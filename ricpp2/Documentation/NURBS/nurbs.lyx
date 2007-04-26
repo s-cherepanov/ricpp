@@ -1576,7 +1576,7 @@ Segments
 
 \layout Section
 
-Trimming NURBS (TODO)
+Trimming NURBS
 \layout Standard
 
 The RenderMan Interface provides an attribute to trim NURBS surfaces in

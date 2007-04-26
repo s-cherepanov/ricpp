@@ -1,0 +1,6 @@
+include ../../../depend/ricpp.dep
+include ../../ricpp.def
+
+OBJ  = $(OBJPATH)/wglrc.o $(OBJPATH)/opengl.o $(OBJPATH)/pixform.o $(OBJPATH)/stdafx.o
+DEBUGBIN  = $(OUTPATH)/libglcppd.a
+RELEASEBIN  = $(OUTPATH)/libglcpp.a

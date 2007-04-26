@@ -1,0 +1,727 @@
+4. PhotoRealistic RenderMan Options
+Every implementation of a RenderMan-compliant rendering program has certain implementation-specific features which are accessed through the functions RiAttribute and RiOption.
+
+Options are parameters that affect the rendering of an entire image. They must be set before calling RiWorldBegin, since at that point options for a specific frame are frozen.
+
+The following table summarizes the options available in PhotoRealistic RenderMan. Note that some of the defaults listed can be overridden by configuration files (see Section 2. Cool ).
+
+RIB Defaults
+Imager "name" - none -
+Hider "hidden" "jitter" [flag] [1]
+"pdisc" [x] [0.0]
+"occlusionbound" [x] [0.0]
+"mpcache" [f] "mpmemory" [n] "mpcachedir" ["s"] [1] [6144] ["."]
+"samplemotion" [flag] [1]
+"subpixel" [samples] [1]
+"extrememotiondof" [n] [1]
+Hider "photon" options - none -
+Hider "depthmask" "zfile" ["shadowmap.sm"] "reversesign" [n]
+"depthbias" [f]
+[0] [0.01]
+Display "name" "type" "mode" "merge" [flag] [0]
+Display "name" "type" "mode" "origin" [a b] [0 0]
+Display "name" "type" "mode" "resolution" ["s"] - none -
+Display "name" "type" "mode" "resolutionunit" [n m] - none -
+Display "+name" "type" "mode" "merge" [flag] - none -
+Option "limits" "bucketsize" [a b] [16 16]
+Option "limits" "gprimsplits" [n] [4]
+Option "limits" "gridsize" [n] [256]
+Option "limits" "texturememory" [n] [2048]
+Option "limits" "zthreshold" [x x x] [1.0 1.0 1.0]
+Option "limits" "othreshold" [x x x] [0.996 0.996 0.996]
+Option "limits" "extremedisplacement" [n] [0] (disabled)
+Option "limits" "eyesplits" [n] [10]
+Option "rib" "format" ["s"] ["ascii"]
+Option "searchpath" "shader" ["s"] [".:${RMANTREE}/lib/shaders"]
+Option "searchpath" "texture" ["s"] [".:${RMANTREE}/lib/textures"]
+Option "searchpath" "vfxmaster" ["s"] [".:${RMANTREE}/look/masters"]
+Option "searchpath" "vfxinstance" ["s"] [".:${RMANTREE}/look/instances"]
+Option "searchpath" "display" ["s"] [".:${RMANTREE}/etc"]
+Option "searchpath" "archive" ["s"] ["."]
+Option "searchpath" "procedural" ["s"] ["."]
+Option "searchpath" "servershader" ["s"] [".:${RMANTREE}/lib/shaders"]
+Option "searchpath" "servertexture" ["s"] [".:${RMANTREE}/lib/textures"]
+Option "searchpath" "servervfxmaster" ["s"] [".:${RMANTREE}/look/masters"]
+Option "searchpath" "servervfxinstance" ["s"] [".:${RMANTREE}/look/instances"]
+Option "searchpath" "serverdisplay" ["s"] [".:${RMANTREE}/etc"]
+Option "searchpath" "serverarchive" ["s"] ["."]
+Option "searchpath" "dirmap" ["[\"zone\" \"from\" \"to\"]"] - none -
+Option "shadow" "bias" [x] [0.225]
+Option "shutter" "offset" [x] [0.0]
+Option "statistics" "endofframe" [n] [0]
+"filelog" ["s"] - none -
+Option "texture" "enable gaussian" [v] [1.0]
+Option "texture" "enable lerp" [v] [1.0]
+Option "trace" "int maxdepth" [x] [10]
+Option "trace" "float specularthreshold" [x] [10]
+Option "user" "myoption" [x] - none -
+PixelFilter "filter" xwidth ywidth "catmull-rom" 2 2
+
+The following sections describe the options available to control the operation of PhotoRealistic RenderMan. Each section gives an example of the use of the option as it would appear in RenderMan Interface. In addition, PhotoRealistic RenderMan implements certain extensions to other parts of the RenderMan Interface, as described in the RenderMan Interface Specification Version 3.2. These extensions are described in Section 6.
+
+4.1. Imager Shaders
+General purpose imager shaders written in the RenderMan Shading Language are not supported by PhotoRealistic RenderMan. However, two built-in imager shaders are available through the RiImager call.
+
+
+
+clamptoalpha
+takes no parameters, and merely assures that all color values are less than the value of the alpha channel prior to output. This is true even if the display mode of the image being generated is not an rgba image. Shaders that produce color values greater than one, as well as the pixel dithering process, can occasionally produce color values greater than the alpha value, potentially resulting in errors when the image is later composited over another image by programs that do not anticipate this possibility.
+RiImager("clamptoalpha", RI_NULL);
+
+
+background
+takes a single parameter, background, of type uniform color. The rendered image is merged over the specified background color and all the alpha values are set to one.
+RtColor bg = {0.4, 0.4, 1.0};
+RiImager("background", "background", (RtPointer)bg, RI_NULL);
+4.2. Bucket Size
+PhotoRealistic RenderMan subdivides the screen into blocks of pixels termed buckets when resolving the visible surface calculations. Large buckets are more efficient and permit larger grids to be used (see below). Large buckets however require more memory. The bucketsize option is used to specify the n-by-m size of a bucket, in pixels; for example:
+RtInt bs[2] = {12, 12};
+RiOption("limits", "bucketsize", (RtPointer)bs, RI_NULL);
+4.3. Grid Size
+The gridsize option determines the maximum number of micropolygons that can be shaded at one time. This is another option that can be used to control the tradeoff between computational efficiency and memory utilization. The number of active micropolygons directly affects the amount of memory required to render an image since the state of each active micropolygon must be maintained until it is resolved. Large grids in general are more efficient to shade since the shading machinery is invoked once for a large number of micropolygons, rather than many times for a fewer number of micropolygons. However, larger grids require larger temporary variable buffers for shading (particularly when textures are involved in the shading process) and produce large increases in the number of active micropolygons. A minimal value for this parameter can be calculated by dividing the bucket size by the micropolygon size set with the RiShadingRate request; e.g., a shading rate of 4.0 and a bucket size of 12×12 gives a gridsize of 12×12/4=36. This is minimal in the sense that values smaller than this don't save much memory. The following sets the maximum grid size to 36:
+RtInt gs = 36;
+RiOption("limits", "gridsize", (RtPointer)&gs, RI_NULL);
+4.4. Texture Memory
+The texture system caches data that is read from texture files. The user can modify the limits on the total amount of memory devoted to cached texture data. Large caches increase texture mapping efficiency (particularly on a lightly-loaded host), but obviously can bloat the total memory usage. The texture-cache memory size is specified in kilobytes with the following option:
+RtInt tm = 8192;
+RiOption("limits", "texturememory", (RtPointer)&tm, RI_NULL);
+4.5. Opacity Threshold
+Only objects with opacities greater than or equal to the opacity threshold will appear in shadow maps and other z files. The threshold is a color value (as is the shader opacity value Oi). Therefore, if any channel of opacity is greater than or equal to the threshold, the object will appear in shadow maps (and other zfiles). The default value for the opacity threshold is {1.0, 1.0, 1.0} or completely opaque. This means that partially or completely transparent objects are not rendered into shadow maps or zfiles; only objects which are completely opaque are rendered. If the opacity threshold is set to {0.0, 0.0, 0.0} all objects will be rendered into the shadow map. The opacity threshold can be controlled with the following option:
+RtColor thres = {0.30, 0.30, 0.30};
+RtOption("limits", "zthreshold", (RtPointer)thres, RI_NULL);
+4.6. Opacity Culling
+When rendering scenes with a large number of semi-transparent layered objects (e.g. hair), the opacity culling threshold can be set for a significant time and memory savings. Essentially, a stack of visible points whose accumulated opacity is greater (in each channel) than the specified limit will be considered fully opaque by the hider, and objects behind the stack will be culled. This opacity limit is controlled with the following option:
+RtColor thres = {0.995, 0.995, 0.995};
+RtOption("limits", "othreshold", (RtPointer)thres, RI_NULL);
+The opacity threshold is {0.996, 0.996, 0.996} by default.
+4.7. Extreme Displacement
+When the displacement of an object on the screen is very large, that is, the displaced point is far from the original point, PhotoRealistic RenderMan invokes a special displacement procedure in order to save large amounts of memory at some additional computational cost. When this occurs, the error message:
+Extreme displacement encountered (WARNING)
+is generated. The maximum permissible displacement before the special procedure is invoked is measured in vertical scanlines. If this value is increased, larger displacements are permitted to use memory rather than incur the additional computation. If this value is decreased, memory usage is minimized even for less severe displacements. The default for this value is 32 scanlines, and can be changed with the following option:
+RtInt ed = 24;
+RiOption("limits", "extremedisplacement", (RtPointer)&ed, RI_NULL);
+4.8. Eye-Plane Splitting
+When PhotoRealistic RenderMan finds a primitive object which falls astride the eye (camera) plane, it tries to split the object into smaller and smaller pieces to prevent perspective-divide abnormalities. Situations can exist where this process cannot work (e.g., when the object's motion blur takes it through the eye). This situation is detected when the number of eye-plane splits of an object exceeds an initial threshold. This initial failure detection threshold defaults to 10, but can be changed (usually to some smaller number in an attempt to reduce time and memory usage) with the following option or attribute:
+
+RtInt es = 5;
+RiOption("limits", "eyesplits", (RtPointer)&es, RI_NULL);
+RiAttribute("limits", "eyesplits", (RtPointer)&es, RI_NULL);
+Once the eyesplits limit has been reached, the remaining unresolved pieces of the object are split by some fixed number of times, and then immediately diced. This can result in decreased image quality (and a warning to this effect will be issued), but typically leads to much better results than the old behaviour of discarded geometry. When this occurs, the warning message:
+
+R56010 Primitive "%s" exceeds eyesplit limit. Image degradation may occur.
+is generated. The fixed number of times that the geometry will split is also controllable by an option:
+
+Option "limits" "gprimsplits" [int]
+The default value is 4, and normally does not need to be changed. Larger values will improve image quality during eyesplits at the cost of time and memory. Smaller values will likewise produce larger grids, using less time and memory. However, it is best to control splitting behavior with the normal "limits" "eyesplits" option and attribute.
+
+4.9. Shadow Maps
+In some cases shadow maps may exhibit a problem with surface self-shadowing. This manifests itself as small grey spots all over objects in shadow, and is caused by numerical inaccuracy in computing the depth of a particular surface. If a depth computed when generating the depth map is slightly less than that computed when rendering the image, a shadowing light source shader will interpret this as a shadow and produce a grey spot. This can be solved by using the shadow option to add a small bias value to the values in the depth map when rendering the final image. Care must be taken not to add too large a value since that would cause shadows to separate from the objects casting them. The bias parameter is set as follows:
+RtFloat bias0 = 0.35;
+RtOption("shadow", "bias", (RtPointer)&bias, RI_NULL);
+Note that this bias value can be overridden by a parameterlist value supplied in the shadow call of the shader.
+Previously shadow maps have always contained the minimum depth value calculated from all depth values within the current pixel. The user now has control over the function that computes the output depth value for each pixel. This is controlled by a new Hider option called "depthfilter". You can now select between the minimum, maximum, or average of the pixel depth values to output.
+
+Examples using the jitter hider:
+
+Hider "hidden" "jitter" [0] "depthfilter" "min"
+Hider "hidden" "jitter" [0] "depthfilter" "max"
+Hider "hidden" "jitter" [0] "depthfilter" "average"
+
+In addition, there is one special version of the depth filter that works a bit differently. For each sample position, it calculates the depth as the midpoint between the object that is closest to the viewpoint and the second closest object. This requires a bit more time than the other techniques, but generates z values that may require less tweaking and biasing. This method was proposed by Andrew Woo of Alias Research in Graphics Gems III , page 338.
+
+This method is specified by the Hider statement:
+
+Hider "hidden" "jitter" [0] "depthfilter" "midpoint"
+
+PRMan 3.8 has an enhanced shadow shadeop supporting a new method of generating soft shadows with true penumbral fadeout, simulating shadows of area light sources. The method uses multiple rendered shadow maps to infer visibility information from a light source whose extended geometry is also specified in the shadeop. For more details, see the Application Note on soft shadows.
+
+4.10. Hider Sampling
+The PhotoRealistic RenderMan default hider, hidden, has several parameter-list options.
+4.10.1 Stochastic Sampling
+The first, jitter, enables/disables stochastic sampling. Stochastic sampling should be enabled whenever motion blur or depth-of-field is being used, and in general improves the quality of antialiasing at a small cost in speed. For best results, the jitter option should be disabled when rendering shadow map values. This option is enabled by default, but can be disabled by:
+
+RtInt flag = 0;
+RiHider("hidden", "jitter", (RtPointer)&flag, RI_NULL);
+The second option, pdisc, enables/disables an alternate stochastic sampling scheme. This scheme often works better than the usual jitter option, with some limitations. The first limitation that the number of samples across a bucket (bucketsize x or y times pixel samples x or y) should be a power of two or at least a multiple of a high power of two. If this is not followed, the image quality can be greatly reduced. Some combinations of bucketsize/pixel samples will not work at all and will produce an error message. If this happens, either modify the bucketsize/pixel samples or use the jitter option instead. The second limitation is that pdisc does not work properly when using parallelism in network rendering. This option is disabled by default, but can be enabled by:
+RtInt flag = 1;
+RiHider("hidden", "pdisc", (RtPointer)&flag, RI_NULL);
+4.10.2 Tentative Hiding Bound
+PRMan 11 now attempts to resolve visibility in its entirety before shading. In nearly all cases this causes a frame to render faster. Only in the case of displaced geometry will PRMan 11 maintain the old behaviour. In order to turn on more aggressive hiding in this case, a new parameter "occlusionbound" passed to the hider allows one to specify how far a point in screen space can be displaced in screen space before it must be shaded prior to hiding. By default, it is set to zero, which causes all displaced objects to be shaded first before hiding. Setting it higher will lead to faster renders at the risk of possible errors on displaced objects.
+4.10.3 Micropolygon Caching
+Several hider options control micropolygon caching. Version 11.0 of PRMan now provides a new strategy for dealing with large amounts of in-memory transient micropolygons: it will cache these transient micropolygons to disk when it is detected that there are a relatively large number of them. First, the "mpcache" option, when set to 1, enables the micropolygon caching strategy.
+
+RtInt flag = 0;
+RiHider("hidden", "mpcache", (RtPointer)&flag, RI_NULL);
+When the strategy is enabled, caching is activated once more than 6MB of transient micropolygons have been created. This can be controlled by the "mpmemory" option. Changing this number controls the number of KB of micropolygons which can be created before micropolygons begin to be cached to disk.
+Cache files are written in the "mpcachedir" location under a directory named "mpc.hostname.n", where 'hostname' is the the name of the host, and 'n' is the process id of the prman process controlling the cache. The renderer will attempt to remove any 'orphaned' cache directories left behind by other invocations of prman. If "mpcachedir" is not specified then the default directory will be the current one; this may be overriden by altering the /prman/hider/mpcachedir directive specified in rendermn.ini.
+
+4.10.4 Motion Sampling
+The samplemotion option toggles the sampling of motion blurred micropolygon in the hider, and is thus only meaningful if motion blur is being used in your scene. By default, this hider option is enabled (set to 1), meaning that micropolygons will be blurred and sampled in the hider. When disabled (set to 0), micropolygons will no longer be blurred before sampling; however, the dPdtime variable will still be computed for all objects. This variable can be output into a separate image using an arbitrary output variable and used to perform motion blur as a postprocess.
+
+4.10.5 Subpixel Output
+
+An option to force the hider to emit every subpixel into the final image, generating an image which is PixelSamples -times larger, but has every unfiltered color and depth available for perusal. For example, asking for a 640x480 image with PixelSamples 4x4, but with subpixel output, would generate a 2560x1920 unfiltered image.
+
+Hider "hidden" "subpixel" [1]
+
+Note that this option does not work with arbitrary output variables.
+
+4.10.6 Extreme Motion Depth of Field Blur
+
+In some cases where a large amount of motion blur is used with depth of field, sampling artifacts could cause an undesirable result. A new flag, "extrememotiondof," has been added to the hider to improve sampling accuracy in these cases. Usage of this parameter is as follows:
+
+Hider "hidden" "extrememotiondof" [1]
+
+This flag causes a slower but more accurate sampling method to be used to alleviate the artifacts. Due to the performance degradations of this sampling method, this flag should only be used when necessary.
+
+4.10.7 Photon Hider
+A hider, "photon" controls the generation of photon maps:
+
+Hider "photon" "int emit" [100000]
+Puts the renderer into photon map calculation mode. Photon map generation is a separate rendering pass akin to shadow map generation, so photon map generation begins when RiWorldEnd is encountered and the Hider is set to "photon". Photons are tagged as global and/or caustic. Caustic photons are deposited into an optional caustic photon map and are specially tuned for use in calculating caustic effects. Global photons are deposited into the optional global photon map and are used to calculate soft indirect illumination. You can generate either or both types of photon maps in a single rendering pass, but if you need very high quality caustics, you'll probably want to increase the photon emission and compute them in a separate photon pass. A single photon pass can result in any number of photon map files. When a photon is "deposited" at a surface point, the standard photon map attributes are consulted to determine the name of the photon map file. To prevent the deposition of a photon on a specific object, specify the empty string for the photon map name.
+4.10.8 Sample-Resolution, Z-Stencil (Depthmask) Hider
+
+PRMan's normal hiders compute visibility at the image plane; the Depthmask hider computes visibility at a frontier defined by depths in a shadow map. The RIB syntax for using this new z-stencil hider is as follows:
+
+Hider "depthmask" "zfile" ["shadowmap.sm"] "reversesign" [0] "depthbias" [0.01]
+The "zfile" option, takes a shadow map file (created with txmake -shadow or RiMakeShadow ). This new hider will then cull surfaces which are nearer (or farther) than the frontier defined by the depth values in the shadowmap.
+
+The parameter "reversesign" controls whether z-depths greater than or less than the depth mask are culled. The default value of 0 culls all geometry in front of the depth mask. Setting this parameter to 1 allows the depth mask to be used to cull geometry behind the mask.
+
+The parameter "depthbias" controls the amount of bias applied to the mask. The default for this parameter is 0.01. Raising this value will prevent self-intersection problems in cases where two surfaces are extremely close.
+
+NOTE: The shadowmap passed to the depthmask hider must be at sample resolution (See subpixel output above). This means the width of the shadow map must be the width of the image being produced by the hider times the x-component of PixelSamples. Similarly, the height of the shadow map must be the height of the image being produced by the hider times the y-component of PixelSamples. If these conditions are not met, the result is undefined.
+
+4.11. Frame Buffer Control
+There are several options which can be enabled through the parameter list of the RiDisplay call. These options, naturally enough, influence the use of the display device.
+
+4.11.1. Display Origin
+The origin of the output window on a frame buffer device can be set using the display origin option. For example, to place the origin of the output window at the point (512,384):
+
+RtInt o[2] = {512, 384};
+RiDisplay("name", "framebuffer", "rgba",
+"origin", (RtPointer)o, RI_NULL);
+4.11.2. Display Merge
+Frame buffers can be configured to merge the generated image over an existing image with the display merge option:
+
+RtInt flag = 1;
+RiDisplay("name", "framebuffer", "rgba",
+"merge", (RtPointer)&flag, RI_NULL);
+The merge option works only if the selected display driver supports it.
+
+4.11.3. Device Resolution
+Some file formats (e.g., TIFF, Postscript) support the concept of device resolution, meaning how many pixels appear per physical unit of measure (e.g., dots per inch). Two display options provide a way to document these values into files generated by PhotoRealistic RenderMan. A string specifying the physical unit of resolution can be set with the resolutionunit option. A pair of integers specifying the number of pixels per resolution unit in width and height can be set with the resolution option. For example, to set the resolution at 72 dpi:
+
+RtString ru[1] = "inch";
+RtInt r[2] = {72, 72};
+RiDisplay("name", "TIFF", "rgba",
+"resolution", (RtPointer)r,
+"resolutionunit", (RtPointer)ru, RI_NULL);
+Currently, the TIFF file driver considers both resolutionunit, which must be "inch" or "centimeter", and both resolution values. The PICT and Postscript drivers only consider the first resolution value, as images in these formats must have the same value in both directions, and implicitly assume inches as the resolution unit.
+
+4.11.4. Output Compression
+The TIFF driver also accepts an option to set the compression type, which may be "lzw", "packbits", "zip" (the default), "pixarlog", or "none":
+
+RtString cmp[1] = "none";
+RiDisplay("name", "TIFF", "rgba",
+"compression", (RtPointer)cmp, RI_NULL );
+4.11.5. Custom Display Driver Options
+Custom display drivers may also accept other display options, but they must be declared with RiDeclare before RiDisplay can accept them and pass them through to the custom driver.
+
+4.11.6. Filename Formatting
+Special formatting can be done on the filename parameter to RiDisplay. The "#" character is recognized as a special lead-in character in file names. The action taken depends on the character after the "#".
+
+
+
+#f
+Is replaced with the frame number as specified to RiFrameBegin. By default it is inserted into the filename as three digits with leading zeroes. The number of digits can be controlled using #widthf, where width is a string of decimal digits.
+
+
+#s
+Replaced with the frame sequence number. This number is incremented for every frame block regardless of the frame number. Takes an optional width as with #f.
+
+
+#n
+Replaced with a running sequence number. This number is incremented every time the renderer outputs an image file, regardless of the frame number. Takes an optional width as with #f.
+
+
+#d
+Replaced with the requested display type.
+
+
+#p
+Is replaced with the processor number in a multiprocessor rendering. This should never be used in a file name during automatic multiprocessor rendering such as through netrender.
+
+
+#P
+Is replaced with the total processor count in a multiprocessor rendering. This should never be used in a file name during automatic multiprocessor rendering such as through netrender.
+
+
+##
+Is replaced with a single #.
+Example:
+
+RiFrameBegin(15);
+RiDisplay("test#f.#d", "tiff", ...);
+Produces the file name: "test015.tiff".
+
+4.11.7. Arbitrary Output Variables
+PRMan supports the use of multiple simultaneous output displays for a single render. As described in the RenderMan Interface Specification Version 3.2, this allows rendering of a display mode which can be the name of a known geometric quantity or the name of a shader output variable. Multiple display channels may be specified by prepending the + character to the display name.
+
+When using multiple output displays, PRMan will recognize the following special parameters when they occur in the RiDisplay parameter list:
+
+float[4] quantize
+These four values (zeroval, oneval, minval, and maxval) control how the output display is quantized, in exactly the same way that RiQuantize works.
+float dither
+This single value controls the amplitude of the dither added to the values of the output display.
+string filter
+The name of the pixel filter to be used for the output display. The names of the standard pixel filters that may be passed to RiPixelFilter may be used here (see Section 4.19 for PRMan extensions).
+In addition, three special filters may be used: min, max, and average. These filters have the same meaning as the depthfilter argument to Hider, i.e. instead of running a convolution filter across all samples, only a single value (the minimum, maximum, or average of all pixel samples) is returned and written into the final pixel value. These filters are useful for arbitrary output variables where standard alpha compositing does not make sense, or where linear interpolation of values between disjoint pieces of geometry is nonsensical. Note that when these filters are used, opacity thresholding is also used on that output to determine which closest surface to sample.
+float[2] filterwidth
+The size in X and Y of the pixel filter to be used.
+In PRMan 11 the special variable __CPUtime may also be used as a mode for an arbitrary display:
+
+Display "+costfilename.tif" "tiff" "__CPUtime"
+This mode will result in an image that profiles how long it takes to shade each micropolygon as it renders. The data stored will be the amount of time it took to shade each micropolygon in seconds.
+
+4.12. Search Paths
+PhotoRealistic RenderMan searches specific paths for shader definitions, texture map files and Pixar Looks® masters and instances. The search path is a colon-separated list of directories that are used in searching for files that have names which do not begin with When a search path is set, the character `@' will be replaced by the standard shader or texture location and the character `&' will be replaced by the previous path description.
+RtString tpath[] = { ".:/usr/me/ri/images" },
+spath[] = { ".::/usr/me/ri" },
+dpath[] = { ".::/usr/me/ri/dspy" };
+RiOption("searchpath", "shader", (RtPointer)spath,
+"texture", (RtPointer)tpath,
+"vfxmaster", (RtPointer)spath,
+"vfxinstance", (RtPointer)spath,
+"archive", (RtPointer)spath,
+"display", (RtPointer)dpath,
+"procedural", (RtPointer)spath,
+RI_NULL);
+The valid search paths are:
+
+
+shader
+Used by the renderer to find all shader .slo files. When using netrender the path elements are all in the context of the netrender command and will be ignored by the render server.
+
+
+texture
+Used by the renderer to find all texture files. When using netrender the path elements are all in the context of the netrender command and will be ignored by the render server.
+
+
+vfxmaster
+Used by the renderer to find all Pixar Look master files. When using netrender the path elements are all in the context of the netrender command and will be ignored by the render server.
+
+
+vfxinstance
+Used by the renderer to find all Pixar Look instances files. (Usually to read an embedded texture out of the instance.) When using netrender the path elements are all in the context of the netrender command and will be ignored by the render server.
+
+
+archive
+Used by the renderer to find RIB archives. When using netrender the path elements are all in the context of the netrender command and will be ignored by the render server.
+
+
+procedural
+Used by the renderer to find procedural primitive DSOS. When using netrender the path elements are all in the context of the netrender command and will be ignored by the render server.
+
+
+display
+Used by the renderer to find display drivers. When using netrender the path elements are all in the context of the netrender command and will be ignored by the render server.
+
+
+servershader
+Used by the renderer to find all shader .slo files. Only used when using netrender with the -f option; the path elements are interpreted in the context of the render server.
+
+
+servertexture
+Used by the renderer to find all texture files. Only used when using netrender with the -f option; the path elements are interpreted in the context of the render server.
+
+
+servervfxmaster
+Used by the renderer to find all Pixar Look master files. Only used when using netrender with the -f option; the path elements are interpreted in the context of the render server.
+
+
+servervfxinstance
+Used by the renderer to find all Pixar Look instances files. (Usually to read an embedded texture out of the instance.) Only used when using netrender with the -f option; the path elements are interpreted in the context of the render server.
+
+
+serverarchive
+Used by the renderer to find all RIB archives. Only used when using netrender with the -f option; the path elements are interpreted in the context of the render server.
+
+
+serverdisplay
+Used by the renderer to find all display drivers. Only used when using netrender with the -f option; the path elements are interpreted in the context of the render server.
+Note that the server versions of the paths are processed only when using netrender -f, and only by the server. They are searched first, independently of the local equivalents; the local searchpaths will be searched afterwards.
+4.13. High Quality Texture Filtering
+Two texture options have been added for use with RiOption to control the use of high quality texture filtering options. These allow the selection of higher quality filtering in the shading language to be enabled or disabled. When disabled, the "filter" and "lerp" optional parameters to texture() and environment() have no effect.
+
+
+enable gaussian
+Enables the use of a gaussian filter when filtering the texture sample data from a texture or environment map. Takes a floating point value. A value of 0.0 disables the selection of the gaussian filter. A value of 1.0 enables the selection of the gaussian filter.
+
+
+enable lerp
+Enables the interpolation of two texture resolution levels to insure smooth transitions between resolution levels. The data will be interpolated between the resolutions above and below the ideal resolution for the shading sample. Takes a floating point value. A value of 0.0 disables the selection of interpolation. A value of 1.0 enables the selection of interpolation.
+They are enabled by default. Here is an example of disabling high quality filtering:
+RtFloat off = 0.0;
+RiOption("texture", "enable gaussian", (RtPointer)&off,
+"enable lerp", (RtPointer)&off,
+RI_NULL);
+4.14. RIB Output
+The RIB output from a C program using the PhotoRealistic RenderMan client library librib.a can be controlled with the rib option. The format parameter specifies either ASCII output by:
+RtString format[1] = {"ascii"};
+RiOption("rib", "format", (RtPointer)format, RI_NULL);
+or binary output by:
+RtString format[1] = {"binary"};
+RiOption("rib", "format", (RtPointer)format, RI_NULL);
+The RiBegin call can be used to specify a specific RIB output file, as in:
+RiBegin("foo.rib");
+If RiBegin is not used to specify a file name, and RISERVER is not defined (see Section 2., the standard output will be used.
+The compression format is derived from the freely available libzip.a library and is compatible with the GNU compression program gzip. You can tell the RIB client library to output compressed RIB by calling RiOption before the call to RiBegin:
+
+RtString str = "gzip";
+RiOption("rib", "compression", &str, RI_NULL);
+Or by setting the environment variable RICOMPRESSION to gzip:
+setenv RICOMPRESSION gzip
+4.15. Control Over Printed Statistics
+General end of frame statistics are controlled by the RIB statement:
+
+Option "statistics" "endofframe" [level]
+The value of level determines how much detail is printed:
+level 0: No statistics
+level 1: Only runtime and memory footprint are printed
+level 2: Runtime, detailed memory stats, and stats about gprims, grids, micropolygons, visible points, but no texture stats.
+level 3: Everything from level 2, plus texture statistics.
+Level 1 is probably the most useful. The information printed at higher levels, particularly level 3 are for debugging errant renders and can be hard to interpret.
+A file logging statistic can be output when the RIB statement:
+
+Option "statistics" "filelog" ["filename"]
+is specified. When the render completes, filename will contain a list of all files accessed by the renderer over the course of image generation.
+
+4.16. Directory Mapping
+In version 3.9.2, a new Option was added which allows the renderer to apply a directory mapping to the absolute paths used to look up resources such as shaders and texture maps. It is specified as follows:
+
+Option "searchpath" "dirmap" [ "[\"zone\" \"directory to map from\" \"directory to map to\"] [\"zone2\" \"from\" \"to\"]" (more mappings)]
+
+Note in particular that the value of this option is a single RtString. Inside this string, multiple mappings can be defined, each delimited with a matched pair of square braces. Each mapping consists of three tokens, each themselves delimited with double quotes, which are the "zone", the "from" directory, and the "to" directory.
+
+Directory mappings are defined for a "zone", which controls when the mapping should be used or ignored. The renderer determines the directory mapping zone that it is in via the /dirmap/zone directive specified in rendermn.ini. The renderer will use the value set for /dirmap/zone; if this does not exist, it will fall back to using /dirmap/zone/$ARCH, and if this does not exist it will default to the value "UNC" on the Windows platform, and "NFS" on Unix platforms.
+
+Directory mappings are applied when the renderer encounters an absolute path, directly in the RIB stream (i.e. when /home/user/texture.tx is specified in the RIB), or when an absolute path is constructed from a relative filename combined with a searchpath entry. The first part of the absolute path is checked (via a case sensitive string compare) against the "from" part of the directory mapping; if it matches, that part of the path is replaced with the "to" part of the mapping.
+
+As an example, suppose the following RIB statements are encountered:
+
+Option "searchpath" "texture" "//smbhost/luxo://smbhost/tinny:@"
+Option "searchpath" "dirmap" [ "[\"NFS\" \"//smbhost/tinny\" \"/home/tintoy\"]" "[\"UNC\" \"/home/tintoy\" \"//smbhost/tinny\"]" ]
+Surface "//smbhost/tinny/myshader" "txname" ["images/mytexture.tx"]
+
+Suppose that the renderer is in the "NFS" zone, i.e it has the /dirmap/zone set to NFS in rendermn.ini. This means that it will use the first mapping specified (from //smbhost/tinny to /home/tintoy), but will ignore the second mapping for "UNC" hosts (from /home/tintoy to //smbhost/tinny). When the renderer goes to look for the shader "myshader", it will note that the absolute path to the shader specified matches the directory map, and so it will apply the directory map:
+
+//smbhost/tinny/myshader -> /home/tintoy/myshader
+
+Now let's assume that the shader "myshader" also looks for the texture "images/mytexture.tx". Note that this texture is specified in a relative form, which means that it will look through the searchpaths as defined in the "searchpath" "texture" statement. The renderer will first construct the absolute path "//smbhost/luxo/images/mytexture.tx" and check directly for this file, since this doesn't match any mappings. If it fails to find it there, it will next construt the path "//smbhost/tinny/images/mytexture.tx" - but since this path matches the directory mapping, the path will be changed:
+
+//smbhost/tinny/images/mytexture.tx -> /home/tintoy/images/mytexture.tx
+
+4.17. Shutter Offset
+PRMan 10.0 supports an option which allows an offset to be added to motion blur times:
+
+Option "shutter" "offset" [float frameoffset]
+The specified offset is added to all time values specified in subsequent RiShutter and RiMotionBegin calls. This is a useful Option to use when using a sequence of RIB files which change the shutter times, while repeatedly referring to the same RIB archive containing motion blurred geometry. Without the new Option this would be difficult because the MotionBegin times in the archive would need to match the Shutter times: either the archive would have to be regenerated with each frame, or the Shutter and MotionBegin would always need to be locked at the same range for all frames (which would mean that the time shading variable is identical for each frame as well).
+
+With the new Option, you may now keep a single RIB archive with the MotionBegin times starting at zero, and then from each referring RIB define an offset, prior to ReadArchive:
+
+Shutter 0 0.5
+Option "shutter" "offset" [0]
+FrameBegin 0
+ReadArchive "geometry.rib"
+FrameEnd
+
+Shutter 1 1.5
+Option "shutter" "offset" [1]
+FrameBegin 2
+ReadArchive "geometry.rib"
+FrameEnd
+4.18. User Specified Options
+PRMan 10.0 supports the use of arbitrarily defined token/value pairs for the user option. These token/value pairs may be arbitrarily defined and set, and then queried with the option shadeop or via the RxOption mechanism.
+
+RtString myoption = "foo";
+RiOption("user", "uniform string myoption", (RtPointer)&myoption, RI_NULL);
+In RIB form:
+
+Option "user" "uniform string myoption" [ "foo" ]
+4.19. Pixel Filters
+In addition to the standard pixel filter functions in the Specification, PRMan supports these additional pixel filters:
+
+RiMitchellFilter
+RIB form: "mitchell"
+The recommended filter from Don Mitchell and Arun Netravali's 1988 Siggraph paper on reconstruction filters - the separable version of the (1/3, 1/3) filter.
+
+RiSeparableCatmullRomFilter
+RIB form: "separable-catmull-rom"
+A separable version of the catmull-rom filter.
+
+RiBlackmanHarrisFilter
+RIB form: "blackman-harris"
+A separable 4 term (-92 dB) Blackman-Harris filter.
+
+4.20. Ray Tracing
+Option "trace" "int maxdepth" [10]
+an absolute limit on the recursion depth of ray probes.
+
+Option "trace" "float specularthreshold" [10]
+a threshold to distinguish between specular ray paths and diffuse ray paths. This threshold is used during caustic photon map generation to tag caustic photons. This value is measured in degrees.
+
+
+
+
+--------------------------------------------------------------------------------
+
+Pixar Animation Studios
+(510) 752-3000 (voice) (510) 752-3151 (fax)
+Copyright © 1996-2004 Pixar. All rights reserved.
+RenderMan® is a registered trademark of Pixar.
+
+
+
+5. PhotoRealistic RenderMan Attributes
+Attributes are flags and values that are part of the graphics state, and are therefore associated with individual primitives. The values of these attributes are pushed and popped with the graphics state.
+
+The following table summarizes the attributes available in PhotoRealistic RenderMan. Note that some of the defaults listed can be overridden by configuration files (see Section 2. Cool ).
+
+RIB Defaults
+Attribute "cull" "backfacing" ["1"] [1.0]
+Attribute "cull" "hidden" ["1"] [1.0]
+Attribute "derivatives" "centered" ["x"] [1.0]
+Attribute "derivatives" "extrapolate" ["x"] [1.0]
+Attribute "dice" "binary" [flag] [0]
+Attribute "dice" "hair" [flag] [0]
+Attribute "dice" "rasterorient" ["x"] [1.0]
+Attribute "displacementbound" "sphere" [x] [0.0]
+"coordinatesystem" ["s"] ["object"]
+Attribute "grouping" "string membership" ["s"] [""]
+Attribute "grouping" "string tracesubset" ["s"] [""]
+Attribute "identifier" "name" ["s"] - none -
+Attribute "irradiance" "string handle" ["s"] [""]
+Attribute "irradiance" "string filemode" [""] [""]
+Attribute "irradiance" "float maxerror" [x] [0.5]
+Attribute "irradiance" "float maxpixeldist" [x] [30]
+Attribute "photon" "int estimator" [x] [50]
+Attribute "photon" "string causticmap" ["s"] [""]
+Attribute "photon" "string globalmap" ["s"] [""]
+Attribute "photon" "string shadingmodel" ["s"] ["matte"]
+Attribute "sides" "backfacetolerance" [v] [0.0]
+Attribute "sides" "doubleshaded" [v] [0.0]
+Attribute "stitch" "enable" ["x"] [1.0]
+Attribute "stitch" "newgroup" [f] [0]
+Attribute "trace" "int maxdiffusedepth" [x] [1]
+Attribute "trace" "int maxspeculardepth" [x] [2]
+Attribute "trace" "int displacements" [x] [0]
+Attribute "trace" "float bias" [x] [0.01]
+Attribute "trace" "int samplemotion" [x] [0]
+Attribute "trimcurve" "sense" ["s"] ["inside"]
+Attribute "user" "myattribute" [x] - none -
+Attribute "visibility" "int camera" [v] 1
+Attribute "visibility" "int trace" [v] 0
+Attribute "visibility" "int photon" [v] 0
+Attribute "visibility" "string transmission" ["s"] ["opaque"]
+
+GeometricApproximation "motionfactor" [v] [0.0]
+
+5.1. Binary Dicing
+This is a flag that indicates whether the lowest level patches must be diced into a grid of micropolygons with power-of-two dimensions. This attribute is typically used to prevent patch cracking on high-curvature patches.
+RtInt flag = 1;
+RiAttribute("dice", "binary", (RtPointer)&flag, RI_NULL);
+5.2. Displacement Bounds
+This is a control that increases the sizes of calculated bounding boxes on primitives in order to account for the effects of displacement mapping. The size is specified by identifying a single floating-point value which is the radius of a sphere which is guaranteed to contain the maximum possible displacement, and the name of the coordinate system in which this sphere resides. This value should be as tight as possible. It is extremely inefficient, both in terms of memory usage and calculation time, to specify a bounding sphere which is larger than the actual displacement. Therefore, this sphere should be as small as possible without permitting points on the object to displace farther than the sphere's radius.
+The coordinate system identified can be:
+
+any of the standard coordinate systems ("screen", "camera", "world", "object")
+"surface" or "displacement", which specifies the shader space of the appropriate shader on this object
+"shader", which is identical to "displacement" if there is a displacement shader on this object, or to "surface" if there is not;
+"current", which is the Shading Language current space (identical to "camera" in PhotoRealistic RenderMan);
+"null", which specifies the coordinate system at the time of the RiAttribute call; or,
+any user-defined coordinate system created with RiCoordinateSystem.
+The default coordinate system is "object" space.
+RtString c[1] = "world";
+RtFloat d = 3.5;
+RiAttribute("displacementbound", "coordinatesystem", (RtPointer)c,
+"sphere", (RtPointer)&d, RI_NULL);
+In version 3.8, the coordinate system may be specified by supplying a transformation matrix. The parameterlist name for this version of the call is "transform", and the value is a single transformation matrix. The semantics of this transformation matrix is parallel to passing a transformation matrix to a shader and transforming a point through it. In other words,
+
+Attribute "displacementbound"
+"sphere" [2]
+"coordinatesystem" ["world"]
+is to
+dispmag = sphereradius * ntransform("world", Nf);
+as
+Attribute "displacementbound"
+"sphere" [2]
+"transform" [...mx...]
+is to
+dispmag = sphereradius * ntransform(mx, Nf);
+5.3. Named Primitives
+It is occasionally useful to give names to individual primitives. For example, when a primitive won't split at the eye plane (see Section 4. it can be desirable to know which primitive is causing the problem.This can be done using the attribute identifier with the parameter name, as in:
+RtString name[1] = { "Gigi" };
+RiAttribute("identifier", "name", (RtPointer)name, RI_NULL);
+
+All defined primitives will have this name until the graphics stack is popped (with RiAttributeEnd) or another such RiAttribute call is made. The error message in the example in Section 4.8 would then contain a reference to a specific primitive name instead of the mysterious <unnamed>.
+
+5.4. Trim Curve Sense
+The sense of Trim Curves can now be reversed using an attribute. The sense can be set to either inside or outside. The default is inside. When the sense is set to outside, all portions of the surface inside the Trim Curve, those drawn in the default case, will not be drawn, and those portions outside the Trim Curve, those not drawn in the default case, will be drawn. Since Trim Curves are attributes themselves, this allows one to use a single Trim Curve to define areas of different shading on the same NURBS surface by repeating the patch with a different sense of the same Trim Curve. The following example shows how to set the Trim Curve sense in a C program.
+RtString sense[1] = "outside";
+RiAttribute("trimcurve", "sense", (RtPointer) sense, RI_NULL);
+The Pixar Looks example program in the /usr/local/prman/examples directory uses this technique.
+5.5. Motion Factor
+A special geometric approximation type, motionfactor, is available with RiGeometricApproximation to provide a processing/quality tradeoff for motion blurred objects whose motion can be large in screen space. The following call:
+
+RiGeometricApproximation("motionfactor", (RtFloat) 1.0);
+
+will cause the renderer to check the length of the motion blur on the screen for all motion blurred objects and if the distance is large, raise the effective shading rate value of the blurred objects. Since the objects will be blurred across the screen, fine shading detail would be lost anyway. This can save large amounts of processing if many objects in the scene have large blurs. A motionfactor factor value of 0.0 will turn this feature off. Values greater than 1.0 will cause motion blurred objects to have their effective shading rate raised even higher. According to the RenderMan Interface Version 3.2 Specification RiGeometricApproximation specifies an attribute and as such, motionfactor should be scoped within the current RiAttributeBegin-RiAttributeEnd block. In the current implementation, motionfactor is not properly scoped as an attribute, hence it should always be specified outside of the RiWorldBegin-RiWorldEnd block.
+
+5.6. One-sided Primitives
+Normally the renderer currently culls one-sided primitives that are backfacing. A primitive is considered backfacing if the primitive's surface normals all point more than 90 degrees away from the viewing vector. In PRMan version 3.7 and earlier, this culling was not guaranteed to occur. Primitives might not be culled even though they were truly backfacing, and no primitive was ever cut cleanly along the terminator. Thus, transparent one-sided objects may have shown inconsistent or ragged-edged results as parts, but not all, of the backfacing sections were culled. Moreover, there was a culling phase prior to shading that could have had the unexpected effect of culling backfacing geometry that a displacement shader would have subsequently moved into a front-facing orientation.
+
+PRMan 3.8 modifies these behaviors. First, backface culling is guaranteed to occur and to be exact; no transparency artifacts as described above will occur.
+
+Second, the threshhold for backface culling of one-sided primitives prior to shading can be adjusted with the new sides:backfacetolerance attribute. The backface culling tolerance angle is a floating-point number, measured in degrees, which specifies the angle that the primitive must exceed, beyond the “silhouette normal”, before it may be culled prior to shading. The default value is 0 degrees. For example:
+
+Attribute "sides" "backfacetolerance" [20]
+
+will cause the renderer to not cull backfacing objects until their surface normals point more than 110 degrees away from the viewing vector. Note that this does not affect the fact that by the end of the rendering pipeline, backface culling is exact and occurs at 90 degrees.
+
+5.7. Centered Derivatives and Normals
+Starting in PRMan 3.9, derivatives and normals are calculated using a new technique which will eliminate or reduce several shading artifacts.
+
+Derivatives are now symmetric with respect to the (u,v) parameterization. This eliminates the shading artifacts that would sometimes occur when adjacent patches in a subdivision surface had different orientations.
+Derivatives are more robust near degeneracies (such as sphere poles).
+Second derivatives are more accurate, which should reduce or eliminate grid artifacts when using reflection maps.
+The new technique will change surface normals slightly, and may give bumpy surfaces a softer appearance.
+
+Note: These changes only take effect when smooth shading is enabled (via ShadingInterpolation "smooth"). When constant shading is used (the default setting), derivatives and normals are unchanged from previous releases. Smooth shading and centered derivatives are highly recommended in order to minimize rendering artifacts.
+
+If desired, centered derivatives can be turned off as follows:
+
+Attribute "derivatives" "centered" [0]
+
+5.8. Internal Crack Elimination
+Starting in PRMan 3.9, the renderer automatically prevents cracks within single primitives, even when large displacements are used. This feature has been implemented for all surface types except polygons and implicits. It is controlled by the following attribute (turned on by default):
+
+Attribute "stitch" "enable" [1]
+
+Cracks may still occur between separate primitives (for example, between two adjacent bicubic patches). As in previous releases, such cracks may be reduced by turning on binary dicing:
+
+Attribute "dice" "binary" [1]
+
+5.9. Nonraster Oriented Dicing
+PRMan 10.0 supports a new mode of dicing on NURBs, which computes micropolygon sizes using an unoriented raster space metric rather than the standard screen aligned raster metric. This is useful in situations where it is important that the dicing rate on an object doesn't change due to camera orientation. For example, it can help in situations where objects which are viewed edge on result in large micropolygons (but small in screen space), which are then displaced leading to micropolygons which are large in screen space.
+
+The default dicing criteria is the screen-oriented raster space. This can be turned off to use the new unoriented metric as follows:
+
+Attribute "dice" "rasterorient" [0]
+
+The ability to turn off the oriented dicing metric has been implemented for NURB, subdivision surface, and bilinear and bicubic primitives.
+
+5.10. User Specified Attributes
+PRMan 10.0 supports the use of arbitrarily defined token/value pairs for the user attribute. These token/value pairs may be arbitrarily defined and set, and then queried with the attribute shadeop or via the RxAttribute mechanism. Like other attributes, all token/value pairs associated with this attribute will be pushed and popped on the graphics stack with each RiAttributeBegin and RiAttributeEnd call.
+
+RtString myattribute = "foo";
+RiAttribute("user", "uniform string myattribute", (RtPointer)&myattribute, RI_NULL);
+In RIB form:
+
+Attribute "user" "uniform string myattribute" [ "foo" ]
+
+5.11. Extrapolated Derivatives
+PRMan 3.9 introduced a new method for computing derivatives and normals at grid boundaries. Instead of replicating the values (and thus leading to second derivatives with value zero along the grid boundaries), the new scheme uses quadratic extrapolation to estimate new values. This is most useful on smooth surfaces, where it can virtually eliminate grid artifacts due to derivatives. On rough or bumpy surfaces, however, there is a chance that enabling this attribute may cause the grid artifacts to be worse.
+
+In PRMan 10.0, the quadratic extrapolation scheme is enabled by default. It may be disabled by specifying:
+
+Attribute "derivatives" "extrapolate" [0]
+5.12 Visibility
+Attribute "visibility" "int camera" [1]
+controls the visibility of subsequent primitives to the camera, that is whether they are rendered in the usual "direct" fashion. Objects which are intended to be visible indirectly only in ray-traced reflections should turn off camera visibility and enable trace visibility.
+
+Attribute "visibility" "int trace" [0]
+controls the visibility of the current primitive to trace rays. These are reflection and refraction rays cast by gather, trace, and environment.
+
+Attribute "visibility" "string transmission" ["opaque"]
+controls the visibility of primitives to transmission (shadow) rays. Since transmission rays can accumulate contributions of semi-transparent objects, for colored shadows, this attribute provides several levels of control over how opacity is handled: "transparent" primitives are ignored by transmission rays.
+"opaque" hit primitives are simply considered to be opaque, no additional shader execution is required during transmission ray intersection.
+"Os" the current Opacity attribute is used as the object's opacity, without reference to the surface shader.
+"shader" the full surface shader on intersected objects is executed to determine (colored) opacity, Oi. In some circumstances, shader analysis may determine that Oi does not depend on complete shader execution.
+
+
+Attribute "visibility" "int photon" [0]
+controls the visibility of the current primitive to photons. Since photon map generation is a separate rendering pass, this attribute is usually superfluous. We support it to facilitate the use of the same RIB archive in both photon generation and final rendering passes.
+5.13 Grouping
+Attribute "grouping" "string membership" ["name_spec"]
+controls the group membership of subsequent primitives. A single primitive can be a member of several groups. Membership is used to precisely control trace relationships between objects. Ray-tracing shaders on one object can limit their ray intersections to members of specific groups by using the optional "subset" parameter of the tracing operators. The name_spec supports relative and absolute specification:
+"name"
+"list,of,names" or "list of names"
+"+additional,names"
+"-without,names"
+Attribute "grouping" "string tracesubset" ["group"]
+controls the default group subset used by tracing operators. If the tracing shadeop does not specify a subset to use, the Attribute value specified in group will be used if it has been specified.
+5.14 Trace
+Attribute "trace" "int maxdiffusedepth" [1] "int maxspeculardepth" [2]
+these attributes limit the number of bounces (diffuse or specular) for indirect illuminance relative to the associated primitive. To resolve the interaction between per-primitive values, we pass the current max down the ray tree and apply MIN(ray.depthMax, primitive.depthMax + ray.depth). The maxdiffusedepth option is used to limit the number of diffuse and specular bounces of photons in the photon tracing pass, while maxspeculardepth controls the number of reflection and refraction bounces.
+
+Attribute "trace" "int displacements" [0]
+controls whether true displacements appear in ray traced results. When false, the displacement will be disregarded for the purposes of ray-primitive intersection tests, but shading will take the displacements into account effectively resulting in a bump mapped appearance.
+
+Attribute "trace" "bias" [.01]
+this bias value affects transmission/shadow rays as well as trace/environment rays. It is an offset applied to the ray origin, moving it slightly away from the surface launch point in the ray direction. This offset can prevent blotchy artifacts resulting from the ray immediately finding an intersection with the surface it just left.
+
+Attribute "trace" "int samplemotion" [0]
+controls whether motion blurred objects appear in ray traced results. When 0, the motion blur of other objects hit by rays launched from the object with this attribute will be ignored. When non-zero, motion blur will be taken into account by rays launched from an object with this attribute.
+
+5.15 Irradiance
+Attribute "irradiance" "string handle" [""]
+specifies the handle of an irradiance cache to use as the basis of indirect diffuse illumination. We recommend that a valid file name be used as the irradiance cache handle as this will allow the storage and retrieval of the cache according to the "irradiance filemode" attribute.
+
+Attribute "irradiance" "string filemode" [""] ("R", "rw", "r", "w", "")
+controls whether the current irradiance cache file is used for reading only (as a seed), for writing only (for future renderings) or both. Set this value to the empty string to prevent storage or retrieval of an irradiance cache. Filemode "R" is used if the rendering is to rely 100 percent on the data in the irradiance cache file -- this makes rendering fast but requires the data in the irradiance cache file to be sufficiently dense and accurate.
+
+Attribute "irradiance" "float maxerror" [0.5]
+an error metric to control quality/speed tradeoff for irradiance calculations. If set to zero, the irradiance will be computed at every shading point; no attempt at interpolation will be done. The larger 'maxerror' is, the more time can be saved by interpolating nearby irradiance values.
+
+Attribute "irradiance" "float maxpixeldist" [30]
+an alternative backup metric to control quality/speed tradeoff for irradiance. If there are visible discontinuities in occlusion or irradiance, typically on curved objects far from other objects, it is often helpful to reduce 'maxpixeldist' to smaller values -- for example 10 or 15. This ensures that interpolation is only done over shorter distances.
+5.16 Photon
+Attribute "photon" "int estimator" [50]
+controls the number of photons to consider when estimating caustic effects. This value is also used to compute the radiance values stored in the global photon map.
+
+Attribute "photon" "causticmap" [""]
+specifies the caustic photonmap to use if a shader with the caustic shade-op is provided.
+During photonmap generation, this attribute allows you to deposit photons into a per-primitive map.
+
+Attribute "photon" "globalmap" [""]
+specifies the global photonmap to use to determine radiance values associated with soft indirect illumination. This map will only be used when the maxdiffusedepth limit has been reached. During photonmap generation, this attribute allows you to deposit photons into a per-primitive map.
+
+Attribute "photon" "string shadingmodel" ["matte"] (glass,water,chrome,matte,transparent,"")
+specifies a simplified shading model to employ when tracing photons. If empty, the shader will be analyzed to determine photon scattering.
+5.17 Accelerated Curves for Hair
+Attribute "dice" "hair" [1]
+This Attribute specifically used for RiCurves geometry makes thin hair-like curves much cheaper to shade, and more memory efficient when dealing with long hair which spans multiple buckets. When it is enabled by setting to 1 (it is disabled by default), Du() of any quantity is 0, with the trivial exception of Du(u) = 1. In other words, derivatives across the width of the curve are ill defined. Because of this, this attribute should only be used for curves which are truly hair-like (very thin in screen space).
+
+5.18 Subdivision Stitch Groups
+Attribute "stitch" "newgroup" [1]
+This Attribute is used in conjunction with subdivision mesh stitching, and is used to avoid stitch curve ID conflicts. When this Attribute appears in the RIB stream as above, it marks the beginning of a new stitch group, which lasts until the end of the enclosing attribute block, or the next "newgroup" attribute, whichever comes first. Tags defined within a given stitch group will not match tags defined anywhere else in the input stream, including those in nested stitch groups.
+
+5.19 Double-sided Shading
+When this Attribute is enabled, two-sided primitives will be shaded twice, once on each side. The surface normals will face in the standard direction on one pass, and in the inverted, or reversed-orientation, direction on the other pass (roughly speaking, towards the viewer once and away from the viewer once). This permits, for example, two-sided objects which are laminar sheets or ribbons to have different colors on each side, or to be displaced in both directions in order to give it a shader-generated thickness.
+
+5.20 Culling
+PRMan 11.5 supports two new attributes for culling.
+
+Attribute "cull" "backfacing" [1]
+Attribute "cull" "hidden" [1]
+
+When the "cull" "backfacing" Attribute is turned off, surfaces are shaded even if they have Sides 1 and their back side is facing the camera. When the "cull" "hidden" Attribute is turned off, surfaces are shaded even if they are behind other surfaces. These attributes are convenient to force shading to happen, for example for baking ambient occlusion or indirect illumination. For regular rendering, these attributes should be left at their default value (1) so that surfaces that do not contribute to an image are culled before wasting time shading them.
+
+
+--------------------------------------------------------------------------------
+
+Pixar Animation Studios
+(510) 752-3000 (voice) (510) 752-3151 (fax)
+Copyright © 1996-2004 Pixar. All rights reserved.
+RenderMan® is a registered trademark of Pixar.

@@ -1,0 +1,19 @@
+include ../../../depend/ricpp.dep
+include ../../ricpp.def
+
+OBJ  = $(OBJPATH)/glrenderer.o $(OBJPATH)/stdafx.o
+
+DEBUGBIN  = $(EXEDEBUGOUTPATH)/Contexts/glrenderer.dll
+RELEASEBIN  = $(EXERELEASEOUTPATH)/Contexts/glrenderer.dll
+
+DEBUGDEPLIBS = ../../libglrenderer/Debug/out/libglrendererd.a ../../rendererloader/Debug/out/librendererloaderd.a ../../glcpp/Debug/out/libglcppd.a ../../rendercontext/Debug/out/librendercontextd.a ../../ribparser/Debug/out/libribparserd.a
+DEBUGLIBS = $(LIBS) $(DEBUGDEPLIBS) -llibz -llibtiff -lopengl32 -lglu32 -lgdi32 -luser32
+
+RELEASEDEPLIBS = ../../libglrenderer/Release/out/libglrenderer.a ../../rendererloader/Release/out/librendererloader.a ../../glcpp/Release/out/libglcpp.a ../../rendercontext/Release/out/librendercontext.a ../../ribparser/Release/out/libribparser.a
+RELEASELIBS = $(LIBS) $(RELEASEDEPLIBS) -llibz -llibtiff -lopengl32 -lglu32 -lgdi32 -luser32
+
+DEBUGDEFFILE=$(OUTPATH)/libglrendererdlld.def
+DEBUGSTATICLIB=$(OUTPATH)/libglrendererdlld.a
+
+RELEASEDEFFILE=$(OUTPATH)/libglrendererdll.def
+RELEASESTATICLIB=$(OUTPATH)/libglrendererdll.a

@@ -1,0 +1,17 @@
+include ../../../depend/ricpp.dep
+include ../../ricpp.def
+
+RES  = wxTest_private.res
+OBJ  = $(OBJPATH)/wxTest.o $(OBJPATH)/stdafx.o $(RES)
+
+DEBUGBIN  = $(EXEDEBUGOUTPATH)/wxTest.exe
+RELEASEBIN  = $(EXERELEASEOUTPATH)/wxTest.exe
+
+WXDEBUGFLAGS = $(CXXDEBUGFLAGS) -I$(WXWIN)/include -I$(WXWIN)/lib/mswdlld -DWXDEBUG=1 -D__WXDEBUG__ -D_WINDOWS -DWINVER=0x400 -D_MT -DWXUSINGDLL -DwxUSE_GUI=1
+WXRELEASEFLAGS = $(CXXRELEASEFLAGS) -I$(WXWIN)/include -I$(WXWIN)/lib/mswdll -DWXDEBUG=0 -D__WXNDEBUG__ -D_WINDOWS -DWINVER=0x400 -D_MT -DWXUSINGDLL -DwxUSE_GUI=1
+
+DEBUGDEPLIBS = ../../rendererloader/Debug/out/librendererloaderd.a
+DEBUGLIBS = $(LIBS) -L$(WXWIN)/lib -mwindows $(DEBUGDEPLIBS) -lwinmm $(DEBUGWXLIBS)
+
+RELEASEDEPLIBS = ../../rendererloader/Release/out/librendererloader.a
+RELEASELIBS = $(LIBS) -L$(WXWIN)/lib -mwindows $(RELEASEDEPLIBS) -lwinmm $(RELEASEWXLIBS)

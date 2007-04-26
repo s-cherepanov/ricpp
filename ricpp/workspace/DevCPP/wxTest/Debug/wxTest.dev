@@ -1,0 +1,78 @@
+[Project]
+FileName=wxTest.dev
+Name=wxTest
+Ver=1
+IsCpp=1
+Type=0
+Compiler=-Wall -D_DEBUG -DWXDEBUG=1 -D__WXDEBUG__ -D__GNUWIN32__ -DWIN32 -D_WINDOWS -DWINVER=0x400 -D_MT -D_MBCS -DWXUSINGDLL -DwxUSE_GUI=1_@@_
+CppCompiler=-Wall -D_DEBUG -DWXDEBUG=1 -D__WXDEBUG__ -D__GNUWIN32__ -DWIN32 -D_WINDOWS -DWINVER=0x400 -D_MT -D_MBCS -DWXUSINGDLL -DwxUSE_GUI=1_@@_
+Includes=../../../../source
+Linker=../../rendererloader/Release/out/librendererloader.a_@@_-lwxmsw242d -lcomdlg32 -luser32 -lgdi32 -lole32 -lwsock32 -lcomctl32 -lctl3d32 -lgcc -lstdc++ -lshell32 -loleaut32 -ladvapi32 -luuid_@@_
+Libs=
+UnitCount=3
+Folders="Header Files","Ressource Files","Source Files"
+ObjFiles=
+PrivateResource=wxTest_private.rc
+ResourceIncludes=../../../../source/wxTest;C:/wxWindows-2.4.2/include
+MakeIncludes=
+Icon=
+ExeOutput=..\..\exe\Debug\out
+ObjectOutput=.\obj
+OverrideOutput=0
+OverrideOutputName=wxTest.exe
+HostApplication=
+CommandLine=
+IncludeVersionInfo=0
+SupportXPThemes=0
+CompilerSet=0
+CompilerSettings=0000001000000000000000
+UseCustomMakefile=1
+CustomMakefile=Makefile
+
+[Unit1]
+FileName=..\..\..\..\source\wxTest\wxTest.cpp
+Folder=Source Files
+Compile=1
+CompileCpp=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[VersionInfo]
+Major=0
+Minor=1
+Release=1
+Build=1
+LanguageID=1033
+CharsetID=1252
+CompanyName=
+FileVersion=0.1
+FileDescription=Developed using the Dev-C++ IDE
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=wxTest.exe
+ProductName=wxTest
+ProductVersion=0.1
+AutoIncBuildNr=0
+
+[Unit2]
+FileName=..\..\..\..\source\wxTest\wxTest.rc
+Folder=Ressource Files
+Compile=1
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit3]
+FileName=..\..\..\..\source\wxTest\wxTest.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+

@@ -24,6 +24,7 @@
 
 #include "rendererloader/rendererloader.h"
 #include "ribwriter/ribwriter.h"
+#include "tools/stringlist.h"
 
 using namespace RiCPP;
 
@@ -126,31 +127,36 @@ IRiRenderer *CRendererLoader::getRibWriter() {
 
 IRiRenderer *CRendererLoader::beginRenderer(RtString name) {
 	const char *ptr;
-	ptr = name ? strrchr(name, '.') : NULL;
-	if ( name && !(ptr && !strcmp(ptr, ".rib")) ) {
-		CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str());
-		if ( dynLib ) {
-			std::string key = dynLib->findLib();
-			CRendererLib *lib = m_libs.findObj(key);
-			if ( lib ) {
-				delete dynLib;
-				return lib->getRenderer();
-			}
-			if ( dynLib->load() && dynLib->valid() ) {
-				lib = new CRendererLib(dynLib);
+	TStringList<char> stringList;
+	stringList.explode(name, ' ');
+	if ( !stringList.empty() ) {
+		TStringList<char>::const_iterator first = stringList.begin();
+		ptr = strrchr(&((*first)[0]), '.');
+		if ( !(ptr && !strcmp(ptr, ".rib")) ) {
+			CDynLib *dynLib = CDynLibFactory::newDynLib(&((*first)[0]), m_searchpath.c_str());
+			if ( dynLib ) {
+				std::string key = dynLib->findLib();
+				CRendererLib *lib = m_libs.findObj(key);
 				if ( lib ) {
-					if ( lib->valid() ) {
-						m_libs.registerObj(key, lib);
-						return lib->getRenderer();
-					} else {
-						delete lib;
-					}
+					delete dynLib;
+					return lib->getRenderer();
 				}
-			} else {
-				delete dynLib;
+				if ( dynLib->load() && dynLib->valid() ) {
+					lib = new CRendererLib(dynLib);
+					if ( lib ) {
+						if ( lib->valid() ) {
+							m_libs.registerObj(key, lib);
+							return lib->getRenderer();
+						} else {
+							delete lib;
+						}
+					}
+				} else {
+					delete dynLib;
+				}
 			}
+			return NULL;
 		}
-		return NULL;
 	}
 
 	if ( !m_ribWriter ) {

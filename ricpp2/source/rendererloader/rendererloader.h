@@ -72,7 +72,7 @@ private:
 		const char *rendererName();
 		// Renderer is deleted in destructor with deleteRenderer(IRiRenderer *)
 	};
-	CObjPtrRegistry<std::string, class CRendererLib *> m_libs;
+	TObjPtrRegistry<std::string, class CRendererLib *> m_libs;
 
 protected:
 	virtual IRiRenderer *getRibWriter();

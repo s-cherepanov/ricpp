@@ -29,25 +29,25 @@
 
 namespace RiCPP {
 
-template<typename KeyType, typename ValueType> class CObjPtrRegistry {
+template<typename KeyType, typename ValueType> class TObjPtrRegistry {
 	std::map<KeyType, ValueType>m_map;
 	bool m_destructMembers;
 public:
-	CObjPtrRegistry(bool destructMembers);
-	~CObjPtrRegistry();
+	TObjPtrRegistry(bool destructMembers);
+	~TObjPtrRegistry();
 	bool registerObj(const KeyType &key, ValueType value);
 	ValueType findObj(const KeyType &key);
 	bool unRegisterObj(const KeyType &key);
-}; // CObjPtrRegistry
+}; // TObjPtrRegistry
 
-template<typename KeyType, typename ValueType>CObjPtrRegistry<KeyType, ValueType>::
-CObjPtrRegistry(bool destructMembers) :
+template<typename KeyType, typename ValueType>TObjPtrRegistry<KeyType, ValueType>::
+TObjPtrRegistry(bool destructMembers) :
 m_destructMembers(destructMembers)
 {
 }
 
-template<typename KeyType, typename ValueType>CObjPtrRegistry<KeyType, ValueType>::
-~CObjPtrRegistry()
+template<typename KeyType, typename ValueType>TObjPtrRegistry<KeyType, ValueType>::
+~TObjPtrRegistry()
 {
 	if ( m_destructMembers ) {
 		typename std::map<KeyType, ValueType>::iterator i;
@@ -62,7 +62,7 @@ template<typename KeyType, typename ValueType>CObjPtrRegistry<KeyType, ValueType
 }
 
 template<typename KeyType, typename ValueType>
-bool CObjPtrRegistry<KeyType, ValueType>::
+bool TObjPtrRegistry<KeyType, ValueType>::
 registerObj(const KeyType &key, ValueType value)
 {
 	if ( m_map.find(key) == m_map.end() ) {
@@ -72,7 +72,7 @@ registerObj(const KeyType &key, ValueType value)
 }
 
 template<typename KeyType, typename ValueType>
-ValueType CObjPtrRegistry<KeyType, ValueType>::
+ValueType TObjPtrRegistry<KeyType, ValueType>::
 findObj(const KeyType &key)
 {
 	if ( m_map.find(key) != m_map.end() ) {
@@ -82,7 +82,7 @@ findObj(const KeyType &key)
 }
 
 template<typename KeyType, typename ValueType>
-bool CObjPtrRegistry<KeyType, ValueType>::
+bool TObjPtrRegistry<KeyType, ValueType>::
 unRegisterObj(const KeyType &key)
 {
 	if ( m_map.find(key) != m_map.end() ) {
@@ -91,6 +91,7 @@ unRegisterObj(const KeyType &key)
 	}
 	return false;
 }
+
 };
 
 #endif // _RICPP_TOOLS_OBJPTRREGISTRY_H

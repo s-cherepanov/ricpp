@@ -148,10 +148,6 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath="..\..\..\source\tools\objptrregistry.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -160,6 +156,10 @@
 			>
 			<File
 				RelativePath="..\..\..\source\tools\objptrregistry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\tools\stringlist.h"
 				>
 			</File>
 		</Filter>

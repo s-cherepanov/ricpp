@@ -25,6 +25,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+#include "tools/env.h"
+
 #include <list>
 #include <vector>
 #include <map>
@@ -55,6 +57,22 @@ private:
 			v.push_back(0);
 	}
 
+	void insertVar(value_type &varName, value_type &v) {
+		varName.push_back(0);
+		if ( m_substmap.find(varName) != m_substmap.end() ) {
+			ValueType &subst = m_substmap[varName];
+			copy(subst.begin(), subst.end(), back_inserter(v));
+		} else {
+			std::string var;
+			std::string strname;
+			copy(varName.begin(), varName.end(), back_inserter(strname));
+			CEnv::find(var, strname.c_str());
+			if ( !var.empty() ) {
+				copy(var.begin(), var.end(), back_inserter(v));
+			}
+		}
+		varName.clear();
+	}
 public:
 	inline TStringList() {
 	}
@@ -116,10 +134,7 @@ public:
 				case varchar:
 					if ( *ptr == varChar ) {
 						state = normal;
-						varName.push_back(0);
-						ValueType &subst = m_substmap[varName];
-						copy(subst.begin(), subst.end(), back_inserter(v));
-						varName.clear();
+						insertVar(varName, v);
 					} else {
 						varName.push_back(*ptr);
 					}
@@ -150,9 +165,7 @@ public:
 					if ( *ptr == varChar ) {
 						state = doublequote;
 						varName.push_back(0);
-						ValueType &subst = m_substmap[varName];
-						copy(subst.begin(), subst.end(), back_inserter(v));
-						varName.clear();
+						insertVar(varName, v);
 					} else {
 						varName.push_back(*ptr);
 					}

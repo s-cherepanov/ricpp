@@ -141,12 +141,12 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration) {
 }
 
 
-RtVoid CRiCPPBridge::begin(RtString name, RtString arguments) {
+RtVoid CRiCPPBridge::begin(RtString name) {
 	IRiRenderer *renderer = NULL;
 	try {
 		renderer = beginRenderer(name);
 		if ( renderer ) {
-			renderer->begin(name, arguments);
+			renderer->begin(name);
 		}
 		CContext ctx(renderer, renderer ? renderer->getContext() : (RtContextHandle)RI_NULL);
 		pushContext(ctx);

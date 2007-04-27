@@ -399,9 +399,12 @@ public:
 	 
 	/** @brief Creates and initializes a new rendering context
 	 * @param name indicates either a rib file for output or an identifier for a renderer
-	 * @param arguments for optional arguments (added)
 	 */
-	virtual RtVoid begin(RtString name, RtString arguments=RI_NULL) = 0;
+	virtual RtVoid begin(RtString name) = 0;
+	
+	// better stay with tzhe standard
+	// @param arguments for optional arguments (added)
+	// virtual RtVoid begin(RtString name, RtString arguments=RI_NULL) = 0;
 
 	/** @brief Terminates the current rendering context, does cleanup operations
 	 */
@@ -1319,22 +1322,24 @@ public:
 	// -> RenderMan 11.5.2
 	virtual RtVoid scopedCoordinateSystem(RtToken space) = 0;
 
-	// -> QRM ?
+	// -> QRM ?, Pixie (http://www.george-graphics.co.uk/pixiewiki/Main_Page)
 	virtual RtVoid resource(RtToken handle, RtToken type, ...) = 0;
 	virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+	virtual RtVoid resourceBegin(RtVoid),
+	virtual RtVoid resourceEnd(RtVoid);
 
-	// -> 3Delight
+	// -> Pixie, 3Delight (archiveInstance)
 	virtual RtArchiveHandle archiveBegin(RtString name, ...) = 0;
     virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 	virtual RtVoid archiveEnd(void) = 0;
 	virtual RtVoid archiveInstance(RtArchiveHandle handle) = 0;
 
-	// -> RenderMan 2004 ???
+	// -> Pixie, RenderMan 2004 ???
 	virtual RtVoid ifBegin(RtString expr, ...) = 0;
 	virtual RtVoid ifBeginV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 	virtual RtVoid elseIf(RtString expr, ...) = 0;
 	virtual RtVoid elseIfV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
-	virtual RtVoid elsePart(void) = 0; // was RiElse
+	virtual RtVoid elseBegin(void) = 0; // was RiElse
 	virtual RtVoid ifEnd(void) = 0;
 	*/
 }; // IRi

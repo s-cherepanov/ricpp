@@ -64,7 +64,7 @@ public:
 	virtual RtContextHandle getContext(void) = 0;
 	virtual RtVoid context(RtContextHandle handle) = 0;
 
-	virtual RtVoid begin(RtString name, RtString arguments = RI_NULL) = 0;
+	virtual RtVoid begin(RtString name) = 0;
 	virtual RtVoid end(void) = 0;
 
 	virtual RtVoid frameBegin(RtInt number) = 0;

@@ -246,7 +246,7 @@ public:
 	virtual RtContextHandle getContext(void);
 	virtual RtVoid context(RtContextHandle handle);
 
-	virtual RtVoid begin(RtString name, RtString arguments = RI_NULL);
+	virtual RtVoid begin(RtString name);
 	virtual RtVoid end(void);
 
 	virtual RtVoid frameBegin(RtInt number);
@@ -441,29 +441,6 @@ public:
 	virtual RtVoid archiveRecordV(RtToken type, RtString line);
     virtual RtVoid readArchive(RtString name, const IArchiveCallback *callback, RtToken token = RI_NULL, ...);
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
-
-	/*
-	// -> RenderMan 11.5.2
-	virtual RtVoid scopedCoordinateSystem(RtToken space);
-
-	// -> QRM ?
-	virtual RtVoid resource(RtToken handle, RtToken type, ...);
-	virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]);
-
-	// -> 3Delight
-	virtual RtArchiveHandle archiveBegin(RtString name, ...);
-    virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]);
-	virtual RtVoid archiveEnd(void);
-	virtual RtVoid archiveInstance(RtArchiveHandle handle);
-
-	// -> RenderMan 2004 ???
-	virtual RtVoid ifBegin(RtString expr, ...);
-	virtual RtVoid ifBeginV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]);
-	virtual RtVoid elseIf(RtString expr, ...);
-	virtual RtVoid elseIfV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]);
-	virtual RtVoid elsePart(void); // was RiElse
-	virtual RtVoid ifEnd(void);
-	*/
 
 	// Not in use, just because of compiler warning
 	inline CRiCPPBridge &operator=(const CRiCPPBridge &bridge) {

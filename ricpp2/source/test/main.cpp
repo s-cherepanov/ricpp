@@ -10,9 +10,8 @@ int main (int argc, char * const argv[]) {
 	ri.errorHandler(ri.errorPrint());
 	ri.begin("test.rib");
 	ri.end();
-	ri.begin("ribwriter", "test.rib");
-	ri.end();
 	ri.errorHandler(ri.errorAbort());
+	// ri.begin("ribwriter test.rib");
 	ri.begin("ribwriter");
 	ri.end();
     std::cout << "Good bye, World!\n";

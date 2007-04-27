@@ -51,7 +51,7 @@ protected:
 	inline virtual RtContextHandle doGetContext(void) { return illContextHandle; }
 	inline virtual RtVoid doContext(RtContextHandle handle) {}
 
-	inline virtual RtVoid doBegin(RtString name, RtString arguments = RI_NULL) {}
+	inline virtual RtVoid doBegin(RtString name) {}
 	inline virtual RtVoid doEnd(void) {}
 
 	inline virtual RtVoid doFrameBegin(RtInt number) {}
@@ -175,25 +175,6 @@ protected:
 
 	inline virtual RtVoid doArchiveRecordV(RtToken type, RtString line) {}
 	inline virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
-
-	/*
-	// -> RenderMan 11.5.2
-	inline virtual RtVoid doScopedCoordinateSystem(RtToken space) {}
-
-	// -> QRM ?
-	inline virtual RtVoid doResourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-
-	// -> 3Delight
-    inline virtual RtArchiveHandle doArchiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) { return illArchiveHandle; }
-	inline virtual RtVoid doArchiveEnd(void) {}
-	inline virtual RtVoid doArchiveInstance(RtArchiveHandle handle) {}
-
-	// -> RenderMan 2004 ???
-	inline virtual RtVoid doIfBeginV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-	inline virtual RtVoid doElseIfV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-	inline virtual RtVoid doElsePart(void) {} // was RiElse
-	inline virtual RtVoid doIfEnd(void) {}
-	*/
 };
 
 } // namespace RiCPP

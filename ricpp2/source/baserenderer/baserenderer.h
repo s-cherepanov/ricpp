@@ -45,7 +45,7 @@ public:
 	 */
 	inline virtual RtToken declare(RtString name, RtString declaration) { return RI_NULL; }
 
-	inline virtual RtVoid begin(RtString name, RtString arguments = RI_NULL) {}
+	inline virtual RtVoid begin(RtString name) {}
 	inline virtual RtVoid end(void) {}
 
 	inline virtual RtContextHandle getContext(void) { return illContextHandle; }
@@ -201,7 +201,7 @@ protected:
 	 */
 	inline virtual RtToken doDeclare(RtString name, RtString declaration) { return RI_NULL; }
 
-	inline virtual RtVoid doBegin(RtString name = RI_NULL, RtString args = RI_NULL, RtString orgname = RI_NULL) {}
+	inline virtual RtVoid doBegin(RtString name = RI_NULL) {}
 	inline virtual RtVoid doEnd(void) {}
 
 	inline virtual RtContextHandle doGetContext(void) { return illContextHandle; }

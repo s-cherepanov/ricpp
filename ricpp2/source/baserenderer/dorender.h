@@ -50,7 +50,7 @@ protected:
 	virtual RtContextHandle doGetContext(void) = 0;
 	virtual RtVoid doContext(RtContextHandle handle) = 0;
 
-	virtual RtVoid doBegin(RtString name, RtString arguments = RI_NULL) = 0;
+	virtual RtVoid doBegin(RtString name) = 0;
 	virtual RtVoid doEnd(void) = 0;
 
 	virtual RtVoid doFrameBegin(RtInt number) = 0;

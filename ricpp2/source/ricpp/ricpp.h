@@ -27,11 +27,11 @@
 
 /** @file ricpp.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Interface for the RenderMan(R) C++ Binding
+ *  @brief Abstract interface for the RenderMan(R) C++ Binding
  *
  *     RenderMan(R) is a registered trademark of Pixar
  * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 200,, 2005 Pixar
+ *         Copyright 1988, 1989, 2000, 2005 Pixar
  *                 All rights Reservered
  *
  * ricpp.h means the same to RiCPP as ri.h to the standard C binding.
@@ -313,14 +313,14 @@ const RtToken  RI_RASTER = "raster", RI_NDC = "NDC", RI_SCREEN = "screen", RI_CA
 const RtToken  RI_CATMULLCLARK = "catmull-clark", RI_HOLE = "hole", RI_CREASE = "crease", RI_CORNER = "corner", RI_INTERPOLATEBOUNDARY = "interpolateboundary";
 //@}
 
-/** @brief RenderMan Interface as pure virtual C++ class
+/** @brief RenderMan Interface as (nearly) pure virtual C++ class
  */
 class IRi {
 public:
 
 	/* The virtual destructor
 	 */
-	// virtual ~IRi() {}
+	inline virtual ~IRi() {}
 
 	//@{
 	/** Standard build-in filter functions
@@ -338,7 +338,7 @@ public:
 	virtual const ISubdivFunc &procDelayedReadArchive() const = 0;
 	virtual const ISubdivFunc &procRunProgram() const = 0;
 	virtual const ISubdivFunc &procDynamicLoad() const = 0;
-	virtual const IFreeFunc &procFreeFunc() const = 0;
+	virtual const IFreeFunc &procFree() const = 0;
 	//@}
 
 	//@{
@@ -475,6 +475,7 @@ public:
     virtual RtVoid motionEnd(void) = 0;
 	//@}
 
+	//@{
 	/** Options
 	 */
 
@@ -649,7 +650,9 @@ public:
 
 	//! \sa option()
     virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	//@}
 	
+	//@{
 	/** Lights
 	 */
 	
@@ -677,8 +680,10 @@ public:
 
 	//! \sa areaLightSource()
 	virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	//@}
 	
 
+	//@{
 	/** Attributes
 	 */
 	
@@ -860,7 +865,9 @@ public:
 	 *  \param w       The w coordinates of the control points
 	 */
     virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) = 0;
+	//@}
 
+	//@{
 	//! Transformations of the cartesian coordinate system
 	/*! Transformations modify the composite transformation matrix (CTM),
 	 *  concatenation is done by premultiplying a matrix to the CTM.
@@ -944,8 +951,14 @@ public:
 	 *  \return points, containing the modified points, NULL if an error orccured
 	 */
 	virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
+	//@}
 
 	
+	//@{
+	/** Graphics primitives
+	 */
+
+	//@{
 	/** Polygons
 	 */
 
@@ -994,7 +1007,9 @@ public:
 
 	//! \sa pointsGeneralPolygon()
     virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	//@}
 
+	//@{
 	/** Patches
 	 */
 
@@ -1038,8 +1053,10 @@ public:
 
 	//! \sa nuPatch()
     virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	//@}
 
 
+	//@{
 	/** Subdivision Surfaces
 	 */
 
@@ -1059,8 +1076,10 @@ public:
 
 	//! \sa subdivisionMesh()
     virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
+	//@}
 
 
+	//@{
 	/** Quadrics, created by sweeping a curve around z, thetamax is given in degrees
 	 */
 
@@ -1179,7 +1198,9 @@ public:
 
 	//! \sa curves()
     virtual RtVoid curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
+	//@}
 
+	//@{
 	/** Blobby implicit surfaces
 	 */
 
@@ -1201,13 +1222,17 @@ public:
 
 	//! \sa blobby()
     virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
+	//@}
 
 
+	//@{
 	//! Procedural primitives
 	/*! Calls a procedural primitive
 	 */
 	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	//@}
 
+	//@{
     /** General objects
 	 */
 
@@ -1219,7 +1244,11 @@ public:
 
 	//! \sa geometry()
     virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	//@}
 
+	//@}
+
+	//@{
     /** Map-making, functions to create texture map from (rendered) images
 	 */
 
@@ -1295,7 +1324,9 @@ public:
 
 	//! \sa makeShadow()
     virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	//@}
 
+	//@{
 	/** Archive files
 	 */
 
@@ -1317,6 +1348,7 @@ public:
 
 	//! \sa readArchive()
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
+	//@}
 
 	/*
 	// -> RenderMan 11.5.2

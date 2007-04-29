@@ -25,6 +25,16 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file rendererloader.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Implements a renderer creator by loading an instance from a dynamic library
+ *
+ *     RenderMan(R) is a registered trademark of Pixar
+ * The RenderMan(R) Interface Procedures and Protocol are:
+ *         Copyright 1988, 1989, 2000, 2005 Pixar
+ *                 All rights Reservered
+ */
+
 #ifndef _RICPP_RICPP_RENDERERCREATOR_H
 #include "ricpp/renderercreator.h"
 #endif // _RICPP_RICPP_RENDERERCREATOR_H

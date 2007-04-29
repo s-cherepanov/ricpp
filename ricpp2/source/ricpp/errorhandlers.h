@@ -25,27 +25,64 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file errorhandlers.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief The standard error handlers of the interface
+ *
+ *     RenderMan(R) is a registered trademark of Pixar
+ * The RenderMan(R) Interface Procedures and Protocol are:
+ *         Copyright 1988, 1989, 2000, 2005 Pixar
+ *                 All rights Reservered
+ */
+
 #ifndef _RICPP_RICPP_RICPP_H
 #include "ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
 namespace RiCPP {
 
+/** The abort-error handler, prints an error at standard output and exit() if the error is severe
+ */
 class CAbortErrorHandler : public IErrorHandler {
 public:
+	/** @return The name of the renderer as used in RIB
+	 */
 	inline virtual const char *name() const {return "abortErrorHandler";}
+	/** Handles the error (print, exit if severe)
+	 * @param code Error code (RIE_...)
+	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
+	 * @param msg Error message, describing the error
+	 */
 	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
 };
 
+/** The print-error handler, prints an error at standard output
+ */
 class CPrintErrorHandler : public IErrorHandler  {
 public:
+	/** @return The name of the renderer as used in RIB
+	 */
 	inline virtual const char *name() const {return "printErrorHandler";}
+	/** Handles the error (print)
+	 * @param code Error code (RIE_...)
+	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
+	 * @param msg Error message, describing the error
+	 */
 	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
 };
 
+/** The ignore-error handler, does nothing, ignores the error
+ */
 class CIgnoreErrorHandler : public IErrorHandler  {
 public:
+	/** @return The name of the renderer as used in RIB
+	 */
 	inline virtual const char *name() const {return "ignoreErrorHandler";}
+	/** Handles the error (ignore)
+	 * @param code Error code (RIE_...)
+	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
+	 * @param msg Error message, describing the error
+	 */
 	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
 };
 

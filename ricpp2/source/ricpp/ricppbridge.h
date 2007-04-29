@@ -25,6 +25,15 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file ricppbridge.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Bridges the interface functions to a current renderer
+ *
+ *     RenderMan(R) is a registered trademark of Pixar
+ * The RenderMan(R) Interface Procedures and Protocol are:
+ *         Copyright 1988, 1989, 2000, 2005 Pixar
+ *                 All rights Reservered
+ */
 
 #ifndef _RICPP_RICPP_FILTERS_H
 #include "ricpp/filters.h"
@@ -53,56 +62,92 @@
 namespace RiCPP {
 
 /** RenderMan Interface Bridge (final)
+ * Jobs: Bridges to a renderer implementing the Ri.
+ * Calls The Ri..V() routines, forwards the global options
+ * (Option "searchpath" "renderer") to the renderer creator,
+ * does the error handling (RiError) by
+ * catching the errors ERendererError of the current renderer, 
+ * matching a context number to a renderer with its context
+ * (forwarding RiContext, RiGetContext). Normally only a single
+ * instance of CRiCPPBridge is used.
  */
 class CRiCPPBridge : public IRi {
 private:
+	//@{
 	/** Build in filters
 	 */
-	const CBoxFilter m_boxFilter;
-	const CCatmullRomFilter m_catmullRomFilter;
-	const CGaussianFilter m_gaussianFilter;
-	const CSincFilter m_sincFilter;
-	const CTriangleFilter m_triangleFilter;
+	const CBoxFilter m_boxFilter; ///< The Box pixel filter
+	const CCatmullRomFilter m_catmullRomFilter; ///< The Catmull-Rom pixel filter
+	const CGaussianFilter m_gaussianFilter; ///< The Gaussian pixel filter
+	const CSincFilter m_sincFilter; ///< The Sinc pixel filter
+	const CTriangleFilter m_triangleFilter; ///< The Triangle pixel filter
+	//@}
 
-	/** Build in error handlers
+	//@{
+	/** Build in error handlers, can be used by CRiCPPBridge::error()
 	 */
-	const CAbortErrorHandler m_abortErrorHandler;
-	const CIgnoreErrorHandler m_ignoreErrorHandler;
-	const CPrintErrorHandler m_printErrorHandler;
+	const CAbortErrorHandler m_abortErrorHandler; ///< Prints error message to standard output and exits if the error is severe
+	const CIgnoreErrorHandler m_ignoreErrorHandler; ///< Ignores the error, does nothing
+	const CPrintErrorHandler m_printErrorHandler; ///< Prints error message to standard output
+	//@}
 
-	/** Current error handler
+	/** Current error handler, m_printErrorHandler is the
+	 *  default handler
 	 */
 	const IErrorHandler *m_curErrorHandler; 
 
+	//@{
 	/** Build in procedurals
 	 */
-	const CProcDelayedReadArchive m_procDelayedReadArchive;
-	const CProcRunProgram m_procRunProgram;
-	const CProcDynamicLoad m_procDynamicLoad;
-	const CProcFreeFunc m_procFreeFunc;
+	const CProcDelayedReadArchive m_procDelayedReadArchive; ///< Reads a RIB archive
+	const CProcRunProgram m_procRunProgram; ///< Runs a program, pipes it output to the renderer
+	const CProcDynamicLoad m_procDynamicLoad; ///< Runs a procedure of a DLL passes 'this' as current renderer
+	const CProcFreeFunc m_procFree; ///< Cleanup function for the data used by the procedurals
+	//@}
 
+	//@{
 	/** Token list cache
 	 */
 	std::vector<RtToken> m_tokens;		///<< The tokens of the parameter list of an interface call
 	std::vector<RtPointer> m_params;	///<< The values of the parameter list of an interface call
+	//@}
 
 protected:
-	/** Extracts all token-value pairs of an interface call (...)
+	/** Extracts all token-value pairs of an (...) interface call
 	 *  and stores them at m_tokens, m_params
+	 *  @param token First token of the token-value list
+	 *  @marker va_start() marker
+	 *  @return Number of token value pairs found
 	 */
 	RtInt getTokens(RtToken token, va_list marker);
 
-	/** Render context
+	/** Holds a render and its context
 	 *  Since multiple renderes can be loaded: A reference to the renderer
 	 *  and the RtContextHandle of this renderer
 	 */
 	class CContext {
 	private:
+		/** References a renderer, NULL if no renderer is set
+		 */
 		IRiRenderer *m_renderer;
+
+		/** References a context of the renderer m_renderer, illContextHandle if
+		 * no handle is set
+		 */
 		RtContextHandle m_handle;
+
+		/** True if the context is valid, the context is invalid after the matching RiEnd() is called
+		 */
 		bool m_valid;
+
+		/** True if the context is aborted. If a 'severe' error occurs, the render context gets
+		 *  aborted and no further rendering or error handling is done in this context (this is independend
+		 * of the current error handler)
+		 */
 		bool m_aborted;
 	public:
+		/** The standard contructor initializes an empty, invalid instance
+		 */
 		inline CContext() :
 			m_renderer((IRiRenderer *)0),
 			m_handle((RtContextHandle)0),
@@ -110,6 +155,14 @@ protected:
 			m_aborted(false)
 		{
 		}
+
+		/** Construct an instance with a renderer and its context.
+		 * The instance is invalidated if the renderer is not set or
+		 * the context handle is invalid. The renderer can be referenced
+		 * by many CContext instances.
+		 * @param aRenderer renderer implementing the Ri
+		 * @param aHandle a andle of aRenderer
+		 */
 		inline CContext(IRiRenderer *aRenderer, RtContextHandle aHandle) :
 			m_renderer(aRenderer),
 			m_handle(aHandle),
@@ -117,35 +170,63 @@ protected:
 			m_aborted(false)
 		{
 		}
+
+		/** Copy constructor
+		 */
 		inline CContext(const CContext &ctx)
 		{
 			*this = ctx;
 		}
+
+		/** Destructor, sets m_valid = false for savety reasons,
+		 *  the renderer is not destructed here. The renderes should be
+		 *  deleted by the renderer creator (see CRendererLoader)
+		 */
 		inline ~CContext() {
 			m_valid = false;
 		}
-		inline void set(IRiRenderer *aRenderer, RtContextHandle aHandle, bool isValid)
-		{
-			m_renderer = aRenderer;
-			m_handle = aHandle;
-			m_valid = isValid;
-		}
+
+		/** Gets the assigned renderer
+		 *  @return The renderer
+		 */
 		inline IRiRenderer *renderer() const {return m_valid ? m_renderer : NULL; }
+
+		/** Gets the assigned renderer handle
+		 *  @return The renderer handle
+		 */
 		inline RtContextHandle handle() const {return m_valid ? m_handle : (RtContextHandle)RI_NULL; }
+
+		/** The instance is invalid either if the renderer is NULL, the handle is invalid or
+		 *  the instance is explicitly invalidated.
+		 *  @return The validy state
+		 */
 		inline bool valid() const {
 			return m_valid && !m_aborted &&
 				m_renderer != NULL &&
-				m_handle != (RtContextHandle)RI_NULL;
+				m_handle != illContextHandle;
 		}
+
+		/** Sets the structure in an invalid state (done in CRiCPPBridge::end())
+		 */
 		inline void invalidate() { m_valid = false; }
 
+		/** Query if the context is aborted
+		 * @return true if the renderer state is aborted
+		 */
 		inline bool aborted() const {
 			return m_aborted;
 		}
+
+		/** The context can be aborted by the bridge if a severe error occurse
+		 */
 		inline void abort() {
 			m_aborted = true;
 		}
 
+		/** Assigns a context
+		 * @param ctx Context to assign
+		 * @return A reference to *this
+		 */
 		inline CContext &operator=(const CContext &ctx) {
 			if ( &ctx == this )
 				return *this;
@@ -158,32 +239,68 @@ protected:
 	}; // class CContext
 
 private:
-	unsigned long m_ctxIdx;
-	std::vector<CContext> m_ctxVect;
+	//@{
+	/** The used renderer, context pairs, content is destroyed in the destructor
+	 * of CRiCPPBridge, Conexts only gets invalidated by CRiCPPBridge::end()
+	 */
+	unsigned long m_ctxIdx; //< current renderer, context pair
+	std::vector<CContext> m_ctxVect; //< All renderer, context pairs used
+	//@}
 
 protected:
+	//@{
+	/** Context handling
+	 */
+	/** Helper, returns the current renderer, context pair
+	 * @return A reference to the current renderer, context pair
+	 */
 	inline CContext &curCtx() {return m_ctxVect[m_ctxIdx];}
+
+	/** Pushes a renderer, context pair to the context vector
+	 * @param ctx A renderer, context pair to be stored
+	 */
 	inline void pushContext(const CContext &ctx) {
 		m_ctxVect.push_back(ctx);
 		m_ctxIdx = (unsigned long)(m_ctxVect.size()-1);
 	}
+
+	/** Pushes an invalid context. The first context (before a begin() is called, after end()) is
+	 *  invalid every time
+	 */
 	inline void pushInvalidContext() {
 		CContext ctx;
 		pushContext(ctx);
 	}
+	//@}
 
+	//@{
 	/** Error Handling
 	 */
-	RtInt m_lastError;
-	RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
-	RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList);
+	RtInt m_lastError; //< The last error number occured, stored by handleErrorV()
 
-	/** Current renderer creator
+	/** Forward to handleErrorV(). Variable parameters like in printf()
+	 * @param code Error Code (RIE_...)
+	 * @param Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+	 * @param message Format string (like in printf())
 	 */
-	bool m_deleteRendererCreator;
-	IRendererCreator *m_curRendererCreator; 
+	RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
+
+	/** Handles an error, sets m_lastError and calls the current error handler
+	 * @param code Error Code (RIE_...)
+	 * @param Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+	 */
+	RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList);
+	//@}
+
+	//@{
+	/** Current renderer creator, the renderer creator creats an instance of a renderer implementing the Ri
+	 */
+	bool m_deleteRendererCreator; //< Destroy m_curRendererCreator at the destructor of the bridge
+	IRendererCreator *m_curRendererCreator; //< A renderer creator, default is a CRendererLoader
+	//@}
 
 	/** Renderer creation
+	 * @name Copy of CRendererLoader::begin(name)
 	 */
 	inline virtual IRiRenderer *beginRenderer(RtString name) {
 		if ( m_curRendererCreator )
@@ -192,7 +309,9 @@ protected:
 	}
 
 	/** Renderer ending, normally nothing needs to be done.
-	 *  Do not throw an exception here
+	 *  Do not throw an exception here. The context should not be aborted, since then
+	 *  the renderer in this context is already finished by abortRenderer().
+	 *  @renderer The renderer to finish
 	 */
 	inline virtual void endRenderer(IRiRenderer *renderer) {
 		assert(!curCtx().aborted());
@@ -200,8 +319,9 @@ protected:
 			m_curRendererCreator->endRenderer(renderer);
 	}
 
-	/** Renderer abords, called if a severe (RIE_SEVERE) error occurs
-	 *  if an renderer is aborted endRenderer() will not be called
+	/** Renderer aborts, called if a severe (RIE_SEVERE) error occurs.
+	 *  If an renderer is aborted, endRenderer() will not be called any more
+	 *  @renderer The renderer to abort
 	 */
 	inline virtual void abortRenderer(IRiRenderer *renderer) {
 		curCtx().abort();
@@ -209,38 +329,90 @@ protected:
 			m_curRendererCreator->abortRenderer(renderer);
 	}
 
-	/** Options for renderer creator
+	/** Options for renderer creator, like RiOption but only concerns the m_curRendererCreator.
+	 * Forwarded option() calls before the first begin() and between end() and begin().
+	 * @param name Option name (likely "searchpath" for the renderer
+	 * @param n Number token-value pairs
+	 * @param Tokens Tokens
+	 * @param params Parameter values
 	 */
 	inline virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
 		if ( m_curRendererCreator )
 			m_curRendererCreator->doOptionV(name, n, tokens, params);
 	}
 
-public:
-	CRiCPPBridge();
+	/** Creates a bridge, with a different renderer creator. The creator is not destroyed
+	 * by the destructor. The pointer to creator is stored. The rest like CRiCPPBridge().
+	 * Can be used from constructors of children of CRiCPPBridge:
+	 * CRiCPPChildBridge() : CRiCPPBridge(&m_myRendererLoader) {}
+	 * @param creator, a different renderer creator
+	 */
 	CRiCPPBridge(IRendererCreator &creator);
+
+public:
+	/** Creates a bridge, a CRendererLoader is used as m_curRendererCreator, m_printErrorHandler
+	 * is used as error handler, an invalid context is stored
+	 */
+	CRiCPPBridge();
+
+	/** Destructor, deletes the m_curRendererCreator only if created by the constructor CRiCPPBridge()
+	 */
 	virtual ~CRiCPPBridge();
 
+	/** Assignment, not in use, just because of compiler warning
+	 * @param bridge
+	 * @return *this
+	 */
+	inline CRiCPPBridge &operator=(const CRiCPPBridge &bridge) {
+		if ( &bridge == this )
+			return *this;
+		return *this;
+	}
+
+	//@{
+	/** Returns the appropriate filter functions
+     */
 	inline virtual const IFilterFunc &boxFilter() const { return m_boxFilter; }
 	inline virtual const IFilterFunc &catmullRomFilter() const { return m_catmullRomFilter; }
 	inline virtual const IFilterFunc &gaussianFilter() const { return m_gaussianFilter; }
 	inline virtual const IFilterFunc &sincFilter() const { return m_sincFilter; }
 	inline virtual const IFilterFunc &triangleFilter() const { return m_triangleFilter; }
+	//@}
 
+	//@{
+	/** Returns the appropriate procedurals
+     */
 	inline virtual const ISubdivFunc &procDelayedReadArchive() const { return m_procDelayedReadArchive; }
 	inline virtual const ISubdivFunc &procRunProgram() const { return m_procRunProgram; }
 	inline virtual const ISubdivFunc &procDynamicLoad() const { return m_procDynamicLoad; }
-	inline virtual const IFreeFunc &procFreeFunc() const { return m_procFreeFunc; }
+	inline virtual const IFreeFunc &procFree() const { return m_procFreeFunc; }
+	//@}
 
+	//@{
+	/** Returns the appropriate error handlers
+     */
 	inline virtual const IErrorHandler &errorAbort() const { return m_abortErrorHandler; }
 	inline virtual const IErrorHandler &errorIgnore() const { return m_ignoreErrorHandler; }
 	inline virtual const IErrorHandler &errorPrint() const {  return m_printErrorHandler; }
+	//@}
 
+	/** The last error is set by handleErrorV()
+	 * @return Recent error number
+     */
 	inline virtual RtInt lastError() { return m_lastError; }
+	/** Sets the current error handler, default is errorPrint()
+	 *  @param handler reference to an error handler, pointer is stored
+	 */
 	inline virtual RtVoid errorHandler(const IErrorHandler &handler) {
 		m_curErrorHandler = &handler;
 	}
 
+	//@{
+	/** The rest of the interface functions see ricpp.h. The functions with variable length parameters
+	 *  are forwarded to the ..V() functions, these are forwarded to the current renderer
+	 *  (only optionV() may be forwared to a renderer loader, if if there is no active renderer)
+	 *  Errors are catched and the current error handler is called with the error found.
+     */
 	virtual RtToken declare(RtString name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
 	virtual RtContextHandle getContext(void);
@@ -441,13 +613,7 @@ public:
 	virtual RtVoid archiveRecordV(RtToken type, RtString line);
     virtual RtVoid readArchive(RtString name, const IArchiveCallback *callback, RtToken token = RI_NULL, ...);
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
-
-	// Not in use, just because of compiler warning
-	inline CRiCPPBridge &operator=(const CRiCPPBridge &bridge) {
-		if ( &bridge == this )
-			return *this;
-		return *this;
-	}
+	//@}
 }; // CRiCPPBridge
 
 } // namespace RiCPP

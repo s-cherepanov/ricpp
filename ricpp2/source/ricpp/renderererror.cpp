@@ -22,6 +22,16 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file renderererror.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Error exception used internally for RiCPP
+ *
+ *     RenderMan(R) is a registered trademark of Pixar
+ * The RenderMan(R) Interface Procedures and Protocol are:
+ *         Copyright 1988, 1989, 2000, 2005 Pixar
+ *                 All rights Reservered
+ */
+
 #include "ricpp/renderererror.h"
 
 using namespace RiCPP;
@@ -134,20 +144,4 @@ const char *ERendererError::formatError(std::string &strCode, RtInt aCode, RtInt
 	strCode += "]";
 
 	return strCode.c_str();
-}
-
-
-void ERendererError::displayMessage() {
-	/*
-	std::string strCaption;
-	DISPLAY_MESSAGE(m_message.c_str(), formatError(strCaption, m_code, m_severity));
-	*/
-}
-
-
-void ERendererError::printMessage() {
-	/*
-	std::string strCaption;
-	PRINT_MESSAGE(m_message.c_str(), formatError(strCaption, m_code, m_severity));
-	*/
 }

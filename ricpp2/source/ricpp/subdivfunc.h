@@ -25,34 +25,82 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file subdivfunc.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief The standard subdivision functions und free function for IRi::procedural()
+ *         not yet implemented
+ *
+ *     RenderMan(R) is a registered trademark of Pixar
+ * The RenderMan(R) Interface Procedures and Protocol are:
+ *         Copyright 1988, 1989, 2000, 2005 Pixar
+ *                 All rights Reservered
+ */
+
 #ifndef _RICPP_RICPP_RICPP_H
 #include "ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
 namespace RiCPP {
 
+/** Implements the DelayedReadArchive procedural
+ */
 class CProcDelayedReadArchive : public ISubdivFunc {
 public:
-	inline virtual const char *name() const {return "procDelayedReadArchive";}
-	virtual RtVoid operator()(IRi &, RtPointer, RtFloat) const;
+	/** @return The name of the function as used in RIB
+	 */
+	inline virtual const char *name() const {return "DelayedReadArchive";}
+	/** Delayed read of a RIB archive
+	 * @param ri Interface to be used
+	 * @param data Array of one string, the name of the archive as null terminated string
+	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
+	 */
+	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 };
 
+/** Implements the RunProgram procedural
+ */
 class CProcRunProgram : public ISubdivFunc {
 public:
-	inline virtual const char *name() const {return "procRunProgram";}
-	virtual RtVoid operator()(IRi &, RtPointer, RtFloat) const;
+	/** @return The name of the function as used in RIB
+	 */
+	inline virtual const char *name() const {return "RunProgram";}
+	/** Run a helper program and capture output as RIB for ri
+	 * @param ri Interface to be used
+	 * @param data Array of two strings, the program name and its command line arguments
+	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
+	 */
+	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 };
 
+/** Implements the DynamicLoad procedural
+ */
 class CProcDynamicLoad : public ISubdivFunc {
 public:
-	inline virtual const char *name() const {return "procDynamicLoad";}
-	virtual RtVoid operator()(IRi &, RtPointer, RtFloat) const;
+	/** @return The name of the function as used in RIB
+	 */
+	inline virtual const char *name() const {return "DynamicLoad";}
+	/** Calls a dynamic library implementing: RtPointer ConvertParameters(IRi &ri, char *initial data), 
+	 * void Subdivide(IRi &ri, RtPointer blinddata, RtFloat detailsize), void Free(IRi &ri, RtPointer blinddata)
+	 * @param ri Interface to be used
+	 * @param data Array of two strings, the library name and its parameters (converted to blinddata by ConvertParameters)
+	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
+	 */
+	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 };
 
-class CProcFreeFunc : public IFreeFunc {
+/** Implements the free function that can be called by the interface to free the 'data'
+ *  of own procedurals
+ */
+class CProcFree : public IFreeFunc {
 public:
-	inline virtual const char *name() const {return "procFreeFunc";}
-	virtual RtVoid operator()(IRi &, RtPointer) const;
+	/** @return The name of the function (no RIB binding)
+	 */
+	inline virtual const char *name() const {return "Free";}
+	/**
+	 * @param ri Interface to be used
+	 * @param data
+	 */
+	virtual RtVoid operator()(IRi &, RtPointer data) const;
 };
 }
 

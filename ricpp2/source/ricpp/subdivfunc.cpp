@@ -22,31 +22,44 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file subdivfunc.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief The standard subdivision functions und free function for IRi::procedural()
+ *         not yet implemented
+ *
+ *     RenderMan(R) is a registered trademark of Pixar
+ * The RenderMan(R) Interface Procedures and Protocol are:
+ *         Copyright 1988, 1989, 2000, 2005 Pixar
+ *                 All rights Reservered
+ */
+
 #include "ricpp/subdivfunc.h"
+#include <malloc.h>
 
 using namespace RiCPP;
 
-RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer p, RtFloat f) const
+RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
 	ri = ri;
-	p = p;
-	f = f;
+	data = data;
+	detail = detail;
 }
 
-RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer p, RtFloat f) const
+RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
 	ri = ri;
-	p = p;
-	f = f;
+	data = data;
+	detail = detail;
 }
 
-RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer p, RtFloat f) const {
+RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) const {
 	ri = ri;
-	p = p;
-	f = f;
+	data = data;
+	detail = detail;
 }
 
-RtVoid CProcFreeFunc::operator()(IRi &ri, RtPointer p) const {
+RtVoid CProcFree::operator()(IRi &ri, RtPointer data) const {
 	ri = ri;
-	p = p;
+	if (data);
+		free(data);
 };

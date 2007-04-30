@@ -37,7 +37,7 @@ void CFilepath::convertToNative() {
 	char pathbuf[MAX_PATH];
 	char *ptr;
 	if ( GetFullPathNameA(m_nativepath.c_str(), sizeof(pathbuf), pathbuf, &ptr) != 0 ) {
-		pathbuf[sizeof(pathbuf)]=0;
+		pathbuf[sizeof(pathbuf)-1]=0;
 		m_fullpath = pathbuf;
 	}
 }

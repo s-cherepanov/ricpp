@@ -145,7 +145,7 @@ IRiRenderer *CRendererLoader::beginRenderer(RtString name) {
 		if ( !(ptr && !strcmp(ptr, ".rib")) ) {
 			CDynLib *dynLib = CDynLibFactory::newDynLib((*first).c_str(), m_searchpath.c_str());
 			if ( dynLib ) {
-				std::string key = dynLib->findLib();
+				std::string key = dynLib->libname();
 				CRendererLib *lib = m_libs.findObj(key);
 				if ( lib ) {
 					delete dynLib;
@@ -190,7 +190,7 @@ RtVoid CRendererLoader::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPo
 	if ( !name )
 		return;
 
-	// The only option is the searchpath for the dynamic renderer libraries
+	// The searchpath for the dynamic renderer libraries
 	if ( !strcmp(name, "searchpath") ) {
 		if ( n < 1 )
 			return;

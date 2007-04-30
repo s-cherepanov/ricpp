@@ -64,11 +64,7 @@ bool CWin32DynLib::isLoaded() {
 
 bool CWin32DynLib::doLoad() {
 	if ( !isLoaded() ) {
-		// const char *libpath = findLib();
-		// if ( libpath )
-		//	m_libHandle = LoadLibraryA(libpath);
-
-		m_libHandle = LoadLibraryA(libname());
+		m_libHandle = LoadLibraryA(libpath());
 	}
 	return isLoaded();
 }

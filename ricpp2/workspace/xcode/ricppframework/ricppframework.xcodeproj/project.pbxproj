@@ -32,6 +32,8 @@
 		C372B8EE0BD7610D009B2459 /* ricppbridge.h in Headers */ = {isa = PBXBuildFile; fileRef = C372B8E20BD7610D009B2459 /* ricppbridge.h */; settings = {ATTRIBUTES = (); }; };
 		C372B8EF0BD7610D009B2459 /* subdivfunc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C372B8E30BD7610D009B2459 /* subdivfunc.cpp */; };
 		C372B8F00BD7610D009B2459 /* subdivfunc.h in Headers */ = {isa = PBXBuildFile; fileRef = C372B8E40BD7610D009B2459 /* subdivfunc.h */; settings = {ATTRIBUTES = (); }; };
+		C399BA9A0BE5E229002FEEF1 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
+		C399BB020BE6020D002FEEF1 /* libtools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C399BA940BE5E1BB002FEEF1 /* libtools.a */; };
 		C3B849020BD7624A00DD22B5 /* ribwriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C3B849010BD7624A00DD22B5 /* ribwriter.h */; };
 		C3B849040BD7625A00DD22B5 /* ribwriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B849030BD7625A00DD22B5 /* ribwriter.cpp */; };
 		C3B849110BD762D900DD22B5 /* rendererloader.h in Headers */ = {isa = PBXBuildFile; fileRef = C3B849100BD762D900DD22B5 /* rendererloader.h */; settings = {ATTRIBUTES = (); }; };
@@ -86,6 +88,13 @@
 			remoteGlobalIDString = C3B849080BD762B700DD22B5;
 			remoteInfo = rendererloader;
 		};
+		C399BB060BE60254002FEEF1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C399BA930BE5E1BB002FEEF1 /* tools */;
+			remoteInfo = tools;
+		};
 		C3F32AED0BE1EB5F00BB58EA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -97,39 +106,44 @@
 
 /* Begin PBXFileReference section */
 		C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgendynlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C32093D60BDCCF5F00A0BB35 /* dynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dynlib.h; path = ../../../source/gendynlib/dynlib.h; sourceTree = SOURCE_ROOT; };
-		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
+		C32093D60BDCCF5F00A0BB35 /* dynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = dynlib.h; path = ../../../source/gendynlib/dynlib.h; sourceTree = SOURCE_ROOT; };
+		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093DF0BDCCF9B00A0BB35 /* libribwriter.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C32093EC0BDCCFE600A0BB35 /* macwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macwriterdll.cpp; path = ../../../source/ribwriterdll/macwriterdll.cpp; sourceTree = SOURCE_ROOT; };
-		C32093F40BDCD02A00A0BB35 /* macrendererlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macrendererlib.cpp; path = ../../../source/rendererloader/macrendererlib.cpp; sourceTree = SOURCE_ROOT; };
-		C32093F60BDCD07300A0BB35 /* macdynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = macdynlib.h; path = ../../../source/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
-		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
-		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
-		C35C7A4A0BD76D4100548675 /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = baserenderer.h; path = ../../../source/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
-		C35C7A4B0BD76D4100548675 /* dorender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dorender.h; path = ../../../source/baserenderer/dorender.h; sourceTree = SOURCE_ROOT; };
-		C35C7A4C0BD76D4100548675 /* rirenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rirenderer.h; path = ../../../source/baserenderer/rirenderer.h; sourceTree = SOURCE_ROOT; };
+		C32093EC0BDCCFE600A0BB35 /* macwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macwriterdll.cpp; path = ../../../source/ribwriterdll/macwriterdll.cpp; sourceTree = SOURCE_ROOT; };
+		C32093F40BDCD02A00A0BB35 /* macrendererlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macrendererlib.cpp; path = ../../../source/rendererloader/macrendererlib.cpp; sourceTree = SOURCE_ROOT; };
+		C32093F60BDCD07300A0BB35 /* macdynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = macdynlib.h; path = ../../../source/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
+		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
+		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
+		C35C7A4A0BD76D4100548675 /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = baserenderer.h; path = ../../../source/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
+		C35C7A4B0BD76D4100548675 /* dorender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = dorender.h; path = ../../../source/baserenderer/dorender.h; sourceTree = SOURCE_ROOT; };
+		C35C7A4C0BD76D4100548675 /* rirenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = rirenderer.h; path = ../../../source/baserenderer/rirenderer.h; sourceTree = SOURCE_ROOT; };
 		C372B8CF0BD760B9009B2459 /* libricpp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricpp.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C372B8D90BD7610D009B2459 /* errorhandlers.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = errorhandlers.cpp; path = ../../../source/ricpp/errorhandlers.cpp; sourceTree = SOURCE_ROOT; };
-		C372B8DA0BD7610D009B2459 /* errorhandlers.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = errorhandlers.h; path = ../../../source/ricpp/errorhandlers.h; sourceTree = SOURCE_ROOT; };
-		C372B8DB0BD7610D009B2459 /* filters.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = filters.cpp; path = ../../../source/ricpp/filters.cpp; sourceTree = SOURCE_ROOT; };
-		C372B8DC0BD7610D009B2459 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = filters.h; path = ../../../source/ricpp/filters.h; sourceTree = SOURCE_ROOT; };
-		C372B8DD0BD7610D009B2459 /* renderercreator.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = renderercreator.h; path = ../../../source/ricpp/renderercreator.h; sourceTree = SOURCE_ROOT; };
-		C372B8DE0BD7610D009B2459 /* renderererror.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = renderererror.cpp; path = ../../../source/ricpp/renderererror.cpp; sourceTree = SOURCE_ROOT; };
-		C372B8DF0BD7610D009B2459 /* renderererror.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = renderererror.h; path = ../../../source/ricpp/renderererror.h; sourceTree = SOURCE_ROOT; };
-		C372B8E00BD7610D009B2459 /* ricpp.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = ricpp.h; path = ../../../source/ricpp/ricpp.h; sourceTree = SOURCE_ROOT; };
-		C372B8E10BD7610D009B2459 /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricpp/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
-		C372B8E20BD7610D009B2459 /* ricppbridge.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = ricppbridge.h; path = ../../../source/ricpp/ricppbridge.h; sourceTree = SOURCE_ROOT; };
-		C372B8E30BD7610D009B2459 /* subdivfunc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = subdivfunc.cpp; path = ../../../source/ricpp/subdivfunc.cpp; sourceTree = SOURCE_ROOT; };
-		C372B8E40BD7610D009B2459 /* subdivfunc.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = subdivfunc.h; path = ../../../source/ricpp/subdivfunc.h; sourceTree = SOURCE_ROOT; };
+		C372B8D90BD7610D009B2459 /* errorhandlers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = errorhandlers.cpp; path = ../../../source/ricpp/errorhandlers.cpp; sourceTree = SOURCE_ROOT; };
+		C372B8DA0BD7610D009B2459 /* errorhandlers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = errorhandlers.h; path = ../../../source/ricpp/errorhandlers.h; sourceTree = SOURCE_ROOT; };
+		C372B8DB0BD7610D009B2459 /* filters.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = filters.cpp; path = ../../../source/ricpp/filters.cpp; sourceTree = SOURCE_ROOT; };
+		C372B8DC0BD7610D009B2459 /* filters.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = filters.h; path = ../../../source/ricpp/filters.h; sourceTree = SOURCE_ROOT; };
+		C372B8DD0BD7610D009B2459 /* renderercreator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = renderercreator.h; path = ../../../source/ricpp/renderercreator.h; sourceTree = SOURCE_ROOT; };
+		C372B8DE0BD7610D009B2459 /* renderererror.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = renderererror.cpp; path = ../../../source/ricpp/renderererror.cpp; sourceTree = SOURCE_ROOT; };
+		C372B8DF0BD7610D009B2459 /* renderererror.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = renderererror.h; path = ../../../source/ricpp/renderererror.h; sourceTree = SOURCE_ROOT; };
+		C372B8E00BD7610D009B2459 /* ricpp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = ricpp.h; path = ../../../source/ricpp/ricpp.h; sourceTree = SOURCE_ROOT; };
+		C372B8E10BD7610D009B2459 /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ricppbridge.cpp; path = ../../../source/ricpp/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
+		C372B8E20BD7610D009B2459 /* ricppbridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = ricppbridge.h; path = ../../../source/ricpp/ricppbridge.h; sourceTree = SOURCE_ROOT; };
+		C372B8E30BD7610D009B2459 /* subdivfunc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = subdivfunc.cpp; path = ../../../source/ricpp/subdivfunc.cpp; sourceTree = SOURCE_ROOT; };
+		C372B8E40BD7610D009B2459 /* subdivfunc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = subdivfunc.h; path = ../../../source/ricpp/subdivfunc.h; sourceTree = SOURCE_ROOT; };
 		C372B8F50BD76177009B2459 /* libbaserenderer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbaserenderer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C399BA380BE5DE4A002FEEF1 /* env.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = env.h; path = ../../../source/tools/env.h; sourceTree = SOURCE_ROOT; };
+		C399BA390BE5DE4A002FEEF1 /* objptrregistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = objptrregistry.h; path = ../../../source/tools/objptrregistry.h; sourceTree = SOURCE_ROOT; };
+		C399BA3A0BE5DE4A002FEEF1 /* stringlist.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = stringlist.h; path = ../../../source/tools/stringlist.h; sourceTree = SOURCE_ROOT; };
+		C399BA940BE5E1BB002FEEF1 /* libtools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libtools.a; path = build/Debug/libtools.a; sourceTree = "<group>"; };
+		C399BA990BE5E229002FEEF1 /* macenv.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macenv.cpp; path = ../../../source/tools/macenv.cpp; sourceTree = SOURCE_ROOT; };
 		C3B848F80BD7621100DD22B5 /* libribwriter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libribwriter.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3B849010BD7624A00DD22B5 /* ribwriter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribwriter.h; path = ../../../source/ribwriter/ribwriter.h; sourceTree = SOURCE_ROOT; };
-		C3B849030BD7625A00DD22B5 /* ribwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribwriter.cpp; path = ../../../source/ribwriter/ribwriter.cpp; sourceTree = SOURCE_ROOT; };
+		C3B849010BD7624A00DD22B5 /* ribwriter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = ribwriter.h; path = ../../../source/ribwriter/ribwriter.h; sourceTree = SOURCE_ROOT; };
+		C3B849030BD7625A00DD22B5 /* ribwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribwriter.cpp; path = ../../../source/ribwriter/ribwriter.cpp; sourceTree = SOURCE_ROOT; };
 		C3B849090BD762B700DD22B5 /* librendererloader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librendererloader.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3B849100BD762D900DD22B5 /* rendererloader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rendererloader.h; path = ../../../source/rendererloader/rendererloader.h; sourceTree = SOURCE_ROOT; };
-		C3B849120BD762DE00DD22B5 /* rendererloader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = rendererloader.cpp; path = ../../../source/rendererloader/rendererloader.cpp; sourceTree = SOURCE_ROOT; };
+		C3B849100BD762D900DD22B5 /* rendererloader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = rendererloader.h; path = ../../../source/rendererloader/rendererloader.h; sourceTree = SOURCE_ROOT; };
+		C3B849120BD762DE00DD22B5 /* rendererloader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = rendererloader.cpp; path = ../../../source/rendererloader/rendererloader.cpp; sourceTree = SOURCE_ROOT; };
 		C3B849170BD762EE00DD22B5 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3B8491F0BD7632B00DD22B5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../source/test/main.cpp; sourceTree = SOURCE_ROOT; };
+		C3B8491F0BD7632B00DD22B5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = main.cpp; path = ../../../source/test/main.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +177,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C399BA920BE5E1BB002FEEF1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C3B848F60BD7621100DD22B5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -186,6 +207,7 @@
 				C3B849240BD764CE00DD22B5 /* libribwriter.a in Frameworks */,
 				C3B849220BD764CE00DD22B5 /* libbaserenderer.a in Frameworks */,
 				C32095210BDCD98C00A0BB35 /* libgendynlib.a in Frameworks */,
+				C399BB020BE6020D002FEEF1 /* libtools.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +227,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				C33773C30BE5DD6B0011B646 /* tools */,
 				C32093DA0BDCCF8100A0BB35 /* ribwriterdll */,
 				C32093CF0BDCCF1900A0BB35 /* gendynlib */,
 				C3B849190BD762F900DD22B5 /* test */,
@@ -226,6 +249,7 @@
 				C3B849170BD762EE00DD22B5 /* test */,
 				C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */,
 				C32093DF0BDCCF9B00A0BB35 /* libribwriter.dylib */,
+				C399BA940BE5E1BB002FEEF1 /* libtools.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -279,6 +303,15 @@
 				C32093EC0BDCCFE600A0BB35 /* macwriterdll.cpp */,
 			);
 			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C33773C30BE5DD6B0011B646 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				C399BA360BE5DDD4002FEEF1 /* Header */,
+				C399BA370BE5DE05002FEEF1 /* Implementation */,
+			);
+			name = tools;
 			sourceTree = "<group>";
 		};
 		C372B8D00BD760C9009B2459 /* ricpp */ = {
@@ -339,6 +372,24 @@
 			isa = PBXGroup;
 			children = (
 				C35C7A480BD76D3A00548675 /* baserenderer.cpp */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C399BA360BE5DDD4002FEEF1 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				C399BA380BE5DE4A002FEEF1 /* env.h */,
+				C399BA390BE5DE4A002FEEF1 /* objptrregistry.h */,
+				C399BA3A0BE5DE4A002FEEF1 /* stringlist.h */,
+			);
+			name = Header;
+			sourceTree = "<group>";
+		};
+		C399BA370BE5DE05002FEEF1 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C399BA990BE5E229002FEEF1 /* macenv.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -468,6 +519,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C399BA900BE5E1BB002FEEF1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C3B848F40BD7621100DD22B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -557,6 +615,23 @@
 			productReference = C372B8F50BD76177009B2459 /* libbaserenderer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		C399BA930BE5E1BB002FEEF1 /* tools */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C399BA960BE5E1CE002FEEF1 /* Build configuration list for PBXNativeTarget "tools" */;
+			buildPhases = (
+				C399BA900BE5E1BB002FEEF1 /* Headers */,
+				C399BA910BE5E1BB002FEEF1 /* Sources */,
+				C399BA920BE5E1BB002FEEF1 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tools;
+			productName = tools;
+			productReference = C399BA940BE5E1BB002FEEF1 /* libtools.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		C3B848F70BD7621100DD22B5 /* ribwriter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C3B848FA0BD7621600DD22B5 /* Build configuration list for PBXNativeTarget "ribwriter" */;
@@ -586,6 +661,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C399BB070BE60254002FEEF1 /* PBXTargetDependency */,
 				C32094700BDCD61C00A0BB35 /* PBXTargetDependency */,
 				C35C7A5D0BD76DA700548675 /* PBXTargetDependency */,
 			);
@@ -629,6 +705,7 @@
 				C3B849160BD762EE00DD22B5 /* test */,
 				C32093CD0BDCCF0A00A0BB35 /* gendynlib */,
 				C32093DE0BDCCF9B00A0BB35 /* ribwriterdll */,
+				C399BA930BE5E1BB002FEEF1 /* tools */,
 			);
 		};
 /* End PBXProject section */
@@ -668,6 +745,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C399BA910BE5E1BB002FEEF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C399BA9A0BE5E229002FEEF1 /* macenv.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -728,6 +813,11 @@
 			isa = PBXTargetDependency;
 			target = C3B849080BD762B700DD22B5 /* rendererloader */;
 			targetProxy = C35C7A5E0BD76DAD00548675 /* PBXContainerItemProxy */;
+		};
+		C399BB070BE60254002FEEF1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C399BA930BE5E1BB002FEEF1 /* tools */;
+			targetProxy = C399BB060BE60254002FEEF1 /* PBXContainerItemProxy */;
 		};
 		C3F32AEE0BE1EB5F00BB58EA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -885,6 +975,36 @@
 			};
 			name = Release;
 		};
+		C399BA970BE5E1CE002FEEF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = tools;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C399BA980BE5E1CE002FEEF1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = tools;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C3B848FB0BD7621600DD22B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -959,9 +1079,11 @@
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_3)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build/Debug\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/build/Debug\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/build/Debug\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = YES;
@@ -980,9 +1102,11 @@
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_3)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build/Debug\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/build/Debug\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/build/Debug\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = NO;
@@ -1033,6 +1157,15 @@
 			buildConfigurations = (
 				C372B8F80BD7617D009B2459 /* Debug */,
 				C372B8F90BD7617D009B2459 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C399BA960BE5E1CE002FEEF1 /* Build configuration list for PBXNativeTarget "tools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C399BA970BE5E1CE002FEEF1 /* Debug */,
+				C399BA980BE5E1CE002FEEF1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -53,9 +53,8 @@ const char *CDynLib::libname() const {
 	return m_libname.c_str();
 }
 
-const char *CDynLib::libpath() {
-	findLib();
-	return m_libpath.c_str();
+const char *CDynLib::libpath() const {
+	return isLoaded() ? m_libpath.c_str() : "";
 }
 
 bool CDynLib::load() {

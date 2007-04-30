@@ -58,14 +58,13 @@ const char *CMacDynLib::className() const {
 	return CMacDynLib::staticClassName();
 }
 
-bool CMacDynLib::isLoaded() {
+bool CMacDynLib::isLoaded() const {
 	return m_libHandle != (void *)0;
 }
 
 bool CMacDynLib::doLoad() {
 	if ( !isLoaded() ) {
-		std::string strlibname = libpath();
-		m_libHandle = dlopen(strlibname.c_str(), RTLD_LOCAL|RTLD_LAZY);
+		m_libHandle = dlopen(findLib(), RTLD_LOCAL|RTLD_LAZY);
 	}
 	return isLoaded();
 }
@@ -93,25 +92,25 @@ const char *CMacDynLib::findLib() {
 	dllname += libname();
 	dllname += ".dylib";
 	
-	std::string libpath = "";
+	std::string strlibpath = "";
 	if ( !m_searchpath.empty() ) {
 		CStringList_const_iterator i = m_searchpath.begin();
 		for ( ; i != m_searchpath.end(); i++ ) {
-			libpath = *i;
-			if ( libpath.size() > 0 )
-				if ( libpath[libpath.size()-1] != '/' )
-					libpath += "/";
-			libpath += dllname;
+			strlibpath = *i;
+			if ( strlibpath.size() > 0 )
+				if ( strlibpath[strlibpath.size()-1] != '/' )
+					strlibpath += "/";
+			strlibpath += dllname;
 			FILE *f=NULL;
-			if ( NULL != (f=fopen(libpath.c_str(), "r")) ) {
+			if ( NULL != (f=fopen(strlibpath.c_str(), "r")) ) {
 				fclose(f);
-				m_libpath = libpath;
+				m_libpath = strlibpath;
 				break;
 			}
 		}
 	} else {
 		// Search the standard path
-		m_libpath = libname();
+		m_libpath = dllname;
 	}
 
 	// return NULL if not found

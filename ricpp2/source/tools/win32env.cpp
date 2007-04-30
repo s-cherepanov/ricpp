@@ -103,10 +103,10 @@ void CEnv::getPath(std::string &path) {
 }
 
 void CEnv::getProgDir(std::string &prog) {
-	char modulepath[512];
+	char modulepath[MAX_PATH];
 	modulepath[0] = (char)0;
-	DWORD fsize = GetModuleFileNameA(NULL, modulepath, sizeof(modulepath)-1);
-	modulepath[sizeof(modulepath)-2] = (char)0;
+	DWORD fsize = GetModuleFileNameA(NULL, modulepath, sizeof(modulepath));
+	modulepath[sizeof(modulepath)-1] = (char)0;
 	size_t len = strlen(modulepath);
 	while ( len > 0 ) {
 		--len;

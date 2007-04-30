@@ -47,6 +47,7 @@ namespace RiCPP {
 		std::string m_libpath;
 		CStringList m_searchpath;
 
+		virtual const char *findLib() = 0;
 		virtual bool doLoad() = 0;
 		virtual bool doUnload() = 0;
 
@@ -54,16 +55,15 @@ namespace RiCPP {
 		CDynLib(const char *libname, const char *searchpath);
 		virtual ~CDynLib();
 
-		const char *libname() const;
-		const char *libpath();
+		virtual const char *libname() const;
+		virtual const char *libpath() const;
 		bool load();
 		bool unload();
 		unsigned long useCount() const;
 
 		virtual const char *className() const = 0;
-		virtual bool isLoaded() = 0;
+		virtual bool isLoaded() const = 0;
 		virtual bool valid() const;
-		virtual const char *findLib() = 0;
 		virtual CLibFunc *getFunc(const char *name) const = 0;
 		virtual void deleteFunc(CLibFunc *f) const;
 	}; // CDynLib

@@ -52,13 +52,13 @@ class CWin32DynLib : public CDynLib {
 protected:
 	virtual bool doUnload();
 	virtual bool doLoad();
+	virtual const char *findLib();
 public:
 	CWin32DynLib(const char *libname, const char *searchpath);
 	virtual ~CWin32DynLib();
 	static const char *staticClassName();
 	virtual const char *className() const;
-	virtual const char *findLib();
-	virtual bool isLoaded();
+	virtual bool isLoaded() const;
 	virtual bool valid() const;
 	virtual CLibFunc *getFunc(const char *name) const;
 }; // CWin32DynLib

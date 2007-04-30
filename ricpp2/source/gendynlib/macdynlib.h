@@ -46,13 +46,13 @@ class CMacDynLib : public CDynLib {
 protected:
 	virtual bool doUnload();
 	virtual bool doLoad();
+	virtual const char *findLib();
 public:
 	CMacDynLib(const char *libname, const char *searchpath);
 	virtual ~CMacDynLib();
 	static const char *staticClassName();
 	virtual const char *className() const;
-	virtual const char *findLib();
-	virtual bool isLoaded();
+	virtual bool isLoaded() const;
 	virtual bool valid() const;
 	virtual CLibFunc *getFunc(const char *name) const;
 }; // CMacDynLib

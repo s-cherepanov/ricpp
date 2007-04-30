@@ -42,12 +42,12 @@ int main (int argc, char * const argv[]) {
 	ri.errorHandler(ri.errorPrint());
 	ri.begin("test.rib");
 	ri.end();
+	ri.option("searchpath", "renderer", "$PROG$;$PATH$", RI_NULL);
 	ri.begin("ribwriter \"$HOME$test.rib\"");
 	ri.end();
 
 	// ri.errorHandler(ri.errorAbort());
 
-	ri.option("searchpath", "renderer", "$PROG$;$PATH$", RI_NULL);
 	ri.begin("ribwriter");
 	ri.end();
     std::cout << "Good bye, World!" << std::endl;

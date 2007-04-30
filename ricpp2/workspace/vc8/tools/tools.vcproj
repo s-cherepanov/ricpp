@@ -152,6 +152,10 @@
 				RelativePath="..\..\..\source\tools\win32env.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\tools\win32filepath.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -160,6 +164,10 @@
 			>
 			<File
 				RelativePath="..\..\..\source\tools\env.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\tools\filepath.h"
 				>
 			</File>
 			<File

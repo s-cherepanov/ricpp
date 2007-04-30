@@ -25,7 +25,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+#ifndef _RICPP_TOOLS_ENV_H
 #include "tools/env.h"
+#endif _RICPP_TOOLS_ENV_H
 
 #include <list>
 #include <vector>
@@ -38,7 +40,7 @@ template<typename CharType = char, typename ValueType = std::vector<CharType> >
 class TStringList {
 private:
 	std::list<ValueType> m_stringList;
-	std::map<ValueType, ValueType> m_substmap;
+	std::map<ValueType, ValueType> m_substMap;
 
 public:
 	typedef typename ValueType value_type;
@@ -46,6 +48,7 @@ public:
 	typedef typename std::list<ValueType>::size_type size_type;
 
 private:
+	inline static bool isTrue(CharType c) { return true; }
 	inline static void copyinto(const CharType *str, value_type &v, bool terminateStr=true) {
 		v.clear();
 		if ( !str )
@@ -57,21 +60,23 @@ private:
 			v.push_back(0);
 	}
 
-	void insertVar(value_type &varName, value_type &v) {
+	void insertVar(value_type &varName) {
 		varName.push_back(0);
-		if ( m_substmap.find(varName) != m_substmap.end() ) {
-			ValueType &subst = m_substmap[varName];
-			copy(subst.begin(), subst.end(), back_inserter(v));
+		if ( m_substMap.find(varName) != m_substMap.end() ) {
+			value_type &subst = m_substMap[varName];
+			varName = subst;
 		} else {
 			std::string var;
 			std::string strname;
 			copy(varName.begin(), varName.end(), back_inserter(strname));
 			CEnv::find(var, strname.c_str());
 			if ( !var.empty() ) {
-				copy(var.begin(), var.end(), back_inserter(v));
+				varName.clear();
+				copy(var.begin(), var.end(), back_inserter(varName));
+			} else {
+				varName.clear();
 			}
 		}
-		varName.clear();
 	}
 public:
 	inline TStringList() {
@@ -99,6 +104,9 @@ public:
 		};
 		EState state = normal;
 
+		value_type strval;
+		copyinto(str, strval);
+
 		value_type v;
 		v.clear();
 		v.reserve(32);
@@ -106,8 +114,12 @@ public:
 		varName.clear();
 		varName.reserve(32);
 
-		const CharType *ptr = str;
-		for ( ; *ptr; ++ptr ) {
+		unsigned long idx = 0;
+		value_type::iterator savptr;
+		value_type::iterator ptr = strval.begin();
+		bool ptrinc = true;
+		for ( ; *ptr != 0; ptrinc ? ++ptr : ptr ) {
+			ptrinc = true;
 			switch ( state ) {
 				case normal:
 					if ( *ptr == seperator ) {
@@ -122,6 +134,7 @@ public:
 					} else if ( *ptr == doubleQuote ) {
 						state = doublequote;
 					} else if ( *ptr == varChar ) {
+						savptr = ptr;
 						state = varchar;
 					} else {
 						v.push_back(*ptr);
@@ -134,7 +147,15 @@ public:
 				case varchar:
 					if ( *ptr == varChar ) {
 						state = normal;
-						insertVar(varName, v);
+						value_type::difference_type d = distance(strval.begin(), savptr);
+						ptr++;
+						savptr = strval.erase(savptr, ptr);
+						insertVar(varName);
+						strval.insert(savptr, varName.begin(), varName.end());
+						varName.clear();
+						ptr = strval.begin();
+						advance(ptr, d);
+						ptrinc = false;
 					} else {
 						varName.push_back(*ptr);
 					}
@@ -151,6 +172,7 @@ public:
 						state = maskinquote;
 					} else if ( *ptr == varChar ) {
 						state = varinquote;
+						savptr = ptr;
 					} else if ( *ptr == doubleQuote ) {
 						state = normal;
 					} else {
@@ -165,7 +187,15 @@ public:
 					if ( *ptr == varChar ) {
 						state = doublequote;
 						varName.push_back(0);
-						insertVar(varName, v);
+						value_type::difference_type d = distance(strval.begin(), savptr);
+						ptr++;
+						savptr = strval.erase(savptr, ptr);
+						insertVar(varName);
+						strval.insert(savptr, varName.begin(), varName.end());
+						varName.clear();
+						ptr = strval.begin();
+						advance(ptr, d);
+						ptrinc = false;
 					} else {
 						varName.push_back(*ptr);
 					}
@@ -218,15 +248,22 @@ public:
 		value_type subst;
 		copyinto(strvar, var);
 		copyinto(strsubst, subst, false);
-		m_substmap[var] = subst;
+		m_substMap[var] = subst;
 		return;
 	}
 	inline void removeSubst(const CharType *strvar)
 	{
 		value_type var;
 		copyinto(strvar, var);
-		m_substmap[var] = "";
-		return;
+		m_substMap[var] = "";
+	}
+	inline void clearSubst()
+	{
+		m_substMap.clear()
+	}
+	inline void clear()
+	{
+		m_stringList.clear()
 	}
 	inline bool empty()
 	{

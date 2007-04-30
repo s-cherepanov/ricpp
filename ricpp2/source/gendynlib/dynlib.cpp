@@ -32,8 +32,10 @@ CLibFunc::~CLibFunc() {
 /**********/
 
 CDynLib::CDynLib(const char *libname, const char *searchpath)
-	: m_useCount(0), m_libname(libname), m_searchpath(searchpath)
+	: m_useCount(0), m_libname(libname)
 {
+	m_libpath.clear();
+	m_searchpath.explode(searchpath);
 }
 
 CDynLib::~CDynLib() {
@@ -51,8 +53,9 @@ const char *CDynLib::libname() const {
 	return m_libname.c_str();
 }
 
-const char *CDynLib::searchpath() const {
-	return m_searchpath.c_str();
+const char *CDynLib::libpath() {
+	findLib();
+	return m_libpath.c_str();
 }
 
 bool CDynLib::load() {

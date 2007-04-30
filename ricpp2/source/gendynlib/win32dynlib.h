@@ -49,7 +49,6 @@ public:
 class CWin32DynLib : public CDynLib {
 	static const HMODULE invalidLibHandle;
 	HMODULE m_libHandle;
-	std::string m_libPath;
 protected:
 	virtual bool doUnload();
 	virtual bool doLoad();

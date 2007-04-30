@@ -25,6 +25,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "gendynlib/win32dynlib.h"
+#include <stdio.h>
 
 using namespace RiCPP;
 
@@ -88,13 +89,37 @@ bool CWin32DynLib::valid() const {
 }
 
 const char *CWin32DynLib::findLib() {
-	if ( !m_libPath.empty() )
-		return m_libPath.c_str();
+	if ( !m_libpath.empty() )
+		return m_libpath.c_str();
 
 	// ToDo search Lib
-	m_libPath = libname();
+	std::string dllname = libname();
+	dllname += ".dll";
+
+	std::string libpath = "";
+	if ( !m_searchpath.empty() ) {
+		TStringList<char>::const_iterator i = m_searchpath.begin();
+		for ( ; i != m_searchpath.end(); i++ ) {
+			libpath = &((*i)[0]);
+			if ( libpath.size() <= 0 )
+				continue;
+			if ( libpath[libpath.size()-1] != '/' )
+				libpath += "/";
+			libpath += dllname;
+			FILE *f=NULL;
+			if ( fopen_s(&f, libpath.c_str(), "r") == 0 ) {
+				fclose(f);
+				m_libpath = libpath;
+				break;
+			}
+		}
+	} else {
+		// Search the standard path
+		m_libpath = libname();
+	}
+
 	// return NULL if not found
-	return m_libPath.c_str();
+	return m_libpath.c_str();
 }
 
 CLibFunc *CWin32DynLib::getFunc(const char *name) const {

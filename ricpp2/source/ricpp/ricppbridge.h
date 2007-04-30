@@ -102,7 +102,7 @@ private:
 	const CProcDelayedReadArchive m_procDelayedReadArchive; ///< Reads a RIB archive
 	const CProcRunProgram m_procRunProgram; ///< Runs a program, pipes it output to the renderer
 	const CProcDynamicLoad m_procDynamicLoad; ///< Runs a procedure of a DLL passes 'this' as current renderer
-	const CProcFreeFunc m_procFree; ///< Cleanup function for the data used by the procedurals
+	const CProcFree m_procFree; ///< Cleanup function for the data used by the procedurals
 	//@}
 
 	//@{
@@ -385,7 +385,7 @@ public:
 	inline virtual const ISubdivFunc &procDelayedReadArchive() const { return m_procDelayedReadArchive; }
 	inline virtual const ISubdivFunc &procRunProgram() const { return m_procRunProgram; }
 	inline virtual const ISubdivFunc &procDynamicLoad() const { return m_procDynamicLoad; }
-	inline virtual const IFreeFunc &procFree() const { return m_procFreeFunc; }
+	inline virtual const IFreeFunc &procFree() const { return m_procFree; }
 	//@}
 
 	//@{

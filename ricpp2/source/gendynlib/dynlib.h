@@ -25,6 +25,10 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+#ifndef _RICPP_TOOLS_STRINGLIST_H
+#include "tools/stringlist.h"
+#endif // _RICPP_TOOLS_STRINGLIST_H
+
 #include <string>
 
 namespace RiCPP {
@@ -37,10 +41,12 @@ namespace RiCPP {
 
 	class CDynLib {
 		unsigned long m_useCount;
-		std::string m_libname;
-		std::string m_searchpath;
 
 	protected:
+		std::string m_libname;
+		std::string m_libpath;
+		TStringList<char> m_searchpath;
+
 		virtual bool doLoad() = 0;
 		virtual bool doUnload() = 0;
 
@@ -49,7 +55,7 @@ namespace RiCPP {
 		virtual ~CDynLib();
 
 		const char *libname() const;
-		const char *searchpath() const;
+		const char *libpath();
 		bool load();
 		bool unload();
 		unsigned long useCount() const;

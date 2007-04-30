@@ -122,7 +122,7 @@ const char *rendererType();
 
 CRendererLoader::CRendererLoader() : m_libs(true) {
 	m_ribWriter = 0;
-	m_searchpath = ".";
+	m_searchpath = "";
 }
 
 CRendererLoader::~CRendererLoader() {
@@ -187,12 +187,15 @@ RtVoid CRendererLoader::abortRenderer(IRiRenderer *renderer) {
 }
 
 RtVoid CRendererLoader::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
-	RtInt i;
+	if ( !name )
+		return;
 
-	// The only option will be the searchpath for the dynamic renderer libraries
-	name = name;
-	for ( i=0; i<n; ++i ) {
-		tokens[i] = tokens[i];
-		params[i] = params[i];
+	// The only option is the searchpath for the dynamic renderer libraries
+	if ( !strcmp(name, "searchpath") ) {
+		if ( n < 1 )
+			return;
+		if ( !strcmp(tokens[0], "renderer") ) {
+			m_searchpath = (const char *)params[0];
+		}
 	}
 }

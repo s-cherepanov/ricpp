@@ -26,5 +26,5 @@
 
 using namespace RiCPP;
 
-const unsigned long IRiRenderer::majorVersion;
-const unsigned long IRiRenderer::minorVersion;
+const unsigned long IRiContext::majorVersion = 1;
+const unsigned long IRiContext::minorVersion = 1;

@@ -49,27 +49,27 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 /**  @brief Returns an instance of a new renderer
  */
-extern "C" __declspec ( dllexport ) IRiRenderer * CDECL newRenderer() {
-	return new CRibWriter;
+extern "C" __declspec ( dllexport ) CContextCreator * CDECL newContextCreator() {
+	return new CRibWriterCreator;
 }
 
-/**  @brief Deletes a renderer created by newRenderer()
+/**  @brief Deletes a renderer created by newContextCreator()
  */
-extern "C" __declspec ( dllexport ) void CDECL deleteRenderer(IRiRenderer *ri) {
-	if ( ri )
-		delete ri;
+extern "C" __declspec ( dllexport ) void CDECL deleteContextCreator(CContextCreator *cc) {
+	if ( cc )
+		delete cc;
 }
 
-/**  @brief Returns the major version number of the interface (changes if the IRiRenderer interface changes)
+/**  @brief Returns the major version number of the interface (changes if the IRiContext interface changes)
  */
 extern "C" __declspec ( dllexport ) unsigned long CDECL majorInterfaceVer() {
-	return IRiRenderer::majorVersion;
+	return IRiContext::majorVersion;
 }
 
-/**  @brief Returns the minor version number of the interface (stays the same since IRiRenderer is pure virtual)
+/**  @brief Returns the minor version number of the interface (stays the same since IRiContext is pure virtual)
  */
 extern "C" __declspec ( dllexport ) unsigned long CDECL minorInterfaceVer() {
-	return IRiRenderer::minorVersion;
+	return IRiContext::minorVersion;
 }
 
 /**  @brief Returns the type of the renderer

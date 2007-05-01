@@ -104,7 +104,7 @@ const char *CWin32DynLib::findLib() {
 
 	std::string strlibpath("");
 	if ( !m_searchpath.empty() ) {
-		CStringList_const_iterator i = m_searchpath.begin();
+		CStringList::const_iterator i = m_searchpath.begin();
 		for ( ; i != m_searchpath.end(); i++ ) {
 			strlibpath = *i;
 			if ( strlibpath.size() > 0 )

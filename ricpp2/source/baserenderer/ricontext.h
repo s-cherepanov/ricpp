@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_RIRENDERER_H
-#define _RICPP_BASERENDERER_RIRENDERER_H
+#ifndef _RICPP_BASERENDERER_RICONTEXT_H
+#define _RICPP_BASERENDERER_RICONTEXT_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -41,28 +41,32 @@ const RtToken ricpp_rib = "RIB";
 const RtToken ricpp_preview = "Preview";
 const RtToken ricpp_photorealistic = "Photorealistic";
 
-/** RenderMan Interface without the ellipsis (...) calls, calld from the CRiCPPBridge
+/** RenderMan Interface without the ellipsis (...) calls,
+ * interface for a render context
+ * called from the CRiCPPBridge
  */
-class IRiRenderer {
+class IRiContext {
+	friend class CContextCreator; // can activate and deactivate
+protected:
+	virtual RtVoid activate(void) = 0;
+	virtual RtVoid deactivate(void) = 0;
 public:
-	static const unsigned long majorVersion = 1;
-	static const unsigned long minorVersion = 0;
+	static const unsigned long majorVersion;
+	static const unsigned long minorVersion;
 
 	/** The virtual destructor of the interface
 	 */
-	inline virtual ~IRiRenderer() {}
+	inline virtual ~IRiContext() {}
 
 	virtual RtToken rendererName() = 0;
 	virtual RtToken rendererType() = 0;
+	virtual RtVoid abort(void) = 0;
 
 	/** The interface functions of IRi
 	 */
 	virtual RtToken declare(RtString name, RtString declaration) = 0;
 
 	virtual RtVoid synchronize(RtToken name) = 0;
-
-	virtual RtContextHandle getContext(void) = 0;
-	virtual RtVoid context(RtContextHandle handle) = 0;
 
 	virtual RtVoid begin(RtString name) = 0;
 	virtual RtVoid end(void) = 0;
@@ -176,7 +180,7 @@ public:
 
 	virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	virtual RtVoid procedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
 
 	virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
@@ -187,7 +191,7 @@ public:
     virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid archiveRecordV(RtToken type, RtString line) = 0;
-	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid readArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	/*
 	// -> RenderMan 11.5.2
@@ -207,7 +211,7 @@ public:
 	virtual RtVoid elsePart(void) = 0; // was RiElse
 	virtual RtVoid ifEnd(void) = 0;
 	*/
-}; // IRiRenderer
+}; // IRiContext
 } // namespace RiCPP
 
-#endif // _RICPP_BASERENDERER_RIRENDERER_H
+#endif // _RICPP_BASERENDERER_RICONTEXT_H

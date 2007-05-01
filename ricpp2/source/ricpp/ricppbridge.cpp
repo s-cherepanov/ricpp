@@ -117,23 +117,27 @@ RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, RtString message, 
 				code = code;
 			}
 		}
-		abortRenderer(curCtx().renderer());
+		abortContext();
 	}
+
+	if ( !message )
+		message = "";
 
 	static const int ERROR_STR_SIZE = 256;
 	char str[ERROR_STR_SIZE];
 	str[0] = (char)0;
-	if ( !message )
-		message = "";
+	if ( argList ) {
 #ifdef WIN32
-	_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, message, argList);
+		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, message, argList);
 #else
-	vsnprintf(str, ERROR_STR_SIZE-1, message, argList);
+		vsnprintf(str, ERROR_STR_SIZE-1, message, argList);
 #endif
-	str[ERROR_STR_SIZE-1] = (char)0;
+		str[ERROR_STR_SIZE-1] = (char)0;
+		message = str;
+	}
 
 	if ( m_curErrorHandler )
-		(*m_curErrorHandler)(code, severity, str);
+		(*m_curErrorHandler)(code, severity, message);
 }
 
 
@@ -142,7 +146,7 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration) {
 		try {
 			return curCtx().renderer()->declare(name, declaration);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::declare(name:\"%s\", declaration:\"%s\")", name ? name : "", declaration ? declaration : "");
@@ -152,36 +156,37 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration) {
 
 
 RtVoid CRiCPPBridge::begin(RtString name) {
-	IRiRenderer *renderer = NULL;
-	try {
-		renderer = beginRenderer(name);
-		if ( renderer ) {
-			renderer->begin(name);
+	// Since this can activate a different context creator, deactivate the old context
+	if ( curCtx().valid() ) {
+		try {
+			curCtx().contextCreator()->context(0);
+		} catch (ERendererError &e) {
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
-		CContext ctx(renderer, renderer ? renderer->getContext() : (RtContextHandle)RI_NULL);
+	}
+
+	CContextCreator *rendererCreator = NULL;
+	try {
+		rendererCreator = getContextCreator(name);
+		if ( rendererCreator ) {
+			rendererCreator->begin(name);
+		}
+		CContext ctx(rendererCreator, rendererCreator ? rendererCreator->getContext() : 0);
 		pushContext(ctx);
-		if ( !renderer ) {
+		if ( !rendererCreator ) {
 			handleError(RIE_SYSTEM, RIE_SEVERE,
-				"Renderer missing in CRiCPPBridge::begin(name:\"%s\")",
+				"Renderer creator missing in CRiCPPBridge::begin(name:\"%s\")",
 				name ? name : "");
 		}
 	} catch (ERendererError &e) {
 		pushInvalidContext();
-		handleError(e.code(), e.severity(), e.what());
+		handleErrorV(e.code(), e.severity(), e.what(), 0);
 	}
 }
 
 RtVoid CRiCPPBridge::end(void) {
 	if ( curCtx().valid() ) {
-		curCtx().invalidate(); // Context is not valid after end()
-		try {
-			curCtx().renderer()->end();
-			endRenderer(curCtx().renderer()); // Does not throw
-		} catch (ERendererError &e) {
-			if ( e.severity() != RIE_SEVERE )
-				endRenderer(curCtx().renderer());
-			handleError(e.code(), e.severity(), e.what()); // Renderer is aborted if e.severity() == RIE_SEVERE
-		}
+		endContext();
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::end()");
 	}
@@ -194,16 +199,28 @@ RtContextHandle CRiCPPBridge::getContext(void) {
 }
 
 RtVoid CRiCPPBridge::context(RtContextHandle handle) {
+	// Since handle can activate a different context creator, deactivate the old context
+	if ( curCtx().valid() ) {
+		try {
+			curCtx().contextCreator()->context(0);
+		} catch (ERendererError &e) {
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
+		}
+	}
+
 	unsigned long handleIdx = (unsigned long)handle;
 	if ( handleIdx >= m_ctxVect.size() ) {
+		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::context(handle:%lu)", (unsigned long)handle);
 		handleIdx = (unsigned long)0;
 	}
 	m_ctxIdx = handleIdx;
+
+	// Activate the stored handle
 	if ( curCtx().valid() ) {
 		try {
-			curCtx().renderer()->context(curCtx().handle());
+			curCtx().contextCreator()->context(curCtx().renderer());
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::context(handle:%lu)", (unsigned long)handle);
@@ -215,7 +232,7 @@ RtVoid CRiCPPBridge::frameBegin(RtInt number) {
 		try {
 			curCtx().renderer()->frameBegin(number);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::frameBegin(number:%d)", (int)number);
@@ -227,7 +244,7 @@ RtVoid CRiCPPBridge::frameEnd(void) {
 		try {
 			curCtx().renderer()->frameEnd();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::frameEnd()");
@@ -239,7 +256,7 @@ RtVoid CRiCPPBridge::worldBegin(void) {
 		try {
 			curCtx().renderer()->worldBegin();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldBegin()");
@@ -251,7 +268,7 @@ RtVoid CRiCPPBridge::worldEnd(void) {
 		try {
 			curCtx().renderer()->worldEnd();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldEnd()");
@@ -263,7 +280,7 @@ RtVoid CRiCPPBridge::attributeBegin(void) {
 		try {
 			curCtx().renderer()->attributeBegin();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeBegin()");
@@ -275,7 +292,7 @@ RtVoid CRiCPPBridge::attributeEnd(void) {
 		try {
 			curCtx().renderer()->attributeEnd();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeEnd()");
@@ -287,7 +304,7 @@ RtVoid CRiCPPBridge::transformBegin(void) {
 		try {
 			curCtx().renderer()->transformBegin();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformBegin()");
@@ -299,7 +316,7 @@ RtVoid CRiCPPBridge::transformEnd(void) {
 		try {
 			curCtx().renderer()->transformEnd();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformEnd()");
@@ -311,7 +328,7 @@ RtVoid CRiCPPBridge::solidBegin(RtToken type) {
 		try {
 			curCtx().renderer()->solidBegin(type);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::solidBegin(type:\"%s\")", type ? type : "");
@@ -323,7 +340,7 @@ RtVoid CRiCPPBridge::solidEnd(void) {
 		try {
 			curCtx().renderer()->solidEnd();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::solidEnd()");
@@ -335,7 +352,7 @@ RtObjectHandle CRiCPPBridge::objectBegin(void) {
 		try {
 			return curCtx().renderer()->objectBegin();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 			return (RtObjectHandle)RI_NULL;
 		}
 	}
@@ -349,7 +366,7 @@ RtVoid CRiCPPBridge::objectEnd(void) {
 		try {
 			curCtx().renderer()->objectEnd();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectEnd()");
@@ -361,7 +378,7 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle) {
 		try {
 			curCtx().renderer()->objectInstance(handle);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectInstance(handle:%lu)", (unsigned long)handle);
@@ -391,7 +408,7 @@ RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[]) {
 		try {
 			curCtx().renderer()->motionBeginV(N, times);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::motionBeginV(N:%d, ...)", (int) N);
@@ -403,7 +420,7 @@ RtVoid CRiCPPBridge::motionEnd(void) {
 		try {
 			curCtx().renderer()->motionEnd();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::motionEnd()");
@@ -415,7 +432,7 @@ RtVoid CRiCPPBridge::synchronize(RtToken name) {
 		try {
 			curCtx().renderer()->synchronize(name);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::synchronize(name:\"%s\")", name ? name : "");
@@ -427,7 +444,7 @@ RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect) {
 		try {
 			curCtx().renderer()->format(xres, yres, aspect);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "format(xres:%d, yres:%d, aspect:%f)", (int)xres, (int)yres, (float)aspect);
@@ -439,7 +456,7 @@ RtVoid CRiCPPBridge::frameAspectRatio(RtFloat aspect) {
 		try {
 			curCtx().renderer()->frameAspectRatio(aspect);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "frameAspectRatio(aspect:%f)", (float)aspect);
@@ -451,7 +468,7 @@ RtVoid CRiCPPBridge::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFl
 		try {
 			curCtx().renderer()->screenWindow(left, right, bot, top);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "screenWindow(left:%f, right:%f, bot:%f, top:%f)", (float)left, (float)right, (float)bot, (float)top);
@@ -463,7 +480,7 @@ RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloa
 		try {
 			curCtx().renderer()->cropWindow(xmin, xmax, ymin, ymax);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "cropWindow(xmin:%f, xmax:%f, ymin:%f, ymax:%f)", (float)xmin, (float)xmax, (float)ymin, (float)ymax);
@@ -483,7 +500,7 @@ RtVoid CRiCPPBridge::projectionV(RtString name, RtInt n, RtToken tokens[], RtPoi
 		try {
 			curCtx().renderer()->projectionV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::projectionV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -495,7 +512,7 @@ RtVoid CRiCPPBridge::clipping(RtFloat hither, RtFloat yon) {
 		try {
 			curCtx().renderer()->clipping(hither, yon);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::clipping(hither:%f, yon:%f)", (float)hither, (float)yon);
@@ -507,7 +524,7 @@ RtVoid CRiCPPBridge::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, 
 		try {
 			curCtx().renderer()->clippingPlane(x, y, z, nx, ny, nz);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::clippingPlane(x:%f, y:%f, z:%f, nx:%f, ny:%f, nz:%f)",x, y, z, nx, ny, nz);
@@ -519,7 +536,7 @@ RtVoid CRiCPPBridge::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat fo
 		try {
 			curCtx().renderer()->depthOfField(fstop, focallength, focaldistance);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::depthOfField(fstop:%f, focallength:%f, focaldistance:%f)", (float)fstop, (float)focallength, (float)focaldistance);
@@ -531,7 +548,7 @@ RtVoid CRiCPPBridge::shutter(RtFloat smin, RtFloat smax) {
 		try {
 			curCtx().renderer()->shutter(smin, smax);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::shutter(smin:%f, smax:%f)", (float)smin, (float)smax);
@@ -543,7 +560,7 @@ RtVoid CRiCPPBridge::pixelVariance(RtFloat variation) {
 		try {
 			curCtx().renderer()->pixelVariance(variation);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::pixelVariance(variation:%f)", (float)variation);
@@ -555,7 +572,7 @@ RtVoid CRiCPPBridge::pixelSamples(RtFloat xsamples, RtFloat ysamples) {
 		try {
 			curCtx().renderer()->pixelSamples(xsamples, ysamples);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::pixelSamples(xsamples:%f, ysamples:%f)", (float)xsamples, (float)ysamples);
@@ -567,7 +584,7 @@ RtVoid CRiCPPBridge::pixelFilter(const IFilterFunc &function, RtFloat xwidth, Rt
 		try {
 			curCtx().renderer()->pixelFilter(function, xwidth, ywidth);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::pixelFilter(function:%s, xwidth:%f, ywidth:%f)", function.name(), (float)xwidth, (float)ywidth);
@@ -579,7 +596,7 @@ RtVoid CRiCPPBridge::exposure(RtFloat gain, RtFloat gamma) {
 		try {
 			curCtx().renderer()->exposure(gain, gamma);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::exposure(gain:%f, gamma:%f)", (float)gain, (float)gamma);
@@ -599,7 +616,7 @@ RtVoid CRiCPPBridge::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer
 		try {
 			curCtx().renderer()->imagerV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::imagerV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -611,7 +628,7 @@ RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, R
 		try {
 			curCtx().renderer()->quantize(type, one, qmin, qmax, ampl);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::quantize(type:%s, one:%d, qmin:%d, qmax:%d, ampl:%f)", type ? type : "", (int)one, (int)qmin, (int)qmax, (float)ampl);
@@ -631,7 +648,7 @@ RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtToken mode, RtInt n
 		try {
 			curCtx().renderer()->displayV(name, type, mode, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::displayV(name:%s, type:%s, mode:%s, n:%d, ...)", name ? name : "", type ? type : "", mode ? mode : "", (int)n);
@@ -651,7 +668,7 @@ RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 		try {
 			curCtx().renderer()->hiderV(type, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::hiderV(type:%s, n:%d, ...)", type ? type : "", (int)n);
@@ -663,7 +680,7 @@ RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {
 		try {
 			curCtx().renderer()->colorSamples(N, nRGB, RGBn);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::colorSamples(N:%d, ...)", (int)N);
@@ -675,7 +692,7 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail) {
 		try {
 			curCtx().renderer()->relativeDetail(relativedetail);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::relativeDetail(relativedetail:%f)", (float)relativedetail);
@@ -695,14 +712,14 @@ RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer
 		try {
 			curCtx().renderer()->optionV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		// options for the Renderer creator and its children
 		try {
 			doOptionV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	}
 }
@@ -720,7 +737,7 @@ RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[
 		try {
 			return curCtx().renderer()->lightSourceV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::lightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -741,7 +758,7 @@ RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tok
 		try {
 			return curCtx().renderer()->areaLightSourceV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::areaLightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -762,7 +779,7 @@ RtVoid CRiCPPBridge::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoin
 		try {
 			curCtx().renderer()->attributeV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -774,7 +791,7 @@ RtVoid CRiCPPBridge::color(RtColor Cs) {
 		try {
 			curCtx().renderer()->color(Cs);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::color(Cs)");
@@ -786,7 +803,7 @@ RtVoid CRiCPPBridge::opacity(RtColor Cs) {
 		try {
 			curCtx().renderer()->opacity(Cs);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::opacity(Cs)");
@@ -806,7 +823,7 @@ RtVoid CRiCPPBridge::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointe
 		try {
 			curCtx().renderer()->surfaceV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::surfaceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -826,7 +843,7 @@ RtVoid CRiCPPBridge::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPoi
 		try {
 			curCtx().renderer()->atmosphereV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::atmosphereV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -846,7 +863,7 @@ RtVoid CRiCPPBridge::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		try {
 			curCtx().renderer()->interiorV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::interiorV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -866,7 +883,7 @@ RtVoid CRiCPPBridge::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		try {
 			curCtx().renderer()->exteriorV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::exteriorV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -879,7 +896,7 @@ RtVoid CRiCPPBridge::illuminate(RtLightHandle light, RtBoolean onoff) {
 		try {
 			curCtx().renderer()->illuminate(light, onoff);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::illuminate(light:%lu, onoff:%d)", (unsigned long)light, (int)onoff);
@@ -900,7 +917,7 @@ RtVoid CRiCPPBridge::displacementV(RtString name, RtInt n, RtToken tokens[], RtP
 		try {
 			curCtx().renderer()->displacementV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::displacementV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -912,7 +929,7 @@ RtVoid CRiCPPBridge::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFl
 		try {
 			curCtx().renderer()->textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::textureCoordinates(s1:%f, t1:%f, s2:%f, t2:%f, s3:%f, t3:%f, s4:%f, t4:%f)", (float)s1, (float)t1, (float)s2, (float)t2, (float)s3, (float)t3, (float)s4, (float)t4);
@@ -924,7 +941,7 @@ RtVoid CRiCPPBridge::shadingRate(RtFloat size) {
 		try {
 			curCtx().renderer()->shadingRate(size);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::shadingRate(size:%f)", (float)size);
@@ -936,7 +953,7 @@ RtVoid CRiCPPBridge::shadingInterpolation(RtToken type) {
 		try {
 			curCtx().renderer()->shadingInterpolation(type);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::shadingInterpolation(type:%s)", type ? type : "");
@@ -948,7 +965,7 @@ RtVoid CRiCPPBridge::matte(RtBoolean onoff) {
 		try {
 			curCtx().renderer()->matte(onoff);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::matte(onoff:%d)", (int)onoff);
@@ -960,7 +977,7 @@ RtVoid CRiCPPBridge::bound(RtBound aBound) {
 		try {
 			curCtx().renderer()->bound(aBound);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::bound(aBound)");
@@ -972,7 +989,7 @@ RtVoid CRiCPPBridge::detail(RtBound aBound) {
 		try {
 			curCtx().renderer()->detail(aBound);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::detail(aBound)");
@@ -984,7 +1001,7 @@ RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran
 		try {
 			curCtx().renderer()->detailRange(minvis, lowtran, uptran, maxvis);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::detailRange(minvis:%f, lowtran:%f, uptran:%f, maxvis:%f)", (float)minvis, (float)lowtran, (float)uptran, (float)maxvis);
@@ -996,7 +1013,7 @@ RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value) {
 		try {
 			curCtx().renderer()->geometricApproximation(type, value);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::geometricApproximation(type:%s, value%%f)", type ? type : "", (float)value);
@@ -1008,7 +1025,7 @@ RtVoid CRiCPPBridge::geometricRepresentation(RtToken type) {
 		try {
 			curCtx().renderer()->geometricRepresentation(type);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::geometricRepresentation(type:%s)", type ? type : "");
@@ -1020,7 +1037,7 @@ RtVoid CRiCPPBridge::orientation(RtToken anOrientation) {
 		try {
 			curCtx().renderer()->orientation(anOrientation);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::orientation(anOrientation:%s)", anOrientation ? anOrientation : "");
@@ -1032,7 +1049,7 @@ RtVoid CRiCPPBridge::reverseOrientation(void) {
 		try {
 			curCtx().renderer()->reverseOrientation();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::reverseOrientation()");
@@ -1044,7 +1061,7 @@ RtVoid CRiCPPBridge::sides(RtInt nsides) {
 		try {
 			curCtx().renderer()->sides(nsides);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::sides(nsides:%d)", (int)nsides);
@@ -1056,7 +1073,7 @@ RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vs
 		try {
 			curCtx().renderer()->basis(ubasis, ustep, vbasis, vstep);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::basis(ubasis, ustep, vbasis, vstep)");
@@ -1068,7 +1085,7 @@ RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFlo
 		try {
 			curCtx().renderer()->trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::trimCurve(nloops:%d, ncurves, order, knot, amin, amax, n, u, v, w)", (int)nloops);
@@ -1082,7 +1099,7 @@ RtVoid CRiCPPBridge::identity(void) {
 		try {
 			curCtx().renderer()->identity();
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::identity()");
@@ -1094,7 +1111,7 @@ RtVoid CRiCPPBridge::transform(RtMatrix aTransform) {
 		try {
 			curCtx().renderer()->transform(aTransform);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transform(aTransform)");
@@ -1106,7 +1123,7 @@ RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform) {
 		try {
 			curCtx().renderer()->concatTransform(aTransform);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::concatTransform(aTransform)");
@@ -1118,7 +1135,7 @@ RtVoid CRiCPPBridge::perspective(RtFloat fov) {
 		try {
 			curCtx().renderer()->perspective(fov);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::perspective(fov:%f)",(float)fov);
@@ -1130,7 +1147,7 @@ RtVoid CRiCPPBridge::translate(RtFloat dx, RtFloat dy, RtFloat dz) {
 		try {
 			curCtx().renderer()->translate(dx, dy, dz);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::translate(dx:%f, dy:%f, dz:%f)", (float)dx, (float)dy, (float)dz);
@@ -1142,7 +1159,7 @@ RtVoid CRiCPPBridge::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {
 		try {
 			curCtx().renderer()->rotate(angle, dx, dy, dz);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::rotate(angle:%f, dx:%f, dy:%f, dz:%f)", (float)angle, (float)dx, (float)dy, (float)dz);
@@ -1154,7 +1171,7 @@ RtVoid CRiCPPBridge::scale(RtFloat dx, RtFloat dy, RtFloat dz) {
 		try {
 			curCtx().renderer()->scale(dx, dy, dz);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::scale(dx:%f, dy:%f, dz:%f)", (float)dx, (float)dy, (float)dz);
@@ -1166,7 +1183,7 @@ RtVoid CRiCPPBridge::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, 
 		try {
 			curCtx().renderer()->skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::skew(angle:%f, dx1:%f, dy1:%f, dz1:%f, dx2:%f, dy2:%f, dz2:%f)", (float)angle, (float)dx1, (float)dy1, (float)dz1, (float)dx2, (float)dy2, (float)dz2);
@@ -1186,7 +1203,7 @@ RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPo
 		try {
 			curCtx().renderer()->deformationV(name, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::deformationV(name:%s, n:%d, ...)", name ? name : "", (int)n);
@@ -1198,7 +1215,7 @@ RtVoid CRiCPPBridge::coordinateSystem(RtToken space) {
 		try {
 			curCtx().renderer()->coordinateSystem(space);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::coordinateSystem(space:%s)", space ? space : "");
@@ -1210,7 +1227,7 @@ RtVoid CRiCPPBridge::coordSysTransform(RtToken space) {
 		try {
 			curCtx().renderer()->coordSysTransform(space);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::coordSysTransform(space:%s)", space ? space : "");
@@ -1222,7 +1239,7 @@ RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt
 		try {
 			return curCtx().renderer()->transformPoints(fromspace, tospace, npoints, points);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformPoints(fromspace:%s, tospace:%s, npoints:%d, ...)", fromspace ? fromspace : "", tospace ? tospace : "", (int)npoints);
@@ -1245,7 +1262,7 @@ RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoin
 		try {
 			curCtx().renderer()->polygonV(nvertices, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::polygonV(nvertices:%d, ...)", (int)nvertices);
@@ -1265,7 +1282,7 @@ RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtTok
 		try {
 			curCtx().renderer()->generalPolygonV(nloops, nverts, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::generalPolygonV(nloops:%d, ...)", (int)nloops);
@@ -1285,7 +1302,7 @@ RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, 
 		try {
 			curCtx().renderer()->pointsPolygonsV(npolys, nverts, verts, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::generalPolygonV(npolys:%d, ...)", (int)npolys);
@@ -1305,7 +1322,7 @@ RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *
 		try {
 			curCtx().renderer()->pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::pointsGeneralPolygonsV(npolys:%d, ...)", (int)npolys);
@@ -1325,7 +1342,7 @@ RtVoid CRiCPPBridge::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 		try {
 			curCtx().renderer()->patchV(type, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::patchV(type:%s, ...)", type ? type : "");
@@ -1345,7 +1362,7 @@ RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv,
 		try {
 			curCtx().renderer()->patchMeshV(type, nu, uwrap, nv, vwrap, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::patchMeshV(type:%s, nu:%d, uwrap:%s, nv:%d, vwrap:%s, ...)", type ? type : "", (int)nu, uwrap ? uwrap : "", (int)nv, vwrap ? vwrap : "");
@@ -1365,7 +1382,7 @@ RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat um
 		try {
 			curCtx().renderer()->nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::nuPatchV(nu:%d, uorder:%d, ...)", (int)nu, (int)uorder);
@@ -1386,7 +1403,7 @@ RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nverti
 		try {
 			curCtx().renderer()->subdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::subdivisionMeshV(scheme:%s, nfaces:%d, ...)", scheme ? scheme : "", (int)nfaces);
@@ -1406,7 +1423,7 @@ RtVoid CRiCPPBridge::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat
 		try {
 			curCtx().renderer()->sphereV(radius, zmin, zmax, thetamax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::sphereV(radius:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)radius, (float)zmin, (float)zmax, (float)thetamax);
@@ -1426,7 +1443,7 @@ RtVoid CRiCPPBridge::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 		try {
 			curCtx().renderer()->coneV(height, radius, thetamax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::sphereV(height:%f, radius:%f, thetamax:%f, ...)", (float)height, (float)radius, (float)thetamax);
@@ -1446,7 +1463,7 @@ RtVoid CRiCPPBridge::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFlo
 		try {
 			curCtx().renderer()->cylinderV(radius, zmin, zmax, thetamax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::cylinderV(radius:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)radius, (float)zmin, (float)zmax, (float)thetamax);
@@ -1466,7 +1483,7 @@ RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetam
 		try {
 			curCtx().renderer()->hyperboloidV(point1, point2, thetamax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::hyperboloidV(...)");
@@ -1486,7 +1503,7 @@ RtVoid CRiCPPBridge::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFlo
 		try {
 			curCtx().renderer()->paraboloidV(rmax, zmin, zmax, thetamax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::paraboloidV(rmax:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)rmax, (float)zmin, (float)zmax, (float)thetamax);
@@ -1506,7 +1523,7 @@ RtVoid CRiCPPBridge::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 		try {
 			curCtx().renderer()->diskV(height, radius, thetamax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::diskV(height:%f, radius:%f, thetamax:%f, ...)", (float)height, (float)radius, (float)thetamax);
@@ -1526,7 +1543,7 @@ RtVoid CRiCPPBridge::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, 
 		try {
 			curCtx().renderer()->torusV(majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::torusV(majorrad:%f, minorrad:%f, phimin:%f, phimax:%f, thetamax:%f, ...)", (float)majorrad, (float)minorrad, (float)phimin, (float)phimax, (float)thetamax);
@@ -1546,7 +1563,7 @@ RtVoid CRiCPPBridge::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer pa
 		try {
 			curCtx().renderer()->pointsV(npts, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::pointsV(npts:%f, ...)", (int)npts);
@@ -1566,7 +1583,7 @@ RtVoid CRiCPPBridge::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToke
 		try {
 			curCtx().renderer()->curvesV(type, ncurves, nverts, wrap, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::curvesV(type:%s, ncurves:%d, ...)", type ? type : "", (int)ncurves);
@@ -1586,7 +1603,7 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 		try {
 			curCtx().renderer()->blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::blobbyV(nleaf:%d, ...)", (int)nleaf);
@@ -1596,9 +1613,9 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {
 	if ( curCtx().valid() ) {
 		try {
-			curCtx().renderer()->procedural(data, bound, subdivfunc, freefunc);
+			curCtx().renderer()->procedural(*this, data, bound, subdivfunc, freefunc);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::procedural(..., subdivfunc:%s, freefunc:%s)", subdivfunc.name(), freefunc.name());
@@ -1618,7 +1635,7 @@ RtVoid CRiCPPBridge::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointe
 		try {
 			curCtx().renderer()->geometryV(type, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::geometryV(type:%s, ...)", type ? type : "" );
@@ -1640,7 +1657,7 @@ RtVoid CRiCPPBridge::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtT
 		try {
 			curCtx().renderer()->makeTextureV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::makeTextureV(pic:%s, tex:%s, swrap:%s, twrap:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", swrap ? swrap : swrap, twrap ? twrap : twrap, filterfunc.name(), (float)swidth, (float)twidth );
@@ -1660,7 +1677,7 @@ RtVoid CRiCPPBridge::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToke
 		try {
 			curCtx().renderer()->makeBumpV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::makeBumpV(pic:%s, tex:%s, swrap:%s, twrap:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", swrap ? swrap : swrap, twrap ? twrap : twrap, filterfunc.name(), (float)swidth, (float)twidth );
@@ -1680,7 +1697,7 @@ RtVoid CRiCPPBridge::makeLatLongEnvironmentV(RtString pic, RtString tex, const I
 		try {
 			curCtx().renderer()->makeLatLongEnvironmentV(pic, tex, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::makeLatLongEnvironmentV(pic:%s, tex:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", filterfunc.name(), (float)swidth, (float)twidth );
@@ -1700,7 +1717,7 @@ RtVoid CRiCPPBridge::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString
 		try {
 			curCtx().renderer()->makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::makeCubeFaceEnvironmentV(px:%s, nx:%s, py:%s, ny:%s, pz:%s, nz:%s, tex:%s, fov:%f, filterfunc:%s, swidth:%f, twidth:%f, ...)", px ? px : px, nx ? nx : nx, py ? py : py, ny ? ny : ny, pz ? pz : pz, nz ? nz : nz, tex ? tex : "", (float)fov, filterfunc.name(), (float)swidth, (float)twidth);
@@ -1720,7 +1737,7 @@ RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken to
 		try {
 			curCtx().renderer()->makeShadowV(pic, tex, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::makeShadowV(pic:%s, tex:%s, ...)", pic ? pic : pic, tex ? tex : "");
@@ -1750,7 +1767,7 @@ RtVoid CRiCPPBridge::archiveRecordV(RtToken type, RtString line) {
 		try {
 			curCtx().renderer()->archiveRecordV(type, line);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::archiveRecordV(type:%s, line:%s, ...)", type ? type : type, line ? line : "");
@@ -1768,9 +1785,9 @@ RtVoid CRiCPPBridge::readArchive(RtString name, const IArchiveCallback *callback
 RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {
 	if ( curCtx().valid() ) {
 		try {
-			curCtx().renderer()->readArchiveV(name, callback, n, tokens, params);
+			curCtx().renderer()->readArchiveV(*this, name, callback, n, tokens, params);
 		} catch (ERendererError &e) {
-			handleError(e.code(), e.severity(), e.what());
+			handleErrorV(e.code(), e.severity(), e.what(), 0);
 		}
 	} else {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::readArchiveV(name:%s, callback:%s, ...)", name ? name : name, callback ? callback->name() : "");

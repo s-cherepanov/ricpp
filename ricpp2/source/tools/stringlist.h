@@ -30,21 +30,24 @@
 #endif _RICPP_TOOLS_ENV_H
 
 #include <list>
-#include <vector>
 #include <map>
+#include <string>
 #include <algorithm>
 
 namespace RiCPP {
 
-typedef std::list<std::string>::const_iterator CStringList_const_iterator;
-typedef std::list<std::string>::size_type CStringList_size_type;
+// typedef std::list<std::string>::const_iterator CStringList_const_iterator;
+// typedef std::list<std::string>::size_type CStringList_size_type;
 
 class CStringList {
+public:
+	typedef std::list<std::string>::const_iterator const_iterator;
+	typedef std::list<std::string>::size_type size_type;
+
 private:
 	std::list<std::string> m_stringList;
 	std::map<std::string, std::string> m_substMap;
 
-private:
 	void insertVar(std::string &varName, bool useEnv) {
 		if ( m_substMap.find(varName) != m_substMap.end() ) {
 			std::string &subst = m_substMap[varName];
@@ -93,30 +96,24 @@ public:
 
 		std::string strval(str ? str : "");
 
-		std::string v;
-		v.clear();
-		v.reserve(32);
-		std::string varName;
-		varName.clear();
-		varName.reserve(32);
+		std::string v("");
+		std::string varName("");
 
-		std::string::iterator savptr;
-		std::string::iterator ptr;
-		bool ptrinc;
+		std::string::iterator saviter;
+		std::string::iterator iter;
+		bool iterinc;
 
-		ptr = strval.begin();
-		ptrinc = true;
-		for ( ; ptr != strval.end(); ptrinc ? ++ptr : ptr ) {
-			ptrinc = true;
+		for ( iter = strval.begin(); iter != strval.end(); iterinc ? ++iter : iter ) {
+			iterinc = true;
 			switch ( state ) {
 				case normal:
-					if ( *ptr == maskChar ) {
+					if ( *iter == maskChar ) {
 						state = maskchar;
 						continue;
-					} else if ( *ptr == singleQuote ) {
+					} else if ( *iter == singleQuote ) {
 						state = singlequote;
-					} else if ( *ptr == varChar ) {
-						savptr = ptr;
+					} else if ( *iter == varChar ) {
+						saviter = iter;
 						state = varchar;
 					}
 					break;
@@ -124,79 +121,74 @@ public:
 					state = normal;
 					break;
 				case varchar:
-					if ( *ptr == varChar ) {
+					if ( *iter == varChar ) {
 						state = normal;
-						std::string::difference_type d = distance(strval.begin(), savptr);
-						ptr++;
-						savptr = strval.erase(savptr, ptr);
+						std::string::difference_type d = distance(strval.begin(), saviter);
+						iter++;
+						saviter = strval.erase(saviter, iter);
 						insertVar(varName, useEnv);
 						d += varName.size();
-						strval.insert(savptr, varName.begin(), varName.end());
+						strval.insert(saviter, varName.begin(), varName.end());
 						varName.clear();
-						ptr = strval.begin();
-						advance(ptr, d);
-						ptrinc = false;
+						iter = strval.begin();
+						advance(iter, d);
+						iterinc = false;
 					} else {
-						varName.push_back(*ptr);
+						varName.push_back(*iter);
 					}
 					break;
 				case singlequote:
-					if ( *ptr == singleQuote ) {
+					if ( *iter == singleQuote ) {
 						state = normal;
 					}
 					break;
 			}
 		}
 
-
-		
-		ptr = strval.begin();
-		ptrinc = true;
-		for ( ;  ptr != strval.end(); ptrinc ? ++ptr : ptr ) {
-			ptrinc = true;
+		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
+			iterinc = true;
 			switch ( state ) {
 				case normal:
-					if ( *ptr == seperator ) {
+					if ( *iter == seperator ) {
 						push(v);
 						v.clear();
 						continue;
-					} else if ( *ptr == maskChar ) {
+					} else if ( *iter == maskChar ) {
 						state = maskchar;
-					} else if ( *ptr == singleQuote ) {
+					} else if ( *iter == singleQuote ) {
 						state = singlequote;
-					} else if ( *ptr == doubleQuote ) {
+					} else if ( *iter == doubleQuote ) {
 						state = doublequote;
 					} else {
-						v.push_back(*ptr);
+						v.push_back(*iter);
 					}
 					break;
 				case maskchar:
-					v.push_back(*ptr);
+					v.push_back(*iter);
 					state = normal;
 					break;
 				case singlequote:
-					if ( *ptr == singleQuote ) {
+					if ( *iter == singleQuote ) {
 						state = normal;
 					} else {
-						v.push_back(*ptr);
+						v.push_back(*iter);
 					}
 					break;
 				case doublequote:
-					if ( *ptr == maskChar ) {
+					if ( *iter == maskChar ) {
 						state = maskinquote;
-					} else if ( *ptr == doubleQuote ) {
+					} else if ( *iter == doubleQuote ) {
 						state = normal;
 					} else {
-						v.push_back(*ptr);
+						v.push_back(*iter);
 					}
 					break;
 				case maskinquote:
-					v.push_back(*ptr);
+					v.push_back(*iter);
 					state = doublequote;
 					break;
 			}
 		}
-		
 		
 		if ( v.size() > 0 ) {
 			push(v);
@@ -224,15 +216,15 @@ public:
 	{
 		return m_stringList.back();
 	}
-	inline CStringList_const_iterator begin()
+	inline const_iterator begin()
 	{
 		return m_stringList.begin();
 	}
-	inline CStringList_const_iterator end()
+	inline const_iterator end()
 	{
 		return m_stringList.end();
 	}
-	inline CStringList_size_type size()
+	inline size_type size()
 	{
 		return m_stringList.size();
 	}
@@ -244,8 +236,9 @@ public:
 	}
 	inline void removeSubst(const char *strvar)
 	{
-		std::string var(strvar  ?strvar : "");
-		m_substMap[var] = "";
+		std::string var(strvar ? strvar : "");
+		if ( m_substMap.find(var) != m_substMap.end() )
+			m_substMap.erase(var);
 	}
 	inline void clearSubst()
 	{

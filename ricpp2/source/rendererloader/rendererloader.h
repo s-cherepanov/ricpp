@@ -52,48 +52,46 @@ namespace RiCPP {
 class CRendererLoader : public IRendererCreator
 {
 private:
-	IRiRenderer *m_ribWriter;
+	CContextCreator *m_ribWriterCreator;
 	std::string m_searchpath;
 
 	class CRendererLib {
 		CDynLib *m_lib;
-		IRiRenderer *m_renderer;
+		CContextCreator *m_contextCreator;
 
-		CLibFunc *m_newRenderer;
-		CLibFunc *m_deleteRenderer;
+		CLibFunc *m_newContextCreator;
+		CLibFunc *m_deleteContextCreator;
 		CLibFunc *m_majorInterfaceVer;
 		CLibFunc *m_minorInterfaceVer;
 		CLibFunc *m_rendererType;
 		CLibFunc *m_rendererName;
 
-		IRiRenderer *newRenderer();
-		void deleteRenderer(IRiRenderer *);
+		CContextCreator *newContextCreator();
+		void deleteContextCreator(CContextCreator *);
 		bool validDLL();
 	public:
 		CRendererLib(CDynLib *);
 		~CRendererLib();
 
 		bool valid();
-		IRiRenderer *getRenderer();
+		CContextCreator *getContextCreator();
 
 		unsigned long majorInterfaceVer();
 		unsigned long minorInterfaceVer();
 		const char *rendererType();
 		const char *rendererName();
-		// Renderer is deleted in destructor with deleteRenderer(IRiRenderer *)
+		// Renderer is deleted in destructor with deleteRendererCreator(IRiContext *)
 	};
 	TObjPtrRegistry<std::string, class CRendererLib *> m_libs;
 
 protected:
-	virtual IRiRenderer *getRibWriter();
+	virtual CContextCreator *getRibWriterCreator();
 
 public:
 	CRendererLoader();
 	virtual ~CRendererLoader();
 
-	virtual IRiRenderer *beginRenderer(RtString name);
-	virtual RtVoid endRenderer(IRiRenderer *renderer);
-	virtual RtVoid abortRenderer(IRiRenderer *renderer);
+	virtual CContextCreator *getContextCreator(RtString name);
 	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 }; // CRendererLoader
 

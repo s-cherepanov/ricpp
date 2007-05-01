@@ -40,17 +40,17 @@ using namespace RiCPP;
 
 
 CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib) {
-	m_renderer = NULL;
-	m_newRenderer = NULL;
-	m_deleteRenderer = NULL;
+	m_contextCreator = NULL;
+	m_newContextCreator = NULL;
+	m_deleteContextCreator = NULL;
 	m_majorInterfaceVer = NULL;
 	m_minorInterfaceVer = NULL;
 	m_rendererType = NULL;
 
 	m_lib = dynLib;
 	if ( m_lib ) {
-		m_newRenderer = m_lib->getFunc("newRenderer");
-		m_deleteRenderer = m_lib->getFunc("deleteRenderer");
+		m_newContextCreator = m_lib->getFunc("newContextCreator");
+		m_deleteContextCreator = m_lib->getFunc("deleteContextCreator");
 		m_majorInterfaceVer = m_lib->getFunc("majorInterfaceVer");
 		m_minorInterfaceVer = m_lib->getFunc("minorInterfaceVer");
 		m_rendererType = m_lib->getFunc("rendererType");
@@ -59,13 +59,13 @@ CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib) {
 }
 
 CRendererLoader::CRendererLib::~CRendererLib() {
-	if ( m_renderer )
-		deleteRenderer(m_renderer);
-	m_renderer = NULL;
+	if ( m_contextCreator )
+		deleteContextCreator(m_contextCreator);
+	m_contextCreator = NULL;
 
 	if ( m_lib ) {
-		m_lib->deleteFunc(m_newRenderer);
-		m_lib->deleteFunc(m_deleteRenderer);
+		m_lib->deleteFunc(m_newContextCreator);
+		m_lib->deleteFunc(m_deleteContextCreator);
 		m_lib->deleteFunc(m_majorInterfaceVer);
 		m_lib->deleteFunc(m_minorInterfaceVer);
 		m_lib->deleteFunc(m_rendererType);
@@ -76,20 +76,20 @@ CRendererLoader::CRendererLib::~CRendererLib() {
 	m_lib = NULL;
 }
 
-IRiRenderer *CRendererLoader::CRendererLib::getRenderer() {
-	if ( m_renderer )
-		return m_renderer;
-	m_renderer = newRenderer();
-	return m_renderer;
+CContextCreator *CRendererLoader::CRendererLib::getContextCreator() {
+	if ( m_contextCreator )
+		return m_contextCreator;
+	m_contextCreator = newContextCreator();
+	return m_contextCreator;
 }
 
 bool CRendererLoader::CRendererLib::valid() {
 	if ( !validDLL() )
 		return false;
 
-	if ( !m_newRenderer || !m_newRenderer->valid() )
+	if ( !m_newContextCreator || !m_newContextCreator->valid() )
 		return false;
-	if ( !m_deleteRenderer || !m_deleteRenderer->valid() )
+	if ( !m_deleteContextCreator || !m_deleteContextCreator->valid() )
 		return false;
 	if ( !m_majorInterfaceVer || !m_majorInterfaceVer->valid() )
 		return false;
@@ -100,12 +100,12 @@ bool CRendererLoader::CRendererLib::valid() {
 	if ( !m_rendererName || !m_rendererName->valid() )
 		return false;
 
-	if ( IRiRenderer::majorVersion > majorInterfaceVer() )
+	if ( IRiContext::majorVersion > majorInterfaceVer() )
 		return false;
 
 	/* // Should be ok if only minor version differ
-	if ( IRiRenderer::majorVersion == majorInterfaceVer() )
-		if ( IRiRenderer::minorVersion > minorInterfaceVer() )
+	if ( IRiContext::majorVersion == majorInterfaceVer() )
+		if ( IRiContext::minorVersion > minorInterfaceVer() )
 			return false;
 	*/
 	return true;
@@ -113,34 +113,34 @@ bool CRendererLoader::CRendererLib::valid() {
 
 /* Platformdependent */
 /*
-IRiRenderer *newRenderer();
-void deleteRenderer(IRiRenderer *);
+CContextCreator *newContextrCreator();
+void deleteContextCreator(CContextCrteator *);
 unsigned long majorInterfaceVer();
 unsigned long minorInterfaceVer();
 const char *rendererType();
 */
 
 CRendererLoader::CRendererLoader() : m_libs(true) {
-	m_ribWriter = 0;
+	m_ribWriterCreator = 0;
 	m_searchpath = "";
 }
 
 CRendererLoader::~CRendererLoader() {
-	if ( m_ribWriter )
-		delete m_ribWriter;
-	m_ribWriter = 0;
+	if ( m_ribWriterCreator )
+		delete m_ribWriterCreator;
+	m_ribWriterCreator = 0;
 }
 
-IRiRenderer *CRendererLoader::getRibWriter() {
-	return new CRibWriter;
+CContextCreator *CRendererLoader::getRibWriterCreator() {
+	return new CRibWriterCreator;
 }
 
-IRiRenderer *CRendererLoader::beginRenderer(RtString name) {
+CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 	const char *ptr;
 	CStringList stringList;
 	stringList.explode(name, ' ');
 	if ( !stringList.empty() ) {
-		CStringList_const_iterator first = stringList.begin();
+		CStringList::const_iterator first = stringList.begin();
 		ptr = strrchr((*first).c_str(), '.');
 		if ( !(ptr && !strcmp(ptr, ".rib")) ) {
 			CDynLib *dynLib = CDynLibFactory::newDynLib((*first).c_str(), m_searchpath.c_str());
@@ -149,14 +149,14 @@ IRiRenderer *CRendererLoader::beginRenderer(RtString name) {
 				CRendererLib *lib = m_libs.findObj(key);
 				if ( lib ) {
 					delete dynLib;
-					return lib->getRenderer();
+					return lib->getContextCreator();
 				}
 				if ( dynLib->load() && dynLib->valid() ) {
 					lib = new CRendererLib(dynLib);
 					if ( lib ) {
 						if ( lib->valid() ) {
 							m_libs.registerObj(key, lib);
-							return lib->getRenderer();
+							return lib->getContextCreator();
 						} else {
 							delete lib;
 						}
@@ -169,21 +169,11 @@ IRiRenderer *CRendererLoader::beginRenderer(RtString name) {
 		}
 	}
 
-	if ( !m_ribWriter ) {
-		m_ribWriter = getRibWriter();
+	if ( !m_ribWriterCreator ) {
+		m_ribWriterCreator = getRibWriterCreator();
 	}
 
-	return m_ribWriter;
-}
-
-RtVoid CRendererLoader::endRenderer(IRiRenderer *renderer) {
-	renderer = renderer;
-	// do nothing with the renderer, the renderer will be destroyed at the end
-}
-
-RtVoid CRendererLoader::abortRenderer(IRiRenderer *renderer) {
-	renderer = renderer;
-	// do nothing with the renderer, the renderer will be destroyed at the end
+	return m_ribWriterCreator;
 }
 
 RtVoid CRendererLoader::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {

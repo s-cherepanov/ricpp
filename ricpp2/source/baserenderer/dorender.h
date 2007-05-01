@@ -31,7 +31,9 @@
 
 namespace RiCPP {
 
-/** RenderMan Interface without the ellipsis (...) calls with checked parameters, called from CBaseRenderer
+/** RenderMan Interface without the ellipsis (...) calls with checked parameters,
+ *  called from CBaseRenderer, renderers can implement these functions to do
+ *  the rendering.
  */
 class IDoRender {
 public:
@@ -43,12 +45,13 @@ protected:
 	//@{
 	/** The interface functions like in IRi
 	 */
+	virtual RtVoid doAbort(void) = 0;
+	virtual RtVoid doActivate(void) = 0;
+	virtual RtVoid doDeactivate(void) = 0;
+
 	virtual RtToken doDeclare(RtString name, RtString declaration) = 0;
 
 	virtual RtVoid doSynchronize(RtToken name) = 0;
-
-	virtual RtContextHandle doGetContext(void) = 0;
-	virtual RtVoid doContext(RtContextHandle handle) = 0;
 
 	virtual RtVoid doBegin(RtString name) = 0;
 	virtual RtVoid doEnd(void) = 0;
@@ -98,9 +101,8 @@ protected:
     virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	
     virtual RtLightHandle doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtLightHandle dodreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtLightHandle doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	
-
     virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doColor(RtColor Cs) = 0;
 	virtual RtVoid doOpacity(RtColor Cs) = 0;
@@ -162,7 +164,7 @@ protected:
 
 	virtual RtVoid doBlobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	virtual RtVoid doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	virtual RtVoid doProcedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
 
 	virtual RtVoid doGeometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
@@ -173,7 +175,7 @@ protected:
     virtual RtVoid doMakeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doArchiveRecordV(RtToken type, RtString line) = 0;
-	virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doReadArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	/*
 	// -> RenderMan 11.5.2

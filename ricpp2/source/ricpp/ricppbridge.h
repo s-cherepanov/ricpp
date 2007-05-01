@@ -127,14 +127,14 @@ protected:
 	 */
 	class CContext {
 	private:
-		/** References a renderer, NULL if no renderer is set
-		 */
-		IRiRenderer *m_renderer;
-
-		/** References a context of the renderer m_renderer, illContextHandle if
+		/** References the context creator of the renderer m_renderer, 0 if
 		 * no handle is set
 		 */
-		RtContextHandle m_handle;
+		CContextCreator *m_contextCreator;
+
+		/** References a renderer context, 0 if no renderer is set
+		 */
+		IRiContext *m_renderer;
 
 		/** True if the context is valid, the context is invalid after the matching RiEnd() is called
 		 */
@@ -149,24 +149,24 @@ protected:
 		/** The standard contructor initializes an empty, invalid instance
 		 */
 		inline CContext() :
-			m_renderer((IRiRenderer *)0),
-			m_handle((RtContextHandle)0),
+			m_contextCreator(0),
+			m_renderer(0),
 			m_valid(false),
 			m_aborted(false)
 		{
 		}
 
-		/** Construct an instance with a renderer and its context.
-		 * The instance is invalidated if the renderer is not set or
-		 * the context handle is invalid. The renderer can be referenced
+		/** Construct an instance with a renderer context and its creator.
+		 * The instance is invalidated if the context or
+		 * the context creator is invalid. The context creator can be referenced
 		 * by many CContext instances.
 		 * @param aRenderer renderer implementing the Ri
 		 * @param aHandle a andle of aRenderer
 		 */
-		inline CContext(IRiRenderer *aRenderer, RtContextHandle aHandle) :
+		inline CContext(CContextCreator *aCreator, IRiContext *aRenderer) :
+			m_contextCreator(aCreator),
 			m_renderer(aRenderer),
-			m_handle(aHandle),
-			m_valid(aRenderer != NULL && aHandle != illContextHandle),
+			m_valid(aRenderer != 0 && aCreator != 0),
 			m_aborted(false)
 		{
 		}
@@ -186,15 +186,15 @@ protected:
 			m_valid = false;
 		}
 
-		/** Gets the assigned renderer
-		 *  @return The renderer
+		/** Gets the assigned context creator
+		 *  @return Pointer to the renderer creator
 		 */
-		inline IRiRenderer *renderer() const {return m_valid ? m_renderer : NULL; }
+		inline CContextCreator *contextCreator() const {return m_valid ? m_contextCreator : 0; }
 
-		/** Gets the assigned renderer handle
-		 *  @return The renderer handle
+		/** Gets the assigned renderer context
+		 *  @return Pointer to the renderer
 		 */
-		inline RtContextHandle handle() const {return m_valid ? m_handle : (RtContextHandle)RI_NULL; }
+		inline IRiContext *renderer() const {return m_valid ? m_renderer : 0; }
 
 		/** The instance is invalid either if the renderer is NULL, the handle is invalid or
 		 *  the instance is explicitly invalidated.
@@ -202,8 +202,8 @@ protected:
 		 */
 		inline bool valid() const {
 			return m_valid && !m_aborted &&
-				m_renderer != NULL &&
-				m_handle != illContextHandle;
+				m_contextCreator != 0 &&
+				m_renderer != 0;
 		}
 
 		/** Sets the structure in an invalid state (done in CRiCPPBridge::end())
@@ -230,8 +230,8 @@ protected:
 		inline CContext &operator=(const CContext &ctx) {
 			if ( &ctx == this )
 				return *this;
+			m_contextCreator = ctx.m_contextCreator;
 			m_renderer = ctx.m_renderer;
-			m_handle = ctx.m_handle;
 			m_valid = ctx.m_valid;
 			m_aborted = ctx.m_aborted;
 			return *this;
@@ -271,6 +271,25 @@ protected:
 		CContext ctx;
 		pushContext(ctx);
 	}
+
+
+	/** Aborts the current context, the context is invalidated, because the renderer is destroyed
+	 */
+	inline void abortContext() {
+		if ( curCtx().valid() ) {
+			curCtx().contextCreator()->abort();
+			curCtx().invalidate();
+		}
+	}
+
+	/** Ends the current context, the context is invalidated, because the renderer is destroyed
+	 */
+	inline void endContext() {
+		if ( curCtx().valid() ) {
+			curCtx().contextCreator()->end();
+			curCtx().invalidate();
+		}
+	}
 	//@}
 
 	//@{
@@ -299,34 +318,18 @@ protected:
 	IRendererCreator *m_curRendererCreator; //< A renderer creator, default is a CRendererLoader
 	//@}
 
-	/** Renderer creation
+	//@{
+	/** Some forwarders for m_curRendererCreator
+	 */
+
+	/** Renderer context creation
 	 * @name Copy of CRendererLoader::begin(name)
+	 * @return Pointer to an appropriate context creator obtained from m_curRendererCreator
 	 */
-	inline virtual IRiRenderer *beginRenderer(RtString name) {
+	inline virtual CContextCreator *getContextCreator(RtString name) {
 		if ( m_curRendererCreator )
-			return m_curRendererCreator->beginRenderer(name);
-		return NULL;
-	}
-
-	/** Renderer ending, normally nothing needs to be done.
-	 *  Do not throw an exception here. The context should not be aborted, since then
-	 *  the renderer in this context is already finished by abortRenderer().
-	 *  @renderer The renderer to finish
-	 */
-	inline virtual void endRenderer(IRiRenderer *renderer) {
-		assert(!curCtx().aborted());
-		if ( m_curRendererCreator )
-			m_curRendererCreator->endRenderer(renderer);
-	}
-
-	/** Renderer aborts, called if a severe (RIE_SEVERE) error occurs.
-	 *  If an renderer is aborted, endRenderer() will not be called any more
-	 *  @renderer The renderer to abort
-	 */
-	inline virtual void abortRenderer(IRiRenderer *renderer) {
-		curCtx().abort();
-		if ( m_curRendererCreator )
-			m_curRendererCreator->abortRenderer(renderer);
+			return m_curRendererCreator->getContextCreator(name);
+		return 0;
 	}
 
 	/** Options for renderer creator, like RiOption but only concerns the m_curRendererCreator.
@@ -340,6 +343,9 @@ protected:
 		if ( m_curRendererCreator )
 			m_curRendererCreator->doOptionV(name, n, tokens, params);
 	}
+	//@}
+
+
 
 	/** Creates a bridge, with a different renderer creator. The creator is not destroyed
 	 * by the destructor. The pointer to creator is stored. The rest like CRiCPPBridge().

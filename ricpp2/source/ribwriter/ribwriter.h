@@ -29,6 +29,10 @@
 #include "baserenderer/baserenderer.h"
 #endif // _RICPP_BASERENDERER_BASERENDERER_H
 
+#ifndef _RICPP_BASERENDERER_CONTEXTCREATOR_H
+#include "baserenderer/contextcreator.h"
+#endif // _RICPP_BASERENDERER_CONTEXTCREATOR_H
+
 namespace RiCPP {
 
 class CRibWriter : public CBaseRenderer {
@@ -163,7 +167,7 @@ protected:
 
 	inline virtual RtVoid doBlobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {}
 
-	inline virtual RtVoid doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+	inline virtual RtVoid doProcedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
 
 	inline virtual RtVoid doGeometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
@@ -174,8 +178,14 @@ protected:
     inline virtual RtVoid doMakeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doArchiveRecordV(RtToken type, RtString line) {}
-	inline virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doReadArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
 };
+
+class CRibWriterCreator : public CContextCreator {
+protected:
+	inline virtual IRiContext *getNewContext() { return new CRibWriter; }
+};
+
 
 } // namespace RiCPP
 

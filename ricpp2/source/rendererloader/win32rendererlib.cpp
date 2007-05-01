@@ -34,13 +34,13 @@
 
 #include "rendererloader/rendererloader.h"
 #include "gendynlib/win32dynlib.h"
-#include "baserenderer/rirenderer.h"
+#include "baserenderer/contextcreator.h"
 
 using namespace RiCPP;
 
 extern "C" {
-typedef IRiRenderer *(CDECL *TNewRendererFunc)();
-typedef void (CDECL *TDeleteRendererFunc)(IRiRenderer *ri);
+typedef CContextCreator *(CDECL *TNewContextCreatorFunc)();
+typedef void (CDECL *TDeleteContextCreatorFunc)(CContextCreator *);
 typedef unsigned long (CDECL *TMajorInterfaceVerFunc)();
 typedef unsigned long (CDECL *TMinorInterfaceVerFunc)();
 typedef const char *(CDECL *TRendererTypeFunc)();
@@ -55,15 +55,15 @@ bool CRendererLoader::CRendererLib::validDLL() {
 	return true;
 }
 
-IRiRenderer *CRendererLoader::CRendererLib::newRenderer() {
-	if ( majorInterfaceVer() > IRiRenderer::majorVersion ) {
+CContextCreator *CRendererLoader::CRendererLib::newContextCreator() {
+	if ( majorInterfaceVer() > IRiContext::majorVersion ) {
 		return NULL;
 	}
-	IRiRenderer *ri = ((TNewRendererFunc)((CWin32LibFunc *)m_newRenderer)->funcPtr())();
-	return ri;
+	CContextCreator *cc = ((TNewContextCreatorFunc)((CWin32LibFunc *)m_newContextCreator)->funcPtr())();
+	return cc;
 }
-void CRendererLoader::CRendererLib::deleteRenderer(IRiRenderer *ri) {
-	((TDeleteRendererFunc)((CWin32LibFunc *)m_deleteRenderer)->funcPtr())(ri);
+void CRendererLoader::CRendererLib::deleteContextCreator(CContextCreator *cc) {
+	((TDeleteContextCreatorFunc)((CWin32LibFunc *)m_deleteContextCreator)->funcPtr())(cc);
 }
 
 unsigned long CRendererLoader::CRendererLib::majorInterfaceVer() {

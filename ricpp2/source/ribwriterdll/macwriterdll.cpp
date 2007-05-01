@@ -10,14 +10,14 @@ using namespace RiCPP;
 extern "C" {
 
 EXPORT
-IRiRenderer *newRenderer() {
-	return new CRibWriter;
+CContextCreator *newContextCreator() {
+	return new CRibWriterCreator;
 }
 
 EXPORT
-void deleteRenderer(IRiRenderer *ri) {
-	if ( ri )
-		delete ri;
+void deleteContextCreator(CContextCreator *cc) {
+	if ( cc )
+		delete cc;
 }
 
 EXPORT

@@ -25,9 +25,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef _RICPP_BASERENDERER_RIRENDERER_H
-#include "baserenderer/rirenderer.h"
-#endif // _RICPP_BASERENDERER_RIRENDERER_H
+#ifndef _RICPP_BASERENDERER_RICONTEXT_H
+#include "baserenderer/ricontext.h"
+#endif // _RICPP_BASERENDERER_RICONTEXT_H
 
 #ifndef _RICPP_BASERENDERER_DORENDER_H
 #include "baserenderer/dorender.h"
@@ -35,21 +35,23 @@
 
 namespace RiCPP {
 
-class CBaseRenderer : public IRiRenderer, public IDoRender {
+class CBaseRenderer : public IRiContext, public IDoRender {
 public:
 	inline CBaseRenderer() {}
 	virtual inline ~CBaseRenderer() {}
+	inline virtual RtVoid abort(void) {}
+	inline virtual RtVoid activate(void) {}
+	inline virtual RtVoid deactivate(void) {}
 
 	//@{
-	/** The interface functions of IRiRenderer
+	/** The interface functions of IRiContext
 	 */
 	inline virtual RtToken declare(RtString name, RtString declaration) { return RI_NULL; }
 
+    inline virtual RtVoid synchronize(RtToken name) {}
+
 	inline virtual RtVoid begin(RtString name) {}
 	inline virtual RtVoid end(void) {}
-
-	inline virtual RtContextHandle getContext(void) { return illContextHandle; }
-	inline virtual RtVoid context(RtContextHandle handle) {}
 
 	inline virtual RtVoid frameBegin(RtInt number) {}
 	inline virtual RtVoid frameEnd(void) {}
@@ -72,8 +74,6 @@ public:
 
     inline virtual RtVoid motionBeginV(RtInt N, RtFloat times[]) {}
     inline virtual RtVoid motionEnd(void) {}
-
-    inline virtual RtVoid synchronize(RtToken name) {}
 
     inline virtual RtVoid format(RtInt xres, RtInt yres, RtFloat aspect) {}
     inline virtual RtVoid frameAspectRatio(RtFloat aspect) {}
@@ -100,7 +100,6 @@ public:
     inline virtual RtLightHandle lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
 	inline virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
 	
-
     inline virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid color(RtColor Cs) {}
 	inline virtual RtVoid opacity(RtColor Cs) {}
@@ -162,7 +161,7 @@ public:
 
 	inline virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {}
 
-	inline virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+	inline virtual RtVoid procedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
 
 	inline virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
@@ -173,7 +172,7 @@ public:
     inline virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid archiveRecordV(RtToken type, RtString line) {}
-	inline virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid readArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	/*
 	// -> RenderMan 11.5.2
@@ -196,6 +195,10 @@ public:
 	//@}
 
 protected:
+	inline virtual RtVoid doAbort(void) {}
+	inline virtual RtVoid doActivate(void) {}
+	inline virtual RtVoid doDeactivate(void) {}
+
 	//@{
 	/** The interface functions of IDoRender
 	 */
@@ -254,8 +257,7 @@ protected:
     inline virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	
     inline virtual RtLightHandle doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
-	inline virtual RtLightHandle dodreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
-	
+	inline virtual RtLightHandle doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
 
     inline virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doColor(RtColor Cs) {}
@@ -318,7 +320,7 @@ protected:
 
 	inline virtual RtVoid doBlobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {}
 
-	inline virtual RtVoid doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+	inline virtual RtVoid doProcedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
 
 	inline virtual RtVoid doGeometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
@@ -329,7 +331,7 @@ protected:
     inline virtual RtVoid doMakeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doArchiveRecordV(RtToken type, RtString line) {}
-	inline virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doReadArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	/*
 	// -> RenderMan 11.5.2

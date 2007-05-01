@@ -25,13 +25,13 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef _RICPP_BASERENDERER_RIRENDERER_H
-#include "baserenderer/rirenderer.h"
-#endif // _RICPP_BASERENDERER_RIRENDERER_H
+#ifndef _RICPP_BASERENDERER_CONTEXTCREATOR_H
+#include "baserenderer/contextcreator.h"
+#endif // _RICPP_BASERENDERER_CONTEXTCREATOR_H
 
 namespace RiCPP {
 
-/** Create a renderer, either by dynamic loading or instanciating
+/** Create a renderer context creator, either by dynamic loading or instanciating
  */	 
 class IRendererCreator
 {
@@ -41,23 +41,11 @@ public:
 	inline virtual ~IRendererCreator() {}
 
 	/** Renderer creation (may throw ERendererException)
-	 * @param name The argument of IRi::begin(RtString name)
+	 * @param name The argument of IRi::begin(RtString name), indicates the
+	 *        name of the renderer creator with parameters appended
+	 * @return A context creator, new or already loaded
 	 */
-	virtual IRiRenderer *beginRenderer(RtString name) = 0;
-
-	/** Renderer ending, normally nothing to be done.
-	 *  Do not throw an exception here
-	 * @param renderer renderer where end() was called
-	 */
-	virtual RtVoid endRenderer(IRiRenderer *renderer) = 0;
-
-	/** Renderer abords, normally nothing to be done.
-	 *  Called if a severe (RIE_SEVERE) error occurs
-	 *  Do not throw an exception here
-	 *  if an renderer is aborted endRenderer() will not be called
-	 *  @param renderer renderer that was aborted
-	 */
-	virtual RtVoid abortRenderer(IRiRenderer *renderer) = 0;
+	virtual CContextCreator *getContextCreator(RtString name) = 0;
 
 	/** Options called before the renderer begins (may throw ERendererException)
 	 *  that is before IRi::begin() is called or between

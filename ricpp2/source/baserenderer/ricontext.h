@@ -32,7 +32,7 @@
 namespace RiCPP {
 
 	
-const RtContextHandle illContextHandle = (RtContextHandle)RI_NULL;
+const RtContextHandle illContextHandle = (RtContextHandle)0;
 const RtObjectHandle illObjectHandle = (RtObjectHandle)RI_NULL;
 const RtLightHandle illLightHandle = (RtLightHandle)RI_NULL;
 // const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)RI_NULL;

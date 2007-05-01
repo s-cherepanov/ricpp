@@ -56,6 +56,7 @@
 #endif
 
 #include <vector>
+#include <map>
 #include <stdarg.h>
 #include <assert.h>
 
@@ -121,9 +122,12 @@ protected:
 	 */
 	RtInt getTokens(RtToken token, va_list marker);
 
-	/** Holds a render and its context
-	 *  Since multiple renderes can be loaded: A reference to the renderer
-	 *  and the RtContextHandle of this renderer
+	
+	//@{
+	/** Context handling
+	 */
+
+	/** Holds a context creator and its renderer context
 	 */
 	class CContext {
 	private:
@@ -217,7 +221,11 @@ protected:
 			return m_aborted;
 		}
 
-		/** The context can be aborted by the bridge if a severe error occurse
+		/** The context can be aborted by the bridge if a severe error occures,
+		 *  this indicates that no further errors should be print (if an
+		 *  context is invalid, an error can be printed, however after a
+		 *  severe error no more errors are printed because it is likely
+		 *  that they are follow up errors)
 		 */
 		inline void abort() {
 			m_aborted = true;
@@ -238,58 +246,101 @@ protected:
 		}
 	}; // class CContext
 
-private:
-	//@{
-	/** The used renderer, context pairs, content is destroyed in the destructor
-	 * of CRiCPPBridge, Conexts only gets invalidated by CRiCPPBridge::end()
+	/** Context Management, the used context creator, renderer context pairs
 	 */
-	unsigned long m_ctxIdx; //< current renderer, context pair
-	std::vector<CContext> m_ctxVect; //< All renderer, context pairs used
-	//@}
+	class CContextManagement {
+		unsigned long m_nextCtxHandle; //< next value for context handle (counts 1 upwarts)	
+		RtContextHandle m_ctxHandle; //< current context handle
+		CContext m_curCtx; //< current creator, context pair
+		std::map<RtContextHandle, CContext> m_ctxMap; //< Maps valid context handle to creator, context pair
 
-protected:
-	//@{
-	/** Context handling
-	 */
-	/** Helper, returns the current renderer, context pair
-	 * @return A reference to the current renderer, context pair
-	 */
-	inline CContext &curCtx() {return m_ctxVect[m_ctxIdx];}
-
-	/** Pushes a renderer, context pair to the context vector
-	 * @param ctx A renderer, context pair to be stored
-	 */
-	inline void pushContext(const CContext &ctx) {
-		m_ctxVect.push_back(ctx);
-		m_ctxIdx = (unsigned long)(m_ctxVect.size()-1);
-	}
-
-	/** Pushes an invalid context. The first context (before a begin() is called, after end()) is
-	 *  invalid every time
-	 */
-	inline void pushInvalidContext() {
-		CContext ctx;
-		pushContext(ctx);
-	}
-
-
-	/** Aborts the current context, the context is invalidated, because the renderer is destroyed
-	 */
-	inline void abortContext() {
-		if ( curCtx().valid() ) {
-			curCtx().contextCreator()->abort();
-			curCtx().invalidate();
+		/** Removes a context creator, renderer context pair from the context map
+		 * @param handle The RtContextHandle as key, illContextHandle is not removed
+		 * @param ctx A context creator, renderer context pair to be stored
+		 */
+		inline void removeContext(RtContextHandle handle) {
+			if ( m_ctxHandle == illContextHandle )
+				return;
+			if ( m_ctxMap.find(handle) != m_ctxMap.end() )
+				m_ctxMap.erase(handle);
+			if ( handle == m_ctxHandle ) {
+				m_curCtx.invalidate();
+				m_ctxHandle = illContextHandle;
+			}
 		}
-	}
-
-	/** Ends the current context, the context is invalidated, because the renderer is destroyed
-	 */
-	inline void endContext() {
-		if ( curCtx().valid() ) {
-			curCtx().contextCreator()->end();
-			curCtx().invalidate();
+	public:
+		/** Initializes context management
+		 */
+		inline CContextManagement() {
+			m_nextCtxHandle = 1;
+			m_ctxHandle = illContextHandle;
+			m_curCtx.invalidate();
+			m_ctxMap[m_ctxHandle] = m_curCtx; // illContextHandle
 		}
-	}
+
+		/** Adds a context creator, renderer context pair to the context map
+		 *  with the handle as key
+		 * @param handle The RtContextHandle as key
+		 * @param ctx A context creator, renderer context pair to be stored
+		 * @return The new handle of the creator, context pair
+		 */
+		inline RtContextHandle add(const CContext &ctx) {
+			m_ctxMap[(RtContextHandle)m_nextCtxHandle] = ctx;
+			return (RtContextHandle)(m_nextCtxHandle++);
+		}
+
+		/** Aborts the current context, the context is invalidated, because the renderer is destroyed
+		 */
+		inline void abort() {
+			if ( m_curCtx.valid() ) {
+				m_curCtx.contextCreator()->abort();
+				removeContext(m_ctxHandle);
+			}
+			m_curCtx.abort();
+		}
+
+		/** Ends the current context, the context is invalidated, because the renderer is destroyed
+		 */
+		inline void end() {
+			if ( m_curCtx.valid() ) {
+				m_curCtx.contextCreator()->end();
+				removeContext(m_ctxHandle);
+			}
+		}
+
+		/** @return A reference to the current creator,
+		 *          context pair, not neccesairly valid
+		 */
+		inline CContext &curCtx() { return m_curCtx; }
+
+		/** @return The handle of the current creator,
+		 *          context pair
+		 */
+		inline RtContextHandle getContext() const { return m_ctxHandle; }
+
+		/**
+		 * @param handle A context handle
+		 * @return true if the parameter handle is a valid handle of a context
+		 */
+		inline bool isContext(RtContextHandle handle) {
+			return m_ctxMap.find(handle) != m_ctxMap.end() && m_ctxMap[handle].valid();
+		}
+
+		/** Set the new current context
+		 * @param handle A context handle
+		 * @return true if the parameter handle is set
+		 */
+		inline bool context(RtContextHandle handle) {
+			if ( m_ctxMap.find(handle) != m_ctxMap.end() ) {
+				m_ctxHandle = handle;
+				m_curCtx = m_ctxMap[m_ctxHandle];
+				return true;
+			}
+			m_ctxHandle = illContextHandle;
+			m_curCtx = m_ctxMap[m_ctxHandle];
+			return false;
+		}
+	} m_ctxMgmt;
 	//@}
 
 	//@{
@@ -297,7 +348,10 @@ protected:
 	 */
 	RtInt m_lastError; //< The last error number occured, stored by handleErrorV()
 
-	/** Forward to handleErrorV(). Variable parameters like in printf()
+	/** Forward to handleErrorV(). Variable parameters like in printf(), do
+	 * not use handleError() if message is not a known format string, use
+	 * handleErrorV() with argList=0 or use handleError(code, severity, "%s", message)
+	 * instead
 	 * @param code Error Code (RIE_...)
 	 * @param Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
 	 * @param message Format string (like in printf())
@@ -307,8 +361,10 @@ protected:
 	/** Handles an error, sets m_lastError and calls the current error handler
 	 * @param code Error Code (RIE_...)
 	 * @param Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+	 * @param message Format string (like in printf())
+	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 	 */
-	RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList);
+	RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0);
 	//@}
 
 	//@{
@@ -344,8 +400,6 @@ protected:
 			m_curRendererCreator->doOptionV(name, n, tokens, params);
 	}
 	//@}
-
-
 
 	/** Creates a bridge, with a different renderer creator. The creator is not destroyed
 	 * by the destructor. The pointer to creator is stored. The rest like CRiCPPBridge().

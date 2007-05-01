@@ -32,7 +32,11 @@ public:
 	virtual RtVoid context(IRiContext *context);
 
 	virtual RtVoid begin(RtString name);
+
+	// Don't throw
 	virtual RtVoid abort(void);
+
+	// Don't throw
 	virtual RtVoid end(void);
 }; // CContextCreator
 

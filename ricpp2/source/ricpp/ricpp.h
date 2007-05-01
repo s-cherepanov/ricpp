@@ -79,7 +79,7 @@ typedef void   *RtPointer;       ///< Pointer to arbitrary data
 
 typedef RtPointer RtObjectHandle;   ///< Handle for a object instance
 typedef RtPointer RtLightHandle;    ///< Handle for a light handle
-typedef RtPointer RtContextHandle;  ///< handle for a render context handle
+typedef unsigned long RtContextHandle;  ///< handle for a render context handle (was RtPointer)
 // typedef RtString  RtArchiveHandle;  // handle for a rib archive (3Delight)
 //@}
 

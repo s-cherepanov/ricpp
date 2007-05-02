@@ -76,7 +76,7 @@ void CEnv::getTmp(std::string &tmp) {
 	if ( tmp.size() < 1 ) {
 		get(tmp, "USERPROFILE");
 	}
-	if ( temp[tmp.size()-1] != '/' )
+	if ( tmp[tmp.size()-1] != '/' )
 		tmp += "/";
 }
 

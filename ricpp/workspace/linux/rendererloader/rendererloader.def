@@ -1,6 +1,0 @@
-include ../../../depend/ricpp.dep
-include ../../ricpp.def
-
-OBJ  = $(OBJPATH)/rendererloader.o $(OBJPATH)/ricpp.o $(OBJPATH)/sysexcept.o $(OBJPATH)/stdafx.o
-DEBUGBIN  = $(OUTPATH)/librendererloaderd.a
-RELEASEBIN  = $(OUTPATH)/librendererloader.a

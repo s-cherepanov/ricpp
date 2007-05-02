@@ -1,2 +1,0 @@
-Binary Format: has a status, it is not sufficient only to store the
-filepointer to reread portions of Rib also the end state must be stored

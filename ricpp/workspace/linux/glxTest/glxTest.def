@@ -1,6 +1,0 @@
-include ../../../depend/ricpp.dep
-include ../../ricpp.def
-
-OBJ  = $(OBJPATH)/glxTest.o
-DEBUGBIN  = $(OUTPATH)/glxTest
-RELEASEBIN  = $(OUTPATH)/glxTest

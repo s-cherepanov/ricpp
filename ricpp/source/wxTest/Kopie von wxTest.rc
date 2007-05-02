@@ -1,8 +1,0 @@
-mondrian ICON "mondrian.ico"
-#include "wx/msw/wx.rc"
-
-#define MAIN_MENU_FILE_OPEN     1
-#define MAIN_MENU_FILE_SAVE     2
-#define MAIN_MENU_FILE_QUIT     3
-#define MAIN_MENU_INFO_ABOUT    4
-

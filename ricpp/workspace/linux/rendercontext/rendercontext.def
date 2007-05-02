@@ -1,6 +1,0 @@
-include ../../../depend/ricpp.dep
-include ../../ricpp.def
-
-OBJ = $(OBJPATH)/baseclass.o $(OBJPATH)/declarationmap.o $(OBJPATH)/displaydesc.o $(OBJPATH)/light.o $(OBJPATH)/matrix3d.o $(OBJPATH)/optionmap.o $(OBJPATH)/parameter.o $(OBJPATH)/parameterdeclaration.o $(OBJPATH)/parametermap.o $(OBJPATH)/pathstack.o $(OBJPATH)/renderattributes.o $(OBJPATH)/rendercontext.o $(OBJPATH)/renderoptions.o $(OBJPATH)/ricppbinding.o $(OBJPATH)/rimacro.o $(OBJPATH)/surfaces.o $(OBJPATH)/parametric.o $(OBJPATH)/polygons.o $(OBJPATH)/subdivision.o $(OBJPATH)/shader.o $(OBJPATH)/stdafx.o $(OBJPATH)/trimcurve.o $(OBJPATH)/validcontext.o $(OBJPATH)/riscene.o
-DEBUGBIN    = $(OUTPATH)/librendercontextd.a
-RELEASEBIN  = $(OUTPATH)/librendercontext.a

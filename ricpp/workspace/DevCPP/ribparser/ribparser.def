@@ -1,6 +1,0 @@
-include ../../../depend/ricpp.dep
-include ../../ricpp.def
-
-OBJ  = $(OBJPATH)/ribistream.o $(OBJPATH)/ribparser.o $(OBJPATH)/paramclasses.o $(OBJPATH)/logfile.o $(OBJPATH)/stdafx.o
-DEBUGBIN  = $(OUTPATH)/libribparserd.a
-RELEASEBIN  = $(OUTPATH)/libribparser.a

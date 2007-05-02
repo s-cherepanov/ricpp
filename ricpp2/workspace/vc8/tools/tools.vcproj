@@ -304,6 +304,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\tools\platform.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\tools\stringlist.h"
 				>
 			</File>

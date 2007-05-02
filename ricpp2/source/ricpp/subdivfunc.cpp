@@ -34,11 +34,7 @@
  */
 
 #include "ricpp/subdivfunc.h"
-// #ifdef WIN32
-// #include <malloc.h>
-// #else
 #include <stdlib.h> //< used for free()
-// #endif
 
 using namespace RiCPP;
 

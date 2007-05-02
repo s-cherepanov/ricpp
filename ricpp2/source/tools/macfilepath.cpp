@@ -26,8 +26,23 @@
 
 using namespace RiCPP;
 
+using namespace RiCPP;
+
+char CFilepathConverter::nativePathSeperator() { return '/'; }
+char CFilepathConverter::nativePathlistSeperator() { return ':'; }
+
+std::string &CFilepathConverter::convertToInternal(std::string &var) {
+	return var;
+}
+
+std::string &CFilepathConverter::convertToNative(std::string &var) {
+	return var;
+}
+
 void CFilepath::convertToNative() {
 	m_nativepath = m_filepath;
+	CFilepathConverter::convertToNative(m_nativepath);
+	// 2Do full path
 	m_fullpath = m_nativepath;
 }
 

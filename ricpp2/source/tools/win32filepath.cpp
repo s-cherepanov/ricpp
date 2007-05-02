@@ -27,12 +27,33 @@
 
 using namespace RiCPP;
 
+char CFilepathConverter::nativePathSeperator() { return '\\'; }
+char CFilepathConverter::nativePathlistSeperator() { return ';'; }
+
+std::string &CFilepathConverter::convertToInternal(std::string &var) {
+	std::string::iterator i = var.begin();
+	for ( ; i != var.end(); i++ ) {
+		if ( (*i) == '\\' )
+			(*i) = '/';
+	}
+
+	return var;
+}
+
+std::string &CFilepathConverter::convertToNative(std::string &var) {
+	std::string::iterator i = var.begin();
+	for ( ; i != var.end(); i++ ) {
+		if ( (*i) == '/' )
+			(*i) = '\\';
+	}
+
+	return var;
+}
+
 void CFilepath::convertToNative() {
 	m_nativepath = m_filepath;
-	for ( std::string::size_type i = 0; i < m_nativepath.size(); ++i ) {
-		if ( m_nativepath[i] == '/' )
-			m_nativepath[i] = '\\';
-	}
+	CFilepathConverter::convertToNative(m_nativepath);
+
 	m_fullpath = "";
 	char pathbuf[MAX_PATH];
 	char *ptr;

@@ -28,6 +28,16 @@
 
 namespace RiCPP {
 
+	class CFilepathConverter {
+	public:
+		inline static char internalPathSeperator() {return '/';}
+		inline static char internalPathlistSeperator() {return ';';}
+		static char nativePathSeperator();
+		static char nativePathlistSeperator();
+		static std::string &convertToInternal(std::string &var);
+		static std::string &convertToNative(std::string &var);
+	}; // CFilepathConverter
+
 	class CFilepath {
 		std::string m_filepath;
 		std::string m_nativepath;

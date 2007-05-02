@@ -23,62 +23,46 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "tools/env.h"
+#include "tools/filepath.h"
 #include <stdlib.h> //!< Included for getenv()
 
 using namespace RiCPP;
 
-void CEnv::genpath(std::string &temp) {
-	std::string::iterator i = temp.begin();
-	for ( ; i != temp.end(); i++ ) {
-		if ( (*i) == ':' )
-			(*i) = ';';
-	}
-}
-
-void CEnv::get(std::string &var, const char *varName) {
+std::string &CEnv::get(std::string &var, const char *varName) {
+	var ="";
 	if ( !varName )
-		return;
+		return var;
 
 	const char *p = getenv(varName);
-	var = p ? p : "";
-	genpath(var);
+	return var = p ? p : "";
 }
 
 void CEnv::getTmp(std::string &tmp) {
 	tmp = "";
-	get(tmp, "TMP");
-	if ( tmp[tmp.size()-1] != '/' )
-		tmp += "/";
+	if ( get(tmp, "TMP").empty() )
+		get(tmp, "HOME");
+	return CFilepathConverter::convertToInternal(tmp);
 }
 
-void CEnv::getHome(std::string &home) {
+std::string &CEnv::getHome(std::string &home) {
 	home = "";
-	get(home, "HOME");
-	if ( home[home.size()-1] != '/' )
-		home += "/";
+	return CFilepathConverter::convertToInternal(get(home, "HOME"));
 }
 
-void CEnv::getPath(std::string &path) {
+std::string &CEnv::getPath(std::string &path) {
 	path = "";
 	get(path, "PATH");
+
+	std::string::iterator i = path.begin();
+	for ( ; i != path.end(); i++ ) {
+		if ( (*i) == ':' )
+			(*i) = ';';
+	}
+	return CFilepathConverter::convertToInternal(path);
 }
 
-void CEnv::getProgDir(std::string &prog) {
+std::string &CEnv::getProgDir(std::string &prog) {
 	prog = "";
-}
-
-void CEnv::find(std::string &var, const char *varName) {
-	if ( !varName )
-		return;
-
-	if ( !strcasecmp(varName, "HOME") )
-		return getHome(var);
-	if ( !strcasecmp(varName, "TMP") )
-		return getTmp(var);
-	if ( !strcasecmp(varName, "PATH") )
-		return getPath(var);
-	if ( !strcasecmp(varName, "PROG") )
-		return getProgDir(var);
-
-	return get(var, varName);
+	// ToDo find prog
+	return CFilepathConverter::convertToInternal(prog);
 }

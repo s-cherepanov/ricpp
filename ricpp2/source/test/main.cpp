@@ -1,6 +1,7 @@
 #include "ricpp/ricppbridge.h"
 #include "tools/stringlist.h"
 #include "tools/env.h"
+#include "tools/filepath.h"
 
 #include <iostream>
 
@@ -13,41 +14,21 @@ int main (int argc, char * const argv[]) {
 	CRiCPPBridge ri;
 	std::cout << "Hello, World!" << std::endl;
 
-#if 0
-	CStringList<> stringList;
-	stringList.push("eins");
-	std::cout << &(stringList.top()[0]) << std::endl;
-	stringList.push("zwei");
-	std::cout << &(stringList.top()[0]) << std::endl;
-	std::cout << stringList.size() << std::endl;
-	stringList.addSubst("PATH", "/Ein Pfad/");
-	stringList.explode("ribout \"$PATH$Eine Datei.rib\"", ' ');
-	CStringList<>::const_iterator i = stringList.begin();
-	for ( ; i != stringList.end(); i++ ) {
-		std::cout << &((*i)[0]) << std::endl;
-	}
-#endif
-
 	std::string str;
-	CEnv::getTmp(str);
-	std::cout << "TMP:" << str << std::endl;
-	CEnv::getHome(str);
-	std::cout << "HOME:" << str << std::endl;
-	CEnv::getPath(str);
-	std::cout << "PATH:" << str << std::endl;
-	CEnv::getProgDir(str);
-	std::cout << "PROGDIR:" << str << std::endl;
-
+	std::cout << CEnv::tmpName() << ": " << CEnv::find(str, CEnv::tmpName()) << std::endl;
+	std::cout << CEnv::homeName() << ": " << CEnv::find(str, CEnv::homeName()) << std::endl;
+	std::cout << CEnv::pathName() << ": "  << CEnv::find(str, CEnv::pathName()) << std::endl;
+	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName()) << std::endl;
 
 	ri.errorHandler(ri.errorPrint());
 	ri.begin("test.rib");
 	ri.end();
-	ri.option("searchpath", "renderer", ".;$PROG$;$PATH$", RI_NULL);
-	ri.begin("ribwriter \"$HOME$test.rib\"");
+	ri.begin("ribwriter \"$HOME$/test.rib\"");
 	ri.end();
 
-	// ri.errorHandler(ri.errorAbort());
+	ri.errorHandler(ri.errorAbort());
 
+	ri.option("searchpath", "renderer", ".;$PROGDIR$;$PATH$", RI_NULL);
 	ri.begin("ribwriter");
 	ri.end();
     std::cout << "Good bye, World!" << std::endl;

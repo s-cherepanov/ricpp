@@ -23,22 +23,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "tools/env.h"
+#include "tools/filepath.h"
 #include <windows.h> //!< Needed GetModulePath()
 #include <stdlib.h> //!< Included for getenv()
 
 using namespace RiCPP;
 
-void CEnv::genpath(std::string &temp) {
-	std::string::iterator i = temp.begin();
-	for ( ; i != temp.end(); i++ ) {
-		if ( (*i) == '\\' )
-			(*i) = '/';
-	}
-}
-
-void CEnv::get(std::string &var, const char *varName) {
+std::string &CEnv::get(std::string &var, const char *varName) {
+	var = "";
 	if ( !varName )
-		return;
+		return var;
 
 	char p[256];
 	size_t requiredSize;
@@ -48,8 +42,7 @@ void CEnv::get(std::string &var, const char *varName) {
 
 	getenv_s( &requiredSize, NULL, 0, varName);
 	if ( requiredSize < 1 ) {
-		var = "";
-		return;
+		return var;
 	}
 
 	if ( requiredSize >= sizeof(p)-1 ) {
@@ -61,26 +54,29 @@ void CEnv::get(std::string &var, const char *varName) {
 	ptr[requiredSize-1] = 0;
 
 	var = ptr;
-	genpath(var);
 
 	if ( &p[0] != ptr )
 		delete[] ptr;
+
+	return var;
 }
 
-void CEnv::getTmp(std::string &tmp) {
+std::string &CEnv::getTmp(std::string &tmp) {
 	tmp = "";
 	get(tmp, "TEMP");
 	if ( tmp.size() < 1 ) {
 		get(tmp, "TMP");
 	}
+
 	if ( tmp.size() < 1 ) {
-		get(tmp, "USERPROFILE");
+		// if there is not temp take the home as temp
+		return getHome(tmp);
 	}
-	if ( tmp[tmp.size()-1] != '/' )
-		tmp += "/";
+
+	return CFilepathConverter::convertToInternal(tmp);
 }
 
-void CEnv::getHome(std::string &home) {
+std::string &CEnv::getHome(std::string &home) {
 	home = "";
 
 	get(home, "HOMEDRIVE");
@@ -91,18 +87,19 @@ void CEnv::getHome(std::string &home) {
 	}
 
 	if ( home.size() < 1 ) {
+		// No home, take the Userprofile (To do: Better "My Files")
 		get(home, "USERPROFILE");
 	}
-	if ( home[home.size()-1] != '/' )
-		home += "/";
+
+	return CFilepathConverter::convertToInternal(home);
 }
 
-void CEnv::getPath(std::string &path) {
+std::string &CEnv::getPath(std::string &path) {
 	path = "";
-	get(path, "PATH");
+	return CFilepathConverter::convertToInternal(get(path, "PATH"));
 }
 
-void CEnv::getProgDir(std::string &prog) {
+std::string &CEnv::getProgDir(std::string &prog) {
 	char modulepath[MAX_PATH];
 	modulepath[0] = (char)0;
 	DWORD fsize = GetModuleFileNameA(NULL, modulepath, sizeof(modulepath));
@@ -111,29 +108,11 @@ void CEnv::getProgDir(std::string &prog) {
 	while ( len > 0 ) {
 		--len;
 		if ( modulepath[len] == '\\' ) {
-			modulepath[len+1] = 0;
+			modulepath[len] = 0;
 			break;
 		}
 	}
 
 	prog = modulepath;
-	genpath(prog);
-	if ( prog[prog.size()-1] != '/' )
-		prog += "/";
-}
-
-void CEnv::find(std::string &var, const char *varName) {
-	if ( !varName )
-		return;
-
-	if ( !_stricmp(varName, "HOME") )
-		return getHome(var);
-	if ( !_stricmp(varName, "TMP") )
-		return getTmp(var);
-	if ( !_stricmp(varName, "PATH") )
-		return getPath(var);
-	if ( !_stricmp(varName, "PROG") )
-		return getProgDir(var);
-
-	return get(var, varName);
+	return CFilepathConverter::convertToInternal(prog);
 }

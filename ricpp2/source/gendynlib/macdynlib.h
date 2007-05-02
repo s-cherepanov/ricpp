@@ -41,7 +41,6 @@ public:
 }; // CMacLibFunc
 
 class CMacDynLib : public CDynLib {
-	std::string m_libPath;
 	void *m_libHandle;
 protected:
 	virtual bool doUnload();

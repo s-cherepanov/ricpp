@@ -53,7 +53,7 @@ void CEnv::getTmp(std::string &tmp) {
 
 void CEnv::getHome(std::string &home) {
 	home = "";
-	get(home, "TMP");
+	get(home, "HOME");
 	if ( home[home.size()-1] != '/' )
 		home += "/";
 }

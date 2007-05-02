@@ -67,17 +67,17 @@ void CEnv::get(std::string &var, const char *varName) {
 		delete[] ptr;
 }
 
-void CEnv::getTemp(std::string &temp) {
-	temp = "";
-	get(temp, "TEMP");
-	if ( temp.size() < 1 ) {
-		get(temp, "TMP");
+void CEnv::getTmp(std::string &tmp) {
+	tmp = "";
+	get(tmp, "TEMP");
+	if ( tmp.size() < 1 ) {
+		get(tmp, "TMP");
 	}
-	if ( temp.size() < 1 ) {
-		get(temp, "USERPROFILE");
+	if ( tmp.size() < 1 ) {
+		get(tmp, "USERPROFILE");
 	}
-	if ( temp[temp.size()-1] != '/' )
-		temp += "/";
+	if ( temp[tmp.size()-1] != '/' )
+		tmp += "/";
 }
 
 void CEnv::getHome(std::string &home) {
@@ -128,8 +128,8 @@ void CEnv::find(std::string &var, const char *varName) {
 
 	if ( !_stricmp(varName, "HOME") )
 		return getHome(var);
-	if ( !_stricmp(varName, "TEMP") )
-		return getTemp(var);
+	if ( !_stricmp(varName, "TMP") )
+		return getTmp(var);
 	if ( !_stricmp(varName, "PATH") )
 		return getPath(var);
 	if ( !_stricmp(varName, "PROG") )

@@ -32,7 +32,7 @@ namespace RiCPP {
 		static void genpath(std::string &temp);
 		static void get(std::string &temp, const char *varName);
 	public:
-		static void getTemp(std::string &temp);
+		static void getTmp(std::string &tmp);
 		static void getHome(std::string &home);
 		static void getPath(std::string &path);
 		static void getProgDir(std::string &prog);

@@ -29,8 +29,8 @@ int main (int argc, char * const argv[]) {
 #endif
 
 	std::string str;
-	CEnv::getTemp(str);
-	std::cout << "TEMP:" << str << std::endl;
+	CEnv::getTmp(str);
+	std::cout << "TMP:" << str << std::endl;
 	CEnv::getHome(str);
 	std::cout << "HOME:" << str << std::endl;
 	CEnv::getPath(str);

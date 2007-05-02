@@ -200,7 +200,7 @@ protected:
 	inline virtual RtVoid doDeactivate(void) {}
 
 	//@{
-	/** The interface functions of IDoRender
+	/** The interface functions are called after parameter testing is done
 	 */
 	inline virtual RtToken doDeclare(RtString name, RtString declaration) { return RI_NULL; }
 

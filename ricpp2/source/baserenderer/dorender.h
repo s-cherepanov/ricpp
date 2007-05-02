@@ -31,9 +31,10 @@
 
 namespace RiCPP {
 
-/** RenderMan Interface without the ellipsis (...) calls with checked parameters,
- *  called from CBaseRenderer, renderers can implement these functions to do
- *  the rendering.
+/** RenderMan Interface without the ellipsis (...), called with checked parameters
+ *  from CBaseRenderer, renderers can inherit from CBaseRenderer implement these
+ *  functions to do the rendering. Maybe this interface is never needed externally,
+ *  however.
  */
 class IDoRender {
 public:

@@ -1,0 +1,296 @@
+Declare
+
+scratch
+-pid 2007/03/20
+-pid 2007/03/28
+---------------------------------------------------------------------------
+
+Declaration of parameter types, general request, allowed in all blocks.
+
+An interface request (e.g. Sphere, Polygon, Attribute ...) usually
+has the following form:
+
+request [requestspecific_parameters] {parameter valuelist}
+
+A parameter is either a token of a predefined variable, a declaration
+previously made or an inline declaration.
+"[[class] type ['[' n ']']] name"
+The declaration and the
+request with it's requestspecific parameters gives the size of the
+valuelist and the type of it's elements s.a. [AppNote22]. Parameters
+correspondent to shader variables or predefined variables.
+
+To issue a declaration, you need to make a 'Declare' request
+
+RIB-binding
+Declare name [[class] type ['[' n ']']]
+
+[RiSPec] [class] [type] ['[' n ']'] (??? what type if only the class is given ???)
+
+RiCPP binding (namespace RiCPP)
+RtToken IRi::declare(const char *name, const char *declaration);
+
+This request will declare a token name 'globally' of 
+specific class (i.e. storage modifier), type and arraysize.
+
+class can be
+
+constant     - one constant value for the whole primary
+uniform      - one value per face of the primary
+varying      - one value per vertex the values are
+               interpolated linearily
+vertex       - one value per vertex the values are
+               interpolated like the positions
+facevarying  - one value per vertex of each face the values
+               are interpolated linearily across the face
+facevertex   - one value per vertex of each face the values
+               are interpolated across the face like the positions
+
+If the value for class is missing, uniform is assumed.
+
+- in some primaries like Sphere varying and vertex are
+  the same and there is only one face, so facevarying and facevertex
+  have the same size as varying or vertex variables. You should use
+  the less specific (varying in this example) in these cases.
+
+Type is one of
+
+float, integer, string,
+vector (3 floats), normal (3 floats), hpoint (4 floats), matrix (16 floats),
+color (color is special because the number of floats
+can be changed with a request ColorSamples, there are 3 floats normally)
+
+- integer and hpoint do not occur as types for shader variables. Because
+  there is no use for integers in shading [ARM] and the hpoints are only
+  used to calculate the points of rational or non-rational B-Spline surfaces
+  and trimcurves. Implementation hint: string needs some extra attention
+  (valuelist is of type pointer to string, not of string)
+
+The type can be an array of size n (affects the number of elements in the
+valuelist), if n is missing it is set to 1.
+
+If class, type and n is missing, name is only tokenized (bound with an index).
+The token name then cannot bind any values.
+
+The declaration is said to be 'global', it overwrites a declaration of
+the same name previously made by writing the declaration into a 'global'
+directory. RiCPP overwrites only the declarations in the same context,
+'global' means only 'global' within the same context. Overwriting contextes
+of a scene by a declaration of another makes no sense and violates the
+isolation of the contexts badly. I consider this global overwriting as
+potential harmfull to the consistency of a scene. It is prone of conflicts.
+Imagine you include a RIB entity or archive that does some arbitrary
+declarations that overwrite your own. In the best case you can figure out
+these declarations and redeclare them after the ReadArchive request.
+
+Within object blocks declarations are stored into the global directory.
+If you call the 'ObjectInstance' request the declaration dictionary
+will be the same after the execution of the 'ObjectInstance'
+request. Implementation hint: Internally the declaration stack gets
+manipulated while 'replaying' the object block, but it gets restored
+before the next request - or since all parameters are bound, the
+Declare requests don't need to be replayed.
+
+If you like to declare variables for your selfwritten shaders,
+you can adopt the naming scheme of QuickRenderMan's qualified token names:
+{namespace:{table:}}var like shadertype:shadername:variablename
+to avoid some conflicts, s.a. [kaushik]. Of course if another
+one writes a shader with the same name and shadertype the conflict
+persists. You can also generally use inline declarations.
+
+
+Implementation hint:
+'inline' declaritions are helpful, but nothing prevents you from using a
+parameter "vertex point P" for your request. RiCPP must figure out that the
+"P" in "vertex point P" is RI_P, with the same semantics - usually not a problem.
+RI_P is not only forwarded to a shader variable "P" but is also used to
+generate the positions of the vertices of a graphics primary. It will
+lead to trouble, if you declare "uniform point P", wheras there is nothing wrong
+in declaring "uniform color Cs" or "constant color Cs" as you like, but
+"constant string Cs" will not work. In [AppNote7] it is strongly recommended
+not to change the type of parameters that have special meaning to
+the renderer. You can also find a list of these variables there:
+
+GENERAL RI PARAMETERS
+
+Cs az epsilon2 near hither subwindow
+N bias0 eyesplits origin t
+Ng bias1 flatness print texture
+Np binary fov rgb texturememory
+Os bucketsize gridarea rgba trimdeviation
+P bucketstride gridsize rgbaz z
+Pw displacement interleave rgbz
+Pz dynamic jitter s
+a endofframe merge shader
+algorithm epsilon1 name st
+
+SHADER PARAMETERS
+
+Ka amplitude conedeltaangle lightcolor specularcolor
+Kd background distance maxdistance texturename
+Kr beamdistribution from mindistance to
+Ks coneangle intensity roughness
+
+Nevertheless, the framework must handle the cases if the declaration of
+these variables are changed.
+
+The declarations are destroyed at the IRi::end() of the context.
+
+Literature: [RiSPEC] [ARM] [RMC] [AppNote7] [AppNote22] [kaushik] [PRMAN10]
+
+Notes and problems
+------------------
+
+facevarying and facevertex are not yet mentioned in the specs.
+facevarying announced in RenderMan Release Notes 10 [PRMAN10]
+facevertex seems only be adopted by a minor number of renderers,
+afaik it makes only sense in bicubic patch meshes, nupatches
+and maybe subdivision surfaces
+"All standard variable types are supported: constant, uniform, varying, vertex,
+facevarying and facevertex. facevertex is used exactly as facevarying but
+interpolates the variables according to surface's subdivision rules. " [3dlight]
+
+If the declarations get "overwritten" the cannot be deleted since e.g.
+parameter naems within objects bear a pointer to their declaration.
+
+Problems with the scope of declarations
+
+Problems if procedure calls are not executed or are executed by level of
+detail - different variables might be declarated - doesn't matter, simply
+issue everyone (linear with the requests).
+
+Caching of ReadArchive calls for the same RIB archive, parameters are bound only
+the first time the ReadArchive is executed, since maybe a different variable set is
+declared at the different ReadArchive calls, that can lead to confilcts.
+
+If spliting a ribfile frame by frame for rendering single frames
+over the network, the state (also the declarations) must be stored
+right after FrameEnd
+
+Begin
+FrameBegin 1
+FrameEnd
+[state snapshot]
+
+FrameBegin 2
+FrameEnd
+End
+
+--->
+
+Begin
+FrameBegin 1
+FrameEnd
+End
+
+Begin
+[state snapshot]
+FrameBegin 2
+FrameEnd
+End
+
+
+Example
+-------
+
+Begin
+[variable set 1]
+ObjectBegin 1
+	[variable set 1 is valid here]
+	do some Declare -> [Variable Set 2]
+ObjectEND
+
+[variable set 2]
+
+Some more declarations
+
+[variable set 3]
+ObjectInstance 1 -- Within Object [variable set 1] is valid
+[variable set 3] -- Even if declarations occur in ObjectInstance 1
+
+ReadArchive "TheArchive.rib" -- [variable set 3] is valid, maybe some Declare
+
+[variable set 4]
+
+Some more declarations
+
+[variable set 5]
+
+ReadArchive "TheArchive.rib" -- [variable set 5] is valid, not [variable set 3] if not cached
+                             -- [variable set 3] would be used if "TheArchive.rib" is cached
+                             -- maybe some Declare
+
+[variable set 6 - mixture of 4 or 5]
+
+end
+
+
+If "TheArchive.rib" is parsed into a cache, this is done with [variable set 3] at
+the beginning. If this archive sets some more declarations, [variable set 4]
+results. Some more declares leads to [variable set 5]. If the next ReadArchive uses
+the parsed data of the first read, [variable set 3] is used instead of [variable
+set 5]. Of course the variables from set 3 and 5 must be declared in a manner, that
+the archive can be read without errors, the sizes of the valuelists don't change.
+However the class (vertex or varying) and color definition can be different and
+therefore the resulting objects may be rendered in a different way.
+Caching the archive file may gain a lot performance, and changeing
+the class of a declaration for the same archive included at differend
+places is incommon. I include a boolean control attribute ricpp:control:cachearchive
+which can be used to enable archive caching, dispite the
+problems with the declares. Differently to ObjectInstance, the declares issued in a
+RIB-Archive do effect the declaration dictionary.
+
+s.a. Parameters, ObjectInstances and RibArchives
+
+Implementation
+--------------
+
+- Jobs to do:
+
+Create declarations (Declare request)
+Find declarations (can be inline declaration string)
+Destroy Declarations
+Register Tokens (Flyweights)
+Enumerate all valid declarations
+
+
+- Objects:
+
+- BasicTypeContainer
+findTypeSpec(colorSize)
+
+- TypeContainer
+findTypeSpec(colorSize)
+
+- ClassContainer
+findClassSpec(colorSize)
+
+- Token (Flyweight, Data class read only, final)
+Data: id, const char * of token
+Contains a reference of the name and token ID for a declaration or inline declaration name.
+The token ID is unique as the name there is a 1:1 relation between name and token ID.
+After "tokenizing" a name you can compare the tokens for equality simply by compareing their IDs.
+
+- Tokenizer, final, Maps String <-> id (Flyweight Factory, candidate for singleton: no! - member of the context)
+Token Search for string, if not available insert a new string, OutOfMemoryException
+Token Search for id (seldom used - Token contains char *), throws TokenizerException if nothing found
+Token Search for string, throws TokenizerException if nothing found
+Iterator to get all tokens
+
+- Declaration (read only, final, object behavioral): Holds a single declaration (inline or Declare)
+Data: Token, class specifier, type specifier, arraysize, type, typesize (mind the color), basicType, basicTypeSize, isInline Flag
+constructor parse(const char *declBody, colorsize, isInline) - throws DeclarationParserException, OutOfMemoryException
+	implements parser for declaration body as constructor
+The size of an element (elementsize) can be calculated typesize*arraysize, and number of bytes of an element
+
+- DeclarationDictionary (final, Object structural) uses Tokenizer
+Overwritten declarations are unlinked from the list with current declarations
+Data: declaration list, overwritten declarations
+insert declaration with overwrite, - throws OutOfMemoryException
+Declaration &find declaration
+Iterator to get all valid declarations
+Destructor destroys all declarations
+parseDeclaration(const char *name, const char *decl, colorsize) - throws DeclarationParserException, OutOfMemoryException
+const Declaration *parseParameter(const char *declwithname, colorsize) - throws ParameterParserException, OutOfMemoryException
+	Can return inline declarations, that are not linked and must be destroyed (handled by Parameter) after use
+

@@ -1,0 +1,19 @@
+include ../../../depend/ricpp.dep
+include ../../ricpp.def
+
+OBJ  = $(OBJPATH)/mesh.o $(OBJPATH)/stdafx.o
+
+DEBUGBIN  = $(EXEDEBUGOUTPATH)/Contexts/mesh.dll
+RELEASEBIN  = $(EXERELEASEOUTPATH)/Contexts/mesh.dll
+
+DEBUGDEPLIBS = ../../libmesh/Debug/out/libmeshd.a ../../rendererloader/Debug/out/librendererloaderd.a ../../rendercontext/Debug/out/librendercontextd.a ../../ribparser/Debug/out/libribparserd.a
+DEBUGLIBS = $(LIBS) $(DEBUGDEPLIBS) -llibz
+
+RELEASEDEPLIBS = ../../libmesh/Release/out/libmesh.a ../../rendererloader/Release/out/librendererloader.a ../../rendercontext/Release/out/librendercontext.a ../../ribparser/Release/out/libribparser.a
+RELEASELIBS = $(LIBS) $(RELEASEDEPLIBS) -llibz
+
+DEBUGDEFFILE=$(OUTPATH)/libmeshdll.def
+DEBUGSTATICLIB=$(OUTPATH)/libmeshdll.a
+
+RELEASEDEFFILE=$(OUTPATH)/libmeshdll.def
+RELEASESTATICLIB=$(OUTPATH)/libmeshdll.a

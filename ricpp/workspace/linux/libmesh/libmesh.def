@@ -1,0 +1,6 @@
+include ../../../depend/ricpp.dep
+include ../../ricpp.def
+
+OBJ  = $(OBJPATH)/libmesh.o $(OBJPATH)/stdafx.o
+DEBUGBIN  = $(OUTPATH)/libmeshd.a
+RELEASEBIN  = $(OUTPATH)/libmesh.a

@@ -1,0 +1,6 @@
+include ../../../depend/ricpp.dep
+include ../../ricpp.def
+
+OBJ  = $(OBJPATH)/glprims.o $(OBJPATH)/libglrenderer.o $(OBJPATH)/stdafx.o
+DEBUGBIN  = $(OUTPATH)/libglrendererd.a
+RELEASEBIN  = $(OUTPATH)/libglrenderer.a

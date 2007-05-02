@@ -1,0 +1,134 @@
+CHANGES
+-------
+
+At the moment ricpp is redesigned and under construction (directory ricpp2)
+Compiling may not work.
+
+
+How to compile
+--------------
+
+  After cvs checkout, please cd to ricpp and use first 'cvs update -P'
+  to prune empty directories.
+
+  Then use prepare.bat in ricpp\workspaces one time to copy some files to
+  their appropriate places.
+
+  The project can be compiled with
+  Visual Studio 6,        workspace is ricpp\workspaces\vc6\ricpp.dsw
+  Visual Studio 2003.net, soulution is ricpp\workspaces\vc7\ricpp.sln
+  MinGW and MinGW32 using Dev-CPP, see below
+  MinGW32 using CBuilderX, see below
+
+Source format
+-------------
+
+  Should be 4 blanks for Tab and indents and additional indents. Tabs only
+  at the beginning (normally) of a line. Blocks are in diagonal curley brackets.
+
+Additional libraries needed
+---------------------------
+
+  libtiff: tiff-3.7.2 (GnuWin32), libtiff.lib used to link by the glrenderer.
+  zlib: zlib-1.2.2 (GnuWin32), libz.lib used to link by the ribparser.
+
+  The includes and libs and DLLs are included with the ricpp\workspace\3rdparty
+  directory.
+
+  The additional dll's are copied to the out (execution) pathes by prepare.bat:
+
+  libtiff3.dll  (from tiff-3.7.2, GnuWin32)
+  libjpeg62.dll (from libjpeg-6b, GnuWin32)
+  zlib1.dll     (from zlib-1.2.2, GnuWin32)
+
+  For some test programms you will also need Qt (>= 2.6) or wxWindows (2.4.2)
+  with their dynamic libraries.
+
+Using Visual Studio
+-------------------
+
+  These files are created in the workspaces exe\debug and exe\release:
+
+    ricpptest.exe, demo for the lib
+    ribpreview.exe, sample with mutidocument interface
+    ribloader.exe, sample with single document interface
+    context\glrenderer.dll, context\ribout.dll, the renderer contexts
+    and test progs for wxWindows, qt in seperate projects
+
+  After compiling the project with batch build you can use
+  copylib.bat (in vc6, vc7, DevCPP) to copy to the ricpplib directory
+  of the workspace.
+
+  After building the main files you can build the progsamples (only for
+  library testing). Use prepare.bat in progsamples\workspaces first to
+  copy some files to their appropriate places. The project files can be
+  found in the progsamples\workspaces subfolders. Another
+  progsamples\RIBPreview (.net only, a 'howto' sample) is only a vc7 project.
+
+  The progsamples\testrib uses the ribparser and the intermediate
+  renderer classes (all linked statically) to parse a RIB file and
+  output the errors on a command console.
+
+Using Dev-CPP (MinGW)
+---------------------
+
+  After preparing the workspaces (prepare.bat) and edited the configuration file
+  ricpp\workspace\DevCPP\ricpp.def to use the Path of DevCPP (MinGW), you can
+  use Dev-CPP (4.9.80 with gcc 3.2) or MinGW 3.1.0-1 with gcc 3.2.3 to compile
+  the projects test files.
+
+  For the DevCPP .dev Projects in the Debug and Release subdirectories,
+  please use DevCPP to compile in the following order:
+
+    glcpp
+    rendererloader
+    ribparser
+    rendercontext
+    rimesh
+    libglrenderer
+    glrenderer
+    libribout
+    ribout
+    ricpptest
+
+    testrib (progamples)
+
+  The executables will be in exe\Debug\out or exe\Release\out.
+
+  There are user defined Makefiles, so you can also change to workspace\DevCPP
+  and call 'make' to make all (also possible: release, debug, clean, cleandebug
+  and cleanrelease). Please use the version of make.exe that comes with RiCPP.
+  There are Makefiles for every subproject and configuration.
+  
+  The source file dependencies are edited manually by now and stored at
+  workspace\depend\ricpp.dep.
+
+Using CBuilderX (test)
+----------------------
+
+  First you probably need to set an environment variable
+
+  BCBX       : Base path of CBuilderX, e.g. C:\CBuilderX
+
+  CBuilderX can be loaded with ricpp\workspaces\CBuilderX\ricpp.bpgr. The results
+  should go to ricpp\workspaces\CBuilderX\build\gnuwin32\Debug\exe or
+  ricpp\workspaces\CBuilderX\build\gnuwin32\Relaese\exe. Only ricpptest and testrib
+  are build at the moment. Compiler is MinGW on the Windows platform only.
+
+Compiling with Gnu-C++ under Linux (static Libs only, test)
+-----------------------------------------------------------
+
+  Change to the ricpp/workspace/linux directory. There is a file called
+  ricpp.def.temp (included by makefile), copy it to ricpp.def.
+  Mesa, libtiff, libjpeg and libz are used additionally.
+  You can call make to compile and link the libraries (static libraries
+  at the moment) to the Debug and Release subdirectories of the workspace
+  directories. The compiler used is g++ version 3.x.
+  There is one executable glxTest to read a rib file and display
+  it using in an X Window with Mesa. The output is very experimental.
+  Another executeable: testrib reads a rib file and prints messages
+  for rib errors found.
+
+Have fun,
+Andreas
+

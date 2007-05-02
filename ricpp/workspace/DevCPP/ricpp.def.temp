@@ -1,0 +1,88 @@
+# Definitions for general compiler configuration
+# -----------------------------------------------------------------------------
+
+# Please enter your path strings
+
+# !!! Please enter: Root of Mingw (or root of Dev-CPP) and the version of gcc (gcc --version) with '/' at front
+
+# Currently supported mingw 3.1.0-1 with gcc 3.2.3 (mind the '/' at front, because of the directories)
+MINGW = C:/MINGW
+GCCVER = /3.2.3
+MAKE = mingw32-make.exe
+
+# or DevCPP 4.9.8.7 (mingw gcc 3.2) - GCCVER must be empty
+# MINGW = C:/Dev-Cpp
+# GCCVER =
+# MAKE = make.exe
+
+# !!! For the WXWin test program, please enter: Root of WXWIN (if there is no environment variable)
+# WXWIN = C:/wxwin
+# See also: RELEASEWXLIBS and DEBUGWXLIBS at the Libraries section at
+# end of the def file
+
+# -----------------------------------------------------------------------------
+# You don't need to change the following
+
+# mingw32 directory
+MINGWDIR = $(MINGW)/mingw32
+
+# path only the MINGW\bin and tools, because dllwrap.exe calls c++.exe
+PATH = $(MINGW)\BIN;..\..\..\3rdparty\bin;..\3rdparty\bin
+
+# Additional includes (libz, libtiff, etc)
+ADDCXXINCS = -I"../../../3rdparty/include"
+
+# Additional libraries (libz, libtiff, etc)
+ADDLIBS = -L"../../../3rdparty/lib"
+
+
+# -----------------------------------------------------------------------------
+
+# The Makefile
+MAKEFILE=Makefile
+
+# Commands (tools)
+RM = rm.exe -f
+
+# Commands (MINGW)
+CPP  = $(MINGW)/bin/g++.exe
+WINDRES = $(MINGW)/bin/windres.exe
+RANLIB = $(MINGW)/bin/ranlib.exe
+AR = $(MINGW)/bin/ar.exe r
+DLLWRAP=$(MINGW)/bin/dllwrap.exe
+STRIP = $(MINGW)/bin/strip.exe
+
+# Relative path to source root
+RELPATH=../../../../source
+
+# Relative destination pathes
+OBJPATH=obj
+OUTPATH=out
+EXERELEASEOUTPATH=../../exe/Release/out
+EXEDEBUGOUTPATH=../../exe/Debug/out
+
+# Includes
+CXXINCS = -I"$(RELPATH)" $(ADDCXXINCS) -I"$(MINGW)/include/c++$(GCCVER)" -I"$(MINGW)/include/c++$(GCCVER)/mingw32"  -I"$(MINGW)/include/c++$(GCCVER)/backward" -I"$(MINGW)/include"
+
+# General flags
+CXXFLAGS = $(CXXINCS) -D__GNUWIN32__ -Wall -DWIN32 -fexceptions -D_MBCS
+
+# General debug flags
+CXXDEBUGFLAGS = $(CXXFLAGS) -D__DEBUG__ -D_DEBUG -fverbose-asm -g2 -O0
+CXXDEBUGLIBFLAGS = $(CXXDEBUGFLAGS) -D_LIB
+CXXDEBUGDLLFLAGS = $(CXXDEBUGFLAGS) -D_USRDLL
+
+# General release flags
+CXXRELEASEFLAGS = $(CXXFLAGS) -DNDEBUG -O3
+CXXRELEASELIBFLAGS = $(CXXRELEASEFLAGS) -D_LIB
+CXXRELEASEDLLFLAGS = $(CXXRELEASEFLAGS) -D_USRDLL
+
+# Libraries
+LIBS = $(ADDLIBS) -L"$(MINGW)/LIB"
+RELEASEWXLIBS = -lwxmsw242
+DEBUGWXLIBS = -lwxmsw242d
+
+# Wrap flags
+# DLLWRAPFLAGS = --driver-name c++ --verbose
+DLLWRAPFLAGS = --driver-name c++
+

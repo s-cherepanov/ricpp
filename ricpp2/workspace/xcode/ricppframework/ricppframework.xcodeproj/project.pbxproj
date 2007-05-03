@@ -31,6 +31,7 @@
 		C372B8EE0BD7610D009B2459 /* ricppbridge.h in Headers */ = {isa = PBXBuildFile; fileRef = C372B8E20BD7610D009B2459 /* ricppbridge.h */; settings = {ATTRIBUTES = (); }; };
 		C372B8EF0BD7610D009B2459 /* subdivfunc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C372B8E30BD7610D009B2459 /* subdivfunc.cpp */; };
 		C372B8F00BD7610D009B2459 /* subdivfunc.h in Headers */ = {isa = PBXBuildFile; fileRef = C372B8E40BD7610D009B2459 /* subdivfunc.h */; settings = {ATTRIBUTES = (); }; };
+		C3787D5C0BE9C4840072105F /* ricontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3787D5B0BE9C4840072105F /* ricontext.cpp */; };
 		C38EA2980BE869E50057831B /* filepath.h in Headers */ = {isa = PBXBuildFile; fileRef = C38EA2970BE869E50057831B /* filepath.h */; };
 		C38EA2A30BE86D370057831B /* macfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2A20BE86D370057831B /* macfilepath.cpp */; };
 		C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */; };
@@ -134,6 +135,7 @@
 		C372B8E30BD7610D009B2459 /* subdivfunc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = subdivfunc.cpp; path = ../../../source/ricpp/subdivfunc.cpp; sourceTree = SOURCE_ROOT; };
 		C372B8E40BD7610D009B2459 /* subdivfunc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = subdivfunc.h; path = ../../../source/ricpp/subdivfunc.h; sourceTree = SOURCE_ROOT; };
 		C372B8F50BD76177009B2459 /* libbaserenderer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbaserenderer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3787D5B0BE9C4840072105F /* ricontext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricontext.cpp; path = ../../../source/baserenderer/ricontext.cpp; sourceTree = SOURCE_ROOT; };
 		C38EA2970BE869E50057831B /* filepath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = filepath.h; path = ../../../source/tools/filepath.h; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = contextcreator.cpp; path = ../../../source/baserenderer/contextcreator.cpp; sourceTree = SOURCE_ROOT; };
@@ -380,6 +382,7 @@
 		C372B8FB0BD7618F009B2459 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C3787D5B0BE9C4840072105F /* ricontext.cpp */,
 				C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */,
 				C35C7A480BD76D3A00548675 /* baserenderer.cpp */,
 			);
@@ -760,6 +763,7 @@
 			files = (
 				C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */,
 				C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */,
+				C3787D5C0BE9C4840072105F /* ricontext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

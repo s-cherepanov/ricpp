@@ -37,7 +37,7 @@ std::string &CEnv::get(std::string &var, const char *varName) {
 	return var = p ? p : "";
 }
 
-void CEnv::getTmp(std::string &tmp) {
+std::string &CEnv::getTmp(std::string &tmp) {
 	tmp = "";
 	if ( get(tmp, "TMP").empty() )
 		get(tmp, "HOME");

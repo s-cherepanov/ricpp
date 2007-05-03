@@ -51,14 +51,22 @@ std::string &CFilepathConverter::convertToNative(std::string &var) {
 }
 
 void CFilepath::convertToNative() {
+	char pathbuf[MAX_PATH];
+
+	if ( m_filepath.empty() ) {
+		if ( getcwd(pathbuf, sizeof(pathbuf)) ) {
+			pathbuf[sizeof(pathbuf)-1] = 0;
+			m_filepath = pathbuf;
+		}
+	}
+
 	m_nativepath = m_filepath;
 	CFilepathConverter::convertToNative(m_nativepath);
 
 	m_fullpath = "";
-	char pathbuf[MAX_PATH];
 	char *ptr;
 	if ( GetFullPathNameA(m_nativepath.c_str(), sizeof(pathbuf), pathbuf, &ptr) != 0 ) {
-		pathbuf[sizeof(pathbuf)-1]=0;
+		pathbuf[sizeof(pathbuf)-1] = 0;
 		m_fullpath = pathbuf;
 	}
 }

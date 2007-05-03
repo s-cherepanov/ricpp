@@ -24,7 +24,9 @@
 
 #include "tools/filepath.h"
 
-using namespace RiCPP;
+#include <sys/param.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 using namespace RiCPP;
 
@@ -40,10 +42,22 @@ std::string &CFilepathConverter::convertToNative(std::string &var) {
 }
 
 void CFilepath::convertToNative() {
+	char pathbuf[PATH_MAX];
+
+	if ( m_filepath.empty() ) {
+		if ( getcwd(pathbuf, sizeof(pathbuf)) ) {
+			pathbuf[sizeof(pathbuf)-1] = 0;
+			m_filepath = pathbuf;
+		}
+	}
+
 	m_nativepath = m_filepath;
 	CFilepathConverter::convertToNative(m_nativepath);
-	// 2Do full path
-	m_fullpath = m_nativepath;
+
+	if ( realpath(m_nativepath.c_str(), pathbuf) ) {
+		pathbuf[sizeof(pathbuf)-1] = 0;
+		m_fullpath = pathbuf;
+	}
 }
 
 bool CFilepath::isAbsolute() const {

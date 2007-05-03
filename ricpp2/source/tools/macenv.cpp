@@ -24,6 +24,7 @@
 
 #include "tools/env.h"
 #include "tools/filepath.h"
+
 #include <stdlib.h> //!< Included for getenv()
 
 using namespace RiCPP;

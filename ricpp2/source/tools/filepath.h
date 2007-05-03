@@ -44,7 +44,8 @@ namespace RiCPP {
 		std::string m_fullpath;
 		void convertToNative();
 	public:
-		inline CFilepath(const char *aFilepath):m_filepath(aFilepath) { convertToNative(); }
+		inline CFilepath():m_filepath("") { convertToNative(); }
+		inline CFilepath(const char *aFilepath):m_filepath(aFilepath ? aFilepath : "") { convertToNative(); }
 		inline const char *filepath() const { return m_filepath.c_str(); }
 		inline const char *nativepath() const { return m_nativepath.c_str(); }
 		inline const char *fullpath() const { return m_fullpath.c_str(); }

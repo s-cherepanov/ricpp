@@ -23,6 +23,7 @@ int main (int argc, char * const argv[]) {
 	ri.errorHandler(ri.errorPrint());
 	ri.begin("test.rib");
 	ri.end();
+	ri.option("searchpath", "renderer", ".", RI_NULL);
 	ri.begin("ribwriter \"$HOME$/test.rib\"");
 	ri.end();
 

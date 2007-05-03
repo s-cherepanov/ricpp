@@ -23,9 +23,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "gendynlib/macdynlib.h"
-#include "ricpp/renderererror.h"
+#include "tools/filepath.h"
+
 #include <dlfcn.h>
-#include <iostream>
 
 using namespace RiCPP;
 
@@ -43,7 +43,6 @@ bool CMacLibFunc::valid() {
 void *CMacLibFunc::funcPtr() const {
 	return m_funcPtr;
 }
-
 
 CMacDynLib::CMacDynLib(const char *libname, const char *searchpath) : m_libHandle((void *)0), CDynLib(libname, searchpath) {
 }
@@ -68,20 +67,7 @@ bool CMacDynLib::doLoad() {
 	if ( !isLoaded() ) {
 		const char *libpath = findLib();
 		if ( libpath && libpath[0] ) {
-			m_libHandle = dlopen(libpath, RTLD_LOCAL|RTLD_LAZY);
-			/*
-			if ( !m_libHandle ) {
-				const char *err = dlerror();
-				std::string errstr(libpath);
-				if ( err ) {
-					errstr += " ";
-					errstr += err;
-				} else {
-					errstr += " could not be loaded";
-				}
-				throw ERendererError(RIE_SYSTEM, RIE_SEVERE, errstr.c_str());
-			}
-			*/
+			m_libHandle = dlopen(libpath, RTLD_LOCAL|RTLD_NOW);
 		}
 	}
 	return isLoaded();
@@ -122,18 +108,22 @@ const char *CMacDynLib::findLib() {
 				if ( strlibpath[strlibpath.size()-1] != '/' )
 					strlibpath += "/";
 			strlibpath += dllname;
-			if ( 0 != (f=fopen(strlibpath.c_str(), "r")) ) {
+			CFilepath p(strlibpath.c_str());
+			if ( 0 != (f=fopen(p.fullpath(), "r")) ) {
 				fclose(f);
-				m_libpath = strlibpath;
+				m_libpath = p.fullpath();
 				break;
 			}
 		}
 	} else {
 		// Search the standard path
-		m_libpath = dllname;
+		// CFilepath p;
+		m_libpath = "";
+		// m_libpath = p.fullpath();
+		// m_libpath += "/";
+		m_libpath += dllname;
 	}
 
-	// return NULL if not found
 	return m_libpath.c_str();
 }
 

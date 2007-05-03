@@ -113,7 +113,7 @@ const char *CWin32DynLib::findLib() {
 			strlibpath += dllname;
 			FILE *f = NULL;
 			CFilepath p(strlibpath.c_str());
-			if ( fopen_s(&f, p.nativepath(), "r") == 0 ) {
+			if ( fopen_s(&f, p.fullpath(), "r") == 0 ) {
 				fclose(f);
 				m_libpath = p.fullpath();
 				break;

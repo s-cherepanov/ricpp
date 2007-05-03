@@ -88,6 +88,7 @@ public:
 			normal,
 			maskchar,
 			varchar,
+			varcharpar,
 			singlequote,
 			doublequote,
 			maskinquote
@@ -121,10 +122,37 @@ public:
 					state = normal;
 					break;
 				case varchar:
-					if ( *iter == varChar ) {
+					if ( *iter == '(' ) {
+						state = varcharpar;
+					} else if (
+						(*iter >= 'a' && *iter <= 'z') ||
+						(*iter >= 'A' && *iter <= 'Z') ||
+						(*iter >= '0' && *iter <= '9') ||
+						*iter == '_'
+					) {
+						varName.push_back(*iter);
+					} else {
 						state = normal;
+
+						// replace variable
 						std::string::difference_type d = distance(strval.begin(), saviter);
+						saviter = strval.erase(saviter, iter);
+						insertVar(varName, useEnv);
+						d += varName.size();
+						strval.insert(saviter, varName.begin(), varName.end());
+						varName.clear();
+						iter = strval.begin();
+						advance(iter, d);
+						iterinc = false;
+					}
+					break;
+				case varcharpar:
+					if ( *iter == ')' ) {
+						state = normal;
 						iter++;
+
+						// copy from varchar replace variable
+						std::string::difference_type d = distance(strval.begin(), saviter);
 						saviter = strval.erase(saviter, iter);
 						insertVar(varName, useEnv);
 						d += varName.size();
@@ -144,6 +172,20 @@ public:
 					break;
 			}
 		}
+		if ( state == varchar || state == varcharpar ) {
+			// copy from varchar replace variable
+			std::string::difference_type d = distance(strval.begin(), saviter);
+			saviter = strval.erase(saviter, iter);
+			insertVar(varName, useEnv);
+			d += varName.size();
+			strval.insert(saviter, varName.begin(), varName.end());
+			varName.clear();
+			// iter = strval.begin();
+			// advance(iter, d);
+			// iterinc = false;
+		}
+
+		state = normal;
 
 		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
 			iterinc = true;

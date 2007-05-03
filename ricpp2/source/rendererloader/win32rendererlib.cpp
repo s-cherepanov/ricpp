@@ -39,7 +39,7 @@
 using namespace RiCPP;
 
 extern "C" {
-typedef CContextCreator *(CDECL *TNewContextCreatorFunc)();
+typedef CContextCreator *(CDECL *TNewContextCreatorFunc)(unsigned long);
 typedef void (CDECL *TDeleteContextCreatorFunc)(CContextCreator *);
 typedef unsigned long (CDECL *TMajorInterfaceVerFunc)();
 typedef unsigned long (CDECL *TMinorInterfaceVerFunc)();
@@ -55,11 +55,8 @@ bool CRendererLoader::CRendererLib::validDLL() {
 	return true;
 }
 
-CContextCreator *CRendererLoader::CRendererLib::newContextCreator() {
-	if ( majorInterfaceVer() > IRiContext::majorVersion ) {
-		return NULL;
-	}
-	CContextCreator *cc = ((TNewContextCreatorFunc)((CWin32LibFunc *)m_newContextCreator)->funcPtr())();
+CContextCreator *CRendererLoader::CRendererLib::newContextCreator(unsigned long majorversion) {
+	CContextCreator *cc = ((TNewContextCreatorFunc)((CWin32LibFunc *)m_newContextCreator)->funcPtr())(majorversion);
 	return cc;
 }
 void CRendererLoader::CRendererLib::deleteContextCreator(CContextCreator *cc) {

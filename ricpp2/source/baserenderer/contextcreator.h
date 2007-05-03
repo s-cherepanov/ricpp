@@ -38,6 +38,12 @@ public:
 
 	// Don't throw
 	virtual RtVoid end(void);
+
+	// Don't throw
+	virtual unsigned int majorVersion(void);
+
+	// Don't throw
+	virtual unsigned int minorVersion(void);
 }; // CContextCreator
 
 } // namespace RiCPP

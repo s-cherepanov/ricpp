@@ -49,7 +49,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 /**  @brief Returns an instance of a new renderer
  */
-extern "C" __declspec ( dllexport ) CContextCreator * CDECL newContextCreator() {
+extern "C" __declspec ( dllexport ) CContextCreator * CDECL newContextCreator(unsigned long majorversion) {
+	if ( majorversion != IRiContext::majorVersion )
+		return NULL;
 	return new CRibWriterCreator;
 }
 

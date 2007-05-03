@@ -66,7 +66,7 @@ private:
 		CLibFunc *m_rendererType;
 		CLibFunc *m_rendererName;
 
-		CContextCreator *newContextCreator();
+		CContextCreator *newContextCreator(unsigned long majorVersion);
 		void deleteContextCreator(CContextCreator *);
 		bool validDLL();
 
@@ -75,7 +75,7 @@ private:
 		~CRendererLib();
 
 		bool valid();
-		CContextCreator *getContextCreator();
+		CContextCreator *getContextCreator(unsigned long majorVersion);
 
 		unsigned long majorInterfaceVer();
 		unsigned long minorInterfaceVer();

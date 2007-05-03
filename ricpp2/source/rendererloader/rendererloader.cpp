@@ -76,10 +76,13 @@ CRendererLoader::CRendererLib::~CRendererLib() {
 	m_lib = NULL;
 }
 
-CContextCreator *CRendererLoader::CRendererLib::getContextCreator() {
-	if ( m_contextCreator )
-		return m_contextCreator;
-	m_contextCreator = newContextCreator();
+CContextCreator *CRendererLoader::CRendererLib::getContextCreator(unsigned long majorVersion) {
+	if ( m_contextCreator ) {
+		if ( m_contextCreator->majorVersion() == majorVersion )
+			return m_contextCreator;
+		return 0;
+	}
+	m_contextCreator = newContextCreator(majorVersion);
 	return m_contextCreator;
 }
 
@@ -142,14 +145,14 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
 		CRendererLib *lib = m_libs.findObj(key);
 		if ( lib ) {
 			delete dynLib;
-			return lib->getContextCreator();
+			return lib->getContextCreator(IRiContext::majorVersion);
 		}
 		if ( dynLib->load() && dynLib->valid() ) {
 			lib = new CRendererLib(dynLib);
 			if ( lib ) {
 				if ( lib->valid() ) {
 					m_libs.registerObj(key, lib);
-					return lib->getContextCreator();
+					return lib->getContextCreator(IRiContext::majorVersion);
 				} else {
 					delete lib;
 				}

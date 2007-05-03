@@ -41,14 +41,14 @@ namespace RiCPP {
 	/** @brief Access of the environment variables. There are
 	 *  different implementations for different OSes. If variable names are used in
 	 *  strings of RiPP, e.g. in name in IRi::begin(RtString name), they are
-	 *  enclosed in $ signs, like the four special vars $TMP$, $HOME$, $PATH$, $PROGDIR$.
+	 *  started with a $ sign, like the four special vars $TMP, $HOME, $PATH, $PROGDIR.
 	 */
 	class CEnv {
 		/** @brief Accesses the variable with the name varName
 		 *  and stores the found value in temp. If the variable
 		 *  is not found, temp is cleared
 		 *  @param var String reference where the value of the environment variable (varName) is stored
-		 *  @param varName pointer to the name of the environment variable (without the enclosing $ signs)
+		 *  @param varName pointer to the name of the environment variable (without the $ sign)
 		 *  @return A reference to var
 		 */
 		static std::string &get(std::string &var, const char *varName);
@@ -109,7 +109,7 @@ namespace RiCPP {
 		/** @brief Finds the value for the environment variable with the name (varName), returns
 		 *  the special values for TMP, HOME, PATH, PROGDIR (these four names are not case sensitive,
 		 *  thats maybe not the case for other variables or different on different OSes)
-		 *  @param varName pointer to the name of the environment variable (without the enclosing $ signs)
+		 *  @param varName pointer to the name of the environment variable (without the $ sign)
 		 *  @return A reference to var
 		 */
 		inline static std::string &find(std::string &var, const char *varName) {

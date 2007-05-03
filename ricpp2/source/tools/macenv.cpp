@@ -42,8 +42,12 @@ std::string &CEnv::get(std::string &var, const char *varName) {
 
 std::string &CEnv::getTmp(std::string &tmp) {
 	tmp = "";
-	if ( get(tmp, "TMP").empty() )
+	if ( get(tmp, "TMP").empty() ) {
+		// To Do : Test existing of $HOME/tmp
+
+		// else
 		get(tmp, "HOME");
+	}
 	return CFilepathConverter::convertToInternal(tmp);
 }
 

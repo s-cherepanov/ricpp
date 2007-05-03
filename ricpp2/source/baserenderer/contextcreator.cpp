@@ -73,3 +73,11 @@ RtVoid CContextCreator::end(void) {
 
 	deleteContext();
 }
+
+unsigned int CContextCreator::majorVersion() {
+	return IRiContext::majorVersion;
+}
+
+unsigned int CContextCreator::minorVersion() {
+	return IRiContext::minorVersion;
+}

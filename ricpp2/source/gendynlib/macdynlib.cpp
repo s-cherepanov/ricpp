@@ -112,15 +112,11 @@ const char *CMacDynLib::findLib() {
 			if ( 0 != (f=fopen(p.fullpath(), "r")) ) {
 				fclose(f);
 				m_libpath = p.fullpath();
-				break;
 			}
 		}
 	} else {
 		// Search the standard path
-		// CFilepath p;
 		m_libpath = "";
-		// m_libpath = p.fullpath();
-		// m_libpath += "/";
 		m_libpath += dllname;
 	}
 

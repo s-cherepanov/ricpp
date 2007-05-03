@@ -25,6 +25,8 @@
 #include "tools/env.h"
 #include "tools/filepath.h"
 
+#include <mach-o/dyld.h>
+
 #include <stdlib.h> //!< Included for getenv()
 
 using namespace RiCPP;
@@ -63,7 +65,30 @@ std::string &CEnv::getPath(std::string &path) {
 }
 
 std::string &CEnv::getProgDir(std::string &prog) {
+	/* See Man page NSModule:
+       extern int _NSGetExecutablePath(
+            char *buf,
+            unsigned long *bufsize);
+	*/
 	prog = "";
-	// ToDo find prog
+	char *buf; 
+	uint32_t buffsize = 0;
+	_NSGetExecutablePath(0, &buffsize);
+	if ( buffsize > 0 ) {
+		uint32_t realbuffsize = buffsize+1;
+		buf = new char[realbuffsize];
+		if ( buf ) {
+			buf[0] = 0;
+			_NSGetExecutablePath(buf, &buffsize);
+			buf[realbuffsize-1] = 0;
+			uint32_t len = strlen(buf);
+			while ( len != 0 && buf[len-1] != '/' )
+				--len;
+			if ( len )
+				buf[len-1] = 0;
+			prog = buf;
+			delete buf;
+		}
+	}
 	return CFilepathConverter::convertToInternal(prog);
 }

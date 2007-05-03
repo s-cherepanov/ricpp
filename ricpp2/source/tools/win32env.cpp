@@ -24,7 +24,7 @@
 
 #include "tools/env.h"
 #include "tools/filepath.h"
-#include <windows.h> //!< Needed GetModulePath()
+#include <windows.h> //!< Needed GetModuleFileNameA()
 #include <stdlib.h> //!< Included for getenv()
 
 using namespace RiCPP;
@@ -45,13 +45,13 @@ std::string &CEnv::get(std::string &var, const char *varName) {
 		return var;
 	}
 
-	if ( requiredSize >= sizeof(p)-1 ) {
+	if ( requiredSize >= sizeof(p) ) {
 		ptr = new char[requiredSize+1];
 	}
 
 	ptr[0] = 0;
 	err = getenv_s(&size, ptr, requiredSize, varName);
-	ptr[requiredSize-1] = 0;
+	ptr[requiredSize] = 0;
 
 	var = ptr;
 
@@ -100,9 +100,10 @@ std::string &CEnv::getPath(std::string &path) {
 }
 
 std::string &CEnv::getProgDir(std::string &prog) {
+	// may be better: modulepath as singleton and dynamically allocated
 	char modulepath[MAX_PATH];
-	modulepath[0] = (char)0;
-	DWORD fsize = GetModuleFileNameA(NULL, modulepath, sizeof(modulepath));
+	modulepath[0] = 0;
+	DWORD fsize = GetModuleFileNameA(NULL, modulepath, sizeof(modulepath)-1);
 	modulepath[sizeof(modulepath)-1] = (char)0;
 	size_t len = strlen(modulepath);
 	while ( len > 0 ) {
@@ -115,4 +116,7 @@ std::string &CEnv::getProgDir(std::string &prog) {
 
 	prog = modulepath;
 	return CFilepathConverter::convertToInternal(prog);
+	// may be test if path really exist, because it can be truncated or
+	// directly use unicode for native pathes but the later leads to trouble
+	// because the ri (internal) strings are not unicode...
 }

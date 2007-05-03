@@ -8,7 +8,7 @@
 //         Copyright 1988, 1989, 200,, 2005 Pixar
 //                 All rights Reservered
 //
-// Copyright © of RiCPP 2007, Andreas Pidde
+// Copyright (c) of RiCPP 2007, Andreas Pidde
 // Contact: andreas@pidde.de
 //
 // This library is free software; you can redistribute it and/or
@@ -25,18 +25,49 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file objptrregistry.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Container template for named object pointers
+ */
+
 #include <map>
 
 namespace RiCPP {
 
+/** Template for named (KeyType, std::string, long, ...)
+ *  object pointers (ValueType, class *)
+ */
 template<typename KeyType, typename ValueType> class TObjPtrRegistry {
-	std::map<KeyType, ValueType>m_map;
-	bool m_destructMembers;
+	std::map<KeyType, ValueType>m_map; //< Container for the key, value pairs
+	bool m_destructMembers; //< Destruct all members if container is deleted or key is unregistered
 public:
+	/** Initializes
+	 * @param destructMembers Delete members if container is destructed or key is unregistered
+	 */
 	TObjPtrRegistry(bool destructMembers);
+
+	/** Destructor, deletes also the members (values) if m_destructMembers is true
+	 */
 	~TObjPtrRegistry();
+
+	/** Registers an object (pointer)
+	 * @param key Key for the registered object pointer
+	 * @param value The object pointer
+	 * @return true, the object could be registered, false the key was already used
+	 */
 	bool registerObj(const KeyType &key, ValueType value);
+
+	/** Finds a registered object pointer for a key
+	 *  @param key Search key
+	 *  @return Pointer found or 0 if not found
+	 */
 	ValueType findObj(const KeyType &key);
+
+	/** Removes a registered object pointer for a key, deletes the referenced object,
+	 *  if m_destructMembers is true
+	 *  @param key Search key
+	 *  @return true if object was unregistered
+	 */
 	bool unRegisterObj(const KeyType &key);
 }; // TObjPtrRegistry
 
@@ -67,6 +98,7 @@ registerObj(const KeyType &key, ValueType value)
 {
 	if ( m_map.find(key) == m_map.end() ) {
 		m_map[key] = value;
+		return true;
 	}
 	return false;
 }
@@ -78,14 +110,19 @@ findObj(const KeyType &key)
 	if ( m_map.find(key) != m_map.end() ) {
 		return m_map[key];
 	}
-	return NULL;
+	return 0;
 }
 
 template<typename KeyType, typename ValueType>
 bool TObjPtrRegistry<KeyType, ValueType>::
 unRegisterObj(const KeyType &key)
 {
-	if ( m_map.find(key) != m_map.end() ) {
+	typename std::map<KeyType, ValueType>::iterator i;
+	if ( (i = m_map.find(key)) != m_map.end() ) {
+		if ( m_destructMembers && (*i).second != NULL ) {
+			ValueType ptr = (*i).second;
+			delete ptr;
+		}
 		m_map.erase(key);
 		return true;
 	}

@@ -24,6 +24,8 @@
 
 #include "tools/filepath.h"
 #include <windows.h>
+#include <direct.h>
+
 
 using namespace RiCPP;
 
@@ -54,7 +56,7 @@ void CFilepath::convertToNative() {
 	char pathbuf[MAX_PATH];
 
 	if ( m_filepath.empty() ) {
-		if ( getcwd(pathbuf, sizeof(pathbuf)) ) {
+		if ( _getcwd(pathbuf, sizeof(pathbuf)) ) {
 			pathbuf[sizeof(pathbuf)-1] = 0;
 			m_filepath = pathbuf;
 		}

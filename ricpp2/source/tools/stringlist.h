@@ -74,8 +74,8 @@ public:
 	inline bool explode(
 		const char *str,
 		char seperator = ';',
-		char maskChar = '\\',
 		char varChar = '$',
+		char maskChar = '\\',
 		char singleQuote = '\'',
 		char doubleQuote = '\"',
 		bool useEnv = true

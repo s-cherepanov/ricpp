@@ -31,8 +31,8 @@ CLibFunc::~CLibFunc() {
 
 /**********/
 
-CDynLib::CDynLib(const char *libname, const char *searchpath)
-	: m_useCount(0), m_libname(libname)
+CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
+	: m_useCount(0), m_version(version), m_libname(libname)
 {
 	m_libpath.clear();
 	m_searchpath.explode(searchpath, ';');

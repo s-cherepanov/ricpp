@@ -61,7 +61,7 @@ namespace RiCPP {
 		 */
 		static char nativePathlistSeperator();
 
-		/** Converts a native path (or list) into the internal representation
+		/** Converts a native path (not a list) into the internal representation
 		 * @param var (input/output) with the path string, gets converted to internal representation
 		 * @param return Reference to var
 		 */

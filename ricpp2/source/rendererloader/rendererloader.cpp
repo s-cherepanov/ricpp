@@ -125,7 +125,7 @@ const char *rendererType();
 
 CRendererLoader::CRendererLoader() : m_libs(true) {
 	m_ribWriterCreator = 0;
-	m_searchpath = "";
+	m_searchpath = "$PROGDIR";
 }
 
 CRendererLoader::~CRendererLoader() {
@@ -139,7 +139,7 @@ CContextCreator *CRendererLoader::getRibWriterCreator() {
 }
 
 CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
-	CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str());
+	CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str(), IRiContext::majorVersion);
 	if ( dynLib ) {
 		std::string key = dynLib->libname();
 		CRendererLib *lib = m_libs.findObj(key);

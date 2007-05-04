@@ -28,6 +28,9 @@
 #include <mach-o/dyld.h>
 
 #include <sys/errno.h>
+#include <sys/types.h>
+
+#include <dirent.h>
 #include <unistd.h>
 #include <stdlib.h> //!< Included for getenv()
 
@@ -62,10 +65,18 @@ std::string &CEnv::get(std::string &var, const char *varName) {
 std::string &CEnv::getTmp(std::string &tmp) {
 	tmp = "";
 	if ( get(tmp, "TMP").empty() ) {
-		// To Do : Test existence of $HOME/tmp
-
-		// else
 		get(tmp, "HOME");
+		
+		std::string path = tmp;
+		path += "/tmp";
+		
+		DIR *d = opendir(path.c_str());
+		if ( d ) {
+			tmp = path;
+			closedir(d);
+		} 
+		
+		// tmp is the home or if exists home/tmp
 	}
 	return CFilepathConverter::convertToInternal(tmp);
 }

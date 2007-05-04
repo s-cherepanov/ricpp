@@ -47,7 +47,7 @@ protected:
 	virtual bool doLoad();
 	virtual const char *findLib();
 public:
-	CMacDynLib(const char *libname, const char *searchpath);
+	CMacDynLib(const char *libname, const char *searchpath, long int version=-1);
 	virtual ~CMacDynLib();
 	static const char *staticClassName();
 	virtual const char *className() const;

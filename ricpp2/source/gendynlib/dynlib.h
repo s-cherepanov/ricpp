@@ -43,6 +43,7 @@ namespace RiCPP {
 		unsigned long m_useCount;
 
 	protected:
+		long int m_version;
 		std::string m_libname;
 		std::string m_libpath;
 		CStringList m_searchpath;
@@ -52,7 +53,7 @@ namespace RiCPP {
 		virtual bool doUnload() = 0;
 
 	public:
-		CDynLib(const char *libname, const char *searchpath);
+		CDynLib(const char *libname, const char *searchpath, long int version=-1);
 		virtual ~CDynLib();
 
 		virtual const char *libname() const;
@@ -71,7 +72,7 @@ namespace RiCPP {
 
 	class CDynLibFactory {
 		public:
-			static CDynLib *newDynLib(const char *libname, const char *searchpath);
+			static CDynLib *newDynLib(const char *libname, const char *searchpath, long int version=-1);
 			static void deleteDynLib(CDynLib *lib);
 	}; // CDynLibFactory
 

@@ -44,7 +44,9 @@ void *CMacLibFunc::funcPtr() const {
 	return m_funcPtr;
 }
 
-CMacDynLib::CMacDynLib(const char *libname, const char *searchpath) : m_libHandle((void *)0), CDynLib(libname, searchpath) {
+CMacDynLib::CMacDynLib(const char *libname, const char *searchpath, long int version)
+	: m_libHandle((void *)0), CDynLib(libname, searchpath, version)
+{
 }
 
 CMacDynLib::~CMacDynLib() {
@@ -94,6 +96,11 @@ const char *CMacDynLib::findLib() {
 
 	std::string dllname = "lib";
 	dllname += libname();
+	if ( m_version >= 0 ) {
+		char buf[64] = { 0 };
+		sprintf(buf, ".%ld", m_version);
+		dllname += buf;
+	}
 	dllname += ".dylib";
 	
 	m_libpath = "";
@@ -130,6 +137,6 @@ CLibFunc *CMacDynLib::getFunc(const char *name) const {
 	return new CMacLibFunc(sym);
 }
 
-CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath) {
-	return new CMacDynLib(libname, searchpath);
+CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath, long int version) {
+	return new CMacDynLib(libname, searchpath, version);
 }

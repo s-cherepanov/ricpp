@@ -63,9 +63,9 @@ std::string &CEnv::get(std::string &var, const char *varName) {
 
 std::string &CEnv::getTmp(std::string &tmp) {
 	tmp = "";
-	get(tmp, "TEMP");
+	get(tmp, "TMP"); // first look TMP - evtl. set by the program itself
 	if ( tmp.size() < 1 ) {
-		get(tmp, "TMP");
+		get(tmp, "TEMP");
 	}
 
 	if ( tmp.size() < 1 ) {
@@ -87,7 +87,7 @@ std::string &CEnv::getHome(std::string &home) {
 	}
 
 	if ( home.size() < 1 ) {
-		// No home, take the Userprofile (To do: Better "My Files")
+		// No home, take the Userprofile (To do: "My Files" ?)
 		get(home, "USERPROFILE");
 	}
 
@@ -100,23 +100,42 @@ std::string &CEnv::getPath(std::string &path) {
 }
 
 std::string &CEnv::getProgDir(std::string &prog) {
-	// may be better: modulepath as singleton and dynamically allocated
-	char modulepath[MAX_PATH];
-	modulepath[0] = 0;
-	DWORD fsize = GetModuleFileNameA(NULL, modulepath, sizeof(modulepath)-1);
-	modulepath[sizeof(modulepath)-1] = (char)0;
-	size_t len = strlen(modulepath);
-	while ( len > 0 ) {
-		--len;
-		if ( modulepath[len] == '\\' ) {
-			modulepath[len] = 0;
-			break;
-		}
-	}
+	static std::string path = "";
+	static bool isset = false;
+	
+	if ( !isset ) {
+		isset = true;
+		
+		// In Win32 docs it is said, that the terminating NUL is counted for MAX_PATH
+		char modulepath[MAX_PATH] = { 0 };
+		char pathbuf[MAX_PATH] = { 0 };
+		
+		DWORD fsize = GetModuleFileNameA(NULL, modulepath, sizeof(modulepath)-1);
+		modulepath[sizeof(modulepath)-1] = (char)0;
 
-	prog = modulepath;
-	return CFilepathConverter::convertToInternal(prog);
-	// may be test if path really exist, because it can be truncated or
-	// directly use unicode for native pathes but the later leads to trouble
-	// because the ri (internal) strings are not unicode...
+		char *ptr = modulepath;
+
+		/* Will GetModuleFileNameA resolve hard lins created with mklink?
+		 */
+		if ( GetFullPathNameA(modulepath, sizeof(pathbuf), pathbuf, &ptr) != 0 ) {
+			pathbuf[sizeof(pathbuf)-1] = 0;
+			ptr = pathbuf;
+		}
+
+		
+		size_t len = strlen(ptr);
+		while ( len > 0 ) {
+			--len;
+			if ( ptr[len] == '\\' ) {
+				ptr[len] = 0;
+				break;
+			}
+		}
+
+		path = ptr;
+		CFilepathConverter::convertToInternal(path);
+	}
+	
+	prog = path;
+	return prog;
 }

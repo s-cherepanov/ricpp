@@ -29,7 +29,7 @@
 		C32093F70BDCD07300A0BB35 /* macdynlib.h in Headers */ = {isa = PBXBuildFile; fileRef = C32093F60BDCD07300A0BB35 /* macdynlib.h */; };
 		C32093F90BDCD07A00A0BB35 /* macdynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */; };
 		C32095210BDCD98C00A0BB35 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */; };
-		C320952D0BDCDC9300A0BB35 /* libriribwriter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B848F80BD7621100DD22B5 /* libriribwriter.a */; };
+		C320952D0BDCDC9300A0BB35 /* libriribwriter.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */; };
 		C320952E0BDCDC9600A0BB35 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8F50BD76177009B2459 /* libbaserenderer.a */; };
 		C33118230BEB10B30084F992 /* stringlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33118220BEB10B30084F992 /* stringlist.cpp */; };
 		C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
@@ -62,7 +62,7 @@
 		C3B849200BD7632B00DD22B5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B8491F0BD7632B00DD22B5 /* main.cpp */; };
 		C3B849220BD764CE00DD22B5 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8F50BD76177009B2459 /* libbaserenderer.a */; };
 		C3B849230BD764CE00DD22B5 /* librendererloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B849090BD762B700DD22B5 /* librendererloader.a */; };
-		C3B849240BD764CE00DD22B5 /* libriribwriter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B848F80BD7621100DD22B5 /* libriribwriter.a */; };
+		C3B849240BD764CE00DD22B5 /* libriribwriter.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */; };
 		C3B849250BD764CE00DD22B5 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8CF0BD760B9009B2459 /* libricpp.a */; };
 /* End PBXBuildFile section */
 
@@ -136,7 +136,7 @@
 		C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgendynlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093D60BDCCF5F00A0BB35 /* dynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = dynlib.h; path = ../../../source/gendynlib/dynlib.h; sourceTree = SOURCE_ROOT; };
 		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
-		C32093DF0BDCCF9B00A0BB35 /* libribwriter.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093EC0BDCCFE600A0BB35 /* macwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macwriterdll.cpp; path = ../../../source/ribwriterdll/macwriterdll.cpp; sourceTree = SOURCE_ROOT; };
 		C32093F40BDCD02A00A0BB35 /* macrendererlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macrendererlib.cpp; path = ../../../source/rendererloader/macrendererlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093F60BDCD07300A0BB35 /* macdynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = macdynlib.h; path = ../../../source/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
@@ -170,7 +170,7 @@
 		C399BA3A0BE5DE4A002FEEF1 /* stringlist.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = stringlist.h; path = ../../../source/tools/stringlist.h; sourceTree = SOURCE_ROOT; };
 		C399BA940BE5E1BB002FEEF1 /* libtools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtools.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C399BA990BE5E229002FEEF1 /* macenv.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 2; name = macenv.cpp; path = ../../../source/tools/macenv.cpp; sourceTree = SOURCE_ROOT; };
-		C3B848F80BD7621100DD22B5 /* libriribwriter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libriribwriter.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libriribwriter.1.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B849010BD7624A00DD22B5 /* ribwriter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = ribwriter.h; path = ../../../source/ribwriter/ribwriter.h; sourceTree = SOURCE_ROOT; };
 		C3B849030BD7625A00DD22B5 /* ribwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribwriter.cpp; path = ../../../source/ribwriter/ribwriter.cpp; sourceTree = SOURCE_ROOT; };
 		C3B849090BD762B700DD22B5 /* librendererloader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librendererloader.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -193,7 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C320952E0BDCDC9600A0BB35 /* libbaserenderer.a in Frameworks */,
-				C320952D0BDCDC9300A0BB35 /* libriribwriter.a in Frameworks */,
+				C320952D0BDCDC9300A0BB35 /* libriribwriter.1.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,7 +238,7 @@
 			files = (
 				C3B849250BD764CE00DD22B5 /* libricpp.a in Frameworks */,
 				C3B849230BD764CE00DD22B5 /* librendererloader.a in Frameworks */,
-				C3B849240BD764CE00DD22B5 /* libriribwriter.a in Frameworks */,
+				C3B849240BD764CE00DD22B5 /* libriribwriter.1.a in Frameworks */,
 				C3B849220BD764CE00DD22B5 /* libbaserenderer.a in Frameworks */,
 				C32095210BDCD98C00A0BB35 /* libgendynlib.a in Frameworks */,
 				C399BB020BE6020D002FEEF1 /* libtools.a in Frameworks */,
@@ -278,11 +278,11 @@
 			children = (
 				C372B8CF0BD760B9009B2459 /* libricpp.a */,
 				C372B8F50BD76177009B2459 /* libbaserenderer.a */,
-				C3B848F80BD7621100DD22B5 /* libriribwriter.a */,
+				C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */,
 				C3B849090BD762B700DD22B5 /* librendererloader.a */,
 				C3B849170BD762EE00DD22B5 /* test */,
 				C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */,
-				C32093DF0BDCCF9B00A0BB35 /* libribwriter.dylib */,
+				C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */,
 				C399BA940BE5E1BB002FEEF1 /* libtools.a */,
 			);
 			name = Products;
@@ -620,7 +620,7 @@
 			);
 			name = ribwriterdll;
 			productName = ribwriterdll;
-			productReference = C32093DF0BDCCF9B00A0BB35 /* libribwriter.dylib */;
+			productReference = C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		C372B8CE0BD760B9009B2459 /* ricpp */ = {
@@ -690,7 +690,7 @@
 			);
 			name = ribwriter;
 			productName = ribwriter;
-			productReference = C3B848F80BD7621100DD22B5 /* libriribwriter.a */;
+			productReference = C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		C3B849080BD762B700DD22B5 /* rendererloader */ = {
@@ -934,6 +934,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -953,6 +954,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -1082,6 +1084,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_EXTENSION = 1.a;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1098,6 +1101,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				EXECUTABLE_EXTENSION = 1.a;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;

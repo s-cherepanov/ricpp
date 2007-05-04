@@ -44,11 +44,9 @@ FARPROC CWin32LibFunc::funcPtr() const {
 
 const HMODULE CWin32DynLib::invalidLibHandle = (HMODULE)NULL;
 
-CWin32DynLib::CWin32DynLib(const char *libname, const char *searchpath) : m_libHandle(invalidLibHandle), CDynLib(libname, searchpath) {
-	// lower case of libname
-	for ( std::string::size_type i = 0; i < m_libname.size(); ++i ) {
-		m_libname[i] = tolower(m_libname[i]);
-	}
+CWin32DynLib::CWin32DynLib(const char *libname, const char *searchpath, long int version)
+	: m_libHandle(invalidLibHandle), CDynLib(libname, searchpath, version)
+{
 }
 
 CWin32DynLib::~CWin32DynLib() {
@@ -100,6 +98,11 @@ const char *CWin32DynLib::findLib() {
 
 	// ToDo search Lib
 	std::string dllname = libname();
+	if ( m_version >= 0 ) {
+		char buf[64] = { 0 };
+		sprintf(buf, ".%ld", m_version);
+		dllname += buf;
+	}
 	dllname += ".dll";
 
 	std::string strlibpath("");
@@ -134,6 +137,6 @@ CLibFunc *CWin32DynLib::getFunc(const char *name) const {
 	return NULL;
 }
 
-CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath) {
-	return new CWin32DynLib(libname, searchpath);
+CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath, long int version) {
+	return new CWin32DynLib(libname, searchpath, version);
 }

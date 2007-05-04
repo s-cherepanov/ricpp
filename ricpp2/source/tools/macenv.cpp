@@ -2,7 +2,7 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
 // Copyright (c) of RiCPP 2007, Andreas Pidde
@@ -22,6 +22,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file macenv.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief MacOs 10 implementation of parts of CEnv,
+ *         the adapter for environment variables.
+ */
+
 #include "tools/env.h"
 #include "tools/filepath.h"
 
@@ -32,13 +38,18 @@
 
 #include <dirent.h>
 #include <unistd.h>
-#include <stdlib.h> //!< Included for getenv()
-
-#include <iostream>
+#include <stdlib.h>
 
 using namespace RiCPP;
 
-static char *_ricpp_cutfilename(char *buf) {
+/**@brief Helper function, cuts away the filename of a path
+ * @param buf Buffer with the filepath
+ * @return \a buf is returned, the filename is cut away
+ *         \a buf can be empty (point to NULL) after calling this
+ *         function.
+ */
+static char *_ricpp_cutfilename(char *buf)
+{
 	if ( !buf )
 		return "";
 		
@@ -53,7 +64,13 @@ static char *_ricpp_cutfilename(char *buf) {
 	return buf;
 }
 
-std::string &CEnv::get(std::string &var, const char *varName) {
+/** @brief Mac implementation to get an environment variable.
+ *
+ * Uses the standard function getenv() to acces the environment variables,
+ * can return an empty string.
+ */
+std::string &CEnv::get(std::string &var, const char *varName)
+{
 	var ="";
 	if ( !varName )
 		return var;
@@ -62,7 +79,15 @@ std::string &CEnv::get(std::string &var, const char *varName) {
 	return var = p ? p : "";
 }
 
-std::string &CEnv::getTmp(std::string &tmp) {
+
+/** @brief Mac implementation to get the directory for temporary data.
+ *
+ * Get the value of the variable TMP if set, otherwise $home/tmp 
+ * or if this also do not exist, returns $home. If there is no
+ * home directory the empty string is returned.
+ */
+std::string &CEnv::getTmp(std::string &tmp)
+{
 	tmp = "";
 	if ( get(tmp, "TMP").empty() ) {
 		get(tmp, "HOME");
@@ -75,18 +100,26 @@ std::string &CEnv::getTmp(std::string &tmp) {
 			tmp = path;
 			closedir(d);
 		} 
-		
-		// tmp is the home or if exists home/tmp
 	}
 	return CFilepathConverter::convertToInternal(tmp);
 }
 
-std::string &CEnv::getHome(std::string &home) {
+/** @brief Mac implementation to get the user's home directory.
+ *
+ * Examines the variable HOME.
+ */
+std::string &CEnv::getHome(std::string &home)
+{
 	home = "";
 	return CFilepathConverter::convertToInternal(get(home, "HOME"));
 }
 
-std::string &CEnv::getPath(std::string &path) {
+/** @brief Mac implementation to get the executable search path list.
+ *
+ * Examines the variable PATH.
+ */
+std::string &CEnv::getPath(std::string &path)
+{
 	path = "";
 	get(path, "PATH");
 
@@ -98,24 +131,31 @@ std::string &CEnv::getPath(std::string &path) {
 	return CFilepathConverter::convertToInternal(path);
 }
 
-std::string &CEnv::getProgDir(std::string &prog) {
+/** @brief Mac implementation to get the absolute path of the running executable.
+ *
+ * Use the system function _NSGetExecutablePath() and realpath() to replace
+ * symlinks. The filename itself is deleted. Can return
+ * an empty string. Uses a singleton to store the path.
+ */
+std::string &CEnv::getProgDir(std::string &prog)
+{
 	/* See Man page NSModule:
        extern int _NSGetExecutablePath(
             char *buf,
             unsigned long *bufsize);
-		and realpath() (instead of readlink)
+		and realpath() (used instead of readlink())
 	*/
 	
 	static std::string path = "";
 	static bool isset = false;
 
 	if ( !isset ) {
+		isset = true; // only try one time, path can be empty
+
 		uint32_t buffsize = 0;
 		char *buf = 0; 
 		char symbuf[PATH_MAX+1] = { 0 };
-		
-		isset = true; // only try one time, path can be empty, if executable at root path
-		
+			
 		_NSGetExecutablePath(0, &buffsize);
 		
 		if ( buffsize > 0 ) {

@@ -36,17 +36,18 @@
  *
  * ricpp.h means the same to RiCPP as ri.h to the standard C binding.
  * For an interface description, you can use
- * @anchor [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman
- * @anchor [RISPEC3.2] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document
- * @anchor [STE2003] Ian Stephenson; Essential RenderMan fast; 2003, Springer
- * @anchor [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley
- * @anchor [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier
- * @anchor [STE] Production Rendering; 2005, Springer (another OO-framework)
+ * - [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman
+ * - [RISPEC3.2] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document
+ * - [STE2003] Ian Stephenson; Essential RenderMan fast; 2003, Springer
+ * - [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley
+ * - [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier
+ * - [STE] Production Rendering; 2005, Springer (another OO-framework)
  */
 
 #include <limits>
 
-/** All of the interface is placed within the RiCPP namespace
+/** @namespace RiCPP
+ *  @brief All of the interface is placed within the RiCPP namespace.
  */
 namespace RiCPP {
 
@@ -54,9 +55,9 @@ namespace RiCPP {
  */
 class IRi;
 
-//@{
-/** Some basic types are copied from ri.h (s.a. \ref [RISPEC3.2], Appendix C)
+/** @defgroup RiTypes Some basic types are copied from ri.h (s.a. \see RISPEC3.2, Appendix C)
  */
+//@{
 typedef short   RtBoolean; ///< Booleans can be RI_TRUE or RI_FALSE
 typedef int     RtInt;     ///< Integers
 typedef float   RtFloat;   ///< Floats

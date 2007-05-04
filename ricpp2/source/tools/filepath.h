@@ -5,7 +5,7 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
 // Copyright (c) of RiCPP 2007, Andreas Pidde
@@ -87,11 +87,19 @@ namespace RiCPP {
 	public:
 		/** Init with the current working directory
 		 */
-		inline CFilepath():m_filepath("") { convertToNative(); }
+		inline CFilepath()
+			:m_filepath("")
+		{
+			convertToNative();
+		}
 
 		/** Init with an internal path representation
 		 */
-		inline CFilepath(const char *aFilepath):m_filepath(aFilepath ? aFilepath : "") { convertToNative(); }
+		inline CFilepath(const char *aFilepath)
+			: m_filepath(aFilepath ? aFilepath : "")
+		{
+			convertToNative();
+		}
 
 		/** Returns the original internal representation of the filepath
 		 *  @return Internal representation

@@ -5,7 +5,7 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
 // Copyright (c) of RiCPP 2007, Andreas Pidde
@@ -27,7 +27,12 @@
 
 /** @file env.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Adapter for environment variables
+ *  @brief Adapter for environment variables.
+ *
+ *  In this file the class CEnv is declared to access environment variables.
+ *  Since the implementation differs from OS to OS, parts of the object
+ *  are implemented in different files: see win32env.cpp for windows and
+ *  see macenv.cpp for MacOS 10.
  */
 
 #ifndef _RICPP_TOOLS_PLATFORM_H
@@ -38,85 +43,118 @@
 
 namespace RiCPP {
 
-	/** @brief Access of the environment variables. There are
-	 *  different implementations for different OSes. If variable names are used in
-	 *  strings of RiPP, e.g. in name in IRi::begin(RtString name), they are
-	 *  started with a $ sign, like the four special vars $TMP, $HOME, $PATH, $PROGDIR.
+	/** @brief Class to access the environment variables.
+	 *
+	 *  There are different implementations for different OSes.
+	 *  If variable names are used in strings of RiCPP, e.g. for name in
+	 *  IRi::begin(RtString name), they are started with a $ sign,
+	 *  like the four special vars $TMP, $HOME, $PATH, $PROGDIR.
+	 *  Implementation can be found in win32env.cpp for Windows and macenv.cpp for MacOs.
 	 */
 	class CEnv {
-		/** @brief Accesses the variable with the name varName
-		 *  and stores the found value in temp. If the variable
-		 *  is not found, temp is cleared
-		 *  @param var String reference where the value of the environment variable (varName) is stored
-		 *  @param varName pointer to the name of the environment variable (without the $ sign)
-		 *  @return A reference to var
+		/** @brief Accesses the variable with the name \a varName
+		 *         and stores the value found in \a var. If the variable
+		 *         is not found, \a var is cleared.
+		 *  @param var String reference where the value of the environment variable
+		 *         \a varName is stored
+		 *  @param varName Pointer to the name of the environment variable
+		 *         (without the leading $ sign)
+		 *  @return A reference to \a var
 		 */
 		static std::string &get(std::string &var, const char *varName);
 
 	public:
-		/** @brief Gets the string "TMP", the name of the TMP-variable (see getTmp)
+		/** @brief Gets the string "TMP", the name of the TMP-variable (see getTmp())
 		 *  @return "TMP"
 		 */
 		inline static char *tmpName() {return "TMP";}
 
-		/** @brief Gets the string "HOME", the name of the HOME-variable (see getHome)
+		/** @brief Gets the string "HOME", the name of the HOME-variable (see getHome())
 		 *  @return "HOME"
 		 */
 		inline static char *homeName() {return "HOME";}
 
-		/** @brief Gets the string "PATH", the name of the PATH-variable (see getPath)
+		/** @brief Gets the string "PATH", the name of the PATH-variable (see getPath())
 		 *  @return "PATH"
 		 */
 		inline static char *pathName() {return "PATH";}
 
-		/** @brief Gets the string "PROGDIR", the name of the PROGDIR-variable (see getProgDir)
+		/** @brief Gets the string "PROGDIR", the name of the PROGDIR-variable (see getProgDir())
 		 *  @return "PROGDIR"
 		 */
 		inline static char *progDirName() {return "PROGDIR";}
 
-		/** @brief Gets the value of the special variable TMP (so named in RiCPP), a path to a directory
-		 *  where data can be stored temporarily. The path is encoded using the internal RiCPP format.
+		/** @brief Gets the value of the special variable TMP (so called in RiCPP).
+		 *
+		 *  A path to a directory, where data can be stored temporarily.
+		 *  The path is encoded using the internal RiCPP format.
 		 *  The native name of this variable can be different.
-		 *  @param tmp String reference where the value of the special environment variable TMP is stored
-		 *  @return A reference to tmp
+		 *
+		 *  @param tmp String reference where the value of the special environment variable TMP is stored.
+		 *  @return A reference to \a tmp.
 		 */
 		static std::string &getTmp(std::string &tmp);
 
-		/** @brief Gets the value of the special variable HOME (so named in RiCPP), a path to the
-		 *  home directory of the current user. The path is encoded using the internal RiCPP format.
+		/** @brief Gets the value of the special variable HOME (so called in RiCPP).
+		 *
+		 *  A path to the
+		 *  home directory of the current user. The path is encoded using the internal
+		 *  RiCPP format ('/' as path seperator).
 		 *  The native name of this variable can be different.
-		 *  @param home String reference where the value of the special environment variable HOME is stored
-		 *  @return A reference to home
+		 *
+		 *  @param home String reference where the value of the special environment variable
+		 *         HOME is stored.
+		 *  @return A reference to \a home.
 		 */
 		static std::string &getHome(std::string &home);
 
-		/** @brief Gets the value of the special variable PATH (so named in RiCPP), a pathlist with
-		 *  search pathes for executable programs. The searchpath is encoded using the internal RiCPP format.
+		/** @brief Gets the value of the special variable PATH (so called in RiCPP).
+		 *
+		 *  A pathlist with the search pathes for executable programs.
+		 *  The searchpath is encoded using the internal RiCPP format
+		 *  ('/' as path seperator, pathes seperated by ';').
 		 *  The native name of this variable can be different.
-		 *  @param path String reference where the value of the special environment variable HOME is stored
-		 *  @return A reference to path
+		 *
+		 *  @param path String reference where the value of the special environment
+		 *         variable PATH is stored.
+		 *  @return A reference to \a path.
 		 */
 		static std::string &getPath(std::string &path);
 
-		/** @brief Gets the value of the special variable PROGDIR (so named in RiCPP), the absolute path
-		 *  to the directory of the running program. The path is encoded using the internal RiCPP format.
-		 *  The native name of this variable can be different.
-		 *  @param path String reference where the value of the special environment variable PROG is stored
-		 *  @return A reference to prog
+		/** @brief Gets the value of the special variable PROGDIR (so called in RiCPP).
+		 *
+		 *  The absolute path to the directory of the running program. The path is encoded
+		 *  using the internal RiCPP format ('/' as seperator). The native name of this variable
+		 *  can be different (is not existent).
+		 *
+		 *  @param path String reference where the value of the special environment variable
+		 *         PROG is stored
+		 *  @return A reference to \a prog.
 		 */
 		static std::string &getProgDir(std::string &prog);
 
-		/** @brief Finds the value for the environment variable with the name (varName), returns
-		 *  the special values for TMP, HOME, PATH, PROGDIR (these four names are not case sensitive,
-		 *  thats maybe not the case for other variables or different on different OSes)
-		 *  @param varName pointer to the name of the environment variable (without the $ sign)
-		 *  @return A reference to var
+		/** @brief Finds the value for the environment variable.
+		 *
+		 *  Returns the value of the environment variable with the name \a varName or
+		 *  the special values for the variables TMP, HOME, PATH, PROGDIR in \a var
+		 *  (these four names are not case sensitive,
+		 *  that's maybe not the case for other variables or different for different OSes).
+		 *  If no variable \a varName is found, var is cleared.
+		 *
+		 *  @param varName Pointer to the name of the environment variable
+		 *         (without the leading $ sign).
+		 *  @return A reference to \a var, the value of the variable.
 		 */
-		inline static std::string &find(std::string &var, const char *varName) {
+		inline static std::string &find(std::string &var, const char *varName)
+		{
+			// Clear the variable
 			var = "";
+
+			// No variable name
 			if ( !varName )
 				return var;
 
+			// Special variables HOME, TMP, PATH, PROGDIR
 			if ( !strcasecmp(varName, homeName()) )
 				return getHome(var);
 			if ( !strcasecmp(varName, tmpName()) )
@@ -126,6 +164,7 @@ namespace RiCPP {
 			if ( !strcasecmp(varName, progDirName()) )
 				return getProgDir(var);
 
+			// Get an environment variable
 			return get(var, varName);
 		}
 	}; // CEnv

@@ -2,7 +2,7 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
 // Copyright (c) of RiCPP 2007, Andreas Pidde
@@ -22,11 +22,17 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file stringlist.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Implementation of the string list class
+ */
+
 #include "tools/stringlist.h"
 
 using namespace RiCPP;
 
-void CStringList::insertVar(std::string &varName, bool useEnv) {
+void CStringList::insertVar(std::string &varName, bool useEnv)
+{
 	if ( m_substMap.find(varName) != m_substMap.end() ) {
 		std::string &subst = m_substMap[varName];
 		varName = subst;
@@ -53,8 +59,8 @@ bool CStringList::explode(
 	char maskChar,
 	char singleQuote,
 	char doubleQuote,
-	bool useEnv
-) {
+	bool useEnv)
+{
 	if ( !str )
 		return false;
 

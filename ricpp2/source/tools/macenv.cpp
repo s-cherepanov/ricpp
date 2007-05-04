@@ -92,7 +92,7 @@ std::string &CEnv::getProgDir(std::string &prog) {
        extern int _NSGetExecutablePath(
             char *buf,
             unsigned long *bufsize);
-		and readlink()
+		and realpath() (instead of readlink)
 	*/
 	
 	static std::string path = "";
@@ -114,34 +114,10 @@ std::string &CEnv::getProgDir(std::string &prog) {
 				buf[0] = 0;
 				_NSGetExecutablePath(buf, &buffsize);
 				buf[realbuffsize-1] = 0;
-
 				symbuf[0] = 0;
-				size_t size;
-				if ( (size = readlink(buf, symbuf, sizeof(symbuf)-1)) > 0 && size < sizeof(symbuf)-1 ) {
-					symbuf[size] = 0;
-					_ricpp_cutfilename(symbuf);
-				}
-
-				_ricpp_cutfilename(buf);
-				
-				if ( symbuf[0] ) {
-					if ( symbuf[0] != '/' ) {
-						path = buf;
-						path += "/";
-						path += symbuf;
-					} else {
-						path = symbuf;
-					}
-				} else {
-					path = buf;
-				}
-				
-				delete[] buf;
-				buf = 0;
-
-				symbuf[0] = 0;
-				if ( realpath(path.c_str(), symbuf) ) {
+				if ( realpath(buf, symbuf) ) {
 					symbuf[sizeof(symbuf)-1] = 0;
+					_ricpp_cutfilename(symbuf);
 					path = symbuf;
 				} else {
 					path = "";

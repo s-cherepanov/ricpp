@@ -122,11 +122,20 @@ std::string &CEnv::getProgDir(std::string &prog) {
 					_ricpp_cutfilename(symbuf);
 				}
 
-				path = _ricpp_cutfilename(buf);
+				_ricpp_cutfilename(buf);
+				
 				if ( symbuf[0] ) {
-					path += "/";
-					path += symbuf;
+					if ( symbuf[0] != '/' ) {
+						path = buf;
+						path += "/";
+						path += symbuf;
+					} else {
+						path = symbuf;
+					}
+				} else {
+					path = buf;
 				}
+				
 				delete[] buf;
 				buf = 0;
 

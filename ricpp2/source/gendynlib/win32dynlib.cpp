@@ -100,7 +100,8 @@ const char *CWin32DynLib::findLib() {
 	std::string dllname = libname();
 	if ( m_version >= 0 ) {
 		char buf[64] = { 0 };
-		sprintf(buf, ".%ld", m_version);
+		sprintf_s(buf, sizeof(buf), ".%ld", m_version);
+		buf[sizeof(buf)-1] = 0;
 		dllname += buf;
 	}
 	dllname += ".dll";

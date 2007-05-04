@@ -115,12 +115,14 @@ std::string &CEnv::getProgDir(std::string &prog) {
 
 		char *ptr = modulepath;
 
-		/* Will GetModuleFileNameA resolve hard lins created with mklink?
+		/* GetModuleFileNameA and GetFullPathNameA will not resolve links (junction points) created with mklink.
 		 */
+		/*
 		if ( GetFullPathNameA(modulepath, sizeof(pathbuf), pathbuf, &ptr) != 0 ) {
 			pathbuf[sizeof(pathbuf)-1] = 0;
 			ptr = pathbuf;
 		}
+		*/
 
 		
 		size_t len = strlen(ptr);

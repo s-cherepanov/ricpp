@@ -54,7 +54,7 @@ protected:
 	virtual bool doLoad();
 	virtual const char *findLib();
 public:
-	CWin32DynLib(const char *libname, const char *searchpath);
+	CWin32DynLib(const char *libname, const char *searchpath, long int version = -1);
 	virtual ~CWin32DynLib();
 	static const char *staticClassName();
 	virtual const char *className() const;

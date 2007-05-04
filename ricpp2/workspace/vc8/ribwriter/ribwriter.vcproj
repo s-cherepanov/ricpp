@@ -129,7 +129,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\lib$(ProjectName).lib"
+				OutputFile="$(OutDir)\libri$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -254,7 +254,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)\lib$(ProjectName).lib"
+				OutputFile="$(OutDir)\libri$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

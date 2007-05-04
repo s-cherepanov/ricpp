@@ -73,7 +73,7 @@ CRendererLoader::CRendererLib::~CRendererLib() {
 
 		CDynLibFactory::deleteDynLib(m_lib);
 	}
-	m_lib = NULL;
+	m_lib = 0;
 }
 
 CContextCreator *CRendererLoader::CRendererLib::getContextCreator(unsigned long majorVersion) {

@@ -42,7 +42,7 @@ std::string &CFilepathConverter::convertToNative(std::string &var) {
 }
 
 void CFilepath::convertToNative() {
-	char pathbuf[PATH_MAX];
+	char pathbuf[PATH_MAX+1];
 
 	if ( m_filepath.empty() ) {
 		if ( getcwd(pathbuf, sizeof(pathbuf)) ) {

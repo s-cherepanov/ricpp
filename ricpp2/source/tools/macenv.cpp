@@ -27,9 +27,28 @@
 
 #include <mach-o/dyld.h>
 
+#include <sys/errno.h>
+#include <unistd.h>
 #include <stdlib.h> //!< Included for getenv()
 
+#include <iostream>
+
 using namespace RiCPP;
+
+static char *_ricpp_cutfilename(char *buf) {
+	if ( !buf )
+		return "";
+		
+	uint32_t len = strlen(buf);
+	while ( len != 0 && buf[len-1] != '/' )
+		--len;
+	if ( len )
+		buf[len-1] = 0;
+	else
+		buf[0] = 0; // was root path
+		
+	return buf;
+}
 
 std::string &CEnv::get(std::string &var, const char *varName) {
 	var ="";
@@ -43,7 +62,7 @@ std::string &CEnv::get(std::string &var, const char *varName) {
 std::string &CEnv::getTmp(std::string &tmp) {
 	tmp = "";
 	if ( get(tmp, "TMP").empty() ) {
-		// To Do : Test existing of $HOME/tmp
+		// To Do : Test existence of $HOME/tmp
 
 		// else
 		get(tmp, "HOME");
@@ -73,26 +92,54 @@ std::string &CEnv::getProgDir(std::string &prog) {
        extern int _NSGetExecutablePath(
             char *buf,
             unsigned long *bufsize);
+		and readlink()
 	*/
-	prog = "";
-	char *buf; 
-	uint32_t buffsize = 0;
-	_NSGetExecutablePath(0, &buffsize);
-	if ( buffsize > 0 ) {
-		uint32_t realbuffsize = buffsize+1;
-		buf = new char[realbuffsize];
-		if ( buf ) {
-			buf[0] = 0;
-			_NSGetExecutablePath(buf, &buffsize);
-			buf[realbuffsize-1] = 0;
-			uint32_t len = strlen(buf);
-			while ( len != 0 && buf[len-1] != '/' )
-				--len;
-			if ( len )
-				buf[len-1] = 0;
-			prog = buf;
-			delete buf;
+	
+	static std::string path = "";
+	static bool isset = false;
+
+	if ( !isset ) {
+		uint32_t buffsize = 0;
+		char *buf = 0; 
+		char symbuf[PATH_MAX+1] = { 0 };
+		
+		isset = true; // only try one time, path can be emty if root path
+		
+		_NSGetExecutablePath(0, &buffsize);
+		
+		if ( buffsize > 0 ) {
+			uint32_t realbuffsize = buffsize+1;
+			buf = new char[realbuffsize];
+			if ( buf ) {
+				buf[0] = 0;
+				_NSGetExecutablePath(buf, &buffsize);
+				buf[realbuffsize-1] = 0;
+
+				symbuf[0] = 0;
+				size_t size;
+				if ( (size = readlink(buf, symbuf, sizeof(symbuf)-1)) > 0 && size < sizeof(symbuf)-1 ) {
+					symbuf[size] = 0;
+					_ricpp_cutfilename(symbuf);
+				}
+
+				path = _ricpp_cutfilename(buf);
+				if ( symbuf[0] ) {
+					path += "/";
+					path += symbuf;
+				}
+				delete[] buf;
+				buf = 0;
+
+				symbuf[0] = 0;
+				if ( realpath(path.c_str(), symbuf) ) {
+					symbuf[sizeof(symbuf)-1] = 0;
+					path = symbuf;
+				}
+			}
 		}
+		CFilepathConverter::convertToInternal(prog);
 	}
-	return CFilepathConverter::convertToInternal(prog);
+	
+	prog = path;
+	return prog;
 }

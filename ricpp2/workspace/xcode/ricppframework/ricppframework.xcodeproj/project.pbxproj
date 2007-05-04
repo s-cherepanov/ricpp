@@ -31,6 +31,7 @@
 		C32095210BDCD98C00A0BB35 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */; };
 		C320952D0BDCDC9300A0BB35 /* libriribwriter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B848F80BD7621100DD22B5 /* libriribwriter.a */; };
 		C320952E0BDCDC9600A0BB35 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8F50BD76177009B2459 /* libbaserenderer.a */; };
+		C33118230BEB10B30084F992 /* stringlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33118220BEB10B30084F992 /* stringlist.cpp */; };
 		C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
 		C35C7A4D0BD76D4100548675 /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C35C7A4A0BD76D4100548675 /* baserenderer.h */; };
 		C35C7A4E0BD76D4100548675 /* dorender.h in Headers */ = {isa = PBXBuildFile; fileRef = C35C7A4B0BD76D4100548675 /* dorender.h */; };
@@ -84,21 +85,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C399BA930BE5E1BB002FEEF1 /* tools */;
+			remoteGlobalIDString = C399BA930BE5E1BB002FEEF1;
 			remoteInfo = tools;
 		};
 		C35607560BEA42BF00323615 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C3B849160BD762EE00DD22B5 /* test */;
+			remoteGlobalIDString = C3B849160BD762EE00DD22B5;
 			remoteInfo = test;
 		};
 		C356076A0BEA435400323615 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C32093DE0BDCCF9B00A0BB35 /* ribwriterdll */;
+			remoteGlobalIDString = C32093DE0BDCCF9B00A0BB35;
 			remoteInfo = ribwriterdll;
 		};
 		C35C7A380BD76BC300548675 /* PBXContainerItemProxy */ = {
@@ -140,6 +141,7 @@
 		C32093F40BDCD02A00A0BB35 /* macrendererlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macrendererlib.cpp; path = ../../../source/rendererloader/macrendererlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093F60BDCD07300A0BB35 /* macdynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = macdynlib.h; path = ../../../source/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
 		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
+		C33118220BEB10B30084F992 /* stringlist.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stringlist.cpp; path = ../../../source/tools/stringlist.cpp; sourceTree = SOURCE_ROOT; };
 		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C35C7A4A0BD76D4100548675 /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = baserenderer.h; path = ../../../source/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
 		C35C7A4B0BD76D4100548675 /* dorender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = dorender.h; path = ../../../source/baserenderer/dorender.h; sourceTree = SOURCE_ROOT; };
@@ -427,6 +429,7 @@
 			children = (
 				C399BA990BE5E229002FEEF1 /* macenv.cpp */,
 				C38EA2A20BE86D370057831B /* macfilepath.cpp */,
+				C33118220BEB10B30084F992 /* stringlist.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -795,6 +798,7 @@
 			files = (
 				C399BA9A0BE5E229002FEEF1 /* macenv.cpp in Sources */,
 				C38EA2A30BE86D370057831B /* macfilepath.cpp in Sources */,
+				C33118230BEB10B30084F992 /* stringlist.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

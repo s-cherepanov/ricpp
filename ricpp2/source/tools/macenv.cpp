@@ -103,7 +103,7 @@ std::string &CEnv::getProgDir(std::string &prog) {
 		char *buf = 0; 
 		char symbuf[PATH_MAX+1] = { 0 };
 		
-		isset = true; // only try one time, path can be emty if root path
+		isset = true; // only try one time, path can be empty, if executable at root path
 		
 		_NSGetExecutablePath(0, &buffsize);
 		
@@ -143,10 +143,12 @@ std::string &CEnv::getProgDir(std::string &prog) {
 				if ( realpath(path.c_str(), symbuf) ) {
 					symbuf[sizeof(symbuf)-1] = 0;
 					path = symbuf;
+				} else {
+					path = "";
 				}
 			}
 		}
-		CFilepathConverter::convertToInternal(prog);
+		CFilepathConverter::convertToInternal(path);
 	}
 	
 	prog = path;

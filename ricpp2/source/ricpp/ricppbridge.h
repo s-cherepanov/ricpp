@@ -47,10 +47,6 @@
 #include "ricpp/errorhandlers.h"
 #endif
 
-#ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/renderererror.h"
-#endif
-
 #ifndef _RICPP_RICPP_RENDERERCREATOR_H
 #include "ricpp/renderercreator.h"
 #endif

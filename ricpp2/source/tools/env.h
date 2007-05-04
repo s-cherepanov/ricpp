@@ -27,7 +27,7 @@
 
 /** @file env.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Adaptor for environment variables
+ *  @brief Adapter for environment variables
  */
 
 #ifndef _RICPP_TOOLS_PLATFORM_H

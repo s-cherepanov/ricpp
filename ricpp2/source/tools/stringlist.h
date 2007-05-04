@@ -31,7 +31,6 @@
 
 #include <list>
 #include <map>
-#include <string>
 #include <algorithm>
 
 namespace RiCPP {

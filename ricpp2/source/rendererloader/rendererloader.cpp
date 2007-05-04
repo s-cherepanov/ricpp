@@ -34,7 +34,6 @@
 
 #include "rendererloader/rendererloader.h"
 #include "ribwriter/ribwriter.h"
-#include "tools/stringlist.h"
 
 using namespace RiCPP;
 

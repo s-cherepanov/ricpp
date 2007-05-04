@@ -1,6 +1,5 @@
 #include "ricpp/ricppbridge.h"
 #include "tools/stringlist.h"
-#include "tools/env.h"
 #include "tools/filepath.h"
 
 #include <iostream>

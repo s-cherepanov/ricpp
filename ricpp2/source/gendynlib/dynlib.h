@@ -29,8 +29,6 @@
 #include "tools/stringlist.h"
 #endif // _RICPP_TOOLS_STRINGLIST_H
 
-#include <string>
-
 namespace RiCPP {
 
 	class CLibFunc {

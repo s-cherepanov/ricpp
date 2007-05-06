@@ -34,39 +34,39 @@
 
 namespace RiCPP {
 
-/** Template for named (KeyType, std::string, long, ...)
- *  object pointers (ValueType, class *)
+/** @brief Template that maps names (KeyType, std::string, long, ...) to object
+ *         pointers (ValueType, class *), can manage the object deletion.
  */
 template<typename KeyType, typename ValueType> class TObjPtrRegistry {
 	std::map<KeyType, ValueType>m_map; //< Container for the key, value pairs
 	bool m_destructMembers; //< Destruct all members if container is deleted or key is unregistered
 public:
-	/** Initializes
-	 * @param destructMembers Delete members if container is destructed or key is unregistered
+	/** @brief Initializes the object, the map is empty at the beginning.
+	 * @param destructMembers Deletes members if container is destructed or the key is unregistered.
 	 */
 	TObjPtrRegistry(bool destructMembers);
 
-	/** Destructor, deletes also the members (values) if m_destructMembers is true
+	/** @brief Destructor, deletes also the members (values) if m_destructMembers is true.
 	 */
 	~TObjPtrRegistry();
 
-	/** Registers an object (pointer)
+	/** @brief Registers an object (pointer).
 	 * @param key Key for the registered object pointer
 	 * @param value The object pointer
 	 * @return true, the object could be registered, false the key was already used
 	 */
 	bool registerObj(const KeyType &key, ValueType value);
 
-	/** Finds a registered object pointer for a key
-	 *  @param key Search key
-	 *  @return Pointer found or 0 if not found
+	/** @brief Finds a registered object pointer for a key.
+	 *  @param key Search key.
+	 *  @return Pointer if found or 0 if not found.
 	 */
 	ValueType findObj(const KeyType &key);
 
-	/** Removes a registered object pointer for a key, deletes the referenced object,
-	 *  if m_destructMembers is true
-	 *  @param key Search key
-	 *  @return true if object was unregistered
+	/** @brief Removes a registered object pointer for a key, deletes the referenced object,
+	 *  if m_destructMembers is true.
+	 *  @param key Search key.
+	 *  @return true if object was unregistered.
 	 */
 	bool unRegisterObj(const KeyType &key);
 }; // TObjPtrRegistry
@@ -77,7 +77,8 @@ m_destructMembers(destructMembers)
 {
 }
 
-template<typename KeyType, typename ValueType>TObjPtrRegistry<KeyType, ValueType>::
+template<typename KeyType, typename ValueType>
+TObjPtrRegistry<KeyType, ValueType>::
 ~TObjPtrRegistry()
 {
 	if ( m_destructMembers ) {

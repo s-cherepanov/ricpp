@@ -27,65 +27,73 @@
 
 /** @file filepath.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief OS independent handling of (still ANSI) file pathes
+ *  @brief OS independent handling of (still ANSI) file pathes.
+  * 
+  * The class is implemented in machfilepath.cpp and win32filepath.cpp.
  */
 
 #include <string>
 
 namespace RiCPP {
 
-	/** Helper class to convert file pathes to the internal representation and
+	/** @brief Helper class to convert file pathes to the internal representation and
 	 *  back to the native representation. Contains static members only.
 	 */
 	class CFilepathConverter {
 	public:
-		/** The character to seperate parts of a directory, internally used. The /
-		 * (like in Unix) is used because \ must be masked in strings.
+		/** @brief The character to seperate parts of a directory, internally used.
+		 *
+		 * The '/' (like in Unix) is used internally because '\' must be masked in strings.
+		 *
 		 * @return Internally used path seperator
 		 */
 		inline static char internalPathSeperator() {return '/';}
 
-		/** The internal character to seperate multiple pathes (e.g. search path), the
-		 * ; (like in Windows) is used, because : can be part of regular windows file names (e.g. C:\autoexec.bat)
+		/**  @brief The internal character to seperate multiple pathes (e.g. search path)
+		 *
+		 * ';' (like in Windows) is used, because ':' can be part of regular windows file names (e.g. C:\autoexec.bat)
+		 *
 		 * @return Internally used seperator for multiple pathes
 		 */
 		inline static char internalPathlistSeperator() {return ';';}
 
-		/** The character to seperate parts of a native directory.
-		 * @return Native path seperator
+		/** @brief The character to seperate parts of a native directory.
+		 * @return Native path seperator.
 		 */
 		static char nativePathSeperator();
 
-		/** The character to seperate native directory in directory lists.
-		 * @return Native pathlist seperator
+		/** @brief The character to seperate native directory in directory lists.
+		 * @return Native pathlist seperator.
 		 */
 		static char nativePathlistSeperator();
 
-		/** Converts a native path (not a list) into the internal representation
-		 * @param var (input/output) with the path string, gets converted to internal representation
-		 * @param return Reference to var
+		/** @brief Converts a native path (not a list) into the internal representation.
+		 * @param var (input/output) with the path string, will be converted into internal representation.
+		 * @return Reference to var.
 		 */
 		static std::string &convertToInternal(std::string &var);
 
-		/** Converts an internally used path (or list) into the native representation
-		 * @param var (input/output) with the path string, gets converted to native representation
-		 * @param return Reference to var
+		/** @brief Converts an internally used path (or list) into the native representation
+		 * @param var (input/output) with the path string, will be converted into native representation.
+		 * @return Reference to var.
 		 */
 		static std::string &convertToNative(std::string &var);
 	}; // CFilepathConverter
 
 
-	/** Class to temporally store the name of a file path and convert from
-	 *  internal representation to native.
-	 *  Get the native and native expanded representation of an internal path
+	/** @brief Class to temporally store a file path and convert from internal
+	 *  to native representation.
+	 *
+	 *  There are member functions to get the native and native
+	 *  expanded representation of an internal path.
 	 */
 	class CFilepath {
-		std::string m_filepath; //< Internal path
-		std::string m_nativepath; //< Native path
-		std::string m_fullpath; //< Native expanded path
-		void convertToNative(); //< converts m_filepath to the native representations
+		std::string m_filepath; //< Internal path.
+		std::string m_nativepath; //< Native path.
+		std::string m_fullpath; //< Native expanded path (also called full path, real path).
+		void convertToNative(); //< converts /a m_filepath to the native representations /a m_nativepath and /a m_fullpath.
 	public:
-		/** Init with the current working directory
+		/** @brief Init with the current working directory
 		 */
 		inline CFilepath()
 			:m_filepath("")
@@ -93,7 +101,9 @@ namespace RiCPP {
 			convertToNative();
 		}
 
-		/** Init with an internal path representation
+		/** @brief Init with an internal path representation.
+		 * @param aFilepath Internal representation of a filepath, you can use CFilepathConverter::convertToInternal()
+		 * to convert a native into an internal representation.
 		 */
 		inline CFilepath(const char *aFilepath)
 			: m_filepath(aFilepath ? aFilepath : "")
@@ -101,29 +111,28 @@ namespace RiCPP {
 			convertToNative();
 		}
 
-		/** Returns the original internal representation of the filepath
+		/** @brief Gets the original internal representation of the filepath.
 		 *  @return Internal representation
 		 */
 		inline const char *filepath() const { return m_filepath.c_str(); }
 
-		/** Returns the native representation of the filepath
-		 *  @return Native representation
+		/** @brief Gets the native representation of the path.
+		 *  @return Native representation of the path.
 		 */
 		inline const char *nativepath() const { return m_nativepath.c_str(); }
 
-		/** Returns the expanded native representation of the filepath
-		 *  @return Expanded native representation (full path)
+		/** @brief Gets the expanded native representation of the path (real path or full path).
+		 *  @return Expanded native representation of the path.
 		 */
 		inline const char *fullpath() const { return m_fullpath.c_str(); }
 
-		/** Returns true if the original path was absolute
-		 *  @return Path was absolute
+		/** @brief Checks if a path (the current object) is absolute.
+		 *  @return Path is absolute.
 		 */
 		bool isAbsolute() const;
 
-		/** Only for convinience, returns true if the original path was
-		 *  relative (not absolute)
-		 *  @return Path was relative (not absolute)
+		/** @brief Only for convinience, Checks if a path (the current object) is relative (not absolute).
+		 *  @return Path is relative (not absolute).
 		 */
 		inline bool isRelative() const { return !isAbsolute(); }
 	}; // CFilepath

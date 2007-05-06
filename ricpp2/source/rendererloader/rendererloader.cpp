@@ -166,7 +166,7 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
 CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 	const char *ptr;
 	CStringList stringList;
-	stringList.explode(name, ' ');
+	stringList.explode(' ', name, true);
 	if ( !stringList.empty() ) {
 		CStringList::const_iterator first = stringList.begin();
 		ptr = strrchr((*first).c_str(), '.');

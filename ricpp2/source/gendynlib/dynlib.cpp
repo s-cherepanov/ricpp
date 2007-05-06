@@ -35,7 +35,7 @@ CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
 	: m_useCount(0), m_version(version), m_libname(libname)
 {
 	m_libpath.clear();
-	m_searchpath.explode(searchpath, ';');
+	m_searchpath.explode(';', searchpath, true);
 }
 
 CDynLib::~CDynLib() {

@@ -36,17 +36,28 @@
 
 using namespace RiCPP;
 
+/** @brief The '/' is the path seperator at MacOS
+ */
 char CFilepathConverter::nativePathSeperator() { return '/'; }
+
+/** @brief The ':' seperates different pathes in MacOS
+ */
 char CFilepathConverter::nativePathlistSeperator() { return ':'; }
 
+/** @brief No operation, the internal representation and the MAC representation are equal.
+ */
 std::string &CFilepathConverter::convertToInternal(std::string &var) {
 	return var;
 }
 
+/** @brief No operation, the internal representation and the MAC representation are equal.
+ */
 std::string &CFilepathConverter::convertToNative(std::string &var) {
 	return var;
 }
 
+/** @brief See description of CFilepath::convertToNative() in header file filepath.h.
+ */
 void CFilepath::convertToNative() {
 	char pathbuf[PATH_MAX+1];
 
@@ -66,6 +77,8 @@ void CFilepath::convertToNative() {
 	}
 }
 
+/** @brief In MacOs a path is absolut if it has a path seperator '/' as  its first charakter.
+ */
 bool CFilepath::isAbsolute() const {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '/');
 }

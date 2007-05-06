@@ -31,7 +31,7 @@
 
 using namespace RiCPP;
 
-void CStringList::insertVar(std::string &varName, bool useEnv)
+void CStringList::getVar(std::string &varName, bool useEnv)
 {
 	if ( m_substMap.find(varName) != m_substMap.end() ) {
 		std::string &subst = m_substMap[varName];
@@ -52,17 +52,19 @@ void CStringList::insertVar(std::string &varName, bool useEnv)
 	}
 }
 
-bool CStringList::explode(
-	const char *str,
+CStringList::size_type CStringList::explode(
 	char seperator,
-	char varChar,
-	char maskChar,
-	char singleQuote,
-	char doubleQuote,
+	const char *str,
 	bool useEnv)
 {
+	size_type count = 0;
 	if ( !str )
-		return false;
+		return count;
+
+	const char varChar = '$';
+	const char maskChar = '\\';
+	const char singleQuote = '\'';
+	const char doubleQuote = '\"';
 
 	enum EState {
 		normal,
@@ -117,7 +119,7 @@ bool CStringList::explode(
 					// replace variable
 					std::string::difference_type d = distance(strval.begin(), saviter);
 					saviter = strval.erase(saviter, iter);
-					insertVar(varName, useEnv);
+					getVar(varName, useEnv);
 					d += varName.size();
 					strval.insert(saviter, varName.begin(), varName.end());
 					varName.clear();
@@ -134,7 +136,7 @@ bool CStringList::explode(
 					// copy from varchar replace variable
 					std::string::difference_type d = distance(strval.begin(), saviter);
 					saviter = strval.erase(saviter, iter);
-					insertVar(varName, useEnv);
+					getVar(varName, useEnv);
 					d += varName.size();
 					strval.insert(saviter, varName.begin(), varName.end());
 					varName.clear();
@@ -156,7 +158,7 @@ bool CStringList::explode(
 		// copy from varchar replace variable
 		std::string::difference_type d = distance(strval.begin(), saviter);
 		saviter = strval.erase(saviter, iter);
-		insertVar(varName, useEnv);
+		getVar(varName, useEnv);
 		d += varName.size();
 		strval.insert(saviter, varName.begin(), varName.end());
 		varName.clear();
@@ -172,7 +174,8 @@ bool CStringList::explode(
 		switch ( state ) {
 			case normal:
 				if ( *iter == seperator ) {
-					push(v);
+					++count;
+					m_stringList.push_back(v);
 					v.clear();
 					continue;
 				} else if ( *iter == maskChar ) {
@@ -213,7 +216,9 @@ bool CStringList::explode(
 	}
 	
 	if ( v.size() > 0 ) {
-		push(v);
+		++count;
+		m_stringList.push_back(v);
 	}
-	return true;
+
+	return count;
 }

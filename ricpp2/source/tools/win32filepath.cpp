@@ -33,9 +33,16 @@
 
 using namespace RiCPP;
 
+/** @brief The native path seperator in windows is the backslash '\'
+ */
 char CFilepathConverter::nativePathSeperator() { return '\\'; }
+
+/** @brief Different pathes are seperated by ':' like in %PATH%
+ */
 char CFilepathConverter::nativePathlistSeperator() { return ';'; }
 
+/** @brief path conversion is done by replacing all '\' by '/'.
+ */
 std::string &CFilepathConverter::convertToInternal(std::string &var)
 {
 	std::string::iterator i = var.begin();
@@ -47,6 +54,8 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 	return var;
 }
 
+/** @brief path conversion is done by replacing all '/' by '\'.
+ */
 std::string &CFilepathConverter::convertToNative(std::string &var)
 {
 	std::string::iterator i = var.begin();
@@ -58,6 +67,8 @@ std::string &CFilepathConverter::convertToNative(std::string &var)
 	return var;
 }
 
+/** @brief See description of CFilepath::convertToNative() in header file filepath.h
+ */
 void CFilepath::convertToNative()
 {
 	char pathbuf[MAX_PATH];
@@ -80,6 +91,8 @@ void CFilepath::convertToNative()
 	}
 }
 
+/** @brief In Win32 the path can be absolute by a trailing '\' (or two if it is a UNC path) or if the second charakter in the path is a ':' (the first is a drive letter)
+ */
 bool CFilepath::isAbsolute() const
 {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '\\') || (m_nativepath.size() > 1 && m_nativepath[1] == ':');

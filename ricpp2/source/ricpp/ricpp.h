@@ -42,6 +42,7 @@
  * - [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley
  * - [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier
  * - [STE] Production Rendering; 2005, Springer (another OO-framework)
+ * - [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep)
  */
 
 #include <limits>
@@ -375,7 +376,7 @@ public:
 	 */
 	virtual RtToken declare(RtString name, RtString declaration) = 0;
  
-	//! Synchronize the rendering state
+	//! Synchronize the rendering state [QRM]
 	/*! \param name Type of synchronization, e.g. RI_ABORT to abort the rendering
 	 */
     virtual RtVoid synchronize(RtToken name) = 0;
@@ -403,9 +404,13 @@ public:
 	 */
 	virtual RtVoid begin(RtString name) = 0;
 	
-	// better stay with tzhe standard
+	// better stay with the standard inseted of
 	// @param arguments for optional arguments (added)
 	// virtual RtVoid begin(RtString name, RtString arguments=RI_NULL) = 0;
+	// however [QRM] had
+	// virtual RtToken begin(RtString handle, RtString arguments=RI_NULL) = 0;
+	// the returned token was more or less a context handle, the parameter
+	// name the name for the context.
 
 	/** @brief Terminates the current rendering context, does cleanup operations
 	 */
@@ -1355,11 +1360,24 @@ public:
 	// -> RenderMan 11.5.2
 	virtual RtVoid scopedCoordinateSystem(RtToken space) = 0;
 
-	// -> QRM ?, Pixie (http://www.george-graphics.co.uk/pixiewiki/Main_Page)
-	virtual RtVoid resource(RtToken handle, RtToken type, ...) = 0;
-	virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
-	virtual RtVoid resourceBegin(RtVoid),
-	virtual RtVoid resourceEnd(RtVoid);
+	// -> QRM
+	virtual RtToken createHandle(RtToken handle, RtToken type) = 0;
+
+	virtual RtToken macroBegin(RtString name, ...) = 0;
+	virtual RtToken macroBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+	virtual RtVoid macroEnd(void) = 0;
+	virtual RtToken macroInstance(RtToken macro, ...) = 0;
+	virtual RtToken macroInstance(RtToken macro, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+
+	virtual version(RtFloat version) = 0;
+
+	// -> QRM, old QRMSpec.rtfd (Next, Hydra) External resources, Pixie (other meaning, RtVoid)
+	virtual RtToken resource(RtToken handle, RtToken type, ...) = 0;
+	virtual RtToken resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+
+	// -> Pixie (http://www.george-graphics.co.uk/pixiewiki/Main_Page)
+	virtual RtVoid resourceBegin(RtVoid) = 0;
+	virtual RtVoid resourceEnd(RtVoid) = 0;
 
 	// -> Pixie, 3Delight (archiveInstance)
 	virtual RtArchiveHandle archiveBegin(RtString name, ...) = 0;

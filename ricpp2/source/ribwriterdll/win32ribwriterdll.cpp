@@ -71,7 +71,7 @@ extern "C" __declspec ( dllexport ) unsigned long CDECL majorInterfaceVer() {
 /**  @brief Returns the minor version number of the interface (stays the same since IRiContext is pure virtual)
  */
 extern "C" __declspec ( dllexport ) unsigned long CDECL minorInterfaceVer() {
-	return IRiContext::minorVersion;
+	return CRibWriter::ribWriterMinorVersion;
 }
 
 /**  @brief Returns the type of the renderer

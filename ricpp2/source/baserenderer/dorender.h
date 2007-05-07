@@ -5,10 +5,10 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
-// Copyright © of RiCPP 2007, Andreas Pidde
+// Copyright (c) of RiCPP 2007, Andreas Pidde
 // Contact: andreas@pidde.de
 //
 // This library is free software; you can redistribute it and/or
@@ -31,11 +31,11 @@
 
 namespace RiCPP {
 
-/** RenderMan Interface without the ellipsis (...), called with checked parameters
- *  from CBaseRenderer, renderers can inherit from CBaseRenderer implement these
- *  functions to do the rendering. Maybe this interface is never needed externally,
- *  however.
- */
+/** Members called called with checked parameters (here from CBaseRenderer).
+ *
+ *  Renderer contexts can inherit from CBaseRenderer to implement these
+ *  functions to do the rendering. This interface is never needed externally.
+*/
 class IDoRender {
 public:
 	/** The virtual destructor of the interface
@@ -49,6 +49,8 @@ protected:
 	virtual RtVoid doAbort(void) = 0;
 	virtual RtVoid doActivate(void) = 0;
 	virtual RtVoid doDeactivate(void) = 0;
+
+	virtual RtVoid doErrorHandler(const IErrorHandler &handler) = 0;
 
 	virtual RtToken doDeclare(RtString name, RtString declaration) = 0;
 
@@ -165,7 +167,7 @@ protected:
 
 	virtual RtVoid doBlobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	virtual RtVoid doProcedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	virtual RtVoid doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
 
 	virtual RtVoid doGeometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
@@ -176,27 +178,7 @@ protected:
     virtual RtVoid doMakeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doArchiveRecordV(RtToken type, RtString line) = 0;
-	virtual RtVoid doReadArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-
-	/*
-	// -> RenderMan 11.5.2
-	virtual RtVoid doScopedCoordinateSystem(RtToken space) = 0;
-
-	// -> QRM ?
-	virtual RtVoid doResourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
-
-	// -> 3Delight
-    virtual RtArchiveHandle doArchiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
-	virtual RtVoid doArchiveEnd(void) = 0;
-	virtual RtVoid doArchiveInstance(RtArchiveHandle handle) = 0;
-
-	// -> RenderMan 2004 ???
-	virtual RtVoid doIfBeginV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
-	virtual RtVoid doElseIfV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
-	virtual RtVoid doElsePart(void) = 0; // was RiElse
-	virtual RtVoid doIfEnd(void) = 0;
-	*/
-	//@}
+	virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 }; // IDoRender
 } // namespace RiCPP
 

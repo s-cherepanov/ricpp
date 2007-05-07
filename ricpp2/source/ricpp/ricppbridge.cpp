@@ -210,6 +210,11 @@ RtVoid CRiCPPBridge::context(RtContextHandle handle) {
 			handleErrorV(e.code(), e.severity(), e.what());
 		}
 	}
+	
+	if ( handle == illContextHandle ) {
+		// Only deactivated the current context, outside a context now.
+		return;
+	}
 
 	if ( !m_ctxMgmt.context(handle) ) {
 		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::context(handle:%lu)", (unsigned long)handle);
@@ -1614,7 +1619,7 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
-			m_ctxMgmt.curCtx().renderer()->procedural(*this, data, bound, subdivfunc, freefunc);
+			m_ctxMgmt.curCtx().renderer()->procedural(data, bound, subdivfunc, freefunc);
 		} catch (ERendererError &e) {
 			handleErrorV(e.code(), e.severity(), e.what());
 		}
@@ -1786,7 +1791,7 @@ RtVoid CRiCPPBridge::readArchive(RtString name, const IArchiveCallback *callback
 RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
-			m_ctxMgmt.curCtx().renderer()->readArchiveV(*this, name, callback, n, tokens, params);
+			m_ctxMgmt.curCtx().renderer()->readArchiveV(name, callback, n, tokens, params);
 		} catch (ERendererError &e) {
 			handleErrorV(e.code(), e.severity(), e.what());
 		}

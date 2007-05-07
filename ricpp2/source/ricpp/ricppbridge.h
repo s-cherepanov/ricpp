@@ -5,10 +5,10 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
-// Copyright © of RiCPP 2007, Andreas Pidde
+// Copyright (c) of RiCPP 2007, Andreas Pidde
 // Contact: andreas@pidde.de
 //
 // This library is free software; you can redistribute it and/or
@@ -28,11 +28,6 @@
 /** @file ricppbridge.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Bridges the interface functions to a current renderer
- *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
  */
 
 #ifndef _RICPP_RICPP_FILTERS_H
@@ -466,7 +461,7 @@ public:
 	//@{
 	/** The rest of the interface functions see ricpp.h. The functions with variable length parameters
 	 *  are forwarded to the ..V() functions, these are forwarded to the current renderer
-	 *  (only optionV() may be forwared to a renderer loader, if if there is no active renderer)
+	 *  (only optionV() may be forwared to a CRendererCreator, if if there is no active renderer)
 	 *  Errors are catched and the current error handler is called with the error found.
      */
 	virtual RtToken declare(RtString name, RtString declaration);

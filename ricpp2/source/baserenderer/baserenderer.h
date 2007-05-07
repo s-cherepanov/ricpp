@@ -5,10 +5,10 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
-// Copyright © of RiCPP 2007, Andreas Pidde
+// Copyright (c) of RiCPP 2007, Andreas Pidde
 // Contact: andreas@pidde.de
 //
 // This library is free software; you can redistribute it and/or
@@ -35,6 +35,12 @@
 
 namespace RiCPP {
 
+/** @brief This class is used to implement the basis of a renderer context.
+ *  
+ *  It does type checking and
+ *  calls the IDoRenderer do...() members if the checking was successful. The concrete context inherits
+ *  from CBaseRenderer and implements the IDoRenderer members.
+ */
 class CBaseRenderer : public IRiContext, public IDoRender {
 public:
 	inline CBaseRenderer() {}
@@ -43,9 +49,8 @@ public:
 	inline virtual RtVoid activate(void) {}
 	inline virtual RtVoid deactivate(void) {}
 
-	//@{
-	/** The interface functions of IRiContext
-	 */
+	inline virtual RtVoid errorHandler(const IErrorHandler &handler) { }
+	
 	inline virtual RtToken declare(RtString name, RtString declaration) { return RI_NULL; }
 
     inline virtual RtVoid synchronize(RtToken name) {}
@@ -161,7 +166,7 @@ public:
 
 	inline virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {}
 
-	inline virtual RtVoid procedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+	inline virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
 
 	inline virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
@@ -172,36 +177,13 @@ public:
     inline virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid archiveRecordV(RtToken type, RtString line) {}
-	inline virtual RtVoid readArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
-
-	/*
-	// -> RenderMan 11.5.2
-	inline virtual RtVoid scopedCoordinateSystem(RtToken space) {}
-
-	// -> QRM ?
-	inline virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-
-	// -> 3Delight
-    inline virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) { return illArchiveHandle; }
-	inline virtual RtVoid archiveEnd(void) {}
-	inline virtual RtVoid archiveInstance(RtArchiveHandle handle) {}
-
-	// -> RenderMan 2004 ???
-	inline virtual RtVoid ifBeginV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-	inline virtual RtVoid elseIfV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-	inline virtual RtVoid elsePart(void) {} // was RiElse
-	inline virtual RtVoid ifEnd(void) {}
-	*/
-	//@}
+	inline virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 protected:
 	inline virtual RtVoid doAbort(void) {}
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
 
-	//@{
-	/** The interface functions are called after parameter testing is done
-	 */
 	inline virtual RtToken doDeclare(RtString name, RtString declaration) { return RI_NULL; }
 
 	inline virtual RtVoid doBegin(RtString name = RI_NULL) {}
@@ -320,7 +302,7 @@ protected:
 
 	inline virtual RtVoid doBlobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {}
 
-	inline virtual RtVoid doProcedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+	inline virtual RtVoid doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
 
 	inline virtual RtVoid doGeometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
@@ -331,28 +313,7 @@ protected:
     inline virtual RtVoid doMakeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doArchiveRecordV(RtToken type, RtString line) {}
-	inline virtual RtVoid doReadArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
-
-	/*
-	// -> RenderMan 11.5.2
-	inline virtual RtVoid doScopedCoordinateSystem(RtToken space) {}
-
-	// -> QRM ?
-	inline virtual RtVoid doResourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-
-	// -> 3Delight
-    inline virtual RtArchiveHandle doArchiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) { return illArchiveHandle; }
-	inline virtual RtVoid doArchiveEnd(void) {}
-	inline virtual RtVoid doArchiveInstance(RtArchiveHandle handle) {}
-
-	// -> RenderMan 2004 ???
-	inline virtual RtVoid doIfBeginV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-	inline virtual RtVoid doElseIfV(RtString expr, RtInt n, RtToken tokens[], RtPointer parms[]) {}
-	inline virtual RtVoid doElsePart(void) {} // was RiElse
-	inline virtual RtVoid doIfEnd(void) {}
-	*/
-	//@}
-
+	inline virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
 }; // CBaseRenderer
 
 } // namespace RiCPP

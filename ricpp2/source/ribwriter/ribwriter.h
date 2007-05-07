@@ -5,10 +5,10 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
-// Copyright © of RiCPP 2007, Andreas Pidde
+// Copyright (c) of RiCPP 2007, Andreas Pidde
 // Contact: andreas@pidde.de
 //
 // This library is free software; you can redistribute it and/or
@@ -36,19 +36,20 @@
 namespace RiCPP {
 
 class CRibWriter : public CBaseRenderer {
-
 public:
 	inline CRibWriter() {}
 	inline virtual ~CRibWriter() {}
 
+	static const unsigned long ribWriterMinorVersion;
+
 	static RtToken myRendererName();
-	virtual RtToken rendererName();
+	virtual RtToken rendererName() const;
 	static RtToken myRendererType();
-	virtual RtToken rendererType();
+	virtual RtToken rendererType() const;
 
 protected:
-	/** The interface functions of IDoRender
-	 */
+	inline virtual RtVoid doErrorHandler(const IErrorHandler &handler) {}
+
 	inline virtual RtToken doDeclare(RtString name, RtString declaration) { return RI_NULL; }
 
 	inline virtual RtVoid doSynchronize(RtToken name) {}

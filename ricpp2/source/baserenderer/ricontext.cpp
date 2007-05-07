@@ -2,10 +2,10 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
-// Copyright © of RiCPP 2007, Andreas Pidde
+// Copyright (c) of RiCPP 2007, Andreas Pidde
 // Contact: andreas@pidde.de
 //
 // This library is free software; you can redistribute it and/or
@@ -27,4 +27,3 @@
 using namespace RiCPP;
 
 const unsigned long IRiContext::majorVersion = 1;
-const unsigned long IRiContext::minorVersion = 1;

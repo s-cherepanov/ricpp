@@ -261,14 +261,14 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				C33773C30BE5DD6B0011B646 /* tools */,
-				C32093DA0BDCCF8100A0BB35 /* ribwriterdll */,
-				C32093CF0BDCCF1900A0BB35 /* gendynlib */,
-				C3B849190BD762F900DD22B5 /* test */,
-				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
-				C3B848F90BD7621600DD22B5 /* ribwriter */,
 				C372B8F60BD7617D009B2459 /* baserenderer */,
+				C32093CF0BDCCF1900A0BB35 /* gendynlib */,
+				C3B848F90BD7621600DD22B5 /* ribwriter */,
+				C32093DA0BDCCF8100A0BB35 /* ribwriterdll */,
 				C372B8D00BD760C9009B2459 /* ricpp */,
+				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
+				C3B849190BD762F900DD22B5 /* test */,
+				C33773C30BE5DD6B0011B646 /* tools */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -739,15 +739,15 @@
 			mainGroup = 08FB7794FE84155DC02AAC07 /* ricppframework */;
 			projectDirPath = "";
 			targets = (
-				C372B8CE0BD760B9009B2459 /* ricpp */,
+				C35607550BEA42B400323615 /* all */,
 				C372B8F40BD76177009B2459 /* baserenderer */,
+				C32093CD0BDCCF0A00A0BB35 /* gendynlib */,
 				C3B848F70BD7621100DD22B5 /* ribwriter */,
+				C32093DE0BDCCF9B00A0BB35 /* ribwriterdll */,
+				C372B8CE0BD760B9009B2459 /* ricpp */,
 				C3B849080BD762B700DD22B5 /* rendererloader */,
 				C3B849160BD762EE00DD22B5 /* test */,
-				C32093CD0BDCCF0A00A0BB35 /* gendynlib */,
-				C32093DE0BDCCF9B00A0BB35 /* ribwriterdll */,
 				C399BA930BE5E1BB002FEEF1 /* tools */,
-				C35607550BEA42B400323615 /* all */,
 			);
 		};
 /* End PBXProject section */

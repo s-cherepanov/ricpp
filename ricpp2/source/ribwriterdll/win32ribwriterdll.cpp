@@ -25,17 +25,13 @@
 /** @file win32ribwriterdll.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief The Win32 stub for a DLL.
- *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
  */
 
 #include "ribwriter/ribwriter.h"
 #include <windows.h>
 
 using namespace RiCPP;
+#define EXPORT __declspec ( dllexport )
 
 /**  @brief Defines the entry point for the DLL.
  */
@@ -47,9 +43,12 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
+extern "C" {
+
 /**  @brief Returns an instance of a new renderer
  */
-extern "C" __declspec ( dllexport ) CContextCreator * CDECL newContextCreator(unsigned long majorversion) {
+EXPORT
+CContextCreator * CDECL newContextCreator(unsigned long majorversion) {
 	if ( majorversion != IRiContext::majorVersion )
 		return NULL;
 	return new CRibWriterCreator;
@@ -57,31 +56,39 @@ extern "C" __declspec ( dllexport ) CContextCreator * CDECL newContextCreator(un
 
 /**  @brief Deletes a renderer created by newContextCreator()
  */
-extern "C" __declspec ( dllexport ) void CDECL deleteContextCreator(CContextCreator *cc) {
+EXPORT
+void CDECL deleteContextCreator(CContextCreator *cc) {
 	if ( cc )
 		delete cc;
 }
 
 /**  @brief Returns the major version number of the interface (changes if the IRiContext interface changes)
  */
-extern "C" __declspec ( dllexport ) unsigned long CDECL majorInterfaceVer() {
+EXPORT
+unsigned long CDECL majorInterfaceVer() {
 	return IRiContext::majorVersion;
 }
 
 /**  @brief Returns the minor version number of the interface (stays the same since IRiContext is pure virtual)
  */
-extern "C" __declspec ( dllexport ) unsigned long CDECL minorInterfaceVer() {
+EXPORT
+unsigned long CDECL minorInterfaceVer() {
 	return CRibWriter::ribWriterMinorVersion;
 }
 
 /**  @brief Returns the type of the renderer
  */
-extern "C" __declspec ( dllexport ) RtToken CDECL rendererType() {
+EXPORT
+RtToken CDECL rendererType() {
 	return CRibWriter::myRendererType();
 }
 
 /**  @brief Returns the name of the renderer
  */
-extern "C" __declspec ( dllexport ) RtToken CDECL rendererName() {
+EXPORT
+RtToken CDECL rendererName() {
 	return CRibWriter::myRendererName();
 }
+
+}
+

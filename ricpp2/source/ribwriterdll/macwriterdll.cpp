@@ -34,7 +34,9 @@ using namespace RiCPP;
 extern "C" {
 
 EXPORT
-CContextCreator *newContextCreator() {
+CContextCreator *newContextCreator(unsigned long majorversion) {
+	if ( majorversion != IRiContext::majorVersion )
+		return NULL;
 	return new CRibWriterCreator;
 }
 

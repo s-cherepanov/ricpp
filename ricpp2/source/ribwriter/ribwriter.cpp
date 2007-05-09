@@ -27,6 +27,7 @@
 using namespace RiCPP;
 
 const unsigned long CRibWriter::ribWriterMinorVersion = 1;
+const unsigned long CRibWriter::ribWriterRevision = 1;
 
 RtToken CRibWriter::myRendererName() {
 	return "CRibWriter";

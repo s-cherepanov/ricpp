@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="rendererloader"
-	ProjectGUID="{BA620735-A66E-4B9B-8F56-E3F6AD95681F}"
-	RootNamespace="rendererloader"
+	Name="ricppbridge"
+	ProjectGUID="{4BB1A752-6ACA-4857-8375-84D3BCC8C5B1}"
+	RootNamespace="ricppbridge"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -282,11 +282,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\source\rendererloader\rendererloader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\rendererloader\win32rendererlib.cpp"
+				RelativePath="..\..\..\source\ricppbridge\ricppbridge.cpp"
 				>
 			</File>
 		</Filter>
@@ -296,11 +292,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\source\rendererloader\renderercreator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\rendererloader\rendererloader.h"
+				RelativePath="..\..\..\source\ricppbridge\ricppbridge.h"
 				>
 			</File>
 		</Filter>

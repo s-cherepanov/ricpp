@@ -45,6 +45,7 @@ class CBaseRenderer : public IRiContext, public IDoRender {
 public:
 	inline CBaseRenderer() {}
 	virtual inline ~CBaseRenderer() {}
+
 	inline virtual RtVoid abort(void) {}
 	inline virtual RtVoid activate(void) {}
 	inline virtual RtVoid deactivate(void) {}

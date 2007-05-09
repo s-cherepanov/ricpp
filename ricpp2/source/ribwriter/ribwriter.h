@@ -41,6 +41,7 @@ public:
 	inline virtual ~CRibWriter() {}
 
 	static const unsigned long ribWriterMinorVersion;
+	static const unsigned long ribWriterRevision;
 
 	static RtToken myRendererName();
 	virtual RtToken rendererName() const;

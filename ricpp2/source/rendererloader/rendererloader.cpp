@@ -44,6 +44,7 @@ CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib) {
 	m_deleteContextCreator = NULL;
 	m_majorInterfaceVer = NULL;
 	m_minorInterfaceVer = NULL;
+	m_interfaceRevision = NULL;
 	m_rendererType = NULL;
 
 	m_lib = dynLib;
@@ -52,6 +53,7 @@ CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib) {
 		m_deleteContextCreator = m_lib->getFunc("deleteContextCreator");
 		m_majorInterfaceVer = m_lib->getFunc("majorInterfaceVer");
 		m_minorInterfaceVer = m_lib->getFunc("minorInterfaceVer");
+		m_interfaceRevision = m_lib->getFunc("interfaceRevision");
 		m_rendererType = m_lib->getFunc("rendererType");
 		m_rendererName = m_lib->getFunc("rendererName");
 	}
@@ -67,6 +69,7 @@ CRendererLoader::CRendererLib::~CRendererLib() {
 		m_lib->deleteFunc(m_deleteContextCreator);
 		m_lib->deleteFunc(m_majorInterfaceVer);
 		m_lib->deleteFunc(m_minorInterfaceVer);
+		m_lib->deleteFunc(m_interfaceRevision);
 		m_lib->deleteFunc(m_rendererType);
 		m_lib->deleteFunc(m_rendererName);
 
@@ -97,19 +100,16 @@ bool CRendererLoader::CRendererLib::valid() {
 		return false;
 	if ( !m_minorInterfaceVer || !m_minorInterfaceVer->valid() )
 		return false;
+	if ( !m_interfaceRevision || !m_interfaceRevision->valid() )
+		return false;
 	if ( !m_rendererType || !m_rendererType->valid() )
 		return false;
 	if ( !m_rendererName || !m_rendererName->valid() )
 		return false;
 
-	if ( IRiContext::majorVersion > majorInterfaceVer() )
+	if ( IRiContext::majorVersion != majorInterfaceVer() )
 		return false;
 
-	/* // Should be ok if only minor version differ
-	if ( IRiContext::majorVersion == majorInterfaceVer() )
-		if ( IRiContext::minorVersion > minorInterfaceVer() )
-			return false;
-	*/
 	return true;
 }
 
@@ -119,6 +119,7 @@ CContextCreator *newContextrCreator();
 void deleteContextCreator(CContextCrteator *);
 unsigned long majorInterfaceVer();
 unsigned long minorInterfaceVer();
+unsigned long interfaceRevision();
 const char *rendererType();
 */
 
@@ -138,6 +139,15 @@ CContextCreator *CRendererLoader::getRibWriterCreator() {
 }
 
 CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
+
+	if ( !name || !name[0] /* || !strcasecmp(name, "ribwriter") */ ) {
+		if ( !m_ribWriterCreator ) {
+			m_ribWriterCreator = getRibWriterCreator();
+		}
+
+		return m_ribWriterCreator;
+	}
+
 	CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str(), IRiContext::majorVersion);
 	if ( dynLib ) {
 		std::string key = dynLib->libname();
@@ -175,11 +185,7 @@ CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 		}
 	}
 
-	if ( !m_ribWriterCreator ) {
-		m_ribWriterCreator = getRibWriterCreator();
-	}
-
-	return m_ribWriterCreator;
+	return loadContextCreator(0);
 }
 
 RtVoid CRendererLoader::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {

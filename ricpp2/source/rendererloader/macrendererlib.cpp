@@ -32,6 +32,7 @@ typedef CContextCreator *(*TNewContextCreatorFunc)(unsigned long majorversion);
 typedef void (*TDeleteContextCreatorFunc)(CContextCreator *);
 typedef unsigned long (*TMajorInterfaceVerFunc)();
 typedef unsigned long (*TMinorInterfaceVerFunc)();
+typedef unsigned long (*TInterfaceRevisionFunc)();
 typedef const char *(*TRendererTypeFunc)();
 typedef const char *(*TRendererNameFunc)();
 }
@@ -58,6 +59,10 @@ unsigned long CRendererLoader::CRendererLib::majorInterfaceVer() {
 
 unsigned long CRendererLoader::CRendererLib::minorInterfaceVer() {
 	return ((TMinorInterfaceVerFunc)((CMacLibFunc *)m_minorInterfaceVer)->funcPtr())();
+}
+
+unsigned long CRendererLoader::CRendererLib::interfaceRevision() {
+	return ((TInterfaceRevisionFunc)((CMacLibFunc *)m_interfaceRevision)->funcPtr())();
 }
 
 const char *CRendererLoader::CRendererLib::rendererType() {

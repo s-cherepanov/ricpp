@@ -72,13 +72,13 @@ RtVoid CContextCreator::context(IRiContext *context) {
 	}
 	// if not found clear current, throw error
 	m_curContext = 0;
-	throw ERendererError(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::context(), context handle not generated from context creator");
+	errHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::context(), context handle not generated from context creator");
 }
 
 RtVoid CContextCreator::begin(RtString name) {
 	m_curContext = getNewContext();
 	if ( !m_curContext ) {
-		throw ERendererError(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
+		errHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
 	}
 
 	m_curContext->begin(name);

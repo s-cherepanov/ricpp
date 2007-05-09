@@ -69,11 +69,18 @@ unsigned long CDECL majorInterfaceVer() {
 	return IRiContext::majorVersion;
 }
 
-/**  @brief Returns the minor version number of the interface (stays the same since IRiContext is pure virtual)
+/**  @brief Returns the minor version number of the interface (since IRiContext is pure virtual, the concrete renderer has the minor version)
  */
 EXPORT
 unsigned long CDECL minorInterfaceVer() {
 	return CRibWriter::ribWriterMinorVersion;
+}
+
+/**  @brief Returns the revision of the interface (since IRiContext is pure virtual, the concrete renderer has the revision number)
+ */
+EXPORT
+unsigned long CDECL interfaceRevision() {
+	return CRibWriter::ribWriterRevision;
 }
 
 /**  @brief Returns the type of the renderer

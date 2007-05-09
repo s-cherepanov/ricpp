@@ -52,8 +52,13 @@ unsigned long majorInterfaceVer() {
 }
 
 EXPORT
-unsigned long minorInterfaceVer() {
+unsigned long CDECL minorInterfaceVer() {
 	return CRibWriter::ribWriterMinorVersion;
+}
+
+EXPORT
+unsigned long CDECL interfaceRevision() {
+	return CRibWriter::ribWriterRevision;
 }
 
 EXPORT

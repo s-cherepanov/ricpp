@@ -26,7 +26,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/renderererror.h"
+#include "baserenderer/renderererror.h"
 #endif // _RICPP_RICPP_RENDERERERROR_H
 
 #ifndef _RICPP_BASERENDERER_RICONTEXT_H
@@ -41,7 +41,10 @@ namespace RiCPP {
 class CContextCreator {
 	std::list<IRiContext *> m_contextList;
 	IRiContext *m_curContext;
+	// Error Handler
+	CErrorHandler m_errorHandler;
 protected:
+	inline virtual CErrorHandler &errHandler() { return m_errorHandler; }
 	// Factory method
 	virtual IRiContext *getNewContext();
 

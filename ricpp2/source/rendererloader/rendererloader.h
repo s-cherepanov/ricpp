@@ -30,9 +30,9 @@
  *  @brief Implements a renderer creator by loading an instance from a dynamic library
  */
 
-#ifndef _RICPP_RICPP_RENDERERCREATOR_H
-#include "ricpp/renderercreator.h"
-#endif // _RICPP_RICPP_RENDERERCREATOR_H
+#ifndef _RICPP_RENDERERLOADER_RENDERERCREATOR_H
+#include "rendererloader/renderercreator.h"
+#endif // _RICPP_RENDERERLOADER_RENDERERCREATOR_H
 
 #ifndef _RICPP_GENDYNLIB_DYNLIB_H
 #include "gendynlib/dynlib.h"
@@ -58,6 +58,7 @@ private:
 		CLibFunc *m_deleteContextCreator;
 		CLibFunc *m_majorInterfaceVer;
 		CLibFunc *m_minorInterfaceVer;
+		CLibFunc *m_interfaceRevision;
 		CLibFunc *m_rendererType;
 		CLibFunc *m_rendererName;
 
@@ -74,6 +75,7 @@ private:
 
 		unsigned long majorInterfaceVer();
 		unsigned long minorInterfaceVer();
+		unsigned long interfaceRevision();
 		const char *rendererType();
 		const char *rendererName();
 		// Renderer is deleted in destructor with deleteRendererCreator(IRiContext *)

@@ -93,64 +93,6 @@ const RtLightHandle illLightHandle = (RtLightHandle)0;
 // const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)0;
 //@}
 
-// ---------------------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------------------
-
-/** Forward declaration of the RI (RenderMan Interface)
- */
-class IRi;
-
-/** @brief Interface for the error handler (was RtErrorHandler)
- */
-class IErrorHandler {
-public:
-	virtual const char *name() const = 0;
-	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const = 0;
-};
-
-/** @brief Interface for a pixel filter
- */
-class IFilterFunc {
-public:
-	virtual const char *name() const = 0;
-	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const = 0;
-};
-
-/** @brief Interface, subdivision for procedurals changed to include renderer instance
- */
-class ISubdivFunc {
-public:
-	/** Name of the subdivision function
-	 */
-	virtual const char *name() const = 0;
-	/** The subdivision function as operator()()
-	 */
-	virtual RtVoid operator()(IRi &, RtPointer, RtFloat) const = 0;
-};
-
-/** @brief Free function for procedurals
- */
-class IFreeFunc {
-public:
-	/** Name of the free function
-	 */
-	virtual const char *name() const = 0;
-	/** The free function as operator()()
-	 */
-	virtual RtVoid operator()(IRi &, RtPointer) const = 0;
-};
-
-/** @brief Callback function to handle structural comments in rib files (IRi::readArchive), changed to include renderer instance and to const char
- */
-class IArchiveCallback {
-public:
-	/** Name of the callback function
-	 */
-	virtual const char *name() const = 0;
-	/** The callback function as operator()()
-	 */
-	virtual RtVoid operator()(IRi &, RtToken, RtString, ...) const = 0;
-};
 
 // ---------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------
@@ -283,6 +225,7 @@ const RtInt RIE_MISSINGDATA    = 46;       ///< Required parameters not provided
 const RtInt RIE_SYNTAX         = 47;       ///< Declare type syntax error
 
 const RtInt RIE_MATH           = 61;       ///< Zerodivide, noninvert matrix, etc.
+const RtInt RIE_LASTERROR      = 61;       ///< Endmarker, not an error code
 //@}
 
 /** @brief Error severity levels (0-3)
@@ -292,6 +235,7 @@ const RtInt RIE_INFO           =  0;       ///< Rendering stats & other info
 const RtInt RIE_WARNING        =  1;       ///< Something seems wrong, maybe okay
 const RtInt RIE_ERROR          =  2;       ///< Problem.  Results may be wrong
 const RtInt RIE_SEVERE         =  3;       ///< So bad you should probably abort
+const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code
 //@}
 
 /** @brief Tokens
@@ -332,7 +276,99 @@ const RtToken  RI_CURRENT = "current", RI_WORLD = "world", RI_OBJECT = "object",
 const RtToken  RI_RASTER = "raster", RI_NDC = "NDC", RI_SCREEN = "screen", RI_CAMERA = "camera", RI_EYE = "eye";
 
 const RtToken  RI_CATMULLCLARK = "catmull-clark", RI_HOLE = "hole", RI_CREASE = "crease", RI_CORNER = "corner", RI_INTERPOLATEBOUNDARY = "interpolateboundary";
+
+const RtToken RI_UNKNOWN = "unknown";
 //@}
+
+/** @brief Helöper class, errormessages as Strings
+ */
+class CRiCPPErrMsg {
+	static RtString s_errorMessages[];	///< 'RIE_...' error codes as descriptive text
+	static RtString s_errorSeverity[];	///< 'RIE_...' severity codes as descriptive text
+public:
+	/** Returns the descriptive string for an error code
+	 *  @param aCode The error code
+	 *  @return error string for the error code aCode
+	 */
+	inline static const char *errorMessage(RtInt aCode)
+	{
+		if ( aCode < 0 || aCode > RIE_LASTERROR )
+			return RI_UNKNOWN;
+
+		return s_errorMessages[(int)aCode];
+	}
+
+	/** Returns the descriptive string for a severity level
+	 *  @param aSeverity severity level
+	 *  @return The descriptive string for an error severity level aSeverity
+	 */
+	inline static const char *errorSeverity(RtInt aSeverity)
+	{
+		if ( aSeverity < 0 || aSeverity > RIE_LASTSEVERITY )
+			return RI_UNKNOWN;
+
+		return s_errorSeverity[(int)aSeverity];
+	}
+}; // CRiCPPErrMsg
+
+// ---------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------
+
+/** Forward declaration of the RI (RenderMan Interface)
+ */
+class IRi;
+
+/** @brief Interface for the error handler (was RtErrorHandler)
+ */
+class IErrorHandler {
+public:
+	virtual const char *name() const = 0;
+	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const = 0;
+};
+
+/** @brief Interface for a pixel filter
+ */
+class IFilterFunc {
+public:
+	virtual const char *name() const = 0;
+	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const = 0;
+};
+
+/** @brief Interface, subdivision for procedurals changed to include renderer instance
+ */
+class ISubdivFunc {
+public:
+	/** Name of the subdivision function
+	 */
+	virtual const char *name() const = 0;
+	/** The subdivision function as operator()()
+	 */
+	virtual RtVoid operator()(IRi &, RtPointer, RtFloat) const = 0;
+};
+
+/** @brief Free function for procedurals
+ */
+class IFreeFunc {
+public:
+	/** Name of the free function
+	 */
+	virtual const char *name() const = 0;
+	/** The free function as operator()()
+	 */
+	virtual RtVoid operator()(IRi &, RtPointer) const = 0;
+};
+
+/** @brief Callback function to handle structural comments in rib files (IRi::readArchive), changed to include renderer instance and to const char
+ */
+class IArchiveCallback {
+public:
+	/** Name of the callback function
+	 */
+	virtual const char *name() const = 0;
+	/** The callback function as operator()()
+	 */
+	virtual RtVoid operator()(IRi &, RtToken, RtString, ...) const = 0;
+};
 
 // ---------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------

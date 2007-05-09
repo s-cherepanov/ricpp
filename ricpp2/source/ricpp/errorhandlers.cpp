@@ -33,7 +33,6 @@
  */
 
 #include "ricpp/errorhandlers.h"
-#include "ricpp/renderererror.h"
 #include <iostream>
 
 using namespace RiCPP;
@@ -41,8 +40,8 @@ using namespace RiCPP;
 RtVoid CAbortErrorHandler::operator()(RtInt code, RtInt severity, RtString msg) const
 {
 	std::cout << "*** Code " <<
-		"[" << code << "] " << ERendererError::errorMessage(code) <<
-		", severity [" << severity << "] " << ERendererError::errorSeverity(severity) << ", '" <<
+		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
+		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
 		msg << "'" << std::endl;
 	if ( severity == RIE_SEVERE ) {
 		std::cout << "exit." << std::endl;
@@ -53,8 +52,8 @@ RtVoid CAbortErrorHandler::operator()(RtInt code, RtInt severity, RtString msg) 
 RtVoid CPrintErrorHandler::operator()(RtInt code, RtInt severity, RtString msg) const
 {
 	std::cout << "*** Code " <<
-		"[" << code << "] " << ERendererError::errorMessage(code) <<
-		", severity [" << severity << "] " << ERendererError::errorSeverity(severity) << ", '" <<
+		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
+		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
 		msg << "'" << std::endl;
 }
 

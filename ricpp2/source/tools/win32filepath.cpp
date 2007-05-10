@@ -27,7 +27,7 @@
  *  @brief Win32 implementation of the file path classes.
  */
 
-#include "tools/filepath.h"
+#include "ricpp/tools/filepath.h"
 #include <windows.h>
 #include <direct.h>
 

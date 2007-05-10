@@ -31,19 +31,19 @@
  */
 
 #ifndef _RICPP_RICPP_FILTERS_H
-#include "ricpp/filters.h"
+#include "ricpp/ricpp/filters.h"
 #endif
 
 #ifndef _RICPP_RICPP_SUBDIVFUNC_H
-#include "ricpp/subdivfunc.h"
+#include "ricpp/ricpp/subdivfunc.h"
 #endif
 
 #ifndef _RICPP_RICPP_ERRORHANDLERS_H
-#include "ricpp/errorhandlers.h"
+#include "ricpp/ricpp/errorhandlers.h"
 #endif
 
 #ifndef _RICPP_RENDERERLOADER_RENDERERCREATOR_H
-#include "rendererloader/renderercreator.h"
+#include "ricpp/rendererloader/renderercreator.h"
 #endif
 
 #include <vector>

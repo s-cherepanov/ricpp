@@ -26,7 +26,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef _RICPP_TOOLS_STRINGLIST_H
-#include "tools/stringlist.h"
+#include "ricpp/tools/stringlist.h"
 #endif // _RICPP_TOOLS_STRINGLIST_H
 
 namespace RiCPP {

@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -108,7 +108,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -172,7 +172,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -235,7 +235,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -296,11 +296,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\source\gendynlib\dynlib.h"
+				RelativePath="..\..\..\source\include\ricpp\gendynlib\dynlib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\gendynlib\win32dynlib.h"
+				RelativePath="..\..\..\source\include\ricpp\gendynlib\macdynlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\gendynlib\win32dynlib.h"
 				>
 			</File>
 		</Filter>

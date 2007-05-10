@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -108,7 +108,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -172,7 +172,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -235,7 +235,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -304,23 +304,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\source\baserenderer\baserenderer.h"
+				RelativePath="..\..\..\source\include\ricpp\baserenderer\baserenderer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\baserenderer\contextcreator.h"
+				RelativePath="..\..\..\source\include\ricpp\baserenderer\contextcreator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\baserenderer\dorender.h"
+				RelativePath="..\..\..\source\include\ricpp\baserenderer\dorender.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\baserenderer\renderererror.h"
+				RelativePath="..\..\..\source\include\ricpp\baserenderer\renderererror.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\baserenderer\ricontext.h"
+				RelativePath="..\..\..\source\include\ricpp\baserenderer\ricontext.h"
 				>
 			</File>
 		</Filter>

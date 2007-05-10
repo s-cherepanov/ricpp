@@ -26,11 +26,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef _RICPP_BASERENDERER_BASERENDERER_H
-#include "baserenderer/baserenderer.h"
+#include "ricpp/baserenderer/baserenderer.h"
 #endif // _RICPP_BASERENDERER_BASERENDERER_H
 
 #ifndef _RICPP_BASERENDERER_CONTEXTCREATOR_H
-#include "baserenderer/contextcreator.h"
+#include "ricpp/baserenderer/contextcreator.h"
 #endif // _RICPP_BASERENDERER_CONTEXTCREATOR_H
 
 namespace RiCPP {
@@ -41,7 +41,9 @@ public:
 	inline virtual ~CRibWriter() {}
 
 	static const unsigned long ribWriterMinorVersion;
+	inline virtual unsigned long minorVersion() const { return ribWriterMinorVersion; }
 	static const unsigned long ribWriterRevision;
+	inline virtual unsigned long revision() const { return ribWriterRevision; }
 
 	static RtToken myRendererName();
 	virtual RtToken rendererName() const;
@@ -186,6 +188,11 @@ protected:
 class CRibWriterCreator : public CContextCreator {
 protected:
 	inline virtual IRiContext *getNewContext() { return new CRibWriter; }
+	inline virtual unsigned long majorVersion() const { return IRiContext::riContextMajorVersion; }
+	inline virtual unsigned long minorVersion() const { return CRibWriter::ribWriterMinorVersion; }
+	inline virtual unsigned long revision() const { return CRibWriter::ribWriterRevision; }
+	inline virtual RtToken rendererName() const { return CRibWriter::myRendererName(); }
+	inline virtual RtToken rendererType() const { return CRibWriter::myRendererType(); }
 };
 
 

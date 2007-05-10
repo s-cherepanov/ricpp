@@ -26,7 +26,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef _RICPP_BASERENDERER_CONTEXTCREATOR_H
-#include "baserenderer/contextcreator.h"
+#include "ricpp/baserenderer/contextcreator.h"
 #endif // _RICPP_BASERENDERER_CONTEXTCREATOR_H
 
 namespace RiCPP {

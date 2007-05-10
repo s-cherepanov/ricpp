@@ -26,11 +26,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "baserenderer/renderererror.h"
+#include "ricpp/baserenderer/renderererror.h"
 #endif // _RICPP_RICPP_RENDERERERROR_H
 
 #ifndef _RICPP_BASERENDERER_RICONTEXT_H
-#include "baserenderer/ricontext.h"
+#include "ricpp/baserenderer/ricontext.h"
 #endif // _RICPP_BASERENDERER_RICONTEXT_H
 
 #include <list>

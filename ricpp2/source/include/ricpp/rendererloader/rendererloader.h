@@ -31,15 +31,15 @@
  */
 
 #ifndef _RICPP_RENDERERLOADER_RENDERERCREATOR_H
-#include "rendererloader/renderercreator.h"
+#include "ricpp/rendererloader/renderercreator.h"
 #endif // _RICPP_RENDERERLOADER_RENDERERCREATOR_H
 
 #ifndef _RICPP_GENDYNLIB_DYNLIB_H
-#include "gendynlib/dynlib.h"
+#include "ricpp/gendynlib/dynlib.h"
 #endif // _RICPP_GENDYNLIB_DYNLIB_H
 
 #ifndef _RICPP_TOOLS_OBJPTRREGISTRY_H
-#include "tools/objptrregistry.h"
+#include "ricpp/tools/objptrregistry.h"
 #endif // _RICPP_TOOLS_OBJPTRREGISTRY_H
 
 namespace RiCPP {
@@ -84,6 +84,7 @@ private:
 
 protected:
 	virtual CContextCreator *getRibWriterCreator();
+	virtual const char *getRibWritername();
 	virtual CContextCreator *loadContextCreator(const char *name);
 
 public:

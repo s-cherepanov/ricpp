@@ -31,7 +31,7 @@
  */
 
 #ifndef _RICPP_TOOLS_ENV_H
-#include "tools/env.h"
+#include "ricpp/tools/env.h"
 #endif _RICPP_TOOLS_ENV_H
 
 #include <list>

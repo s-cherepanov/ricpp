@@ -27,8 +27,8 @@
  *  @brief Win32 implementation of parts of CEnv, the adapter for environment variables.
  */
 
-#include "tools/env.h"
-#include "tools/filepath.h"
+#include "ricpp/tools/env.h"
+#include "ricpp/tools/filepath.h"
 
 #include <windows.h>
 #include <stdlib.h>

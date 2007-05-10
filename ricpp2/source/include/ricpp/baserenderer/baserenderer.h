@@ -26,11 +26,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef _RICPP_BASERENDERER_RICONTEXT_H
-#include "baserenderer/ricontext.h"
+#include "ricpp/baserenderer/ricontext.h"
 #endif // _RICPP_BASERENDERER_RICONTEXT_H
 
 #ifndef _RICPP_BASERENDERER_DORENDER_H
-#include "baserenderer/dorender.h"
+#include "ricpp/baserenderer/dorender.h"
 #endif // _RICPP_BASERENDERER_DORENDER_H
 
 namespace RiCPP {

@@ -26,7 +26,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp.h"
+#include "ricpp/ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
 namespace RiCPP {
@@ -56,15 +56,33 @@ protected:
 	 */
 	virtual RtVoid deactivate(void) = 0;
 public:
+	/** @brief The virtual destructor of the interface
+	 */
+	inline virtual ~IRiContext() {}
+
 	/** @brief The Major Version of the IRiContext interface
 	 *
 	 *  The major version changes, if either IRiContext's or IRiRoot's signature changes
 	 */
-	static const unsigned long majorVersion;
+	static const unsigned long riContextMajorVersion;
 
-	/** The virtual destructor of the interface
+	/** @brief The major version of the IRiContext interface
+	 *
+	 *  @return The name of a major version number of the context
 	 */
-	inline virtual ~IRiContext() {}
+	inline virtual unsigned long majorVersion() const { return riContextMajorVersion; }
+
+	/** @brief Overload for the minor version of the interface
+	 *
+	 *  @return The name of a minor version number of the context
+	 */
+	inline virtual unsigned long minorVersion() const = 0;
+
+	/** @brief Overload for the revision number of the interface
+	 *
+	 *  @return The name of a revision number of the context
+	 */
+	inline virtual unsigned long revision() const = 0;
 
 	/** @brief Overload to give the renderer a name
 	 *
@@ -72,7 +90,7 @@ public:
 	 */
 	virtual RtToken rendererName() const = 0;
 	
-	/** @brief Overload to specify the renderer typ
+	/** @brief Overload to specify the renderer type
 	 *
 	 *  @return The type of a renderer: ricpp_archive, ricpp_draft or ricpp_realistic for information
 	 */

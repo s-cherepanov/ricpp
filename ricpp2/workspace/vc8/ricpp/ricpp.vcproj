@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -170,7 +170,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -232,7 +232,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source"
+				AdditionalIncludeDirectories="../../../source/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -300,19 +300,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\source\ricpp\errorhandlers.h"
+				RelativePath="..\..\..\source\include\ricpp\ricpp\errorhandlers.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\ricpp\filters.h"
+				RelativePath="..\..\..\source\include\ricpp\ricpp\filters.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\ricpp\ricpp.h"
+				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\ricpp\subdivfunc.h"
+				RelativePath="..\..\..\source\include\ricpp\ricpp\subdivfunc.h"
 				>
 			</File>
 		</Filter>

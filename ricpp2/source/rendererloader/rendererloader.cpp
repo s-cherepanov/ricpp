@@ -32,8 +32,8 @@
  *                 All rights Reservered
  */
 
-#include "rendererloader/rendererloader.h"
-#include "ribwriter/ribwriter.h"
+#include "ricpp/rendererloader/rendererloader.h"
+#include "ricpp/ribwriter/ribwriter.h"
 
 using namespace RiCPP;
 
@@ -107,7 +107,7 @@ bool CRendererLoader::CRendererLib::valid() {
 	if ( !m_rendererName || !m_rendererName->valid() )
 		return false;
 
-	if ( IRiContext::majorVersion != majorInterfaceVer() )
+	if ( IRiContext::riContextMajorVersion != majorInterfaceVer() )
 		return false;
 
 	return true;
@@ -138,9 +138,15 @@ CContextCreator *CRendererLoader::getRibWriterCreator() {
 	return new CRibWriterCreator;
 }
 
-CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
+const char *CRendererLoader::getRibWritername() {
+	return CRibWriter::myRendererName();
+}
 
-	if ( !name || !name[0] /* || !strcasecmp(name, "ribwriter") */ ) {
+CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
+	const char *ribWriterName = getRibWritername();
+
+	// While testing load the ribwriter dll (since there is only one dll)
+	if ( !name || !name[0] /* || ribWriterName && !strcasecmp(name, ribWriterName) */ ) {
 		if ( !m_ribWriterCreator ) {
 			m_ribWriterCreator = getRibWriterCreator();
 		}
@@ -148,20 +154,20 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
 		return m_ribWriterCreator;
 	}
 
-	CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str(), IRiContext::majorVersion);
+	CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str(), IRiContext::riContextMajorVersion);
 	if ( dynLib ) {
 		std::string key = dynLib->libname();
 		CRendererLib *lib = m_libs.findObj(key);
 		if ( lib ) {
 			delete dynLib;
-			return lib->getContextCreator(IRiContext::majorVersion);
+			return lib->getContextCreator(IRiContext::riContextMajorVersion);
 		}
 		if ( dynLib->load() && dynLib->valid() ) {
 			lib = new CRendererLib(dynLib);
 			if ( lib ) {
 				if ( lib->valid() ) {
 					m_libs.registerObj(key, lib);
-					return lib->getContextCreator(IRiContext::majorVersion);
+					return lib->getContextCreator(IRiContext::riContextMajorVersion);
 				} else {
 					delete lib;
 				}

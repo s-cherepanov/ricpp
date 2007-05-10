@@ -22,8 +22,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#include "baserenderer/ricontext.h"
+#include "ricpp/baserenderer/ricontext.h"
 
 using namespace RiCPP;
 
-const unsigned long IRiContext::majorVersion = 1;
+const unsigned long IRiContext::riContextMajorVersion = 1;

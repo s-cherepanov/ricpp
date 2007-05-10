@@ -31,7 +31,7 @@
  */
 
 #ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp.h"
+#include "ricpp/ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
 #include <string>

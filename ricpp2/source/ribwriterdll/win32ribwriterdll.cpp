@@ -2,10 +2,10 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
-//         Copyright 1988, 1989, 200,, 2005 Pixar
+//         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
-// Copyright © of RiCPP 2007, Andreas Pidde
+// Copyright (c) of RiCPP 2007, Andreas Pidde
 // Contact: andreas@pidde.de
 //
 // This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
  *  @brief The Win32 stub for a DLL.
  */
 
-#include "ribwriter/ribwriter.h"
+#include "ricpp/ribwriter/ribwriter.h"
 #include <windows.h>
 
 using namespace RiCPP;
@@ -49,7 +49,7 @@ extern "C" {
  */
 EXPORT
 CContextCreator * CDECL newContextCreator(unsigned long majorversion) {
-	if ( majorversion != IRiContext::majorVersion )
+	if ( majorversion != IRiContext::riContextMajorVersion )
 		return NULL;
 	return new CRibWriterCreator;
 }
@@ -66,7 +66,7 @@ void CDECL deleteContextCreator(CContextCreator *cc) {
  */
 EXPORT
 unsigned long CDECL majorInterfaceVer() {
-	return IRiContext::majorVersion;
+	return IRiContext::riContextMajorVersion;
 }
 
 /**  @brief Returns the minor version number of the interface (since IRiContext is pure virtual, the concrete renderer has the minor version)

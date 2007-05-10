@@ -27,7 +27,7 @@
  *  @brief Implementation of the string list class
  */
 
-#include "tools/stringlist.h"
+#include "ricpp/tools/stringlist.h"
 
 using namespace RiCPP;
 

@@ -280,35 +280,21 @@ const RtToken  RI_CATMULLCLARK = "catmull-clark", RI_HOLE = "hole", RI_CREASE = 
 const RtToken RI_UNKNOWN = "unknown";
 //@}
 
-/** @brief Helöper class, errormessages as Strings
+/** @brief Helper class, errormessages as Strings
  */
 class CRiCPPErrMsg {
-	static RtString s_errorMessages[];	///< 'RIE_...' error codes as descriptive text
-	static RtString s_errorSeverity[];	///< 'RIE_...' severity codes as descriptive text
 public:
 	/** Returns the descriptive string for an error code
 	 *  @param aCode The error code
 	 *  @return error string for the error code aCode
 	 */
-	inline static const char *errorMessage(RtInt aCode)
-	{
-		if ( aCode < 0 || aCode > RIE_LASTERROR )
-			return RI_UNKNOWN;
-
-		return s_errorMessages[(int)aCode];
-	}
+	static RtString errorMessage(RtInt aCode);
 
 	/** Returns the descriptive string for a severity level
 	 *  @param aSeverity severity level
 	 *  @return The descriptive string for an error severity level aSeverity
 	 */
-	inline static const char *errorSeverity(RtInt aSeverity)
-	{
-		if ( aSeverity < 0 || aSeverity > RIE_LASTSEVERITY )
-			return RI_UNKNOWN;
-
-		return s_errorSeverity[(int)aSeverity];
-	}
+	static RtString errorSeverity(RtInt aSeverity);
 }; // CRiCPPErrMsg
 
 // ---------------------------------------------------------------------------------------------------

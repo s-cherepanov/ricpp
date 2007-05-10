@@ -25,81 +25,93 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file ricontext.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Contains the calling interface of the backend.
+ */
+
 #ifndef _RICPP_RICPP_RICPP_H
 #include "ricpp/ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
 namespace RiCPP {
 
-const RtToken ricpp_archive = "archive"; //!< archive 'renderer' type (IRiContext::rendererType()) to archive RIB code
-const RtToken ricpp_draft = "draft"; //!< fast draft renderer type (IRiContext::rendererType()) with limited implementation of the RI
-const RtToken ricpp_realistic = "realistic"; //!< photo realistic renderer type (IRiContext::rendererType())  implementing the full RI
-
-/** @brief RenderMan Interface for a context.
+/** @brief RenderMan Interface for a backend render context.
  *
  * Interface for a render context called from the CRiCPPBridge and CContextCreator. A concrete render context
  * will extend CBaseRenderer not IRiContext.
  */
 class IRiContext : public IRiRoot {
 	friend class CContextCreator; //!< A CContextCreator can activate and deactivate the context
+
 protected:
 	/** @brief Activate the context
 	 *
-	 * The context is activated either by an CContextCreator::begin() or a CContextCreator::context().
+	 * The context is activated by CContextCreator::context() (indirectly by CRiCPPBridge::context())
+	 * Also begin() is used for activation, if a context 'begins' it is *not* explicitely activated
+	 * (because the context may need some special handling in this case).
 	 */
 	virtual RtVoid activate(void) = 0;
+
 	/** @brief Dectivate the context
 	 *
-	 * The context is activated either by an CContextCreator::end() or by activating
-	 * a different context withC ContextCreator::begin() or CContextCreator::context(),
-	 * while this context is active.
+	 * The context is deactivated either by an CContextCreator::end() or by activating
+	 * a different context with CContextCreator::begin() or CContextCreator::context(),
+	 * while this context is active. Again indirectly deactivated by the appropriate
+	 * CRiCPPBridge member functions.
+	 * Also end() and abort() is used for deactivation, if a context 'ends' or is 'aborted'
+	 * it is *not* explicitly deactivated (because the context may need some special handling
+	 * in this case).
 	 */
 	virtual RtVoid deactivate(void) = 0;
+
 public:
-	/** @brief The virtual destructor of the interface
+	/** @brief The virtual destructor of the interface.
 	 */
 	inline virtual ~IRiContext() {}
 
-	/** @brief The Major Version of the IRiContext interface
+	/** @brief The Major Version of the IRiContext interface.
 	 *
-	 *  The major version changes, if either IRiContext's or IRiRoot's signature changes
+	 *  The major version changes, if either IRiContext's or IRiRoot's signature changes -
+	 *  that means if the backend calling interface changes.
 	 */
 	static const unsigned long riContextMajorVersion;
 
 	/** @brief The major version of the IRiContext interface
 	 *
-	 *  @return The name of a major version number of the context
+	 *  @return The major version number of the context
 	 */
 	inline virtual unsigned long majorVersion() const { return riContextMajorVersion; }
 
 	/** @brief Overload for the minor version of the interface
 	 *
-	 *  @return The name of a minor version number of the context
+	 *  @return The minor version number of the context
 	 */
 	inline virtual unsigned long minorVersion() const = 0;
 
 	/** @brief Overload for the revision number of the interface
 	 *
-	 *  @return The name of a revision number of the context
+	 *  @return The revision number of the context
 	 */
 	inline virtual unsigned long revision() const = 0;
 
 	/** @brief Overload to give the renderer a name
 	 *
-	 *  @return The name of a renderer used for the IRi::begin() of the front end
+	 *  @return The name of a renderer used by the IRi::begin(RtString name) of the frontend
 	 */
 	virtual RtToken rendererName() const = 0;
 	
 	/** @brief Overload to specify the renderer type
 	 *
-	 *  @return The type of a renderer: ricpp_archive, ricpp_draft or ricpp_realistic for information
+	 *  @return The type of a renderer: RI_ARCHIVE, RI_DRAFT, RI_REALISTIC or user defined for information
 	 */
 	virtual RtToken rendererType() const = 0;
 	
-	/** @brief Aborts a context
+	/** @brief Overload to abort a context
 	 *
-	 * After an severy error occurs the context will be aborted and destroyed, clean up goes here, deactivate() is not
-	 * called for an aborted context.
+	 * After a severe error occurs the context will be aborted and destroyed, clean up goes here, deactivate()
+	 * is *not* called for an aborted context. So if a context need some action after aborted,
+	 * this must be done here (because the context can be in a state that do not allow an explicit deactivation)
 	 */
 	virtual RtVoid abort(void) = 0;
 }; // IRiContext

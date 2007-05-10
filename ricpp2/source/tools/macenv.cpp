@@ -42,10 +42,11 @@
 
 using namespace RiCPP;
 
-/**@brief Helper function, cuts away the filename of a path
- * @param buf Buffer with the filepath
- * @return \a buf is returned, the filename is cut away
- *         \a buf can be empty (point to NULL) after calling this
+/**@brief Helper function, cuts away the filename of a path.
+ * @param buf Pointer to the characrer buffer with the filepath.
+ *            The buffer will be modified.
+ * @return \a buf or "" is returned, the filename is cut away.
+ *         \a buf can be empty (point to NUL) after calling this
  *         function.
  */
 static char *_ricpp_cutfilename(char *buf)
@@ -54,12 +55,25 @@ static char *_ricpp_cutfilename(char *buf)
 		return "";
 		
 	uint32_t len = strlen(buf);
+	
+	// empty string - no filename no changes
+	if ( !len )
+		return buf;
+
+	// --> strlen(buf) > 0, buf[0] and buf[1] are within buffer
+
 	while ( len != 0 && buf[len-1] != '/' )
 		--len;
-	if ( len )
-		buf[len-1] = 0;
-	else
-		buf[0] = 0; // was root path
+	if ( len ) {
+		// A '/' found at buf[len-1]
+		buf[len-1] = 0; // can lead to buf[0] == NUL, if buf contained a file with root path
+	} else {
+		// No '/' found.
+		// Was a path containing a filename only, it was a relative path,
+		// therefore '.' is the directory
+		buf[0] = '.'; 
+		buf[1] = 0; 
+	}
 		
 	return buf;
 }
@@ -71,7 +85,7 @@ static char *_ricpp_cutfilename(char *buf)
  */
 std::string &CEnv::get(std::string &var, const char *varName)
 {
-	var ="";
+	var.empty();
 	if ( !varName )
 		return var;
 

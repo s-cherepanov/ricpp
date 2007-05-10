@@ -27,7 +27,7 @@
 
 /** @file errorhandlers.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The standard error handlers of the interface
+ *  @brief The standard error handlers of the interface.
  */
 
 #ifndef _RICPP_RICPP_RICPP_H
@@ -36,14 +36,14 @@
 
 namespace RiCPP {
 
-/** The abort-error handler, prints an error at standard output and exit() if the error is severe
+/** @brief The abort-error handler, prints an error at standard output and exit() if the error is severe
  */
 class CAbortErrorHandler : public IErrorHandler {
 public:
 	/** @return The name of the renderer as used in RIB
 	 */
 	inline virtual const char *name() const {return "abortErrorHandler";}
-	/** Handles the error (print, exit if severe)
+	/** @brief Handles the error (print, exit if severe)
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
 	 * @param msg Error message, describing the error
@@ -51,14 +51,14 @@ public:
 	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
 };
 
-/** The print-error handler, prints an error at standard output
+/** @brief The print-error handler, prints an error at standard output
  */
 class CPrintErrorHandler : public IErrorHandler  {
 public:
 	/** @return The name of the renderer as used in RIB
 	 */
 	inline virtual const char *name() const {return "printErrorHandler";}
-	/** Handles the error (print)
+	/** @brief Handles the error (print)
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
 	 * @param msg Error message, describing the error
@@ -73,7 +73,7 @@ public:
 	/** @return The name of the renderer as used in RIB
 	 */
 	inline virtual const char *name() const {return "ignoreErrorHandler";}
-	/** Handles the error (ignore)
+	/** @brief Handles the error (ignore)
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
 	 * @param msg Error message, describing the error

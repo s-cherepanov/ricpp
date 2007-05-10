@@ -38,12 +38,12 @@
 #include "ricpp/ricpp/subdivfunc.h"
 #endif
 
-#ifndef _RICPP_RICPP_ERRORHANDLERS_H
-#include "ricpp/ricpp/errorhandlers.h"
-#endif
-
 #ifndef _RICPP_RENDERERLOADER_RENDERERCREATOR_H
 #include "ricpp/rendererloader/renderercreator.h"
+#endif
+
+#ifndef _RICPP_RICPP_ERRORHANDLERS_H
+#include "ricpp/ricpp/errorhandlers.h"
 #endif
 
 #include <vector>

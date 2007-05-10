@@ -25,9 +25,10 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef _RICPP_BASERENDERER_RICONTEXT_H
-#include "ricpp/baserenderer/ricontext.h"
-#endif // _RICPP_BASERENDERER_RICONTEXT_H
+/** @file baserenderer.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Contains the declaration of the backend base class of a renderer context.
+ */
 
 #ifndef _RICPP_BASERENDERER_DORENDER_H
 #include "ricpp/baserenderer/dorender.h"
@@ -37,11 +38,11 @@ namespace RiCPP {
 
 /** @brief This class is used to implement the basis of a renderer context.
  *  
- *  It does type checking and
- *  calls the IDoRenderer do...() members if the checking was successful. The concrete context inherits
- *  from CBaseRenderer and implements the IDoRenderer members.
+ *  It does type checking and calls the IDoRenderer do...() members if the checking was successful.
+ *  The concrete context inherits from CBaseRenderer and implements the IDoRenderer members for
+ *  its rendering jobs. The CBaseRenderer is the foundation of the backend renderer context.
  */
-class CBaseRenderer : public IRiContext, public IDoRender {
+class CBaseRenderer : public IDoRender {
 public:
 	inline CBaseRenderer() {}
 	virtual inline ~CBaseRenderer() {}

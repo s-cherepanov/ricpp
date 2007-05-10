@@ -37,7 +37,7 @@ using namespace RiCPP;
 
 /** @brief Win32 implementation to get an environment variable.
  *
- * Uses the Win32 function getenv_s() to acces the environment variables,
+ * Uses the Win32 function getenv_s() to access the environment variables,
  * can return an empty string.
  */
 std::string &CEnv::get(std::string &var, const char *varName)

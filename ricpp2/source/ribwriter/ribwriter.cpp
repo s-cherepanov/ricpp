@@ -38,7 +38,7 @@ RtToken CRibWriter::rendererName()  const {
 }
 
 RtToken CRibWriter::myRendererType() {
-	return ricpp_archive;
+	return RI_ARCHIVE;
 }
 
 RtToken CRibWriter::rendererType() const {

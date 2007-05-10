@@ -277,7 +277,14 @@ const RtToken  RI_RASTER = "raster", RI_NDC = "NDC", RI_SCREEN = "screen", RI_CA
 
 const RtToken  RI_CATMULLCLARK = "catmull-clark", RI_HOLE = "hole", RI_CREASE = "crease", RI_CORNER = "corner", RI_INTERPOLATEBOUNDARY = "interpolateboundary";
 
-const RtToken RI_UNKNOWN = "unknown";
+/** @brief Additional tokens, used by RiCPP
+ */
+//@{
+const RtToken RI_ARCHIVE = "archive"; //!< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code
+const RtToken RI_DRAFT = "draft"; //!< fast draft renderer type (\a IRiContext::rendererType()) with limited implementation of the RI
+const RtToken RI_REALISTIC = "realistic"; //!< photo realistic renderer type (\a IRiContext::rendererType())  implementing the full RI
+const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL!!!
+//@}
 //@}
 
 /** @brief Helper class, errormessages as Strings

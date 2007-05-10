@@ -27,7 +27,7 @@
 
 /** @file subdivfunc.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The standard subdivision functions und free function for IRi::procedural()
+ *  @brief The standard subdivision functions and free function for IRi::procedural()
  *         not yet implemented
  */
 

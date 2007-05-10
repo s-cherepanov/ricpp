@@ -22,7 +22,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file baserenderer.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Contains the implementation of the backend base class of a renderer context.
+ */
+
 #include "ricpp/baserenderer/baserenderer.h"
 
 using namespace RiCPP;
-

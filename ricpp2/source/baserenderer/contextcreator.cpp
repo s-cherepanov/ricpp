@@ -22,27 +22,32 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file contextcreator.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Contains the implementation of a class for creation and basic handling of render contexts.
+ */
+
 #include "ricpp/baserenderer/contextcreator.h"
 #include <algorithm>
 
 using namespace RiCPP;
 
-CContextCreator::CContextCreator() {
+CContextCreator::~CContextCreator()
+{
 	m_curContext = 0;
-}
 
-CContextCreator::~CContextCreator() {
-	m_curContext = 0;
 	// Delete all contexts in m_contextList
+	std::list<IRiContext *>::iterator iter;
+	for ( iter = m_contextList.begin(); iter != m_contextList.end(); iter ++ ) {
+		delete (*iter);
+	}
+
+	m_contextList.clear();
 }
 
-IRiContext *CContextCreator::getNewContext() {
-	// Has to be overloaded for a concrete context creator
-	return 0;
-}
-
-void CContextCreator::deleteContext() {
-	// remove m_curContext from list
+void CContextCreator::deleteContext()
+{
+	// removes m_curContext from list
 	if ( m_curContext ) {
 		// m_curContext is in list everytime
 		m_contextList.remove(m_curContext);
@@ -51,14 +56,13 @@ void CContextCreator::deleteContext() {
 	m_curContext = 0;
 }
 
-IRiContext *CContextCreator::getContext() {
-	return m_curContext;
-}
-
-RtVoid CContextCreator::context(IRiContext *context) {
+RtVoid CContextCreator::context(IRiContext *context)
+{
+	// Deactivate the current context
 	if ( m_curContext )
 		m_curContext->deactivate();
 
+	// There is no new current context
 	if ( !context ) {
 		m_curContext = 0;
 		return;
@@ -70,34 +74,41 @@ RtVoid CContextCreator::context(IRiContext *context) {
 		m_curContext->activate();
 		return;
 	}
+
 	// if not found clear current, throw error
 	m_curContext = 0;
 	errHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::context(), context handle not generated from context creator");
 }
 
-RtVoid CContextCreator::begin(RtString name) {
+RtVoid CContextCreator::begin(RtString name)
+{
+	// Deactivate the current context
+	if ( m_curContext )
+		m_curContext->deactivate();
+
+	// Get a new context
 	m_curContext = getNewContext();
+
 	if ( !m_curContext ) {
 		errHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
 	}
 
+	// Activate the context by calling its begin
 	m_curContext->begin(name);
 }
 
-RtVoid CContextCreator::abort(void) {
+RtVoid CContextCreator::abort(void)
+{
 	if ( m_curContext )
 		m_curContext->abort();
 
 	deleteContext();
 }
 
-RtVoid CContextCreator::end(void) {
+RtVoid CContextCreator::end(void)
+{
 	if ( m_curContext )
 		m_curContext->end();
 
 	deleteContext();
-}
-
-unsigned int CContextCreator::majorVersion(void) {
-	return IRiContext::riContextMajorVersion;
 }

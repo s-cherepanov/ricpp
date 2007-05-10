@@ -24,13 +24,8 @@
 
 /** @file subdivfunc.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The standard subdivision functions und free function for IRi::procedural()
+ *  @brief The standard subdivision functions and free function for IRi::procedural()
  *         not yet implemented
- *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
  */
 
 #include "ricpp/ricpp/subdivfunc.h"

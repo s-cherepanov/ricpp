@@ -25,32 +25,43 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
+/** @file dorender.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Contains the declaration of an interface for handling the rendering jobs of render contexts.
+ */
+
+#ifndef _RICPP_BASERENDERER_RICONTEXT_H
+#include "ricpp/baserenderer/ricontext.h"
+#endif // _RICPP_BASERENDERER_RICONTEXT_H
 
 namespace RiCPP {
 
-/** Members called called with checked parameters (here from CBaseRenderer).
+/** @brief Members called called with checked parameters (here from \a CBaseRenderer).
  *
- *  Renderer contexts can inherit from CBaseRenderer to implement these
- *  functions to do the rendering. This interface is never needed externally.
+ *  Renderer contexts can inherit from \a CBaseRenderer to implement these
+ *  functions to do the rendering.
 */
-class IDoRender {
+class IDoRender : public IRiContext {
 public:
-	/** The virtual destructor of the interface
+	/** @brief The virtual destructor of the interface
 	 */
 	inline virtual ~IDoRender() {}
 
 protected:
-	//@{
-	/** The interface functions like in IRi
+
+	/** @brief Special context handling (see IRiContext::abort(), IRiContext::activate(), IRiContext::deactivate()
 	 */
+	//@{
 	virtual RtVoid doAbort(void) = 0;
 	virtual RtVoid doActivate(void) = 0;
 	virtual RtVoid doDeactivate(void) = 0;
 
-	virtual RtVoid doErrorHandler(const IErrorHandler &handler) = 0;
+	/** The interface functions similar to IRiCPP
+	 */
+	//@{
+
+	// There is no user defined error handler at the backend
+	// virtual RtVoid doErrorHandler(const IErrorHandler &handler) = 0;
 
 	virtual RtToken doDeclare(RtString name, RtString declaration) = 0;
 

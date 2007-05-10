@@ -38,7 +38,7 @@
 
 namespace RiCPP {
 
-/** The renderer error is used internally to throw exceptions
+/** The renderer error is used internally by the back end to throw exceptions
  */
 class ERendererError {
 	RtInt m_severity;       ///< Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
@@ -128,6 +128,9 @@ public:
 
 }; // ERendererError
 
+/** The standard error handler of the backend to format error messages and throw
+ *  an ERendererError.
+ */
 class CErrorHandler {
 public:
 	/** Virtual destructor

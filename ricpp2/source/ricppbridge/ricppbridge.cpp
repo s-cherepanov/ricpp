@@ -25,11 +25,6 @@
 /** @file ricppbridge.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Bridges the interface functions to a current renderer
- *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"

@@ -171,7 +171,7 @@ public:
 
 	/** @return 0, overload to return the name of a concrete context.
 	 */
-	inline virtual RtToken rendererName() const { return RI_UNKNOWN; }
+	inline virtual RtToken rendererName() const { return RI_NULL; }
 
 	/** @return RI_NULL, overload to return the type of a concrete context (RI_ARCHIVE, RI_DRAFT, RI_REALISTIC, or user defined).
 	 */

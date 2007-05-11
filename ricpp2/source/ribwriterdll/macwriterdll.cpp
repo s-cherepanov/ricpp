@@ -25,7 +25,7 @@
 // ribwriterdll.cpp : Defines the entry point for the DLL application.
 //
 
-#include "ribwriter/ribwriter.h"
+#include "ricpp/ribwriter/ribwriter.h"
 
 using namespace RiCPP;
 // Symbolic name for visibility("default") attribute.
@@ -35,7 +35,7 @@ extern "C" {
 
 EXPORT
 CContextCreator *newContextCreator(unsigned long majorversion) {
-	if ( majorversion != IRiContext::majorVersion )
+	if ( majorversion != IRiContext::riContextMajorVersion )
 		return NULL;
 	return new CRibWriterCreator;
 }
@@ -48,7 +48,7 @@ void deleteContextCreator(CContextCreator *cc) {
 
 EXPORT
 unsigned long majorInterfaceVer() {
-	return CRibWriter::majorVersion;
+	return CRibWriter::riContextMajorVersion;
 }
 
 EXPORT

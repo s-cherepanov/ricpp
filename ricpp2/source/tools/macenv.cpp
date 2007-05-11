@@ -28,8 +28,8 @@
  *         the adapter for environment variables.
  */
 
-#include "tools/env.h"
-#include "tools/filepath.h"
+#include "ricpp/tools/env.h"
+#include "ricpp/tools/filepath.h"
 
 #include <mach-o/dyld.h>
 

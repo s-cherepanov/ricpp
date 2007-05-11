@@ -28,7 +28,7 @@
  *  @brief MAC implementation of the file path classes
  */
 
-#include "tools/filepath.h"
+#include "ricpp/tools/filepath.h"
 
 #include <sys/param.h>
 #include <unistd.h>

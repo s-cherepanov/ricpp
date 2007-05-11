@@ -143,9 +143,8 @@ const char *CRendererLoader::getRibWritername() {
 }
 
 CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
-	const char *ribWriterName = getRibWritername();
-
 	// While testing load the ribwriter dll (since there is only one dll)
+	// const char *ribWriterName = getRibWritername();
 	if ( !name || !name[0] /* || ribWriterName && !strcasecmp(name, ribWriterName) */ ) {
 		if ( !m_ribWriterCreator ) {
 			m_ribWriterCreator = getRibWriterCreator();

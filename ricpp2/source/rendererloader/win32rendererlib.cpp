@@ -48,9 +48,7 @@ typedef const char *(CDECL *TRendererNameFunc)();
 }
 
 bool CRendererLoader::CRendererLib::validDLL() {
-	if ( !m_lib )
-		return false;
-	if ( strcmp(m_lib->className(), CWin32DynLib::staticClassName()) != 0 )
+	if ( !m_lib || !m_lib->valid() )
 		return false;
 	return true;
 }

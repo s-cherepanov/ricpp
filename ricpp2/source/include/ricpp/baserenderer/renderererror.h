@@ -38,7 +38,7 @@
 
 namespace RiCPP {
 
-/** The renderer error is used internally by the back end to throw exceptions
+/** @brief The renderer error is used internally by the back end to throw exceptions
  */
 class ERendererError {
 	RtInt m_severity;       ///< Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
@@ -131,11 +131,11 @@ public:
 /** The standard error handler of the backend to format error messages and throw
  *  an ERendererError.
  */
-class CErrorHandler {
+class CErrorExceptionHandler {
 public:
 	/** Virtual destructor
 	 */
-	virtual inline ~CErrorHandler() {}
+	virtual inline ~CErrorExceptionHandler() {}
 
 	/** Error Handling, throws an ERendererError
 	 */
@@ -165,15 +165,10 @@ public:
 	 */
 	virtual RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
 
-	/** Handles an error, sets m_lastError and calls the current error handler
-	 * @param code Error Code (RIE_...)
-	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
-	 * @param line Line number where error occured
-	 * @param file file where error occured
-	 * @param message Format string (like in printf()), not formatted if argList==NULL
-	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
+	/** @brief Simply rethrows an exception
+	 *  @param err Error Exception
 	 */
-	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
+	virtual RtVoid handleError(const ERendererError &err);
 
 	/** Handles an error, sets m_lastError and calls the current error handler
 	 * @param code Error Code (RIE_...)
@@ -185,8 +180,18 @@ public:
 	{
 		handleErrorV(code, severity, 0, NULL, message, argList);
 	}
+
+	/** Handles an error, sets m_lastError and calls the current error handler
+	 * @param code Error Code (RIE_...)
+	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+	 * @param line Line number where error occured
+	 * @param file file where error occured
+	 * @param message Format string (like in printf()), not formatted if argList==NULL
+	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
+	 */
+	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
 	//@}
-}; // CErrorHandler
+}; // CErrorExceptionHandler
 
 } // namespace RiCPP
 

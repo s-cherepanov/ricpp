@@ -53,14 +53,6 @@ CWin32DynLib::~CWin32DynLib() {
 	doUnload();
 }
 
-const char *CWin32DynLib::staticClassName() {
-	return "CWin32DynLib";
-}
-
-const char *CWin32DynLib::className() const {
-	return CWin32DynLib::staticClassName();
-}
-
 bool CWin32DynLib::isLoaded() const {
 	return m_libHandle != invalidLibHandle;
 }

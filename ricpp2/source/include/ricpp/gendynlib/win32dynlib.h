@@ -53,12 +53,10 @@ protected:
 	virtual bool doUnload();
 	virtual bool doLoad();
 	virtual const char *findLib();
+	virtual bool isLoaded() const;
 public:
 	CWin32DynLib(const char *libname, const char *searchpath, long int version = -1);
 	virtual ~CWin32DynLib();
-	static const char *staticClassName();
-	virtual const char *className() const;
-	virtual bool isLoaded() const;
 	virtual bool valid() const;
 	virtual CLibFunc *getFunc(const char *name) const;
 }; // CWin32DynLib

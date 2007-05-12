@@ -363,15 +363,13 @@ protected:
 	 */
 	virtual RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
 
-	/** Handles an error, sets m_lastError and calls the current error handler
-	 * @param code Error Code (RIE_...)
-	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
-	 * @param line Line number where error occured
-	 * @param file file where error occured
-	 * @param message Format string (like in printf()), not formatted if argList==NULL
-	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
+
+	/** Handles an error, by reading out an \a ERendererError excception object.
+	 * @param err Object with error information
 	 */
-	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
+	inline virtual RtVoid handleError(const ERendererError &err) {
+		handleErrorV(err.code(), err.severity(), err.line(), err.file(), err.what(), 0);
+	}
 
 	/** Handles an error, sets m_lastError and calls the current error handler
 	 * @param code Error Code (RIE_...)
@@ -384,13 +382,15 @@ protected:
 		handleErrorV(code, severity, 0, NULL, message, argList);
 	}
 
-
-	/** Handles an error, by reading out an \a ERendererError excception object.
-	 * @param err Object with error information
+	/** Handles an error, sets m_lastError and calls the current error handler
+	 * @param code Error Code (RIE_...)
+	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+	 * @param line Line number where error occured
+	 * @param file file where error occured
+	 * @param message Format string (like in printf()), not formatted if argList==NULL
+	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 	 */
-	inline virtual RtVoid handleError(const ERendererError &err) {
-		handleErrorV(err.code(), err.severity(), err.line(), err.file(), err.what(), 0);
-	}
+	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
 	//@}
 
 	//@{

@@ -52,15 +52,6 @@ CMacDynLib::CMacDynLib(const char *libname, const char *searchpath, long int ver
 CMacDynLib::~CMacDynLib() {
 	doUnload();
 }
-
-const char *CMacDynLib::staticClassName() {
-	return "CMacDynLib";
-}
-
-const char *CMacDynLib::className() const {
-	return CMacDynLib::staticClassName();
-}
-
 bool CMacDynLib::isLoaded() const {
 	return m_libHandle != 0;
 }

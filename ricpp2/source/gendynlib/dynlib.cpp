@@ -22,6 +22,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file dynlib.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Contains the implementation of the system independent parts
+ *         to load a dynamic library.
+ */
+
 #include "ricpp/gendynlib/dynlib.h"
 
 using namespace RiCPP;
@@ -31,9 +37,6 @@ CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
 {
 	m_libpath.clear();
 	m_searchpath.explode(';', searchpath, true);
-}
-
-CDynLib::~CDynLib() {
 }
 
 unsigned long CDynLib::useCount() const {
@@ -48,8 +51,8 @@ const char *CDynLib::libname() const {
 	return m_libname.c_str();
 }
 
-const char *CDynLib::libpath() const {
-	return isLoaded() ? m_libpath.c_str() : "";
+const char *CDynLib::libpath() {
+	return findLib();
 }
 
 bool CDynLib::load() {

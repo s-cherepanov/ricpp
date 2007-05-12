@@ -66,15 +66,15 @@ class CContextCreator {
 	 * catched by the front end and bridged to the RenderMan error handler.
 	 *  Never used directly, so it can be changed by a overwriting errHandler() in a child class.
 	 */
-	CErrorHandler m_errorHandler;
+	CErrorExceptionHandler m_errorHandler;
 
 protected:
 	/** @brief Returns the error handler for use, can be overwritten but usually
 	 *  won't in this framework.
 	 *
-	 *  @return \a m_errorHandler, the default CErrorHandler is returned.
+	 *  @return \a m_errorHandler, the default CErrorExceptionHandler is returned.
 	 */
-	inline virtual CErrorHandler &errHandler() { return m_errorHandler; }
+	inline virtual CErrorExceptionHandler &errHandler() { return m_errorHandler; }
 
 	/** @brief Factory method, must be overwritten to return a concrete renderer context.
 	 *

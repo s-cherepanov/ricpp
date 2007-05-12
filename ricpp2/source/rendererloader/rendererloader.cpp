@@ -155,10 +155,11 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
 
 	CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str(), IRiContext::riContextMajorVersion);
 	if ( dynLib ) {
+		// use libname as key, the path is not used as identification
 		std::string key = dynLib->libname();
 		CRendererLib *lib = m_libs.findObj(key);
 		if ( lib ) {
-			delete dynLib;
+			CDynLibFactory::deleteDynLib(dynLib);
 			return lib->getContextCreator(IRiContext::riContextMajorVersion);
 		}
 		if ( dynLib->load() && dynLib->valid() ) {
@@ -168,11 +169,12 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
 					m_libs.registerObj(key, lib);
 					return lib->getContextCreator(IRiContext::riContextMajorVersion);
 				} else {
+					// also deletes dynLib
 					delete lib;
 				}
 			}
 		} else {
-			delete dynLib;
+			CDynLibFactory::deleteDynLib(dynLib);
 		}
 	}
 	return NULL;

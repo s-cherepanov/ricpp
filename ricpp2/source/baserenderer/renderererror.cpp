@@ -109,7 +109,7 @@ const char *ERendererError::formatError(std::string &strCode) const
 }
 
 
-RtVoid CErrorHandler::handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...)
+RtVoid CErrorExceptionHandler::handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...)
 {
 	va_list argList;
 	va_start(argList, message);
@@ -117,15 +117,19 @@ RtVoid CErrorHandler::handleError(RtInt code, RtInt severity, int line, const ch
 	va_end(argList);
 }
 
-RtVoid CErrorHandler::handleError(RtInt code, RtInt severity, RtString message, ...)
+RtVoid CErrorExceptionHandler::handleError(RtInt code, RtInt severity, RtString message, ...)
 {
 	va_list argList;
 	va_start(argList, message);
 	handleErrorV(code, severity, 0, 0, message, argList);
 	va_end(argList);
 }
+RtVoid CErrorExceptionHandler::handleError(const ERendererError &err)
+{
+	handleErrorV(err.code(), err.severity(), err.line(), err.file(), err.what(), 0);
+}
 
-RtVoid CErrorHandler::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList) {
+RtVoid CErrorExceptionHandler::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList) {
 	static const int ERROR_STR_SIZE = 256;
 	char str[ERROR_STR_SIZE];
 	str[0] = (char)0;

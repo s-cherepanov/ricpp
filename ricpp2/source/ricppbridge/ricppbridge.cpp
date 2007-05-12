@@ -106,15 +106,6 @@ RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, int line, const ch
 
 	// If a severe error occured, end all rendering and reset the renderer
 	if ( severity == RIE_SEVERE ) {
-		if ( m_ctxMgmt.curCtx().valid() && m_ctxMgmt.curCtx().renderer() ) {
-			try {
-				m_ctxMgmt.curCtx().renderer()->synchronize(RI_ABORT);
-			} catch (ERendererError &e) {
-				// ignore the error
-				RtInt code = e.code();
-				code = code;
-			}
-		}
 		m_ctxMgmt.abort();
 	}
 

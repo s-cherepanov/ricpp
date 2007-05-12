@@ -27,7 +27,7 @@
 
 /** @file ricontext.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Contains the calling interface of the backend.
+ *  @brief Contains the declaration calling interface of the backend.
  */
 
 #ifndef _RICPP_RICPP_RICPP_H

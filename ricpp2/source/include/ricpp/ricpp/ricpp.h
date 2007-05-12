@@ -55,7 +55,7 @@ namespace RiCPP {
 // ---------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------
 
-/** Some basic types are copied from ri.h (s.a. \see RISPEC3.2, Appendix C)
+/** @brief Some basic types are copied from ri.h (s.a. RISPEC3.2, Appendix C)
  */
 //@{
 typedef short   RtBoolean; ///< Booleans can be RI_TRUE or RI_FALSE
@@ -84,7 +84,7 @@ typedef unsigned long RtContextHandle;  ///< handle for a render context handle 
 // typedef RtString  RtArchiveHandle;  // handle for a rib archive (3Delight)
 //@}
 
-/** Definitions of illegal handles
+/** @brief Definitions of illegal handles
  */
 //@{
 const RtContextHandle illContextHandle = (RtContextHandle)0;
@@ -331,10 +331,10 @@ public:
  */
 class ISubdivFunc {
 public:
-	/** Name of the subdivision function
+	/** @brief Name of the subdivision function
 	 */
 	virtual const char *name() const = 0;
-	/** The subdivision function as operator()()
+	/** @brief The subdivision function as operator()()
 	 */
 	virtual RtVoid operator()(IRi &, RtPointer, RtFloat) const = 0;
 };
@@ -343,10 +343,10 @@ public:
  */
 class IFreeFunc {
 public:
-	/** Name of the free function
+	/** @brief Name of the free function
 	 */
 	virtual const char *name() const = 0;
-	/** The free function as operator()()
+	/** @brief The free function as operator()()
 	 */
 	virtual RtVoid operator()(IRi &, RtPointer) const = 0;
 };
@@ -355,10 +355,10 @@ public:
  */
 class IArchiveCallback {
 public:
-	/** Name of the callback function
+	/** @brief Name of the callback function
 	 */
 	virtual const char *name() const = 0;
-	/** The callback function as operator()()
+	/** @brief The callback function as operator()()
 	 */
 	virtual RtVoid operator()(IRi &, RtToken, RtString, ...) const = 0;
 };
@@ -399,14 +399,14 @@ public:
 	 *  @param name name of the token
 	 *  @param declaration declaration string of the token
 	 *  @return A unique token
-	 *  s.a. @ref [ARM2000], Parameter Declarations, 64-66,
-	 *  s.a. @ref [RISPEC3.2], RiDeclare, pp. 13-15,
-	 *  s.a. @ref [STE2003], Declaring parameter types, 150-152,
-	 *  s.a. @ref [UPS89], Extending the set of variables, 242-244
+	 *  s.a. ARM2000, Parameter Declarations, 64-66,
+	 *  s.a. RISPEC3.2, RiDeclare, pp. 13-15,
+	 *  s.a. STE2003, Declaring parameter types, 150-152,
+	 *  s.a. UPS89, Extending the set of variables, 242-244
 	 */
 	virtual RtToken declare(RtString name, RtString declaration) = 0;
  
-	//! Synchronize the rendering state [QRM], front end function like errorHandler
+	//! @brief Synchronize the rendering state [QRM], front end function like errorHandler
 	/*! @param name Type of synchronization, e.g. RI_ABORT to abort the rendering
 	 */
     virtual RtVoid synchronize(RtToken name) = 0;
@@ -417,7 +417,7 @@ public:
 	virtual version(RtFloat version) = 0;
 	*/
 
-	/** The modes
+	/** @brief The modes
 	 */
 	//@{
 	/** @brief Creates and initializes a new rendering context, in a context it is called after instanciation
@@ -437,61 +437,61 @@ public:
 	 */
 	virtual RtVoid end(void) = 0;
 
-	//! Starts a new single frame block of an animation sequence
+	//! @brief Starts a new single frame block of an animation sequence
 	/*! @param number of the frame
 	 */
 	virtual RtVoid frameBegin(RtInt number) = 0;
 
-	//! Ends a frame block
+	//! @brief Ends a frame block
 	virtual RtVoid frameEnd(void) = 0;
 
-	//! Starts a new world block, the description of the scene geometry
+	//! @brief Starts a new world block, the description of the scene geometry
 	virtual RtVoid worldBegin(void) = 0;
 
-	//! Ends a world block
+	//! @brief Ends a world block
 	virtual RtVoid worldEnd(void) = 0;
 
-	//! Starts a new attribute block, pushes the current set of attriubes
+	//! @brief Starts a new attribute block, pushes the current set of attriubes
 	virtual RtVoid attributeBegin(void) = 0;
 
-	//! Ends an attribute block, pops the set of attributes
+	//! @brief Ends an attribute block, pops the set of attributes
 	virtual RtVoid attributeEnd(void) = 0;
 
-	//! Starts a transformation block, pushes the composit transformation matrix
+	//! @brief Starts a transformation block, pushes the composit transformation matrix
 	virtual RtVoid transformBegin(void) = 0;
 
-	//! Ends a transformation block, pops the composit transformation matrix
+	//! @brief Ends a transformation block, pops the composit transformation matrix
 	virtual RtVoid transformEnd(void) = 0;
 
-	//! Starts a solid block, a CSG solid primitive
-	/*! @param token Type of the solid block either RI_PRIMITIVE, RI_INTERSECTION, RI_UNION or RI_DIFFERENCE
+	//! @brief Starts a solid block, a CSG solid primitive
+	/*! @param type Type of the solid block either RI_PRIMITIVE, RI_INTERSECTION, RI_UNION or RI_DIFFERENCE
 	 */
     virtual RtVoid solidBegin(RtToken type) = 0;
 
-	//! Ends a solid block
+	//! @brief Ends a solid block
     virtual RtVoid solidEnd(void) = 0;
 
-	//! Starts a new object block, the definition fo an object
+	//! @brief Starts a new object block, the definition fo an object
 	/*! @return The handle is used to later reference the object in IRi::objectInstance()
 	 */
 	virtual RtObjectHandle objectBegin(void) = 0;
 
-	//! Ends an object block, the object can now be created with IRi::objectInstance()
+	//! @brief Ends an object block, the object can now be created with IRi::objectInstance()
 	virtual RtVoid objectEnd(void) = 0;
 
-	//! Retained geometry (objectBegin(), objectEnd())
+	//! @brief Retained geometry (objectBegin(), objectEnd())
 	/*! Creates a new object referenced by handle
 	 * @param handle Reference to an object, returned by objectBegin
 	 */
     virtual RtVoid objectInstance(RtObjectHandle handle) = 0;
 
-	//! Starts a motion block
+	//! @brief Starts a motion block
 	/*! @param N     Number of samples (length of times)
 	 *  @param times Vector of samples
 	 */
     virtual RtVoid motionBeginV(RtInt N, RtFloat times[]) = 0;
 
-	//! End of a motion block
+	//! @brief End of a motion block
     virtual RtVoid motionEnd(void) = 0;
 
 	/*
@@ -516,16 +516,16 @@ public:
 	*/
 	//@}
 
-	//@{
-	/** Options
+	/** @brief Options
 	 */
+	//@{
 
 	//! Sets display resolution
 	/*! Sets the hroizontal (xres) and vertical (yres) resolution (in pixels)
 	 *  of the image to be rendered.
 	 *  @param xres Horizontal resolution (pixel)
 	 *  @param yres Vertical resolution (pixel)
-	 *  \pram aspect pixel aspect ratio pixelwidth/pixelheight
+	 *  @param aspect pixel aspect ratio pixelwidth/pixelheight
 	 */
     virtual RtVoid format(RtInt xres, RtInt yres, RtFloat aspect) = 0;
 
@@ -772,7 +772,7 @@ public:
 
 	//! Turns a specific light source on or off
 	/*! @param light Handle that references a light source (area or non-area light source)
-	 *  @param onoff, RI_TRUE turns a light source on, RI_FALSE turns it off.
+	 *  @param onoff RI_TRUE turns a light source on, RI_FALSE turns it off.
 	 */
 	virtual RtVoid illuminate(RtLightHandle light, RtBoolean onoff) = 0;
 
@@ -812,7 +812,7 @@ public:
 	virtual RtVoid shadingInterpolation(RtToken type) = 0;
 
 	//! Controls rendering as a matte, can be either on or off.
-	/*! @parameter onoff RI_TRUE subsequent primitives are matte objects,
+	/*! @param onoff RI_TRUE subsequent primitives are matte objects,
 	 *                   RI_FALSE subsequent primitives are rendered normal.
 	 */
     virtual RtVoid matte(RtBoolean onoff) = 0;
@@ -914,7 +914,7 @@ public:
 	virtual RtVoid transform(RtMatrix transform) = 0;
 
 	/** @brief Concatenates transform onto the CTM
-	 *  @param concatTransform CTM is premultiplied by transform
+	 *  @param transform CTM is premultiplied by transform
 	 */
 	virtual RtVoid concatTransform(RtMatrix transform) = 0;
 
@@ -934,7 +934,7 @@ public:
 	 *
 	 *  Rotates angle degrees around the axis vector (dx, dy, dz)
 	 *
-	 *  @param angel Degrees to rotate
+	 *  @param angle Degrees to rotate
 	 *  @param dx x component of the rotation axis
 	 *  @param dy y component of the rotation axis
 	 *  @param dz z component of the rotation axis
@@ -944,8 +944,8 @@ public:
 	/** @brief Concatenates a scaling onto the CTM
 	 *
 	 *  @param dx Scales in x direction
-	 *  @param dx Scales in y direction
-	 *  @param dx Scales in z direction
+	 *  @param dy Scales in y direction
+	 *  @param dz Scales in z direction
 	 */
 	virtual RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz) = 0;
 	
@@ -965,7 +965,6 @@ public:
 
 	/** @brief Sets a deformation shader
 	 *  @param name Name of the deformation shader
-	 *  @param token Shader specific parameter list
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
@@ -994,10 +993,11 @@ public:
 	 *
 	 *  Transforms an array of points from the coordinate system fromspace to the coordinatesystem tospace.
 	 *
-	 *  @param fromspace name of the coordinate system from which points are transformed
-	 *  @param tospace name of the coordinate system to which points are transformed
-	 *  @param points the points that are to be transformed, the values are modified
-	 *  @return points, containing the modified points, NULL if an error orccured
+	 *  @param fromspace Name of the coordinate system from which points are transformed
+	 *  @param tospace Name of the coordinate system to which points are transformed
+	 *  @param npoints Number of points in \a points
+	 *  @param points The points that are to be transformed, the values are modified
+	 *  @return Points, containing the modified points, NULL if an error orccured
 	 */
 	virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
 	//@}
@@ -1025,9 +1025,9 @@ public:
 	 */
     virtual RtVoid polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	/** @briefRequests a single general concave planar polygon with holes
+	/** @brief Requests a single general concave planar polygon with holes
 	 *  @param nloops number of loops defining the general polygon
-	 *  @param nvertices Number of vertices, the first is the outline, followed by holes
+	 *  @param nverts Number of vertices, the first is the outline, followed by holes
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
@@ -1286,7 +1286,6 @@ public:
 	//@{
 	/** @brief Generates a predefined geometry, RI_TEAPOT is the only predifined one
 	 *  @param type type of the geometry (RI_TEAPOT)
-	 *  @param token parameterlist with additional token-array pairs
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
@@ -1373,13 +1372,13 @@ public:
 	//@{
 
 	/** @brief Prints into a RIB file
-	 *  @param type Type of Record RI_COMMENT (#text), RI_STRUCTURE (##text), RI_VERBATIM (text)
+	 *  @param type Type of Record RI_COMMENT (\#text), RI_STRUCTURE (\#\#text), RI_VERBATIM (text)
 	 *  @param line Error description
 	 */
 	virtual RtVoid archiveRecordV(RtToken type, RtString line) = 0; /* Added, e.g. line is the formatted line from archive record */
 
-	/** @brief  Reads a RIB archive from a file and 'renders' it's content by calling a delegate 
-	 *  @param filename Name of the RIB file
+	/** @brief Reads a RIB archive from a file and 'renders' it's content by calling a delegate 
+	 *  @param name Name of the RIB file
 	 *  @param callback Called for each archive record
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list
@@ -1471,7 +1470,7 @@ public:
 	//@{
 	//! Starts a motion block for a moving primitive
 	/*! @param N     Number of samples (length of times)
-	 *  @param times Vector of samples
+	 *  @param sample First of the N samples
 	 *  see IRiRoot::motionBeginV()
 	 */
     virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...) = 0;
@@ -1702,7 +1701,7 @@ public:
 	//@{
 
 	/** @brief Prints into a RIB file, see IRiRoot::archiveRecordV()
-	 *  @param type Type of Record RI_COMMENT (#text), RI_STRUCTURE (##text), RI_VERBATIM (text)
+	 *  @param type Type of Record RI_COMMENT (\#text), RI_STRUCTURE (\#\#text), RI_VERBATIM (text)
 	 *  @param format Format string like for printf()
 	 */
     virtual RtVoid archiveRecord(RtToken type, RtString format, ...) = 0; /* New 3.2 */

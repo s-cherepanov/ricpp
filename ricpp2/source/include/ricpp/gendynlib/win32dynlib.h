@@ -1,8 +1,6 @@
 #ifndef _RICPP_GENDYNLIB_WIN32DYNLIB_H
 #define _RICPP_GENDYNLIB_WIN32DYNLIB_H
 
-#ifdef WIN32
-
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
@@ -26,6 +24,11 @@
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+/** @file win32dynlib.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Declaration of a class to handle dynamic libraries in Win32.
+ */
 
 #ifndef _RICPP_GENDYNLIB_DYNLIB_H
 #include "ricpp/gendynlib/dynlib.h"
@@ -62,7 +65,4 @@ public:
 }; // CWin32DynLib
 
 }
-
-#endif // WIN32
-
 #endif // _RICPP_GENDYNLIB_WIN32DYNLIB_H

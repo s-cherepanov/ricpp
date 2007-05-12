@@ -25,6 +25,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file ribwriter.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Declaration of a context to write RIB streams
+ */
+
 #ifndef _RICPP_BASERENDERER_BASERENDERER_H
 #include "ricpp/baserenderer/baserenderer.h"
 #endif // _RICPP_BASERENDERER_BASERENDERER_H

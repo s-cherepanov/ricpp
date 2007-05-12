@@ -99,6 +99,8 @@ public:
 
 	/** @brief Pushes a string to the stored strings. Variables are substituted.
 	 *  @param str A copy of the NUL terminated string is stored.
+	 *  @param useEnv true if the environment variables of the system should
+	 *         also be used a variables
 	 */
 	inline void push(const char *str, bool useEnv)
 	{
@@ -107,6 +109,8 @@ public:
 
 	/** @brief Pushes a string to the stored strings.
 	 *  @param v A copy of the string is stored.
+	 *  @param useEnv true if the environment variables of the system should
+	 *         also be used a variables
 	 */
 	inline void push(const std::string &v, bool useEnv)
 	{

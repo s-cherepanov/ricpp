@@ -22,17 +22,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file renderererror.h
+/** @file renderererror.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Error exception used internally for RiCPP
- *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
+ *  @brief Error exception and base for errorhandling used internally for RiCPP
  */
 
-#include "ricpp/baserenderer/renderererror.h"
+#include "ricpp/ricpp/renderererror.h"
 #include <stdarg.h>
 
 using namespace RiCPP;
@@ -108,8 +103,7 @@ const char *ERendererError::formatError(std::string &strCode) const
 	return strCode.c_str();
 }
 
-
-RtVoid CErrorExceptionHandler::handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...)
+RtVoid IRiCPPErrorHandler::handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...)
 {
 	va_list argList;
 	va_start(argList, message);
@@ -117,14 +111,14 @@ RtVoid CErrorExceptionHandler::handleError(RtInt code, RtInt severity, int line,
 	va_end(argList);
 }
 
-RtVoid CErrorExceptionHandler::handleError(RtInt code, RtInt severity, RtString message, ...)
+RtVoid IRiCPPErrorHandler::handleError(RtInt code, RtInt severity, RtString message, ...)
 {
 	va_list argList;
 	va_start(argList, message);
 	handleErrorV(code, severity, 0, 0, message, argList);
 	va_end(argList);
 }
-RtVoid CErrorExceptionHandler::handleError(const ERendererError &err)
+RtVoid IRiCPPErrorHandler::handleError(const ERendererError &err)
 {
 	handleErrorV(err.code(), err.severity(), err.line(), err.file(), err.what(), 0);
 }

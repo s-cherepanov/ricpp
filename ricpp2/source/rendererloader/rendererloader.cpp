@@ -24,12 +24,7 @@
 
 /** @file rendererloader.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implements a renderer creator by loading an instance from a dynamic library
- *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
+ *  @brief Implements the creation of a renderer
  */
 
 #include "ricpp/rendererloader/rendererloader.h"
@@ -193,18 +188,4 @@ CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 	}
 
 	return loadContextCreator(0);
-}
-
-RtVoid CRendererLoader::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
-	if ( !name )
-		return;
-
-	// The searchpath for the dynamic renderer libraries
-	if ( !strcmp(name, "searchpath") ) {
-		if ( n < 1 )
-			return;
-		if ( !strcmp(tokens[0], "renderer") ) {
-			m_searchpath = (const char *)params[0];
-		}
-	}
 }

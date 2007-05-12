@@ -27,7 +27,7 @@
 
 /** @file baserenderer.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Contains the declaration of the backend base class of a renderer context.
+ *  @brief Declaration of the backend base class of a renderer context.
  */
 
 #ifndef _RICPP_BASERENDERER_DORENDER_H

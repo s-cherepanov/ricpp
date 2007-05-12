@@ -27,11 +27,11 @@
 
 /** @file contextcreator.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Contains the declaration of a class for creation and basic handling of render contexts.
+ *  @brief Declaration of a class for creation and basic handling of render contexts.
  */
 
 #ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/baserenderer/renderererror.h"
+#include "ricpp/RICPP/renderererror.h"
 #endif // _RICPP_RICPP_RENDERERERROR_H
 
 #ifndef _RICPP_BASERENDERER_RICONTEXT_H
@@ -60,11 +60,11 @@ class CContextCreator {
 	 */
 	IRiContext *m_curContext;
 
-	/** @brief Error Handler, returned by the virtual \a errHandler().
+	/** @brief Error Handler, returned by the virtual \a ricppErrHandler().
 	 *
 	 * This error handler throws an ERendererError exception. The exception is
 	 * catched by the front end and bridged to the RenderMan error handler.
-	 *  Never used directly, so it can be changed by a overwriting errHandler() in a child class.
+	 *  Never used directly, so it can be changed by a overwriting ricppErrHandler() in a child class.
 	 */
 	CErrorExceptionHandler m_errorHandler;
 
@@ -74,7 +74,7 @@ protected:
 	 *
 	 *  @return \a m_errorHandler, the default CErrorExceptionHandler is returned.
 	 */
-	inline virtual CErrorExceptionHandler &errHandler() { return m_errorHandler; }
+	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_errorHandler; }
 
 	/** @brief Factory method, must be overwritten to return a concrete renderer context.
 	 *

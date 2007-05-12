@@ -22,6 +22,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file macrendererlib.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief The Win32 specific functions of the representation
+ *         of a dynamic library for the factory of renderer context creators
+ */
+
 #include "ricpp/rendererloader/rendererloader.h"
 #include "ricpp/gendynlib/macdynlib.h"
 

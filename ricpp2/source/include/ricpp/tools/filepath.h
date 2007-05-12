@@ -49,9 +49,9 @@ namespace RiCPP {
 		 */
 		inline static char internalPathSeperator() {return '/';}
 
-		/**  @brief The internal character to seperate multiple pathes (e.g. search path)
+		/** @brief The internal character to seperate multiple pathes (e.g. search path)
 		 *
-		 * ';' (like in Windows) is used, because ':' can be part of regular windows file names (e.g. C:\autoexec.bat)
+		 * ';' (like in Windows) is used, because ':' can be part of regular windows file names (e.g. C:\\autoexec.bat)
 		 *
 		 * @return Internally used seperator for multiple pathes
 		 */

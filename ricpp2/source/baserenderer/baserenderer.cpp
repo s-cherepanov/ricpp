@@ -24,7 +24,7 @@
 
 /** @file baserenderer.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Contains the implementation of the backend base class of a renderer context.
+ *  @brief Implementation of the backend base class of a renderer context.
  */
 
 #include "ricpp/baserenderer/baserenderer.h"

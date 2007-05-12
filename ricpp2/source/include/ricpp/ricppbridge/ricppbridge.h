@@ -46,6 +46,10 @@
 #include "ricpp/ricpp/errorhandlers.h"
 #endif
 
+#ifndef _RICPP_RICPP_RENDERERERROR_H
+#include "ricpp/ricpp/renderererror.h"
+#endif
+
 #include <vector>
 #include <map>
 #include <stdarg.h>
@@ -63,7 +67,7 @@ namespace RiCPP {
  * (forwarding RiContext, RiGetContext). Normally only a single
  * instance of CRiCPPBridge is used.
  */
-class CRiCPPBridge : public IRi {
+class CRiCPPBridge : public IRi, public IRiCPPErrorHandler {
 private:
 	//@{
 	/** Build in filters
@@ -83,10 +87,27 @@ private:
 	const CPrintErrorHandler m_printErrorHandler; ///< Prints error message to standard output
 	//@}
 
-	/** Current error handler, m_printErrorHandler is the
-	 *  default handler
+	//@{
+	/** Error Handling
+	 */
+	RtInt m_lastError; //< The last error number occured, stored by \a handleErrorV()
+
+	/** Current user defined error handler, m_printErrorHandler is the
+	 *  default handler, can be changed by errorHandler()
 	 */
 	const IErrorHandler *m_curErrorHandler; 
+
+	/** Handles an error, sets m_lastError and calls the current error handler
+	 *  Implementation of IRiCPPErrorHandler, used through ricppErrHandler()
+	 * @param code Error Code (RIE_...)
+	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+	 * @param line Line number where error occured
+	 * @param file file where error occured
+	 * @param message Format string (like in printf()), not formatted if argList==NULL
+	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
+	 */
+	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
+	//@}
 
 	//@{
 	/** Build in procedurals
@@ -108,12 +129,19 @@ protected:
 	/** Extracts all token-value pairs of an (...) interface call
 	 *  and stores them at m_tokens, m_params
 	 *  @param token First token of the token-value list
-	 *  @marker va_start() marker
+	 *  @param marker va_start() marker
 	 *  @return Number of token value pairs found
 	 */
 	RtInt getTokens(RtToken token, va_list marker);
 
 	
+	/** @brief Returns the error handler for use, can be overwritten but usually
+	 *  won't in this framework.
+	 *
+	 *  @return *this, The bridge itself has the function of an error handler
+	 */
+	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return *this; }
+
 	//@{
 	/** Context handling
 	 */
@@ -155,8 +183,8 @@ protected:
 		 * The instance is invalidated if the context or
 		 * the context creator is invalid. The context creator can be referenced
 		 * by many CContext instances.
-		 * @param aRenderer renderer implementing the Ri
-		 * @param aHandle a andle of aRenderer
+		 * @param aCreator Context creator
+		 * @param aRenderer Implementation of a renderer context, created by \a aCreator
 		 */
 		inline CContext(CContextCreator *aCreator, IRiContext *aRenderer) :
 			m_contextCreator(aCreator),
@@ -247,7 +275,6 @@ protected:
 
 		/** Removes a context creator, renderer context pair from the context map
 		 * @param handle The RtContextHandle as key, illContextHandle is not removed
-		 * @param ctx A context creator, renderer context pair to be stored
 		 */
 		inline void removeContext(RtContextHandle handle) {
 			if ( m_ctxHandle == illContextHandle )
@@ -270,10 +297,10 @@ protected:
 		}
 
 		/** Adds a context creator, renderer context pair to the context map
-		 *  with the handle as key
-		 * @param handle The RtContextHandle as key
-		 * @param ctx A context creator, renderer context pair to be stored
-		 * @return The new handle of the creator, context pair
+		 *  with the handle as key, the handle is a number \a m_nextCtxHandle
+		 *  also increased in this method.
+		 * @param ctx A context creator, to be stored
+		 * @return The new handle of the creator
 		 */
 		inline RtContextHandle add(const CContext &ctx) {
 			m_ctxMap[(RtContextHandle)m_nextCtxHandle] = ctx;
@@ -335,65 +362,6 @@ protected:
 	//@}
 
 	//@{
-	/** Error Handling
-	 */
-	RtInt m_lastError; //< The last error number occured, stored by \a handleErrorV()
-
-	/** @brief handle an error with line and file
-	 *
-	 * Forward to \a handleErrorV(). Variable parameters like in printf(),
-	 * if not known if message contains a format string use
-	 * handleError(code, severity, line, file, "%s", message) or handleErrorV
-	 * @param code Error Code (RIE_...)
-	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
-	 * @param line Line number where error occured
-	 * @param file file where error occured
-	 * @param message Format string (like in printf())
-	 */
-	virtual RtVoid handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...);
-
-	/** @brief handle an error
-	 *
-	 * Forward to \a handleErrorV(). Variable parameters like in printf(),
-	 * if not known if message contains a format string use
-	 * handleError(code, severity, "%s", message) or handleErrorV
-	 * @param code Error Code (RIE_...)
-	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
-	 * @param message Format string (like in printf())
-	 */
-	virtual RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
-
-
-	/** Handles an error, by reading out an \a ERendererError excception object.
-	 * @param err Object with error information
-	 */
-	inline virtual RtVoid handleError(const ERendererError &err) {
-		handleErrorV(err.code(), err.severity(), err.line(), err.file(), err.what(), 0);
-	}
-
-	/** Handles an error, sets m_lastError and calls the current error handler
-	 * @param code Error Code (RIE_...)
-	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
-	 * @param message Format string (like in printf())
-	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
-	 */
-	inline virtual RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0)
-	{
-		handleErrorV(code, severity, 0, NULL, message, argList);
-	}
-
-	/** Handles an error, sets m_lastError and calls the current error handler
-	 * @param code Error Code (RIE_...)
-	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
-	 * @param line Line number where error occured
-	 * @param file file where error occured
-	 * @param message Format string (like in printf()), not formatted if argList==NULL
-	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
-	 */
-	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
-	//@}
-
-	//@{
 	/** Current renderer creator, the renderer creator creats an instance of a renderer implementing the Ri
 	 */
 	bool m_deleteRendererCreator; //< Destroy m_curRendererCreator at the destructor of the bridge
@@ -414,24 +382,21 @@ protected:
 		return 0;
 	}
 
-	/** Options for renderer creator, like RiOption but only concerns the m_curRendererCreator.
-	 * Forwarded option() calls before the first begin() and between end() and begin().
-	 * @param name Option name (likely "searchpath" for the renderer
+	/** Like RiOption but only concerns the bridge itself.
+	 * Forwarded by optionV() if there is no active render context.
+	 * @param name Option name (likely "searchpath" for the renderer searchpath)
 	 * @param n Number token-value pairs
-	 * @param Tokens Tokens
+	 * @param tokens Tokens
 	 * @param params Parameter values
 	 */
-	inline virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
-		if ( m_curRendererCreator )
-			m_curRendererCreator->doOptionV(name, n, tokens, params);
-	}
+	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 	//@}
 
 	/** Creates a bridge, with a different renderer creator. The creator is not destroyed
 	 * by the destructor. The pointer to creator is stored. The rest like CRiCPPBridge().
 	 * Can be used from constructors of children of CRiCPPBridge:
 	 * CRiCPPChildBridge() : CRiCPPBridge(&m_myRendererLoader) {}
-	 * @param creator, a different renderer creator
+	 * @param creator A different renderer creator
 	 */
 	CRiCPPBridge(IRendererCreator &creator);
 

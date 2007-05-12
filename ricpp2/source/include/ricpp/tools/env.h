@@ -127,7 +127,7 @@ namespace RiCPP {
 		 *  using the internal RiCPP format ('/' as seperator). The native name of this variable
 		 *  can be different (is not existent).
 		 *
-		 *  @param path String reference where the value of the special environment variable
+		 *  @param prog String reference where the value of the special environment variable
 		 *         PROG is stored
 		 *  @return A reference to \a prog.
 		 */
@@ -141,6 +141,7 @@ namespace RiCPP {
 		 *  that's maybe not the case for other variables or different for different OSes).
 		 *  If no variable \a varName is found, var is cleared.
 		 *
+		 *  @retVal var Value of the environment variable is stored here
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign).
 		 *  @return A reference to \a var, the value of the variable.

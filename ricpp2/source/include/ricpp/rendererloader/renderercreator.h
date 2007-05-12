@@ -25,6 +25,17 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file renderercreator.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Interface to provide a CContextCreator
+ * 
+ *  The renderer will be created either by loading a dynamic
+ *  library or by dynamically allocate one. A concrete IRendererCreator
+ *  will manage the dynamically created CContextCreator witch in turn
+ *  can create contexts the concrete implementations of a renderer. CRendererLoader
+ *  implements this interface.
+ */
+
 #ifndef _RICPP_BASERENDERER_CONTEXTCREATOR_H
 #include "ricpp/baserenderer/contextcreator.h"
 #endif // _RICPP_BASERENDERER_CONTEXTCREATOR_H
@@ -40,24 +51,18 @@ public:
 	 */
 	inline virtual ~IRendererCreator() {}
 
-	/** Renderer creation (may throw ERendererException)
+	/** CContextCreator creation, may throw ERendererException for more error information
 	 * @param name The argument of IRi::begin(RtString name), indicates the
 	 *        name of the renderer creator with parameters appended
 	 * @return A context creator, new or already loaded
 	 */
 	virtual CContextCreator *getContextCreator(RtString name) = 0;
 
-	/** Options called before the renderer begins (may throw ERendererException)
-	 *  that is before IRi::begin() is called or between
-	 *  IRi::end() and (IRi::context() or IRi::begin()), handle implementation
-	 *  specific options that are needed for the renderer creator (like the searchpath
-	 *  for the renderers), called by the CRiCPPBridge
-	 * @param name Option name (likely "searchpath" for the renderer
-	 * @param n Number token-value pairs
-	 * @param Tokens Tokens
-	 * @param params Parameter values
+	/** Sets a new searchpath
+	 *
+	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'
 	 */
-	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual void searchpath(RtString aSearchpath) = 0;
 }; // IRendererCreator
 
 } // namespace RiCPP

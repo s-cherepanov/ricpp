@@ -24,12 +24,8 @@
 
 /** @file win32rendererlib.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The Win32 specific functions of the CRendererLoader::CRendererLib
- *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
+ *  @brief The Win32 specific functions of the representation
+ *         of a dynamic library for the factory of renderer context creators
  */
 
 #include "ricpp/rendererloader/rendererloader.h"

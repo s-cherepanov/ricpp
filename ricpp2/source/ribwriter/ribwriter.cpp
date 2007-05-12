@@ -22,6 +22,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file ribwriter.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Implementation of a context to write RIB streams
+ */
+
 #include "ricpp/ribwriter/ribwriter.h"
 
 using namespace RiCPP;

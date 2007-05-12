@@ -24,7 +24,7 @@
 
 /** @file ricpp.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Strings for RiCPP
+ *  @brief Strings for the RenderMan(R) C++ Binding
  */
 
 #include "ricpp/ricpp/ricpp.h"

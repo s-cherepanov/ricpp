@@ -24,7 +24,7 @@
 
 /** @file contextcreator.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Contains the implementation of a class for creation and basic handling of render contexts.
+ *  @brief Implementation of a class for creation and basic handling of render contexts.
  */
 
 #include "ricpp/baserenderer/contextcreator.h"
@@ -77,7 +77,7 @@ RtVoid CContextCreator::context(IRiContext *context)
 
 	// if not found clear current, throw error
 	m_curContext = 0;
-	errHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::context(), context handle not generated from context creator");
+	ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::context(), context handle not generated from context creator");
 }
 
 RtVoid CContextCreator::begin(RtString name)
@@ -90,7 +90,7 @@ RtVoid CContextCreator::begin(RtString name)
 	m_curContext = getNewContext();
 
 	if ( !m_curContext ) {
-		errHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
 	}
 
 	// Activate the context by calling its begin

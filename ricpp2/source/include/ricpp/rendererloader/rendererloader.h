@@ -27,7 +27,8 @@
 
 /** @file rendererloader.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implements a renderer creator by loading an instance from a dynamic library
+ *  @brief Declares a class to provide a renderer creator by loading from dynamic library.
+ *         A RIB writer is created by instanciating CRibWriter.
  */
 
 #ifndef _RICPP_RENDERERLOADER_RENDERERCREATOR_H
@@ -44,12 +45,19 @@
 
 namespace RiCPP {
 
+/** @brief Provides a renderer creator.
+ *
+ *  The creator is loaded a dynamic library or an allocated
+ *  instanciating CRibWriter.
+ */
 class CRendererLoader : public IRendererCreator
 {
 private:
 	CContextCreator *m_ribWriterCreator;
 	std::string m_searchpath;
 
+	/** Class to represent a dynamic library of a renderer creator
+	 */
 	class CRendererLib {
 		CDynLib *m_lib;
 		CContextCreator *m_contextCreator;
@@ -92,7 +100,10 @@ public:
 	virtual ~CRendererLoader();
 
 	virtual CContextCreator *getContextCreator(RtString name);
-	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	inline virtual void searchpath(RtString aSearchpath)
+	{
+		m_searchpath = aSearchpath ? m_searchpath : "";
+	}
 }; // CRendererLoader
 
 } // namespace RiCPP;

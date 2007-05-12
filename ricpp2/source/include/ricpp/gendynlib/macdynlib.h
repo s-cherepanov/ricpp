@@ -25,6 +25,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file macdynlib.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Declaration of a class to handle dynamic libraries in MacOS.
+ */
+
 #ifndef _RICPP_GENDYNLIB_DYNLIB_H
 #include "ricpp/gendynlib/dynlib.h"
 #endif // _RICPP_GENDYNLIB_DYNLIB_H

@@ -25,7 +25,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file dynlib.cpp
+/** @file dynlib.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Declaration of a class to handle dynamic libraries in general.
  */
@@ -68,7 +68,7 @@ namespace RiCPP {
 
 	protected:
 		/** The major version of the library that should be loaded.
-		 *  Libraries bear the major version in their name <libname>.<version>.<suffix>
+		 *  Libraries bear the major version in their name libname.version.suffix
 		 */
 		long int m_version;
 		

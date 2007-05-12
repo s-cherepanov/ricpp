@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_RENDERERERROR_H
-#define _RICPP_BASERENDERER_RENDERERERROR_H
+#ifndef _RICPP_RICPP_RENDERERERROR_H
+#define _RICPP_RICPP_RENDERERERROR_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -27,7 +27,7 @@
 
 /** @file renderererror.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Error exception used internally for RiCPP
+ *  @brief Error exception and base for errorhandling used internally for RiCPP
  */
 
 #ifndef _RICPP_RICPP_RICPP_H
@@ -49,9 +49,9 @@ class ERendererError {
 
 public:
 	/** Constructor, sets error codes and additional error message with source line and source file added
-	 *  @param code Which error ('RIE_...')
-	 *  @param severity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
-	 *  @param message Additional describing error string
+	 *  @param aCode Which error ('RIE_...')
+	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
+	 *  @param aMessage Additional describing error string
 	 *  @param aLine Line number of the source file where the ERendererError is constructed (the error occured), normally __LINE__
 	 *  @param aFile Filke where the ERendererError occured, normally __FILE__
 	 */
@@ -71,7 +71,7 @@ public:
 	virtual inline ~ERendererError() {}
 
 	/** Formats the error/severity numbers to a string.
-	 *  The format is "Error [<number>:<description>] Severity [<number>:<description>] <formated error message>",
+	 *  The format is "Error \[number:description\] Severity \[number:description\] formated error message",
 	 *  File and message parts are optional.
 	 *  @retVal strCode The error is formatted to this string
 	 *  @return strCode.c_str()
@@ -128,18 +128,16 @@ public:
 
 }; // ERendererError
 
-/** The standard error handler of the backend to format error messages and throw
- *  an ERendererError.
+
+/** Interface for easier error handling
+ *  CErrorExceptionHandler and CRiCPPBridge implement this interface to manage
+ *  the error handling.
  */
-class CErrorExceptionHandler {
+class IRiCPPErrorHandler {
 public:
 	/** Virtual destructor
 	 */
-	virtual inline ~CErrorExceptionHandler() {}
-
-	/** Error Handling, throws an ERendererError
-	 */
-	//@{
+	virtual inline ~IRiCPPErrorHandler() {}
 
 	/** @brief Handles an error with line and file
 	 *
@@ -165,12 +163,12 @@ public:
 	 */
 	virtual RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
 
-	/** @brief Simply rethrows an exception
+	/** @brief Forward the contetns of an ERendererError to handleErrorV()
 	 *  @param err Error Exception
 	 */
 	virtual RtVoid handleError(const ERendererError &err);
 
-	/** Handles an error, sets m_lastError and calls the current error handler
+	/** Forwards to handleErrorV with cleard line and filename
 	 * @param code Error Code (RIE_...)
 	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
 	 * @param message Format string (like in printf())
@@ -181,6 +179,22 @@ public:
 		handleErrorV(code, severity, 0, NULL, message, argList);
 	}
 
+	/** Handles an error must be overloaded for concrete error handling
+	 * @param code Error Code (RIE_...)
+	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+	 * @param line Line number where error occured
+	 * @param file file where error occured
+	 * @param message Format string (like in printf()), not formatted if argList==NULL
+	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
+	 */
+	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0) = 0;
+}; // IRiCPPErrorHandler
+
+/** The standard error handler of the backend to format error messages and throw
+ *  an ERendererError.
+ */
+class CErrorExceptionHandler : public IRiCPPErrorHandler {
+public:
 	/** Handles an error, sets m_lastError and calls the current error handler
 	 * @param code Error Code (RIE_...)
 	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
@@ -190,9 +204,8 @@ public:
 	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 	 */
 	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
-	//@}
 }; // CErrorExceptionHandler
 
 } // namespace RiCPP
 
-#endif // _RICPP_BASERENDERER_RENDERERERROR_H
+#endif // _RICPP_RICPP_RENDERERERROR_H

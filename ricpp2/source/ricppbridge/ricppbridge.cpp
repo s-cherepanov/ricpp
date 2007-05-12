@@ -81,21 +81,6 @@ RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
 	return n;
 }
 
-RtVoid CRiCPPBridge::handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...)
-{
-	va_list argList;
-	va_start(argList, message);
-	handleErrorV(code, severity, line, file, message, argList);
-	va_end(argList);
-}
-
-RtVoid CRiCPPBridge::handleError(RtInt code, RtInt severity, RtString message, ...)
-{
-	va_list argList;
-	va_start(argList, message);
-	handleErrorV(code, severity, 0, 0, message, argList);
-	va_end(argList);
-}
 
 RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList) {
 	m_lastError = code;
@@ -187,7 +172,7 @@ RtVoid CRiCPPBridge::end(void) {
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		m_ctxMgmt.end();
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::end()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::end()");
 	}
 }
 
@@ -248,7 +233,7 @@ RtVoid CRiCPPBridge::frameEnd(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::frameEnd()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::frameEnd()");
 	}
 }
 
@@ -260,7 +245,7 @@ RtVoid CRiCPPBridge::worldBegin(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldBegin()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldBegin()");
 	}
 }
 
@@ -272,7 +257,7 @@ RtVoid CRiCPPBridge::worldEnd(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldEnd()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldEnd()");
 	}
 }
 
@@ -284,7 +269,7 @@ RtVoid CRiCPPBridge::attributeBegin(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeBegin()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeBegin()");
 	}
 }
 
@@ -296,7 +281,7 @@ RtVoid CRiCPPBridge::attributeEnd(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeEnd()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeEnd()");
 	}
 }
 
@@ -308,7 +293,7 @@ RtVoid CRiCPPBridge::transformBegin(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformBegin()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformBegin()");
 	}
 }
 
@@ -320,7 +305,7 @@ RtVoid CRiCPPBridge::transformEnd(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformEnd()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformEnd()");
 	}
 }
 
@@ -344,7 +329,7 @@ RtVoid CRiCPPBridge::solidEnd(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::solidEnd()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::solidEnd()");
 	}
 }
 
@@ -358,7 +343,7 @@ RtObjectHandle CRiCPPBridge::objectBegin(void) {
 		}
 	}
 
-	handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectBegin()");
+	ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectBegin()");
 	return (RtObjectHandle)RI_NULL;
 }
 
@@ -370,7 +355,7 @@ RtVoid CRiCPPBridge::objectEnd(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectEnd()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectEnd()");
 	}
 }
 
@@ -382,7 +367,7 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectInstance(handle)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectInstance(handle)");
 	}
 }
 
@@ -424,7 +409,7 @@ RtVoid CRiCPPBridge::motionEnd(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::motionEnd()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::motionEnd()");
 	}
 }
 
@@ -725,6 +710,21 @@ RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer
 	}
 }
 
+RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+	if ( !name )
+		return;
+
+	// The searchpath for the dynamic renderer libraries
+	if ( !strcmp(name, "searchpath") ) {
+		if ( n < 1 )
+			return;
+		if ( !strcmp(tokens[0], "renderer") ) {
+			if ( m_curRendererCreator )
+				m_curRendererCreator->searchpath((RtString)params[0]);
+		}
+	}
+}
+
 RtLightHandle CRiCPPBridge::lightSource(RtString name, RtToken token, ...) {
 	va_list marker;
 	va_start(marker, token);
@@ -795,7 +795,7 @@ RtVoid CRiCPPBridge::color(RtColor Cs) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::color(Cs)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::color(Cs)");
 	}
 }
 
@@ -807,7 +807,7 @@ RtVoid CRiCPPBridge::opacity(RtColor Cs) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::opacity(Cs)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::opacity(Cs)");
 	}
 }
 
@@ -981,7 +981,7 @@ RtVoid CRiCPPBridge::bound(RtBound aBound) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::bound(aBound)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::bound(aBound)");
 	}
 }
 
@@ -993,7 +993,7 @@ RtVoid CRiCPPBridge::detail(RtBound aBound) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::detail(aBound)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::detail(aBound)");
 	}
 }
 
@@ -1053,7 +1053,7 @@ RtVoid CRiCPPBridge::reverseOrientation(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::reverseOrientation()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::reverseOrientation()");
 	}
 }
 
@@ -1103,7 +1103,7 @@ RtVoid CRiCPPBridge::identity(void) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::identity()");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::identity()");
 	}
 }
 
@@ -1115,7 +1115,7 @@ RtVoid CRiCPPBridge::transform(RtMatrix aTransform) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transform(aTransform)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transform(aTransform)");
 	}
 }
 
@@ -1127,7 +1127,7 @@ RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform) {
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::concatTransform(aTransform)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::concatTransform(aTransform)");
 	}
 }
 
@@ -1487,7 +1487,7 @@ RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetam
 			handleError(e);
 		}
 	} else {
-		handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::hyperboloidV(...)");
+		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::hyperboloidV(...)");
 	}
 }
 

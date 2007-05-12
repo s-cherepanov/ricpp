@@ -27,7 +27,7 @@
 
 /** @file dorender.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Contains the declaration of an interface for handling the rendering jobs of render contexts.
+ *  @brief Declaration of an interface for handling the rendering jobs of render contexts.
  */
 
 #ifndef _RICPP_BASERENDERER_RICONTEXT_H

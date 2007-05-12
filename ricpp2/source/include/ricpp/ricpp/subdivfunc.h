@@ -95,7 +95,7 @@ public:
 	 * @param ri Interface to be used
 	 * @param data
 	 */
-	virtual RtVoid operator()(IRi &, RtPointer data) const;
+	virtual RtVoid operator()(IRi &ri, RtPointer data) const;
 };
 }
 

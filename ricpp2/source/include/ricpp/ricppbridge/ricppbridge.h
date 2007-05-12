@@ -38,8 +38,8 @@
 #include "ricpp/ricpp/subdivfunc.h"
 #endif
 
-#ifndef _RICPP_RENDERERLOADER_RENDERERCREATOR_H
-#include "ricpp/rendererloader/renderercreator.h"
+#ifndef _RICPP_RENDERERLOADER_RENDERERLOADER_H
+#include "ricpp/rendererloader/rendererloader.h"
 #endif
 
 #ifndef _RICPP_RICPP_ERRORHANDLERS_H
@@ -124,6 +124,8 @@ private:
 	std::vector<RtToken> m_tokens;		///<< The tokens of the parameter list of an interface call
 	std::vector<RtPointer> m_params;	///<< The values of the parameter list of an interface call
 	//@}
+
+	CRendererLoader m_rendererCreator;  ///<< Used to create renderer context creators CContextCreator
 
 protected:
 	/** Extracts all token-value pairs of an (...) interface call
@@ -327,7 +329,7 @@ protected:
 		}
 
 		/** @return A reference to the current creator,
-		 *          context pair, not neccesairly valid
+		 *          context pair, not neccessairly valid
 		 */
 		inline CContext &curCtx() { return m_curCtx; }
 
@@ -361,26 +363,10 @@ protected:
 	} m_ctxMgmt;
 	//@}
 
-	//@{
-	/** Current renderer creator, the renderer creator creats an instance of a renderer implementing the Ri
+	/** Current renderer creator, the renderer creator creats an renderer context creator
+	 * @return An object to load renderer context creators
 	 */
-	bool m_deleteRendererCreator; //< Destroy m_curRendererCreator at the destructor of the bridge
-	IRendererCreator *m_curRendererCreator; //< A renderer creator, default is a CRendererLoader
-	//@}
-
-	//@{
-	/** Some forwarders for m_curRendererCreator
-	 */
-
-	/** Renderer context creation
-	 * @name Copy of CRendererLoader::begin(name)
-	 * @return Pointer to an appropriate context creator obtained from m_curRendererCreator
-	 */
-	inline virtual CContextCreator *getContextCreator(RtString name) {
-		if ( m_curRendererCreator )
-			return m_curRendererCreator->getContextCreator(name);
-		return 0;
-	}
+	IRendererCreator &rendererCreator() { return m_rendererCreator; }
 
 	/** Like RiOption but only concerns the bridge itself.
 	 * Forwarded by optionV() if there is no active render context.
@@ -390,15 +376,6 @@ protected:
 	 * @param params Parameter values
 	 */
 	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-	//@}
-
-	/** Creates a bridge, with a different renderer creator. The creator is not destroyed
-	 * by the destructor. The pointer to creator is stored. The rest like CRiCPPBridge().
-	 * Can be used from constructors of children of CRiCPPBridge:
-	 * CRiCPPChildBridge() : CRiCPPBridge(&m_myRendererLoader) {}
-	 * @param creator A different renderer creator
-	 */
-	CRiCPPBridge(IRendererCreator &creator);
 
 public:
 	/** Creates a bridge, a CRendererLoader is used as m_curRendererCreator, m_printErrorHandler

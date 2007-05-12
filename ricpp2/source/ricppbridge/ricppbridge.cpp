@@ -28,31 +28,18 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
-#include "ricpp/rendererloader/rendererloader.h"
 
 using namespace RiCPP;
 
 CRiCPPBridge::CRiCPPBridge() :
 	m_lastError(RIE_NOERROR)
 {
+	// Default options
 	m_curErrorHandler = &m_printErrorHandler;
-	m_deleteRendererCreator = true;
-	m_curRendererCreator = new CRendererLoader;
 }
 
-CRiCPPBridge::CRiCPPBridge(IRendererCreator &creator) :
-	m_lastError(RIE_NOERROR),
-	m_deleteRendererCreator(false),
-	m_curRendererCreator(&creator)
-{
-	m_curErrorHandler = &m_printErrorHandler;
-}
 
 CRiCPPBridge::~CRiCPPBridge() {
-	if ( m_deleteRendererCreator && m_curRendererCreator != NULL )
-		delete m_curRendererCreator;
-	m_deleteRendererCreator = false;
-	m_curRendererCreator = NULL;
 }
 
 
@@ -145,7 +132,7 @@ RtVoid CRiCPPBridge::begin(RtString name) {
 
 	CContextCreator *contextCreator = NULL;
 	try {
-		contextCreator = getContextCreator(name);
+		contextCreator = rendererCreator().getContextCreator(name);
 		if ( !contextCreator ) {
 			handleError(RIE_SYSTEM, RIE_SEVERE,
 				"Renderer creator missing in CRiCPPBridge::begin(name:\"%s\")",
@@ -719,8 +706,7 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		if ( n < 1 )
 			return;
 		if ( !strcmp(tokens[0], "renderer") ) {
-			if ( m_curRendererCreator )
-				m_curRendererCreator->searchpath((RtString)params[0]);
+			rendererCreator().searchpath((RtString)params[0]);
 		}
 	}
 }

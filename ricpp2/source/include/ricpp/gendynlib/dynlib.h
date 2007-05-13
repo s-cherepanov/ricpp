@@ -36,23 +36,23 @@
 
 namespace RiCPP {
 
-	/** Base class to represent the exported functions of libraries.
+	/** Interface to represent the exported functions of libraries.
 	 *  There are child classes containing the system depending parts
-	 *  of the handling of these functions: CMacLibFunc, CWin32LibFunc.
+	 *  of the handling of these functions: CMaILibFunc, CWin32LibFunc.
 	 *  These classes contain pointers to the functions. CDynLib
-	 *  handles the creation of CLibFunc instances. Used for
+	 *  handles the creation of ILibFunc instances. Used for
 	 *  example by CRendererLoader::CRendererLib to represent a
 	 *  library of renderer creators (used to generate concrete renderer contexts).
 	 */
-	class CLibFunc {
+	class ILibFunc {
 	public:
 		/** Virtual destructor
 		 */
-		inline virtual ~CLibFunc() { }
+		inline virtual ~ILibFunc() { }
 		/** Overload this member functions to test if the function is valid.
 		 */
 		virtual bool valid()=0;
-	}; // CLibFunc
+	}; // ILibFunc
 
 	/** Base class to represent dynamic libraries in general. There are child classes
 	 *  to handle the system dependend parts (CMacDynLib and CWin32DynLib)
@@ -154,13 +154,13 @@ namespace RiCPP {
 		 *         Signature must be known by the object that called getFunc(), eg.
 		 *         CRendererLoader::CRendererLib
 		 */
-		virtual CLibFunc *getFunc(const char *name) const = 0;
+		virtual ILibFunc *getFunc(const char *name) const = 0;
 
 		/** @brief Deletes a function object created with getFunc()
 		 *
 		 * @param f A function object previously created with getFunc() of the same CDynLib
 		 */
-		virtual void deleteFunc(CLibFunc *f) const;
+		virtual void deleteFunc(ILibFunc *f) const;
 	}; // CDynLib
 
 	/** @brief factory object to create system dependend CDynLib objects

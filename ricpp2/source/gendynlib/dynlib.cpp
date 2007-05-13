@@ -77,7 +77,7 @@ bool CDynLib::unload() {
 	return false;
 }
 
-void CDynLib::deleteFunc(CLibFunc *f) const {
+void CDynLib::deleteFunc(ILibFunc *f) const {
 	if ( f )
 		delete f;
 }

@@ -62,13 +62,13 @@ private:
 		CDynLib *m_lib;
 		CContextCreator *m_contextCreator;
 
-		CLibFunc *m_newContextCreator;
-		CLibFunc *m_deleteContextCreator;
-		CLibFunc *m_majorInterfaceVer;
-		CLibFunc *m_minorInterfaceVer;
-		CLibFunc *m_interfaceRevision;
-		CLibFunc *m_rendererType;
-		CLibFunc *m_rendererName;
+		ILibFunc *m_newContextCreator;
+		ILibFunc *m_deleteContextCreator;
+		ILibFunc *m_majorInterfaceVer;
+		ILibFunc *m_minorInterfaceVer;
+		ILibFunc *m_interfaceRevision;
+		ILibFunc *m_rendererType;
+		ILibFunc *m_rendererName;
 
 		CContextCreator *newContextCreator(unsigned long majorVersion);
 		void deleteContextCreator(CContextCreator *);

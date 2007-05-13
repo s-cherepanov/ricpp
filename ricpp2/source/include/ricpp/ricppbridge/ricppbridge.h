@@ -46,10 +46,6 @@
 #include "ricpp/ricpp/errorhandlers.h"
 #endif
 
-#ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/ricpp/renderererror.h"
-#endif
-
 #include <vector>
 #include <map>
 #include <stdarg.h>

@@ -40,7 +40,7 @@
 
 namespace RiCPP {
 
-class CWin32LibFunc : public CLibFunc {
+class CWin32LibFunc : public ILibFunc {
 	FARPROC m_funcPtr;
 public:
 	CWin32LibFunc(FARPROC ptr);
@@ -61,7 +61,7 @@ public:
 	CWin32DynLib(const char *libname, const char *searchpath, long int version = -1);
 	virtual ~CWin32DynLib();
 	virtual bool valid() const;
-	virtual CLibFunc *getFunc(const char *name) const;
+	virtual ILibFunc *getFunc(const char *name) const;
 }; // CWin32DynLib
 
 }

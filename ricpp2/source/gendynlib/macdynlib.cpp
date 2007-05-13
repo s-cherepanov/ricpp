@@ -126,7 +126,7 @@ const char *CMacDynLib::findLib() {
 	return m_libpath.c_str();
 }
 
-CLibFunc *CMacDynLib::getFunc(const char *name) const {
+ILibFunc *CMacDynLib::getFunc(const char *name) const {
 	if ( !valid() )
 		return 0;
 	void *sym = dlsym(m_libHandle, name);

@@ -128,7 +128,7 @@ const char *CWin32DynLib::findLib() {
 	return m_libpath.c_str();
 }
 
-CLibFunc *CWin32DynLib::getFunc(const char *name) const {
+ILibFunc *CWin32DynLib::getFunc(const char *name) const {
 	if ( m_libHandle != invalidLibHandle ) {
 		return new CWin32LibFunc(GetProcAddress(m_libHandle, name));
 	}

@@ -36,7 +36,7 @@
 
 namespace RiCPP {
 
-class CMacLibFunc : public CLibFunc {
+class CMacLibFunc : public ILibFunc {
 	void *m_funcPtr;
 public:
 	CMacLibFunc(void *aFuncPtr);

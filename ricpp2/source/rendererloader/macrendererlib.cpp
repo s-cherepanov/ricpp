@@ -46,8 +46,6 @@ typedef const char *(*TRendererNameFunc)();
 bool CRendererLoader::CRendererLib::validDLL() {
 	if ( !m_lib )
 		return false;
-	if ( strcmp(m_lib->className(), CMacDynLib::staticClassName()) != 0 )
-		return false;
 	return true;
 }
 

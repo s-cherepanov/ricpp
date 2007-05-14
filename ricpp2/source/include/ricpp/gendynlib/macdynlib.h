@@ -56,7 +56,7 @@ public:
 	virtual ~CMacDynLib();
 	virtual bool isLoaded() const;
 	virtual bool valid() const;
-	virtual CLibFunc *getFunc(const char *name) const;
+	virtual ILibFunc *getFunc(const char *name) const;
 }; // CMacDynLib
 
 }

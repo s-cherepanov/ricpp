@@ -23,13 +23,18 @@
 
 /* Begin PBXBuildFile section */
 		C32093D90BDCCF6900A0BB35 /* dynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093D80BDCCF6900A0BB35 /* dynlib.cpp */; };
-		C32093ED0BDCCFE700A0BB35 /* macwriterdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093EC0BDCCFE600A0BB35 /* macwriterdll.cpp */; };
 		C32093F50BDCD02A00A0BB35 /* macrendererlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093F40BDCD02A00A0BB35 /* macrendererlib.cpp */; };
 		C32093F90BDCD07A00A0BB35 /* macdynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */; };
 		C320952D0BDCDC9300A0BB35 /* libriribwriter.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */; };
 		C33118230BEB10B30084F992 /* stringlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33118220BEB10B30084F992 /* stringlist.cpp */; };
+		C359E7EC0BF886B000C9A382 /* renderererror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C359E7EB0BF886B000C9A382 /* renderererror.cpp */; };
+		C359E7EE0BF886CA00C9A382 /* modestack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C359E7ED0BF886CA00C9A382 /* modestack.cpp */; };
+		C359E7F20BF8870000C9A382 /* modes.h in Headers */ = {isa = PBXBuildFile; fileRef = C359E7EF0BF8870000C9A382 /* modes.h */; };
+		C359E7F30BF8870000C9A382 /* modestack.h in Headers */ = {isa = PBXBuildFile; fileRef = C359E7F00BF8870000C9A382 /* modestack.h */; };
+		C359E7F40BF8870000C9A382 /* requests.h in Headers */ = {isa = PBXBuildFile; fileRef = C359E7F10BF8870000C9A382 /* requests.h */; };
+		C359E7F60BF8870700C9A382 /* renderererror.h in Headers */ = {isa = PBXBuildFile; fileRef = C359E7F50BF8870700C9A382 /* renderererror.h */; };
+		C359E8050BF8876900C9A382 /* macribwriterdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C359E8040BF8876900C9A382 /* macribwriterdll.cpp */; };
 		C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
-		C3610AC10BF2F10C00007CEF /* renderererror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610AC00BF2F10C00007CEF /* renderererror.cpp */; };
 		C3610AC70BF2F26D00007CEF /* ricppbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */; };
 		C3610ADC0BF2F44000007CEF /* ricpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610ADB0BF2F44000007CEF /* ricpp.cpp */; };
 		C3610B270BF2F8EB00007CEF /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8F50BD76177009B2459 /* libbaserenderer.a */; };
@@ -42,7 +47,6 @@
 		C370C16E0BF4693200AA03BC /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1690BF4693200AA03BC /* baserenderer.h */; };
 		C370C16F0BF4693200AA03BC /* contextcreator.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C16A0BF4693200AA03BC /* contextcreator.h */; };
 		C370C1700BF4693200AA03BC /* dorender.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C16B0BF4693200AA03BC /* dorender.h */; };
-		C370C1710BF4693200AA03BC /* renderererror.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C16C0BF4693200AA03BC /* renderererror.h */; };
 		C370C1720BF4693200AA03BC /* ricontext.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C16D0BF4693200AA03BC /* ricontext.h */; };
 		C370C1760BF4694400AA03BC /* dynlib.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1730BF4694400AA03BC /* dynlib.h */; };
 		C370C1770BF4694400AA03BC /* macdynlib.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1740BF4694400AA03BC /* macdynlib.h */; };
@@ -148,19 +152,23 @@
 		C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgendynlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C32093EC0BDCCFE600A0BB35 /* macwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macwriterdll.cpp; path = ../../../source/ribwriterdll/macwriterdll.cpp; sourceTree = SOURCE_ROOT; };
 		C32093F40BDCD02A00A0BB35 /* macrendererlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macrendererlib.cpp; path = ../../../source/rendererloader/macrendererlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C33118220BEB10B30084F992 /* stringlist.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stringlist.cpp; path = ../../../source/tools/stringlist.cpp; sourceTree = SOURCE_ROOT; };
+		C359E7EB0BF886B000C9A382 /* renderererror.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = renderererror.cpp; path = ../../../source/ricpp/renderererror.cpp; sourceTree = SOURCE_ROOT; };
+		C359E7ED0BF886CA00C9A382 /* modestack.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = modestack.cpp; path = ../../../source/ricpp/modestack.cpp; sourceTree = SOURCE_ROOT; };
+		C359E7EF0BF8870000C9A382 /* modes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = modes.h; path = ../../../source/include/ricpp/ricpp/modes.h; sourceTree = SOURCE_ROOT; };
+		C359E7F00BF8870000C9A382 /* modestack.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = modestack.h; path = ../../../source/include/ricpp/ricpp/modestack.h; sourceTree = SOURCE_ROOT; };
+		C359E7F10BF8870000C9A382 /* requests.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = requests.h; path = ../../../source/include/ricpp/ricpp/requests.h; sourceTree = SOURCE_ROOT; };
+		C359E7F50BF8870700C9A382 /* renderererror.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = renderererror.h; path = ../../../source/include/ricpp/ricpp/renderererror.h; sourceTree = SOURCE_ROOT; };
+		C359E8040BF8876900C9A382 /* macribwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macribwriterdll.cpp; path = ../../../source/ribwriterdll/macribwriterdll.cpp; sourceTree = SOURCE_ROOT; };
 		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AB50BF2F06500007CEF /* libricppbridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppbridge.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3610AC00BF2F10C00007CEF /* renderererror.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = renderererror.cpp; path = ../../../source/baserenderer/renderererror.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C3610ADB0BF2F44000007CEF /* ricpp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricpp.cpp; path = ../../../source/ricpp/ricpp.cpp; sourceTree = SOURCE_ROOT; };
 		C370C1690BF4693200AA03BC /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
 		C370C16A0BF4693200AA03BC /* contextcreator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = contextcreator.h; path = ../../../source/include/ricpp/baserenderer/contextcreator.h; sourceTree = SOURCE_ROOT; };
 		C370C16B0BF4693200AA03BC /* dorender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dorender.h; path = ../../../source/include/ricpp/baserenderer/dorender.h; sourceTree = SOURCE_ROOT; };
-		C370C16C0BF4693200AA03BC /* renderererror.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = renderererror.h; path = ../../../source/include/ricpp/baserenderer/renderererror.h; sourceTree = SOURCE_ROOT; };
 		C370C16D0BF4693200AA03BC /* ricontext.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ricontext.h; path = ../../../source/include/ricpp/baserenderer/ricontext.h; sourceTree = SOURCE_ROOT; };
 		C370C1730BF4694400AA03BC /* dynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dynlib.h; path = ../../../source/include/ricpp/gendynlib/dynlib.h; sourceTree = SOURCE_ROOT; };
 		C370C1740BF4694400AA03BC /* macdynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = macdynlib.h; path = ../../../source/include/ricpp/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
@@ -358,7 +366,7 @@
 		C32093EA0BDCCFCE00A0BB35 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C32093EC0BDCCFE600A0BB35 /* macwriterdll.cpp */,
+				C359E8040BF8876900C9A382 /* macribwriterdll.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -411,6 +419,10 @@
 			children = (
 				C370C17F0BF4698F00AA03BC /* errorhandlers.h */,
 				C370C1800BF4698F00AA03BC /* filters.h */,
+				C359E7EF0BF8870000C9A382 /* modes.h */,
+				C359E7F00BF8870000C9A382 /* modestack.h */,
+				C359E7F50BF8870700C9A382 /* renderererror.h */,
+				C359E7F10BF8870000C9A382 /* requests.h */,
 				C370C1810BF4698F00AA03BC /* ricpp.h */,
 				C370C1820BF4698F00AA03BC /* subdivfunc.h */,
 			);
@@ -422,6 +434,8 @@
 			children = (
 				C372B8D90BD7610D009B2459 /* errorhandlers.cpp */,
 				C372B8DB0BD7610D009B2459 /* filters.cpp */,
+				C359E7ED0BF886CA00C9A382 /* modestack.cpp */,
+				C359E7EB0BF886B000C9A382 /* renderererror.cpp */,
 				C3610ADB0BF2F44000007CEF /* ricpp.cpp */,
 				C372B8E30BD7610D009B2459 /* subdivfunc.cpp */,
 			);
@@ -443,7 +457,6 @@
 				C370C1690BF4693200AA03BC /* baserenderer.h */,
 				C370C16A0BF4693200AA03BC /* contextcreator.h */,
 				C370C16B0BF4693200AA03BC /* dorender.h */,
-				C370C16C0BF4693200AA03BC /* renderererror.h */,
 				C370C16D0BF4693200AA03BC /* ricontext.h */,
 			);
 			name = Header;
@@ -454,7 +467,6 @@
 			children = (
 				C35C7A480BD76D3A00548675 /* baserenderer.cpp */,
 				C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */,
-				C3610AC00BF2F10C00007CEF /* renderererror.cpp */,
 				C3787D5B0BE9C4840072105F /* ricontext.cpp */,
 			);
 			name = Implementation;
@@ -600,6 +612,10 @@
 				C370C1840BF4698F00AA03BC /* filters.h in Headers */,
 				C370C1850BF4698F00AA03BC /* ricpp.h in Headers */,
 				C370C1860BF4698F00AA03BC /* subdivfunc.h in Headers */,
+				C359E7F20BF8870000C9A382 /* modes.h in Headers */,
+				C359E7F30BF8870000C9A382 /* modestack.h in Headers */,
+				C359E7F40BF8870000C9A382 /* requests.h in Headers */,
+				C359E7F60BF8870700C9A382 /* renderererror.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -610,7 +626,6 @@
 				C370C16E0BF4693200AA03BC /* baserenderer.h in Headers */,
 				C370C16F0BF4693200AA03BC /* contextcreator.h in Headers */,
 				C370C1700BF4693200AA03BC /* dorender.h in Headers */,
-				C370C1710BF4693200AA03BC /* renderererror.h in Headers */,
 				C370C1720BF4693200AA03BC /* ricontext.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -845,7 +860,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C32093ED0BDCCFE700A0BB35 /* macwriterdll.cpp in Sources */,
+				C359E8050BF8876900C9A382 /* macribwriterdll.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,6 +880,8 @@
 				C372B8E70BD7610D009B2459 /* filters.cpp in Sources */,
 				C372B8EF0BD7610D009B2459 /* subdivfunc.cpp in Sources */,
 				C3610ADC0BF2F44000007CEF /* ricpp.cpp in Sources */,
+				C359E7EC0BF886B000C9A382 /* renderererror.cpp in Sources */,
+				C359E7EE0BF886CA00C9A382 /* modestack.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -875,7 +892,6 @@
 				C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */,
 				C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */,
 				C3787D5C0BE9C4840072105F /* ricontext.cpp in Sources */,
-				C3610AC10BF2F10C00007CEF /* renderererror.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

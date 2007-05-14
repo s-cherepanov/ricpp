@@ -143,7 +143,9 @@ protected:
 	/** Context handling
 	 */
 
-	/** Holds a context creator and its renderer context
+	/** Holds a context creator and one of its renderer contexts.
+	 *
+	 * Context creator/render context pairs are managed by CContextManagement
 	 */
 	class CContext {
 	private:
@@ -165,6 +167,7 @@ protected:
 		 * of the current error handler)
 		 */
 		bool m_aborted;
+
 	public:
 		/** The standard contructor initializes an empty, invalid instance
 		 */
@@ -207,12 +210,19 @@ protected:
 		}
 
 		/** Gets the assigned context creator
-		 *  @return Pointer to the renderer creator
+		 *
+		 *  @return Pointer to the context creator
 		 */
 		inline CContextCreator *contextCreator() const {return m_valid ? m_contextCreator : 0; }
 
 		/** Gets the assigned renderer context
-		 *  @return Pointer to the renderer
+		 *
+		 *  Since a context creator can bear many contexts, the context creator/render context
+		 *  pairs are stored (CContext objects in CContextManager::m_ctxMap).
+		 *  *After* a CContext is activated via the
+		 *  CContextManager::context() method, renderer() and contextCreator()->renderer() are the same.
+		 *
+		 *  @return Pointer to the renderer context
 		 */
 		inline IRiContext *renderer() const {return m_valid ? m_renderer : 0; }
 
@@ -245,6 +255,7 @@ protected:
 		 */
 		inline void abort() {
 			m_aborted = true;
+			m_renderer = 0;
 		}
 
 		/** Assigns a context
@@ -262,15 +273,22 @@ protected:
 		}
 	}; // class CContext
 
-	/** Context Management, the used context creator, renderer context pairs
+	/** Context Management for CContext (context creator/renderer context pairs)
+	 *
+	 *  A RtContextHandle is mapped to a CContext. A RtContextHandle of the frontend
+	 *  references a backend context creator with a renderer context. The CRiCPPBridge
+	 *  forwards the interface calls to the active backend renderer context.
+	 *
+	 *  The frontend illContextHandle has a special meaning: "There is no active renderer context". It
+	 *  cannot be removed.
 	 */
 	class CContextManagement {
-		unsigned long m_nextCtxHandle; //< next value for context handle (counts 1 upwarts)	
-		RtContextHandle m_ctxHandle; //< current context handle
-		CContext m_curCtx; //< current creator, context pair
-		std::map<RtContextHandle, CContext> m_ctxMap; //< Maps valid context handle to creator, context pair
+		unsigned long m_nextCtxHandle; //< next value for context handle (counts 1 upwarts), deleted handles are not reused	
+		RtContextHandle m_ctxHandle; //< current context handle of the front end
+		CContext m_curCtx; //< current creator, context pair of the backend
+		std::map<RtContextHandle, CContext> m_ctxMap; //< Maps valid context handles to a CContext context creator/renderer context pair.
 
-		/** Removes a context creator, renderer context pair from the context map
+		/** Removes a context creator/renderer context pair from the context map
 		 * @param handle The RtContextHandle as key, illContextHandle is not removed
 		 */
 		inline void removeContext(RtContextHandle handle) {
@@ -279,8 +297,9 @@ protected:
 			if ( m_ctxMap.find(handle) != m_ctxMap.end() )
 				m_ctxMap.erase(handle);
 			if ( handle == m_ctxHandle ) {
-				m_curCtx.invalidate();
+				// Either erased or not in list, the later case is invalid
 				m_ctxHandle = illContextHandle;
+				m_curCtx = m_ctxMap[m_ctxHandle];
 			}
 		}
 	public:
@@ -304,14 +323,16 @@ protected:
 			return (RtContextHandle)(m_nextCtxHandle++);
 		}
 
-		/** Aborts the current context, the context is invalidated, because the renderer is destroyed
+		/** Aborts the current context, it is not removed ontil its ended, so the
+		 *  client can call request until end(). But since it
+		 *  is aborted no renderering and error handling will be done.
 		 */
 		inline void abort() {
 			if ( m_curCtx.valid() ) {
 				m_curCtx.contextCreator()->abort();
-				removeContext(m_ctxHandle);
 			}
-			m_curCtx.abort();
+			if ( m_ctxHandle != illContextHandle )
+				m_curCtx.abort();
 		}
 
 		/** Ends the current context, the context is invalidated, because the renderer is destroyed
@@ -319,8 +340,9 @@ protected:
 		inline void end() {
 			if ( m_curCtx.valid() ) {
 				m_curCtx.contextCreator()->end();
-				removeContext(m_ctxHandle);
 			}
+			if ( m_ctxHandle != illContextHandle )
+				removeContext(m_ctxHandle);
 		}
 
 		/** @return A reference to the current creator,
@@ -333,17 +355,19 @@ protected:
 		 */
 		inline RtContextHandle getContext() const { return m_ctxHandle; }
 
-		/**
-		 * @param handle A context handle
-		 * @return true if the parameter handle is a valid handle of a context
-		 */
-		inline bool isContext(RtContextHandle handle) {
-			return m_ctxMap.find(handle) != m_ctxMap.end() && m_ctxMap[handle].valid();
-		}
 
-		/** Set the new current context
+		/* Not used
 		 * @param handle A context handle
-		 * @return true if the parameter handle is set
+		 * @return true if the parameter handle is managed (can be invalid or aborted)
+		 *
+		inline bool isContext(RtContextHandle handle) {
+			return m_ctxMap.find(handle) != m_ctxMap.end();
+		}
+		 */
+
+		/** Sets the new current context
+		 * @param handle A context handle
+		 * @return true if the parameter handle was found
 		 */
 		inline bool context(RtContextHandle handle) {
 			if ( m_ctxMap.find(handle) != m_ctxMap.end() ) {

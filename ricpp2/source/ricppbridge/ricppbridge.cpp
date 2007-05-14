@@ -156,7 +156,7 @@ RtVoid CRiCPPBridge::begin(RtString name) {
 }
 
 RtVoid CRiCPPBridge::end(void) {
-	if ( m_ctxMgmt.curCtx().valid() ) {
+	if ( m_ctxMgmt.getContext() != illContextHandle ) {
 		m_ctxMgmt.end();
 	} else {
 		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::end()");

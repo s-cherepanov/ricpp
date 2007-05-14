@@ -36,40 +36,47 @@ using namespace RiCPP;
 extern "C" {
 
 EXPORT
-CContextCreator *newContextCreator(unsigned long majorversion) {
+CContextCreator *newContextCreator(unsigned long majorversion)
+{
 	if ( majorversion != IRiContext::riContextMajorVersion )
 		return NULL;
 	return new CRibWriterCreator;
 }
 
 EXPORT
-void deleteContextCreator(CContextCreator *cc) {
+void deleteContextCreator(CContextCreator *cc)
+{
 	if ( cc )
 		delete cc;
 }
 
 EXPORT
-unsigned long majorInterfaceVer() {
+unsigned long majorInterfaceVer()
+{
 	return CRibWriter::riContextMajorVersion;
 }
 
 EXPORT
-unsigned long minorInterfaceVer() {
+unsigned long minorInterfaceVer()
+{
 	return CRibWriter::ribWriterMinorVersion;
 }
 
 EXPORT
-unsigned long interfaceRevision() {
+unsigned long interfaceRevision()
+{
 	return CRibWriter::ribWriterRevision;
 }
 
 EXPORT
-RtToken rendererType() {
+RtToken rendererType()
+{
 	return CRibWriter::myRendererType();
 }
 
 EXPORT
-RtToken rendererName() {
+RtToken rendererName()
+{
 	return CRibWriter::myRendererName();
 }
 

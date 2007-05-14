@@ -29,7 +29,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief OS independent handling of (still ANSI) file pathes.
   * 
-  * The class is implemented in machfilepath.cpp and win32filepath.cpp.
+  * The class is implemented in macfilepath.cpp and win32filepath.cpp.
  */
 
 #include <string>

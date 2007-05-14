@@ -28,6 +28,8 @@
 /** @file contextcreator.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Declaration of a class for creation and basic handling of render contexts.
+ *
+ *  The CContextCreator is part of the backend. It is managed by CRiCPPBridge and CRendererLoader.
  */
 
 #ifndef _RICPP_RICPP_RENDERERERROR_H
@@ -42,49 +44,61 @@
 
 namespace RiCPP {
 
-/** Context creation and switching, base class of a concrete context creator.
+/** @brief Context creation and switching, base class of a concrete context creator.
  *
- *  All renderers of the same type shall share the same context creator. The
- *  context creator is the part of the back end delivering a concrete renderer context.
+ * The context creator is the part of the backend and delivers a concrete renderer context.
+ * All renderers of the same name shall share the same context creator, e.g. there is
+ * one CRibWriterCreator for the "ribwriter" CRibWriter contexts declared in ribwriter.h.
+ * There are members to ask for the name, type and versioning information of the concrete contextgroup.
+ * If loaded from a shared library a context creator is return by newContextCreator() and can be destroyed
+ * by deleteContextCreator() (e.g. winribwriterdll.cpp macribwriterdll.cpp). CRiCPPBridge manages
+ * the usage of CContextCreator from the frontend.
  */
 class CContextCreator {
 
-	/** @brief List of all context created and not yet destroyed.
+	/** @brief List of all contexts created and not yet destroyed.
 	 */
 	std::list<IRiContext *> m_contextList;
 
 	/** @brief Active context of this creator.
 	 *
-	 * \a m_curContext is a member of \a m_contextList or 0.
-	 * \a m_curContext == 0 means that there is no active context.
+	 * The context currently active. It has to be an item of m_contextList of the same creator
+	 * or 0. There is at most one active context at a time for each bridge. The
+	 * CRiCPPBridge can be used to get this context: CRiCPPBridge::getContext().
+	 * CRiCPPBridge::context() manages the context switching.
+	 * - \a m_curContext is a member of \a m_contextList or 0.
+	 * - \a m_curContext == 0 means that there is no active context.
 	 */
 	IRiContext *m_curContext;
 
-	/** @brief Error Handler, returned by the virtual \a ricppErrHandler().
+	/** @brief Error handler used by CContextCreator, it is returned by the virtual \a ricppErrHandler().
 	 *
 	 * This error handler throws an ERendererError exception. The exception is
 	 * catched by the front end and bridged to the RenderMan error handler.
-	 *  Never used directly, so it can be changed by a overwriting ricppErrHandler() in a child class.
+	 * Member shall be never used directly, so it can be changed by an overwritten ricppErrHandler()
+	 * at a child class.
 	 */
 	CErrorExceptionHandler m_errorHandler;
 
 protected:
-	/** @brief Returns the error handler for use, can be overwritten but usually
-	 *  won't in this framework.
+	/** @brief Returns the error handler to use. It can but usually
+	 *  won't be overwritten in this framework.
 	 *
 	 *  @return \a m_errorHandler, the default CErrorExceptionHandler is returned.
 	 */
 	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_errorHandler; }
 
-	/** @brief Factory method, must be overwritten to return a concrete renderer context.
+	/** @brief Factory method, must be overwritten to return a new concrete renderer context.
 	 *
-	 * @return This one returns 0, a overwritten method one returns a concrete render context.
+	 * @return This one returns 0, an overwritten method returns a new concrete render context.
 	 */
 	inline virtual IRiContext *getNewContext() { return 0; }
 
 	/** @brief Discards the current context.
 	 * 
-	 * Removes the current context \a m_curContext from \a m_contextList it deletes it.
+	 * Removes the current context m_curContext from the m_contextList it deletes it.
+	 * So it is not available anymore. This member function is called after ending or aborting
+	 * a context by end() or abort().
 	 */
 	virtual void deleteContext();
 
@@ -97,23 +111,24 @@ public:
 	 */
 	virtual ~CContextCreator();
 
-	/** @brief  The current context
+	/** @brief The current render context for the library managed by this CContextCreator.
 	 *
-	 * @return The current context (\a m_curContext) to work with, can be 0.
+	 * @return The current context (m_curContext) to work with. Mind, it can return 0 if there is no active context.
 	 */
 	virtual IRiContext *getContext() { return m_curContext; }
 
 	/** @brief Context switching
 	 *
 	 * Used also to notify the context switching using
-	 * IRiContext::deactivate() for the old \a m_curContext and IRiContext::activate()
+	 * IRiContext::deactivate() for the old m_curContext and IRiContext::activate()
 	 * for the new context (if not 0). This is important for example for OpenGL to activate
-	 * or deactivate the OpenGL context. Sets the current context \a m_curContext
-	 * to \a context. It can call the error handler if \a context is not a member of
-	 * \a m_contextList, i.e. not created by \a begin() of this \a CContextCreator.
+	 * or deactivate the OpenGL context. Sets the current context m_curContext
+	 * to the value of the parameter context. It can call the error handler if the parameter
+	 * context is not a member of m_contextList, i.e. not created by begin() of this CContextCreator.
+	 * CRiCPPBridge::context() manages the context switching.
 	 *
-	 * @param context The new current context, can be 0 to deactivate the previous \a m_curContext.
-	 *        Must be created by this \a CContextCreator.
+	 * @param context The new current context, can be 0 to deactivate the previous m_curContext.
+	 *        Must be created by this CContextCreator.
 	 */
 	virtual RtVoid context(IRiContext *context);
 
@@ -161,19 +176,23 @@ public:
 	 */
 	virtual unsigned long majorVersion(void) const { return IRiContext::riContextMajorVersion; }
 
-	/** @return 0, overload to return the minor version of a concrete context.
+	/** @brief The minor version is the version of a concrete context (must be overwritten)
+	 *  @return 0, overload to return the minor version of a concrete context.
 	 */
 	inline virtual unsigned long minorVersion() const { return 0; }
 
-	/** @return 0. overload to return the revision of a concrete context.
+	/** @brief The revision of a concrete context (must be overwritten)
+	 *  @return 0, overload to return the revision of a concrete context.
 	 */
 	inline virtual unsigned long revision() const { return 0; }
 
-	/** @return 0, overload to return the name of a concrete context.
+	/** @brief The name of a concrete context (must be overwritten)
+	 *  @return 0, overload to return the name of a concrete context.
 	 */
 	inline virtual RtToken rendererName() const { return RI_NULL; }
 
-	/** @return RI_NULL, overload to return the type of a concrete context (RI_ARCHIVE, RI_DRAFT, RI_REALISTIC, or user defined).
+	/** @brief The renderer type of a concrete context (must be overwritten)
+	 *  @return RI_NULL, overload to return the type of a concrete context (RI_ARCHIVE, RI_DRAFT, RI_REALISTIC, or user defined).
 	 */
 	inline virtual RtToken rendererType() const { return RI_NULL; }
 	//@}

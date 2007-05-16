@@ -52,7 +52,7 @@ class CValidModes
 {
 	/** @brief Stores the information for valid modes for requests in a table.
 	 *
-	 *  \a m_requests uses the REQ_ constants (e.g. REQ_SPHERE) as indicees.
+	 *  m_requests uses the REQ_ constants (e.g. REQ_SPHERE) as indicees.
 	 *  It stores a bitfield as content: MODE_BIT_ constants (e.g. MODE_BIT_WORLD)
 	 *  for the bits of valid modes for a request.
 	 *  see also UPS89: Valid contexts for RenderMan Procedurte calls, pp.56
@@ -66,7 +66,7 @@ public:
 
 	/** @brief Queries the validity of a request for a given mode.
 	 *
-	 *  @param idxRequest Index of a request (interface call) to test if valid in mode \a idxMode, is a REQ_ constant (e.g. REQ_SPHERE)
+	 *  @param idxRequest Index of a request (interface call) to test if valid in mode idxMode, is a REQ_ constant (e.g. REQ_SPHERE)
 	 *  @param idxMode Index of a mode as MODE_ constant (e.g. MODE_WORLD), norally the current mode
 	 *  @return true if request is valid, false otherwise.
 	 */
@@ -147,10 +147,10 @@ public:
     virtual void motionEnd();
 	//@}
 
-	/** @brief test if a request \a rew is valid in the current mode.
+	/** @brief Test if a request req is valid in the current mode.
 	 *
 	 *  @param req Index of the request to test.
-	 *  @return true if the request \a req is valid in the current mode.
+	 *  @return true if the request req is valid in the current mode.
 	 */
 	inline virtual bool validRequest(EnumRequests req) { return m_validModes.isValid(req, m_curMode); }
 }; // CMode

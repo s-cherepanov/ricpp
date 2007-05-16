@@ -49,9 +49,6 @@ int main (int argc, char * const argv[]) {
 
 	ri.errorHandler(ri.errorPrint());
 
-	// ri.begin("bla");
-	// ri.end();
-
 	ri.begin("test.rib");
 	RtContextHandle ch1 = ri.getContext();
 	ri.end();
@@ -62,13 +59,27 @@ int main (int argc, char * const argv[]) {
 			RtContextHandle ch3 = ri.getContext();
 			ri.context(illContextHandle);
 			ri.clipping(0, 1); /* Error */
-			ri.context(ch3);
+
+			// Swapping contexts
+			ri.context(ch2);
 		ri.end();
-		ri.context(ch2);
+		ri.context(ch3);
 	ri.end();
 
 	ri.end(); /* Error */
 	ri.context(ch1); /* Error */
+
+	/* not existant */
+	ri.begin("bla");
+	ri.worldBegin();
+	ri.worldEnd();
+	ri.end();
+
+	/* wrong lib */
+	ri.begin("user32.dll");
+	ri.worldBegin();
+	ri.worldEnd();
+	ri.end();
 
 	ri.errorHandler(ri.errorAbort());
 

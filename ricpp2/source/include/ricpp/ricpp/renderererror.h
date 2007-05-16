@@ -67,7 +67,7 @@ public:
 	 }
 
 	/** Copy Constructor
-	 *  @pararm err The error object to copy
+	 *  @param err The error object to copy
 	 */
 	inline ERendererError(const ERendererError &err)
 	{
@@ -135,7 +135,7 @@ public:
 	}
 
 	/** Copy an Error
-	 *  @pararm err The error object to copy
+	 *  @param err The error object to copy
 	 *  @return *this
 	 */
 	inline ERendererError &operator=(const ERendererError &err)

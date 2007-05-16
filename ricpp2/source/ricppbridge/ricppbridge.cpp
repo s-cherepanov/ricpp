@@ -31,15 +31,62 @@
 
 using namespace RiCPP;
 
+void CRiCPPBridge::CContextManagement::removeContext(RtContextHandle handle)
+{
+	if ( m_ctxHandle == illContextHandle )
+		return;
+	if ( isContext(handle) )
+		m_ctxMap.erase(handle);
+
+	if ( handle == m_ctxHandle ) {
+		// Was the current context handle - no active context any more
+		m_ctxHandle = illContextHandle;
+		m_curCtx = m_ctxMap[m_ctxHandle];
+	}
+}
+
+void CRiCPPBridge::CContextManagement::begin(const char *name, CContextCreator *cc)
+	// throws ERendererError
+{
+	try {
+		m_curCtx.deactivate();
+	} catch (ERendererError &e) {
+		m_ctxHandle = illContextHandle;
+		m_curCtx = m_ctxMap[m_ctxHandle];
+		throw e;
+	}
+
+	m_ctxHandle = illContextHandle;
+	m_curCtx = m_ctxMap[m_ctxHandle];
+
+	// A context creator exists
+	assert(cc != 0);
+	if ( !cc )
+		return;
+
+	try {
+		cc->begin(name);
+	} catch (ERendererError &e) {
+		// Context may be invalid, nevertheless it is stored, so interface
+		// requests can be called until end()
+		CContext ctx(cc, cc->getContext());
+		m_ctxHandle = add(ctx);
+		m_curCtx = m_ctxMap[m_ctxHandle];
+		throw e;
+	}
+
+	// Inserts the context creator / context pair into the m_ctxMap
+	CContext ctx(cc, cc->getContext());
+	m_ctxHandle = add(ctx);
+	m_curCtx = m_ctxMap[m_ctxHandle];
+}
+
+
 CRiCPPBridge::CRiCPPBridge() :
 	m_lastError(RIE_NOERROR)
 {
 	// Default options
 	m_curErrorHandler = &m_printErrorHandler;
-}
-
-
-CRiCPPBridge::~CRiCPPBridge() {
 }
 
 
@@ -69,14 +116,15 @@ RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
 }
 
 
-RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList) {
+RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList)
+{
 	m_lastError = code;
 
 	// Do no more error handling if the context is already aborted
 	if ( m_ctxMgmt.curCtx().aborted() )
 		return;
 
-	// Better let an error handler abord the context
+	// Better let an error handler abort the context
 	// if ( severity == RIE_SEVERE ) {
 	//	m_ctxMgmt.abort();
 	// }
@@ -103,7 +151,8 @@ RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, int line, const ch
 }
 
 
-RtToken CRiCPPBridge::declare(RtString name, RtString declaration) {
+RtToken CRiCPPBridge::declare(RtString name, RtString declaration)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			return m_ctxMgmt.curCtx().renderer()->declare(name, declaration);
@@ -117,7 +166,8 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration) {
 }
 
 
-RtVoid CRiCPPBridge::begin(RtString name) {
+RtVoid CRiCPPBridge::begin(RtString name)
+{
 	// Try to create a new context creator
 	CContextCreator *contextCreator = 0;
 	try {
@@ -147,7 +197,8 @@ RtVoid CRiCPPBridge::begin(RtString name) {
 	}
 }
 
-RtVoid CRiCPPBridge::end(void) {
+RtVoid CRiCPPBridge::end(void)
+{
 	if ( m_ctxMgmt.getContext() != illContextHandle ) {
 		m_ctxMgmt.end();
 	} else {
@@ -155,11 +206,8 @@ RtVoid CRiCPPBridge::end(void) {
 	}
 }
 
-RtContextHandle CRiCPPBridge::getContext(void) {
-	return m_ctxMgmt.getContext();
-}
-
-RtVoid CRiCPPBridge::context(RtContextHandle handle) {
+RtVoid CRiCPPBridge::context(RtContextHandle handle)
+{
 	// Since handle can activate a different context creator, deactivate the old context
 	try {
 		m_ctxMgmt.context(illContextHandle);
@@ -187,7 +235,8 @@ RtVoid CRiCPPBridge::context(RtContextHandle handle) {
 	assert(setContext);
 }
 
-RtVoid CRiCPPBridge::frameBegin(RtInt number) {
+RtVoid CRiCPPBridge::frameBegin(RtInt number)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->frameBegin(number);
@@ -200,7 +249,8 @@ RtVoid CRiCPPBridge::frameBegin(RtInt number) {
 	}
 }
 
-RtVoid CRiCPPBridge::frameEnd(void) {
+RtVoid CRiCPPBridge::frameEnd(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->frameEnd();
@@ -213,7 +263,8 @@ RtVoid CRiCPPBridge::frameEnd(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::worldBegin(void) {
+RtVoid CRiCPPBridge::worldBegin(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->worldBegin();
@@ -226,7 +277,8 @@ RtVoid CRiCPPBridge::worldBegin(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::worldEnd(void) {
+RtVoid CRiCPPBridge::worldEnd(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->worldEnd();
@@ -239,7 +291,8 @@ RtVoid CRiCPPBridge::worldEnd(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::attributeBegin(void) {
+RtVoid CRiCPPBridge::attributeBegin(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->attributeBegin();
@@ -252,7 +305,8 @@ RtVoid CRiCPPBridge::attributeBegin(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::attributeEnd(void) {
+RtVoid CRiCPPBridge::attributeEnd(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->attributeEnd();
@@ -265,7 +319,8 @@ RtVoid CRiCPPBridge::attributeEnd(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::transformBegin(void) {
+RtVoid CRiCPPBridge::transformBegin(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->transformBegin();
@@ -278,7 +333,8 @@ RtVoid CRiCPPBridge::transformBegin(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::transformEnd(void) {
+RtVoid CRiCPPBridge::transformEnd(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->transformEnd();
@@ -291,7 +347,8 @@ RtVoid CRiCPPBridge::transformEnd(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::solidBegin(RtToken type) {
+RtVoid CRiCPPBridge::solidBegin(RtToken type)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->solidBegin(type);
@@ -304,7 +361,8 @@ RtVoid CRiCPPBridge::solidBegin(RtToken type) {
 	}
 }
 
-RtVoid CRiCPPBridge::solidEnd(void) {
+RtVoid CRiCPPBridge::solidEnd(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->solidEnd();
@@ -317,7 +375,8 @@ RtVoid CRiCPPBridge::solidEnd(void) {
 	}
 }
 
-RtObjectHandle CRiCPPBridge::objectBegin(void) {
+RtObjectHandle CRiCPPBridge::objectBegin(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			return m_ctxMgmt.curCtx().renderer()->objectBegin();
@@ -332,7 +391,8 @@ RtObjectHandle CRiCPPBridge::objectBegin(void) {
 	return (RtObjectHandle)RI_NULL;
 }
 
-RtVoid CRiCPPBridge::objectEnd(void) {
+RtVoid CRiCPPBridge::objectEnd(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->objectEnd();
@@ -345,7 +405,8 @@ RtVoid CRiCPPBridge::objectEnd(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle) {
+RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->objectInstance(handle);
@@ -358,7 +419,8 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle) {
 	}
 }
 
-RtVoid CRiCPPBridge::motionBegin(RtInt N, RtFloat sample, ...) {
+RtVoid CRiCPPBridge::motionBegin(RtInt N, RtFloat sample, ...)
+{
 	va_list marker;
 	std::vector<RtFloat> samples;
 	RtInt n;
@@ -376,7 +438,8 @@ RtVoid CRiCPPBridge::motionBegin(RtInt N, RtFloat sample, ...) {
 	// No try and catch, simple call to ...V() function, exception handling is done there
 }
 
-RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[]) {
+RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->motionBeginV(N, times);
@@ -389,7 +452,8 @@ RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[]) {
 	}
 }
 
-RtVoid CRiCPPBridge::motionEnd(void) {
+RtVoid CRiCPPBridge::motionEnd(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->motionEnd();
@@ -402,7 +466,8 @@ RtVoid CRiCPPBridge::motionEnd(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::synchronize(RtToken name) {
+RtVoid CRiCPPBridge::synchronize(RtToken name)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->synchronize(name);
@@ -415,7 +480,8 @@ RtVoid CRiCPPBridge::synchronize(RtToken name) {
 	}
 }
 
-RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect) {
+RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->format(xres, yres, aspect);
@@ -428,7 +494,8 @@ RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect) {
 	}
 }
 
-RtVoid CRiCPPBridge::frameAspectRatio(RtFloat aspect) {
+RtVoid CRiCPPBridge::frameAspectRatio(RtFloat aspect)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->frameAspectRatio(aspect);
@@ -441,7 +508,8 @@ RtVoid CRiCPPBridge::frameAspectRatio(RtFloat aspect) {
 	}
 }
 
-RtVoid CRiCPPBridge::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {
+RtVoid CRiCPPBridge::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->screenWindow(left, right, bot, top);
@@ -454,7 +522,8 @@ RtVoid CRiCPPBridge::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFl
 	}
 }
 
-RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {
+RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->cropWindow(xmin, xmax, ymin, ymax);
@@ -467,7 +536,8 @@ RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloa
 	}
 }
 
-RtVoid CRiCPPBridge::projection(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::projection(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -475,7 +545,8 @@ RtVoid CRiCPPBridge::projection(RtString name, RtToken token, ...) {
 	projectionV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->projectionV(name, n, tokens, params);
@@ -488,7 +559,8 @@ RtVoid CRiCPPBridge::projectionV(RtString name, RtInt n, RtToken tokens[], RtPoi
 	}
 }
 
-RtVoid CRiCPPBridge::clipping(RtFloat hither, RtFloat yon) {
+RtVoid CRiCPPBridge::clipping(RtFloat hither, RtFloat yon)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->clipping(hither, yon);
@@ -501,7 +573,8 @@ RtVoid CRiCPPBridge::clipping(RtFloat hither, RtFloat yon) {
 	}
 }
 
-RtVoid CRiCPPBridge::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {
+RtVoid CRiCPPBridge::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->clippingPlane(x, y, z, nx, ny, nz);
@@ -514,7 +587,8 @@ RtVoid CRiCPPBridge::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, 
 	}
 }
 
-RtVoid CRiCPPBridge::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {
+RtVoid CRiCPPBridge::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->depthOfField(fstop, focallength, focaldistance);
@@ -527,7 +601,8 @@ RtVoid CRiCPPBridge::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat fo
 	}
 }
 
-RtVoid CRiCPPBridge::shutter(RtFloat smin, RtFloat smax) {
+RtVoid CRiCPPBridge::shutter(RtFloat smin, RtFloat smax)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->shutter(smin, smax);
@@ -540,7 +615,8 @@ RtVoid CRiCPPBridge::shutter(RtFloat smin, RtFloat smax) {
 	}
 }
 
-RtVoid CRiCPPBridge::pixelVariance(RtFloat variation) {
+RtVoid CRiCPPBridge::pixelVariance(RtFloat variation)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->pixelVariance(variation);
@@ -553,7 +629,8 @@ RtVoid CRiCPPBridge::pixelVariance(RtFloat variation) {
 	}
 }
 
-RtVoid CRiCPPBridge::pixelSamples(RtFloat xsamples, RtFloat ysamples) {
+RtVoid CRiCPPBridge::pixelSamples(RtFloat xsamples, RtFloat ysamples)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->pixelSamples(xsamples, ysamples);
@@ -566,7 +643,8 @@ RtVoid CRiCPPBridge::pixelSamples(RtFloat xsamples, RtFloat ysamples) {
 	}
 }
 
-RtVoid CRiCPPBridge::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) {
+RtVoid CRiCPPBridge::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->pixelFilter(function, xwidth, ywidth);
@@ -579,7 +657,8 @@ RtVoid CRiCPPBridge::pixelFilter(const IFilterFunc &function, RtFloat xwidth, Rt
 	}
 }
 
-RtVoid CRiCPPBridge::exposure(RtFloat gain, RtFloat gamma) {
+RtVoid CRiCPPBridge::exposure(RtFloat gain, RtFloat gamma)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->exposure(gain, gamma);
@@ -592,7 +671,8 @@ RtVoid CRiCPPBridge::exposure(RtFloat gain, RtFloat gamma) {
 	}
 }
 
-RtVoid CRiCPPBridge::imager(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::imager(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -600,7 +680,8 @@ RtVoid CRiCPPBridge::imager(RtString name, RtToken token, ...) {
 	imagerV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->imagerV(name, n, tokens, params);
@@ -613,7 +694,8 @@ RtVoid CRiCPPBridge::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer
 	}
 }
 
-RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {
+RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->quantize(type, one, qmin, qmax, ampl);
@@ -626,7 +708,8 @@ RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, R
 	}
 }
 
-RtVoid CRiCPPBridge::display(RtString name, RtToken type, RtToken mode, RtToken token, ...) {
+RtVoid CRiCPPBridge::display(RtString name, RtToken type, RtToken mode, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -634,7 +717,8 @@ RtVoid CRiCPPBridge::display(RtString name, RtToken type, RtToken mode, RtToken 
 	displayV(name, type, mode, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->displayV(name, type, mode, n, tokens, params);
@@ -647,7 +731,8 @@ RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtToken mode, RtInt n
 	}
 }
 
-RtVoid CRiCPPBridge::hider(RtToken type, RtToken token, ...) {
+RtVoid CRiCPPBridge::hider(RtToken type, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -655,7 +740,8 @@ RtVoid CRiCPPBridge::hider(RtToken type, RtToken token, ...) {
 	imagerV(type, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->hiderV(type, n, tokens, params);
@@ -668,7 +754,8 @@ RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 	}
 }
 
-RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {
+RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->colorSamples(N, nRGB, RGBn);
@@ -681,7 +768,8 @@ RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {
 	}
 }
 
-RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail) {
+RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->relativeDetail(relativedetail);
@@ -694,7 +782,8 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail) {
 	}
 }
 
-RtVoid CRiCPPBridge::option(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::option(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -702,7 +791,8 @@ RtVoid CRiCPPBridge::option(RtString name, RtToken token, ...) {
 	optionV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->optionV(name, n, tokens, params);
@@ -719,7 +809,8 @@ RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer
 	}
 }
 
-RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( !name )
 		return;
 
@@ -733,7 +824,8 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	}
 }
 
-RtLightHandle CRiCPPBridge::lightSource(RtString name, RtToken token, ...) {
+RtLightHandle CRiCPPBridge::lightSource(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -741,7 +833,8 @@ RtLightHandle CRiCPPBridge::lightSource(RtString name, RtToken token, ...) {
 	return lightSourceV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			return m_ctxMgmt.curCtx().renderer()->lightSourceV(name, n, tokens, params);
@@ -755,7 +848,8 @@ RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[
 	return (RtLightHandle) RI_NULL;
 }
 
-RtLightHandle CRiCPPBridge::areaLightSource(RtString name, RtToken token, ...) {
+RtLightHandle CRiCPPBridge::areaLightSource(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -763,7 +857,8 @@ RtLightHandle CRiCPPBridge::areaLightSource(RtString name, RtToken token, ...) {
 	return areaLightSourceV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			return m_ctxMgmt.curCtx().renderer()->areaLightSourceV(name, n, tokens, params);
@@ -777,7 +872,8 @@ RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tok
 	return (RtLightHandle) RI_NULL;
 }
 
-RtVoid CRiCPPBridge::attribute(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::attribute(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -785,7 +881,8 @@ RtVoid CRiCPPBridge::attribute(RtString name, RtToken token, ...) {
 	return attributeV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->attributeV(name, n, tokens, params);
@@ -798,7 +895,8 @@ RtVoid CRiCPPBridge::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoin
 	}
 }
 
-RtVoid CRiCPPBridge::color(RtColor Cs) {
+RtVoid CRiCPPBridge::color(RtColor Cs)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->color(Cs);
@@ -811,7 +909,8 @@ RtVoid CRiCPPBridge::color(RtColor Cs) {
 	}
 }
 
-RtVoid CRiCPPBridge::opacity(RtColor Cs) {
+RtVoid CRiCPPBridge::opacity(RtColor Cs)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->opacity(Cs);
@@ -824,7 +923,8 @@ RtVoid CRiCPPBridge::opacity(RtColor Cs) {
 	}
 }
 
-RtVoid CRiCPPBridge::surface(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::surface(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -832,7 +932,8 @@ RtVoid CRiCPPBridge::surface(RtString name, RtToken token, ...) {
 	return surfaceV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->surfaceV(name, n, tokens, params);
@@ -845,7 +946,8 @@ RtVoid CRiCPPBridge::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	}
 }
 
-RtVoid CRiCPPBridge::atmosphere(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::atmosphere(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -853,7 +955,8 @@ RtVoid CRiCPPBridge::atmosphere(RtString name, RtToken token, ...) {
 	return atmosphereV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->atmosphereV(name, n, tokens, params);
@@ -866,7 +969,8 @@ RtVoid CRiCPPBridge::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPoi
 	}
 }
 
-RtVoid CRiCPPBridge::interior(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::interior(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -874,7 +978,8 @@ RtVoid CRiCPPBridge::interior(RtString name, RtToken token, ...) {
 	return interiorV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->interiorV(name, n, tokens, params);
@@ -887,7 +992,8 @@ RtVoid CRiCPPBridge::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	}
 }
 
-RtVoid CRiCPPBridge::exterior(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::exterior(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -895,7 +1001,8 @@ RtVoid CRiCPPBridge::exterior(RtString name, RtToken token, ...) {
 	return exteriorV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->exteriorV(name, n, tokens, params);
@@ -909,7 +1016,8 @@ RtVoid CRiCPPBridge::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 }
 
 
-RtVoid CRiCPPBridge::illuminate(RtLightHandle light, RtBoolean onoff) {
+RtVoid CRiCPPBridge::illuminate(RtLightHandle light, RtBoolean onoff)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->illuminate(light, onoff);
@@ -923,7 +1031,8 @@ RtVoid CRiCPPBridge::illuminate(RtLightHandle light, RtBoolean onoff) {
 }
 
 
-RtVoid CRiCPPBridge::displacement(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::displacement(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -931,7 +1040,8 @@ RtVoid CRiCPPBridge::displacement(RtString name, RtToken token, ...) {
 	return displacementV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->displacementV(name, n, tokens, params);
@@ -944,7 +1054,8 @@ RtVoid CRiCPPBridge::displacementV(RtString name, RtInt n, RtToken tokens[], RtP
 	}
 }
 
-RtVoid CRiCPPBridge::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {
+RtVoid CRiCPPBridge::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
@@ -956,7 +1067,8 @@ RtVoid CRiCPPBridge::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFl
 	}
 }
 
-RtVoid CRiCPPBridge::shadingRate(RtFloat size) {
+RtVoid CRiCPPBridge::shadingRate(RtFloat size)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->shadingRate(size);
@@ -969,7 +1081,8 @@ RtVoid CRiCPPBridge::shadingRate(RtFloat size) {
 	}
 }
 
-RtVoid CRiCPPBridge::shadingInterpolation(RtToken type) {
+RtVoid CRiCPPBridge::shadingInterpolation(RtToken type)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->shadingInterpolation(type);
@@ -982,7 +1095,8 @@ RtVoid CRiCPPBridge::shadingInterpolation(RtToken type) {
 	}
 }
 
-RtVoid CRiCPPBridge::matte(RtBoolean onoff) {
+RtVoid CRiCPPBridge::matte(RtBoolean onoff)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->matte(onoff);
@@ -995,7 +1109,8 @@ RtVoid CRiCPPBridge::matte(RtBoolean onoff) {
 	}
 }
 
-RtVoid CRiCPPBridge::bound(RtBound aBound) {
+RtVoid CRiCPPBridge::bound(RtBound aBound)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->bound(aBound);
@@ -1008,7 +1123,8 @@ RtVoid CRiCPPBridge::bound(RtBound aBound) {
 	}
 }
 
-RtVoid CRiCPPBridge::detail(RtBound aBound) {
+RtVoid CRiCPPBridge::detail(RtBound aBound)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->detail(aBound);
@@ -1021,7 +1137,8 @@ RtVoid CRiCPPBridge::detail(RtBound aBound) {
 	}
 }
 
-RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {
+RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->detailRange(minvis, lowtran, uptran, maxvis);
@@ -1034,7 +1151,8 @@ RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran
 	}
 }
 
-RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value) {
+RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->geometricApproximation(type, value);
@@ -1047,7 +1165,8 @@ RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value) {
 	}
 }
 
-RtVoid CRiCPPBridge::geometricRepresentation(RtToken type) {
+RtVoid CRiCPPBridge::geometricRepresentation(RtToken type)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->geometricRepresentation(type);
@@ -1060,7 +1179,8 @@ RtVoid CRiCPPBridge::geometricRepresentation(RtToken type) {
 	}
 }
 
-RtVoid CRiCPPBridge::orientation(RtToken anOrientation) {
+RtVoid CRiCPPBridge::orientation(RtToken anOrientation)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->orientation(anOrientation);
@@ -1073,7 +1193,8 @@ RtVoid CRiCPPBridge::orientation(RtToken anOrientation) {
 	}
 }
 
-RtVoid CRiCPPBridge::reverseOrientation(void) {
+RtVoid CRiCPPBridge::reverseOrientation(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->reverseOrientation();
@@ -1086,7 +1207,8 @@ RtVoid CRiCPPBridge::reverseOrientation(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::sides(RtInt nsides) {
+RtVoid CRiCPPBridge::sides(RtInt nsides)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->sides(nsides);
@@ -1099,7 +1221,8 @@ RtVoid CRiCPPBridge::sides(RtInt nsides) {
 	}
 }
 
-RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) {
+RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->basis(ubasis, ustep, vbasis, vstep);
@@ -1112,7 +1235,8 @@ RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vs
 	}
 }
 
-RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {
+RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
@@ -1127,7 +1251,8 @@ RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFlo
 
 /******************************************************************************/
 
-RtVoid CRiCPPBridge::identity(void) {
+RtVoid CRiCPPBridge::identity(void)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->identity();
@@ -1140,7 +1265,8 @@ RtVoid CRiCPPBridge::identity(void) {
 	}
 }
 
-RtVoid CRiCPPBridge::transform(RtMatrix aTransform) {
+RtVoid CRiCPPBridge::transform(RtMatrix aTransform)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->transform(aTransform);
@@ -1153,7 +1279,8 @@ RtVoid CRiCPPBridge::transform(RtMatrix aTransform) {
 	}
 }
 
-RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform) {
+RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->concatTransform(aTransform);
@@ -1166,7 +1293,8 @@ RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform) {
 	}
 }
 
-RtVoid CRiCPPBridge::perspective(RtFloat fov) {
+RtVoid CRiCPPBridge::perspective(RtFloat fov)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->perspective(fov);
@@ -1179,7 +1307,8 @@ RtVoid CRiCPPBridge::perspective(RtFloat fov) {
 	}
 }
 
-RtVoid CRiCPPBridge::translate(RtFloat dx, RtFloat dy, RtFloat dz) {
+RtVoid CRiCPPBridge::translate(RtFloat dx, RtFloat dy, RtFloat dz)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->translate(dx, dy, dz);
@@ -1192,7 +1321,8 @@ RtVoid CRiCPPBridge::translate(RtFloat dx, RtFloat dy, RtFloat dz) {
 	}
 }
 
-RtVoid CRiCPPBridge::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {
+RtVoid CRiCPPBridge::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->rotate(angle, dx, dy, dz);
@@ -1205,7 +1335,8 @@ RtVoid CRiCPPBridge::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {
 	}
 }
 
-RtVoid CRiCPPBridge::scale(RtFloat dx, RtFloat dy, RtFloat dz) {
+RtVoid CRiCPPBridge::scale(RtFloat dx, RtFloat dy, RtFloat dz)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->scale(dx, dy, dz);
@@ -1218,7 +1349,8 @@ RtVoid CRiCPPBridge::scale(RtFloat dx, RtFloat dy, RtFloat dz) {
 	}
 }
 
-RtVoid CRiCPPBridge::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {
+RtVoid CRiCPPBridge::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
@@ -1231,7 +1363,8 @@ RtVoid CRiCPPBridge::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, 
 	}
 }
 
-RtVoid CRiCPPBridge::deformation(RtString name, RtToken token, ...) {
+RtVoid CRiCPPBridge::deformation(RtString name, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1239,7 +1372,8 @@ RtVoid CRiCPPBridge::deformation(RtString name, RtToken token, ...) {
 	return deformationV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->deformationV(name, n, tokens, params);
@@ -1252,7 +1386,8 @@ RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPo
 	}
 }
 
-RtVoid CRiCPPBridge::coordinateSystem(RtToken space) {
+RtVoid CRiCPPBridge::coordinateSystem(RtToken space)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->coordinateSystem(space);
@@ -1265,7 +1400,8 @@ RtVoid CRiCPPBridge::coordinateSystem(RtToken space) {
 	}
 }
 
-RtVoid CRiCPPBridge::coordSysTransform(RtToken space) {
+RtVoid CRiCPPBridge::coordSysTransform(RtToken space)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->coordSysTransform(space);
@@ -1278,7 +1414,8 @@ RtVoid CRiCPPBridge::coordSysTransform(RtToken space) {
 	}
 }
 
-RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) {
+RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			return m_ctxMgmt.curCtx().renderer()->transformPoints(fromspace, tospace, npoints, points);
@@ -1294,7 +1431,8 @@ RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt
 
 /******************************************************************************/
 
-RtVoid CRiCPPBridge::polygon(RtInt nvertices, RtToken token, ...) {
+RtVoid CRiCPPBridge::polygon(RtInt nvertices, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1302,7 +1440,8 @@ RtVoid CRiCPPBridge::polygon(RtInt nvertices, RtToken token, ...) {
 	return polygonV(nvertices, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->polygonV(nvertices, n, tokens, params);
@@ -1315,7 +1454,8 @@ RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoin
 	}
 }
 
-RtVoid CRiCPPBridge::generalPolygon(RtInt nloops, RtInt *nverts, RtToken token, ...) {
+RtVoid CRiCPPBridge::generalPolygon(RtInt nloops, RtInt *nverts, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1323,7 +1463,8 @@ RtVoid CRiCPPBridge::generalPolygon(RtInt nloops, RtInt *nverts, RtToken token, 
 	return generalPolygonV(nloops, nverts, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->generalPolygonV(nloops, nverts, n, tokens, params);
@@ -1336,7 +1477,8 @@ RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtTok
 	}
 }
 
-RtVoid CRiCPPBridge::pointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, RtToken token, ...) {
+RtVoid CRiCPPBridge::pointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1344,7 +1486,8 @@ RtVoid CRiCPPBridge::pointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, R
 	return pointsPolygonsV(npolys, nverts, verts, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->pointsPolygonsV(npolys, nverts, verts, n, tokens, params);
@@ -1357,7 +1500,8 @@ RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, 
 	}
 }
 
-RtVoid CRiCPPBridge::pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, RtToken token, ...) {
+RtVoid CRiCPPBridge::pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1365,7 +1509,8 @@ RtVoid CRiCPPBridge::pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *n
 	return pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, tokens, params);
@@ -1378,7 +1523,8 @@ RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *
 	}
 }
 
-RtVoid CRiCPPBridge::patch(RtToken type, RtToken token, ...) {
+RtVoid CRiCPPBridge::patch(RtToken type, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1386,7 +1532,8 @@ RtVoid CRiCPPBridge::patch(RtToken type, RtToken token, ...) {
 	return patchV(type, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->patchV(type, n, tokens, params);
@@ -1399,7 +1546,8 @@ RtVoid CRiCPPBridge::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 	}
 }
 
-RtVoid CRiCPPBridge::patchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtToken token, ...) {
+RtVoid CRiCPPBridge::patchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1407,7 +1555,8 @@ RtVoid CRiCPPBridge::patchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, 
 	return patchMeshV(type, nu, uwrap, nv, vwrap, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->patchMeshV(type, nu, uwrap, nv, vwrap, n, tokens, params);
@@ -1420,7 +1569,8 @@ RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv,
 	}
 }
 
-RtVoid CRiCPPBridge::nuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtToken token, ...) {
+RtVoid CRiCPPBridge::nuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1428,7 +1578,8 @@ RtVoid CRiCPPBridge::nuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umi
 	return nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
@@ -1442,7 +1593,8 @@ RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat um
 }
 
 
-RtVoid CRiCPPBridge::subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken token, ...) {
+RtVoid CRiCPPBridge::subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1450,7 +1602,8 @@ RtVoid CRiCPPBridge::subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertic
 	return subdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->subdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, n, tokens, params);
@@ -1463,7 +1616,8 @@ RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nverti
 	}
 }
 
-RtVoid CRiCPPBridge::sphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token, ...) {
+RtVoid CRiCPPBridge::sphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1471,7 +1625,8 @@ RtVoid CRiCPPBridge::sphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat 
 	return sphereV(radius, zmin, zmax, thetamax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->sphereV(radius, zmin, zmax, thetamax, n, tokens, params);
@@ -1484,7 +1639,8 @@ RtVoid CRiCPPBridge::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat
 	}
 }
 
-RtVoid CRiCPPBridge::cone(RtFloat height, RtFloat radius, RtFloat thetamax, RtToken token, ...) {
+RtVoid CRiCPPBridge::cone(RtFloat height, RtFloat radius, RtFloat thetamax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1492,7 +1648,8 @@ RtVoid CRiCPPBridge::cone(RtFloat height, RtFloat radius, RtFloat thetamax, RtTo
 	return coneV(height, radius, thetamax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->coneV(height, radius, thetamax, n, tokens, params);
@@ -1505,7 +1662,8 @@ RtVoid CRiCPPBridge::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 	}
 }
 
-RtVoid CRiCPPBridge::cylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token, ...) {
+RtVoid CRiCPPBridge::cylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1513,7 +1671,8 @@ RtVoid CRiCPPBridge::cylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloa
 	return cylinderV(radius, zmin, zmax, thetamax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->cylinderV(radius, zmin, zmax, thetamax, n, tokens, params);
@@ -1526,7 +1685,8 @@ RtVoid CRiCPPBridge::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFlo
 	}
 }
 
-RtVoid CRiCPPBridge::hyperboloid(RtPoint point1, RtPoint point2, RtFloat thetamax, RtToken token, ...) {
+RtVoid CRiCPPBridge::hyperboloid(RtPoint point1, RtPoint point2, RtFloat thetamax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1534,7 +1694,8 @@ RtVoid CRiCPPBridge::hyperboloid(RtPoint point1, RtPoint point2, RtFloat thetama
 	return hyperboloidV(point1, point2, thetamax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->hyperboloidV(point1, point2, thetamax, n, tokens, params);
@@ -1547,7 +1708,8 @@ RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetam
 	}
 }
 
-RtVoid CRiCPPBridge::paraboloid (RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token, ...) {
+RtVoid CRiCPPBridge::paraboloid (RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1555,7 +1717,8 @@ RtVoid CRiCPPBridge::paraboloid (RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFlo
 	return paraboloidV(rmax, zmin, zmax, thetamax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->paraboloidV(rmax, zmin, zmax, thetamax, n, tokens, params);
@@ -1568,7 +1731,8 @@ RtVoid CRiCPPBridge::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFlo
 	}
 }
 
-RtVoid CRiCPPBridge::disk(RtFloat height, RtFloat radius, RtFloat thetamax, RtToken token, ...) {
+RtVoid CRiCPPBridge::disk(RtFloat height, RtFloat radius, RtFloat thetamax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1576,7 +1740,8 @@ RtVoid CRiCPPBridge::disk(RtFloat height, RtFloat radius, RtFloat thetamax, RtTo
 	return diskV(height, radius, thetamax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->diskV(height, radius, thetamax, n, tokens, params);
@@ -1589,7 +1754,8 @@ RtVoid CRiCPPBridge::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 	}
 }
 
-RtVoid CRiCPPBridge::torus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtToken token, ...) {
+RtVoid CRiCPPBridge::torus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1597,7 +1763,8 @@ RtVoid CRiCPPBridge::torus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, R
 	return torusV(majorrad, minorrad, phimin, phimax, thetamax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->torusV(majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
@@ -1610,7 +1777,8 @@ RtVoid CRiCPPBridge::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, 
 	}
 }
 
-RtVoid CRiCPPBridge::points(RtInt npts, RtToken token, ...) {
+RtVoid CRiCPPBridge::points(RtInt npts, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1618,7 +1786,8 @@ RtVoid CRiCPPBridge::points(RtInt npts, RtToken token, ...) {
 	return pointsV(npts, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->pointsV(npts, n, tokens, params);
@@ -1631,7 +1800,8 @@ RtVoid CRiCPPBridge::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer pa
 	}
 }
 
-RtVoid CRiCPPBridge::curves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtToken token, ...) {
+RtVoid CRiCPPBridge::curves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1639,7 +1809,8 @@ RtVoid CRiCPPBridge::curves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken
 	return curvesV(type, ncurves, nverts, wrap, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->curvesV(type, ncurves, nverts, wrap, n, tokens, params);
@@ -1652,7 +1823,8 @@ RtVoid CRiCPPBridge::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToke
 	}
 }
 
-RtVoid CRiCPPBridge::blobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtToken token, ...) {
+RtVoid CRiCPPBridge::blobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1660,7 +1832,8 @@ RtVoid CRiCPPBridge::blobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, 
 	return blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
@@ -1673,7 +1846,8 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 	}
 }
 
-RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {
+RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->procedural(data, bound, subdivfunc, freefunc);
@@ -1686,7 +1860,8 @@ RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc
 	}
 }
 
-RtVoid CRiCPPBridge::geometry(RtToken type, RtToken token, ...) {
+RtVoid CRiCPPBridge::geometry(RtToken type, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1694,7 +1869,8 @@ RtVoid CRiCPPBridge::geometry(RtToken type, RtToken token, ...) {
 	return geometryV(type, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->geometryV(type, n, tokens, params);
@@ -1709,7 +1885,8 @@ RtVoid CRiCPPBridge::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointe
 
 /******************************************************************************/
 
-RtVoid CRiCPPBridge::makeTexture(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...) {
+RtVoid CRiCPPBridge::makeTexture(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1717,7 +1894,8 @@ RtVoid CRiCPPBridge::makeTexture(RtString pic, RtString tex, RtToken swrap, RtTo
 	return makeTextureV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->makeTextureV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
@@ -1730,7 +1908,8 @@ RtVoid CRiCPPBridge::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtT
 	}
 }
 
-RtVoid CRiCPPBridge::makeBump(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...) {
+RtVoid CRiCPPBridge::makeBump(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1738,7 +1917,8 @@ RtVoid CRiCPPBridge::makeBump(RtString pic, RtString tex, RtToken swrap, RtToken
 	return makeBumpV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->makeBumpV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
@@ -1751,7 +1931,8 @@ RtVoid CRiCPPBridge::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToke
 	}
 }
 
-RtVoid CRiCPPBridge::makeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...) {
+RtVoid CRiCPPBridge::makeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1759,7 +1940,8 @@ RtVoid CRiCPPBridge::makeLatLongEnvironment(RtString pic, RtString tex, const IF
 	return makeLatLongEnvironmentV(pic, tex, filterfunc, swidth, twidth, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->makeLatLongEnvironmentV(pic, tex, filterfunc, swidth, twidth, n, tokens, params);
@@ -1772,7 +1954,8 @@ RtVoid CRiCPPBridge::makeLatLongEnvironmentV(RtString pic, RtString tex, const I
 	}
 }
 
-RtVoid CRiCPPBridge::makeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...) {
+RtVoid CRiCPPBridge::makeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1780,7 +1963,8 @@ RtVoid CRiCPPBridge::makeCubeFaceEnvironment(RtString px, RtString nx, RtString 
 	return makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
@@ -1793,7 +1977,8 @@ RtVoid CRiCPPBridge::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString
 	}
 }
 
-RtVoid CRiCPPBridge::makeShadow(RtString pic, RtString tex, RtToken token, ...) {
+RtVoid CRiCPPBridge::makeShadow(RtString pic, RtString tex, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1801,7 +1986,8 @@ RtVoid CRiCPPBridge::makeShadow(RtString pic, RtString tex, RtToken token, ...) 
 	return makeShadowV(pic, tex, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->makeShadowV(pic, tex, n, tokens, params);
@@ -1816,7 +2002,8 @@ RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken to
 
 /******************************************************************************/
 
-RtVoid CRiCPPBridge::archiveRecord(RtToken type, RtString format, ...) {
+RtVoid CRiCPPBridge::archiveRecord(RtToken type, RtString format, ...)
+{
 	static const int ARCHIVE_BUF_SIZE = 512;
 	char archiveBuf[ARCHIVE_BUF_SIZE];
 	va_list argList;
@@ -1832,7 +2019,8 @@ RtVoid CRiCPPBridge::archiveRecord(RtToken type, RtString format, ...) {
 	archiveRecordV(type, archiveBuf);
 }
 
-RtVoid CRiCPPBridge::archiveRecordV(RtToken type, RtString line) {
+RtVoid CRiCPPBridge::archiveRecordV(RtToken type, RtString line)
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->archiveRecordV(type, line);
@@ -1845,7 +2033,8 @@ RtVoid CRiCPPBridge::archiveRecordV(RtToken type, RtString line) {
 	}
 }
 
-RtVoid CRiCPPBridge::readArchive(RtString name, const IArchiveCallback *callback, RtToken token, ...) {
+RtVoid CRiCPPBridge::readArchive(RtString name, const IArchiveCallback *callback, RtToken token, ...)
+{
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
@@ -1853,7 +2042,8 @@ RtVoid CRiCPPBridge::readArchive(RtString name, const IArchiveCallback *callback
 	return readArchiveV(name, callback, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+{
 	if ( m_ctxMgmt.curCtx().valid() ) {
 		try {
 			m_ctxMgmt.curCtx().renderer()->readArchiveV(name, callback, n, tokens, params);

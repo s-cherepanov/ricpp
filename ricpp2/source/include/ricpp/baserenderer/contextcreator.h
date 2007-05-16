@@ -97,7 +97,7 @@ protected:
 	/** @brief Discards the current context.
 	 * 
 	 * Removes the current context m_curContext from the m_contextList it deletes it.
-	 * So it is not available anymore. This member function is called after ending or aborting
+	 * So it is not available anymore. This member function is called after ending
 	 * a context by end() or abort().
 	 */
 	virtual void deleteContext();
@@ -147,7 +147,8 @@ public:
 	/** @brief Aborts (irregulary) the current context.
 	 *
 	 * Called bey the front end if an severe error occurs.
-	 * Calls the current context's IRiContext::abort() (no explicit deactivate()) and discards it.
+	 * Calls the current context's IRiContext::abort() (no explicit deactivate()).
+	 * It is not discarded here, an explicit end must be called.
 	 * Don't throw an exception here.
 	 */
 	virtual RtVoid abort(void);

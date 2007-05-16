@@ -76,10 +76,10 @@ RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, int line, const ch
 	if ( m_ctxMgmt.curCtx().aborted() )
 		return;
 
-	// If a severe error occured, end all rendering and reset the renderer
-	if ( severity == RIE_SEVERE ) {
-		m_ctxMgmt.abort();
-	}
+	// Better let an error handler abord the context
+	// if ( severity == RIE_SEVERE ) {
+	//	m_ctxMgmt.abort();
+	// }
 
 	static const int ERROR_STR_SIZE = 256;
 	char str[ERROR_STR_SIZE];
@@ -119,20 +119,15 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration) {
 
 RtVoid CRiCPPBridge::begin(RtString name) {
 	// Since this can activate a different context creator, deactivate the old context
-	if ( m_ctxMgmt.curCtx().valid() ) {
-		try {
-			m_ctxMgmt.curCtx().contextCreator()->context(0);
-		} catch (ERendererError &e) {
-			m_ctxMgmt.context(illContextHandle);
-			handleError(e);
-		}
+	try {
+		m_ctxMgmt.context(illContextHandle);
+	} catch (ERendererError &e) {
+		handleError(e);
+		return;
 	}
 
-	// No active context any more
-	m_ctxMgmt.context(illContextHandle);
-
 	// Try to create a new context
-	CContextCreator *contextCreator = NULL;
+	CContextCreator *contextCreator = 0;
 	try {
 		contextCreator = rendererCreator().getContextCreator(name);
 		if ( !contextCreator ) {
@@ -146,11 +141,13 @@ RtVoid CRiCPPBridge::begin(RtString name) {
 		return;
 	}
 
+	assert(contextCreator != 0);
+
 	// Start the new context
 	try {
 		contextCreator->begin(name);
 	} catch (ERendererError &e) {
-		// Store anyway
+		// Store anyway, must be end()
 		CContext ctx(contextCreator, contextCreator->getContext());
 		m_ctxMgmt.context(m_ctxMgmt.add(ctx));
 
@@ -168,7 +165,7 @@ RtVoid CRiCPPBridge::end(void) {
 	if ( m_ctxMgmt.getContext() != illContextHandle ) {
 		m_ctxMgmt.end();
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::end()");
+		ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::end()");
 	}
 }
 
@@ -178,35 +175,30 @@ RtContextHandle CRiCPPBridge::getContext(void) {
 
 RtVoid CRiCPPBridge::context(RtContextHandle handle) {
 	// Since handle can activate a different context creator, deactivate the old context
-	if ( m_ctxMgmt.curCtx().valid() ) {
-		try {
-			m_ctxMgmt.curCtx().contextCreator()->context(0);
-		} catch (ERendererError &e) {
-			m_ctxMgmt.context(illContextHandle);
-			handleError(e);
-		}
+	try {
+		m_ctxMgmt.context(illContextHandle);
+	} catch (ERendererError &e) {
+		handleError(e);
+		return;
 	}
 	
-	if ( handle == illContextHandle ) {
-		// Only deactivated the current context, outside a context now.
+	if ( !m_ctxMgmt.isContext(handle) ) {
+		handleError(RIE_BADHANDLE, RIE_SEVERE, "Context handle not found in CRiCPPBridge::context(handle:%lu)", (unsigned long)handle);
+		return;
+	}
+	
+	bool setContext = false;
+	try { 
+		setContext = m_ctxMgmt.context(handle);
+	} catch (ERendererError &e) {
+		handleError(e);
 		return;
 	}
 
-	if ( !m_ctxMgmt.context(handle) ) {
-		handleError(RIE_BADHANDLE, RIE_SEVERE, "Context handle in CRiCPPBridge::context(handle:%lu)", (unsigned long)handle);
+	if ( handle == illContextHandle )
 		return;
-	}
-
-	// Activate the stored handle
-	if ( m_ctxMgmt.curCtx().valid() ) {
-		try {
-			m_ctxMgmt.curCtx().contextCreator()->context(m_ctxMgmt.curCtx().renderer());
-		} catch (ERendererError &e) {
-			handleError(e);
-		}
-	} else {
-		handleError(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::context(handle:%lu), renderer context not set internally", (unsigned long)handle);
-	}
+		
+	assert(setContext);
 }
 
 RtVoid CRiCPPBridge::frameBegin(RtInt number) {
@@ -217,7 +209,8 @@ RtVoid CRiCPPBridge::frameBegin(RtInt number) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::frameBegin(number:%d)", (int)number);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::frameBegin(number:%d)", (int)number);
 	}
 }
 
@@ -229,7 +222,8 @@ RtVoid CRiCPPBridge::frameEnd(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::frameEnd()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::frameEnd()");
 	}
 }
 
@@ -241,7 +235,8 @@ RtVoid CRiCPPBridge::worldBegin(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldBegin()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::worldBegin()");
 	}
 }
 
@@ -253,7 +248,8 @@ RtVoid CRiCPPBridge::worldEnd(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::worldEnd()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::worldEnd()");
 	}
 }
 
@@ -265,7 +261,8 @@ RtVoid CRiCPPBridge::attributeBegin(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeBegin()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::attributeBegin()");
 	}
 }
 
@@ -277,7 +274,8 @@ RtVoid CRiCPPBridge::attributeEnd(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::attributeEnd()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::attributeEnd()");
 	}
 }
 
@@ -289,7 +287,8 @@ RtVoid CRiCPPBridge::transformBegin(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformBegin()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::transformBegin()");
 	}
 }
 
@@ -301,7 +300,8 @@ RtVoid CRiCPPBridge::transformEnd(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transformEnd()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::transformEnd()");
 	}
 }
 
@@ -313,7 +313,8 @@ RtVoid CRiCPPBridge::solidBegin(RtToken type) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::solidBegin(type:\"%s\")", type ? type : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::solidBegin(type:\"%s\")", type ? type : "");
 	}
 }
 
@@ -325,7 +326,8 @@ RtVoid CRiCPPBridge::solidEnd(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::solidEnd()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::solidEnd()");
 	}
 }
 
@@ -337,9 +339,10 @@ RtObjectHandle CRiCPPBridge::objectBegin(void) {
 			handleError(e);
 			return (RtObjectHandle)RI_NULL;
 		}
+	} else {
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::objectBegin()");
 	}
-
-	ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectBegin()");
 	return (RtObjectHandle)RI_NULL;
 }
 
@@ -351,7 +354,8 @@ RtVoid CRiCPPBridge::objectEnd(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectEnd()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::objectEnd()");
 	}
 }
 
@@ -363,7 +367,8 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::objectInstance(handle)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::objectInstance(handle)");
 	}
 }
 
@@ -393,7 +398,8 @@ RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[]) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::motionBeginV(N:%d, ...)", (int) N);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::motionBeginV(N:%d, ...)", (int) N);
 	}
 }
 
@@ -405,7 +411,8 @@ RtVoid CRiCPPBridge::motionEnd(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::motionEnd()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::motionEnd()");
 	}
 }
 
@@ -417,7 +424,8 @@ RtVoid CRiCPPBridge::synchronize(RtToken name) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::synchronize(name:\"%s\")", name ? name : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::synchronize(name:\"%s\")", name ? name : "");
 	}
 }
 
@@ -429,7 +437,8 @@ RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "format(xres:%d, yres:%d, aspect:%f)", (int)xres, (int)yres, (float)aspect);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "format(xres:%d, yres:%d, aspect:%f)", (int)xres, (int)yres, (float)aspect);
 	}
 }
 
@@ -441,7 +450,8 @@ RtVoid CRiCPPBridge::frameAspectRatio(RtFloat aspect) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "frameAspectRatio(aspect:%f)", (float)aspect);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "frameAspectRatio(aspect:%f)", (float)aspect);
 	}
 }
 
@@ -453,7 +463,8 @@ RtVoid CRiCPPBridge::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFl
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "screenWindow(left:%f, right:%f, bot:%f, top:%f)", (float)left, (float)right, (float)bot, (float)top);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "screenWindow(left:%f, right:%f, bot:%f, top:%f)", (float)left, (float)right, (float)bot, (float)top);
 	}
 }
 
@@ -465,7 +476,8 @@ RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloa
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "cropWindow(xmin:%f, xmax:%f, ymin:%f, ymax:%f)", (float)xmin, (float)xmax, (float)ymin, (float)ymax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "cropWindow(xmin:%f, xmax:%f, ymin:%f, ymax:%f)", (float)xmin, (float)xmax, (float)ymin, (float)ymax);
 	}
 }
 
@@ -485,7 +497,8 @@ RtVoid CRiCPPBridge::projectionV(RtString name, RtInt n, RtToken tokens[], RtPoi
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::projectionV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::projectionV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -497,7 +510,8 @@ RtVoid CRiCPPBridge::clipping(RtFloat hither, RtFloat yon) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::clipping(hither:%f, yon:%f)", (float)hither, (float)yon);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::clipping(hither:%f, yon:%f)", (float)hither, (float)yon);
 	}
 }
 
@@ -509,7 +523,8 @@ RtVoid CRiCPPBridge::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, 
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::clippingPlane(x:%f, y:%f, z:%f, nx:%f, ny:%f, nz:%f)",x, y, z, nx, ny, nz);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::clippingPlane(x:%f, y:%f, z:%f, nx:%f, ny:%f, nz:%f)",x, y, z, nx, ny, nz);
 	}
 }
 
@@ -521,7 +536,8 @@ RtVoid CRiCPPBridge::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat fo
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::depthOfField(fstop:%f, focallength:%f, focaldistance:%f)", (float)fstop, (float)focallength, (float)focaldistance);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::depthOfField(fstop:%f, focallength:%f, focaldistance:%f)", (float)fstop, (float)focallength, (float)focaldistance);
 	}
 }
 
@@ -533,7 +549,8 @@ RtVoid CRiCPPBridge::shutter(RtFloat smin, RtFloat smax) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::shutter(smin:%f, smax:%f)", (float)smin, (float)smax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::shutter(smin:%f, smax:%f)", (float)smin, (float)smax);
 	}
 }
 
@@ -545,7 +562,8 @@ RtVoid CRiCPPBridge::pixelVariance(RtFloat variation) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pixelVariance(variation:%f)", (float)variation);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pixelVariance(variation:%f)", (float)variation);
 	}
 }
 
@@ -557,7 +575,8 @@ RtVoid CRiCPPBridge::pixelSamples(RtFloat xsamples, RtFloat ysamples) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pixelSamples(xsamples:%f, ysamples:%f)", (float)xsamples, (float)ysamples);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pixelSamples(xsamples:%f, ysamples:%f)", (float)xsamples, (float)ysamples);
 	}
 }
 
@@ -569,7 +588,8 @@ RtVoid CRiCPPBridge::pixelFilter(const IFilterFunc &function, RtFloat xwidth, Rt
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pixelFilter(function:%s, xwidth:%f, ywidth:%f)", function.name(), (float)xwidth, (float)ywidth);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pixelFilter(function:%s, xwidth:%f, ywidth:%f)", function.name(), (float)xwidth, (float)ywidth);
 	}
 }
 
@@ -581,7 +601,8 @@ RtVoid CRiCPPBridge::exposure(RtFloat gain, RtFloat gamma) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::exposure(gain:%f, gamma:%f)", (float)gain, (float)gamma);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::exposure(gain:%f, gamma:%f)", (float)gain, (float)gamma);
 	}
 }
 
@@ -601,7 +622,8 @@ RtVoid CRiCPPBridge::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::imagerV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::imagerV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -613,7 +635,8 @@ RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, R
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::quantize(type:%s, one:%d, qmin:%d, qmax:%d, ampl:%f)", type ? type : "", (int)one, (int)qmin, (int)qmax, (float)ampl);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::quantize(type:%s, one:%d, qmin:%d, qmax:%d, ampl:%f)", type ? type : "", (int)one, (int)qmin, (int)qmax, (float)ampl);
 	}
 }
 
@@ -633,7 +656,8 @@ RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtToken mode, RtInt n
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::displayV(name:%s, type:%s, mode:%s, n:%d, ...)", name ? name : "", type ? type : "", mode ? mode : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::displayV(name:%s, type:%s, mode:%s, n:%d, ...)", name ? name : "", type ? type : "", mode ? mode : "", (int)n);
 	}
 }
 
@@ -653,7 +677,8 @@ RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::hiderV(type:%s, n:%d, ...)", type ? type : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::hiderV(type:%s, n:%d, ...)", type ? type : "", (int)n);
 	}
 }
 
@@ -665,7 +690,8 @@ RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::colorSamples(N:%d, ...)", (int)N);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::colorSamples(N:%d, ...)", (int)N);
 	}
 }
 
@@ -677,7 +703,8 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::relativeDetail(relativedetail:%f)", (float)relativedetail);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::relativeDetail(relativedetail:%f)", (float)relativedetail);
 	}
 }
 
@@ -736,7 +763,8 @@ RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::lightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::lightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 	return (RtLightHandle) RI_NULL;
 }
@@ -757,7 +785,8 @@ RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tok
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::areaLightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::areaLightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 	return (RtLightHandle) RI_NULL;
 }
@@ -778,7 +807,8 @@ RtVoid CRiCPPBridge::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoin
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::attributeV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::attributeV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -790,7 +820,8 @@ RtVoid CRiCPPBridge::color(RtColor Cs) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::color(Cs)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::color(Cs)");
 	}
 }
 
@@ -802,7 +833,8 @@ RtVoid CRiCPPBridge::opacity(RtColor Cs) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::opacity(Cs)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::opacity(Cs)");
 	}
 }
 
@@ -822,7 +854,8 @@ RtVoid CRiCPPBridge::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointe
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::surfaceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::surfaceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -842,7 +875,8 @@ RtVoid CRiCPPBridge::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPoi
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::atmosphereV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::atmosphereV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -862,7 +896,8 @@ RtVoid CRiCPPBridge::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::interiorV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::interiorV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -882,7 +917,8 @@ RtVoid CRiCPPBridge::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::exteriorV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::exteriorV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -895,7 +931,8 @@ RtVoid CRiCPPBridge::illuminate(RtLightHandle light, RtBoolean onoff) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::illuminate(light, onoff:%d)", (int)onoff);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::illuminate(light, onoff:%d)", (int)onoff);
 	}
 }
 
@@ -916,7 +953,8 @@ RtVoid CRiCPPBridge::displacementV(RtString name, RtInt n, RtToken tokens[], RtP
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::displacementV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::displacementV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -940,7 +978,8 @@ RtVoid CRiCPPBridge::shadingRate(RtFloat size) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::shadingRate(size:%f)", (float)size);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::shadingRate(size:%f)", (float)size);
 	}
 }
 
@@ -952,7 +991,8 @@ RtVoid CRiCPPBridge::shadingInterpolation(RtToken type) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::shadingInterpolation(type:%s)", type ? type : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::shadingInterpolation(type:%s)", type ? type : "");
 	}
 }
 
@@ -964,7 +1004,8 @@ RtVoid CRiCPPBridge::matte(RtBoolean onoff) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::matte(onoff:%d)", (int)onoff);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::matte(onoff:%d)", (int)onoff);
 	}
 }
 
@@ -976,7 +1017,8 @@ RtVoid CRiCPPBridge::bound(RtBound aBound) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::bound(aBound)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::bound(aBound)");
 	}
 }
 
@@ -988,7 +1030,8 @@ RtVoid CRiCPPBridge::detail(RtBound aBound) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::detail(aBound)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::detail(aBound)");
 	}
 }
 
@@ -1000,7 +1043,8 @@ RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::detailRange(minvis:%f, lowtran:%f, uptran:%f, maxvis:%f)", (float)minvis, (float)lowtran, (float)uptran, (float)maxvis);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::detailRange(minvis:%f, lowtran:%f, uptran:%f, maxvis:%f)", (float)minvis, (float)lowtran, (float)uptran, (float)maxvis);
 	}
 }
 
@@ -1012,7 +1056,8 @@ RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricApproximation(type:%s, value%%f)", type ? type : "", (float)value);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricApproximation(type:%s, value%%f)", type ? type : "", (float)value);
 	}
 }
 
@@ -1024,7 +1069,8 @@ RtVoid CRiCPPBridge::geometricRepresentation(RtToken type) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricRepresentation(type:%s)", type ? type : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricRepresentation(type:%s)", type ? type : "");
 	}
 }
 
@@ -1036,7 +1082,8 @@ RtVoid CRiCPPBridge::orientation(RtToken anOrientation) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::orientation(anOrientation:%s)", anOrientation ? anOrientation : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::orientation(anOrientation:%s)", anOrientation ? anOrientation : "");
 	}
 }
 
@@ -1048,7 +1095,8 @@ RtVoid CRiCPPBridge::reverseOrientation(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::reverseOrientation()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::reverseOrientation()");
 	}
 }
 
@@ -1060,7 +1108,8 @@ RtVoid CRiCPPBridge::sides(RtInt nsides) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::sides(nsides:%d)", (int)nsides);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::sides(nsides:%d)", (int)nsides);
 	}
 }
 
@@ -1072,7 +1121,8 @@ RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vs
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::basis(ubasis, ustep, vbasis, vstep)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::basis(ubasis, ustep, vbasis, vstep)");
 	}
 }
 
@@ -1084,7 +1134,8 @@ RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFlo
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::trimCurve(nloops:%d, ncurves, order, knot, amin, amax, n, u, v, w)", (int)nloops);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::trimCurve(nloops:%d, ncurves, order, knot, amin, amax, n, u, v, w)", (int)nloops);
 	}
 }
 
@@ -1098,7 +1149,8 @@ RtVoid CRiCPPBridge::identity(void) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::identity()");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::identity()");
 	}
 }
 
@@ -1110,7 +1162,8 @@ RtVoid CRiCPPBridge::transform(RtMatrix aTransform) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transform(aTransform)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::transform(aTransform)");
 	}
 }
 
@@ -1122,7 +1175,8 @@ RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform) {
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::concatTransform(aTransform)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::concatTransform(aTransform)");
 	}
 }
 
@@ -1134,7 +1188,8 @@ RtVoid CRiCPPBridge::perspective(RtFloat fov) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::perspective(fov:%f)",(float)fov);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::perspective(fov:%f)",(float)fov);
 	}
 }
 
@@ -1146,7 +1201,8 @@ RtVoid CRiCPPBridge::translate(RtFloat dx, RtFloat dy, RtFloat dz) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::translate(dx:%f, dy:%f, dz:%f)", (float)dx, (float)dy, (float)dz);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::translate(dx:%f, dy:%f, dz:%f)", (float)dx, (float)dy, (float)dz);
 	}
 }
 
@@ -1158,7 +1214,8 @@ RtVoid CRiCPPBridge::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::rotate(angle:%f, dx:%f, dy:%f, dz:%f)", (float)angle, (float)dx, (float)dy, (float)dz);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::rotate(angle:%f, dx:%f, dy:%f, dz:%f)", (float)angle, (float)dx, (float)dy, (float)dz);
 	}
 }
 
@@ -1170,7 +1227,8 @@ RtVoid CRiCPPBridge::scale(RtFloat dx, RtFloat dy, RtFloat dz) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::scale(dx:%f, dy:%f, dz:%f)", (float)dx, (float)dy, (float)dz);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::scale(dx:%f, dy:%f, dz:%f)", (float)dx, (float)dy, (float)dz);
 	}
 }
 
@@ -1182,7 +1240,8 @@ RtVoid CRiCPPBridge::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, 
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::skew(angle:%f, dx1:%f, dy1:%f, dz1:%f, dx2:%f, dy2:%f, dz2:%f)", (float)angle, (float)dx1, (float)dy1, (float)dz1, (float)dx2, (float)dy2, (float)dz2);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::skew(angle:%f, dx1:%f, dy1:%f, dz1:%f, dx2:%f, dy2:%f, dz2:%f)", (float)angle, (float)dx1, (float)dy1, (float)dz1, (float)dx2, (float)dy2, (float)dz2);
 	}
 }
 
@@ -1202,7 +1261,8 @@ RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPo
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::deformationV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::deformationV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -1214,7 +1274,8 @@ RtVoid CRiCPPBridge::coordinateSystem(RtToken space) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::coordinateSystem(space:%s)", space ? space : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::coordinateSystem(space:%s)", space ? space : "");
 	}
 }
 
@@ -1226,7 +1287,8 @@ RtVoid CRiCPPBridge::coordSysTransform(RtToken space) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::coordSysTransform(space:%s)", space ? space : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::coordSysTransform(space:%s)", space ? space : "");
 	}
 }
 
@@ -1238,7 +1300,8 @@ RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::transformPoints(fromspace:%s, tospace:%s, npoints:%d, ...)", fromspace ? fromspace : "", tospace ? tospace : "", (int)npoints);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::transformPoints(fromspace:%s, tospace:%s, npoints:%d, ...)", fromspace ? fromspace : "", tospace ? tospace : "", (int)npoints);
 	}
 	return NULL;
 }
@@ -1261,7 +1324,8 @@ RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoin
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::polygonV(nvertices:%d, ...)", (int)nvertices);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::polygonV(nvertices:%d, ...)", (int)nvertices);
 	}
 }
 
@@ -1281,7 +1345,8 @@ RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtTok
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::generalPolygonV(nloops:%d, ...)", (int)nloops);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::generalPolygonV(nloops:%d, ...)", (int)nloops);
 	}
 }
 
@@ -1301,7 +1366,8 @@ RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, 
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::generalPolygonV(npolys:%d, ...)", (int)npolys);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::generalPolygonV(npolys:%d, ...)", (int)npolys);
 	}
 }
 
@@ -1321,7 +1387,8 @@ RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pointsGeneralPolygonsV(npolys:%d, ...)", (int)npolys);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pointsGeneralPolygonsV(npolys:%d, ...)", (int)npolys);
 	}
 }
 
@@ -1341,7 +1408,8 @@ RtVoid CRiCPPBridge::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::patchV(type:%s, ...)", type ? type : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::patchV(type:%s, ...)", type ? type : "");
 	}
 }
 
@@ -1361,7 +1429,8 @@ RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv,
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::patchMeshV(type:%s, nu:%d, uwrap:%s, nv:%d, vwrap:%s, ...)", type ? type : "", (int)nu, uwrap ? uwrap : "", (int)nv, vwrap ? vwrap : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::patchMeshV(type:%s, nu:%d, uwrap:%s, nv:%d, vwrap:%s, ...)", type ? type : "", (int)nu, uwrap ? uwrap : "", (int)nv, vwrap ? vwrap : "");
 	}
 }
 
@@ -1381,7 +1450,8 @@ RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat um
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::nuPatchV(nu:%d, uorder:%d, ...)", (int)nu, (int)uorder);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::nuPatchV(nu:%d, uorder:%d, ...)", (int)nu, (int)uorder);
 	}
 }
 
@@ -1402,7 +1472,8 @@ RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nverti
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::subdivisionMeshV(scheme:%s, nfaces:%d, ...)", scheme ? scheme : "", (int)nfaces);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::subdivisionMeshV(scheme:%s, nfaces:%d, ...)", scheme ? scheme : "", (int)nfaces);
 	}
 }
 
@@ -1422,7 +1493,8 @@ RtVoid CRiCPPBridge::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::sphereV(radius:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)radius, (float)zmin, (float)zmax, (float)thetamax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::sphereV(radius:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)radius, (float)zmin, (float)zmax, (float)thetamax);
 	}
 }
 
@@ -1442,7 +1514,8 @@ RtVoid CRiCPPBridge::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::sphereV(height:%f, radius:%f, thetamax:%f, ...)", (float)height, (float)radius, (float)thetamax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::sphereV(height:%f, radius:%f, thetamax:%f, ...)", (float)height, (float)radius, (float)thetamax);
 	}
 }
 
@@ -1462,7 +1535,8 @@ RtVoid CRiCPPBridge::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFlo
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::cylinderV(radius:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)radius, (float)zmin, (float)zmax, (float)thetamax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::cylinderV(radius:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)radius, (float)zmin, (float)zmax, (float)thetamax);
 	}
 }
 
@@ -1482,7 +1556,8 @@ RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetam
 			handleError(e);
 		}
 	} else {
-		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::hyperboloidV(...)");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::hyperboloidV(...)");
 	}
 }
 
@@ -1502,7 +1577,8 @@ RtVoid CRiCPPBridge::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFlo
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::paraboloidV(rmax:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)rmax, (float)zmin, (float)zmax, (float)thetamax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::paraboloidV(rmax:%f, zmin:%f, zmax:%f, thetamax:%f, ...)", (float)rmax, (float)zmin, (float)zmax, (float)thetamax);
 	}
 }
 
@@ -1522,7 +1598,8 @@ RtVoid CRiCPPBridge::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::diskV(height:%f, radius:%f, thetamax:%f, ...)", (float)height, (float)radius, (float)thetamax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::diskV(height:%f, radius:%f, thetamax:%f, ...)", (float)height, (float)radius, (float)thetamax);
 	}
 }
 
@@ -1542,7 +1619,8 @@ RtVoid CRiCPPBridge::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, 
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::torusV(majorrad:%f, minorrad:%f, phimin:%f, phimax:%f, thetamax:%f, ...)", (float)majorrad, (float)minorrad, (float)phimin, (float)phimax, (float)thetamax);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::torusV(majorrad:%f, minorrad:%f, phimin:%f, phimax:%f, thetamax:%f, ...)", (float)majorrad, (float)minorrad, (float)phimin, (float)phimax, (float)thetamax);
 	}
 }
 
@@ -1562,7 +1640,8 @@ RtVoid CRiCPPBridge::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer pa
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pointsV(npts:%f, ...)", (int)npts);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::pointsV(npts:%f, ...)", (int)npts);
 	}
 }
 
@@ -1582,7 +1661,8 @@ RtVoid CRiCPPBridge::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToke
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::curvesV(type:%s, ncurves:%d, ...)", type ? type : "", (int)ncurves);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::curvesV(type:%s, ncurves:%d, ...)", type ? type : "", (int)ncurves);
 	}
 }
 
@@ -1602,7 +1682,8 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::blobbyV(nleaf:%d, ...)", (int)nleaf);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::blobbyV(nleaf:%d, ...)", (int)nleaf);
 	}
 }
 
@@ -1614,7 +1695,8 @@ RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::procedural(..., subdivfunc:%s, freefunc:%s)", subdivfunc.name(), freefunc.name());
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::procedural(..., subdivfunc:%s, freefunc:%s)", subdivfunc.name(), freefunc.name());
 	}
 }
 
@@ -1634,7 +1716,8 @@ RtVoid CRiCPPBridge::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointe
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometryV(type:%s, ...)", type ? type : "" );
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometryV(type:%s, ...)", type ? type : "" );
 	}
 }
 
@@ -1656,7 +1739,8 @@ RtVoid CRiCPPBridge::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtT
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeTextureV(pic:%s, tex:%s, swrap:%s, twrap:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", swrap ? swrap : swrap, twrap ? twrap : twrap, filterfunc.name(), (float)swidth, (float)twidth );
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeTextureV(pic:%s, tex:%s, swrap:%s, twrap:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", swrap ? swrap : swrap, twrap ? twrap : twrap, filterfunc.name(), (float)swidth, (float)twidth );
 	}
 }
 
@@ -1676,7 +1760,8 @@ RtVoid CRiCPPBridge::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToke
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeBumpV(pic:%s, tex:%s, swrap:%s, twrap:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", swrap ? swrap : swrap, twrap ? twrap : twrap, filterfunc.name(), (float)swidth, (float)twidth );
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeBumpV(pic:%s, tex:%s, swrap:%s, twrap:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", swrap ? swrap : swrap, twrap ? twrap : twrap, filterfunc.name(), (float)swidth, (float)twidth );
 	}
 }
 
@@ -1696,7 +1781,8 @@ RtVoid CRiCPPBridge::makeLatLongEnvironmentV(RtString pic, RtString tex, const I
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeLatLongEnvironmentV(pic:%s, tex:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", filterfunc.name(), (float)swidth, (float)twidth );
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeLatLongEnvironmentV(pic:%s, tex:%s, filterfunc:%s, swidth:%f, twidth:%f, ...)", pic ? pic : pic, tex ? tex : "", filterfunc.name(), (float)swidth, (float)twidth );
 	}
 }
 
@@ -1716,7 +1802,8 @@ RtVoid CRiCPPBridge::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeCubeFaceEnvironmentV(px:%s, nx:%s, py:%s, ny:%s, pz:%s, nz:%s, tex:%s, fov:%f, filterfunc:%s, swidth:%f, twidth:%f, ...)", px ? px : px, nx ? nx : nx, py ? py : py, ny ? ny : ny, pz ? pz : pz, nz ? nz : nz, tex ? tex : "", (float)fov, filterfunc.name(), (float)swidth, (float)twidth);
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeCubeFaceEnvironmentV(px:%s, nx:%s, py:%s, ny:%s, pz:%s, nz:%s, tex:%s, fov:%f, filterfunc:%s, swidth:%f, twidth:%f, ...)", px ? px : px, nx ? nx : nx, py ? py : py, ny ? ny : ny, pz ? pz : pz, nz ? nz : nz, tex ? tex : "", (float)fov, filterfunc.name(), (float)swidth, (float)twidth);
 	}
 }
 
@@ -1736,7 +1823,8 @@ RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken to
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeShadowV(pic:%s, tex:%s, ...)", pic ? pic : pic, tex ? tex : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeShadowV(pic:%s, tex:%s, ...)", pic ? pic : pic, tex ? tex : "");
 	}
 }
 
@@ -1766,7 +1854,8 @@ RtVoid CRiCPPBridge::archiveRecordV(RtToken type, RtString line) {
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::archiveRecordV(type:%s, line:%s, ...)", type ? type : type, line ? line : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::archiveRecordV(type:%s, line:%s, ...)", type ? type : type, line ? line : "");
 	}
 }
 
@@ -1786,6 +1875,7 @@ RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callbac
 			handleError(e);
 		}
 	} else {
-		handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::readArchiveV(name:%s, callback:%s, ...)", name ? name : name, callback ? callback->name() : "");
+		if ( !m_ctxMgmt.curCtx().aborted() )
+			handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::readArchiveV(name:%s, callback:%s, ...)", name ? name : name, callback ? callback->name() : "");
 	}
 }

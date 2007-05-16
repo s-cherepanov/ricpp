@@ -101,8 +101,6 @@ RtVoid CContextCreator::abort(void)
 {
 	if ( m_curContext )
 		m_curContext->abort();
-
-	deleteContext();
 }
 
 RtVoid CContextCreator::end(void)

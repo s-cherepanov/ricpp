@@ -179,7 +179,7 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name)
 		std::string key = dynLib->libname();
 		CRendererLib *lib = m_libs.findObj(key);
 		if ( lib ) {
-			// Lib already laoded
+			// Lib already loaded
 			CDynLibFactory::deleteDynLib(dynLib);
 			try {
 				CContextCreator *cc = lib->getContextCreator(IRiContext::riContextMajorVersion);

@@ -160,10 +160,6 @@ protected:
 		 */
 		IRiContext *m_renderer;
 
-		/** True if the context is valid, the context is invalid after the matching RiEnd() is called
-		 */
-		bool m_valid;
-
 		/** True if the context is aborted. If a 'severe' error occurs, the render can be
 		 *  aborted by an user defined error handler and no further rendering or error handling
 		 *  is done in this context any more
@@ -171,27 +167,23 @@ protected:
 		bool m_aborted;
 
 	public:
-		/** The standard contructor initializes an empty, invalid instance
+		/** The standard contructor initializes an empty instance
 		 */
 		inline CContext() :
 			m_contextCreator(0),
 			m_renderer(0),
-			m_valid(false),
 			m_aborted(false)
 		{
 		}
 
 		/** Construct an instance with a renderer context and its creator.
-		 * The instance is invalidated if the context or
-		 * the context creator is invalid. The context creator can be referenced
-		 * by many CContext instances.
+		 * A context creator can be referenced by many CContext instances.
 		 * @param aCreator Context creator
 		 * @param aRenderer Implementation of a renderer context, created by \a aCreator
 		 */
 		inline CContext(CContextCreator *aCreator, IRiContext *aRenderer) :
 			m_contextCreator(aCreator),
 			m_renderer(aRenderer),
-			m_valid(aRenderer != 0 && aCreator != 0),
 			m_aborted(false)
 		{
 		}
@@ -203,13 +195,11 @@ protected:
 			*this = ctx;
 		}
 
-		/** Destructor, sets m_valid = false for savety reasons,
-		 *  the renderer is not destructed here. The renderes should be
+		/** Destructor, the renderer is not destructed here. The renderes should be
 		 *  deleted by the renderer creator (see CRendererLoader)
 		 */
 		inline ~CContext()
 		{
-			m_valid = false;
 		}
 
 		/** Gets the assigned context creator
@@ -218,7 +208,7 @@ protected:
 		 */
 		inline CContextCreator *contextCreator() const
 		{
-			return m_valid ? m_contextCreator : 0;
+			return m_contextCreator;
 		}
 
 		/** Gets the assigned renderer context
@@ -232,25 +222,18 @@ protected:
 		 */
 		inline IRiContext *renderer() const
 		{
-			return m_valid ? m_renderer : 0;
+			return m_renderer;
 		}
 
 		/** The instance is invalid either if the renderer is NULL, the handle is invalid or
-		 *  the instance is explicitly invalidated or aborted.
+		 *  the instance is aborted.
 		 *  @return The validy state
 		 */
 		inline bool valid() const
 		{
-			return m_valid && !m_aborted &&
+			return !m_aborted &&
 				m_contextCreator != 0 &&
 				m_renderer != 0;
-		}
-
-		/** Sets the structure in an invalid state
-		 */
-		inline void invalidate()
-		{
-			m_valid = false;
 		}
 
 		/** Query if the context is aborted
@@ -279,24 +262,24 @@ protected:
 		{
 			if ( m_contextCreator != 0 )
 				m_contextCreator->end();
-			m_valid = false;
 			m_renderer = 0;
 		}
 
-		/** Activate the current context
-		 */
-		inline void activate()
-		{
-			if ( m_contextCreator != 0 )
-				m_contextCreator->context(m_renderer);
-		}
-
-		/** Deactivate the current context
+		/** Deactivate the current context, used for context switching
 		 */
 		inline void deactivate()
 		{
 			if ( m_contextCreator != 0 )
 				m_contextCreator->context(0);
+		}
+
+
+		/** Activate the current context, used for context switching
+		 */
+		inline void activate()
+		{
+			if ( m_contextCreator != 0 )
+				m_contextCreator->context(m_renderer);
 		}
 
 		/** Assigns a context
@@ -309,7 +292,6 @@ protected:
 				return *this;
 			m_contextCreator = ctx.m_contextCreator;
 			m_renderer = ctx.m_renderer;
-			m_valid = ctx.m_valid;
 			m_aborted = ctx.m_aborted;
 			return *this;
 		}
@@ -328,7 +310,7 @@ protected:
 		unsigned long m_nextCtxHandle; //< next value for context handle (counts 1 upwarts), deleted handles are not reused	
 		RtContextHandle m_ctxHandle; //< current context handle of the front end
 		CContext m_curCtx; //< current creator, context pair of the backend
-		std::map<RtContextHandle, CContext> m_ctxMap; //< Maps valid context handles to a CContext context creator/renderer context pair.
+		std::map<RtContextHandle, CContext> m_ctxMap; //< Maps used context handles to a CContext context creator/renderer context pair.
 
 		/** Removes a context creator/renderer context pair from the context map
 		 * @param handle The RtContextHandle as key, illContextHandle is not removed
@@ -351,9 +333,10 @@ protected:
 		inline CContextManagement()
 		{
 			m_nextCtxHandle = 1;
-			m_ctxHandle = 0; // == illContextHandle
-			m_curCtx.invalidate();
-			m_ctxMap[m_ctxHandle] = m_curCtx; // illContextHandle is always the first context (outside begin-end)
+			// illContextHandle is always the first context (outside begin-end)
+			// m_curCtx initially has nor context creator or renderer
+			m_ctxHandle = illContextHandle;
+			m_ctxMap[m_ctxHandle] = m_curCtx;
 		}
 
 		/** Adds a context creator, renderer context pair to the context map
@@ -377,13 +360,48 @@ protected:
 			m_curCtx.abort();
 		}
 
-		/** Ends the current context, the context is invalidated, because the renderer is destroyed
+		inline void begin(const char *name, CContextCreator *cc)
+		{
+			try {
+				m_curCtx.deactivate();
+			} catch (ERendererError &e) {
+				m_ctxHandle = illContextHandle;
+				m_curCtx = m_ctxMap[m_ctxHandle];
+				throw e;
+			}
+
+			m_ctxHandle = illContextHandle;
+			m_curCtx = m_ctxMap[m_ctxHandle];
+
+			// A context creator exists
+			assert(cc != 0);
+			if ( !cc )
+				return;
+
+			try {
+				cc->begin(name);
+			} catch (ERendererError &e) {
+				// Context may be invalid, nevertheless it is stored, so interface
+				// requests can be called until end()
+				CContext ctx(cc, cc->getContext());
+				m_ctxHandle = add(ctx);
+				m_curCtx = m_ctxMap[m_ctxHandle];
+				throw e;
+			}
+
+			CContext ctx(cc, cc->getContext());
+			m_ctxHandle = add(ctx);
+			m_curCtx = m_ctxMap[m_ctxHandle];
+		}
+
+		/** Ends the current context and removes it from the list
 		 */
 		inline void end()
 		{
-			m_curCtx.end();
-			if ( m_ctxHandle != illContextHandle )
+			if ( m_ctxHandle != illContextHandle ) {
+				m_curCtx.end();
 				removeContext(m_ctxHandle);
+			}
 			m_ctxHandle = illContextHandle;
 		}
 
@@ -400,7 +418,7 @@ protected:
 
 		/** Test if the context handle is in the map
 		 * @param handle A context handle
-		 * @return true if the parameter handle is managed (can be invalid or aborted)
+		 * @return true if the parameter handle is managed (can be illContextHandle or aborted)
 		 */
 		inline bool isContext(RtContextHandle handle)
 		{
@@ -446,7 +464,7 @@ protected:
 
 public:
 	/** Creates a bridge, a CRendererLoader is used as m_curRendererCreator, m_printErrorHandler
-	 * is used as error handler, an invalid context is stored
+	 * is used as error handler, an invalid context is stored a 'outside' context
 	 */
 	CRiCPPBridge();
 

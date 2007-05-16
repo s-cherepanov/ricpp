@@ -58,6 +58,9 @@ void CContextCreator::deleteContext()
 
 RtVoid CContextCreator::context(IRiContext *context)
 {
+	if ( m_curContext == context )
+		return;
+
 	// Deactivate the current context
 	if ( m_curContext )
 		m_curContext->deactivate();
@@ -91,7 +94,10 @@ RtVoid CContextCreator::begin(RtString name)
 
 	if ( !m_curContext ) {
 		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
+		return;
 	}
+
+	m_contextList.push_back(m_curContext);
 
 	// Activate the context by calling its begin
 	m_curContext->begin(name);

@@ -53,9 +53,22 @@ int main (int argc, char * const argv[]) {
 	// ri.end();
 
 	ri.begin("test.rib");
+	RtContextHandle ch1 = ri.getContext();
 	ri.end();
+
 	ri.begin("ribwriter \"$HOME/test.rib\"");
+		RtContextHandle ch2 = ri.getContext();
+		ri.begin("test2.rib");
+			RtContextHandle ch3 = ri.getContext();
+			ri.context(illContextHandle);
+			ri.clipping(0, 1); /* Error */
+			ri.context(ch3);
+		ri.end();
+		ri.context(ch2);
 	ri.end();
+
+	ri.end(); /* Error */
+	ri.context(ch1); /* Error */
 
 	ri.errorHandler(ri.errorAbort());
 

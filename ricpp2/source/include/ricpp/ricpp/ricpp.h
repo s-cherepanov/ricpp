@@ -41,7 +41,7 @@
  * - [STE2003] Ian Stephenson; Essential RenderMan fast; 2003, Springer
  * - [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley
  * - [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier
- * - [STE] Production Rendering; 2005, Springer (another OO-framework)
+ * - [STE] Ian Stephenson (Ed.); Production Rendering; 2005, Springer (another OO-framework)
  * - [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep)
  */
 

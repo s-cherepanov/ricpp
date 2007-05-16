@@ -118,25 +118,19 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration) {
 
 
 RtVoid CRiCPPBridge::begin(RtString name) {
-	// Since this can activate a different context creator, deactivate the old context
-	try {
-		m_ctxMgmt.context(illContextHandle);
-	} catch (ERendererError &e) {
-		handleError(e);
-		return;
-	}
-
-	// Try to create a new context
+	// Try to create a new context creator
 	CContextCreator *contextCreator = 0;
 	try {
 		contextCreator = rendererCreator().getContextCreator(name);
 		if ( !contextCreator ) {
+			m_ctxMgmt.context(illContextHandle);
 			handleError(RIE_SYSTEM, RIE_SEVERE,
-				"Renderer creator missing in CRiCPPBridge::begin(name:\"%s\")",
+				"Context creator missing in CRiCPPBridge::begin(name:\"%s\")",
 				name ? name : "");
 			return;
 		}
 	} catch (ERendererError &e) {
+		m_ctxMgmt.context(illContextHandle);
 		handleError(e);
 		return;
 	}
@@ -145,20 +139,12 @@ RtVoid CRiCPPBridge::begin(RtString name) {
 
 	// Start the new context
 	try {
-		contextCreator->begin(name);
+		m_ctxMgmt.begin(name, contextCreator);
 	} catch (ERendererError &e) {
-		// Store anyway, must be end()
-		CContext ctx(contextCreator, contextCreator->getContext());
-		m_ctxMgmt.context(m_ctxMgmt.add(ctx));
-
 		// And handle the error
 		handleError(e);
 		return;
 	}
-
-	// Store the context
-	CContext ctx(contextCreator, contextCreator->getContext());
-	m_ctxMgmt.context(m_ctxMgmt.add(ctx));
 }
 
 RtVoid CRiCPPBridge::end(void) {

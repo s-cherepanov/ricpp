@@ -43,11 +43,6 @@ typedef const char *(*TRendererTypeFunc)();
 typedef const char *(*TRendererNameFunc)();
 }
 
-bool CRendererLoader::CRendererLib::validDLL() {
-	if ( !m_lib )
-		return false;
-	return true;
-}
 
 CContextCreator *CRendererLoader::CRendererLib::newContextCreator(unsigned long majorversion) {
 	CContextCreator *ri = ((TNewContextCreatorFunc)((CMacLibFunc *)m_newContextCreator)->funcPtr())(majorversion);

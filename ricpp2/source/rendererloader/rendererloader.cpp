@@ -33,14 +33,15 @@
 using namespace RiCPP;
 
 
-CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib) {
-	m_contextCreator = NULL;
-	m_newContextCreator = NULL;
-	m_deleteContextCreator = NULL;
-	m_majorInterfaceVer = NULL;
-	m_minorInterfaceVer = NULL;
-	m_interfaceRevision = NULL;
-	m_rendererType = NULL;
+CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib)
+{
+	m_contextCreator = 0;
+	m_newContextCreator = 0;
+	m_deleteContextCreator = 0;
+	m_majorInterfaceVer = 0;
+	m_minorInterfaceVer = 0;
+	m_interfaceRevision = 0;
+	m_rendererType = 0;
 
 	m_lib = dynLib;
 	if ( m_lib ) {
@@ -54,10 +55,11 @@ CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib) {
 	}
 }
 
-CRendererLoader::CRendererLib::~CRendererLib() {
+CRendererLoader::CRendererLib::~CRendererLib()
+{
 	if ( m_contextCreator )
 		deleteContextCreator(m_contextCreator);
-	m_contextCreator = NULL;
+	m_contextCreator = 0;
 
 	if ( m_lib ) {
 		m_lib->deleteFunc(m_newContextCreator);
@@ -73,18 +75,22 @@ CRendererLoader::CRendererLib::~CRendererLib() {
 	m_lib = 0;
 }
 
-CContextCreator *CRendererLoader::CRendererLib::getContextCreator(unsigned long majorVersion) {
+CContextCreator *CRendererLoader::CRendererLib::getContextCreator(unsigned long majorVersion)
+// throw ERendererError
+{
 	if ( m_contextCreator ) {
 		if ( m_contextCreator->majorVersion() == majorVersion )
 			return m_contextCreator;
+		throw ERendererError(RIE_VERSION, RIE_SEVERE, "Major version of context creator does not match.", __LINE__, __FILE__);
 		return 0;
 	}
 	m_contextCreator = newContextCreator(majorVersion);
 	return m_contextCreator;
 }
 
-bool CRendererLoader::CRendererLib::valid() {
-	if ( !validDLL() )
+bool CRendererLoader::CRendererLib::valid()
+{
+	if ( !m_lib || !m_lib->valid() )
 		return false;
 
 	if ( !m_newContextCreator || !m_newContextCreator->valid() )
@@ -109,6 +115,7 @@ bool CRendererLoader::CRendererLib::valid() {
 }
 
 /* Platformdependent */
+
 /*
 CContextCreator *newContextrCreator();
 void deleteContextCreator(CContextCrteator *);
@@ -118,74 +125,129 @@ unsigned long interfaceRevision();
 const char *rendererType();
 */
 
-CRendererLoader::CRendererLoader() : m_libs(true) {
+CRendererLoader::CRendererLoader()
+	: m_libs(true)
+{
 	m_ribWriterCreator = 0;
 	m_searchpath = "$PROGDIR";
 }
 
-CRendererLoader::~CRendererLoader() {
+CRendererLoader::~CRendererLoader()
+{
 	if ( m_ribWriterCreator )
 		delete m_ribWriterCreator;
 	m_ribWriterCreator = 0;
 }
 
-CContextCreator *CRendererLoader::getRibWriterCreator() {
-	return new CRibWriterCreator;
+CContextCreator *CRendererLoader::getRibWriterCreator()
+// throw ERendererError
+{
+	CContextCreator *cc = new CRibWriterCreator;
+	if ( !cc ) {
+		ricppErrHandler().handleErrorV(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a new CRibWriterCreator");
+	}
+	return cc;
 }
 
-const char *CRendererLoader::getRibWritername() {
+const char *CRendererLoader::getRibWritername()
+{
 	return CRibWriter::myRendererName();
 }
 
-CContextCreator *CRendererLoader::loadContextCreator(const char *name) {
-	// While testing load the ribwriter dll (since there is only one dll)
+CContextCreator *CRendererLoader::loadContextCreator(const char *name)
+// throw ERendererError
+{
+	// name: if there is no name or the name of the RibWriter return the RibWriter
+	// commented out to test the loading of libraries
 	// const char *ribWriterName = getRibWritername();
 	if ( !name || !name[0] /* || ribWriterName && !strcasecmp(name, ribWriterName) */ ) {
 		if ( !m_ribWriterCreator ) {
-			m_ribWriterCreator = getRibWriterCreator();
+			try {
+				m_ribWriterCreator = getRibWriterCreator();
+			} catch (ERendererError &err) {
+				m_ribWriterCreator = 0;
+				ricppErrHandler().handleError(err);
+			}
 		}
-
 		return m_ribWriterCreator;
 	}
 
+	// name does not stand for the standard RibWriter
 	CDynLib *dynLib = CDynLibFactory::newDynLib(name, m_searchpath.c_str(), IRiContext::riContextMajorVersion);
 	if ( dynLib ) {
-		// use libname as key, the path is not used as identification
+		// use libname as key, the path is not used for identification
 		std::string key = dynLib->libname();
 		CRendererLib *lib = m_libs.findObj(key);
 		if ( lib ) {
+			// Lib already laoded
 			CDynLibFactory::deleteDynLib(dynLib);
-			return lib->getContextCreator(IRiContext::riContextMajorVersion);
+			try {
+				CContextCreator *cc = lib->getContextCreator(IRiContext::riContextMajorVersion);
+				return cc;
+			} catch (ERendererError &err) {
+				ricppErrHandler().handleError(err);
+			}
+			return 0;
 		}
-		if ( dynLib->load() && dynLib->valid() ) {
+
+		try {
+			dynLib->load();
+		} catch ( ERendererError &err ) {
+			ricppErrHandler().handleError(err);
+		}
+
+		if ( dynLib->valid() ) {
 			lib = new CRendererLib(dynLib);
 			if ( lib ) {
 				if ( lib->valid() ) {
 					m_libs.registerObj(key, lib);
-					return lib->getContextCreator(IRiContext::riContextMajorVersion);
+					try {
+						CContextCreator *cc = lib->getContextCreator(IRiContext::riContextMajorVersion);
+						return cc;
+					} catch (ERendererError &err) {
+						ricppErrHandler().handleError(err);
+					}
+					return 0;
 				} else {
 					// also deletes dynLib
 					delete lib;
+					ricppErrHandler().handleError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Library of %s not of expected type", key.empty() ? "<no libname>" : key.c_str());
 				}
+			} else {
+				ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create a new CRendererLib for %s", key.empty() ? "<no libname>" : key.c_str());
 			}
 		} else {
 			CDynLibFactory::deleteDynLib(dynLib);
+			ricppErrHandler().handleError(RIE_BADFILE, RIE_SEVERE, "Invalid library %s", key.empty() ? "<no libname>" : key.c_str());
 		}
+	} else {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create a new CDynLib for %s", !name && !*name ? "<no libname>" : name);
 	}
-	return NULL;
+	return 0;
 }
 
-CContextCreator *CRendererLoader::getContextCreator(RtString name) {
-	const char *ptr;
+CContextCreator *CRendererLoader::getContextCreator(RtString name)
+// throw ERendererError
+{
 	CStringList stringList;
 	stringList.explode(' ', name, true);
+
+	const char *libname = 0; // loadContextCreator(0) returns a RibWriter
 	if ( !stringList.empty() ) {
 		CStringList::const_iterator first = stringList.begin();
-		ptr = strrchr((*first).c_str(), '.');
+		const char *ptr = strrchr((*first).c_str(), '.');
 		if ( !(ptr && !strcmp(ptr, ".rib")) ) {
-			return loadContextCreator((*first).c_str());
+			// Load the context using the first word of name as library name
+			libname = (*first).c_str();
 		}
 	}
 
-	return loadContextCreator(0);
+	CContextCreator *cc = 0;
+	try {
+		cc = loadContextCreator(libname);
+	} catch ( ERendererError &err ) {
+		ricppErrHandler().handleError(err);
+	}
+
+	return cc;
 }

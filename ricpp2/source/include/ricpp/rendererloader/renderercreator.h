@@ -46,6 +46,23 @@ namespace RiCPP {
  */	 
 class IRendererCreator
 {
+	/** @brief Error handler used by CContextCreator, it is returned by the virtual \a ricppErrHandler().
+	 *
+	 * This error handler throws an ERendererError exception. The exception is
+	 * catched by the front end and bridged to the RenderMan error handler.
+	 * Member shall be never used directly, so it can be changed by an overwritten ricppErrHandler()
+	 * at a child class.
+	 */
+	CErrorExceptionHandler m_errorHandler;
+
+protected:
+	/** @brief Returns the error handler to use. It can but usually
+	 *  won't be overwritten in this framework.
+	 *
+	 *  @return \a m_errorHandler, the default CErrorExceptionHandler is returned.
+	 */
+	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_errorHandler; }
+
 public:
 	/** Virtual destructor
 	 */

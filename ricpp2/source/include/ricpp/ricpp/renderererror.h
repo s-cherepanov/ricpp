@@ -66,6 +66,14 @@ public:
 	 {
 	 }
 
+	/** Copy Constructor
+	 *  @pararm err The error object to copy
+	 */
+	inline ERendererError(const ERendererError &err)
+	{
+		*this = err;
+	}
+
 	/** Virtual destructor
 	 */
 	virtual inline ~ERendererError() {}
@@ -126,6 +134,21 @@ public:
 		return m_severity;
 	}
 
+	/** Copy an Error
+	 *  @pararm err The error object to copy
+	 *  @return *this
+	 */
+	inline ERendererError &operator=(const ERendererError &err)
+	{
+		if ( this == &err )
+			return *this;
+		m_severity = err.m_severity;
+		m_code = err.m_code;
+		m_message = err.m_message;
+		m_line = err.m_line;
+		m_file = err.m_file;
+		return *this;
+	}
 }; // ERendererError
 
 

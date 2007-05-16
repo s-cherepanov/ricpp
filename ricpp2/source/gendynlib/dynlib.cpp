@@ -30,6 +30,10 @@
 
 #include "ricpp/gendynlib/dynlib.h"
 
+#ifndef _RICPP_RICPP_RENDERERERROR_H
+#include "ricpp/RICPP/renderererror.h"
+#endif // _RICPP_RICPP_RENDERERERROR_H
+
 using namespace RiCPP;
 
 CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
@@ -65,6 +69,7 @@ bool CDynLib::load() {
 		++m_useCount;
 		return true;
 	}
+	throw ERendererError(RIE_NOFILE, RIE_SEVERE, libname(), __LINE__, __FILE__ );
 	return false;
 }
 

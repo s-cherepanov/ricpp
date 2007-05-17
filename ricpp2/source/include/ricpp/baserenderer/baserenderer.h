@@ -34,6 +34,14 @@
 #include "ricpp/baserenderer/dorender.h"
 #endif // _RICPP_BASERENDERER_DORENDER_H
 
+#ifndef _RICPP_BASERENDERER_RENDERSTATE_H
+#include "ricpp/baserenderer/renderstate.h"
+#endif // _RICPP_BASERENDERER_RENDERSTATE_H
+
+#ifndef _RICPP_RICPP_RENDERERERROR_H
+#include "ricpp/ricpp/renderererror.h"
+#endif // _RICPP_RICPP_RENDERERERROR_H
+
 namespace RiCPP {
 
 /** @brief This class is used to implement the basis of a renderer context.
@@ -43,22 +51,83 @@ namespace RiCPP {
  *  its rendering jobs. The CBaseRenderer is the foundation of the backend renderer context.
  */
 class CBaseRenderer : public IDoRender {
+	/** @brief Initializes the m_renderState, called by begin()
+	 */
+	void initRenderState();
+
+	/** @brief The error handler throws exceptions, default handler
+	 *
+	 *  Never used directly, ricppErrHandler() is used for error handling
+	 */
+	CErrorExceptionHandler m_errorExceptionHandler;
+protected:
+	/** @brief The render state contains all render state objects of this context
+	 *
+	 *  The render state is initialized at begin()
+	 */
+	CRenderState m_renderState;
+
+	/** @brief Creates a new modestack, called by initModeStack()
+	 *
+	 *  Overwrite this method if you want to return an own modestack
+	 */
+	inline virtual CModeStack *getNewModeStack() { return new CModeStack; }
+
+	/** @brief The backend's error handler
+	 *
+	 *  A child class can overload ricppErrHandler() to use it's own handler
+	 *  However it also should return an error handler that throws an ERendererError
+	 * @return The error handler used by the backend
+	 */
+	virtual IRiCPPErrorHandler &ricppErrHandler()
+	{
+		return m_errorExceptionHandler;
+	}
+
 public:
 	inline CBaseRenderer() {}
+
+	/** @brief Virtual destruction
+	 */
 	virtual inline ~CBaseRenderer() {}
 
+	/** @brief Is called by the frontend, if the renderer is aborted due to severe errors.
+	 */
 	inline virtual RtVoid abort(void) {}
+	/** @brief Is called, if the renderer is activated by context()
+	 *
+	 * If the context will be the new active rendering context, it is activated by it's
+	 * context creator.
+	 */
 	inline virtual RtVoid activate(void) {}
+	/** @brief Is called, if the renderer is deactivated by context()
+	 *
+	 * If the context will be the suspended rendering context, it is deactivated by it's
+	 * context creator.
+	 */
 	inline virtual RtVoid deactivate(void) {}
 
-	inline virtual RtVoid errorHandler(const IErrorHandler &handler) { }
-	
 	inline virtual RtToken declare(RtString name, RtString declaration) { return RI_NULL; }
 
     inline virtual RtVoid synchronize(RtToken name) {}
 
-	inline virtual RtVoid begin(RtString name) {}
-	inline virtual RtVoid end(void) {}
+	/** @brief Initializes a new render context.
+	 *
+	 *  begin() is called exactly one time by the context creator
+	 *  after the rendering context object is created.
+	 *  This method must be called by child objects begin() at first
+	 *  for initialization before they do their own job.
+	 *  @param name Passed by the front end's begin()-method.
+	 */
+	virtual RtVoid begin(RtString name);
+
+	/** @brief Clears the context.
+	 *
+	 *  end() is called exactly one time by the context creator before deletion. It
+	 *  can be overwritten, but child classes must call CBaseRenderer::end()
+	 *  as their last action.
+	 */
+	virtual RtVoid end(void);
 
 	inline virtual RtVoid frameBegin(RtInt number) {}
 	inline virtual RtVoid frameEnd(void) {}

@@ -81,8 +81,7 @@ public:
  */
 class CModeStack {
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
-	EnumModes m_curMode; //!< Current Mode
-	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes)
+	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
 	std::vector<RtToken> m_solidBlocks; //!< Tokens of nested solid blocks
 
 protected:
@@ -101,18 +100,19 @@ protected:
 	 */
 	inline virtual EnumModes pop()
 	{
-		EnumModes prev = m_modes.back();
-		m_modes.pop_back();
+		EnumModes prev = MODE_OUTSIDE;
+		if ( !m_modes.empty() ) {	
+			m_modes.back();
+			m_modes.pop_back();
+		}
 		return prev;
 	}
 
 public:
 	/** @brief Initializing of the mode, normally starts outside any blocks. 
 	 */
-	inline CModeStack( EnumModes aMode = MODE_OUTSIDE )
-		: m_curMode(aMode)
+	inline CModeStack( )
 	{
-		m_modes.push_back(aMode);
 	}
 
 	/** @brief Virtual destructor.
@@ -152,7 +152,12 @@ public:
 	 *  @param req Index of the request to test.
 	 *  @return true if the request req is valid in the current mode.
 	 */
-	inline virtual bool validRequest(EnumRequests req) { return m_validModes.isValid(req, m_curMode); }
+	inline virtual bool validRequest(EnumRequests req) { return m_validModes.isValid(req, curMode()); }
+
+	/** @brief The current mode
+	 *  @return The current mode
+	 */
+	inline virtual EnumModes curMode() const { return m_modes.empty() ? MODE_OUTSIDE : m_modes.back(); }
 }; // CMode
 
 }

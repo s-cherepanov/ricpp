@@ -38,7 +38,7 @@ namespace RiCPP {
  * (outside: no block is open)
  */
 enum EnumModes {
-	MODE_OUTSIDE= 0,    //!< Index outside Begin/End
+	MODE_OUTSIDE = 0,  //!< Index outside Begin/End
 
 	MODE_BEGIN,		    //!< Index directly inside Begin/End
 	MODE_FRAME,		    //!< Index directly inside frame block

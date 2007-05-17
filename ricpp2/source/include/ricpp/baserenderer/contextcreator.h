@@ -71,7 +71,7 @@ class CContextCreator {
 	 */
 	IRiContext *m_curContext;
 
-	/** @brief Error handler used by CContextCreator, it is returned by the virtual \a ricppErrHandler().
+	/** @brief Error handler used by CContextCreator, it is returned by the virtual errHandler().
 	 *
 	 * This error handler throws an ERendererError exception. The exception is
 	 * catched by the front end and bridged to the RenderMan error handler.

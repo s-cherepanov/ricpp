@@ -178,11 +178,17 @@ bool CValidModes::isValid(EnumRequests idxRequest, EnumModes idxMode) const
 
 void CModeStack::begin()
 {
+	if ( MODE_OUTSIDE == curMode() ) {
+		m_modes.clear();
+	}
+	push(MODE_BEGIN);
 }
 
 
 void CModeStack::end()
 {
+	while ( MODE_OUTSIDE != curMode() )
+		pop();
 }
 
 

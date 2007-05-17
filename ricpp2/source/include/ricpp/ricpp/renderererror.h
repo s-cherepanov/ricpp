@@ -41,8 +41,8 @@ namespace RiCPP {
 /** @brief The renderer error is used internally by the back end to throw exceptions
  */
 class ERendererError {
-	RtInt m_severity;       ///< Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	RtInt m_code;           ///< Which of error occured, 'RIE_...'
+	RtInt m_severity;       ///< Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	std::string m_message;  ///< error string
 	int m_line;             ///< Line where the error occured
 	std::string m_file;     ///< File where the error occured
@@ -56,14 +56,12 @@ public:
 	 *  @param aFile Filke where the ERendererError occured, normally __FILE__
 	 */
 	 ERendererError(
-		 RtInt aCode, RtInt aSeverity = RIE_ERROR,
+		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
 		 const char *aMessage = NULL,
 		 int aLine = 0, const char *aFile = NULL
 		 )
-		: m_severity(aSeverity), m_code(aCode),
-		m_message(aMessage ? aMessage : ""),
-		m_line(aLine), m_file(aFile ? aFile : "")
 	 {
+		 set(aCode, aSeverity, aMessage, aLine, aFile);
 	 }
 
 	/** Copy Constructor
@@ -74,7 +72,27 @@ public:
 		*this = err;
 	}
 
-	/** Virtual destructor
+	/** Sets error codes and additional error message with source line and source file added
+	 *  @param aCode Which error ('RIE_...')
+	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
+	 *  @param aMessage Additional describing error string
+	 *  @param aLine Line number of the source file where the ERendererError is constructed (the error occured), normally __LINE__
+	 *  @param aFile Filke where the ERendererError occured, normally __FILE__
+	 */
+	 void set(
+		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
+		 const char *aMessage = NULL,
+		 int aLine = 0, const char *aFile = NULL
+		 )
+	 {
+		m_code = aCode;
+		m_severity = aSeverity;
+		m_message = aMessage ? aMessage : "";
+		m_line = aLine;
+		m_file = aFile ? aFile : "";
+	 }
+
+	 /** Virtual destructor
 	 */
 	virtual inline ~ERendererError() {}
 
@@ -126,6 +144,14 @@ public:
 		return m_code;
 	}
 
+	/** Is the error code set?
+	 *  @return true, if the error code is not RIE_NOERROR
+	 */
+	inline bool isError() const
+	{
+		return m_code != RIE_NOERROR;
+	}
+
 	/** Get the current error severity
 	 *  @return error severity stored in \a ERendererError::m_severity
 	 */
@@ -142,11 +168,7 @@ public:
 	{
 		if ( this == &err )
 			return *this;
-		m_severity = err.m_severity;
-		m_code = err.m_code;
-		m_message = err.m_message;
-		m_line = err.m_line;
-		m_file = err.m_file;
+		set(err.m_code, err.m_severity, err.m_message.c_str(), err.m_line, err.m_file.c_str());
 		return *this;
 	}
 }; // ERendererError

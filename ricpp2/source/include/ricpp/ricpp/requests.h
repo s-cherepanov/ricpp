@@ -79,7 +79,7 @@ enum EnumRequests {
 
 	// Options
 	REQ_FORMAT,						//!< Index for ri function IRi::format()
-	REQ_FRAME_ASPECT_RATIO,			//!< Index for ri function IRi::fameAspectRatio()
+	REQ_FRAME_ASPECT_RATIO,			//!< Index for ri function IRi::frameAspectRatio()
 	REQ_SCREEN_WINDOW,				//!< Index for ri function IRi::screenWindow()
 	REQ_CROP_WINDOW,				//!< Index for ri function IRi::cropWindow()
 	REQ_PROJECTION,					//!< Index for ri function IRi::projection()
@@ -120,7 +120,7 @@ enum EnumRequests {
 	REQ_BOUND,						//!< Index for ri function IRi::bound()
 	REQ_DETAIL,						//!< Index for ri function IRi::detail()
 	REQ_DETAIL_RANGE,				//!< Index for ri function IRi::detailRange()
-	REQ_GEOMETRIC_APPROXIMATION,	//!< Index for ri function IRi::geometrixApproximation()
+	REQ_GEOMETRIC_APPROXIMATION,	//!< Index for ri function IRi::geometricApproximation()
 	REQ_GEOMETRIC_REPRESENTATION,	//!< Index for ri function IRi::geometricRepresentation()
 	REQ_ORIENTATION,				//!< Index for ri function IRi::orientation()
 	REQ_REVERSE_ORIENTATION,		//!< Index for ri function IRi::reverseOrientation()
@@ -145,8 +145,8 @@ enum EnumRequests {
 	// Polygons
 	REQ_POLYGON,					//!< Index for ri function IRi::polygon()
 	REQ_GENERAL_POLYGON,			//!< Index for ri function IRi::generalPolygon()
-	REQ_POINTS_POLYGONS,			//!< Index for ri function IRi::pointsPolygon()
-	REQ_POINTS_GENERAL_POLYGONS,	//!< Index for ri function IRi::pointsGeneralPolygon()
+	REQ_POINTS_POLYGONS,			//!< Index for ri function IRi::pointsPolygons()
+	REQ_POINTS_GENERAL_POLYGONS,	//!< Index for ri function IRi::pointsGeneralPolygons()
 
 	// Patches
 	REQ_PATCH,						//!< Index for ri function IRi::patch()
@@ -186,7 +186,7 @@ enum EnumRequests {
 
 	// Map-making
 	REQ_MAKE_TEXTURE,				//!< Index for ri function IRi::makeTexture()
-	REQ_MAKE_BUMP,					//!< Index for ri function IRi::makeBumb()
+	REQ_MAKE_BUMP,					//!< Index for ri function IRi::makeBump()
 	REQ_MAKE_LAT_LONG_ENVIRONMENT,	//!< Index for ri function IRi::makeLatLongEnvironment()
 	REQ_MAKE_CUBE_FACE_ENVIRONMENT,	//!< Index for ri function IRi::makeCubeFaceEnvironment()
 	REQ_MAKE_SHADOW,				//!< Index for ri function IRi::makeShadow()
@@ -196,7 +196,7 @@ enum EnumRequests {
 	REQ_READ_ARCHIVE,				//!< Index for ri function IRi::readArchive()
 
 	// Additional
-	REQ_VERSION                     //!< Index for ri function IRi::version() (additional RIB only)
+	REQ_VERSION                     //!< Index for version (additional, in RIB only)
 };
 
 /** Number of requests

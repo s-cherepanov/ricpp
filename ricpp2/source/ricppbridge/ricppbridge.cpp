@@ -82,6 +82,24 @@ void CRiCPPBridge::CContextManagement::begin(const char *name, CContextCreator *
 }
 
 
+void CRiCPPBridge::CContextManagement::end()
+	// throws ERendererError
+{
+	ERendererError e;
+
+	if ( m_ctxHandle != illContextHandle ) {
+		try {
+			m_curCtx.end();
+		} catch (ERendererError &e2) {
+			e = e2;
+		}
+		removeContext(m_ctxHandle);
+	}
+	m_ctxHandle = illContextHandle;
+	if ( e.isError() )
+		throw e;
+}
+
 CRiCPPBridge::CRiCPPBridge() :
 	m_lastError(RIE_NOERROR)
 {
@@ -124,10 +142,10 @@ RtVoid CRiCPPBridge::handleErrorV(RtInt code, RtInt severity, int line, const ch
 	if ( m_ctxMgmt.curCtx().aborted() )
 		return;
 
-	// Better let an error handler abort the context
-	// if ( severity == RIE_SEVERE ) {
-	//	m_ctxMgmt.abort();
-	// }
+	// To do an option to enable abort on error
+	if ( severity == RIE_SEVERE ) {
+		m_ctxMgmt.abort();
+	}
 
 	static const int ERROR_STR_SIZE = 256;
 	char str[ERROR_STR_SIZE];
@@ -200,7 +218,12 @@ RtVoid CRiCPPBridge::begin(RtString name)
 RtVoid CRiCPPBridge::end(void)
 {
 	if ( m_ctxMgmt.getContext() != illContextHandle ) {
-		m_ctxMgmt.end();
+		try {
+			m_ctxMgmt.end();
+		} catch (ERendererError &e) {
+			handleError(e);
+			return;
+		}
 	} else {
 		ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::end()");
 	}

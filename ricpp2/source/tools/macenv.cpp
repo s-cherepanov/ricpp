@@ -187,6 +187,7 @@ std::string &CEnv::getProgDir(std::string &prog)
 				} else {
 					path = "";
 				}
+				delete buf;
 			}
 		}
 		CFilepathConverter::convertToInternal(path);

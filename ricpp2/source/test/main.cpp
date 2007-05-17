@@ -76,7 +76,7 @@ int main (int argc, char * const argv[]) {
 	ri.end();
 
 	/* wrong lib */
-	ri.begin("user32.dll");
+	ri.begin("user32");
 	ri.worldBegin();
 	ri.worldEnd();
 	ri.end();

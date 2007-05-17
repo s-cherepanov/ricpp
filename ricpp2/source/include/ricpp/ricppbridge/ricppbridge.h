@@ -283,8 +283,8 @@ protected:
 			return m_aborted;
 		}
 
-		/** @brief The current context can be aborted by an user defined error handler
-		 *  e.g. if a severe error occures,
+		/** @brief The current context can be aborted by the frontend
+		 *  if a severe error occurs,
 		 *  this indicates that no further errors should be print (it is
 		 *  likely that these errors are follow up errors)
 		 *  @see aborted()
@@ -419,14 +419,7 @@ protected:
 		 * There is no active rendering context after end() ended.
 		 *
 		 */
-		inline void end()
-		{
-			if ( m_ctxHandle != illContextHandle ) {
-				m_curCtx.end();
-				removeContext(m_ctxHandle);
-			}
-			m_ctxHandle = illContextHandle;
-		}
+		void end();
 
 		/** @brief The active context creator/rendering context.
 		 * 

@@ -384,11 +384,11 @@ public:
 	 *
 	 *  The error handler (predifined are
 	 *  errorAbort, errorPrint, errorIgnore)
-	 *  is called if an error occurs. It is a front end function.
-	 *  Since errorHandler can be a RIB command, it is declared
-	 *  in RiCPP::IRiRoot. The context itself does not have an error
-	 *  handler, it throws a RiCPP::ERendererException the front
-	 *  end catches this exception and calls the error handler.
+	 *  is called if an error occurs. It is a frontend function.
+	 *  ErrorHandler can be a RIB command, but it can be deactivated
+	 *  by the frontend. The context IRiContext itself does not have an error
+	 *  handler: It throws a RiCPP::ERendererException. The frontend
+	 *  end catches this exception and calls the user defined error handler.
 	 *
 	 *  @param handler The error handler
 	 *

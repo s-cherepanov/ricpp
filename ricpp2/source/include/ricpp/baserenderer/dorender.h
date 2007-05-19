@@ -60,11 +60,7 @@ protected:
 	 */
 	//@{
 
-	// There is no user defined error handler at the backend
-	// virtual RtVoid doErrorHandler(const IErrorHandler &handler) = 0;
-
 	virtual RtToken doDeclare(RtString name, RtString declaration) = 0;
-
 	virtual RtVoid doSynchronize(RtToken name) = 0;
 
 	virtual RtVoid doBegin(RtString name) = 0;

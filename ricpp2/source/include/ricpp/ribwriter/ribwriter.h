@@ -56,13 +56,12 @@ public:
 	virtual RtToken rendererType() const;
 
 protected:
-	inline virtual RtVoid doErrorHandler(const IErrorHandler &handler) {}
+	inline virtual RtVoid doAbort(void) {}
+	inline virtual RtVoid doActivate(void) {}
+	inline virtual RtVoid doDeactivate(void) {}
 
 	inline virtual RtToken doDeclare(RtString name, RtString declaration) { return RI_NULL; }
-
 	inline virtual RtVoid doSynchronize(RtToken name) {}
-	inline virtual RtContextHandle doGetContext(void) { return illContextHandle; }
-	inline virtual RtVoid doContext(RtContextHandle handle) {}
 
 	inline virtual RtVoid doBegin(RtString name) {}
 	inline virtual RtVoid doEnd(void) {}

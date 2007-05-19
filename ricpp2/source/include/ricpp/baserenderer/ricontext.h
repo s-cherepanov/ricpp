@@ -45,9 +45,9 @@ class IRiContext : public IRiRoot {
 	friend class CContextCreator; //!< A CContextCreator can activate and deactivate the context
 
 	/** @brief At the backend a user defined error handler is not used
-	 *  @param handler The error handler
+	 *  @param handler The error handler (not used)
 	 */
-	virtual RtVoid errorHandler(const IErrorHandler &handler) {}
+	virtual RtVoid errorHandler(const IErrorHandler &handler) { }
 
 protected:
 	/** @brief Activate the context

@@ -260,9 +260,6 @@ protected:
 	inline virtual RtVoid doBegin(RtString name = RI_NULL) {}
 	inline virtual RtVoid doEnd(void) {}
 
-	inline virtual RtContextHandle doGetContext(void) { return illContextHandle; }
-	inline virtual RtVoid doContext(RtContextHandle handle) {}
-
 	inline virtual RtVoid doFrameBegin(RtInt number) {}
 	inline virtual RtVoid doFrameEnd(void) {}
 

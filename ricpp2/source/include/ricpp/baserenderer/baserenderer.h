@@ -129,8 +129,8 @@ public:
 	 */
 	virtual RtVoid end(void);
 
-	inline virtual RtVoid frameBegin(RtInt number) {}
-	inline virtual RtVoid frameEnd(void) {}
+	virtual RtVoid frameBegin(RtInt number);
+	virtual RtVoid frameEnd(void);
 
 	inline virtual RtVoid worldBegin(void) {}
 	inline virtual RtVoid worldEnd(void) {}

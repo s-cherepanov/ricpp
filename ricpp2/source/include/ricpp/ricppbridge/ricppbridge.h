@@ -64,7 +64,7 @@ namespace RiCPP {
  * a single instance of CRiCPPBridge is used. However doesn't want to restrict it
  * to be a singleton.
  */
-class CRiCPPBridge : public IRi, public IRiCPPErrorHandler
+class CRiCPPBridge : public IRi
 {
 private:
 	/** @brief Build in filters
@@ -88,27 +88,52 @@ private:
 	/** @brief Error Handling
 	 */
 	//@{
-	RtInt m_lastError; //< The last error number occured, stored by handleErrorV()
-
 	/** @brief Current user defined error handler
 	 *
 	 * m_printErrorHandler is the default handler. It can be changed by errorHandler()
 	 */
 	const IErrorHandler *m_curErrorHandler; 
+	RtInt m_lastError; //< The last error number occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
 
-	/** @brief Handles an error, sets m_lastError and calls the current error handler
-	 *
-	 * Implementation of IRiCPPErrorHandler, used through virtual ricppErrHandler(),
-	 * never called directly.
-	 *
-	 * @param code Error Code (RIE_...)
-	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
-	 * @param line Line number where error occured
-	 * @param file file where error occured
-	 * @param message Format string (like in printf()), not formatted if argList==NULL
-	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
+	/** Error handler used by the bridge, forwards the error to the 
+	 *  user defined errorhandler
+	 *  @see CRiCPPBridge::m_ricppErrorHandler
 	 */
-	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
+	class CRiCPPBridgeErrorHandler : public IRiCPPErrorHandler {
+		friend class CRiCPPBridge;
+	private:
+		CRiCPPBridge *m_outer; ///< The outer instance is the CRiCPPBridge instance belonging to this error handler.
+
+		/** @brief Is created automatically by the outer class, a CRiCPPBridge instance.
+		 * @see CRiCPPBridge::m_ricppErrorHandler
+		 */
+		inline CRiCPPBridgeErrorHandler() : m_outer(0) { }
+
+		/** @brief Sets the outer
+		 * 
+		 * Called in the constructor of CRiCPPBridge
+		 * @param outer The CRiCPPBridge instances that has this object.
+		 */
+		inline void setOuter(CRiCPPBridge &outer)
+		{
+			m_outer = &outer;
+		}
+
+		/** @brief Handles an error, sets CRiCPPBridge::m_lastError and calls the current error handler
+		 *
+		 * Implementation of IRiCPPErrorHandler, used through virtual ricppErrHandler(),
+		 * never called directly.
+		 *
+		 * @param code Error Code (RIE_...)
+		 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
+		 * @param line Line number where error occured
+		 * @param file file where error occured
+		 * @param message Format string (like in printf()), not formatted if argList==NULL
+		 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
+		 */
+		virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
+	} m_ricppErrorHandler; // used only via ricppErrHandler()
+	friend class CRiCPPBridgeErrorHandler;
 	//@}
 
 	/** @brief Build in procedurals
@@ -142,6 +167,13 @@ private:
 	}
 
 protected:
+	/** @brief Returns the error handler to use. It can but usually
+	 *  won't be overwritten in this framework.
+	 *
+	 *  @return m_errorHandler, the CRiCPPBridgeErrorHandler is returned.
+	 */
+	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_ricppErrorHandler; }
+
 	/** @brief Extracts all token-value pairs of an (...) interface call
 	 *
 	 *  The paires are stored in m_tokens, m_params
@@ -151,14 +183,6 @@ protected:
 	 *  @return Number of token value pairs found
 	 */
 	RtInt getTokens(RtToken token, va_list marker);
-
-	
-	/** @brief Returns the error handler to use, can be overwritten but usually
-	 *  won't in this framework.
-	 *
-	 *  @return *this, The bridge itself has the function of an error handler
-	 */
-	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return *this; }
 
 	/** @brief Context handling
 	 */
@@ -172,45 +196,52 @@ protected:
 	class CContext
 	{
 	private:
-		/** References the context creator of the renderer m_renderer, 0 if
-		 *  no handle is set
+		/** @brief Points to the context creator
+		 *
+		 *  The context creator can create a rendering context m_renderingContext.
+		 *  Can be 0 if it is not set, valid() returns false in that case.
 		 */
 		CContextCreator *m_contextCreator;
 
-		/** @brief References a rendering context, 0 if no renderer is set
+		/** @brief References a rendering context
+		 * 
+		 *  The rendering context must be created by m_contextCreator.
+		 *  Can be 0 if it is not set or after end(), valid() returns false in that case.
 		 */
-		IRiContext *m_renderer;
+		IRiContext *m_renderingContext;
 
 		/** @brief Context aborted?
 		 *
-		 *  True, if the context is aborted. If a 'severe' error occurs, the render can be
-		 *  aborted by an user defined error handler and no further rendering and error handling
-		 *  is done in this context any more.
+		 *  True, if the context is aborted. If a 'severe' error occurs, the render is
+		 *  aborted and no further rendering and error handling is done in this
+		 *  context any more.
+		 *  @see abort(), aborted()
 		 */
 		bool m_aborted;
 
 	public:
 		/** @brief The standard contructor initializes an empty instance
 		 *
-		 * The CContext instance referenced by illContextHandle to represent the 'outside' context
-		 * is used without m_contextCreator and m_renderer
+		 * The CContext instance referenced by illContextHandle to represent
+		 * the 'outside' context (MODE_OUTSIDE), there are no
+		 * m_contextCreator and m_renderingContext there.
 		 */
 		inline CContext() :
 			m_contextCreator(0),
-			m_renderer(0),
+			m_renderingContext(0),
 			m_aborted(false)
 		{
 		}
 
-		/** @brief  Constructs an instance with a rendering context and its creator.
+		/** @brief  Constructs an instance with a context creator and its rendering context.
 		 *
 		 * A context creator can be referenced by many CContext instances.
 		 * @param aCreator Context creator
-		 * @param aRenderer Implementation of a rendering context, created by aCreator
+		 * @param aRenderingContext Implementation of a rendering context, created by aCreator
 		 */
-		inline CContext(CContextCreator *aCreator, IRiContext *aRenderer) :
+		inline CContext(CContextCreator *aCreator, IRiContext *aRenderingContext) :
 			m_contextCreator(aCreator),
-			m_renderer(aRenderer),
+			m_renderingContext(aRenderingContext),
 			m_aborted(false)
 		{
 		}
@@ -222,10 +253,13 @@ protected:
 			*this = ctx;
 		}
 
-		/** @brief Destructor, the renderer is not destructed here.
+		/** @brief Destructor
 		 *
-		 *  The renderes should be
-		 *  deleted by the renderer creator (see CRendererLoader)
+		 *  The rendering context is not destroyed here, this was happen in end().
+		 *  The context creator destroys the renderer. This can be assured
+		 *  Because the CContext instance is destroyed by the framework CRendererBridge
+		 *  right after calling it's end through the CContextManagement.
+		 *  @see end()
 		 */
 		inline ~CContext()
 		{
@@ -245,20 +279,20 @@ protected:
 		 *  Since a context creator can bear many contexts, the context creator/rendering context
 		 *  pairs are stored (CContext objects in CContextManager::m_ctxMap).
 		 *  *After* a CContext is activated via the
-		 *  CContextManager::context() or begin() method, renderer() and
-		 *  contextCreator()->renderer() are the same. Only those active contexts are
+		 *  CContextManager::context() or begin() method, renderingContext() and
+		 *  contextCreator()->getContext() are the same. Only those active contexts are
 		 *  used by other functions than context() and begin().
 		 *
-		 *  @return Pointer to the rendering context
+		 *  @return Pointer to the rendering context stored
 		 */
-		inline IRiContext *renderer() const
+		inline IRiContext *renderingContext() const
 		{
-			return m_renderer;
+			return m_renderingContext;
 		}
 
-		/** @brief Checks the validity of a CContext Instance
+		/** @brief Checks the validity of a CContext instance.
 		 *  
-		 *  The instance is invalid either if the renderer is NULL, the handle is invalid or
+		 *  The instance is invalid either if the renderer is 0, the handle is invalid or
 		 *  the instance is aborted.
 		 *
 		 *  @return The validity state
@@ -267,27 +301,33 @@ protected:
 		{
 			return !m_aborted &&
 				m_contextCreator != 0 &&
-				m_renderer != 0;
+				m_renderingContext != 0;
 		}
 
-		/** @brief Query if the context is aborted
+		/** @brief Query if the context is aborted.
 		 *
 		 * Aborted context are not used any more, even if active. This can be used to
-		 * continue with unrecoverable errors.
+		 * continue with unrecoverable errors till end().
 		 *
 		 * @return true if the renderer state is aborted
-		 * @see abort()
+		 * @see abort(), m_aborted
 		 */
 		inline bool aborted() const
 		{
 			return m_aborted;
 		}
 
-		/** @brief The current context can be aborted by the frontend
-		 *  if a severe error occurs,
-		 *  this indicates that no further errors should be print (it is
-		 *  likely that these errors are follow up errors)
-		 *  @see aborted()
+		/** @brief The current context is aborted by the frontend
+		 *  if a severe error occurs.
+		 *
+		 *  This indicates that no further errors should be made (it is
+		 *  likely that these errors are follow up errors) and no
+		 *  more rendering is done because the renderer
+		 *  is in an unrecoverable state.
+		 *  However, the context is not destroyed till end().
+		 *  The context creator is notified via CContextCreator::abort() that
+		 *  the context is aborted.
+		 *  @see aborted(), m_aborted
 		 */
 		inline void abort()
 		{
@@ -296,16 +336,30 @@ protected:
 			m_aborted = true;
 		}
 
-		/** @brief End the current context regulary
+		/** @brief Ends the current context regulary
+		 *
+		 *  The context creator is notified that the context ends.
+		 *  Any cleanup can be made before deletion. The rendering
+		 *  context is deleted by the context creator's CCOntextCreator::end().
 		 */
 		inline void end()
 		{
 			if ( m_contextCreator != 0 )
 				m_contextCreator->end();
-			m_renderer = 0;
+			m_renderingContext = 0;
 		}
 
 		/** @brief Deactivate the current context, used for context switching
+		 *
+		 *  Called indirectly from CRiCPPBridge::context(RtContextHandle handle)
+		 *  and CRiCPPBridge::begin(RtString name)
+		 *  through the CContextManagement to deactivate the previous active
+		 *  rendering context.
+		 *
+		 *  @see CContextManagement::begin(RtString name),
+		 *  CContextManagement::context(RtContextHandle handle),
+		 *  CRiCPPBridge::begin(RtString name),
+		 *  CRiCPPBridge::context(RtContextHandle handle)
 		 */
 		inline void deactivate()
 		{
@@ -315,14 +369,23 @@ protected:
 
 
 		/** @brief Activate the current context, used for context switching
+		 *
+		 *  Called from indirectly by CRiCPPBridge::context()
+		 *  through  CContextManagement to activate the
+		 *  new active rendering context.
+		 *
+		 *  @see CContextManagement::context(RtContextHandle handle),
+		 *  CRiCPPBridge::context(RtContextHandle handle)
 		 */
 		inline void activate()
 		{
 			if ( m_contextCreator != 0 )
-				m_contextCreator->context(m_renderer);
+				m_contextCreator->context(m_renderingContext);
 		}
 
-		/** @brief Assigns a context to another
+		/** @brief Copies a CContext instance.
+		 *
+		 * Copies only the pointers.
 		 *
 		 * @param ctx Context to assign to *this
 		 * @return A reference to *this
@@ -332,7 +395,7 @@ protected:
 			if ( &ctx == this )
 				return *this;
 			m_contextCreator = ctx.m_contextCreator;
-			m_renderer = ctx.m_renderer;
+			m_renderingContext = ctx.m_renderingContext;
 			m_aborted = ctx.m_aborted;
 			return *this;
 		}
@@ -349,9 +412,9 @@ protected:
 	 *  can be thought of illContextHandle representing the bridge itself, it cannot be removed.
 	 */
 	class CContextManagement {
-		unsigned long m_nextCtxHandle; //< next value for context handle (counts 1 upwarts), deleted handles are not reused	
-		RtContextHandle m_ctxHandle; //< current context handle of the front end
-		CContext m_curCtx; //< current creator, context pair of the backend
+		RtContextHandle m_nextCtxHandle; //< Next value for context handle (counts 1 upwarts), deleted handles are not reused.
+		RtContextHandle m_ctxHandle;     //< Current context handle of the front end.
+		CContext m_curCtx;               //< Current creator, context pair of the backend, is a copy of m_ctxMap[m_ctxHandle] for faster access
 		std::map<RtContextHandle, CContext> m_ctxMap; //< Maps used context handles to a CContext context creator/rendering context pair.
 
 		/** @brief Removes a context creator/rendering context pair from the context map.
@@ -362,33 +425,37 @@ protected:
 		 */
 		void removeContext(RtContextHandle handle);
 
+		/** @brief Adds a new CContext instance.
+		 *
+		 *  Puts the context creator / rendering context pair at the context map
+		 *  with the handle as key. The handle is the number m_nextCtxHandle.
+		 *  m_nextCtxHandle is also increased at the end of this method to
+		 *  serve as the next handle.
+		 *	m_ctxHandle the current context handle is set by the calling function
+		 *  begin() to indicate the new context.
+		 *
+		 * @param ctx A context creator/rendering context pair, to be stored
+		 * @return The new handle of the creator
+		 * @see begin()
+		 */
+		inline RtContextHandle add(const CContext &ctx)
+		{
+			m_ctxMap[m_nextCtxHandle] = ctx;
+			return m_nextCtxHandle++;
+		}
 	public:
 		/** @brief Initializes context management
 		 *
-		 *  The illContextHandle context is constructed.
+		 *  The illContextHandle representing the context outside
+		 *  (the bridge itself for some means) context is constructed.
 		 */
 		inline CContextManagement()
 		{
 			m_nextCtxHandle = 1;
 			// illContextHandle is always the first context (outside begin-end)
-			// m_curCtx initially has nor context creator or renderer
+			// m_curCtx initially has nor context creator or rendering context.
 			m_ctxHandle = illContextHandle;
 			m_ctxMap[m_ctxHandle] = m_curCtx;
-		}
-
-		/** @brief Adds a context creator
-		 *
-		 *  Puts the context creator / rendering context pair at the context map
-		 *  with the handle as key. The handle is a number m_nextCtxHandle here
-		 *  and is also increased in this method to be used as next handle.
-		 *
-		 * @param ctx A context creator/rendering context pair, to be stored
-		 * @return The new handle of the creator
-		 */
-		inline RtContextHandle add(const CContext &ctx)
-		{
-			m_ctxMap[(RtContextHandle)m_nextCtxHandle] = ctx;
-			return (RtContextHandle)(m_nextCtxHandle++);
 		}
 
 		/** @brief  Aborts the current context
@@ -404,37 +471,43 @@ protected:
 
 		/** @brief Begins a new context.
 		 *
-		 * Manages the creation of a new context, creates a new CContext. The old
-		 * context is deactivated. To generate a new active rendering context the
-		 * CContextCreator::begin(name) is called. The new context is not
-		 * explicitly activated.
+		 * Manages the creation of a new rendering context, creates a new CContext and
+		 * stores it with add(). The old context is deactivated. To generate a new
+		 * active rendering context the CContextCreator::begin(name) is called.
+		 * The new context is not explicitly activated (because a creating a new
+		 * context might be handled by the backend different to activating an
+		 * already created one).
 		 *
-		 * @param name Forwarded from TRiCPPBridge::begin()
-		 * @param cc Context Creator used to create the new context
+		 * @param name Forwarded name from TRiCPPBridge::begin(RtString name)
+		 * @param cc Context creator used to create the new context
+		 * @see add(), CContext::activate()
 		 */
 		void begin(const char *name, CContextCreator *cc);
 
 		/** @brief Ends the current context and removes it from the list.
 		 *
-		 * There is no active rendering context after end() ended.
-		 *
+		 * There is no active rendering context after end() ended. The context
+		 * is not explicitely deactivated (because ending a rendering context
+		 * can be handled by the backend different to deactivating one for
+		 * further use).
+		 * 
+		 * @see CContext::end(), removeContext()
 		 */
 		void end();
 
-		/** @brief The active context creator/rendering context.
+		/** @brief Access the active current creator/rendering context.
 		 * 
-		 * @return A reference to the current creator,
-		 *          context pair, not neccessairly valid.
+		 * @return A reference to the backend current creator, context pair,
+		 * not neccessairly valid (e.g. if aborted).
 		 */
-		inline CContext &curCtx()
+		inline CContext &curBackend()
 		{
 			return m_curCtx;
 		}
 
-		/** @brief The handle of the active context creator/rendering context.
+		/** @brief Access the current frontend context handle
 		 *
-		 *  @return The handle of the current creator,
-		 *          context pair
+		 *  @return The handle of the current frontend context handle
 		 */
 		inline RtContextHandle getContext() const
 		{
@@ -496,7 +569,7 @@ protected:
 	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 public:
-	/** @brief Creates a bridge
+	/** @brief Creates a bridge.
 	 *
 	 * A CRendererLoader is used as m_curRendererCreator, m_printErrorHandler
 	 * is used as error handler, an invalid context indexed by illContextHandle
@@ -535,7 +608,7 @@ public:
 	inline virtual const IErrorHandler &errorPrint() const {  return m_printErrorHandler; }
 	//@}
 
-	/** @brief The last error is set by handleError(), handleErrorV()
+	/** @brief The last error is set by CRiCPPBridgeErrorHandler::handleError(), CRiCPPBridgeErrorHandler::handleErrorV()
 	 *
 	 * @return Most recent error number
      */
@@ -579,7 +652,8 @@ public:
 	 * @param handle Handle that references a rendering context (the backend renderer),
 	 *        you should not use destroyed contexts (end()).
 	 *
-	 * @see getContext(), begin(), end(), CBaseRenderer::context(), IRiRoot::context()
+	 * @see getContext(), begin(), end(),
+	 * CContextManager::context(), IRiRoot::context()
 	 */
 	virtual RtVoid context(RtContextHandle handle);
 
@@ -592,7 +666,8 @@ public:
 	 * The new context is not explicitly activated.
 	 *
 	 * @param name RIB file or name of renderer with parameters separated by blanks
-	 * @see context(), getContext(), begin(), CBaseRenderer::begin(), IRiRoot::begin()
+	 * @see context(), getContext(), end(),
+	 * CContextManager::begin(), IRiRoot::begin()
 	 */
 	virtual RtVoid begin(RtString name);
 
@@ -602,7 +677,7 @@ public:
 	 * this routine until a begin() or context() is called.
 	 * The destroyed context is not explicitly deactivated.
 	 * 
-	 * @see context(), getContext(), end(), CBaseRenderer::end(), IRiRoot::end()
+	 * @see context(), getContext(), begin(), CContextManager::end(), IRiRoot::end()
 	 */
 	virtual RtVoid end(void);
 

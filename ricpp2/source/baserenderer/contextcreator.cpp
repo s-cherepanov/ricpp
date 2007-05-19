@@ -39,7 +39,7 @@ CContextCreator::~CContextCreator()
 	// Delete all contexts in m_contextList
 	std::list<IRiContext *>::iterator iter;
 	for ( iter = m_contextList.begin(); iter != m_contextList.end(); iter ++ ) {
-		delete (*iter);
+		delete *iter;
 	}
 
 	m_contextList.clear();

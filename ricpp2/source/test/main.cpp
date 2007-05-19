@@ -59,13 +59,16 @@ int main (int argc, char * const argv[]) {
 			RtContextHandle ch3 = ri.getContext();
 			ri.context(illContextHandle);
 			ri.clipping(0, 1); /* Error */
-
 			// Swapping contexts
 			ri.context(ch2);
 		ri.end();
 		ri.context(ch3);
+		ri.frameBegin(1);
+		ri.frameEnd();
+		ri.frameEnd(); /** Error **/
 	ri.end();
 
+	ri.frameEnd(); /* Error */
 	ri.end(); /* Error */
 	ri.context(ch1); /* Error */
 

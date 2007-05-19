@@ -40,31 +40,106 @@ void CBaseRenderer::initRenderState()
 	m_renderState.modeStack(modeStack, true);
 }
 
-
 RtVoid CBaseRenderer::begin(RtString name)
 // throw ERendererError
 {
+	// Render state is initialized here, there is no mode so it must be not valid
+	// This is the case because begin is only called through the frame work
+	// A begin at the frontend always creates a new backend.
+	if ( m_renderState.valid() ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, "State already initialized in begin, begin called twice.");
+		return;
+	}
+
 	try {
 		initRenderState();
-	} catch ( ERendererError &e ) {
-		ricppErrHandler().handleError(e);
+	} catch ( ERendererError &e2 ) {
+		ricppErrHandler().handleError(e2);
 		return;
 	}
 
 	m_renderState.modeStack()->begin();
+
+	try {
+		doBegin(name);
+	} catch ( ERendererError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	}
 }
 
 RtVoid CBaseRenderer::end(void)
 // throw ERendererError
 {
-	ERendererError e;
+	if ( !m_renderState.valid() ) {
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in end.");
+		return;
+	}
+
+	ERendererError err;
 	if ( m_renderState.modeStack()->curMode() != MODE_BEGIN ) {
-		e.set(RIE_ILLSTATE, RIE_ERROR, "Ended context not at begin-state");
+		// Let's end cleaning anyway.
+		err.set(RIE_NESTING, RIE_WARNING, "Ended context not at begin-state");
 	}
 
 	m_renderState.modeStack()->end();
 
-	if ( e.isError() ) {
-		ricppErrHandler().handleError(e);
+	try {
+		doEnd();
+	} catch ( ERendererError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	}
+
+	if ( err.isError() ) {
+		ricppErrHandler().handleError(err);
+		return;
+	}
+}
+
+RtVoid CBaseRenderer::frameBegin(RtInt number)
+// throw ERendererError
+{
+	if ( !m_renderState.valid() ) {
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized frameBegin(%d)", (int)number);
+		return;
+	}
+
+	if ( !m_renderState.modeStack()->validRequest(REQ_FRAME_BEGIN) ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_ERROR, "frameBegin(%d)", (int)number);
+		return;
+	}
+
+	m_renderState.modeStack()->frameBegin();
+	m_renderState.frameNumber(number);
+
+	try {
+		doFrameBegin(number);
+	} catch ( ERendererError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	}
+}
+
+RtVoid CBaseRenderer::frameEnd(void)
+// throw ERendererError
+{
+	if ( !m_renderState.valid() ) {
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized frameEnd.");
+		return;
+	}
+
+	if ( !m_renderState.modeStack()->validRequest(REQ_FRAME_END) ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_ERROR, "frameEnd()");
+	}
+	
+	m_renderState.modeStack()->frameEnd();
+	m_renderState.frameNumber(0);
+
+	try {
+		doFrameEnd();
+	} catch ( ERendererError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
 	}
 }

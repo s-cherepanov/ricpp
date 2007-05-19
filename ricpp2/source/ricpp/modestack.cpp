@@ -178,7 +178,7 @@ bool CValidModes::isValid(EnumRequests idxRequest, EnumModes idxMode) const
 
 void CModeStack::begin()
 {
-	if ( MODE_OUTSIDE == curMode() ) {
+	if ( MODE_OUTSIDE != curMode() ) {
 		m_modes.clear();
 	}
 	push(MODE_BEGIN);
@@ -194,71 +194,83 @@ void CModeStack::end()
 
 void CModeStack::frameBegin()
 {
+	push(MODE_FRAME);
 }
 
 
 void CModeStack::frameEnd()
 {
+	pop();
 }
 
 
 void CModeStack::worldBegin()
 {
+	push(MODE_WORLD);
 }
 
 
 void CModeStack::worldEnd()
 {
+	pop();
 }
 
 
 void CModeStack::attributeBegin()
 {
+	push(MODE_ATTRIBUTE);
 }
 
 
 void CModeStack::attributeEnd()
 {
+	pop();
 }
 
 
 void CModeStack::transformBegin()
 {
+	push(MODE_TRANSFORM);
 }
 
 
 void CModeStack::transformEnd()
 {
+	pop();
 }
 
 
-void CModeStack::solidBegin(RtToken type)
+void CModeStack::solidBegin()
 {
-	type = type;
+	push(MODE_SOLID);
 }
 
 
-RtToken CModeStack::solidEnd()
+void CModeStack::solidEnd()
 {
-	return RI_NULL;
+	pop();
 }
 
 
 void CModeStack::objectBegin()
 {
+	push(MODE_OBJECT);
 }
 
 
 void CModeStack::objectEnd()
 {
+	pop();
 }
 
 
 void CModeStack::motionBegin()
 {
+	push(MODE_MOTION);
 }
 
 
 void CModeStack::motionEnd()
 {
+	pop();
 }

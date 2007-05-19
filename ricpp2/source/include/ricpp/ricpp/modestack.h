@@ -82,8 +82,6 @@ public:
 class CModeStack {
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
 	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
-	std::vector<RtToken> m_solidBlocks; //!< Tokens of nested solid blocks
-
 protected:
 	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before)
 	 *
@@ -137,8 +135,8 @@ public:
 	virtual void transformBegin();
 	virtual void transformEnd();
 
-    virtual void solidBegin(RtToken type);
-    virtual RtToken solidEnd();
+    virtual void solidBegin();
+    virtual void solidEnd();
 
 	virtual void objectBegin();
 	virtual void objectEnd();

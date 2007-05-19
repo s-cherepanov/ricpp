@@ -40,8 +40,8 @@ namespace RiCPP {
  */
 class CRenderState {
 	bool m_deleteModeStack;   ///< Delete the modestack if object is destroyed
-	CModeStack *m_modeStack; ///< Pointer to a mode stack
-
+	CModeStack *m_modeStack;  ///< Pointer to a mode stack
+	RtInt m_frameNumber;      ///< Frame number
 public:
 	/** @brief Initializes the object
 	 *
@@ -54,6 +54,7 @@ public:
 	inline CRenderState()
 	{
 		m_modeStack = 0;
+		m_frameNumber = 0;
 		m_deleteModeStack = false;
 	}
 
@@ -71,6 +72,18 @@ public:
 	inline bool valid() const {
 		return m_modeStack != 0;
 	}
+
+	/** @brief The current frame number (frames are not nested)
+	 *
+	 *  @param number The frame number
+	 */
+	inline void frameNumber(RtInt number) { m_frameNumber = number; }
+
+	/** @brief Get The current frame number (frames are not nested)
+	 *
+	 *  @return The frame number
+	 */
+	inline RtInt frameNumber() const { return m_frameNumber; }
 
 	/** The mode stack
 	 *

@@ -27,7 +27,7 @@
 
 /** \file filters.h
  *  \author Andreas Pidde (andreas@pidde.de)
- *  \brief Pixel filters for RiCPP, see [RISPEC3.2] Appendix E
+ *  \brief Pixel filters for RiCPP, see RISPEC3.2 Appendix E
  */
 
 #ifndef _RICPP_RICPP_RICPP_H
@@ -36,26 +36,36 @@
 
 namespace RiCPP {
 
+/** @brief The gaussian pixel filter.
+ */
 class CGaussianFilter : public IFilterFunc {
 	inline virtual const char *name() const { return "gausianFilter"; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
+/** @brief The box pixel filter.
+ */
 class CBoxFilter : public IFilterFunc {
 	inline virtual const char *name() const { return "boxFilter"; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
+/** @brief The triangle pixel filter.
+ */
 class CTriangleFilter : public IFilterFunc {
 	inline virtual const char *name() const { return "triangleFilter"; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
+/** @brief The Catmull-Rom pixel filter.
+ */
 class CCatmullRomFilter : public IFilterFunc {
 	inline virtual const char *name() const { return "catmullRomFilter"; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
+/** @brief The sinc pixel filter.
+ */
 class CSincFilter : public IFilterFunc {
 	inline virtual const char *name() const { return "sincFilter"; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;

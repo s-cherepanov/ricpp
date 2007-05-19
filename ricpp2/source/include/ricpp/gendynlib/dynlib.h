@@ -36,7 +36,8 @@
 
 namespace RiCPP {
 
-	/** Interface to represent the exported functions of libraries.
+	/** @brief Interface to represent the exported functions of libraries.
+	 *
 	 *  There are child classes containing the system depending parts
 	 *  of the handling of these functions: CMaILibFunc, CWin32LibFunc.
 	 *  These classes contain pointers to the functions. CDynLib
@@ -54,11 +55,15 @@ namespace RiCPP {
 		virtual bool valid()=0;
 	}; // ILibFunc
 
-	/** Base class to represent dynamic libraries in general. There are child classes
+	/** @brief Base class to represent dynamic libraries in general.
+	 * 
+	 *  There are child classes
 	 *  to handle the system dependend parts (CMacDynLib and CWin32DynLib)
 	 */
 	class CDynLib {
-		/** Counts how often a library is loaded, load() and unload() handles the
+		/** @brief Counts how often a library is loaded.
+		 * 
+		 *  load() and unload() handles the
 		 *  incrementation and decrementation of this member. load() only loads
 		 *  the library for the first time called, and only if unload() encounters
 		 *  that m_useCount is 0, it unloads the library by calling the
@@ -67,25 +72,30 @@ namespace RiCPP {
 		unsigned long m_useCount;
 
 	protected:
-		/** The major version of the library that should be loaded.
+		/** @brief The major version of the library that should be loaded.
+		 *
 		 *  Libraries bear the major version in their name libname.version.suffix
 		 */
 		long int m_version;
 		
-		/** The name of the library as given by the framework, without suffixes
+		/** @brief The name of the library as given by the framework, without suffixes.
 		 */
 		std::string m_libname;
 		
-		/** The full directory path of the library, inserted by findLib()
+		/** @brief The full directory path of the library, inserted by findLib().
 		 */
 		std::string m_libpath;
 
-		/** The search path for the library, if empty, the system dependent
+		/** @brief The search path for the library.
+		 *
+		 *  If empty, the system dependent
 		 *  searchpath is used.
 		 */
 		CStringList m_searchpath;
 
-		/** Overload this member function with a method to find the
+		/** @brief Find the library in file system.
+		 *  
+		 *  Overload this member function with a method to find the
 		 *  library m_libname of version m_version in the m_searchpath.
 		 *  If the search path is empty the library shall be searched in a system
 		 *  dependent manner. The function puts the full directory path
@@ -95,25 +105,35 @@ namespace RiCPP {
 		 */
 		virtual const char *findLib() = 0;
 		
-		/** Overload to load the library (called by load() if m_useCount increments to 1)
+		/** @brief Load the library into memory if called the first time.
+		 * 
+		 * Overload to load the library (called by load() if m_useCount increments to 1)
 		 */
 		virtual bool doLoad() = 0;
 
-		/** Overload to unload the library (called by unload() if m_useCount
+		/** @brief Unloads the library outof memory, if not used any more.
+		 *
+		 *  Overload to unload the library (called by unload() if m_useCount
 		 *  decrements to 0 or by the destructor of the child class)
 		 */
 		virtual bool doUnload() = 0;
 
-		/** @return Used by load() to check if the library is loaded, independend of the m_useCount
+		/** @brief Tests if library in memory.
+		 *
+		 * @return Used by load() to check if the library is loaded, independend of the m_useCount
 		 */
 		virtual bool isLoaded() const = 0;
 	public:
-		/** Object creation (done by CDynLibFactory) initialises the members
-		 *  with the parameters
+		/** @brief Object creation.
+		 *  
+		 * (done by CDynLibFactory) initialises the members
+		 *  with the parameters.
 		 */
 		CDynLib(const char *libname, const char *searchpath, long int version=-1);
 
-		/** Destructor, doUnload() must be called by the destructors of the
+		/** @brief Destructor.
+		 *
+		 *  doUnload() must be called by the destructors of the
 		 *  system dependend child classes
 		 */
 		inline virtual ~CDynLib() { }
@@ -130,20 +150,24 @@ namespace RiCPP {
 		 */
 		virtual const char *libpath();
 
-		/** Handles the loading of the library, calls doload() if called the first time
+		/** @brief Handles the loading of the library, calls doload() if called the first time
 		 */
 		bool load();
 
-		/** Handles the unloading of the library, calls dounload()
+		/** @brief Handles the unloading of the library.
+		 *
+		 *  Calls dounload()
 		 *  if called as much times as load(), use m_useCount for this.
 		 */
 		bool unload();
 
-		/** @return m_useCount is returned
+		/** @brief Query how often the library is used.
+		 * @return m_useCount is returned
 		 */
 		unsigned long useCount() const;
 
-		/** @return true if useCount() > 0
+		/** @brief Query if the library is loaded.
+		 *  @return true if useCount() > 0
 		 */
 		virtual bool valid() const;
 
@@ -163,7 +187,7 @@ namespace RiCPP {
 		virtual void deleteFunc(ILibFunc *f) const;
 	}; // CDynLib
 
-	/** @brief factory object to create system dependend CDynLib objects
+	/** @brief Factory object to create system dependend CDynLib objects.
 	 */
 	class CDynLibFactory {
 		public:

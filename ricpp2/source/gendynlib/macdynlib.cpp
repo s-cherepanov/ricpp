@@ -133,6 +133,8 @@ ILibFunc *CMacDynLib::getFunc(const char *name) const {
 	return new CMacLibFunc(sym);
 }
 
+/** @brief The Factory method that returns a Win32 library
+ */
 CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath, long int version) {
 	return new CMacDynLib(libname, searchpath, version);
 }

@@ -27,7 +27,7 @@
 
 /** @file renderererror.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Error exception and base for errorhandling used internally for RiCPP
+ *  @brief Error exception and base for error handling used internally for RiCPP
  */
 
 #ifndef _RICPP_RICPP_RICPP_H
@@ -41,14 +41,14 @@ namespace RiCPP {
 /** @brief The renderer error is used internally by the back end to throw exceptions
  */
 class ERendererError {
-	RtInt m_code;           ///< Which of error occured, 'RIE_...'
-	RtInt m_severity;       ///< Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
-	std::string m_message;  ///< error string
-	int m_line;             ///< Line where the error occured
-	std::string m_file;     ///< File where the error occured
+	RtInt m_code;           ///< @brief Which of error occured, 'RIE_...'
+	RtInt m_severity;       ///< @brief Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
+	std::string m_message;  ///< @brief error string
+	int m_line;             ///< @brief Line where the error occured
+	std::string m_file;     ///< @brief File where the error occured
 
 public:
-	/** Constructor, sets error codes and additional error message with source line and source file added
+	/** @brief Constructor, sets error codes and additional error message with source line and source file added
 	 *  @param aCode Which error ('RIE_...')
 	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	 *  @param aMessage Additional describing error string
@@ -64,7 +64,7 @@ public:
 		 set(aCode, aSeverity, aMessage, aLine, aFile);
 	 }
 
-	/** Copy Constructor
+	/** @brief Copy Constructor
 	 *  @param err The error object to copy
 	 */
 	inline ERendererError(const ERendererError &err)
@@ -72,7 +72,7 @@ public:
 		*this = err;
 	}
 
-	/** Sets error codes and additional error message with source line and source file added
+	/** @brief Sets error codes and additional error message with source line and source file added
 	 *  @param aCode Which error ('RIE_...')
 	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	 *  @param aMessage Additional describing error string
@@ -92,11 +92,12 @@ public:
 		m_file = aFile ? aFile : "";
 	 }
 
-	 /** Virtual destructor
+	 /** @brief Virtual destructor
 	 */
 	virtual inline ~ERendererError() {}
 
-	/** Formats the error/severity numbers to a string.
+	/** @brief Formats the error/severity numbers to a string.
+	 *
 	 *  The format is "Error \[number:description\] Severity \[number:description\] formated error message",
 	 *  File and message parts are optional.
 	 *  @retVal strCode The error is formatted to this string
@@ -104,7 +105,8 @@ public:
 	 */
 	virtual const char *formatError(std::string &strCode) const;
 
-	/** Formats the error/severity numbers to a string.
+	/** @brief Formats the error/severity numbers to a string.
+	 *
 	 *  The format is "File [<line>: <file>] - <message>" if file and massege are set,
 	 *  it can missing the file info, message or can be empty.
 	 *  @retVal strCode The error is formatted to this string
@@ -112,7 +114,7 @@ public:
 	 */
 	virtual const char *formatErrorMessage(std::string &strCode) const;
 
-	/** Gets the file string
+	/** @brief Gets the file string.
 	 *  @return Pointer to the file name stored in \a ERendererError::m_file
 	 */
 	inline const char *file() const
@@ -120,7 +122,7 @@ public:
 		return m_file.c_str();
 	}
 
-	/** Gets the line number
+	/** @brief Gets the line number.
 	 *  @return Line number stored in \a ERendererError::m_line
 	 */
 	inline int line() const
@@ -136,7 +138,7 @@ public:
 		return m_message.c_str();
 	}
 
-	/** Gets the current error code
+	/** @brief Gets the current error code.
 	 *  @return error code stored in \a RendererError::m_code
 	 */
 	inline RtInt code() const
@@ -144,7 +146,7 @@ public:
 		return m_code;
 	}
 
-	/** Is the error code set?
+	/** @brief Is the error code set?
 	 *  @return true, if the error code is not RIE_NOERROR
 	 */
 	inline bool isError() const
@@ -152,7 +154,7 @@ public:
 		return m_code != RIE_NOERROR;
 	}
 
-	/** Get the current error severity
+	/** @brief Get the current error severity.
 	 *  @return error severity stored in \a ERendererError::m_severity
 	 */
 	inline RtInt severity() const
@@ -160,7 +162,7 @@ public:
 		return m_severity;
 	}
 
-	/** Copy an Error
+	/** @brief Copy an Error.
 	 *  @param err The error object to copy
 	 *  @return *this
 	 */
@@ -174,13 +176,14 @@ public:
 }; // ERendererError
 
 
-/** Interface for easier error handling
+/** @brief Interface for easier error handling
+ *
  *  CErrorExceptionHandler and CRiCPPBridge implement this interface to manage
  *  the error handling.
  */
 class IRiCPPErrorHandler {
 public:
-	/** Virtual destructor
+	/** @brief Virtual destructor
 	 */
 	virtual inline ~IRiCPPErrorHandler() {}
 
@@ -224,7 +227,7 @@ public:
 		handleErrorV(code, severity, 0, NULL, message, argList);
 	}
 
-	/** Handles an error must be overloaded for concrete error handling
+	/** @brief Handles an error must be overloaded for concrete error handling
 	 * @param code Error Code (RIE_...)
 	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
 	 * @param line Line number where error occured
@@ -235,12 +238,14 @@ public:
 	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0) = 0;
 }; // IRiCPPErrorHandler
 
-/** The standard error handler of the backend to format error messages and throw
+/** @brief The standard error handler of the backend.
+ *
+ *  Used to format error messages and throw
  *  an ERendererError.
  */
 class CErrorExceptionHandler : public IRiCPPErrorHandler {
 public:
-	/** Handles an error, sets m_lastError and calls the current error handler
+	/** @brief Handles an error, sets m_lastError and calls the current error handler
 	 * @param code Error Code (RIE_...)
 	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
 	 * @param line Line number where error occured

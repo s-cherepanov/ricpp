@@ -53,6 +53,7 @@
 namespace RiCPP {
 
 /** @brief RenderMan Interface Bridge
+ *
  * Jobs: Bridges to a renderer (context) that implements the Ri
  * and the error handlers.
  * Calls The Ri..V() routines, handles the global options
@@ -95,8 +96,9 @@ private:
 	const IErrorHandler *m_curErrorHandler; 
 	RtInt m_lastError; //< The last error number occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
 
-	/** Error handler used by the bridge, forwards the error to the 
-	 *  user defined errorhandler
+	/** @brief Error handler used by the bridge
+	 *
+	 *  Forwards the error to the user defined error handler
 	 *  @see CRiCPPBridge::m_ricppErrorHandler
 	 */
 	class CRiCPPBridgeErrorHandler : public IRiCPPErrorHandler {

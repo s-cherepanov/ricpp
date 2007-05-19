@@ -40,7 +40,8 @@ namespace RiCPP {
  */
 class CAbortErrorHandler : public IErrorHandler {
 public:
-	/** @return The name of the renderer as used in RIB
+	/**@brief The name of the handler.
+	 * @return The name of the renderer as used in RIB
 	 */
 	inline virtual const char *name() const {return "abortErrorHandler";}
 	/** @brief Handles the error (print, exit if severe)
@@ -55,7 +56,8 @@ public:
  */
 class CPrintErrorHandler : public IErrorHandler  {
 public:
-	/** @return The name of the renderer as used in RIB
+	/**@brief The name of the handler.
+	 * @return The name of the renderer as used in RIB
 	 */
 	inline virtual const char *name() const {return "printErrorHandler";}
 	/** @brief Handles the error (print)
@@ -66,11 +68,12 @@ public:
 	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
 };
 
-/** The ignore-error handler, does nothing, ignores the error
+/** @brief The ignore-error handler, does nothing, ignores the error
  */
 class CIgnoreErrorHandler : public IErrorHandler  {
 public:
-	/** @return The name of the renderer as used in RIB
+	/**@brief The name of the handler.
+	 * @return The name of the renderer as used in RIB
 	 */
 	inline virtual const char *name() const {return "ignoreErrorHandler";}
 	/** @brief Handles the error (ignore)

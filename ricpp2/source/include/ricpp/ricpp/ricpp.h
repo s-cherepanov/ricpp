@@ -315,43 +315,75 @@ class IRi;
  */
 class IErrorHandler {
 public:
+	/** @brief The name of the error handler.
+	 * @param The name of the error handler as used in RIB files.
+	 */
 	virtual const char *name() const = 0;
+	/** @brief Handles the error.
+	 * @param code Error code (RIE_...).
+	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE).
+	 * @param msg Error message, describing the specific error in detail.
+	 */
 	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const = 0;
 };
 
-/** @brief Interface for a pixel filter
+/** @brief Interface for a pixel filter (super sampling).
  */
 class IFilterFunc {
 public:
+	/** @brief The name of the filter.
+	 *  @return The name of the filter as used in RIB binding.
+	 */
 	virtual const char *name() const = 0;
+	/** @brief The implementation of the filter function.
+	 *
+	 *  Each supersample in the rectangular area xwidth, ywidth contributes by its
+	 *  weight to the output value of a pixel in the center of this rectangle.
+	 *  The filter function is used to calculate the weight of a sample at the x,y position
+	 *  relative to the center of the pixel (grid cell).
+	 *  See RISPEC3.2 Appendix E, UPS89 Filtering the supersamples, 176ff.
+	 *  @param x x-coordinate of the supersample in the image relative to the center, -(xwidth/2) <= x <= (xwidth/2)
+	 *  @param y y-coordinate of the supersample in the image relative to the center, -(ywidth/2) <= y <= (ywidth/2)
+	 *  @param xwidth Influence in pixels of the filter in horizontal direction
+	 *  @param ywidth Influence in pixels of the filter in vertical direction
+	 *  @return The weigth of the sample, the final pixel value is the average of the weighted supersamples.
+	 *  @see CRiRoot::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
+	 */
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const = 0;
 };
 
-/** @brief Interface, subdivision for procedurals changed to include renderer instance
+/** @brief Interface, subdivision for procedurals changed to include renderer instance.
  */
 class ISubdivFunc {
 public:
-	/** @brief Name of the subdivision function
+	/** @brief Name of the subdivision function.
+	 *  @return The name of the subdivision function as used in RIB binding.
 	 */
 	virtual const char *name() const = 0;
-	/** @brief The subdivision function as operator()()
+	/** @brief The subdivision function as operator()().
+	 * @param ri the frontend for interface calls of the subdivision function.
+	 * @param data The data handled by the subdivision function.
+	 * @param detail the current level of detail.
 	 */
-	virtual RtVoid operator()(IRi &, RtPointer, RtFloat) const = 0;
+	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const = 0;
 };
 
-/** @brief Free function for procedurals
+/** @brief Free function for procedurals.
  */
 class IFreeFunc {
 public:
-	/** @brief Name of the free function
+	/** @brief Name of the free function.
+	 *  @return The name of the free function as used in RIB binding.
 	 */
 	virtual const char *name() const = 0;
-	/** @brief The free function as operator()()
+	/** @brief The free function as operator()().
+	 * @param ri the frontend used by the subdivision function that handled the data.
+	 * @param data The data handled by the subdivision function that should be freed.
 	 */
-	virtual RtVoid operator()(IRi &, RtPointer) const = 0;
+	virtual RtVoid operator()(IRi &ri, RtPointer data) const = 0;
 };
 
-/** @brief Callback function to handle structural comments in rib files (IRi::readArchive), changed to include renderer instance and to const char
+/** @brief (2do) Callback function to handle structural comments in rib files (IRi::readArchive), changed to include renderer instance
  */
 class IArchiveCallback {
 public:
@@ -360,7 +392,7 @@ public:
 	virtual const char *name() const = 0;
 	/** @brief The callback function as operator()()
 	 */
-	virtual RtVoid operator()(IRi &, RtToken, RtString, ...) const = 0;
+	virtual RtVoid operator()(IRi &ri, RtToken, RtString, ...) const = 0;
 };
 
 // ---------------------------------------------------------------------------------------------------

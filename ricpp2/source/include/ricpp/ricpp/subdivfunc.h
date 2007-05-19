@@ -37,14 +37,15 @@
 
 namespace RiCPP {
 
-/** Implements the DelayedReadArchive procedural
+/** @brief Implements the DelayedReadArchive procedural.
  */
 class CProcDelayedReadArchive : public ISubdivFunc {
 public:
-	/** @return The name of the function as used in RIB
+	/** @brief The name of the function
+	 *  @return The name of the function as used in RIB
 	 */
 	inline virtual const char *name() const {return "DelayedReadArchive";}
-	/** Delayed read of a RIB archive
+	/** @brief Delayed read of a RIB archive
 	 * @param ri Interface to be used
 	 * @param data Array of one string, the name of the archive as null terminated string
 	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
@@ -52,14 +53,15 @@ public:
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 };
 
-/** Implements the RunProgram procedural
+/** @brief Implements the RunProgram procedural.
  */
 class CProcRunProgram : public ISubdivFunc {
 public:
-	/** @return The name of the function as used in RIB
+	/** @brief The name of the function
+	 *  @return The name of the function as used in RIB
 	 */
 	inline virtual const char *name() const {return "RunProgram";}
-	/** Run a helper program and capture output as RIB for ri
+	/** @brief Run a helper program and capture output as RIB for ri
 	 * @param ri Interface to be used
 	 * @param data Array of two strings, the program name and its command line arguments
 	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
@@ -67,14 +69,15 @@ public:
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 };
 
-/** Implements the DynamicLoad procedural
+/** @brief Implements the DynamicLoad procedural.
  */
 class CProcDynamicLoad : public ISubdivFunc {
 public:
-	/** @return The name of the function as used in RIB
+	/** @brief The name of the function
+	 *  @return The name of the function as used in RIB
 	 */
 	inline virtual const char *name() const {return "DynamicLoad";}
-	/** Calls a dynamic library implementing: RtPointer ConvertParameters(IRi &ri, char *initial data), 
+	/** @brief Calls a dynamic library implementing: RtPointer ConvertParameters(IRi &ri, char *initial data), 
 	 * void Subdivide(IRi &ri, RtPointer blinddata, RtFloat detailsize), void Free(IRi &ri, RtPointer blinddata)
 	 * @param ri Interface to be used
 	 * @param data Array of two strings, the library name and its parameters (converted to blinddata by ConvertParameters)
@@ -83,15 +86,18 @@ public:
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 };
 
-/** Implements the free function that can be called by the interface to free the 'data'
- *  of own procedurals
+/** @brief Implements the free function that can be called by the interface to free the 'data'
+ *  of own procedurals.
  */
 class CProcFree : public IFreeFunc {
 public:
-	/** @return The name of the function (no RIB binding)
+	/** @brief The name of the function
+	 *  @return The name of the function (no RIB binding)
 	 */
 	inline virtual const char *name() const {return "Free";}
-	/**
+	/** @brief The implementation of the free function
+	 *
+	 * Just call free() for the data.
 	 * @param ri Interface to be used
 	 * @param data
 	 */

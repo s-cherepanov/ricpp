@@ -34,8 +34,7 @@
 
 using namespace RiCPP;
 
-/**
- *  Interface test program
+/** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
 	CRiCPPBridge ri;

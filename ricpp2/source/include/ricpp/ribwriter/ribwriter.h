@@ -40,6 +40,8 @@
 
 namespace RiCPP {
 
+/** @brief Rendering context that writes a RIB stream
+ */
 class CRibWriter : public CBaseRenderer {
 public:
 	inline CRibWriter() {}
@@ -189,6 +191,8 @@ protected:
 	inline virtual RtVoid doReadArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
 };
 
+/** @brief Creator for the CRibWriter rendering context.
+ */
 class CRibWriterCreator : public CContextCreator {
 protected:
 	inline virtual IRiContext *getNewContext() { return new CRibWriter; }

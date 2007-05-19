@@ -42,11 +42,13 @@
 
 namespace RiCPP {
 
-/** Create a renderer context creator, either by dynamic loading or instanciating
+/** @brief Creates a renderer context creator.
+ *
+ *  It is created either by dynamic loading or instanciating
  */	 
 class IRendererCreator
 {
-	/** @brief Error handler used by CContextCreator, it is returned by the virtual \a ricppErrHandler().
+	/** @brief Error handler used by CContextCreator, it is returned by the virtual ricppErrHandler().
 	 *
 	 * This error handler throws an ERendererError exception. The exception is
 	 * catched by the front end and bridged to the RenderMan error handler.
@@ -56,28 +58,31 @@ class IRendererCreator
 	CErrorExceptionHandler m_errorHandler;
 
 protected:
-	/** @brief Returns the error handler to use. It can but usually
-	 *  won't be overwritten in this framework.
+	/** @brief Returns the error handler to use.
 	 *
-	 *  @return \a m_errorHandler, the default CErrorExceptionHandler is returned.
+	 * It can but usually won't be overwritten in this framework.
+	 *
+	 *  @return m_errorHandler, the default CErrorExceptionHandler is returned.
 	 */
 	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_errorHandler; }
 
 public:
-	/** Virtual destructor
+	/** @brief Virtual destructor
 	 */
 	inline virtual ~IRendererCreator() {}
 
-	/** CContextCreator creation, may throw ERendererException for more error information
+	/** @brief CContextCreator creation.
+	 * 
+	 * May throw ERendererException for more error information.
 	 * @param name The argument of IRi::begin(RtString name), indicates the
-	 *        name of the renderer creator with parameters appended
-	 * @return A context creator, new or already loaded
+	 *        name of the renderer creator with parameters appended.
+	 * @return A context creator, new or already loaded.
 	 */
 	virtual CContextCreator *getContextCreator(RtString name) = 0;
 
-	/** Sets a new searchpath
+	/** @brief Sets a new searchpath.
 	 *
-	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'
+	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'.
 	 */
 	virtual void searchpath(RtString aSearchpath) = 0;
 }; // IRendererCreator

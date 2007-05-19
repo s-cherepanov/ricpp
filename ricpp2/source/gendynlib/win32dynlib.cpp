@@ -132,9 +132,11 @@ ILibFunc *CWin32DynLib::getFunc(const char *name) const {
 	if ( m_libHandle != invalidLibHandle ) {
 		return new CWin32LibFunc(GetProcAddress(m_libHandle, name));
 	}
-	return NULL;
+	return 0;
 }
 
+/** @brief The Factory method that returns a Win32 library
+ */
 CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath, long int version) {
 	return new CWin32DynLib(libname, searchpath, version);
 }

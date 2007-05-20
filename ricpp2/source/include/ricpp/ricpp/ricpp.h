@@ -78,8 +78,8 @@ typedef const char *RtString;    ///< Character string, which is not a predefine
 typedef void   *RtPointer;       ///< Pointer to arbitrary data
 #define RtVoid  void             ///< Simple 'void' datatype, used as 'return type' for functions returning nothing (C++: typedef is not working for void)
 
-typedef RtPointer RtObjectHandle;   ///< Handle for an object instance
-typedef RtPointer RtLightHandle;    ///< Handle for a light handle
+typedef unsigned long RtObjectHandle;   ///< Handle for an object instance (was RtPointer)
+typedef unsigned long RtLightHandle;    ///< Handle for a light handle (was RtPointer)
 typedef unsigned long RtContextHandle;  ///< handle for a render context handle (was RtPointer)
 // typedef RtString  RtArchiveHandle;  // handle for a rib archive (3Delight)
 //@}
@@ -316,7 +316,7 @@ class IRi;
 class IErrorHandler {
 public:
 	/** @brief The name of the error handler.
-	 * @param The name of the error handler as used in RIB files.
+	 * @return The name of the error handler as used in RIB files.
 	 */
 	virtual const char *name() const = 0;
 	/** @brief Handles the error.

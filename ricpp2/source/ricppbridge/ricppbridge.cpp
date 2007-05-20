@@ -420,13 +420,13 @@ RtObjectHandle CRiCPPBridge::objectBegin(void)
 			return m_ctxMgmt.curBackend().renderingContext()->objectBegin();
 		} catch (ERendererError &e) {
 			ricppErrHandler().handleError(e);
-			return (RtObjectHandle)RI_NULL;
+			return illObjectHandle;
 		}
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::objectBegin()");
 	}
-	return (RtObjectHandle)RI_NULL;
+	return illObjectHandle;
 }
 
 RtVoid CRiCPPBridge::objectEnd(void)
@@ -883,7 +883,7 @@ RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::lightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
-	return (RtLightHandle) RI_NULL;
+	return illLightHandle;
 }
 
 RtLightHandle CRiCPPBridge::areaLightSource(RtString name, RtToken token, ...)
@@ -907,7 +907,7 @@ RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tok
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::areaLightSourceV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
-	return (RtLightHandle) RI_NULL;
+	return illLightHandle;
 }
 
 RtVoid CRiCPPBridge::attribute(RtString name, RtToken token, ...)

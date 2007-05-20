@@ -46,7 +46,7 @@ public:
 	 * If the pointer is not valid valid() will return false. This can be
 	 * used for error handling.
 	 *
-	 * @param ptr Pointer to a loaded library function.
+	 * @param aFuncPtr Pointer to a loaded library function.
 	 */
 	CMacLibFunc(void *aFuncPtr);
 	/** @brief Destructor, nothing to do.

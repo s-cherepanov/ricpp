@@ -74,10 +74,6 @@ public:
 }; // CValidModes
 
 /** @brief Stores modes and check validity of requests
- *
- *  Tries to restaurate the stack, if an illegal block is closed, e.g.
- *  if an attribute block is closed all blocks nested inside this
- *  attribute block are also closed.
  */
 class CModeStack {
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
@@ -106,6 +102,15 @@ protected:
 		return prev;
 	}
 
+	/** @brief Clears the mode stack.
+	 *
+	 * The mode stack is cleared by end()
+	 */
+	inline virtual void clear()
+	{
+		m_modes.clear();
+	}
+
 public:
 	/** @brief Initializing of the mode, normally starts outside any blocks. 
 	 */
@@ -118,6 +123,8 @@ public:
 	inline virtual ~CModeStack() {}
 
 	/** @brief The modes
+	 *
+	 * Called by the CBaseRenderer
 	 */
 	//@{
 	virtual void begin();

@@ -55,7 +55,7 @@ If the value for class is missing, uniform is assumed.
 
 Type is one of
 
-float, integer, string,
+float, integer, string, point (3 floats), 
 vector (3 floats), normal (3 floats), hpoint (4 floats), matrix (16 floats),
 color (color is special because the number of floats
 can be changed with a request ColorSamples, there are 3 floats normally)

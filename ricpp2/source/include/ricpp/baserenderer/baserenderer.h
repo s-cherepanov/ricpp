@@ -107,7 +107,7 @@ public:
 	 */
 	inline virtual RtVoid deactivate(void) {}
 
-	inline virtual RtToken declare(RtString name, RtString declaration) { return RI_NULL; }
+	RtToken declare(RtString name, RtString declaration);
 
     inline virtual RtVoid synchronize(RtToken name) {}
 
@@ -132,17 +132,17 @@ public:
 	virtual RtVoid frameBegin(RtInt number);
 	virtual RtVoid frameEnd(void);
 
-	inline virtual RtVoid worldBegin(void) {}
-	inline virtual RtVoid worldEnd(void) {}
+	virtual RtVoid worldBegin(void);
+	virtual RtVoid worldEnd(void);
 
-	inline virtual RtVoid attributeBegin(void) {}
-	inline virtual RtVoid attributeEnd(void) {}
+	virtual RtVoid attributeBegin(void);
+	virtual RtVoid attributeEnd(void);
 
-	inline virtual RtVoid transformBegin(void) {}
-	inline virtual RtVoid transformEnd(void) {}
+	virtual RtVoid transformBegin(void);
+	virtual RtVoid transformEnd(void);
 
-    inline virtual RtVoid solidBegin(RtToken type) {}
-    inline virtual RtVoid solidEnd(void) {}
+	inline virtual RtVoid solidBegin(RtToken type) {}
+	inline virtual RtVoid solidEnd(void) {}
 
 	inline virtual RtObjectHandle objectBegin(void) { return illObjectHandle; }
 	inline virtual RtVoid objectEnd(void) {}

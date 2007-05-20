@@ -57,12 +57,26 @@ public:
 	 */
 	 ERendererError(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
-		 const char *aMessage = NULL,
-		 int aLine = 0, const char *aFile = NULL
+		 const char *aMessage = 0,
+		 int aLine = 0, const char *aFile = 0
 		 )
 	 {
 		 set(aCode, aSeverity, aMessage, aLine, aFile);
 	 }
+
+	/** @brief Constructor, sets error codes and additional error message with source line and source file added
+	 *  @param aCode Which error ('RIE_...')
+	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
+	 *  @param aLine Line number of the source file where the ERendererError is constructed (the error occured), normally __LINE__
+	 *  @param aFile Filke where the ERendererError occured, normally __FILE__
+	 *  @param aMessage format string (like printf) describing the error, followed by
+	 *  first argument like in printf, if there is not such an argument formating is not done
+	 */
+	 ERendererError(
+		 RtInt aCode, RtInt aSeverity,
+		 int aLine, const char *aFile,
+		 const char *aMessage, ...
+		 );
 
 	/** @brief Copy Constructor
 	 *  @param err The error object to copy
@@ -72,6 +86,10 @@ public:
 		*this = err;
 	}
 
+	/** @brief Virtual destructor
+	 */
+	inline virtual ~ERendererError() {}
+
 	/** @brief Sets error codes and additional error message with source line and source file added
 	 *  @param aCode Which error ('RIE_...')
 	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
@@ -79,10 +97,10 @@ public:
 	 *  @param aLine Line number of the source file where the ERendererError is constructed (the error occured), normally __LINE__
 	 *  @param aFile Filke where the ERendererError occured, normally __FILE__
 	 */
-	 void set(
+	 inline void set(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
-		 const char *aMessage = NULL,
-		 int aLine = 0, const char *aFile = NULL
+		 const char *aMessage = 0,
+		 int aLine = 0, const char *aFile = 0
 		 )
 	 {
 		m_code = aCode;
@@ -92,9 +110,19 @@ public:
 		m_file = aFile ? aFile : "";
 	 }
 
-	 /** @brief Virtual destructor
+	/** @brief Sets error codes and additional error message with source line and source file added
+	 *  @param aCode Which error ('RIE_...')
+	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
+	 *  @param aLine Line number of the source file where the ERendererError is constructed (the error occured), normally __LINE__
+	 *  @param aFile Filke where the ERendererError occured, normally __FILE__
+	 *  @param aMessage format string (like printf) describing the error, followed by
+	 *  first argument like in printf, if there is not such an argument formating is not done
 	 */
-	virtual inline ~ERendererError() {}
+	 void set(
+		 RtInt aCode, RtInt aSeverity,
+		 int aLine, const char *aFile,
+		 const char *aMessage, ...
+		 );
 
 	/** @brief Formats the error/severity numbers to a string.
 	 *
@@ -103,7 +131,7 @@ public:
 	 *  @retVal strCode The error is formatted to this string
 	 *  @return strCode.c_str()
 	 */
-	virtual const char *formatError(std::string &strCode) const;
+	const char *formatError(std::string &strCode) const;
 
 	/** @brief Formats the error/severity numbers to a string.
 	 *
@@ -112,7 +140,7 @@ public:
 	 *  @retVal strCode The error is formatted to this string
 	 *  @return strCode.c_str()
 	 */
-	virtual const char *formatErrorMessage(std::string &strCode) const;
+	const char *formatErrorMessage(std::string &strCode) const;
 
 	/** @brief Gets the file string.
 	 *  @return Pointer to the file name stored in \a ERendererError::m_file
@@ -224,7 +252,7 @@ public:
 	 */
 	inline virtual RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0)
 	{
-		handleErrorV(code, severity, 0, NULL, message, argList);
+		handleErrorV(code, severity, 0, 0, message, argList);
 	}
 
 	/** @brief Handles an error must be overloaded for concrete error handling
@@ -232,7 +260,7 @@ public:
 	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
 	 * @param line Line number where error occured
 	 * @param file file where error occured
-	 * @param message Format string (like in printf()), not formatted if argList==NULL
+	 * @param message Format string (like in printf()), not formatted if argList==0
 	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 	 */
 	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0) = 0;
@@ -250,7 +278,7 @@ public:
 	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)
 	 * @param line Line number where error occured
 	 * @param file file where error occured
-	 * @param message Format string (like in printf()), not formatted if argList==NULL
+	 * @param message Format string (like in printf()), not formatted if argList==0
 	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 	 */
 	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);

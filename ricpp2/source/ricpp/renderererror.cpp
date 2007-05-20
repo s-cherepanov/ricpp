@@ -103,6 +103,55 @@ const char *ERendererError::formatError(std::string &strCode) const
 	return strCode.c_str();
 }
 
+
+ERendererError::ERendererError(
+	RtInt aCode, RtInt aSeverity,
+	int aLine, const char *aFile,
+	const char *aMessage, ...
+	)
+{
+	static const int ERROR_STR_SIZE = 256;
+	va_list argList;
+	va_start(argList, aMessage);
+	if ( aMessage && *aMessage && argList ) {
+		char str[ERROR_STR_SIZE];
+		str[0] = (char)0;
+#ifdef WIN32
+		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, aMessage, argList);
+#else
+		vsnprintf(str, ERROR_STR_SIZE-1, message, argList);
+#endif
+		str[ERROR_STR_SIZE-1] = (char)0;
+		aMessage = str;
+	}
+	va_end(argList);
+	set(aCode, aSeverity, aMessage, aLine, aFile);
+}
+
+void ERendererError::set(
+	RtInt aCode, RtInt aSeverity,
+	int aLine, const char *aFile,
+	const char *aMessage, ...
+	)
+{
+	static const int ERROR_STR_SIZE = 256;
+	va_list argList;
+	va_start(argList, aMessage);
+	if ( aMessage && *aMessage && argList ) {
+		char str[ERROR_STR_SIZE];
+		str[0] = (char)0;
+#ifdef WIN32
+		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, aMessage, argList);
+#else
+		vsnprintf(str, ERROR_STR_SIZE-1, message, argList);
+#endif
+		str[ERROR_STR_SIZE-1] = (char)0;
+		aMessage = str;
+	}
+	va_end(argList);
+	set(aCode, aSeverity, aMessage, aLine, aFile);
+}
+
 RtVoid IRiCPPErrorHandler::handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...)
 {
 	va_list argList;
@@ -125,9 +174,9 @@ RtVoid IRiCPPErrorHandler::handleError(const ERendererError &err)
 
 RtVoid CErrorExceptionHandler::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList) {
 	static const int ERROR_STR_SIZE = 256;
-	char str[ERROR_STR_SIZE];
-	str[0] = (char)0;
 	if ( message && *message && argList ) {
+		char str[ERROR_STR_SIZE];
+		str[0] = (char)0;
 #ifdef WIN32
 		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, message, argList);
 #else

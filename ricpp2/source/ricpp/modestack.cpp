@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/ricpp/modestack.h"
+#include <assert.h>
 
 using namespace RiCPP;
 
@@ -187,8 +188,7 @@ void CModeStack::begin()
 
 void CModeStack::end()
 {
-	while ( MODE_OUTSIDE != curMode() )
-		pop();
+	clear();
 }
 
 
@@ -200,6 +200,7 @@ void CModeStack::frameBegin()
 
 void CModeStack::frameEnd()
 {
+	assert(curMode() == MODE_FRAME);
 	pop();
 }
 
@@ -212,6 +213,7 @@ void CModeStack::worldBegin()
 
 void CModeStack::worldEnd()
 {
+	assert(curMode() == MODE_WORLD);
 	pop();
 }
 
@@ -224,6 +226,7 @@ void CModeStack::attributeBegin()
 
 void CModeStack::attributeEnd()
 {
+	assert(curMode() == MODE_ATTRIBUTE);
 	pop();
 }
 
@@ -236,6 +239,7 @@ void CModeStack::transformBegin()
 
 void CModeStack::transformEnd()
 {
+	assert(curMode() == MODE_TRANSFORM);
 	pop();
 }
 
@@ -248,6 +252,7 @@ void CModeStack::solidBegin()
 
 void CModeStack::solidEnd()
 {
+	assert(curMode() == MODE_SOLID);
 	pop();
 }
 
@@ -260,6 +265,7 @@ void CModeStack::objectBegin()
 
 void CModeStack::objectEnd()
 {
+	assert(curMode() == MODE_OBJECT);
 	pop();
 }
 
@@ -272,5 +278,6 @@ void CModeStack::motionBegin()
 
 void CModeStack::motionEnd()
 {
+	assert(curMode() == MODE_MOTION);
 	pop();
 }

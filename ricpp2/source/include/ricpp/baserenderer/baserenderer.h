@@ -255,7 +255,7 @@ protected:
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
 
-	inline virtual RtToken doDeclare(RtString name, RtString declaration) { return RI_NULL; }
+	virtual RtToken doDeclare(RtString name, RtString declaration);
 
 	inline virtual RtVoid doBegin(RtString name = RI_NULL) {}
 	inline virtual RtVoid doEnd(void) {}

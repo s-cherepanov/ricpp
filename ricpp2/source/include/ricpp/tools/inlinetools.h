@@ -51,4 +51,13 @@ inline const char *nonullstr(const char *str)
 }
 } // namespace RiCPP
 
+
+/** @brief Tests if string is empty, either pointer is 0 or ""
+ * @param str String to test
+ * @return true, if str is 0 or points to ""
+ */
+inline bool emptyStr(const char *str)
+{
+	return !str || !*str;
+}
 #endif // _RICPP_TOOLS_INLINETOOLS_H

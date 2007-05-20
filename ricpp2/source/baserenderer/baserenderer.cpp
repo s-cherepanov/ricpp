@@ -29,6 +29,7 @@
 
 #include "ricpp/baserenderer/baserenderer.h"
 #include "ricpp/declaration/declaration.h"
+#include "ricpp/tools/inlinetools.h"
 #include <assert.h>
 
 using namespace RiCPP;
@@ -62,23 +63,36 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		return RI_NULL;
 	}
 
-	RtToken t = RI_NULL;
+	CToken t;
+	CDeclaration *d = 0;
 	try {
-		t = doDeclare(name, declaration);
+		t = m_renderState.m_tokenizer.findCreate(name);
+		// if no declaration only tokenize the name
+		if ( !emptyStr(declaration) ) {
+			d = new CDeclaration(t, declaration, 3, false); // <--- curColorSize if attributes are implemented !!!!
+			if ( !d )
+				throw ERendererError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of \"%s\": \"%s\"", name, declaration);
+			m_renderState.m_decldict.add(d);
+		}
+	} catch (ERendererError &e) {
+		ricppErrHandler().handleError(e);
+		return RI_NULL;
+	}
+
+	RtToken tok;
+	try {
+		tok = doDeclare(t.name(), declaration);
 	} catch ( ERendererError &e2 ) {
 		ricppErrHandler().handleError(e2);
 		return RI_NULL;
 	}
 
-	return t;
+	return tok;
 }
 
-RtToken doDeclare(RtString name, RtString declaration)
+RtToken CBaseRenderer::doDeclare(RtString name, RtString declaration)
 {
-	assert ( name != RI_NULL && *name != 0 );
-
-
-	return RI_NULL;
+	return name;
 }
 
 RtVoid CBaseRenderer::begin(RtString name)

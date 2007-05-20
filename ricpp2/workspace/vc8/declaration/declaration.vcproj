@@ -153,6 +153,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\declaration\decldict.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\declaration\tokenizer.cpp"
 				>
 			</File>
@@ -168,6 +172,10 @@
 			>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\declaration\declaration.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\declaration\decldict.h"
 				>
 			</File>
 			<File

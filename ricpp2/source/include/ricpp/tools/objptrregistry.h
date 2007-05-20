@@ -41,6 +41,13 @@ template<typename KeyType, typename ValueType> class TObjPtrRegistry {
 	std::map<KeyType, ValueType>m_map; //< Container for the key, value pairs
 	bool m_destructMembers; //< Destruct all members if container is deleted or key is unregistered
 public:
+	/** @brief Const iterator for the elements.
+	 */
+	typedef typename std::map<typename KeyType, typename ValueType>::const_iterator const_iterator;
+	/** @brief Size type for the number of stored elements
+	 */
+	typedef typename std::map<typename KeyType, typename ValueType>::size_type size_type;
+
 	/** @brief Initializes the object, the map is empty at the beginning.
 	 * @param destructMembers Deletes members if container is destructed or the key is unregistered.
 	 */
@@ -69,6 +76,31 @@ public:
 	 *  @return true if object was unregistered.
 	 */
 	bool unRegisterObj(const KeyType &key);
+
+	/** @brief Constant iterator to access the elements (beginning).
+	 *  @return Iterator with the first elements as current element.
+	 */
+	inline const_iterator begin()
+	{
+		return m_map.begin();
+	}
+
+	/** @brief Constant iterator to access the elements (behind the last element).
+	 *  @return Iterator to query the end of the iteration
+	 *          (like sthe std iterators does not refer a valid element).
+	 */
+	inline const_iterator end()
+	{
+		return m_map.end();
+	}
+
+	/** @brief Gets the size of the element map
+	 * @return The number of stored elements.
+	 */
+	inline size_type size()
+	{
+		return m_map.size();
+	}
 }; // TObjPtrRegistry
 
 template<typename KeyType, typename ValueType>TObjPtrRegistry<KeyType, ValueType>::

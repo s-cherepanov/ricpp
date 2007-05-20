@@ -68,7 +68,7 @@ public:
 	 *  @param name A pointer to a token name
 	 *  @return Token with name and id
 	 */
-	inline CToken findCreate(const char *name);
+	CToken findCreate(const char *name);
 
 	/** @brief Searches for a token
 	 *  @param name A pointer to a token name

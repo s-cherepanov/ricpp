@@ -55,6 +55,8 @@ int main (int argc, char * const argv[]) {
 	ri.begin("ribwriter \"$HOME/test.rib\"");
 		RtContextHandle ch2 = ri.getContext();
 		ri.begin("test2.rib");
+			ri.declare("name", "    constant    string  [19] ");
+			ri.declare("bla", "fdfw[19]ss"); // Error
 			RtContextHandle ch3 = ri.getContext();
 			ri.context(illContextHandle);
 			ri.clipping(0, 1); /* Error */

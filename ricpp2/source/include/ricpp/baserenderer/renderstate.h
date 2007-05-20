@@ -34,15 +34,26 @@
 #include "ricpp/ricpp/modestack.h"
 #endif // _RICPP_RICPP_MODESTACK_H
 
+#ifndef _RICPP_DECLARATION_DECLDICT_H
+#include "ricpp/declaration/decldict.h"
+#endif // _RICPP_DECLARATION_DECLDICT_H
+
+#ifndef _RICPP_DECLARATION_TOKENIZER_H
+#include "ricpp/declaration/tokenizer.h"
+#endif // _RICPP_DECLARATION_TOKENIZER_H
+
 namespace RiCPP {
 
 /** @brief The container for the render state objects
  */
 class CRenderState {
-	bool m_deleteModeStack;   ///< Delete the modestack if object is destroyed
-	CModeStack *m_modeStack;  ///< Pointer to a mode stack
-	RtInt m_frameNumber;      ///< Frame number
+	bool m_deleteModeStack;            ///< Delete the modestack if object is destroyed
+	CModeStack *m_modeStack;           ///< Pointer to a mode stack
+	RtInt m_frameNumber;               ///< Frame number
 public:
+	CDeclarationDictionary m_decldict; ///< Dictionary for declarations
+	CTokenizer m_tokenizer;            ///< Registered tokens
+
 	/** @brief Initializes the object
 	 *
 	 * At creation all is cleared. The state objects

@@ -43,6 +43,7 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 	m_typeSize = 0;
 	m_class = CLASS_UNKNOWN;
 	m_type = TYPE_UNKNOWN;
+	m_basicType = BASICTYPE_UNKNOWN;
 
 	if ( decl ) {
 		size_t pos = 0;
@@ -69,6 +70,7 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 		// defered to the caller
 		m_type = CTypeInfo::typePrefix(decl, pos);
 		if ( m_type ) {
+			m_basicType = CTypeInfo::basicTypeForType(m_type);
 			decl += pos;
 			m_typeSize = CTypeInfo::typeSize(m_type);
 			// Color needs special handling

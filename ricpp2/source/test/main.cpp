@@ -85,6 +85,17 @@ int main (int argc, char * const argv[]) {
 	ri.worldEnd();
 	ri.end();
 
+	for ( int i = 1; i < 1000; ++i ) {
+		ri.begin(RI_NULL);
+			for ( int j = 1; j < 1000; ++j ) {
+				ri.declare("name", "    constant    string  [19] ");
+			}
+			ri.frameBegin((RtInt)i);
+				ri.worldBegin();
+				ri.worldEnd();
+			ri.frameEnd();
+		ri.end();
+	}
 	ri.errorHandler(ri.errorAbort());
 
 	ri.option("searchpath", "renderer", ".;$PROGDIR;$PATH", RI_NULL);

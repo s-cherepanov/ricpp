@@ -1,0 +1,19 @@
+/*! \mainpage RiCPP
+\section intro_sec Introduction
+
+RiCPP is a C++ framework for the RenderMan interface.
+
+\section copyright_sec Copyright notice
+
+     RenderMan(R) is a registered trademark of Pixar
+	 
+ The RenderMan(R) Interface Procedures and Protocol are:
+ 
+         Copyright 1988, 1989, 2000, 2005 Pixar
+		 
+                 All rights Reservered
+				 
+--
+
+RiCPP is written by Andreas Pidde
+*/

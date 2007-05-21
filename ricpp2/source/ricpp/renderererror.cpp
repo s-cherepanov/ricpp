@@ -119,7 +119,7 @@ ERendererError::ERendererError(
 #ifdef WIN32
 		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, aMessage, argList);
 #else
-		vsnprintf(str, ERROR_STR_SIZE-1, message, argList);
+		vsnprintf(str, ERROR_STR_SIZE-1, aMessage, argList);
 #endif
 		str[ERROR_STR_SIZE-1] = (char)0;
 		aMessage = str;
@@ -143,7 +143,7 @@ void ERendererError::set(
 #ifdef WIN32
 		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, aMessage, argList);
 #else
-		vsnprintf(str, ERROR_STR_SIZE-1, message, argList);
+		vsnprintf(str, ERROR_STR_SIZE-1, aMessage, argList);
 #endif
 		str[ERROR_STR_SIZE-1] = (char)0;
 		aMessage = str;

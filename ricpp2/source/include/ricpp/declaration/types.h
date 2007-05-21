@@ -29,6 +29,8 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Possible basic types, types and classes
  */
+ 
+#include <stddef.h>
 namespace RiCPP {
 
 /**! @brief Possible basic types. All types consists of these basic types.

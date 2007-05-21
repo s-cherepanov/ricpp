@@ -38,7 +38,6 @@
 		C3610AC70BF2F26D00007CEF /* ricppbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */; };
 		C3610ADC0BF2F44000007CEF /* ricpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610ADB0BF2F44000007CEF /* ricpp.cpp */; };
 		C3610B270BF2F8EB00007CEF /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8F50BD76177009B2459 /* libbaserenderer.a */; };
-		C3610B280BF2F8F600007CEF /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8CF0BD760B9009B2459 /* libricpp.a */; };
 		C3610B290BF2F92900007CEF /* libritools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C399BA940BE5E1BB002FEEF1 /* libritools.a */; };
 		C3610B2A0BF2F94C00007CEF /* librendererloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3B849090BD762B700DD22B5 /* librendererloader.a */; };
 		C3610B2B0BF2F95500007CEF /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */; };
@@ -67,6 +66,20 @@
 		C372B8E70BD7610D009B2459 /* filters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C372B8DB0BD7610D009B2459 /* filters.cpp */; };
 		C372B8EF0BD7610D009B2459 /* subdivfunc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C372B8E30BD7610D009B2459 /* subdivfunc.cpp */; };
 		C3787D5C0BE9C4840072105F /* ricontext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3787D5B0BE9C4840072105F /* ricontext.cpp */; };
+		C37DBB930C01C27B003AE4E7 /* renderstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DBB920C01C27B003AE4E7 /* renderstate.cpp */; };
+		C37DBB9A0C01C2AF003AE4E7 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8CF0BD760B9009B2459 /* libricpp.a */; };
+		C37DBB9B0C01C2BB003AE4E7 /* libdeclaration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C37DBB990C01C29D003AE4E7 /* libdeclaration.a */; };
+		C37DBBA70C01CC54003AE4E7 /* renderstate.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBA60C01CC54003AE4E7 /* renderstate.h */; };
+		C37DBBAD0C01CC6E003AE4E7 /* declaration.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBA80C01CC6E003AE4E7 /* declaration.h */; };
+		C37DBBAE0C01CC6E003AE4E7 /* decldict.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBA90C01CC6E003AE4E7 /* decldict.h */; };
+		C37DBBAF0C01CC6E003AE4E7 /* token.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBAA0C01CC6E003AE4E7 /* token.h */; };
+		C37DBBB00C01CC6E003AE4E7 /* tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBAB0C01CC6E003AE4E7 /* tokenizer.h */; };
+		C37DBBB10C01CC6E003AE4E7 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBAC0C01CC6E003AE4E7 /* types.h */; };
+		C37DBBB60C01CC7F003AE4E7 /* declaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */; };
+		C37DBBB70C01CC7F003AE4E7 /* decldict.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */; };
+		C37DBBB80C01CC7F003AE4E7 /* tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DBBB40C01CC7F003AE4E7 /* tokenizer.cpp */; };
+		C37DBBB90C01CC7F003AE4E7 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DBBB50C01CC7F003AE4E7 /* types.cpp */; };
+		C37DBBBB0C01CCC1003AE4E7 /* inlinetools.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */; };
 		C38EA2A30BE86D370057831B /* macfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2A20BE86D370057831B /* macfilepath.cpp */; };
 		C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */; };
 		C399BA9A0BE5E229002FEEF1 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
@@ -191,6 +204,19 @@
 		C372B8E30BD7610D009B2459 /* subdivfunc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = subdivfunc.cpp; path = ../../../source/ricpp/subdivfunc.cpp; sourceTree = SOURCE_ROOT; };
 		C372B8F50BD76177009B2459 /* libbaserenderer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbaserenderer.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3787D5B0BE9C4840072105F /* ricontext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricontext.cpp; path = ../../../source/baserenderer/ricontext.cpp; sourceTree = SOURCE_ROOT; };
+		C37DBB920C01C27B003AE4E7 /* renderstate.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = renderstate.cpp; path = ../../../source/baserenderer/renderstate.cpp; sourceTree = SOURCE_ROOT; };
+		C37DBB990C01C29D003AE4E7 /* libdeclaration.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdeclaration.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C37DBBA60C01CC54003AE4E7 /* renderstate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = renderstate.h; path = ../../../source/include/ricpp/baserenderer/renderstate.h; sourceTree = SOURCE_ROOT; };
+		C37DBBA80C01CC6E003AE4E7 /* declaration.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = declaration.h; path = ../../../source/include/ricpp/declaration/declaration.h; sourceTree = SOURCE_ROOT; };
+		C37DBBA90C01CC6E003AE4E7 /* decldict.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = decldict.h; path = ../../../source/include/ricpp/declaration/decldict.h; sourceTree = SOURCE_ROOT; };
+		C37DBBAA0C01CC6E003AE4E7 /* token.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = token.h; path = ../../../source/include/ricpp/declaration/token.h; sourceTree = SOURCE_ROOT; };
+		C37DBBAB0C01CC6E003AE4E7 /* tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tokenizer.h; path = ../../../source/include/ricpp/declaration/tokenizer.h; sourceTree = SOURCE_ROOT; };
+		C37DBBAC0C01CC6E003AE4E7 /* types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = types.h; path = ../../../source/include/ricpp/declaration/types.h; sourceTree = SOURCE_ROOT; };
+		C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = declaration.cpp; path = ../../../source/declaration/declaration.cpp; sourceTree = SOURCE_ROOT; };
+		C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = decldict.cpp; path = ../../../source/declaration/decldict.cpp; sourceTree = SOURCE_ROOT; };
+		C37DBBB40C01CC7F003AE4E7 /* tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tokenizer.cpp; path = ../../../source/declaration/tokenizer.cpp; sourceTree = SOURCE_ROOT; };
+		C37DBBB50C01CC7F003AE4E7 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = ../../../source/declaration/types.cpp; sourceTree = SOURCE_ROOT; };
+		C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = inlinetools.h; path = ../../../source/include/ricpp/tools/inlinetools.h; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = contextcreator.cpp; path = ../../../source/baserenderer/contextcreator.cpp; sourceTree = SOURCE_ROOT; };
 		C399BA940BE5E1BB002FEEF1 /* libritools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libritools.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -239,7 +265,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3610B280BF2F8F600007CEF /* libricpp.a in Frameworks */,
+				C37DBB9B0C01C2BB003AE4E7 /* libdeclaration.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37DBB970C01C29D003AE4E7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37DBB9A0C01C2AF003AE4E7 /* libricpp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +326,7 @@
 			isa = PBXGroup;
 			children = (
 				C372B8F60BD7617D009B2459 /* baserenderer */,
+				C37DBB9C0C01C2C6003AE4E7 /* declaration */,
 				C32093CF0BDCCF1900A0BB35 /* gendynlib */,
 				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
 				C3B848F90BD7621600DD22B5 /* ribwriter */,
@@ -316,6 +351,7 @@
 				C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */,
 				C399BA940BE5E1BB002FEEF1 /* libritools.a */,
 				C3610AB50BF2F06500007CEF /* libricppbridge.a */,
+				C37DBB990C01C29D003AE4E7 /* libdeclaration.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -457,6 +493,7 @@
 				C370C1690BF4693200AA03BC /* baserenderer.h */,
 				C370C16A0BF4693200AA03BC /* contextcreator.h */,
 				C370C16B0BF4693200AA03BC /* dorender.h */,
+				C37DBBA60C01CC54003AE4E7 /* renderstate.h */,
 				C370C16D0BF4693200AA03BC /* ricontext.h */,
 			);
 			name = Header;
@@ -467,7 +504,40 @@
 			children = (
 				C35C7A480BD76D3A00548675 /* baserenderer.cpp */,
 				C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */,
+				C37DBB920C01C27B003AE4E7 /* renderstate.cpp */,
 				C3787D5B0BE9C4840072105F /* ricontext.cpp */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C37DBB9C0C01C2C6003AE4E7 /* declaration */ = {
+			isa = PBXGroup;
+			children = (
+				C37DBBA00C01CBB8003AE4E7 /* Header */,
+				C37DBBA10C01CBCE003AE4E7 /* Implementation */,
+			);
+			name = declaration;
+			sourceTree = "<group>";
+		};
+		C37DBBA00C01CBB8003AE4E7 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				C37DBBA80C01CC6E003AE4E7 /* declaration.h */,
+				C37DBBA90C01CC6E003AE4E7 /* decldict.h */,
+				C37DBBAA0C01CC6E003AE4E7 /* token.h */,
+				C37DBBAB0C01CC6E003AE4E7 /* tokenizer.h */,
+				C37DBBAC0C01CC6E003AE4E7 /* types.h */,
+			);
+			name = Header;
+			sourceTree = "<group>";
+		};
+		C37DBBA10C01CBCE003AE4E7 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */,
+				C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */,
+				C37DBBB40C01CC7F003AE4E7 /* tokenizer.cpp */,
+				C37DBBB50C01CC7F003AE4E7 /* types.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -477,6 +547,7 @@
 			children = (
 				C370C1890BF469BD00AA03BC /* env.h */,
 				C370C18A0BF469BD00AA03BC /* filepath.h */,
+				C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */,
 				C370C18B0BF469BD00AA03BC /* objptrregistry.h */,
 				C370C18C0BF469BD00AA03BC /* platform.h */,
 				C370C18D0BF469BD00AA03BC /* stringlist.h */,
@@ -627,6 +698,19 @@
 				C370C16F0BF4693200AA03BC /* contextcreator.h in Headers */,
 				C370C1700BF4693200AA03BC /* dorender.h in Headers */,
 				C370C1720BF4693200AA03BC /* ricontext.h in Headers */,
+				C37DBBA70C01CC54003AE4E7 /* renderstate.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37DBB950C01C29D003AE4E7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37DBBAD0C01CC6E003AE4E7 /* declaration.h in Headers */,
+				C37DBBAE0C01CC6E003AE4E7 /* decldict.h in Headers */,
+				C37DBBAF0C01CC6E003AE4E7 /* token.h in Headers */,
+				C37DBBB00C01CC6E003AE4E7 /* tokenizer.h in Headers */,
+				C37DBBB10C01CC6E003AE4E7 /* types.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -639,6 +723,7 @@
 				C370C1900BF469BD00AA03BC /* objptrregistry.h in Headers */,
 				C370C1910BF469BD00AA03BC /* platform.h in Headers */,
 				C370C1920BF469BD00AA03BC /* stringlist.h in Headers */,
+				C37DBBBB0C01CCC1003AE4E7 /* inlinetools.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -751,6 +836,23 @@
 			productReference = C372B8F50BD76177009B2459 /* libbaserenderer.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		C37DBB980C01C29D003AE4E7 /* declaration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C37DBB9D0C01C2C6003AE4E7 /* Build configuration list for PBXNativeTarget "declaration" */;
+			buildPhases = (
+				C37DBB950C01C29D003AE4E7 /* Headers */,
+				C37DBB960C01C29D003AE4E7 /* Sources */,
+				C37DBB970C01C29D003AE4E7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = declaration;
+			productName = declaration;
+			productReference = C37DBB990C01C29D003AE4E7 /* libdeclaration.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		C399BA930BE5E1BB002FEEF1 /* tools */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C399BA960BE5E1CE002FEEF1 /* Build configuration list for PBXNativeTarget "tools" */;
@@ -834,6 +936,7 @@
 			targets = (
 				C35607550BEA42B400323615 /* all */,
 				C372B8F40BD76177009B2459 /* baserenderer */,
+				C37DBB980C01C29D003AE4E7 /* declaration */,
 				C32093CD0BDCCF0A00A0BB35 /* gendynlib */,
 				C3B848F70BD7621100DD22B5 /* ribwriter */,
 				C32093DE0BDCCF9B00A0BB35 /* ribwriterdll */,
@@ -892,6 +995,18 @@
 				C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */,
 				C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */,
 				C3787D5C0BE9C4840072105F /* ricontext.cpp in Sources */,
+				C37DBB930C01C27B003AE4E7 /* renderstate.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37DBB960C01C29D003AE4E7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37DBBB60C01CC7F003AE4E7 /* declaration.cpp in Sources */,
+				C37DBBB70C01CC7F003AE4E7 /* decldict.cpp in Sources */,
+				C37DBBB80C01CC7F003AE4E7 /* tokenizer.cpp in Sources */,
+				C37DBBB90C01CC7F003AE4E7 /* types.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1168,6 +1283,11 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build/Debug\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = baserenderer;
 				ZERO_LINK = YES;
@@ -1182,8 +1302,43 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/build/Debug\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = baserenderer;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C37DBB9E0C01C2C6003AE4E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = declaration;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C37DBB9F0C01C2C6003AE4E7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = declaration;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1390,6 +1545,15 @@
 			buildConfigurations = (
 				C372B8F80BD7617D009B2459 /* Debug */,
 				C372B8F90BD7617D009B2459 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C37DBB9D0C01C2C6003AE4E7 /* Build configuration list for PBXNativeTarget "declaration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C37DBB9E0C01C2C6003AE4E7 /* Debug */,
+				C37DBB9F0C01C2C6003AE4E7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

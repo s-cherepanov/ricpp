@@ -43,10 +43,10 @@ template<typename KeyType, typename ValueType> class TObjPtrRegistry {
 public:
 	/** @brief Const iterator for the elements.
 	 */
-	typedef typename std::map<typename KeyType, typename ValueType>::const_iterator const_iterator;
+	typedef typename std::map<KeyType, ValueType>::const_iterator const_iterator;
 	/** @brief Size type for the number of stored elements
 	 */
-	typedef typename std::map<typename KeyType, typename ValueType>::size_type size_type;
+	typedef typename std::map<KeyType, ValueType>::size_type size_type;
 
 	/** @brief Initializes the object, the map is empty at the beginning.
 	 * @param destructMembers Deletes members if container is destructed or the key is unregistered.

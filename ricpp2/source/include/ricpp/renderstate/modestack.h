@@ -1,5 +1,5 @@
-#ifndef RICPP_RICPP_MODESTACK_H
-#define RICPP_RICPP_MODESTACK_H
+#ifndef RICPP_RENDERSTATE_MODESTACK_H
+#define RICPP_RENDERSTATE_MODESTACK_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -34,13 +34,13 @@
 #include "ricpp/ricpp/ricpp.h"
 #endif // RICPP_RICPP_RICPP_H
 
-#ifndef RICPP_RICPP_MODES_H
-#include "ricpp/ricpp/modes.h"
-#endif // RICPP_RICPP_MODES_H
+#ifndef RICPP_RENDERSTATE_REQUESTS_H
+#include "ricpp/renderstate/requests.h"
+#endif // RICPP_RENDERSTATE_REQUESTS_H
 
-#ifndef RICPP_RICPP_REQUESTS_H
-#include "ricpp/ricpp/requests.h"
-#endif // RICPP_RICPP_REQUESTS_H
+#ifndef RICPP_RENDERSTATE_MODES_H
+#include "ricpp/renderstate/modes.h"
+#endif // RICPP_RENDERSTATE_MODES_H
 
 #include <vector>
 
@@ -170,4 +170,4 @@ public:
 
 }
 
-#endif // RICPP_RICPP_MODESTACK_H
+#endif // RICPP_RENDERSTATE_MODESTACK_H

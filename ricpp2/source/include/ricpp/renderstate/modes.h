@@ -1,5 +1,5 @@
-#ifndef RICPP_RICPP_MODES_H
-#define RICPP_RICPP_MODES_H
+#ifndef RICPP_RENDERSTATE_MODES_H
+#define RICPP_RENDERSTATE_MODES_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -75,4 +75,4 @@ enum EnumModeBits {
 
 } // namespace RiCPP
 
-#endif // RICPP_RICPP_MODES_H
+#endif // RICPP_RENDERSTATE_MODES_H

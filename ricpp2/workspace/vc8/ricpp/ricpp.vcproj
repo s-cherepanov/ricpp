@@ -286,10 +286,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\ricpp\modestack.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\ricpp\renderererror.cpp"
 				>
 			</File>
@@ -316,19 +312,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\modes.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\modestack.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\include\ricpp\ricpp\renderererror.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\requests.h"
 				>
 			</File>
 			<File

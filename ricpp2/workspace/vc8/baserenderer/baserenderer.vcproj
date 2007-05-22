@@ -290,10 +290,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\baserenderer\renderstate.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\baserenderer\ricontext.cpp"
 				>
 			</File>
@@ -313,10 +309,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\dorender.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\renderstate.h"
 				>
 			</File>
 			<File

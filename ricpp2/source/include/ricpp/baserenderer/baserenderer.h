@@ -34,9 +34,9 @@
 #include "ricpp/baserenderer/dorender.h"
 #endif // _RICPP_BASERENDERER_DORENDER_H
 
-#ifndef _RICPP_BASERENDERER_RENDERSTATE_H
-#include "ricpp/baserenderer/renderstate.h"
-#endif // _RICPP_BASERENDERER_RENDERSTATE_H
+#ifndef _RICPP_RENDERSTATE_RENDERSTATE_H
+#include "ricpp/renderstate/renderstate.h"
+#endif // _RICPP_RENDERSTATE_RENDERSTATE_H
 
 #ifndef _RICPP_RICPP_RENDERERERROR_H
 #include "ricpp/ricpp/renderererror.h"

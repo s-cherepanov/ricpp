@@ -27,7 +27,7 @@
  *  @brief Implementation of the handling of the modes (blocks and nesting) of the interface.
  */
 
-#include "ricpp/ricpp/modestack.h"
+#include "ricpp/renderstate/modestack.h"
 #include <assert.h>
 
 using namespace RiCPP;

@@ -27,6 +27,6 @@
  *  @brief Implementation of the facade for the render state objects (like modes, options, attributes)
  */
 
-#include "ricpp/baserenderer/renderstate.h"
+#include "ricpp/renderstate/renderstate.h"
 
 using namespace RiCPP;

@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_RENDERSTATE_H
-#define _RICPP_BASERENDERER_RENDERSTATE_H
+#ifndef _RICPP_RENDERSTATE_RENDERSTATE_H
+#define _RICPP_RENDERSTATE_RENDERSTATE_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -30,9 +30,9 @@
  *  @brief Facade for the render state objects (like modes, options, attributes)
  */
 
-#ifndef _RICPP_RICPP_MODESTACK_H
-#include "ricpp/ricpp/modestack.h"
-#endif // _RICPP_RICPP_MODESTACK_H
+#ifndef _RICPP_RENDERSTATE_MODESTACK_H
+#include "ricpp/renderstate/modestack.h"
+#endif // _RICPP_RENDERSTATE_MODESTACK_H
 
 #ifndef _RICPP_DECLARATION_DECLDICT_H
 #include "ricpp/declaration/decldict.h"
@@ -229,4 +229,4 @@ public:
 
 } // namespace RiCPP
 
-#endif // _RICPP_BASERENDERER_RENDERSTATE_H
+#endif // _RICPP_RENDERSTATE_RENDERSTATE_H

@@ -62,13 +62,12 @@ public:
 	inline ~CTokenizer() {}
 
 	/** @brief Searches for a token and creates one if token name is not found
-	 *
-	 *  Throws ERendererError if the token cannot be created (out of memory).
-	 *
 	 *  @param name A pointer to a token name
 	 *  @return Token with name and id
+	 *  @exception ERendererError if the token cannot be created (out of memory).
 	 */
-	CToken findCreate(const char *name);
+	CToken findCreate(const char *name) // throw(ERendererException)
+	;
 
 	/** @brief Searches for a token
 	 *  @param name A pointer to a token name

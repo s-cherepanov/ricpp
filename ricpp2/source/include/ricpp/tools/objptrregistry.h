@@ -68,7 +68,7 @@ public:
 	 *  @param key Search key.
 	 *  @return Pointer if found or 0 if not found.
 	 */
-	ValueType findObj(const KeyType &key);
+	ValueType findObj(const KeyType &key) const;
 
 	/** @brief Removes a registered object pointer for a key, deletes the referenced object,
 	 *  if m_destructMembers is true.
@@ -80,7 +80,7 @@ public:
 	/** @brief Constant iterator to access the elements (beginning).
 	 *  @return Iterator with the first elements as current element.
 	 */
-	inline const_iterator begin()
+	inline const_iterator begin() const
 	{
 		return m_map.begin();
 	}
@@ -89,7 +89,7 @@ public:
 	 *  @return Iterator to query the end of the iteration
 	 *          (like sthe std iterators does not refer a valid element).
 	 */
-	inline const_iterator end()
+	inline const_iterator end() const
 	{
 		return m_map.end();
 	}
@@ -97,7 +97,7 @@ public:
 	/** @brief Gets the size of the element map
 	 * @return The number of stored elements.
 	 */
-	inline size_type size()
+	inline size_type size() const
 	{
 		return m_map.size();
 	}
@@ -136,12 +136,15 @@ registerObj(const KeyType &key, ValueType value)
 	return false;
 }
 
+
 template<typename KeyType, typename ValueType>
 ValueType TObjPtrRegistry<KeyType, ValueType>::
-findObj(const KeyType &key)
+findObj(const KeyType &key) const
 {
-	if ( m_map.find(key) != m_map.end() ) {
-		return m_map[key];
+	
+	typename std::map<KeyType, ValueType>::const_iterator i;
+	if ( (i = m_map.find(key)) != m_map.end() ) {
+		return (*i).second;
 	}
 	return 0;
 }

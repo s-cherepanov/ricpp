@@ -65,7 +65,7 @@ protected:
 	 *
 	 *  The render state is initialized at begin()
 	 */
-	CRenderState m_renderState;
+	CRenderState *m_renderState;
 
 	/** @brief Creates a new modestack, called by initModeStack()
 	 *
@@ -85,7 +85,7 @@ protected:
 	}
 
 public:
-	inline CBaseRenderer() {}
+	inline CBaseRenderer() : m_renderState(0) {}
 
 	/** @brief Virtual destruction
 	 */

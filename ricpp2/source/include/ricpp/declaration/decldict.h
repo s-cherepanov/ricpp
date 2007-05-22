@@ -46,24 +46,28 @@ namespace RiCPP {
  */
 class CDeclarationDictionary
 {
-	class TObjPtrRegistry<CToken, CDeclaration *> m_active;
-	class std::list<CDeclaration *> m_all;
+	class TObjPtrRegistry<CToken, const CDeclaration *> m_active;
+	class std::list<const CDeclaration *> m_all;
 public:
 	/** @brief Const iterator for the elements.
 	 */
-	typedef TObjPtrRegistry<CToken, CDeclaration *>::const_iterator const_iterator;
+	typedef TObjPtrRegistry<CToken, CDeclaration const *>::const_iterator const_iterator;
 	/** @brief Size type for the number of stored elements
 	 */
-	typedef TObjPtrRegistry<CToken, CDeclaration *>::size_type size_type;
+	typedef TObjPtrRegistry<CToken, CDeclaration const *>::size_type size_type;
 
 public:
 	inline CDeclarationDictionary() : m_active(false) {}
 	~CDeclarationDictionary();
-	CDeclaration *find(const CToken &name, unsigned int curColorSize);
+	inline const CDeclaration *find(const CToken &name) const
+	{
+		return m_active.findObj(name);
+	}
+	const CDeclaration *find(const CToken &name, unsigned int curColorSize);
 	bool add(CDeclaration *decl);
-	inline const_iterator begin() { return m_active.begin(); }
-	inline const_iterator end() { return m_active.end(); }
-	inline size_type size() { return m_active.size(); }
+	inline const_iterator begin() const { return m_active.begin(); }
+	inline const_iterator end() const { return m_active.end(); }
+	inline size_type size() const { return m_active.size(); }
 }; // CDeclarationDictionary
 
 } // namespace RiCPP

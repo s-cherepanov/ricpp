@@ -122,9 +122,10 @@ public:
 	 */
 	inline virtual ~CModeStack() {}
 
-	/** @brief The modes
+	/** @defgroup mode_group
+	 * @brief The modes
 	 *
-	 * Called by the CBaseRenderer
+	 * Called by the CRenderState
 	 */
 	//@{
 	virtual void begin();
@@ -152,15 +153,17 @@ public:
     virtual void motionEnd();
 	//@}
 
-	/** @brief Test if a request req is valid in the current mode.
+	/** @brief Test if a request @a req is valid in the current mode.
 	 *
 	 *  @param req Index of the request to test.
-	 *  @return true if the request req is valid in the current mode.
+	 *  @return true, if the request req is valid in the current mode.
+	 *  @see EnumRequests  
 	 */
-	inline virtual bool validRequest(EnumRequests req) { return m_validModes.isValid(req, curMode()); }
+	inline virtual bool validRequest(EnumRequests req) const { return m_validModes.isValid(req, curMode()); }
 
 	/** @brief The current mode
 	 *  @return The current mode
+	 *  @see EnumRequests  
 	 */
 	inline virtual EnumModes curMode() const { return m_modes.empty() ? MODE_OUTSIDE : m_modes.back(); }
 }; // CMode

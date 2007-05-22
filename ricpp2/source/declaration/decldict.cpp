@@ -34,16 +34,16 @@ using namespace RiCPP;
 
 CDeclarationDictionary::~CDeclarationDictionary()
 {
-	std::list<CDeclaration *>::iterator i;
+	std::list<const CDeclaration *>::const_iterator i;
 	for ( i = m_all.begin(); i != m_all.end(); i++ ) {
 		delete (*i);
 	}
 }
 
-CDeclaration *CDeclarationDictionary::find(const CToken &name, unsigned int curColorSize)
+const CDeclaration *CDeclarationDictionary::find(const CToken &name, unsigned int curColorSize)
 // throw ERendererError
 {
-	CDeclaration *decl = m_active.findObj(name);
+	const CDeclaration *decl = find(name);
 	if ( !decl )
 		return decl;
 
@@ -69,7 +69,7 @@ bool CDeclarationDictionary::add(CDeclaration *decl)
 		return false;
 
 	m_all.push_back(decl);
-	CDeclaration *found = m_active.findObj(decl->token());
+	const CDeclaration *found = m_active.findObj(decl->token());
 	if ( found ) {
 		m_active.unRegisterObj(found->token());
 	}

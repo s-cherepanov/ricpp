@@ -24,14 +24,9 @@
 
 /** @file renderstate.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implementation of the container for the render state objects (like modes, options, attributes)
+ *  @brief Implementation of the facade for the render state objects (like modes, options, attributes)
  */
 
 #include "ricpp/baserenderer/renderstate.h"
 
 using namespace RiCPP;
-
-CRenderState::~CRenderState() {
-	if ( m_deleteModeStack )
-		delete m_modeStack;
-}

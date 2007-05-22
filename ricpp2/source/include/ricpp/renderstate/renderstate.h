@@ -53,7 +53,7 @@ namespace RiCPP {
  */
 class IRenderStateReader {
 public:
-	/** @defgroup modestack_interface_group
+	/** @defgroup modestack_interface_group CModeStack functions
 	 *  @brief Reading the modestack.
 	 */
 	//@{
@@ -71,7 +71,7 @@ public:
 	virtual EnumModes curMode() const = 0;
 	//@}
 
-	/** @defgroup tokenizer_interface_group
+	/** @defgroup tokenizer_interface_group CTokenizer functions
 	 *  @brief Reading the tokenizer.
 	 */
 	//@{
@@ -90,7 +90,7 @@ public:
 	inline virtual bool tokFind(unsigned long id, CToken &c) const = 0;
 	//@}
 
-	/** @defgroup decldict_interface_group
+	/** @defgroup decldict_interface_group CDeclarationDictionary functions
 	 *  @brief Reading the declaration dictionary.
 	 */
 	//@{
@@ -154,7 +154,7 @@ public:
 	 */
 	inline RtInt frameNumber() const { return m_frameNumber; }
 
-	/** @defgroup modestack_group
+	/** @defgroup modestack_group  CModeStack functions
 	 *  @brief Facading the modestack.
 	 *  The modes are handled by the @c ...Begin(), @c ...End() functions
 	 *  of CBaseRenderer
@@ -189,7 +189,7 @@ public:
 	inline virtual EnumModes curMode() const { return m_modeStack->curMode(); }
 	//@}
 
-	/** @defgroup tokenizer_group
+	/** @defgroup tokenizer_group CTokenizer functions
 	 *  @brief Facading the tokenizer.
 	 *
 	 *  The tokenizer can be used to have unique strings as tokens CToken.
@@ -212,7 +212,7 @@ public:
 	inline virtual bool tokFind(unsigned long id, CToken &c) const { return m_tokenizer.find(id, c); }
 	//@}
 
-	/** @defgroup decldict_group
+	/** @defgroup decldict_group CDeclarationDictionary functions
 	 *  @brief Facading the dictionary of declarations.
 	*
 	 *  The dictionary is filled by CBaseRenderer::declare()

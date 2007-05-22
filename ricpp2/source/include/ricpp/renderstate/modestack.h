@@ -122,8 +122,8 @@ public:
 	 */
 	inline virtual ~CModeStack() {}
 
-	/** @defgroup mode_group
-	 * @brief The modes
+	/** @defgroup mode_group The Modes
+	 * @brief The modes of the RenderMan interface
 	 *
 	 * Called by the CRenderState
 	 */

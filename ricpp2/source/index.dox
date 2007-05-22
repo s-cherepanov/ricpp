@@ -1,7 +1,121 @@
 /*! \mainpage RiCPP
 \section intro_sec Introduction
 
-RiCPP is a C++ framework for the RenderMan interface.
+Important note: RiCPP is not developed (only a few classes exist), the documentation also
+in a very draft state is not describing what is, but more what
+will be, hopefully.
+
+RenderMan(R) can be seen generally as an interface between modeller
+(the software that produces 3D scenes) and renderer (the software that
+produces 'renders' a visible representation of the 3D scene description);
+it is a kind of high level 3D API (Application Interface) though. Using the
+RenderMan interface you can describe complete 3D scenes with objects,
+transformation, lights, shading methods, camera settings and so on in
+a higher level a using OpenGL for instance. The sequence of scenes
+of an animation is given in a rendering method independent form frame
+by frame. Also, the language that is used to write procedural shading
+and texture mapping tools is part of the RenderMan Interface. The
+Interface and a photorealistic renderer for it were invented by the
+company Pixar in the late 80's and both are still popular today.
+
+The RenderMan interface is implemented using a variety
+of languages, so called language bindings. Most common are the C-binding for the
+programming language 'C' and the RIB-binding. RIB is the acronym for
+RenderMan Interface Bytstream, a data stream format to transport and archive
+the serialized RenderMan interface calls. RIB output can
+be written to files (either in a human readable ASCII format or in a more
+compact binary format or a mixed format) and used by renderers for the later offline
+rendering. It also can be transported over a network to one or more renderer servers.
+
+Renderers that can cope with the RenderMan interface are called RenderMan complient
+renderers. The first renderer written for the RenderMan Interface, implemented the
+REYES (Renders Everything You Ever Saw) algorithm. For a longer time this renderer
+'prman' of the company Pixar was the only renderer providing a RenderMan interface,
+it became very famous. There are some renderers available nowadays, that use
+different rendering methods.
+
+RiCPP is not a renderer, it is a C++ framework for the RenderMan(R) interface,
+a C++ language binding. RiCPP can be used to write renderers. Like the
+C-language QuickRenderMan Interface, that was part of the NextStep operation system,
+it provides a frontend C++-binding, that calls the rendering routines of one
+or more concrete backend renderers, also written in C++, that can be bound as
+dynamic libraries.
+
+Also some basics of the backend are part of RiCPP. The two 'renderers'
+that (will) come with RiCPP are the RIBWriter (a 'renderer' that uses RIB as
+output format) and a draft renderer for OpenGL output. The later will be a very
+simple one that does not provide the features, like procedural shading, of a
+'real' RenderMan complient renderer.
+
+\section implementation_sec Implementation
+
+These web pages are the doxygen output of the technical documentation of RiCPP
+I'm currently working on. RiCPP is also the name of the namespace for all
+elements of this framework. The classes CRiCPPBridge and CRendererLoader are two
+main parts of the frontend, that bridges to the backend, a class derived from
+CBaseRenderer. An instance of CRiCPPBridge implements the interface IRi, and
+that is the only interface you need to see, if you only want to use RiCPP as an API
+to connect with a backend renderer. IRi (#include "ricpp/ricpp/ricpp.h") is
+similar to the declarations of the C-binding in ri.h.
+
+At the moment I'm developing RiCPP using Visual Studio 2005 (the express edition
+with PSDK for the 32Bit version will do) for MS Windows and XCode on Apple's
+MacOS 10.x. There is of course a plan to port to Linux later. You can find
+the sources on the SVN server of project ricpp on SourceForge in the ricpp2
+subfolder. The ricpp subfolder contains an older version of RiCPP.
+
+\section literature_sec Literature
+
+You can learn a lot of RenderMan by these books and documents:
+
+ <ul>
+ <li> [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman </li>
+ <li> [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier </li>
+ <li> [RISPEC3.2] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document, the reference </li>
+ <li> [STE2003] Ian Stephenson; Essential RenderMan fast; 2003, Springer </li>
+ <li> [STE2005] Ian Stephenson (Ed.); Production Rendering; 2005, Springer (another OO-framework) </li>
+ <li> [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley </li>
+ <li> [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep) </li>
+</ul>
+
+\section renderers_sec RenderMan complient renderers
+
+Some commercial renderes are:
+
+<ul>
+<li> <a href="http://www.3delight.com/">3Delight</a>, DNA research </li>
+<li> <a href="http://www.sitexgraphics.com/">Air</a>, SiTex Graphics</li>
+<li> <a href="http://www.pixar.com/">prman</a>, Pixar's photorealistic renderer </li>
+<li> <a href="http://www.dotcsw.com/">RenderDotC</a>, Dot C Software, Inc. </li>
+</ul>
+
+Some free one's:
+
+<ul>
+<li> <a href="http://www.aqsis.org/">Aqsis</a>, REYES renderer </li>
+<li> <a href="http://jrman.sourceforge.net/">JrMan</a>, a REYES Java implementation </li>
+<li> <a href="http://www.cs.utexas.edu/~okan/Pixie/pixie.htm">Pixie</a>, with raytracing</li>
+<li> BMRT, canceled, but still available at some sites </li>
+</ul>
+
+Selection of modellers:
+
+<ul>
+<li> <a href="http://aqsis.sourceforge.net/">Ayam</a> is free an can produce RIB </li>
+<li> <a href="http://www.imagos.fl.net.au/">Breeze designer</a>, also free, easy to use and some basic RIB output </li>
+</ul>
+
+\section websites_sec Websites for RenderMan
+
+Only two out of many:
+
+<ul>
+<li> <a href="http://www.renderman.org/">RenderMan Repository</a> </li>
+<li> <a href="http://www.rendermanacademy.com/">The RenderMan Academy</a> </li>
+</ul>
+
+And don't forget comp.graphics.rendering.renderman and the
+<a href="http://www.faqs.org/faqs/graphics/renderman-faq/">RenderMan-FAQ</a>. 
 
 \section copyright_sec Copyright notice
 
@@ -13,7 +127,4 @@ RiCPP is a C++ framework for the RenderMan interface.
 		 
                  All rights Reservered
 				 
---
-
-RiCPP is written by Andreas Pidde
 */

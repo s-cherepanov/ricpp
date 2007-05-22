@@ -35,14 +35,6 @@
  *                 All rights Reservered
  *
  * ricpp.h means the same to RiCPP as ri.h to the standard C binding.
- * For an interface description, you can use
- * - [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman
- * - [RISPEC3.2] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document
- * - [STE2003] Ian Stephenson; Essential RenderMan fast; 2003, Springer
- * - [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley
- * - [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier
- * - [STE] Ian Stephenson (Ed.); Production Rendering; 2005, Springer (another OO-framework)
- * - [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep)
  */
 
 #include <limits>

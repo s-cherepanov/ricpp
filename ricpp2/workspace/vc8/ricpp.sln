@@ -141,7 +141,7 @@ Global
 		{34A174FF-0F19-453B-BC6E-D20686A7D380}.Debug|x64.ActiveCfg = Debug|x64
 		{34A174FF-0F19-453B-BC6E-D20686A7D380}.Release|Win32.ActiveCfg = Release|Win32
 		{34A174FF-0F19-453B-BC6E-D20686A7D380}.Release|Win32.Build.0 = Release|Win32
-		{34A174FF-0F19-453B-BC6E-D20686A7D380}.Release|x64.ActiveCfg = Release|Win32
+		{34A174FF-0F19-453B-BC6E-D20686A7D380}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
-#ifndef RICPP_RICPP_REQUESTS_H
-#define RICPP_RICPP_REQUESTS_H
+#ifndef RICPP_RENDERSTATE_REQUESTS_H
+#define RICPP_RENDERSTATE_REQUESTS_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -205,4 +205,4 @@ const int N_REQUESTS = (int)REQ_VERSION + 1;
 
 } // namespace RiCPP
 
-#endif // RICPP_RICPP_REQUESTS_H
+#endif // RICPP_RENDERSTATE_REQUESTS_H

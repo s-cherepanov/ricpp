@@ -54,8 +54,9 @@ class CValidModes
 	 *
 	 *  m_requests uses the REQ_ constants (e.g. REQ_SPHERE) as indicees.
 	 *  It stores a bitfield as content: MODE_BIT_ constants (e.g. MODE_BIT_WORLD)
-	 *  for the bits of valid modes for a request.
-	 *  see also UPS89: Valid contexts for RenderMan Procedurte calls, pp.56
+	 *  for the bits of valid modes for a request. If bitwise 'AND'ed with the
+	 *  bit of the current mode, a request is valid, if the result is not 0.
+	 *  See also UPS89: Valid contexts for RenderMan Procedurte calls, pp.56
      *  and RISPEC3.2: Definition of the new RI3.2 procs
 	 */
 	unsigned short m_requests[N_REQUESTS];
@@ -64,16 +65,19 @@ public:
 	 */
 	CValidModes();
 
-	/** @brief Queries the validity of a request for a given mode.
+	/** @brief Checks the validity of a request for a given mode.
 	 *
-	 *  @param idxRequest Index of a request (interface call) to test if valid in mode idxMode, is a REQ_ constant (e.g. REQ_SPHERE)
-	 *  @param idxMode Index of a mode as MODE_ constant (e.g. MODE_WORLD), norally the current mode
-	 *  @return true if request is valid, false otherwise.
+	 *  @param idxRequest Index of a request (interface call, a @c REQ_ constant like REQ_SPHERE) to test if valid in mode idxMode
+	 *  @param idxMode Index of a mode as @c MODE_ constant (e.g. MODE_WORLD), normally the current mode
+	 *  @return true, if request is valid inside the mode, false otherwise.
 	 */
 	bool isValid(EnumRequests idxRequest, EnumModes idxMode) const;
 }; // CValidModes
 
-/** @brief Stores modes and check validity of requests
+/** @brief Stores nested modes and checks validity of requests
+ *
+ * The checking is done in the member functions of CBaseRenderer objects
+ * @see CBaseRenderer
  */
 class CModeStack {
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
@@ -81,7 +85,7 @@ class CModeStack {
 protected:
 	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before)
 	 *
-	 * @param newMode New mode nesting
+	 * @param newMode New mode for nesting
 	 */
 	inline virtual void push(EnumModes newMode)
 	{
@@ -122,34 +126,85 @@ public:
 	 */
 	inline virtual ~CModeStack() {}
 
-	/** @defgroup mode_group The Modes
-	 * @brief The modes of the RenderMan interface
+	/** @defgroup mode_group CModeStack, the modes
+	 * @brief Stacks the modes of the RenderMan interface
 	 *
-	 * Called by the CRenderState
+	 * Called by the CRenderState. The @cbegin - @c end calls must be balanced.
 	 */
 	//@{
+	/** @brief Begins a new rendering context, called once for each context for initialization
+	 * @see CBaseRenderer::begin()
+	 */
 	virtual void begin();
+	/** @brief Ends a rendering context, called once for each context before deletion
+	 * @see CBaseRenderer::end()
+	 */
 	virtual void end();
 
+	/** @brief Begins a new frame (optional)
+	  * Directly in begin-block, cannot be nested
+	  */
 	virtual void frameBegin();
+	/** @brief Ends a frame
+	 */
 	virtual void frameEnd();
 
+	/** @brief Begin the world block to place objects
+	 *
+	 * inside frame block or begin-block, cannot be nested.
+	 */
 	virtual void worldBegin();
+	/** @brief End the world block
+	 */
 	virtual void worldEnd();
 
+	/** @brief Begins an attribute block
+	 *
+	 * Can be used inside world, object, solid, transformation and other attribute blocks
+	 * @see CBaseRenderer::attributeBegin()
+	 */
 	virtual void attributeBegin();
+	/** @brief Ends a block of attributes
+	 * @see CBaseRenderer::attributeEnd()
+	 */
 	virtual void attributeEnd();
 
+	/** @brief Begins a new transformation block
+	 *
+	 * Inside other transformation blocks, attribute, solid and object blocks,
+	 * world or for camera/light placings inside frame or begin block
+	 */
 	virtual void transformBegin();
+	/** @brief Ends transformation block
+	 */
 	virtual void transformEnd();
 
+	/** @brief Begins a new solid geometry block
+	 *
+	 * Inside other solid blocks (primitive-blocks must be the 'leaves'),
+	 * transformation, attribute, world and object blocks
+	 */
     virtual void solidBegin();
+	/** @brief Ends a solid block
+	 */
     virtual void solidEnd();
 
+	/** @brief Begins a new object block for retained geometry
+	 *
+	 * Inside frame and begin block, cannot be nested
+	 */
 	virtual void objectBegin();
+	/** @brief Ends an object block
+	 */
 	virtual void objectEnd();
 
+	/** @brief Begins a new motion block
+	 *
+	 * Inside object, world, attribute or transform block, cannot be nested.
+	 */
     virtual void motionBegin();
+	/** @brief Ends a motion block
+	 */
     virtual void motionEnd();
 	//@}
 

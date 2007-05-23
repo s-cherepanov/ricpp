@@ -64,7 +64,9 @@ can be changed with a request ColorSamples, there are 3 floats normally)
   there is no use for integers in shading [ARM] and the hpoints are only
   used to calculate the points of rational or non-rational B-Spline surfaces
   and trimcurves. Implementation hint: string needs some extra attention
-  (valuelist is of type pointer to string, not of string)
+  (valuelist is of type pointer to string, not of string), also colours
+  need special handling, because the number of colour components can
+  vary.
 
 The type can be an array of size n (affects the number of elements in the
 valuelist), if n is missing it is set to 1.
@@ -151,7 +153,7 @@ facevarying and facevertex. facevertex is used exactly as facevarying but
 interpolates the variables according to surface's subdivision rules. " [3dlight]
 
 If the declarations get "overwritten" the cannot be deleted since e.g.
-parameter naems within objects bear a pointer to their declaration.
+parameter names within objects bear a pointer to their declaration.
 
 Problems with the scope of declarations
 

@@ -30,6 +30,8 @@
 #include "ricpp/declaration/decldict.h"
 #include "ricpp/ricpp/renderererror.h"
 
+#include <assert.h>
+
 using namespace RiCPP;
 
 CDeclarationDictionary::~CDeclarationDictionary()
@@ -40,8 +42,7 @@ CDeclarationDictionary::~CDeclarationDictionary()
 	}
 }
 
-const CDeclaration *CDeclarationDictionary::find(const CToken &name, unsigned int curColorSize)
-// throw ERendererError
+const CDeclaration *CDeclarationDictionary::findAndUpdate(const CToken &name, unsigned int curColorSize)
 {
 	const CDeclaration *decl = find(name);
 	if ( !decl )
@@ -53,7 +54,13 @@ const CDeclaration *CDeclarationDictionary::find(const CToken &name, unsigned in
 	if ( decl->typeSize() == curColorSize )
 		return decl;
 
-	CDeclaration *newDecl = new CDeclaration(*decl, curColorSize);
+	CDeclaration *newDecl = 0;
+	try {
+		newDecl = new CDeclaration(*decl, curColorSize);
+	} catch ( ... ) {
+		newDecl = 0;
+	}
+	
 	if ( !newDecl )
 		throw ERendererError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of %s", name.name());
 
@@ -63,15 +70,18 @@ const CDeclaration *CDeclarationDictionary::find(const CToken &name, unsigned in
 	return newDecl;
 }
 
-bool CDeclarationDictionary::add(CDeclaration *decl)
+void CDeclarationDictionary::add(CDeclaration *decl)
 {
 	if ( !decl )
-		return false;
+		return;
 
 	m_all.push_back(decl);
 	const CDeclaration *found = m_active.findObj(decl->token());
 	if ( found ) {
 		m_active.unRegisterObj(found->token());
 	}
-	return m_active.registerObj(decl->token(), decl);
+	
+	bool flag = m_active.registerObj(decl->token(), decl);
+	flag = flag;
+	assert(flag);
 }

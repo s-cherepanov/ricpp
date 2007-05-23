@@ -222,8 +222,8 @@ public:
 	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_decldict.begin(); }
 	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_decldict.end(); }
 	inline virtual CDeclarationDictionary::size_type declSize() const { return m_decldict.size(); }
-	inline const CDeclaration *declFindAndUpdate(const CToken &name, unsigned int curColorSize) { return m_decldict.find(name, curColorSize); }
-	inline bool declAdd(CDeclaration *decl) { return m_decldict.add(decl); }
+	inline const CDeclaration *declFindAndUpdate(const CToken &name, unsigned int curColorSize) { return m_decldict.findAndUpdate(name, curColorSize); }
+	inline void declAdd(CDeclaration *decl) { return m_decldict.add(decl); }
 	//@}
 }; // CRenderState
 

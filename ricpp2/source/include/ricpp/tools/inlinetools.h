@@ -49,8 +49,6 @@ inline const char *nonullstr(const char *str)
 {
 	return  str ? str : "";
 }
-} // namespace RiCPP
-
 
 /** @brief Tests if string is empty, either pointer is 0 or ""
  * @param str String to test
@@ -60,4 +58,6 @@ inline bool emptyStr(const char *str)
 {
 	return !str || !*str;
 }
+
+} // namespace RiCPP
 #endif // _RICPP_TOOLS_INLINETOOLS_H

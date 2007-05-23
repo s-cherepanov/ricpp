@@ -47,7 +47,8 @@ namespace RiCPP {
 // ---------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------
 
-/** @brief Some basic types are copied from ri.h (s.a. RISPEC3.2, Appendix C)
+/** @defgroup ricpp_type Ri types
+ * @brief Some basic types are copied from ri.h (s.a. RISPEC3.2, Appendix C)
  */
 //@{
 typedef short   RtBoolean; ///< Booleans can be RI_TRUE or RI_FALSE
@@ -76,7 +77,8 @@ typedef unsigned long RtContextHandle;  ///< handle for a render context handle 
 // typedef RtString  RtArchiveHandle;  // handle for a rib archive (3Delight)
 //@}
 
-/** @brief Definitions of illegal handles
+/** @defgroup ricpp_illhandle Ri illegal handles
+ * @brief Definitions of illegal handles (additional constants)
  */
 //@{
 const RtContextHandle illContextHandle = (RtContextHandle)0;
@@ -89,21 +91,24 @@ const RtLightHandle illLightHandle = (RtLightHandle)0;
 // ---------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------
 
-/** @brief Boolean values
+/** @defgroup ricpp_booleans Ri booleans
+ * @brief Boolean true, false values
  */
 //@{
 const RtBoolean RI_FALSE       = 0;           ///< false
 const RtBoolean RI_TRUE        = (!RI_FALSE); ///< true
 //@}
 
-/** @brief Limits
+/** @defgroup ricpp_limits Ri limits
+ *  @brief Limits for clipping planes
  */
 //@{
 const RtFloat RI_INFINITY      = std::numeric_limits<RtFloat>::max();     ///< Maximum value for RtFloat, was 1.0e38
 const RtFloat RI_EPSILON       = std::numeric_limits<RtFloat>::epsilon(); ///< Minimum value for v+riEpsilon != v, was 1.0e-10
 //@}
 
-/** @brief Step sizes (correspondence to the basis matrices of the bicubic patches)
+/** @defgroup ricpp_steps Ri stepsizes for bicubic patch meshes
+ *  @brief Step sizes (correspondence to the basis matrices of the bicubic patches)
  */
 //@{
 const RtInt RI_BEZIERSTEP      = 3; ///< Stepsize for control points of bezier meshes
@@ -113,7 +118,8 @@ const RtInt RI_HERMITESTEP     = 2; ///< Stepsize for control points of hermite 
 const RtInt RI_POWERSTEP       = 4; ///< Stepsize for control points of power matrix spline meshes
 //@}
 
-/** @brief Basis matrices for bicubic patches
+/** @defgroup ricpp_basis Ri basis matrices for bicubic patches
+ *  @brief Basis matrices for bicubic patches
  */
 //@{
 const RtBasis RiBezierBasis = {
@@ -148,7 +154,8 @@ const RtBasis RiPowerBasis = {
 }; ///< Power-basis patch
 //@}
 
-/** @brief Added constants for IRi::blobby(): Primitives always followed by an index to the (float) operands
+/** @defgroup ricpp_blobby Ri constants for RiRoot::blobby()
+ *  @brief Added constants for IRi::blobby(): Primitives always followed by an index to the (float) operands
  */
 //@{
 const RtInt RI_BLOBBY_CONSTANT        = 1000; ///< 1 index to  1 float
@@ -158,7 +165,8 @@ const RtInt RI_BLOBBY_REPELLING_PLANE = 1003; ///< 2 Indices, first for 1 string
 //@}
 
 
-/** @brief Added constants for IRi::blobby() Operations, Substract (4) and Divide (5) are exchanged - seems to be a bug in the [RISPEC]
+/** @defgroup ricpp_blobbyop Ri constants for RiRoot::blobby() operations
+ *  @brief Added constants for IRi::blobby() Operations, Substract (4) and Divide (5) are exchanged - seems to be a bug in the [RISPEC]
  */
 //@{
 const RtInt RI_BLOBBY_OP_ADD = 0; ///< Addition:  count, ...
@@ -171,7 +179,8 @@ const RtInt RI_BLOBBY_OP_NEG = 6; ///< Negate:    negand
 const RtInt RI_BLOBBY_OP_IDP = 7; ///< Identity:  idempotentate
 //@}
 
-/** @brief Error codes
+/** @defgroup ricpp_error Ri error constants
+ *  @brief Error codes
  *
  *  -  1-10
  *    -# System and File errors
@@ -220,7 +229,8 @@ const RtInt RIE_MATH           = 61;       ///< Zerodivide, noninvert matrix, et
 const RtInt RIE_LASTERROR      = 61;       ///< Endmarker, not an error code
 //@}
 
-/** @brief Error severity levels (0-3)
+/** @defgroup ricpp_severity Ri error severity
+ *  @brief Error severity levels (0-3)
  */
 //@{
 const RtInt RIE_INFO           =  0;       ///< Rendering stats & other info
@@ -230,7 +240,8 @@ const RtInt RIE_SEVERE         =  3;       ///< So bad you should probably abort
 const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code
 //@}
 
-/** @brief Tokens
+/** @defgroup ricpp_tokens Ri tokens
+ * @brief Definition of the tokens of the RenderMan interface
  */
 //@{
 const RtToken  RI_NULL = (RtToken)0L;
@@ -269,7 +280,8 @@ const RtToken  RI_RASTER = "raster", RI_NDC = "NDC", RI_SCREEN = "screen", RI_CA
 
 const RtToken  RI_CATMULLCLARK = "catmull-clark", RI_HOLE = "hole", RI_CREASE = "crease", RI_CORNER = "corner", RI_INTERPOLATEBOUNDARY = "interpolateboundary";
 
-/** @brief Additional tokens, used by RiCPP
+/** @addgroup ricpp_tokens ri tokens
+ *  @brief Additional tokens, used by RiCPP
  */
 //@{
 const RtToken RI_ARCHIVE = "archive"; //!< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code
@@ -375,7 +387,7 @@ public:
 	virtual RtVoid operator()(IRi &ri, RtPointer data) const = 0;
 };
 
-/** @brief (2do) Callback function to handle structural comments in rib files (IRi::readArchive), changed to include renderer instance
+/** @brief Callback function to handle structural comments in rib files (IRi::readArchive), changed to include renderer instance
  */
 class IArchiveCallback {
 public:
@@ -392,7 +404,8 @@ public:
 
 /** @brief RenderMan Interface without the ellipsis (...) calls
  * 
- * Base class for front end IRiCPP::IRi, back end context IRiCPP::IRiContext, RIB interception
+ * Base class for frontend IRiCPP::IRi and backend context IRiCPP::IRiContext, also used for RIB interception
+ * @see IRi, ricpp_interface
  */
 class IRiRoot {
 public:
@@ -400,14 +413,16 @@ public:
 	 */
 	inline virtual ~IRiRoot() {}
 
-	/** @brief The interface functions, see also RiCPP::IRi
+	/** @defgroup ricpp_interface Ri interface functions
+	 *  @brief The interface functions, part 1
+	 *  @see IRi
 	 */
 	//@{
 
 	/** @brief Sets an error handler.
 	 *
 	 *  The error handler (predifined are
-	 *  errorAbort, errorPrint, errorIgnore)
+	 *  @c errorAbort, @c errorPrint, @c errorIgnore)
 	 *  is called if an error occurs. It is a frontend function.
 	 *  ErrorHandler can be a RIB command, but it can be deactivated
 	 *  by the frontend. The context IRiContext itself does not have an error
@@ -441,23 +456,28 @@ public:
 	virtual version(RtFloat version) = 0;
 	*/
 
-	/** @brief The modes
+	/** @defgroup ricpp_modes Ri Modes
+	 *  @brief The modes
 	 */
 	//@{
-	/** @brief Creates and initializes a new rendering context, in a context it is called after instanciation
+	/** @brief Creates and initializes a new rendering context
+	 *
+	 * In a context it is called after instanciation
 	 * @param name indicates either a rib file for output or an identifier for a renderer
 	 */
 	virtual RtVoid begin(RtString name) = 0;
 	
-	// better stay with the standard inseted of
+	// better stay with the standard instead of
 	// @param arguments for optional arguments (added)
 	// virtual RtVoid begin(RtString name, RtString arguments=RI_NULL) = 0;
 	// however [QRM] had
-	// virtual RtToken begin(RtString handle, RtString arguments=RI_NULL) = 0;
+	// virtual RtToken begin(RtString handle, RtString arguments=RI_NULL, ...) = 0;
 	// the returned token was more or less a context handle, the parameter
 	// name the name for the context.
 
-	/** @brief Terminates the current rendering context, does cleanup operations, in a context it is called before the context is deleted.
+	/** @brief Terminates the current rendering context
+	 *
+	 * Does cleanup operations, in a context it is called before the context is deleted.
 	 */
 	virtual RtVoid end(void) = 0;
 
@@ -540,7 +560,8 @@ public:
 	*/
 	//@}
 
-	/** @brief Options
+	/** @defgroup ricpp_options Ri Options
+	 *  @brief Options
 	 */
 	//@{
 
@@ -712,9 +733,11 @@ public:
     virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 	
-	//@{
-	/** Lights
+	/** @defgroup ricpp_lights Ri Lights
+	 *  @brief Light sources
+	 *  @see IRiRoot::illuminate()
 	 */
+	//@{
 	
 	//! Sets a light source shader
 	/*! Creates a non-area light, turns it on, and adds it to the current light source
@@ -740,9 +763,10 @@ public:
 	virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 	
-	//@{
-	/** Attributes
+	/** @defgroup ricpp_attributes Ri Attributes
+	 *  Attributes
 	 */
+	//@{
 	
 	//! Sets a implementation-specific attribute
 	/*! @param name Name of the attribute
@@ -797,6 +821,7 @@ public:
 	//! Turns a specific light source on or off
 	/*! @param light Handle that references a light source (area or non-area light source)
 	 *  @param onoff RI_TRUE turns a light source on, RI_FALSE turns it off.
+	 *  @see ricpp_lights
 	 */
 	virtual RtVoid illuminate(RtLightHandle light, RtBoolean onoff) = 0;
 
@@ -920,7 +945,8 @@ public:
 	//@}
 
 	
-	/** @brief Transformations
+	/** @defgroup ricpp_transforms Ri Transformations
+	 *  @brief Transformations
      *
 	 * Transformations of the cartesian coordinate system
 	 * Transformations modify the composite transformation matrix (CTM),
@@ -1027,11 +1053,13 @@ public:
 	//@}
 
 	
-	/** @brief Graphics primitives
+	/** @defgroup ricpp_prims Ri Graphics primitives
+	 * @brief Graphics primitives
 	 */
 	//@{
 
-	/** @brief Polygons
+	/** @defgroup ricpp_polygons Ri Polygons
+	 *  @brief Polygons
 	 */
 	//@{
 
@@ -1081,7 +1109,8 @@ public:
     virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
-	/** Patches
+	/** @defgroup ricpp_patches Ri Patches
+	 *  @brief Patches
 	 */
 	//@{
 
@@ -1124,7 +1153,8 @@ public:
 	//@}
 
 
-	/** Subdivision Surfaces
+	/** @defgroup ricpp_subdiv Ri Subdivision surfaces
+	 *  @brief Subdivision Surfaces
 	 */
 	//@{
 
@@ -1146,7 +1176,8 @@ public:
 	//@}
 
 
-	/** Quadrics, created by sweeping a curve around z, thetamax is given in degrees
+	/** @defgroup ricpp_quadrics Ri Quadrics
+	 *  @brief Quadrics, created by sweeping a curve around z, thetamax is given in degrees
 	 */
 	//@{
 
@@ -1245,7 +1276,8 @@ public:
     virtual RtVoid torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
-	/** Point and curve primitives
+	/** @defgroup ricpp_2d Ri Points and curves
+	 *  @brief Point and curve primitives
 	 */
 	//@{
 	
@@ -1269,7 +1301,8 @@ public:
     virtual RtVoid curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
 	//@}
 
-	/** Blobby implicit surfaces
+	/** @defgroup ricpp_blobby Ri Blobby implicit surfaces
+	 * @brief Blobby implicit surfaces
 	 */
 	//@{
 	/** @brief Creates implicit surfaces
@@ -1293,7 +1326,8 @@ public:
     virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
 	//@}
 
-	/** Procedural primitives
+	/** @defgroup ricpp_proc Ri Procedural primitives
+	 *  @brief Procedural primitives
 	 */
 	//@{
 	/*! @brief Calls a procedural primitive
@@ -1305,7 +1339,8 @@ public:
 	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
 	//@}
 
-    /** General objects
+	/** @defgroup ricpp_general Ri General objects
+     *  General objects
 	 */
 	//@{
 	/** @brief Generates a predefined geometry, RI_TEAPOT is the only predifined one
@@ -1319,7 +1354,8 @@ public:
 
 	//@}
 
-	/** @brief Map-making, functions to create texture map from (rendered) images
+	/** @defgroup ricpp_texture Ri texture maps
+	 *  @brief Map-making, functions to create texture map from (rendered) images
 	 */
 	//@{
  
@@ -1391,7 +1427,8 @@ public:
     virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
-	/** Archive files
+	/** @defgroup ricpp_archive Ri RIB archives
+	 *  Archive files
 	 */
 	//@{
 
@@ -1423,7 +1460,11 @@ public:
 // ---------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------
 
-/** @brief RenderMan Interface as (nearly) pure virtual C++ class, extents IRiRoot with the (...) functions
+/** @brief RenderMan Interface
+ *
+ * Part 2 of the as (nearly) pure virtual C++ class, extents IRiRoot with the ellipsis (...) functions
+ * with variable parameters.
+ * @see IRiRoot, ricpp_filter, ricpp_stdprocs, ricpp_stderrors ricpp_interface
  */
 class IRi : public IRiRoot {
 public:
@@ -1432,7 +1473,10 @@ public:
 	 */
 	inline virtual ~IRi() {}
 
-	/** @brief Standard build-in filter functions
+	/** @defgroup ricpp_filter Ri pixel filters
+	 *
+	 *  @brief Standard build-in filter functions, part 2
+	 *  @see IRiRoot
 	 */
 	//@{
 	virtual const IFilterFunc &boxFilter() const = 0;
@@ -1442,7 +1486,8 @@ public:
 	virtual const IFilterFunc &triangleFilter() const = 0;
 	//@}
 
-	/** @brief Standard build-in procedural primitives
+	/** @defgroup ricpp_stdprocs Ri standard procedural primitives
+	 * @brief Standard build-in procedural primitives
 	 */
 	//@{
 	virtual const ISubdivFunc &procDelayedReadArchive() const = 0;
@@ -1451,7 +1496,8 @@ public:
 	virtual const IFreeFunc &procFree() const = 0;
 	//@}
 
-	/** @brief Standard build-in error handler
+	/** @defgroup ricpp_stderrors Ri error handlers
+	 * @brief Standard build-in error handler
 	 */
 	//@{
 	virtual const IErrorHandler &errorAbort() const = 0;
@@ -1463,7 +1509,8 @@ public:
 	 */
 	virtual RtInt lastError() = 0;
 
-	/** @brief Contexts
+	/** @defgroup ricpp_contexts Ri context handlers
+	 *  @brief Contexts
 	 */
 	//@{
 	/** @brief Gets the current context
@@ -1489,7 +1536,7 @@ public:
 	virtual RtArchiveHandle archiveBegin(RtString name, ...) = 0;
 	*/
 
-	/** Modes
+	/** @addgroup ricpp_modes Ri Modes
 	 */
 	//@{
 	//! Starts a motion block for a moving primitive
@@ -1500,7 +1547,7 @@ public:
     virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...) = 0;
 	//@}
 
-	/** @brief Options with ellipsis (...)
+	/** @addgroup ricpp_options Ri Options
 	 */
 	//@{
 
@@ -1525,7 +1572,7 @@ public:
     virtual RtVoid option(RtString name, RtToken token = RI_NULL, ...) = 0;
 	//@}
 	
-	/** @brief Lights
+	/** @addgroup ricpp_lights Ri Lights
 	 */
 	//@{
 	
@@ -1539,7 +1586,7 @@ public:
 	//@}
 	
 
-	/** @brief Attributes
+	/** @addgroup ricpp_attributes Ri Attributes
 	 */
 	//@{
 	
@@ -1568,7 +1615,7 @@ public:
 	virtual RtVoid displacement(RtString name, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
-	/** @brief Transformations
+	/** @addgroup ricpp_transforms Ri Transformations
 	 */
 	//@{
 
@@ -1578,11 +1625,7 @@ public:
 	//@}
 
 	
-	/** @brief Graphics primitives
-	 */
-	//@{
-
-	/** @brief Polygons
+	/** @addgroup ricpp_polygons Ri Polygons
 	 */
 	//@{
 
@@ -1603,7 +1646,7 @@ public:
 	virtual RtVoid pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
-	/** @brief Patches
+	/** @addgroup ricpp_patches Ri Patches
 	 */
 	//@{
 
@@ -1621,7 +1664,7 @@ public:
 	//@}
 
 
-	/** @brief Subdivision Surfaces
+	/** @addgroup ricpp_subdiv Ri Subdivision surfaces
 	 */
 	//@{
 
@@ -1631,7 +1674,7 @@ public:
 	//@}
 
 
-	/** @brief Quadrics, created by sweeping a curve around z, thetamax is given in degrees
+	/** @addgroup ricpp_quadrics Ri Quadrics
 	 */
 	//@{
 	/** @brief Requests a sphere surface, see IRiRoot::sphereV()
@@ -1663,7 +1706,7 @@ public:
 	virtual RtVoid torus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
-	/** @brief Point and curve primitives
+	/** @addgroup ricpp_2d Ri Points and curves
 	 */
 	//@{
 	/** @brief Creates a point cloud, see IRiRoot::pointsV()
@@ -1675,7 +1718,7 @@ public:
     virtual RtVoid curves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 	//@}
 
-	/** @brief Blobby implicit surfaces
+	/** @addgroup ricpp_blobby Ri Blobby implicit surfaces
 	 */
 	//@{
 
@@ -1684,7 +1727,7 @@ public:
 	virtual RtVoid blobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 	//@}
 
-    /** @brief General objects
+	/** @addgroup ricpp_general Ri General objects
 	 */
 	//@{
 
@@ -1693,9 +1736,7 @@ public:
     virtual RtVoid geometry(RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
-	//@}
-
-	/** @brief Map-making, functions to create texture map from (rendered) images
+	/** @addgroup ricpp_texture Ri texture maps
 	 */
 	//@{
  
@@ -1720,7 +1761,7 @@ public:
     virtual RtVoid makeShadow(RtString pic, RtString tex, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
-	/** @brief Archive files
+	/** @addgroup ricpp_archive Ri RIB archives
 	 */
 	//@{
 

@@ -375,12 +375,12 @@
 				C372B8F60BD7617D009B2459 /* baserenderer */,
 				C37DBB9C0C01C2C6003AE4E7 /* declaration */,
 				C32093CF0BDCCF1900A0BB35 /* gendynlib */,
+				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
+				C35A155D0C031FEB000C9348 /* renderstate */,
 				C3B848F90BD7621600DD22B5 /* ribwriter */,
 				C32093DA0BDCCF8100A0BB35 /* ribwriterdll */,
 				C372B8D00BD760C9009B2459 /* ricpp */,
 				C3610AB60BF2F08500007CEF /* ricppbridge */,
-				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
-				C35A155D0C031FEB000C9348 /* renderstate */,
 				C3B849190BD762F900DD22B5 /* test */,
 				C33773C30BE5DD6B0011B646 /* tools */,
 			);
@@ -390,17 +390,17 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C372B8CF0BD760B9009B2459 /* libricpp.a */,
-				C372B8F50BD76177009B2459 /* libbaserenderer.a */,
-				C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */,
-				C3B849090BD762B700DD22B5 /* librendererloader.a */,
 				C3B849170BD762EE00DD22B5 /* test */,
-				C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */,
-				C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */,
-				C399BA940BE5E1BB002FEEF1 /* libritools.a */,
-				C3610AB50BF2F06500007CEF /* libricppbridge.a */,
+				C372B8F50BD76177009B2459 /* libbaserenderer.a */,
 				C37DBB990C01C29D003AE4E7 /* libdeclaration.a */,
+				C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */,
+				C3B849090BD762B700DD22B5 /* librendererloader.a */,
 				C35A15640C03201F000C9348 /* librenderstate.a */,
+				C3B848F80BD7621100DD22B5 /* libriribwriter.1.a */,
+				C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */,
+				C372B8CF0BD760B9009B2459 /* libricpp.a */,
+				C3610AB50BF2F06500007CEF /* libricppbridge.a */,
+				C399BA940BE5E1BB002FEEF1 /* libritools.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1039,12 +1039,12 @@
 				C372B8F40BD76177009B2459 /* baserenderer */,
 				C37DBB980C01C29D003AE4E7 /* declaration */,
 				C32093CD0BDCCF0A00A0BB35 /* gendynlib */,
+				C3B849080BD762B700DD22B5 /* rendererloader */,
+				C35A15630C03201F000C9348 /* renderstate */,
 				C3B848F70BD7621100DD22B5 /* ribwriter */,
 				C32093DE0BDCCF9B00A0BB35 /* ribwriterdll */,
 				C372B8CE0BD760B9009B2459 /* ricpp */,
 				C3610AB40BF2F06500007CEF /* ricppbridge */,
-				C3B849080BD762B700DD22B5 /* rendererloader */,
-				C35A15630C03201F000C9348 /* renderstate */,
 				C3B849160BD762EE00DD22B5 /* test */,
 				C399BA930BE5E1BB002FEEF1 /* tools */,
 			);

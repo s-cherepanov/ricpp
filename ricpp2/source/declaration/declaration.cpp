@@ -37,8 +37,8 @@ using namespace RiCPP;
 bool CDeclaration::parse(const char *name, const char *decl, unsigned int curColorSize)
 {
 	// Set the name, 0 for inline declarations
-	m_name = name ? name : "";
-
+	m_name = nonullstr(name);
+	
 	m_arraySize = 0;
 	m_typeSize = 0;
 	m_class = CLASS_UNKNOWN;
@@ -65,9 +65,7 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 			++decl;
 
 		// The type is the second part of a declaration
-		// Types are not optional, however types for
-		// parameters can be the typename only, so error handling is
-		// defered to the caller
+		// Types are not optional
 		m_type = CTypeInfo::typePrefix(decl, pos);
 		if ( m_type ) {
 			m_basicType = CTypeInfo::basicTypeForType(m_type);
@@ -77,6 +75,8 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 			if ( m_type == TYPE_COLOR ) {
 				m_typeSize = curColorSize;
 			}
+		} else {
+			return false;
 		}
 
 		// Eat the whitespaces
@@ -97,7 +97,7 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 			++decl;
 
 		// The name follows in inline declarations
-		if ( !name || !*name ) {
+		if ( m_name.empty() ) {
 			// inline declaration or only a typename
 			while ( *decl && !isspace(*decl) ) {
 				m_name += *decl;
@@ -130,15 +130,6 @@ CDeclaration::CDeclaration(const char *parameterDeclstr, unsigned int curColorSi
 	if ( !parse(0, parameterDeclstr, curColorSize) ) {
 		throw ERendererError(RIE_SYNTAX, RIE_ERROR, (int)0, (const char *)0, parameterDeclstr);
 	}
-
-	// Already searched for declaration or syntax error
-	if ( m_type == TYPE_UNKNOWN ) {
-		throw ERendererError(RIE_SYNTAX, RIE_ERROR, (int)0, (const char *)0, "Type or declaration not found: \"%s\"", markemptystr(parameterDeclstr));
-	}
-	// Declaration name not found in inline declaration
-	if ( m_name.empty() ) {
-		throw ERendererError(RIE_SYNTAX, RIE_ERROR, (int)0, (const char *)0, "Name not found: \"%s\"", markemptystr(parameterDeclstr));
-	}
 }
 
 CDeclaration::CDeclaration(CToken &token, const char *declstr, unsigned int curColorSize, bool isDefault)
@@ -146,8 +137,11 @@ CDeclaration::CDeclaration(CToken &token, const char *declstr, unsigned int curC
 	m_isDefault = isDefault;
 	m_isInline = false;
 	m_token = token;
-	if ( !parse(token.name(), declstr, curColorSize) || (m_type == TYPE_UNKNOWN) ) {
-		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "%s: %s", markemptystr(token.name()), markemptystr(declstr));
+	if ( emptyStr(token.name()) ) {
+		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "Declaration name is empty for \"%s\"", markemptystr(declstr));
+	}
+	if ( !parse(token.name(), declstr, curColorSize) ) {
+		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", markemptystr(token.name()), markemptystr(declstr));
 	}
 }
 

@@ -27,7 +27,7 @@
 
 /** @file declaration.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief A declaration
+ *  @brief Header for Ri declarations
  */
 #ifndef _RICPP_DECLARATION_TOKEN_H
 #include "ricpp/declaration/token.h"
@@ -42,10 +42,13 @@
 namespace RiCPP {
 /** @brief Representation of a (possibly inline) declaration
  *
- * If the declaration has a color type, the number of elements m_typesize is the
- * size, when the declaration is used. If the size changes, a new declaration is
+ * All declarations are stored and handled in a CDeclarationDictionary
+ * of the state of a rendering context.
+ * If the declaration has a color type, the number of elements @c m_typesize is the
+ * size, at the time the declaration is used. If the size changes, a new declaration is
  * created, if a parameter of the declaration is used. Declarations that are not
- * inline are not destroyed before the rendering context ends.
+ * inline, are not destroyed before the rendering context ends.
+ * @see CDeclarationDictionary, @subpage page_decl
  */
 class CDeclaration {
 	std::string m_name;         ///< Name of the declaration
@@ -54,13 +57,26 @@ class CDeclaration {
 	EnumTypes m_type;           ///< Type of the elements
 	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type)
 	unsigned long m_arraySize;  ///< Number of elements in an array, 1 if no array declaration
-	unsigned long m_typeSize;   ///< Number of basic types per element type (eg. 3 for RtPoint, RtColor needs special handling, RtString and RtToken have the size of a const char * pointer)
+	
+	/** @brief Number of basic types per element type.
+	 *
+	 * For example 3 for RtPoint, RtColor needs special handling, RtString and RtToken
+	 * have the size of a const char * pointer.
+	 */
+	unsigned long m_typeSize;
+	
 	bool m_isInline;            ///< True, if it is an inline declaration - can be destroyed with the parameter
-	bool m_isDefault;           ///< True, if a default declaration of the renderer (like RI_P)
+	bool m_isDefault;           ///< True, if a default declaration of the renderer (like @c RI_P)
 
 	/** @brief Parses a declaration.
 	 *
-	 * Inline declarations have name == 0.
+	 * Inline declarations have name == 0. The declaration has the form (@c declare):
+	 *
+	 * [class] type ['['n']']
+	 *
+	 * or as inline declaration (parameter):
+	 *
+	 * [class] type ['['n']'] name
 	 *
 	 * @param name  Name of the declaration (case sensitive), 0 for inline declarations.
 	 * @param decl  The declaration string.
@@ -69,19 +85,28 @@ class CDeclaration {
 	 */
 	bool parse(const char *name, const char *decl, unsigned int curColorSize);
 
+	/** @brief Assigns a declaration instance, declaration should not be changed.
+	 *  @param decl declaration that is copied
+	 *  @return *this
+	 */
+	CDeclaration &operator=(const CDeclaration &decl);
+
 public:
-	/** @brief Standard constructor for inline declarations, throws ERendererError
-	 * @param parameterDeclstr inline declaration of a parameter. Only a declaration name
+	/** @brief Standard constructor for inline declarations
+	 * @param parameterDeclstr Inline declaration of a parameter. Only a declaration name
 	 * is considered as an error because the existence of a declaration for
-	 * parameterDeclstr has been tested before.
+	 * \a parameterDeclstr has been tested before. Can throw a RIE_SYNTAX parsing error.
 	 * @param curColorSize The current size of color (number of floats).
+	 * @exception ERendererError
 	 */
 	CDeclaration(const char *parameterDeclstr, unsigned int curColorSize);
-	/** @brief Standard constructor for declarations TRi::Declare(), throws ERendererError.
-	 * @param token The token for the declaration name.
+	/** @brief Standard constructor for declarations CBaseRenderer::Declare().
+	 * Can throw a RIE_SYNTAX parsing error.
+	 * @param token The token for the declaration name, must not represent an empty string.
 	 * @param declstr The declaration.
 	 * @param curColorSize The current size of color (number of floats).
-	 * @param isDefault A default declaration of the interface
+	 * @param isDefault A default declaration of the interface?
+	 * @exception ERendererError
 	 */
 	CDeclaration(CToken &token, const char *declstr, unsigned int curColorSize, bool isDefault);
 	/** @brief Copy constructor for declaration with different color size
@@ -161,12 +186,6 @@ public:
 	 *  @return The type size times the array size times number of bytes for the basic type
 	 */
 	inline unsigned long numberOfBytes() const { return m_typeSize * m_arraySize * CTypeInfo::basicTypeByteSize(m_basicType); }
-
-	/** @brief Assigns a declaration instance
-	 *  @param decl declaration that is copied
-	 *  @return *this
-	 */
-	CDeclaration &operator=(const CDeclaration &decl);
 }; // CDeclarartion
 
 } // namespace RiCPP

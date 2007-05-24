@@ -43,7 +43,7 @@ namespace RiCPP {
  *  @see CToken
  */
 class CTokenizer {
-	std::map<std::string, unsigned long> m_tokenMapper; ///< @brief Maps a token anme to it's id
+	std::map<std::string, unsigned long> m_tokenMapper; ///< @brief Maps a token name to it's id
 	unsigned long m_nextIndex; ///< @brief The next id for a token
 public:
 	/** @brief Const iterator for the token maps.

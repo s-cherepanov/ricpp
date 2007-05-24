@@ -1,5 +1,7 @@
 /*! \mainpage RiCPP
-\section intro_sec Introduction
+ *  @author Andreas Pidde (andreas@pidde.de)
+
+@section intro_sec Introduction
 
 Important note: RiCPP is not developed (only a few classes exist), the documentation also
 in a very draft state is not describing what is, but more what
@@ -47,7 +49,7 @@ output format) and a draft renderer for OpenGL output. The later will be a very
 simple one that does not provide the features, like procedural shading, of a
 'real' RenderMan complient renderer.
 
-\section implementation_sec Implementation
+@section implementation_sec Implementation
 
 These web pages are the doxygen output of the technical documentation of RiCPP
 I'm currently working on. RiCPP is also the name of the namespace for all
@@ -64,7 +66,7 @@ MacOS 10.x. There is of course a plan to port to Linux later. You can find
 the sources on the SVN server of project ricpp on SourceForge in the ricpp2
 subfolder. The ricpp subfolder contains an older version of RiCPP.
 
-\section literature_sec Literature
+@section literature_sec Literature
 
 You can learn a lot of RenderMan by these books and documents:
 
@@ -78,7 +80,7 @@ You can learn a lot of RenderMan by these books and documents:
  <li> [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep) </li>
 </ul>
 
-\section renderers_sec RenderMan complient renderers
+@section renderers_sec RenderMan complient renderers
 
 Some commercial renderes are:
 
@@ -105,7 +107,7 @@ Selection of modellers:
 <li> <a href="http://www.imagos.fl.net.au/">Breeze designer</a>, also free, easy to use and some basic RIB output </li>
 </ul>
 
-\section websites_sec Websites for RenderMan
+@section websites_sec Websites for RenderMan
 
 Only two out of many:
 
@@ -117,7 +119,7 @@ Only two out of many:
 And don't forget comp.graphics.rendering.renderman and the
 <a href="http://www.faqs.org/faqs/graphics/renderman-faq/">RenderMan-FAQ</a>. 
 
-\section copyright_sec Copyright notice
+@section copyright_sec Copyright notice
 
      RenderMan(R) is a registered trademark of Pixar
 	 
@@ -129,9 +131,9 @@ And don't forget comp.graphics.rendering.renderman and the
 				 
 */
 
-/*! \page page_decl Declaration of variables
+/*! @page page_decl Declaration of variables
 
-\section page_decl_sec1 The declaration types
+@section page_decl_sec1 The declaration types
 
 Declaration of parameter types, general request, allowed in all blocks.
 
@@ -233,7 +235,7 @@ one writes a shader with the same name and shadertype the conflict
 persists. You can also generally use inline declarations.
 
 
-\section page_decl_sec2 Implementation hint
+@section page_decl_sec2 Implementation hint
 
 'inline' declaritions are helpful, but nothing prevents you from using a
 parameter "vertex point P" for your request. RiCPP must figure out that the
@@ -246,7 +248,7 @@ in declaring "uniform color Cs" or "constant color Cs" as you like, but
 not to change the type of parameters that have special meaning to
 the renderer. You can also find a list of these variables there:
 
-\subsection page_decl_sec2_1 GENERAL RI PARAMETERS
+@subsection page_decl_sec2_1 GENERAL RI PARAMETERS
 
 Cs az epsilon2 near hither subwindow
 N bias0 eyesplits origin t
@@ -259,7 +261,7 @@ Pz dynamic jitter s
 a endofframe merge shader
 algorithm epsilon1 name st
 
-\subsection page_decl_sec2_2 SHADER PARAMETERS
+@subsection page_decl_sec2_2 SHADER PARAMETERS
 
 Ka amplitude conedeltaangle lightcolor specularcolor
 Kd background distance maxdistance texturename
@@ -269,11 +271,11 @@ Ks coneangle intensity roughness
 Nevertheless, the framework must handle the cases if the declaration of
 these variables are changed.
 
-The declarations are destroyed at the IRi::end() of the context.
+The declarations are destroyed at the CRiContext::end() of the context.
 
 Literature: [RiSPEC] [ARM] [RMC] [AppNote7] [AppNote22] [kaushik] [PRMAN10]
 
-\section page_decl_sec3 Notes and problems
+@section page_decl_sec3 Notes and problems
 
 facevarying and facevertex are not yet mentioned in the specs.
 facevarying announced in RenderMan Release Notes 10 [PRMAN10]
@@ -375,7 +377,7 @@ which can be used to enable archive caching, dispite the
 problems with the declares. Differently to ObjectInstance, the declares issued in a
 RIB-Archive do effect the declaration dictionary.
 
-\section page_decl_sec4 Implementation
+@section page_decl_sec4 Implementation
 
 Declarations in RiCPP are implemented by the class @c CDeclaration in collaboration
 with @c CDeclarationDict, @c CTokenizer and @c CToken.

@@ -34,6 +34,39 @@
 
 using namespace RiCPP;
 
+bool CDeclaration::stripName()
+{
+	if ( m_name.empty() ) {
+		m_namespace = NAMESPACE_UNKNOWN;
+		m_table.clear();
+		m_var.clear();
+		return false;
+	}
+
+	size_t pos = 0;
+	const char *str = m_name.c_str();
+	m_namespace = CTypeInfo::namespacePrefix(str, pos);
+	if ( m_namespace != NAMESPACE_UNKNOWN ) {
+		str += pos;
+	}
+	
+	m_table = "";
+	m_table.reserve(strlen(str)+1);
+	for ( pos = 0; str[pos]; ++pos ) {
+		if ( str[pos] == ':' ) {
+			str += pos+1;
+			m_var = str;
+			return !m_table.empty() && !m_var.empty() && m_var.find(':') == std::string::npos; // not an empty table or name, no more :, namespace:table:var or table:var
+		}
+		m_table += str[pos];
+	}
+	m_table.clear();
+	m_var = str;
+	// no table -> no namespace
+	return m_namespace == NAMESPACE_UNKNOWN;
+}
+
+
 bool CDeclaration::parse(const char *name, const char *decl, unsigned int curColorSize)
 {
 	// Set the name, 0 for inline declarations
@@ -117,13 +150,14 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 
 	}
 
-	return true;
+	return stripName();
 }
 
 CDeclaration::CDeclaration(const char *parameterDeclstr, unsigned int curColorSize)
 {
 	assert(parameterDeclstr != 0);
 
+	m_namespace = NAMESPACE_UNKNOWN;
 	m_isDefault = false; // inline declarations are never default declarations
 	m_isInline = true;   // mark inline
 
@@ -134,6 +168,7 @@ CDeclaration::CDeclaration(const char *parameterDeclstr, unsigned int curColorSi
 
 CDeclaration::CDeclaration(CToken &token, const char *declstr, unsigned int curColorSize, bool isDefault)
 {
+	m_namespace = NAMESPACE_UNKNOWN;
 	m_isDefault = isDefault;
 	m_isInline = false;
 	m_token = token;
@@ -162,6 +197,9 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 	if ( this == &decl )
 		return *this;
 	m_name = decl.m_name;
+	m_namespace = decl.m_namespace;
+	m_table = decl.m_table;
+	m_var = decl.m_var;
 	m_token = decl.m_token;
 	m_class = decl.m_class;
 	m_type = decl.m_type;

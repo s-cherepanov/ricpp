@@ -457,6 +457,20 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle)
 	}
 }
 
+RtVoid CRiCPPBridge::freeObject(RtObjectHandle handle)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->freeObject(handle);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::freeObject(handle)");
+	}
+}
+
 RtVoid CRiCPPBridge::motionBegin(RtInt N, RtFloat sample, ...)
 {
 	va_list marker;
@@ -515,6 +529,45 @@ RtVoid CRiCPPBridge::synchronize(RtToken name)
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::synchronize(name:\"%s\")", name ? name : "");
+	}
+}
+
+RtToken CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	return resourceV(name, type, n, &m_tokens[0], &m_params[0]);
+}
+
+RtToken CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			return m_ctxMgmt.curBackend().renderingContext()->resourceV(name, type, n, tokens, params);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::resourceV(name:%s, type:%s, n:%d, ...)", name ? name : "", type ? type : "", (int)n);
+	}
+
+	return RI_NULL;
+}
+
+RtVoid CRiCPPBridge::freeResource(RtToken handle)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->freeResource(handle);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::freeResource(handle:%s, ...)", handle ? handle : "");
 	}
 }
 
@@ -1189,17 +1242,26 @@ RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran
 	}
 }
 
-RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value)
+RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	return geometricApproximationV(type, n, &m_tokens[0], &m_params[0]);
+}
+
+RtVoid CRiCPPBridge::geometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
-			m_ctxMgmt.curBackend().renderingContext()->geometricApproximation(type, value);
+			m_ctxMgmt.curBackend().renderingContext()->geometricApproximationV(type, n, tokens, params);
 		} catch (ERendererError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricApproximation(type:%s, value%%f)", type ? type : "", (float)value);
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricApproximationV(type:%s, ...)", type ? type : "");
 	}
 }
 

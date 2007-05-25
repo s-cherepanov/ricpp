@@ -55,7 +55,8 @@ int main (int argc, char * const argv[]) {
 	ri.begin("ribwriter \"$HOME/test.rib\"");
 		RtContextHandle ch2 = ri.getContext();
 		ri.begin("test2.rib");
-			ri.declare("name", "    constant    string  [19] ");
+			ri.declare("surface:tile", "    constant    float "); // syntax error
+			ri.declare("surface:tile:anarray", "    constant    float  [19] ");
 			ri.declare("bla", "fdfw[19]ss"); // Error
 			RtContextHandle ch3 = ri.getContext();
 			ri.context(illContextHandle);
@@ -85,9 +86,9 @@ int main (int argc, char * const argv[]) {
 	ri.worldEnd();
 	ri.end();
 
-	for ( int i = 1; i < 1000; ++i ) {
+	for ( int i = 1; i < 100; ++i ) {
 		ri.begin(RI_NULL);
-			for ( int j = 1; j < 1000; ++j ) {
+			for ( int j = 1; j < 100; ++j ) {
 				ri.declare("name", "    constant    string  [19] ");
 			}
 			ri.frameBegin((RtInt)i);

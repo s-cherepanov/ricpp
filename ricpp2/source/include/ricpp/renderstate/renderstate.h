@@ -95,6 +95,7 @@ public:
 	 */
 	//@{
 	virtual const CDeclaration *declFind(const CToken &name) const = 0;
+	virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const = 0;
 	virtual CDeclarationDictionary::const_iterator declBegin() const = 0;
 	virtual CDeclarationDictionary::const_iterator declEnd() const = 0;
 	virtual CDeclarationDictionary::size_type declSize() const = 0;
@@ -219,10 +220,20 @@ public:
 	 */
 	//@{
 	inline virtual const CDeclaration *declFind(const CToken &name) const { return m_decldict.find(name); }
+	inline virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const { return m_decldict.find(tableNamespace, table, var, tokenizer); }
 	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_decldict.begin(); }
 	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_decldict.end(); }
 	inline virtual CDeclarationDictionary::size_type declSize() const { return m_decldict.size(); }
 	inline const CDeclaration *declFindAndUpdate(const CToken &name, unsigned int curColorSize) { return m_decldict.findAndUpdate(name, curColorSize); }
+	inline const CDeclaration *declFindAndUpdate(
+		const char*tableNamespace,
+		const char *table,
+		const char *var,
+		const CTokenizer &tokenizer,
+		unsigned int curColorSize)
+	{
+		return m_decldict.findAndUpdate(tableNamespace, table, var, tokenizer, curColorSize);
+	}
 	inline void declAdd(CDeclaration *decl) { return m_decldict.add(decl); }
 	//@}
 }; // CRenderState

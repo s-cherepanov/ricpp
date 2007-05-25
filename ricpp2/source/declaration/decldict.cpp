@@ -42,6 +42,45 @@ CDeclarationDictionary::~CDeclarationDictionary()
 	}
 }
 
+const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const
+{
+	if ( emptyStr(var) )
+		return 0;
+
+	CToken c;
+	std::string s;
+
+	if ( notEmptyStr(tableNamespace) ) {
+		s = tableNamespace;
+		s += ':';
+		if ( notEmptyStr(tableNamespace) ) {
+			s += table;
+			s += ':';
+		}
+		s += var;
+
+		if ( tokenizer.find(s.c_str(), c) ) {
+			return find(c);
+		}
+	}
+
+	if ( notEmptyStr(table) ) {
+		s = table;
+		s += ':';
+		s += nonullstr(var);
+		if ( tokenizer.find(s.c_str(), c) ) {
+			return find(c);
+		}
+	}
+
+	s = var;
+	if ( tokenizer.find(s.c_str(), c) ) {
+		return find(c);
+	}
+
+	return 0;
+}
+
 const CDeclaration *CDeclarationDictionary::findAndUpdate(const CToken &name, unsigned int curColorSize)
 {
 	const CDeclaration *decl = find(name);
@@ -68,6 +107,51 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(const CToken &name, un
 	m_active.unRegisterObj(decl->token());
 	m_active.registerObj(newDecl->token(), newDecl);
 	return newDecl;
+}
+
+const CDeclaration *CDeclarationDictionary::findAndUpdate(
+	RtToken tableNamespace,
+	const char *table,
+	const char *var,
+	const CTokenizer &tokenizer,
+	unsigned int curColorSize
+)
+{
+	if ( emptyStr(var) )
+		return 0;
+
+	CToken c;
+	std::string s;
+
+	if ( notEmptyStr(tableNamespace) ) {
+		s = tableNamespace;
+		s += ':';
+		if ( notEmptyStr(tableNamespace) ) {
+			s += table;
+			s += ':';
+		}
+		s += var;
+
+		if ( tokenizer.find(s.c_str(), c) ) {
+			return findAndUpdate(c, curColorSize);
+		}
+	}
+
+	if ( notEmptyStr(table) ) {
+		s = table;
+		s += ':';
+		s += nonullstr(var);
+		if ( tokenizer.find(s.c_str(), c) ) {
+			return findAndUpdate(c, curColorSize);
+		}
+	}
+
+	s = var;
+	if ( tokenizer.find(s.c_str(), c) ) {
+		return findAndUpdate(c, curColorSize);
+	}
+
+	return 0;
 }
 
 void CDeclarationDictionary::add(CDeclaration *decl)

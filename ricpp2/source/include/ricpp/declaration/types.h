@@ -30,7 +30,12 @@
  *  @brief Possible basic types, types and classes
  */
  
+#ifndef _RICPP_RICPP_RICPP_H
+#include "ricpp/ricpp/ricpp.h"
+#endif // _RICPP_RICPP_RICPP_H
+
 #include <stddef.h>
+
 namespace RiCPP {
 
 /**! @brief Possible basic types. All types consists of these basic types.
@@ -100,18 +105,46 @@ enum EnumClasses {
  */
 const int N_CLASSES = (int)CLASS_FACEVERTEX+1;
 
+/**! @brief Possible table namespaces for declarations
+ */
+enum EnumNamespaces {
+	NAMESPACE_UNKNOWN = 0,//!< Unknown basic type
+	NAMESPACE_AREALIGHT,
+	NAMESPACE_LIGHT,
+	NAMESPACE_SURFACE,
+	NAMESPACE_VOLUME,
+	NAMESPACE_IMAGER,
+	NAMESPACE_DISPLACEMENT,
+	NAMESPACE_DEFORMATION,
+	NAMESPACE_INTERIOR,
+	NAMESPACE_EXTERIOR,
+	NAMESPACE_ATMOSPHERE,
+	NAMESPACE_ATTRIBUTE,
+	NAMESPACE_OPTION,
+	NAMESPACE_GEOMETRY,
+	NAMESPACE_HIDER,
+	NAMESPACE_RESOURCE
+};
+
+/**! @brief Number of basic types
+ */
+const int N_NAMESPACES = (int)NAMESPACE_RESOURCE+1;
+
 /** @brief Class to query info about Ri-types that can occur in declarations.
  */
 class CTypeInfo {
 	static const unsigned int m_basicTypeSizes[N_BASICTYPES]; ///< Number of bytes for the basic types
-	static const char *m_basicTypeNames[N_BASICTYPES]; ///< Names of basic types
+	static RtToken m_basicTypeNames[N_BASICTYPES]; ///< Names of basic types
 	static const unsigned int m_typeSizes[N_TYPES+1]; ///< Sizes of the types (+1 to have the same size as m_typeNames, but not needed)
-	static const char *m_typeNames[N_TYPES+1]; ///< Type names (+1 to recognize 'int', that is internally converted to 'integer' in typePrefix())
-	static const char *m_classNames[N_CLASSES]; ///< Storage class names
+	static RtToken m_typeNames[N_TYPES+1]; ///< Type names (+1 to recognize 'int', that is internally converted to 'integer' in typePrefix())
+	static RtToken m_classNames[N_CLASSES]; ///< Storage class names
 	static const unsigned int m_typeByteSizes[N_TYPES+1]; ///< Number of bytes for the types
 	static const EnumBasicTypes m_basicTypesForTypes[N_TYPES+1]; ///< Basic types the types consists of.
+	static RtToken m_namespaces[N_NAMESPACES]; ///< Table namespaces
 
 	/** @brief Compares prefixes
+	 * Compares if @token is a prefix of @search, after the
+	 * prefix a blank, [ or : must be there as a seperator.
 	 * @param token Prefix to search
 	 * @param search token is tested to be a prefix of search
 	 * @return Like in strcmp():
@@ -127,7 +160,7 @@ public:
 	 * @return The name (like in RIB or declarations) of a basic type
 	 * @see EnumBasicTypes
 	 */
-	static const char *basicTypeName(EnumBasicTypes e);
+	static RtToken basicTypeName(EnumBasicTypes e);
 
 	/** @brief Gets the size of a basic types in bytes
 	 * @param e Ri basic type
@@ -141,7 +174,7 @@ public:
 	 * @return The name (like in RIB or declarations) of a type
 	 * @see EnumTypes
 	 */
-	static const char *typeName(EnumTypes e);
+	static RtToken typeName(EnumTypes e);
 
 	/** @brief Gets the size of a types in elements
 	 *
@@ -172,7 +205,13 @@ public:
 	 * @param e Ri storage class
 	 * @return The name of a storage class as used in declarations and RIB
 	 */
-	static const char *className(EnumClasses e);
+	static RtToken className(EnumClasses e);
+
+	/** @brief Gets the name of the table namespace [QRM]
+	 * @param e (Q)Ri table namespace
+	 * @return The name of a table namespace as used in declarations and RIB
+	 */
+	static RtToken tableNamespace(EnumNamespaces e);
 
 	/** @brief Tries to find a class name as prefix of aclass.
 	 * @param aclass string possibly having class name as prefix
@@ -197,6 +236,13 @@ public:
 	 *  -  > 0, \[n\] found, returns the n
 	 */
 	static int arrayPrefix(const char *acard, size_t &pos);
+
+	/** @brief Tries to find a namespace+':' as prefix of avar.
+	 * @param avar string possibly having namespace+':' as prefix
+	 * @retval pos if found position right behind the prefix
+	 * @return NAMESPACE_UNKNOWN if no prefix found, matching EnumNamespaces if found.
+	 */
+	static EnumNamespaces namespacePrefix(const char *avar, size_t &pos);
 }; // CTypeInfo
 
 } // namespace RiCPP

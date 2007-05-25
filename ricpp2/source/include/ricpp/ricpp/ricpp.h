@@ -284,10 +284,51 @@ const RtToken  RI_CATMULLCLARK = "catmull-clark", RI_HOLE = "hole", RI_CREASE = 
  *  @brief Additional tokens, used by RiCPP
  */
 //@{
-const RtToken RI_ARCHIVE = "archive"; //!< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code
+const RtToken RI_ARCHIVE = "archive"; //!< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code or resource type
 const RtToken RI_DRAFT = "draft"; //!< fast draft renderer type (\a IRiContext::rendererType()) with limited implementation of the RI
 const RtToken RI_REALISTIC = "realistic"; //!< photo realistic renderer type (\a IRiContext::rendererType())  implementing the full RI
 const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL!!!
+
+const RtToken RI_EMPTY   = ""; //!< Empty String "not" used instead of RI_NULL!!!
+const RtToken RI_FLOAT   = "float";
+const RtToken RI_INTEGER = "integer";
+const RtToken RI_STRING  = "string";
+const RtToken RI_POINT   = "point";
+const RtToken RI_VECTOR  = "vector";
+const RtToken RI_NORMAL  = "normal";
+const RtToken RI_HPOINT  = "hpoint";
+const RtToken RI_MATRIX  = "matrix";
+const RtToken RI_COLOR   = "color";
+const RtToken RI_INT     = "int"; //!< RI_INTEGER is used internally, RI_INT is only used for parsing
+
+// const RtToken RI_CONSTANT = "constant"; // already a RtToken
+const RtToken RI_UNIFORM = "uniform";
+const RtToken RI_VARYING = "varying";
+const RtToken RI_VERTEX = "vertex";
+const RtToken RI_FACEVARYING = "facevarying";
+const RtToken RI_FACEVERTEX = "facevertex";
+
+const RtToken RI_AREALIGHT = "arealight";
+const RtToken RI_LIGHT = "light";
+const RtToken RI_SURFACE = "surface";
+const RtToken RI_VOLUME = "volume";
+const RtToken RI_IMAGER = "imager";
+const RtToken RI_DISPLACEMENT = "displacement";
+const RtToken RI_DEFORMATION = "deformation";
+const RtToken RI_INTERIOR = "interior";
+const RtToken RI_EXTERIOR = "exterior";
+const RtToken RI_ATMOSPHERE = "atmosphere";
+const RtToken RI_ATTRIBUTE = "attribute";
+const RtToken RI_OPTION = "option";
+const RtToken RI_GEOMETRY = "geometry";
+const RtToken RI_HIDER = "hider";
+const RtToken RI_RESOURCE = "resource";
+
+// const RtToken RI_GEOMETRICAPPROXYMATION = "geometricapproximation"; // Not used
+const RtToken RI_DEVIATION = "deviation";
+const RtToken RI_TESSELATION = "tesselation";
+// const RtToken RI_RASTER = "raster"; // already a RtToken
+const RtToken RI_PARAMETRIC = "parametric";
 //@}
 //@}
 
@@ -450,10 +491,34 @@ public:
 	 */
     virtual RtVoid synchronize(RtToken name) = 0;
 
+	//! @brief Create an external resource
+	/*! Took sematics from QRM, see QRMSpec.rtfd (Next, Hydra) External resources, Pixie (other meaning, RtVoid)
+	 *  Helps to get rid of a bunch of ressource handling (e.g. when to destroy a memory stored rib archive).
+	 *  resourceV() includes an implicit createHandle (createHandle is not explicitely implemented).
+	 *  There is no Rib-Binding, since not standard, in RIB binding,
+	 *  in Rib binding the resource is replaced inline or the name is propagated.
+	 *
+	 * Types can be:
+	 *
+	 *  RtArchive : RiRoot::readArchiveV()
+	 *
+     *  @param name Name of the resource
+	 *  @return The handle for the resource, can be used in various places like
+	 *          @c readArchive() as parameter @a name - that's different to QRM.
+	 */
+	virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+
+	//! @brief Removes an external resource from memory (added)
+	/*! Removes a resource that was declared by @c resourceV() from memory. The @a handle
+	 *  cannot accessed after removed (results in error)
+	 *  There is no Rib-Binding, since not standard.
+     *  @param handle Resource handle that is freed
+	 */
+	virtual RtVoid freeResource(RtToken handle) = 0;
+
 	/*
 	// -> QRM
 	virtual RtToken createHandle(RtToken handle, RtToken type) = 0;
-	virtual version(RtFloat version) = 0;
 	*/
 
 	/** @defgroup ricpp_modes Ri Modes
@@ -529,6 +594,12 @@ public:
 	 */
     virtual RtVoid objectInstance(RtObjectHandle handle) = 0;
 
+	//! @brief Explicitely frees an object handle
+	/*! There is no Rib-Binding (simply ignored), since not standard.
+	 *  @param handle Reference to an object, returned by objectBegin
+	 */
+    virtual RtVoid freeObject(RtObjectHandle handle) = 0;
+
 	//! @brief Starts a motion block
 	/*! @param N     Number of samples (length of times)
 	 *  @param times Vector of samples
@@ -539,25 +610,26 @@ public:
     virtual RtVoid motionEnd(void) = 0;
 
 	/*
-	// -> QRM
+	// -> QRM, object will be handled like macro
 	virtual RtToken macroBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 	virtual RtVoid macroEnd(void) = 0;
 	virtual RtToken macroInstance(RtToken macro, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 
+	// -> QRM
+	// Here: Version must be printed some how by Rib writer, since only this object 'knows' whitch version it writes
 	virtual version(RtFloat version) = 0;
-
-	// -> QRM, old QRMSpec.rtfd (Next, Hydra) External resources, Pixie (other meaning, RtVoid)
-	virtual RtToken resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 
 	// -> Pixie (http://www.george-graphics.co.uk/pixiewiki/Main_Page)
 	virtual RtVoid resourceBegin(RtVoid) = 0;
 	virtual RtVoid resourceEnd(RtVoid) = 0;
 
 	// -> Pixie, 3Delight (archiveInstance)
+	// same as macros?
     virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 	virtual RtVoid archiveEnd(void) = 0;
 	virtual RtVoid archiveInstance(RtArchiveHandle handle) = 0;
 	*/
+
 	//@}
 
 	/** @defgroup ricpp_options Ri Options
@@ -886,11 +958,13 @@ public:
 	 */
 	virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
 
-	//! Sets the criterion for approximating the surface primitives with other, more easily rendered, primitives (usually polygons)
-	/*!  @param type Type of criterion for approximation, e.g. RI_TESSELATION in TGLRenderer
+	//! Sets the criterion for approximating the surface primitives
+	/*! The primitives are approximated with other, more easily rendered,
+	 * primitives (usually polygons), the [QRM] Spec is used here.
+	 *  @param type Type of criterion for approximation, e.g. RI_TESSELATION in TGLRenderer
 	 *  @param value metric for the criterion, e.g. the number of polygons generated by a tesselation in TGLRenderer
 	 */
-    virtual RtVoid geometricApproximation(RtToken type, RtFloat value) = 0;
+    virtual RtVoid geometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	//! Sets the type of the geometric representation used to represent the primitives
 	/*! @param type Type of representation, e.g. RI_POINTS for points at vertices
@@ -1509,6 +1583,10 @@ public:
 	 */
 	virtual RtInt lastError() = 0;
 
+	/** @brief Frees a ressource handle, see IRiRoot::resourceV()
+	 */
+	virtual RtToken resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
+
 	/** @defgroup ricpp_contexts Ri context handlers
 	 *  @brief Contexts
 	 */
@@ -1525,9 +1603,6 @@ public:
 	//@}
 
 	/*
-	// -> QRM, old QRMSpec.rtfd (Next, Hydra) External resources, Pixie (other meaning, RtVoid)
-	virtual RtToken resource(RtToken handle, RtToken type, ...) = 0;
-
 	// QRM
 	virtual RtToken macroBegin(RtString name, ...) = 0;
 	virtual RtToken macroInstance(RtToken macro, ...) = 0;
@@ -1539,6 +1614,7 @@ public:
 	/** @addgroup ricpp_modes Ri Modes
 	 */
 	//@{
+
 	//! Starts a motion block for a moving primitive
 	/*! @param N     Number of samples (length of times)
 	 *  @param sample First of the N samples
@@ -1613,6 +1689,10 @@ public:
 	/** @brief the current displacement shader, see IRiRoot::displacementV()
 	 */
 	virtual RtVoid displacement(RtString name, RtToken token = RI_NULL, ...) = 0;
+
+	/** @brief The current displacement shader, see IRiRoot::geometricApproximationV()
+	 */
+    virtual RtVoid geometricApproximation(RtToken type,  RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @addgroup ricpp_transforms Ri Transformations

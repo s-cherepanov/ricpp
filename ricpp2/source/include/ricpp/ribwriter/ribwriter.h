@@ -62,8 +62,17 @@ protected:
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
 
-	inline virtual RtToken doDeclare(RtString name, RtString declaration) { return RI_NULL; }
+	inline virtual RtToken doDeclare(RtString name, RtString declaration)
+	{
+		return CBaseRenderer::doDeclare(name, declaration);
+	}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
+
+	virtual RtToken doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[])
+	{
+		return CBaseRenderer::doResourceV(name, type, n, tokens, parms);
+	}
+	virtual RtVoid doFreeResource(RtToken handle) {}
 
 	inline virtual RtVoid doBegin(RtString name) {}
 	inline virtual RtVoid doEnd(void) {}
@@ -83,9 +92,13 @@ protected:
     inline virtual RtVoid doSolidBegin(RtToken type) {}
     inline virtual RtVoid doSolidEnd(void) {}
 
-	inline virtual RtObjectHandle doObjectBegin(void) { return illObjectHandle; }
+	inline virtual RtObjectHandle doObjectBegin(void)
+	{
+		return CBaseRenderer::doObjectBegin();
+	}
 	inline virtual RtVoid doObjectEnd(void) {}
     inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
+    inline virtual RtVoid doFreeObject(RtObjectHandle handle) {}
 
     inline virtual RtVoid doMotionBeginV(RtInt N, RtFloat times[]) {}
     inline virtual RtVoid doMotionEnd(void) {}
@@ -112,8 +125,14 @@ protected:
     inline virtual RtVoid doRelativeDetail(RtFloat relativedetail) {}
     inline virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	
-    inline virtual RtLightHandle doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
-	inline virtual RtLightHandle dodreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
+    inline virtual RtLightHandle doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return CBaseRenderer::doLightSourceV(name, n, tokens, params);
+	}
+	inline virtual RtLightHandle doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return CBaseRenderer::doAreaLightSourceV(name, n, tokens, params);
+	}
 	
 
     inline virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
@@ -132,7 +151,7 @@ protected:
 	inline virtual RtVoid doBound(RtBound bound) {}
 	inline virtual RtVoid doDetail(RtBound bound) {}
 	inline virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
-    inline virtual RtVoid doGeometricApproximation(RtToken type, RtFloat value) {}
+    inline virtual RtVoid doGeometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doGeometricRepresentation(RtToken type) {}
 	inline virtual RtVoid doOrientation(RtToken orientation) {}
 	inline virtual RtVoid doReverseOrientation(void) {}
@@ -151,7 +170,10 @@ protected:
 	inline virtual RtVoid doDeformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doCoordinateSystem(RtToken space) {}
 	inline virtual RtVoid doCoordSysTransform(RtToken space) {}
-	inline virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
+	inline virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
+	{
+		return CBaseRenderer::doTransformPoints(fromspace, tospace, npoints, points);
+	}
 
     inline virtual RtVoid doPolygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doGeneralPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]) {}

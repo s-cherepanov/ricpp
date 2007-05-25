@@ -55,6 +55,7 @@ protected:
 	virtual RtVoid doAbort(void) = 0;
 	virtual RtVoid doActivate(void) = 0;
 	virtual RtVoid doDeactivate(void) = 0;
+	//@}
 
 	/** The interface functions similar to IRiCPP
 	 */
@@ -62,6 +63,9 @@ protected:
 
 	virtual RtToken doDeclare(RtString name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
+
+	virtual RtToken doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+	virtual RtVoid doFreeResource(RtToken handle) = 0;
 
 	virtual RtVoid doBegin(RtString name) = 0;
 	virtual RtVoid doEnd(void) = 0;
@@ -84,6 +88,7 @@ protected:
 	virtual RtObjectHandle doObjectBegin(void) = 0;
 	virtual RtVoid doObjectEnd(void) = 0;
     virtual RtVoid doObjectInstance(RtObjectHandle handle) = 0;
+	virtual RtVoid doFreeObject(RtObjectHandle handle) = 0;
 
     virtual RtVoid doMotionBeginV(RtInt N, RtFloat times[]) = 0;
     virtual RtVoid doMotionEnd(void) = 0;
@@ -129,7 +134,7 @@ protected:
 	virtual RtVoid doBound(RtBound bound) = 0;
 	virtual RtVoid doDetail(RtBound bound) = 0;
 	virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
-    virtual RtVoid doGeometricApproximation(RtToken type, RtFloat value) = 0;
+    virtual RtVoid doGeometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doGeometricRepresentation(RtToken type) = 0;
 	virtual RtVoid doOrientation(RtToken orientation) = 0;
 	virtual RtVoid doReverseOrientation(void) = 0;

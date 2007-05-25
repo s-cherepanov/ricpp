@@ -27,39 +27,44 @@
  *  @brief Implements helpers for ri types
  */
 #include "ricpp/declaration/types.h"
-#include "ricpp/ricpp/ricpp.h"
+#include "ricpp/tools/inlinetools.h"
 
 #include <string.h>
 #include <ctype.h>
 
+#include <string>
+
 using namespace RiCPP;
 
-const unsigned int CTypeInfo::m_basicTypeSizes[N_BASICTYPES] = {
+const unsigned int CTypeInfo::m_basicTypeSizes[N_BASICTYPES] =
+{
 	0,
 	sizeof(RtInt),
 	sizeof(RtFloat),
 	sizeof(RtString)
 };
 
-const char *CTypeInfo::m_basicTypeNames[N_BASICTYPES] = {
-	"",
-	"float",
-	"integer",
-	"string"
+RtToken CTypeInfo::m_basicTypeNames[N_BASICTYPES] =
+{
+	RI_EMPTY,
+	RI_FLOAT,
+	RI_INTEGER,
+	RI_STRING
 };
 
-const char *CTypeInfo::m_typeNames[N_TYPES+1] = {
-	"",
-	"float",
-	"integer",
-	"string",
-	"point",
-	"vector",
-	"normal",
-	"hpoint",
-	"matrix",
-	"color"
-	"int"
+RtToken CTypeInfo::m_typeNames[N_TYPES+1] =
+{
+	RI_EMPTY,
+	RI_FLOAT,
+	RI_INTEGER,
+	RI_STRING,
+	RI_POINT,
+	RI_VECTOR,
+	RI_NORMAL,
+	RI_HPOINT,
+	RI_MATRIX,
+	RI_COLOR,
+	RI_INT
 };
 
 const unsigned int CTypeInfo::m_typeSizes[N_TYPES+1] =
@@ -107,25 +112,47 @@ const EnumBasicTypes CTypeInfo::m_basicTypesForTypes[N_TYPES+1] =
 	BASICTYPE_INTEGER   // (RtInt)
 };
 
-const char *CTypeInfo::m_classNames[N_CLASSES] = {
-	"",
-	"constant",
-	"uniform",
-	"varying",
-	"vertex",
-	"facevarying",
-	"facevertex"
+RtToken CTypeInfo::m_classNames[N_CLASSES] =
+{
+	RI_EMPTY,
+	RI_CONSTANT,
+	RI_UNIFORM,
+	RI_VARYING,
+	RI_VERTEX,
+	RI_FACEVARYING,
+	RI_FACEVERTEX
 };
 
-int CTypeInfo::tokcmp(const char *token, const char *search) {
-	if ( !token ) return search && *search ? -1 : 0;
-	if ( !search ) return token && *token ? 1 : 0;
+RtToken CTypeInfo::m_namespaces[N_NAMESPACES] =
+{
+	RI_EMPTY,
+	RI_AREALIGHT,
+	RI_LIGHT,
+	RI_SURFACE,
+	RI_VOLUME,
+	RI_IMAGER,
+	RI_DISPLACEMENT,
+	RI_DEFORMATION,
+	RI_INTERIOR,
+	RI_EXTERIOR,
+	RI_ATMOSPHERE,
+	RI_ATTRIBUTE,
+	RI_OPTION,
+	RI_GEOMETRY,
+	RI_HIDER,
+	RI_RESOURCE
+};
+
+int CTypeInfo::tokcmp(const char *token, const char *search)
+{
+	if ( emptyStr(token) ) return search && *search ? -1 : 0;
+	if ( emptyStr(search) ) return token && *token ? 1 : 0;
 
 	int comp;
 	const char *cp1 = token;
 	const char *cp2 = search;
 
-	while ( *cp2 && !isspace(*cp2) && *cp2 != '[' ) {
+	while ( *cp2 && !isspace(*cp2) && *cp2 != '[' && *cp2 != ':' ) {
 		if ( !*cp1 )
 			return -1;
 		comp = *cp1 - *cp2;
@@ -140,7 +167,29 @@ int CTypeInfo::tokcmp(const char *token, const char *search) {
 }
 
 
-EnumClasses CTypeInfo::classPrefix(const char *aclass, size_t &pos) {
+EnumNamespaces CTypeInfo::namespacePrefix(const char *avar, size_t &pos)
+{
+	int i;
+	if ( emptyStr(avar) )
+		return NAMESPACE_UNKNOWN;
+	for ( i = 1; i < N_NAMESPACES; ++i ) {
+		if ( !tokcmp(m_namespaces[i], avar) ) {
+			pos = strlen(m_namespaces[i]);
+			if ( avar[pos] == ':' ) {
+				++pos;
+			} else {
+				if ( avar[pos] && avar[pos] != ':' ) {
+					return NAMESPACE_UNKNOWN;
+				}
+			}
+			return (EnumNamespaces)i;
+		}
+	}
+	return NAMESPACE_UNKNOWN;
+}
+
+EnumClasses CTypeInfo::classPrefix(const char *aclass, size_t &pos)
+{
 	int i;
 	if ( !aclass ) return CLASS_UNKNOWN;
 	for ( i = 1; i < N_CLASSES; ++i ) {
@@ -153,7 +202,8 @@ EnumClasses CTypeInfo::classPrefix(const char *aclass, size_t &pos) {
 }
 
 
-EnumTypes CTypeInfo::typePrefix(const char *type, size_t &pos) {
+EnumTypes CTypeInfo::typePrefix(const char *type, size_t &pos)
+{
 	int i;
 	if ( !type ) return TYPE_UNKNOWN;
 	for ( i = 1; i < N_TYPES+1; ++i ) {
@@ -169,7 +219,8 @@ EnumTypes CTypeInfo::typePrefix(const char *type, size_t &pos) {
 	return TYPE_UNKNOWN;
 }
 
-int CTypeInfo::arrayPrefix(const char *acard, size_t &pos) {
+int CTypeInfo::arrayPrefix(const char *acard, size_t &pos)
+{
 	int state = 0;
 	int retval = 0;
 	if ( !acard ) return 0;
@@ -213,7 +264,7 @@ int CTypeInfo::arrayPrefix(const char *acard, size_t &pos) {
 }
 
 
-const char *CTypeInfo::basicTypeName(EnumBasicTypes e)
+RtToken CTypeInfo::basicTypeName(EnumBasicTypes e)
 {
 	return m_basicTypeNames[e];
 }
@@ -224,7 +275,7 @@ unsigned int CTypeInfo::basicTypeByteSize(EnumBasicTypes e)
 }
 
 
-const char *CTypeInfo::typeName(EnumTypes e)
+RtToken CTypeInfo::typeName(EnumTypes e)
 {
 	return m_typeNames[e];
 }
@@ -234,9 +285,14 @@ unsigned int CTypeInfo::typeSize(EnumTypes e)
 	return m_typeSizes[e];
 }
 
-const char *CTypeInfo::className(EnumClasses e)
+RtToken CTypeInfo::className(EnumClasses e)
 {
 	return m_classNames[e];
+}
+
+RtToken CTypeInfo::tableNamespace(EnumNamespaces e)
+{
+	return m_namespaces[e];
 }
 
 unsigned int CTypeInfo::typeByteSize(EnumTypes e)

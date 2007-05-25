@@ -51,7 +51,17 @@ namespace RiCPP {
  * @see CDeclarationDictionary, @subpage page_decl
  */
 class CDeclaration {
-	std::string m_name;         ///< Name of the declaration
+	/** @brief Name of the declaration.
+	 * The name has the form [[namespace:]table:]var
+	 * (QRM notation, namespace ENamespaces, table e.g. surface shader name, var variable name),
+	 * the name as given in the declaration is the token that is stored in the
+	 * dictionary. The declaration can be overwritten by excactly the same name.
+	 * @see var()
+	 */
+	std::string m_name;         
+	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...)
+	std::string m_table;        ///< Optional name of the table
+	std::string m_var;          ///< Stripped name of the variable
 	CToken m_token;             ///< Token for the declaration, if not inline
 	EnumClasses m_class;        ///< Storage class of the declaration
 	EnumTypes m_type;           ///< Type of the elements
@@ -67,6 +77,14 @@ class CDeclaration {
 	
 	bool m_isInline;            ///< True, if it is an inline declaration - can be destroyed with the parameter
 	bool m_isDefault;           ///< True, if a default declaration of the renderer (like @c RI_P)
+
+
+	/** @brief Parses m_name into m_namespace, m_table and m_var
+	 *  
+	 * @return false, if parsing cannot be done (namespace but no table name, another ':' behind the table name)
+	 * @see var()
+	 */
+	bool stripName();
 
 	/** @brief Parses a declaration.
 	 *
@@ -124,6 +142,44 @@ public:
 	 *  @return Name of the declaration
 	 */
 	inline const char *name() const { return m_name.c_str(); }
+
+	/** @brief Gets the namespace of the variable
+	 *
+	 *  [QRM] Can be the name of a request with declareable parameters surface, option, attribute
+	 * 
+	 *  @return Namespace identifier
+	 */
+	inline EnumNamespaces tableNamespace() const { return m_namespace; }
+
+	/** @brief Additional tablename if variable name is still not unique
+	 *
+	 *  [QRM] E.G. for an option "renderer" "searchpath": "option" is the
+	 *  namespace, renderer is the "table" and "searchpath" the variable name
+	 * 
+	 *  @return Table identifier
+	 */
+	inline const char *table() const { return m_table.c_str(); }
+
+	/** @brief Gets the stripped variable name of the declaration
+	 *
+	 *  (?) If only the stripped variable name is the variable name,
+	 *  that can be found in the parameter list,
+	 *  the searching for a variable in the dictionary must be done in 3 steps having the
+	 *  following order:
+	 *  <ol>
+	 *  <li> namespace:table:var </li>
+	 *  <li> table:var </li>
+	 *  <li> var </li>
+	 *  </ol>
+	 *
+	 *  If the qualified name is used where needed also in parameter lists, simple search 
+	 *  is enought. The stripped variable name is used in shaders.
+	 *
+	 *  @return Stripped variable name
+	 *  @see CDeclarationDictionary
+	 */
+	inline const char *var() const { return m_var.c_str(); }
+
 
 	/** @brief Gets the token for the declaration name
 	 *  @return Token of the declaration name, id=0 if it is an inline declaration

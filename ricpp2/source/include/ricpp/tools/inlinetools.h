@@ -59,5 +59,13 @@ inline bool emptyStr(const char *str)
 	return !str || !*str;
 }
 
+/** @brief Tests if string is not empty
+ * @param str String to test
+ * @return true, if str is not 0 or nor ""
+ */
+inline bool notEmptyStr(const char *str)
+{
+	return str && *str;
+}
 } // namespace RiCPP
 #endif // _RICPP_TOOLS_INLINETOOLS_H

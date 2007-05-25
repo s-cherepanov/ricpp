@@ -43,6 +43,10 @@ enum EnumRequests {
 	REQ_GET_CONTEXT,				//!< Index for ri function IRi::getContext() (no RIB binding)
 	REQ_CONTEXT,					//!< Index for ri function IRi::context() (no RIB binding)
 
+	// Resource
+	REQ_RESOURCE,					//!< Index for ri function IRi::resource() (no RIB binding)
+	REQ_FREE_RESOURCE,				//!< Index for ri function IRi::freeResource() (no RIB binding)
+
 	// Modes
 
 	// Begin-end block
@@ -183,6 +187,7 @@ enum EnumRequests {
 
 	// retained geometry
 	REQ_OBJECT_INSTANCE,			//!< Index for ri function IRi::objectInstance()
+	REQ_FREE_OBJECT,				//!< Index for ri function IRi::freeObject() (no RIB binding)
 
 	// Map-making
 	REQ_MAKE_TEXTURE,				//!< Index for ri function IRi::makeTexture()

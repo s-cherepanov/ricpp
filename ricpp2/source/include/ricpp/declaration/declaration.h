@@ -62,7 +62,7 @@ class CDeclaration {
 	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...)
 	std::string m_table;        ///< Optional name of the table
 	std::string m_var;          ///< Stripped name of the variable
-	CToken m_token;             ///< Token for the declaration, if not inline
+	RtToken m_token;            ///< Token for the declaration, if not inline
 	EnumClasses m_class;        ///< Storage class of the declaration
 	EnumTypes m_type;           ///< Type of the elements
 	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type)
@@ -120,13 +120,13 @@ public:
 	CDeclaration(const char *parameterDeclstr, unsigned int curColorSize);
 	/** @brief Standard constructor for declarations CBaseRenderer::Declare().
 	 * Can throw a RIE_SYNTAX parsing error.
-	 * @param token The token for the declaration name, must not represent an empty string.
+	 * @param token The token (unique string, see CTokenizer) for the declaration name, must not represent an empty string.
 	 * @param declstr The declaration.
 	 * @param curColorSize The current size of color (number of floats).
 	 * @param isDefault A default declaration of the interface?
 	 * @exception ERendererError
 	 */
-	CDeclaration(CToken &token, const char *declstr, unsigned int curColorSize, bool isDefault);
+	CDeclaration(RtToken token, const char *declstr, unsigned int curColorSize, bool isDefault);
 	/** @brief Copy constructor for declaration with different color size
 	 * @param decl The CDeclaration instance to copy
 	 * @param newColorSize The new current size of color (number of floats).
@@ -184,7 +184,7 @@ public:
 	/** @brief Gets the token for the declaration name
 	 *  @return Token of the declaration name, id=0 if it is an inline declaration
 	 */
-	inline CToken token() const { return m_token; }
+	inline RtToken token() const { return m_token; }
 
 	/** @brief Tests if inline declaration
 	 *  @return True, if instance represents an inline declaration

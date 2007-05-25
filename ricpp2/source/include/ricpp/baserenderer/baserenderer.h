@@ -259,7 +259,7 @@ protected:
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
 
-	virtual RtToken doDeclare(RtString name, RtString declaration);
+	virtual RtToken doDeclare(RtToken name, RtString declaration);
 	virtual RtToken doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[])
 	{
 		return RI_NULL;

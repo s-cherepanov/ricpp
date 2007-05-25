@@ -27,7 +27,7 @@
 
 /** @file tokenizer.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Token factory
+ *  @brief Token dictionary
  */
 
 #ifndef _RICPP_DECLARATION_TOKEN_H
@@ -35,7 +35,7 @@
 #endif // _RICPP_DECLARATION_TOKEN_H
 
 #include <map>
-#include <string>
+#include <list>
 
 namespace RiCPP {
 
@@ -43,45 +43,60 @@ namespace RiCPP {
  *  @see CToken
  */
 class CTokenizer {
-	std::map<std::string, unsigned long> m_tokenMapper; ///< @brief Maps a token name to it's id
-	unsigned long m_nextIndex; ///< @brief The next id for a token
+	std::map<CToken, RtToken> m_tokenMapper; ///< @brief Maps a token name to it's id
+	std::list<const char *> m_strList; ///< @brief List of strings to delete at destructor
+
 public:
 	/** @brief Const iterator for the token maps.
 	 */
-	typedef std::map<std::string, unsigned long>::const_iterator const_iterator;
+	typedef std::map<CToken, RtToken>::const_iterator const_iterator;
+	typedef std::map<CToken, RtToken>::size_type size_type;
 
-	/** @brief Constructor, "" maps to 0 at the beginning
+	/** @brief Constructor
+	 * 
+	 * Maps the RtToken out of ricpp.h at the beginning
 	 */
-	inline CTokenizer() : m_nextIndex(1)
-	{
-		m_tokenMapper[""] = 0;
-	}
+	CTokenizer();
 
 	/** @brief Destructor
 	 */
-	inline ~CTokenizer() {}
+	inline ~CTokenizer()
+	{
+		std::list<const char *>::iterator i;
+		for ( i = m_strList.begin(); i != m_strList.end(); i++ ) {
+			if ( (*i) != 0 )
+				delete [](*i);
+		}
+	}
 
-	/** @brief Searches for a token and creates one if token name is not found
-	 *  @param name A pointer to a token name
-	 *  @return Token with name and id
+	/** @brief Searches for a token and creates one if token name is not found.
+	 *  @param name A pointer to a token name.
+	 *  @return Token with name and id.
 	 *  @exception ERendererError if the token cannot be created (out of memory).
 	 */
-	CToken findCreate(const char *name) // throw(ERendererException)
+	RtToken findCreate(const char *name) // throw(ERendererException)
 	;
 
-	/** @brief Searches for a token
-	 *  @param name A pointer to a token name
-	 *  @retval c If the token is found, it is copied to c
-	 *  @return true, if token could be found
+	/** @brief Searches for a token.
+	 *  @param name A pointer to a token name.
+	 *  @return != RI_NULL, if token could be found.
 	 */
-	bool find(const char *name, CToken &c) const;
+	RtToken find(const char *name) const;
+	
+	/** @brief Gets the const iterator.
+	 *  @return const_iterator for the token map.
+	 */
+	inline const const_iterator begin() const { return m_tokenMapper.begin(); }
 
-	/** @brief Searches for a token by id (normally not used)
-	 *  @param id Id of the token
-	 *  @retval c If the token is found, it is copied to c
-	 *  @return true, if token could be found
+	/** @brief Gets the end const iterator.
+	 *  @return end condition for const_iterator for the token map.
 	 */
-	bool find(unsigned long id, CToken &c) const;
+	inline const const_iterator end() const { return m_tokenMapper.end(); }
+
+	/** @brief Gets the size of the token map.
+	 *  @return Size of the token map.
+	 */
+	inline size_type size() const { return m_tokenMapper.size(); }
 }; // CTokenizer
 
 } // namespace RiCPP

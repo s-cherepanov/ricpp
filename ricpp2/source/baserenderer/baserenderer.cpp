@@ -48,27 +48,27 @@ void CBaseRenderer::initRenderState()
 RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized declare(\"%s\", \"%s\")", name ? name : "<null>", declaration ? declaration : "<null>");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized declare(\"%s\", \"%s\")", markemptystr(name), markemptystr(declaration));
 		return RI_NULL;
 	}
 
 	if ( !m_renderState->validRequest(REQ_DECLARE) ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_ERROR, "declare(\"%s\", \"%s\")", name ? name : "<null>", declaration ? declaration : "<null>");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_ERROR, "declare(\"%s\", \"%s\")", markemptystr(name), markemptystr(declaration));
 		return RI_NULL;
 	}
 
 	if ( !name || !*name ) {
-		ricppErrHandler().handleError(RIE_MISSINGDATA, RIE_ERROR, "name is missing in declare(\"%s\", \"%s\")", name ? name : "<null>", declaration ? declaration : "<null>");
+		ricppErrHandler().handleError(RIE_MISSINGDATA, RIE_ERROR, "name is missing in declare(\"%s\", \"%s\")", markemptystr(name), markemptystr(declaration));
 		return RI_NULL;
 	}
 
-	CToken t;
+	RtToken token;
 	CDeclaration *d = 0;
 	try {
-		t = m_renderState->tokFindCreate(name);
+		token = m_renderState->tokFindCreate(name);
 		// if no declaration only tokenize the name
 		if ( !emptyStr(declaration) ) {
-			d = new CDeclaration(t, declaration, 3, false); // <--- curColorSize if attributes are implemented !!!!
+			d = new CDeclaration(token, declaration, 3, false); // <--- curColorSize if attributes are implemented !!!!
 			if ( !d )
 				throw ERendererError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of \"%s\": \"%s\"", name, declaration);
 			m_renderState->declAdd(d);
@@ -78,18 +78,17 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		return RI_NULL;
 	}
 
-	RtToken tok;
 	try {
-		tok = doDeclare(t.name(), declaration);
+		token = doDeclare(token, declaration);
 	} catch ( ERendererError &e2 ) {
 		ricppErrHandler().handleError(e2);
 		return RI_NULL;
 	}
 
-	return tok;
+	return token;
 }
 
-RtToken CBaseRenderer::doDeclare(RtString name, RtString declaration)
+RtToken CBaseRenderer::doDeclare(RtToken name, RtString declaration)
 {
 	return name;
 }

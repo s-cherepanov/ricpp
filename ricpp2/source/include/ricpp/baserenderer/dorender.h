@@ -57,11 +57,19 @@ protected:
 	virtual RtVoid doDeactivate(void) = 0;
 	//@}
 
-	/** The interface functions similar to IRiCPP
+	/** The interface functions similar to IRiCPP, RtToken are tokenized strings here (CBaseRenderer used CTokenizer)
 	 */
 	//@{
 
-	virtual RtToken doDeclare(RtString name, RtString declaration) = 0;
+	/** @brief Called after declaration is done
+	 * 
+	 * After the declaration was performed, this callback is called with the new tokenized name.
+	 *
+	 * @param name Unique token for the declaration
+	 * @param declaration declaration string
+	 * @see CTokenizer, CBaseRenderer::declare()
+	 */
+	virtual RtToken doDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
 
 	virtual RtToken doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;

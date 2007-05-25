@@ -65,7 +65,7 @@ class CDeclarationDictionary
 	 * Only the copied pointers to objects of m_all.
 	 *
 	 */
-	class TObjPtrRegistry<CToken, const CDeclaration *> m_active;
+	class TObjPtrRegistry<RtToken, const CDeclaration *> m_active;
 	
 	/** @brief All declarations.
 	 *
@@ -78,11 +78,11 @@ class CDeclarationDictionary
 public:
 	/** @brief Const iterator for the elements.
 	 */
-	typedef TObjPtrRegistry<CToken, CDeclaration const *>::const_iterator const_iterator;
+	typedef TObjPtrRegistry<RtToken, CDeclaration const *>::const_iterator const_iterator;
 
 	/** @brief Size type for the number of stored elements
 	 */
-	typedef TObjPtrRegistry<CToken, CDeclaration const *>::size_type size_type;
+	typedef TObjPtrRegistry<RtToken, CDeclaration const *>::size_type size_type;
 
 	/** @brief Constructor.
 	 *
@@ -107,13 +107,13 @@ public:
 	 * the dictionary. Can only be used, if the number of color components
 	 * has not changed since declaration.
 	 *
-	 * @param name Token of the name of the declaration
+	 * @param token Token (unique string)  of the name of the declaration
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
-	 * @see find(const CToken &name, unsigned int curColorSize), CToken
+	 * @see find(RtToken name, unsigned int curColorSize), CTokenizer
 	 */
-	inline const CDeclaration *find(const CToken &name) const
+	inline const CDeclaration *find(RtToken token) const
 	{
-		return m_active.findObj(name);
+		return m_active.findObj(token);
 	}
 	
 	/** @brief Searches a declaration using three steps.
@@ -130,7 +130,7 @@ public:
 	 * @param var The stripped name of the variable
 	 * @param tokenizer The tokenizer with all tokens of a rendering context
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
-	 * @see find(const CToken &name, unsigned int curColorSize), CDeclaration
+	 * @see find(RtToken name, unsigned int curColorSize), CDeclaration
 	 */
 	const CDeclaration *find(RtToken tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const;
 
@@ -145,9 +145,9 @@ public:
 	 * @param curColorSize The current number of color components.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise.
 	 * @exception ERendererError Can throw this if @c RIE_NOMEM for a new color declaration.
-	 * @see find(const CToken &), CToken
+	 * @see find(RtToken), CTokenizer
 	 */
-	const CDeclaration *findAndUpdate(const CToken &name, unsigned int curColorSize)
+	const CDeclaration *findAndUpdate(RtToken token, unsigned int curColorSize)
 	// throw(ERendererError)
 	;
 

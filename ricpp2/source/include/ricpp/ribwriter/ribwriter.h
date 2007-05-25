@@ -62,7 +62,7 @@ protected:
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
 
-	inline virtual RtToken doDeclare(RtString name, RtString declaration)
+	inline virtual RtToken doDeclare(RtToken name, RtString declaration)
 	{
 		return CBaseRenderer::doDeclare(name, declaration);
 	}

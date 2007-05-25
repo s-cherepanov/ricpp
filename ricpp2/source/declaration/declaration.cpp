@@ -160,23 +160,24 @@ CDeclaration::CDeclaration(const char *parameterDeclstr, unsigned int curColorSi
 	m_namespace = NAMESPACE_UNKNOWN;
 	m_isDefault = false; // inline declarations are never default declarations
 	m_isInline = true;   // mark inline
+	m_token = RI_NULL;
 
 	if ( !parse(0, parameterDeclstr, curColorSize) ) {
 		throw ERendererError(RIE_SYNTAX, RIE_ERROR, (int)0, (const char *)0, parameterDeclstr);
 	}
 }
 
-CDeclaration::CDeclaration(CToken &token, const char *declstr, unsigned int curColorSize, bool isDefault)
+CDeclaration::CDeclaration(RtToken token, const char *declstr, unsigned int curColorSize, bool isDefault)
 {
 	m_namespace = NAMESPACE_UNKNOWN;
 	m_isDefault = isDefault;
 	m_isInline = false;
 	m_token = token;
-	if ( emptyStr(token.name()) ) {
+	if ( m_token == RI_NULL ) {
 		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "Declaration name is empty for \"%s\"", markemptystr(declstr));
 	}
-	if ( !parse(token.name(), declstr, curColorSize) ) {
-		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", markemptystr(token.name()), markemptystr(declstr));
+	if ( !parse(m_token, declstr, curColorSize) ) {
+		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", m_token, markemptystr(declstr));
 	}
 }
 

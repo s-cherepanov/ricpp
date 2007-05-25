@@ -77,24 +77,16 @@ public:
 	//@{
 	/** @brief Searches for a token
 	 *  @param name A pointer to a token name
-	 *  @retval c If the token is found, it is copied to c
-	 *  @return true, if token could be found
+	 *  @return RI_NULL if token not found, token otherwise
 	 */
-	inline virtual bool tokFind(const char *name, CToken &c) const = 0;
-
-	/** @brief Searches for a token by id (normally not used)
-	 *  @param id Id of the token
-	 *  @retval c If the token is found, it is copied to c
-	 *  @return true, if token could be found
-	 */
-	inline virtual bool tokFind(unsigned long id, CToken &c) const = 0;
+	inline virtual RtToken tokFind(const char *name) const = 0;
 	//@}
 
 	/** @defgroup decldict_interface_group CDeclarationDictionary functions
 	 *  @brief Reading the declaration dictionary.
 	 */
 	//@{
-	virtual const CDeclaration *declFind(const CToken &name) const = 0;
+	virtual const CDeclaration *declFind(RtToken name) const = 0;
 	virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const = 0;
 	virtual CDeclarationDictionary::const_iterator declBegin() const = 0;
 	virtual CDeclarationDictionary::const_iterator declEnd() const = 0;
@@ -193,24 +185,23 @@ public:
 	/** @defgroup tokenizer_group CTokenizer functions
 	 *  @brief Facading the tokenizer.
 	 *
-	 *  The tokenizer can be used to have unique strings as tokens CToken.
-	 *  CToken objects can be compared by their id fastly.
-	 *  @see CTokenizer, CToken
+	 *  The tokenizer can be used to have unique strings as tokens RtToken.
+	 *  RtToken can be compared by their address fastly.
+	 *  @see CTokenizer
 	 */
 	//@{
 	/** @brief Searches for a token and creates one if token name is not found
 	 *  @param name A pointer to a token name
-	 *  @return Token with name and id
+	 *  @return Unique RtToken
 	 *  @exception ERendererError if the token cannot be created (out of memory).
 	 */
-	inline CToken tokFindCreate(const char *name)
+	inline RtToken tokFindCreate(const char *name)
 	// throw(ERendererException)
 	{
 		return m_tokenizer.findCreate(name);
 	}
 
-	inline virtual bool tokFind(const char *name, CToken &c) const { return m_tokenizer.find(name, c); }
-	inline virtual bool tokFind(unsigned long id, CToken &c) const { return m_tokenizer.find(id, c); }
+	inline virtual RtToken tokFind(const char *name) const { return m_tokenizer.find(name); }
 	//@}
 
 	/** @defgroup decldict_group CDeclarationDictionary functions
@@ -219,12 +210,12 @@ public:
 	 *  The dictionary is filled by CBaseRenderer::declare()
 	 */
 	//@{
-	inline virtual const CDeclaration *declFind(const CToken &name) const { return m_decldict.find(name); }
+	inline virtual const CDeclaration *declFind(RtToken name) const { return m_decldict.find(name); }
 	inline virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const { return m_decldict.find(tableNamespace, table, var, tokenizer); }
 	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_decldict.begin(); }
 	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_decldict.end(); }
 	inline virtual CDeclarationDictionary::size_type declSize() const { return m_decldict.size(); }
-	inline const CDeclaration *declFindAndUpdate(const CToken &name, unsigned int curColorSize) { return m_decldict.findAndUpdate(name, curColorSize); }
+	inline const CDeclaration *declFindAndUpdate(RtToken name, unsigned int curColorSize) { return m_decldict.findAndUpdate(name, curColorSize); }
 	inline const CDeclaration *declFindAndUpdate(
 		const char*tableNamespace,
 		const char *table,

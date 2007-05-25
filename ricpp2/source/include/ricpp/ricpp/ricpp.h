@@ -240,7 +240,7 @@ const RtInt RIE_SEVERE         =  3;       ///< So bad you should probably abort
 const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code
 //@}
 
-/** @defgroup ricpp_tokens Ri tokens
+/** @defgroup ricpp_tokens Ri tokens, must be inserted into the CTokenizer, see tokenizer.cpp
  * @brief Definition of the tokens of the RenderMan interface
  */
 //@{
@@ -287,19 +287,16 @@ const RtToken  RI_CATMULLCLARK = "catmull-clark", RI_HOLE = "hole", RI_CREASE = 
 const RtToken RI_ARCHIVE = "archive"; //!< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code or resource type
 const RtToken RI_DRAFT = "draft"; //!< fast draft renderer type (\a IRiContext::rendererType()) with limited implementation of the RI
 const RtToken RI_REALISTIC = "realistic"; //!< photo realistic renderer type (\a IRiContext::rendererType())  implementing the full RI
-const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL!!!
 
-const RtToken RI_EMPTY   = ""; //!< Empty String "not" used instead of RI_NULL!!!
 const RtToken RI_FLOAT   = "float";
 const RtToken RI_INTEGER = "integer";
 const RtToken RI_STRING  = "string";
-const RtToken RI_POINT   = "point";
+const RtToken RI_POINT   = "point"; //<! That's a type not the parameter RI_P
 const RtToken RI_VECTOR  = "vector";
-const RtToken RI_NORMAL  = "normal";
-const RtToken RI_HPOINT  = "hpoint";
+const RtToken RI_NORMAL  = "normal"; //<! That's a type not the parameter RI_N
+const RtToken RI_HPOINT  = "hpoint"; //<! That's a type not the parameter RI_PW
 const RtToken RI_MATRIX  = "matrix";
 const RtToken RI_COLOR   = "color";
-const RtToken RI_INT     = "int"; //!< RI_INTEGER is used internally, RI_INT is only used for parsing
 
 // const RtToken RI_CONSTANT = "constant"; // already a RtToken
 const RtToken RI_UNIFORM = "uniform";
@@ -329,6 +326,10 @@ const RtToken RI_DEVIATION = "deviation";
 const RtToken RI_TESSELATION = "tesselation";
 // const RtToken RI_RASTER = "raster"; // already a RtToken
 const RtToken RI_PARAMETRIC = "parametric";
+
+const RtToken RI_INT     = "int"; //!< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
+const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL, used internally
+const RtToken RI_EMPTY   = ""; //!< Empty String marker, not a real token, only used internally,  "not" use this instead of RI_NULL!!!
 //@}
 //@}
 

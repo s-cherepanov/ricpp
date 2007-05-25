@@ -46,7 +46,9 @@ namespace RiCPP {
 
 /** @brief This class is used to implement the basis of a renderer context.
  *  
- *  It does type checking and calls the IDoRenderer do...() members if the checking was successful.
+ *  Finds the unique strings (tokens) for RtTokens and
+ *  it does type checking and calls the IDoRenderer do...() members if the checking was successful.
+ *  Maintains a render state.
  *  The concrete context inherits from CBaseRenderer and implements the IDoRenderer members for
  *  its rendering jobs. The CBaseRenderer is the foundation of the backend renderer context.
  */

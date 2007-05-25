@@ -108,7 +108,6 @@ class CRenderState : IRenderStateReader {
 public:
 
 	/** @brief Initializes the object
-	 *  @param aModeStack A reference to a valid mode stack
 	 *
 	 * The state object is created and
 	 * initialized, done at CBaseRenderer::begin() of the rendering context.
@@ -116,8 +115,12 @@ public:
 	 * an error if some objects cannot be created.
 	 * Rendering is not possible (context should be aborted)
 	 * in the case that the state cannot be fully initialized.
+	 *
+	 *  @param aModeStack A reference to a valid mode stack
+	 *  @exception ERendererError if the token cannot be created (out of memory while filling map).
 	 */
 	inline CRenderState(CModeStack &aModeStack)
+	// throw(ERendererError)
 	{
 		m_modeStack = &aModeStack;
 		m_frameNumber = 0;

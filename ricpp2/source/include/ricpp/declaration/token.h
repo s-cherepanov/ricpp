@@ -39,7 +39,12 @@
 namespace RiCPP {
 
 	/** @brief A registered token, the tokens are managed by CTokenizer
-	 *  @see CTokenizer
+	 *
+	 * Just stores a character pointer. CToken is used by CTokenManager.
+	 * The compare functions are used. CToken can be used ouside CTokenizer
+	 * to iterate through all declared tokens.
+	 *
+	 * @see CTokenizer
 	 */
 	class CToken
 	{

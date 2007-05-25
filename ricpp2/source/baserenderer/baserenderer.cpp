@@ -36,12 +36,34 @@ using namespace RiCPP;
 void CBaseRenderer::initRenderState()
 // throw ERendererError
 {
-	CModeStack *modeStack = getNewModeStack();
+	m_renderState = 0;
+	CModeStack *modeStack = 0;
+
+	try {
+		modeStack = getNewModeStack();
+	} catch (ERendererError &err) {
+		ricppErrHandler().handleError(err);
+		return;
+	} catch (...) {
+	}
+
 	if ( !modeStack ) {
 		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a mode stack");
 		return;
 	}
-	m_renderState = new CRenderState(*modeStack);
+
+	try {
+		m_renderState = new CRenderState(*modeStack);
+	} catch (ERendererError &err) {
+		ricppErrHandler().handleError(err);
+		return;
+	} catch (...) {
+	}
+
+	if ( !m_renderState ) {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a render state");
+		return;
+	}
 }
 
 

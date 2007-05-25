@@ -55,6 +55,7 @@ public:
 	/** @brief Constructor
 	 * 
 	 * Maps the RtToken out of ricpp.h at the beginning
+	 * @exception ERendererError if a token cannot be created (out of memory while filling map).
 	 */
 	CTokenizer();
 
@@ -70,11 +71,20 @@ public:
 	}
 
 	/** @brief Searches for a token and creates one if token name is not found.
-	 *  @param name A pointer to a token name.
-	 *  @return Token with name and id.
+	 *  @param name A pointer to a token name, the name is copied to a new memory area,
+	 *  if a new token must be created.
+	 *  @return Unique token
 	 *  @exception ERendererError if the token cannot be created (out of memory).
 	 */
 	RtToken findCreate(const char *name) // throw(ERendererException)
+	;
+
+	/** @brief Searches for a token and creates one if token name is not found.
+	 *  @param token A pointer to a token name, the pointer is stored as is
+	 *  @return Unique token (pointer of @a token)
+	 *  @exception ERendererError if the token cannot be created (out of memory while filling map).
+	 */
+	RtToken staticFindCreate(RtToken token) // throw(ERendererException)
 	;
 
 	/** @brief Searches for a token.

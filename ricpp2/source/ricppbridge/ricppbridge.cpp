@@ -521,7 +521,8 @@ RtVoid CRiCPPBridge::motionEnd(void)
 RtVoid CRiCPPBridge::synchronize(RtToken name)
 {
 	if ( !strcmp(name, RI_ABORT) ) {
-		m_ctxMgmt.abort();
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			m_ctxMgmt.abort();
 		return;
 	}
 

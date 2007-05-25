@@ -101,18 +101,13 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 	}
 
 	try {
-		token = doDeclare(token, declaration);
+		doDeclare(token, declaration);
 	} catch ( ERendererError &e2 ) {
 		ricppErrHandler().handleError(e2);
 		return RI_NULL;
 	}
 
 	return token;
-}
-
-RtToken CBaseRenderer::doDeclare(RtToken name, RtString declaration)
-{
-	return name;
 }
 
 RtVoid CBaseRenderer::begin(RtString name)

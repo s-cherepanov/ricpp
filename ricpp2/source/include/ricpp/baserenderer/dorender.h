@@ -39,7 +39,7 @@ namespace RiCPP {
 /** @brief Members called called with checked parameters (here from \a CBaseRenderer).
  *
  *  Renderer contexts can inherit from \a CBaseRenderer to implement these
- *  functions to do the rendering.
+ *  functions to do the rendering. Since this are callbacks, all functions have no return values.
 */
 class IDoRender : public IRiContext {
 public:
@@ -69,10 +69,10 @@ protected:
 	 * @param declaration declaration string
 	 * @see CTokenizer, CBaseRenderer::declare()
 	 */
-	virtual RtToken doDeclare(RtToken name, RtString declaration) = 0;
+	virtual RtVoid doDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
 
-	virtual RtToken doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+	virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 	virtual RtVoid doFreeResource(RtToken handle) = 0;
 
 	virtual RtVoid doBegin(RtString name) = 0;
@@ -93,7 +93,7 @@ protected:
     virtual RtVoid doSolidBegin(RtToken type) = 0;
     virtual RtVoid doSolidEnd(void) = 0;
 
-	virtual RtObjectHandle doObjectBegin(void) = 0;
+	virtual RtVoid doObjectBegin(void) = 0;
 	virtual RtVoid doObjectEnd(void) = 0;
     virtual RtVoid doObjectInstance(RtObjectHandle handle) = 0;
 	virtual RtVoid doFreeObject(RtObjectHandle handle) = 0;
@@ -123,8 +123,8 @@ protected:
     virtual RtVoid doRelativeDetail(RtFloat relativedetail) = 0;
     virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	
-    virtual RtLightHandle doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtLightHandle doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	
     virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doColor(RtColor Cs) = 0;
@@ -161,7 +161,8 @@ protected:
 	virtual RtVoid doDeformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid doCoordSysTransform(RtToken space) = 0;
-	virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
+	// only CBaseRenderer
+	// virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
 
     virtual RtVoid doPolygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doGeneralPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]) = 0;

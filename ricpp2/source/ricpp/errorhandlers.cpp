@@ -46,6 +46,8 @@ RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 
 RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
+	const IRi *pri = &ri;
+	pri = pri;
 	std::cout << "*** Code " <<
 		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
 		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
@@ -54,6 +56,8 @@ RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 
 RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
+	const IRi *pri = &ri;
+	pri = pri;
 	code = code;
 	severity = severity;
 	msg = msg;

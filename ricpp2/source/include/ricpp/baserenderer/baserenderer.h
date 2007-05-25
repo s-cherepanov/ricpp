@@ -261,12 +261,9 @@ protected:
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
 
-	virtual RtToken doDeclare(RtToken name, RtString declaration);
-	virtual RtToken doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[])
-	{
-		return RI_NULL;
-	}
-	virtual RtVoid doFreeResource(RtToken handle) {}
+	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
+	inline virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) {}
+	inline virtual RtVoid doFreeResource(RtToken handle) {}
 
 	inline virtual RtVoid doBegin(RtString name = RI_NULL) {}
 	inline virtual RtVoid doEnd(void) {}
@@ -286,7 +283,7 @@ protected:
     inline virtual RtVoid doSolidBegin(RtToken type) {}
     inline virtual RtVoid doSolidEnd(void) {}
 
-	inline virtual RtObjectHandle doObjectBegin(void) { return illObjectHandle; }
+	inline virtual RtVoid doObjectBegin(void) {}
 	inline virtual RtVoid doObjectEnd(void) {}
     inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
     inline virtual RtVoid doFreeObject(RtObjectHandle handle) {}
@@ -318,8 +315,8 @@ protected:
     inline virtual RtVoid doRelativeDetail(RtFloat relativedetail) {}
     inline virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	
-    inline virtual RtLightHandle doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
-	inline virtual RtLightHandle doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
+    inline virtual RtVoid doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { }
+	inline virtual RtVoid doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { }
 
     inline virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doColor(RtColor Cs) {}
@@ -356,7 +353,9 @@ protected:
 	inline virtual RtVoid doDeformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doCoordinateSystem(RtToken space) {}
 	inline virtual RtVoid doCoordSysTransform(RtToken space) {}
-	inline virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
+
+	// no do-funcltion
+	// inline virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
 
     inline virtual RtVoid doPolygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doGeneralPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]) {}

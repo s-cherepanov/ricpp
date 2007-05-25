@@ -143,7 +143,7 @@ class CTypeInfo {
 	static RtToken m_namespaces[N_NAMESPACES]; ///< Table namespaces
 
 	/** @brief Compares prefixes
-	 * Compares if @token is a prefix of @search, after the
+	 * Compares if @a token is a prefix of @a search. Behind the
 	 * prefix a blank, [ or : must be there as a seperator.
 	 * @param token Prefix to search
 	 * @param search token is tested to be a prefix of search
@@ -227,13 +227,13 @@ public:
 	 */
 	static EnumTypes typePrefix(const char *atype, size_t &pos);
 
-	/** @brief Tries to find an array specifier \[n\] as prefix of atype.
+	/** @brief Tries to find an array specifier [n] as prefix of atype.
 	 * @param acard string possibly having an array specifier as prefix
 	 * @retval pos if found position right behind the prefix
 	 * @return The size of the array
-	 *  -  < 0, syntax error or \[0\]
+	 *  -  < 0, syntax error or [0]
 	 *  - == 0, no cardinality found
-	 *  -  > 0, \[n\] found, returns the n
+	 *  -  > 0, [n] found, returns the n
 	 */
 	static int arrayPrefix(const char *acard, size_t &pos);
 

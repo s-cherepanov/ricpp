@@ -46,8 +46,6 @@
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
-#include <list>
-
 namespace RiCPP {
 
 /** @brief Dictionary for the declarations of a rendering context
@@ -130,7 +128,7 @@ public:
 	 * @param var The stripped name of the variable
 	 * @param tokenizer The tokenizer with all tokens of a rendering context
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
-	 * @see find(RtToken name, unsigned int curColorSize), CDeclaration
+	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
 	const CDeclaration *find(RtToken tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const;
 
@@ -141,7 +139,7 @@ public:
 	 * of the corrected declaration is stored as the new active one. The old, overwritten
 	 * declaration remains stored in m_all.
 	 *
-	 * @param name Token of the name of the declaration.
+	 * @param token Token of the name of the declaration.
 	 * @param curColorSize The current number of color components.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise.
 	 * @exception ERendererError Can throw this if @c RIE_NOMEM for a new color declaration.

@@ -74,6 +74,7 @@ public:
 	bool isValid(EnumRequests idxRequest, EnumModes idxMode) const;
 }; // CValidModes
 
+
 /** @brief Stores nested modes and checks validity of requests
  *
  * The checking is done in the member functions of CBaseRenderer objects
@@ -129,9 +130,10 @@ public:
 	/** @defgroup mode_group CModeStack, the modes
 	 * @brief Stacks the modes of the RenderMan interface
 	 *
-	 * Called by the CRenderState. The @cbegin - @c end calls must be balanced.
+	 * Called by the CRenderState. The @c begin - @c end calls must be balanced.
 	 */
 	//@{
+
 	/** @brief Begins a new rendering context, called once for each context for initialization
 	 * @see CBaseRenderer::begin()
 	 */

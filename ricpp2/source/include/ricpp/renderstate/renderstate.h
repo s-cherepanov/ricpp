@@ -38,10 +38,6 @@
 #include "ricpp/declaration/decldict.h"
 #endif // _RICPP_DECLARATION_DECLDICT_H
 
-#ifndef _RICPP_DECLARATION_TOKENIZER_H
-#include "ricpp/declaration/tokenizer.h"
-#endif // _RICPP_DECLARATION_TOKENIZER_H
-
 namespace RiCPP {
 
 /** @brief Interface to read the state of a renderer.

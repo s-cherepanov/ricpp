@@ -126,7 +126,7 @@ public:
 
 	/** @brief Formats the error/severity numbers to a string.
 	 *
-	 *  The format is "Error \[number:description\] Severity \[number:description\] formated error message",
+	 *  The format is "Error [number:description] Severity [number:description] formated error message",
 	 *  File and message parts are optional.
 	 *  @retVal strCode The error is formatted to this string
 	 *  @return strCode.c_str()

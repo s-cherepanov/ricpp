@@ -28,7 +28,6 @@
  */
 
 #include "ricpp/baserenderer/baserenderer.h"
-#include "ricpp/tools/inlinetools.h"
 #include <assert.h>
 
 using namespace RiCPP;

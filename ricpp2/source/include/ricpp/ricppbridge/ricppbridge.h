@@ -634,7 +634,7 @@ public:
 	virtual RtToken declare(RtString name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
 
-	virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]);
+	virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtToken resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...);
 
 	virtual RtVoid  freeResource(RtToken handle);

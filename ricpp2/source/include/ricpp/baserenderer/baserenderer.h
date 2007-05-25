@@ -113,7 +113,7 @@ public:
 
     inline virtual RtVoid synchronize(RtToken name) {}
 
-	inline virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) { return RI_NULL; }
+	inline virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) { return RI_NULL; }
 	inline virtual RtVoid  freeResource(RtToken handle) {}
 
 	/** @brief Initializes a new render context.
@@ -262,7 +262,7 @@ protected:
 	inline virtual RtVoid doDeactivate(void) {}
 
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
-	inline virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) {}
+	inline virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doFreeResource(RtToken handle) {}
 
 	inline virtual RtVoid doBegin(RtString name = RI_NULL) {}

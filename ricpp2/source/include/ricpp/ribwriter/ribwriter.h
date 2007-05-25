@@ -65,7 +65,7 @@ protected:
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
 
-	virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer parms[]) {}
+	virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	virtual RtVoid doFreeResource(RtToken handle) {}
 
 	inline virtual RtVoid doBegin(RtString name) {}

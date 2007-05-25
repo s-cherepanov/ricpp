@@ -57,7 +57,7 @@ elements of this framework. The classes CRiCPPBridge and CRendererLoader are two
 main parts of the frontend, that bridges to the backend, a class derived from
 CBaseRenderer. An instance of CRiCPPBridge implements the interface IRi, and
 that is the only interface you need to see, if you only want to use RiCPP as an API
-to connect with a backend renderer. IRi (#include "ricpp/ricpp/ricpp.h") is
+to connect with a backend renderer. IRi (\c include "ricpp/ricpp/ricpp.h") is
 similar to the declarations of the C-binding in ri.h.
 
 At the moment I'm developing RiCPP using Visual Studio 2005 (the express edition

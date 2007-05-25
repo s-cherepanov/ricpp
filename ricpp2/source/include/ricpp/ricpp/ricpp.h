@@ -366,11 +366,12 @@ public:
 	 */
 	virtual const char *name() const = 0;
 	/** @brief Handles the error.
+	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...).
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE).
 	 * @param msg Error message, describing the specific error in detail.
 	 */
-	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const = 0;
+	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const = 0;
 };
 
 /** @brief Interface for a pixel filter (super sampling).

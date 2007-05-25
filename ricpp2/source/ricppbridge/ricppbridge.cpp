@@ -145,10 +145,10 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 	if ( m_outer->m_ctxMgmt.curBackend().aborted() )
 		return;
 
-	// To do an option to enable abort on error
-	if ( severity == RIE_SEVERE ) {
-		m_outer->m_ctxMgmt.abort();
-	}
+	// To do an option to enable abort on error - done by the abort handler synchronize(RI_ABORT)
+	// if ( severity == RIE_SEVERE ) {
+	//	m_outer->m_ctxMgmt.abort();
+	// }
 
 	static const int ERROR_STR_SIZE = 256;
 	char str[ERROR_STR_SIZE];
@@ -168,7 +168,7 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 	err.formatErrorMessage(errorstring);
 
 	if ( m_outer->m_curErrorHandler )
-		(*m_outer->m_curErrorHandler)(code, severity, errorstring.c_str());
+		(*m_outer->m_curErrorHandler)(*m_outer, code, severity, errorstring.c_str());
 }
 
 
@@ -520,6 +520,11 @@ RtVoid CRiCPPBridge::motionEnd(void)
 
 RtVoid CRiCPPBridge::synchronize(RtToken name)
 {
+	if ( !strcmp(name, RI_ABORT) ) {
+		m_ctxMgmt.abort();
+		return;
+	}
+
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->synchronize(name);

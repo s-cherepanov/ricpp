@@ -44,12 +44,13 @@ public:
 	 * @return The name of the renderer as used in RIB
 	 */
 	inline virtual const char *name() const {return "abortErrorHandler";}
-	/** @brief Handles the error (print, exit if severe)
+	/** @brief Handles the error (print, abort if severe)
+	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
 	 * @param msg Error message, describing the error
 	 */
-	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
+	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
 };
 
 /** @brief The print-error handler, prints an error at standard output
@@ -61,11 +62,12 @@ public:
 	 */
 	inline virtual const char *name() const {return "printErrorHandler";}
 	/** @brief Handles the error (print)
+	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
 	 * @param msg Error message, describing the error
 	 */
-	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
+	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
 };
 
 /** @brief The ignore-error handler, does nothing, ignores the error
@@ -77,11 +79,12 @@ public:
 	 */
 	inline virtual const char *name() const {return "ignoreErrorHandler";}
 	/** @brief Handles the error (ignore)
+	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
 	 * @param msg Error message, describing the error
 	 */
-	virtual RtVoid operator()(RtInt code, RtInt severity, RtString msg) const;
+	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
 };
 
 } // namespace RiCPP

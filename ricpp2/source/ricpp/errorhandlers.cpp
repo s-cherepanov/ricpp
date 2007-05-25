@@ -32,19 +32,19 @@
 
 using namespace RiCPP;
 
-RtVoid CAbortErrorHandler::operator()(RtInt code, RtInt severity, RtString msg) const
+RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	std::cout << "*** Code " <<
 		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
 		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
 		msg << "'" << std::endl;
 	if ( severity == RIE_SEVERE ) {
-		std::cout << "exit." << std::endl;
-		exit(code);
+		std::cout << "abort renderer." << std::endl;
+		ri.synchronize(RI_ABORT);
 	}
 }
 
-RtVoid CPrintErrorHandler::operator()(RtInt code, RtInt severity, RtString msg) const
+RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	std::cout << "*** Code " <<
 		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
@@ -52,7 +52,7 @@ RtVoid CPrintErrorHandler::operator()(RtInt code, RtInt severity, RtString msg) 
 		msg << "'" << std::endl;
 }
 
-RtVoid CIgnoreErrorHandler::operator()(RtInt code, RtInt severity, RtString msg) const
+RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	code = code;
 	severity = severity;

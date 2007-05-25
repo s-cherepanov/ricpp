@@ -80,12 +80,6 @@ int main (int argc, char * const argv[]) {
 	ri.worldEnd();
 	ri.end();
 
-	/* wrong lib */
-	ri.begin("user32");
-	ri.worldBegin();
-	ri.worldEnd();
-	ri.end();
-
 	for ( int i = 1; i < 100; ++i ) {
 		ri.begin(RI_NULL);
 			for ( int j = 1; j < 100; ++j ) {
@@ -98,6 +92,12 @@ int main (int argc, char * const argv[]) {
 		ri.end();
 	}
 	ri.errorHandler(ri.errorAbort());
+
+	/* wrong lib */
+	ri.begin("user32");
+	ri.worldBegin();
+	ri.worldEnd();
+	ri.end();
 
 	ri.option("searchpath", "renderer", ".;$PROGDIR;$PATH", RI_NULL);
 	ri.begin("ribwriter");

@@ -150,7 +150,7 @@ public:
 	 * if no new context can be created. The current context is cleared in this case.
 	 *
 	 * @param name Name of a renderer
-	 * @paran n number of parameters
+	 * @param n number of parameters
 	 * @param tokens Token array
 	 * @param params Prameter pointer array
 	 * @return The new backend context handle

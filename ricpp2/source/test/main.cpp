@@ -79,10 +79,14 @@ int main (int argc, char * const argv[]) {
 	ri.worldEnd();
 	ri.end();
 
+	std::string name;
+	name.reserve(200);
 	for ( int i = 1; i < 100; ++i ) {
 		ri.begin(RI_NULL);
+			name = "name";
 			for ( int j = 1; j < 100; ++j ) {
-				ri.declare("name", "    constant    string  [19] ");
+				ri.declare(name.c_str(), "    constant    string  [19] ");
+				name += ".";
 			}
 			ri.frameBegin((RtInt)i);
 				ri.worldBegin();
@@ -90,6 +94,8 @@ int main (int argc, char * const argv[]) {
 			ri.frameEnd();
 		ri.end();
 	}
+	name.clear();
+	name.resize(0);
 	ri.errorHandler(ri.errorAbort());
 
 	/* wrong lib */

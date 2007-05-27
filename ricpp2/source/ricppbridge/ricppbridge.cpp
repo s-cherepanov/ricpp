@@ -28,6 +28,9 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
+#include "ricpp/tools/stringlist.h"
+
+#include <assert.h>
 
 using namespace RiCPP;
 
@@ -45,7 +48,7 @@ void CRiCPPBridge::CContextManagement::removeContext(RtContextHandle handle)
 	}
 }
 
-void CRiCPPBridge::CContextManagement::begin(const char *name, CContextCreator *cc)
+RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, CContextCreator *cc, RtInt n, RtToken tokens[], RtPointer params[])
 	// throws ERendererError
 {
 	try {
@@ -56,16 +59,17 @@ void CRiCPPBridge::CContextManagement::begin(const char *name, CContextCreator *
 		throw e;
 	}
 
-	m_ctxHandle = illContextHandle;
+	m_ctxHandle = illContextHandle; // No context!
 	m_curCtx = m_ctxMap[m_ctxHandle];
 
 	// A context creator exists
 	assert(cc != 0);
 	if ( !cc )
-		return;
+		return illContextHandle;
 
+	IRiContext *backendContext;
 	try {
-		cc->begin(name);
+		backendContext = cc->beginV(name, n, tokens, params);
 	} catch (ERendererError &e) {
 		// Context may be invalid, nevertheless it is stored, so interface
 		// requests can be called until end()
@@ -76,9 +80,12 @@ void CRiCPPBridge::CContextManagement::begin(const char *name, CContextCreator *
 	}
 
 	// Inserts the context creator / context pair into the m_ctxMap
-	CContext ctx(cc, cc->getContext());
-	m_ctxHandle = add(ctx);
-	m_curCtx = m_ctxMap[m_ctxHandle];
+	if ( backendContext != 0 ) { 
+		CContext ctx(cc, backendContext);
+		m_ctxHandle = add(ctx);
+		m_curCtx = m_ctxMap[m_ctxHandle];
+	}
+	return m_ctxHandle;
 }
 
 
@@ -188,7 +195,39 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration)
 }
 
 
-RtVoid CRiCPPBridge::begin(RtString name)
+RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	if ( name && *name ) {
+		CStringList stringList;
+		stringList.explode(0, name, true); // Only one string, replace environment variables
+
+		CStringList::const_iterator first = stringList.begin();
+		if ( first != stringList.end() ) {
+			const char *ptr = strrchr((*first).c_str(), '.');
+			if ( ptr && !strcmp(ptr, ".rib") ) {
+				// name was the name of a rib file
+				if ( n == 0 ) {
+					// remove the 0 entries
+					m_tokens.clear();
+					m_params.clear();
+				}
+				m_tokens.push_back(RI_FILE);
+				m_params.push_back(&name);
+				// new name == 0 to load the rib writer
+				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
+			}
+		}
+	}
+
+	return beginV(name, n, &m_tokens[0], &m_params[0]);
+}
+
+
+RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	// Try to create a new context creator
 	CContextCreator *contextCreator = 0;
@@ -199,24 +238,26 @@ RtVoid CRiCPPBridge::begin(RtString name)
 			ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE,
 				"Context creator missing in CRiCPPBridge::begin(name:\"%s\")",
 				name ? name : "");
-			return;
+			return illContextHandle;
 		}
 	} catch (ERendererError &e) {
 		m_ctxMgmt.context(illContextHandle);
 		ricppErrHandler().handleError(e);
-		return;
+		return illContextHandle;
 	}
 
 	assert(contextCreator != 0);
 
 	// Start the new context
 	try {
-		m_ctxMgmt.begin(name, contextCreator);
+		return m_ctxMgmt.beginV(name, contextCreator, n, tokens, params);
 	} catch (ERendererError &e) {
 		// And handle the error
 		ricppErrHandler().handleError(e);
-		return;
+		return illContextHandle;
 	}
+
+	return illContextHandle;
 }
 
 RtVoid CRiCPPBridge::end(void)

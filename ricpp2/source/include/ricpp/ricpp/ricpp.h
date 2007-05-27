@@ -647,21 +647,19 @@ public:
 	 *  @brief The modes
 	 *  @{
 	 */
+
 	/** @brief Creates and initializes a new rendering context
 	 *
-	 * In a context it is called after instanciation
+	 * In a context it is called after instanciation, changed the signature (similar to [QRM])
+	 * to simplify the handling of arguments for the renderer.
 	 * @param name indicates either a rib file for output or an identifier for a renderer
+	 * @param n Number of tokens
+	 * @param tokens Tokens for additional parameter list
+	 * @param params Value pointer for additional parameter list for the renderer, e.g. RI_FILE outputfile
+	 * @return The new context handle
 	 */
-	virtual RtVoid begin(RtString name) = 0;
+	virtual RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	
-	// better stay with the standard instead of
-	// @param arguments for optional arguments (added)
-	// virtual RtVoid begin(RtString name, RtString arguments=RI_NULL) = 0;
-	// however [QRM] had
-	// virtual RtToken begin(RtString handle, RtString arguments=RI_NULL, ...) = 0;
-	// the returned token was more or less a context handle, the parameter
-	// name the name for the context.
-
 	/** @brief Terminates the current rendering context
 	 *
 	 * Does cleanup operations, in a context it is called before the context is deleted.
@@ -1743,7 +1741,8 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Frees a ressource handle, see IRiRoot::resourceV()
+	/** @brief Frees a ressource handle
+	 *  @see IRiRoot::resourceV()
 	 */
 	virtual RtToken resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1779,10 +1778,19 @@ public:
 	virtual RtArchiveHandle archiveBegin(RtString name, ...) = 0;
 	*/
 
+	
+	/** @brief Starts a new renderer
+	 *
+	 * Added a parameterlist (RtToken @a token, ...) and as the return type,
+	 * a context handle (similar to [QRM])
+	 * @see IRiRoot::begin()
+	 */
+	virtual RtContextHandle begin(RtString name, RtToken token = RI_NULL, ...) = 0;
+
 	//! Starts a motion block for a moving primitive
 	/*! @param N     Number of samples (length of times)
 	 *  @param sample First of the N samples
-	 *  see IRiRoot::motionBeginV()
+	 *  @see IRiRoot::motionBeginV()
 	 */
     virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...) = 0;
 	//@}
@@ -1792,23 +1800,28 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Projection type, see IRiRoot::projectionV()
+	/** @brief Projection type
+	 *  @see IRiRoot::projectionV()
 	 */
     virtual RtVoid projection(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Imager function, see IRiRoot::imagerV()
+	/** @brief Imager function
+	 *  @see IRiRoot::imagerV()
 	 */
     virtual RtVoid imager(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Choose a display, see IRiRoot::displayV()
+	/** @brief Choose a display
+	 *  @see IRiRoot::displayV()
 	 */
 	virtual RtVoid display(RtString name, RtToken type, RtToken mode, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Choose the hidden surface algorithm, see IRiRoot::hiderV()
+	/** @brief Choose the hidden surface algorithm
+	 *  @see IRiRoot::hiderV()
 	 */
 	virtual RtVoid hider(RtToken type, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Sets a implementation-specific option, see IRiRoot::optionV()
+	/** @brief Sets a implementation-specific option
+	 *  @see IRiRoot::optionV()
 	 */
     virtual RtVoid option(RtString name, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1818,11 +1831,13 @@ public:
 	 *  @{
 	 */
 	
-	/** @brief Sets a light source shader, see IRiRoot::lightSourceV()
+	/** @brief Sets a light source shader
+	 *  @see IRiRoot::lightSourceV()
 	 */
     virtual RtLightHandle lightSource(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Sets an area light source shader, see IRiRoot::arealightSourceV()
+	/** @brief Sets an area light source shader
+	 *  @see IRiRoot::arealightSourceV()
 	 */
 	virtual RtLightHandle areaLightSource(RtString name, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1833,31 +1848,38 @@ public:
 	 *  @{
 	 */
 	
-	/** @brief Sets a implementation-specific attribute, see IRiRoot::attributeV
+	/** @brief Sets a implementation-specific attribute
+	 *  @see IRiRoot::attributeV
 	 */
 	virtual RtVoid attribute(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Sets the current surface shader, see IRiRoot::surfaceV()
+	/** @brief Sets the current surface shader
+	 *  @see IRiRoot::surfaceV()
 	 */
 	virtual RtVoid surface(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Sets the current atmosphere shader, see IRiRoot::atmosphereV()
+	/** @brief Sets the current atmosphere shader
+	 *  @see IRiRoot::atmosphereV()
 	 */
     virtual RtVoid atmosphere(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Sets the current interior shader, see IRiRoot::interiorV()
+	/** @brief Sets the current interior shader
+	 *  @see IRiRoot::interiorV()
 	 */
 	virtual RtVoid interior(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Sets the current exterior shader, see IRiRoot::exteriorV()
+	/** @brief Sets the current exterior shader
+	 *  @see IRiRoot::exteriorV()
 	 */
     virtual RtVoid exterior(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief the current displacement shader, see IRiRoot::displacementV()
+	/** @brief the current displacement shader
+	 *  @see IRiRoot::displacementV()
 	 */
 	virtual RtVoid displacement(RtString name, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief The current displacement shader, see IRiRoot::geometricApproximationV()
+	/** @brief The current displacement shader
+	 *  @see IRiRoot::geometricApproximationV()
 	 */
     virtual RtVoid geometricApproximation(RtToken type,  RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1867,7 +1889,8 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Sets a deformation shader, see IRiRoot::deformationV()
+	/** @brief Sets a deformation shader
+	 *  @see IRiRoot::deformationV()
 	 */
 	virtual RtVoid deformation(RtString name, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1883,19 +1906,23 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Requests a single closed planar convex polygon, see IRiRoot::polygonV()
+	/** @brief Requests a single closed planar convex polygon
+	 *  @see IRiRoot::polygonV()
 	 */
 	virtual RtVoid polygon(RtInt nvertices, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a single general concave planar polygon with holes, see IRiRoot::generalPolygonV()
+	/** @brief Requests a single general concave planar polygon with holes
+	 *  @see IRiRoot::generalPolygonV()
 	 */
 	virtual RtVoid generalPolygon(RtInt nloops, RtInt *nverts, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a mesh of convex planar polygons with shared vertices, see IRiRoot::pointsPolygonsV()
+	/** @brief Requests a mesh of convex planar polygons with shared vertices
+	 *  @see IRiRoot::pointsPolygonsV()
 	 */
 	virtual RtVoid pointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a mesh of general concave planar polygons with holes and shared vertices, see IRiRoot::pointsGeneralPolygonsV()
+	/** @brief Requests a mesh of general concave planar polygons with holes and shared vertices
+	 *  @see IRiRoot::pointsGeneralPolygonsV()
 	 */
 	virtual RtVoid pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1905,15 +1932,18 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Requests a single bilinear or bicubic patch, see IRiRoot::patchV()
+	/** @brief Requests a single bilinear or bicubic patch
+	 *  @see IRiRoot::patchV()
 	 */
     virtual RtVoid patch(RtToken type, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a bilinear or bicubic patch mesh, see IRiRoot::patchMeshV()
+	/** @brief Requests a bilinear or bicubic patch mesh
+	 *  @see IRiRoot::patchMeshV()
 	 */
     virtual RtVoid patchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Creates a single tensor product rational or polynomal non-uniform B-spline (NURB) surface patch, see IRiRoot::nuPatchV()
+	/** @brief Creates a single tensor product rational or polynomal non-uniform B-spline (NURB) surface patch
+	 *  @see IRiRoot::nuPatchV()
 	 */
 	virtual RtVoid nuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1924,7 +1954,8 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Request a subdivison surface mesh, see IRiRoot::subdivisionMeshV()
+	/** @brief Request a subdivison surface mesh
+	 *  @see IRiRoot::subdivisionMeshV()
 	 */
     virtual RtVoid subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 	//@}
@@ -1935,31 +1966,38 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Requests a sphere surface, see IRiRoot::sphereV()
+	/** @brief Requests a sphere surface
+	 *  @see IRiRoot::sphereV()
 	 */
 	virtual RtVoid sphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a conic surface, see IRiRoot::coneV()
+	/** @brief Requests a conic surface
+	 *  @see IRiRoot::coneV()
 	 */
 	virtual RtVoid cone(RtFloat height, RtFloat radius, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a cylindric surface, see IRiRoot::cylinderV()
+	/** @brief Requests a cylindric surface
+	 *  @see IRiRoot::cylinderV()
 	 */
 	virtual RtVoid cylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a hyperbolic surface, see IRiRoot::hyperboloidV()
+	/** @brief Requests a hyperbolic surface
+	 *  @see IRiRoot::hyperboloidV()
 	 */
 	virtual RtVoid hyperboloid(RtPoint point1, RtPoint point2, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a parabolic surface, see IRiRoot::paraboloidV()
+	/** @brief Requests a parabolic surface
+	 *  @see IRiRoot::paraboloidV()
 	 */
 	virtual RtVoid paraboloid (RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a flat disk, same as a cone with height == 0, see IRiRoot::diskV()
+	/** @brief Requests a flat disk, same as a cone with height == 0
+	 *  @see IRiRoot::diskV()
 	 */
 	virtual RtVoid disk(RtFloat height, RtFloat radius, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Requests a torodial surface, see IRiRoot::torusV()
+	/** @brief Requests a torodial surface
+	 *  @see IRiRoot::torusV()
 	 */
 	virtual RtVoid torus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -1969,11 +2007,13 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Creates a point cloud, see IRiRoot::pointsV()
+	/** @brief Creates a point cloud
+	 *  @see IRiRoot::pointsV()
 	 */
 	virtual RtVoid points(RtInt npts, RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 
-	/** @brief Creates linear or cubic curves, see IRiRoot::curvesV()
+	/** @brief Creates linear or cubic curves
+	 *  @see IRiRoot::curvesV()
 	 */
     virtual RtVoid curves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 	//@}
@@ -1983,7 +2023,8 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Creates implicit surfaces, see IRiRoot::blobbyV()
+	/** @brief Creates implicit surfaces
+	 *  @see IRiRoot::blobbyV()
 	 */
 	virtual RtVoid blobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 	//@}
@@ -1993,7 +2034,8 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Generates a predefined geometry, see IRiRoot::geometryV()
+	/** @brief Generates a predefined geometry,
+	 *  @see IRiRoot::geometryV()
 	 */
     virtual RtVoid geometry(RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -2005,23 +2047,28 @@ public:
 	 *  @{
 	 */
  
-	/** @brief Creates a texture map, see IRiRoot::makeTextureV()
+	/** @brief Creates a texture map
+	 *  @see IRiRoot::makeTextureV()
 	 */
 	virtual RtVoid makeTexture(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Creates a bump map, see IRiRoot::makeBumpV()
+	/** @brief Creates a bump map
+	 *  @see IRiRoot::makeBumpV()
 	 */
     virtual RtVoid makeBump(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Creates a lattitude/longitude environment map, see IRiRoot::makeLatLongEnvironmentV()
+	/** @brief Creates a lattitude/longitude environment map
+	 *  @see IRiRoot::makeLatLongEnvironmentV()
 	 */
     virtual RtVoid makeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Creates a cube face environment map, see IRiRoot::makeCubeFaceEnvironmentV()
+	/** @brief Creates a cube face environment map
+	 *  @see IRiRoot::makeCubeFaceEnvironmentV()
 	 */
     virtual RtVoid makeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtToken token = RI_NULL, ...) = 0;
 
-	/** @brief Creates a shadow map, see IRiRoot::makeShadowV()
+	/** @brief Creates a shadow map
+	 *  @see IRiRoot::makeShadowV()
 	 */
     virtual RtVoid makeShadow(RtString pic, RtString tex, RtToken token = RI_NULL, ...) = 0;
 	//@}
@@ -2031,13 +2078,15 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Prints into a RIB file, see IRiRoot::archiveRecordV()
+	/** @brief Prints into a RIB file
 	 *  @param type Type of Record RI_COMMENT (\#text), RI_STRUCTURE (\#\#text), RI_VERBATIM (text)
 	 *  @param format Format string like for printf()
+	 *  @see IRiRoot::archiveRecordV()
 	 */
     virtual RtVoid archiveRecord(RtToken type, RtString format, ...) = 0; /* New 3.2 */
 
-	/** @brief Reads a RIB archive from a file and renders it's content, see IRiRoot::archiveRecordV()
+	/** @brief Reads a RIB archive from a file and renders it's content
+	 *  @see IRiRoot::archiveRecordV()
 	 */
     virtual RtVoid readArchive(RtString name, const IArchiveCallback *callback, RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 	//@}

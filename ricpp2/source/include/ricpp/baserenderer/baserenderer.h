@@ -91,7 +91,7 @@ public:
 
 	/** @brief Virtual destruction
 	 */
-	virtual inline ~CBaseRenderer() {}
+	virtual ~CBaseRenderer();
 
 	/** @brief Is called by the frontend, if the renderer is aborted due to severe errors.
 	 */
@@ -118,13 +118,21 @@ public:
 
 	/** @brief Initializes a new render context.
 	 *
-	 *  begin() is called exactly one time by the context creator
+	 *  beginV() is called exactly one time by the context creator
 	 *  after the rendering context object is created.
 	 *  This method must be called by child objects begin() at first
 	 *  for initialization before they do their own job.
+	 *
+	 *  Has no return type on purpose, because the CBaseRender is the back end context.
+	 *
 	 *  @param name Passed by the front end's begin()-method.
+	 *  @param n Passed by the front end's begin()-method.
+	 *  @param tokens Passed by the front end's begin()-method.
+	 *  @param params Passed by the front end's begin()-method.
+	 *  @return 0 (instance is the context, the handle is managed by CContextCreator)
+	 *  @see IRiCPPBridge::beginV()
 	 */
-	virtual RtVoid begin(RtString name);
+	virtual RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Clears the context.
 	 *
@@ -265,7 +273,7 @@ protected:
 	inline virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doFreeResource(RtToken handle) {}
 
-	inline virtual RtVoid doBegin(RtString name = RI_NULL) {}
+	inline virtual RtVoid doBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doEnd(void) {}
 
 	inline virtual RtVoid doFrameBegin(RtInt number) {}

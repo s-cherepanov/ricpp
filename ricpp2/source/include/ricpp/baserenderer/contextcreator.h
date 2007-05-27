@@ -111,6 +111,15 @@ public:
 	 */
 	virtual ~CContextCreator();
 
+	/** @brief Aborts (irregulary) the current context.
+	 *
+	 * Called bey the front end if an severe error occurs.
+	 * Calls the current context's IRiContext::abort() (no explicit deactivate()).
+	 * It is not discarded here, an explicit end must be called.
+	 * Don't throw an exception here.
+	 */
+	virtual RtVoid abort(void);
+
 	/** @brief The current render context for the library managed by this CContextCreator.
 	 *
 	 * @return The current context (m_curContext) to work with. Mind, it can return 0 if there is no active context.
@@ -124,7 +133,7 @@ public:
 	 * for the new context (if not 0). This is important for example for OpenGL to activate
 	 * or deactivate the OpenGL context. Sets the current context m_curContext
 	 * to the value of the parameter context. It can call the error handler if the parameter
-	 * context is not a member of m_contextList, i.e. not created by begin() of this CContextCreator.
+	 * context is not a member of m_contextList, i.e. not created by beginV() of this CContextCreator.
 	 * CRiCPPBridge::context() manages the context switching.
 	 *
 	 * @param context The new current context, can be 0 to deactivate the previous m_curContext.
@@ -132,26 +141,22 @@ public:
 	 */
 	virtual RtVoid context(IRiContext *context);
 
-	/** @brief Begin a new rendering context
+	/** @brief Begins a new rendering context
 	 *
-	 * Called by the CRiCPPBridge::begin() of the framework front end.
+	 * Called by the CRiCPPBridge::beginV() of the framework front end.
 	 * deactivates the current context createsa new one by calling getContext().
-	 * The new context is activated by calling it's begin() (no explicite activate()),
+	 * The new context is activated by calling it's beginV() (no explicite activate()),
 	 * \a name is used as parameter for this method again. Can call the error handler
 	 * if no new context can be created. The current context is cleared in this case.
 	 *
-	 * @param name The parameter used for the front end's CRiCPPBridge::begin()
+	 * @param name Name of a renderer
+	 * @paran n number of parameters
+	 * @param tokens Token array
+	 * @param params Prameter pointer array
+	 * @return The new backend context handle
+	 * @see CRiCPPBridge::beginV()
 	 */
-	virtual RtVoid begin(RtString name);
-
-	/** @brief Aborts (irregulary) the current context.
-	 *
-	 * Called bey the front end if an severe error occurs.
-	 * Calls the current context's IRiContext::abort() (no explicit deactivate()).
-	 * It is not discarded here, an explicit end must be called.
-	 * Don't throw an exception here.
-	 */
-	virtual RtVoid abort(void);
+	virtual IRiContext *beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Regulary ends the current context.
 	 *

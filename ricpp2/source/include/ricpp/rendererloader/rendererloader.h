@@ -186,7 +186,7 @@ protected:
 	 *
 	 * Used to load a new context creator for the name (from CRi::begin(RtString name))
 	 * @param name name of the renderer, can be NULL to name a rib writer context creator
-	 *  created by getRibWriterCreator() (is also compared to getRibWritername() for this purpose).
+	 * created by getRibWriterCreator() (is also compared to getRibWritername() for this purpose).
 	 * @return A CContextCreator instance new or cached.
 	 */
 	virtual CContextCreator *loadContextCreator(const char *name);

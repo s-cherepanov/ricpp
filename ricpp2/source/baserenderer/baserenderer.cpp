@@ -32,6 +32,12 @@
 
 using namespace RiCPP;
 
+CBaseRenderer::~CBaseRenderer()
+{
+	if ( m_renderState )
+		delete m_renderState;
+}
+
 void CBaseRenderer::initRenderState()
 // throw ERendererError
 {
@@ -109,7 +115,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 	return token;
 }
 
-RtVoid CBaseRenderer::begin(RtString name)
+RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ERendererError
 {
 	// Render state is initialized here, there is no mode so it must be not valid
@@ -117,24 +123,21 @@ RtVoid CBaseRenderer::begin(RtString name)
 	// A begin at the frontend always creates a new backend.
 	if ( m_renderState ) {
 		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, "State already initialized in begin, begin called twice. That can an implementation error.");
-		return;
+		return 0;
 	}
+
+	initRenderState(); // Can throw
 
 	try {
-		initRenderState();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
+		m_renderState->begin();
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'begin'");
+		return 0;
 	}
 
-	m_renderState->begin();
+	doBeginV(name, n, tokens, params); // Can throw
 
-	try {
-		doBegin(name);
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	}
+	return 0;
 }
 
 RtVoid CBaseRenderer::end(void)
@@ -154,11 +157,14 @@ RtVoid CBaseRenderer::end(void)
 	m_renderState->end();
 
 	try {
-		doEnd();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
+		doEnd(); // Can throw, err is lost then
+	} catch ( ERendererError &err2 )  {
+		err = err2;
 	}
+
+	// Delete the state anyway
+	delete m_renderState;
+	m_renderState = 0;
 
 	if ( err.isError() ) {
 		ricppErrHandler().handleError(err);
@@ -179,15 +185,15 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 		return;
 	}
 
-	m_renderState->frameBegin();
-	m_renderState->frameNumber(number);
-
 	try {
-		doFrameBegin(number);
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
+		m_renderState->frameBegin();
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'frameBegin', Frame no.: %d", (int)number);
 		return;
 	}
+	m_renderState->frameNumber(number);
+
+	doFrameBegin(number); // Can throw
 }
 
 RtVoid CBaseRenderer::frameEnd(void)
@@ -206,12 +212,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 	m_renderState->frameEnd();
 	m_renderState->frameNumber(0);
 
-	try {
-		doFrameEnd();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	}
+	doFrameEnd();
 }
 
 RtVoid CBaseRenderer::worldBegin(void)
@@ -227,14 +228,14 @@ RtVoid CBaseRenderer::worldBegin(void)
 		return;
 	}
 	
-	m_renderState->worldBegin();
-
 	try {
-		doWorldBegin();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
+		m_renderState->worldBegin();
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'worldBegin'");
 		return;
 	}
+
+	doWorldBegin();
 }
 
 RtVoid CBaseRenderer::worldEnd(void)
@@ -252,12 +253,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 	
 	m_renderState->worldEnd();
 
-	try {
-		doWorldEnd();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	}
+	doWorldEnd();
 }
 
 RtVoid CBaseRenderer::attributeBegin(void)
@@ -273,14 +269,14 @@ RtVoid CBaseRenderer::attributeBegin(void)
 		return;
 	}
 	
-	m_renderState->attributeBegin();
-
 	try {
-		doAttributeBegin();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
+		m_renderState->attributeBegin();
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'attributeBegin'");
 		return;
 	}
+
+	doAttributeBegin();
 }
 
 RtVoid CBaseRenderer::attributeEnd(void)
@@ -298,12 +294,7 @@ RtVoid CBaseRenderer::attributeEnd(void)
 	
 	m_renderState->attributeEnd();
 
-	try {
-		doAttributeEnd();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	}
+	doAttributeEnd();
 }
 
 RtVoid CBaseRenderer::transformBegin(void)
@@ -319,14 +310,14 @@ RtVoid CBaseRenderer::transformBegin(void)
 		return;
 	}
 	
-	m_renderState->transformBegin();
-
 	try {
-		doTransformBegin();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
+		m_renderState->transformBegin();
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'attributeBegin'");
 		return;
 	}
+
+	doTransformBegin();
 }
 
 RtVoid CBaseRenderer::transformEnd(void)
@@ -344,10 +335,5 @@ RtVoid CBaseRenderer::transformEnd(void)
 	
 	m_renderState->transformEnd();
 
-	try {
-		doTransformEnd();
-	} catch ( ERendererError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	}
+	doTransformEnd();
 }

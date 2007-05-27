@@ -38,8 +38,10 @@ namespace RiCPP {
 
 /** @brief RenderMan Interface for a backend render context.
  *
- * Interface for a render context called from the CRiCPPBridge and CContextCreator. A concrete render context
- * will extend CBaseRenderer not IRiContext.
+ * Interface for a render context called from the CRiCPPBridge and CContextCreator.
+ * A concrete render context will extend CBaseRenderer not IRiContext. Typically
+ * an overloaded beginV() will return no RtContextHandle (0), because IRiContext is
+ * the context and the handle is managed by CContextCreator.
  */
 class IRiContext : public IRiRoot {
 	friend class CContextCreator; //!< A CContextCreator can activate and deactivate the context

@@ -84,7 +84,7 @@ RtVoid CContextCreator::context(IRiContext *context)
 	ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::context(), context handle not generated from context creator");
 }
 
-RtVoid CContextCreator::begin(RtString name)
+IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ERendererError
 {
 	// Deactivate the current context
@@ -96,17 +96,21 @@ RtVoid CContextCreator::begin(RtString name)
 
 	if ( !m_curContext ) {
 		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
-		return;
+		return illContextHandle;
 	}
 
 	m_contextList.push_back(m_curContext);
 
 	// Activate the context by calling its begin
 	try {
-		m_curContext->begin(name);
+		m_curContext->beginV(name, n, tokens, params);
 	} catch ( ERendererError &e ) {
+		deleteContext();
 		ricppErrHandler().handleError(e);
+		return illContextHandle;
 	}
+
+	return m_curContext;
 }
 
 RtVoid CContextCreator::abort(void)

@@ -68,7 +68,7 @@ protected:
 	virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	virtual RtVoid doFreeResource(RtToken handle) {}
 
-	inline virtual RtVoid doBegin(RtString name) {}
+	inline virtual RtVoid doBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doEnd(void) {}
 
 	inline virtual RtVoid doFrameBegin(RtInt number) {}

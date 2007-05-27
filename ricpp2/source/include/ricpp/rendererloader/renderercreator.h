@@ -74,8 +74,8 @@ public:
 	/** @brief CContextCreator creation.
 	 * 
 	 * May throw ERendererException for more error information.
-	 * @param name The argument of IRi::begin(RtString name), indicates the
-	 *        name of the renderer creator with parameters appended.
+	 * @param name The argument of IRiRoot::beginV(), indicates the
+	 *        name of the renderer creator.
 	 * @return A context creator, new or already loaded.
 	 */
 	virtual CContextCreator *getContextCreator(RtString name) = 0;

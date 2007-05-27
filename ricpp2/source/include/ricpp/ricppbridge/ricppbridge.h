@@ -61,7 +61,7 @@ namespace RiCPP {
  * by catching the errors ERendererError of the current renderer and
  * calling the user defined error handler set by errorHandler(), 
  * matches a context handle RtContextHandle to a context creator with
- * its rendering context (begin(), end(), context(), getContext()). Normally only
+ * its rendering context (beginV(), end(), context(), getContext()). Normally only
  * a single instance of CRiCPPBridge is used. However doesn't want to restrict it
  * to be a singleton.
  */
@@ -281,9 +281,9 @@ protected:
 		 *  Since a context creator can bear many contexts, the context creator/rendering context
 		 *  pairs are stored (CContext objects in CContextManager::m_ctxMap).
 		 *  *After* a CContext is activated via the
-		 *  CContextManager::context() or begin() method, renderingContext() and
+		 *  CContextManager::context() or beginV() method, renderingContext() and
 		 *  contextCreator()->getContext() are the same. Only those active contexts are
-		 *  used by other functions than context() and begin().
+		 *  used by other functions than context() and beginV().
 		 *
 		 *  @return Pointer to the rendering context stored
 		 */
@@ -354,13 +354,13 @@ protected:
 		/** @brief Deactivate the current context, used for context switching
 		 *
 		 *  Called indirectly from CRiCPPBridge::context(RtContextHandle handle)
-		 *  and CRiCPPBridge::begin(RtString name)
+		 *  and CRiCPPBridge::beginV()
 		 *  through the CContextManagement to deactivate the previous active
 		 *  rendering context.
 		 *
-		 *  @see CContextManagement::begin(RtString name),
+		 *  @see CContextManagement::beginV(),
 		 *  CContextManagement::context(RtContextHandle handle),
-		 *  CRiCPPBridge::begin(RtString name),
+		 *  CRiCPPBridge::beginV(),
 		 *  CRiCPPBridge::context(RtContextHandle handle)
 		 */
 		inline void deactivate()
@@ -407,7 +407,7 @@ protected:
 	 *
 	 *  A RtContextHandle is mapped to a CContext. A RtContextHandle of the frontend
 	 *  references a backend context creator with a rendering context. The CRiCPPBridge
-	 *  forwards the interface calls always to the active backend rendering context. begin() and
+	 *  forwards the interface calls always to the active backend rendering context. beginV() and
 	 *  context() are out of this rule.
 	 *
 	 *  The frontend illContextHandle has a special meaning: "There is no active rendering context". It
@@ -434,11 +434,11 @@ protected:
 		 *  m_nextCtxHandle is also increased at the end of this method to
 		 *  serve as the next handle.
 		 *	m_ctxHandle the current context handle is set by the calling function
-		 *  begin() to indicate the new context.
+		 *  beginV() to indicate the new context.
 		 *
 		 * @param ctx A context creator/rendering context pair, to be stored
 		 * @return The new handle of the creator
-		 * @see begin()
+		 * @see beginV()
 		 */
 		inline RtContextHandle add(const CContext &ctx)
 		{
@@ -475,16 +475,20 @@ protected:
 		 *
 		 * Manages the creation of a new rendering context, creates a new CContext and
 		 * stores it with add(). The old context is deactivated. To generate a new
-		 * active rendering context the CContextCreator::begin(name) is called.
+		 * active rendering context the CContextCreator::beginV() is called.
 		 * The new context is not explicitly activated (because a creating a new
 		 * context might be handled by the backend different to activating an
 		 * already created one).
 		 *
-		 * @param name Forwarded name from TRiCPPBridge::begin(RtString name)
+		 * @param name Name of a renderer, forwarded from TRiCPPBridge::beginV() call
 		 * @param cc Context creator used to create the new context
-		 * @see add(), CContext::activate()
+		 * @param n number of @a tokens and @a params, forwarded from TRiCPPBridge::beginV() call
+		 * @param tokens Token array, forwarded from TRiCPPBridge::beginV() call
+		 * @param params Array of pointers to parameter arrays, forwarded from TRiCPPBridge::beginV() call
+		 * @return New context handle
+		 * @see add(), CContext::activate(), IRiCCPPBridge::beginV()
 		 */
-		void begin(const char *name, CContextCreator *cc);
+		RtContextHandle beginV(RtString name, CContextCreator *cc, RtInt n, RtToken tokens[], RtPointer params[]);
 
 		/** @brief Ends the current context and removes it from the list.
 		 *
@@ -645,7 +649,7 @@ public:
 	 *
 	 * @return handle of the current active context, illContextHandle (== RI_NULL)
 	 * is returned if there is no active context
-	 * @see context(), begin(), end(), CContextManager::getContext(), IRiRoot::getContext()
+	 * @see context(), beginV(), end(), CContextManager::getContext(), IRiRoot::getContext()
 	 */
 	inline virtual RtContextHandle getContext(void) { return m_ctxMgmt.getContext(); }
 
@@ -659,10 +663,25 @@ public:
 	 * @param handle Handle that references a rendering context (the backend renderer),
 	 *        you should not use destroyed contexts (end()).
 	 *
-	 * @see getContext(), begin(), end(),
+	 * @see getContext(), beginV(), end(),
 	 * CContextManager::context(), IRiRoot::context()
 	 */
 	virtual RtVoid context(RtContextHandle handle);
+
+	/** @brief Begins a new rendering context.
+	 *
+	 * Can be called from everywhere.
+	 *
+	 * If the name is a RIB filename (ends with .rib), the filename is inserted as
+	 * new parameter. @a name is set to 0 to indicate that a ribfile should be written.
+	 *
+	 * @param name RIB file or name of renderer
+	 * @param token First token in parameterlist (e.G. RI_FILE for filename) followed by a parameter
+	 *        pointer (value array), and so on. Must be ended by a token RI_NULL.
+	 * @return The new context handle
+	 * @see beginV()
+	 */
+	virtual RtContextHandle begin(RtString name, RtToken token = RI_NULL, ...);
 
 	/** @brief Begins a new rendering context.
 	 *
@@ -672,19 +691,24 @@ public:
 	 * the new one created. The deactivated context is not destroyed.
 	 * The new context is not explicitly activated.
 	 *
-	 * @param name RIB file or name of renderer with parameters separated by blanks
-	 * @see context(), getContext(), end(),
-	 * CContextManager::begin(), IRiRoot::begin()
+	 * @param name RIB file or name of renderer
+	 * @param n Number of Token-Value pairs.
+	 * @param tokens Tokens in parameterlist (e.g. RI_FILE for filename)
+	 * @param params The parameter areay pointers for the tokens (e.g. pointer (char **) to the filename)
+	 * @return The new context handle
+	 *
+	 * @see context(), getContext(), beginV(), end(),
+	 * CContextManager::beginV(), IRiRoot::beginV()
 	 */
-	virtual RtVoid begin(RtString name);
+	virtual RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Ends a rendering context.
 	 *
 	 * The active context is destroyed. There is no active context after calling
-	 * this routine until a begin() or context() is called.
+	 * this routine until a beginV() or context() is called.
 	 * The destroyed context is not explicitly deactivated.
 	 * 
-	 * @see context(), getContext(), begin(), CContextManager::end(), IRiRoot::end()
+	 * @see context(), getContext(), beginV(), CContextManager::end(), IRiRoot::end()
 	 */
 	virtual RtVoid end(void);
 

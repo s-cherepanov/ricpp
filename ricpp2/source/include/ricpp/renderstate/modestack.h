@@ -193,12 +193,22 @@ public:
 
 	/** @brief Begins a new object block for retained geometry
 	 *
-	 * Inside frame and begin block, cannot be nested
+	 * Inside frame, world, attribute, transform, archive, and begin blocks
 	 */
 	virtual void objectBegin();
 	/** @brief Ends an object block
 	 */
 	virtual void objectEnd();
+
+	/** @brief Begins a rib archive block
+	 *
+	 * Inside frame, world, attribute, transform, object, and begin blocks
+	 */
+	virtual void archiveBegin();
+
+	/** @brief Ends an archive block
+	 */
+	virtual void archiveEnd();
 
 	/** @brief Begins a new motion block
 	 *

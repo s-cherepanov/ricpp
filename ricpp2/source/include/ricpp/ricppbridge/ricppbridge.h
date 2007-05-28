@@ -638,11 +638,6 @@ public:
 	virtual RtToken declare(RtString name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
 
-	virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtToken resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...);
-
-	virtual RtVoid  freeResource(RtToken handle);
-
 	/** @brief Returns the current context handle
 	 *
 	 * Can be called from everywhere.
@@ -729,9 +724,7 @@ public:
 
 	virtual RtObjectHandle objectBegin(void);
 	virtual RtVoid objectEnd(void);
-
 	virtual RtVoid objectInstance(RtObjectHandle handle);
-    virtual RtVoid freeObject(RtObjectHandle handle);
 
 	virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...);
 	virtual RtVoid motionBeginV(RtInt N, RtFloat times[]);
@@ -820,8 +813,7 @@ public:
 	virtual RtVoid bound(RtBound aBound);
 	virtual RtVoid detail(RtBound aBound);
 	virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis);
-	virtual RtVoid geometricApproximation(RtString type, RtToken token = RI_NULL, ...);
-    virtual RtVoid geometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
+    virtual RtVoid geometricApproximation(RtToken type, RtFloat value);
 	virtual RtVoid geometricRepresentation(RtToken type);
 	virtual RtVoid orientation(RtToken anOrientation);
 	virtual RtVoid reverseOrientation(void);

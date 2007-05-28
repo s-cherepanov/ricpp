@@ -37,8 +37,6 @@
  * ricpp.h means the same to RiCPP as ri.h to the standard C binding.
  */
 
-#include <limits>
-
 /** @namespace RiCPP
  *  @brief All of the interface is placed within the RiCPP namespace.
  */
@@ -62,7 +60,7 @@ typedef RtFloat  RtPoint[3];     ///< Points in 3D
 typedef RtFloat  RtVector[3];    ///< Vectors in 3D
 typedef RtFloat  RtNormal[3];    ///< Normals in 3D
 typedef RtFloat  RtHpoint[4];    ///< Points in homgenous 3D
-typedef RtFloat  RtMpoint[4][4]; ///< 'Map Points' introduced in App Note #31 (RiBlobby)
+typedef RtFloat  RtMpoint[4][4]; ///< 'Map Points' introduced in App Note #31, used by CRiCPP::blobbyV() (added)
 typedef RtFloat  RtMatrix[4][4]; ///< Homogenous matrix for 3D transformations
 typedef RtFloat  RtBasis[4][4];  ///< Base matrix for spline interpolations
 typedef RtFloat  RtBound[6];     ///< Bound of 3D object: Left, right, bottom, top, front, back
@@ -71,20 +69,29 @@ typedef const char *RtString;    ///< Character string, which is not a predefine
 typedef void   *RtPointer;       ///< Pointer to arbitrary data
 #define RtVoid  void             ///< Simple 'void' datatype, used as 'return type' for functions returning nothing (C++: typedef is not working for void)
 
-typedef unsigned long RtObjectHandle;   ///< Handle for an object instance (was RtPointer)
-typedef unsigned long RtLightHandle;    ///< Handle for a light handle (was RtPointer)
-typedef unsigned long RtContextHandle;  ///< handle for a render context handle (was RtPointer)
-// typedef RtString  RtArchiveHandle;  // handle for a rib archive (3Delight)
+/** @defgroup ricpp_handles Ri handle types
+ *  @ingroup ricpp_types
+ *  @brief handles are only valid for the rendering context, where they are defined
+ *  @see ricpp_illhandle
+ *  @{
+ */
+typedef const char *RtObjectHandle;    ///< Handle for an object instance (was RtPointer), is a tokenized name
+typedef const char *RtLightHandle;     ///< Handle for a light handle (was RtPointer), is a tokenized name
+typedef unsigned long RtContextHandle; ///< handle for a render context handle (was RtPointer)
+typedef const char *RtArchiveHandle;   ///< handle for a rib archive (was RtPointer), is the tokenized name
+typedef const char *RtResourceHandle;  ///< handle for a resource, is the tokenized name (added)
+//@}
 //@}
 
-/** @defgroup ricpp_illhandle Ri illegal handles
+/** @defgroup ricpp_illhandle Illegal handles (added)
  *  @brief Definitions of illegal handles (additional constants)
  *  @{
  */
-const RtContextHandle illContextHandle = (RtContextHandle)0;
-const RtObjectHandle illObjectHandle = (RtObjectHandle)0;
-const RtLightHandle illLightHandle = (RtLightHandle)0;
-// const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)0;
+const RtContextHandle illContextHandle = (RtContextHandle)0; ///< illegal context handle
+const RtObjectHandle illObjectHandle = (RtObjectHandle)0; ///< illegal object handle
+const RtLightHandle illLightHandle = (RtLightHandle)0; ///< illegal light source handle
+const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)0; ///< illegal archive handle
+const RtArchiveHandle illResourceHandle = (RtResourceHandle)0; ///< illegal resource handle
 //@}
 
 
@@ -103,12 +110,18 @@ const RtBoolean RI_TRUE        = (!RI_FALSE); ///< true
  *  @brief Limits for clipping planes
  *  @{
  */
-const RtFloat RI_INFINITY      = std::numeric_limits<RtFloat>::max();     ///< Maximum value for RtFloat, was 1.0e38
-const RtFloat RI_EPSILON       = std::numeric_limits<RtFloat>::epsilon(); ///< Minimum value for v+riEpsilon != v, was 1.0e-10
+const RtFloat RI_INFINITY      = (RtFloat)(1.0e38);  ///< Maximal value used for RtFloat
+const RtFloat RI_EPSILON       = (RtFloat)(1.0e-10); ///< Minimal value used for RtFloat 
+/*
+ Other <limits>
+ std::numeric_limits<RtFloat>::max()
+ std::numeric_limits<RtFloat>::epsilon() minimal |epsilon| for v+epsilon != v
+ */
 //@}
 
 /** @defgroup ricpp_steps Ri stepsizes for bicubic patch meshes
  *  @brief Step sizes (correspondence to the basis matrices of the bicubic patches)
+ *  @see CRiCPP::basis(), ricpp_basis
  *  @{
  */
 const RtInt RI_BEZIERSTEP      = 3; ///< Stepsize for control points of bezier meshes
@@ -120,6 +133,7 @@ const RtInt RI_POWERSTEP       = 4; ///< Stepsize for control points of power ma
 
 /** @defgroup ricpp_basis Ri basis matrices for bicubic patches
  *  @brief Basis matrices for bicubic patches
+ *  @see CRiCPP::basis(), ricpp_steps
  *  @{
  */
 const RtBasis RiBezierBasis = {
@@ -127,35 +141,36 @@ const RtBasis RiBezierBasis = {
 	{(RtFloat) 3.0, (RtFloat)-6.0, (RtFloat) 3.0, (RtFloat) 0.0},
 	{(RtFloat)-3.0, (RtFloat) 3.0, (RtFloat) 0.0, (RtFloat) 0.0},
 	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0}
-}; ///< Bezier patch
+}; ///< Basis matrix for bezier patch meshes
 const RtBasis RiBSplineBasis = {
 	{(RtFloat)(-1.0/6.0), (RtFloat)( 3.0/6.0), (RtFloat)(-3.0/6.0), (RtFloat)(1.0/6.0)},
 	{(RtFloat)( 3.0/6.0), (RtFloat)(-6.0/6.0), (RtFloat)( 3.0/6.0), (RtFloat) 0.0},
 	{(RtFloat)(-3.0/6.0), (RtFloat)  0.0,      (RtFloat)( 3.0/6.0), (RtFloat) 0.0},
 	{(RtFloat)( 1.0/6.0), (RtFloat)( 4.0/6.0), (RtFloat)( 1.0/6.0), (RtFloat) 0.0}
-}; ///< B-spline patch
+}; ///< Basis matrix B-spline patch meshes
 const RtBasis RiBCatmullRomBasis = {
 	{(RtFloat)(-1.0/2.0), (RtFloat)( 3.0/2.0), (RtFloat)(-3.0/2.0), (RtFloat)( 1.0/2.0)},
 	{(RtFloat)( 2.0/2.0), (RtFloat)(-5.0/2.0), (RtFloat)( 4.0/2.0), (RtFloat)(-1.0/2.0)},
 	{(RtFloat)(-1.0/2.0), (RtFloat)  0.0,      (RtFloat)( 1.0/2.0), (RtFloat)  0.0},
 	{(RtFloat)  0.0,      (RtFloat)( 2.0/2.0), (RtFloat)  0.0,      (RtFloat)  0.0}
-}; ///< Catmull-Rom patch
+}; ///< Basis matrix Catmull-Rom patch meshes
 const RtBasis RiHermiteBasis = {
 	{(RtFloat) 2.0, (RtFloat) 1.0, (RtFloat)-2.0, (RtFloat) 1.0},
 	{(RtFloat)-3.0, (RtFloat)-2.0, (RtFloat) 3.0, (RtFloat)-1.0},
 	{(RtFloat) 0.0, (RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0},
 	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0}
-}; ///< Hermite patch
+}; ///< Basis matrix Hermite patch meshes
 const RtBasis RiPowerBasis = {
 	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0},
 	{(RtFloat) 0.0, (RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0},
 	{(RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 1.0, (RtFloat) 0.0},
 	{(RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 1.0}
-}; ///< Power-basis patch
+}; ///< Basis matrix Power-basis patch meshes
 //@}
 
-/** @defgroup ricpp_blobbyconst Ri constants for RiRoot::blobby()
- *  @brief Added constants for IRi::blobby(): Primitives always followed by an index to the (float) operands
+/** @defgroup ricpp_blobbyconst Ri constants for CRiRoot::blobbyV() (added)
+ *  @brief Added constants for CRiRoot::blobbyV(): Primitives always followed by an index to the (float) operands
+ *  @see CRiRoot::blobbyV(), ricpp_blobbyop
  *  @{
  */
 const RtInt RI_BLOBBY_CONSTANT        = 1000; ///< 1 index to  1 float
@@ -165,8 +180,9 @@ const RtInt RI_BLOBBY_REPELLING_PLANE = 1003; ///< 2 Indices, first for 1 string
 //@}
 
 
-/** @defgroup ricpp_blobbyop Ri constants for RiRoot::blobby() operations
+/** @defgroup ricpp_blobbyop Ri constants for CRiRoot::blobbyV() operations (added)
  *  @brief Added constants for IRi::blobby() Operations, Substract (4) and Divide (5) are exchanged - seems to be a bug in the [RISPEC]
+ *  @see CRiRoot::blobbyV(), ricpp_blobbyconst
  *  @{
  */
 const RtInt RI_BLOBBY_OP_ADD = 0; ///< Addition:  count, ...
@@ -192,6 +208,8 @@ const RtInt RI_BLOBBY_OP_IDP = 7; ///< Identity:  idempotentate
  *    -# Parameter and Protocol Errors
  *  - 61-80
  *    -# Execution Errors
+ *
+ *  @see CRiCPP::errorHandler(), IErrorHandler, ricpp_severity
  * @{
  */
 const RtInt RIE_NOERROR        =  0;       ///< No error occured
@@ -226,150 +244,131 @@ const RtInt RIE_MISSINGDATA    = 46;       ///< Required parameters not provided
 const RtInt RIE_SYNTAX         = 47;       ///< Declare type syntax error
 
 const RtInt RIE_MATH           = 61;       ///< Zerodivide, noninvert matrix, etc.
-const RtInt RIE_LASTERROR      = 61;       ///< Endmarker, not an error code
+const RtInt RIE_LASTERROR      = 61;       ///< Endmarker, not an error code (added)
 //@}
 
 /** @defgroup ricpp_severity Ri error severity
  *  @brief Error severity levels (0-3)
+ *  @see CRiCPP::errorHandler(), IErrorHandler, ricpp_errorconst
  *  @{
  */
 const RtInt RIE_INFO           =  0;       ///< Rendering stats & other info
 const RtInt RIE_WARNING        =  1;       ///< Something seems wrong, maybe okay
 const RtInt RIE_ERROR          =  2;       ///< Problem.  Results may be wrong
 const RtInt RIE_SEVERE         =  3;       ///< So bad you should probably abort
-const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code
+const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code (added)
 //@}
 
 /** @defgroup ricpp_tokens Ri tokens
  *  @brief Definition of the tokens of the RenderMan interface
- *  @warning Must be inserted into the CTokenizer
- *  @see tokenizer.cpp
+ *  @warning Must be inserted into CTokenizer::CTokenizer()
+ *  @see CTokenizer::CTokenizer()
  *  @{
  */
 const RtToken  RI_NULL = (RtToken)0L; ///< Used to mark undefined tokens and end marker of parameter list.
 
-const RtToken  RI_FRAMEBUFFER = "framebuffer", ///< Framebuffer output device as \a type in \c  RiRoot:display()
-               RI_FILE = "file"; ///< File output as \a type in \c RiRoot:display()
+const RtToken  RI_FRAMEBUFFER = "framebuffer", ///< Framebuffer output device as \a type in \c  CRiRoot::display()
+               RI_FILE = "file";               ///< File output as \a type in \c CRiRoot::display()
 
-const RtToken  RI_RGB = "rgb", ///< Output RGB (red green blue) channels for \a mode in \c RiRoot:display()
-               RI_RGBA = "rgba", ///< Output RGBA (RGB + alpha opacitiy) channels for \a mode in \c RiRoot:display()
-			   RI_RGBZ = "rgbz", ///< Output RGBZ (RGB + depth) channels for \a mode in \c RiRoot:display()
-			   RI_RGBAZ = "rgbaz", ///< Output RGBAZ channels for \a mode in \c RiRoot:display()
-               RI_A = "a", ///< Alpha (opacity) channel for \a mode in \c RiRoot:display()
-			   RI_Z = "z", ///< Depth channel for \a mode in \c RiRoot:display()
-			   RI_AZ = "az"; ///< Alpha and Depth channels for \a mode in \c RiRoot:display()
+const RtToken  RI_RGB = "rgb",     ///< Output RGB (red green blue) channels for \a mode in \c CRiRoot::display()
+               RI_RGBA = "rgba",   ///< Output RGBA (RGB + alpha opacitiy) channels for \a mode in \c CRiRoot::display()
+			   RI_RGBZ = "rgbz",   ///< Output RGBZ (RGB + depth) channels for \a mode in \c CRiRoot::display()
+			   RI_RGBAZ = "rgbaz", ///< Output RGBAZ channels for \a mode in \c CRiRoot:::display()
+               RI_A = "a",         ///< Alpha (opacity) channel for \a mode in \c CRiRoot::display()
+			   RI_Z = "z",         ///< Depth channel for \a mode in \c CRiRoot::display()
+			   RI_AZ = "az";       ///< Alpha and Depth channels for \a mode in \c CRiRoot::display()
 
-const RtToken  RI_PERSPECTIVE = "perspective",
-               RI_ORTHOGRAPHIC = "orthographic";
+const RtToken  RI_PERSPECTIVE = "perspective",   ///< Perspective projection for parameter \a name for CRiRoot::projectionV()
+               RI_ORTHOGRAPHIC = "orthographic"; ///< Orthographic projection for parameter \a name for CRiRoot::projectionV()
 
-const RtToken  RI_HIDDEN = "hidden",
-               RI_PAINT = "paint";
+const RtToken  RI_HIDDEN = "hidden", ///< Standard hider 'hidden' for CRiRoot::hiderV()
+               RI_PAINT = "paint";   ///< Standard hider painters algorithm for CRiRoot::hiderV()
 
-const RtToken  RI_CONSTANT = "constant",
-               RI_SMOOTH = "smooth";
+const RtToken  RI_CONSTANT = "constant", ///< Constant shading parameter \a type for CRiRoot::shadingInterpolation()
+               RI_SMOOTH = "smooth";     ///< Smooth shading parameter \a type for CRiRoot::shadingInterpolation()
 
-const RtToken  RI_FLATNESS = "flatness",
-               RI_FOV = "fov";
+const RtToken  RI_FLATNESS = "flatness"; ///< Standard approximation criterion for CRiRoot::geometricApproximation()
 
-const RtToken  RI_AMBIENTLIGHT = "ambientlight",
-               RI_POINTLIGHT = "pointlight",
-               RI_DISTANTLIGHT = "distantlight",
-			   RI_SPOTLIGHT = "spotlight";
-const RtToken  RI_INTENSITY = "intensity",
-               RI_LIGHTCOLOR = "lightcolor",
-			   RI_FROM = "from",
-			   RI_TO = "to",
-			   RI_CONEANGLE = "coneangle",
-               RI_CONEDELTAANGLE = "conedeltaangle",
-			   RI_BEAMDISTRIBUTION = "beamdistribution";
+const RtToken  RI_FOV = "fov"; ///< Field of view value for perspective projection @see RI_PERSPECTIVE, CRiRoot::projectionV()
 
-const RtToken  RI_MATTE = "matte",
-               RI_METAL = "metal",
-			   RI_SHINYMETAL = "shinymetal",
-               RI_PLASTIC = "plastic",
-			   RI_PAINTEDPLASTIC = "paintedplastic";
+const RtToken  RI_AMBIENTLIGHT = "ambientlight", ///< Ambient light source shader CRiRoot::lightSourceV()
+               RI_POINTLIGHT = "pointlight",     ///< Point light source shader CRiRoot::lightSourceV()
+               RI_DISTANTLIGHT = "distantlight", ///< Distant light source shader CRiRoot::lightSourceV()
+			   RI_SPOTLIGHT = "spotlight";       ///< Spotlight source shader CRiRoot::lightSourceV()
 
-const RtToken  RI_KA = "Ka",
-               RI_KD = "Kd",
-			   RI_KS = "Ks",
-			   RI_ROUGHNESS = "roughness",
-			   RI_KR = "Kr",
-               RI_TEXTURENAME = "texturename",
-			   RI_SPECULARCOLOR = "specularcolor";
+const RtToken  RI_INTENSITY = "intensity",               ///< Intensity (RtFloat) parameter of a lightsource
+               RI_LIGHTCOLOR = "lightcolor",             ///< Lightcolor (RtColor) parameter of a lightsource
+			   RI_FROM = "from",                         ///< From position (RtPoint) parameter of a lightsource
+			   RI_TO = "to",                             ///< Direction (RtVector) parameter of a lightsource (not point light)
+			   RI_CONEANGLE = "coneangle",               ///< Cone angle (RtFloat) parameter of a spotlight
+               RI_CONEDELTAANGLE = "conedeltaangle",     ///< Cone delta angle (RtFloat) parameter of a spotlight
+			   RI_BEAMDISTRIBUTION = "beamdistribution"; ///< Beamdistribution (RtFloat) parameter of a spotlight
 
-const RtToken  RI_DEPTHCUE = "depthcue",
-               RI_FOG = "fog",
-			   RI_BUMPY = "bumpy";
+const RtToken  RI_MATTE = "matte",                   ///< Matte surface shader
+               RI_METAL = "metal",                   ///< Metal surface shader
+			   RI_SHINYMETAL = "shinymetal",         ///< Shiny metal surface shader
+               RI_PLASTIC = "plastic",               ///< Plastic surface shader
+			   RI_PAINTEDPLASTIC = "paintedplastic"; ///< Painted plastic surface shader
 
-const RtToken  RI_MINDISTANCE = "mindistance",
-               RI_MAXDISTANCE = "maxdistance",
-			   RI_BACKGROUND = "background",
-               RI_DISTANCE = "distance",
-			   RI_AMPLITUDE = "amplitude";
+const RtToken  RI_KA = "Ka",                       ///< Ambient terms for the reflection formular of a surface
+               RI_KD = "Kd",                       ///< Diffuse terms for the reflection formular of a surface
+			   RI_KS = "Ks",                       ///< Specular terms for the reflection formular of a surface
+			   RI_ROUGHNESS = "roughness",         ///< Roughness (controls size of the highlight) for the specular reflection of a surface
+			   RI_KR = "Kr",                       ///< Term for mix in environment color (shiny metal)
+               RI_TEXTURENAME = "texturename",     ///< Texturname of a surface (e.g. RI_SHINYMETAL or RI_PAINTEDPLASTIC)
+			   RI_SPECULARCOLOR = "specularcolor"; ///< Color for the hightlight of a specular reflection of a surface 
 
-const RtToken  RI_INSIDE = "inside",
-               RI_OUTSIDE = "outside",
-			   RI_LH = "lh",
-			   RI_RH = "rh";
+const RtToken  RI_DEPTHCUE = "depthcue", ///< Depth cue volume shader
+               RI_FOG = "fog";           ///< Fog volume shader
 
-const RtToken  RI_P = "P",
-               RI_PZ = "Pz",
-			   RI_PW = "Pw",
-			   RI_N = "N",
-			   RI_NP = "NP",
-			   RI_CS = "Cs",
-               RI_OS = "Os",
-			   RI_S = "s",
-			   RI_T = "t",
-			   RI_ST = "st";
+const RtToken  RI_BUMPY = "bumpy"; ///< Bumpy displacement shader
 
-const RtToken  RI_BILINEAR = "bilinear",
-               RI_BICUBIC = "bicubic";
+const RtToken  RI_MINDISTANCE = "mindistance", ///< Minimal distance of surface where RI_DEPTHCUE is applied  (all surfaces nearer get no background color mixed in)
+               RI_MAXDISTANCE = "maxdistance", ///< Maximal distance of surface where RI_DEPTHCUE is applied (all surfaces farer away get background color)
+			   RI_BACKGROUND = "background",   ///< Background color the RI_DEPTHCUE and RI_FOG atmosphere shader mixes in
+               RI_DISTANCE = "distance",       ///< Distance shader parameter, controls the attenuation of the surface color in RI_FOG shader
+			   RI_AMPLITUDE = "amplitude";     ///< Controls (amplifies) the amplitude of bump maps in bumpy displacement shader
 
-const RtToken  RI_PRIMITIVE = "primitive",
-               RI_INTERSECTION = "intersection",
-			   RI_UNION = "union",
-			   RI_DIFFERENCE = "difference";
+const RtToken  RI_RASTER = "raster", ///< Name of the raster coordinate system
+			   RI_SCREEN = "screen", ///< Name of the screen coordinate system
+			   RI_CAMERA = "camera", ///< Name of the camera coordinate system
+               RI_WORLD = "world",   ///< Name of the world coordinate system
+			   RI_OBJECT = "object"; ///< Name of the object coordinate system
 
-const RtToken  RI_PERIODIC = "periodic",
-               RI_NONPERIODIC = "nonperiodic",
-               RI_CLAMP = "clamp",
-			   RI_BLACK = "black";
+const RtToken  RI_INSIDE = "inside",   ///< Inside orientation @see CRiRoot::orientation()
+               RI_OUTSIDE = "outside", ///< Outside orientation @see CRiRoot::orientation()
+			   RI_LH = "lh",           ///< Concrete left handed orientation @see CRiRoot::orientation()
+			   RI_RH = "rh";           ///< Concrete right handed orientation @see CRiRoot::orientation()
 
-const RtToken  RI_IGNORE = "ignore",
-               RI_PRINT = "print",
-			   RI_ABORT = "abort",
-			   RI_HANDLER = "handler";
+const RtToken  RI_P = "P",   ///< Token for position parameter
+               RI_PZ = "Pz", ///< Token for depth parameter
+			   RI_PW = "Pw", ///< Token for homogenous points parameter
+			   RI_N = "N",   ///< Token for normal vector parameter
+			   RI_NP = "NP", ///< Token for normal vector followed by position parameter
+			   RI_CS = "Cs", ///< Token for surface color
+               RI_OS = "Os", ///< Token for surface opacity
+			   RI_S = "s",   ///< Token for s texture coordinate
+			   RI_T = "t",   ///< Token for t texture coordinate
+			   RI_ST = "st"; ///< Token for s folowed by t texture coordinate
 
-const RtToken  RI_ORIGIN = "origin",
-               RI_IDENTIFIER = "identifier",
-			   RI_NAME = "name";
+const RtToken  RI_BILINEAR = "bilinear", ///< Bilinear patch/mesh @see RiCPP::patchV(), RiCPP::patchMeshV()
+               RI_BICUBIC = "bicubic";   ///< Bicubic patch/mesh @see RiCPP::patchV(), RiCPP::patchMeshV()
 
-const RtToken  RI_COMMENT = "comment",
-               RI_STRUCTURE = "structure",
-			   RI_VERBATIM = "verbatim";
+const RtToken  RI_PRIMITIVE = "primitive",       ///< Primitive solid (leaf knot), also used as geometric representation @see RiCPP::solidBegin(), RiCPP::solidEnd(), RiCPP::geometricRepresentation()
+               RI_INTERSECTION = "intersection", ///< Intersection of two solids @see RiCPP::solidBegin(), RiCPP::solidEnd()
+			   RI_UNION = "union",               ///< Union of two solids @see RiCPP::solidBegin(), RiCPP::solidEnd()
+			   RI_DIFFERENCE = "difference";     ///< Difference of two solids @see RiCPP::solidBegin(), RiCPP::solidEnd()
 
-const RtToken  RI_LINEAR = "linear",
-               RI_CUBIC = "cubic",
-			   RI_WIDTH = "width",
-			   RI_CONSTANTWIDTH = "constantwidth";
+const RtToken  RI_PERIODIC = "periodic",       ///< Periodic wrap of a patch meshes, curves or texture coordinates @see RiCPPRoot::patchMeshV(), ricpp_texture,  CRiCPP::curvesV()
+               RI_NONPERIODIC = "nonperiodic", ///< Non-periodic wrap of a patch meshes or curves @see RiCPPRoot::patchMeshV(), CRiCPP::curvesV()
+               RI_CLAMP = "clamp",             ///< Clamping textures coordinates to their borders @see ricpp_texture
+			   RI_BLACK = "black";             ///< Leaving textels outside their borders black @see ricpp_texture
 
-const RtToken  RI_CURRENT = "current",
-               RI_WORLD = "world",
-			   RI_OBJECT = "object",
-			   RI_SHADER = "shader";
+const RtToken  RI_IGNORE = "ignore",   ///< Token indicates the ignore error handler
+               RI_PRINT = "print",     ///< Token indicates the print error handler
+			   RI_ABORT = "abort",     ///< Token indicates the abort error handler
+			   RI_HANDLER = "handler"; ///< General token for handler
 
-const RtToken  RI_RASTER = "raster",
-               RI_NDC = "NDC",
-			   RI_SCREEN = "screen",
-			   RI_CAMERA = "camera",
-			   RI_EYE = "eye";
-
-const RtToken  RI_CATMULLCLARK = "catmull-clark",
-               RI_HOLE = "hole",
-			   RI_CREASE = "crease",
-			   RI_CORNER = "corner",
-			   RI_INTERPOLATEBOUNDARY = "interpolateboundary";
 
 /** @defgroup ricpp_tokens_add Additional tokens
  *  @ingroup ricpp_tokens
@@ -377,48 +376,90 @@ const RtToken  RI_CATMULLCLARK = "catmull-clark",
  *  @{
  */
 
-const RtToken RI_ARCHIVE = "archive"; ///< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code or resource type
-const RtToken RI_DRAFT = "draft"; ///< fast draft renderer type (\a IRiContext::rendererType()) with limited implementation of the RI
-const RtToken RI_REALISTIC = "realistic"; ///< photo realistic renderer type (\a IRiContext::rendererType())  implementing the full RI
+const RtToken  RI_CATMULLCLARK = "catmull-clark",              ///< Name of Catmull-Clark subdivision surface @see CRiCPP::subdivisionMeshV()
+               RI_HOLE = "hole",                               ///< Hole in subdivision surface @see CRiCPP::subdivisionMeshV()
+			   RI_CREASE = "crease",                           ///< Sharp edge in subdivision surface @see CRiCPP::subdivisionMeshV()
+			   RI_CORNER = "corner",                           ///< Corner in subdivision surface @see CRiCPP::subdivisionMeshV()
+			   RI_INTERPOLATEBOUNDARY = "interpolateboundary"; ///< Interpolate the boundery (instead of approximate) subdivision surface @see CRiCPP::subdivisionMeshV()
 
-const RtToken RI_FLOAT   = "float";
-const RtToken RI_INTEGER = "integer";
-const RtToken RI_STRING  = "string";
-const RtToken RI_POINT   = "point"; ///< That's a type not the parameter RI_P
-const RtToken RI_VECTOR  = "vector";
-const RtToken RI_NORMAL  = "normal"; ///< That's a type not the parameter RI_N
-const RtToken RI_HPOINT  = "hpoint"; ///< That's a type not the parameter RI_PW
-const RtToken RI_MATRIX  = "matrix";
-const RtToken RI_COLOR   = "color";
+const RtToken  RI_ORIGIN = "origin",          ///< Token for an origin parameter @see CRiCPP::displayV()
+			   RI_NAME = "name";              ///< Token for a name parameter
+
+const RtToken  RI_COMMENT = "comment",     ///< Comment for CRiCPP::ArchiveRecord()
+               RI_STRUCTURE = "structure", ///< Structuredcomment for CRiCPP::ArchiveRecord()
+			   RI_VERBATIM = "verbatim";   ///< Verbatim output for CRiCPP::ArchiveRecord()
+
+const RtToken  RI_LINEAR = "linear", ///< Linear curves @see CRiCPP::curvesV()
+               RI_CUBIC = "cubic";   ///< Cubic curves @see CRiCPP::curvesV()
+
+const RtToken  RI_WIDTH = "width",
+			   RI_CONSTANTWIDTH = "constantwidth";
+
+/*
+const RtToken  RI_CURRENT = "current", // Current coordinate system
+			   RI_EYE = "eye",         // Eye coordinate system
+			   RI_SHADER = "shader",   // Shader coordinate system
+               RI_NDC = "NDC";         // NDC coordinate system
+*/
+
+const RtToken  RI_PIPE = "pipe",               ///< Pipe input/output for RIB, parameter of \c CRiRoot::beginV() parameter is a command
+               RI_NAMEDPIPE = "namedpipe",     ///< Named pipe input/output for RIB parameter of \c CRiRoot::beginV(), parameter is the name of a pipe
+               RI_FILEPOINTER = "filepointer", ///< Input/Output to a file opend by FILE * \c CRiRoot::beginV() or resource, not allowed for RIB
+               RI_MEMORY = "memory";           ///< Input from memory resource, not allowed for RIB
+
+const RtToken RI_ARCHIVE = "archive",   ///< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code, or archive namespace
+              RI_DRAFT = "draft",       ///< fast draft renderer type (\a IRiContext::rendererType()) with limited implementation of the RI
+              RI_REALISTIC = "realistic"; ///< photo realistic renderer type (\a IRiContext::rendererType())  implementing the full RI
+
+const RtToken RI_FLOAT   = "float"; ///< Name for type RtFloat
+const RtToken RI_INTEGER = "integer"; ///< Name for type RtInteger
+const RtToken RI_STRING  = "string"; ///< Name for type RtString
+const RtToken RI_POINT   = "point"; ///< Name for type RtPoint
+const RtToken RI_VECTOR  = "vector"; ///< Name for type RtVector
+const RtToken RI_NORMAL  = "normal"; ///< Name for type RtNormal
+const RtToken RI_HPOINT  = "hpoint"; ///< Name for type RtHpoint
+const RtToken RI_MATRIX  = "matrix"; ///< Name for type RtMatrix
+const RtToken RI_COLOR   = "color"; ///< Name for type RtColor
 
 // const RtToken RI_CONSTANT = "constant"; // already a RtToken
-const RtToken RI_UNIFORM = "uniform";
-const RtToken RI_VARYING = "varying";
-const RtToken RI_VERTEX = "vertex";
-const RtToken RI_FACEVARYING = "facevarying";
-const RtToken RI_FACEVERTEX = "facevertex";
+const RtToken RI_UNIFORM = "uniform"; ///< Name for storage class uniform
+const RtToken RI_VARYING = "varying"; ///< Name for storage class varying
+const RtToken RI_VERTEX = "vertex"; ///< Name for storage class vertex
+const RtToken RI_FACEVARYING = "facevarying"; ///< Name for storage class facevarying
+const RtToken RI_FACEVERTEX = "facevertex"; ///< Name for storage class facevertex
 
-const RtToken RI_AREALIGHT = "arealight";
-const RtToken RI_LIGHT = "light";
-const RtToken RI_SURFACE = "surface";
-const RtToken RI_VOLUME = "volume";
-const RtToken RI_IMAGER = "imager";
-const RtToken RI_DISPLACEMENT = "displacement";
-const RtToken RI_DEFORMATION = "deformation";
-const RtToken RI_INTERIOR = "interior";
-const RtToken RI_EXTERIOR = "exterior";
-const RtToken RI_ATMOSPHERE = "atmosphere";
-const RtToken RI_ATTRIBUTE = "attribute";
-const RtToken RI_OPTION = "option";
-const RtToken RI_GEOMETRY = "geometry";
-const RtToken RI_HIDER = "hider";
-const RtToken RI_RESOURCE = "resource";
+const RtToken RI_PROJECTION = "projection"; ///< Projection namespace
+const RtToken RI_IMAGER = "imager"; ///< Imager namespace
+const RtToken RI_DISPLAY = "display"; ///< Display namespace
+const RtToken RI_HIDER = "hider"; ///< Hider namespace
+const RtToken RI_OPTION = "option"; ///< Option namespace
+const RtToken RI_LIGHT = "light"; ///< Light source namespace
+const RtToken RI_AREALIGHT = "arealight"; ///< Area light source namespace
+const RtToken RI_SURFACE = "surface"; ///< Surface shader namespace
+const RtToken RI_ATMOSPHERE = "atmosphere"; ///< Atmosphere shader namespace
+const RtToken RI_INTERIOR = "interior"; ///< Interior shader namespace
+const RtToken RI_EXTERIOR = "exterior"; ///< Exterior shader namespace
+const RtToken RI_DISPLACEMENT = "displacement"; ///< Displacement shader namespace
+const RtToken RI_DEFORMATION = "deformation"; ///< Deformation shader namespace
+const RtToken RI_VOLUME = "volume"; ///< Volume shader namespace
+const RtToken RI_GEOMETRICAPPROXYMATION = "geometricapproximation"; ///< Geometric approcximation namespace
+const RtToken RI_COORDINATESYSTEM = "coordinatesystem"; ///< Coordinate system namespace
+const RtToken RI_ATTRIBUTE = "attribute"; ///< Attribute namespace
+const RtToken RI_GEOMETRY = "geometry"; ///< Geometry namespace
+const RtToken RI_TEXTURE = "texture"; ///< Texture namespace
+const RtToken RI_READARCHIVE = "readarchive"; // Read archive namespace primitive already a token
+// const RtToken RI_ARCHIVE   = "archive"; // Archive block namespace primitive already a token
+const RtToken RI_DISPLAYCHANNEL = "displaychannel"; // Display channel namespace primitive already a token
+const RtToken RI_RESOURCE = "resource"; ///< Resource namespace
 
-// const RtToken RI_GEOMETRICAPPROXYMATION = "geometricapproximation"; // Not used
-const RtToken RI_DEVIATION = "deviation";
-const RtToken RI_TESSELATION = "tesselation";
-// const RtToken RI_RASTER = "raster"; // already a RtToken
-const RtToken RI_PARAMETRIC = "parametric";
+const RtToken RI_DEVIATION = "deviation";     ///< Type for RiCPP::geometricApproximation()
+const RtToken RI_TESSELATION = "tesselation"; ///< Type for RiCPP::geometricApproximation()
+
+const RtToken RI_POINTS  = "points"; ///< Geometric representation as points
+const RtToken RI_LINES   = "lines";  ///< Geometric representation as lines
+// const RtToken RI_PRIMITIVE   = "primitive"; // Geometric representation as shaded primitive already a token
+
+const RtToken RI_SENSE  = "sense"; ///< User defined attribute for trimcurve sense RI_INSIDE, RI_OUTSIDE
 
 const RtToken RI_INT     = "int"; //!< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
 const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL, used internally
@@ -523,7 +564,8 @@ public:
 	virtual RtVoid operator()(IRi &ri, RtPointer data) const = 0;
 };
 
-/** @brief Callback function to handle structural comments in rib files (IRi::readArchive), changed to include renderer instance
+/** @brief Callback function to handle structural comments in rib files (IRi::readArchive),
+ *  changed to include renderer instance and has a stripped signature
  */
 class IArchiveCallback {
 public:
@@ -531,8 +573,13 @@ public:
 	 */
 	virtual const char *name() const = 0;
 	/** @brief The callback function as operator()()
+	 * @param ri the frontend used by the subdivision function that handled the data.
+	 * @param type The type of the comment, either RI_COMMENT or RI_STRUCTURE. RI_VERBATIM
+	 * cannot be handled.
+	 * @param line The (formatted) comment line, smae as the formatted string
+	 * given by IRiRoot::archiveRecordV()
 	 */
-	virtual RtVoid operator()(IRi &ri, RtToken, RtString) const = 0;
+	virtual RtVoid operator()(IRi &ri, RtToken type, RtString line) const = 0;
 };
 
 // ---------------------------------------------------------------------------------------------------
@@ -573,7 +620,7 @@ public:
 	 *  end catches this exception and calls the user defined error handler.
 	 *
 	 *  @param handler The error handler
-	 *
+	 *  @see ricpp_errorconst, IErrorHandler, ricpp_severity
 	 */
 	virtual RtVoid errorHandler(const IErrorHandler &handler) = 0;
 	//@}
@@ -599,47 +646,123 @@ public:
 	/*! @param name Type of synchronization, e.g. RI_ABORT to abort the rendering
 	 */
     virtual RtVoid synchronize(RtToken name) = 0;
+
+	/* @brief Executes an arbitrary system command
+	 * @param cmd The command
+	 */
+	// virtual RtVoid RiSystem(char *cmd);
+
 	//@}
 
-	/** @defgroup ricpp_resource Ri Ressource handling
+#if 0
+	/*  @defgroup ricpp_resource Ri Ressource handling
 	 *  @ingroup ricpp_interface
 	 *  @brief Handling of external resources
 	 *  @{
 	 */
 
-	//! @brief Create an external resource
-	/*! Took sematics from QRM, see QRMSpec.rtfd (Next, Hydra) External resources, Pixie (other meaning, RtVoid)
-	 *  Helps to get rid of a bunch of ressource handling (e.g. when to destroy a memory stored rib archive).
-	 *  resourceV() includes an implicit createHandle (createHandle is not explicitely implemented).
-	 *  There is no Rib-Binding, since not standard, in RIB binding,
-	 *  in Rib binding the resource is replaced inline or the name is propagated.
+	/* @brief Hints to cache a resource (added, no rib binding).
 	 *
-	 * Types can be:
+	 *  If @a onoff is set to RI_TRUE, a context can cache all ressources of a
+	 *  given @a name and @a type instead of rereading it over and over again.
+	 *  If @a onoff is set to RI_FALSE, caching is turned of and cached resources
+	 *  are freed. The ressources are freed at end. The cache is turned off as
+	 *  default. The resource @a type can be one of
 	 *
-	 *  RtArchive : RiRoot::readArchiveV()
+	 *  - RI_ARCHIVE
+	 *  - RI_TEXTURE
+	 *  - RI_SHADER
 	 *
-     *  @param name Name of the resource
-     *  @param type Type of the resource 
+	 *  also the specific shader type is allowed
+	 *
+	 *  - RI_AREALIGHT
+	 *	- RI_LIGHT
+	 *	- RI_SURFACE
+	 *	- RI_VOLUME
+	 *	- RI_IMAGER
+	 *	- RI_DISPLACEMENT
+	 *	- RI_DEFORMATION
+	 *	- RI_INTERIOR
+	 *	- RI_EXTERIOR
+	 *	- RI_ATMOSPHERE
+	 * 
+	 *  RI_NULL for all types (handy for clearing all at once)
+	 *
+	 *  @param name Name of the Ressource, RI_NULL for all ressources of a type
+	 *  @param type Type of the Ressource,
+	 *  @param onoff Turn caching on or off (also frees the cached data)
+	 */
+	virtual RtVoid cacheResource(RtString name, RtToken type, RtBoolean onoff) = 0;
+
+	/* @brief Creates an external resource. Scope inside resourceBegin, resourceEnd
+	 *
+	 *  resourceV() creates a handle for the resource @a name of the given @a type.
+	 *
+	 *  Pixars C-binding exposes no return type (RtString name -> Token as handle).
+	 *  Can be used to store attributes (has a additional meaning as QRM resource,
+	 *  resembles more the PostScript save/restore)
+	 *
+	 *  In RIB binding the resource is replaced inline or the name is propagated
+	 *  (of course the name will not be found if the RIB is rendered). Therefore
+	 *  the direct mode for readArchiveV() is used for RIB output - that
+	 *  is: The RIB commands are written instead of archiving a readArchive().
+	 *  Also this will be the sane for a network proxy (if implemented).
+	 *
+	 *  The handle has the form RES:. Whenever a RES: name is encountered,
+	 *  the routines can query an interface the ressource (interface for this will
+	 *  be implemented when the parser gets implemented). That saver as
+	 *  directly accessing a memory address or file handle.
+	 *
+	 *  Ressources are
+	 *  removed, if the current mode is ending. However, only the handle
+	 *  is removed, not the resource itself - so you must free the
+	 *  memory or close the file if it is not needed any more.
+	 *
+	 *  Types can be (at the moment only one type):
+	 *
+	 *  RI_ARCHIVE : RiRoot::readArchiveV()
+	 *
+     *  @param name Name of the resource 
+     *  @param type Type of the resource (RI_ARCHIVE)
 	 *  @param n Number of tokens
-	 *  @param tokens Tokens for additional parameter list
+	 *  @param tokens Tokens for additional parameter list.
+	 *  RI_MEMORY memory address of a 0 terminated string,
+	 *  RI_FILEPOINTER for a FILE *
 	 *  @param params Value pointer for additional parameter list for the resource
-	 *  @return The handle for the resource, can be used in various places like
-	 *          @c readArchive() as parameter @a name - that's different to QRM.
+	 *  @return The handle for the resource is the tokenized name.
 	 */
-	virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	//! @brief Removes an external resource from memory (added)
-	/*! Removes a resource that was declared by @c resourceV() from memory. The @a handle
-	 *  cannot accessed after removed (results in error)
-	 *  There is no Rib-Binding, since not standard.
-     *  @param handle Resource handle that is freed
-	 */
-	virtual RtVoid freeResource(RtToken handle) = 0;
+	/* @brief Create a resource handle (QRM)
+	 *
+	 * Helps to get rid of a bunch of ressource handling (e.g. when to destroy a memory stored
+	 * rib archive). When archiving the resources to RIB, the resourcenames are replaced inline.
+	 *
+	 * However decided to use a new interface routine cacheResource(RtString name, RtToken type, RtBoolean onoff)
+	 *
+	 * Used for inline archives
+	 * @verbatim
+	 * // Creates a handle token (unique pointer): "ribarchive.rib" for the
+	 * // RIB archive with the filename ribarchive.rib
+	 * ri.attributeBegin();
+	 * handle = ri.createHandle("ribarchive.rib", RI_ARCHIVE);
+	 * ...
+	 * ri.attributeBegin()
+	 *     ri.readArchive(handle, RI_NULL); // The first time Reads the archive, caches in handle
+	 * ri.attributeEnd()
+	 * ...
+	 * ri.readArchive(handle, RI_NULL); // Uses the cached archive the next times
+	 * ...
+	 * ri.attributeEnd();
+	 * // Handle is invalid here
+	 * @endverbatim
+	 * 
+     *  @param name Name of the resource
+     *  @param type Type of the resource (RI_ARCHIVE)
+     */
+	virtual RtToken createHandle(RtToken name, RtToken type) = 0;
+#endif
 
-	/*
-	// -> QRM
-	virtual RtToken createHandle(RtToken handle, RtToken type) = 0;
-	*/
 	//@}
 
 	/** @defgroup ricpp_modes Ri Modes
@@ -693,32 +816,42 @@ public:
 	virtual RtVoid transformEnd(void) = 0;
 
 	//! @brief Starts a solid block, a CSG solid primitive
-	/*! @param type Type of the solid block either RI_PRIMITIVE, RI_INTERSECTION, RI_UNION or RI_DIFFERENCE
+	/*! @param type Type of the solid block either
+	 *  RI_PRIMITIVE, RI_INTERSECTION, RI_UNION or RI_DIFFERENCE
 	 */
     virtual RtVoid solidBegin(RtToken type) = 0;
 
 	//! @brief Ends a solid block
     virtual RtVoid solidEnd(void) = 0;
 
-	//! @brief Starts a new object block, the definition fo an object
-	/*! @return The handle is used to later reference the object in IRi::objectInstance()
+	/** @brief Starts a new object block for retained models
+	 *  
+	 *  The object is freed at its neares enclosing frame or world block. It inherits
+	 *  the object state, when it is instanciated. Calls inside do not have
+	 *  side effects when instanciated - that's different to a rib archive. Nested blocks
+	 *  inside have to be balanced. You can declare variables inside object blocks and
+	 *  they stay declared after objectEnd(), but are not redeclared by objectInstance().
+	 *
+	 *  If used inside an archive block, it cannot be used outside this block and is
+	 *  freed with this block. Dito for objects in objects.
+	 *
+	 *  Cannot be nested.
+	 *
+	 *  The rib writer will have an option to expand macros.
+	 *
+	 *  @return The handle is used to later reference the object in IRi::objectInstance()
 	 */
 	virtual RtObjectHandle objectBegin(void) = 0;
 
 	//! @brief Ends an object block, the object can now be created with IRi::objectInstance()
 	virtual RtVoid objectEnd(void) = 0;
 
-	//! @brief Retained geometry (objectBegin(), objectEnd())
-	/*! Creates a new object referenced by handle
+	//! @brief Instanciate retained models (objectBegin(), objectEnd())
+	/*! Creates a new object referenced by handle, the object inherits the
+	 *  current state but do not have side effects.
 	 * @param handle Reference to an object, returned by objectBegin
 	 */
     virtual RtVoid objectInstance(RtObjectHandle handle) = 0;
-
-	//! @brief Explicitely frees an object handle
-	/*! There is no Rib-Binding (simply ignored), since not standard.
-	 *  @param handle Reference to an object, returned by objectBegin
-	 */
-    virtual RtVoid freeObject(RtObjectHandle handle) = 0;
 
 	//! @brief Starts a motion block
 	/*! @param N     Number of samples (length of times)
@@ -730,7 +863,7 @@ public:
     virtual RtVoid motionEnd(void) = 0;
 
 	/*
-	// -> QRM, object will be handled like macro
+	// -> QRM, objects are handled like macros (same as archiveBeginV() ?)
 	virtual RtToken macroBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid macroEnd(void) = 0;
 	virtual RtToken macroInstance(RtToken macro, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
@@ -739,18 +872,53 @@ public:
 	// Here: Version must be printed some how by Rib writer, since only this object 'knows' whitch version it writes
 	virtual version(RtFloat version) = 0;
 
-	// -> Pixie (http://www.george-graphics.co.uk/pixiewiki/Main_Page)
-	virtual RtVoid resourceBegin(RtVoid) = 0;
-	virtual RtVoid resourceEnd(RtVoid) = 0;
-
-	// -> Pixie, 3Delight (archiveInstance)
-	// same as macros?
-    virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtVoid archiveEnd(void) = 0;
-	virtual RtVoid archiveInstance(RtArchiveHandle handle) = 0;
 	*/
 
+#if 0
+	/** @brief Begins a resource block.
+	 *
+	 *  Controls the scope of resource()
+	 */
+	virtual RtVoid resourceBegin(RtVoid) = 0;
+
+	/** @brief Ends a resource block.
+	 */
+	virtual RtVoid resourceEnd(RtVoid) = 0;
+
+	/*  @brief Begins an inline archive
+	 *
+	 *  Stores the commands in memory for later use. When @a name is used in
+	 *  readArchiveV() and the DelayedReadArchive procedural,
+	 *  the stored archive @a name is used.
+	 *  Macros are freed at its neares enclosing frame or world block.
+	 *  This command does not write a RIB entity or file. The rib writer will
+	 *  have an option to expand archivs.
+	 *
+	 *  Can be nested.
+	 *
+	 *  @param name Name of the archive
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameter list
+	 */
+	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+	/*  @brief Ends an archive
+	 *  The commands are not longer stored if the outer most archive block is closed
+	 */
+	virtual RtVoid archiveEnd(void) = 0;
+#endif
 	//@}
+
+#if 0
+	/*  @defgroup ricpp_displaychannel
+	 *  @brief Defines a new display channel for display()
+	 *  @ingroup ricpp_interface
+	 *  @{
+	 */
+	displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
+	//@}
+#endif
 
 	/** @defgroup ricpp_options Ri Options
 	 *  @ingroup ricpp_interface
@@ -891,7 +1059,7 @@ public:
 	 *  @param type Type of the output, e.g. RI_FRAMEBUFFER, RI_FILE
 	 *  @param mode Mode of the output, e.g. RI_RGBA, RI_Z
 	 *  @param n Number of tokens
-	 *  @param tokens Tokens for additional parameter list
+	 *  @param tokens Tokens for additional parameter list (RI_ORIGIN)
 	 *  @param params Value pointer for additional parameter list for the display
 	 */
     virtual RtVoid displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
@@ -1013,6 +1181,14 @@ public:
 	 */
 	virtual RtVoid exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
+	/* @brief Sets the current volume shader.
+	 *  @param name Name of the volume shader
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameter list
+	 */
+	// virtual RtVoid volumeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
 	//! Turns a specific light source on or off
 	/*! @param light Handle that references a light source (area or non-area light source)
 	 *  @param onoff RI_TRUE turns a light source on, RI_FALSE turns it off.
@@ -1045,6 +1221,7 @@ public:
 	//! Sets the current shading rate to size
 	/*! Controls the frequency of shading a surface.
 	 *  @param size The new current shading rate (area in pixels)
+	 *  @see shadingInterpolation()
 	 */
     virtual RtVoid shadingRate(RtFloat size) = 0;
 
@@ -1052,6 +1229,7 @@ public:
 	/*! Controls how values are interpolated between shading samples
 	 *  (usually across a polygon).
 	 *  @param type Type of the shading interpolation, RI_SMOOTH or RI_CONSTANT
+	 *  @see shadingRate()
 	 */
 	virtual RtVoid shadingInterpolation(RtToken type) = 0;
 
@@ -1071,7 +1249,7 @@ public:
 	 */
 	virtual RtVoid detail(RtBound bound) = 0;
 
-	//! Sets the current detail range
+	//! @brief Sets the current detail range.
 	/*! The detail range is taken for subsequent primitives to the next call of
      *  detailRange() or the next attributeEnd() or worldEnd()
 	 *  @param minvis model is not used for values smaller than this level of detail (LOD)
@@ -1081,50 +1259,51 @@ public:
 	 */
 	virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
 
-	//! Sets the criterion for approximating the surface primitives
+	//! @brief Adds the criterion for approximating the surface primitives.
 	/*! The primitives are approximated with other, more easily rendered,
 	 * primitives (usually polygons), the [QRM] Spec is used here.
-	 *  @param type Type of criterion for approximation, e.g. RI_TESSELATION in TGLRenderer
-	 *  @param n Number of tokens
-	 *  @param tokens Tokens for additional parameter list
-	 *  @param params Value pointer for additional parameter list,
-	 *                e.g. metric for the criterion, e.g. the number of polygons generated
-	 *                by a tesselation
+	 *  @param type Type of criterion for approximation, RI_TESSELATION, RI_DEVIATION, RI_FLATNESS
+	 *  @param value metric for the criterion
 	 */
-    virtual RtVoid geometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid geometricApproximation(RtToken type, RtFloat value) = 0;
 
-	//! Sets the type of the geometric representation used to represent the primitives
-	/*! @param type Type of representation, e.g. RI_POINTS for points at vertices
+	//! @brief Sets the type of the geometric representation.
+	/*! Used to represent the primitives (added, was QRM)
+	 *  @param type Type of representation, RI_POINTS, RI_LINES, RI_PRIMITIVE
 	 */
-	virtual RtVoid geometricRepresentation(RtToken type) = 0; /* New 3.2 */
+	virtual RtVoid geometricRepresentation(RtToken type) = 0;
 
-	//! Sets the current orientation
+	//! @brief Sets the current orientation.
 	/*! The orientation can be set expicitly to be either left-handed or right-handed or
 	 *  set to the inside or the outside (the side is then rendered if IRi::sides(1))
 	 *  @param orientation The new orientation,
 	 *                     RI_LH, TRi_RH, RI_INSIDE or RI_OUTSIDE
+	 *  @see reverseOrientation()
 	 */
 	virtual RtVoid orientation(RtToken orientation) = 0;
 
-	//! Flips current orientation, left-handed becomes right-handed and vice versa
+	//! @brief Flips current orientation, left-handed becomes right-handed and vice versa.
+	/*! @see reverseOrientation()
+	 */
 	virtual RtVoid reverseOrientation(void) = 0;
 
-	//! Sets the number of sides of a surface being rendered
+	//! @brief Sets the number of sides of a surface being rendered.
     /*! If sides is 2, subsequent surfaces are considerd two-sided and both the inside
 	 *  and the outside of a surface will be visible.
 	 *  @param nsides Visible sides of a surface (0 <= nsides <= 2)
 	 */
 	virtual RtVoid sides(RtInt nsides) = 0;
 
-	//! Sets the current basis matrices used by bicubic patches
+	//! @brief Sets the current basis matrices used by bicubic patches.
 	/*! @param ubasis The u-basis matrix
 	 *  @param ustep The step size in u direction (bicubic patch meshes)
 	 *  @param vbasis The v-basis matrix
 	 *  @param vstep The step size in v direction (bicubic patch meshes)
+	 *  @see ricpp_steps, ricpp_basis
 	 */
     virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) = 0;
 
-	/** @brief Sets the current trim curve
+	/** @brief Sets the current trim curve.
 	 *
 	 *  The current trim curve consists of NURB curves in homogeneous parameter space,
 	 *  and is used to trim IRi::nuPatch().
@@ -1224,7 +1403,7 @@ public:
 	virtual RtVoid deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	/*
-	// -> RenderMan 11.5.2
+	// -> RenderMan 11.5.2, like coordinate system, difference: stacked with attribute block and above (not xform block)
 	// virtual RtVoid scopedCoordinateSystem(RtToken space) = 0;
 	*/
 
@@ -1379,6 +1558,8 @@ public:
 	 *  @param params Value pointer for additional parameter list
 	 */
     virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
+	// Application note #41, November 2004
+    // virtual RtVoid hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 
@@ -1532,6 +1713,7 @@ public:
 	 * @param n Number of tokens
 	 * @param tokens Tokens for additional parameter list
 	 * @param params Value pointer for additional parameter list
+	 * @see ricpp_blobbyconst, ricpp_blobbyop
 	 */
     virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
 	//@}
@@ -1664,13 +1846,20 @@ public:
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
 	//@}
 
-	/*
-	// -> Pixie, RenderMan 2004 ???
-	virtual RtVoid ifBeginV(RtString expr, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtVoid elseIfV(RtString expr, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+#if 0
+	/*  @defgroup ricpp_conditional Ri RIB conditional expressions
+	 *  @ingroup ricpp_interface
+	 *  @brief Conditional expression for RIB
+	 *
+	 *  Changed the names of the procedures elseif and else because else is a keyword in c/c++
+	 *  @{
+	 */
+	virtual RtVoid ifBegin(RtString expr) = 0;
+	virtual RtVoid elseIfBegin(RtString expr) = 0; // was RiElseIf
 	virtual RtVoid elseBegin(void) = 0; // was RiElse
 	virtual RtVoid ifEnd(void) = 0;
-	*/
+	//@}
+#endif
 
 	//@}
 }; // IRiRoot
@@ -1736,16 +1925,18 @@ public:
 	virtual RtInt lastError() = 0;
 	//@}
 
-	/** @addtogroup ricpp_resource
+#if 0
+	/*  @addtogroup ricpp_resource
 	 *  @ingroup ricpp_interface
 	 *  @{
 	 */
 
-	/** @brief Frees a ressource handle
+	/*  @brief Ressource handle
 	 *  @see IRiRoot::resourceV()
 	 */
-	virtual RtToken resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
+	virtual RtResourceHandle resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
+#endif
 
 	/** @defgroup ricpp_contexts Ri context handlers
 	 *  @ingroup ricpp_interface
@@ -1773,17 +1964,20 @@ public:
 	// QRM
 	virtual RtToken macroBegin(RtString name, ...) = 0;
 	virtual RtToken macroInstance(RtToken macro, ...) = 0;
-
-	// -> Pixie, 3Delight (archiveInstance)
-	virtual RtArchiveHandle archiveBegin(RtString name, ...) = 0;
 	*/
 
-	
+#if 0
+	/** @brief Starts an archive in memory
+	 * @see IRiRoot::archiveBeginV()
+	 */
+	virtual RtVoid archiveBegin(RtString name, RtToken token = RI_NULL, ...) = 0;
+#endif
+
 	/** @brief Starts a new renderer
 	 *
 	 * Added a parameterlist (RtToken @a token, ...) and as the return type,
 	 * a context handle (similar to [QRM])
-	 * @see IRiRoot::begin()
+	 * @see IRiRoot::beginV()
 	 */
 	virtual RtContextHandle begin(RtString name, RtToken token = RI_NULL, ...) = 0;
 
@@ -1794,6 +1988,16 @@ public:
 	 */
     virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...) = 0;
 	//@}
+
+#if 0
+	/*  @defgroup ricpp_displaychannel
+	 *  @brief Defines a new display channel for display()
+	 *  @ingroup ricpp_interface
+	 *  @{
+	 */
+	displayChannel(RtToken channel, ...),
+	//@}
+#endif
 
 	/** @addtogroup ricpp_options
 	 *  @ingroup ricpp_interface
@@ -1873,15 +2077,15 @@ public:
 	 */
     virtual RtVoid exterior(RtString name, RtToken token = RI_NULL, ...) = 0;
 
+	/* @brief Sets the current volume shader.
+	 * @see IRiRoot::volumeV()
+	 */
+	// virtual RtVoid volume(RtString name, RtToken token = RI_NULL, ...) = 0;
+
 	/** @brief the current displacement shader
 	 *  @see IRiRoot::displacementV()
 	 */
 	virtual RtVoid displacement(RtString name, RtToken token = RI_NULL, ...) = 0;
-
-	/** @brief The current displacement shader
-	 *  @see IRiRoot::geometricApproximationV()
-	 */
-    virtual RtVoid geometricApproximation(RtToken type,  RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @addtogroup ricpp_transforms
@@ -1958,6 +2162,7 @@ public:
 	 *  @see IRiRoot::subdivisionMeshV()
 	 */
     virtual RtVoid subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
+    // virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 
@@ -2091,11 +2296,6 @@ public:
     virtual RtVoid readArchive(RtString name, const IArchiveCallback *callback, RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 	//@}
 
-	/*
-	// -> Pixie, RenderMan 2004 ???
-	virtual RtVoid ifBegin(RtString expr, ...) = 0;
-	virtual RtVoid elseIf(RtString expr, ...) = 0;
-	*/
 	//@}
 }; // IRi
 } // namespace RiCPP

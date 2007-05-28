@@ -174,7 +174,10 @@ public:
 	inline void objectBegin() { return m_modeStack->objectBegin(); }
 	inline void objectEnd() { return m_modeStack->objectEnd(); }
 
-    inline void motionBegin() { return m_modeStack->motionBegin(); }
+    inline void archiveBegin() { return m_modeStack->archiveBegin(); }
+    inline void archiveEnd() { return m_modeStack->archiveEnd(); }
+
+	inline void motionBegin() { return m_modeStack->motionBegin(); }
     inline void motionEnd() { return m_modeStack->motionEnd(); }
 
 	inline virtual bool validRequest(EnumRequests req) const { return m_modeStack->validRequest(req); }

@@ -89,7 +89,6 @@ protected:
 	inline virtual RtVoid doObjectBegin(void) {}
 	inline virtual RtVoid doObjectEnd(void) {}
     inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
-    inline virtual RtVoid doFreeObject(RtObjectHandle handle) {}
 
     inline virtual RtVoid doMotionBeginV(RtInt N, RtFloat times[]) {}
     inline virtual RtVoid doMotionEnd(void) {}
@@ -135,7 +134,7 @@ protected:
 	inline virtual RtVoid doBound(RtBound bound) {}
 	inline virtual RtVoid doDetail(RtBound bound) {}
 	inline virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
-    inline virtual RtVoid doGeometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
+    inline virtual RtVoid doGeometricApproximationV(RtToken type, RtFloat value) {}
 	inline virtual RtVoid doGeometricRepresentation(RtToken type) {}
 	inline virtual RtVoid doOrientation(RtToken orientation) {}
 	inline virtual RtVoid doReverseOrientation(void) {}

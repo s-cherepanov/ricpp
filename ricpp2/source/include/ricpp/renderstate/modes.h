@@ -47,7 +47,9 @@ enum EnumModes {
 	MODE_ATTRIBUTE,	    //!< Index directly inside attribute block
 	MODE_TRANSFORM,	    //!< Index directly inside transformation block
 	MODE_SOLID,		    //!< Index directly inside solid block
-	MODE_MOTION,		    //!< Index directly inside motion block
+	MODE_MOTION,	    //!< Index directly inside motion block
+
+	MODE_ARCHIVE,	    //!< Index directly inside archive block
 
 	MODE_OBJECT		    //!< Index directly inside object block
 };
@@ -70,7 +72,9 @@ enum EnumModeBits {
 	MODE_BIT_SOLID     =  64, //!< Bit for directly inside solid block
 	MODE_BIT_MOTION    = 128, //!< Bit for directly inside motion block
 
-	MODE_BIT_OBJECT    = 256  //!< Bit for directly inside object block
+	MODE_BIT_ARCHIVE   = 256, //!< Bit for directly inside archive block
+
+	MODE_BIT_OBJECT    = 512  //!< Bit for directly inside object block
 };
 
 } // namespace RiCPP

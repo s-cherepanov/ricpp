@@ -40,11 +40,25 @@
 
 namespace RiCPP {
 
+/** @brief Interface for variable substitution.
+ */
+class ISearchCallback
+{
+public:
+	/** @brief Searches for a variable varName and returns the value found
+	 *  in \a varName.
+	 *  @retval varName (input/output) variable name to search for, also used return
+	 *         the found value. Is not cleared if not found.
+	 *  @return true, if found
+	 */
+	virtual bool operator()(std::string &varName) = 0;
+}; // ISearchCallback
+
 /** @brief Class used to store strings, used like a stack with a constant iterator.
  *
- *  The Strings can contain variables ($VARIABLE), which are substituted
- *  before inserted. Strings can be pushed or obtained from a string list by
- *  'exploding' a string like a search path for executables. Can also
+ *  The Strings can contain variables ($VARIABLE ${VARIABLE}), which are
+ *  substituted before inserted. Strings can be pushed or obtained from a string
+ *  list by 'exploding' a string like a search path for executables. Can also
  *  substitute environment variables like $HOME or $PROGDIR, see env.h.
  */
 class CStringList {
@@ -57,6 +71,10 @@ public:
 	typedef std::list<std::string>::size_type size_type;
 
 private:
+	/** @brief Search callback for variable substitution
+	 */
+	ISearchCallback *m_callback;
+
 	/** @brief The strings are stored in a std::list.
 	 */
 	std::list<std::string> m_stringList;
@@ -64,9 +82,15 @@ private:
 	 */
 	std::map<std::string, std::string> m_substMap;
 
-	/** @brief Searches a variable varName in \a m_substMap (and environment) and returns the found
-	 *  value in \a varName.
-	 *  @param varName (input/output) variable name to search for, also used return
+	/** @brief Searches a variable varName. 
+	 *
+	 * -# via \a m_callback
+	 * -# in \a m_substMap
+	 * -# in shell environment (if useEnv is set)
+	 *
+	 *  and returns the found value in \a varName.
+	 *
+	 *  @retval varName (input/output) variable name to search for, also used return
 	 *         the found value. Is cleared if not empty.
 	 *  @param useEnv If true tries to get \a varEnv as environment variable if it is not
 	 *         found in \a m_substMap.
@@ -74,6 +98,13 @@ private:
 	void getVar(std::string &varName, bool useEnv);
 
 public:
+	/** @brief Standard constructor
+	 *
+	 * No search callback.
+	 */
+	inline CStringList() { m_callback = 0; }
+	inline CStringList(ISearchCallback *callback) { m_callback = callback; }
+
 	/** @brief Seperates a string.
 	 *
 	 *  Seperates a string \a str using the seperator character \a seperator. The seperated

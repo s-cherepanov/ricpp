@@ -113,9 +113,6 @@ public:
 
     inline virtual RtVoid synchronize(RtToken name) {}
 
-	inline virtual RtToken resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) { return RI_NULL; }
-	inline virtual RtVoid  freeResource(RtToken handle) {}
-
 	/** @brief Initializes a new render context.
 	 *
 	 *  beginV() is called exactly one time by the context creator
@@ -160,8 +157,7 @@ public:
 	inline virtual RtObjectHandle objectBegin(void) { return illObjectHandle; }
 	inline virtual RtVoid objectEnd(void) {}
     inline virtual RtVoid objectInstance(RtObjectHandle handle) {}
-    inline virtual RtVoid freeObject(RtObjectHandle handle) {}
-
+    
     inline virtual RtVoid motionBeginV(RtInt N, RtFloat times[]) {}
     inline virtual RtVoid motionEnd(void) {}
 
@@ -206,7 +202,7 @@ public:
 	inline virtual RtVoid bound(RtBound bound) {}
 	inline virtual RtVoid detail(RtBound bound) {}
 	inline virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
-    inline virtual RtVoid geometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
+    inline virtual RtVoid geometricApproximation(RtToken type, RtFloat value) {}
 	inline virtual RtVoid geometricRepresentation(RtToken type) {}
 	inline virtual RtVoid orientation(RtToken orientation) {}
 	inline virtual RtVoid reverseOrientation(void) {}
@@ -294,7 +290,6 @@ protected:
 	inline virtual RtVoid doObjectBegin(void) {}
 	inline virtual RtVoid doObjectEnd(void) {}
     inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
-    inline virtual RtVoid doFreeObject(RtObjectHandle handle) {}
 
     inline virtual RtVoid doMotionBeginV(RtInt N, RtFloat times[]) {}
     inline virtual RtVoid doMotionEnd(void) {}
@@ -342,7 +337,7 @@ protected:
 	inline virtual RtVoid doBound(RtBound bound) {}
 	inline virtual RtVoid doDetail(RtBound bound) {}
 	inline virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
-    inline virtual RtVoid doGeometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
+    inline virtual RtVoid doGeometricApproximationV(RtToken type, RtFloat value) {}
 	inline virtual RtVoid doGeometricRepresentation(RtToken type) {}
 	inline virtual RtVoid doOrientation(RtToken orientation) {}
 	inline virtual RtVoid doReverseOrientation(void) {}

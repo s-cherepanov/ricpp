@@ -2121,18 +2121,7 @@ The size of the array is
 
 \layout Standard
 
-There is another difference between 
-\begin_inset LatexCommand \cite{Pixa05}
-
-\end_inset 
-
- and 
-\begin_inset LatexCommand \cite{Apod00}
-
-\end_inset 
-
-.
- In 
+In 
 \begin_inset LatexCommand \cite{Pixa05}
 
 \end_inset 
@@ -2182,7 +2171,7 @@ left
 Because both rules hold, some restrictions follow.
  Trim curves do not intersect each other but may form isles (loops may contain
  other loops).
- The outer trim curve should always have a 
+ The outer trim curve should always has a 
 \begin_inset Quotes eld
 \end_inset 
 
@@ -2266,7 +2255,20 @@ In
 
 \end_inset 
 
- you'll find that the renderers PRMan and BMRT use a different approach:
+ you'll find that the renderers PRMan and BMRT use an additional attribute
+ (
+\family typewriter 
+
+\begin_inset Quotes erd
+\end_inset 
+
+sense
+\begin_inset Quotes erd
+\end_inset 
+
+
+\family default 
+ has to be added):
 \layout Quotation
 
 
@@ -2368,29 +2370,22 @@ outside
 
 \layout Standard
 
-Maybe an additional odd winding rule can be used to create 
-\begin_inset Quotes eld
-\end_inset 
-
-isles
-\begin_inset Quotes erd
-\end_inset 
-
-.
- In RiCPP the 
-\begin_inset LatexCommand \cite{Pixa05}
-
-\end_inset 
-
- definition is used.
- If you are using left an right winding consitently, the trim curves will
- work in both types of implementation: 
+In RiCPP these definitions are used.
+ 
 \family typewriter 
 Attribute 
 \begin_inset Quotes erd
 \end_inset 
 
 trimcurve
+\begin_inset Quotes erd
+\end_inset 
+
+ 
+\begin_inset Quotes erd
+\end_inset 
+
+sense
 \begin_inset Quotes erd
 \end_inset 
 
@@ -2404,13 +2399,26 @@ inside
 
 ]
 \family default 
- and outer trim curve counterclockwise or 
+ is the default as described in 
+\begin_inset LatexCommand \cite{Pixa05}
+
+\end_inset 
+
+ and 
 \family typewriter 
 Attribute 
 \begin_inset Quotes erd
 \end_inset 
 
 trimcurve
+\begin_inset Quotes erd
+\end_inset 
+
+ 
+\begin_inset Quotes erd
+\end_inset 
+
+sense
 \begin_inset Quotes erd
 \end_inset 
 
@@ -2424,7 +2432,7 @@ outside
 
 ]
 \family default 
- and outer trim curve clockwise.
+ flips what's cut away.
 \layout Standard
 
 For the OpenGL output of RiCPP the trim curves are calculated using the

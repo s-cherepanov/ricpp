@@ -38,14 +38,14 @@ enum EnumRequests {
 	// General routines
 	REQ_ERROR_HANDLER          = 0, //!< Index for ri function IRi::errorHandler()
 	REQ_DECLARE,                    //!< Index for ri function IRi::declare()
+	REQ_CACHE_RESOURCE,             //!< Index for ri function IRi::cacheResource() (no RIB binding)
 
 	// Context Switching
 	REQ_GET_CONTEXT,				//!< Index for ri function IRi::getContext() (no RIB binding)
 	REQ_CONTEXT,					//!< Index for ri function IRi::context() (no RIB binding)
 
 	// Resource
-	REQ_RESOURCE,					//!< Index for ri function IRi::resource() (no RIB binding)
-	REQ_FREE_RESOURCE,				//!< Index for ri function IRi::freeResource() (no RIB binding)
+	// REQ_RESOURCE,				//!< Index for ri function IRi::resource()
 
 	// Modes
 
@@ -80,6 +80,10 @@ enum EnumRequests {
 	// Motion block
 	REQ_MOTION_BEGIN,				//!< Index for ri function IRi::motionBegin()
 	REQ_MOTION_END,					//!< Index for ri function IRi::motionEnd()
+
+	// Archive block
+	REQ_ARCHIVE_BEGIN,				//!< Index for ri function IRi::archiveBegin()
+	REQ_ARCHIVE_END,				//!< Index for ri function IRi::archiveEnd()
 
 	// Options
 	REQ_FORMAT,						//!< Index for ri function IRi::format()
@@ -185,9 +189,8 @@ enum EnumRequests {
 	// General objects
 	REQ_GEOMETRY,					//!< Index for ri function IRi::geometry()
 
-	// retained geometry
+	// retained models
 	REQ_OBJECT_INSTANCE,			//!< Index for ri function IRi::objectInstance()
-	REQ_FREE_OBJECT,				//!< Index for ri function IRi::freeObject() (no RIB binding)
 
 	// Map-making
 	REQ_MAKE_TEXTURE,				//!< Index for ri function IRi::makeTexture()

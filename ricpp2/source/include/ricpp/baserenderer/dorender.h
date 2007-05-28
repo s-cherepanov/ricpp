@@ -72,9 +72,6 @@ protected:
 	virtual RtVoid doDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
 
-	virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtVoid doFreeResource(RtToken handle) = 0;
-
 	virtual RtVoid doBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doEnd(void) = 0;
 
@@ -96,7 +93,6 @@ protected:
 	virtual RtVoid doObjectBegin(void) = 0;
 	virtual RtVoid doObjectEnd(void) = 0;
     virtual RtVoid doObjectInstance(RtObjectHandle handle) = 0;
-	virtual RtVoid doFreeObject(RtObjectHandle handle) = 0;
 
     virtual RtVoid doMotionBeginV(RtInt N, RtFloat times[]) = 0;
     virtual RtVoid doMotionEnd(void) = 0;
@@ -142,7 +138,7 @@ protected:
 	virtual RtVoid doBound(RtBound bound) = 0;
 	virtual RtVoid doDetail(RtBound bound) = 0;
 	virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
-    virtual RtVoid doGeometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid doGeometricApproximationV(RtToken type, RtFloat value) = 0;
 	virtual RtVoid doGeometricRepresentation(RtToken type) = 0;
 	virtual RtVoid doOrientation(RtToken orientation) = 0;
 	virtual RtVoid doReverseOrientation(void) = 0;

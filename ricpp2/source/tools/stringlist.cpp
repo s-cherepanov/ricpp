@@ -33,6 +33,11 @@ using namespace RiCPP;
 
 void CStringList::getVar(std::string &varName, bool useEnv)
 {
+	if ( m_callback ) {
+		if ( (*m_callback)(varName) )
+			return;
+	}
+
 	if ( m_substMap.find(varName) != m_substMap.end() ) {
 		std::string &subst = m_substMap[varName];
 		varName = subst;
@@ -65,6 +70,8 @@ CStringList::size_type CStringList::explode(
 	const char maskChar = '\\';
 	const char singleQuote = '\'';
 	const char doubleQuote = '\"';
+	const char varBegin = '{';
+	const char varEnd = '}';
 
 	enum EState {
 		normal,
@@ -104,7 +111,7 @@ CStringList::size_type CStringList::explode(
 				state = normal;
 				break;
 			case varchar:
-				if ( *iter == '(' ) {
+				if ( *iter == varBegin ) {
 					state = varcharpar;
 				} else if (
 					(*iter >= 'a' && *iter <= 'z') ||
@@ -129,7 +136,7 @@ CStringList::size_type CStringList::explode(
 				}
 				break;
 			case varcharpar:
-				if ( *iter == ')' ) {
+				if ( *iter == varEnd ) {
 					state = normal;
 					iter++;
 

@@ -220,6 +220,18 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 				// new name == 0 to load the rib writer
 				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
 			}
+			if ( ptr && ptr[0] == '|' ) {
+				// name was the name of a piped ribfile
+				if ( n == 0 ) {
+					// remove the 0 entries
+					m_tokens.clear();
+					m_params.clear();
+				}
+				m_tokens.push_back(RI_PIPE);
+				m_params.push_back(&name);
+				// new name == 0 to load the rib writer
+				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
+			}
 		}
 	}
 
@@ -498,20 +510,6 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle)
 	}
 }
 
-RtVoid CRiCPPBridge::freeObject(RtObjectHandle handle)
-{
-	if ( m_ctxMgmt.curBackend().valid() ) {
-		try {
-			m_ctxMgmt.curBackend().renderingContext()->freeObject(handle);
-		} catch (ERendererError &e) {
-			ricppErrHandler().handleError(e);
-		}
-	} else {
-		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::freeObject(handle)");
-	}
-}
-
 RtVoid CRiCPPBridge::motionBegin(RtInt N, RtFloat sample, ...)
 {
 	va_list marker;
@@ -578,7 +576,7 @@ RtVoid CRiCPPBridge::synchronize(RtToken name)
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::synchronize(name:\"%s\")", name ? name : "");
 	}
 }
-
+/*
 RtToken CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
 {
 	va_list marker;
@@ -603,21 +601,7 @@ RtToken CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, RtToken to
 
 	return RI_NULL;
 }
-
-RtVoid CRiCPPBridge::freeResource(RtToken handle)
-{
-	if ( m_ctxMgmt.curBackend().valid() ) {
-		try {
-			m_ctxMgmt.curBackend().renderingContext()->freeResource(handle);
-		} catch (ERendererError &e) {
-			ricppErrHandler().handleError(e);
-		}
-	} else {
-		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::freeResource(handle:%s, ...)", handle ? handle : "");
-	}
-}
-
+*/
 RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
@@ -1289,26 +1273,18 @@ RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran
 	}
 }
 
-RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtToken token, ...)
-{
-	va_list marker;
-	va_start(marker, token);
-	RtInt n = getTokens(token, marker);
 
-	return geometricApproximationV(type, n, &m_tokens[0], &m_params[0]);
-}
-
-RtVoid CRiCPPBridge::geometricApproximationV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
-			m_ctxMgmt.curBackend().renderingContext()->geometricApproximationV(type, n, tokens, params);
+			m_ctxMgmt.curBackend().renderingContext()->geometricApproximation(type, value);
 		} catch (ERendererError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricApproximationV(type:%s, ...)", type ? type : "");
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::geometricApproximationV(type:%s, value:%f)", type ? type : "", value);
 	}
 }
 

@@ -763,7 +763,7 @@ public:
 
 	virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl);
 
-	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
+	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid displayChannel(RtToken channel, RtToken token = RI_NULL, ...);
 
 	virtual RtVoid display(RtString name, RtToken type, RtToken mode, RtToken token = RI_NULL, ...);

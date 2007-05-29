@@ -184,7 +184,7 @@ public:
     inline virtual RtVoid exposure(RtFloat gain, RtFloat gamma) {}
     inline virtual RtVoid imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
-	inline virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]) {}
+	inline virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}
@@ -330,7 +330,7 @@ protected:
     inline virtual RtVoid doExposure(RtFloat gain, RtFloat gamma) {}
     inline virtual RtVoid doImagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
-    inline virtual RtVoid doDisplayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]) {}
+    inline virtual RtVoid doDisplayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doDisplayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doHiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}

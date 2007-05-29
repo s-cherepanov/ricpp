@@ -89,6 +89,7 @@ protected:
 	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before)
 	 *
 	 * @param newMode New mode for nesting
+	 * @param newModeBits Bits corresponding mode, transparent blocks have mode bits of outer block added
 	 */
 	inline virtual void push(EnumModes newMode, TypeModeBits newModeBits)
 	{

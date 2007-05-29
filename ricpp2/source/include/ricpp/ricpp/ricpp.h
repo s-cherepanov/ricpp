@@ -1041,7 +1041,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameters to declare the type of the channel
 	 */
-	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	//! Choose a display (or file) and sets the type for the output being rendered.
 	/*! @param name Name for the display or filename

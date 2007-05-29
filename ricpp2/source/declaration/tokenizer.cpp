@@ -171,8 +171,6 @@ CTokenizer::CTokenizer()
 		// m_tokenMapper[CToken(RI_SHADER)] = RI_SHADER;
 		// m_tokenMapper[CToken(RI_NDC)] = RI_NDC;
 
-		m_tokenMapper[CToken(RI_PIPE)] = RI_PIPE;
-		m_tokenMapper[CToken(RI_NAMEDPIPE)] = RI_NAMEDPIPE;
 		m_tokenMapper[CToken(RI_FILEPOINTER)] = RI_FILEPOINTER;
 		m_tokenMapper[CToken(RI_MEMORY)] = RI_MEMORY;
 

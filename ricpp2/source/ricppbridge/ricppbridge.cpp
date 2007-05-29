@@ -227,8 +227,8 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 					m_tokens.clear();
 					m_params.clear();
 				}
-				m_tokens.push_back(RI_PIPE);
-				m_params.push_back(&name);
+				m_tokens.push_back(RI_FILE);
+				m_params.push_back(&name); // Pipe is identified because of leading '|'
 				// new name == 0 to load the rib writer
 				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
 			}

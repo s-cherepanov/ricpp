@@ -59,7 +59,7 @@ class CValidModes
 	 *  See also UPS89: Valid contexts for RenderMan Procedurte calls, pp.56
      *  and RISPEC3.2: Definition of the new RI3.2 procs
 	 */
-	unsigned short m_requests[N_REQUESTS];
+	TypeModeBits m_requests[N_REQUESTS];
 public:
 	/** @brief Initializes the valid contexts for all RI routines.
 	 */
@@ -68,10 +68,10 @@ public:
 	/** @brief Checks the validity of a request for a given mode.
 	 *
 	 *  @param idxRequest Index of a request (interface call, a @c REQ_ constant like REQ_SPHERE) to test if valid in mode idxMode
-	 *  @param idxMode Index of a mode as @c MODE_ constant (e.g. MODE_WORLD), normally the current mode
+	 *  @param idxMode Set of @c MODEBIT_ constant (e.g. MODEBIT_WORLD), combined with or, normally the current mode
 	 *  @return true, if request is valid inside the mode, false otherwise.
 	 */
-	bool isValid(EnumRequests idxRequest, EnumModes idxMode) const;
+	bool isValid(EnumRequests idxRequest, TypeModeBits idxMode) const;
 }; // CValidModes
 
 
@@ -82,29 +82,30 @@ public:
  */
 class CModeStack {
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
-	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
+	std::vector<TypeMode> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
+	std::vector<TypeModeBits> m_modeBits; //!< All modes (nesting of modes), transparent modes are 'ored' to the mode bits of outer blocks.
+
 protected:
 	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before)
 	 *
 	 * @param newMode New mode for nesting
 	 */
-	inline virtual void push(EnumModes newMode)
+	inline virtual void push(EnumModes newMode, TypeModeBits newModeBits)
 	{
 		m_modes.push_back(newMode);
+		m_modeBits.push_back(newModeBits);
 	}
 
 	/** @brief Removes nesting from the modes, do not test if valid (is done by the interface before)
-	 *
-	 * @return The previous current mode
 	 */
-	inline virtual EnumModes pop()
+	inline virtual void pop()
 	{
-		EnumModes prev = MODE_OUTSIDE;
 		if ( !m_modes.empty() ) {	
-			m_modes.back();
 			m_modes.pop_back();
 		}
-		return prev;
+		if ( !m_modeBits.empty() ) {	
+			m_modeBits.pop_back();
+		}
 	}
 
 	/** @brief Clears the mode stack.
@@ -114,9 +115,19 @@ protected:
 	inline virtual void clear()
 	{
 		m_modes.clear();
+		m_modeBits.clear();
 	}
 
 public:
+	/** @brief Const iterator for the elements.
+	 */
+	typedef std::vector<TypeMode>::const_iterator const_iterator;
+
+	/** @brief Size type for the number of stored elements
+	 */
+	typedef std::vector<TypeMode>::size_type size_type;
+
+
 	/** @brief Initializing of the mode, normally starts outside any blocks. 
 	 */
 	inline CModeStack( )
@@ -126,6 +137,7 @@ public:
 	/** @brief Virtual destructor.
 	 */
 	inline virtual ~CModeStack() {}
+
 
 	/** @defgroup mode_group CModeStack, the modes
 	 * @brief Stacks the modes of the RenderMan interface
@@ -137,11 +149,11 @@ public:
 	/** @brief Begins a new rendering context, called once for each context for initialization
 	 * @see CBaseRenderer::begin()
 	 */
-	virtual void begin();
+	virtual void contextBegin();
 	/** @brief Ends a rendering context, called once for each context before deletion
 	 * @see CBaseRenderer::end()
 	 */
-	virtual void end();
+	virtual void contextEnd();
 
 	/** @brief Begins a new frame (optional)
 	  * Directly in begin-block, cannot be nested
@@ -210,6 +222,38 @@ public:
 	 */
 	virtual void archiveEnd();
 
+	/** @brief Begins a (transparent) resource block
+	 *
+	 * Inside frame, world, attribute, transform, object, and begin blocks
+	 */
+	virtual void resourceBegin();
+
+	/** @brief Ends a resource block
+	 */
+	virtual void resourceEnd();
+
+	/** @brief Begins a conditional if block
+	 *
+	 * Inside frame, world, attribute, transform, object, and begin blocks
+	 */
+	virtual void ifBegin();
+
+	/** @brief Begins a conditional if-else block
+	 *
+	 * Inside if blocks
+	 */
+	virtual void ifElseBegin();
+
+	/** @brief Begins a conditional else block
+	 *
+	 * Inside if or ifElse blocks
+	 */
+	virtual void elseBegin();
+
+	/** @brief Ends a conditional block
+	 */
+	virtual void ifEnd();
+
 	/** @brief Begins a new motion block
 	 *
 	 * Inside object, world, attribute or transform block, cannot be nested.
@@ -226,13 +270,41 @@ public:
 	 *  @return true, if the request req is valid in the current mode.
 	 *  @see EnumRequests  
 	 */
-	inline virtual bool validRequest(EnumRequests req) const { return m_validModes.isValid(req, curMode()); }
+	inline virtual bool validRequest(EnumRequests req) const { return m_validModes.isValid(req, curModeBits()); }
 
 	/** @brief The current mode
+	 *  Transparent modes are not considered
 	 *  @return The current mode
 	 *  @see EnumRequests  
 	 */
-	inline virtual EnumModes curMode() const { return m_modes.empty() ? MODE_OUTSIDE : m_modes.back(); }
+	inline virtual EnumModes curMode() const
+	{
+		return m_modes.empty() ? 0 : m_modes.back();
+	}
+
+	/** @brief The current mode bits
+	 *  @return The current mode bits (incl. the transparent blocks)
+	 *  @see EnumRequests  
+	 */
+	inline virtual TypeModeBits curModeBits() const
+	{
+		return m_modes.empty() ? MODE_BIT_OUTSIDE : m_modes.back();
+	}
+
+	/** @brief Constant iterator, begin of the modes.
+	 * @return Constant iterator, points to the first element of the active dictionary.
+	 */
+	inline const_iterator begin() const { return m_modes.begin(); }
+
+	/** @brief Constant iterator, end of the modes.
+	 * @return Constant iterator, points behind the last element of the active dictionary.
+	 */
+	inline const_iterator end() const { return m_modes.end(); }
+	
+	/** @brief Gets the size of the modes.
+	 * @return Size of the active dictionary.
+	 */
+	inline size_type size() const { return m_modes.size(); }
 }; // CMode
 
 }

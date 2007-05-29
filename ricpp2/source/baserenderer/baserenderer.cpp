@@ -129,7 +129,7 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 	initRenderState(); // Can throw
 
 	try {
-		m_renderState->begin();
+		m_renderState->contextBegin();
 	} catch ( ... ) {
 		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'begin'");
 		return 0;
@@ -154,7 +154,7 @@ RtVoid CBaseRenderer::end(void)
 		err.set(RIE_NESTING, RIE_WARNING, "Ended context not at begin-state");
 	}
 
-	m_renderState->end();
+	m_renderState->contextEnd();
 
 	try {
 		doEnd(); // Can throw, err is lost then

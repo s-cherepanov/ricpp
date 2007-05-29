@@ -4,7 +4,15 @@
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
-// The RenderMan(R) Interface Procedures and Protocol are:
+// The RenderMan(R) Interface Procedures and Protocol are:	/** @brief Defines a new display channel for display()
+	 *  @param channel Identifier for the Channel
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameters to declare the type of the channel
+	 */
+	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
+
+
 //         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
@@ -402,10 +410,10 @@ const RtToken  RI_CURRENT = "current", // Current coordinate system
                RI_NDC = "NDC";         // NDC coordinate system
 */
 
-const RtToken  RI_PIPE = "pipe",               ///< Pipe input/output for RIB, parameter of \c CRiRoot::beginV() parameter is a command
-               RI_NAMEDPIPE = "namedpipe",     ///< Named pipe input/output for RIB parameter of \c CRiRoot::beginV(), parameter is the name of a pipe
-               RI_FILEPOINTER = "filepointer", ///< Input/Output to a file opend by FILE * \c CRiRoot::beginV() or resource, not allowed for RIB
+const RtToken  RI_FILEPOINTER = "filepointer", ///< Input/Output to a file FILE * (resource)
                RI_MEMORY = "memory";           ///< Input from memory resource, not allowed for RIB
+
+// note: Named pipe as PIPE:pipename as normal filename, |cmd for anonymous pipe output, | for input
 
 const RtToken RI_ARCHIVE = "archive",   ///< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code, or archive namespace
               RI_DRAFT = "draft",       ///< fast draft renderer type (\a IRiContext::rendererType()) with limited implementation of the RI
@@ -654,14 +662,44 @@ public:
 
 	//@}
 
-#if 0
-	/*  @defgroup ricpp_resource Ri Ressource handling
+	/** @defgroup ricpp_resource Ri Ressource handling
 	 *  @ingroup ricpp_interface
 	 *  @brief Handling of external resources
 	 *  @{
 	 */
 
-	/* @brief Hints to cache a resource (added, no rib binding).
+	/** @brief Creates a handle for an external resource. Scope inside resourceBegin, resourceEnd
+	 *
+	 *  resourceV() creates a handle (input/output, store/reload) for the resource @a name of the given @a type
+	 *
+	 *  Pixars C-binding exposes no return type (RtString name -> name string to identify the handle).
+	 *  Can be used to store sets of attributes.
+	 *
+	 *  External resources maybe cannot be output to RIB (e.g. Memory resources for deffered read archive).
+	 *  However, the referenced resource can be used. If an handle is used to cache resources this
+	 *  caching hint may be lost in RIB.
+	 *
+	 *  Ressources are removed, if the current mode is ending. However, only the handle
+	 *  is removed, not an external resource itself - so you must free the
+	 *  memory or close the file if it is not needed any more. Internally handled
+	 *  resources like the storage for attributes are appropriatly freed. A resource
+	 *  can be overwritten by another one with the same name (warning). The overwritten
+	 *  one is not accessibly and will be freed as usual at the blocks end.
+	 *
+     *  @param name Name of the resource 
+     *  @param type Type of the resource
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list.
+	 *  @param params Value pointer for additional parameter list for the resource
+	 *  @return The handle for the resource is the tokenized name. Can be used to test: illResourceHandle on error.
+	 *  If ok, strcmp(retval, name) == 0.
+	 *  @see resourcebegin(), resourceEnd()
+	 */
+	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+#if 0
+	/* --- Cancled, archiveBegin/end for resource cache, maybe resourceV to declare cache handles that are internally handled freed as usually ---
+	 * @brief Hints to cache a resource (added, no rib binding).
 	 *
 	 *  If @a onoff is set to RI_TRUE, a context can cache all ressources of a
 	 *  given @a name and @a type instead of rereading it over and over again.
@@ -694,46 +732,8 @@ public:
 	 */
 	virtual RtVoid cacheResource(RtString name, RtToken type, RtBoolean onoff) = 0;
 
-	/* @brief Creates an external resource. Scope inside resourceBegin, resourceEnd
-	 *
-	 *  resourceV() creates a handle for the resource @a name of the given @a type.
-	 *
-	 *  Pixars C-binding exposes no return type (RtString name -> Token as handle).
-	 *  Can be used to store attributes (has a additional meaning as QRM resource,
-	 *  resembles more the PostScript save/restore)
-	 *
-	 *  In RIB binding the resource is replaced inline or the name is propagated
-	 *  (of course the name will not be found if the RIB is rendered). Therefore
-	 *  the direct mode for readArchiveV() is used for RIB output - that
-	 *  is: The RIB commands are written instead of archiving a readArchive().
-	 *  Also this will be the sane for a network proxy (if implemented).
-	 *
-	 *  The handle has the form RES:. Whenever a RES: name is encountered,
-	 *  the routines can query an interface the ressource (interface for this will
-	 *  be implemented when the parser gets implemented). That saver as
-	 *  directly accessing a memory address or file handle.
-	 *
-	 *  Ressources are
-	 *  removed, if the current mode is ending. However, only the handle
-	 *  is removed, not the resource itself - so you must free the
-	 *  memory or close the file if it is not needed any more.
-	 *
-	 *  Types can be (at the moment only one type):
-	 *
-	 *  RI_ARCHIVE : RiRoot::readArchiveV()
-	 *
-     *  @param name Name of the resource 
-     *  @param type Type of the resource (RI_ARCHIVE)
-	 *  @param n Number of tokens
-	 *  @param tokens Tokens for additional parameter list.
-	 *  RI_MEMORY memory address of a 0 terminated string,
-	 *  RI_FILEPOINTER for a FILE *
-	 *  @param params Value pointer for additional parameter list for the resource
-	 *  @return The handle for the resource is the tokenized name.
-	 */
-	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-
-	/* @brief Create a resource handle (QRM)
+	/* --- Cancled, handle is created via resourceV() ---
+	 * @brief Create a resource handle (QRM)
 	 *
 	 * Helps to get rid of a bunch of ressource handling (e.g. when to destroy a memory stored
 	 * rib archive). When archiving the resources to RIB, the resourcenames are replaced inline.
@@ -762,7 +762,6 @@ public:
      */
 	virtual RtToken createHandle(RtToken name, RtToken type) = 0;
 #endif
-
 	//@}
 
 	/** @defgroup ricpp_modes Ri Modes
@@ -862,30 +861,17 @@ public:
 	//! @brief End of a motion block
     virtual RtVoid motionEnd(void) = 0;
 
-	/*
-	// -> QRM, objects are handled like macros (same as archiveBeginV() ?)
-	virtual RtToken macroBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtVoid macroEnd(void) = 0;
-	virtual RtToken macroInstance(RtToken macro, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-
-	// -> QRM
-	// Here: Version must be printed some how by Rib writer, since only this object 'knows' whitch version it writes
-	virtual version(RtFloat version) = 0;
-
-	*/
-
-#if 0
 	/** @brief Begins a resource block.
 	 *
 	 *  Controls the scope of resource()
 	 */
-	virtual RtVoid resourceBegin(RtVoid) = 0;
+	virtual RtVoid resourceBegin(void) = 0;
 
 	/** @brief Ends a resource block.
 	 */
-	virtual RtVoid resourceEnd(RtVoid) = 0;
+	virtual RtVoid resourceEnd(void) = 0;
 
-	/*  @brief Begins an inline archive
+	/** @brief Begins an inline archive
 	 *
 	 *  Stores the commands in memory for later use. When @a name is used in
 	 *  readArchiveV() and the DelayedReadArchive procedural,
@@ -903,22 +889,25 @@ public:
 	 */
 	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	/*  @brief Ends an archive
+	/** @brief Ends an archive
 	 *  The commands are not longer stored if the outer most archive block is closed
 	 */
 	virtual RtVoid archiveEnd(void) = 0;
-#endif
-	//@}
 
-#if 0
-	/*  @defgroup ricpp_displaychannel
-	 *  @brief Defines a new display channel for display()
-	 *  @ingroup ricpp_interface
-	 *  @{
-	 */
-	displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
+	/*
+	// -> QRM, objects are handled like macros (same as archiveBeginV() ?)
+	// --- cancled, called archive now, instanciating via readArchve ---
+	virtual RtToken macroBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid macroEnd(void) = 0;
+	virtual RtToken macroInstance(RtToken macro, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+	// -> QRM
+	// --- cancled ---
+	// Here: Version must be printed some how by Rib writer, since only this object 'knows' whitch version it writes
+	virtual version(RtFloat version) = 0;
+
+	*/
 	//@}
-#endif
 
 	/** @defgroup ricpp_options Ri Options
 	 *  @ingroup ricpp_interface
@@ -1037,7 +1026,7 @@ public:
 
 	//! Sets an imager shader
 	/*! Selects an imager function programmed in the Shading Language
-	 * @param name Name of the shader
+	 *  @param name Name of the shader
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list for the imager
@@ -1054,10 +1043,18 @@ public:
 	 */
 	virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
 
+	/** @brief Defines a new display channel for display()
+	 *  @param channel Identifier for the Channel
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameters to declare the type of the channel
+	 */
+	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
+
 	//! Choose a display (or file) and sets the type for the output being rendered.
 	/*! @param name Name for the display or filename
 	 *  @param type Type of the output, e.g. RI_FRAMEBUFFER, RI_FILE
-	 *  @param mode Mode of the output, e.g. RI_RGBA, RI_Z
+	 *  @param mode Mode of the output, channels e.g. RI_RGBA, RI_Z, see displayChannelV()
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list (RI_ORIGIN)
 	 *  @param params Value pointer for additional parameter list for the display
@@ -1558,8 +1555,25 @@ public:
 	 *  @param params Value pointer for additional parameter list
 	 */
     virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
-	// Application note #41, November 2004
-    // virtual RtVoid hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+	/** @brief Request a hierarchical subdivison surface mesh.
+	 *
+	 *  see Application note #41, November 2004
+	 *  @param scheme Scheme of the subdivion mesh, currently RI_CATMULLCLARK only
+	 *  @param nfaces Number of initial faces
+	 *  @param nvertices Number of the vertices per face
+	 *  @param vertices Indices of the vertices
+	 *  @param ntags Number of tags
+	 *  @param tags The tags
+	 *  @param nargs Number of the arguments of a tag, number of intargs followed by the number of the floatargs
+	 *  @param intargs Integer arguments for the tags
+	 *  @param floatargs Float arguments for the tags
+	 *  @param stringargs String arguments for edits
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameter list
+	 */
+    virtual RtVoid hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 
@@ -1846,7 +1860,6 @@ public:
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New 3.2 */
 	//@}
 
-#if 0
 	/*  @defgroup ricpp_conditional Ri RIB conditional expressions
 	 *  @ingroup ricpp_interface
 	 *  @brief Conditional expression for RIB
@@ -1855,11 +1868,10 @@ public:
 	 *  @{
 	 */
 	virtual RtVoid ifBegin(RtString expr) = 0;
-	virtual RtVoid elseIfBegin(RtString expr) = 0; // was RiElseIf
-	virtual RtVoid elseBegin(void) = 0; // was RiElse
+	virtual RtVoid elseIfBegin(RtString expr) = 0; // was RiElseIf (renamed to match elseBegin()
+	virtual RtVoid elseBegin(void) = 0; // was RiElse, else is a keyword ... moan, may be a reason for uppercase method names Else()
 	virtual RtVoid ifEnd(void) = 0;
 	//@}
-#endif
 
 	//@}
 }; // IRiRoot
@@ -1925,7 +1937,6 @@ public:
 	virtual RtInt lastError() = 0;
 	//@}
 
-#if 0
 	/*  @addtogroup ricpp_resource
 	 *  @ingroup ricpp_interface
 	 *  @{
@@ -1936,7 +1947,6 @@ public:
 	 */
 	virtual RtResourceHandle resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
-#endif
 
 	/** @defgroup ricpp_contexts Ri context handlers
 	 *  @ingroup ricpp_interface
@@ -1962,16 +1972,15 @@ public:
 
 	/*
 	// QRM
+	// Cancled
 	virtual RtToken macroBegin(RtString name, ...) = 0;
 	virtual RtToken macroInstance(RtToken macro, ...) = 0;
 	*/
 
-#if 0
 	/** @brief Starts an archive in memory
 	 * @see IRiRoot::archiveBeginV()
 	 */
 	virtual RtVoid archiveBegin(RtString name, RtToken token = RI_NULL, ...) = 0;
-#endif
 
 	/** @brief Starts a new renderer
 	 *
@@ -1989,16 +1998,6 @@ public:
     virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...) = 0;
 	//@}
 
-#if 0
-	/*  @defgroup ricpp_displaychannel
-	 *  @brief Defines a new display channel for display()
-	 *  @ingroup ricpp_interface
-	 *  @{
-	 */
-	displayChannel(RtToken channel, ...),
-	//@}
-#endif
-
 	/** @addtogroup ricpp_options
 	 *  @ingroup ricpp_interface
 	 *  @{
@@ -2013,6 +2012,11 @@ public:
 	 *  @see IRiRoot::imagerV()
 	 */
     virtual RtVoid imager(RtString name, RtToken token = RI_NULL, ...) = 0;
+
+	/*  @brief Defines a new display channel for display()
+	 *  @see displayChannelV()
+	 */
+	displayChannel(RtToken channel, ...),
 
 	/** @brief Choose a display
 	 *  @see IRiRoot::displayV()
@@ -2158,11 +2162,15 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Request a subdivison surface mesh
+	/** @brief Requests a subdivison surface mesh
 	 *  @see IRiRoot::subdivisionMeshV()
 	 */
     virtual RtVoid subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
-    // virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+	/** @brief Requests a hierarchical subdivison surface mesh
+	 *  @see IRiRoot::subdivisionMeshV()
+	 */
+    virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 

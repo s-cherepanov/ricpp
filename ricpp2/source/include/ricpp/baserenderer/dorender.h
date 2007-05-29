@@ -71,6 +71,7 @@ protected:
 	 */
 	virtual RtVoid doDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
+	virtual RtVoid doResource(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doEnd(void) = 0;
@@ -97,6 +98,12 @@ protected:
     virtual RtVoid doMotionBeginV(RtInt N, RtFloat times[]) = 0;
     virtual RtVoid doMotionEnd(void) = 0;
 
+	virtual RtVoid doResourceBegin(void) = 0;
+	virtual RtVoid doResourceEnd(void) = 0;
+
+	virtual RtVoid doArchiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doArchiveEnd(void) = 0;
+
     virtual RtVoid doFormat(RtInt xres, RtInt yres, RtFloat aspect) = 0;
     virtual RtVoid doFrameAspectRatio(RtFloat aspect) = 0;
 
@@ -113,6 +120,7 @@ protected:
     virtual RtVoid doExposure(RtFloat gain, RtFloat gamma) = 0;
     virtual RtVoid doImagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
+    virtual RtVoid doDisplayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
     virtual RtVoid doDisplayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
     virtual RtVoid doHiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
     virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) = 0;
@@ -170,6 +178,7 @@ protected:
     virtual RtVoid doNuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doHierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doSphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
     virtual RtVoid doConeV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
@@ -196,6 +205,11 @@ protected:
 
 	virtual RtVoid doArchiveRecordV(RtToken type, RtString line) = 0;
 	virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+	virtual RtVoid doIfBegin(RtString expr) = 0;
+	virtual RtVoid doElseIfBegin(RtString expr) = 0; // was RiElseIf (renamed to match elseBegin()
+	virtual RtVoid doElseBegin(void) = 0; // was RiElse, else is a keyword ... moan, may be a reason for uppercase method names Else()
+	virtual RtVoid doIfEnd(void) = 0;
 }; // IDoRender
 } // namespace RiCPP
 

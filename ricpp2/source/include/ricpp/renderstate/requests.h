@@ -36,7 +36,8 @@ namespace RiCPP {
  */
 enum EnumRequests {
 	// General routines
-	REQ_ERROR_HANDLER          = 0, //!< Index for ri function IRi::errorHandler()
+	REQ_UNKNOWN = 0,				//!< Unknoen request
+	REQ_ERROR_HANDLER				//!< Index for ri function IRi::errorHandler()
 	REQ_DECLARE,                    //!< Index for ri function IRi::declare()
 	REQ_CACHE_RESOURCE,             //!< Index for ri function IRi::cacheResource() (no RIB binding)
 
@@ -45,7 +46,7 @@ enum EnumRequests {
 	REQ_CONTEXT,					//!< Index for ri function IRi::context() (no RIB binding)
 
 	// Resource
-	// REQ_RESOURCE,				//!< Index for ri function IRi::resource()
+	REQ_RESOURCE,					//!< Index for ri function IRi::resource()
 
 	// Modes
 
@@ -81,6 +82,10 @@ enum EnumRequests {
 	REQ_MOTION_BEGIN,				//!< Index for ri function IRi::motionBegin()
 	REQ_MOTION_END,					//!< Index for ri function IRi::motionEnd()
 
+	// Resource block
+	REQ_ARCHIVE_BEGIN,				//!< Index for ri function IRi::resourceBegin()
+	REQ_ARCHIVE_END,				//!< Index for ri function IRi::resourceEnd()
+
 	// Archive block
 	REQ_ARCHIVE_BEGIN,				//!< Index for ri function IRi::archiveBegin()
 	REQ_ARCHIVE_END,				//!< Index for ri function IRi::archiveEnd()
@@ -101,7 +106,8 @@ enum EnumRequests {
 	REQ_EXPOSURE,					//!< Index for ri function IRi::exposure()
 	REQ_IMAGER,						//!< Index for ri function IRi::imager()
 	REQ_QUANTIZE,					//!< Index for ri function IRi::quantize()
-	REQ_DISPLAY,					//!< Index for ri function IRi::display()
+	REQ_DISPLAYCHANNEL,				//!< Index for ri function IRi::display()
+	REQ_DISPLAY,					//!< Index for ri function IRi::displayChannel()
 	REQ_HIDER,						//!< Index for ri function IRi::hider()
 	REQ_COLOR_SAMPLES,				//!< Index for ri function IRi::colorSamples()
 	REQ_RELATIVE_DETAIL,			//!< Index for ri function IRi::relativeDetail()
@@ -163,6 +169,7 @@ enum EnumRequests {
 
 	// Subdivision Surfaces
 	REQ_SUBDIVISION_MESH,			//!< Index for ri function IRi::subdivisionMesh()
+	REQ_HIERARCHICAL_SUBDIVISION_MESH, //!< Index for ri function IRi::hierarchicalSubdivisionMesh()
 
 	// Quadrics
 	REQ_SPHERE,						//!< Index for ri function IRi::sphere()
@@ -203,7 +210,13 @@ enum EnumRequests {
 	REQ_ARCHIVE_RECORD,				//!< Index for ri function IRi::archiveRecord() (no RIB binding)
 	REQ_READ_ARCHIVE,				//!< Index for ri function IRi::readArchive()
 
-	// Additional
+	// Conditions
+	REQ_IF_BEGIN,					//!< Index for ri function IRi::ifBegin()
+	REQ_IF_ELSE,					//!< Index for ri function IRi::ifElseBegin()
+	REQ_ELSE,						//!< Index for ri function IRi::elseBegin()
+	REQ_IF_END,						//!< Index for ri function IRi::ifBegin()
+
+	// Additional (also end marker)
 	REQ_VERSION                     //!< Index for version (additional, in RIB only)
 };
 

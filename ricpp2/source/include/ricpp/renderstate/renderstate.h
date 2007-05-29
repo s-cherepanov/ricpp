@@ -62,9 +62,20 @@ public:
 
 	/** @brief The current mode
 	 *  @return The current mode
-	 *  @see CModeStack::validRequest(), EnumRequests  
+	 *  @see CModeStack::curMode(), EnumRequests  
 	 */
 	virtual EnumModes curMode() const = 0;
+
+
+	/** @brief The current mode bits
+	 *  @return The current mode bits
+	 *  @see CModeStack::curModeBits(), EnumRequests  
+	 */
+	virtual EnumModes curModeBits() const = 0;
+
+	virtual CModeStack::const_iterator modesBegin() const = 0;
+	virtual CModeStack::const_iterator modesEnd() const = 0;
+	virtual CModeStack::size_type modesSize() const = 0;
 	//@}
 
 	/** @defgroup tokenizer_interface_group CTokenizer functions
@@ -75,7 +86,11 @@ public:
 	 *  @param name A pointer to a token name
 	 *  @return RI_NULL if token not found, token otherwise
 	 */
-	inline virtual RtToken tokFind(const char *name) const = 0;
+	virtual RtToken tokFind(const char *name) const = 0;
+
+	virtual CTokenizer::const_iterator tokBegin() const = 0;
+	virtual CTokenizer::const_iterator tokEnd() const = 0;
+	virtual CTokenizer::size_type tokSize() const = 0;
 	//@}
 
 	/** @defgroup decldict_interface_group CDeclarationDictionary functions
@@ -153,35 +168,49 @@ public:
 	 *  @see CModeStack
 	 */
 	//@{
-	inline void begin() { return m_modeStack->begin(); }
-	inline void end() { return m_modeStack->end(); }
+	inline void contextBegin() { m_modeStack->contextBegin(); }
+	inline void contextEnd() { m_modeStack->contextEnd(); }
 
-	inline void frameBegin() { return m_modeStack->frameBegin(); }
-	inline void frameEnd() { return m_modeStack->frameEnd(); }
+	inline void frameBegin() { m_modeStack->frameBegin(); }
+	inline void frameEnd() { m_modeStack->frameEnd(); }
 
-	inline void worldBegin() { return m_modeStack->worldBegin(); }
-	inline void worldEnd() { return m_modeStack->worldEnd(); }
+	inline void worldBegin() { m_modeStack->worldBegin(); }
+	inline void worldEnd() { m_modeStack->worldEnd(); }
 
-	inline void attributeBegin() { return m_modeStack->attributeBegin(); }
-	inline void attributeEnd() { return m_modeStack->attributeEnd(); }
+	inline void attributeBegin() { m_modeStack->attributeBegin(); }
+	inline void attributeEnd() { m_modeStack->attributeEnd(); }
 
-	inline void transformBegin() { return m_modeStack->transformBegin(); }
-	inline void transformEnd() { return m_modeStack->transformEnd(); }
+	inline void transformBegin() { m_modeStack->transformBegin(); }
+	inline void transformEnd() { m_modeStack->transformEnd(); }
 
-    inline void solidBegin() { return m_modeStack->solidBegin(); }
-    inline void solidEnd() { return m_modeStack->solidEnd(); }
+    inline void solidBegin() { m_modeStack->solidBegin(); }
+    inline void solidEnd() { m_modeStack->solidEnd(); }
 
-	inline void objectBegin() { return m_modeStack->objectBegin(); }
-	inline void objectEnd() { return m_modeStack->objectEnd(); }
+	inline void objectBegin() { m_modeStack->objectBegin(); }
+	inline void objectEnd() { m_modeStack->objectEnd(); }
 
-    inline void archiveBegin() { return m_modeStack->archiveBegin(); }
-    inline void archiveEnd() { return m_modeStack->archiveEnd(); }
+    inline void archiveBegin() { m_modeStack->archiveBegin(); }
+    inline void archiveEnd() { m_modeStack->archiveEnd(); }
+
+    inline void resourceBegin() { m_modeStack->resourceBegin(); }
+    inline void resourceEnd() { m_modeStack->resourceEnd(); }
+
+    inline void ifBegin() { m_modeStack->ifBegin(); }
+    inline void ifElseBegin() { m_modeStack->iElsefBegin(); }
+    inline void elseBegin() { m_modeStack->elseBegin(); }
+    inline void ifEnd() { m_modeStack->resourceEnd(); }
 
 	inline void motionBegin() { return m_modeStack->motionBegin(); }
     inline void motionEnd() { return m_modeStack->motionEnd(); }
 
 	inline virtual bool validRequest(EnumRequests req) const { return m_modeStack->validRequest(req); }
 	inline virtual EnumModes curMode() const { return m_modeStack->curMode(); }
+	inline virtual EnumModes curModeBits() const { return m_modeStack->curModeBits(); }
+
+	inline CModeStack::const_iterator modesBegin() const { return m_modes.begin(); }
+	inline CModeStack::const_iterator modesEnd() const { return m_modes.end(); }
+	inline CModeStack::size_type modesSize() const { return m_modes.size(); }
+
 	//@}
 
 	/** @defgroup tokenizer_group CTokenizer functions
@@ -204,6 +233,10 @@ public:
 	}
 
 	inline virtual RtToken tokFind(const char *name) const { return m_tokenizer.find(name); }
+
+	inline virtual CTokenizer::const_iterator tokBegin() const { return m_tokenizer.begin(); }
+	inline virtual CTokenizer::const_iterator tokEnd() const { return m_tokenizer.end(); }
+	inline virtual CTokenizer::size_type tokSize() const { return m_tokenizer.size(); }
 	//@}
 
 	/** @defgroup decldict_group CDeclarationDictionary functions

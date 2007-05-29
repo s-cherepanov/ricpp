@@ -266,6 +266,7 @@ protected:
 	inline virtual RtVoid doDeactivate(void) {}
 
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
+    inline virtual RtVoid doSynchronize(RtToken name) {}
 	inline virtual RtVoid doResourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doFreeResource(RtToken handle) {}
 
@@ -294,7 +295,11 @@ protected:
     inline virtual RtVoid doMotionBeginV(RtInt N, RtFloat times[]) {}
     inline virtual RtVoid doMotionEnd(void) {}
 
-    inline virtual RtVoid doSynchronize(RtToken name) {}
+	inline virtual RtVoid doResourceBegin(void) {}
+	inline virtual RtVoid doResourceEnd(void) {}
+
+	inline virtual RtVoid doArchiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doArchiveEnd(void) {}
 
     inline virtual RtVoid doFormat(RtInt xres, RtInt yres, RtFloat aspect) {}
     inline virtual RtVoid doFrameAspectRatio(RtFloat aspect) {}
@@ -312,6 +317,7 @@ protected:
     inline virtual RtVoid doExposure(RtFloat gain, RtFloat gamma) {}
     inline virtual RtVoid doImagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
+    inline virtual RtVoid doDisplayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]) {}
     inline virtual RtVoid doDisplayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doHiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}
@@ -370,6 +376,7 @@ protected:
     inline virtual RtVoid doNuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doHierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doSphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doConeV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
@@ -396,6 +403,11 @@ protected:
 
 	inline virtual RtVoid doArchiveRecordV(RtToken type, RtString line) {}
 	inline virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+	inline virtual RtVoid doIfBegin(RtString expr) {}
+	inline virtual RtVoid doElseIfBegin(RtString expr) {}
+	inline virtual RtVoid doElseBegin(void) {}
+	inline virtual RtVoid doIfEnd(void) {}
 }; // CBaseRenderer
 
 } // namespace RiCPP

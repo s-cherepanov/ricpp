@@ -38,9 +38,9 @@ namespace RiCPP {
  * (outside: no block is open)
  */
 enum EnumModes {
-	MODE_OUTSIDE = 0,  //!< Index outside Begin/End
+	MODE_OUTSIDE = 0,   //!< Index outside Begin/End
 
-	MODE_BEGIN,		    //!< Index directly inside Begin/End
+	MODE_BEGIN,		    //!< Index directly inside Begin/End context block
 	MODE_FRAME,		    //!< Index directly inside frame block
 	MODE_WORLD,		    //!< Index directly inside world block
 
@@ -49,7 +49,13 @@ enum EnumModes {
 	MODE_SOLID,		    //!< Index directly inside solid block
 	MODE_MOTION,	    //!< Index directly inside motion block
 
+	MODE_RESOURCE,	    //!< Index directly inside resource block
+
 	MODE_ARCHIVE,	    //!< Index directly inside archive block
+
+	MODE_IF,	        //!< Index directly inside if conditional block
+	MODE_IF_ELSE,	    //!< Index directly inside if else conditional block
+	MODE_ELSE,	        //!< Index directly inside else conditional block
 
 	MODE_OBJECT		    //!< Index directly inside object block
 };
@@ -61,21 +67,29 @@ const int N_MODES = (int)MODE_OBJECT+1;
 /** Bits for sets of modes
  */
 enum EnumModeBits {
-	MODE_BIT_OUTSIDE   =   1, //!< Bit for outside Begin/End
+	MODE_BIT_OUTSIDE   =    1, //!< Bit for outside context
 
-	MODE_BIT_BEGIN     =   2, //!< Bit for directly inside Begin/End
-	MODE_BIT_FRAME     =   4, //!< Bit for directly inside frame block
-	MODE_BIT_WORLD     =   8, //!< Bit for directly inside world block
+	MODE_BIT_BEGIN     =    2, //!< Bit for context block (Begin/End block)
+	MODE_BIT_FRAME     =    4, //!< Bit for frame block
+	MODE_BIT_WORLD     =    8, //!< Bit for world block
 
-	MODE_BIT_ATTRIBUTE =  16, //!< Bit for directly inside attribute block
-	MODE_BIT_TRANSFORM =  32, //!< Bit for directly inside transform block
-	MODE_BIT_SOLID     =  64, //!< Bit for directly inside solid block
-	MODE_BIT_MOTION    = 128, //!< Bit for directly inside motion block
+	MODE_BIT_ATTRIBUTE =   16, //!< Bit for attribute block
+	MODE_BIT_TRANSFORM =   32, //!< Bit for transform block
+	MODE_BIT_SOLID     =   64, //!< Bit for solid block
+	MODE_BIT_MOTION    =  128, //!< Bit for motion block
 
-	MODE_BIT_ARCHIVE   = 256, //!< Bit for directly inside archive block
+	MODE_BIT_RESOURCE  =  256, //!< Bit for resource block
+	MODE_BIT_ARCHIVE   =  512, //!< Bit for archive block
 
-	MODE_BIT_OBJECT    = 512  //!< Bit for directly inside object block
+	MODE_BIT_IF        = 1024, //!< Bit for if block
+	MODE_BIT_IF_ELSE   = 2048, //!< Bit for if else block
+	MODE_BIT_ELSE      = 4096, //!< Bit for else block
+
+	MODE_BIT_OBJECT    = 8192  //!< Bit for object block
+
 };
+
+typedef unsigned short TypeModeBits;
 
 } // namespace RiCPP
 

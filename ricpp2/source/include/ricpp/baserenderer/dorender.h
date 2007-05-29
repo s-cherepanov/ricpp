@@ -71,7 +71,7 @@ protected:
 	 */
 	virtual RtVoid doDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
-	virtual RtVoid doResource(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doResourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doEnd(void) = 0;

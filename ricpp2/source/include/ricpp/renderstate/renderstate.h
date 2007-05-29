@@ -71,7 +71,7 @@ public:
 	 *  @return The current mode bits
 	 *  @see CModeStack::curModeBits(), EnumRequests  
 	 */
-	virtual EnumModes curModeBits() const = 0;
+	virtual TypeModeBits curModeBits() const = 0;
 
 	virtual CModeStack::const_iterator modesBegin() const = 0;
 	virtual CModeStack::const_iterator modesEnd() const = 0;
@@ -196,7 +196,7 @@ public:
     inline void resourceEnd() { m_modeStack->resourceEnd(); }
 
     inline void ifBegin() { m_modeStack->ifBegin(); }
-    inline void ifElseBegin() { m_modeStack->iElsefBegin(); }
+    inline void ifElseBegin() { m_modeStack->ifElseBegin(); }
     inline void elseBegin() { m_modeStack->elseBegin(); }
     inline void ifEnd() { m_modeStack->resourceEnd(); }
 
@@ -205,11 +205,11 @@ public:
 
 	inline virtual bool validRequest(EnumRequests req) const { return m_modeStack->validRequest(req); }
 	inline virtual EnumModes curMode() const { return m_modeStack->curMode(); }
-	inline virtual EnumModes curModeBits() const { return m_modeStack->curModeBits(); }
+	inline virtual TypeModeBits curModeBits() const { return m_modeStack->curModeBits(); }
 
-	inline CModeStack::const_iterator modesBegin() const { return m_modes.begin(); }
-	inline CModeStack::const_iterator modesEnd() const { return m_modes.end(); }
-	inline CModeStack::size_type modesSize() const { return m_modes.size(); }
+	inline CModeStack::const_iterator modesBegin() const { return m_modeStack->begin(); }
+	inline CModeStack::const_iterator modesEnd() const { return m_modeStack->end(); }
+	inline CModeStack::size_type modesSize() const { return m_modeStack->size(); }
 
 	//@}
 

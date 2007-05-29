@@ -557,6 +557,74 @@ RtVoid CRiCPPBridge::motionEnd(void)
 	}
 }
 
+
+RtVoid CRiCPPBridge::resourceBegin(void)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->resourceBegin();
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::resourceBegin()");
+	}
+}
+
+RtVoid CRiCPPBridge::resourceEnd(void)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->resourceEnd();
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::resourceEnd()");
+	}
+}
+
+RtVoid CRiCPPBridge::archiveBegin(RtString name, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	archiveBeginV(name, n, &m_tokens[0], &m_params[0]);
+}
+
+RtArchiveHandle CRiCPPBridge::archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			return m_ctxMgmt.curBackend().renderingContext()->archiveBeginV(name, n, tokens, params);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::archiveBeginV(name:%s, n:%d, ...)", name ? name : "", (int)n);
+	}
+	return illArchiveHandle;
+}
+
+RtVoid CRiCPPBridge::archiveEnd(void)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->archiveEnd();
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::archiveEnd()");
+	}
+}
+
+
 RtVoid CRiCPPBridge::synchronize(RtToken name)
 {
 	if ( !strcmp(name, RI_ABORT) ) {
@@ -576,8 +644,8 @@ RtVoid CRiCPPBridge::synchronize(RtToken name)
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::synchronize(name:\"%s\")", name ? name : "");
 	}
 }
-/*
-RtToken CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
+
+RtResourceHandle CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -586,7 +654,7 @@ RtToken CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
 	return resourceV(name, type, n, &m_tokens[0], &m_params[0]);
 }
 
-RtToken CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+RtResourceHandle CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -599,9 +667,9 @@ RtToken CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, RtToken to
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::resourceV(name:%s, type:%s, n:%d, ...)", name ? name : "", type ? type : "", (int)n);
 	}
 
-	return RI_NULL;
+	return illResourceHandle;
 }
-*/
+
 RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
@@ -827,6 +895,29 @@ RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, R
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::quantize(type:%s, one:%d, qmin:%d, qmax:%d, ampl:%f)", type ? type : "", (int)one, (int)qmin, (int)qmax, (float)ampl);
+	}
+}
+
+RtVoid CRiCPPBridge::displayChannel(RtString name, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	displayChannelV(name, n, &m_tokens[0], &m_params[0]);
+}
+
+RtVoid CRiCPPBridge::displayChannelV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->displayChannelV(name, n, tokens, params);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::displayChannelV(name:%s, n:%d, ...)", name ? name : "", (int)n);
 	}
 }
 
@@ -1739,6 +1830,30 @@ RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nverti
 	}
 }
 
+
+RtVoid CRiCPPBridge::hierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	return hierarchicalSubdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, n, &m_tokens[0], &m_params[0]);
+}
+
+RtVoid CRiCPPBridge::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->hierarchicalSubdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, n, tokens, params);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::hierarchicalSubdivisionMeshV(scheme:%s, nfaces:%d, ...)", scheme ? scheme : "", (int)nfaces);
+	}
+}
+
 RtVoid CRiCPPBridge::sphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token, ...)
 {
 	va_list marker;
@@ -2176,5 +2291,61 @@ RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callbac
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::readArchiveV(name:%s, callback:%s, ...)", name ? name : name, callback ? callback->name() : "");
+	}
+}
+
+RtVoid CRiCPPBridge::ifBegin(RtString expr)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->ifBegin(expr);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "ifBegin(expr:%s)", expr ? expr : "");
+	}
+}
+
+RtVoid CRiCPPBridge::elseIfBegin(RtString expr)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->elseIfBegin(expr);
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "elseIfBegin(expr:%s)", expr ? expr : "");
+	}
+}
+
+RtVoid CRiCPPBridge::elseBegin(void)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->elseBegin();
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "elseBegin()");
+	}
+}
+
+RtVoid CRiCPPBridge::ifEnd(void)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->ifEnd();
+		} catch (ERendererError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "ifEnd()");
 	}
 }

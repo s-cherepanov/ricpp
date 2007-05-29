@@ -637,6 +637,8 @@ public:
 	//@{
 	virtual RtToken declare(RtString name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
+	virtual RtResourceHandle resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...);
+	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Returns the current context handle
 	 *
@@ -728,8 +730,14 @@ public:
 
 	virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...);
 	virtual RtVoid motionBeginV(RtInt N, RtFloat times[]);
-
 	virtual RtVoid motionEnd(void);
+
+	virtual RtVoid resourceBegin(void);
+	virtual RtVoid resourceEnd(void);
+
+	virtual RtVoid archiveBegin(RtString name, RtToken token = RI_NULL, ...);
+	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid archiveEnd(void);
 
 	/******************************************************************************/
 
@@ -754,6 +762,9 @@ public:
     virtual RtVoid imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl);
+
+	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
+	virtual RtVoid displayChannel(RtToken channel, RtToken token = RI_NULL, ...);
 
 	virtual RtVoid display(RtString name, RtToken type, RtToken mode, RtToken token = RI_NULL, ...);
     virtual RtVoid displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -860,6 +871,9 @@ public:
 	virtual RtVoid subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken token = RI_NULL, ...);
     virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]);
 
+	virtual RtVoid hierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtToken token = RI_NULL, ...);
+    virtual RtVoid hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]);
+
 	virtual RtVoid sphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtToken token = RI_NULL, ...);
     virtual RtVoid sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid cone(RtFloat height, RtFloat radius, RtFloat thetamax, RtToken token = RI_NULL, ...);
@@ -907,6 +921,13 @@ public:
 	virtual RtVoid archiveRecordV(RtToken type, RtString line);
     virtual RtVoid readArchive(RtString name, const IArchiveCallback *callback, RtToken token = RI_NULL, ...);
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/******************************************************************************/
+
+	virtual RtVoid ifBegin(RtString expr);
+	virtual RtVoid elseIfBegin(RtString expr);
+	virtual RtVoid elseBegin(void);
+	virtual RtVoid ifEnd(void);
 	//@}
 }; // CRiCPPBridge
 

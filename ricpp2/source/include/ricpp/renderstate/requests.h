@@ -37,7 +37,7 @@ namespace RiCPP {
 enum EnumRequests {
 	// General routines
 	REQ_UNKNOWN = 0,				//!< Unknoen request
-	REQ_ERROR_HANDLER				//!< Index for ri function IRi::errorHandler()
+	REQ_ERROR_HANDLER,				//!< Index for ri function IRi::errorHandler()
 	REQ_DECLARE,                    //!< Index for ri function IRi::declare()
 	REQ_CACHE_RESOURCE,             //!< Index for ri function IRi::cacheResource() (no RIB binding)
 
@@ -83,8 +83,8 @@ enum EnumRequests {
 	REQ_MOTION_END,					//!< Index for ri function IRi::motionEnd()
 
 	// Resource block
-	REQ_ARCHIVE_BEGIN,				//!< Index for ri function IRi::resourceBegin()
-	REQ_ARCHIVE_END,				//!< Index for ri function IRi::resourceEnd()
+	REQ_RESOURCE_BEGIN,				//!< Index for ri function IRi::resourceBegin()
+	REQ_RESOURCE_END,				//!< Index for ri function IRi::resourceEnd()
 
 	// Archive block
 	REQ_ARCHIVE_BEGIN,				//!< Index for ri function IRi::archiveBegin()

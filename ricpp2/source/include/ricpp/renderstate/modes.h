@@ -53,7 +53,7 @@ enum EnumModes {
 
 	MODE_ARCHIVE,	    //!< Index directly inside archive block
 
-	MODE_IF,	        //!< Index directly inside if conditional block
+	MODE_IF,            //!< Index directly inside if conditional block
 	MODE_IF_ELSE,	    //!< Index directly inside if else conditional block
 	MODE_ELSE,	        //!< Index directly inside else conditional block
 

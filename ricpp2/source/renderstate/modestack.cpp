@@ -46,7 +46,7 @@ CValidModes::CValidModes()
 	const TypeModeBits geometryBits =  MODE_BIT_WORLD | MODE_BIT_ATTRIBUTE | MODE_BIT_TRANSFORM | MODE_BIT_SOLID | MODE_BIT_ARCHIVE | MODE_BIT_OBJECT | MODE_BIT_MOTION;
 	const TypeModeBits transformBits = insideBits;
 	
-	for ( int i=0; i < N_REQUESTS: ++i )
+	for ( int i=0; i < N_REQUESTS; ++i )
 		m_requests[i] = nowhereBits; 
 
 	m_requests[REQ_UNKNOWN] = nowhereBits;
@@ -90,9 +90,9 @@ CValidModes::CValidModes()
 	m_requests[REQ_MOTION_END] = MODE_BIT_MOTION;
 	
 	m_requests[REQ_IF_BEGIN] = insideBits;
-	m_requests[REQ_IF_ELSE] = MODE_BIT_IF_BEGIN;
-	m_requests[REQ_ELSE] = MODE_BIT_IF_BEGIN | MODE_BIT_IF_ELSE;
-	m_requests[REQ_IF_END] = MODE_BIT_IF_BEGIN | MODE_BIT_IF_ELSE | MODE_BIT_ELSE;
+	m_requests[REQ_IF_ELSE] = MODE_BIT_IF;
+	m_requests[REQ_ELSE] = MODE_BIT_IF | MODE_BIT_IF_ELSE;
+	m_requests[REQ_IF_END] = MODE_BIT_IF | MODE_BIT_IF_ELSE | MODE_BIT_ELSE;
 	
 
 	m_requests[REQ_FORMAT] = optionBits;
@@ -321,39 +321,39 @@ void CModeStack::archiveEnd()
 	pop();
 }
 
-virtual void resourceBegin() {
-	push(MODE_RESOURCE, MODE_BIT_RESOURCE|curModeBits);
+void CModeStack::resourceBegin() {
+	push(MODE_RESOURCE, MODE_BIT_RESOURCE|curModeBits());
 }
 
-virtual void resourceEnd() {
+void CModeStack::resourceEnd() {
 	assert(curMode() == MODE_RESOURCE);
 	pop();
 }
 
-virtual void ifBegin() {
-	push(MODE_IF, MODE_BIT_IF|curModeBits);
+void CModeStack::ifBegin() {
+	push(MODE_IF, MODE_BIT_IF|curModeBits());
 }
 
-virtual void ifElseBegin() {
+void CModeStack::ifElseBegin() {
 	assert(curMode() == MODE_IF);
 	pop();
-	push(MODE_IF, MODE_BIT_IF_ELSE|curModeBits);
+	push(MODE_IF_ELSE, MODE_BIT_IF_ELSE|curModeBits());
 }
 
-virtual void elseBegin() {
+void CModeStack::elseBegin() {
 	assert(curMode() == MODE_IF || curMode() == MODE_IF_ELSE);
 	pop();
-	push(MODE_IF, MODE_BIT_ELSE|curModeBits);
+	push(MODE_ELSE, MODE_BIT_ELSE|curModeBits());
 }
 
-virtual void ifEnd() {
+void CModeStack::ifEnd() {
 	assert(curMode() == MODE_IF || curMode() == MODE_IF_ELSE || curMode() == MODE_ELSE);
 	pop();
 }
 
 void CModeStack::motionBegin()
 {
-	push(MODE_MOTION);
+	push(MODE_MOTION, MODE_BIT_MOTION);
 }
 
 

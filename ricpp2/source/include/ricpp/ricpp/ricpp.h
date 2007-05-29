@@ -5,14 +5,6 @@
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:	/** @brief Defines a new display channel for display()
-	 *  @param channel Identifier for the Channel
-	 *  @param n Number of tokens
-	 *  @param tokens Tokens for additional parameter list
-	 *  @param params Value pointer for additional parameters to declare the type of the channel
-	 */
-	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
-
-
 //         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
@@ -1049,7 +1041,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameters to declare the type of the channel
 	 */
-	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]);
+	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
 
 	//! Choose a display (or file) and sets the type for the output being rendered.
 	/*! @param name Name for the display or filename
@@ -2016,7 +2008,7 @@ public:
 	/*  @brief Defines a new display channel for display()
 	 *  @see displayChannelV()
 	 */
-	displayChannel(RtToken channel, ...),
+	virtual RtVoid displayChannel(RtToken channel, RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Choose a display
 	 *  @see IRiRoot::displayV()
@@ -2168,9 +2160,9 @@ public:
     virtual RtVoid subdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken token = RI_NULL, ...) = 0; /* New 3.2 */
 
 	/** @brief Requests a hierarchical subdivison surface mesh
-	 *  @see IRiRoot::subdivisionMeshV()
+	 *  @see IRiRoot::hierarchicalSubdivisionMeshV()
 	 */
-    virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid hierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtToken tokens = RI_NULL, ...) = 0;
 	//@}
 
 

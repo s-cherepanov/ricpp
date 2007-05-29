@@ -82,7 +82,7 @@ public:
  */
 class CModeStack {
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
-	std::vector<TypeMode> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
+	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
 	std::vector<TypeModeBits> m_modeBits; //!< All modes (nesting of modes), transparent modes are 'ored' to the mode bits of outer blocks.
 
 protected:
@@ -121,11 +121,11 @@ protected:
 public:
 	/** @brief Const iterator for the elements.
 	 */
-	typedef std::vector<TypeMode>::const_iterator const_iterator;
+	typedef std::vector<EnumModes>::const_iterator const_iterator;
 
 	/** @brief Size type for the number of stored elements
 	 */
-	typedef std::vector<TypeMode>::size_type size_type;
+	typedef std::vector<EnumModes>::size_type size_type;
 
 
 	/** @brief Initializing of the mode, normally starts outside any blocks. 
@@ -279,7 +279,7 @@ public:
 	 */
 	inline virtual EnumModes curMode() const
 	{
-		return m_modes.empty() ? 0 : m_modes.back();
+		return m_modes.empty() ? MODE_OUTSIDE : m_modes.back();
 	}
 
 	/** @brief The current mode bits
@@ -288,7 +288,7 @@ public:
 	 */
 	inline virtual TypeModeBits curModeBits() const
 	{
-		return m_modes.empty() ? MODE_BIT_OUTSIDE : m_modes.back();
+		return m_modeBits.empty() ? MODE_BIT_OUTSIDE : m_modeBits.back();
 	}
 
 	/** @brief Constant iterator, begin of the modes.

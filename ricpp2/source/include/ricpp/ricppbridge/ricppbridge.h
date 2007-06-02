@@ -486,6 +486,7 @@ protected:
 		 * @param tokens Token array, forwarded from TRiCPPBridge::beginV() call
 		 * @param params Array of pointers to parameter arrays, forwarded from TRiCPPBridge::beginV() call
 		 * @return New context handle
+		 * @exception ERendererError If thrown, there is no active rendering context any more
 		 * @see add(), CContext::activate(), IRiCCPPBridge::beginV()
 		 */
 		RtContextHandle beginV(RtString name, CContextCreator *cc, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -495,8 +496,10 @@ protected:
 		 * There is no active rendering context after end() ended. The context
 		 * is not explicitely deactivated (because ending a rendering context
 		 * can be handled by the backend different to deactivating one for
-		 * further use).
+		 * further use). In anny case context() is illContextHandle after
+		 * end(9 (even if an error was thrown)
 		 * 
+		 * @exception ERendererError
 		 * @see CContext::end(), removeContext()
 		 */
 		void end();

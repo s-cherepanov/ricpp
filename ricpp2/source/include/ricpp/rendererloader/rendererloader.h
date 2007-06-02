@@ -204,12 +204,26 @@ public:
 	 *
 	 * The context creators library-name is obtained from the string name.
 	 * name is forwarded from IRiCPPBridge::begin(name). The first word
-	 * of this string can contain a ribfile or the renderer name.
+	 * of this string can contain a ribfile or the renderer name. The
+	 * context creators are wrapped by CRendererLib and cached in m_libs till
+	 * the CRendererLoader instance is destroyed.
 	 *
 	 * @param name String that contains the name of the renderer (or a RIB file) in front
 	 * @return A renderer context creator (cached or new) for name.
 	 */
 	virtual CContextCreator *getContextCreator(RtString name);
+
+	/** @brief Removes renderer context creator.
+	 *
+	 * A renderer context creator is not explicitly deleted. The context creators
+	 * are cached by the CRendererLoader instance till end of program. Because
+	 * of the overhead to load a DLL. The context creators are likely to be
+	 * reused and there are only a very limited number.
+	 *
+	 * @param cc ContextCreator to remove
+	 * @see getContextCreator()
+	 */
+	virtual void removeContextCreator(CContextCreator *cc) {}
 
 	/** @brief Sets a new searchpath
 	 * 

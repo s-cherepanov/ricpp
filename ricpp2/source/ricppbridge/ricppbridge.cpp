@@ -253,6 +253,7 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 			return illContextHandle;
 		}
 	} catch (ERendererError &e) {
+		// Could not create a context
 		m_ctxMgmt.context(illContextHandle);
 		ricppErrHandler().handleError(e);
 		return illContextHandle;
@@ -264,7 +265,7 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 	try {
 		return m_ctxMgmt.beginV(name, contextCreator, n, tokens, params);
 	} catch (ERendererError &e) {
-		// And handle the error
+		// And handle the error, the context was set by m_ctxMgmt appropriately
 		ricppErrHandler().handleError(e);
 		return illContextHandle;
 	}
@@ -276,10 +277,26 @@ RtVoid CRiCPPBridge::end(void)
 {
 	if ( m_ctxMgmt.getContext() != illContextHandle ) {
 		// End the context to clean up, end even aborted contexts.
+		CContextCreator *contextCreator = m_ctxMgmt.curBackend().contextCreator();
+
+		ERendererError e2;
 		try {
 			m_ctxMgmt.end();
 		} catch (ERendererError &e) {
-			ricppErrHandler().handleError(e);
+			e2 = e;
+		}
+
+		assert(m_ctxMgmt.getContext() == illContextHandle);
+
+		// Let the renderer loader decide what to do
+		// with the old context creator. In the current
+		// implementation it is not freed, removeContextCreator()
+		// does nothing and the context creator is cached
+		// by rendererCreator()
+		rendererCreator().removeContextCreator(contextCreator);
+
+		if ( e2.isError() ) {
+			ricppErrHandler().handleError(e2);
 			return;
 		}
 	} else {

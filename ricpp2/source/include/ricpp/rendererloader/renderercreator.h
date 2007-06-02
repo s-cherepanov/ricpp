@@ -74,11 +74,18 @@ public:
 	/** @brief CContextCreator creation.
 	 * 
 	 * May throw ERendererException for more error information.
+	 *
 	 * @param name The argument of IRiRoot::beginV(), indicates the
-	 *        name of the renderer creator.
+	 *        name of the renderer context creator.
 	 * @return A context creator, new or already loaded.
 	 */
 	virtual CContextCreator *getContextCreator(RtString name) = 0;
+
+	/** @brief Removes renderer context creator.
+	 *
+	 * @param cc ContextCreator to remove
+	 */
+	virtual void removeContextCreator(CContextCreator *cc) = 0;
 
 	/** @brief Sets a new searchpath.
 	 *

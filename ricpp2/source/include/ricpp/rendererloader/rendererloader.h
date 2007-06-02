@@ -81,7 +81,7 @@ private:
 		//@{
 		ILibFunc *m_newContextCreator;    ///< Gets a new context creator
 		ILibFunc *m_deleteContextCreator; ///< Deletes a context creator (created by newContextCreator() of the same library)
-		ILibFunc *m_majorInterfaceVer;    ///< Gets the major imterface version (the version of IRendererContext
+		ILibFunc *m_majorInterfaceVer;    ///< Gets the major interface version (the version of IRendererContext
 		ILibFunc *m_minorInterfaceVer;    ///< Gets the minor version of a concrete context
 		ILibFunc *m_interfaceRevision;    ///< Gets the revision of a concrete context
 		ILibFunc *m_rendererType;         ///< Gets the renderer type of a concrete context

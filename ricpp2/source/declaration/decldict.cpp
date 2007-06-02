@@ -104,7 +104,7 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(RtToken token, unsigne
 	}
 	
 	if ( !newDecl )
-		throw ERendererError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of %s", token);
+		throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of %s", token);
 
 	m_all.push_back(newDecl);
 	m_active.unRegisterObj(decl->token());

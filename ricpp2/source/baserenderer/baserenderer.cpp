@@ -39,14 +39,14 @@ CBaseRenderer::~CBaseRenderer()
 }
 
 void CBaseRenderer::initRenderState()
-// throw ERendererError
+// throw ERiCPPError
 {
 	m_renderState = 0;
 	CModeStack *modeStack = 0;
 
 	try {
 		modeStack = getNewModeStack();
-	} catch (ERendererError &err) {
+	} catch (ERiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
 	} catch (...) {
@@ -59,7 +59,7 @@ void CBaseRenderer::initRenderState()
 
 	try {
 		m_renderState = new CRenderState(*modeStack);
-	} catch (ERendererError &err) {
+	} catch (ERiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
 	} catch (...) {
@@ -97,17 +97,17 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		if ( !emptyStr(declaration) ) {
 			d = new CDeclaration(token, declaration, 3, false); // <--- curColorSize if attributes are implemented !!!!
 			if ( !d )
-				throw ERendererError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of \"%s\": \"%s\"", name, declaration);
+				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of \"%s\": \"%s\"", name, declaration);
 			m_renderState->declAdd(d);
 		}
-	} catch (ERendererError &e) {
+	} catch (ERiCPPError &e) {
 		ricppErrHandler().handleError(e);
 		return RI_NULL;
 	}
 
 	try {
 		doDeclare(token, declaration);
-	} catch ( ERendererError &e2 ) {
+	} catch ( ERiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
 		return RI_NULL;
 	}
@@ -116,7 +116,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 }
 
 RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-// throw ERendererError
+// throw ERiCPPError
 {
 	// Render state is initialized here, there is no mode so it must be not valid
 	// This is the case because begin is only called through the frame work
@@ -141,14 +141,14 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 }
 
 RtVoid CBaseRenderer::end(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in end(), break.");
 		return;
 	}
 
-	ERendererError err;
+	ERiCPPError err;
 	if ( m_renderState->curMode() != MODE_BEGIN ) {
 		// Let's end cleaning anyway.
 		err.set(RIE_NESTING, RIE_WARNING, "Ended context not at begin-state");
@@ -158,7 +158,7 @@ RtVoid CBaseRenderer::end(void)
 
 	try {
 		doEnd(); // Can throw, err is lost then
-	} catch ( ERendererError &err2 )  {
+	} catch ( ERiCPPError &err2 )  {
 		err = err2;
 	}
 
@@ -173,7 +173,7 @@ RtVoid CBaseRenderer::end(void)
 }
 
 RtVoid CBaseRenderer::frameBegin(RtInt number)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized frameBegin(%d)", (int)number);
@@ -197,7 +197,7 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 }
 
 RtVoid CBaseRenderer::frameEnd(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized frameEnd().");
@@ -216,7 +216,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 }
 
 RtVoid CBaseRenderer::worldBegin(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized worldBegin().");
@@ -239,7 +239,7 @@ RtVoid CBaseRenderer::worldBegin(void)
 }
 
 RtVoid CBaseRenderer::worldEnd(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized worldEnd().");
@@ -257,7 +257,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 }
 
 RtVoid CBaseRenderer::attributeBegin(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized attributeBegin().");
@@ -280,7 +280,7 @@ RtVoid CBaseRenderer::attributeBegin(void)
 }
 
 RtVoid CBaseRenderer::attributeEnd(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized attributeEnd().");
@@ -298,7 +298,7 @@ RtVoid CBaseRenderer::attributeEnd(void)
 }
 
 RtVoid CBaseRenderer::transformBegin(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized transformBegin().");
@@ -321,7 +321,7 @@ RtVoid CBaseRenderer::transformBegin(void)
 }
 
 RtVoid CBaseRenderer::transformEnd(void)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( !m_renderState ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized transformEnd().");

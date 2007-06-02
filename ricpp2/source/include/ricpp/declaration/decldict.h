@@ -142,11 +142,11 @@ public:
 	 * @param token Token of the name of the declaration.
 	 * @param curColorSize The current number of color components.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise.
-	 * @exception ERendererError Can throw this if @c RIE_NOMEM for a new color declaration.
+	 * @exception ERiCPPError Can throw this if @c RIE_NOMEM for a new color declaration.
 	 * @see find(RtToken), CTokenizer
 	 */
 	const CDeclaration *findAndUpdate(RtToken token, unsigned int curColorSize)
-	// throw(ERendererError)
+	// throw(ERiCPPError)
 	;
 
 	/** @brief Searches a declaration with color update, using three steps.
@@ -165,7 +165,7 @@ public:
 		const char *var,
 		const CTokenizer &tokenizer,
 		unsigned int curColorSize)
-	// throw(ERendererError)
+	// throw(ERiCPPError)
 	;
 
 	/** @brief Adds (overwrites) a new declaration.

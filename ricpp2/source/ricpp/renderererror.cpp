@@ -36,7 +36,7 @@ using namespace RiCPP;
 
 // display Message
 
-const char *ERendererError::formatErrorMessage(std::string &strCode) const
+const char *ERiCPPError::formatErrorMessage(std::string &strCode) const
 {
 	char buffer[64];
 	strCode.clear();
@@ -64,7 +64,7 @@ const char *ERendererError::formatErrorMessage(std::string &strCode) const
 	return strCode.c_str();
 }
 
-const char *ERendererError::formatError(std::string &strCode) const
+const char *ERiCPPError::formatError(std::string &strCode) const
 {
 	char buffer[64];
 	
@@ -104,7 +104,7 @@ const char *ERendererError::formatError(std::string &strCode) const
 }
 
 
-ERendererError::ERendererError(
+ERiCPPError::ERiCPPError(
 	RtInt aCode, RtInt aSeverity,
 	int aLine, const char *aFile,
 	const char *aMessage, ...
@@ -128,7 +128,7 @@ ERendererError::ERendererError(
 	set(aCode, aSeverity, aMessage, aLine, aFile);
 }
 
-void ERendererError::set(
+void ERiCPPError::set(
 	RtInt aCode, RtInt aSeverity,
 	int aLine, const char *aFile,
 	const char *aMessage, ...
@@ -167,7 +167,7 @@ RtVoid IRiCPPErrorHandler::handleError(RtInt code, RtInt severity, RtString mess
 	handleErrorV(code, severity, 0, 0, message, argList);
 	va_end(argList);
 }
-RtVoid IRiCPPErrorHandler::handleError(const ERendererError &err)
+RtVoid IRiCPPErrorHandler::handleError(const ERiCPPError &err)
 {
 	handleErrorV(err.code(), err.severity(), err.line(), err.file(), err.what(), 0);
 }
@@ -186,5 +186,5 @@ RtVoid CErrorExceptionHandler::handleErrorV(RtInt code, RtInt severity, int line
 		message = str;
 	}
 
-	throw ERendererError(code, severity, message, line, file);
+	throw ERiCPPError(code, severity, message, line, file);
 }

@@ -34,39 +34,39 @@
 using namespace RiCPP;
 
 extern "C" {
-typedef CContextCreator *(CDECL *TNewContextCreatorFunc)(unsigned long);
-typedef void (CDECL *TDeleteContextCreatorFunc)(CContextCreator *);
-typedef unsigned long (CDECL *TMajorInterfaceVerFunc)();
-typedef unsigned long (CDECL *TMinorInterfaceVerFunc)();
-typedef unsigned long (CDECL *TInterfaceRevisionFunc)();
-typedef const char *(CDECL *TRendererTypeFunc)();
-typedef const char *(CDECL *TRendererNameFunc)();
+typedef CContextCreator *(CDECL *TypeNewContextCreatorFunc)(unsigned long);
+typedef void (CDECL *TypeDeleteContextCreatorFunc)(CContextCreator *);
+typedef unsigned long (CDECL *TypeMajorInterfaceVerFunc)();
+typedef unsigned long (CDECL *TypeMinorInterfaceVerFunc)();
+typedef unsigned long (CDECL *TypeInterfaceRevisionFunc)();
+typedef const char *(CDECL *TypeRendererTypeFunc)();
+typedef const char *(CDECL *TypeRendererNameFunc)();
 }
 
 CContextCreator *CRendererLoader::CRendererLib::newContextCreator(unsigned long majorversion) {
-	CContextCreator *cc = ((TNewContextCreatorFunc)((CWin32LibFunc *)m_newContextCreator)->funcPtr())(majorversion);
+	CContextCreator *cc = ((TypeNewContextCreatorFunc)((CWin32LibFunc *)m_newContextCreator)->funcPtr())(majorversion);
 	return cc;
 }
 void CRendererLoader::CRendererLib::deleteContextCreator(CContextCreator *cc) {
-	((TDeleteContextCreatorFunc)((CWin32LibFunc *)m_deleteContextCreator)->funcPtr())(cc);
+	((TypeDeleteContextCreatorFunc)((CWin32LibFunc *)m_deleteContextCreator)->funcPtr())(cc);
 }
 
 unsigned long CRendererLoader::CRendererLib::majorInterfaceVer() {
-	return ((TMajorInterfaceVerFunc)((CWin32LibFunc *)m_majorInterfaceVer)->funcPtr())();
+	return ((TypeMajorInterfaceVerFunc)((CWin32LibFunc *)m_majorInterfaceVer)->funcPtr())();
 }
 
 unsigned long CRendererLoader::CRendererLib::minorInterfaceVer() {
-	return ((TMinorInterfaceVerFunc)((CWin32LibFunc *)m_minorInterfaceVer)->funcPtr())();
+	return ((TypeMinorInterfaceVerFunc)((CWin32LibFunc *)m_minorInterfaceVer)->funcPtr())();
 }
 
 unsigned long CRendererLoader::CRendererLib::interfaceRevision() {
-	return ((TInterfaceRevisionFunc)((CWin32LibFunc *)m_interfaceRevision)->funcPtr())();
+	return ((TypeInterfaceRevisionFunc)((CWin32LibFunc *)m_interfaceRevision)->funcPtr())();
 }
 
 const char *CRendererLoader::CRendererLib::rendererType() {
-	return ((TRendererTypeFunc)((CWin32LibFunc *)m_rendererType)->funcPtr())();
+	return ((TypeRendererTypeFunc)((CWin32LibFunc *)m_rendererType)->funcPtr())();
 }
 
 const char *CRendererLoader::CRendererLib::rendererName() {
-	return ((TRendererNameFunc)((CWin32LibFunc *)m_rendererName)->funcPtr())();
+	return ((TypeRendererNameFunc)((CWin32LibFunc *)m_rendererName)->funcPtr())();
 }

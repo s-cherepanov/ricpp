@@ -34,10 +34,6 @@
 #include "ricpp/gendynlib/dynlib.h"
 #endif // _RICPP_GENDYNLIB_DYNLIB_H
 
-#ifndef _WINDOWS_
-#include <windows.h>
-#endif // _WINDOWS_
-
 namespace RiCPP {
 
 /** @brief The Win32 implementation to handle functions of dynamic libraries.
@@ -63,7 +59,7 @@ public:
 	/** @brief The function pointer to call the function.
 	 * @return The function pointer, used by the framework to call the library function.
 	 */
-	FARPROC funcPtr() const;
+	virtual FARPROC funcPtr() const;
 }; // CWin32LibFunc
 
 /** @brief The Win32 implemenatation to handle dynamic libraries.

@@ -33,12 +33,22 @@
 #include <string.h>
 
 #ifdef WIN32
+
+#ifndef _WINDOWS_
+#include <windows.h>
+#endif // _WINDOWS_
+
 /** @brief Case insensitive strcmp() - Compare s1 with s2, under Mac and Linux/Unix there is no _stricmp(), it is named strcasecmp().
  *  @param s1 first NUL terminated string
  *  @param s2 second NUL terminated string
  *  @return 1, if s1 > s2, 0 if the strings are equal and -1 if s2 > s1
  */
 inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2); }
+#endif
+
+#ifdef MAC
+typedef int (*FARPROC)()
+#define CDECL
 #endif
 
 #endif

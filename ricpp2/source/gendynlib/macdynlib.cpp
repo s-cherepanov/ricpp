@@ -45,8 +45,8 @@ bool CMacLibFunc::valid() {
 	return m_funcPtr != 0;
 }
 
-void *CMacLibFunc::funcPtr() const {
-	return m_funcPtr;
+FARPROC CMacLibFunc::funcPtr() const {
+	return (FARPROC)m_funcPtr;
 }
 
 CMacDynLib::CMacDynLib(const char *libname, const char *searchpath, long int version)

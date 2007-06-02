@@ -115,7 +115,7 @@ public:
 	 * is considered as an error because the existence of a declaration for
 	 * \a parameterDeclstr has been tested before. Can throw a RIE_SYNTAX parsing error.
 	 * @param curColorSize The current size of color (number of floats).
-	 * @exception ERendererError
+	 * @exception ERiCPPError
 	 */
 	CDeclaration(const char *parameterDeclstr, unsigned int curColorSize);
 	/** @brief Standard constructor for declarations CBaseRenderer::Declare().
@@ -124,7 +124,7 @@ public:
 	 * @param declstr The declaration.
 	 * @param curColorSize The current size of color (number of floats).
 	 * @param isDefault A default declaration of the interface?
-	 * @exception ERendererError
+	 * @exception ERiCPPError
 	 */
 	CDeclaration(RtToken token, const char *declstr, unsigned int curColorSize, bool isDefault);
 	/** @brief Copy constructor for declaration with different color size

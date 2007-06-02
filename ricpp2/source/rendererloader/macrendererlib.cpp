@@ -34,40 +34,40 @@
 using namespace RiCPP;
 
 extern "C" {
-typedef CContextCreator *(*TNewContextCreatorFunc)(unsigned long majorversion);
-typedef void (*TDeleteContextCreatorFunc)(CContextCreator *);
-typedef unsigned long (*TMajorInterfaceVerFunc)();
-typedef unsigned long (*TMinorInterfaceVerFunc)();
-typedef unsigned long (*TInterfaceRevisionFunc)();
-typedef const char *(*TRendererTypeFunc)();
-typedef const char *(*TRendererNameFunc)();
+typedef CContextCreator *(*TypeNewContextCreatorFunc)(unsigned long majorversion);
+typedef void (*TypeDeleteContextCreatorFunc)(CContextCreator *);
+typedef unsigned long (*TypeMajorInterfaceVerFunc)();
+typedef unsigned long (*TypeMinorInterfaceVerFunc)();
+typedef unsigned long (*TypeInterfaceRevisionFunc)();
+typedef const char *(*TypeRendererTypeFunc)();
+typedef const char *(*TypeRendererNameFunc)();
 }
 
 
 CContextCreator *CRendererLoader::CRendererLib::newContextCreator(unsigned long majorversion) {
-	CContextCreator *ri = ((TNewContextCreatorFunc)((CMacLibFunc *)m_newContextCreator)->funcPtr())(majorversion);
+	CContextCreator *ri = ((TypeNewContextCreatorFunc)((CMacLibFunc *)m_newContextCreator)->funcPtr())(majorversion);
 	return ri;
 }
 void CRendererLoader::CRendererLib::deleteContextCreator(CContextCreator *cc) {
-	((TDeleteContextCreatorFunc)((CMacLibFunc *)m_deleteContextCreator)->funcPtr())(cc);
+	((TypeDeleteContextCreatorFunc)((CMacLibFunc *)m_deleteContextCreator)->funcPtr())(cc);
 }
 
 unsigned long CRendererLoader::CRendererLib::majorInterfaceVer() {
-	return ((TMajorInterfaceVerFunc)((CMacLibFunc *)m_majorInterfaceVer)->funcPtr())();
+	return ((TypeMajorInterfaceVerFunc)((CMacLibFunc *)m_majorInterfaceVer)->funcPtr())();
 }
 
 unsigned long CRendererLoader::CRendererLib::minorInterfaceVer() {
-	return ((TMinorInterfaceVerFunc)((CMacLibFunc *)m_minorInterfaceVer)->funcPtr())();
+	return ((TypeMinorInterfaceVerFunc)((CMacLibFunc *)m_minorInterfaceVer)->funcPtr())();
 }
 
 unsigned long CRendererLoader::CRendererLib::interfaceRevision() {
-	return ((TInterfaceRevisionFunc)((CMacLibFunc *)m_interfaceRevision)->funcPtr())();
+	return ((TypeInterfaceRevisionFunc)((CMacLibFunc *)m_interfaceRevision)->funcPtr())();
 }
 
 const char *CRendererLoader::CRendererLib::rendererType() {
-	return ((TRendererTypeFunc)((CMacLibFunc *)m_rendererType)->funcPtr())();
+	return ((TypeRendererTypeFunc)((CMacLibFunc *)m_rendererType)->funcPtr())();
 }
 
 const char *CRendererLoader::CRendererLib::rendererName() {
-	return ((TRendererNameFunc)((CMacLibFunc *)m_rendererName)->funcPtr())();
+	return ((TypeRendererNameFunc)((CMacLibFunc *)m_rendererName)->funcPtr())();
 }

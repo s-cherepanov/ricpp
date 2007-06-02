@@ -163,7 +163,7 @@ CDeclaration::CDeclaration(const char *parameterDeclstr, unsigned int curColorSi
 	m_token = RI_NULL;
 
 	if ( !parse(0, parameterDeclstr, curColorSize) ) {
-		throw ERendererError(RIE_SYNTAX, RIE_ERROR, (int)0, (const char *)0, parameterDeclstr);
+		throw ERiCPPError(RIE_SYNTAX, RIE_ERROR, (int)0, (const char *)0, parameterDeclstr);
 	}
 }
 
@@ -174,10 +174,10 @@ CDeclaration::CDeclaration(RtToken token, const char *declstr, unsigned int curC
 	m_isInline = false;
 	m_token = token;
 	if ( m_token == RI_NULL ) {
-		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "Declaration name is empty for \"%s\"", markemptystr(declstr));
+		throw ERiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "Declaration name is empty for \"%s\"", markemptystr(declstr));
 	}
 	if ( !parse(m_token, declstr, curColorSize) ) {
-		throw ERendererError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", m_token, markemptystr(declstr));
+		throw ERiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", m_token, markemptystr(declstr));
 	}
 }
 

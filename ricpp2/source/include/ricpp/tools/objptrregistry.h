@@ -101,6 +101,14 @@ public:
 	{
 		return m_map.size();
 	}
+
+	/** @brief Gets whether the members are deleted by the class or not.
+	 * @return true, the class deletes its members
+	 */
+	inline bool membersAreDestructed() const
+	{
+		return m_destructMembers;
+	}
 }; // TObjPtrRegistry
 
 template<typename KeyType, typename ValueType>TObjPtrRegistry<KeyType, ValueType>::

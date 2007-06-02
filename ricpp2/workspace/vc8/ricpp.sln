@@ -50,6 +50,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "renderstate", "renderstate\
 		{F132C58F-975C-4752-BB09-0A9DB2EE477D} = {F132C58F-975C-4752-BB09-0A9DB2EE477D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pluginhandler", "pluginhandler\pluginhandler.vcproj", "{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -142,6 +144,12 @@ Global
 		{1268F5B0-2204-4D2D-B61A-571266610158}.Release|Win32.ActiveCfg = Release|Win32
 		{1268F5B0-2204-4D2D-B61A-571266610158}.Release|Win32.Build.0 = Release|Win32
 		{1268F5B0-2204-4D2D-B61A-571266610158}.Release|x64.ActiveCfg = Release|x64
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Debug|Win32.Build.0 = Debug|Win32
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Debug|x64.ActiveCfg = Debug|x64
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Release|Win32.ActiveCfg = Release|Win32
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Release|Win32.Build.0 = Release|Win32
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

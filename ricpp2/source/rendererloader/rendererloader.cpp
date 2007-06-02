@@ -76,12 +76,12 @@ CRendererLoader::CRendererLib::~CRendererLib()
 }
 
 CContextCreator *CRendererLoader::CRendererLib::getContextCreator(unsigned long majorVersion)
-// throw ERendererError
+// throw ERiCPPError
 {
 	if ( m_contextCreator ) {
 		if ( m_contextCreator->majorVersion() == majorVersion )
 			return m_contextCreator;
-		throw ERendererError(RIE_VERSION, RIE_SEVERE, "Major version of context creator does not match.", __LINE__, __FILE__);
+		throw ERiCPPError(RIE_VERSION, RIE_SEVERE, "Major version of context creator does not match.", __LINE__, __FILE__);
 		return 0;
 	}
 	m_contextCreator = newContextCreator(majorVersion);
@@ -140,7 +140,7 @@ CRendererLoader::~CRendererLoader()
 }
 
 CContextCreator *CRendererLoader::getRibWriterCreator()
-// throw ERendererError
+// throw ERiCPPError
 {
 	CContextCreator *cc = 0;
 	try {
@@ -161,7 +161,7 @@ const char *CRendererLoader::getRibWritername()
 }
 
 CContextCreator *CRendererLoader::loadContextCreator(const char *name)
-// throw ERendererError
+// throw ERiCPPError
 {
 	// name: if there is no name, create RIB output
 	const char *ribWriterName = getRibWritername();
@@ -183,7 +183,7 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name)
 		if ( !m_ribWriterCreator ) {
 			try {
 				m_ribWriterCreator = getRibWriterCreator();
-			} catch (ERendererError &err) {
+			} catch (ERiCPPError &err) {
 				m_ribWriterCreator = 0;
 				ricppErrHandler().handleError(err);
 			}
@@ -217,7 +217,7 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name)
 		try {
 			CContextCreator *cc = lib->getContextCreator(IRiContext::riContextMajorVersion);
 			return cc;
-		} catch (ERendererError &err) {
+		} catch (ERiCPPError &err) {
 			ricppErrHandler().handleError(err);
 		}
 		return 0;
@@ -226,7 +226,7 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name)
 	// Step 4: Loads Library
 	try {
 		dynLib->load();
-	} catch ( ERendererError &err ) {
+	} catch ( ERiCPPError &err ) {
 		CDynLibFactory::deleteDynLib(dynLib);
 		ricppErrHandler().handleError(err);
 		return 0;
@@ -261,7 +261,7 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name)
 
 	try {
 		cc = lib->getContextCreator(IRiContext::riContextMajorVersion);
-	} catch (ERendererError &err) {
+	} catch (ERiCPPError &err) {
 		// also deletes dynLib
 		delete lib;
 		ricppErrHandler().handleError(err);
@@ -274,12 +274,12 @@ CContextCreator *CRendererLoader::loadContextCreator(const char *name)
 }
 
 CContextCreator *CRendererLoader::getContextCreator(RtString name)
-// throw ERendererError
+// throw ERiCPPError
 {
 	CContextCreator *cc = 0;
 	try {
 		cc = loadContextCreator(name);
-	} catch ( ERendererError &err ) {
+	} catch ( ERiCPPError &err ) {
 		ricppErrHandler().handleError(err);
 		return 0;
 	}

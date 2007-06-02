@@ -53,6 +53,7 @@ namespace RiCPP {
 		/** Overload this member functions to test if the function is valid.
 		 */
 		virtual bool valid()=0;
+		virtual FARPROC funcPtr() const = 0;
 	}; // ILibFunc
 
 	/** @brief Base class to represent dynamic libraries in general.
@@ -150,9 +151,10 @@ namespace RiCPP {
 		 */
 		virtual const char *libpath();
 
-		/** @brief Handles the loading of the library, calls doload() if called the first time
+		/** @brief Handles the loading of the library, calls doload() if called the first time.
+		 *  @exception ERiCPPError Thrown if library could not be loaded.
 		 */
-		bool load();
+		void load();
 
 		/** @brief Handles the unloading of the library.
 		 *

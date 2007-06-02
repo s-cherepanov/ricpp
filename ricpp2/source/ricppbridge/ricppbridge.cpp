@@ -49,11 +49,11 @@ void CRiCPPBridge::CContextManagement::removeContext(RtContextHandle handle)
 }
 
 RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, CContextCreator *cc, RtInt n, RtToken tokens[], RtPointer params[])
-	// throws ERendererError
+	// throws ERiCPPError
 {
 	try {
 		m_curCtx.deactivate();
-	} catch (ERendererError &e) {
+	} catch (ERiCPPError &e) {
 		m_ctxHandle = illContextHandle;
 		m_curCtx = m_ctxMap[m_ctxHandle];
 		throw e;
@@ -70,7 +70,7 @@ RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, CContext
 	IRiContext *backendContext;
 	try {
 		backendContext = cc->beginV(name, n, tokens, params);
-	} catch (ERendererError &e) {
+	} catch (ERiCPPError &e) {
 		// Context may be invalid, nevertheless it is stored, so interface
 		// requests can be called until end()
 		CContext ctx(cc, cc->getContext());
@@ -90,15 +90,15 @@ RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, CContext
 
 
 void CRiCPPBridge::CContextManagement::end()
-	// throws ERendererError
+	// throws ERiCPPError
 {
-	ERendererError e;
+	ERiCPPError e;
 
 	if ( m_ctxHandle != illContextHandle ) {
 		// End even aborted contexts to clean up
 		try {
 			m_curCtx.end();
-		} catch (ERendererError &e2) {
+		} catch (ERiCPPError &e2) {
 			e = e2;
 		}
 		removeContext(m_ctxHandle);
@@ -171,7 +171,7 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 	}
 
 	std::string errorstring;
-	ERendererError err(code, severity, message, line, file);
+	ERiCPPError err(code, severity, message, line, file);
 	err.formatErrorMessage(errorstring);
 
 	if ( m_outer->m_curErrorHandler )
@@ -184,7 +184,7 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			return m_ctxMgmt.curBackend().renderingContext()->declare(name, declaration);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return RI_NULL;
 		}
@@ -252,7 +252,7 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 				name ? name : "");
 			return illContextHandle;
 		}
-	} catch (ERendererError &e) {
+	} catch (ERiCPPError &e) {
 		// Could not create a context
 		m_ctxMgmt.context(illContextHandle);
 		ricppErrHandler().handleError(e);
@@ -264,7 +264,7 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 	// Start the new context
 	try {
 		return m_ctxMgmt.beginV(name, contextCreator, n, tokens, params);
-	} catch (ERendererError &e) {
+	} catch (ERiCPPError &e) {
 		// And handle the error, the context was set by m_ctxMgmt appropriately
 		ricppErrHandler().handleError(e);
 		return illContextHandle;
@@ -279,10 +279,10 @@ RtVoid CRiCPPBridge::end(void)
 		// End the context to clean up, end even aborted contexts.
 		CContextCreator *contextCreator = m_ctxMgmt.curBackend().contextCreator();
 
-		ERendererError e2;
+		ERiCPPError e2;
 		try {
 			m_ctxMgmt.end();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			e2 = e;
 		}
 
@@ -309,7 +309,7 @@ RtVoid CRiCPPBridge::context(RtContextHandle handle)
 	// Since handle can activate a different context creator, deactivate the old context
 	try {
 		m_ctxMgmt.context(illContextHandle);
-	} catch (ERendererError &e) {
+	} catch (ERiCPPError &e) {
 		ricppErrHandler().handleError(e);
 		return;
 	}
@@ -322,7 +322,7 @@ RtVoid CRiCPPBridge::context(RtContextHandle handle)
 	bool setContext = false;
 	try { 
 		setContext = m_ctxMgmt.context(handle);
-	} catch (ERendererError &e) {
+	} catch (ERiCPPError &e) {
 		ricppErrHandler().handleError(e);
 		return;
 	}
@@ -338,7 +338,7 @@ RtVoid CRiCPPBridge::frameBegin(RtInt number)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->frameBegin(number);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -353,7 +353,7 @@ RtVoid CRiCPPBridge::frameEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->frameEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -368,7 +368,7 @@ RtVoid CRiCPPBridge::worldBegin(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->worldBegin();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -383,7 +383,7 @@ RtVoid CRiCPPBridge::worldEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->worldEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -398,7 +398,7 @@ RtVoid CRiCPPBridge::attributeBegin(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->attributeBegin();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -413,7 +413,7 @@ RtVoid CRiCPPBridge::attributeEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->attributeEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -428,7 +428,7 @@ RtVoid CRiCPPBridge::transformBegin(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->transformBegin();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -443,7 +443,7 @@ RtVoid CRiCPPBridge::transformEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->transformEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -458,7 +458,7 @@ RtVoid CRiCPPBridge::solidBegin(RtToken type)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->solidBegin(type);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -473,7 +473,7 @@ RtVoid CRiCPPBridge::solidEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->solidEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
 		}
@@ -488,7 +488,7 @@ RtObjectHandle CRiCPPBridge::objectBegin(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			return m_ctxMgmt.curBackend().renderingContext()->objectBegin();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return illObjectHandle;
 		}
@@ -504,7 +504,7 @@ RtVoid CRiCPPBridge::objectEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->objectEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -518,7 +518,7 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->objectInstance(handle);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -551,7 +551,7 @@ RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[])
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->motionBeginV(N, times);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -565,7 +565,7 @@ RtVoid CRiCPPBridge::motionEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->motionEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -580,7 +580,7 @@ RtVoid CRiCPPBridge::resourceBegin(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->resourceBegin();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -594,7 +594,7 @@ RtVoid CRiCPPBridge::resourceEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->resourceEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -617,7 +617,7 @@ RtArchiveHandle CRiCPPBridge::archiveBeginV(RtString name, RtInt n, RtToken toke
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			return m_ctxMgmt.curBackend().renderingContext()->archiveBeginV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -632,7 +632,7 @@ RtVoid CRiCPPBridge::archiveEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->archiveEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -653,7 +653,7 @@ RtVoid CRiCPPBridge::synchronize(RtToken name)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->synchronize(name);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -676,7 +676,7 @@ RtResourceHandle CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, R
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			return m_ctxMgmt.curBackend().renderingContext()->resourceV(name, type, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -692,7 +692,7 @@ RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->format(xres, yres, aspect);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -706,7 +706,7 @@ RtVoid CRiCPPBridge::frameAspectRatio(RtFloat aspect)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->frameAspectRatio(aspect);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -720,7 +720,7 @@ RtVoid CRiCPPBridge::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFl
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->screenWindow(left, right, bot, top);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -734,7 +734,7 @@ RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloa
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->cropWindow(xmin, xmax, ymin, ymax);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -757,7 +757,7 @@ RtVoid CRiCPPBridge::projectionV(RtString name, RtInt n, RtToken tokens[], RtPoi
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->projectionV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -771,7 +771,7 @@ RtVoid CRiCPPBridge::clipping(RtFloat hither, RtFloat yon)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->clipping(hither, yon);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -785,7 +785,7 @@ RtVoid CRiCPPBridge::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, 
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->clippingPlane(x, y, z, nx, ny, nz);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -799,7 +799,7 @@ RtVoid CRiCPPBridge::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat fo
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->depthOfField(fstop, focallength, focaldistance);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -813,7 +813,7 @@ RtVoid CRiCPPBridge::shutter(RtFloat smin, RtFloat smax)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->shutter(smin, smax);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -827,7 +827,7 @@ RtVoid CRiCPPBridge::pixelVariance(RtFloat variation)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->pixelVariance(variation);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -841,7 +841,7 @@ RtVoid CRiCPPBridge::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->pixelSamples(xsamples, ysamples);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -855,7 +855,7 @@ RtVoid CRiCPPBridge::pixelFilter(const IFilterFunc &function, RtFloat xwidth, Rt
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->pixelFilter(function, xwidth, ywidth);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -869,7 +869,7 @@ RtVoid CRiCPPBridge::exposure(RtFloat gain, RtFloat gamma)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->exposure(gain, gamma);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -892,7 +892,7 @@ RtVoid CRiCPPBridge::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->imagerV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -906,7 +906,7 @@ RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, R
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->quantize(type, one, qmin, qmax, ampl);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -929,7 +929,7 @@ RtVoid CRiCPPBridge::displayChannelV(RtString name, RtInt n, RtToken tokens[], R
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->displayChannelV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -952,7 +952,7 @@ RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtToken mode, RtInt n
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->displayV(name, type, mode, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -975,7 +975,7 @@ RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->hiderV(type, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -989,7 +989,7 @@ RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->colorSamples(N, nRGB, RGBn);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1003,7 +1003,7 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->relativeDetail(relativedetail);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1026,14 +1026,14 @@ RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->optionV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
 		// options for the Renderer creator and its children
 		try {
 			doOptionV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	}
@@ -1068,7 +1068,7 @@ RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			return m_ctxMgmt.curBackend().renderingContext()->lightSourceV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1092,7 +1092,7 @@ RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tok
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			return m_ctxMgmt.curBackend().renderingContext()->areaLightSourceV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1116,7 +1116,7 @@ RtVoid CRiCPPBridge::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoin
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->attributeV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1130,7 +1130,7 @@ RtVoid CRiCPPBridge::color(RtColor Cs)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->color(Cs);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1144,7 +1144,7 @@ RtVoid CRiCPPBridge::opacity(RtColor Cs)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->opacity(Cs);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1167,7 +1167,7 @@ RtVoid CRiCPPBridge::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->surfaceV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1190,7 +1190,7 @@ RtVoid CRiCPPBridge::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPoi
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->atmosphereV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1213,7 +1213,7 @@ RtVoid CRiCPPBridge::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->interiorV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1236,7 +1236,7 @@ RtVoid CRiCPPBridge::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->exteriorV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1251,7 +1251,7 @@ RtVoid CRiCPPBridge::illuminate(RtLightHandle light, RtBoolean onoff)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->illuminate(light, onoff);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1275,7 +1275,7 @@ RtVoid CRiCPPBridge::displacementV(RtString name, RtInt n, RtToken tokens[], RtP
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->displacementV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1289,7 +1289,7 @@ RtVoid CRiCPPBridge::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFl
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1302,7 +1302,7 @@ RtVoid CRiCPPBridge::shadingRate(RtFloat size)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->shadingRate(size);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1316,7 +1316,7 @@ RtVoid CRiCPPBridge::shadingInterpolation(RtToken type)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->shadingInterpolation(type);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1330,7 +1330,7 @@ RtVoid CRiCPPBridge::matte(RtBoolean onoff)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->matte(onoff);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1344,7 +1344,7 @@ RtVoid CRiCPPBridge::bound(RtBound aBound)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->bound(aBound);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1358,7 +1358,7 @@ RtVoid CRiCPPBridge::detail(RtBound aBound)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->detail(aBound);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1372,7 +1372,7 @@ RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->detailRange(minvis, lowtran, uptran, maxvis);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1387,7 +1387,7 @@ RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->geometricApproximation(type, value);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1401,7 +1401,7 @@ RtVoid CRiCPPBridge::geometricRepresentation(RtToken type)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->geometricRepresentation(type);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1415,7 +1415,7 @@ RtVoid CRiCPPBridge::orientation(RtToken anOrientation)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->orientation(anOrientation);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1429,7 +1429,7 @@ RtVoid CRiCPPBridge::reverseOrientation(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->reverseOrientation();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1443,7 +1443,7 @@ RtVoid CRiCPPBridge::sides(RtInt nsides)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->sides(nsides);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1457,7 +1457,7 @@ RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vs
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->basis(ubasis, ustep, vbasis, vstep);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1471,7 +1471,7 @@ RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFlo
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1487,7 +1487,7 @@ RtVoid CRiCPPBridge::identity(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->identity();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1501,7 +1501,7 @@ RtVoid CRiCPPBridge::transform(RtMatrix aTransform)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->transform(aTransform);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1515,7 +1515,7 @@ RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->concatTransform(aTransform);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1529,7 +1529,7 @@ RtVoid CRiCPPBridge::perspective(RtFloat fov)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->perspective(fov);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1543,7 +1543,7 @@ RtVoid CRiCPPBridge::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->translate(dx, dy, dz);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1557,7 +1557,7 @@ RtVoid CRiCPPBridge::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->rotate(angle, dx, dy, dz);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1571,7 +1571,7 @@ RtVoid CRiCPPBridge::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->scale(dx, dy, dz);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1585,7 +1585,7 @@ RtVoid CRiCPPBridge::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, 
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1608,7 +1608,7 @@ RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPo
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->deformationV(name, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1622,7 +1622,7 @@ RtVoid CRiCPPBridge::coordinateSystem(RtToken space)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->coordinateSystem(space);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1636,7 +1636,7 @@ RtVoid CRiCPPBridge::coordSysTransform(RtToken space)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->coordSysTransform(space);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1650,7 +1650,7 @@ RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			return m_ctxMgmt.curBackend().renderingContext()->transformPoints(fromspace, tospace, npoints, points);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1676,7 +1676,7 @@ RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoin
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->polygonV(nvertices, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1699,7 +1699,7 @@ RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtTok
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->generalPolygonV(nloops, nverts, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1722,7 +1722,7 @@ RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, 
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->pointsPolygonsV(npolys, nverts, verts, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1745,7 +1745,7 @@ RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1768,7 +1768,7 @@ RtVoid CRiCPPBridge::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->patchV(type, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1791,7 +1791,7 @@ RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv,
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->patchMeshV(type, nu, uwrap, nv, vwrap, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1814,7 +1814,7 @@ RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat um
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1838,7 +1838,7 @@ RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nverti
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->subdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1862,7 +1862,7 @@ RtVoid CRiCPPBridge::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, 
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->hierarchicalSubdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1885,7 +1885,7 @@ RtVoid CRiCPPBridge::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->sphereV(radius, zmin, zmax, thetamax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1908,7 +1908,7 @@ RtVoid CRiCPPBridge::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->coneV(height, radius, thetamax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1931,7 +1931,7 @@ RtVoid CRiCPPBridge::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFlo
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->cylinderV(radius, zmin, zmax, thetamax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1954,7 +1954,7 @@ RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetam
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->hyperboloidV(point1, point2, thetamax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -1977,7 +1977,7 @@ RtVoid CRiCPPBridge::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFlo
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->paraboloidV(rmax, zmin, zmax, thetamax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2000,7 +2000,7 @@ RtVoid CRiCPPBridge::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->diskV(height, radius, thetamax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2023,7 +2023,7 @@ RtVoid CRiCPPBridge::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, 
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->torusV(majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2046,7 +2046,7 @@ RtVoid CRiCPPBridge::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer pa
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->pointsV(npts, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2069,7 +2069,7 @@ RtVoid CRiCPPBridge::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToke
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->curvesV(type, ncurves, nverts, wrap, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2092,7 +2092,7 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2106,7 +2106,7 @@ RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->procedural(data, bound, subdivfunc, freefunc);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2129,7 +2129,7 @@ RtVoid CRiCPPBridge::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointe
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->geometryV(type, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2154,7 +2154,7 @@ RtVoid CRiCPPBridge::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtT
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->makeTextureV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2177,7 +2177,7 @@ RtVoid CRiCPPBridge::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToke
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->makeBumpV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2200,7 +2200,7 @@ RtVoid CRiCPPBridge::makeLatLongEnvironmentV(RtString pic, RtString tex, const I
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->makeLatLongEnvironmentV(pic, tex, filterfunc, swidth, twidth, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2223,7 +2223,7 @@ RtVoid CRiCPPBridge::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2246,7 +2246,7 @@ RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken to
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->makeShadowV(pic, tex, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2279,7 +2279,7 @@ RtVoid CRiCPPBridge::archiveRecordV(RtToken type, RtString line)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->archiveRecordV(type, line);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2302,7 +2302,7 @@ RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callbac
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->readArchiveV(name, callback, n, tokens, params);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2316,7 +2316,7 @@ RtVoid CRiCPPBridge::ifBegin(RtString expr)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->ifBegin(expr);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2330,7 +2330,7 @@ RtVoid CRiCPPBridge::elseIfBegin(RtString expr)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->elseIfBegin(expr);
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2344,7 +2344,7 @@ RtVoid CRiCPPBridge::elseBegin(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->elseBegin();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
@@ -2358,7 +2358,7 @@ RtVoid CRiCPPBridge::ifEnd(void)
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->ifEnd();
-		} catch (ERendererError &e) {
+		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {

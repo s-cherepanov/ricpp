@@ -59,7 +59,7 @@ public:
 	/** @brief The function pointer to call the function.
 	 * @return The function pointer, used by the framework to call the library function.
 	 */
-	void *funcPtr() const;
+	virtual FARPROC funcPtr() const;
 }; // CMacLibFunc
 
 /** @brief The Mac implemenatation to handle dynamic libraries.

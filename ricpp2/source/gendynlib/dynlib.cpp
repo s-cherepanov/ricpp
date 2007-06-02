@@ -43,37 +43,46 @@ CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
 	m_searchpath.explode(';', searchpath, true);
 }
 
-unsigned long CDynLib::useCount() const {
+unsigned long CDynLib::useCount() const
+{
 	return m_useCount;
 }
 
-bool CDynLib::valid() const {
+bool CDynLib::valid() const
+{
 	return m_useCount > 0;
 }
 
-const char *CDynLib::libname() const {
+const char *CDynLib::libname() const
+{
 	return m_libname.c_str();
 }
 
-const char *CDynLib::libpath() {
+const char *CDynLib::libpath()
+{
 	return findLib();
 }
 
-bool CDynLib::load() {
+void CDynLib::load()
+// throw ERiCPPError
+{
 	if ( isLoaded() ) {
 		++m_useCount;
-		return true;
+		return;
+		// return true;
 	}
 	m_useCount = 0;
 	if ( doLoad() ) {
 		++m_useCount;
-		return true;
+		return;
+		// return true;
 	}
-	throw ERendererError(RIE_NOFILE, RIE_SEVERE, libname(), __LINE__, __FILE__ );
-	return false;
+	throw ERiCPPError(RIE_NOFILE, RIE_SEVERE, libname(), __LINE__, __FILE__ );
+	// return false;
 }
 
-bool CDynLib::unload() {
+bool CDynLib::unload()
+{
 	if ( m_useCount == 1 ) {
 		m_useCount = 0;
 		return doUnload();
@@ -82,7 +91,8 @@ bool CDynLib::unload() {
 	return false;
 }
 
-void CDynLib::deleteFunc(ILibFunc *f) const {
+void CDynLib::deleteFunc(ILibFunc *f) const
+{
 	if ( f )
 		delete f;
 }
@@ -91,8 +101,8 @@ void CDynLib::deleteFunc(ILibFunc *f) const {
 /**********/
 
 
-void CDynLibFactory::deleteDynLib(CDynLib *lib) {
-	if ( lib ) {
+void CDynLibFactory::deleteDynLib(CDynLib *lib)
+{
+	if ( lib )
 		delete lib;
-	}
 }

@@ -58,7 +58,7 @@ namespace RiCPP {
  * and the error handlers.
  * Calls The Ri..V() routines, handles the global options
  * (Option "searchpath" "renderer"), does the error handling
- * by catching the errors ERendererError of the current renderer and
+ * by catching the errors ERiCPPError of the current renderer and
  * calling the user defined error handler set by errorHandler(), 
  * matches a context handle RtContextHandle to a context creator with
  * its rendering context (beginV(), end(), context(), getContext()). Normally only
@@ -486,7 +486,7 @@ protected:
 		 * @param tokens Token array, forwarded from TRiCPPBridge::beginV() call
 		 * @param params Array of pointers to parameter arrays, forwarded from TRiCPPBridge::beginV() call
 		 * @return New context handle
-		 * @exception ERendererError If thrown, there is no active rendering context any more
+		 * @exception ERiCPPError If thrown, there is no active rendering context any more
 		 * @see add(), CContext::activate(), IRiCCPPBridge::beginV()
 		 */
 		RtContextHandle beginV(RtString name, CContextCreator *cc, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -499,7 +499,7 @@ protected:
 		 * further use). In anny case context() is illContextHandle after
 		 * end(9 (even if an error was thrown)
 		 * 
-		 * @exception ERendererError
+		 * @exception ERiCPPError
 		 * @see CContext::end(), removeContext()
 		 */
 		void end();

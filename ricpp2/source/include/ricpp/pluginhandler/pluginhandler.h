@@ -484,9 +484,10 @@ protected:
 
 	/** @brief Get and register a plugin library
 	 *  @param name Basename of the plugin library
+	 *  @param type Type of the plugin, must match the one of the factory
 	 *  @return Factory object for the plugin
 	 */
-	TPluginFactory<Plugin> *getFactory(const char *name)
+	TPluginFactory<Plugin> *getFactory(const char *name, const char *type)
 	{
 		std::string key(nonullstr(name));
 		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
@@ -500,8 +501,17 @@ protected:
 			}
 			if ( !f )
 				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create a new plugin factory for \"%s\"", markemptystr(name));
+
+			if ( strcmp(nonullstr(type), nonullstr(f->type())) != 0 ) {
+				delete f;
+				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - not loaded", nonullstr(type), nonullstr(f->type()));
+			}
+			m_factoryRegistry.registerObj(key, f);
 		}
-		m_factoryRegistry.registerObj(key, f);
+
+		if ( strcmp(nonullstr(type), nonullstr(f->type())) != 0 ) {
+			throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - allready loaded", nonullstr(type), nonullstr(f->type()));
+		}
 		return f;
 	}
 
@@ -525,20 +535,25 @@ public:
 	/** @brief Gets a new plugin
 	 *
 	 * @param name Name of the plugin and basename of the plugin library
+	 * @param type Type of the plugin, must match the one of the factory
+	 * @return The loaded plugin
+	 * @exception ERiCPPException Could not load plugin or types do not match.
 	 */
-	inline virtual Plugin *newPlugin(const char *name)
+	inline virtual Plugin *newPlugin(const char *name, const char *type)
 	{
-		return getFactory(name)->newPlugin();
+		return getFactory(name, type)->newPlugin();
 	}
 
 	/** @brief Gets the last plugin created
 	 *
 	 * @param name Name of the plugin and basename of the plugin library
+	 * @param type Type of the plugin, must match the one of the factory
+	 * @return The loaded plugin loaded lately
 	 * @see TPluginFactory::lastPlugin()
 	 */
-	inline virtual Plugin *lastPlugin(const char *name)
+	inline virtual Plugin *lastPlugin(const char *name, const char *type)
 	{
-		return getFactory(name)->lastPlugin();
+		return getFactory(name, type)->lastPlugin();
 	}
 
 	/** @brief Deletes a plugin.

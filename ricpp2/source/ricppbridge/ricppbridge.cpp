@@ -29,8 +29,6 @@
 
 #include "ricpp/ricppbridge/ricppbridge.h"
 
-#include <assert.h>
-
 using namespace RiCPP;
 
 void CRiCPPBridge::CContextManagement::removeContext(RtContextHandle handle)
@@ -111,6 +109,7 @@ CRiCPPBridge::CRiCPPBridge() :
 	m_lastError(RIE_NOERROR)
 {
 	m_ricppErrorHandler.setOuter(const_cast<CRiCPPBridge &>(*this));
+	m_ribFilter.m_next = this;
 	// Default options
 	m_curErrorHandler = &m_printErrorHandler;
 }
@@ -602,13 +601,13 @@ RtVoid CRiCPPBridge::resourceEnd(void)
 	}
 }
 
-RtVoid CRiCPPBridge::archiveBegin(RtString name, RtToken token, ...)
+RtArchiveHandle CRiCPPBridge::archiveBegin(RtString name, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
 
-	archiveBeginV(name, n, &m_tokens[0], &m_params[0]);
+	return archiveBeginV(name, n, &m_tokens[0], &m_params[0]);
 }
 
 RtArchiveHandle CRiCPPBridge::archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1138,17 +1137,17 @@ RtVoid CRiCPPBridge::color(RtColor Cs)
 	}
 }
 
-RtVoid CRiCPPBridge::opacity(RtColor Cs)
+RtVoid CRiCPPBridge::opacity(RtColor Os)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
-			m_ctxMgmt.curBackend().renderingContext()->opacity(Cs);
+			m_ctxMgmt.curBackend().renderingContext()->opacity(Os);
 		} catch (ERiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::opacity(Cs)");
+			ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_SEVERE, "CRiCPPBridge::opacity(Os)");
 	}
 }
 

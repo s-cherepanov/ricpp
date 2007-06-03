@@ -49,7 +49,7 @@ class IRiContext : public IRiRoot {
 	/** @brief At the backend a user defined error handler is not used
 	 *  @param handler The error handler (not used)
 	 */
-	virtual RtVoid errorHandler(const IErrorHandler &handler) { }
+	inline virtual RtVoid errorHandler(const IErrorHandler &handler) { }
 
 protected:
 	/** @brief Activate the context

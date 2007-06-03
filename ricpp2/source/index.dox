@@ -94,10 +94,12 @@ Some commercial renderes are:
 Some free one's:
 
 <ul>
-<li> <a href="http://www.aqsis.org/">Aqsis</a>, REYES renderer </li>
-<li> <a href="http://jrman.sourceforge.net/">JrMan</a>, a REYES Java implementation </li>
+<li> <a href="http://www.dctsystems.co.uk/RenderMan/angel.html">Angel</a>, renderer with global illumination</li>
+<li> <a href="http://www.aqsis.org/">Aqsis</a>, REYES renderer</li>
+<li> BMRT, canceled, but still available at some sites</li>
+<li> <a href="http://jrman.sourceforge.net/">JrMan</a>, a REYES Java implementation</li>
 <li> <a href="http://www.cs.utexas.edu/~okan/Pixie/pixie.htm">Pixie</a>, with raytracing</li>
-<li> BMRT, canceled, but still available at some sites </li>
+<li> <a href="http://home.earthlink.net/~jiverson782/Siren.html">Siren</a>, for DOS</li>
 </ul>
 
 Selection of modellers:
@@ -116,18 +118,24 @@ Only two out of many:
 <li> <a href="http://www.rendermanacademy.com/">The RenderMan Academy</a> </li>
 </ul>
 
-And don't forget comp.graphics.rendering.renderman and the
-<a href="http://www.faqs.org/faqs/graphics/renderman-faq/">RenderMan-FAQ</a>. 
+And don't forget the newsgroup comp.graphics.rendering.renderman and the
+<a href="http://www.faqs.org/faqs/graphics/renderman-faq/">RenderMan-FAQ</a>
+including more links. 
+
+@section Other Toolkits
+
+<ul>
+<li> <a href="http://www.affine.org/">The Affine Toolkit</a> </li>
+</ul>
 
 @section copyright_sec Copyright notice
 
-     RenderMan(R) is a registered trademark of Pixar
-	 
+@verbatim
+     RenderMan(R) is a registered trademark of Pixar	 
  The RenderMan(R) Interface Procedures and Protocol are:
- 
          Copyright 1988, 1989, 2000, 2005 Pixar
-		 
                  All rights Reservered
+@endverbatim
 				 
 */
 

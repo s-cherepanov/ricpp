@@ -38,8 +38,8 @@ enum EnumRequests {
 	// General routines
 	REQ_UNKNOWN = 0,				//!< Unknoen request
 	REQ_ERROR_HANDLER,				//!< Index for ri function IRi::errorHandler()
+	REQ_SYNCHRONIZE,				//!< Index for ri function IRi::synchronize()
 	REQ_DECLARE,                    //!< Index for ri function IRi::declare()
-	REQ_CACHE_RESOURCE,             //!< Index for ri function IRi::cacheResource() (no RIB binding)
 
 	// Context Switching
 	REQ_GET_CONTEXT,				//!< Index for ri function IRi::getContext() (no RIB binding)
@@ -106,7 +106,7 @@ enum EnumRequests {
 	REQ_EXPOSURE,					//!< Index for ri function IRi::exposure()
 	REQ_IMAGER,						//!< Index for ri function IRi::imager()
 	REQ_QUANTIZE,					//!< Index for ri function IRi::quantize()
-	REQ_DISPLAYCHANNEL,				//!< Index for ri function IRi::display()
+	REQ_DISPLAY_CHANNEL,			//!< Index for ri function IRi::display()
 	REQ_DISPLAY,					//!< Index for ri function IRi::displayChannel()
 	REQ_HIDER,						//!< Index for ri function IRi::hider()
 	REQ_COLOR_SAMPLES,				//!< Index for ri function IRi::colorSamples()
@@ -212,7 +212,7 @@ enum EnumRequests {
 
 	// Conditions
 	REQ_IF_BEGIN,					//!< Index for ri function IRi::ifBegin()
-	REQ_IF_ELSE,					//!< Index for ri function IRi::ifElseBegin()
+	REQ_ELSE_IF,					//!< Index for ri function IRi::elseIfBegin()
 	REQ_ELSE,						//!< Index for ri function IRi::elseBegin()
 	REQ_IF_END,						//!< Index for ri function IRi::ifBegin()
 

@@ -5,8 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ricpp", "ricpp\ricpp.vcproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{52AF05EE-E743-413C-ACC5-AC279583A850}"
 	ProjectSection(ProjectDependencies) = postProject
-		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 		{4BB1A752-6ACA-4857-8375-84D3BCC8C5B1} = {4BB1A752-6ACA-4857-8375-84D3BCC8C5B1}
+		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "baserenderer", "baserenderer\baserenderer.vcproj", "{8B07A80D-1C1E-4B0A-85D0-6741FA1791CD}"
@@ -21,22 +21,23 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribwriter", "ribwriter\ribw
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rendererloader", "rendererloader\rendererloader.vcproj", "{BA620735-A66E-4B9B-8F56-E3F6AD95681F}"
 	ProjectSection(ProjectDependencies) = postProject
-		{9C56FA12-1685-4E40-8691-8780D929EE60} = {9C56FA12-1685-4E40-8691-8780D929EE60}
 		{9631D26B-C884-4A48-B089-95A37BE62052} = {9631D26B-C884-4A48-B089-95A37BE62052}
+		{9C56FA12-1685-4E40-8691-8780D929EE60} = {9C56FA12-1685-4E40-8691-8780D929EE60}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gendynlib", "gendynlib\gendynlib.vcproj", "{9C56FA12-1685-4E40-8691-8780D929EE60}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribwriterdll", "ribwriterdll\ribwriterdll.vcproj", "{3EC5E3AA-AD7F-41F3-BC42-B10351C7FFF9}"
 	ProjectSection(ProjectDependencies) = postProject
-		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 		{9631D26B-C884-4A48-B089-95A37BE62052} = {9631D26B-C884-4A48-B089-95A37BE62052}
+		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tools", "tools\tools.vcproj", "{86799DCE-A6F4-4325-8E18-3243EFCE76D4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ricppbridge", "ricppbridge\ricppbridge.vcproj", "{4BB1A752-6ACA-4857-8375-84D3BCC8C5B1}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A} = {A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}
 		{BA620735-A66E-4B9B-8F56-E3F6AD95681F} = {BA620735-A66E-4B9B-8F56-E3F6AD95681F}
 	EndProjectSection
 EndProject
@@ -51,6 +52,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "renderstate", "renderstate\
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pluginhandler", "pluginhandler\pluginhandler.vcproj", "{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9C56FA12-1685-4E40-8691-8780D929EE60} = {9C56FA12-1685-4E40-8691-8780D929EE60}
+		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribfilter", "ribfilter\ribfilter.vcproj", "{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD} = {B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +160,12 @@ Global
 		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Release|Win32.ActiveCfg = Release|Win32
 		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Release|Win32.Build.0 = Release|Win32
 		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}.Release|x64.ActiveCfg = Release|x64
+		{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}.Debug|Win32.Build.0 = Debug|Win32
+		{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}.Debug|x64.ActiveCfg = Debug|x64
+		{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}.Release|Win32.ActiveCfg = Release|Win32
+		{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}.Release|Win32.Build.0 = Release|Win32
+		{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

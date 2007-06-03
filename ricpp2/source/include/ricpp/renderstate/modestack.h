@@ -243,7 +243,7 @@ public:
 	 *
 	 * Inside if blocks
 	 */
-	virtual void ifElseBegin();
+	virtual void elseIfBegin();
 
 	/** @brief Begins a conditional else block
 	 *

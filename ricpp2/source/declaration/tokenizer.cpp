@@ -226,6 +226,11 @@ CTokenizer::CTokenizer()
 
 		m_tokenMapper[CToken(RI_SENSE)] = RI_SENSE;
 
+		m_tokenMapper[CToken(RI_DELAYED_READ_ARCHIVE)] = RI_DELAYED_READ_ARCHIVE;
+		m_tokenMapper[CToken(RI_RUN_PROGRAM)] = RI_RUN_PROGRAM;
+		m_tokenMapper[CToken(RI_DYNAMIC_LOAD)] = RI_DYNAMIC_LOAD;
+		m_tokenMapper[CToken(RI_FREE)] = RI_FREE;
+
 		m_tokenMapper[CToken(RI_INT)] = RI_INT;
 		m_tokenMapper[CToken(RI_UNKNOWN)] = RI_UNKNOWN;
 		// RI_EMPTY same token as RI_NULL

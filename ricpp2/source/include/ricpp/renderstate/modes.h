@@ -54,7 +54,7 @@ enum EnumModes {
 	MODE_ARCHIVE,	    //!< Index directly inside archive block
 
 	MODE_IF,            //!< Index directly inside if conditional block
-	MODE_IF_ELSE,	    //!< Index directly inside if else conditional block
+	MODE_ELSE_IF,	    //!< Index directly inside if else conditional block
 	MODE_ELSE,	        //!< Index directly inside else conditional block
 
 	MODE_OBJECT		    //!< Index directly inside object block
@@ -82,7 +82,7 @@ enum EnumModeBits {
 	MODE_BIT_ARCHIVE   =  512, //!< Bit for archive block
 
 	MODE_BIT_IF        = 1024, //!< Bit for if block
-	MODE_BIT_IF_ELSE   = 2048, //!< Bit for if else block
+	MODE_BIT_ELSE_IF   = 2048, //!< Bit for if else block
 	MODE_BIT_ELSE      = 4096, //!< Bit for else block
 
 	MODE_BIT_OBJECT    = 8192  //!< Bit for object block

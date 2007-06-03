@@ -90,9 +90,9 @@ CValidModes::CValidModes()
 	m_requests[REQ_MOTION_END] = MODE_BIT_MOTION;
 	
 	m_requests[REQ_IF_BEGIN] = insideBits;
-	m_requests[REQ_IF_ELSE] = MODE_BIT_IF;
-	m_requests[REQ_ELSE] = MODE_BIT_IF | MODE_BIT_IF_ELSE;
-	m_requests[REQ_IF_END] = MODE_BIT_IF | MODE_BIT_IF_ELSE | MODE_BIT_ELSE;
+	m_requests[REQ_ELSE_IF] = MODE_BIT_IF;
+	m_requests[REQ_ELSE] = MODE_BIT_IF | MODE_BIT_ELSE_IF;
+	m_requests[REQ_IF_END] = MODE_BIT_IF | MODE_BIT_ELSE_IF | MODE_BIT_ELSE;
 	
 
 	m_requests[REQ_FORMAT] = optionBits;
@@ -110,7 +110,7 @@ CValidModes::CValidModes()
 	m_requests[REQ_EXPOSURE] = optionBits;
 	m_requests[REQ_IMAGER] = optionBits;
 	m_requests[REQ_QUANTIZE] = optionBits;
-	m_requests[REQ_DISPLAYCHANNEL] = optionBits;
+	m_requests[REQ_DISPLAY_CHANNEL] = optionBits;
 	m_requests[REQ_DISPLAY] = optionBits;
 	m_requests[REQ_HIDER] = optionBits;
 	m_requests[REQ_COLOR_SAMPLES] = optionBits;
@@ -123,7 +123,7 @@ CValidModes::CValidModes()
 	m_requests[REQ_ATTRIBUTE] = attributeBits;
 	m_requests[REQ_COLOR] = attributeBits;
 	m_requests[REQ_OPACITY] = attributeBits;
-	m_requests[REQ_SURFACE] =attributeBits;
+	m_requests[REQ_SURFACE] = attributeBits;
 	m_requests[REQ_ATMOSPHERE] = attributeBits;
 	m_requests[REQ_INTERIOR] = attributeBits;
 	m_requests[REQ_EXTERIOR] = attributeBits;
@@ -334,20 +334,20 @@ void CModeStack::ifBegin() {
 	push(MODE_IF, MODE_BIT_IF|curModeBits());
 }
 
-void CModeStack::ifElseBegin() {
+void CModeStack::elseIfBegin() {
 	assert(curMode() == MODE_IF);
 	pop();
-	push(MODE_IF_ELSE, MODE_BIT_IF_ELSE|curModeBits());
+	push(MODE_ELSE_IF, MODE_BIT_ELSE_IF|curModeBits());
 }
 
 void CModeStack::elseBegin() {
-	assert(curMode() == MODE_IF || curMode() == MODE_IF_ELSE);
+	assert(curMode() == MODE_IF || curMode() == MODE_ELSE_IF);
 	pop();
 	push(MODE_ELSE, MODE_BIT_ELSE|curModeBits());
 }
 
 void CModeStack::ifEnd() {
-	assert(curMode() == MODE_IF || curMode() == MODE_IF_ELSE || curMode() == MODE_ELSE);
+	assert(curMode() == MODE_IF || curMode() == MODE_ELSE_IF || curMode() == MODE_ELSE);
 	pop();
 }
 

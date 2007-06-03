@@ -39,7 +39,7 @@
 #endif // _RICPP_TOOLS_OBJPTRREGISTRY_H
 
 #ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/RICPP/renderererror.h"
+#include "ricpp/ricpp/renderererror.h"
 #endif // _RICPP_RICPP_RENDERERERROR_H
 
 #ifndef _RICPP_TOOLS_INLINETOOLS_H

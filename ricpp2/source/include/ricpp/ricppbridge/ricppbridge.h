@@ -46,6 +46,10 @@
 #include "ricpp/ricpp/errorhandlers.h"
 #endif
 
+#ifndef _RICPP_RIBFILTER_RIBFILTER_H
+#include "ricpp/ribfilter/ribfilter.h"
+#endif
+
 #include <vector>
 #include <stdarg.h>
 #include <assert.h>
@@ -95,6 +99,10 @@ private:
 	 */
 	const IErrorHandler *m_curErrorHandler; 
 	RtInt m_lastError; //< The last error number occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
+
+	/** @brief Standard Rib filter, to hook in other Rib filters and RIB parser
+	 */
+	CRibFilter m_ribFilter;
 
 	/** @brief Error handler used by the bridge
 	 *
@@ -738,7 +746,7 @@ public:
 	virtual RtVoid resourceBegin(void);
 	virtual RtVoid resourceEnd(void);
 
-	virtual RtVoid archiveBegin(RtString name, RtToken token = RI_NULL, ...);
+	virtual RtArchiveHandle archiveBegin(RtString name, RtToken token = RI_NULL, ...);
 	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid archiveEnd(void);
 
@@ -804,7 +812,7 @@ public:
     virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid color(RtColor Cs);
-	virtual RtVoid opacity(RtColor Cs);
+	virtual RtVoid opacity(RtColor Os);
 
 	virtual RtVoid surface(RtString name, RtToken token = RI_NULL, ...);
     virtual RtVoid surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);

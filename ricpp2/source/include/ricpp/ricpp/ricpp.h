@@ -4,7 +4,7 @@
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
-// The RenderMan(R) Interface Procedures and Protocol are:
+// The RenderMan(R) Interface Procedures and Protocol are:	/** @brief Defines a new display channel for display()
 //         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
@@ -29,10 +29,12 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Abstract interface for the RenderMan(R) C++ Binding
  *
- *     RenderMan(R) is a registered trademark of Pixar
- * The RenderMan(R) Interface Procedures and Protocol are:
- *         Copyright 1988, 1989, 2000, 2005 Pixar
- *                 All rights Reservered
+ @verbatim
+       RenderMan(R) is a registered trademark of Pixar
+   The RenderMan(R) Interface Procedures and Protocol are:
+           Copyright 1988, 1989, 2000, 2005 Pixar
+                   All rights Reservered
+ @endverbatim
  *
  * ricpp.h means the same to RiCPP as ri.h to the standard C binding.
  */
@@ -148,7 +150,7 @@ const RtBasis RiBSplineBasis = {
 	{(RtFloat)(-3.0/6.0), (RtFloat)  0.0,      (RtFloat)( 3.0/6.0), (RtFloat) 0.0},
 	{(RtFloat)( 1.0/6.0), (RtFloat)( 4.0/6.0), (RtFloat)( 1.0/6.0), (RtFloat) 0.0}
 }; ///< Basis matrix B-spline patch meshes
-const RtBasis RiBCatmullRomBasis = {
+const RtBasis RiCatmullRomBasis = {
 	{(RtFloat)(-1.0/2.0), (RtFloat)( 3.0/2.0), (RtFloat)(-3.0/2.0), (RtFloat)( 1.0/2.0)},
 	{(RtFloat)( 2.0/2.0), (RtFloat)(-5.0/2.0), (RtFloat)( 4.0/2.0), (RtFloat)(-1.0/2.0)},
 	{(RtFloat)(-1.0/2.0), (RtFloat)  0.0,      (RtFloat)( 1.0/2.0), (RtFloat)  0.0},
@@ -461,6 +463,11 @@ const RtToken RI_LINES   = "lines";  ///< Geometric representation as lines
 
 const RtToken RI_SENSE  = "sense"; ///< User defined attribute for trimcurve sense RI_INSIDE, RI_OUTSIDE
 
+const RtToken RI_DELAYED_READ_ARCHIVE = "DelayedReadArchive"; ///< Token for procedural CProcDelayedReadArchive
+const RtToken RI_RUN_PROGRAM = "RunProgram"; ///< Token for procedural CProcRunProgram
+const RtToken RI_DYNAMIC_LOAD = "DynamicLoad"; ///< Token for procedural CProcDynamicLoad
+const RtToken RI_FREE = "Free"; ///< Token for CProcFree
+
 const RtToken RI_INT     = "int"; //!< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
 const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL, used internally
 const RtToken RI_EMPTY   = ""; //!< Empty String marker, not a real token, only used internally,  "not" use this instead of RI_NULL!!!
@@ -688,72 +695,6 @@ public:
 	 *  @see resourcebegin(), resourceEnd()
 	 */
 	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-
-#if 0
-	/* --- Cancled, archiveBegin/end for resource cache, maybe resourceV to declare cache handles that are internally handled freed as usually ---
-	 * @brief Hints to cache a resource (added, no rib binding).
-	 *
-	 *  If @a onoff is set to RI_TRUE, a context can cache all ressources of a
-	 *  given @a name and @a type instead of rereading it over and over again.
-	 *  If @a onoff is set to RI_FALSE, caching is turned of and cached resources
-	 *  are freed. The ressources are freed at end. The cache is turned off as
-	 *  default. The resource @a type can be one of
-	 *
-	 *  - RI_ARCHIVE
-	 *  - RI_TEXTURE
-	 *  - RI_SHADER
-	 *
-	 *  also the specific shader type is allowed
-	 *
-	 *  - RI_AREALIGHT
-	 *	- RI_LIGHT
-	 *	- RI_SURFACE
-	 *	- RI_VOLUME
-	 *	- RI_IMAGER
-	 *	- RI_DISPLACEMENT
-	 *	- RI_DEFORMATION
-	 *	- RI_INTERIOR
-	 *	- RI_EXTERIOR
-	 *	- RI_ATMOSPHERE
-	 * 
-	 *  RI_NULL for all types (handy for clearing all at once)
-	 *
-	 *  @param name Name of the Ressource, RI_NULL for all ressources of a type
-	 *  @param type Type of the Ressource,
-	 *  @param onoff Turn caching on or off (also frees the cached data)
-	 */
-	virtual RtVoid cacheResource(RtString name, RtToken type, RtBoolean onoff) = 0;
-
-	/* --- Cancled, handle is created via resourceV() ---
-	 * @brief Create a resource handle (QRM)
-	 *
-	 * Helps to get rid of a bunch of ressource handling (e.g. when to destroy a memory stored
-	 * rib archive). When archiving the resources to RIB, the resourcenames are replaced inline.
-	 *
-	 * However decided to use a new interface routine cacheResource(RtString name, RtToken type, RtBoolean onoff)
-	 *
-	 * Used for inline archives
-	 * @verbatim
-	 * // Creates a handle token (unique pointer): "ribarchive.rib" for the
-	 * // RIB archive with the filename ribarchive.rib
-	 * ri.attributeBegin();
-	 * handle = ri.createHandle("ribarchive.rib", RI_ARCHIVE);
-	 * ...
-	 * ri.attributeBegin()
-	 *     ri.readArchive(handle, RI_NULL); // The first time Reads the archive, caches in handle
-	 * ri.attributeEnd()
-	 * ...
-	 * ri.readArchive(handle, RI_NULL); // Uses the cached archive the next times
-	 * ...
-	 * ri.attributeEnd();
-	 * // Handle is invalid here
-	 * @endverbatim
-	 * 
-     *  @param name Name of the resource
-     *  @param type Type of the resource (RI_ARCHIVE)
-     */
-	virtual RtToken createHandle(RtToken name, RtToken type) = 0;
-#endif
 	//@}
 
 	/** @defgroup ricpp_modes Ri Modes
@@ -885,20 +826,6 @@ public:
 	 *  The commands are not longer stored if the outer most archive block is closed
 	 */
 	virtual RtVoid archiveEnd(void) = 0;
-
-	/*
-	// -> QRM, objects are handled like macros (same as archiveBeginV() ?)
-	// --- cancled, called archive now, instanciating via readArchve ---
-	virtual RtToken macroBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtVoid macroEnd(void) = 0;
-	virtual RtToken macroInstance(RtToken macro, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-
-	// -> QRM
-	// --- cancled ---
-	// Here: Version must be printed some how by Rib writer, since only this object 'knows' whitch version it writes
-	virtual version(RtFloat version) = 0;
-
-	*/
 	//@}
 
 	/** @defgroup ricpp_options Ri Options
@@ -1134,9 +1061,9 @@ public:
 	virtual RtVoid color(RtColor Cs) = 0;
 
 	//! Sets the current opacity
-	/*! @param Cs The current opacity
+	/*! @param Os The current opacity
 	 */
-	virtual RtVoid opacity(RtColor Cs) = 0;
+	virtual RtVoid opacity(RtColor Os) = 0;
 
 	//! Sets the current surface shader
 	/*! @param name Name of the surface shader
@@ -1265,11 +1192,11 @@ public:
 	//! @brief Sets the current orientation.
 	/*! The orientation can be set expicitly to be either left-handed or right-handed or
 	 *  set to the inside or the outside (the side is then rendered if IRi::sides(1))
-	 *  @param orientation The new orientation,
+	 *  @param anOrientation The new orientation,
 	 *                     RI_LH, TRi_RH, RI_INSIDE or RI_OUTSIDE
 	 *  @see reverseOrientation()
 	 */
-	virtual RtVoid orientation(RtToken orientation) = 0;
+	virtual RtVoid orientation(RtToken anOrientation) = 0;
 
 	//! @brief Flips current orientation, left-handed becomes right-handed and vice versa.
 	/*! @see reverseOrientation()
@@ -1329,14 +1256,14 @@ public:
 	virtual RtVoid identity(void) = 0;
 
 	/** @brief Sets the CTM to transform
-	 *  @param transform The new transformation matrix
+	 *  @param aTransform The new transformation matrix
 	 */
-	virtual RtVoid transform(RtMatrix transform) = 0;
+	virtual RtVoid transform(RtMatrix aTransform) = 0;
 
 	/** @brief Concatenates transform onto the CTM
-	 *  @param transform CTM is premultiplied by transform
+	 *  @param aTransform CTM is premultiplied by transform
 	 */
-	virtual RtVoid concatTransform(RtMatrix transform) = 0;
+	virtual RtVoid concatTransform(RtMatrix aTransform) = 0;
 
 	/** @brief Concatenates a perspective transformation matrix onto the CTM
 	 *  @param fov The field of view angle used to calculate the perspective transformation
@@ -1961,18 +1888,10 @@ public:
 	 *  @ingroup ricpp_interface
 	 *  @{
 	 */
-
-	/*
-	// QRM
-	// Cancled
-	virtual RtToken macroBegin(RtString name, ...) = 0;
-	virtual RtToken macroInstance(RtToken macro, ...) = 0;
-	*/
-
 	/** @brief Starts an archive in memory
 	 * @see IRiRoot::archiveBeginV()
 	 */
-	virtual RtVoid archiveBegin(RtString name, RtToken token = RI_NULL, ...) = 0;
+	virtual RtArchiveHandle archiveBegin(RtString name, RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Starts a new renderer
 	 *

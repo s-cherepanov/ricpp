@@ -196,7 +196,7 @@ public:
 	
     inline virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid color(RtColor Cs) {}
-	inline virtual RtVoid opacity(RtColor Cs) {}
+	inline virtual RtVoid opacity(RtColor Os) {}
     inline virtual RtVoid surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
@@ -212,15 +212,15 @@ public:
 	inline virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
     inline virtual RtVoid geometricApproximation(RtToken type, RtFloat value) {}
 	inline virtual RtVoid geometricRepresentation(RtToken type) {}
-	inline virtual RtVoid orientation(RtToken orientation) {}
+	inline virtual RtVoid orientation(RtToken anOrientation) {}
 	inline virtual RtVoid reverseOrientation(void) {}
 	inline virtual RtVoid sides(RtInt nsides) {}
     inline virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) {}
     inline virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {}
 
 	inline virtual RtVoid identity(void) {}
-	inline virtual RtVoid transform(RtMatrix transform) {}
-	inline virtual RtVoid concatTransform(RtMatrix transform) {}
+	inline virtual RtVoid transform(RtMatrix aTransform) {}
+	inline virtual RtVoid concatTransform(RtMatrix aTransform) {}
 	inline virtual RtVoid perspective(RtFloat fov) {}
 	inline virtual RtVoid translate(RtFloat dx, RtFloat dy, RtFloat dz) {}
 	inline virtual RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}
@@ -342,7 +342,7 @@ protected:
 
     inline virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doColor(RtColor Cs) {}
-	inline virtual RtVoid doOpacity(RtColor Cs) {}
+	inline virtual RtVoid doOpacity(RtColor Os) {}
     inline virtual RtVoid doSurfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doAtmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doInteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
@@ -358,15 +358,15 @@ protected:
 	inline virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
     inline virtual RtVoid doGeometricApproximationV(RtToken type, RtFloat value) {}
 	inline virtual RtVoid doGeometricRepresentation(RtToken type) {}
-	inline virtual RtVoid doOrientation(RtToken orientation) {}
+	inline virtual RtVoid doOrientation(RtToken anOrientation) {}
 	inline virtual RtVoid doReverseOrientation(void) {}
 	inline virtual RtVoid doSides(RtInt nsides) {}
     inline virtual RtVoid doBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) {}
     inline virtual RtVoid doTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {}
 
 	inline virtual RtVoid doIdentity(void) {}
-	inline virtual RtVoid doTransform(RtMatrix transform) {}
-	inline virtual RtVoid doConcatTransform(RtMatrix transform) {}
+	inline virtual RtVoid doTransform(RtMatrix aTransform) {}
+	inline virtual RtVoid doConcatTransform(RtMatrix aTransform) {}
 	inline virtual RtVoid doPerspective(RtFloat fov) {}
 	inline virtual RtVoid doTranslate(RtFloat dx, RtFloat dy, RtFloat dz) {}
 	inline virtual RtVoid doRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}

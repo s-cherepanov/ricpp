@@ -196,7 +196,7 @@ public:
     inline void resourceEnd() { m_modeStack->resourceEnd(); }
 
     inline void ifBegin() { m_modeStack->ifBegin(); }
-    inline void ifElseBegin() { m_modeStack->ifElseBegin(); }
+    inline void elseIfBegin() { m_modeStack->elseIfBegin(); }
     inline void elseBegin() { m_modeStack->elseBegin(); }
     inline void ifEnd() { m_modeStack->resourceEnd(); }
 

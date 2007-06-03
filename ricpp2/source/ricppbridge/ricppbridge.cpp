@@ -28,7 +28,6 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
-#include "ricpp/tools/stringlist.h"
 
 #include <assert.h>
 

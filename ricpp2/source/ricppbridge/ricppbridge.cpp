@@ -106,10 +106,12 @@ void CRiCPPBridge::CContextManagement::end()
 }
 
 CRiCPPBridge::CRiCPPBridge() :
-	m_lastError(RIE_NOERROR)
+	m_lastError(RIE_NOERROR),
+	m_ribFilterList(&m_ribFilter)
 {
 	m_ricppErrorHandler.setOuter(const_cast<CRiCPPBridge &>(*this));
 	m_ribFilter.m_next = this;
+	m_ribFilterList.searchpath("$PROGDIR");
 	// Default options
 	m_curErrorHandler = &m_printErrorHandler;
 }
@@ -1048,7 +1050,10 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 			return;
 		if ( !strcmp(tokens[0], "renderer") ) {
 			rendererCreator().searchpath((RtString)params[0]);
+		} else if ( !strcmp(tokens[0], "ribfilter") ) {
+			m_ribFilterList.searchpath((RtString)params[0]);
 		}
+
 	}
 }
 

@@ -44,6 +44,7 @@ namespace RiCPP {
  */
 class CRibFilter : public IRiRoot, public IPlugin {
 	friend class CRiCPPBridge;
+	friend class CRibFilterList;
 
 	IRiRoot *m_next;
 	bool m_suspended;

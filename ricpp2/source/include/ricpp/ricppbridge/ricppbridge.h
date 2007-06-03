@@ -46,8 +46,8 @@
 #include "ricpp/ricpp/errorhandlers.h"
 #endif
 
-#ifndef _RICPP_RIBFILTER_RIBFILTER_H
-#include "ricpp/ribfilter/ribfilter.h"
+#ifndef _RICPP_RIBFILTER_RIBFILTERLIST_H
+#include "ricpp/ribfilter/ribfilterlist.h"
 #endif
 
 #include <vector>
@@ -103,6 +103,10 @@ private:
 	/** @brief Standard Rib filter, to hook in other Rib filters and RIB parser
 	 */
 	CRibFilter m_ribFilter;
+
+	/** @brief Standard Rib filter list
+	 */
+	CRibFilterList m_ribFilterList;
 
 	/** @brief Error handler used by the bridge
 	 *
@@ -597,6 +601,49 @@ public:
 	/** @brief Destructor
 	 */
 	inline virtual ~CRiCPPBridge() {}
+
+	/*  @brief Filterlist
+	 *
+	 *  User defined Rib filters can be inserted int the filterlist
+	 *
+	 *  @return The filter list
+	 */
+	// inline CRibFilterList &ribFilterList() {return m_ribFilterList;}
+
+	inline virtual IRiRoot *firstRibFilter()
+	{
+		return m_ribFilterList.firstHandler();
+	}
+
+	inline virtual IRiRoot *lastRibFilter() {
+		return m_ribFilterList.lastHandler();
+	}
+
+	inline virtual bool addFrontRibFilter(CRibFilter *aFilter)
+	{
+		try {
+			return m_ribFilterList.addFront(aFilter);
+		} catch ( ERiCPPError &e ) {
+			ricppErrHandler().handleError(e);
+		}
+		return false;
+	}
+
+	inline bool addFrontRibFilter(const char *name)
+	{
+		try {
+			return m_ribFilterList.addFront(name);
+		} catch ( ERiCPPError &e ) {
+			ricppErrHandler().handleError(e);
+		}
+		return false;
+	}
+
+	inline bool removeFrontRibFilter()
+	{
+		return m_ribFilterList.removeFront();
+	}
+
 
 	/** @brief Returns the appropriate filter functions
      */

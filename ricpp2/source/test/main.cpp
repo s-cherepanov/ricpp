@@ -47,6 +47,7 @@ int main (int argc, char * const argv[]) {
 	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName()) << std::endl;
 
 	ri.errorHandler(ri.errorPrint());
+	ri.addFrontRibFilter("passthrough");
 
 	ri.begin("test.rib");
 	RtContextHandle ch1 = ri.getContext();

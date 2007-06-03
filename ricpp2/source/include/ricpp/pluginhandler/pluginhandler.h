@@ -279,7 +279,7 @@ class TPluginLoaderFactory : public TPluginFactory<Plugin>
 {
 private:
 	std::string m_libName;        ///< Name of the plugin (library).
-	std::string m_searchPath;     ///< Searchpath to find the dynamic library.
+	std::string m_searchpath;     ///< Searchpath to find the dynamic library.
 
 	CDynLib  *m_lib;              ///< Library of the plugin.
 	ILibFunc *m_funcNewPlugin;    ///< Gets a new plugin.
@@ -290,7 +290,7 @@ private:
 	ILibFunc *m_funcName;         ///< Gets the name of a plugin (should be == libname).
 	ILibFunc *m_funcType;         ///< Gets the type of a plugin.
 
-	typedef Plugin *(CDECL *TypeNewPlugin)(unsigned long); ///< Gets a new plugin (Type of library function for m_funcNewPlugin).
+	typedef Plugin *(CDECL *TypeNewPlugin)(unsigned long, const char *); ///< Gets a new plugin (Type of library function for m_funcNewPlugin).
 	typedef void (CDECL *TypeDeletePlugin)(Plugin *);      ///< Deletes a plugin (Type of library function m_funcDeletePlugin).
 	typedef unsigned long (CDECL *TypeMajorVersion)(void); ///< Gets the major plugin version (Type of library function m_funcMajorVersion).
 	typedef unsigned long (CDECL *TypeMinorVersion)(void); ///< Gets the minor version of a plugin (Type of library function m_funcMinorVersion).
@@ -322,11 +322,11 @@ public:
 		m_lib = 0;
 
 		m_libName = nonullstr(libname);
-		m_searchPath = nonullstr(pathlist);
+		m_searchpath = nonullstr(pathlist);
 
 		// Create the library handler
 		try {
-			m_lib = CDynLibFactory::newDynLib(m_libName.c_str(), m_searchPath.c_str(), Plugin::myMajorVersion());
+			m_lib = CDynLibFactory::newDynLib(m_libName.c_str(), m_searchpath.c_str(), Plugin::myMajorVersion());
 		} catch ( ... ) {
 			// m_lib not created
 		}
@@ -399,16 +399,16 @@ public:
 	{
 		return ((TypeName)(m_funcName->funcPtr()))();
 	}
-	inline virtual const char *searchPath()
+	inline virtual const char *searchpath()
 	{
-		return m_searchPath.c_str();
+		return m_searchpath.c_str();
 	}
 
 	inline virtual Plugin *newPlugin()
 	{ 
 		Plugin *p = 0;
 
-		p = ((TypeNewPlugin)(m_funcNewPlugin->funcPtr()))(Plugin::myMajorVersion());
+		p = ((TypeNewPlugin)(m_funcNewPlugin->funcPtr()))(Plugin::myMajorVersion(), Plugin::myType());
 		if ( p ) {
 			m_lastPlugin = p;
 			m_pluginRegistry.registerObj(p, p);
@@ -480,20 +480,19 @@ protected:
 	TObjPtrRegistry<std::string, TPluginFactory<Plugin> *> m_factoryRegistry;
 	/** @brief Searchpath to find the dynamic libraries for the plugins.
 	 */
-	std::string m_searchPath;
+	std::string m_searchpath;
 
 	/** @brief Get and register a plugin library
 	 *  @param name Basename of the plugin library
-	 *  @param type Type of the plugin, must match the one of the factory
 	 *  @return Factory object for the plugin
 	 */
-	TPluginFactory<Plugin> *getFactory(const char *name, const char *type)
+	TPluginFactory<Plugin> *getFactory(const char *name)
 	{
 		std::string key(nonullstr(name));
 		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
 		if ( !f ) {
 			try {
-				f = new TPluginLoaderFactory<Plugin>(name, m_searchPath.c_str());
+				f = new TPluginLoaderFactory<Plugin>(name, m_searchpath.c_str());
 			} catch ( ERiCPPError &e ) {
 				throw e;
 			} catch ( ... ) {
@@ -502,15 +501,15 @@ protected:
 			if ( !f )
 				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create a new plugin factory for \"%s\"", markemptystr(name));
 
-			if ( strcmp(nonullstr(type), nonullstr(f->type())) != 0 ) {
+			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
 				delete f;
-				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - not loaded", nonullstr(type), nonullstr(f->type()));
+				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - not loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
 			}
 			m_factoryRegistry.registerObj(key, f);
 		}
 
-		if ( strcmp(nonullstr(type), nonullstr(f->type())) != 0 ) {
-			throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - allready loaded", nonullstr(type), nonullstr(f->type()));
+		if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
+			throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - allready loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
 		}
 		return f;
 	}
@@ -522,7 +521,7 @@ public:
 	 */
 	inline TPluginHandler(const char *pathlist = 0)
 	: m_factoryRegistry(true),
-	  m_searchPath(nonullstr(pathlist))
+	  m_searchpath(nonullstr(pathlist))
 	{
 	}
 
@@ -535,25 +534,23 @@ public:
 	/** @brief Gets a new plugin
 	 *
 	 * @param name Name of the plugin and basename of the plugin library
-	 * @param type Type of the plugin, must match the one of the factory
 	 * @return The loaded plugin
 	 * @exception ERiCPPException Could not load plugin or types do not match.
 	 */
-	inline virtual Plugin *newPlugin(const char *name, const char *type)
+	inline virtual Plugin *newPlugin(const char *name)
 	{
-		return getFactory(name, type)->newPlugin();
+		return getFactory(name)->newPlugin();
 	}
 
 	/** @brief Gets the last plugin created
 	 *
 	 * @param name Name of the plugin and basename of the plugin library
-	 * @param type Type of the plugin, must match the one of the factory
 	 * @return The loaded plugin loaded lately
 	 * @see TPluginFactory::lastPlugin()
 	 */
-	inline virtual Plugin *lastPlugin(const char *name, const char *type)
+	inline virtual Plugin *lastPlugin(const char *name)
 	{
-		return getFactory(name, type)->lastPlugin();
+		return getFactory(name)->lastPlugin();
 	}
 
 	/** @brief Deletes a plugin.
@@ -591,6 +588,10 @@ public:
 		}
 		return m_factoryRegistry.registerObj(key, f);
 	}
+
+	inline void searchpath(const char *path) { m_searchpath = nonullstr(path); }
+	inline const char *searchpath() const { return m_searchpath.c_str();  }
+
 }; // template class TPluginHandler
 
 } // namespace RiCPP

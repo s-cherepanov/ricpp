@@ -167,7 +167,7 @@ private:
 	std::vector<RtPointer> m_params;	///<< The values of the parameter list of an interface call
 	//@}
 
-	CRendererLoader m_rendererCreator;  ///<< Used by CContextCreator to create context creators
+	CRendererLoader m_rendererLoader;  ///<< Used by CContextCreator to create context creators
 
 	
 	/** @brief  Assignment, not in use, just because of compiler warning
@@ -570,15 +570,15 @@ protected:
 	} m_ctxMgmt; ///< The instance for the context management
 	//@}
 
-	/** @brief Current renderer creator
+	/** @brief Current renderer loader
 	 *
-	 * The renderer creator loads a context creator from a
+	 * The renderer loads a context creator from a
 	 * dynamic library or constructs one in memory
 	 * @return An object to load context creators
 	 */
-	IRendererCreator &rendererCreator()
+	inline virtual CRendererLoader &rendererLoader()
 	{
-		return m_rendererCreator;
+		return m_rendererLoader;
 	}
 
 	/** @brief Like RiOption but only concerns the bridge itself.
@@ -691,7 +691,7 @@ public:
 
 	/** The rest of the interface functions see ricpp.h. The functions with variable length parameters
 	 *  are forwarded to the ..V() functions, these are forwarded to the current rendering context
-	 *  (only optionV() may be forwared to a CRendererCreator, if if there is no active context)
+	 *  (only optionV() may be forwared to a CRendererLoader, if if there is no active context)
 	 *  Errors are catched and the current error handler is called with the error found.
      */
 	//@{
@@ -842,7 +842,7 @@ public:
 	 *
 	 * Sets an option for the renderer. If there is no active rendering context, the option is
 	 * interpreted by the bridge. The option "renderer" "searchpath" is used by the
-	 * renderer creator CRendererCreator (concrete CRendererLoader)
+	 * renderer creator CRendererLoader (concrete CRendererLoader)
 	 *
 	 * @see IRiRoot::optionV()
 	 */

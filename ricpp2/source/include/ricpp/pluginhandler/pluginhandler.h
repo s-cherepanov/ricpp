@@ -589,7 +589,16 @@ public:
 		return m_factoryRegistry.registerObj(key, f);
 	}
 
+	/** @brief Sets a new searchpath.
+	 *
+	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'.
+	 */
 	inline void searchpath(const char *path) { m_searchpath = nonullstr(path); }
+
+	/** @brief Gets a new searchpath.
+	 *
+	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
+	 */
 	inline const char *searchpath() const { return m_searchpath.c_str();  }
 
 }; // template class TPluginHandler

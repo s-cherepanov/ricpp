@@ -46,52 +46,41 @@ namespace RiCPP {
  *
  *  It is created either by dynamic loading or instanciating
  */	 
-class IRendererCreator
+class CRendererCreator : protected TPluginHandler<CContextCreator>
 {
-	/** @brief Error handler used by CContextCreator, it is returned by the virtual ricppErrHandler().
-	 *
-	 * This error handler throws an ERiCPPError exception. The exception is
-	 * catched by the front end and bridged to the RenderMan error handler.
-	 * Member shall be never used directly, so it can be changed by an overwritten ricppErrHandler()
-	 * at a child class.
-	 */
-	CErrorExceptionHandler m_errorHandler;
-
-protected:
-	/** @brief Returns the error handler to use.
-	 *
-	 * It can but usually won't be overwritten in this framework.
-	 *
-	 *  @return m_errorHandler, the default CErrorExceptionHandler is returned.
-	 */
-	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_errorHandler; }
-
 public:
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~IRendererCreator() {}
+	inline virtual ~CRendererCreator() {}
 
 	/** @brief CContextCreator creation.
 	 * 
-	 * May throw ERendererException for more error information.
+	 * May throw ERiCPPException for more error information.
 	 *
 	 * @param name The argument of IRiRoot::beginV(), indicates the
 	 *        name of the renderer context creator.
 	 * @return A context creator, new or already loaded.
+	 * @exception ERiCPPException
 	 */
-	virtual CContextCreator *getContextCreator(RtString name) = 0;
+	inline virtual CContextCreator *getContextCreator(RtString name) { return lastPlugin(name); }
 
-	/** @brief Removes renderer context creator.
+	/** @brief Do not remove, context creator is cached
 	 *
-	 * @param cc ContextCreator to remove
+	 * Context creators are destroyed, when the frontend is destroyed. If Context creator
+	 * is not cached, this function can call deletePlugin(). end calls this function
+	 * so uncached context can be used in principle.
+	 *
+	 * @param cc ContextCreator is not removed
 	 */
-	virtual void removeContextCreator(CContextCreator *cc) = 0;
+	inline virtual void removeContextCreator(CContextCreator *cc) {}
+
+	inline virtual bool registerFactory(const char *name, TPluginFactory<CContextCreator> *f) { return TPluginHandler<CContextCreator>::registerFactory(name, f); }
 
 	/** @brief Sets a new searchpath.
 	 *
 	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'.
 	 */
-	virtual void searchpath(RtString aSearchpath) = 0;
+	inline virtual void searchpath(RtString aSearchpath) { TPluginHandler<CContextCreator>::searchpath(aSearchpath); }
 }; // IRendererCreator
 
 } // namespace RiCPP

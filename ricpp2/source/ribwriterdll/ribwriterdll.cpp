@@ -56,6 +56,81 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 extern "C" {
 
+/** @fn CContextCreator *newPlugin(unsigned long majorversion, const char *type)
+ *  @brief Returns an instance of a new plugin
+ *  @param majorversion Major version number of the returned interface (base class CContextCreator)
+ *  @param type Type must match the type of the plugins interface (base class CContextCreator)
+ *  @return Returns a plugin if \a majorversion has the right value
+ */
+EXPORT
+CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)
+{
+	if ( majorversion != CContextCreator::myMajorVersion() || !type || strcmp(type, CContextCreator::myType()) != 0 )
+		return NULL;
+	return new CRibWriterCreator;
+}
+
+/** @fn void deletePlugin(CContextCreator *p)
+ *  @brief Deletes a plugin created by newPlugin()
+ *  @param p Plugin that is deletetd, must have been constructed by newPlugin()
+ */
+EXPORT
+void CDECL deletePlugin(CRibWriterCreator *p)
+{
+	if ( p )
+		delete p;
+}
+
+/** @fn unsigned long majorVersion()
+ *  @brief Returns the major version number of the plugin
+ *  @return The major version of the plugin
+ */
+EXPORT
+unsigned long CDECL majorVersion()
+{
+	return CRibWriterCreator::myMajorVersion();
+}
+
+/** @fn unsigned long minorVersion()
+ *  @brief Returns the minor version number of the plugin
+ *  @return The minor version of the plugin
+ */
+EXPORT
+unsigned long CDECL minorVersion()
+{
+	return CRibWriterCreator::myMinorVersion();
+}
+
+/** @fn unsigned long revision()
+ *  @brief Returns the revision of the plugin
+ *  @return The revision number of the plugin
+ */
+EXPORT
+unsigned long CDECL revision()
+{
+	return CRibWriterCreator::myRevision();
+}
+
+/** @fn RtToken type()
+ *  @brief Returns the type of the plugin
+ *  @return The renderer type the plugin
+ */
+EXPORT
+const char * CDECL type()
+{
+	return CRibWriterCreator::myType();
+}
+
+/** @fn RtToken name()
+ *  @brief Returns the name of the plugin
+ *  @return The name of the plugin
+ */
+EXPORT
+const char * CDECL name()
+{
+	return CRibWriterCreator::myName();
+}
+
 /** @fn CContextCreator *newContextCreator(unsigned long majorversion)
  *  @brief Returns an instance of a new renderer
  *  @param majorversion Major version number of the returnd IRiContext

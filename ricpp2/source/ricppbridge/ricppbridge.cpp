@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
+#include "ricpp/ribwriter/ribwriter.h"
 
 using namespace RiCPP;
 
@@ -111,7 +112,11 @@ CRiCPPBridge::CRiCPPBridge() :
 {
 	m_ricppErrorHandler.setOuter(const_cast<CRiCPPBridge &>(*this));
 	m_ribFilter.m_next = this;
-	m_ribFilterList.searchpath("$PROGDIR");
+	m_ribFilterList.searchpath(".;$PROGDIR");
+	m_rendererLoader.searchpath("$PROGDIR");
+	TPluginFactory<CRibWriterCreator> *f = new TPluginFactory<CRibWriterCreator>;
+	if ( f )
+		m_rendererLoader.registerFactory("ribwriter", (TPluginFactory<CContextCreator> *)f);
 	// Default options
 	m_curErrorHandler = &m_printErrorHandler;
 }
@@ -244,7 +249,7 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 	// Try to create a new context creator
 	CContextCreator *contextCreator = 0;
 	try {
-		contextCreator = rendererCreator().getContextCreator(name);
+		contextCreator = rendererLoader().getContextCreator(name);
 		if ( !contextCreator ) {
 			m_ctxMgmt.context(illContextHandle);
 			ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE,
@@ -292,8 +297,8 @@ RtVoid CRiCPPBridge::end(void)
 		// with the old context creator. In the current
 		// implementation it is not freed, removeContextCreator()
 		// does nothing and the context creator is cached
-		// by rendererCreator()
-		rendererCreator().removeContextCreator(contextCreator);
+		// by rendererLoader()
+		rendererLoader().removeContextCreator(contextCreator);
 
 		if ( e2.isError() ) {
 			ricppErrHandler().handleError(e2);
@@ -1049,7 +1054,7 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		if ( n < 1 )
 			return;
 		if ( !strcmp(tokens[0], "renderer") ) {
-			rendererCreator().searchpath((RtString)params[0]);
+			rendererLoader().searchpath((RtString)params[0]);
 		} else if ( !strcmp(tokens[0], "ribfilter") ) {
 			m_ribFilterList.searchpath((RtString)params[0]);
 		}

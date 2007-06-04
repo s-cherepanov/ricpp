@@ -292,10 +292,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\rendererloader\renderercreator.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\include\ricpp\rendererloader\rendererloader.h"
 				>
 			</File>

@@ -28,7 +28,6 @@
  */
 
 #include "ricpp/ribwriter/ribwriter.h"
-#include "ricpp/tools/platform.h"
 
 using namespace RiCPP;
 

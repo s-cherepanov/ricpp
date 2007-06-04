@@ -46,14 +46,22 @@ class CRibFilter : public IRiRoot, public IPlugin {
 	friend class CRiCPPBridge;
 	friend class CRibFilterList;
 
-	IRiRoot *m_next;
-	bool m_suspended;
-	bool m_enabled[N_REQUESTS];
+	IRiRoot *m_next; ///< Next filter to call, can also point to the frontend.
+	bool m_suspended; ///< Rib requests are suspended until resume() is called
+	bool m_enabled[N_REQUESTS]; ///< Used to disable/enable selected requests
 
+	/** @brief beginV() is not a RIB request.
+	 */
 	inline RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illContextHandle; }
+
+	/** @brief end() is not a RIB request.
+	 */
 	inline RtVoid end(void) {}
 
 protected:
+	/** @brief Tests if a requst can be called.
+	 *  @param req Index number of a request (REQ_... constants)
+	 */
 	inline bool canCall(EnumRequests req) { return callee() != 0 && passthrough() && enabled(req); }
 
 public:
@@ -78,27 +86,76 @@ public:
 	inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
 	inline virtual unsigned long revision() const { return myRevision(); }
 
-	inline virtual void startup() {}
-	inline virtual void shutdown() {}
+	inline virtual void startup()
+	{
+		// Can be overwritten.
+	}
 
+	inline virtual void shutdown()
+	{
+		// Can be overwritten.
+	}
+
+	/** @brief No transfering until resume().
+	 */
 	inline virtual bool suspended() const { return m_suspended; }
+
+	/** @brief Transfering until suspend().
+	 */
 	inline virtual bool passthrough() const { return !m_suspended; }
+
+	/** @brief Stop the transfering of RIB calls until resume().
+	 */
 	inline virtual void suspend() { m_suspended = true; }
+
+	/** @brief Continue the transfering of RIB calls.
+	 */
 	inline virtual void resume() { m_suspended = false; }
 
+	/** @brief Tests if a certain command is enabled.
+	 *  @param req Number of a request (REQ_...-constant)
+	 *  @return true, command is enabled
+	 */
 	inline virtual bool enabled(EnumRequests req) const { return m_enabled[req]; }
+
+	/** @brief Tests if a certain command is disabled.
+	 *  @param req Number of a request (REQ_...-constant)
+	 *  @return true, command is disabled
+	 */
 	inline virtual bool disabled(EnumRequests req) const { return !m_enabled[req]; }
+
+	/** @brief Enables a certain command.
+	 *  @param req Number of the request (REQ_...-constant) to enable.
+	 */
 	inline virtual void enable(EnumRequests req) { m_enabled[req] = true; }
+
+	/** @brief Disables a certain command.
+	 *  @param req Number of the request (REQ_...-constant) to disable.
+	 */
 	inline virtual void disable(EnumRequests req) { m_enabled[req] = false; }
 
+	/** @brief Interface that is called.
+	 *  @return Pointer to the RenderMan interrface that is called by this filter.
+	 */
 	inline virtual IRiRoot *callee() const { return m_next; }
 
-    inline virtual RtVoid setArg(RtString name, RtPointer param)
+	/** @brief Sets parameter.
+	 *
+	 *  Overload this functions to set own parameters.
+	 *
+	 *  @param name Name of the argument.
+	 *  @param param Pointer to the parameter.
+	 *  @return Pointer to the RenderMan interrface that is called by this filter.
+	 */
+    inline virtual RtVoid setParam(RtString name, RtPointer param)
 	{
+		// Can be overwritten
 	}
 
 	/* ********************************************************************* */
-
+	/** @defgroup ricpp_ricalls Filtered ri calls
+	 *  @{
+	 */
 	inline RtToken declare(RtString name, RtString declaration)
 	{
 		return canCall(REQ_DECLARE) ?
@@ -804,7 +861,9 @@ public:
 		if ( canCall(REQ_IF_END) )
 			callee()->ifEnd();
 	}
-};
+
+	/// @}
+}; // CRibFilter
 
 
 } // namespace RiCPP

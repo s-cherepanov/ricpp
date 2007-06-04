@@ -31,7 +31,6 @@
 //
 
 #include "ricpp/ribfilter/ribfilter.h"
-#include "ricpp/tools/platform.h"
 
 using namespace RiCPP;
 

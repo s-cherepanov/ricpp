@@ -34,36 +34,86 @@
 #include "ricpp/ribfilter/ribfilter.h"
 #endif // _RICPP_RIBFILTER_RIBFILTER_H
 
-#include <list>
-
 namespace RiCPP {
 
+/** @brief List to manage RIB filters.
+ *  @see CRibFilter
+ */
 class CRibFilterList {
 	friend class CRiCPPBridge;
 
-	IRiRoot *m_ri;
-	std::list<CRibFilter *>m_filters;
-	TPluginHandler<CRibFilter> m_pluginHandler;
+	IRiRoot *m_ri; ///< Interface routines of the frontend that are called at last.
+	std::list<CRibFilter *>m_filters; ///< List of filters.
+	TPluginHandler<CRibFilter> m_pluginHandler; ///< Plugin handler to register filters in memory.
 
+	/** @brief Sets the RenderMan interface.
+	 *  @param ri Pointer to the interface, that will be called.
+	 */
 	inline CRibFilterList(IRiRoot *ri) {
 		m_ri = ri;
 	}
 
+	/** @brief Gets a new filter.
+	 *  @param name Name of the filter (registered or dynamic library).
+	 */
 	CRibFilter *newFilterPlugin(const char *name);
+
+	/** @brief Deletes a filter.
+	 *
+	 *  Deletes a filter, that was created by the factory that is part
+	 *  of this class.
+	 *  @param aFilter Filter to destroy.
+	 *  @return true, filter was deleted.
+	 */
 	bool deleteFilterPlugin(CRibFilter *aFilter);
 
 public:
+	/** @brief First interface that is called.
+	 *
+	 *  Is called from parser.
+	 *  @return first interface, called from parser.
+	 */
 	inline IRiRoot *firstHandler() {
 		return m_filters.empty() ? m_ri : m_filters.front();
 	}
+
+	/** @brief Last interface that is called.
+	 *  Is called from parser.
+	 *  @return last interface (part of the frontend), called from parser.
+	 */
 	inline IRiRoot *lastHandler() {
 		return m_ri;
 	}
 
+	/** @brief Adds a new filter instance in front of the others.
+	 *
+	 *  @param aFilter Filter to add.
+	 */
 	bool addFront(CRibFilter *aFilter);
+
+	/** @brief Adds a new filter plugin instance in front of the others.
+	 *
+	 *  Can load or instanciate a filter.
+	 *
+	 *  @param name Name of the filter to add.
+	 */
 	bool addFront(const char *name);
+
+	/** @brief Removes the first filter.
+	 *  Only the filters created by this object are also deleted.
+	 *  @return true, filter was deleted.
+	 */
 	bool removeFront();
+
+	/** @brief Sets a searchpath to the libraries
+	 *  @param path String with searchpath "path1;path2;..."
+	 */
 	inline void searchpath(const char *path) { m_pluginHandler.searchpath(path); }
+
+	/** @brief Registers a filter factory
+	 *  @param name Name of the plugn group
+	 *  @param f filter factory
+	 */
 	inline virtual bool registerFactory(const char *name, TPluginFactory<CRibFilter> *f)
 	{
 		return m_pluginHandler.registerFactory(name, f);

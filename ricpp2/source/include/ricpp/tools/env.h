@@ -52,10 +52,12 @@ namespace RiCPP {
 	 *  Implementation can be found in win32env.cpp for Windows and macenv.cpp for MacOs.
 	 */
 	class CEnv {
-		/** @brief Accesses the variable with the name \a varName
+		/** @brief Find the value of a variable
+		 *
+		 *         Accesses the variable with the name \a varName
 		 *         and stores the value found in \a var. If the variable
 		 *         is not found, \a var is cleared.
-		 *  @param var String reference where the value of the environment variable
+		 *  @retval var String reference where the value of the environment variable
 		 *         \a varName is stored
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign)
@@ -64,22 +66,22 @@ namespace RiCPP {
 		static std::string &get(std::string &var, const char *varName);
 
 	public:
-		/** @brief Gets the string "TMP", the name of the TMP-variable (see getTmp())
+		/** @brief Gets the string "TMP", the name of the TMP-variable (see getTmp()).
 		 *  @return "TMP"
 		 */
 		inline static char *tmpName() {return "TMP";}
 
-		/** @brief Gets the string "HOME", the name of the HOME-variable (see getHome())
+		/** @brief Gets the string "HOME", the name of the HOME-variable (see getHome()).
 		 *  @return "HOME"
 		 */
 		inline static char *homeName() {return "HOME";}
 
-		/** @brief Gets the string "PATH", the name of the PATH-variable (see getPath())
+		/** @brief Gets the string "PATH", the name of the PATH-variable (see getPath()).
 		 *  @return "PATH"
 		 */
 		inline static char *pathName() {return "PATH";}
 
-		/** @brief Gets the string "PROGDIR", the name of the PROGDIR-variable (see getProgDir())
+		/** @brief Gets the string "PROGDIR", the name of the PROGDIR-variable (see getProgDir()).
 		 *  @return "PROGDIR"
 		 */
 		inline static char *progDirName() {return "PROGDIR";}

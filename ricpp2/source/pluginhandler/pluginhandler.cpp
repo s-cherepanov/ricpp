@@ -31,6 +31,8 @@
 
 using namespace RiCPP;
 
+/** @brief Test class for the plugin templates
+ */
 class CPlugin : public IPlugin {
 public:
 	static const char *myName();

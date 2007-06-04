@@ -38,8 +38,8 @@ namespace RiCPP {
  *         pointers (ValueType, class *), can manage the object deletion.
  */
 template<typename KeyType, typename ValueType> class TObjPtrRegistry {
-	std::map<KeyType, ValueType>m_map; //< Container for the key, value pairs
-	bool m_destructMembers; //< Destruct all members if container is deleted or key is unregistered
+	std::map<KeyType, ValueType>m_map; ///< Container for the key, value pairs
+	bool m_destructMembers; ///< Destruct all members if container is deleted or key is unregistered
 public:
 	/** @brief Const iterator for the elements.
 	 */

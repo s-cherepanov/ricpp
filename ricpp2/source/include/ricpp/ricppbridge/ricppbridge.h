@@ -56,23 +56,28 @@
 
 namespace RiCPP {
 
-/** @brief RenderMan Interface Bridge
+/** @brief RenderMan Interface Bridge, the frontend
  *
- * Jobs: Bridges to a renderer (context) that implements the Ri
- * and the error handlers.
- * Calls The Ri..V() routines, handles the global options
- * (Option "searchpath" "renderer"), does the error handling
- * by catching the errors ERiCPPError of the current renderer and
- * calling the user defined error handler set by errorHandler(), 
- * matches a context handle RtContextHandle to a context creator with
- * its rendering context (beginV(), end(), context(), getContext()). Normally only
- * a single instance of CRiCPPBridge is used. However doesn't want to restrict it
- * to be a singleton.
+ * Jobs:
+ *
+ * - Bridges to a renderer (context) that implements the Ri
+ *   and the error handlers.
+ * - Calls the Ri...V() routines from the routines with variable parameters
+ * - handles the global options (e.g. Option "searchpath" "renderer"),
+ * - does the error handling by catching the errors ERiCPPError of the current renderer and
+ *   calling the user defined error handler set by errorHandler(), 
+ * - matches a frontend context handle RtContextHandle to a backend context creator with
+ *   its rendering context (beginV(), end(), context(), getContext()).
+ * - Entry point for RIB parsing and RIB Filters
+ *
+ * Normally only a single instance of CRiCPPBridge is used. However didn't want to
+ * restrict it to be a singleton.
  */
 class CRiCPPBridge : public IRi
 {
 private:
-	/** @brief Build in filters
+	/** @addtogroup ricpp_filter
+	 * @brief Build in filters
 	 */
 	//@{
 	const CBoxFilter m_boxFilter; ///< The Box pixel filter
@@ -82,31 +87,20 @@ private:
 	const CTriangleFilter m_triangleFilter; ///< The Triangle pixel filter
 	//@}
 
-	/** @brief Build in error handlers, can be used by CRiCPPBridge::error()
+	/** @addtogroup ricpp_error
+	 * @brief Build in error handlers, can be used by CRiCPPBridge::error()
 	 */
 	//@{
 	const CAbortErrorHandler m_abortErrorHandler; ///< Prints error message to standard output and exits if the error is severe
 	const CIgnoreErrorHandler m_ignoreErrorHandler; ///< Ignores the error, does nothing
 	const CPrintErrorHandler m_printErrorHandler; ///< Prints error message to standard output
-	//@}
 
-	/** @brief Error Handling
-	 */
-	//@{
 	/** @brief Current user defined error handler
 	 *
 	 * m_printErrorHandler is the default handler. It can be changed by errorHandler()
 	 */
 	const IErrorHandler *m_curErrorHandler; 
-	RtInt m_lastError; //< The last error number occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
-
-	/** @brief Standard Rib filter, to hook in other Rib filters and RIB parser
-	 */
-	CRibFilter m_ribFilter;
-
-	/** @brief Standard Rib filter list
-	 */
-	CRibFilterList m_ribFilterList;
+	RtInt m_lastError; ///< The last error number occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
 
 	/** @brief Error handler used by the bridge
 	 *
@@ -116,16 +110,22 @@ private:
 	class CRiCPPBridgeErrorHandler : public IRiCPPErrorHandler {
 		friend class CRiCPPBridge;
 	private:
-		CRiCPPBridge *m_outer; ///< The outer instance is the CRiCPPBridge instance belonging to this error handler.
+		/** @brief Surronding CRiCPPBridge instance
+		 *
+		 * The outer instance is the CRiCPPBridge instance belonging to this error handler.
+		 * Used to call the user defined error handler.
+		 */
+		CRiCPPBridge *m_outer;
 
 		/** @brief Is created automatically by the outer class, a CRiCPPBridge instance.
 		 * @see CRiCPPBridge::m_ricppErrorHandler
 		 */
 		inline CRiCPPBridgeErrorHandler() : m_outer(0) { }
 
-		/** @brief Sets the outer
+		/** @brief Sets the outer object
 		 * 
-		 * Called in the constructor of CRiCPPBridge
+		 * Initialized in the constructor of CRiCPPBridge.
+		 *
 		 * @param outer The CRiCPPBridge instances that has this object.
 		 */
 		inline void setOuter(CRiCPPBridge &outer)
@@ -146,12 +146,13 @@ private:
 		 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 		 */
 		virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
-	} m_ricppErrorHandler; // used only via ricppErrHandler()
+	} m_ricppErrorHandler; ///< Error handler instance, used only via ricppErrHandler()
 
 	friend class CRiCPPBridgeErrorHandler;
 	//@}
 
-	/** @brief Build in procedurals
+	/** @addtogroup ricpp_proc
+	 *  @brief Build in procedurals
 	 */
 	//@{
 	const CProcDelayedReadArchive m_procDelayedReadArchive; ///< Reads a RIB archive
@@ -160,14 +161,42 @@ private:
 	const CProcFree m_procFree; ///< Cleanup function for the data used by the procedurals
 	//@}
 
-	/** @brief Token list cache
+	/** @defgroup ricpp_tokenlist Tokenlist cache 
+	 * @brief Stores the token-parameter list.
+	 *
+	 * Used to store the token-parameter list of the current
+	 * interface call with variable parameters.
 	 */
 	//@{
 	std::vector<RtToken> m_tokens;		///<< The tokens of the parameter list of an interface call
 	std::vector<RtPointer> m_params;	///<< The values of the parameter list of an interface call
 	//@}
 
-	CRendererLoader m_rendererLoader;  ///<< Used by CContextCreator to create context creators
+	/** @defgroup ri_ribfilter Filterlist
+	 *  @{
+	 */
+
+	/** @brief Standard Rib filter
+	 *  Used by m_ribFilterList to hook in other Rib filters, Options can
+	 *  be used to activate/deactivate intrerface calls, if they are invoked
+	 *  via rib requsets. E.G. procedure calls can be deactivated.
+	 *  @see m_ribFilterList
+	 */
+	CRibFilter m_ribFilter;
+
+	/** @brief Standard Rib filter list
+	 *  @see m_ribFilter
+	 */
+	CRibFilterList m_ribFilterList;
+
+	//@}
+
+	/** @brief Loader for backends.
+	 *
+	 *  Used by to create backends of the type CContextCreator, which in turn
+	 *  is used to create the concrete rendering contexts IRiContext
+	 */
+	CRendererLoader m_rendererLoader;
 
 	
 	/** @brief  Assignment, not in use, just because of compiler warning
@@ -183,31 +212,36 @@ private:
 	}
 
 protected:
-	/** @brief Returns the error handler to use. It can but usually
-	 *  won't be overwritten in this framework.
+	/** @brief Returns the error handler to use.
 	 *
-	 *  @return m_errorHandler, the CRiCPPBridgeErrorHandler is returned.
+	 *  This function can be overwritten to change the
+	 *  default error handler for backend exceptions.
+	 *  Usually it won't be overwritten.
+	 *
+	 *  @return m_ricppErrorHandler, the defualt CRiCPPBridgeErrorHandler is returned.
 	 */
 	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_ricppErrorHandler; }
 
 	/** @brief Extracts all token-value pairs of an (...) interface call
 	 *
-	 *  The paires are stored in m_tokens, m_params
+	 *  The pairs are stored in m_tokens, m_params
 	 *
 	 *  @param token First token of the token-value list
 	 *  @param marker va_start() marker
 	 *  @return Number of token value pairs found
+	 *  @see m_tokens, m_params
 	 */
 	RtInt getTokens(RtToken token, va_list marker);
 
-	/** @brief Context handling
+	/** @addtogroup ricpp_contexts
 	 */
 	//@{
 
 	/** @brief Holds a context creator and one of its rendering contexts.
 	 *
-	 * The context creator/rendering context pairs of a CRiCPPBridge instance
-	 * are managed by a CContextManagement instance m_ctxMgmt.
+	 * The backend context creator/rendering context pairs of the frontend
+	 * CRiCPPBridge instance are managed by the CContextManagement instance
+	 * m_ctxMgmt.
 	 */
 	class CContext
 	{
@@ -238,9 +272,9 @@ protected:
 	public:
 		/** @brief The standard contructor initializes an empty instance
 		 *
-		 * The CContext instance referenced by illContextHandle to represent
-		 * the 'outside' context (MODE_OUTSIDE), there are no
-		 * m_contextCreator and m_renderingContext there.
+		 * The CContext instance referenced by illContextHandle is used
+		 * to represent the 'outside' context (MODE_OUTSIDE), there are no
+		 * valid m_contextCreator and m_renderingContext objects there.
 		 */
 		inline CContext() :
 			m_contextCreator(0),
@@ -273,8 +307,8 @@ protected:
 		 *
 		 *  The rendering context is not destroyed here, this was happen in end().
 		 *  The context creator destroys the renderer. This can be assured
-		 *  Because the CContext instance is destroyed by the framework CRendererBridge
-		 *  right after calling it's end through the CContextManagement.
+		 *  because the CContext instance is destroyed by the CRendererBridge
+		 *  right after calling it's end() through the CContextManagement.
 		 *  @see end()
 		 */
 		inline ~CContext()
@@ -290,16 +324,16 @@ protected:
 			return m_contextCreator;
 		}
 
-		/** @brief Gets the assigned rendering context
+		/** @brief Gets the assigned rendering context.
 		 *
-		 *  Since a context creator can bear many contexts, the context creator/rendering context
+		 *  Since a context creator can bear many contexts, all context creator/rendering context
 		 *  pairs are stored (CContext objects in CContextManager::m_ctxMap).
 		 *  *After* a CContext is activated via the
 		 *  CContextManager::context() or beginV() method, renderingContext() and
 		 *  contextCreator()->getContext() are the same. Only those active contexts are
 		 *  used by other functions than context() and beginV().
 		 *
-		 *  @return Pointer to the rendering context stored
+		 *  @return Pointer to the stored backend rendering context
 		 */
 		inline IRiContext *renderingContext() const
 		{
@@ -308,8 +342,11 @@ protected:
 
 		/** @brief Checks the validity of a CContext instance.
 		 *  
-		 *  The instance is invalid either if the renderer is 0, the handle is invalid or
-		 *  the instance is aborted.
+		 *  The instance is invalid either if
+		 *
+		 *  - the rendering context is 0,
+		 *  - the context creator is 0 or
+		 *  - the instance is aborted.
 		 *
 		 *  @return The validity state
 		 */
@@ -325,7 +362,7 @@ protected:
 		 * Aborted context are not used any more, even if active. This can be used to
 		 * continue with unrecoverable errors till end().
 		 *
-		 * @return true if the renderer state is aborted
+		 * @return true if the renderer state is aborted.
 		 * @see abort(), m_aborted
 		 */
 		inline bool aborted() const
@@ -333,13 +370,14 @@ protected:
 			return m_aborted;
 		}
 
-		/** @brief The current context is aborted by the frontend
+		/** @brief The current context gets aborted by the frontend
 		 *  if a severe error occurs.
 		 *
-		 *  This indicates that no further errors should be made (it is
+		 *  This indicates that no further error handling should be made (it is
 		 *  likely that these errors are follow up errors) and no
 		 *  more rendering is done because the renderer
 		 *  is in an unrecoverable state.
+		 *
 		 *  However, the context is not destroyed till end().
 		 *  The context creator is notified via CContextCreator::abort() that
 		 *  the context is aborted.
@@ -352,11 +390,12 @@ protected:
 			m_aborted = true;
 		}
 
-		/** @brief Ends the current context regulary
+		/** @brief Ends the current context regulary.
 		 *
-		 *  The context creator is notified that the context ends.
-		 *  Any cleanup can be made before deletion. The rendering
-		 *  context is deleted by the context creator's CCOntextCreator::end().
+		 *  The context creator is notified that the context ends and
+		 *  any cleanup can be made before deletion. The rendering
+		 *  context is deleted by the context creator's CContextCreator::end().
+		 *  Therefore, it is set to 0.
 		 */
 		inline void end()
 		{
@@ -365,12 +404,12 @@ protected:
 			m_renderingContext = 0;
 		}
 
-		/** @brief Deactivate the current context, used for context switching
+		/** @brief Deactivate the current context
 		 *
 		 *  Called indirectly from CRiCPPBridge::context(RtContextHandle handle)
-		 *  and CRiCPPBridge::beginV()
-		 *  through the CContextManagement to deactivate the previous active
-		 *  rendering context.
+		 *  and CRiCPPBridge::beginV() through the CContextManagement to deactivate
+		 *  the previous active rendering context. These context can be activated
+		 *  (activate()) once more and are not destroyed.
 		 *
 		 *  @see CContextManagement::beginV(),
 		 *  CContextManagement::context(RtContextHandle handle),
@@ -384,7 +423,7 @@ protected:
 		}
 
 
-		/** @brief Activate the current context, used for context switching
+		/** @brief Activate the current context
 		 *
 		 *  Called from indirectly by CRiCPPBridge::context()
 		 *  through  CContextManagement to activate the
@@ -417,10 +456,10 @@ protected:
 		}
 	}; // class CContext
 
-	/** @brief Context Management for CContext (context creator/rendering context pairs)
+	/** @brief Context Management for CContext.
 	 *
-	 *  A RtContextHandle is mapped to a CContext. A RtContextHandle of the frontend
-	 *  references a backend context creator with a rendering context. The CRiCPPBridge
+	 *  A RtContextHandle is mapped to a CContext, the backend context creator/rendering context pairs.
+	 *  A RtContextHandle of the frontend references one of those pairs. The CRiCPPBridge
 	 *  forwards the interface calls always to the active backend rendering context. beginV() and
 	 *  context() are out of this rule.
 	 *
@@ -428,30 +467,30 @@ protected:
 	 *  can be thought of illContextHandle representing the bridge itself, it cannot be removed.
 	 */
 	class CContextManagement {
-		RtContextHandle m_nextCtxHandle; //< Next value for context handle (counts 1 upwarts), deleted handles are not reused.
-		RtContextHandle m_ctxHandle;     //< Current context handle of the front end.
-		CContext m_curCtx;               //< Current creator, context pair of the backend, is a copy of m_ctxMap[m_ctxHandle] for faster access
-		std::map<RtContextHandle, CContext> m_ctxMap; //< Maps used context handles to a CContext context creator/rendering context pair.
+		RtContextHandle m_nextCtxHandle; ///< Next value for context handle (counts 1 upwarts), deleted handles are not reused.
+		RtContextHandle m_ctxHandle;     ///< Current context handle of the frontend.
+		CContext m_curCtx;               ///< Current creator, context pair of the backend, it is a copy of m_ctxMap[m_ctxHandle] for faster access
+		std::map<RtContextHandle, CContext> m_ctxMap; ///< Maps used frontend context handles to it's backend CContext context creator/rendering context pair.
 
 		/** @brief Removes a context creator/rendering context pair from the context map.
 		 *
 		 *  illContextHandle, the handle that represents the bridge itself cannot be removed.
 		 *
-		 * @param handle The RtContextHandle as key, illContextHandle is not removed
+		 * @param handle The RtContextHandle as key, illContextHandle is not removed.
 		 */
 		void removeContext(RtContextHandle handle);
 
 		/** @brief Adds a new CContext instance.
 		 *
-		 *  Puts the context creator / rendering context pair at the context map
-		 *  with the handle as key. The handle is the number m_nextCtxHandle.
+		 *  Puts the backend context creator / rendering context pair at the context map
+		 *  with the frontend handle as key. The handle is the number m_nextCtxHandle.
 		 *  m_nextCtxHandle is also increased at the end of this method to
 		 *  serve as the next handle.
-		 *	m_ctxHandle the current context handle is set by the calling function
-		 *  beginV() to indicate the new context.
+		 *	m_ctxHandle, the current context handle, is set by the calling function
+		 *  beginV() to refer the new context.
 		 *
-		 * @param ctx A context creator/rendering context pair, to be stored
-		 * @return The new handle of the creator
+		 * @param ctx A backend context creator/rendering context pair, to be stored
+		 * @return The new frontend handle of the creator
 		 * @see beginV()
 		 */
 		inline RtContextHandle add(const CContext &ctx)
@@ -460,10 +499,10 @@ protected:
 			return m_nextCtxHandle++;
 		}
 	public:
-		/** @brief Initializes context management
+		/** @brief Initializes context management.
 		 *
 		 *  The illContextHandle representing the context outside
-		 *  (the bridge itself for some means) context is constructed.
+		 *  (the bridge itself for some means).
 		 */
 		inline CContextManagement()
 		{
@@ -511,16 +550,16 @@ protected:
 		 * is not explicitely deactivated (because ending a rendering context
 		 * can be handled by the backend different to deactivating one for
 		 * further use). In anny case context() is illContextHandle after
-		 * end(9 (even if an error was thrown)
+		 * end() (even if an error was thrown)
 		 * 
 		 * @exception ERiCPPError
 		 * @see CContext::end(), removeContext()
 		 */
 		void end();
 
-		/** @brief Access the active current creator/rendering context.
+		/** @brief Gets the active current creator/rendering context.
 		 * 
-		 * @return A reference to the backend current creator, context pair,
+		 * @return A reference to the backend current creator/context pair,
 		 * not neccessairly valid (e.g. if aborted).
 		 */
 		inline CContext &curBackend()
@@ -528,7 +567,7 @@ protected:
 			return m_curCtx;
 		}
 
-		/** @brief Access the current frontend context handle
+		/** @brief Gets the current frontend context handle.
 		 *
 		 *  @return The handle of the current frontend context handle
 		 */
@@ -541,18 +580,20 @@ protected:
 		/** @brief Test if the context handle is in the map.
 		 *
 		 * @param handle A context handle
-		 * @return true if the parameter handle is managed (can be illContextHandle or aborted)
+		 * @return true, if the parameter handle is managed (can be illContextHandle or aborted)
 		 */
 		inline bool isContext(RtContextHandle handle)
 		{
 			return m_ctxMap.find(handle) != m_ctxMap.end();
 		}
 
-		/** @brief Sets the new current context.
+		/** @brief Sets and activates the new current context.
+		 *
+		 * The previous context is deactivated.
 		 *
 		 * @param handle A context handle of the new context
 		 * @return True, if the parameter handle was found and set
-		 *         (normally tested before context() is called).
+		 *         as active (normally tested before context() is called).
 		 */
 		inline bool context(RtContextHandle handle)
 		{
@@ -572,8 +613,9 @@ protected:
 
 	/** @brief Current renderer loader
 	 *
-	 * The renderer loads a context creator from a
-	 * dynamic library or constructs one in memory
+	 * The renderer loader loads a context creator from a
+	 * dynamic library or constructs one in memory.
+	 *
 	 * @return An object to load context creators
 	 */
 	inline virtual CRendererLoader &rendererLoader()
@@ -581,7 +623,7 @@ protected:
 		return m_rendererLoader;
 	}
 
-	/** @brief Like RiOption but only concerns the bridge itself.
+	/** @brief Like optionV() but only concerns the bridge itself.
 	 *
 	 * Forwarded by optionV() if there is no active rendering context.
 	 * @param name Option name (likely "searchpath" for the renderer searchpath)
@@ -596,7 +638,7 @@ public:
 	 *
 	 * A CRendererLoader is used as m_curRendererCreator, m_printErrorHandler
 	 * is used as error handler, an invalid context indexed by illContextHandle
-	 * is stored as 'outside' context
+	 * is stored to represent 'outside' context and the rib filter list is initialized. 
 	 */
 	CRiCPPBridge();
 
@@ -604,23 +646,36 @@ public:
 	 */
 	inline virtual ~CRiCPPBridge() {}
 
-	/*  @brief Filterlist
+	/** @addtogroup ri_ribfilter
 	 *
-	 *  User defined Rib filters can be inserted int the filterlist
-	 *
-	 *  @return The filter list
+	 *  @brief User defined Rib filters can be inserted into the filterlist
+	 *  @{
 	 */
+
 	// inline CRibFilterList &ribFilterList() {return m_ribFilterList;}
 
+	/*  @brief The first interface to a user defined RIB filter
+	 *  @return A pointer to the interface of the first user defined filter
+	 */
 	inline virtual IRiRoot *firstRibFilter()
 	{
 		return m_ribFilterList.firstHandler();
 	}
 
+	/*  @brief The last interface to a user defined RIB filter
+	 *  @return A pointer to the interface of the last user defined filter,
+	 *          that is 
+	 */
 	inline virtual IRiRoot *lastRibFilter() {
 		return m_ribFilterList.lastHandler();
 	}
 
+	/*  @brief Adds a new rib filter to the front.
+	 *
+	 *  The rib filter at the front is used first
+	 *
+	 *  @return true, filter was inserted
+	 */
 	inline virtual bool addFrontRibFilter(CRibFilter *aFilter)
 	{
 		try {
@@ -631,6 +686,13 @@ public:
 		return false;
 	}
 
+	/*  @brief Adds a new rib filter plugin to the front.
+	 *
+	 *  The rib filter at the front is used first
+	 *
+	 *  @param name The name of the Rib filter (dll or in memory)
+	 *  @return true, filter was inserted
+	 */
 	inline virtual bool addFrontRibFilter(const char *name)
 	{
 		try {
@@ -641,11 +703,24 @@ public:
 		return false;
 	}
 
+	/*  @brief Removes a rib filter from the top
+	 *
+	 *  The rib filter is only deleted if it was created by this instance
+	 *
+	 *  @return true, filter was removed
+	 */
 	inline virtual bool removeFrontRibFilter()
 	{
 		return m_ribFilterList.removeFront();
 	}
 
+	/*  @brief Register a filter factory
+	 *
+	 *  The filter factory of the name \a name is used to create
+	 *  filters directly in memory.
+	 *
+	 *  @return true, filter factory was registerd
+	 */
 	inline virtual bool registerRibFilterFactory(const char *name, TPluginFactory<CRibFilter> *f)
 	{
 		try {
@@ -655,8 +730,10 @@ public:
 		}
 		return false;
 	}
+	//@}
 
-	/** @brief Returns the appropriate filter functions
+	/** @addtogroup ricpp_filter
+	 *  @brief Returns the appropriate filter functions
      */
 	//@{
 	inline virtual const IFilterFunc &boxFilter() const { return m_boxFilter; }
@@ -666,7 +743,8 @@ public:
 	inline virtual const IFilterFunc &triangleFilter() const { return m_triangleFilter; }
 	//@}
 
-	/** @brief Returns the appropriate procedurals
+	/** @addtogroup ricpp_proc
+	 *  @brief Returns the appropriate procedurals
      */
 	//@{
 	inline virtual const ISubdivFunc &procDelayedReadArchive() const { return m_procDelayedReadArchive; }
@@ -675,13 +753,13 @@ public:
 	inline virtual const IFreeFunc &procFree() const { return m_procFree; }
 	//@}
 
-	/** @brief Returns the appropriate error handlers
+	/** @addtogroup ricpp_error
+	 *  @brief Returns the appropriate error handlers
      */
 	//@{
 	inline virtual const IErrorHandler &errorAbort() const { return m_abortErrorHandler; }
 	inline virtual const IErrorHandler &errorIgnore() const { return m_ignoreErrorHandler; }
 	inline virtual const IErrorHandler &errorPrint() const {  return m_printErrorHandler; }
-	//@}
 
 	/** @brief The last error is set by CRiCPPBridgeErrorHandler::handleError(), CRiCPPBridgeErrorHandler::handleErrorV()
 	 *
@@ -697,11 +775,17 @@ public:
 	{
 		m_curErrorHandler = &handler;
 	}
+	//@}
 
-	/** The rest of the interface functions see ricpp.h. The functions with variable length parameters
-	 *  are forwarded to the ..V() functions, these are forwarded to the current rendering context
-	 *  (only optionV() may be forwared to a CRendererLoader, if if there is no active context)
-	 *  Errors are catched and the current error handler is called with the error found.
+	/** @defgroup ri_frontend Remaining Ri requests
+	 *
+	 *  @brief The RenderMan frontend functions that are forwarded to the backend.
+	 *
+	 * The rest of the interface functions see ricpp.h. The calls of functions with
+	 * variable length parameters are passed to the ...V() functions, these are
+	 * forwarded to the current rendering context
+	 * (only optionV() may be handled by the frontend, if if there is no active context)
+	 * Errors are catched and the current error handler is called with the error found.
      */
 	//@{
 	virtual RtToken declare(RtString name, RtString declaration);
@@ -727,7 +811,8 @@ public:
 	 * Can be called from everywhere.
 	 *
 	 * @param handle Handle that references a rendering context (the backend renderer),
-	 *        you should not use destroyed contexts (end()).
+	 *        you should not use destroyed contexts (end()). \a handle can be
+	 *        illContextHandle to disable the backend.
 	 *
 	 * @see getContext(), beginV(), end(),
 	 * CContextManager::context(), IRiRoot::context()
@@ -741,7 +826,7 @@ public:
 	 * If the name is a RIB filename (ends with .rib), the filename is inserted as
 	 * new parameter. @a name is set to 0 to indicate that a ribfile should be written.
 	 *
-	 * @param name RIB file or name of renderer
+	 * @param name RIB file or name of renderer, if empty the Rib writer is used
 	 * @param token First token in parameterlist (e.G. RI_FILE for filename) followed by a parameter
 	 *        pointer (value array), and so on. Must be ended by a token RI_NULL.
 	 * @return The new context handle

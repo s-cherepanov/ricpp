@@ -88,10 +88,10 @@ namespace RiCPP {
 	 *  expanded representation of an internal path.
 	 */
 	class CFilepath {
-		std::string m_filepath; //< Internal path.
-		std::string m_nativepath; //< Native path.
-		std::string m_fullpath; //< Native expanded path (also called full path, real path).
-		void convertToNative(); //< converts /a m_filepath to the native representations /a m_nativepath and /a m_fullpath.
+		std::string m_filepath; ///< Internal path.
+		std::string m_nativepath; ///< Native path.
+		std::string m_fullpath; ///< Native expanded path (also called full path, real path).
+		void convertToNative(); ///< converts /a m_filepath to the native representations /a m_nativepath and /a m_fullpath.
 	public:
 		/** @brief Init with the current working directory
 		 */

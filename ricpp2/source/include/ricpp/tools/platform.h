@@ -51,9 +51,14 @@ inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2);
 
 #else
 
+/** @brief Generic pointer to a function.
+ *
+ * FARPROC Pointers are needed for functions loaded from dynamic libraries.
+ * The return value need not to be integer and the functions might have parameters.
+ */
 typedef int (*FARPROC)();
 
-/** @brief CDECL is not used
+/** @brief CDECL is not used for MAC
  */
 #define CDECL
 

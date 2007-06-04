@@ -40,8 +40,6 @@
 #include "ricpp/baserenderer/ricontext.h"
 #endif // _RICPP_BASERENDERER_RICONTEXT_H
 
-#include <list>
-
 namespace RiCPP {
 
 /** @brief Context creation and switching, base class of a concrete context creator.

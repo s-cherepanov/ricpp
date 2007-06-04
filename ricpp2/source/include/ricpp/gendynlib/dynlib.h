@@ -34,10 +34,6 @@
 #include "ricpp/tools/stringlist.h"
 #endif // _RICPP_TOOLS_STRINGLIST_H
 
-#ifndef _RICPP_TOOLS_PLATFORM_H
-#include "ricpp/tools/platform.h"
-#endif // _RICPP_TOOLS_PLATFORM_H
-
 namespace RiCPP {
 
 	/** @brief Interface to represent the exported functions of libraries.

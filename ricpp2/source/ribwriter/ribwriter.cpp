@@ -31,6 +31,12 @@
 
 using namespace RiCPP;
 
+const char *CRibWriterCreator::myName() { return "ribwritercreator"; }
+const char *CRibWriterCreator::myType() { return CContextCreator::myType(); }
+unsigned long CRibWriterCreator::myMajorVersion() { return CContextCreator::myMajorVersion(); }
+unsigned long CRibWriterCreator::myMinorVersion() { return 1; }
+unsigned long CRibWriterCreator::myRevision() { return 1; }
+
 const unsigned long CRibWriter::ribWriterMinorVersion = 1;
 const unsigned long CRibWriter::ribWriterRevision = 1;
 

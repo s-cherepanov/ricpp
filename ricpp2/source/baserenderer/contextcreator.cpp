@@ -32,6 +32,12 @@
 
 using namespace RiCPP;
 
+const char *CContextCreator::myName() { return "contextcreator"; }
+const char *CContextCreator::myType() { return "contextcreator"; }
+unsigned long CContextCreator::myMajorVersion() { return 1; }
+unsigned long CContextCreator::myMinorVersion() { return 1; }
+unsigned long CContextCreator::myRevision() { return 1; }
+
 CContextCreator::~CContextCreator()
 {
 	m_curContext = 0;

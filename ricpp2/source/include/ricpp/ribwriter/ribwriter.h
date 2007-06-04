@@ -207,10 +207,25 @@ protected:
  */
 class CRibWriterCreator : public CContextCreator {
 protected:
+	static const char *myName();
+	static const char *myType();
+	static unsigned long myMajorVersion();
+	static unsigned long myMinorVersion();
+	static unsigned long myRevision();
+
+	inline virtual const char *name() { return myName(); }
+	inline virtual const char *type() { return myType(); }
+	inline virtual unsigned long majorVersion() {return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() {return myMinorVersion(); }
+	inline virtual unsigned long revision() {return myRevision(); }
+
+	inline virtual void startup() {}
+	inline virtual void shutdown() {}
+
 	inline virtual IRiContext *getNewContext() { return new CRibWriter; }
-	inline virtual unsigned long majorVersion() const { return IRiContext::riContextMajorVersion; }
-	inline virtual unsigned long minorVersion() const { return CRibWriter::ribWriterMinorVersion; }
-	inline virtual unsigned long revision() const { return CRibWriter::ribWriterRevision; }
+	inline virtual unsigned long majorInterfaceVer() const { return IRiContext::riContextMajorVersion; }
+	inline virtual unsigned long minorInterfaceVer() const { return CRibWriter::ribWriterMinorVersion; }
+	inline virtual unsigned long interfaceRevision() const { return CRibWriter::ribWriterRevision; }
 	inline virtual RtToken rendererName() const { return CRibWriter::myRendererName(); }
 	inline virtual RtToken rendererType() const { return CRibWriter::myRendererType(); }
 };

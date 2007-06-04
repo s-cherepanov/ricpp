@@ -32,9 +32,9 @@
  *  The CContextCreator is part of the backend. It is managed by CRiCPPBridge and CRendererLoader.
  */
 
-#ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/RICPP/renderererror.h"
-#endif // _RICPP_RICPP_RENDERERERROR_H
+#ifndef _RICPP_PLUGINHANDLER_PLUGINHANDLER_H
+#include "ricpp/pluginhandler/pluginhandler.h"
+#endif // _RICPP_PLUGINHANDLER_PLUGINHANDLER_H
 
 #ifndef _RICPP_BASERENDERER_RICONTEXT_H
 #include "ricpp/baserenderer/ricontext.h"
@@ -54,7 +54,7 @@ namespace RiCPP {
  * by deleteContextCreator() (e.g. winribwriterdll.cpp macribwriterdll.cpp). CRiCPPBridge manages
  * the usage of CContextCreator from the frontend.
  */
-class CContextCreator {
+class CContextCreator : IPlugin {
 
 	/** @brief List of all contexts created and not yet destroyed.
 	 */
@@ -103,6 +103,21 @@ protected:
 	virtual void deleteContext();
 
 public:
+	static const char *myName();
+	static const char *myType();
+	static unsigned long myMajorVersion();
+	static unsigned long myMinorVersion();
+	static unsigned long myRevision();
+
+	inline virtual const char *name() { return myName(); }
+	inline virtual const char *type() { return myType(); }
+	inline virtual unsigned long majorVersion() {return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() {return myMinorVersion(); }
+	inline virtual unsigned long revision() {return myRevision(); }
+
+	inline virtual void startup() {}
+	inline virtual void shutdown() {}
+
 	/** @brief Constructor, just initializes the current context to 0
 	 */
 	inline CContextCreator() : m_curContext(0) { }
@@ -180,17 +195,17 @@ public:
 	 *
 	 * @return the major version of IRiContext
 	 */
-	virtual unsigned long majorVersion(void) const { return IRiContext::riContextMajorVersion; }
+	virtual unsigned long majorInterfaceVer(void) const { return IRiContext::riContextMajorVersion; }
 
 	/** @brief The minor version is the version of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the minor version of a concrete context.
 	 */
-	inline virtual unsigned long minorVersion() const { return 0; }
+	inline virtual unsigned long minorInterfaceVer() const { return 0; }
 
 	/** @brief The revision of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the revision of a concrete context.
 	 */
-	inline virtual unsigned long revision() const { return 0; }
+	inline virtual unsigned long interfaceRevision() const { return 0; }
 
 	/** @brief The name of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the name of a concrete context.

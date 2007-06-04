@@ -147,6 +147,7 @@ private:
 		 */
 		virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
 	} m_ricppErrorHandler; // used only via ricppErrHandler()
+
 	friend class CRiCPPBridgeErrorHandler;
 	//@}
 
@@ -168,6 +169,7 @@ private:
 
 	CRendererLoader m_rendererCreator;  ///<< Used by CContextCreator to create context creators
 
+	
 	/** @brief  Assignment, not in use, just because of compiler warning
 	 *
 	 * @param bridge

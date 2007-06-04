@@ -108,7 +108,7 @@ CContextCreator *CRendererLoader::CRendererLib::getContextCreator(unsigned long 
 // throw ERiCPPError
 {
 	if ( m_contextCreator ) {
-		if ( m_contextCreator->majorVersion() == majorVersion )
+		if ( m_contextCreator->majorInterfaceVer() == majorVersion )
 			return m_contextCreator;
 		throw ERiCPPError(RIE_VERSION, RIE_SEVERE, "Major version of context creator does not match.", __LINE__, __FILE__);
 		return 0;

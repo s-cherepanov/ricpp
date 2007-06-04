@@ -29,9 +29,38 @@
 
 #include "ricpp/rendererloader/rendererloader.h"
 #include "ricpp/ribwriter/ribwriter.h"
+#include "ricpp/tools/platform.h"
 
 using namespace RiCPP;
 
+
+CContextCreator *CRendererLoader::CRendererLib::newContextCreator(unsigned long majorversion) {
+	CContextCreator *cc = ((TypeNewContextCreatorFunc)m_newContextCreator->funcPtr())(majorversion);
+	return cc;
+}
+void CRendererLoader::CRendererLib::deleteContextCreator(CContextCreator *cc) {
+	((TypeDeleteContextCreatorFunc)m_deleteContextCreator->funcPtr())(cc);
+}
+
+unsigned long CRendererLoader::CRendererLib::majorInterfaceVer() {
+	return ((TypeMajorInterfaceVerFunc)m_majorInterfaceVer->funcPtr())();
+}
+
+unsigned long CRendererLoader::CRendererLib::minorInterfaceVer() {
+	return ((TypeMinorInterfaceVerFunc)m_minorInterfaceVer->funcPtr())();
+}
+
+unsigned long CRendererLoader::CRendererLib::interfaceRevision() {
+	return ((TypeInterfaceRevisionFunc)m_interfaceRevision->funcPtr())();
+}
+
+const char *CRendererLoader::CRendererLib::rendererType() {
+	return ((TypeRendererTypeFunc)m_rendererType->funcPtr())();
+}
+
+const char *CRendererLoader::CRendererLib::rendererName() {
+	return ((TypeRendererNameFunc)m_rendererName->funcPtr())();
+}
 
 CRendererLoader::CRendererLib::CRendererLib(CDynLib *dynLib)
 {

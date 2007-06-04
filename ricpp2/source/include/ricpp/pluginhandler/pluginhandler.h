@@ -381,23 +381,23 @@ public:
 
 	inline virtual unsigned long majorVersion()
 	{
-		return ((TypeMajorVersion)(m_funcMajorVersion->funcPtr()))();
+		return ((TypeMajorVersion)m_funcMajorVersion->funcPtr())();
 	}
 	inline virtual unsigned long minorVersion()
 	{
-		return ((TypeMinorVersion)(m_funcMinorVersion->funcPtr()))();
+		return ((TypeMinorVersion)m_funcMinorVersion->funcPtr())();
 	}
 	inline virtual unsigned long revision()
 	{
-		return ((TypeRevision)(m_funcRevision->funcPtr()))();
+		return ((TypeRevision)m_funcRevision->funcPtr())();
 	}
 	inline virtual const char *type()
 	{
-		return ((TypeType)(m_funcType->funcPtr()))();
+		return ((TypeType)m_funcType->funcPtr())();
 	}
 	inline virtual const char *name()
 	{
-		return ((TypeName)(m_funcName->funcPtr()))();
+		return ((TypeName)m_funcName->funcPtr())();
 	}
 	inline virtual const char *searchpath()
 	{
@@ -408,7 +408,7 @@ public:
 	{ 
 		Plugin *p = 0;
 
-		p = ((TypeNewPlugin)(m_funcNewPlugin->funcPtr()))(Plugin::myMajorVersion(), Plugin::myType());
+		p = ((TypeNewPlugin)m_funcNewPlugin->funcPtr())(Plugin::myMajorVersion(), Plugin::myType());
 		if ( p ) {
 			TPluginFactory<Plugin>::m_lastPlugin = p;
 			TPluginFactory<Plugin>::m_pluginRegistry.registerObj(p, p);
@@ -422,7 +422,7 @@ public:
 		if ( p && TPluginFactory<Plugin>::m_pluginRegistry.findObj(p) ) {
 			p->shutdown();
 			TPluginFactory<Plugin>::m_pluginRegistry.unRegisterObj(p);
-			((TypeDeletePlugin)(m_funcDeletePlugin->funcPtr()))(p);
+			((TypeDeletePlugin)m_funcDeletePlugin->funcPtr())(p);
 			if ( TPluginFactory<Plugin>::m_lastPlugin == p )
 				TPluginFactory<Plugin>::m_lastPlugin = 0;
 			return true;

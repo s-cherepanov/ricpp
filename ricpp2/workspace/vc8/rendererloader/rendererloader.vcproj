@@ -285,10 +285,6 @@
 				RelativePath="..\..\..\source\rendererloader\rendererloader.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\source\rendererloader\win32rendererlib.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

@@ -338,7 +338,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\source\ribwriterdll\win32ribwriterdll.cpp"
+				RelativePath="..\..\..\source\ribwriterdll\ribwriterdll.cpp"
 				>
 			</File>
 		</Filter>

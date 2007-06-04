@@ -79,6 +79,14 @@ private:
 		/** @brief The functions loaded from the library
 		 */
 		//@{
+		typedef CContextCreator *(CDECL *TypeNewContextCreatorFunc)(unsigned long);
+		typedef void (CDECL *TypeDeleteContextCreatorFunc)(CContextCreator *);
+		typedef unsigned long (CDECL *TypeMajorInterfaceVerFunc)();
+		typedef unsigned long (CDECL *TypeMinorInterfaceVerFunc)();
+		typedef unsigned long (CDECL *TypeInterfaceRevisionFunc)();
+		typedef const char *(CDECL *TypeRendererTypeFunc)();
+		typedef const char *(CDECL *TypeRendererNameFunc)();
+
 		ILibFunc *m_newContextCreator;    ///< Gets a new context creator
 		ILibFunc *m_deleteContextCreator; ///< Deletes a context creator (created by newContextCreator() of the same library)
 		ILibFunc *m_majorInterfaceVer;    ///< Gets the major interface version (the version of IRendererContext

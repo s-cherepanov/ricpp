@@ -22,18 +22,38 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file macpassthrough.cpp
+/** @file win32passthrough.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The MacOS stub for the dynamic library of a CRibFilter (demo)
+ *  @brief The Win32 stub for the dynamic library of a CRibFilter (demo)
  */
+
+// passthrough.cpp : Defines the entry point for the DLL application.
+//
 
 #include "ricpp/ribfilter/ribfilter.h"
 #include "ricpp/tools/platform.h"
 
 using namespace RiCPP;
-/* @brief Symbolic name for visibility("default") attribute.
- */
-// #define EXPORT __attribute__((visibility("default")))
+
+#ifdef WIN32
+
+#ifdef _MANAGED
+#pragma managed(push, off)
+#endif
+
+BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD  ul_reason_for_call,
+                       LPVOID lpReserved
+					 )
+{
+    return TRUE;
+}
+
+#ifdef _MANAGED
+#pragma managed(pop)
+#endif
+
+#endif // WIN32
 
 extern "C" {
 
@@ -67,7 +87,7 @@ void CDECL deletePlugin(CRibFilter *p)
  *  @return The major version of the plugin
  */
 EXPORT
-unsigned CDECL long majorVersion()
+unsigned long CDECL majorVersion()
 {
 	return CRibFilter::myMajorVersion();
 }
@@ -77,7 +97,7 @@ unsigned CDECL long majorVersion()
  *  @return The minor version of the plugin
  */
 EXPORT
-unsigned CDECL long minorVersion()
+unsigned long CDECL minorVersion()
 {
 	return CRibFilter::myMinorVersion();
 }
@@ -87,7 +107,7 @@ unsigned CDECL long minorVersion()
  *  @return The revision number of the plugin
  */
 EXPORT
-unsigned CDECL long revision()
+unsigned long CDECL revision()
 {
 	return CRibFilter::myRevision();
 }

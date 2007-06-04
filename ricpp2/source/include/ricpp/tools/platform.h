@@ -44,9 +44,22 @@
  *  @return 1, if s1 > s2, 0 if the strings are equal and -1 if s2 > s1
  */
 inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2); }
+
+/** @brief Export declaration for the included functions
+ */
+#define EXPORT __declspec ( dllexport )
+
 #else
+
 typedef int (*FARPROC)();
+
+/** @brief CDECL is not used
+ */
 #define CDECL
+
+/** @brief Symbolic name for visibility("default") attribute.
+ */
+#define EXPORT __attribute__((visibility("default")))
 #endif
 
 #endif

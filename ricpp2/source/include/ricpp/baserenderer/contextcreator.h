@@ -109,11 +109,11 @@ public:
 	static unsigned long myMinorVersion();
 	static unsigned long myRevision();
 
-	inline virtual const char *name() { return myName(); }
-	inline virtual const char *type() { return myType(); }
-	inline virtual unsigned long majorVersion() {return myMajorVersion(); }
-	inline virtual unsigned long minorVersion() {return myMinorVersion(); }
-	inline virtual unsigned long revision() {return myRevision(); }
+	inline virtual const char *name() const { return myName(); }
+	inline virtual const char *type() const { return myType(); }
+	inline virtual unsigned long majorVersion() const {return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() const {return myMinorVersion(); }
+	inline virtual unsigned long revision() const {return myRevision(); }
 
 	inline virtual void startup() {}
 	inline virtual void shutdown() {}
@@ -195,22 +195,27 @@ public:
 	 *
 	 * @return the major version of IRiContext
 	 */
-	virtual unsigned long majorInterfaceVer(void) const { return IRiContext::riContextMajorVersion; }
+	virtual unsigned long majorContextVersion(void) const { return IRiContext::myMajorVersion(); }
 
 	/** @brief The minor version is the version of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the minor version of a concrete context.
 	 */
-	inline virtual unsigned long minorInterfaceVer() const { return 0; }
+	inline virtual unsigned long minorContextVersion() const { return 0; }
 
 	/** @brief The revision of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the revision of a concrete context.
 	 */
-	inline virtual unsigned long interfaceRevision() const { return 0; }
+	inline virtual unsigned long contextRevision() const { return 0; }
 
 	/** @brief The name of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the name of a concrete context.
 	 */
-	inline virtual RtToken rendererName() const { return RI_NULL; }
+	inline virtual RtToken contextName() const { return RI_NULL; }
+
+	/** @brief The type of a concrete context interface (that's IRiContext)
+	 *  @return Type of IRiContext
+	 */
+	inline virtual RtToken contextType() const { return IRiContext::myType(); }
 
 	/** @brief The renderer type of a concrete context (must be overwritten)
 	 *  @return RI_NULL, overload to return the type of a concrete context (RI_ARCHIVE, RI_DRAFT, RI_REALISTIC, or user defined).

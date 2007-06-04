@@ -31,7 +31,6 @@
 
 using namespace RiCPP;
 
-#ifdef _DEBUG
 class CPlugin : public IPlugin {
 public:
 	static const char *myName();
@@ -43,11 +42,11 @@ public:
 	inline CPlugin::CPlugin() {}
 	inline virtual ~CPlugin() {}
 
-	inline virtual const char *name() { return myName(); }
-	inline virtual const char *type() { return myType(); }
-	inline virtual unsigned long majorVersion() {return myMajorVersion(); }
-	inline virtual unsigned long minorVersion() {return myMinorVersion(); }
-	inline virtual unsigned long revision() {return myRevision(); }
+	inline virtual const char *name() const { return myName(); }
+	inline virtual const char *type() const { return myType(); }
+	inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
+	inline virtual unsigned long revision() const { return myRevision(); }
 
 	inline virtual void startup() {}
 	inline virtual void shutdown() {}
@@ -70,5 +69,3 @@ void testPluginFactory()
 		e = e;
 	}
 }
-
-#endif // _DEBUG

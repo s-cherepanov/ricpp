@@ -76,7 +76,7 @@ public:
 	 *
 	 * @return Major version number of the plugin.
 	 */
-	virtual unsigned long majorVersion() = 0;
+	virtual unsigned long majorVersion() const = 0;
 
 	/** @brief Minor version number of the plugin interface.
 	 *
@@ -85,7 +85,7 @@ public:
 	 *
 	 * @return Minor version number of the plugin.
 	 */
-	virtual unsigned long minorVersion() = 0;
+	virtual unsigned long minorVersion() const = 0;
 
 	/** @brief Revision number of the plugin interface.
 	 *
@@ -93,18 +93,18 @@ public:
 	 *
 	 * @return Revision number of the plugin
 	 */
-	virtual unsigned long revision() = 0;
+	virtual unsigned long revision() const = 0;
 
 	/** @brief Type of the plugin for grouping the plugins somehow.
 	 * @return Type of the plugin
 	 */
-	virtual const char *type() = 0;
+	virtual const char *type() const = 0;
 
 	/** @brief Name of the plugin and factory library.
 	 *
 	 * @return Name of the plugin and plugin library.
 	 */
-	virtual const char *name() = 0;
+	virtual const char *name() const = 0;
 
 	/** @brief Called after the plugin is created.
 	 */
@@ -203,7 +203,7 @@ public:
 			// p could not be created
 		}
 		if ( !p ) {
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create a plugin \"%s\"", markemptystr(name()));
+			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a plugin '%s'", markemptystr(name()));
 		}
 
 		if ( p ) {
@@ -331,7 +331,7 @@ public:
 			// m_lib not created
 		}
 		if ( !m_lib ) {
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create a new CDynLib for plugin factory \"%s\"", markemptystr(libname));
+			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a new CDynLib for plugin factory '%s'", markemptystr(libname));
 		}
 
 		// Load the library
@@ -355,7 +355,7 @@ public:
 			// One of the funcs is not created
 		}
 		if ( !valid() ) {
-			throw ERiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create the library functions for plugin factory \"%s\"", markemptystr(libname));
+			throw ERiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create the library functions for plugin factory '%s'", markemptystr(libname));
 		}
 	}
 
@@ -413,6 +413,8 @@ public:
 			TPluginFactory<Plugin>::m_lastPlugin = p;
 			TPluginFactory<Plugin>::m_pluginRegistry.registerObj(p, p);
 			p->startup();
+		} else {
+			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Plugin of wrong version or type '%s'", markemptystr(m_libName.c_str()));
 		}
 		return p;
 	}
@@ -499,17 +501,26 @@ protected:
 				// could not create TPluginLoaderFactory
 			}
 			if ( !f )
-				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__ "Cannot create a new plugin factory for \"%s\"", markemptystr(name));
+				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a new plugin factory for '%s'", markemptystr(name));
 
 			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
 				delete f;
-				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - not loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
+				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong type '%s' vs. '%s' - not loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
 			}
-			m_factoryRegistry.registerObj(key, f);
-		}
 
-		if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
-			throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__ "Plugin Factory is of wrong type \"%s\" vs. \"%s\" - allready loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
+			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
+				delete f;
+				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong version '%ld' vs. '%ld' - not loaded", Plugin::myMajorVersion(), f->majorVersion());
+			}
+
+			m_factoryRegistry.registerObj(key, f);
+		} else {
+			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
+				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong type '%s' vs. '%s' - allready loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
+			}
+			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
+				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong version '%ld' vs. '%ld' - allready loaded", Plugin::myMajorVersion(), f->majorVersion());
+			}
 		}
 		return f;
 	}
@@ -591,7 +602,7 @@ public:
 
 	/** @brief Sets a new searchpath.
 	 *
-	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'.
+	 * @param path New searchpath, directory seperator '/', pathes separated by ';'.
 	 */
 	inline void searchpath(const char *path) { m_searchpath = nonullstr(path); }
 

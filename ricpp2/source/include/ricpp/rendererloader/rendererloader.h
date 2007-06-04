@@ -51,10 +51,7 @@ protected:
 	 * @param name
 	 * @return The renderer name for \a name
 	 */
-	inline virtual const char *rendererName(RtString name) const
-	{
-		return emptyStr(name) ? "ribwriter" : name;
-	}
+	virtual const char *rendererName(RtString name) const;
 	
 public:
 	/** @brief Virtual destructor
@@ -70,7 +67,7 @@ public:
 	 * @return A context creator, new or already loaded.
 	 * @exception ERiCPPException
 	 */
-	inline virtual CContextCreator *getContextCreator(RtString name) { return lastPlugin(rendererName(name)); }
+	virtual CContextCreator *getContextCreator(RtString name);
 
 	/** @brief Do not remove, context creator is cached
 	 *

@@ -64,6 +64,10 @@ public:
 	bool addFront(const char *name);
 	bool removeFront();
 	inline void searchpath(const char *path) { m_pluginHandler.searchpath(path); }
+	inline virtual bool registerFactory(const char *name, TPluginFactory<CRibFilter> *f)
+	{
+		return m_pluginHandler.registerFactory(name, f);
+	}
 }; // class CRibFilterList
 
 } // namespace RiCPP

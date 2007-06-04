@@ -22,9 +22,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file win32ribwriterdll.cpp
+/** @file ribwriterdll.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The Win32 stub for the dynamic library of a CRibWriter
+ *  @brief Stub for the dynamic library of a CRibWriter
  */
 
 #include "ricpp/ribwriter/ribwriter.h"
@@ -75,7 +75,7 @@ CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)
  *  @param p Plugin that is deletetd, must have been constructed by newPlugin()
  */
 EXPORT
-void CDECL deletePlugin(CRibWriterCreator *p)
+void CDECL deletePlugin(CContextCreator *p)
 {
 	if ( p )
 		delete p;
@@ -129,80 +129,6 @@ EXPORT
 const char * CDECL name()
 {
 	return CRibWriterCreator::myName();
-}
-
-/** @fn CContextCreator *newContextCreator(unsigned long majorversion)
- *  @brief Returns an instance of a new renderer
- *  @param majorversion Major version number of the returnd IRiContext
- *  @return Returns a context if \a majorversion has the right value
- */
-EXPORT
-CContextCreator * CDECL newContextCreator(unsigned long majorversion)
-{
-	if ( majorversion != IRiContext::riContextMajorVersion )
-		return NULL;
-	return new CRibWriterCreator;
-}
-
-/** @fn void deleteContextCreator(CContextCreator *cc)
- *  @brief Deletes a renderer created by newContextCreator()
- *  @param cc Context creator that is deletetd, must have been constructed by newContextCreator()
- */
-EXPORT
-void CDECL deleteContextCreator(CContextCreator *cc)
-{
-	if ( cc )
-		delete cc;
-}
-
-/** @fn unsigned long majorInterfaceVer()
- *  @brief Returns the major version number of the interface (changes if the IRiContext interface changes)
- *  @return The major version of IRiContext
- */
-EXPORT
-unsigned long CDECL majorInterfaceVer()
-{
-	return IRiContext::riContextMajorVersion;
-}
-
-/** @fn unsigned long minorInterfaceVer()
- *  @brief Returns the minor version number of the interface (since IRiContext is pure virtual, the concrete renderer has the minor version)
- *  @return The minor version of CRibWriter
- */
-EXPORT
-unsigned long CDECL minorInterfaceVer()
-{
-	return CRibWriter::ribWriterMinorVersion;
-}
-
-/** @fn unsigned long interfaceRevision()
- *  @brief Returns the revision of the interface (since IRiContext is pure virtual, the concrete renderer has the revision number)
- *  @return The revision number of CRibWriter
- */
-EXPORT
-unsigned long CDECL interfaceRevision()
-{
-	return CRibWriter::ribWriterRevision;
-}
-
-/** @fn RtToken rendererType()
- *  @brief Returns the type of the renderer
- *  @return The renderer type of CRibWriter
- */
-EXPORT
-RtToken CDECL rendererType()
-{
-	return CRibWriter::myRendererType();
-}
-
-/** @fn RtToken rendererName()
- *  @brief Returns the name of the renderer
- *  @return The name of CRibWriter
- */
-EXPORT
-RtToken CDECL rendererName()
-{
-	return CRibWriter::myRendererName();
 }
 
 }

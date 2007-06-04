@@ -32,4 +32,6 @@
 
 using namespace RiCPP;
 
-const unsigned long IRiContext::riContextMajorVersion = 1;
+unsigned long IRiContext::myMajorVersion() { return 1; }
+
+const char *IRiContext::myType() { return "ricontext"; }

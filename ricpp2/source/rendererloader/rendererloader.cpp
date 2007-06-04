@@ -28,5 +28,24 @@
  */
 
 #include "ricpp/rendererloader/rendererloader.h"
+#include "ricpp/ribwriter/ribwriter.h"
 
 using namespace RiCPP;
+
+const char *CRendererLoader::rendererName(RtString name) const
+{
+	return emptyStr(name) ? CRibWriter::myName() : name;
+}
+
+CContextCreator *CRendererLoader::getContextCreator(RtString name) {
+	CContextCreator *cc = lastPlugin(rendererName(name));
+	if ( cc ) {
+		if ( cc->majorContextVersion() != IRiContext::myMajorVersion() ) {
+			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Context version mismatch, renderer name: '%s'", rendererName(name));
+		}
+		if ( strcmp(nonullstr(cc->contextType()), nonullstr(IRiContext::myType())) != 0 ) {
+			throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Context type mismatch, renderer name: '%s'", rendererName(name));
+		}
+	}
+	return cc;
+}

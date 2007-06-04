@@ -72,11 +72,11 @@ public:
 	}
 	inline virtual ~CRibFilter() {}
 
-	inline virtual const char *name() { return myName(); }
-	inline virtual const char *type() { return myType(); }
-	inline virtual unsigned long majorVersion() {return myMajorVersion(); }
-	inline virtual unsigned long minorVersion() {return myMinorVersion(); }
-	inline virtual unsigned long revision() {return myRevision(); }
+	inline virtual const char *name() const  { return myName(); }
+	inline virtual const char *type() const { return myType(); }
+	inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
+	inline virtual unsigned long revision() const { return myRevision(); }
 
 	inline virtual void startup() {}
 	inline virtual void shutdown() {}

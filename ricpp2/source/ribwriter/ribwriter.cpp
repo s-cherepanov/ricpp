@@ -37,21 +37,9 @@ unsigned long CRibWriterCreator::myMajorVersion() { return CContextCreator::myMa
 unsigned long CRibWriterCreator::myMinorVersion() { return 1; }
 unsigned long CRibWriterCreator::myRevision() { return 1; }
 
-const unsigned long CRibWriter::ribWriterMinorVersion = 1;
-const unsigned long CRibWriter::ribWriterRevision = 1;
-
-RtToken CRibWriter::myRendererName() {
-	return "ribwriter";
-}
-
-RtToken CRibWriter::rendererName()  const {
-	return myRendererName();
-}
-
-RtToken CRibWriter::myRendererType() {
-	return RI_ARCHIVE;
-}
-
-RtToken CRibWriter::rendererType() const {
-	return myRendererType();
-}
+const char *CRibWriter::myName() { return "ribwriter"; }
+const char *CRibWriter::myType() { return IRiContext::myType(); }
+unsigned long CRibWriter::myMajorVersion() { return IRiContext::myMajorVersion(); }
+unsigned long CRibWriter::myMinorVersion() { return 1; }
+unsigned long CRibWriter::myRevision() { return 1; }
+RtToken CRibWriter::myRendererType() { return RI_ARCHIVE; }

@@ -36,10 +36,10 @@
 
 namespace RiCPP {
 
-/** @brief RenderMan Interface for a backend render context.
+/** @brief RenderMan Interface for a backend rendering context.
  *
- * Interface for a render context called from the CRiCPPBridge and CContextCreator.
- * A concrete render context will extend CBaseRenderer not IRiContext. Typically
+ * Interface for a rendering context called from the CRiCPPBridge and CContextCreator.
+ * A concrete rendering context will extend CBaseRenderer not IRiContext. Typically
  * an overloaded beginV() will return no RtContextHandle (0), because IRiContext is
  * the context and the handle is managed by CContextCreator.
  */
@@ -81,14 +81,25 @@ public:
 	 *
 	 *  The major version changes, if either IRiContext's or IRiRoot's signature changes -
 	 *  that means if the backend calling interface changes.
+	 *
+	 *  @return Major interface number
 	 */
-	static const unsigned long riContextMajorVersion;
+	static unsigned long myMajorVersion();
+
+	/** @brief The type of contexts.
+	 *
+	 *  The type name of a context "ricontext",
+	 *  is the same of all classes inheriting from IRiContext.
+	 *
+	 *  @return type string "ricontext"
+	 */
+	static const char *myType();
 
 	/** @brief The major version of the IRiContext interface
 	 *
 	 *  @return The major version number of the context
 	 */
-	inline virtual unsigned long majorVersion() const { return riContextMajorVersion; }
+	inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
 
 	/** @brief Overload for the minor version of the interface
 	 *
@@ -106,8 +117,14 @@ public:
 	 *
 	 *  @return The name of a renderer used by the IRi::begin(RtString name) of the frontend
 	 */
-	virtual RtToken rendererName() const = 0;
+	virtual RtToken name() const = 0;
 	
+	/** @brief The type of the base class
+	 *
+	 *  @return The type of the base class
+	 */
+	virtual RtToken type() const { return myType(); }
+
 	/** @brief Overload to specify the renderer type
 	 *
 	 *  @return The type of a renderer: RI_ARCHIVE, RI_DRAFT, RI_REALISTIC or user defined for information

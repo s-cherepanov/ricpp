@@ -47,15 +47,22 @@ public:
 	inline CRibWriter() {}
 	inline virtual ~CRibWriter() {}
 
-	static const unsigned long ribWriterMinorVersion;
-	inline virtual unsigned long minorVersion() const { return ribWriterMinorVersion; }
-	static const unsigned long ribWriterRevision;
-	inline virtual unsigned long revision() const { return ribWriterRevision; }
+	static const char *myName();
+	static const char *myType();
+	static unsigned long myMajorVersion();
+	static unsigned long myMinorVersion();
+	static unsigned long myRevision();
 
-	static RtToken myRendererName();
-	virtual RtToken rendererName() const;
 	static RtToken myRendererType();
-	virtual RtToken rendererType() const;
+
+	inline virtual const char *name() const { return myName(); }
+	inline virtual const char *type() const { return myType(); }
+	inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
+	inline virtual unsigned long revision() const { return myRevision(); }
+
+	inline virtual RtToken rendererType() const { return myRendererType(); }
+
 
 protected:
 	inline virtual RtVoid doAbort(void) {}
@@ -208,11 +215,6 @@ protected:
 class CRibWriterCreator : public CContextCreator {
 protected:
 	inline virtual IRiContext *getNewContext() { return new CRibWriter; }
-	inline virtual unsigned long majorInterfaceVer() const { return IRiContext::riContextMajorVersion; }
-	inline virtual unsigned long minorInterfaceVer() const { return CRibWriter::ribWriterMinorVersion; }
-	inline virtual unsigned long interfaceRevision() const { return CRibWriter::ribWriterRevision; }
-	inline virtual RtToken rendererName() const { return CRibWriter::myRendererName(); }
-	inline virtual RtToken rendererType() const { return CRibWriter::myRendererType(); }
 
 public:
 	static const char *myName();
@@ -221,14 +223,21 @@ public:
 	static unsigned long myMinorVersion();
 	static unsigned long myRevision();
 
-	inline virtual const char *name() { return myName(); }
-	inline virtual const char *type() { return myType(); }
-	inline virtual unsigned long majorVersion() {return myMajorVersion(); }
-	inline virtual unsigned long minorVersion() {return myMinorVersion(); }
-	inline virtual unsigned long revision() {return myRevision(); }
+	inline virtual const char *name() const { return myName(); }
+	inline virtual const char *type() const { return myType(); }
+	inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
+	inline virtual unsigned long revision() const { return myRevision(); }
 
 	inline virtual void startup() {}
 	inline virtual void shutdown() {}
+
+	inline virtual unsigned long majorContextVersion() const { return CRibWriter::myMajorVersion(); }
+	inline virtual unsigned long minorContextVersion() const { return CRibWriter::myMinorVersion(); }
+	inline virtual unsigned long contextRevision() const { return CRibWriter::myRevision(); }
+	inline virtual RtToken contextName() const { return CRibWriter::myName(); }
+	inline virtual RtToken contextType() const { return CRibWriter::myType(); }
+	inline virtual RtToken rendererType() const { return CRibWriter::myRendererType(); }
 };
 
 

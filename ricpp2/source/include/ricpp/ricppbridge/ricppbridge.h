@@ -631,7 +631,7 @@ public:
 		return false;
 	}
 
-	inline bool addFrontRibFilter(const char *name)
+	inline virtual bool addFrontRibFilter(const char *name)
 	{
 		try {
 			return m_ribFilterList.addFront(name);
@@ -641,11 +641,20 @@ public:
 		return false;
 	}
 
-	inline bool removeFrontRibFilter()
+	inline virtual bool removeFrontRibFilter()
 	{
 		return m_ribFilterList.removeFront();
 	}
 
+	inline virtual bool registerRibFilterFactory(const char *name, TPluginFactory<CRibFilter> *f)
+	{
+		try {
+			return m_ribFilterList.registerFactory(name, f);
+		} catch ( ERiCPPError &e ) {
+			ricppErrHandler().handleError(e);
+		}
+		return false;
+	}
 
 	/** @brief Returns the appropriate filter functions
      */

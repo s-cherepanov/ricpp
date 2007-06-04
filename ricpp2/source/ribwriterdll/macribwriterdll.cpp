@@ -30,7 +30,9 @@
 #include "ricpp/ribwriter/ribwriter.h"
 
 using namespace RiCPP;
-// Symbolic name for visibility("default") attribute.
+
+/** @brief Symbolic name for visibility("default") attribute.
+ */
 #define EXPORT __attribute__((visibility("default")))
 
 extern "C" {

@@ -310,7 +310,7 @@ public:
 	 * @exception ERiCPPError
 	 */
 	inline TPluginLoaderFactory(const char *libname, const char *pathlist = 0)
-		: TPluginFactory(false)
+		: TPluginFactory<Plugin>(false)
 	{
 		m_funcNewPlugin = 0;
 		m_funcDeletePlugin = 0;
@@ -363,8 +363,8 @@ public:
 	 **/
 	inline virtual ~TPluginLoaderFactory()
 	{
-		TObjPtrRegistry<Plugin *, Plugin *>::const_iterator it;
-		for ( it = m_pluginRegistry.begin(); it != m_pluginRegistry.end(); ++it ) {
+		typename TObjPtrRegistry<Plugin *, Plugin *>::const_iterator it;
+		for ( it = TPluginFactory<Plugin>::m_pluginRegistry.begin(); it != TPluginFactory<Plugin>::m_pluginRegistry.end(); ++it ) {
 			delete it->second;
 		}
 		if ( m_lib ) {
@@ -410,8 +410,8 @@ public:
 
 		p = ((TypeNewPlugin)(m_funcNewPlugin->funcPtr()))(Plugin::myMajorVersion(), Plugin::myType());
 		if ( p ) {
-			m_lastPlugin = p;
-			m_pluginRegistry.registerObj(p, p);
+			TPluginFactory<Plugin>::m_lastPlugin = p;
+			TPluginFactory<Plugin>::m_pluginRegistry.registerObj(p, p);
 			p->startup();
 		}
 		return p;
@@ -419,12 +419,12 @@ public:
 
 	inline virtual bool deletePlugin(Plugin *p)
 	{
-		if ( p && m_pluginRegistry.findObj(p) ) {
+		if ( p && TPluginFactory<Plugin>::m_pluginRegistry.findObj(p) ) {
 			p->shutdown();
-			m_pluginRegistry.unRegisterObj(p);
+			TPluginFactory<Plugin>::m_pluginRegistry.unRegisterObj(p);
 			((TypeDeletePlugin)(m_funcDeletePlugin->funcPtr()))(p);
-			if ( m_lastPlugin == p )
-				m_lastPlugin = 0;
+			if ( TPluginFactory<Plugin>::m_lastPlugin == p )
+				TPluginFactory<Plugin>::m_lastPlugin = 0;
 			return true;
 		}
 		return false;

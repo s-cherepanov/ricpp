@@ -1,36 +1,38 @@
-/** @file win32passthrough.cpp
- *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The Win32 stub for the dynamic library of a CRibFilter (demo)
- */
-
-// win32passthrough.cpp : Defines the entry point for the DLL application.
+// RICPP - RenderMan(R) Interface CPP Language Binding
 //
+//     RenderMan(R) is a registered trademark of Pixar
+// The RenderMan(R) Interface Procedures and Protocol are:
+//         Copyright 1988, 1989, 2000, 2005 Pixar
+//                 All rights Reservered
+//
+// Copyright (c) of RiCPP 2007, Andreas Pidde
+// Contact: andreas@pidde.de
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//  
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+/** @file macpassthrough.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief The MacOS stub for the dynamic library of a CRibFilter (demo)
+ */
 
 #include "ricpp/ribfilter/ribfilter.h"
-#include <windows.h>
 
 using namespace RiCPP;
-
-/** @brief Export declaration for the included functions
+/** @brief Symbolic name for visibility("default") attribute.
  */
-#define EXPORT __declspec ( dllexport )
-
-
-#ifdef _MANAGED
-#pragma managed(push, off)
-#endif
-
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
-{
-    return TRUE;
-}
-
-#ifdef _MANAGED
-#pragma managed(pop)
-#endif
+#define EXPORT __attribute__((visibility("default")))
 
 extern "C" {
 
@@ -53,7 +55,7 @@ CRibFilter * CDECL newPlugin(unsigned long majorversion, const char *type)
  *  @param p Plugin that is deletetd, must have been constructed by newPlugin()
  */
 EXPORT
-void CDECL deletePlugin(CRibFilter *p)
+void deletePlugin(CRibFilter *p)
 {
 	if ( p )
 		delete p;
@@ -64,7 +66,7 @@ void CDECL deletePlugin(CRibFilter *p)
  *  @return The major version of the plugin
  */
 EXPORT
-unsigned long CDECL majorVersion()
+unsigned long majorVersion()
 {
 	return CRibFilter::myMajorVersion();
 }
@@ -74,7 +76,7 @@ unsigned long CDECL majorVersion()
  *  @return The minor version of the plugin
  */
 EXPORT
-unsigned long CDECL minorVersion()
+unsigned long minorVersion()
 {
 	return CRibFilter::myMinorVersion();
 }
@@ -84,7 +86,7 @@ unsigned long CDECL minorVersion()
  *  @return The revision number of the plugin
  */
 EXPORT
-unsigned long CDECL revision()
+unsigned long revision()
 {
 	return CRibFilter::myRevision();
 }
@@ -94,7 +96,7 @@ unsigned long CDECL revision()
  *  @return The renderer type the plugin
  */
 EXPORT
-const char * CDECL type()
+const char *type()
 {
 	return CRibFilter::myType();
 }
@@ -104,7 +106,7 @@ const char * CDECL type()
  *  @return The name of the plugin
  */
 EXPORT
-const char * CDECL name()
+const char *name()
 {
 	return CRibFilter::myName();
 }

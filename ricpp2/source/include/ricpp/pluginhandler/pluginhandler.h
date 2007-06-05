@@ -606,7 +606,7 @@ public:
 	 */
 	inline void searchpath(const char *path) { m_searchpath = nonullstr(path); }
 
-	/** @brief Gets a new searchpath.
+	/** @brief Gets the current searchpath.
 	 *
 	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
 	 */

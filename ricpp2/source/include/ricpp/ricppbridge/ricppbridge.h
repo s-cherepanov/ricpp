@@ -172,10 +172,6 @@ private:
 	std::vector<RtPointer> m_params;	///<< The values of the parameter list of an interface call
 	//@}
 
-	/** @defgroup ri_ribfilter Filterlist
-	 *  @{
-	 */
-
 	/** @brief Standard Rib filter
 	 *  Used by m_ribFilterList to hook in other Rib filters, Options can
 	 *  be used to activate/deactivate intrerface calls, if they are invoked
@@ -188,15 +184,6 @@ private:
 	 *  @see m_ribFilter
 	 */
 	CRibFilterList m_ribFilterList;
-
-	//@}
-
-	/** @brief Loader for backends.
-	 *
-	 *  Used by to create backends of the type CContextCreator, which in turn
-	 *  is used to create the concrete rendering contexts IRiContext
-	 */
-	CRendererLoader m_rendererLoader;
 
 	
 	/** @brief  Assignment, not in use, just because of compiler warning
@@ -236,7 +223,6 @@ protected:
 	/** @addtogroup ricpp_contexts
 	 */
 	//@{
-
 	/** @brief Holds a context creator and one of its rendering contexts.
 	 *
 	 * The backend context creator/rendering context pairs of the frontend
@@ -456,7 +442,7 @@ protected:
 		}
 	}; // class CContext
 
-	/** @brief Context Management for CContext.
+	/** @brief Context Management, maps frontend to backend.
 	 *
 	 *  A RtContextHandle is mapped to a CContext, the backend context creator/rendering context pairs.
 	 *  A RtContextHandle of the frontend references one of those pairs. The CRiCPPBridge
@@ -471,6 +457,13 @@ protected:
 		RtContextHandle m_ctxHandle;     ///< Current context handle of the frontend.
 		CContext m_curCtx;               ///< Current creator, context pair of the backend, it is a copy of m_ctxMap[m_ctxHandle] for faster access
 		std::map<RtContextHandle, CContext> m_ctxMap; ///< Maps used frontend context handles to it's backend CContext context creator/rendering context pair.
+
+		/** @brief Loader for backends.
+		 *
+		 *  Used by to create backends of the type CContextCreator, which in turn
+		 *  is used to create the concrete rendering contexts IRiContext
+		 */
+		CRendererLoader m_rendererLoader;
 
 		/** @brief Removes a context creator/rendering context pair from the context map.
 		 *
@@ -493,25 +486,14 @@ protected:
 		 * @return The new frontend handle of the creator
 		 * @see beginV()
 		 */
-		inline RtContextHandle add(const CContext &ctx)
-		{
-			m_ctxMap[m_nextCtxHandle] = ctx;
-			return m_nextCtxHandle++;
-		}
+		RtContextHandle addContext(const CContext &ctx);
 	public:
 		/** @brief Initializes context management.
 		 *
 		 *  The illContextHandle representing the context outside
 		 *  (the bridge itself for some means).
 		 */
-		inline CContextManagement()
-		{
-			m_nextCtxHandle = 1;
-			// illContextHandle is always the first context (outside begin-end)
-			// m_curCtx initially has nor context creator or rendering context.
-			m_ctxHandle = illContextHandle;
-			m_ctxMap[m_ctxHandle] = m_curCtx;
-		}
+		inline CContextManagement();
 
 		/** @brief  Aborts the current context
 		 *
@@ -542,7 +524,7 @@ protected:
 		 * @exception ERiCPPError If thrown, there is no active rendering context any more
 		 * @see add(), CContext::activate(), IRiCCPPBridge::beginV()
 		 */
-		RtContextHandle beginV(RtString name, CContextCreator *cc, RtInt n, RtToken tokens[], RtPointer params[]);
+		RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 		/** @brief Ends the current context and removes it from the list.
 		 *
@@ -557,6 +539,25 @@ protected:
 		 */
 		void end();
 
+		/** @brief Gets the current frontend context handle.
+		 *
+		 *  @return The handle of the current frontend context handle
+		 */
+		inline RtContextHandle getContext() const
+		{
+			return m_ctxHandle;
+		}
+
+		/** @brief Test if the context handle is in the map.
+		 *
+		 * @param handle A frontend context handle
+		 * @return true, if the parameter handle is managed (can be illContextHandle or aborted)
+		 */
+		inline bool isContext(RtContextHandle handle)
+		{
+			return m_ctxMap.find(handle) != m_ctxMap.end();
+		}
+
 		/** @brief Gets the active current creator/rendering context.
 		 * 
 		 * @return A reference to the backend current creator/context pair,
@@ -567,26 +568,6 @@ protected:
 			return m_curCtx;
 		}
 
-		/** @brief Gets the current frontend context handle.
-		 *
-		 *  @return The handle of the current frontend context handle
-		 */
-		inline RtContextHandle getContext() const
-		{
-			return m_ctxHandle;
-		}
-
-
-		/** @brief Test if the context handle is in the map.
-		 *
-		 * @param handle A context handle
-		 * @return true, if the parameter handle is managed (can be illContextHandle or aborted)
-		 */
-		inline bool isContext(RtContextHandle handle)
-		{
-			return m_ctxMap.find(handle) != m_ctxMap.end();
-		}
-
 		/** @brief Sets and activates the new current context.
 		 *
 		 * The previous context is deactivated.
@@ -595,33 +576,38 @@ protected:
 		 * @return True, if the parameter handle was found and set
 		 *         as active (normally tested before context() is called).
 		 */
-		inline bool context(RtContextHandle handle)
-		{
-			if ( isContext(handle) ) {
-				m_curCtx.deactivate();
-				m_ctxHandle = handle;
-				m_curCtx = m_ctxMap[m_ctxHandle];
-				m_curCtx.activate();
-				return true;
-			}
-			m_ctxHandle = illContextHandle;
-			m_curCtx = m_ctxMap[m_ctxHandle];
-			return false;
-		}
-	} m_ctxMgmt; ///< The instance for the context management
-	//@}
+		bool context(RtContextHandle handle);
+		
+		/**
+		 */
+		
+		
+		/** @brief sets the searchpath for the rendererloader
+		 *  @param path The searchpath
+		 */
+		inline void searchpath(const char *path) { m_rendererLoader.searchpath(path); }
 
-	/** @brief Current renderer loader
-	 *
-	 * The renderer loader loads a context creator from a
-	 * dynamic library or constructs one in memory.
-	 *
-	 * @return An object to load context creators
-	 */
-	inline virtual CRendererLoader &rendererLoader()
-	{
-		return m_rendererLoader;
-	}
+		/** @brief Gets the current searchpath of the rendererloader.
+		 *
+		 * @return Searchpath, directory seperator '/', pathes separated by ';'.
+		 */
+		inline const char *searchpath() const { return m_rendererLoader.searchpath();  }
+
+		/** @brief Registers a plugin factory for the context creator
+		 *
+		 *  Registers a context creator factory for a specific name. Normally
+		 *  TPluginFactory are registered to create specific plugins with
+		 *  \c new instead of loading them from a dynamic library.
+		 *
+		 * @param name Name of the renderer factory (context creator)
+		 * @param f Factory for the context creators
+		 * @return true, if the plugin factory could be registered
+		 */
+		inline virtual bool registerFactory(const char *name, TPluginFactory<CContextCreator> *f) { return m_rendererLoader.registerFactory(name, f); }
+	};
+	
+	CContextManagement m_ctxMgmt; ///< The instance for the context management
+	//@}
 
 	/** @brief Like optionV() but only concerns the bridge itself.
 	 *
@@ -636,8 +622,7 @@ protected:
 public:
 	/** @brief Creates a bridge.
 	 *
-	 * A CRendererLoader is used as m_curRendererCreator, m_printErrorHandler
-	 * is used as error handler, an invalid context indexed by illContextHandle
+	 * m_printErrorHandler is used as error handler, an invalid context indexed by illContextHandle
 	 * is stored to represent 'outside' context and the rib filter list is initialized. 
 	 */
 	CRiCPPBridge();
@@ -646,15 +631,15 @@ public:
 	 */
 	inline virtual ~CRiCPPBridge() {}
 
-	/** @addtogroup ri_ribfilter
+	/******************************************************************************/
+
+	/** @defgroup ri_addfrontend Additional front end functions
 	 *
 	 *  @brief User defined Rib filters can be inserted into the filterlist
 	 *  @{
 	 */
 
-	// inline CRibFilterList &ribFilterList() {return m_ribFilterList;}
-
-	/*  @brief The first interface to a user defined RIB filter
+	/**  @brief The first interface to a user defined RIB filter
 	 *  @return A pointer to the interface of the first user defined filter
 	 */
 	inline virtual IRiRoot *firstRibFilter()
@@ -662,7 +647,7 @@ public:
 		return m_ribFilterList.firstHandler();
 	}
 
-	/*  @brief The last interface to a user defined RIB filter
+	/** @brief The last interface to a user defined RIB filter
 	 *  @return A pointer to the interface of the last user defined filter,
 	 *          that is 
 	 */
@@ -670,7 +655,7 @@ public:
 		return m_ribFilterList.lastHandler();
 	}
 
-	/*  @brief Adds a new rib filter to the front.
+	/** @brief Adds a new rib filter to the front.
 	 *
 	 *  The rib filter at the front is used first
 	 *
@@ -686,7 +671,7 @@ public:
 		return false;
 	}
 
-	/*  @brief Adds a new rib filter plugin to the front.
+	/** @brief Adds a new rib filter plugin to the front.
 	 *
 	 *  The rib filter at the front is used first
 	 *
@@ -703,7 +688,7 @@ public:
 		return false;
 	}
 
-	/*  @brief Removes a rib filter from the top
+	/** @brief Removes a rib filter from the top
 	 *
 	 *  The rib filter is only deleted if it was created by this instance
 	 *
@@ -714,7 +699,7 @@ public:
 		return m_ribFilterList.removeFront();
 	}
 
-	/*  @brief Register a filter factory
+	/** @brief Register a filter factory
 	 *
 	 *  The filter factory of the name \a name is used to create
 	 *  filters directly in memory.
@@ -730,7 +715,35 @@ public:
 		}
 		return false;
 	}
+
+	/** @brief Registers a plugin factory for the context creator
+	 *
+	 *  Registers a context creator factory for a specific name. Normally
+	 *  TPluginFactory are registered to create specific plugins with
+	 *  \c new instead of loading them from a dynamic library.
+	 *
+	 * @param name Name of the renderer factory (context creator)
+	 * @param f Factory for the context creators
+	 * @return true, if the plugin factory could be registered
+	 */
+	inline virtual bool registerRendererFactory(const char *name, TPluginFactory<CContextCreator> *f) {
+		try {
+			return m_ctxMgmt.registerFactory(name, f);
+		} catch ( ERiCPPError &e ) {
+			ricppErrHandler().handleError(e);
+		}
+		return false;
+	}
 	//@}
+
+	/******************************************************************************
+	 The RenderMan interface functions
+	 ******************************************************************************
+	 RenderMan(R) is a registered trademark of Pixar
+	 The RenderMan(R) Interface Procedures and Protocol are:
+	 Copyright 1988, 1989, 2000, 2005 Pixar
+	 All rights Reservered
+	 ******************************************************************************/
 
 	/** @addtogroup ricpp_filter
 	 *  @brief Returns the appropriate filter functions
@@ -776,6 +789,8 @@ public:
 		m_curErrorHandler = &handler;
 	}
 	//@}
+
+	/******************************************************************************/
 
 	/** @defgroup ri_frontend Remaining Ri requests
 	 *

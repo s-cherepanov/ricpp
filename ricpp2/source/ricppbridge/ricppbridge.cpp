@@ -32,12 +32,33 @@
 
 using namespace RiCPP;
 
+inline CRiCPPBridge::CContextManagement::CContextManagement()
+{
+	m_nextCtxHandle = 1;
+	// illContextHandle is always the first context (outside begin-end)
+	// m_curCtx initially has nor context creator or rendering context.
+	m_ctxHandle = illContextHandle;
+	m_ctxMap[m_ctxHandle] = m_curCtx;
+}
+
+RtContextHandle CRiCPPBridge::CContextManagement::addContext(const CContext &ctx)
+{
+	m_ctxMap[m_nextCtxHandle] = ctx;
+	return m_nextCtxHandle++;
+}
+
 void CRiCPPBridge::CContextManagement::removeContext(RtContextHandle handle)
 {
+	// illContextHandle illContextHandle is not removed
 	if ( m_ctxHandle == illContextHandle )
 		return;
-	if ( isContext(handle) )
+
+	// Remove if the handle is an element of the map
+	assert(isContext(handle));
+	if ( isContext(handle) ) {
+		// m_ctxMap[handle].renderingContext() is not 0 but already destroyed
 		m_ctxMap.erase(handle);
+	}
 
 	if ( handle == m_ctxHandle ) {
 		// Was the current context handle - no active context any more
@@ -46,7 +67,21 @@ void CRiCPPBridge::CContextManagement::removeContext(RtContextHandle handle)
 	}
 }
 
-RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, CContextCreator *cc, RtInt n, RtToken tokens[], RtPointer params[])
+bool CRiCPPBridge::CContextManagement::context(RtContextHandle handle)
+{
+	if ( isContext(handle) ) {
+		m_curCtx.deactivate();
+		m_ctxHandle = handle;
+		m_curCtx = m_ctxMap[m_ctxHandle];
+		m_curCtx.activate();
+		return true;
+	}
+	m_ctxHandle = illContextHandle;
+	m_curCtx = m_ctxMap[m_ctxHandle];
+	return false;
+}
+
+RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 	// throws ERiCPPError
 {
 	try {
@@ -60,27 +95,38 @@ RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, CContext
 	m_ctxHandle = illContextHandle; // No context!
 	m_curCtx = m_ctxMap[m_ctxHandle];
 
+	// Try to create a new context creator
+	CContextCreator *contextCreator = 0;
+	try {
+		contextCreator = m_rendererLoader.getContextCreator(name);
+	} catch (ERiCPPError &e) {
+		// Could not create a context
+		throw e;
+	}
+
 	// A context creator exists
-	assert(cc != 0);
-	if ( !cc )
+	assert(contextCreator != 0);
+	if ( !contextCreator )
 		return illContextHandle;
 
 	IRiContext *backendContext;
 	try {
-		backendContext = cc->beginV(name, n, tokens, params);
+		backendContext = contextCreator->beginV(name, n, tokens, params);
 	} catch (ERiCPPError &e) {
 		// Context may be invalid, nevertheless it is stored, so interface
 		// requests can be called until end()
-		CContext ctx(cc, cc->getContext());
-		m_ctxHandle = add(ctx);
+		CContext ctx(contextCreator, contextCreator->getContext());
+		m_ctxHandle = addContext(ctx);
 		m_curCtx = m_ctxMap[m_ctxHandle];
 		throw e;
 	}
 
+	// A backend exists
+	assert(backendContext != 0);
 	// Inserts the context creator / context pair into the m_ctxMap
 	if ( backendContext != 0 ) { 
-		CContext ctx(cc, backendContext);
-		m_ctxHandle = add(ctx);
+		CContext ctx(contextCreator, backendContext);
+		m_ctxHandle = addContext(ctx);
 		m_curCtx = m_ctxMap[m_ctxHandle];
 	}
 	return m_ctxHandle;
@@ -93,15 +139,24 @@ void CRiCPPBridge::CContextManagement::end()
 	ERiCPPError e;
 
 	if ( m_ctxHandle != illContextHandle ) {
-		// End even aborted contexts to clean up
+		// CContextCreator *cc = m_curCtx.contextCreator();
 		try {
+			// Also destroys the rendering context (done by the CContextCreator)
 			m_curCtx.end();
 		} catch (ERiCPPError &e2) {
 			e = e2;
 		}
+		// The context creator is cached and not removed
+		// m_rendererLoader.removeContextCreator(cc);
+		
+		// Just remove the CContext pair
 		removeContext(m_ctxHandle);
+		
+		// Done by removeContext()
+		// m_ctxHandle = illContextHandle;
+		// m_curCtx = m_ctxMap[m_ctxHandle];
 	}
-	m_ctxHandle = illContextHandle;
+
 	if ( e.isError() )
 		throw e;
 }
@@ -113,12 +168,12 @@ CRiCPPBridge::CRiCPPBridge() :
 	m_ricppErrorHandler.setOuter(const_cast<CRiCPPBridge &>(*this));
 	m_ribFilter.m_next = this;
 	m_ribFilterList.searchpath(".;$PROGDIR");
-	m_rendererLoader.searchpath("$PROGDIR");
-	TPluginFactory<CRibWriterCreator> *f = new TPluginFactory<CRibWriterCreator>;
-	if ( f )
-		m_rendererLoader.registerFactory("ribwriter", (TPluginFactory<CContextCreator> *)f);
 	// Default options
 	m_curErrorHandler = &m_printErrorHandler;
+	m_ctxMgmt.searchpath("$PROGDIR");
+	TPluginFactory<CRibWriterCreator> *f = new TPluginFactory<CRibWriterCreator>;
+	if ( f )
+		m_ctxMgmt.registerFactory("ribwriter", (TPluginFactory<CContextCreator> *)f);
 }
 
 
@@ -199,7 +254,6 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration)
 	return RI_NULL;
 }
 
-
 RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 {
 	va_list marker;
@@ -243,32 +297,11 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 	return beginV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-
 RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	// Try to create a new context creator
-	CContextCreator *contextCreator = 0;
-	try {
-		contextCreator = rendererLoader().getContextCreator(name);
-		if ( !contextCreator ) {
-			m_ctxMgmt.context(illContextHandle);
-			ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE,
-				"Context creator missing in CRiCPPBridge::begin(name:\"%s\")",
-				name ? name : "");
-			return illContextHandle;
-		}
-	} catch (ERiCPPError &e) {
-		// Could not create a context
-		m_ctxMgmt.context(illContextHandle);
-		ricppErrHandler().handleError(e);
-		return illContextHandle;
-	}
-
-	assert(contextCreator != 0);
-
 	// Start the new context
 	try {
-		return m_ctxMgmt.beginV(name, contextCreator, n, tokens, params);
+		return m_ctxMgmt.beginV(name, n, tokens, params);
 	} catch (ERiCPPError &e) {
 		// And handle the error, the context was set by m_ctxMgmt appropriately
 		ricppErrHandler().handleError(e);
@@ -280,10 +313,8 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 
 RtVoid CRiCPPBridge::end(void)
 {
+	// End the context to clean up, end even aborted contexts.
 	if ( m_ctxMgmt.getContext() != illContextHandle ) {
-		// End the context to clean up, end even aborted contexts.
-		CContextCreator *contextCreator = m_ctxMgmt.curBackend().contextCreator();
-
 		ERiCPPError e2;
 		try {
 			m_ctxMgmt.end();
@@ -292,13 +323,6 @@ RtVoid CRiCPPBridge::end(void)
 		}
 
 		assert(m_ctxMgmt.getContext() == illContextHandle);
-
-		// Let the renderer loader decide what to do
-		// with the old context creator. In the current
-		// implementation it is not freed, removeContextCreator()
-		// does nothing and the context creator is cached
-		// by rendererLoader()
-		rendererLoader().removeContextCreator(contextCreator);
 
 		if ( e2.isError() ) {
 			ricppErrHandler().handleError(e2);
@@ -1054,7 +1078,7 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		if ( n < 1 )
 			return;
 		if ( !strcmp(tokens[0], "renderer") ) {
-			rendererLoader().searchpath((RtString)params[0]);
+			m_ctxMgmt.searchpath((RtString)params[0]);
 		} else if ( !strcmp(tokens[0], "ribfilter") ) {
 			m_ribFilterList.searchpath((RtString)params[0]);
 		}

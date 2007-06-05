@@ -79,6 +79,16 @@ public:
 	 */
 	inline virtual void removeContextCreator(CContextCreator *cc) {}
 
+	/** @brief Registers a plugin factory
+	 *
+	 *  Registers a plugin factory for a specific name. Normally
+	 *  TPluginFactory are registered to create specific plugins with
+	 *  \c new instead of loading them from a dynamic library.
+	 *
+	 * @param name Name of the plugins
+	 * @param f Factory to create the plugins
+	 * @return true, if the plugin factory could be registerd
+	 */
 	inline virtual bool registerFactory(const char *name, TPluginFactory<CContextCreator> *f) { return TPluginHandler<CContextCreator>::registerFactory(name, f); }
 
 	/** @brief Sets a new searchpath.
@@ -86,6 +96,12 @@ public:
 	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'.
 	 */
 	inline virtual void searchpath(RtString aSearchpath) { TPluginHandler<CContextCreator>::searchpath(aSearchpath); }
+
+	/** @brief Gets the current searchpath.
+	 *
+	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
+	 */
+	inline const char *searchpath() const { return TPluginHandler<CContextCreator>::searchpath();  }
 }; // IRendererCreator
 
 } // namespace RiCPP

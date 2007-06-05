@@ -100,8 +100,8 @@ public:
 
 	/** @brief Type of the plugin for grouping the plugins.
 	 *
-	 * The type of the loaded plugin and the linked interface must match (case sensitive), otherwise
-	 * the plugin is not loaded. E.g. you cannot load a renderer as ribfilter.
+	 * The type of the loaded plugin and the linked interface must match (case sensitive),
+	 * otherwise the plugin is not loaded. E.g. you cannot load a renderer as ribfilter.
 	 *
 	 * @return Type of the plugin
 	 */
@@ -119,14 +119,12 @@ public:
 	 *
 	 * You can do some initialization if you implement the startup()
 	 * function of a plugin.
-	 *
 	 */
 	virtual void startup() = 0;
 
 	/** @brief Called before the plugin is deleted.
 	 *
 	 * Cleanup can be made in an implemented shutdown() function.
-	 *
 	 */
 	virtual void shutdown() = 0;
 }; // class IPlugin
@@ -134,7 +132,7 @@ public:
 
 /** @brief Plugin factory to create plugins in memory.
  *
- *  Can be used to create plugins on the heap, no dynamic libraries are involved.
+ * Can be used to create plugins on the heap, no dynamic libraries are involved.
  * E.g. the ribwriter will be created on the heap, so it can be assumed that
  * it works without having to access a library.
  */
@@ -156,7 +154,8 @@ protected:
 	 *
 	 * Can be used to use a plugin as a singleton, only if only lastPlugin() is used to
 	 * create plugins.
-	 *  @see lastPlugin()
+	 *
+	 * @see lastPlugin()
 	 */
 	Plugin *m_lastPlugin;
 public:
@@ -183,57 +182,81 @@ public:
 
 	/** @brief Major version number of the plugin.
 	 *
-	 * The major version number of the interface and the created plugin have to be equal. This is the case
-	 * for all heap objects , but must be tested if the object is loaded from a dynamic library.
-	 *  @return Major version number of the linked interface.
-	 *  @see IPlugin::majorVersion()
+	 * The major version number of the interface and the created plugin have to be equal.
+	 * This is the case for all heap objects, but must be tested if the object is loaded
+	 * from a dynamic library.
+	 *
+	 * @return Major version number of the linked interface.
+	 * @see IPlugin::majorVersion()
 	 */
-	inline virtual unsigned long majorVersion() {return Plugin::myMajorVersion(); }
+	inline virtual unsigned long majorVersion() const
+	{
+		return Plugin::myMajorVersion();
+	}
 
 	/** @brief Minor version number of the plugin.
 	 *
 	 * In the case of a plugin created on the heap, the minor version of the plugin and
 	 * the linked interface are naturally the same. That need not to be the case if the
 	 * plugin is loaded from a dynamic library.
-	 *  @return Minor version number of the plugin.
-	 *  @see IPlugin::minorVersion()
+	 *
+	 * @return Minor version number of the plugin.
+	 * @see IPlugin::minorVersion()
 	 */
-	inline virtual unsigned long minorVersion() {return Plugin::myMinorVersion(); }
+	inline virtual unsigned long minorVersion() const
+	{
+		return Plugin::myMinorVersion();
+	}
 
 	/** @brief Revision number of the plugin.
 	 *
 	 * In the case of a plugin created on the heap, the revision number of the plugin and
 	 * the linked interface are naturally the same. That need not to be the case if the
 	 * plugin is loaded from a dynamic library.
+	 *
 	 *  @return Revision number of the plugin.
 	 *  @see IPlugin::revision()
 	 */
-	inline virtual unsigned long revision() {return Plugin::myRevision(); }
+	inline virtual unsigned long revision() const
+	{
+		return Plugin::myRevision();
+	}
 
 	/** @brief Type name of the plugin.
 	 *
-	 * The type name of the interface and the created plugin have to be equal (case sensitive). This is the case
-	 * for all heap objects , but must be tested if the object is loaded from a dynamic library.
-	 *  @return Type name of the plugin.
-	 *  @see IPlugin::type()
+	 * The type name of the interface and the created plugin have to be equal (case sensitive).
+	 * This is the case for all heap objects , but must be tested if the object is loaded from
+	 * a dynamic library.
+	 *
+	 * @return Type name of the plugin.
+	 * @see IPlugin::type()
 	 */
-	inline virtual const char *type() { return Plugin::myType(); }
+	inline virtual const char *type() const
+	{
+		return Plugin::myType();
+	}
 
 	/** @brief Name of the plugin.
 	 *
 	 * In the case of a plugin created on the heap, the name of the plugin and
 	 * the linked interface are naturally the same. That need not to be the case if the
 	 * plugin is loaded from a dynamic library.
-	 *  @return Name of the plugin.
-	 *  @see IPlugin::name()
+	 *
+	 * @return Name of the plugin.
+	 * @see IPlugin::name()
 	 */
-	inline virtual const char *name() { return Plugin::myName(); }
+	inline virtual const char *name() const
+	{
+		return Plugin::myName();
+	}
 
 	/** @brief Create a new plugin in memory.
 	 *
-	 * Use \t new to create a new instance of the plugin. The startup() of this plugin is called after creation.
-	 * The plugin must be deleted by deletePlugin(), or automatically by ~TPluginFactory(), if the
-	 * \a destructMembers parameter of the constructor was set to true.
+	 * Use \t new to create a new instance of the plugin. The startup() of this
+	 * plugin is called after creation. The plugin must be deleted by deletePlugin(),
+	 * or automatically by ~TPluginFactory(), if the \a destructMembers parameter of
+	 * the constructor was set to true.
+	 *
 	 *  @return The new plugin.
 	 *  @exception ERiCPPError
 	 */
@@ -262,6 +285,7 @@ public:
 	 *
 	 *  The plugin is deleted if it is registerd (created by newPlugin()).
 	 *  The shutdown() of the plugin is called before deletion.
+	 *
 	 *  @return true, plugin is deleted.
 	 */
 	inline virtual bool deletePlugin(Plugin *p)
@@ -282,7 +306,7 @@ public:
 	 *  @param p Pointer of plugin to look for
 	 *  @return true, plugin is registered.
 	 */
-	inline virtual bool isRegistered(Plugin *p)
+	inline virtual bool isRegistered(Plugin *p) const
 	{
 		return m_pluginRegistry.findObj(p) != 0;
 	}
@@ -304,12 +328,16 @@ public:
 
 	/** @brief Is the object valid?
 	 *
-	 *  This is always true, needed for classes that inherit from TPluginFactory,
-	 *  i.e. TPluginLoaderFactory::valid()
+	 * This is always true for TPluginFactory, needed for classes that
+	 * inherit from TPluginFactory, i.e. TPluginLoaderFactory::valid()
+	 * tests if the library could be loaded correctly and the major
+	 * version number and type string matches the ones of the
+	 * linked interface.
 	 *
-	 *  @return true, the object ist valid.
+	 * @return true, if the object is valid.
 	 */
-	inline virtual bool valid() {
+	inline virtual bool valid() const
+	{
 		return true;
 	}
 }; // template class TPluginFactory
@@ -317,7 +345,7 @@ public:
 
 /** @brief Plugin factory to create plugins loaded from dynamic libraries.
  *
- *  Can be used to create plugins that are stored in danamic libraries.
+ * Can be used to create plugins that are stored in danamic libraries.
  */
 template
 <class Plugin>
@@ -436,7 +464,7 @@ public:
 	 *
 	 * Deletes loaded plugins, functions and library (gets closed).
 	 *
-	 **/
+	 */
 	inline virtual ~TPluginLoaderFactory()
 	{
 		typename TObjPtrRegistry<Plugin *, Plugin *>::const_iterator it;
@@ -459,27 +487,32 @@ public:
 		}
 	}
 
-	inline virtual unsigned long majorVersion()
+	inline virtual unsigned long majorVersion() const
 	{
 		return ((TypeMajorVersion)m_funcMajorVersion->funcPtr())();
 	}
-	inline virtual unsigned long minorVersion()
+
+	inline virtual unsigned long minorVersion() const
 	{
 		return ((TypeMinorVersion)m_funcMinorVersion->funcPtr())();
 	}
-	inline virtual unsigned long revision()
+
+	inline virtual unsigned long revision() const
 	{
 		return ((TypeRevision)m_funcRevision->funcPtr())();
 	}
-	inline virtual const char *type()
+	
+	inline virtual const char *type() const
 	{
 		return ((TypeType)m_funcType->funcPtr())();
 	}
-	inline virtual const char *name()
+	
+	inline virtual const char *name() const
 	{
 		return ((TypeName)m_funcName->funcPtr())();
 	}
-	inline virtual const char *searchpath()
+	
+	inline virtual const char *searchpath() const
 	{
 		return m_searchpath.c_str();
 	}
@@ -520,12 +553,13 @@ public:
 		return TPluginFactory<Plugin>::lastPlugin();
 	}
 
-	inline virtual bool isRegistered(Plugin *p)
+	inline virtual bool isRegistered(Plugin *p) const
 	{
 		return TPluginFactory<Plugin>::isRegistered(p);
 	}
 
-	inline virtual bool valid() {
+	inline virtual bool valid() const
+	{
 		if ( !m_lib || !m_lib->valid() )
 			return false;
 
@@ -556,7 +590,7 @@ public:
 
 /** @brief Handles the plugins for a specific type.
  *
- *  Plugins can be loaded from a dynamic library or created by registered factories.
+ * Plugins can be loaded from a dynamic library or created by registered factories.
  */
 template
 <class Plugin>
@@ -593,7 +627,8 @@ protected:
 					markemptystr(name));
 
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
-				// Should not happen, since already tested using valid() in the constructor of TPluginLoaderFactory
+				// Should not happen, since already tested using valid()
+				// in the constructor of TPluginLoaderFactory
 				delete f;
 				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong version '%ld' vs. '%ld' - not loaded",
@@ -601,7 +636,8 @@ protected:
 			}
 
 			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
-				// Should not happen, since already tested using valid() in the constructor of TPluginLoaderFactory
+				// Should not happen, since already tested using valid()
+				// in the constructor of TPluginLoaderFactory
 				delete f;
 				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong type '%s' vs. '%s' - not loaded",
@@ -684,9 +720,9 @@ public:
 
 	/** @brief Registers a plugin factory
 	 *
-	 *  Registers a plugin factory for a specific name. Normally
-	 *  TPluginFactory are registered to create specific plugins with
-	 *  \c new instead of loading them from a dynamic library.
+	 * Registers a plugin factory for a specific name. Normally
+	 * TPluginFactory are registered to create specific plugins with
+	 * \c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the plugins
 	 * @param f Factory to create the plugins

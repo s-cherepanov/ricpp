@@ -94,6 +94,7 @@ private:
 	const CAbortErrorHandler m_abortErrorHandler; ///< Prints error message to standard output and exits if the error is severe
 	const CIgnoreErrorHandler m_ignoreErrorHandler; ///< Ignores the error, does nothing
 	const CPrintErrorHandler m_printErrorHandler; ///< Prints error message to standard output
+	//@}
 
 	/** @brief Current user defined error handler
 	 *
@@ -149,7 +150,6 @@ private:
 	} m_ricppErrorHandler; ///< Error handler instance, used only via ricppErrHandler()
 
 	friend class CRiCPPBridgeErrorHandler;
-	//@}
 
 	/** @addtogroup ricpp_proc
 	 *  @brief Build in procedurals
@@ -508,7 +508,8 @@ protected:
 
 		/** @brief Begins a new context.
 		 *
-		 * Manages the creation of a new rendering context, creates a new CContext and
+		 * Manages the creation of a new backend rendering context,
+		 * creates a new CContext and
 		 * stores it with add(). The old context is deactivated. To generate a new
 		 * active rendering context the CContextCreator::beginV() is called.
 		 * The new context is not explicitly activated (because a creating a new
@@ -516,11 +517,11 @@ protected:
 		 * already created one).
 		 *
 		 * @param name Name of a renderer, forwarded from TRiCPPBridge::beginV() call
-		 * @param cc Context creator used to create the new context
 		 * @param n number of @a tokens and @a params, forwarded from TRiCPPBridge::beginV() call
 		 * @param tokens Token array, forwarded from TRiCPPBridge::beginV() call
-		 * @param params Array of pointers to parameter arrays, forwarded from TRiCPPBridge::beginV() call
-		 * @return New context handle
+		 * @param params Array of pointers to parameter arrays, forwarded from
+		 * TRiCPPBridge::beginV() call
+		 * @return New frontend context handle
 		 * @exception ERiCPPError If thrown, there is no active rendering context any more
 		 * @see add(), CContext::activate(), IRiCCPPBridge::beginV()
 		 */

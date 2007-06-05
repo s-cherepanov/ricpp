@@ -72,7 +72,10 @@ public:
 	/** @brief Major version number of the plugin interface.
 	 *
 	 * A plugin must implement the major version to work correctly. The
-	 * major version of the plugin in the used interface must be equal.
+	 * major version of the plugin and the used interface must be equal.
+	 * The major version is compared while loding the plugin. If the
+	 * version do not match to the version of the linkted interface
+	 * the plugin is not created.
 	 *
 	 * @return Major version number of the plugin.
 	 */
@@ -81,7 +84,7 @@ public:
 	/** @brief Minor version number of the plugin interface.
 	 *
 	 * Minor version changes reflect changes in the functionality of
-	 * the plugin, but no changes did not affect the interface.
+	 * the plugin, but does not affect the interface.
 	 *
 	 * @return Minor version number of the plugin.
 	 */
@@ -89,28 +92,41 @@ public:
 
 	/** @brief Revision number of the plugin interface.
 	 *
-	 * Simple revisions that do not change the functionality.
+	 * Simple revisions (e.g. bug fixes) that do not change the functionality.
 	 *
 	 * @return Revision number of the plugin
 	 */
 	virtual unsigned long revision() const = 0;
 
-	/** @brief Type of the plugin for grouping the plugins somehow.
+	/** @brief Type of the plugin for grouping the plugins.
+	 *
+	 * The type of the loaded plugin and the linked interface must match (case sensitive), otherwise
+	 * the plugin is not loaded. E.g. you cannot load a renderer as ribfilter.
+	 *
 	 * @return Type of the plugin
 	 */
 	virtual const char *type() const = 0;
 
 	/** @brief Name of the plugin and factory library.
 	 *
+	 * The name of the plugin for reference.
+	 *
 	 * @return Name of the plugin and plugin library.
 	 */
 	virtual const char *name() const = 0;
 
 	/** @brief Called after the plugin is created.
+	 *
+	 * You can do some initialization if you implement the startup()
+	 * function of a plugin.
+	 *
 	 */
 	virtual void startup() = 0;
 
 	/** @brief Called before the plugin is deleted.
+	 *
+	 * Cleanup can be made in an implemented shutdown() function.
+	 *
 	 */
 	virtual void shutdown() = 0;
 }; // class IPlugin
@@ -118,7 +134,9 @@ public:
 
 /** @brief Plugin factory to create plugins in memory.
  *
- *  Can be used to statically create plugins, no dynamic libraries are interfered.
+ *  Can be used to create plugins on the heap, no dynamic libraries are involved.
+ * E.g. the ribwriter will be created on the heap, so it can be assumed that
+ * it works without having to access a library.
  */
 template
 <class Plugin>
@@ -127,14 +145,17 @@ class TPluginFactory
 protected:
 	/** @brief Registry of created plugins.
 	 *
-	 * Plugins are also deleted if the factory is deleted if the
-	 * destructMembers parameter in TPluginFactory() was true.
+	 * If the destructMembers parameter in TPluginFactory() was true,
+	 * plugins registered are deleted automatically, if the factory is deleted.
+	 * \a key and \a value is the same pointer, m_pluginRegistry is used
+	 * to find registerd pointers quickly.
 	 */
 	TObjPtrRegistry<Plugin *, Plugin *> m_pluginRegistry;
 
-	/** @brief Pointer to the last Plugin created.
+	/** @brief Pointer to the last plugin created.
 	 *
-	 *  Can be used to use plugins as singletons.
+	 * Can be used to use a plugin as a singleton, only if only lastPlugin() is used to
+	 * create plugins.
 	 *  @see lastPlugin()
 	 */
 	Plugin *m_lastPlugin;
@@ -142,8 +163,11 @@ public:
 
 	/** @brief Constructor of the factory.
 	 *
-	 *  @param destructMembers true, to handle deletion of the plugins.
-	 *  Should be normally true if the object is used, exception TPluginLoaderFactory.
+	 * \a destructMembers should be set true if the object shall be
+	 * deleted automatically, while the TPluginFactor is deleted.
+	 * This parameter does not affect deletePlugin().
+	 *
+	 * @param destructMembers true, to handle deletion of the plugins.
 	 */
 	inline TPluginFactory(bool destructMembers = true)
 		: m_pluginRegistry(destructMembers)
@@ -158,30 +182,48 @@ public:
 	}
 
 	/** @brief Major version number of the plugin.
-	 *  @return Major version.
+	 *
+	 * The major version number of the interface and the created plugin have to be equal. This is the case
+	 * for all heap objects , but must be tested if the object is loaded from a dynamic library.
+	 *  @return Major version number of the linked interface.
 	 *  @see IPlugin::majorVersion()
 	 */
 	inline virtual unsigned long majorVersion() {return Plugin::myMajorVersion(); }
 
 	/** @brief Minor version number of the plugin.
-	 *  @return Minor version number.
+	 *
+	 * In the case of a plugin created on the heap, the minor version of the plugin and
+	 * the linked interface are naturally the same. That need not to be the case if the
+	 * plugin is loaded from a dynamic library.
+	 *  @return Minor version number of the plugin.
 	 *  @see IPlugin::minorVersion()
 	 */
 	inline virtual unsigned long minorVersion() {return Plugin::myMinorVersion(); }
 
 	/** @brief Revision number of the plugin.
-	 *  @return Revision number.
+	 *
+	 * In the case of a plugin created on the heap, the revision number of the plugin and
+	 * the linked interface are naturally the same. That need not to be the case if the
+	 * plugin is loaded from a dynamic library.
+	 *  @return Revision number of the plugin.
 	 *  @see IPlugin::revision()
 	 */
 	inline virtual unsigned long revision() {return Plugin::myRevision(); }
 
 	/** @brief Type name of the plugin.
+	 *
+	 * The type name of the interface and the created plugin have to be equal (case sensitive). This is the case
+	 * for all heap objects , but must be tested if the object is loaded from a dynamic library.
 	 *  @return Type name of the plugin.
 	 *  @see IPlugin::type()
 	 */
 	inline virtual const char *type() { return Plugin::myType(); }
 
 	/** @brief Name of the plugin.
+	 *
+	 * In the case of a plugin created on the heap, the name of the plugin and
+	 * the linked interface are naturally the same. That need not to be the case if the
+	 * plugin is loaded from a dynamic library.
 	 *  @return Name of the plugin.
 	 *  @see IPlugin::name()
 	 */
@@ -189,8 +231,9 @@ public:
 
 	/** @brief Create a new plugin in memory.
 	 *
-	 *  The startup() of the plugon is called after creation
-	 *
+	 * Use \t new to create a new instance of the plugin. The startup() of this plugin is called after creation.
+	 * The plugin must be deleted by deletePlugin(), or automatically by ~TPluginFactory(), if the
+	 * \a destructMembers parameter of the constructor was set to true.
 	 *  @return The new plugin.
 	 *  @exception ERiCPPError
 	 */
@@ -203,14 +246,15 @@ public:
 			// p could not be created
 		}
 		if ( !p ) {
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a plugin '%s'", markemptystr(name()));
+			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
+				"Cannot create a plugin '%s'",
+				markemptystr(name()));
 		}
 
-		if ( p ) {
-			m_lastPlugin = p;
-			m_pluginRegistry.registerObj(p, p);
-			p->startup();
-		}
+		m_lastPlugin = p;
+		m_pluginRegistry.registerObj(p, p);
+		p->startup();
+
 		return p;
 	}
 
@@ -236,7 +280,7 @@ public:
 	/** @brief Plugin registered by this factory?
 	 *
 	 *  @param p Pointer of plugin to look for
-	 *  @return true, plugin is registerd.
+	 *  @return true, plugin is registered.
 	 */
 	inline virtual bool isRegistered(Plugin *p)
 	{
@@ -245,7 +289,9 @@ public:
 
 	/** @brief Last plugin created
 	 *
-	 * Creates a new one if no plugin was created or the last created was deleted.
+	 * Creates a new plugin if none was created before or the last created was deleted.
+	 * If only lastPlugin() (no call of newPlugin() and deletePlugin() directly) is used,
+	 * only one plugin will be created.
 	 *
 	 *  @return The last plugin created.
 	 */
@@ -269,7 +315,7 @@ public:
 }; // template class TPluginFactory
 
 
-/** @brief Plugin factory to create plugins out of libraries.
+/** @brief Plugin factory to create plugins loaded from dynamic libraries.
  *
  *  Can be used to create plugins that are stored in danamic libraries.
  */
@@ -290,13 +336,33 @@ private:
 	ILibFunc *m_funcName;         ///< Gets the name of a plugin (should be == libname).
 	ILibFunc *m_funcType;         ///< Gets the type of a plugin.
 
-	typedef Plugin *(CDECL *TypeNewPlugin)(unsigned long, const char *); ///< Gets a new plugin (Type of library function for m_funcNewPlugin).
-	typedef void (CDECL *TypeDeletePlugin)(Plugin *);      ///< Deletes a plugin (Type of library function m_funcDeletePlugin).
-	typedef unsigned long (CDECL *TypeMajorVersion)(void); ///< Gets the major plugin version (Type of library function m_funcMajorVersion).
-	typedef unsigned long (CDECL *TypeMinorVersion)(void); ///< Gets the minor version of a plugin (Type of library function m_funcMinorVersion).
-	typedef unsigned long (CDECL *TypeRevision)(void);     ///< Gets the revision of a plugin (Type of library function m_funcRevision).
-	typedef const char *(CDECL *TypeType)(void);           ///< Gets the name of a plugin (Type of library function m_funcName).
-	typedef const char *(CDECL *TypeName)(void);           ///< Gets the type of a plugin (Type of library function m_funcType).
+	/** @brief Gets a new plugin (Type of library function for m_funcNewPlugin).
+	 */
+	typedef Plugin *(CDECL *TypeNewPlugin)(unsigned long, const char *);
+
+	/** @brief Deletes a plugin (Type of library function m_funcDeletePlugin).
+	 */
+	typedef void (CDECL *TypeDeletePlugin)(Plugin *);
+
+	/** @brief Gets the major version of the plugin (Type of library function m_funcMajorVersion).
+	 */
+	typedef unsigned long (CDECL *TypeMajorVersion)(void);
+
+	/** @brief Gets the minor version of a plugin (Type of library function m_funcMinorVersion).
+	 */
+	typedef unsigned long (CDECL *TypeMinorVersion)(void);
+
+	/** @brief Gets the revision of a plugin (Type of library function m_funcRevision).
+	 */
+	typedef unsigned long (CDECL *TypeRevision)(void);
+
+	/** @brief Gets the name of a plugin (Type of library function m_funcName).
+	 */
+	typedef const char *(CDECL *TypeType)(void);
+
+	/** @brief Gets the type of a plugin (Type of library function m_funcType).
+	 */
+	typedef const char *(CDECL *TypeName)(void);
 public:
 
 	/** @brief Constructor to load a dynamic library.
@@ -305,12 +371,14 @@ public:
 	 * therefore \a destructMembers of TPluginFactory is set to false.
 	 *
 	 * @param libname Basename of the library
-	 * @param pathlist Pathlist (with variables) to search for the library
+	 * @param pathlist Pathlist (optionally with $-variables) to search for the library
 	 * @see CDynLibFactory, CDynLib
 	 * @exception ERiCPPError
 	 */
-	inline TPluginLoaderFactory(const char *libname, const char *pathlist = 0)
-		: TPluginFactory<Plugin>(false)
+	inline TPluginLoaderFactory(
+		const char *libname,
+		const char *pathlist = 0
+		) : TPluginFactory<Plugin>(false)
 	{
 		m_funcNewPlugin = 0;
 		m_funcDeletePlugin = 0;
@@ -326,12 +394,15 @@ public:
 
 		// Create the library handler
 		try {
-			m_lib = CDynLibFactory::newDynLib(m_libName.c_str(), m_searchpath.c_str(), Plugin::myMajorVersion());
+			m_lib = CDynLibFactory::newDynLib(m_libName.c_str(),
+				m_searchpath.c_str(), Plugin::myMajorVersion());
 		} catch ( ... ) {
 			// m_lib not created
 		}
 		if ( !m_lib ) {
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a new CDynLib for plugin factory '%s'", markemptystr(libname));
+			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
+				"Cannot create a new CDynLib for plugin factory '%s'",
+				markemptystr(libname));
 		}
 
 		// Load the library
@@ -355,16 +426,24 @@ public:
 			// One of the funcs is not created
 		}
 		if ( !valid() ) {
-			throw ERiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create the library functions for plugin factory '%s'", markemptystr(libname));
+			throw ERiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__,
+				"Cannot create the library functions or version mismatch for plugin factory '%s'",
+				markemptystr(libname));
 		}
 	}
 
 	/** @brief Destructor removes the library.
+	 *
+	 * Deletes loaded plugins, functions and library (gets closed).
+	 *
 	 **/
 	inline virtual ~TPluginLoaderFactory()
 	{
 		typename TObjPtrRegistry<Plugin *, Plugin *>::const_iterator it;
-		for ( it = TPluginFactory<Plugin>::m_pluginRegistry.begin(); it != TPluginFactory<Plugin>::m_pluginRegistry.end(); ++it ) {
+		for ( it = TPluginFactory<Plugin>::m_pluginRegistry.begin();
+		      it != TPluginFactory<Plugin>::m_pluginRegistry.end();
+			  ++it )
+		{
 			delete it->second;
 		}
 		if ( m_lib ) {
@@ -375,6 +454,7 @@ public:
 			m_lib->deleteFunc(m_funcRevision);
 			m_lib->deleteFunc(m_funcType);
 			m_lib->deleteFunc(m_funcName);
+			
 			CDynLibFactory::deleteDynLib(m_lib);
 		}
 	}
@@ -408,13 +488,16 @@ public:
 	{ 
 		Plugin *p = 0;
 
-		p = ((TypeNewPlugin)m_funcNewPlugin->funcPtr())(Plugin::myMajorVersion(), Plugin::myType());
+		p = ((TypeNewPlugin)m_funcNewPlugin->funcPtr())(
+			Plugin::myMajorVersion(), Plugin::myType());
 		if ( p ) {
 			TPluginFactory<Plugin>::m_lastPlugin = p;
 			TPluginFactory<Plugin>::m_pluginRegistry.registerObj(p, p);
 			p->startup();
 		} else {
-			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Plugin of wrong version or type '%s'", markemptystr(m_libName.c_str()));
+			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
+				"Plugin of wrong version or type '%s'",
+				markemptystr(m_libName.c_str()));
 		}
 		return p;
 	}
@@ -463,6 +546,9 @@ public:
 
 		if ( Plugin::myMajorVersion() != majorVersion() )
 			return false;
+			
+		if ( strcmp(nonullstr(Plugin::myType()), nonullstr(type())) != 0 )
+			return false;
 
 		return true;
 	}
@@ -480,6 +566,7 @@ protected:
 	/** @brief Registry for the plugin factories.
 	 */
 	TObjPtrRegistry<std::string, TPluginFactory<Plugin> *> m_factoryRegistry;
+	
 	/** @brief Searchpath to find the dynamic libraries for the plugins.
 	 */
 	std::string m_searchpath;
@@ -501,25 +588,39 @@ protected:
 				// could not create TPluginLoaderFactory
 			}
 			if ( !f )
-				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a new plugin factory for '%s'", markemptystr(name));
-
-			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
-				delete f;
-				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong type '%s' vs. '%s' - not loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
-			}
+				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
+					"Cannot create a new plugin factory for '%s'",
+					markemptystr(name));
 
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
+				// Should not happen, since already tested using valid() in the constructor of TPluginLoaderFactory
 				delete f;
-				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong version '%ld' vs. '%ld' - not loaded", Plugin::myMajorVersion(), f->majorVersion());
+				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
+					"Plugin Factory is of wrong version '%ld' vs. '%ld' - not loaded",
+					Plugin::myMajorVersion(), f->majorVersion());
+			}
+
+			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
+				// Should not happen, since already tested using valid() in the constructor of TPluginLoaderFactory
+				delete f;
+				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
+					"Plugin Factory is of wrong type '%s' vs. '%s' - not loaded",
+					nonullstr(Plugin::myType()), nonullstr(f->type()));
 			}
 
 			m_factoryRegistry.registerObj(key, f);
 		} else {
-			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
-				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong type '%s' vs. '%s' - allready loaded", nonullstr(Plugin::myType()), nonullstr(f->type()));
-			}
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
-				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Plugin Factory is of wrong version '%ld' vs. '%ld' - allready loaded", Plugin::myMajorVersion(), f->majorVersion());
+				// Should not happen, since already tested
+				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
+					"Plugin Factory is of wrong version '%ld' vs. '%ld' - already loaded",
+					Plugin::myMajorVersion(), f->majorVersion());
+			}
+			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
+				// Should not happen, since already tested
+				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
+					"Plugin Factory is of wrong type '%s' vs. '%s' - already loaded",
+					nonullstr(Plugin::myType()), nonullstr(f->type()));
 			}
 		}
 		return f;
@@ -604,13 +705,19 @@ public:
 	 *
 	 * @param path New searchpath, directory seperator '/', pathes separated by ';'.
 	 */
-	inline void searchpath(const char *path) { m_searchpath = nonullstr(path); }
+	inline void searchpath(const char *path)
+	{
+		m_searchpath = nonullstr(path);
+	}
 
 	/** @brief Gets the current searchpath.
 	 *
 	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
 	 */
-	inline const char *searchpath() const { return m_searchpath.c_str();  }
+	inline const char *searchpath() const
+	{
+		return m_searchpath.c_str();
+	}
 
 }; // template class TPluginHandler
 

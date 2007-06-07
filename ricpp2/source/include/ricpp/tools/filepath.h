@@ -51,11 +51,16 @@ namespace RiCPP {
 
 		/** @brief The internal character to seperate multiple pathes (e.g. search path)
 		 *
-		 * ';' (like in Windows) is used, because ':' can be part of regular windows file names (e.g. C:\\autoexec.bat)
+		 * In rib ':' is used as seperator. That's a bit unlucky, because ':' is used to
+		 * seperate drive letters from the rest of the path. However CStringList::explode()
+		 * tries to cope with this double meaning of ':'. I've considered to
+		 * use ';' as path seperator, but this would be incompatible to others renderers
+		 * and the RIB files.
 		 *
 		 * @return Internally used seperator for multiple pathes
+		 * @see CStringList::explode()
 		 */
-		inline static char internalPathlistSeperator() {return ';';}
+		inline static char internalPathlistSeperator() {return ':';}
 
 		/** @brief The character to seperate parts of a native directory.
 		 * @return Native path seperator.

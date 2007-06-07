@@ -590,7 +590,7 @@ protected:
 
 		/** @brief Gets the current searchpath of the rendererloader.
 		 *
-		 * @return Searchpath, directory seperator '/', pathes separated by ';'.
+		 * @return Searchpath, directory seperator '/', pathes separated by ':'.
 		 */
 		inline const char *searchpath() const { return m_rendererLoader.searchpath();  }
 
@@ -620,6 +620,34 @@ protected:
 	 */
 	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
+	/** @brief Replacement for variables.
+	 *
+	 * In this case only '&' is replaced by the last variable of a given type
+	 */
+	class CPathReplace : public ISearchCallback {
+		std::string m_path; ///< Path used to replace
+	public:
+		/** Standard constructor
+		 */
+		inline CPathReplace() {}
+		/** Get the path
+		 * @return The current path
+		 */
+		inline const char *path() const { return m_path.c_str(); }
+		/** Set the path
+		 * @param aPath The path to set
+		 */
+		inline void path(const char *aPath) { m_path = nonullstr(aPath); }
+		inline virtual bool operator()(std::string &varName)
+		{
+			if ( varName == "&" ) {
+				varName = m_path;
+				return true;
+			}
+			return false;
+		}
+	};
+	CPathReplace m_pathReplace;
 public:
 	/** @brief Creates a bridge.
 	 *

@@ -129,6 +129,10 @@ namespace RiCPP {
 		 *  
 		 * (done by CDynLibFactory) initialises the members
 		 *  with the parameters.
+		 *
+		 * @param libname Basename of the library
+		 * @param searchpath Colon seperated (no variable substitution)
+		 * @param version Version of the library
 		 */
 		CDynLib(const char *libname, const char *searchpath, long int version=-1);
 
@@ -197,6 +201,11 @@ namespace RiCPP {
 			 *
 			 * Normally only used once per library, can be used to examine the
 			 * library path.
+			 *
+			 * @param libname Basename of the library
+			 * @param searchpath Colon seperated (no variable substitution)
+			 * @param version Version of the library
+			 * @return New handler for dynamic library
 			 */
 			static CDynLib *newDynLib(const char *libname, const char *searchpath, long int version=-1);
 

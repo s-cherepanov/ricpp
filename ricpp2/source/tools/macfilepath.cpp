@@ -77,7 +77,7 @@ void CFilepath::convertToNative() {
 	}
 }
 
-/** @brief In MacOs a path is absolut if it has a path seperator '/' as  its first charakter.
+/** @brief In MacOs a path is absolut if it has a path seperator '/' as  its first character.
  */
 bool CFilepath::isAbsolute() const {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '/');

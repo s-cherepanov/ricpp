@@ -105,8 +105,13 @@ public:
 	 */
 	bool removeFront();
 
+	/** @brief Gets the searchpath to the libraries
+	 *  @return String with searchpath "path1:path2:..."
+	 */
+	inline const char *searchpath() const { return m_pluginHandler.searchpath(); }
+
 	/** @brief Sets a searchpath to the libraries
-	 *  @param path String with searchpath "path1;path2;..."
+	 *  @param path String with searchpath "path1:path2:..."
 	 */
 	inline void searchpath(const char *path) { m_pluginHandler.searchpath(path); }
 

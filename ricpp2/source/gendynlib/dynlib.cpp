@@ -29,10 +29,8 @@
  */
 
 #include "ricpp/gendynlib/dynlib.h"
-
-#ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/RICPP/renderererror.h"
-#endif // _RICPP_RICPP_RENDERERERROR_H
+#include "ricpp/ricpp/renderererror.h"
+#include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;
 
@@ -40,7 +38,7 @@ CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
 	: m_useCount(0), m_version(version), m_libname(libname)
 {
 	m_libpath.clear();
-	m_searchpath.explode(';', searchpath, true);
+	m_searchpath.explode(CFilepathConverter::internalPathlistSeperator(), searchpath, false, false, true);
 }
 
 unsigned long CDynLib::useCount() const

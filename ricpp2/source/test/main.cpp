@@ -29,6 +29,7 @@
 
 #include "ricpp/ricppbridge/ricppbridge.h"
 #include "ricpp/tools/filepath.h"
+#include "ricpp/tools/stringlist.h"
 
 #include <iostream>
 
@@ -45,6 +46,14 @@ int main (int argc, char * const argv[]) {
 	std::cout << CEnv::homeName() << ": " << CEnv::find(str, CEnv::homeName()) << std::endl;
 	std::cout << CEnv::pathName() << ": "  << CEnv::find(str, CEnv::pathName()) << std::endl;
 	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName()) << std::endl;
+
+	CStringList testpath;
+	testpath.explode(':', ".:$PROGDIR:$PATH:$HOME", true, true, true);
+
+	std::string teststr;
+	testpath.implode(':', teststr);
+	testpath.clear();
+	testpath.explode(':', teststr.c_str(), false, false, true);
 
 	ri.errorHandler(ri.errorPrint());
 	ri.addFrontRibFilter("passthrough");
@@ -110,7 +119,7 @@ int main (int argc, char * const argv[]) {
 		ri.end();
 	}
 
-	ri.option("searchpath", "renderer", ".;$PROGDIR;$PATH", RI_NULL);
+	ri.option("searchpath", "renderer", "&:$PATH", RI_NULL);
 	ri.begin("ribwriter");
 	ri.end();
     std::cout << "Good bye, World!" << std::endl;

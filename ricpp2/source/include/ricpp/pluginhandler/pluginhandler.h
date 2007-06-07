@@ -252,7 +252,7 @@ public:
 
 	/** @brief Create a new plugin in memory.
 	 *
-	 * Use \t new to create a new instance of the plugin. The startup() of this
+	 * Use \c new to create a new instance of the plugin. The startup() of this
 	 * plugin is called after creation. The plugin must be deleted by deletePlugin(),
 	 * or automatically by ~TPluginFactory(), if the \a destructMembers parameter of
 	 * the constructor was set to true.

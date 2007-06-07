@@ -29,6 +29,7 @@
 
 #include "ricpp/ricppbridge/ricppbridge.h"
 #include "ricpp/ribwriter/ribwriter.h"
+#include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;
 
@@ -167,10 +168,12 @@ CRiCPPBridge::CRiCPPBridge() :
 {
 	m_ricppErrorHandler.setOuter(const_cast<CRiCPPBridge &>(*this));
 	m_ribFilter.m_next = this;
-	m_ribFilterList.searchpath(".;$PROGDIR");
 	// Default options
+	RtToken tsearchpath[] = {"renderer", "ribfilter"};
+	RtPointer psearchpath[] = {"$PROGDIR", ".:$PROGDIR"};
+	doOptionV("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+
 	m_curErrorHandler = &m_printErrorHandler;
-	m_ctxMgmt.searchpath("$PROGDIR");
 	TPluginFactory<CRibWriterCreator> *f = new TPluginFactory<CRibWriterCreator>;
 	if ( f )
 		m_ctxMgmt.registerFactory("ribwriter", (TPluginFactory<CContextCreator> *)f);
@@ -262,7 +265,7 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 
 	if ( name && *name ) {
 		CStringList stringList;
-		stringList.explode(0, name, true); // Only one string, replace environment variables
+		stringList.explode(0, name, true, true, false); // Only one string, replace environment variables
 
 		CStringList::const_iterator first = stringList.begin();
 		if ( first != stringList.end() ) {
@@ -1077,12 +1080,24 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	if ( !strcmp(name, "searchpath") ) {
 		if ( n < 1 )
 			return;
-		if ( !strcmp(tokens[0], "renderer") ) {
-			m_ctxMgmt.searchpath((RtString)params[0]);
-		} else if ( !strcmp(tokens[0], "ribfilter") ) {
-			m_ribFilterList.searchpath((RtString)params[0]);
-		}
 
+		CStringList sl(&m_pathReplace);
+		std::string s;
+		int i;
+		for ( i = 0; i<n; ++i) {
+			if ( !strcmp(tokens[i], "renderer") ) {
+				m_pathReplace.path(m_ctxMgmt.searchpath());
+				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				m_ctxMgmt.searchpath(s.c_str());
+			} else if ( !strcmp(tokens[i], "ribfilter") ) {
+				m_pathReplace.path(m_ribFilterList.searchpath());
+				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				m_ribFilterList.searchpath(s.c_str());
+			}
+			sl.clear();
+		}
 	}
 }
 

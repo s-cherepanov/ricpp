@@ -107,7 +107,7 @@ public:
 	 *
 	 * With search callback.
 	 *
-	 * @param callback Callback for variable and @, & substitution
+	 * @param aCallback Callback for variable and @, & substitution
 	 */
 	inline CStringList(ISearchCallback *aCallback) { m_callback = aCallback; }
 
@@ -278,7 +278,7 @@ public:
 	}
 
 	/** @brief Removes all strings.
-	 * @param callback Callback for variable and @, & substitution
+	 * @param aCallback Callback for variable and @, & substitution
 	 */
 	inline void callback(ISearchCallback *aCallback)
 	{

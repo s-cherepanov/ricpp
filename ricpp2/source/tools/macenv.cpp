@@ -138,10 +138,12 @@ std::string &CEnv::getPath(std::string &path)
 	get(path, "PATH");
 
 	std::string::iterator i = path.begin();
+	/*
 	for ( ; i != path.end(); i++ ) {
 		if ( (*i) == ':' )
 			(*i) = ';';
 	}
+	*/
 	return CFilepathConverter::convertToInternal(path);
 }
 

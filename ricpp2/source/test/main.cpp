@@ -55,6 +55,7 @@ int main (int argc, char * const argv[]) {
 	testpath.clear();
 	testpath.explode(':', teststr.c_str(), false, false, true);
 
+	ri.option("searchpath", "ribfilter", "@:$PATH", RI_NULL);
 	ri.errorHandler(ri.errorPrint());
 	ri.addFrontRibFilter("passthrough");
 

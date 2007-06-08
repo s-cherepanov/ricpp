@@ -623,9 +623,12 @@ protected:
 	/** @brief Replacement for variables.
 	 *
 	 * In this case only '&' is replaced by the last variable of a given type
+	 * And @ by the standardpath.
+	 * @see http://accad.osu.edu/~smay/RManNotes/prman_config.html#searchpaths
 	 */
 	class CPathReplace : public ISearchCallback {
 		std::string m_path; ///< Path used to replace
+		std::string m_standardpath; ///< Standard-Path used to replace
 	public:
 		/** Standard constructor
 		 */
@@ -638,16 +641,43 @@ protected:
 		 * @param aPath The path to set
 		 */
 		inline void path(const char *aPath) { m_path = nonullstr(aPath); }
+		/** Get the standardpath
+		 * @return The current standardpath
+		 */
+		inline const char *standardpath() const { return m_standardpath.c_str(); }
+		/** Set the standardpath
+		 * @param aPath The path to standardpath
+		 */
+		inline void standardpath(const char *aPath) { m_standardpath = nonullstr(aPath); }
 		inline virtual bool operator()(std::string &varName)
 		{
 			if ( varName == "&" ) {
 				varName = m_path;
 				return true;
+			} else if ( varName == "@" ) {
+				varName = m_standardpath;
+				return true;
 			}
 			return false;
 		}
 	};
+	/** @brief Helper object to get standard pathes
+	 *  @see doOptionV()
+	 */
 	CPathReplace m_pathReplace;
+	
+	/** @brief Standard path for Rib filters
+	 *  
+	 *  Set in Constructor by Option "standardpath" "ribfilter" "path"
+	 */
+	std::string m_standardPathRibFilter;
+
+	/** @brief Standard path for Renderers
+	 *  
+	 *  Set in Constructor by Option "standardpath" "renderer" "path"
+	 */
+	std::string m_standardPathRenderer;
+	
 public:
 	/** @brief Creates a bridge.
 	 *

@@ -172,6 +172,7 @@ CRiCPPBridge::CRiCPPBridge() :
 	RtToken tsearchpath[] = {"renderer", "ribfilter"};
 	RtPointer psearchpath[] = {(RtPointer)"$PROGDIR", (RtPointer)".:$PROGDIR"};
 	doOptionV("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+	doOptionV("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
 
 	m_curErrorHandler = &m_printErrorHandler;
 	TPluginFactory<CRibWriterCreator> *f = new TPluginFactory<CRibWriterCreator>;
@@ -1087,16 +1088,49 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		for ( i = 0; i<n; ++i) {
 			if ( !strcmp(tokens[i], "renderer") ) {
 				m_pathReplace.path(m_ctxMgmt.searchpath());
+				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
 				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
 				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
 				m_ctxMgmt.searchpath(s.c_str());
 			} else if ( !strcmp(tokens[i], "ribfilter") ) {
 				m_pathReplace.path(m_ribFilterList.searchpath());
+				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
 				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
 				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
 				m_ribFilterList.searchpath(s.c_str());
 			}
 			sl.clear();
+			m_pathReplace.path("");
+			m_pathReplace.standardpath("");
+		}
+	}
+
+	// The standardpath for the dynamic renderer libraries
+	if ( !strcmp(name, "standardpath") ) {
+		if ( n < 1 )
+			return;
+
+		CStringList sl(&m_pathReplace);
+		std::string s;
+		int i;
+		for ( i = 0; i<n; ++i) {
+			if ( !strcmp(tokens[i], "renderer") ) {
+				m_pathReplace.path(m_ctxMgmt.searchpath());
+				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
+				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				m_standardPathRenderer = nonullstr(s.c_str());
+			} else if ( !strcmp(tokens[i], "ribfilter") ) {
+				m_pathReplace.path(m_ribFilterList.searchpath());
+				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
+				m_pathReplace.path(m_ribFilterList.searchpath());
+				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				m_standardPathRibFilter = nonullstr(s.c_str());
+			}
+			sl.clear();
+			m_pathReplace.path("");
+			m_pathReplace.standardpath("");
 		}
 	}
 }

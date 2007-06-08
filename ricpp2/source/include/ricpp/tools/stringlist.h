@@ -71,7 +71,7 @@ public:
 	typedef std::list<std::string>::size_type size_type;
 
 private:
-	/** @brief Search callback for variable substitution
+	/** @brief Search callback for variable and @, & substitution
 	 */
 	ISearchCallback *m_callback;
 
@@ -104,7 +104,14 @@ public:
 	 * No search callback.
 	 */
 	inline CStringList() { m_callback = 0; }
-	inline CStringList(ISearchCallback *callback) { m_callback = callback; }
+
+	/** @brief Standard constructor
+	 *
+	 * With search callback.
+	 *
+	 * @param callback Callback for variable and @, & substitution
+	 */
+	inline CStringList(ISearchCallback *aCallback) { m_callback = aCallback; }
 
 	/** @brief Seperates a string.
 	 *
@@ -263,6 +270,23 @@ public:
 	{
 		return m_stringList.empty();
 	}
+
+	/** @brief Gets the current callback
+	 * @return Callback for variable and @, & substitution
+	 */
+	inline ISearchCallback *callback(ISearchCallback *aCallback) const
+	{
+		return m_callback;
+	}
+
+	/** @brief Removes all strings.
+	 * @param callback Callback for variable and @, & substitution
+	 */
+	inline void callback(ISearchCallback *aCallback)
+	{
+		m_callback = aCallback;
+	}
+
 }; // CStringList
 
 }

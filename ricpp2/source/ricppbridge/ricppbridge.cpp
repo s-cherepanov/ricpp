@@ -170,7 +170,7 @@ CRiCPPBridge::CRiCPPBridge() :
 	m_ribFilter.m_next = this;
 	// Default options
 	RtToken tsearchpath[] = {"renderer", "ribfilter"};
-	RtPointer psearchpath[] = {"$PROGDIR", ".:$PROGDIR"};
+	RtPointer psearchpath[] = {(RtPointer)"$PROGDIR", (RtPointer)".:$PROGDIR"};
 	doOptionV("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
 
 	m_curErrorHandler = &m_printErrorHandler;

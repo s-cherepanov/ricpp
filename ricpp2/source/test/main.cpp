@@ -48,7 +48,7 @@ int main (int argc, char * const argv[]) {
 	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName()) << std::endl;
 
 	CStringList testpath;
-	testpath.explode(':', ".:$PROGDIR:$PATH:$HOME", true, true, true);
+	testpath.explode(':', "$HOME:C:\\testdir:C:/Anothertest;.:$PROGDIR:$PATH", true, true, true);
 
 	std::string teststr;
 	testpath.implode(':', teststr);

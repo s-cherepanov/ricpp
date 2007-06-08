@@ -266,7 +266,7 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 
 	if ( name && *name ) {
 		CStringList stringList;
-		stringList.explode(0, name, true, true, false); // Only one string, replace environment variables
+		stringList.explode(0, name, true, true, true); // Only one string, replace environment variables
 
 		CStringList::const_iterator first = stringList.begin();
 		if ( first != stringList.end() ) {

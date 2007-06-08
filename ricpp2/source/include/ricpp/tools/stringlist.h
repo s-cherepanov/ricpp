@@ -92,8 +92,6 @@ private:
 	 *
 	 *  @retval varName (input/output) variable name to search for, also used return
 	 *         the found value. Is cleared if not empty.
-	 *  @param useEnv If true tries to get \a varEnv as environment variable if it is not
-	 *         found in \a m_substMap.
 	 *  @return true, variable was replaced
 	 */
 	bool getVar(std::string &varName, bool useEnv);

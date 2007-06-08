@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/tools/stringlist.h"
+#include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;
 
@@ -236,7 +237,7 @@ CStringList::size_type CStringList::explode(
 				saviter = iter;
 				++iter;
 				iterinc = false;
-				if ( *iter != '/' ) {
+				if ( *iter != '/' && *iter != '\\' ) {
 					*saviter = ';';
 				}
 				firstletter = false;
@@ -261,6 +262,7 @@ CStringList::size_type CStringList::explode(
 		}
 		seperator = ';';
 	}
+	CFilepathConverter::convertToInternal(strval);
 #endif
 
 	state = normal;
@@ -285,6 +287,8 @@ CStringList::size_type CStringList::explode(
 				}
 				break;
 			case maskchar:
+				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar )
+				//	v.push_back(maskChar);
 				v.push_back(*iter);
 				state = normal;
 				break;
@@ -305,6 +309,8 @@ CStringList::size_type CStringList::explode(
 				}
 				break;
 			case maskinquote:
+				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar )
+				//	v.push_back(maskChar);
 				v.push_back(*iter);
 				state = doublequote;
 				break;

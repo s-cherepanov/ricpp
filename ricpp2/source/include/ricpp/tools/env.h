@@ -50,6 +50,9 @@ namespace RiCPP {
 	 *  IRi::begin(RtString name), they are started with a $ sign,
 	 *  like the four special vars $TMP, $HOME, $PATH, $PROGDIR.
 	 *  Implementation can be found in win32env.cpp for Windows and macenv.cpp for MacOs.
+	 *  The values variables are not converted as file pathes, since it cannot be
+	 *  expected in general (i.e. get()) that a variable is a filename. Conversion
+	 *  is done e.g. in CStringList
 	 */
 	class CEnv {
 		/** @brief Find the value of a variable
@@ -89,7 +92,6 @@ namespace RiCPP {
 		/** @brief Gets the value of the special variable TMP (so called in RiCPP).
 		 *
 		 *  A path to a directory, where data can be stored temporarily.
-		 *  The path is encoded using the internal RiCPP format.
 		 *  The native name of this variable can be different.
 		 *
 		 *  @param tmp String reference where the value of the special environment variable TMP is stored.
@@ -100,8 +102,7 @@ namespace RiCPP {
 		/** @brief Gets the value of the special variable HOME (so called in RiCPP).
 		 *
 		 *  A path to the
-		 *  home directory of the current user. The path is encoded using the internal
-		 *  RiCPP format ('/' as path seperator).
+		 *  home directory of the current user.
 		 *  The native name of this variable can be different.
 		 *
 		 *  @param home String reference where the value of the special environment variable
@@ -113,8 +114,6 @@ namespace RiCPP {
 		/** @brief Gets the value of the special variable PATH (so called in RiCPP).
 		 *
 		 *  A pathlist with the search pathes for executable programs.
-		 *  The searchpath is encoded using the internal RiCPP format
-		 *  ('/' as path seperator, pathes seperated by ';').
 		 *  The native name of this variable can be different.
 		 *
 		 *  @param path String reference where the value of the special environment
@@ -125,9 +124,8 @@ namespace RiCPP {
 
 		/** @brief Gets the value of the special variable PROGDIR (so called in RiCPP).
 		 *
-		 *  The absolute path to the directory of the running program. The path is encoded
-		 *  using the internal RiCPP format ('/' as seperator). The native name of this variable
-		 *  can be different (is not existent).
+		 *  The absolute path to the directory of the running program.
+		 *  The native name of this variable can be different (is not existent).
 		 *
 		 *  @param prog String reference where the value of the special environment variable
 		 *         PROG is stored
@@ -139,8 +137,8 @@ namespace RiCPP {
 		 *
 		 *  Returns the value of the environment variable with the name \a varName or
 		 *  the special values for the variables TMP, HOME, PATH, PROGDIR in \a var
-		 *  (these four names are not case sensitive,
-		 *  that's maybe not the case for other variables or different for different OSes).
+		 *  (these four names are not case sensitive, that's maybe not the case for
+		 *  other variables or different for different OSes).
 		 *  If no variable \a varName is found, var is cleared.
 		 *
 		 *  @retVal var Value of the environment variable is stored here

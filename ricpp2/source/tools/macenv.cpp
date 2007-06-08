@@ -115,7 +115,8 @@ std::string &CEnv::getTmp(std::string &tmp)
 			closedir(d);
 		} 
 	}
-	return CFilepathConverter::convertToInternal(tmp);
+	// return CFilepathConverter::convertToInternal(tmp);
+	return tmp;
 }
 
 /** @brief Mac implementation to get the user's home directory.
@@ -125,7 +126,9 @@ std::string &CEnv::getTmp(std::string &tmp)
 std::string &CEnv::getHome(std::string &home)
 {
 	home = "";
-	return CFilepathConverter::convertToInternal(get(home, "HOME"));
+	get(home, "HOME");
+	// return CFilepathConverter::convertToInternal(home);
+	return home;
 }
 
 /** @brief Mac implementation to get the executable search path list.
@@ -137,14 +140,8 @@ std::string &CEnv::getPath(std::string &path)
 	path = "";
 	get(path, "PATH");
 
-	std::string::iterator i = path.begin();
-	/*
-	for ( ; i != path.end(); i++ ) {
-		if ( (*i) == ':' )
-			(*i) = ';';
-	}
-	*/
-	return CFilepathConverter::convertToInternal(path);
+	// return CFilepathConverter::convertToInternal(path);
+	return path;
 }
 
 /** @brief Mac implementation to get the absolute path of the running executable.
@@ -192,7 +189,7 @@ std::string &CEnv::getProgDir(std::string &prog)
 				delete buf;
 			}
 		}
-		CFilepathConverter::convertToInternal(path);
+		// CFilepathConverter::convertToInternal(path);
 	}
 	
 	prog = path;

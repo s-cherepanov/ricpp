@@ -37,9 +37,10 @@ namespace RiCPP {
 enum EnumRequests {
 	// General routines
 	REQ_UNKNOWN = 0,				//!< Unknoen request
-	REQ_ERROR_HANDLER,				//!< Index for ri function IRi::errorHandler()
-	REQ_SYNCHRONIZE,				//!< Index for ri function IRi::synchronize()
-	REQ_DECLARE,                    //!< Index for ri function IRi::declare()
+	REQ_ERROR_HANDLER,				//!< Index for ri function IRiRoot::errorHandler()
+	REQ_SYNCHRONIZE,				//!< Index for ri function IRiRoot::synchronize()
+	REQ_SYSTEM,                     //!< Index for ri function IRiRoot::system()
+	REQ_DECLARE,                    //!< Index for ri function IRiRoot::declare()
 
 	// Context Switching
 	REQ_GET_CONTEXT,				//!< Index for ri function IRi::getContext() (no RIB binding)
@@ -152,6 +153,7 @@ enum EnumRequests {
 	REQ_SCALE,						//!< Index for ri function IRi::scale()
 	REQ_SKEW,						//!< Index for ri function IRi::skew()
 	REQ_DEFORMATION,				//!< Index for ri function IRi::deformation()
+	REQ_SCOPED_COORDINATE_SYSTEM,	//!< Index for ri function IRi::scopedCoordinateSystem()
 	REQ_COORDINATE_SYSTEM,			//!< Index for ri function IRi::coordinateSystem()
 	REQ_COORD_SYS_TRANSFORM,		//!< Index for ri function IRi::coordSysTransform()
 	REQ_TRANSFORM_POINTS,			//!< Index for ri function IRi::transformPoints() (no RIB binding)
@@ -205,6 +207,7 @@ enum EnumRequests {
 	REQ_MAKE_LAT_LONG_ENVIRONMENT,	//!< Index for ri function IRi::makeLatLongEnvironment()
 	REQ_MAKE_CUBE_FACE_ENVIRONMENT,	//!< Index for ri function IRi::makeCubeFaceEnvironment()
 	REQ_MAKE_SHADOW,				//!< Index for ri function IRi::makeShadow()
+	REQ_MAKE_BRICK_MAP,				//!< Index for ri function IRi::makeBrickMap()
 
 	// Archive files
 	REQ_ARCHIVE_RECORD,				//!< Index for ri function IRi::archiveRecord() (no RIB binding)

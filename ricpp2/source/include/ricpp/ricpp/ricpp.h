@@ -632,9 +632,9 @@ public:
 	virtual RtVoid errorHandler(const IErrorHandler &handler) = 0;
 	//@}
 
-	/** @defgroup ricpp_otherstate Ri other state handling routines
+	/** @defgroup ricpp_other Ri other routines
 	 *  @ingroup ricpp_interface
-	 *  @brief Declarations and synchronizing
+	 *  @brief Declarations, synchronizing and system
 	 *  @{
 	 */
 
@@ -654,10 +654,10 @@ public:
 	 */
     virtual RtVoid synchronize(RtToken name) = 0;
 
-	/* @brief Executes an arbitrary system command
+	/** @brief Executes an arbitrary system command
 	 * @param cmd The command
 	 */
-	// virtual RtVoid RiSystem(char *cmd);
+	virtual RtVoid system(RtString cmd) = 0;
 
 	//@}
 
@@ -1318,10 +1318,15 @@ public:
 	 */
 	virtual RtVoid deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	/*
-	// -> RenderMan 11.5.2, like coordinate system, difference: stacked with attribute block and above (not xform block)
-	// virtual RtVoid scopedCoordinateSystem(RtToken space) = 0;
-	*/
+	/* @brief Marks the CTM in the scope of a block
+	 *
+	 * RenderMan 11.5.2, like coordinate system, difference: stacked with attribute block
+	 * and above (not xform block)
+	 *
+	 * @param space Name for the CTM of the coordinate system
+	 * @see coordinateSystem()
+	 */
+	virtual RtVoid scopedCoordinateSystem(RtToken space) = 0;
 
 	/** @brief Marks the CTM
 	 *
@@ -1747,7 +1752,8 @@ public:
 	 */
     virtual RtVoid makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	/** @brief Creates a shadow map
+	/** @brief Creates a shadow map.
+	 *
 	 *  @param pic Filename of an image (input).
 	 *  @param tex Filename for the shadow map (output).
 	 *  @param n Number of tokens
@@ -1755,6 +1761,18 @@ public:
 	 *  @param params Value pointer for additional parameter list
 	 */
     virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+	/** @brief Creates a 3D texture map.
+	 *  Can be used by the texture3D function of the Shading Language.
+	 *
+	 *  @param nNames Number of poinbt clouds
+	 *  @param ptcnames Pointer to filenames of the point clouds
+	 *  @param bkmname Filename for the 3d texture map (output).
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameter list
+	 */
+    virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 	/** @defgroup ricpp_archive Ri RIB archives
@@ -2195,6 +2213,11 @@ public:
 	 *  @see IRiRoot::makeShadowV()
 	 */
     virtual RtVoid makeShadow(RtString pic, RtString tex, RtToken token = RI_NULL, ...) = 0;
+
+	/** @brief Creates a 3D texture map.
+	 *  @see IRiRoot::makeBrickMapV()
+	 */
+    virtual RtVoid makeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @addtogroup ricpp_archive

@@ -71,6 +71,7 @@ protected:
 
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
+	inline virtual RtVoid doSystem(RtToken cmd) {}
 	inline virtual RtVoid doResourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
@@ -163,6 +164,7 @@ protected:
 	inline virtual RtVoid doScale(RtFloat dx, RtFloat dy, RtFloat dz) {}
     inline virtual RtVoid doSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {}
 	inline virtual RtVoid doDeformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doScopedCoordinateSystem(RtToken space) {}
 	inline virtual RtVoid doCoordinateSystem(RtToken space) {}
 	inline virtual RtVoid doCoordSysTransform(RtToken space) {}
 
@@ -200,6 +202,7 @@ protected:
     inline virtual RtVoid doMakeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doMakeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
     inline virtual RtVoid doMakeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doMakeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doArchiveRecordV(RtToken type, RtString line) {}
 	inline virtual RtVoid doReadArchiveV(IRi &callee, RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}

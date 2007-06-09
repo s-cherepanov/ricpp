@@ -695,6 +695,20 @@ RtVoid CRiCPPBridge::synchronize(RtToken name)
 	}
 }
 
+RtVoid CRiCPPBridge::system(RtString cmd)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->system(cmd);
+		} catch (ERiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "system(system:%s)", cmd ? cmd : "");
+	}
+}
+
 RtResourceHandle CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
 {
 	va_list marker;
@@ -1698,6 +1712,20 @@ RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPo
 	}
 }
 
+RtVoid CRiCPPBridge::scopedCoordinateSystem(RtToken space)
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->scopedCoordinateSystem(space);
+		} catch (ERiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::scopedCoordinateSystem(space:%s)", space ? space : "");
+	}
+}
+
 RtVoid CRiCPPBridge::coordinateSystem(RtToken space)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
@@ -2333,6 +2361,29 @@ RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken to
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeShadowV(pic:%s, tex:%s, ...)", pic ? pic : pic, tex ? tex : "");
+	}
+}
+
+RtVoid CRiCPPBridge::makeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	return makeBrickMapV(nNames, ptcnames, bkmname, n, &m_tokens[0], &m_params[0]);
+}
+
+RtVoid CRiCPPBridge::makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->makeBrickMapV(nNames, ptcnames, bkmname, n, tokens, params);
+		} catch (ERiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::makeBrickMapV(nNames:%d, bkmname:%s, ...)", (int)nNames, bkmname ? bkmname : "");
 	}
 }
 

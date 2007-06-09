@@ -193,6 +193,12 @@ public:
 			callee()->synchronize(name);
 	}
 
+	inline virtual RtVoid system(RtToken cmd)
+	{
+		if ( canCall(REQ_SYSTEM) )
+			callee()->system(cmd);
+	}
+
 	inline virtual RtResourceHandle resourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return canCall(REQ_RESOURCE) ?
@@ -648,6 +654,12 @@ public:
 			callee()->deformationV(name, n, tokens, params);
 	}
 
+	inline virtual RtVoid scopedCoordinateSystem(RtToken space)
+	{
+		if ( canCall(REQ_SCOPED_COORDINATE_SYSTEM) )
+			callee()->scopedCoordinateSystem(space);
+	}
+
 	inline virtual RtVoid coordinateSystem(RtToken space)
 	{
 		if ( canCall(REQ_COORDINATE_SYSTEM) )
@@ -842,6 +854,12 @@ public:
 	{
 		if ( canCall(REQ_MAKE_SHADOW) )
 			callee()->makeShadowV(pic, tex, n, tokens, params);
+	}
+
+    inline virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		if ( canCall(REQ_MAKE_SHADOW) )
+			callee()->makeBrickMapV(nNames, ptcnames, bkmname, n, tokens, params);
 	}
 
 	inline virtual RtVoid archiveRecordV(RtToken type, RtString line)

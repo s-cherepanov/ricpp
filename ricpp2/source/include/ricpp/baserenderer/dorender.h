@@ -71,6 +71,7 @@ protected:
 	 */
 	virtual RtVoid doDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
+	virtual RtVoid doSystem(RtToken cmd) = 0;
 	virtual RtVoid doResourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
@@ -163,6 +164,7 @@ protected:
 	virtual RtVoid doScale(RtFloat dx, RtFloat dy, RtFloat dz) = 0;
     virtual RtVoid doSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) = 0;
 	virtual RtVoid doDeformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doScopedCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid doCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid doCoordSysTransform(RtToken space) = 0;
 	// only CBaseRenderer
@@ -202,6 +204,7 @@ protected:
     virtual RtVoid doMakeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
     virtual RtVoid doMakeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
     virtual RtVoid doMakeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid doMakeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	virtual RtVoid doArchiveRecordV(RtToken type, RtString line) = 0;
 	virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;

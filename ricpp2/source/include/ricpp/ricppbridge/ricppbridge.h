@@ -864,6 +864,7 @@ public:
 	//@{
 	virtual RtToken declare(RtString name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
+	virtual RtVoid system(RtString cmd);
 	virtual RtResourceHandle resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...);
 	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 
@@ -1074,6 +1075,7 @@ public:
 	virtual RtVoid deformation(RtString name, RtToken token = RI_NULL, ...);
 	virtual RtVoid deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
+	virtual RtVoid scopedCoordinateSystem(RtToken space);
 	virtual RtVoid coordinateSystem(RtToken space);
 	virtual RtVoid coordSysTransform(RtToken space);
 	virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]);
@@ -1142,6 +1144,8 @@ public:
     virtual RtVoid makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]);
     virtual RtVoid makeShadow(RtString pic, RtString tex, RtToken token = RI_NULL, ...);
     virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]);
+    virtual RtVoid makeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, RtToken token = RI_NULL, ...);
+    virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/******************************************************************************/
 

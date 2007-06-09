@@ -22,12 +22,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file tokenizer.cpp
+/** @file tokenmap.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of the representation of a Token (index and its string)
  */
 
-#include "ricpp/declaration/tokenizer.h"
+#include "ricpp/declaration/tokenmap.h"
 
 #ifndef _RICPP_RICPP_RENDERERERROR_H
 #include "ricpp/ricpp/renderererror.h"
@@ -36,7 +36,7 @@
 using namespace RiCPP;
 
 
-CTokenizer::CTokenizer()
+CTokenMap::CTokenMap()
 // throw ERiCPPError;
 {
 	try {
@@ -238,13 +238,13 @@ CTokenizer::CTokenizer()
 	} catch(...) {
 
 		// If there was an error, the token was not created. Handled by the next few lines.
-		throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not initialize tokenizer");
+		throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not initialize tokenmap");
 
 	}
 }
 
 
-RtToken CTokenizer::findCreate(const char *name)
+RtToken CTokenMap::findCreate(const char *name)
 // throw ERiCPPError;
 {
 	if ( !name )
@@ -284,7 +284,7 @@ RtToken CTokenizer::findCreate(const char *name)
 	return iter->second;
 }
 
-RtToken CTokenizer::find(const char *name) const
+RtToken CTokenMap::find(const char *name) const
 {
 	if ( !name )
 		return RI_NULL;
@@ -299,7 +299,7 @@ RtToken CTokenizer::find(const char *name) const
 	return iter->second;
 }
 
-RtToken CTokenizer::staticFindCreate(RtToken token)
+RtToken CTokenMap::staticFindCreate(RtToken token)
 // throw ERiCPPError;
 {
 	if ( !token )

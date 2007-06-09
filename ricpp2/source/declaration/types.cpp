@@ -36,7 +36,7 @@
 
 using namespace RiCPP;
 
-const unsigned int CTypeInfo::m_basicTypeSizes[N_BASICTYPES] =
+const unsigned int CTypeInfo::ms_basicTypeSizes[N_BASICTYPES] =
 {
 	0,
 	sizeof(RtInt),
@@ -44,7 +44,7 @@ const unsigned int CTypeInfo::m_basicTypeSizes[N_BASICTYPES] =
 	sizeof(RtString)
 };
 
-RtToken CTypeInfo::m_basicTypeNames[N_BASICTYPES] =
+RtToken CTypeInfo::ms_basicTypeNames[N_BASICTYPES] =
 {
 	RI_EMPTY,
 	RI_FLOAT,
@@ -52,7 +52,7 @@ RtToken CTypeInfo::m_basicTypeNames[N_BASICTYPES] =
 	RI_STRING
 };
 
-RtToken CTypeInfo::m_typeNames[N_TYPES+1] =
+RtToken CTypeInfo::ms_typeNames[N_TYPES+1] =
 {
 	RI_EMPTY,
 	RI_FLOAT,
@@ -67,7 +67,7 @@ RtToken CTypeInfo::m_typeNames[N_TYPES+1] =
 	RI_INT
 };
 
-const unsigned int CTypeInfo::m_typeSizes[N_TYPES+1] =
+const unsigned int CTypeInfo::ms_typeSizes[N_TYPES+1] =
 {
 	0,  // Unknown
 	1,  // (RtFloat)
@@ -82,7 +82,7 @@ const unsigned int CTypeInfo::m_typeSizes[N_TYPES+1] =
 	1  // (RtInt)
 };
 
-const unsigned int CTypeInfo::m_typeByteSizes[N_TYPES+1] =
+const unsigned int CTypeInfo::ms_typeByteSizes[N_TYPES+1] =
 {
 	0,                  // Unknown
 	sizeof(RtFloat),    // (RtFloat)
@@ -97,7 +97,7 @@ const unsigned int CTypeInfo::m_typeByteSizes[N_TYPES+1] =
 	sizeof(RtInt)       // (RtInt)
 };
 
-const EnumBasicTypes CTypeInfo::m_basicTypesForTypes[N_TYPES+1] =
+const EnumBasicTypes CTypeInfo::ms_basicTypesForTypes[N_TYPES+1] =
 {
 	BASICTYPE_UNKNOWN,  // Unknown
 	BASICTYPE_FLOAT,    // (RtFloat)
@@ -112,7 +112,7 @@ const EnumBasicTypes CTypeInfo::m_basicTypesForTypes[N_TYPES+1] =
 	BASICTYPE_INTEGER   // (RtInt)
 };
 
-RtToken CTypeInfo::m_classNames[N_CLASSES] =
+RtToken CTypeInfo::ms_classNames[N_CLASSES] =
 {
 	RI_EMPTY,
 	RI_CONSTANT,
@@ -123,7 +123,7 @@ RtToken CTypeInfo::m_classNames[N_CLASSES] =
 	RI_FACEVERTEX
 };
 
-RtToken CTypeInfo::m_namespaces[N_NAMESPACES] =
+RtToken CTypeInfo::ms_namespaces[N_NAMESPACES] =
 {
 	RI_EMPTY,
 	RI_PROJECTION,
@@ -181,8 +181,8 @@ EnumNamespaces CTypeInfo::namespacePrefix(const char *avar, size_t &pos)
 	if ( emptyStr(avar) )
 		return NAMESPACE_UNKNOWN;
 	for ( i = 1; i < N_NAMESPACES; ++i ) {
-		if ( !tokcmp(m_namespaces[i], avar) ) {
-			pos = strlen(m_namespaces[i]);
+		if ( !tokcmp(ms_namespaces[i], avar) ) {
+			pos = strlen(ms_namespaces[i]);
 			if ( avar[pos] == ':' ) {
 				++pos;
 			} else {
@@ -201,8 +201,8 @@ EnumClasses CTypeInfo::classPrefix(const char *aclass, size_t &pos)
 	int i;
 	if ( !aclass ) return CLASS_UNKNOWN;
 	for ( i = 1; i < N_CLASSES; ++i ) {
-		if ( !tokcmp(m_classNames[i], aclass) ) {
-			pos = strlen(m_classNames[i]);
+		if ( !tokcmp(ms_classNames[i], aclass) ) {
+			pos = strlen(ms_classNames[i]);
 			return (EnumClasses)i;
 		}
 	}
@@ -215,8 +215,8 @@ EnumTypes CTypeInfo::typePrefix(const char *type, size_t &pos)
 	int i;
 	if ( !type ) return TYPE_UNKNOWN;
 	for ( i = 1; i < N_TYPES+1; ++i ) {
-		if ( !tokcmp(m_typeNames[i], type) ) {
-			pos = strlen(m_typeNames[i]);
+		if ( !tokcmp(ms_typeNames[i], type) ) {
+			pos = strlen(ms_typeNames[i]);
 			if ( i == N_TYPES ) {
 				// let "int" be "integer"
 				i = TYPE_INTEGER;
@@ -274,41 +274,41 @@ int CTypeInfo::arrayPrefix(const char *acard, size_t &pos)
 
 RtToken CTypeInfo::basicTypeName(EnumBasicTypes e)
 {
-	return m_basicTypeNames[e];
+	return ms_basicTypeNames[e];
 }
 
 unsigned int CTypeInfo::basicTypeByteSize(EnumBasicTypes e)
 {
-	return m_basicTypeSizes[e];
+	return ms_basicTypeSizes[e];
 }
 
 
 RtToken CTypeInfo::typeName(EnumTypes e)
 {
-	return m_typeNames[e];
+	return ms_typeNames[e];
 }
 
 unsigned int CTypeInfo::typeSize(EnumTypes e)
 {
-	return m_typeSizes[e];
+	return ms_typeSizes[e];
 }
 
 RtToken CTypeInfo::className(EnumClasses e)
 {
-	return m_classNames[e];
+	return ms_classNames[e];
 }
 
 RtToken CTypeInfo::tableNamespace(EnumNamespaces e)
 {
-	return m_namespaces[e];
+	return ms_namespaces[e];
 }
 
 unsigned int CTypeInfo::typeByteSize(EnumTypes e)
 {
-	return m_typeByteSizes[e];
+	return ms_typeByteSizes[e];
 }
 
 EnumBasicTypes CTypeInfo::basicTypeForType(EnumTypes e)
 {
-	return m_basicTypesForTypes[e];
+	return ms_basicTypesForTypes[e];
 }

@@ -120,7 +120,7 @@ public:
 	CDeclaration(const char *parameterDeclstr, unsigned int curColorSize);
 	/** @brief Standard constructor for declarations CBaseRenderer::Declare().
 	 * Can throw a RIE_SYNTAX parsing error.
-	 * @param token The token (unique string, see CTokenizer) for the declaration name, must not represent an empty string.
+	 * @param token The token (unique string, see CTokenMap) for the declaration name, must not represent an empty string.
 	 * @param declstr The declaration.
 	 * @param curColorSize The current size of color (number of floats).
 	 * @param isDefault A default declaration of the interface?

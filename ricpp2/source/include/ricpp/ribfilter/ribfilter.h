@@ -139,17 +139,35 @@ public:
 	 */
 	inline virtual IRiRoot *callee() const { return m_next; }
 
-	/** @brief Sets parameter.
+	/** @brief Sets argument.
 	 *
 	 *  Overload this functions to set own parameters.
 	 *
 	 *  @param name Name of the argument.
-	 *  @param param Pointer to the parameter.
+	 *  @param value Pointer to the parameter.
 	 *  @return Pointer to the RenderMan interrface that is called by this filter.
 	 */
-    inline virtual RtVoid setParam(RtString name, RtPointer param)
+    inline virtual RtVoid setArg(RtString name, RtPointer value)
 	{
 		// Can be overwritten
+	}
+
+	/** @brief Sets arguments.
+	 *
+	 *  Overload this functions to set own parameters.
+	 *
+	 *  @param n Number of name value pairs
+	 *  @param name Name of the argument.
+	 *  @param value Pointer to the parameter.
+	 *  @return Pointer to the RenderMan interrface that is called by this filter.
+	 */
+    inline virtual RtVoid setArgs(RtInt n, RtString name[], RtPointer value[])
+	{
+		if ( n <= 0 )
+			return;
+		for ( RtInt i = 0; i < n; ++i ) {
+			setArg(name[i], value[i]);
+		}
 	}
 
 	/* ********************************************************************* */

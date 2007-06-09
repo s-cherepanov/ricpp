@@ -62,6 +62,7 @@ namespace RiCPP {
  *  - static const char *myName();
  *
  *  are needed (same meaning as the virtuals without the prefix 'my').
+ *
  */
 class IPlugin {
 public:
@@ -601,6 +602,10 @@ protected:
 	 */
 	TObjPtrRegistry<std::string, TPluginFactory<Plugin> *> m_factoryRegistry;
 	
+	/** @brief Memory managed plugin factories.
+	 */
+	TObjPtrRegistry<std::string, TPluginFactory<Plugin> *> m_internalFactoryRegistry;
+
 	/** @brief Searchpath to find the dynamic libraries for the plugins.
 	 */
 	std::string m_searchpath;
@@ -609,13 +614,17 @@ protected:
 	 *  @param name Basename of the plugin library
 	 *  @return Factory object for the plugin
 	 */
-	TPluginFactory<Plugin> *getFactory(const char *name)
+	inline virtual TPluginFactory<Plugin> *getFactory(const char *name)
 	{
 		std::string key(nonullstr(name));
+
 		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
 		if ( !f ) {
+			f = m_internalFactoryRegistry.findObj(key);
+		}
+		if ( !f ) {
 			try {
-				f = new TPluginLoaderFactory<Plugin>(name, m_searchpath.c_str());
+				f = new TPluginLoaderFactory<Plugin>(key.c_str(), m_searchpath.c_str());
 			} catch ( ERiCPPError &e ) {
 				throw e;
 			} catch ( ... ) {
@@ -624,7 +633,7 @@ protected:
 			if ( !f )
 				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
 					"Cannot create a new plugin factory for '%s'",
-					markemptystr(name));
+					markemptystr(key.c_str()));
 
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
 				// Should not happen, since already tested using valid()
@@ -644,7 +653,7 @@ protected:
 					nonullstr(Plugin::myType()), nonullstr(f->type()));
 			}
 
-			m_factoryRegistry.registerObj(key, f);
+			m_internalFactoryRegistry.registerObj(key, f);
 		} else {
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
 				// Should not happen, since already tested
@@ -668,7 +677,8 @@ public:
 	 *  @param pathlist Pathlist to find the libraries
 	 */
 	inline TPluginHandler(const char *pathlist = 0)
-	: m_factoryRegistry(true),
+	: m_factoryRegistry(false),
+	  m_internalFactoryRegistry(true),
 	  m_searchpath(nonullstr(pathlist))
 	{
 	}
@@ -737,6 +747,15 @@ public:
 		return m_factoryRegistry.registerObj(key, f);
 	}
 
+	inline virtual bool unRegisterFactory(const char *name)
+	{
+		std::string key(nonullstr(name));
+		if ( key.empty() ) {
+			return false;
+		}
+		return m_factoryRegistry.unRegisterObj(key);
+	}
+
 	/** @brief Sets a new searchpath.
 	 *
 	 * @param path New searchpath, directory seperator '/', pathes separated by ';'.
@@ -756,6 +775,107 @@ public:
 	}
 
 }; // template class TPluginHandler
+
+/** @brief Singleton that handles the plugins for a specific type.
+ *
+ * Plugins can be loaded from a dynamic library or created by registered factories.
+ * Objects of TPluginHandlerSingleton are singletons of TPluginHandler.
+ */
+template
+<class Plugin>
+class TPluginHandlerSingleton
+{
+protected:
+	/** @brief Plugin handler as singleton.
+	 */
+	static TPluginHandler<Plugin> ms_pluginHandler;
+public:
+
+	/** @brief Constructor
+	 */
+	inline TPluginHandlerSingleton()
+	{
+	}
+
+	/** @brief Virtual destructor
+	 */
+	inline virtual ~TPluginHandlerSingleton()
+	{
+	}
+
+	/** @brief Gets a new plugin
+	 *
+	 * @param name Name of the plugin and basename of the plugin library
+	 * @return The loaded plugin
+	 * @exception ERiCPPException Could not load plugin or types do not match.
+	 */
+	inline virtual Plugin *newPlugin(const char *name)
+	{
+		return ms_pluginHandler.newPlugin(name);
+	}
+
+	/** @brief Gets the last plugin created
+	 *
+	 * @param name Name of the plugin and basename of the plugin library
+	 * @return The loaded plugin loaded lately
+	 * @see TPluginFactory::lastPlugin()
+	 */
+	inline virtual Plugin *lastPlugin(const char *name)
+	{
+		return ms_pluginHandler.lastPlugin(name);
+	}
+
+	/** @brief Deletes a plugin.
+	 *
+	 * @param p Plugin to delete
+	 * @return true, if the plugin could be deleted
+	 */
+	inline virtual bool deletePlugin(Plugin *p)
+	{
+		return ms_pluginHandler.deletePlugin(p);
+	}
+
+	/** @brief Registers a plugin factory
+	 *
+	 * Registers a plugin factory for a specific name. Normally
+	 * TPluginFactory are registered to create specific plugins with
+	 * \c new instead of loading them from a dynamic library.
+	 *
+	 * @param name Name of the plugins
+	 * @param f Factory to create the plugins
+	 * @return true, if the plugin factory could be registerd
+	 */
+	inline virtual bool registerFactory(const char *name, TPluginFactory<Plugin> *f)
+	{
+		return ms_pluginHandler.registerFactory(name, f);
+	}
+
+	inline virtual bool unRegisterFactory(const char *name)
+	{
+		return ms_pluginHandler.unRegisterFactory(name);
+	}
+
+	/** @brief Sets a new searchpath.
+	 *
+	 * @param path New searchpath, directory seperator '/', pathes separated by ';'.
+	 */
+	inline void searchpath(const char *path)
+	{
+		ms_pluginHandler.searchpath(path);
+	}
+
+	/** @brief Gets the current searchpath.
+	 *
+	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
+	 */
+	inline const char *searchpath() const
+	{
+		return ms_pluginHandler.searchpath();
+	}
+
+}; // template class TPluginHandler
+
+template <class Plugin> TPluginHandler<Plugin> TPluginHandlerSingleton<Plugin>::ms_pluginHandler;
 
 } // namespace RiCPP
 

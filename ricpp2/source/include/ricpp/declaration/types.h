@@ -1,5 +1,5 @@
-#ifndef _RICPP_RICPP_TYPES_H
-#define _RICPP_RICPP_TYPES_H
+#ifndef _RICPP_DECLARATION_TYPES_H
+#define _RICPP_DECLARATION_TYPES_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -141,14 +141,14 @@ const int N_NAMESPACES = (int)NAMESPACE_RESOURCE+1;
 /** @brief Class to query info about Ri-types that can occur in declarations.
  */
 class CTypeInfo {
-	static const unsigned int m_basicTypeSizes[N_BASICTYPES]; ///< Number of bytes for the basic types
-	static RtToken m_basicTypeNames[N_BASICTYPES]; ///< Names of basic types
-	static const unsigned int m_typeSizes[N_TYPES+1]; ///< Sizes of the types (+1 to have the same size as m_typeNames, but not needed)
-	static RtToken m_typeNames[N_TYPES+1]; ///< Type names (+1 to recognize 'int', that is internally converted to 'integer' in typePrefix())
-	static RtToken m_classNames[N_CLASSES]; ///< Storage class names
-	static const unsigned int m_typeByteSizes[N_TYPES+1]; ///< Number of bytes for the types
-	static const EnumBasicTypes m_basicTypesForTypes[N_TYPES+1]; ///< Basic types the types consists of.
-	static RtToken m_namespaces[N_NAMESPACES]; ///< Table namespaces
+	static const unsigned int ms_basicTypeSizes[N_BASICTYPES]; ///< Number of bytes for the basic types
+	static RtToken ms_basicTypeNames[N_BASICTYPES]; ///< Names of basic types
+	static const unsigned int ms_typeSizes[N_TYPES+1]; ///< Sizes of the types (+1 to have the same size as m_typeNames, but not needed)
+	static RtToken ms_typeNames[N_TYPES+1]; ///< Type names (+1 to recognize 'int', that is internally converted to 'integer' in typePrefix())
+	static RtToken ms_classNames[N_CLASSES]; ///< Storage class names
+	static const unsigned int ms_typeByteSizes[N_TYPES+1]; ///< Number of bytes for the types
+	static const EnumBasicTypes ms_basicTypesForTypes[N_TYPES+1]; ///< Basic types the types consists of.
+	static RtToken ms_namespaces[N_NAMESPACES]; ///< Table namespaces
 
 	/** @brief Compares prefixes
 	 * Compares if @a token is a prefix of @a search. Behind the
@@ -255,4 +255,4 @@ public:
 
 } // namespace RiCPP
 
-#endif // _RICPP_RICPP_TYPES_H
+#endif // _RICPP_DECLARATION_TYPES_H

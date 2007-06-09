@@ -38,20 +38,20 @@
 
 namespace RiCPP {
 
-	/** @brief A registered token, the tokens are managed by CTokenizer
+	/** @brief A registered token, the tokens are managed by CTokenMap
 	 *
 	 * Just stores a character pointer. CToken is used by CTokenManager.
-	 * The compare functions are used. CToken can be used ouside CTokenizer
+	 * The compare functions are used. CToken can be used ouside CTokenMap
 	 * to iterate through all declared tokens.
 	 *
-	 * @see CTokenizer
+	 * @see CTokenMap
 	 */
 	class CToken
 	{
-		friend class CTokenizer;
+		friend class CTokenMap;
 		RtToken m_token;
 
-		/** @brief Constructor, is constructed by searching in CTokenizer
+		/** @brief Constructor, is constructed by searching in CTokenMap
 		 * @param aToken token
 		 */
 		inline CToken(RtToken aToken)
@@ -59,7 +59,7 @@ namespace RiCPP {
 			m_token = aToken;
 		}
 
-		/** @brief Sets the members of this token, set by CTokenizer
+		/** @brief Sets the members of this token, set by CTokenMap
 		 * @param aToken name of the token
 		 */
 		inline void set(RtToken aToken)

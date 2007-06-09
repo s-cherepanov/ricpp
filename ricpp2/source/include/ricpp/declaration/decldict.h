@@ -30,9 +30,9 @@
  *  @brief Dictionary for declarations
  */
 
-#ifndef _RICPP_DECLARATION_TOKENIZER_H
-#include "ricpp/declaration/tokenizer.h"
-#endif // _RICPP_DECLARATION_TOKENIZER_H
+#ifndef _RICPP_DECLARATION_TOKENMAP_H
+#include "ricpp/declaration/tokenmap.h"
+#endif // _RICPP_DECLARATION_TOKENMAP_H
 
 #ifndef _RICPP_DECLARATION_DECLARATION_H
 #include "ricpp/declaration/declaration.h"
@@ -107,7 +107,7 @@ public:
 	 *
 	 * @param token Token (unique string)  of the name of the declaration
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
-	 * @see find(RtToken name, unsigned int curColorSize), CTokenizer
+	 * @see find(RtToken name, unsigned int curColorSize), CTokenMap
 	 */
 	inline const CDeclaration *find(RtToken token) const
 	{
@@ -126,11 +126,11 @@ public:
 	 * @param tableNamespace The namespace
 	 * @param table The table
 	 * @param var The stripped name of the variable
-	 * @param tokenizer The tokenizer with all tokens of a rendering context
+	 * @param tokenmap The token map with all tokens of a rendering context
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
-	const CDeclaration *find(RtToken tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const;
+	const CDeclaration *find(RtToken tableNamespace, const char *table, const char *var, const CTokenMap &tokenmap) const;
 
 	/** @brief Finds a declaration for a token, may change number of color components.
 	 *
@@ -143,7 +143,7 @@ public:
 	 * @param curColorSize The current number of color components.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise.
 	 * @exception ERiCPPError Can throw this if @c RIE_NOMEM for a new color declaration.
-	 * @see find(RtToken), CTokenizer
+	 * @see find(RtToken), CTokenMap
 	 */
 	const CDeclaration *findAndUpdate(RtToken token, unsigned int curColorSize)
 	// throw(ERiCPPError)
@@ -154,16 +154,16 @@ public:
 	 * @param tableNamespace The namespace
 	 * @param table The table
 	 * @param var The stripped name of the variable
-	 * @param tokenizer The tokenizer with all tokens of a rendering context
+	 * @param tokenmap The tokenmap with all tokens of a rendering context
 	 * @param curColorSize The current number of color components.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
-	 * @see find(const char *, const char *, const char *, const CTokenizer &), CDeclaration
+	 * @see find(const char *, const char *, const char *, const CTokenMap &), CDeclaration
 	 */
 	const CDeclaration *findAndUpdate(
 		RtToken tableNamespace,
 		const char *table,
 		const char *var,
-		const CTokenizer &tokenizer,
+		const CTokenMap &tokenmap,
 		unsigned int curColorSize)
 	// throw(ERiCPPError)
 	;

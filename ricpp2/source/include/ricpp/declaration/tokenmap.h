@@ -1,5 +1,5 @@
-#ifndef _RICPP_DECLARATION_TOKENIZER_H
-#define _RICPP_DECLARATION_TOKENIZER_H
+#ifndef _RICPP_DECLARATION_TOKENMAP_H
+#define _RICPP_DECLARATION_TOKENMAP_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -25,7 +25,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file tokenizer.h
+/** @file tokenmap.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Token dictionary
  */
@@ -39,10 +39,10 @@
 
 namespace RiCPP {
 
-/** @brief A tokenizer to create unique tokens for strings
+/** @brief A tokenmap to create unique tokens for strings
  *  @see CToken
  */
-class CTokenizer {
+class CTokenMap {
 	std::map<CToken, RtToken> m_tokenMapper; ///< @brief Maps a token name to it's id
 	std::list<const char *> m_strList; ///< @brief List of strings to delete at destructor
 
@@ -57,11 +57,11 @@ public:
 	 * Maps the RtToken out of ricpp.h at the beginning
 	 * @exception ERiCPPError if a token cannot be created (out of memory while filling map).
 	 */
-	CTokenizer();
+	CTokenMap();
 
 	/** @brief Destructor
 	 */
-	inline ~CTokenizer()
+	inline ~CTokenMap()
 	{
 		std::list<const char *>::iterator i;
 		for ( i = m_strList.begin(); i != m_strList.end(); i++ ) {
@@ -107,8 +107,8 @@ public:
 	 *  @return Size of the token map.
 	 */
 	inline size_type size() const { return m_tokenMapper.size(); }
-}; // CTokenizer
+}; // CTokenMap
 
 } // namespace RiCPP
 
-#endif // _RICPP_DECLARATION_TOKENIZER_H
+#endif // _RICPP_DECLARATION_TOKENMAP_H

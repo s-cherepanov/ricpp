@@ -263,8 +263,8 @@ const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code (
 
 /** @defgroup ricpp_tokens Ri tokens
  *  @brief Definition of the tokens of the RenderMan interface
- *  @warning Must be inserted into CTokenizer::CTokenizer()
- *  @see CTokenizer::CTokenizer()
+ *  @warning Must be inserted into CTokenMap::CTokenMap()
+ *  @see CTokenMap::CTokenMap()
  *  @{
  */
 const RtToken  RI_NULL = (RtToken)0L; ///< Used to mark undefined tokens and end marker of parameter list.

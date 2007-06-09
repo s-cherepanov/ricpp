@@ -67,6 +67,7 @@ void testPluginFactory()
 		TPluginFactory<CPlugin> pluginFactory;
 		TPluginLoaderFactory<CPlugin> pluginLoaderFactory("demo");
 		TPluginHandler<CPlugin> pluginHandler;
+		TPluginHandlerSingleton<CPlugin> pluginHandlerSingleton;
 	} catch ( ERiCPPError &e ) {
 		e = e;
 	}

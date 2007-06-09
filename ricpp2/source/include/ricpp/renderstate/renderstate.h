@@ -78,8 +78,8 @@ public:
 	virtual CModeStack::size_type modesSize() const = 0;
 	//@}
 
-	/** @defgroup tokenizer_interface_group CTokenizer functions
-	 *  @brief Reading the tokenizer.
+	/** @defgroup tokenmap_interface_group CTokenMap functions
+	 *  @brief Reading the tokenmap.
 	 */
 	//@{
 	/** @brief Searches for a token
@@ -88,9 +88,9 @@ public:
 	 */
 	virtual RtToken tokFind(const char *name) const = 0;
 
-	virtual CTokenizer::const_iterator tokBegin() const = 0;
-	virtual CTokenizer::const_iterator tokEnd() const = 0;
-	virtual CTokenizer::size_type tokSize() const = 0;
+	virtual CTokenMap::const_iterator tokBegin() const = 0;
+	virtual CTokenMap::const_iterator tokEnd() const = 0;
+	virtual CTokenMap::size_type tokSize() const = 0;
 	//@}
 
 	/** @defgroup decldict_interface_group CDeclarationDictionary functions
@@ -98,7 +98,7 @@ public:
 	 */
 	//@{
 	virtual const CDeclaration *declFind(RtToken name) const = 0;
-	virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const = 0;
+	virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenMap &tokenmap) const = 0;
 	virtual CDeclarationDictionary::const_iterator declBegin() const = 0;
 	virtual CDeclarationDictionary::const_iterator declEnd() const = 0;
 	virtual CDeclarationDictionary::size_type declSize() const = 0;
@@ -115,7 +115,7 @@ class CRenderState : IRenderStateReader {
 	RtInt m_frameNumber;               ///< Frame number
 
 	CDeclarationDictionary m_decldict; ///< Dictionary for declarations
-	CTokenizer m_tokenizer;            ///< Registered tokens
+	CTokenMap m_tokenmap;            ///< Registered tokens
 public:
 
 	/** @brief Initializes the object
@@ -213,12 +213,12 @@ public:
 
 	//@}
 
-	/** @defgroup tokenizer_group CTokenizer functions
-	 *  @brief Facading the tokenizer.
+	/** @defgroup tokenmap_group CTokenMap functions
+	 *  @brief Facading the tokenmap.
 	 *
-	 *  The tokenizer can be used to have unique strings as tokens RtToken.
+	 *  The tokenmap can be used to have unique strings as tokens RtToken.
 	 *  RtToken can be compared by their address fastly.
-	 *  @see CTokenizer
+	 *  @see CTokenMap
 	 */
 	//@{
 	/** @brief Searches for a token and creates one if token name is not found
@@ -229,14 +229,14 @@ public:
 	inline RtToken tokFindCreate(const char *name)
 	// throw(ERendererException)
 	{
-		return m_tokenizer.findCreate(name);
+		return m_tokenmap.findCreate(name);
 	}
 
-	inline virtual RtToken tokFind(const char *name) const { return m_tokenizer.find(name); }
+	inline virtual RtToken tokFind(const char *name) const { return m_tokenmap.find(name); }
 
-	inline virtual CTokenizer::const_iterator tokBegin() const { return m_tokenizer.begin(); }
-	inline virtual CTokenizer::const_iterator tokEnd() const { return m_tokenizer.end(); }
-	inline virtual CTokenizer::size_type tokSize() const { return m_tokenizer.size(); }
+	inline virtual CTokenMap::const_iterator tokBegin() const { return m_tokenmap.begin(); }
+	inline virtual CTokenMap::const_iterator tokEnd() const { return m_tokenmap.end(); }
+	inline virtual CTokenMap::size_type tokSize() const { return m_tokenmap.size(); }
 	//@}
 
 	/** @defgroup decldict_group CDeclarationDictionary functions
@@ -246,7 +246,7 @@ public:
 	 */
 	//@{
 	inline virtual const CDeclaration *declFind(RtToken name) const { return m_decldict.find(name); }
-	inline virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenizer &tokenizer) const { return m_decldict.find(tableNamespace, table, var, tokenizer); }
+	inline virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenMap &tokenmap) const { return m_decldict.find(tableNamespace, table, var, tokenmap); }
 	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_decldict.begin(); }
 	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_decldict.end(); }
 	inline virtual CDeclarationDictionary::size_type declSize() const { return m_decldict.size(); }
@@ -255,10 +255,10 @@ public:
 		const char*tableNamespace,
 		const char *table,
 		const char *var,
-		const CTokenizer &tokenizer,
+		const CTokenMap &tokenmap,
 		unsigned int curColorSize)
 	{
-		return m_decldict.findAndUpdate(tableNamespace, table, var, tokenizer, curColorSize);
+		return m_decldict.findAndUpdate(tableNamespace, table, var, tokenmap, curColorSize);
 	}
 	inline void declAdd(CDeclaration *decl) { return m_decldict.add(decl); }
 	//@}

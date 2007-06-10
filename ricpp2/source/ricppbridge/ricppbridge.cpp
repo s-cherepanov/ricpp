@@ -28,7 +28,7 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
-#include "ricpp/ribwriter/ribwriter.h"
+// #include "ricpp/ribwriter/ribwriter.h"
 #include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;
@@ -175,11 +175,23 @@ CRiCPPBridge::CRiCPPBridge() :
 	doOptionV("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
 
 	m_curErrorHandler = &m_printErrorHandler;
+
+	/* Loaded from DLL
 	TPluginFactory<CRibWriterCreator> *f = new TPluginFactory<CRibWriterCreator>;
 	if ( f )
 		m_ctxMgmt.registerFactory("ribwriter", (TPluginFactory<CContextCreator> *)f);
+	*/
 }
 
+CRiCPPBridge::~CRiCPPBridge()
+{
+	/* see constructor - no ribwriter creation
+	TPluginFactory<CContextCreator> *f =
+		m_ctxMgmt.unRegisterFactory("ribwriter");
+	if ( f )
+		delete f;
+	*/
+}
 
 RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
 {

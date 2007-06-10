@@ -51,8 +51,8 @@
 #endif
 
 #include <vector>
+#include <cassert>
 #include <stdarg.h>
-#include <assert.h>
 
 namespace RiCPP {
 
@@ -579,10 +579,6 @@ protected:
 		 */
 		bool context(RtContextHandle handle);
 		
-		/**
-		 */
-		
-		
 		/** @brief sets the searchpath for the rendererloader
 		 *  @param path The searchpath
 		 */
@@ -605,6 +601,24 @@ protected:
 		 * @return true, if the plugin factory could be registered
 		 */
 		inline virtual bool registerFactory(const char *name, TPluginFactory<CContextCreator> *f) { return m_rendererLoader.registerFactory(name, f); }
+
+		/** @brief unregisters a renderer factory
+		 * @param name Name of the plugins
+		 * @return Pointer to factory that was unregistered
+		 */
+		inline virtual TPluginFactory<CContextCreator> *unRegisterFactory(const char *name) { return m_rendererLoader.unRegisterFactory(name); }
+
+		/** @brief Gets the name of the standard renderer.
+		 *
+		 * @return Name of the standard renderer
+		 */
+		inline const char *standardRendererName() const { return m_rendererLoader.standardRendererName(); }
+
+		/** @brief Sets the name of the standard renderer.
+		 *
+		 * @param Name of the standard renderer, 0 is substituted by "ribwriter"
+		 */
+		inline void standardRendererName(const char *name) { m_rendererLoader.standardRendererName(name); }
 	};
 	
 	CContextManagement m_ctxMgmt; ///< The instance for the context management
@@ -688,7 +702,7 @@ public:
 
 	/** @brief Destructor
 	 */
-	inline virtual ~CRiCPPBridge() {}
+	virtual ~CRiCPPBridge();
 
 	/******************************************************************************/
 
@@ -710,7 +724,8 @@ public:
 	 *  @return A pointer to the interface of the last user defined filter,
 	 *          that is 
 	 */
-	inline virtual IRiRoot *lastRibFilter() {
+	inline virtual IRiRoot *lastRibFilter()
+	{
 		return m_ribFilterList.lastHandler();
 	}
 
@@ -785,7 +800,8 @@ public:
 	 * @param f Factory for the context creators
 	 * @return true, if the plugin factory could be registered
 	 */
-	inline virtual bool registerRendererFactory(const char *name, TPluginFactory<CContextCreator> *f) {
+	inline virtual bool registerRendererFactory(const char *name, TPluginFactory<CContextCreator> *f)
+	{
 		try {
 			return m_ctxMgmt.registerFactory(name, f);
 		} catch ( ERiCPPError &e ) {
@@ -793,6 +809,32 @@ public:
 		}
 		return false;
 	}
+
+	/** @brief unregisters a plugin factory
+	 * @param name Name of the plugins
+	 * @return Pointer to factory that was unregistered
+	 */
+	inline virtual TPluginFactory<CContextCreator> *unRegisterRendererFactory(const char *name)
+	{
+		try {
+			return m_ctxMgmt.unRegisterFactory(name);
+		} catch ( ERiCPPError &e ) {
+			ricppErrHandler().handleError(e);
+		}
+		return 0;
+	}
+
+	/** @brief Gets the name of the standard renderer.
+	 *
+	 * @return Name of the standard renderer
+	 */
+	inline const char *standardRendererName() const { return m_ctxMgmt.standardRendererName(); }
+
+	/** @brief Sets the name of the standard renderer.
+	 *
+	 * @param Name of the standard renderer, 0 is substituted by "ribwriter"
+	 */
+	inline void standardRendererName(const char *name) { m_ctxMgmt.standardRendererName(name); }
 	//@}
 
 	/******************************************************************************

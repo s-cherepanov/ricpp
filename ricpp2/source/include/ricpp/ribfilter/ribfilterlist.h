@@ -116,7 +116,7 @@ public:
 	inline void searchpath(const char *path) { m_pluginHandler.searchpath(path); }
 
 	/** @brief Registers a filter factory
-	 *  @param name Name of the plugn group
+	 *  @param name Name of the plugin group
 	 *  @param f filter factory
 	 */
 	inline virtual bool registerFactory(const char *name, TPluginFactory<CRibFilter> *f)

@@ -38,9 +38,9 @@
 #include "ricpp/renderstate/renderstate.h"
 #endif // _RICPP_RENDERSTATE_RENDERSTATE_H
 
-#ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/ricpp/renderererror.h"
-#endif // _RICPP_RICPP_RENDERERERROR_H
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#include "ricpp/ricpp/ricpperror.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
 
 namespace RiCPP {
 

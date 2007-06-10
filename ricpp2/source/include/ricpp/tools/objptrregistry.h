@@ -111,7 +111,8 @@ public:
 	}
 }; // TObjPtrRegistry
 
-template<typename KeyType, typename ValueType>TObjPtrRegistry<KeyType, ValueType>::
+template<typename KeyType, typename ValueType>
+TObjPtrRegistry<KeyType, ValueType>::
 TObjPtrRegistry(bool destructMembers) :
 m_destructMembers(destructMembers)
 {
@@ -134,7 +135,8 @@ TObjPtrRegistry<KeyType, ValueType>::
 }
 
 template<typename KeyType, typename ValueType>
-bool TObjPtrRegistry<KeyType, ValueType>::
+bool
+TObjPtrRegistry<KeyType, ValueType>::
 registerObj(const KeyType &key, ValueType value)
 {
 	if ( m_map.find(key) == m_map.end() ) {
@@ -146,7 +148,8 @@ registerObj(const KeyType &key, ValueType value)
 
 
 template<typename KeyType, typename ValueType>
-ValueType TObjPtrRegistry<KeyType, ValueType>::
+ValueType
+TObjPtrRegistry<KeyType, ValueType>::
 findObj(const KeyType &key) const
 {
 	
@@ -158,7 +161,8 @@ findObj(const KeyType &key) const
 }
 
 template<typename KeyType, typename ValueType>
-bool TObjPtrRegistry<KeyType, ValueType>::
+bool
+TObjPtrRegistry<KeyType, ValueType>::
 unRegisterObj(const KeyType &key)
 {
 	typename std::map<KeyType, ValueType>::iterator i;

@@ -28,7 +28,8 @@
  */
 
 #include "ricpp/renderstate/modestack.h"
-#include <assert.h>
+
+#include <cassert>
 
 using namespace RiCPP;
 

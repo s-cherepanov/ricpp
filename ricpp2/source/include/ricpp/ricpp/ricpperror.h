@@ -1,5 +1,5 @@
-#ifndef _RICPP_RICPP_RENDERERERROR_H
-#define _RICPP_RICPP_RENDERERERROR_H
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#define _RICPP_RICPP_RICPPERROR_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -25,7 +25,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file renderererror.h
+/** @file ricpperror.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Error exception and base for error handling used internally for RiCPP
  */
@@ -57,7 +57,7 @@ public:
 	 */
 	 ERiCPPError(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
-		 const char *aMessage = 0,
+		 RtString aMessage = 0,
 		 int aLine = 0, const char *aFile = 0
 		 )
 	 {
@@ -75,7 +75,7 @@ public:
 	 ERiCPPError(
 		 RtInt aCode, RtInt aSeverity,
 		 int aLine, const char *aFile,
-		 const char *aMessage, ...
+		 RtString aMessage, ...
 		 );
 
 	/** @brief Copy Constructor
@@ -99,7 +99,7 @@ public:
 	 */
 	 inline void set(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
-		 const char *aMessage = 0,
+		 RtString aMessage = 0,
 		 int aLine = 0, const char *aFile = 0
 		 )
 	 {
@@ -121,7 +121,7 @@ public:
 	 void set(
 		 RtInt aCode, RtInt aSeverity,
 		 int aLine, const char *aFile,
-		 const char *aMessage, ...
+		 RtString aMessage, ...
 		 );
 
 	/** @brief Formats the error/severity numbers to a string.
@@ -286,4 +286,4 @@ public:
 
 } // namespace RiCPP
 
-#endif // _RICPP_RICPP_RENDERERERROR_H
+#endif // _RICPP_RICPP_RICPPERROR_H

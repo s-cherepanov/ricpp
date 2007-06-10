@@ -30,11 +30,23 @@
 #include "ricpp/rendererloader/rendererloader.h"
 #include "ricpp/ribwriter/ribwriter.h"
 
+#include <cassert>
+
 using namespace RiCPP;
+
+CRendererLoader::CRendererLoader()
+{
+	m_standardRendererName = CRibWriter::myName();
+}
 
 const char *CRendererLoader::rendererName(RtString name) const
 {
-	return emptyStr(name) ? CRibWriter::myName() : name;
+	assert (!m_standardRendererName.empty());
+
+	if ( emptyStr(name) )
+		return m_standardRendererName.empty() ? CRibWriter::myName() : m_standardRendererName.c_str();
+
+	return name;
 }
 
 CContextCreator *CRendererLoader::getContextCreator(RtString name) {
@@ -48,4 +60,11 @@ CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 		}
 	}
 	return cc;
+}
+
+void CRendererLoader::standardRendererName(const char *name)
+{
+	if ( emptyStr(name) )
+		name = CRibWriter::myName();
+	m_standardRendererName = name;
 }

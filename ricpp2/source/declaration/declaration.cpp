@@ -27,10 +27,10 @@
  *  @brief Implements a declaration
  */
 #include "ricpp/declaration/declaration.h"
-#include "ricpp/ricpp/renderererror.h"
+#include "ricpp/ricpp/ricpperror.h"
 #include "ricpp/tools/inlinetools.h"
 
-#include <assert.h>
+#include <cassert>
 
 using namespace RiCPP;
 

@@ -34,6 +34,10 @@
 #include "ricpp/tools/env.h"
 #endif _RICPP_TOOLS_ENV_H
 
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 #include <list>
 #include <map>
 #include <algorithm>
@@ -198,7 +202,7 @@ public:
 	/** @brief Constant iterator to access the strings (beginning).
 	 *  @return Iterator with the first inserted string as current element.
 	 */
-	inline const_iterator begin()
+	inline const_iterator begin() const
 	{
 		return m_stringList.begin();
 	}
@@ -207,7 +211,7 @@ public:
 	 *  @return Iterator to query the end of the iteration
 	 *          (like sthe std iterators does not refer a valid element).
 	 */
-	inline const_iterator end()
+	inline const_iterator end() const
 	{
 		return m_stringList.end();
 	}
@@ -215,7 +219,7 @@ public:
 	/** @brief Gets the size of the string list
 	 * @return The number of stored strings.
 	 */
-	inline size_type size()
+	inline size_type size() const
 	{
 		return m_stringList.size();
 	}
@@ -264,7 +268,7 @@ public:
 	/** @brief Find out if no strings are stored
 	 *  @return true, if there are no stored strings (also size() == 0).
 	 */
-	inline bool empty()
+	inline bool empty() const
 	{
 		return m_stringList.empty();
 	}
@@ -285,6 +289,18 @@ public:
 		m_callback = aCallback;
 	}
 
+	/** @brief Checks if a string is in the string list.
+	 * @param str String to search for
+	 * @return true, if string was found in the string list
+	 */
+	inline bool isMember(const char *str) const
+	{
+		return std::find(
+			m_stringList.begin(),
+			m_stringList.end(),
+			std::string(nonullstr(str))
+			) != m_stringList.end();
+	}
 }; // CStringList
 
 }

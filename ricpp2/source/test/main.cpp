@@ -30,6 +30,7 @@
 #include "ricpp/ricppbridge/ricppbridge.h"
 #include "ricpp/tools/filepath.h"
 #include "ricpp/tools/stringlist.h"
+#include "ricpp/streams/uri.h"
 
 #include <iostream>
 
@@ -38,6 +39,7 @@ using namespace RiCPP;
 /** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
+	CUri testuri("http://www.nowhere.com:8080/index.php?i=wqqw&j=1234");
 	CRiCPPBridge ri;
 	std::cout << "Hello, World!" << std::endl;
 
@@ -55,8 +57,11 @@ int main (int argc, char * const argv[]) {
 	testpath.clear();
 	testpath.explode(':', teststr.c_str(), false, false, true);
 
-	ri.option("searchpath", "ribfilter", "@:$PATH", RI_NULL);
+	// Print error, does not abort
 	ri.errorHandler(ri.errorPrint());
+
+	// Test to load a rib filter
+	ri.option("searchpath", "ribfilter", "@:$PATH", RI_NULL);
 	ri.addFrontRibFilter("passthrough");
 
 	ri.begin("test.rib");
@@ -84,7 +89,7 @@ int main (int argc, char * const argv[]) {
 	ri.end(); /* Error */
 	ri.context(ch1); /* Error */
 
-	/* not existant */
+	/* not existent */
 	ri.begin("bla");
 	ri.worldBegin();
 	ri.worldEnd();
@@ -107,6 +112,8 @@ int main (int argc, char * const argv[]) {
 	}
 	name.clear();
 	name.resize(0);
+
+	// No abort context on error
 	ri.errorHandler(ri.errorAbort());
 
 	/* wrong lib */

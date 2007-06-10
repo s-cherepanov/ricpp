@@ -2,11 +2,14 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ricpp", "ricpp\ricpp.vcproj", "{07C205B0-8383-4394-A8E2-A62CF64E3C8E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{52AF05EE-E743-413C-ACC5-AC279583A850}"
 	ProjectSection(ProjectDependencies) = postProject
-		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 		{4BB1A752-6ACA-4857-8375-84D3BCC8C5B1} = {4BB1A752-6ACA-4857-8375-84D3BCC8C5B1}
+		{9A6AE7B2-CF94-4A75-A872-A5877D493DEA} = {9A6AE7B2-CF94-4A75-A872-A5877D493DEA}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "baserenderer", "baserenderer\baserenderer.vcproj", "{8B07A80D-1C1E-4B0A-85D0-6741FA1791CD}"
@@ -26,10 +29,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rendererloader", "rendererl
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gendynlib", "gendynlib\gendynlib.vcproj", "{9C56FA12-1685-4E40-8691-8780D929EE60}"
+	ProjectSection(ProjectDependencies) = postProject
+		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribwriterdll", "ribwriterdll\ribwriterdll.vcproj", "{3EC5E3AA-AD7F-41F3-BC42-B10351C7FFF9}"
 	ProjectSection(ProjectDependencies) = postProject
-		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 		{9631D26B-C884-4A48-B089-95A37BE62052} = {9631D26B-C884-4A48-B089-95A37BE62052}
 	EndProjectSection
 EndProject
@@ -53,7 +58,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "renderstate", "renderstate\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pluginhandler", "pluginhandler\pluginhandler.vcproj", "{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}"
 	ProjectSection(ProjectDependencies) = postProject
-		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 		{9C56FA12-1685-4E40-8691-8780D929EE60} = {9C56FA12-1685-4E40-8691-8780D929EE60}
 	EndProjectSection
 EndProject
@@ -68,6 +72,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "passthrough", "passthrough\
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "streams", "streams\streams.vcproj", "{9A6AE7B2-CF94-4A75-A872-A5877D493DEA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07C205B0-8383-4394-A8E2-A62CF64E3C8E} = {07C205B0-8383-4394-A8E2-A62CF64E3C8E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

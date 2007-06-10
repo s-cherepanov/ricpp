@@ -38,9 +38,9 @@
 #include "ricpp/tools/objptrregistry.h"
 #endif // _RICPP_TOOLS_OBJPTRREGISTRY_H
 
-#ifndef _RICPP_RICPP_RENDERERERROR_H
-#include "ricpp/ricpp/renderererror.h"
-#endif // _RICPP_RICPP_RENDERERERROR_H
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#include "ricpp/ricpp/ricpperror.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
 
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
@@ -728,15 +728,16 @@ public:
 		return f->deletePlugin(p);
 	}
 
-	/** @brief Registers a plugin factory
+	/** @brief Registers a plugin factory.
 	 *
 	 * Registers a plugin factory for a specific name. Normally
 	 * TPluginFactory are registered to create specific plugins with
 	 * \c new instead of loading them from a dynamic library.
 	 *
-	 * @param name Name of the plugins
+	 * @param name Name of the plugins factory.
 	 * @param f Factory to create the plugins
-	 * @return true, if the plugin factory could be registerd
+	 * @return true, if the plugin factory could be registered
+	 * (no \a name of factory \a f) or is already registered.
 	 */
 	inline virtual bool registerFactory(const char *name, TPluginFactory<Plugin> *f)
 	{
@@ -747,13 +748,21 @@ public:
 		return m_factoryRegistry.registerObj(key, f);
 	}
 
-	inline virtual bool unRegisterFactory(const char *name)
+	/** @brief Unregisters a plugin factory.
+	 *
+	 * @param name Name of the plugin factory.
+	 * @return The unregistered factory or 0, if there was no factory found.
+	 */
+	inline virtual TPluginFactory<Plugin> *unRegisterFactory(const char *name)
 	{
 		std::string key(nonullstr(name));
 		if ( key.empty() ) {
 			return false;
 		}
-		return m_factoryRegistry.unRegisterObj(key);
+		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
+		if ( f )
+			m_factoryRegistry.unRegisterObj(key);
+		return f;
 	}
 
 	/** @brief Sets a new searchpath.
@@ -850,7 +859,12 @@ public:
 		return ms_pluginHandler.registerFactory(name, f);
 	}
 
-	inline virtual bool unRegisterFactory(const char *name)
+	/** @brief Unregisters a plugin factory.
+	 *
+	 * @param name Name of the plugin factory.
+	 * @return The unregistered factory or 0, if there was no factory found.
+	 */
+	inline virtual TPluginFactory<Plugin> * unRegisterFactory(const char *name)
 	{
 		return ms_pluginHandler.unRegisterFactory(name);
 	}

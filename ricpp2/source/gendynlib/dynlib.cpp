@@ -29,7 +29,7 @@
  */
 
 #include "ricpp/gendynlib/dynlib.h"
-#include "ricpp/ricpp/renderererror.h"
+#include "ricpp/ricpp/ricpperror.h"
 #include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;

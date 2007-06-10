@@ -286,11 +286,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\ricpp\renderererror.cpp"
+				RelativePath="..\..\..\source\ricpp\ricpp.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\ricpp\ricpp.cpp"
+				RelativePath="..\..\..\source\ricpp\ricpperror.cpp"
 				>
 			</File>
 			<File
@@ -312,11 +312,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\renderererror.h"
+				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpp.h"
+				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpperror.h"
 				>
 			</File>
 			<File

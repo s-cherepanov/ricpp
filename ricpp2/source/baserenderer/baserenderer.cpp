@@ -28,7 +28,7 @@
  */
 
 #include "ricpp/baserenderer/baserenderer.h"
-#include <assert.h>
+#include <cassert>
 
 using namespace RiCPP;
 

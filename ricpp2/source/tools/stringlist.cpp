@@ -244,6 +244,16 @@ CStringList::size_type CStringList::explode(
 				continue;
 			}
 
+			if ( firstletter && *iter == '|' ) {
+				// '|' can be used as substitute for ':' in some installations.
+				// Btw.: Also the file protocol uses '|' as seperator
+				// e.g. file:///C|/temp works as URI
+				// see ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.WEBDEV.v10.en/ASYNCPLUGPROTO/workshop/networking/predefined/file.htm
+				*iter = ':';
+				firstletter = false;
+				continue;
+			}
+
 			firstletter = false;
 			if ( startpath ) {
 				if ( (*iter >= 'a' && *iter <= 'z') || (*iter >= 'A' && *iter <= 'Z') ) {

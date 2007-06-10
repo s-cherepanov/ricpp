@@ -28,9 +28,9 @@
  */
 
 #include "ricpp/declaration/decldict.h"
-#include "ricpp/ricpp/renderererror.h"
+#include "ricpp/ricpp/ricpperror.h"
 
-#include <assert.h>
+#include <cassert>
 
 using namespace RiCPP;
 

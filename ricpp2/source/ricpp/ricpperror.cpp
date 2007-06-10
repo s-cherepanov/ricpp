@@ -27,7 +27,7 @@
  *  @brief Error exception and base for errorhandling used internally for RiCPP
  */
 
-#include "ricpp/ricpp/renderererror.h"
+#include "ricpp/ricpp/ricpperror.h"
 #include <stdarg.h>
 
 using namespace RiCPP;
@@ -107,7 +107,7 @@ const char *ERiCPPError::formatError(std::string &strCode) const
 ERiCPPError::ERiCPPError(
 	RtInt aCode, RtInt aSeverity,
 	int aLine, const char *aFile,
-	const char *aMessage, ...
+	RtString aMessage, ...
 	)
 {
 	static const int ERROR_STR_SIZE = 256;
@@ -131,7 +131,7 @@ ERiCPPError::ERiCPPError(
 void ERiCPPError::set(
 	RtInt aCode, RtInt aSeverity,
 	int aLine, const char *aFile,
-	const char *aMessage, ...
+	RtString aMessage, ...
 	)
 {
 	static const int ERROR_STR_SIZE = 256;

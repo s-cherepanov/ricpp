@@ -44,9 +44,14 @@ namespace RiCPP {
 class CRendererLoader : protected TPluginHandler<CContextCreator>
 {
 protected:
+	/**
+	 * Name of the standard renderer, standard string is "ribwriter"
+	 */
+	std::string m_standardRendererName;
+
 	/** @brief Return real renderername
 	 *
-	 * The null string stands for the ribwriter
+	 * The null string stands for the standard renderer
 	 *
 	 * @param name
 	 * @return The renderer name for \a name
@@ -54,6 +59,10 @@ protected:
 	virtual const char *rendererName(RtString name) const;
 	
 public:
+	/** @brief Stanadard constructor
+	 */
+	CRendererLoader();
+
 	/** @brief Virtual destructor
 	 */
 	inline virtual ~CRendererLoader() {}
@@ -91,6 +100,12 @@ public:
 	 */
 	inline virtual bool registerFactory(const char *name, TPluginFactory<CContextCreator> *f) { return TPluginHandler<CContextCreator>::registerFactory(name, f); }
 
+	/** @brief unregisters a plugin factory
+	 * @param name Name of the plugins
+	 * @return Pointer to factory that was unregistered
+	 */
+	inline virtual TPluginFactory<CContextCreator> * unRegisterFactory(const char *name) { return TPluginHandler<CContextCreator>::unRegisterFactory(name); }
+
 	/** @brief Sets a new searchpath.
 	 *
 	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'.
@@ -102,6 +117,19 @@ public:
 	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
 	 */
 	inline const char *searchpath() const { return TPluginHandler<CContextCreator>::searchpath();  }
+
+	/** @brief Gets the name of the standard renderer.
+	 *
+	 * @return Name of the standard renderer
+	 */
+	inline const char *standardRendererName() const { return m_standardRendererName.c_str(); }
+
+	/** @brief Sets the name of the standard renderer.
+	 *
+	 * @param Name of the standard renderer, 0 is substituted by "ribwriter"
+	 */
+	void standardRendererName(const char *name);
+
 }; // IRendererCreator
 
 } // namespace RiCPP

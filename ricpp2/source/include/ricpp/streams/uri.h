@@ -434,7 +434,6 @@ namespace RiCPP {
 
 			if ( !(c1 = alpha(str, m_toplabel)) )
 				return false;
-			const unsigned char *sav = *str;
 
 			unsigned char c;
 			do {
@@ -464,7 +463,6 @@ namespace RiCPP {
 
 			if ( !(c1 = alphanum(str, m_domainlabel)) )
 				return false;
-			const unsigned char *sav = *str;
 
 			unsigned char c;
 			do {

@@ -42,7 +42,7 @@ namespace RiCPP {
 	class TBuffer {
 	public:
 		typedef size_t size_type;
-		typedef typename T contenttype;
+		typedef T contenttype;
 		typedef contenttype * iterator;
 		typedef const contenttype * const_iterator;
 	private:

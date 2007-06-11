@@ -2,9 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ricpp", "ricpp\ricpp.vcproj", "{07C205B0-8383-4394-A8E2-A62CF64E3C8E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{52AF05EE-E743-413C-ACC5-AC279583A850}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,6 +12,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "baserenderer", "baserenderer\baserenderer.vcproj", "{8B07A80D-1C1E-4B0A-85D0-6741FA1791CD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1268F5B0-2204-4D2D-B61A-571266610158} = {1268F5B0-2204-4D2D-B61A-571266610158}
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD} = {B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribwriter", "ribwriter\ribwriter.vcproj", "{9631D26B-C884-4A48-B089-95A37BE62052}"
@@ -24,7 +22,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribwriter", "ribwriter\ribw
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rendererloader", "rendererloader\rendererloader.vcproj", "{BA620735-A66E-4B9B-8F56-E3F6AD95681F}"
 	ProjectSection(ProjectDependencies) = postProject
-		{9C56FA12-1685-4E40-8691-8780D929EE60} = {9C56FA12-1685-4E40-8691-8780D929EE60}
 		{9631D26B-C884-4A48-B089-95A37BE62052} = {9631D26B-C884-4A48-B089-95A37BE62052}
 	EndProjectSection
 EndProject
@@ -48,6 +45,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ricppbridge", "ricppbridge\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "declaration", "declaration\declaration.vcproj", "{F132C58F-975C-4752-BB09-0A9DB2EE477D}"
 	ProjectSection(ProjectDependencies) = postProject
+		{86799DCE-A6F4-4325-8E18-3243EFCE76D4} = {86799DCE-A6F4-4325-8E18-3243EFCE76D4}
 		{07C205B0-8383-4394-A8E2-A62CF64E3C8E} = {07C205B0-8383-4394-A8E2-A62CF64E3C8E}
 	EndProjectSection
 EndProject
@@ -58,11 +56,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "renderstate", "renderstate\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pluginhandler", "pluginhandler\pluginhandler.vcproj", "{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}"
 	ProjectSection(ProjectDependencies) = postProject
+		{07C205B0-8383-4394-A8E2-A62CF64E3C8E} = {07C205B0-8383-4394-A8E2-A62CF64E3C8E}
 		{9C56FA12-1685-4E40-8691-8780D929EE60} = {9C56FA12-1685-4E40-8691-8780D929EE60}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribfilter", "ribfilter\ribfilter.vcproj", "{A7F6F532-E6DB-4451-92F4-BBED4FD2F40A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{1268F5B0-2204-4D2D-B61A-571266610158} = {1268F5B0-2204-4D2D-B61A-571266610158}
 		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD} = {B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}
 	EndProjectSection
 EndProject
@@ -73,7 +73,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "passthrough", "passthrough\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "streams", "streams\streams.vcproj", "{9A6AE7B2-CF94-4A75-A872-A5877D493DEA}"
 	ProjectSection(ProjectDependencies) = postProject
-		{07C205B0-8383-4394-A8E2-A62CF64E3C8E} = {07C205B0-8383-4394-A8E2-A62CF64E3C8E}
+		{B83A2D68-543B-4B9B-8ABA-FD45F7A751AD} = {B83A2D68-543B-4B9B-8ABA-FD45F7A751AD}
 	EndProjectSection
 EndProject
 Global

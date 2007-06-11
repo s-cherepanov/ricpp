@@ -116,56 +116,56 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C32093CD0BDCCF0A00A0BB35 /* gendynlib */;
+			remoteGlobalIDString = C32093CD0BDCCF0A00A0BB35;
 			remoteInfo = gendynlib;
 		};
 		C3003D8B0C1D6EA8004C4EF0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C39754A10C1408A80089A579 /* pluginhandler */;
+			remoteGlobalIDString = C39754A10C1408A80089A579;
 			remoteInfo = pluginhandler;
 		};
 		C3003D8E0C1D6EFD004C4EF0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C35A15630C03201F000C9348 /* renderstate */;
+			remoteGlobalIDString = C35A15630C03201F000C9348;
 			remoteInfo = renderstate;
 		};
 		C3003D9A0C1D6F8B004C4EF0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C372B8CE0BD760B9009B2459 /* ricpp */;
+			remoteGlobalIDString = C372B8CE0BD760B9009B2459;
 			remoteInfo = ricpp;
 		};
 		C3003D9C0C1D6FA3004C4EF0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C399BA930BE5E1BB002FEEF1 /* tools */;
+			remoteGlobalIDString = C399BA930BE5E1BB002FEEF1;
 			remoteInfo = tools;
 		};
 		C3003DA20C1D70F6004C4EF0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C39754A10C1408A80089A579 /* pluginhandler */;
+			remoteGlobalIDString = C39754A10C1408A80089A579;
 			remoteInfo = pluginhandler;
 		};
 		C3003DA40C1D7405004C4EF0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C3B848F70BD7621100DD22B5 /* ribwriter */;
+			remoteGlobalIDString = C3B848F70BD7621100DD22B5;
 			remoteInfo = ribwriter;
 		};
 		C3003DFA0C1D7E6D004C4EF0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C3003D670C1D6C3A004C4EF0 /* streams */;
+			remoteGlobalIDString = C3003D670C1D6C3A004C4EF0;
 			remoteInfo = streams;
 		};
 		C32095060BDCD8BE00A0BB35 /* PBXContainerItemProxy */ = {
@@ -277,7 +277,7 @@
 		C3003D450C1D6458004C4EF0 /* uri.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = uri.h; path = ../../../source/include/ricpp/streams/uri.h; sourceTree = SOURCE_ROOT; };
 		C3003D4A0C1D649C004C4EF0 /* filereader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = filereader.cpp; path = ../../../source/streams/filereader.cpp; sourceTree = SOURCE_ROOT; };
 		C3003D4B0C1D649C004C4EF0 /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = reader.cpp; path = ../../../source/streams/reader.cpp; sourceTree = SOURCE_ROOT; };
-		C3003D680C1D6C3A004C4EF0 /* libstreams.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libstreams.a; path = build/Debug/libstreams.a; sourceTree = "<group>"; };
+		C3003D680C1D6C3A004C4EF0 /* libstreams.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libstreams.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3003D7B0C1D6CF9004C4EF0 /* tokenmap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tokenmap.cpp; path = ../../../source/declaration/tokenmap.cpp; sourceTree = SOURCE_ROOT; };
 		C3003D7E0C1D6D21004C4EF0 /* tokenmap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tokenmap.h; path = ../../../source/include/ricpp/declaration/tokenmap.h; sourceTree = SOURCE_ROOT; };
 		C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgendynlib.a; sourceTree = BUILT_PRODUCTS_DIR; };

@@ -39,7 +39,7 @@ using namespace RiCPP;
 /** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
-	CUri testuri("http://myname:abcd@www.nowhere.com:8080/directory;find/index.php?i=wqqw&j=1234+6#frag");
+	CUri testuri("http://myname:abcd@www.nowhere.com:8080/A%20directory;find/index.php?i=wqqw&j=1234+6#frag");
 	CRiCPPBridge ri;
 	std::cout << "Hello, World!" << std::endl;
 

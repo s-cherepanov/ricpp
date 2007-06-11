@@ -75,6 +75,7 @@ namespace RiCPP {
 		std::string m_authority;
 		std::string m_scheme;
 		std::string m_rel_segment;
+		std::string m_escaped;
 	
 		inline void clearAll() {
 			m_valid = true;
@@ -105,6 +106,7 @@ namespace RiCPP {
 			m_authority.clear();
 			m_scheme.clear();
 			m_rel_segment.clear();
+			m_escaped.clear();
 		}
 
 		inline void advance(const unsigned char **str, std::string &result, int steps=1)
@@ -169,23 +171,25 @@ namespace RiCPP {
 		inline bool escaped(const unsigned char **str, std::string &result)
 		{
 			const unsigned char *sav = *str;
+			m_escaped = "";
 			if ( (*str)[0] != '%' ) {
 				return false;
 			}
-			advance(str, result);
+			advance(str, m_escaped);
 
-			if ( !hex(str, result) ) {
+			if ( !hex(str, m_escaped) ) {
 				*str = sav;
 				return false;
 			}
-			advance(str, result);
+			advance(str, m_escaped);
 
-			if ( !hex(str, result) ) {
+			if ( !hex(str, m_escaped) ) {
 				*str = sav;
 				return false;
 			}
-			advance(str, result);
-
+			advance(str, m_escaped);
+			
+			result += m_escaped;
 			return true;
 		}
 

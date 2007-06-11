@@ -1116,13 +1116,13 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 				m_pathReplace.path(m_ctxMgmt.searchpath());
 				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
 				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
 				m_ctxMgmt.searchpath(s.c_str());
 			} else if ( !strcmp(tokens[i], "ribfilter") ) {
 				m_pathReplace.path(m_ribFilterList.searchpath());
 				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
 				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
 				m_ribFilterList.searchpath(s.c_str());
 			}
 			sl.clear();
@@ -1144,14 +1144,14 @@ RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPoint
 				m_pathReplace.path(m_ctxMgmt.searchpath());
 				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
 				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
 				m_standardPathRenderer = nonullstr(s.c_str());
 			} else if ( !strcmp(tokens[i], "ribfilter") ) {
 				m_pathReplace.path(m_ribFilterList.searchpath());
 				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
 				m_pathReplace.path(m_ribFilterList.searchpath());
 				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s);
+				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
 				m_standardPathRibFilter = nonullstr(s.c_str());
 			}
 			sl.clear();

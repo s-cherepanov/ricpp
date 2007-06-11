@@ -87,7 +87,7 @@ namespace RiCPP {
 		inline virtual bool acceptsScheme(const char *scheme) const
 		{
 			std::string str_scheme(nonullstr(scheme));
-			std::for_each(str_scheme.begin(), str_scheme.end(), std::ptr_fun(toupper));
+			std::for_each(str_scheme.begin(), str_scheme.end(), std::ptr_fun(asciiToUpper));
 			return m_schemes.isMember(str_scheme.c_str());
 		}
 

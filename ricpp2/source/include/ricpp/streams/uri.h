@@ -168,31 +168,6 @@ namespace RiCPP {
 			return 0;
 		}
 
-		inline bool escaped(const unsigned char **str, std::string &result)
-		{
-			const unsigned char *sav = *str;
-			m_escaped = "";
-			if ( (*str)[0] != '%' ) {
-				return false;
-			}
-			advance(str, m_escaped);
-
-			if ( !hex(str, m_escaped) ) {
-				*str = sav;
-				return false;
-			}
-			advance(str, m_escaped);
-
-			if ( !hex(str, m_escaped) ) {
-				*str = sav;
-				return false;
-			}
-			advance(str, m_escaped);
-			
-			result += m_escaped;
-			return true;
-		}
-
 		inline unsigned char mark(const unsigned char **str, std::string &result)
 		{
 			unsigned char c = (*str)[0];
@@ -239,6 +214,31 @@ namespace RiCPP {
 			}
 		}
 
+		inline bool escaped(const unsigned char **str, std::string &result)
+		{
+			const unsigned char *sav = *str;
+			m_escaped = "";
+			if ( (*str)[0] != '%' ) {
+				return false;
+			}
+			advance(str, m_escaped);
+
+			if ( !hex(str, m_escaped) ) {
+				*str = sav;
+				return false;
+			}
+			advance(str, m_escaped);
+
+			if ( !hex(str, m_escaped) ) {
+				*str = sav;
+				return false;
+			}
+			advance(str, m_escaped);
+			
+			result += m_escaped;
+			return true;
+		}
+
 		inline bool uric(const unsigned char **str, std::string &result)
 		{
 			return reserved(str, result) != 0 ||
@@ -272,22 +272,6 @@ namespace RiCPP {
 			}
 		}
 
-		inline bool fragment(const unsigned char **str, std::string &result)
-		{
-			m_fragment = "";
-			while ( uric(str, m_fragment) );
-			result += m_fragment;
-			return true;
-		}
-
-		inline bool query(const unsigned char **str, std::string &result)
-		{
-			m_query = "";
-			while ( uric(str, m_query) );
-			result += m_query;
-			return true;
-		}
-
 		inline bool pchar(const unsigned char **str, std::string &result)
 		{
 			if ( unreserved(str, result) != 0 ||
@@ -310,6 +294,22 @@ namespace RiCPP {
 				default:
 					return false;
 			}
+		}
+
+		inline bool fragment(const unsigned char **str, std::string &result)
+		{
+			m_fragment = "";
+			while ( uric(str, m_fragment) );
+			result += m_fragment;
+			return true;
+		}
+
+		inline bool query(const unsigned char **str, std::string &result)
+		{
+			m_query = "";
+			while ( uric(str, m_query) );
+			result += m_query;
+			return true;
 		}
 
 		inline bool param(const unsigned char **str, std::string &result)
@@ -364,6 +364,7 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_abs_path = "";
+			
 			if ( (*str)[0] != '/' )
 				return false;
 
@@ -409,8 +410,8 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_IPv4address = "";
-			int i;
-			for ( i=0; i<4; ++i ) {
+
+			for ( int i=0; i<4; ++i ) {
 				if ( i > 0 ) {
 					if ( *str[0] != '.' ) {
 						m_IPv4address = "";
@@ -433,8 +434,10 @@ namespace RiCPP {
 
 		inline bool toplabel(const unsigned char **str, std::string &result)
 		{
-			m_toplabel = "";
+			// This is never called, because a toplabel is recognized
+			// as a domainlabel in hostname()
 			unsigned char c1;
+			m_toplabel = "";
 
 			if ( !(c1 = alpha(str, m_toplabel)) )
 				return false;
@@ -462,8 +465,8 @@ namespace RiCPP {
 
 		inline bool domainlabel(const unsigned char **str, std::string &result)
 		{
-			m_domainlabel = "";
 			unsigned char c1;
+			m_domainlabel = "";
 
 			if ( !(c1 = alphanum(str, m_domainlabel)) )
 				return false;
@@ -491,15 +494,19 @@ namespace RiCPP {
 
 		inline bool hostname(const unsigned char **str, std::string &result)
 		{
+			// Special handling: Last domainlabel has to be a toplabel
 			const unsigned char *sav = *str;
 
 			m_hostname = "";
 			m_toplabel = "";
-			m_domainlabel = "";
 
 			while ( domainlabel(str, m_hostname) ) {
+				// rember to found domainlabel in toplabel
+				// is not neccessairily a valid toplabel here
 				m_toplabel = m_domainlabel;
+				
 				if ( (*str)[0] != '.' ) {
+					// Last domainlabel has to be a toplabel
 					if ( isdigit(m_toplabel[0]) ) {
 						m_hostname = "";
 						m_toplabel = "";
@@ -510,8 +517,11 @@ namespace RiCPP {
 					result += m_hostname;
 					return true;
 				}
+				
 				advance(str, m_hostname);
 			}
+
+			// Last domainlabel has to be a toplabel
 			if ( m_toplabel.empty() || isdigit(m_toplabel[0]) ) {
 				m_hostname = "";
 				m_toplabel = "";

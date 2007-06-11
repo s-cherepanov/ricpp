@@ -217,14 +217,21 @@ CStringList::size_type CStringList::explode(
 	}
 
 #ifdef WIN32
-	// In RIB files the seperator for pathes is unfortunatly ':'
-	// so I try to convert it to ';'. That's in fact messy.
-	// ':' is not converted, if "<letter>:/" is the prefix of a path
+	// The messy part...
+	// In RIB files the seperator for pathes is unfortunatly ':'.
+	// ':' can have a double meaning as seperator for drive letters
+	// and seperator for pathes.
+	// ':' is converted to '|', if "<letter>:/" is the prefix of a path
 	// i.e. a windows path letter. Since there are no drive letters
 	// in other OSes as WIN32 this is done only for WIN32 binaries
 	// If RIB files have to be exchanged across OSe, drive letters
 	// won't work anyway.
-	if ( isPathlist && (seperator == ':' || seperator == ';') ) {
+	// Also in windows the path seperator can be a ';', which
+	// is converted to ':'
+	// Also schemes can have a : as seperator, e.g. "http:/", it is
+	// assumend that these schems are already given as "http|/", since
+	// not standard RIB
+	if ( isPathlist && seperator == ':' ) {
 		state = normal;
 
 		bool startpath = true;
@@ -237,19 +244,9 @@ CStringList::size_type CStringList::explode(
 				saviter = iter;
 				++iter;
 				iterinc = false;
-				if ( *iter != '/' && *iter != '\\' ) {
-					*saviter = ';';
+				if ( *iter == '/' || *iter == '\\' ) {
+					*saviter = '|';
 				}
-				firstletter = false;
-				continue;
-			}
-
-			if ( firstletter && *iter == '|' ) {
-				// '|' can be used as substitute for ':' in some installations.
-				// Btw.: Also the file protocol uses '|' as seperator
-				// e.g. file:///C|/temp works as URI
-				// see ms-help://MS.VSCC.v80/MS.MSDN.v80/MS.WEBDEV.v10.en/ASYNCPLUGPROTO/workshop/networking/predefined/file.htm
-				*iter = ':';
 				firstletter = false;
 				continue;
 			}
@@ -264,15 +261,15 @@ CStringList::size_type CStringList::explode(
 			}
 
 			startpath = false;
-			if ( *iter == ':' || *iter == ';' ) {
-				*iter = ';';
+			if ( *iter == ':' || *iter ==';' ) {
 				startpath = true;
+				// also convert a seperator ';' to ':'
+				*iter = ':';
 				continue;
 			}
 		}
-		seperator = ';';
+		CFilepathConverter::convertToInternal(strval);
 	}
-	CFilepathConverter::convertToInternal(strval);
 #endif
 
 	state = normal;
@@ -283,6 +280,9 @@ CStringList::size_type CStringList::explode(
 			case normal:
 				if ( *iter == seperator ) {
 					++count;
+					// Not only Win32, unmasks also scheme (e.g. 'http|' -> 'http:')
+					if ( isPathlist && seperator == ':' )
+						unmaskColon(v);
 					m_stringList.push_back(v);
 					v.clear();
 					continue;
@@ -297,7 +297,7 @@ CStringList::size_type CStringList::explode(
 				}
 				break;
 			case maskchar:
-				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar )
+				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar && *iter != seperator )
 				//	v.push_back(maskChar);
 				v.push_back(*iter);
 				state = normal;
@@ -319,7 +319,7 @@ CStringList::size_type CStringList::explode(
 				}
 				break;
 			case maskinquote:
-				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar )
+				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar && *iter != seperator )
 				//	v.push_back(maskChar);
 				v.push_back(*iter);
 				state = doublequote;
@@ -329,19 +329,30 @@ CStringList::size_type CStringList::explode(
 	
 	if ( v.size() > 0 ) {
 		++count;
+		// Not only Win32, unmasks also scheme (e.g. 'http|' -> 'http:')
+		if ( isPathlist && seperator == ':' )
+			unmaskColon(v);
 		m_stringList.push_back(v);
 	}
 
 	return count;
 }
 
-void CStringList::implode(char seperator, std::string &str)
+void CStringList::implode(char seperator, std::string &str, bool isPathList)
 {
 	const_iterator i = begin();
+	std::string mask;
 
 	str = "";
 	while ( i != end() ) {
-		str += (*i);
+		if ( isPathList && seperator == ':' ) {
+			// Not only Win32, masks also scheme (e.g. 'http:' -> 'http|')
+			mask = (*i);
+			maskColon(mask);
+			str += mask;
+		} else {
+			str += (*i);
+		}
 		i++;
 		if ( i != end() ) {
 			str += seperator;

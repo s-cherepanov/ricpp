@@ -67,5 +67,32 @@ inline bool notEmptyStr(const char *str)
 {
 	return str && *str;
 }
+
+/** @brief toupper conversion for for_each()
+ * @retval c Char to convert
+ */
+inline void asciiToUpper(char &c)
+{
+	if ( c >= 'a' && c <= 'z' )
+		c = (c-'a') + 'A';
+}
+
+/** @brief Converts a ':' to a '|', used for pathlists
+ * @retval c Char to convert
+ */
+inline void maskColon(char &c)
+{
+	if ( c == ':' )
+		c = '|';
+}
+
+/** @brief Converts a '|' back to a ':', used for pathlists
+ * @retval c Char to convert
+ */
+inline void unmaskColon(char &c)
+{
+	if ( c == '|' )
+		c = ':';
+}
 } // namespace RiCPP
 #endif // _RICPP_TOOLS_INLINETOOLS_H

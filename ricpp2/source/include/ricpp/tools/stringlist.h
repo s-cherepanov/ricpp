@@ -100,6 +100,25 @@ private:
 	 */
 	bool getVar(std::string &varName, bool useEnv);
 
+	/** @brief Converts all ':' to '|'
+	 *
+	 * Used in path lists to mask the ':' which is a path seperator
+	 * and a scheme and drive letter seperator.
+	 *
+	 * @param str String where the '|' are converted
+	 */
+	inline void maskColon(std::string &str)
+	{
+		std::for_each(str.begin(), str.end(), std::ptr_fun(RiCPP::maskColon));
+	}
+	
+	/** @brief Converts all '|' to ':'
+	 * @param str String where the '|' are converted
+	 */
+	inline void unmaskColon(std::string &str)
+	{
+		std::for_each(str.begin(), str.end(), std::ptr_fun(RiCPP::unmaskColon));
+	}
 public:
 	/** @brief Standard constructor
 	 *
@@ -152,10 +171,12 @@ public:
 	 * The stringlist is concatenated to single string using \a seperator
 	 * @param seperator Character that is used as seperator for the new \a str
 	 * @retval str Container for the new concatenated string
+	 *  @param isPathlist true, for handling pathlists.
 	 */
 	void implode(
 		char seperator,
-		std::string &str
+		std::string &str,
+		bool isPathList
 	);
 
 	/** @brief Pushes a string to the stored strings. Variables are substituted.

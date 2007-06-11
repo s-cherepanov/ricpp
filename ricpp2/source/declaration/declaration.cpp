@@ -70,7 +70,7 @@ bool CDeclaration::stripName()
 bool CDeclaration::parse(const char *name, const char *decl, unsigned int curColorSize)
 {
 	// Set the name, 0 for inline declarations
-	m_name = nonullstr(name);
+	m_name = noNullStr(name);
 	
 	m_arraySize = 0;
 	m_typeSize = 0;
@@ -174,10 +174,10 @@ CDeclaration::CDeclaration(RtToken token, const char *declstr, unsigned int curC
 	m_isInline = false;
 	m_token = token;
 	if ( m_token == RI_NULL ) {
-		throw ERiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "Declaration name is empty for \"%s\"", markemptystr(declstr));
+		throw ERiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "Declaration name is empty for \"%s\"", markEmptyStr(declstr));
 	}
 	if ( !parse(m_token, declstr, curColorSize) ) {
-		throw ERiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", m_token, markemptystr(declstr));
+		throw ERiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", m_token, markEmptyStr(declstr));
 	}
 }
 

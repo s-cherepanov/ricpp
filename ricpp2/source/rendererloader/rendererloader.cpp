@@ -55,7 +55,7 @@ CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 		if ( cc->majorContextVersion() != IRiContext::myMajorVersion() ) {
 			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Context version mismatch, renderer name: '%s'", rendererName(name));
 		}
-		if ( strcmp(nonullstr(cc->contextType()), nonullstr(IRiContext::myType())) != 0 ) {
+		if ( strcmp(noNullStr(cc->contextType()), noNullStr(IRiContext::myType())) != 0 ) {
 			throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Context type mismatch, renderer name: '%s'", rendererName(name));
 		}
 	}

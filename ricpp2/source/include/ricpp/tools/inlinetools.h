@@ -29,6 +29,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Frequent used inline tools
  */
+#include <string.h>
 
 namespace RiCPP {
 
@@ -36,7 +37,7 @@ namespace RiCPP {
  * @param str String to test
  * @return str itself or "<empty>" if the string is empty
  */
-inline const char *markemptystr(const char *str)
+inline const char *markEmptyStr(const char *str)
 {
 	return  str && *str ? str : "<empty>";
 }
@@ -45,7 +46,7 @@ inline const char *markemptystr(const char *str)
  * @param str String to test
  * @return str itself or "" if the string points to 0
  */
-inline const char *nonullstr(const char *str)
+inline const char *noNullStr(const char *str)
 {
 	return  str ? str : "";
 }
@@ -94,5 +95,42 @@ inline void unmaskColon(char &c)
 	if ( c == '|' )
 		c = ':';
 }
+
+/**@brief Helper function, cuts away the filename of a path.
+ * @param buf Pointer to the characrer buffer with the filepath.
+ *            The buffer will be modified.
+ * @return \a buf or "" is returned, the filename is cut away.
+ *         \a buf can be empty (point to NUL) after calling this
+ *         function.
+ */
+inline char *cutfilename(char *buf)
+{
+	if ( !buf )
+		return "";
+		
+	size_t len = strlen(buf);
+	
+	// empty string - no filename no changes
+	if ( !len )
+		return buf;
+
+	// --> strlen(buf) > 0, buf[0] and buf[1] are within buffer
+
+	while ( len != 0 && buf[len-1] != '/' )
+		--len;
+	if ( len ) {
+		// A '/' found at buf[len-1]
+		buf[len-1] = 0; // can lead to buf[0] == NUL, if buf contained a file with root path
+	} else {
+		// No '/' found.
+		// Was a path containing a filename only, it was a relative path,
+		// therefore '.' is the directory
+		buf[0] = '.'; 
+		buf[1] = 0; 
+	}
+		
+	return buf;
+}
+
 } // namespace RiCPP
 #endif // _RICPP_TOOLS_INLINETOOLS_H

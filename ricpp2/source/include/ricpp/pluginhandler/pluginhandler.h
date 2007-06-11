@@ -268,7 +268,7 @@ public:
 		if ( !p ) {
 			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
 				"Cannot create a plugin '%s'",
-				markemptystr(name()));
+				markEmptyStr(name()));
 		}
 
 		m_lastPlugin = p;
@@ -414,8 +414,8 @@ public:
 		m_funcName = 0;
 		m_lib = 0;
 
-		m_libName = nonullstr(libname);
-		m_searchpath = nonullstr(pathlist);
+		m_libName = noNullStr(libname);
+		m_searchpath = noNullStr(pathlist);
 
 		// Create the library handler
 		try {
@@ -427,7 +427,7 @@ public:
 		if ( !m_lib ) {
 			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
 				"Cannot create a new CDynLib for plugin factory '%s'",
-				markemptystr(libname));
+				markEmptyStr(libname));
 		}
 
 		// Load the library
@@ -453,7 +453,7 @@ public:
 		if ( !valid() ) {
 			throw ERiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__,
 				"Cannot create the library functions or version mismatch for plugin factory '%s'",
-				markemptystr(libname));
+				markEmptyStr(libname));
 		}
 	}
 
@@ -527,7 +527,7 @@ public:
 		} else {
 			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
 				"Plugin of wrong version or type '%s'",
-				markemptystr(m_libName.c_str()));
+				markEmptyStr(m_libName.c_str()));
 		}
 		return p;
 	}
@@ -578,7 +578,7 @@ public:
 		if ( Plugin::myMajorVersion() != majorVersion() )
 			return false;
 			
-		if ( strcmp(nonullstr(Plugin::myType()), nonullstr(type())) != 0 )
+		if ( strcmp(noNullStr(Plugin::myType()), noNullStr(type())) != 0 )
 			return false;
 
 		return true;
@@ -612,7 +612,7 @@ protected:
 	 */
 	inline virtual TPluginFactory<Plugin> *getFactory(const char *name)
 	{
-		std::string key(nonullstr(name));
+		std::string key(noNullStr(name));
 
 		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
 		if ( !f ) {
@@ -629,7 +629,7 @@ protected:
 			if ( !f )
 				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
 					"Cannot create a new plugin factory for '%s'",
-					markemptystr(key.c_str()));
+					markEmptyStr(key.c_str()));
 
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
 				// Should not happen, since already tested using valid()
@@ -640,13 +640,13 @@ protected:
 					Plugin::myMajorVersion(), f->majorVersion());
 			}
 
-			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
+			if ( strcmp(noNullStr(Plugin::myType()), noNullStr(f->type())) != 0 ) {
 				// Should not happen, since already tested using valid()
 				// in the constructor of TPluginLoaderFactory
 				delete f;
 				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong type '%s' vs. '%s' - not loaded",
-					nonullstr(Plugin::myType()), nonullstr(f->type()));
+					noNullStr(Plugin::myType()), noNullStr(f->type()));
 			}
 
 			m_internalFactoryRegistry.registerObj(key, f);
@@ -657,11 +657,11 @@ protected:
 					"Plugin Factory is of wrong version '%ld' vs. '%ld' - already loaded",
 					Plugin::myMajorVersion(), f->majorVersion());
 			}
-			if ( strcmp(nonullstr(Plugin::myType()), nonullstr(f->type())) != 0 ) {
+			if ( strcmp(noNullStr(Plugin::myType()), noNullStr(f->type())) != 0 ) {
 				// Should not happen, since already tested
 				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong type '%s' vs. '%s' - already loaded",
-					nonullstr(Plugin::myType()), nonullstr(f->type()));
+					noNullStr(Plugin::myType()), noNullStr(f->type()));
 			}
 		}
 		return f;
@@ -675,7 +675,7 @@ public:
 	inline TPluginHandler(const char *pathlist = 0)
 	: m_factoryRegistry(false),
 	  m_internalFactoryRegistry(true),
-	  m_searchpath(nonullstr(pathlist))
+	  m_searchpath(noNullStr(pathlist))
 	{
 	}
 
@@ -716,7 +716,7 @@ public:
 	{
 		if ( !p )
 			return false;
-		std::string key(nonullstr(p->myName()));
+		std::string key(noNullStr(p->myName()));
 		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
 		if ( !f ) {
 			return false;
@@ -737,7 +737,7 @@ public:
 	 */
 	inline virtual bool registerFactory(const char *name, TPluginFactory<Plugin> *f)
 	{
-		std::string key(nonullstr(name));
+		std::string key(noNullStr(name));
 		if ( key.empty() || !f ) {
 			return false;
 		}
@@ -751,7 +751,7 @@ public:
 	 */
 	inline virtual TPluginFactory<Plugin> *unRegisterFactory(const char *name)
 	{
-		std::string key(nonullstr(name));
+		std::string key(noNullStr(name));
 		if ( key.empty() ) {
 			return false;
 		}
@@ -767,7 +767,7 @@ public:
 	 */
 	inline void searchpath(const char *path)
 	{
-		m_searchpath = nonullstr(path);
+		m_searchpath = noNullStr(path);
 	}
 
 	/** @brief Gets the current searchpath.

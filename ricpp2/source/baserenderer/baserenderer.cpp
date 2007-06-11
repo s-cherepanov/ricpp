@@ -75,17 +75,17 @@ void CBaseRenderer::initRenderState()
 RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized declare(\"%s\", \"%s\")", markemptystr(name), markemptystr(declaration));
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration));
 		return RI_NULL;
 	}
 
 	if ( !m_renderState->validRequest(REQ_DECLARE) ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_ERROR, "declare(\"%s\", \"%s\")", markemptystr(name), markemptystr(declaration));
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_ERROR, "declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration));
 		return RI_NULL;
 	}
 
 	if ( !name || !*name ) {
-		ricppErrHandler().handleError(RIE_MISSINGDATA, RIE_ERROR, "name is missing in declare(\"%s\", \"%s\")", markemptystr(name), markemptystr(declaration));
+		ricppErrHandler().handleError(RIE_MISSINGDATA, RIE_ERROR, "name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration));
 		return RI_NULL;
 	}
 

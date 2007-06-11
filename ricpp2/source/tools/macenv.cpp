@@ -30,6 +30,7 @@
 
 #include "ricpp/tools/env.h"
 #include "ricpp/tools/filepath.h"
+#include "ricpp/tools/inlinetools.h"
 
 #include <mach-o/dyld.h>
 
@@ -41,42 +42,6 @@
 #include <stdlib.h>
 
 using namespace RiCPP;
-
-/**@brief Helper function, cuts away the filename of a path.
- * @param buf Pointer to the characrer buffer with the filepath.
- *            The buffer will be modified.
- * @return \a buf or "" is returned, the filename is cut away.
- *         \a buf can be empty (point to NUL) after calling this
- *         function.
- */
-static char *_ricpp_cutfilename(char *buf)
-{
-	if ( !buf )
-		return "";
-		
-	uint32_t len = strlen(buf);
-	
-	// empty string - no filename no changes
-	if ( !len )
-		return buf;
-
-	// --> strlen(buf) > 0, buf[0] and buf[1] are within buffer
-
-	while ( len != 0 && buf[len-1] != '/' )
-		--len;
-	if ( len ) {
-		// A '/' found at buf[len-1]
-		buf[len-1] = 0; // can lead to buf[0] == NUL, if buf contained a file with root path
-	} else {
-		// No '/' found.
-		// Was a path containing a filename only, it was a relative path,
-		// therefore '.' is the directory
-		buf[0] = '.'; 
-		buf[1] = 0; 
-	}
-		
-	return buf;
-}
 
 /** @brief Mac implementation to get an environment variable.
  *
@@ -181,7 +146,7 @@ std::string &CEnv::getProgDir(std::string &prog)
 				symbuf[0] = 0;
 				if ( realpath(buf, symbuf) ) {
 					symbuf[sizeof(symbuf)-1] = 0;
-					_ricpp_cutfilename(symbuf);
+					cutfilename(symbuf);
 					path = symbuf;
 				} else {
 					path = "";

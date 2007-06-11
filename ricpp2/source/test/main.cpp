@@ -39,7 +39,7 @@ using namespace RiCPP;
 /** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
-	CUri testuri("http://myname:abcd@www.nowhere-1.com:8080/A%20directory;find/index.php?i=wqqw&j=1234+6#frag");
+	CUri testuri("http://myname:abcd@www.nowhere-1.com.:8080/A%20directory;find;more=1/subdirectory/index.php?i=wqqw&j=1234+6#frag");
 	CRiCPPBridge ri;
 	std::cout << "Hello, World!" << std::endl;
 
@@ -51,7 +51,7 @@ int main (int argc, char * const argv[]) {
 
 #ifdef WIN32
 	CStringList testpath;
-	testpath.explode(':', "$HOME:C:/testdir:C:/Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
+	testpath.explode(':', "$HOME:C:/testdir:C:\\Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
 
 	std::string teststr;
 	testpath.implode(':', teststr, true);

@@ -654,7 +654,7 @@ protected:
 		/** Set the path
 		 * @param aPath The path to set
 		 */
-		inline void path(const char *aPath) { m_path = nonullstr(aPath); }
+		inline void path(const char *aPath) { m_path = noNullStr(aPath); }
 		/** Get the standardpath
 		 * @return The current standardpath
 		 */
@@ -662,7 +662,7 @@ protected:
 		/** Set the standardpath
 		 * @param aPath The path to standardpath
 		 */
-		inline void standardpath(const char *aPath) { m_standardpath = nonullstr(aPath); }
+		inline void standardpath(const char *aPath) { m_standardpath = noNullStr(aPath); }
 		inline virtual bool operator()(std::string &varName)
 		{
 			if ( varName == "&" ) {

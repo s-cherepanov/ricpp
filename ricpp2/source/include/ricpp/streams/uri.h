@@ -30,7 +30,12 @@
  *  @brief URI parser.
  */
 
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 #include <string>
+#include <list>
 #include <cassert>
 
 namespace RiCPP {
@@ -46,67 +51,123 @@ namespace RiCPP {
 	 * @see http://www.ietf.org/rfc/rfc2396.txt
 	 */
 	class CUri {
+	public:
+		class CSegment {
+			friend class CUri;
+			std::string m_name;
+			std::list<std::string> m_parameters;
+			void clear() {
+				m_name.clear();
+				m_parameters.clear();
+			}
+		public:
+			inline const char *getName() const { return m_name.c_str(); }
+			inline std::list<std::string>::const_iterator parametersBegin() const
+			{
+				return m_parameters.begin();
+			}
+			inline std::list<std::string>::const_iterator parametersEnd() const
+			{
+				return m_parameters.end();
+			}
+			inline std::list<std::string>::size_type parametersSize() const
+			{
+				return m_parameters.size();
+			}
+		};
+	private:
 		bool m_valid;
 
+		std::string m_path;
+		std::string m_escaped;
+
 		std::string m_URI_reference;
+
 		std::string m_absoluteURI;
 		std::string m_relativeURI;
-		std::string m_domainlabel;
-		std::string m_toplabel;
-		std::string m_IPv4address;
-		std::string m_port;
+
+		std::string m_scheme;
+
 		std::string m_opaque_part;
 		std::string m_hier_part;
-		std::string m_path;
+
 		std::string m_net_path;
 		std::string m_abs_path;
 		std::string m_rel_path;
-		std::string m_path_segments;
-		std::string m_segment;
-		std::string m_param;
+
 		std::string m_query;
+
 		std::string m_fragment;
-		std::string m_host;
-		std::string m_hostname;
-		std::string m_hostport;
+
+		std::string m_authority;
 		std::string m_userinfo;
 		std::string m_server;
 		std::string m_reg_name;
-		std::string m_authority;
-		std::string m_scheme;
-		std::string m_rel_segment;
-		std::string m_escaped;
+
+		std::string m_host;
+		std::string m_hostport;
+		std::string m_IPv4address;
+		std::string m_hostname;
+		std::string m_port;
 	
+		std::list<std::string> m_domainlabels;
+		std::string m_domainlabel;
+		std::string m_toplabel;
+		
+		std::string m_rel_segment;
+		std::string m_path_segments;
+		std::string m_segment;
+		std::string m_param;
+
+		CSegment m_segmentContainer;
+		std::list<CSegment> m_segments;
+
 		inline void clearAll() {
 			m_valid = true;
+
+			m_path.clear();
+			m_escaped.clear();
+
 			m_URI_reference.clear();
+
 			m_absoluteURI.clear();
 			m_relativeURI.clear();
-			m_domainlabel.clear();
-			m_toplabel.clear();
-			m_IPv4address.clear();
-			m_port.clear();
+
+			m_scheme.clear();
+
 			m_opaque_part.clear();
 			m_hier_part.clear();
-			m_path.clear();
+
 			m_net_path.clear();
 			m_abs_path.clear();
 			m_rel_path.clear();
-			m_path_segments.clear();
-			m_segment.clear();
-			m_param.clear();
+
 			m_query.clear();
+
 			m_fragment.clear();
-			m_host.clear();
-			m_hostname.clear();
-			m_hostport.clear();
+
+			m_authority.clear();
 			m_userinfo.clear();
 			m_server.clear();
 			m_reg_name.clear();
-			m_authority.clear();
-			m_scheme.clear();
+
+			m_host.clear();
+			m_hostport.clear();
+			m_IPv4address.clear();
+			m_hostname.clear();
+			m_port.clear();
+
+			m_domainlabels.clear();
+			m_domainlabel.clear();
+			m_toplabel.clear();
+			
 			m_rel_segment.clear();
-			m_escaped.clear();
+			m_path_segments.clear();
+			m_segment.clear();
+			m_param.clear();
+
+			m_segmentContainer.clear();
+			m_segments.clear();
 		}
 
 		inline void advance(const unsigned char **str, std::string &result, int steps=1)
@@ -296,84 +357,73 @@ namespace RiCPP {
 			}
 		}
 
-		inline bool fragment(const unsigned char **str, std::string &result)
+		inline void fragment(const unsigned char **str, std::string &result)
 		{
 			m_fragment = "";
 			while ( uric(str, m_fragment) );
 			result += m_fragment;
-			return true;
 		}
 
-		inline bool query(const unsigned char **str, std::string &result)
+		inline void query(const unsigned char **str, std::string &result)
 		{
 			m_query = "";
 			while ( uric(str, m_query) );
 			result += m_query;
-			return true;
 		}
 
-		inline bool param(const unsigned char **str, std::string &result)
+		inline void param(const unsigned char **str, std::string &result)
 		{
 			m_param = "";
 			while ( pchar(str, m_param) );
 			result += m_param;
-			return true;
 		}
 
-		inline bool segment(const unsigned char **str, std::string &result)
+		inline void segment(const unsigned char **str, std::string &result)
 		{
-			const unsigned char *sav = *str;
+			m_segmentContainer.clear();
 			m_segment = "";
 
 			while ( pchar(str, m_segment) );
 
+			m_segmentContainer.m_name = m_segment;
+
 			while ( *str[0] == ';' ) {
 				advance(str, m_segment);
-				if ( !param(str, m_segment) ) {
-					m_segment = "";
-					*str = sav;
-					return false;
-				}
+				param(str, m_segment);
+				m_segmentContainer.m_parameters.push_back(m_param);
 			}
 			result += m_segment;
-			return true;
 		}
 
-		inline bool path_segments(const unsigned char **str, std::string &result)
+		inline void path_segments(const unsigned char **str, std::string &result)
 		{
 			const unsigned char *sav = *str;
-			m_path_segments = "";
 
-			if ( !segment(str, m_path_segments) ) {
-				return false;
-			}
+			m_path_segments = "";
+			m_segments.clear();
+
+			segment(str, m_path_segments);
+			m_segments.push_back(m_segmentContainer);
 
 			while ( *str[0] == '/' ) {
 				advance(str, m_path_segments);
-				if ( !segment(str, m_path_segments) ) {
-					m_path_segments = "";
-					*str = sav;
-					return false;
-				}
+				segment(str, m_path_segments);
+				m_segments.push_back(m_segmentContainer);
 			}
 			result += m_path_segments;
-			return true;
 		}
 
 		inline bool abs_path(const unsigned char **str, std::string &result)
 		{
-			const unsigned char *sav = *str;
 			m_abs_path = "";
+			m_path = "";
 			
 			if ( (*str)[0] != '/' )
 				return false;
 
 			advance(str, m_abs_path);
-			if ( !path_segments(str, m_abs_path) ) {
-				m_abs_path = "";
-				*str = sav;
-				return false;
-			}
+			path_segments(str, m_abs_path);
+			m_path = m_abs_path;
 			result += m_abs_path;
 			return true;
 		}
@@ -381,14 +431,20 @@ namespace RiCPP {
 		inline bool opaque_part(const unsigned char **str, std::string &result)
 		{
 			m_opaque_part = "";
+			m_path = "";
 			if ( uric_no_slash(str, m_opaque_part) ) {
 				while ( uric(str, m_opaque_part) );
+				m_path = m_opaque_part;
 				result += m_opaque_part;
 				return true;
 			}
 			return false;
 		}
 
+		/*
+		// Never called path is either the opaque part or the abs path,
+		// m_path is set in opaque_part() or abs_path()
+		// The path component m_path can also be a net_path() or rel_path()
 		inline bool path(const unsigned char **str, std::string &result)
 		{
 			m_path = "";
@@ -397,13 +453,13 @@ namespace RiCPP {
 			}
 			return true;
 		}
+		*/
 
-		inline bool port(const unsigned char **str, std::string &result)
+		inline void port(const unsigned char **str, std::string &result)
 		{
 			m_port = "";
 			while ( digit(str, m_port) );
 			result += m_port;
-			return true;
 		}
 
 		inline bool IPv4address(const unsigned char **str, std::string &result)
@@ -432,6 +488,7 @@ namespace RiCPP {
 			return true;
 		}
 
+		/*
 		inline bool toplabel(const unsigned char **str, std::string &result)
 		{
 			// This is never called, because a toplabel is recognized
@@ -462,6 +519,7 @@ namespace RiCPP {
 			result += m_toplabel;
 			return true;
 		}
+		*/
 
 		inline bool domainlabel(const unsigned char **str, std::string &result)
 		{
@@ -499,6 +557,7 @@ namespace RiCPP {
 
 			m_hostname = "";
 			m_toplabel = "";
+			m_domainlabels.clear();
 
 			while ( domainlabel(str, m_hostname) ) {
 				// rember to found domainlabel in toplabel
@@ -511,21 +570,25 @@ namespace RiCPP {
 						m_hostname = "";
 						m_toplabel = "";
 						m_domainlabel = "";
+						m_domainlabels.clear();
 						*str = sav;
 						return false;
 					}
 					result += m_hostname;
 					return true;
 				}
-				
+				m_domainlabels.push_back(m_domainlabel);
 				advance(str, m_hostname);
 			}
+			if ( !m_domainlabels.empty() )
+				m_domainlabels.pop_back();
 
 			// Last domainlabel has to be a toplabel
 			if ( m_toplabel.empty() || isdigit(m_toplabel[0]) ) {
 				m_hostname = "";
 				m_toplabel = "";
 				m_domainlabel = "";
+				m_domainlabels.clear();
 				*str = sav;
 				return false;
 			}
@@ -554,17 +617,13 @@ namespace RiCPP {
 			}
 			if ( (*str)[0] == ':' ) {
 				advance(str, m_hostport);
-				if ( !port(str, m_hostport) ) {
-					m_hostport = "";
-					*str = sav;
-					return false;
-				}
+				port(str, m_hostport);
 			}
 			result += m_hostport;
 			return true;
 		}
 
-		inline bool userinfo(const unsigned char **str, std::string &result)
+		inline void userinfo(const unsigned char **str, std::string &result)
 		{
 			m_userinfo = "";
 			for ( ;; ) {
@@ -590,29 +649,25 @@ namespace RiCPP {
 				break;
 			}
 			result += m_userinfo;
-			return true;
 		}
 
 		inline bool server(const unsigned char **str, std::string &result)
 		{
 			const unsigned char *sav = *str;
 			m_server = "";
-			if ( userinfo(str, m_server) ) {
-				if ( (*str)[0] != '@' ) {
-					m_userinfo = "";
-					m_server = "";
-					*str = sav;
-					// continue with hostport without userinfo
-				} else {
-					advance(str, m_server);
-				}
-				if ( !hostport(str, m_server) ) {
-					m_server = "";
-					*str = sav;
-					return false;
-				}
+			userinfo(str, m_server);
+			if ( (*str)[0] != '@' ) {
+				m_userinfo = "";
+				m_server = "";
+				*str = sav;
+				// continue with hostport without userinfo
 			} else {
-				hostport(str, m_server);
+				advance(str, m_server);
+			}
+			if ( !hostport(str, m_server) ) {
+				m_server = "";
+				*str = sav;
+				return false;
 			}
 			result += m_server;
 			return true;
@@ -717,8 +772,11 @@ namespace RiCPP {
 		inline bool rel_path(const unsigned char **str, std::string &result)
 		{
 			m_rel_path = "";
+			m_path = "";
+
 			if ( rel_segment(str, m_rel_path) ) {
 				abs_path(str, m_rel_path);
+				m_path = m_rel_path;
 				result += m_rel_path;
 				return true;
 			}
@@ -729,6 +787,7 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_net_path = "";
+			m_path = "";
 
 			if ( (*str)[0] != '/' ) {
 				return false;
@@ -750,6 +809,7 @@ namespace RiCPP {
 
 			abs_path(str, m_net_path);
 
+			m_path = m_net_path;
 			result += m_net_path;
 			return true;
 		}
@@ -763,10 +823,7 @@ namespace RiCPP {
 			{
 				if ( (*str)[0] == '?' ) {
 					advance(str, m_hier_part);
-					if ( !query(str, m_hier_part) ) {
-						*str = sav;
-						return false;
-					}
+					query(str, m_hier_part);
 				}
 				result += m_hier_part;
 				return true;
@@ -784,11 +841,7 @@ namespace RiCPP {
 			{
 				if ( (*str)[0] == '?' ) {
 					advance(str, m_relativeURI);
-					if ( !query(str, m_relativeURI) ) {
-						m_relativeURI = "";
-						*str = sav;
-						return false;
-					}
+					query(str, m_relativeURI);
 				}
 				result += m_relativeURI;
 				return true;
@@ -831,26 +884,168 @@ namespace RiCPP {
 				relativeURI(str, m_URI_reference);
 			if ( (*str)[0] == '#' ) {
 				advance(str, m_URI_reference);
-				if ( !fragment(str, m_URI_reference) ) {
-					m_URI_reference = "";
-					*str = sav;
-					return false;
-				}
+				fragment(str, m_URI_reference);
 			}
 			return *str[0] == 0;
 		}
 
 	public:
-		inline CUri(const char *anUri) { parse(anUri); }
+		inline CUri(const char *anUri = 0) { parse(anUri); }
+		inline CUri(const CUri &uri) { *this = uri; }
+
 		inline bool parse(const char *anUri)
 		{
-			clearAll();
-			if ( !anUri )
+			if ( !anUri ) {
+				clearAll();
 				return m_valid;
-			m_valid = URI_reference((const unsigned char **)&anUri);
+			}
+			std::string uri(anUri);
+			const char *uriptr = uri.c_str();
+			m_valid = URI_reference((const unsigned char **)&uriptr);
 			return m_valid;
 		}
+
+		inline CUri &operator=(const char *anUri)
+		{
+			parse(anUri);
+			return *this;
+		}
+
+		inline CUri &operator=(const CUri &uri)
+		{
+			if ( this == &uri ) {
+				return *this;
+			}
+			parse(uri.getUriReference());
+			return *this;
+		}
+
+		inline bool makeAbsolute(const CUri &baseUri)
+		{
+			if ( emptyStr(getPath()) &&
+				emptyStr(getScheme()) &&
+				emptyStr(getAuthority()) &&
+				emptyStr(getQuery()) )
+			{
+				// The URI references the document itself
+				return true;
+			}
+
+			if ( isAbsolute() ) {
+				// The URI is already absolute
+				return true;
+			}
+
+			// Check the base URI
+			if ( !baseUri.isValid() || !baseUri.isAbsolute() ) {
+				return false;
+			}
+
+			// String to get the result URI
+			std::string resultUriStr;
+
+			// Inherit the query or not
+			const char *refQuery = noNullStr(getQuery());
+			if ( emptyStr(refQuery) )
+				refQuery = baseUri.getQuery();
+
+			// Inherit the fragment or not
+			const char *refFragment = noNullStr(getFragment());
+			if ( emptyStr(refFragment) )
+				refQuery = baseUri.getFragment();
+
+			// Inherit the scheme
+			const char *refScheme = noNullStr(baseUri.getScheme());
+
+			// Authority
+			const char *refAuthority = noNullStr(getAuthority());
+
+			// Path
+			std::string refPath(noNullStr(getPath()));
+
+			if ( emptyStr(refAuthority) ) {
+				refAuthority = noNullStr(baseUri.getAuthority());
+
+				if ( refPath.empty() || refPath[0] != '/' ) {
+					refPath = noNullStr(baseUri.getPath());
+					/* to be continued ... */
+				}
+			}
+			/* to be continued ... */
+
+			CUri resultUri(resultUriStr.c_str());
+
+			if ( !resultUri.isValid() )
+				return false;
+			*this = resultUri;
+			return true;
+		}
+
 		inline bool isValid() const { return m_valid; }
+
+		inline const char *c_str() const { return m_URI_reference.c_str();}
+
+		inline const char *getUriReference() const { return m_URI_reference.c_str();}
+
+		inline bool isRelative() const { return !m_relativeURI.empty(); }
+		inline bool isAbsolute() const { return !m_absoluteURI.empty(); }
+		inline const char *getAbsoluteUri() const { return m_absoluteURI.c_str(); }
+		inline const char *getRelativeUri() const { return m_relativeURI.c_str(); }
+
+		inline const char *getScheme() const { return m_scheme.c_str(); }
+
+		inline const char *getOpaquePart() const { return m_opaque_part.c_str(); }
+		inline const char *getHierPart() const { return m_hier_part.c_str(); }
+
+		inline const char *getPath() const { return m_path.c_str(); }
+		inline const char *getNetPath() const { return m_net_path.c_str(); }
+		inline const char *getAbsPath() const { return m_abs_path.c_str(); }
+		inline const char *getRelPath() const { return m_rel_path.c_str(); }
+
+		inline const char *getQuery() const { return m_query.c_str(); }
+
+		inline const char *getFragment() const { return m_fragment.c_str(); }
+
+		inline const char *getAuthority() const { return m_authority.c_str(); }
+		inline const char *getUserinfo() const { return m_userinfo.c_str(); }
+		inline const char *getServer() const { return m_server.c_str(); }
+		inline const char *getRegName() const { return m_reg_name.c_str(); }
+
+		inline const char *getHost() const { return m_host.c_str(); }
+		inline const char *getHostport() const { return m_hostport.c_str(); }
+		inline const char *getIPv4Address() const { return m_IPv4address.c_str(); }
+		inline const char *getHostname() const { return m_hostname.c_str(); }
+		inline const char *getPort() const { return m_port.c_str(); }
+
+		inline std::list<std::string>::const_iterator domainlablesBegin() const
+		{
+			return m_domainlabels.begin();
+		}
+		inline std::list<std::string>::const_iterator domainlablesEnd() const
+		{
+			return m_domainlabels.end();
+		}
+		inline std::list<std::string>::size_type domainlablesSize() const
+		{
+			return m_domainlabels.size();
+		}
+		inline const char *getTopLabel() const { return m_toplabel.c_str(); }
+
+		inline const char *getRelSegment() { m_rel_segment.c_str(); }
+		inline const char *getPathSegments() { m_path_segments.c_str(); }
+
+		inline std::list<CSegment>::const_iterator segmentsBegin() const
+		{
+			return m_segments.begin();
+		}
+		inline std::list<CSegment>::const_iterator segmentsEnd() const
+		{
+			return m_segments.end();
+		}
+		inline std::list<CSegment>::size_type segmentsSize() const
+		{
+			return m_segments.size();
+		}
 	};
 }
 

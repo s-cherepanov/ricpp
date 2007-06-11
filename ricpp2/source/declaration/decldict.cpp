@@ -68,7 +68,7 @@ const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const c
 	if ( notEmptyStr(table) ) {
 		s = table;
 		s += ':';
-		s += nonullstr(var);
+		s += noNullStr(var);
 		token = tokenmap.find(s.c_str());
 		if ( token != RI_NULL ) {
 			return find(token);
@@ -144,7 +144,7 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 	if ( notEmptyStr(table) ) {
 		s = table;
 		s += ':';
-		s += nonullstr(var);
+		s += noNullStr(var);
 		token = tokenmap.find(s.c_str());
 		if ( token != RI_NULL ) {
 			return findAndUpdate(token, curColorSize);

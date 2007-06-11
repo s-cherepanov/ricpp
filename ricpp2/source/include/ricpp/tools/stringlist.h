@@ -319,7 +319,7 @@ public:
 		return std::find(
 			m_stringList.begin(),
 			m_stringList.end(),
-			std::string(nonullstr(str))
+			std::string(noNullStr(str))
 			) != m_stringList.end();
 	}
 }; // CStringList

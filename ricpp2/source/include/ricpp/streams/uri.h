@@ -585,9 +585,12 @@ namespace RiCPP {
 			m_server = "";
 			if ( userinfo(str, m_server) ) {
 				if ( (*str)[0] != '@' ) {
+					m_userinfo = "";
 					m_server = "";
 					*str = sav;
-					return false;
+					// continue with hostport without userinfo
+				} else {
+					advance(str, m_server);
 				}
 				if ( !hostport(str, m_server) ) {
 					m_server = "";

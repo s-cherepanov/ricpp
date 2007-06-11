@@ -34,14 +34,15 @@
 #include "ricpp/streams/reader.h"
 #endif // _RICPP_STREAMS_READER_H
 
-#include <stdio.h>
+#include <fstream>
+
 namespace RiCPP {
 
 	/** @brief Read a file using the file: scheme
 	 */
 	class CFileReader : public CReader {
 		std::string m_uri;
-		FILE *m_file;
+		std::fstream *m_file;
 	public:
 		static const char *myName();
 		static const char *myType();

@@ -42,10 +42,6 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
-#ifndef _RICPP_TOOLS_INLINETOOLS_H
-#include "ricpp/tools/inlinetools.h"
-#endif // _RICPP_TOOLS_INLINETOOLS_H
-
 namespace RiCPP {
 
 /** @brief Minimal interface a plugin must implement.

@@ -86,6 +86,7 @@ namespace RiCPP {
 		std::string m_absoluteURI;
 		std::string m_relativeURI;
 
+		bool m_hasScheme;
 		std::string m_scheme;
 
 		std::string m_opaque_part;
@@ -95,19 +96,30 @@ namespace RiCPP {
 		std::string m_abs_path;
 		std::string m_rel_path;
 
+		bool m_hasQuery;
 		std::string m_query;
 
+		bool m_hasFragment;
 		std::string m_fragment;
 
+		bool m_hasAuthority;
 		std::string m_authority;
+
+		bool m_hasUserinfo;
 		std::string m_userinfo;
+
+		bool m_hasServer;
 		std::string m_server;
 		std::string m_reg_name;
 
 		std::string m_host;
 		std::string m_hostport;
 		std::string m_IPv4address;
+
+		bool m_hasTrailingDot;
 		std::string m_hostname;
+
+		bool m_hasPort;
 		std::string m_port;
 	
 		std::list<std::string> m_domainlabels;
@@ -133,6 +145,7 @@ namespace RiCPP {
 			m_absoluteURI.clear();
 			m_relativeURI.clear();
 
+			m_hasScheme = false;
 			m_scheme.clear();
 
 			m_opaque_part.clear();
@@ -142,19 +155,30 @@ namespace RiCPP {
 			m_abs_path.clear();
 			m_rel_path.clear();
 
+			m_hasQuery = false;
 			m_query.clear();
 
+			m_hasFragment = false;
 			m_fragment.clear();
 
+			m_hasAuthority = false;
 			m_authority.clear();
+
+			m_hasUserinfo = false;
 			m_userinfo.clear();
+
+			m_hasServer = false;
 			m_server.clear();
 			m_reg_name.clear();
 
 			m_host.clear();
 			m_hostport.clear();
 			m_IPv4address.clear();
+
+			m_hasTrailingDot = false;
 			m_hostname.clear();
+
+			m_hasPort = false;
 			m_port.clear();
 
 			m_domainlabels.clear();
@@ -390,6 +414,7 @@ namespace RiCPP {
 			while ( *str[0] == ';' ) {
 				advance(str, m_segment);
 				param(str, m_segment);
+				// m_param can be empty
 				m_segmentContainer.m_parameters.push_back(m_param);
 			}
 			result += m_segment;
@@ -403,11 +428,13 @@ namespace RiCPP {
 			m_segments.clear();
 
 			segment(str, m_path_segments);
+			// m_segmentContainer can be empty
 			m_segments.push_back(m_segmentContainer);
 
 			while ( *str[0] == '/' ) {
 				advance(str, m_path_segments);
 				segment(str, m_path_segments);
+				// m_segmentContainer can be empty
 				m_segments.push_back(m_segmentContainer);
 			}
 			result += m_path_segments;
@@ -423,6 +450,7 @@ namespace RiCPP {
 
 			advance(str, m_abs_path);
 			path_segments(str, m_abs_path);
+			// m_abs_path can be "/"
 			m_path = m_abs_path;
 			result += m_abs_path;
 			return true;
@@ -479,6 +507,7 @@ namespace RiCPP {
 				if ( digit(str, m_IPv4address) ) {
 					while ( digit(str, m_IPv4address) );
 				} else {
+					// At least one digit
 					m_IPv4address = "";
 					*str = sav;
 					return false;
@@ -555,6 +584,7 @@ namespace RiCPP {
 			// Special handling: Last domainlabel has to be a toplabel
 			const unsigned char *sav = *str;
 
+			m_hasTrailingDot = false;
 			m_hostname = "";
 			m_toplabel = "";
 			m_domainlabels.clear();
@@ -564,6 +594,7 @@ namespace RiCPP {
 				// is not neccessairily a valid toplabel here
 				m_toplabel = m_domainlabel;
 				
+				// look ahead (*str)[0]
 				if ( (*str)[0] != '.' ) {
 					// Last domainlabel has to be a toplabel
 					if ( isdigit(m_toplabel[0]) ) {
@@ -592,6 +623,7 @@ namespace RiCPP {
 				*str = sav;
 				return false;
 			}
+			m_hasTrailingDot = !m_hostname.empty() && m_hostname[m_hostname.size()-1] == '.';
 			result += m_hostname;
 			return true;
 		}
@@ -612,11 +644,14 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_hostport = "";
+			m_hasPort = false;
+
 			if ( !host(str, m_hostport) ) {
 				return false;
 			}
 			if ( (*str)[0] == ':' ) {
 				advance(str, m_hostport);
+				m_hasPort = true;
 				port(str, m_hostport);
 			}
 			result += m_hostport;
@@ -651,10 +686,11 @@ namespace RiCPP {
 			result += m_userinfo;
 		}
 
-		inline bool server(const unsigned char **str, std::string &result)
+		inline void server(const unsigned char **str, std::string &result)
 		{
 			const unsigned char *sav = *str;
 			m_server = "";
+			m_hasUserinfo = false;
 			userinfo(str, m_server);
 			if ( (*str)[0] != '@' ) {
 				m_userinfo = "";
@@ -663,14 +699,10 @@ namespace RiCPP {
 				// continue with hostport without userinfo
 			} else {
 				advance(str, m_server);
+				m_hasUserinfo = true;
 			}
-			if ( !hostport(str, m_server) ) {
-				m_server = "";
-				*str = sav;
-				return false;
-			}
+			hostport(str, m_server);
 			result += m_server;
-			return true;
 		}
 
 		inline bool reg_name(const unsigned char **str, std::string &result)
@@ -700,19 +732,23 @@ namespace RiCPP {
 				break;
 			}
 			result += m_reg_name;
+			// At least one legal character
 			return !m_reg_name.empty();
 		}
 
-		inline bool authority(const unsigned char **str, std::string &result)
+		inline void authority(const unsigned char **str, std::string &result)
 		{
 			m_authority = "";
-			if ( server(str, m_authority) ||
-				reg_name(str, m_authority) )
+			m_hasServer = true;
+			
+			server(str, m_authority);
+			if ( m_server.empty() )
 			{
-				result += m_authority;
-				return true;
+				if ( reg_name(str, m_authority) ) {
+					m_hasServer = false;
+				}
 			}
-			return false;
+			result += m_authority;
 		}
 
 		inline bool scheme(const unsigned char **str, std::string &result)
@@ -737,6 +773,7 @@ namespace RiCPP {
 				result += m_scheme;
 				return true;
 			}
+			// At least one legal character
 			return false;
 		}
 
@@ -766,6 +803,7 @@ namespace RiCPP {
 				break;
 			}
 			result += m_rel_segment;
+			// At least one legal character
 			return !m_rel_segment.empty();
 		}
 
@@ -788,6 +826,7 @@ namespace RiCPP {
 			const unsigned char *sav = *str;
 			m_net_path = "";
 			m_path = "";
+			m_hasAuthority = false;
 
 			if ( (*str)[0] != '/' ) {
 				return false;
@@ -800,12 +839,9 @@ namespace RiCPP {
 				return false;
 			}
 			advance(str, m_net_path);
+			m_hasAuthority = true;
 
-			if ( !authority(str, m_net_path) ) {
-				m_net_path = "";
-				*str = sav;
-				return false;
-			}
+			authority(str, m_net_path);
 
 			abs_path(str, m_net_path);
 
@@ -818,11 +854,15 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_hier_part = "";
+			m_query = "";
+			m_hasQuery = false;
+
 			if ( net_path(str, m_hier_part) ||
 				abs_path(str, m_hier_part) )
 			{
 				if ( (*str)[0] == '?' ) {
 					advance(str, m_hier_part);
+					m_hasQuery = true;
 					query(str, m_hier_part);
 				}
 				result += m_hier_part;
@@ -835,12 +875,16 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_relativeURI = "";
+			m_query = "";
+			m_hasQuery = false;
+
 			if ( net_path(str, m_relativeURI) ||
 				abs_path(str, m_relativeURI) ||
 				rel_path(str, m_relativeURI) )
 			{
 				if ( (*str)[0] == '?' ) {
 					advance(str, m_relativeURI);
+					m_hasQuery = true;
 					query(str, m_relativeURI);
 				}
 				result += m_relativeURI;
@@ -853,6 +897,8 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_absoluteURI = "";
+			m_hasScheme = false;
+
 			if ( !scheme(str, m_absoluteURI) ) {
 				return false;
 			}
@@ -862,6 +908,9 @@ namespace RiCPP {
 				*str = sav;
 				return false;
 			}
+			m_hasScheme = true;
+			sav = *str;
+
 			advance(str, m_absoluteURI);
 
 			if ( hier_part(str, m_absoluteURI) ||
@@ -871,21 +920,28 @@ namespace RiCPP {
 				return true;
 			}
 
-			m_absoluteURI = "";
-			*str = sav;
-			return false;
+			// Grammar must have absolute or relative URI
+			// however base URI can consist of the scheme only
+			// so return true
+			return true;
 		}
 
 		inline bool URI_reference(const unsigned char **str)
 		{
 			const unsigned char *sav = *str;
 			m_URI_reference = "";
+			m_fragment = "";
+			m_hasFragment = false;
+
 			if ( !absoluteURI(str, m_URI_reference) )
 				relativeURI(str, m_URI_reference);
+
 			if ( (*str)[0] == '#' ) {
 				advance(str, m_URI_reference);
+				m_hasFragment = true;
 				fragment(str, m_URI_reference);
 			}
+			// Make shure that there are no more trailing characters
 			return *str[0] == 0;
 		}
 
@@ -920,12 +976,14 @@ namespace RiCPP {
 			return *this;
 		}
 
-		inline bool makeAbsolute(const CUri &baseUri)
+		inline bool makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 		{
+			resultUriStr = "";
+
 			if ( emptyStr(getPath()) &&
-				emptyStr(getScheme()) &&
-				emptyStr(getAuthority()) &&
-				emptyStr(getQuery()) )
+				!hasScheme() &&
+				!hasAuthority() &&
+				!hasQuery() )
 			{
 				// The URI references the document itself
 				return true;
@@ -933,51 +991,146 @@ namespace RiCPP {
 
 			if ( isAbsolute() ) {
 				// The URI is already absolute
+				resultUriStr = c_str();
 				return true;
 			}
 
 			// Check the base URI
-			if ( !baseUri.isValid() || !baseUri.isAbsolute() ) {
+			if ( !baseUri.isValid() ) {
 				return false;
 			}
 
-			// String to get the result URI
-			std::string resultUriStr;
+			// Query is not inherited
 
-			// Inherit the query or not
-			const char *refQuery = noNullStr(getQuery());
-			if ( emptyStr(refQuery) )
-				refQuery = baseUri.getQuery();
-
-			// Inherit the fragment or not
-			const char *refFragment = noNullStr(getFragment());
-			if ( emptyStr(refFragment) )
-				refQuery = baseUri.getFragment();
+			// Fragment is not inherited
 
 			// Inherit the scheme
-			const char *refScheme = noNullStr(baseUri.getScheme());
+			bool refHasScheme = true;
+			const char *refScheme = noNullStr(getScheme());
+			if ( !hasScheme() ) {
+				refScheme = noNullStr(baseUri.getScheme());
+				refHasScheme = baseUri.hasScheme();
+			}
 
 			// Authority
+			bool refHasAuthority = true;
 			const char *refAuthority = noNullStr(getAuthority());
+			if ( !hasAuthority() ) {
+				refAuthority = noNullStr(baseUri.getAuthority());
+				refHasAuthority = baseUri.hasAuthority();
+			}
+
+			// Possibly inherited parts
+			if ( refHasScheme )
+			{
+				resultUriStr += refScheme;
+				resultUriStr += ":";
+			}
+
+			if ( refHasAuthority )
+			{
+				resultUriStr += "//";
+				resultUriStr += refAuthority;
+			}
+
 
 			// Path
-			std::string refPath(noNullStr(getPath()));
+			std::string refPath;
+			std::list<CSegment> pathList;
 
-			if ( emptyStr(refAuthority) ) {
-				refAuthority = noNullStr(baseUri.getAuthority());
+			std::list<CSegment>::const_iterator si = baseUri.segmentsBegin();
+			std::list<CSegment>::const_iterator siend = baseUri.segmentsEnd();
+			int startpass = 0;
 
-				if ( refPath.empty() || refPath[0] != '/' ) {
-					refPath = noNullStr(baseUri.getPath());
-					/* to be continued ... */
+			if ( hasAuthority() || (!emptyStr(getPath()) && m_path[0]=='/') ) {
+				startpass = 1;
+			}
+
+			for ( int pass = startpass; pass < 2; ++pass ) {
+				if ( pass == 1 ) {
+					refPath += getRelSegment();
+					si = segmentsBegin();
+					siend = segmentsEnd();
+				}
+				for ( ; si != siend; si++ ) {
+					if ( !strcmp((*si).getName(), ".") &&
+						(*si).parametersSize() == 0 )
+					{
+						// Ignore "."
+						continue;
+					}
+					if ( !strcmp((*si).getName(), "..") &&
+						(*si).parametersSize() == 0 )
+					{
+						if ( pathList.empty() ) {
+							// first segment == ".." considered to be an error
+							return false;
+						}
+						// Remove "<segment>/..", segment cannot be ".."
+						// because the ".." are removed from left to right
+						pathList.pop_back();
+						continue;
+					}
+					pathList.push_back(*si);
+				}
+				if ( pass == 0 ) {
+					// skip the last segment (all right of the '/' - possibly was an empty segment)
+					if ( !pathList.empty() )
+						pathList.pop_back();
+					bool rootOnly = false;
+					if ( pathList.empty() && (notEmptyStr(baseUri.getAbsPath()) || baseUri.hasAuthority() ) ) {
+						// The root '/'
+						pathList.push_back(CSegment());
+						rootOnly = true;
+					}
+					for ( si = pathList.begin(); si != pathList.end(); si++ ) {
+						refPath += "/";
+						refPath += (*si).getName();
+						std::list<std::string>::const_iterator pi = (*si).parametersBegin();
+						for ( ; pi != (*si).parametersEnd(); pi++ ) {
+							refPath += ";";
+							refPath += (*pi);
+						}
+					}
+					if ( !pathList.empty() && !rootOnly && notEmptyStr(getRelSegment()) ) {
+						refPath += "/";
+					}
+					pathList.clear();
 				}
 			}
-			/* to be continued ... */
 
-			CUri resultUri(resultUriStr.c_str());
+			for ( si = pathList.begin(); si != pathList.end(); si++ ) {
+				refPath += "/";
+				refPath += (*si).getName();
+				std::list<std::string>::const_iterator pi = (*si).parametersBegin();
+				for ( ; pi != (*si).parametersEnd(); pi++ ) {
+					refPath += ";";
+					refPath += (*pi);
+				}
+			}
 
-			if ( !resultUri.isValid() )
-				return false;
-			*this = resultUri;
+			if ( refPath.empty() &&
+				notEmptyStr(getAbsPath()) )
+			{
+				refPath += "/";
+			}
+
+			// Mixed parts (only the path)
+			resultUriStr += refPath;
+
+			// Not inherited parts
+			if ( hasQuery() )
+			{
+				resultUriStr += "?";
+				resultUriStr += noNullStr(getQuery());
+			}
+
+			if ( hasFragment() )
+			{
+				resultUriStr += "#";
+				resultUriStr += noNullStr(getFragment());
+			}
+
 			return true;
 		}
 
@@ -992,6 +1145,7 @@ namespace RiCPP {
 		inline const char *getAbsoluteUri() const { return m_absoluteURI.c_str(); }
 		inline const char *getRelativeUri() const { return m_relativeURI.c_str(); }
 
+		inline bool hasScheme() const { return m_hasScheme; }
 		inline const char *getScheme() const { return m_scheme.c_str(); }
 
 		inline const char *getOpaquePart() const { return m_opaque_part.c_str(); }
@@ -1002,19 +1156,30 @@ namespace RiCPP {
 		inline const char *getAbsPath() const { return m_abs_path.c_str(); }
 		inline const char *getRelPath() const { return m_rel_path.c_str(); }
 
+		inline bool hasQuery() const { return m_hasQuery; }
 		inline const char *getQuery() const { return m_query.c_str(); }
 
+		inline bool hasFragment() const { return m_hasFragment; }
 		inline const char *getFragment() const { return m_fragment.c_str(); }
 
+		inline bool hasAuthority() const { return m_hasAuthority; }
 		inline const char *getAuthority() const { return m_authority.c_str(); }
+
+		inline bool hasUserinfo() const { return m_hasUserinfo; }
 		inline const char *getUserinfo() const { return m_userinfo.c_str(); }
+
+		inline bool hasServer() const { return m_hasServer; }
 		inline const char *getServer() const { return m_server.c_str(); }
 		inline const char *getRegName() const { return m_reg_name.c_str(); }
 
 		inline const char *getHost() const { return m_host.c_str(); }
 		inline const char *getHostport() const { return m_hostport.c_str(); }
 		inline const char *getIPv4Address() const { return m_IPv4address.c_str(); }
+
+		inline bool hasTrailingDot() const { return m_hasTrailingDot; }
 		inline const char *getHostname() const { return m_hostname.c_str(); }
+
+		inline bool hasPort() const { return m_hasPort; }
 		inline const char *getPort() const { return m_port.c_str(); }
 
 		inline std::list<std::string>::const_iterator domainlablesBegin() const
@@ -1031,8 +1196,8 @@ namespace RiCPP {
 		}
 		inline const char *getTopLabel() const { return m_toplabel.c_str(); }
 
-		inline const char *getRelSegment() { m_rel_segment.c_str(); }
-		inline const char *getPathSegments() { m_path_segments.c_str(); }
+		inline const char *getRelSegment() const { return m_rel_segment.c_str(); }
+		inline const char *getPathSegments() const { return m_path_segments.c_str(); }
 
 		inline std::list<CSegment>::const_iterator segmentsBegin() const
 		{

@@ -39,9 +39,48 @@ using namespace RiCPP;
 /** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
-	CUri testuri("http://myname:abcd@www.nowhere-1.com.:8080/A%20directory;find;more=1/subdirectory/index.php?i=wqqw&j=1234+6#frag");
-	CRiCPPBridge ri;
 	std::cout << "Hello, World!" << std::endl;
+
+	CUri testUri("http://myname:abcd@www.nowhere-1.com.:8080/A%20directory;find;more=1/subdirectory/index.php?i=wqqw&j=1234+6#frag");
+	CUri testUri2("http://127.0.0.1");
+	CUri testUri3("file:///C:/");
+	CUri testUri4("ftp:");
+	CUri relUri("adir/name;str/./deldir/../index.html?#anchor");
+	CUri relUri2("adir/");
+	CUri relUri3("/rootdir");
+
+	std::string refUriStr;
+	if ( relUri.makeAbsolute(testUri, refUriStr) )
+		std::cout << refUriStr << std::endl;
+	else
+		std::cout << "Error in uri" << std::endl;
+
+	if ( relUri.makeAbsolute(testUri2, refUriStr) )
+		std::cout << refUriStr << std::endl;
+	else
+		std::cout << "Error in uri" << std::endl;
+
+	if ( relUri.makeAbsolute(testUri3, refUriStr) )
+		std::cout << refUriStr << std::endl;
+	else
+		std::cout << "Error in uri" << std::endl;
+
+	if ( relUri.makeAbsolute(testUri4, refUriStr) )
+		std::cout << refUriStr << std::endl;
+	else
+		std::cout << "Error in uri" << std::endl;
+
+	if ( relUri2.makeAbsolute(testUri4, refUriStr) )
+		std::cout << refUriStr << std::endl;
+	else
+		std::cout << "Error in uri" << std::endl;
+
+	if ( relUri3.makeAbsolute(testUri4, refUriStr) )
+		std::cout << refUriStr << std::endl;
+	else
+		std::cout << "Error in uri" << std::endl;
+
+	CRiCPPBridge ri;
 
 	std::string str;
 	std::cout << CEnv::tmpName() << ": " << CEnv::find(str, CEnv::tmpName()) << std::endl;

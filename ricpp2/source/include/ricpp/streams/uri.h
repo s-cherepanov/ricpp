@@ -422,8 +422,6 @@ namespace RiCPP {
 
 		inline void path_segments(const unsigned char **str, std::string &result)
 		{
-			const unsigned char *sav = *str;
-
 			m_path_segments = "";
 			m_segments.clear();
 
@@ -642,7 +640,6 @@ namespace RiCPP {
 
 		inline bool hostport(const unsigned char **str, std::string &result)
 		{
-			const unsigned char *sav = *str;
 			m_hostport = "";
 			m_hasPort = false;
 
@@ -852,7 +849,6 @@ namespace RiCPP {
 
 		inline bool hier_part(const unsigned char **str, std::string &result)
 		{
-			const unsigned char *sav = *str;
 			m_hier_part = "";
 			m_query = "";
 			m_hasQuery = false;
@@ -873,7 +869,6 @@ namespace RiCPP {
 
 		inline bool relativeURI(const unsigned char **str, std::string &result)
 		{
-			const unsigned char *sav = *str;
 			m_relativeURI = "";
 			m_query = "";
 			m_hasQuery = false;
@@ -928,7 +923,6 @@ namespace RiCPP {
 
 		inline bool URI_reference(const unsigned char **str)
 		{
-			const unsigned char *sav = *str;
 			m_URI_reference = "";
 			m_fragment = "";
 			m_hasFragment = false;

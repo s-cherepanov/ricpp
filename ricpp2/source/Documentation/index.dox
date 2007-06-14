@@ -3,31 +3,32 @@
 
 @section intro_sec Introduction
 
-Important note: RiCPP is not developed (only a few classes exist), the documentation also
-in a very draft state is not describing what is, but more what
-will be, hopefully.
+Important note: RiCPP is not developed (only a few classes exist),
+the documentation also in a very draft state is not describing what is,
+but more what will be, hopefully.
 
 RenderMan(R) can be seen generally as an interface between modeller
-(the software that produces 3D scenes) and renderer (the software that
-produces 'renders' a visible representation of the 3D scene description);
-it is a kind of high level 3D API (Application Interface) though. Using the
+(the software that is used to produce 3D scenes) and renderer (the software that
+is used to 'render' a visible representation of the 3D scene description);
+it is a kind of high level 3D API (Application Interface). Using the
 RenderMan interface you can describe complete 3D scenes with objects,
 transformation, lights, shading methods, camera settings and so on in
-a higher level a using OpenGL for instance. The sequence of scenes
-of an animation is given in a rendering method independent form frame
-by frame. Also, the language that is used to write procedural shading
+a higher level as using OpenGL for instance. The sequence of scenes
+of an animation is given frame by frame in a rendering method independent
+form. Also, the language that is used to write procedural shading
 and texture mapping tools is part of the RenderMan Interface. The
 Interface and a photorealistic renderer for it were invented by the
-company Pixar in the late 80's and both are still popular today.
+people of the company Pixar in the late 80's.
 
-The RenderMan interface is implemented using a variety
-of languages, so called language bindings. Most common are the C-binding for the
+The RenderMan interface is implemented using a variety of languages,
+so called language bindings. Most common are the C-binding for the
 programming language 'C' and the RIB-binding. RIB is the acronym for
-RenderMan Interface Bytstream, a data stream format to transport and archive
-the serialized RenderMan interface calls. RIB output can
-be written to files (either in a human readable ASCII format or in a more
-compact binary format or a mixed format) and used by renderers for the later offline
-rendering. It also can be transported over a network to one or more renderer servers.
+RenderMan Interface Bytstream, a data stream format to transport and
+archive the serialized RenderMan interface calls. RIB output can be
+written to files (either in a human readable ASCII format or in a more
+compact binary format or in a mixed form) and used by renderers for
+the later offline rendering. It also can be transported over a network
+to one or more renderer servers.
 
 Renderers that can cope with the RenderMan interface are called RenderMan complient
 renderers. The first renderer written for the RenderMan Interface, implemented the
@@ -37,28 +38,29 @@ it became very famous. There are some renderers available nowadays, that use
 different rendering methods.
 
 RiCPP is not a renderer, it is a C++ framework for the RenderMan(R) interface,
-a C++ language binding. RiCPP can be used to write renderers. Like the
-C-language QuickRenderMan Interface, that was part of the NextStep operation system,
-it provides a frontend C++-binding, that calls the rendering routines of one
-or more concrete backend renderers, also written in C++, that can be bound as
-dynamic libraries.
+a C++ language binding. RiCPP can be used to write renderers or to produce or
+change RIB-code. Like the C-language QuickRenderMan Interface, that was part
+of the NextStep operation system, it provides a front end, that calls the
+rendering routines of one or more concrete back end renderers.
+RiCPP uses dynamic libraries in form of plug-ins to bind the back ends
+to the front end.
 
-Also some basics of the backend are part of RiCPP. The two 'renderers'
+Also some basics of the back end are part of RiCPP. The two 'renderers'
 that (will) come with RiCPP are the RIBWriter (a 'renderer' that uses RIB as
 output format) and a draft renderer for OpenGL output. The later will be a very
-simple one that does not provide the features, like procedural shading, of a
+simple one, that does not provide the features, like procedural shading, of a
 'real' RenderMan complient renderer.
 
 @section implementation_sec Implementation
 
 These web pages are the doxygen output of the technical documentation of RiCPP
 I'm currently working on. RiCPP is also the name of the namespace for all
-elements of this framework. The classes CRiCPPBridge and CRendererLoader are two
-main parts of the frontend, that bridges to the backend, a class derived from
-CBaseRenderer. An instance of CRiCPPBridge implements the interface IRi, and
-that is the only interface you need to see, if you only want to use RiCPP as an API
-to connect with a backend renderer. IRi (\c include "ricpp/ricpp/ricpp.h") is
-similar to the declarations of the C-binding in ri.h.
+elements of this framework. The classes CRiCPPBridge and CRendererLoader are the
+two main parts of the front end, that bridges to the back end, which is in turn
+a class derived from CBaseRenderer. An instance of CRiCPPBridge implements the
+interface IRi, and that is the only interface you need to see, if you only want
+to use RiCPP as an API connected with a back end renderer. IRi (include
+"ricpp/ricpp/ricpp.h") is similar to the declarations of the C-binding in ri.h.
 
 At the moment I'm developing RiCPP using Visual Studio 2005 (the express edition
 with PSDK for the 32Bit version will do) for MS Windows and XCode on Apple's
@@ -71,13 +73,13 @@ subfolder. The ricpp subfolder contains an older version of RiCPP.
 You can learn a lot of RenderMan by these books and documents:
 
  <ul>
- <li> [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman </li>
- <li> [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier </li>
- <li> [RISPEC3.2] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document, the reference <a href="https://renderman.pixar.com/products/rispec/index.htm">Pixar's The RenderMan Interface Specification</a> </li>
+ <li> [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman</li>
+ <li> [RAG2005] Saty Raghavachary; Rendering for Beginners; 2005, Elsevier</li>
+ <li> [RISPEC3.2] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document, the reference <a href="https://renderman.pixar.com/products/rispec/index.htm">Pixar's The RenderMan Interface Specification</a></li>
  <li> [STE2003] Ian Stephenson; Essential RenderMan fast; 2003, Springer </li>
- <li> [STE2005] Ian Stephenson (Ed.); Production Rendering; 2005, Springer (another OO-framework) </li>
- <li> [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley </li>
- <li> [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep) </li>
+ <li> [STE2005] Ian Stephenson (Ed.); Production Rendering; 2005, Springer (another OO-framework)</li>
+ <li> [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley</li>
+ <li> [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep)</li>
 </ul>
 
 @section renderers_sec RenderMan complient renderers
@@ -85,10 +87,10 @@ You can learn a lot of RenderMan by these books and documents:
 Some commercial renderes are:
 
 <ul>
-<li> <a href="http://www.3delight.com/">3Delight</a>, DNA research </li>
+<li> <a href="http://www.3delight.com/">3Delight</a>, DNA research</li>
 <li> <a href="http://www.sitexgraphics.com/">Air</a>, SiTex Graphics</li>
-<li> <a href="http://www.pixar.com/">prman</a>, Pixar's photorealistic renderer </li>
-<li> <a href="http://www.dotcsw.com/">RenderDotC</a>, Dot C Software, Inc. </li>
+<li> <a href="http://www.pixar.com/">prman</a>, Pixar's photorealistic renderer</li>
+<li> <a href="http://www.dotcsw.com/">RenderDotC</a>, Dot C Software, Inc.</li>
 </ul>
 
 Some free one's:
@@ -139,7 +141,7 @@ including more links.
 				 
 */
 
-/*! @page page_decl Declaration of variables
+/*! @page page_decl Declaration of variables (draft)
 
 @section page_decl_sec1 The declaration types
 

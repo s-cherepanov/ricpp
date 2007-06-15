@@ -64,7 +64,7 @@ namespace RiCPP {
 			typedef std::list<std::string>::const_iterator const_iterator;
 			typedef std::list<std::string>::size_type size_type;
 
-			inline const char *getName() const { return m_name.c_str(); }
+			inline const std::string &getName() const { return m_name; }
 			const_iterator begin() const
 			{
 				return m_parameters.begin();
@@ -371,6 +371,10 @@ namespace RiCPP {
 		inline CUri(const CUri &uri) { *this = uri; }
 
 		bool parse(const char *anUri);
+		inline bool parse(const std::string &anUri)
+		{
+			return parse(anUri.c_str());
+		}
 
 		inline CUri &operator=(const char *anUri)
 		{
@@ -400,14 +404,15 @@ namespace RiCPP {
 		inline const char *c_str() const { return m_uri_reference.c_str(); }
 		inline const std::string &toString() const { return m_uri_reference; }
 
-		inline const char *getUriReference() const { return m_uri_reference.c_str(); }
+		inline const std::string &getUriReference() const { return m_uri_reference; }
+
+		inline bool isAbsolute() const { return !m_absoluteURI.empty(); }
+		inline const std::string &getAbsoluteUri() const { return m_absoluteURI; }
 
 		inline bool isRelative() const { return !m_relativeURI.empty(); }
-		inline bool isAbsolute() const { return !m_absoluteURI.empty(); }
-		inline const char *getAbsoluteUri() const { return m_absoluteURI.c_str(); }
-		inline const char *getRelativeUri() const { return m_relativeURI.c_str(); }
+		inline const std::string &getRelativeUri() const { return m_relativeURI; }
 
-		inline bool currentDocument() const
+		inline bool isCurrentDocument() const
 		{
 			return
 				m_path.empty() &&
@@ -417,45 +422,46 @@ namespace RiCPP {
 		}
 
 		inline bool hasScheme() const { return m_hasScheme; }
-		inline const char *getScheme() const { return m_scheme.c_str(); }
+		inline const std::string &getScheme() const { return m_scheme; }
 
 		inline bool hasOpaquePart() const { return !m_opaque_part.empty(); }
-		inline const char *getOpaquePart() const { return m_opaque_part.c_str(); }
+		inline const std::string &getOpaquePart() const { return m_opaque_part; }
 
 		inline bool hasHierPart() const { return !m_hier_part.empty(); }
-		inline const char *getHierPart() const { return m_hier_part.c_str(); }
+		inline const std::string &getHierPart() const { return m_hier_part; }
 
-		inline bool emptyPart() const { return !m_path.empty(); }
-		inline const char *getPath() const { return m_path.c_str(); }
-		inline const char *getNetPath() const { return m_net_path.c_str(); }
-		inline const char *getAbsPath() const { return m_abs_path.c_str(); }
-		inline const char *getRelPath() const { return m_rel_path.c_str(); }
+		inline const std::string &getPath() const { return m_path; }
+		inline const std::string &getNetPath() const { return m_net_path; }
+		inline const std::string &getAbsPath() const { return m_abs_path; }
+		inline const std::string &getRelPath() const { return m_rel_path; }
 
 		inline bool hasQuery() const { return m_hasQuery; }
-		inline const char *getQuery() const { return m_query.c_str(); }
+		inline const std::string &getQuery() const { return m_query; }
 
 		inline bool hasFragment() const { return m_hasFragment; }
-		inline const char *getFragment() const { return m_fragment.c_str(); }
+		inline const std::string &getFragment() const { return m_fragment; }
 
 		inline bool hasAuthority() const { return m_hasAuthority; }
-		inline const char *getAuthority() const { return m_authority.c_str(); }
+		inline const std::string &getAuthority() const { return m_authority; }
 
 		inline bool hasUserinfo() const { return m_hasUserinfo; }
-		inline const char *getUserinfo() const { return m_userinfo.c_str(); }
+		inline const std::string &getUserinfo() const { return m_userinfo; }
 
 		inline bool hasServer() const { return m_hasServer; }
-		inline const char *getServer() const { return m_server.c_str(); }
-		inline const char *getRegName() const { return m_reg_name.c_str(); }
+		inline const std::string &getServer() const { return m_server; }
 
-		inline const char *getHost() const { return m_host.c_str(); }
-		inline const char *getHostport() const { return m_hostport.c_str(); }
-		inline const char *getIPv4address() const { return m_ipV4address.c_str(); }
+		inline bool emptyRegName() const { return m_reg_name.empty(); }
+		inline const std::string &getRegName() const { return m_reg_name; }
+
+		inline const std::string &getHost() const { return m_host; }
+		inline const std::string &getHostport() const { return m_hostport; }
+		inline const std::string &getIPv4address() const { return m_ipV4address; }
 
 		inline bool hasTrailingDot() const { return m_hasTrailingDot; }
-		inline const char *getHostname() const { return m_hostname.c_str(); }
+		inline const std::string &getHostname() const { return m_hostname; }
 
 		inline bool hasPort() const { return m_hasPort; }
-		inline const char *getPort() const { return m_port.c_str(); }
+		inline const std::string &getPort() const { return m_port; }
 
 		inline std::list<std::string>::const_iterator domainlablesBegin() const
 		{
@@ -469,10 +475,10 @@ namespace RiCPP {
 		{
 			return m_domainlabels.size();
 		}
-		inline const char *getTopLabel() const { return m_toplabel.c_str(); }
+		inline const std::string &getTopLabel() const { return m_toplabel; }
 
-		inline const char *getRelSegment() const { return m_rel_segment.c_str(); }
-		inline const char *getPathSegments() const { return m_path_segments.c_str(); }
+		inline const std::string &getRelSegment() const { return m_rel_segment; }
+		inline const std::string &getPathSegments() const { return m_path_segments; }
 
 		inline const_iterator segmentsBegin() const
 		{

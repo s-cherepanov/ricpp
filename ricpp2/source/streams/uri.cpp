@@ -693,19 +693,19 @@ bool CUri::parse(const char *anUri)
 
 void CUri::addSegment(const CSegment &seg, std::list<CSegment> &segList) const
 {
-	if ( !strcmp(seg.getName(), ".") &&
+	if ( seg.getName() == "." &&
 		seg.size() == 0 )
 	{
 		// Ignore complete path segments "."
 		return;
 	}
 
-	if ( !strcmp(seg.getName(), "..") &&
+	if ( seg.getName() == ".." &&
 		seg.size() == 0 &&
 		!segList.empty() )
 	{
 		const CSegment &segBack = segList.back();
-		if ( strcmp(segBack.getName(), "..") != 0 )	{
+		if ( segBack.getName() != ".." ) {
 			segList.pop_back();
 			return;
 		}
@@ -718,7 +718,7 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 {
 	resultUriStr = "";
 
-	if ( emptyStr(getPath()) &&
+	if ( getPath().empty() &&
 		!hasScheme() &&
 		!hasQuery() &&
 		!hasAuthority() )
@@ -726,7 +726,7 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 		if ( hasFragment() )
 		{
 			resultUriStr += "#";
-			resultUriStr += noNullStr(getFragment());
+			resultUriStr += getFragment();
 		}
 		return true;
 	}
@@ -748,31 +748,31 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 
 	// Inherit the scheme
 	bool refHasScheme = hasScheme();
-	const char *refScheme = noNullStr(getScheme());
+	const char *refScheme = getScheme().c_str();
 	if ( !refHasScheme ) {
-		refScheme = noNullStr(baseUri.getScheme());
+		refScheme = baseUri.getScheme().c_str();
 		refHasScheme = baseUri.hasScheme();
 	}
 
 	// Authority
 	bool refHasAuthority = hasAuthority();
-	const char *refAuthority = noNullStr(getAuthority());
+	const char *refAuthority = getAuthority().c_str();
 	if ( !refHasAuthority ) {
-		refAuthority = noNullStr(baseUri.getAuthority());
+		refAuthority = baseUri.getAuthority().c_str();
 		refHasAuthority = baseUri.hasAuthority();
 	}
 
 	// Possibly inherited parts
 	if ( refHasScheme )
 	{
-		resultUriStr += refScheme;
+		resultUriStr += noNullStr(refScheme);
 		resultUriStr += ":";
 	}
 
 	if ( refHasAuthority )
 	{
 		resultUriStr += "//";
-		resultUriStr += refAuthority;
+		resultUriStr += noNullStr(refAuthority);
 	}
 
 	// Path
@@ -782,7 +782,7 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 	refPath = "";
 	pathList.clear();
 
-	if ( hasAuthority() || (!emptyStr(getPath()) && m_path[0] == '/') ) {
+	if ( hasAuthority() || (!getPath().empty() && m_path[0] == '/') ) {
 		refPath = m_path;
 	} else {
 		const_iterator si = baseUri.segmentsBegin();
@@ -791,7 +791,7 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 		for ( int pass = 0; pass < 2; ++pass ) {
 			for ( ; si != siend; si++ ) {
 				addSegment(*si, pathList);
-				lastWasDot = strcmp((*si).getName(), ".") == 0 || strcmp((*si).getName(), "..") == 0;
+				lastWasDot = (*si).getName() == "." || (*si).getName() == "..";
 			}
 			if ( pass == 0 ) {
 				// skip the last segment, that is
@@ -803,7 +803,7 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 				CSegment relSeg;
 				relSeg.m_name = getRelSegment();
 				addSegment(relSeg, pathList);
-				lastWasDot = strcmp(relSeg.getName(), ".") == 0 || strcmp(relSeg.getName(), "..") == 0;
+				lastWasDot = relSeg.getName() == "." || relSeg.getName() == "..";
 
 				si = segmentsBegin();
 				siend = segmentsEnd();
@@ -835,13 +835,13 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 	if ( hasQuery() )
 	{
 		resultUriStr += "?";
-		resultUriStr += noNullStr(getQuery());
+		resultUriStr += getQuery();
 	}
 
 	if ( hasFragment() )
 	{
 		resultUriStr += "#";
-		resultUriStr += noNullStr(getFragment());
+		resultUriStr += getFragment();
 	}
 
 	return true;

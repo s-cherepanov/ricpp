@@ -66,7 +66,7 @@ void testURI(const CUri &baseUri, const char **refUriStrs)
 
 		std::cout
 			<< (const char *)(refUri.isValid() ? refUri.c_str() : "<invalid>") << " = "
-			<< (const char *)(valid_absUri && absUri.currentDocument() ? "(current document)" : "")
+			<< (const char *)(valid_absUri && absUri.isCurrentDocument() ? "(current document)" : "")
 			<< (const char *)(valid_absUri ? absUri.c_str() : "<invalid>") << std::endl;
 	}
 }

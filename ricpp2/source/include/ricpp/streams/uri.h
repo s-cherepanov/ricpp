@@ -378,6 +378,12 @@ namespace RiCPP {
 			return *this;
 		}
 
+		inline CUri &operator=(const std::string &anUri)
+		{
+			parse(anUri.c_str());
+			return *this;
+		}
+
 		inline CUri &operator=(const CUri &uri)
 		{
 			if ( this == &uri ) {
@@ -387,25 +393,39 @@ namespace RiCPP {
 			return *this;
 		}
 
-		bool makeAbsolute(const CUri &baseUri, std::string &resultUriStr, bool &currentDoc) const;
+		bool makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const;
 
 		inline bool isValid() const { return m_valid; }
 
-		inline const char *c_str() const { return m_uri_reference.c_str();}
+		inline const char *c_str() const { return m_uri_reference.c_str(); }
+		inline const std::string &toString() const { return m_uri_reference; }
 
-		inline const char *getUriReference() const { return m_uri_reference.c_str();}
+		inline const char *getUriReference() const { return m_uri_reference.c_str(); }
 
 		inline bool isRelative() const { return !m_relativeURI.empty(); }
 		inline bool isAbsolute() const { return !m_absoluteURI.empty(); }
 		inline const char *getAbsoluteUri() const { return m_absoluteURI.c_str(); }
 		inline const char *getRelativeUri() const { return m_relativeURI.c_str(); }
 
+		inline bool currentDocument() const
+		{
+			return
+				m_path.empty() &&
+				m_opaque_part.empty() &&
+				m_scheme.empty() &&
+				m_authority.empty();
+		}
+
 		inline bool hasScheme() const { return m_hasScheme; }
 		inline const char *getScheme() const { return m_scheme.c_str(); }
 
+		inline bool hasOpaquePart() const { return !m_opaque_part.empty(); }
 		inline const char *getOpaquePart() const { return m_opaque_part.c_str(); }
+
+		inline bool hasHierPart() const { return !m_hier_part.empty(); }
 		inline const char *getHierPart() const { return m_hier_part.c_str(); }
 
+		inline bool emptyPart() const { return !m_path.empty(); }
 		inline const char *getPath() const { return m_path.c_str(); }
 		inline const char *getNetPath() const { return m_net_path.c_str(); }
 		inline const char *getAbsPath() const { return m_abs_path.c_str(); }

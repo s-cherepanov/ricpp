@@ -36,6 +36,124 @@
 
 using namespace RiCPP;
 
+/** @brief Test a base URI with reference URI strings.
+ *
+ * Prints the results to cout
+ *
+ * @param baseUri The base URI
+ * @param refUriStrs The reference URIs as char pointer array
+ */
+void testURI(const CUri &baseUri, const char **refUriStrs)
+{
+	if ( !refUriStrs )
+		return;
+
+	CUri refUri, absUri;
+	std::string absoluteUriStr;
+
+	for ( const char **strPtr = refUriStrs; *strPtr; ++strPtr ) {
+		const char *str = strPtr[0];
+		refUri = str;
+		bool valid_absUri = false;
+
+		if ( refUri.isValid() ) {
+			valid_absUri = refUri.makeAbsolute(baseUri, absoluteUriStr);
+			absUri = absoluteUriStr;
+			valid_absUri = absUri.isValid();
+			if ( refUri.toString().empty() )
+				std::cout << "<>";
+		}
+
+		std::cout
+			<< (const char *)(refUri.isValid() ? refUri.c_str() : "<invalid>") << " = "
+			<< (const char *)(valid_absUri && absUri.currentDocument() ? "(current document)" : "")
+			<< (const char *)(valid_absUri ? absUri.c_str() : "<invalid>") << std::endl;
+	}
+}
+
+/** @brief Test URI RFC 2396
+ *
+ * Prints the results to cout
+ */
+void testURI()
+{
+	std::cout << "RFC 2396" << std::endl;
+	std::cout << "C. Examples of Resolving Relative URI References" << std::endl;
+
+	std::cout << "Within an object with a well-defined base URI of" << std::endl;
+
+	CUri baseUri("http://a/b/c/d;p?q");
+	if ( baseUri.isValid() ) {
+		std::cout << baseUri.c_str() << std::endl;
+	} else {
+		std::cout << "Base URI invalid" << std::endl;
+		return;
+	}
+
+	std::cout << "The relative URI would be resolved as follows:" << std::endl;
+
+	std::cout << "C.1 Normal Examples" << std::endl;
+
+	const char *normalExamples[] = {
+		"g:h",
+		"g",
+		"./g",
+		"g/",
+		"/g",
+		"//g",
+		"?y",
+		"g?y",
+		"#s",
+		"g#s",
+		"g?y#s",
+		";x",
+		"g;x",
+		"g;x?y#s",
+		".",
+		"./",
+		"..",
+		"../",
+		"../g",
+		"../..",
+		"../../",
+		"../../g",
+		0
+	};
+	testURI(baseUri, normalExamples);
+
+	std::cout << "C.2 Abnormal Examples" << std::endl;
+
+	const char *abnormalExamples[] = {
+		"",
+
+		"../../../g",
+		"../../../../g",
+
+		"/./g",
+		"/../g",
+		"g.",
+		".g",
+		"g..",
+		"..g",
+
+		"./../g",
+		"./g/.",
+		"g/./h",
+		"g/../h",
+		"g;x=1/./y",
+		"g;x=1/../y",
+
+		"g?y/./x",
+		"g?y/../x",
+		"g#s/./x",
+		"g#s/../x",
+
+		"http:g",
+		0
+	};
+	testURI(baseUri, abnormalExamples);
+}
+
 /** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
@@ -48,38 +166,40 @@ int main (int argc, char * const argv[]) {
 	CUri relUri("adir/name;str/./deldir/../index.html?#anchor");
 	CUri relUri2("#fragment");
 	CUri relUri3("/rootdir");
-	bool currentDoc;
+	CUri relUri4;
 
 	std::string refUriStr;
-	if ( relUri.makeAbsolute(testUri, refUriStr, currentDoc) )
+	if ( relUri.makeAbsolute(testUri, refUriStr) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri2, refUriStr, currentDoc) )
+	if ( relUri.makeAbsolute(testUri2, refUriStr) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri3, refUriStr, currentDoc) )
+	if ( relUri.makeAbsolute(testUri3, refUriStr) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri4, refUriStr, currentDoc) )
+	if ( relUri.makeAbsolute(testUri4, refUriStr) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri2.makeAbsolute(testUri4, refUriStr, currentDoc) )
+	if ( relUri2.makeAbsolute(testUri4, refUriStr) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri3.makeAbsolute(testUri4, refUriStr, currentDoc) )
+	if ( relUri3.makeAbsolute(testUri4, refUriStr) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
+
+	testURI();
 
 	CRiCPPBridge ri;
 

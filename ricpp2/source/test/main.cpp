@@ -44,38 +44,39 @@ int main (int argc, char * const argv[]) {
 	CUri testUri("http://myname:abcd@www.nowhere-1.com.:8080/A%20directory;find;more=1/subdirectory/index.php?i=wqqw&j=1234+6#frag");
 	CUri testUri2("http://127.0.0.1");
 	CUri testUri3("file:///C:/");
-	CUri testUri4("ftp:");
+	CUri testUri4("ftp:/");
 	CUri relUri("adir/name;str/./deldir/../index.html?#anchor");
-	CUri relUri2("adir/");
+	CUri relUri2("#fragment");
 	CUri relUri3("/rootdir");
+	bool currentDoc;
 
 	std::string refUriStr;
-	if ( relUri.makeAbsolute(testUri, refUriStr) )
+	if ( relUri.makeAbsolute(testUri, refUriStr, currentDoc) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri2, refUriStr) )
+	if ( relUri.makeAbsolute(testUri2, refUriStr, currentDoc) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri3, refUriStr) )
+	if ( relUri.makeAbsolute(testUri3, refUriStr, currentDoc) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri4, refUriStr) )
+	if ( relUri.makeAbsolute(testUri4, refUriStr, currentDoc) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri2.makeAbsolute(testUri4, refUriStr) )
+	if ( relUri2.makeAbsolute(testUri4, refUriStr, currentDoc) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri3.makeAbsolute(testUri4, refUriStr) )
+	if ( relUri3.makeAbsolute(testUri4, refUriStr, currentDoc) )
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;

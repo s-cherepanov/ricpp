@@ -297,6 +297,10 @@
 				RelativePath="..\..\..\source\streams\reader.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\streams\uri.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

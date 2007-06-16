@@ -189,7 +189,7 @@ bool CUri::opaque_part(const unsigned char **str, std::string &result)
 
 /*
 // Never called path is either the opaque part or the abs path,
-// m_path is set in opaque_part() or abs_path()
+// m_path is set in opaque_part() or abs_path() (also set in rel_path() here)
 // The path component m_path can also be a net_path() or rel_path()
 void CUri::path(const unsigned char **str, std::string &result)
 {
@@ -294,6 +294,93 @@ bool CUri::hostname(const unsigned char **str, std::string &result)
 	// Special handling: Last domainlabel has to be a toplabel
 	const unsigned char *sav = *str;
 
+	std::list<const unsigned char *>savList;
+
+	m_hasTrailingDot = false;
+	m_hostname = "";
+	m_toplabel = "";
+	m_domainlabels.clear();
+
+	while ( domainlabel(str, m_hostname) ) {
+		// rember to found domainlabel in toplabel
+		// is not neccessairily a valid toplabel here
+		m_toplabel = m_domainlabel;
+		
+		// look ahead (*str)[0]
+		if ( (*str)[0] != '.' ) {
+			// Last domainlabel has to be a toplabel
+			if ( isdigit(m_toplabel[0]) ) {
+				while ( isdigit(m_toplabel[0]) ) {
+					if ( m_domainlabels.empty() ) {
+						m_hostname = "";
+						m_toplabel = "";
+						m_domainlabel = "";
+						*str = sav;
+						return false;
+					}
+					*str = savList.back();
+					savList.pop_back();
+					m_toplabel = m_domainlabels.back();
+					m_domainlabels.pop_back();
+				}
+				m_hostname = "";
+				while ( sav != *str ) {
+					m_hostname += *sav;
+					++sav;
+				}
+			}
+
+			result += m_hostname;
+			return true;
+		}
+		m_domainlabels.push_back(m_domainlabel);
+		advance(str, m_hostname);
+		savList.push_back(*str);
+	}
+
+	// At least one domain label
+	if ( m_domainlabels.empty() ) {
+		m_hostname = "";
+		m_toplabel = "";
+		m_domainlabel = "";
+		m_domainlabels.clear();
+		*str = sav;
+		return false;
+	}
+
+	// Last domainlabel has to be a toplabel
+	if ( isdigit(m_toplabel[0]) ) {
+		while ( isdigit(m_toplabel[0]) ) {
+			if ( m_domainlabels.empty() ) {
+				m_hostname = "";
+				m_toplabel = "";
+				m_domainlabel = "";
+				*str = sav;
+				return false;
+			}
+			*str = savList.back();
+			savList.pop_back();
+			m_toplabel = m_domainlabels.back();
+			m_domainlabels.pop_back();
+		}
+		m_hostname = "";
+		while ( sav != *str ) {
+			m_hostname += *sav;
+			++sav;
+		}
+	}
+
+	m_hasTrailingDot = !m_hostname.empty() && m_hostname[m_hostname.size()-1] == '.';
+	result += m_hostname;
+	return true;
+}
+
+/*
+bool CUri::hostname(const unsigned char **str, std::string &result)
+{
+	// Special handling: Last domainlabel has to be a toplabel
+	const unsigned char *sav = *str;
+
 	m_hasTrailingDot = false;
 	m_hostname = "";
 	m_toplabel = "";
@@ -321,8 +408,6 @@ bool CUri::hostname(const unsigned char **str, std::string &result)
 		m_domainlabels.push_back(m_domainlabel);
 		advance(str, m_hostname);
 	}
-	if ( !m_domainlabels.empty() )
-		m_domainlabels.pop_back();
 
 	// Last domainlabel has to be a toplabel
 	if ( m_toplabel.empty() || isdigit(m_toplabel[0]) ) {
@@ -337,6 +422,7 @@ bool CUri::hostname(const unsigned char **str, std::string &result)
 	result += m_hostname;
 	return true;
 }
+*/
 
 bool CUri::host(const unsigned char **str, std::string &result)
 {
@@ -733,7 +819,7 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 
 	if ( isAbsolute() || hasOpaquePart() ) {
 		// The URI is already absolute or is opaque
-		resultUriStr = c_str();
+		resultUriStr = toString();
 		return true;
 	}
 
@@ -782,7 +868,7 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 	refPath = "";
 	pathList.clear();
 
-	if ( hasAuthority() || (!getPath().empty() && m_path[0] == '/') ) {
+	if ( hasAuthority() || hasAbsPath() ) {
 		refPath = m_path;
 	} else {
 		const_iterator si = baseUri.segmentsBegin();

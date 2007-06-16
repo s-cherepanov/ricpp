@@ -65,9 +65,9 @@ void testURI(const CUri &baseUri, const char **refUriStrs)
 		}
 
 		std::cout
-			<< (const char *)(refUri.isValid() ? refUri.c_str() : "<invalid>") << " = "
+			<< (const char *)(refUri.isValid() ? refUri.toString().c_str() : "<invalid>") << " = "
 			<< (const char *)(valid_absUri && absUri.isCurrentDocument() ? "(current document)" : "")
-			<< (const char *)(valid_absUri ? absUri.c_str() : "<invalid>") << std::endl;
+			<< (const char *)(valid_absUri ? absUri.toString().c_str() : "<invalid>") << std::endl;
 	}
 }
 
@@ -84,7 +84,7 @@ void testURI()
 
 	CUri baseUri("http://a/b/c/d;p?q");
 	if ( baseUri.isValid() ) {
-		std::cout << baseUri.c_str() << std::endl;
+		std::cout << baseUri.toString().c_str() << std::endl;
 	} else {
 		std::cout << "Base URI invalid" << std::endl;
 		return;
@@ -163,10 +163,16 @@ int main (int argc, char * const argv[]) {
 	CUri testUri2("http://127.0.0.1");
 	CUri testUri3("file:///C:/");
 	CUri testUri4("ftp:/");
+	CUri testUri5("http://1testdom.2sub.3top/anotherpath/4711");
+	CUri testUri6("http://1testdom.sub.3top/anotherpath/4711");
+	CUri testUri7("http://127.0.0.1/path/index.html");
+	CUri testUri8("mailto:a@b.c");
+
 	CUri relUri("adir/name;str/./deldir/../index.html?#anchor");
 	CUri relUri2("#fragment");
 	CUri relUri3("/rootdir");
 	CUri relUri4;
+
 
 	std::string refUriStr;
 	if ( relUri.makeAbsolute(testUri, refUriStr) )

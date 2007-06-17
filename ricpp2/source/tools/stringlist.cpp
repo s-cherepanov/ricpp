@@ -338,14 +338,14 @@ CStringList::size_type CStringList::explode(
 	return count;
 }
 
-void CStringList::implode(char seperator, std::string &str, bool isPathList)
+void CStringList::implode(char seperator, std::string &str, bool isPathlist)
 {
 	const_iterator i = begin();
 	std::string mask;
 
 	str = "";
 	while ( i != end() ) {
-		if ( isPathList && seperator == ':' ) {
+		if ( isPathlist && seperator == ':' ) {
 			// Not only Win32, masks also scheme (e.g. 'http:' -> 'http|')
 			mask = (*i);
 			maskColon(mask);

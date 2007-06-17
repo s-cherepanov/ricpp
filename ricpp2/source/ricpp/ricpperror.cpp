@@ -22,7 +22,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file renderererror.cpp
+/** @file ricpperror.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Error exception and base for errorhandling used internally for RiCPP
  */

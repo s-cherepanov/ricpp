@@ -616,7 +616,7 @@ protected:
 
 		/** @brief Sets the name of the standard renderer.
 		 *
-		 * @param Name of the standard renderer, 0 is substituted by "ribwriter"
+		 * @param name Name of the standard renderer, 0 is substituted by "ribwriter"
 		 */
 		inline void standardRendererName(const char *name) { m_rendererLoader.standardRendererName(name); }
 	};
@@ -832,7 +832,7 @@ public:
 
 	/** @brief Sets the name of the standard renderer.
 	 *
-	 * @param Name of the standard renderer, 0 is substituted by "ribwriter"
+	 * @param name Name of the standard renderer, 0 is substituted by "ribwriter"
 	 */
 	inline void standardRendererName(const char *name) { m_ctxMgmt.standardRendererName(name); }
 	//@}

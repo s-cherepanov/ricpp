@@ -59,7 +59,7 @@ namespace RiCPP {
 		 *
 		 *         Accesses the variable with the name \a varName
 		 *         and stores the value found in \a var. If the variable
-		 *         is not found, \a var is cleared.
+		 *         has not been found, \a var is cleared.
 		 *  @retval var String reference where the value of the environment variable
 		 *         \a varName is stored
 		 *  @param varName Pointer to the name of the environment variable
@@ -139,7 +139,7 @@ namespace RiCPP {
 		 *  the special values for the variables TMP, HOME, PATH, PROGDIR in \a var
 		 *  (these four names are not case sensitive, that's maybe not the case for
 		 *  other variables or different for different OSes).
-		 *  If no variable \a varName is found, var is cleared.
+		 *  If no variable \a varName has been found, var is cleared.
 		 *
 		 *  @retVal var Value of the environment variable is stored here
 		 *  @param varName Pointer to the name of the environment variable

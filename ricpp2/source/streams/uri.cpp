@@ -289,6 +289,7 @@ bool CUri::domainlabel(const unsigned char **str, std::string &result)
 	return true;
 }
 
+/*
 bool CUri::hostname(const unsigned char **str, std::string &result)
 {
 	// Special handling: Last domainlabel has to be a toplabel
@@ -374,8 +375,8 @@ bool CUri::hostname(const unsigned char **str, std::string &result)
 	result += m_hostname;
 	return true;
 }
+*/
 
-/*
 bool CUri::hostname(const unsigned char **str, std::string &result)
 {
 	// Special handling: Last domainlabel has to be a toplabel
@@ -422,7 +423,6 @@ bool CUri::hostname(const unsigned char **str, std::string &result)
 	result += m_hostname;
 	return true;
 }
-*/
 
 bool CUri::host(const unsigned char **str, std::string &result)
 {
@@ -876,8 +876,13 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 		bool lastWasDot = false;
 		for ( int pass = 0; pass < 2; ++pass ) {
 			for ( ; si != siend; si++ ) {
-				addSegment(*si, pathList);
-				lastWasDot = (*si).getName() == "." || (*si).getName() == "..";
+				if ( pass > 0 ) {
+					// Only in relative pathes "." and ".." have special meaning
+					addSegment(*si, pathList);
+					lastWasDot = (*si).getName() == "." || (*si).getName() == "..";
+				} else {
+					pathList.push_back(*si);
+				}
 			}
 			if ( pass == 0 ) {
 				// skip the last segment, that is

@@ -171,12 +171,12 @@ public:
 	 * The stringlist is concatenated to single string using \a seperator
 	 * @param seperator Character that is used as seperator for the new \a str
 	 * @retval str Container for the new concatenated string
-	 *  @param isPathlist true, for handling pathlists.
+	 * @param isPathlist true, for handling pathlists.
 	 */
 	void implode(
 		char seperator,
 		std::string &str,
-		bool isPathList
+		bool isPathlist
 	);
 
 	/** @brief Pushes a string to the stored strings. Variables are substituted.

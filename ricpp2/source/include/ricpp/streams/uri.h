@@ -39,7 +39,7 @@
 #include <cassert>
 
 namespace RiCPP {
-	/** @brief Class to represent a absolute or relative URI.
+	/** @brief Class to represent an absolute or relative URI.
 	 *
 	 * URIs that do not match the generic format as
 	 * described in rfc2396 are not suported. A string
@@ -85,7 +85,7 @@ namespace RiCPP {
 			 */
 			typedef std::list<std::string>::const_iterator const_iterator;
 
-			/** @brief Size type for the size of the parameter list.
+			/** @brief Type for the size of the parameter list.
 			 */
 			typedef std::list<std::string>::size_type size_type;
 
@@ -123,7 +123,7 @@ namespace RiCPP {
 		 */
 		typedef std::list<CSegment>::const_iterator const_iterator;
 
-		/** @brief Constant iterator for the size of the segment list.
+		/** @brief Type for the size of the segment list.
 		 */
 		typedef std::list<CSegment>::size_type size_type;
 
@@ -131,7 +131,7 @@ namespace RiCPP {
 		 */
 		typedef std::list<std::string>::const_iterator domainlabels_const_iterator;
 
-		/** @brief Size type for the size of the domainlabel list.
+		/** @brief Type for the size of the domainlabel list.
 		 */
 		typedef std::list<std::string>::size_type domainlabels_size_type;
 
@@ -336,9 +336,12 @@ namespace RiCPP {
 		 */
 		std::string m_param;
 
-		/** @brief temporary store of a segment with parameters.
+		/** @brief Temporary store of a segment with parameters.
 		 */
 		CSegment m_segmentContainer;
+
+		/** @brief List of the segments of a path component, exculding the relative segment.
+		 */
 		std::list<CSegment> m_segments;
 
 		/** @brief Clears all components.
@@ -1241,7 +1244,7 @@ namespace RiCPP {
 		 */
 		bool uri_reference(const unsigned char **str);
 
-		/** @brief Add path segment to the segment list
+		/** @brief Adds path segment to the segment list.
 		 *
 		 * Adds a pathsegment to the segment list handles the special meaning
 		 * of "." (same hierarchy level) and ".." (hierarchy level above) segments.
@@ -1266,7 +1269,7 @@ namespace RiCPP {
 		 */
 		inline CUri(const std::string &anUri) { parse(anUri.c_str()); }
 
-		/** @brief Copy constructor
+		/** @brief Copy constructor.
 		 *
 		 * @param uri Another URI
 		 * @see CUri::operator=()

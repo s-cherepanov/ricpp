@@ -133,8 +133,6 @@ void CUri::segment(const unsigned char **str, std::string &result)
 
 void CUri::path_segments(const unsigned char **str, std::string &result)
 {
-	const unsigned char *sav = *str;
-
 	m_path_segments = "";
 	m_segments.clear();
 
@@ -438,7 +436,6 @@ bool CUri::host(const unsigned char **str, std::string &result)
 
 bool CUri::hostport(const unsigned char **str, std::string &result)
 {
-	const unsigned char *sav = *str;
 	m_hostport = "";
 	m_hasPort = false;
 
@@ -662,7 +659,6 @@ bool CUri::net_path(const unsigned char **str, std::string &result)
 
 bool CUri::hier_part(const unsigned char **str, std::string &result)
 {
-	const unsigned char *sav = *str;
 	m_hier_part = "";
 	m_query = "";
 	m_hasQuery = false;
@@ -683,7 +679,6 @@ bool CUri::hier_part(const unsigned char **str, std::string &result)
 
 bool CUri::relativeURI(const unsigned char **str, std::string &result)
 {
-	const unsigned char *sav = *str;
 	m_relativeURI = "";
 	m_query = "";
 	m_hasQuery = false;
@@ -748,7 +743,6 @@ bool CUri::absoluteURI(const unsigned char **str, std::string &result)
 
 bool CUri::uri_reference(const unsigned char **str)
 {
-	const unsigned char *sav = *str;
 	m_uri_reference = "";
 	m_fragment = "";
 	m_hasFragment = false;

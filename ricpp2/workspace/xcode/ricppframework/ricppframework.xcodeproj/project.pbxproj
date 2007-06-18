@@ -67,6 +67,7 @@
 		C362FB720C03337F00880F4D /* requests.h in Headers */ = {isa = PBXBuildFile; fileRef = C362FB6E0C03337F00880F4D /* requests.h */; };
 		C364F5F30C1431EF00C5E4E1 /* passthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */; };
 		C364F6010C1432E300C5E4E1 /* ribwriterdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */; };
+		C366B42D0C26642600F41773 /* uri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C366B42C0C26642600F41773 /* uri.cpp */; };
 		C370C16E0BF4693200AA03BC /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1690BF4693200AA03BC /* baserenderer.h */; };
 		C370C16F0BF4693200AA03BC /* contextcreator.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C16A0BF4693200AA03BC /* contextcreator.h */; };
 		C370C1700BF4693200AA03BC /* dorender.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C16B0BF4693200AA03BC /* dorender.h */; };
@@ -298,6 +299,7 @@
 		C362FB6E0C03337F00880F4D /* requests.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = requests.h; path = ../../../source/include/ricpp/renderstate/requests.h; sourceTree = SOURCE_ROOT; };
 		C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passthrough.cpp; path = ../../../source/ribfilter/passthrough.cpp; sourceTree = SOURCE_ROOT; };
 		C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribwriterdll.cpp; path = ../../../source/ribwriterdll/ribwriterdll.cpp; sourceTree = SOURCE_ROOT; };
+		C366B42C0C26642600F41773 /* uri.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = uri.cpp; path = ../../../source/streams/uri.cpp; sourceTree = SOURCE_ROOT; };
 		C370C1690BF4693200AA03BC /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
 		C370C16A0BF4693200AA03BC /* contextcreator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = contextcreator.h; path = ../../../source/include/ricpp/baserenderer/contextcreator.h; sourceTree = SOURCE_ROOT; };
 		C370C16B0BF4693200AA03BC /* dorender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dorender.h; path = ../../../source/include/ricpp/baserenderer/dorender.h; sourceTree = SOURCE_ROOT; };
@@ -549,6 +551,7 @@
 			children = (
 				C3003D4A0C1D649C004C4EF0 /* filereader.cpp */,
 				C3003D4B0C1D649C004C4EF0 /* reader.cpp */,
+				C366B42C0C26642600F41773 /* uri.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -1403,6 +1406,7 @@
 			files = (
 				C3003D6E0C1D6C7D004C4EF0 /* filereader.cpp in Sources */,
 				C3003D6F0C1D6C7D004C4EF0 /* reader.cpp in Sources */,
+				C366B42D0C26642600F41773 /* uri.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

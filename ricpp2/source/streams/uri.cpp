@@ -92,28 +92,32 @@ void CUri::clearAll()
 	m_segments.clear();
 }
 
-void CUri::fragment(const unsigned char **str, std::string &result)
+void CUri::fragment(const unsigned char **str,
+                    std::string &result)
 {
 	m_fragment = "";
 	while ( uric(str, m_fragment) );
 	result += m_fragment;
 }
 
-void CUri::query(const unsigned char **str, std::string &result)
+void CUri::query(const unsigned char **str,
+                 std::string &result)
 {
 	m_query = "";
 	while ( uric(str, m_query) );
 	result += m_query;
 }
 
-void CUri::param(const unsigned char **str, std::string &result)
+void CUri::param(const unsigned char **str,
+                 std::string &result)
 {
 	m_param = "";
 	while ( pchar(str, m_param) );
 	result += m_param;
 }
 
-void CUri::segment(const unsigned char **str, std::string &result)
+void CUri::segment(const unsigned char **str,
+                   std::string &result)
 {
 	m_segmentContainer.clear();
 	m_segment = "";
@@ -131,7 +135,8 @@ void CUri::segment(const unsigned char **str, std::string &result)
 	result += m_segment;
 }
 
-void CUri::path_segments(const unsigned char **str, std::string &result)
+void CUri::path_segments(const unsigned char **str,
+                         std::string &result)
 {
 	m_path_segments = "";
 	m_segments.clear();
@@ -149,14 +154,16 @@ void CUri::path_segments(const unsigned char **str, std::string &result)
 	result += m_path_segments;
 }
 
-void CUri::port(const unsigned char **str, std::string &result)
+void CUri::port(const unsigned char **str,
+                std::string &result)
 {
 	m_port = "";
 	while ( digit(str, m_port) );
 	result += m_port;
 }
 
-bool CUri::abs_path(const unsigned char **str, std::string &result)
+bool CUri::abs_path(const unsigned char **str,
+                    std::string &result)
 {
 	m_abs_path = "";
 	m_path = "";
@@ -172,7 +179,8 @@ bool CUri::abs_path(const unsigned char **str, std::string &result)
 	return true;
 }
 
-bool CUri::opaque_part(const unsigned char **str, std::string &result)
+bool CUri::opaque_part(const unsigned char **str,
+                       std::string &result)
 {
 	m_opaque_part = "";
 	m_path = "";
@@ -189,7 +197,8 @@ bool CUri::opaque_part(const unsigned char **str, std::string &result)
 // Never called path is either the opaque part or the abs path,
 // m_path is set in opaque_part() or abs_path() (also set in rel_path() here)
 // The path component m_path can also be a net_path() or rel_path()
-void CUri::path(const unsigned char **str, std::string &result)
+void CUri::path(const unsigned char **str,
+                std::string &result)
 {
 	m_path = "";
 	if ( opaque_part(str, m_path) || abs_path(str, m_path) ) {
@@ -198,7 +207,8 @@ void CUri::path(const unsigned char **str, std::string &result)
 }
 */
 
-bool CUri::ipV4address(const unsigned char **str, std::string &result)
+bool CUri::ipV4address(const unsigned char **str,
+                       std::string &result)
 {
 	const unsigned char *sav = *str;
 	m_ipV4address = "";
@@ -226,7 +236,8 @@ bool CUri::ipV4address(const unsigned char **str, std::string &result)
 }
 
 /*
-bool CUri::toplabel(const unsigned char **str, std::string &result)
+bool CUri::toplabel(const unsigned char **str,
+                    std::string &result)
 {
 	// This is never called, because a toplabel is recognized
 	// as a domainlabel in hostname()
@@ -258,7 +269,8 @@ bool CUri::toplabel(const unsigned char **str, std::string &result)
 }
 */
 
-bool CUri::domainlabel(const unsigned char **str, std::string &result)
+bool CUri::domainlabel(const unsigned char **str,
+                       std::string &result)
 {
 	unsigned char c1;
 	m_domainlabel = "";
@@ -287,95 +299,8 @@ bool CUri::domainlabel(const unsigned char **str, std::string &result)
 	return true;
 }
 
-/*
-bool CUri::hostname(const unsigned char **str, std::string &result)
-{
-	// Special handling: Last domainlabel has to be a toplabel
-	const unsigned char *sav = *str;
-
-	std::list<const unsigned char *>savList;
-
-	m_hasTrailingDot = false;
-	m_hostname = "";
-	m_toplabel = "";
-	m_domainlabels.clear();
-
-	while ( domainlabel(str, m_hostname) ) {
-		// rember to found domainlabel in toplabel
-		// is not neccessairily a valid toplabel here
-		m_toplabel = m_domainlabel;
-		
-		// look ahead (*str)[0]
-		if ( (*str)[0] != '.' ) {
-			// Last domainlabel has to be a toplabel
-			if ( isdigit(m_toplabel[0]) ) {
-				while ( isdigit(m_toplabel[0]) ) {
-					if ( m_domainlabels.empty() ) {
-						m_hostname = "";
-						m_toplabel = "";
-						m_domainlabel = "";
-						*str = sav;
-						return false;
-					}
-					*str = savList.back();
-					savList.pop_back();
-					m_toplabel = m_domainlabels.back();
-					m_domainlabels.pop_back();
-				}
-				m_hostname = "";
-				while ( sav != *str ) {
-					m_hostname += *sav;
-					++sav;
-				}
-			}
-
-			result += m_hostname;
-			return true;
-		}
-		m_domainlabels.push_back(m_domainlabel);
-		advance(str, m_hostname);
-		savList.push_back(*str);
-	}
-
-	// At least one domain label
-	if ( m_domainlabels.empty() ) {
-		m_hostname = "";
-		m_toplabel = "";
-		m_domainlabel = "";
-		m_domainlabels.clear();
-		*str = sav;
-		return false;
-	}
-
-	// Last domainlabel has to be a toplabel
-	if ( isdigit(m_toplabel[0]) ) {
-		while ( isdigit(m_toplabel[0]) ) {
-			if ( m_domainlabels.empty() ) {
-				m_hostname = "";
-				m_toplabel = "";
-				m_domainlabel = "";
-				*str = sav;
-				return false;
-			}
-			*str = savList.back();
-			savList.pop_back();
-			m_toplabel = m_domainlabels.back();
-			m_domainlabels.pop_back();
-		}
-		m_hostname = "";
-		while ( sav != *str ) {
-			m_hostname += *sav;
-			++sav;
-		}
-	}
-
-	m_hasTrailingDot = !m_hostname.empty() && m_hostname[m_hostname.size()-1] == '.';
-	result += m_hostname;
-	return true;
-}
-*/
-
-bool CUri::hostname(const unsigned char **str, std::string &result)
+bool CUri::hostname(const unsigned char **str,
+                    std::string &result)
 {
 	// Special handling: Last domainlabel has to be a toplabel
 	const unsigned char *sav = *str;
@@ -417,12 +342,14 @@ bool CUri::hostname(const unsigned char **str, std::string &result)
 		*str = sav;
 		return false;
 	}
-	m_hasTrailingDot = !m_hostname.empty() && m_hostname[m_hostname.size()-1] == '.';
+	m_hasTrailingDot = !m_hostname.empty() &&
+	                   m_hostname[m_hostname.size()-1] == '.';
 	result += m_hostname;
 	return true;
 }
 
-bool CUri::host(const unsigned char **str, std::string &result)
+bool CUri::host(const unsigned char **str,
+                std::string &result)
 {
 	m_host = "";
 	if ( hostname(str, m_host) ||
@@ -434,7 +361,8 @@ bool CUri::host(const unsigned char **str, std::string &result)
 	return false;
 }
 
-bool CUri::hostport(const unsigned char **str, std::string &result)
+bool CUri::hostport(const unsigned char **str,
+                    std::string &result)
 {
 	m_hostport = "";
 	m_hasPort = false;
@@ -451,7 +379,8 @@ bool CUri::hostport(const unsigned char **str, std::string &result)
 	return true;
 }
 
-void CUri::userinfo(const unsigned char **str, std::string &result)
+void CUri::userinfo(const unsigned char **str,
+                    std::string &result)
 {
 	m_userinfo = "";
 	for ( ;; ) {
@@ -479,7 +408,8 @@ void CUri::userinfo(const unsigned char **str, std::string &result)
 	result += m_userinfo;
 }
 
-void CUri::server(const unsigned char **str, std::string &result)
+void CUri::server(const unsigned char **str,
+                  std::string &result)
 {
 	const unsigned char *sav = *str;
 	m_server = "";
@@ -513,7 +443,8 @@ void CUri::server(const unsigned char **str, std::string &result)
 	result += m_server;
 }
 
-bool CUri::reg_name(const unsigned char **str, std::string &result)
+bool CUri::reg_name(const unsigned char **str,
+                    std::string &result)
 {
 	m_reg_name = "";
 	for ( ;; ) {
@@ -544,7 +475,8 @@ bool CUri::reg_name(const unsigned char **str, std::string &result)
 	return !m_reg_name.empty();
 }
 
-void CUri::authority(const unsigned char **str, std::string &result)
+void CUri::authority(const unsigned char **str,
+                     std::string &result)
 {
 	m_authority = "";
 	m_hasServer = true;
@@ -559,7 +491,8 @@ void CUri::authority(const unsigned char **str, std::string &result)
 	result += m_authority;
 }
 
-bool CUri::scheme(const unsigned char **str, std::string &result)
+bool CUri::scheme(const unsigned char **str,
+                  std::string &result)
 {
 	m_scheme = "";
 	if ( alpha(str, m_scheme) ) {
@@ -585,7 +518,8 @@ bool CUri::scheme(const unsigned char **str, std::string &result)
 	return false;
 }
 
-bool CUri::rel_segment(const unsigned char **str, std::string &result)
+bool CUri::rel_segment(const unsigned char **str,
+                       std::string &result)
 {
 	m_rel_segment = "";
 	for ( ;; ) {
@@ -615,7 +549,8 @@ bool CUri::rel_segment(const unsigned char **str, std::string &result)
 	return !m_rel_segment.empty();
 }
 
-bool CUri::rel_path(const unsigned char **str, std::string &result)
+bool CUri::rel_path(const unsigned char **str,
+                    std::string &result)
 {
 	m_rel_path = "";
 	m_path = "";
@@ -629,7 +564,8 @@ bool CUri::rel_path(const unsigned char **str, std::string &result)
 	return false;
 }
 
-bool CUri::net_path(const unsigned char **str, std::string &result)
+bool CUri::net_path(const unsigned char **str,
+                    std::string &result)
 {
 	const unsigned char *sav = *str;
 	m_net_path = "";
@@ -657,7 +593,8 @@ bool CUri::net_path(const unsigned char **str, std::string &result)
 	return true;
 }
 
-bool CUri::hier_part(const unsigned char **str, std::string &result)
+bool CUri::hier_part(const unsigned char **str,
+                     std::string &result)
 {
 	m_hier_part = "";
 	m_query = "";
@@ -677,7 +614,8 @@ bool CUri::hier_part(const unsigned char **str, std::string &result)
 	return false;
 }
 
-bool CUri::relativeURI(const unsigned char **str, std::string &result)
+bool CUri::relativeURI(const unsigned char **str,
+                       std::string &result)
 {
 	m_relativeURI = "";
 	m_query = "";
@@ -708,7 +646,8 @@ bool CUri::relativeURI(const unsigned char **str, std::string &result)
 	return false;
 }
 
-bool CUri::absoluteURI(const unsigned char **str, std::string &result)
+bool CUri::absoluteURI(const unsigned char **str,
+                       std::string &result)
 {
 	const unsigned char *sav = *str;
 	m_absoluteURI = "";
@@ -771,7 +710,8 @@ bool CUri::parse(const char *anUri)
 	return m_valid;
 }
 
-void CUri::addSegment(const CSegment &seg, std::list<CSegment> &segList) const
+void CUri::addSegment(const CSegment &seg,
+                      std::list<CSegment> &segList) const
 {
 	if ( seg.getName() == "." &&
 		seg.size() == 0 )
@@ -794,7 +734,8 @@ void CUri::addSegment(const CSegment &seg, std::list<CSegment> &segList) const
 	segList.push_back(seg);
 }
 
-bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
+bool CUri::makeAbsolute(const CUri &baseUri,
+                        std::string &resultUriStr) const
 {
 	resultUriStr = "";
 
@@ -873,7 +814,8 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 				if ( pass > 0 ) {
 					// Only in relative pathes "." and ".." have special meaning
 					addSegment(*si, pathList);
-					lastWasDot = (*si).getName() == "." || (*si).getName() == "..";
+					lastWasDot = (*si).getName() == "." ||
+					             (*si).getName() == "..";
 				} else {
 					pathList.push_back(*si);
 				}
@@ -888,7 +830,8 @@ bool CUri::makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const
 				CSegment relSeg;
 				relSeg.m_name = getRelSegment();
 				addSegment(relSeg, pathList);
-				lastWasDot = relSeg.getName() == "." || relSeg.getName() == "..";
+				lastWasDot = relSeg.getName() == "." ||
+				             relSeg.getName() == "..";
 
 				si = segmentsBegin();
 				siend = segmentsEnd();

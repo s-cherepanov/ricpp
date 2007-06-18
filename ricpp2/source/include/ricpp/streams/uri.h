@@ -359,7 +359,9 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @param steps Number of advances.
 		 */
-		inline void advance(const unsigned char **str, std::string &result, int steps=1)
+		inline void advance(const unsigned char **str,
+		                    std::string &result,
+							int steps=1)
 		{
 			while ( steps-- > 0 ) {
 				result += ((*str)++)[0];
@@ -382,7 +384,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @return 0, no digit or digit, the digit found.
 		 */
-		inline unsigned char digit(const unsigned char **str, std::string &result)
+		inline unsigned char digit(const unsigned char **str,
+		                           std::string &result)
 		{
 			unsigned char c = (*str)[0];
 			if ( c>='0' && c<='9' ) {
@@ -409,7 +412,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @return 0, no letter or letter, the letter found.
 		 */
-		inline unsigned char upalpha(const unsigned char **str, std::string &result)
+		inline unsigned char upalpha(const unsigned char **str,
+		                             std::string &result)
 		{
 			unsigned char c = (*str)[0];
 			if ( c>='A' && c<='Z' ) {
@@ -436,7 +440,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @return 0, no letter or letter, the letter found.
 		 */
-		inline unsigned char lowalpha(const unsigned char **str, std::string &result)
+		inline unsigned char lowalpha(const unsigned char **str,
+		                              std::string &result)
 		{
 			unsigned char c = (*str)[0];
 			if ( c>='a' && c<='z' ) {
@@ -462,7 +467,8 @@ namespace RiCPP {
 		 * @return 0, no letter or letter, the letter found.
 		 * @see lowalpha() upalpha()
 		 */
-		inline unsigned char alpha(const unsigned char **str, std::string &result)
+		inline unsigned char alpha(const unsigned char **str,
+		                           std::string &result)
 		{
 			return lowalpha(str, result) || upalpha(str, result);
 		}
@@ -483,7 +489,8 @@ namespace RiCPP {
 		 * @return 0, no alphanumeric or alphanumeric, the alphanumeric found.
 		 * @see alpha() digit()
 		 */
-		inline unsigned char alphanum(const unsigned char **str, std::string &result)
+		inline unsigned char alphanum(const unsigned char **str,
+		                              std::string &result)
 		{
 			return alpha(str, result) || digit(str, result);
 		}
@@ -505,7 +512,8 @@ namespace RiCPP {
 		 * @return 0, no hexdigit or hexdigit, the hexdigit found.
 		 * @see digit()
 		 */
-		inline unsigned char hex(const unsigned char **str, std::string &result)
+		inline unsigned char hex(const unsigned char **str,
+		                         std::string &result)
 		{
 			unsigned char c = (*str)[0];
 			if ( digit(str, result) )
@@ -532,7 +540,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @return 0 or the mark found.
 		 */
-		inline unsigned char mark(const unsigned char **str, std::string &result)
+		inline unsigned char mark(const unsigned char **str,
+		                          std::string &result)
 		{
 			unsigned char c = (*str)[0];
 			switch (c) {
@@ -569,7 +578,8 @@ namespace RiCPP {
 		 * @return 0 or the unreserved character found.
 		 * @see alphanum() mark()
 		 */
-		inline unsigned char unreserved(const unsigned char **str, std::string &result)
+		inline unsigned char unreserved(const unsigned char **str,
+		                                std::string &result)
 		{
 			return alphanum(str, result) || mark(str, result);
 		}
@@ -591,7 +601,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @return 0 or the reserved character found.
 		 */
-		inline unsigned char reserved(const unsigned char **str, std::string &result)
+		inline unsigned char reserved(const unsigned char **str,
+		                              std::string &result)
 		{
 			unsigned char c = (*str)[0];
 			switch (c) {
@@ -628,7 +639,8 @@ namespace RiCPP {
 		 * @return true, escape sequence found.
 		 * @see m_escaped hex()
 		 */
-		inline bool escaped(const unsigned char **str, std::string &result)
+		inline bool escaped(const unsigned char **str,
+		                    std::string &result)
 		{
 			const unsigned char *sav = *str;
 			m_escaped = "";
@@ -669,7 +681,8 @@ namespace RiCPP {
 		 * @return true, URI character was found.
 		 * @see reserved() unreserved() escaped()
 		 */
-		inline bool uric(const unsigned char **str, std::string &result)
+		inline bool uric(const unsigned char **str,
+		                 std::string &result)
 		{
 			return reserved(str, result) != 0 ||
 				unreserved(str, result) != 0 ||
@@ -693,7 +706,8 @@ namespace RiCPP {
 		 * @return true, URI character (without '/') was found.
 		 * @see unreserved() escaped()
 		 */
-		inline bool uric_no_slash(const unsigned char **str, std::string &result)
+		inline bool uric_no_slash(const unsigned char **str,
+		                          std::string &result)
 		{
 			if ( unreserved(str, result) != 0 ||
 				escaped(str, result) )
@@ -737,7 +751,8 @@ namespace RiCPP {
 		 * @return true, path character was found.
 		 * @see unreserved() escaped()
 		 */
-		inline bool pchar(const unsigned char **str, std::string &result)
+		inline bool pchar(const unsigned char **str,
+		                  std::string &result)
 		{
 			if ( unreserved(str, result) != 0 ||
 				escaped(str, result) )
@@ -779,7 +794,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_fragment m_hasFragment uric()
 		 */
-		void fragment(const unsigned char **str, std::string &result);
+		void fragment(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Query component.
 		 *
@@ -803,7 +819,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_query m_hasQuery uric()
 		 */
-		void query(const unsigned char **str, std::string &result);
+		void query(const unsigned char **str,
+		           std::string &result);
 
 		/** @brief Path parameter component.
 		 *
@@ -820,7 +837,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_param pchar()
 		 */
-		void param(const unsigned char **str, std::string &result);
+		void param(const unsigned char **str,
+		           std::string &result);
 
 		/** @brief Single path segment.
 		 *
@@ -836,7 +854,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_segment m_segmentContainer pchar() param()
 		 */
-		void segment(const unsigned char **str, std::string &result);
+		void segment(const unsigned char **str,
+		             std::string &result);
 
 		/** @brief Path segments.
 		 *
@@ -854,7 +873,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_segment m_segmentContainer segment()
 		 */
-		void path_segments(const unsigned char **str, std::string &result);
+		void path_segments(const unsigned char **str,
+		                   std::string &result);
 
 		/** @brief Port number.
 		 *
@@ -871,7 +891,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_port digit()
 		 */
-		void port(const unsigned char **str, std::string &result);
+		void port(const unsigned char **str,
+		          std::string &result);
 
 		/** @brief Absolute path.
 		 *
@@ -891,7 +912,8 @@ namespace RiCPP {
 		 * @return true, absolute path has been found
 		 * @see m_abs_path m_path rel_path() path_segments()
 		 */
-		bool abs_path(const unsigned char **str, std::string &result);
+		bool abs_path(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Opaque part.
 		 *
@@ -910,11 +932,13 @@ namespace RiCPP {
 		 * @return true, opaque part has been found
 		 * @see m_opaque_part uric() uric_no_slash()
 		 */
-		bool opaque_part(const unsigned char **str, std::string &result);
+		bool opaque_part(const unsigned char **str,
+		                 std::string &result);
 
 		/*
 		// Absolute or opaque path, not used
-		void path(const unsigned char **str, std::string &result);
+		void path(const unsigned char **str,
+		          std::string &result);
 		*/
 
 		/** @brief IPv4 address.
@@ -933,11 +957,14 @@ namespace RiCPP {
 		 * @return true, IPv4 address has been found
 		 * @see m_ipV4address digit()
 		 */
-		bool ipV4address(const unsigned char **str, std::string &result);
+		bool ipV4address(const unsigned char **str,
+		                 std::string &result);
 
 		/*
-		// Top label of a hostname, not used because every toplabel is a domainlabel
-		bool toplabel(const unsigned char **str, std::string &result);
+		// Top label of a hostname, not used because every toplabel
+		// is a domainlabel
+		bool toplabel(const unsigned char **str,
+		              std::string &result);
 		*/
 
 		/** @brief Domainlabel.
@@ -959,7 +986,8 @@ namespace RiCPP {
 		 * @return true, domainlabel or toplabel has been found
 		 * @see m_port m_domainlabel hostname()
 		 */
-		bool domainlabel(const unsigned char **str, std::string &result);
+		bool domainlabel(const unsigned char **str,
+		     std::string &result);
 
 		/** @brief Hostname.
 		 *
@@ -984,7 +1012,8 @@ namespace RiCPP {
 		 * @return true, hostname has been found
 		 * @see m_domainlabels m_hostname m_toplabel m_hasTrailingDot domainlabel() 
 		 */
-		bool hostname(const unsigned char **str, std::string &result);
+		bool hostname(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Host.
 		 *
@@ -1001,7 +1030,8 @@ namespace RiCPP {
 		 * @return true, host has been found
 		 * @see m_host hostname() ipV4Address()
 		 */
-		bool host(const unsigned char **str, std::string &result);
+		bool host(const unsigned char **str,
+		          std::string &result);
 
 		/** @brief Host and port.
 		 *
@@ -1020,7 +1050,8 @@ namespace RiCPP {
 		 * @return true, hostport has been found
 		 * @see m_hostport m_hasPort host() port()
 		 */
-		bool hostport(const unsigned char **str, std::string &result);
+		bool hostport(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Userinfo for an authority.
 		 *
@@ -1038,7 +1069,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_userinfo unreserved() escaped()
 		 */
-		void userinfo(const unsigned char **str, std::string &result);
+		void userinfo(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Server-nased naming authority.
 		 *
@@ -1056,7 +1088,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_server m_hasUserinfo userinfo() hostport()
 		 */
-		void server(const unsigned char **str, std::string &result);
+		void server(const unsigned char **str,
+					std::string &result);
 
 		/** @brief Registry-based naming authority.
 		 *
@@ -1075,7 +1108,8 @@ namespace RiCPP {
 		 * @return true, reg_name has been found
 		 * @see m_reg_name unreserved() escaped()
 		 */
-		bool reg_name(const unsigned char **str, std::string &result);
+		bool reg_name(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Authority component.
 		 *
@@ -1093,7 +1127,8 @@ namespace RiCPP {
 		 * @retval result String to store the characters read.
 		 * @see m_authority m_hasServer server() reg_name()
 		 */
-		void authority(const unsigned char **str, std::string &result);
+		void authority(const unsigned char **str,
+		               std::string &result);
 
 		/** @brief Scheme component.
 		 *
@@ -1110,7 +1145,8 @@ namespace RiCPP {
 		 * @return true if a scheme has been found
 		 * @see m_scheme alpha() digit()
 		 */
-		bool scheme(const unsigned char **str, std::string &result);
+		bool scheme(const unsigned char **str,
+		            std::string &result);
 
 		/** @brief First segment of a relative-path reference.
 		 *
@@ -1127,7 +1163,8 @@ namespace RiCPP {
 		 * @return true if a rel_segment has been found
 		 * @see m_rel_segment unreserved() escaped()
 		 */
-		bool rel_segment(const unsigned char **str, std::string &result);
+		bool rel_segment(const unsigned char **str,
+		                 std::string &result);
 
 		/** @brief Relative-path reference.
 		 *
@@ -1146,7 +1183,8 @@ namespace RiCPP {
 		 * @return true if a rel_path has been found
 		 * @see m_rel_path m_path rel_segment() abs_path()
 		 */
-		bool rel_path(const unsigned char **str, std::string &result);
+		bool rel_path(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Network based absolute path.
 		 *
@@ -1164,7 +1202,8 @@ namespace RiCPP {
 		 * @return true if a net_path has been found
 		 * @see m_net_path authority() abs_path()
 		 */
-		bool net_path(const unsigned char **str, std::string &result);
+		bool net_path(const unsigned char **str,
+		              std::string &result);
 
 		/** @brief Hierarchical part.
 		 *
@@ -1182,7 +1221,8 @@ namespace RiCPP {
 		 * @return true if a hier_part has been found
 		 * @see m_hier_part m_hasQuery net_path() abs_path() query()
 		 */
-		bool hier_part(const unsigned char **str, std::string &result);
+		bool hier_part(const unsigned char **str,
+		               std::string &result);
 
 		/** @brief Relative URI reference.
 		 *
@@ -1202,7 +1242,8 @@ namespace RiCPP {
 		 * @return true if a relativeURI has been found
 		 * @see m_relativeURI m_hasQuery net_path() abs_path() rel_path() query()
 		 */
-		bool relativeURI(const unsigned char **str, std::string &result);
+		bool relativeURI(const unsigned char **str,
+		                 std::string &result);
 
 		/** @brief Absolute URI.
 		 *
@@ -1221,7 +1262,8 @@ namespace RiCPP {
 		 * @return true if an absoluteURI has been found
 		 * @see m_absoluteURI m_hasScheme scheme() hier_part() opaque_part()
 		 */
-		bool absoluteURI(const unsigned char **str, std::string &result);
+		bool absoluteURI(const unsigned char **str,
+		                 std::string &result);
 
 		/** @brief URI reference.
 		 *
@@ -1252,7 +1294,8 @@ namespace RiCPP {
 		 * @param seg Segment to add
 		 * @retval segList List of segments reflecting the hierarchy levels
 		 */
-		void addSegment(const CSegment &seg, std::list<CSegment> &segList) const;
+		void addSegment(const CSegment &seg,
+		                std::list<CSegment> &segList) const;
 
 	public:
 		/** @brief Constructor, parses URI.
@@ -1260,21 +1303,30 @@ namespace RiCPP {
 		 * @param anUri Char pointer to a URI
 		 * @see parse() isValid()
 		 */
-		inline CUri(const char *anUri = 0) { parse(anUri); }
+		inline CUri(const char *anUri = 0)
+		{
+			parse(anUri);
+		}
 
 		/** @brief Constructor, parses URI.
 		 *
 		 * @param anUri String containing a URI
 		 * @see parse() isValid()
 		 */
-		inline CUri(const std::string &anUri) { parse(anUri.c_str()); }
+		inline CUri(const std::string &anUri)
+		{
+			parse(anUri.c_str());
+		}
 
 		/** @brief Copy constructor.
 		 *
 		 * @param uri Another URI
 		 * @see CUri::operator=()
 		 */
-		inline CUri(const CUri &uri) { *this = uri; }
+		inline CUri(const CUri &uri)
+		{
+			*this = uri;
+		}
 
 		/** @brief Parses URI.
 		 *
@@ -1359,7 +1411,8 @@ namespace RiCPP {
 		 * @return true, absolute form could be resolved.
 		 * @see parse() isValid()
 		 */
-		bool makeAbsolute(const CUri &baseUri, std::string &resultUriStr) const;
+		bool makeAbsolute(const CUri &baseUri,
+		                  std::string &resultUriStr) const;
 
 		/** @brief Resolving relative references to absolute form.
 		 *
@@ -1370,7 +1423,8 @@ namespace RiCPP {
 		 * @return true, absolute form could be resolved.
 		 * @see parse() isValid()
 		 */
-		inline bool makeAbsolute(const CUri &baseUri) {
+		inline bool makeAbsolute(const CUri &baseUri)
+		{
 			std::string resultUriStr;
 			if ( makeAbsolute(baseUri, resultUriStr) ) {
 				*this = resultUriStr;
@@ -1389,7 +1443,8 @@ namespace RiCPP {
 		 * @return true, absolute form could be resolved.
 		 * @see parse() isValid()
 		 */
-		inline bool makeAbsolute(const CUri &baseUri, CUri &resultUri) {
+		inline bool makeAbsolute(const CUri &baseUri, CUri &resultUri)
+		{
 			if ( &resultUri == this )
 				return makeAbsolute(baseUri);
 
@@ -1408,33 +1463,51 @@ namespace RiCPP {
 		 *
 		 * @return true, the components of this URI are valid
 		 */
-		inline bool isValid() const { return m_valid; }
+		inline bool isValid() const
+		{
+			return m_valid;
+		}
 
 		/** @brief Converts a CUri to a string.
 		 *
 		 * @return The URI reference
 		 */
-		inline const std::string &toString() const { return m_uri_reference; }
+		inline const std::string &toString() const
+		{
+			return m_uri_reference;
+		}
 
 		/** @brief Tests if URI reference is absolute.
 		 * @return true, URI is absolute
 		 */
-		inline bool isAbsolute() const { return !m_absoluteURI.empty(); }
+		inline bool isAbsolute() const
+		{
+			return !m_absoluteURI.empty();
+		}
 
 		/** @brief Gets the absolute URI.
 		 * @return Absolute URI.
 		 */
-		inline const std::string &getAbsoluteUri() const { return m_absoluteURI; }
+		inline const std::string &getAbsoluteUri() const
+		{
+			return m_absoluteURI;
+		}
 
 		/** @brief Tests if URI reference is relative.
 		 * @return true, URI is relative.
 		 */
-		inline bool isRelative() const { return !m_relativeURI.empty(); }
+		inline bool isRelative() const
+		{
+			return !m_relativeURI.empty();
+		}
 
 		/** @brief Gets the relative URI.
 		 * @return Relative URI.
 		 */
-		inline const std::string &getRelativeUri() const { return m_relativeURI; }
+		inline const std::string &getRelativeUri() const
+		{
+			return m_relativeURI;
+		}
 
 		/** @brief Tests, if URI represents the "current document".
 		 *
@@ -1452,32 +1525,50 @@ namespace RiCPP {
 		/** @brief Tests, if URI has defined a scheme component (is an absolute URI).
 		 * @return true, URI has a scheme component.
 		 */
-		inline bool hasScheme() const { return m_hasScheme; }
+		inline bool hasScheme() const
+		{
+			return m_hasScheme;
+		}
 
 		/** @brief Gets the scheme component.
 		 * @return The scheme component.
 		 */
-		inline const std::string &getScheme() const { return m_scheme; }
+		inline const std::string &getScheme() const
+		{
+			return m_scheme;
+		}
 
 		/** @brief Tests, if URI has defined an opaque part.
 		 * @return true, if URI has an opaque part.
 		 */
-		inline bool hasOpaquePart() const { return !m_opaque_part.empty(); }
+		inline bool hasOpaquePart() const
+		{
+			return !m_opaque_part.empty();
+		}
 
 		/** @brief Gets the opaque part.
 		 * @return The opaque part.
 		 */
-		inline const std::string &getOpaquePart() const { return m_opaque_part; }
+		inline const std::string &getOpaquePart() const
+		{
+			return m_opaque_part;
+		}
 
 		/** @brief Tests, if URI has defined an hierarchy part.
 		 * @return true, if URI has an hierarchy part.
 		 */
-		inline bool hasHierPart() const { return !m_hier_part.empty(); }
+		inline bool hasHierPart() const
+		{
+			return !m_hier_part.empty();
+		}
 
 		/** @brief Gets the hierarchy part.
 		 * @return The hierarchy part.
 		 */
-		inline const std::string &getHierPart() const { return m_hier_part; }
+		inline const std::string &getHierPart() const
+		{
+			return m_hier_part;
+		}
 
 		/** @brief Gets the path component.
 		 * 
@@ -1486,7 +1577,10 @@ namespace RiCPP {
 		 *
 		 * @return The path component.
 		 */
-		inline const std::string &getPath() const { return m_path; }
+		inline const std::string &getPath() const
+		{
+			return m_path;
+		}
 
 		/** @brief Gets the network path component.
 		 *
@@ -1494,7 +1588,10 @@ namespace RiCPP {
 		 *
 		 * @return The network path component.
 		 */
-		inline const std::string &getNetPath() const { return m_net_path; }
+		inline const std::string &getNetPath() const
+		{
+			return m_net_path;
+		}
 
 		/** @brief Tests, if path component is absolute.
 		 *
@@ -1502,7 +1599,10 @@ namespace RiCPP {
 		 *
 		 * @return true, if path component was absolute.
 		 */
-		inline const bool hasAbsPath() const { return !m_path.empty() && m_path[0] == '/'; }
+		inline const bool hasAbsPath() const
+		{
+			return !m_path.empty() && m_path[0] == '/';
+		}
 
 		/** @brief Gets the path component to the right of the leftmost "/".
 		 *
@@ -1512,12 +1612,18 @@ namespace RiCPP {
 		 *
 		 * @return The absolute path component.
 		 */
-		inline const std::string &getAbsPath() const { return m_abs_path; }
+		inline const std::string &getAbsPath() const
+		{
+			return m_abs_path;
+		}
 
 		/** @brief Tests, if path component is relative.
 		 * @return true, if path component was relative.
 		 */
-		inline const bool hasRelPath() const { return m_path.empty() || m_path[0] != '/'; }
+		inline const bool hasRelPath() const
+		{
+			return m_path.empty() || m_path[0] != '/';
+		}
 
 		/** @brief Gets the relative path component
 		 *
@@ -1526,67 +1632,106 @@ namespace RiCPP {
 		 *
 		 * @return Relative path component.
 		 */
-		inline const std::string &getRelPath() const { return m_rel_path; }
+		inline const std::string &getRelPath() const
+		{
+			return m_rel_path;
+		}
 
 		/** @brief Tests, if URI has defined a query component.
 		 * @return true, if path component was relative.
 		 */
-		inline bool hasQuery() const { return m_hasQuery; }
+		inline bool hasQuery() const
+		{
+			return m_hasQuery;
+		}
 
 		/** @brief Gets the query component.
 		 * @return Query component.
 		 */
-		inline const std::string &getQuery() const { return m_query; }
+		inline const std::string &getQuery() const
+		{
+			return m_query;
+		}
 
 		/** @brief Tests, if URI has defined a fragment component.
 		 * @return true, if fragment component was relative.
 		 */
-		inline bool hasFragment() const { return m_hasFragment; }
+		inline bool hasFragment() const
+		{
+			return m_hasFragment;
+		}
 
 		/** @brief Gets the fragment component.
 		 * @return Fragment component.
 		 */
-		inline const std::string &getFragment() const { return m_fragment; }
+		inline const std::string &getFragment() const
+		{
+			return m_fragment;
+		}
 
 		/** @brief Tests, if URI has defined a naming authority of a network path.
 		 * @return true, if authority is defined.
 		 */
-		inline bool hasAuthority() const { return m_hasAuthority; }
+		inline bool hasAuthority() const
+		{
+			return m_hasAuthority;
+		}
 
 		/** @brief Gets the naming authority of a network path.
 		 * @return Naming authority part of a network path.
 		 */
-		inline const std::string &getAuthority() const { return m_authority; }
+		inline const std::string &getAuthority() const
+		{
+			return m_authority;
+		}
 
 		/** @brief Tests, if URI has defined the userinfo of an authority.
 		 * @return true, if userinfo of an authority is defined.
 		 */
-		inline bool hasUserinfo() const { return m_hasUserinfo; }
+		inline bool hasUserinfo() const
+		{
+			return m_hasUserinfo;
+		}
 
 		/** @brief Gets the userinfo of an authority.
 		 * @return userinfo.
 		 */
-		inline const std::string &getUserinfo() const { return m_userinfo; }
+		inline const std::string &getUserinfo() const
+		{
+			return m_userinfo;
+		}
 
 		/** @brief Tests, if the server part of a naming authority.
 		 * @return true, if the server part of a naming authority is defined
 		 */
-		inline bool hasServer() const { return m_hasServer; }
+		inline bool hasServer() const
+		{
+			return m_hasServer;
+		}
 
 		/** @brief Gets the server part of a naming authority.
 		 * @return Server part of a naming authority.
 		 */
-		inline const std::string &getServer() const { return m_server; }
+		inline const std::string &getServer() const
+		{
+			return m_server;
+		}
 
 		/** @brief Tests, if the naming authority is registry based.
 		 * @return true, if the server part of a network path is defined
 		 */
-		inline bool hasRegName() const { return !m_reg_name.empty(); }
+		inline bool hasRegName() const
+		{
+			return !m_reg_name.empty();
+		}
 
 		/** @brief Gets the registry based naming authority.
 		 * @return Registry based naming authority.
 		 */
-		inline const std::string &getRegName() const { return m_reg_name; }
+		inline const std::string &getRegName() const
+		{
+			return m_reg_name;
+		}
 
 		/** @brief Gets the host part of the naming authority.
 		 *
@@ -1594,7 +1739,10 @@ namespace RiCPP {
 		 *
 		 * @return Host part of the naming authority.
 		 */
-		inline const std::string &getHost() const { return m_host; }
+		inline const std::string &getHost() const
+		{
+			return m_host;
+		}
 
 		/** @brief Gets the host part with portnumber of the naming authority.
 		 *
@@ -1602,22 +1750,34 @@ namespace RiCPP {
 		 *
 		 * @return Hostport part of the naming authority.
 		 */
-		inline const std::string &getHostport() const { return m_hostport; }
+		inline const std::string &getHostport() const
+		{
+			return m_hostport;
+		}
 
 		/** @brief Gets the IPv4 address if present.
 		 * @return IPv4 address.
 		 */
-		inline const std::string &getIPv4address() const { return m_ipV4address; }
+		inline const std::string &getIPv4address() const
+		{
+			return m_ipV4address;
+		}
 
 		/** @brief Gets the hostname if present.
 		 * @return Hostname.
 		 */
-		inline const std::string &getHostname() const { return m_hostname; }
+		inline const std::string &getHostname() const
+		{
+			return m_hostname;
+		}
 
 		/** @brief Tests, if hostname has a trailing dot.
 		 * @return true, if hostname has a trailing dot.
 		 */
-		inline bool hasTrailingDot() const { return m_hasTrailingDot; }
+		inline bool hasTrailingDot() const
+		{
+			return m_hasTrailingDot;
+		}
 
 		/** @brief Tests, if host has a port number.
 		 *
@@ -1630,7 +1790,10 @@ namespace RiCPP {
 		/** @brief Gets the (possibly empty) port number.
 		 * @return Port number.
 		 */
-		inline const std::string &getPort() const { return m_port; }
+		inline const std::string &getPort() const
+		{
+			return m_port;
+		}
 
 		/** @brief Gets the first domainlabel.
 		 *
@@ -1673,12 +1836,18 @@ namespace RiCPP {
 		 *
 		 * @return The top label.
 		 */
-		inline const std::string &getToplabel() const { return m_toplabel; }
+		inline const std::string &getToplabel() const
+		{
+			return m_toplabel;
+		}
 
 		/** @brief Gets the (first) relative segment of a relative path.
 		 * @return The relative segment of a relative path.
 		 */
-		inline const std::string &getRelSegment() const { return m_rel_segment; }
+		inline const std::string &getRelSegment() const
+		{
+			return m_rel_segment;
+		}
 
 		/** @brief Gets the path segments.
 		 *
@@ -1689,7 +1858,10 @@ namespace RiCPP {
 		 *
 		 * @return The path segments
 		 */
-		inline const std::string &getPathSegments() const { return m_path_segments; }
+		inline const std::string &getPathSegments() const
+		{
+			return m_path_segments;
+		}
 
 		/** @brief Gets the first of the path segments.
 		 *

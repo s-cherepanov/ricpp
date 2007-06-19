@@ -284,7 +284,7 @@ namespace RiCPP {
 		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
 		 * @retval result String to store the characters matched.
-		 * @param steps Number of advances.
+		 * @param n Number of advances.
 		 */
 		inline void advance(const unsigned char **str,
 		                    std::string &result,
@@ -896,8 +896,8 @@ namespace RiCPP {
 		 * @return true, absolute or empty path has been found.
 		 * @see m_path m_pathType path_absolute() path_empty()
 		 */
-		bool CUri::path_abempty(const unsigned char **str,
-								std::string &result);
+		bool path_abempty(const unsigned char **str,
+		                  std::string &result);
 
 		/** @brief Absolute path.
 		 *
@@ -915,8 +915,8 @@ namespace RiCPP {
 		 * @return true, absolute path has been found.
 		 * @see m_path m_pathType
 		 */
-		bool CUri::path_absolute(const unsigned char **str,
-								 std::string &result);
+		bool path_absolute(const unsigned char **str,
+		                   std::string &result);
 
 		/** @brief Path begins with non-colon ':' segment.
 		 *
@@ -933,8 +933,8 @@ namespace RiCPP {
 		 * @return true, absolute path has been found.
 		 * @see m_path m_pathType
 		 */
-		bool CUri::path_noscheme(const unsigned char **str,
-								 std::string &result);
+		bool path_noscheme(const unsigned char **str,
+		                   std::string &result);
 
 		/** @brief Relative path.
 		 *
@@ -951,8 +951,8 @@ namespace RiCPP {
 		 * @return true, absolute path has been found
 		 * @see m_path m_pathType
 		 */
-		bool CUri::path_rootless(const unsigned char **str,
-								 std::string &result);
+		bool path_rootless(const unsigned char **str,
+		                   std::string &result);
 
 		/** @brief Empty path.
 		 *
@@ -969,8 +969,8 @@ namespace RiCPP {
 		 * @return true, absolute path has been found
 		 * @see m_path m_pathType
 		 */
-		bool CUri::path_empty(const unsigned char **str,
-							  std::string &result);
+		bool path_empty(const unsigned char **str,
+                        std::string &result);
 
 		/** @brief Port number.
 		 *

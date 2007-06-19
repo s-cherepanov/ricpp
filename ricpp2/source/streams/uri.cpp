@@ -281,6 +281,8 @@ void CUri::port(const unsigned char **str,
 	result += m_port;
 }
 
+// Not used
+/*
 bool CUri::path(const unsigned char **str,
                 std::string &result)
 {
@@ -290,6 +292,7 @@ bool CUri::path(const unsigned char **str,
 		   path_rootless(str, result) ||
 		   path_empty(str, result);
 }
+*/
 
 bool CUri::ipVFuture(const unsigned char **str,
                      std::string &result)
@@ -347,70 +350,61 @@ bool CUri::ipV6address(const unsigned char **str,
 	m_ipV6Address = "";
 	m_ipAddrType = ipAddrTypeEmpty;
 
-	bool elisionFound = false;
-	int count1 = 0;
-	int count2 = 0;
+	int countLeft = 0;
+	int countRight = 0;
 
-	int i = 0;
-
-	if ( match("::", str, m_ipV6Address) ) {
-		elisionFound = true;
-		++i;
-	}
-
-	for ( ; i<8; ++i ) {
-
-		if ( i==6 ) {
-			bool wasLs32 = ls32(str, m_ipV6Address);
-			if ( wasLs32 && !elisionFound ) {
-				if ( !match(":", str, m_ipV6Address) ) {
-					*str = sav;
-					m_ipV6Address = "";
-					return false;
-				}
-				elisionFound = true;
-				if ( !m_ipV4Address.empty() ) {
-					*str = sav;
-					m_ipV6Address = "";
-					return false;
-				}
-				break;
-			}
-			if ( wasLs32 && elisionFound ) {
-				break;
-			}
-			if ( !wasLs32 && elisionFound ) {
-				*str = sav;
-				m_ipV6Address = "";
-				return false;
-			}
-			if ( !wasLs32 && !elisionFound ) {
-				continue;
-			}
-		}
-
+	bool elisionFound = match("::", str, m_ipV6Address);
+	const unsigned char *sav2 = *str;
+	
+	for ( ;; ) {
 		if ( h16(str, m_ipV6Address) ) {
+			++countRight;
 			if ( !match(":", str, m_ipV6Address) ) {
-				*str = sav;
-				m_ipV6Address = "";
-				return false;
+				if ( (*str)[0] == '.' ) {
+					*str = sav2;
+					m_ipV6Address = "";
+					for ( sav2 = sav; sav2 < *str; ++sav2 )				
+						m_ipV6Address += *sav2;
+					if ( !ipV4address(str, m_ipV6Address) ) {
+						*str = sav2;
+						m_ipV6Address = "";
+						return false;
+					}
+					// IPv4: 2x 16 Bit
+					++countRight;
+				}
+				break;
+			} 
+			if ( !elisionFound && match(":", str, m_ipV6Address) ) {
+				elisionFound = true;
+				countLeft = countRight;
+				countRight = 0;
+				if ( (*str)[0] == ']' ) {
+					break;
+				}
 			}
-		}
-		if ( match(":", str, m_ipV6Address) ) {
-			if ( elisionFound ) {
-				*str = sav;
-				m_ipV6Address = "";
-				return false;
-			}
-			elisionFound = true;
+			sav2 = *str;
+		} else {
+			*str = sav2;
+			m_ipV6Address = "";
+			return false;
 		}
 	}
+	
+	int count = countLeft + countRight;
 
+	if ( (!elisionFound && count != 8) ||
+	     (elisionFound && count > 7) )
+	{
+		*str = sav2;
+		m_ipV6Address = "";
+		return false;
+	}
+	
 	result += m_ipV6Address;
 	m_ipAddrType = ipAddrTypeV6Address;
 	return true;
 }
-
 
 bool CUri::ip_literal(const unsigned char **str,
                 std::string &result)
@@ -744,14 +738,14 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 		return true;
 	}
 
-	if ( isAbsolute() ) {
+	if ( isAbsoluteUri() ) {
 		// The URI is already absolute or is opaque
 		resultUriStr = toString();
 		return true;
 	}
 
 	// Check the base URI, must be absolute
-	if ( !(isValid() && baseUri.isValid() && baseUri.isAbsolute()) ) {
+	if ( !(isValid() && baseUri.isValid() && baseUri.isAbsoluteUri()) ) {
 		return false;
 	}
 

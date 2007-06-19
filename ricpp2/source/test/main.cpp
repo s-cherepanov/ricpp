@@ -77,88 +77,6 @@ void testURI(const CUri &baseUri, const char **refUriStrs)
  */
 void testURI()
 {
-	std::cout << "RFC 2396" << std::endl;
-	std::cout << "C. Examples of Resolving Relative URI References" << std::endl;
-
-	std::cout << "Within an object with a well-defined base URI of" << std::endl;
-
-	CUri baseUri("http://a/b/c/d;p?q");
-	if ( baseUri.isValid() ) {
-		std::cout << baseUri.toString().c_str() << std::endl;
-	} else {
-		std::cout << "Base URI invalid" << std::endl;
-		return;
-	}
-
-	std::cout << "The relative URI would be resolved as follows:" << std::endl;
-
-	std::cout << "C.1 Normal Examples" << std::endl;
-
-	const char *normalExamples[] = {
-		"g:h",
-		"g",
-		"./g",
-		"g/",
-		"/g",
-		"//g",
-		"?y",
-		"g?y",
-		"#s",
-		"g#s",
-		"g?y#s",
-		";x",
-		"g;x",
-		"g;x?y#s",
-		".",
-		"./",
-		"..",
-		"../",
-		"../g",
-		"../..",
-		"../../",
-		"../../g",
-		0
-	};
-	testURI(baseUri, normalExamples);
-
-	std::cout << "C.2 Abnormal Examples" << std::endl;
-
-	const char *abnormalExamples[] = {
-		"",
-
-		"../../../g",
-		"../../../../g",
-
-		"/./g",
-		"/../g",
-		"g.",
-		".g",
-		"g..",
-		"..g",
-
-		"./../g",
-		"./g/.",
-		"g/./h",
-		"g/../h",
-		"g;x=1/./y",
-		"g;x=1/../y",
-
-		"g?y/./x",
-		"g?y/../x",
-		"g#s/./x",
-		"g#s/../x",
-
-		"http:g",
-		0
-	};
-	testURI(baseUri, abnormalExamples);
-}
-
-/** @brief Interface test program
- */
-int main (int argc, char * const argv[]) {
-	std::cout << "Hello, World!" << std::endl;
-
 	CUri testUri("http://myname:abcd@www.nowhere-1.com.:8080/A%20directory;find;more=1/subdirectory/index.php?i=wqqw&j=1234+6#frag");
 	CUri testUri2("http://127.0.0.1");
 	CUri testUri3("file:///C:/");
@@ -172,7 +90,6 @@ int main (int argc, char * const argv[]) {
 	CUri relUri2("#fragment");
 	CUri relUri3("/rootdir");
 	CUri relUri4;
-
 
 	std::string refUriStr;
 	if ( relUri.makeAbsolute(testUri, refUriStr) )
@@ -204,6 +121,116 @@ int main (int argc, char * const argv[]) {
 		std::cout << refUriStr << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
+
+
+	std::cout << "RFC 3986" << std::endl;
+	std::cout << "Examples of Resolving Relative URI References" << std::endl;
+
+	std::cout << "Within an object with a well-defined base URI of" << std::endl;
+
+	CUri baseUri("http://a/b/c/d;p?q");
+	if ( baseUri.isValid() ) {
+		std::cout << baseUri.toString().c_str() << std::endl;
+	} else {
+		std::cout << "Base URI invalid" << std::endl;
+		return;
+	}
+
+	std::cout << "The relative URI would be resolved as follows:" << std::endl;
+
+	std::cout << "Normal Examples" << std::endl;
+
+	const char *normalExamples[] = {
+		"g:h",
+		"g",
+		"./g",
+		"g/",
+		"/g",
+		"//g",
+		"?y",
+		"g?y",
+		"#s",
+		"g#s",
+		"g?y#s",
+		";x",
+		"g;x",
+		"g;x?y#s",
+		".",
+		"./",
+		"..",
+		"../",
+		"../g",
+		"../..",
+		"../../",
+		"../../g",
+		0
+	};
+	testURI(baseUri, normalExamples);
+
+	std::cout << "Abnormal Examples" << std::endl;
+
+	const char *abnormalExamples[] = {
+		"",
+
+		"../../../g",
+		"../../../../g",
+
+		"/./g",
+		"/../g",
+		"g.",
+		".g",
+		"g..",
+		"..g",
+
+		"./../g",
+		"./g/.",
+		"g/./h",
+		"g/../h",
+		"g;x=1/./y",
+		"g;x=1/../y",
+
+		"g?y/./x",
+		"g?y/../x",
+		"g#s/./x",
+		"g#s/../x",
+
+		"http:g",
+		0
+	};
+	testURI(baseUri, abnormalExamples);
+
+	std::cout << "IPv6 Examples" << std::endl;
+
+	const char *ipV6Examples[] = {
+		"hTTp://[1080:0:0:0:8:800:200C:417A]:8080/",
+		"http://[1080::8:800:200C:417A]:80/",
+		"http://[::13.1.68.3]:/",
+		"http://[0:0:0:0:0:FFFF:129.144.52.38]/",
+		"http://[::FFFF:129.144.52.38]",
+		"http://[v7.0:0:0:0:0:FFFF:129.144.52.38]/%20Test",
+		"http:",
+		0
+	};
+	testURI(baseUri, ipV6Examples);
+
+
+	std::cout << "Faulty Examples" << std::endl;
+
+	const char *faultyExamples[] = {
+		"error://[1080:0:0:0:8:800:200C]/",
+		"error://[1080:0:0:0:8:800:200C:417A:0]:8080/",
+		"error://[1080:0:0:0:8:800:200C:417A]:8AB/",
+		"error://124.2.2.1er:8080/",
+		"error://124.2.2.1/%",
+		0
+	};
+	testURI(baseUri, faultyExamples);
+}
+
+/** @brief Interface test program
+ */
+int main (int argc, char * const argv[]) {
+	std::cout << "Hello, World!" << std::endl;
 
 	testURI();
 

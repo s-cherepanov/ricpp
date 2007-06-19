@@ -47,14 +47,16 @@ namespace RiCPP {
 	 * components by CUri::parse(). Please read
 	 * "rfc3986 Unified Identifiers (URI): Generic Syntax"
 	 * for more information (also for full BNF). The grammar
-	 * used for this class is changed but should be functional
-	 * aquivalent (rfc 2396 style uri-reference rule).
+	 * used for this class is changed so that the fragment
+	 * is not included in absolute-uri and relative-uri.
+	 * Recognition but should be functional
+	 * aquivalent (used rfc 2396 style for uri-reference rule,
+	 * also the syntax of the BNF is not ABNF).
 	 *
 	 * @see http://www.ietf.org/rfc/rfc3986.txt
 	 */
 	class CUri {
 	public:
-
 		/** @brief Constant iterator for the segment list.
 		 */
 		typedef std::list<std::string>::const_iterator segments_const_iterator;
@@ -66,45 +68,44 @@ namespace RiCPP {
 		/** @brief Types of the pathes.
 		 */
 		enum EnumPathType {
-			pathTypeEmpty = 0, ///!< Path is empty
-			pathTypeAbsolute, ///!< Path is absolute
-			pathTypeNoScheme, ///!< Path begins with non-colon segment (not used)
-			pathTypeRootless ///!< Relative pathj
+			pathTypeEmpty = 0, ///!< @brief Path is empty.
+			pathTypeAbsolute,  ///!< @brief Path is absolute with leading slash '/'.
+			pathTypeNoScheme,  ///!< @brief @brief Path begins with non-colon segment (not used).
+			pathTypeRootless   ///!< Relative path.
 		};
 
 		/** @brief Types of the IP addresses
 		 */
 		enum EnumIPAddrType {
-			ipAddrTypeEmpty = 0, ///!< no authority set
-			ipAddrTypeV4Address, ///!< IPv4 Address
-			ipAddrTypeV6Address, ///!< IPv6 Address
-			ipAddrTypeVFuture, ///!< Generic IP Address
-			ipRegName ///!< Registry based name or host
+			ipAddrTypeEmpty = 0, ///!< @brief No authority set.
+			ipAddrTypeV4Address, ///!< @brief IPv4 address.
+			ipAddrTypeV6Address, ///!< @brief IPv6 address.
+			ipAddrTypeVFuture,   ///!< @brief Generic IP address.
+			ipRegName            ///!< @brief Registry based name or host.
 		};
 
 	private:
-		/** @brief true, if a valid URI has been parsed.
+		/** @brief true, if a valid URI has been parsed correctly.
 		 */
 		bool m_valid;
-
 
 		/** @brief Type of the path component of the URI.
 		 */
 		EnumPathType m_pathType;
 
-		/** @brief Type of the path component of the URI.
+		/** @brief Type of the ip adress, registry based name of the authority of the URI.
 		 */
 		EnumIPAddrType m_ipAddrType;
 
 		/** @brief The path component.
 		 *
-		 * The absolute or relative path or the opaque part of the URI
+		 * The absolute or relative path or the opaque part of the URI.
 		 */
 		std::string m_path;
 
 		/** @brief Temporary string of an pct_encoded character.
 		 *
-		 * If an pct_encoded character (%nm) is parsed, it is stored temporarily
+		 * If an percent encoded character (%nm) is parsed, it is stored temporarily
 		 * in this member.
 		 */
 		std::string m_pct_encoded;
@@ -113,11 +114,11 @@ namespace RiCPP {
 		 */
 		std::string m_h16;
 
-		/** @brief Last significant bits of a IPv6 address
+		/** @brief Last significant bits of a IPv6 address.
 		 */
 		std::string m_ls32;
 
-		/** @brief 8Bit decimal encoded
+		/** @brief 8 bit decimal encoded number (octet).
 		 */
 		std::string m_dec_octet;
 
@@ -129,34 +130,31 @@ namespace RiCPP {
 
 		/** @brief The absolute URI.
 		 *
-		 * Contains the absolute URI, empty URI was relative.
+		 * Contains the absolute URI (without fragment), empty URI is relative.
 		 */
 		std::string m_absolute_uri;
 
 		/** @brief The relative URI.
 		 *
-		 * Contains the relative URI, empty URI was absolute.
+		 * Contains the relative URI (without fragment), empty URI is absolute.
 		 */
 		std::string m_relative_uri;
 
 		/** @brief true, if a scheme was found.
 		 *
-		 * If there is a scheme found, m_scheme will contain it and
-		 * will not be empty.
+		 * If there has been a scheme found (trailing  ':'), m_scheme will
+		 * contain it and will not be empty.
 		 */
 		bool m_hasScheme;
 
-		/** @brief The scheme of an absolute URI
+		/** @brief The scheme of an absolute URI.
 		 *
-		 * The scheme is stored without the trailing ':'
+		 * The scheme is stored without the trailing ':', is not empty if found.
 		 *
 		 */
 		std::string m_scheme;
 
-		/** @brief The hierarchical part of URI
-		 *
-		 * If a URI contains an hierarchical part, there is no
-		 * opaque path.
+		/** @brief The hierarchical part of URI.
 		 */
 		std::string m_hier_part;
 	
@@ -166,19 +164,19 @@ namespace RiCPP {
 
 		/** @brief URI contains a query component
 		 *
-		 * true, if an '?' has been found in an approriate place
+		 * True, if an '?' has been found introducing a query.
 		 */
 		bool m_hasQuery;
 
 		/** @brief The query.
 		 *
-		 * The query is stored without the leading '?' and can be an empty string.
+		 * The query has been stored without the leading '?' and can be an empty string.
 		 */
 		std::string m_query;
 
-		/** @brief URI contains a fragment component
+		/** @brief URI contains a fragment component.
 		 *
-		 * true, if an '#' has been found in an approriate place
+		 * true, if an '#' has been found introducing a fragment.
 		 */
 		bool m_hasFragment;
 
@@ -190,7 +188,7 @@ namespace RiCPP {
 
 		/** @brief The authority.
 		 *
-		 * The authority can be an empty string ( "file:///c/" contains an
+		 * The authority can be an empty string ( e.g. "file:///c:/" contains an
 		 * empty authority after the leading "//").
 		 */
 		bool m_hasAuthority;
@@ -201,27 +199,37 @@ namespace RiCPP {
 		 */
 		std::string m_authority;
 
-		/** @brief Authority contains a user info.
+		/** @brief Authority contains a user information.
+		 *
+		 * The at-sign '@' has been found trailing a user information component.
 		 */
 		bool m_hasUserinfo;
 
-		/** @brief The user info.
+		/** @brief The user information.
 		 *
-		 * The authority contains a user info, can be an empty string.
+		 * The authority contains a user information, can be an empty string.
 		 */
 		std::string m_userinfo;
 
 		/** @brief The registry based name of the URI.
 		 *
 		 * The authority contains a registry based name, can be an empty string.
+		 * Alternatively it can contain an IP literal or an IPv4 address.
 		 */
 		std::string m_reg_name;
 
-		/** @brief The host contains an IP literal (IPv6 or future address)
+		/** @brief The host contains an IP literal (IPv6 or future address).
+		*
+		 * Alternatively it can contain a registry based name or an
+		 * IPv4adress.
 		 */
 		std::string m_ip_literal;
 
 		/** @brief The host contains an IPv6 address.
+		 *
+		 * Alternatively it can contain a registry based name,
+		 * or an IPv4 address. An IPv6address can
+		 * also contain an IPv4 part stored in m_ipV4Address.
 		 */
 		std::string m_ipV6Address;
 
@@ -230,22 +238,35 @@ namespace RiCPP {
 		std::string m_ipVFuture;
 
 		/** @brief The host contains an IP4 address.
+		 *
+		 * Can also be a part of the IPv6adress.
+		 * Alternatively it can contain a registry based name,
+		 * an IP literal or (IPv6) address.
+		 *
 		 */
 		std::string m_ipV4Address;
 
-		/** @brief, true if there is a portaddress in the authority.
+		/** @brief, true if there is a port number in the authority.
+		 *
+		 * Found the ':' of a port number.
 		 */
 		bool m_hasPort;
 
 		/** @brief The port address without leading ':'.
+		 *
+		 * The port number can be an empty string.
+		 *
 		 */
 		std::string m_port;
 
-		/** @brief Tempoprary store for a path segment.
+		/** @brief Temporary storage for a path segment.
+		 *
+		 * The segments are stored in m_segments.
+		 *
 		 */
 		std::string m_segment;
 
-		/** @brief List of the segments of a path component, exculding the relative segment.
+		/** @brief List of the segments of a path component.
 		 */
 		std::list<std::string> m_segments;
 
@@ -257,37 +278,40 @@ namespace RiCPP {
 
 		/** @brief Advances the input pointer.
 		 *
-		 * Advances the input pointer \a *str and stores the characters in \a result.
+		 * Advances the input pointer \a *str \a n times and
+		 * stores the characters in \a result.
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @param steps Number of advances.
 		 */
 		inline void advance(const unsigned char **str,
 		                    std::string &result,
-							int steps=1)
+							int n=1)
 		{
-			while ( steps-- > 0 ) {
+			while ( n-- > 0 ) {
 				result += ((*str)++)[0];
 			}
 		}
 
 		/** @brief Matches a sequence, advances the input pointer.
 		 *
-		 * Matches the sequence \a matchStr and advances the pointer.
+		 * Matches the sequence \a matchStr and advances the input
+		 * pointer. If the whole string could not be matched,
+		 * the input pointer is restored.
 		 *
 		 * @param matchStr String to match
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, the \a matchStr matches.
-		 * @param steps Number of advances.
 		 */
 		inline bool match( const char *matchStr,
 						   const unsigned char **str,
 		                   std::string &result)
 		{
+			// An empty string matches
 			if ( !matchStr || !*matchStr )
 				return true;
 
@@ -308,29 +332,31 @@ namespace RiCPP {
 
 		/** @brief Matches one character of a string, advances the input pointer.
 		 *
-		 * Matches one character of \a matchStr and advances the pointer.
+		 * Matches one character of \a matchStr and advances the pointer if
+		 * one character matches. If matchStr is empty no
+		 * character matches,
 		 *
 		 * @param matchStr One character of the string to match.
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, one character matches
-		 * @param steps Number of advances.
+		 * @retval result String to store the characters matched.
+		 * @return true, one character that matches or 0, if no character matches.
 		 */
-		inline bool matchOneOf( const char *matchStr,
+		inline unsigned char matchOneOf( const char *matchStr,
 						        const unsigned char **str,
 		                        std::string &result)
 		{
 			if ( !matchStr || !*matchStr )
-				return true;
+				return 0;
+
 			const unsigned char *ptr = (const unsigned char *)matchStr;
 			for ( ; *ptr; ++ptr ) {
 				if ( *str[0] == *ptr ) {
 					result += ((*str)++)[0];
-					return true;
+					return *ptr;
 				}
 			}
-			return false;
+			return 0;
 		}
 
 		/** @brief Digit.
@@ -344,10 +370,10 @@ namespace RiCPP {
 		         "8" | "9"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0, no digit or digit, the digit found.
+		 * @retval result String to store the characters matched.
+		 * @return 0, no digit or digit that matches.
 		 */
 		inline unsigned char digit(const unsigned char **str,
 		                           std::string &result)
@@ -364,7 +390,7 @@ namespace RiCPP {
 		 *
 		 * Test if current input character is an uppercase letter.
 		 * If the current input character is an uppercase letter ('A'-'Z'),
-		 * it is stored in \a result and returned.
+		 * it is appended to \a result and is returned.
 		 *
 		 @verbatim
 		 upalpha = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
@@ -372,10 +398,10 @@ namespace RiCPP {
 		           "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0, no letter or letter, the letter found.
+		 * @retval result String to store the characters matched.
+		 * @return 0, no letter or letter that matches.
 		 */
 		inline unsigned char upalpha(const unsigned char **str,
 		                             std::string &result)
@@ -392,7 +418,7 @@ namespace RiCPP {
 		 *
 		 * Test if current input character is a lowercase letter.
 		 * If the current input character is an lowercase letter ('a'-'z'),
-		 * it is stored in \a result and returned.
+		 * it is appended to \a result and is returned.
 		 *
 		 @verbatim
 		 lowalpha = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" |
@@ -400,10 +426,10 @@ namespace RiCPP {
 		            "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0, no letter or letter, the letter found.
+		 * @retval result String to store the characters matched.
+		 * @return 0, no letter or letter that matches.
 		 */
 		inline unsigned char lowalpha(const unsigned char **str,
 		                              std::string &result)
@@ -416,20 +442,20 @@ namespace RiCPP {
 			return 0;
 		}
 
-		/** @brief Letter.
+		/** @brief Lowercase or uppercase letter.
 		 *
 		 * Test if current input character is a lowercase or uppercase letter.
 		 * If the current input character is a letter ('A'-'Z' or 'a'-'z'),
-		 * it is stored in \a result and returned.
+		 * it is appended to \a result and is returned.
 		 *
 		 @verbatim
 		 alpha = lowalpha | upalpha
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0, no letter or letter, the letter found.
+		 * @retval result String to store the characters matched.
+		 * @return 0, no letter or the letter that matches.
 		 * @see lowalpha() upalpha()
 		 */
 		inline unsigned char alpha(const unsigned char **str,
@@ -442,16 +468,17 @@ namespace RiCPP {
 		 *
 		 * Test if current input character is a letter or a digit.
 		 * If the current input character is alphanumeric ('A'-'Z' or 'a'-'z', '0'-'9'),
-		 * it is stored in \a result and returned.
+		 * it is appended to \a result and is returned.
 		 *
 		 @verbatim
 		 alphanum = alpha | digit
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0, no alphanumeric or alphanumeric, the alphanumeric found.
+		 * @retval result String to store the characters matched.
+		 * @return 0, if no alphanumeric has been found
+		 * or the alphanumeric that matches.
 		 * @see alpha() digit()
 		 */
 		inline unsigned char alphanum(const unsigned char **str,
@@ -463,18 +490,20 @@ namespace RiCPP {
 		/** @brief Hexadecimal digit.
 		 *
 		 * Test if current input character is hexadecimal digit.
-		 * If the current input character is a hexadecimal digit ('0'-'9', 'A'-'f' or 'a'-'f'),
-		 * it is stored in \a result and returned.
+		 * If the current input character is a hexadecimal digit
+		 * ('0'-'9', 'A'-'f' or 'a'-'f'),
+		 * it is appended to \a result and is returned.
 		 *
 		 @verbatim
-		 hex = digit | "A" | "B" | "C" | "D" | "E" | "F" |
-		               "a" | "b" | "c" | "d" | "e" | "f"
+		 hexdig = digit |
+		          "A" | "B" | "C" | "D" | "E" | "F" |
+		          "a" | "b" | "c" | "d" | "e" | "f"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0, no hexdigit or hexdigit, the hexdigit found.
+		 * @retval result String to store the characters matched.
+		 * @return 0, no hexdigit or the hexdigit that matches.
 		 * @see digit()
 		 */
 		inline unsigned char hexdig(const unsigned char **str,
@@ -493,7 +522,7 @@ namespace RiCPP {
 		/** @brief Unreserved characters.
 		 *
 		 * Characters that are allowed in a URI but have no special purpose.
-		 * If found, the character stored in \a result and is returned. Unreserved
+		 * If found, the character is appended to \a result and is returned. Unreserved
 		 * characters can be pct_encoded without changing the semantics of a URI,
 		 * but there is no need to do that in general.
 		 *
@@ -501,10 +530,10 @@ namespace RiCPP {
 		 unreserved = "alpha" | "digit" | "-" | "." | "_" | "~"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0 or the unreserved character found.
+		 * @retval result String to store the characters matched.
+		 * @return 0 or the character that matches.
 		 * @see alpha() digit()
 		 */
 		inline unsigned char unreserved(const unsigned char **str,
@@ -524,17 +553,16 @@ namespace RiCPP {
 			}
 		}
 
-
-		/** @brief Generic delimiters
+		/** @brief Generic delimiters.
 		 *
 		 @verbatim
 		 gen_delims = ":" | "/" | "?" | "#" | "[" | "]" | "@"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0 or the reserved character found.
+		 * @retval result String to store the characters matched.
+		 * @return 0 or the character that matches.
 		 */
 		inline unsigned char gen_delims(const unsigned char **str,
 		                              std::string &result)
@@ -555,17 +583,17 @@ namespace RiCPP {
 			}
 		}
 
-		/** @brief Subcomponents delimiters
+		/** @brief Subcomponents delimiters.
 		 *
 		 @verbatim
 		 sub_delims = "!" | "$" | "&" | "'" | "(" | ")" |
 		              "*" | "+" | "," | ";" | "="
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return 0 or the reserved character found.
+		 * @retval result String to store the characters matched.
+		 * @return 0 or the reserved character that matches.
 		 */
 		inline unsigned char sub_delims(const unsigned char **str,
 		                              std::string &result)
@@ -593,17 +621,18 @@ namespace RiCPP {
 		/** @brief Reserved characters.
 		 *
 		 * Characters that are allowed in a URI and have the special purpose of
-		 * delimeters. If found, the character stored in \a result and is returned.
-		 * Reserved characters have to be pct_encoded, if they occur in the data part (have
-		 * no delimiting purpose)
+		 * delimeters. If found, the character is appended to \a result and
+		 * is returned.
+		 * Reserved characters have to be pct_encoded, if they occur in the data part
+		 * (than no delimiting purposes any more).
 		 *
 		 @verbatim
 		 reserved = gen_delims | sub_delims
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return 0 or the reserved character found.
 		 */
 		inline unsigned char reserved(const unsigned char **str,
@@ -615,16 +644,16 @@ namespace RiCPP {
 		/** @brief Escape sequence.
 		 *
 		 * Test if current input is an escape character (e.g. "%20" for blank)
-		 * If found, the current escape sequence it is stored in \a result and
+		 * If found, the current escape sequence it is appended to \a result and stored in
 		 * m_pct_encoded and true is returned.
 		 *
 		 @verbatim
 		 pct_encoded = "%" hex hex
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, escape sequence found.
 		 * @see m_pct_encoded hexdig()
 		 */
@@ -653,17 +682,17 @@ namespace RiCPP {
 
 		/** @brief 16bit hexadecimal sequence (4 hexdigits).
 		 *
-		 * If found, the current h16 it is stored in \a result and
+		 * If found, the current h16 it is appended to \a result and stored in
 		 * m_h16 and true is returned.
 		 *
 		 @verbatim
 		 h16 = 1*4hexdig
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, h16 found.
+		 * @retval result String to store the characters matched.
+		 * @return true, a h16 matches.
 		 * @see m_h16 hexdig()
 		 */
 		inline bool h16(const unsigned char **str,
@@ -686,7 +715,7 @@ namespace RiCPP {
 
 		/** @brief 8 Bit decimal 0-255.
 		 *
-		 * If found, the current octet it is stored in \a result and
+		 * If found, the current octet it is appended to \a result and stored in
 		 * m_dec_octet and true is returned.
 		 *
 		 @verbatim
@@ -697,10 +726,10 @@ namespace RiCPP {
 					 "25" %x30-35
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, octet found.
+		 * @retval result String to store the characters matched.
+		 * @return true, an octet matches.
 		 * @see m_dec_octet digit()
 		 */
 		bool dec_octet(const unsigned char **str,
@@ -708,19 +737,18 @@ namespace RiCPP {
 
 		/** @brief Character of a path component.
 		 *
-		 * Character that is part of a path conmponent.
-		 * If found, the character (or pct_encoded character) is stored in \a result and
-		 * true is returned.
+		 * Character that is part of a path component.
+		 * If found, the character (or percent encoded character sequence)
+		 * is appended to \a result and true is returned.
 		 *
 		 @verbatim
 		 pchar = unreserved | pct_encoded | sub_delims |
 		         ":" | "@"
-		            
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, path character was found.
 		 * @see unreserved() pct_encoded()
 		 */
@@ -740,16 +768,17 @@ namespace RiCPP {
 		 * However, handled with the URI because it is directly written after the
 		 * regular URI, separated by a crosshatch '#'. It is interpreted by the
 		 * user agent to identify a part of the retrieved ressource. The fragment
-		 * is copied to \a result and m_fragment. The fragment can be an empty string.
-		 * m_hasFragment is set true if '#' was found.
+		 * is appanded on \a result and stored in m_fragment.
+		 * The fragment can be an empty string.
+		 * m_hasFragment is set, if '#' was found.
 		 *
 		 @verbatim
 		 fragment = *( pchar | "/" | "?" )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @see m_fragment m_hasFragment uric()
 		 */
 		void fragment(const unsigned char **str,
@@ -759,22 +788,17 @@ namespace RiCPP {
 		 *
 		 * The query component, interpreted by the ressource,
 		 * separated by a question mark '?'. The query component
-		 * is copied to \a result and m_query. The query can be an empty string.
-		 * m_hasQuery is set true if '#' was found.
+		 * is appanded on \a result and stored in m_query.
+		 * The query can be an empty string.
+		 * m_hasQuery is set, if '#' was found.
 		 *
 		 @verbatim
 		 query =  *( pchar | "/" | "?" )
 		 @endverbatim
 		 *
-		 * Within query component, the characters:
-		 @verbatim
-		 ";", "/", "?", ":", "@", "&", "=", "+", ",", "$"
-		 @endverbatim
-		 * are reserved (delimiters).
-		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @see m_query m_hasQuery uric()
 		 */
 		void query(const unsigned char **str,
@@ -782,16 +806,16 @@ namespace RiCPP {
 
 		/** @brief Single path segment.
 		 *
-		 * The segment is copied to \a result and m_segment.
-		 * The segment can be an empty string.
+		 * The segment is appanded on \a result and stored
+		 * temporarily in m_segment. The segment can be an empty string.
 		 *
 		 @verbatim
 		 segment = *pchar
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @see m_segment pchar()
 		 */
 		void segment(const unsigned char **str,
@@ -799,16 +823,16 @@ namespace RiCPP {
 
 		/** @brief Single path segment not empty.
 		 *
-		 * The segment is copied to \a result and m_segment.
-		 * 
+		 * The segment is appanded on \a result and stored
+		 * temporarily in m_segment. The segment can be an empty string.
 		 *
 		 @verbatim
-		 segment = 1*pchar
+		 segment_nz = 1*pchar
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, if a segment has been found.
 		 * @see m_segment pchar()
 		 */
@@ -817,23 +841,23 @@ namespace RiCPP {
 
 		/** @brief Single path segment not empty, without any colon ':'.
 		 *
-		 * The segment is copied to \a result and m_segment.
+		 * The segment is appanded on \a result and stored
+		 * temporarily in m_segment. The segment can be an empty string.
 		 *
 		 @verbatim
-		 segment = 1*( unreserved | pct_encoded | sub_delims | "@" )
+		 segment_nz_nc = 1*( unreserved | pct_encoded | sub_delims | "@" )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, if a segment has been found.
 		 * @see m_segment pchar()
 		 */
 		bool segment_nz_nc(const unsigned char **str,
 		                   std::string &result);
 
-
-		/** @brief Path component (not used)
+		/* @brief Path component (not used)
 		 *
 		 * If a path has been found, it is stored in m_path, the type of the
 		 * path is stored in m_pathType, true is returned.
@@ -846,30 +870,30 @@ namespace RiCPP {
 				path_empty
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, path has been found
 		 * @see m_path m_pathType path_abempty() path_absolute() path_noscheme() path_rootless path_empty()
 		 */
-		bool path(const unsigned char **str,
-		          std::string &result);
+		// bool path(const unsigned char **str,
+		//           std::string &result);
 
 		/** @brief Absolute path or empty.
 		 *
 		 * The absolute path begins with a '/'.
-		 * If a path has been found, it is stored in m_path, the type of the
-		 * path pathtypeEmpty or pathTypeAbsolute is stored in m_pathType,
+		 * If a path has been found, it is appended to \a result and is stored in m_path,
+		 * the type of the path pathtypeEmpty or pathTypeAbsolute is stored in m_pathType,
 		 * true is returned.
 		 *
 		 @verbatim
 		 path_abempty = *( "/" segment )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, absolute path has been found
+		 * @retval result String to store the characters matched.
+		 * @return true, absolute or empty path has been found.
 		 * @see m_path m_pathType path_absolute() path_empty()
 		 */
 		bool CUri::path_abempty(const unsigned char **str,
@@ -878,17 +902,17 @@ namespace RiCPP {
 		/** @brief Absolute path.
 		 *
 		 * The absolute path begins with a '/'.
-		 * If a path has been found, it is stored in m_path, the type of the
-		 * path pathTypeAbsolute is stored in m_pathType, true is returned.
+		 * If a path has been found, it is appended to \a result and is stored in m_path,
+		 * the type of the path pathTypeAbsolute is stored in m_pathType, true is returned.
 		 *
 		 @verbatim
 		 path_absolute = "/" [ segment_nz *( "/" segment ) ]
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, absolute path has been found
+		 * @retval result String to store the characters matched.
+		 * @return true, absolute path has been found.
 		 * @see m_path m_pathType
 		 */
 		bool CUri::path_absolute(const unsigned char **str,
@@ -896,17 +920,17 @@ namespace RiCPP {
 
 		/** @brief Path begins with non-colon ':' segment.
 		 *
-		 * If a path has been found, it is stored in m_path, the type of the
-		 * path pathTypeNoScheme is stored in m_pathType, true is returned.
+		 * If a path has been found, it is appended to \a result and is stored in m_path,
+		 * the type of the path pathTypeNoScheme is stored in m_pathType, true is returned.
 		 *
 		 @verbatim
 		 path_noscheme = segment_nz_nc *( "/" segment )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, absolute path has been found
+		 * @retval result String to store the characters matched.
+		 * @return true, absolute path has been found.
 		 * @see m_path m_pathType
 		 */
 		bool CUri::path_noscheme(const unsigned char **str,
@@ -914,16 +938,16 @@ namespace RiCPP {
 
 		/** @brief Relative path.
 		 *
-		 * If a path has been found, it is stored in m_path, the type of the
-		 * path pathTypeRootless is stored in m_pathType, true is returned.
+		 * If a path has been found, it is appended to \a result and is stored in m_path,
+		 * the type of the path pathTypeRootless is stored in m_pathType, true is returned.
 		 *
 		 @verbatim
 		 path_rootless = segment_nz *( "/" segment )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, absolute path has been found
 		 * @see m_path m_pathType
 		 */
@@ -939,9 +963,9 @@ namespace RiCPP {
 		 path_empty = 0\<pchar\>
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, absolute path has been found
 		 * @see m_path m_pathType
 		 */
@@ -950,17 +974,17 @@ namespace RiCPP {
 
 		/** @brief Port number.
 		 *
-		 * The port network number for the server. Is separated by a colon ':'
+		 * The port number for the server. Is separated by a colon ':'
 		 * from the host. The port number can be omitted (default port assumed).
-		 * If found, the number is stored in m_port.
+		 * If found, the number is appended to \a result stored in m_port.
 		 *
 		 @verbatim
 		 port = *digit
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @see m_port digit()
 		 */
 		void port(const unsigned char **str,
@@ -968,16 +992,17 @@ namespace RiCPP {
 
 		/** @brief Generic IP address.
 		 *
-		 * If a generic IP address has been found, it is stored in m_ipVFuture,
-		 * true is returned. Sets m_ipAddrType as ipAddrTypeVFuture.
+		 * If a generic IP address has been found, it is appended to \a result
+		 * and stored in m_ipVFuture, true is returned. Sets m_ipAddrType
+		 * to ipAddrTypeVFuture.
 		 *
 		 @verbatim
 		 IPvFuture = "v" 1*hexdig "." 1*( unreserved | sub_delims | ":" )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, generic IP address has been found
 		 * @see m_ipVFuture hexdig() unreserved() sub_delims()
 		 */
@@ -986,16 +1011,17 @@ namespace RiCPP {
 
 		/** @brief IPv6 address.
 		 *
-		 * If an IPv6 address has been found, it is stored in m_ipV6Address,
-		 * true is returned. Sets m_ipAddrType as ipAddrTypeV6Address.
+		 * If an IPv6 address has been found, it is appended to \a result
+		 * and stored in m_ipV6Address, true is returned. Sets m_ipAddrType
+		 * to ipAddrTypeV6Address.
 		 *
 		 @verbatim
 		 IPv6address = "[" ( IPv6address | IPvFuture ) "]"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, IPv6 address has been found
 		 * @see m_ipV6Address ls32()
 		 */
@@ -1004,18 +1030,18 @@ namespace RiCPP {
 
 		/** @brief IP literal.
 		 *
-		 * The IP literal is a IPv6or a generic IP address.
-		 * If an IP literal has been found, it is stored in m_ip_literal,
-		 * true is returned.
+		 * The IP literal is a IPv6 or a generic IP address.
+		 * If an IP literal has been found, it is appended to \a result
+		 * and stored in m_ip_literal, true is returned.
 		 *
 		 @verbatim
 		 IP_literal = "[" ( IPv6address | IPvFuture ) "]"
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, IPv4 address has been found
+		 * @retval result String to store the characters matched.
+		 * @return true, IP literal has been found.
 		 * @see m_ip_literal ipV6Address() ipVFuture()
 		 */
 		bool ip_literal(const unsigned char **str,
@@ -1024,35 +1050,36 @@ namespace RiCPP {
 		/** @brief IPv4 address.
 		 *
 		 * The IPv4 address are for numbers separated by a dot each.
-		 * If an IPv4 address has been found, it is stored in m_ipV4Address,
-		 * true is returned. Sets m_ipAddrType as ipAddrTypeV4Address.
+		 * If an IPv4 address has been found, it is appended to \a result
+		 * and stored in m_ipV4Address, true is returned. Sets m_ipAddrType
+		 * to ipAddrTypeV4Address.
 		 *
 		 @verbatim
 		 ipV4address = 1*digit "." 1*digit "." 1*digit "." 1*digit
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, IPv4 address has been found
 		 * @see m_ipV4Address digit()
 		 */
 		bool ipV4address(const unsigned char **str,
 		                 std::string &result);
 
-		/** @brief Least significant 32 bits (or IP 4 address).
+		/** @brief Least significant 32 bits (or IP 4 address) of an IPv6 address.
 		 *
-		 * If found, it is stored in m_ls32,
-		 * true is returned.
+		 * If found, it it is appended to \a result
+		 * and stored in m_ls32, true is returned.
 		 *
 		 @verbatim
 		 ls32 = ( h16 ":" h16 ) | IPv4address
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, IPv4 address has been found
+		 * @retval result String to store the characters matched.
+		 * @return true, least significant part of a IPv6 address has been found.
 		 * @see m_ls32 h16() ipV4Address()
 		 */
 		bool ls32(const unsigned char **str,
@@ -1060,17 +1087,18 @@ namespace RiCPP {
 
 		/** @brief Host.
 		 *
-		 * A host is represented by a hostname or an IPv4 address.
-		 * If a host has been found, it is stored in m_host and true is returned.
+		 * A host is represented by a hostname or an IP address.
+		 * If a host has been found, it is appended to \a result and stored
+		 * in m_host, true is returned.
 		 *
 		 @verbatim
 		 host = IP_literal | IPv4address |  reg_name
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
-		 * @return true, host has been found
+		 * @retval result String to store the characters matched.
+		 * @return true, host has been found.
 		 * @see m_host hostname() ipV4Address()
 		 */
 		void host(const unsigned char **str,
@@ -1079,16 +1107,16 @@ namespace RiCPP {
 		/** @brief Userinfo for an authority.
 		 *
 		 * The userinfo is followed by an at-sign "@".
-		 * If found, it is stored in m_userinfo.
+		 * If found, it is appended to \a result and stored in m_userinfo.
 		 * The at-sign is not stored in m_userinfo. The string can be empty.
 		 *
 		 @verbatim
 		 userinfo = *( unreserved | pct_encoded | sub_delims | ":" )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @see m_userinfo unreserved() pct_encoded()
 		 */
 		void userinfo(const unsigned char **str,
@@ -1097,15 +1125,15 @@ namespace RiCPP {
 		/** @brief Registry-based naming authority.
 		 *
 		 * The structure is specific to the URI scheme, e.g. mailto.
-		 * It is stored in m_reg_name.
+		 * It is appended to \a result and stored in m_reg_name.
 		 *
 		 @verbatim
 		 reg_name = *( unreserved | pct_encoded | sub_delims )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true, reg_name has been found
 		 * @see m_reg_name unreserved() pct_encoded()
 		 */
@@ -1115,17 +1143,18 @@ namespace RiCPP {
 		/** @brief Authority component.
 		 *
 		 * Top hierarchical element for naming authority. 
-		 * If found, it is stored in m_authority. The string
-		 * can be empty (because host can be empty). m_hasUserinfo
-		 * is set if a m_hasUserinfo (maybe empty) found.
+		 * If found, it is appended to \a result and stored in m_authority.
+		 * The string can be empty (because host can be empty). m_hasUserinfo
+		 * is set if a m_hasUserinfo (maybe empty) has been found. Also
+		 * m_hasPort is set if a port has been found (port is not empty then).
 		 *
 		 @verbatim
 		 authority = [ userinfo "@" ] host [ ':' port ]
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @see m_authority m_hasServer server() reg_name()
 		 */
 		void authority(const unsigned char **str,
@@ -1134,15 +1163,16 @@ namespace RiCPP {
 		/** @brief Scheme component.
 		 *
 		 * Scheme to identify ressources, part of an absolute URI. 
-		 * If found, it is stored in m_scheme and true is returned.
+		 * If found, it is appended to \a result and stored in m_scheme,
+		 * true is returned.
 		 *
 		 @verbatim
 		 scheme = alpha *( alpha | digit | "+" | "-" | "." )
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true if a scheme has been found
 		 * @see m_scheme alpha() digit()
 		 */
@@ -1151,8 +1181,8 @@ namespace RiCPP {
 
 		/** @brief Hierarchical part.
 		 *
-		 * If found, it is stored in m_hier_part
-		 * and true is returned. m_hasQuery is set
+		 * If found, it is appended to \a result, stored in 
+		 * m_hier_part and true is returned. m_hasQuery is set
 		 * if an query component has been found.
 		 *
 		 @verbatim
@@ -1162,9 +1192,9 @@ namespace RiCPP {
 					 path_empty
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true if a hier_part has been found
 		 * @see m_hier_part m_hasQuery net_path() abs_path() query()
 		 */
@@ -1175,17 +1205,17 @@ namespace RiCPP {
 		 *
 		 * A URI reference relative to an absolute base URI.
 		 *
-		 * If found, it is stored in m_relative_uri
-		 * and true is returned. m_hasQuery is set
+		 * If found, it is appended to \a result, stored in
+		 * m_relative_uri and true is returned. m_hasQuery is set
 		 * if an query component has been found.
 		 *
 		 @verbatim
 		 relative_uri = hier_part [ "?" query ] 
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true if a relative_uri has been found
 		 * @see m_relative_uri m_hasQuery net_path() abs_path() rel_path() query()
 		 */
@@ -1196,16 +1226,16 @@ namespace RiCPP {
 		 *
 		 * An absoulte URI with a scheme.
 		 *
-		 * If found, it is stored in m_absolute_uri and m_hasScheme is set,
-		 * true is returned.
+		 * If found, it is appended to \a result, stored in m_absolute_uri.
+		 * m_hasScheme is set and true is returned.
 		 *
 		 @verbatim
 		 absolute_uri = scheme ":" hier_part [ "?" query ]
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
-		 * @retval result String to store the characters read.
+		 * @retval result String to store the characters matched.
 		 * @return true if an absolute_uri has been found
 		 * @see m_absolute_uri m_hasScheme scheme() hier_part() opaque_part()
 		 */
@@ -1216,7 +1246,7 @@ namespace RiCPP {
 		 *
 		 * Tests and parses the generic syntax of a URI reference.
 		 *
-		 * If found, it is stored in m_uri_reference.
+		 * If found, it is appended to \a result and stored in m_uri_reference.
 		 * If a (possibly empty) fragment has been fount, it
 		 * is stored in m_fragment and m_hasFrament is set. An empty URI reference
 		 * (absolute or relative URI) references the "current document".
@@ -1226,7 +1256,7 @@ namespace RiCPP {
 		 URI-reference = [ absolute_uri | relative_uri ] ["#" fragment]
 		 @endverbatim
 		 *
-		 * @param str Address of a string pointer to the
+		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
 		 * @return true if there are no more trailing characters after parsing .
 		 * @see m_uri_reference m_fragment m_hasfragment absolute_uri() relative_uri() fragment()
@@ -1235,7 +1265,7 @@ namespace RiCPP {
 
 		/** @brief Adds path segment to the segment list.
 		 *
-		 * Adds a pathsegment to the segment list handles the special meaning
+		 * Adds a pathsegment to the segment list, handles the special meaning
 		 * of "." (same hierarchy level) and ".." (hierarchy level above) segments.
 		 *
 		 * @param seg Segment to add
@@ -1279,7 +1309,7 @@ namespace RiCPP {
 
 		/** @brief Copy constructor.
 		 *
-		 * @param uri Another URI
+		 * @param uri URI to assign to this instance.
 		 * @see CUri::operator=()
 		 */
 		inline CUri(const CUri &uri)
@@ -1362,19 +1392,6 @@ namespace RiCPP {
 
 		/** @brief Resolving relative references to absolute form.
 		 *
-		 * Resolving a relative URI reference (this) to the absolute
-		 * form using the absolute base URI \a baseURI.
-		 *
-		 * @param baseUri CUri instance containig the absolute base URI
-		 * @retval resultUriStr The absolute form is returned as string representation in this variable
-		 * @return true, absolute form could be resolved.
-		 * @see parse() isValid()
-		 */
-		bool makeAbsolute(const CUri &baseUri,
-		                  std::string &resultUriStr) const;
-
-		/** @brief Resolving relative references to absolute form.
-		 *
 		 * Converting a relative URI to the absolute
 		 * form using the absolute base URI \a baseURI.
 		 *
@@ -1398,11 +1415,25 @@ namespace RiCPP {
 		 * form using the absolute base URI \a baseURI.
 		 *
 		 * @param baseUri CUri instance containig the absolute base URI
+		 * @retval resultUriStr The absolute form is returned as string representation in this variable
+		 * @return true, absolute form could be resolved.
+		 * @see parse() isValid()
+		 */
+		bool makeAbsolute(const CUri &baseUri,
+		                  std::string &resultUriStr) const;
+
+		/** @brief Resolving relative references to absolute form.
+		 *
+		 * Resolving a relative URI reference (this) to the absolute
+		 * form using the absolute base URI \a baseURI.
+		 *
+		 * @param baseUri CUri instance containig the absolute base URI
 		 * @retval resultUri The absolute form is returned in this variable
 		 * @return true, absolute form could be resolved.
 		 * @see parse() isValid()
 		 */
-		inline bool makeAbsolute(const CUri &baseUri, CUri &resultUri)
+		inline bool makeAbsolute(const CUri &baseUri,
+		                         CUri &resultUri)
 		{
 			if ( &resultUri == this )
 				return makeAbsolute(baseUri);
@@ -1439,7 +1470,7 @@ namespace RiCPP {
 		/** @brief Tests if URI reference is absolute.
 		 * @return true, URI is absolute
 		 */
-		inline bool isAbsolute() const
+		inline bool isAbsoluteUri() const
 		{
 			return !m_absolute_uri.empty();
 		}
@@ -1447,7 +1478,7 @@ namespace RiCPP {
 		/** @brief Gets the absolute URI.
 		 * @return Absolute URI.
 		 */
-		inline const std::string &getabsolute_uri() const
+		inline const std::string &getAbsoluteUri() const
 		{
 			return m_absolute_uri;
 		}
@@ -1455,7 +1486,7 @@ namespace RiCPP {
 		/** @brief Tests if URI reference is relative.
 		 * @return true, URI is relative.
 		 */
-		inline bool isRelative() const
+		inline bool isRelativeUri() const
 		{
 			return !m_relative_uri.empty();
 		}
@@ -1463,7 +1494,7 @@ namespace RiCPP {
 		/** @brief Gets the relative URI.
 		 * @return Relative URI.
 		 */
-		inline const std::string &getrelative_uri() const
+		inline const std::string &getRelativeUri() const
 		{
 			return m_relative_uri;
 		}
@@ -1476,9 +1507,7 @@ namespace RiCPP {
 		 */
 		inline bool isCurrentDocument() const
 		{
-			return
-				m_absolute_uri.empty() &&
-				m_relative_uri.empty();
+			return m_path.empty() && !m_hasScheme && !m_hasAuthority;
 		}
 
 		/** @brief Tests, if URI has defined a scheme component (is an absolute URI).
@@ -1581,14 +1610,6 @@ namespace RiCPP {
 			return m_userinfo;
 		}
 
-		/** @brief Tests, if the naming authority is registry based.
-		 * @return true, if the server part of a network path is defined.
-		 */
-		inline bool hasRegName() const
-		{
-			return !m_reg_name.empty();
-		}
-
 		/** @brief Gets the registry based naming authority.
 		 * @return Registry based naming authority.
 		 */
@@ -1600,15 +1621,23 @@ namespace RiCPP {
 		/** @brief Gets the IPv4 address if present.
 		 * @return IPv4 address.
 		 */
-		inline const std::string &getIPv4address() const
+		inline const std::string &getIPv4Address() const
 		{
 			return m_ipV4Address;
+		}
+
+		/** @brief Gets the IP literal if present.
+		 * @return IP literal (IPv6 or IPvFuture).
+		 */
+		inline const std::string &getIPLiteral() const
+		{
+			return m_ip_literal;
 		}
 
 		/** @brief Gets the IPv6 address if present.
 		 * @return IPv6 address.
 		 */
-		inline const std::string &getIPv6address() const
+		inline const std::string &getIPv6Address() const
 		{
 			return m_ipV6Address;
 		}

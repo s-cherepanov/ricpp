@@ -34,24 +34,26 @@ using namespace RiCPP;
 void CUri::clearAll()
 {
 	m_valid = true;
+	m_pathType = pathTypeEmpty;
+	m_ipAddrType = ipAddrTypeEmpty;
 
 	m_path.clear();
-	m_escaped.clear();
+	m_ls32.clear();
+	m_h16.clear();
+	m_dec_octet.clear();
+	m_pct_encoded.clear();
 
 	m_uri_reference.clear();
 
-	m_absoluteURI.clear();
-	m_relativeURI.clear();
+	m_absolute_uri.clear();
+	m_relative_uri.clear();
 
 	m_hasScheme = false;
 	m_scheme.clear();
 
-	m_opaque_part.clear();
-	m_hier_part.clear();
+	m_host.clear();
 
-	m_net_path.clear();
-	m_abs_path.clear();
-	m_rel_path.clear();
+	m_hier_part.clear();
 
 	m_hasQuery = false;
 	m_query.clear();
@@ -65,38 +67,58 @@ void CUri::clearAll()
 	m_hasUserinfo = false;
 	m_userinfo.clear();
 
-	m_hasServer = false;
-	m_server.clear();
 	m_reg_name.clear();
 
-	m_host.clear();
-	m_hostport.clear();
-	m_ipV4address.clear();
-
-	m_hasTrailingDot = false;
-	m_hostname.clear();
+	m_ip_literal.clear();
+	m_ipV6Address.clear();
+	m_ipVFuture.clear();
+	m_ipV4Address.clear();
 
 	m_hasPort = false;
 	m_port.clear();
 
-	m_domainlabels.clear();
-	m_domainlabel.clear();
-	m_toplabel.clear();
-	
-	m_rel_segment.clear();
-	m_path_segments.clear();
 	m_segment.clear();
-	m_param.clear();
-
-	m_segmentContainer.clear();
 	m_segments.clear();
+}
+
+bool CUri::dec_octet(const unsigned char **str,
+               std::string &result)
+{
+	const unsigned char *sav = *str;
+	m_dec_octet = "";
+	unsigned char c1 = digit(str, m_dec_octet);
+
+	if ( !c1 ) {
+		return false;
+	}
+
+	if ( c1 != '0' ) {
+		unsigned char c2 = digit(str, m_dec_octet);
+		if ( c1 == '1' && c2  ) {
+			digit(str, m_dec_octet);
+		} else if ( c1 == '2' && c2 && c2 < '5' ) {
+			digit(str, m_dec_octet);
+		} else if ( c1 == '2' && c2 == '5' ) {
+			unsigned char c3 = digit(str, m_dec_octet);
+			if ( c3 > '5' ) {
+				*str = sav;
+				m_dec_octet = "";
+				return false;
+			}
+		}
+	}
+	result += m_dec_octet;
+	return true;
 }
 
 void CUri::fragment(const unsigned char **str,
                     std::string &result)
 {
 	m_fragment = "";
-	while ( uric(str, m_fragment) );
+	while ( pchar(str, m_fragment) ||
+		    matchOneOf("/?", str, m_fragment) )
+	{
+	}
 	result += m_fragment;
 }
 
@@ -104,54 +126,151 @@ void CUri::query(const unsigned char **str,
                  std::string &result)
 {
 	m_query = "";
-	while ( uric(str, m_query) );
+	while ( pchar(str, m_query) ||
+		    matchOneOf("/?", str, m_query) )
+	{
+	}
 	result += m_query;
 }
 
-void CUri::param(const unsigned char **str,
-                 std::string &result)
+bool CUri::path_abempty(const unsigned char **str,
+                        std::string &result)
 {
-	m_param = "";
-	while ( pchar(str, m_param) );
-	result += m_param;
+	m_path = "";
+	if ( (*str)[0] == '/' )
+		return path_absolute(str, result);
+	return true;
+}
+
+bool CUri::path_absolute(const unsigned char **str,
+                        std::string &result)
+{
+	m_path = "";
+	m_segments.clear();
+
+	if ( !match("/", str, m_path) ) {
+		return false;
+	}
+
+	if ( segment_nz(str, m_path) ) {
+		m_segments.push_back(m_segment);
+		while ( match("/", str, m_path) ) {
+			segment(str, m_path);
+			m_segments.push_back(m_segment);
+		}
+	}
+
+	result += m_path;
+	m_pathType = pathTypeAbsolute;
+	return true;
+}
+
+bool CUri::path_noscheme(const unsigned char **str,
+                        std::string &result)
+{
+	m_path = "";
+	m_segments.clear();
+
+	if ( !segment_nz_nc(str, m_path) ) {
+		return false;
+	}
+	m_segments.push_back(m_segment);
+
+	while ( match("/", str, m_path) ) {
+		segment(str, m_path);
+		m_segments.push_back(m_segment);
+	}
+
+	result += m_path;
+	m_pathType = pathTypeNoScheme;
+	return true;
+}
+
+bool CUri::path_rootless(const unsigned char **str,
+                        std::string &result)
+{
+	m_path = "";
+	m_segments.clear();
+
+	if ( !segment_nz(str, m_path) ) {
+		return false;
+	}
+	m_segments.push_back(m_segment);
+
+	while ( match("/", str, m_path) ) {
+		segment(str, m_path);
+		m_segments.push_back(m_segment);
+	}
+
+	result += m_path;
+	m_pathType = pathTypeRootless;
+	return true;
+}
+
+bool CUri::path_empty(const unsigned char **str,
+                        std::string &result)
+{
+	const unsigned char *sav = *str;
+	m_path = "";
+	m_segments.clear();
+
+	if ( pchar(str, m_path) ) {
+		m_path = "";
+		*str = sav;
+		return false;
+	}
+
+	m_pathType = pathTypeEmpty;
+	return true;
 }
 
 void CUri::segment(const unsigned char **str,
                    std::string &result)
 {
-	m_segmentContainer.clear();
 	m_segment = "";
 
 	while ( pchar(str, m_segment) );
 
-	m_segmentContainer.m_name = m_segment;
-
-	while ( *str[0] == ';' ) {
-		advance(str, m_segment);
-		param(str, m_segment);
-		// m_param can be empty
-		m_segmentContainer.m_parameters.push_back(m_param);
-	}
 	result += m_segment;
 }
 
-void CUri::path_segments(const unsigned char **str,
+bool CUri::segment_nz(const unsigned char **str,
+                      std::string &result)
+{
+	m_segment = "";
+
+	if ( !pchar(str, m_segment) ) {
+		return false;
+	}
+
+	while ( pchar(str, m_segment) );
+
+	result += m_segment;
+	return true;
+}
+
+bool CUri::segment_nz_nc(const unsigned char **str,
                          std::string &result)
 {
-	m_path_segments = "";
-	m_segments.clear();
+	m_segment = "";
 
-	segment(str, m_path_segments);
-	// m_segmentContainer can be empty
-	m_segments.push_back(m_segmentContainer);
-
-	while ( *str[0] == '/' ) {
-		advance(str, m_path_segments);
-		segment(str, m_path_segments);
-		// m_segmentContainer can be empty
-		m_segments.push_back(m_segmentContainer);
+	if ( !(unreserved(str, m_segment) ||
+		   pct_encoded(str, m_segment) ||
+		   sub_delims(str, m_segment) ||
+		   match("@", str, m_segment)) )
+	{
+		return false;
 	}
-	result += m_path_segments;
+
+	while ( unreserved(str, m_segment) ||
+		    pct_encoded(str, m_segment) ||
+		    sub_delims(str, m_segment) ||
+		    match("@", str, m_segment) )
+	{
+	}
+
+	result += m_segment;
+	return true;
 }
 
 void CUri::port(const unsigned char **str,
@@ -162,332 +281,281 @@ void CUri::port(const unsigned char **str,
 	result += m_port;
 }
 
-bool CUri::abs_path(const unsigned char **str,
-                    std::string &result)
+bool CUri::path(const unsigned char **str,
+                std::string &result)
 {
-	m_abs_path = "";
-	m_path = "";
-	
-	if ( (*str)[0] != '/' )
-		return false;
+	return path_abempty(str, result)  ||
+		   path_absolute(str, result) ||
+		   path_noscheme(str, result) ||
+		   path_rootless(str, result) ||
+		   path_empty(str, result);
+}
 
-	advance(str, m_abs_path);
-	path_segments(str, m_abs_path);
-	// m_abs_path can be "/"
-	m_path = m_abs_path;
-	result += m_abs_path;
+bool CUri::ipVFuture(const unsigned char **str,
+                     std::string &result)
+{
+	const unsigned char *sav = *str;
+	m_ipVFuture = "";
+	m_ipAddrType = ipAddrTypeEmpty;
+
+	if ( *str[0] != 'v' ) {
+		return false;
+	}
+	advance(str, m_ipVFuture);
+
+	if ( !hexdig(str, m_ipVFuture) ) {
+		*str = sav;
+		m_ipVFuture = "";
+		return false;
+	}
+	while ( hexdig(str, m_ipVFuture) );
+
+	if ( *str[0] != '.' ) {
+		*str = sav;
+		m_ipVFuture = "";
+		return false;
+	}
+	advance(str, m_ipVFuture);
+
+	bool has_char = false;
+	for ( ; ; has_char = true ) {
+		if ( *str[0] == ':' ) {
+			advance(str, m_ipVFuture);
+		} else if ( !(unreserved(str, m_ipVFuture) ||
+		              sub_delims(str, m_ipVFuture)) )
+		{
+			break;
+		}
+	}
+
+	if ( !has_char ) {
+		*str = sav;
+		m_ipVFuture = "";
+		return false;
+	}
+
+	result += m_ipVFuture;
+	m_ipAddrType = ipAddrTypeVFuture;
 	return true;
 }
 
-bool CUri::opaque_part(const unsigned char **str,
+bool CUri::ipV6address(const unsigned char **str,
                        std::string &result)
 {
-	m_opaque_part = "";
-	m_path = "";
-	if ( uric_no_slash(str, m_opaque_part) ) {
-		while ( uric(str, m_opaque_part) );
-		m_path = m_opaque_part;
-		result += m_opaque_part;
+	const unsigned char *sav = *str;
+
+	m_ipV6Address = "";
+	m_ipAddrType = ipAddrTypeEmpty;
+
+	bool elisionFound = false;
+	int count1 = 0;
+	int count2 = 0;
+
+	int i = 0;
+
+	if ( match("::", str, m_ipV6Address) ) {
+		elisionFound = true;
+		++i;
+	}
+
+	for ( ; i<8; ++i ) {
+
+		if ( i==6 ) {
+			bool wasLs32 = ls32(str, m_ipV6Address);
+			if ( wasLs32 && !elisionFound ) {
+				if ( !match(":", str, m_ipV6Address) ) {
+					*str = sav;
+					m_ipV6Address = "";
+					return false;
+				}
+				elisionFound = true;
+				if ( !m_ipV4Address.empty() ) {
+					*str = sav;
+					m_ipV6Address = "";
+					return false;
+				}
+				break;
+			}
+			if ( wasLs32 && elisionFound ) {
+				break;
+			}
+			if ( !wasLs32 && elisionFound ) {
+				*str = sav;
+				m_ipV6Address = "";
+				return false;
+			}
+			if ( !wasLs32 && !elisionFound ) {
+				continue;
+			}
+		}
+
+		if ( h16(str, m_ipV6Address) ) {
+			if ( !match(":", str, m_ipV6Address) ) {
+				*str = sav;
+				m_ipV6Address = "";
+				return false;
+			}
+		}
+		if ( match(":", str, m_ipV6Address) ) {
+			if ( elisionFound ) {
+				*str = sav;
+				m_ipV6Address = "";
+				return false;
+			}
+			elisionFound = true;
+		}
+	}
+
+	result += m_ipV6Address;
+	m_ipAddrType = ipAddrTypeV6Address;
+	return true;
+}
+
+
+bool CUri::ip_literal(const unsigned char **str,
+                std::string &result)
+{
+	const unsigned char *sav = *str;
+	m_ip_literal = "";
+	if ( match("[", str, m_ip_literal) &&
+	     (ipV6address(str, m_ip_literal) || ipVFuture(str, m_ip_literal)) &&
+	     match("]", str, m_ip_literal) )
+	{
+		result += m_ip_literal;
 		return true;
 	}
+
+	m_ip_literal = "";
+	*str = sav;
 	return false;
 }
 
-/*
-// Never called path is either the opaque part or the abs path,
-// m_path is set in opaque_part() or abs_path() (also set in rel_path() here)
-// The path component m_path can also be a net_path() or rel_path()
-void CUri::path(const unsigned char **str,
-                std::string &result)
-{
-	m_path = "";
-	if ( opaque_part(str, m_path) || abs_path(str, m_path) ) {
-		result += m_path;
-	}
-}
-*/
 
 bool CUri::ipV4address(const unsigned char **str,
                        std::string &result)
 {
 	const unsigned char *sav = *str;
-	m_ipV4address = "";
+	m_ipV4Address = "";
+	m_ipAddrType = ipAddrTypeEmpty;
 
 	for ( int i=0; i<4; ++i ) {
 		if ( i > 0 ) {
 			if ( *str[0] != '.' ) {
-				m_ipV4address = "";
+				m_ipV4Address = "";
 				*str = sav;
 				return false;
 			}
-			advance(str, m_ipV4address);
+			advance(str, m_ipV4Address);
 		}
-		if ( digit(str, m_ipV4address) ) {
-			while ( digit(str, m_ipV4address) );
-		} else {
-			// At least one digit
-			m_ipV4address = "";
+		if ( !dec_octet(str, m_ipV4Address) ) {
+			m_ipV4Address = "";
 			*str = sav;
 			return false;
 		}
 	}
-	result += m_ipV4address;
+	result += m_ipV4Address;
+	m_ipAddrType = ipAddrTypeV4Address;
 	return true;
 }
 
-/*
-bool CUri::toplabel(const unsigned char **str,
-                    std::string &result)
+bool CUri::ls32(const unsigned char **str,
+                 std::string &result)
 {
-	// This is never called, because a toplabel is recognized
-	// as a domainlabel in hostname()
-	unsigned char c1;
-	m_toplabel = "";
-
-	if ( !(c1 = alpha(str, m_toplabel)) )
-		return false;
-
-	unsigned char c;
-	do {
-		c = alphanum(str, m_toplabel);
-		if ( !c ) {
-			c = (*str)[0];
-			if ( c != '-' )
-				break;
-			else
-				advance(str, m_toplabel);
-		} 
-	} while ( true );
-
-	assert(m_toplabel[0] != '-');
-	while ( m_toplabel[m_toplabel.size()-1] == '-' ) {
-		(*str)--;
-		m_toplabel.resize(m_toplabel.size()-1);
-	}
-	result += m_toplabel;
-	return true;
-}
-*/
-
-bool CUri::domainlabel(const unsigned char **str,
-                       std::string &result)
-{
-	unsigned char c1;
-	m_domainlabel = "";
-
-	if ( !(c1 = alphanum(str, m_domainlabel)) )
-		return false;
-
-	unsigned char c;
-	do {
-		c = alphanum(str, m_domainlabel);
-		if ( !c ) {
-			c = (*str)[0];
-			if ( c != '-' )
-				break;
-			else
-				advance(str, m_domainlabel);
-		} 
-	} while ( true );
-
-	assert(m_domainlabel[0] != '-');
-	while ( m_domainlabel[m_domainlabel.size()-1] == '-' ) {
-		(*str)--;
-		m_domainlabel.resize(m_domainlabel.size()-1);
-	}
-	result += m_domainlabel;
-	return true;
-}
-
-bool CUri::hostname(const unsigned char **str,
-                    std::string &result)
-{
-	// Special handling: Last domainlabel has to be a toplabel
 	const unsigned char *sav = *str;
+	m_ls32 = "";
+	m_ipV4Address = "";
 
-	m_hasTrailingDot = false;
-	m_hostname = "";
-	m_toplabel = "";
-	m_domainlabels.clear();
-
-	while ( domainlabel(str, m_hostname) ) {
-		// rember to found domainlabel in toplabel
-		// is not neccessairily a valid toplabel here
-		m_toplabel = m_domainlabel;
-		
-		// look ahead (*str)[0]
-		if ( (*str)[0] != '.' ) {
-			// Last domainlabel has to be a toplabel
-			if ( isdigit(m_toplabel[0]) ) {
-				m_hostname = "";
-				m_toplabel = "";
-				m_domainlabel = "";
-				m_domainlabels.clear();
-				*str = sav;
-				return false;
+	if ( h16(str, m_ls32) ) {
+		if ( (*str)[0] == ':' ) {
+			advance(str, m_ls32);
+			if ( h16(str, m_ls32) ) {
+				result += m_ls32;
+				return true;
 			}
-			result += m_hostname;
-			return true;
 		}
-		m_domainlabels.push_back(m_domainlabel);
-		advance(str, m_hostname);
 	}
 
-	// Last domainlabel has to be a toplabel
-	if ( m_toplabel.empty() || isdigit(m_toplabel[0]) ) {
-		m_hostname = "";
-		m_toplabel = "";
-		m_domainlabel = "";
-		m_domainlabels.clear();
+	*str = sav;
+	m_ls32 = "";
+
+	if ( !ipV4address(str, m_ls32) ) {
 		*str = sav;
+		m_ls32 = "";
 		return false;
 	}
-	m_hasTrailingDot = !m_hostname.empty() &&
-	                   m_hostname[m_hostname.size()-1] == '.';
-	result += m_hostname;
+
+	result += m_ls32;
 	return true;
 }
 
-bool CUri::host(const unsigned char **str,
+void CUri::host(const unsigned char **str,
                 std::string &result)
 {
 	m_host = "";
-	if ( hostname(str, m_host) ||
+	if ( ip_literal(str, m_host) ||
 		ipV4address(str, m_host) )
 	{
 		result += m_host;
-		return true;
+		return;
 	}
-	return false;
-}
-
-bool CUri::hostport(const unsigned char **str,
-                    std::string &result)
-{
-	m_hostport = "";
-	m_hasPort = false;
-
-	if ( !host(str, m_hostport) ) {
-		return false;
-	}
-	if ( (*str)[0] == ':' ) {
-		advance(str, m_hostport);
-		m_hasPort = true;
-		port(str, m_hostport);
-	}
-	result += m_hostport;
-	return true;
+	reg_name(str, m_host);
+	result += m_host;
+	return;
 }
 
 void CUri::userinfo(const unsigned char **str,
                     std::string &result)
 {
 	m_userinfo = "";
-	for ( ;; ) {
-		if ( unreserved(str, m_userinfo) != 0 ||
-			escaped(str, m_userinfo) )
-		{
-			continue;
-		}
-		unsigned char c = (*str)[0];
-		switch (c) {
-			case ';':
-			case ':':
-			case '&':
-			case '=':
-			case '+':
-			case '$':
-			case ',':
-				advance(str, m_userinfo);
-				continue;
-			default:
-				break;
-		}
-		break;
-	}
+	while ( unreserved(str, m_userinfo)  ||
+		    pct_encoded(str, m_userinfo) ||
+		    sub_delims(str, m_userinfo)  ||
+			match(":", str, m_userinfo) );
+
 	result += m_userinfo;
 }
 
-void CUri::server(const unsigned char **str,
-                  std::string &result)
-{
-	const unsigned char *sav = *str;
-	m_server = "";
-	m_hasUserinfo = false;
-	userinfo(str, m_server);
-
-	// '@' seperates userinfo from hostport
-	if ( (*str)[0] == '@' ) {
-		advance(str, m_server);
-		m_hasUserinfo = true;
-
-		// There must be a hostport after an userinfo if a server
-		if ( !hostport(str, m_server) ) {
-			// empty server (also no userinfo)
-			*str = sav;
-			m_hasUserinfo = false;
-			m_userinfo = "";
-			return;
-		}
-		result += m_server;
-		return;
-	}
-
-	m_userinfo = "";
-	m_server = "";
-
-	// no '@' -> no userinfo
-	*str = sav;
-
-	hostport(str, m_server);
-	result += m_server;
-}
-
-bool CUri::reg_name(const unsigned char **str,
+void CUri::reg_name(const unsigned char **str,
                     std::string &result)
 {
 	m_reg_name = "";
-	for ( ;; ) {
-		if ( unreserved(str, m_reg_name) != 0 ||
-			escaped(str, m_reg_name) )
-		{
-			continue;
-		}
-		unsigned char c = (*str)[0];
-		switch (c) {
-			case '$':
-			case ',':
-			case ';':
-			case ':':
-			case '@':
-			case '&':
-			case '=':
-			case '+':
-				advance(str, m_reg_name);
-				continue;
-			default:
-				break;
-		}
-		break;
-	}
+	while ( unreserved(str, m_reg_name) != 0 ||
+			pct_encoded(str, m_reg_name) ||
+			sub_delims(str, m_reg_name) != 0 );
+
 	result += m_reg_name;
-	// At least one legal character
-	return !m_reg_name.empty();
+	m_ipAddrType = ipRegName;
 }
 
 void CUri::authority(const unsigned char **str,
                      std::string &result)
 {
+	const unsigned char *sav = *str;
+
 	m_authority = "";
-	m_hasServer = true;
-	
-	server(str, m_authority);
-	if ( m_server.empty() )
-	{
-		if ( reg_name(str, m_authority) ) {
-			m_hasServer = false;
-		}
+	m_hasPort = false;
+	m_hasUserinfo = false;
+
+	userinfo(str, m_authority);
+
+	// '@' seperates userinfo from hostport
+	if ( (*str)[0] == '@' ) {
+		advance(str, m_authority);
+		m_hasUserinfo = true;
+	} else {
+		*str = sav;
+		m_authority = "";
 	}
+
+	host(str, m_authority);
+
+	if ( (*str)[0] == ':' ) {
+		advance(str, m_authority);
+		m_hasPort = true;
+		port(str, m_authority);
+	}
+
+	m_hasAuthority = true;
 	result += m_authority;
 }
 
@@ -518,160 +586,86 @@ bool CUri::scheme(const unsigned char **str,
 	return false;
 }
 
-bool CUri::rel_segment(const unsigned char **str,
-                       std::string &result)
-{
-	m_rel_segment = "";
-	for ( ;; ) {
-		if ( unreserved(str, m_rel_segment) != 0 ||
-			escaped(str, m_rel_segment) )
-		{
-			continue;
-		}
-		unsigned char c = (*str)[0];
-		switch (c) {
-			case ';':
-			case '@':
-			case '&':
-			case '=':
-			case '+':
-			case '$':
-			case ',':
-				advance(str, m_rel_segment);
-				continue;
-			default:
-				break;
-		}
-		break;
-	}
-	result += m_rel_segment;
-	// At least one legal character
-	return !m_rel_segment.empty();
-}
-
-bool CUri::rel_path(const unsigned char **str,
-                    std::string &result)
-{
-	m_rel_path = "";
-	m_path = "";
-
-	if ( rel_segment(str, m_rel_path) ) {
-		abs_path(str, m_rel_path);
-		m_path = m_rel_path;
-		result += m_rel_path;
-		return true;
-	}
-	return false;
-}
-
-bool CUri::net_path(const unsigned char **str,
-                    std::string &result)
-{
-	const unsigned char *sav = *str;
-	m_net_path = "";
-	m_path = "";
-	m_hasAuthority = false;
-
-	if ( (*str)[0] != '/' ) {
-		return false;
-	}
-	advance(str, m_net_path);
-
-	if ( (*str)[0] != '/' ) {
-		m_net_path = "";
-		*str = sav;
-		return false;
-	}
-	advance(str, m_net_path);
-	m_hasAuthority = true;
-
-	authority(str, m_net_path);
-
-	abs_path(str, m_net_path);
-
-	result += m_net_path;
-	return true;
-}
-
 bool CUri::hier_part(const unsigned char **str,
                      std::string &result)
 {
+	const unsigned char *sav = *str;
 	m_hier_part = "";
-	m_query = "";
-	m_hasQuery = false;
 
-	if ( net_path(str, m_hier_part) ||
-		abs_path(str, m_hier_part) )
-	{
-		if ( (*str)[0] == '?' ) {
-			advance(str, m_hier_part);
-			m_hasQuery = true;
-			query(str, m_hier_part);
+	if ( match("//", str, m_hier_part) ) {
+		authority(str, m_hier_part);
+		if ( path_abempty(str, m_hier_part) ) {
+			result += m_hier_part;
+			return true;
 		}
+	}
+	*str = sav;
+	m_hier_part = "";
+
+	if ( path_absolute(str, m_hier_part) ||
+		 path_rootless(str, m_hier_part) ||
+		 path_empty(str, m_hier_part) )
+	{
 		result += m_hier_part;
 		return true;
 	}
+
+	*str = sav;
+	m_hier_part = "";
 	return false;
 }
 
-bool CUri::relativeURI(const unsigned char **str,
+bool CUri::relative_uri(const unsigned char **str,
                        std::string &result)
 {
-	m_relativeURI = "";
+	m_relative_uri = "";
 	m_query = "";
 	m_hasQuery = false;
 
-	if ( net_path(str, m_relativeURI) ||
-		abs_path(str, m_relativeURI) ||
-		rel_path(str, m_relativeURI) )
+	if ( hier_part(str, m_relative_uri) )
 	{
 		if ( (*str)[0] == '?' ) {
-			advance(str, m_relativeURI);
+			advance(str, m_relative_uri);
 			m_hasQuery = true;
-			query(str, m_relativeURI);
+			query(str, m_relative_uri);
 		}
-		result += m_relativeURI;
-		return true;
-	}
-
-	// can consist of query only
-	if ( (*str)[0] == '?' ) {
-		advance(str, m_relativeURI);
-		m_hasQuery = true;
-		query(str, m_relativeURI);
-		result += m_relativeURI;
+		result += m_relative_uri;
 		return true;
 	}
 
 	return false;
 }
 
-bool CUri::absoluteURI(const unsigned char **str,
+bool CUri::absolute_uri(const unsigned char **str,
                        std::string &result)
 {
 	const unsigned char *sav = *str;
-	m_absoluteURI = "";
+	m_absolute_uri = "";
 	m_hasScheme = false;
 
-	if ( !scheme(str, m_absoluteURI) ) {
+	if ( !scheme(str, m_absolute_uri) ) {
 		return false;
 	}
 
 	if ( (*str)[0] != ':' ) {
-		m_absoluteURI = "";
+		m_absolute_uri = "";
 		*str = sav;
 		return false;
 	}
 	m_hasScheme = true;
 
-	advance(str, m_absoluteURI);
+	advance(str, m_absolute_uri);
 
 	// The base URI can consist of the <scheme> only:
-	// written as <scheme>:/ - so <hier_part> is true
-	if ( hier_part(str, m_absoluteURI) ||
-		opaque_part(str, m_absoluteURI) )
+	// written as <scheme>: - so <hier_part> is true
+	if ( hier_part(str, m_absolute_uri) )
 	{
-		result += m_absoluteURI;
+		if ( (*str)[0] == '?' ) {
+			advance(str, m_absolute_uri);
+			m_hasQuery = true;
+			query(str, m_absolute_uri);
+		}
+		result += m_absolute_uri;
 		return true;
 	}
 
@@ -686,8 +680,8 @@ bool CUri::uri_reference(const unsigned char **str)
 	m_fragment = "";
 	m_hasFragment = false;
 
-	if ( !absoluteURI(str, m_uri_reference) )
-		relativeURI(str, m_uri_reference);
+	if ( !absolute_uri(str, m_uri_reference) )
+		relative_uri(str, m_uri_reference);
 
 	if ( (*str)[0] == '#' ) {
 		advance(str, m_uri_reference);
@@ -710,22 +704,20 @@ bool CUri::parse(const char *anUri)
 	return m_valid;
 }
 
-void CUri::addSegment(const CSegment &seg,
-                      std::list<CSegment> &segList) const
+void CUri::addSegment(const std::string &seg,
+					  std::list<std::string> &segList) const
 {
-	if ( seg.getName() == "." &&
-		seg.size() == 0 )
+	if ( seg == "." )
 	{
 		// Ignore complete path segments "."
 		return;
 	}
 
-	if ( seg.getName() == ".." &&
-		seg.size() == 0 &&
+	if ( seg == ".." &&
 		!segList.empty() )
 	{
-		const CSegment &segBack = segList.back();
-		if ( segBack.getName() != ".." ) {
+		const std::string &segBack = segList.back();
+		if ( segBack != ".." ) {
 			segList.pop_back();
 			return;
 		}
@@ -752,7 +744,7 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 		return true;
 	}
 
-	if ( isAbsolute() || hasOpaquePart() ) {
+	if ( isAbsolute() ) {
 		// The URI is already absolute or is opaque
 		resultUriStr = toString();
 		return true;
@@ -798,24 +790,24 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 
 	// Path
 	std::string refPath;
-	std::list<CSegment> pathList;
+	std::list<std::string> pathList;
 
 	refPath = "";
 	pathList.clear();
 
-	if ( hasAuthority() || hasAbsPath() ) {
+	if ( hasAuthority() || pathType() == pathTypeAbsolute ) {
 		refPath = m_path;
 	} else {
-		const_iterator si = baseUri.segmentsBegin();
-		const_iterator siend = baseUri.segmentsEnd();
+		segments_const_iterator si = baseUri.segmentsBegin();
+		segments_const_iterator siend = baseUri.segmentsEnd();
 		bool lastWasDot = false;
 		for ( int pass = 0; pass < 2; ++pass ) {
 			for ( ; si != siend; si++ ) {
 				if ( pass > 0 ) {
 					// Only in relative pathes "." and ".." have special meaning
 					addSegment(*si, pathList);
-					lastWasDot = (*si).getName() == "." ||
-					             (*si).getName() == "..";
+					lastWasDot = (*si) == "." ||
+					             (*si) == "..";
 				} else {
 					pathList.push_back(*si);
 				}
@@ -827,12 +819,7 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 				if ( !pathList.empty() )
 					pathList.pop_back();
 
-				CSegment relSeg;
-				relSeg.m_name = getRelSegment();
-				addSegment(relSeg, pathList);
-				lastWasDot = relSeg.getName() == "." ||
-				             relSeg.getName() == "..";
-
+				std::string relSeg;
 				si = segmentsBegin();
 				siend = segmentsEnd();
 			}
@@ -844,14 +831,9 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 		}
 		for ( si = pathList.begin(); si != pathList.end(); si++ ) {
 			refPath += "/";
-			refPath += (*si).getName();
-			CSegment::const_iterator pi = (*si).begin();
-			for ( ; pi != (*si).end(); pi++ ) {
-				refPath += ";";
-				refPath += (*pi);
-			}
+			refPath += (*si);
 		}
-		if ( lastWasDot && strcmp(refPath.c_str(), "/")!=0 ) {
+		if ( lastWasDot && strcmp(refPath.c_str(), "/") !=0 ) {
 			refPath += "/";
 		}
 	}

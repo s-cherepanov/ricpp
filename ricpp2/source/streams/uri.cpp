@@ -452,8 +452,10 @@ bool CUri::ipV4address(const unsigned char **str,
 	return true;
 }
 
+// Not used
+/*
 bool CUri::ls32(const unsigned char **str,
-                 std::string &result)
+                std::string &result)
 {
 	const unsigned char *sav = *str;
 	m_ls32 = "";
@@ -481,6 +483,7 @@ bool CUri::ls32(const unsigned char **str,
 	result += m_ls32;
 	return true;
 }
+*/
 
 void CUri::host(const unsigned char **str,
                 std::string &result)

@@ -1015,15 +1015,24 @@ namespace RiCPP {
 		 * and stored in m_ipV6Address, true is returned. Sets m_ipAddrType
 		 * to ipAddrTypeV6Address.
 		 *
-		 @verbatim
-		 IPv6address = "[" ( IPv6address | IPvFuture ) "]"
-		 @endverbatim
+           @verbatim
+           IPv6address  =
+                                        6( h16 ":" ) ls32 |
+                                   "::" 5( h16 ":" ) ls32 |
+             [               h16 ] "::" 4( h16 ":" ) ls32 |
+             [ *1( h16 ":" ) h16 ] "::" 3( h16 ":" ) ls32 |
+             [ *2( h16 ":" ) h16 ] "::" 2( h16 ":" ) ls32 |
+             [ *3( h16 ":" ) h16 ] "::"    h16 ":"   ls32 |
+             [ *4( h16 ":" ) h16 ] "::"              ls32 |
+             [ *5( h16 ":" ) h16 ] "::"              h16  |
+             [ *6( h16 ":" ) h16 ] "::"
+		   @endverbatim
 		 *
 		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
 		 * @retval result String to store the characters matched.
 		 * @return true, IPv6 address has been found
-		 * @see m_ipV6Address ls32()
+		 * @see m_ipV6Address h16()
 		 */
 		bool ipV6address(const unsigned char **str,
 		                  std::string &result);
@@ -1067,7 +1076,8 @@ namespace RiCPP {
 		bool ipV4address(const unsigned char **str,
 		                 std::string &result);
 
-		/** @brief Least significant 32 bits (or IP 4 address) of an IPv6 address.
+		// Not used
+		/* @brief Least significant 32 bits (or IP 4 address) of an IPv6 address.
 		 *
 		 * If found, it it is appended to \a result
 		 * and stored in m_ls32, true is returned.
@@ -1082,8 +1092,8 @@ namespace RiCPP {
 		 * @return true, least significant part of a IPv6 address has been found.
 		 * @see m_ls32 h16() ipV4Address()
 		 */
-		bool ls32(const unsigned char **str,
-		          std::string &result);
+		// bool ls32(const unsigned char **str,
+		//           std::string &result);
 
 		/** @brief Host.
 		 *

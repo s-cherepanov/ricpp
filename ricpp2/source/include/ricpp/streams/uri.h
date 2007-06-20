@@ -30,10 +30,6 @@
  *  @brief URI parser.
  */
 
-#ifndef _RICPP_TOOLS_INLINETOOLS_H
-#include "ricpp/tools/inlinetools.h"
-#endif // _RICPP_TOOLS_INLINETOOLS_H
-
 #include <string>
 #include <list>
 #include <cassert>
@@ -49,7 +45,7 @@ namespace RiCPP {
 	 * for more information (also for full BNF). The grammar
 	 * used for this class is changed so that the fragment
 	 * is not included in absolute-uri and relative-uri.
-	 * Recognition but should be functional
+	 * However, recognition should be functional
 	 * aquivalent (used rfc 2396 style for uri-reference rule,
 	 * also the syntax of the BNF is not ABNF).
 	 *
@@ -67,21 +63,23 @@ namespace RiCPP {
 
 		/** @brief Types of the pathes.
 		 */
-		enum EnumPathType {
-			pathTypeEmpty = 0, ///!< @brief Path is empty.
-			pathTypeAbsolute,  ///!< @brief Path is absolute with leading slash '/'.
-			pathTypeNoScheme,  ///!< @brief @brief Path begins with non-colon segment (not used).
-			pathTypeRootless   ///!< Relative path.
+		enum EnumPathType
+		{
+			pathTypeEmpty = 0, ///< @brief Path is empty.
+			pathTypeAbsolute,  ///< @brief Path is absolute with leading slash '/'.
+			pathTypeNoScheme,  ///< @brief @brief Path begins with non-colon segment (not used).
+			pathTypeRootless   ///< Relative path.
 		};
 
 		/** @brief Types of the IP addresses
 		 */
-		enum EnumIPAddrType {
-			ipAddrTypeEmpty = 0, ///!< @brief No authority set.
-			ipAddrTypeV4Address, ///!< @brief IPv4 address.
-			ipAddrTypeV6Address, ///!< @brief IPv6 address.
-			ipAddrTypeVFuture,   ///!< @brief Generic IP address.
-			ipRegName            ///!< @brief Registry based name or host.
+		enum EnumIPAddrType
+		{
+			ipAddrTypeEmpty = 0, ///< @brief No authority set.
+			ipAddrTypeV4Address, ///< @brief IPv4 address.
+			ipAddrTypeV6Address, ///< @brief IPv6 address.
+			ipAddrTypeVFuture,   ///< @brief Generic IP address.
+			ipRegName            ///< @brief Registry based name or host.
 		};
 
 	private:
@@ -110,7 +108,7 @@ namespace RiCPP {
 		 */
 		std::string m_pct_encoded;
 
-		/** @brief Temporary string of an 16bit hexadecimal (4 hexdigits).
+		/** @brief Temporary string of an 16bit hexadecimal (1-4 hexdigits).
 		 */
 		std::string m_h16;
 
@@ -276,7 +274,7 @@ namespace RiCPP {
 		 */
 		void clearAll();
 
-		/** @brief Advances the input pointer.
+		/** @brief Advances the input pointer and copies to result.
 		 *
 		 * Advances the input pointer \a *str \a n times and
 		 * stores the characters in \a result.
@@ -295,11 +293,26 @@ namespace RiCPP {
 			}
 		}
 
+		/** @brief Lookahead
+		 *
+		 * Gets the first character of \a *str.
+		 *
+		 * @param str Address of a character pointer to the
+		 * input string (address of input pointer).
+		 * @return First character of \a *str
+		 */
+		inline unsigned char la(const unsigned char **str)
+		{
+			return (*str)[0];
+		}
+
 		/** @brief Matches a sequence, advances the input pointer.
 		 *
 		 * Matches the sequence \a matchStr and advances the input
 		 * pointer. If the whole string could not be matched,
-		 * the input pointer is restored.
+		 * the input pointer is restored. If all characters
+		 * of \a mathString could be matched, they are stored
+		 * in \a result.
 		 *
 		 * @param matchStr String to match
 		 * @param str Address of a character pointer to the
@@ -307,9 +320,9 @@ namespace RiCPP {
 		 * @retval result String to store the characters matched.
 		 * @return true, the \a matchStr matches.
 		 */
-		inline bool match( const char *matchStr,
-						   const unsigned char **str,
-		                   std::string &result)
+		inline bool match(const char *matchStr,
+						  const unsigned char **str,
+		                  std::string &result)
 		{
 			// An empty string matches
 			if ( !matchStr || !*matchStr )
@@ -317,7 +330,7 @@ namespace RiCPP {
 
 			const unsigned char *sav = *str;
 			const unsigned char *ptr = (const unsigned char *)matchStr;
-			while ( *ptr && *str[0] == *ptr ) {
+			while ( *ptr && la(str) == *ptr ) {
 				++ptr;
 				++(*str);
 			}
@@ -334,25 +347,28 @@ namespace RiCPP {
 		 *
 		 * Matches one character of \a matchStr and advances the pointer if
 		 * one character matches. If matchStr is empty no
-		 * character matches,
+		 * character matches. If one character
+		 * of \a mathString could be matched, the matched character is stored
+		 * in \a result and returned.
+		 *
 		 *
 		 * @param matchStr One character of the string to match.
 		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
 		 * @retval result String to store the characters matched.
-		 * @return true, one character that matches or 0, if no character matches.
+		 * @return The matched character or 0 if no character matches.
 		 */
-		inline unsigned char matchOneOf( const char *matchStr,
-						        const unsigned char **str,
-		                        std::string &result)
+		inline unsigned char matchOneOf(const char *matchStr,
+						                const unsigned char **str,
+		                                std::string &result)
 		{
 			if ( !matchStr || !*matchStr )
 				return 0;
 
 			const unsigned char *ptr = (const unsigned char *)matchStr;
 			for ( ; *ptr; ++ptr ) {
-				if ( *str[0] == *ptr ) {
-					result += ((*str)++)[0];
+				if ( la(str) == *ptr ) {
+					advance(str, result);
 					return *ptr;
 				}
 			}
@@ -378,7 +394,7 @@ namespace RiCPP {
 		inline unsigned char digit(const unsigned char **str,
 		                           std::string &result)
 		{
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 			if ( c>='0' && c<='9' ) {
 				advance(str, result);
 				return c;
@@ -406,7 +422,7 @@ namespace RiCPP {
 		inline unsigned char upalpha(const unsigned char **str,
 		                             std::string &result)
 		{
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 			if ( c>='A' && c<='Z' ) {
 				advance(str, result);
 				return c;
@@ -434,7 +450,7 @@ namespace RiCPP {
 		inline unsigned char lowalpha(const unsigned char **str,
 		                              std::string &result)
 		{
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 			if ( c>='a' && c<='z' ) {
 				advance(str, result);
 				return c;
@@ -509,7 +525,7 @@ namespace RiCPP {
 		inline unsigned char hexdig(const unsigned char **str,
 		                         std::string &result)
 		{
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 			if ( digit(str, result) )
 				return c;
 			if ( (c>='A' && c<='F') || (c>='a' && c<='f') ) {
@@ -539,7 +555,7 @@ namespace RiCPP {
 		inline unsigned char unreserved(const unsigned char **str,
 		                                std::string &result)
 		{
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 
 			switch (c) {
 				case '-':
@@ -567,7 +583,7 @@ namespace RiCPP {
 		inline unsigned char gen_delims(const unsigned char **str,
 		                              std::string &result)
 		{
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 			switch (c) {
 				case ':':
 				case '/':
@@ -598,7 +614,7 @@ namespace RiCPP {
 		inline unsigned char sub_delims(const unsigned char **str,
 		                              std::string &result)
 		{
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 			switch (c) {
 				case '!':
 				case '$':
@@ -662,10 +678,9 @@ namespace RiCPP {
 		{
 			const unsigned char *sav = *str;
 			m_pct_encoded = "";
-			if ( (*str)[0] != '%' ) {
+			if ( !match("%", str, m_pct_encoded) ) {
 				return false;
 			}
-			advance(str, m_pct_encoded);
 
 			if ( !hexdig(str, m_pct_encoded) ) {
 				*str = sav;
@@ -680,7 +695,7 @@ namespace RiCPP {
 			return true;
 		}
 
-		/** @brief 16bit hexadecimal sequence (4 hexdigits).
+		/** @brief 16bit hexadecimal sequence (1-4 hexdigits).
 		 *
 		 * If found, the current h16 it is appended to \a result and stored in
 		 * m_h16 and true is returned.
@@ -721,9 +736,9 @@ namespace RiCPP {
 		 @verbatim
 		 dec_octet = digit |
 		             0x31-39 digit |
-					 "1" 2digit |
-					 "2" %x30-34 digit |
-					 "25" %x30-35
+		             "1" 2digit |
+		             "2" %x30-34 digit |
+		             "25" %x30-35
 		 @endverbatim
 		 *
 		 * @param str Address of a character pointer to the
@@ -768,9 +783,9 @@ namespace RiCPP {
 		 * However, handled with the URI because it is directly written after the
 		 * regular URI, separated by a crosshatch '#'. It is interpreted by the
 		 * user agent to identify a part of the retrieved ressource. The fragment
-		 * is appanded on \a result and stored in m_fragment.
+		 * is appended on \a result and stored in m_fragment.
 		 * The fragment can be an empty string.
-		 * m_hasFragment is set, if '#' was found.
+		 * m_hasFragment has been set in uri_reference(), if '#' was found.
 		 *
 		 @verbatim
 		 fragment = *( pchar | "/" | "?" )
@@ -779,18 +794,19 @@ namespace RiCPP {
 		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
 		 * @retval result String to store the characters matched.
-		 * @see m_fragment m_hasFragment uric()
+		 * @see m_fragment m_hasFragment pchar() uri_reference()
 		 */
 		void fragment(const unsigned char **str,
 		              std::string &result);
 
 		/** @brief Query component.
 		 *
-		 * The query component, interpreted by the ressource,
-		 * separated by a question mark '?'. The query component
-		 * is appanded on \a result and stored in m_query.
+		 * The query component, separated by a question mark '?'.
+		 * The query component
+		 * is appended on \a result and stored in m_query.
 		 * The query can be an empty string.
-		 * m_hasQuery is set, if '#' was found.
+		 * m_hasQuery has been set in absolute_uri() or relative_uri(),
+		 * if '?' was found.
 		 *
 		 @verbatim
 		 query =  *( pchar | "/" | "?" )
@@ -799,14 +815,14 @@ namespace RiCPP {
 		 * @param str Address of a character pointer to the
 		 * input string (address of input pointer).
 		 * @retval result String to store the characters matched.
-		 * @see m_query m_hasQuery uric()
+		 * @see m_query m_hasQuery pchar() absolute_uri() relative_uri()
 		 */
 		void query(const unsigned char **str,
 		           std::string &result);
 
 		/** @brief Single path segment.
 		 *
-		 * The segment is appanded on \a result and stored
+		 * The segment is appended on \a result and stored
 		 * temporarily in m_segment. The segment can be an empty string.
 		 *
 		 @verbatim
@@ -823,7 +839,7 @@ namespace RiCPP {
 
 		/** @brief Single path segment not empty.
 		 *
-		 * The segment is appanded on \a result and stored
+		 * The segment is appended on \a result and stored
 		 * temporarily in m_segment. The segment can be an empty string.
 		 *
 		 @verbatim
@@ -841,7 +857,7 @@ namespace RiCPP {
 
 		/** @brief Single path segment not empty, without any colon ':'.
 		 *
-		 * The segment is appanded on \a result and stored
+		 * The segment is appended on \a result and stored
 		 * temporarily in m_segment. The segment can be an empty string.
 		 *
 		 @verbatim
@@ -960,7 +976,7 @@ namespace RiCPP {
 		 * path pathTypeEmpty is stored in m_pathType, true is returned.
 		 *
 		 @verbatim
-		 path_empty = 0\<pchar\>
+		 path_empty = 0&lt;pchar&gt;
 		 @endverbatim
 		 *
 		 * @param str Address of a character pointer to the
@@ -1198,8 +1214,8 @@ namespace RiCPP {
 		 @verbatim
 		 hier_part = "//" authority path_abempty |
 		             path_absolute |
-					 path_rootless |
-					 path_empty
+			         path_rootless |
+		             path_empty
 		 @endverbatim
 		 *
 		 * @param str Address of a character pointer to the
@@ -1257,7 +1273,7 @@ namespace RiCPP {
 		 * Tests and parses the generic syntax of a URI reference.
 		 *
 		 * If found, it is appended to \a result and stored in m_uri_reference.
-		 * If a (possibly empty) fragment has been fount, it
+		 * If a (possibly empty) fragment has been found, it
 		 * is stored in m_fragment and m_hasFrament is set. An empty URI reference
 		 * (absolute or relative URI) references the "current document".
 		 * Returns true if there are no more trailing characters after parsing.
@@ -1305,7 +1321,7 @@ namespace RiCPP {
 			parse(anUri.c_str());
 		}
 
-		/** @brief Constructor, creates Uri from base and relative URI.
+		/** @brief Constructor, creates URI from base and relative URI.
 		 *
 		 * @param baseUri Absolute base URI
 		 * @param relative_uri Relative URI
@@ -1354,7 +1370,7 @@ namespace RiCPP {
 
 		/** @brief Assigns URI.
 		 *
-		 * Assignes a URI by parsing the string representation.
+		 * Assigns a URI by parsing the string representation.
 		 *
 		 * @param anUri Char pointer containing a URI.
 		 * @return This URI.
@@ -1368,7 +1384,7 @@ namespace RiCPP {
 
 		/** @brief Assigns URI.
 		 *
-		 * Assignes a URI by parsing the string representation.
+		 * Assigns a URI by parsing the string representation.
 		 *
 		 * @param anUri String containing a URI.
 		 * @return This URI.
@@ -1382,7 +1398,7 @@ namespace RiCPP {
 
 		/** @brief Assigns URI.
 		 *
-		 * Assignes a URI by parsing the string representation.
+		 * Assigns a URI by parsing the string representation.
 		 * Assumes that the \a uri is valid.
 		 *
 		 * @param uri CUri instance containing a vaild URI.
@@ -1477,49 +1493,6 @@ namespace RiCPP {
 			return m_uri_reference;
 		}
 
-		/** @brief Tests if URI reference is absolute.
-		 * @return true, URI is absolute
-		 */
-		inline bool isAbsoluteUri() const
-		{
-			return !m_absolute_uri.empty();
-		}
-
-		/** @brief Gets the absolute URI.
-		 * @return Absolute URI.
-		 */
-		inline const std::string &getAbsoluteUri() const
-		{
-			return m_absolute_uri;
-		}
-
-		/** @brief Tests if URI reference is relative.
-		 * @return true, URI is relative.
-		 */
-		inline bool isRelativeUri() const
-		{
-			return !m_relative_uri.empty();
-		}
-
-		/** @brief Gets the relative URI.
-		 * @return Relative URI.
-		 */
-		inline const std::string &getRelativeUri() const
-		{
-			return m_relative_uri;
-		}
-
-		/** @brief Tests, if URI represents the "current document".
-		 *
-		 * A URI represents the current document if absolute and relative parts are empty.
-		 *
-		 * @return true, if URI represents the "current document".
-		 */
-		inline bool isCurrentDocument() const
-		{
-			return m_path.empty() && !m_hasScheme && !m_hasAuthority;
-		}
-
 		/** @brief Tests, if URI has defined a scheme component (is an absolute URI).
 		 * @return true, URI has a scheme component.
 		 */
@@ -1542,6 +1515,15 @@ namespace RiCPP {
 		inline const std::string &getHierPart() const
 		{
 			return m_hier_part;
+		}
+
+		/** @brief Gets the type of the path component of the URI.
+		 * @return Type of the path component of the URI.
+		 * @see path()
+		 */
+		inline CUri::EnumPathType pathType() const
+		{
+			return m_pathType;
 		}
 
 		/** @brief Gets the path component.
@@ -1618,6 +1600,15 @@ namespace RiCPP {
 		inline const std::string &getUserinfo() const
 		{
 			return m_userinfo;
+		}
+
+		/** @brief Gets the type of the host component of the URI.
+		 * @return Type of the host component of the URI.
+		 * @see host()
+		 */
+		inline CUri::EnumIPAddrType ipAddrType() const
+		{
+			return m_ipAddrType;
 		}
 
 		/** @brief Gets the registry based naming authority.
@@ -1732,22 +1723,48 @@ namespace RiCPP {
 			return m_segments.size();
 		}
 
-		/** @brief Gets the type of the path component of the URI.
-		 * @return Type of the path component of the URI.
-		 * @see path()
+		/** @brief Tests, if URI represents the "current document".
+		 *
+		 * A URI represents the current document if absolute and relative parts are empty,
+		 * no scheme, authority or query.
+		 *
+		 * @return true, if URI represents the "current document".
 		 */
-		inline CUri::EnumPathType pathType() const
+		inline bool isCurrentDocument() const
 		{
-			return m_pathType;
+			return getPath().empty() && !(hasScheme() || hasAuthority() || hasQuery());
 		}
 
-		/** @brief Gets the type of the host component of the URI.
-		 * @return Type of the host component of the URI.
-		 * @see host()
+		/** @brief Tests if URI reference is absolute.
+		 * @return true, URI is absolute
 		 */
-		inline CUri::EnumIPAddrType ipAddrType() const
+		inline bool isAbsoluteUri() const
 		{
-			return m_ipAddrType;
+			return !m_absolute_uri.empty();
+		}
+
+		/** @brief Gets the absolute URI.
+		 * @return Absolute URI.
+		 */
+		inline const std::string &getAbsoluteUri() const
+		{
+			return m_absolute_uri;
+		}
+
+		/** @brief Tests if URI reference is relative.
+		 * @return true, URI is relative.
+		 */
+		inline bool isRelativeUri() const
+		{
+			return !m_relative_uri.empty() || isCurrentDocument();
+		}
+
+		/** @brief Gets the relative URI.
+		 * @return Relative URI.
+		 */
+		inline const std::string &getRelativeUri() const
+		{
+			return m_relative_uri;
 		}
 	};
 }

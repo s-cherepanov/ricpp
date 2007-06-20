@@ -116,9 +116,7 @@ void CUri::fragment(const unsigned char **str,
 {
 	m_fragment = "";
 	while ( pchar(str, m_fragment) ||
-		    matchOneOf("/?", str, m_fragment) )
-	{
-	}
+		    matchOneOf("/?", str, m_fragment) );
 	result += m_fragment;
 }
 
@@ -127,9 +125,7 @@ void CUri::query(const unsigned char **str,
 {
 	m_query = "";
 	while ( pchar(str, m_query) ||
-		    matchOneOf("/?", str, m_query) )
-	{
-	}
+		    matchOneOf("/?", str, m_query) );
 	result += m_query;
 }
 
@@ -137,9 +133,9 @@ bool CUri::path_abempty(const unsigned char **str,
                         std::string &result)
 {
 	m_path = "";
-	if ( (*str)[0] == '/' )
+	if ( la(str) == '/' )
 		return path_absolute(str, result);
-	return true;
+	return path_empty(str, result);
 }
 
 bool CUri::path_absolute(const unsigned char **str,
@@ -301,10 +297,9 @@ bool CUri::ipVFuture(const unsigned char **str,
 	m_ipVFuture = "";
 	m_ipAddrType = ipAddrTypeEmpty;
 
-	if ( *str[0] != 'v' ) {
+	if ( !match("v", str, m_ipVFuture) ) {
 		return false;
 	}
-	advance(str, m_ipVFuture);
 
 	if ( !hexdig(str, m_ipVFuture) ) {
 		*str = sav;
@@ -313,29 +308,19 @@ bool CUri::ipVFuture(const unsigned char **str,
 	}
 	while ( hexdig(str, m_ipVFuture) );
 
-	if ( *str[0] != '.' ) {
+	if ( !(match(".", str, m_ipVFuture) &&
+	       (match(":", str, m_ipVFuture) ||
+	        unreserved(str, m_ipVFuture) ||
+	        sub_delims(str, m_ipVFuture))) )
+	{
 		*str = sav;
 		m_ipVFuture = "";
 		return false;
 	}
-	advance(str, m_ipVFuture);
 
-	bool has_char = false;
-	for ( ; ; has_char = true ) {
-		if ( *str[0] == ':' ) {
-			advance(str, m_ipVFuture);
-		} else if ( !(unreserved(str, m_ipVFuture) ||
-		              sub_delims(str, m_ipVFuture)) )
-		{
-			break;
-		}
-	}
-
-	if ( !has_char ) {
-		*str = sav;
-		m_ipVFuture = "";
-		return false;
-	}
+	while ( match(":", str, m_ipVFuture) ||
+	        unreserved(str, m_ipVFuture) ||
+	        sub_delims(str, m_ipVFuture) );
 
 	result += m_ipVFuture;
 	m_ipAddrType = ipAddrTypeVFuture;
@@ -360,7 +345,7 @@ bool CUri::ipV6address(const unsigned char **str,
 		if ( h16(str, m_ipV6Address) ) {
 			++countRight;
 			if ( !match(":", str, m_ipV6Address) ) {
-				if ( (*str)[0] == '.' ) {
+				if ( la(str) == '.' ) {
 					*str = sav2;
 					m_ipV6Address = "";
 					for ( sav2 = sav; sav2 < *str; ++sav2 )				
@@ -379,7 +364,7 @@ bool CUri::ipV6address(const unsigned char **str,
 				elisionFound = true;
 				countLeft = countRight;
 				countRight = 0;
-				if ( (*str)[0] == ']' ) {
+				if ( la(str) == ']' ) {
 					break;
 				}
 			}
@@ -434,12 +419,11 @@ bool CUri::ipV4address(const unsigned char **str,
 
 	for ( int i=0; i<4; ++i ) {
 		if ( i > 0 ) {
-			if ( *str[0] != '.' ) {
+			if ( !match(".", str, m_ipV4Address) ) {
 				m_ipV4Address = "";
 				*str = sav;
 				return false;
 			}
-			advance(str, m_ipV4Address);
 		}
 		if ( !dec_octet(str, m_ipV4Address) ) {
 			m_ipV4Address = "";
@@ -462,8 +446,7 @@ bool CUri::ls32(const unsigned char **str,
 	m_ipV4Address = "";
 
 	if ( h16(str, m_ls32) ) {
-		if ( (*str)[0] == ':' ) {
-			advance(str, m_ls32);
+		if ( match(":", str, m_ls32) ) {
 			if ( h16(str, m_ls32) ) {
 				result += m_ls32;
 				return true;
@@ -490,7 +473,7 @@ void CUri::host(const unsigned char **str,
 {
 	m_host = "";
 	if ( ip_literal(str, m_host) ||
-		ipV4address(str, m_host) )
+	     ipV4address(str, m_host) )
 	{
 		result += m_host;
 		return;
@@ -505,9 +488,9 @@ void CUri::userinfo(const unsigned char **str,
 {
 	m_userinfo = "";
 	while ( unreserved(str, m_userinfo)  ||
-		    pct_encoded(str, m_userinfo) ||
-		    sub_delims(str, m_userinfo)  ||
-			match(":", str, m_userinfo) );
+	        pct_encoded(str, m_userinfo) ||
+	        sub_delims(str, m_userinfo)  ||
+	        match(":", str, m_userinfo) );
 
 	result += m_userinfo;
 }
@@ -536,8 +519,7 @@ void CUri::authority(const unsigned char **str,
 	userinfo(str, m_authority);
 
 	// '@' seperates userinfo from hostport
-	if ( (*str)[0] == '@' ) {
-		advance(str, m_authority);
+	if ( match("@", str, m_authority) ) {
 		m_hasUserinfo = true;
 	} else {
 		*str = sav;
@@ -546,8 +528,7 @@ void CUri::authority(const unsigned char **str,
 
 	host(str, m_authority);
 
-	if ( (*str)[0] == ':' ) {
-		advance(str, m_authority);
+	if ( match(":", str, m_authority) ) {
 		m_hasPort = true;
 		port(str, m_authority);
 	}
@@ -564,7 +545,7 @@ bool CUri::scheme(const unsigned char **str,
 		for ( ;; ) {
 			if ( alphanum(str, m_scheme) )
 				continue;
-			unsigned char c = (*str)[0];
+			unsigned char c = la(str);
 			switch (c) {
 				case '+':
 				case '-':
@@ -595,9 +576,10 @@ bool CUri::hier_part(const unsigned char **str,
 			result += m_hier_part;
 			return true;
 		}
+		*str = sav;
+		m_hier_part = "";
+		return false;
 	}
-	*str = sav;
-	m_hier_part = "";
 
 	if ( path_absolute(str, m_hier_part) ||
 		 path_rootless(str, m_hier_part) ||
@@ -621,8 +603,7 @@ bool CUri::relative_uri(const unsigned char **str,
 
 	if ( hier_part(str, m_relative_uri) )
 	{
-		if ( (*str)[0] == '?' ) {
-			advance(str, m_relative_uri);
+		if (  match("?", str, m_relative_uri) ) {
 			m_hasQuery = true;
 			query(str, m_relative_uri);
 		}
@@ -644,21 +625,18 @@ bool CUri::absolute_uri(const unsigned char **str,
 		return false;
 	}
 
-	if ( (*str)[0] != ':' ) {
+	if ( !match(":", str, m_absolute_uri) ) {
 		m_absolute_uri = "";
 		*str = sav;
 		return false;
 	}
 	m_hasScheme = true;
 
-	advance(str, m_absolute_uri);
-
 	// The base URI can consist of the <scheme> only:
 	// written as <scheme>: - so <hier_part> is true
 	if ( hier_part(str, m_absolute_uri) )
 	{
-		if ( (*str)[0] == '?' ) {
-			advance(str, m_absolute_uri);
+		if ( match("?", str, m_absolute_uri) ) {
 			m_hasQuery = true;
 			query(str, m_absolute_uri);
 		}
@@ -680,13 +658,13 @@ bool CUri::uri_reference(const unsigned char **str)
 	if ( !absolute_uri(str, m_uri_reference) )
 		relative_uri(str, m_uri_reference);
 
-	if ( (*str)[0] == '#' ) {
-		advance(str, m_uri_reference);
+	if ( match("#", str, m_uri_reference) ) {
 		m_hasFragment = true;
 		fragment(str, m_uri_reference);
 	}
+	
 	// Make shure that there are no more trailing characters
-	return *str[0] == 0;
+	return la(str) == 0;
 }
 
 bool CUri::parse(const char *anUri)
@@ -775,14 +753,16 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 	// Possibly inherited parts
 	if ( refHasScheme )
 	{
-		resultUriStr += noNullStr(refScheme);
+		if ( refScheme )
+			resultUriStr += refScheme;
 		resultUriStr += ":";
 	}
 
 	if ( refHasAuthority )
 	{
 		resultUriStr += "//";
-		resultUriStr += noNullStr(refAuthority);
+		if ( refAuthority )
+			resultUriStr += refAuthority;
 	}
 
 	// Path

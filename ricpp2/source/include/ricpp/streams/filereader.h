@@ -42,7 +42,7 @@ namespace RiCPP {
 	 */
 	class CFileReader : public CReader {
 		std::string m_uri;
-		std::fstream *m_file;
+		std::istream *m_file;
 	public:
 		static const char *myName();
 		static const char *myType();

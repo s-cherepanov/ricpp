@@ -27,7 +27,7 @@
 
 /** @file buffer.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Buffer for the stream classes.
+ *  @brief Headerfile of the template for a simple memory buffer.
  */
 
 #ifndef _RICPP_RICPP_RICPPERROR_H
@@ -38,18 +38,24 @@
 
 namespace RiCPP {
 
-	template<typename T=unsigned char>
+	/** @brief Template for a simple memory buffer.
+	 */
+	template<typename T_char=unsigned char>
 	class TBuffer {
 	public:
-		typedef size_t size_type;
-		typedef T contenttype;
-		typedef contenttype * iterator;
-		typedef const contenttype * const_iterator;
+		typedef size_t size_type; ///< @brief Size type for the buffer.
+		typedef T_char *iterator; ///< @brief Iterator.
+		typedef const T_char *const_iterator; ///< @brief Constant iterator.
+
 	private:
-		contenttype *m_buffer;
-		size_type m_size;
-		size_type m_reserved;
+		T_char *m_buffer; ///< @brief Pointer to the buffer.
+		size_type m_size;  ///< @brief Current size of the buffer.
+		size_type m_reserved; ///< @brief Reserved size of the buffer.
+
 	public:
+		/** @brief Construct a buffer of the given size.
+		 * @param size Size of the buffer.
+		 */
 		inline TBuffer(size_type size=0)
 		{
 			m_reserved = 0;
@@ -57,79 +63,170 @@ namespace RiCPP {
 			m_buffer = 0;
 			resize(size);
 		}
-		inline TBuffer(const TBuffer<T> &bb)
+
+		/** @brief Copy constructor.
+		 * @param bb Buffer to copy.
+		 */
+		inline TBuffer(const TBuffer<T_char> &bb)
 		{
 			m_reserved = 0;
 			m_size = 0;
 			m_buffer = 0;
 			*this = bb;
 		}
+
+		/** @brief Destructor.
+		 *
+		 * Frees the memory.
+		 */
 		inline ~TBuffer()
 		{
 			if ( m_buffer )
 				delete[] m_buffer;
 		}
+
+		/** @brief Resize the buffer.
+		 * @param newsize New buffer size.
+		 * @exception ERiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
+		 */
 		void resize(size_type newsize);
-		inline size_type size() const { return m_size; }
-		TBuffer<T> &operator=(const TBuffer<T> &bb);
+
+		/** @brief Gets the current size.
+		 * @return Current buffer size.
+		 */
+		inline size_type size() const
+		{
+			return m_size;
+		}
+
+		/** @brief Assignment.
+		 *
+		 * Assigns a buffer \a bb to this object.
+		 *
+		 * @param bb Buffer to assign.
+		 * @return Reference of this object.
+		 * @exception ERiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
+		 */
+		TBuffer<T_char> &operator=(const TBuffer<T_char> &bb);
+
 		inline void clear()
 		{
 			if ( !m_size )
 				return;
-			memset(m_buffer, 0, m_size);
+			memset(m_buffer, 0, m_size*sizeof(T_char));
 		}
-		inline iterator begin() { return m_buffer; }
-		inline iterator end() { return m_buffer ? m_buffer+m_size+1: m_buffer; }
-		inline const_iterator begin() const { return m_buffer; }
-		inline const_iterator end() const { return m_buffer ? m_buffer+m_size+1: m_buffer; }
+
+		/** @brief Gets an iterator initialized with the first element.
+		 * @return Iterator initialized with the first element.
+		 */
+		inline iterator begin()
+		{
+			return m_buffer;
+		}
+
+		/** @brief Gets an iterator pointing behind last element.
+		 * @return Iterator pointing behind last element.
+		 */
+		inline iterator end()
+		{
+			return m_buffer+m_size;
+		}
+
+		/** @brief Gets a constant iterator initialized with the first element.
+		 * @return Constant iterator initialized with the first element.
+		 */
+		inline const_iterator begin() const
+		{
+			return m_buffer;
+		}
+
+		/** @brief Gets a constant iterator pointing behind last element.
+		 * @return Constant iterator pointing behind last element.
+		 */
+		inline const_iterator end() const
+		{
+			return m_buffer+m_size;
+		}
+
+		/** @brief Gets the reference to the element at positon \a pos.
+		 * @param pos position (< size()).
+		 * @return Reference of element at the position \a pos.
+		 * @exception ERiCPPError Throws severe RIE_RANGE if \a pos >= size()
+		 */
+		T_char &operator[](size_type pos);
 	}; // TBuffer
 
 
-	template<typename T>
+	template<typename T_char>
 	inline
-	void TBuffer<T>::
-	resize(size_type newsize)
+	void
+	TBuffer<T_char>::resize(size_type newsize)
 	{
-		contenttype *tempbuffer = 0;
+		T_char *tempbuffer = 0;
 		if ( newsize > m_reserved ) {
 			try {
-				tempbuffer = new contenttype[newsize];
+				tempbuffer = new T_char[newsize];
 			} catch ( ... ) {
 			}
 			if ( !tempbuffer ) {
-				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Not enough memory for a byte buffer.");
+				throw ERiCPPError(
+					RIE_NOMEM, RIE_SEVERE,
+					__LINE__, __FILE__,
+					"Not enough memory for a byte buffer.");
 			}
-			m_reserved = newsize;
 		}
 
 		size_type size = newsize < m_size ? newsize : m_size;
 
 		if ( size && tempbuffer )
-			memcpy(tempbuffer, m_buffer, size);
+			memcpy(tempbuffer, m_buffer, size*sizeof(T_char));
 
-		if ( m_buffer && tempbuffer ) {
+		if ( m_buffer ) {
+			m_reserved = 0;
+			m_size = 0;
 			delete[] m_buffer;
+		}
+
+		if ( tempbuffer ) {
 			m_buffer = tempbuffer;
+			m_reserved = newsize;
 		}
 
 		m_size = newsize;
 	}
 
-	template <typename T>
+	template <typename T_char>
 	inline
-	TBuffer<T> &TBuffer<T>::
-	operator=(const TBuffer<T> &bb)
+	TBuffer<T_char> &
+	TBuffer<T_char>::operator=(const TBuffer<T_char> &bb)
 	{
 		if ( this == &bb )
 			return *this;
 		resize(0);
-		resize(bb.size());
+		try {
+			resize(bb.size());
+		} catch (ERiCPPError &e) {
+			throw e;
+		}
 		if ( m_size ) {
-			memcpy(m_buffer, bb.begin(), m_size);
+			memcpy(m_buffer, bb.begin(), m_size*sizeof(T_char));
 		}
 		return *this;
 	}
 
+	template <typename T_char>
+	inline
+	T_char &
+	TBuffer<T_char>::operator[](size_type pos)
+	{
+		if ( pos < m_size )
+			return m_buffer[pos];
+
+		throw ERiCPPError(
+			RIE_RANGE, RIE_SEVERE,
+			__LINE__, __FILE__,
+			"Index out of range for a byte buffer.");
+	}
 } // namespace RiCPP
 
 #endif // _RICPP_STREAMS_BUFFER_H

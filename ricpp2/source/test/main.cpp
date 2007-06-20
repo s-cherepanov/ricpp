@@ -31,6 +31,7 @@
 #include "ricpp/tools/filepath.h"
 #include "ricpp/tools/stringlist.h"
 #include "ricpp/streams/uri.h"
+#include "ricpp/streams/buffer.h"
 
 #include <iostream>
 
@@ -230,6 +231,8 @@ void testURI()
 /** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
+	TBuffer<> test(1024);
+
 	std::cout << "Hello, World!" << std::endl;
 
 	testURI();

@@ -34,6 +34,10 @@
 #include <list>
 #include <cassert>
 
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 namespace RiCPP {
 	/** @brief Class to represent an absolute or relative URI.
 	 *
@@ -53,14 +57,6 @@ namespace RiCPP {
 	 */
 	class CUri {
 	public:
-		/** @brief Constant iterator for the segment list.
-		 */
-		typedef std::list<std::string>::const_iterator segments_const_iterator;
-
-		/** @brief Type for the size of the segment list.
-		 */
-		typedef std::list<std::string>::size_type segments_size_type;
-
 		/** @brief Types of the pathes.
 		 */
 		enum EnumPathType
@@ -267,12 +263,6 @@ namespace RiCPP {
 		/** @brief List of the segments of a path component.
 		 */
 		std::list<std::string> m_segments;
-
-		/** @brief Clears all components.
-		 *
-		 * A cleared URI is a valid URI.
-		 */
-		void clearAll();
 
 		/** @brief Advances the input pointer and copies to result.
 		 *
@@ -1289,17 +1279,61 @@ namespace RiCPP {
 		 */
 		bool uri_reference(const unsigned char **str);
 
+		/** @brief Reparses URI.
+		 *
+		 * Build an URI string using the object's five components
+		 * and parses this string again.
+		 *
+		 * @return true if anURI was a vaild URI
+		 * @see parse()
+		 */
+		bool reparse();
+
 		/** @brief Adds path segment to the segment list.
 		 *
-		 * Adds a pathsegment to the segment list, handles the special meaning
+		 * Adds a path segment to the segment list, handles the special meaning
 		 * of "." (same hierarchy level) and ".." (hierarchy level above) segments.
 		 *
 		 * @param seg Segment to add
 		 * @retval segList List of segments reflecting the hierarchy levels
 		 */
-		void addSegment(const std::string &seg,
-			std::list<std::string> &segList) const;
+		static void addSegment(const std::string &seg,
+			std::list<std::string> &segList);
 
+		/** @brief Removes the segments "." and "..".
+		 *
+		 * Iterates \a fromSegList and appends a copy of the segments at 
+		 * \a segList. The "." and ".." segments are handled appropriately.
+		 *
+		 * @param fromSegList Segments to add
+		 * @retval segList Returned list of segments reflecting the hierarchy levels
+		 * @retval lastWasDot true, if the last segment was "." or ".."
+		 *         (needs special handling, an empty segment must be appended
+		 *         after the last segment list was converted)
+		 * @see segmentsToPath()
+		 */
+		static void removeDotSegments(
+			const std::list<std::string> &fromSegList,
+			std::list<std::string> &segList,
+			bool &lastWasDot);
+		
+		/** @brief Converts a list of segments to a path string.
+		 *
+		 * Adds a path segment to the segment list, handles the special meaning
+		 * of "." (same hierarchy level) and ".." (hierarchy level above) segments.
+		 *
+		 * @param isAbsolute Path has to be absolute with a '/' as leftmost character.
+		 * @param fromSegList Segments used to build the path string.
+		 * @retval resultStr The resulting path string.
+		 * @param lastWasDot A '/' is appended, if path does not end already with '/'
+		 *        becuase the original path ended with '/.' or '/..'
+		 */
+		static void segmentsToPath(
+			bool isAbsolute,
+			const std::list<std::string> &fromSegList,
+			std::string &resultStr,
+			bool lastWasDot);
+			
 	public:
 		/** @brief Constructor, parses URI.
 		 *
@@ -1325,14 +1359,33 @@ namespace RiCPP {
 		 *
 		 * @param baseUri Absolute base URI
 		 * @param relative_uri Relative URI
+		 * @param isStrict Use the strict reference resolution
 		 * @see CUri::operator=()
 		 */
-		inline CUri(const CUri &baseUri, const CUri &relative_uri)
+		inline CUri(const CUri &baseUri,
+		            const CUri &relative_uri,
+		            bool isStrict=true)
 		{
-			*this = relative_uri;
-			makeAbsolute(baseUri);
+			makeAbsolute(*this, baseUri, relative_uri, isStrict);
 		}
 
+		/** @brief Constructor, sets the five components of an URI.
+		 * @param aScheme A scheme, 0 to remove scheme
+		 * @param anAuthority A authority, 0 to remove authority (network path)
+		 * @param aPath A path
+		 * @param aQuery A query, 0 to remove query
+		 * @param aFragment A fragment, 0 to remove fragment
+		 * @see isValid()
+		 */
+		inline CUri(const char *aScheme,
+		                const char *anAuthority,
+		                const char *aPath,
+		                const char *aQuery,
+		                const char *aFragment)
+		{
+			set(aScheme, anAuthority, aPath, aQuery, aFragment);
+		}
+		
 		/** @brief Copy constructor.
 		 *
 		 * @param uri URI to assign to this instance.
@@ -1342,6 +1395,12 @@ namespace RiCPP {
 		{
 			*this = uri;
 		}
+
+		/** @brief Clears all components.
+		 *
+		 * A cleared URI is a valid URI.
+		 */
+		void clear();
 
 		/** @brief Parses URI.
 		 *
@@ -1418,59 +1477,20 @@ namespace RiCPP {
 
 		/** @brief Resolving relative references to absolute form.
 		 *
-		 * Converting a relative URI to the absolute
+		 * Resolving a relative URI reference to the absolute
 		 * form using the absolute base URI \a baseURI.
 		 *
+		 * @retval resultUri Resolved URI
 		 * @param baseUri CUri instance containig the absolute base URI
-		 * @return true, absolute form could be resolved.
+		 * @param relativeUri CUri instance containig the relative URI
+		 * @param isStrict Use the strict reference resolution
+		 * @return true, if \a resultUri is valid.
 		 * @see parse() isValid()
 		 */
-		inline bool makeAbsolute(const CUri &baseUri)
-		{
-			std::string resultUriStr;
-			if ( makeAbsolute(baseUri, resultUriStr) ) {
-				*this = resultUriStr;
-				return isValid();
-			}
-			return false;
-		}
-
-		/** @brief Resolving relative references to absolute form.
-		 *
-		 * Resolving a relative URI reference (this) to the absolute
-		 * form using the absolute base URI \a baseURI.
-		 *
-		 * @param baseUri CUri instance containig the absolute base URI
-		 * @retval resultUriStr The absolute form is returned as string representation in this variable
-		 * @return true, absolute form could be resolved.
-		 * @see parse() isValid()
-		 */
-		bool makeAbsolute(const CUri &baseUri,
-		                  std::string &resultUriStr) const;
-
-		/** @brief Resolving relative references to absolute form.
-		 *
-		 * Resolving a relative URI reference (this) to the absolute
-		 * form using the absolute base URI \a baseURI.
-		 *
-		 * @param baseUri CUri instance containig the absolute base URI
-		 * @retval resultUri The absolute form is returned in this variable
-		 * @return true, absolute form could be resolved.
-		 * @see parse() isValid()
-		 */
-		inline bool makeAbsolute(const CUri &baseUri,
-		                         CUri &resultUri)
-		{
-			if ( &resultUri == this )
-				return makeAbsolute(baseUri);
-
-			std::string resultUriStr;
-			if ( makeAbsolute(baseUri, resultUriStr) ) {
-				resultUri = resultUriStr;
-				return resultUri.isValid();
-			}
-			return false;
-		}
+		static bool makeAbsolute(CUri &resultUri,
+		                         const CUri &baseUri,
+		                         const CUri &relativeUri,
+						         bool isStrict = true);
 
 		/** @brief Tests if valid contents.
 		 *
@@ -1493,6 +1513,32 @@ namespace RiCPP {
 			return m_uri_reference;
 		}
 
+		/** @brief Sets the five components of an URI.
+		 * @param aScheme A scheme, 0 to remove scheme
+		 * @param anAuthority A authority, 0 to remove authority (network path)
+		 * @param aPath A path
+		 * @param aQuery A query, 0 to remove query
+		 * @param aFragment A fragment, 0 to remove fragment
+		 * @return true, if URI is valid.
+		 */
+		inline bool set(const char *aScheme,
+		                const char *anAuthority,
+		                const char *aPath,
+		                const char *aQuery,
+		                const char *aFragment)
+		{
+			m_hasScheme = aScheme != 0;
+			m_scheme = noNullStr(aScheme); 		
+			m_hasAuthority = anAuthority != 0;
+			m_authority = noNullStr(anAuthority); 		
+			m_path = noNullStr(aPath); 		
+			m_hasQuery = aQuery != 0;
+			m_query = noNullStr(aQuery); 		
+			m_hasFragment = aFragment != 0;
+			m_fragment = noNullStr(aFragment); 		
+			return reparse();
+		}
+
 		/** @brief Tests, if URI has defined a scheme component (is an absolute URI).
 		 * @return true, URI has a scheme component.
 		 */
@@ -1509,65 +1555,16 @@ namespace RiCPP {
 			return m_scheme;
 		}
 
-		/** @brief Gets the hierarchy part.
-		 * @return The hierarchy part.
-		 */
-		inline const std::string &getHierPart() const
-		{
-			return m_hier_part;
-		}
-
-		/** @brief Gets the type of the path component of the URI.
-		 * @return Type of the path component of the URI.
-		 * @see path()
-		 */
-		inline CUri::EnumPathType pathType() const
-		{
-			return m_pathType;
-		}
-
-		/** @brief Gets the path component.
-		 * 
-		 * The path component is either an absolute path, relative path or
-		 * the opaque part.
+		/** @brief Sets the scheme component.
 		 *
-		 * @return The path component.
+		 * @param aScheme A scheme, 0 to remove scheme
+		 * @return true, if URI is valid.
 		 */
-		inline const std::string &getPath() const
+		inline bool setScheme(const char *aScheme)
 		{
-			return m_path;
-		}
-
-		/** @brief Tests, if URI has defined a query component.
-		 * @return true, if path component was relative.
-		 */
-		inline bool hasQuery() const
-		{
-			return m_hasQuery;
-		}
-
-		/** @brief Gets the query component.
-		 * @return Query component.
-		 */
-		inline const std::string &getQuery() const
-		{
-			return m_query;
-		}
-
-		/** @brief Tests, if URI has defined a fragment component.
-		 * @return true, if fragment component was relative.
-		 */
-		inline bool hasFragment() const
-		{
-			return m_hasFragment;
-		}
-
-		/** @brief Gets the fragment component.
-		 * @return Fragment component.
-		 */
-		inline const std::string &getFragment() const
-		{
-			return m_fragment;
+			m_hasScheme = aScheme != 0;
+			m_scheme = noNullStr(aScheme); 		
+			return reparse();
 		}
 
 		/** @brief Tests, if URI has defined a naming authority of a network path.
@@ -1586,6 +1583,111 @@ namespace RiCPP {
 			return m_authority;
 		}
 
+		/** @brief Sets the authority component.
+		 *
+		 * Set Authority before setting the path (because path must be
+		 * absolute and is maybe converted) 
+		 *
+		 * @param anAuthority A authority, 0 to remove authority (network path)
+		 * @return true, if URI is valid.
+		 */
+		inline bool setAuthority(const char *anAuthority)
+		{
+			m_hasAuthority = anAuthority != 0;
+			m_authority = noNullStr(anAuthority); 		
+			return reparse();
+		}
+
+		/** @brief Gets the path component.
+		 * 
+		 * The path component is either an absolute path, relative path or
+		 * the opaque part.
+		 *
+		 * @return The path component.
+		 */
+		inline const std::string &getPath() const
+		{
+			return m_path;
+		}
+
+		/** @brief Sets the path component.
+		 *
+		 * Set Authority before setting the path (because path must be
+		 * absolute and is maybe converted) 
+		 *
+		 * @param aPath A path
+		 * @return true, if URI is valid.
+		 */
+		inline bool setPath(const char *aPath)
+		{
+			m_path = noNullStr(aPath); 		
+			return reparse();
+		}
+
+		/** @brief Tests, if URI has defined a query component.
+		 * @return true, if path component was relative.
+		 */
+		inline bool hasQuery() const
+		{
+			return m_hasQuery;
+		}
+
+		/** @brief Gets the query component.
+		 * @return Query component.
+		 */
+		inline const std::string &getQuery() const
+		{
+			return m_query;
+		}
+
+		/** @brief Sets the query component.
+		 *
+		 * @param aQuery A query, 0 to remove query
+		 * @return true, if URI is valid.
+		 */
+		inline bool setQuery(const char *aQuery)
+		{
+			m_hasQuery = aQuery != 0;
+			m_query = noNullStr(aQuery); 		
+			return reparse();
+		}
+
+		/** @brief Tests, if URI has defined a fragment component.
+		 * @return true, if fragment component was relative.
+		 */
+		inline bool hasFragment() const
+		{
+			return m_hasFragment;
+		}
+
+		/** @brief Gets the fragment component.
+		 * @return Fragment component.
+		 */
+		inline const std::string &getFragment() const
+		{
+			return m_fragment;
+		}
+
+		/** @brief Sets the fragment component.
+		 *
+		 * @param aFragment A fragment, 0 to remove fragment
+		 * @return true, if URI is valid.
+		 */
+		inline bool setFragment(const char *aFragment)
+		{
+			m_hasFragment = aFragment != 0;
+			m_fragment = noNullStr(aFragment); 		
+			return reparse();
+		}
+
+		/** @brief Gets the hierarchy part.
+		 * @return The hierarchy part.
+		 */
+		inline const std::string &getHierPart() const
+		{
+			return m_hier_part;
+		}
+
 		/** @brief Tests, if URI has defined the userinfo of an authority.
 		 * @return true, if userinfo of an authority is defined.
 		 */
@@ -1600,6 +1702,24 @@ namespace RiCPP {
 		inline const std::string &getUserinfo() const
 		{
 			return m_userinfo;
+		}
+
+		/** @brief Test if the leftmots character of a path is '/'
+		 * @return true, if path is absolute
+		 * @see path(), pathtype()
+		 */
+		inline bool isAbsolutePath() const
+		{
+			return m_path.empty() ? false : m_path[0] == '/';
+		}
+
+		/** @brief Gets the type of the path component of the URI.
+		 * @return Type of the path component of the URI.
+		 * @see path()
+		 */
+		inline CUri::EnumPathType pathType() const
+		{
+			return m_pathType;
 		}
 
 		/** @brief Gets the type of the host component of the URI.
@@ -1686,41 +1806,18 @@ namespace RiCPP {
 			return m_port;
 		}
 
-		/** @brief Gets the first of the path segments.
+		/** @brief Gets the path segments as list.
 		 *
-		 * Gets the iterator to the first of the path segments (not including the
-		 * relative segment). If the path endend with a '/', the last segment
-		 * has an empty name.
+		 * If the path endend with a '/', the last segment
+		 * has an empty name. You may need to
+		 * call isAbsolute() additionally.
 		 *
-		 * @return The constant iterator for the path segmnents
-		 * @see getRelSegments() getPathSegments() segmentsEnd()
+		 * @return Constant list of path segments.
+		 * @see isAbsolute()
 		 */
-		inline segments_const_iterator segmentsBegin() const
+		inline const std::list<std::string> getSegments() const
 		{
-			return m_segments.begin();
-		}
-
-		/** @brief Gets the end of the path segments.
-		 *
-		 * Constant iterator end for path segments.
-		 *
-		 * @return Constant iterator end for path segments.
-		 * @see segmentsBegin()
-		 */
-		inline segments_const_iterator segmentsEnd() const
-		{
-			return m_segments.end();
-		}
-
-		/** @brief Gets the numer of the path segments
-		 *
-		 * The relative segment of a relative path is not counted.
-		 *
-		 * @return Number of path segments.
-		 */
-		inline segments_size_type segmentsSize() const
-		{
-			return m_segments.size();
+			return m_segments;
 		}
 
 		/** @brief Tests, if URI represents the "current document".

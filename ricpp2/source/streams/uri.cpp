@@ -28,10 +28,11 @@
  */
 
 #include "ricpp/streams/uri.h"
+#include "ricpp/tools/platform.h"
 
 using namespace RiCPP;
 
-void CUri::clearAll()
+void CUri::clear()
 {
 	m_valid = true;
 	m_pathType = pathTypeEmpty;
@@ -533,7 +534,6 @@ void CUri::authority(const unsigned char **str,
 		port(str, m_authority);
 	}
 
-	m_hasAuthority = true;
 	result += m_authority;
 }
 
@@ -571,6 +571,7 @@ bool CUri::hier_part(const unsigned char **str,
 	m_hier_part = "";
 
 	if ( match("//", str, m_hier_part) ) {
+		m_hasAuthority = true;
 		authority(str, m_hier_part);
 		if ( path_abempty(str, m_hier_part) ) {
 			result += m_hier_part;
@@ -669,7 +670,7 @@ bool CUri::uri_reference(const unsigned char **str)
 
 bool CUri::parse(const char *anUri)
 {
-	clearAll();
+	clear();
 	if ( !anUri ) {
 		return m_valid;
 	}
@@ -679,6 +680,39 @@ bool CUri::parse(const char *anUri)
 	return m_valid;
 }
 
+bool CUri::reparse()
+{
+	std::string uriStr;
+	
+	if ( hasScheme() ) {
+		uriStr += getScheme();
+		uriStr += ":";
+	} 
+
+	if ( hasAuthority() ) {
+		uriStr += "//";
+		uriStr += getAuthority();
+		if ( !getPath().empty() && getPath()[0] != '/' ) {
+			uriStr += "/";
+		} 
+	} 
+
+	uriStr += getPath();
+	
+	if ( hasQuery() ) {
+		uriStr += "?";
+		uriStr += getQuery();
+	}
+
+	if ( hasFragment() ) {
+		uriStr += "#";
+		uriStr += getFragment();
+	}
+	
+	return parse(uriStr);
+}
+
+/*
 void CUri::addSegment(const std::string &seg,
 					  std::list<std::string> &segList) const
 {
@@ -702,12 +736,19 @@ void CUri::addSegment(const std::string &seg,
 }
 
 bool CUri::makeAbsolute(const CUri &baseUri,
-                        std::string &resultUriStr) const
+                        std::string &resultUriStr,
+                        bool isStrict) const
 {
 	resultUriStr = "";
+	bool refHasScheme = hasScheme();
+	if ( !isStrict &&
+	     strcasecmp(getScheme().c_str(), baseUri.getScheme().c_str()) == 0 )
+	{
+		refHasScheme = false;
+	}
 
 	if ( getPath().empty() &&
-		!hasScheme() &&
+		!refHasScheme &&
 		!hasQuery() &&
 		!hasAuthority() )
 	{
@@ -735,7 +776,6 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 	// Fragment is not inherited
 
 	// Inherit the scheme
-	bool refHasScheme = hasScheme();
 	const char *refScheme = getScheme().c_str();
 	if ( !refHasScheme ) {
 		refScheme = baseUri.getScheme().c_str();
@@ -832,4 +872,166 @@ bool CUri::makeAbsolute(const CUri &baseUri,
 	}
 
 	return true;
+}
+*/
+
+void CUri::addSegment(const std::string &seg,
+					  std::list<std::string> &segList)
+{
+	if ( seg == "." ) {
+		// Ignore complete path segments "."
+		return;
+	}
+
+	if ( seg == ".." ) {
+		// One level up
+		if ( !segList.empty() ) {
+			segList.pop_back();
+			return;
+		}
+		return;		
+	}
+
+	segList.push_back(seg);
+}
+
+void CUri::removeDotSegments(const std::list<std::string> &fromSegList,
+					         std::list<std::string> &segList,
+							 bool &lastWasDot )
+{
+	lastWasDot = false;
+	for (
+		std::list<std::string>::const_iterator si = fromSegList.begin();
+		si != fromSegList.end();
+		si++ )
+	{
+		// "." and ".." have special meaning
+		addSegment(*si, segList);
+		lastWasDot = (*si) == "." ||
+					 (*si) == "..";
+	}
+}
+
+void CUri::segmentsToPath(bool isAbsolute,
+						  const std::list<std::string> &fromSegList,
+                          std::string &resultStr,
+						  bool lastWasDot )
+{
+	resultStr = "";
+	
+	for (
+		std::list<std::string>::const_iterator si = fromSegList.begin();
+		si != fromSegList.end();
+		si++ )
+	{
+		resultStr += "/";
+		resultStr += (*si);
+	}
+	if ( (resultStr.empty() && isAbsolute) ||
+	     (lastWasDot && resultStr[resultStr.size()-1] != '/') )
+	{
+		resultStr += "/";
+	}
+}
+
+bool CUri::makeAbsolute(CUri &resultUri,
+						const CUri &baseUri,
+                        const CUri &relativeUri,
+                        bool isStrict)
+{
+	if ( &relativeUri == &resultUri || &baseUri == &resultUri ) {
+		CUri temp;
+		bool ret = makeAbsolute(temp, baseUri, relativeUri, isStrict);
+		resultUri = temp;
+		return ret;
+	}
+
+	resultUri.clear();
+	
+	bool refHasScheme = relativeUri.hasScheme();
+	
+	if ( !isStrict &&
+	     strcasecmp(relativeUri.getScheme().c_str(), baseUri.getScheme().c_str()) == 0 )
+	{
+		refHasScheme = false;
+	}
+
+	// Path
+	std::list<std::string> pathList;
+
+	resultUri.m_hasFragment = relativeUri.hasFragment();		
+	resultUri.m_fragment = relativeUri.getFragment();		
+
+	bool lastWasDot;
+
+	if ( refHasScheme ) {
+	
+		resultUri.m_hasScheme = true;
+		resultUri.m_scheme = relativeUri.getScheme();
+		resultUri.m_hasAuthority = relativeUri.hasAuthority();		
+		removeDotSegments(relativeUri.getSegments(), pathList, lastWasDot);
+		segmentsToPath(relativeUri.isAbsolutePath(), pathList, resultUri.m_path, lastWasDot);
+		resultUri.m_authority = relativeUri.getAuthority();		
+		resultUri.m_hasQuery = relativeUri.hasQuery();		
+		resultUri.m_query = relativeUri.getQuery();
+		
+		
+	} else {
+	
+		resultUri.m_hasScheme = baseUri.hasScheme();		
+		resultUri.m_scheme = baseUri.getScheme();
+
+		if ( relativeUri.hasAuthority() ) {
+		
+			resultUri.m_hasAuthority = relativeUri.hasAuthority();		
+			resultUri.m_authority = relativeUri.getAuthority();		
+			removeDotSegments(relativeUri.getSegments(), pathList, lastWasDot);
+			segmentsToPath(relativeUri.isAbsolutePath(),
+			               pathList, resultUri.m_path, lastWasDot);
+			resultUri.m_hasQuery = relativeUri.hasQuery();		
+			resultUri.m_query = relativeUri.getQuery();
+			
+		} else {
+		
+			resultUri.m_hasAuthority = baseUri.hasAuthority();		
+			resultUri.m_authority = baseUri.getAuthority();		
+		
+			if ( relativeUri.getPath().empty() ) {
+			
+				if ( relativeUri.hasQuery() ) {
+					resultUri.m_hasQuery =  relativeUri.hasQuery();
+					resultUri.m_query = relativeUri.getQuery();
+				} else {
+					resultUri.m_hasQuery =  baseUri.hasQuery();
+					resultUri.m_query = baseUri.getQuery();
+				}
+				// m_path = baseUri.path() (???)
+				removeDotSegments(baseUri.getSegments(), pathList, lastWasDot);
+				segmentsToPath(baseUri.isAbsolutePath(),
+				               pathList, resultUri.m_path, lastWasDot);
+			
+			} else {
+			
+				resultUri.m_hasQuery =  relativeUri.hasQuery();
+				resultUri.m_query = relativeUri.getQuery();
+				
+				if ( relativeUri.isAbsolutePath() ) {
+					removeDotSegments(relativeUri.getSegments(), pathList, lastWasDot);
+					segmentsToPath(relativeUri.isAbsolutePath(),
+					               pathList, resultUri.m_path, lastWasDot);
+				} else {
+					removeDotSegments(baseUri.getSegments(), pathList, lastWasDot);
+					if ( !(lastWasDot || pathList.empty()) ) {
+						pathList.pop_back();
+					}
+					removeDotSegments(relativeUri.getSegments(), pathList, lastWasDot);
+					segmentsToPath(baseUri.isAbsolutePath(),
+								   pathList, resultUri.m_path, lastWasDot);
+				}
+				
+			}						
+		}
+	}
+	
+	return resultUri.reparse();
 }

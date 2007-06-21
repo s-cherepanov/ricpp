@@ -43,14 +43,14 @@ using namespace RiCPP;
  *
  * @param baseUri The base URI
  * @param refUriStrs The reference URIs as char pointer array
+ * @param isStrict Strict syntax for relative URI (no scheme)
  */
-void testURI(const CUri &baseUri, const char **refUriStrs)
+void testURI(const CUri &baseUri, const char **refUriStrs, bool isStrict = true)
 {
 	if ( !refUriStrs )
 		return;
 
 	CUri refUri, absUri;
-	std::string absoluteUriStr;
 
 	for ( const char **strPtr = refUriStrs; *strPtr; ++strPtr ) {
 		const char *str = strPtr[0];
@@ -58,8 +58,7 @@ void testURI(const CUri &baseUri, const char **refUriStrs)
 		bool valid_absUri = false;
 
 		if ( refUri.isValid() ) {
-			valid_absUri = refUri.makeAbsolute(baseUri, absoluteUriStr);
-			absUri = absoluteUriStr;
+			valid_absUri = CUri::makeAbsolute(absUri, baseUri, refUri, isStrict);
 			valid_absUri = absUri.isValid();
 			if ( refUri.toString().empty() )
 				std::cout << "<>";
@@ -92,34 +91,34 @@ void testURI()
 	CUri relUri3("/rootdir");
 	CUri relUri4;
 
-	std::string refUriStr;
-	if ( relUri.makeAbsolute(testUri, refUriStr) )
-		std::cout << refUriStr << std::endl;
+	CUri refUri;
+	if ( CUri::makeAbsolute(refUri, testUri, relUri) )
+		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri2, refUriStr) )
-		std::cout << refUriStr << std::endl;
+	if ( CUri::makeAbsolute(refUri, testUri2, relUri) )
+		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri3, refUriStr) )
-		std::cout << refUriStr << std::endl;
+	if ( CUri::makeAbsolute(refUri, testUri3, relUri) )
+		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri.makeAbsolute(testUri4, refUriStr) )
-		std::cout << refUriStr << std::endl;
+	if ( CUri::makeAbsolute(refUri, testUri4, relUri) )
+		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri2.makeAbsolute(testUri4, refUriStr) )
-		std::cout << refUriStr << std::endl;
+	if ( CUri::makeAbsolute(refUri, testUri4, relUri2) )
+		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( relUri3.makeAbsolute(testUri4, refUriStr) )
-		std::cout << refUriStr << std::endl;
+	if ( CUri::makeAbsolute(refUri, testUri4, relUri3) )
+		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
@@ -156,6 +155,7 @@ void testURI()
 		";x",
 		"g;x",
 		"g;x?y#s",
+		"",
 		".",
 		"./",
 		"..",
@@ -171,8 +171,6 @@ void testURI()
 	std::cout << "Abnormal Examples" << std::endl;
 
 	const char *abnormalExamples[] = {
-		"",
-
 		"../../../g",
 		"../../../../g",
 
@@ -199,6 +197,12 @@ void testURI()
 		0
 	};
 	testURI(baseUri, abnormalExamples);
+
+	const char *abnormalExamples2[] = {
+		"http:g",
+		0
+	};
+	testURI(baseUri, abnormalExamples2, false);
 
 	std::cout << "IPv6 Examples" << std::endl;
 

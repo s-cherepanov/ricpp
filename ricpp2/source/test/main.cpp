@@ -33,9 +33,376 @@
 #include "ricpp/streams/uri.h"
 #include "ricpp/streams/buffer.h"
 
+#include "zlib.h"
+
 #include <iostream>
+#include <fstream>
+#include <streambuf>
 
 using namespace RiCPP;
+
+class CBackBufferRoot : public std::basic_streambuf<char> {
+protected:
+	virtual int_type overflow (int_type c) {
+		return  0;
+	}
+	virtual int_type underflow () {
+		return  0;
+	}
+
+public:
+	inline virtual ~CBackBufferRoot() {}
+	virtual void close() { }
+	virtual bool open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary) { return false; }
+	inline virtual bool isOpen() const { return false; }
+};
+
+class CFileBackBuffer : public CBackBufferRoot {
+	std::fstream m_stream;
+	TemplBuffer<char> m_backBuffer;
+protected:
+	virtual int_type overflow (int_type c) {
+		return  0;
+	}
+	virtual int_type underflow () {
+		return  0;
+	}
+public:
+	inline CFileBackBuffer()
+		: m_backBuffer(8192)
+	{
+	}
+	inline virtual ~CFileBackBuffer()
+	{
+		close();
+	}
+	virtual void close()
+	{
+		if ( m_stream.is_open() )
+			m_stream.close();
+	}
+	inline virtual bool open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	{
+		close();
+		std::string filename(absUri.getHierPart());
+		CFilepathConverter::convertToNative(filename);
+		m_stream.open(filename.c_str(), mode);
+		return m_stream.is_open();
+	}
+	inline virtual bool isOpen() const
+	{
+		return m_stream.is_open();
+	}
+};
+
+class CBackBufferFactory : IPlugin {
+	CStringList m_schemes;
+	TemplObjPtrRegistry<CBackBufferRoot *, CBackBufferRoot *> m_myBuffers;
+
+protected:
+
+	void addScheme(const char *scheme)
+	{
+		std::string str_scheme(noNullStr(scheme));
+		if ( str_scheme.empty() )
+			return;
+		std::for_each(str_scheme.begin(), str_scheme.end(), std::ptr_fun(toupper));
+		m_schemes.push(str_scheme, false, false, false);
+	}
+
+	bool registerObj(CBackBufferRoot *b) {
+		if ( !b )
+			return false;
+		return m_myBuffers.registerObj(b, b);
+	}
+
+	bool unRegisterObj(CBackBufferRoot *b) {
+		if ( !b )
+			return false;
+		return m_myBuffers.unregisterObj(b);
+	}
+
+public:
+	/** @brief Const iterator for the protocol identifiers.
+	 */
+	typedef CStringList::const_iterator const_iterator;
+
+	/** @brief Size type for the number of stored protocol identifiers.
+	 */
+	typedef CStringList::size_type size_type;
+
+	static const char *myName();
+	static const char *myType();
+	static unsigned long myMajorVersion();
+	static unsigned long myMinorVersion();
+	static unsigned long myRevision();
+
+	inline CBackBufferFactory::CBackBufferFactory() : m_myBuffers(true) {}
+	inline virtual ~CBackBufferFactory() {}
+
+	inline virtual const char *name() const { return myName(); }
+	inline virtual const char *type() const { return myType(); }
+	inline virtual unsigned long majorVersion() const {return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() const {return myMinorVersion(); }
+	inline virtual unsigned long revision() const { return myRevision(); }
+
+	inline virtual void startup() {}
+	inline virtual void shutdown() {}
+
+	inline virtual bool acceptsScheme(const char *scheme) const
+	{
+		std::string str_scheme(noNullStr(scheme));
+		std::for_each(str_scheme.begin(), str_scheme.end(), std::ptr_fun(asciiToUpper));
+		return m_schemes.isMember(str_scheme.c_str());
+	}
+
+	inline virtual const_iterator begin() const { return m_schemes.begin(); }
+	inline virtual const_iterator end() const { return m_schemes.end(); }
+	inline virtual size_type size() const { return m_schemes.size(); }
+
+	inline virtual CBackBufferRoot *open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	{
+		return 0;
+	}
+	inline virtual bool close(CBackBufferRoot *bbr) {
+		bool rval = false;
+		if ( bbr ) {
+			bbr->close();
+			return unRegisterObj(bbr);
+		}
+		return rval;
+	}
+};	
+
+const char *CBackBufferFactory::myType() { return "backbufferfactory"; }
+const char *CBackBufferFactory::myName() { return "backbufferfactory"; }
+unsigned long CBackBufferFactory::myMajorVersion() { return 1; }
+unsigned long CBackBufferFactory::myMinorVersion() { return 1; }
+unsigned long CBackBufferFactory::myRevision() { return 1; }
+
+class CFileBackBufferFactory : public CBackBufferFactory {
+public:
+	static const char *myType();
+	static const char *myName();
+	static unsigned long myMajorVersion();
+	static unsigned long myMinorVersion();
+	static unsigned long myRevision();
+
+	inline CFileBackBufferFactory::CFileBackBufferFactory() { addScheme("FILE"); }
+	inline virtual ~CFileBackBufferFactory() {}
+
+	inline virtual const char *type() const { return myType(); }
+	inline virtual const char *name() const { return myName(); }
+	inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
+	inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
+	inline virtual unsigned long revision() const { return myRevision(); }
+
+	inline virtual void startup() {}
+	inline virtual void shutdown() {}
+
+	inline virtual CBackBufferRoot *open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	{
+		CFileBackBuffer *buf;
+		buf = new CFileBackBuffer;
+		if ( buf ) {
+			if ( !buf->open(absUri, mode) ) {
+				delete buf;
+				return 0;
+			}
+		}
+		registerObj(buf);
+		return buf;
+	}
+};	
+
+const char *CFileBackBufferFactory::myType() { return CBackBufferFactory::myType(); }
+const char *CFileBackBufferFactory::myName() { return "file_backbuffer"; }
+unsigned long CFileBackBufferFactory::myMajorVersion() { return CBackBufferFactory::myMajorVersion(); }
+unsigned long CFileBackBufferFactory::myMinorVersion() { return 1; }
+unsigned long CFileBackBufferFactory::myRevision() { return 1; }
+
+class CBackBufferRegistry {
+	TemplPluginHandler<CBackBufferFactory> m_backBufferPluginHandler;
+	TemplPluginFactory<CFileBackBufferFactory> m_fileBuffer;
+	inline void init() {
+		if ( !m_backBufferPluginHandler.isRegistered("filebuffer") ) {
+			m_backBufferPluginHandler.registerFactory(
+				"file.buffer",
+				(TemplPluginFactory<CBackBufferFactory> *)&m_fileBuffer );
+			std::string str;
+			CEnv::find(str, CEnv::progDirName());
+			try {
+				m_backBufferPluginHandler.registerFromDirectory(0, ".buffer");
+			} catch ( ... ) {
+				throw;
+			}
+		}
+	}
+
+	inline TemplPluginHandler<CBackBufferFactory> &getHandler()
+	{
+		return m_backBufferPluginHandler;
+	}
+
+public:
+	inline CBackBufferRegistry() {init();}
+	inline ~CBackBufferRegistry() {}
+	inline CBackBufferFactory *getBufferFactory(const char *scheme)
+	{
+		TemplPluginHandler<CBackBufferFactory>::const_iterator i;
+		for ( i = m_backBufferPluginHandler.begin(); i != m_backBufferPluginHandler.end(); i++ ) {
+			CBackBufferFactory *f = (*i).second->lastPlugin();
+			if ( f && f->acceptsScheme(scheme) )
+				return f;
+		}
+		return 0;
+	}
+};
+
+class CByteStreambuf : public std::basic_streambuf<char> {
+	std::list<TemplBuffer<char> > m_frontBufferList;
+	CBackBufferRoot *m_backBuffer;
+	CBackBufferFactory *m_factory;
+
+	CUri m_baseUri;
+	CUri m_resolutionUri;
+	bool m_cache;
+	CBackBufferRegistry *m_bufferReg;
+
+	z_stream m_strm;
+	bool m_compress;
+
+	void init()
+	{
+	}
+
+protected:
+	virtual int_type overflow (int_type c) {
+		return  0;
+	}
+	virtual int_type underflow () {
+		return  0;
+	}
+	virtual void setBaseCwd() {
+		CFilepath p;
+		std::string path(p.filepath());
+		path += CFilepathConverter::internalPathSeperator();
+		m_baseUri.set("file", "", path.c_str(), 0, 0);
+	}
+
+public:
+	inline CByteStreambuf(CBackBufferRegistry &bufferReg) :
+		m_backBuffer(0),
+		m_factory(0),
+		m_cache(false),
+		m_compress(true),
+		m_bufferReg(&bufferReg)
+	{
+		init();
+	}
+
+	inline CByteStreambuf(CByteStreambuf &)
+	{
+	}
+
+	inline virtual ~CByteStreambuf() throw()
+	{
+		close();
+	}
+
+	inline virtual bool setBase(const CUri &base)
+	{
+		if ( base.isValid() ) {
+			m_baseUri = base;
+		} else {
+			return true;
+		}
+		return m_baseUri.isValid();
+	}
+
+	inline virtual bool open(const CUri &refUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	{
+		if ( m_factory && m_backBuffer ) {
+			m_factory->close(m_backBuffer);
+			m_backBuffer = 0;
+			m_factory = 0;
+		}
+
+		if ( m_baseUri.toString().empty() ) {
+			setBaseCwd();
+		}
+
+		if ( !CUri::makeAbsolute(m_resolutionUri, m_baseUri, refUri) )
+		{
+			return false;
+		}
+
+		m_factory = m_bufferReg->getBufferFactory(m_resolutionUri.getScheme().c_str());
+		if ( m_factory ) {
+			m_backBuffer = m_factory->open(m_resolutionUri, mode);
+			if ( !m_backBuffer )
+				m_factory = 0;
+		}
+		return m_backBuffer != 0;
+	}
+
+	inline virtual bool close()
+	{
+		if ( m_factory && m_backBuffer ) {
+			bool rval = m_factory->close(m_backBuffer);
+			m_backBuffer = 0;
+			m_factory = 0;
+			return rval;
+		}
+		return false;
+	}
+
+	inline virtual void enableCache()
+	{
+		m_cache = true;
+	}
+
+	inline virtual void disableCache()
+	{
+		m_cache = false;
+	}
+
+	inline virtual bool cacheEnabled() const
+	{
+		return m_cache;
+	}
+
+	inline virtual bool rewind() const
+	{
+		if ( m_cache ) {
+			// rewind on my own
+		} else {
+			// let the backbuffer rewind
+		}
+		return false;
+	}
+};
+
+void testStream(CBackBufferRegistry &factory)
+{
+	CByteStreambuf bi(factory);
+	std::istream myistream(&bi);
+
+	bi.open("ReadMe.txt", std::ios_base::in|std::ios_base::binary);
+	bi.close();
+
+	CByteStreambuf bo(factory);
+	std::string str;
+	CEnv::find(str, CEnv::tmpName());
+	str += CFilepathConverter::nativePathSeperator();
+	CFilepathConverter::convertToInternal(str);
+
+	CUri base("file", "", str.c_str(), 0, 0);
+	bo.setBase(base);
+	std::ostream myostream(&bo);
+	bo.open("ReadMe2.txt", std::ios_base::out|std::ios_base::binary);
+	bo.close();
+}
 
 /** @brief Test a base URI with reference URI strings.
  *
@@ -235,11 +602,13 @@ void testURI()
 /** @brief Interface test program
  */
 int main (int argc, char * const argv[]) {
-	TBuffer<> test(1024);
-
 	std::cout << "Hello, World!" << std::endl;
 
+
+	CBackBufferRegistry globalFactory;
+	TemplBuffer<> test(1024);
 	testURI();
+	testStream(globalFactory);
 
 	CRiCPPBridge ri;
 
@@ -332,7 +701,8 @@ int main (int argc, char * const argv[]) {
 	ri.option("searchpath", "renderer", "&:$PATH", RI_NULL);
 	ri.begin("ribwriter");
 	ri.end();
-    std::cout << "Good bye, World!" << std::endl;
+
+	std::cout << "Good bye, World!" << std::endl;
 
     return 0;
 }

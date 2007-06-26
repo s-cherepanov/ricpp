@@ -128,10 +128,10 @@ public:
 	 * in the case that the state cannot be fully initialized.
 	 *
 	 *  @param aModeStack A reference to a valid mode stack
-	 *  @exception ERiCPPError if the token cannot be created (out of memory while filling map).
+	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory while filling map).
 	 */
 	inline CRenderState(CModeStack &aModeStack)
-	// throw(ERiCPPError)
+	// throw(ExceptRiCPPError)
 	{
 		m_modeStack = &aModeStack;
 		m_frameNumber = 0;
@@ -224,7 +224,7 @@ public:
 	/** @brief Searches for a token and creates one if token name is not found
 	 *  @param name A pointer to a token name
 	 *  @return Unique RtToken
-	 *  @exception ERiCPPError if the token cannot be created (out of memory).
+	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory).
 	 */
 	inline RtToken tokFindCreate(const char *name)
 	// throw(ERendererException)

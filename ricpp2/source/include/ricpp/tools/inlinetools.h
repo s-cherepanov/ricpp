@@ -29,7 +29,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Frequent used inline tools
  */
-#include <string.h>
+#include <cstring>
 
 namespace RiCPP {
 

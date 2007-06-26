@@ -46,7 +46,7 @@ bool CFileReader::open(const char *an_uri)
 	return false;
 }
 
-TBuffer<>::size_type CFileReader::fillBuffer(TBuffer<> &buffer)
+TemplBuffer<>::size_type CFileReader::fillBuffer(TemplBuffer<> &buffer)
 {
 	return 0;
 }

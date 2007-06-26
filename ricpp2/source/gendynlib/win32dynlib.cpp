@@ -29,7 +29,7 @@
 
 #include "ricpp/gendynlib/win32dynlib.h"
 #include "ricpp/tools/filepath.h"
-#include <stdio.h>
+#include <cstdio>
 
 using namespace RiCPP;
 
@@ -94,14 +94,15 @@ const char *CWin32DynLib::findLib() {
 		return m_libpath.c_str();
 
 	// ToDo search Lib
-	std::string dllname = libname();
+	std::string dllname(CFilepathConverter::nativeDynlibPrefix());
+	dllname += libname();
 	if ( m_version >= 0 ) {
 		char buf[64] = { 0 };
 		sprintf_s(buf, sizeof(buf), ".%ld", m_version);
 		buf[sizeof(buf)-1] = 0;
 		dllname += buf;
 	}
-	dllname += ".dll";
+	dllname += CFilepathConverter::nativeDynlibSuffix();
 
 	std::string strlibpath("");
 	if ( !m_searchpath.empty() ) {

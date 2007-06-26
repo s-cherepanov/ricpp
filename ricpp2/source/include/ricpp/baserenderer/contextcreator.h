@@ -71,7 +71,7 @@ class CContextCreator : IPlugin {
 
 	/** @brief Error handler used by CContextCreator, it is returned by the virtual errHandler().
 	 *
-	 * This error handler throws an ERiCPPError exception. The exception is
+	 * This error handler throws an ExceptRiCPPError exception. The exception is
 	 * catched by the front end and bridged to the RenderMan error handler.
 	 * Member shall be never used directly, so it can be changed by an overwritten ricppErrHandler()
 	 * at a child class.

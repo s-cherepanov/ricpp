@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/tools/filepath.h"
+
 #include <windows.h>
 #include <direct.h>
 
@@ -40,6 +41,14 @@ char CFilepathConverter::nativePathSeperator() { return '\\'; }
 /** @brief Different pathes are seperated by ':' like in %PATH%
  */
 char CFilepathConverter::nativePathlistSeperator() { return ';'; }
+
+/** @brief Dynamic libraries have no specific prefix in win32 systems
+ */
+const char *CFilepathConverter::nativeDynlibPrefix() { return ""; }
+
+/** @brief Dynamic libraries have the suffix .dll in win32 systems
+ */
+const char *CFilepathConverter::nativeDynlibSuffix() { return ".dll"; }
 
 /** @brief path conversion is done by replacing all '\' by '/'.
  */
@@ -64,6 +73,10 @@ std::string &CFilepathConverter::convertToNative(std::string &var)
 			(*i) = '\\';
 	}
 
+	if ( var.length() > 4 ) {
+		if ( var[0] == '\\' && var[1] == '\\' && var[2] == '\\' && var[4] == ':' )
+			var = var.substr(3);
+	}
 	return var;
 }
 
@@ -78,6 +91,7 @@ void CFilepath::convertToNative()
 			pathbuf[sizeof(pathbuf)-1] = 0;
 			m_filepath = pathbuf;
 		}
+		CFilepathConverter::convertToInternal(m_filepath);
 	}
 
 	m_nativepath = m_filepath;
@@ -96,4 +110,49 @@ void CFilepath::convertToNative()
 bool CFilepath::isAbsolute() const
 {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '\\') || (m_nativepath.size() > 1 && m_nativepath[1] == ':');
+}
+
+bool CDirectory::readDirectory(const char *pattern) {
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind;
+
+	m_dirList.clear();
+	std::string direntry(m_directory.fullpath());
+
+	if ( !(pattern && *pattern) )
+		pattern = "*";
+
+	direntry += "\\";
+	direntry += pattern;
+
+	hFind = FindFirstFileA(direntry.c_str(), &FindFileData);
+	if (hFind == INVALID_HANDLE_VALUE) {
+		DWORD dwError = GetLastError();
+		if ( dwError != ERROR_NO_MORE_FILES && dwError != ERROR_FILE_NOT_FOUND ) {
+			// printf ("FindNextFile error. Error is %u\n", GetLastError());
+			return false;
+		}
+		return true;
+	} 
+
+	direntry = FindFileData.cFileName;
+	if ( direntry != "." && direntry != ".." ) {
+		m_dirList.push_back(CFilepath(direntry));
+	}
+
+	while ( FindNextFileA(hFind, &FindFileData) != 0 ) {
+		direntry = FindFileData.cFileName;
+		if ( direntry != "." && direntry != ".." ) {
+			m_dirList.push_back(CFilepath(direntry));
+		}
+	}
+
+	DWORD dwError = GetLastError();
+	FindClose(hFind);
+	if ( dwError != ERROR_NO_MORE_FILES ) {
+		// printf ("FindNextFile error. Error is %u\n", GetLastError());
+		return false;
+	}
+
+	return true;
 }

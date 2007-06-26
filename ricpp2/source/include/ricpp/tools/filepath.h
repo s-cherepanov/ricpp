@@ -33,6 +33,7 @@
  */
 
 #include <string>
+#include <list>
 
 namespace RiCPP {
 
@@ -67,6 +68,16 @@ namespace RiCPP {
 		 */
 		static char nativePathSeperator();
 
+		/** @brief The native prefix for dynamic libraries.
+		 * @return Native prefix for dynamic libraries.
+		 */
+		static const char *nativeDynlibPrefix();
+
+		/** @brief The native suffix for dynamic libraries.
+		 * @return Native suffix for dynamic libraries.
+		 */
+		static const char *nativeDynlibSuffix();
+
 		/** @brief The character to seperate native directory in directory lists.
 		 * @return Native pathlist seperator.
 		 */
@@ -98,20 +109,20 @@ namespace RiCPP {
 		std::string m_fullpath; ///< Native expanded path (also called full path, real path).
 		void convertToNative(); ///< converts /a m_filepath to the native representations /a m_nativepath and /a m_fullpath.
 	public:
-		/** @brief Init with the current working directory
+		/** @brief Init with an internal path representation.
+		 * @param aFilepath Internal representation of a filepath, you can use
+		 *        CFilepathConverter::convertToInternal()
+		 *        to convert a native into an internal representation.
+		 *        If the path is empty the current working directory is used as path
 		 */
-		inline CFilepath()
-			:m_filepath("")
+		inline CFilepath(const char *aFilepath = 0)
+			: m_filepath(aFilepath ? aFilepath : "")
 		{
 			convertToNative();
 		}
 
-		/** @brief Init with an internal path representation.
-		 * @param aFilepath Internal representation of a filepath, you can use CFilepathConverter::convertToInternal()
-		 * to convert a native into an internal representation.
-		 */
-		inline CFilepath(const char *aFilepath)
-			: m_filepath(aFilepath ? aFilepath : "")
+		inline CFilepath(const std::string &aFilepath)
+			: m_filepath(aFilepath)
 		{
 			convertToNative();
 		}
@@ -120,6 +131,34 @@ namespace RiCPP {
 		 *  @return Internal representation
 		 */
 		inline const char *filepath() const { return m_filepath.c_str(); }
+
+		/** @brief Gets the basename of the path
+		 *  @param suffix Suffix to cut away
+		 *	@retval aBasename Basename is stored here
+		 *  @return C-String pointer of \a aBasename
+		 */
+		inline const char *basename(const char *suffix, std::string &aBasename) const
+		{
+			const char *path = filepath();
+			const char *left = strrchr(path, CFilepathConverter::internalPathSeperator());
+			aBasename = "";
+			if ( !(left && *left) ) {
+				left = path;
+			} else {
+				++left;
+			}
+
+			if ( suffix && strlen(left) >= strlen(suffix) ) {
+				const char *right = left+(strlen(left)-strlen(suffix));
+				if ( !strcmp(right, suffix) ) {
+					aBasename.assign(left, right);
+					return aBasename.c_str();
+				}
+			}
+
+			aBasename = left;
+			return aBasename.c_str();
+		}
 
 		/** @brief Gets the native representation of the path.
 		 *  @return Native representation of the path.
@@ -141,6 +180,66 @@ namespace RiCPP {
 		 */
 		inline bool isRelative() const { return !isAbsolute(); }
 	}; // CFilepath
+
+
+	class CDirectory {
+	public:
+		/** @brief Const iterator for the strings.
+		 */
+		typedef std::list<CFilepath>::const_iterator const_iterator;
+		/** @brief Size type for the number of stored strings: CStringList::size()
+		 */
+		typedef std::list<CFilepath>::size_type size_type;
+
+	private:
+		std::list<CFilepath> m_dirList;
+		CFilepath m_directory;
+		bool readDirectory(const char *pattern = 0);
+
+	public:
+		/** @brief Init with an internal path representation.
+		 * @param aFilepath Internal representation of a filepath, you can use
+		 *        CFilepathConverter::convertToInternal()
+		 *        to convert a native into an internal representation.
+		 *        If the path is empty the current working directory is used as path
+		 */
+		inline CDirectory(const char *pattern = 0, const char *aFilepath = 0)
+			: m_directory(aFilepath)
+		{
+			readDirectory(pattern);
+		}
+
+		inline CDirectory(const char *pattern, const std::string &aFilepath)
+			: m_directory(aFilepath)
+		{
+			readDirectory(pattern);
+		}
+		/** @brief Constant iterator to access the strings (beginning).
+		 *  @return Iterator with the first inserted string as current element.
+		 */
+		inline const_iterator begin() const
+		{
+			return m_dirList.begin();
+		}
+
+		/** @brief Constant iterator to access the strings (behind the last element).
+		 *  @return Iterator to query the end of the iteration
+		 *          (like sthe std iterators does not refer a valid element).
+		 */
+		inline const_iterator end() const
+		{
+			return m_dirList.end();
+		}
+
+		/** @brief Gets the size of the string list
+		 * @return The number of stored strings.
+		 */
+		inline size_type size() const
+		{
+			return m_dirList.size();
+		}
+
+	};
 }; // namespace RiCPP
 
 #endif // _RICPP_TOOLS_FILEPATH_H

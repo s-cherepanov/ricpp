@@ -63,7 +63,7 @@ void CContextCreator::deleteContext()
 }
 
 RtVoid CContextCreator::context(IRiContext *context)
-// throw ERiCPPError
+// throw ExceptRiCPPError
 {
 	if ( m_curContext == context )
 		return;
@@ -91,7 +91,7 @@ RtVoid CContextCreator::context(IRiContext *context)
 }
 
 IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-// throw ERiCPPError
+// throw ExceptRiCPPError
 {
 	// Deactivate the current context
 	if ( m_curContext )
@@ -110,7 +110,7 @@ IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], Rt
 	// Activate the context by calling its begin
 	try {
 		m_curContext->beginV(name, n, tokens, params);
-	} catch ( ERiCPPError &e ) {
+	} catch ( ExceptRiCPPError &e ) {
 		deleteContext();
 		ricppErrHandler().handleError(e);
 		return illContextHandle;
@@ -126,14 +126,14 @@ RtVoid CContextCreator::abort(void)
 }
 
 RtVoid CContextCreator::end(void)
-// throw ERiCPPError
+// throw ExceptRiCPPError
 {
-	ERiCPPError e;
+	ExceptRiCPPError e;
 
 	try {
 		if ( m_curContext )
 			m_curContext->end();
-	} catch (ERiCPPError &e2) {
+	} catch (ExceptRiCPPError &e2) {
 		e = e2;
 	}
 

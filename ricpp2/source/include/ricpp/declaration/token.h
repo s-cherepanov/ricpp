@@ -34,7 +34,7 @@
 #include "ricpp/ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
-#include <string.h>
+#include <cstring>
 
 namespace RiCPP {
 

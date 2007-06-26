@@ -30,7 +30,7 @@
  *  @brief (Small) adapters for system dependent functions.
  */
 
-#include <string.h>
+#include <cstring>
 
 #ifdef WIN32
 

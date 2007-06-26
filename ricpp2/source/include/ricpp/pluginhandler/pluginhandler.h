@@ -42,12 +42,15 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
+#include <iostream>
+#include <sstream>
+
 namespace RiCPP {
 
 /** @brief Minimal interface a plugin must implement.
  *
  *  This is the minimal interface, a plugin must implement to be
- *  used by TPluginFactory, TPluginLoaderFactory and TPluginHandler.
+ *  used by TemplPluginFactory, TemplPluginLoaderFactory and TemplPluginHandler.
  *  Classes need not to inherit from this class, it's only for convenience.
  *  Also the static functions:
  *
@@ -135,17 +138,17 @@ public:
  */
 template
 <class Plugin>
-class TPluginFactory
+class TemplPluginFactory
 {
 protected:
 	/** @brief Registry of created plugins.
 	 *
-	 * If the destructMembers parameter in TPluginFactory() was true,
+	 * If the destructMembers parameter in TemplPluginFactory() was true,
 	 * plugins registered are deleted automatically, if the factory is deleted.
 	 * \a key and \a value is the same pointer, m_pluginRegistry is used
 	 * to find registerd pointers quickly.
 	 */
-	TObjPtrRegistry<Plugin *, Plugin *> m_pluginRegistry;
+	TemplObjPtrRegistry<Plugin *, Plugin *> m_pluginRegistry;
 
 	/** @brief Pointer to the last plugin created.
 	 *
@@ -165,7 +168,7 @@ public:
 	 *
 	 * @param destructMembers true, to handle deletion of the plugins.
 	 */
-	inline TPluginFactory(bool destructMembers = true)
+	inline TemplPluginFactory(bool destructMembers = true)
 		: m_pluginRegistry(destructMembers)
 	{
 		m_lastPlugin = 0;
@@ -173,7 +176,7 @@ public:
 
 	/** @brief Virtual destructor.
 	 */
-	inline virtual ~TPluginFactory()
+	inline virtual ~TemplPluginFactory()
 	{
 	}
 
@@ -251,11 +254,11 @@ public:
 	 *
 	 * Use \c new to create a new instance of the plugin. The startup() of this
 	 * plugin is called after creation. The plugin must be deleted by deletePlugin(),
-	 * or automatically by ~TPluginFactory(), if the \a destructMembers parameter of
+	 * or automatically by ~TemplPluginFactory(), if the \a destructMembers parameter of
 	 * the constructor was set to true.
 	 *
 	 *  @return The new plugin.
-	 *  @exception ERiCPPError
+	 *  @exception ExceptRiCPPError
 	 */
 	inline virtual Plugin *newPlugin()
 	{ 
@@ -266,7 +269,7 @@ public:
 			// p could not be created
 		}
 		if ( !p ) {
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
 				"Cannot create a plugin '%s'",
 				markEmptyStr(name()));
 		}
@@ -291,8 +294,8 @@ public:
 			p->shutdown();
 			if ( m_lastPlugin == p )
 				m_lastPlugin = 0;
-			m_pluginRegistry.unRegisterObj(p);
-			if ( !m_pluginRegistry.membersAreDestructed() )
+			m_pluginRegistry.unregisterObj(p);
+			if ( !m_pluginRegistry.membersAreDestructable() )
 				delete p;
 		}
 		return false;
@@ -325,8 +328,8 @@ public:
 
 	/** @brief Is the object valid?
 	 *
-	 * This is always true for TPluginFactory, needed for classes that
-	 * inherit from TPluginFactory, i.e. TPluginLoaderFactory::valid()
+	 * This is always true for TemplPluginFactory, needed for classes that
+	 * inherit from TemplPluginFactory, i.e. TemplPluginLoaderFactory::valid()
 	 * tests if the library could be loaded correctly and the major
 	 * version number and type string matches the ones of the
 	 * linked interface.
@@ -337,7 +340,7 @@ public:
 	{
 		return true;
 	}
-}; // template class TPluginFactory
+}; // template class TemplPluginFactory
 
 
 /** @brief Plugin factory to create plugins loaded from dynamic libraries.
@@ -346,7 +349,7 @@ public:
  */
 template
 <class Plugin>
-class TPluginLoaderFactory : public TPluginFactory<Plugin>
+class TemplPluginLoaderFactory : public TemplPluginFactory<Plugin>
 {
 private:
 	std::string m_libName;        ///< Name of the plugin (library).
@@ -393,17 +396,17 @@ public:
 	/** @brief Constructor to load a dynamic library.
 	 *
 	 * The destruction of the plugins is handled by a library function,
-	 * therefore \a destructMembers of TPluginFactory is set to false.
+	 * therefore \a destructMembers of TemplPluginFactory is set to false.
 	 *
 	 * @param libname Basename of the library
 	 * @param pathlist Pathlist (optionally with $-variables) to search for the library
 	 * @see CDynLibFactory, CDynLib
-	 * @exception ERiCPPError
+	 * @exception ExceptRiCPPError
 	 */
-	inline TPluginLoaderFactory(
+	inline TemplPluginLoaderFactory(
 		const char *libname,
 		const char *pathlist = 0
-		) : TPluginFactory<Plugin>(false)
+		) : TemplPluginFactory<Plugin>(false)
 	{
 		m_funcNewPlugin = 0;
 		m_funcDeletePlugin = 0;
@@ -425,7 +428,7 @@ public:
 			// m_lib not created
 		}
 		if ( !m_lib ) {
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
 				"Cannot create a new CDynLib for plugin factory '%s'",
 				markEmptyStr(libname));
 		}
@@ -433,7 +436,7 @@ public:
 		// Load the library
 		try {
 			m_lib->load();
-		} catch ( ERiCPPError &err ) {
+		} catch ( ExceptRiCPPError &err ) {
 			CDynLibFactory::deleteDynLib(m_lib);
 			throw err;
 		}
@@ -451,7 +454,8 @@ public:
 			// One of the funcs is not created
 		}
 		if ( !valid() ) {
-			throw ERiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__,
+			m_lib->unload();
+			throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__,
 				"Cannot create the library functions or version mismatch for plugin factory '%s'",
 				markEmptyStr(libname));
 		}
@@ -462,11 +466,11 @@ public:
 	 * Deletes loaded plugins, functions and library (gets closed).
 	 *
 	 */
-	inline virtual ~TPluginLoaderFactory()
+	inline virtual ~TemplPluginLoaderFactory()
 	{
-		typename TObjPtrRegistry<Plugin *, Plugin *>::const_iterator it;
-		for ( it = TPluginFactory<Plugin>::m_pluginRegistry.begin();
-		      it != TPluginFactory<Plugin>::m_pluginRegistry.end();
+		typename TemplObjPtrRegistry<Plugin *, Plugin *>::const_iterator it;
+		for ( it = TemplPluginFactory<Plugin>::m_pluginRegistry.begin();
+		      it != TemplPluginFactory<Plugin>::m_pluginRegistry.end();
 			  ++it )
 		{
 			delete it->second;
@@ -521,11 +525,11 @@ public:
 		p = ((TypeNewPlugin)m_funcNewPlugin->funcPtr())(
 			Plugin::myMajorVersion(), Plugin::myType());
 		if ( p ) {
-			TPluginFactory<Plugin>::m_lastPlugin = p;
-			TPluginFactory<Plugin>::m_pluginRegistry.registerObj(p, p);
+			TemplPluginFactory<Plugin>::m_lastPlugin = p;
+			TemplPluginFactory<Plugin>::m_pluginRegistry.registerObj(p, p);
 			p->startup();
 		} else {
-			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
+			throw ExceptRiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
 				"Plugin of wrong version or type '%s'",
 				markEmptyStr(m_libName.c_str()));
 		}
@@ -534,12 +538,12 @@ public:
 
 	inline virtual bool deletePlugin(Plugin *p)
 	{
-		if ( p && TPluginFactory<Plugin>::m_pluginRegistry.findObj(p) ) {
+		if ( p && TemplPluginFactory<Plugin>::m_pluginRegistry.findObj(p) ) {
 			p->shutdown();
-			TPluginFactory<Plugin>::m_pluginRegistry.unRegisterObj(p);
+			TemplPluginFactory<Plugin>::m_pluginRegistry.unregisterObj(p);
 			((TypeDeletePlugin)m_funcDeletePlugin->funcPtr())(p);
-			if ( TPluginFactory<Plugin>::m_lastPlugin == p )
-				TPluginFactory<Plugin>::m_lastPlugin = 0;
+			if ( TemplPluginFactory<Plugin>::m_lastPlugin == p )
+				TemplPluginFactory<Plugin>::m_lastPlugin = 0;
 			return true;
 		}
 		return false;
@@ -547,12 +551,12 @@ public:
 
 	inline virtual Plugin *lastPlugin()
 	{
-		return TPluginFactory<Plugin>::lastPlugin();
+		return TemplPluginFactory<Plugin>::lastPlugin();
 	}
 
 	inline virtual bool isRegistered(Plugin *p) const
 	{
-		return TPluginFactory<Plugin>::isRegistered(p);
+		return TemplPluginFactory<Plugin>::isRegistered(p);
 	}
 
 	inline virtual bool valid() const
@@ -583,7 +587,7 @@ public:
 
 		return true;
 	}
-}; // template class TPluginLoaderFactory
+}; // template class TemplPluginLoaderFactory
 
 /** @brief Handles the plugins for a specific type.
  *
@@ -591,75 +595,87 @@ public:
  */
 template
 <class Plugin>
-class TPluginHandler
+class TemplPluginHandler
 {
 protected:
 	/** @brief Registry for the plugin factories.
 	 */
-	TObjPtrRegistry<std::string, TPluginFactory<Plugin> *> m_factoryRegistry;
+	TemplObjPtrRegistry<std::string, TemplPluginFactory<Plugin> *> m_factoryRegistry;
 	
 	/** @brief Memory managed plugin factories.
 	 */
-	TObjPtrRegistry<std::string, TPluginFactory<Plugin> *> m_internalFactoryRegistry;
+	TemplObjPtrRegistry<std::string, TemplPluginFactory<Plugin> *> m_internalFactoryRegistry;
+
+	/** @brief Memory all plugin (pointers only) factories to iterate
+	 */
+	TemplObjPtrRegistry<std::string, TemplPluginFactory<Plugin> *> m_allFactoryRegistry;
 
 	/** @brief Searchpath to find the dynamic libraries for the plugins.
 	 */
 	std::string m_searchpath;
 
+	/** @brief Block the loading of factories from dynamic libraries.
+	 */
+	bool m_blockLoad;
+
 	/** @brief Get and register a plugin library
 	 *  @param name Basename of the plugin library
 	 *  @return Factory object for the plugin
 	 */
-	inline virtual TPluginFactory<Plugin> *getFactory(const char *name)
+	inline virtual TemplPluginFactory<Plugin> *getFactory(const char *name)
 	{
 		std::string key(noNullStr(name));
 
-		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
+		TemplPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
 		if ( !f ) {
 			f = m_internalFactoryRegistry.findObj(key);
 		}
 		if ( !f ) {
+			if ( m_blockLoad )
+				return 0;
+
 			try {
-				f = new TPluginLoaderFactory<Plugin>(key.c_str(), m_searchpath.c_str());
-			} catch ( ERiCPPError &e ) {
+				f = new TemplPluginLoaderFactory<Plugin>(key.c_str(), m_searchpath.c_str());
+			} catch ( ExceptRiCPPError &e ) {
 				throw e;
 			} catch ( ... ) {
-				// could not create TPluginLoaderFactory
+				// could not create TemplPluginLoaderFactory
 			}
 			if ( !f )
-				throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
+				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__,
 					"Cannot create a new plugin factory for '%s'",
 					markEmptyStr(key.c_str()));
 
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
 				// Should not happen, since already tested using valid()
-				// in the constructor of TPluginLoaderFactory
+				// in the constructor of TemplPluginLoaderFactory
 				delete f;
-				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
+				throw ExceptRiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong version '%ld' vs. '%ld' - not loaded",
 					Plugin::myMajorVersion(), f->majorVersion());
 			}
 
 			if ( strcmp(noNullStr(Plugin::myType()), noNullStr(f->type())) != 0 ) {
 				// Should not happen, since already tested using valid()
-				// in the constructor of TPluginLoaderFactory
+				// in the constructor of TemplPluginLoaderFactory
 				delete f;
-				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
+				throw ExceptRiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong type '%s' vs. '%s' - not loaded",
 					noNullStr(Plugin::myType()), noNullStr(f->type()));
 			}
 
 			m_internalFactoryRegistry.registerObj(key, f);
+			m_allFactoryRegistry.registerObj(key, f);
 		} else {
 			if ( Plugin::myMajorVersion() != f->majorVersion() ) {
 				// Should not happen, since already tested
-				throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
+				throw ExceptRiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong version '%ld' vs. '%ld' - already loaded",
 					Plugin::myMajorVersion(), f->majorVersion());
 			}
 			if ( strcmp(noNullStr(Plugin::myType()), noNullStr(f->type())) != 0 ) {
 				// Should not happen, since already tested
-				throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
+				throw ExceptRiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__,
 					"Plugin Factory is of wrong type '%s' vs. '%s' - already loaded",
 					noNullStr(Plugin::myType()), noNullStr(f->type()));
 			}
@@ -668,20 +684,35 @@ protected:
 	}
 
 public:
+	/** @brief Const iterator for the elements.
+	 */
+	typedef
+		typename
+		TemplObjPtrRegistry<std::string, TemplPluginFactory<Plugin> *>::const_iterator
+		const_iterator;
+
+	/** @brief Size type for the number of stored elements
+	 */
+	typedef
+		typename
+		TemplObjPtrRegistry<std::string, TemplPluginFactory<Plugin> *>::size_type
+		size_type;
 
 	/** @brief Constructor
 	 *  @param pathlist Pathlist to find the libraries
 	 */
-	inline TPluginHandler(const char *pathlist = 0)
+	inline TemplPluginHandler(const char *pathlist = 0)
 	: m_factoryRegistry(false),
 	  m_internalFactoryRegistry(true),
-	  m_searchpath(noNullStr(pathlist))
+	  m_allFactoryRegistry(false),
+	  m_searchpath(noNullStr(pathlist)),
+	  m_blockLoad(false)
 	{
 	}
 
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~TPluginHandler()
+	inline virtual ~TemplPluginHandler()
 	{
 	}
 
@@ -700,7 +731,7 @@ public:
 	 *
 	 * @param name Name of the plugin and basename of the plugin library
 	 * @return The loaded plugin loaded lately
-	 * @see TPluginFactory::lastPlugin()
+	 * @see TemplPluginFactory::lastPlugin()
 	 */
 	inline virtual Plugin *lastPlugin(const char *name)
 	{
@@ -717,7 +748,7 @@ public:
 		if ( !p )
 			return false;
 		std::string key(noNullStr(p->myName()));
-		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
+		TemplPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
 		if ( !f ) {
 			return false;
 		}
@@ -727,38 +758,68 @@ public:
 	/** @brief Registers a plugin factory.
 	 *
 	 * Registers a plugin factory for a specific name. Normally
-	 * TPluginFactory are registered to create specific plugins with
+	 * TemplPluginFactory are registered to create specific plugins with
 	 * \c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the plugins factory.
-	 * @param f Factory to create the plugins
+	 * @param f Factory to create the plugins (or 0 to load)
 	 * @return true, if the plugin factory could be registered
 	 * (no \a name of factory \a f) or is already registered.
+	 * @exception ExceptRiCPPError No memory or wrong version
 	 */
-	inline virtual bool registerFactory(const char *name, TPluginFactory<Plugin> *f)
-	{
-		std::string key(noNullStr(name));
-		if ( key.empty() || !f ) {
-			return false;
-		}
-		return m_factoryRegistry.registerObj(key, f);
-	}
-
-	/** @brief Unregisters a plugin factory.
-	 *
-	 * @param name Name of the plugin factory.
-	 * @return The unregistered factory or 0, if there was no factory found.
-	 */
-	inline virtual TPluginFactory<Plugin> *unRegisterFactory(const char *name)
+	inline virtual bool registerFactory(const char *name, TemplPluginFactory<Plugin> *f=0)
 	{
 		std::string key(noNullStr(name));
 		if ( key.empty() ) {
 			return false;
 		}
-		TPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
-		if ( f )
-			m_factoryRegistry.unRegisterObj(key);
-		return f;
+		if ( f ) {
+			m_allFactoryRegistry.registerObj(key, f);
+			return m_factoryRegistry.registerObj(key, f);
+		}
+
+		bool rval = getFactory(name) != 0;
+		return rval;
+	}
+
+	/** @brief Unregisters a plugin factory.
+	 *
+	 * @param name Name of the plugin factory.
+	 * @return true, if factory was unregistered
+	 */
+	inline bool unregisterFactory(const char *name)
+	{
+		std::string key(noNullStr(name));
+		if ( key.empty() ) {
+			return false;
+		}
+		TemplPluginFactory<Plugin> *f = m_factoryRegistry.findObj(key);
+		if ( f ) {
+			m_factoryRegistry.unregisterObj(key);
+			m_allFactoryRegistry.unregisterObj(key);
+			return true;
+		} else {
+			if ( m_internalFactoryRegistry.unregisterObj(key) ) {
+				m_allFactoryRegistry.unregisterObj(key);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** @brief Query, if plugin factory is registered.
+	 *
+	 * @param name Name of the plugin factory.
+	 * @return true, if the factory is registered.
+	 */
+	inline virtual bool isRegistered(const char *name)
+	{
+		std::string key(noNullStr(name));
+		if ( key.empty() ) {
+			return false;
+		}
+		TemplPluginFactory<Plugin> *f = m_allFactoryRegistry.findObj(key);
+		return f != 0;
 	}
 
 	/** @brief Sets a new searchpath.
@@ -779,32 +840,133 @@ public:
 		return m_searchpath.c_str();
 	}
 
-}; // template class TPluginHandler
+	/** @brief Block or unblock loadable plugin factories.
+	 * @param isBlocked True to block the loading of dynamic libreries for plugin factories.
+	 */
+	inline void blockLoad(bool isBlocked) 
+	{
+		m_blockLoad = isBlocked;
+	}
+
+	/** @brief Queries, if plugin factories are loadable.
+	 * @return True, loading of dynamic libreries for plugin factories has been blocked.
+	 */
+	inline bool blockLoad() const
+	{
+		return m_blockLoad;
+	}
+
+	/** @brief Load all plugins from a directory.
+	 *
+	 * Load all plugins of appropriate version and name suffix \a nameSuffix
+	 * from a directory \a direct.
+	 * @return Number of registered factories;
+	 * @exception ExceptRiCPPError No memory
+	 */
+	inline int registerFromDirectory(const char *direct, const char *nameSuffix)
+	{
+		// load "<dynlib_prefix>*<nameSuffix>.<version><dynlib_suffix>"
+		std::string pattern(CFilepathConverter::nativeDynlibPrefix());		
+		pattern += "*";
+		pattern += nameSuffix ? nameSuffix : "";
+		std::ostringstream o;
+		o << Plugin::myMajorVersion();
+
+		std::string suffix = ".";
+		suffix += o.str();
+		suffix += CFilepathConverter::nativeDynlibSuffix();
+
+		pattern += suffix;
+
+		std::string base;
+		CDirectory directory(pattern.c_str(), direct);
+		CDirectory::const_iterator i = directory.begin();
+		int n = 0;
+		for ( ; i!= directory.end(); ++i ) {
+			(*i).basename(suffix.c_str(), base);
+			if ( !base.empty() ) {
+				const char *basename = base.c_str();
+				if ( base.length() >= strlen(CFilepathConverter::nativeDynlibPrefix()) ) {
+					basename += strlen(CFilepathConverter::nativeDynlibPrefix());
+				}
+				try {
+					if ( getFactory(basename) ) {
+						++n;
+					}
+				} catch (ExceptRiCPPError &e) {
+					if ( e.code() == RIE_NOMEM ) {
+						throw e;
+					}
+					// ignore the other errors (file not appropriate)
+				}
+			}
+		}
+		return n;
+	}
+
+	/** @brief Constant iterator to access the elements (beginning).
+	 *  @return Iterator with the first elements as current element.
+	 */
+	inline const_iterator begin() const
+	{
+		return m_allFactoryRegistry.begin();
+	}
+
+	/** @brief Constant iterator to access the elements (behind the last element).
+	 *  @return Iterator to query the end of the iteration
+	 *          (like sthe std iterators does not refer a valid element).
+	 */
+	inline const_iterator end() const
+	{
+		return m_allFactoryRegistry.end();
+	}
+
+	/** @brief Gets the size of the element map
+	 * @return The number of stored elements.
+	 */
+	inline size_type size() const
+	{
+		return m_allFactoryRegistry.size();
+	}
+}; // template class TemplPluginHandler
 
 /** @brief Singleton that handles the plugins for a specific type.
  *
  * Plugins can be loaded from a dynamic library or created by registered factories.
- * Objects of TPluginHandlerSingleton are singletons of TPluginHandler.
+ * Objects of TemplPluginHandlerSingleton are singletons of TemplPluginHandler.
  */
 template
 <class Plugin>
-class TPluginHandlerSingleton
+class TemplPluginHandlerSingleton
 {
 protected:
 	/** @brief Plugin handler as singleton.
 	 */
-	static TPluginHandler<Plugin> ms_pluginHandler;
+	static TemplPluginHandler<Plugin> ms_pluginHandler;
 public:
+	/** @brief Const iterator for the elements.
+	 */
+	typedef
+		typename
+		TemplPluginHandler<Plugin>::const_iterator
+		const_iterator;
+
+	/** @brief Size type for the number of stored elements
+	 */
+	typedef
+		typename
+		TemplPluginHandler<Plugin>::size_type
+		size_type;
 
 	/** @brief Constructor
 	 */
-	inline TPluginHandlerSingleton()
+	inline TemplPluginHandlerSingleton()
 	{
 	}
 
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~TPluginHandlerSingleton()
+	inline virtual ~TemplPluginHandlerSingleton()
 	{
 	}
 
@@ -823,7 +985,7 @@ public:
 	 *
 	 * @param name Name of the plugin and basename of the plugin library
 	 * @return The loaded plugin loaded lately
-	 * @see TPluginFactory::lastPlugin()
+	 * @see TemplPluginFactory::lastPlugin()
 	 */
 	inline virtual Plugin *lastPlugin(const char *name)
 	{
@@ -843,26 +1005,36 @@ public:
 	/** @brief Registers a plugin factory
 	 *
 	 * Registers a plugin factory for a specific name. Normally
-	 * TPluginFactory are registered to create specific plugins with
+	 * TemplPluginFactory are registered to create specific plugins with
 	 * \c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the plugins
 	 * @param f Factory to create the plugins
 	 * @return true, if the plugin factory could be registerd
 	 */
-	inline virtual bool registerFactory(const char *name, TPluginFactory<Plugin> *f)
+	inline virtual bool registerFactory(const char *name, TemplPluginFactory<Plugin> *f)
 	{
 		return ms_pluginHandler.registerFactory(name, f);
 	}
 
-	/** @brief Unregisters a plugin factory.
+	/** @brief unregisters a plugin factory.
 	 *
 	 * @param name Name of the plugin factory.
-	 * @return The unregistered factory or 0, if there was no factory found.
+	 * @return true, if factory was unregistered
 	 */
-	inline virtual TPluginFactory<Plugin> * unRegisterFactory(const char *name)
+	inline virtual bool unregisterFactory(const char *name)
 	{
-		return ms_pluginHandler.unRegisterFactory(name);
+		return ms_pluginHandler.unregisterFactory(name);
+	}
+
+	/** @brief Query, if plugin factory is registered.
+	 *
+	 * @param name Name of the plugin factory.
+	 * @return true, if the factory is registered.
+	 */
+	inline virtual bool isRegistered(const char *name)
+	{
+		return ms_pluginHandler.isRegistered(name);
 	}
 
 	/** @brief Sets a new searchpath.
@@ -875,7 +1047,6 @@ public:
 	}
 
 	/** @brief Gets the current searchpath.
-	 *
 	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
 	 */
 	inline const char *searchpath() const
@@ -883,9 +1054,60 @@ public:
 		return ms_pluginHandler.searchpath();
 	}
 
-}; // template class TPluginHandler
+	/** @brief Block or unblock loadable plugin factories
+	 * @param isBlocked True to block the loading of dynamic libreries for plugin factories.
+	 */
+	inline void blockLoad(bool isBlocked) 
+	{
+		ms_pluginHandler.blockLoad(isBlocked);
+	}
 
-template <class Plugin> TPluginHandler<Plugin> TPluginHandlerSingleton<Plugin>::ms_pluginHandler;
+	/** @brief Queries, if plugin factories are loadable.
+	 * @return True, loading of dynamic libreries for plugin factories has been blocked.
+	 */
+	inline bool blockLoad() const
+	{
+		return ms_pluginHandler.blockLoad();
+	}
+
+	/** @brief Load all plugins from a directory.
+	 *
+	 * Load all plugins of appropriate version and suffix \a suffix from a directory \a direct
+	 *
+	 * @return Number of loaded plugins
+	 */
+	inline int registerFromDirectory(const char *direct, const char *suffix)
+	{
+		return ms_pluginHandler.registerFromDirectory(direct, suffix);
+	}
+
+	/** @brief Constant iterator to access the elements (beginning).
+	 *  @return Iterator with the first elements as current element.
+	 */
+	inline const_iterator begin() const
+	{
+		return ms_pluginHandler.begin();
+	}
+
+	/** @brief Constant iterator to access the elements (behind the last element).
+	 *  @return Iterator to query the end of the iteration
+	 *          (like sthe std iterators does not refer a valid element).
+	 */
+	inline const_iterator end() const
+	{
+		return ms_pluginHandler.end();
+	}
+
+	/** @brief Gets the size of the element map
+	 * @return The number of stored elements.
+	 */
+	inline size_type size() const
+	{
+		return ms_pluginHandler.size();
+	}
+}; // template class TemplPluginHandler
+
+template <class Plugin> TemplPluginHandler<Plugin> TemplPluginHandlerSingleton<Plugin>::ms_pluginHandler;
 
 } // namespace RiCPP
 

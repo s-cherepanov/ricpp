@@ -29,8 +29,8 @@
 #include "ricpp/declaration/types.h"
 #include "ricpp/tools/inlinetools.h"
 
-#include <string.h>
-#include <ctype.h>
+#include <cstring>
+#include <cctype>
 
 #include <string>
 

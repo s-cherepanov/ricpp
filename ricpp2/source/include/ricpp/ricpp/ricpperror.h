@@ -35,12 +35,13 @@
 #endif // _RICPP_RICPP_RICPP_H
 
 #include <string>
+#include <exception>
 
 namespace RiCPP {
 
 /** @brief The renderer error is used internally by the back end to throw exceptions
  */
-class ERiCPPError {
+	class ExceptRiCPPError : public std::exception {
 	RtInt m_code;           ///< @brief Which of error occured, 'RIE_...'
 	RtInt m_severity;       ///< @brief Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	std::string m_message;  ///< @brief error string
@@ -52,10 +53,10 @@ public:
 	 *  @param aCode Which error ('RIE_...')
 	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	 *  @param aMessage Additional describing error string
-	 *  @param aLine Line number of the source file where the ERiCPPError is constructed (the error occured), normally __LINE__
-	 *  @param aFile Filke where the ERiCPPError occured, normally __FILE__
+	 *  @param aLine Line number of the source file where the ExceptRiCPPError is constructed (the error occured), normally __LINE__
+	 *  @param aFile Filke where the ExceptRiCPPError occured, normally __FILE__
 	 */
-	 ERiCPPError(
+	 ExceptRiCPPError(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
 		 RtString aMessage = 0,
 		 int aLine = 0, const char *aFile = 0
@@ -67,12 +68,12 @@ public:
 	/** @brief Constructor, sets error codes and additional error message with source line and source file added
 	 *  @param aCode Which error ('RIE_...')
 	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
-	 *  @param aLine Line number of the source file where the ERiCPPError is constructed (the error occured), normally __LINE__
-	 *  @param aFile Filke where the ERiCPPError occured, normally __FILE__
+	 *  @param aLine Line number of the source file where the ExceptRiCPPError is constructed (the error occured), normally __LINE__
+	 *  @param aFile Filke where the ExceptRiCPPError occured, normally __FILE__
 	 *  @param aMessage format string (like printf) describing the error, followed by
 	 *  first argument like in printf, if there is not such an argument formating is not done
 	 */
-	 ERiCPPError(
+	 ExceptRiCPPError(
 		 RtInt aCode, RtInt aSeverity,
 		 int aLine, const char *aFile,
 		 RtString aMessage, ...
@@ -81,21 +82,21 @@ public:
 	/** @brief Copy Constructor
 	 *  @param err The error object to copy
 	 */
-	inline ERiCPPError(const ERiCPPError &err)
+	inline ExceptRiCPPError(const ExceptRiCPPError &err)
 	{
 		*this = err;
 	}
 
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~ERiCPPError() {}
+	inline virtual ~ExceptRiCPPError() {}
 
 	/** @brief Sets error codes and additional error message with source line and source file added
 	 *  @param aCode Which error ('RIE_...')
 	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	 *  @param aMessage Additional describing error string
-	 *  @param aLine Line number of the source file where the ERiCPPError is constructed (the error occured), normally __LINE__
-	 *  @param aFile Filke where the ERiCPPError occured, normally __FILE__
+	 *  @param aLine Line number of the source file where the ExceptRiCPPError is constructed (the error occured), normally __LINE__
+	 *  @param aFile Filke where the ExceptRiCPPError occured, normally __FILE__
 	 */
 	 inline void set(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
@@ -113,8 +114,8 @@ public:
 	/** @brief Sets error codes and additional error message with source line and source file added
 	 *  @param aCode Which error ('RIE_...')
 	 *  @param aSeverity Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
-	 *  @param aLine Line number of the source file where the ERiCPPError is constructed (the error occured), normally __LINE__
-	 *  @param aFile Filke where the ERiCPPError occured, normally __FILE__
+	 *  @param aLine Line number of the source file where the ExceptRiCPPError is constructed (the error occured), normally __LINE__
+	 *  @param aFile Filke where the ExceptRiCPPError occured, normally __FILE__
 	 *  @param aMessage format string (like printf) describing the error, followed by
 	 *  first argument like in printf, if there is not such an argument formating is not done
 	 */
@@ -143,7 +144,7 @@ public:
 	const char *formatErrorMessage(std::string &strCode) const;
 
 	/** @brief Gets the file string.
-	 *  @return Pointer to the file name stored in \a ERiCPPError::m_file
+	 *  @return Pointer to the file name stored in \a ExceptRiCPPError::m_file
 	 */
 	inline const char *file() const
 	{
@@ -151,7 +152,7 @@ public:
 	}
 
 	/** @brief Gets the line number.
-	 *  @return Line number stored in \a ERiCPPError::m_line
+	 *  @return Line number stored in \a ExceptRiCPPError::m_line
 	 */
 	inline int line() const
 	{
@@ -159,9 +160,9 @@ public:
 	}
 
 	/** Gets the current error string
-	 *  @return Pointer to the error message stored in \a ERiCPPError::m_message
+	 *  @return Pointer to the error message stored in \a ExceptRiCPPError::m_message
 	 */
-	inline const char *what() const
+	inline virtual const char *what() const
 	{
 		return m_message.c_str();
 	}
@@ -183,7 +184,7 @@ public:
 	}
 
 	/** @brief Get the current error severity.
-	 *  @return error severity stored in \a ERiCPPError::m_severity
+	 *  @return error severity stored in \a ExceptRiCPPError::m_severity
 	 */
 	inline RtInt severity() const
 	{
@@ -194,14 +195,14 @@ public:
 	 *  @param err The error object to copy
 	 *  @return *this
 	 */
-	inline ERiCPPError &operator=(const ERiCPPError &err)
+	inline ExceptRiCPPError &operator=(const ExceptRiCPPError &err)
 	{
 		if ( this == &err )
 			return *this;
 		set(err.m_code, err.m_severity, err.m_message.c_str(), err.m_line, err.m_file.c_str());
 		return *this;
 	}
-}; // ERiCPPError
+}; // ExceptRiCPPError
 
 
 /** @brief Interface for easier error handling
@@ -239,10 +240,10 @@ public:
 	 */
 	virtual RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
 
-	/** @brief Forward the contetns of an ERiCPPError to handleErrorV()
+	/** @brief Forward the contetns of an ExceptRiCPPError to handleErrorV()
 	 *  @param err Error Exception
 	 */
-	virtual RtVoid handleError(const ERiCPPError &err);
+	virtual RtVoid handleError(const ExceptRiCPPError &err);
 
 	/** Forwards to handleErrorV with cleard line and filename
 	 * @param code Error Code (RIE_...)
@@ -269,7 +270,7 @@ public:
 /** @brief The standard error handler of the backend.
  *
  *  Used to format error messages and throw
- *  an ERiCPPError.
+ *  an ExceptRiCPPError.
  */
 class CErrorExceptionHandler : public IRiCPPErrorHandler {
 public:

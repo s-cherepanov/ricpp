@@ -62,7 +62,7 @@ const char *CDynLib::libpath()
 }
 
 void CDynLib::load()
-// throw ERiCPPError
+// throw ExceptRiCPPError
 {
 	if ( isLoaded() ) {
 		++m_useCount;
@@ -75,7 +75,7 @@ void CDynLib::load()
 		return;
 		// return true;
 	}
-	throw ERiCPPError(RIE_NOFILE, RIE_SEVERE, __LINE__, __FILE__, "Lib: '%s' Path: '%s'", libname(), libpath());
+	throw ExceptRiCPPError(RIE_NOFILE, RIE_SEVERE, __LINE__, __FILE__, "Lib: '%s' Path: '%s'", libname(), libpath());
 	// return false;
 }
 

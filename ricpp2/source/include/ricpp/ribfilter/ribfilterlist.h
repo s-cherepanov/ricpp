@@ -44,7 +44,7 @@ class CRibFilterList {
 
 	IRiRoot *m_ri; ///< Interface routines of the frontend that are called at last.
 	std::list<CRibFilter *>m_filters; ///< List of filters.
-	TPluginHandler<CRibFilter> m_pluginHandler; ///< Plugin handler to register filters in memory.
+	TemplPluginHandler<CRibFilter> m_pluginHandler; ///< Plugin handler to register filters in memory.
 
 	/** @brief Sets the RenderMan interface.
 	 *  @param ri Pointer to the interface, that will be called.
@@ -119,7 +119,7 @@ public:
 	 *  @param name Name of the plugin group
 	 *  @param f filter factory
 	 */
-	inline virtual bool registerFactory(const char *name, TPluginFactory<CRibFilter> *f)
+	inline virtual bool registerFactory(const char *name, TemplPluginFactory<CRibFilter> *f)
 	{
 		return m_pluginHandler.registerFactory(name, f);
 	}

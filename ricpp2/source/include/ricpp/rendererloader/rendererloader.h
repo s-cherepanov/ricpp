@@ -41,7 +41,7 @@ namespace RiCPP {
  *
  *  It is created either by dynamic loading or instanciating
  */	 
-class CRendererLoader : protected TPluginHandler<CContextCreator>
+class CRendererLoader : protected TemplPluginHandler<CContextCreator>
 {
 protected:
 	/**
@@ -59,7 +59,7 @@ protected:
 	virtual const char *rendererName(RtString name) const;
 	
 public:
-	/** @brief Stanadard constructor
+	/** @brief Standard constructor
 	 */
 	CRendererLoader();
 
@@ -91,38 +91,55 @@ public:
 	/** @brief Registers a plugin factory
 	 *
 	 *  Registers a plugin factory for a specific name. Normally
-	 *  TPluginFactory are registered to create specific plugins with
+	 *  TemplPluginFactory are registered to create specific plugins with
 	 *  \c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the plugins
 	 * @param f Factory to create the plugins
 	 * @return true, if the plugin factory could be registerd
 	 */
-	inline virtual bool registerFactory(const char *name, TPluginFactory<CContextCreator> *f) { return TPluginHandler<CContextCreator>::registerFactory(name, f); }
+	inline virtual bool registerFactory(
+		const char *name,
+		TemplPluginFactory<CContextCreator> *f)
+	{
+		return TemplPluginHandler<CContextCreator>::registerFactory(name, f);
+	}
 
 	/** @brief unregisters a plugin factory
 	 * @param name Name of the plugins
-	 * @return Pointer to factory that was unregistered
+	 * @return true, if factory was unregistered
 	 */
-	inline virtual TPluginFactory<CContextCreator> * unRegisterFactory(const char *name) { return TPluginHandler<CContextCreator>::unRegisterFactory(name); }
+	inline virtual bool unregisterFactory(const char *name)
+	{
+		return TemplPluginHandler<CContextCreator>::unregisterFactory(name);
+	}
 
 	/** @brief Sets a new searchpath.
 	 *
 	 * @param aSearchpath New searchpath, directory seperator '/', pathes separated by ';'.
 	 */
-	inline virtual void searchpath(RtString aSearchpath) { TPluginHandler<CContextCreator>::searchpath(aSearchpath); }
+	inline virtual void searchpath(RtString aSearchpath)
+	{
+		TemplPluginHandler<CContextCreator>::searchpath(aSearchpath);
+	}
 
 	/** @brief Gets the current searchpath.
 	 *
 	 * @return Searchpath, directory seperator '/', pathes separated by ';'.
 	 */
-	inline const char *searchpath() const { return TPluginHandler<CContextCreator>::searchpath();  }
+	inline const char *searchpath() const
+	{
+		return TemplPluginHandler<CContextCreator>::searchpath();
+	}
 
 	/** @brief Gets the name of the standard renderer.
 	 *
 	 * @return Name of the standard renderer
 	 */
-	inline const char *standardRendererName() const { return m_standardRendererName.c_str(); }
+	inline const char *standardRendererName() const
+	{
+		return m_standardRendererName.c_str();
+	}
 
 	/** @brief Sets the name of the standard renderer.
 	 *

@@ -156,7 +156,7 @@ namespace RiCPP {
 		virtual const char *libpath();
 
 		/** @brief Handles the loading of the library, calls doload() if called the first time.
-		 *  @exception ERiCPPError Thrown if library could not be loaded.
+		 *  @exception ExceptRiCPPError Thrown if library could not be loaded.
 		 */
 		void load();
 

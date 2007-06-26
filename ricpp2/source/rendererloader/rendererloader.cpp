@@ -53,10 +53,10 @@ CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 	CContextCreator *cc = lastPlugin(rendererName(name));
 	if ( cc ) {
 		if ( cc->majorContextVersion() != IRiContext::myMajorVersion() ) {
-			throw ERiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Context version mismatch, renderer name: '%s'", rendererName(name));
+			throw ExceptRiCPPError(RIE_VERSION, RIE_SEVERE, __LINE__, __FILE__, "Context version mismatch, renderer name: '%s'", rendererName(name));
 		}
 		if ( strcmp(noNullStr(cc->contextType()), noNullStr(IRiContext::myType())) != 0 ) {
-			throw ERiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Context type mismatch, renderer name: '%s'", rendererName(name));
+			throw ExceptRiCPPError(RIE_BADFILE, RIE_SEVERE, __LINE__, __FILE__, "Context type mismatch, renderer name: '%s'", rendererName(name));
 		}
 	}
 	return cc;

@@ -29,7 +29,7 @@
  */
 
 #include "ricpp/ricpp/subdivfunc.h"
-#include <stdlib.h> //< used for free()
+#include <cstdlib> //< used for free()
 
 using namespace RiCPP;
 

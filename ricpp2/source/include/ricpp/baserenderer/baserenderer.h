@@ -78,7 +78,7 @@ protected:
 	/** @brief The backend's error handler
 	 *
 	 *  A child class can overload ricppErrHandler() to use it's own handler
-	 *  However it also should return an error handler that throws an ERiCPPError
+	 *  However it also should return an error handler that throws an ExceptRiCPPError
 	 * @return The error handler used by the backend
 	 */
 	virtual IRiCPPErrorHandler &ricppErrHandler()

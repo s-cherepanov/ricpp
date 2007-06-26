@@ -44,6 +44,14 @@ char CFilepathConverter::nativePathSeperator() { return '/'; }
  */
 char CFilepathConverter::nativePathlistSeperator() { return ':'; }
 
+/** @brief Dynamic libraries have the prefix "lib" in mac systems
+ */
+const char *CFilepathConverter::nativeDynlibPrefix() { return "lib"; }
+
+/** @brief Dynamic libraries have the suffix ".dylib" in mac systems
+ */
+const char *CFilepathConverter::nativeDynlibSuffix() { return ".dylib"; }
+
 /** @brief No operation, the internal representation and the MAC representation are equal.
  */
 std::string &CFilepathConverter::convertToInternal(std::string &var) {
@@ -65,6 +73,7 @@ void CFilepath::convertToNative() {
 		if ( getcwd(pathbuf, sizeof(pathbuf)) ) {
 			pathbuf[sizeof(pathbuf)-1] = 0;
 			m_filepath = pathbuf;
+			CFilepathConverter::convertToInternal(m_filepath);
 		}
 	}
 
@@ -81,4 +90,10 @@ void CFilepath::convertToNative() {
  */
 bool CFilepath::isAbsolute() const {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '/');
+}
+
+
+bool CDirectory::readDirectory(const char *pattern) {
+	m_dirList.clear();
+	return false;
 }

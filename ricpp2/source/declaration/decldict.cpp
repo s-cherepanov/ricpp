@@ -84,7 +84,8 @@ const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const c
 	return 0;
 }
 
-const CDeclaration *CDeclarationDictionary::findAndUpdate(RtToken token, unsigned int curColorSize)
+const CDeclaration *CDeclarationDictionary::findAndUpdate(
+	RtToken token, unsigned int curColorSize)
 {
 	const CDeclaration *decl = find(token);
 	if ( !decl )
@@ -104,10 +105,10 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(RtToken token, unsigne
 	}
 	
 	if ( !newDecl )
-		throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of %s", token);
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of %s", token);
 
 	m_all.push_back(newDecl);
-	m_active.unRegisterObj(decl->token());
+	m_active.unregisterObj(decl->token());
 	m_active.registerObj(newDecl->token(), newDecl);
 	return newDecl;
 }
@@ -168,7 +169,7 @@ void CDeclarationDictionary::add(CDeclaration *decl)
 	m_all.push_back(decl);
 	const CDeclaration *found = m_active.findObj(decl->token());
 	if ( found ) {
-		m_active.unRegisterObj(found->token());
+		m_active.unregisterObj(found->token());
 	}
 	
 	bool flag = m_active.registerObj(decl->token(), decl);

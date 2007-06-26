@@ -37,7 +37,7 @@ namespace RiCPP {
 /** @brief Template that maps names (KeyType, std::string, long, ...) to object
  *         pointers (ValueType, class *), can manage the object deletion.
  */
-template<typename KeyType, typename ValueType> class TObjPtrRegistry {
+template<typename KeyType, typename ValueType> class TemplObjPtrRegistry {
 	std::map<KeyType, ValueType>m_map; ///< Container for the key, value pairs
 	bool m_destructMembers; ///< Destruct all members if container is deleted or key is unregistered
 public:
@@ -51,11 +51,11 @@ public:
 	/** @brief Initializes the object, the map is empty at the beginning.
 	 * @param destructMembers Deletes members if container is destructed or the key is unregistered.
 	 */
-	TObjPtrRegistry(bool destructMembers);
+	TemplObjPtrRegistry(bool destructMembers);
 
 	/** @brief Destructor, deletes also the members (values) if m_destructMembers is true.
 	 */
-	~TObjPtrRegistry();
+	~TemplObjPtrRegistry();
 
 	/** @brief Registers an object (pointer).
 	 * @param key Key for the registered object pointer
@@ -75,7 +75,7 @@ public:
 	 *  @param key Search key.
 	 *  @return true if object was unregistered.
 	 */
-	bool unRegisterObj(const KeyType &key);
+	bool unregisterObj(const KeyType &key);
 
 	/** @brief Constant iterator to access the elements (beginning).
 	 *  @return Iterator with the first elements as current element.
@@ -105,22 +105,22 @@ public:
 	/** @brief Gets whether the members are deleted by the class or not.
 	 * @return true, the class deletes its members
 	 */
-	inline bool membersAreDestructed() const
+	inline bool membersAreDestructable() const
 	{
 		return m_destructMembers;
 	}
-}; // TObjPtrRegistry
+}; // TemplObjPtrRegistry
 
 template<typename KeyType, typename ValueType>
-TObjPtrRegistry<KeyType, ValueType>::
-TObjPtrRegistry(bool destructMembers) :
+TemplObjPtrRegistry<KeyType, ValueType>::
+TemplObjPtrRegistry(bool destructMembers) :
 m_destructMembers(destructMembers)
 {
 }
 
 template<typename KeyType, typename ValueType>
-TObjPtrRegistry<KeyType, ValueType>::
-~TObjPtrRegistry()
+TemplObjPtrRegistry<KeyType, ValueType>::
+~TemplObjPtrRegistry()
 {
 	if ( m_destructMembers ) {
 		typename std::map<KeyType, ValueType>::iterator i;
@@ -136,7 +136,7 @@ TObjPtrRegistry<KeyType, ValueType>::
 
 template<typename KeyType, typename ValueType>
 bool
-TObjPtrRegistry<KeyType, ValueType>::
+TemplObjPtrRegistry<KeyType, ValueType>::
 registerObj(const KeyType &key, ValueType value)
 {
 	if ( m_map.find(key) == m_map.end() ) {
@@ -149,10 +149,9 @@ registerObj(const KeyType &key, ValueType value)
 
 template<typename KeyType, typename ValueType>
 ValueType
-TObjPtrRegistry<KeyType, ValueType>::
+TemplObjPtrRegistry<KeyType, ValueType>::
 findObj(const KeyType &key) const
 {
-	
 	typename std::map<KeyType, ValueType>::const_iterator i;
 	if ( (i = m_map.find(key)) != m_map.end() ) {
 		return (*i).second;
@@ -162,8 +161,8 @@ findObj(const KeyType &key) const
 
 template<typename KeyType, typename ValueType>
 bool
-TObjPtrRegistry<KeyType, ValueType>::
-unRegisterObj(const KeyType &key)
+TemplObjPtrRegistry<KeyType, ValueType>::
+unregisterObj(const KeyType &key)
 {
 	typename std::map<KeyType, ValueType>::iterator i;
 	if ( (i = m_map.find(key)) != m_map.end() ) {

@@ -31,7 +31,7 @@
 #include "ricpp/tools/filepath.h"
 
 #include <windows.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace RiCPP;
 

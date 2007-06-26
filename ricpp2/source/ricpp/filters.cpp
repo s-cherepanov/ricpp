@@ -28,7 +28,7 @@
  */
 
 #include "ricpp/ricpp/filters.h"
-#include <math.h>
+#include <cmath>
 
 using namespace RiCPP;
 

@@ -63,7 +63,7 @@ namespace RiCPP {
 		inline virtual void shutdown() {}
 
 		virtual bool open(const char *an_uri);
-		virtual TBuffer<>::size_type fillBuffer(TBuffer<> &buffer);
+		virtual TemplBuffer<>::size_type fillBuffer(TemplBuffer<> &buffer);
 		virtual bool close();
 	}; // CFileReader
 } // namespace RiCPP

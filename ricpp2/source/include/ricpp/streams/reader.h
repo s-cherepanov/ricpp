@@ -96,7 +96,7 @@ namespace RiCPP {
 		inline virtual size_type size() const { return m_schemes.size(); }
 
 		inline virtual bool open(const char *anURI) { return false; }
-		inline virtual TBuffer<>::size_type fillBuffer(TBuffer<> &buffer) { return 0; }
+		inline virtual TemplBuffer<>::size_type fillBuffer(TemplBuffer<> &buffer) { return 0; }
 		inline virtual bool close() { return false; }
 	}; // CReader
 

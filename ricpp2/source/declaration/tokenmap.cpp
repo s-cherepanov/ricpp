@@ -37,7 +37,7 @@ using namespace RiCPP;
 
 
 CTokenMap::CTokenMap()
-// throw ERiCPPError;
+// throw ExceptRiCPPError;
 {
 	try {
 
@@ -238,14 +238,14 @@ CTokenMap::CTokenMap()
 	} catch(...) {
 
 		// If there was an error, the token was not created. Handled by the next few lines.
-		throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not initialize tokenmap");
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not initialize tokenmap");
 
 	}
 }
 
 
 RtToken CTokenMap::findCreate(const char *name)
-// throw ERiCPPError;
+// throw ExceptRiCPPError;
 {
 	if ( !name )
 		return RI_NULL;
@@ -277,7 +277,7 @@ RtToken CTokenMap::findCreate(const char *name)
 		if ( iter == m_tokenMapper.end() ) {
 			if ( newtok )
 				delete[] newtok;
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not create token \"%s\"", name);
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not create token \"%s\"", name);
 		}
 	}
 
@@ -300,7 +300,7 @@ RtToken CTokenMap::find(const char *name) const
 }
 
 RtToken CTokenMap::staticFindCreate(RtToken token)
-// throw ERiCPPError;
+// throw ExceptRiCPPError;
 {
 	if ( !token )
 		return RI_NULL;
@@ -317,7 +317,7 @@ RtToken CTokenMap::staticFindCreate(RtToken token)
 	if ( (iter = m_tokenMapper.find(token)) == m_tokenMapper.end() ) {
 		iter = m_tokenMapper.find(CToken(token));
 		if ( iter == m_tokenMapper.end() ) {
-			throw ERiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not create token \"%s\"", token);
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not create token \"%s\"", token);
 		}
 	}
 

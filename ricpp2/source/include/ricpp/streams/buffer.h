@@ -41,7 +41,7 @@ namespace RiCPP {
 	/** @brief Template for a simple memory buffer.
 	 */
 	template<typename T_char=unsigned char>
-	class TBuffer {
+	class TemplBuffer {
 	public:
 		typedef size_t size_type; ///< @brief Size type for the buffer.
 		typedef T_char *iterator; ///< @brief Iterator.
@@ -56,7 +56,7 @@ namespace RiCPP {
 		/** @brief Construct a buffer of the given size.
 		 * @param size Size of the buffer.
 		 */
-		inline TBuffer(size_type size=0)
+		inline TemplBuffer(size_type size=0)
 		{
 			m_reserved = 0;
 			m_size = 0;
@@ -67,7 +67,7 @@ namespace RiCPP {
 		/** @brief Copy constructor.
 		 * @param bb Buffer to copy.
 		 */
-		inline TBuffer(const TBuffer<T_char> &bb)
+		inline TemplBuffer(const TemplBuffer<T_char> &bb)
 		{
 			m_reserved = 0;
 			m_size = 0;
@@ -79,7 +79,7 @@ namespace RiCPP {
 		 *
 		 * Frees the memory.
 		 */
-		inline ~TBuffer()
+		inline ~TemplBuffer()
 		{
 			if ( m_buffer )
 				delete[] m_buffer;
@@ -87,7 +87,7 @@ namespace RiCPP {
 
 		/** @brief Resize the buffer.
 		 * @param newsize New buffer size.
-		 * @exception ERiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
+		 * @exception ExceptRiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
 		 */
 		void resize(size_type newsize);
 
@@ -105,9 +105,9 @@ namespace RiCPP {
 		 *
 		 * @param bb Buffer to assign.
 		 * @return Reference of this object.
-		 * @exception ERiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
+		 * @exception ExceptRiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
 		 */
-		TBuffer<T_char> &operator=(const TBuffer<T_char> &bb);
+		TemplBuffer<T_char> &operator=(const TemplBuffer<T_char> &bb);
 
 		inline void clear()
 		{
@@ -151,16 +151,16 @@ namespace RiCPP {
 		/** @brief Gets the reference to the element at positon \a pos.
 		 * @param pos position (< size()).
 		 * @return Reference of element at the position \a pos.
-		 * @exception ERiCPPError Throws severe RIE_RANGE if \a pos >= size()
+		 * @exception ExceptRiCPPError Throws severe RIE_RANGE if \a pos >= size()
 		 */
 		T_char &operator[](size_type pos);
-	}; // TBuffer
+	}; // TemplBuffer
 
 
 	template<typename T_char>
 	inline
 	void
-	TBuffer<T_char>::resize(size_type newsize)
+	TemplBuffer<T_char>::resize(size_type newsize)
 	{
 		T_char *tempbuffer = 0;
 		if ( newsize > m_reserved ) {
@@ -169,7 +169,7 @@ namespace RiCPP {
 			} catch ( ... ) {
 			}
 			if ( !tempbuffer ) {
-				throw ERiCPPError(
+				throw ExceptRiCPPError(
 					RIE_NOMEM, RIE_SEVERE,
 					__LINE__, __FILE__,
 					"Not enough memory for a byte buffer.");
@@ -197,15 +197,15 @@ namespace RiCPP {
 
 	template <typename T_char>
 	inline
-	TBuffer<T_char> &
-	TBuffer<T_char>::operator=(const TBuffer<T_char> &bb)
+	TemplBuffer<T_char> &
+	TemplBuffer<T_char>::operator=(const TemplBuffer<T_char> &bb)
 	{
 		if ( this == &bb )
 			return *this;
 		resize(0);
 		try {
 			resize(bb.size());
-		} catch (ERiCPPError &e) {
+		} catch (ExceptRiCPPError &e) {
 			throw e;
 		}
 		if ( m_size ) {
@@ -217,12 +217,12 @@ namespace RiCPP {
 	template <typename T_char>
 	inline
 	T_char &
-	TBuffer<T_char>::operator[](size_type pos)
+	TemplBuffer<T_char>::operator[](size_type pos)
 	{
 		if ( pos < m_size )
 			return m_buffer[pos];
 
-		throw ERiCPPError(
+		throw ExceptRiCPPError(
 			RIE_RANGE, RIE_SEVERE,
 			__LINE__, __FILE__,
 			"Index out of range for a byte buffer.");

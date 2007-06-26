@@ -90,14 +90,14 @@ const char *CMacDynLib::findLib() {
 	if ( !m_libpath.empty() )
 		return m_libpath.c_str();
 
-	std::string dllname = "lib";
+	std::string dllname(CFilepathConverter::nativeDynlibPrefix());
 	dllname += libname();
 	if ( m_version >= 0 ) {
 		char buf[64] = { 0 };
 		sprintf(buf, ".%ld", m_version);
 		dllname += buf;
 	}
-	dllname += ".dylib";
+	dllname += CFilepathConverter::nativeDynlibSuffix();
 	
 	m_libpath = "";
 

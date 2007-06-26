@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/streams/reader.h"
+#include "ricpp/streams/buffer.h"
 
 using namespace RiCPP;
 

@@ -60,15 +60,15 @@ unsigned long CPlugin::myMajorVersion() { return 1; }
 unsigned long CPlugin::myMinorVersion() { return 1; }
 unsigned long CPlugin::myRevision() { return 1; }
 
-void testPluginFactory()
+void testTemplPluginFactory()
 {
 	try {
 		CPlugin plugin;
-		TPluginFactory<CPlugin> pluginFactory;
-		TPluginLoaderFactory<CPlugin> pluginLoaderFactory("demo");
-		TPluginHandler<CPlugin> pluginHandler;
-		TPluginHandlerSingleton<CPlugin> pluginHandlerSingleton;
-	} catch ( ERiCPPError &e ) {
+		TemplPluginFactory<CPlugin> pluginFactory;
+		TemplPluginLoaderFactory<CPlugin> pluginLoaderFactory("demo");
+		TemplPluginHandler<CPlugin> pluginHandler;
+		TemplPluginHandlerSingleton<CPlugin> pluginHandlerSingleton;
+	} catch ( ExceptRiCPPError &e ) {
 		e = e;
 	}
 }

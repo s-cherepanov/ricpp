@@ -63,7 +63,7 @@ class CDeclarationDictionary
 	 * Only the copied pointers to objects of m_all.
 	 *
 	 */
-	class TObjPtrRegistry<RtToken, const CDeclaration *> m_active;
+	class TemplObjPtrRegistry<RtToken, const CDeclaration *> m_active;
 	
 	/** @brief All declarations.
 	 *
@@ -76,11 +76,11 @@ class CDeclarationDictionary
 public:
 	/** @brief Const iterator for the elements.
 	 */
-	typedef TObjPtrRegistry<RtToken, CDeclaration const *>::const_iterator const_iterator;
+	typedef TemplObjPtrRegistry<RtToken, CDeclaration const *>::const_iterator const_iterator;
 
 	/** @brief Size type for the number of stored elements
 	 */
-	typedef TObjPtrRegistry<RtToken, CDeclaration const *>::size_type size_type;
+	typedef TemplObjPtrRegistry<RtToken, CDeclaration const *>::size_type size_type;
 
 	/** @brief Constructor.
 	 *
@@ -142,11 +142,11 @@ public:
 	 * @param token Token of the name of the declaration.
 	 * @param curColorSize The current number of color components.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise.
-	 * @exception ERiCPPError Can throw this if @c RIE_NOMEM for a new color declaration.
+	 * @exception ExceptRiCPPError Can throw this if @c RIE_NOMEM for a new color declaration.
 	 * @see find(RtToken), CTokenMap
 	 */
 	const CDeclaration *findAndUpdate(RtToken token, unsigned int curColorSize)
-	// throw(ERiCPPError)
+	// throw (ExceptRiCPPError)
 	;
 
 	/** @brief Searches a declaration with color update, using three steps.
@@ -165,7 +165,7 @@ public:
 		const char *var,
 		const CTokenMap &tokenmap,
 		unsigned int curColorSize)
-	// throw(ERiCPPError)
+	// throw(ExceptRiCPPError)
 	;
 
 	/** @brief Adds (overwrites) a new declaration.

@@ -52,7 +52,7 @@
 
 #include <vector>
 #include <cassert>
-#include <stdarg.h>
+#include <cstdarg>
 
 namespace RiCPP {
 
@@ -64,7 +64,7 @@ namespace RiCPP {
  *   and the error handlers.
  * - Calls the Ri...V() routines from the routines with variable parameters
  * - handles the global options (e.g. Option "searchpath" "renderer"),
- * - does the error handling by catching the errors ERiCPPError of the current renderer and
+ * - does the error handling by catching the errors ExceptRiCPPError of the current renderer and
  *   calling the user defined error handler set by errorHandler(), 
  * - matches a frontend context handle RtContextHandle to a backend context creator with
  *   its rendering context (beginV(), end(), context(), getContext()).
@@ -522,7 +522,7 @@ protected:
 		 * @param params Array of pointers to parameter arrays, forwarded from
 		 * TRiCPPBridge::beginV() call
 		 * @return New frontend context handle
-		 * @exception ERiCPPError If thrown, there is no active rendering context any more
+		 * @exception ExceptRiCPPError If thrown, there is no active rendering context any more
 		 * @see add(), CContext::activate(), IRiCCPPBridge::beginV()
 		 */
 		RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -535,7 +535,7 @@ protected:
 		 * further use). In anny case context() is illContextHandle after
 		 * end() (even if an error was thrown)
 		 * 
-		 * @exception ERiCPPError
+		 * @exception ExceptRiCPPError
 		 * @see CContext::end(), removeContext()
 		 */
 		void end();
@@ -582,43 +582,63 @@ protected:
 		/** @brief sets the searchpath for the rendererloader
 		 *  @param path The searchpath
 		 */
-		inline void searchpath(const char *path) { m_rendererLoader.searchpath(path); }
+		inline void searchpath(const char *path)
+		{
+			m_rendererLoader.searchpath(path);
+		}
 
 		/** @brief Gets the current searchpath of the rendererloader.
 		 *
 		 * @return Searchpath, directory seperator '/', pathes separated by ':'.
 		 */
-		inline const char *searchpath() const { return m_rendererLoader.searchpath();  }
+		inline const char *searchpath() const
+		{
+			return m_rendererLoader.searchpath();
+		}
 
 		/** @brief Registers a plugin factory for the context creator
 		 *
 		 *  Registers a context creator factory for a specific name. Normally
-		 *  TPluginFactory are registered to create specific plugins with
+		 *  TemplPluginFactory are registered to create specific plugins with
 		 *  \c new instead of loading them from a dynamic library.
 		 *
 		 * @param name Name of the renderer factory (context creator)
 		 * @param f Factory for the context creators
 		 * @return true, if the plugin factory could be registered
 		 */
-		inline virtual bool registerFactory(const char *name, TPluginFactory<CContextCreator> *f) { return m_rendererLoader.registerFactory(name, f); }
+		inline virtual bool registerFactory(
+			const char *name,
+			TemplPluginFactory<CContextCreator> *f)
+		{
+			return m_rendererLoader.registerFactory(name, f);
+		}
 
 		/** @brief unregisters a renderer factory
 		 * @param name Name of the plugins
-		 * @return Pointer to factory that was unregistered
+		 * @return true, if factory was unregistered
 		 */
-		inline virtual TPluginFactory<CContextCreator> *unRegisterFactory(const char *name) { return m_rendererLoader.unRegisterFactory(name); }
+		inline virtual bool unregisterFactory(const char *name)
+		{
+			return m_rendererLoader.unregisterFactory(name);
+		}
 
 		/** @brief Gets the name of the standard renderer.
 		 *
 		 * @return Name of the standard renderer
 		 */
-		inline const char *standardRendererName() const { return m_rendererLoader.standardRendererName(); }
+		inline const char *standardRendererName() const
+		{
+			return m_rendererLoader.standardRendererName();
+		}
 
 		/** @brief Sets the name of the standard renderer.
 		 *
 		 * @param name Name of the standard renderer, 0 is substituted by "ribwriter"
 		 */
-		inline void standardRendererName(const char *name) { m_rendererLoader.standardRendererName(name); }
+		inline void standardRendererName(const char *name)
+		{
+			m_rendererLoader.standardRendererName(name);
+		}
 	};
 	
 	CContextManagement m_ctxMgmt; ///< The instance for the context management
@@ -739,7 +759,7 @@ public:
 	{
 		try {
 			return m_ribFilterList.addFront(aFilter);
-		} catch ( ERiCPPError &e ) {
+		} catch ( ExceptRiCPPError &e ) {
 			ricppErrHandler().handleError(e);
 		}
 		return false;
@@ -756,7 +776,7 @@ public:
 	{
 		try {
 			return m_ribFilterList.addFront(name);
-		} catch ( ERiCPPError &e ) {
+		} catch ( ExceptRiCPPError &e ) {
 			ricppErrHandler().handleError(e);
 		}
 		return false;
@@ -780,11 +800,11 @@ public:
 	 *
 	 *  @return true, filter factory was registerd
 	 */
-	inline virtual bool registerRibFilterFactory(const char *name, TPluginFactory<CRibFilter> *f)
+	inline virtual bool registerRibFilterFactory(const char *name, TemplPluginFactory<CRibFilter> *f)
 	{
 		try {
 			return m_ribFilterList.registerFactory(name, f);
-		} catch ( ERiCPPError &e ) {
+		} catch ( ExceptRiCPPError &e ) {
 			ricppErrHandler().handleError(e);
 		}
 		return false;
@@ -793,18 +813,18 @@ public:
 	/** @brief Registers a plugin factory for the context creator
 	 *
 	 *  Registers a context creator factory for a specific name. Normally
-	 *  TPluginFactory are registered to create specific plugins with
+	 *  TemplPluginFactory are registered to create specific plugins with
 	 *  \c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the renderer factory (context creator)
 	 * @param f Factory for the context creators
 	 * @return true, if the plugin factory could be registered
 	 */
-	inline virtual bool registerRendererFactory(const char *name, TPluginFactory<CContextCreator> *f)
+	inline virtual bool registerRendererFactory(const char *name, TemplPluginFactory<CContextCreator> *f)
 	{
 		try {
 			return m_ctxMgmt.registerFactory(name, f);
-		} catch ( ERiCPPError &e ) {
+		} catch ( ExceptRiCPPError &e ) {
 			ricppErrHandler().handleError(e);
 		}
 		return false;
@@ -812,16 +832,16 @@ public:
 
 	/** @brief unregisters a plugin factory
 	 * @param name Name of the plugins
-	 * @return Pointer to factory that was unregistered
+	 * @return true, if factory was unregistered
 	 */
-	inline virtual TPluginFactory<CContextCreator> *unRegisterRendererFactory(const char *name)
+	inline virtual bool unregisterRendererFactory(const char *name)
 	{
 		try {
-			return m_ctxMgmt.unRegisterFactory(name);
-		} catch ( ERiCPPError &e ) {
+			return m_ctxMgmt.unregisterFactory(name);
+		} catch ( ExceptRiCPPError &e ) {
 			ricppErrHandler().handleError(e);
 		}
-		return 0;
+		return false;
 	}
 
 	/** @brief Gets the name of the standard renderer.

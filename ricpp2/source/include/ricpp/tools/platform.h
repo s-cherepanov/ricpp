@@ -31,6 +31,7 @@
  */
 
 #include <cstring>
+#include <ios>
 
 #ifdef WIN32
 
@@ -49,6 +50,8 @@ inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2);
  */
 #define EXPORT __declspec ( dllexport )
 
+typedef std::ios_base::openmode TypeOpenMode;
+
 #else
 
 /** @brief Generic pointer to a function.
@@ -65,6 +68,8 @@ typedef int (*FARPROC)();
 /** @brief Symbolic name for visibility("default") attribute.
  */
 #define EXPORT __attribute__((visibility("default")))
+
+typedef std::_Ios_Openmode TypeOpenMode;
 #endif
 
 #endif

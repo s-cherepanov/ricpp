@@ -1331,7 +1331,7 @@ namespace RiCPP {
 
 		/** @brief Reparses a scheme.
 		*
-		* Reparses the scheme \aScheme as part of an URI.
+		* Reparses the scheme \a aScheme as part of an URI.
 		*
 		* @return true if scheme is valid.
 		* @see setScheme() set()
@@ -1365,7 +1365,7 @@ namespace RiCPP {
 
 		/** @brief Reparses a query.
 		*
-		* Reparses the query \aQuery as part of an URI.
+		* Reparses the query \a aQuery as part of an URI.
 		*
 		* @return true if query is valid.
 		* @see setQuery() set()
@@ -1374,7 +1374,7 @@ namespace RiCPP {
 
 		/** @brief Reparses a fragment.
 		*
-		* Reparses the fragment \aFragment as part of an URI.
+		* Reparses the fragment \a aFragment as part of an URI.
 		*
 		* @return true if fragment is valid.
 		* @see setFragment() set()

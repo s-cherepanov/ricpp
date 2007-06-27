@@ -53,7 +53,7 @@ protected:
 public:
 	inline virtual ~CBackBufferRoot() {}
 	virtual void close() { }
-	virtual bool open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary) { return false; }
+	virtual bool open(const CUri &absUri, std::_Ios_Openmode mode = std::ios_base::in|std::ios_base::binary) { return false; }
 	inline virtual bool isOpen() const { return false; }
 };
 
@@ -81,7 +81,7 @@ public:
 		if ( m_stream.is_open() )
 			m_stream.close();
 	}
-	inline virtual bool open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	inline virtual bool open(const CUri &absUri, std::_Ios_Openmode mode = std::ios_base::in|std::ios_base::binary)
 	{
 		close();
 		std::string filename(absUri.getHierPart());
@@ -160,7 +160,7 @@ public:
 	inline virtual const_iterator end() const { return m_schemes.end(); }
 	inline virtual size_type size() const { return m_schemes.size(); }
 
-	inline virtual CBackBufferRoot *open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	inline virtual CBackBufferRoot *open(const CUri &absUri, std::_Ios_Openmode mode = std::ios_base::in|std::ios_base::binary)
 	{
 		return 0;
 	}
@@ -200,7 +200,7 @@ public:
 	inline virtual void startup() {}
 	inline virtual void shutdown() {}
 
-	inline virtual CBackBufferRoot *open(const CUri &absUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	inline virtual CBackBufferRoot *open(const CUri &absUri, std::_Ios_Openmode mode = std::ios_base::in|std::ios_base::binary)
 	{
 		CFileBackBuffer *buf;
 		buf = new CFileBackBuffer;
@@ -320,7 +320,7 @@ public:
 		return m_baseUri.isValid();
 	}
 
-	inline virtual bool open(const CUri &refUri, std::ios_base::open_mode mode = std::ios_base::in|std::ios_base::binary)
+	inline virtual bool open(const CUri &refUri, std::_Ios_Openmode mode = std::ios_base::in|std::ios_base::binary)
 	{
 		if ( m_factory && m_backBuffer ) {
 			m_factory->close(m_backBuffer);

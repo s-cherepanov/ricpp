@@ -29,10 +29,13 @@
  */
 
 #include "ricpp/tools/filepath.h"
+#include <cstdlib>
+#include <cerrno>
 
 #include <sys/param.h>
 #include <unistd.h>
-#include <stdlib.h>
+
+#include <dirent.h>
 
 using namespace RiCPP;
 
@@ -92,8 +95,51 @@ bool CFilepath::isAbsolute() const {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '/');
 }
 
+static bool filenamecmp(const char *direntry, const char *pattern)
+{
+	int ret;
+	const char *patpos = pattern ? strchr(pattern, '*') : 0;
+
+	if ( patpos ) {
+		ret = strncmp(direntry, pattern, (int)(patpos - pattern));
+		if ( ret != 0 )
+			return false;
+		++patpos;
+		int len = strlen(direntry)-strlen(patpos);
+		if ( len > 0 )
+			return !strcmp(direntry+len, patpos);
+	} else if (!strcmp(direntry, pattern))
+		return true;
+
+	return false;
+}
 
 bool CDirectory::readDirectory(const char *pattern) {
+	struct dirent *dir_entry_p;
+	DIR *dir_p;
+
 	m_dirList.clear();
-	return false;
+	std::string direntry(m_directory.fullpath());
+
+	if ( !(pattern && *pattern) )
+		pattern = "*";
+
+	direntry += "/";
+	direntry += pattern;
+
+
+	dir_p = opendir(direntry.c_str());
+	if ( dir_p == 0 )  {
+		return false;
+	}
+	
+	while ( (dir_entry_p = readdir(dir_p)) != 0 ) {
+		direntry = dir_entry_p->d_name;
+		if ( direntry != "." && direntry != ".." && filenamecmp(direntry.c_str(), pattern) ) {
+			m_dirList.push_back(CFilepath(direntry));
+		}
+	}
+
+	closedir(dir_p);
+	return errno == 0;
 }

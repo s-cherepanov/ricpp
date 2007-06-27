@@ -89,7 +89,7 @@ public:
 
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~ExceptRiCPPError() {}
+	inline virtual ~ExceptRiCPPError() throw() {}
 
 	/** @brief Sets error codes and additional error message with source line and source file added
 	 *  @param aCode Which error ('RIE_...')
@@ -162,7 +162,7 @@ public:
 	/** Gets the current error string
 	 *  @return Pointer to the error message stored in \a ExceptRiCPPError::m_message
 	 */
-	inline virtual const char *what() const
+	inline virtual const char *what() const throw()
 	{
 		return m_message.c_str();
 	}

@@ -198,7 +198,7 @@ namespace RiCPP {
 
 	public:
 		/** @brief Init with an internal path representation.
-		 * @param Simple search pattern (like abc*.txt).
+		 * @param pattern Simple search pattern (like abc*.txt).
 		 * @param aFilepath Internal representation of a filepath, you can use
 		 *        CFilepathConverter::convertToInternal()
 		 *        to convert a native into an internal representation.

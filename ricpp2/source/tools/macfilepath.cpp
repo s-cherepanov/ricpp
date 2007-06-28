@@ -99,17 +99,21 @@ static bool filenamecmp(const char *direntry, const char *pattern)
 {
 	int ret;
 	const char *patpos = pattern ? strchr(pattern, '*') : 0;
+	direntry = direntry ? direntry : "";
 
 	if ( patpos ) {
 		ret = strncmp(direntry, pattern, (int)(patpos - pattern));
-		if ( ret != 0 )
+		if ( ret != 0 ) {
 			return false;
+		}
 		++patpos;
 		int len = strlen(direntry)-strlen(patpos);
-		if ( len > 0 )
+		if ( len > 0 ) {
 			return !strcmp(direntry+len, patpos);
-	} else if (!strcmp(direntry, pattern))
+		}
+	} else if (!strcmp(direntry, pattern)) {
 		return true;
+	}
 
 	return false;
 }
@@ -120,13 +124,11 @@ bool CDirectory::readDirectory(const char *pattern) {
 
 	m_dirList.clear();
 	std::string direntry(m_directory.fullpath());
-
-	if ( !(pattern && *pattern) )
-		pattern = "*";
-
 	direntry += "/";
-	direntry += pattern;
 
+	if ( !(pattern && *pattern) ) {
+		pattern = "*";
+	}
 
 	dir_p = opendir(direntry.c_str());
 	if ( dir_p == 0 )  {
@@ -134,7 +136,7 @@ bool CDirectory::readDirectory(const char *pattern) {
 	}
 	
 	while ( (dir_entry_p = readdir(dir_p)) != 0 ) {
-		direntry = dir_entry_p->d_name;
+		direntry = dir_entry_p->d_name ? dir_entry_p->d_name : "";
 		if ( direntry != "." && direntry != ".." && filenamecmp(direntry.c_str(), pattern) ) {
 			m_dirList.push_back(CFilepath(direntry));
 		}

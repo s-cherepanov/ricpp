@@ -181,10 +181,11 @@ namespace RiCPP {
 		if ( size && tempbuffer )
 			memcpy(tempbuffer, m_buffer, size*sizeof(T_char));
 
-		if ( m_buffer ) {
+		if ( m_buffer && tempbuffer) {
 			m_reserved = 0;
 			m_size = 0;
 			delete[] m_buffer;
+			m_buffer = 0;
 		}
 
 		if ( tempbuffer ) {

@@ -29,11 +29,11 @@
 
 #include "ricpp/ricppbridge/ricppbridge.h"
 #include "ricpp/tools/filepath.h"
-#include "ricpp/tools/stringlist.h"
 #include "ricpp/streams/uri.h"
 #include "ricpp/streams/buffer.h"
 
 #include "zlib.h"
+#include "zutil.h"
 
 #include <iostream>
 #include <fstream>
@@ -41,35 +41,24 @@
 
 using namespace RiCPP;
 
-class CBackBufferRoot : public std::basic_streambuf<char> {
+class CBackBufferRoot {
 protected:
-	virtual int_type overflow (int_type c) {
-		return  0;
-	}
-	virtual int_type underflow () {
-		return  0;
-	}
-
+	CUri m_lastFileName;
 public:
 	inline virtual ~CBackBufferRoot() {}
 	virtual void close() { }
-	virtual bool open(const CUri &absUri, TypeOpenMode mode = std::ios_base::in|std::ios_base::binary) { return false; }
+	virtual bool open(const CUri &absUri, TypeOpenMode mode = std::ios_base::in|std::ios_base::binary) { m_lastFileName = absUri; return false; }
 	inline virtual bool isOpen() const { return false; }
+	inline virtual std::streamsize sgetn(char *b, std::streamsize size) { return 0; }
+	inline virtual std::streamsize sputn(const char *b, std::streamsize size) { return 0; }
+	inline virtual const CUri &lastFileName() const { return m_lastFileName; }
 };
 
 class CFileBackBuffer : public CBackBufferRoot {
 	std::fstream m_stream;
-	TemplBuffer<char> m_backBuffer;
-protected:
-	virtual int_type overflow (int_type c) {
-		return  0;
-	}
-	virtual int_type underflow () {
-		return  0;
-	}
+	TypeOpenMode m_mode;
 public:
 	inline CFileBackBuffer()
-		: m_backBuffer(8192)
 	{
 	}
 	inline virtual ~CFileBackBuffer()
@@ -78,20 +67,54 @@ public:
 	}
 	virtual void close()
 	{
-		if ( m_stream.is_open() )
+		if ( m_stream.is_open() ) {
 			m_stream.close();
+			m_stream.clear();
+		}
 	}
 	inline virtual bool open(const CUri &absUri, TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
 	{
+		CBackBufferRoot::open(absUri, mode);
 		close();
+		m_stream.clear();
+		m_mode = mode;
 		std::string filename(absUri.getHierPart());
 		CFilepathConverter::convertToNative(filename);
 		m_stream.open(filename.c_str(), mode);
-		return m_stream.is_open();
+		return m_stream && m_stream.is_open();
 	}
+
 	inline virtual bool isOpen() const
 	{
 		return m_stream.is_open();
+	}
+
+	inline virtual std::streamsize sgetn(char *b, std::streamsize size) 
+	{
+		if ( !m_stream || !b || !size )
+			return 0;
+		if ( !(m_mode & std::ios_base::in) )
+			return 0;
+
+#ifdef _MSC_VER
+		m_stream._Read_s(b, size, size);
+		return m_stream.gcount();
+#else
+		m_stream.read(b, size);
+		return m_stream.gcount();
+#endif
+	}
+
+	inline virtual std::streamsize sputn(const char *b, std::streamsize size) 
+	{
+		if ( !m_stream || !b || !size )
+			return 0;
+		if ( !(m_mode & std::ios_base::out) )
+			return 0;
+
+		m_stream.write(b, size);
+
+		return size;
 	}
 };
 
@@ -222,17 +245,19 @@ unsigned long CFileBackBufferFactory::myMinorVersion() { return 1; }
 unsigned long CFileBackBufferFactory::myRevision() { return 1; }
 
 class CBackBufferRegistry {
+	std::string m_direct;
+	bool m_hasDirect;
 	TemplPluginHandler<CBackBufferFactory> m_backBufferPluginHandler;
 	TemplPluginFactory<CFileBackBufferFactory> m_fileBuffer;
-	inline void init() {
+	inline void init(const char *direct) {
+		m_direct = direct ? direct : "";
+		m_hasDirect = direct != 0;
 		if ( !m_backBufferPluginHandler.isRegistered("filebuffer") ) {
 			m_backBufferPluginHandler.registerFactory(
 				"file.buffer",
 				(TemplPluginFactory<CBackBufferFactory> *)&m_fileBuffer );
-			std::string str;
-			CEnv::find(str, CEnv::progDirName());
 			try {
-				m_backBufferPluginHandler.registerFromDirectory(0, ".buffer");
+				m_backBufferPluginHandler.registerFromDirectory(direct, ".buffer");
 			} catch ( ... ) {
 				throw;
 			}
@@ -245,7 +270,7 @@ class CBackBufferRegistry {
 	}
 
 public:
-	inline CBackBufferRegistry() {init();}
+	inline CBackBufferRegistry(const char *direct=0) {init(direct);}
 	inline ~CBackBufferRegistry() {}
 	inline CBackBufferFactory *getBufferFactory(const char *scheme)
 	{
@@ -259,31 +284,428 @@ public:
 	}
 };
 
-class CByteStreambuf : public std::basic_streambuf<char> {
-	std::list<TemplBuffer<char> > m_frontBufferList;
+template<class charT, class traits=std::char_traits<charT> >
+class TemplFrontStreambuf : public std::basic_streambuf<charT, traits> {
+	static const int gz_magic_0 = 0x1f;
+	static const int gz_magic_1 = 0x8b; /* gzip magic header */
+
+	/* gzip flag byte */
+	static int const ASCII_FLAG   = 0x01; /* bit 0 set: file probably ascii text */
+	static int const HEAD_CRC     = 0x02; /* bit 1 set: header CRC present */
+	static int const EXTRA_FIELD  = 0x04; /* bit 2 set: extra field present */
+	static int const ORIG_NAME    = 0x08; /* bit 3 set: original file name present */
+	static int const COMMENT      = 0x10; /* bit 4 set: file comment present */
+	static int const RESERVED     = 0xE0; /* bits 5..7: reserved */
+
+	std::basic_streambuf<charT, traits> *m_coupledBuffer;
 	CBackBufferRoot *m_backBuffer;
 	CBackBufferFactory *m_factory;
-
-	CUri m_baseUri;
-	CUri m_resolutionUri;
-	bool m_cache;
 	CBackBufferRegistry *m_bufferReg;
 
-	z_stream m_strm;
-	bool m_compress;
+	TypeOpenMode m_mode;
+	CUri m_baseUri;
+	CUri m_resolutionUri;
 
-	void init()
+	int_type m_buffersize;
+	int_type m_putbackSize;
+
+	TemplBuffer<charT> m_frontInBuffer;
+	z_stream m_strmIn;
+	TemplBuffer<unsigned char> m_transferInBuffer;
+	bool m_inIsEOF;
+	long m_in;
+	long m_crcIn;
+	int m_transparentIn;
+	int m_strategyIn;
+	char m_methodIn;
+
+	TemplBuffer<charT> m_frontOutBuffer;
+	z_stream m_strmOut;
+	TemplBuffer<char> m_transferOutBuffer;
+	long m_out;
+	long m_crcOut;
+	int m_compressLevelOut;
+	int m_strategyOut;
+	char m_methodOut;
+
+	inline void init()
 	{
+		m_backBuffer = 0;
+		m_coupledBuffer = 0;
+		m_factory = 0;
+
+		m_mode = 0;
+
+		m_buffersize = 8192;
+		m_putbackSize = 128;
+
+		m_frontInBuffer.clear();
+		m_frontInBuffer.resize(m_buffersize);
+		m_in = 0;
+		m_crcIn = 0;
+		m_transparentIn = true;
+		m_strategyIn = Z_DEFAULT_STRATEGY;
+		m_methodIn = Z_DEFLATED;
+		setg(
+			m_frontInBuffer.begin()+m_putbackSize,
+			m_frontInBuffer.begin()+m_putbackSize,
+			m_frontInBuffer.begin()+m_putbackSize);
+
+
+		m_frontOutBuffer.clear();
+		m_frontOutBuffer.resize(m_buffersize);
+		m_out = 0;
+		m_crcOut = 0;
+		m_compressLevelOut = Z_DEFAULT_COMPRESSION;
+		m_strategyOut = Z_DEFAULT_STRATEGY;
+		m_methodOut = Z_DEFLATED;
+		setp(m_frontOutBuffer.begin(), m_frontOutBuffer.end());
+
 	}
+
+	inline void putLong(unsigned char c[4], unsigned long x) const
+	{
+		for (int n = 0; n < 4; n++) {
+			c[n] = (unsigned char)(x & 0xff);
+			x >>= 8;
+		}
+	}
+
+	inline unsigned long getLong(const unsigned char c[4]) const
+	{
+		unsigned long x = (unsigned long)c[0];
+		x += ((unsigned long)c[1])<<8;
+		x += ((unsigned long)c[2])<<16;
+		x += ((unsigned long)c[3])<<24;
+		return x;
+	}
+
+		
+	inline int get_byte()
+	{
+		if ( m_strmIn.avail_in == 0 ) {
+			fill_in_buffer();
+			if (m_strmIn.avail_in == 0) {
+				return EOF;
+			}
+			m_strmIn.next_in = m_transferInBuffer.begin();
+		}
+
+		m_strmIn.avail_in--;
+		return (int)*(m_strmIn.next_in++);
+	}
+
+	inline bool check_header()
+	{
+		int method; // method byte
+		int flags;  // flags byte
+		uInt len;
+		bool iseof = false;
+
+		// Stream buffer is greater than 2, if it is less tahn 2,
+		// the file is smaller as 2 Bytes
+		if ( m_strmIn.avail_in < 2 ) {
+			fill_in_buffer();
+			if ( m_strmIn.avail_in < 2 ) {
+				m_transparentIn = true;
+				return true;
+			}
+		}
+
+		// Peek ahead to check the gzip magic header
+		if (m_strmIn.next_in[0] != gz_magic_0 ||
+			m_strmIn.next_in[1] != gz_magic_1)
+		{
+			m_transparentIn = true;
+			return true;
+		}
+
+		// Skip the header
+		get_byte();
+		get_byte();
+
+		m_transparentIn = false;
+
+		// Check the rest of the gzip header
+		method = get_byte();
+		flags = get_byte();
+
+		if ( method != Z_DEFLATED || flags == EOF || (flags & RESERVED) != 0 ) {
+			return false;
+		}
+
+		// Discard time, xflags and OS code:
+		for ( len = 0; len < 6; len++ ) {
+			get_byte();
+		}
+
+		if ( (flags & EXTRA_FIELD) != 0 ) { // skip the extra field
+			len  =  (uInt)get_byte();
+			len += ((uInt)get_byte())<<8;
+			// len is garbage if EOF but the loop below will quit anyway
+			while ( len-- != 0 && get_byte() != EOF ) ;
+		}
+		if ((flags & ORIG_NAME) != 0) { // skip the extra field
+			while ( get_byte() != EOF ) ;
+		}
+		if ((flags & COMMENT) != 0) {   // skip the .gz file comment
+			while ( get_byte() != EOF ) ;
+		}
+		if ((flags & HEAD_CRC) != 0) {  // skip the header crc 16Bit
+			for (len = 0; len < 2; len++) {
+				get_byte();
+			}
+		}
+
+		return !m_inIsEOF;
+	}
+
+	inline unsigned int fill_in_buffer()
+	{
+		if ( m_strmIn.avail_in != 0 ) {
+			return m_strmIn.avail_in;
+		}
+
+		if ( m_inIsEOF )
+			return 0;
+
+		bool startstream = false;
+		if ( m_transferInBuffer.size() == 0 ) {
+			int additionalchars = 8;
+			if ( m_buffersize < 16 ) {
+				additionalchars += 16;
+			}
+			m_transferInBuffer.resize(m_buffersize*sizeof(charT)+additionalchars);
+			m_strmIn.next_in = m_transferInBuffer.begin()+8;
+			startstream = true;
+		} else if ( m_strmIn.next_in < m_transferInBuffer.begin()+(m_transferInBuffer.size()-8) ) {
+			m_inIsEOF = true;
+			return 0;
+		} else {
+			TemplBuffer<unsigned char>::iterator e = m_transferInBuffer.begin()+(m_transferInBuffer.size()-8);
+			TemplBuffer<unsigned char>::iterator b = m_transferInBuffer.begin();
+
+			for ( int i=0; i<8; ++i ) {
+				*(b++) = *(e++);
+			}
+			m_strmIn.next_in = m_transferInBuffer.begin();
+		}
+
+		if ( m_backBuffer ) {
+			m_strmIn.avail_in =
+				(uInt)m_backBuffer->sgetn(
+					(char *)m_transferInBuffer.begin()+8,
+					(std::streamsize)m_transferInBuffer.size()-8);
+		} else if ( m_coupledBuffer ) {
+			#ifdef _MSC_VER
+				m_strmIn.avail_in =
+					(uInt)m_coupledBuffer->_Sgetn_s(
+						(char *)m_transferInBuffer.begin()+8,
+						m_transferInBuffer.size()-8,
+						(std::streamsize)m_transferInBuffer.size()-8);
+			#else
+				m_strmIn.avail_in =
+					m_coupledBuffer->sgetn(
+						(char *)m_transferInBuffer.begin()+8,
+						m_transferInBuffer.size()-8);
+			#endif
+		}
+
+		if ( startstream && m_strmIn.avail_in > 2 ) {
+			if (m_strmIn.next_in[0] == gz_magic_0 &&
+				m_strmIn.next_in[1] == gz_magic_1)
+			{
+				if ( m_strmIn.avail_in >= 10 ) {
+					// At least the 8 Byte at the and of the zipfile (4 Byte CRC, 4 Byte length)
+					m_strmIn.avail_in -= 8;
+				}
+				// If the filesize is smaller than 10 the header check will fail.
+			}
+		}
+
+		return m_strmIn.avail_in;
+	}
+
 
 protected:
-	virtual int_type overflow (int_type c) {
-		return  0;
+	inline virtual int flushBuffer(bool finish=false)
+	{
+		if ( !(m_mode & std::ios_base::out) ) {
+			return 0;
+		}
+		int num = static_cast<int>(pptr() - pbase());
+		if ( num <= 0 ) {
+			pbump(0);
+			return 0;
+		}
+
+		if ( !m_backBuffer && !m_coupledBuffer ) {
+			pbump(-num);
+			return 0;
+		}
+
+		if ( m_compressLevelOut == Z_NO_COMPRESSION ) {
+			if ( m_backBuffer ) {
+				m_backBuffer->sputn(m_frontOutBuffer.begin(), num*sizeof(charT));
+			} else if ( m_coupledBuffer ) {
+				m_coupledBuffer->sputn(m_frontOutBuffer.begin(), num);
+			}
+		} else {
+			// Copy to/from transferbuff with zlib, transfer the back buffer or
+			// coupled buffer
+			int ret;
+
+			m_strmOut.avail_in = num*sizeof(charT);
+			m_strmOut.next_in = (Bytef *)(m_frontOutBuffer.begin());
+
+			if ( m_transferOutBuffer.size() == 0 ) {
+				m_transferOutBuffer.resize(m_buffersize*sizeof(charT));
+
+				// Write compress header
+				char header[10] = {
+					(char)gz_magic_0, (char)gz_magic_1,
+					m_methodOut,
+					0, // flags
+					0,0,0,0, // time
+					0, //xflags 
+					OS_CODE
+				};
+				if ( m_backBuffer ) {
+					if ( !m_backBuffer->sputn(header, sizeof(header)) ) {
+						pbump(-num);
+						return 0;
+					}
+				} else if ( m_coupledBuffer ) {
+					if ( !m_coupledBuffer->sputn(header, sizeof(header)) ) {
+						pbump(-num);
+						return 0;
+					}
+				}
+			}
+
+			do {
+				int flush = finish ? Z_FINISH : Z_NO_FLUSH;
+
+				m_strmOut.avail_out = static_cast<uInt>(m_transferOutBuffer.size());
+				m_strmOut.next_out = (Bytef *)(m_transferOutBuffer.begin());
+
+				ret = deflate(&m_strmOut, flush);
+
+				if ( ret == Z_STREAM_ERROR ) {
+					pbump(-num);
+					return 0;
+				}
+
+				int have = (int)(m_transferOutBuffer.size() - m_strmOut.avail_out);
+
+				if ( m_backBuffer ) {
+					if ( !m_backBuffer->sputn(m_transferOutBuffer.begin(), have) ) {
+						pbump(-num);
+						return 0;
+					}
+				} else if ( m_coupledBuffer ) {
+					if ( !m_coupledBuffer->sputn(m_transferOutBuffer.begin(), have) ) {
+						pbump(-num);
+						return 0;
+					}
+				} 
+			} while ( m_strmOut.avail_out == 0 );
+			m_out = num;
+			m_crcOut = crc32(m_crcOut, (const Bytef *)m_frontOutBuffer.begin(), (unsigned int)num);
+		}
+
+		pbump(-num);
+		return num;
 	}
-	virtual int_type underflow () {
-		return  0;
+
+	inline virtual int sync(bool finish=false)
+	{
+		return flushBuffer(finish);
 	}
-	virtual void setBaseCwd() {
+
+	inline virtual int_type overflow(int_type c)
+	{
+		if ( c != traits::eof() ) {
+			*pptr() = c;
+			pbump(1);
+		}
+		if ( flushBuffer() == traits::eof() ) {
+			return traits::eof();
+		}
+		return c;
+	}
+
+	inline virtual int_type underflow()
+	{
+		if ( gptr() < egptr() ) {
+			return *gptr();
+		}
+		
+		if ( m_inIsEOF ) {
+			return traits::eof();
+		}
+
+		int_type numPutback;
+		numPutback = (int_type)(gptr() - eback());
+		if ( numPutback > m_putbackSize )
+			numPutback = m_putbackSize;
+
+		if ( numPutback ) {
+			memcpy(m_frontInBuffer.begin()+(m_putbackSize-numPutback), gptr()-numPutback, numPutback*sizeof(charT));
+		}
+
+		// Read new Characters
+		std::streamsize num = 0;
+		if ( m_transparentIn ) {
+			if ( m_backBuffer ) {
+				num =
+					m_backBuffer->sgetn(
+						(char *)(m_frontInBuffer.begin()+m_putbackSize),
+							(std::streamsize)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize)));
+			} else if ( m_coupledBuffer ) {
+				#ifdef _MSC_VER
+					num =
+						m_coupledBuffer->_Sgetn_s(
+							(char *)(m_frontInBuffer.begin()+m_putbackSize),
+							sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize),
+							(std::streamsize)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize)));
+				#else
+					num =
+						m_coupledBuffer->sgetn(
+							(char *)(m_frontInBuffer.begin()+m_putbackSize),
+							sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize));
+				#endif
+			}
+		} else {
+			m_strmIn.avail_out = (uInt)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize));
+			m_strmIn.next_out = (Bytef *)(m_frontInBuffer.begin()+m_putbackSize);
+			while ( m_strmIn.avail_out != 0 ) {
+				fill_in_buffer();
+				if ( m_strmIn.avail_in != 0 ) {
+					inflate(&m_strmIn, Z_NO_FLUSH);
+					continue;
+				}
+				break;
+			}
+			num = (std::streamsize)(
+				sizeof(charT) *
+				(m_frontInBuffer.size()-m_putbackSize) -
+				m_strmIn.avail_out);
+		}
+
+		setg(
+			m_frontInBuffer.begin()+(m_putbackSize-numPutback), 
+			m_frontInBuffer.begin()+m_putbackSize,
+			m_frontInBuffer.begin()+m_putbackSize+num);
+
+		if ( num == 0 )
+			return traits::eof();
+
+		return *gptr();
+	}
+
+	inline virtual void setBaseCwd()
+	{
 		CFilepath p;
 		std::string path(p.filepath());
 		path += CFilepathConverter::internalPathSeperator();
@@ -291,26 +713,23 @@ protected:
 	}
 
 public:
-	inline CByteStreambuf(CBackBufferRegistry &bufferReg) :
-		m_backBuffer(0),
-		m_factory(0),
-		m_cache(false),
-		m_compress(true),
+	inline TemplFrontStreambuf(CBackBufferRegistry &bufferReg) :
 		m_bufferReg(&bufferReg)
 	{
 		init();
 	}
 
-	inline CByteStreambuf(CByteStreambuf &)
+
+	inline TemplFrontStreambuf(TemplFrontStreambuf &)
 	{
 	}
 
-	inline virtual ~CByteStreambuf() throw()
+	inline virtual ~TemplFrontStreambuf() throw()
 	{
 		close();
 	}
 
-	inline virtual bool setBase(const CUri &base)
+	inline virtual bool base(const CUri &base)
 	{
 		if ( base.isValid() ) {
 			m_baseUri = base;
@@ -320,13 +739,24 @@ public:
 		return m_baseUri.isValid();
 	}
 
-	inline virtual bool open(const CUri &refUri, TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
+	inline virtual const CUri &base() const
 	{
+		return m_baseUri;
+	}
+
+	inline virtual bool open(
+		const CUri &refUri,
+		TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
+		int compressLevel = Z_DEFAULT_COMPRESSION)
+	{
+		m_mode = mode;
+		m_compressLevelOut = compressLevel;
 		if ( m_factory && m_backBuffer ) {
 			m_factory->close(m_backBuffer);
 			m_backBuffer = 0;
 			m_factory = 0;
 		}
+		m_coupledBuffer = 0;
 
 		if ( m_baseUri.toString().empty() ) {
 			setBaseCwd();
@@ -343,65 +773,128 @@ public:
 			if ( !m_backBuffer )
 				m_factory = 0;
 		}
+
+		if ( m_compressLevelOut != Z_NO_COMPRESSION  && (m_mode & std::ios_base::out) ) {
+			m_strmOut.zalloc = Z_NULL;
+			m_strmOut.zfree = Z_NULL;
+			m_strmOut.opaque = Z_NULL;
+			m_strmOut.avail_in = 0;
+			m_strmOut.avail_out = 0;
+			
+			m_out = 0;
+			m_crcOut = crc32(0L, Z_NULL, 0);
+			m_strategyOut = Z_DEFAULT_STRATEGY;
+
+			setp(m_frontOutBuffer.begin(), m_frontOutBuffer.end());
+			int ret = deflateInit2(
+				&m_strmOut,
+				m_compressLevelOut,
+				m_methodOut,
+				-MAX_WBITS,
+				DEF_MEM_LEVEL,
+				m_strategyOut);
+			if ( ret != Z_OK ) {
+				return false;
+			}
+		}
+
+		if ( m_mode & std::ios_base::in ) {
+			m_strmIn.zalloc = Z_NULL;
+			m_strmIn.zfree = Z_NULL;
+			m_strmIn.opaque = Z_NULL;
+			m_strmIn.avail_in = 0;
+			m_strmIn.avail_out = 0;
+			
+			m_strategyIn = Z_DEFAULT_STRATEGY;
+			m_transparentIn = compressLevel == Z_NO_COMPRESSION;
+			m_in = 0;
+			m_inIsEOF = false;
+			m_crcIn = crc32(0L, Z_NULL, 0);
+			setg(
+				m_frontInBuffer.begin()+m_putbackSize,
+				m_frontInBuffer.begin()+m_putbackSize,
+				m_frontInBuffer.begin()+m_putbackSize);
+
+			if ( !m_transparentIn && !check_header() )
+				return false;
+
+			if ( !m_transparentIn ) {
+				int ret = inflateInit2(
+					&m_strmIn,
+					-MAX_WBITS);
+				if ( ret != Z_OK ) {
+					return false;
+				}
+			}
+		}
+
 		return m_backBuffer != 0;
 	}
 
 	inline virtual bool close()
 	{
+		sync(true);
 		if ( m_factory && m_backBuffer ) {
+			if ( m_compressLevelOut != Z_NO_COMPRESSION && (m_mode & std::ios_base::out) ) {
+				unsigned char c[2][4];
+				putLong (c[0], m_crcOut);
+				putLong (c[1], (unsigned long)(m_out & 0xffffffff));
+				if ( m_backBuffer ) {
+					if ( !m_backBuffer->sputn((const char *)(&c[0][0]), 8) ) {
+					}
+				} else if ( m_coupledBuffer ) {
+					if ( !m_coupledBuffer->sputn((const char *)(&c[0][0]), 8) ) {
+					}
+				} else {
+					// Do nothing
+				}
+				deflateEnd(&m_strmOut);
+			}
+			if ( !m_transparentIn && (m_mode & std::ios_base::in) ) {
+				inflateEnd(&m_strmIn);
+			}
 			bool rval = m_factory->close(m_backBuffer);
 			m_backBuffer = 0;
 			m_factory = 0;
+			m_transferOutBuffer.resize(0);
 			return rval;
 		}
 		return false;
 	}
 
-	inline virtual void enableCache()
-	{
-		m_cache = true;
-	}
-
-	inline virtual void disableCache()
-	{
-		m_cache = false;
-	}
-
-	inline virtual bool cacheEnabled() const
-	{
-		return m_cache;
-	}
-
 	inline virtual bool rewind() const
 	{
-		if ( m_cache ) {
-			// rewind on my own
-		} else {
-			// let the backbuffer rewind
-		}
 		return false;
 	}
 };
 
 void testStream(CBackBufferRegistry &factory)
 {
-	CByteStreambuf bi(factory);
-	std::istream myistream(&bi);
-
-	bi.open("ReadMe.txt", std::ios_base::in|std::ios_base::binary);
-	bi.close();
-
-	CByteStreambuf bo(factory);
+	TemplFrontStreambuf<char> ob(factory);
 	std::string str;
 	CEnv::find(str, CEnv::tmpName());
 	str += CFilepathConverter::nativePathSeperator();
 	CFilepathConverter::convertToInternal(str);
 
 	CUri base("file", "", str.c_str(), 0, 0);
-	bo.setBase(base);
-	std::ostream myostream(&bo);
-	bo.open("ReadMe2.txt", std::ios_base::out|std::ios_base::binary);
-	bo.close();
+	ob.base(base);
+	ob.open("ReadMe2.txt.gz", std::ios_base::out|std::ios_base::binary);
+	std::ostream myostream(&ob);
+	if ( myostream ) {
+		myostream << "Teste";
+	}
+	ob.close();
+
+	TemplFrontStreambuf<char> ib(factory);
+	ib.base(base);
+	ib.open("ReadMe2.txt.gz", std::ios_base::in|std::ios_base::binary);
+	std::istream myistream(&ib);
+	if ( myistream ) {
+		std::string teststr;
+		myistream >> teststr;
+		std::cout << teststr << std::endl;
+	}
+	ib.close();
 }
 
 /** @brief Test a base URI with reference URI strings.
@@ -617,6 +1110,14 @@ int main (int argc, char * const argv[]) {
 	std::cout << CEnv::homeName() << ": " << CEnv::find(str, CEnv::homeName()) << std::endl;
 	std::cout << CEnv::pathName() << ": "  << CEnv::find(str, CEnv::pathName()) << std::endl;
 	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName()) << std::endl;
+
+	std::string tmp(CEnv::tmpName());
+	tmp = "Z:\\test.gz";
+	gzFile f = gzopen(tmp.c_str(), "w");
+	if ( f ) {
+		gzwrite(f, "Teste", 4);
+		gzclose(f);
+	}
 
 #ifdef WIN32
 	CStringList testpath;

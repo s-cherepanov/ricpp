@@ -120,7 +120,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/win32/zlib123-dll/include&quot;"
+				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/x64/zlib123-dll/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -273,7 +273,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/win32/zlib123-dll/include&quot;"
+				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/x64/zlib123-dll/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

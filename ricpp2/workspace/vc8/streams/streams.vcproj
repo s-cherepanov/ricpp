@@ -110,7 +110,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/win32/zlib123-dll/include&quot;"
+				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/x64/zlib123-dll/include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -131,8 +131,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="zdll.lib"
-				AdditionalLibraryDirectories="&quot;../../../3rdparty/win32/zlib123-dll/lib&quot;"
+				AdditionalDependencies="zlibwapi.lib"
+				AdditionalLibraryDirectories="&quot;../../../3rdparty/x64/zlib123-dll/lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\3rdParty\win32\zlib123-dll\zlib1.dll $(OutDir)"
+				CommandLine="copy ..\..\..\3rdParty\x64\zlib123-dll\zlibwapi.dll $(OutDir)"
 			/>
 		</Configuration>
 		<Configuration
@@ -241,7 +241,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/win32/zlib123-dll/include&quot;"
+				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/x64/zlib123-dll/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -260,8 +260,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="zdll.lib"
-				AdditionalLibraryDirectories="&quot;../../../3rdparty/win32/zlib123-dll/lib&quot;"
+				AdditionalDependencies="zlibwapi.lib"
+				AdditionalLibraryDirectories="&quot;../../../3rdparty/x64/zlib123-dll/lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -277,7 +277,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy ..\..\..\3rdParty\win32\zlib123-dll\zlib1.dll $(OutDir)"
+				CommandLine="copy ..\..\..\3rdParty\x64\zlib123-dll\zlibwapi.dll $(OutDir)"
 			/>
 		</Configuration>
 	</Configurations>

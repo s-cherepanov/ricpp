@@ -30,9 +30,9 @@
  *  @brief Representation of a Token (index and its string)
  */
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
+#ifndef _RICPP_RICPP_RICPPTOKENS_H
+#include "ricpp/ricpp/ricpptokens.h"
+#endif // _RICPP_RICPP_RICPPTOKENS_H
 
 #include <cstring>
 

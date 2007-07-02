@@ -286,10 +286,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\ricpp\ricpp.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\ricpp\ricpperror.cpp"
 				>
 			</File>
@@ -316,7 +312,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\ricpp\ricppconst.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpperror.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpptokens.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpptypes.h"
 				>
 			</File>
 			<File

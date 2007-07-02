@@ -24,7 +24,7 @@
 
 /** @file backbuffer.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implementation of the zlib-enabled streambuffer facets.
+ *  @brief Implementation for zlib-enabled dtreams and base classes for plugable streambuffer facets.
  */
 
 #include "ricpp/streams/backbuffer.h"

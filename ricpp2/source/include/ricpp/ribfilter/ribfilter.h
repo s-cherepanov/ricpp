@@ -38,6 +38,10 @@
 #include "ricpp/renderstate/requests.h"
 #endif // _RICPP_RENDERSTATE_REQUESTS_H
 
+#ifndef _RICPP_RICPP_RICPP_H
+#include "ricpp/ricpp/ricpp.h"
+#endif // _RICPP_RICPP_RICPP_H
+
 namespace RiCPP {
 
 /** @brief Root class for RIB filters and stub for CRiCPPBridge

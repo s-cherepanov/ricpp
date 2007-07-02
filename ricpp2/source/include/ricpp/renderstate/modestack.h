@@ -30,10 +30,6 @@
  *  @brief Handling of the modes (blocks and nesting) of the interface.
  */
 
-#ifndef RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // RICPP_RICPP_RICPP_H
-
 #ifndef RICPP_RENDERSTATE_REQUESTS_H
 #include "ricpp/renderstate/requests.h"
 #endif // RICPP_RENDERSTATE_REQUESTS_H

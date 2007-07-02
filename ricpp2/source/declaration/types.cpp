@@ -28,6 +28,7 @@
  */
 #include "ricpp/declaration/types.h"
 #include "ricpp/tools/inlinetools.h"
+#include "ricpp/ricpp/ricpptokens.h"
 
 #include <cstring>
 #include <cctype>

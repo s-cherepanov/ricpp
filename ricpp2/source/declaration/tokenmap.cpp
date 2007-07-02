@@ -28,10 +28,7 @@
  */
 
 #include "ricpp/declaration/tokenmap.h"
-
-#ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
-#endif // _RICPP_RICPP_RICPPERROR_H
 
 using namespace RiCPP;
 

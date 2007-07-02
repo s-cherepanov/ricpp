@@ -28,9 +28,99 @@
  */
 
 #include "ricpp/ricpp/ricpperror.h"
+#include "ricpp/ricpp/ricpptokens.h"
 #include <cstdarg>
 
 using namespace RiCPP;
+
+// Error messages RIE_ as clear text
+
+RtString CRiCPPErrMsg::errorMessage(RtInt aCode)
+{
+	RtString riErrorMessages[] = {
+		"RIE_NOERROR",
+		"RIE_NOMEM: Out of memory",
+		"RIE_SYSTEM: Miscellaneous system error",
+		"RIE_NOFILE: File nonexistant",
+		"RIE_BADFILE: Bad file format",
+		"RIE_VERSION: File version mismatch",
+		"RIE_DISKFULL: Target disk is full",
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		"RIE_INCAPABLE, RIE_OPTIONAL: Optional RI feature",
+		"RIE_UNIMPLEMENT: Unimplemented feature",
+		"RIE_LIMIT: Arbitrary program limit",
+		"RIE_BUG: Probably a bug in renderer",
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		"RIE_NOTSTARTED: RiBegin not called",
+		"RIE_NESTING: Bad begin-end nesting",
+		"RIE_NOTOPTIONS: Invalid state for options",
+		"RIE_NOTATTRIBS: Invalid state for attributes",
+		"RIE_NOTPRIMS: Invalid state for primitives",
+		"RIE_ILLSTATE: Other invalid state",
+		"RIE_BADMOTION: Badly formed motion block",
+		"RIE_BADSOLID: Badly formed solid block",
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		"RIE_BADTOKEN: Invalid token for request",
+		"RIE_RANGE: Parameter out of range",
+		"RIE_CONSISTENCY: Parameters inconsistent",
+		"RIE_BADHANDLE: Bad object, light or context handle",
+		"RIE_NOSHADER: Can't load requested shader",
+		"RIE_MISSINGDATA: Required parameters not provided",
+		"RIE_SYNTAX: Declare type syntax error",
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		RI_UNKNOWN,
+		"RIE_MATH: Zerodivide, noninvert matrix, etc.",
+		RI_NULL
+	};
+
+	if ( aCode < 0 || aCode > RIE_LASTERROR )
+		return RI_UNKNOWN;
+	return riErrorMessages[(int)aCode];
+}
+
+RtString CRiCPPErrMsg::errorSeverity(RtInt aSeverity)
+{
+	RtString riErrorSeverity[] = {
+		"RIE_INFO: Info",
+		"RIE_WARNING: Warning",
+		"RIE_ERROR: Error",
+		"RIE_SEVERE: Severe",
+		RI_NULL
+	};
+	if ( aSeverity < 0 || aSeverity > RIE_LASTSEVERITY )
+		return RI_UNKNOWN;
+	return riErrorSeverity[(int)aSeverity];
+}
 
 // Renderer Error
 

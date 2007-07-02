@@ -34,6 +34,8 @@
 
 using namespace RiCPP;
 
+/** @brief Create and read a .gz file 
+ */
 void testStream(CBackBufferRegistry &factory)
 {
 	TemplFrontStreambuf<char> ob(factory);
@@ -44,12 +46,12 @@ void testStream(CBackBufferRegistry &factory)
 
 	CUri base("file", "", str.c_str(), 0, 0);
 	ob.base(base);
-	ob.open("ReadMe3.txt.gz", std::ios_base::out, 3);
+	ob.open("ReadMe3.txt.gz", std::ios_base::out|std::ios_base::binary, 3);
 	std::ostream myostream(&ob);
 	if ( myostream ) {
 		for ( int i = 1; i < 10; ++i )
 			myostream <<
-				"Teste\t" <<
+				"Testing\t" <<
 				"123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\t" <<
 				18.3 << std::endl;
 	}

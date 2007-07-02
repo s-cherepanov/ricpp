@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/ricpp/errorhandlers.h"
+#include "ricpp/ricpp/ricpperror.h"
 #include <iostream>
 
 using namespace RiCPP;

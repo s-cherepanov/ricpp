@@ -27,7 +27,10 @@
 
 /** @file backbuffer.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Headerfile with templates and base classes for zlib-enabled streambuffer facets.
+ *  @brief Headerfile with templates for zlib-enabled dtreams and base classes for plugable streambuffer facets.
+ * @todo Much to do here: Random access, stream buffering,
+ * more channels (HTTP:, FTP:, SMB:, ...), test routines, better interface, i/o stream objects for the TemplFrontStreambuf,
+ * CR/LF LF/CR LF if file is zipped and not binary, exceptions, more documentation.
  */
 
 #ifndef _RICPP_STREAMS_URI_H
@@ -48,6 +51,13 @@
 
 namespace RiCPP {
 
+/** @brief Root for the backbuffer facet
+ *
+ * Used by TemplFrontStreamBuf as simple back end streambuf (block read/write) plug-in. Can be overwritten
+ * for various channels. CFileBackBuffer is the backend for files. A specialiced factory inheriting
+ * from CBackBufferFactory is needed to create those the back ends,. e.g. CFileBackBufferFactory is
+ * the factory for CFileBackBuffer objects.
+ */
 class CBackBufferRoot {
 protected:
 	CUri m_lastFileName;
@@ -68,6 +78,9 @@ public:
 }; // CBackBufferRoot
 
 
+/** @brief Back end buffer for file i/o.
+ * @see CBackBufferRoot
+ */
 class CFileBackBuffer : public CBackBufferRoot {
 	std::filebuf m_filebuf;
 	TypeOpenMode m_mode;
@@ -90,8 +103,8 @@ public:
 		const CUri &absUri,
 		TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
 	{
-		CBackBufferRoot::open(absUri, mode);
 		close();
+		CBackBufferRoot::open(absUri, mode);
 		m_mode = mode;
 		std::string filename(absUri.getHierPart());
 		CFilepathConverter::convertToNative(filename);
@@ -132,6 +145,9 @@ public:
 }; // CFileBackBuffer
 
 
+/** @brief Base class for the factory classes of specialiced CBackBufferRoot objects
+ * @see CBackBufferRoot
+ */
 class CBackBufferFactory : public IPlugin {
 
 	CStringList m_schemes;
@@ -139,7 +155,7 @@ class CBackBufferFactory : public IPlugin {
 
 protected:
 
-	void addScheme(const char *scheme)
+	inline void addScheme(const char *scheme)
 	{
 		std::string str_scheme(noNullStr(scheme));
 		if ( str_scheme.empty() )
@@ -148,14 +164,14 @@ protected:
 		m_schemes.push(str_scheme, false, false, false);
 	}
 
-	bool registerObj(CBackBufferRoot *b)
+	inline bool registerObj(CBackBufferRoot *b)
 	{
 		if ( !b )
 			return false;
 		return m_myBuffers.registerObj(b, b);
 	}
 
-	bool unRegisterObj(CBackBufferRoot *b)
+	inline bool unRegisterObj(CBackBufferRoot *b)
 	{
 		if ( !b )
 			return false;
@@ -216,6 +232,9 @@ public:
 }; // CBackBufferFactory
 
 
+/** @brief Base class for the factory classes of CFileBackBuffer objects
+ * @see CBackBufferRoot
+ */
 class CFileBackBufferFactory : public CBackBufferFactory {
 public:
 	static const char *myType();
@@ -253,8 +272,13 @@ public:
 }; // CFileBackBufferFactory
 
 
+/** @brief Registration for back buffer factories
+ *
+ * Is not a singleton, because every RiCPP front end has one.
+ *
+ * @see CBackBufferRoot
+ */
 class CBackBufferRegistry {
-	
 	std::string m_direct;
 	bool m_hasDirect;
 	TemplPluginHandler<CBackBufferFactory> m_backBufferPluginHandler;
@@ -276,11 +300,6 @@ class CBackBufferRegistry {
 		}
 	}
 
-	inline TemplPluginHandler<CBackBufferFactory> &getHandler()
-	{
-		return m_backBufferPluginHandler;
-	}
-
 public:
 	inline CBackBufferRegistry(const char *direct=0) {init(direct);}
 	inline ~CBackBufferRegistry() {}
@@ -294,8 +313,23 @@ public:
 		}
 		return 0;
 	}
+	inline TemplPluginHandler<CBackBufferFactory> &getHandler()
+	{
+		return m_backBufferPluginHandler;
+	}
 }; // CBackBufferRegistry
 
+/** @brief Templates for zlib streams
+ *
+ * Can be used by istream, ostream as streambuf. A coupled back end buffer CBackBufferRoot or a
+ * basic_streambuf can be used as data source/drain. TemplFrontStreambuf adds zlib in between the
+ * stream and the buffer. By using open(), back end buffers for various channels can be used. However,
+ * at the moment only FILE: is supported. open() uses a generic URI as resource name/locator.
+ *
+ * I used copied code of the zlib here.
+ *
+ * @see CBackBufferRoot
+ */
 template<class charT, class traits=std::char_traits<charT> >
 class TemplFrontStreambuf : public std::basic_streambuf<charT, traits> {
 
@@ -605,7 +639,7 @@ protected:
 				char header[10] = {
 					(char)gz_magic_0, (char)gz_magic_1,
 					m_methodOut,
-					0, // flags
+					(m_mode  & std::ios_base::binary) ? 0 : ASCII_FLAG, // flags
 					0,0,0,0, // time
 					0, //xflags 
 					OS_CODE

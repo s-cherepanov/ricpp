@@ -30,9 +30,9 @@
  *  @brief Possible basic types, types and classes
  */
  
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
+#ifndef _RICPP_RICPP_RICPPTYPES_H
+#include "ricpp/ricpp/ricpptypes.h"
+#endif // _RICPP_RICPP_RICPPTYPES_H
 
 #include <cstddef>
 

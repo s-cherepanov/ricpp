@@ -30,14 +30,31 @@
  *  @brief Error exception and base for error handling used internally for RiCPP
  */
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
+#ifndef _RICPP_RICPP_RICPPCONST_H
+#include "ricpp/ricpp/ricppconst.h"
+#endif // _RICPP_RICPP_RICPPCONST_H
 
 #include <string>
 #include <exception>
 
 namespace RiCPP {
+
+/** @brief Helper class, errormessages as Strings
+ */
+class CRiCPPErrMsg {
+public:
+	/** Returns the descriptive string for an error code
+	 *  @param aCode The error code
+	 *  @return error string for the error code aCode
+	 */
+	static RtString errorMessage(RtInt aCode);
+
+	/** Returns the descriptive string for a severity level
+	 *  @param aSeverity severity level
+	 *  @return The descriptive string for an error severity level aSeverity
+	 */
+	static RtString errorSeverity(RtInt aSeverity);
+}; // CRiCPPErrMsg
 
 /** @brief The renderer error is used internally by the back end to throw exceptions
  */

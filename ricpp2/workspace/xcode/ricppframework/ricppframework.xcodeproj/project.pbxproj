@@ -1657,9 +1657,10 @@
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = ../../../3rdparty/macos/zlib123/lib;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = ../../../source/include;
+				USER_HEADER_SEARCH_PATHS = "../../../source/include ../../../3rdparty/macos/zlib123/include";
 			};
 			name = Debug;
 		};
@@ -1668,9 +1669,10 @@
 			buildSettings = {
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = ../../../3rdparty/macos/zlib123/lib;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				USER_HEADER_SEARCH_PATHS = ../../../source/include;
+				USER_HEADER_SEARCH_PATHS = "../../../source/include ../../../3rdparty/macos/zlib123/include";
 			};
 			name = Release;
 		};
@@ -1684,6 +1686,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = streams;
 				ZERO_LINK = YES;
@@ -1698,6 +1701,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = streams;
 				ZERO_LINK = NO;
@@ -2185,7 +2189,9 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/build/Debug\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/build/Debug\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/build/Debug\"";
+				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
+				PRELINK_LIBS = "$(inherited)";
 				PRODUCT_NAME = test;
 				ZERO_LINK = YES;
 			};
@@ -2210,7 +2216,9 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/build/Debug\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/build/Debug\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_4 = "\"$(SRCROOT)/build/Debug\"";
+				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
+				PRELINK_LIBS = "$(inherited)";
 				PRODUCT_NAME = test;
 				ZERO_LINK = NO;
 			};

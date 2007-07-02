@@ -33,13 +33,34 @@
 #include "ricpp/streams/buffer.h"
 
 #include "zlib.h"
-#include "zutil.h"
 
 #include <iostream>
 #include <fstream>
 #include <streambuf>
 
 using namespace RiCPP;
+
+
+// Extracted from zutil.h
+// RiCPP will be only WIN32, MACOS or Unix
+#ifdef WIN32
+#define OS_CODE  0x0b
+#endif
+
+#if defined(MACOS) || defined(TARGET_OS_MAC)
+#define OS_CODE  0x07
+#endif
+
+#ifndef OS_CODE
+#define OS_CODE  0x03  // assume Unix
+#endif
+
+#if MAX_MEM_LEVEL >= 8
+#  define DEF_MEM_LEVEL 8
+#else
+#  define DEF_MEM_LEVEL  MAX_MEM_LEVEL
+#endif
+// End of extraction from zutil.h
 
 class CBackBufferRoot {
 protected:
@@ -286,6 +307,15 @@ public:
 
 template<class charT, class traits=std::char_traits<charT> >
 class TemplFrontStreambuf : public std::basic_streambuf<charT, traits> {
+
+public:
+      typedef typename std::basic_streambuf<charT, traits>::int_type int_type;
+      typedef typename std::basic_streambuf<charT, traits>::pos_type pos_type;
+      typedef typename std::basic_streambuf<charT, traits>::off_type off_type;
+	  
+private:
+	typedef typename std::basic_streambuf<charT, traits> TypeParent;
+	
 	static const int gz_magic_0 = 0x1f;
 	static const int gz_magic_1 = 0x8b; /* gzip magic header */
 
@@ -334,7 +364,7 @@ class TemplFrontStreambuf : public std::basic_streambuf<charT, traits> {
 		m_coupledBuffer = 0;
 		m_factory = 0;
 
-		m_mode = 0;
+		m_mode = static_cast<TypeOpenMode>(0);
 
 		m_buffersize = 8192;
 		m_putbackSize = 128;
@@ -400,7 +430,6 @@ class TemplFrontStreambuf : public std::basic_streambuf<charT, traits> {
 		int method; // method byte
 		int flags;  // flags byte
 		uInt len;
-		bool iseof = false;
 
 		// Stream buffer is greater than 2, if it is less tahn 2,
 		// the file is smaller as 2 Bytes
@@ -533,14 +562,14 @@ protected:
 		if ( !(m_mode & std::ios_base::out) ) {
 			return 0;
 		}
-		int num = static_cast<int>(pptr() - pbase());
+		int num = static_cast<int>(TypeParent::pptr() - TypeParent::pbase());
 		if ( num <= 0 ) {
-			pbump(0);
+			TypeParent::pbump(0);
 			return 0;
 		}
 
 		if ( !m_backBuffer && !m_coupledBuffer ) {
-			pbump(-num);
+			TypeParent::pbump(-num);
 			return 0;
 		}
 
@@ -572,12 +601,12 @@ protected:
 				};
 				if ( m_backBuffer ) {
 					if ( !m_backBuffer->sputn(header, sizeof(header)) ) {
-						pbump(-num);
+						TypeParent::pbump(-num);
 						return 0;
 					}
 				} else if ( m_coupledBuffer ) {
 					if ( !m_coupledBuffer->sputn(header, sizeof(header)) ) {
-						pbump(-num);
+						TypeParent::pbump(-num);
 						return 0;
 					}
 				}
@@ -592,7 +621,7 @@ protected:
 				ret = deflate(&m_strmOut, flush);
 
 				if ( ret == Z_STREAM_ERROR ) {
-					pbump(-num);
+					TypeParent::pbump(-num);
 					return 0;
 				}
 
@@ -600,12 +629,12 @@ protected:
 
 				if ( m_backBuffer ) {
 					if ( !m_backBuffer->sputn(m_transferOutBuffer.begin(), have) ) {
-						pbump(-num);
+						TypeParent::pbump(-num);
 						return 0;
 					}
 				} else if ( m_coupledBuffer ) {
 					if ( !m_coupledBuffer->sputn(m_transferOutBuffer.begin(), have) ) {
-						pbump(-num);
+						TypeParent::pbump(-num);
 						return 0;
 					}
 				} 
@@ -614,7 +643,7 @@ protected:
 			m_crcOut = crc32(m_crcOut, (const Bytef *)m_frontOutBuffer.begin(), (unsigned int)num);
 		}
 
-		pbump(-num);
+		TypeParent::pbump(-num);
 		return num;
 	}
 
@@ -626,8 +655,8 @@ protected:
 	inline virtual int_type overflow(int_type c)
 	{
 		if ( c != traits::eof() ) {
-			*pptr() = c;
-			pbump(1);
+			*TypeParent::pptr() = c;
+			TypeParent::pbump(1);
 		}
 		if ( flushBuffer() == traits::eof() ) {
 			return traits::eof();
@@ -637,8 +666,8 @@ protected:
 
 	inline virtual int_type underflow()
 	{
-		if ( gptr() < egptr() ) {
-			return *gptr();
+		if ( TypeParent::gptr() < TypeParent::egptr() ) {
+			return *TypeParent::gptr();
 		}
 		
 		if ( m_inIsEOF ) {
@@ -646,12 +675,12 @@ protected:
 		}
 
 		int_type numPutback;
-		numPutback = (int_type)(gptr() - eback());
+		numPutback = (int_type)(TypeParent::gptr() - TypeParent::eback());
 		if ( numPutback > m_putbackSize )
 			numPutback = m_putbackSize;
 
 		if ( numPutback ) {
-			memcpy(m_frontInBuffer.begin()+(m_putbackSize-numPutback), gptr()-numPutback, numPutback*sizeof(charT));
+			memcpy(m_frontInBuffer.begin()+(m_putbackSize-numPutback), TypeParent::gptr()-numPutback, numPutback*sizeof(charT));
 		}
 
 		// Read new Characters
@@ -701,7 +730,7 @@ protected:
 		if ( num == 0 )
 			return traits::eof();
 
-		return *gptr();
+		return *TypeParent::gptr();
 	}
 
 	inline virtual void setBaseCwd()
@@ -762,7 +791,7 @@ public:
 			setBaseCwd();
 		}
 
-		if ( !CUri::makeAbsolute(m_resolutionUri, m_baseUri, refUri) )
+		if ( !CUri::makeAbsolute(m_resolutionUri, m_baseUri, refUri, true) )
 		{
 			return false;
 		}
@@ -782,6 +811,7 @@ public:
 			m_strmOut.avail_out = 0;
 			
 			m_out = 0;
+			// m_crcOut = 0;
 			m_crcOut = crc32(0L, Z_NULL, 0);
 			m_strategyOut = Z_DEFAULT_STRATEGY;
 
@@ -809,6 +839,7 @@ public:
 			m_transparentIn = compressLevel == Z_NO_COMPRESSION;
 			m_in = 0;
 			m_inIsEOF = false;
+			// m_crcIn = 0;
 			m_crcIn = crc32(0L, Z_NULL, 0);
 			setg(
 				m_frontInBuffer.begin()+m_putbackSize,

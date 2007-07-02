@@ -76,7 +76,7 @@ public:
 };
 
 class CFileBackBuffer : public CBackBufferRoot {
-	std::fstream m_stream;
+	std::filebuf m_filebuf;
 	TypeOpenMode m_mode;
 public:
 	inline CFileBackBuffer()
@@ -88,54 +88,48 @@ public:
 	}
 	virtual void close()
 	{
-		if ( m_stream.is_open() ) {
-			m_stream.close();
-			m_stream.clear();
+		if ( m_filebuf.is_open() ) {
+			m_filebuf.close();
 		}
 	}
 	inline virtual bool open(const CUri &absUri, TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
 	{
 		CBackBufferRoot::open(absUri, mode);
 		close();
-		m_stream.clear();
 		m_mode = mode;
 		std::string filename(absUri.getHierPart());
 		CFilepathConverter::convertToNative(filename);
-		m_stream.open(filename.c_str(), mode);
-		return m_stream && m_stream.is_open();
+		m_filebuf.open(filename.c_str(), mode);
+		return m_filebuf.is_open();
 	}
 
 	inline virtual bool isOpen() const
 	{
-		return m_stream.is_open();
+		return m_filebuf.is_open();
 	}
 
 	inline virtual std::streamsize sgetn(char *b, std::streamsize size) 
 	{
-		if ( !m_stream || !b || !size )
+		if ( !isOpen() || !b || !size )
 			return 0;
 		if ( !(m_mode & std::ios_base::in) )
 			return 0;
 
 #ifdef _MSC_VER
-		m_stream._Read_s(b, size, size);
-		return m_stream.gcount();
+		return m_filebuf._Sgetn_s(b, size, size);
 #else
-		m_stream.read(b, size);
-		return m_stream.gcount();
+		return m_filebuf.sgetn(b, size);
 #endif
 	}
 
 	inline virtual std::streamsize sputn(const char *b, std::streamsize size) 
 	{
-		if ( !m_stream || !b || !size )
+		if ( !isOpen() || !b || !size )
 			return 0;
 		if ( !(m_mode & std::ios_base::out) )
 			return 0;
 
-		m_stream.write(b, size);
-
-		return size;
+		return m_filebuf.sputn(b, size);
 	}
 };
 

@@ -290,11 +290,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\source\streams\filereader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\streams\reader.cpp"
+				RelativePath="..\..\..\source\streams\backbuffer.cpp"
 				>
 			</File>
 			<File
@@ -308,15 +304,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\streams\backbuffer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\streams\buffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\streams\filereader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\streams\reader.h"
 				>
 			</File>
 			<File

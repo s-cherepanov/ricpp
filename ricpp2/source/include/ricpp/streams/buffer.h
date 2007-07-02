@@ -83,6 +83,7 @@ namespace RiCPP {
 		{
 			if ( m_buffer )
 				delete[] m_buffer;
+			m_buffer = 0;
 		}
 
 		/** @brief Resize the buffer.

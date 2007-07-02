@@ -22,18 +22,23 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file reader.cpp
+/** @file backbuffer.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implementation of the base class for input streams.
+ *  @brief Implementation of the zlib-enabled streambuffer facets.
  */
 
-#include "ricpp/streams/reader.h"
-#include "ricpp/streams/buffer.h"
+#include "ricpp/streams/backbuffer.h"
 
 using namespace RiCPP;
 
-const char *CReader::myName() { return "reader"; }
-const char *CReader::myType() { return "instream"; }
-unsigned long CReader::myMajorVersion() { return 1; }
-unsigned long CReader::myMinorVersion() { return 1; }
-unsigned long CReader::myRevision() { return 1; }
+const char *CBackBufferFactory::myType() { return "backbufferfactory"; }
+const char *CBackBufferFactory::myName() { return "backbufferfactory"; }
+unsigned long CBackBufferFactory::myMajorVersion() { return 1; }
+unsigned long CBackBufferFactory::myMinorVersion() { return 1; }
+unsigned long CBackBufferFactory::myRevision() { return 1; }
+
+const char *CFileBackBufferFactory::myType() { return CBackBufferFactory::myType(); }
+const char *CFileBackBufferFactory::myName() { return "file_backbuffer"; }
+unsigned long CFileBackBufferFactory::myMajorVersion() { return CBackBufferFactory::myMajorVersion(); }
+unsigned long CFileBackBufferFactory::myMinorVersion() { return 1; }
+unsigned long CFileBackBufferFactory::myRevision() { return 1; }

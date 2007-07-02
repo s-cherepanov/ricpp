@@ -42,9 +42,9 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
-#ifndef _RICPP_TOOLS_FILEPAT_H
+#ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
-#endif // _RICPP_TOOLS_FILEPAT_H
+#endif // _RICPP_TOOLS_FILEPATH_H
 
 #include <iostream>
 #include <sstream>

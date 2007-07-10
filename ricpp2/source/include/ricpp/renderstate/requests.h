@@ -36,7 +36,7 @@ namespace RiCPP {
  */
 enum EnumRequests {
 	// General routines
-	REQ_UNKNOWN = 0,				//!< Unknoen request
+	REQ_UNKNOWN = 0,				//!< Unknown request
 	REQ_ERROR_HANDLER,				//!< Index for ri function IRiRoot::errorHandler()
 	REQ_SYNCHRONIZE,				//!< Index for ri function IRiRoot::synchronize()
 	REQ_SYSTEM,                     //!< Index for ri function IRiRoot::system()
@@ -226,6 +226,18 @@ enum EnumRequests {
 /** Number of requests
  */
 const int N_REQUESTS = (int)REQ_VERSION + 1;
+
+/** @brief Class to get the RIB request name for an index.
+ */
+class CRequestInfo {
+	static const char *ms_requestNames[N_REQUESTS]; ///< Table request names.
+public:
+	/** @brief Gets the request name for index \A req.
+	 * @param req Index for request.
+	 * @return name for the request, RI_UNKNOWN if \A req is not defined
+	 */
+	static const char *requestName(EnumRequests req);
+};
 
 } // namespace RiCPP
 

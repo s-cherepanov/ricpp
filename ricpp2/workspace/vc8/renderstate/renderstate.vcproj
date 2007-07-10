@@ -285,6 +285,10 @@
 				RelativePath="..\..\..\source\renderstate\renderstate.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\requests.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

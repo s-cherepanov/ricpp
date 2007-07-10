@@ -321,6 +321,10 @@
 				RelativePath="..\..\..\source\include\ricpp\tools\stringlist.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\tools\templatefuncs.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

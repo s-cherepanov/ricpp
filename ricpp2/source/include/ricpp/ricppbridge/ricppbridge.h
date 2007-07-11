@@ -50,6 +50,10 @@
 #include "ricpp/ribfilter/ribfilterlist.h"
 #endif
 
+#ifndef _RICPP_STREAMS_BACKBUFFER_H
+#include "ricpp/streams/backbuffer.h"
+#endif
+
 #include <vector>
 #include <cassert>
 #include <cstdarg>
@@ -172,7 +176,8 @@ private:
 	std::vector<RtPointer> m_params;	///<< The values of the parameter list of an interface call
 	//@}
 
-	/** @brief Standard Rib filter
+	/** @brief Standard Rib filter.
+	 *
 	 *  Used by m_ribFilterList to hook in other Rib filters, Options can
 	 *  be used to activate/deactivate intrerface calls, if they are invoked
 	 *  via rib requsets. E.G. procedure calls can be deactivated.
@@ -185,6 +190,12 @@ private:
 	 */
 	CRibFilterList m_ribFilterList;
 
+	/** @brief Factory for stream protocol handlers.
+	 *  
+	 * At the moment FILE: only.
+	 * @todo Add outled to add more protocol handlers.
+	 */
+	CBackBufferProtocolHandlers m_backBufferProtocolHandlers;
 	
 	/** @brief  Assignment, not in use, just because of compiler warning
 	 *

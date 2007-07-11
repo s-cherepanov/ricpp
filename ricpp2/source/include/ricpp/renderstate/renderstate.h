@@ -109,7 +109,7 @@ public:
  *
  * The CRenderState object is a part of CBaseRenderer.
  */
-class CRenderState : IRenderStateReader {
+class CRenderState : public IRenderStateReader {
 	CModeStack *m_modeStack;           ///< Pointer to a mode stack
 
 	RtInt m_frameNumber;               ///< Frame number

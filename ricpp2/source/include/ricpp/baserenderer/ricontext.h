@@ -34,6 +34,14 @@
 #include "ricpp/ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
+#ifndef _RICPP_STREAMS_BACKBUFFER_H
+#include "ricpp/streams/backbuffer.h"
+#endif // _RICPP_STREAMS_BACKBUFFER_H
+
+#ifndef _RICPP_RICPP_ERRORHANDLERS_H
+#include "ricpp/ricpp/errorhandlers.h"
+#endif
+
 namespace RiCPP {
 
 /** @brief RenderMan Interface for a backend rendering context.
@@ -138,6 +146,30 @@ public:
 	 * this must be done here (because the context can be in a state that do not allow an explicit deactivation)
 	 */
 	virtual RtVoid abort(void) = 0;
+
+	/** @brief Interfaces to register front end.
+	 *
+	 * Is called at the begin() of the front end.
+	 *
+	 * @params frontend Ri front end.
+	 */
+	virtual RtVoid registerFrontEnd(IRi &frontend, IRiCPPErrorHandler &errorHandler) = 0;
+
+	/** @brief Interfaces needed for byte streams.
+	 *
+	 * Is called at the begin() of the front end.
+	 *
+	 * @params protocolHandler Protocol handler for byte streams.
+	 */
+	virtual RtVoid registerProtocolHandler(CBackBufferProtocolHandlers &protocolHandler) = 0;
+
+	/** @brief Interfaces needed to call rib handlers.
+	 *
+	 * Is registered before an archive function (readArchive(), procedural()) is called.
+	 *
+	 * @params ribFilter Call interace for rib handlers.
+	 */
+	virtual RtVoid registerRibFilter(IRiRoot *ribFilter) = 0;
 }; // IRiContext
 } // namespace RiCPP
 

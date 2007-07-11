@@ -30,13 +30,13 @@
  *  @brief Parser for rib
  */
 
+#ifndef _RICPP_RICPP_RICPP_H
+#include "ricpp/ricpp/ricpp.h"
+#endif // _RICPP_RICPP_RICPP_H
+
 #ifndef _RICPP_STREAMS_BACKBUFFER_H
 #include "ricpp/streams/backbuffer.h"
 #endif // _RICPP_STREAMS_BACKBUFFER_H
-
-#ifndef _RICPP_RIBFILTER_RIBFILTER_H
-#include "ricpp/ribfilter/ribfilter.h"
-#endif // _RICPP_RIBFILTER_RIBFILTER_H
 
 #ifndef _RICPP_RENDERSTATE_RENDERSTATE_H
 #include "ricpp/renderstate/renderstate.h"
@@ -57,7 +57,7 @@ namespace RiCPP {
 		virtual long lineno() const = 0;
 		virtual const IArchiveCallback *callback() const = 0;
 		virtual const IRenderStateReader &stateReader() const = 0;
-		virtual CRibFilter &ribFilter() = 0;
+		virtual IRiRoot &ribFilter() = 0;
 	};
 
 	/** @brief Root for the request handlers
@@ -283,8 +283,8 @@ namespace RiCPP {
 	/** @brief Generic parser object
 	 */
 	class CArchiveParser : public IRibParserState {
-		CBackBufferRegistry *m_backBufferReg;
-		CRibFilter *m_ribFilter;
+		CBackBufferProtocolHandlers *m_backBufferReg;
+		IRiRoot *m_ribFilter;
 		const IRenderStateReader *m_stateReader;
 		const IArchiveCallback *m_callback;
 		IRi *m_ri;
@@ -310,8 +310,8 @@ namespace RiCPP {
 		inline CArchiveParser(
 			IRi &aFrontend,
 			IRiCPPErrorHandler &anErrHandler,
-			CBackBufferRegistry &backBufferReg,
-			CRibFilter &ribFilter,
+			CBackBufferProtocolHandlers &backBufferReg,
+			IRiRoot &ribFilter,
 			const IRenderStateReader &stateReader,
 			const CUri &baseUri) :
 			m_ob(backBufferReg),
@@ -328,7 +328,10 @@ namespace RiCPP {
 			m_putback = 0;
 		}
 
-		inline virtual ~CArchiveParser() {}
+		inline virtual ~CArchiveParser()
+		{
+			close();
+		}
 
 		inline virtual const CUri &baseUri() const
 		{
@@ -365,12 +368,13 @@ namespace RiCPP {
 			return *m_errHandler;
 		}
 
-		virtual CRibFilter &ribFilter()
+		virtual IRiRoot &ribFilter()
 		{
 			return *m_ribFilter;
 		}
 
 		virtual bool canParse(RtString name);
+		bool close();
 
 		inline virtual void parse(
 			const IArchiveCallback *callback,
@@ -520,8 +524,8 @@ namespace RiCPP {
 		inline CRibParser(
 			IRi &aFrontend,
 			IRiCPPErrorHandler &anErrHandler,
-			CBackBufferRegistry &backBufferReg,
-			CRibFilter &ribFilter,
+			CBackBufferProtocolHandlers &backBufferReg,
+			IRiRoot &ribFilter,
 			const IRenderStateReader &stateReader,
 			const CUri &baseUri)
 			: CArchiveParser(aFrontend, anErrHandler, backBufferReg, ribFilter, stateReader, baseUri)

@@ -32,6 +32,19 @@
 
 using namespace RiCPP;
 
+CBaseRenderer::CBaseRenderer() :
+	m_renderState(0),
+	m_ri(0),
+	m_errorHandler(0),
+	m_protocolHandler(0),
+	m_ribFilter(0)
+{
+	CFilepath fp;
+	std::string s(fp.filepath());
+	s+= "/";
+	m_baseUri.set("file", "", s.c_str(), 0, 0);
+}
+
 CBaseRenderer::~CBaseRenderer()
 {
 	if ( m_renderState )
@@ -337,3 +350,35 @@ RtVoid CBaseRenderer::transformEnd(void)
 
 	doTransformEnd();
 }
+
+
+RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( !m_renderState ) {
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized readArchive().");
+		return;
+	}
+
+	if ( !m_renderState->validRequest(REQ_READ_ARCHIVE) ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_ERROR, "readArchive()");
+		return;
+	}
+
+	doReadArchiveV(name, callback, n, tokens, params);
+}
+
+RtVoid CBaseRenderer::doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	CUri sav(m_baseUri);
+	CRibParser parser(*m_ri, *m_errorHandler, *m_protocolHandler, *m_ribFilter, *m_renderState, m_baseUri);
+	try {
+		if ( parser.canParse(name) ) {
+			m_baseUri = parser.absUri();
+			parser.parse(callback, n, tokens, params);
+		}
+	} catch(...) {
+	}
+	parser.close();
+	m_baseUri = sav;
+}
+

@@ -317,7 +317,13 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 {
 	// Start the new context
 	try {
-		return m_ctxMgmt.beginV(name, n, tokens, params);
+		RtContextHandle h = m_ctxMgmt.beginV(name, n, tokens, params);
+		if ( m_ctxMgmt.curBackend().valid() ) {
+			m_ctxMgmt.curBackend().renderingContext()->registerFrontEnd(*this, ricppErrHandler());
+			m_ctxMgmt.curBackend().renderingContext()->registerProtocolHandler(m_backBufferProtocolHandlers);
+			m_ctxMgmt.curBackend().renderingContext()->registerRibFilter(0);
+		}
+		return h;
 	} catch (ExceptRiCPPError &e) {
 		// And handle the error, the context was set by m_ctxMgmt appropriately
 		ricppErrHandler().handleError(e);
@@ -2226,6 +2232,7 @@ RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			m_ctxMgmt.curBackend().renderingContext()->registerRibFilter(m_ribFilterList.firstHandler());
 			m_ctxMgmt.curBackend().renderingContext()->procedural(data, bound, subdivfunc, freefunc);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2445,6 +2452,7 @@ RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callbac
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			m_ctxMgmt.curBackend().renderingContext()->registerRibFilter(m_ribFilterList.firstHandler());
 			m_ctxMgmt.curBackend().renderingContext()->readArchiveV(name, callback, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);

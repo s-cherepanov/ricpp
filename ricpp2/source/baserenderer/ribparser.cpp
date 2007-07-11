@@ -218,12 +218,22 @@ void CSphereRequest::operator()(IRibParserState &parser) const
 
 bool CArchiveParser::canParse(RtString name)
 {
-	return true;
+	CUri refUri(name);
+	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, true) )
+	{
+		return false;
+	}
+	m_ob.base(m_baseUri);
+	return m_ob.open(refUri);
+}
+
+bool CArchiveParser::close()
+{
+	return m_ob.close();
 }
 
 void CArchiveParser::putback(unsigned char c) {
 	m_hasPutBack = true;
-	assert(m_lineno > 0);
 	if ( c == '\n' && m_lineno > 0 )
 		--m_lineno;
 	m_putback = c;
@@ -242,6 +252,9 @@ unsigned char CArchiveParser::getchar() {
 	}
 
 	m_istream >> val;
+	if ( !m_istream ) {
+		val = 0;
+	}
 
 	if ( val == '\n' )
 		++m_lineno;
@@ -715,12 +728,13 @@ int CRibParser::nextToken() {
 			loop = false;
 		} else {
 			c = getchar();
-			if ( c == '\r' )
-				continue;
-			if ( c == 0 ) {
+			if ( !m_istream ) {
 				// EOF: finish last request
 				c = '\n';
 				loop = false;
+			} else {
+				if ( c == '\r' )
+					continue;
 			}
 		}
 
@@ -742,19 +756,21 @@ int CRibParser::nextToken() {
 				bool isStructured = false;
 				while ( m_istream ) {
 					c = getchar();
-					if ( startToken ) {
-						isStructured = (c == '#');
-						startToken = false;
-						continue;
+					if ( m_istream ) {
+						if ( startToken ) {
+							isStructured = (c == '#');
+							startToken = false;
+							continue;
+						}
+						if ( c == '\r' )
+							continue;
+						if ( c == '\n' ) {
+							// end of comment
+							handleComment(tempToken, isStructured);
+							break;
+						}
+						tempToken.push_back(c);
 					}
-					if ( c == '\r' )
-						continue;
-					if ( c == '\n' ) {
-						// end of comment
-						handleComment(tempToken, isStructured);
-						break;
-					}
-					tempToken.push_back(c);
 				}
 			}
 

@@ -28,7 +28,6 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
-#include "ricpp/streams/backbuffer.h"
 
 // #include <iostream>
 
@@ -36,7 +35,7 @@ using namespace RiCPP;
 
 /** @brief Create and read a .gz file 
  */
-void testStream(CBackBufferRegistry &factory)
+void testStream(CBackBufferProtocolHandlers &factory)
 {
 	TemplFrontStreambuf<char> ob(factory);
 	std::string str;
@@ -47,6 +46,7 @@ void testStream(CBackBufferRegistry &factory)
 	CUri base("file", "", str.c_str(), 0, 0);
 	ob.base(base);
 	ob.open("ReadMe3.txt.gz", std::ios_base::out|std::ios_base::binary, 3);
+	// ob.open("ReadMe3.txt", std::ios_base::out|std::ios_base::binary, 0);
 	std::ostream myostream(&ob);
 	if ( myostream ) {
 		for ( int i = 1; i < 10; ++i )
@@ -60,6 +60,7 @@ void testStream(CBackBufferRegistry &factory)
 	TemplFrontStreambuf<char> ib(factory);
 	ib.base(base);
 	ib.open("ReadMe3.txt.gz", std::ios_base::in|std::ios_base::binary);
+	// ib.open("ReadMe3.txt", std::ios_base::in|std::ios_base::binary);
 	std::istream myistream(&ib);
 	std::string teststr;
 	while ( myistream ) {
@@ -271,8 +272,7 @@ int main (int argc, char * const argv[]) {
 	std::cout << "Hello, World!" << std::endl;
 
 
-	CBackBufferRegistry globalFactory;
-	TemplBuffer<> test(1024);
+	CBackBufferProtocolHandlers globalFactory;
 	testURI();
 	testStream(globalFactory);
 
@@ -374,6 +374,7 @@ int main (int argc, char * const argv[]) {
 
 	ri.option("searchpath", "renderer", "&:$PATH", RI_NULL);
 	ri.begin("ribwriter");
+//	ri.readArchive("../../../../ribsamples/hermite.rib", 0, RI_NULL);
 	ri.end();
 
 	std::cout << "Good bye, World!" << std::endl;

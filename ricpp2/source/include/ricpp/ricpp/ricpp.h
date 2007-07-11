@@ -145,7 +145,7 @@ public:
 	 * @param type The type of the comment, either RI_COMMENT or RI_STRUCTURE. RI_VERBATIM
 	 * cannot be handled.
 	 * @param line The (formatted) comment line, smae as the formatted string
-	 * given by IRiRoot::archiveRecordV()
+	 * given by IRi::archiveRecordV()
 	 */
 	virtual RtVoid operator()(IRi &ri, RtToken type, RtString line) const = 0;
 };

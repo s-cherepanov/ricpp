@@ -34,13 +34,13 @@
 #include "ricpp/baserenderer/dorender.h"
 #endif // _RICPP_BASERENDERER_DORENDER_H
 
-#ifndef _RICPP_RENDERSTATE_RENDERSTATE_H
-#include "ricpp/renderstate/renderstate.h"
-#endif // _RICPP_RENDERSTATE_RENDERSTATE_H
-
 #ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
+
+#ifndef _RICPP_BASERENDERER_RIBPARSER_H
+#include "ricpp/baserenderer/ribparser.h"
+#endif // _RICPP_BASERENDERER_RIBPARSER_H
 
 namespace RiCPP {
 
@@ -86,8 +86,31 @@ protected:
 		return m_errorExceptionHandler;
 	}
 
+
+	/** @brief Front end
+	 */
+	IRi *m_ri;
+
+	/** @brief Front end error handler
+	 */
+	IRiCPPErrorHandler *m_errorHandler;
+
+	/** @brief Input handler for byte streams
+	 */
+	CBackBufferProtocolHandlers *m_protocolHandler;
+
+	/** @brief RIB handler
+	 */
+	IRiRoot *m_ribFilter;
+
+	/** @brief Base URI for RIB files
+	 */
+	CUri m_baseUri;
+
 public:
-	inline CBaseRenderer() : m_renderState(0) {}
+	/** @brief Constructor, initializes member variables.
+	 */
+	CBaseRenderer();
 
 	/** @brief Virtual destruction
 	 */
@@ -110,6 +133,22 @@ public:
 	 * context creator.
 	 */
 	inline virtual RtVoid deactivate(void) {}
+
+	inline virtual RtVoid registerFrontEnd(IRi &frontend, IRiCPPErrorHandler &errorHandler)
+	{
+		m_ri = &frontend;
+		m_errorHandler = &errorHandler;
+	}
+
+	inline virtual RtVoid registerProtocolHandler(CBackBufferProtocolHandlers &protocolHandler)
+	{
+		m_protocolHandler = &protocolHandler;
+	}
+
+	inline virtual RtVoid registerRibFilter(IRiRoot *ribFilter)
+	{
+		m_ribFilter = ribFilter;
+	}
 
 	RtToken declare(RtString name, RtString declaration);
 
@@ -272,7 +311,7 @@ public:
 	inline virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid archiveRecordV(RtToken type, RtString line) {}
-	inline virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	inline virtual RtVoid ifBegin(RtString expr) {}
 	inline virtual RtVoid elseIfBegin(RtString expr) {}
@@ -423,7 +462,7 @@ protected:
 	inline virtual RtVoid doMakeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doArchiveRecordV(RtToken type, RtString line) {}
-	inline virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	inline virtual RtVoid doIfBegin(RtString expr) {}
 	inline virtual RtVoid doElseIfBegin(RtString expr) {}

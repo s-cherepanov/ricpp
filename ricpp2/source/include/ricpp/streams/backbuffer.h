@@ -278,7 +278,7 @@ public:
  *
  * @see CBackBufferRoot
  */
-class CBackBufferRegistry {
+class CBackBufferProtocolHandlers {
 	std::string m_direct;
 	bool m_hasDirect;
 	TemplPluginHandler<CBackBufferFactory> m_backBufferPluginHandler;
@@ -301,8 +301,8 @@ class CBackBufferRegistry {
 	}
 
 public:
-	inline CBackBufferRegistry(const char *direct=0) {init(direct);}
-	inline ~CBackBufferRegistry() {}
+	inline CBackBufferProtocolHandlers(const char *direct=0) {init(direct);}
+	inline ~CBackBufferProtocolHandlers() {}
 	inline CBackBufferFactory *getBufferFactory(const char *scheme)
 	{
 		TemplPluginHandler<CBackBufferFactory>::const_iterator i;
@@ -317,7 +317,7 @@ public:
 	{
 		return m_backBufferPluginHandler;
 	}
-}; // CBackBufferRegistry
+}; // CBackBufferProtocolHandlers
 
 /** @brief Templates for zlib streams
  *
@@ -372,7 +372,7 @@ private:
 	TypeParent *m_coupledBuffer;
 	CBackBufferRoot *m_backBuffer;
 	CBackBufferFactory *m_factory;
-	CBackBufferRegistry *m_bufferReg;
+	CBackBufferProtocolHandlers *m_bufferReg;
 
 	TypeOpenMode m_mode;
 	CUri m_baseUri;
@@ -728,42 +728,31 @@ protected:
 
 		// Read new Characters
 		std::streamsize num = 0;
-		if ( m_transparentIn ) {
-			if ( m_backBuffer ) {
-				num =
-					m_backBuffer->sgetn(
-						(char *)(m_frontInBuffer.begin()+m_putbackSize),
-							(std::streamsize)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize)));
-			} else if ( m_coupledBuffer ) {
-				#ifdef _MSC_VER
-					num =
-						m_coupledBuffer->_Sgetn_s(
-							(char *)(m_frontInBuffer.begin()+m_putbackSize),
-							sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize),
-							(std::streamsize)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize)));
-				#else
-					num =
-						m_coupledBuffer->sgetn(
-							(char *)(m_frontInBuffer.begin()+m_putbackSize),
-							sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize));
-				#endif
-			}
-		} else {
-			m_strmIn.avail_out = (uInt)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize));
-			m_strmIn.next_out = (Bytef *)(m_frontInBuffer.begin()+m_putbackSize);
-			while ( m_strmIn.avail_out != 0 ) {
-				fill_in_buffer();
-				if ( m_strmIn.avail_in != 0 ) {
+
+		m_strmIn.avail_out = (uInt)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize));
+		m_strmIn.next_out = (Bytef *)(m_frontInBuffer.begin()+m_putbackSize);
+		while ( m_strmIn.avail_out != 0 ) {
+			fill_in_buffer();
+			if ( m_strmIn.avail_in != 0 ) {
+				if ( !m_transparentIn ) {
 					inflate(&m_strmIn, Z_NO_FLUSH);
-					continue;
+				} else {
+					uInt avail = min(m_strmIn.avail_in, m_strmIn.avail_out);
+					memcpy(m_strmIn.next_out, m_strmIn.next_in, avail);
+					m_strmIn.avail_out -= avail;
+					m_strmIn.avail_in -= avail;
+					m_strmIn.next_out += avail;
+					m_strmIn.next_in += avail;
 				}
-				break;
+				continue;
 			}
-			num = (std::streamsize)(
-				sizeof(charT) *
-				(m_frontInBuffer.size()-m_putbackSize) -
-				m_strmIn.avail_out);
+			break;
 		}
+
+		num = (std::streamsize)(
+			sizeof(charT) *
+			(m_frontInBuffer.size()-m_putbackSize) -
+			m_strmIn.avail_out);
 
 		setg(
 			m_frontInBuffer.begin()+(m_putbackSize-numPutback), 
@@ -785,7 +774,7 @@ protected:
 	}
 
 public:
-	inline TemplFrontStreambuf(CBackBufferRegistry &bufferReg) :
+	inline TemplFrontStreambuf(CBackBufferProtocolHandlers &bufferReg) :
 		m_bufferReg(&bufferReg)
 	{
 		init();

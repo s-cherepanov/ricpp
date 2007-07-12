@@ -45,6 +45,10 @@
 #include "ricpp/streams/buffer.h"
 #endif // _RICPP_STREAMS_BUFFER_H
 
+#ifndef _RICPP_TOOLS_TEMPLATEFUNCS_H
+#include "ricpp/tools/templatefuncs.h"
+#endif // _RICPP_TOOLS_TEMPLATEFUNCS_H
+
 #include "zlib.h"
 
 #include <fstream>
@@ -737,7 +741,7 @@ protected:
 				if ( !m_transparentIn ) {
 					inflate(&m_strmIn, Z_NO_FLUSH);
 				} else {
-					uInt avail = min(m_strmIn.avail_in, m_strmIn.avail_out);
+					uInt avail = tmin(m_strmIn.avail_in, m_strmIn.avail_out);
 					memcpy(m_strmIn.next_out, m_strmIn.next_in, avail);
 					m_strmIn.avail_out -= avail;
 					m_strmIn.avail_in -= avail;

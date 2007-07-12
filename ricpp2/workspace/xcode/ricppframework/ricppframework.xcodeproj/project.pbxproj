@@ -25,7 +25,6 @@
 /* Begin PBXBuildFile section */
 		C3003D310C1D63C4004C4EF0 /* ricpperror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3003D300C1D63C4004C4EF0 /* ricpperror.cpp */; };
 		C3003D350C1D63FF004C4EF0 /* ricpperror.h in Headers */ = {isa = PBXBuildFile; fileRef = C3003D340C1D63FF004C4EF0 /* ricpperror.h */; };
-		C3003D690C1D6C5B004C4EF0 /* libstreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3003D680C1D6C3A004C4EF0 /* libstreams.a */; };
 		C3003D6A0C1D6C75004C4EF0 /* buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = C3003D420C1D6458004C4EF0 /* buffer.h */; };
 		C3003D6D0C1D6C75004C4EF0 /* uri.h in Headers */ = {isa = PBXBuildFile; fileRef = C3003D450C1D6458004C4EF0 /* uri.h */; };
 		C3003D7C0C1D6CF9004C4EF0 /* tokenmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3003D7B0C1D6CF9004C4EF0 /* tokenmap.cpp */; };
@@ -50,7 +49,14 @@
 		C3003DD80C1D78D6004C4EF0 /* libritools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C399BA940BE5E1BB002FEEF1 /* libritools.a */; };
 		C32093D90BDCCF6900A0BB35 /* dynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093D80BDCCF6900A0BB35 /* dynlib.cpp */; };
 		C32093F90BDCD07A00A0BB35 /* macdynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */; };
+		C330D7970C44C4B400FC8F4F /* paramclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C330D7950C44C4B400FC8F4F /* paramclasses.h */; };
+		C330D7980C44C4B400FC8F4F /* ribparser.h in Headers */ = {isa = PBXBuildFile; fileRef = C330D7960C44C4B400FC8F4F /* ribparser.h */; };
+		C330D79B0C44C4D300FC8F4F /* paramclasses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C330D7990C44C4D300FC8F4F /* paramclasses.cpp */; };
+		C330D79C0C44C4D300FC8F4F /* ribparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C330D79A0C44C4D300FC8F4F /* ribparser.cpp */; };
+		C330D79E0C44C4F800FC8F4F /* requests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C330D79D0C44C4F800FC8F4F /* requests.cpp */; };
 		C33118230BEB10B30084F992 /* stringlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33118220BEB10B30084F992 /* stringlist.cpp */; };
+		C337F2860C460AA100E174B0 /* templatefuncs.h in Headers */ = {isa = PBXBuildFile; fileRef = C337F2850C460AA100E174B0 /* templatefuncs.h */; };
+		C337F3300C460E3D00E174B0 /* libstreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3003D680C1D6C3A004C4EF0 /* libstreams.a */; };
 		C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
 		C3610AC70BF2F26D00007CEF /* ricppbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */; };
 		C3610B2F0BF2F9D500007CEF /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3610AB50BF2F06500007CEF /* libricppbridge.a */; };
@@ -162,19 +168,19 @@
 			remoteGlobalIDString = C3B848F70BD7621100DD22B5;
 			remoteInfo = ribwriter;
 		};
-		C3003DFA0C1D7E6D004C4EF0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C3003D670C1D6C3A004C4EF0;
-			remoteInfo = streams;
-		};
 		C32095060BDCD8BE00A0BB35 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C3B848F70BD7621100DD22B5;
 			remoteInfo = ribwriter;
+		};
+		C337F32D0C460E0E00E174B0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3003D670C1D6C3A004C4EF0 /* streams */;
+			remoteInfo = streams;
 		};
 		C35606CA0BEA36B400323615 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -281,7 +287,13 @@
 		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
+		C330D7950C44C4B400FC8F4F /* paramclasses.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = paramclasses.h; path = ../../../source/include/ricpp/baserenderer/paramclasses.h; sourceTree = SOURCE_ROOT; };
+		C330D7960C44C4B400FC8F4F /* ribparser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribparser.h; path = ../../../source/include/ricpp/baserenderer/ribparser.h; sourceTree = SOURCE_ROOT; };
+		C330D7990C44C4D300FC8F4F /* paramclasses.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = paramclasses.cpp; path = ../../../source/baserenderer/paramclasses.cpp; sourceTree = SOURCE_ROOT; };
+		C330D79A0C44C4D300FC8F4F /* ribparser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribparser.cpp; path = ../../../source/baserenderer/ribparser.cpp; sourceTree = SOURCE_ROOT; };
+		C330D79D0C44C4F800FC8F4F /* requests.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = requests.cpp; path = ../../../source/renderstate/requests.cpp; sourceTree = SOURCE_ROOT; };
 		C33118220BEB10B30084F992 /* stringlist.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stringlist.cpp; path = ../../../source/tools/stringlist.cpp; sourceTree = SOURCE_ROOT; };
+		C337F2850C460AA100E174B0 /* templatefuncs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = templatefuncs.h; path = ../../../source/include/ricpp/tools/templatefuncs.h; sourceTree = SOURCE_ROOT; };
 		C35A15640C03201F000C9348 /* librenderstate.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librenderstate.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AB50BF2F06500007CEF /* libricppbridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppbridge.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -410,6 +422,7 @@
 				C3003DB00C1D754A004C4EF0 /* libgendynlib.a in Frameworks */,
 				C3003DB20C1D7568004C4EF0 /* libricpp.a in Frameworks */,
 				C3003DB30C1D756B004C4EF0 /* libritools.a in Frameworks */,
+				C337F3300C460E3D00E174B0 /* libstreams.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,7 +488,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3003D690C1D6C5B004C4EF0 /* libstreams.a in Frameworks */,
 				C3610B2F0BF2F9D500007CEF /* libricppbridge.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -648,6 +660,7 @@
 		C35A155F0C031FFF000C9348 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C330D79D0C44C4F800FC8F4F /* requests.cpp */,
 				C362FB670C03336F00880F4D /* modestack.cpp */,
 				C362FB680C03336F00880F4D /* renderstate.cpp */,
 			);
@@ -726,6 +739,8 @@
 		C372B8FA0BD7618A009B2459 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C330D7950C44C4B400FC8F4F /* paramclasses.h */,
+				C330D7960C44C4B400FC8F4F /* ribparser.h */,
 				C370C1690BF4693200AA03BC /* baserenderer.h */,
 				C370C16A0BF4693200AA03BC /* contextcreator.h */,
 				C370C16B0BF4693200AA03BC /* dorender.h */,
@@ -737,6 +752,8 @@
 		C372B8FB0BD7618F009B2459 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C330D7990C44C4D300FC8F4F /* paramclasses.cpp */,
+				C330D79A0C44C4D300FC8F4F /* ribparser.cpp */,
 				C35C7A480BD76D3A00548675 /* baserenderer.cpp */,
 				C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */,
 				C3787D5B0BE9C4840072105F /* ricontext.cpp */,
@@ -855,6 +872,7 @@
 		C399BA360BE5DDD4002FEEF1 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C337F2850C460AA100E174B0 /* templatefuncs.h */,
 				C370C1890BF469BD00AA03BC /* env.h */,
 				C370C18A0BF469BD00AA03BC /* filepath.h */,
 				C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */,
@@ -1027,6 +1045,8 @@
 				C370C16F0BF4693200AA03BC /* contextcreator.h in Headers */,
 				C370C1700BF4693200AA03BC /* dorender.h in Headers */,
 				C370C1720BF4693200AA03BC /* ricontext.h in Headers */,
+				C330D7970C44C4B400FC8F4F /* paramclasses.h in Headers */,
+				C330D7980C44C4B400FC8F4F /* ribparser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1076,6 +1096,7 @@
 				C370C1910BF469BD00AA03BC /* platform.h in Headers */,
 				C370C1920BF469BD00AA03BC /* stringlist.h in Headers */,
 				C37DBBBB0C01CCC1003AE4E7 /* inlinetools.h in Headers */,
+				C337F2860C460AA100E174B0 /* templatefuncs.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1219,6 +1240,7 @@
 			dependencies = (
 				C3003D8C0C1D6EA8004C4EF0 /* PBXTargetDependency */,
 				C35A15920C032414000C9348 /* PBXTargetDependency */,
+				C337F32E0C460E0E00E174B0 /* PBXTargetDependency */,
 			);
 			name = baserenderer;
 			productName = baserenderer;
@@ -1364,7 +1386,6 @@
 			);
 			dependencies = (
 				C3610B120BF2F78A00007CEF /* PBXTargetDependency */,
-				C3003DFB0C1D7E6D004C4EF0 /* PBXTargetDependency */,
 			);
 			name = test;
 			productName = test;
@@ -1434,6 +1455,7 @@
 			files = (
 				C362FB690C03336F00880F4D /* modestack.cpp in Sources */,
 				C362FB6A0C03336F00880F4D /* renderstate.cpp in Sources */,
+				C330D79E0C44C4F800FC8F4F /* requests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1463,6 +1485,8 @@
 				C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */,
 				C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */,
 				C3787D5C0BE9C4840072105F /* ricontext.cpp in Sources */,
+				C330D79B0C44C4D300FC8F4F /* paramclasses.cpp in Sources */,
+				C330D79C0C44C4D300FC8F4F /* ribparser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1574,15 +1598,15 @@
 			target = C3B848F70BD7621100DD22B5 /* ribwriter */;
 			targetProxy = C3003DA40C1D7405004C4EF0 /* PBXContainerItemProxy */;
 		};
-		C3003DFB0C1D7E6D004C4EF0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C3003D670C1D6C3A004C4EF0 /* streams */;
-			targetProxy = C3003DFA0C1D7E6D004C4EF0 /* PBXContainerItemProxy */;
-		};
 		C32095070BDCD8BE00A0BB35 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C3B848F70BD7621100DD22B5 /* ribwriter */;
 			targetProxy = C32095060BDCD8BE00A0BB35 /* PBXContainerItemProxy */;
+		};
+		C337F32E0C460E0E00E174B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3003D670C1D6C3A004C4EF0 /* streams */;
+			targetProxy = C337F32D0C460E0E00E174B0 /* PBXContainerItemProxy */;
 		};
 		C35606CB0BEA36B400323615 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

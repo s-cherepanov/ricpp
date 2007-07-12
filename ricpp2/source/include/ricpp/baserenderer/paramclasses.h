@@ -243,7 +243,7 @@ public:
 	inline void reset(RtInt npolys, RtInt *nverts, RtInt *verts) {
 		m_npolys = npolys;
 		m_nvertices = sum(npolys, nverts);
-		m_nmaxvertex = max(m_nvertices, verts);
+		m_nmaxvertex = tmax(m_nvertices, verts);
 		++m_nmaxvertex; // Index+1 == number of vertices
 	}
 
@@ -281,7 +281,7 @@ public:
 		m_npolys = npolys;
 		RtInt sumloops = sum(npolys, nloops);
 		m_nvertices = sum(sumloops, nverts);
-		m_nmaxvertex = max(m_nvertices, verts);
+		m_nmaxvertex = tmax(m_nvertices, verts);
 		++m_nmaxvertex; // Index+1 == number of vertices
 	}
 

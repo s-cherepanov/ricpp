@@ -30,3 +30,75 @@
 #include "ricpp/renderstate/renderstate.h"
 
 using namespace RiCPP;
+
+CRenderState::~CRenderState()
+{
+	while ( popOptions() );
+	if ( m_optionsFactory ) {
+		delete m_optionsFactory;
+	}
+
+	while ( popAttributes() );
+	if ( m_attributesFactory ) {
+		delete m_attributesFactory;
+	}
+
+	if ( m_modeStack ) {
+		delete m_modeStack;
+	}
+}
+
+void CRenderState::pushOptions()
+{
+	if ( m_optionsStack.empty() ) {
+		m_optionsStack.push_back(m_optionsFactory->newOptions());
+	} else {
+		m_optionsStack.push_back(m_optionsFactory->newOptions(*m_optionsStack.back()));
+	}
+	if ( m_optionsStack.back() == 0 ) {
+		m_optionsStack.pop_back();
+		// Throw
+	}
+}
+
+bool CRenderState::popOptions()
+{
+	while ( m_optionsStack.begin() != m_optionsStack.end() )
+	{
+		m_optionsFactory->deleteOptions(m_optionsStack.back());
+		m_optionsStack.pop_back();
+	}
+	return !m_optionsStack.empty();
+}
+
+void CRenderState::pushAttributes()
+{
+	if ( m_attributesStack.empty() ) {
+		m_attributesStack.push_back(m_attributesFactory->newAttributes(m_optionsStack.back()->colorDesc()));
+	} else {
+		m_attributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
+	}
+	if ( m_attributesStack.back() == 0 ) {
+		m_attributesStack.pop_back();
+		// Throw
+	}
+}
+
+bool CRenderState::popAttributes()
+{
+	if ( m_attributesStack.begin() != m_attributesStack.end() )
+	{
+		m_attributesFactory->deleteAttributes(m_attributesStack.back());
+		m_attributesStack.pop_back();
+	}
+	return !m_attributesStack.empty();
+}
+
+void CRenderState::pushTransform()
+{
+}
+
+bool CRenderState::popTransform()
+{
+	return false;
+}

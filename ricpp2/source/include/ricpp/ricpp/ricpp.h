@@ -63,10 +63,16 @@ class IRi;
  */
 class IErrorHandler {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the filter function.
+	 */
+	virtual IErrorHandler *duplicate() const = 0;
+
 	/** @brief The name of the error handler.
 	 * @return The name of the error handler as used in RIB files.
 	 */
-	virtual const char *name() const = 0;
+	virtual RtToken name() const = 0;
+
 	/** @brief Handles the error.
 	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...).
@@ -80,10 +86,16 @@ public:
  */
 class IFilterFunc {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the filter function.
+	 */
+	virtual IFilterFunc *duplicate() const = 0;
+
 	/** @brief The name of the filter.
 	 *  @return The name of the filter as used in RIB binding.
 	 */
-	virtual const char *name() const = 0;
+	virtual RtToken name() const = 0;
+
 	/** @brief The implementation of the filter function.
 	 *
 	 *  Each supersample in the rectangular area xwidth, ywidth contributes by its
@@ -105,10 +117,16 @@ public:
  */
 class ISubdivFunc {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	virtual ISubdivFunc *duplicate() const = 0;
+
 	/** @brief Name of the subdivision function.
 	 *  @return The name of the subdivision function as used in RIB binding.
 	 */
-	virtual const char *name() const = 0;
+	virtual RtToken name() const = 0;
+
 	/** @brief The subdivision function as operator()().
 	 * @param ri the frontend for interface calls of the subdivision function.
 	 * @param data The data handled by the subdivision function.
@@ -121,10 +139,16 @@ public:
  */
 class IFreeFunc {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	virtual IFreeFunc *duplicate() const = 0;
+
 	/** @brief Name of the free function.
 	 *  @return The name of the free function as used in RIB binding.
 	 */
-	virtual const char *name() const = 0;
+	virtual RtToken name() const = 0;
+
 	/** @brief The free function as operator()().
 	 * @param ri the frontend used by the subdivision function that handled the data.
 	 * @param data The data handled by the subdivision function that should be freed.
@@ -137,9 +161,15 @@ public:
  */
 class IArchiveCallback {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	virtual IArchiveCallback *duplicate() const = 0;
+
 	/** @brief Name of the callback function
 	 */
-	virtual const char *name() const = 0;
+	virtual RtToken name() const = 0;
+
 	/** @brief The callback function as operator()()
 	 * @param ri the frontend used by the subdivision function that handled the data.
 	 * @param type The type of the comment, either RI_COMMENT or RI_STRUCTURE. RI_VERBATIM
@@ -524,12 +554,12 @@ public:
 	virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
 
 	/** @brief Defines a new display channel for display()
-	 *  @param channel Identifier for the Channel
+	 *  @param channel Identifier and type information for the Channel
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameters to declare the type of the channel
 	 */
-	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid displayChannelV(RtString channel, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	//! Choose a display (or file) and sets the type for the output being rendered.
 	/*! @param name Name for the display or filename
@@ -539,10 +569,12 @@ public:
 	 *  @param tokens Tokens for additional parameter list (RI_ORIGIN)
 	 *  @param params Value pointer for additional parameter list for the display
 	 */
-    virtual RtVoid displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
-	//! Choose the hidden surface algorithm
-	/*! @param type Algorithm, default types are RI_HIDER, RI_PAINT and RI_NULL
+	//! @brief Choose the hidden surface algorithm
+	/*! @param type Hidden surface algorithm, default types are
+	 *              RI_HIDER (hidden surface), RI_PAINT (paint in the order of the definition)
+	 *              and the RI_NULL_LIT "null" (can also be RI_NULL, performs no output)
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list for the hider
@@ -1506,12 +1538,12 @@ public:
 	/*  @brief Defines a new display channel for display()
 	 *  @see displayChannelV()
 	 */
-	virtual RtVoid displayChannel(RtToken channel, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid displayChannel(RtString channel, RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Choose a display
 	 *  @see IRiRoot::displayV()
 	 */
-	virtual RtVoid display(RtString name, RtToken type, RtToken mode, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid display(RtString name, RtToken type, RtString mode, RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Choose the hidden surface algorithm
 	 *  @see IRiRoot::hiderV()

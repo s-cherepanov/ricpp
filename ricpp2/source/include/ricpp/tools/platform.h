@@ -34,10 +34,14 @@
 #include <ios>
 
 #ifdef WIN32
-
 #ifndef _WINDOWS_
 #include <windows.h>
 #endif // _WINDOWS_
+#endif
+
+namespace RiCPP {
+
+#ifdef WIN32
 
 /** @brief Case insensitive strcmp() - Compare s1 with s2, under Mac and Linux/Unix there is no _stricmp(), it is named strcasecmp().
  *  @param s1 first NUL terminated string
@@ -71,5 +75,6 @@ typedef int (*FARPROC)();
 
 typedef std::_Ios_Openmode TypeOpenMode;
 #endif
+}
 
 #endif

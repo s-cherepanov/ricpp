@@ -1065,11 +1065,11 @@ public:
 
 	virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl);
 
-	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid displayChannel(RtToken channel, RtToken token = RI_NULL, ...);
+	virtual RtVoid displayChannelV(RtString channel, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid displayChannel(RtString channel, RtToken token = RI_NULL, ...);
 
-	virtual RtVoid display(RtString name, RtToken type, RtToken mode, RtToken token = RI_NULL, ...);
-    virtual RtVoid displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid display(RtString name, RtToken type, RtString mode, RtToken token = RI_NULL, ...);
+    virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid hider(RtToken type, RtToken token = RI_NULL, ...);
     virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);

@@ -42,37 +42,13 @@
 #include "ricpp/renderstate/renderstate.h"
 #endif // _RICPP_RENDERSTATE_RENDERSTATE_H
 
+#ifndef _RICPP_BASERENDERER_PARAMCLASSES_H
+#include "ricpp/baserenderer/paramclasses.h"
+#endif // _RICPP_BASERENDERER_PARAMCLASSES_H
+
 #include <deque>
 
 namespace RiCPP {
-	class CRibParser;
-
-	/** @brief Interface for the state reader of the parser CRibParser
-	 */
-	class IRibParserState {
-	public:
-		inline virtual ~IRibParserState() {}
-		virtual const CUri &baseUri() const = 0;
-		virtual const CUri &absUri() const = 0;
-		virtual long lineno() const = 0;
-		virtual const IArchiveCallback *callback() const = 0;
-		virtual const IRenderStateReader &stateReader() const = 0;
-		virtual IRiRoot &ribFilter() = 0;
-	};
-
-	/** @brief Root for the request handlers
-	 */
-	class CRibRequest {
-	public:
-		virtual void operator()(IRibParserState &parser) const {}
-		inline virtual CRibRequest &operator=(const IRibParserState &req)
-		{
-			return *this;
-		}
-		virtual EnumRequests getId() const {return REQ_UNKNOWN;}
-	}; // CRibRequest
-
-
 	//! Container class for one parameter (array) read by the parser (RIB)
 	/*! Types float, int or string are supported.
 	 */
@@ -279,6 +255,166 @@ namespace RiCPP {
 	}; // CRibParameter
 
 
+	/** @brief Interface for the state reader of the parser CRibParser
+	 */
+	class IRibParserState {
+	public:
+		inline virtual ~IRibParserState() {}
+		virtual const CUri &baseUri() const = 0;
+		virtual const CUri &absUri() const = 0;
+		virtual long lineno() const = 0;
+		virtual const IArchiveCallback *callback() const = 0;
+		virtual const IRenderStateReader &stateReader() const = 0;
+		virtual IRiRoot &ribFilter() = 0;
+	}; // IRibParserState
+
+
+	class CRibRequestData {
+		IRibParserState *m_parserState;
+		IRiCPPErrorHandler *m_errHandler;
+		std::vector<CRibParameter> m_parameters;     //!< All parameteres parsed within one interface call
+		std::vector<const char *> m_tokenList;       //!< Tokens of the token-value parameterlist of an interface call, inserted by getTokenList()
+		std::vector<void *> m_valueList;             //!< Values of the token-value parameterlist of an interface call, inserted by getTokenList()
+		bool m_checkParameters;                      //!< Check the size and types of the parameter list while parsing
+		std::string m_curRequest;                    //!< Current request as string (e.g. "Sphere", "BeginWorld")
+
+		inline IRiCPPErrorHandler &errHandler()
+		{
+			return *m_errHandler;
+		}
+		inline const char *resourceName()
+		{
+			return m_parserState->absUri().toString().c_str();
+		}
+
+		inline const IRenderStateReader &stateReader() const
+		{
+			return m_parserState->stateReader();
+		}
+	public:
+		inline CRibRequestData()
+		{
+			m_parserState = 0;
+			m_errHandler = 0;
+			m_checkParameters = true;
+		}
+
+		inline void init(
+			IRibParserState &aParserState,
+			IRiCPPErrorHandler &anErrHandler
+		)
+		{
+			m_parserState = &aParserState;
+			m_errHandler = &anErrHandler;
+		}
+
+		inline void clear()
+		{
+			m_parameters.clear();
+			m_tokenList.clear();
+			m_valueList.clear();
+			m_curRequest.clear();
+		}
+
+		void push_back(CRibParameter &p)
+		{
+			m_parameters.push_back(p);
+		}
+
+		inline CRibParameter &back()
+		{
+			return m_parameters.back();
+		}
+
+		inline size_t size()
+		{
+			return m_parameters.size();
+		}
+
+		inline RtToken *tokenList()
+		{
+			return (RtToken *)&m_tokenList[0];
+		}
+
+		inline RtPointer *valueList()
+		{
+			return (RtPointer *)&m_valueList[0];
+		}
+
+		inline CRibParameter &operator[](int idx)
+		{
+			return m_parameters[idx];
+		}
+
+		//! Fills the token-value list
+		/*! The members m_tokenList and m_valueList are filled by
+		 * this function. The token-value list (parameter list) starts by
+		 * the parameter at position start.
+		 * \param start Token-value list starts here
+		 * \vertices Number of vertices (shared vertices count 1) of the primary to which the parameter list belongs
+		 * \corners Number of the corners (shared corners count 1) of the primary to which the parameter list belongs
+		 * \facets Number of the faces of the primary to which the parameter list belongs
+		 * \faceVertices Number of the vertices of all faces of the primary to which the parameter list belongs
+		 * \return The number of token-value pairs stored in m_tokenList and m_valueList, -1 if an error occured
+		 */
+		int getTokenList(
+			size_t start,
+			RtInt vertices=0, RtInt corners=0, RtInt facets=0,
+			RtInt faceVertices=0, RtInt faceCorners=0
+		);
+
+		//! Gets the token-value list without checking, doesn't store values
+		/*! \param start Token-value list starts here
+		 *  \return The number of token-value pairs found
+		 */
+		inline int getTokenListNoCheck(size_t start)
+		{
+			bool check = m_checkParameters;
+			m_checkParameters = false;
+			int r = getTokenList(start);
+			m_checkParameters = check;
+			return r;
+		}
+
+		//! Gets the token list
+		/*! Uses an instances TParameterClasses to get vertices, corners e.t.c.
+		 *  \param start Token-value list starts here
+		 *  \param p used to get vertices, corners e.t.c.
+		 */
+		inline int getTokenList(size_t start, const CParameterClasses &p)
+		{
+			return getTokenList(
+				start,
+				p.vertex(),
+				p.varying(),
+				p.uniform(),
+				p.faceVertex(),
+				p.faceVarying());
+		}
+
+		void curRequest(const char *req)
+		{
+			m_curRequest = req ? req : "";
+		}
+
+		const char *curRequest() const
+		{
+			return m_curRequest.c_str();
+		}
+	}; // CRibRequestData
+
+	/** @brief Root for the request handlers
+	 */
+	class CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const {}
+		inline virtual CRibRequest &operator=(const IRibParserState &req)
+		{
+			return *this;
+		}
+		virtual EnumRequests getId() const {return REQ_UNKNOWN;}
+	}; // CRibRequest
+
 
 	/** @brief Generic parser object
 	 */
@@ -312,7 +448,7 @@ namespace RiCPP {
 			IRiCPPErrorHandler &anErrHandler,
 			CBackBufferProtocolHandlers &backBufferReg,
 			IRiRoot &ribFilter,
-			const IRenderStateReader &stateReader,
+			const IRenderStateReader &aStateReader,
 			const CUri &baseUri) :
 			m_ob(backBufferReg),
 			m_istream(&m_ob)
@@ -321,7 +457,7 @@ namespace RiCPP {
 			m_errHandler = &anErrHandler;
 			m_backBufferReg = &backBufferReg;
 			m_ribFilter = &ribFilter;
-			m_stateReader = &stateReader;
+			m_stateReader = &aStateReader;
 			m_baseUri = baseUri;
 			m_lineno = 0;
 			m_hasPutBack = false;
@@ -353,22 +489,22 @@ namespace RiCPP {
 			return m_callback;
 		}
 
-		virtual const IRenderStateReader &stateReader() const
+		inline virtual const IRenderStateReader &stateReader() const
 		{
 			return *m_stateReader;
 		}
 
-		virtual IRi &frontend() const
+		inline virtual IRi &frontend() const
 		{
 			return *m_ri;
 		}
 
-		virtual IRiCPPErrorHandler &errHandler()
+		inline virtual IRiCPPErrorHandler &errHandler()
 		{
 			return *m_errHandler;
 		}
 
-		virtual IRiRoot &ribFilter()
+		inline virtual IRiRoot &ribFilter()
 		{
 			return *m_ribFilter;
 		}
@@ -384,6 +520,7 @@ namespace RiCPP {
 		{
 			m_callback = callback;
 		}
+
 	}; // CArchiveParser
 
 	/** @brief Rib parser object
@@ -411,26 +548,17 @@ namespace RiCPP {
 		static const int RIBPARSER_NOT_A_TOKEN;        //!< Used if a token is not found in token list.
 		static const int RIBPARSER_REQUEST;            //!< Token is a request string stored in m_request
 
+		CRibRequestData m_request;                   //!< Data of a parsed line.
 
-		std::vector<CRibParameter> m_parameters;     //!< all parameteres parsed within one interface call
-		std::vector<const char *> m_tokenList;       //!< Tokens of the token-value parameterlist of an interface call, inserted by getTokenList()
-		std::vector<void *> m_valueList;             //!< Values of the token-value parameterlist of an interface call, inserted by getTokenList()
-
-		std::string m_curRequest;                    //!< Current request
 		std::vector<char> m_token;                   //!< Current token to be handled as string
 		int m_lookahead;                             //!< One character look ahead
 		int m_braketDepth;                           //!< Braket [] nesting depth
-
-		bool m_checkParameters;                      //!< Check the size and types of the parameter list while parsing
 
 		int m_code;                                  //!< If >= 0 Code of a RIB call to encode (next String) (used by binary encoding)
 		EnumRequests m_ribEncode[256];               //!< 256 (0-255) Rib-Codes can be defined (used by binary encoding)
 
 		long m_defineString;                         //!< If >= 0 encode a string token
 		NUM2STRING m_stringMap;                      //!< Map of string tokens
-
-		const char *m_lastToken;                     //!< Cached last token
-		int m_lastTokenId;                           //!< Cached token nmber for m_lastToken
 
 		RtInt m_n;                                   //!< Number of token value pairs (copy of TRi::readArchive())
 		RtToken *m_tokens;                           //!< Tokens (copy of TRi::readArchive())
@@ -520,16 +648,22 @@ namespace RiCPP {
 		int nextToken();
 		int parseNextCall();
 		void parseFile();
+
+		inline const char *resourceName()
+		{
+			return absUri().toString().c_str();
+		}
 	public:
 		inline CRibParser(
 			IRi &aFrontend,
 			IRiCPPErrorHandler &anErrHandler,
 			CBackBufferProtocolHandlers &backBufferReg,
 			IRiRoot &ribFilter,
-			const IRenderStateReader &stateReader,
+			const IRenderStateReader &aStateReader,
 			const CUri &baseUri)
-			: CArchiveParser(aFrontend, anErrHandler, backBufferReg, ribFilter, stateReader, baseUri)
+			: CArchiveParser(aFrontend, anErrHandler, backBufferReg, ribFilter, aStateReader, baseUri)
 		{
+			m_request.init(*this, anErrHandler);
 			initRequestMap();
 		}
 

@@ -416,13 +416,13 @@ public:
 			callee()->quantize(type, one, qmin, qmax, ampl);
 	}
 
-	inline virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid displayChannelV(RtString channel, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_DISPLAY_CHANNEL) )
 			callee()->displayChannelV(channel, n, tokens, params);
 	}
 
-	inline virtual RtVoid displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_DISPLAY) )
 			callee()->displayV(name, type, mode, n, tokens, params);

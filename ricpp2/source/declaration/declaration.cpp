@@ -211,3 +211,31 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 	m_isDefault = decl.m_isDefault;
 	return *this;
 }
+
+int CDeclaration::selectNumber(int vertices, int corners, int facets, int faceVertices, int faceCorners) const
+{
+	int n = 1;
+	switch ( m_class ) {
+		case CLASS_CONSTANT:
+			break;
+		case CLASS_UNIFORM:
+			n = facets;
+			break;
+		case CLASS_VARYING:
+			n = corners;
+			break;
+		case CLASS_VERTEX:
+			n = vertices;
+			break;
+		case CLASS_FACEVARYING:
+			n = faceCorners;
+			break;
+		case CLASS_FACEVERTEX:
+			n = faceVertices;
+			break;
+		default: // CLASS_UNKNOWN
+			break;
+	}
+
+	return n;
+}

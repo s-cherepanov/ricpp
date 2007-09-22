@@ -40,10 +40,16 @@ namespace RiCPP {
  */
 class CAbortErrorHandler : public IErrorHandler {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	inline virtual IErrorHandler *duplicate() const { return new CAbortErrorHandler(*this); }
+
 	/**@brief The name of the handler.
 	 * @return The name of the renderer as used in RIB
 	 */
-	inline virtual const char *name() const {return "abortErrorHandler";}
+	inline virtual const char *name() const {return RI_ABORT;}
+
 	/** @brief Handles the error (print, abort if severe)
 	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
@@ -57,10 +63,16 @@ public:
  */
 class CPrintErrorHandler : public IErrorHandler  {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	inline virtual IErrorHandler *duplicate() const { return new CPrintErrorHandler(*this); }
+
 	/**@brief The name of the handler.
 	 * @return The name of the renderer as used in RIB
 	 */
-	inline virtual const char *name() const {return "printErrorHandler";}
+	inline virtual const char *name() const {return RI_PRINT;}
+
 	/** @brief Handles the error (print)
 	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
@@ -74,10 +86,16 @@ public:
  */
 class CIgnoreErrorHandler : public IErrorHandler  {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	inline virtual IErrorHandler *duplicate() const { return new CIgnoreErrorHandler(*this); }
+
 	/**@brief The name of the handler.
 	 * @return The name of the renderer as used in RIB
 	 */
-	inline virtual const char *name() const {return "ignoreErrorHandler";}
+	inline virtual const char *name() const {return RI_IGNORE;}
+
 	/** @brief Handles the error (ignore)
 	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)

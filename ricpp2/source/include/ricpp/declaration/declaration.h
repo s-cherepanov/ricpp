@@ -141,7 +141,7 @@ public:
 	/** @brief Gets the name of the declaration
 	 *  @return Name of the declaration
 	 */
-	inline const char *name() const { return m_name.c_str(); }
+	inline const char *name() const { return m_name.c_str() ? m_name.c_str() : ""; }
 
 	/** @brief Gets the namespace of the variable
 	 *
@@ -217,6 +217,14 @@ public:
 	 */
 	inline EnumBasicTypes basicType() const { return m_basicType; }
 
+	/** @brief Gets the size of the basic type in bytes.
+	 * @return The size of the basic type in bytes.
+	 */
+	inline unsigned int basicTypeByteSize() const
+	{
+		return CTypeInfo::basicTypeByteSize(m_basicType);
+	}
+
 	/** @brief Gets the array size of an declaration
 	 *
 	 * 1 is returned for no array declaration 
@@ -233,15 +241,47 @@ public:
 	 */
 	inline unsigned long typeSize() const { return m_typeSize; }
 
-	/** @brief Gets number of all elements of the declaration (incl. array)
+	/** @brief Gets number of one compound element of the declaration (incl. array)
 	 *  @return The type size times the array size
 	 */
 	inline unsigned long elemSize() const { return m_typeSize * m_arraySize; }
 
-	/** @brief Gets number bytes of all elements of the declaration (incl. array)
+	/** @brief Gets number bytes of one compound element of the declaration (incl. array)
 	 *  @return The type size times the array size times number of bytes for the basic type
 	 */
-	inline unsigned long numberOfBytes() const { return m_typeSize * m_arraySize * CTypeInfo::basicTypeByteSize(m_basicType); }
+	inline unsigned long numberOfBytes() const { return m_typeSize * m_arraySize * basicTypeByteSize(); }
+
+	/** @brief Get the number of elements.
+	 *
+	 * The appropriate number depends on the storage class m_class. It is one of the given parameters.
+	 * The returned number can be used to calculate the size of the value array
+	 * of a token-value pair by multipling it with either elemSize() or numberOfBytes().
+	 *
+	 * @param vertices       Number of vertices (used by vertex class)
+	 * @param corners        Number of corners (used by varying class)
+	 * @param facets         Number of facets (used by uniform class)
+	 * @param facevertices   Number of vertices per face (used by facevertex class)
+	 * @param facecorners    Number of corners per face (used by facevarying class)
+	 *
+	 * @return Number of elements of a parameter depending on storage class.
+	 */
+	RtInt selectNumber(RtInt vertices, RtInt corners, RtInt facets, RtInt faceVertices, RtInt faceCorners) const;
+
+	/** @brief Get the number of elements.
+	 *
+	 * The appropriate number depends on the storage class m_class. It is one of the given parameters.
+	 * The returned number can be used to calculate the size of the value array
+	 * of a token-value pair by multipling it with either elemSize() or numberOfBytes().
+	 *
+	 * @param aCount Number of vertices, corners, etc.
+	 *
+	 * @return Number of elements of a parameter depending on storage class.
+	 */
+	inline RtInt selectNumber(const CValueCounts &aCount) const
+	{
+		return selectNumber(aCount.vertices(), aCount.corners(), aCount.facets(),
+			                aCount.faceVertices(), aCount.faceCorners());
+	}
 }; // CDeclarartion
 
 } // namespace RiCPP

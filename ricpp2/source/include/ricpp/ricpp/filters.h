@@ -39,35 +39,40 @@ namespace RiCPP {
 /** @brief The gaussian pixel filter.
  */
 class CGaussianFilter : public IFilterFunc {
-	inline virtual const char *name() const { return "gausianFilter"; }
+	inline virtual IFilterFunc *duplicate() const { return new CGaussianFilter(*this); }
+	inline virtual RtToken name() const { return RI_GAUSIAN_FILTER; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
 /** @brief The box pixel filter.
  */
 class CBoxFilter : public IFilterFunc {
-	inline virtual const char *name() const { return "boxFilter"; }
+	inline virtual IFilterFunc *duplicate() const { return new CBoxFilter(*this); }
+	inline virtual RtToken name() const { return RI_BOX_FILTER; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
 /** @brief The triangle pixel filter.
  */
 class CTriangleFilter : public IFilterFunc {
-	inline virtual const char *name() const { return "triangleFilter"; }
+	inline virtual IFilterFunc *duplicate() const { return new CTriangleFilter(*this); }
+	inline virtual RtToken name() const { return RI_TRIANGLE_FILTER; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
 /** @brief The Catmull-Rom pixel filter.
  */
 class CCatmullRomFilter : public IFilterFunc {
-	inline virtual const char *name() const { return "catmullRomFilter"; }
+	inline virtual IFilterFunc *duplicate() const { return new CCatmullRomFilter(*this); }
+	inline virtual RtToken name() const { return RI_CATMULL_ROM_FILTER; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 
 /** @brief The sinc pixel filter.
  */
 class CSincFilter : public IFilterFunc {
-	inline virtual const char *name() const { return "sincFilter"; }
+	inline virtual IFilterFunc *duplicate() const { return new CSincFilter(*this); }
+	inline virtual RtToken name() const { return RI_SINC_FILTER; }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
 };
 } // namespace RiCPP

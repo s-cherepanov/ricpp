@@ -34,9 +34,13 @@
 #include "ricpp/renderstate/modestack.h"
 #endif // _RICPP_RENDERSTATE_MODESTACK_H
 
-#ifndef _RICPP_DECLARATION_DECLDICT_H
-#include "ricpp/declaration/decldict.h"
-#endif // _RICPP_DECLARATION_DECLDICT_H
+#ifndef _RICPP_BASERENDERER_OPTIONS_H
+#include "ricpp/baserenderer/options.h"
+#endif //  _RICPP_BASERENDERER_OPTIONS_H
+
+#ifndef _RICPP_BASERENDERER_ATTRIBUTES_H
+#include "ricpp/baserenderer/attributes.h"
+#endif //  _RICPP_BASERENDERER_ATTRIBUTES_H
 
 namespace RiCPP {
 
@@ -102,7 +106,13 @@ public:
 	virtual CDeclarationDictionary::const_iterator declBegin() const = 0;
 	virtual CDeclarationDictionary::const_iterator declEnd() const = 0;
 	virtual CDeclarationDictionary::size_type declSize() const = 0;
+
+	virtual const COptionsReader &optionsReader() const = 0;
+	virtual const CAttributesReader &attributesReader() const = 0;
 	//@}
+
+	virtual const char *archiveName() const = 0;
+	virtual long lineNo() const = 0;
 }; // IRenderStateReader
 
 /** @brief The facade for the render state objects.
@@ -114,8 +124,26 @@ class CRenderState : public IRenderStateReader {
 
 	RtInt m_frameNumber;               ///< Frame number
 
+	std::string m_archiveName;         ///< Current archive name, optional
+	long m_lineNo;                     ///< Current line number in the file, -1 if not available
+
 	CDeclarationDictionary m_decldict; ///< Dictionary for declarations
-	CTokenMap m_tokenmap;            ///< Registered tokens
+	CTokenMap m_tokenmap;              ///< Registered tokens
+
+	COptionsFactory *m_optionsFactory;     ///< Create new Options
+	std::vector<COptions *> m_optionsStack; ///< Current option stack
+
+	CAttributesFactory *m_attributesFactory;     ///< Create new attributes
+	std::vector<CAttributes *> m_attributesStack; ///< Current attributes stack
+
+	void pushOptions();
+	bool popOptions();
+
+	void pushAttributes();
+	bool popAttributes();
+
+	void pushTransform();
+	bool popTransform();
 public:
 
 	/** @brief Initializes the object
@@ -130,11 +158,17 @@ public:
 	 *  @param aModeStack A reference to a valid mode stack
 	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory while filling map).
 	 */
-	inline CRenderState(CModeStack &aModeStack)
+	inline CRenderState(
+		CModeStack &aModeStack,
+		COptionsFactory &optionsFactory,
+		CAttributesFactory &attributesFactory)
 	// throw(ExceptRiCPPError)
 	{
 		m_modeStack = &aModeStack;
+		m_optionsFactory = &optionsFactory;
+		m_attributesFactory = &attributesFactory;
 		m_frameNumber = 0;
+		m_lineNo = -1;
 		// Attribute stack and Option stack follows after implemented
 	}
 
@@ -142,12 +176,7 @@ public:
 	 *
 	 *  State objects are deleted
 	 */
-	inline ~CRenderState()
-	{
-		if ( m_modeStack ) {
-			delete m_modeStack;
-		}
-	}
+	virtual ~CRenderState();
 
 	/** @brief The current frame number (frames are not nested)
 	 *
@@ -168,29 +197,104 @@ public:
 	 *  @see CModeStack
 	 */
 	//@{
-	inline void contextBegin() { m_modeStack->contextBegin(); }
-	inline void contextEnd() { m_modeStack->contextEnd(); }
+	inline void contextBegin()
+	{
+		m_modeStack->contextBegin();
+		pushOptions();
+		pushAttributes();
+		pushTransform();
+	}
+	inline void contextEnd()
+	{
+		popTransform();
+		popAttributes();
+		popOptions();
+		m_modeStack->contextEnd();
+	}
 
-	inline void frameBegin() { m_modeStack->frameBegin(); }
-	inline void frameEnd() { m_modeStack->frameEnd(); }
+	inline void frameBegin()
+	{
+		m_modeStack->frameBegin();
+		pushOptions();
+		pushAttributes();
+		pushTransform();
+	}
+	inline void frameEnd()
+	{
+		popTransform();
+		popAttributes();
+		popOptions();
+		m_modeStack->frameEnd();
+	}
 
-	inline void worldBegin() { m_modeStack->worldBegin(); }
-	inline void worldEnd() { m_modeStack->worldEnd(); }
+	inline void worldBegin()
+	{
+		pushTransform();
+		pushAttributes();
+		m_modeStack->worldBegin();
+	}
+	inline void worldEnd()
+	{
+		m_modeStack->worldEnd();
+		popAttributes();
+		popTransform();
+	}
 
-	inline void attributeBegin() { m_modeStack->attributeBegin(); }
-	inline void attributeEnd() { m_modeStack->attributeEnd(); }
+	inline void attributeBegin()
+	{
+		pushTransform();
+		pushAttributes();
+		m_modeStack->attributeBegin();
+	}
+	inline void attributeEnd()
+	{
+		m_modeStack->attributeEnd();
+		popAttributes();
+		popTransform();
+	}
 
-	inline void transformBegin() { m_modeStack->transformBegin(); }
-	inline void transformEnd() { m_modeStack->transformEnd(); }
+	inline void transformBegin()
+	{
+		pushTransform();
+		m_modeStack->transformBegin();
+	}
+	inline void transformEnd()
+	{
+		m_modeStack->transformEnd();
+		popTransform();
+	}
 
     inline void solidBegin() { m_modeStack->solidBegin(); }
     inline void solidEnd() { m_modeStack->solidEnd(); }
 
-	inline void objectBegin() { m_modeStack->objectBegin(); }
-	inline void objectEnd() { m_modeStack->objectEnd(); }
+	inline void objectBegin()
+	{
+		m_modeStack->objectBegin();
+		pushOptions();
+		pushAttributes();
+		pushTransform();
+	}
+	inline void objectEnd()
+	{
+		popTransform();
+		popAttributes();
+		popOptions();
+		m_modeStack->objectEnd();
+	}
 
-    inline void archiveBegin() { m_modeStack->archiveBegin(); }
-    inline void archiveEnd() { m_modeStack->archiveEnd(); }
+    inline void archiveBegin()
+	{
+		m_modeStack->archiveBegin();
+		pushOptions();
+		pushAttributes();
+		pushTransform();
+	}
+    inline void archiveEnd() {
+		popTransform();
+		popAttributes();
+		popOptions();
+		m_modeStack->archiveEnd();
+	}
 
     inline void resourceBegin() { m_modeStack->resourceBegin(); }
     inline void resourceEnd() { m_modeStack->resourceEnd(); }
@@ -260,7 +364,61 @@ public:
 	{
 		return m_decldict.findAndUpdate(tableNamespace, table, var, tokenmap, curColorSize);
 	}
-	inline void declAdd(CDeclaration *decl) { return m_decldict.add(decl); }
+	inline void declAdd(CDeclaration *decl)
+	{
+		return m_decldict.add(decl);
+	}
+	inline CDeclarationDictionary &dict()
+	{
+		return m_decldict;
+	}
+
+	COptions &options() const
+	{
+		return *(m_optionsStack.back());
+	}
+
+	CAttributes &attributes() const
+	{
+		return *(m_attributesStack.back());
+	}
+
+	virtual const COptionsReader &optionsReader() const
+	{
+		if ( options().reader() == 0 ) {
+			// throw
+		}
+		return *(options().reader());
+	}
+
+	virtual const CAttributesReader &attributesReader() const
+	{
+		if ( attributes().reader() == 0 ) {
+			// throw
+		}
+		return *(attributes().reader());
+	}
+
+	virtual const char *archiveName() const
+	{
+		return m_archiveName.c_str();
+	}
+
+	virtual void archiveName(const char *anArchiveName)
+	{
+		m_archiveName = noNullStr(anArchiveName);
+	}
+
+	virtual long lineNo() const
+	{
+		return m_lineNo;
+	}
+
+	virtual void lineNo(long aLineNo)
+	{
+		m_lineNo = aLineNo;
+	}
+
 	//@}
 }; // CRenderState
 

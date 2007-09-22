@@ -1003,7 +1003,7 @@ RtVoid CRiCPPBridge::displayChannelV(RtString name, RtInt n, RtToken tokens[], R
 	}
 }
 
-RtVoid CRiCPPBridge::display(RtString name, RtToken type, RtToken mode, RtToken token, ...)
+RtVoid CRiCPPBridge::display(RtString name, RtToken type, RtString mode, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1012,7 +1012,7 @@ RtVoid CRiCPPBridge::display(RtString name, RtToken type, RtToken mode, RtToken 
 	displayV(name, type, mode, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {

@@ -41,10 +41,16 @@ namespace RiCPP {
  */
 class CProcDelayedReadArchive : public ISubdivFunc {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	inline virtual ISubdivFunc *duplicate() const { return new CProcDelayedReadArchive(*this); }
+
 	/** @brief The name of the function
 	 *  @return The name of the function as used in RIB
 	 */
-	inline virtual const char *name() const {return "DelayedReadArchive";}
+	inline virtual RtToken name() const {return RI_DELAYED_READ_ARCHIVE;}
+
 	/** @brief Delayed read of a RIB archive
 	 * @param ri Interface to be used
 	 * @param data Array of one string, the name of the archive as null terminated string
@@ -57,10 +63,16 @@ public:
  */
 class CProcRunProgram : public ISubdivFunc {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	inline virtual ISubdivFunc *duplicate() const { return new CProcRunProgram(*this); }
+
 	/** @brief The name of the function
 	 *  @return The name of the function as used in RIB
 	 */
-	inline virtual const char *name() const {return "RunProgram";}
+	inline virtual RtToken name() const {return RI_RUN_PROGRAM;}
+
 	/** @brief Run a helper program and capture output as RIB for ri
 	 * @param ri Interface to be used
 	 * @param data Array of two strings, the program name and its command line arguments
@@ -73,10 +85,16 @@ public:
  */
 class CProcDynamicLoad : public ISubdivFunc {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	inline virtual ISubdivFunc *duplicate() const { return new CProcDynamicLoad(*this); }
+
 	/** @brief The name of the function
 	 *  @return The name of the function as used in RIB
 	 */
-	inline virtual const char *name() const {return "DynamicLoad";}
+	inline virtual RtToken name() const {return RI_DYNAMIC_LOAD;}
+
 	/** @brief Calls a dynamic library implementing: RtPointer ConvertParameters(IRi &ri, char *initial data), 
 	 * void Subdivide(IRi &ri, RtPointer blinddata, RtFloat detailsize), void Free(IRi &ri, RtPointer blinddata)
 	 * @param ri Interface to be used
@@ -91,10 +109,16 @@ public:
  */
 class CProcFree : public IFreeFunc {
 public:
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	inline virtual IFreeFunc *duplicate() const { return new CProcFree(*this); }
+
 	/** @brief The name of the function
 	 *  @return The name of the function (no RIB binding)
 	 */
-	inline virtual const char *name() const {return "Free";}
+	inline virtual RtToken name() const {return RI_FREE;}
+
 	/** @brief The implementation of the free function
 	 *
 	 * Just call free() for the data.

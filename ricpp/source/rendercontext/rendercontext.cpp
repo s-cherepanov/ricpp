@@ -2694,7 +2694,7 @@ RtVoid TIntermediateRenderer::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn
 	options().m_RGBn.clear();
 	options().m_iNColor = N;
 	int i;
-	for ( i = 0; i < N; ++i ) {
+	for ( i = 0; i < N*3; ++i ) {
 		options().m_nRGB.push_back(nRGB[i]);
 		options().m_RGBn.push_back(RGBn[i]);
 	}

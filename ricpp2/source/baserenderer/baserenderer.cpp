@@ -56,6 +56,8 @@ void CBaseRenderer::initRenderState()
 {
 	m_renderState = 0;
 	CModeStack *modeStack = 0;
+	COptionsFactory *optionsFactory = 0;
+	CAttributesFactory *attributesFactory = 0;
 
 	try {
 		modeStack = getNewModeStack();
@@ -71,7 +73,36 @@ void CBaseRenderer::initRenderState()
 	}
 
 	try {
-		m_renderState = new CRenderState(*modeStack);
+		optionsFactory = getNewOptionsFactory();
+	} catch (ExceptRiCPPError &err) {
+		ricppErrHandler().handleError(err);
+		return;
+	} catch (...) {
+	}
+
+	if ( !optionsFactory ) {
+		delete modeStack;
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create an options factory");
+		return;
+	}
+
+	try {
+		attributesFactory = getNewAttributesFactory();
+	} catch (ExceptRiCPPError &err) {
+		ricppErrHandler().handleError(err);
+		return;
+	} catch (...) {
+	}
+
+	if ( !attributesFactory ) {
+		delete modeStack;
+		delete optionsFactory;
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create an attributes factory");
+		return;
+	}
+
+	try {
+		m_renderState = new CRenderState(*modeStack, *optionsFactory, *attributesFactory);
 	} catch (ExceptRiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
@@ -79,16 +110,42 @@ void CBaseRenderer::initRenderState()
 	}
 
 	if ( !m_renderState ) {
+		delete modeStack;
+		delete optionsFactory;
+		delete attributesFactory;
 		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a render state");
 		return;
 	}
 }
 
 
+/** @brief Create new entry in dectaration list
+ */
+RtToken CBaseRenderer::handleDeclaration(RtString name, RtString declaration, bool isDefault)
+{
+	RtToken token;
+	CDeclaration *d = 0;
+	try {
+		token = m_renderState->tokFindCreate(name);
+		// if no declaration only tokenize the name
+		if ( !emptyStr(declaration) ) {
+			d = new CDeclaration(token, declaration, 3, isDefault); // <--- curColorSize if attributes are implemented !!!!
+			if ( !d )
+				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of \"%s\": \"%s\"", name, declaration);
+			m_renderState->declAdd(d);
+		}
+	} catch (ExceptRiCPPError &e) {
+		ricppErrHandler().handleError(e);
+		return RI_NULL;
+	}
+
+	return token;
+}
+
 RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration));
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration));
 		return RI_NULL;
 	}
 
@@ -102,21 +159,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		return RI_NULL;
 	}
 
-	RtToken token;
-	CDeclaration *d = 0;
-	try {
-		token = m_renderState->tokFindCreate(name);
-		// if no declaration only tokenize the name
-		if ( !emptyStr(declaration) ) {
-			d = new CDeclaration(token, declaration, 3, false); // <--- curColorSize if attributes are implemented !!!!
-			if ( !d )
-				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of \"%s\": \"%s\"", name, declaration);
-			m_renderState->declAdd(d);
-		}
-	} catch (ExceptRiCPPError &e) {
-		ricppErrHandler().handleError(e);
-		return RI_NULL;
-	}
+	RtToken token = handleDeclaration(name, declaration, false);
 
 	try {
 		doDeclare(token, declaration);
@@ -147,6 +190,48 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'begin'");
 		return 0;
 	}
+
+	// Default declarations
+	handleDeclaration(RI_FLATNESS, "float", true);
+	handleDeclaration(RI_FOV, "float", true);
+
+	handleDeclaration(RI_INTENSITY, "float", true);
+	handleDeclaration(RI_LIGHTCOLOR, "color", true);
+	handleDeclaration(RI_FROM, "point", true);
+	handleDeclaration(RI_TO, "point", true);
+	handleDeclaration(RI_CONEANGLE, "float", true);
+	handleDeclaration(RI_CONEDELTAANGLE, "float", true);
+	handleDeclaration(RI_BEAMDISTRIBUTION, "float", true);
+
+	handleDeclaration(RI_KA, "float", true);
+	handleDeclaration(RI_KD, "float", true);
+	handleDeclaration(RI_KS, "float", true);
+	handleDeclaration(RI_ROUGHNESS, "float", true);
+	handleDeclaration(RI_KR, "float", true);
+	handleDeclaration(RI_TEXTURENAME, "string", true);
+	handleDeclaration(RI_SPECULARCOLOR, "color", true);
+	handleDeclaration(RI_MINDISTANCE, "float", true);
+	handleDeclaration(RI_MAXDISTANCE, "float", true);
+	handleDeclaration(RI_BACKGROUND, "color", true);
+	handleDeclaration(RI_DISTANCE, "float", true);
+	handleDeclaration(RI_AMPLITUDE, "float", true);
+
+	handleDeclaration(RI_P, "vertex point", true);
+	handleDeclaration(RI_PZ, "vertex float", true);
+	handleDeclaration(RI_PW, "vertex hpoint", true);
+	handleDeclaration(RI_N,  "varying point", true);  // Normal
+	handleDeclaration(RI_NP, "uniform point", true);
+	handleDeclaration(RI_CS, "varying color", true);  // Color
+	handleDeclaration(RI_OS, "varying color", true);  // Opacity
+	handleDeclaration(RI_S,  "varying float", true);  // Texture coordinates
+	handleDeclaration(RI_T,  "varying float", true);
+	handleDeclaration(RI_ST, "varying float[2]", true);
+
+	handleDeclaration(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
+
+	handleDeclaration(RI_NAME, "constant string", true);
+	handleDeclaration(RI_WIDTH, "varying float", true);
+	handleDeclaration(RI_CONSTANTWIDTH, "float", true);
 
 	doBeginV(name, n, tokens, params); // Can throw
 
@@ -189,7 +274,7 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized frameBegin(%d)", (int)number);
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in frameBegin(%d)", (int)number);
 		return;
 	}
 
@@ -213,7 +298,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized frameEnd().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in frameEnd().");
 		return;
 	}
 
@@ -232,7 +317,7 @@ RtVoid CBaseRenderer::worldBegin(void)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized worldBegin().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in worldBegin().");
 		return;
 	}
 
@@ -255,7 +340,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized worldEnd().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in worldEnd().");
 		return;
 	}
 
@@ -273,7 +358,7 @@ RtVoid CBaseRenderer::attributeBegin(void)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized attributeBegin().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in attributeBegin().");
 		return;
 	}
 
@@ -296,7 +381,7 @@ RtVoid CBaseRenderer::attributeEnd(void)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized attributeEnd().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in attributeEnd().");
 		return;
 	}
 
@@ -314,7 +399,7 @@ RtVoid CBaseRenderer::transformBegin(void)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized transformBegin().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in transformBegin().");
 		return;
 	}
 
@@ -337,7 +422,7 @@ RtVoid CBaseRenderer::transformEnd(void)
 // throw ExceptRiCPPError
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized transformEnd().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in transformEnd().");
 		return;
 	}
 
@@ -355,7 +440,7 @@ RtVoid CBaseRenderer::transformEnd(void)
 RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized readArchive().");
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in readArchive().");
 		return;
 	}
 
@@ -382,3 +467,34 @@ RtVoid CBaseRenderer::doReadArchiveV(RtString name, const IArchiveCallback *call
 	m_baseUri = sav;
 }
 
+RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+{
+	//! @todo record interface calls (object, archive)
+
+	if ( !m_renderState ) {
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in colorSamples().");
+		return;
+	}
+
+	if ( !m_renderState->validRequest(REQ_COLOR_SAMPLES) ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_ERROR, "colorSamples()");
+		return;
+	}
+
+	try {
+
+		m_renderState->options().colorSamples(N, nRGB, RGBn);
+		doColorSamples(N, nRGB, RGBn);
+
+	} catch(ExceptRiCPPError &err) {
+		ricppErrHandler().handleError(err);
+		return;
+	} catch(...) {
+		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown error in colorSamples().");
+		return;
+	}
+
+	if ( N <= 0 || nRGB == 0 || RGBn == 0 ) {
+		ricppErrHandler().handleError(RIE_RANGE, RIE_ERROR, "Illegal values for the parameters of colorSamples().");
+	}
+}

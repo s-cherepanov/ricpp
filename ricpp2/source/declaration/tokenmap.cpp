@@ -228,7 +228,14 @@ CTokenMap::CTokenMap()
 		m_tokenMapper[CToken(RI_DYNAMIC_LOAD)] = RI_DYNAMIC_LOAD;
 		m_tokenMapper[CToken(RI_FREE)] = RI_FREE;
 
+		m_tokenMapper[CToken(RI_GAUSIAN_FILTER)] = RI_GAUSIAN_FILTER;
+		m_tokenMapper[CToken(RI_BOX_FILTER)] = RI_BOX_FILTER;
+		m_tokenMapper[CToken(RI_TRIANGLE_FILTER)] = RI_TRIANGLE_FILTER;
+		m_tokenMapper[CToken(RI_CATMULL_ROM_FILTER)] = RI_CATMULL_ROM_FILTER;
+		m_tokenMapper[CToken(RI_SINC_FILTER)] = RI_SINC_FILTER;
+
 		m_tokenMapper[CToken(RI_INT)] = RI_INT;
+		m_tokenMapper[CToken(RI_NULL_LIT)] = RI_NULL_LIT;
 		m_tokenMapper[CToken(RI_UNKNOWN)] = RI_UNKNOWN;
 		// RI_EMPTY same token as RI_NULL
 

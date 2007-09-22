@@ -243,7 +243,16 @@ const RtToken RI_RUN_PROGRAM = "RunProgram"; ///< Token for procedural CProcRunP
 const RtToken RI_DYNAMIC_LOAD = "DynamicLoad"; ///< Token for procedural CProcDynamicLoad
 const RtToken RI_FREE = "Free"; ///< Token for CProcFree
 
+const RtToken RI_GAUSIAN_FILTER = "gausianFilter"; ///< Token for the gausian filter
+const RtToken RI_BOX_FILTER = "boxFilter"; ///< Token for the box filter
+const RtToken RI_TRIANGLE_FILTER = "triangleFilter"; ///< Token for the triangle filter
+const RtToken RI_CATMULL_ROM_FILTER = "catmullRomFilter"; ///< Token for the Catmull Rom filter
+const RtToken RI_SINC_FILTER = "sincFilter"; ///< Token for the sinc filter
+
+
 const RtToken RI_INT     = "int"; //!< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
+
+const RtToken RI_NULL_LIT = "null"; //!< The literal "null". Used as standard hider type,  "not" use this instead of RI_NULL!!!
 const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL, used internally
 const RtToken RI_EMPTY   = ""; //!< Empty String marker, not a real token, only used internally,  "not" use this instead of RI_NULL!!!
 //@}

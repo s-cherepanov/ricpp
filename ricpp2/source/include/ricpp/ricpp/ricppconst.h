@@ -4,7 +4,7 @@
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
-// The RenderMan(R) Interface Procedures and Protocol are:	/** @brief Defines a new display channel for display()
+// The RenderMan(R) Interface Procedures and Protocol are:
 //         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //

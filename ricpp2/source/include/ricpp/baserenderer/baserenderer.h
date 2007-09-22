@@ -69,11 +69,31 @@ protected:
 	 */
 	CRenderState *m_renderState;
 
-	/** @brief Creates a new modestack, called by initModeStack()
+	/** @brief Creates a new modestack, called by initRenderState()
 	 *
 	 *  Overwrite this method if you want to return an own modestack
+	 *
+	 * @return A stack object for render modes
 	 */
 	inline virtual CModeStack *getNewModeStack() { return new CModeStack; }
+
+	/** @brief Creates a new options factory, called by initRenderState()
+	 *
+	 *  Overwrite this method if you want to return an own factory
+	 *  for a customized options set.
+	 *
+	 * @return A container object for the render options.
+	 */
+	inline virtual COptionsFactory *getNewOptionsFactory() { return new COptionsFactory; }
+
+	/** @brief Creates a new attributes factory, called by initRenderState()
+	 *
+	 *  Overwrite this method if you want to return an own factory
+	 *  for a customized attributes set.
+	 *
+	 * @return A container object for the render attributes.
+	 */
+	inline virtual CAttributesFactory *getNewAttributesFactory() { return new CAttributesFactory; }
 
 	/** @brief The backend's error handler
 	 *
@@ -83,6 +103,7 @@ protected:
 	 */
 	virtual IRiCPPErrorHandler &ricppErrHandler()
 	{
+		// @todo fill m_errorExceptionHandler with lineno and filename
 		return m_errorExceptionHandler;
 	}
 
@@ -106,6 +127,10 @@ protected:
 	/** @brief Base URI for RIB files
 	 */
 	CUri m_baseUri;
+
+	/** @brief Create new entry in dectaration list
+	 */
+	virtual RtToken handleDeclaration(RtString name, RtString declaration, bool isDefault);
 
 public:
 	/** @brief Constructor, initializes member variables.
@@ -212,7 +237,6 @@ public:
 
 	inline virtual RtVoid format(RtInt xres, RtInt yres, RtFloat aspect) {}
 	inline virtual RtVoid frameAspectRatio(RtFloat aspect) {}
-
 	inline virtual RtVoid screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {}
 	inline virtual RtVoid cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {}
 	inline virtual RtVoid projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
@@ -227,9 +251,9 @@ public:
 	inline virtual RtVoid imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
 	inline virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid displayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}
+	virtual RtVoid colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn);
 	inline virtual RtVoid relativeDetail(RtFloat relativedetail) {}
 	inline virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
@@ -375,8 +399,8 @@ protected:
 	inline virtual RtVoid doExposure(RtFloat gain, RtFloat gamma) {}
 	inline virtual RtVoid doImagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
-	inline virtual RtVoid doDisplayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid doDisplayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doDisplayChannelV(RtString channel, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doDisplayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doHiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}
 	inline virtual RtVoid doRelativeDetail(RtFloat relativedetail) {}

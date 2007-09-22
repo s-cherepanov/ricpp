@@ -1119,10 +1119,10 @@ public:
 	inline virtual const char *className() const { return TRiColorSamples::myClassName(); }
 
 	inline TRiColorSamples(long aLineNo, RtInt N, RtFloat *nRGB, RtFloat *RGBn) : TRInterfaceCall(aLineNo), m_N(N) {
-		m_nRGB.reserve(N);
-		m_RGBn.reserve(N);
+		m_nRGB.reserve(N*3);
+		m_RGBn.reserve(N*3);
 		RtInt i;
-		for ( i = 0; i < N; ++i ) {
+		for ( i = 0; i < N*3; ++i ) {
 			m_nRGB.push_back(nRGB[i]);
 			m_RGBn.push_back(RGBn[i]);
 		}

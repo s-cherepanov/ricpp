@@ -121,8 +121,8 @@ protected:
     virtual RtVoid doExposure(RtFloat gain, RtFloat gamma) = 0;
     virtual RtVoid doImagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
-    virtual RtVoid doDisplayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
-    virtual RtVoid doDisplayV(RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid doDisplayChannelV(RtString channel, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+    virtual RtVoid doDisplayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
     virtual RtVoid doHiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
     virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) = 0;
     virtual RtVoid doRelativeDetail(RtFloat relativedetail) = 0;

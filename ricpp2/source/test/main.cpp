@@ -266,9 +266,45 @@ void testURI()
 	testURI(baseUri, faultyExamples);
 }
 
+/** @brief Test rendering
+ * @param ri A renderer 
+ */
+void testrun(CRiCPPBridge &ri)
+{
+	RtFloat frommonochr[]={
+		static_cast<RtFloat>(.3),
+		static_cast<RtFloat>(.3),
+		static_cast<RtFloat>(.4)
+	};
+	RtFloat tomonochr[] = {
+		static_cast<RtFloat>(1.0),
+		static_cast<RtFloat>(1.0),
+		static_cast<RtFloat>(1.0)
+	};
+
+	RtFloat id[] = {
+		static_cast<RtFloat>(1.0), static_cast<RtFloat>(0.0), static_cast<RtFloat>(0.0),
+		static_cast<RtFloat>(0.0), static_cast<RtFloat>(1.0), static_cast<RtFloat>(0.0),
+		static_cast<RtFloat>(0.0), static_cast<RtFloat>(0.0), static_cast<RtFloat>(1.0)
+	};
+
+	// Print error, does not abort
+	ri.errorHandler(ri.errorPrint());
+
+	ri.begin("testrun.rib");
+		ri.colorSamples(1, frommonochr, tomonochr);
+		ri.frameBegin(1);
+			ri.colorSamples(3, id, id);
+			ri.worldBegin();
+			ri.worldEnd();
+		ri.frameEnd();
+	ri.end();
+}
+
 /** @brief Interface test program
  */
-int main (int argc, char * const argv[]) {
+int main(int argc, char * const argv[])
+{
 	std::cout << "Hello, World!" << std::endl;
 
 
@@ -301,6 +337,8 @@ int main (int argc, char * const argv[]) {
 	testpath.clear();
 	testpath.explode(':', teststr.c_str(), false, false, true);
 #endif
+
+	testrun(ri);
 
 	// Print error, does not abort
 	ri.errorHandler(ri.errorPrint());

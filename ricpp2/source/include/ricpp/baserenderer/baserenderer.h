@@ -42,6 +42,10 @@
 #include "ricpp/baserenderer/ribparser.h"
 #endif // _RICPP_BASERENDERER_RIBPARSER_H
 
+#ifndef _RICPP_BASERENDERER_RIMACRO_H
+#include "ricpp/baserenderer/rimacro.h"
+#endif // _RICPP_BASERENDERER_RIMACRO_H
+
 namespace RiCPP {
 
 /** @brief This class is used to implement the basis of a renderer context.
@@ -95,6 +99,13 @@ protected:
 	 */
 	inline virtual CAttributesFactory *getNewAttributesFactory() { return new CAttributesFactory; }
 
+	/** @brief Factory method to create a macro factory
+	 */
+	inline virtual CRManInterfaceFactory *getNewMacroFactory()
+	{
+		return new CRManInterfaceFactory;
+	}
+
 	/** @brief The backend's error handler
 	 *
 	 *  A child class can overload ricppErrHandler() to use it's own handler
@@ -124,6 +135,14 @@ protected:
 	 */
 	IRiRoot *m_ribFilter;
 
+	/** @brief Factory for macro interfaces
+	 */
+	CRManInterfaceFactory *m_macroFactory;
+
+	/** @brief Points to current writeable macro
+	 */
+	CRiMacro *m_curMacro;
+
 	/** @brief Base URI for RIB files
 	 */
 	CUri m_baseUri;
@@ -132,6 +151,12 @@ protected:
 	 */
 	virtual RtToken handleDeclaration(RtString name, RtString declaration, bool isDefault);
 
+	/** @brief Check validity of state for common requests.
+	 * @throw ExceptRiCPPError
+	 * @param req Number of the requests
+	 * @return false if checking fails
+	 */
+	bool preCheck(EnumRequests req);
 public:
 	/** @brief Constructor, initializes member variables.
 	 */
@@ -235,27 +260,27 @@ public:
 	inline virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illArchiveHandle; }
 	inline virtual RtVoid archiveEnd(void) {}
 
-	inline virtual RtVoid format(RtInt xres, RtInt yres, RtFloat aspect) {}
-	inline virtual RtVoid frameAspectRatio(RtFloat aspect) {}
-	inline virtual RtVoid screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {}
-	inline virtual RtVoid cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {}
-	inline virtual RtVoid projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid clipping(RtFloat hither, RtFloat yon) {}
-	inline virtual RtVoid clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {}
-	inline virtual RtVoid depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {}
-	inline virtual RtVoid shutter(RtFloat smin, RtFloat smax) {}
-	inline virtual RtVoid pixelVariance(RtFloat variation) {}
-	inline virtual RtVoid pixelSamples(RtFloat xsamples, RtFloat ysamples) {}
-	inline virtual RtVoid pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) {}
-	inline virtual RtVoid exposure(RtFloat gain, RtFloat gamma) {}
-	inline virtual RtVoid imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
-	inline virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid format(RtInt xres, RtInt yres, RtFloat aspect);
+	virtual RtVoid frameAspectRatio(RtFloat aspect);
+	virtual RtVoid screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top);
+	virtual RtVoid cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
+	virtual RtVoid projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid clipping(RtFloat hither, RtFloat yon);
+	virtual RtVoid clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz);
+	virtual RtVoid depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance);
+	virtual RtVoid shutter(RtFloat smin, RtFloat smax);
+	virtual RtVoid pixelVariance(RtFloat variation);
+	virtual RtVoid pixelSamples(RtFloat xsamples, RtFloat ysamples);
+	virtual RtVoid pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth);
+	virtual RtVoid exposure(RtFloat gain, RtFloat gamma);
+	virtual RtVoid imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl);
+	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn);
-	inline virtual RtVoid relativeDetail(RtFloat relativedetail) {}
-	inline virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid relativeDetail(RtFloat relativedetail);
+	virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	inline virtual RtLightHandle lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
 	inline virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }

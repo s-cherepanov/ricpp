@@ -958,6 +958,34 @@ public:
 }; // CRiQuantize
 
 ///////////////////////////////////////////////////////////////////////////////
+class CRiDisplayChannel : public CVarParamRManInterfaceCall {
+protected:
+	std::string m_channel;
+public:
+	inline static const char *myClassName(void) { return "CRiDisplayChannel"; }
+	inline virtual const char *className() const { return CRiDisplayChannel::myClassName(); }
+
+	inline CRiDisplayChannel(
+		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		RtToken channel,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CVarParamRManInterfaceCall(aLineNo), m_channel(channel)
+	{
+		CParameterClasses p;
+		setParams(decl, p, curColorSize, n, tokens, params);
+	}
+	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLAY_CHANNEL; }
+	inline virtual void replay(IRi &ri)
+	{
+		ri.displayChannelV(m_channel.c_str(), static_cast<RtInt>(size()), getTokens(), getParams());
+	}
+	inline CRiDisplayChannel &operator=(const CRiDisplayChannel &)
+	{
+		return *this;
+	}
+}; // CRiDisplayChannel
+
+///////////////////////////////////////////////////////////////////////////////
 class CRiDisplay : public CVarParamRManInterfaceCall {
 protected:
 	std::string m_name, m_type, m_mode;
@@ -2670,7 +2698,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 //! Interface, return a new instance of a IRi... class.
 class CRManInterfaceFactory {
-
+public:
 	inline CRManInterfaceFactory() {}
 	inline virtual ~CRManInterfaceFactory() {}
 
@@ -2705,11 +2733,11 @@ class CRManInterfaceFactory {
 		return new CRiWorldEnd(aLineNo);
 	}
 
-	inline virtual CRiAttributeBegin *newRiAtCRibuteBegin(long aLineNo) {
+	inline virtual CRiAttributeBegin *newRiAttributeBegin(long aLineNo) {
 		return new CRiAttributeBegin(aLineNo);
 	}
 
-	inline virtual CRiAttributeEnd *newRiAtCRibuteEnd(long aLineNo) {
+	inline virtual CRiAttributeEnd *newRiAttributeEnd(long aLineNo) {
 		return new CRiAttributeEnd(aLineNo);
 	}
 
@@ -2811,6 +2839,14 @@ class CRManInterfaceFactory {
 
 	inline virtual CRiQuantize *newRiQuantize(long aLineNo, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {
 		return new CRiQuantize(aLineNo, type, one, qmin, qmax, ampl);
+	}
+
+	inline virtual CRiDisplayChannel *newRiDisplayChannel(
+		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		RtToken channel,
+		RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return new CRiDisplayChannel(aLineNo, decl, curColorSize, channel, n, tokens, params);
 	}
 
 	inline virtual CRiDisplay *newRiDisplay(

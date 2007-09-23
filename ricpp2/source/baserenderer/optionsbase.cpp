@@ -31,10 +31,10 @@ void COptionsBase::set(
 	CDeclarationDictionary &dict,
 	RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	CNamedParameterList *pl = (CNamedParameterList *)get(name);
+	CNamedParameterList *pl = getWriteable(name);
 	if ( !pl ) {
 		m_paramList.push_back(CNamedParameterList(name));
-		pl = (CNamedParameterList *)&m_paramList.back();
+		pl = &m_paramList.back();
 		m_paramMap[name] = pl;
 	}
 
@@ -62,6 +62,14 @@ const CParameter *COptionsBase::get(const char *name, const char *token) const
 	return pl->get(token);
 }
 
+CNamedParameterList *COptionsBase::getWriteable(const char *name)
+{
+	Map_type::iterator i = m_paramMap.find(name);
+	if ( i != m_paramMap.end() ) {
+		return i->second;
+	}
+	return 0;
+}
 
 bool COptionsBase::erase(const char *name)
 {

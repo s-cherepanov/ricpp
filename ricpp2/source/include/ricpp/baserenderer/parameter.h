@@ -72,15 +72,8 @@ namespace RiCPP {
 			CDeclarationDictionary &dict,
 			unsigned int curColorSize);
 
-		inline const char *name() const
-		{
-			return m_declaration ? m_declaration->name() : "";
-		}
-
-		inline RtToken token() const
-		{
-			return m_declaration ? m_declaration->token() : RI_NULL;
-		}
+		const char *fullName() const;
+		RtToken token() const;
 
 		RtPointer valptr();
 
@@ -123,7 +116,7 @@ namespace RiCPP {
 		typedef std::list<CParameter>::size_type size_type;
 
 	private:
-		typedef std::map<std::string, const CParameter *> Map_type;
+		typedef std::map<std::string, CParameter *> Map_type;
 		std::list<CParameter> m_params;
 		Map_type m_paramMap;
 
@@ -179,9 +172,10 @@ namespace RiCPP {
 			unsigned int curColorSize,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
-		const CParameter *get(const char *name) const;
-		bool erase(const char *name);
-		bool erase(const CParameter *param);
+		CParameter *getWriteable(RtToken token);
+		const CParameter *get(RtToken token) const;
+		bool erase(RtToken token);
+		bool erase(CParameter *param);
 
 		inline RtToken *tokenPtr()
 		{

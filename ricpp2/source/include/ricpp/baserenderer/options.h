@@ -277,7 +277,7 @@ namespace RiCPP {
 		RtVoid getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFloat &ymax) const;
 		RtVoid getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &ymax) const;
 
-		RtVoid projection(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+		RtVoid projectionV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 		inline bool projectionCalled() const
 		{
 			return m_projectionCalled;

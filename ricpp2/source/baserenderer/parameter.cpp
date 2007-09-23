@@ -34,7 +34,7 @@ CParameter &CParameter::operator=(const CParameter &param)
 
 	if ( param.m_declaration && param.m_declaration->isInline() ) {
 		m_declaration = new CDeclaration(*param.m_declaration);
-		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.name());
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.fullName());
 	} else {
 		m_declaration = param.m_declaration;
 	}
@@ -49,6 +49,16 @@ CParameter &CParameter::operator=(const CParameter &param)
 	return *this;
 }
 
+const char *CParameter::fullName() const
+{
+	return m_declaration ? m_declaration->name() : "";
+}
+
+RtToken CParameter::token() const
+{
+	return m_declaration ? m_declaration->token() : RI_NULL;
+}
+
 void CParameter::set(
 	RtToken theName,
 	RtPointer theData,
@@ -60,6 +70,8 @@ void CParameter::set(
 	clear();
 	if ( !theName )
 		return;
+
+	m_position = thePosition;
 
 	const CDeclaration *decl = dict.findAndUpdate(theName, curColorSize);
 	if ( !decl ) {
@@ -74,17 +86,16 @@ void CParameter::set(
 		}
 	}
 
-	unsigned long elems = decl->selectNumber(counts) * decl->elemSize();
+	m_declaration = decl;
+	unsigned long elems = m_declaration->selectNumber(counts) * m_declaration->elemSize();
 
 	if ( elems > 0 && !theData ) {
 		clear();
 		throw ExceptRiCPPError(RIE_MISSINGDATA, RIE_ERROR, __LINE__, __FILE__, "Parameter of %s", theName);
 	}
 
-	m_position = thePosition;
-
 	if ( theData ) {
-		switch ( decl->basicType() ) {
+		switch ( m_declaration->basicType() ) {
 			case BASICTYPE_INTEGER:
 				m_ints.reserve(elems);
 				for (unsigned long cnt = 0; cnt < elems; ++cnt ) {
@@ -176,7 +187,8 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 		++i )
 	{
 		m_params.push_back(*i);
-		m_paramMap[m_params.back().name()] = &m_params.back();
+		RtToken paramtok = m_params.back().token();
+		m_paramMap[paramtok] = &m_params.back();
 	}
 
 	rebuild();
@@ -200,37 +212,47 @@ void CParameterList::add(
 	unsigned int curColorSize,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	for ( RtInt i = 0; i < n; ++n ) {
-		const CParameter *param = get(tokens[i]);
+	for ( RtInt i = 0; i < n; ++i ) {
+		CParameter *param = getWriteable(tokens[i]);
 		if ( param ) {
 			erase(param);
 		}
 		m_params.push_back(CParameter());
 		m_params.back().set(tokens[i], params[i], i, counts, dict, curColorSize);
-		m_paramMap[m_params.back().token()] = &m_params.back();
+		RtToken paramtok = m_params.back().token();
+		m_paramMap[paramtok] = &m_params.back();
 	}
 	rebuild();
 }
 
-const CParameter *CParameterList::get(const char *name) const
+CParameter *CParameterList::getWriteable(RtToken token)
 {
-	Map_type::const_iterator i = m_paramMap.find(name);
+	Map_type::iterator i = m_paramMap.find(token);
 	if ( i != m_paramMap.end() ) {
 		return i->second;
 	}
 	return 0;
 }
 
-bool CParameterList::erase(const char *name)
+const CParameter *CParameterList::get(RtToken token) const
 {
-	const CParameter *param = get(name);
+	Map_type::const_iterator i = m_paramMap.find(token);
+	if ( i != m_paramMap.end() ) {
+		return i->second;
+	}
+	return 0;
+}
+
+bool CParameterList::erase(RtToken token)
+{
+	const CParameter *param = get(token);
 	if ( !param )
 		return false;
 
 	std::list<CParameter>::iterator i;
 	for ( i = m_params.begin(); i != m_params.end(); ++i ) {
 		if ( param == &(*i) ) {
-			m_paramMap.erase(param->name());
+			m_paramMap.erase(param->token());
 			m_params.erase(i);
 			rebuild();
 			return true;
@@ -240,7 +262,7 @@ bool CParameterList::erase(const char *name)
 	return false;
 }
 
-bool CParameterList::erase(const CParameter *param)
+bool CParameterList::erase(CParameter *param)
 {
 	if (!param )
 		return false;
@@ -248,7 +270,7 @@ bool CParameterList::erase(const CParameter *param)
 	std::list<CParameter>::iterator i;
 	for ( i = m_params.begin(); i != m_params.end(); ++i ) {
 		if ( param == &(*i) ) {
-			m_paramMap.erase(param->name());
+			m_paramMap.erase(param->token());
 			m_params.erase(i);
 			rebuild();
 			return true;

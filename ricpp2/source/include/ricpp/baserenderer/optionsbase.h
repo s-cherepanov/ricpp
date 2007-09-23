@@ -13,7 +13,7 @@ namespace RiCPP {
 	 */
 	class COptionsBase {
 	private:
-		typedef std::map<std::string, const CNamedParameterList *> Map_type;
+		typedef std::map<std::string, CNamedParameterList *> Map_type;
 		std::list<CNamedParameterList> m_paramList;
 		Map_type m_paramMap;
 
@@ -53,8 +53,11 @@ namespace RiCPP {
 			CDeclarationDictionary &dict,
 			RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
+		CNamedParameterList *getWriteable(const char *name);
 		const CNamedParameterList *get(const char *name) const;
+
 		const CParameter *get(const char *name, const char *token) const;
+
 
 		inline const_iterator begin() const
 		{

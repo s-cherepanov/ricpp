@@ -288,11 +288,15 @@ void testrun(CRiCPPBridge &ri)
 		static_cast<RtFloat>(0.0), static_cast<RtFloat>(0.0), static_cast<RtFloat>(1.0)
 	};
 
+	RtFloat floats[] = { static_cast<RtFloat>(1.234) };
+
 	// Print error, does not abort
 	ri.errorHandler(ri.errorPrint());
 
 	ri.begin("testrun.rib");
+		RtToken myOptionValue = ri.declare("myOptionValue", "float");
 		ri.colorSamples(1, frommonochr, tomonochr);
+		ri.option("myOption", myOptionValue, floats, RI_NULL);
 		ri.frameBegin(1);
 			ri.colorSamples(3, id, id);
 			ri.worldBegin();

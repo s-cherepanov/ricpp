@@ -113,6 +113,12 @@ public:
 
 	virtual const char *archiveName() const = 0;
 	virtual long lineNo() const = 0;
+
+	virtual bool hasOptions() const = 0;
+	virtual bool hasOptionsReader() const = 0;
+	virtual bool hasAttributes() const = 0;
+	virtual bool hasAttributesReader() const = 0;
+
 }; // IRenderStateReader
 
 /** @brief The facade for the render state objects.
@@ -375,29 +381,32 @@ public:
 
 	COptions &options() const
 	{
+		assert(m_optionsStack.back() != 0);
 		return *(m_optionsStack.back());
 	}
 
 	CAttributes &attributes() const
 	{
+		assert(m_attributesStack.back() != 0);
 		return *(m_attributesStack.back());
 	}
 
 	virtual const COptionsReader &optionsReader() const
 	{
-		if ( options().reader() == 0 ) {
-			// throw
-		}
+		assert(options().reader() != 0);
 		return *(options().reader());
 	}
 
 	virtual const CAttributesReader &attributesReader() const
 	{
-		if ( attributes().reader() == 0 ) {
-			// throw
-		}
+		assert(attributes().reader() != 0);
 		return *(attributes().reader());
 	}
+
+	virtual bool hasOptions() const {return m_optionsStack.back() != 0;}
+	virtual bool hasOptionsReader() const {return m_optionsStack.back() != 0 && options().reader() != 0;}
+	virtual bool hasAttributes() const {return m_attributesStack.back() != 0;}
+	virtual bool hasAttributesReader() const {return m_attributesStack.back() != 0 && attributes().reader() != 0;}
 
 	virtual const char *archiveName() const
 	{

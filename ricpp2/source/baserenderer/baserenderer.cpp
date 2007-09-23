@@ -125,12 +125,22 @@ void CBaseRenderer::initRenderState()
 bool CBaseRenderer::preCheck(EnumRequests req)
 {
 	if ( !m_renderState ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, "State not initialized in %s()", CRequestInfo::requestName(req));
+		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "State not initialized in %s()", CRequestInfo::requestName(req));
 		return false;
 	}
 
 	if ( !m_renderState->validRequest(req) ) {
 		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_ERROR, "%s()", CRequestInfo::requestName(req));
+		return false;
+	}
+
+	if ( !m_renderState->hasOptionsReader() ) {
+		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "%s() - options not available.", CRequestInfo::requestName(req));
+		return false;
+	}
+
+	if ( !m_renderState->hasAttributesReader() ) {
+		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "%s() - attributes not available.", CRequestInfo::requestName(req));
 		return false;
 	}
 
@@ -578,8 +588,6 @@ RtVoid CBaseRenderer::doReadArchiveV(RtString name, const IArchiveCallback *call
 }
 
 
-
-
 RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 {
 	if ( !preCheck(REQ_FORMAT) )
@@ -602,6 +610,7 @@ RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 		doFormat(xres, yres, aspect);
 	}
 }
+
 
 RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 {
@@ -626,10 +635,13 @@ RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 	}
 }
 
+
 RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
 {
 	if ( !preCheck(REQ_SCREEN_WINDOW) )
 		return;
+
+	m_renderState->options().screenWindow(left, right, bot, top);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -649,10 +661,13 @@ RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtF
 	}
 }
 
+
 RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
 {
 	if ( !preCheck(REQ_CROP_WINDOW) )
 		return;
+
+	m_renderState->options().cropWindow(xmin, xmax, ymin, ymax);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -672,10 +687,13 @@ RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFlo
 	}
 }
 
+
 RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !preCheck(REQ_PROJECTION) )
 		return;
+
+	m_renderState->options().projectionV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -695,10 +713,13 @@ RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPo
 	}
 }
 
+
 RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
 {
 	if ( !preCheck(REQ_CLIPPING) )
 		return;
+
+	m_renderState->options().clipping(hither, yon);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -718,10 +739,13 @@ RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
 	}
 }
 
+
 RtVoid CBaseRenderer::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
 {
 	if ( !preCheck(REQ_CLIPPING_PLANE) )
 		return;
+
+	m_renderState->options().clippingPlane(x, y, z, nx, ny, nz);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -741,10 +765,13 @@ RtVoid CBaseRenderer::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx,
 	}
 }
 
+
 RtVoid CBaseRenderer::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
 {
 	if ( !preCheck(REQ_DEPTH_OF_FIELD) )
 		return;
+
+	m_renderState->options().depthOfField(fstop, focallength, focaldistance);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -764,10 +791,13 @@ RtVoid CBaseRenderer::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat f
 	}
 }
 
+
 RtVoid CBaseRenderer::shutter(RtFloat smin, RtFloat smax)
 {
 	if ( !preCheck(REQ_SHUTTER) )
 		return;
+
+	m_renderState->options().shutter(smin, smax);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -787,10 +817,13 @@ RtVoid CBaseRenderer::shutter(RtFloat smin, RtFloat smax)
 	}
 }
 
+
 RtVoid CBaseRenderer::pixelVariance(RtFloat variation)
 {
 	if ( !preCheck(REQ_PIXEL_VARIANCE) )
 		return;
+
+	m_renderState->options().pixelVariance(variation);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -810,10 +843,13 @@ RtVoid CBaseRenderer::pixelVariance(RtFloat variation)
 	}
 }
 
+
 RtVoid CBaseRenderer::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 {
 	if ( !preCheck(REQ_PIXEL_SAMPLES) )
 		return;
+
+	m_renderState->options().pixelSamples(xsamples, ysamples);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -833,10 +869,13 @@ RtVoid CBaseRenderer::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 	}
 }
 
+
 RtVoid CBaseRenderer::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
 {
 	if ( !preCheck(REQ_PIXEL_FILTER) )
 		return;
+
+	m_renderState->options().pixelFilter(function, xwidth, ywidth);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -856,10 +895,13 @@ RtVoid CBaseRenderer::pixelFilter(const IFilterFunc &function, RtFloat xwidth, R
 	}
 }
 
+
 RtVoid CBaseRenderer::exposure(RtFloat gain, RtFloat gamma)
 {
 	if ( !preCheck(REQ_EXPOSURE) )
 		return;
+
+	m_renderState->options().exposure(gain, gamma);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -879,10 +921,13 @@ RtVoid CBaseRenderer::exposure(RtFloat gain, RtFloat gamma)
 	}
 }
 
+
 RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !preCheck(REQ_IMAGER) )
 		return;
+
+	m_renderState->options().imagerV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -902,10 +947,13 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	}
 }
 
+
 RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
 {
 	if ( !preCheck(REQ_QUANTIZE) )
 		return;
+
+	m_renderState->options().quantize(type, one, qmin, qmax, ampl);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -925,10 +973,13 @@ RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, 
 	}
 }
 
+
 RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !preCheck(REQ_DISPLAY_CHANNEL) )
 		return;
+
+	m_renderState->options().displayChannelV(m_renderState->dict(), channel, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 		try {
@@ -951,6 +1002,8 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 	if ( !preCheck(REQ_DISPLAY) )
 		return;
 
+	m_renderState->options().displayV(m_renderState->dict(), name, type, mode, n, tokens, params);
+
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
@@ -969,10 +1022,13 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 	}
 }
 
+
 RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !preCheck(REQ_HIDER) )
 		return;
+
+	m_renderState->options().hiderV(m_renderState->dict(), type, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -998,17 +1054,7 @@ RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
 	if ( !preCheck(REQ_COLOR_SAMPLES) )
 		return;
 
-	try {
-
-		m_renderState->options().colorSamples(N, nRGB, RGBn);
-
-	} catch(ExceptRiCPPError &err) {
-		ricppErrHandler().handleError(err);
-		return;
-	} catch(...) {
-		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown error in colorSamples().");
-		return;
-	}
+	m_renderState->options().colorSamples(N, nRGB, RGBn);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -1038,6 +1084,8 @@ RtVoid CBaseRenderer::relativeDetail(RtFloat relativedetail)
 	if ( !preCheck(REQ_RELATIVE_DETAIL) )
 		return;
 
+	m_renderState->options().relativeDetail(relativedetail);
+
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
@@ -1061,6 +1109,8 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 {
 	if ( !preCheck(REQ_OPTION) )
 		return;
+
+	m_renderState->options().set(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 

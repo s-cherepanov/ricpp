@@ -287,7 +287,7 @@ void COptions::initProjection()
 	m_FOV = defaultCameraFOV;
 }
 
-RtVoid COptions::projection(CDeclarationDictionary &dict, RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid COptions::projectionV(CDeclarationDictionary &dict, RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	m_projectionCalled = true;
 	m_projectionName = name;

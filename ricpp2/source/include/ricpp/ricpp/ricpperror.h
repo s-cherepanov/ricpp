@@ -39,6 +39,12 @@
 
 namespace RiCPP {
 
+/** @brief Symbolic name for visibility("default") attribute.
+ * (MAC)
+ * see http://developer.apple.com/technotes/tn2007/tn2185.html
+ */
+#pragma GCC visibility push(default)
+
 /** @brief Helper class, errormessages as Strings
  */
 class CRiCPPErrMsg {
@@ -303,6 +309,8 @@ public:
 	 */
 	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
 }; // CErrorExceptionHandler
+
+#pragma GCC visibility pop
 
 } // namespace RiCPP
 

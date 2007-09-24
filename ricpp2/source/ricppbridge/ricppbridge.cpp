@@ -263,6 +263,9 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration)
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return RI_NULL;
+		} catch (std::exception &e) {
+			ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown Exception in CRiCPPBridge::declare(name:\"%s\", declaration:\"%s\") - %s", name ? name : "", declaration ? declaration : "", e.what());
+			return RI_NULL;
 		} catch (...) {
 			ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown Exception in CRiCPPBridge::declare(name:\"%s\", declaration:\"%s\")", name ? name : "", declaration ? declaration : "");
 			return RI_NULL;
@@ -410,6 +413,8 @@ RtVoid CRiCPPBridge::frameEnd(void)
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return;
+		} catch (std::exception &e) {
+			ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown Exception in %s: %s", "CRiCPPBridge::frameEnd()", e.what());
 		} catch (...) {
 			ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown Exception in %s", "CRiCPPBridge::frameEnd()");
 			return;

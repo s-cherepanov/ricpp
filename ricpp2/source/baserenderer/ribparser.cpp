@@ -476,6 +476,7 @@ int CRibRequestData::getTokenList(
 			// RtInt numComps;
 			// long int numBytes;
 			const CDeclaration *d = stateReader().declFind(token);
+			d = d;
 			/*
 			if ( !m_ricb->queryParam(token, vertices, corners, facets, faceVertices, faceCorners, aClass, aType, aCardinality, numComps, numBytes) ) {
 				errHandler().handleError(

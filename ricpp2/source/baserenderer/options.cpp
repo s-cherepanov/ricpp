@@ -250,25 +250,25 @@ RtVoid COptions::getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &yma
 	getCropWindow(xminf, xmaxf, yminf, ymaxf);
 
 	xmin = static_cast<RtInt>(clamptempl(
-		ceil(xres*xminf),
+		static_cast<RtFloat>(ceil(xres*xminf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(xres - 1)
 	));
 	
 	xmax = static_cast<RtInt>(clamptempl(
-		ceil(xres*xmaxf),
+		static_cast<RtFloat>(ceil(xres*xmaxf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(xres - 1)
 	));
 
 	ymin = static_cast<RtInt>(clamptempl(
-		ceil(yres*yminf),
+		static_cast<RtFloat>(ceil(yres*yminf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(yres - 1)
 	));
 	
 	ymax = static_cast<RtInt>(clamptempl(
-		ceil(yres*ymaxf),
+		static_cast<RtFloat>(ceil(yres*ymaxf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(yres - 1)
 	));

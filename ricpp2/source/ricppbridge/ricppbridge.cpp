@@ -263,6 +263,9 @@ RtToken CRiCPPBridge::declare(RtString name, RtString declaration)
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return RI_NULL;
+		} catch (...) {
+			ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown Exception in CRiCPPBridge::declare(name:\"%s\", declaration:\"%s\")", name ? name : "", declaration ? declaration : "");
+			return RI_NULL;
 		}
 	} else {
 		ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::declare(name:\"%s\", declaration:\"%s\")", name ? name : "", declaration ? declaration : "");
@@ -406,6 +409,9 @@ RtVoid CRiCPPBridge::frameEnd(void)
 			m_ctxMgmt.curBackend().renderingContext()->frameEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
+			return;
+		} catch (...) {
+			ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "Unknown Exception in %s", "CRiCPPBridge::frameEnd()");
 			return;
 		}
 	} else {

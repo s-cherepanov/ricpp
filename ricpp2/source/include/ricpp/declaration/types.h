@@ -583,7 +583,7 @@ public:
 		return m_ny;
 	}
 
-	inline RtFloat nz(RtFloat aNZ)
+	inline RtVoid nz(RtFloat aNZ)
 	{
 		m_nz = aNZ;
 	}

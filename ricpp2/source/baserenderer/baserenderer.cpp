@@ -151,13 +151,21 @@ bool CBaseRenderer::preCheck(EnumRequests req)
  */
 RtToken CBaseRenderer::handleDeclaration(RtString name, RtString declaration, bool isDefault)
 {
-	RtToken token;
+	RtToken token = RI_NULL;
 	CDeclaration *d = 0;
+
 	try {
 		token = m_renderState->tokFindCreate(name);
 		// if no declaration only tokenize the name
 		if ( !emptyStr(declaration) ) {
-			d = new CDeclaration(token, declaration, 3, isDefault); // <--- curColorSize if attributes are implemented !!!!
+		
+			try {
+				d = new CDeclaration(token, declaration, 3, isDefault); // <--- curColorSize if attributes are implemented !!!!
+			} catch (ExceptRiCPPError &e) {
+				ricppErrHandler().handleError(e);
+				return RI_NULL;
+			}
+			
 			if ( !d )
 				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Declaration of \"%s\": \"%s\"", name, declaration);
 			m_renderState->declAdd(d);
@@ -180,7 +188,15 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		return RI_NULL;
 	}
 
-	RtToken token = handleDeclaration(name, declaration, false);
+
+	RtToken token = RI_NULL;
+
+	try {
+		token = handleDeclaration(name, declaration, false);
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return RI_NULL;
+	}
 
 	if ( m_macroFactory && m_curMacro ) {
 

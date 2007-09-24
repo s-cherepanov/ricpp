@@ -42,6 +42,11 @@
 #include "ricpp/baserenderer/attributes.h"
 #endif //  _RICPP_BASERENDERER_ATTRIBUTES_H
 
+#ifndef _RICPP_BASERENDERER_TRANSFORMATION_H
+#include "ricpp/baserenderer/transformation.h"
+#endif // _RICPP_BASERENDERER_TRANSFORMATION_H
+
+
 namespace RiCPP {
 
 /** @brief Interface to read the state of a renderer.
@@ -109,6 +114,7 @@ public:
 
 	virtual const COptionsReader &optionsReader() const = 0;
 	virtual const CAttributesReader &attributesReader() const = 0;
+	virtual const CTransformationReader &transformReader() const = 0;
 	//@}
 
 	virtual const char *archiveName() const = 0;
@@ -118,6 +124,7 @@ public:
 	virtual bool hasOptionsReader() const = 0;
 	virtual bool hasAttributes() const = 0;
 	virtual bool hasAttributesReader() const = 0;
+	virtual bool hasTransform() const = 0;
 
 }; // IRenderStateReader
 
@@ -141,6 +148,8 @@ class CRenderState : public IRenderStateReader {
 
 	CAttributesFactory *m_attributesFactory;     ///< Create new attributes
 	std::vector<CAttributes *> m_attributesStack; ///< Current attributes stack
+
+	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses
 
 	void pushOptions();
 	bool popOptions();
@@ -379,34 +388,49 @@ public:
 		return m_decldict;
 	}
 
-	COptions &options() const
+	COptions &options()
 	{
 		assert(m_optionsStack.back() != 0);
 		return *(m_optionsStack.back());
 	}
 
-	CAttributes &attributes() const
+	CAttributes &attributes()
 	{
 		assert(m_attributesStack.back() != 0);
 		return *(m_attributesStack.back());
 	}
 
+	CTransformation &transform()
+	{
+		assert(!m_transformStack.empty());
+		return m_transformStack.back();
+	}
+
 	virtual const COptionsReader &optionsReader() const
 	{
-		assert(options().reader() != 0);
-		return *(options().reader());
+		assert(m_optionsStack.back() != 0);
+		assert(m_optionsStack.back()->reader() != 0);
+		return *(m_optionsStack.back()->reader());
 	}
 
 	virtual const CAttributesReader &attributesReader() const
 	{
-		assert(attributes().reader() != 0);
-		return *(attributes().reader());
+		assert(m_attributesStack.back() != 0);
+		assert(m_attributesStack.back()->reader() != 0);
+		return *(m_attributesStack.back()->reader());
 	}
 
+	virtual const CTransformationReader &transformReader() const
+	{
+		assert(!m_transformStack.empty());
+		return m_transformStack.back();
+
+	}
 	virtual bool hasOptions() const {return m_optionsStack.back() != 0;}
-	virtual bool hasOptionsReader() const {return m_optionsStack.back() != 0 && options().reader() != 0;}
+	virtual bool hasOptionsReader() const {return m_optionsStack.back() != 0 && m_optionsStack.back()->reader() != 0;}
 	virtual bool hasAttributes() const {return m_attributesStack.back() != 0;}
-	virtual bool hasAttributesReader() const {return m_attributesStack.back() != 0 && attributes().reader() != 0;}
+	virtual bool hasAttributesReader() const {return m_attributesStack.back() != 0 && m_attributesStack.back()->reader() != 0;}
+	virtual bool hasTransform() const {return !m_transformStack.empty();}
 
 	virtual const char *archiveName() const
 	{

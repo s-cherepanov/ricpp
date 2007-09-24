@@ -329,6 +329,10 @@
 				RelativePath="..\..\..\source\baserenderer\rimacro.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\baserenderer\transformation.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -385,6 +389,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\rimacro.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\baserenderer\transformation.h"
 				>
 			</File>
 		</Filter>

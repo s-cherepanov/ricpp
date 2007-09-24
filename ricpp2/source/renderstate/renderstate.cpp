@@ -43,6 +43,8 @@ CRenderState::~CRenderState()
 		delete m_attributesFactory;
 	}
 
+	m_transformStack.clear();
+
 	if ( m_modeStack ) {
 		delete m_modeStack;
 	}
@@ -63,8 +65,7 @@ void CRenderState::pushOptions()
 
 bool CRenderState::popOptions()
 {
-	while ( m_optionsStack.begin() != m_optionsStack.end() )
-	{
+	if ( !m_optionsStack.empty() ) {
 		m_optionsFactory->deleteOptions(m_optionsStack.back());
 		m_optionsStack.pop_back();
 	}
@@ -86,8 +87,7 @@ void CRenderState::pushAttributes()
 
 bool CRenderState::popAttributes()
 {
-	if ( m_attributesStack.begin() != m_attributesStack.end() )
-	{
+	if ( !m_attributesStack.empty() ) {
 		m_attributesFactory->deleteAttributes(m_attributesStack.back());
 		m_attributesStack.pop_back();
 	}
@@ -96,9 +96,13 @@ bool CRenderState::popAttributes()
 
 void CRenderState::pushTransform()
 {
+	m_transformStack.push_back(CTransformation());
 }
 
 bool CRenderState::popTransform()
 {
-	return false;
+	if ( !m_transformStack.empty() ) {
+		m_transformStack.pop_back();
+	}
+	return !m_transformStack.empty();
 }

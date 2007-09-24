@@ -796,7 +796,7 @@ public:
 //! A class for a 3D homogene matrix (4x4)
 /*! The class implements all matrix operations needed by the implementation of the RenderMan interface.
  */
-class TMatrix3D {
+class CMatrix3D {
 	//! The value of the 4x4 matrix, init with identity
 	/*! Index [i][j]:\n
 	 *  [0][0] [0][1] [0][2] [0][3]\n
@@ -812,14 +812,14 @@ class TMatrix3D {
 	// void extract(RtFloat *result, const RtFloat *mat, int i, int size) const;
 	// RtFloat det(const RtFloat *mat, int size) const;
 public:
-	TMatrix3D();
-	TMatrix3D(const TMatrix3D &mat);
-	TMatrix3D(RtMatrix mat);
-	~TMatrix3D();
+	CMatrix3D();
+	CMatrix3D(const CMatrix3D &mat);
+	CMatrix3D(RtMatrix mat);
+	~CMatrix3D();
 
-	// TMatrix3D &duplicate() const;
-	TMatrix3D &operator=(const TMatrix3D &mat);
-	TMatrix3D &operator=(RtMatrix mat);
+	// CMatrix3D &duplicate() const;
+	CMatrix3D &operator=(const CMatrix3D &mat);
+	CMatrix3D &operator=(RtMatrix mat);
 
 	operator const RtFloat *() const { return (const RtFloat *)&m_Matrix[0]; }
 	// RtFloat *getPointer() const { return (RtFloat *)&m_Matrix[0]; }
@@ -839,9 +839,9 @@ public:
 	}
 	void get(RtMatrix &mat) const;
 
-	bool operator==(const TMatrix3D &mat) const;
+	bool operator==(const CMatrix3D &mat) const;
 	bool operator==(RtMatrix mat) const;
-	bool operator!=(const TMatrix3D &mat) const;
+	bool operator!=(const CMatrix3D &mat) const;
 	bool operator!=(RtMatrix mat) const;
 
 	void clear();
@@ -851,15 +851,15 @@ public:
 	void scale(RtFloat sx, RtFloat sy, RtFloat sz);
 
 	void transform(RtMatrix mat);
-	void transform(TMatrix3D &mat);
+	void transform(CMatrix3D &mat);
 
 	void postMultiply(RtMatrix mat);
-	void postMultiply(TMatrix3D mat);
+	void postMultiply(CMatrix3D mat);
 	void preMultiply(RtMatrix mat);
-	void preMultiply(TMatrix3D mat);
+	void preMultiply(CMatrix3D mat);
 
 	void concatTransform(RtMatrix mat);
-	void concatTransform(TMatrix3D mat);
+	void concatTransform(CMatrix3D mat);
 
 	void transformPoints(RtFloat &x, RtFloat &y, RtFloat &z);
 
@@ -870,12 +870,12 @@ public:
 
 	void skew(RtFloat w, RtFloat x1, RtFloat y1, RtFloat z1, RtFloat x2, RtFloat y2, RtFloat z2);
 
-	void perspectiveProject(RtFloat fov);
+	void perspective(RtFloat fov);
 
 	RtFloat determinant() const;
 	bool isIdentity() const;
 	bool getInverse(RtMatrix &mat) const;
-};
+}; // CMatrix3D
 
 } // namespace RiCPP
 

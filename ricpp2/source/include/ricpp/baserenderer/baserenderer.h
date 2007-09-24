@@ -317,6 +317,7 @@ public:
 	inline virtual RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}
 	inline virtual RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz) {}
 	inline virtual RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {}
+
 	inline virtual RtVoid deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid scopedCoordinateSystem(RtToken space) {}
 	inline virtual RtVoid coordinateSystem(RtToken space) {}

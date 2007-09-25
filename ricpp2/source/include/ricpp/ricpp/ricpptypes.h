@@ -62,7 +62,7 @@ typedef void   *RtPointer;       ///< Pointer to arbitrary data
  *  @{
  */
 typedef const char *RtObjectHandle;    ///< Handle for an object instance (was RtPointer), is a tokenized name
-typedef unsigned long RtLightHandle;     ///< Handle for a light handle (was RtPointer), is a tokenized name
+typedef long RtLightHandle;            ///< Handle for a light handle (was RtPointer) can be positive or negative, see CLights
 typedef unsigned long RtContextHandle; ///< handle for a render context handle (was RtPointer)
 typedef const char *RtArchiveHandle;   ///< handle for a rib archive (was RtPointer), is the tokenized name
 typedef const char *RtResourceHandle;  ///< handle for a resource, is the tokenized name (added)

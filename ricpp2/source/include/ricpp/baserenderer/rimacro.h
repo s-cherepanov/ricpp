@@ -1177,7 +1177,7 @@ public:
 
 	inline virtual void replay(IRi &ri, CRenderState &state)
 	{
-		ri.illuminate(state.lights().getHandle(m_handleIdx), m_onoff);
+		ri.illuminate(m_handleIdx, m_onoff);
 	}
 	inline virtual RtLightHandle handleIdx() { return m_handleIdx; }
 	inline CRiIlluminate &operator=(const CRiIlluminate &)

@@ -15,9 +15,9 @@
 
 namespace RiCPP {
 
-//! Stores a description of a light source either TRi::LightSource() or TRi::AreaLightSource()
-/*! TIntermediateRenderer stores all lights in a vector, the position of an instance in this vector
- *  is used as light handle.
+/** @brief Stores a description of a light source either IRi::LightSource() or IRi::AreaLightSource().
+ *
+ *  A rendering context stores all lights in a CLights instance.
  */
 class CLightSource {
 	bool m_isIlluminated;            //!< true, if the light source is on
@@ -25,6 +25,7 @@ class CLightSource {
 	bool m_isAreaLight;              //!< true, if the light source is created via TRi::AreaLightSource()
 
 	CNamedParameterList m_lightParameters; //!< Parameter list of the light source, contains the name of the light source
+
 public:
 	//! Default constructor initializes with empty values
 	inline CLightSource(const char *name=0)
@@ -109,6 +110,8 @@ public:
 }; // CLightSource
 
 
+/** @brief Factory allows to create customized light sources.
+ */
 class CLightSourceFactory {
 public:
 	inline CLightSourceFactory() {}
@@ -128,6 +131,9 @@ public:
 	}
 }; // CLightSourceFactory
 
+
+/** @brief Interface to iterate and read the light sources of arendering context.
+ */
 class ILightsReader {
 public:
 	typedef std::deque<CLightSource *> LightContainer;
@@ -138,13 +144,34 @@ public:
 	virtual LightContainer::const_iterator begin() const = 0;
 	virtual LightContainer::const_iterator end() const = 0;
 	virtual LightContainer::size_type size() const = 0;
-};
+}; // ILightsReader
 
+
+/** @brief Container for the light sources of a rendering context
+ */
 class CLights : public ILightsReader {
 private:
+	/** @brief Indirection for light handles
+	 *
+	 * m_handles contains indizees for m_lights.
+	 * A RtLightHandle used as index for m_handles is negative to
+	 * distinguish it from RtLightHandle for m_lights. index = -(RtLightHandle+1) for
+	 * negative RtLightHandle.
+	 * The indirection is needed because of archives (and objects). Inbetween archives
+	 * no light instances exist, but may be referenced to get illuminated.
+	 * Mind also, there can be many instances of one archive.
+	 */
 	LightHandleContainer m_handles;
-	LightContainer m_lights; ///! Ptr to List, Index is the RtLightHandle
-	CLightSourceFactory *m_lightsFactory;     ///< Create new lights
+	LightContainer m_lights; ///< Ptr to light sources (CLightSource), Index is a positive RtLightHandle (-1)
+	CLightSourceFactory *m_lightsFactory; ///< Create new lights
+
+	/** @brief Transforms a handle to an index for m_lights, throws if out of range.
+	 *
+	 * @param handle \a handle can be negative (indirection) or postive (Light handle)
+	 * @return Index for m_lights
+	 * @except ExceptRiCPPError Out of range
+	 */
+	LightContainer::size_type handleToLightIndex(RtLightHandle handle) const;
 
 public:
 	inline CLights(CLightSourceFactory &lightsFactory)
@@ -164,8 +191,8 @@ public:
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
-	virtual const CLightSource *getLight(RtLightHandle l) const;
-	CLightSource *getWriteableLight(RtLightHandle l);
+	virtual const CLightSource *getLight(RtLightHandle handle) const;
+	CLightSource *getWriteableLight(RtLightHandle handle);
 
 	virtual inline LightContainer::iterator begin() { return m_lights.begin(); }
 	virtual inline LightContainer::iterator end() { return m_lights.end(); }

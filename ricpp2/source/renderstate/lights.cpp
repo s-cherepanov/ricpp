@@ -51,12 +51,12 @@ void CLightSource::lightSource(
 
 CLightSource *CLightSourceFactory::newLightSource(const char *name)
 {
-	CLightSource *l = new CLightSource(name);
-	if ( !l ) {
+	CLightSource *light = new CLightSource(name);
+	if ( !light ) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::newLightSource()");
 	}
 
-	return l;
+	return light;
 }
 
 CLightSource *CLightSourceFactory::newLightSource(
@@ -65,31 +65,46 @@ CLightSource *CLightSourceFactory::newLightSource(
 	const char *name,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	CLightSource *l = newLightSource();
-	if ( !l ) {
+	CLightSource *light = newLightSource();
+	if ( !light ) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::newLightSource()");
 	}
 
-	l->lightSource(
+	light->lightSource(
 		dict, colorDescr,
 		isIlluminated, isGlobal, isArea,
 		name,
 		n, tokens, params);
-	return l;
+
+	return light;
 }
 
-const CLightSource *CLights::getLight(RtLightHandle l) const
+
+CLights::LightContainer::size_type CLights::handleToLightIndex(RtLightHandle handle) const
 {
-	if ( l >= m_lights.size() )
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::insertLight(), Handle undefined");
-	return m_lights[static_cast<LightContainer::size_type>(l)];
+	if ( handle < 0 ) {
+		handle = -(handle+1);
+		if ( handle >= static_cast<RtLightHandle>(m_handles.size()) )
+			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::getWriteableLight(), Handle undefined");
+		handle = m_handles[handle];
+	}
+
+	if ( handle == 0 || handle > static_cast<RtLightHandle>(m_lights.size()) )
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::getWriteableLight(), Handle undefined");
+
+	return handle-1;
 }
 
-CLightSource *CLights::getWriteableLight(RtLightHandle l)
+
+const CLightSource *CLights::getLight(RtLightHandle handle) const
 {
-	if ( l >= m_lights.size() )
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::insertLight(), Handle undefined");
-	return m_lights[static_cast<LightContainer::size_type>(l)];
+	return m_lights[handleToLightIndex(handle)];
+}
+
+
+CLightSource *CLights::getWriteableLight(RtLightHandle handle)
+{
+	return m_lights[handleToLightIndex(handle)];
 }
 
 
@@ -98,28 +113,47 @@ RtLightHandle CLights::newLightHandleIdx()
 	try {
 		m_handles.push_back(0);
 	} catch(std::exception e) {
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s: %s", "CLightSource::newLightHandle()", noNullStr(e.what()));
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "%s: %s", "CLightSource::newLightHandle()", noNullStr(e.what()));
 	}
 
-	RtLightHandle l = static_cast<RtLightHandle>(m_handles.size()-1);
-	return l;
+	RtLightHandle idx = static_cast<RtLightHandle>(m_handles.size()-1);
+	idx = -(idx+1);
+	// idx < 0
+
+	return idx;
 }
 
 void CLights::setHandle(RtLightHandle idx, RtLightHandle handle)
 {
-	if ( idx >= m_handles.size() )
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::setHandle(), Handle idx undefined");
-	if ( handle >= m_lights.size() )
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::setHandle(), Light handle undefined");
+	if ( idx >= 0 )
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::setHandle(), Handle idx undefined");
+
+	// idx < 0
+	idx = -(idx+1);
+
+	if ( idx >= static_cast<RtLightHandle>(m_handles.size()) )
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::setHandle(), Handle idx undefined");
+	
+	if ( handle <= 0 || handle > static_cast<RtLightHandle>(m_lights.size()) )
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::setHandle(), Light handle undefined");
+
 	m_handles[static_cast<LightContainer::size_type>(idx)] = handle;
 }
 
 RtLightHandle CLights::getHandle(RtLightHandle idx)
 {
-	if ( idx >= m_handles.size() )
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::getHandle(), Handle idx undefined");
+	if ( idx >= 0 )
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::getHandle(), Handle idx undefined");
+
+	// idx < 0
+	idx = -(idx+1);
+
+	if ( idx >= static_cast<RtLightHandle>(m_handles.size()) )
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::getHandle(), Handle idx undefined");
+
 	return m_handles[static_cast<LightContainer::size_type>(idx)];
 }
+
 
 RtLightHandle CLights::lightSource(
 	CDeclarationDictionary &dict, const CColorDescr &colorDescr,
@@ -132,7 +166,7 @@ RtLightHandle CLights::lightSource(
 	try {
 		m_lights.push_back(0);
 	} catch(std::exception e) {
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s: %s", "CLightSource::lightSource()", noNullStr(e.what()));
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "%s: %s", "CLightSource::lightSource()", noNullStr(e.what()));
 	}
 
 	CLightSource *s = m_lightsFactory->newLightSource(
@@ -143,8 +177,9 @@ RtLightHandle CLights::lightSource(
 
 	m_lights[m_lights.size()-1] = s;
 
-	RtLightHandle l = static_cast<RtLightHandle>(m_lights.size()-1);
-	return l;
+	RtLightHandle handle = static_cast<RtLightHandle>(m_lights.size());
+	// handle > 0
+	return handle;
 }
 
 CLights::~CLights()

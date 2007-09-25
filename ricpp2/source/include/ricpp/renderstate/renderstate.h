@@ -34,18 +34,21 @@
 #include "ricpp/renderstate/modestack.h"
 #endif // _RICPP_RENDERSTATE_MODESTACK_H
 
-#ifndef _RICPP_BASERENDERER_OPTIONS_H
-#include "ricpp/baserenderer/options.h"
-#endif //  _RICPP_BASERENDERER_OPTIONS_H
+#ifndef _RICPP_RENDERSTATE_OPTIONS_H
+#include "ricpp/renderstate/options.h"
+#endif //  _RICPP_RENDERSTATE_OPTIONS_H
 
-#ifndef _RICPP_BASERENDERER_ATTRIBUTES_H
-#include "ricpp/baserenderer/attributes.h"
-#endif //  _RICPP_BASERENDERER_ATTRIBUTES_H
+#ifndef _RICPP_RENDERSTATE_ATTRIBUTES_H
+#include "ricpp/renderstate/attributes.h"
+#endif //  _RICPP_RENDERSTATE_ATTRIBUTES_H
 
-#ifndef _RICPP_BASERENDERER_TRANSFORMATION_H
-#include "ricpp/baserenderer/transformation.h"
-#endif // _RICPP_BASERENDERER_TRANSFORMATION_H
+#ifndef _RICPP_RENDERSTATE_TRANSFORMATION_H
+#include "ricpp/renderstate/transformation.h"
+#endif // _RICPP_RENDERSTATE_TRANSFORMATION_H
 
+#ifndef _RICPP_RENDERSTATE_LIGHTS_H
+#include "ricpp/renderstate/lights.h"
+#endif // _RICPP_RENDERSTATE_LIGHTS_H
 
 namespace RiCPP {
 
@@ -114,7 +117,8 @@ public:
 
 	virtual const COptionsReader &optionsReader() const = 0;
 	virtual const CAttributesReader &attributesReader() const = 0;
-	virtual const CTransformationReader &transformReader() const = 0;
+	virtual const ITransformationReader &transformReader() const = 0;
+	virtual const ILightsReader &lightsReader() const = 0;
 	//@}
 
 	virtual const char *archiveName() const = 0;
@@ -151,6 +155,8 @@ class CRenderState : public IRenderStateReader {
 
 	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses
 
+	CLights m_lights; ///< Global light list
+
 	void pushOptions();
 	bool popOptions();
 
@@ -176,7 +182,9 @@ public:
 	inline CRenderState(
 		CModeStack &aModeStack,
 		COptionsFactory &optionsFactory,
-		CAttributesFactory &attributesFactory)
+		CAttributesFactory &attributesFactory,
+		CLightSourceFactory &lightSourceFactory)
+		: m_lights(lightSourceFactory)
 	// throw(ExceptRiCPPError)
 	{
 		m_modeStack = &aModeStack;
@@ -388,66 +396,70 @@ public:
 		return m_decldict;
 	}
 
-	COptions &options()
+	inline COptions &options()
 	{
 		assert(m_optionsStack.back() != 0);
 		return *(m_optionsStack.back());
 	}
 
-	CAttributes &attributes()
+	inline CAttributes &attributes()
 	{
 		assert(m_attributesStack.back() != 0);
 		return *(m_attributesStack.back());
 	}
 
-	CTransformation &transform()
+	inline CTransformation &transform()
 	{
 		assert(!m_transformStack.empty());
 		return m_transformStack.back();
 	}
 
-	virtual const COptionsReader &optionsReader() const
+	inline CLights &lights() { return m_lights; }
+
+	inline virtual const COptionsReader &optionsReader() const
 	{
 		assert(m_optionsStack.back() != 0);
 		assert(m_optionsStack.back()->reader() != 0);
 		return *(m_optionsStack.back()->reader());
 	}
 
-	virtual const CAttributesReader &attributesReader() const
+	inline virtual const CAttributesReader &attributesReader() const
 	{
 		assert(m_attributesStack.back() != 0);
 		assert(m_attributesStack.back()->reader() != 0);
 		return *(m_attributesStack.back()->reader());
 	}
 
-	virtual const CTransformationReader &transformReader() const
+	inline virtual const ITransformationReader &transformReader() const
 	{
 		assert(!m_transformStack.empty());
 		return m_transformStack.back();
-
 	}
-	virtual bool hasOptions() const {return m_optionsStack.back() != 0;}
-	virtual bool hasOptionsReader() const {return m_optionsStack.back() != 0 && m_optionsStack.back()->reader() != 0;}
-	virtual bool hasAttributes() const {return m_attributesStack.back() != 0;}
-	virtual bool hasAttributesReader() const {return m_attributesStack.back() != 0 && m_attributesStack.back()->reader() != 0;}
-	virtual bool hasTransform() const {return !m_transformStack.empty();}
 
-	virtual const char *archiveName() const
+	inline virtual const ILightsReader &lightsReader() const { return m_lights; }
+
+	inline virtual bool hasOptions() const {return m_optionsStack.back() != 0;}
+	inline virtual bool hasOptionsReader() const {return m_optionsStack.back() != 0 && m_optionsStack.back()->reader() != 0;}
+	inline virtual bool hasAttributes() const {return m_attributesStack.back() != 0;}
+	inline virtual bool hasAttributesReader() const {return m_attributesStack.back() != 0 && m_attributesStack.back()->reader() != 0;}
+	inline virtual bool hasTransform() const {return !m_transformStack.empty();}
+
+	inline virtual const char *archiveName() const
 	{
 		return m_archiveName.c_str();
 	}
 
-	virtual void archiveName(const char *anArchiveName)
+	inline virtual void archiveName(const char *anArchiveName)
 	{
 		m_archiveName = noNullStr(anArchiveName);
 	}
 
-	virtual long lineNo() const
+	inline virtual long lineNo() const
 	{
 		return m_lineNo;
 	}
 
-	virtual void lineNo(long aLineNo)
+	inline virtual void lineNo(long aLineNo)
 	{
 		m_lineNo = aLineNo;
 	}

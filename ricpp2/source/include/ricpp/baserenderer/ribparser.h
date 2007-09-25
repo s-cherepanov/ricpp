@@ -30,21 +30,17 @@
  *  @brief Parser for rib
  */
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
-
-#ifndef _RICPP_STREAMS_BACKBUFFER_H
-#include "ricpp/streams/backbuffer.h"
-#endif // _RICPP_STREAMS_BACKBUFFER_H
-
 #ifndef _RICPP_RENDERSTATE_RENDERSTATE_H
 #include "ricpp/renderstate/renderstate.h"
 #endif // _RICPP_RENDERSTATE_RENDERSTATE_H
 
-#ifndef _RICPP_BASERENDERER_PARAMCLASSES_H
-#include "ricpp/baserenderer/paramclasses.h"
-#endif // _RICPP_BASERENDERER_PARAMCLASSES_H
+#ifndef _RICPP_RENDERSTATE_PARAMCLASSES_H
+#include "ricpp/renderstate/paramclasses.h"
+#endif // _RICPP_RENDERSTATE_PARAMCLASSES_H
+
+#ifndef _RICPP_STREAMS_BACKBUFFER_H
+#include "ricpp/streams/backbuffer.h"
+#endif // _RICPP_STREAMS_BACKBUFFER_H
 
 #include <deque>
 

@@ -282,10 +282,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\source\baserenderer\attributes.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\baserenderer\baserenderer.cpp"
 				>
 			</File>
@@ -294,27 +290,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\baserenderer\displaydesc.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\baserenderer\node.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\options.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\optionsbase.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\paramclasses.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\parameter.cpp"
 				>
 			</File>
 			<File
@@ -329,20 +305,12 @@
 				RelativePath="..\..\..\source\baserenderer\rimacro.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\transformation.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\attributes.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\baserenderer.h"
 				>
@@ -352,31 +320,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\displaydesc.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\dorender.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\node.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\options.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\optionsbase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\paramclasses.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\parameter.h"
 				>
 			</File>
 			<File
@@ -389,10 +337,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\rimacro.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\transformation.h"
 				>
 			</File>
 		</Filter>

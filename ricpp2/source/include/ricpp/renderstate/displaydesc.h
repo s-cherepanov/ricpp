@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_DISPLAYDESC_H
-#define _RICPP_BASERENDERER_DISPLAYDESC_H
+#ifndef _RICPP_RENDERSTATE_DISPLAYDESC_H
+#define _RICPP_RENDERSTATE_DISPLAYDESC_H
 
 /*! \file displaydesc.h
  *  \brief Declaration of the CDisplayDescr display descriptor
@@ -7,9 +7,9 @@
  *  \author Andreas Pidde (andreas@pidde.de)
  */
 
-#ifndef _RICPP_BASERENDERER_PARAMETER_H
-#include "ricpp/baserenderer/parameter.h"
-#endif // _RICPP_BASERENDERER_PARAMETER_H
+#ifndef _RICPP_RENDERSTATE_PARAMETER_H
+#include "ricpp/renderstate/parameter.h"
+#endif // _RICPP_RENDERSTATE_PARAMETER_H
 
 #ifndef _RICPP_DECLARATION_DECLDICT_H
 #include "ricpp/declaration/decldict.h"
@@ -203,4 +203,4 @@ namespace RiCPP {
 
 }
 
-#endif // _RICPP_BASERENDERER_DISPLAYDESC_H
+#endif // _RICPP_RENDERSTATE_DISPLAYDESC_H

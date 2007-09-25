@@ -1,4 +1,4 @@
-#include "ricpp/baserenderer/optionsbase.h"
+#include "ricpp/renderstate/optionsbase.h"
 
 using namespace RiCPP;
 

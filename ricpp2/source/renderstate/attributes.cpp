@@ -1,4 +1,4 @@
-#include "ricpp/baserenderer/attributes.h"
+#include "ricpp/renderstate/attributes.h"
 
 using namespace RiCPP;
 

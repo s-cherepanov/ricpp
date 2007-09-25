@@ -1,9 +1,9 @@
-#ifndef _RICPP_BASERENDERER_ATTRIBUTES_H
-#define _RICPP_BASERENDERER_ATTRIBUTES_H
+#ifndef _RICPP_RENDERSTATE_ATTRIBUTES_H
+#define _RICPP_RENDERSTATE_ATTRIBUTES_H
 
-#ifndef _RICPP_BASERENDERER_OPTIONSBASE_H
-#include "ricpp/baserenderer/optionsbase.h"
-#endif //  _RICPP_BASERENDERER_OPTIONSBASE_H
+#ifndef _RICPP_RENDERSTATE_OPTIONSBASE_H
+#include "ricpp/renderstate/optionsbase.h"
+#endif //  _RICPP_RENDERSTATE_OPTIONSBASE_H
 
 namespace RiCPP {
 
@@ -143,4 +143,4 @@ namespace RiCPP {
 	}; // CAttributesFactory
 }
 
-#endif // _RICPP_BASERENDERER_ATTRIBUTES_H
+#endif // _RICPP_RENDERSTATE_ATTRIBUTES_H

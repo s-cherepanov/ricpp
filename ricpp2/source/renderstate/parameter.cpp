@@ -1,4 +1,4 @@
-#include "ricpp/baserenderer/parameter.h"
+#include "ricpp/renderstate/parameter.h"
 #include "ricpp/ricpp/ricpperror.h"
 
 using namespace RiCPP;

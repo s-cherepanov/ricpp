@@ -4,7 +4,7 @@
  *  \author Andreas Pidde (andreas@pidde.de)
  */
 
-#include "ricpp/baserenderer/displaydesc.h"
+#include "ricpp/renderstate/displaydesc.h"
 
 using namespace RiCPP;
 

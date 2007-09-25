@@ -278,7 +278,35 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\..\source\renderstate\attributes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\displaydesc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\lights.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\renderstate\modestack.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\options.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\optionsbase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\paramclasses.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\parameter.cpp"
 				>
 			</File>
 			<File
@@ -289,12 +317,28 @@
 				RelativePath="..\..\..\source\renderstate\requests.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\renderstate\transformation.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\attributes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\displaydesc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\lights.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\modes.h"
 				>
@@ -304,11 +348,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\options.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\optionsbase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\paramclasses.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\parameter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\renderstate.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\requests.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\transformation.h"
 				>
 			</File>
 		</Filter>

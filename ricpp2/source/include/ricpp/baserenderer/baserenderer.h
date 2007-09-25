@@ -86,7 +86,7 @@ protected:
 	 *  Overwrite this method if you want to return an own factory
 	 *  for a customized options set.
 	 *
-	 * @return A container object for the render options.
+	 * @return A factory object for the render options.
 	 */
 	inline virtual COptionsFactory *getNewOptionsFactory() { return new COptionsFactory; }
 
@@ -95,9 +95,18 @@ protected:
 	 *  Overwrite this method if you want to return an own factory
 	 *  for a customized attributes set.
 	 *
-	 * @return A container object for the render attributes.
+	 * @return A factory object for the render attributes.
 	 */
 	inline virtual CAttributesFactory *getNewAttributesFactory() { return new CAttributesFactory; }
+
+	/** @brief Creates a new lightsource factory, called by initRenderState()
+	 *
+	 *  Overwrite this method if you want to return an own factory
+	 *  for a customized lightsources.
+	 *
+	 * @return A factory object for the lightsources.
+	 */
+	inline virtual CLightSourceFactory *getNewLightSourceFactory() { return new CLightSourceFactory; }
 
 	/** @brief Factory method to create a macro factory
 	 */

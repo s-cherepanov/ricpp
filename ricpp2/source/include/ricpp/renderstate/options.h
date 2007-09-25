@@ -1,13 +1,13 @@
-#ifndef _RICPP_BASERENDERER_OPTIONS_H
-#define _RICPP_BASERENDERER_OPTIONS_H
+#ifndef _RICPP_RENDERSTATE_OPTIONS_H
+#define _RICPP_RENDERSTATE_OPTIONS_H
 
-#ifndef _RICPP_BASERENDERER_OPTIONSBASE_H
-#include "ricpp/baserenderer/optionsbase.h"
-#endif //  _RICPP_BASERENDERER_OPTIONSBASE_H
+#ifndef _RICPP_RENDERSTATE_OPTIONSBASE_H
+#include "ricpp/renderstate/optionsbase.h"
+#endif //  _RICPP_RENDERSTATE_OPTIONSBASE_H
 
-#ifndef _RICPP_BASERENDERER_DISPLAYDESC_H
-#include "ricpp/baserenderer/displaydesc.h"
-#endif //  _RICPP_BASERENDERER_DISPLAYDESC_H
+#ifndef _RICPP_RENDERSTATE_DISPLAYDESC_H
+#include "ricpp/renderstate/displaydesc.h"
+#endif //  _RICPP_RENDERSTATE_DISPLAYDESC_H
 
 #ifndef _RICPP_RICPP_FILTERS_H
 #include "ricpp/ricpp/filters.h"
@@ -825,4 +825,4 @@ namespace RiCPP {
 	}; // COptionsFactory
 }
 
-#endif // _RICPP_BASERENDERER_OPTIONS_H
+#endif // _RICPP_RENDERSTATE_OPTIONS_H

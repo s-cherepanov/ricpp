@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_PARAMETER_H
-#define _RICPP_BASERENDERER_PARAMETER_H
+#ifndef _RICPP_RENDERSTATE_PARAMETER_H
+#define _RICPP_RENDERSTATE_PARAMETER_H
 
 #ifndef _RICPP_DECLARATION_DECLDICT_H
 #include "ricpp/declaration/decldict.h"
@@ -268,4 +268,4 @@ namespace RiCPP {
 	}; // CNamedParameterList
 }
 
-#endif // _RICPP_BASERENDERER_PARAMETER_H
+#endif // _RICPP_RENDERSTATE_PARAMETER_H

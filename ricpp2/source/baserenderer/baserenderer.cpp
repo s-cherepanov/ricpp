@@ -62,13 +62,13 @@ void CBaseRenderer::initRenderState()
 	CModeStack *modeStack = 0;
 	COptionsFactory *optionsFactory = 0;
 	CAttributesFactory *attributesFactory = 0;
+	CLightSourceFactory *lightSourceFactory = 0;
 
 	try {
 		modeStack = getNewModeStack();
 	} catch (ExceptRiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
-	} catch (...) {
 	}
 
 	if ( !modeStack ) {
@@ -81,7 +81,6 @@ void CBaseRenderer::initRenderState()
 	} catch (ExceptRiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
-	} catch (...) {
 	}
 
 	if ( !optionsFactory ) {
@@ -95,7 +94,6 @@ void CBaseRenderer::initRenderState()
 	} catch (ExceptRiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
-	} catch (...) {
 	}
 
 	if ( !attributesFactory ) {
@@ -106,11 +104,25 @@ void CBaseRenderer::initRenderState()
 	}
 
 	try {
-		m_renderState = new CRenderState(*modeStack, *optionsFactory, *attributesFactory);
+		lightSourceFactory = getNewLightSourceFactory();
 	} catch (ExceptRiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
-	} catch (...) {
+	}
+
+	if ( !lightSourceFactory ) {
+		delete attributesFactory;
+		delete modeStack;
+		delete optionsFactory;
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create an light source factory");
+		return;
+	}
+
+	try {
+		m_renderState = new CRenderState(*modeStack, *optionsFactory, *attributesFactory, *lightSourceFactory);
+	} catch (ExceptRiCPPError &err) {
+		ricppErrHandler().handleError(err);
+		return;
 	}
 
 	if ( !m_renderState ) {

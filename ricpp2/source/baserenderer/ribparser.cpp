@@ -28,9 +28,6 @@
  */
 
 #include "ricpp/baserenderer/ribparser.h"
-#include "ricpp/baserenderer/paramclasses.h"
-#include "ricpp/ricpp/ricpptokens.h"
-#include "ricpp/tools/templatefuncs.h"
 
 using namespace RiCPP;
 

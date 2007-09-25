@@ -1,9 +1,9 @@
-#ifndef _RICPP_BASERENDERER_OPTIONSBASE_H
-#define _RICPP_BASERENDERER_OPTIONSBASE_H
+#ifndef _RICPP_RENDERSTATE_OPTIONSBASE_H
+#define _RICPP_RENDERSTATE_OPTIONSBASE_H
 
-#ifndef _RICPP_BASERENDERER_PARAMETER_H
-#include "ricpp/baserenderer/parameter.h"
-#endif // _RICPP_BASERENDERER_PARAMETER_H
+#ifndef _RICPP_RENDERSTATE_PARAMETER_H
+#include "ricpp/renderstate/parameter.h"
+#endif // _RICPP_RENDERSTATE_PARAMETER_H
 
 namespace RiCPP {
 
@@ -140,4 +140,4 @@ namespace RiCPP {
 
 }
 
-#endif // _RICPP_BASERENDERER_OPTIONSBASE_H
+#endif // _RICPP_RENDERSTATE_OPTIONSBASE_H

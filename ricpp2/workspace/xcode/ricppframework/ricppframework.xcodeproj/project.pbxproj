@@ -49,14 +49,28 @@
 		C3003DD80C1D78D6004C4EF0 /* libritools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C399BA940BE5E1BB002FEEF1 /* libritools.a */; };
 		C32093D90BDCCF6900A0BB35 /* dynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093D80BDCCF6900A0BB35 /* dynlib.cpp */; };
 		C32093F90BDCD07A00A0BB35 /* macdynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */; };
-		C330D7970C44C4B400FC8F4F /* paramclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C330D7950C44C4B400FC8F4F /* paramclasses.h */; };
 		C330D7980C44C4B400FC8F4F /* ribparser.h in Headers */ = {isa = PBXBuildFile; fileRef = C330D7960C44C4B400FC8F4F /* ribparser.h */; };
-		C330D79B0C44C4D300FC8F4F /* paramclasses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C330D7990C44C4D300FC8F4F /* paramclasses.cpp */; };
 		C330D79C0C44C4D300FC8F4F /* ribparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C330D79A0C44C4D300FC8F4F /* ribparser.cpp */; };
 		C330D79E0C44C4F800FC8F4F /* requests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C330D79D0C44C4F800FC8F4F /* requests.cpp */; };
 		C33118230BEB10B30084F992 /* stringlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33118220BEB10B30084F992 /* stringlist.cpp */; };
 		C337F2860C460AA100E174B0 /* templatefuncs.h in Headers */ = {isa = PBXBuildFile; fileRef = C337F2850C460AA100E174B0 /* templatefuncs.h */; };
 		C337F3300C460E3D00E174B0 /* libstreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3003D680C1D6C3A004C4EF0 /* libstreams.a */; };
+		C344D52C0CA8F3E300E077EC /* attributes.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5240CA8F3E300E077EC /* attributes.h */; };
+		C344D52D0CA8F3E300E077EC /* displaydesc.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5250CA8F3E300E077EC /* displaydesc.h */; };
+		C344D52E0CA8F3E300E077EC /* lights.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5260CA8F3E300E077EC /* lights.h */; };
+		C344D52F0CA8F3E300E077EC /* options.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5270CA8F3E300E077EC /* options.h */; };
+		C344D5300CA8F3E300E077EC /* optionsbase.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5280CA8F3E300E077EC /* optionsbase.h */; };
+		C344D5310CA8F3E300E077EC /* paramclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5290CA8F3E300E077EC /* paramclasses.h */; };
+		C344D5320CA8F3E300E077EC /* parameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D52A0CA8F3E300E077EC /* parameter.h */; };
+		C344D5330CA8F3E300E077EC /* transformation.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D52B0CA8F3E300E077EC /* transformation.h */; };
+		C344D53C0CA8F40800E077EC /* attributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5340CA8F40800E077EC /* attributes.cpp */; };
+		C344D53D0CA8F40800E077EC /* displaydesc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5350CA8F40800E077EC /* displaydesc.cpp */; };
+		C344D53E0CA8F40800E077EC /* lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5360CA8F40800E077EC /* lights.cpp */; };
+		C344D53F0CA8F40800E077EC /* options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5370CA8F40800E077EC /* options.cpp */; };
+		C344D5400CA8F40800E077EC /* optionsbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5380CA8F40800E077EC /* optionsbase.cpp */; };
+		C344D5410CA8F40800E077EC /* paramclasses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5390CA8F40800E077EC /* paramclasses.cpp */; };
+		C344D5420CA8F40800E077EC /* parameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D53A0CA8F40800E077EC /* parameter.cpp */; };
+		C344D5430CA8F40800E077EC /* transformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D53B0CA8F40800E077EC /* transformation.cpp */; };
 		C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
 		C3610AC70BF2F26D00007CEF /* ricppbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */; };
 		C3610B2F0BF2F9D500007CEF /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3610AB50BF2F06500007CEF /* libricppbridge.a */; };
@@ -73,19 +87,9 @@
 		C36326E20C3A3CCF00364168 /* ricpptypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C36326DF0C3A3CCF00364168 /* ricpptypes.h */; };
 		C364F5F30C1431EF00C5E4E1 /* passthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */; };
 		C364F6010C1432E300C5E4E1 /* ribwriterdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */; };
-		C365889A0CA7AA3E002CE152 /* attributes.h in Headers */ = {isa = PBXBuildFile; fileRef = C36588930CA7AA3E002CE152 /* attributes.h */; };
-		C365889B0CA7AA3E002CE152 /* displaydesc.h in Headers */ = {isa = PBXBuildFile; fileRef = C36588940CA7AA3E002CE152 /* displaydesc.h */; };
 		C365889C0CA7AA3E002CE152 /* node.h in Headers */ = {isa = PBXBuildFile; fileRef = C36588950CA7AA3E002CE152 /* node.h */; };
-		C365889D0CA7AA3E002CE152 /* options.h in Headers */ = {isa = PBXBuildFile; fileRef = C36588960CA7AA3E002CE152 /* options.h */; };
-		C365889E0CA7AA3E002CE152 /* optionsbase.h in Headers */ = {isa = PBXBuildFile; fileRef = C36588970CA7AA3E002CE152 /* optionsbase.h */; };
-		C365889F0CA7AA3E002CE152 /* parameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C36588980CA7AA3E002CE152 /* parameter.h */; };
 		C36588A00CA7AA3E002CE152 /* rimacro.h in Headers */ = {isa = PBXBuildFile; fileRef = C36588990CA7AA3E002CE152 /* rimacro.h */; };
-		C36588A80CA7AA60002CE152 /* attributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36588A10CA7AA60002CE152 /* attributes.cpp */; };
-		C36588A90CA7AA60002CE152 /* displaydesc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36588A20CA7AA60002CE152 /* displaydesc.cpp */; };
 		C36588AA0CA7AA60002CE152 /* node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36588A30CA7AA60002CE152 /* node.cpp */; };
-		C36588AB0CA7AA60002CE152 /* options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36588A40CA7AA60002CE152 /* options.cpp */; };
-		C36588AC0CA7AA60002CE152 /* optionsbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36588A50CA7AA60002CE152 /* optionsbase.cpp */; };
-		C36588AD0CA7AA60002CE152 /* parameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36588A60CA7AA60002CE152 /* parameter.cpp */; };
 		C36588AE0CA7AA60002CE152 /* rimacro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36588A70CA7AA60002CE152 /* rimacro.cpp */; };
 		C366B42D0C26642600F41773 /* uri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C366B42C0C26642600F41773 /* uri.cpp */; };
 		C370C16E0BF4693200AA03BC /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1690BF4693200AA03BC /* baserenderer.h */; };
@@ -301,13 +305,27 @@
 		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
-		C330D7950C44C4B400FC8F4F /* paramclasses.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = paramclasses.h; path = ../../../source/include/ricpp/baserenderer/paramclasses.h; sourceTree = SOURCE_ROOT; };
 		C330D7960C44C4B400FC8F4F /* ribparser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribparser.h; path = ../../../source/include/ricpp/baserenderer/ribparser.h; sourceTree = SOURCE_ROOT; };
-		C330D7990C44C4D300FC8F4F /* paramclasses.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = paramclasses.cpp; path = ../../../source/baserenderer/paramclasses.cpp; sourceTree = SOURCE_ROOT; };
 		C330D79A0C44C4D300FC8F4F /* ribparser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribparser.cpp; path = ../../../source/baserenderer/ribparser.cpp; sourceTree = SOURCE_ROOT; };
 		C330D79D0C44C4F800FC8F4F /* requests.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = requests.cpp; path = ../../../source/renderstate/requests.cpp; sourceTree = SOURCE_ROOT; };
 		C33118220BEB10B30084F992 /* stringlist.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stringlist.cpp; path = ../../../source/tools/stringlist.cpp; sourceTree = SOURCE_ROOT; };
 		C337F2850C460AA100E174B0 /* templatefuncs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = templatefuncs.h; path = ../../../source/include/ricpp/tools/templatefuncs.h; sourceTree = SOURCE_ROOT; };
+		C344D5240CA8F3E300E077EC /* attributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = attributes.h; path = ../../../source/include/ricpp/renderstate/attributes.h; sourceTree = SOURCE_ROOT; };
+		C344D5250CA8F3E300E077EC /* displaydesc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = displaydesc.h; path = ../../../source/include/ricpp/renderstate/displaydesc.h; sourceTree = SOURCE_ROOT; };
+		C344D5260CA8F3E300E077EC /* lights.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lights.h; path = ../../../source/include/ricpp/renderstate/lights.h; sourceTree = SOURCE_ROOT; };
+		C344D5270CA8F3E300E077EC /* options.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = options.h; path = ../../../source/include/ricpp/renderstate/options.h; sourceTree = SOURCE_ROOT; };
+		C344D5280CA8F3E300E077EC /* optionsbase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = optionsbase.h; path = ../../../source/include/ricpp/renderstate/optionsbase.h; sourceTree = SOURCE_ROOT; };
+		C344D5290CA8F3E300E077EC /* paramclasses.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = paramclasses.h; path = ../../../source/include/ricpp/renderstate/paramclasses.h; sourceTree = SOURCE_ROOT; };
+		C344D52A0CA8F3E300E077EC /* parameter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = parameter.h; path = ../../../source/include/ricpp/renderstate/parameter.h; sourceTree = SOURCE_ROOT; };
+		C344D52B0CA8F3E300E077EC /* transformation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = transformation.h; path = ../../../source/include/ricpp/renderstate/transformation.h; sourceTree = SOURCE_ROOT; };
+		C344D5340CA8F40800E077EC /* attributes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = attributes.cpp; path = ../../../source/renderstate/attributes.cpp; sourceTree = SOURCE_ROOT; };
+		C344D5350CA8F40800E077EC /* displaydesc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = displaydesc.cpp; path = ../../../source/renderstate/displaydesc.cpp; sourceTree = SOURCE_ROOT; };
+		C344D5360CA8F40800E077EC /* lights.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = lights.cpp; path = ../../../source/renderstate/lights.cpp; sourceTree = SOURCE_ROOT; };
+		C344D5370CA8F40800E077EC /* options.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = options.cpp; path = ../../../source/renderstate/options.cpp; sourceTree = SOURCE_ROOT; };
+		C344D5380CA8F40800E077EC /* optionsbase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = optionsbase.cpp; path = ../../../source/renderstate/optionsbase.cpp; sourceTree = SOURCE_ROOT; };
+		C344D5390CA8F40800E077EC /* paramclasses.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = paramclasses.cpp; path = ../../../source/renderstate/paramclasses.cpp; sourceTree = SOURCE_ROOT; };
+		C344D53A0CA8F40800E077EC /* parameter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = parameter.cpp; path = ../../../source/renderstate/parameter.cpp; sourceTree = SOURCE_ROOT; };
+		C344D53B0CA8F40800E077EC /* transformation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = transformation.cpp; path = ../../../source/renderstate/transformation.cpp; sourceTree = SOURCE_ROOT; };
 		C35A15640C03201F000C9348 /* librenderstate.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librenderstate.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AB50BF2F06500007CEF /* libricppbridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppbridge.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -325,19 +343,9 @@
 		C36326DF0C3A3CCF00364168 /* ricpptypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ricpptypes.h; path = ../../../source/include/ricpp/ricpp/ricpptypes.h; sourceTree = SOURCE_ROOT; };
 		C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passthrough.cpp; path = ../../../source/ribfilter/passthrough.cpp; sourceTree = SOURCE_ROOT; };
 		C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribwriterdll.cpp; path = ../../../source/ribwriterdll/ribwriterdll.cpp; sourceTree = SOURCE_ROOT; };
-		C36588930CA7AA3E002CE152 /* attributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = attributes.h; path = ../../../source/include/ricpp/baserenderer/attributes.h; sourceTree = SOURCE_ROOT; };
-		C36588940CA7AA3E002CE152 /* displaydesc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = displaydesc.h; path = ../../../source/include/ricpp/baserenderer/displaydesc.h; sourceTree = SOURCE_ROOT; };
 		C36588950CA7AA3E002CE152 /* node.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = node.h; path = ../../../source/include/ricpp/baserenderer/node.h; sourceTree = SOURCE_ROOT; };
-		C36588960CA7AA3E002CE152 /* options.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = options.h; path = ../../../source/include/ricpp/baserenderer/options.h; sourceTree = SOURCE_ROOT; };
-		C36588970CA7AA3E002CE152 /* optionsbase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = optionsbase.h; path = ../../../source/include/ricpp/baserenderer/optionsbase.h; sourceTree = SOURCE_ROOT; };
-		C36588980CA7AA3E002CE152 /* parameter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = parameter.h; path = ../../../source/include/ricpp/baserenderer/parameter.h; sourceTree = SOURCE_ROOT; };
 		C36588990CA7AA3E002CE152 /* rimacro.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacro.h; path = ../../../source/include/ricpp/baserenderer/rimacro.h; sourceTree = SOURCE_ROOT; };
-		C36588A10CA7AA60002CE152 /* attributes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = attributes.cpp; path = ../../../source/baserenderer/attributes.cpp; sourceTree = SOURCE_ROOT; };
-		C36588A20CA7AA60002CE152 /* displaydesc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = displaydesc.cpp; path = ../../../source/baserenderer/displaydesc.cpp; sourceTree = SOURCE_ROOT; };
 		C36588A30CA7AA60002CE152 /* node.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = node.cpp; path = ../../../source/baserenderer/node.cpp; sourceTree = SOURCE_ROOT; };
-		C36588A40CA7AA60002CE152 /* options.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = options.cpp; path = ../../../source/baserenderer/options.cpp; sourceTree = SOURCE_ROOT; };
-		C36588A50CA7AA60002CE152 /* optionsbase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = optionsbase.cpp; path = ../../../source/baserenderer/optionsbase.cpp; sourceTree = SOURCE_ROOT; };
-		C36588A60CA7AA60002CE152 /* parameter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = parameter.cpp; path = ../../../source/baserenderer/parameter.cpp; sourceTree = SOURCE_ROOT; };
 		C36588A70CA7AA60002CE152 /* rimacro.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = rimacro.cpp; path = ../../../source/baserenderer/rimacro.cpp; sourceTree = SOURCE_ROOT; };
 		C366B42C0C26642600F41773 /* uri.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = uri.cpp; path = ../../../source/streams/uri.cpp; sourceTree = SOURCE_ROOT; };
 		C370C1690BF4693200AA03BC /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
@@ -677,6 +685,14 @@
 		C35A155E0C031FF9000C9348 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C344D5240CA8F3E300E077EC /* attributes.h */,
+				C344D5250CA8F3E300E077EC /* displaydesc.h */,
+				C344D5260CA8F3E300E077EC /* lights.h */,
+				C344D5270CA8F3E300E077EC /* options.h */,
+				C344D5280CA8F3E300E077EC /* optionsbase.h */,
+				C344D5290CA8F3E300E077EC /* paramclasses.h */,
+				C344D52A0CA8F3E300E077EC /* parameter.h */,
+				C344D52B0CA8F3E300E077EC /* transformation.h */,
 				C362FB6B0C03337F00880F4D /* modes.h */,
 				C362FB6C0C03337F00880F4D /* modestack.h */,
 				C362FB6D0C03337F00880F4D /* renderstate.h */,
@@ -688,6 +704,14 @@
 		C35A155F0C031FFF000C9348 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C344D5340CA8F40800E077EC /* attributes.cpp */,
+				C344D5350CA8F40800E077EC /* displaydesc.cpp */,
+				C344D5360CA8F40800E077EC /* lights.cpp */,
+				C344D5370CA8F40800E077EC /* options.cpp */,
+				C344D5380CA8F40800E077EC /* optionsbase.cpp */,
+				C344D5390CA8F40800E077EC /* paramclasses.cpp */,
+				C344D53A0CA8F40800E077EC /* parameter.cpp */,
+				C344D53B0CA8F40800E077EC /* transformation.cpp */,
 				C330D79D0C44C4F800FC8F4F /* requests.cpp */,
 				C362FB670C03336F00880F4D /* modestack.cpp */,
 				C362FB680C03336F00880F4D /* renderstate.cpp */,
@@ -767,14 +791,8 @@
 		C372B8FA0BD7618A009B2459 /* Header */ = {
 			isa = PBXGroup;
 			children = (
-				C36588930CA7AA3E002CE152 /* attributes.h */,
-				C36588940CA7AA3E002CE152 /* displaydesc.h */,
 				C36588950CA7AA3E002CE152 /* node.h */,
-				C36588960CA7AA3E002CE152 /* options.h */,
-				C36588970CA7AA3E002CE152 /* optionsbase.h */,
-				C36588980CA7AA3E002CE152 /* parameter.h */,
 				C36588990CA7AA3E002CE152 /* rimacro.h */,
-				C330D7950C44C4B400FC8F4F /* paramclasses.h */,
 				C330D7960C44C4B400FC8F4F /* ribparser.h */,
 				C370C1690BF4693200AA03BC /* baserenderer.h */,
 				C370C16A0BF4693200AA03BC /* contextcreator.h */,
@@ -787,14 +805,8 @@
 		C372B8FB0BD7618F009B2459 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C36588A10CA7AA60002CE152 /* attributes.cpp */,
-				C36588A20CA7AA60002CE152 /* displaydesc.cpp */,
 				C36588A30CA7AA60002CE152 /* node.cpp */,
-				C36588A40CA7AA60002CE152 /* options.cpp */,
-				C36588A50CA7AA60002CE152 /* optionsbase.cpp */,
-				C36588A60CA7AA60002CE152 /* parameter.cpp */,
 				C36588A70CA7AA60002CE152 /* rimacro.cpp */,
-				C330D7990C44C4D300FC8F4F /* paramclasses.cpp */,
 				C330D79A0C44C4D300FC8F4F /* ribparser.cpp */,
 				C35C7A480BD76D3A00548675 /* baserenderer.cpp */,
 				C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */,
@@ -1053,6 +1065,14 @@
 				C362FB700C03337F00880F4D /* modestack.h in Headers */,
 				C362FB710C03337F00880F4D /* renderstate.h in Headers */,
 				C362FB720C03337F00880F4D /* requests.h in Headers */,
+				C344D52C0CA8F3E300E077EC /* attributes.h in Headers */,
+				C344D52D0CA8F3E300E077EC /* displaydesc.h in Headers */,
+				C344D52E0CA8F3E300E077EC /* lights.h in Headers */,
+				C344D52F0CA8F3E300E077EC /* options.h in Headers */,
+				C344D5300CA8F3E300E077EC /* optionsbase.h in Headers */,
+				C344D5310CA8F3E300E077EC /* paramclasses.h in Headers */,
+				C344D5320CA8F3E300E077EC /* parameter.h in Headers */,
+				C344D5330CA8F3E300E077EC /* transformation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1087,14 +1107,8 @@
 				C370C16F0BF4693200AA03BC /* contextcreator.h in Headers */,
 				C370C1700BF4693200AA03BC /* dorender.h in Headers */,
 				C370C1720BF4693200AA03BC /* ricontext.h in Headers */,
-				C330D7970C44C4B400FC8F4F /* paramclasses.h in Headers */,
 				C330D7980C44C4B400FC8F4F /* ribparser.h in Headers */,
-				C365889A0CA7AA3E002CE152 /* attributes.h in Headers */,
-				C365889B0CA7AA3E002CE152 /* displaydesc.h in Headers */,
 				C365889C0CA7AA3E002CE152 /* node.h in Headers */,
-				C365889D0CA7AA3E002CE152 /* options.h in Headers */,
-				C365889E0CA7AA3E002CE152 /* optionsbase.h in Headers */,
-				C365889F0CA7AA3E002CE152 /* parameter.h in Headers */,
 				C36588A00CA7AA3E002CE152 /* rimacro.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1505,6 +1519,14 @@
 				C362FB690C03336F00880F4D /* modestack.cpp in Sources */,
 				C362FB6A0C03336F00880F4D /* renderstate.cpp in Sources */,
 				C330D79E0C44C4F800FC8F4F /* requests.cpp in Sources */,
+				C344D53C0CA8F40800E077EC /* attributes.cpp in Sources */,
+				C344D53D0CA8F40800E077EC /* displaydesc.cpp in Sources */,
+				C344D53E0CA8F40800E077EC /* lights.cpp in Sources */,
+				C344D53F0CA8F40800E077EC /* options.cpp in Sources */,
+				C344D5400CA8F40800E077EC /* optionsbase.cpp in Sources */,
+				C344D5410CA8F40800E077EC /* paramclasses.cpp in Sources */,
+				C344D5420CA8F40800E077EC /* parameter.cpp in Sources */,
+				C344D5430CA8F40800E077EC /* transformation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1534,14 +1556,8 @@
 				C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */,
 				C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */,
 				C3787D5C0BE9C4840072105F /* ricontext.cpp in Sources */,
-				C330D79B0C44C4D300FC8F4F /* paramclasses.cpp in Sources */,
 				C330D79C0C44C4D300FC8F4F /* ribparser.cpp in Sources */,
-				C36588A80CA7AA60002CE152 /* attributes.cpp in Sources */,
-				C36588A90CA7AA60002CE152 /* displaydesc.cpp in Sources */,
 				C36588AA0CA7AA60002CE152 /* node.cpp in Sources */,
-				C36588AB0CA7AA60002CE152 /* options.cpp in Sources */,
-				C36588AC0CA7AA60002CE152 /* optionsbase.cpp in Sources */,
-				C36588AD0CA7AA60002CE152 /* parameter.cpp in Sources */,
 				C36588AE0CA7AA60002CE152 /* rimacro.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

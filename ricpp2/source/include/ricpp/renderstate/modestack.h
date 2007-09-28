@@ -38,6 +38,10 @@
 #include "ricpp/renderstate/modes.h"
 #endif // RICPP_RENDERSTATE_MODES_H
 
+#ifndef RICPP_RICPP_RICPPCONST_H
+#include "ricpp/ricpp/ricppconst.h"
+#endif // RICPP_RICPP_RICPPCONST_H
+
 #include <vector>
 
 namespace RiCPP {
@@ -77,10 +81,21 @@ public:
  * @see CBaseRenderer
  */
 class CModeStack {
+public:
+	/** @brief Const iterator for the elements.
+	 */
+	typedef std::vector<EnumModes>::const_iterator const_iterator;
+
+	/** @brief Size type for the number of stored elements
+	 */
+	typedef std::vector<EnumModes>::size_type size_type;
+private:
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
 	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
 	std::vector<TypeModeBits> m_modeBits; //!< All modes (nesting of modes), transparent modes are 'ored' to the mode bits of outer blocks.
 
+	size_type m_areaLightSourceDepth;
+	RtLightHandle m_areaLightSourceHandle;
 protected:
 	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before)
 	 *
@@ -116,19 +131,13 @@ protected:
 	}
 
 public:
-	/** @brief Const iterator for the elements.
-	 */
-	typedef std::vector<EnumModes>::const_iterator const_iterator;
-
-	/** @brief Size type for the number of stored elements
-	 */
-	typedef std::vector<EnumModes>::size_type size_type;
-
 
 	/** @brief Initializing of the mode, normally starts outside any blocks. 
 	 */
 	inline CModeStack( )
 	{
+		m_areaLightSourceHandle = illLightHandle;
+		m_areaLightSourceDepth = 0;
 	}
 
 	/** @brief Virtual destructor.
@@ -302,7 +311,21 @@ public:
 	 * @return Size of the active dictionary.
 	 */
 	inline size_type size() const { return m_modes.size(); }
-}; // CMode
+
+	inline virtual RtLightHandle areaLightSourceHandle() const { return m_areaLightSourceHandle; }
+	inline virtual size_type areaLightSourceDepth() const { return m_areaLightSourceDepth; }
+
+	inline virtual void startAreaLightSource(RtLightHandle h)
+	{
+		m_areaLightSourceHandle = h;
+		m_areaLightSourceDepth = size();
+	}
+	inline virtual void endAreaLightSource()
+	{
+		m_areaLightSourceHandle = illLightHandle;
+		m_areaLightSourceDepth = 0;
+	}
+}; // CModeStack
 
 }
 

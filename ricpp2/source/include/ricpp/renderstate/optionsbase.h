@@ -92,7 +92,7 @@ namespace RiCPP {
 			return m_curColorDesc.colorSamples();
 		}
 
-		const CColorDescr &colorDesc() const
+		const CColorDescr &colorDescr() const
 		{
 			return m_curColorDesc;
 		}
@@ -132,9 +132,9 @@ namespace RiCPP {
 			return m_attribs->colorSamples();
 		}
 
-		const CColorDescr &colorDesc() const
+		const CColorDescr &colorDescr() const
 		{
-			return m_attribs->colorDesc();
+			return m_attribs->colorDescr();
 		}
 	}; // COptionsBaseReader
 

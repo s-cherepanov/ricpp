@@ -128,8 +128,8 @@ protected:
     virtual RtVoid doRelativeDetail(RtFloat relativedetail) = 0;
     virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	
-    virtual RtVoid doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
-	virtual RtVoid doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid doLightSourceV(RtLightHandle h, RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doAreaLightSourceV(RtLightHandle h, RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	
     virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	virtual RtVoid doColor(RtColor Cs) = 0;
@@ -147,7 +147,7 @@ protected:
 	virtual RtVoid doBound(RtBound bound) = 0;
 	virtual RtVoid doDetail(RtBound bound) = 0;
 	virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
-    virtual RtVoid doGeometricApproximationV(RtToken type, RtFloat value) = 0;
+    virtual RtVoid doGeometricApproximation(RtToken type, RtFloat value) = 0;
 	virtual RtVoid doGeometricRepresentation(RtToken type) = 0;
 	virtual RtVoid doOrientation(RtToken anOrientation) = 0;
 	virtual RtVoid doReverseOrientation(void) = 0;

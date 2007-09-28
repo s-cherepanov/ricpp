@@ -85,6 +85,9 @@ public:
 	 */
 	virtual TypeModeBits curModeBits() const = 0;
 
+	virtual bool inWorldBlock() const = 0;
+	virtual RtLightHandle areaLightSourceHandle() const = 0;
+
 	virtual CModeStack::const_iterator modesBegin() const = 0;
 	virtual CModeStack::const_iterator modesEnd() const = 0;
 	virtual CModeStack::size_type modesSize() const = 0;
@@ -129,7 +132,6 @@ public:
 	virtual bool hasAttributes() const = 0;
 	virtual bool hasAttributesReader() const = 0;
 	virtual bool hasTransform() const = 0;
-
 }; // IRenderStateReader
 
 /** @brief The facade for the render state objects.
@@ -222,32 +224,36 @@ public:
 	//@{
 	inline void contextBegin()
 	{
-		m_modeStack->contextBegin();
+		m_lights.mark();
 		pushOptions();
 		pushAttributes();
 		pushTransform();
+		m_modeStack->contextBegin();
 	}
 	inline void contextEnd()
 	{
+		m_modeStack->contextEnd();
 		popTransform();
 		popAttributes();
 		popOptions();
-		m_modeStack->contextEnd();
+		m_lights.clearToMark();
 	}
 
 	inline void frameBegin()
 	{
-		m_modeStack->frameBegin();
+		m_lights.mark();
 		pushOptions();
 		pushAttributes();
 		pushTransform();
+		m_modeStack->frameBegin();
 	}
 	inline void frameEnd()
 	{
+		m_modeStack->frameEnd();
 		popTransform();
 		popAttributes();
 		popOptions();
-		m_modeStack->frameEnd();
+		m_lights.clearToMark();
 	}
 
 	inline void worldBegin()
@@ -261,6 +267,7 @@ public:
 		m_modeStack->worldEnd();
 		popAttributes();
 		popTransform();
+		m_lights.clearToMark();
 	}
 
 	inline void attributeBegin()
@@ -292,31 +299,31 @@ public:
 
 	inline void objectBegin()
 	{
-		m_modeStack->objectBegin();
 		pushOptions();
 		pushAttributes();
 		pushTransform();
+		m_modeStack->objectBegin();
 	}
 	inline void objectEnd()
 	{
+		m_modeStack->objectEnd();
 		popTransform();
 		popAttributes();
 		popOptions();
-		m_modeStack->objectEnd();
 	}
 
     inline void archiveBegin()
 	{
-		m_modeStack->archiveBegin();
 		pushOptions();
 		pushAttributes();
 		pushTransform();
+		m_modeStack->archiveBegin();
 	}
     inline void archiveEnd() {
+		m_modeStack->archiveEnd();
 		popTransform();
 		popAttributes();
 		popOptions();
-		m_modeStack->archiveEnd();
 	}
 
     inline void resourceBegin() { m_modeStack->resourceBegin(); }
@@ -333,10 +340,19 @@ public:
 	inline virtual bool validRequest(EnumRequests req) const { return m_modeStack->validRequest(req); }
 	inline virtual EnumModes curMode() const { return m_modeStack->curMode(); }
 	inline virtual TypeModeBits curModeBits() const { return m_modeStack->curModeBits(); }
+	inline virtual bool inWorldBlock() const
+	{
+		return (curModeBits() & MODE_BIT_WORLD) == MODE_BIT_WORLD;
+	}
+
 
 	inline CModeStack::const_iterator modesBegin() const { return m_modeStack->begin(); }
 	inline CModeStack::const_iterator modesEnd() const { return m_modeStack->end(); }
 	inline CModeStack::size_type modesSize() const { return m_modeStack->size(); }
+
+	inline virtual RtLightHandle areaLightSourceHandle() const { return m_modeStack->areaLightSourceHandle(); }
+	inline virtual void startAreaLightSource(RtLightHandle h) { m_modeStack->startAreaLightSource(h); }
+	inline virtual void endAreaLightSource() { m_modeStack->endAreaLightSource(); }
 
 	//@}
 

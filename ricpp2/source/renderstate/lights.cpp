@@ -195,3 +195,41 @@ CLights::~CLights()
 		}
 	}
 }
+
+void CLights::mark()
+{
+	m_lightMarks.push_back(static_cast<unsigned long>(m_handles.size()));
+	m_lightMarks.push_back(static_cast<unsigned long>(m_lights.size()));
+}
+
+
+void CLights::clearToMark()
+{
+	if ( !m_lights.empty() )
+	{
+		assert (!m_lightMarks.empty());
+
+		LightContainer::size_type lightsz =
+			static_cast<LightContainer::size_type>(m_lightMarks.back());
+
+		assert(lightsz >= m_lights.size());
+		
+		m_lights.pop_back();
+		for (
+			LightContainer::size_type i = lightsz;
+			i < m_lights.size();
+			++i )
+		{
+			m_lightsFactory->deleteLightSource(m_lights[i]);
+		}
+		m_lights.resize(lightsz);
+
+		LightHandleContainer::size_type lighthandlesz =
+			static_cast<LightHandleContainer::size_type>(m_lightMarks.back());
+
+		assert(lighthandlesz >= m_handles.size());
+
+		m_lightMarks.pop_back();
+		m_handles.resize(lighthandlesz);
+	}
+}

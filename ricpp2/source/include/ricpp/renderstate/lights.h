@@ -165,6 +165,7 @@ private:
 	LightContainer m_lights; ///< Ptr to light sources (CLightSource), Index is a positive RtLightHandle (-1)
 	CLightSourceFactory *m_lightsFactory; ///< Create new lights
 
+	std::vector<unsigned long> m_lightMarks;
 	/** @brief Transforms a handle to an index for m_lights, throws if out of range.
 	 *
 	 * @param handle \a handle can be negative (indirection) or postive (Light handle)
@@ -193,6 +194,9 @@ public:
 
 	virtual const CLightSource *getLight(RtLightHandle handle) const;
 	CLightSource *getWriteableLight(RtLightHandle handle);
+
+	void mark();
+	void clearToMark();
 
 	virtual inline LightContainer::iterator begin() { return m_lights.begin(); }
 	virtual inline LightContainer::iterator end() { return m_lights.end(); }

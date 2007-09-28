@@ -2890,7 +2890,7 @@ public:
 		return new CRiIlluminate(aLineNo, handleIdx, onoff);
 	}
 
-	inline virtual CRiAttribute *newRiAtCRibute(
+	inline virtual CRiAttribute *newRiAttribute(
 		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
@@ -2974,11 +2974,11 @@ public:
 		return new CRiDetailRange(aLineNo, minvis, lowtran, uptran, maxvis);
 	}
 
-	inline virtual CRiGeometricApproximation *newRiGeomeCRicApproximation(long aLineNo, RtToken type, RtFloat value) {
+	inline virtual CRiGeometricApproximation *newRiGeometricApproximation(long aLineNo, RtToken type, RtFloat value) {
 		return new CRiGeometricApproximation(aLineNo, type, value);
 	}
 
-	inline virtual CRiGeometricRepresentation *newRiGeomeCRicRepresentation(long aLineNo, RtToken type) {
+	inline virtual CRiGeometricRepresentation *newRiGeometricRepresentation(long aLineNo, RtToken type) {
 		return new CRiGeometricRepresentation(aLineNo, type);
 	}
 
@@ -2998,7 +2998,7 @@ public:
 		return new CRiBasis(aLineNo, ubasis, ustep, vbasis, vstep);
 	}
 
-	inline virtual CRiTrimCurve *newRiCRimCurve(long aLineNo, RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {
+	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {
 		return new CRiTrimCurve(aLineNo, nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}
 

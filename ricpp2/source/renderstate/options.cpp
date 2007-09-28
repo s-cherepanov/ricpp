@@ -291,7 +291,7 @@ RtVoid COptions::projectionV(CDeclarationDictionary &dict, RtToken name, RtInt n
 {
 	m_projectionCalled = true;
 	m_projectionName = name;
-	m_projection.set(CValueCounts(), dict, colorDesc(), m_projectionName, n, tokens, params);
+	m_projection.set(CValueCounts(), dict, colorDescr(), m_projectionName, n, tokens, params);
 
 	m_FOVSet = false;
 	if ( m_projectionName == RI_PERSPECTIVE ) {
@@ -512,7 +512,7 @@ void COptions::initImager()
 
 RtVoid COptions::imagerV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	m_imager.set(CValueCounts(), dict, colorDesc(), name, n, tokens, params);
+	m_imager.set(CValueCounts(), dict, colorDescr(), name, n, tokens, params);
 }
 
 // ----
@@ -566,7 +566,7 @@ void COptions::initDisplayChannels()
 RtVoid COptions::displayChannelV(CDeclarationDictionary &dict, RtString channel, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	CDisplayChannelDescr dcd;
-	dcd.displayChannelV(dict, colorDesc(), channel, n, tokens, params);
+	dcd.displayChannelV(dict, colorDescr(), channel, n, tokens, params);
 
 	CDisplayDescr::DisplayChannels_type::iterator iter;
 	for ( iter = m_displayChannels.begin();
@@ -627,7 +627,7 @@ RtVoid COptions::displayV(CDeclarationDictionary &dict, RtString name, RtToken t
 
 	m_displays.push_back(CDisplayDescr());
 	CDisplayDescr &dd = m_displays.back();
-	dd.displayV(dict, colorDesc(), m_displayChannels, name, type, mode, n, tokens, params);
+	dd.displayV(dict, colorDescr(), m_displayChannels, name, type, mode, n, tokens, params);
 }
 
 COptions::Displays_type::const_iterator COptions::findDisplay(RtString name) const
@@ -661,7 +661,7 @@ RtVoid COptions::hiderV(CDeclarationDictionary &dict, RtToken type, RtInt n, RtT
 	if ( type == RI_NULL )
 		type = RI_NULL_LIT;
 	m_hiderType = type;
-	m_hider.set(CValueCounts(), dict, colorDesc(), type, n, tokens, params);
+	m_hider.set(CValueCounts(), dict, colorDescr(), type, n, tokens, params);
 }
 
 // ----

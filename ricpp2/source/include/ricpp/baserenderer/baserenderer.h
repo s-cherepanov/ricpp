@@ -291,32 +291,32 @@ public:
 	virtual RtVoid relativeDetail(RtFloat relativedetail);
 	virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtLightHandle lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
-	inline virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illLightHandle; }
+	virtual RtLightHandle lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid color(RtColor Cs) {}
-	inline virtual RtVoid opacity(RtColor Os) {}
-	inline virtual RtVoid surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid illuminate(RtLightHandle light, RtBoolean onoff) {}
-	inline virtual RtVoid displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {}
-	inline virtual RtVoid shadingRate(RtFloat size) {}
-	inline virtual RtVoid shadingInterpolation(RtToken type) {}
-	inline virtual RtVoid matte(RtBoolean onoff) {}
-	inline virtual RtVoid bound(RtBound bound) {}
-	inline virtual RtVoid detail(RtBound bound) {}
-	inline virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
-	inline virtual RtVoid geometricApproximation(RtToken type, RtFloat value) {}
-	inline virtual RtVoid geometricRepresentation(RtToken type) {}
-	inline virtual RtVoid orientation(RtToken anOrientation) {}
-	inline virtual RtVoid reverseOrientation(void) {}
-	inline virtual RtVoid sides(RtInt nsides) {}
-	inline virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) {}
-	inline virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {}
+	virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid color(RtColor Cs);
+	virtual RtVoid opacity(RtColor Os);
+	virtual RtVoid surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid illuminate(RtLightHandle light, RtBoolean onoff);
+	virtual RtVoid displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
+	virtual RtVoid shadingRate(RtFloat size);
+	virtual RtVoid shadingInterpolation(RtToken type);
+	virtual RtVoid matte(RtBoolean onoff);
+	virtual RtVoid bound(RtBound aBound);
+	virtual RtVoid detail(RtBound aBound);
+	virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis);
+	virtual RtVoid geometricApproximation(RtToken type, RtFloat value);
+	virtual RtVoid geometricRepresentation(RtToken type);
+	virtual RtVoid orientation(RtToken anOrientation);
+	virtual RtVoid reverseOrientation(void);
+	virtual RtVoid sides(RtInt nsides);
+	virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
+	virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
 
 	inline virtual RtVoid identity(void) {}
 	inline virtual RtVoid transform(RtMatrix aTransform) {}
@@ -441,8 +441,8 @@ protected:
 	inline virtual RtVoid doRelativeDetail(RtFloat relativedetail) {}
 	inline virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
-	inline virtual RtVoid doLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { }
-	inline virtual RtVoid doAreaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { }
+	inline virtual RtVoid doLightSourceV(RtLightHandle h, RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { }
+	inline virtual RtVoid doAreaLightSourceV(RtLightHandle h, RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { }
 
 	inline virtual RtVoid doAttributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 	inline virtual RtVoid doColor(RtColor Cs) {}
@@ -460,7 +460,7 @@ protected:
 	inline virtual RtVoid doBound(RtBound bound) {}
 	inline virtual RtVoid doDetail(RtBound bound) {}
 	inline virtual RtVoid doDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
-	inline virtual RtVoid doGeometricApproximationV(RtToken type, RtFloat value) {}
+	inline virtual RtVoid doGeometricApproximation(RtToken type, RtFloat value) {}
 	inline virtual RtVoid doGeometricRepresentation(RtToken type) {}
 	inline virtual RtVoid doOrientation(RtToken anOrientation) {}
 	inline virtual RtVoid doReverseOrientation(void) {}

@@ -75,7 +75,7 @@ bool CRenderState::popOptions()
 void CRenderState::pushAttributes()
 {
 	if ( m_attributesStack.empty() ) {
-		m_attributesStack.push_back(m_attributesFactory->newAttributes(m_optionsStack.back()->colorDesc()));
+		m_attributesStack.push_back(m_attributesFactory->newAttributes(m_optionsStack.back()->colorDescr()));
 	} else {
 		m_attributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
 	}

@@ -66,6 +66,8 @@ namespace RiCPP {
 	const RtInt defMaxZ = 0;
 	const RtFloat m_ditherAmplitudeZ = 0;
 
+	const RtToken def_imagerName = RI_NULL;
+
 	const RtToken def_hiderType = RI_HIDDEN;
 
 	const RtFloat def_relativeDetail = 1.0;
@@ -89,9 +91,6 @@ namespace RiCPP {
 		std::map<RtToken, CQuantizer> m_quantizers; //!< Quantizer (def. "RGBA" and "z")
 
 		ClippingPlanes_type m_clippingPlanes;   //!< Additional clipping planes
-
-		CNamedParameterList m_imager;      //!< Imager Shader, default RI_NULL
-		CNamedParameterList m_hider;       //!< Hidden surface algorithm, default "hidden" (others are "null" and "paint")
 
 		bool    m_formatCalled;        //!< true, if CRi::format() has been called
 		RtInt	m_xResolution;		   //!< Horizontal Resolution of last CRi::display() call
@@ -142,10 +141,15 @@ namespace RiCPP {
 				m_yWidth;           //!< Y-width of the filter in pixels, default 2
 
 		bool m_exposureCalled;		//!< CRi::exposure() has been called
+
+		CParameterList m_imagerParams; //!< Imager Shader, default no params
+		RtToken m_imagerName;          //!< Name of Imager Shader, default RI_NULL
+
 		RtFloat m_gain,             //!< Exposure (gain) color = (color*gain)**(1/gamma), default 1.0
 				m_gamma;            //!< Exposure (gamma) color = (color*gain)**(1/gamma), default 1.0
 
-		RtToken m_hiderType;
+		RtToken m_hiderType;          //!< Type of the hidden surface algorithm
+		CParameterList m_hiderParams; //!< Hidden surface algorithm, default "hidden" (others are "null" and "paint")
 
 		RtFloat m_relativeDetail;   //!< Sets the relative Detail, default 1.0
 
@@ -420,10 +424,14 @@ namespace RiCPP {
 		RtVoid colorExposure(RtColor color) const;
 		RtVoid colorExposure(std::vector<RtFloat> &colors) const;
 
-		RtVoid imagerV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-		const CNamedParameterList &imager() const
+		RtVoid imager(RtToken name, const CParameterList &params);
+		RtToken imagerName() const
 		{
-			return m_imager;
+			return m_imagerName;
+		}
+		const CParameterList &imagerParams() const
+		{
+			return m_imagerParams;
 		}
 
 		RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl);
@@ -453,14 +461,14 @@ namespace RiCPP {
 		}
 		Displays_type::const_iterator findDisplay(RtString name) const;
 
-		RtVoid hiderV(CDeclarationDictionary &dict, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
+		RtVoid hider(RtToken type, const CParameterList &params);
 		inline RtToken hiderType() const
 		{
 			return m_hiderType;
 		}
-		inline const CNamedParameterList &hider() const
+		inline const CParameterList &hiderParams() const
 		{
-			return m_hider;
+			return m_hiderParams;
 		}
 
 		RtVoid relativeDetail(RtFloat relativedetail);
@@ -711,9 +719,13 @@ namespace RiCPP {
 			return m_riOptions->colorExposure(colors);
 		}
 
-		inline const CNamedParameterList &imager() const
+		RtToken imagerName() const
 		{
-			return m_riOptions->imager();
+			return m_riOptions->imagerName();
+		}
+		const CParameterList &imagerParams() const
+		{
+			return m_riOptions->imagerParams();
 		}
 
 		inline const CQuantizer *quantizer(RtToken type) const
@@ -766,9 +778,9 @@ namespace RiCPP {
 			return m_riOptions->hiderType();
 		}
 
-		inline const CNamedParameterList &hider() const
+		inline const CParameterList &hiderParams() const
 		{
-			return m_riOptions->hider();
+			return m_riOptions->hiderParams();
 		}
 
 		inline RtFloat relativeDetail() const

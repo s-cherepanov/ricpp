@@ -981,7 +981,7 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	name = m_renderState->tokFindCreate(name);
 	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
 	
-	m_renderState->options().imagerV(m_renderState->dict(), name, n, tokens, params);
+	m_renderState->options().imager(name, m_renderState->curParamList());
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -1104,7 +1104,7 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 	type = m_renderState->tokFindCreate(type);
 	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
 
-	m_renderState->options().hiderV(m_renderState->dict(), type, n, tokens, params);
+	m_renderState->options().hider(type, m_renderState->curParamList());
 
 	if ( m_macroFactory && m_curMacro ) {
 

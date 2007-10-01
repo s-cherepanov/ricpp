@@ -303,14 +303,12 @@ bool CParameterList::hasColor() const
 	return false;
 }
 
-
 CNamedParameterList &CNamedParameterList::operator=(const CNamedParameterList &params)
 {
 	if ( this == &params )
 		return *this;
 
 	m_name = params.m_name;
-	m_curColorDescr = params.m_curColorDescr;
 
 	CParameterList::operator=(params);
 	return *this;
@@ -324,8 +322,7 @@ void CNamedParameterList::set(
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
 	name(aName);
-	m_curColorDescr = curColorDescr;
-	CParameterList::set(counts, dict, m_curColorDescr, n, tokens, params);
+	CParameterList::set(counts, dict, curColorDescr, n, tokens, params);
 }
 
 void CNamedParameterList::add(
@@ -334,9 +331,5 @@ void CNamedParameterList::add(
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	if ( hasColor() && m_curColorDescr != curColorDescr ) {
-		throw(ExceptRiCPPError(RIE_CONSISTENCY, RIE_ERROR, "color descriptors of parameters differs to others of the same type"));
-	}
-	m_curColorDescr = curColorDescr;
 	CParameterList::add(counts, dict, curColorDescr, n, tokens, params);
 }

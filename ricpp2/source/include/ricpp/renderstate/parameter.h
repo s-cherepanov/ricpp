@@ -193,10 +193,10 @@ namespace RiCPP {
 		bool hasColor() const;
 	}; // CParameterList
 
+
 	class CNamedParameterList : public CParameterList {
 	private:
 		std::string m_name;
-		CColorDescr m_curColorDescr;
 
 		inline virtual void set(
 			const CValueCounts &counts,
@@ -227,7 +227,6 @@ namespace RiCPP {
 			: CParameterList(counts, dict, curColorDescr, n, tokens, params)
 		{
 			name(aName);
-			m_curColorDescr = curColorDescr;
 		}
 
 		CNamedParameterList &operator=(const CNamedParameterList &params);
@@ -254,12 +253,8 @@ namespace RiCPP {
 		{
 			return m_name.c_str();
 		}
-
-		inline const CColorDescr &colorDescr() const
-		{
-			return m_curColorDescr;
-		}
 	}; // CNamedParameterList
+
 }
 
 #endif // _RICPP_RENDERSTATE_PARAMETER_H

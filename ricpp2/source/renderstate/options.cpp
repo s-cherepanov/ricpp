@@ -73,10 +73,13 @@ COptions &COptions::operator=(const COptions &ro)
 	m_ySamples = ro.m_ySamples;
 
 	m_exposureCalled = ro.m_exposureCalled;
+
+	m_imagerName = ro.m_imagerName;
+	m_imagerParams = ro.m_imagerParams;
+
 	m_gain = ro.m_gain;
 	m_gamma = ro.m_gamma;
 
-	m_imager = ro.m_imager;
 
 	m_quantizers = ro.m_quantizers;
 
@@ -92,7 +95,7 @@ COptions &COptions::operator=(const COptions &ro)
 	m_displayChannels = ro.m_displayChannels;
 
 	m_hiderType = ro.m_hiderType;
-	m_hider = ro.m_hider;
+	m_hiderParams = ro.m_hiderParams;
 
 	m_relativeDetail = ro.m_relativeDetail;
 
@@ -504,13 +507,14 @@ RtVoid COptions::colorExposure(std::vector<RtFloat> &colors) const
 
 void COptions::initImager()
 {
-	m_imager.name(RI_NULL);
-	m_imager.clear();
+	m_imagerName = RI_NULL;
+	m_imagerParams.clear();
 }
 
-RtVoid COptions::imagerV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid COptions::imager(RtToken name, const CParameterList &params)
 {
-	m_imager.set(CValueCounts(), dict, colorDescr(), name, n, tokens, params);
+	m_imagerName = name;
+	m_imagerParams = params;
 }
 
 // ----
@@ -649,17 +653,17 @@ COptions::Displays_type::const_iterator COptions::findDisplay(RtString name) con
 
 void COptions::initHider()
 {
-	m_hider.clear();
 	m_hiderType = def_hiderType;
-	m_hider.name(def_hiderType);
+	m_hiderParams.clear();
 }
 
-RtVoid COptions::hiderV(CDeclarationDictionary &dict, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid COptions::hider(RtToken type, const CParameterList &params)
 {
-	if ( type == RI_NULL )
-		type = RI_NULL_LIT;
+	if ( type == RI_NULL_LIT ) // "null" as null
+		type = RI_NULL;
+
 	m_hiderType = type;
-	m_hider.set(CValueCounts(), dict, colorDescr(), type, n, tokens, params);
+	m_hiderParams = params;
 }
 
 // ----

@@ -52,7 +52,7 @@ void CRiMacro::replay(IRi &ri, CRenderState &state) {
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiGeneralPolygon::CRiGeneralPolygon(
-	long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt nloops, RtInt *nverts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo), m_nLoops(nloops)
@@ -60,12 +60,12 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	m_nVerts.resize(nloops);
 	m_nVerts.assign(nverts, nverts+nloops);
 	CGeneralPolygonClasses p(nloops, nverts);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiPointsPolygons::CRiPointsPolygons(
-	long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt npolys, RtInt *nverts, RtInt *verts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo), m_nPolys(npolys)
@@ -81,12 +81,12 @@ CRiPointsPolygons::CRiPointsPolygons(
 	m_verts.assign(verts, verts+nIdx);
 
 	CPointsPolygonsClasses p(npolys, nverts, verts);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
-	long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo), m_nPolys(npolys)
@@ -108,22 +108,22 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	m_verts.assign(verts, verts+nIdx);
 
 	CPointsGeneralPolygonsClasses p(npolys, nloops, nverts, verts);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiPatchMesh::CRiPatchMesh(
-	long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize, RtInt ustep, RtInt vstep,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr, RtInt ustep, RtInt vstep,
 	RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CUVRManInterfaceCall(aLineNo), m_type(type), m_uwrap(uwrap), m_vwrap(vwrap), m_nu(nu), m_nv(nv), m_ustep(ustep), m_vstep(vstep)
 {
 	CPatchMeshClasses p(type, nu, ustep, uwrap, nv, vstep, vwrap);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-CRiNuPatch::CRiNuPatch(long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize, RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtInt n, RtToken tokens[], RtPointer params[])
+CRiNuPatch::CRiNuPatch(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr, RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtInt n, RtToken tokens[], RtPointer params[])
 	: CGeometryRManInterfaceCall(aLineNo), m_nu(nu), m_uorder(uorder), m_nv(nv), m_vorder(vorder), m_umin(umin), m_umax(umax), m_vmin(vmin), m_vmax(vmax)
 {
 	m_uknot.resize(nu+uorder);
@@ -132,12 +132,12 @@ CRiNuPatch::CRiNuPatch(long aLineNo, CDeclarationDictionary &decl, unsigned int 
 	m_vknot.assign(vknot, vknot+nv+vorder);
 
 	CNuPatchClasses p(nu, uorder, nv, vorder);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiSubdivisionMesh::CRiSubdivisionMesh(
-	long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
 	RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[],
 	RtInt n, RtToken tokens[], RtPointer params[])
@@ -198,12 +198,12 @@ CRiSubdivisionMesh::CRiSubdivisionMesh(
 	m_floargs.assign(floargs, floargs+sumargs);
 
 	CSubdivisionMeshClasses p(nfaces, nverts, verts);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiCurves::CRiCurves(
-	long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt ustep, RtInt vstep, RtToken type,
 	RtInt ncurves, RtInt nverts[], RtToken wrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
@@ -213,12 +213,12 @@ CRiCurves::CRiCurves(
 	m_nverts.assign(nverts, nverts+ncurves);
 
 	CCurvesClasses p(type, ncurves, nverts, wrap, vstep);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiBlobby::CRiBlobby(
-	long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt nleaf, RtInt ncode, RtInt code[],
 	RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
 	RtInt n, RtToken tokens[], RtPointer params[])
@@ -241,7 +241,7 @@ CRiBlobby::CRiBlobby(
 	}
 
 	CBlobbyClasses p(nleaf);
-	setParams(decl, p, curColorSize, n, tokens, params);
+	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

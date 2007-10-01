@@ -228,11 +228,13 @@ EnumTypes CTypeInfo::typePrefix(const char *type, size_t &pos)
 	return TYPE_UNKNOWN;
 }
 
-int CTypeInfo::arrayPrefix(const char *acard, size_t &pos)
+bool CTypeInfo::arrayPrefix(const char *acard, size_t &pos, unsigned long &arraySize)
 {
 	int state = 0;
-	int retval = 0;
-	if ( !acard ) return 0;
+	long retval = 1;
+	arraySize = 1;
+
+	if ( !acard ) return false;
 
 	for ( pos = 0; acard[pos]; ++pos ) {
 		if ( isspace(acard[pos]) && state != 1 )
@@ -240,10 +242,11 @@ int CTypeInfo::arrayPrefix(const char *acard, size_t &pos)
 		switch ( state ) {
 		case 0:
 			if ( acard[pos] == '[' ) {
+				retval = 0;
 				state = 1;
 				break;
 			}
-			return -1;
+			return false;
 		case 1:
 			if ( isdigit(acard[pos]) )
 				retval = retval*10+(int)(acard[pos]-'0');
@@ -257,19 +260,17 @@ int CTypeInfo::arrayPrefix(const char *acard, size_t &pos)
 				state = 3;
 				break;
 			}
-			return -1;
+			return false;
 		}
 		if ( state == 3 ) {
-			if ( retval == 0 ) {
-				// [0] is treated as error...
-				retval = -1;
-			}
+			// arraySize == 0 is possible, if [0]
 			++pos;
 			break;
 		}
 	}
 
-	return (state != 3 && state > 0) ? -1 : retval;
+	arraySize = retval;
+	return (state == 3 || state == 0);
 }
 
 

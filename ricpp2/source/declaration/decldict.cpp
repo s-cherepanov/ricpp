@@ -42,7 +42,7 @@ CDeclarationDictionary::~CDeclarationDictionary()
 	}
 }
 
-const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const char *table, const char *var, const CTokenMap &tokenmap) const
+const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const char *table, const char *var) const
 {
 	if ( emptyStr(var) )
 		return 0;
@@ -59,7 +59,7 @@ const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const c
 		}
 		s += var;
 
-		token = tokenmap.find(s.c_str());
+		token = m_tokenMap.find(s.c_str());
 		if ( token != RI_NULL ) {
 			return find(token);
 		}
@@ -69,14 +69,14 @@ const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const c
 		s = table;
 		s += ':';
 		s += noNullStr(var);
-		token = tokenmap.find(s.c_str());
+		token = m_tokenMap.find(s.c_str());
 		if ( token != RI_NULL ) {
 			return find(token);
 		}
 	}
 
 	s = var;
-	token = tokenmap.find(s.c_str());
+	token = m_tokenMap.find(s.c_str());
 	if ( token != RI_NULL ) {
 		return find(token);
 	}
@@ -85,7 +85,7 @@ const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const c
 }
 
 const CDeclaration *CDeclarationDictionary::findAndUpdate(
-	RtToken token, unsigned int curColorSize)
+	RtToken token, const CColorDescr &curColorDescr)
 {
 	const CDeclaration *decl = find(token);
 	if ( !decl )
@@ -94,12 +94,12 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 	if ( decl->type() != TYPE_COLOR )
 		return decl;
 
-	if ( decl->typeSize() == curColorSize )
+	if ( decl->colorDescr() == curColorDescr )
 		return decl;
 
 	CDeclaration *newDecl = 0;
 	try {
-		newDecl = new CDeclaration(*decl, curColorSize);
+		newDecl = new CDeclaration(*decl, curColorDescr);
 	} catch ( ... ) {
 		newDecl = 0;
 	}
@@ -117,8 +117,7 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 	RtToken tableNamespace,
 	const char *table,
 	const char *var,
-	const CTokenMap &tokenmap,
-	unsigned int curColorSize
+	const CColorDescr &curColorDescr
 )
 {
 	if ( emptyStr(var) )
@@ -136,9 +135,9 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 		}
 		s += var;
 
-		token = tokenmap.find(s.c_str());
+		token = m_tokenMap.find(s.c_str());
 		if ( token != RI_NULL ) {
-			return findAndUpdate(token, curColorSize);
+			return findAndUpdate(token, curColorDescr);
 		}
 	}
 
@@ -146,16 +145,16 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 		s = table;
 		s += ':';
 		s += noNullStr(var);
-		token = tokenmap.find(s.c_str());
+		token = m_tokenMap.find(s.c_str());
 		if ( token != RI_NULL ) {
-			return findAndUpdate(token, curColorSize);
+			return findAndUpdate(token, curColorDescr);
 		}
 	}
 
 	s = var;
-	token = tokenmap.find(s.c_str());
+	token = m_tokenMap.find(s.c_str());
 	if ( token != RI_NULL ) {
-		return findAndUpdate(token, curColorSize);
+		return findAndUpdate(token, curColorDescr);
 	}
 
 	return 0;

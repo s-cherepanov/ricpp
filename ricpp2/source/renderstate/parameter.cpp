@@ -34,7 +34,8 @@ CParameter &CParameter::operator=(const CParameter &param)
 
 	if ( param.m_declaration && param.m_declaration->isInline() ) {
 		m_declaration = new CDeclaration(*param.m_declaration);
-		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.fullName());
+		if ( !m_declaration )
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.name());
 	} else {
 		m_declaration = param.m_declaration;
 	}
@@ -49,14 +50,14 @@ CParameter &CParameter::operator=(const CParameter &param)
 	return *this;
 }
 
-const char *CParameter::fullName() const
+const char *CParameter::name() const
 {
 	return m_declaration ? m_declaration->name() : "";
 }
 
-RtToken CParameter::token() const
+RtToken CParameter::var() const
 {
-	return m_declaration ? m_declaration->token() : RI_NULL;
+	return m_declaration ? m_declaration->var() : RI_NULL;
 }
 
 void CParameter::set(
@@ -65,29 +66,31 @@ void CParameter::set(
 	unsigned int thePosition,
 	const CValueCounts &counts,
 	CDeclarationDictionary &dict,
-	unsigned int curColorSize)
+	const CColorDescr &curColorDescr)
 {
 	clear();
 	if ( !theName )
 		return;
 
 	m_position = thePosition;
-
-	const CDeclaration *decl = dict.findAndUpdate(theName, curColorSize);
+	RtToken theNameToken = dict.tokenMap().find(theName);
+	const CDeclaration *decl = 0;
+	if ( theNameToken )
+		decl = dict.findAndUpdate(theNameToken, curColorDescr);
 	if ( !decl ) {
 		// inline
-		decl = new CDeclaration(theName, curColorSize);
+		decl = new CDeclaration(theName, curColorDescr, dict.tokenMap());
 		if ( !decl ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Parameter of %s", theName);
 		}
-		if ( decl->isInline() ) {
+		if ( !decl->isInline() ) {
 			delete decl;
 			throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR, __LINE__, __FILE__, "Parameter of %s, no declaration or illegal inline declaration", theName);
 		}
 	}
 
 	m_declaration = decl;
-	unsigned long elems = m_declaration->selectNumber(counts) * m_declaration->elemSize();
+	unsigned long elems = m_declaration->selectNumberOf(counts) * m_declaration->elemSize();
 
 	if ( elems > 0 && !theData ) {
 		clear();
@@ -111,7 +114,7 @@ void CParameter::set(
 			case BASICTYPE_STRING:
 				m_strings.resize(elems);
 				for (unsigned long cnt = 0; cnt < elems; ++cnt ) {
-					m_strings[cnt] = ((const char *)theData)[cnt];
+					m_strings[cnt] = ((const char **)theData)[cnt];
 				}
 				copyStringPtr();
 				break;
@@ -146,17 +149,17 @@ RtPointer CParameter::valptr()
 CParameterList::CParameterList(
 	const CValueCounts &counts,
 	CDeclarationDictionary &dict,
-	unsigned int curColorSize,
+	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	set(counts, dict, curColorSize, n, tokens, params);
+	set(counts, dict, curColorDescr, n, tokens, params);
 }
 
 
 void CParameterList::rebuild()
 {
-	m_tokenPtr.clear();
-	m_paramPtr.clear();
+	m_tokenPtr.resize(0);
+	m_paramPtr.resize(0);
 
 	for (
 		std::list<CParameter>::iterator i = m_params.begin();
@@ -165,12 +168,14 @@ void CParameterList::rebuild()
 	{
 		CParameter &p = (*i);
 		const CDeclaration *d = p.declaration();
-		if ( d && d->isInline() ) {
-			m_tokenPtr.push_back(d->name());
-		} else {
-			m_tokenPtr.push_back(d->token());
+		if ( d ) {
+			if ( d->isInline() ) {
+				m_tokenPtr.push_back(d->name());
+			} else {
+				m_tokenPtr.push_back(d->var());
+			}
+			m_paramPtr.push_back(p.valptr());
 		}
-		m_paramPtr.push_back(p.valptr());
 	}
 }
 
@@ -186,9 +191,11 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 		i != params.end();
 		++i )
 	{
-		m_params.push_back(*i);
-		RtToken paramtok = m_params.back().token();
-		m_paramMap[paramtok] = &m_params.back();
+		if ( i->var() != RI_NULL ) {
+			m_params.push_back(*i);
+			RtToken var = m_params.back().var();
+			m_paramMap[var] = &m_params.back();
+		}
 	}
 
 	rebuild();
@@ -199,60 +206,65 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 void CParameterList::set(
 	const CValueCounts &counts,
 	CDeclarationDictionary &dict,
-	unsigned int curColorSize,
+	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
 	clear();
-	add(counts, dict, curColorSize, n, tokens, params);
+	add(counts, dict, curColorDescr, n, tokens, params);
 }
 
 void CParameterList::add(
 	const CValueCounts &counts,
 	CDeclarationDictionary &dict,
-	unsigned int curColorSize,
+	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
 	for ( RtInt i = 0; i < n; ++i ) {
-		CParameter *param = getWriteable(tokens[i]);
+		CParameter *param = get(tokens[i]);
 		if ( param ) {
 			erase(param);
 		}
-		m_params.push_back(CParameter());
-		m_params.back().set(tokens[i], params[i], i, counts, dict, curColorSize);
-		RtToken paramtok = m_params.back().token();
-		m_paramMap[paramtok] = &m_params.back();
+		try {
+			m_params.push_back(CParameter(tokens[i], params[i], i, counts, dict, curColorDescr));
+			RtToken var = m_params.back().var();
+			assert(var);
+			if ( var )
+				m_paramMap[var] = &m_params.back();
+		} catch(ExceptRiCPPError &) {
+			// Consume Error, ignore illegal parameters
+		}
 	}
 	rebuild();
 }
 
-CParameter *CParameterList::getWriteable(RtToken token)
+CParameter *CParameterList::get(RtToken var)
 {
-	Map_type::iterator i = m_paramMap.find(token);
+	Map_type::iterator i = m_paramMap.find(var);
 	if ( i != m_paramMap.end() ) {
 		return i->second;
 	}
 	return 0;
 }
 
-const CParameter *CParameterList::get(RtToken token) const
+const CParameter *CParameterList::get(RtToken var) const
 {
-	Map_type::const_iterator i = m_paramMap.find(token);
+	Map_type::const_iterator i = m_paramMap.find(var);
 	if ( i != m_paramMap.end() ) {
 		return i->second;
 	}
 	return 0;
 }
 
-bool CParameterList::erase(RtToken token)
+bool CParameterList::erase(RtToken var)
 {
-	const CParameter *param = get(token);
+	const CParameter *param = get(var);
 	if ( !param )
 		return false;
 
 	std::list<CParameter>::iterator i;
 	for ( i = m_params.begin(); i != m_params.end(); ++i ) {
 		if ( param == &(*i) ) {
-			m_paramMap.erase(param->token());
+			m_paramMap.erase(param->var());
 			m_params.erase(i);
 			rebuild();
 			return true;
@@ -270,7 +282,7 @@ bool CParameterList::erase(CParameter *param)
 	std::list<CParameter>::iterator i;
 	for ( i = m_params.begin(); i != m_params.end(); ++i ) {
 		if ( param == &(*i) ) {
-			m_paramMap.erase(param->token());
+			m_paramMap.erase(param->var());
 			m_params.erase(i);
 			rebuild();
 			return true;
@@ -307,28 +319,24 @@ CNamedParameterList &CNamedParameterList::operator=(const CNamedParameterList &p
 void CNamedParameterList::set(
 	const CValueCounts &counts,
 	CDeclarationDictionary &dict,
-	const CColorDescr &colorDescr,
+	const CColorDescr &curColorDescr,
 	const char *aName,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
 	name(aName);
-	m_curColorDescr = colorDescr;
-	CParameterList::set(counts, dict, m_curColorDescr.colorSamples(), n, tokens, params);
+	m_curColorDescr = curColorDescr;
+	CParameterList::set(counts, dict, m_curColorDescr, n, tokens, params);
 }
 
 void CNamedParameterList::add(
 	const CValueCounts &counts,
 	CDeclarationDictionary &dict,
-	const CColorDescr &colorDescr,
+	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	if ( hasColor() && m_curColorDescr != colorDescr ) {
+	if ( hasColor() && m_curColorDescr != curColorDescr ) {
 		throw(ExceptRiCPPError(RIE_CONSISTENCY, RIE_ERROR, "color descriptors of parameters differs to others of the same type"));
 	}
-
-	CParameterList::add(counts, dict, colorDescr.colorSamples(), n, tokens, params);
-
-	if ( hasColor() ) {
-		m_curColorDescr = colorDescr;
-	}
+	m_curColorDescr = curColorDescr;
+	CParameterList::add(counts, dict, curColorDescr, n, tokens, params);
 }

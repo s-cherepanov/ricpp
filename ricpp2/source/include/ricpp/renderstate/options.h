@@ -90,7 +90,6 @@ namespace RiCPP {
 
 		ClippingPlanes_type m_clippingPlanes;   //!< Additional clipping planes
 
-		CNamedParameterList m_projection;  //!< Projection, default Orthographic
 		CNamedParameterList m_imager;      //!< Imager Shader, default RI_NULL
 		CNamedParameterList m_hider;       //!< Hidden surface algorithm, default "hidden" (others are "null" and "paint")
 
@@ -114,10 +113,11 @@ namespace RiCPP {
 		RtFloat m_cropWindowBottom; //!< Crop Window (NDC), bottom edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
 		RtFloat m_cropWindowTop;    //!< Crop Window (NDC), top edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
 
-		bool m_projectionCalled;    //!< CRi::projection() is called
-		RtToken m_projectionName;  //!< Projection type, default "orthographic"
-		RtBoolean m_FOVSet;         //!< "FOV" is set in CRi::projection("perspective");
-		RtFloat m_FOV;              //!< Field of View (perspective projection), default is 90.0 (degrees)
+		bool m_projectionCalled;           //!< CRi::projection() is called
+		RtToken m_projectionName;          //!< Projection type, default "orthographic"
+		CParameterList m_projectionParams; //!< Projection parameters
+		RtBoolean m_FOVSet;                //!< RI_FOV is set in CRi::projection("perspective");
+		RtFloat m_FOV;                     //!< Field of View (perspective projection), default is 90.0 (degrees)
 
 		bool m_nearFarSet;          //!< Near and far clipping plane are set
 		RtFloat m_nearClip;         //!< Near Clipping plane, default is epsilon
@@ -277,7 +277,7 @@ namespace RiCPP {
 		RtVoid getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFloat &ymax) const;
 		RtVoid getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &ymax) const;
 
-		RtVoid projectionV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+		RtVoid projection(RtToken name, const CParameterList &params);
 		inline bool projectionCalled() const
 		{
 			return m_projectionCalled;
@@ -286,9 +286,9 @@ namespace RiCPP {
 		{
 			return m_projectionName;
 		}
-		const CNamedParameterList &projection() const
+		const CParameterList &projectionParams() const
 		{
-			return m_projection;
+			return m_projectionParams;
 		}
 		inline RtFloat fov() const
 		{
@@ -565,9 +565,9 @@ namespace RiCPP {
 			return m_riOptions->projectionName();
 		}
 
-		const CNamedParameterList &projection() const
+		const CParameterList &projectionParams() const
 		{
-			return m_riOptions->projection();
+			return m_riOptions->projectionParams();
 		}
 
 		inline RtFloat fov() const

@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/renderstate/renderstate.h"
+#include "ricpp/ricpp/ricpperror.h"
 
 using namespace RiCPP;
 
@@ -105,4 +106,26 @@ bool CRenderState::popTransform()
 		m_transformStack.pop_back();
 	}
 	return !m_transformStack.empty();
+}
+
+
+void CRenderState::startAreaLightSource(RtLightHandle h)
+{
+	m_modeStack->startAreaLightSource(h);
+}
+
+void CRenderState::endAreaLightSource() {
+	try {
+		m_modeStack->endAreaLightSource();
+	} catch (ExceptRiCPPError &err) {
+		if ( archiveName() != 0 ) {
+			err.line(lineNo());
+			err.file(archiveName());
+		}
+	}
+}
+
+void CRenderState::parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
+{
+	m_curParams.set(counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
 }

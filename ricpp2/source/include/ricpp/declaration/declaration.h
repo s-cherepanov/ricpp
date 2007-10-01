@@ -29,9 +29,9 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Header for Ri declarations
  */
-#ifndef _RICPP_DECLARATION_TOKEN_H
-#include "ricpp/declaration/token.h"
-#endif // _RICPP_DECLARATION_TOKEN_H
+#ifndef _RICPP_DECLARATION_TOKENMAP_H
+#include "ricpp/declaration/tokenmap.h"
+#endif // _RICPP_DECLARATION_TOKENMAP_H
 
 #ifndef _RICPP_DECLARATION_TYPES_H
 #include "ricpp/declaration/types.h"
@@ -60,13 +60,14 @@ class CDeclaration {
 	 */
 	std::string m_name;         
 	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...)
-	std::string m_table;        ///< Optional name of the table
-	std::string m_var;          ///< Stripped name of the variable
+	RtToken m_table;            ///< Optional name of the table
+	RtToken m_var;              ///< Stripped name of the variable
 	RtToken m_token;            ///< Token for the declaration, if not inline
 	EnumClasses m_class;        ///< Storage class of the declaration
 	EnumTypes m_type;           ///< Type of the elements
 	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type)
 	unsigned long m_arraySize;  ///< Number of elements in an array, 1 if no array declaration
+	CColorDescr m_colorDescr;   ///< Color descriptior valid while variable is definded
 	
 	/** @brief Number of basic types per element type.
 	 *
@@ -81,10 +82,11 @@ class CDeclaration {
 
 	/** @brief Parses m_name into m_namespace, m_table and m_var
 	 *  
+	 * @param tokenmap Map of all tokens of a context
 	 * @return false, if parsing cannot be done (namespace but no table name, another ':' behind the table name)
 	 * @see var()
 	 */
-	bool stripName();
+	bool stripName(CTokenMap &tokenmap);
 
 	/** @brief Parses a declaration.
 	 *
@@ -98,10 +100,10 @@ class CDeclaration {
 	 *
 	 * @param name  Name of the declaration (case sensitive), 0 for inline declarations.
 	 * @param decl  The declaration string.
-	 * @param curColorSize The current size of color (number of floats).
+	 * @param tokenmap Map of all tokens of a context
 	 * @return true, if parsing was ok and false if an error was found while parsing.
 	 */
-	bool parse(const char *name, const char *decl, unsigned int curColorSize);
+	bool parse(const char *name, const char *decl, CTokenMap &tokenmap);
 
 	/** @brief Assigns a declaration instance, declaration should not be changed.
 	 *  @param decl declaration that is copied
@@ -114,24 +116,24 @@ public:
 	 * @param parameterDeclstr Inline declaration of a parameter. Only a declaration name
 	 * is considered as an error because the existence of a declaration for
 	 * \a parameterDeclstr has been tested before. Can throw a RIE_SYNTAX parsing error.
-	 * @param curColorSize The current size of color (number of floats).
+	 * @param curColorDescr The current size of color (number of floats) and it's RGB transformation
 	 * @exception ExceptRiCPPError
 	 */
-	CDeclaration(const char *parameterDeclstr, unsigned int curColorSize);
+	CDeclaration(const char *parameterDeclstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap);
 	/** @brief Standard constructor for declarations CBaseRenderer::Declare().
 	 * Can throw a RIE_SYNTAX parsing error.
 	 * @param token The token (unique string, see CTokenMap) for the declaration name, must not represent an empty string.
 	 * @param declstr The declaration.
-	 * @param curColorSize The current size of color (number of floats).
+	 * @param curColorDescr The current size of color (number of floats) and it's RGB transformation
 	 * @param isDefault A default declaration of the interface?
 	 * @exception ExceptRiCPPError
 	 */
-	CDeclaration(RtToken token, const char *declstr, unsigned int curColorSize, bool isDefault);
+	CDeclaration(RtToken token, const char *declstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap, bool isDefault);
 	/** @brief Copy constructor for declaration with different color size
 	 * @param decl The CDeclaration instance to copy
-	 * @param newColorSize The new current size of color (number of floats).
+	 * @param newColorDescr The new current size of color (number of floats) and RGB transformation.
 	 */
-	CDeclaration(const CDeclaration &decl, unsigned int newColorSize);
+	CDeclaration(const CDeclaration &decl, const CColorDescr &newColorDescr);
 
 	/** @brief Copy constructor
 	 * @param decl The CDeclaration instance to copy.
@@ -158,7 +160,7 @@ public:
 	 * 
 	 *  @return Table identifier
 	 */
-	inline const char *table() const { return m_table.c_str(); }
+	inline RtToken table() const { return m_table; }
 
 	/** @brief Gets the stripped variable name of the declaration
 	 *
@@ -178,7 +180,7 @@ public:
 	 *  @return Stripped variable name
 	 *  @see CDeclarationDictionary
 	 */
-	inline const char *var() const { return m_var.c_str(); }
+	inline RtToken var() const { return m_var; }
 
 
 	/** @brief Gets the token for the declaration name
@@ -265,7 +267,7 @@ public:
 	 *
 	 * @return Number of elements of a parameter depending on storage class.
 	 */
-	RtInt selectNumber(RtInt vertices, RtInt corners, RtInt facets, RtInt faceVertices, RtInt faceCorners) const;
+	RtInt selectNumberOf(RtInt vertices, RtInt corners, RtInt facets, RtInt faceVertices, RtInt faceCorners) const;
 
 	/** @brief Get the number of elements.
 	 *
@@ -277,11 +279,16 @@ public:
 	 *
 	 * @return Number of elements of a parameter depending on storage class.
 	 */
-	inline RtInt selectNumber(const CValueCounts &aCount) const
+	inline RtInt selectNumberOf(const CValueCounts &aCount) const
 	{
-		return selectNumber(aCount.vertices(), aCount.corners(), aCount.facets(),
+		return selectNumberOf(aCount.vertices(), aCount.corners(), aCount.facets(),
 			                aCount.faceVertices(), aCount.faceCorners());
 	}
+
+
+	/** @brief The color descriptor valid for this declaration instance
+	 */
+	const CColorDescr &colorDescr() const { return m_colorDescr; }
 }; // CDeclarartion
 
 } // namespace RiCPP

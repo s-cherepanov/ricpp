@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/renderstate/modestack.h"
+#include "ricpp/ricpp/ricpperror.h"
 
 #include <cassert>
 
@@ -362,4 +363,23 @@ void CModeStack::motionEnd()
 {
 	assert(curMode() == MODE_MOTION);
 	pop();
+}
+
+void CModeStack::startAreaLightSource(RtLightHandle h)
+{
+	if ( h == illLightHandle ) {
+		endAreaLightSource();
+	} else {
+		m_areaLightSourceHandle = h;
+		m_areaLightSourceDepth = size();
+	}
+}
+
+void CModeStack::endAreaLightSource()
+{
+	if ( size() != m_areaLightSourceDepth ) {
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR,  __LINE__, __FILE__, "%s", "Bad AreaLightSource Block");
+	}
+	m_areaLightSourceHandle = illLightHandle;
+	m_areaLightSourceDepth = 0;
 }

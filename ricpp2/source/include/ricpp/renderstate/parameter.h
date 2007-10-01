@@ -49,9 +49,11 @@ namespace RiCPP {
 			unsigned int thePosition,
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			unsigned int curColorSize)
+			const CColorDescr &curColorDescr)
 		{
-			set(theName, theData, thePosition, counts, dict, curColorSize);
+			m_declaration = 0;
+			m_position = 0;
+			set(theName, theData, thePosition, counts, dict, curColorDescr);
 		}
 
 		inline ~CParameter()
@@ -70,10 +72,10 @@ namespace RiCPP {
 			unsigned int thePosition,
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			unsigned int curColorSize);
+			const CColorDescr &curColorDescr);
 
-		const char *fullName() const;
-		RtToken token() const;
+		const char *name() const;
+		RtToken var() const;
 
 		RtPointer valptr();
 
@@ -116,7 +118,7 @@ namespace RiCPP {
 		typedef std::list<CParameter>::size_type size_type;
 
 	private:
-		typedef std::map<std::string, CParameter *> Map_type;
+		typedef std::map<RtToken, CParameter *> Map_type;
 		std::list<CParameter> m_params;
 		Map_type m_paramMap;
 
@@ -131,7 +133,7 @@ namespace RiCPP {
 		CParameterList(
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			unsigned int curColorSize,
+			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 		inline virtual ~CParameterList() {}
 
@@ -154,27 +156,27 @@ namespace RiCPP {
 
 		inline void clear()
 		{
-			m_params.clear();
+			m_params.resize(0);
 			m_paramMap.clear();
-			m_tokenPtr.clear();
-			m_paramPtr.clear();
+			m_tokenPtr.resize(0);
+			m_paramPtr.resize(0);
 		}
 
 		virtual void set(
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			unsigned int curColorSize,
+			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
 		virtual void add(
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			unsigned int curColorSize,
+			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
-		CParameter *getWriteable(RtToken token);
-		const CParameter *get(RtToken token) const;
-		bool erase(RtToken token);
+		CParameter *get(RtToken var);
+		const CParameter *get(RtToken var) const;
+		bool erase(RtToken var);
 		bool erase(CParameter *param);
 
 		inline RtToken *tokenPtr()
@@ -199,20 +201,12 @@ namespace RiCPP {
 		inline virtual void set(
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			unsigned int curColorSize,
+			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[])
 		{
-			CParameterList::set(counts, dict, curColorSize, n, tokens, params);
+			CParameterList::set(counts, dict, curColorDescr, n, tokens, params);
 		}
 
-		inline virtual void add(
-			const CValueCounts &counts,
-			CDeclarationDictionary &dict,
-			unsigned int curColorSize,
-			RtInt n, RtToken tokens[], RtPointer params[])
-		{
-			CParameterList::add(counts, dict, curColorSize, n, tokens, params);
-		}
 	public:
 		inline CNamedParameterList(const char *aName = 0)
 		{
@@ -227,13 +221,13 @@ namespace RiCPP {
 		inline CNamedParameterList(
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			const CColorDescr &colorDescr,
+			const CColorDescr &curColorDescr,
 			const char *aName,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CParameterList(counts, dict, colorDescr.colorSamples(), n, tokens, params)
+			: CParameterList(counts, dict, curColorDescr, n, tokens, params)
 		{
 			name(aName);
-			m_curColorDescr = colorDescr;
+			m_curColorDescr = curColorDescr;
 		}
 
 		CNamedParameterList &operator=(const CNamedParameterList &params);
@@ -241,14 +235,14 @@ namespace RiCPP {
 		virtual void set(
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			const CColorDescr &colorDescr,
+			const CColorDescr &curColorDescr,
 			const char *aName,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
 		virtual void add(
 			const CValueCounts &counts,
 			CDeclarationDictionary &dict,
-			const CColorDescr &colorDescr,
+			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
 		inline void name(const char *aName)

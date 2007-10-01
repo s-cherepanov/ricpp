@@ -48,7 +48,7 @@ COptions &COptions::operator=(const COptions &ro)
 
 	m_projectionCalled = ro.m_projectionCalled;
 	m_projectionName = ro.m_projectionName;
-	m_projection = ro.m_projection;
+	m_projectionParams = ro.m_projectionParams;
 	m_FOVSet = ro.m_FOVSet;
 	m_FOV = ro.m_FOV;
 
@@ -278,24 +278,22 @@ RtVoid COptions::getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &yma
 
 void COptions::initProjection()
 {
-	m_projection.clear();
-	m_projection.name(defaultProjection);
-
+	m_projectionParams.clear();
 	m_projectionCalled = false;
 	m_projectionName = defaultProjection;
 	m_FOVSet = false;
 	m_FOV = defaultCameraFOV;
 }
 
-RtVoid COptions::projectionV(CDeclarationDictionary &dict, RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid COptions::projection(RtToken name, const CParameterList &params)
 {
 	m_projectionCalled = true;
 	m_projectionName = name;
-	m_projection.set(CValueCounts(), dict, colorDescr(), m_projectionName, n, tokens, params);
+	m_projectionParams = params;
 
 	m_FOVSet = false;
 	if ( m_projectionName == RI_PERSPECTIVE ) {
-		const CParameter *p = m_projection.get(RI_FOV);
+		const CParameter *p = m_projectionParams.get(RI_FOV);
 		if ( p && p->floats().size() > 0 ) {
 			m_FOVSet = true;
 			m_FOV = p->floats()[0];

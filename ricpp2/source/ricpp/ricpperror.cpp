@@ -128,15 +128,15 @@ RtString CRiCPPErrMsg::errorSeverity(RtInt aSeverity)
 
 const char *ExceptRiCPPError::formatErrorMessage(std::string &strCode) const
 {
-	char buffer[64];
+	char buffer[128];
 	strCode.clear();
 
 	if ( !m_file.empty() ) {
 		strCode += "File [";
 #ifdef WIN32
-	sprintf_s(buffer, sizeof(buffer), "%d", m_line);
+	sprintf_s(buffer, sizeof(buffer), "%ld", m_line);
 #else
-	snprintf(buffer, sizeof(buffer)-1, "%d", m_line);
+	snprintf(buffer, sizeof(buffer)-1, "%ld", m_line);
 #endif
 		strCode += buffer;
 		strCode += ": ";
@@ -196,7 +196,7 @@ const char *ExceptRiCPPError::formatError(std::string &strCode) const
 
 ExceptRiCPPError::ExceptRiCPPError(
 	RtInt aCode, RtInt aSeverity,
-	int aLine, const char *aFile,
+	long aLine, const char *aFile,
 	RtString aMessage, ...
 	)
 {
@@ -220,7 +220,7 @@ ExceptRiCPPError::ExceptRiCPPError(
 
 void ExceptRiCPPError::set(
 	RtInt aCode, RtInt aSeverity,
-	int aLine, const char *aFile,
+	long aLine, const char *aFile,
 	RtString aMessage, ...
 	)
 {

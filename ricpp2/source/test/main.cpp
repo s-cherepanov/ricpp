@@ -290,6 +290,8 @@ void testrun(CRiCPPBridge &ri)
 
 	RtFloat floats[] = { static_cast<RtFloat>(1.234) };
 
+	RtFloat fov = static_cast<RtFloat>(90.0);
+
 	// Print error, does not abort
 	ri.errorHandler(ri.errorPrint());
 
@@ -297,6 +299,7 @@ void testrun(CRiCPPBridge &ri)
 		RtToken myOptionValue = ri.declare("myOptionValue", "float");
 		ri.colorSamples(1, frommonochr, tomonochr);
 		ri.option("myOption", myOptionValue, floats, RI_NULL);
+		ri.projection("perspective", "float[1] fov", &fov, RI_NULL);
 		ri.frameBegin(1);
 			ri.colorSamples(3, id, id);
 			ri.worldBegin();
@@ -355,7 +358,8 @@ int main(int argc, char * const argv[])
 	RtContextHandle ch1 = ri.getContext();
 	ri.end();
 
-	RtContextHandle ch2 = ri.begin("ribwriter", RI_FILE, "$HOME/test.rib", RI_NULL);
+	const char *filename = "$HOME/test.rib";
+	RtContextHandle ch2 = ri.begin("ribwriter", RI_FILE, &filename, RI_NULL);
 		ri.begin("test2.rib");
 			ri.declare("surface:tile", "    constant    float "); // syntax error
 			ri.declare("surface:tile:anarray", "    constant    float  [19] ");
@@ -414,7 +418,8 @@ int main(int argc, char * const argv[])
 		ri.end();
 	}
 
-	ri.option("searchpath", "renderer", "&:$PATH", RI_NULL);
+	const char *rendererPath = "&:$PATH";
+	ri.option("searchpath", "renderer", &rendererPath, RI_NULL);
 	ri.begin("ribwriter");
 //	ri.readArchive("../../../../ribsamples/hermite.rib", 0, RI_NULL);
 	ri.end();

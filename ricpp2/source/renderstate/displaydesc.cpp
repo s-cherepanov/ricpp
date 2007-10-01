@@ -73,7 +73,7 @@ RtVoid CDisplayChannelDescr::displayChannelV(CDeclarationDictionary &dict, const
 	if ( m_channel )
 		delete m_channel;
 
-	m_channel = new CDeclaration(aChannel, colorDescr.colorSamples());
+	m_channel = new CDeclaration(aChannel, colorDescr, dict.tokenMap());
 	set(CValueCounts(), dict, colorDescr, aChannel, n, tokens, params);
 }
 

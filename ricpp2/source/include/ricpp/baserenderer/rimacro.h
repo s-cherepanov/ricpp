@@ -121,10 +121,10 @@ public:
 	inline virtual void set(
 		const CValueCounts &counts,
 		CDeclarationDictionary &decl,
-		unsigned int curColorSize,
+		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		m_parameters.set(counts, decl, curColorSize, n, tokens, params);
+		m_parameters.set(counts, decl, curColorDescr, n, tokens, params);
 	}
 
 	inline virtual const CParameter *get(const char *name) const
@@ -136,11 +136,11 @@ public:
 	inline virtual void setParams(
 		CDeclarationDictionary &decl,
 		const CParameterClasses &p,
-		unsigned int curColorSize,
+		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		set(CValueCounts(p.vertex(), p.varying(), p.uniform(), p.faceVertex(), p.faceVarying()),
-		    decl, curColorSize, n, tokens, params);
+		    decl, curColorDescr, n, tokens, params);
 	}
 	
 	inline virtual CParameterList::size_type size() const
@@ -740,13 +740,13 @@ public:
 	inline virtual const char *className() const { return CRiProjection::myClassName(); }
 
 	inline CRiProjection(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PROJECTION; }
 	inline virtual void replay(IRi &ri, CRenderState &state)
@@ -918,13 +918,13 @@ public:
 	inline static const char *myClassName(void) { return "CRiImager"; }
 	inline virtual const char *className() const { return CRiImager::myClassName(); }
 
-	inline CRiImager(long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	inline CRiImager(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_IMAGER; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.imagerV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -960,13 +960,13 @@ public:
 	inline virtual const char *className() const { return CRiDisplayChannel::myClassName(); }
 
 	inline CRiDisplayChannel(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken channel,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_channel(channel)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLAY_CHANNEL; }
 	inline virtual void replay(IRi &ri, CRenderState &state)
@@ -988,13 +988,13 @@ public:
 	inline virtual const char *className() const { return CRiDisplay::myClassName(); }
 
 	inline CRiDisplay(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken name, RtToken type, RtToken mode,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name), m_type(type), m_mode(mode)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLAY; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.displayV(m_name.c_str(), m_type.c_str(), m_mode.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1012,13 +1012,13 @@ public:
 	inline virtual const char *className() const { return CRiHider::myClassName(); }
 
 	inline CRiHider(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_HIDER; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.hiderV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1082,13 +1082,13 @@ public:
 	inline virtual const char *className() const { return CRiOption::myClassName(); }
 
 	inline CRiOption(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OPTION; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.optionV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1114,7 +1114,7 @@ public:
 	{
 		m_handleIdx = state.lights().newLightHandleIdx();
 		CParameterClasses p;
-		setParams(state.dict(), p, state.options().colorSamples(), n, tokens, params);
+		setParams(state.dict(), p, state.options().colorDescr(), n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_LIGHT_SOURCE; }
 	inline virtual void replay(IRi &ri, CRenderState &state)
@@ -1146,7 +1146,7 @@ public:
 	{
 		m_handleIdx = state.lights().newLightHandleIdx();
 		CParameterClasses p;
-		setParams(state.dict(), p, state.options().colorSamples(), n, tokens, params);
+		setParams(state.dict(), p, state.options().colorDescr(), n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_AREA_LIGHT_SOURCE; }
 	inline virtual void replay(IRi &ri, CRenderState &state) {
@@ -1195,13 +1195,13 @@ public:
 	inline virtual const char *className() const { return CRiAttribute::myClassName(); }
 
 	inline CRiAttribute(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.attributeV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1218,9 +1218,9 @@ public:
 	inline static const char *myClassName(void) { return "CRiColor"; }
 	inline virtual const char *className() const { return CRiColor::myClassName(); }
 
-	inline CRiColor(long aLineNo, unsigned int curColorSize, RtColor Cs) : CRManInterfaceCall(aLineNo) {
-		unsigned int i;
-		for ( i=0; i<curColorSize; ++i )
+	inline CRiColor(long aLineNo, const CColorDescr &curColorDescr, RtColor Cs) : CRManInterfaceCall(aLineNo) {
+		RtInt i;
+		for ( i=0; i<curColorDescr.colorSamples(); ++i )
 			m_color.push_back(Cs[i]);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COLOR; }
@@ -1240,9 +1240,9 @@ public:
 	inline static const char *myClassName(void) { return "CRiOpacity"; }
 	inline virtual const char *className() const { return CRiOpacity::myClassName(); }
 
-	inline CRiOpacity(long aLineNo, unsigned int curColorSize, RtColor Cs) : CRManInterfaceCall(aLineNo) {
-		unsigned int i;
-		for ( i=0; i<curColorSize; ++i )
+	inline CRiOpacity(long aLineNo, const CColorDescr &curColorDescr, RtColor Cs) : CRManInterfaceCall(aLineNo) {
+		RtInt i;
+		for ( i=0; i<curColorDescr.colorSamples(); ++i )
 			m_opacity.push_back(Cs[i]);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OPACITY; }
@@ -1263,13 +1263,13 @@ public:
 	inline virtual const char *className() const { return CRiSurface::myClassName(); }
 
 	inline CRiSurface(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SURFACE; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.surfaceV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1287,13 +1287,13 @@ public:
 	inline virtual const char *className() const { return CRiAtmosphere::myClassName(); }
 
 	inline CRiAtmosphere(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATMOSPHERE; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.atmosphereV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1311,13 +1311,13 @@ public:
 	inline virtual const char *className() const { return CRiInterior::myClassName(); }
 
 	inline CRiInterior(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_INTERIOR; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.interiorV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1335,13 +1335,13 @@ public:
 	inline virtual const char *className() const { return CRiExterior::myClassName(); }
 
 	inline CRiExterior(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_EXTERIOR; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.exteriorV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1359,13 +1359,13 @@ public:
 	inline virtual const char *className() const { return CRiDisplacement::myClassName(); }
 
 	inline CRiDisplacement(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLACEMENT; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.displacementV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1760,13 +1760,13 @@ public:
 	inline virtual const char *className() const { return CRiDeformation::myClassName(); }
 
 	inline CRiDeformation(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DEFORMATION; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.deformationV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1851,13 +1851,13 @@ public:
 	inline virtual const char *className() const { return CRiPolygon::myClassName(); }
 
 	inline CRiPolygon(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nvertices,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CPolygonRManInterfaceCall(aLineNo), m_nVertices(nvertices)
 	{
 		CPolygonClasses p(nvertices);
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POLYGON; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.polygonV(m_nVertices, static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1876,7 +1876,7 @@ public:
 	inline virtual const char *className() const { return CRiGeneralPolygon::myClassName(); }
 
 	CRiGeneralPolygon(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nloops, RtInt *nverts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GENERAL_POLYGON; }
@@ -1901,7 +1901,7 @@ public:
 	inline virtual const char *className() const { return CRiPointsPolygons::myClassName(); }
 
 	CRiPointsPolygons(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npolys, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
@@ -1928,7 +1928,7 @@ public:
 	inline virtual const char *className() const { return CRiPointsGeneralPolygons::myClassName(); }
 
 	CRiPointsGeneralPolygons(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
@@ -1953,13 +1953,13 @@ public:
 	inline virtual const char *className() const { return CRiPatch::myClassName(); }
 
 	inline CRiPatch(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken type,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo), m_type(type)
 	{
 		CPatchClasses p(type);
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.patchV(m_type.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -1979,7 +1979,7 @@ public:
 	inline virtual const char *className() const { return CRiPatchMesh::myClassName(); }
 
 	CRiPatchMesh(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
@@ -2000,7 +2000,7 @@ public:
 	inline virtual const char *className() const { return CRiNuPatch::myClassName(); }
 
 	CRiNuPatch(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
@@ -2033,7 +2033,7 @@ public:
 	inline static const char *myClassName(void) { return "CRiSubdivisionMesh"; }
 	inline virtual const char *className() const { return CRiSubdivisionMesh::myClassName(); }
 
-	CRiSubdivisionMesh(long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	CRiSubdivisionMesh(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
 		RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[],
 		RtInt n, RtToken tokens[], RtPointer params[]
@@ -2075,14 +2075,14 @@ public:
 	inline virtual const char *className() const { return CRiSphere::myClassName(); }
 
 	inline CRiSphere(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo),
 		  m_radius(radius), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
 	{
 		CQuadricClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.sphereV(m_radius, m_zmin, m_zmax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2100,14 +2100,14 @@ public:
 	inline virtual const char *className() const { return CRiCone::myClassName(); }
 
 	inline CRiCone(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat height, RtFloat radius, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo),
 		  m_height(height), m_radius(radius), m_thetamax(thetamax)
 	{
 		CQuadricClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CONE; }
 	inline virtual void replay(IRi &ri, CRenderState &state) {
@@ -2127,14 +2127,14 @@ public:
 	inline virtual const char *className() const { return CRiCylinder::myClassName(); }
 
 	inline CRiCylinder(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo),
 		  m_radius(radius), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
 	{
 		CQuadricClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.cylinderV(m_radius, m_zmin, m_zmax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2153,7 +2153,7 @@ public:
 	inline virtual const char *className() const { return CRiHyperboloid::myClassName(); }
 
 	inline CRiHyperboloid(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtPoint point1, RtPoint point2, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo), m_thetamax(thetamax)
@@ -2164,7 +2164,7 @@ public:
 			m_point2[i] = point2[i];
 		}
 		CQuadricClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_HYPERBOLOID; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.hyperboloidV(m_point1, m_point2, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2182,14 +2182,14 @@ public:
 	inline virtual const char *className() const { return CRiParaboloid::myClassName(); }
 
 	inline CRiParaboloid(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo),
 		  m_rmax(rmax), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
 	{
 		CQuadricClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PARABOLOID; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.paraboloidV(m_rmax, m_zmin, m_zmax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2207,14 +2207,14 @@ public:
 	inline virtual const char *className() const { return CRiDisk::myClassName(); }
 
 	inline CRiDisk(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat height, RtFloat radius, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo),
 		  m_height(height), m_radius(radius), m_thetamax(thetamax)
 	{
 		CQuadricClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISK; }
 	inline virtual void replay(IRi &ri, CRenderState &state) {
@@ -2234,7 +2234,7 @@ public:
 	inline virtual const char *className() const { return CRiTorus::myClassName(); }
 
 	inline CRiTorus(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CUVRManInterfaceCall(aLineNo),
@@ -2242,7 +2242,7 @@ public:
 		  m_phimin(phimin), m_phimax(phimax), m_thetamax(thetamax)
 	{
 		CQuadricClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TORUS; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.torusV(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2260,13 +2260,13 @@ public:
 	inline virtual const char *className() const { return CRiPoints::myClassName(); }
 
 	inline CRiPoints(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CGeometryRManInterfaceCall(aLineNo), m_npts(npts)
 	{
 		CPointsClasses p(npts);
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.pointsV(m_npts, static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2286,7 +2286,7 @@ public:
 	inline virtual const char *className() const { return CRiCurves::myClassName(); }
 
 	CRiCurves(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt ustep, RtInt vstep, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CURVES; }
@@ -2311,7 +2311,7 @@ public:
 	inline static const char *myClassName(void) { return "CRiBlobby"; }
 	inline virtual const char *className() const { return CRiBlobby::myClassName(); }
 
-	CRiBlobby(long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+	CRiBlobby(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BLOBBY; }
@@ -2394,13 +2394,13 @@ public:
 	inline virtual const char *className() const { return CRiGeometry::myClassName(); }
 
 	inline CRiGeometry(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CGeometryRManInterfaceCall(aLineNo), m_name(name)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRY; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.geometryV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2445,14 +2445,14 @@ public:
 	inline virtual const char *className() const { return CRiMakeTexture::myClassName(); }
 
 	inline CRiMakeTexture(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex, RtToken swrap, RtToken twrap,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_pic(pic), m_tex(tex), m_swrap(swrap), m_twrap(twrap), m_swidth(swidth), m_twidth(twidth)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 		m_filterfunc = filterfunc.duplicate();
 		if ( !m_filterfunc ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiMakeTexture, m_filterfunc", __LINE__, __FILE__);
@@ -2486,14 +2486,14 @@ public:
 	inline virtual const char *className() const { return CRiMakeBump::myClassName(); }
 
 	inline CRiMakeBump(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex, RtToken swrap, RtToken twrap,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_pic(pic), m_tex(tex), m_swrap(swrap), m_twrap(twrap), m_swidth(swidth), m_twidth(twidth)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 		m_filterfunc = filterfunc.duplicate();
 		if ( !m_filterfunc ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiMakeBump, m_filterfunc", __LINE__, __FILE__);
@@ -2526,14 +2526,14 @@ public:
 	inline virtual const char *className() const { return CRiMakeLatLongEnvironment::myClassName(); }
 
 	inline CRiMakeLatLongEnvironment(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_pic(pic), m_tex(tex), m_swidth(swidth), m_twidth(twidth)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 		m_filterfunc = filterfunc.duplicate();
 		if ( !m_filterfunc ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiMakeLatLongEnvironment, m_filterfunc", __LINE__, __FILE__);
@@ -2569,7 +2569,7 @@ public:
 	inline virtual const char *className() const { return CRiMakeCubeFaceEnvironment::myClassName(); }
 
 	inline CRiMakeCubeFaceEnvironment(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *px, const char *nx, const char *py, const char *ny, const char *pz, const char *nz,
 		const char *tex, RtFloat fov,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
@@ -2577,7 +2577,7 @@ public:
 		: CVarParamRManInterfaceCall(aLineNo), m_px(px), m_nx(nx), m_py(py), m_ny(ny), m_pz(pz), m_nz(nz), m_tex(tex), m_fov(fov), m_swidth(swidth), m_twidth(twidth)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 		m_filterfunc = filterfunc.duplicate();
 		if ( !m_filterfunc ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiMakeCubeFaceEnvironment, m_filterfunc", __LINE__, __FILE__);
@@ -2608,13 +2608,13 @@ public:
 	inline virtual const char *className() const { return CRiMakeShadow::myClassName(); }
 
 	inline CRiMakeShadow(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_pic(pic), m_tex(tex)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_SHADOW; }
 	inline virtual void replay(IRi &ri, CRenderState &state) { ri.makeShadowV(m_pic.c_str(), m_tex.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
@@ -2655,13 +2655,13 @@ public:
 	inline virtual const char *className() const { return CRiReadArchive::myClassName(); }
 
 	inline CRiReadArchive(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtString filename, const IArchiveCallback *callback,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo), m_filename(filename)
 	{
 		CParameterClasses p;
-		setParams(decl, p, curColorSize, n, tokens, params);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 
 		m_callback = 0;
 		if ( callback )
@@ -2781,11 +2781,11 @@ public:
 	}
 
 	inline virtual CRiProjection *newRiProjection(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiProjection(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiProjection(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiClipping *newRiClipping(long aLineNo, RtFloat hither, RtFloat yon) {
@@ -2821,11 +2821,11 @@ public:
 	}
 
 	inline virtual CRiImager *newRiImager(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiImager(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiImager(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiQuantize *newRiQuantize(long aLineNo, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {
@@ -2833,27 +2833,27 @@ public:
 	}
 
 	inline virtual CRiDisplayChannel *newRiDisplayChannel(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken channel,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiDisplayChannel(aLineNo, decl, curColorSize, channel, n, tokens, params);
+		return new CRiDisplayChannel(aLineNo, decl, curColorDescr, channel, n, tokens, params);
 	}
 
 	inline virtual CRiDisplay *newRiDisplay(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken name, RtToken type, RtToken mode,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiDisplay(aLineNo, decl, curColorSize, name, type, mode, n, tokens, params);
+		return new CRiDisplay(aLineNo, decl, curColorDescr, name, type, mode, n, tokens, params);
 	}
 
 	inline virtual CRiHider *newRiHider(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiHider(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiHider(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiColorSamples *newRiColorSamples(long aLineNo, RtInt N, RtFloat *nRGB, RtFloat *RGBn) {
@@ -2865,11 +2865,11 @@ public:
 	}
 
 	inline virtual CRiOption *newRiOption(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiOption(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiOption(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiLightSource *newRiLightSource(
@@ -2891,59 +2891,59 @@ public:
 	}
 
 	inline virtual CRiAttribute *newRiAttribute(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiAttribute(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiAttribute(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
-	inline virtual CRiColor *newRiColor(long aLineNo, RtInt size, RtColor Cs) {
-		return new CRiColor(aLineNo, size, Cs);
+	inline virtual CRiColor *newRiColor(long aLineNo, const CColorDescr &curColorDescr, RtColor Cs) {
+		return new CRiColor(aLineNo, curColorDescr, Cs);
 	}
 
-	inline virtual CRiOpacity *newRiOpacity(long aLineNo, RtInt size, RtColor Cs) {
-		return new CRiOpacity(aLineNo, size, Cs);
+	inline virtual CRiOpacity *newRiOpacity(long aLineNo, const CColorDescr &curColorDescr, RtColor Cs) {
+		return new CRiOpacity(aLineNo, curColorDescr, Cs);
 	}
 
 	inline virtual CRiSurface *newRiSurface(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiSurface(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiSurface(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiAtmosphere *newRiAtmosphere(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiAtmosphere(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiAtmosphere(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiInterior *newRiInterior(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiInterior(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiInterior(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiExterior *newRiExterior(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiExterior(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiExterior(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiDisplacement *newRiDisplacement(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiDisplacement(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiDisplacement(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiTextureCoordinates *newRiTextureCoordinates(long aLineNo, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {
@@ -3039,11 +3039,11 @@ public:
 	}
 
 	inline virtual CRiDeformation *newRiDeformation(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiDeformation(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiDeformation(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiCoordinateSystem *newRiCoordinateSystem(long aLineNo, const char *name) {
@@ -3059,148 +3059,148 @@ public:
 	}
 
 	inline virtual CRiPolygon *newRiPolygon(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nvertices,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiPolygon(aLineNo, decl, curColorSize, nvertices, n, tokens, params);
+		return new CRiPolygon(aLineNo, decl, curColorDescr, nvertices, n, tokens, params);
 	}
 
 	inline virtual CRiGeneralPolygon *newRiGeneralPolygon(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nloops, RtInt *nverts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiGeneralPolygon(aLineNo, decl, curColorSize, nloops, nverts, n, tokens, params);
+		return new CRiGeneralPolygon(aLineNo, decl, curColorDescr, nloops, nverts, n, tokens, params);
 	}
 
 	inline virtual CRiPointsPolygons *newRiPointsPolygons(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npolys, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiPointsPolygons(aLineNo, decl, curColorSize, npolys, nverts, verts, n, tokens, params);
+		return new CRiPointsPolygons(aLineNo, decl, curColorDescr, npolys, nverts, verts, n, tokens, params);
 	}
 
 	inline virtual CRiPointsGeneralPolygons *newRiPointsGeneralPolygons(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiPointsGeneralPolygons(aLineNo, decl, curColorSize, npolys, nloops, nverts, verts, n, tokens, params);
+		return new CRiPointsGeneralPolygons(aLineNo, decl, curColorDescr, npolys, nloops, nverts, verts, n, tokens, params);
 	}
 
 	inline virtual CRiPatch *newRiPatch(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken type,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiPatch(aLineNo, decl, curColorSize, type, n, tokens, params);
+		return new CRiPatch(aLineNo, decl, curColorDescr, type, n, tokens, params);
 	}
 
 	inline virtual CRiPatchMesh *newRiPatchMesh(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiPatchMesh(aLineNo, decl, curColorSize, ustep, vstep, type, nu, uwrap, nv, vwrap, n, tokens, params);
+		return new CRiPatchMesh(aLineNo, decl, curColorDescr, ustep, vstep, type, nu, uwrap, nv, vwrap, n, tokens, params);
 	}
 
 	inline virtual CRiNuPatch *newRiNuPatch(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiNuPatch(aLineNo, decl, curColorSize, nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
+		return new CRiNuPatch(aLineNo, decl, curColorDescr, nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
 	}
 
 	inline virtual CRiSubdivisionMesh *newRiSubdivisionMesh(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
 		RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiSubdivisionMesh(aLineNo, decl, curColorSize, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, n, tokens, params);
+		return new CRiSubdivisionMesh(aLineNo, decl, curColorDescr, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, n, tokens, params);
 	}
 
 	inline virtual CRiSphere *newRiSphere(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiSphere(aLineNo, decl, curColorSize, radius, zmin, zmax, thetamax, n, tokens, params);
+		return new CRiSphere(aLineNo, decl, curColorDescr, radius, zmin, zmax, thetamax, n, tokens, params);
 	}
 
 	inline virtual CRiCone *newRiCone(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat height, RtFloat radius, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiCone(aLineNo, decl, curColorSize, height, radius, thetamax, n, tokens, params);
+		return new CRiCone(aLineNo, decl, curColorDescr, height, radius, thetamax, n, tokens, params);
 	}
 
 	inline virtual CRiCylinder *newRiCylinder(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiCylinder(aLineNo, decl, curColorSize, radius, zmin, zmax, thetamax, n, tokens, params);
+		return new CRiCylinder(aLineNo, decl, curColorDescr, radius, zmin, zmax, thetamax, n, tokens, params);
 	}
 
 	inline virtual CRiHyperboloid *newRiHyperboloid(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtPoint point1, RtPoint point2, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiHyperboloid(aLineNo, decl, curColorSize, point1, point2, thetamax, n, tokens, params);
+		return new CRiHyperboloid(aLineNo, decl, curColorDescr, point1, point2, thetamax, n, tokens, params);
 	}
 
 	inline virtual CRiParaboloid *newRiParaboloid(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiParaboloid(aLineNo, decl, curColorSize, rmax, zmin, zmax, thetamax, n, tokens, params);
+		return new CRiParaboloid(aLineNo, decl, curColorDescr, rmax, zmin, zmax, thetamax, n, tokens, params);
 	}
 
 	inline virtual CRiDisk *newRiDisk(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat height, RtFloat radius, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiDisk(aLineNo, decl, curColorSize, height, radius, thetamax, n, tokens, params);
+		return new CRiDisk(aLineNo, decl, curColorDescr, height, radius, thetamax, n, tokens, params);
 	}
 
 	inline virtual CRiTorus *newRiTorus(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiTorus(aLineNo, decl, curColorSize, majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
+		return new CRiTorus(aLineNo, decl, curColorDescr, majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
 	}
 
 	inline virtual CRiPoints *newRiPoints(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiPoints(aLineNo, decl, curColorSize, npts, n, tokens, params);
+		return new CRiPoints(aLineNo, decl, curColorDescr, npts, n, tokens, params);
 	}
 
 	inline virtual CRiCurves *newRiCurves(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt ustep, RtInt vstep, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiCurves(aLineNo, decl, curColorSize, ustep, vstep, type, ncurves, nverts, wrap, n, tokens, params);
+		return new CRiCurves(aLineNo, decl, curColorDescr, ustep, vstep, type, ncurves, nverts, wrap, n, tokens, params);
 	}
 
 	inline virtual CRiBlobby *newRiBlobby(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiBlobby(aLineNo, decl, curColorSize, nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
+		return new CRiBlobby(aLineNo, decl, curColorDescr, nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
 	}
 
 	inline virtual CRiProcedural *newRiProcedural(long aLineNo, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc, IRi &ri) {
@@ -3208,11 +3208,11 @@ public:
 	}
 
 	inline virtual CRiGeometry *newRiGeometry(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiGeometry(aLineNo, decl, curColorSize, name, n, tokens, params);
+		return new CRiGeometry(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
 	inline virtual CRiObjectInstance *newRiObjectInstance(long aLineNo, RtObjectHandle *handle) {
@@ -3220,48 +3220,48 @@ public:
 	}
 
 	inline virtual CRiMakeTexture *newRiMakeTexture(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex, RtToken swrap, RtToken twrap,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiMakeTexture(aLineNo, decl, curColorSize, pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
+		return new CRiMakeTexture(aLineNo, decl, curColorDescr, pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
 	}
 
 	inline virtual CRiMakeBump *newRiMakeBump(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex, RtToken swrap, RtToken twrap,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiMakeBump(aLineNo, decl, curColorSize, pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
+		return new CRiMakeBump(aLineNo, decl, curColorDescr, pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
 	}
 
 	inline virtual CRiMakeLatLongEnvironment *newRiMakeLatLongEnvironment(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiMakeLatLongEnvironment(aLineNo, decl, curColorSize, pic, tex, filterfunc, swidth, twidth, n, tokens, params);
+		return new CRiMakeLatLongEnvironment(aLineNo, decl, curColorDescr, pic, tex, filterfunc, swidth, twidth, n, tokens, params);
 	}
 
 	inline virtual CRiMakeCubeFaceEnvironment *newRiMakeCubeFaceEnvironment(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *px, const char *nx, const char *py, const char *ny, const char *pz, const char *nz,
 		const char *tex, RtFloat fov,
 		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiMakeCubeFaceEnvironment(aLineNo, decl, curColorSize, px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
+		return new CRiMakeCubeFaceEnvironment(aLineNo, decl, curColorDescr, px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
 	}
 
 	inline virtual CRiMakeShadow *newRiMakeShadow(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiMakeShadow(aLineNo, decl, curColorSize, pic, tex, n, tokens, params);
+		return new CRiMakeShadow(aLineNo, decl, curColorDescr, pic, tex, n, tokens, params);
 	}
 
 	inline virtual CRiArchiveRecord *newRiArchiveRecord(long aLineNo, RtToken type, const char *line)
@@ -3270,11 +3270,11 @@ public:
 	}
 
 	inline virtual CRiReadArchive *newRiReadArchive(
-		long aLineNo, CDeclarationDictionary &decl, unsigned int curColorSize,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtString filename, const IArchiveCallback *callback,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiReadArchive(aLineNo, decl, curColorSize, filename, callback, n, tokens, params);
+		return new CRiReadArchive(aLineNo, decl, curColorDescr, filename, callback, n, tokens, params);
 	}
 
 }; // CRManInterfaceFactory

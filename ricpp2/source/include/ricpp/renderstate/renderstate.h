@@ -87,6 +87,7 @@ public:
 
 	virtual bool inWorldBlock() const = 0;
 	virtual RtLightHandle areaLightSourceHandle() const = 0;
+	virtual CModeStack::size_type areaLightSourceDepth() const = 0;
 
 	virtual CModeStack::const_iterator modesBegin() const = 0;
 	virtual CModeStack::const_iterator modesEnd() const = 0;
@@ -102,7 +103,7 @@ public:
 	 *  @return RI_NULL if token not found, token otherwise
 	 */
 	virtual RtToken tokFind(const char *name) const = 0;
-
+	virtual const CTokenMap &tokenMap() const = 0;
 	virtual CTokenMap::const_iterator tokBegin() const = 0;
 	virtual CTokenMap::const_iterator tokEnd() const = 0;
 	virtual CTokenMap::size_type tokSize() const = 0;
@@ -113,7 +114,7 @@ public:
 	 */
 	//@{
 	virtual const CDeclaration *declFind(RtToken name) const = 0;
-	virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenMap &tokenmap) const = 0;
+	virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) const = 0;
 	virtual CDeclarationDictionary::const_iterator declBegin() const = 0;
 	virtual CDeclarationDictionary::const_iterator declEnd() const = 0;
 	virtual CDeclarationDictionary::size_type declSize() const = 0;
@@ -132,6 +133,9 @@ public:
 	virtual bool hasAttributes() const = 0;
 	virtual bool hasAttributesReader() const = 0;
 	virtual bool hasTransform() const = 0;
+
+	virtual RtInt numTokens() const = 0;
+	virtual const CParameterList &curParamList() = 0;
 }; // IRenderStateReader
 
 /** @brief The facade for the render state objects.
@@ -146,8 +150,7 @@ class CRenderState : public IRenderStateReader {
 	std::string m_archiveName;         ///< Current archive name, optional
 	long m_lineNo;                     ///< Current line number in the file, -1 if not available
 
-	CDeclarationDictionary m_decldict; ///< Dictionary for declarations
-	CTokenMap m_tokenmap;              ///< Registered tokens
+	CDeclarationDictionary m_declDict; ///< Dictionary for declarations
 
 	COptionsFactory *m_optionsFactory;     ///< Create new Options
 	std::vector<COptions *> m_optionsStack; ///< Current option stack
@@ -156,6 +159,8 @@ class CRenderState : public IRenderStateReader {
 	std::vector<CAttributes *> m_attributesStack; ///< Current attributes stack
 
 	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses
+
+	CParameterList m_curParams;
 
 	CLights m_lights; ///< Global light list
 
@@ -351,8 +356,9 @@ public:
 	inline CModeStack::size_type modesSize() const { return m_modeStack->size(); }
 
 	inline virtual RtLightHandle areaLightSourceHandle() const { return m_modeStack->areaLightSourceHandle(); }
-	inline virtual void startAreaLightSource(RtLightHandle h) { m_modeStack->startAreaLightSource(h); }
-	inline virtual void endAreaLightSource() { m_modeStack->endAreaLightSource(); }
+	inline virtual CModeStack::size_type areaLightSourceDepth() const { return m_modeStack->areaLightSourceDepth(); }
+	virtual void startAreaLightSource(RtLightHandle h);
+	virtual void endAreaLightSource();
 
 	//@}
 
@@ -372,14 +378,27 @@ public:
 	inline RtToken tokFindCreate(const char *name)
 	// throw(ERendererException)
 	{
-		return m_tokenmap.findCreate(name);
+		return tokenMap().findCreate(name);
 	}
 
-	inline virtual RtToken tokFind(const char *name) const { return m_tokenmap.find(name); }
+	inline virtual const CTokenMap &tokenMap() const {return m_declDict.tokenMap();}
+	inline CTokenMap &tokenMap() {return m_declDict.tokenMap();}
 
-	inline virtual CTokenMap::const_iterator tokBegin() const { return m_tokenmap.begin(); }
-	inline virtual CTokenMap::const_iterator tokEnd() const { return m_tokenmap.end(); }
-	inline virtual CTokenMap::size_type tokSize() const { return m_tokenmap.size(); }
+	inline virtual RtToken tokFind(const char *name) const { return tokenMap().find(name); }
+	virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken tokens[], RtPointer params[]);
+
+	inline virtual RtInt numTokens() const
+	{
+		return static_cast<RtInt>(m_curParams.size());
+	}
+	inline virtual CParameterList &curParamList() { return m_curParams; }
+	inline virtual const CParameterList &curParamList() const { return m_curParams; }
+	inline virtual RtToken *tokens() { return m_curParams.tokenPtr(); }
+	inline virtual RtPointer *params() { return m_curParams.valuePtr(); }
+
+	inline virtual CTokenMap::const_iterator tokBegin() const { return tokenMap().begin(); }
+	inline virtual CTokenMap::const_iterator tokEnd() const { return tokenMap().end(); }
+	inline virtual CTokenMap::size_type tokSize() const { return tokenMap().size(); }
 	//@}
 
 	/** @defgroup decldict_group CDeclarationDictionary functions
@@ -388,28 +407,27 @@ public:
 	 *  The dictionary is filled by CBaseRenderer::declare()
 	 */
 	//@{
-	inline virtual const CDeclaration *declFind(RtToken name) const { return m_decldict.find(name); }
-	inline virtual const CDeclaration *declFind(const char *tableNamespace, const char *table, const char *var, const CTokenMap &tokenmap) const { return m_decldict.find(tableNamespace, table, var, tokenmap); }
-	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_decldict.begin(); }
-	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_decldict.end(); }
-	inline virtual CDeclarationDictionary::size_type declSize() const { return m_decldict.size(); }
-	inline const CDeclaration *declFindAndUpdate(RtToken name, unsigned int curColorSize) { return m_decldict.findAndUpdate(name, curColorSize); }
+	inline virtual const CDeclaration *declFind(RtToken name) const { return m_declDict.find(name); }
+	inline virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) const { return m_declDict.find(tableNamespace, table, var); }
+	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_declDict.begin(); }
+	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_declDict.end(); }
+	inline virtual CDeclarationDictionary::size_type declSize() const { return m_declDict.size(); }
+	inline const CDeclaration *declFindAndUpdate(RtToken name, const CColorDescr &curColorDescr) { return m_declDict.findAndUpdate(name, curColorDescr); }
 	inline const CDeclaration *declFindAndUpdate(
 		const char*tableNamespace,
 		const char *table,
 		const char *var,
-		const CTokenMap &tokenmap,
-		unsigned int curColorSize)
+		const CColorDescr &curColorDescr)
 	{
-		return m_decldict.findAndUpdate(tableNamespace, table, var, tokenmap, curColorSize);
+		return m_declDict.findAndUpdate(tableNamespace, table, var, curColorDescr);
 	}
 	inline void declAdd(CDeclaration *decl)
 	{
-		return m_decldict.add(decl);
+		return m_declDict.add(decl);
 	}
 	inline CDeclarationDictionary &dict()
 	{
-		return m_decldict;
+		return m_declDict;
 	}
 
 	inline COptions &options()

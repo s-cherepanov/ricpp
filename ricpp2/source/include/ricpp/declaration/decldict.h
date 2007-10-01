@@ -73,6 +73,8 @@ class CDeclarationDictionary
 	 */
 	class std::list<const CDeclaration *> m_all;
 
+	CTokenMap m_tokenMap;              ///< Registered tokens
+
 public:
 	/** @brief Const iterator for the elements.
 	 */
@@ -90,7 +92,10 @@ public:
 	 *
 	 * @see m_active, m_all
 	 */
-	inline CDeclarationDictionary() : m_active(false) {}
+	inline CDeclarationDictionary()
+		: m_active(false)
+	{
+	}
 	
 	/** @brief Destructor.
 	 *
@@ -107,7 +112,7 @@ public:
 	 *
 	 * @param token Token (unique string)  of the name of the declaration
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
-	 * @see find(RtToken name, unsigned int curColorSize), CTokenMap
+	 * @see find(RtToken name, const CColorDescr &colorDescr), CTokenMap
 	 */
 	inline const CDeclaration *find(RtToken token) const
 	{
@@ -130,7 +135,7 @@ public:
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
-	const CDeclaration *find(RtToken tableNamespace, const char *table, const char *var, const CTokenMap &tokenmap) const;
+	const CDeclaration *find(RtToken tableNamespace, const char *table, const char *var) const;
 
 	/** @brief Finds a declaration for a token, may change number of color components.
 	 *
@@ -140,12 +145,12 @@ public:
 	 * declaration remains stored in m_all.
 	 *
 	 * @param token Token of the name of the declaration.
-	 * @param curColorSize The current number of color components.
+	 * @param curColorDescr The current number of color components and RGB transformation
 	 * @return 0, if not found, pointer to declaration of @a name otherwise.
 	 * @exception ExceptRiCPPError Can throw this if @c RIE_NOMEM for a new color declaration.
 	 * @see find(RtToken), CTokenMap
 	 */
-	const CDeclaration *findAndUpdate(RtToken token, unsigned int curColorSize)
+	const CDeclaration *findAndUpdate(RtToken token, const CColorDescr &curColorDescr)
 	// throw (ExceptRiCPPError)
 	;
 
@@ -155,7 +160,7 @@ public:
 	 * @param table The table
 	 * @param var The stripped name of the variable
 	 * @param tokenmap The tokenmap with all tokens of a rendering context
-	 * @param curColorSize The current number of color components.
+	 * @param curColorDescr The current number of color components and RGB transformation.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(const char *, const char *, const char *, const CTokenMap &), CDeclaration
 	 */
@@ -163,8 +168,7 @@ public:
 		RtToken tableNamespace,
 		const char *table,
 		const char *var,
-		const CTokenMap &tokenmap,
-		unsigned int curColorSize)
+		const CColorDescr &curColorDescr)
 	// throw(ExceptRiCPPError)
 	;
 
@@ -194,6 +198,13 @@ public:
 	 * @return Size of the active dictionary.
 	 */
 	inline size_type size() const { return m_active.size(); }
+
+	/** @brief Gets the interface of the tokenmap.
+	 * @return Reference to the tokenmap
+	 */
+	inline CTokenMap &tokenMap() { return m_tokenMap; }
+	inline const CTokenMap &tokenMap() const { return m_tokenMap; }
+
 }; // CDeclarationDictionary
 
 } // namespace RiCPP

@@ -172,7 +172,7 @@ RtToken CBaseRenderer::handleDeclaration(RtString name, RtString declaration, bo
 		if ( !emptyStr(declaration) ) {
 		
 			try {
-				d = new CDeclaration(token, declaration, 3, isDefault); // <--- curColorSize if attributes are implemented !!!!
+				d = new CDeclaration(token, declaration, m_renderState->options().colorDescr(), m_renderState->tokenMap(), isDefault);
 			} catch (ExceptRiCPPError &e) {
 				ricppErrHandler().handleError(e);
 				return RI_NULL;
@@ -238,29 +238,9 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 	return token;
 }
 
-RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-// throw ExceptRiCPPError
+
+void CBaseRenderer::defaultDeclarations()
 {
-	// Render state is initialized here, there is no mode so it must be not valid
-	// This is the case because begin is only called through the frame work
-	// A begin at the frontend always creates a new backend.
-	if ( m_renderState ) {
-		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, "State already initialized in begin, begin called twice. That can an implementation error.");
-		return 0;
-	}
-
-	if ( !m_macroFactory )
-		m_macroFactory = getNewMacroFactory();
-
-	initRenderState(); // Can throw
-
-	try {
-		m_renderState->contextBegin();
-	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'begin'");
-		return 0;
-	}
-
 	// Default declarations
 	handleDeclaration(RI_FLATNESS, "float", true);
 	handleDeclaration(RI_FOV, "float", true);
@@ -303,7 +283,41 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 	handleDeclaration(RI_WIDTH, "varying float", true);
 	handleDeclaration(RI_CONSTANTWIDTH, "float", true);
 
+	handleDeclaration(RI_FILE, "string", true);
+}
+
+
+RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+// throw ExceptRiCPPError
+{
+	// Render state is initialized here, there is no mode so it must be not valid
+	// This is the case because begin is only called through the frame work
+	// A begin at the frontend always creates a new backend.
+	if ( m_renderState ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, "State already initialized in begin, begin called twice. That can an implementation error.");
+		return 0;
+	}
+
+	if ( !m_macroFactory )
+		m_macroFactory = getNewMacroFactory();
+
+	initRenderState(); // Can throw
+
+	try {
+		m_renderState->contextBegin();
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'begin'");
+		return 0;
+	}
+
+	defaultDeclarations();
+
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
 	doBeginV(name, n, tokens, params); // Can throw
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'begin'");
+	}
 
 	return 0;
 }
@@ -322,7 +336,9 @@ RtVoid CBaseRenderer::end(void)
 		err.set(RIE_NESTING, RIE_WARNING, "Ended context not at begin-state");
 	}
 
-	if ( m_renderState->areaLightSourceHandle() != illLightHandle ) {
+	if ( m_renderState->areaLightSourceHandle() != illLightHandle &&
+	     m_renderState->areaLightSourceDepth() == m_renderState->modesSize() )
+	{
 		doAreaLightSourceV(m_renderState->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
 		m_renderState->endAreaLightSource();
 	}
@@ -384,7 +400,9 @@ RtVoid CBaseRenderer::frameEnd(void)
 	if ( !preCheck(REQ_FRAME_END) )
 		return;
 	
-	if ( m_renderState->areaLightSourceHandle() != illLightHandle ) {
+	if ( m_renderState->areaLightSourceHandle() != illLightHandle &&
+	     m_renderState->areaLightSourceDepth() == m_renderState->modesSize() )
+	{
 		doAreaLightSourceV(m_renderState->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
 		m_renderState->endAreaLightSource();
 	}
@@ -447,7 +465,9 @@ RtVoid CBaseRenderer::worldEnd(void)
 	if ( !preCheck(REQ_WORLD_END) )
 		return;
 	
-	if ( m_renderState->areaLightSourceHandle() != illLightHandle ) {
+	if ( m_renderState->areaLightSourceHandle() != illLightHandle &&
+	     m_renderState->areaLightSourceDepth() == m_renderState->modesSize() )
+	{
 		doAreaLightSourceV(m_renderState->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
 		m_renderState->endAreaLightSource();
 	}
@@ -509,7 +529,9 @@ RtVoid CBaseRenderer::attributeEnd(void)
 	if ( !preCheck(REQ_ATTRIBUTE_END) )
 		return;
 	
-	if ( m_renderState->areaLightSourceHandle() != illLightHandle ) {
+	if ( m_renderState->areaLightSourceHandle() != illLightHandle &&
+	     m_renderState->areaLightSourceDepth() == m_renderState->modesSize() )
+	{
 		doAreaLightSourceV(m_renderState->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
 		m_renderState->endAreaLightSource();
 	}
@@ -592,48 +614,22 @@ RtVoid CBaseRenderer::transformEnd(void)
 }
 
 
-RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !preCheck(REQ_READ_ARCHIVE) )
-		return;
 
-	doReadArchiveV(name, callback, n, tokens, params);
-}
+RtVoid CBaseRenderer::solidBegin(RtToken type){}
+RtVoid CBaseRenderer::solidEnd(void) {}
 
-RtVoid CBaseRenderer::doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	CUri sav(m_baseUri);
-	const char *oldArchiveName = m_renderState->archiveName();
-	long oldLineNo = m_renderState->lineNo();
+RtObjectHandle CBaseRenderer::objectBegin(void) { return illObjectHandle; }
+RtVoid CBaseRenderer::objectEnd(void) {}
+RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle) {}
 
-	CRibParser parser(*m_ri, *m_errorHandler, *m_protocolHandler, *m_ribFilter, *m_renderState, m_baseUri);
-	try {
-		if ( parser.canParse(name) ) {
-			m_baseUri = parser.absUri();
-			m_renderState->archiveName(name);
-			m_renderState->lineNo(0);
-			parser.parse(callback, n, tokens, params);
-			m_renderState->archiveName(oldArchiveName);
-			m_renderState->lineNo(oldLineNo);
-			m_baseUri = sav;
-			parser.close();
-		}
-	} catch(ExceptRiCPPError &err) {
-		m_baseUri = sav;
-		m_renderState->archiveName(oldArchiveName);
-		m_renderState->lineNo(oldLineNo);
-		parser.close();
-		ricppErrHandler().handleError(err);
-		return;
-	} catch(...) {
-		m_baseUri = sav;
-		m_renderState->archiveName(oldArchiveName);
-		m_renderState->lineNo(oldLineNo);
-		parser.close();
-		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "unknown error");
-		return;
-	}
-}
+RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[]) {}
+RtVoid CBaseRenderer::motionEnd(void) {}
+
+RtVoid CBaseRenderer::resourceBegin(void) {}
+RtVoid CBaseRenderer::resourceEnd(void) {}
+
+RtArchiveHandle CBaseRenderer::archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illArchiveHandle; }
+RtVoid CBaseRenderer::archiveEnd(void) {}
 
 
 RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
@@ -741,13 +737,16 @@ RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPo
 	if ( !preCheck(REQ_PROJECTION) )
 		return;
 
-	m_renderState->options().projectionV(m_renderState->dict(), name, n, tokens, params);
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
+	m_renderState->options().projection(name, m_renderState->curParamList());
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiProjection *m = m_macroFactory->newRiProjection(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiProjection *m = m_macroFactory->newRiProjection(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, m_renderState->numTokens(), m_renderState->tokens(), m_renderState->params());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiProjection", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -758,6 +757,10 @@ RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPo
 
 	} else {
 		doProjectionV(name, n, tokens, params);
+	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'projectionV'");
 	}
 }
 
@@ -975,13 +978,16 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	if ( !preCheck(REQ_IMAGER) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+	
 	m_renderState->options().imagerV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiImager *m = m_macroFactory->newRiImager(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiImager *m = m_macroFactory->newRiImager(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiImager", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -991,7 +997,11 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 		}
 
 	} else {
-		doImagerV(name, n, tokens,  params);
+		doImagerV(name, n, tokens, params);
+	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'imagerV'");
 	}
 }
 
@@ -1027,12 +1037,15 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 	if ( !preCheck(REQ_DISPLAY_CHANNEL) )
 		return;
 
+	channel = m_renderState->tokFindCreate(channel);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+	
 	m_renderState->options().displayChannelV(m_renderState->dict(), channel, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiDisplayChannel *m = m_macroFactory->newRiDisplayChannel(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), channel, n, tokens, params);
+				CRiDisplayChannel *m = m_macroFactory->newRiDisplayChannel(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), channel, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDisplayChannel", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1043,6 +1056,10 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 	} else {
 		doDisplayChannelV(channel, n, tokens, params);
 	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'displayChannelV'");
+	}
 }
 
 RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1050,13 +1067,17 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 	if ( !preCheck(REQ_DISPLAY) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	mode = m_renderState->tokFindCreate(mode);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->options().displayV(m_renderState->dict(), name, type, mode, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiDisplay *m = m_macroFactory->newRiDisplay(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, type, mode, n, tokens, params);
+				CRiDisplay *m = m_macroFactory->newRiDisplay(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, type, mode, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDisplay", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1068,6 +1089,10 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 	} else {
 		doDisplayV(name, type, mode, n, tokens, params);
 	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'displayV'");
+	}
 }
 
 
@@ -1076,13 +1101,16 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 	if ( !preCheck(REQ_HIDER) )
 		return;
 
+	type = m_renderState->tokFindCreate(type);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->options().hiderV(m_renderState->dict(), type, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiHider *m = m_macroFactory->newRiHider(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), type, n, tokens, params);
+				CRiHider *m = m_macroFactory->newRiHider(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), type, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiHider", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1093,6 +1121,10 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 
 	} else {
 		doHiderV(type, n, tokens, params);
+	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'hiderV'");
 	}
 }
 
@@ -1158,13 +1190,16 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	if ( !preCheck(REQ_OPTION) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->options().set(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiOption *m = m_macroFactory->newRiOption(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiOption *m = m_macroFactory->newRiOption(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOption", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1176,6 +1211,10 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	} else {
 		doOptionV(name, n, tokens, params);
 	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'optionV'");
+	}
 }
 
 
@@ -1184,7 +1223,10 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 	RtLightHandle h = illLightHandle;
 
 	if ( !preCheck(REQ_LIGHT_SOURCE) )
-		return illLightHandle;
+		return h;
+
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -1199,7 +1241,6 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 		} catch ( ExceptRiCPPError &e2 ) {
 			ricppErrHandler().handleError(e2);
 		}
-
 	} else {
 		try {
 			h = m_renderState->lights().lightSource(m_renderState->dict(), m_renderState->options().colorDescr(),
@@ -1208,10 +1249,13 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 		} catch ( ExceptRiCPPError &e2 ) {
 			ricppErrHandler().handleError(e2);
 		}
-		return h;
 	}
 
-	return illLightHandle;
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'lightSourceV'");
+	}
+
+	return h;
 }
 
 
@@ -1219,6 +1263,9 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 {
 	if ( !preCheck(REQ_AREA_LIGHT_SOURCE) )
 		return illLightHandle;
+
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
 
 	RtLightHandle h = m_renderState->areaLightSourceHandle();
 
@@ -1236,29 +1283,38 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 				m_curMacro->add(m);
 				h = m->handleIdx();
 				m_renderState->startAreaLightSource(h);
+
+				if ( n != m_renderState->numTokens() ) {
+					ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
+				}
 				return h;
 			}
 		} catch ( ExceptRiCPPError &e2 ) {
 			ricppErrHandler().handleError(e2);
 		}
 
-	} else {
-
-		try {
-			if ( !emptyStr(name) ) {
-				h = m_renderState->lights().lightSource(m_renderState->dict(), m_renderState->options().colorDescr(),
-					true, !m_renderState->inWorldBlock(), true, name, n, tokens, params);
-			}
-			m_renderState->startAreaLightSource(h);
-			doAreaLightSourceV(h, name, n, tokens, params);
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+		if ( n != m_renderState->numTokens() ) {
+			ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
 		}
-
-		return h;
+		return illLightHandle;
 	}
 
-	return illLightHandle;
+	try {
+		if ( !emptyStr(name) ) {
+			h = m_renderState->lights().lightSource(m_renderState->dict(), m_renderState->options().colorDescr(),
+				true, !m_renderState->inWorldBlock(), true, name, n, tokens, params);
+		}
+		m_renderState->startAreaLightSource(h);
+		doAreaLightSourceV(h, name, n, tokens, params);
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
+	}
+
+	return h;
 }
 
 
@@ -1267,13 +1323,16 @@ RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoi
 	if ( !preCheck(REQ_ATTRIBUTE) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->attributes().set(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiAttribute *m = m_macroFactory->newRiAttribute(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiAttribute *m = m_macroFactory->newRiAttribute(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttribute", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1284,6 +1343,10 @@ RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoi
 
 	} else {
 		doAttributeV(name, n, tokens, params);
+	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'attributeV'");
 	}
 }
 
@@ -1299,7 +1362,7 @@ RtVoid CBaseRenderer::color(RtColor Cs)
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiColor *m = m_macroFactory->newRiColor(m_renderState->lineNo(), m_renderState->options().colorSamples(), Cs);
+				CRiColor *m = m_macroFactory->newRiColor(m_renderState->lineNo(), m_renderState->options().colorDescr(), Cs);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiColor", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1325,7 +1388,7 @@ RtVoid CBaseRenderer::opacity(RtColor Os)
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiOpacity *m = m_macroFactory->newRiOpacity(m_renderState->lineNo(), m_renderState->options().colorSamples(), Os);
+				CRiOpacity *m = m_macroFactory->newRiOpacity(m_renderState->lineNo(), m_renderState->options().colorDescr(), Os);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOpacity", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1345,13 +1408,16 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	if ( !preCheck(REQ_SURFACE) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->attributes().surfaceV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiSurface *m = m_macroFactory->newRiSurface(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiSurface *m = m_macroFactory->newRiSurface(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiSurface", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1363,6 +1429,10 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	} else {
 		doSurfaceV(name, n, tokens, params);
 	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'surfaceV'");
+	}
 }
 
 
@@ -1371,13 +1441,16 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 	if ( !preCheck(REQ_ATMOSPHERE) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->attributes().atmosphereV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiAtmosphere *m = m_macroFactory->newRiAtmosphere(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiAtmosphere *m = m_macroFactory->newRiAtmosphere(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAtmosphere", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1389,6 +1462,10 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 	} else {
 		doAtmosphereV(name, n, tokens, params);
 	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'atmosphereV'");
+	}
 }
 
 
@@ -1397,13 +1474,16 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 	if ( !preCheck(REQ_INTERIOR) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->attributes().interiorV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiInterior *m = m_macroFactory->newRiInterior(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiInterior *m = m_macroFactory->newRiInterior(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiInterior", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1415,6 +1495,10 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 	} else {
 		doInteriorV(name, n, tokens, params);
 	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'interiorV'");
+	}
 }
 
 
@@ -1423,13 +1507,16 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 	if ( !preCheck(REQ_EXTERIOR) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->attributes().exteriorV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiExterior *m = m_macroFactory->newRiExterior(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiExterior *m = m_macroFactory->newRiExterior(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiExterior", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1440,6 +1527,10 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 
 	} else {
 		doExteriorV(name, n, tokens, params);
+	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'exteriorV'");
 	}
 }
 
@@ -1475,13 +1566,16 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 	if ( !preCheck(REQ_DISPLACEMENT) )
 		return;
 
+	name = m_renderState->tokFindCreate(name);
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+
 	m_renderState->attributes().displacementV(m_renderState->dict(), name, n, tokens, params);
 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
 			if ( m_curMacro->valid() ) {
-				CRiDisplacement *m = m_macroFactory->newRiDisplacement(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorSamples(), name, n, tokens, params);
+				CRiDisplacement *m = m_macroFactory->newRiDisplacement(m_renderState->lineNo(), m_renderState->dict(), m_renderState->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDisplacement", __LINE__, __FILE__));
 				m_curMacro->add(m);
@@ -1492,6 +1586,10 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 
 	} else {
 		doDisplacementV(name, n, tokens, params);
+	}
+
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'displacementV'");
 	}
 }
 
@@ -1683,6 +1781,7 @@ RtVoid CBaseRenderer::geometricApproximation(RtToken type, RtFloat value)
 	if ( !preCheck(REQ_GEOMETRIC_APPROXIMATION) )
 		return;
 
+	type = m_renderState->tokFindCreate(type);
 	m_renderState->attributes().geometricApproximation(type, value);
 
 	if ( m_macroFactory && m_curMacro ) {
@@ -1709,6 +1808,8 @@ RtVoid CBaseRenderer::geometricRepresentation(RtToken type)
 	if ( !preCheck(REQ_GEOMETRIC_REPRESENTATION) )
 		return;
 
+	type = m_renderState->tokFindCreate(type);
+
 	m_renderState->attributes().geometricRepresentation(type);
 
 	if ( m_macroFactory && m_curMacro ) {
@@ -1734,6 +1835,8 @@ RtVoid CBaseRenderer::orientation(RtToken anOrientation)
 {
 	if ( !preCheck(REQ_ORIENTATION) )
 		return;
+
+	anOrientation = m_renderState->tokFindCreate(anOrientation);
 
 	m_renderState->attributes().orientation(anOrientation);
 
@@ -1859,3 +1962,112 @@ RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFl
 	}
 }
 
+RtVoid CBaseRenderer::identity(void) {}
+RtVoid CBaseRenderer::transform(RtMatrix aTransform) {}
+RtVoid CBaseRenderer::concatTransform(RtMatrix aTransform) {}
+RtVoid CBaseRenderer::perspective(RtFloat fov) {}
+RtVoid CBaseRenderer::translate(RtFloat dx, RtFloat dy, RtFloat dz) {}
+RtVoid CBaseRenderer::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}
+RtVoid CBaseRenderer::scale(RtFloat dx, RtFloat dy, RtFloat dz) {}
+RtVoid CBaseRenderer::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {}
+
+RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::scopedCoordinateSystem(RtToken space) {}
+RtVoid CBaseRenderer::coordinateSystem(RtToken space) {}
+RtVoid CBaseRenderer::coordSysTransform(RtToken space) {}
+RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
+
+RtVoid CBaseRenderer::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+
+RtVoid CBaseRenderer::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
+RtVoid CBaseRenderer::makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) {}
+
+RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line) {}
+
+RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( !preCheck(REQ_READ_ARCHIVE) )
+		return;
+
+	m_renderState->parseParameters(CValueCounts(), n, tokens, params);
+	doReadArchiveV(name, callback, n, tokens, params);
+	if ( n != m_renderState->numTokens() ) {
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'readArchiveV'");
+	}
+}
+
+RtVoid CBaseRenderer::doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	CUri sav(m_baseUri);
+	const char *oldArchiveName = m_renderState->archiveName();
+	long oldLineNo = m_renderState->lineNo();
+
+	n = m_renderState->numTokens();
+	tokens = m_renderState->tokens();
+	params = m_renderState->params();
+
+	CRibParser parser(*m_ri, *m_errorHandler, *m_protocolHandler, *m_ribFilter, *m_renderState, m_baseUri);
+	try {
+		if ( parser.canParse(name) ) {
+			m_baseUri = parser.absUri();
+			m_renderState->archiveName(name);
+			m_renderState->lineNo(0);
+			parser.parse(callback, n, tokens, params);
+			m_renderState->archiveName(oldArchiveName);
+			m_renderState->lineNo(oldLineNo);
+			m_baseUri = sav;
+			parser.close();
+		}
+	} catch(ExceptRiCPPError &err) {
+		m_baseUri = sav;
+		m_renderState->archiveName(oldArchiveName);
+		m_renderState->lineNo(oldLineNo);
+		parser.close();
+		ricppErrHandler().handleError(err);
+		return;
+	} catch(...) {
+		m_baseUri = sav;
+		m_renderState->archiveName(oldArchiveName);
+		m_renderState->lineNo(oldLineNo);
+		parser.close();
+		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "unknown error");
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::ifBegin(RtString expr) {}
+RtVoid CBaseRenderer::elseIfBegin(RtString expr) {}
+RtVoid CBaseRenderer::elseBegin(void) {}
+RtVoid CBaseRenderer::ifEnd(void) {}

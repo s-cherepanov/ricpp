@@ -244,7 +244,7 @@ public:
 	 *  - == 0, no cardinality found
 	 *  -  > 0, [n] found, returns the n
 	 */
-	static int arrayPrefix(const char *acard, size_t &pos);
+	static bool arrayPrefix(const char *acard, size_t &pos, unsigned long &arraySize);
 
 	/** @brief Tries to find a namespace+':' as prefix of avar.
 	 * @param avar string possibly having namespace+':' as prefix

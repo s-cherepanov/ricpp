@@ -315,16 +315,8 @@ public:
 	inline virtual RtLightHandle areaLightSourceHandle() const { return m_areaLightSourceHandle; }
 	inline virtual size_type areaLightSourceDepth() const { return m_areaLightSourceDepth; }
 
-	inline virtual void startAreaLightSource(RtLightHandle h)
-	{
-		m_areaLightSourceHandle = h;
-		m_areaLightSourceDepth = size();
-	}
-	inline virtual void endAreaLightSource()
-	{
-		m_areaLightSourceHandle = illLightHandle;
-		m_areaLightSourceDepth = 0;
-	}
+	virtual void startAreaLightSource(RtLightHandle h);
+	virtual void endAreaLightSource();
 }; // CModeStack
 
 }

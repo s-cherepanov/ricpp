@@ -34,6 +34,10 @@
 #include "ricpp/ricpp/ricppconst.h"
 #endif // _RICPP_RICPP_RICPPCONST_H
 
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 #include <string>
 #include <exception>
 
@@ -71,7 +75,7 @@ class ExceptRiCPPError : public std::exception
 	RtInt m_code;           ///< @brief Which of error occured, 'RIE_...'
 	RtInt m_severity;       ///< @brief Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE
 	std::string m_message;  ///< @brief error string
-	int m_line;             ///< @brief Line where the error occured
+	long m_line;            ///< @brief Line where the error occured
 	std::string m_file;     ///< @brief File where the error occured
 
 public:
@@ -85,7 +89,7 @@ public:
 	 ExceptRiCPPError(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
 		 RtString aMessage = 0,
-		 int aLine = 0, const char *aFile = 0
+		 long aLine = 0, const char *aFile = 0
 		 )
 	 {
 		 set(aCode, aSeverity, aMessage, aLine, aFile);
@@ -101,7 +105,7 @@ public:
 	 */
 	 ExceptRiCPPError(
 		 RtInt aCode, RtInt aSeverity,
-		 int aLine, const char *aFile,
+		 long aLine, const char *aFile,
 		 RtString aMessage, ...
 		 );
 
@@ -128,7 +132,7 @@ public:
 	 inline void set(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
 		 RtString aMessage = 0,
-		 int aLine = 0, const char *aFile = 0
+		 long aLine = 0, const char *aFile = 0
 		 )
 	 {
 		m_code = aCode;
@@ -148,7 +152,7 @@ public:
 	 */
 	 void set(
 		 RtInt aCode, RtInt aSeverity,
-		 int aLine, const char *aFile,
+		 long aLine, const char *aFile,
 		 RtString aMessage, ...
 		 );
 
@@ -170,7 +174,15 @@ public:
 	 */
 	const char *formatErrorMessage(std::string &strCode) const;
 
-	/** @brief Gets the file string.
+	/** @brief Sets the file name string.
+	 *  @param aFile Pointer to a file name
+	 */
+	inline void file(const char *aFile)
+	{
+		m_file = noNullStr(aFile);
+	}
+
+	/** @brief Gets the file name string.
 	 *  @return Pointer to the file name stored in \a ExceptRiCPPError::m_file
 	 */
 	inline const char *file() const
@@ -178,10 +190,18 @@ public:
 		return m_file.c_str();
 	}
 
+	/** @brief Sets the line number.
+	 *  @name aLine A line number
+	 */
+	inline void line(long aLine)
+	{
+		m_line = aLine;
+	}
+
 	/** @brief Gets the line number.
 	 *  @return Line number stored in \a ExceptRiCPPError::m_line
 	 */
-	inline int line() const
+	inline long line() const
 	{
 		return m_line;
 	}

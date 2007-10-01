@@ -127,6 +127,11 @@ protected:
 		return m_errorExceptionHandler;
 	}
 
+	/** @brief Call the default declarations.
+	 *
+	 * Overload this to add more default declarations, by calling handleDeclaration().
+	 */
+	virtual void defaultDeclarations();
 
 	/** @brief Front end
 	 */
@@ -166,6 +171,7 @@ protected:
 	 * @return false if checking fails
 	 */
 	bool preCheck(EnumRequests req);
+
 public:
 	/** @brief Constructor, initializes member variables.
 	 */
@@ -253,21 +259,21 @@ public:
 	virtual RtVoid transformBegin(void);
 	virtual RtVoid transformEnd(void);
 
-	inline virtual RtVoid solidBegin(RtToken type) {}
-	inline virtual RtVoid solidEnd(void) {}
+	virtual RtVoid solidBegin(RtToken type);
+	virtual RtVoid solidEnd(void);
 
-	inline virtual RtObjectHandle objectBegin(void) { return illObjectHandle; }
-	inline virtual RtVoid objectEnd(void) {}
-	inline virtual RtVoid objectInstance(RtObjectHandle handle) {}
+	virtual RtObjectHandle objectBegin(void);
+	virtual RtVoid objectEnd(void);
+	virtual RtVoid objectInstance(RtObjectHandle handle);
 
-	inline virtual RtVoid motionBeginV(RtInt N, RtFloat times[]) {}
-	inline virtual RtVoid motionEnd(void) {}
+	virtual RtVoid motionBeginV(RtInt N, RtFloat times[]);
+	virtual RtVoid motionEnd(void);
 
-	inline virtual RtVoid resourceBegin(void) {}
-	inline virtual RtVoid resourceEnd(void) {}
+	virtual RtVoid resourceBegin(void);
+	virtual RtVoid resourceEnd(void);
 
-	inline virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illArchiveHandle; }
-	inline virtual RtVoid archiveEnd(void) {}
+	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid archiveEnd(void);
 
 	virtual RtVoid format(RtInt xres, RtInt yres, RtFloat aspect);
 	virtual RtVoid frameAspectRatio(RtFloat aspect);
@@ -318,64 +324,64 @@ public:
 	virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
 	virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
 
-	inline virtual RtVoid identity(void) {}
-	inline virtual RtVoid transform(RtMatrix aTransform) {}
-	inline virtual RtVoid concatTransform(RtMatrix aTransform) {}
-	inline virtual RtVoid perspective(RtFloat fov) {}
-	inline virtual RtVoid translate(RtFloat dx, RtFloat dy, RtFloat dz) {}
-	inline virtual RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}
-	inline virtual RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz) {}
-	inline virtual RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {}
+	virtual RtVoid identity(void);
+	virtual RtVoid transform(RtMatrix aTransform);
+	virtual RtVoid concatTransform(RtMatrix aTransform);
+	virtual RtVoid perspective(RtFloat fov);
+	virtual RtVoid translate(RtFloat dx, RtFloat dy, RtFloat dz);
+	virtual RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
+	virtual RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz);
+	virtual RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
 
-	inline virtual RtVoid deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid scopedCoordinateSystem(RtToken space) {}
-	inline virtual RtVoid coordinateSystem(RtToken space) {}
-	inline virtual RtVoid coordSysTransform(RtToken space) {}
-	inline virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
+	virtual RtVoid deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid scopedCoordinateSystem(RtToken space);
+	virtual RtVoid coordinateSystem(RtToken space);
+	virtual RtVoid coordSysTransform(RtToken space);
+	virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]);
 
-	inline virtual RtVoid polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc);
 
-	inline virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid makeTextureV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]) {}
-	inline virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid makeTextureV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid archiveRecordV(RtToken type, RtString line) {}
+	virtual RtVoid archiveRecordV(RtToken type, RtString line);
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	inline virtual RtVoid ifBegin(RtString expr) {}
-	inline virtual RtVoid elseIfBegin(RtString expr) {}
-	inline virtual RtVoid elseBegin(void) {}
-	inline virtual RtVoid ifEnd(void) {}
+	virtual RtVoid ifBegin(RtString expr);
+	virtual RtVoid elseIfBegin(RtString expr);
+	virtual RtVoid elseBegin(void);
+	virtual RtVoid ifEnd(void);
 
 protected:
 	inline virtual RtVoid doAbort(void) {}

@@ -34,45 +34,60 @@
 
 using namespace RiCPP;
 
-bool CDeclaration::stripName()
+bool CDeclaration::stripName(CTokenMap &tokenmap)
 {
+	m_namespace = NAMESPACE_UNKNOWN;
+	m_table = RI_NULL;
+	m_var = RI_NULL;
+
 	if ( m_name.empty() ) {
-		m_namespace = NAMESPACE_UNKNOWN;
-		m_table.clear();
-		m_var.clear();
 		return false;
 	}
 
 	size_t pos = 0;
+	std::string table, var;
 	const char *str = m_name.c_str();
+
 	m_namespace = CTypeInfo::namespacePrefix(str, pos);
 	if ( m_namespace != NAMESPACE_UNKNOWN ) {
 		str += pos;
 	}
 	
-	m_table = "";
-	m_table.reserve(strlen(str)+1);
+	table.reserve(strlen(str)+1);
 	for ( pos = 0; str[pos]; ++pos ) {
 		if ( str[pos] == ':' ) {
 			str += pos+1;
-			m_var = str;
-			return !m_table.empty() && !m_var.empty() && m_var.find(':') == std::string::npos; // not an empty table or name, no more :, namespace:table:var or table:var
+			var = str;
+			if ( !table.empty() && !var.empty() && var.find(':') == std::string::npos ) {
+				// not an empty table or name, no more :, namespace:table:var or table:var
+				m_table = tokenmap.findCreate(table.c_str());
+				m_var = tokenmap.findCreate(var.c_str());
+				return true;
+			}
+			return false;
 		}
-		m_table += str[pos];
+		table += str[pos];
 	}
-	m_table.clear();
-	m_var = str;
-	// no table -> no namespace
-	return m_namespace == NAMESPACE_UNKNOWN;
+	// No Table found: m_table == RI_NULL
+
+	if ( notEmptyStr(str) )
+		m_var = tokenmap.findCreate(str);
+
+	// no table, there should also be no namespace, only a variable name (?)
+	//! @todo Does namespace:variable or namespace:tablename:variable or tablename:variable work? Makes sense.
+	// return m_namespace == NAMESPACE_UNKNOWN;
+
+	// At least a variable should be found.
+	return m_var != RI_NULL;
 }
 
 
-bool CDeclaration::parse(const char *name, const char *decl, unsigned int curColorSize)
+bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap)
 {
 	// Set the name, 0 for inline declarations
 	m_name = noNullStr(name);
 	
-	m_arraySize = 0;
+	m_arraySize = 1;
 	m_typeSize = 0;
 	m_class = CLASS_UNKNOWN;
 	m_type = TYPE_UNKNOWN;
@@ -106,7 +121,7 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 			m_typeSize = CTypeInfo::typeSize(m_type);
 			// Color needs special handling
 			if ( m_type == TYPE_COLOR ) {
-				m_typeSize = curColorSize;
+				m_typeSize = m_colorDescr.colorSamples();
 			}
 		} else {
 			return false;
@@ -118,11 +133,11 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 			++decl;
 
 		// The optional array specifier [n], defaults to 1
-		m_arraySize = CTypeInfo::arrayPrefix(decl, pos);
-		if ( m_arraySize >= 1 )
+		if ( CTypeInfo::arrayPrefix(decl, pos, m_arraySize) )
 			decl += pos;
-		else
-			m_arraySize = 1;
+
+		if ( m_arraySize == 0 )
+			return false;
 
 		// Eat the whitespaces
 		pos = 0;
@@ -150,42 +165,53 @@ bool CDeclaration::parse(const char *name, const char *decl, unsigned int curCol
 
 	}
 
-	return stripName();
+	return stripName(tokenmap);
 }
 
-CDeclaration::CDeclaration(const char *parameterDeclstr, unsigned int curColorSize)
+CDeclaration::CDeclaration(const char *parameterDeclstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap)
 {
 	assert(parameterDeclstr != 0);
 
 	m_namespace = NAMESPACE_UNKNOWN;
+	m_table = RI_NULL;
+	m_var = RI_NULL;
+	m_colorDescr = curColorDescr;
+
 	m_isDefault = false; // inline declarations are never default declarations
 	m_isInline = true;   // mark inline
 	m_token = RI_NULL;
 
-	if ( !parse(0, parameterDeclstr, curColorSize) ) {
+	if ( !parse(0, parameterDeclstr, tokenmap) ) {
 		throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR, (int)0, (const char *)0, parameterDeclstr);
 	}
 }
 
-CDeclaration::CDeclaration(RtToken token, const char *declstr, unsigned int curColorSize, bool isDefault)
+CDeclaration::CDeclaration(RtToken token, const char *declstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap, bool isDefault)
 {
 	m_namespace = NAMESPACE_UNKNOWN;
+	m_table = RI_NULL;
+	m_var = RI_NULL;
+
+	m_colorDescr = curColorDescr;
+
 	m_isDefault = isDefault;
 	m_isInline = false;
-	m_token = token;
+	m_token = tokenmap.findCreate(token);
+
 	if ( m_token == RI_NULL ) {
 		throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "Declaration name is empty for \"%s\"", markEmptyStr(declstr));
 	}
-	if ( !parse(m_token, declstr, curColorSize) ) {
+	if ( !parse(m_token, declstr, tokenmap) ) {
 		throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR, 0, NULL, "\"%s\": \"%s\"", m_token, markEmptyStr(declstr));
 	}
 }
 
-CDeclaration::CDeclaration(const CDeclaration &decl, unsigned int newColorSize)
+CDeclaration::CDeclaration(const CDeclaration &decl, const CColorDescr &newColorDescr)
 {
 	*this = decl;
+	m_colorDescr = newColorDescr;
 	if ( decl.m_type == TYPE_COLOR )
-		m_typeSize = newColorSize;
+		m_typeSize = newColorDescr.colorSamples();
 }
 
 CDeclaration::CDeclaration(const CDeclaration &decl)
@@ -209,10 +235,11 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 	m_typeSize = decl.m_typeSize;
 	m_isInline = decl.m_isInline;
 	m_isDefault = decl.m_isDefault;
+	m_colorDescr = decl.m_colorDescr;
 	return *this;
 }
 
-int CDeclaration::selectNumber(int vertices, int corners, int facets, int faceVertices, int faceCorners) const
+int CDeclaration::selectNumberOf(int vertices, int corners, int facets, int faceVertices, int faceCorners) const
 {
 	int n = 1;
 	switch ( m_class ) {

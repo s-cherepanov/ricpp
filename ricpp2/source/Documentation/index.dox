@@ -180,11 +180,11 @@ class can be
 <ul>
 <li>constant     - one constant value for the whole primary</li>
 <li>uniform      - one value per face of the primary</li>
-<li>varying      - one value per vertex the values are
+<li>varying      - one value per corner the values are
                interpolated linearily</li>
 <li>vertex       - one value per vertex the values are
                interpolated like the positions</li>
-<li>facevarying  - one value per vertex of each face the values
+<li>facevarying  - one value per corner of each face the values
                are interpolated linearily across the face</li>
 <li>facevertex   - one value per vertex of each face the values
                are interpolated across the face like the positions</li>
@@ -239,7 +239,7 @@ Declare requests don't need to be replayed.
 
 If you like to declare variables for your selfwritten shaders,
 you can adopt the naming scheme of QuickRenderMan's qualified token names:
-{namespace:{table:}}var like shadertype:shadername:variablename
+[namespace:][table:]var like shadertype:shadername:variablename
 to avoid some conflicts, s.a. [kaushik]. Of course if another
 one writes a shader with the same name and shadertype the conflict
 persists. You can also generally use inline declarations.

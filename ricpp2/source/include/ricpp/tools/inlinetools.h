@@ -31,6 +31,7 @@
  */
 #include <cstring>
 #include <cmath>
+#include <cstdlib>
 
 namespace RiCPP {
 

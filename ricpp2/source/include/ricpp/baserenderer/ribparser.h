@@ -34,10 +34,6 @@
 #include "ricpp/renderstate/renderstate.h"
 #endif // _RICPP_RENDERSTATE_RENDERSTATE_H
 
-#ifndef _RICPP_RENDERSTATE_PARAMCLASSES_H
-#include "ricpp/renderstate/paramclasses.h"
-#endif // _RICPP_RENDERSTATE_PARAMCLASSES_H
-
 #ifndef _RICPP_STREAMS_BACKBUFFER_H
 #include "ricpp/streams/backbuffer.h"
 #endif // _RICPP_STREAMS_BACKBUFFER_H
@@ -381,11 +377,11 @@ namespace RiCPP {
 		{
 			return getTokenList(
 				start,
-				p.vertex(),
-				p.varying(),
-				p.uniform(),
-				p.faceVertex(),
-				p.faceVarying());
+				p.vertices(),
+				p.corners(),
+				p.facets(),
+				p.faceVertices(),
+				p.faceCorners());
 		}
 
 		void curRequest(const char *req)

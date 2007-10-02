@@ -33,6 +33,10 @@
 #include "ricpp/declaration/tokenmap.h"
 #endif // _RICPP_DECLARATION_TOKENMAP_H
 
+#ifndef _RICPP_DECLARATION_PARAMCLASSES_H
+#include "ricpp/declaration/paramclasses.h"
+#endif // _RICPP_DECLARATION_PARAMCLASSES_H
+
 #ifndef _RICPP_DECLARATION_TYPES_H
 #include "ricpp/declaration/types.h"
 #endif // _RICPP_DECLARATION_TYPES_H
@@ -52,7 +56,7 @@ namespace RiCPP {
  */
 class CDeclaration {
 	/** @brief Name of the declaration.
-	 * The name has the form [[namespace:]table:]var
+	 * The name has the form [namespace:][table:]var
 	 * (QRM notation, namespace ENamespaces, table e.g. surface shader name, var variable name),
 	 * the name as given in the declaration is the token that is stored in the
 	 * dictionary. The declaration can be overwritten by excactly the same name.
@@ -62,7 +66,7 @@ class CDeclaration {
 	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...)
 	RtToken m_table;            ///< Optional name of the table
 	RtToken m_var;              ///< Stripped name of the variable
-	RtToken m_token;            ///< Token for the declaration, if not inline
+	RtToken m_token;            ///< Token for the declaration ([namespace:][table:]var)
 	EnumClasses m_class;        ///< Storage class of the declaration
 	EnumTypes m_type;           ///< Type of the elements
 	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type)

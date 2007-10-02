@@ -55,9 +55,9 @@ const char *CParameter::name() const
 	return m_declaration ? m_declaration->name() : "";
 }
 
-RtToken CParameter::var() const
+RtToken CParameter::token() const
 {
-	return m_declaration ? m_declaration->var() : RI_NULL;
+	return m_declaration ? m_declaration->token() : RI_NULL;
 }
 
 void CParameter::set(
@@ -172,7 +172,7 @@ void CParameterList::rebuild()
 			if ( d->isInline() ) {
 				m_tokenPtr.push_back(d->name());
 			} else {
-				m_tokenPtr.push_back(d->var());
+				m_tokenPtr.push_back(d->token());
 			}
 			m_paramPtr.push_back(p.valptr());
 		}
@@ -191,9 +191,9 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 		i != params.end();
 		++i )
 	{
-		if ( i->var() != RI_NULL ) {
+		if ( i->token() != RI_NULL ) {
 			m_params.push_back(*i);
-			RtToken var = m_params.back().var();
+			RtToken var = m_params.back().token();
 			m_paramMap[var] = &m_params.back();
 		}
 	}
@@ -226,7 +226,7 @@ void CParameterList::add(
 		}
 		try {
 			m_params.push_back(CParameter(tokens[i], params[i], i, counts, dict, curColorDescr));
-			RtToken var = m_params.back().var();
+			RtToken var = m_params.back().token();
 			assert(var);
 			if ( var )
 				m_paramMap[var] = &m_params.back();
@@ -264,7 +264,7 @@ bool CParameterList::erase(RtToken var)
 	std::list<CParameter>::iterator i;
 	for ( i = m_params.begin(); i != m_params.end(); ++i ) {
 		if ( param == &(*i) ) {
-			m_paramMap.erase(param->var());
+			m_paramMap.erase(param->token());
 			m_params.erase(i);
 			rebuild();
 			return true;
@@ -282,7 +282,7 @@ bool CParameterList::erase(CParameter *param)
 	std::list<CParameter>::iterator i;
 	for ( i = m_params.begin(); i != m_params.end(); ++i ) {
 		if ( param == &(*i) ) {
-			m_paramMap.erase(param->var());
+			m_paramMap.erase(param->token());
 			m_params.erase(i);
 			rebuild();
 			return true;

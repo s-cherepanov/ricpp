@@ -286,6 +286,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\declaration\paramclasses.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\declaration\tokenmap.cpp"
 				>
 			</File>
@@ -305,6 +309,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\declaration\decldict.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\declaration\paramclasses.h"
 				>
 			</File>
 			<File

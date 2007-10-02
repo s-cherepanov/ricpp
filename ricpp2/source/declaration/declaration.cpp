@@ -154,6 +154,7 @@ bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap
 			// No name in an inline declaration is considered as error
 			if ( m_name.empty() )
 				return false;
+			m_token = tokenmap.findCreate(m_name.c_str());
 		}
 
 		// Now only white spaces may follow

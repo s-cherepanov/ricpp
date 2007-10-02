@@ -21,9 +21,9 @@
 #include "ricpp/renderstate/renderstate.h"
 #endif // _RICPP_RENDERSTATE_RENDERSTATE_H
 
-#ifndef _RICPP_RENDERSTATE_PARAMCLASSES_H
-#include "ricpp/renderstate/paramclasses.h"
-#endif // _RICPP_RENDERSTATE_PARAMCLASSES_H
+#ifndef _RICPP_DECLARATION_PARAMCLASSES_H
+#include "ricpp/declaration/paramclasses.h"
+#endif // _RICPP_DECLARATION_PARAMCLASSES_H
 
 #include <list>
 
@@ -139,7 +139,7 @@ public:
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		set(CValueCounts(p.vertex(), p.varying(), p.uniform(), p.faceVertex(), p.faceVarying()),
+		set(CValueCounts(p),
 		    decl, curColorDescr, n, tokens, params);
 	}
 	

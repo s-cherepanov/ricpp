@@ -75,7 +75,7 @@ namespace RiCPP {
 			const CColorDescr &curColorDescr);
 
 		const char *name() const;
-		RtToken var() const;
+		RtToken token() const;
 
 		RtPointer valptr();
 

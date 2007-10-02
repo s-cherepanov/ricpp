@@ -302,10 +302,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\renderstate\paramclasses.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\renderstate\parameter.cpp"
 				>
 			</File>
@@ -353,10 +349,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\optionsbase.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\renderstate\paramclasses.h"
 				>
 			</File>
 			<File

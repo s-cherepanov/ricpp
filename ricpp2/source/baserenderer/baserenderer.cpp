@@ -296,7 +296,7 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 	defaultDeclarations();
 
 	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-	doBeginV(name, n, tokens, params); // Can throw
+	doBegin(name, renderState()->curParamList()); // Can throw
 
 	if ( n != renderState()->numTokens() ) {
 		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'begin'");
@@ -322,7 +322,7 @@ RtVoid CBaseRenderer::end(void)
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
-		doAreaLightSourceV(renderState()->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
+		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
 		renderState()->endAreaLightSource();
 	}
 
@@ -386,7 +386,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
-		doAreaLightSourceV(renderState()->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
+		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
 		renderState()->endAreaLightSource();
 	}
 
@@ -451,7 +451,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
-		doAreaLightSourceV(renderState()->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
+		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
 		renderState()->endAreaLightSource();
 	}
 
@@ -515,7 +515,7 @@ RtVoid CBaseRenderer::attributeEnd(void)
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
-		doAreaLightSourceV(renderState()->areaLightSourceHandle(), RI_NULL, 0, 0, 0);
+		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
 		renderState()->endAreaLightSource();
 	}
 
@@ -991,7 +991,7 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 		}
 
 	} else {
-		doImagerV(name, n, tokens, params);
+		doImager(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1048,7 +1048,7 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 			ricppErrHandler().handleError(e2);
 		}
 	} else {
-		doDisplayChannelV(channel, n, tokens, params);
+		doDisplayChannel(channel, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1081,7 +1081,7 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 		}
 
 	} else {
-		doDisplayV(name, type, mode, n, tokens, params);
+		doDisplay(name, type, mode, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1114,7 +1114,7 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 		}
 
 	} else {
-		doHiderV(type, n, tokens, params);
+		doHider(type, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1203,7 +1203,7 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 		}
 
 	} else {
-		doOptionV(name, n, tokens, params);
+		doOption(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1239,7 +1239,7 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 		try {
 			h = renderState()->lights().lightSource(renderState()->dict(), renderState()->options().colorDescr(),
 				true, !renderState()->inWorldBlock(), false, name, n, tokens, params);
-			doLightSourceV(h, name, n, tokens, params);
+			doLightSource(h, name, renderState()->curParamList());
 		} catch ( ExceptRiCPPError &e2 ) {
 			ricppErrHandler().handleError(e2);
 		}
@@ -1299,7 +1299,7 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 				true, !renderState()->inWorldBlock(), true, name, n, tokens, params);
 		}
 		renderState()->startAreaLightSource(h);
-		doAreaLightSourceV(h, name, n, tokens, params);
+		doAreaLightSource(h, name, renderState()->curParamList());
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
 	}
@@ -1336,7 +1336,7 @@ RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoi
 		}
 
 	} else {
-		doAttributeV(name, n, tokens, params);
+		doAttribute(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1421,7 +1421,7 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		}
 
 	} else {
-		doSurfaceV(name, n, tokens, params);
+		doSurface(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1454,7 +1454,7 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 		}
 
 	} else {
-		doAtmosphereV(name, n, tokens, params);
+		doAtmosphere(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1487,7 +1487,7 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 		}
 
 	} else {
-		doInteriorV(name, n, tokens, params);
+		doInterior(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1520,7 +1520,7 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 		}
 
 	} else {
-		doExteriorV(name, n, tokens, params);
+		doExterior(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -1579,7 +1579,7 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 		}
 
 	} else {
-		doDisplacementV(name, n, tokens, params);
+		doDisplacement(name, renderState()->curParamList());
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -2015,21 +2015,21 @@ RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callba
 		return;
 
 	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-	doReadArchiveV(name, callback, n, tokens, params);
+	doReadArchive(name, callback, renderState()->curParamList());
 	if ( n != renderState()->numTokens() ) {
 		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'readArchiveV'");
 	}
 }
 
-RtVoid CBaseRenderer::doReadArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
 	CUri sav(m_baseUri);
 	const char *oldArchiveName = renderState()->archiveName();
 	long oldLineNo = renderState()->lineNo();
 
-	n = renderState()->numTokens();
-	tokens = renderState()->tokens();
-	params = renderState()->params();
+	RtInt n = renderState()->numTokens();
+	RtToken *tokens = renderState()->tokens();
+	RtPointer *paramptr = renderState()->params();
 
 	CRibParser parser(*m_ri, *m_errorHandler, *m_protocolHandler, *m_ribFilter, *renderState(), m_baseUri);
 	try {
@@ -2037,7 +2037,7 @@ RtVoid CBaseRenderer::doReadArchiveV(RtString name, const IArchiveCallback *call
 			m_baseUri = parser.absUri();
 			renderState()->archiveName(name);
 			renderState()->lineNo(0);
-			parser.parse(callback, n, tokens, params);
+			parser.parse(callback, n, tokens, paramptr);
 			renderState()->archiveName(oldArchiveName);
 			renderState()->lineNo(oldLineNo);
 			m_baseUri = sav;

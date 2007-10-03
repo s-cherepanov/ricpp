@@ -22,34 +22,6 @@ bool CRiMacro::add(CRManInterfaceCall *c) {
 	return true;
 }
 
-void CRiMacro::replay(IRi &ri, CRenderState &state, const IArchiveCallback *callback) {
-	state.archiveName(m_name.c_str());
-	std::list<CRManInterfaceCall *>::iterator i;
-	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
-		state.lineNo((*i)->lineNo());
-		if ( (*i)->interfaceIdx() == REQ_ARCHIVE_RECORD ) {
-			(*i)->replay(ri, state, callback);
-		} else if ( (*i)->interfaceIdx() == REQ_READ_ARCHIVE ) {
-			(*i)->replay(ri, state, callback);
-		} else {
-			(*i)->replay(ri, state);
-		}
-	}
-	state.lineNo(-1);
-	state.archiveName(0);
-}
-
-void CRiMacro::replay(IRi &ri, CRenderState &state) {
-	state.archiveName(m_name.c_str());
-	std::list<CRManInterfaceCall *>::iterator i;
-	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
-		state.lineNo((*i)->lineNo());
-		(*i)->replay(ri, state);
-	}
-	state.lineNo(-1);
-	state.archiveName(0);
-}
-
 
 void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback) {
 	CRenderState *state = ri.renderState();

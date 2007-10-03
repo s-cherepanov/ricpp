@@ -15,32 +15,32 @@
 
 namespace RiCPP {
 
-	const RtInt   defaultXResolution = 640;
-	const RtInt   defaultYResolution = 480;
-	const RtFloat defaultPixelAspectRatio = 1.0;
+	const RtInt   defXResolution = 640;
+	const RtInt   defYResolution = 480;
+	const RtFloat defPixelAspectRatio = 1.0;
 
-	const RtFloat defaultFrameAspectRatio = (defaultXResolution * defaultPixelAspectRatio) /
-	                                        static_cast<RtFloat>(defaultYResolution);
+	const RtFloat defFrameAspectRatio = (defXResolution * defPixelAspectRatio) /
+	                                        static_cast<RtFloat>(defYResolution);
 
-	const RtFloat defaultScreenWindowLeft = -defaultFrameAspectRatio;
-	const RtFloat defaultScreenWindowRight = defaultFrameAspectRatio;
-	const RtFloat defaultScreenWindowBottom = -1.0;
-	const RtFloat defaultScreenWindowTop = 1.0;
+	const RtFloat defScreenWindowLeft = -defFrameAspectRatio;
+	const RtFloat defScreenWindowRight = defFrameAspectRatio;
+	const RtFloat defScreenWindowBottom = -1.0;
+	const RtFloat defScreenWindowTop = 1.0;
 
-	const RtFloat defaultCropWindowLeft = defaultScreenWindowLeft;
-	const RtFloat defaultCropWindowRight = defaultScreenWindowRight;
-	const RtFloat defaultCropWindowBottom = defaultScreenWindowBottom;
-	const RtFloat defaultCropWindowTop = defaultScreenWindowTop;
+	const RtFloat defCropWindowLeft = defScreenWindowLeft;
+	const RtFloat defCropWindowRight = defScreenWindowRight;
+	const RtFloat defCropWindowBottom = defScreenWindowBottom;
+	const RtFloat defCropWindowTop = defScreenWindowTop;
 
-	const RtToken defaultProjection = RI_ORTHOGRAPHIC;
-	const RtFloat defaultCameraFOV = 90.0;
+	const RtToken defProjection = RI_ORTHOGRAPHIC;
+	const RtFloat defCameraFOV = 90.0;
 
-	const RtFloat defaultNearClip = RI_EPSILON;
-	const RtFloat defaultFarClip = RI_INFINITY;
+	const RtFloat defNearClip = RI_EPSILON;
+	const RtFloat defFarClip = RI_INFINITY;
 
-	const RtFloat defaultFstop = RI_INFINITY;
-	const RtFloat defaultFocalLength = 0;
-	const RtFloat defaultFocalDistance = 0;
+	const RtFloat defFstop = RI_INFINITY;
+	const RtFloat defFocalLength = 0;
+	const RtFloat defFocalDistance = 0;
 
 	const RtFloat defShutterOpen = 0;
 	const RtFloat defShutterClose = 0;
@@ -59,18 +59,18 @@ namespace RiCPP {
 	const RtInt defOneRGBA = 255;
 	const RtInt defMinRGBA = 0;
 	const RtInt defMaxRGBA = 255;
-	const RtFloat m_ditherAmplitudeRGBA = 0.5;
+	const RtFloat defDitherAmplitudeRGBA = 0.5;
 
 	const RtInt defOneZ = 0;
 	const RtInt defMinZ = 0;
 	const RtInt defMaxZ = 0;
-	const RtFloat m_ditherAmplitudeZ = 0;
+	const RtFloat defDitherAmplitudeZ = 0;
 
-	const RtToken def_imagerName = RI_NULL;
+	const RtToken defImagerName = RI_NULL;
 
-	const RtToken def_hiderType = RI_HIDDEN;
+	const RtToken defHiderType = RI_HIDDEN;
 
-	const RtFloat def_relativeDetail = 1.0;
+	const RtFloat defRelativeDetail = 1.0;
 
 	class COptionsReader;
 

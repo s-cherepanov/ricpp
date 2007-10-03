@@ -131,9 +131,9 @@ void COptions::init()
 void COptions::initFormat()
 {
 	m_formatCalled = false;
-	m_xResolution = defaultXResolution;
-	m_yResolution = defaultYResolution;
-	m_pixelAspectRatio = defaultPixelAspectRatio;
+	m_xResolution = defXResolution;
+	m_yResolution = defYResolution;
+	m_pixelAspectRatio = defPixelAspectRatio;
 }
 
 RtVoid COptions::format(RtInt xres, RtInt yres, RtFloat aspect)
@@ -149,7 +149,7 @@ RtVoid COptions::format(RtInt xres, RtInt yres, RtFloat aspect)
 void COptions::initFrameAspectRatio()
 {
 	m_frameAspectRatioCalled = false;
-	m_frameAspectRatio = defaultFrameAspectRatio;
+	m_frameAspectRatio = defFrameAspectRatio;
 }
 
 RtVoid COptions::frameAspectRatio(RtFloat aspect)
@@ -174,10 +174,10 @@ RtFloat COptions::frameAspectRatio() const
 RtVoid COptions::initScreenWindow()
 {
 	m_screenWindowCalled = false;
-	m_screenWindowLeft = defaultScreenWindowLeft;
-	m_screenWindowRight = defaultScreenWindowRight;
-	m_screenWindowBottom = defaultScreenWindowBottom;
-	m_screenWindowTop = defaultScreenWindowTop;
+	m_screenWindowLeft = defScreenWindowLeft;
+	m_screenWindowRight = defScreenWindowRight;
+	m_screenWindowBottom = defScreenWindowBottom;
+	m_screenWindowTop = defScreenWindowTop;
 }
 
 RtVoid COptions::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
@@ -217,10 +217,10 @@ RtVoid COptions::getScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, Rt
 RtVoid COptions::initCropWindow()
 {
 	m_cropWindowCalled = false;
-	m_cropWindowLeft = defaultCropWindowLeft;
-	m_cropWindowRight = defaultCropWindowRight;
-	m_cropWindowBottom = defaultCropWindowBottom;
-	m_cropWindowTop = defaultCropWindowTop;
+	m_cropWindowLeft = defCropWindowLeft;
+	m_cropWindowRight = defCropWindowRight;
+	m_cropWindowBottom = defCropWindowBottom;
+	m_cropWindowTop = defCropWindowTop;
 }
 
 RtVoid COptions::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
@@ -283,9 +283,9 @@ void COptions::initProjection()
 {
 	m_projectionParams.clear();
 	m_projectionCalled = false;
-	m_projectionName = defaultProjection;
+	m_projectionName = defProjection;
 	m_FOVSet = false;
-	m_FOV = defaultCameraFOV;
+	m_FOV = defCameraFOV;
 }
 
 RtVoid COptions::projection(RtToken name, const CParameterList &params)
@@ -301,7 +301,7 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 			m_FOVSet = true;
 			m_FOV = p->floats()[0];
 		} else {
-			m_FOV = defaultCameraFOV;
+			m_FOV = defCameraFOV;
 		}
 	}
 }
@@ -311,8 +311,8 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 void COptions::initClipping()
 {
 		m_nearFarSet = false;
-		m_nearClip = defaultNearClip;
-		m_farClip = defaultFarClip;
+		m_nearClip = defNearClip;
+		m_farClip = defFarClip;
 }
 
 RtVoid COptions::clipping(RtFloat hither, RtFloat yon)
@@ -344,9 +344,9 @@ RtVoid COptions::clippingPlane(const CClippingPlane &s)
 void COptions::initDepthOfField()
 {
 	m_depthOfFieldCalled = false;
-	m_fstop = defaultFstop;
-	m_focalLength = defaultFocalLength;
-	m_focalDistance = defaultFocalDistance;
+	m_fstop = defFstop;
+	m_focalLength = defFocalLength;
+	m_focalDistance = defFocalDistance;
 }
 
 RtVoid COptions::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
@@ -521,8 +521,8 @@ RtVoid COptions::imager(RtToken name, const CParameterList &params)
 
 void COptions::initQuantize()
 {
-	m_quantizers[RI_RGBA] = CQuantizer(RI_RGBA, defOneRGBA, defMinRGBA, defMaxRGBA, m_ditherAmplitudeRGBA);
-	m_quantizers[RI_Z] = CQuantizer(RI_Z, defOneZ, defMinZ, defMaxZ, m_ditherAmplitudeZ);
+	m_quantizers[RI_RGBA] = CQuantizer(RI_RGBA, defOneRGBA, defMinRGBA, defMaxRGBA, defDitherAmplitudeRGBA);
+	m_quantizers[RI_Z] = CQuantizer(RI_Z, defOneZ, defMinZ, defMaxZ, defDitherAmplitudeZ);
 }
 
 RtVoid COptions::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
@@ -653,7 +653,7 @@ COptions::Displays_type::const_iterator COptions::findDisplay(RtString name) con
 
 void COptions::initHider()
 {
-	m_hiderType = def_hiderType;
+	m_hiderType = defHiderType;
 	m_hiderParams.clear();
 }
 
@@ -670,7 +670,7 @@ RtVoid COptions::hider(RtToken type, const CParameterList &params)
 
 void COptions::initRelativeDetail()
 {
-	m_relativeDetail = def_relativeDetail;
+	m_relativeDetail = defRelativeDetail;
 }
 
 RtVoid COptions::relativeDetail(RtFloat relativedetail)

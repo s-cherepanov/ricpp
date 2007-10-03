@@ -105,7 +105,7 @@ namespace RiCPP {
 		const std::vector<std::string> &strings() const { return m_strings; }
 		const std::vector<RtString> &stringPtrs() const { return m_stringPtrs; }
 
-		const CDeclaration *declaration()
+		const CDeclaration *declaration() const
 		{
 			return m_declaration;
 		}

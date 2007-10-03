@@ -128,6 +128,8 @@ public:
 	virtual const char *archiveName() const = 0;
 	virtual long lineNo() const = 0;
 
+	virtual bool reject() const = 0;
+
 	virtual bool hasOptions() const = 0;
 	virtual bool hasOptionsReader() const = 0;
 	virtual bool hasAttributes() const = 0;
@@ -164,6 +166,8 @@ class CRenderState : public IRenderStateReader {
 
 	CLights m_lights; ///< Global light list
 
+	bool m_reject; ///< Reject requests while running, e.g. for appropriate if-then-else blocks
+
 	void pushOptions();
 	bool popOptions();
 
@@ -199,6 +203,7 @@ public:
 		m_attributesFactory = &attributesFactory;
 		m_frameNumber = 0;
 		m_lineNo = -1;
+		m_reject = false;
 		// Attribute stack and Option stack follows after implemented
 	}
 
@@ -498,6 +503,15 @@ public:
 		m_lineNo = aLineNo;
 	}
 
+	inline virtual bool reject() const
+	{
+		return m_reject;
+	}
+
+	inline virtual void reject(bool doRecect)
+	{
+		m_reject = doRecect;
+	}
 	//@}
 }; // CRenderState
 

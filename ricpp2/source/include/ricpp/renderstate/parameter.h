@@ -15,7 +15,8 @@ namespace RiCPP {
 	 *
 	 *  Stores all data needed to specify one parameter, incl. a pointer to the declaration.
 	 *  The number of faces, corners etc. needed to calculate the number of parameters
-	 *  can be determined by using the TParameterClasses classes found in the file paramclasses.h.
+	 *  can be determined by using the CParameterClasses classes found in the file paramclasses.h.
+	 *  Class handles also inline declarations.
 	 */
 	class CParameter {
 	private:
@@ -47,7 +48,7 @@ namespace RiCPP {
 			RtToken theName,
 			RtPointer theData,
 			unsigned int thePosition,
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr)
 		{
@@ -70,7 +71,7 @@ namespace RiCPP {
 			RtToken theName,
 			RtPointer theData,
 			unsigned int thePosition,
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr);
 
@@ -111,9 +112,9 @@ namespace RiCPP {
 
 	}; // CParameter
 
-
 	class CParameterList {
 	public:
+		typedef std::list<CParameter>::iterator iterator;
 		typedef std::list<CParameter>::const_iterator const_iterator;
 		typedef std::list<CParameter>::size_type size_type;
 
@@ -131,7 +132,7 @@ namespace RiCPP {
 		inline CParameterList() {}
 		inline CParameterList(const CParameterList &params) { *this = params; }
 		CParameterList(
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
@@ -144,7 +145,17 @@ namespace RiCPP {
 			return m_params.begin();
 		}
 
+		inline iterator begin()
+		{
+			return m_params.begin();
+		}
+
 		inline const_iterator end() const
+		{
+			return m_params.end();
+		}
+
+		inline iterator end()
 		{
 			return m_params.end();
 		}
@@ -163,13 +174,13 @@ namespace RiCPP {
 		}
 
 		virtual void set(
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
 		virtual void add(
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
@@ -199,7 +210,7 @@ namespace RiCPP {
 		std::string m_name;
 
 		inline virtual void set(
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[])
@@ -219,7 +230,7 @@ namespace RiCPP {
 		}
 
 		inline CNamedParameterList(
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			const char *aName,
@@ -232,14 +243,14 @@ namespace RiCPP {
 		CNamedParameterList &operator=(const CNamedParameterList &params);
 
 		virtual void set(
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			const char *aName,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
 		virtual void add(
-			const CValueCounts &counts,
+			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);

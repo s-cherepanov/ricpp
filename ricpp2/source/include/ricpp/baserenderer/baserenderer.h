@@ -129,7 +129,7 @@ protected:
 
 	/** @brief Call the default declarations.
 	 *
-	 * Overload this to add more default declarations, by calling handleDeclaration().
+	 * Overload this to add more default declarations, by calling preDeclare().
 	 */
 	virtual void defaultDeclarations();
 
@@ -161,18 +161,17 @@ protected:
 	 */
 	CUri m_baseUri;
 
-	/** @brief Create new entry in dectaration list
-	 */
-	virtual RtToken handleDeclaration(RtString name, RtString declaration, bool isDefault);
-
+public:
 	/** @brief Check validity of state for common requests.
 	 * @throw ExceptRiCPPError
 	 * @param req Number of the requests
 	 * @return false if checking fails
 	 */
-	bool preCheck(EnumRequests req);
+	virtual bool preCheck(EnumRequests req);
 
-public:
+	inline virtual CRenderState *renderState() { return m_renderState; }
+	inline virtual const CRenderState *renderState() const { return m_renderState; }
+
 	/** @brief Constructor, initializes member variables.
 	 */
 	CBaseRenderer();
@@ -383,7 +382,13 @@ public:
 	virtual RtVoid elseBegin(void);
 	virtual RtVoid ifEnd(void);
 
-protected:
+public:
+	/** @brief Create new entry in dectaration list
+	 */
+	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault);
+	virtual RtVoid preProjection(RtToken name, const CParameterList &params);
+
+public:
 	inline virtual RtVoid doAbort(void) {}
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
@@ -429,7 +434,8 @@ protected:
 
 	inline virtual RtVoid doScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {}
 	inline virtual RtVoid doCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {}
-	inline virtual RtVoid doProjectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	// inline virtual RtVoid doProjectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	inline virtual RtVoid doProjection(RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doClipping(RtFloat hither, RtFloat yon) {}
 	inline virtual RtVoid doClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {}
 	inline virtual RtVoid doDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {}

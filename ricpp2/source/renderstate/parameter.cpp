@@ -64,7 +64,7 @@ void CParameter::set(
 	RtToken theName,
 	RtPointer theData,
 	unsigned int thePosition,
-	const CValueCounts &counts,
+	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr)
 {
@@ -147,7 +147,7 @@ RtPointer CParameter::valptr()
 }
 
 CParameterList::CParameterList(
-	const CValueCounts &counts,
+	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
@@ -204,7 +204,7 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 }
 
 void CParameterList::set(
-	const CValueCounts &counts,
+	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
@@ -214,7 +214,7 @@ void CParameterList::set(
 }
 
 void CParameterList::add(
-	const CValueCounts &counts,
+	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
@@ -315,7 +315,7 @@ CNamedParameterList &CNamedParameterList::operator=(const CNamedParameterList &p
 }
 
 void CNamedParameterList::set(
-	const CValueCounts &counts,
+	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	const char *aName,
@@ -326,7 +326,7 @@ void CNamedParameterList::set(
 }
 
 void CNamedParameterList::add(
-	const CValueCounts &counts,
+	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])

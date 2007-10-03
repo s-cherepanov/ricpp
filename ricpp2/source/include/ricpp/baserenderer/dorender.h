@@ -34,6 +34,10 @@
 #include "ricpp/baserenderer/ricontext.h"
 #endif // _RICPP_BASERENDERER_RICONTEXT_H
 
+#ifndef _RICPP_RENDERERSTATE_RENDERSTATE_H
+#include "ricpp/renderstate/renderstate.h"
+#endif // _RICPP_RENDERERSTATE_RENDERSTATE_H
+
 namespace RiCPP {
 
 /** @brief Members called called with checked parameters (here from \a CBaseRenderer).
@@ -47,7 +51,16 @@ public:
 	 */
 	inline virtual ~IDoRender() {}
 
-protected:
+public:
+	virtual bool preCheck(EnumRequests req) = 0;
+	virtual CRenderState *renderState() = 0;
+	virtual const CRenderState *renderState() const = 0;
+
+public:
+	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault) = 0;
+	virtual RtVoid preProjection(RtToken name, const CParameterList &params) = 0;
+
+public:
 
 	/** @brief Special context handling (see IRiContext::abort(), IRiContext::activate(), IRiContext::deactivate()
 	 */
@@ -110,7 +123,8 @@ protected:
 
 	virtual RtVoid doScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) = 0;
     virtual RtVoid doCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) = 0;
-    virtual RtVoid doProjectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    // virtual RtVoid doProjectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid doProjection(RtToken name, const CParameterList &params) = 0;
 	virtual RtVoid doClipping(RtFloat hither, RtFloat yon) = 0;
     virtual RtVoid doClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) = 0;
     virtual RtVoid doDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance) = 0;

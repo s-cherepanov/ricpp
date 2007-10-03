@@ -64,7 +64,7 @@ public:
 	inline virtual RtToken rendererType() const { return myRendererType(); }
 
 
-protected:
+public:
 	inline virtual RtVoid doAbort(void) {}
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
@@ -110,7 +110,8 @@ protected:
 
 	inline virtual RtVoid doScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {}
     inline virtual RtVoid doCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {}
-    inline virtual RtVoid doProjectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+    // inline virtual RtVoid doProjectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+    inline virtual RtVoid doProjection(RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doClipping(RtFloat hither, RtFloat yon) {}
     inline virtual RtVoid doClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {}
     inline virtual RtVoid doDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {}

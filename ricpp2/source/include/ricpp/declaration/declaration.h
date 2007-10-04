@@ -283,7 +283,7 @@ public:
 	 *
 	 * @return Number of elements of a parameter depending on storage class.
 	 */
-	inline RtInt selectNumberOf(const CValueCounts &aCount) const
+	inline RtInt selectNumberOf(const CParameterClasses &aCount) const
 	{
 		return selectNumberOf(aCount.vertices(), aCount.corners(), aCount.facets(),
 			                aCount.faceVertices(), aCount.faceCorners());

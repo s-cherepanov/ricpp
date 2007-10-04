@@ -67,7 +67,7 @@ namespace RiCPP {
 
 //! CParameterClasses, base class for the parameter classes
 
-/*! CParameterClasses contain the signature for all C...Classes.
+/*! CParameterClasses contains the signature for all C...Classes.
     An instance of this class can be used for various interface calls,
     like shaders, lightsources, projection,
 	this means all parameters have to be constant.

@@ -7,7 +7,8 @@
 
 using namespace RiCPP;
 
-CRiMacro::~CRiMacro() {
+CRiMacro::~CRiMacro()
+{
 	std::list<CRManInterfaceCall *>::iterator i;
 	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
 		delete *i;
@@ -15,7 +16,8 @@ CRiMacro::~CRiMacro() {
 	m_callList.clear();
 }
 
-bool CRiMacro::add(CRManInterfaceCall *c) {
+bool CRiMacro::add(CRManInterfaceCall *c)
+{
 	if ( !c )
 		return false;
 	m_callList.push_back(c);
@@ -23,7 +25,8 @@ bool CRiMacro::add(CRManInterfaceCall *c) {
 }
 
 
-void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback) {
+void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
+{
 	CRenderState *state = ri.renderState();
 	if ( !state )
 		return;
@@ -52,7 +55,8 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback) {
 	state->archiveName(0);
 }
 
-void CRiMacro::replay(IDoRender &ri) {
+void CRiMacro::replay(IDoRender &ri)
+{
 	CRenderState *state = ri.renderState();
 	if ( !state )
 		return;

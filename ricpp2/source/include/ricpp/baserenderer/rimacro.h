@@ -140,10 +140,10 @@ public:
 
 	/** @brief Assignment.
 	 *
-	 *  @param c CRManInterfaceCall to assign
+	 *  @param c CRManInterfaceCall to assign.
 	 *  @return A reference to this object.
 	 */
-	inline CRManInterfaceCall &CRManInterfaceCall::operator=(const CRManInterfaceCall &c)
+	inline CRManInterfaceCall &operator=(const CRManInterfaceCall &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -162,13 +162,22 @@ private:
 	CParameterList m_parameters;             //!< Parameters of an interface call.
 
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline static const char *myClassName(void) { return "CVarParamRManInterfaceCall"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline virtual const char *className() const { return CVarParamRManInterfaceCall::myClassName(); }
 
 	/** @brief Checks if instance belongs to a specific class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to specific class atomizedClassName.
 	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
@@ -187,8 +196,11 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	//! Constructor. Empty parameter list, with line number, defaults to -1
-	/*! \param aLineNo The line number to store
+	/** @brief Constructor.
+	 *
+	 *  Constructs an empty parameter list, with line number, defaults to -1.
+	 *
+	 *  @param aLineNo The line number to store.
 	 */
 	inline CVarParamRManInterfaceCall(long aLineNo=-1) :
 		CRManInterfaceCall(aLineNo)
@@ -198,7 +210,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param Dictonary with the current declarations.
+	 *  @param dict Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -216,9 +228,9 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 
-	/* @brief Constructor.
+	/** @brief Constructor.
 	 *
-	 * @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 * @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known).
 	 * @param parameters Parsed parameter list.
 	 */
 	inline CVarParamRManInterfaceCall(
@@ -229,9 +241,9 @@ public:
 		parameters(theParameters);
 	}
 
-	/** @brief Copy constructor
+	/** @brief Copy constructor.
 	 *
-	 *  @param c Object to copy
+	 *  @param c Object to copy.
 	 */
 	inline CVarParamRManInterfaceCall(const CVarParamRManInterfaceCall &c)
 	{
@@ -249,6 +261,15 @@ public:
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CVarParamRManInterfaceCall(*this);
+	}
+
+	/** @brief Gets the size of tokens and parameters of the request.
+	 *
+	 * @return The size of tokens and parameters of the request.
+	 */
+	inline virtual CParameterList::size_type size() const
+	{
+		return m_parameters.size();
 	}
 
 	/** @brief Gets the tokens of the request.
@@ -273,23 +294,33 @@ public:
 		return m_parameters.valuePtr();
 	}
 
-
+	/** @brief Gets a writeable reference of the parameter list.
+	 *
+	 *  @return Writeable reference of the parameter list interface.
+	 */
 	inline CParameterList &parameters()
 	{
 		return m_parameters;
 	}
 
+	/** @brief Gets a read only reference of the parameter list.
+	 *
+	 *  @return Read only reference of the parameter list interface.
+	 */
 	inline const CParameterList &parameters() const
 	{
 		return m_parameters;
 	}
 
-	inline virtual const CParameter *get(RtToken name) const
-	{
-		return m_parameters.get(name);
-	}
-
-	//! Fill the parameter list
+	/** @brief Fills the parameter list.
+	 *
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	inline void setParams(
 		CDeclarationDictionary &decl,
 		const CParameterClasses &p,
@@ -299,36 +330,21 @@ public:
 		m_parameters.set(p, decl, curColorDescr, n, tokens, params);
 	}
 	
-	//! Fill the parameter list
+	/** @brief Fills the parameter list.
+	 *
+	 *  @param parameters Parsed parameter list.
+	 */
 	inline void parameters(const CParameterList &theParameters)
 	{
 		m_parameters = theParameters;
 	}
 
-	/** @brief Gets the size of tokens and parameters of the request.
+	/** @brief Assignment.
 	 *
-	 * @return The size of tokens and parameters of the request.
+	 *  @param c CVarParamRManInterfaceCall to assign.
+	 *  @return A reference to this object.
 	 */
-	inline virtual CParameterList::size_type size() const
-	{
-		return m_parameters.size();
-	}
-
-	inline virtual CParameterList::const_iterator begin() const
-	{
-		return m_parameters.begin();
-	}
-
-	inline virtual CParameterList::const_iterator end() const
-	{
-		return m_parameters.end();
-	}
-
-	//! Assignment
-	/*! \param c CRManInterfaceCall to assign
-	 *  \return *this
-	 */
-	inline CVarParamRManInterfaceCall &CVarParamRManInterfaceCall::operator=(const CVarParamRManInterfaceCall &c)
+	inline CVarParamRManInterfaceCall &operator=(const CVarParamRManInterfaceCall &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -345,13 +361,22 @@ public:
  */
 class CGeometryRManInterfaceCall : public CVarParamRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline static const char *myClassName(void) { return "CGeometryRManInterfaceCall"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline virtual const char *className() const { return CGeometryRManInterfaceCall::myClassName(); }
 
 	/** @brief Checks if instance belongs to a specific class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to specific class atomizedClassName.
 	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
@@ -370,11 +395,22 @@ public:
 		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	//! Constructor. empty parameter list, with line number
-	/*! \param aLineNo The line number to store
+	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+	 *
+	 *  @param aLineNo The line number to store.
 	 */
 	inline CGeometryRManInterfaceCall(long aLineNo=-1) : CVarParamRManInterfaceCall(aLineNo) {}
 
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store.
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	inline CGeometryRManInterfaceCall(
 		long aLineNo,
 		CDeclarationDictionary &decl,
@@ -385,6 +421,11 @@ public:
 	{
 	}
 
+	/** @brief Constructor.
+	 *
+	 * @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known).
+	 * @param parameters Parsed parameter list.
+	 */
 	inline CGeometryRManInterfaceCall(
 		long aLineNo,
 		const CParameterList &theParameters) :
@@ -392,23 +433,32 @@ public:
 	{
 	}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CGeometryRManInterfaceCall(const CGeometryRManInterfaceCall &c)
 	{
 		*this = c;
 	}
 
-	//! Destructor, frees the resources
-	inline virtual ~CGeometryRManInterfaceCall() {}
-
+	/** @brief Duplication.
+	 * 
+	 *  @return New instance as clone of this instance.
+	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CGeometryRManInterfaceCall(*this);
 	}
 
-	/** @brief Assignment
+	/** @brief Destructor.
+	 */
+	inline virtual ~CGeometryRManInterfaceCall() {}
+
+	/** @brief Assignment.
 	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
+	 * @param c Object to assign.
+	 * @return A reference to this object.
 	 */
 	inline CGeometryRManInterfaceCall &CGeometryRManInterfaceCall::operator=(const CGeometryRManInterfaceCall &c)
 	{
@@ -426,13 +476,22 @@ public:
  */
 class CUVRManInterfaceCall : public CGeometryRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline static const char *myClassName(void) { return "CUVRManInterfaceCall"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline virtual const char *className() const { return CUVRManInterfaceCall::myClassName(); }
 
 	/** @brief Checks if instance belongs to a specific class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to specific class atomizedClassName.
 	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
@@ -441,8 +500,8 @@ public:
 
 	/** @brief Checks if instance belongs to a kind of a class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to a kind of class atomizedClassName.
 	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
@@ -451,11 +510,22 @@ public:
 		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	//! Constructor. empty parameter list, with line number
-	/*! \param aLineNo The line number to store
+	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+	 *
+	 *  @param aLineNo The line number to store.
 	 */
 	inline CUVRManInterfaceCall(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo) {}
 
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store.
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	inline CUVRManInterfaceCall(
 		long aLineNo,
 		CDeclarationDictionary &decl,
@@ -466,6 +536,11 @@ public:
 	{
 	}
 
+	/** @brief Constructor.
+	 *
+	 * @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known).
+	 * @param parameters Parsed parameter list.
+	 */
 	inline CUVRManInterfaceCall(
 		long aLineNo,
 		const CParameterList &theParameters) :
@@ -473,23 +548,32 @@ public:
 	{
 	}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CUVRManInterfaceCall(const CUVRManInterfaceCall &c)
 	{
 		*this = c;
 	}
 
-	//! Destructor, frees the resources
-	inline virtual ~CUVRManInterfaceCall() {}
-
+	/** @brief Duplication.
+	 * 
+	 *  @return New instance as clone of this instance.
+	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CUVRManInterfaceCall(*this);
 	}
 
-	/** @brief Assignment
+	/** @brief Destructor.
+	 */
+	inline virtual ~CUVRManInterfaceCall() {}
+
+	/** @brief Assignment.
 	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
+	 * @param c Object to assign.
+	 * @return A reference to this object.
 	 */
 	inline CUVRManInterfaceCall &CUVRManInterfaceCall::operator=(const CUVRManInterfaceCall &c)
 	{
@@ -506,15 +590,23 @@ public:
 /** @brief Base class of all interface calls based on Polygon meshes.
  */
 class CPolygonRManInterfaceCall : public CGeometryRManInterfaceCall {
-protected:
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline static const char *myClassName(void) { return "CPolygonRManInterfaceCall"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline virtual const char *className() const { return CPolygonRManInterfaceCall::myClassName(); }
 
 	/** @brief Checks if instance belongs to a specific class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to specific class atomizedClassName.
 	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
@@ -523,8 +615,8 @@ public:
 
 	/** @brief Checks if instance belongs to a kind of a class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to a kind of class atomizedClassName.
 	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
@@ -533,11 +625,22 @@ public:
 		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	//! Constructor. empty parameter list, with line number
-	/*! \param aLineNo The line number to store
+	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+	 *
+	 *  @param aLineNo The line number to store..
 	 */
 	inline CPolygonRManInterfaceCall(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo) {}
 
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store.
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	inline CPolygonRManInterfaceCall(
 		long aLineNo,
 		CDeclarationDictionary &decl,
@@ -548,6 +651,11 @@ public:
 	{
 	}
 
+	/** @brief Constructor.
+	 *
+	 * @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known).
+	 * @param parameters Parsed parameter list.
+	 */
 	inline CPolygonRManInterfaceCall(
 		long aLineNo,
 		const CParameterList &theParameters) :
@@ -555,23 +663,32 @@ public:
 	{
 	}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CPolygonRManInterfaceCall(const CPolygonRManInterfaceCall &c)
 	{
 		*this = c;
 	}
 
-	//! Destructor, frees the resources
-	inline virtual ~CPolygonRManInterfaceCall() {}
-
+	/** @brief Duplication.
+	 * 
+	 *  @return New instance as clone of this instance.
+	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CPolygonRManInterfaceCall(*this);
 	}
 
-	/** @brief Assignment
+	/** @brief Destructor.
+	 */
+	inline virtual ~CPolygonRManInterfaceCall() {}
+
+	/** @brief Assignment.
 	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
+	 * @param c Object to assign.
+	 * @return A reference to this object.
 	 */
 	inline CPolygonRManInterfaceCall &CPolygonRManInterfaceCall::operator=(const CPolygonRManInterfaceCall &c)
 	{
@@ -586,223 +703,92 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Macro container.
+ *
+ * @todo Replay single frames.
  */
 class CRiMacro {
-protected:
-	std::list<CRManInterfaceCall *> m_callList;  //!< List of all interface calls for this macro
-
-	bool m_isObject;                          //!< true, if macro is an RenderMan object (IRi::objectInstance())
-	bool m_isDefining;                        //!< true, if macro is not closed (object end or file end not reached)
-	bool m_valid;                             //!< true if the macro could be defined without errors
-
-	std::string m_name;                       //!< Name of the macro (eg. file name)
-
+	std::list<CRManInterfaceCall *> m_callList;  //!< List of all interface calls for this macro.
+	std::string m_name; //!< Name of the macro (eg. file name).
+	bool m_valid;       //!< Can be set to false to indicate to stop inserting request into the macro.
 public:
-	int m_frames; //!< Number of frames defined inside this macros (not used)
-
-	//! Constructor initializes the macro.
-	/*! \param aName Name of the macro, eg. file name
-	 *  \param isObject Macro defines an geomeCRic object
+	/** @brief Constructor initializes the macro.
+	 *
+	 *  @param aName Name of the macro, eg. file name.
+	 *  @param isObject Macro defines a geometric object.
 	 */
-	inline CRiMacro(const char *aName="", bool isObject=false)
-		: m_isObject(isObject), m_isDefining(true), m_valid(true), m_name(aName?aName:"")
+	inline CRiMacro(
+		const char *aName = "") :
+		m_name(noNullStr(aName)), m_valid(true)
 	{
 	}
 
-	//! Destructor to free resources.
+	/** @brief Destructor, frees resources.
+	 */
 	virtual ~CRiMacro();
 
-	//! The name of the macro.
-	/*! \return The name of the macro.
+	/** @brief Gets the name of the macro.
+	 *  @return The name of the macro.
 	 */
 	inline const char *name() const { return m_name.c_str(); }
 
-	//! Sets the name of the macro
-	/*! \param name The new name for the macro.
-	 *  \return name itself.
+	/** @brief Sets the name of the macro.
+	 *
+	 *  @param name The new name for the macro.
 	 */
-	inline const char *name(const char *aName ) { m_name = aName; return m_name.c_str(); }
+	inline void name(const char *aName)
+	{
+		m_name = noNullStr(aName);
+	}
 
-	//! Archive replay with callback for RIB archives
-	/*! \param ri The backend renderer used to replay
-	 *  \param ricb Callback to set line number, doing error handling etc.
-	 *  \param callback Used for archive callbacks (esp. for IRi::readArchive())
+	/** @brief Replays archive with callback for RIB archives at a back end renderer.
+	 *
+	 *  @param ri The back end renderer used to replay.
+	 *  @param callback Used for archive callbacks (esp. for IRi::readArchive()).
 	 */
 	void replay(IDoRender &ri, const IArchiveCallback *callback);
 
-	//! Archive replay with callback for RenderMan objects
-	/*! \param ri The backend renderer used to replay
-	 *  \param ricb Callback to set line number, doing error handling etc.
+	/** @brief Replays archive at a back end renderer.
+	 *
+	 *  @param ri The back end renderer used to replay.
 	 */
-	void replay(IDoRender &ri); // Object replay
+	void replay(IDoRender &ri);
 
-	// Replay single frames not implemented, yet
-	// void replay(IRi &ri, RtInt lastFrameNo, RtInt frameNo);
-	
-	//! Adds an interface call to the macro
-	/*! \param c Interface call instance
-	 *  \return true if ok
+	/** @brief Adds an interface call to the macro.
+	 *
+	 *  @param c Instance of an interface call.
+	 *  @return true, if added and false, if not (because c == 0).
 	 */
 	bool add(CRManInterfaceCall *c);
-	
-	//! Checks whether macro is a recorded RI object or not (for RI objects \sa IRi::objectBegin(), IRi::objectEnd(), IRi::objectInstance())
-	/*! \return true if macro is a recorded RI macro
+
+	/** @brief Gets the validity of the macro.
+	 *
+	 *  @return true, macro is valid and request objects can be inserted.
 	 */
-	inline bool isObject() const { return m_isObject; }
-	
-	//! Checks whether macro is still recording
-	/*! \return true if macro is still recording
-	 */
-	inline bool isDefining() const { return m_isDefining; }
-
-	//! Closes the macro definition, isDefinig() is false after a call of this function.
-	inline void endMacro() { m_isDefining = false; }
-
-
-	//! \return whether macros is valid or not
-	inline bool valid() const { return m_valid; }
-
-	//! Sets the validity of the macro - e.g. if an error while parsing occured.
-	//! \param isvalid The new validity.
-	//! \return The validity set befor.
-	inline bool valid(bool isValid) {
-		bool old = m_valid;
-		m_valid = isValid;
-		return old;
+	bool valid() const
+	{
+		return m_valid;
 	}
 
+	/** @brief Sets the validity of the macro.
+	 *
+	 *  @param isValid false, to indicate stopping further insertion of request
+	 */
+	void valid(bool isValid)
+	{
+		m_valid = isValid;
+	}
 }; // CRiMacro
 
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-
-///////////////////////////////////////////////////////////////////////////////
-//! Stores the content of a IRi::declare() call
-/*! A declaration of an interface variable is stored in an instance of this class.
- */
-class CRiDeclare : public CRManInterfaceCall {
-private:
-	RtToken m_name;            //!< Atomized name of the declarated variable
-	std::string m_declaration; //!< The declaration, like: varying float[3]
-public:
-	inline static const char *myClassName(void) { return "CRiDeclare"; }
-	inline virtual const char *className() const { return CRiDeclare::myClassName(); }
-
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
-
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
-	}
-
-	/** @brief Default constructor.
-	 *
-	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file
-	 *  @param name The name of the declared variable (not atomized)
-	 *  @param declaration The declaration string
-	 */
-	inline CRiDeclare(
-		long aLineNo = -1,
-		RtToken aName = 0, 
-		RtString aDeclaration = 0)
-		: CRManInterfaceCall(aLineNo),
-		  m_name(aName),
-		  m_declaration(noNullStr(aDeclaration))
-	{}
-	
-	/** @brief Copy constructor.
-	 *
-	 *  @param c Object to copy.
-	 */
-	inline CRiDeclare(const CRiDeclare &c)
-	{
-		*this = c;
-	}
-
-	/** @brief Destructor.
-	 */
-	inline virtual ~CRiDeclare() {}
-
-	/** @brief Cloning.
-	 *
-	 *  @return a clone of this object
-	 */
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRiDeclare(*this);
-	}
-
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
-	inline virtual EnumRequests interfaceIdx() const { return REQ_DECLARE; }
-
-	/** @brief Replays the interface call.
-	 *
-	 *  @param ri The renderer backend used for replay.
-	 *  @param state The renderer backend status.
-	 */
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preDeclare(name(), declaration(), false);
-		ri.doDeclare(name(), declaration());
-	}
-
-	inline RtToken name() const
-	{
-		return m_name;
-	}
-
-	inline void name(RtToken aName)
-	{
-		m_name = aName;
-	}
-
-	inline RtString declaration() const
-	{
-		return m_declaration.c_str();
-	}
-
-	inline void declaration(RtString aDeclaration)
-	{
-		m_declaration = noNullStr(aDeclaration);
-	}
-
-	/** @brief Assignment
-	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
-	 */
-	inline CRiDeclare &CRiDeclare::operator=(const CRiDeclare &c)
-	{
-		if ( this == &c )
-			return *this;
-
-		name(c.name());
-		declaration(c.declaration());
-
-		CRManInterfaceCall::operator=(c);
-		return *this;
-	}
-}; // CRiDeclare
+// Not suported: Frontend functions
+// (REQ_ERROR_HANDLER)
+// REQ_BEGIN
+// REQ_END
+// REQ_CONTEXT
+// REQ_GET_CONTEXT
 
 #if 0
 ///////////////////////////////////////////////////////////////////////////////
@@ -816,13 +802,17 @@ private:
 	IErrorHandler *m_handler; //!< Pointer to the error handler function
 
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline static const char *myClassName(void) { return "CRiErrorHandler"; }
 	inline virtual const char *className() const { return CRiErrorHandler::myClassName(); }
 
 	/** @brief Checks if instance belongs to a specific class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to specific class atomizedClassName.
 	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
@@ -831,8 +821,8 @@ public:
 
 	/** @brief Checks if instance belongs to a kind of a class.
 	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to a kind of class atomizedClassName.
 	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
@@ -843,8 +833,8 @@ public:
 
 	/** @brief Default Constructor, default handler is a CPrintErrorHandler.
 	 *
-	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file
-	 *  @except ExceptRiCPPError Could not construct a handler
+	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
+	 *  @except ExceptRiCPPError Could not construct a handler.
 	 */
 	inline CRiErrorHandler(
 		long aLineNo = -1)
@@ -860,7 +850,7 @@ public:
 	 *  @param aLineNo The line number at a rib file where the declare statement starts,
 	 *                 -1 if there is no file.
 	 *  @param handler Pointer to the error handler function that should be used.
-	 *  @except ExceptRiCPPError Could not construct a handler
+	 *  @except ExceptRiCPPError Could not construct a handler.
 	 */
 	inline CRiErrorHandler(
 		long aLineNo,
@@ -875,7 +865,7 @@ public:
 	/** @brief Copy constructor.
 	 *
 	 *  @param c Object to copy.
-	 *  @except ExceptRiCPPError Could not construct a handler
+	 *  @except ExceptRiCPPError Could not construct a handler.
 	 */
 	inline CRiErrorHandler(const CRiErrorHandler &c)
 	{
@@ -906,7 +896,7 @@ public:
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ERROR_HANDLER; }
 
 	//! Replays the errorhandler statement for a given renderer - will not be replayed because it's a frontend function
-	/*! \param ri Instance of a renderer, used to replay the errorhandler statement
+	/*! @param ri Instance of a renderer, used to replay the errorhandler statement
 	 */
 	inline virtual void replay(IDoRender &ri) { ri.errorHandler(*m_handler); }
 
@@ -956,21 +946,174 @@ public:
 }; // CRiErrorHandler
 #endif
 
-// Not suported: Frontend functions
-// REQ_BEGIN
-// REQ_END
-// REQ_CONTEXT
-// REQ_GET_CONTEXT
 
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Stores the content of a IRi::declare() call.
+ *
+ * A declaration of an interface variable is stored in an instance of this class.
+ * The declaration is only stored here, not checked.
+ */
+class CRiDeclare : public CRManInterfaceCall {
+	RtToken m_name;            //!< Atomized name of the declarated variable
+	std::string m_declaration; //!< The declaration, like: varying float[3]
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
+	inline static const char *myClassName(void) { return "CRiDeclare"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
+	inline virtual const char *className() const { return CRiDeclare::myClassName(); }
+
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to specific class atomizedClassName.
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+	 *  @return true, if instance belongs to a kind of class atomizedClassName.
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
+	 *  @param name The atomized name of the declared variable.
+	 *  @param declaration The declaration string.
+	 */
+	inline CRiDeclare(
+		long aLineNo = -1,
+		RtToken aName = 0, 
+		RtString aDeclaration = 0)
+		: CRManInterfaceCall(aLineNo),
+		  m_name(aName),
+		  m_declaration(noNullStr(aDeclaration))
+	{}
+	
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiDeclare(const CRiDeclare &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiDeclare() {}
+
+	/** @brief Cloning.
+	 *
+	 *  @return a clone of this object
+	 */
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiDeclare(*this);
+	}
+
+	/** @brief Gets the interface number of the corresponding RI request.
+	 *
+	 *  @return Interface number of the corresponding RI request.
+	 */
+	inline virtual EnumRequests interfaceIdx() const { return REQ_DECLARE; }
+
+	/** @brief Replays the interface call.
+	 *
+	 *  @param ri The renderer backend used for replay.
+	 */
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preDeclare(name(), declaration(), false);
+		ri.doDeclare(name(), declaration());
+	}
+
+	/** @brief Gets the token of the name iof the declaration.
+	 *
+	 *  @return Token of the name of the declaration.
+	 */
+	inline RtToken name() const
+	{
+		return m_name;
+	}
+
+	/** @brief Sets the token of the name iof the declaration.
+	 *
+	 *  @param name Token of the name of the declaration.
+	 */
+	inline void name(RtToken aName)
+	{
+		m_name = aName;
+	}
+
+	/** @brief Gets the declaration string.
+	 *
+	 *  @return The declaration string.
+	 */
+	inline RtString declaration() const
+	{
+		return m_declaration.c_str();
+	}
+
+	/** @brief Sets (does not check) the declaration string.
+	 *
+	 *  @param aDeclaration The declaration string.
+	 */
+	inline void declaration(RtString aDeclaration)
+	{
+		m_declaration = noNullStr(aDeclaration);
+	}
+
+	/** @brief Assignment.
+	 *
+	 * @param c Object to assign.
+	 * @return A reference to this object.
+	 */
+	inline CRiDeclare &CRiDeclare::operator=(const CRiDeclare &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		name(c.name());
+		declaration(c.declaration());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiDeclare
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Starts a frame block.
  */
 class CRiFrameBegin : public CRManInterfaceCall {
-private:
 	RtInt m_frameNumber; //!< A number to identify the frame.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline static const char *myClassName(void) { return "CRiFrameBegin"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline virtual const char *className() const { return CRiFrameBegin::myClassName(); }
 
 	/** @brief Checks if instance belongs to a specific class.
@@ -1032,7 +1175,15 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_BEGIN; }
 
-	inline virtual void replay(IDoRender &ri) { ri.frameBegin(m_frameNumber); }
+	/** @brief Replays the interface call.
+	 *
+	 *  @param ri The renderer backend used for replay.
+	 */
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preFrameBegin(m_frameNumber);
+		ri.doFrameBegin(m_frameNumber);
+	}
 
 	/** @brief Gets the frame number.
 	 *
@@ -1123,7 +1274,11 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_END; }
-	inline virtual void replay(IDoRender &ri) { ri.frameEnd(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preFrameEnd();
+		ri.doFrameEnd();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1198,7 +1353,11 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_WORLD_BEGIN; }
-	inline virtual void replay(IDoRender &ri) { ri.worldBegin(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preWorldBegin();
+		ri.doWorldBegin();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1276,7 +1435,11 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_WORLD_END; }
-	inline virtual void replay(IDoRender &ri) { ri.worldEnd(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.doWorldEnd();
+		ri.doWorldEnd();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1350,7 +1513,11 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_BEGIN; }
-	inline virtual void replay(IDoRender &ri) { ri.attributeBegin(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.doAttributeBegin();
+		ri.doAttributeBegin();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1424,7 +1591,11 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_END; }
-	inline virtual void replay(IDoRender &ri) { ri.attributeEnd(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preAttributeEnd();
+		ri.doAttributeEnd();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1498,7 +1669,11 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_BEGIN; }
-	inline virtual void replay(IDoRender &ri) { ri.transformBegin(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preTransformBegin();
+		ri.doTransformBegin();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1576,7 +1751,11 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_END; }
-	inline virtual void replay(IDoRender &ri) { ri.transformEnd(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preTransformEnd();
+		ri.doTransformEnd();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1672,7 +1851,10 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_BEGIN; }
 
-	inline virtual void replay(IDoRender &ri) { ri.solidBegin(m_operation); }
+	inline virtual void replay(IDoRender &ri) {
+		ri.preSolidBegin(m_operation);
+		ri.doSolidBegin(m_operation);
+	}
 
 	/** @brief Gets the solid operation.
 	 * @return The token of the operation (must be an atomized string, @sa CToken)
@@ -1783,7 +1965,11 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_END; }
 
-	inline virtual void replay(IDoRender &ri) { ri.solidEnd(); }
+	inline virtual void replay(IDoRender &ri)
+{
+		ri.preSolidEnd();
+		ri.doSolidEnd();
+	}
 
 	/** @brief Assignment
 	 *
@@ -1800,16 +1986,23 @@ public:
 	}
 }; // CRiSolidEnd
 
+#if 0
 ///////////////////////////////////////////////////////////////////////////////
 //! \sa CRManInterfaceCall
 class CRiObjectBegin : public CRManInterfaceCall {
 protected:
-	RtObjectHandle *m_handlePtr; //!< (out) Used to identify the internal object handle with the object number of a rib file.
+	RtObjectHandle m_handleIdx;
 
 public:
 	inline static const char *myClassName(void) { return "CRiObjectBegin"; }
 	inline virtual const char *className() const { return CRiObjectBegin::myClassName(); }
 
+	inline CRiLightSource(
+		long aLineNo = -1)
+		: CRManInterfaceCall(aLineNo)
+	{
+		m_handleIdx = illObjectHandle;
+	}
 	inline CRiObjectBegin(long aLineNo, RtObjectHandle *h) : CRManInterfaceCall(aLineNo)
 	{
 		assert(h != 0);
@@ -1819,9 +2012,11 @@ public:
 	inline virtual void replay(IDoRender &ri) {
 		assert(m_handlePtr != 0);
 		if ( m_handlePtr != 0 ) {
-			*m_handlePtr = ri.objectBegin();
+			*m_handlePtr = ri.preObjectBegin();
+			ri.doObjectBegin(*m_handlePtr);
 		} else {
-			ri.objectBegin();
+			RtObjectHandle h = ri.preObjectBegin();
+			ri.doObjectBegin(h);
 		}
 	}
 	inline virtual RtObjectHandle *handlePtr() { return m_handlePtr; }
@@ -1839,11 +2034,15 @@ public:
 
 	inline CRiObjectEnd(long aLineNo) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_END; }
-	inline virtual void replay(IDoRender &ri) { ri.objectEnd(); }
+	inline virtual void replay(IDoRender &ri) {
+		ri.preObjectEnd();
+		ri.doObjectEnd();
+	}
 	// inline CRiObjectEnd &operator=(const CRiObjectEnd &) {
 	// 	return *this;
 	// }
 }; // CRiObjectEnd
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \sa CRManInterfaceCall
@@ -1861,8 +2060,13 @@ public:
 		*/
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_BEGIN; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.motionBeginV(
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preMotionBegin(
+			static_cast<RtInt>(m_motionVars.size()),
+			m_motionVars.empty() ? 0 : &m_motionVars[0]
+		);
+		ri.doMotionBegin(
 			static_cast<RtInt>(m_motionVars.size()),
 			m_motionVars.empty() ? 0 : &m_motionVars[0]
 		);
@@ -1881,70 +2085,539 @@ public:
 
 	inline CRiMotionEnd(long aLineNo) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_END; }
-	inline virtual void replay(IDoRender &ri) { ri.motionEnd(); }
+	inline virtual void replay(IDoRender &ri) {
+		ri.preMotionEnd();
+		ri.doMotionEnd();
+	}
 	// inline CRiMotionEnd &operator=(const CRiMotionEnd &) {
 	// 	return *this;
 	// }
 }; // CRiMotionEnd
 
+
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief The raster resolution and pixel aspect ratio of the image to be rendered.
+ */
 class CRiFormat : public CRManInterfaceCall {
-protected:
-	RtInt m_xres,     //!< width
-	      m_yres;     //!< height
-	RtFloat m_aspect; //!< pixel aspect ratio
+	RtInt m_xres,     //!< Width of the image to be rendered.
+	      m_yres;     //!< Height of the image to be rendered.
+	RtFloat m_aspect; //!< Pixel aspect ratio (width to the height).
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiFormat"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline virtual const char *className() const { return CRiFormat::myClassName(); }
 
-	inline CRiFormat(long aLineNo, RtInt xres, RtInt yres, RtFloat aspect) : CRManInterfaceCall(aLineNo), m_xres(xres), m_yres(yres), m_aspect(aspect) {}
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 *  @param name Atomized name of the projection
+	 *  @param aXRes The x (horizontal) resolution of the image to be rendered.
+	 *  @param aYRes The y (vertical) resolution of the image to be rendered.
+	 *  @param anAspect The pixel aspect ratio of the image to be rendered.
+	 */
+	inline CRiFormat(
+		long aLineNo = -1,
+		RtInt aXRes = defXResolution,
+		RtInt aYRes = defYResolution,
+		RtFloat anAspect = defPixelAspectRatio) :
+		CRManInterfaceCall(aLineNo), m_xres(aXRes), m_yres(aYRes), m_aspect(anAspect)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiFormat(const CRiFormat &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiFormat()
+	{
+	}
+
+	/** @brief Cloning.
+	 *
+	 *  @return A clone of this object.
+	 */
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiFormat(*this);
+	}
+
+	/** @brief Gets the interface number of the corresponding RI request.
+	 *
+	 *  @return Interface number of the corresponding RI request.
+	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FORMAT; }
-	inline virtual void replay(IDoRender &ri) { ri.format(m_xres, m_yres, m_aspect); }
-	// inline CRiFormat &operator=(const CRiFormat &) {
-	//	return *this;
-	// }
+
+	/** @brief Gets the x (horizontal) resolution of the image.
+	 *
+	 *  @return The x (horizontal) resolution of the image to be rendered.
+	 */
+	inline RtInt xres() const
+	{
+		return m_xres;
+	}
+
+	/** @brief Sets the x (horizontal) resolution of the image.
+	 *
+	 *  @param aXRes The x (horizontal) resolution of the image to be rendered.
+	 */
+	inline void xres(RtInt aXRes)
+	{
+		m_xres = aXRes;
+	}
+
+	/** @brief Gets the y (vertical) resolution of the image.
+	 *
+	 *  @return The y (vertical) resolution of the image to be rendered.
+	 */
+	inline RtInt yres() const
+	{
+		return m_yres;
+	}
+
+	/** @brief Sets the y (vertical) resolution of the image.
+	 *
+	 *  @param aYRes The y (vertical) resolution of the image to be rendered.
+	 */
+	inline void yres(RtInt aYRes)
+	{
+		m_yres = aYRes;
+	}
+
+	/** @brief Gets the pixel aspect ratio of the image.
+	 *
+	 * The pixel aspect ration matches a physical display.
+	 * The viewport aspect ratio is calculated by (xres() * aspect())/yres()
+	 *
+	 *  @return The pixel aspect ratio of the image to be rendered.
+	 */
+	inline RtFloat aspect() const
+	{
+		return m_aspect;
+	}
+
+	/** @brief Sets the pixel aspect ratio of the image.
+	 *
+	 *  @param anAspect The pixel aspect ratio of the image to be rendered.
+	 */
+	inline void aspect(RtFloat anAspect)
+	{
+		m_aspect = anAspect;
+	}
+
+	/** @brief Replays the content.
+	 *
+	 * State of the renderer is already checked before this function is
+	 * called by CRiMacro::replay().
+	 *
+	 *  @param ri Back end renderer
+	 */
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preFormat(m_xres, m_yres, m_aspect);
+		ri.doFormat(m_xres, m_yres, m_aspect);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiFormat &operator=(const CRiFormat &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		xres(c.xres());
+		yres(c.yres());
+		aspect(c.aspect());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiFormat
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Frame aspect ratio of the image to be rendered
+ *
+ * If the frame aspect ration do not match the setting made by calling a IRi::display()
+ * and IRi::format(), die image should be aligned with the upper left corner (origin)
+ * of the image so that the longer edge of the image fills the appropriate edge of the display.
+ *
+ * If a IRi::frameAspectRatio() is not called, the frame aspect is calculated by the settings
+ * made by IRi::format().
+ */
 class CRiFrameAspectRatio : public CRManInterfaceCall {
-protected:
 	RtFloat m_aspect; //!< frame aspect ratio
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiFrameAspectRatio"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline virtual const char *className() const { return CRiFrameAspectRatio::myClassName(); }
 
-	inline CRiFrameAspectRatio(long aLineNo, RtFloat aspect) : CRManInterfaceCall(aLineNo), m_aspect(aspect) {}
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 *  @param anAspect The frame aspect ratio of the image to be rendered.
+	 */
+	inline CRiFrameAspectRatio(
+		long aLineNo = -1,
+		RtFloat aspect = defFrameAspectRatio) :
+		CRManInterfaceCall(aLineNo), m_aspect(aspect)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiFrameAspectRatio(const CRiFrameAspectRatio &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiFrameAspectRatio()
+	{
+	}
+
+	/** @brief Cloning.
+	 *
+	 *  @return A clone of this object.
+	 */
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiFrameAspectRatio(*this);
+	}
+
+	/** @brief Gets the interface number of the corresponding RI request.
+	 *
+	 *  @return Interface number of the corresponding RI request.
+	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_ASPECT_RATIO; }
-	inline virtual void replay(IDoRender &ri) { ri.frameAspectRatio(m_aspect); }
-	// inline CRiFrameAspectRatio &operator=(const CRiFrameAspectRatio &) {
-	// 	return *this;
-	// }
+	
+	/** @brief Gets the frame aspect ratio of the image.
+	 *
+	 *  @return The frame aspect ratio of the image to be rendered.
+	 */
+	inline RtFloat aspect() const
+	{
+		return m_aspect;
+	}
+
+	/** @brief Sets the frame aspect ratio of the image.
+	 *
+	 *  @param anAspect The frame aspect ratio of the image to be rendered.
+	 */
+	inline void aspect(RtFloat anAspect)
+	{
+		m_aspect = anAspect;
+	}
+
+	/** @brief Replays the content.
+	 *
+	 * State of the renderer is already checked before this function is
+	 * called by CRiMacro::replay().
+	 *
+	 *  @param ri Back end renderer.
+	 */
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preFrameAspectRatio(m_aspect);
+		ri.doFrameAspectRatio(m_aspect);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign.
+	 *  @return A reference to this object.
+	 */
+	inline CRiFrameAspectRatio &operator=(const CRiFrameAspectRatio &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		aspect(c.aspect());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiFrameAspectRatio
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Sets the size of the screen window (in screen coordinates)
+ *
+ *  Has to match the frame aspect ratio (frameaspect = abs(right-left)/abs(top-bot))
+ *  to avoid distortion at the displayed image. If the
+ *  IRi::screenWindow() is nor called, the values default to
+ *  frameaspectratio >= 1: (-frameaspectratio, frameaspectratio, -1, 1), and
+ *  frameaspectratio < 1: (-1, 1, -1/frameaspectratio, 1/frameaspectratio).
+ *  For perspective projection the smaller range will be centered at the displayed
+ *  image.
+ */
 class CRiScreenWindow : public CRManInterfaceCall {
-protected:
-	RtFloat m_left,  //!< coordinate of the left screen window edge
-	        m_right, //!< coordinate of the right screen window edge
-	        m_bot,   //!< coordinate of the bottom screen window edge
-	        m_top;   //!< coordinate of the top screen window edge
+	RtFloat m_left,   //!< coordinate of the left screen window edge
+	        m_right,  //!< coordinate of the right screen window edge
+	        m_bottom, //!< coordinate of the bottom screen window edge
+	        m_top;    //!< coordinate of the top screen window edge
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiScreenWindow"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline virtual const char *className() const { return CRiScreenWindow::myClassName(); }
 
-	inline CRiScreenWindow(long aLineNo, RtFloat left, RtFloat right, RtFloat bot, RtFloat top) : CRManInterfaceCall(aLineNo), m_left(left), m_right(right), m_bot(bot), m_top(top) {}
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 *  @param aLeft The left edge of the screen window (screen coordinates)
+	 *  @param aRight The right edge of the screen window (screen coordinates)
+	 *  @param aBot The bottom edge of the screen window (screen coordinates)
+	 *  @param aTop The top edge of the screen window (screen coordinates)
+	 */
+	inline CRiScreenWindow(
+		long aLineNo = -1,
+		RtFloat aLeft = defScreenWindowLeft,
+		RtFloat aRight = defScreenWindowRight,
+		RtFloat aBottom = defScreenWindowBottom,
+		RtFloat aTop = defScreenWindowTop ) :
+		CRManInterfaceCall(aLineNo),
+		m_left(aLeft), m_right(aRight), m_bottom(aBottom), m_top(aTop)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiScreenWindow(const CRiFrameAspectRatio &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiScreenWindow()
+	{
+	}
+
+	/** @brief Cloning.
+	 *
+	 *  @return A clone of this object.
+	 */
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiScreenWindow(*this);
+	}
+
+	/** @brief Gets the interface number of the corresponding RI request.
+	 *
+	 *  @return Interface number of the corresponding RI request.
+	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SCREEN_WINDOW; }
-	inline virtual void replay(IDoRender &ri) { ri.screenWindow(m_left, m_right, m_bot, m_top); }
-	// inline CRiScreenWindow &operator=(const CRiScreenWindow &) {
-	// 	return *this;
-	// }
+
+	/** @brief Gets the left edge.
+	 *
+	 *  @return The left edge of the screen window (screen coordinates).
+	 */
+	inline RtFloat left() const
+	{
+		return m_left;
+	}
+
+	/** @brief Sets the left edge.
+	 *
+	 *  @param aLeft The left edge of the screen window (screen coordinates).
+	 */
+	inline void left(RtFloat aLeft)
+	{
+		m_left = aLeft;
+	}
+
+	/** @brief Gets the left edge.
+	 *
+	 *  @return The right edge of the screen window (screen coordinates).
+	 */
+	inline RtFloat right() const
+	{
+		return m_right;
+	}
+
+	/** @brief Sets the right edge.
+	 *
+	 *  @param aRight The right edge of the screen window (screen coordinates).
+	 */
+	inline void right(RtFloat aRight)
+	{
+		m_right = aRight;
+	}
+
+	/** @brief Gets the bottom edge.
+	 *
+	 *  @return The bottom edge of the screen window (screen coordinates).
+	 */
+	inline RtFloat bottom() const
+	{
+		return m_bottom;
+	}
+
+	/** @brief Sets The bottom edge.
+	 *
+	 *  @param aBot The bottom edge of the screen window (screen coordinates).
+	 */
+	inline void bottom(RtFloat aBottom)
+	{
+		m_bottom = aBottom;
+	}
+
+	/** @brief Gets the top edge.
+	 *
+	 *  @return The top edge of the screen window (screen coordinates).
+	 */
+	inline RtFloat top() const
+	{
+		return m_top;
+	}
+
+	/** @brief Sets The top edge.
+	 *
+	 *  @param aTop The top edge of the screen window (screen coordinates).
+	 */
+	inline void top(RtFloat aTop)
+	{
+		m_top = aTop;
+	}
+
+	/** @brief Replays the content.
+	 *
+	 * State of the renderer is already checked before this function is
+	 * called by CRiMacro::replay().
+	 *
+	 *  @param ri Back end renderer
+	 */
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preScreenWindow(m_left, m_right, m_bottom, m_top);
+		ri.doScreenWindow(m_left, m_right, m_bottom, m_top);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign.
+	 *  @return A reference to this object.
+	 */
+	inline CRiScreenWindow &operator=(const CRiScreenWindow &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		left(c.left());
+		right(c.right());
+		bottom(c.bottom());
+		top(c.top());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiScreenWindow
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Give a rectangular cropped region of the image in screen coordinates.
+ */
 class CRiCropWindow : public CRManInterfaceCall {
 protected:
 	RtFloat m_xmin,  //!< Crop window minimal x
@@ -1957,7 +2630,11 @@ public:
 
 	inline CRiCropWindow(long aLineNo, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) : CRManInterfaceCall(aLineNo), m_xmin(xmin), m_xmax(xmax), m_ymin(ymin), m_ymax(ymax) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CROP_WINDOW; }
-	inline virtual void replay(IDoRender &ri) { ri.cropWindow(m_xmin, m_xmax, m_ymin, m_ymax); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preCropWindow(m_xmin, m_xmax, m_ymin, m_ymax);
+		ri.doCropWindow(m_xmin, m_xmax, m_ymin, m_ymax);
+	}
 	// inline CRiCropWindow &operator=(const CRiCropWindow &) {
 	//	return *this;
 	// }
@@ -2000,13 +2677,15 @@ public:
 	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
+		if ( atomizedClassName == myClassName() )
+			return true;
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/* @brief Default Constructor.
+	/** @brief Default Constructor.
 	 *
-	 * @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
-	 * @param name Atomized name of the projection
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 *  @param name Atomized name of the projection
 	 */
 	inline CRiProjection(
 		long aLineNo = -1,
@@ -2018,7 +2697,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param Dictonary with the current declarations.
+	 *  @param dict Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param name Atomized name of the projection
@@ -2035,7 +2714,7 @@ public:
 	{
 	}
 
-	/* @brief Constructor.
+	/** @brief Constructor.
 	 *
 	 * @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
 	 * @param name Atomized name of the projection
@@ -2115,7 +2794,7 @@ public:
 	 *  @param c CRManInterfaceCall to assign
 	 *  @return A reference to this object.
 	 */
-	inline CRiProjection &CRiProjection::operator=(const CRiProjection &c)
+	inline CRiProjection &operator=(const CRiProjection &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -2140,7 +2819,11 @@ public:
 	inline CRiClipping(long aLineNo, RtFloat hither, RtFloat yon)
 		: CRManInterfaceCall(aLineNo), m_hither(hither), m_yon(yon) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING; }
-	inline virtual void replay(IDoRender &ri) { ri.clipping(m_hither, m_yon); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preClipping(m_hither, m_yon);
+		ri.doClipping(m_hither, m_yon);
+	}
 	// inline CRiClipping &operator=(const CRiClipping &) {
 	//	return *this;
 	// }
@@ -2162,7 +2845,11 @@ public:
 
 	inline CRiClippingPlane(long aLineNo, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) : CRManInterfaceCall(aLineNo), m_x(x), m_y(y), m_z(z), m_nx(nx), m_ny(ny), m_nz(nz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
-	inline virtual void replay(IDoRender &ri) { ri.clippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preClippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz);
+		ri.doClippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz);
+	}
 	// inline CRiClippingPlane &operator=(const CRiClippingPlane &) {
 	// 	return *this;
 	// }
@@ -2178,7 +2865,11 @@ public:
 
 	inline CRiDepthOfField(long aLineNo, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) : CRManInterfaceCall(aLineNo), m_fstop(fstop), m_focallength(focallength), m_focaldistance(focaldistance) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DEPTH_OF_FIELD; }
-	inline virtual void replay(IDoRender &ri) { ri.depthOfField(m_fstop, m_focallength, m_focaldistance); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preDepthOfField(m_fstop, m_focallength, m_focaldistance);
+		ri.doDepthOfField(m_fstop, m_focallength, m_focaldistance);
+	}
 	inline CRiDepthOfField &operator=(const CRiDepthOfField &) {
 		return *this;
 	}
@@ -2194,7 +2885,11 @@ public:
 
 	inline CRiShutter(long aLineNo, RtFloat smin, RtFloat smax) : CRManInterfaceCall(aLineNo), m_smin(smin), m_smax(smax) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SHUTTER; }
-	inline virtual void replay(IDoRender &ri) { ri.shutter(m_smin, m_smax); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preShutter(m_smin, m_smax);
+		ri.doShutter(m_smin, m_smax);
+	}
 	inline CRiShutter &operator=(const CRiShutter &) {
 		return *this;
 	}
@@ -2209,7 +2904,11 @@ public:
 
 	inline CRiPixelVariance(long aLineNo, RtFloat variation) : CRManInterfaceCall(aLineNo), m_variation(variation) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_VARIANCE; }
-	inline virtual void replay(IDoRender &ri) { ri.pixelVariance(m_variation); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePixelVariance(m_variation);
+		ri.doPixelVariance(m_variation);
+	}
 	inline CRiPixelVariance &operator=(const CRiPixelVariance &) {
 		return *this;
 	}
@@ -2225,7 +2924,11 @@ public:
 
 	inline CRiPixelSamples(long aLineNo, RtFloat xsamples, RtFloat ysamples) : CRManInterfaceCall(aLineNo), m_xsamples(xsamples), m_ysamples(ysamples) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_SAMPLES; }
-	inline virtual void replay(IDoRender &ri) { ri.pixelSamples(m_xsamples, m_ysamples); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePixelSamples(m_xsamples, m_ysamples);
+		ri.doPixelSamples(m_xsamples, m_ysamples);
+	}
 	inline CRiPixelSamples &operator=(const CRiPixelSamples &) {
 		return *this;
 	}
@@ -2256,8 +2959,10 @@ public:
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_FILTER; }
 	inline virtual void replay(IDoRender &ri) {
 		assert(m_function != 0);
-		if ( m_function )
-			ri.pixelFilter(*m_function, m_xwidth, m_ywidth);
+		if ( m_function ) {
+			ri.prePixelFilter(*m_function, m_xwidth, m_ywidth);
+			ri.doPixelFilter(*m_function, m_xwidth, m_ywidth);
+		}
 	}
 	inline CRiPixelFilter &operator=(const CRiPixelFilter &) {
 		return *this;
@@ -2274,7 +2979,11 @@ public:
 
 	inline CRiExposure(long aLineNo, RtFloat gain, RtFloat gamma) : CRManInterfaceCall(aLineNo), m_gain(gain), m_gamma(gamma) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_EXPOSURE; }
-	inline virtual void replay(IDoRender &ri) { ri.exposure(m_gain, m_gamma); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preExposure(m_gain, m_gamma);
+		ri.doExposure(m_gain, m_gamma);
+	}
 	inline CRiExposure &operator=(const CRiExposure &) {
 		return *this;
 	}
@@ -2318,7 +3027,11 @@ public:
 	{
 		m_name = aName;
 	}
-	inline virtual void replay(IDoRender &ri) { ri.imagerV(m_name, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preImager(m_name, parameters());
+		ri.doImager(m_name, parameters());
+	}
 	inline CRiImager &operator=(const CRiImager &c) {
 		if ( this == &c )
 			return *this;
@@ -2342,7 +3055,11 @@ public:
 
 	inline CRiQuantize(long aLineNo, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) : CRManInterfaceCall(aLineNo), m_type(type), m_one(one), m_qmin(qmin), m_qmax(qmax), m_ampl(ampl) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_QUANTIZE; }
-	inline virtual void replay(IDoRender &ri) { ri.quantize(m_type.c_str(), m_one, m_qmin, m_qmax, m_ampl); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preQuantize(m_type.c_str(), m_one, m_qmin, m_qmax, m_ampl);
+		ri.doQuantize(m_type.c_str(), m_one, m_qmin, m_qmax, m_ampl);
+	}
 	inline CRiQuantize &operator=(const CRiQuantize &) {
 		return *this;
 	}
@@ -2390,7 +3107,8 @@ public:
 	}
 	inline virtual void replay(IDoRender &ri)
 	{
-		ri.displayChannelV(m_channel.c_str(), static_cast<RtInt>(size()), getTokens(), getParams());
+		ri.preDisplayChannel(m_channel.c_str(), parameters());
+		ri.doDisplayChannel(m_channel.c_str(), parameters());
 	}
 	inline CRiDisplayChannel &operator=(const CRiDisplayChannel &c) {
 		if ( this == &c )
@@ -2458,7 +3176,11 @@ public:
 	{
 		m_mode = aMode;
 	}
-	inline virtual void replay(IDoRender &ri) { ri.displayV(m_name, m_type, m_mode, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preDisplay(m_name, m_type, m_mode, parameters());
+		ri.doDisplay(m_name, m_type, m_mode, parameters());
+	}
 
 	inline CRiDisplay &operator=(const CRiDisplay &c) {
 		if ( this == &c )
@@ -2513,7 +3235,11 @@ public:
 	{
 		m_type = aType;
 	}
-	inline virtual void replay(IDoRender &ri) { ri.hiderV(m_type, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preHider(m_type, parameters());
+		ri.preHider(m_type, parameters());
+	}
 	inline CRiHider &operator=(const CRiHider &c) {
 		if ( this == &c )
 			return *this;
@@ -2545,7 +3271,11 @@ public:
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COLOR_SAMPLES; }
 	inline virtual void replay(IDoRender &ri) {
-		ri.colorSamples(
+		ri.preColorSamples(
+			m_N,
+			m_nRGB.empty() ? 0 : &m_nRGB[0],
+			m_RGBn.empty() ? 0 : &m_RGBn[0]);
+		ri.doColorSamples(
 			m_N,
 			m_nRGB.empty() ? 0 : &m_nRGB[0],
 			m_RGBn.empty() ? 0 : &m_RGBn[0]);
@@ -2565,7 +3295,11 @@ public:
 
 	inline CRiRelativeDetail(long aLineNo, RtFloat relativedetail) : CRManInterfaceCall(aLineNo), m_relativedetail(relativedetail) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_RELATIVE_DETAIL; }
-	inline virtual void replay(IDoRender &ri) { ri.relativeDetail(m_relativedetail); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preRelativeDetail(m_relativedetail);
+		ri.doRelativeDetail(m_relativedetail);
+	}
 	inline CRiRelativeDetail &operator=(const CRiRelativeDetail &) {
 		return *this;
 	}
@@ -2611,7 +3345,11 @@ public:
 	{
 		m_name = aName;
 	}
-	inline virtual void replay(IDoRender &ri) { ri.optionV(m_name, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preOption(m_name, parameters());
+		ri.doOption(m_name, parameters());
+	}
 	inline CRiOption &operator=(const CRiOption &c) {
 		if ( this == &c )
 			return *this;
@@ -2668,9 +3406,9 @@ public:
 	}
 	inline virtual void replay(IDoRender &ri)
 	{
-		ri.renderState()->lights().setHandle(m_handleIdx,
-			ri.lightSourceV(m_name, static_cast<RtInt>(size()), getTokens(), getParams())
-		);
+		RtLightHandle h = ri.preLightSource(m_name, parameters());
+		ri.renderState()->lights().setHandle(m_handleIdx, h);
+		ri.doLightSource(h, m_name, parameters());
 	}
 	inline virtual RtLightHandle handleIdx() { return m_handleIdx; }
 	inline CRiLightSource &operator=(const CRiLightSource &c) {
@@ -2729,9 +3467,9 @@ public:
 		m_name = aName;
 	}
 	inline virtual void replay(IDoRender &ri) {
-		ri.renderState()->lights().setHandle(m_handleIdx,
-			ri.areaLightSourceV(m_name, static_cast<RtInt>(size()), getTokens(), getParams())
-		);
+		RtLightHandle h = ri.preAreaLightSource(m_name, parameters());
+		ri.renderState()->lights().setHandle(m_handleIdx, h);
+		ri.doAreaLightSource(h, m_name, parameters());
 	}
 	inline virtual RtLightHandle handleIdx() { return m_handleIdx; }
 	inline CRiAreaLightSource &operator=(const CRiAreaLightSource &c) {
@@ -2763,7 +3501,8 @@ public:
 
 	inline virtual void replay(IDoRender &ri)
 	{
-		ri.illuminate(m_handleIdx, m_onoff);
+		ri.preIlluminate(m_handleIdx, m_onoff);
+		ri.doIlluminate(m_handleIdx, m_onoff);
 	}
 	inline virtual RtLightHandle handleIdx() { return m_handleIdx; }
 	inline CRiIlluminate &operator=(const CRiIlluminate &)
@@ -2790,7 +3529,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE; }
-	inline virtual void replay(IDoRender &ri) { ri.attributeV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preAttribute(m_name.c_str(), parameters());
+		ri.doAttribute(m_name.c_str(), parameters());
+	}
 	inline CRiAttribute &operator=(const CRiAttribute &) {
 		return *this;
 	}
@@ -2811,7 +3554,8 @@ public:
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COLOR; }
 	inline virtual void replay(IDoRender &ri) {
-		ri.color(m_color.empty() ? 0 : &m_color[0]);
+		ri.preColor(m_color.empty() ? 0 : &m_color[0]);
+		ri.doColor(m_color.empty() ? 0 : &m_color[0]);
 	}
 	inline CRiColor &operator=(const CRiColor &) {
 		return *this;
@@ -2833,7 +3577,8 @@ public:
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OPACITY; }
 	inline virtual void replay(IDoRender &ri) {
-		ri.opacity(m_opacity.empty() ? 0 : &m_opacity[0]);
+		ri.preOpacity(m_opacity.empty() ? 0 : &m_opacity[0]);
+		ri.doOpacity(m_opacity.empty() ? 0 : &m_opacity[0]);
 	}
 	inline CRiOpacity &operator=(const CRiOpacity &) {
 		return *this;
@@ -2858,7 +3603,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SURFACE; }
-	inline virtual void replay(IDoRender &ri) { ri.surfaceV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preSurface(m_name.c_str(), parameters());
+		ri.doSurface(m_name.c_str(), parameters());
+	}
 	inline CRiSurface &operator=(const CRiSurface &) {
 		return *this;
 	}
@@ -2882,7 +3631,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATMOSPHERE; }
-	inline virtual void replay(IDoRender &ri) { ri.atmosphereV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preAtmosphere(m_name.c_str(), parameters());
+		ri.doAtmosphere(m_name.c_str(), parameters());
+	}
 	inline CRiAtmosphere &operator=(const CRiAtmosphere &) {
 		return *this;
 	}
@@ -2906,7 +3659,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_INTERIOR; }
-	inline virtual void replay(IDoRender &ri) { ri.interiorV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preInterior(m_name.c_str(), parameters());
+		ri.doInterior(m_name.c_str(), parameters());
+	}
 	inline CRiInterior &operator=(const CRiInterior &) {
 		return *this;
 	}
@@ -2930,7 +3687,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_EXTERIOR; }
-	inline virtual void replay(IDoRender &ri) { ri.exteriorV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preExterior(m_name.c_str(), parameters());
+		ri.doExterior(m_name.c_str(), parameters());
+	}
 	inline CRiExterior &operator=(const CRiExterior &) {
 		return *this;
 	}
@@ -2954,7 +3715,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLACEMENT; }
-	inline virtual void replay(IDoRender &ri) { ri.displacementV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preDisplacement(m_name.c_str(), parameters());
+		ri.doDisplacement(m_name.c_str(), parameters());
+	}
 	inline CRiDisplacement &operator=(const CRiDisplacement &) {
 		return *this;
 	}
@@ -2970,7 +3735,11 @@ public:
 
 	inline CRiTextureCoordinates(long aLineNo, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) : CRManInterfaceCall(aLineNo), m_s1(s1), m_t1(t1), m_s2(s2), m_t2(t2), m_s3(s3), m_t3(t3), m_s4(s4), m_t4(t4) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TEXTURE_COORDINATES; }
-	inline virtual void replay(IDoRender &ri) { ri.textureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preTextureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
+		ri.doTextureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
+	}
 	inline CRiTextureCoordinates &operator=(const CRiTextureCoordinates &) {
 		return *this;
 	}
@@ -2986,7 +3755,11 @@ public:
 
 	inline CRiShadingRate(long aLineNo, RtFloat size) : CRManInterfaceCall(aLineNo), m_size(size) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SHADING_RATE; }
-	inline virtual void replay(IDoRender &ri) { ri.shadingRate(m_size); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preShadingRate(m_size);
+		ri.doShadingRate(m_size);
+	}
 	inline CRiShadingRate &operator=(const CRiShadingRate &) {
 		return *this;
 	}
@@ -3002,7 +3775,11 @@ public:
 
 	inline CRiShadingInterpolation(long aLineNo, RtToken type) : CRManInterfaceCall(aLineNo), m_type(type) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SHADING_INTERPOLATION; }
-	inline virtual void replay(IDoRender &ri) { ri.shadingInterpolation(m_type.c_str()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preShadingInterpolation(m_type.c_str());
+		ri.doShadingInterpolation(m_type.c_str());
+	}
 	inline CRiShadingInterpolation &operator=(const CRiShadingInterpolation &) {
 		return *this;
 	}
@@ -3018,7 +3795,11 @@ public:
 
 	inline CRiMatte(long aLineNo, RtBoolean onoff) : CRManInterfaceCall(aLineNo), m_onoff(onoff) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MATTE; }
-	inline virtual void replay(IDoRender &ri) { ri.matte(m_onoff); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preMatte(m_onoff);
+		ri.doMatte(m_onoff);
+	}
 	inline CRiMatte &operator=(const CRiMatte &) {
 		return *this;
 	}
@@ -3036,7 +3817,11 @@ public:
 		memcpy(m_bound, bound, sizeof(RtBound));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BOUND; }
-	inline virtual void replay(IDoRender &ri) { ri.bound(m_bound); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preBound(m_bound);
+		ri.doBound(m_bound);
+	}
 	inline CRiBound &operator=(const CRiBound &) {
 		return *this;
 	}
@@ -3054,7 +3839,11 @@ public:
 		memcpy(m_bound, bound, sizeof(RtBound));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DETAIL; }
-	inline virtual void replay(IDoRender &ri) { ri.bound(m_bound); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preDetail(m_bound);
+		ri.doDetail(m_bound);
+	}
 	inline CRiDetail &operator=(const CRiDetail &) {
 		return *this;
 	}
@@ -3070,7 +3859,11 @@ public:
 
 	inline CRiDetailRange(long aLineNo, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) : CRManInterfaceCall(aLineNo), m_minvis(minvis), m_lowtran(lowtran), m_uptran(uptran), m_maxvis(maxvis) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DETAIL_RANGE; }
-	inline virtual void replay(IDoRender &ri) { ri.detailRange(m_minvis, m_lowtran, m_uptran, m_maxvis); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preDetailRange(m_minvis, m_lowtran, m_uptran, m_maxvis);
+		ri.doDetailRange(m_minvis, m_lowtran, m_uptran, m_maxvis);
+	}
 	inline CRiDetailRange &operator=(const CRiDetailRange &) {
 		return *this;
 	}
@@ -3087,7 +3880,11 @@ public:
 
 	inline CRiGeometricApproximation(long aLineNo, RtToken type, RtFloat value) : CRManInterfaceCall(aLineNo), m_type(type), m_value(value) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRIC_APPROXIMATION; }
-	inline virtual void replay(IDoRender &ri) { ri.geometricApproximation(m_type.c_str(), m_value); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preGeometricApproximation(m_type.c_str(), m_value);
+		ri.doGeometricApproximation(m_type.c_str(), m_value);
+	}
 	inline CRiGeometricApproximation &operator=(const CRiGeometricApproximation &) {
 		return *this;
 	}
@@ -3103,7 +3900,11 @@ public:
 
 	inline CRiGeometricRepresentation(long aLineNo, RtToken type) : CRManInterfaceCall(aLineNo), m_type(type) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRIC_REPRESENTATION; }
-	inline virtual void replay(IDoRender &ri) { ri.geometricRepresentation(m_type.c_str()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preGeometricRepresentation(m_type.c_str());
+		ri.doGeometricRepresentation(m_type.c_str());
+	}
 	inline CRiGeometricRepresentation &operator=(const CRiGeometricRepresentation &) {
 		return *this;
 	}
@@ -3119,7 +3920,11 @@ public:
 
 	inline CRiOrientation(long aLineNo, RtToken orientation) : CRManInterfaceCall(aLineNo), m_orientation(orientation) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ORIENTATION; }
-	inline virtual void replay(IDoRender &ri) { ri.orientation(m_orientation.c_str()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preOrientation(m_orientation.c_str());
+		ri.doOrientation(m_orientation.c_str());
+	}
 	inline CRiOrientation &operator=(const CRiOrientation &) {
 		return *this;
 	}
@@ -3133,7 +3938,11 @@ public:
 
 	inline CRiReverseOrientation(long aLineNo) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_REVERSE_ORIENTATION; }
-	inline virtual void replay(IDoRender &ri) { ri.reverseOrientation(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preReverseOrientation();
+		ri.doReverseOrientation();
+	}
 	inline CRiReverseOrientation &operator=(const CRiReverseOrientation &) {
 		return *this;
 	}
@@ -3149,7 +3958,11 @@ public:
 
 	inline CRiSides(long aLineNo, RtInt nsides) : CRManInterfaceCall(aLineNo), m_nsides(nsides) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SIDES; }
-	inline virtual void replay(IDoRender &ri) { ri.sides(m_nsides); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preSides(m_nsides);
+		ri.doSides(m_nsides);
+	}
 	inline CRiSides &operator=(const CRiSides &) {
 		return *this;
 	}
@@ -3169,7 +3982,11 @@ public:
 		memcpy(m_vbasis, vbasis, sizeof(RtBasis));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BASIS; }
-	inline virtual void replay(IDoRender &ri) { ri.basis(m_ubasis, m_ustep, m_vbasis, m_vstep); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
+		ri.doBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
+	}
 	inline CRiBasis &operator=(const CRiBasis &) {
 		return *this;
 	}
@@ -3188,7 +4005,17 @@ public:
 	inline CRiTrimCurve(long aLineNo, const CTrimCurveData &CRimCurve)  : CRManInterfaceCall(aLineNo), m_trimCurve(CRimCurve) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRIM_CURVE; }
 	inline virtual void replay(IDoRender &ri) {
-		ri.trimCurve(m_trimCurve.m_nLoops,
+		ri.preTrimCurve(m_trimCurve.m_nLoops,
+			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
+			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
+			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
+			m_trimCurve.m_min.empty() ? 0 : &m_trimCurve.m_min[0],
+			m_trimCurve.m_max.empty() ? 0 : &m_trimCurve.m_max[0],
+			m_trimCurve.m_n.empty() ? 0 : &m_trimCurve.m_n[0],
+			m_trimCurve.m_u.empty() ? 0 : &m_trimCurve.m_u[0],
+			m_trimCurve.m_v.empty() ? 0 : &m_trimCurve.m_v[0],
+			m_trimCurve.m_w.empty() ? 0 : &m_trimCurve.m_w[0]);
+		ri.doTrimCurve(m_trimCurve.m_nLoops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
 			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
@@ -3213,7 +4040,11 @@ public:
 
 	inline CRiIdentity(long aLineNo) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_IDENTITY; }
-	inline virtual void replay(IDoRender &ri) { ri.identity(); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preIdentity();
+		ri.doIdentity();
+	}
 	inline CRiIdentity &operator=(const CRiIdentity &) {
 		return *this;
 	}
@@ -3231,7 +4062,11 @@ public:
 		memcpy(m_transform, transform, sizeof(RtMatrix));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM; }
-	inline virtual void replay(IDoRender &ri) { ri.transform(m_transform); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preTransform(m_transform);
+		ri.doTransform(m_transform);
+	}
 	inline CRiTransform &operator=(const CRiTransform &) {
 		return *this;
 	}
@@ -3249,7 +4084,11 @@ public:
 		memcpy(m_transform, transform, sizeof(RtMatrix));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CONCAT_TRANSFORM; }
-	inline virtual void replay(IDoRender &ri) { ri.concatTransform(m_transform); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preConcatTransform(m_transform);
+		ri.doConcatTransform(m_transform);
+	}
 	inline CRiConcatTransform &operator=(const CRiConcatTransform &) {
 		return *this;
 	}
@@ -3265,7 +4104,11 @@ public:
 
 	inline CRiPerspective(long aLineNo, RtFloat fov) : CRManInterfaceCall(aLineNo), m_fov(fov) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PERSPECTIVE; }
-	inline virtual void replay(IDoRender &ri) { ri.perspective(m_fov); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePerspective(m_fov);
+		ri.doPerspective(m_fov);
+	}
 	inline CRiPerspective &operator=(const CRiPerspective &) {
 		return *this;
 	}
@@ -3281,7 +4124,11 @@ public:
 
 	inline CRiTranslate(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz) : CRManInterfaceCall(aLineNo), m_dx(dx), m_dy(dy), m_dz(dz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSLATE; }
-	inline virtual void replay(IDoRender &ri) { ri.translate(m_dx, m_dy, m_dz); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preTranslate(m_dx, m_dy, m_dz);
+		ri.doTranslate(m_dx, m_dy, m_dz);
+	}
 	inline CRiTranslate &operator=(const CRiTranslate &) {
 		return *this;
 	}
@@ -3297,7 +4144,11 @@ public:
 
 	inline CRiRotate(long aLineNo, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) : CRManInterfaceCall(aLineNo), m_angle(angle), m_dx(dx), m_dy(dy), m_dz(dz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ROTATE; }
-	inline virtual void replay(IDoRender &ri) { ri.rotate(m_angle, m_dx, m_dy, m_dz); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preRotate(m_angle, m_dx, m_dy, m_dz);
+		ri.doRotate(m_angle, m_dx, m_dy, m_dz);
+	}
 	inline CRiRotate &operator=(const CRiRotate &) {
 		return *this;
 	}
@@ -3313,7 +4164,11 @@ public:
 
 	inline CRiScale(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz) : CRManInterfaceCall(aLineNo), m_dx(dx), m_dy(dy), m_dz(dz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SCALE; }
-	inline virtual void replay(IDoRender &ri) { ri.scale(m_dx, m_dy, m_dz); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preScale(m_dx, m_dy, m_dz);
+		ri.doScale(m_dx, m_dy, m_dz);
+	}
 	inline CRiScale &operator=(const CRiScale &) {
 		return *this;
 	}
@@ -3331,7 +4186,11 @@ public:
 
 	inline CRiSkew(long aLineNo, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) : CRManInterfaceCall(aLineNo), m_angle(angle), m_dx1(dx1), m_dy1(dy1), m_dz1(dz1), m_dx2(dx2), m_dy2(dy2), m_dz2(dz2) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SKEW; }
-	inline virtual void replay(IDoRender &ri) { ri.skew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preSkew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+		ri.doSkew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+	}
 	inline CRiSkew &operator=(const CRiSkew &) {
 		return *this;
 	}
@@ -3355,7 +4214,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DEFORMATION; }
-	inline virtual void replay(IDoRender &ri) { ri.deformationV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preDeformation(m_name.c_str(), parameters());
+		ri.doDeformation(m_name.c_str(), parameters());
+	}
 	inline CRiDeformation &operator=(const CRiDeformation &) {
 		return *this;
 	}
@@ -3371,7 +4234,11 @@ public:
 
 	inline CRiCoordinateSystem(long aLineNo, const char *name) : CRManInterfaceCall(aLineNo), m_name(name) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COORDINATE_SYSTEM; }
-	inline virtual void replay(IDoRender &ri) { ri.coordinateSystem(m_name.c_str()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preCoordinateSystem(m_name.c_str());
+		ri.doCoordinateSystem(m_name.c_str());
+	}
 	inline CRiCoordinateSystem &operator=(const CRiCoordinateSystem &) {
 		return *this;
 	}
@@ -3387,7 +4254,11 @@ public:
 
 	inline CRiCoordSysTransform(long aLineNo, const char *name) : CRManInterfaceCall(aLineNo), m_name(name) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COORDINATE_SYSTEM; }
-	inline virtual void replay(IDoRender &ri) { ri.coordSysTransform(m_name.c_str()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preCoordSysTransform(m_name.c_str());
+		ri.doCoordSysTransform(m_name.c_str());
+	}
 	inline CRiCoordSysTransform &operator=(const CRiCoordSysTransform &) {
 		return *this;
 	}
@@ -3446,7 +4317,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POLYGON; }
-	inline virtual void replay(IDoRender &ri) { ri.polygonV(m_nVertices, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePolygon(m_nVertices, parameters());
+		ri.doPolygon(m_nVertices, parameters());
+	}
 	inline CRiPolygon &operator=(const CRiPolygon &) {
 		return *this;
 	}
@@ -3467,9 +4342,12 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GENERAL_POLYGON; }
 	inline virtual void replay(IDoRender &ri) {
-		ri.generalPolygonV(m_nLoops,
+		ri.preGeneralPolygon(m_nLoops,
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
-			static_cast<RtInt>(size()), getTokens(), getParams());
+			parameters());
+		ri.doGeneralPolygon(m_nLoops,
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			parameters());
 	}
 	inline CRiGeneralPolygon &operator=(const CRiGeneralPolygon &) {
 		return *this;
@@ -3491,12 +4369,19 @@ public:
 		RtInt npolys, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.pointsPolygonsV(
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePointsPolygons(
 			m_nPolys,
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			m_verts.empty() ? 0 : &m_verts[0],
-			static_cast<RtInt>(size()), getTokens(), getParams()); }
+			parameters());
+		ri.doPointsPolygons(
+			m_nPolys,
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			m_verts.empty() ? 0 : &m_verts[0],
+			parameters());
+	}
 	inline CRiPointsPolygons &operator=(const CRiPointsPolygons &) {
 		return *this;
 	}
@@ -3518,13 +4403,21 @@ public:
 		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.pointsGeneralPolygonsV(
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePointsGeneralPolygons(
 			m_nPolys,
 			m_nLoops.empty() ? 0 : &m_nLoops[0],
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			m_verts.empty() ? 0 : &m_verts[0],
-			static_cast<RtInt>(size()), getTokens(), getParams()); }
+			parameters());
+		ri.prePointsGeneralPolygons(
+			m_nPolys,
+			m_nLoops.empty() ? 0 : &m_nLoops[0],
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			m_verts.empty() ? 0 : &m_verts[0],
+			parameters());
+	}
 	inline CRiPointsGeneralPolygons &operator=(const CRiPointsGeneralPolygons &) {
 		return *this;
 	}
@@ -3548,7 +4441,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri) { ri.patchV(m_type.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePatch(m_type.c_str(), parameters());
+		ri.doPatch(m_type.c_str(), parameters());
+	}
 	inline CRiPatch &operator=(const CRiPatch &) {
 		return *this;
 	}
@@ -3569,7 +4466,11 @@ public:
 		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri) { ri.patchMeshV(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
+		ri.doPatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
+	}
 	inline CRiPatchMesh &operator=(const CRiPatchMesh &) {
 		return *this;
 	}
@@ -3590,12 +4491,21 @@ public:
 		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.nuPatchV(m_nu, m_uorder,
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preNuPatch(m_nu, m_uorder,
 			m_uknot.empty() ? 0 : &m_uknot[0],
 			m_umin, m_umax, m_nv, m_vorder,
 			m_vknot.empty() ? 0 : &m_vknot[0],
-			m_vmin, m_vmax, static_cast<RtInt>(size()), getTokens(), getParams()); }
+			m_vmin, m_vmax,
+			parameters());
+		ri.doNuPatch(m_nu, m_uorder,
+			m_uknot.empty() ? 0 : &m_uknot[0],
+			m_umin, m_umax, m_nv, m_vorder,
+			m_vknot.empty() ? 0 : &m_vknot[0],
+			m_vmin, m_vmax,
+			parameters());
+	}
 	inline CRiNuPatch &operator=(const CRiNuPatch &) {
 		return *this;
 	}
@@ -3625,8 +4535,9 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[]
 		);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SUBDIVISION_MESH; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.subdivisionMeshV(
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preSubdivisionMesh(
 			m_scheme.c_str(), m_nfaces,
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
@@ -3635,17 +4546,20 @@ public:
 			m_nargs.empty() ? 0 : &(m_nargs[0]),
 			m_intargs.empty() ? 0 : &(m_intargs[0]),
 			m_floargs.empty() ? 0 : &(m_floargs[0]),
-			static_cast<RtInt>(size()), getTokens(), getParams()
+			parameters()
 			);
 
-		/*
-		int idx = 0;
-		ri.subdivisionMeshV(
-			m_data[idx].m_scheme.c_str(), m_data[idx].m_nfaces, &(m_data[idx].m_nverts[0]), &(m_data[idx].m_verts[0]),
-			m_data[idx].m_ntags, &(m_data[idx].m_tags[0]), &(m_data[idx].m_nargs[0]), &(m_data[idx].m_intargs[0]), &(m_data[idx].m_floargs[0]),
-			static_cast<RtInt>(size()), getTokens(), getParams()
+		ri.doSubdivisionMesh(
+			m_scheme.c_str(), m_nfaces,
+			m_nverts.empty() ? 0 : &(m_nverts[0]),
+			m_verts.empty() ? 0 : &(m_verts[0]),
+			m_ntags,
+			m_tags.empty() ? 0 : &(m_tags[0]),
+			m_nargs.empty() ? 0 : &(m_nargs[0]),
+			m_intargs.empty() ? 0 : &(m_intargs[0]),
+			m_floargs.empty() ? 0 : &(m_floargs[0]),
+			parameters()
 			);
-		*/
 	}
 	inline CRiSubdivisionMesh &operator=(const CRiSubdivisionMesh &) {
 		return *this;
@@ -3671,7 +4585,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
-	inline virtual void replay(IDoRender &ri) { ri.sphereV(m_radius, m_zmin, m_zmax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.doSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+	}
 	inline CRiSphere &operator=(const CRiSphere &) {
 		return *this;
 	}
@@ -3696,8 +4614,10 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CONE; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.coneV(m_height, m_radius, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams());
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preCone(m_height, m_radius, m_thetamax, parameters());
+		ri.doCone(m_height, m_radius, m_thetamax, parameters());
 	}
 	inline CRiCone &operator=(const CRiCone &) {
 		return *this;
@@ -3723,7 +4643,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
-	inline virtual void replay(IDoRender &ri) { ri.cylinderV(m_radius, m_zmin, m_zmax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.doCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+	}
 	inline CRiCylinder &operator=(const CRiCylinder &) {
 		return *this;
 	}
@@ -3753,7 +4677,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_HYPERBOLOID; }
-	inline virtual void replay(IDoRender &ri) { ri.hyperboloidV(m_point1, m_point2, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preHyperboloid(m_point1, m_point2, m_thetamax, parameters());
+		ri.doHyperboloid(m_point1, m_point2, m_thetamax, parameters());
+	}
 	inline CRiHyperboloid &operator=(const CRiHyperboloid &) {
 		return *this;
 	}
@@ -3778,7 +4706,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PARABOLOID; }
-	inline virtual void replay(IDoRender &ri) { ri.paraboloidV(m_rmax, m_zmin, m_zmax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.doParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+	}
 	inline CRiParaboloid &operator=(const CRiParaboloid &) {
 		return *this;
 	}
@@ -3804,7 +4736,8 @@ public:
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISK; }
 	inline virtual void replay(IDoRender &ri) {
-		ri.diskV(m_height, m_radius, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams());
+		ri.preDisk(m_height, m_radius, m_thetamax, parameters());
+		ri.doDisk(m_height, m_radius, m_thetamax, parameters());
 	}
 	inline CRiDisk &operator=(const CRiDisk &) {
 		return *this;
@@ -3831,7 +4764,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TORUS; }
-	inline virtual void replay(IDoRender &ri) { ri.torusV(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+		ri.doTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+	}
 	inline CRiTorus &operator=(const CRiTorus &) {
 		return *this;
 	}
@@ -3855,7 +4792,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS; }
-	inline virtual void replay(IDoRender &ri) { ri.pointsV(m_npts, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.prePoints(m_npts, parameters());
+		ri.doPoints(m_npts, parameters());
+	}
 	inline CRiPoints &operator=(const CRiPoints &) {
 		return *this;
 	}
@@ -3876,10 +4817,17 @@ public:
 		RtInt ustep, RtInt vstep, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CURVES; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.curvesV(m_type.c_str(), m_ncurves,
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preCurves(m_type.c_str(), m_ncurves,
 			m_nverts.empty() ? 0 : &m_nverts[0],
-			m_wrap.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+			m_wrap.c_str(),
+			parameters());
+		ri.doCurves(m_type.c_str(), m_ncurves,
+			m_nverts.empty() ? 0 : &m_nverts[0],
+			m_wrap.c_str(),
+			parameters());
+	}
 	inline CRiCurves &operator=(const CRiCurves &) {
 		return *this;
 	}
@@ -3901,12 +4849,18 @@ public:
 		RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BLOBBY; }
-	inline virtual void replay(IDoRender &ri) {
-		ri.blobbyV(m_nleaf,
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preBlobby(m_nleaf,
 			m_ncode, m_code.empty() ? 0 : &m_code[0],
 			m_nflt, m_flt.empty() ? 0 : &m_flt[0],
 			m_nstr, m_str.empty() ? 0 : &m_str[0],
-			static_cast<RtInt>(size()), getTokens(), getParams());
+			parameters());
+		ri.doBlobby(m_nleaf,
+			m_ncode, m_code.empty() ? 0 : &m_code[0],
+			m_nflt, m_flt.empty() ? 0 : &m_flt[0],
+			m_nstr, m_str.empty() ? 0 : &m_str[0],
+			parameters());
 	}
 	inline CRiBlobby &operator=(const CRiBlobby &) {
 		return *this;
@@ -3955,7 +4909,10 @@ public:
 		assert(m_subdivfunc != 0);
 		assert(m_freefunc != 0);
 		if ( m_subdivfunc != 0 && m_freefunc != 0 )
-		ri.procedural(m_str.empty() ? 0 :
+		ri.preProcedural(m_str.empty() ? 0 :
+			m_str.empty() ? 0 : (RtPointer)&m_str[0],
+			m_bound, *m_subdivfunc, *m_freefunc);
+		ri.doProcedural(m_str.empty() ? 0 :
 			m_str.empty() ? 0 : (RtPointer)&m_str[0],
 			m_bound, *m_subdivfunc, *m_freefunc);
 	}
@@ -3989,7 +4946,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRY; }
-	inline virtual void replay(IDoRender &ri) { ri.geometryV(m_name.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preGeometry(m_name.c_str(), parameters());
+		ri.doGeometry(m_name.c_str(), parameters());
+	}
 	inline CRiGeometry &operator=(const CRiGeometry &) {
 		return *this;
 	}
@@ -4011,8 +4972,10 @@ public:
 	inline virtual void replay(IDoRender &ri)
 	{
 		assert(m_handle != 0);
-		if ( m_handle != 0 )
-			ri.objectInstance(*m_handle);
+		if ( m_handle != 0 ) {
+			ri.preObjectInstance(*m_handle);
+			ri.doObjectInstance(*m_handle);
+		}
 	}
 	inline virtual RtObjectHandle *handleRef() { return m_handle; }
 	inline CRiObjectInstance &operator=(const CRiObjectInstance &) {
@@ -4053,8 +5016,10 @@ public:
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_TEXTURE; }
 	inline virtual void replay(IDoRender &ri) {
 		assert(m_filterfunc != 0);
-		if ( m_filterfunc )
-			ri.makeTextureV(m_pic.c_str(), m_tex.c_str(), m_swrap.c_str(), m_twrap.c_str(), *m_filterfunc, m_swidth, m_twidth, static_cast<RtInt>(size()), getTokens(), getParams());
+		if ( m_filterfunc ) {
+			ri.preMakeTexture(m_pic.c_str(), m_tex.c_str(), m_swrap.c_str(), m_twrap.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeTexture(m_pic.c_str(), m_tex.c_str(), m_swrap.c_str(), m_twrap.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+		}
 	}
 	inline CRiMakeTexture &operator=(const CRiMakeTexture &) {
 		return *this;
@@ -4091,10 +5056,13 @@ public:
 			delete m_filterfunc;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_BUMP; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri)
+	{
 		assert(m_filterfunc != 0);
-		if ( m_filterfunc )
-			ri.makeBumpV(m_pic.c_str(), m_tex.c_str(), m_swrap.c_str(), m_twrap.c_str(), *m_filterfunc, m_swidth, m_twidth, static_cast<RtInt>(size()), getTokens(), getParams());
+		if ( m_filterfunc ) {
+			ri.preMakeBump(m_pic.c_str(), m_tex.c_str(), m_swrap.c_str(), m_twrap.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeBump(m_pic.c_str(), m_tex.c_str(), m_swrap.c_str(), m_twrap.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+		}
 	}
 	inline CRiMakeBump &operator=(const CRiMakeBump &) {
 		return *this;
@@ -4135,8 +5103,10 @@ public:
 	inline virtual void replay(IDoRender &ri)
 	{
 		assert(m_filterfunc != 0);
-		if ( m_filterfunc )
-			ri.makeLatLongEnvironmentV(m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, static_cast<RtInt>(size()), getTokens(), getParams());
+		if ( m_filterfunc ) {
+			ri.preMakeLatLongEnvironment(m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeLatLongEnvironment(m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+		}
 	}
 	inline CRiMakeLatLongEnvironment &operator=(const CRiMakeLatLongEnvironment &) {
 		return *this;
@@ -4175,10 +5145,13 @@ public:
 			delete m_filterfunc;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_CUBE_FACE_ENVIRONMENT; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri)
+	{
 		assert(m_filterfunc != 0);
-		if ( m_filterfunc )
-			ri.makeCubeFaceEnvironmentV(m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, static_cast<RtInt>(size()), getTokens(), getParams());
+		if ( m_filterfunc ) {
+			ri.preMakeCubeFaceEnvironment(m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeCubeFaceEnvironment(m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
+		}
 	}
 	inline CRiMakeCubeFaceEnvironment &operator=(const CRiMakeCubeFaceEnvironment &) {
 		return *this;
@@ -4203,7 +5176,11 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_SHADOW; }
-	inline virtual void replay(IDoRender &ri) { ri.makeShadowV(m_pic.c_str(), m_tex.c_str(), static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preMakeShadow(m_pic.c_str(), m_tex.c_str(), parameters());
+		ri.doMakeShadow(m_pic.c_str(), m_tex.c_str(), parameters());
+	}
 	inline CRiMakeShadow &operator=(const CRiMakeShadow &) {
 		return *this;
 	}
@@ -4220,11 +5197,17 @@ public:
 
 	inline CRiArchiveRecord(long aLineNo, RtToken type, const char *line) : CRManInterfaceCall(aLineNo), m_type(type), m_line(line) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_RECORD; }
-	inline virtual void replay(IDoRender &ri) { ri.archiveRecordV(m_type.c_str(), m_line.c_str()); }
-	inline virtual void replay(IRi &ri, const IArchiveCallback *callback) {
-		ri.archiveRecordV(m_type.c_str(), m_line.c_str());
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preArchiveRecord(m_type.c_str(), m_line.c_str());
+		ri.doArchiveRecord(m_type.c_str(), m_line.c_str());
+	}
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *callback)
+	{
+		ri.preArchiveRecord(m_type.c_str(), m_line.c_str());
+		ri.doArchiveRecord(m_type.c_str(), m_line.c_str());
 		if ( callback ) 
-			(*callback)(ri, m_type.c_str(), m_line.c_str());
+			(*callback)(ri.frontend(), m_type.c_str(), m_line.c_str());
 	}
 	inline CRiArchiveRecord &operator=(const CRiArchiveRecord &) {
 		return *this;
@@ -4261,11 +5244,16 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_READ_ARCHIVE; }
-	inline virtual void replay(IRi &ri, const IArchiveCallback *callback)
+	inline virtual void replay(IDoRender &ri)
 	{
-		ri.readArchiveV(m_filename.c_str(), callback, static_cast<RtInt>(size()), getTokens(), getParams());
+		ri.preReadArchive(m_filename.c_str(), m_callback, parameters());
+		ri.doReadArchive(m_filename.c_str(), m_callback, parameters());
 	}
-	inline virtual void replay(IDoRender &ri) { ri.readArchiveV(m_filename.c_str(), m_callback, static_cast<RtInt>(size()), getTokens(), getParams()); }
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *callback)
+	{
+		ri.preReadArchive(m_filename.c_str(), callback, parameters());
+		ri.doReadArchive(m_filename.c_str(), callback, parameters());
+	}
 	inline CRiReadArchive &operator=(const CRiReadArchive &) {
 		return *this;
 	}
@@ -4336,6 +5324,7 @@ public:
 		return new CRiSolidEnd(aLineNo);
 	}
 
+	/*
 	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo, RtObjectHandle *h) {
 		return new CRiObjectBegin(aLineNo, h);
 	}
@@ -4343,6 +5332,7 @@ public:
 	inline virtual CRiObjectEnd *newRiObjectEnd(long aLineNo) {
 		return new CRiObjectEnd(aLineNo);
 	}
+	*/
 
 	inline virtual CRiMotionBegin *newRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) {
 		return new CRiMotionBegin(aLineNo, n, f);

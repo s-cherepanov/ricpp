@@ -53,14 +53,22 @@ CRenderState::~CRenderState()
 
 void CRenderState::pushOptions()
 {
-	if ( m_optionsStack.empty() ) {
-		m_optionsStack.push_back(m_optionsFactory->newOptions());
-	} else {
-		m_optionsStack.push_back(m_optionsFactory->newOptions(*m_optionsStack.back()));
-	}
-	if ( m_optionsStack.back() == 0 ) {
-		m_optionsStack.pop_back();
-		// Throw
+	try {
+
+		if ( m_optionsStack.empty() ) {
+			m_optionsStack.push_back(m_optionsFactory->newOptions());
+		} else {
+			m_optionsStack.push_back(m_optionsFactory->newOptions(*m_optionsStack.back()));
+		}
+		if ( m_optionsStack.back() == 0 ) {
+			m_optionsStack.pop_back();
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in pushOptions()", __LINE__, __FILE__);
+		}
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		throw e2;
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,  __LINE__, __FILE__, "in pushOptions(): %s", e.what());
 	}
 }
 
@@ -75,14 +83,22 @@ bool CRenderState::popOptions()
 
 void CRenderState::pushAttributes()
 {
-	if ( m_attributesStack.empty() ) {
-		m_attributesStack.push_back(m_attributesFactory->newAttributes(m_optionsStack.back()->colorDescr()));
-	} else {
-		m_attributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
-	}
-	if ( m_attributesStack.back() == 0 ) {
-		m_attributesStack.pop_back();
-		// Throw
+	try {
+
+		if ( m_attributesStack.empty() ) {
+			m_attributesStack.push_back(m_attributesFactory->newAttributes(m_optionsStack.back()->colorDescr()));
+		} else {
+			m_attributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
+		}
+		if ( m_attributesStack.back() == 0 ) {
+			m_attributesStack.pop_back();
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in pushAttributes()", __LINE__, __FILE__);
+		}
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		throw e2;
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,  __LINE__, __FILE__, "in pushAttributes(): %s", e.what());
 	}
 }
 
@@ -97,7 +113,11 @@ bool CRenderState::popAttributes()
 
 void CRenderState::pushTransform()
 {
-	m_transformStack.push_back(CTransformation());
+	try {
+		m_transformStack.push_back(CTransformation());
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,  __LINE__, __FILE__, "in pushTransform(): %s", e.what());
+	}
 }
 
 bool CRenderState::popTransform()
@@ -111,10 +131,19 @@ bool CRenderState::popTransform()
 
 void CRenderState::startAreaLightSource(RtLightHandle h)
 {
-	m_modeStack->startAreaLightSource(h);
+	try {
+		m_modeStack->startAreaLightSource(h);
+	} catch (ExceptRiCPPError &err) {
+		if ( archiveName() != 0 ) {
+			err.line(lineNo());
+			err.file(archiveName());
+		}
+		throw err;
+	}
 }
 
-void CRenderState::endAreaLightSource() {
+void CRenderState::endAreaLightSource()
+{
 	try {
 		m_modeStack->endAreaLightSource();
 	} catch (ExceptRiCPPError &err) {
@@ -122,10 +151,19 @@ void CRenderState::endAreaLightSource() {
 			err.line(lineNo());
 			err.file(archiveName());
 		}
+		throw err;
 	}
 }
 
 void CRenderState::parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
 {
-	m_curParams.set(counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+	try {
+		m_curParams.set(counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+	} catch (ExceptRiCPPError &err) {
+		if ( archiveName() != 0 ) {
+			err.line(lineNo());
+			err.file(archiveName());
+		}
+		throw err;
+	}
 }

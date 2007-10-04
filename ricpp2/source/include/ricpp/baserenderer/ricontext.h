@@ -153,7 +153,9 @@ public:
 	 *
 	 * @params frontend Ri front end.
 	 */
-	virtual RtVoid registerFrontEnd(IRi &frontend, IRiCPPErrorHandler &errorHandler) = 0;
+	virtual RtVoid registerFrontEnd(IRi &aFrontend, IRiCPPErrorHandler &errorHandler) = 0;
+
+	virtual IRi &frontend()=0;
 
 	/** @brief Interfaces needed for byte streams.
 	 *

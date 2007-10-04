@@ -85,7 +85,17 @@ public:
 	 */
 	virtual TypeModeBits curModeBits() const = 0;
 
+	/** @brief The current frame number
+	 *
+	 *  Set 0 if outside a frame, but has no meaning, can also be inside
+	 *  rame with number 0.
+	 *
+	 *  @return The current frame Number
+	 */
+	virtual RtInt frameNumber() const = 0;
+
 	virtual bool inWorldBlock() const = 0;
+
 	virtual RtLightHandle areaLightSourceHandle() const = 0;
 	virtual CModeStack::size_type areaLightSourceDepth() const = 0;
 
@@ -162,7 +172,7 @@ class CRenderState : public IRenderStateReader {
 
 	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses
 
-	CParameterList m_curParams;
+	CParameterList m_curParams; ///< Params of the last interface request with variable parameters
 
 	CLights m_lights; ///< Global light list
 
@@ -217,13 +227,13 @@ public:
 	 *
 	 *  @param number The frame number
 	 */
-	inline void frameNumber(RtInt number) { m_frameNumber = number; }
+	inline virtual void frameNumber(RtInt number) { m_frameNumber = number; }
 
 	/** @brief Gets The current frame number (frames are not nested).
 	 *
 	 *  @return The frame number.
 	 */
-	inline RtInt frameNumber() const { return m_frameNumber; }
+	inline virtual RtInt frameNumber() const { return m_frameNumber; }
 
 	/** @defgroup modestack_group  CModeStack functions
 	 *  @brief Facading the modestack.
@@ -249,16 +259,18 @@ public:
 		m_lights.clearToMark();
 	}
 
-	inline void frameBegin()
+	inline void frameBegin(RtInt number)
 	{
 		m_lights.mark();
 		pushOptions();
 		pushAttributes();
 		pushTransform();
 		m_modeStack->frameBegin();
+		frameNumber(number);
 	}
 	inline void frameEnd()
 	{
+		frameNumber(0);
 		m_modeStack->frameEnd();
 		popTransform();
 		popAttributes();

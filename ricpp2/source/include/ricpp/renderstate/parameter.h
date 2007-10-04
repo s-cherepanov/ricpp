@@ -187,6 +187,7 @@ namespace RiCPP {
 
 		CParameter *get(RtToken var);
 		const CParameter *get(RtToken var) const;
+
 		bool erase(RtToken var);
 		bool erase(CParameter *param);
 
@@ -195,7 +196,20 @@ namespace RiCPP {
 			assert(m_tokenPtr.size() == size());
 			return m_tokenPtr.empty() ? 0 : &m_tokenPtr[0];
 		}
+
+		inline const RtToken *tokenPtr() const
+		{
+			assert(m_tokenPtr.size() == size());
+			return m_tokenPtr.empty() ? 0 : &m_tokenPtr[0];
+		}
+
 		inline RtPointer *valuePtr()
+		{
+			assert(m_paramPtr.size() == size());
+			return m_paramPtr.empty() ? 0 : &m_paramPtr[0];
+		}
+
+		inline const RtPointer *valuePtr() const
 		{
 			assert(m_paramPtr.size() == size());
 			return m_paramPtr.empty() ? 0 : &m_paramPtr[0];

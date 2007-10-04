@@ -204,6 +204,13 @@ public:
 		m_errorHandler = &errorHandler;
 	}
 
+	inline IRi &frontend()
+	{
+		assert(m_ri != 0);
+		return *m_ri;
+	}
+
+
 	inline virtual RtVoid registerProtocolHandler(CBackBufferProtocolHandlers &protocolHandler)
 	{
 		m_protocolHandler = &protocolHandler;
@@ -393,22 +400,22 @@ public:
 	inline virtual RtVoid preBegin(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid preEnd(void) {}
 
-	inline virtual RtVoid preFrameBegin(RtInt number) {}
-	inline virtual RtVoid preFrameEnd(void) {}
+	virtual RtVoid preFrameBegin(RtInt number);
+	virtual RtVoid preFrameEnd(void);
 
-	inline virtual RtVoid preWorldBegin(void) {}
-	inline virtual RtVoid preWorldEnd(void) {}
+	virtual RtVoid preWorldBegin(void);
+	virtual RtVoid preWorldEnd(void);
 
-	inline virtual RtVoid preAttributeBegin(void) {}
-	inline virtual RtVoid preAttributeEnd(void) {}
+	virtual RtVoid preAttributeBegin(void);
+	virtual RtVoid preAttributeEnd(void);
 
-	inline virtual RtVoid preTransformBegin(void) {}
-	inline virtual RtVoid preTransformEnd(void) {}
+	virtual RtVoid preTransformBegin(void);
+	virtual RtVoid preTransformEnd(void);
 
 	inline virtual RtVoid preSolidBegin(RtToken type) {}
 	inline virtual RtVoid preSolidEnd(void) {}
 
-	inline virtual RtVoid preObjectBegin(void) {}
+	inline virtual RtObjectHandle preObjectBegin(void) {return illObjectHandle;}
 	inline virtual RtVoid preObjectEnd(void) {}
 	inline virtual RtVoid preObjectInstance(RtObjectHandle handle) {}
 
@@ -421,11 +428,11 @@ public:
 	inline virtual RtVoid preArchiveBegin(RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid preArchiveEnd(void) {}
 
-	inline virtual RtVoid preFormat(RtInt xres, RtInt yres, RtFloat aspect) {}
-	inline virtual RtVoid preFrameAspectRatio(RtFloat aspect) {}
+	virtual RtVoid preFormat(RtInt xres, RtInt yres, RtFloat aspect);
+	virtual RtVoid preFrameAspectRatio(RtFloat aspect);
 
-	inline virtual RtVoid preScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {}
-	inline virtual RtVoid preCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {}
+	virtual RtVoid preScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top);
+	virtual RtVoid preCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
 	virtual RtVoid preProjection(RtToken name, const CParameterList &params);
 	inline virtual RtVoid preClipping(RtFloat hither, RtFloat yon) {}
 	inline virtual RtVoid preClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {}
@@ -444,8 +451,8 @@ public:
 	inline virtual RtVoid preRelativeDetail(RtFloat relativedetail) {}
 	inline virtual RtVoid preOption(RtString name, const CParameterList &params) {}
 
-	inline virtual RtVoid preLightSource(RtLightHandle h, RtString name, const CParameterList &params) { }
-	inline virtual RtVoid preAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params) { }
+	inline virtual RtLightHandle preLightSource(RtString name, const CParameterList &params) { return illLightHandle; }
+	inline virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params) { return illLightHandle; }
 
 	inline virtual RtVoid preAttribute(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid preColor(RtColor Cs) {}
@@ -558,7 +565,7 @@ public:
 	inline virtual RtVoid doSolidBegin(RtToken type) {}
 	inline virtual RtVoid doSolidEnd(void) {}
 
-	inline virtual RtVoid doObjectBegin(void) {}
+	inline virtual RtVoid doObjectBegin(RtObjectHandle h) {}
 	inline virtual RtVoid doObjectEnd(void) {}
 	inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
 

@@ -344,20 +344,18 @@ RtVoid CBaseRenderer::end(void)
 	}
 }
 
+RtVoid CBaseRenderer::preFrameBegin(RtInt number)
+{
+	renderState()->frameBegin(number);
+}
+
 RtVoid CBaseRenderer::frameBegin(RtInt number)
 // throw ExceptRiCPPError
 {
 	if ( !preCheck(REQ_FRAME_BEGIN) )
 		return;
 
-	try {
-		renderState()->frameBegin();
-	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'frameBegin', Frame no.: %d", (int)number);
-		return;
-	}
-
-	renderState()->frameNumber(number);
+	preFrameBegin(number);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -377,12 +375,9 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 	}
 }
 
-RtVoid CBaseRenderer::frameEnd(void)
-// throw ExceptRiCPPError
+
+RtVoid CBaseRenderer::preFrameEnd(void)
 {
-	if ( !preCheck(REQ_FRAME_END) )
-		return;
-	
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
@@ -391,7 +386,15 @@ RtVoid CBaseRenderer::frameEnd(void)
 	}
 
 	renderState()->frameEnd();
-	renderState()->frameNumber(0);
+}
+
+RtVoid CBaseRenderer::frameEnd(void)
+// throw ExceptRiCPPError
+{
+	if ( !preCheck(REQ_FRAME_END) )
+		return;
+
+	preFrameEnd();
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -411,18 +414,18 @@ RtVoid CBaseRenderer::frameEnd(void)
 	}
 }
 
+RtVoid CBaseRenderer::preWorldBegin(void)
+{
+	renderState()->worldBegin();
+}
+
 RtVoid CBaseRenderer::worldBegin(void)
 // throw ExceptRiCPPError
 {
 	if ( !preCheck(REQ_WORLD_BEGIN) )
 		return;
 
-	try {
-		renderState()->worldBegin();
-	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'worldBegin'");
-		return;
-	}
+	preWorldBegin();
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -442,12 +445,9 @@ RtVoid CBaseRenderer::worldBegin(void)
 	}
 }
 
-RtVoid CBaseRenderer::worldEnd(void)
-// throw ExceptRiCPPError
+
+RtVoid CBaseRenderer::preWorldEnd(void)
 {
-	if ( !preCheck(REQ_WORLD_END) )
-		return;
-	
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
@@ -456,7 +456,16 @@ RtVoid CBaseRenderer::worldEnd(void)
 	}
 
 	renderState()->worldEnd();
+}
 
+RtVoid CBaseRenderer::worldEnd(void)
+// throw ExceptRiCPPError
+{
+	if ( !preCheck(REQ_WORLD_END) )
+		return;
+
+	preWorldEnd();
+	
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
@@ -475,18 +484,19 @@ RtVoid CBaseRenderer::worldEnd(void)
 	}
 }
 
+
+RtVoid CBaseRenderer::preAttributeBegin(void)
+{
+	renderState()->attributeBegin();
+}
+
 RtVoid CBaseRenderer::attributeBegin(void)
 // throw ExceptRiCPPError
 {
 	if ( !preCheck(REQ_ATTRIBUTE_BEGIN) )
 		return;
 	
-	try {
-		renderState()->attributeBegin();
-	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'attributeBegin'");
-		return;
-	}
+	preAttributeBegin();
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -506,12 +516,9 @@ RtVoid CBaseRenderer::attributeBegin(void)
 	}
 }
 
-RtVoid CBaseRenderer::attributeEnd(void)
-// throw ExceptRiCPPError
+
+RtVoid CBaseRenderer::preAttributeEnd(void)
 {
-	if ( !preCheck(REQ_ATTRIBUTE_END) )
-		return;
-	
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
@@ -520,6 +527,15 @@ RtVoid CBaseRenderer::attributeEnd(void)
 	}
 
 	renderState()->attributeEnd();
+}
+
+RtVoid CBaseRenderer::attributeEnd(void)
+// throw ExceptRiCPPError
+{
+	if ( !preCheck(REQ_ATTRIBUTE_END) )
+		return;
+
+	preAttributeEnd();
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -539,18 +555,18 @@ RtVoid CBaseRenderer::attributeEnd(void)
 	}
 }
 
+RtVoid CBaseRenderer::preTransformBegin(void)
+{
+	renderState()->transformBegin();
+}
+
 RtVoid CBaseRenderer::transformBegin(void)
 // throw ExceptRiCPPError
 {
 	if ( !preCheck(REQ_TRANSFORM_BEGIN) )
 		return;
 	
-	try {
-		renderState()->transformBegin();
-	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'attributeBegin'");
-		return;
-	}
+	preTransformBegin();
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -570,13 +586,19 @@ RtVoid CBaseRenderer::transformBegin(void)
 	}
 }
 
+
+RtVoid CBaseRenderer::preTransformEnd(void)
+{
+	renderState()->transformEnd();
+}
+
 RtVoid CBaseRenderer::transformEnd(void)
 // throw ExceptRiCPPError
 {
 	if ( !preCheck(REQ_TRANSFORM_END) )
 		return;
 
-	renderState()->transformEnd();
+	preTransformEnd();
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -597,7 +619,6 @@ RtVoid CBaseRenderer::transformEnd(void)
 }
 
 
-
 RtVoid CBaseRenderer::solidBegin(RtToken type){}
 RtVoid CBaseRenderer::solidEnd(void) {}
 
@@ -615,10 +636,17 @@ RtArchiveHandle CBaseRenderer::archiveBeginV(RtString name, RtInt n, RtToken tok
 RtVoid CBaseRenderer::archiveEnd(void) {}
 
 
+RtVoid CBaseRenderer::preFormat(RtInt xres, RtInt yres, RtFloat aspect)
+{
+	renderState()->options().format(xres, yres, aspect);
+}
+
 RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 {
 	if ( !preCheck(REQ_FORMAT) )
 		return;
+
+	preFormat(xres, yres, aspect);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -639,10 +667,17 @@ RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 }
 
 
+RtVoid CBaseRenderer::preFrameAspectRatio(RtFloat aspect)
+{
+	renderState()->options().frameAspectRatio(aspect);
+}
+
 RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 {
 	if ( !preCheck(REQ_FRAME_ASPECT_RATIO) )
 		return;
+
+	preFrameAspectRatio(aspect);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -663,12 +698,17 @@ RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 }
 
 
+RtVoid CBaseRenderer::preScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
+{
+	renderState()->options().screenWindow(left, right, bot, top);
+}
+
 RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
 {
 	if ( !preCheck(REQ_SCREEN_WINDOW) )
 		return;
 
-	renderState()->options().screenWindow(left, right, bot, top);
+	preScreenWindow(left, right, bot, top);
 
 	if ( m_macroFactory && m_curMacro ) {
 
@@ -689,12 +729,17 @@ RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtF
 }
 
 
+RtVoid CBaseRenderer::preCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
+{
+	renderState()->options().cropWindow(xmin, xmax, ymin, ymax);
+}
+
 RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
 {
 	if ( !preCheck(REQ_CROP_WINDOW) )
 		return;
 
-	renderState()->options().cropWindow(xmin, xmax, ymin, ymax);
+	preCropWindow(xmin, xmax, ymin, ymax);
 
 	if ( m_macroFactory && m_curMacro ) {
 

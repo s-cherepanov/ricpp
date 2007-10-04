@@ -91,7 +91,7 @@ public:
     virtual RtVoid preSolidBegin(RtToken type) = 0;
     virtual RtVoid preSolidEnd(void) = 0;
 
-	virtual RtVoid preObjectBegin(void) = 0;
+	virtual RtObjectHandle preObjectBegin(void) = 0;
 	virtual RtVoid preObjectEnd(void) = 0;
     virtual RtVoid preObjectInstance(RtObjectHandle handle) = 0;
 
@@ -127,8 +127,8 @@ public:
     virtual RtVoid preRelativeDetail(RtFloat relativedetail) = 0;
     virtual RtVoid preOption(RtString name, const CParameterList &params) = 0;
 	
-    virtual RtVoid preLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
+    virtual RtLightHandle preLightSource(RtString name, const CParameterList &params) = 0;
+	virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params) = 0;
 	
     virtual RtVoid preAttribute(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid preColor(RtColor Cs) = 0;
@@ -247,7 +247,7 @@ public:
     virtual RtVoid doSolidBegin(RtToken type) = 0;
     virtual RtVoid doSolidEnd(void) = 0;
 
-	virtual RtVoid doObjectBegin(void) = 0;
+	virtual RtVoid doObjectBegin(RtObjectHandle handle) = 0;
 	virtual RtVoid doObjectEnd(void) = 0;
     virtual RtVoid doObjectInstance(RtObjectHandle handle) = 0;
 
@@ -276,7 +276,7 @@ public:
     virtual RtVoid doExposure(RtFloat gain, RtFloat gamma) = 0;
     virtual RtVoid doImager(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid doQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
-    virtual RtVoid doDisplayChannel(RtString channel, RtInt n, RtToken tokens[], RtPointer parms[]) = 0;
+    virtual RtVoid doDisplayChannel(RtString channel, const CParameterList &params) = 0;
     virtual RtVoid doDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params) = 0;
     virtual RtVoid doHider(RtToken type, const CParameterList &params) = 0;
     virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) = 0;

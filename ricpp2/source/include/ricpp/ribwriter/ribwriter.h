@@ -92,7 +92,7 @@ public:
     inline virtual RtVoid doSolidBegin(RtToken type) {}
     inline virtual RtVoid doSolidEnd(void) {}
 
-	inline virtual RtVoid doObjectBegin(void) {}
+	inline virtual RtVoid doObjectBegin(RtObjectHandle h) {}
 	inline virtual RtVoid doObjectEnd(void) {}
     inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
 
@@ -121,7 +121,7 @@ public:
     inline virtual RtVoid doExposure(RtFloat gain, RtFloat gamma) {}
     inline virtual RtVoid doImager(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
-	inline virtual RtVoid doDisplayChannel(RtString channel, RtInt n, RtToken tokens[], RtPointer parms[]) {}
+	inline virtual RtVoid doDisplayChannel(RtString channel, const CParameterList &params) {}
     inline virtual RtVoid doDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params) {}
     inline virtual RtVoid doHider(RtToken type, const CParameterList &params) {}
     inline virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}

@@ -60,7 +60,6 @@
 		C344D52E0CA8F3E300E077EC /* lights.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5260CA8F3E300E077EC /* lights.h */; };
 		C344D52F0CA8F3E300E077EC /* options.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5270CA8F3E300E077EC /* options.h */; };
 		C344D5300CA8F3E300E077EC /* optionsbase.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5280CA8F3E300E077EC /* optionsbase.h */; };
-		C344D5310CA8F3E300E077EC /* paramclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D5290CA8F3E300E077EC /* paramclasses.h */; };
 		C344D5320CA8F3E300E077EC /* parameter.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D52A0CA8F3E300E077EC /* parameter.h */; };
 		C344D5330CA8F3E300E077EC /* transformation.h in Headers */ = {isa = PBXBuildFile; fileRef = C344D52B0CA8F3E300E077EC /* transformation.h */; };
 		C344D53C0CA8F40800E077EC /* attributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5340CA8F40800E077EC /* attributes.cpp */; };
@@ -68,9 +67,10 @@
 		C344D53E0CA8F40800E077EC /* lights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5360CA8F40800E077EC /* lights.cpp */; };
 		C344D53F0CA8F40800E077EC /* options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5370CA8F40800E077EC /* options.cpp */; };
 		C344D5400CA8F40800E077EC /* optionsbase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5380CA8F40800E077EC /* optionsbase.cpp */; };
-		C344D5410CA8F40800E077EC /* paramclasses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D5390CA8F40800E077EC /* paramclasses.cpp */; };
 		C344D5420CA8F40800E077EC /* parameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D53A0CA8F40800E077EC /* parameter.cpp */; };
 		C344D5430CA8F40800E077EC /* transformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C344D53B0CA8F40800E077EC /* transformation.cpp */; };
+		C348216C0CB4BAE100766567 /* paramclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C348216B0CB4BAE100766567 /* paramclasses.h */; };
+		C348216E0CB4BB0800766567 /* paramclasses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C348216D0CB4BB0800766567 /* paramclasses.cpp */; };
 		C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
 		C3610AC70BF2F26D00007CEF /* ricppbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */; };
 		C3610B2F0BF2F9D500007CEF /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3610AB50BF2F06500007CEF /* libricppbridge.a */; };
@@ -315,7 +315,6 @@
 		C344D5260CA8F3E300E077EC /* lights.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lights.h; path = ../../../source/include/ricpp/renderstate/lights.h; sourceTree = SOURCE_ROOT; };
 		C344D5270CA8F3E300E077EC /* options.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = options.h; path = ../../../source/include/ricpp/renderstate/options.h; sourceTree = SOURCE_ROOT; };
 		C344D5280CA8F3E300E077EC /* optionsbase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = optionsbase.h; path = ../../../source/include/ricpp/renderstate/optionsbase.h; sourceTree = SOURCE_ROOT; };
-		C344D5290CA8F3E300E077EC /* paramclasses.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = paramclasses.h; path = ../../../source/include/ricpp/renderstate/paramclasses.h; sourceTree = SOURCE_ROOT; };
 		C344D52A0CA8F3E300E077EC /* parameter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = parameter.h; path = ../../../source/include/ricpp/renderstate/parameter.h; sourceTree = SOURCE_ROOT; };
 		C344D52B0CA8F3E300E077EC /* transformation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = transformation.h; path = ../../../source/include/ricpp/renderstate/transformation.h; sourceTree = SOURCE_ROOT; };
 		C344D5340CA8F40800E077EC /* attributes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = attributes.cpp; path = ../../../source/renderstate/attributes.cpp; sourceTree = SOURCE_ROOT; };
@@ -323,9 +322,10 @@
 		C344D5360CA8F40800E077EC /* lights.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = lights.cpp; path = ../../../source/renderstate/lights.cpp; sourceTree = SOURCE_ROOT; };
 		C344D5370CA8F40800E077EC /* options.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = options.cpp; path = ../../../source/renderstate/options.cpp; sourceTree = SOURCE_ROOT; };
 		C344D5380CA8F40800E077EC /* optionsbase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = optionsbase.cpp; path = ../../../source/renderstate/optionsbase.cpp; sourceTree = SOURCE_ROOT; };
-		C344D5390CA8F40800E077EC /* paramclasses.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = paramclasses.cpp; path = ../../../source/renderstate/paramclasses.cpp; sourceTree = SOURCE_ROOT; };
 		C344D53A0CA8F40800E077EC /* parameter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = parameter.cpp; path = ../../../source/renderstate/parameter.cpp; sourceTree = SOURCE_ROOT; };
 		C344D53B0CA8F40800E077EC /* transformation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = transformation.cpp; path = ../../../source/renderstate/transformation.cpp; sourceTree = SOURCE_ROOT; };
+		C348216B0CB4BAE100766567 /* paramclasses.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = paramclasses.h; path = ../../../source/include/ricpp/declaration/paramclasses.h; sourceTree = SOURCE_ROOT; };
+		C348216D0CB4BB0800766567 /* paramclasses.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = paramclasses.cpp; path = ../../../source/declaration/paramclasses.cpp; sourceTree = SOURCE_ROOT; };
 		C35A15640C03201F000C9348 /* librenderstate.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librenderstate.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AB50BF2F06500007CEF /* libricppbridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppbridge.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -690,7 +690,6 @@
 				C344D5260CA8F3E300E077EC /* lights.h */,
 				C344D5270CA8F3E300E077EC /* options.h */,
 				C344D5280CA8F3E300E077EC /* optionsbase.h */,
-				C344D5290CA8F3E300E077EC /* paramclasses.h */,
 				C344D52A0CA8F3E300E077EC /* parameter.h */,
 				C344D52B0CA8F3E300E077EC /* transformation.h */,
 				C362FB6B0C03337F00880F4D /* modes.h */,
@@ -709,7 +708,6 @@
 				C344D5360CA8F40800E077EC /* lights.cpp */,
 				C344D5370CA8F40800E077EC /* options.cpp */,
 				C344D5380CA8F40800E077EC /* optionsbase.cpp */,
-				C344D5390CA8F40800E077EC /* paramclasses.cpp */,
 				C344D53A0CA8F40800E077EC /* parameter.cpp */,
 				C344D53B0CA8F40800E077EC /* transformation.cpp */,
 				C330D79D0C44C4F800FC8F4F /* requests.cpp */,
@@ -827,6 +825,7 @@
 		C37DBBA00C01CBB8003AE4E7 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C348216B0CB4BAE100766567 /* paramclasses.h */,
 				C37DBBA80C01CC6E003AE4E7 /* declaration.h */,
 				C37DBBA90C01CC6E003AE4E7 /* decldict.h */,
 				C37DBBAA0C01CC6E003AE4E7 /* token.h */,
@@ -839,6 +838,7 @@
 		C37DBBA10C01CBCE003AE4E7 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C348216D0CB4BB0800766567 /* paramclasses.cpp */,
 				C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */,
 				C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */,
 				C3003D7B0C1D6CF9004C4EF0 /* tokenmap.cpp */,
@@ -1070,7 +1070,6 @@
 				C344D52E0CA8F3E300E077EC /* lights.h in Headers */,
 				C344D52F0CA8F3E300E077EC /* options.h in Headers */,
 				C344D5300CA8F3E300E077EC /* optionsbase.h in Headers */,
-				C344D5310CA8F3E300E077EC /* paramclasses.h in Headers */,
 				C344D5320CA8F3E300E077EC /* parameter.h in Headers */,
 				C344D5330CA8F3E300E077EC /* transformation.h in Headers */,
 			);
@@ -1122,6 +1121,7 @@
 				C37DBBAF0C01CC6E003AE4E7 /* token.h in Headers */,
 				C37DBBB10C01CC6E003AE4E7 /* types.h in Headers */,
 				C3003D7F0C1D6D21004C4EF0 /* tokenmap.h in Headers */,
+				C348216C0CB4BAE100766567 /* paramclasses.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1524,7 +1524,6 @@
 				C344D53E0CA8F40800E077EC /* lights.cpp in Sources */,
 				C344D53F0CA8F40800E077EC /* options.cpp in Sources */,
 				C344D5400CA8F40800E077EC /* optionsbase.cpp in Sources */,
-				C344D5410CA8F40800E077EC /* paramclasses.cpp in Sources */,
 				C344D5420CA8F40800E077EC /* parameter.cpp in Sources */,
 				C344D5430CA8F40800E077EC /* transformation.cpp in Sources */,
 			);
@@ -1570,6 +1569,7 @@
 				C37DBBB70C01CC7F003AE4E7 /* decldict.cpp in Sources */,
 				C37DBBB90C01CC7F003AE4E7 /* types.cpp in Sources */,
 				C3003D7C0C1D6CF9004C4EF0 /* tokenmap.cpp in Sources */,
+				C348216E0CB4BB0800766567 /* paramclasses.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

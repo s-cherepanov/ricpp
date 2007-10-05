@@ -80,25 +80,37 @@ void CRiMacro::replay(IDoRender &ri)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void CRiGeneralPolygon::enterValues(RtInt nloops, RtInt *nverts)
+{
+	m_nLoops = nloops;
+	m_nVerts.resize(nloops);
+	m_nVerts.assign(nverts, nverts+nloops);
+}
+
 CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt nloops, RtInt *nverts,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo), m_nLoops(nloops)
+	: CPolygonRManInterfaceCall(aLineNo)
 {
-	m_nVerts.resize(nloops);
-	m_nVerts.assign(nverts, nverts+nloops);
+	enterValues(nloops, nverts);
 	CGeneralPolygonClasses p(nloops, nverts);
 	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-CRiPointsPolygons::CRiPointsPolygons(
-	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt npolys, RtInt *nverts, RtInt *verts,
-	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo), m_nPolys(npolys)
+CRiGeneralPolygon::CRiGeneralPolygon(
+	long aLineNo,
+	RtInt nloops, RtInt *nverts,
+	const CParameterList &theParameters)
+	: CPolygonRManInterfaceCall(aLineNo)
 {
+	enterValues(nloops, nverts);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void CRiPointsPolygons::enterValues(RtInt npolys, RtInt *nverts, RtInt *verts)
+{
+	m_nPolys = npolys;
 	m_nVerts.resize(npolys);
 	m_nVerts.assign(nverts, nverts+npolys);
 
@@ -108,18 +120,31 @@ CRiPointsPolygons::CRiPointsPolygons(
 		nIdx += nverts[i];
 	m_verts.resize(nIdx);
 	m_verts.assign(verts, verts+nIdx);
+}
 
+CRiPointsPolygons::CRiPointsPolygons(
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	RtInt npolys, RtInt *nverts, RtInt *verts,
+	RtInt n, RtToken tokens[], RtPointer params[])
+	: CPolygonRManInterfaceCall(aLineNo)
+{
+	enterValues(npolys, nverts, verts);
 	CPointsPolygonsClasses p(npolys, nverts, verts);
 	setParams(decl, p, curColorDescr, n, tokens, params);
 }
+inline CRiPointsPolygons::CRiPointsPolygons(
+	long aLineNo,
+	RtInt npolys, RtInt *nverts, RtInt *verts,
+	const CParameterList &theParameters)
+	: CPolygonRManInterfaceCall(aLineNo)
+{
+	enterValues(npolys, nverts, verts);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
-CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
-	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
-	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo), m_nPolys(npolys)
+void CRiPointsGeneralPolygons::enterValues(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts)
 {
+	m_nPolys = npolys;
 	m_nLoops.resize(npolys);
 	m_nLoops.assign(nloops, nloops+npolys);
 
@@ -136,19 +161,58 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	m_verts.resize(nIdx);
 	m_verts.assign(verts, verts+nIdx);
 
+}
+
+CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+	RtInt n, RtToken tokens[], RtPointer params[])
+	: CPolygonRManInterfaceCall(aLineNo)
+{
+	enterValues(npolys, nloops, nverts, verts);
 	CPointsGeneralPolygonsClasses p(npolys, nloops, nverts, verts);
 	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
+CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
+	long aLineNo,
+	RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+	const CParameterList &theParameters)
+	: CPolygonRManInterfaceCall(aLineNo)
+{
+	enterValues(npolys, nloops, nverts, verts);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
+void CRiPatchMesh::enterValues(RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap)
+{
+	m_type = type;
+	m_uwrap = uwrap;
+	m_vwrap = vwrap;
+	m_nu = nu;
+	m_nv = nv;
+	m_ustep = ustep;
+	m_vstep = vstep;
+}
+
 CRiPatchMesh::CRiPatchMesh(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr, RtInt ustep, RtInt vstep,
 	RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CUVRManInterfaceCall(aLineNo), m_type(type), m_uwrap(uwrap), m_vwrap(vwrap), m_nu(nu), m_nv(nv), m_ustep(ustep), m_vstep(vstep)
+	: CUVRManInterfaceCall(aLineNo)
 {
+	enterValues(ustep, vstep, type, nu, uwrap, nv, vwrap);
 	CPatchMeshClasses p(type, nu, ustep, uwrap, nv, vstep, vwrap);
 	setParams(decl, p, curColorDescr, n, tokens, params);
+}
+
+CRiPatchMesh::CRiPatchMesh(
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
+	const CParameterList &theParameters)
+	: CUVRManInterfaceCall(aLineNo)
+{
+	enterValues(ustep, vstep, type, nu, uwrap, nv, vwrap);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

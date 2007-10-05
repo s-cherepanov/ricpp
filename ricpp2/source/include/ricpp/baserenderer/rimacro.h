@@ -790,12 +790,10 @@ public:
 // REQ_CONTEXT
 // REQ_GET_CONTEXT
 
-#if 0
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Stores the content of a IRi::errorHandler() call.
  *
- *  Stores the setting of an error handler. IRi::errorHandler() is a frontend function,
- *  so this object is currently not used.
+ *  Stores the setting of an error handler.
  */
 class CRiErrorHandler : public CRManInterfaceCall {
 private:
@@ -895,10 +893,14 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ERROR_HANDLER; }
 
-	//! Replays the errorhandler statement for a given renderer - will not be replayed because it's a frontend function
+	//! Replays the errorhandler statement for a given renderer
 	/*! @param ri Instance of a renderer, used to replay the errorhandler statement
 	 */
-	inline virtual void replay(IDoRender &ri) { ri.errorHandler(*m_handler); }
+	inline virtual void replay(IDoRender &ri)
+	{
+		ri.preErrorHandler(*m_handler);
+		ri.doErrorHandler(*m_handler);
+	}
 
 	/** @brief Gets the handler.
 	 *
@@ -944,7 +946,7 @@ public:
 		return *this;
 	}
 }; // CRiErrorHandler
-#endif
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1138,7 +1140,10 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	/** @brief Standard constructor.
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
+	 *  @param number A frame number.
 	 */
 	inline CRiFrameBegin(long aLineNo=-1, RtInt number=0)
 		: CRManInterfaceCall(aLineNo), m_frameNumber(number)
@@ -1154,12 +1159,6 @@ public:
 		*this = c;
 	}
 
-	/** @brief Destructor.
-	 */
-	inline virtual ~CRiFrameBegin()
-	{
-	}
-
 	/** @brief Cloning.
 	 *
 	 *  @return A clone of this object.
@@ -1167,6 +1166,12 @@ public:
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiFrameBegin(*this);
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiFrameBegin()
+	{
 	}
 
 	/** @brief Gets the interface number of the corresponding RI request.
@@ -1225,7 +1230,16 @@ public:
  */
 class CRiFrameEnd : public CRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline static const char *myClassName(void) { return "CRiFrameEnd"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
 	inline virtual const char *className() const { return CRiFrameEnd::myClassName(); }
 
 	/** @brief Checks if instance belongs to a specific class.
@@ -1250,40 +1264,56 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
+	 */
 	inline CRiFrameEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
-	//! Copy constructor
-	/** @param c Object to copy
+	/** @brief Copy constructor
+	 *
+	 *  @param c Object to copy
 	 */
 	inline CRiFrameEnd(const CRiFrameEnd &c)
 	{
 		*this = c;
 	}
 
-	//! Destructor, frees the resources
-	inline virtual ~CRiFrameEnd()
-	{
-	}
-
-	//! Cloning
-	/** @return a clone of this object
+	/** @brief Cloning.
+	 *
+	 *  @return A clone of this object.
 	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiFrameEnd(*this);
 	}
 
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiFrameEnd()
+	{
+	}
+
+	/** @brief Gets the interface number of the corresponding RI request.
+	 *
+	 *  @return Interface number of the corresponding RI request.
+	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_END; }
+
+	/** @brief Replays the interface call.
+	 *
+	 *  @param ri The renderer backend used for replay.
+	 */
 	inline virtual void replay(IDoRender &ri)
 	{
 		ri.preFrameEnd();
 		ri.doFrameEnd();
 	}
 
-	/** @brief Assignment
+	/** @brief Assignment.
 	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
+	 * @param c Object to assign.
+	 * @return A reference to this object.
 	 */
 	inline CRiFrameEnd &CRiFrameEnd::operator=(const CRiFrameEnd &c)
 	{
@@ -1944,12 +1974,6 @@ public:
 		*this = c;
 	}
 
-	/** @brief Destructor.
-	 */
-	inline virtual ~CRiSolidEnd()
-	{
-	}
-
 	/** @brief Cloning.
 	 *
 	 *  @return A clone of this object.
@@ -1957,6 +1981,12 @@ public:
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiSolidEnd(*this);
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiSolidEnd()
+	{
 	}
 
 	/** @brief Gets the interface number of the corresponding RI request.
@@ -1994,8 +2024,39 @@ protected:
 	RtObjectHandle m_handleIdx;
 
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiObjectBegin"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline virtual const char *className() const { return CRiObjectBegin::myClassName(); }
+
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
 
 	inline CRiLightSource(
 		long aLineNo = -1)
@@ -2003,11 +2064,27 @@ public:
 	{
 		m_handleIdx = illObjectHandle;
 	}
+
 	inline CRiObjectBegin(long aLineNo, RtObjectHandle *h) : CRManInterfaceCall(aLineNo)
 	{
 		assert(h != 0);
 		m_handlePtr = h;
 	}
+
+	inline CRiObjectBegin(const CRiSolidEnd &c)
+	{
+		*this = c;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiObjectBegin(*this);
+	}
+
+	inline virtual ~CRiObjectBegin()
+	{
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_BEGIN; }
 	inline virtual void replay(IDoRender &ri) {
 		assert(m_handlePtr != 0);
@@ -2020,46 +2097,176 @@ public:
 		}
 	}
 	inline virtual RtObjectHandle *handlePtr() { return m_handlePtr; }
-	// inline CRiObjectBegin &operator=(const CRiObjectBegin &) {
-	//	return *this;
-	// }
+	inline CRiObjectBegin &operator=(const CRiObjectBegin &c) {
+		if ( this == &c )
+			return *this;
+		
+		// ???
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiObjectBegin
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \sa CRManInterfaceCall
 class CRiObjectEnd : public CRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiObjectEnd"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline virtual const char *className() const { return CRiObjectEnd::myClassName(); }
 
-	inline CRiObjectEnd(long aLineNo) : CRManInterfaceCall(aLineNo) {}
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	inline CRiObjectEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	inline CRiObjectEnd(const CRiSolidEnd &c)
+	{
+		*this = c;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiObjectEnd(*this);
+	}
+
+	inline virtual ~CRiObjectEnd()
+	{
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_END; }
 	inline virtual void replay(IDoRender &ri) {
 		ri.preObjectEnd();
 		ri.doObjectEnd();
 	}
-	// inline CRiObjectEnd &operator=(const CRiObjectEnd &) {
-	// 	return *this;
-	// }
+	inline CRiObjectEnd &operator=(const CRiObjectEnd &c) {
+		if ( this == &c )
+			return *this;
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiObjectEnd
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \sa CRManInterfaceCall
 class CRiMotionBegin : public CRManInterfaceCall {
-protected:
 	std::vector<RtFloat> m_motionVars; //!< The motion "time stamps"
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiMotionBegin"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline virtual const char *className() const { return CRiMotionBegin::myClassName(); }
 
-	inline CRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) : CRManInterfaceCall(aLineNo), m_motionVars(f, f+n) {
-	/*
-	m_motionVars.resize(n);
-	m_motionVars.assign(f, f+n);
-		*/
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
 	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	inline CRiMotionBegin(long aLineNo=-1) :
+		CRManInterfaceCall(aLineNo)
+	{
+	}
+
+	inline CRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) :
+		CRManInterfaceCall(aLineNo)
+	{
+		motionVars(n, f);
+	}
+
+	inline CRiMotionBegin(const CRiSolidEnd &c)
+	{
+		*this = c;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiMotionBegin(*this);
+	}
+
+	inline virtual ~CRiMotionBegin()
+	{
+	}
+	
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_BEGIN; }
+
+	std::vector<RtFloat> &motionVars()
+	{
+		return m_motionVars;
+	}
+
+	const std::vector<RtFloat> &motionVars() const
+	{
+		return m_motionVars;
+	}
+
+	void motionVars(std::vector<RtFloat> m)
+	{
+		m_motionVars = m;
+	}
+
+	void motionVars(RtInt n, RtFloat *f)
+	{
+		m_motionVars.resize(0);
+		if ( n > 0 ) {
+			m_motionVars.resize(n);
+			m_motionVars.assign(f, f+n);
+		}
+	}
+
 	inline virtual void replay(IDoRender &ri)
 	{
 		ri.preMotionBegin(
@@ -2071,27 +2278,66 @@ public:
 			m_motionVars.empty() ? 0 : &m_motionVars[0]
 		);
 	}
-	// inline CRiMotionBegin &operator=(const CRiMotionBegin &) {
-	// 	return *this;
-	// }
+
+	inline CRiMotionBegin &operator=(const CRiMotionBegin &c) {
+		if ( this == &c )
+			return *this;
+		motionVars(c.motionVars());
+		CRManInterfaceCall::operator=(c);
+	 	return *this;
+	}
 }; // CRiMotionBegin
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \sa CRManInterfaceCall
 class CRiMotionEnd : public CRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiMotionEnd"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline virtual const char *className() const { return CRiMotionEnd::myClassName(); }
 
-	inline CRiMotionEnd(long aLineNo) : CRManInterfaceCall(aLineNo) {}
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	inline CRiMotionEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_END; }
 	inline virtual void replay(IDoRender &ri) {
 		ri.preMotionEnd();
 		ri.doMotionEnd();
 	}
-	// inline CRiMotionEnd &operator=(const CRiMotionEnd &) {
-	// 	return *this;
-	// }
+	inline CRiMotionEnd &operator=(const CRiMotionEnd &c) {
+		if ( this == &c )
+			return *this;
+		CRManInterfaceCall::operator=(c);
+	 	return *this;
+	}
 }; // CRiMotionEnd
 
 
@@ -3528,6 +3774,14 @@ public:
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+	inline CRiAttribute(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+	{
+	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -3602,6 +3856,14 @@ public:
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+	inline CRiSurface(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+	{
+	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SURFACE; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -3629,6 +3891,14 @@ public:
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
+	}
+	inline CRiAtmosphere(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATMOSPHERE; }
 	inline virtual void replay(IDoRender &ri)
@@ -3658,6 +3928,14 @@ public:
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+	inline CRiInterior(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+	{
+	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_INTERIOR; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -3686,6 +3964,14 @@ public:
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+	inline CRiExterior(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+	{
+	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_EXTERIOR; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -3713,6 +3999,14 @@ public:
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
+	}
+	inline CRiDisplacement(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLACEMENT; }
 	inline virtual void replay(IDoRender &ri)
@@ -4316,6 +4610,15 @@ public:
 		CPolygonClasses p(nvertices);
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+	inline CRiPolygon(
+		long aLineNo,
+		RtInt nvertices,
+		const CParameterList &theParameters
+		)
+		: CPolygonRManInterfaceCall(aLineNo, theParameters)
+	{
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POLYGON; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -4332,6 +4635,7 @@ class CRiGeneralPolygon : public CPolygonRManInterfaceCall {
 protected:
 	RtInt m_nLoops;
 	std::vector<RtInt> m_nVerts;
+	void enterValues(RtInt nloops, RtInt *nverts);
 public:
 	inline static const char *myClassName(void) { return "CRiGeneralPolygon"; }
 	inline virtual const char *className() const { return CRiGeneralPolygon::myClassName(); }
@@ -4340,6 +4644,11 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nloops, RtInt *nverts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+	CRiGeneralPolygon(
+		long aLineNo,
+		RtInt nloops, RtInt *nverts,
+		const CParameterList &theParameters);
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GENERAL_POLYGON; }
 	inline virtual void replay(IDoRender &ri) {
 		ri.preGeneralPolygon(m_nLoops,
@@ -4360,6 +4669,7 @@ protected:
 	RtInt m_nPolys;
 	std::vector<RtInt> m_nVerts;
 	std::vector<RtInt> m_verts;
+	void enterValues(RtInt npolys, RtInt *nverts, RtInt *verts);
 public:
 	inline static const char *myClassName(void) { return "CRiPointsPolygons"; }
 	inline virtual const char *className() const { return CRiPointsPolygons::myClassName(); }
@@ -4368,6 +4678,10 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npolys, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+	CRiPointsPolygons(
+		long aLineNo,
+		RtInt npolys, RtInt *nverts, RtInt *verts,
+		const CParameterList &theParameters);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -4394,6 +4708,7 @@ protected:
 	std::vector<RtInt> m_nLoops;
 	std::vector<RtInt> m_nVerts;
 	std::vector<RtInt> m_verts;
+	void enterValues(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts);
 public:
 	inline static const char *myClassName(void) { return "CRiPointsGeneralPolygons"; }
 	inline virtual const char *className() const { return CRiPointsGeneralPolygons::myClassName(); }
@@ -4402,6 +4717,10 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+	CRiPointsGeneralPolygons(
+		long aLineNo,
+		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+		const CParameterList &theParameters);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -4440,6 +4759,14 @@ public:
 		CPatchClasses p(type);
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+	inline CRiPatch(
+		long aLineNo,
+		RtToken type,
+		const CParameterList &theParameters)
+		: CUVRManInterfaceCall(aLineNo), m_type(type)
+	{
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -4457,6 +4784,7 @@ protected:
 	std::string m_type, m_uwrap, m_vwrap;
 	RtInt m_nu, m_nv;
 	RtInt m_ustep, m_vstep;
+	void enterValues(RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap);
 public:
 	inline static const char *myClassName(void) { return "CRiPatchMesh"; }
 	inline virtual const char *className() const { return CRiPatchMesh::myClassName(); }
@@ -4465,6 +4793,11 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+	CRiPatchMesh(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
+		const CParameterList &theParameters);
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -5275,14 +5608,12 @@ public:
 		return new CRiDeclare(aLineNo, name, declaration);	
 	}
 
-#if 0
 	inline virtual CRiErrorHandler *newRiErrorHandler(
 		long aLineNo,
 		const IErrorHandler &handler)
 	{
 		return new CRiErrorHandler(aLineNo, handler);
 	}
-#endif
 
 	inline virtual CRiFrameBegin *newRiFrameBegin(long aLineNo, RtInt number) {
 		return new CRiFrameBegin(aLineNo, number);

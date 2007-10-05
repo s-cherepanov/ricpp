@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_RIBPARSER_H
-#define _RICPP_BASERENDERER_RIBPARSER_H
+#ifndef _RICPP_RIBPARSER_RIBPARSER_H
+#define _RICPP_RIBPARSER_RIBPARSER_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -671,4 +671,4 @@ namespace RiCPP {
 	}; // CRibParser
 }
 
-#endif // _RICPP_BASERENDERER_RIBPARSER_H
+#endif // _RICPP_RIBPARSER_RIBPARSER_H

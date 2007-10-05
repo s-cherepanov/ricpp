@@ -27,7 +27,7 @@
  *  @brief Implementation of the parser for rib
  */
 
-#include "ricpp/baserenderer/ribparser.h"
+#include "ricpp/ribparser/ribparser.h"
 
 using namespace RiCPP;
 

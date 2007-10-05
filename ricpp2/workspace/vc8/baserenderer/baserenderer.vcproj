@@ -324,10 +324,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\renderstate\projectionoption.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\ricontext.h"
 				>
 			</File>

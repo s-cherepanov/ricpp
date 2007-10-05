@@ -41,10 +41,6 @@ CBaseRenderer::CBaseRenderer() :
 	m_macroFactory(0),
 	m_curMacro(0)
 {
-	CFilepath fp;
-	std::string s(fp.filepath());
-	s+= "/";
-	m_baseUri.set("file", "", s.c_str(), 0, 0);
 }
 
 CBaseRenderer::~CBaseRenderer()
@@ -137,22 +133,22 @@ void CBaseRenderer::initRenderState()
 bool CBaseRenderer::preCheck(EnumRequests req)
 {
 	if ( !renderState() ) {
-		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "State not initialized in %s()", CRequestInfo::requestName(req));
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "State not initialized in %s()", CRequestInfo::requestName(req));
 		return false;
 	}
 
 	if ( !renderState()->validRequest(req) ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_ERROR, "%s()", CRequestInfo::requestName(req));
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s()", CRequestInfo::requestName(req));
 		return false;
 	}
 
 	if ( !renderState()->hasOptionsReader() ) {
-		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "%s() - options not available.", CRequestInfo::requestName(req));
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - options not available.", CRequestInfo::requestName(req));
 		return false;
 	}
 
 	if ( !renderState()->hasAttributesReader() ) {
-		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, "%s() - attributes not available.", CRequestInfo::requestName(req));
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - attributes not available.", CRequestInfo::requestName(req));
 		return false;
 	}
 
@@ -176,20 +172,18 @@ void CBaseRenderer::preDeclare(RtToken name, RtString declaration, bool isDefaul
 
 RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 {
-	if ( !preCheck(REQ_DECLARE) )
-		return RI_NULL;
-
-	if ( emptyStr(name) ) {
-		ricppErrHandler().handleError(
-			RIE_MISSINGDATA,
-			RIE_ERROR,
-			renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__),
-			"name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration)
-		);
-		return RI_NULL;
-	}
-	
 	try {
+		if ( !preCheck(REQ_DECLARE) )
+			return RI_NULL;
+
+		if ( emptyStr(name) ) {
+			throw ExceptRiCPPError(
+				RIE_MISSINGDATA,
+				RIE_ERROR,
+				renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__),
+				"name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration)
+			);
+		}
 
 		name = renderState()->tokFindCreate(name);
 		preDeclare(name, declaration, false);
@@ -199,12 +193,15 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 			if ( m_curMacro->valid() ) {
 				CRiDeclare *m = m_macroFactory->newRiDeclare(renderState()->lineNo(), name, declaration);
 				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in declare() for CRiDeclare", __LINE__, __FILE__));
+					throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in declare() for CRiDeclare", __LINE__, __FILE__);
 				m_curMacro->add(m);
 			}
 			return name;
 
 		} 
+
+		if ( renderState()->updateStateOnly() )
+			return name;
 
 		doDeclare(name, declaration);
 		return name;
@@ -264,6 +261,9 @@ void CBaseRenderer::defaultDeclarations()
 	preDeclare(RI_FILE, "string", true);
 }
 
+RtVoid CBaseRenderer::preBegin(RtString name, const CParameterList &params)
+{
+}
 
 RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ExceptRiCPPError
@@ -276,28 +276,49 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 		return 0;
 	}
 
-	if ( !m_macroFactory )
-		m_macroFactory = getNewMacroFactory();
-
-	initRenderState(); // Can throw
-
 	try {
+		// Init
+		if ( !m_macroFactory )
+			m_macroFactory = getNewMacroFactory();
+
+		initRenderState();
+
 		renderState()->contextBegin();
+
+		defaultDeclarations();
+
+		// Handle the parameters
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		preBegin(name, renderState()->curParamList());
+		doBegin(name, renderState()->curParamList());
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return 0;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, "Unknown error at 'begin': %s", e1.what());
+		return 0;
 	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, "Could not allocate memory for the state 'begin'");
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, "Unknown error at 'begin'");
 		return 0;
 	}
-
-	defaultDeclarations();
-
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-	doBegin(name, renderState()->curParamList()); // Can throw
 
 	if ( n != renderState()->numTokens() ) {
 		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'begin'");
 	}
 
 	return 0;
+}
+
+RtVoid CBaseRenderer::preEnd(void)
+{
+	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
+	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
+	{
+		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
+		renderState()->endAreaLightSource();
+	}
+	renderState()->contextEnd();
 }
 
 RtVoid CBaseRenderer::end(void)
@@ -314,22 +335,15 @@ RtVoid CBaseRenderer::end(void)
 		err.set(RIE_NESTING, RIE_WARNING, "Ended context not at begin-state");
 	}
 
-	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
-	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
-	{
-		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
-		renderState()->endAreaLightSource();
-	}
-
-	renderState()->contextEnd();
-
 	try {
-		doEnd(); // Can throw, err is lost then
+		preEnd();
+		doEnd();
 	} catch ( ExceptRiCPPError &err2 )  {
+		// err is overwriteen, since only one error can be handled
 		err = err2;
 	}
 
-	// Delete the state anyway
+	// Delete the state, also if there are errors
 	delete m_renderState;
 	m_renderState = 0;
 
@@ -347,26 +361,31 @@ RtVoid CBaseRenderer::preFrameBegin(RtInt number)
 RtVoid CBaseRenderer::frameBegin(RtInt number)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_FRAME_BEGIN) )
-		return;
+	try {
 
-	preFrameBegin(number);
+		if ( !preCheck(REQ_FRAME_BEGIN) )
+			return;
 
-	if ( m_macroFactory && m_curMacro ) {
+		preFrameBegin(number);
 
-		try {
+		if ( m_macroFactory && m_curMacro ) {
+
 			if ( m_curMacro->valid() ) {
 				CRiFrameBegin *m = m_macroFactory->newRiFrameBegin(renderState()->lineNo(), number);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFrameBegin", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+			return;
 		}
 
-	} else {
-		doFrameBegin(number); // Can throw
+		if ( renderState()->updateStateOnly() )
+			return;
+
+		doFrameBegin(number);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -386,26 +405,30 @@ RtVoid CBaseRenderer::preFrameEnd(void)
 RtVoid CBaseRenderer::frameEnd(void)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_FRAME_END) )
-		return;
+	try {
 
-	preFrameEnd();
+		if ( !preCheck(REQ_FRAME_END) )
+			return;
 
-	if ( m_macroFactory && m_curMacro ) {
+		preFrameEnd();
 
-		try {
-			if ( m_curMacro->valid() ) {
-				CRiFrameEnd *m = m_macroFactory->newRiFrameEnd(renderState()->lineNo());
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFrameEnd", __LINE__, __FILE__));
-				m_curMacro->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+		if ( m_macroFactory && m_curMacro ) {
+				if ( m_curMacro->valid() ) {
+					CRiFrameEnd *m = m_macroFactory->newRiFrameEnd(renderState()->lineNo());
+					if ( !m )
+						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFrameEnd", __LINE__, __FILE__));
+					m_curMacro->add(m);
+				}
+				return;
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doFrameEnd();
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -417,29 +440,32 @@ RtVoid CBaseRenderer::preWorldBegin(void)
 RtVoid CBaseRenderer::worldBegin(void)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_WORLD_BEGIN) )
-		return;
+	try {
+		if ( !preCheck(REQ_WORLD_BEGIN) )
+			return;
 
-	preWorldBegin();
+		preWorldBegin();
 
-	if ( m_macroFactory && m_curMacro ) {
+		if ( m_macroFactory && m_curMacro ) {
 
-		try {
 			if ( m_curMacro->valid() ) {
 				CRiWorldBegin *m = m_macroFactory->newRiWorldBegin(renderState()->lineNo());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiWorldBegin", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+			return;
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doWorldBegin();
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
-
 
 RtVoid CBaseRenderer::preWorldEnd(void)
 {
@@ -456,26 +482,30 @@ RtVoid CBaseRenderer::preWorldEnd(void)
 RtVoid CBaseRenderer::worldEnd(void)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_WORLD_END) )
-		return;
+	try {
+		if ( !preCheck(REQ_WORLD_END) )
+			return;
 
-	preWorldEnd();
-	
-	if ( m_macroFactory && m_curMacro ) {
+		preWorldEnd();
+		
+		if ( m_macroFactory && m_curMacro ) {
 
-		try {
-			if ( m_curMacro->valid() ) {
-				CRiWorldEnd *m = m_macroFactory->newRiWorldEnd(renderState()->lineNo());
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiWorldEnd", __LINE__, __FILE__));
-				m_curMacro->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+				if ( m_curMacro->valid() ) {
+					CRiWorldEnd *m = m_macroFactory->newRiWorldEnd(renderState()->lineNo());
+					if ( !m )
+						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiWorldEnd", __LINE__, __FILE__));
+					m_curMacro->add(m);
+				}
+			return;
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doWorldEnd();
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -488,26 +518,31 @@ RtVoid CBaseRenderer::preAttributeBegin(void)
 RtVoid CBaseRenderer::attributeBegin(void)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_ATTRIBUTE_BEGIN) )
-		return;
-	
-	preAttributeBegin();
+	try {
 
-	if ( m_macroFactory && m_curMacro ) {
+		if ( !preCheck(REQ_ATTRIBUTE_BEGIN) )
+			return;
 
-		try {
-			if ( m_curMacro->valid() ) {
-				CRiAttributeBegin *m = m_macroFactory->newRiAttributeBegin(renderState()->lineNo());
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeBegin", __LINE__, __FILE__));
-				m_curMacro->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+		preAttributeBegin();
+
+		if ( m_macroFactory && m_curMacro ) {
+
+				if ( m_curMacro->valid() ) {
+					CRiAttributeBegin *m = m_macroFactory->newRiAttributeBegin(renderState()->lineNo());
+					if ( !m )
+						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeBegin", __LINE__, __FILE__));
+					m_curMacro->add(m);
+				}
+				return;
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doAttributeBegin();
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -527,26 +562,32 @@ RtVoid CBaseRenderer::preAttributeEnd(void)
 RtVoid CBaseRenderer::attributeEnd(void)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_ATTRIBUTE_END) )
-		return;
+	try {
 
-	preAttributeEnd();
+		if ( !preCheck(REQ_ATTRIBUTE_END) )
+			return;
 
-	if ( m_macroFactory && m_curMacro ) {
+		preAttributeEnd();
 
-		try {
-			if ( m_curMacro->valid() ) {
-				CRiAttributeEnd *m = m_macroFactory->newRiAttributeEnd(renderState()->lineNo());
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeEnd", __LINE__, __FILE__));
-				m_curMacro->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+		if ( m_macroFactory && m_curMacro ) {
+
+				if ( m_curMacro->valid() ) {
+					CRiAttributeEnd *m = m_macroFactory->newRiAttributeEnd(renderState()->lineNo());
+					if ( !m )
+						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeEnd", __LINE__, __FILE__));
+					m_curMacro->add(m);
+				}
+				return;
+
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doAttributeEnd();
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -558,26 +599,32 @@ RtVoid CBaseRenderer::preTransformBegin(void)
 RtVoid CBaseRenderer::transformBegin(void)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_TRANSFORM_BEGIN) )
-		return;
-	
-	preTransformBegin();
 
-	if ( m_macroFactory && m_curMacro ) {
+	try {
 
-		try {
-			if ( m_curMacro->valid() ) {
-				CRiTransformBegin *m = m_macroFactory->newRiTransformBegin(renderState()->lineNo());
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTransformBegin", __LINE__, __FILE__));
-				m_curMacro->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+		if ( !preCheck(REQ_TRANSFORM_BEGIN) )
+			return;
+
+		preTransformBegin();
+
+		if ( m_macroFactory && m_curMacro ) {
+
+				if ( m_curMacro->valid() ) {
+					CRiTransformBegin *m = m_macroFactory->newRiTransformBegin(renderState()->lineNo());
+					if ( !m )
+						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTransformBegin", __LINE__, __FILE__));
+					m_curMacro->add(m);
+				}
+				return;
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doTransformBegin();
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -590,26 +637,31 @@ RtVoid CBaseRenderer::preTransformEnd(void)
 RtVoid CBaseRenderer::transformEnd(void)
 // throw ExceptRiCPPError
 {
-	if ( !preCheck(REQ_TRANSFORM_END) )
-		return;
+	try {
 
-	preTransformEnd();
+		if ( !preCheck(REQ_TRANSFORM_END) )
+			return;
 
-	if ( m_macroFactory && m_curMacro ) {
+		preTransformEnd();
 
-		try {
+		if ( m_macroFactory && m_curMacro ) {
+
 			if ( m_curMacro->valid() ) {
 				CRiTransformEnd *m = m_macroFactory->newRiTransformEnd(renderState()->lineNo());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTransformEnd", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+			return;
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doTransformEnd();
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -638,26 +690,30 @@ RtVoid CBaseRenderer::preFormat(RtInt xres, RtInt yres, RtFloat aspect)
 
 RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 {
-	if ( !preCheck(REQ_FORMAT) )
-		return;
+	try {
+		if ( !preCheck(REQ_FORMAT) )
+			return;
 
-	preFormat(xres, yres, aspect);
+		preFormat(xres, yres, aspect);
 
-	if ( m_macroFactory && m_curMacro ) {
+		if ( m_macroFactory && m_curMacro ) {
 
-		try {
 			if ( m_curMacro->valid() ) {
 				CRiFormat *m = m_macroFactory->newRiFormat(renderState()->lineNo(), xres, yres, aspect);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFormat", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+			return;
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doFormat(xres, yres, aspect);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -669,26 +725,31 @@ RtVoid CBaseRenderer::preFrameAspectRatio(RtFloat aspect)
 
 RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 {
-	if ( !preCheck(REQ_FRAME_ASPECT_RATIO) )
-		return;
+	try {
+		if ( !preCheck(REQ_FRAME_ASPECT_RATIO) )
+			return;
 
-	preFrameAspectRatio(aspect);
+		preFrameAspectRatio(aspect);
 
-	if ( m_macroFactory && m_curMacro ) {
+		if ( m_macroFactory && m_curMacro ) {
 
-		try {
 			if ( m_curMacro->valid() ) {
 				CRiFrameAspectRatio *m = m_macroFactory->newRiFrameAspectRatio(renderState()->lineNo(), aspect);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFrameAspectRatio", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+			return;
+
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doFrameAspectRatio(aspect);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -700,26 +761,31 @@ RtVoid CBaseRenderer::preScreenWindow(RtFloat left, RtFloat right, RtFloat bot, 
 
 RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
 {
-	if ( !preCheck(REQ_SCREEN_WINDOW) )
-		return;
+	try {
+		if ( !preCheck(REQ_SCREEN_WINDOW) )
+			return;
 
-	preScreenWindow(left, right, bot, top);
+		preScreenWindow(left, right, bot, top);
 
-	if ( m_macroFactory && m_curMacro ) {
+		if ( m_macroFactory && m_curMacro ) {
 
-		try {
 			if ( m_curMacro->valid() ) {
 				CRiScreenWindow *m = m_macroFactory->newRiScreenWindow(renderState()->lineNo(), left, right, bot, top);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiScreenWindow", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+			return;
+
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doScreenWindow(left, right, bot, top);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -731,26 +797,31 @@ RtVoid CBaseRenderer::preCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, Rt
 
 RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
 {
-	if ( !preCheck(REQ_CROP_WINDOW) )
-		return;
+	try {
+		if ( !preCheck(REQ_CROP_WINDOW) )
+			return;
 
-	preCropWindow(xmin, xmax, ymin, ymax);
+		preCropWindow(xmin, xmax, ymin, ymax);
 
-	if ( m_macroFactory && m_curMacro ) {
+		if ( m_macroFactory && m_curMacro ) {
 
-		try {
-			if ( m_curMacro->valid() ) {
-				CRiCropWindow *m = m_macroFactory->newRiCropWindow(renderState()->lineNo(), xmin, xmax, ymin, ymax);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiCropWindow", __LINE__, __FILE__));
-				m_curMacro->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+				if ( m_curMacro->valid() ) {
+					CRiCropWindow *m = m_macroFactory->newRiCropWindow(renderState()->lineNo(), xmin, xmax, ymin, ymax);
+					if ( !m )
+						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiCropWindow", __LINE__, __FILE__));
+					m_curMacro->add(m);
+				}
+				return;
+
 		}
 
-	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		doCropWindow(xmin, xmax, ymin, ymax);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 }
 
@@ -762,34 +833,46 @@ RtVoid CBaseRenderer::preProjection(RtToken name, const CParameterList &params)
 
 RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	// Check validity and accessibility (if-then-else)
-	if ( !preCheck(REQ_PROJECTION) )
-		return;
+	try {
 
-	// Parse parameters, ignore unrecognized ones
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		// Check validity and accessibility (if-then-else)
+		if ( !preCheck(REQ_PROJECTION) )
+			return;
 
-	// Preprocess the projection (can throw)
-	preProjection(name, renderState()->curParamList());
+		// Parse parameters, ignore unrecognized ones
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
 
-	// Record as a macro
-	if ( m_macroFactory && m_curMacro ) {
+		// Preprocess the projection (can throw)
+		preProjection(name, renderState()->curParamList());
 
-		try {
+		// Record as a macro
+		if ( m_macroFactory && m_curMacro ) {
 			if ( m_curMacro->valid() ) {
 				CRiProjection *m = m_macroFactory->newRiProjection(renderState()->lineNo(), name, renderState()->curParamList());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiProjection", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
+			return;
 		}
 
-	} else {
+		// Test if only the state has to be updated
+		if ( renderState()->updateStateOnly() )
+			return;
+
 		// Do whatever needs to be done for the projection, can throw an exception
 		doProjection(name, renderState()->curParamList());
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, "Unknown error at 'projectionV': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, "Unknown error at 'projectionV'");
+		return;
 	}
 
 	// If there were any unrecognized tokens, give an error message
@@ -820,6 +903,8 @@ RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doClipping(hither, yon);
 	}
 }
@@ -846,6 +931,8 @@ RtVoid CBaseRenderer::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx,
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doClippingPlane(x, y, z, nx, ny, nz);
 	}
 }
@@ -872,6 +959,8 @@ RtVoid CBaseRenderer::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat f
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doDepthOfField(fstop, focallength, focaldistance);
 	}
 }
@@ -898,6 +987,8 @@ RtVoid CBaseRenderer::shutter(RtFloat smin, RtFloat smax)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doShutter(smin, smax);
 	}
 }
@@ -924,6 +1015,8 @@ RtVoid CBaseRenderer::pixelVariance(RtFloat variation)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doPixelVariance(variation);
 	}
 }
@@ -950,6 +1043,8 @@ RtVoid CBaseRenderer::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doPixelSamples(xsamples, ysamples);
 	}
 }
@@ -976,6 +1071,8 @@ RtVoid CBaseRenderer::pixelFilter(const IFilterFunc &function, RtFloat xwidth, R
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doPixelFilter(function, xwidth, ywidth);
 	}
 }
@@ -1002,6 +1099,8 @@ RtVoid CBaseRenderer::exposure(RtFloat gain, RtFloat gamma)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doExposure(gain, gamma);
 	}
 }
@@ -1031,6 +1130,8 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doImager(name, renderState()->curParamList());
 	}
 
@@ -1061,6 +1162,8 @@ RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, 
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doQuantize(type, one, qmin, qmax, ampl);
 	}
 }
@@ -1088,6 +1191,8 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 			ricppErrHandler().handleError(e2);
 		}
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doDisplayChannel(channel, renderState()->curParamList());
 	}
 
@@ -1121,6 +1226,8 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doDisplay(name, type, mode, renderState()->curParamList());
 	}
 
@@ -1154,6 +1261,8 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doHider(type, renderState()->curParamList());
 	}
 
@@ -1184,6 +1293,8 @@ RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doColorSamples(N, nRGB, RGBn);
 	}
 
@@ -1214,6 +1325,8 @@ RtVoid CBaseRenderer::relativeDetail(RtFloat relativedetail)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doRelativeDetail(relativedetail);
 	}
 }
@@ -1243,6 +1356,8 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doOption(name, renderState()->curParamList());
 	}
 
@@ -1279,6 +1394,10 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 		try {
 			h = renderState()->lights().lightSource(renderState()->dict(), renderState()->options().colorDescr(),
 				true, !renderState()->inWorldBlock(), false, name, n, tokens, params);
+
+			if ( renderState()->updateStateOnly() )
+				return h;
+
 			doLightSource(h, name, renderState()->curParamList());
 		} catch ( ExceptRiCPPError &e2 ) {
 			ricppErrHandler().handleError(e2);
@@ -1339,6 +1458,10 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 				true, !renderState()->inWorldBlock(), true, name, n, tokens, params);
 		}
 		renderState()->startAreaLightSource(h);
+
+		if ( renderState()->updateStateOnly() )
+			return h;
+
 		doAreaLightSource(h, name, renderState()->curParamList());
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -1376,6 +1499,8 @@ RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoi
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doAttribute(name, renderState()->curParamList());
 	}
 
@@ -1406,6 +1531,8 @@ RtVoid CBaseRenderer::color(RtColor Cs)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doColor(Cs);
 	}
 }
@@ -1432,6 +1559,8 @@ RtVoid CBaseRenderer::opacity(RtColor Os)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doOpacity(Os);
 	}
 }
@@ -1461,6 +1590,8 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doSurface(name, renderState()->curParamList());
 	}
 
@@ -1494,6 +1625,8 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doAtmosphere(name, renderState()->curParamList());
 	}
 
@@ -1527,6 +1660,8 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doInterior(name, renderState()->curParamList());
 	}
 
@@ -1560,6 +1695,8 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doExterior(name, renderState()->curParamList());
 	}
 
@@ -1590,6 +1727,8 @@ RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doIlluminate(light, onoff);
 	}
 }
@@ -1619,6 +1758,8 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doDisplacement(name, renderState()->curParamList());
 	}
 
@@ -1649,6 +1790,8 @@ RtVoid CBaseRenderer::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtF
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doTextureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
 	}
 }
@@ -1675,6 +1818,8 @@ RtVoid CBaseRenderer::shadingRate(RtFloat size)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doShadingRate(size);
 	}
 }
@@ -1701,6 +1846,8 @@ RtVoid CBaseRenderer::shadingInterpolation(RtToken type)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doShadingInterpolation(type);
 	}
 }
@@ -1727,6 +1874,8 @@ RtVoid CBaseRenderer::matte(RtBoolean onoff)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doMatte(onoff);
 	}
 }
@@ -1753,6 +1902,8 @@ RtVoid CBaseRenderer::bound(RtBound aBound)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doBound(aBound);
 	}
 }
@@ -1779,6 +1930,8 @@ RtVoid CBaseRenderer::detail(RtBound aBound)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doDetail(aBound);
 	}
 }
@@ -1805,6 +1958,8 @@ RtVoid CBaseRenderer::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptra
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doDetailRange(minvis, lowtran, uptran, maxvis);
 	}
 }
@@ -1832,6 +1987,8 @@ RtVoid CBaseRenderer::geometricApproximation(RtToken type, RtFloat value)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doGeometricApproximation(type, value);
 	}
 }
@@ -1860,6 +2017,8 @@ RtVoid CBaseRenderer::geometricRepresentation(RtToken type)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doGeometricRepresentation(type);
 	}
 }
@@ -1888,6 +2047,8 @@ RtVoid CBaseRenderer::orientation(RtToken anOrientation)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doOrientation(anOrientation);
 	}
 }
@@ -1914,6 +2075,8 @@ RtVoid CBaseRenderer::reverseOrientation(void)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doReverseOrientation();
 	}
 }
@@ -1940,6 +2103,8 @@ RtVoid CBaseRenderer::sides(RtInt nsides)
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doSides(nsides);
 	}
 }
@@ -1966,6 +2131,8 @@ RtVoid CBaseRenderer::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt v
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doBasis(ubasis, ustep, vbasis, vstep);
 	}
 }
@@ -1992,6 +2159,8 @@ RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFl
 		}
 
 	} else {
+		if ( renderState()->updateStateOnly() )
+			return;
 		doTrimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}
 }
@@ -2063,7 +2232,7 @@ RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callba
 
 RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
-	CUri sav(m_baseUri);
+	CUri sav(renderState()->baseUri());
 	const char *oldArchiveName = renderState()->archiveName();
 	long oldLineNo = renderState()->lineNo();
 
@@ -2071,27 +2240,27 @@ RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callb
 	RtToken *tokens = renderState()->tokens();
 	RtPointer *paramptr = renderState()->params();
 
-	CRibParser parser(*m_ri, *m_errorHandler, *m_protocolHandler, *m_ribFilter, *renderState(), m_baseUri);
+	CRibParser parser(*m_ri, *m_errorHandler, *m_protocolHandler, *m_ribFilter, *renderState(), renderState()->baseUri());
 	try {
 		if ( parser.canParse(name) ) {
-			m_baseUri = parser.absUri();
+			renderState()->baseUri() = parser.absUri();
 			renderState()->archiveName(name);
 			renderState()->lineNo(0);
 			parser.parse(callback, n, tokens, paramptr);
 			renderState()->archiveName(oldArchiveName);
 			renderState()->lineNo(oldLineNo);
-			m_baseUri = sav;
+			renderState()->baseUri() = sav;
 			parser.close();
 		}
 	} catch(ExceptRiCPPError &err) {
-		m_baseUri = sav;
+		renderState()->baseUri() = sav;
 		renderState()->archiveName(oldArchiveName);
 		renderState()->lineNo(oldLineNo);
 		parser.close();
 		ricppErrHandler().handleError(err);
 		return;
 	} catch(...) {
-		m_baseUri = sav;
+		renderState()->baseUri() = sav;
 		renderState()->archiveName(oldArchiveName);
 		renderState()->lineNo(oldLineNo);
 		parser.close();

@@ -34,10 +34,6 @@
 #include "ricpp/baserenderer/ricontext.h"
 #endif // _RICPP_BASERENDERER_RICONTEXT_H
 
-#ifndef _RICPP_RENDERERSTATE_RENDERSTATE_H
-#include "ricpp/renderstate/renderstate.h"
-#endif // _RICPP_RENDERERSTATE_RENDERSTATE_H
-
 namespace RiCPP {
 
 /** @brief Members called called with checked parameters (here from \a CBaseRenderer).
@@ -51,12 +47,22 @@ public:
 	 */
 	inline virtual ~IDoRender() {}
 
-public:
+	/** @brief Checks validity of state for common requests.
+	 * @param req Number of the requests.
+	 * @return false if checking fails.
+	 * @except ExceptRiCPPError Implementation can also throw an exception on errors.
+	 */
 	virtual bool preCheck(EnumRequests req) = 0;
-	virtual CRenderState *renderState() = 0;
-	virtual const CRenderState *renderState() const = 0;
 
-public:
+	/** @brief Gets a writeable renderState.
+	 *  @return Writeable renderstate.
+	 */
+	virtual CRenderState *renderState() = 0;
+
+	/** @brief Gets a read only render state.
+	 *  @return Read only renderstate.
+	 */
+	virtual const CRenderState *renderState() const = 0;
 
 	/** @brief Special context handling (see IRiContext::abort(), IRiContext::activate(), IRiContext::deactivate()
 	 */
@@ -67,7 +73,16 @@ public:
 	//@}
 
 
-public:
+	/** @brief Error handler
+	 *
+	 *  Error handler is normally a front end function, but
+	 *  e.g. for RIB writing, it is also needed as a back end function
+	 *  for output. But it will normally not handle errors at the back end.
+	 *
+	 *  @param handler The error handler
+	 */
+	virtual RtVoid preErrorHandler(const IErrorHandler &handler) = 0;
+
 	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault) = 0;
 	virtual RtVoid preSynchronize(RtToken name) = 0;
 	virtual RtVoid preSystem(RtToken cmd) = 0;
@@ -211,10 +226,17 @@ public:
 	virtual RtVoid preElseBegin(void) = 0; // was RiElse, else is a keyword ... moan, may be a reason for uppercase method names Else()
 	virtual RtVoid preIfEnd(void) = 0;
 
-public:
 	/** The interface functions similar to IRiCPP, RtToken are tokenized strings here (CBaseRenderer used CTokenMap)
 	 */
 	//@{
+
+	/** @brief Error handler
+	 *
+	 *  @se preErrorHandler()
+	 *
+	 *  @param handler The error handler
+	 */
+	virtual RtVoid doErrorHandler(const IErrorHandler &handler) = 0;
 
 	/** @brief Called after declaration is done
 	 * 

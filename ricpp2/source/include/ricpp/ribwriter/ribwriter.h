@@ -69,6 +69,8 @@ public:
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
 
+	inline virtual RtVoid doErrorHandler(const IErrorHandler &handler) {}
+
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
 	inline virtual RtVoid doSystem(RtToken cmd) {}

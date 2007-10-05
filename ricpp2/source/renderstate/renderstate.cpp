@@ -29,8 +29,33 @@
 
 #include "ricpp/renderstate/renderstate.h"
 #include "ricpp/ricpp/ricpperror.h"
+#include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;
+
+CRenderState::CRenderState(
+	CModeStack &aModeStack,
+	COptionsFactory &optionsFactory,
+	CAttributesFactory &attributesFactory,
+	CLightSourceFactory &lightSourceFactory)
+	: m_lights(lightSourceFactory)
+// throw(ExceptRiCPPError)
+{
+	m_modeStack = &aModeStack;
+	m_optionsFactory = &optionsFactory;
+	m_attributesFactory = &attributesFactory;
+	m_frameNumber = 0;
+	m_lineNo = -1;
+
+	m_reject = false;
+	m_updateStateOnly = false;
+
+
+	CFilepath fp;
+	std::string s(fp.filepath());
+	s+= "/";
+	m_baseUri.set("file", "", s.c_str(), 0, 0);
+}
 
 CRenderState::~CRenderState()
 {

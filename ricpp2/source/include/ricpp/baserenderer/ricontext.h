@@ -38,9 +38,13 @@
 #include "ricpp/streams/backbuffer.h"
 #endif // _RICPP_STREAMS_BACKBUFFER_H
 
+#ifndef _RICPP_RENDERERSTATE_RENDERSTATE_H
+#include "ricpp/renderstate/renderstate.h"
+#endif // _RICPP_RENDERERSTATE_RENDERSTATE_H
+
 #ifndef _RICPP_RICPP_ERRORHANDLERS_H
 #include "ricpp/ricpp/errorhandlers.h"
-#endif
+#endif // _RICPP_RICPP_ERRORHANDLERS_H
 
 namespace RiCPP {
 
@@ -53,11 +57,6 @@ namespace RiCPP {
  */
 class IRiContext : public IRiRoot {
 	friend class CContextCreator; //!< A CContextCreator can activate and deactivate the context
-
-	/** @brief At the backend a user defined error handler is not used
-	 *  @param handler The error handler (not used)
-	 */
-	inline virtual RtVoid errorHandler(const IErrorHandler &handler) { }
 
 protected:
 	/** @brief Activate the context
@@ -156,6 +155,12 @@ public:
 	virtual RtVoid registerFrontEnd(IRi &aFrontend, IRiCPPErrorHandler &errorHandler) = 0;
 
 	virtual IRi &frontend()=0;
+
+
+	/** @brief Gets a read only render state.
+	 *  @return Read only renderstate.
+	 */
+	virtual const CRenderState *renderState() const = 0;
 
 	/** @brief Interfaces needed for byte streams.
 	 *

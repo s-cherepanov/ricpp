@@ -274,7 +274,7 @@ public:
 
 	/** @brief Gets the tokens of the request.
 	 *
-	 * For the size of the array @sa size(), for the parameter pointers @see getParams().
+	 * For the size of the array @see size(), for the parameter pointers @see getParams().
 	 *
 	 * @return The tokens of the request.
 	 */
@@ -285,7 +285,7 @@ public:
 
 	/** @brief Gets the parameter pointers of the request.
 	 *
-	 * For the size of the array @sa size(), for the tokenss @see getTokens().
+	 * For the size of the array @see size(), for the tokenss @see getTokens().
 	 *
 	 * @return The parameters of the request.
 	 */
@@ -1777,7 +1777,7 @@ public:
  */
 class CRiSolidBegin : public CRManInterfaceCall {
 private:
-	RtToken m_operation; //!< Token that indicates the solid operation (like RI_UNION), must be atomized (@sa CToken)
+	RtToken m_operation; //!< Token that indicates the solid operation (like RI_UNION), must be atomized (@see CToken)
 
 public:
 	/** @brief Gets name for the class.
@@ -1817,7 +1817,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
-	 *  @param anOperation The token of the operation (must be an atomized string, @sa CToken).
+	 *  @param anOperation The token of the operation (must be an atomized string, @see CToken).
 	 */
 	inline CRiSolidBegin(long aLineNo=-1, RtToken anOperation=RI_PRIMITIVE) : CRManInterfaceCall(aLineNo), m_operation(anOperation) { }
 
@@ -1857,7 +1857,7 @@ public:
 	}
 
 	/** @brief Gets the solid operation.
-	 * @return The token of the operation (must be an atomized string, @sa CToken)
+	 * @return The token of the operation (must be an atomized string, @see CToken)
 	 */
 	inline RtToken operation() const
 	{
@@ -1865,7 +1865,7 @@ public:
 	}
 
 	/** @brief Sets solid operation.
-	 * @param anOperation The token of the operation (must be an atomized string, @sa CToken)
+	 * @param anOperation The token of the operation (must be an atomized string, @see CToken)
 	 */
 	inline void operation(RtToken anOperation)
 	{
@@ -1931,7 +1931,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
-	 *  @param anOperation The token of the operation (must be an atomized string, @sa CToken).
+	 *  @param anOperation The token of the operation (must be an atomized string, @see CToken).
 	 */
 	inline CRiSolidEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 

@@ -50,6 +50,10 @@
 #include "ricpp/renderstate/lights.h"
 #endif // _RICPP_RENDERSTATE_LIGHTS_H
 
+#ifndef _RICPP_STREAMS_URI_H
+#include "ricpp/streams/uri.h"
+#endif // _RICPP_STREAMS_URI_H
+
 namespace RiCPP {
 
 /** @brief Interface to read the state of a renderer.
@@ -155,10 +159,13 @@ public:
 	virtual const ILightsReader &lightsReader() const = 0;
 	//@}
 
+	virtual const CUri &baseUri() const = 0;
+
 	virtual const char *archiveName() const = 0;
 	virtual long lineNo() const = 0;
 
 	virtual bool reject() const = 0;
+	virtual bool updateStateOnly() const = 0;
 
 	virtual bool hasOptions() const = 0;
 	virtual bool hasOptionsReader() const = 0;
@@ -201,6 +208,16 @@ class CRenderState : public IRenderStateReader {
 
 	bool m_reject;                                 ///< Reject requests while running, e.g. for appropriate if-then-else blocks
 
+	/** @brief Only update the state, do no rendering.
+	 *
+	 * Update the state (handled by the base renderer), but do no more. E.g. if the RIB
+	 * writer wants to postpone the archive reading, object instanciating etc.
+	 *
+	 */
+	bool m_updateStateOnly;
+
+	CUri m_baseUri;                                ///< Base URI for RIB archive files
+
 	void pushOptions();
 	bool popOptions();
 
@@ -223,22 +240,11 @@ public:
 	 *  @param aModeStack A reference to a valid mode stack
 	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory while filling map).
 	 */
-	inline CRenderState(
+	CRenderState(
 		CModeStack &aModeStack,
 		COptionsFactory &optionsFactory,
 		CAttributesFactory &attributesFactory,
-		CLightSourceFactory &lightSourceFactory)
-		: m_lights(lightSourceFactory)
-	// throw(ExceptRiCPPError)
-	{
-		m_modeStack = &aModeStack;
-		m_optionsFactory = &optionsFactory;
-		m_attributesFactory = &attributesFactory;
-		m_frameNumber = 0;
-		m_lineNo = -1;
-		m_reject = false;
-		// Attribute stack and Option stack follows after implemented
-	}
+		CLightSourceFactory &lightSourceFactory);
 
 	/** @brief Destroys the object
 	 *
@@ -524,6 +530,9 @@ public:
 	inline virtual bool hasAttributesReader() const {return m_attributesStack.back() != 0 && m_attributesStack.back()->reader() != 0;}
 	inline virtual bool hasTransform() const {return !m_transformStack.empty();}
 
+	inline virtual const CUri &baseUri() const { return m_baseUri; }
+	inline virtual CUri &baseUri() { return m_baseUri; }
+
 	inline virtual const char *archiveName() const
 	{
 		return m_archiveName.c_str();
@@ -552,6 +561,16 @@ public:
 	inline virtual void reject(bool doRecect)
 	{
 		m_reject = doRecect;
+	}
+	
+	inline virtual bool updateStateOnly() const
+	{
+		return m_updateStateOnly;
+	}
+
+	inline virtual void updateStateOnly(bool doOnlyUpdate)
+	{
+		m_updateStateOnly = doOnlyUpdate;
 	}
 	
 	inline virtual const char *printName(const char *aFileName) const

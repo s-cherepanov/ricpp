@@ -333,7 +333,7 @@ public:
 
 	/** @brief Ends an area light source definition
 	 *
-	 * @sa startAreaLightSource(RtLightHandle h)
+	 * @see startAreaLightSource(RtLightHandle h)
 	 * 
 	 * @except ExceptRiCPPError Closed at wrong nesting level.
 	 */

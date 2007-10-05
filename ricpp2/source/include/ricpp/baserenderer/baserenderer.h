@@ -66,6 +66,7 @@ class CBaseRenderer : public IDoRender {
 	 *  Never used directly, ricppErrHandler() is used for error handling
 	 */
 	CErrorExceptionHandler m_errorExceptionHandler;
+
 protected:
 	/** @brief The render state contains all render state objects of this context
 	 *
@@ -133,7 +134,7 @@ protected:
 	 */
 	virtual void defaultDeclarations();
 
-	/** @brief Front end
+	/** @brief Front end @todo eliminate this (parser to frontend)
 	 */
 	IRi *m_ri;
 
@@ -145,7 +146,7 @@ protected:
 	 */
 	CBackBufferProtocolHandlers *m_protocolHandler;
 
-	/** @brief RIB handler
+	/** @brief RIB handler @todo eliminate this (parser to frontend)
 	 */
 	IRiRoot *m_ribFilter;
 
@@ -157,11 +158,8 @@ protected:
 	 */
 	CRiMacro *m_curMacro;
 
-	/** @brief Base URI for RIB files
-	 */
-	CUri m_baseUri;
-
 public:
+
 	/** @brief Check validity of state for common requests.
 	 * @throw ExceptRiCPPError
 	 * @param req Number of the requests
@@ -198,10 +196,10 @@ public:
 	 */
 	inline virtual RtVoid deactivate(void) {}
 
-	inline virtual RtVoid registerFrontEnd(IRi &frontend, IRiCPPErrorHandler &errorHandler)
+	inline virtual RtVoid registerFrontEnd(IRi &frontend, IRiCPPErrorHandler &anErrorHandler)
 	{
 		m_ri = &frontend;
-		m_errorHandler = &errorHandler;
+		m_errorHandler = &anErrorHandler;
 	}
 
 	inline IRi &frontend()
@@ -220,6 +218,14 @@ public:
 	{
 		m_ribFilter = ribFilter;
 	}
+
+	/** @brief Error handler
+	 *
+	 *  @se IRiContext::preErrorHandler()
+	 *
+	 *  @param handler The error handler
+	 */
+	inline virtual RtVoid errorHandler(const IErrorHandler &handler) {}
 
 	RtToken declare(RtString name, RtString declaration);
 
@@ -382,6 +388,8 @@ public:
 	virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid archiveRecordV(RtToken type, RtString line);
+	/** @todo parser to frontend
+	 */
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid ifBegin(RtString expr);
@@ -390,6 +398,14 @@ public:
 	virtual RtVoid ifEnd(void);
 
 public:
+	/** @brief Error handler
+	 *
+	 *  @se IRiContext::preErrorHandler()
+	 *
+	 *  @param handler The error handler
+	 */
+	inline virtual RtVoid preErrorHandler(const IErrorHandler &handler) {}
+
 	/** @brief Create new entry in dectaration list
 	 */
 	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault);
@@ -397,8 +413,8 @@ public:
 	inline virtual RtVoid preSystem(RtToken cmd) {}
 	inline virtual RtVoid preResource(RtToken name, RtToken type, const CParameterList &params) {}
 
-	inline virtual RtVoid preBegin(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preEnd(void) {}
+	virtual RtVoid preBegin(RtString name, const CParameterList &params);
+	virtual RtVoid preEnd(void);
 
 	virtual RtVoid preFrameBegin(RtInt number);
 	virtual RtVoid preFrameEnd(void);
@@ -541,6 +557,14 @@ public:
 	inline virtual RtVoid doAbort(void) {}
 	inline virtual RtVoid doActivate(void) {}
 	inline virtual RtVoid doDeactivate(void) {}
+
+	/** @brief Error handler
+	 *
+	 *  @se IRiContext::preErrorHandler()
+	 *
+	 *  @param handler The error handler
+	 */
+	inline virtual RtVoid doErrorHandler(const IErrorHandler &handler) {}
 
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}

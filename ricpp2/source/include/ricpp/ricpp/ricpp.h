@@ -211,11 +211,15 @@ public:
 	 *
 	 *  The error handler (predifined are
 	 *  @c errorAbort, @c errorPrint, @c errorIgnore)
-	 *  is called if an error occurs. It is a frontend function.
-	 *  ErrorHandler can be a RIB command, but it can be deactivated
-	 *  by the frontend. The context IRiContext itself does not have an error
-	 *  handler: It throws a RiCPP::ERendererException. The frontend
+	 *  is called if an error occurs. It is a front end function because it
+	 *  is not bound to a specific context.
+	 *  The ErrorHandler RIB command readed in from a RIB archive can be deactivated
+	 *  by the front end to avoid disturbing program logic. The context
+	 *  IRiContext itself does not have an IRiRoot::ErrorHandler()
+	 *  handler implemented: It throws a RiCPP::ERendererException. The front end
 	 *  end catches this exception and calls the user defined error handler.
+	 *  However, because the error handler can be written as a RIB command,
+	 *  a stub must exist at the back end.
 	 *
 	 *  @param handler The error handler
 	 *  @see ricpp_errorconst, IErrorHandler, ricpp_severity

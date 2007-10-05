@@ -179,46 +179,41 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 	if ( !preCheck(REQ_DECLARE) )
 		return RI_NULL;
 
-	if ( !name || !*name ) {
-		ricppErrHandler().handleError(RIE_MISSINGDATA, RIE_ERROR, "name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration));
+	if ( emptyStr(name) ) {
+		ricppErrHandler().handleError(
+			RIE_MISSINGDATA,
+			RIE_ERROR,
+			renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__),
+			"name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration)
+		);
 		return RI_NULL;
 	}
-
-	name = renderState()->tokFindCreate(name);
-
+	
 	try {
+
+		name = renderState()->tokFindCreate(name);
 		preDeclare(name, declaration, false);
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return RI_NULL;
-	}
 
-	if ( m_macroFactory && m_curMacro ) {
+		if ( m_macroFactory && m_curMacro ) {
 
-		try {
 			if ( m_curMacro->valid() ) {
 				CRiDeclare *m = m_macroFactory->newRiDeclare(renderState()->lineNo(), name, declaration);
 				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDeclare", __LINE__, __FILE__));
+					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in declare() for CRiDeclare", __LINE__, __FILE__));
 				m_curMacro->add(m);
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-			return RI_NULL;
-		}
+			return name;
 
-	} else {
+		} 
 
-		try {
-			doDeclare(name, declaration);
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-			return RI_NULL;
-		}
+		doDeclare(name, declaration);
+		return name;
 
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
 	}
 
-	return name;
+	return RI_NULL;
 }
 
 

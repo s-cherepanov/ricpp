@@ -218,6 +218,35 @@ bool CValidModes::isValid(EnumRequests idxRequest, TypeModeBits idxModeBit) cons
 }
 
 
+// --------------------
+
+
+void CModeStack::push(EnumModes newMode, TypeModeBits newModeBits)
+{
+	try {
+		m_modes.push_back(newMode);
+		m_modeBits.push_back(newModeBits);
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,  __LINE__, __FILE__, "in CModeStack:push(): %s", e.what());
+	}
+}
+
+void CModeStack::pop()
+{
+	if ( !m_modes.empty() ) {	
+		m_modes.pop_back();
+	}
+	if ( !m_modeBits.empty() ) {	
+		m_modeBits.pop_back();
+	}
+}
+
+void CModeStack::clear()
+{
+	m_modes.clear();
+	m_modeBits.clear();
+}
+
 void CModeStack::contextBegin()
 {
 	if ( MODE_OUTSIDE != curMode() ) {
@@ -369,16 +398,21 @@ void CModeStack::startAreaLightSource(RtLightHandle h)
 {
 	if ( h == illLightHandle ) {
 		endAreaLightSource();
-	} else {
-		m_areaLightSourceHandle = h;
-		m_areaLightSourceDepth = size();
+		return;
 	}
+	
+	if ( m_areaLightSourceHandle != illLightHandle ) {
+		endAreaLightSource();		
+	}
+
+	m_areaLightSourceHandle = h;
+	m_areaLightSourceDepth = size();
 }
 
 void CModeStack::endAreaLightSource()
 {
 	if ( size() != m_areaLightSourceDepth ) {
-		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR,  __LINE__, __FILE__, "%s", "Bad AreaLightSource Block");
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR,  __LINE__, __FILE__, "%s", "AreaLightSource block closed at wrong nesting level.");
 	}
 	m_areaLightSourceHandle = illLightHandle;
 	m_areaLightSourceDepth = 0;

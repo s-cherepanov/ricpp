@@ -60,6 +60,7 @@ class CValidModes
      *  and RISPEC3.2: Definition of the new RI3.2 procs
 	 */
 	TypeModeBits m_requests[N_REQUESTS];
+	
 public:
 	/** @brief Initializes the valid contexts for all RI routines.
 	 */
@@ -89,55 +90,38 @@ public:
 	/** @brief Size type for the number of stored elements
 	 */
 	typedef std::vector<EnumModes>::size_type size_type;
+
 private:
 	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
 	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
 	std::vector<TypeModeBits> m_modeBits; //!< All modes (nesting of modes), transparent modes are 'ored' to the mode bits of outer blocks.
 
-	size_type m_areaLightSourceDepth;
-	RtLightHandle m_areaLightSourceHandle;
-protected:
-	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before)
-	 *
-	 * @param newMode New mode for nesting
-	 * @param newModeBits Bits corresponding mode, transparent blocks have mode bits of outer block added
-	 */
-	inline virtual void push(EnumModes newMode, TypeModeBits newModeBits)
-	{
-		m_modes.push_back(newMode);
-		m_modeBits.push_back(newModeBits);
-	}
+	size_type m_areaLightSourceDepth; //!< Nesting depth of the enclosing mode block of an area light source, 0 if not in area light source definition.
+	RtLightHandle m_areaLightSourceHandle; //!< Handle of area light source to be defined, illLightHandle if not defining an area light source.
 
-	/** @brief Removes nesting from the modes, do not test if valid (is done by the interface before)
+protected:
+	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before).
+	 *
+	 * @param newMode New mode for nesting.
+	 * @param newModeBits Bits corresponding mode, transparent blocks have mode bits of outer block added.
+	 * @except ExceptRiCPPError Something went worong while pushing on a vector.
 	 */
-	inline virtual void pop()
-	{
-		if ( !m_modes.empty() ) {	
-			m_modes.pop_back();
-		}
-		if ( !m_modeBits.empty() ) {	
-			m_modeBits.pop_back();
-		}
-	}
+	 virtual void push(EnumModes newMode, TypeModeBits newModeBits);
+
+	/** @brief Removes nesting from the modes, do not test if valid (is done by the interface before).
+	 */
+	virtual void pop();
 
 	/** @brief Clears the mode stack.
-	 *
-	 * The mode stack is cleared by end()
 	 */
-	inline virtual void clear()
-	{
-		m_modes.clear();
-		m_modeBits.clear();
-	}
+	virtual void clear();
 
 public:
-
 	/** @brief Initializing of the mode, normally starts outside any blocks. 
 	 */
-	inline CModeStack( )
+	inline CModeStack( ) :
+		m_areaLightSourceHandle(illLightHandle), m_areaLightSourceDepth(0)
 	{
-		m_areaLightSourceHandle = illLightHandle;
-		m_areaLightSourceDepth = 0;
 	}
 
 	/** @brief Virtual destructor.
@@ -145,7 +129,7 @@ public:
 	inline virtual ~CModeStack() {}
 
 
-	/** @defgroup mode_group CModeStack, the modes
+	/** @defgroup mode_group CModeStack, the modes.
 	 * @brief Stacks the modes of the RenderMan interface
 	 *
 	 * Called by the CRenderState. The @c begin - @c end calls must be balanced.
@@ -156,6 +140,7 @@ public:
 	 * @see CBaseRenderer::begin()
 	 */
 	virtual void contextBegin();
+	
 	/** @brief Ends a rendering context, called once for each context before deletion
 	 * @see CBaseRenderer::end()
 	 */
@@ -165,6 +150,7 @@ public:
 	  * Directly in begin-block, cannot be nested
 	  */
 	virtual void frameBegin();
+	
 	/** @brief Ends a frame
 	 */
 	virtual void frameEnd();
@@ -174,6 +160,7 @@ public:
 	 * inside frame block or begin-block, cannot be nested.
 	 */
 	virtual void worldBegin();
+	
 	/** @brief End the world block
 	 */
 	virtual void worldEnd();
@@ -184,6 +171,7 @@ public:
 	 * @see CBaseRenderer::attributeBegin()
 	 */
 	virtual void attributeBegin();
+	
 	/** @brief Ends a block of attributes
 	 * @see CBaseRenderer::attributeEnd()
 	 */
@@ -195,6 +183,7 @@ public:
 	 * world or for camera/light placings inside frame or begin block
 	 */
 	virtual void transformBegin();
+	
 	/** @brief Ends transformation block
 	 */
 	virtual void transformEnd();
@@ -205,6 +194,7 @@ public:
 	 * transformation, attribute, world and object blocks
 	 */
     virtual void solidBegin();
+	
 	/** @brief Ends a solid block
 	 */
     virtual void solidEnd();
@@ -214,6 +204,7 @@ public:
 	 * Inside frame, world, attribute, transform, archive, and begin blocks
 	 */
 	virtual void objectBegin();
+	
 	/** @brief Ends an object block
 	 */
 	virtual void objectEnd();
@@ -265,6 +256,7 @@ public:
 	 * Inside object, world, attribute or transform block, cannot be nested.
 	 */
     virtual void motionBegin();
+	
 	/** @brief Ends a motion block
 	 */
     virtual void motionEnd();
@@ -312,10 +304,39 @@ public:
 	 */
 	inline size_type size() const { return m_modes.size(); }
 
+	/** @brief Get the area light source handle, if inside a area light definition.
+	 *
+	 *  @return The handle of the actually defined area light source or
+	 *          illLightHandle, if outside an are light definition.
+	 */
 	inline virtual RtLightHandle areaLightSourceHandle() const { return m_areaLightSourceHandle; }
+
+	/** @brief The nesting depth of begin of the area light source.
+	 *
+	 *  The area light source is closed if the enclosing attribute (world, frame)
+	 *  block is closed. Area light sources cannot be nested.
+	 *
+	 *  @return Nesting level of mode of the current light source or 0 if
+	 *          not defining area light source.
+	 */
 	inline virtual size_type areaLightSourceDepth() const { return m_areaLightSourceDepth; }
 
+	/** @brief Start the definition of an area light source.
+	 *
+	 * Stats the definition of an area light source. Area light sources cannot be nested. The are closed
+	 * at the end of the surrounding attribute (world or frame) or by the start of another area light
+	 * source or handle = illLightHandle.
+	 *
+	 * @param h the handle of the are light source to be defined.
+	 */
 	virtual void startAreaLightSource(RtLightHandle h);
+
+	/** @brief Ends an area light source definition
+	 *
+	 * @sa startAreaLightSource(RtLightHandle h)
+	 * 
+	 * @except ExceptRiCPPError Closed at wrong nesting level.
+	 */
 	virtual void endAreaLightSource();
 }; // CModeStack
 

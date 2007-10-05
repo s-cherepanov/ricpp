@@ -65,38 +65,58 @@ public:
 	 *  @brief Reading the modestack.
 	 */
 	//@{
-	/** @brief Test if a request @a req is valid in the current mode.
+	/** @brief Tests if a request @a req is valid in the current mode.
 	 *  @param req Index of the request to test.
 	 *  @return true, if the request req is valid in the current mode.
 	 *  @see CModeStack::validRequest(), EnumRequests  
 	 */
 	virtual bool validRequest(EnumRequests req) const = 0;
 
-	/** @brief The current mode
-	 *  @return The current mode
+	/** @brief Gets the current mode.
+	 *
+	 *  @return The current mode.
 	 *  @see CModeStack::curMode(), EnumRequests  
 	 */
 	virtual EnumModes curMode() const = 0;
 
 
-	/** @brief The current mode bits
-	 *  @return The current mode bits
+	/** @brief Gets the current mode bits.
+	 *
+	 *  @return The current mode bits.
 	 *  @see CModeStack::curModeBits(), EnumRequests  
 	 */
 	virtual TypeModeBits curModeBits() const = 0;
 
-	/** @brief The current frame number
+	/** @brief The current frame number.
 	 *
 	 *  Set 0 if outside a frame, but has no meaning, can also be inside
 	 *  rame with number 0.
 	 *
-	 *  @return The current frame Number
+	 *  @return The current frame Number.
 	 */
 	virtual RtInt frameNumber() const = 0;
 
+	/** @brief Tests if the renderer is inside a world block.
+	 *
+	 *  @return true, the renderer is inside a world block.
+	 */
 	virtual bool inWorldBlock() const = 0;
 
+	/** @brief Get the area light source handle, if inside a area light definition.
+	 *
+	 *  @return The handle of the actually defined area light source or
+	 *          illLightHandle, if outside an are light definition.
+	 */
 	virtual RtLightHandle areaLightSourceHandle() const = 0;
+
+	/** @brief The nesting depth of begin of the area light source.
+	 *
+	 *  The area light source is closed if the enclosing attribute (world, frame)
+	 *  block is closed. Area light sources cannot be nested.
+	 *
+	 *  @return Nesting level of mode of the current light source or 0 if
+	 *          not defining area light source.
+	 */
 	virtual CModeStack::size_type areaLightSourceDepth() const = 0;
 
 	virtual CModeStack::const_iterator modesBegin() const = 0;
@@ -148,6 +168,9 @@ public:
 
 	virtual RtInt numTokens() const = 0;
 	virtual const CParameterList &curParamList() = 0;
+
+	virtual const char *printName(const char *aFileName) const = 0;
+	virtual long printLineNo(long aLineNo) const = 0;
 }; // IRenderStateReader
 
 /** @brief The facade for the render state objects.
@@ -155,28 +178,28 @@ public:
  * The CRenderState object is a part of CBaseRenderer.
  */
 class CRenderState : public IRenderStateReader {
-	CModeStack *m_modeStack;           ///< Pointer to a mode stack
+	CModeStack *m_modeStack;                       ///< Pointer to a mode stack.
 
-	RtInt m_frameNumber;               ///< Frame number
+	RtInt m_frameNumber;                           ///< Frame number.
 
-	std::string m_archiveName;         ///< Current archive name, optional
-	long m_lineNo;                     ///< Current line number in the file, -1 if not available
+	std::string m_archiveName;                     ///< Current archive name, optional.
+	long m_lineNo;                                 ///< Current line number in the file, -1 if not available.
 
-	CDeclarationDictionary m_declDict; ///< Dictionary for declarations
+	CDeclarationDictionary m_declDict;             ///< Dictionary for declarations.
 
-	COptionsFactory *m_optionsFactory;     ///< Create new Options
-	std::vector<COptions *> m_optionsStack; ///< Current option stack
+	COptionsFactory *m_optionsFactory;             ///< Create new Options.
+	std::vector<COptions *> m_optionsStack;        ///< Current option stack.
 
-	CAttributesFactory *m_attributesFactory;     ///< Create new attributes
-	std::vector<CAttributes *> m_attributesStack; ///< Current attributes stack
+	CAttributesFactory *m_attributesFactory;       ///< Create new attributes.
+	std::vector<CAttributes *> m_attributesStack;  ///< Current attributes stack.
 
-	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses
+	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses.
 
-	CParameterList m_curParams; ///< Params of the last interface request with variable parameters
+	CParameterList m_curParams;                    ///< Params of the last interface request with variable parameters.
 
-	CLights m_lights; ///< Global light list
+	CLights m_lights;                              ///< Global light list.
 
-	bool m_reject; ///< Reject requests while running, e.g. for appropriate if-then-else blocks
+	bool m_reject;                                 ///< Reject requests while running, e.g. for appropriate if-then-else blocks
 
 	void pushOptions();
 	bool popOptions();
@@ -360,8 +383,11 @@ public:
     inline void motionEnd() { return m_modeStack->motionEnd(); }
 
 	inline virtual bool validRequest(EnumRequests req) const { return m_modeStack->validRequest(req); }
+
 	inline virtual EnumModes curMode() const { return m_modeStack->curMode(); }
+
 	inline virtual TypeModeBits curModeBits() const { return m_modeStack->curModeBits(); }
+
 	inline virtual bool inWorldBlock() const
 	{
 		return (curModeBits() & MODE_BIT_WORLD) == MODE_BIT_WORLD;
@@ -376,7 +402,6 @@ public:
 	inline virtual CModeStack::size_type areaLightSourceDepth() const { return m_modeStack->areaLightSourceDepth(); }
 	virtual void startAreaLightSource(RtLightHandle h);
 	virtual void endAreaLightSource();
-
 	//@}
 
 	/** @defgroup tokenmap_group CTokenMap functions
@@ -408,14 +433,14 @@ public:
 	{
 		return static_cast<RtInt>(m_curParams.size());
 	}
+	inline virtual CTokenMap::const_iterator tokBegin() const { return tokenMap().begin(); }
+	inline virtual CTokenMap::const_iterator tokEnd() const { return tokenMap().end(); }
+	inline virtual CTokenMap::size_type tokSize() const { return tokenMap().size(); }
+	
 	inline virtual CParameterList &curParamList() { return m_curParams; }
 	inline virtual const CParameterList &curParamList() const { return m_curParams; }
 	inline virtual RtToken *tokens() { return m_curParams.tokenPtr(); }
 	inline virtual RtPointer *params() { return m_curParams.valuePtr(); }
-
-	inline virtual CTokenMap::const_iterator tokBegin() const { return tokenMap().begin(); }
-	inline virtual CTokenMap::const_iterator tokEnd() const { return tokenMap().end(); }
-	inline virtual CTokenMap::size_type tokSize() const { return tokenMap().size(); }
 	//@}
 
 	/** @defgroup decldict_group CDeclarationDictionary functions
@@ -426,9 +451,7 @@ public:
 	//@{
 	inline virtual const CDeclaration *declFind(RtToken name) const { return m_declDict.find(name); }
 	inline virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) const { return m_declDict.find(tableNamespace, table, var); }
-	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_declDict.begin(); }
-	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_declDict.end(); }
-	inline virtual CDeclarationDictionary::size_type declSize() const { return m_declDict.size(); }
+	
 	inline const CDeclaration *declFindAndUpdate(RtToken name, const CColorDescr &curColorDescr) { return m_declDict.findAndUpdate(name, curColorDescr); }
 	inline const CDeclaration *declFindAndUpdate(
 		const char*tableNamespace,
@@ -438,10 +461,16 @@ public:
 	{
 		return m_declDict.findAndUpdate(tableNamespace, table, var, curColorDescr);
 	}
+	
 	inline void declAdd(CDeclaration *decl)
 	{
 		return m_declDict.add(decl);
 	}
+	
+	inline virtual CDeclarationDictionary::const_iterator declBegin() const { return m_declDict.begin(); }
+	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_declDict.end(); }
+	inline virtual CDeclarationDictionary::size_type declSize() const { return m_declDict.size(); }
+
 	inline CDeclarationDictionary &dict()
 	{
 		return m_declDict;
@@ -524,6 +553,21 @@ public:
 	{
 		m_reject = doRecect;
 	}
+	
+	inline virtual const char *printName(const char *aFileName) const
+	{
+		if ( !m_archiveName.empty() )
+			return m_archiveName.c_str();
+		return noNullStr(aFileName);
+	}
+	
+	inline virtual long printLineNo(long aLineNo) const
+	{
+		if ( !m_archiveName.empty() )
+			return m_lineNo;
+		return aLineNo;
+	}
+	
 	//@}
 }; // CRenderState
 

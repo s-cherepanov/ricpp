@@ -33,13 +33,13 @@
 #include "ricpp/declaration/tokenmap.h"
 #endif // _RICPP_DECLARATION_TOKENMAP_H
 
-#ifndef _RICPP_DECLARATION_PARAMCLASSES_H
-#include "ricpp/declaration/paramclasses.h"
-#endif // _RICPP_DECLARATION_PARAMCLASSES_H
+#ifndef _RICPP_RICPP_PARAMCLASSES_H
+#include "ricpp/ricpp/paramclasses.h"
+#endif // _RICPP_RICPP_PARAMCLASSES_H
 
-#ifndef _RICPP_DECLARATION_TYPES_H
-#include "ricpp/declaration/types.h"
-#endif // _RICPP_DECLARATION_TYPES_H
+#ifndef _RICPP_RICPP_TYPES_H
+#include "ricpp/ricpp/types.h"
+#endif // _RICPP_RICPP_TYPES_H
 
 #include <string>
 

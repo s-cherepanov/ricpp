@@ -286,11 +286,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricpp\paramclasses.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricpp\ricpperror.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\ricpp\subdivfunc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\ricpp\types.cpp"
 				>
 			</File>
 		</Filter>
@@ -305,6 +313,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricpp\filters.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricpp\paramclasses.h"
 				>
 			</File>
 			<File
@@ -329,6 +341,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricpp\subdivfunc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricpp\types.h"
 				>
 			</File>
 		</Filter>

@@ -26,9 +26,9 @@
  *  @brief Implementation of some types, classes and data about types needed by the interface.
  *  @author Andreas Pidde (andreas@pidde.de)
  */
-#include "ricpp/declaration/types.h"
-#include "ricpp/tools/inlinetools.h"
+#include "ricpp/ricpp/types.h"
 #include "ricpp/ricpp/ricpptokens.h"
+#include "ricpp/tools/inlinetools.h"
 
 #include <cstring>
 #include <cctype>
@@ -366,7 +366,7 @@ RtVoid CColorDescr::colorSamples(RtInt nColorSamples, RtFloat *nRGB, RtFloat *RG
 			m_RGBn[s] = RGBn[s];
 		} else {
 			m_RGBn[s] =
-				(s == 0 || s == nColorSamples + 1 || s == nColorSamples*2 + 2) ?
+				(s == 0 || (RtInt)s == nColorSamples + 1 || (RtInt)s == nColorSamples*2 + 2) ?
 				static_cast<RtFloat>(1.0) :
 				0;
 		}
@@ -499,7 +499,7 @@ bool CColorDescr::testident()
 		  static_cast<RtInt>(s) < m_nColorSamples;
 		  ++s )
 	{
-		for ( int i = 0; i < 3; ++i ) {
+		for ( std::vector<RtFloat>::size_type i = 0; i < 3; ++i ) {
 			if ( s == i ) {
 				if ( m_RGBn[o+i] != 1 ) {
 					m_isIdentity = false;
@@ -516,7 +516,7 @@ bool CColorDescr::testident()
 	}
 
 	o = 0;
-	for ( int i = 0; i < 3; ++i ) {
+	for ( std::vector<RtFloat>::size_type i = 0; i < 3; ++i ) {
 		for ( std::vector<RtFloat>::size_type s = 0;
 			  static_cast<RtInt>(s) < m_nColorSamples;
 			  ++s )

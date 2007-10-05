@@ -1,5 +1,5 @@
-#ifndef _RICPP_DECLARATION_TYPES_H
-#define _RICPP_DECLARATION_TYPES_H
+#ifndef _RICPP_RICPP_TYPES_H
+#define _RICPP_RICPP_TYPES_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -756,4 +756,4 @@ public:
 
 } // namespace RiCPP
 
-#endif // _RICPP_DECLARATION_TYPES_H
+#endif // _RICPP_RICPP_TYPES_H

@@ -17,9 +17,9 @@
 #include "ricpp/baserenderer/dorender.h"
 #endif // _RICPP_BASERENDERER_DORENDER_H
 
-#ifndef _RICPP_DECLARATION_PARAMCLASSES_H
-#include "ricpp/declaration/paramclasses.h"
-#endif // _RICPP_DECLARATION_PARAMCLASSES_H
+#ifndef _RICPP_RICPP_PARAMCLASSES_H
+#include "ricpp/ricpp/paramclasses.h"
+#endif // _RICPP_RICPP_PARAMCLASSES_H
 
 #ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
@@ -5207,7 +5207,7 @@ public:
 		ri.preArchiveRecord(m_type.c_str(), m_line.c_str());
 		ri.doArchiveRecord(m_type.c_str(), m_line.c_str());
 		if ( callback ) 
-			(*callback)(ri.frontend(), m_type.c_str(), m_line.c_str());
+			(*callback)(ri, m_type.c_str(), m_line.c_str());
 	}
 	inline CRiArchiveRecord &operator=(const CRiArchiveRecord &) {
 		return *this;

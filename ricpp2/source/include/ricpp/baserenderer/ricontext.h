@@ -146,21 +146,13 @@ public:
 	 */
 	virtual RtVoid abort(void) = 0;
 
-	/** @brief Interfaces to register front end.
-	 *
-	 * Is called at the begin() of the front end.
-	 *
-	 * @params frontend Ri front end.
-	 */
-	virtual RtVoid registerFrontEnd(IRi &aFrontend, IRiCPPErrorHandler &errorHandler) = 0;
-
-	virtual IRi &frontend()=0;
-
 
 	/** @brief Gets a read only render state.
 	 *  @return Read only renderstate.
 	 */
 	virtual const CRenderState *renderState() const = 0;
+	virtual CRenderState *renderState() = 0;
+	virtual bool preCheck(EnumRequests req) = 0;
 
 	/** @brief Interfaces needed for byte streams.
 	 *
@@ -169,14 +161,6 @@ public:
 	 * @params protocolHandler Protocol handler for byte streams.
 	 */
 	virtual RtVoid registerProtocolHandler(CBackBufferProtocolHandlers &protocolHandler) = 0;
-
-	/** @brief Interfaces needed to call rib handlers.
-	 *
-	 * Is registered before an archive function (readArchive(), procedural()) is called.
-	 *
-	 * @params ribFilter Call interace for rib handlers.
-	 */
-	virtual RtVoid registerRibFilter(IRiRoot *ribFilter) = 0;
 }; // IRiContext
 } // namespace RiCPP
 

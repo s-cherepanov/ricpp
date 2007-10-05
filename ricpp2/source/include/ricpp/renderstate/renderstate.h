@@ -166,6 +166,7 @@ public:
 
 	virtual bool reject() const = 0;
 	virtual bool updateStateOnly() const = 0;
+	virtual bool postponeReadArchive() const = 0;
 
 	virtual bool hasOptions() const = 0;
 	virtual bool hasOptionsReader() const = 0;
@@ -215,6 +216,8 @@ class CRenderState : public IRenderStateReader {
 	 *
 	 */
 	bool m_updateStateOnly;
+
+	bool m_postponeReadArchive;
 
 	CUri m_baseUri;                                ///< Base URI for RIB archive files
 
@@ -433,7 +436,8 @@ public:
 	inline CTokenMap &tokenMap() {return m_declDict.tokenMap();}
 
 	inline virtual RtToken tokFind(const char *name) const { return tokenMap().find(name); }
-	virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual void parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
+	virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 
 	inline virtual RtInt numTokens() const
 	{
@@ -573,6 +577,16 @@ public:
 		m_updateStateOnly = doOnlyUpdate;
 	}
 	
+	inline virtual bool postponeReadArchive() const
+	{
+		return m_postponeReadArchive;
+	}
+
+	inline virtual void postponeReadArchive(bool postponeReadArchive)
+	{
+		m_postponeReadArchive = postponeReadArchive;
+	}
+
 	inline virtual const char *printName(const char *aFileName) const
 	{
 		if ( !m_archiveName.empty() )

@@ -210,6 +210,10 @@ private:
 	}
 
 protected:
+	/** @brief Reads a RIB archive.
+	 */
+	virtual RtVoid doReadArchive(RtString name, const IArchiveCallback *callback, const class CParameterList &p);
+
 	/** @brief Returns the error handler to use.
 	 *
 	 *  This function can be overwritten to change the
@@ -332,7 +336,12 @@ protected:
 		 *
 		 *  @return Pointer to the stored backend rendering context
 		 */
-		inline IRiContext *renderingContext() const
+		inline const IRiContext *renderingContext() const
+		{
+			return m_renderingContext;
+		}
+		
+		inline IRiContext *renderingContext()
 		{
 			return m_renderingContext;
 		}
@@ -575,6 +584,11 @@ protected:
 		 * @return A reference to the backend current creator/context pair,
 		 * not neccessairly valid (e.g. if aborted).
 		 */
+		inline const CContext &curBackend() const
+		{
+			return m_curCtx;
+		}
+
 		inline CContext &curBackend()
 		{
 			return m_curCtx;

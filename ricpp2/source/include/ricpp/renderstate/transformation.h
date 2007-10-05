@@ -2,7 +2,7 @@
 #define _RICPP_RENDERSTATE_TRANSFORMATON_H
 
 #ifndef _RICPP_DECLAREATION_TYPES_H
-#include "ricpp/declaration/types.h"
+#include "ricpp/ricpp/types.h"
 #endif //  _RICPP_DECLAREATION_TYPES_H
 
 namespace RiCPP {

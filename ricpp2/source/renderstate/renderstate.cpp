@@ -49,6 +49,7 @@ CRenderState::CRenderState(
 
 	m_reject = false;
 	m_updateStateOnly = false;
+	m_postponeReadArchive = false;
 
 
 	CFilepath fp;
@@ -180,10 +181,24 @@ void CRenderState::endAreaLightSource()
 	}
 }
 
+
+void CRenderState::parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
+{
+	try {
+		p.set(counts, m_declDict, optionsReader().colorDescr(), n, theTokens, theParams);
+	} catch (ExceptRiCPPError &err) {
+		if ( archiveName() != 0 ) {
+			err.line(lineNo());
+			err.file(archiveName());
+		}
+		throw err;
+	}
+}
+
 void CRenderState::parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
 {
 	try {
-		m_curParams.set(counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+		m_curParams.set(counts, m_declDict, optionsReader().colorDescr(), n, theTokens, theParams);
 	} catch (ExceptRiCPPError &err) {
 		if ( archiveName() != 0 ) {
 			err.line(lineNo());

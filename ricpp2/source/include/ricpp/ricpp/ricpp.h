@@ -57,6 +57,7 @@ namespace RiCPP {
 
 /** Forward declaration of the RI (RenderMan Interface)
  */
+class IRiRoot;
 class IRi;
 
 /** @brief Interface for the error handler (was RtErrorHandler)
@@ -177,7 +178,7 @@ public:
 	 * @param line The (formatted) comment line, smae as the formatted string
 	 * given by IRi::archiveRecordV()
 	 */
-	virtual RtVoid operator()(IRi &ri, RtToken type, RtString line) const = 0;
+	virtual RtVoid operator()(IRiRoot &ri, RtToken type, RtString line) const = 0;
 };
 
 // ---------------------------------------------------------------------------------------------------

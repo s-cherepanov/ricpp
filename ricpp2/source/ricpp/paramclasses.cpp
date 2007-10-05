@@ -29,7 +29,7 @@
  *  \author Andreas Pidde (andreas@pidde.de)
  *  \sa pramclasses.h
  */
-#include "ricpp/declaration/paramclasses.h"
+#include "ricpp/ricpp/paramclasses.h"
 
 using namespace RiCPP;
 

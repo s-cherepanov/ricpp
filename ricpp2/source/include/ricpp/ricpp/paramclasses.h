@@ -1,5 +1,5 @@
-#ifndef _RICPP_DECLARATION_PARAMCLASSES_H
-#define _RICPP_DECLARATION_PARAMCLASSES_H
+#ifndef _RICPP_RICPP_PARAMCLASSES_H
+#define _RICPP_RICPP_PARAMCLASSES_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -680,4 +680,4 @@ public:
 
 } // namespace RiCPP
 
-#endif // _RICPP_DECLARATION_PARAMCLASSES_H
+#endif // _RICPP_RICPP_PARAMCLASSES_H

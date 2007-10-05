@@ -34,10 +34,7 @@ using namespace RiCPP;
 
 CBaseRenderer::CBaseRenderer() :
 	m_renderState(0),
-	m_ri(0),
-	m_errorHandler(0),
 	m_protocolHandler(0),
-	m_ribFilter(0),
 	m_macroFactory(0),
 	m_curMacro(0)
 {
@@ -2224,6 +2221,7 @@ RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callba
 		return;
 
 	renderState()->parseParameters(CValueCounts(), n, tokens, params);
+	preReadArchive(name, callback, renderState()->curParamList());
 	doReadArchive(name, callback, renderState()->curParamList());
 	if ( n != renderState()->numTokens() ) {
 		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'readArchiveV'");
@@ -2232,41 +2230,6 @@ RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callba
 
 RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
-	CUri sav(renderState()->baseUri());
-	const char *oldArchiveName = renderState()->archiveName();
-	long oldLineNo = renderState()->lineNo();
-
-	RtInt n = renderState()->numTokens();
-	RtToken *tokens = renderState()->tokens();
-	RtPointer *paramptr = renderState()->params();
-
-	CRibParser parser(*m_ri, *m_errorHandler, *m_protocolHandler, *m_ribFilter, *renderState(), renderState()->baseUri());
-	try {
-		if ( parser.canParse(name) ) {
-			renderState()->baseUri() = parser.absUri();
-			renderState()->archiveName(name);
-			renderState()->lineNo(0);
-			parser.parse(callback, n, tokens, paramptr);
-			renderState()->archiveName(oldArchiveName);
-			renderState()->lineNo(oldLineNo);
-			renderState()->baseUri() = sav;
-			parser.close();
-		}
-	} catch(ExceptRiCPPError &err) {
-		renderState()->baseUri() = sav;
-		renderState()->archiveName(oldArchiveName);
-		renderState()->lineNo(oldLineNo);
-		parser.close();
-		ricppErrHandler().handleError(err);
-		return;
-	} catch(...) {
-		renderState()->baseUri() = sav;
-		renderState()->archiveName(oldArchiveName);
-		renderState()->lineNo(oldLineNo);
-		parser.close();
-		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "%s", "unknown error");
-		return;
-	}
 }
 
 

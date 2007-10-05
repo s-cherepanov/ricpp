@@ -943,12 +943,12 @@ void CRibParser::handleDeferedComments() {
 		if ( c.m_isStructured ) {
 			ribFilter().archiveRecordV(RI_STRUCTURE, c.m_comment.empty() ? 0 : &c.m_comment[0]);
 			if ( callback() ) {
-				(*callback())(frontend(), RI_STRUCTURE, c.m_comment.empty() ? 0 : &c.m_comment[0]);
+				(*callback())(ribFilter(), RI_STRUCTURE, c.m_comment.empty() ? 0 : &c.m_comment[0]);
 			}
 		} else {
 			ribFilter().archiveRecordV(RI_COMMENT, c.m_comment.empty() ? 0 : &c.m_comment[0]);
 			if ( callback() ) {
-				(*callback())(frontend(), RI_COMMENT, c.m_comment.empty() ? 0 : &c.m_comment[0]);
+				(*callback())(ribFilter(), RI_COMMENT, c.m_comment.empty() ? 0 : &c.m_comment[0]);
 			}
 		}
 	}
@@ -1503,10 +1503,8 @@ bool CRibParser::canParse(RtString name)
 
 void CRibParser::parse(
 	const IArchiveCallback *callback,
-	RtInt n,
-	RtToken tokens[],
-	RtPointer params[])
+	const CParameterList &params)
 {
-	CArchiveParser::parse(callback, n, tokens, params);
+	CArchiveParser::parse(callback, params);
 	parseFile();
 }

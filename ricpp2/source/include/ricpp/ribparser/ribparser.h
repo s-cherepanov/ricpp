@@ -415,7 +415,6 @@ namespace RiCPP {
 		IRiRoot *m_ribFilter;
 		const IRenderStateReader *m_stateReader;
 		const IArchiveCallback *m_callback;
-		IRi *m_ri;
 		IRiCPPErrorHandler *m_errHandler;
 
 		CUri m_baseUri;
@@ -425,9 +424,12 @@ namespace RiCPP {
 		bool m_hasPutBack;
 		unsigned char m_putback;
 
+
 		inline CArchiveParser &operator=(const CArchiveParser &) { return *this; }
 
 	protected:
+		CParameterList m_parameterList;
+
 		std::istream m_istream;
 		TemplFrontStreambuf<char> m_ob;
 
@@ -436,7 +438,6 @@ namespace RiCPP {
 
 	public:
 		inline CArchiveParser(
-			IRi &aFrontend,
 			IRiCPPErrorHandler &anErrHandler,
 			CBackBufferProtocolHandlers &backBufferReg,
 			IRiRoot &ribFilter,
@@ -445,7 +446,6 @@ namespace RiCPP {
 			m_ob(backBufferReg),
 			m_istream(&m_ob)
 		{
-			m_ri = &aFrontend;
 			m_errHandler = &anErrHandler;
 			m_backBufferReg = &backBufferReg;
 			m_ribFilter = &ribFilter;
@@ -486,11 +486,6 @@ namespace RiCPP {
 			return *m_stateReader;
 		}
 
-		inline virtual IRi &frontend() const
-		{
-			return *m_ri;
-		}
-
 		inline virtual IRiCPPErrorHandler &errHandler()
 		{
 			return *m_errHandler;
@@ -506,11 +501,10 @@ namespace RiCPP {
 
 		inline virtual void parse(
 			const IArchiveCallback *callback,
-			RtInt n,
-			RtToken tokens[],
-			RtPointer params[])
+			const CParameterList &params)
 		{
 			m_callback = callback;
+			m_parameterList = params;
 		}
 
 	}; // CArchiveParser
@@ -551,10 +545,6 @@ namespace RiCPP {
 
 		long m_defineString;                         //!< If >= 0 encode a string token
 		NUM2STRING m_stringMap;                      //!< Map of string tokens
-
-		RtInt m_n;                                   //!< Number of token value pairs (copy of TRi::readArchive())
-		RtToken *m_tokens;                           //!< Tokens (copy of TRi::readArchive())
-		RtPointer *m_params;                         //!< Values (copy of TRi::readArchive())
 
 		//! Maps number to object handle
 		NUM2OBJECT m_mapObjectHandle;
@@ -647,13 +637,12 @@ namespace RiCPP {
 		}
 	public:
 		inline CRibParser(
-			IRi &aFrontend,
 			IRiCPPErrorHandler &anErrHandler,
 			CBackBufferProtocolHandlers &backBufferReg,
 			IRiRoot &ribFilter,
 			const IRenderStateReader &aStateReader,
 			const CUri &baseUri)
-			: CArchiveParser(aFrontend, anErrHandler, backBufferReg, ribFilter, aStateReader, baseUri)
+			: CArchiveParser(anErrHandler, backBufferReg, ribFilter, aStateReader, baseUri)
 		{
 			m_request.init(*this, anErrHandler);
 			initRequestMap();
@@ -665,9 +654,7 @@ namespace RiCPP {
 
 		virtual void parse(
 			const IArchiveCallback *callback,
-			RtInt n,
-			RtToken tokens[],
-			RtPointer params[]);
+			const CParameterList &params);
 	}; // CRibParser
 }
 

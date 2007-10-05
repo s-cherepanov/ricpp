@@ -134,21 +134,9 @@ protected:
 	 */
 	virtual void defaultDeclarations();
 
-	/** @brief Front end @todo eliminate this (parser to frontend)
-	 */
-	IRi *m_ri;
-
-	/** @brief Front end error handler
-	 */
-	IRiCPPErrorHandler *m_errorHandler;
-
 	/** @brief Input handler for byte streams
 	 */
 	CBackBufferProtocolHandlers *m_protocolHandler;
-
-	/** @brief RIB handler @todo eliminate this (parser to frontend)
-	 */
-	IRiRoot *m_ribFilter;
 
 	/** @brief Factory for macro interfaces
 	 */
@@ -167,8 +155,8 @@ public:
 	 */
 	virtual bool preCheck(EnumRequests req);
 
-	inline virtual CRenderState *renderState() { return m_renderState; }
 	inline virtual const CRenderState *renderState() const { return m_renderState; }
+	inline virtual CRenderState *renderState() { return m_renderState; }
 
 	/** @brief Constructor, initializes member variables.
 	 */
@@ -196,27 +184,9 @@ public:
 	 */
 	inline virtual RtVoid deactivate(void) {}
 
-	inline virtual RtVoid registerFrontEnd(IRi &frontend, IRiCPPErrorHandler &anErrorHandler)
-	{
-		m_ri = &frontend;
-		m_errorHandler = &anErrorHandler;
-	}
-
-	inline IRi &frontend()
-	{
-		assert(m_ri != 0);
-		return *m_ri;
-	}
-
-
 	inline virtual RtVoid registerProtocolHandler(CBackBufferProtocolHandlers &protocolHandler)
 	{
 		m_protocolHandler = &protocolHandler;
-	}
-
-	inline virtual RtVoid registerRibFilter(IRiRoot *ribFilter)
-	{
-		m_ribFilter = ribFilter;
 	}
 
 	/** @brief Error handler

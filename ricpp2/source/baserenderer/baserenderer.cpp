@@ -139,13 +139,18 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 		return false;
 	}
 
-	if ( !renderState()->hasOptionsReader() ) {
+	if ( !renderState()->hasOptions() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - options not available.", CRequestInfo::requestName(req));
 		return false;
 	}
 
-	if ( !renderState()->hasAttributesReader() ) {
+	if ( !renderState()->hasAttributes() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - attributes not available.", CRequestInfo::requestName(req));
+		return false;
+	}
+
+	if ( !renderState()->hasTransform() ) {
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - transformations not available.", CRequestInfo::requestName(req));
 		return false;
 	}
 

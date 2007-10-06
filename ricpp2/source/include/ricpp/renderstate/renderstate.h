@@ -56,136 +56,11 @@
 
 namespace RiCPP {
 
-/** @brief Interface to read the state of a renderer.
- *
- *  Implemented by CRenderState, the class that handles the rendering state.
- *  Seperating the reader from the complete state allows objects
- *  to query the state without being able to modify it. The member function
- *  of this calss are typically const for this reason.
- */
-class IRenderStateReader {
-public:
-	/** @defgroup modestack_interface_group CModeStack functions
-	 *  @brief Reading the modestack.
-	 */
-	//@{
-	/** @brief Tests if a request @a req is valid in the current mode.
-	 *  @param req Index of the request to test.
-	 *  @return true, if the request req is valid in the current mode.
-	 *  @see CModeStack::validRequest(), EnumRequests  
-	 */
-	virtual bool validRequest(EnumRequests req) const = 0;
-
-	/** @brief Gets the current mode.
-	 *
-	 *  @return The current mode.
-	 *  @see CModeStack::curMode(), EnumRequests  
-	 */
-	virtual EnumModes curMode() const = 0;
-
-
-	/** @brief Gets the current mode bits.
-	 *
-	 *  @return The current mode bits.
-	 *  @see CModeStack::curModeBits(), EnumRequests  
-	 */
-	virtual TypeModeBits curModeBits() const = 0;
-
-	/** @brief The current frame number.
-	 *
-	 *  Set 0 if outside a frame, but has no meaning, can also be inside
-	 *  rame with number 0.
-	 *
-	 *  @return The current frame Number.
-	 */
-	virtual RtInt frameNumber() const = 0;
-
-	/** @brief Tests if the renderer is inside a world block.
-	 *
-	 *  @return true, the renderer is inside a world block.
-	 */
-	virtual bool inWorldBlock() const = 0;
-
-	/** @brief Get the area light source handle, if inside a area light definition.
-	 *
-	 *  @return The handle of the actually defined area light source or
-	 *          illLightHandle, if outside an are light definition.
-	 */
-	virtual RtLightHandle areaLightSourceHandle() const = 0;
-
-	/** @brief The nesting depth of begin of the area light source.
-	 *
-	 *  The area light source is closed if the enclosing attribute (world, frame)
-	 *  block is closed. Area light sources cannot be nested.
-	 *
-	 *  @return Nesting level of mode of the current light source or 0 if
-	 *          not defining area light source.
-	 */
-	virtual CModeStack::size_type areaLightSourceDepth() const = 0;
-
-	virtual CModeStack::const_iterator modesBegin() const = 0;
-	virtual CModeStack::const_iterator modesEnd() const = 0;
-	virtual CModeStack::size_type modesSize() const = 0;
-	//@}
-
-	/** @defgroup tokenmap_interface_group CTokenMap functions
-	 *  @brief Reading the tokenmap.
-	 */
-	//@{
-	/** @brief Searches for a token
-	 *  @param name A pointer to a token name
-	 *  @return RI_NULL if token not found, token otherwise
-	 */
-	virtual RtToken tokFind(const char *name) const = 0;
-	virtual const CTokenMap &tokenMap() const = 0;
-	virtual CTokenMap::const_iterator tokBegin() const = 0;
-	virtual CTokenMap::const_iterator tokEnd() const = 0;
-	virtual CTokenMap::size_type tokSize() const = 0;
-	//@}
-
-	/** @defgroup decldict_interface_group CDeclarationDictionary functions
-	 *  @brief Reading the declaration dictionary.
-	 */
-	//@{
-	virtual const CDeclaration *declFind(RtToken name) const = 0;
-	virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) const = 0;
-	virtual CDeclarationDictionary::const_iterator declBegin() const = 0;
-	virtual CDeclarationDictionary::const_iterator declEnd() const = 0;
-	virtual CDeclarationDictionary::size_type declSize() const = 0;
-
-	virtual const COptionsReader &optionsReader() const = 0;
-	virtual const CAttributesReader &attributesReader() const = 0;
-	virtual const ITransformationReader &transformReader() const = 0;
-	virtual const ILightsReader &lightsReader() const = 0;
-	//@}
-
-	virtual const CUri &baseUri() const = 0;
-
-	virtual const char *archiveName() const = 0;
-	virtual long lineNo() const = 0;
-
-	virtual bool reject() const = 0;
-	virtual bool updateStateOnly() const = 0;
-	virtual bool postponeReadArchive() const = 0;
-
-	virtual bool hasOptions() const = 0;
-	virtual bool hasOptionsReader() const = 0;
-	virtual bool hasAttributes() const = 0;
-	virtual bool hasAttributesReader() const = 0;
-	virtual bool hasTransform() const = 0;
-
-	virtual RtInt numTokens() const = 0;
-	virtual const CParameterList &curParamList() = 0;
-
-	virtual const char *printName(const char *aFileName) const = 0;
-	virtual long printLineNo(long aLineNo) const = 0;
-}; // IRenderStateReader
-
 /** @brief The facade for the render state objects.
  *
  * The CRenderState object is a part of CBaseRenderer.
  */
-class CRenderState : public IRenderStateReader {
+class CRenderState {
 	CModeStack *m_modeStack;                       ///< Pointer to a mode stack.
 
 	RtInt m_frameNumber;                           ///< Frame number.
@@ -261,9 +136,12 @@ public:
 	 */
 	inline virtual void frameNumber(RtInt number) { m_frameNumber = number; }
 
-	/** @brief Gets The current frame number (frames are not nested).
+	/** @brief The current frame number.
 	 *
-	 *  @return The frame number.
+	 *  Set 0 if outside a frame, but has no meaning, can also be inside
+	 *  rame with number 0.
+	 *
+	 *  @return The current frame Number.
 	 */
 	inline virtual RtInt frameNumber() const { return m_frameNumber; }
 
@@ -391,12 +269,31 @@ public:
 	inline void motionBegin() { return m_modeStack->motionBegin(); }
     inline void motionEnd() { return m_modeStack->motionEnd(); }
 
+	/** @brief Tests if a request @a req is valid in the current mode.
+	 *  @param req Index of the request to test.
+	 *  @return true, if the request req is valid in the current mode.
+	 *  @see CModeStack::validRequest(), EnumRequests  
+	 */
 	inline virtual bool validRequest(EnumRequests req) const { return m_modeStack->validRequest(req); }
 
+	/** @brief Gets the current mode.
+	 *
+	 *  @return The current mode.
+	 *  @see CModeStack::curMode(), EnumRequests  
+	 */
 	inline virtual EnumModes curMode() const { return m_modeStack->curMode(); }
 
+	/** @brief Gets the current mode bits.
+	 *
+	 *  @return The current mode bits.
+	 *  @see CModeStack::curModeBits(), EnumRequests  
+	 */
 	inline virtual TypeModeBits curModeBits() const { return m_modeStack->curModeBits(); }
 
+	/** @brief Tests if the renderer is inside a world block.
+	 *
+	 *  @return true, the renderer is inside a world block.
+	 */
 	inline virtual bool inWorldBlock() const
 	{
 		return (curModeBits() & MODE_BIT_WORLD) == MODE_BIT_WORLD;
@@ -407,8 +304,23 @@ public:
 	inline CModeStack::const_iterator modesEnd() const { return m_modeStack->end(); }
 	inline CModeStack::size_type modesSize() const { return m_modeStack->size(); }
 
+	/** @brief Get the area light source handle, if inside a area light definition.
+	 *
+	 *  @return The handle of the actually defined area light source or
+	 *          illLightHandle, if outside an are light definition.
+	 */
 	inline virtual RtLightHandle areaLightSourceHandle() const { return m_modeStack->areaLightSourceHandle(); }
+
+	/** @brief The nesting depth of begin of the area light source.
+	 *
+	 *  The area light source is closed if the enclosing attribute (world, frame)
+	 *  block is closed. Area light sources cannot be nested.
+	 *
+	 *  @return Nesting level of mode of the current light source or 0 if
+	 *          not defining area light source.
+	 */
 	inline virtual CModeStack::size_type areaLightSourceDepth() const { return m_modeStack->areaLightSourceDepth(); }
+
 	virtual void startAreaLightSource(RtLightHandle h);
 	virtual void endAreaLightSource();
 	//@}
@@ -435,6 +347,10 @@ public:
 	inline virtual const CTokenMap &tokenMap() const {return m_declDict.tokenMap();}
 	inline CTokenMap &tokenMap() {return m_declDict.tokenMap();}
 
+	/** @brief Searches for a token
+	 *  @param name A pointer to a token name
+	 *  @return RI_NULL if token not found, token otherwise
+	 */
 	inline virtual RtToken tokFind(const char *name) const { return tokenMap().find(name); }
 	virtual void parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 	virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
@@ -485,8 +401,15 @@ public:
 	{
 		return m_declDict;
 	}
+	//@}
 
 	inline COptions &options()
+	{
+		assert(m_optionsStack.back() != 0);
+		return *(m_optionsStack.back());
+	}
+
+	inline virtual const COptions &options() const
 	{
 		assert(m_optionsStack.back() != 0);
 		return *(m_optionsStack.back());
@@ -498,7 +421,19 @@ public:
 		return *(m_attributesStack.back());
 	}
 
+	inline virtual const CAttributes &attributes() const
+	{
+		assert(m_attributesStack.back() != 0);
+		return *(m_attributesStack.back());
+	}
+
 	inline CTransformation &transform()
+	{
+		assert(!m_transformStack.empty());
+		return m_transformStack.back();
+	}
+
+	inline virtual const CTransformation &transform() const
 	{
 		assert(!m_transformStack.empty());
 		return m_transformStack.back();
@@ -506,32 +441,10 @@ public:
 
 	inline CLights &lights() { return m_lights; }
 
-	inline virtual const COptionsReader &optionsReader() const
-	{
-		assert(m_optionsStack.back() != 0);
-		assert(m_optionsStack.back()->reader() != 0);
-		return *(m_optionsStack.back()->reader());
-	}
+	inline virtual const CLights &lights() const { return m_lights; }
 
-	inline virtual const CAttributesReader &attributesReader() const
-	{
-		assert(m_attributesStack.back() != 0);
-		assert(m_attributesStack.back()->reader() != 0);
-		return *(m_attributesStack.back()->reader());
-	}
-
-	inline virtual const ITransformationReader &transformReader() const
-	{
-		assert(!m_transformStack.empty());
-		return m_transformStack.back();
-	}
-
-	inline virtual const ILightsReader &lightsReader() const { return m_lights; }
-
-	inline virtual bool hasOptions() const {return m_optionsStack.back() != 0;}
-	inline virtual bool hasOptionsReader() const {return m_optionsStack.back() != 0 && m_optionsStack.back()->reader() != 0;}
-	inline virtual bool hasAttributes() const {return m_attributesStack.back() != 0;}
-	inline virtual bool hasAttributesReader() const {return m_attributesStack.back() != 0 && m_attributesStack.back()->reader() != 0;}
+	inline virtual bool hasOptions() const {return !m_optionsStack.empty() && m_optionsStack.back() != 0;}
+	inline virtual bool hasAttributes() const {return !m_attributesStack.empty() && m_attributesStack.back() != 0;}
 	inline virtual bool hasTransform() const {return !m_transformStack.empty();}
 
 	inline virtual const CUri &baseUri() const { return m_baseUri; }
@@ -600,8 +513,6 @@ public:
 			return m_lineNo;
 		return aLineNo;
 	}
-	
-	//@}
 }; // CRenderState
 
 } // namespace RiCPP

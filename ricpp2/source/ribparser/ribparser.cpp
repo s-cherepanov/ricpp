@@ -472,7 +472,7 @@ int CRibRequestData::getTokenList(
 			// Test token/value, if OK push to Paramter list, don't use otherwise
 			// RtInt numComps;
 			// long int numBytes;
-			const CDeclaration *d = stateReader().declFind(token);
+			const CDeclaration *d = renderState().declFind(token);
 			d = d;
 			/*
 			if ( !m_ricb->queryParam(token, vertices, corners, facets, faceVertices, faceCorners, aClass, aType, aCardinality, numComps, numBytes) ) {

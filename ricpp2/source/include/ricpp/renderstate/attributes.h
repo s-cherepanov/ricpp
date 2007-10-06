@@ -7,14 +7,10 @@
 
 namespace RiCPP {
 
-	class CAttributesReader;
-
 	/** @brief
 	 */
 	class CAttributes : public COptionsBase {
 	private:
-		CAttributesReader *m_reader;
-
 		//
 		// shading attributes
 		//
@@ -23,21 +19,15 @@ namespace RiCPP {
 
 		bool m_inAreaLightSource;
 
-	protected:
-		virtual void deleteReader(CAttributesReader *reader);
-		virtual CAttributesReader *newReader();
-
 	public:
 		inline CAttributes(const CColorDescr &c)
 			: COptionsBase(c)
 		{
-			m_reader = 0;
 		}
 
 		inline CAttributes(const CAttributes &ra)
 			: COptionsBase(ra.colorDescr())
 		{
-			m_reader = 0;
 			*this = ra;
 		}
 
@@ -45,22 +35,6 @@ namespace RiCPP {
 
 		CAttributes &operator=(const CAttributes &ra);
 
-
-		inline const CAttributesReader &createReader()
-		{
-			if ( !m_reader ) {
-				m_reader = newReader();
-				if ( !m_reader ) {
-					// throw;
-				}
-			}
-			return *m_reader;
-		}
-
-		inline const CAttributesReader *reader() const
-		{
-				return m_reader;
-		}
 
 		virtual RtVoid color(RtColor Cs);
 		inline virtual const std::vector<RtFloat> &color() const
@@ -100,30 +74,6 @@ namespace RiCPP {
 
 	/** @brief
 	 */
-	class CAttributesReader : public COptionsBaseReader {
-	private:
-		const CAttributes *m_riAttribs;
-
-	public:
-		CAttributesReader(CAttributes &attribs)
-			: COptionsBaseReader(attribs)
-		{
-			m_riAttribs = &attribs;
-		}
-
-		inline virtual const std::vector<RtFloat> &color() const
-		{
-			return m_riAttribs->color();
-		}
-
-		inline virtual const std::vector<RtFloat> &opacity() const
-		{
-			return m_riAttribs->opacity();
-		}
-	}; // CAttributesReader
-
-	/** @brief
-	 */
 	class CAttributesFactory
 	{
 	protected:
@@ -138,26 +88,8 @@ namespace RiCPP {
 
 	public:
 		inline virtual ~CAttributesFactory() {}
-		inline virtual CAttributes *newAttributes(const CColorDescr &c)
-		{
-			CAttributes *a = newAttributesInstance(c);
-			if ( a ) {
-				a->createReader(); 
-			} else {
-				// throw
-			}
-			return a;
-		}
-		inline virtual CAttributes *newAttributes(const CAttributes &attr)
-		{
-			CAttributes *a = newAttributesInstance(attr);
-			if ( a ) {
-				a->createReader(); 
-			} else {
-				// throw
-			}
-			return a;
-		}
+		virtual CAttributes *newAttributes(const CColorDescr &c);
+		virtual CAttributes *newAttributes(const CAttributes &attr);
 		inline virtual void deleteAttributes(CAttributes *a)
 		{
 			if ( a )

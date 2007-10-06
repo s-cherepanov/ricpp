@@ -72,8 +72,6 @@ namespace RiCPP {
 
 	const RtFloat defRelativeDetail = 1.0;
 
-	class COptionsReader;
-
 	/** @brief
 	 */
 	class COptions : public COptionsBase {
@@ -81,8 +79,6 @@ namespace RiCPP {
 		typedef std::vector<CClippingPlane> ClippingPlanes_type;
 		typedef std::list<CDisplayDescr> Displays_type;
 	private:
-		COptionsReader *m_reader;
-
 		// CViewPort m_curViewPort;      //!< Viewport data
 
 		CDisplayDescr::DisplayChannels_type m_displayChannels; //!< Display channels can be as mode by display
@@ -175,42 +171,20 @@ namespace RiCPP {
 		void initHider();
 		void initRelativeDetail();
 
-	protected:
-		virtual void deleteReader(COptionsReader *reader);
-		virtual COptionsReader *newReader();
-
 	public:
 		inline COptions()
 		{
-			m_reader = 0;
 			m_filterFunc = 0;
 			init();
 		}
 
 		inline COptions(const COptions &ro)
 		{
-			m_reader = 0;
 			m_filterFunc = 0;
 			*this = ro;
 		}
 
 		virtual ~COptions();
-
-		inline const COptionsReader &createReader()
-		{
-			if ( !m_reader ) {
-				m_reader = newReader();
-				if ( !m_reader ) {
-					// throw;
-				}
-			}
-			return *m_reader;
-		}
-
-		inline const COptionsReader *reader() const
-		{
-				return m_reader;
-		}
 
 		COptions &operator=(const COptions &ra);
 
@@ -480,314 +454,6 @@ namespace RiCPP {
 	}; // COptions
 
 	
-	/** @brief
-	 */
-	class COptionsReader : public COptionsBaseReader {
-	private:
-		const COptions *m_riOptions;
-
-	public:
-		COptionsReader(COptions &options)
-			: COptionsBaseReader(options)
-		{
-			m_riOptions = &options;
-		}
-
-		inline bool formatCalled() const
-		{
-			return m_riOptions->formatCalled();
-		}
-
-		inline RtInt xResolution() const
-		{
-			return m_riOptions->xResolution();
-		}
-
-		inline RtInt yResolution() const
-		{
-			return m_riOptions->yResolution();
-		}
-
-		inline RtFloat pixelAspectRatio() const
-		{
-			return m_riOptions->pixelAspectRatio();
-		}
-
-		inline RtVoid getFormat(RtInt &xres, RtInt &yres, RtFloat &aspect) const
-		{
-			m_riOptions->getFormat(xres, yres, aspect);
-		}
-
-		inline RtFloat frameAspectRatio() const
-		{
-			return m_riOptions->frameAspectRatio();
-		}
-
-		inline bool frameAspectRatioCalled() const
-		{
-			return m_riOptions->frameAspectRatioCalled();
-		}
-
-		inline RtVoid getScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const
-		{
-			m_riOptions->getScreenWindow(left, right, bot, top);
-		}
-
-		inline RtFloat screenWindowLeft() const
-		{
-			return m_riOptions->screenWindowLeft();
-		}
-
-		inline RtFloat screenWindowRight() const
-		{
-			return m_riOptions->screenWindowRight();
-		}
-
-		inline RtFloat screenWindowBottom() const
-		{
-			return m_riOptions->screenWindowBottom();
-		}
-
-		inline RtFloat screenWindowTop() const
-		{
-			return m_riOptions->screenWindowTop();
-		}
-
-		inline RtVoid getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFloat &ymax) const
-		{
-			return m_riOptions->getCropWindow(xmin, xmax, ymin, ymax);
-		}
-
-		inline RtVoid getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &ymax) const
-		{
-			m_riOptions->getCropWindow(xmin, xmax, ymin, ymax);
-		}
-
-		inline bool projectionCalled() const
-		{
-			return m_riOptions->projectionCalled();
-		}
-
-		inline RtToken projectionName() const
-		{
-			return m_riOptions->projectionName();
-		}
-
-		const CParameterList &projectionParams() const
-		{
-			return m_riOptions->projectionParams();
-		}
-
-		inline RtFloat fov() const
-		{
-			return m_riOptions->fov();
-		}
-
-		inline bool clippingCalled() const
-		{
-			return m_riOptions->clippingCalled();
-		}
-
-		inline RtVoid getClipping(RtFloat &hither, RtFloat &yon) const
-		{
-			m_riOptions->getClipping(hither, yon);
-		}
-
-		inline RtFloat hither() const
-		{
-			return m_riOptions->hither();
-		}
-
-		inline RtFloat yon() const
-		{
-			return m_riOptions->yon();
-		}
-
-		inline const COptions::ClippingPlanes_type getClippingPlanes() const
-		{
-			return m_riOptions->getClippingPlanes();
-		}
-
-		inline COptions::ClippingPlanes_type::const_iterator clippingBegin() const
-		{
-			return m_riOptions->clippingBegin();
-		}
-
-		inline COptions::ClippingPlanes_type::const_iterator clippingEnd() const
-		{
-			return m_riOptions->clippingEnd();
-		}
-
-		inline RtFloat fstop() const
-		{
-			return m_riOptions->fstop();
-		}
-
-		inline RtFloat focallength() const
-		{
-			return m_riOptions->focallength();
-		}
-
-		inline RtFloat focaldistance() const
-		{
-			return m_riOptions->focaldistance();
-		}
-
-		inline void getDepthofField(RtFloat &fstop, RtFloat &focallength, RtFloat &focaldistance) const
-		{
-			return m_riOptions->getDepthofField(fstop, focallength, focaldistance);
-		}
-
-		inline RtFloat lensdiameter() const
-		{
-			return m_riOptions->lensdiameter();
-		}
-
-		inline RtVoid getShutter(RtFloat &smin, RtFloat &smax) const
-		{
-			m_riOptions->getShutter(smin, smax);
-		}
-
-		inline RtFloat shutterOpen() const
-		{
-			return m_riOptions->shutterOpen();
-		}
-
-		inline RtFloat shutterClose() const
-		{
-			return m_riOptions->shutterClose();
-		}
-
-		inline RtFloat pixelVariance() const
-		{
-			return m_riOptions->pixelVariance();
-		}
-
-		inline RtVoid getPixelSamples(RtFloat &xsamples, RtFloat &ysamples) const
-		{
-			m_riOptions->getPixelSamples(xsamples, ysamples);
-		}
-
-		inline RtFloat xPixelSamples() const
-		{
-			return m_riOptions->xPixelSamples();
-		}
-		inline RtFloat yPixelSamples() const
-		{
-			return m_riOptions->yPixelSamples();
-		}
-
-		inline RtVoid getPixelFilter(const IFilterFunc *&function, RtFloat &xwidth, RtFloat &ywidth) const
-		{
-			m_riOptions->getPixelFilter(function, xwidth, ywidth);
-		}
-		inline const IFilterFunc *pixelFilterFunction() const
-		{
-			return m_riOptions->pixelFilterFunction();
-		}
-		inline const RtFloat xPixelFilterWidth() const
-		{
-			return m_riOptions->xPixelFilterWidth();
-		}
-		inline const RtFloat yPixelFilterWidth() const
-		{
-			return m_riOptions->yPixelFilterWidth();
-		}
-
-		inline RtVoid getExposure(RtFloat &aGain, RtFloat &aGamma) const
-		{
-			m_riOptions->getExposure(aGain, aGamma);
-		}
-		inline bool exposureCalled() const
-		{
-			return m_riOptions->exposureCalled();
-		}
-		inline RtFloat gain() const
-		{
-			return m_riOptions->gain();
-		}
-		inline RtFloat gamma() const
-		{
-			return m_riOptions->gamma();
-		}
-		inline RtVoid colorExposure(RtColor color) const
-		{
-			return m_riOptions->colorExposure(color);
-		}
-		inline RtVoid colorExposure(std::vector<RtFloat> &colors) const
-		{
-			return m_riOptions->colorExposure(colors);
-		}
-
-		RtToken imagerName() const
-		{
-			return m_riOptions->imagerName();
-		}
-		const CParameterList &imagerParams() const
-		{
-			return m_riOptions->imagerParams();
-		}
-
-		inline const CQuantizer *quantizer(RtToken type) const
-		{
-			return m_riOptions->quantizer(type);
-		}
-
-		inline bool hasQuantizer(RtToken type) const
-		{
-			return m_riOptions->hasQuantizer(type);
-		}
-
-		inline bool getQuantize(RtToken type, RtInt &one, RtInt &qmin, RtInt &qmax, RtFloat &ampl) const
-		{
-			return m_riOptions->getQuantize(type, one, qmin, qmax, ampl);
-		}
-
-		inline CDisplayDescr::DisplayChannels_type::const_iterator displayChannelBegin() const
-		{
-			return m_riOptions->displayChannelBegin();
-		}
-
-		inline CDisplayDescr::DisplayChannels_type::const_iterator displayChannelEnd() const
-		{
-			return m_riOptions->displayChannelEnd();
-		}
-
-		inline CDisplayDescr::DisplayChannels_type::const_iterator findDisplayChannel(RtString channelName) const
-		{
-			return m_riOptions->findDisplayChannel(channelName);
-		}
-
-		inline COptions::Displays_type::const_iterator displayBegin() const
-		{
-			return m_riOptions->displayBegin();
-		}
-
-		inline COptions::Displays_type::const_iterator displayEnd() const
-		{
-			return m_riOptions->displayEnd();
-		}
-
-		inline COptions::Displays_type::const_iterator findDisplay(RtString name) const
-		{
-			return m_riOptions->findDisplay(name);
-		}
-
-		inline RtToken hiderType() const
-		{
-			return m_riOptions->hiderType();
-		}
-
-		inline const CParameterList &hiderParams() const
-		{
-			return m_riOptions->hiderParams();
-		}
-
-		inline RtFloat relativeDetail() const
-		{
-			return m_riOptions->relativeDetail();
-		}
-	}; // COptionsReader
 
 	/** @brief
 	 */
@@ -807,28 +473,8 @@ namespace RiCPP {
 	public:
 		inline virtual ~COptionsFactory() {}
 
-		inline virtual COptions *newOptions()
-		{
-			COptions *o = newOptionsInstance();
-			if ( o ) {
-				o->createReader();
-			} else {
-				// throw
-			}
-			return o;
-		}
-
-		inline virtual COptions *newOptions(const COptions &opt)
-		{
-			COptions *o = new COptions(opt);
-			if ( o ) {
-				o->createReader();
-			} else {
-				// throw
-			}
-			return o;
-		}
-
+		virtual COptions *newOptions();
+		virtual COptions *newOptions(const COptions &opt);
 		inline virtual void deleteOptions(COptions *o)
 		{
 			if ( o )

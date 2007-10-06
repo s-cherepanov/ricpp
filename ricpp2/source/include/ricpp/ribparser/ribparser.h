@@ -256,7 +256,7 @@ namespace RiCPP {
 		virtual const CUri &absUri() const = 0;
 		virtual long lineno() const = 0;
 		virtual const IArchiveCallback *callback() const = 0;
-		virtual const IRenderStateReader &stateReader() const = 0;
+		virtual const CRenderState &renderState() const = 0;
 		virtual IRiRoot &ribFilter() = 0;
 	}; // IRibParserState
 
@@ -279,9 +279,9 @@ namespace RiCPP {
 			return m_parserState->absUri().toString().c_str();
 		}
 
-		inline const IRenderStateReader &stateReader() const
+		inline const CRenderState &renderState() const
 		{
-			return m_parserState->stateReader();
+			return m_parserState->renderState();
 		}
 	public:
 		inline CRibRequestData()
@@ -413,7 +413,7 @@ namespace RiCPP {
 	class CArchiveParser : public IRibParserState {
 		CBackBufferProtocolHandlers *m_backBufferReg;
 		IRiRoot *m_ribFilter;
-		const IRenderStateReader *m_stateReader;
+		const CRenderState *m_renderState;
 		const IArchiveCallback *m_callback;
 		IRiCPPErrorHandler *m_errHandler;
 
@@ -441,7 +441,7 @@ namespace RiCPP {
 			IRiCPPErrorHandler &anErrHandler,
 			CBackBufferProtocolHandlers &backBufferReg,
 			IRiRoot &ribFilter,
-			const IRenderStateReader &aStateReader,
+			const CRenderState &aRenderState,
 			const CUri &baseUri) :
 			m_ob(backBufferReg),
 			m_istream(&m_ob)
@@ -449,7 +449,7 @@ namespace RiCPP {
 			m_errHandler = &anErrHandler;
 			m_backBufferReg = &backBufferReg;
 			m_ribFilter = &ribFilter;
-			m_stateReader = &aStateReader;
+			m_renderState = &aRenderState;
 			m_baseUri = baseUri;
 			m_lineno = 0;
 			m_hasPutBack = false;
@@ -481,9 +481,9 @@ namespace RiCPP {
 			return m_callback;
 		}
 
-		inline virtual const IRenderStateReader &stateReader() const
+		inline virtual const CRenderState &renderState() const
 		{
-			return *m_stateReader;
+			return *m_renderState;
 		}
 
 		inline virtual IRiCPPErrorHandler &errHandler()
@@ -640,9 +640,9 @@ namespace RiCPP {
 			IRiCPPErrorHandler &anErrHandler,
 			CBackBufferProtocolHandlers &backBufferReg,
 			IRiRoot &ribFilter,
-			const IRenderStateReader &aStateReader,
+			const CRenderState &aRenderState,
 			const CUri &baseUri)
-			: CArchiveParser(anErrHandler, backBufferReg, ribFilter, aStateReader, baseUri)
+			: CArchiveParser(anErrHandler, backBufferReg, ribFilter, aRenderState, baseUri)
 		{
 			m_request.init(*this, anErrHandler);
 			initRequestMap();

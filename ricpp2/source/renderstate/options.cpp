@@ -1,24 +1,12 @@
 #include "ricpp/renderstate/options.h"
+#include "ricpp/ricpp/ricpperror.h"
 
 using namespace RiCPP;
 
 COptions::~COptions()
 {
-	if ( m_reader )
-		deleteReader(m_reader);
 	if ( m_filterFunc )
 		delete m_filterFunc;
-}
-
-COptionsReader *COptions::newReader()
-{
-	return new COptionsReader(*this);
-}
-
-void COptions::deleteReader(COptionsReader *reader)
-{
-	if ( reader )
-		delete reader;
 }
 
 COptions &COptions::operator=(const COptions &ro)
@@ -676,4 +664,25 @@ void COptions::initRelativeDetail()
 RtVoid COptions::relativeDetail(RtFloat relativedetail)
 {
 	m_relativeDetail = relativedetail;
+}
+
+
+// ----------------------------------------------------------------------------
+
+COptions *COptionsFactory::newOptions()
+{
+	COptions *o = newOptionsInstance();
+	if ( !o ) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in newOptions()", __LINE__, __FILE__);
+	}
+	return o;
+}
+
+COptions *COptionsFactory::newOptions(const COptions &opt)
+{
+	COptions *o = new COptions(opt);
+	if ( !o ) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in newOptions(const COptions &opt)", __LINE__, __FILE__);
+	}
+	return o;
 }

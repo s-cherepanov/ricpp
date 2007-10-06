@@ -7,17 +7,8 @@
 
 namespace RiCPP {
 
-class ITransformationReader {
-public:
-	//! @brief Destructor
-	inline virtual ~ITransformationReader() { }
-	virtual const CMatrix3D &getCTM() const = 0;
-	virtual const CMatrix3D &getInverseCTM() const = 0;
-	virtual bool isValid() const = 0;
-}; // ITransformationReader
-
 //! Class with the transformation stack and composit transformation matrix
-class CTransformation : public ITransformationReader {
+class CTransformation {
 	//! Composit transformation matrix
 	CMatrix3D m_CTM;
 
@@ -50,7 +41,7 @@ public:
 	 */
 	CTransformation &operator=(const CTransformation &o);
 
-	inline CMatrix3D &getWriteableCTM()
+	inline CMatrix3D &getCTM()
 	{
 		return m_CTM;
 	}
@@ -60,7 +51,7 @@ public:
 		return m_CTM;
 	}
 
-	inline CMatrix3D &getWriteableInverseCTM()
+	inline CMatrix3D &getInverseCTM()
 	{
 		return m_inverseCTM;
 	}

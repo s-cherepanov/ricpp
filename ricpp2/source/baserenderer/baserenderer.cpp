@@ -36,7 +36,10 @@ CBaseRenderer::CBaseRenderer() :
 	m_renderState(0),
 	m_protocolHandler(0),
 	m_macroFactory(0),
-	m_curMacro(0)
+	m_curMacro(0),
+	m_handleMacroBase(0),
+	m_archiveMacros(true),
+	m_objectMacros(true)
 {
 }
 
@@ -192,7 +195,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiDeclare *m = m_macroFactory->newRiDeclare(renderState()->lineNo(), name, declaration);
 				if ( !m )
 					throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in declare() for CRiDeclare", __LINE__, __FILE__);
@@ -372,7 +375,7 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiFrameBegin *m = m_macroFactory->newRiFrameBegin(renderState()->lineNo(), number);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFrameBegin", __LINE__, __FILE__));
@@ -415,7 +418,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 		preFrameEnd();
 
 		if ( m_macroFactory && m_curMacro ) {
-				if ( m_curMacro->valid() ) {
+				if ( !m_curMacro->stopInsertion() ) {
 					CRiFrameEnd *m = m_macroFactory->newRiFrameEnd(renderState()->lineNo());
 					if ( !m )
 						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFrameEnd", __LINE__, __FILE__));
@@ -450,7 +453,7 @@ RtVoid CBaseRenderer::worldBegin(void)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiWorldBegin *m = m_macroFactory->newRiWorldBegin(renderState()->lineNo());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiWorldBegin", __LINE__, __FILE__));
@@ -492,7 +495,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 		
 		if ( m_macroFactory && m_curMacro ) {
 
-				if ( m_curMacro->valid() ) {
+				if ( !m_curMacro->stopInsertion() ) {
 					CRiWorldEnd *m = m_macroFactory->newRiWorldEnd(renderState()->lineNo());
 					if ( !m )
 						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiWorldEnd", __LINE__, __FILE__));
@@ -529,7 +532,7 @@ RtVoid CBaseRenderer::attributeBegin(void)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-				if ( m_curMacro->valid() ) {
+				if ( !m_curMacro->stopInsertion() ) {
 					CRiAttributeBegin *m = m_macroFactory->newRiAttributeBegin(renderState()->lineNo());
 					if ( !m )
 						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeBegin", __LINE__, __FILE__));
@@ -573,7 +576,7 @@ RtVoid CBaseRenderer::attributeEnd(void)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-				if ( m_curMacro->valid() ) {
+				if ( !m_curMacro->stopInsertion() ) {
 					CRiAttributeEnd *m = m_macroFactory->newRiAttributeEnd(renderState()->lineNo());
 					if ( !m )
 						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeEnd", __LINE__, __FILE__));
@@ -611,7 +614,7 @@ RtVoid CBaseRenderer::transformBegin(void)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-				if ( m_curMacro->valid() ) {
+				if ( !m_curMacro->stopInsertion() ) {
 					CRiTransformBegin *m = m_macroFactory->newRiTransformBegin(renderState()->lineNo());
 					if ( !m )
 						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTransformBegin", __LINE__, __FILE__));
@@ -648,7 +651,7 @@ RtVoid CBaseRenderer::transformEnd(void)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiTransformEnd *m = m_macroFactory->newRiTransformEnd(renderState()->lineNo());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTransformEnd", __LINE__, __FILE__));
@@ -700,7 +703,7 @@ RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiFormat *m = m_macroFactory->newRiFormat(renderState()->lineNo(), xres, yres, aspect);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFormat", __LINE__, __FILE__));
@@ -735,7 +738,7 @@ RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 
 		if ( m_macroFactory && m_curMacro ) {
 
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiFrameAspectRatio *m = m_macroFactory->newRiFrameAspectRatio(renderState()->lineNo(), aspect);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiFrameAspectRatio", __LINE__, __FILE__));
@@ -771,7 +774,7 @@ RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtF
 
 		if ( m_macroFactory && m_curMacro ) {
 
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiScreenWindow *m = m_macroFactory->newRiScreenWindow(renderState()->lineNo(), left, right, bot, top);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiScreenWindow", __LINE__, __FILE__));
@@ -807,7 +810,7 @@ RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFlo
 
 		if ( m_macroFactory && m_curMacro ) {
 
-				if ( m_curMacro->valid() ) {
+				if ( !m_curMacro->stopInsertion() ) {
 					CRiCropWindow *m = m_macroFactory->newRiCropWindow(renderState()->lineNo(), xmin, xmax, ymin, ymax);
 					if ( !m )
 						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiCropWindow", __LINE__, __FILE__));
@@ -850,7 +853,7 @@ RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPo
 
 		// Record as a macro
 		if ( m_macroFactory && m_curMacro ) {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiProjection *m = m_macroFactory->newRiProjection(renderState()->lineNo(), name, renderState()->curParamList());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiProjection", __LINE__, __FILE__));
@@ -894,7 +897,7 @@ RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiClipping *m = m_macroFactory->newRiClipping(renderState()->lineNo(), hither, yon);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiClipping", __LINE__, __FILE__));
@@ -922,7 +925,7 @@ RtVoid CBaseRenderer::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx,
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiClippingPlane *m = m_macroFactory->newRiClippingPlane(renderState()->lineNo(), x, y, z, nx, ny, nz);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiClippingPlane", __LINE__, __FILE__));
@@ -950,7 +953,7 @@ RtVoid CBaseRenderer::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat f
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiDepthOfField *m = m_macroFactory->newRiDepthOfField(renderState()->lineNo(), fstop, focallength, focaldistance);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDepthOfField", __LINE__, __FILE__));
@@ -978,7 +981,7 @@ RtVoid CBaseRenderer::shutter(RtFloat smin, RtFloat smax)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiShutter *m = m_macroFactory->newRiShutter(renderState()->lineNo(), smin, smax);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiShutter", __LINE__, __FILE__));
@@ -1006,7 +1009,7 @@ RtVoid CBaseRenderer::pixelVariance(RtFloat variation)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiPixelVariance *m = m_macroFactory->newRiPixelVariance(renderState()->lineNo(), variation);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiPixelVariance", __LINE__, __FILE__));
@@ -1034,7 +1037,7 @@ RtVoid CBaseRenderer::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiPixelSamples *m = m_macroFactory->newRiPixelSamples(renderState()->lineNo(), xsamples, ysamples);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiPixelSamples", __LINE__, __FILE__));
@@ -1062,7 +1065,7 @@ RtVoid CBaseRenderer::pixelFilter(const IFilterFunc &function, RtFloat xwidth, R
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiPixelFilter *m = m_macroFactory->newRiPixelFilter(renderState()->lineNo(), function, xwidth, ywidth);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiPixelFilter", __LINE__, __FILE__));
@@ -1090,7 +1093,7 @@ RtVoid CBaseRenderer::exposure(RtFloat gain, RtFloat gamma)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiExposure *m = m_macroFactory->newRiExposure(renderState()->lineNo(), gain, gamma);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiExposure", __LINE__, __FILE__));
@@ -1121,7 +1124,7 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiImager *m = m_macroFactory->newRiImager(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiImager", __LINE__, __FILE__));
@@ -1153,7 +1156,7 @@ RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiQuantize *m = m_macroFactory->newRiQuantize(renderState()->lineNo(), type, one, qmin, qmax, ampl);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiQuantize", __LINE__, __FILE__));
@@ -1183,7 +1186,7 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 
 	if ( m_macroFactory && m_curMacro ) {
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiDisplayChannel *m = m_macroFactory->newRiDisplayChannel(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), channel, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDisplayChannel", __LINE__, __FILE__));
@@ -1217,7 +1220,7 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiDisplay *m = m_macroFactory->newRiDisplay(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, type, mode, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDisplay", __LINE__, __FILE__));
@@ -1252,7 +1255,7 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiHider *m = m_macroFactory->newRiHider(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), type, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiHider", __LINE__, __FILE__));
@@ -1284,7 +1287,7 @@ RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiColorSamples *m = m_macroFactory->newRiColorSamples(renderState()->lineNo(), N, nRGB, RGBn);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiColorSamples", __LINE__, __FILE__));
@@ -1316,7 +1319,7 @@ RtVoid CBaseRenderer::relativeDetail(RtFloat relativedetail)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiRelativeDetail *m = m_macroFactory->newRiRelativeDetail(renderState()->lineNo(), relativedetail);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiRelativeDetail", __LINE__, __FILE__));
@@ -1347,7 +1350,7 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiOption *m = m_macroFactory->newRiOption(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOption", __LINE__, __FILE__));
@@ -1382,7 +1385,7 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiLightSource *m = m_macroFactory->newRiLightSource(*renderState(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiLightSource", __LINE__, __FILE__));
@@ -1431,7 +1434,7 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiAreaLightSource *m = m_macroFactory->newRiAreaLightSource(*renderState(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAreaLightSource", __LINE__, __FILE__));
@@ -1490,7 +1493,7 @@ RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoi
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiAttribute *m = m_macroFactory->newRiAttribute(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttribute", __LINE__, __FILE__));
@@ -1522,7 +1525,7 @@ RtVoid CBaseRenderer::color(RtColor Cs)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiColor *m = m_macroFactory->newRiColor(renderState()->lineNo(), renderState()->options().colorDescr(), Cs);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiColor", __LINE__, __FILE__));
@@ -1550,7 +1553,7 @@ RtVoid CBaseRenderer::opacity(RtColor Os)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiOpacity *m = m_macroFactory->newRiOpacity(renderState()->lineNo(), renderState()->options().colorDescr(), Os);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOpacity", __LINE__, __FILE__));
@@ -1581,7 +1584,7 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiSurface *m = m_macroFactory->newRiSurface(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiSurface", __LINE__, __FILE__));
@@ -1616,7 +1619,7 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiAtmosphere *m = m_macroFactory->newRiAtmosphere(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAtmosphere", __LINE__, __FILE__));
@@ -1651,7 +1654,7 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiInterior *m = m_macroFactory->newRiInterior(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiInterior", __LINE__, __FILE__));
@@ -1686,7 +1689,7 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiExterior *m = m_macroFactory->newRiExterior(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiExterior", __LINE__, __FILE__));
@@ -1718,7 +1721,7 @@ RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiIlluminate *m = m_macroFactory->newRiIlluminate(renderState()->lineNo(), light, onoff);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiIlluminate", __LINE__, __FILE__));
@@ -1749,7 +1752,7 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiDisplacement *m = m_macroFactory->newRiDisplacement(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDisplacement", __LINE__, __FILE__));
@@ -1781,7 +1784,7 @@ RtVoid CBaseRenderer::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtF
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiTextureCoordinates *m = m_macroFactory->newRiTextureCoordinates(renderState()->lineNo(), s1, t1, s2, t2, s3, t3, s4, t4);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTextureCoordinates", __LINE__, __FILE__));
@@ -1809,7 +1812,7 @@ RtVoid CBaseRenderer::shadingRate(RtFloat size)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiShadingRate *m = m_macroFactory->newRiShadingRate(renderState()->lineNo(), size);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiShadingRate", __LINE__, __FILE__));
@@ -1837,7 +1840,7 @@ RtVoid CBaseRenderer::shadingInterpolation(RtToken type)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiShadingInterpolation *m = m_macroFactory->newRiShadingInterpolation(renderState()->lineNo(), type);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiShadingInterpolation", __LINE__, __FILE__));
@@ -1865,7 +1868,7 @@ RtVoid CBaseRenderer::matte(RtBoolean onoff)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiMatte *m = m_macroFactory->newRiMatte(renderState()->lineNo(), onoff);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiMatte", __LINE__, __FILE__));
@@ -1893,7 +1896,7 @@ RtVoid CBaseRenderer::bound(RtBound aBound)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiBound *m = m_macroFactory->newRiBound(renderState()->lineNo(), aBound);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiBound", __LINE__, __FILE__));
@@ -1921,7 +1924,7 @@ RtVoid CBaseRenderer::detail(RtBound aBound)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiDetail *m = m_macroFactory->newRiDetail(renderState()->lineNo(), aBound);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDetail", __LINE__, __FILE__));
@@ -1949,7 +1952,7 @@ RtVoid CBaseRenderer::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptra
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiDetailRange *m = m_macroFactory->newRiDetailRange(renderState()->lineNo(), minvis, lowtran, uptran, maxvis);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDetailRange", __LINE__, __FILE__));
@@ -1978,7 +1981,7 @@ RtVoid CBaseRenderer::geometricApproximation(RtToken type, RtFloat value)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiGeometricApproximation *m = m_macroFactory->newRiGeometricApproximation(renderState()->lineNo(), type, value);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiGeometricApproximation", __LINE__, __FILE__));
@@ -2008,7 +2011,7 @@ RtVoid CBaseRenderer::geometricRepresentation(RtToken type)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiGeometricRepresentation *m = m_macroFactory->newRiGeometricRepresentation(renderState()->lineNo(), type);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiGeometricRepresentation", __LINE__, __FILE__));
@@ -2038,7 +2041,7 @@ RtVoid CBaseRenderer::orientation(RtToken anOrientation)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiOrientation *m = m_macroFactory->newRiOrientation(renderState()->lineNo(), anOrientation);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOrientation", __LINE__, __FILE__));
@@ -2066,7 +2069,7 @@ RtVoid CBaseRenderer::reverseOrientation(void)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiReverseOrientation *m = m_macroFactory->newRiReverseOrientation(renderState()->lineNo());
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiReverseOrientation", __LINE__, __FILE__));
@@ -2094,7 +2097,7 @@ RtVoid CBaseRenderer::sides(RtInt nsides)
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiSides *m = m_macroFactory->newRiSides(renderState()->lineNo(), nsides);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiSides", __LINE__, __FILE__));
@@ -2122,7 +2125,7 @@ RtVoid CBaseRenderer::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt v
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiBasis *m = m_macroFactory->newRiBasis(renderState()->lineNo(), ubasis, ustep, vbasis, vstep);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiBasis", __LINE__, __FILE__));
@@ -2150,7 +2153,7 @@ RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFl
 	if ( m_macroFactory && m_curMacro ) {
 
 		try {
-			if ( m_curMacro->valid() ) {
+			if ( !m_curMacro->stopInsertion() ) {
 				CRiTrimCurve *m = m_macroFactory->newRiTrimCurve(renderState()->lineNo(), nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTrimCurve", __LINE__, __FILE__));

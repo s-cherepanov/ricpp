@@ -290,15 +290,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\baserenderer\node.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\baserenderer\ricontext.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\rimacro.cpp"
 				>
 			</File>
 		</Filter>
@@ -320,15 +312,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\node.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\ricontext.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\rimacro.h"
 				>
 			</File>
 		</Filter>

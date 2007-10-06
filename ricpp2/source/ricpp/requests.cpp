@@ -27,7 +27,7 @@
  *  @brief Various requests names (interface routines)
  */
 
-#include "ricpp/renderstate/requests.h"
+#include "ricpp/ricpp/requests.h"
 #include "ricpp/ricpp/ricpptokens.h"
 
 using namespace RiCPP;

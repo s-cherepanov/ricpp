@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_RIMACRO_H
-#define _RICPP_BASERENDERER_RIMACRO_H
+#ifndef _RICPP_RENDERSTATE_RIMACRO_H
+#define _RICPP_RENDERSTATE_RIMACRO_H
 
 
 /** @file rimacro.h
@@ -32,6 +32,12 @@
 #include <list>
 
 namespace RiCPP {
+
+enum EnumMacroTypes {
+	MACROTYPE_UNKNOWN = 0, //!< Macro type is yet unknown
+	MACROTYPE_OBJECT,      //!< Macro contains interface calls for an object definition
+	MACROTYPE_ARCHIVE      //!< Macro contains interface calls for an rin archive definition
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Base class of all interface calls.
@@ -708,8 +714,9 @@ public:
  */
 class CRiMacro {
 	std::list<CRManInterfaceCall *> m_callList;  //!< List of all interface calls for this macro.
-	std::string m_name; //!< Name of the macro (eg. file name).
-	bool m_valid;       //!< Can be set to false to indicate to stop inserting request into the macro.
+	std::string m_name;         //!< Name of the macro (eg. file name, handle name).
+	EnumMacroTypes m_macroType; //!< Type of macro, either object or archive.
+	bool m_stopInsertion;       //!< Can be set to false to indicate to stop inserting request into the macro.
 public:
 	/** @brief Constructor initializes the macro.
 	 *
@@ -717,8 +724,9 @@ public:
 	 *  @param isObject Macro defines a geometric object.
 	 */
 	inline CRiMacro(
-		const char *aName = "") :
-		m_name(noNullStr(aName)), m_valid(true)
+		RtString aName = "",
+		EnumMacroTypes macroType = MACROTYPE_UNKNOWN) :
+		m_name(noNullStr(aName)), m_macroType(macroType), m_stopInsertion(false)
 	{
 	}
 
@@ -729,13 +737,13 @@ public:
 	/** @brief Gets the name of the macro.
 	 *  @return The name of the macro.
 	 */
-	inline const char *name() const { return m_name.c_str(); }
+	inline RtString name() const { return m_name.c_str(); }
 
 	/** @brief Sets the name of the macro.
 	 *
 	 *  @param name The new name for the macro.
 	 */
-	inline void name(const char *aName)
+	inline void name(RtString aName)
 	{
 		m_name = noNullStr(aName);
 	}
@@ -764,18 +772,28 @@ public:
 	 *
 	 *  @return true, macro is valid and request objects can be inserted.
 	 */
-	bool valid() const
+	bool stopInsertion() const
 	{
-		return m_valid;
+		return m_stopInsertion;
 	}
 
 	/** @brief Sets the validity of the macro.
 	 *
 	 *  @param isValid false, to indicate stopping further insertion of request
 	 */
-	void valid(bool isValid)
+	void stopInsertion(bool stopIt)
 	{
-		m_valid = isValid;
+		m_stopInsertion = stopIt;
+	}
+
+	EnumMacroTypes macroType() const
+	{
+		return m_macroType;
+	}
+
+	void macroType(EnumMacroTypes aMacroType)
+	{
+		m_macroType = aMacroType;
 	}
 }; // CRiMacro
 
@@ -5292,12 +5310,12 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiObjectInstance : public CRManInterfaceCall {
 protected:
-	RtObjectHandle *m_handle;
+	RtObjectHandle m_handle;
 public:
 	inline static const char *myClassName(void) { return "CRiObjectInstance"; }
 	inline virtual const char *className() const { return CRiObjectInstance::myClassName(); }
 
-	inline CRiObjectInstance(long aLineNo, RtObjectHandle *handle) : CRManInterfaceCall(aLineNo), m_handle(handle)
+	inline CRiObjectInstance(long aLineNo, RtObjectHandle handle) : CRManInterfaceCall(aLineNo), m_handle(handle)
 	{
 		assert(handle != 0);
 	}
@@ -5306,11 +5324,11 @@ public:
 	{
 		assert(m_handle != 0);
 		if ( m_handle != 0 ) {
-			ri.preObjectInstance(*m_handle);
-			ri.doObjectInstance(*m_handle);
+			ri.preObjectInstance(m_handle);
+			ri.doObjectInstance(m_handle);
 		}
 	}
-	inline virtual RtObjectHandle *handleRef() { return m_handle; }
+	inline virtual RtObjectHandle handle() { return m_handle; }
 	inline CRiObjectInstance &operator=(const CRiObjectInstance &) {
 		return *this;
 	}
@@ -6186,7 +6204,7 @@ public:
 		return new CRiGeometry(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
-	inline virtual CRiObjectInstance *newRiObjectInstance(long aLineNo, RtObjectHandle *handle) {
+	inline virtual CRiObjectInstance *newRiObjectInstance(long aLineNo, RtObjectHandle handle) {
 		return new CRiObjectInstance(aLineNo, handle);
 	}
 
@@ -6252,4 +6270,4 @@ public:
 
 }
 
-#endif // _RICPP_BASERENDERER_RIMACRO_H
+#endif // _RICPP_RENDERSTATE_RIMACRO_H

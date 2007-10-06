@@ -290,6 +290,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricpp\requests.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricpp\ricpperror.cpp"
 				>
 			</File>
@@ -317,6 +321,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricpp\paramclasses.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricpp\requests.h"
 				>
 			</File>
 			<File

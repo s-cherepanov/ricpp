@@ -310,7 +310,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\renderstate\requests.cpp"
+				RelativePath="..\..\..\source\renderstate\rimacro.cpp"
 				>
 			</File>
 			<File
@@ -360,7 +360,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\renderstate\requests.h"
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacro.h"
 				>
 			</File>
 			<File

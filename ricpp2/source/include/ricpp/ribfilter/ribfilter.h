@@ -34,9 +34,9 @@
 #include "ricpp/pluginhandler/pluginhandler.h"
 #endif // _RICPP_PLUGINHANDLER_PLUGINHANDLER_H
 
-#ifndef _RICPP_RENDERSTATE_REQUESTS_H
-#include "ricpp/renderstate/requests.h"
-#endif // _RICPP_RENDERSTATE_REQUESTS_H
+#ifndef _RICPP_RICPP_REQUESTS_H
+#include "ricpp/ricpp/requests.h"
+#endif // _RICPP_RICPP_REQUESTS_H
 
 #ifndef _RICPP_RICPP_RICPP_H
 #include "ricpp/ricpp/ricpp.h"

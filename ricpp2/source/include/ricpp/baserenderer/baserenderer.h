@@ -42,9 +42,9 @@
 #include "ricpp/ribparser/ribparser.h"
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
-#ifndef _RICPP_BASERENDERER_RIMACRO_H
-#include "ricpp/baserenderer/rimacro.h"
-#endif // _RICPP_BASERENDERER_RIMACRO_H
+#ifndef _RICPP_RENDERSTATE_RIMACRO_H
+#include "ricpp/renderstate/rimacro.h"
+#endif // _RICPP_RENDERSTATE_RIMACRO_H
 
 namespace RiCPP {
 
@@ -74,13 +74,43 @@ protected:
 	 */
 	CRenderState *m_renderState;
 
+	/** @brief Input handler for byte streams
+	 */
+	CBackBufferProtocolHandlers *m_protocolHandler;
+
+	/** @brief Factory for macro interfaces
+	 */
+	CRManInterfaceFactory *m_macroFactory;
+
+	/** @brief Points to current writeable macro
+	 */
+	CRiMacro *m_curMacro;
+
+	/** @brief Counter to create tokens for macros.
+	 *
+	 * Is used for both, objects and rib archive
+	 *
+	 */
+	unsigned long m_handleMacroBase;
+
+	/** @brief Macros for rib archive definitions
+	 */
+	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_archiveMacros;
+
+	/** @brief Macros for object definitions
+	 */
+	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_objectMacros;
+
 	/** @brief Creates a new modestack, called by initRenderState()
 	 *
 	 *  Overwrite this method if you want to return an own modestack
 	 *
 	 * @return A stack object for render modes
 	 */
-	inline virtual CModeStack *getNewModeStack() { return new CModeStack; }
+	inline virtual CModeStack *getNewModeStack()
+	{
+		return new CModeStack;
+	}
 
 	/** @brief Creates a new options factory, called by initRenderState()
 	 *
@@ -89,7 +119,10 @@ protected:
 	 *
 	 * @return A factory object for the render options.
 	 */
-	inline virtual COptionsFactory *getNewOptionsFactory() { return new COptionsFactory; }
+	inline virtual COptionsFactory *getNewOptionsFactory()
+	{
+		return new COptionsFactory;
+	}
 
 	/** @brief Creates a new attributes factory, called by initRenderState()
 	 *
@@ -98,7 +131,10 @@ protected:
 	 *
 	 * @return A factory object for the render attributes.
 	 */
-	inline virtual CAttributesFactory *getNewAttributesFactory() { return new CAttributesFactory; }
+	inline virtual CAttributesFactory *getNewAttributesFactory()
+	{
+		return new CAttributesFactory;
+	}
 
 	/** @brief Creates a new lightsource factory, called by initRenderState()
 	 *
@@ -107,7 +143,10 @@ protected:
 	 *
 	 * @return A factory object for the lightsources.
 	 */
-	inline virtual CLightSourceFactory *getNewLightSourceFactory() { return new CLightSourceFactory; }
+	inline virtual CLightSourceFactory *getNewLightSourceFactory()
+	{
+		return new CLightSourceFactory;
+	}
 
 	/** @brief Factory method to create a macro factory
 	 */
@@ -134,17 +173,7 @@ protected:
 	 */
 	virtual void defaultDeclarations();
 
-	/** @brief Input handler for byte streams
-	 */
-	CBackBufferProtocolHandlers *m_protocolHandler;
-
-	/** @brief Factory for macro interfaces
-	 */
-	CRManInterfaceFactory *m_macroFactory;
-
-	/** @brief Points to current writeable macro
-	 */
-	CRiMacro *m_curMacro;
+	inline virtual CRiMacro *curMacro() {return 0;}
 
 public:
 

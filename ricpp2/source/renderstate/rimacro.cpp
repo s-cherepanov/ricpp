@@ -3,7 +3,7 @@
  *  \author Andreas Pidde (andreas@pidde.de)
  */
 
-#include "ricpp/baserenderer/rimacro.h"
+#include "ricpp/renderstate/rimacro.h"
 
 using namespace RiCPP;
 

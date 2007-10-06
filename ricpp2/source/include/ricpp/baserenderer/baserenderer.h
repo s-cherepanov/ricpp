@@ -42,10 +42,6 @@
 #include "ricpp/ribparser/ribparser.h"
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
-#ifndef _RICPP_RENDERSTATE_RIMACRO_H
-#include "ricpp/renderstate/rimacro.h"
-#endif // _RICPP_RENDERSTATE_RIMACRO_H
-
 namespace RiCPP {
 
 /** @brief This class is used to implement the basis of a renderer context.
@@ -77,29 +73,6 @@ protected:
 	/** @brief Input handler for byte streams
 	 */
 	CBackBufferProtocolHandlers *m_protocolHandler;
-
-	/** @brief Factory for macro interfaces
-	 */
-	CRManInterfaceFactory *m_macroFactory;
-
-	/** @brief Points to current writeable macro
-	 */
-	CRiMacro *m_curMacro;
-
-	/** @brief Counter to create tokens for macros.
-	 *
-	 * Is used for both, objects and rib archive
-	 *
-	 */
-	unsigned long m_handleMacroBase;
-
-	/** @brief Macros for rib archive definitions
-	 */
-	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_archiveMacros;
-
-	/** @brief Macros for object definitions
-	 */
-	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_objectMacros;
 
 	/** @brief Creates a new modestack, called by initRenderState()
 	 *
@@ -150,10 +123,7 @@ protected:
 
 	/** @brief Factory method to create a macro factory
 	 */
-	inline virtual CRManInterfaceFactory *getNewMacroFactory()
-	{
-		return new CRManInterfaceFactory;
-	}
+	virtual CRManInterfaceFactory *getNewMacroFactory();
 
 	/** @brief The backend's error handler
 	 *

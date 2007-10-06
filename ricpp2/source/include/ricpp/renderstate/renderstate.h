@@ -56,6 +56,9 @@
 
 namespace RiCPP {
 
+class CRManInterfaceFactory;
+class CRiMacro;
+
 /** @brief The facade for the render state objects.
  *
  * The CRenderState object is a part of CBaseRenderer.
@@ -92,9 +95,39 @@ class CRenderState {
 	 */
 	bool m_updateStateOnly;
 
+	/** @brief Postpone the archive reading to the backend.
+	 *
+	 *  The RIB writer must be capable to print a ReadArchive request instead of
+	 *  printing the contents of the archive. However, the
+	 *  archive must be interpreted to maintain the render state.
+	 *
+	 */
 	bool m_postponeReadArchive;
 
 	CUri m_baseUri;                                ///< Base URI for RIB archive files
+
+	/** @brief Factory for macro interfaces
+	 */
+	CRManInterfaceFactory *m_macroFactory;
+
+	/** @brief Points to current writeable macro
+	 */
+	CRiMacro *m_curMacro;
+
+	/** @brief Counter to create tokens for macros.
+	 *
+	 * Is used for both, objects and rib archive
+	 *
+	 */
+	unsigned long m_handleMacroBase;
+
+	/** @brief Macros for rib archive definitions
+	 */
+	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_archiveMacros;
+
+	/** @brief Macros for object definitions
+	 */
+	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_objectMacros;
 
 	void pushOptions();
 	bool popOptions();
@@ -122,7 +155,8 @@ public:
 		CModeStack &aModeStack,
 		COptionsFactory &optionsFactory,
 		CAttributesFactory &attributesFactory,
-		CLightSourceFactory &lightSourceFactory);
+		CLightSourceFactory &lightSourceFactory,
+		CRManInterfaceFactory &aMacroFactory);
 
 	/** @brief Destroys the object
 	 *
@@ -443,6 +477,8 @@ public:
 
 	inline virtual const CLights &lights() const { return m_lights; }
 
+	inline virtual bool hasMacroFactory() const {return m_macroFactory != 0;}
+
 	inline virtual bool hasOptions() const {return !m_optionsStack.empty() && m_optionsStack.back() != 0;}
 	inline virtual bool hasAttributes() const {return !m_attributesStack.empty() && m_attributesStack.back() != 0;}
 	inline virtual bool hasTransform() const {return !m_transformStack.empty();}
@@ -512,6 +548,19 @@ public:
 		if ( !m_archiveName.empty() )
 			return m_lineNo;
 		return aLineNo;
+	}
+
+	virtual CRManInterfaceFactory &macroFactory();
+	virtual const CRManInterfaceFactory &macroFactory() const;
+
+	CRiMacro *curMacro()
+	{
+		return m_curMacro;
+	}
+
+	const CRiMacro *curMacro() const
+	{
+		return m_curMacro;
 	}
 }; // CRenderState
 

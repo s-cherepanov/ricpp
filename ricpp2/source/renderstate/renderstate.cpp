@@ -28,7 +28,8 @@
  */
 
 #include "ricpp/renderstate/renderstate.h"
-#include "ricpp/ricpp/ricpperror.h"
+
+#include "ricpp/renderstate/rimacro.h"
 #include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;
@@ -37,15 +38,22 @@ CRenderState::CRenderState(
 	CModeStack &aModeStack,
 	COptionsFactory &optionsFactory,
 	CAttributesFactory &attributesFactory,
-	CLightSourceFactory &lightSourceFactory)
-	: m_lights(lightSourceFactory)
+	CLightSourceFactory &lightSourceFactory,
+	CRManInterfaceFactory &aMacroFactory) :
+	m_lights(lightSourceFactory),
+	m_archiveMacros(true),
+	m_objectMacros(true)
 // throw(ExceptRiCPPError)
 {
 	m_modeStack = &aModeStack;
 	m_optionsFactory = &optionsFactory;
 	m_attributesFactory = &attributesFactory;
+	m_macroFactory = &aMacroFactory;
 	m_frameNumber = 0;
 	m_lineNo = -1;
+
+	m_curMacro = 0;
+	m_handleMacroBase = 0;
 
 	m_reject = false;
 	m_updateStateOnly = false;
@@ -74,6 +82,10 @@ CRenderState::~CRenderState()
 
 	if ( m_modeStack ) {
 		delete m_modeStack;
+	}
+
+	if ( m_macroFactory ) {
+		delete m_macroFactory;
 	}
 }
 
@@ -206,4 +218,15 @@ void CRenderState::parseParameters(const CValueCounts &counts, RtInt n, RtToken 
 		}
 		throw err;
 	}
+}
+
+CRManInterfaceFactory &CRenderState::macroFactory()
+{
+	assert(m_macroFactory != 0);
+	return *m_macroFactory;
+}
+const CRManInterfaceFactory &CRenderState::macroFactory() const
+{
+	assert(m_macroFactory != 0);
+	return *m_macroFactory;
 }

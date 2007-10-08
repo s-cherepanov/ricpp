@@ -129,6 +129,9 @@ class CRenderState {
 	 */
 	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_objectMacros;
 
+	std::vector<bool> m_conditions;
+	bool m_curCondition; //!< Render (true outside if-else-blocks, conditional inside the blocks
+
 	void pushOptions();
 	bool popOptions();
 
@@ -295,13 +298,37 @@ public:
     inline void resourceBegin() { m_modeStack->resourceBegin(); }
     inline void resourceEnd() { m_modeStack->resourceEnd(); }
 
-    inline void ifBegin() { m_modeStack->ifBegin(); }
-    inline void elseIfBegin() { m_modeStack->elseIfBegin(); }
-    inline void elseBegin() { m_modeStack->elseBegin(); }
-    inline void ifEnd() { m_modeStack->resourceEnd(); }
-
 	inline void motionBegin() { return m_modeStack->motionBegin(); }
     inline void motionEnd() { return m_modeStack->motionEnd(); }
+
+	inline bool curCondition() const
+	{
+		return m_curCondition;
+
+	}
+
+	void pushConditional();
+	void popConditional();
+
+	inline void ifBegin(bool condition) {
+		m_modeStack->ifBegin();
+		pushConditional();
+		m_curCondition = condition;
+	}
+	inline void elseIfBegin(bool condition) {
+		m_modeStack->elseIfBegin();
+		m_curCondition = !m_curCondition && condition;
+	}
+	inline void elseBegin(bool condition)
+	{
+		m_modeStack->elseBegin();
+		m_curCondition = !m_curCondition;
+	}
+	inline void ifEnd()
+	{
+		 m_modeStack->ifEnd();
+		popConditional();
+	}
 
 	/** @brief Tests if a request @a req is valid in the current mode.
 	 *  @param req Index of the request to test.
@@ -562,6 +589,7 @@ public:
 	{
 		return m_curMacro;
 	}
+
 }; // CRenderState
 
 } // namespace RiCPP

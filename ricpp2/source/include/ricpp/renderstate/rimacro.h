@@ -120,6 +120,7 @@ public:
 	 */
 	inline virtual void replay(IDoRender &ri)
 	{
+		ri.replayRequest(*this);
 	}
 
 	/** @brief Replays the interface call.
@@ -156,6 +157,39 @@ public:
 
 		lineNo(c.lineNo());
 		return *this;
+	}
+
+	/** @brief Pre-Processes an interface call
+	 *
+	 *  Pre-Processing normally involves state update of the renderer.
+	 *  Is also performed before macro insertion.
+	 *
+	 *  @param ri The renderer backend used for pre-processing.
+	 */
+	inline virtual void preProcess(IDoRender &ri)
+	{
+	}
+
+	/** @brief Processes an interface call
+	 *
+	 *  Processing the interface call, e.g. do the rendering. This is
+	 *  not called at a macro (object) definition.
+	 *
+	 *  @param ri The renderer backend used for processing.
+	 */
+	inline virtual void doProcess(IDoRender &ri)
+	{
+	}
+
+	/** @brief Post-Processes an interface call
+	 *
+	 *  Post-Processing the interface call, is called after
+	 *  Macro insertion or processing.
+	 *
+	 *  @param ri The renderer backend used for pre-processing.
+	 */
+	inline virtual void postProcess(IDoRender &ri)
+	{
 	}
 }; // CRManInterfaceCall
 
@@ -1054,16 +1088,6 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DECLARE; }
 
-	/** @brief Replays the interface call.
-	 *
-	 *  @param ri The renderer backend used for replay.
-	 */
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preDeclare(name(), declaration(), false);
-		ri.doDeclare(name(), declaration());
-	}
-
 	/** @brief Gets the token of the name iof the declaration.
 	 *
 	 *  @return Token of the name of the declaration.
@@ -1115,6 +1139,42 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	/** @brief Pre-Processes an interface call
+	 *
+	 *  Pre-Processing normally involves state update of the renderer.
+	 *  Is also performed before macro insertion.
+	 *
+	 *  @param ri The renderer backend used for pre-processing.
+	 */
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preDeclare(name(), declaration(), false);
+	}
+
+	/** @brief Processes an interface call
+	 *
+	 *  Processing the interface call, e.g. do the rendering. This is
+	 *  not called at a macro (object) definition.
+	 *
+	 *  @param ri The renderer backend used for processing.
+	 */
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doDeclare(name(), declaration());
+	}
+
+	/** @brief Post-Processes an interface call
+	 *
+	 *  Post-Processing the interface call, is called after
+	 *  Macro insertion or processing.
+	 *
+	 *  @param ri The renderer backend used for pre-processing.
+	 */
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postDeclare(name(), declaration());
 	}
 }; // CRiDeclare
 
@@ -1198,16 +1258,6 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_BEGIN; }
 
-	/** @brief Replays the interface call.
-	 *
-	 *  @param ri The renderer backend used for replay.
-	 */
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preFrameBegin(m_frameNumber);
-		ri.doFrameBegin(m_frameNumber);
-	}
-
 	/** @brief Gets the frame number.
 	 *
 	 *  @return The frame number.
@@ -1240,6 +1290,20 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preFrameBegin(m_frameNumber);
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doFrameBegin(m_frameNumber);
+	}
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postFrameBegin(m_frameNumber);
 	}
 }; // CRiFrameBegin
 
@@ -1318,16 +1382,6 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_END; }
 
-	/** @brief Replays the interface call.
-	 *
-	 *  @param ri The renderer backend used for replay.
-	 */
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preFrameEnd();
-		ri.doFrameEnd();
-	}
-
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -1340,6 +1394,20 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preFrameEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doFrameEnd();
+	}
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postFrameEnd();
 	}
 }; // CRiFrameEnd
 
@@ -1401,11 +1469,6 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_WORLD_BEGIN; }
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preWorldBegin();
-		ri.doWorldBegin();
-	}
 
 	/** @brief Assignment
 	 *
@@ -1419,6 +1482,20 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preWorldBegin();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doWorldBegin();
+	}
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postWorldBegin();
 	}
 }; // CRiWorldBegin
 
@@ -1483,11 +1560,6 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_WORLD_END; }
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.doWorldEnd();
-		ri.doWorldEnd();
-	}
 
 	/** @brief Assignment
 	 *
@@ -1501,6 +1573,20 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preWorldEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doWorldEnd();
+	}
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postWorldEnd();
 	}
 }; // CRiWorldEnd
 

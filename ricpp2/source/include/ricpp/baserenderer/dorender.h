@@ -64,6 +64,10 @@ public:
 	 */
 	virtual const CRenderState *renderState() const = 0;
 
+	/** Replays a single interface call
+	 */
+	virtual void replayRequest(class CRManInterfaceCall &aRequest) = 0;
+
 	/** @brief Special context handling (see IRiContext::abort(), IRiContext::activate(), IRiContext::deactivate()
 	 */
 	//@{
@@ -71,7 +75,6 @@ public:
 	virtual RtVoid doActivate(void) = 0;
 	virtual RtVoid doDeactivate(void) = 0;
 	//@}
-
 
 	/** @brief Error handler
 	 *
@@ -390,6 +393,153 @@ public:
 	virtual RtVoid doElseIfBegin(RtString expr) = 0; // was RiElseIf (renamed to match elseBegin()
 	virtual RtVoid doElseBegin(void) = 0; // was RiElse, else is a keyword ... moan, may be a reason for uppercase method names Else()
 	virtual RtVoid doIfEnd(void) = 0;
+
+
+	virtual RtVoid postErrorHandler(const IErrorHandler &handler) = 0;
+
+	virtual RtVoid postDeclare(RtToken name, RtString declaration) = 0;
+	virtual RtVoid postSynchronize(RtToken name) = 0;
+	virtual RtVoid postSystem(RtToken cmd) = 0;
+	virtual RtVoid postResource(RtToken name, RtToken type, const CParameterList &params) = 0;
+
+	virtual RtVoid postBegin(RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postEnd(void) = 0;
+
+	virtual RtVoid postFrameBegin(RtInt number) = 0;
+	virtual RtVoid postFrameEnd(void) = 0;
+
+	virtual RtVoid postWorldBegin(void) = 0;
+	virtual RtVoid postWorldEnd(void) = 0;
+
+	virtual RtVoid postAttributeBegin(void) = 0;
+	virtual RtVoid postAttributeEnd(void) = 0;
+
+	virtual RtVoid postTransformBegin(void) = 0;
+	virtual RtVoid postTransformEnd(void) = 0;
+
+    virtual RtVoid postSolidBegin(RtToken type) = 0;
+    virtual RtVoid postSolidEnd(void) = 0;
+
+	inline virtual RtVoid postObjectBegin(RtObjectHandle h) = 0;
+	virtual RtVoid postObjectEnd(void) = 0;
+    virtual RtVoid postObjectInstance(RtObjectHandle handle) = 0;
+
+    virtual RtVoid postMotionBegin(RtInt N, RtFloat times[]) = 0;
+    virtual RtVoid postMotionEnd(void) = 0;
+
+	virtual RtVoid postResourceBegin(void) = 0;
+	virtual RtVoid postResourceEnd(void) = 0;
+
+	virtual RtVoid postArchiveBegin(RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid postArchiveEnd(void) = 0;
+
+    virtual RtVoid postFormat(RtInt xres, RtInt yres, RtFloat aspect) = 0;
+    virtual RtVoid postFrameAspectRatio(RtFloat aspect) = 0;
+
+	virtual RtVoid postScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top) = 0;
+    virtual RtVoid postCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) = 0;
+	virtual RtVoid postProjection(RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid postClipping(RtFloat hither, RtFloat yon) = 0;
+    virtual RtVoid postClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) = 0;
+    virtual RtVoid postDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance) = 0;
+    virtual RtVoid postShutter(RtFloat smin, RtFloat smax) = 0;
+	virtual RtVoid postPixelVariance(RtFloat variation) = 0;
+    virtual RtVoid postPixelSamples(RtFloat xsamples, RtFloat ysamples) = 0;
+    virtual RtVoid postPixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) = 0;
+    virtual RtVoid postExposure(RtFloat gain, RtFloat gamma) = 0;
+    virtual RtVoid postImager(RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
+    virtual RtVoid postDisplayChannel(RtString channel, const CParameterList &params) = 0;
+    virtual RtVoid postDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params) = 0;
+    virtual RtVoid postHider(RtToken type, const CParameterList &params) = 0;
+    virtual RtVoid postColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) = 0;
+    virtual RtVoid postRelativeDetail(RtFloat relativedetail) = 0;
+    virtual RtVoid postOption(RtString name, const CParameterList &params) = 0;
+	
+    inline virtual RtVoid postLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
+	inline virtual RtVoid postAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
+	
+    virtual RtVoid postAttribute(RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postColor(RtColor Cs) = 0;
+	virtual RtVoid postOpacity(RtColor Os) = 0;
+    virtual RtVoid postSurface(RtString name, const CParameterList &params) = 0;
+    virtual RtVoid postAtmosphere(RtString name, const CParameterList &params) = 0;
+    virtual RtVoid postInterior(RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postExterior(RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postIlluminate(RtLightHandle light, RtBoolean onoff) = 0;
+    virtual RtVoid postDisplacement(RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) = 0;
+    virtual RtVoid postShadingRate(RtFloat size) = 0;
+	virtual RtVoid postShadingInterpolation(RtToken type) = 0;
+    virtual RtVoid postMatte(RtBoolean onoff) = 0;
+	virtual RtVoid postBound(RtBound bound) = 0;
+	virtual RtVoid postDetail(RtBound bound) = 0;
+	virtual RtVoid postDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
+    virtual RtVoid postGeometricApproximation(RtToken type, RtFloat value) = 0;
+	virtual RtVoid postGeometricRepresentation(RtToken type) = 0;
+	virtual RtVoid postOrientation(RtToken anOrientation) = 0;
+	virtual RtVoid postReverseOrientation(void) = 0;
+	virtual RtVoid postSides(RtInt nsides) = 0;
+    virtual RtVoid postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) = 0;
+    virtual RtVoid postTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) = 0;
+
+	virtual RtVoid postIdentity(void) = 0;
+	virtual RtVoid postTransform(RtMatrix aTransform) = 0;
+	virtual RtVoid postConcatTransform(RtMatrix aTransform) = 0;
+	virtual RtVoid postPerspective(RtFloat fov) = 0;
+	virtual RtVoid postTranslate(RtFloat dx, RtFloat dy, RtFloat dz) = 0;
+	virtual RtVoid postRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
+	virtual RtVoid postScale(RtFloat dx, RtFloat dy, RtFloat dz) = 0;
+    virtual RtVoid postSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) = 0;
+	virtual RtVoid postDeformation(RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postScopedCoordinateSystem(RtToken space) = 0;
+	virtual RtVoid postCoordinateSystem(RtToken space) = 0;
+	virtual RtVoid postCoordSysTransform(RtToken space) = 0;
+
+    virtual RtVoid postPolygon(RtInt nvertices, const CParameterList &params) = 0;
+	virtual RtVoid postGeneralPolygon(RtInt nloops, RtInt *nverts, const CParameterList &params) = 0;
+	virtual RtVoid postPointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, const CParameterList &params) = 0;
+    virtual RtVoid postPointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, const CParameterList &params) = 0;
+
+	virtual RtVoid postPatch(RtToken type, const CParameterList &params) = 0;
+	virtual RtVoid postPatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params) = 0;
+    virtual RtVoid postNuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, const CParameterList &params) = 0;
+
+	virtual RtVoid postSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params) = 0;
+	virtual RtVoid postHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params) = 0;
+
+	virtual RtVoid postSphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
+    virtual RtVoid postCone(RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
+    virtual RtVoid postCylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
+    virtual RtVoid postHyperboloid(RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params) = 0;
+    virtual RtVoid postParaboloid(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
+    virtual RtVoid postDisk(RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
+    virtual RtVoid postTorus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params) = 0;
+
+    virtual RtVoid postPoints(RtInt npts, const CParameterList &params) = 0;
+    virtual RtVoid postCurves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params) = 0;
+
+	virtual RtVoid postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) = 0;
+
+	virtual RtVoid postProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+
+	virtual RtVoid postGeometry(RtToken type, const CParameterList &params) = 0;
+
+	virtual RtVoid postMakeTexture(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
+    virtual RtVoid postMakeBump(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
+    virtual RtVoid postMakeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
+    virtual RtVoid postMakeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
+    virtual RtVoid postMakeShadow(RtString pic, RtString tex, const CParameterList &params) = 0;
+    virtual RtVoid postMakeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, const CParameterList &params) = 0;
+
+	virtual RtVoid postArchiveRecord(RtToken type, RtString line) = 0;
+	virtual RtVoid postReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params) = 0;
+
+	virtual RtVoid postIfBegin(RtString expr) = 0;
+	virtual RtVoid postElseIfBegin(RtString expr) = 0; // was RiElseIf (renamed to match elseBegin()
+	virtual RtVoid postElseBegin(void) = 0; // was RiElse, else is a keyword ... moan, may be a reason for uppercase method names Else()
+	virtual RtVoid postIfEnd(void) = 0;
+
 }; // IDoRender
 } // namespace RiCPP
 

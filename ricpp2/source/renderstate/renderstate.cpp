@@ -59,11 +59,31 @@ CRenderState::CRenderState(
 	m_updateStateOnly = false;
 	m_postponeReadArchive = false;
 
+	m_curCondition = true;
 
 	CFilepath fp;
 	std::string s(fp.filepath());
 	s+= "/";
 	m_baseUri.set("file", "", s.c_str(), 0, 0);
+}
+
+
+inline void CRenderState::pushConditional()
+{
+	try {
+		m_conditions.push_back(m_curCondition);
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in pushConditional(): %s", e.what());
+	}
+}
+
+inline void CRenderState::popConditional()
+{
+	try {
+		m_conditions.pop_back();
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NESTING, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in popConditional(): %s", e.what());
+	}
 }
 
 CRenderState::~CRenderState()

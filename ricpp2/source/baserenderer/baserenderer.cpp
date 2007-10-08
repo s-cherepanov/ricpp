@@ -186,32 +186,22 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 	return !renderState()->reject();
 }
 
-void CBaseRenderer::renderRequest(CRManInterfaceCall *aRequest, EnumRequests req)
+void CBaseRenderer::renderRequest(CRManInterfaceCall &aRequest, EnumRequests req)
 {
-	if ( !aRequest ) {
-		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "To create a request: %s", CRequestInfo::requestName(req));
-		return;
-	}
-
-	bool deleteRequest = true;
-
 	if ( renderState()->curCondition() ) {
-		aRequest->preProcess(*this);
+		aRequest.preProcess(*this);
 	}
 	if ( renderState()->curMacro() ) {
 		if ( !renderState()->curMacro()->stopInsertion() ) {
-			renderState()->curMacro()->add(aRequest);
-			deleteRequest = false;
+			renderState()->curMacro()->add(aRequest.duplicate());
 		}
 	} else {
 		if ( !renderState()->updateStateOnly() && renderState()->curCondition() ) {
-			aRequest->doProcess(*this);
+			aRequest.doProcess(*this);
 		}
 	}
 
-	aRequest->postProcess(*this);
-	if ( deleteRequest )
-		delete aRequest;
+	aRequest.postProcess(*this);
 }
 
 void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest)
@@ -252,10 +242,9 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 				"name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration)
 			);
 		}
-
 		name = renderState()->tokFindCreate(name);
-		CRiDeclare *m = renderState()->macroFactory().newRiDeclare(renderState()->lineNo(), name, declaration);
-		renderRequest(m, REQ_DECLARE);
+
+		renderRequest(CRiDeclare(renderState()->lineNo(), name, declaration), REQ_DECLARE);
 
 		return name;
 
@@ -427,8 +416,7 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 		if ( !preCheck(REQ_FRAME_BEGIN) )
 			return;
 
-		CRiFrameBegin *m = renderState()->macroFactory().newRiFrameBegin(renderState()->lineNo(), number);
-		renderRequest(m, REQ_FRAME_BEGIN);
+		renderRequest(CRiFrameBegin(renderState()->lineNo(), number), REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -463,8 +451,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 		if ( !preCheck(REQ_FRAME_END) )
 			return;
 
-		CRiFrameEnd *m = renderState()->macroFactory().newRiFrameEnd(renderState()->lineNo());
-		renderRequest(m, REQ_FRAME_END);
+		renderRequest(CRiFrameEnd(renderState()->lineNo()), REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -490,8 +477,7 @@ RtVoid CBaseRenderer::worldBegin(void)
 		if ( !preCheck(REQ_WORLD_BEGIN) )
 			return;
 
-		CRiWorldBegin *m = renderState()->macroFactory().newRiWorldBegin(renderState()->lineNo());
-		renderRequest(m, REQ_WORLD_BEGIN);
+		renderRequest(CRiWorldBegin(renderState()->lineNo()), REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -524,8 +510,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 		if ( !preCheck(REQ_WORLD_END) )
 			return;
 
-		CRiWorldEnd *m = renderState()->macroFactory().newRiWorldEnd(renderState()->lineNo());
-		renderRequest(m, REQ_WORLD_END);
+		renderRequest(CRiWorldEnd(renderState()->lineNo()), REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -538,6 +523,8 @@ RtVoid CBaseRenderer::worldEnd(void)
 		return;
 	}
 }
+
+//-----------------------------------------------------
 
 
 RtVoid CBaseRenderer::preAttributeBegin(void)

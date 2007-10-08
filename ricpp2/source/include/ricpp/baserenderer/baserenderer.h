@@ -145,7 +145,7 @@ protected:
 
 	inline virtual CRiMacro *curMacro() {return 0;}
 
-	virtual void renderRequest(CRManInterfaceCall *aRequest, EnumRequests req);
+	virtual void renderRequest(CRManInterfaceCall &aRequest, EnumRequests req);
 	virtual void replayRequest(CRManInterfaceCall &aRequest);
 
 public:

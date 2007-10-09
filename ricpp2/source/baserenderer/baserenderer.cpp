@@ -527,8 +527,6 @@ RtVoid CBaseRenderer::worldEnd(void)
 	}
 }
 
-//-----------------------------------------------------
-
 
 RtVoid CBaseRenderer::preAttributeBegin(void)
 {
@@ -539,30 +537,21 @@ RtVoid CBaseRenderer::attributeBegin(void)
 // throw ExceptRiCPPError
 {
 	try {
-
 		if ( !preCheck(REQ_ATTRIBUTE_BEGIN) )
 			return;
 
-		preAttributeBegin();
-
-		if ( renderState()->curMacro() ) {
-
-				if ( !renderState()->curMacro()->stopInsertion() ) {
-					CRiAttributeBegin *m = renderState()->macroFactory().newRiAttributeBegin(renderState()->lineNo());
-					if ( !m )
-						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeBegin", __LINE__, __FILE__));
-					renderState()->curMacro()->add(m);
-				}
-				return;
-		}
-
-		if ( renderState()->updateStateOnly() )
-			return;
-
-		doAttributeBegin();
+		CRiAttributeBegin r(renderState()->lineNo());
+		renderRequest(r, REQ_ATTRIBUTE_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'attributeBegin': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'attributeBegin'");
+		return;
 	}
 }
 
@@ -583,33 +572,24 @@ RtVoid CBaseRenderer::attributeEnd(void)
 // throw ExceptRiCPPError
 {
 	try {
-
 		if ( !preCheck(REQ_ATTRIBUTE_END) )
 			return;
 
-		preAttributeEnd();
-
-		if ( renderState()->curMacro() ) {
-
-				if ( !renderState()->curMacro()->stopInsertion() ) {
-					CRiAttributeEnd *m = renderState()->macroFactory().newRiAttributeEnd(renderState()->lineNo());
-					if ( !m )
-						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttributeEnd", __LINE__, __FILE__));
-					renderState()->curMacro()->add(m);
-				}
-				return;
-
-		}
-
-		if ( renderState()->updateStateOnly() )
-			return;
-
-		doAttributeEnd();
+		CRiAttributeEnd r(renderState()->lineNo());
+		renderRequest(r, REQ_ATTRIBUTE_END);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'attributeEnd': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'attributeEnd'");
+		return;
 	}
 }
+
 
 RtVoid CBaseRenderer::preTransformBegin(void)
 {
@@ -619,32 +599,22 @@ RtVoid CBaseRenderer::preTransformBegin(void)
 RtVoid CBaseRenderer::transformBegin(void)
 // throw ExceptRiCPPError
 {
-
 	try {
-
 		if ( !preCheck(REQ_TRANSFORM_BEGIN) )
 			return;
 
-		preTransformBegin();
-
-		if ( renderState()->curMacro() ) {
-
-				if ( !renderState()->curMacro()->stopInsertion() ) {
-					CRiTransformBegin *m = renderState()->macroFactory().newRiTransformBegin(renderState()->lineNo());
-					if ( !m )
-						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTransformBegin", __LINE__, __FILE__));
-					renderState()->curMacro()->add(m);
-				}
-				return;
-		}
-
-		if ( renderState()->updateStateOnly() )
-			return;
-
-		doTransformBegin();
+		CRiTransformBegin r(renderState()->lineNo());
+		renderRequest(r, REQ_TRANSFORM_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'transformBegin': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'transformBegin'");
+		return;
 	}
 }
 
@@ -658,36 +628,94 @@ RtVoid CBaseRenderer::transformEnd(void)
 // throw ExceptRiCPPError
 {
 	try {
-
 		if ( !preCheck(REQ_TRANSFORM_END) )
 			return;
 
-		preTransformEnd();
-
-		if ( renderState()->curMacro() ) {
-
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiTransformEnd *m = renderState()->macroFactory().newRiTransformEnd(renderState()->lineNo());
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTransformEnd", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-			return;
-		}
-
-		if ( renderState()->updateStateOnly() )
-			return;
-
-		doTransformEnd();
+		CRiTransformEnd r(renderState()->lineNo());
+		renderRequest(r, REQ_TRANSFORM_END);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'transformEnd': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'transformEnd'");
+		return;
 	}
 }
 
 
-RtVoid CBaseRenderer::solidBegin(RtToken type){}
-RtVoid CBaseRenderer::solidEnd(void) {}
+RtVoid CBaseRenderer::preSolidBegin(RtToken type)
+{
+	renderState()->solidBegin(type);
+}
+
+RtVoid CBaseRenderer::solidBegin(RtToken type)
+{
+	try {
+		if ( !preCheck(REQ_SOLID_BEGIN) )
+			return;
+		
+		RtToken typeTok;
+
+		if ( emptyStr(type) ) {
+			typeTok = RI_PRIMITIVE;
+		}
+		type = renderState()->tokFind(type);
+		if ( type != RI_PRIMITIVE && type != RI_INTERSECTION && type != RI_UNION && type != RI_DIFFERENCE ) {
+			typeTok = RI_PRIMITIVE;
+		} else {
+			typeTok = type;
+		}
+
+		CRiSolidBegin r(renderState()->lineNo(), typeTok);
+		renderRequest(r, REQ_SOLID_BEGIN);
+
+		if ( type != typeTok ) {
+			throw ExceptRiCPPError(RIE_BADSOLID, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown solid operation '%s' at 'solidBegin'", noNullStr(type));
+		}
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'solidBegin': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'solidBegin'");
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::preSolidEnd(void)
+{
+	renderState()->solidEnd();
+}
+
+RtVoid CBaseRenderer::solidEnd(void)
+{
+	try {
+		if ( !preCheck(REQ_SOLID_END) )
+			return;
+
+		CRiSolidEnd r(renderState()->lineNo());
+		renderRequest(r, REQ_SOLID_END);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'solidEnd': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'solidEnd'");
+		return;
+	}
+}
+
 
 RtObjectHandle CBaseRenderer::objectBegin(void) { return illObjectHandle; }
 RtVoid CBaseRenderer::objectEnd(void) {}

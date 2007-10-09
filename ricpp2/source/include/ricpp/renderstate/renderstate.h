@@ -71,6 +71,8 @@ class CRenderState {
 	std::string m_archiveName;                     ///< Current archive name, optional.
 	long m_lineNo;                                 ///< Current line number in the file, -1 if not available.
 
+	std::vector<RtToken> m_solidTypes;             ///< Stack with the types of solid blocks (if currently opened)
+
 	CDeclarationDictionary m_declDict;             ///< Dictionary for declarations.
 
 	COptionsFactory *m_optionsFactory;             ///< Create new Options.
@@ -263,8 +265,9 @@ public:
 		popTransform();
 	}
 
-    inline void solidBegin() { m_modeStack->solidBegin(); }
-    inline void solidEnd() { m_modeStack->solidEnd(); }
+    void solidBegin(RtToken type);
+    void solidEnd();
+	RtToken CRenderState::solid() const;
 
 	inline void objectBegin()
 	{

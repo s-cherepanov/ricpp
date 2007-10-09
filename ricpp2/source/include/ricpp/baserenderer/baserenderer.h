@@ -400,8 +400,8 @@ public:
 	virtual RtVoid preTransformBegin(void);
 	virtual RtVoid preTransformEnd(void);
 
-	inline virtual RtVoid preSolidBegin(RtToken type) {}
-	inline virtual RtVoid preSolidEnd(void) {}
+	virtual RtVoid preSolidBegin(RtToken type);
+	virtual RtVoid preSolidEnd(void);
 
 	inline virtual RtObjectHandle preObjectBegin(void) {return illObjectHandle;}
 	inline virtual RtVoid preObjectEnd(void) {}

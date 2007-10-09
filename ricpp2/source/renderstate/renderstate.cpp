@@ -109,6 +109,26 @@ CRenderState::~CRenderState()
 	}
 }
 
+void CRenderState::solidBegin(RtToken type)
+{
+	m_modeStack->solidBegin();
+	m_solidTypes.push_back(type);
+}
+
+void CRenderState::solidEnd()
+{
+	if ( !m_solidTypes.empty() )
+		m_solidTypes.pop_back();
+	m_modeStack->solidEnd();
+}
+
+RtToken CRenderState::solid() const
+{
+	if ( m_solidTypes.empty() )
+		return RI_NULL;
+	return m_solidTypes.back();
+}
+
 void CRenderState::pushOptions()
 {
 	try {

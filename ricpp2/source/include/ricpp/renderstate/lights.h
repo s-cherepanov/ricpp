@@ -132,24 +132,13 @@ public:
 }; // CLightSourceFactory
 
 
-/** @brief Interface to iterate and read the light sources of arendering context.
+/** @brief Container for the light sources of a rendering context
  */
-class ILightsReader {
+class CLights {
 public:
 	typedef std::deque<CLightSource *> LightContainer;
 	typedef std::deque<RtLightHandle> LightHandleContainer;
 
-	inline virtual ~ILightsReader() {}
-	virtual const CLightSource *getLight(RtLightHandle l) const = 0;
-	virtual LightContainer::const_iterator begin() const = 0;
-	virtual LightContainer::const_iterator end() const = 0;
-	virtual LightContainer::size_type size() const = 0;
-}; // ILightsReader
-
-
-/** @brief Container for the light sources of a rendering context
- */
-class CLights : public ILightsReader {
 private:
 	/** @brief Indirection for light handles
 	 *

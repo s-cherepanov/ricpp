@@ -1584,6 +1584,7 @@ public:
 	{
 		ri.doWorldEnd();
 	}
+
 	inline virtual void postProcess(IDoRender &ri)
 	{
 		ri.postWorldEnd();
@@ -1647,11 +1648,6 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_BEGIN; }
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.doAttributeBegin();
-		ri.doAttributeBegin();
-	}
 
 	/** @brief Assignment
 	 *
@@ -1665,6 +1661,21 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preAttributeBegin();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doAttributeBegin();
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postAttributeBegin();
 	}
 }; // CRiAttributeBegin
 
@@ -1725,11 +1736,6 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_END; }
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preAttributeEnd();
-		ri.doAttributeEnd();
-	}
 
 	/** @brief Assignment
 	 *
@@ -1743,6 +1749,21 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preAttributeEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doAttributeEnd();
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postAttributeEnd();
 	}
 }; // CRiAttributeEnd
 
@@ -1803,11 +1824,6 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_BEGIN; }
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preTransformBegin();
-		ri.doTransformBegin();
-	}
 
 	/** @brief Assignment
 	 *
@@ -1821,6 +1837,21 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preTransformBegin();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doTransformBegin();
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postTransformBegin();
 	}
 }; // CRiTransformBegin
 
@@ -1885,11 +1916,6 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_END; }
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.preTransformEnd();
-		ri.doTransformEnd();
-	}
 
 	/** @brief Assignment
 	 *
@@ -1904,6 +1930,21 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preTransformEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doTransformEnd();
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postTransformEnd();
+	}
 }; // CRiTransformEnd
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1911,7 +1952,7 @@ public:
  */
 class CRiSolidBegin : public CRManInterfaceCall {
 private:
-	RtToken m_operation; //!< Token that indicates the solid operation (like RI_UNION), must be atomized (@see CToken)
+	RtToken m_type; //!< Token that indicates the solid operation (like RI_UNION), must be atomized (@see CToken)
 
 public:
 	/** @brief Gets name for the class.
@@ -1953,7 +1994,7 @@ public:
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
 	 *  @param anOperation The token of the operation (must be an atomized string, @see CToken).
 	 */
-	inline CRiSolidBegin(long aLineNo=-1, RtToken anOperation=RI_PRIMITIVE) : CRManInterfaceCall(aLineNo), m_operation(anOperation) { }
+	inline CRiSolidBegin(long aLineNo=-1, RtToken aType=RI_PRIMITIVE) : CRManInterfaceCall(aLineNo), m_type(aType) { }
 
 	/** @brief Copy constructor.
 	 *
@@ -1985,25 +2026,20 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_BEGIN; }
 
-	inline virtual void replay(IDoRender &ri) {
-		ri.preSolidBegin(m_operation);
-		ri.doSolidBegin(m_operation);
-	}
-
 	/** @brief Gets the solid operation.
 	 * @return The token of the operation (must be an atomized string, @see CToken)
 	 */
-	inline RtToken operation() const
+	inline RtToken type() const
 	{
-		return m_operation;
+		return m_type;
 	}
 
 	/** @brief Sets solid operation.
 	 * @param anOperation The token of the operation (must be an atomized string, @see CToken)
 	 */
-	inline void operation(RtToken anOperation)
+	inline void type(RtToken aType)
 	{
-		m_operation = anOperation;
+		m_type = aType;
 	}
 
 	/** @brief Assignment
@@ -2016,10 +2052,25 @@ public:
 		if ( this == &c )
 			return *this;
 
-		operation(c.operation());
+		type(c.type());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preSolidBegin(m_type);
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doSolidBegin(m_type);
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postSolidBegin(m_type);
 	}
 }; // CRiSolidBegin
 
@@ -2099,12 +2150,6 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_END; }
 
-	inline virtual void replay(IDoRender &ri)
-{
-		ri.preSolidEnd();
-		ri.doSolidEnd();
-	}
-
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -2117,6 +2162,22 @@ public:
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
+	}
+
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preSolidEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doSolidEnd();
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postSolidEnd();
 	}
 }; // CRiSolidEnd
 

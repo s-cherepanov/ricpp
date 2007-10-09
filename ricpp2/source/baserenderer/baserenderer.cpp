@@ -244,7 +244,8 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		}
 		name = renderState()->tokFindCreate(name);
 
-		renderRequest(CRiDeclare(renderState()->lineNo(), name, declaration), REQ_DECLARE);
+		CRiDeclare r(renderState()->lineNo());
+		renderRequest(r, REQ_DECLARE);
 
 		return name;
 
@@ -415,8 +416,8 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 
 		if ( !preCheck(REQ_FRAME_BEGIN) )
 			return;
-
-		renderRequest(CRiFrameBegin(renderState()->lineNo(), number), REQ_FRAME_BEGIN);
+		CRiFrameBegin r(renderState()->lineNo(), number);
+		renderRequest(r, REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -450,8 +451,8 @@ RtVoid CBaseRenderer::frameEnd(void)
 
 		if ( !preCheck(REQ_FRAME_END) )
 			return;
-
-		renderRequest(CRiFrameEnd(renderState()->lineNo()), REQ_FRAME_BEGIN);
+		CRiFrameEnd r(renderState()->lineNo());
+		renderRequest(r, REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -477,7 +478,8 @@ RtVoid CBaseRenderer::worldBegin(void)
 		if ( !preCheck(REQ_WORLD_BEGIN) )
 			return;
 
-		renderRequest(CRiWorldBegin(renderState()->lineNo()), REQ_FRAME_BEGIN);
+		CRiWorldBegin r(renderState()->lineNo());
+		renderRequest(r, REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -510,7 +512,8 @@ RtVoid CBaseRenderer::worldEnd(void)
 		if ( !preCheck(REQ_WORLD_END) )
 			return;
 
-		renderRequest(CRiWorldEnd(renderState()->lineNo()), REQ_FRAME_BEGIN);
+		CRiWorldEnd r(renderState()->lineNo());
+		renderRequest(r, REQ_FRAME_BEGIN);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);

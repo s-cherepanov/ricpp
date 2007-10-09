@@ -266,7 +266,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C36C39AA0CBA1F2600D2B7B2 /* ribparser */;
+			remoteGlobalIDString = C36C39AA0CBA1F2600D2B7B2;
 			remoteInfo = ribparser;
 		};
 		C39753FA0C13FFF80089A579 /* PBXContainerItemProxy */ = {
@@ -344,7 +344,7 @@
 		C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = passthrough.cpp; path = ../../../source/ribfilter/passthrough.cpp; sourceTree = SOURCE_ROOT; };
 		C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribwriterdll.cpp; path = ../../../source/ribwriterdll/ribwriterdll.cpp; sourceTree = SOURCE_ROOT; };
 		C366B42C0C26642600F41773 /* uri.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = uri.cpp; path = ../../../source/streams/uri.cpp; sourceTree = SOURCE_ROOT; };
-		C36C39AB0CBA1F2600D2B7B2 /* libribparser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libribparser.a; path = build/Debug/libribparser.a; sourceTree = "<group>"; };
+		C36C39AB0CBA1F2600D2B7B2 /* libribparser.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libribparser.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C36C39B40CBA1FBB00D2B7B2 /* ribparser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribparser.cpp; path = ../../../source/ribparser/ribparser.cpp; sourceTree = SOURCE_ROOT; };
 		C36C39B60CBA1FCA00D2B7B2 /* ribparser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribparser.h; path = ../../../source/include/ricpp/ribparser/ribparser.h; sourceTree = SOURCE_ROOT; };
 		C36C39B80CBA203D00D2B7B2 /* rimacro.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacro.h; path = ../../../source/include/ricpp/renderstate/rimacro.h; sourceTree = SOURCE_ROOT; };

@@ -3821,13 +3821,14 @@ public:
 		ri.renderState()->lights().setHandle(m_handleIdx, h);
 		ri.doLightSource(h, m_name, parameters());
 	}
-	inline virtual RtLightHandle handleIdx() { return m_handleIdx; }
+	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
+	inline virtual void handleIdx(RtLightHandle anIndex) { m_handleIdx = anIndex; }
 	inline CRiLightSource &operator=(const CRiLightSource &c) {
 		if ( this == &c )
 			return *this;
 
 		name(c.name());
-		m_handleIdx = illLightHandle;
+		handleIdx(c.handleIdx());
 
 		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
@@ -3882,13 +3883,14 @@ public:
 		ri.renderState()->lights().setHandle(m_handleIdx, h);
 		ri.doAreaLightSource(h, m_name, parameters());
 	}
-	inline virtual RtLightHandle handleIdx() { return m_handleIdx; }
+	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
+	inline virtual void handleIdx(RtLightHandle anIndex) { m_handleIdx = anIndex; }
 	inline CRiAreaLightSource &operator=(const CRiAreaLightSource &c) {
 		if ( this == &c )
 			return *this;
 
 		name(c.name());
-		m_handleIdx = illLightHandle;
+		handleIdx(c.handleIdx());
 
 		CVarParamRManInterfaceCall::operator=(c);
 		return *this;

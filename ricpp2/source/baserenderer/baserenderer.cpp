@@ -1419,37 +1419,41 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 {
 	RtLightHandle h = illLightHandle;
 
-	if ( !preCheck(REQ_LIGHT_SOURCE) )
-		return h;
+	try {
+		if ( !preCheck(REQ_LIGHT_SOURCE) )
+			return h;
 
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
 
-	if ( renderState()->curMacro() ) {
+		if ( renderState()->curMacro() ) {
+				if ( !renderState()->curMacro()->stopInsertion() ) {
+					CRiLightSource *m = renderState()->macroFactory().newRiLightSource(*renderState(), name, n, tokens, params);
+					if ( !m )
+						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiLightSource", __LINE__, __FILE__));
+					renderState()->curMacro()->add(m);
+					return m->handleIdx();
+				}
+		} else {
+			if ( renderState()->curCondition() ) {
+				h = renderState()->lights().lightSource(renderState()->dict(), renderState()->options().colorDescr(),
+					true, !renderState()->inWorldBlock(), false, name, n, tokens, params);
 
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiLightSource *m = renderState()->macroFactory().newRiLightSource(*renderState(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiLightSource", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-				return m->handleIdx();
+				if ( renderState()->updateStateOnly() )
+					return h;
+
+				doLightSource(h, name, renderState()->curParamList());
 			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
 		}
-	} else {
-		try {
-			h = renderState()->lights().lightSource(renderState()->dict(), renderState()->options().colorDescr(),
-				true, !renderState()->inWorldBlock(), false, name, n, tokens, params);
 
-			if ( renderState()->updateStateOnly() )
-				return h;
-
-			doLightSource(h, name, renderState()->curParamList());
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare': %s", e1.what());
+		return 0;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare'");
+		return 0;
 	}
 
 	if ( n != renderState()->numTokens() ) {

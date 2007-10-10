@@ -50,9 +50,9 @@
 #include "ricpp/renderstate/lights.h"
 #endif // _RICPP_RENDERSTATE_LIGHTS_H
 
-#ifndef _RICPP_RENDERSTATE_HANDLESTACK_H
-#include "ricpp/renderstate/handlestack.h"
-#endif // _RICPP_RENDERSTATE_HANDLESTACK_H
+// #ifndef _RICPP_RENDERSTATE_HANDLESTACK_H
+// #include "ricpp/renderstate/handlestack.h"
+// #endif // _RICPP_RENDERSTATE_HANDLESTACK_H
 
 #ifndef _RICPP_STREAMS_URI_H
 #include "ricpp/streams/uri.h"

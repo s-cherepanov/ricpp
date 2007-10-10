@@ -41,6 +41,9 @@ template<typename KeyType, typename ValueType> class TemplObjPtrRegistry {
 	std::map<KeyType, ValueType>m_map; ///< Container for the key, value pairs
 	bool m_destructMembers; ///< Destruct all members if container is deleted or key is unregistered
 public:
+	/** @brief Iterator for the elements.
+	 */
+	typedef typename std::map<KeyType, ValueType>::iterator iterator;
 	/** @brief Const iterator for the elements.
 	 */
 	typedef typename std::map<KeyType, ValueType>::const_iterator const_iterator;
@@ -66,9 +69,15 @@ public:
 
 	/** @brief Finds a registered object pointer for a key.
 	 *  @param key Search key.
+	 *  @return Pointer (read only) if found or 0 if not found.
+	 */
+	const ValueType findObj(const KeyType &key) const;
+
+	/** @brief Finds a registered object pointer for a key.
+	 *  @param key Search key.
 	 *  @return Pointer if found or 0 if not found.
 	 */
-	ValueType findObj(const KeyType &key) const;
+	ValueType findObj(const KeyType &key);
 
 	/** @brief Removes a registered object pointer for a key, deletes the referenced object,
 	 *  if m_destructMembers is true.
@@ -78,18 +87,35 @@ public:
 	bool unregisterObj(const KeyType &key);
 
 	/** @brief Constant iterator to access the elements (beginning).
-	 *  @return Iterator with the first elements as current element.
+	 *  @return Iterator with the first elements as current element (read only).
 	 */
 	inline const_iterator begin() const
 	{
 		return m_map.begin();
 	}
 
+	/** @brief Iterator to access the elements (beginning).
+	 *  @return Iterator with the first elements as current element.
+	 */
+	inline iterator begin()
+	{
+		return m_map.begin();
+	}
+
 	/** @brief Constant iterator to access the elements (behind the last element).
-	 *  @return Iterator to query the end of the iteration
-	 *          (like sthe std iterators does not refer a valid element).
+	 *  @return Iterator to query the end of the iteration (read only,
+	 *          like the std iterators does not refer a valid element).
 	 */
 	inline const_iterator end() const
+	{
+		return m_map.end();
+	}
+
+	/** @brief Iterator to access the elements (behind the last element).
+	 *  @return Iterator to query the end of the iteration
+	 *          (like the std iterators does not refer a valid element).
+	 */
+	inline iterator end()
 	{
 		return m_map.end();
 	}
@@ -148,11 +174,23 @@ registerObj(const KeyType &key, ValueType value)
 
 
 template<typename KeyType, typename ValueType>
-ValueType
+const ValueType
 TemplObjPtrRegistry<KeyType, ValueType>::
 findObj(const KeyType &key) const
 {
 	typename std::map<KeyType, ValueType>::const_iterator i;
+	if ( (i = m_map.find(key)) != m_map.end() ) {
+		return (*i).second;
+	}
+	return 0;
+}
+
+template<typename KeyType, typename ValueType>
+ValueType
+TemplObjPtrRegistry<KeyType, ValueType>::
+findObj(const KeyType &key)
+{
+	typename std::map<KeyType, ValueType>::iterator i;
 	if ( (i = m_map.find(key)) != m_map.end() ) {
 		return (*i).second;
 	}

@@ -8,6 +8,7 @@ using namespace RiCPP;
 
 CLightSource::CLightSource(const CLightSource &light)
 {
+	m_handle = illLightHandle;
 	*this = light;
 }
 
@@ -49,7 +50,7 @@ void CLightSource::lightSource(
 	m_lightParameters.set(CValueCounts(), dict, colorDescr, name, n, tokens, params);
 }
 
-CLightSource *CLightSourceFactory::newLightSource(const char *name)
+CLightSource *CLightSourceFactory::newLightSource(const char *name) const
 {
 	CLightSource *light = new CLightSource(name);
 	if ( !light ) {
@@ -63,7 +64,7 @@ CLightSource *CLightSourceFactory::newLightSource(
 	CDeclarationDictionary &dict, const CColorDescr &colorDescr,
 	bool isIlluminated, bool isGlobal, bool isArea,
 	const char *name,
-	RtInt n, RtToken tokens[], RtPointer params[])
+	RtInt n, RtToken tokens[], RtPointer params[]) const
 {
 	CLightSource *light = newLightSource();
 	if ( !light ) {
@@ -102,11 +103,10 @@ const CLightSource *CLights::getLight(RtLightHandle handle) const
 }
 
 
-CLightSource *CLights::getWriteableLight(RtLightHandle handle)
+CLightSource *CLights::getLight(RtLightHandle handle)
 {
 	return m_lights[handleToLightIndex(handle)];
 }
-
 
 RtLightHandle CLights::newLightHandleIdx()
 {
@@ -179,6 +179,8 @@ RtLightHandle CLights::lightSource(
 
 	RtLightHandle handle = static_cast<RtLightHandle>(m_lights.size());
 	// handle > 0
+	s->handle(handle);
+	
 	return handle;
 }
 

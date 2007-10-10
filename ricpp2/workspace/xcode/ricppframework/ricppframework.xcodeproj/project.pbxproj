@@ -47,6 +47,7 @@
 		C3003DD60C1D78D6004C4EF0 /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C39753F40C13FFAA0089A579 /* libribfilter.a */; };
 		C3003DD70C1D78D6004C4EF0 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C372B8CF0BD760B9009B2459 /* libricpp.a */; };
 		C3003DD80C1D78D6004C4EF0 /* libritools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C399BA940BE5E1BB002FEEF1 /* libritools.a */; };
+		C3121A990CBD048700CF64CC /* handlestack.h in Headers */ = {isa = PBXBuildFile; fileRef = C3121A980CBD048700CF64CC /* handlestack.h */; };
 		C32093D90BDCCF6900A0BB35 /* dynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093D80BDCCF6900A0BB35 /* dynlib.cpp */; };
 		C32093F90BDCD07A00A0BB35 /* macdynlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */; };
 		C33118230BEB10B30084F992 /* stringlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33118220BEB10B30084F992 /* stringlist.cpp */; };
@@ -307,6 +308,7 @@
 		C3003D680C1D6C3A004C4EF0 /* libstreams.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libstreams.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3003D7B0C1D6CF9004C4EF0 /* tokenmap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tokenmap.cpp; path = ../../../source/declaration/tokenmap.cpp; sourceTree = SOURCE_ROOT; };
 		C3003D7E0C1D6D21004C4EF0 /* tokenmap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tokenmap.h; path = ../../../source/include/ricpp/declaration/tokenmap.h; sourceTree = SOURCE_ROOT; };
+		C3121A980CBD048700CF64CC /* handlestack.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = handlestack.h; path = ../../../source/include/ricpp/renderstate/handlestack.h; sourceTree = SOURCE_ROOT; };
 		C32093CE0BDCCF0A00A0BB35 /* libgendynlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgendynlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093DF0BDCCF9B00A0BB35 /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -703,6 +705,7 @@
 				C36C39B80CBA203D00D2B7B2 /* rimacro.h */,
 				C344D5240CA8F3E300E077EC /* attributes.h */,
 				C344D5250CA8F3E300E077EC /* displaydesc.h */,
+				C3121A980CBD048700CF64CC /* handlestack.h */,
 				C344D5260CA8F3E300E077EC /* lights.h */,
 				C362FB6B0C03337F00880F4D /* modes.h */,
 				C344D5270CA8F3E300E077EC /* options.h */,
@@ -1108,6 +1111,7 @@
 				C344D5320CA8F3E300E077EC /* parameter.h in Headers */,
 				C344D5330CA8F3E300E077EC /* transformation.h in Headers */,
 				C36C39B90CBA203D00D2B7B2 /* rimacro.h in Headers */,
+				C3121A990CBD048700CF64CC /* handlestack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

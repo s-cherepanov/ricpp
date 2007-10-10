@@ -50,9 +50,14 @@
 #include "ricpp/renderstate/lights.h"
 #endif // _RICPP_RENDERSTATE_LIGHTS_H
 
+#ifndef _RICPP_RENDERSTATE_HANDLESTACK_H
+#include "ricpp/renderstate/handlestack.h"
+#endif // _RICPP_RENDERSTATE_HANDLESTACK_H
+
 #ifndef _RICPP_STREAMS_URI_H
 #include "ricpp/streams/uri.h"
 #endif // _RICPP_STREAMS_URI_H
+
 
 namespace RiCPP {
 
@@ -86,7 +91,7 @@ class CRenderState {
 	CParameterList m_curParams;                    ///< Params of the last interface request with variable parameters.
 
 	CLights m_lights;                              ///< Global light list.
-
+	
 	bool m_reject;                                 ///< Reject requests while running, e.g. for appropriate if-then-else blocks
 
 	/** @brief Only update the state, do no rendering.

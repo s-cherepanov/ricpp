@@ -25,13 +25,14 @@ class CLightSource {
 	bool m_isAreaLight;              //!< true, if the light source is created via TRi::AreaLightSource()
 
 	CNamedParameterList m_lightParameters; //!< Parameter list of the light source, contains the name of the light source
-
+	RtLightHandle m_handle;
+	
 public:
 	//! Default constructor initializes with empty values
 	inline CLightSource(const char *name=0)
 		: m_isIlluminated(false),
 		  m_isGlobalLight(false), m_isAreaLight(false),
-		  m_lightParameters(name)
+		  m_lightParameters(name), m_handle(0)
 	{
 	}
 
@@ -107,6 +108,16 @@ public:
 	 */
 	inline void areaLight(bool isArea) { m_isAreaLight = isArea; }
 
+	RtLightHandle handle() const
+	{
+		return m_handle;
+	}
+
+	void handle(RtLightHandle h)
+	{
+		m_handle = h;
+	}
+
 }; // CLightSource
 
 
@@ -117,17 +128,22 @@ public:
 	inline CLightSourceFactory() {}
 	inline virtual ~CLightSourceFactory() {}
 
-	virtual CLightSource *newLightSource(const char *name=0);
+	virtual CLightSource *newLightSource(const char *name=0) const;
 
 	virtual CLightSource *newLightSource(
 		CDeclarationDictionary &dict, const CColorDescr &colorDescr,
 		bool isIlluminated, bool isGlobal, bool isArea,
 		const char *name,
-		RtInt n, RtToken tokens[], RtPointer params[]);
+		RtInt n, RtToken tokens[], RtPointer params[]) const;
 
 	inline virtual void deleteLightSource(CLightSource *l)
 	{
 		delete l;
+	}
+
+	virtual CLightSource *newObject() const
+	{
+		return newLightSource(0);
 	}
 }; // CLightSourceFactory
 
@@ -182,7 +198,7 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual const CLightSource *getLight(RtLightHandle handle) const;
-	CLightSource *getWriteableLight(RtLightHandle handle);
+	virtual CLightSource *getLight(RtLightHandle handle);
 
 	void mark();
 	void clearToMark();

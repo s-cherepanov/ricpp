@@ -31,7 +31,7 @@ private:
 	std::string m_prefix;         ///< Prefix for the tokens
 
 public:
-	TemplHandleStack(const char *prefix)
+	TemplHandleStack(const char *prefix="")
 	{
 		m_maxHandleIdx = 0;
 		m_stack.push_back(RI_NULL);
@@ -43,7 +43,7 @@ public:
 		typename TypeHandleMap::iterator i;
 		for ( i = m_map.begin(); i != m_map.end(); i++ ) {
 			if ( (*i).second != NULL ) {
-				ValueType ptr = (*i).second;
+				ValueType *ptr = (*i).second;
 				delete ptr;
 			}
 		}
@@ -55,9 +55,17 @@ public:
 		char strnum[64];
 		std::string str;
 		str = m_prefix;
-		sprintf(strnum, "%ld", ++m_maxHandleIdx);
+
+		strnum[0] = (char)0;
+#ifdef WIN32
+		sprintf_s(strnum, sizeof(strnum), "%ld", ++m_maxHandleIdx);
+#else
+		snprintf(strnum, sizeof(strnum)-1, "%ld", ++m_maxHandleIdx);
+#endif
+		strnum[sizeof(strnum)-1] = (char)0;
+
 		str += strnum;
-		RtToken tok = m_tokens.findCreate(str);
+		RtToken tok = m_tokens.findCreate(str.c_str());
 		return tok;
 	}
 
@@ -70,6 +78,11 @@ public:
 		return (*i).second;
 	}
 
+	ValueType *back()
+	{
+		return find(m_stack.back());
+	}
+
 	const ValueType *find(RtToken tok) const
 	{
 		typename TypeHandleMap::const_iterator i;
@@ -77,6 +90,11 @@ public:
 		if ( i == m_map.end() )
 			return 0;
 		return (*i).second;
+	}
+
+	const ValueType *back() const
+	{
+		return find(m_stack.back());
 	}
 
 	bool deleteObject(RtToken tok)

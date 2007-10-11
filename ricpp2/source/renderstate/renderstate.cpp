@@ -41,8 +41,8 @@ CRenderState::CRenderState(
 	CLightSourceFactory &lightSourceFactory,
 	CRManInterfaceFactory &aMacroFactory) :
 	m_lights(lightSourceFactory),
-	m_archiveMacros(true),
-	m_objectMacros(true)
+	m_objectMacros("OBJ_"),
+	m_archiveMacros("ARC_")
 // throw(ExceptRiCPPError)
 {
 	m_modeStack = &aModeStack;
@@ -53,7 +53,6 @@ CRenderState::CRenderState(
 	m_lineNo = -1;
 
 	m_curMacro = 0;
-	m_handleMacroBase = 0;
 
 	m_reject = false;
 	m_updateStateOnly = false;
@@ -127,6 +126,74 @@ RtToken CRenderState::solid() const
 	if ( m_solidTypes.empty() )
 		return RI_NULL;
 	return m_solidTypes.back();
+}
+
+RtObjectHandle CRenderState::objectBegin()
+{
+	m_macros.push_back(m_curMacro);
+	m_curMacro = 0;
+	pushOptions();
+	pushAttributes();
+	pushTransform();
+	m_modeStack->objectBegin();
+	
+	CRiObjectMacro *m = new CRiObjectMacro;
+
+	if ( m ) {
+		m_objectMacros.insertObject(m);
+		m_curMacro = m;
+		return m->handle();
+	} else {
+		return illObjectHandle;
+	}
+
+}
+
+void CRenderState::objectEnd()
+{
+	m_modeStack->objectEnd();
+	popTransform();
+	popAttributes();
+	popOptions();
+	if ( !m_macros.empty() ) {
+		m_curMacro = m_macros.back();
+		m_macros.pop_back();
+	} else {
+		m_curMacro = 0;
+	}
+}
+
+RtArchiveHandle CRenderState::archiveBegin()
+{
+	m_macros.push_back(m_curMacro);
+	m_curMacro = 0;
+	pushOptions();
+	pushAttributes();
+	pushTransform();
+	m_modeStack->archiveBegin();
+
+	CRiArchiveMacro *m = new CRiArchiveMacro;
+
+	if ( m ) {
+		m_archiveMacros.insertObject(m);
+		m_curMacro = m;
+		return m->handle();
+	} else {
+		return illArchiveHandle;
+	}
+}
+
+void CRenderState::archiveEnd() {
+	m_modeStack->archiveEnd();
+	popTransform();
+	popAttributes();
+	popOptions();
+	if ( !m_macros.empty() ) {
+		m_curMacro = m_macros.back();
+		m_macros.pop_back();
+	} else {
+		m_curMacro = 0;
+	}
 }
 
 void CRenderState::pushOptions()

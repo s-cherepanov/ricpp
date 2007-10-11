@@ -832,6 +832,24 @@ public:
 }; // CRiMacro
 
 
+class CRiObjectMacro : public CRiMacro {
+private:
+	RtObjectHandle m_handle;
+public:
+	inline CRiObjectMacro() : CRiMacro("", MACROTYPE_OBJECT) {}
+	inline RtObjectHandle handle() const { return m_handle; }
+	inline void handle(RtObjectHandle h) { m_handle = h; }
+};
+
+class CRiArchiveMacro : public CRiMacro {
+private:
+	RtArchiveHandle m_handle;
+public:
+	inline CRiArchiveMacro() : CRiMacro("", MACROTYPE_ARCHIVE) {}
+	inline RtArchiveHandle handle() const { return m_handle; }
+	inline void handle(RtArchiveHandle h) { m_handle = h; }
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 

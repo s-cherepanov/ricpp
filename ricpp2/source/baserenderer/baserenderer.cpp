@@ -188,7 +188,7 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 
 void CBaseRenderer::renderRequest(CRManInterfaceCall &aRequest, EnumRequests req)
 {
-	if ( renderState()->curCondition() ) {
+	if ( renderState()->curCondition() || renderState()->curMacro() ) {
 		aRequest.preProcess(*this);
 	}
 	if ( renderState()->curMacro() ) {

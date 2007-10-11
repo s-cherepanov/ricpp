@@ -50,9 +50,9 @@
 #include "ricpp/renderstate/lights.h"
 #endif // _RICPP_RENDERSTATE_LIGHTS_H
 
-// #ifndef _RICPP_RENDERSTATE_HANDLESTACK_H
-// #include "ricpp/renderstate/handlestack.h"
-// #endif // _RICPP_RENDERSTATE_HANDLESTACK_H
+#ifndef _RICPP_RENDERSTATE_HANDLESTACK_H
+#include "ricpp/renderstate/handlestack.h"
+#endif // _RICPP_RENDERSTATE_HANDLESTACK_H
 
 #ifndef _RICPP_STREAMS_URI_H
 #include "ricpp/streams/uri.h"
@@ -63,6 +63,8 @@ namespace RiCPP {
 
 class CRManInterfaceFactory;
 class CRiMacro;
+class CRiObjectMacro;
+class CRiArchiveMacro;
 
 /** @brief The facade for the render state objects.
  *
@@ -121,20 +123,9 @@ class CRenderState {
 	 */
 	CRiMacro *m_curMacro;
 
-	/** @brief Counter to create tokens for macros.
-	 *
-	 * Is used for both, objects and rib archive
-	 *
-	 */
-	unsigned long m_handleMacroBase;
-
-	/** @brief Macros for rib archive definitions
-	 */
-	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_archiveMacros;
-
-	/** @brief Macros for object definitions
-	 */
-	class TemplObjPtrRegistry<RtToken, const CRiMacro *> m_objectMacros;
+	TemplHandleStack<CRiObjectMacro> m_objectMacros;
+	TemplHandleStack<CRiArchiveMacro> m_archiveMacros;
+	std::vector<CRiMacro *> m_macros;
 
 	std::vector<bool> m_conditions;
 	bool m_curCondition; //!< Render (true outside if-else-blocks, conditional inside the blocks
@@ -274,34 +265,11 @@ public:
     void solidEnd();
 	RtToken CRenderState::solid() const;
 
-	inline void objectBegin()
-	{
-		pushOptions();
-		pushAttributes();
-		pushTransform();
-		m_modeStack->objectBegin();
-	}
-	inline void objectEnd()
-	{
-		m_modeStack->objectEnd();
-		popTransform();
-		popAttributes();
-		popOptions();
-	}
+	RtObjectHandle objectBegin();
+	void objectEnd();
 
-    inline void archiveBegin()
-	{
-		pushOptions();
-		pushAttributes();
-		pushTransform();
-		m_modeStack->archiveBegin();
-	}
-    inline void archiveEnd() {
-		m_modeStack->archiveEnd();
-		popTransform();
-		popAttributes();
-		popOptions();
-	}
+	RtArchiveHandle archiveBegin();
+	void archiveEnd();
 
     inline void resourceBegin() { m_modeStack->resourceBegin(); }
     inline void resourceEnd() { m_modeStack->resourceEnd(); }
@@ -312,7 +280,6 @@ public:
 	inline bool curCondition() const
 	{
 		return m_curCondition;
-
 	}
 
 	void pushConditional();
@@ -334,7 +301,7 @@ public:
 	}
 	inline void ifEnd()
 	{
-		 m_modeStack->ifEnd();
+		m_modeStack->ifEnd();
 		popConditional();
 	}
 

@@ -332,6 +332,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\handlestack.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\lights.h"
 				>
 			</File>

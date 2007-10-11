@@ -126,6 +126,7 @@ class CRenderState {
 	TemplHandleStack<CRiObjectMacro> m_objectMacros;
 	TemplHandleStack<CRiArchiveMacro> m_archiveMacros;
 	std::vector<CRiMacro *> m_macros;
+	std::map<std::string, RtArchiveHandle> m_mapFileArchive;
 
 	std::vector<bool> m_conditions;
 	bool m_curCondition; //!< Render (true outside if-else-blocks, conditional inside the blocks

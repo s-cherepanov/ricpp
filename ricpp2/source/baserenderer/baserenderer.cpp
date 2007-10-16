@@ -244,7 +244,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		}
 		name = renderState()->tokFindCreate(name);
 
-		CRiDeclare r(renderState()->lineNo());
+		CRiDeclare r(renderState()->lineNo(), name, declaration);
 		renderRequest(r, REQ_DECLARE);
 
 		return name;

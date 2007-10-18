@@ -186,11 +186,10 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 	return !renderState()->reject();
 }
 
-void CBaseRenderer::renderRequest(CRManInterfaceCall &aRequest, EnumRequests req)
+void CBaseRenderer::renderRequest(CRManInterfaceCall &aRequest)
 {
-	if ( renderState()->curCondition() || renderState()->curMacro() ) {
-		aRequest.preProcess(*this);
-	}
+	aRequest.preProcess(*this);
+
 	if ( renderState()->curMacro() ) {
 		if ( !renderState()->curMacro()->stopInsertion() ) {
 			renderState()->curMacro()->add(aRequest.duplicate());
@@ -245,7 +244,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		name = renderState()->tokFindCreate(name);
 
 		CRiDeclare r(renderState()->lineNo(), name, declaration);
-		renderRequest(r, REQ_DECLARE);
+		renderRequest(r);
 
 		return name;
 
@@ -417,7 +416,7 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 		if ( !preCheck(REQ_FRAME_BEGIN) )
 			return;
 		CRiFrameBegin r(renderState()->lineNo(), number);
-		renderRequest(r, REQ_FRAME_BEGIN);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -452,7 +451,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 		if ( !preCheck(REQ_FRAME_END) )
 			return;
 		CRiFrameEnd r(renderState()->lineNo());
-		renderRequest(r, REQ_FRAME_BEGIN);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -479,7 +478,7 @@ RtVoid CBaseRenderer::worldBegin(void)
 			return;
 
 		CRiWorldBegin r(renderState()->lineNo());
-		renderRequest(r, REQ_FRAME_BEGIN);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -513,7 +512,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 			return;
 
 		CRiWorldEnd r(renderState()->lineNo());
-		renderRequest(r, REQ_FRAME_BEGIN);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -541,7 +540,7 @@ RtVoid CBaseRenderer::attributeBegin(void)
 			return;
 
 		CRiAttributeBegin r(renderState()->lineNo());
-		renderRequest(r, REQ_ATTRIBUTE_BEGIN);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -576,7 +575,7 @@ RtVoid CBaseRenderer::attributeEnd(void)
 			return;
 
 		CRiAttributeEnd r(renderState()->lineNo());
-		renderRequest(r, REQ_ATTRIBUTE_END);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -604,7 +603,7 @@ RtVoid CBaseRenderer::transformBegin(void)
 			return;
 
 		CRiTransformBegin r(renderState()->lineNo());
-		renderRequest(r, REQ_TRANSFORM_BEGIN);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -632,7 +631,7 @@ RtVoid CBaseRenderer::transformEnd(void)
 			return;
 
 		CRiTransformEnd r(renderState()->lineNo());
-		renderRequest(r, REQ_TRANSFORM_END);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -671,7 +670,7 @@ RtVoid CBaseRenderer::solidBegin(RtToken type)
 		}
 
 		CRiSolidBegin r(renderState()->lineNo(), typeTok);
-		renderRequest(r, REQ_SOLID_BEGIN);
+		renderRequest(r);
 
 		if ( type != typeTok ) {
 			throw ExceptRiCPPError(RIE_BADSOLID, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown solid operation '%s' at 'solidBegin'", noNullStr(type));
@@ -702,7 +701,7 @@ RtVoid CBaseRenderer::solidEnd(void)
 			return;
 
 		CRiSolidEnd r(renderState()->lineNo());
-		renderRequest(r, REQ_SOLID_END);
+		renderRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -717,9 +716,73 @@ RtVoid CBaseRenderer::solidEnd(void)
 }
 
 
-RtObjectHandle CBaseRenderer::objectBegin(void) { return illObjectHandle; }
-RtVoid CBaseRenderer::objectEnd(void) {}
-RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle) {}
+RtObjectHandle CBaseRenderer::preObjectBegin(void)
+{
+	return renderState()->objectBegin();
+}
+
+RtObjectHandle CBaseRenderer::objectBegin(void) {
+	try {
+		if ( !preCheck(REQ_OBJECT_BEGIN) )
+			return illObjectHandle;
+
+		CRiObjectBegin r(renderState()->lineNo());
+		r.preProcess(*this);
+		if ( !renderState()->updateStateOnly() && (renderState()->curCondition() || renderState()->curMacro()) ) {
+			r.doProcess(*this);
+		}
+		r.postProcess(*this);
+		return r.handle();
+		
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return illObjectHandle;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'objectBegin': %s", e1.what());
+		return illObjectHandle;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'objectBegin'");
+		return illObjectHandle;
+	}
+	
+	return illObjectHandle;
+}
+
+RtVoid CBaseRenderer::preObjectEnd(void)
+{
+	renderState()->objectEnd();
+}
+
+RtVoid CBaseRenderer::objectEnd(void)
+{
+	try {
+		if ( !preCheck(REQ_OBJECT_END) )
+			return;
+
+		CRiObjectEnd r(renderState()->lineNo());
+		
+		bool stop = renderState()->curMacro()->stopInsertion();
+		renderState()->curMacro()->stopInsertion(true);
+		renderRequest(r);
+		renderState()->curMacro()->stopInsertion(stop);
+		
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'objectEnd': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'objectEnd'");
+		return;
+	}
+}
+
+RtVoid CBaseRenderer::preObjectInstance(RtObjectHandle handle) {}
+
+RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle)
+{
+}
 
 RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[]) {}
 RtVoid CBaseRenderer::motionEnd(void) {}

@@ -420,7 +420,7 @@ public:
     virtual RtVoid postSolidBegin(RtToken type) = 0;
     virtual RtVoid postSolidEnd(void) = 0;
 
-	inline virtual RtVoid postObjectBegin(RtObjectHandle h) = 0;
+	virtual RtVoid postObjectBegin(RtObjectHandle h) = 0;
 	virtual RtVoid postObjectEnd(void) = 0;
     virtual RtVoid postObjectInstance(RtObjectHandle handle) = 0;
 

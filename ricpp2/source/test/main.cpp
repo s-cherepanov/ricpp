@@ -301,13 +301,13 @@ void testrun(CRiCPPBridge &ri)
 		ri.option("myOption", myOptionValue, floats, RI_NULL);
 		ri.projection("perspective", "float[1] fov", &fov, RI_NULL);
 
-		RtToken myObject = ri.objectBegin();
+		RtObjectHandle myObject = ri.objectBegin();
 			ri.attributeBegin();
 				ri.sphere(0.5, -1.0, 1.0, 360.0, RI_NULL);
 			ri.attributeEnd();
 		ri.objectEnd();
 
-		RtToken myArchive = ri.archiveBegin("MyArchive", RI_NULL);
+		RtArchiveHandle myArchive = ri.archiveBegin("MyArchive", RI_NULL);
 			ri.attributeBegin();
 				ri.torus(0.5, 0.125, 0.0, 360.0, 360.0, RI_NULL);
 			ri.attributeEnd();
@@ -316,6 +316,8 @@ void testrun(CRiCPPBridge &ri)
 		ri.frameBegin(1);
 			ri.colorSamples(3, id, id);
 			ri.worldBegin();
+			ri.objectInstance(myObject);
+			ri.readArchive(myArchive, 0, RI_NULL);
 			ri.worldEnd();
 		ri.frameEnd();
 	ri.end();

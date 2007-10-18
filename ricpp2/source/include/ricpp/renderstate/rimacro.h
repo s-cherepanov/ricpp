@@ -751,6 +751,7 @@ class CRiMacro {
 	std::string m_name;         //!< Name of the macro (eg. file name, handle name).
 	EnumMacroTypes m_macroType; //!< Type of macro, either object or archive.
 	bool m_stopInsertion;       //!< Can be set to false to indicate to stop inserting request into the macro.
+	bool m_isClosed;            //!< Set to true (close) if macro definition ended.
 public:
 	/** @brief Constructor initializes the macro.
 	 *
@@ -760,7 +761,7 @@ public:
 	inline CRiMacro(
 		RtString aName = "",
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN) :
-		m_name(noNullStr(aName)), m_macroType(macroType), m_stopInsertion(false)
+		m_name(noNullStr(aName)), m_macroType(macroType), m_stopInsertion(false), m_isClosed(false)
 	{
 	}
 
@@ -818,6 +819,16 @@ public:
 	void stopInsertion(bool stopIt)
 	{
 		m_stopInsertion = stopIt;
+	}
+
+	bool isClosed() const
+	{
+		return m_isClosed;
+	}
+	
+	void close()
+	{
+		m_isClosed = true;
 	}
 
 	EnumMacroTypes macroType() const
@@ -2199,12 +2210,12 @@ public:
 	}
 }; // CRiSolidEnd
 
-#if 0
+
 ///////////////////////////////////////////////////////////////////////////////
 //! \sa CRManInterfaceCall
 class CRiObjectBegin : public CRManInterfaceCall {
 protected:
-	RtObjectHandle m_handleIdx;
+	RtObjectHandle m_handle;
 
 public:
 	/** @brief Gets name for the class.
@@ -2241,17 +2252,11 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	inline CRiLightSource(
+	inline CRiObjectBegin(
 		long aLineNo = -1)
 		: CRManInterfaceCall(aLineNo)
 	{
-		m_handleIdx = illObjectHandle;
-	}
-
-	inline CRiObjectBegin(long aLineNo, RtObjectHandle *h) : CRManInterfaceCall(aLineNo)
-	{
-		assert(h != 0);
-		m_handlePtr = h;
+		m_handle = illObjectHandle;
 	}
 
 	inline CRiObjectBegin(const CRiSolidEnd &c)
@@ -2268,23 +2273,31 @@ public:
 	{
 	}
 
+	inline virtual RtObjectHandle handle() const { return m_handle; }
+	inline virtual void handle(RtObjectHandle handle) { m_handle = handle; }
+	
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_BEGIN; }
-	inline virtual void replay(IDoRender &ri) {
-		assert(m_handlePtr != 0);
-		if ( m_handlePtr != 0 ) {
-			*m_handlePtr = ri.preObjectBegin();
-			ri.doObjectBegin(*m_handlePtr);
-		} else {
-			RtObjectHandle h = ri.preObjectBegin();
-			ri.doObjectBegin(h);
-		}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		handle(ri.preObjectBegin());
 	}
-	inline virtual RtObjectHandle *handlePtr() { return m_handlePtr; }
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doObjectBegin(handle());
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postObjectBegin(handle());
+	}
+
 	inline CRiObjectBegin &operator=(const CRiObjectBegin &c) {
 		if ( this == &c )
 			return *this;
 		
-		// ???
+		handle(c.handle());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -2357,7 +2370,7 @@ public:
 		return *this;
 	}
 }; // CRiObjectEnd
-#endif
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \sa CRManInterfaceCall

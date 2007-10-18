@@ -130,23 +130,25 @@ RtToken CRenderState::solid() const
 
 RtObjectHandle CRenderState::objectBegin()
 {
-	m_macros.push_back(m_curMacro);
-	m_curMacro = 0;
 	pushOptions();
 	pushAttributes();
 	pushTransform();
 	m_modeStack->objectBegin();
-	
+
+	m_macros.push_back(m_curMacro);
 	CRiObjectMacro *m = new CRiObjectMacro;
+	curMacro(m);
 
-	if ( m ) {
-		m_objectMacros.insertObject(m);
-		m_curMacro = m;
-		return m->handle();
-	} else {
-		return illObjectHandle;
+	if ( curCondition() || curMacro() != 0 ) {
+		if ( m != 0 ) {
+			m_objectMacros.insertObject(m);
+			return m->handle();
+		} else {
+			return illObjectHandle;
+		}
 	}
-
+	
+	return illObjectHandle;
 }
 
 void CRenderState::objectEnd()
@@ -155,32 +157,40 @@ void CRenderState::objectEnd()
 	popTransform();
 	popAttributes();
 	popOptions();
-	if ( !m_macros.empty() ) {
-		m_curMacro = m_macros.back();
-		m_macros.pop_back();
-	} else {
-		m_curMacro = 0;
+	
+	if ( curCondition()  || curMacro() != 0 ) {
+		if ( m_curMacro != 0 )
+			m_curMacro->close();
+		if ( !m_macros.empty() ) {
+			m_curMacro = m_macros.back();
+			m_macros.pop_back();
+		} else {
+			m_curMacro = 0;
+		}
 	}
 }
 
 RtArchiveHandle CRenderState::archiveBegin()
 {
-	m_macros.push_back(m_curMacro);
-	m_curMacro = 0;
 	pushOptions();
 	pushAttributes();
 	pushTransform();
 	m_modeStack->archiveBegin();
 
-	CRiArchiveMacro *m = new CRiArchiveMacro;
+	if ( curCondition() || curMacro() != 0 ) {
+		m_macros.push_back(m_curMacro);
+		CRiArchiveMacro *m = new CRiArchiveMacro;
+		curMacro(m);
 
-	if ( m ) {
-		m_archiveMacros.insertObject(m);
-		m_curMacro = m;
-		return m->handle();
-	} else {
-		return illArchiveHandle;
+		if ( m != 0 ) {
+			m_archiveMacros.insertObject(m);
+			return m->handle();
+		} else {
+			return illArchiveHandle;
+		}
 	}
+
+	return illArchiveHandle;
 }
 
 void CRenderState::archiveEnd() {
@@ -188,11 +198,16 @@ void CRenderState::archiveEnd() {
 	popTransform();
 	popAttributes();
 	popOptions();
-	if ( !m_macros.empty() ) {
-		m_curMacro = m_macros.back();
-		m_macros.pop_back();
-	} else {
-		m_curMacro = 0;
+
+	if ( curCondition() || curMacro() != 0 ) {
+		if ( !m_macros.empty() ) {
+			if ( m_curMacro != 0 )
+				m_curMacro->close();
+			m_curMacro = m_macros.back();
+			m_macros.pop_back();
+		} else {
+			m_curMacro = 0;
+		}
 	}
 }
 

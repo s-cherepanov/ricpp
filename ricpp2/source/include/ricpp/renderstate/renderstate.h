@@ -139,6 +139,12 @@ class CRenderState {
 
 	void pushTransform();
 	bool popTransform();
+
+	void curMacro(CRiMacro *m)
+	{
+		m_curMacro = m;
+	}
+
 public:
 
 	/** @brief Initializes the object

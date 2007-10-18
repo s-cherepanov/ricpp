@@ -145,7 +145,7 @@ protected:
 
 	inline virtual CRiMacro *curMacro() {return 0;}
 
-	virtual void renderRequest(CRManInterfaceCall &aRequest, EnumRequests req);
+	virtual void renderRequest(CRManInterfaceCall &aRequest);
 	virtual void replayRequest(CRManInterfaceCall &aRequest);
 
 public:
@@ -403,9 +403,9 @@ public:
 	virtual RtVoid preSolidBegin(RtToken type);
 	virtual RtVoid preSolidEnd(void);
 
-	inline virtual RtObjectHandle preObjectBegin(void) {return illObjectHandle;}
-	inline virtual RtVoid preObjectEnd(void) {}
-	inline virtual RtVoid preObjectInstance(RtObjectHandle handle) {}
+	virtual RtObjectHandle preObjectBegin(void);
+	virtual RtVoid preObjectEnd(void);
+	virtual RtVoid preObjectInstance(RtObjectHandle handle);
 
 	inline virtual RtVoid preMotionBegin(RtInt N, RtFloat times[]) {}
 	inline virtual RtVoid preMotionEnd(void) {}

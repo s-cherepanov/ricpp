@@ -952,8 +952,8 @@ public:
 	virtual RtToken declare(RtString name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
 	virtual RtVoid system(RtString cmd);
-	virtual RtResourceHandle resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...);
-	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...);
+	virtual RtVoid resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Returns the current context handle
 	 *

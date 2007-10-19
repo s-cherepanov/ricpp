@@ -33,13 +33,6 @@
 
 namespace RiCPP {
 
-enum EnumMacroTypes {
-	MACROTYPE_UNKNOWN = 0, //!< Macro type is yet unknown
-	MACROTYPE_OBJECT,      //!< Macro contains interface calls for an object definition
-	MACROTYPE_ARCHIVE,     //!< Macro contains interface calls for an rib inline archive definition
-	MACROTYPE_FILE         //!< Macro contains interface calls for an rib file archive definition
-};
-
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Base class of all interface calls.
  */
@@ -785,24 +778,35 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Macro container.
- *
- * @todo Replay single frames.
  */
 class CRiMacro {
+public:
+	/** @brief Macro types
+	 */
+	enum EnumMacroTypes {
+		MACROTYPE_UNKNOWN = 0, //!< Macro type is yet unknown
+		MACROTYPE_OBJECT,      //!< Macro contains interface calls for an object definition
+		MACROTYPE_ARCHIVE,     //!< Macro contains interface calls for an rib inline archive definition
+		MACROTYPE_FILE         //!< Macro contains interface calls for an rib file archive definition
+	};
+
+private:
 	std::list<CRManInterfaceCall *> m_callList;  //!< List of all interface calls for this macro.
 	std::string m_name;         //!< Name of the macro (eg. file name, handle name).
 	EnumMacroTypes m_macroType; //!< Type of macro, either object or archive.
 	bool m_stopInsertion;       //!< Can be set to false to indicate to stop inserting request into the macro.
 	bool m_isClosed;            //!< Set to true (close) if macro definition ended.
 	bool m_postpone;            //!< Set to true if macro should be postponed (e.g. in RIB oputput).
+
 public:
+
 	/** @brief Constructor initializes the macro.
 	 *
 	 *  @param aName Name of the macro, eg. file name.
 	 *  @param isObject Macro defines a geometric object.
 	 */
 	inline CRiMacro(
-		RtString aName = "",
+		RtString aName = 0,
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN) :
 		m_name(noNullStr(aName)), m_macroType(macroType), m_stopInsertion(false), m_isClosed(false), m_postpone(true)
 	{
@@ -858,36 +862,75 @@ public:
 		m_stopInsertion = stopIt;
 	}
 
+	/** @brief Gets the open/closed state of a macro.
+	 *
+	 * A macro is closed, if all request are read and an End (Like IRi::objectEnd() ) was called.
+	 * A closed macro can be instanciated.
+	 *
+	 *  @return true, if the macro is closed
+	 */
 	bool isClosed() const
 	{
 		return m_isClosed;
 	}
 	
+	/** @brief Opens a macro for writing (adding requests).
+	 *
+	 * A macro is opened after created. @see isClosed()
+	 */
 	void open()
 	{
 		m_isClosed = false;
 	}
 
+	/** @brief Closes a macro.
+	 *
+	 * A macro is closed by the framework after called an End-Request. @see isClosed()
+	 */
 	void close()
 	{
 		m_isClosed = true;
 	}
 
+	/** @brief Postpone a macro instanciation (hint only).
+	 *
+	 * postpone() gives a hint, that the instanciation should be postponed. E.g.
+	 * indicates, that a RIB writer should print a ReadArchive request instead
+	 * of reading the macro and print the content. Also possible for ObjectInstance.
+	 *
+	 * @return true, if a macro instanciation is postponed (e.g. by a RIB writer).
+	 */
 	bool postpone() const
 	{
 		return m_postpone;
 	}
 	
+	/** @brief Sets the postpone state.
+	 *
+	 * @see postpone()
+	 *
+	 * @param doPostpone true, if a macro instanciation should be postponed (e.g. by a RIB writer).
+	 */
 	void postpone(bool doPostpone)
 	{
 		m_postpone = doPostpone;
 	}
 
+	/** @brief Gets the type of the macro.
+	 *
+	 * Gets the type of the macro (EnumMacroTypes) for some checking.
+	 *
+	 * @return Type of the macro (EnumMacroTypes object, inline archive or archive file).
+	 */
 	EnumMacroTypes macroType() const
 	{
 		return m_macroType;
 	}
 
+	/** @brief Sets the type of the macro.
+	 *
+	 * @param aMacroType Type of the macro (EnumMacroTypes object, inline archive or archive file).
+	 */
 	void macroType(EnumMacroTypes aMacroType)
 	{
 		m_macroType = aMacroType;
@@ -895,21 +938,59 @@ public:
 }; // CRiMacro
 
 
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Macro container for objects.
+ */
 class CRiObjectMacro : public CRiMacro {
 private:
-	RtObjectHandle m_handle;
+	RtObjectHandle m_handle; //!< Associated handle to identify the macro.
 public:
-	inline CRiObjectMacro() : CRiMacro("", MACROTYPE_OBJECT) {}
+	/** @brief Creates a macro container for an object (retained geometry).
+	 *
+	 * The type for the object macro is allways MACROTYPE_OBJECT
+	 */
+	inline CRiObjectMacro() : CRiMacro(0, MACROTYPE_OBJECT) { m_handle = illObjectHandle; }
+
+	/** @brief Gets the associated handle of the object.
+	 *
+	 * @return The associated handle of the object.
+	 */
 	inline RtObjectHandle handle() const { return m_handle; }
+
+	/** @brief Sets the associated handle of the object.
+	 *
+	 * @param h The associated handle of the object.
+	 */
 	inline void handle(RtObjectHandle h) { m_handle = h; }
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Macro container for archives (file or inline).
+ */
 class CRiArchiveMacro : public CRiMacro {
 private:
-	RtArchiveHandle m_handle;
+	RtArchiveHandle m_handle; //!< Associated handle to identify the macro.
 public:
-	inline CRiArchiveMacro(const char *name = "") : CRiMacro(name, MACROTYPE_ARCHIVE) {}
+	/** @brief Creates a macro container for a RIB archive.
+	 *
+	 * @param name Filename or archive name
+	 * @param aMacroType Type of the macro, will be MACROTYPE_ARCHIVE or MACROTYPE_FILE
+	 */
+	inline CRiArchiveMacro(const char *name = 0, EnumMacroTypes aMacroType=MACROTYPE_ARCHIVE) : CRiMacro(name, aMacroType)
+	{
+		m_handle = illArchiveHandle; 
+ 	}
+
+	/** @brief Gets the associated handle of the archive.
+	 *
+	 * @return The associated handle of the archive.
+	 */
 	inline RtArchiveHandle handle() const { return m_handle; }
+
+	/** @brief Sets the associated handle of the archive.
+	 *
+	 * @param h The associated handle of the archive.
+	 */
 	inline void handle(RtArchiveHandle h) { m_handle = h; }
 };
 
@@ -917,7 +998,8 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 
 // Not suported: Frontend functions
-// (REQ_ERROR_HANDLER)
+// (REQ_ERROR_HANDLER - is a frontend funktion but has a class CRiErrorHandler
+//  because Errorhandler is also a RIB request)
 // REQ_BEGIN
 // REQ_END
 // REQ_CONTEXT
@@ -938,23 +1020,14 @@ public:
 	 *  @return The name of the class (can be used as atomized string).
 	 */
 	inline static const char *myClassName(void) { return "CRiErrorHandler"; }
+
 	inline virtual const char *className() const { return CRiErrorHandler::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to specific class atomizedClassName.
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to a kind of class atomizedClassName.
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -1020,20 +1093,7 @@ public:
 		return new CRiErrorHandler(*this);
 	}
 
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ERROR_HANDLER; }
-
-	//! Replays the errorhandler statement for a given renderer
-	/*! @param ri Instance of a renderer, used to replay the errorhandler statement
-	 */
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.preErrorHandler(*m_handler);
-		ri.doErrorHandler(*m_handler);
-	}
 
 	/** @brief Gets the handler.
 	 *
@@ -1060,6 +1120,21 @@ public:
 		m_handler = handler.duplicate();
 		if ( !m_handler )
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"CRiErrorHandler::handler()", __LINE__, __FILE__);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+	{
+		ri.preErrorHandler(*m_handler);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doErrorHandler(*m_handler);
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postErrorHandler(*m_handler);
 	}
 
 	/** @brief Assignment.
@@ -1089,6 +1164,7 @@ public:
  * The declaration is only stored here, not checked.
  */
 class CRiDeclare : public CRManInterfaceCall {
+private:
 	RtToken m_name;            //!< Atomized name of the declarated variable
 	std::string m_declaration; //!< The declaration, like: varying float[3]
 public:
@@ -1098,27 +1174,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiDeclare"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
 	inline virtual const char *className() const { return CRiDeclare::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to specific class atomizedClassName.
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to a kind of class atomizedClassName.
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -1163,10 +1225,6 @@ public:
 		return new CRiDeclare(*this);
 	}
 
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DECLARE; }
 
 	/** @brief Gets the token of the name iof the declaration.
@@ -1205,6 +1263,21 @@ public:
 		m_declaration = noNullStr(aDeclaration);
 	}
 
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+	{
+		ri.preDeclare(name(), declaration(), false);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doDeclare(name(), declaration());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postDeclare(name(), declaration());
+	}
+
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -1221,42 +1294,6 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
-
-	/** @brief Pre-Processes an interface call
-	 *
-	 *  Pre-Processing normally involves state update of the renderer.
-	 *  Is also performed before macro insertion.
-	 *
-	 *  @param ri The renderer backend used for pre-processing.
-	 */
-	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
-	{
-		ri.preDeclare(name(), declaration(), false);
-	}
-
-	/** @brief Processes an interface call
-	 *
-	 *  Processing the interface call, e.g. do the rendering. This is
-	 *  not called at a macro (object) definition.
-	 *
-	 *  @param ri The renderer backend used for processing.
-	 */
-	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.doDeclare(name(), declaration());
-	}
-
-	/** @brief Post-Processes an interface call
-	 *
-	 *  Post-Processing the interface call, is called after
-	 *  Macro insertion or processing.
-	 *
-	 *  @param ri The renderer backend used for pre-processing.
-	 */
-	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.postDeclare(name(), declaration());
-	}
 }; // CRiDeclare
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1271,27 +1308,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiFrameBegin"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
 	inline virtual const char *className() const { return CRiFrameBegin::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -1333,10 +1356,6 @@ public:
 	{
 	}
 
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_BEGIN; }
 
 	/** @brief Gets the frame number.
@@ -1357,6 +1376,20 @@ public:
 		m_frameNumber = number;
 	}
 
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preFrameBegin(m_frameNumber);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doFrameBegin(m_frameNumber);
+	}
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postFrameBegin(m_frameNumber);
+	}
+
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1372,21 +1405,8 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
-
-	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.preFrameBegin(m_frameNumber);
-	}
-
-	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.doFrameBegin(m_frameNumber);
-	}
-	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.postFrameBegin(m_frameNumber);
-	}
 }; // CRiFrameBegin
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Ends a frame block.
@@ -1399,27 +1419,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiFrameEnd"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
 	inline virtual const char *className() const { return CRiFrameEnd::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -1442,6 +1448,12 @@ public:
 		*this = c;
 	}
 
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiFrameEnd()
+	{
+	}
+
 	/** @brief Cloning.
 	 *
 	 *  @return A clone of this object.
@@ -1451,31 +1463,7 @@ public:
 		return new CRiFrameEnd(*this);
 	}
 
-	/** @brief Destructor.
-	 */
-	inline virtual ~CRiFrameEnd()
-	{
-	}
-
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_FRAME_END; }
-
-	/** @brief Assignment.
-	 *
-	 * @param c Object to assign.
-	 * @return A reference to this object.
-	 */
-	inline CRiFrameEnd &CRiFrameEnd::operator=(const CRiFrameEnd &c)
-	{
-		if ( this == &c )
-			return *this;
-
-		CRManInterfaceCall::operator=(c);
-		return *this;
-	}
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -1490,6 +1478,20 @@ public:
 	{
 		ri.postFrameEnd();
 	}
+
+	/** @brief Assignment.
+	 *
+	 * @param c Object to assign.
+	 * @return A reference to this object.
+	 */
+	inline CRiFrameEnd &CRiFrameEnd::operator=(const CRiFrameEnd &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiFrameEnd
 
 
@@ -1501,24 +1503,19 @@ public:
  */
 class CRiWorldBegin : public CRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiWorldBegin"; }
+
 	inline virtual const char *className() const { return CRiWorldBegin::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -1526,44 +1523,33 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
+	 */
 	inline CRiWorldBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
-	//! Copy constructor
-	/** @param c Object to copy
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy
 	 */
 	inline CRiWorldBegin(const CRiWorldBegin &c)
 	{
 		*this = c;
 	}
 
-	//! Destructor, frees the resources
+	/** @brief Destructor.
+	 */
 	inline virtual ~CRiWorldBegin()
 	{
 	}
 
-	//! Cloning
-	/** @return a clone of this object
-	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiWorldBegin(*this);
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_WORLD_BEGIN; }
-
-	/** @brief Assignment
-	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
-	 */
-	inline CRiWorldBegin &CRiWorldBegin::operator=(const CRiWorldBegin &c)
-	{
-		if ( this == &c )
-			return *this;
-
-		CRManInterfaceCall::operator=(c);
-		return *this;
-	}
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -1578,6 +1564,20 @@ public:
 	{
 		ri.postWorldBegin();
 	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiWorldBegin &CRiWorldBegin::operator=(const CRiWorldBegin &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiWorldBegin
 
 
@@ -1589,24 +1589,19 @@ public:
  */
 class CRiWorldEnd : public CRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiWorldEnd"; }
+
 	inline virtual const char *className() const { return CRiWorldEnd::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -1614,47 +1609,33 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	//! Constructor
-	/** @param aLineNo Line number of a Rib Archive, -1 if there is no such file
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
 	inline CRiWorldEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
-	//! Copy constructor
-	/** @param c Object to copy
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy
 	 */
 	inline CRiWorldEnd(const CRiWorldEnd &c)
 	{
 		*this = c;
 	}
 
-	//! Destructor, frees the resources
+	/** @brief Destructor.
+	 */
 	inline virtual ~CRiWorldEnd()
 	{
 	}
 
-	//! Cloning
-	/** @return a clone of this object
-	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiWorldEnd(*this);
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_WORLD_END; }
-
-	/** @brief Assignment
-	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
-	 */
-	inline CRiWorldEnd &CRiWorldEnd::operator=(const CRiWorldEnd &c)
-	{
-		if ( this == &c )
-			return *this;
-
-		CRManInterfaceCall::operator=(c);
-		return *this;
-	}
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -1670,72 +1651,13 @@ public:
 	{
 		ri.postWorldEnd();
 	}
-}; // CRiWorldEnd
-
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Begin of an attribute block
- */
-class CRiAttributeBegin : public CRManInterfaceCall {
-public:
-	inline static const char *myClassName(void) { return "CRiAttributeBegin"; }
-	inline virtual const char *className() const { return CRiAttributeBegin::myClassName(); }
-
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
-
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
-	}
-
-	//! Constructor
-	/** @param aLineNo Line number of a Rib Archive, -1 if there is no such file
-	 */
-	inline CRiAttributeBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
-
-	//! Copy constructor
-	/** @param c Object to copy
-	 */
-	inline CRiAttributeBegin(const CRiAttributeBegin &c)
-	{
-		*this = c;
-	}
-
-	//! Destructor, frees the resources
-	inline virtual ~CRiAttributeBegin()
-	{
-	}
-
-	//! Cloning
-	/** @return a clone of this object
-	 */
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRiAttributeBegin(*this);
-	}
-
-	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_BEGIN; }
 
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
 	 * @return A reference to this object
 	 */
-	inline CRiAttributeBegin &CRiAttributeBegin::operator=(const CRiAttributeBegin &c)
+	inline CRiWorldEnd &CRiWorldEnd::operator=(const CRiWorldEnd &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -1743,6 +1665,60 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
+}; // CRiWorldEnd
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Begin of an attribute block
+ */
+class CRiAttributeBegin : public CRManInterfaceCall {
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiAttributeBegin"; }
+
+	inline virtual const char *className() const { return CRiAttributeBegin::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
+	 */
+	inline CRiAttributeBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy
+	 */
+	inline CRiAttributeBegin(const CRiAttributeBegin &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiAttributeBegin()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiAttributeBegin(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_BEGIN; }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -1758,72 +1734,13 @@ public:
 	{
 		ri.postAttributeBegin();
 	}
-}; // CRiAttributeBegin
-
-///////////////////////////////////////////////////////////////////////////////
-/** @brief End of an attribute block
- */
-class CRiAttributeEnd : public CRManInterfaceCall {
-public:
-	inline static const char *myClassName(void) { return "CRiAttributeEnd"; }
-	inline virtual const char *className() const { return CRiAttributeEnd::myClassName(); }
-
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
-
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
-	}
-
-	//! Constructor
-	/** @param aLineNo Line number of a Rib Archive, -1 if there is no such file
-	 */
-	inline CRiAttributeEnd(long aLineNo) : CRManInterfaceCall(aLineNo) {}
-
-	//! Copy constructor
-	/** @param c Object to copy
-	 */
-	inline CRiAttributeEnd(const CRiAttributeEnd &c)
-	{
-		*this = c;
-	}
-
-	//! Destructor, frees the resources
-	inline virtual ~CRiAttributeEnd()
-	{
-	}
-
-	//! Cloning
-	/** @return a clone of this object
-	 */
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRiAttributeEnd(*this);
-	}
-
-	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_END; }
 
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
 	 * @return A reference to this object
 	 */
-	inline CRiAttributeEnd &CRiAttributeEnd::operator=(const CRiAttributeEnd &c)
+	inline CRiAttributeBegin &CRiAttributeBegin::operator=(const CRiAttributeBegin &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -1831,6 +1748,60 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
+}; // CRiAttributeBegin
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief End of an attribute block
+ */
+class CRiAttributeEnd : public CRManInterfaceCall {
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiAttributeEnd"; }
+
+	inline virtual const char *className() const { return CRiAttributeEnd::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
+	 */
+	inline CRiAttributeEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy
+	 */
+	inline CRiAttributeEnd(const CRiAttributeEnd &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiAttributeEnd()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiAttributeEnd(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE_END; }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -1846,72 +1817,13 @@ public:
 	{
 		ri.postAttributeEnd();
 	}
-}; // CRiAttributeEnd
-
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Begin of a transformation block
- */
-class CRiTransformBegin : public CRManInterfaceCall {
-public:
-	inline static const char *myClassName(void) { return "CRiTransformBegin"; }
-	inline virtual const char *className() const { return CRiTransformBegin::myClassName(); }
-
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
-
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
-	}
-
-	//! Constructor
-	/** @param aLineNo Line number of a Rib Archive, -1 if there is no such file
-	 */
-	inline CRiTransformBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
-
-	//! Copy constructor
-	/** @param c Object to copy
-	 */
-	inline CRiTransformBegin(const CRiTransformBegin &c)
-	{
-		*this = c;
-	}
-
-	//! Destructor, frees the resources
-	inline virtual ~CRiTransformBegin()
-	{
-	}
-
-	//! Cloning
-	/** @return a clone of this object
-	 */
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRiTransformBegin(*this);
-	}
-
-	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_BEGIN; }
 
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
 	 * @return A reference to this object
 	 */
-	inline CRiTransformBegin &CRiTransformBegin::operator=(const CRiTransformBegin &c)
+	inline CRiAttributeEnd &CRiAttributeEnd::operator=(const CRiAttributeEnd &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -1919,6 +1831,60 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
+}; // CRiAttributeEnd
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Begin of a transformation block
+ */
+class CRiTransformBegin : public CRManInterfaceCall {
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiTransformBegin"; }
+
+	inline virtual const char *className() const { return CRiTransformBegin::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
+	 */
+	inline CRiTransformBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy
+	 */
+	inline CRiTransformBegin(const CRiTransformBegin &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiTransformBegin()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiTransformBegin(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_BEGIN; }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -1934,6 +1900,20 @@ public:
 	{
 		ri.postTransformBegin();
 	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiTransformBegin &CRiTransformBegin::operator=(const CRiTransformBegin &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiTransformBegin
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1941,24 +1921,19 @@ public:
  */
 class CRiTransformEnd : public CRManInterfaceCall {
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiTransformEnd"; }
+
 	inline virtual const char *className() const { return CRiTransformEnd::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -1966,7 +1941,7 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	/** @brief Constructor,
+	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
@@ -1987,30 +1962,12 @@ public:
 	{
 	}
 
-	/** @brief Cloning.
-	 *
-	 *  @return a clone of this object
-	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiTransformEnd(*this);
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_END; }
-
-	/** @brief Assignment
-	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
-	 */
-	inline CRiTransformEnd &CRiTransformEnd::operator=(const CRiTransformEnd &c)
-	{
-		if ( this == &c )
-			return *this;
-
-		CRManInterfaceCall::operator=(c);
-		return *this;
-	}
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -2025,6 +1982,20 @@ public:
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postTransformEnd();
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiTransformEnd &CRiTransformEnd::operator=(const CRiTransformEnd &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
 	}
 }; // CRiTransformEnd
 
@@ -2042,27 +2013,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiSolidBegin"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
 	inline virtual const char *className() const { return CRiSolidBegin::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2070,7 +2027,7 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	/** @brief Constructor.
+	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
 	 *  @param anOperation The token of the operation (must be an atomized string, @see CToken).
@@ -2092,19 +2049,11 @@ public:
 	{
 	}
 
-	/** @brief Cloning.
-	 *
-	 *  @return A clone of this object.
-	 */
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiSolidBegin(*this);
 	}
 
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_BEGIN; }
 
 	/** @brief Gets the solid operation.
@@ -2123,6 +2072,21 @@ public:
 		m_type = aType;
 	}
 
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preSolidBegin(m_type);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doSolidBegin(m_type);
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postSolidBegin(m_type);
+	}
+
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -2138,21 +2102,6 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
-
-	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.preSolidBegin(m_type);
-	}
-
-	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.doSolidBegin(m_type);
-	}
-
-	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.postSolidBegin(m_type);
-	}
 }; // CRiSolidBegin
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2166,27 +2115,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiSolidEnd"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
 	inline virtual const char *className() const { return CRiSolidEnd::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2194,10 +2129,9 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	/** @brief Constructor.
+	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
-	 *  @param anOperation The token of the operation (must be an atomized string, @see CToken).
 	 */
 	inline CRiSolidEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
@@ -2210,41 +2144,18 @@ public:
 		*this = c;
 	}
 
-	/** @brief Cloning.
-	 *
-	 *  @return A clone of this object.
-	 */
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRiSolidEnd(*this);
-	}
-
 	/** @brief Destructor.
 	 */
 	inline virtual ~CRiSolidEnd()
 	{
 	}
 
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
-	inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_END; }
-
-	/** @brief Assignment
-	 *
-	 * @param c Object to assign
-	 * @return A reference to this object
-	 */
-	inline CRiSolidEnd &CRiSolidEnd::operator=(const CRiSolidEnd &c)
+	inline virtual CRManInterfaceCall *duplicate() const
 	{
-		if ( this == &c )
-			return *this;
-
-		CRManInterfaceCall::operator=(c);
-		return *this;
+		return new CRiSolidEnd(*this);
 	}
 
+	inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_END; }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -2260,43 +2171,53 @@ public:
 	{
 		ri.postSolidEnd();
 	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiSolidEnd &CRiSolidEnd::operator=(const CRiSolidEnd &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
 }; // CRiSolidEnd
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Starts an object block of retained geometry.
+ *
+ *  CRiObjectBegin requests are used to control macro definitions and
+ *  instances are not stored at a macro themselves.
+ */
 class CRiObjectBegin : public CRManInterfaceCall {
 protected:
-	RtObjectHandle m_handle;
+	RtObjectHandle m_handle; //!< Handle used to identify the object
 
 public:
 	/** @brief Gets name for the class.
 	 *
 	 *  @return The name of the class (can be used as atomized string)
 	 */
-	inline static const char *myClassName(void) { return "CRiObjectBegin"; }
+	inline static const char *myClassName(void)
+	{
+		return "CRiObjectBegin";
+	}
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
-	inline virtual const char *className() const { return CRiObjectBegin::myClassName(); }
-
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
+	inline virtual const char *className() const
+	{
+		return CRiObjectBegin::myClassName();
+	}
+	
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
-
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
+	
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2304,16 +2225,28 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	inline CRiObjectBegin(
-		long aLineNo = -1)
-		: CRManInterfaceCall(aLineNo)
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiObjectBegin(long aLineNo = -1) : CRManInterfaceCall(aLineNo)
 	{
 		m_handle = illObjectHandle;
 	}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CRiObjectBegin(const CRiSolidEnd &c)
 	{
 		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiObjectBegin()
+	{
 	}
 
 	inline virtual CRManInterfaceCall *duplicate() const
@@ -2321,15 +2254,23 @@ public:
 		return new CRiObjectBegin(*this);
 	}
 
-	inline virtual ~CRiObjectBegin()
-	{
-	}
-
-	inline virtual RtObjectHandle handle() const { return m_handle; }
-	inline virtual void handle(RtObjectHandle handle) { m_handle = handle; }
-	
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_BEGIN; }
 
+	/** Gets the handle of the object.
+	 *
+	 * @return Handle of the object.
+	 */
+	inline virtual RtObjectHandle handle() const { return m_handle; }
+
+	/** Sets the handle of the object.
+	 *
+	 * The handle is generated by a IDoRender::preObjectBegin() implementation
+	 * using a TemplHandleStack.
+	 *
+	 * @param aHandle Handle of the object.
+	 */
+	inline virtual void handle(RtObjectHandle aHandle) { m_handle = aHandle; }
+	
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		handle(ri.preObjectBegin());
@@ -2345,6 +2286,11 @@ public:
 		ri.postObjectBegin(handle());
 	}
 
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
 	inline CRiObjectBegin &operator=(const CRiObjectBegin &c) {
 		if ( this == &c )
 			return *this;
@@ -2361,8 +2307,13 @@ public:
 	}
 }; // CRiObjectBegin
 
+
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Ends an object block of retained geometry.
+ *
+ *  CRiObjectEnd requests are used to control macro definitions and
+ *  instances are not stored at a macro themselves.
+ */
 class CRiObjectEnd : public CRManInterfaceCall {
 public:
 	/** @brief Gets name for the class.
@@ -2371,27 +2322,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiObjectEnd"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
 	inline virtual const char *className() const { return CRiObjectEnd::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2399,20 +2336,30 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 */
 	inline CRiObjectEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CRiObjectEnd(const CRiObjectEnd &c)
 	{
 		*this = c;
 	}
 
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiObjectEnd()
+	{
+	}
+
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiObjectEnd(*this);
-	}
-
-	inline virtual ~CRiObjectEnd()
-	{
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_END; }
@@ -2432,6 +2379,11 @@ public:
 		ri.postObjectEnd();
 	}
 
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
 	inline CRiObjectEnd &operator=(const CRiObjectEnd &c) {
 		if ( this == &c )
 			return *this;
@@ -2447,13 +2399,15 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Begins the block of an archive.
+ *
+ *  CRiArchiveBegin requests are used to control macro definitions and
+ *  instances are not stored at a macro themselves.
+ */
 class CRiArchiveBegin : public CVarParamRManInterfaceCall {
-
-protected:
-	RtArchiveHandle m_handle;
-	std::string m_name;
-
+private:
+	RtArchiveHandle m_handle; //!< Associated archive handle to identify the object (constructed by IDoRender::preArchiveBegin()).
+	std::string m_name;       //!< Name of the archive, used to generate the handle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2461,27 +2415,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiArchiveBegin"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
 	inline virtual const char *className() const { return CRiArchiveBegin::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2489,14 +2429,28 @@ public:
 		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	inline CRiArchiveBegin(
-		long aLineNo = -1, const char *aName = 0)
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the archive. If empty, a name will generated by the framework (TemplHandleStack).
+	 */
+	inline CRiArchiveBegin(long aLineNo = -1, const char *aName = 0)
 		: CVarParamRManInterfaceCall(aLineNo)
 	{
 		m_handle = illObjectHandle;
 		m_name = noNullStr(aName);
 	}
 
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aName Name of the archive. If empty, a name will generated by the framework (TemplHandleStack).
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	inline CRiArchiveBegin(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
@@ -2506,19 +2460,34 @@ public:
 		m_name = noNullStr(aName);
 	}
 
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the archive. If empty, a name will generated by the framework (TemplHandleStack).
+	 *  @param theParameters Parameter values of the request.
+	 */
 	inline CRiArchiveBegin(
 		long aLineNo,
 		RtToken aName,
-		const CParameterList &theParameters
-		)
+		const CParameterList &theParameters)
 		: CVarParamRManInterfaceCall(aLineNo, theParameters)
 	{
 		m_name = noNullStr(aName);
 	}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CRiArchiveBegin(const CRiArchiveBegin &c)
 	{
 		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiArchiveBegin()
+	{
 	}
 
 	inline virtual CRManInterfaceCall *duplicate() const
@@ -2526,17 +2495,37 @@ public:
 		return new CRiArchiveBegin(*this);
 	}
 
-	inline virtual ~CRiArchiveBegin()
-	{
-	}
-
-	inline virtual RtArchiveHandle handle() const { return m_handle; }
-	inline virtual void handle(RtArchiveHandle handle) { m_handle = handle; }
-	
-	inline virtual RtString name() const { return m_name.c_str(); }
-	inline virtual void name(const char *aName) { m_name = noNullStr(aName); }
-
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_BEGIN; }
+
+	/** Gets the handle of the archive.
+	 *
+	 * @return Handle of the archive.
+	 */
+	inline virtual RtArchiveHandle handle() const { return m_handle; }
+
+	/** Sets the handle of the archive.
+	 *
+	 * The handle is generated by a IDoRender::preArchiveBegin() implementation
+	 * using a TemplHandleStack.
+	 *
+	 * @param aHandle Handle of the archive.
+	 */
+	inline virtual void handle(RtArchiveHandle aHandle) { m_handle = aHandle; }
+	
+	/** Gets the name of the archive.
+	 *
+	 * @return Name of the archive.
+	 */
+	inline virtual RtString name() const { return m_name.c_str(); }
+
+	/** Sets the name of the archive.
+	 *
+	 * The name is set by the constructor and usually not changed. The name
+	 * is used to create the handle. An archive can overwrite another one with the same name.
+	 *
+	 * @param aName Name of the archive.
+	 */
+	inline virtual void name(const char *aName) { m_name = noNullStr(aName); }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -2553,6 +2542,11 @@ public:
 		ri.postArchiveBegin(handle(), name(), parameters());
 	}
 
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
 	inline CRiArchiveBegin &operator=(const CRiArchiveBegin &c) {
 		if ( this == &c )
 			return *this;
@@ -2570,8 +2564,13 @@ public:
 	}
 }; // CRiArchiveBegin
 
+
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Ends the block of an archive.
+ *
+ *  CRiArchiveEnd requests are used to control macro definitions and
+ *  instances are not stored at a macro themselves.
+ */
 class CRiArchiveEnd : public CRManInterfaceCall {
 public:
 	/** @brief Gets name for the class.
@@ -2580,27 +2579,13 @@ public:
 	 */
 	inline static const char *myClassName(void) { return "CRiArchiveEnd"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
 	inline virtual const char *className() const { return CRiArchiveEnd::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2608,20 +2593,30 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 */
 	inline CRiArchiveEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CRiArchiveEnd(const CRiArchiveEnd &c)
 	{
 		*this = c;
 	}
 
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiArchiveEnd()
+	{
+	}
+
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiArchiveEnd(*this);
-	}
-
-	inline virtual ~CRiArchiveEnd()
-	{
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_END; }
@@ -2641,6 +2636,11 @@ public:
 		ri.postArchiveEnd();
 	}
 
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
 	inline CRiArchiveEnd &operator=(const CRiArchiveEnd &c) {
 		if ( this == &c )
 			return *this;
@@ -2656,38 +2656,27 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief Start of a motion block.
+ *
+ *  @todo Count the time stamps within a motion block at the render state.
+ */
 class CRiMotionBegin : public CRManInterfaceCall {
 	std::vector<RtFloat> m_motionVars; //!< The motion "time stamps"
 
 public:
-	/** @brief Gets name for the class.
+	/** @brief Gets the name for the class.
 	 *
 	 *  @return The name of the class (can be used as atomized string)
 	 */
 	inline static const char *myClassName(void) { return "CRiMotionBegin"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
 	inline virtual const char *className() const { return CRiMotionBegin::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2695,31 +2684,49 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
-	inline CRiMotionBegin(long aLineNo=-1) :
-		CRManInterfaceCall(aLineNo)
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiMotionBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo)
 	{
 	}
 
+	/** @brief Constructor.
+	 *
+	 *  Start of a motion block. The motion block contains n requests. Each requests is associated with a
+	 *  time sample using the vector f of "time stamps".
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known).
+	 *  @param n Number of "time stamps".
+	 *  @param Vector of "time stamps", size is @a n.
+	 */
 	inline CRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) :
 		CRManInterfaceCall(aLineNo)
 	{
 		motionVars(n, f);
 	}
 
-	inline CRiMotionBegin(const CRiSolidEnd &c)
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiMotionBegin(const CRiMotionBegin &c)
 	{
 		*this = c;
 	}
 
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiMotionBegin()
+	{
+	}
+	
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CRiMotionBegin(*this);
 	}
 
-	inline virtual ~CRiMotionBegin()
-	{
-	}
-	
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_BEGIN; }
 
 	std::vector<RtFloat> &motionVars()
@@ -2746,58 +2753,65 @@ public:
 		}
 	}
 
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preMotionBegin(
 			static_cast<RtInt>(m_motionVars.size()),
 			m_motionVars.empty() ? 0 : &m_motionVars[0]
 		);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doMotionBegin(
 			static_cast<RtInt>(m_motionVars.size()),
 			m_motionVars.empty() ? 0 : &m_motionVars[0]
 		);
 	}
 
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postMotionBegin(
+			static_cast<RtInt>(m_motionVars.size()),
+			m_motionVars.empty() ? 0 : &m_motionVars[0]
+		);
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
 	inline CRiMotionBegin &operator=(const CRiMotionBegin &c) {
 		if ( this == &c )
 			return *this;
+
 		motionVars(c.motionVars());
+
 		CRManInterfaceCall::operator=(c);
 	 	return *this;
 	}
 }; // CRiMotionBegin
 
+
 ///////////////////////////////////////////////////////////////////////////////
-//! \sa CRManInterfaceCall
+/** @brief End of a motion block.
+ */
 class CRiMotionEnd : public CRManInterfaceCall {
 public:
-	/** @brief Gets name for the class.
+	/** @brief Gets the name for the class.
 	 *
 	 *  @return The name of the class (can be used as atomized string)
 	 */
 	inline static const char *myClassName(void) { return "CRiMotionEnd"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
 	inline virtual const char *className() const { return CRiMotionEnd::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to specific class atomizedClassName
-	 */
 	inline virtual bool isA(const char *atomizedClassName) const
 	{
 		return ( atomizedClassName == myClassName() );
 	}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
 	inline virtual bool isKindOf(const char *atomizedClassName) const
 	{
 		if ( atomizedClassName == myClassName() )
@@ -2805,12 +2819,54 @@ public:
 		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if alineNo is initialized to -1 (a line number is not known)
+	 */
 	inline CRiMotionEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiMotionEnd(const CRiMotionEnd &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiMotionEnd()
+	{
+	}
+	
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiMotionEnd(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_END; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.preMotionEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doMotionEnd();
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postMotionEnd();
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
 	inline CRiMotionEnd &operator=(const CRiMotionEnd &c) {
 		if ( this == &c )
 			return *this;
@@ -2828,7 +2884,7 @@ class CRiFormat : public CRManInterfaceCall {
 	      m_yres;     //!< Height of the image to be rendered.
 	RtFloat m_aspect; //!< Pixel aspect ratio (width to the height).
 public:
-	/** @brief Gets name for the class.
+	/** @brief Gets the name for the class.
 	 *
 	 *  @return The name of the class (can be used as atomized string)
 	 */

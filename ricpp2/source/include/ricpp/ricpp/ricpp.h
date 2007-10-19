@@ -263,9 +263,9 @@ public:
 	 *  @{
 	 */
 
-	/** @brief Creates a handle for an external resource. Scope inside resourceBegin, resourceEnd
+	/** @brief Creates an external resource. Scope inside resourceBegin, resourceEnd
 	 *
-	 *  resourceV() creates a handle (input/output, store/reload) for the resource @a name of the given @a type
+	 *  resourceV() creates  a resource (input/output, store/reload) @a name of the given @a type
 	 *
 	 *  Pixars C-binding exposes no return type (RtString name -> name string to identify the handle).
 	 *  Can be used to store sets of attributes.
@@ -286,11 +286,9 @@ public:
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list.
 	 *  @param params Value pointer for additional parameter list for the resource
-	 *  @return The handle for the resource is the tokenized name. Can be used to test: illResourceHandle on error.
-	 *  If ok, strcmp(retval, name) == 0.
 	 *  @see resourcebegin(), resourceEnd()
 	 */
-	virtual RtResourceHandle resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 	/** @defgroup ricpp_modes Ri Modes
@@ -1480,7 +1478,7 @@ public:
 	/*  @brief Ressource handle
 	 *  @see IRiRoot::resourceV()
 	 */
-	virtual RtResourceHandle resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @defgroup ricpp_contexts Ri context handlers

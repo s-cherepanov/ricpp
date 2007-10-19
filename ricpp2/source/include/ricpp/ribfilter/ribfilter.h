@@ -203,11 +203,10 @@ public:
 			callee()->system(cmd);
 	}
 
-	inline virtual RtResourceHandle resourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid resourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return canCall(REQ_RESOURCE) ?
-			callee()->resourceV(name, type, n, tokens, params) :
-			illResourceHandle;
+		if ( canCall(REQ_RESOURCE) )
+			callee()->resourceV(name, type, n, tokens, params);
 	}
 
 	inline virtual RtVoid frameBegin(RtInt number)

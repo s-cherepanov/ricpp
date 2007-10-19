@@ -726,20 +726,21 @@ RtVoid CRiCPPBridge::system(RtString cmd)
 	}
 }
 
-RtResourceHandle CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
+RtVoid CRiCPPBridge::resource(RtString name, RtToken type, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
 
-	return resourceV(name, type, n, &m_tokens[0], &m_params[0]);
+	resourceV(name, type, n, &m_tokens[0], &m_params[0]);
 }
 
-RtResourceHandle CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
-			return m_ctxMgmt.curBackend().renderingContext()->resourceV(name, type, n, tokens, params);
+			m_ctxMgmt.curBackend().renderingContext()->resourceV(name, type, n, tokens, params);
+			return;
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
@@ -748,7 +749,7 @@ RtResourceHandle CRiCPPBridge::resourceV(RtString name, RtToken type, RtInt n, R
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::resourceV(name:%s, type:%s, n:%d, ...)", name ? name : "", type ? type : "", (int)n);
 	}
 
-	return illResourceHandle;
+	return;
 }
 
 RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect)

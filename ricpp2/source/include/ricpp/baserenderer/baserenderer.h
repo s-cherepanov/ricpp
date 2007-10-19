@@ -210,7 +210,7 @@ public:
 
 	inline virtual RtVoid synchronize(RtToken name) {}
 	inline virtual RtVoid system(RtToken cmd) {}
-	inline virtual RtResourceHandle resourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) { return illResourceHandle; }
+	inline virtual RtVoid resourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) { }
 
 	/** @brief Initializes a new render context.
 	 *

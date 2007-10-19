@@ -48,7 +48,6 @@ const RtContextHandle illContextHandle = (RtContextHandle)0; ///< illegal contex
 const RtObjectHandle illObjectHandle = (RtObjectHandle)0; ///< illegal object handle
 const RtLightHandle illLightHandle = (RtLightHandle)0; ///< illegal light source handle
 const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)0; ///< illegal archive handle
-const RtArchiveHandle illResourceHandle = (RtResourceHandle)0; ///< illegal resource handle
 //@}
 
 

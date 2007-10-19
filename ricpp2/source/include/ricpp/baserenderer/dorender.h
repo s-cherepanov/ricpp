@@ -71,7 +71,7 @@ public:
 
 	/** Replays a single interface call
 	 */
-	virtual void replayRequest(class CRManInterfaceCall &aRequest) = 0;
+	virtual void replayRequest(class CRManInterfaceCall &aRequest, const IArchiveCallback *cb) = 0;
 
 	/** @brief Special context handling (see IRiContext::abort(), IRiContext::activate(), IRiContext::deactivate()
 	 */

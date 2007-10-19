@@ -146,7 +146,7 @@ protected:
 	inline virtual CRiMacro *curMacro() {return 0;}
 
 	virtual void processRequest(CRManInterfaceCall &aRequest);
-	virtual void replayRequest(CRManInterfaceCall &aRequest);
+	virtual void replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb);
 
 public:
 

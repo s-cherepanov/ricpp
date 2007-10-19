@@ -117,21 +117,11 @@ public:
 	/** @brief Replays the interface call.
 	 *
 	 *  @param ri The renderer backend used for replay.
-	 *  @param state The renderer backend status.
-	 */
-	inline virtual void replay(IDoRender &ri)
-	{
-		ri.replayRequest(*this);
-	}
-
-	/** @brief Replays the interface call.
-	 *
-	 *  @param ri The renderer backend used for replay.
 	 *  @param cb Archive callback.
 	 */
 	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		replay(ri);
+		ri.replayRequest(*this, cb);
 	}
 
 	/** @brief Asks for the line number.
@@ -165,10 +155,47 @@ public:
 	 *  Pre-Processing normally involves state update of the renderer.
 	 *  Is also performed before macro insertion.
 	 *
+	 *  @param cb Callback interface for comments.
+	 *  @param ri The renderer backend used for pre-processing.
+	 */
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+	}
+
+	/** @brief Processes an interface call
+	 *
+	 *  Processing the interface call, e.g. do the rendering. This is
+	 *  not called at a macro (object) definition.
+	 *
+	 *  @param cb Callback interface for comments.
+	 *  @param ri The renderer backend used for processing.
+	 */
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+	}
+
+	/** @brief Post-Processes an interface call
+	 *
+	 *  Post-Processing the interface call, is called after
+	 *  Macro insertion or processing.
+	 *
+	 *  @param cb Callback interface for comments.
+	 *  @param ri The renderer backend used for pre-processing.
+	 */
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+	}
+
+	/** @brief Pre-Processes an interface call
+	 *
+	 *  Pre-Processing normally involves state update of the renderer.
+	 *  Is also performed before macro insertion.
+	 *
 	 *  @param ri The renderer backend used for pre-processing.
 	 */
 	inline virtual void preProcess(IDoRender &ri)
 	{
+		preProcess(ri, 0);
 	}
 
 	/** @brief Processes an interface call
@@ -180,6 +207,7 @@ public:
 	 */
 	inline virtual void doProcess(IDoRender &ri)
 	{
+		doProcess(ri, 0);
 	}
 
 	/** @brief Post-Processes an interface call
@@ -191,8 +219,8 @@ public:
 	 */
 	inline virtual void postProcess(IDoRender &ri)
 	{
+		postProcess(ri, 0);
 	}
-
 
 	/** @brief Test if interface call belongs to a macro definition
 	 *
@@ -805,12 +833,6 @@ public:
 	 */
 	void replay(IDoRender &ri, const IArchiveCallback *callback);
 
-	/** @brief Replays archive at a back end renderer.
-	 *
-	 *  @param ri The back end renderer used to replay.
-	 */
-	void replay(IDoRender &ri);
-
 	/** @brief Adds an interface call to the macro.
 	 *
 	 *  @param c Instance of an interface call.
@@ -1007,7 +1029,7 @@ public:
 	//! Replays the errorhandler statement for a given renderer
 	/*! @param ri Instance of a renderer, used to replay the errorhandler statement
 	 */
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preErrorHandler(*m_handler);
 		ri.doErrorHandler(*m_handler);
@@ -1207,7 +1229,7 @@ public:
 	 *
 	 *  @param ri The renderer backend used for pre-processing.
 	 */
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
 	{
 		ri.preDeclare(name(), declaration(), false);
 	}
@@ -1219,7 +1241,7 @@ public:
 	 *
 	 *  @param ri The renderer backend used for processing.
 	 */
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doDeclare(name(), declaration());
 	}
@@ -1231,7 +1253,7 @@ public:
 	 *
 	 *  @param ri The renderer backend used for pre-processing.
 	 */
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postDeclare(name(), declaration());
 	}
@@ -1351,16 +1373,16 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preFrameBegin(m_frameNumber);
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doFrameBegin(m_frameNumber);
 	}
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postFrameBegin(m_frameNumber);
 	}
@@ -1455,16 +1477,16 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preFrameEnd();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doFrameEnd();
 	}
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postFrameEnd();
 	}
@@ -1543,16 +1565,16 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preWorldBegin();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doWorldBegin();
 	}
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postWorldBegin();
 	}
@@ -1634,17 +1656,17 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preWorldEnd();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doWorldEnd();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postWorldEnd();
 	}
@@ -1722,17 +1744,17 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preAttributeBegin();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doAttributeBegin();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postAttributeBegin();
 	}
@@ -1810,17 +1832,17 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preAttributeEnd();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doAttributeEnd();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postAttributeEnd();
 	}
@@ -1898,17 +1920,17 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preTransformBegin();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doTransformBegin();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postTransformBegin();
 	}
@@ -1990,17 +2012,17 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preTransformEnd();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doTransformEnd();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postTransformEnd();
 	}
@@ -2117,17 +2139,17 @@ public:
 		return *this;
 	}
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSolidBegin(m_type);
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doSolidBegin(m_type);
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postSolidBegin(m_type);
 	}
@@ -2224,17 +2246,17 @@ public:
 	}
 
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSolidEnd();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doSolidEnd();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postSolidEnd();
 	}
@@ -2308,17 +2330,17 @@ public:
 	
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_BEGIN; }
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		handle(ri.preObjectBegin());
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doObjectBegin(handle());
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postObjectBegin(handle());
 	}
@@ -2395,17 +2417,17 @@ public:
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_END; }
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preObjectEnd();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doObjectEnd();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postObjectEnd();
 	}
@@ -2516,17 +2538,17 @@ public:
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_BEGIN; }
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		handle(ri.preArchiveBegin(name(), parameters()));
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doArchiveBegin(handle(), name(), parameters());
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postArchiveBegin(handle(), name(), parameters());
 	}
@@ -2604,17 +2626,17 @@ public:
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_END; }
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preArchiveEnd();
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doArchiveEnd();
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postArchiveEnd();
 	}
@@ -2724,7 +2746,7 @@ public:
 		}
 	}
 
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preMotionBegin(
 			static_cast<RtInt>(m_motionVars.size()),
@@ -2785,7 +2807,7 @@ public:
 
 	inline CRiMotionEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_END; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		ri.preMotionEnd();
 		ri.doMotionEnd();
 	}
@@ -2951,7 +2973,7 @@ public:
 	 *
 	 *  @param ri Back end renderer
 	 */
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preFormat(m_xres, m_yres, m_aspect);
 		ri.doFormat(m_xres, m_yres, m_aspect);
@@ -3090,7 +3112,7 @@ public:
 	 *
 	 *  @param ri Back end renderer.
 	 */
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preFrameAspectRatio(m_aspect);
 		ri.doFrameAspectRatio(m_aspect);
@@ -3292,7 +3314,7 @@ public:
 	 *
 	 *  @param ri Back end renderer
 	 */
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preScreenWindow(m_left, m_right, m_bottom, m_top);
 		ri.doScreenWindow(m_left, m_right, m_bottom, m_top);
@@ -3333,7 +3355,7 @@ public:
 
 	inline CRiCropWindow(long aLineNo, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) : CRManInterfaceCall(aLineNo), m_xmin(xmin), m_xmax(xmax), m_ymin(ymin), m_ymax(ymax) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CROP_WINDOW; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCropWindow(m_xmin, m_xmax, m_ymin, m_ymax);
 		ri.doCropWindow(m_xmin, m_xmax, m_ymin, m_ymax);
@@ -3470,7 +3492,7 @@ public:
 	 *  @param ri The renderer backend used for replay.
 	 *  @param state The renderer backend status.
 	 */
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preProjection(name(), parameters());
 		ri.doProjection(name(), parameters());
@@ -3524,7 +3546,7 @@ public:
 	inline CRiClipping(long aLineNo, RtFloat hither, RtFloat yon)
 		: CRManInterfaceCall(aLineNo), m_hither(hither), m_yon(yon) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preClipping(m_hither, m_yon);
 		ri.doClipping(m_hither, m_yon);
@@ -3550,7 +3572,7 @@ public:
 
 	inline CRiClippingPlane(long aLineNo, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) : CRManInterfaceCall(aLineNo), m_x(x), m_y(y), m_z(z), m_nx(nx), m_ny(ny), m_nz(nz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preClippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz);
 		ri.doClippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz);
@@ -3570,7 +3592,7 @@ public:
 
 	inline CRiDepthOfField(long aLineNo, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) : CRManInterfaceCall(aLineNo), m_fstop(fstop), m_focallength(focallength), m_focaldistance(focaldistance) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DEPTH_OF_FIELD; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preDepthOfField(m_fstop, m_focallength, m_focaldistance);
 		ri.doDepthOfField(m_fstop, m_focallength, m_focaldistance);
@@ -3590,7 +3612,7 @@ public:
 
 	inline CRiShutter(long aLineNo, RtFloat smin, RtFloat smax) : CRManInterfaceCall(aLineNo), m_smin(smin), m_smax(smax) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SHUTTER; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preShutter(m_smin, m_smax);
 		ri.doShutter(m_smin, m_smax);
@@ -3609,7 +3631,7 @@ public:
 
 	inline CRiPixelVariance(long aLineNo, RtFloat variation) : CRManInterfaceCall(aLineNo), m_variation(variation) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_VARIANCE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePixelVariance(m_variation);
 		ri.doPixelVariance(m_variation);
@@ -3629,7 +3651,7 @@ public:
 
 	inline CRiPixelSamples(long aLineNo, RtFloat xsamples, RtFloat ysamples) : CRManInterfaceCall(aLineNo), m_xsamples(xsamples), m_ysamples(ysamples) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_SAMPLES; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePixelSamples(m_xsamples, m_ysamples);
 		ri.doPixelSamples(m_xsamples, m_ysamples);
@@ -3662,7 +3684,7 @@ public:
 			delete m_function;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_FILTER; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		assert(m_function != 0);
 		if ( m_function ) {
 			ri.prePixelFilter(*m_function, m_xwidth, m_ywidth);
@@ -3684,7 +3706,7 @@ public:
 
 	inline CRiExposure(long aLineNo, RtFloat gain, RtFloat gamma) : CRManInterfaceCall(aLineNo), m_gain(gain), m_gamma(gamma) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_EXPOSURE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preExposure(m_gain, m_gamma);
 		ri.doExposure(m_gain, m_gamma);
@@ -3735,7 +3757,7 @@ public:
 	{
 		m_name = aName;
 	}
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preImager(m_name, parameters());
 		ri.doImager(m_name, parameters());
@@ -3763,7 +3785,7 @@ public:
 
 	inline CRiQuantize(long aLineNo, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) : CRManInterfaceCall(aLineNo), m_type(type), m_one(one), m_qmin(qmin), m_qmax(qmax), m_ampl(ampl) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_QUANTIZE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preQuantize(m_type.c_str(), m_one, m_qmin, m_qmax, m_ampl);
 		ri.doQuantize(m_type.c_str(), m_one, m_qmin, m_qmax, m_ampl);
@@ -3816,7 +3838,7 @@ public:
 	{
 		m_channel = noNullStr(aChannel);
 	}
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preDisplayChannel(m_channel.c_str(), parameters());
 		ri.doDisplayChannel(m_channel.c_str(), parameters());
@@ -3887,7 +3909,7 @@ public:
 	{
 		m_mode = aMode;
 	}
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preDisplay(m_name, m_type, m_mode, parameters());
 		ri.doDisplay(m_name, m_type, m_mode, parameters());
@@ -3946,7 +3968,7 @@ public:
 	{
 		m_type = aType;
 	}
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preHider(m_type, parameters());
 		ri.preHider(m_type, parameters());
@@ -3981,7 +4003,7 @@ public:
 		}
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COLOR_SAMPLES; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		ri.preColorSamples(
 			m_N,
 			m_nRGB.empty() ? 0 : &m_nRGB[0],
@@ -4006,7 +4028,7 @@ public:
 
 	inline CRiRelativeDetail(long aLineNo, RtFloat relativedetail) : CRManInterfaceCall(aLineNo), m_relativedetail(relativedetail) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_RELATIVE_DETAIL; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preRelativeDetail(m_relativedetail);
 		ri.doRelativeDetail(m_relativedetail);
@@ -4056,7 +4078,7 @@ public:
 	{
 		m_name = aName;
 	}
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preOption(m_name, parameters());
 		ri.doOption(m_name, parameters());
@@ -4115,7 +4137,7 @@ public:
 	{
 		m_name = aName;
 	}
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		RtLightHandle h = ri.preLightSource(m_name, parameters());
 		ri.renderState()->lights().setHandle(m_handleIdx, h);
@@ -4178,7 +4200,7 @@ public:
 	{
 		m_name = aName;
 	}
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		RtLightHandle h = ri.preAreaLightSource(m_name, parameters());
 		ri.renderState()->lights().setHandle(m_handleIdx, h);
 		ri.doAreaLightSource(h, m_name, parameters());
@@ -4212,7 +4234,7 @@ public:
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ILLUMINATE; }
 
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preIlluminate(m_handleIdx, m_onoff);
 		ri.doIlluminate(m_handleIdx, m_onoff);
@@ -4250,7 +4272,7 @@ public:
 	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATTRIBUTE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preAttribute(m_name.c_str(), parameters());
 		ri.doAttribute(m_name.c_str(), parameters());
@@ -4274,7 +4296,7 @@ public:
 			m_color.push_back(Cs[i]);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COLOR; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		ri.preColor(m_color.empty() ? 0 : &m_color[0]);
 		ri.doColor(m_color.empty() ? 0 : &m_color[0]);
 	}
@@ -4297,7 +4319,7 @@ public:
 			m_opacity.push_back(Cs[i]);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OPACITY; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		ri.preOpacity(m_opacity.empty() ? 0 : &m_opacity[0]);
 		ri.doOpacity(m_opacity.empty() ? 0 : &m_opacity[0]);
 	}
@@ -4332,7 +4354,7 @@ public:
 	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SURFACE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSurface(m_name.c_str(), parameters());
 		ri.doSurface(m_name.c_str(), parameters());
@@ -4368,7 +4390,7 @@ public:
 	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ATMOSPHERE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preAtmosphere(m_name.c_str(), parameters());
 		ri.doAtmosphere(m_name.c_str(), parameters());
@@ -4404,7 +4426,7 @@ public:
 	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_INTERIOR; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preInterior(m_name.c_str(), parameters());
 		ri.doInterior(m_name.c_str(), parameters());
@@ -4440,7 +4462,7 @@ public:
 	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_EXTERIOR; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preExterior(m_name.c_str(), parameters());
 		ri.doExterior(m_name.c_str(), parameters());
@@ -4476,7 +4498,7 @@ public:
 	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLACEMENT; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preDisplacement(m_name.c_str(), parameters());
 		ri.doDisplacement(m_name.c_str(), parameters());
@@ -4496,7 +4518,7 @@ public:
 
 	inline CRiTextureCoordinates(long aLineNo, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) : CRManInterfaceCall(aLineNo), m_s1(s1), m_t1(t1), m_s2(s2), m_t2(t2), m_s3(s3), m_t3(t3), m_s4(s4), m_t4(t4) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TEXTURE_COORDINATES; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preTextureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
 		ri.doTextureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
@@ -4516,7 +4538,7 @@ public:
 
 	inline CRiShadingRate(long aLineNo, RtFloat size) : CRManInterfaceCall(aLineNo), m_size(size) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SHADING_RATE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preShadingRate(m_size);
 		ri.doShadingRate(m_size);
@@ -4536,7 +4558,7 @@ public:
 
 	inline CRiShadingInterpolation(long aLineNo, RtToken type) : CRManInterfaceCall(aLineNo), m_type(type) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SHADING_INTERPOLATION; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preShadingInterpolation(m_type.c_str());
 		ri.doShadingInterpolation(m_type.c_str());
@@ -4556,7 +4578,7 @@ public:
 
 	inline CRiMatte(long aLineNo, RtBoolean onoff) : CRManInterfaceCall(aLineNo), m_onoff(onoff) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MATTE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preMatte(m_onoff);
 		ri.doMatte(m_onoff);
@@ -4578,7 +4600,7 @@ public:
 		memcpy(m_bound, bound, sizeof(RtBound));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BOUND; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preBound(m_bound);
 		ri.doBound(m_bound);
@@ -4600,7 +4622,7 @@ public:
 		memcpy(m_bound, bound, sizeof(RtBound));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DETAIL; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preDetail(m_bound);
 		ri.doDetail(m_bound);
@@ -4620,7 +4642,7 @@ public:
 
 	inline CRiDetailRange(long aLineNo, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) : CRManInterfaceCall(aLineNo), m_minvis(minvis), m_lowtran(lowtran), m_uptran(uptran), m_maxvis(maxvis) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DETAIL_RANGE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preDetailRange(m_minvis, m_lowtran, m_uptran, m_maxvis);
 		ri.doDetailRange(m_minvis, m_lowtran, m_uptran, m_maxvis);
@@ -4641,7 +4663,7 @@ public:
 
 	inline CRiGeometricApproximation(long aLineNo, RtToken type, RtFloat value) : CRManInterfaceCall(aLineNo), m_type(type), m_value(value) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRIC_APPROXIMATION; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preGeometricApproximation(m_type.c_str(), m_value);
 		ri.doGeometricApproximation(m_type.c_str(), m_value);
@@ -4661,7 +4683,7 @@ public:
 
 	inline CRiGeometricRepresentation(long aLineNo, RtToken type) : CRManInterfaceCall(aLineNo), m_type(type) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRIC_REPRESENTATION; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preGeometricRepresentation(m_type.c_str());
 		ri.doGeometricRepresentation(m_type.c_str());
@@ -4681,7 +4703,7 @@ public:
 
 	inline CRiOrientation(long aLineNo, RtToken orientation) : CRManInterfaceCall(aLineNo), m_orientation(orientation) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ORIENTATION; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preOrientation(m_orientation.c_str());
 		ri.doOrientation(m_orientation.c_str());
@@ -4699,7 +4721,7 @@ public:
 
 	inline CRiReverseOrientation(long aLineNo) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_REVERSE_ORIENTATION; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preReverseOrientation();
 		ri.doReverseOrientation();
@@ -4719,7 +4741,7 @@ public:
 
 	inline CRiSides(long aLineNo, RtInt nsides) : CRManInterfaceCall(aLineNo), m_nsides(nsides) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SIDES; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSides(m_nsides);
 		ri.doSides(m_nsides);
@@ -4743,7 +4765,7 @@ public:
 		memcpy(m_vbasis, vbasis, sizeof(RtBasis));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BASIS; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
 		ri.doBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
@@ -4765,7 +4787,7 @@ public:
 	inline CRiTrimCurve(long aLineNo, RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) : CRManInterfaceCall(aLineNo), m_trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w) {}
 	inline CRiTrimCurve(long aLineNo, const CTrimCurveData &CRimCurve)  : CRManInterfaceCall(aLineNo), m_trimCurve(CRimCurve) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRIM_CURVE; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		ri.preTrimCurve(m_trimCurve.m_nLoops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
@@ -4801,7 +4823,7 @@ public:
 
 	inline CRiIdentity(long aLineNo) : CRManInterfaceCall(aLineNo) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_IDENTITY; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preIdentity();
 		ri.doIdentity();
@@ -4823,7 +4845,7 @@ public:
 		memcpy(m_transform, transform, sizeof(RtMatrix));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preTransform(m_transform);
 		ri.doTransform(m_transform);
@@ -4845,7 +4867,7 @@ public:
 		memcpy(m_transform, transform, sizeof(RtMatrix));
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CONCAT_TRANSFORM; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preConcatTransform(m_transform);
 		ri.doConcatTransform(m_transform);
@@ -4865,7 +4887,7 @@ public:
 
 	inline CRiPerspective(long aLineNo, RtFloat fov) : CRManInterfaceCall(aLineNo), m_fov(fov) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PERSPECTIVE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePerspective(m_fov);
 		ri.doPerspective(m_fov);
@@ -4885,7 +4907,7 @@ public:
 
 	inline CRiTranslate(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz) : CRManInterfaceCall(aLineNo), m_dx(dx), m_dy(dy), m_dz(dz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSLATE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preTranslate(m_dx, m_dy, m_dz);
 		ri.doTranslate(m_dx, m_dy, m_dz);
@@ -4905,7 +4927,7 @@ public:
 
 	inline CRiRotate(long aLineNo, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) : CRManInterfaceCall(aLineNo), m_angle(angle), m_dx(dx), m_dy(dy), m_dz(dz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ROTATE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preRotate(m_angle, m_dx, m_dy, m_dz);
 		ri.doRotate(m_angle, m_dx, m_dy, m_dz);
@@ -4925,7 +4947,7 @@ public:
 
 	inline CRiScale(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz) : CRManInterfaceCall(aLineNo), m_dx(dx), m_dy(dy), m_dz(dz) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SCALE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preScale(m_dx, m_dy, m_dz);
 		ri.doScale(m_dx, m_dy, m_dz);
@@ -4947,7 +4969,7 @@ public:
 
 	inline CRiSkew(long aLineNo, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) : CRManInterfaceCall(aLineNo), m_angle(angle), m_dx1(dx1), m_dy1(dy1), m_dz1(dz1), m_dx2(dx2), m_dy2(dy2), m_dz2(dz2) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SKEW; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSkew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
 		ri.doSkew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
@@ -4975,7 +4997,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DEFORMATION; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preDeformation(m_name.c_str(), parameters());
 		ri.doDeformation(m_name.c_str(), parameters());
@@ -4995,7 +5017,7 @@ public:
 
 	inline CRiCoordinateSystem(long aLineNo, const char *name) : CRManInterfaceCall(aLineNo), m_name(name) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COORDINATE_SYSTEM; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCoordinateSystem(m_name.c_str());
 		ri.doCoordinateSystem(m_name.c_str());
@@ -5015,7 +5037,7 @@ public:
 
 	inline CRiCoordSysTransform(long aLineNo, const char *name) : CRManInterfaceCall(aLineNo), m_name(name) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COORDINATE_SYSTEM; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCoordSysTransform(m_name.c_str());
 		ri.doCoordSysTransform(m_name.c_str());
@@ -5047,7 +5069,7 @@ public:
 		*/
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_COORDINATE_SYSTEM; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 	/*
 	m_toPoints = m_fromPoints;
 	RtPoint *p = ri.transformPoints(m_fromSpace.c_str(), m_toSpace.c_str(), m_nPoints, (RtPoint *)&m_toPoints[0]);
@@ -5087,7 +5109,7 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POLYGON; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePolygon(m_nVertices, parameters());
 		ri.doPolygon(m_nVertices, parameters());
@@ -5117,7 +5139,7 @@ public:
 		const CParameterList &theParameters);
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GENERAL_POLYGON; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		ri.preGeneralPolygon(m_nLoops,
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			parameters());
@@ -5150,7 +5172,7 @@ public:
 		RtInt npolys, RtInt *nverts, RtInt *verts,
 		const CParameterList &theParameters);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePointsPolygons(
 			m_nPolys,
@@ -5189,7 +5211,7 @@ public:
 		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
 		const CParameterList &theParameters);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePointsGeneralPolygons(
 			m_nPolys,
@@ -5235,7 +5257,7 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePatch(m_type.c_str(), parameters());
 		ri.doPatch(m_type.c_str(), parameters());
@@ -5266,7 +5288,7 @@ public:
 		const CParameterList &theParameters);
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
 		ri.doPatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
@@ -5291,7 +5313,7 @@ public:
 		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preNuPatch(m_nu, m_uorder,
 			m_uknot.empty() ? 0 : &m_uknot[0],
@@ -5335,7 +5357,7 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[]
 		);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SUBDIVISION_MESH; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSubdivisionMesh(
 			m_scheme.c_str(), m_nfaces,
@@ -5409,16 +5431,16 @@ public:
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
 
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
@@ -5454,7 +5476,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CONE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCone(m_height, m_radius, m_thetamax, parameters());
 		ri.doCone(m_height, m_radius, m_thetamax, parameters());
@@ -5483,7 +5505,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 		ri.doCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
@@ -5517,7 +5539,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_HYPERBOLOID; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preHyperboloid(m_point1, m_point2, m_thetamax, parameters());
 		ri.doHyperboloid(m_point1, m_point2, m_thetamax, parameters());
@@ -5546,7 +5568,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PARABOLOID; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
 		ri.doParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
@@ -5575,7 +5597,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISK; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		ri.preDisk(m_height, m_radius, m_thetamax, parameters());
 		ri.doDisk(m_height, m_radius, m_thetamax, parameters());
 	}
@@ -5627,16 +5649,16 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TORUS; }
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
@@ -5671,7 +5693,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePoints(m_npts, parameters());
 		ri.doPoints(m_npts, parameters());
@@ -5696,7 +5718,7 @@ public:
 		RtInt ustep, RtInt vstep, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CURVES; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCurves(m_type.c_str(), m_ncurves,
 			m_nverts.empty() ? 0 : &m_nverts[0],
@@ -5728,7 +5750,7 @@ public:
 		RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BLOBBY; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preBlobby(m_nleaf,
 			m_ncode, m_code.empty() ? 0 : &m_code[0],
@@ -5784,7 +5806,7 @@ public:
 			delete m_freefunc;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PROCEDURAL; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		assert(m_subdivfunc != 0);
 		assert(m_freefunc != 0);
 		if ( m_subdivfunc != 0 && m_freefunc != 0 )
@@ -5825,7 +5847,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRY; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preGeometry(m_name.c_str(), parameters());
 		ri.doGeometry(m_name.c_str(), parameters());
@@ -5862,17 +5884,17 @@ public:
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_INSTANCE; }
 	inline virtual RtObjectHandle handle() const { return m_handle; }
 	inline virtual void handle(RtObjectHandle h) { m_handle = h; }
-	inline virtual void preProcess(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preObjectInstance(handle());
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doObjectInstance(handle());
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postObjectInstance(handle());
 	}
@@ -5895,14 +5917,14 @@ public:
 	inline static const char *myClassName(void) { return "CRiArchiveInstance"; }
 	inline virtual const char *className() const { return CRiArchiveInstance::myClassName(); }
 
-	inline CRiArchiveInstance(long aLineNo=-1, RtObjectHandle aHandle=illArchiveHandle,	IArchiveCallback *aCallback = 0) : CVarParamRManInterfaceCall(aLineNo), m_handle(aHandle)
+	inline CRiArchiveInstance(long aLineNo=-1, RtObjectHandle aHandle=illArchiveHandle,	const IArchiveCallback *aCallback = 0) : CVarParamRManInterfaceCall(aLineNo), m_handle(aHandle)
 	{
 		m_callback = aCallback ? aCallback->duplicate() : 0;
 	}
 
 	inline CRiArchiveInstance(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtObjectHandle aHandle,	IArchiveCallback *aCallback,
+		RtObjectHandle aHandle,	const IArchiveCallback *aCallback,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
@@ -5912,7 +5934,7 @@ public:
 
 	inline CRiArchiveInstance(
 		long aLineNo,
-		RtObjectHandle aHandle,	IArchiveCallback *aCallback,
+		RtObjectHandle aHandle, const IArchiveCallback *aCallback,
 		const CParameterList &theParameters
 		)
 		: CVarParamRManInterfaceCall(aLineNo, theParameters)
@@ -5939,28 +5961,61 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_INSTANCE; }
+	
 	inline virtual RtObjectHandle handle() const { return m_handle; }
+	
 	inline virtual void handle(RtObjectHandle h) { m_handle = h; }
-	inline virtual void preProcess(IDoRender &ri)
+
+	inline const IArchiveCallback *callback() const
+	{
+		return m_callback;
+	}
+	
+	inline void callback(const IArchiveCallback *cb)
+	{
+		if ( m_callback )
+			delete m_callback;
+		m_callback = 0;
+		if ( cb )
+			m_callback = cb->duplicate();
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preArchiveInstance(handle(), m_callback, parameters());
 	}
 
-	inline virtual void doProcess(IDoRender &ri)
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doArchiveInstance(handle(), m_callback, parameters());
 	}
 
-	inline virtual void postProcess(IDoRender &ri)
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.postArchiveInstance(handle(), m_callback, parameters());
 	}
+	
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		preProcess(ri, m_callback);
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		doProcess(ri, m_callback);
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		postProcess(ri, m_callback);
+	}
+
 	inline CRiArchiveInstance &operator=(const CRiArchiveInstance &c) {
 		if ( this == &c )
 			return *this;
 
 		handle(c.handle());
-		m_callback = c.m_callback ? c.m_callback->duplicate() : 0;
+		callback(c.callback());
 		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
 	}
@@ -5997,7 +6052,7 @@ public:
 			delete m_filterfunc;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_TEXTURE; }
-	inline virtual void replay(IDoRender &ri) {
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
 			ri.preMakeTexture(m_pic.c_str(), m_tex.c_str(), m_swrap.c_str(), m_twrap.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
@@ -6039,7 +6094,7 @@ public:
 			delete m_filterfunc;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_BUMP; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
@@ -6083,7 +6138,7 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_LAT_LONG_ENVIRONMENT; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
@@ -6128,7 +6183,7 @@ public:
 			delete m_filterfunc;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_CUBE_FACE_ENVIRONMENT; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
@@ -6159,7 +6214,7 @@ public:
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_SHADOW; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preMakeShadow(m_pic.c_str(), m_tex.c_str(), parameters());
 		ri.doMakeShadow(m_pic.c_str(), m_tex.c_str(), parameters());
@@ -6180,17 +6235,12 @@ public:
 
 	inline CRiArchiveRecord(long aLineNo, RtToken type, const char *line) : CRManInterfaceCall(aLineNo), m_type(type), m_line(line) {}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_RECORD; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preArchiveRecord(m_type.c_str(), m_line.c_str());
 		ri.doArchiveRecord(m_type.c_str(), m_line.c_str());
-	}
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *callback)
-	{
-		ri.preArchiveRecord(m_type.c_str(), m_line.c_str());
-		ri.doArchiveRecord(m_type.c_str(), m_line.c_str());
-		if ( callback ) 
-			(*callback)(ri, m_type.c_str(), m_line.c_str());
+		if ( cb ) 
+			(*cb)(ri, m_type.c_str(), m_line.c_str());
 	}
 	inline CRiArchiveRecord &operator=(const CRiArchiveRecord &) {
 		return *this;
@@ -6208,16 +6258,16 @@ public:
 
 	inline CRiReadArchive(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtString filename, const IArchiveCallback *callback,
+		RtString aFilename, const IArchiveCallback *cb,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_filename(filename)
+		: CVarParamRManInterfaceCall(aLineNo), m_filename(noNullStr(aFilename))
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 
 		m_callback = 0;
-		if ( callback )
-			m_callback = callback->duplicate();
+		if ( cb )
+			m_callback = cb->duplicate();
 	}
 
 	inline virtual ~CRiReadArchive()
@@ -6227,20 +6277,66 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_READ_ARCHIVE; }
-	inline virtual void replay(IDoRender &ri)
+	
+	inline const IArchiveCallback *callback() const
 	{
-		ri.preReadArchive(m_filename.c_str(), m_callback, parameters());
-		ri.doReadArchive(m_filename.c_str(), m_callback, parameters());
+		return m_callback;
 	}
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *callback)
+	inline void callback(const IArchiveCallback *cb)
 	{
-		ri.preReadArchive(m_filename.c_str(), callback, parameters());
-		ri.doReadArchive(m_filename.c_str(), callback, parameters());
+		if ( m_callback )
+			delete m_callback;
+		m_callback = 0;
+		if ( cb )
+			m_callback = cb->duplicate();
 	}
+
+	inline RtString filename() const
+	{
+		return m_filename.c_str();
+	}
+	inline void filename(RtString aFilename)
+	{
+		m_filename = noNullStr(aFilename);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preReadArchive(m_filename.c_str(), cb, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doReadArchive(m_filename.c_str(), cb, parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postReadArchive(m_filename.c_str(), cb, parameters());
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		preProcess(ri, m_callback);
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		doProcess(ri, m_callback);
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		postProcess(ri, m_callback);
+	}
+
 	inline CRiReadArchive &operator=(const CRiReadArchive &c) {
 		if ( this == &c )
 			return *this;
 
+		filename(c.filename());
+		callback(c.callback());
+		
 		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
 	}
@@ -6864,7 +6960,7 @@ public:
 
 	inline virtual CRiArchiveInstance *newRiArchiveInstance(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtArchiveHandle handle, IArchiveCallback *aCallback,
+		RtArchiveHandle handle, const IArchiveCallback *aCallback,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiArchiveInstance(aLineNo, decl, curColorDescr, handle, aCallback, n, tokens, params);

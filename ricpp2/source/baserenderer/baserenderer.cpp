@@ -203,14 +203,14 @@ void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest)
 	aRequest.postProcess(*this);
 }
 
-void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest)
+void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb)
 {
 	renderState()->lineNo(aRequest.lineNo());
-	aRequest.preProcess(*this);
+	aRequest.preProcess(*this, cb);
 	if ( renderState()->curCondition() ) {
-		aRequest.doProcess(*this);
+		aRequest.doProcess(*this, cb);
 	}
-	aRequest.postProcess(*this);
+	aRequest.postProcess(*this, cb);
 }
 
 /** @brief Create new entry in dectaration list
@@ -782,7 +782,7 @@ RtVoid CBaseRenderer::doObjectInstance(RtObjectHandle handle)
 	renderState()->curReplay(m);
 	if ( m ) {
 		if ( m->isClosed() ) {
-			m->replay(*this);
+			m->replay(*this, 0);
 		} else {
 			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Object instance used before it's ObjectEnd().");
 		}
@@ -895,7 +895,7 @@ RtVoid CBaseRenderer::doArchiveInstance(RtArchiveHandle handle, const IArchiveCa
 	renderState()->curReplay(m);
 	if ( m ) {
 		if ( m->isClosed() ) {
-			m->replay(*this);
+			m->replay(*this, callback);
 		} else {
 			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Object instance used before it's ArchiveEnd().");
 		}
@@ -916,7 +916,7 @@ RtVoid CBaseRenderer::archiveInstanceV(RtArchiveHandle handle, const IArchiveCal
 		if ( !preCheck(REQ_ARCHIVE_INSTANCE) )
 			return;
 
-		CRiArchiveInstance r(renderState()->lineNo(), handle);
+		CRiArchiveInstance r(renderState()->lineNo(), handle, callback);
 		processRequest(r);
 		
 	} catch ( ExceptRiCPPError &e2 ) {

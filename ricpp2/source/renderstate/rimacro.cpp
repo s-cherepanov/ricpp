@@ -37,37 +37,7 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 		try {
 			state->lineNo((*i)->lineNo());
 			if ( ri.preCheck((*i)->interfaceIdx()) ) {
-				if ( (*i)->interfaceIdx() == REQ_ARCHIVE_RECORD ) {
-					(*i)->replay(ri, callback);
-				} else if ( (*i)->interfaceIdx() == REQ_READ_ARCHIVE ) {
-					(*i)->replay(ri, callback);
-				} else {
-					(*i)->replay(ri);
-				}
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			state->lineNo(-1);
-			state->archiveName(0);
-			throw e2;
-		}
-	}
-	state->lineNo(-1);
-	state->archiveName(0);
-}
-
-void CRiMacro::replay(IDoRender &ri)
-{
-	CRenderState *state = ri.renderState();
-	if ( !state )
-		return;
-
-	state->archiveName(m_name.c_str());
-	std::list<CRManInterfaceCall *>::iterator i;
-	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
-		try {
-			state->lineNo((*i)->lineNo());
-			if ( ri.preCheck((*i)->interfaceIdx()) ) {
-				(*i)->replay(ri);
+				(*i)->replay(ri, callback);
 			}
 		} catch ( ExceptRiCPPError &e2 ) {
 			state->lineNo(-1);

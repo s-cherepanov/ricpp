@@ -35,6 +35,10 @@ namespace RiCPP {
 
 		CAttributes &operator=(const CAttributes &ra);
 
+		inline virtual CAttributes *duplicate()
+		{
+			return new CAttributes(*this);
+		}
 
 		virtual RtVoid color(RtColor Cs);
 		inline virtual const std::vector<RtFloat> &color() const

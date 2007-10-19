@@ -59,6 +59,13 @@ public:
 	 */
 	CTokenMap();
 
+	/** @brief Default Ri Tokens
+	 * 
+	 * Maps the RtToken out of ricpp.h at the beginning
+	 * @exception ExceptRiCPPError if a token cannot be created (out of memory while filling map).
+	 */
+	void defaultTokens();
+
 	/** @brief Destructor
 	 */
 	inline ~CTokenMap()

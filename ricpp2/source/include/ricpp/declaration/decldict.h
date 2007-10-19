@@ -95,6 +95,7 @@ public:
 	inline CDeclarationDictionary()
 		: m_active(false)
 	{
+		m_tokenMap.defaultTokens();
 	}
 	
 	/** @brief Destructor.

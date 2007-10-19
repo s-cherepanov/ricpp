@@ -290,7 +290,13 @@ void testrun(CRiCPPBridge &ri)
 
 	RtFloat floats[] = { static_cast<RtFloat>(1.234) };
 
+	RtFloat c[3] = {static_cast<RtFloat>(1.0), static_cast<RtFloat>(1.0), static_cast<RtFloat>(1.0)};
+
 	RtFloat fov = static_cast<RtFloat>(90.0);
+
+	char *save = "save";
+	char *restore = "restore";
+	char *all = "all";
 
 	// Print error, does not abort
 	ri.errorHandler(ri.errorPrint());
@@ -316,8 +322,14 @@ void testrun(CRiCPPBridge &ri)
 		ri.frameBegin(1);
 			ri.colorSamples(3, id, id);
 			ri.worldBegin();
+			ri.color(c);
+			ri.surface(RI_MATTE, RI_NULL);
+			ri.resource("fullresource", "attributes", "string operation", &save, RI_NULL);
 			ri.objectInstance(myObject);
-			ri.readArchive(myArchive, 0, RI_NULL);
+			ri.resourceBegin();
+				ri.resource("fullresource", "attributes", "string operation", &restore, "string subset", &all, RI_NULL);
+				ri.readArchive(myArchive, 0, RI_NULL);
+			ri.resourceEnd();
 			ri.worldEnd();
 		ri.frameEnd();
 	ri.end();

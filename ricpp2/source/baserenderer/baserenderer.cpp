@@ -46,11 +46,19 @@ CBaseRenderer::~CBaseRenderer()
 		delete m_renderState;
 }
 
-/** @brief Factory method to create a macro factory
- */
 CRManInterfaceFactory *CBaseRenderer::getNewMacroFactory()
 {
 	return new CRManInterfaceFactory;
+}
+
+void CBaseRenderer::registerResources()
+{
+	renderState()->registerResourceFactory(getNewAttributesResourceFactory());
+}
+
+CAttributesResourceFactory *CBaseRenderer::getNewAttributesResourceFactory()
+{
+	return new CAttributesResourceFactory;
 }
 
 void CBaseRenderer::initRenderState()
@@ -149,6 +157,8 @@ void CBaseRenderer::initRenderState()
 		ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a render state");
 		return;
 	}
+
+	registerResources();
 }
 
 bool CBaseRenderer::preCheck(EnumRequests req)
@@ -826,8 +836,114 @@ RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle)
 RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[]) {}
 RtVoid CBaseRenderer::motionEnd(void) {}
 
-RtVoid CBaseRenderer::resourceBegin(void) {}
-RtVoid CBaseRenderer::resourceEnd(void) {}
+
+RtVoid CBaseRenderer::preResourceBegin(void)
+{
+	renderState()->resourceBegin();
+}
+
+RtVoid CBaseRenderer::doResourceBegin(void)
+{
+}
+
+RtVoid CBaseRenderer::postResourceBegin(void)
+{
+}
+
+RtVoid CBaseRenderer::resourceBegin(void)
+// throw ExceptRiCPPError
+{
+	try {
+		if ( !preCheck(REQ_RESOURCE_BEGIN) )
+			return;
+
+		CRiResourceBegin r(renderState()->lineNo());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'resourceBegin': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'resourceBegin'");
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::preResourceEnd(void)
+{
+	renderState()->resourceEnd();
+}
+
+RtVoid CBaseRenderer::doResourceEnd(void)
+{
+}
+
+RtVoid CBaseRenderer::postResourceEnd(void)
+{
+}
+
+RtVoid CBaseRenderer::resourceEnd(void)
+// throw ExceptRiCPPError
+{
+	try {
+		if ( !preCheck(REQ_RESOURCE_END) )
+			return;
+
+		CRiResourceEnd r(renderState()->lineNo());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'resourceEnd': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'resourceEnd'");
+		return;
+	}
+}
+
+RtVoid CBaseRenderer::preResource(RtString handle, RtString type, const CParameterList &params)
+{
+}
+
+RtVoid CBaseRenderer::doResource(RtString handle, RtString type, const CParameterList &params)
+{
+	renderState()->resource(*this, handle, type, params);
+}
+
+RtVoid CBaseRenderer::postResource(RtString handle, RtString type, const CParameterList &params)
+{
+}
+
+RtVoid CBaseRenderer::resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	try {
+		if ( !preCheck(REQ_RESOURCE) )
+			return;
+
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+
+		CRiResource r(renderState()->lineNo(), handle, type, renderState()->curParamList());
+		processRequest(r);
+		return;
+		
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'resourceV': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'resourceV'");
+		return;
+	}
+}
 
 RtArchiveHandle CBaseRenderer::preArchiveBegin(RtToken name, const CParameterList &params)
 {

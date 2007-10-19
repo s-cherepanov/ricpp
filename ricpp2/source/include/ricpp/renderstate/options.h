@@ -186,6 +186,11 @@ namespace RiCPP {
 
 		virtual ~COptions();
 
+		inline virtual COptions *duplicate()
+		{
+			return new COptions(*this);
+		}
+
 		COptions &operator=(const COptions &ra);
 
 		RtVoid format(RtInt xres, RtInt yres, RtFloat aspect);

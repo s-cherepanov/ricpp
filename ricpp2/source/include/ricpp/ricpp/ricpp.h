@@ -257,7 +257,7 @@ public:
 
 	//@}
 
-	/** @defgroup ricpp_resource Ri Ressource handling
+	/** @defgroup ricpp_resource Ri Resource handling
 	 *  @ingroup ricpp_interface
 	 *  @brief Handling of external resources
 	 *  @{
@@ -274,21 +274,21 @@ public:
 	 *  However, the referenced resource can be used. If an handle is used to cache resources this
 	 *  caching hint may be lost in RIB.
 	 *
-	 *  Ressources are removed, if the current mode is ending. However, only the handle
+	 *  Resources are removed, if the current mode is ending. However, only the handle
 	 *  is removed, not an external resource itself - so you must free the
 	 *  memory or close the file if it is not needed any more. Internally handled
 	 *  resources like the storage for attributes are appropriatly freed. A resource
 	 *  can be overwritten by another one with the same name (warning). The overwritten
 	 *  one is not accessibly and will be freed as usual at the blocks end.
 	 *
-     *  @param name Name of the resource 
+     *  @param handle Name of the resource 
      *  @param type Type of the resource
 	 *  @param n Number of tokens
 	 *  @param tokens Tokens for additional parameter list.
 	 *  @param params Value pointer for additional parameter list for the resource
 	 *  @see resourcebegin(), resourceEnd()
 	 */
-	virtual RtVoid resourceV(RtString name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 	/** @defgroup ricpp_modes Ri Modes
@@ -1475,10 +1475,10 @@ public:
 	 *  @{
 	 */
 
-	/*  @brief Ressource handle
+	/*  @brief Resource handle
 	 *  @see IRiRoot::resourceV()
 	 */
-	virtual RtVoid resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid resource(RtString handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @defgroup ricpp_contexts Ri context handlers

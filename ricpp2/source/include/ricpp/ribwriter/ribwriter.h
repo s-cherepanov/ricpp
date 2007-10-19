@@ -74,7 +74,10 @@ public:
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
 	inline virtual RtVoid doSystem(RtToken cmd) {}
-	inline virtual RtVoid doResource(RtToken name, RtToken type, const CParameterList &params) {}
+	inline virtual RtVoid doResource(RtString handle, RtString type, const CParameterList &params)
+	{
+		CBaseRenderer::doResource(handle, type, params);
+	}
 
 	inline virtual RtVoid doBegin(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doEnd(void) {}

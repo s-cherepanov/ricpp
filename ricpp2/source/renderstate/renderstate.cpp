@@ -40,6 +40,7 @@ CRenderState::CRenderState(
 	CAttributesFactory &attributesFactory,
 	CLightSourceFactory &lightSourceFactory,
 	CRManInterfaceFactory &aMacroFactory) :
+	m_resourceFactories(true),
 	m_lights(lightSourceFactory),
 	m_objectMacros("OBJ_"),
 	m_archiveMacros("ARC_")
@@ -133,6 +134,16 @@ RtToken CRenderState::solid() const
 	return m_solidTypes.back();
 }
 
+CRiObjectMacro *CRenderState::objectInstance(RtObjectHandle handle)
+{
+	return m_objectMacros.find(handle);
+}
+
+const CRiObjectMacro *CRenderState::objectInstance(RtObjectHandle handle) const
+{
+	return m_objectMacros.find(handle);
+}
+
 RtObjectHandle CRenderState::objectBegin()
 {
 	pushOptions();
@@ -176,6 +187,16 @@ void CRenderState::objectEnd()
 	}
 }
 
+CRiArchiveMacro *CRenderState::archiveInstance(RtArchiveHandle handle)
+{
+	return m_archiveMacros.find(handle);
+}
+
+const CRiArchiveMacro *CRenderState::archiveInstance(RtArchiveHandle handle) const
+{
+	return m_archiveMacros.find(handle);
+}
+
 RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 {
 	pushOptions();
@@ -216,6 +237,38 @@ void CRenderState::archiveEnd() {
 			m_curMacro = 0;
 		}
 	}
+}
+
+
+void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params)
+{
+	RtToken t = tokFind(type);
+	if ( !t ) {
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "not a token for a resource factory in resource(%s, Token: %s)", noNullStr(handle), noNullStr(type));
+	}
+
+	IResourceFactory *f = m_resourceFactories.findObj(t);
+	if ( !f ) {
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "no resource factory in resource(Handle: %s, Token: %s)", noNullStr(handle), noNullStr(type));
+	}
+
+	CResource *r = 0;
+	if ( f && f->overwrites(params) ) {
+		r = m_resourceStack.find(m_resourceStack.identify(handle), true);
+		if ( !r ) {
+			r = f->getResource(handle);
+			if ( !r ) {
+				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "no resource factory in resource(Handle: %s, Token: %s)", noNullStr(handle), noNullStr(type));
+			}
+			m_resourceStack.insertObject(r);
+		}
+	} else {
+		r = m_resourceStack.find(m_resourceStack.identify(handle), false);
+		if ( !r ) {
+			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "no valid resource handle found in resource(Handle: %s, Token: %s)", noNullStr(handle), noNullStr(type));
+		}
+	}
+	r->operate(ri, params);
 }
 
 void CRenderState::pushOptions()
@@ -358,4 +411,18 @@ const CRManInterfaceFactory &CRenderState::macroFactory() const
 {
 	assert(m_macroFactory != 0);
 	return *m_macroFactory;
+}
+
+RtToken CRenderState::storedArchiveName(RtString archiveName) const
+{
+	return m_archiveMacros.identify(archiveName);
+}
+
+void CRenderState::registerResourceFactory(IResourceFactory *f)
+{
+	if ( !f )
+		return;
+	RtToken t = tokFindCreate(f->type());
+	f->registerOperations(tokenMap());
+	m_resourceFactories.registerObj(t, f);
 }

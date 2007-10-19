@@ -20,34 +20,58 @@ namespace RiCPP {
  */
 template<typename ValueType> class TemplHandleStack {
 public:
-	typedef std::map<RtToken, ValueType *> TypeHandleMap;
-	typedef std::vector<RtToken> TypeHandleStack;
+	typedef std::vector<ValueType *> TypeHandleStack;
 
 private:
 	TypeHandleStack m_stack;      ///< Stack to push handles and markers.
-	TypeHandleMap m_map;          ///< Container for the key, value pairs to find an object for a handle
 	unsigned long m_maxHandleIdx; ///< Counter to generate handles
 	CTokenMap m_tokens;           ///< RtToken as handles
 	std::string m_prefix;         ///< Prefix for the tokens
+
+	typename TypeHandleStack::reverse_iterator rfind(RtToken tok, bool toMark)
+	{
+		typename TypeHandleStack::reverse_iterator i;
+
+		for( i = m_stack.rbegin(); i != m_stack.rend(); i++ ) {
+			if ( (*i) && (*i)->handle() == tok )
+				break;
+			if ( !(*i) && toMark )
+				return m_stack.rend();
+		}
+
+		return i;
+	}
+
+	typename TypeHandleStack::const_reverse_iterator rfind(RtToken tok, bool toMark) const
+	{
+		typename TypeHandleStack::const_reverse_iterator i;
+
+		for( i = m_stack.rbegin(); i != m_stack.rend(); i++ ) {
+			if ( (*i) && (*i)->handle() == tok )
+				break;
+			if ( !(*i) && toMark )
+				return m_stack.rend();
+		}
+
+		return i;
+	}
 
 public:
 	TemplHandleStack(RtString prefix="")
 	{
 		m_maxHandleIdx = 0;
-		m_stack.push_back(RI_NULL);
+		m_stack.push_back(0);
 		m_prefix = noNullStr(prefix);
 	}
 	
 	~TemplHandleStack()
 	{
-		typename TypeHandleMap::iterator i;
-		for ( i = m_map.begin(); i != m_map.end(); i++ ) {
-			if ( (*i).second != NULL ) {
-				ValueType *ptr = (*i).second;
-				delete ptr;
+		typename TypeHandleStack::iterator i;
+		for ( i = m_stack.begin(); i != m_stack.end(); i++ ) {
+			if ( (*i) != 0 ) {
+				delete (*i);
 			}
 		}
-		m_map.clear();
 		m_stack.clear();
 	}
 	
@@ -82,51 +106,48 @@ public:
 		return m_tokens.find(name);
 	}
 
-	ValueType *find(RtToken tok)
+	ValueType *find(RtToken tok, bool toMark=false)
 	{
-		typename TypeHandleMap::iterator i;
-		i = m_map.find(tok);
-		if ( i == m_map.end() )
-			return 0;
-		return (*i).second;
+		typename TypeHandleStack::reverse_iterator i = rfind(tok, toMark);
+		if ( i != m_stack.rend() )
+			return (*i);
+		return 0;
 	}
 
 	ValueType *back()
 	{
-		return find(m_stack.back());
+		return m_stack.back();
 	}
 
-	const ValueType *find(RtToken tok) const
+	const ValueType *find(RtToken tok, bool toMark=false) const
 	{
-		typename TypeHandleMap::const_iterator i;
-		i = m_map.find(tok);
-		if ( i == m_map.end() )
-			return 0;
-		return (*i).second;
+		typename TypeHandleStack::const_reverse_iterator i = rfind(tok, toMark);
+		if ( i != m_stack.rend() )
+			return (*i);
+		return 0;
 	}
 
 	const ValueType *back() const
 	{
-		return find(m_stack.back());
+		return m_stack.back();
 	}
 
-	bool deleteObject(RtToken tok)
+	bool deleteObject(RtToken tok, bool toMark=false)
 	{
-		ValueType *v = find(tok);
-		if ( v != 0 ) {
-			m_map.erase(tok);
-			delete v;
-			m_stack.erase(tok);
+		typename TypeHandleStack::const_reverse_iterator i = rfind(tok, toMark);
+		if ( i != m_stack.rend() ) {
+			delete (*i);
+			m_stack.erase(i);
 			return true;
 		}
 		return false;
 	}
 	
-	bool deleteObject(ValueType *obj)
+	bool deleteObject(ValueType *obj, bool toMark=false)
 	{
 		if ( !obj )
 			return false;
-		return deleteObj(obj->handle());
+		return deleteObj(obj->handle(), toMark);
 	}
 
 	RtToken insertObject(ValueType *o)
@@ -135,25 +156,25 @@ public:
 			return RI_NULL;
 
 		RtToken tok = newHandle(o->name());
-		m_stack.push_back(tok);
 		o->handle(tok);
-		m_map[tok] = o;
+		m_stack.push_back(o);
 		return tok; 
 	}
 
 	void mark()
 	{
-		m_stack.push_back(RI_NULL);
+		m_stack.push_back(0);
 	}
 	
 	void clearToMark()
 	{
 		while ( !m_stack.empty() ) {
-			RtToken tok = m_stack.back();
+			ValueType *v = back();
 			m_stack.pop_back();
-			if ( tok == RI_NULL )
+			if ( v == 0 ) {
 				return;
-			deleteObject(tok);
+			}
+			delete v;
 		}
 	}
 };

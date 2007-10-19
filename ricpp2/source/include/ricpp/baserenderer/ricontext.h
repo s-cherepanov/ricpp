@@ -38,15 +38,17 @@
 #include "ricpp/streams/backbuffer.h"
 #endif // _RICPP_STREAMS_BACKBUFFER_H
 
-#ifndef _RICPP_RENDERERSTATE_RENDERSTATE_H
-#include "ricpp/renderstate/renderstate.h"
-#endif // _RICPP_RENDERERSTATE_RENDERSTATE_H
-
 #ifndef _RICPP_RICPP_ERRORHANDLERS_H
 #include "ricpp/ricpp/errorhandlers.h"
 #endif // _RICPP_RICPP_ERRORHANDLERS_H
 
+#ifndef RICPP_RENDERSTATE_RENDERSTATE_H
+#include "ricpp/renderstate/renderstate.h"
+#endif // RICPP_RENDERSTATE_RENDERSTATE_H
+
 namespace RiCPP {
+
+class CRenderState;
 
 /** @brief RenderMan Interface for a backend rendering context.
  *

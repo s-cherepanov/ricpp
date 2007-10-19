@@ -32,8 +32,11 @@
 
 using namespace RiCPP;
 
-
 CTokenMap::CTokenMap()
+{
+}
+
+void CTokenMap::defaultTokens()
 // throw ExceptRiCPPError;
 {
 	try {

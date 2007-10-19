@@ -94,7 +94,7 @@ public:
 	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault) = 0;
 	virtual RtVoid preSynchronize(RtToken name) = 0;
 	virtual RtVoid preSystem(RtToken cmd) = 0;
-	virtual RtVoid preResource(RtToken name, RtToken type, const CParameterList &params) = 0;
+	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params) = 0;
 
 	virtual RtVoid preBegin(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid preEnd(void) = 0;
@@ -257,7 +257,7 @@ public:
 	virtual RtVoid doDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid doSynchronize(RtToken name) = 0;
 	virtual RtVoid doSystem(RtToken cmd) = 0;
-	virtual RtVoid doResource(RtToken name, RtToken type, const CParameterList &params) = 0;
+	virtual RtVoid doResource(RtString handle, RtString type, const CParameterList &params) = 0;
 
 	virtual RtVoid doBegin(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid doEnd(void) = 0;
@@ -405,7 +405,7 @@ public:
 	virtual RtVoid postDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid postSynchronize(RtToken name) = 0;
 	virtual RtVoid postSystem(RtToken cmd) = 0;
-	virtual RtVoid postResource(RtToken name, RtToken type, const CParameterList &params) = 0;
+	virtual RtVoid postResource(RtString handle, RtString type, const CParameterList &params) = 0;
 
 	virtual RtVoid postBegin(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid postEnd(void) = 0;

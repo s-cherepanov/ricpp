@@ -125,6 +125,14 @@ protected:
 	 */
 	virtual CRManInterfaceFactory *getNewMacroFactory();
 
+	/** @brief Register resources
+	 */
+	virtual void registerResources();
+
+	/** @brief Get a factory for the "attributes" resource.
+	 */
+	virtual CAttributesResourceFactory *getNewAttributesResourceFactory();
+
 	/** @brief The backend's error handler
 	 *
 	 *  A child class can overload ricppErrHandler() to use it's own handler
@@ -210,7 +218,7 @@ public:
 
 	inline virtual RtVoid synchronize(RtToken name) {}
 	inline virtual RtVoid system(RtToken cmd) {}
-	inline virtual RtVoid resourceV(RtToken name, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) { }
+	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Initializes a new render context.
 	 *
@@ -390,7 +398,7 @@ public:
 	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault);
 	inline virtual RtVoid preSynchronize(RtToken name) {}
 	inline virtual RtVoid preSystem(RtToken cmd) {}
-	inline virtual RtVoid preResource(RtToken name, RtToken type, const CParameterList &params) {}
+	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params);
 
 	virtual RtVoid preBegin(RtString name, const CParameterList &params);
 	virtual RtVoid preEnd(void);
@@ -417,8 +425,8 @@ public:
 	inline virtual RtVoid preMotionBegin(RtInt N, RtFloat times[]) {}
 	inline virtual RtVoid preMotionEnd(void) {}
 
-	inline virtual RtVoid preResourceBegin(void) {}
-	inline virtual RtVoid preResourceEnd(void) {}
+	virtual RtVoid preResourceBegin(void);
+	virtual RtVoid preResourceEnd(void);
 
 	virtual RtArchiveHandle preArchiveBegin(RtToken name, const CParameterList &params);
 	virtual RtVoid preArchiveEnd(void);
@@ -548,7 +556,7 @@ public:
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
 	inline virtual RtVoid doSystem(RtToken cmd) {}
-	inline virtual RtVoid doResource(RtToken name, RtToken type, const CParameterList &params) {}
+	virtual RtVoid doResource(RtString handle, RtString type, const CParameterList &params);
 
 	inline virtual RtVoid doBegin(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doEnd(void) {}
@@ -575,8 +583,8 @@ public:
 	inline virtual RtVoid doMotionBegin(RtInt N, RtFloat times[]) {}
 	inline virtual RtVoid doMotionEnd(void) {}
 
-	inline virtual RtVoid doResourceBegin(void) {}
-	inline virtual RtVoid doResourceEnd(void) {}
+	virtual RtVoid doResourceBegin(void);
+	virtual RtVoid doResourceEnd(void);
 
 	inline virtual RtVoid doArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doArchiveEnd(void) {}
@@ -697,7 +705,7 @@ public:
 	inline virtual RtVoid postDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid postSynchronize(RtToken name){}
 	inline virtual RtVoid postSystem(RtToken cmd){}
-	inline virtual RtVoid postResource(RtToken name, RtToken type, const CParameterList &params){}
+	RtVoid postResource(RtString handle, RtString type, const CParameterList &params);
 
 	inline virtual RtVoid postBegin(RtString name, const CParameterList &params){}
 	inline virtual RtVoid postEnd(void){}
@@ -724,8 +732,8 @@ public:
     inline virtual RtVoid postMotionBegin(RtInt N, RtFloat times[]){}
     inline virtual RtVoid postMotionEnd(void){}
 
-	inline virtual RtVoid postResourceBegin(void){}
-	inline virtual RtVoid postResourceEnd(void){}
+	virtual RtVoid postResourceBegin(void);
+	virtual RtVoid postResourceEnd(void);
 
 	inline virtual RtVoid postArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params){}
 	inline virtual RtVoid postArchiveEnd(void){}

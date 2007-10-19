@@ -58,6 +58,9 @@
 #include "ricpp/streams/uri.h"
 #endif // _RICPP_STREAMS_URI_H
 
+#ifndef _RICPP_RENDERSTATE_RESOURCE_H
+#include "ricpp/renderstate/resource.h"
+#endif // _RICPP_RENDERSTATE_RESOURCE_H
 
 namespace RiCPP {
 
@@ -81,6 +84,9 @@ class CRenderState {
 	std::vector<RtToken> m_solidTypes;             ///< Stack with the types of solid blocks (if currently opened)
 
 	CDeclarationDictionary m_declDict;             ///< Dictionary for declarations.
+
+	TemplObjPtrRegistry<RtToken, IResourceFactory *> m_resourceFactories; ///< new RiResource handlers
+	TemplHandleStack<CResource> m_resourceStack;
 
 	COptionsFactory *m_optionsFactory;             ///< Create new Options.
 	std::vector<COptions *> m_optionsStack;        ///< Current option stack.
@@ -276,36 +282,33 @@ public:
 
     void solidBegin(RtToken type);
     void solidEnd();
-	RtToken CRenderState::solid() const;
+	RtToken solid() const;
 
 	RtObjectHandle objectBegin();
 	void objectEnd();
 
-	CRiObjectMacro *objectInstance(RtObjectHandle handle)
-	{
-		return m_objectMacros.find(handle);
-	}
-
-	const CRiObjectMacro *objectInstance(RtObjectHandle handle) const
-	{
-		return m_objectMacros.find(handle);
-	}
+	CRiObjectMacro *objectInstance(RtObjectHandle handle);
+	const CRiObjectMacro *objectInstance(RtObjectHandle handle) const;
 
 	RtArchiveHandle archiveBegin(const char *aName);
 	void archiveEnd();
 
-	CRiArchiveMacro *archiveInstance(RtArchiveHandle handle)
+	CRiArchiveMacro *archiveInstance(RtArchiveHandle handle);
+	const CRiArchiveMacro *archiveInstance(RtArchiveHandle handle) const;
+
+	inline void resourceBegin()
 	{
-		return m_archiveMacros.find(handle);
+		m_modeStack->resourceBegin();
+		m_resourceStack.mark();
 	}
 
-	const CRiArchiveMacro *archiveInstance(RtArchiveHandle handle) const
+    inline void resourceEnd()
 	{
-		return m_archiveMacros.find(handle);
+		m_modeStack->resourceEnd();
+		m_resourceStack.clearToMark();
 	}
 
-	inline void resourceBegin() { m_modeStack->resourceBegin(); }
-    inline void resourceEnd() { m_modeStack->resourceEnd(); }
+    void resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params);
 
 	inline void motionBegin() { return m_modeStack->motionBegin(); }
     inline void motionEnd() { return m_modeStack->motionEnd(); }
@@ -618,35 +621,34 @@ public:
 	virtual CRManInterfaceFactory &macroFactory();
 	virtual const CRManInterfaceFactory &macroFactory() const;
 
-	CRiMacro *curMacro()
+	inline CRiMacro *curMacro()
 	{
 		return m_curMacro;
 	}
 
-	const CRiMacro *curMacro() const
+	inline const CRiMacro *curMacro() const
 	{
 		return m_curMacro;
 	}
 
-	void curReplay(CRiMacro *m)
+	inline void curReplay(CRiMacro *m)
 	{
 		m_curReplay = m;
 	}
 
-	CRiMacro *curReplay()
+	inline CRiMacro *curReplay()
 	{
 		return m_curReplay;
 	}
 
-	const CRiMacro *curReplay() const
+	inline const CRiMacro *curReplay() const
 	{
 		return m_curReplay;
 	}
 
-	RtToken storedArchiveName(RtString archiveName) const
-	{
-		return m_archiveMacros.identify(archiveName);
-	}
+	RtToken storedArchiveName(RtString archiveName) const;
+
+	void registerResourceFactory(IResourceFactory *f);
 }; // CRenderState
 
 } // namespace RiCPP

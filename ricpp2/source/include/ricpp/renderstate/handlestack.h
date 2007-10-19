@@ -31,7 +31,7 @@ private:
 	std::string m_prefix;         ///< Prefix for the tokens
 
 public:
-	TemplHandleStack(const char *prefix="")
+	TemplHandleStack(RtString prefix="")
 	{
 		m_maxHandleIdx = 0;
 		m_stack.push_back(RI_NULL);
@@ -51,22 +51,35 @@ public:
 		m_stack.clear();
 	}
 	
-	RtToken newHandle() {
-		char strnum[64];
-		std::string str;
-		str = m_prefix;
+	RtToken newHandle(RtString name = 0)
+	{
+		std::string str(m_prefix);
+		if ( emptyStr(name) ) {
+			char strnum[64];
 
-		strnum[0] = (char)0;
+			strnum[0] = (char)0;
 #ifdef WIN32
-		sprintf_s(strnum, sizeof(strnum), "%ld", ++m_maxHandleIdx);
+			sprintf_s(strnum, sizeof(strnum), "%ld", ++m_maxHandleIdx);
 #else
-		snprintf(strnum, sizeof(strnum)-1, "%ld", ++m_maxHandleIdx);
+			snprintf(strnum, sizeof(strnum)-1, "%ld", ++m_maxHandleIdx);
 #endif
-		strnum[sizeof(strnum)-1] = (char)0;
+			strnum[sizeof(strnum)-1] = (char)0;
 
-		str += strnum;
-		RtToken tok = m_tokens.findCreate(str.c_str());
+			str += strnum;
+			RtToken tok = m_tokens.findCreate(str.c_str());
+			return tok;
+		}
+
+		RtToken tok = m_tokens.findCreate(name);
 		return tok;
+	}
+
+	RtToken identify(RtString name) const
+	{
+		if ( emptyStr(name) )
+			return RI_NULL;
+
+		return m_tokens.find(name);
 	}
 
 	ValueType *find(RtToken tok)
@@ -121,7 +134,7 @@ public:
 		if ( !o )
 			return RI_NULL;
 
-		RtToken tok = newHandle();
+		RtToken tok = newHandle(o->name());
 		m_stack.push_back(tok);
 		o->handle(tok);
 		m_map[tok] = o;

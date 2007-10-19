@@ -200,6 +200,7 @@ enum EnumRequests {
 
 	// retained models
 	REQ_OBJECT_INSTANCE,			//!< Index for ri function IRi::objectInstance()
+	REQ_ARCHIVE_INSTANCE,			//!< Index for ri function IDoRender::arciveInstanceV() (only used internally)
 
 	// Map-making
 	REQ_MAKE_TEXTURE,				//!< Index for ri function IRi::makeTexture()

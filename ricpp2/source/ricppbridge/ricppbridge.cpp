@@ -2453,9 +2453,9 @@ RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callbac
 			CRenderState *state = m_ctxMgmt.curBackend().renderingContext()->renderState();
 			if ( state ) {
 				try {
-					if ( state->postponeReadArchive() ) {
-						m_ctxMgmt.curBackend().renderingContext()->readArchiveV(name, callback, n, tokens, params);
-					} else {
+					m_ctxMgmt.curBackend().renderingContext()->readArchiveV(name, callback, n, tokens, params);
+
+					if ( state->storedArchiveName(name) == RI_NULL && !state->postponeReadArchive() ) {
 						CParameterList p;
 
 						if ( m_ctxMgmt.curBackend().renderingContext()->preCheck(REQ_READ_ARCHIVE) ) {
@@ -2480,6 +2480,9 @@ RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callbac
 
 RtVoid CRiCPPBridge::doReadArchive(RtString name, const IArchiveCallback *callback, const class CParameterList &p)
 {
+	if ( emptyStr(name) )
+		return;
+
 	CRenderState *state = m_ctxMgmt.curBackend().renderingContext()->renderState();
 	CUri sav(state->baseUri());
 	const char *oldArchiveName = state->archiveName();

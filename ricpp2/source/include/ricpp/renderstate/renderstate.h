@@ -96,11 +96,12 @@ class CRenderState {
 	
 	bool m_reject;                                 ///< Reject requests while running, e.g. for appropriate if-then-else blocks
 
-	/** @brief Only update the state, do no rendering.
+	/** @brief Only update the state, do no rendering (legacy).
 	 *
 	 * Update the state (handled by the base renderer), but do no more. E.g. if the RIB
 	 * writer wants to postpone the archive reading, object instanciating etc.
 	 *
+	 * @todo remove this
 	 */
 	bool m_updateStateOnly;
 
@@ -109,9 +110,13 @@ class CRenderState {
 	 *  The RIB writer must be capable to print a ReadArchive request instead of
 	 *  printing the contents of the archive. However, the
 	 *  archive must be interpreted to maintain the render state.
-	 *
+	 *  m_postponeArchive is used to postpone BeginArchive/EndArchive macros.
 	 */
 	bool m_postponeReadArchive;
+
+	bool m_postponeObject; ///< Postpone object instanciation where applicable (e.g. in RIB writer)
+	bool m_postponeArchive; ///< Postpone archive instanciation where applicable (e.g. in RIB writer, @see m_postponeReadArchive to postpone archive reading)
+	bool m_postponeCondition; ///< Postpone conditionals where applicable (e.g. in RIB writer)
 
 	CUri m_baseUri;                                ///< Base URI for RIB archive files
 
@@ -123,10 +128,11 @@ class CRenderState {
 	 */
 	CRiMacro *m_curMacro;
 
+	CRiMacro *m_curReplay;
+
 	TemplHandleStack<CRiObjectMacro> m_objectMacros;
 	TemplHandleStack<CRiArchiveMacro> m_archiveMacros;
 	std::vector<CRiMacro *> m_macros;
-	std::map<std::string, RtArchiveHandle> m_mapFileArchive;
 
 	std::vector<bool> m_conditions;
 	bool m_curCondition; //!< Render (true outside if-else-blocks, conditional inside the blocks
@@ -275,10 +281,30 @@ public:
 	RtObjectHandle objectBegin();
 	void objectEnd();
 
-	RtArchiveHandle archiveBegin();
+	CRiObjectMacro *objectInstance(RtObjectHandle handle)
+	{
+		return m_objectMacros.find(handle);
+	}
+
+	const CRiObjectMacro *objectInstance(RtObjectHandle handle) const
+	{
+		return m_objectMacros.find(handle);
+	}
+
+	RtArchiveHandle archiveBegin(const char *aName);
 	void archiveEnd();
 
-    inline void resourceBegin() { m_modeStack->resourceBegin(); }
+	CRiArchiveMacro *archiveInstance(RtArchiveHandle handle)
+	{
+		return m_archiveMacros.find(handle);
+	}
+
+	const CRiArchiveMacro *archiveInstance(RtArchiveHandle handle) const
+	{
+		return m_archiveMacros.find(handle);
+	}
+
+	inline void resourceBegin() { m_modeStack->resourceBegin(); }
     inline void resourceEnd() { m_modeStack->resourceEnd(); }
 
 	inline void motionBegin() { return m_modeStack->motionBegin(); }
@@ -540,9 +566,39 @@ public:
 		return m_postponeReadArchive;
 	}
 
-	inline virtual void postponeReadArchive(bool postponeReadArchive)
+	inline virtual void postponeReadArchive(bool doPostponeReadArchive)
 	{
-		m_postponeReadArchive = postponeReadArchive;
+		m_postponeReadArchive = doPostponeReadArchive;
+	}
+
+	inline virtual bool postponeArchive() const
+	{
+		return m_postponeArchive;
+	}
+
+	inline virtual void postponeArchive(bool doPostponeArchive)
+	{
+		m_postponeArchive = doPostponeArchive;
+	}
+
+	inline virtual bool postponeObject() const
+	{
+		return m_postponeObject;
+	}
+
+	inline virtual void postponeObject(bool doPostponeObject)
+	{
+		m_postponeObject = doPostponeObject;
+	}
+
+	inline virtual bool postponeCondition() const
+	{
+		return m_postponeCondition;
+	}
+
+	inline virtual void postponeCondition(bool doPostponeCondition)
+	{
+		m_postponeCondition = doPostponeCondition;
 	}
 
 	inline virtual const char *printName(const char *aFileName) const
@@ -572,6 +628,25 @@ public:
 		return m_curMacro;
 	}
 
+	void curReplay(CRiMacro *m)
+	{
+		m_curReplay = m;
+	}
+
+	CRiMacro *curReplay()
+	{
+		return m_curReplay;
+	}
+
+	const CRiMacro *curReplay() const
+	{
+		return m_curReplay;
+	}
+
+	RtToken storedArchiveName(RtString archiveName) const
+	{
+		return m_archiveMacros.identify(archiveName);
+	}
 }; // CRenderState
 
 } // namespace RiCPP

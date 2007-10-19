@@ -96,7 +96,10 @@ public:
 
 	inline virtual RtVoid doObjectBegin(RtObjectHandle h) {}
 	inline virtual RtVoid doObjectEnd(void) {}
-    inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
+    inline virtual RtVoid doObjectInstance(RtObjectHandle handle)
+	{
+		CBaseRenderer::doObjectInstance(handle);
+	}
 
     inline virtual RtVoid doMotionBegin(RtInt N, RtFloat times[]) {}
     inline virtual RtVoid doMotionEnd(void) {}
@@ -104,7 +107,7 @@ public:
 	inline virtual RtVoid doResourceBegin(void) {}
 	inline virtual RtVoid doResourceEnd(void) {}
 
-	inline virtual RtVoid doArchiveBegin(RtToken name, const CParameterList &params) {}
+	inline virtual RtVoid doArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doArchiveEnd(void) {}
 
     inline virtual RtVoid doFormat(RtInt xres, RtInt yres, RtFloat aspect) {}

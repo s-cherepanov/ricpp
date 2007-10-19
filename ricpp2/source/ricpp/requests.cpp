@@ -199,6 +199,7 @@ const char *CRequestInfo::ms_requestNames[N_REQUESTS] =
 
 	// retained models
 	"ObjectInstance",
+	"ArchiveInstance",
 
 	// Map-making
 	"MakeTexture",

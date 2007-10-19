@@ -43,6 +43,11 @@ namespace RiCPP {
 */
 class IDoRender : public IRiContext {
 public:
+	virtual RtVoid archiveInstanceV(RtArchiveHandle handle, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid preArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params) = 0;
+	virtual RtVoid doArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params) = 0;
+	virtual RtVoid postArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params) = 0;
+public:
 	/** @brief The virtual destructor of the interface
 	 */
 	inline virtual ~IDoRender() {}
@@ -119,7 +124,7 @@ public:
 	virtual RtVoid preResourceBegin(void) = 0;
 	virtual RtVoid preResourceEnd(void) = 0;
 
-	virtual RtVoid preArchiveBegin(RtToken name, const CParameterList &params) = 0;
+	virtual RtArchiveHandle preArchiveBegin(RtToken name, const CParameterList &params) = 0;
 	virtual RtVoid preArchiveEnd(void) = 0;
 
     virtual RtVoid preFormat(RtInt xres, RtInt yres, RtFloat aspect) = 0;
@@ -282,7 +287,7 @@ public:
 	virtual RtVoid doResourceBegin(void) = 0;
 	virtual RtVoid doResourceEnd(void) = 0;
 
-	virtual RtVoid doArchiveBegin(RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid doArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params) = 0;
 	virtual RtVoid doArchiveEnd(void) = 0;
 
     virtual RtVoid doFormat(RtInt xres, RtInt yres, RtFloat aspect) = 0;
@@ -430,7 +435,7 @@ public:
 	virtual RtVoid postResourceBegin(void) = 0;
 	virtual RtVoid postResourceEnd(void) = 0;
 
-	virtual RtVoid postArchiveBegin(RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid postArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params) = 0;
 	virtual RtVoid postArchiveEnd(void) = 0;
 
     virtual RtVoid postFormat(RtInt xres, RtInt yres, RtFloat aspect) = 0;

@@ -145,8 +145,15 @@ protected:
 
 	inline virtual CRiMacro *curMacro() {return 0;}
 
-	virtual void renderRequest(CRManInterfaceCall &aRequest);
+	virtual void processRequest(CRManInterfaceCall &aRequest);
 	virtual void replayRequest(CRManInterfaceCall &aRequest);
+
+public:
+
+	virtual RtVoid archiveInstanceV(RtArchiveHandle handle, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid preArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	virtual RtVoid doArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	virtual RtVoid postArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
 
 public:
 
@@ -413,8 +420,8 @@ public:
 	inline virtual RtVoid preResourceBegin(void) {}
 	inline virtual RtVoid preResourceEnd(void) {}
 
-	inline virtual RtVoid preArchiveBegin(RtToken name, const CParameterList &params) {}
-	inline virtual RtVoid preArchiveEnd(void) {}
+	virtual RtArchiveHandle preArchiveBegin(RtToken name, const CParameterList &params);
+	virtual RtVoid preArchiveEnd(void);
 
 	virtual RtVoid preFormat(RtInt xres, RtInt yres, RtFloat aspect);
 	virtual RtVoid preFrameAspectRatio(RtFloat aspect);
@@ -563,7 +570,7 @@ public:
 
 	inline virtual RtVoid doObjectBegin(RtObjectHandle h) {}
 	inline virtual RtVoid doObjectEnd(void) {}
-	inline virtual RtVoid doObjectInstance(RtObjectHandle handle) {}
+	virtual RtVoid doObjectInstance(RtObjectHandle handle);
 
 	inline virtual RtVoid doMotionBegin(RtInt N, RtFloat times[]) {}
 	inline virtual RtVoid doMotionEnd(void) {}
@@ -571,7 +578,7 @@ public:
 	inline virtual RtVoid doResourceBegin(void) {}
 	inline virtual RtVoid doResourceEnd(void) {}
 
-	inline virtual RtVoid doArchiveBegin(RtToken name, const CParameterList &params) {}
+	inline virtual RtVoid doArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doArchiveEnd(void) {}
 
 	inline virtual RtVoid doFormat(RtInt xres, RtInt yres, RtFloat aspect) {}
@@ -712,7 +719,7 @@ public:
 
 	inline virtual RtVoid postObjectBegin(RtObjectHandle h){}
 	inline virtual RtVoid postObjectEnd(void){}
-    inline virtual RtVoid postObjectInstance(RtObjectHandle handle){}
+    virtual RtVoid postObjectInstance(RtObjectHandle handle);
 
     inline virtual RtVoid postMotionBegin(RtInt N, RtFloat times[]){}
     inline virtual RtVoid postMotionEnd(void){}
@@ -720,7 +727,7 @@ public:
 	inline virtual RtVoid postResourceBegin(void){}
 	inline virtual RtVoid postResourceEnd(void){}
 
-	inline virtual RtVoid postArchiveBegin(RtToken name, const CParameterList &params){}
+	inline virtual RtVoid postArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params){}
 	inline virtual RtVoid postArchiveEnd(void){}
 
     inline virtual RtVoid postFormat(RtInt xres, RtInt yres, RtFloat aspect){}

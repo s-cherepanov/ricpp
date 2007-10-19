@@ -36,7 +36,8 @@ namespace RiCPP {
 enum EnumMacroTypes {
 	MACROTYPE_UNKNOWN = 0, //!< Macro type is yet unknown
 	MACROTYPE_OBJECT,      //!< Macro contains interface calls for an object definition
-	MACROTYPE_ARCHIVE      //!< Macro contains interface calls for an rin archive definition
+	MACROTYPE_ARCHIVE,     //!< Macro contains interface calls for an rib inline archive definition
+	MACROTYPE_FILE         //!< Macro contains interface calls for an rib file archive definition
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -190,6 +191,19 @@ public:
 	 */
 	inline virtual void postProcess(IDoRender &ri)
 	{
+	}
+
+
+	/** @brief Test if interface call belongs to a macro definition
+	 *
+	 *  Macro definitions are not stored themselfes in macros.
+	 *  (i.e. ObjectBegin, ObjectEnd, ArchiveBegin, Archive End)
+	 *
+	 *  @return true, if the request starts or ends a macro definition
+	 */
+	inline virtual bool isMacroDefinition()
+	{
+		return false;
 	}
 }; // CRManInterfaceCall
 
@@ -752,6 +766,7 @@ class CRiMacro {
 	EnumMacroTypes m_macroType; //!< Type of macro, either object or archive.
 	bool m_stopInsertion;       //!< Can be set to false to indicate to stop inserting request into the macro.
 	bool m_isClosed;            //!< Set to true (close) if macro definition ended.
+	bool m_postpone;            //!< Set to true if macro should be postponed (e.g. in RIB oputput).
 public:
 	/** @brief Constructor initializes the macro.
 	 *
@@ -761,7 +776,7 @@ public:
 	inline CRiMacro(
 		RtString aName = "",
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN) :
-		m_name(noNullStr(aName)), m_macroType(macroType), m_stopInsertion(false), m_isClosed(false)
+		m_name(noNullStr(aName)), m_macroType(macroType), m_stopInsertion(false), m_isClosed(false), m_postpone(true)
 	{
 	}
 
@@ -826,9 +841,24 @@ public:
 		return m_isClosed;
 	}
 	
+	void open()
+	{
+		m_isClosed = false;
+	}
+
 	void close()
 	{
 		m_isClosed = true;
+	}
+
+	bool postpone() const
+	{
+		return m_postpone;
+	}
+	
+	void postpone(bool doPostpone)
+	{
+		m_postpone = doPostpone;
 	}
 
 	EnumMacroTypes macroType() const
@@ -856,7 +886,7 @@ class CRiArchiveMacro : public CRiMacro {
 private:
 	RtArchiveHandle m_handle;
 public:
-	inline CRiArchiveMacro() : CRiMacro("", MACROTYPE_ARCHIVE) {}
+	inline CRiArchiveMacro(const char *name = "") : CRiMacro(name, MACROTYPE_ARCHIVE) {}
 	inline RtArchiveHandle handle() const { return m_handle; }
 	inline void handle(RtArchiveHandle h) { m_handle = h; }
 };
@@ -2302,6 +2332,11 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
+
+	inline virtual bool isMacroDefinition()
+	{
+		return true;
+	}
 }; // CRiObjectBegin
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2344,7 +2379,7 @@ public:
 
 	inline CRiObjectEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
-	inline CRiObjectEnd(const CRiSolidEnd &c)
+	inline CRiObjectEnd(const CRiObjectEnd &c)
 	{
 		*this = c;
 	}
@@ -2359,17 +2394,243 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_END; }
-	inline virtual void replay(IDoRender &ri) {
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
 		ri.preObjectEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
 		ri.doObjectEnd();
 	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postObjectEnd();
+	}
+
 	inline CRiObjectEnd &operator=(const CRiObjectEnd &c) {
 		if ( this == &c )
 			return *this;
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
+
+	inline virtual bool isMacroDefinition()
+	{
+		return true;
+	}
 }; // CRiObjectEnd
+
+
+///////////////////////////////////////////////////////////////////////////////
+//! \sa CRManInterfaceCall
+class CRiArchiveBegin : public CVarParamRManInterfaceCall {
+
+protected:
+	RtArchiveHandle m_handle;
+	std::string m_name;
+
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiArchiveBegin"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline virtual const char *className() const { return CRiArchiveBegin::myClassName(); }
+
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	inline CRiArchiveBegin(
+		long aLineNo = -1, const char *aName = 0)
+		: CVarParamRManInterfaceCall(aLineNo)
+	{
+		m_handle = illObjectHandle;
+		m_name = noNullStr(aName);
+	}
+
+	inline CRiArchiveBegin(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtToken aName,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+	{
+		m_name = noNullStr(aName);
+	}
+
+	inline CRiArchiveBegin(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters)
+	{
+		m_name = noNullStr(aName);
+	}
+
+	inline CRiArchiveBegin(const CRiArchiveBegin &c)
+	{
+		*this = c;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiArchiveBegin(*this);
+	}
+
+	inline virtual ~CRiArchiveBegin()
+	{
+	}
+
+	inline virtual RtArchiveHandle handle() const { return m_handle; }
+	inline virtual void handle(RtArchiveHandle handle) { m_handle = handle; }
+	
+	inline virtual RtString name() const { return m_name.c_str(); }
+	inline virtual void name(const char *aName) { m_name = noNullStr(aName); }
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_BEGIN; }
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		handle(ri.preArchiveBegin(name(), parameters()));
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doArchiveBegin(handle(), name(), parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postArchiveBegin(handle(), name(), parameters());
+	}
+
+	inline CRiArchiveBegin &operator=(const CRiArchiveBegin &c) {
+		if ( this == &c )
+			return *this;
+		
+		handle(c.handle());
+		name(c.name());
+
+		CVarParamRManInterfaceCall::operator=(c);
+		return *this;
+	}
+
+	inline virtual bool isMacroDefinition()
+	{
+		return true;
+	}
+}; // CRiArchiveBegin
+
+///////////////////////////////////////////////////////////////////////////////
+//! \sa CRManInterfaceCall
+class CRiArchiveEnd : public CRManInterfaceCall {
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiArchiveEnd"; }
+
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline virtual const char *className() const { return CRiArchiveEnd::myClassName(); }
+
+	/** @brief Checks if instance belongs to a specific class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to specific class atomizedClassName
+	 */
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	/** @brief Checks if instance belongs to a kind of a class.
+	 *
+	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+	 *  @return true, if instance belongs to a kind of class atomizedClassName
+	 */
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	inline CRiArchiveEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	inline CRiArchiveEnd(const CRiArchiveEnd &c)
+	{
+		*this = c;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiArchiveEnd(*this);
+	}
+
+	inline virtual ~CRiArchiveEnd()
+	{
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_END; }
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preArchiveEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doArchiveEnd();
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postArchiveEnd();
+	}
+
+	inline CRiArchiveEnd &operator=(const CRiArchiveEnd &c) {
+		if ( this == &c )
+			return *this;
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
+
+	inline virtual bool isMacroDefinition()
+	{
+		return true;
+	}
+}; // CRiArchiveEnd
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2576,7 +2837,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return ( atomizedClassName == myClassName() );
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -2759,7 +3020,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return ( atomizedClassName == myClassName() );
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -2900,7 +3161,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return ( atomizedClassName == myClassName() );
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -3121,7 +3382,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return ( atomizedClassName == myClassName() );
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -3132,8 +3393,9 @@ public:
 	inline CRiProjection(
 		long aLineNo = -1,
 		RtToken aName = defProjection)
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo)
 	{
+		m_name = aName;
 	}
 
 	/** @brief Constructor.
@@ -3151,9 +3413,9 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params),
-		m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
+		m_name = aName;
 	}
 
 	/** @brief Constructor.
@@ -3167,8 +3429,9 @@ public:
 		RtToken aName,
 		const CParameterList &theParameters
 		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters)
 	{
+		m_name = aName;
 	}
 
 
@@ -3441,24 +3704,27 @@ public:
 	inline CRiImager(
 		long aLineNo = -1,
 		RtToken aName = defImagerName)
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo)
 	{
+		m_name = aName;
 	}
 	inline CRiImager(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
+		m_name = aName;
 	}
 	inline CRiImager(
 		long aLineNo,
 		RtToken aName,
 		const CParameterList &theParameters
 		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters)
 	{
+		m_name = aName;
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_IMAGER; }
 	inline RtToken name() const
@@ -3518,25 +3784,28 @@ public:
 	inline CRiDisplayChannel(
 		long aLineNo = -1,
 		RtString aChannel = RI_NULL)
-		: CVarParamRManInterfaceCall(aLineNo), m_channel(aChannel)
+		: CVarParamRManInterfaceCall(aLineNo)
 	{
+		m_channel = noNullStr(aChannel);
 	}
 	inline CRiDisplayChannel(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtString channel,
+		RtString aChannel,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_channel(channel)
+		: CVarParamRManInterfaceCall(aLineNo)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
+		m_channel = noNullStr(aChannel);
 	}
 	inline CRiDisplayChannel(
 		long aLineNo,
 		RtToken aChannel,
 		const CParameterList &theParameters
 		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_channel(aChannel)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters)
 	{
+		m_channel = noNullStr(aChannel);
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLAY_CHANNEL; }
 	inline RtString channel() const
@@ -3545,7 +3814,7 @@ public:
 	}
 	inline void channel(RtToken aChannel)
 	{
-		m_channel = aChannel;
+		m_channel = noNullStr(aChannel);
 	}
 	inline virtual void replay(IDoRender &ri)
 	{
@@ -5115,13 +5384,53 @@ public:
 		CQuadricClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+
+	inline CRiSphere(
+		long aLineNo,
+		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_radius(radius), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
+	{
+	}
+
+	inline CRiSphere(const CRiSphere &c)
+	{
+		*this = c;
+	}
+
+	inline virtual ~CRiSphere() {}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiSphere(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
-	inline virtual void replay(IDoRender &ri)
+
+	inline virtual void preProcess(IDoRender &ri)
 	{
 		ri.preSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
 		ri.doSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
-	inline CRiSphere &operator=(const CRiSphere &) {
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+	}
+
+	inline CRiSphere &operator=(const CRiSphere &c) {
+		if ( this == &c )
+			return *this;
+		m_radius = c.m_radius;
+		m_zmin = c.m_zmin;
+		m_zmax = c.m_zmax;
+		m_thetamax = c.m_thetamax;
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiSphere
@@ -5294,13 +5603,52 @@ public:
 		CQuadricClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+	inline CRiTorus(
+		long aLineNo,
+		RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_majorrad(majorrad), m_minorrad(minorrad),
+		  m_phimin(phimin), m_phimax(phimax), m_thetamax(thetamax)
+	{
+	}
+
+	inline CRiTorus(const CRiTorus &c)
+	{
+		*this = c;
+	}
+
+	inline virtual ~CRiTorus() {}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiTorus(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TORUS; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual void preProcess(IDoRender &ri)
 	{
 		ri.preTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
 		ri.doTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
-	inline CRiTorus &operator=(const CRiTorus &) {
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+	}
+	inline CRiTorus &operator=(const CRiTorus &c) {
+		if ( this == &c )
+			return *this;
+		m_majorrad = c.m_majorrad;
+		m_minorrad = c.m_minorrad;
+		m_phimin = c.m_phimin;
+		m_phimax = c.m_phimax;
+		m_thetamax = c.m_thetamax;
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiTorus
@@ -5495,24 +5843,128 @@ public:
 	inline static const char *myClassName(void) { return "CRiObjectInstance"; }
 	inline virtual const char *className() const { return CRiObjectInstance::myClassName(); }
 
-	inline CRiObjectInstance(long aLineNo, RtObjectHandle handle) : CRManInterfaceCall(aLineNo), m_handle(handle)
+	inline CRiObjectInstance(long aLineNo=-1, RtObjectHandle aHandle=illObjectHandle) : CRManInterfaceCall(aLineNo), m_handle(aHandle)
 	{
-		assert(handle != 0);
 	}
+
+	inline CRiObjectInstance(const CRiObjectInstance &c)
+	{
+		*this = c;
+	}
+
+	inline virtual ~CRiObjectInstance() {}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiObjectInstance(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_INSTANCE; }
-	inline virtual void replay(IDoRender &ri)
+	inline virtual RtObjectHandle handle() const { return m_handle; }
+	inline virtual void handle(RtObjectHandle h) { m_handle = h; }
+	inline virtual void preProcess(IDoRender &ri)
 	{
-		assert(m_handle != 0);
-		if ( m_handle != 0 ) {
-			ri.preObjectInstance(m_handle);
-			ri.doObjectInstance(m_handle);
-		}
+		ri.preObjectInstance(handle());
 	}
-	inline virtual RtObjectHandle handle() { return m_handle; }
-	inline CRiObjectInstance &operator=(const CRiObjectInstance &) {
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doObjectInstance(handle());
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postObjectInstance(handle());
+	}
+	inline CRiObjectInstance &operator=(const CRiObjectInstance &c) {
+		if ( this == &c )
+			return *this;
+
+		handle(c.handle());
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiObjectInstance
+
+///////////////////////////////////////////////////////////////////////////////
+class CRiArchiveInstance : public CVarParamRManInterfaceCall {
+protected:
+	RtArchiveHandle m_handle;
+	IArchiveCallback *m_callback;
+public:
+	inline static const char *myClassName(void) { return "CRiArchiveInstance"; }
+	inline virtual const char *className() const { return CRiArchiveInstance::myClassName(); }
+
+	inline CRiArchiveInstance(long aLineNo=-1, RtObjectHandle aHandle=illArchiveHandle,	IArchiveCallback *aCallback = 0) : CVarParamRManInterfaceCall(aLineNo), m_handle(aHandle)
+	{
+		m_callback = aCallback ? aCallback->duplicate() : 0;
+	}
+
+	inline CRiArchiveInstance(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtObjectHandle aHandle,	IArchiveCallback *aCallback,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+	{
+		m_handle = aHandle;
+		m_callback = aCallback ? aCallback->duplicate() : 0;
+	}
+
+	inline CRiArchiveInstance(
+		long aLineNo,
+		RtObjectHandle aHandle,	IArchiveCallback *aCallback,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters)
+	{
+		m_handle = aHandle;
+		m_callback = aCallback ? aCallback->duplicate() : 0;
+	}
+
+	inline CRiArchiveInstance(const CRiArchiveInstance &c)
+	{
+		*this = c;
+	}
+
+	inline virtual ~CRiArchiveInstance()
+	{
+		if ( m_callback ) {
+			delete m_callback;
+		}
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiArchiveInstance(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_INSTANCE; }
+	inline virtual RtObjectHandle handle() const { return m_handle; }
+	inline virtual void handle(RtObjectHandle h) { m_handle = h; }
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		ri.preArchiveInstance(handle(), m_callback, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		ri.doArchiveInstance(handle(), m_callback, parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		ri.postArchiveInstance(handle(), m_callback, parameters());
+	}
+	inline CRiArchiveInstance &operator=(const CRiArchiveInstance &c) {
+		if ( this == &c )
+			return *this;
+
+		handle(c.handle());
+		m_callback = c.m_callback ? c.m_callback->duplicate() : 0;
+		CVarParamRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiArchiveInstance
 
 ///////////////////////////////////////////////////////////////////////////////
 class CRiMakeTexture : public CVarParamRManInterfaceCall {
@@ -5785,7 +6237,11 @@ public:
 		ri.preReadArchive(m_filename.c_str(), callback, parameters());
 		ri.doReadArchive(m_filename.c_str(), callback, parameters());
 	}
-	inline CRiReadArchive &operator=(const CRiReadArchive &) {
+	inline CRiReadArchive &operator=(const CRiReadArchive &c) {
+		if ( this == &c )
+			return *this;
+
+		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiReadArchive
@@ -5853,15 +6309,33 @@ public:
 		return new CRiSolidEnd(aLineNo);
 	}
 
-	/*
-	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo, RtObjectHandle *h) {
-		return new CRiObjectBegin(aLineNo, h);
+	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo) {
+		return new CRiObjectBegin(aLineNo);
 	}
 
 	inline virtual CRiObjectEnd *newRiObjectEnd(long aLineNo) {
 		return new CRiObjectEnd(aLineNo);
 	}
-	*/
+
+	inline virtual CRiArchiveBegin *newRiArchiveBegin(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		const char *name,
+		RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return new CRiArchiveBegin(aLineNo, decl, curColorDescr, name, n, tokens, params);
+	}
+
+	inline virtual CRiArchiveBegin *newRiArchiveBegin(
+		long aLineNo,
+		const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiArchiveBegin(aLineNo, name, parameters);
+	}
+
+	inline virtual CRiArchiveEnd *newRiArchiveEnd(long aLineNo) {
+		return new CRiArchiveEnd(aLineNo);
+	}
 
 	inline virtual CRiMotionBegin *newRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) {
 		return new CRiMotionBegin(aLineNo, n, f);
@@ -6386,6 +6860,14 @@ public:
 
 	inline virtual CRiObjectInstance *newRiObjectInstance(long aLineNo, RtObjectHandle handle) {
 		return new CRiObjectInstance(aLineNo, handle);
+	}
+
+	inline virtual CRiArchiveInstance *newRiArchiveInstance(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtArchiveHandle handle, IArchiveCallback *aCallback,
+		RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return new CRiArchiveInstance(aLineNo, decl, curColorDescr, handle, aCallback, n, tokens, params);
 	}
 
 	inline virtual CRiMakeTexture *newRiMakeTexture(

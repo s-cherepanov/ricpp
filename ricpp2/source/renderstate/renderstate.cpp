@@ -53,10 +53,15 @@ CRenderState::CRenderState(
 	m_lineNo = -1;
 
 	m_curMacro = 0;
+	m_curReplay = 0;
 
 	m_reject = false;
 	m_updateStateOnly = false;
-	m_postponeReadArchive = false;
+
+	m_postponeReadArchive = true;
+	m_postponeObject = true;
+	m_postponeArchive = true;
+	m_postponeCondition = true;
 
 	m_curCondition = true;
 
@@ -141,6 +146,7 @@ RtObjectHandle CRenderState::objectBegin()
 
 	if ( curCondition() || curMacro() != 0 ) {
 		if ( m != 0 ) {
+			m->postpone(postponeObject());
 			m_objectMacros.insertObject(m);
 			return m->handle();
 		} else {
@@ -170,7 +176,7 @@ void CRenderState::objectEnd()
 	}
 }
 
-RtArchiveHandle CRenderState::archiveBegin()
+RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 {
 	pushOptions();
 	pushAttributes();
@@ -179,10 +185,11 @@ RtArchiveHandle CRenderState::archiveBegin()
 
 	if ( curCondition() || curMacro() != 0 ) {
 		m_macros.push_back(m_curMacro);
-		CRiArchiveMacro *m = new CRiArchiveMacro;
+		CRiArchiveMacro *m = new CRiArchiveMacro(aName);
 		curMacro(m);
 
 		if ( m != 0 ) {
+			m->postpone(postponeArchive());
 			m_archiveMacros.insertObject(m);
 			return m->handle();
 		} else {

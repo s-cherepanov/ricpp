@@ -192,6 +192,7 @@ CValidModes::CValidModes()
 	m_requests[REQ_GEOMETRY] = geometryBits;
 
 	m_requests[REQ_OBJECT_INSTANCE] = geometryBits;
+	m_requests[REQ_ARCHIVE_INSTANCE] = everywhereBits;
 
 	m_requests[REQ_MAKE_TEXTURE] = textureBits;
 	m_requests[REQ_MAKE_BUMP] = textureBits;

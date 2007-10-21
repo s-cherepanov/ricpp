@@ -422,8 +422,8 @@ public:
 	virtual RtVoid preObjectEnd(void);
 	virtual RtVoid preObjectInstance(RtObjectHandle handle);
 
-	inline virtual RtVoid preMotionBegin(RtInt N, RtFloat times[]) {}
-	inline virtual RtVoid preMotionEnd(void) {}
+	virtual RtVoid preMotionBegin(RtInt N, RtFloat times[]);
+	virtual RtVoid preMotionEnd(void);
 
 	virtual RtVoid preResourceBegin(void);
 	virtual RtVoid preResourceEnd(void);
@@ -580,8 +580,8 @@ public:
 	inline virtual RtVoid doObjectEnd(void) {}
 	virtual RtVoid doObjectInstance(RtObjectHandle handle);
 
-	inline virtual RtVoid doMotionBegin(RtInt N, RtFloat times[]) {}
-	inline virtual RtVoid doMotionEnd(void) {}
+	virtual RtVoid doMotionBegin(RtInt N, RtFloat times[]);
+	virtual RtVoid doMotionEnd(void);
 
 	virtual RtVoid doResourceBegin(void);
 	virtual RtVoid doResourceEnd(void);
@@ -729,8 +729,8 @@ public:
 	inline virtual RtVoid postObjectEnd(void){}
     virtual RtVoid postObjectInstance(RtObjectHandle handle);
 
-    inline virtual RtVoid postMotionBegin(RtInt N, RtFloat times[]){}
-    inline virtual RtVoid postMotionEnd(void){}
+    virtual RtVoid postMotionBegin(RtInt N, RtFloat times[]);
+    virtual RtVoid postMotionEnd(void);
 
 	virtual RtVoid postResourceBegin(void);
 	virtual RtVoid postResourceEnd(void);

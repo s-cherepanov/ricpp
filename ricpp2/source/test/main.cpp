@@ -306,6 +306,7 @@ void testrun(CRiCPPBridge &ri)
 		ri.colorSamples(1, frommonochr, tomonochr);
 		ri.option("myOption", myOptionValue, floats, RI_NULL);
 		ri.projection("perspective", "float[1] fov", &fov, RI_NULL);
+		ri.shutter(0.0, 1.0);
 
 		RtObjectHandle myObject = ri.objectBegin();
 			ri.attributeBegin();
@@ -326,10 +327,16 @@ void testrun(CRiCPPBridge &ri)
 			ri.surface(RI_MATTE, RI_NULL);
 			ri.resource("fullresource", "attributes", "string operation", &save, RI_NULL);
 			ri.objectInstance(myObject);
-			ri.resourceBegin();
-				ri.resource("fullresource", "attributes", "string operation", &restore, "string subset", &all, RI_NULL);
-				ri.readArchive(myArchive, 0, RI_NULL);
-			ri.resourceEnd();
+			ri.transformBegin();
+				ri.motionBegin(2, (RtFloat)0.0, (RtFloat)1.0);
+					ri.translate(0, 0, 0);
+					ri.translate((RtFloat)0.2, 0, 0);
+				ri.motionEnd();
+				ri.resourceBegin();
+					ri.resource("fullresource", "attributes", "string operation", &restore, "string subset", &all, RI_NULL);
+					ri.readArchive(myArchive, 0, RI_NULL);
+				ri.resourceEnd();
+			ri.transformEnd();
 			ri.worldEnd();
 		ri.frameEnd();
 	ri.end();

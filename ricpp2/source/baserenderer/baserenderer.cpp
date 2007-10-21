@@ -165,32 +165,31 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 {
 	if ( !renderState() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "State not initialized in %s()", CRequestInfo::requestName(req));
-		return false;
 	}
 
 	if ( !renderState()->validRequest(req) ) {
-		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s()", CRequestInfo::requestName(req));
-		return false;
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s", CRequestInfo::requestName(req));
+	}
+
+	renderState()->motionState().request(req);
+	if ( (renderState()->motionState().curState() & ~CMotionState::MOT_INSIDE) != 0 ) {
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "inside a motion block: %s", CRequestInfo::requestName(req));
 	}
 
 	if ( !renderState()->hasOptions() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - options not available.", CRequestInfo::requestName(req));
-		return false;
 	}
 
 	if ( !renderState()->hasAttributes() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - attributes not available.", CRequestInfo::requestName(req));
-		return false;
 	}
 
 	if ( !renderState()->hasTransform() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - transformations not available.", CRequestInfo::requestName(req));
-		return false;
 	}
 
 	if ( !renderState()->hasMacroFactory() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - macro factory not available.", CRequestInfo::requestName(req));
-		return false;
 	}
 
 	return !renderState()->reject();
@@ -833,8 +832,63 @@ RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle)
 	renderState()->curReplay(m);
 }
 
-RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[]) {}
-RtVoid CBaseRenderer::motionEnd(void) {}
+RtVoid CBaseRenderer::preMotionBegin(RtInt N, RtFloat times[])
+{
+	renderState()->motionBegin(N, times);
+}
+
+RtVoid CBaseRenderer::doMotionBegin(RtInt N, RtFloat times[]) {}
+RtVoid CBaseRenderer::postMotionBegin(RtInt N, RtFloat times[]) {}
+
+RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[])
+{
+	try {
+		if ( !preCheck(REQ_MOTION_BEGIN) )
+			return;
+
+		CRiMotionBegin r(renderState()->lineNo(), N, times);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'motionBeginV': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'motionBeginV'");
+		return;
+	}
+}
+
+RtVoid CBaseRenderer::preMotionEnd(void)
+{
+	renderState()->motionEnd();
+}
+
+RtVoid CBaseRenderer::doMotionEnd(void) {}
+RtVoid CBaseRenderer::postMotionEnd(void) {}
+
+RtVoid CBaseRenderer::motionEnd(void)
+{
+	try {
+		if ( !preCheck(REQ_MOTION_END) )
+			return;
+
+		CRiMotionEnd r(renderState()->lineNo());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'motionEnd': %s", e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'motionEnd'");
+		return;
+	}
+}
 
 
 RtVoid CBaseRenderer::preResourceBegin(void)

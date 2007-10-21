@@ -294,6 +294,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\renderstate\motionstate.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\renderstate\options.cpp"
 				>
 			</File>
@@ -349,6 +353,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\modestack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\motionstate.h"
 				>
 			</File>
 			<File

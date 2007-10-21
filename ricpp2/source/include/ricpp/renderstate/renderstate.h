@@ -62,6 +62,10 @@
 #include "ricpp/renderstate/resource.h"
 #endif // _RICPP_RENDERSTATE_RESOURCE_H
 
+#ifndef _RICPP_RENDERSTATE_MOTIONSTATE_H
+#include "ricpp/renderstate/motionstate.h"
+#endif // _RICPP_RENDERSTATE_MOTIONSTATE_H
+
 namespace RiCPP {
 
 class CRManInterfaceFactory;
@@ -84,6 +88,8 @@ class CRenderState {
 	std::vector<RtToken> m_solidTypes;             ///< Stack with the types of solid blocks (if currently opened)
 
 	CDeclarationDictionary m_declDict;             ///< Dictionary for declarations.
+
+	CMotionState m_motionState;                    ///< Current request id and motion state.
 
 	TemplObjPtrRegistry<RtToken, IResourceFactory *> m_resourceFactories; ///< new RiResource handlers
 	TemplHandleStack<CResource> m_resourceStack;
@@ -308,10 +314,19 @@ public:
 		m_resourceStack.clearToMark();
 	}
 
-    void resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params);
+	void resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params);
 
-	inline void motionBegin() { return m_modeStack->motionBegin(); }
-    inline void motionEnd() { return m_modeStack->motionEnd(); }
+	inline void motionBegin(RtInt N, RtFloat times[])
+	{
+		m_modeStack->motionBegin();
+		m_motionState.open(N, times);
+	}
+
+    inline void motionEnd()
+	{
+		m_modeStack->motionEnd();
+		m_motionState.close();
+	}
 
 	inline bool curCondition() const
 	{
@@ -346,7 +361,9 @@ public:
 	 *  @return true, if the request req is valid in the current mode.
 	 *  @see CModeStack::validRequest(), EnumRequests  
 	 */
-	inline virtual bool validRequest(EnumRequests req) const { return m_modeStack->validRequest(req); }
+	inline virtual bool validRequest(EnumRequests req) const {
+		return m_modeStack->validRequest(req);
+	}
 
 	/** @brief Gets the current mode.
 	 *
@@ -649,6 +666,9 @@ public:
 	RtToken storedArchiveName(RtString archiveName) const;
 
 	void registerResourceFactory(IResourceFactory *f);
+
+	CMotionState &motionState() { return m_motionState; }
+	const CMotionState &motionState() const { return m_motionState; }
 }; // CRenderState
 
 } // namespace RiCPP

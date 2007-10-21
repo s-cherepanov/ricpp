@@ -219,7 +219,7 @@ public:
 	 */
 	virtual void archiveEnd();
 
-	/** @brief Begins a (transparent) resource block
+	/** @brief Begins a resource block
 	 *
 	 * Inside frame, world, attribute, transform, object, and begin blocks
 	 */

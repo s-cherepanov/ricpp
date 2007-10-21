@@ -437,22 +437,22 @@ public:
 	virtual RtVoid preScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top);
 	virtual RtVoid preCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
 	virtual RtVoid preProjection(RtToken name, const CParameterList &params);
-	inline virtual RtVoid preClipping(RtFloat hither, RtFloat yon) {}
-	inline virtual RtVoid preClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {}
-	inline virtual RtVoid preDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {}
-	inline virtual RtVoid preShutter(RtFloat smin, RtFloat smax) {}
-	inline virtual RtVoid prePixelVariance(RtFloat variation) {}
-	inline virtual RtVoid prePixelSamples(RtFloat xsamples, RtFloat ysamples) {}
-	inline virtual RtVoid prePixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) {}
-	inline virtual RtVoid preExposure(RtFloat gain, RtFloat gamma) {}
-	inline virtual RtVoid preImager(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {}
-	inline virtual RtVoid preDisplayChannel(RtString channel, const CParameterList &params) {}
-	inline virtual RtVoid preDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params) {}
-	inline virtual RtVoid preHider(RtToken type, const CParameterList &params) {}
-	inline virtual RtVoid preColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}
-	inline virtual RtVoid preRelativeDetail(RtFloat relativedetail) {}
-	inline virtual RtVoid preOption(RtString name, const CParameterList &params) {}
+	virtual RtVoid preClipping(RtFloat hither, RtFloat yon);
+	virtual RtVoid preClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz);
+	virtual RtVoid preDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance);
+	virtual RtVoid preShutter(RtFloat smin, RtFloat smax);
+	virtual RtVoid prePixelVariance(RtFloat variation);
+	virtual RtVoid prePixelSamples(RtFloat xsamples, RtFloat ysamples);
+	virtual RtVoid prePixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth);
+	virtual RtVoid preExposure(RtFloat gain, RtFloat gamma);
+	virtual RtVoid preImager(RtString name, const CParameterList &params);
+	virtual RtVoid preQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl);
+	virtual RtVoid preDisplayChannel(RtString channel, const CParameterList &params);
+	virtual RtVoid preDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params);
+	virtual RtVoid preHider(RtToken type, const CParameterList &params);
+	virtual RtVoid preColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn);
+	virtual RtVoid preRelativeDetail(RtFloat relativedetail);
+	virtual RtVoid preOption(RtString name, const CParameterList &params);
 
 	inline virtual RtLightHandle preLightSource(RtString name, const CParameterList &params) { return illLightHandle; }
 	inline virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params) { return illLightHandle; }

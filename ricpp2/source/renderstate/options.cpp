@@ -553,10 +553,10 @@ void COptions::initDisplayChannels()
 	m_displayChannels.clear();
 }
 
-RtVoid COptions::displayChannelV(CDeclarationDictionary &dict, RtString channel, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid COptions::displayChannel(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString channel, const CParameterList &params)
 {
 	CDisplayChannelDescr dcd;
-	dcd.displayChannelV(dict, colorDescr(), channel, n, tokens, params);
+	dcd.displayChannel(dict, colorDescr, channel, params);
 
 	CDisplayDescr::DisplayChannels_type::iterator iter;
 	for ( iter = m_displayChannels.begin();
@@ -606,7 +606,7 @@ void COptions::initDisplays()
 	m_displays.clear();
 }
 
-RtVoid COptions::displayV(CDeclarationDictionary &dict, RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid COptions::display(RtString name, RtToken type, RtString mode, const CParameterList &params)
 {
 	if ( name && name[0] != '+' ) {
 		m_displays.clear();
@@ -617,7 +617,7 @@ RtVoid COptions::displayV(CDeclarationDictionary &dict, RtString name, RtToken t
 
 	m_displays.push_back(CDisplayDescr());
 	CDisplayDescr &dd = m_displays.back();
-	dd.displayV(dict, colorDescr(), m_displayChannels, name, type, mode, n, tokens, params);
+	dd.display(m_displayChannels, name, type, mode, params);
 }
 
 COptions::Displays_type::const_iterator COptions::findDisplay(RtString name) const

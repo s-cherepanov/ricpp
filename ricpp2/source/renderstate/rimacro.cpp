@@ -7,6 +7,7 @@
 
 using namespace RiCPP;
 
+///////////////////////////////////////////////////////////////////////////////
 CRiMacro::~CRiMacro()
 {
 	std::list<CRManInterfaceCall *>::iterator i;
@@ -23,7 +24,6 @@ bool CRiMacro::add(CRManInterfaceCall *c)
 	m_callList.push_back(c);
 	return true;
 }
-
 
 void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 {

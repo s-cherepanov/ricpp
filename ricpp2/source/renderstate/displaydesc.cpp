@@ -77,6 +77,14 @@ RtVoid CDisplayChannelDescr::displayChannelV(CDeclarationDictionary &dict, const
 	set(CValueCounts(), dict, colorDescr, aChannel, n, tokens, params);
 }
 
+RtVoid CDisplayChannelDescr::displayChannel(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString aChannel, const CParameterList &params)
+{
+	if ( m_channel )
+		delete m_channel;
+
+	m_channel = new CDeclaration(aChannel, colorDescr, dict.tokenMap());
+	set(aChannel, params);
+}
 
 // ----------------------------------------------------------------------------
 // CDisplayDescr
@@ -120,28 +128,13 @@ CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd) {
 	return *this;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/*! Fills a CDisplayDescr instance with a display description given in
- *  a TRi::displayV() call
- *
- *  \param dict       Current declarations
- *  \param curColorSize Number of components per color
- *  \param aName      Token with name of the
- *  \param aType      Token with type of the display
- *  \param aMode      Token with the display mode
- *  \param n          Number of additional parameters
- *  \param tokens     Tokens of the additional parameters
- *  \param params     Values of the parameters
- *  \return false if parameters could not be parsed, true if ok
- */
-void CDisplayDescr::displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]) {
+void CDisplayDescr::display(const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode) {
 	m_type = aType;
 	m_mode = aMode;
 
 	m_origin[0] = 0;
 	m_origin[1] = 0;
 	
-	set(CValueCounts(), dict, colorDescr, aName, n, tokens, params);
 
 	const CParameter *p = get(RI_ORIGIN);
 	if ( p ) {
@@ -170,4 +163,28 @@ void CDisplayDescr::displayV(CDeclarationDictionary &dict, const CColorDescr &co
 			}
 		}
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/*! Fills a CDisplayDescr instance with a display description given in
+ *  a TRi::displayV() call
+ *
+ *  \param dict       Current declarations
+ *  \param curColorSize Number of components per color
+ *  \param aName      Token with name of the
+ *  \param aType      Token with type of the display
+ *  \param aMode      Token with the display mode
+ *  \param n          Number of additional parameters
+ *  \param tokens     Tokens of the additional parameters
+ *  \param params     Values of the parameters
+ *  \return false if parameters could not be parsed, true if ok
+ */
+void CDisplayDescr::displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]) {
+	set(CValueCounts(), dict, colorDescr, aName, n, tokens, params);
+	display(channels, aName, aType, aMode);
+}
+
+void CDisplayDescr::display(const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params) {
+	set(aName, params);
+	display(channels, aName, aType, aMode);
 }

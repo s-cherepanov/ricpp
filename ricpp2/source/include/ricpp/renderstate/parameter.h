@@ -179,11 +179,18 @@ namespace RiCPP {
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
+		inline virtual void set(const CParameterList &params)
+		{
+			*this = params;
+		}
+
 		virtual void add(
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
+
+		virtual void add(const CParameterList &params);
 
 		CParameter *get(RtToken var);
 		const CParameter *get(RtToken var) const;
@@ -263,11 +270,22 @@ namespace RiCPP {
 			const char *aName,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
+		inline virtual void set(const char *aName, const CParameterList &params)
+		{
+			name(aName);
+			CParameterList::set(params);
+		}
+
 		virtual void add(
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
+
+		inline virtual void add(const CParameterList &params)
+		{
+			CParameterList::add(params);
+		}
 
 		inline void name(const char *aName)
 		{

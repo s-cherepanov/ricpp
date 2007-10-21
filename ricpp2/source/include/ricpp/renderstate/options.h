@@ -418,7 +418,7 @@ namespace RiCPP {
 		bool hasQuantizer(RtToken type) const;
 		bool getQuantize(RtToken type, RtInt &one, RtInt &qmin, RtInt &qmax, RtFloat &ampl) const;
 
-		RtVoid displayChannelV(CDeclarationDictionary &dict, RtString channel, RtInt n, RtToken tokens[], RtPointer params[]);
+		RtVoid displayChannel(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString channel, const CParameterList &params);
 		inline CDisplayDescr::DisplayChannels_type::const_iterator displayChannelBegin() const
 		{
 			return m_displayChannels.begin();
@@ -429,7 +429,7 @@ namespace RiCPP {
 		}
 		CDisplayDescr::DisplayChannels_type::const_iterator findDisplayChannel(RtString channelName) const;
 
-		RtVoid displayV(CDeclarationDictionary &dict, RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]);
+		RtVoid display(RtString name, RtToken type, RtString mode, const CParameterList &params);
 		inline Displays_type::const_iterator displayBegin() const
 		{
 			return m_displays.begin();

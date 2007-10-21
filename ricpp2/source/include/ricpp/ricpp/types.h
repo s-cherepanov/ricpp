@@ -390,6 +390,42 @@ public:
 		nRGB = m_nRGB;
 		RGBn = m_RGBn;
 	}
+
+	/** @brief Gets the nRGB matrix (read-only).
+	 *
+	 *  @return Read-only nRGB matrix.
+	 */
+	const std::vector<RtFloat> &nRGBMatrix() const
+	{
+		return m_nRGB;
+	}
+
+	/** @brief Gets the nRGB matrix.
+	 *
+	 *  @return nRGB matrix.
+	 */
+	std::vector<RtFloat> &nRGBMatrix()
+	{
+		return m_nRGB;
+	}
+
+	/** @brief Gets the RGBn matrix (read-only).
+	 *
+	 *  @return Read-only RGBn matrix.
+	 */
+	const std::vector<RtFloat> &RGBnMatrix() const
+	{
+		return m_RGBn;
+	}
+
+	/** @brief Gets the RGBn matrix
+	 *
+	 *  @return RGBn matrix.
+	 */
+	std::vector<RtFloat> &RGBnMatrix()
+	{
+		return m_RGBn;
+	}
 }; // CColorDescr
 
 

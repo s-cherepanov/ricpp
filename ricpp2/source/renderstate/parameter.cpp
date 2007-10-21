@@ -186,17 +186,7 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 		return *this;
 	clear();
 
-	for (
-		const_iterator i = params.begin();
-		i != params.end();
-		++i )
-	{
-		if ( i->token() != RI_NULL ) {
-			m_params.push_back(*i);
-			RtToken var = m_params.back().token();
-			m_paramMap[var] = &m_params.back();
-		}
-	}
+	add(params);
 
 	rebuild();
 
@@ -234,6 +224,27 @@ void CParameterList::add(
 			// Consume Error, ignore illegal parameters
 		}
 	}
+	rebuild();
+}
+
+
+void CParameterList::add(const CParameterList &params)
+{
+	if ( this == &params )
+		return;
+
+	for (
+		const_iterator i = params.begin();
+		i != params.end();
+		++i )
+	{
+		if ( i->token() != RI_NULL ) {
+			m_params.push_back(*i);
+			RtToken var = m_params.back().token();
+			m_paramMap[var] = &m_params.back();
+		}
+	}
+
 	rebuild();
 }
 

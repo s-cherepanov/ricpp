@@ -42,6 +42,18 @@ void COptionsBase::set(
 	pl->add(counts, dict, m_curColorDesc, n, tokens, params);
 }
 
+void COptionsBase::set(
+	RtString name, const CParameterList &params)
+{
+	CNamedParameterList *pl = getWriteable(name);
+	if ( !pl ) {
+		m_paramList.push_back(CNamedParameterList(name));
+		pl = &m_paramList.back();
+		m_paramMap[name] = pl;
+	}
+
+	pl->add(params);
+}
 
 const CNamedParameterList *COptionsBase::get(const char *name) const
 {

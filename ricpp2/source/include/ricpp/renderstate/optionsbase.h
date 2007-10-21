@@ -52,6 +52,8 @@ namespace RiCPP {
 		void set(
 			CDeclarationDictionary &dict,
 			RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+		void set(
+			RtString name, const CParameterList &params);
 
 		CNamedParameterList *getWriteable(const char *name);
 		const CNamedParameterList *get(const char *name) const;
@@ -98,7 +100,7 @@ namespace RiCPP {
 		}
 	}; // COptionsBase
 
-
+#if 0
 	/** @brief
 	 */
 	class COptionsBaseReader {
@@ -137,6 +139,7 @@ namespace RiCPP {
 			return m_attribs->colorDescr();
 		}
 	}; // COptionsBaseReader
+#endif // 0
 
 }
 

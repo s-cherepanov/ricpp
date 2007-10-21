@@ -34,6 +34,7 @@ namespace RiCPP {
 		bool CDisplayChannelDescr::operator==(std::string name) const;
 
 		RtVoid displayChannelV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString aChannel, RtInt n, RtToken tokens[], RtPointer params[]);
+		RtVoid displayChannel(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString aChannel, const CParameterList &params);
 
 		inline const CDeclaration *channel() const
 		{
@@ -82,6 +83,8 @@ namespace RiCPP {
 		 *  \param aMode The display mode, \sa m_mode
 		 */
 		void displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]);
+		void display(const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode);
+		void display(const DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params);
 
 		inline RtToken type() const
 		{

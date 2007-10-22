@@ -134,6 +134,10 @@
 		C3B26A320C14600E0080C1F9 /* rendererloader.h in Headers */ = {isa = PBXBuildFile; fileRef = C3B26A310C14600E0080C1F9 /* rendererloader.h */; };
 		C3B849040BD7625A00DD22B5 /* ribwriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B849030BD7625A00DD22B5 /* ribwriter.cpp */; };
 		C3B849200BD7632B00DD22B5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B8491F0BD7632B00DD22B5 /* main.cpp */; };
+		C3EF21360CCC8FD100714133 /* motionstate.h in Headers */ = {isa = PBXBuildFile; fileRef = C3EF21340CCC8FD100714133 /* motionstate.h */; };
+		C3EF21370CCC8FD100714133 /* resource.h in Headers */ = {isa = PBXBuildFile; fileRef = C3EF21350CCC8FD100714133 /* resource.h */; };
+		C3EF213A0CCC8FEC00714133 /* motionstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3EF21380CCC8FEC00714133 /* motionstate.cpp */; };
+		C3EF213B0CCC8FEC00714133 /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3EF21390CCC8FEC00714133 /* resource.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -407,6 +411,10 @@
 		C3B849090BD762B700DD22B5 /* librendererloader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librendererloader.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B849170BD762EE00DD22B5 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B8491F0BD7632B00DD22B5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = main.cpp; path = ../../../source/test/main.cpp; sourceTree = SOURCE_ROOT; };
+		C3EF21340CCC8FD100714133 /* motionstate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = motionstate.h; path = ../../../source/include/ricpp/renderstate/motionstate.h; sourceTree = SOURCE_ROOT; };
+		C3EF21350CCC8FD100714133 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = resource.h; path = ../../../source/include/ricpp/renderstate/resource.h; sourceTree = SOURCE_ROOT; };
+		C3EF21380CCC8FEC00714133 /* motionstate.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = motionstate.cpp; path = ../../../source/renderstate/motionstate.cpp; sourceTree = SOURCE_ROOT; };
+		C3EF21390CCC8FEC00714133 /* resource.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = resource.cpp; path = ../../../source/renderstate/resource.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -702,6 +710,8 @@
 		C35A155E0C031FF9000C9348 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C3EF21340CCC8FD100714133 /* motionstate.h */,
+				C3EF21350CCC8FD100714133 /* resource.h */,
 				C36C39B80CBA203D00D2B7B2 /* rimacro.h */,
 				C344D5240CA8F3E300E077EC /* attributes.h */,
 				C344D5250CA8F3E300E077EC /* displaydesc.h */,
@@ -721,6 +731,8 @@
 		C35A155F0C031FFF000C9348 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C3EF21380CCC8FEC00714133 /* motionstate.cpp */,
+				C3EF21390CCC8FEC00714133 /* resource.cpp */,
 				C344D5340CA8F40800E077EC /* attributes.cpp */,
 				C344D5350CA8F40800E077EC /* displaydesc.cpp */,
 				C344D5360CA8F40800E077EC /* lights.cpp */,
@@ -1112,6 +1124,8 @@
 				C344D5330CA8F3E300E077EC /* transformation.h in Headers */,
 				C36C39B90CBA203D00D2B7B2 /* rimacro.h in Headers */,
 				C3121A990CBD048700CF64CC /* handlestack.h in Headers */,
+				C3EF21360CCC8FD100714133 /* motionstate.h in Headers */,
+				C3EF21370CCC8FD100714133 /* resource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1591,6 +1605,8 @@
 				C344D5420CA8F40800E077EC /* parameter.cpp in Sources */,
 				C344D5430CA8F40800E077EC /* transformation.cpp in Sources */,
 				C36C39BB0CBA206000D2B7B2 /* rimacro.cpp in Sources */,
+				C3EF213A0CCC8FEC00714133 /* motionstate.cpp in Sources */,
+				C3EF213B0CCC8FEC00714133 /* resource.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

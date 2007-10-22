@@ -134,9 +134,9 @@ class CRenderState {
 
 	CUri m_baseUri;                                ///< Base URI for RIB archive files
 
-	/** @brief Factory for macro interfaces
+	/* @brief Factory for macro interfaces
 	 */
-	CRManInterfaceFactory *m_macroFactory;
+	// CRManInterfaceFactory *m_macroFactory;
 
 	/** @brief Points to current writeable macro
 	 */
@@ -183,8 +183,7 @@ public:
 		CModeStack &aModeStack,
 		COptionsFactory &optionsFactory,
 		CAttributesFactory &attributesFactory,
-		CLightSourceFactory &lightSourceFactory,
-		CRManInterfaceFactory &aMacroFactory);
+		CLightSourceFactory &lightSourceFactory);
 
 	/** @brief Destroys the object
 	 *
@@ -534,7 +533,7 @@ public:
 
 	inline virtual const CLights &lights() const { return m_lights; }
 
-	inline virtual bool hasMacroFactory() const {return m_macroFactory != 0;}
+	// inline virtual bool hasMacroFactory() const {return m_macroFactory != 0;}
 
 	inline virtual bool hasOptions() const {return !m_optionsStack.empty() && m_optionsStack.back() != 0;}
 	inline virtual bool hasAttributes() const {return !m_attributesStack.empty() && m_attributesStack.back() != 0;}
@@ -637,8 +636,8 @@ public:
 		return aLineNo;
 	}
 
-	virtual CRManInterfaceFactory &macroFactory();
-	virtual const CRManInterfaceFactory &macroFactory() const;
+	// virtual CRManInterfaceFactory &macroFactory();
+	// virtual const CRManInterfaceFactory &macroFactory() const;
 
 	inline CRiMacro *curMacro()
 	{

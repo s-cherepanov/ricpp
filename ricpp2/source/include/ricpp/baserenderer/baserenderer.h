@@ -121,9 +121,9 @@ protected:
 		return new CLightSourceFactory;
 	}
 
-	/** @brief Factory method to create a macro factory
+	/* @brief Factory method to create a macro factory
 	 */
-	virtual CRManInterfaceFactory *getNewMacroFactory();
+	// virtual CRManInterfaceFactory *getNewMacroFactory();
 
 	/** @brief Register resources
 	 */

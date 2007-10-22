@@ -29,8 +29,13 @@
 
 #include "ricpp/renderstate/renderstate.h"
 
+#ifndef _RICPP_RENDERSTATE_RIMACRO_H
 #include "ricpp/renderstate/rimacro.h"
+#endif _RICPP_RENDERSTATE_RIMACRO_H
+
+#ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
+#endif // _RICPP_TOOLS_FILEPATH_H
 
 using namespace RiCPP;
 
@@ -38,8 +43,9 @@ CRenderState::CRenderState(
 	CModeStack &aModeStack,
 	COptionsFactory &optionsFactory,
 	CAttributesFactory &attributesFactory,
-	CLightSourceFactory &lightSourceFactory,
-	CRManInterfaceFactory &aMacroFactory) :
+	CLightSourceFactory &lightSourceFactory
+	// , CRManInterfaceFactory &aMacroFactory
+	) :
 	m_resourceFactories(true),
 	m_lights(lightSourceFactory),
 	m_objectMacros("OBJ_"),
@@ -49,7 +55,7 @@ CRenderState::CRenderState(
 	m_modeStack = &aModeStack;
 	m_optionsFactory = &optionsFactory;
 	m_attributesFactory = &attributesFactory;
-	m_macroFactory = &aMacroFactory;
+	// m_macroFactory = &aMacroFactory;
 	m_frameNumber = 0;
 	m_lineNo = -1;
 
@@ -109,9 +115,11 @@ CRenderState::~CRenderState()
 		delete m_modeStack;
 	}
 
+	/*
 	if ( m_macroFactory ) {
 		delete m_macroFactory;
 	}
+	*/
 }
 
 void CRenderState::solidBegin(RtToken type)
@@ -402,16 +410,19 @@ void CRenderState::parseParameters(const CValueCounts &counts, RtInt n, RtToken 
 	}
 }
 
+/*
 CRManInterfaceFactory &CRenderState::macroFactory()
 {
 	assert(m_macroFactory != 0);
 	return *m_macroFactory;
 }
+
 const CRManInterfaceFactory &CRenderState::macroFactory() const
 {
 	assert(m_macroFactory != 0);
 	return *m_macroFactory;
 }
+*/
 
 RtToken CRenderState::storedArchiveName(RtString archiveName) const
 {

@@ -384,6 +384,50 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacroattributes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacrobase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacrocontainer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacroexternals.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacrofactory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacrolights.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacromisc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacromodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacrooptions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacroprims.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\rimacrotransforms.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\transformation.h"
 				>
 			</File>

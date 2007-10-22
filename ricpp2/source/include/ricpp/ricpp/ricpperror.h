@@ -69,8 +69,11 @@ public:
 }; // CRiCPPErrMsg
 
 /** @brief The renderer error is used internally by the back end to throw exceptions
+ *
+ *  Since Apple discourage to use STL for the exported interface of shared libraries
+ *  ExceptRiCPPError will not inherit from std::exception.
  */
-class ExceptRiCPPError : public std::exception
+class ExceptRiCPPError // : public std::exception
 {
 	RtInt m_code;           ///< @brief Which of error occured, 'RIE_...'
 	RtInt m_severity;       ///< @brief Severity level RIE_INFO, RIE_WARNING, RIE_ERROR, RIE_SEVERE

@@ -76,6 +76,8 @@ class CRiArchiveMacro;
 /** @brief The facade for the render state objects.
  *
  * The CRenderState object is a part of CBaseRenderer.
+ *
+ * @todo Remove STL from public interfaces of shared libraries (@see Creating Compatible Libraries in Apples C++ Runtime Environment Programming Guide)
  */
 class CRenderState {
 	CModeStack *m_modeStack;                       ///< Pointer to a mode stack.

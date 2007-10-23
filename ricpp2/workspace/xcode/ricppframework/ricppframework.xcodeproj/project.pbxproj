@@ -121,6 +121,17 @@
 		C37DBBB60C01CC7F003AE4E7 /* declaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */; };
 		C37DBBB70C01CC7F003AE4E7 /* decldict.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */; };
 		C37DBBBB0C01CCC1003AE4E7 /* inlinetools.h in Headers */ = {isa = PBXBuildFile; fileRef = C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */; };
+		C37F497C0CCDD4F500754302 /* rimacroattributes.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49710CCDD4F500754302 /* rimacroattributes.h */; };
+		C37F497D0CCDD4F500754302 /* rimacrobase.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49720CCDD4F500754302 /* rimacrobase.h */; };
+		C37F497E0CCDD4F500754302 /* rimacrocontainer.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49730CCDD4F500754302 /* rimacrocontainer.h */; };
+		C37F497F0CCDD4F500754302 /* rimacroexternals.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49740CCDD4F500754302 /* rimacroexternals.h */; };
+		C37F49800CCDD4F500754302 /* rimacrofactory.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49750CCDD4F500754302 /* rimacrofactory.h */; };
+		C37F49810CCDD4F500754302 /* rimacrolights.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49760CCDD4F500754302 /* rimacrolights.h */; };
+		C37F49820CCDD4F500754302 /* rimacromisc.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49770CCDD4F500754302 /* rimacromisc.h */; };
+		C37F49830CCDD4F500754302 /* rimacromodes.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49780CCDD4F500754302 /* rimacromodes.h */; };
+		C37F49840CCDD4F500754302 /* rimacrooptions.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F49790CCDD4F500754302 /* rimacrooptions.h */; };
+		C37F49850CCDD4F500754302 /* rimacroprims.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F497A0CCDD4F500754302 /* rimacroprims.h */; };
+		C37F49860CCDD4F500754302 /* rimacrotransforms.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F497B0CCDD4F500754302 /* rimacrotransforms.h */; };
 		C38EA2A30BE86D370057831B /* macfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2A20BE86D370057831B /* macfilepath.cpp */; };
 		C38EA2AE0BE86DBD0057831B /* contextcreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */; };
 		C39754130C1402250089A579 /* ribfilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754110C1402250089A579 /* ribfilter.cpp */; };
@@ -267,11 +278,11 @@
 			remoteGlobalIDString = C3610AB40BF2F06500007CEF;
 			remoteInfo = ricppbridge;
 		};
-		C36C39CC0CBA221300D2B7B2 /* PBXContainerItemProxy */ = {
+		C37F49870CCDD5CA00754302 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C36C39AA0CBA1F2600D2B7B2;
+			remoteGlobalIDString = C36C39AA0CBA1F2600D2B7B2 /* ribparser */;
 			remoteInfo = ribparser;
 		};
 		C39753FA0C13FFF80089A579 /* PBXContainerItemProxy */ = {
@@ -391,6 +402,17 @@
 		C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = declaration.cpp; path = ../../../source/declaration/declaration.cpp; sourceTree = SOURCE_ROOT; };
 		C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = decldict.cpp; path = ../../../source/declaration/decldict.cpp; sourceTree = SOURCE_ROOT; };
 		C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = inlinetools.h; path = ../../../source/include/ricpp/tools/inlinetools.h; sourceTree = SOURCE_ROOT; };
+		C37F49710CCDD4F500754302 /* rimacroattributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacroattributes.h; path = ../../../source/include/ricpp/renderstate/rimacroattributes.h; sourceTree = SOURCE_ROOT; };
+		C37F49720CCDD4F500754302 /* rimacrobase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacrobase.h; path = ../../../source/include/ricpp/renderstate/rimacrobase.h; sourceTree = SOURCE_ROOT; };
+		C37F49730CCDD4F500754302 /* rimacrocontainer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacrocontainer.h; path = ../../../source/include/ricpp/renderstate/rimacrocontainer.h; sourceTree = SOURCE_ROOT; };
+		C37F49740CCDD4F500754302 /* rimacroexternals.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacroexternals.h; path = ../../../source/include/ricpp/renderstate/rimacroexternals.h; sourceTree = SOURCE_ROOT; };
+		C37F49750CCDD4F500754302 /* rimacrofactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacrofactory.h; path = ../../../source/include/ricpp/renderstate/rimacrofactory.h; sourceTree = SOURCE_ROOT; };
+		C37F49760CCDD4F500754302 /* rimacrolights.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacrolights.h; path = ../../../source/include/ricpp/renderstate/rimacrolights.h; sourceTree = SOURCE_ROOT; };
+		C37F49770CCDD4F500754302 /* rimacromisc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacromisc.h; path = ../../../source/include/ricpp/renderstate/rimacromisc.h; sourceTree = SOURCE_ROOT; };
+		C37F49780CCDD4F500754302 /* rimacromodes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacromodes.h; path = ../../../source/include/ricpp/renderstate/rimacromodes.h; sourceTree = SOURCE_ROOT; };
+		C37F49790CCDD4F500754302 /* rimacrooptions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacrooptions.h; path = ../../../source/include/ricpp/renderstate/rimacrooptions.h; sourceTree = SOURCE_ROOT; };
+		C37F497A0CCDD4F500754302 /* rimacroprims.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacroprims.h; path = ../../../source/include/ricpp/renderstate/rimacroprims.h; sourceTree = SOURCE_ROOT; };
+		C37F497B0CCDD4F500754302 /* rimacrotransforms.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacrotransforms.h; path = ../../../source/include/ricpp/renderstate/rimacrotransforms.h; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C38EA2AD0BE86DBD0057831B /* contextcreator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = contextcreator.cpp; path = ../../../source/baserenderer/contextcreator.cpp; sourceTree = SOURCE_ROOT; };
 		C39753E90C13FF370089A579 /* libpassthrough.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpassthrough.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -710,19 +732,30 @@
 		C35A155E0C031FF9000C9348 /* Header */ = {
 			isa = PBXGroup;
 			children = (
-				C3EF21340CCC8FD100714133 /* motionstate.h */,
-				C3EF21350CCC8FD100714133 /* resource.h */,
-				C36C39B80CBA203D00D2B7B2 /* rimacro.h */,
 				C344D5240CA8F3E300E077EC /* attributes.h */,
 				C344D5250CA8F3E300E077EC /* displaydesc.h */,
 				C3121A980CBD048700CF64CC /* handlestack.h */,
 				C344D5260CA8F3E300E077EC /* lights.h */,
 				C362FB6B0C03337F00880F4D /* modes.h */,
+				C3EF21340CCC8FD100714133 /* motionstate.h */,
 				C344D5270CA8F3E300E077EC /* options.h */,
 				C344D5280CA8F3E300E077EC /* optionsbase.h */,
 				C344D52A0CA8F3E300E077EC /* parameter.h */,
 				C362FB6C0C03337F00880F4D /* modestack.h */,
 				C362FB6D0C03337F00880F4D /* renderstate.h */,
+				C3EF21350CCC8FD100714133 /* resource.h */,
+				C36C39B80CBA203D00D2B7B2 /* rimacro.h */,
+				C37F49710CCDD4F500754302 /* rimacroattributes.h */,
+				C37F49720CCDD4F500754302 /* rimacrobase.h */,
+				C37F49730CCDD4F500754302 /* rimacrocontainer.h */,
+				C37F49740CCDD4F500754302 /* rimacroexternals.h */,
+				C37F49750CCDD4F500754302 /* rimacrofactory.h */,
+				C37F49760CCDD4F500754302 /* rimacrolights.h */,
+				C37F49770CCDD4F500754302 /* rimacromisc.h */,
+				C37F49780CCDD4F500754302 /* rimacromodes.h */,
+				C37F49790CCDD4F500754302 /* rimacrooptions.h */,
+				C37F497A0CCDD4F500754302 /* rimacroprims.h */,
+				C37F497B0CCDD4F500754302 /* rimacrotransforms.h */,
 				C344D52B0CA8F3E300E077EC /* transformation.h */,
 			);
 			name = Header;
@@ -731,16 +764,16 @@
 		C35A155F0C031FFF000C9348 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C3EF21380CCC8FEC00714133 /* motionstate.cpp */,
-				C3EF21390CCC8FEC00714133 /* resource.cpp */,
 				C344D5340CA8F40800E077EC /* attributes.cpp */,
 				C344D5350CA8F40800E077EC /* displaydesc.cpp */,
 				C344D5360CA8F40800E077EC /* lights.cpp */,
 				C362FB670C03336F00880F4D /* modestack.cpp */,
+				C3EF21380CCC8FEC00714133 /* motionstate.cpp */,
 				C344D5370CA8F40800E077EC /* options.cpp */,
 				C344D5380CA8F40800E077EC /* optionsbase.cpp */,
 				C344D53A0CA8F40800E077EC /* parameter.cpp */,
 				C362FB680C03336F00880F4D /* renderstate.cpp */,
+				C3EF21390CCC8FEC00714133 /* resource.cpp */,
 				C36C39BA0CBA206000D2B7B2 /* rimacro.cpp */,
 				C344D53B0CA8F40800E077EC /* transformation.cpp */,
 			);
@@ -1126,6 +1159,17 @@
 				C3121A990CBD048700CF64CC /* handlestack.h in Headers */,
 				C3EF21360CCC8FD100714133 /* motionstate.h in Headers */,
 				C3EF21370CCC8FD100714133 /* resource.h in Headers */,
+				C37F497C0CCDD4F500754302 /* rimacroattributes.h in Headers */,
+				C37F497D0CCDD4F500754302 /* rimacrobase.h in Headers */,
+				C37F497E0CCDD4F500754302 /* rimacrocontainer.h in Headers */,
+				C37F497F0CCDD4F500754302 /* rimacroexternals.h in Headers */,
+				C37F49800CCDD4F500754302 /* rimacrofactory.h in Headers */,
+				C37F49810CCDD4F500754302 /* rimacrolights.h in Headers */,
+				C37F49820CCDD4F500754302 /* rimacromisc.h in Headers */,
+				C37F49830CCDD4F500754302 /* rimacromodes.h in Headers */,
+				C37F49840CCDD4F500754302 /* rimacrooptions.h in Headers */,
+				C37F49850CCDD4F500754302 /* rimacroprims.h in Headers */,
+				C37F49860CCDD4F500754302 /* rimacrotransforms.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1326,6 +1370,7 @@
 			);
 			dependencies = (
 				C39753FD0C14000E0089A579 /* PBXTargetDependency */,
+				C37F49880CCDD5CA00754302 /* PBXTargetDependency */,
 				C3610AD40BF2F38400007CEF /* PBXTargetDependency */,
 			);
 			name = ricppbridge;
@@ -1379,7 +1424,6 @@
 			);
 			dependencies = (
 				C3003D8C0C1D6EA8004C4EF0 /* PBXTargetDependency */,
-				C36C39CD0CBA221300D2B7B2 /* PBXTargetDependency */,
 				C35A15920C032414000C9348 /* PBXTargetDependency */,
 				C337F32E0C460E0E00E174B0 /* PBXTargetDependency */,
 			);
@@ -1812,10 +1856,10 @@
 			target = C3610AB40BF2F06500007CEF /* ricppbridge */;
 			targetProxy = C3610B110BF2F78A00007CEF /* PBXContainerItemProxy */;
 		};
-		C36C39CD0CBA221300D2B7B2 /* PBXTargetDependency */ = {
+		C37F49880CCDD5CA00754302 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C36C39AA0CBA1F2600D2B7B2 /* ribparser */;
-			targetProxy = C36C39CC0CBA221300D2B7B2 /* PBXContainerItemProxy */;
+			targetProxy = C37F49870CCDD5CA00754302 /* PBXContainerItemProxy */;
 		};
 		C39753FB0C13FFF80089A579 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

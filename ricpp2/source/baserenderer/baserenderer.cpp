@@ -2086,7 +2086,7 @@ RtVoid CBaseRenderer::color(RtColor Cs)
 
 		try {
 			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiColor *m = new CRiColor(renderState()->lineNo(), renderState()->options().colorDescr(), Cs);
+				CRiColor *m = new CRiColor(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Cs);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiColor", __LINE__, __FILE__));
 				renderState()->curMacro()->add(m);
@@ -2114,7 +2114,7 @@ RtVoid CBaseRenderer::opacity(RtColor Os)
 
 		try {
 			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiOpacity *m = new CRiOpacity(renderState()->lineNo(), renderState()->options().colorDescr(), Os);
+				CRiOpacity *m = new CRiOpacity(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Os);
 				if ( !m )
 					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOpacity", __LINE__, __FILE__));
 				renderState()->curMacro()->add(m);

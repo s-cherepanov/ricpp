@@ -1434,7 +1434,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		set(s1(), t1(), s2(), t2(), s3(), t3(), s4(), t4());
+		set(c.s1(), c.t1(), c.s2(), c.t2(), c.s3(), c.t3(), c.s4(), c.t4());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -1546,7 +1546,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		size(size());
+		size(c.size());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -1657,7 +1657,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		type(type());
+		type(c.type());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -1767,7 +1767,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		onoff(onoff());
+		onoff(c.onoff());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -1905,7 +1905,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		bound(bound());
+		bound(c.bound());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -2044,7 +2044,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		bound(bound());
+		bound(c.bound());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -2053,7 +2053,7 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////
-/** @brief
+/** @brief The detail range of graphical primitives.
  */
 class CRiDetailRange : public CRManInterfaceCall {
 private:
@@ -2226,7 +2226,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		set(minVis(), lowTran(), upTran(), maxVis());
+		set(c.minVis(), c.lowTran(), c.upTran(), c.maxVis());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;
@@ -2235,6 +2235,8 @@ public:
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief The type of he geometrical approximation.
+ */
 class CRiGeometricApproximation : public CRManInterfaceCall {
 private:
 	RtToken m_type;
@@ -2266,16 +2268,87 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiGeometricApproximation(long aLineNo, RtToken type, RtFloat value) : CRManInterfaceCall(aLineNo), m_type(type), m_value(value) {}
+	inline CRiGeometricApproximation(long aLineNo = -1, RtToken aType = RI_NULL, RtFloat aValue = 0)
+	: CRManInterfaceCall(aLineNo), m_type(aType), m_value(aValue)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiGeometricApproximation(const CRiGeometricApproximation &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiGeometricApproximation()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiGeometricApproximation(*this);
+	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRIC_APPROXIMATION; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+	
+	inline RtToken type() const
+	{
+		return m_type;
+	}
+
+	inline void type(RtToken aType)
+	{
+		m_type = aType;
+	}
+
+	inline RtFloat value() const
+	{
+		return m_value;
+	}
+
+	inline void value(RtFloat aValue)
+	{
+		m_value = aValue;
+	}
+	
+	void set(RtToken aType, RtFloat aValue)
+	{
+		m_type = aType;
+		m_value = aValue;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preGeometricApproximation(m_type, m_value);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doGeometricApproximation(m_type, m_value);
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postGeometricApproximation(m_type, m_value);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiGeometricApproximation &operator=(const CRiGeometricApproximation &c)
 	{
+		if ( this == &c )
+			return *this;
+
+		set(c.type(), c.value());
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiGeometricApproximation
@@ -2312,16 +2385,71 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiGeometricRepresentation(long aLineNo, RtToken type) : CRManInterfaceCall(aLineNo), m_type(type) {}
+	inline CRiGeometricRepresentation(long aLineNo = -1, RtToken aType = RI_NULL)
+	: CRManInterfaceCall(aLineNo), m_type(aType)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiGeometricRepresentation(const CRiGeometricApproximation &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiGeometricRepresentation()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiGeometricRepresentation(*this);
+	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRIC_REPRESENTATION; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	inline RtToken type() const
+	{
+		return m_type;
+	}
+
+	inline void type(RtToken aType)
+	{
+		m_type = aType;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preGeometricRepresentation(m_type);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doGeometricRepresentation(m_type);
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postGeometricRepresentation(m_type);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiGeometricRepresentation &operator=(const CRiGeometricRepresentation &c)
 	{
+		if ( this == &c )
+			return *this;
+
+		type(c.type());
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiGeometricRepresentation
@@ -2358,16 +2486,71 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiOrientation(long aLineNo, RtToken orientation) : CRManInterfaceCall(aLineNo), m_orientation(orientation) {}
+	inline CRiOrientation(long aLineNo=-1, RtToken anOrientation=RI_NULL)
+	: CRManInterfaceCall(aLineNo), m_orientation(anOrientation)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiOrientation(const CRiOrientation &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiOrientation()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiOrientation(*this);
+	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ORIENTATION; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	inline RtToken orientation() const
+	{
+		return m_orientation;
+	}
+
+	inline void orientation(RtToken anOrientation)
+	{
+		m_orientation = anOrientation;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preOrientation(m_orientation);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doOrientation(m_orientation);
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postOrientation(m_orientation);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiOrientation &operator=(const CRiOrientation &c)
 	{
+		if ( this == &c )
+			return *this;
+
+		orientation(c.orientation());
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiOrientation
@@ -2401,16 +2584,56 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiReverseOrientation(long aLineNo) : CRManInterfaceCall(aLineNo) {}
+	inline CRiReverseOrientation(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiReverseOrientation(const CRiReverseOrientation &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiReverseOrientation()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiReverseOrientation(*this);
+	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_REVERSE_ORIENTATION; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preReverseOrientation();
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doReverseOrientation();
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postReverseOrientation();
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiReverseOrientation &operator=(const CRiReverseOrientation &c)
 	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiReverseOrientation
@@ -2447,16 +2670,68 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiSides(long aLineNo, RtInt nsides) : CRManInterfaceCall(aLineNo), m_nsides(nsides) {}
+	inline CRiSides(long aLineNo=-1, RtInt theNSides=2) : CRManInterfaceCall(aLineNo), m_nsides(theNSides) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiSides(const CRiSides &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiSides()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiSides(*this);
+	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SIDES; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	inline RtInt nSides() const
+	{
+		return m_nsides;
+	}
+
+	inline void nSides(RtInt theNSides)
+	{
+		m_nsides = theNSides;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSides(m_nsides);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doSides(m_nsides);
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postSides(m_nsides);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiSides &operator=(const CRiSides &c)
 	{
+		if ( this == &c )
+			return *this;
+			
+		nSides(c.nSides());
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiSides
@@ -2494,19 +2769,117 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiBasis(long aLineNo, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) : CRManInterfaceCall(aLineNo), m_ustep(ustep), m_vstep(vstep) {
-		memcpy(m_ubasis, ubasis, sizeof(RtBasis));
-		memcpy(m_vbasis, vbasis, sizeof(RtBasis));
+	inline CRiBasis(long aLineNo, const RtBasis anUBasis, RtInt anUStep, const RtBasis aVBasis, RtInt aVStep)
+	: CRManInterfaceCall(aLineNo), m_ustep(anUStep), m_vstep(aVStep)
+	{
+		set(anUBasis, anUStep, aVBasis, aVStep);
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiBasis(const CRiBasis &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiBasis()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiBasis(*this);
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BASIS; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+	
+	const RtBasis &ubasis() const
+	{
+		return m_ubasis;
+	}
+
+	void ubasis(const RtBasis &anUBasis)
+	{
+		memcpy(m_ubasis, anUBasis, sizeof(RtBasis));
+	}
+
+	void ubasis(const RtBasis &anUBasis, RtInt anUStep)
+	{
+		memcpy(m_ubasis, anUBasis, sizeof(RtBasis));
+		m_ustep = anUStep;
+	}
+
+	const RtBasis &vbasis() const
+	{
+		return m_vbasis;
+	}
+
+	void vbasis(const RtBasis &aVBasis)
+	{
+		memcpy(m_vbasis, aVBasis, sizeof(RtBasis));
+	}
+
+	void vbasis(const RtBasis &aVBasis, RtInt aVStep)
+	{
+		memcpy(m_vbasis, aVBasis, sizeof(RtBasis));
+		m_vstep = aVStep;
+	}
+
+	RtInt ustep() const
+	{
+		return m_ustep;
+	}
+	
+	void ustep(RtInt anUStep)
+	{
+		m_ustep = anUStep;
+	}
+
+	RtInt vstep() const
+	{
+		return m_vstep;
+	}
+	
+	void vstep(RtInt aVStep)
+	{
+		m_vstep = aVStep;
+	}
+
+	inline void set(const RtBasis anUBasis, RtInt anUStep, const RtBasis aVBasis, RtInt aVStep)
+	{
+		memcpy(m_ubasis, anUBasis, sizeof(RtBasis));
+		m_ustep = anUStep;
+		memcpy(m_vbasis, aVBasis, sizeof(RtBasis));
+		m_vstep = aVStep;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
+	}
+
 	inline CRiBasis &operator=(const CRiBasis &c)
 	{
+		if ( this == &c )
+			return *this;
+			
+		set(c.ubasis(), c.ustep(), c.vbasis(), c.vstep());
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiBasis
@@ -2543,11 +2916,39 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
+	inline CRiTrimCurve(long aLineNo=-1) : CRManInterfaceCall(aLineNo), m_trimCurve(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
+
 	inline CRiTrimCurve(long aLineNo, RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) : CRManInterfaceCall(aLineNo), m_trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w) {}
 
 	inline CRiTrimCurve(long aLineNo, const CTrimCurveData &CRimCurve)  : CRManInterfaceCall(aLineNo), m_trimCurve(CRimCurve) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiTrimCurve(const CRiTrimCurve &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiTrimCurve()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiTrimCurve(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TRIM_CURVE; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
+
+	inline const CTrimCurveData &trimCurve() const { return m_trimCurve; }
+	inline void trimCurve(const CTrimCurveData &t) { m_trimCurve = t; }
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.preTrimCurve(m_trimCurve.m_nLoops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
@@ -2558,6 +2959,10 @@ public:
 			m_trimCurve.m_u.empty() ? 0 : &m_trimCurve.m_u[0],
 			m_trimCurve.m_v.empty() ? 0 : &m_trimCurve.m_v[0],
 			m_trimCurve.m_w.empty() ? 0 : &m_trimCurve.m_w[0]);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doTrimCurve(m_trimCurve.m_nLoops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
@@ -2569,11 +2974,31 @@ public:
 			m_trimCurve.m_v.empty() ? 0 : &m_trimCurve.m_v[0],
 			m_trimCurve.m_w.empty() ? 0 : &m_trimCurve.m_w[0]);
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postTrimCurve(m_trimCurve.m_nLoops,
+			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
+			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
+			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
+			m_trimCurve.m_min.empty() ? 0 : &m_trimCurve.m_min[0],
+			m_trimCurve.m_max.empty() ? 0 : &m_trimCurve.m_max[0],
+			m_trimCurve.m_n.empty() ? 0 : &m_trimCurve.m_n[0],
+			m_trimCurve.m_u.empty() ? 0 : &m_trimCurve.m_u[0],
+			m_trimCurve.m_v.empty() ? 0 : &m_trimCurve.m_v[0],
+			m_trimCurve.m_w.empty() ? 0 : &m_trimCurve.m_w[0]);
+	}
+
 	inline CRiTrimCurve &operator=(const CRiTrimCurve &c)
 	{
+		if ( this == &c )
+			return *this;
+			
+		trimCurve(c.trimCurve());
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
-	inline const CTrimCurveData &CRimCurve() { return m_trimCurve; }
 }; // CRiTrimCurve
 
 }

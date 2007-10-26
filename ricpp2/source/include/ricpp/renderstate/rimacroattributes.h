@@ -1825,7 +1825,7 @@ public:
 	 */
 	inline CRiBound(
 		long aLineNo,
-		const RtBound &aBound)
+		const RtBound aBound)
 		: CRManInterfaceCall(aLineNo)
 	{
 		bound(aBound);
@@ -1875,7 +1875,7 @@ public:
 	 *
 	 * @retval aBound The bounding box of subsequent primitives.
 	 */
-	void bound(const RtBound &aBound)
+	void bound(const RtBound aBound)
 	{
 		memcpy(m_bound, aBound, sizeof(RtBound));
 	}
@@ -1964,7 +1964,7 @@ public:
 	 */
 	inline CRiDetail(
 		long aLineNo,
-		const RtBound &aBound)
+		const RtBound aBound)
 		: CRManInterfaceCall(aLineNo)
 	{
 		bound(aBound);
@@ -2014,7 +2014,7 @@ public:
 	 *
 	 * @retval aBound The bounding box of subsequent primitives.
 	 */
-	void bound(const RtBound &aBound)
+	void bound(const RtBound aBound)
 	{
 		memcpy(m_bound, aBound, sizeof(RtBound));
 	}

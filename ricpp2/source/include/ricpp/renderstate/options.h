@@ -136,11 +136,10 @@ namespace RiCPP {
 		RtFloat m_xWidth,           //!< X-width of the filter in pixels, default 2
 				m_yWidth;           //!< Y-width of the filter in pixels, default 2
 
-		bool m_exposureCalled;		//!< CRi::exposure() has been called
-
-		CParameterList m_imagerParams; //!< Imager Shader, default no params
 		RtToken m_imagerName;          //!< Name of Imager Shader, default RI_NULL
+		CParameterList m_imagerParams; //!< Imager Shader, default no params
 
+		bool m_exposureCalled;		//!< CRi::exposure() has been called
 		RtFloat m_gain,             //!< Exposure (gain) color = (color*gain)**(1/gamma), default 1.0
 				m_gamma;            //!< Exposure (gamma) color = (color*gain)**(1/gamma), default 1.0
 

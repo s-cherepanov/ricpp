@@ -2040,237 +2040,6 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 }
 
 
-RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !preCheck(REQ_ATTRIBUTE) )
-		return;
-
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-
-	renderState()->attributes().set(renderState()->dict(), name, n, tokens, params);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiAttribute *m = new CRiAttribute(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAttribute", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
-			return;
-		doAttribute(name, renderState()->curParamList());
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'attributeV'");
-	}
-}
-
-
-RtVoid CBaseRenderer::color(RtColor Cs)
-{
-	if ( !preCheck(REQ_COLOR) )
-		return;
-
-	renderState()->attributes().color(Cs);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiColor *m = new CRiColor(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Cs);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiColor", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
-			return;
-		doColor(Cs);
-	}
-}
-
-
-RtVoid CBaseRenderer::opacity(RtColor Os)
-{
-	if ( !preCheck(REQ_OPACITY) )
-		return;
-
-	renderState()->attributes().opacity(Os);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiOpacity *m = new CRiOpacity(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Os);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOpacity", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
-			return;
-		doOpacity(Os);
-	}
-}
-
-
-RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !preCheck(REQ_SURFACE) )
-		return;
-
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-
-	renderState()->attributes().surfaceV(renderState()->dict(), name, n, tokens, params);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiSurface *m = new CRiSurface(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiSurface", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
-			return;
-		doSurface(name, renderState()->curParamList());
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'surfaceV'");
-	}
-}
-
-
-RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !preCheck(REQ_ATMOSPHERE) )
-		return;
-
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-
-	renderState()->attributes().atmosphereV(renderState()->dict(), name, n, tokens, params);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiAtmosphere *m = new CRiAtmosphere(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAtmosphere", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
-			return;
-		doAtmosphere(name, renderState()->curParamList());
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'atmosphereV'");
-	}
-}
-
-
-RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !preCheck(REQ_INTERIOR) )
-		return;
-
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-
-	renderState()->attributes().interiorV(renderState()->dict(), name, n, tokens, params);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiInterior *m = new CRiInterior(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiInterior", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
-			return;
-		doInterior(name, renderState()->curParamList());
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'interiorV'");
-	}
-}
-
-
-RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !preCheck(REQ_EXTERIOR) )
-		return;
-
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-
-	renderState()->attributes().exteriorV(renderState()->dict(), name, n, tokens, params);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiExterior *m = new CRiExterior(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiExterior", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
-			return;
-		doExterior(name, renderState()->curParamList());
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'exteriorV'");
-	}
-}
-
-
 RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 {
 	if ( !preCheck(REQ_ILLUMINATE) )
@@ -2299,434 +2068,866 @@ RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 }
 
 
-RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::preAttribute(RtString name, const CParameterList &params)
 {
-	if ( !preCheck(REQ_DISPLACEMENT) )
-		return;
+	renderState()->attributes().set(name, params);
+}
 
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-
-	renderState()->attributes().displacementV(renderState()->dict(), name, n, tokens, params);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiDisplacement *m = new CRiDisplacement(renderState()->lineNo(), renderState()->dict(), renderState()->options().colorDescr(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDisplacement", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	EnumRequests req = REQ_ATTRIBUTE;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doDisplacement(name, renderState()->curParamList());
+
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+
+		CRiAttribute r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 
 	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'displacementV'");
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
 	}
 }
 
+
+RtVoid CBaseRenderer::preColor(RtColor Cs)
+{
+	renderState()->attributes().color(Cs);
+}
+
+RtVoid CBaseRenderer::color(RtColor Cs)
+{
+	EnumRequests req = REQ_COLOR;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		CRiColor r(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Cs);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::preOpacity(RtColor Os)
+{
+	renderState()->attributes().opacity(Os);
+}
+
+RtVoid CBaseRenderer::opacity(RtColor Os)
+{
+	EnumRequests req = REQ_OPACITY;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		CRiOpacity r(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Os);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::preSurface(RtString name, const CParameterList &params)
+{
+	renderState()->attributes().surface(name, params);
+}
+
+RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	EnumRequests req = REQ_SURFACE;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+
+		CRiSurface r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
+	}
+}
+
+
+RtVoid CBaseRenderer::preAtmosphere(RtString name, const CParameterList &params)
+{
+	renderState()->attributes().atmosphere(name, params);
+}
+
+RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	EnumRequests req = REQ_ATMOSPHERE;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+
+		CRiAtmosphere r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
+	}
+}
+
+
+RtVoid CBaseRenderer::preInterior(RtString name, const CParameterList &params)
+{
+	renderState()->attributes().interior(name, params);
+}
+
+RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	EnumRequests req = REQ_INTERIOR;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+
+		CRiInterior r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
+	}
+}
+
+
+RtVoid CBaseRenderer::preExterior(RtString name, const CParameterList &params)
+{
+	renderState()->attributes().exterior(name, params);
+}
+
+RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	EnumRequests req = REQ_EXTERIOR;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+
+		CRiExterior r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
+	}
+}
+
+
+RtVoid CBaseRenderer::preDisplacement(RtString name, const CParameterList &params)
+{
+	renderState()->attributes().displacement(name, params);
+}
+
+RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	EnumRequests req = REQ_DISPLACEMENT;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+
+		CRiDisplacement r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
+	}
+}
+
+
+RtVoid CBaseRenderer::preTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+{
+	renderState()->attributes().textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
+}
 
 RtVoid CBaseRenderer::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
 {
-	if ( !preCheck(REQ_TEXTURE_COORDINATES) )
-		return;
-
-	renderState()->attributes().textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiTextureCoordinates *m = new CRiTextureCoordinates(renderState()->lineNo(), s1, t1, s2, t2, s3, t3, s4, t4);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTextureCoordinates", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_TEXTURE_COORDINATES;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doTextureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
+
+		CRiTextureCoordinates r(renderState()->lineNo(), s1, t1, s2, t2, s3, t3, s4, t4);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preShadingRate(RtFloat size)
+{
+	renderState()->attributes().shadingRate(size);
+}
 
 RtVoid CBaseRenderer::shadingRate(RtFloat size)
 {
-	if ( !preCheck(REQ_SHADING_RATE) )
-		return;
-
-	renderState()->attributes().shadingRate(size);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiShadingRate *m = new CRiShadingRate(renderState()->lineNo(), size);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiShadingRate", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_SHADING_RATE;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doShadingRate(size);
+
+		CRiShadingRate r(renderState()->lineNo(), size);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preShadingInterpolation(RtToken type)
+{
+	renderState()->attributes().shadingInterpolation(type);
+}
 
 RtVoid CBaseRenderer::shadingInterpolation(RtToken type)
 {
-	if ( !preCheck(REQ_SHADING_INTERPOLATION) )
-		return;
-
-	renderState()->attributes().shadingInterpolation(type);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiShadingInterpolation *m = new CRiShadingInterpolation(renderState()->lineNo(), type);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiShadingInterpolation", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_SHADING_INTERPOLATION;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doShadingInterpolation(type);
+
+		CRiShadingInterpolation r(renderState()->lineNo(), type);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preMatte(RtBoolean onoff)
+{
+	renderState()->attributes().matte(onoff);
+}
 
 RtVoid CBaseRenderer::matte(RtBoolean onoff)
 {
-	if ( !preCheck(REQ_MATTE) )
-		return;
-
-	renderState()->attributes().matte(onoff);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiMatte *m = new CRiMatte(renderState()->lineNo(), onoff);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiMatte", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_MATTE;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doMatte(onoff);
+
+		CRiMatte r(renderState()->lineNo(), onoff);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preBound(RtBound aBound)
+{
+	renderState()->attributes().bound(aBound);
+}
 
 RtVoid CBaseRenderer::bound(RtBound aBound)
 {
-	if ( !preCheck(REQ_BOUND) )
-		return;
-
-	renderState()->attributes().bound(aBound);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiBound *m = new CRiBound(renderState()->lineNo(), aBound);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiBound", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_BOUND;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doBound(aBound);
+
+		CRiBound r(renderState()->lineNo(), aBound);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preDetail(RtBound aBound)
+{
+	renderState()->attributes().detail(aBound);
+}
 
 RtVoid CBaseRenderer::detail(RtBound aBound)
 {
-	if ( !preCheck(REQ_DETAIL) )
-		return;
-
-	renderState()->attributes().detail(aBound);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiDetail *m = new CRiDetail(renderState()->lineNo(), aBound);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDetail", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_DETAIL;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doDetail(aBound);
+
+		CRiDetail r(renderState()->lineNo(), aBound);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+{
+	renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
+}
 
 RtVoid CBaseRenderer::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
-	if ( !preCheck(REQ_DETAIL_RANGE) )
-		return;
-
-	renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiDetailRange *m = new CRiDetailRange(renderState()->lineNo(), minvis, lowtran, uptran, maxvis);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiDetailRange", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_DETAIL_RANGE;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doDetailRange(minvis, lowtran, uptran, maxvis);
+
+		CRiDetailRange r(renderState()->lineNo(), minvis, lowtran, uptran, maxvis);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preGeometricApproximation(RtToken type, RtFloat value)
+{
+	renderState()->attributes().geometricApproximation(type, value);
+}
 
 RtVoid CBaseRenderer::geometricApproximation(RtToken type, RtFloat value)
 {
-	if ( !preCheck(REQ_GEOMETRIC_APPROXIMATION) )
-		return;
-
-	type = renderState()->tokFindCreate(type);
-	renderState()->attributes().geometricApproximation(type, value);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiGeometricApproximation *m = new CRiGeometricApproximation(renderState()->lineNo(), type, value);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiGeometricApproximation", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_GEOMETRIC_APPROXIMATION;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doGeometricApproximation(type, value);
+
+		type = renderState()->tokFindCreate(type);
+
+		CRiGeometricApproximation r(renderState()->lineNo(), type, value);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preGeometricRepresentation(RtToken type)
+{
+	renderState()->attributes().geometricRepresentation(type);
+}
 
 RtVoid CBaseRenderer::geometricRepresentation(RtToken type)
 {
-	if ( !preCheck(REQ_GEOMETRIC_REPRESENTATION) )
-		return;
-
-	type = renderState()->tokFindCreate(type);
-
-	renderState()->attributes().geometricRepresentation(type);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiGeometricRepresentation *m = new CRiGeometricRepresentation(renderState()->lineNo(), type);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiGeometricRepresentation", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_GEOMETRIC_REPRESENTATION;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doGeometricRepresentation(type);
+
+		type = renderState()->tokFindCreate(type);
+
+		CRiGeometricRepresentation r(renderState()->lineNo(), type);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preOrientation(RtToken anOrientation)
+{
+	renderState()->attributes().orientation(anOrientation);
+}
 
 RtVoid CBaseRenderer::orientation(RtToken anOrientation)
 {
-	if ( !preCheck(REQ_ORIENTATION) )
-		return;
-
-	anOrientation = renderState()->tokFindCreate(anOrientation);
-
-	renderState()->attributes().orientation(anOrientation);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiOrientation *m = new CRiOrientation(renderState()->lineNo(), anOrientation);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiOrientation", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_ORIENTATION;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doOrientation(anOrientation);
+
+		anOrientation = renderState()->tokFindCreate(anOrientation);
+
+		CRiOrientation r(renderState()->lineNo(), anOrientation);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preReverseOrientation(void)
+{
+	renderState()->attributes().reverseOrientation();
+}
 
 RtVoid CBaseRenderer::reverseOrientation(void)
 {
-	if ( !preCheck(REQ_REVERSE_ORIENTATION) )
-		return;
-
-	renderState()->attributes().reverseOrientation();
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiReverseOrientation *m = new CRiReverseOrientation(renderState()->lineNo());
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiReverseOrientation", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_REVERSE_ORIENTATION;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doReverseOrientation();
+
+		CRiReverseOrientation r(renderState()->lineNo());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preSides(RtInt nsides)
+{
+	renderState()->attributes().sides(nsides);
+}
 
 RtVoid CBaseRenderer::sides(RtInt nsides)
 {
-	if ( !preCheck(REQ_SIDES) )
-		return;
-
-	renderState()->attributes().sides(nsides);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiSides *m = new CRiSides(renderState()->lineNo(), nsides);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiSides", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_SIDES;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doSides(nsides);
+
+		CRiSides r(renderState()->lineNo(), nsides);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
+
+RtVoid CBaseRenderer::preBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+{
+	renderState()->attributes().basis(ubasis, ustep, vbasis, vstep);
+}
 
 RtVoid CBaseRenderer::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
 {
-	if ( !preCheck(REQ_BASIS) )
-		return;
-
-	renderState()->attributes().basis(ubasis, ustep, vbasis, vstep);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiBasis *m = new CRiBasis(renderState()->lineNo(), ubasis, ustep, vbasis, vstep);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiBasis", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_BASIS;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doBasis(ubasis, ustep, vbasis, vstep);
+
+		CRiBasis r(renderState()->lineNo(), ubasis, ustep, vbasis, vstep);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 
 
+RtVoid CBaseRenderer::preTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+{
+	renderState()->attributes().trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+}
+
 RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
 {
-	if ( !preCheck(REQ_BASIS) )
-		return;
-
-	renderState()->attributes().trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiTrimCurve *m = new CRiTrimCurve(renderState()->lineNo(), nloops, ncurves, order, knot, amin, amax, n, u, v, w);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiTrimCurve", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	EnumRequests req = REQ_TRIM_CURVE;
+	try {
+		if ( !preCheck(req) )
 			return;
-		doTrimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+
+		CRiTrimCurve r(renderState()->lineNo(), nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
 	}
 }
 

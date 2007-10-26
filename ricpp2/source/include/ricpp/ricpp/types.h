@@ -39,7 +39,7 @@
 
 namespace RiCPP {
 
-/**! @brief Possible basic types. All types consists of these basic types.
+/** @brief Possible basic types. All types consists of these basic types.
  */
 enum EnumBasicTypes {
 	BASICTYPE_UNKNOWN = 0,//!< Unknown basic type
@@ -48,11 +48,11 @@ enum EnumBasicTypes {
 	BASICTYPE_STRING      //!< String basic type
 };
 
-/**! @brief Number of basic types
+/** @brief Number of basic types
  */
 const int N_BASICTYPES = (int)BASICTYPE_STRING+1;
 
-/**! @brief Possible types
+/** @brief Possible types
  */
 enum EnumTypes {
 	TYPE_UNKNOWN       = 0, //!< Unknown type
@@ -86,11 +86,11 @@ enum EnumTypes {
 */
 };
 
-/**! @brief Number of different types
+/** @brief Number of different types
  */
 const int N_TYPES  = (int)TYPE_COLOR+1;
 
-/**! @brief Possible parameter storage classes
+/** @brief Possible parameter storage classes
  */
 enum EnumClasses {
 	CLASS_UNKNOWN	 = 0, //!< Unknown class
@@ -102,11 +102,11 @@ enum EnumClasses {
 	CLASS_FACEVERTEX	  //!< Face Vertex class (one value per vertex of each face)
 };
 
-/**! @brief Number of different classes
+/** @brief Number of different classes
  */
 const int N_CLASSES = (int)CLASS_FACEVERTEX+1;
 
-/**! @brief Possible table namespaces for declarations
+/** @brief Possible table namespaces for declarations
  */
 enum EnumNamespaces {
 	NAMESPACE_UNKNOWN = 0,
@@ -135,7 +135,7 @@ enum EnumNamespaces {
 	NAMESPACE_RESOURCE
 };
 
-/**! @brief Number of basic types
+/** @brief Number of basic types
  */
 const int N_NAMESPACES = (int)NAMESPACE_RESOURCE+1;
 
@@ -429,7 +429,7 @@ public:
 }; // CColorDescr
 
 
-/** @brief Additional clipping plane
+/** @brief Additional clipping plane.
  */
 class CClippingPlane {
 	RtFloat m_x;
@@ -507,7 +507,7 @@ public:
 }; // CClippingPlane
 
 
-/** @brief Quantizer
+/** @brief Quantizer.
  */
 class CQuantizer {
 	RtToken m_type;
@@ -574,47 +574,49 @@ public:
 }; // CQuantizer
 
 
-/** @brief Contains one trim curve
+/** @brief Contains one trim curve.
  */
 class CTrimCurveData {
 public:
-	RtInt m_nLoops; //!< Number of closed loops
+	RtInt m_nLoops; //!< Number of closed loops.
 
-	int m_total;	//!< Total number of curves
-	int m_npoints;	//!< Total number of control points
-	int m_nknots;	//!< Total number of knots
+	int m_total;	//!< Total number of curves.
+	int m_npoints;	//!< Total number of control points.
+	int m_nknots;	//!< Total number of knots.
 
 	
-	std::vector<RtInt>   m_nCurves; //!< Number if loops (curves with holes)
-	std::vector<RtInt>   m_order;   //!< Order of the curves
-	std::vector<RtFloat> m_knots;   //!< Knot vectors of the curves
-	std::vector<RtFloat> m_min;     //!< Minimum parametric values of the curves
-	std::vector<RtFloat> m_max;     //!< Maximum parametric values of the curves
-	std::vector<RtInt>   m_n;       //!< Number of coordinates
-	std::vector<RtFloat> m_u;       //!< u coordinates of the curves
-	std::vector<RtFloat> m_v;       //!< v coordinates of the curves
-	std::vector<RtFloat> m_w;       //!< w coordinates of the curves
-	std::vector<RtFloat> m_points;  //!< Points filled with (u[0], v[0], w[0], ... )
+	std::vector<RtInt>   m_nCurves; //!< Number if loops (curves with holes).
+	std::vector<RtInt>   m_order;   //!< Order of the curves.
+	std::vector<RtFloat> m_knots;   //!< Knot vectors of the curves.
+	std::vector<RtFloat> m_min;     //!< Minimum parametric values of the curves.
+	std::vector<RtFloat> m_max;     //!< Maximum parametric values of the curves.
+	std::vector<RtInt>   m_n;       //!< Number of coordinates.
+	std::vector<RtFloat> m_u;       //!< u coordinates of the curves.
+	std::vector<RtFloat> m_v;       //!< v coordinates of the curves.
+	std::vector<RtFloat> m_w;       //!< w coordinates of the curves.
+	std::vector<RtFloat> m_points;  //!< Points filled with (u[0], v[0], w[0], ... ).
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Member functions
 
-	//! Standard constructor, initializes with 0 loops
+	/** @brief Standard constructor, initializes with 0 loops.
+	 */
 	inline CTrimCurveData() {
 		m_nLoops = 0;
 	}
 
-	//! Constructor, fills instances with the values of a trim curve interface call
-	/*! \param nloops   Number if loops (curves with holes)
-	 *  \param ncurves  Curves of the loops
-	 *  \param order    Order of the curves
-	 *  \param knot     Knot vectors of the curves
-	 *  \param amin     Minimum parametric values of the curves
-	 *  \param amax     Maximum parametric values of the curves
-	 *  \param n        Number of the homogene u,v,w coordinates
-	 *  \param u        u coordinates of the curves
-	 *  \param v        v coordinates of the curves
-	 *  \param w        w coordinates of the curves
+	/** @breif Constructor, fills instances with the values of a trim curve interface call.
+	 *
+	 *  @param nloops   Number if loops (curves with holes).
+	 *  @param ncurves  Curves of the loops.
+	 *  @param order    Order of the curves.
+	 *  @param knot     Knot vectors of the curves.
+	 *  @param amin     Minimum parametric values of the curves.
+	 *  @param amax     Maximum parametric values of the curves.
+	 *  @param n        Number of the homogene u,v,w coordinates.
+	 *  @param u        u coordinates of the curves.
+	 *  @param v        v coordinates of the curves.
+	 *  @param w        w coordinates of the curves.
 	 */
 	inline CTrimCurveData(
 		RtInt nloops, const RtInt *ncurves,
@@ -626,23 +628,26 @@ public:
 		trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}
 
-	//! Copy constructor
-	/*! \param curve The curve to assign from.
+	/** @brief Copy constructor.
+	 *
+	 *  @param curve The curve to assign from.
 	 */
 	CTrimCurveData(const CTrimCurveData &curve)
 	{
 		*this = curve;
 	}
 
-	//! Destructor
+	/** @brief Destructor.
+	 */
 	~CTrimCurveData()
 	{
 		releaseAll();
 	}
 
-	//! Assignment of another curve
-	/*! \param curve The curve to assign
-	 *  \return this
+	/** @brief Assignment of another curve.
+	 *
+	 *  @param curve The curve to assign.
+	 *  @return *this.
 	 */
 	inline CTrimCurveData &operator=(const CTrimCurveData &curve)
 	{
@@ -683,35 +688,41 @@ public:
 		return true;
 	}
 
-	//! Empties instance
+	/** @brief Clears instance.
+	 *
+	 *  Zero loops menas, there is no trim curve.
+	 */
 	inline void releaseAll()
 	{
 		m_nLoops = 0;
 	}
 
-	//! Fills instances with the values of a trim curve interface call.
-	/*! \param nloops   Number if loops (curves with holes)
-	 *  \param ncurves  Curves of the loops
-	 *  \param order    Order of the curves
-	 *  \param knot     Knot vectors of the curves
-	 *  \param amin     Minimum parameter of a curve
-	 *  \param amax     Maximum parameter of a curve
-	 *  \param n        Number of the homogene u,v,w coordinates
-	 *  \param u        u coordinates of the curves
-	 *  \param v        v coordinates of the curves
-	 *  \param w        w coordinates of the curves
+	/** @brief Fills instances with the values of a trim curve interface call.
+	 *
+	 *  @param nloops   Number if loops (curves with holes).
+	 *  @param ncurves  Curves of the loops.
+	 *  @param order    Order of the curves.
+	 *  @param knot     Knot vectors of the curves.
+	 *  @param amin     Minimum parameter of a curve.
+	 *  @param amax     Maximum parameter of a curve.
+	 *  @param n        Number of the homogene u,v,w coordinates.
+	 *  @param u        u coordinates of the curves.
+	 *  @param v        v coordinates of the curves.
+	 *  @param w        w coordinates of the curves.
 	 */
 	void trimCurve(RtInt nloops, const RtInt *ncurves, const RtInt *order, const RtFloat *knot, const RtFloat *amin, const RtFloat *amax,
 				   const RtInt *n, const RtFloat *u, const RtFloat *v, const RtFloat *w);
-};
+}; // 
 
 
-//! A class for a 3D homogene matrix (4x4)
-/*! The class implements all matrix operations needed by the implementation of the RenderMan interface.
+/** @brief A class for a 3D homogene matrix (4x4).
+ *
+ *  The class implements all matrix operations needed by the implementation of the RenderMan interface.
  */
 class CMatrix3D {
-	//! The value of the 4x4 matrix, init with identity
-	/*! Index [i][j]:\n
+	/** @brief The value of the 4x4 matrix, init with identity.
+	 *
+	 *  Index [i][j]:\n
 	 *  [0][0] [0][1] [0][2] [0][3]\n
 	 *  [1][0] [1][1] [1][2] [1][3]\n
 	 *  [2][0] [2][1] [2][2] [2][3]\n
@@ -719,7 +730,8 @@ class CMatrix3D {
 	 */
 	RtMatrix m_Matrix;
 
-	//! true (default), if premultiply when concatenate matrices (e.g. by transform())
+	/** @brief true (default), if premultiply when concatenate matrices (e.g. by transform()).
+	 */
 	bool m_preMultiply;
 
 	// void extract(RtFloat *result, const RtFloat *mat, int i, int size) const;

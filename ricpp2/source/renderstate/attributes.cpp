@@ -28,27 +28,27 @@ RtVoid CAttributes::opacity(RtColor Os)
 {
 }
 
-RtVoid CAttributes::surfaceV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-}
-
-RtVoid CAttributes::atmosphereV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-}
-
-RtVoid CAttributes::interiorV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-}
-
-RtVoid CAttributes::exteriorV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-}
-
 RtVoid CAttributes::illuminate(RtLightHandle light, RtBoolean onoff)
 {
 }
 
-RtVoid CAttributes::displacementV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CAttributes::surface(RtToken name, const CParameterList &params)
+{
+}
+
+RtVoid CAttributes::atmosphere(RtToken name, const CParameterList &params)
+{
+}
+
+RtVoid CAttributes::interior(RtToken name, const CParameterList &params)
+{
+}
+
+RtVoid CAttributes::exterior(RtToken name, const CParameterList &params)
+{
+}
+
+RtVoid CAttributes::displacement(RtToken name, const CParameterList &params)
 {
 }
 
@@ -106,6 +106,11 @@ RtVoid CAttributes::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vst
 
 RtVoid CAttributes::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
 {
+}
+
+RtVoid CAttributes::trimCurve(const CTrimCurveData &trimCurveData)
+{
+	m_trimCurve = trimCurveData;
 }
 
 // ----------------------------------------------------------------------------

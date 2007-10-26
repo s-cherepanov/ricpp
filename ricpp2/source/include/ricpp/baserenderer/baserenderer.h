@@ -456,30 +456,30 @@ public:
 
 	inline virtual RtLightHandle preLightSource(RtString name, const CParameterList &params) { return illLightHandle; }
 	inline virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params) { return illLightHandle; }
-
-	inline virtual RtVoid preAttribute(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preColor(RtColor Cs) {}
-	inline virtual RtVoid preOpacity(RtColor Os) {}
-	inline virtual RtVoid preSurface(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preAtmosphere(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preInterior(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preExterior(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid preIlluminate(RtLightHandle light, RtBoolean onoff) {}
-	inline virtual RtVoid preDisplacement(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {}
-	inline virtual RtVoid preShadingRate(RtFloat size) {}
-	inline virtual RtVoid preShadingInterpolation(RtToken type) {}
-	inline virtual RtVoid preMatte(RtBoolean onoff) {}
-	inline virtual RtVoid preBound(RtBound bound) {}
-	inline virtual RtVoid preDetail(RtBound bound) {}
-	inline virtual RtVoid preDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {}
-	inline virtual RtVoid preGeometricApproximation(RtToken type, RtFloat value) {}
-	inline virtual RtVoid preGeometricRepresentation(RtToken type) {}
-	inline virtual RtVoid preOrientation(RtToken anOrientation) {}
-	inline virtual RtVoid preReverseOrientation(void) {}
-	inline virtual RtVoid preSides(RtInt nsides) {}
-	inline virtual RtVoid preBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) {}
-	inline virtual RtVoid preTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {}
+
+	virtual RtVoid preAttribute(RtString name, const CParameterList &params);
+	virtual RtVoid preColor(RtColor Cs);
+	virtual RtVoid preOpacity(RtColor Os);
+	virtual RtVoid preSurface(RtString name, const CParameterList &params);
+	virtual RtVoid preAtmosphere(RtString name, const CParameterList &params);
+	virtual RtVoid preInterior(RtString name, const CParameterList &params);
+	virtual RtVoid preExterior(RtString name, const CParameterList &params);
+	virtual RtVoid preDisplacement(RtString name, const CParameterList &params);
+	virtual RtVoid preTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
+	virtual RtVoid preShadingRate(RtFloat size);
+	virtual RtVoid preShadingInterpolation(RtToken type);
+	virtual RtVoid preMatte(RtBoolean onoff);
+	virtual RtVoid preBound(RtBound aBound);
+	virtual RtVoid preDetail(RtBound aBound);
+	virtual RtVoid preDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis);
+	virtual RtVoid preGeometricApproximation(RtToken type, RtFloat value);
+	virtual RtVoid preGeometricRepresentation(RtToken type);
+	virtual RtVoid preOrientation(RtToken anOrientation);
+	virtual RtVoid preReverseOrientation(void);
+	virtual RtVoid preSides(RtInt nsides);
+	virtual RtVoid preBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
+	virtual RtVoid preTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
 
 	inline virtual RtVoid preIdentity(void) {}
 	inline virtual RtVoid preTransform(RtMatrix aTransform) {}

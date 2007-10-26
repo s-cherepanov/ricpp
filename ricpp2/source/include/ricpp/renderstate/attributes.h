@@ -17,6 +17,8 @@ namespace RiCPP {
 		std::vector<RtFloat> m_color;		//!< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
 		std::vector<RtFloat> m_opacity;		//!< Current opacity of an object (opaque - all 1.0), components as in color.
 
+		CTrimCurveData m_trimCurve;         //!< Tirmcurve, default: empty
+
 		bool m_inAreaLightSource;
 
 	public:
@@ -52,12 +54,14 @@ namespace RiCPP {
 			return m_opacity;
 		}
 
-		virtual RtVoid surfaceV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-		virtual RtVoid atmosphereV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-		virtual RtVoid interiorV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-		virtual RtVoid exteriorV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 		virtual RtVoid illuminate(RtLightHandle light, RtBoolean onoff);
-		virtual RtVoid displacementV(CDeclarationDictionary &dict, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+
+		virtual RtVoid surface(RtToken name, const CParameterList &params);
+		virtual RtVoid atmosphere(RtToken name, const CParameterList &params);
+		virtual RtVoid interior(RtToken name, const CParameterList &params);
+		virtual RtVoid exterior(RtToken name, const CParameterList &params);
+		virtual RtVoid displacement(RtToken name, const CParameterList &params);
+
 		virtual RtVoid textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
 		virtual RtVoid shadingRate(RtFloat size);
 		virtual RtVoid shadingInterpolation(RtToken type);
@@ -72,7 +76,7 @@ namespace RiCPP {
 		virtual RtVoid sides(RtInt nsides);
 		virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
 		virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
-
+		virtual RtVoid trimCurve(const CTrimCurveData &trimCurveData);
 	}; // CAttributes
 
 

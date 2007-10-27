@@ -51,7 +51,7 @@ namespace RiCPP {
 	 */
 	class CDisplayDescr : public CNamedParameterList {
 	public:
-		typedef std::list<CDisplayChannelDescr> DisplayChannels_type;
+		typedef std::list<CDisplayChannelDescr> TypeDisplayChannels;
 
 	private:
 		RtToken m_type;      //!< Type of the display, e.g. TRi::RI_FILE, TRi::RI_FRAMEBUFFER, default is TRi::RI_NULL
@@ -82,9 +82,9 @@ namespace RiCPP {
 		 *  \param aType The display type, \sa m_type
 		 *  \param aMode The display mode, \sa m_mode
 		 */
-		void displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]);
-		void display(const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode);
-		void display(const DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params);
+		void displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]);
+		void display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode);
+		void display(const TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params);
 
 		inline RtToken type() const
 		{

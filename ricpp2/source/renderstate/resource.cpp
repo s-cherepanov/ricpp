@@ -4,9 +4,9 @@
 #include "ricpp/declaration/tokenmap.h"
 #endif // _RICPP_DECLARATION_TOKENMAP_H
 
-#ifndef _RICPP_BASERENDERER_RICONTEXT_H
-#include "ricpp/baserenderer/ricontext.h"
-#endif // _RICPP_BASERENDERER_RICONTEXT_H
+#ifndef _RICPP_RENDERSTATE_RICONTEXT_H
+#include "ricpp/renderstate/ricontext.h"
+#endif // _RICPP_RENDERSTATE_RICONTEXT_H
 
 #ifndef _RICPP_RENDERSTATE_ATTRIBUTES_H
 #include "ricpp/renderstate/attributes.h"

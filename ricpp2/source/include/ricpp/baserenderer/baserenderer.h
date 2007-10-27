@@ -30,9 +30,9 @@
  *  @brief Declaration of the backend base class of a renderer context.
  */
 
-#ifndef _RICPP_BASERENDERER_DORENDER_H
-#include "ricpp/baserenderer/dorender.h"
-#endif // _RICPP_BASERENDERER_DORENDER_H
+#ifndef _RICPP_RENDERSTATE_DORENDER_H
+#include "ricpp/renderstate/dorender.h"
+#endif // _RICPP_RENDERSTATE_DORENDER_H
 
 #ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"

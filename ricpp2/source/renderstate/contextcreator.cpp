@@ -27,7 +27,7 @@
  *  @brief Implementation of a class for creation and basic handling of render contexts.
  */
 
-#include "ricpp/baserenderer/contextcreator.h"
+#include "ricpp/renderstate/contextcreator.h"
 #include <algorithm>
 
 using namespace RiCPP;

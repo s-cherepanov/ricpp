@@ -3,6 +3,66 @@
 
 using namespace RiCPP;
 
+const RtInt   COptions::defXResolution = 640;
+const RtInt   COptions::defYResolution = 480;
+const RtFloat COptions::defPixelAspectRatio = 1.0;
+
+const RtFloat COptions::defFrameAspectRatio =
+	(defXResolution * defPixelAspectRatio) /
+    static_cast<RtFloat>(defYResolution);
+
+const RtFloat COptions::defScreenWindowLeft = -defFrameAspectRatio;
+const RtFloat COptions::defScreenWindowRight = defFrameAspectRatio;
+const RtFloat COptions::defScreenWindowBottom = -1.0;
+const RtFloat COptions::defScreenWindowTop = 1.0;
+
+const RtFloat COptions::defCropWindowLeft = defScreenWindowLeft;
+const RtFloat COptions::defCropWindowRight = defScreenWindowRight;
+const RtFloat COptions::defCropWindowBottom = defScreenWindowBottom;
+const RtFloat COptions::defCropWindowTop = defScreenWindowTop;
+
+const RtToken COptions::defProjection = RI_ORTHOGRAPHIC;
+const RtFloat COptions::defCameraFOV = 90.0;
+
+const RtFloat COptions::defNearClip = RI_EPSILON;
+const RtFloat COptions::defFarClip = RI_INFINITY;
+
+const RtFloat COptions::defFstop = RI_INFINITY;
+const RtFloat COptions::defFocalLength = 0;
+const RtFloat COptions::defFocalDistance = 0;
+
+const RtFloat COptions::defShutterOpen = 0;
+const RtFloat COptions::defShutterClose = 0;
+
+const RtFloat COptions::defPixelVariance = 0;
+
+const RtFloat COptions::defXSamples = 2;
+const RtFloat COptions::defYSamples = 2;
+
+const RtFloat COptions::defXFilterWidth = 2;
+const RtFloat COptions::defYFilterWidth = 2;
+
+const RtFloat COptions::defGain = 1;
+const RtFloat COptions::defGamma = 1;
+
+const RtInt   COptions::defOneRGBA = 255;
+const RtInt   COptions::defMinRGBA = 0;
+const RtInt   COptions::defMaxRGBA = 255;
+const RtFloat COptions::defDitherAmplitudeRGBA = 0.5;
+
+const RtInt   COptions::defOneZ = 0;
+const RtInt   COptions::defMinZ = 0;
+const RtInt   COptions::defMaxZ = 0;
+const RtFloat COptions::defDitherAmplitudeZ = 0;
+
+const RtToken COptions::defImagerName = RI_NULL;
+
+const RtToken COptions::defHiderType = RI_HIDDEN;
+
+const RtFloat COptions::defRelativeDetail = 1;
+
+
+
 COptions::~COptions()
 {
 	if ( m_filterFunc )
@@ -558,7 +618,7 @@ RtVoid COptions::displayChannel(CDeclarationDictionary &dict, const CColorDescr 
 	CDisplayChannelDescr dcd;
 	dcd.displayChannel(dict, colorDescr, channel, params);
 
-	CDisplayDescr::DisplayChannels_type::iterator iter;
+	CDisplayDescr::TypeDisplayChannels::iterator iter;
 	for ( iter = m_displayChannels.begin();
 	      iter != m_displayChannels.end();
 		  ++iter )
@@ -582,11 +642,11 @@ RtVoid COptions::displayChannel(CDeclarationDictionary &dict, const CColorDescr 
 	m_displayChannels.push_back(dcd);
 }
 
-CDisplayDescr::DisplayChannels_type::const_iterator COptions::findDisplayChannel(RtString channelName) const
+CDisplayDescr::TypeDisplayChannels::const_iterator COptions::findDisplayChannel(RtString channelName) const
 {
 	channelName = noNullStr(channelName);
 
-	CDisplayDescr::DisplayChannels_type::const_iterator iter;
+	CDisplayDescr::TypeDisplayChannels::const_iterator iter;
 	for ( iter = displayChannelBegin();
 	      iter != displayChannelEnd();
 		  ++iter )
@@ -620,11 +680,11 @@ RtVoid COptions::display(RtString name, RtToken type, RtString mode, const CPara
 	dd.display(m_displayChannels, name, type, mode, params);
 }
 
-COptions::Displays_type::const_iterator COptions::findDisplay(RtString name) const
+COptions::TypeDisplays::const_iterator COptions::findDisplay(RtString name) const
 {
 	name = noNullStr(name);
 
-	Displays_type::const_iterator iter;
+	TypeDisplays::const_iterator iter;
 	for ( iter = displayBegin();
 	      iter != displayEnd();
 		  ++iter )

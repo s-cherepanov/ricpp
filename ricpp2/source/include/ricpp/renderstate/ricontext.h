@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_RICONTEXT_H
-#define _RICPP_BASERENDERER_RICONTEXT_H
+#ifndef _RICPP_RENDERSTATE_RICONTEXT_H
+#define _RICPP_RENDERSTATE_RICONTEXT_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -166,4 +166,4 @@ public:
 }; // IRiContext
 } // namespace RiCPP
 
-#endif // _RICPP_BASERENDERER_RICONTEXT_H
+#endif // _RICPP_RENDERSTATE_RICONTEXT_H

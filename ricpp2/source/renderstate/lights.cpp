@@ -81,7 +81,7 @@ CLightSource *CLightSourceFactory::newLightSource(
 }
 
 
-CLights::LightContainer::size_type CLights::handleToLightIndex(RtLightHandle handle) const
+CLights::TypeLightContainer::size_type CLights::handleToLightIndex(RtLightHandle handle) const
 {
 	if ( handle < 0 ) {
 		handle = -(handle+1);
@@ -137,7 +137,7 @@ void CLights::setHandle(RtLightHandle idx, RtLightHandle handle)
 	if ( handle <= 0 || handle > static_cast<RtLightHandle>(m_lights.size()) )
 		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::setHandle(), Light handle undefined");
 
-	m_handles[static_cast<LightContainer::size_type>(idx)] = handle;
+	m_handles[static_cast<TypeLightContainer::size_type>(idx)] = handle;
 }
 
 RtLightHandle CLights::getHandle(RtLightHandle idx)
@@ -151,7 +151,7 @@ RtLightHandle CLights::getHandle(RtLightHandle idx)
 	if ( idx >= static_cast<RtLightHandle>(m_handles.size()) )
 		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::getHandle(), Handle idx undefined");
 
-	return m_handles[static_cast<LightContainer::size_type>(idx)];
+	return m_handles[static_cast<TypeLightContainer::size_type>(idx)];
 }
 
 
@@ -188,7 +188,7 @@ CLights::~CLights()
 {
 	assert(m_lightsFactory != 0);
 
-	for ( LightContainer::iterator i = begin();
+	for ( TypeLightContainer::iterator i = begin();
 		i != end();
 		i++)
 	{
@@ -211,14 +211,14 @@ void CLights::clearToMark()
 	{
 		assert (!m_lightMarks.empty());
 
-		LightContainer::size_type lightsz =
-			static_cast<LightContainer::size_type>(m_lightMarks.back());
+		TypeLightContainer::size_type lightsz =
+			static_cast<TypeLightContainer::size_type>(m_lightMarks.back());
 
 		assert(lightsz >= m_lights.size());
 		
 		m_lights.pop_back();
 		for (
-			LightContainer::size_type i = lightsz;
+			TypeLightContainer::size_type i = lightsz;
 			i < m_lights.size();
 			++i )
 		{
@@ -226,8 +226,8 @@ void CLights::clearToMark()
 		}
 		m_lights.resize(lightsz);
 
-		LightHandleContainer::size_type lighthandlesz =
-			static_cast<LightHandleContainer::size_type>(m_lightMarks.back());
+		TypeLightHandleContainer::size_type lighthandlesz =
+			static_cast<TypeLightHandleContainer::size_type>(m_lightMarks.back());
 
 		assert(lighthandlesz >= m_handles.size());
 

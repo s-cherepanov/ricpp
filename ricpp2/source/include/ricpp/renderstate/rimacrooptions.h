@@ -50,9 +50,9 @@ public:
 	 */
 	inline CRiFormat(
 		long aLineNo = -1,
-		RtInt aXRes = defXResolution,
-		RtInt aYRes = defYResolution,
-		RtFloat anAspect = defPixelAspectRatio) :
+		RtInt aXRes = COptions::defXResolution,
+		RtInt aYRes = COptions::defYResolution,
+		RtFloat anAspect = COptions::defPixelAspectRatio) :
 		CRManInterfaceCall(aLineNo), m_xres(aXRes), m_yres(aYRes), m_aspect(anAspect)
 	{
 	}
@@ -243,7 +243,7 @@ public:
 	 */
 	inline CRiFrameAspectRatio(
 		long aLineNo = -1,
-		RtFloat aspect = defFrameAspectRatio) :
+		RtFloat aspect = COptions::defFrameAspectRatio) :
 		CRManInterfaceCall(aLineNo), m_aspect(aspect)
 	{
 	}
@@ -369,10 +369,10 @@ public:
 	 */
 	inline CRiScreenWindow(
 		long aLineNo = -1,
-		RtFloat aLeft = defScreenWindowLeft,
-		RtFloat aRight = defScreenWindowRight,
-		RtFloat aBottom = defScreenWindowBottom,
-		RtFloat aTop = defScreenWindowTop ) :
+		RtFloat aLeft = COptions::defScreenWindowLeft,
+		RtFloat aRight = COptions::defScreenWindowRight,
+		RtFloat aBottom = COptions::defScreenWindowBottom,
+		RtFloat aTop = COptions::defScreenWindowTop ) :
 		CRManInterfaceCall(aLineNo),
 		m_left(aLeft), m_right(aRight), m_bottom(aBottom), m_top(aTop)
 	{
@@ -584,10 +584,10 @@ public:
 	 */
 	inline CRiCropWindow(
 		long aLineNo = -1,
-		RtFloat aXmin = defCropWindowLeft,
-		RtFloat aXmax = defCropWindowRight,
-		RtFloat aYmin = defScreenWindowBottom,
-		RtFloat aYmax = defScreenWindowTop )
+		RtFloat aXmin = COptions::defCropWindowLeft,
+		RtFloat aXmax = COptions::defCropWindowRight,
+		RtFloat aYmin = COptions::defScreenWindowBottom,
+		RtFloat aYmax = COptions::defScreenWindowTop )
 		: CRManInterfaceCall(aLineNo), m_xmin(aXmin), m_xmax(aXmax), m_ymin(aYmin), m_ymax(aYmax)
 	{
 	}
@@ -788,7 +788,7 @@ public:
 	 */
 	inline CRiProjection(
 		long aLineNo = -1,
-		RtToken aName = defProjection)
+		RtToken aName = COptions::defProjection)
 		: CVarParamRManInterfaceCall(aLineNo)
 	{
 		m_name = aName;
@@ -939,7 +939,10 @@ public:
 	 *  @param hither Near clipping plane
 	 *  @param yon Far clipping plane
 	 */
-	inline CRiClipping(long aLineNo=-1, RtFloat aHither=defNearClip, RtFloat aYon=defFarClip)
+	inline CRiClipping(
+		long aLineNo=-1,
+		RtFloat aHither=COptions::defNearClip,
+		RtFloat aYon=COptions::defFarClip)
 		: CRManInterfaceCall(aLineNo), m_hither(aHither), m_yon(aYon)
 	{
 	}
@@ -1407,9 +1410,9 @@ public:
 	 */
 	inline CRiDepthOfField(
 		long aLineNo = -1,
-		RtFloat aFstop = defFstop,
-		RtFloat aFocallength = defFocalLength,
-		RtFloat aFocaldistance = defFocalDistance)
+		RtFloat aFstop = COptions::defFstop,
+		RtFloat aFocallength = COptions::defFocalLength,
+		RtFloat aFocaldistance = COptions::defFocalDistance)
 		: CRManInterfaceCall(aLineNo),
 		  m_fstop(aFstop), m_focallength(aFocallength), m_focaldistance(aFocaldistance)
 	{
@@ -1593,8 +1596,8 @@ public:
 	 */
 	inline CRiShutter(
 		long aLineNo = -1,
-		RtFloat smin = defShutterOpen,
-		RtFloat smax = defShutterClose)
+		RtFloat smin = COptions::defShutterOpen,
+		RtFloat smax = COptions::defShutterClose)
 		: CRManInterfaceCall(aLineNo),
 		  m_smin(smin), m_smax(smax)
 	{
@@ -1751,7 +1754,7 @@ public:
 	 */
 	inline CRiPixelVariance(
 		long aLineNo = -1,
-		RtFloat aVariation = defPixelVariance)
+		RtFloat aVariation = COptions::defPixelVariance)
 		: CRManInterfaceCall(aLineNo),
 		  m_variation(aVariation)
 	{
@@ -1867,8 +1870,8 @@ public:
 	 */
 	inline CRiPixelSamples(
 		long aLineNo = -1,
-		RtFloat aXsamples = defXSamples,
-		RtFloat aYsamples = defYSamples)
+		RtFloat aXsamples = COptions::defXSamples,
+		RtFloat aYsamples = COptions::defYSamples)
 		: CRManInterfaceCall(aLineNo),
 		  m_xsamples(aXsamples), m_ysamples(aYsamples)
 	{
@@ -2033,8 +2036,8 @@ public:
 		if ( !m_function ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiPixelFilter, m_function=CGaussianFilter", __LINE__, __FILE__);
 		}
-		m_xwidth = defXFilterWidth;
-		m_ywidth = defYFilterWidth;
+		m_xwidth = COptions::defXFilterWidth;
+		m_ywidth = COptions::defYFilterWidth;
 	}
 
 	/** @brief Default constructor
@@ -2256,8 +2259,8 @@ public:
 	 */
 	inline CRiExposure(
 		long aLineNo = -1,
-		RtFloat aGain = defGain,
-		RtFloat aGamma = defGamma)
+		RtFloat aGain = COptions::defGain,
+		RtFloat aGamma = COptions::defGamma)
 		: CRManInterfaceCall(aLineNo),
 		   m_gain(aGain), m_gamma(aGamma)
 	{
@@ -2413,7 +2416,7 @@ public:
 	 */
 	inline CRiImager(
 		long aLineNo = -1,
-		RtToken aName = defImagerName)
+		RtToken aName = COptions::defImagerName)
 		: CVarParamRManInterfaceCall(aLineNo)
 	{
 		m_name = aName;
@@ -2572,10 +2575,10 @@ public:
 	inline CRiQuantize(
 		long aLineNo = -1,
 		RtToken aType = RI_RGBA,
-		RtInt aOne = defOneRGBA,
-		RtInt aQmin = defMinRGBA,
-		RtInt aQmax = defMaxRGBA,
-		RtFloat aDitherAmplitude = defDitherAmplitudeRGBA)
+		RtInt aOne = COptions::defOneRGBA,
+		RtInt aQmin = COptions::defMinRGBA,
+		RtInt aQmax = COptions::defMaxRGBA,
+		RtFloat aDitherAmplitude = COptions::defDitherAmplitudeRGBA)
 		: CRManInterfaceCall(aLineNo),
 		m_type(aType), m_one(aOne), m_qmin(aQmin), m_qmax(aQmax), m_ditheramplitude(aDitherAmplitude)
 	{
@@ -3177,7 +3180,7 @@ public:
 	 */
 	inline CRiHider(
 		long aLineNo = -1,
-		RtToken aType = defHiderType)
+		RtToken aType = COptions::defHiderType)
 		: CVarParamRManInterfaceCall(aLineNo), m_type(aType)
 	{
 	}
@@ -3510,7 +3513,7 @@ public:
 	 */
 	inline CRiRelativeDetail(
 		long aLineNo = -1,
-		RtFloat aRelativedetail = defRelativeDetail)
+		RtFloat aRelativedetail = COptions::defRelativeDetail)
 		: CRManInterfaceCall(aLineNo), m_relativedetail(aRelativedetail)
 	{
 	}

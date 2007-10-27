@@ -1185,10 +1185,10 @@ public:
 	 */
 	inline CRiTextureCoordinates(
 		long aLineNo = -1,
-		RtFloat as1 = 0, RtFloat at1 = 0,
-		RtFloat as2 = 1, RtFloat at2 = 0,
-		RtFloat as3 = 0, RtFloat at3 = 1,
-		RtFloat as4 = 1, RtFloat at4 = 1)
+		RtFloat as1 = CAttributes::defTextureS1, RtFloat at1 = CAttributes::defTextureT1,
+		RtFloat as2 = CAttributes::defTextureS2, RtFloat at2 = CAttributes::defTextureT2,
+		RtFloat as3 = CAttributes::defTextureS3, RtFloat at3 = CAttributes::defTextureT3,
+		RtFloat as4 = CAttributes::defTextureS4, RtFloat at4 = CAttributes::defTextureT4)
 		: CRManInterfaceCall(aLineNo),
 		  m_s1(as1), m_t1(at1),
 		  m_s2(as2), m_t2(at2),
@@ -1476,7 +1476,7 @@ public:
 	 */
 	inline CRiShadingRate(
 		long aLineNo=-1,
-		RtFloat aSize=1)
+		RtFloat aSize = CAttributes::defShadingRate)
 		: CRManInterfaceCall(aLineNo), m_size(aSize)
 	{
 	}
@@ -1587,7 +1587,7 @@ public:
 	 */
 	inline CRiShadingInterpolation(
 		long aLineNo=-1,
-		RtToken aType=RI_CONSTANT)
+		RtToken aType = CAttributes::defShadingInterpolation)
 		: CRManInterfaceCall(aLineNo), m_type(aType)
 	{
 	}
@@ -1697,7 +1697,7 @@ public:
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param anOnoff RI_TRUE, matte is on and RI_FALSE, matte is off
 	 */
-	inline CRiMatte(long aLineNo=-1, RtBoolean anOnoff=false)
+	inline CRiMatte(long aLineNo = -1, RtBoolean anOnoff = CAttributes::defMatte)
 		: CRManInterfaceCall(aLineNo), m_onoff(anOnoff)
 	{
 	}
@@ -2092,10 +2092,10 @@ public:
 	 */
 	inline CRiDetailRange(
 		long aLineNo = -1,
-		RtFloat aMinVis = 0,
-		RtFloat aLowTran = 0,
-		RtFloat anUpTran = RI_INFINITY,
-		RtFloat aMaxVis = RI_INFINITY)
+		RtFloat aMinVis = CAttributes::defMinVis,
+		RtFloat aLowTran = CAttributes::defLowTran,
+		RtFloat anUpTran = CAttributes::defUpTran,
+		RtFloat aMaxVis = CAttributes::defMaxVis)
 		: CRManInterfaceCall(aLineNo),
 		  m_minvis(aMinVis), m_lowtran(aLowTran), m_uptran(anUpTran), m_maxvis(aMaxVis)
 	{
@@ -2268,7 +2268,10 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiGeometricApproximation(long aLineNo = -1, RtToken aType = RI_NULL, RtFloat aValue = 0)
+	inline CRiGeometricApproximation(
+		long aLineNo = -1,
+		RtToken aType = CAttributes::defGeometricApproximationType,
+		RtFloat aValue = CAttributes::defGeometricApproximationValue)
 	: CRManInterfaceCall(aLineNo), m_type(aType), m_value(aValue)
 	{
 	}
@@ -2385,7 +2388,9 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiGeometricRepresentation(long aLineNo = -1, RtToken aType = RI_NULL)
+	inline CRiGeometricRepresentation(
+		long aLineNo = -1,
+		RtToken aType = CAttributes::defGeometricRepresentation)
 	: CRManInterfaceCall(aLineNo), m_type(aType)
 	{
 	}
@@ -2486,7 +2491,9 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiOrientation(long aLineNo=-1, RtToken anOrientation=RI_NULL)
+	inline CRiOrientation(
+		long aLineNo=-1,
+		RtToken anOrientation = CAttributes::defOrientation)
 	: CRManInterfaceCall(aLineNo), m_orientation(anOrientation)
 	{
 	}
@@ -2670,7 +2677,12 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiSides(long aLineNo=-1, RtInt theNSides=2) : CRManInterfaceCall(aLineNo), m_nsides(theNSides) {}
+	inline CRiSides(
+		long aLineNo = -1,
+		RtInt theNSides = CAttributes::defNSides)
+	: CRManInterfaceCall(aLineNo), m_nsides(theNSides)
+	{
+	}
 
 	/** @brief Copy constructor.
 	 *
@@ -2769,6 +2781,12 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
+	inline CRiBasis(long aLineNo = -1)
+	: CRManInterfaceCall(aLineNo)
+	{
+		set(RiBezierBasis, RI_BEZIERSTEP, RiBezierBasis, RI_BEZIERSTEP);
+	}
+
 	inline CRiBasis(long aLineNo, const RtBasis anUBasis, RtInt anUStep, const RtBasis aVBasis, RtInt aVStep)
 	: CRManInterfaceCall(aLineNo), m_ustep(anUStep), m_vstep(aVStep)
 	{

@@ -152,8 +152,8 @@ public:
  */
 class CLights {
 public:
-	typedef std::deque<CLightSource *> LightContainer;
-	typedef std::deque<RtLightHandle> LightHandleContainer;
+	typedef std::deque<CLightSource *> TypeLightContainer;
+	typedef std::deque<RtLightHandle> TypeLightHandleContainer;
 
 private:
 	/** @brief Indirection for light handles
@@ -166,8 +166,8 @@ private:
 	 * no light instances exist, but may be referenced to get illuminated.
 	 * Mind also, there can be many instances of one archive.
 	 */
-	LightHandleContainer m_handles;
-	LightContainer m_lights; ///< Ptr to light sources (CLightSource), Index is a positive RtLightHandle (-1)
+	TypeLightHandleContainer m_handles;
+	TypeLightContainer m_lights; ///< Ptr to light sources (CLightSource), Index is a positive RtLightHandle (-1)
 	CLightSourceFactory *m_lightsFactory; ///< Create new lights
 
 	std::vector<unsigned long> m_lightMarks;
@@ -177,7 +177,7 @@ private:
 	 * @return Index for m_lights
 	 * @except ExceptRiCPPError Out of range
 	 */
-	LightContainer::size_type handleToLightIndex(RtLightHandle handle) const;
+	TypeLightContainer::size_type handleToLightIndex(RtLightHandle handle) const;
 
 public:
 	inline CLights(CLightSourceFactory &lightsFactory)
@@ -203,11 +203,11 @@ public:
 	void mark();
 	void clearToMark();
 
-	virtual inline LightContainer::iterator begin() { return m_lights.begin(); }
-	virtual inline LightContainer::iterator end() { return m_lights.end(); }
-	virtual inline LightContainer::const_iterator begin() const { return m_lights.begin(); }
-	virtual inline LightContainer::const_iterator end() const { return m_lights.end(); }
-	virtual inline LightContainer::size_type size() const { return m_lights.size(); }
+	virtual inline TypeLightContainer::iterator begin() { return m_lights.begin(); }
+	virtual inline TypeLightContainer::iterator end() { return m_lights.end(); }
+	virtual inline TypeLightContainer::const_iterator begin() const { return m_lights.begin(); }
+	virtual inline TypeLightContainer::const_iterator end() const { return m_lights.end(); }
+	virtual inline TypeLightContainer::size_type size() const { return m_lights.size(); }
 }; // CLights
 
 }

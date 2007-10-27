@@ -282,6 +282,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\renderstate\contextcreator.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\renderstate\displaydesc.cpp"
 				>
 			</File>
@@ -318,6 +322,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\renderstate\ricontext.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\renderstate\rimacro.cpp"
 				>
 			</File>
@@ -336,7 +344,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\contextcreator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\displaydesc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\dorender.h"
 				>
 			</File>
 			<File
@@ -377,6 +393,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\renderstate\resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\renderstate\ricontext.h"
 				>
 			</File>
 			<File

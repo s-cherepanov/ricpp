@@ -1,9 +1,9 @@
 #ifndef _RICPP_RENDERSTATE_RIMACROBASE_H
 #define _RICPP_RENDERSTATE_RIMACROBASE_H
 
-#ifndef _RICPP_BASERENDERER_DORENDER_H
-#include "ricpp/baserenderer/dorender.h"
-#endif // _RICPP_BASERENDERER_DORENDER_H
+#ifndef _RICPP_RENDERSTATE_DORENDER_H
+#include "ricpp/renderstate/dorender.h"
+#endif // _RICPP_RENDERSTATE_DORENDER_H
 
 namespace RiCPP {
 

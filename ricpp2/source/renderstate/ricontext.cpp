@@ -28,7 +28,7 @@
  *         major version number in this case).
  */
 
-#include "ricpp/baserenderer/ricontext.h"
+#include "ricpp/renderstate/ricontext.h"
 
 using namespace RiCPP;
 

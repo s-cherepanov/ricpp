@@ -128,7 +128,7 @@ CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd) {
 	return *this;
 }
 
-void CDisplayDescr::display(const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode) {
+void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode) {
 	m_type = aType;
 	m_mode = aMode;
 
@@ -154,7 +154,7 @@ void CDisplayDescr::display(const CDisplayDescr::DisplayChannels_type &channels,
 	      iter != m_channelNames.end();
 	      ++iter )
 	{
-		for ( CDisplayDescr::DisplayChannels_type::const_iterator dciter = channels.begin();
+		for ( CDisplayDescr::TypeDisplayChannels::const_iterator dciter = channels.begin();
 			  dciter != channels.end();
 			  ++dciter )
 		{
@@ -179,12 +179,12 @@ void CDisplayDescr::display(const CDisplayDescr::DisplayChannels_type &channels,
  *  \param params     Values of the parameters
  *  \return false if parameters could not be parsed, true if ok
  */
-void CDisplayDescr::displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]) {
+void CDisplayDescr::displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]) {
 	set(CValueCounts(), dict, colorDescr, aName, n, tokens, params);
 	display(channels, aName, aType, aMode);
 }
 
-void CDisplayDescr::display(const CDisplayDescr::DisplayChannels_type &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params) {
+void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params) {
 	set(aName, params);
 	display(channels, aName, aType, aMode);
 }

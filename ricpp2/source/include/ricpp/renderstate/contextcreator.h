@@ -1,5 +1,5 @@
-#ifndef _RICPP_BASERENDERER_CONTEXTCREATOR_H
-#define _RICPP_BASERENDERER_CONTEXTCREATOR_H
+#ifndef _RICPP_RENDERSTATE_CONTEXTCREATOR_H
+#define _RICPP_RENDERSTATE_CONTEXTCREATOR_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -36,9 +36,9 @@
 #include "ricpp/pluginhandler/pluginhandler.h"
 #endif // _RICPP_PLUGINHANDLER_PLUGINHANDLER_H
 
-#ifndef _RICPP_BASERENDERER_RICONTEXT_H
-#include "ricpp/baserenderer/ricontext.h"
-#endif // _RICPP_BASERENDERER_RICONTEXT_H
+#ifndef _RICPP_RENDERSTATE_RICONTEXT_H
+#include "ricpp/renderstate/ricontext.h"
+#endif // _RICPP_RENDERSTATE_RICONTEXT_H
 
 namespace RiCPP {
 
@@ -224,4 +224,4 @@ public:
 
 } // namespace RiCPP
 
-#endif // _RICPP_BASERENDERER_CONTEXTCREATOR_H
+#endif // _RICPP_RENDERSTATE_CONTEXTCREATOR_H

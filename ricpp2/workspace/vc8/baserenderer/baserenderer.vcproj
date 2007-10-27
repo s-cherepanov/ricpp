@@ -285,14 +285,6 @@
 				RelativePath="..\..\..\source\baserenderer\baserenderer.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\contextcreator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\baserenderer\ricontext.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -301,18 +293,6 @@
 			>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\baserenderer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\contextcreator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\dorender.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\baserenderer\ricontext.h"
 				>
 			</File>
 		</Filter>

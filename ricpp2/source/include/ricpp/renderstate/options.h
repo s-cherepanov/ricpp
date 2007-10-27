@@ -76,17 +76,73 @@ namespace RiCPP {
 	 */
 	class COptions : public COptionsBase {
 	public:
-		typedef std::vector<CClippingPlane> ClippingPlanes_type;
-		typedef std::list<CDisplayDescr> Displays_type;
+		static const RtInt   defXResolution;
+		static const RtInt   defYResolution;
+		static const RtFloat defPixelAspectRatio;
+
+		static const RtFloat defFrameAspectRatio;
+
+		static const RtFloat defScreenWindowLeft;
+		static const RtFloat defScreenWindowRight;
+		static const RtFloat defScreenWindowBottom;
+		static const RtFloat defScreenWindowTop;
+
+		static const RtFloat defCropWindowLeft;
+		static const RtFloat defCropWindowRight;
+		static const RtFloat defCropWindowBottom;
+		static const RtFloat defCropWindowTop;
+
+		static const RtToken defProjection;
+		static const RtFloat defCameraFOV;
+
+		static const RtFloat defNearClip;
+		static const RtFloat defFarClip;
+
+		static const RtFloat defFstop;
+		static const RtFloat defFocalLength;
+		static const RtFloat defFocalDistance;
+
+		static const RtFloat defShutterOpen;
+		static const RtFloat defShutterClose;
+
+		static const RtFloat defPixelVariance;
+
+		static const RtFloat defXSamples;
+		static const RtFloat defYSamples;
+
+		static const RtFloat defXFilterWidth;
+		static const RtFloat defYFilterWidth;
+
+		static const RtFloat defGain;
+		static const RtFloat defGamma;
+
+		static const RtInt   defOneRGBA;
+		static const RtInt   defMinRGBA;
+		static const RtInt   defMaxRGBA;
+		static const RtFloat defDitherAmplitudeRGBA;
+
+		static const RtInt   defOneZ;
+		static const RtInt   defMinZ;
+		static const RtInt   defMaxZ;
+		static const RtFloat defDitherAmplitudeZ;
+
+		static const RtToken defImagerName;
+
+		static const RtToken defHiderType;
+
+		static const RtFloat defRelativeDetail;
+
+		typedef std::vector<CClippingPlane> TypeClippingPlanes;
+		typedef std::list<CDisplayDescr> TypeDisplays;
 	private:
 		// CViewPort m_curViewPort;      //!< Viewport data
 
-		CDisplayDescr::DisplayChannels_type m_displayChannels; //!< Display channels can be as mode by display
-		Displays_type m_displays; //!< Current displays (CDisplayDescr), set by CRi::display()
+		CDisplayDescr::TypeDisplayChannels m_displayChannels; //!< Display channels can be as mode by display
+		TypeDisplays m_displays; //!< Current displays (CDisplayDescr), set by CRi::display()
 
 		std::map<RtToken, CQuantizer> m_quantizers; //!< Quantizer (def. "RGBA" and "z")
 
-		ClippingPlanes_type m_clippingPlanes;   //!< Additional clipping planes
+		TypeClippingPlanes m_clippingPlanes;   //!< Additional clipping planes
 
 		bool    m_formatCalled;        //!< true, if CRi::format() has been called
 		RtInt	m_xResolution;		   //!< Horizontal Resolution of last CRi::display() call
@@ -298,15 +354,15 @@ namespace RiCPP {
 
 		RtVoid clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz);
 		RtVoid clippingPlane(const CClippingPlane &s);
-		inline const ClippingPlanes_type getClippingPlanes() const
+		inline const TypeClippingPlanes getClippingPlanes() const
 		{
 			return m_clippingPlanes;
 		}
-		inline ClippingPlanes_type::const_iterator clippingBegin() const
+		inline TypeClippingPlanes::const_iterator clippingBegin() const
 		{
 			return m_clippingPlanes.begin();
 		}
-		inline ClippingPlanes_type::const_iterator clippingEnd() const
+		inline TypeClippingPlanes::const_iterator clippingEnd() const
 		{
 			return m_clippingPlanes.end();
 		}
@@ -418,26 +474,26 @@ namespace RiCPP {
 		bool getQuantize(RtToken type, RtInt &one, RtInt &qmin, RtInt &qmax, RtFloat &ampl) const;
 
 		RtVoid displayChannel(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString channel, const CParameterList &params);
-		inline CDisplayDescr::DisplayChannels_type::const_iterator displayChannelBegin() const
+		inline CDisplayDescr::TypeDisplayChannels::const_iterator displayChannelBegin() const
 		{
 			return m_displayChannels.begin();
 		}
-		inline CDisplayDescr::DisplayChannels_type::const_iterator displayChannelEnd() const
+		inline CDisplayDescr::TypeDisplayChannels::const_iterator displayChannelEnd() const
 		{
 			return m_displayChannels.end();
 		}
-		CDisplayDescr::DisplayChannels_type::const_iterator findDisplayChannel(RtString channelName) const;
+		CDisplayDescr::TypeDisplayChannels::const_iterator findDisplayChannel(RtString channelName) const;
 
 		RtVoid display(RtString name, RtToken type, RtString mode, const CParameterList &params);
-		inline Displays_type::const_iterator displayBegin() const
+		inline TypeDisplays::const_iterator displayBegin() const
 		{
 			return m_displays.begin();
 		}
-		inline Displays_type::const_iterator displayEnd() const
+		inline TypeDisplays::const_iterator displayEnd() const
 		{
 			return m_displays.end();
 		}
-		Displays_type::const_iterator findDisplay(RtString name) const;
+		TypeDisplays::const_iterator findDisplay(RtString name) const;
 
 		RtVoid hider(RtToken type, const CParameterList &params);
 		inline RtToken hiderType() const

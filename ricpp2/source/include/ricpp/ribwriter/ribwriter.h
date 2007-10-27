@@ -34,9 +34,9 @@
 #include "ricpp/baserenderer/baserenderer.h"
 #endif // _RICPP_BASERENDERER_BASERENDERER_H
 
-#ifndef _RICPP_RENDERSTATE_CONTEXTCREATOR_H
-#include "ricpp/renderstate/contextcreator.h"
-#endif // _RICPP_RENDERSTATE_CONTEXTCREATOR_H
+#ifndef _RICPP_RICONTEXT_CONTEXTCREATOR_H
+#include "ricpp/ricontext/contextcreator.h"
+#endif // _RICPP_RICONTEXT_CONTEXTCREATOR_H
 
 namespace RiCPP {
 

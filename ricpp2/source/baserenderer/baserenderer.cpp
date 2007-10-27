@@ -28,7 +28,7 @@
  */
 
 #include "ricpp/baserenderer/baserenderer.h"
-#include "ricpp/renderstate/rimacro.h"
+#include "ricpp/ricontext/rimacro.h"
 
 #include <cassert>
 

@@ -30,9 +30,9 @@
  *  @brief Parser for rib
  */
 
-#ifndef _RICPP_RENDERSTATE_RENDERSTATE_H
-#include "ricpp/renderstate/renderstate.h"
-#endif // _RICPP_RENDERSTATE_RENDERSTATE_H
+#ifndef _RICPP_RICONTEXT_RENDERSTATE_H
+#include "ricpp/ricontext/renderstate.h"
+#endif // _RICPP_RICONTEXT_RENDERSTATE_H
 
 #ifndef _RICPP_STREAMS_BACKBUFFER_H
 #include "ricpp/streams/backbuffer.h"

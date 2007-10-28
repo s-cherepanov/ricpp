@@ -149,7 +149,8 @@ class CRenderState {
 	std::vector<CRiMacro *> m_macros;
 
 	std::vector<bool> m_conditions; //!< Stack of m_executeConditional and m_ifCondition for nested ifs.
-	bool m_executeConditional; //!< Render (true outside if-else-blocks, conditional inside the blocks.
+	bool m_executeConditional; //!< Render (true outside if-else-blocks, conditional inside the blocks).
+	bool m_accumulateConditional; //!< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
 	bool m_ifCondition;        //!< true, if an if or elseif condition was true;
 
 	void pushOptions();
@@ -339,7 +340,7 @@ public:
 
 	inline bool executeConditionial() const
 	{
-		return m_executeConditional;
+		return m_accumulateConditional && m_executeConditional;
 	}
 
 	inline void ifBegin(bool condition) {

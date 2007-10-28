@@ -71,6 +71,7 @@ CRenderState::CRenderState(
 	m_postponeCondition = true;
 
 	m_executeConditional = true;
+	m_accumulateConditional = true;
 	m_ifCondition = false;
 
 	CFilepath fp;
@@ -216,6 +217,8 @@ void CRenderState::pushConditional()
 	try {
 		m_conditions.push_back(m_executeConditional);
 		m_conditions.push_back(m_ifCondition);
+		m_accumulateConditional = m_accumulateConditional && m_executeConditional;
+		m_conditions.push_back(m_accumulateConditional);
 	} catch (std::exception &e) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in pushConditional(): %s", e.what());
 	}
@@ -224,6 +227,8 @@ void CRenderState::pushConditional()
 void CRenderState::popConditional()
 {
 	try {
+		m_accumulateConditional = m_conditions.back();
+		m_conditions.pop_back();
 		m_ifCondition = m_conditions.back();
 		m_conditions.pop_back();
 		m_executeConditional = m_conditions.back();

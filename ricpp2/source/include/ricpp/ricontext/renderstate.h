@@ -109,7 +109,7 @@ class CRenderState {
 	CLights m_lights;                              ///< Global light list.
 	
 	bool m_reject;                                 ///< Reject requests while running, e.g. for appropriate if-then-else blocks
-
+	
 	/** @brief Only update the state, do no rendering (legacy).
 	 *
 	 * Update the state (handled by the base renderer), but do no more. E.g. if the RIB
@@ -148,8 +148,9 @@ class CRenderState {
 	TemplHandleStack<CRiArchiveMacro> m_archiveMacros;
 	std::vector<CRiMacro *> m_macros;
 
-	std::vector<bool> m_conditions;
-	bool m_curCondition; //!< Render (true outside if-else-blocks, conditional inside the blocks
+	std::vector<bool> m_conditions; //!< Stack of m_executeConditional and m_ifCondition for nested ifs.
+	bool m_executeConditional; //!< Render (true outside if-else-blocks, conditional inside the blocks.
+	bool m_ifCondition;        //!< true, if an if or elseif condition was true;
 
 	void pushOptions();
 	bool popOptions();
@@ -160,10 +161,17 @@ class CRenderState {
 	void pushTransform();
 	bool popTransform();
 
+	void pushConditional();
+	void popConditional();
+
 	void curMacro(CRiMacro *m)
 	{
 		m_curMacro = m;
 	}
+
+	bool varsplit(RtString identifier, RtToken *namespaceQual, RtToken *varname, RtToken *valuename) const;
+	bool getAttribute(CValue &p, RtToken varname, RtToken valuename) const;
+	bool getOption(CValue &p, RtToken varname, RtToken valuename) const;
 
 public:
 
@@ -329,27 +337,30 @@ public:
 		m_motionState.close();
 	}
 
-	inline bool curCondition() const
+	inline bool executeConditionial() const
 	{
-		return m_curCondition;
+		return m_executeConditional;
 	}
-
-	void pushConditional();
-	void popConditional();
 
 	inline void ifBegin(bool condition) {
 		m_modeStack->ifBegin();
 		pushConditional();
-		m_curCondition = condition;
+		m_ifCondition = condition;
+		m_executeConditional = condition;
 	}
 	inline void elseIfBegin(bool condition) {
 		m_modeStack->elseIfBegin();
-		m_curCondition = !m_curCondition && condition;
+		if ( !m_ifCondition ) {
+			m_executeConditional = condition;
+			m_ifCondition = condition;
+		} else {
+			m_executeConditional = false;
+		}
 	}
 	inline void elseBegin(bool condition)
 	{
 		m_modeStack->elseBegin();
-		m_curCondition = !m_curCondition;
+		m_executeConditional = !m_ifCondition;
 	}
 	inline void ifEnd()
 	{
@@ -357,12 +368,17 @@ public:
 		popConditional();
 	}
 
+	bool exists(RtString identifier) const;
+	bool getValue(CValue &p, RtString identifier) const;
+	bool eval(RtString expr) const;
+
 	/** @brief Tests if a request @a req is valid in the current mode.
 	 *  @param req Index of the request to test.
 	 *  @return true, if the request req is valid in the current mode.
 	 *  @see CModeStack::validRequest(), EnumRequests  
 	 */
-	inline virtual bool validRequest(EnumRequests req) const {
+	inline virtual bool validRequest(EnumRequests req) const
+	{
 		return m_modeStack->validRequest(req);
 	}
 

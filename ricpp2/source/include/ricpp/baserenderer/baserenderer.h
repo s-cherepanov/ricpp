@@ -63,13 +63,19 @@ class CBaseRenderer : public IDoRender {
 	 */
 	CErrorExceptionHandler m_errorExceptionHandler;
 
-protected:
 	/** @brief The render state contains all render state objects of this context
 	 *
 	 *  The render state is initialized at begin()
 	 */
 	CRenderState *m_renderState;
 
+	CModeStack *m_modeStack;
+	COptionsFactory *m_optionsFactory;
+	CAttributesFactory *m_attributesFactory;
+	CLightSourceFactory *m_lightSourceFactory;
+	CAttributesResourceFactory *m_attributesResourceFactory;
+
+protected:
 	/** @brief Input handler for byte streams
 	 */
 	CBackBufferProtocolHandlers *m_protocolHandler;
@@ -85,6 +91,12 @@ protected:
 		return new CModeStack;
 	}
 
+	inline virtual void deleteModeStack(CModeStack *ptr)
+	{
+		if ( ptr )
+			delete ptr;
+	}
+
 	/** @brief Creates a new options factory, called by initRenderState()
 	 *
 	 *  Overwrite this method if you want to return an own factory
@@ -95,6 +107,12 @@ protected:
 	inline virtual COptionsFactory *getNewOptionsFactory()
 	{
 		return new COptionsFactory;
+	}
+
+	inline virtual void deleteOptionsFactory(COptionsFactory *ptr)
+	{
+		if ( ptr )
+			delete ptr;
 	}
 
 	/** @brief Creates a new attributes factory, called by initRenderState()
@@ -109,6 +127,12 @@ protected:
 		return new CAttributesFactory;
 	}
 
+	inline virtual void deleteAttributesFactory(CAttributesFactory *ptr)
+	{
+		if ( ptr )
+			delete ptr;
+	}
+
 	/** @brief Creates a new lightsource factory, called by initRenderState()
 	 *
 	 *  Overwrite this method if you want to return an own factory
@@ -121,17 +145,33 @@ protected:
 		return new CLightSourceFactory;
 	}
 
+	inline virtual void deleteLightSourceFactory(CLightSourceFactory *ptr)
+	{
+		if ( ptr )
+			delete ptr;
+	}
+
 	/* @brief Factory method to create a macro factory
 	 */
 	// virtual CRManInterfaceFactory *getNewMacroFactory();
+	// virtual void deleteMacroFactory(CRManInterfaceFactory *ptr);
 
-	/** @brief Register resources
+	/** @brief Registers resource factories.
+	 *
+	 *  Overwrite this if own (other than attributes) resources have to be registered, also.
+	 *  The function is called by initRenderState().
 	 */
 	virtual void registerResources();
 
 	/** @brief Get a factory for the "attributes" resource.
 	 */
 	virtual CAttributesResourceFactory *getNewAttributesResourceFactory();
+
+	inline virtual void deleteAttributesResourceFactory(CAttributesResourceFactory *ptr)
+	{
+		if ( ptr )
+			delete ptr;
+	}
 
 	/** @brief The backend's error handler
 	 *

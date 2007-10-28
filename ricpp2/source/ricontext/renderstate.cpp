@@ -46,7 +46,7 @@ CRenderState::CRenderState(
 	CLightSourceFactory &lightSourceFactory
 	// , CRManInterfaceFactory &aMacroFactory
 	) :
-	m_resourceFactories(true),
+	m_resourceFactories(false),
 	m_lights(lightSourceFactory),
 	m_objectMacros("OBJ_"),
 	m_archiveMacros("ARC_")
@@ -70,7 +70,8 @@ CRenderState::CRenderState(
 	m_postponeArchive = true;
 	m_postponeCondition = true;
 
-	m_curCondition = true;
+	m_executeConditional = true;
+	m_ifCondition = false;
 
 	CFilepath fp;
 	std::string s(fp.filepath());
@@ -78,48 +79,11 @@ CRenderState::CRenderState(
 	m_baseUri.set("file", "", s.c_str(), 0, 0);
 }
 
-
-inline void CRenderState::pushConditional()
-{
-	try {
-		m_conditions.push_back(m_curCondition);
-	} catch (std::exception &e) {
-		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in pushConditional(): %s", e.what());
-	}
-}
-
-inline void CRenderState::popConditional()
-{
-	try {
-		m_conditions.pop_back();
-	} catch (std::exception &e) {
-		throw ExceptRiCPPError(RIE_NESTING, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in popConditional(): %s", e.what());
-	}
-}
-
 CRenderState::~CRenderState()
 {
 	while ( popOptions() );
-	if ( m_optionsFactory ) {
-		delete m_optionsFactory;
-	}
-
 	while ( popAttributes() );
-	if ( m_attributesFactory ) {
-		delete m_attributesFactory;
-	}
-
 	m_transformStack.clear();
-
-	if ( m_modeStack ) {
-		delete m_modeStack;
-	}
-
-	/*
-	if ( m_macroFactory ) {
-		delete m_macroFactory;
-	}
-	*/
 }
 
 void CRenderState::solidBegin(RtToken type)
@@ -163,7 +127,7 @@ RtObjectHandle CRenderState::objectBegin()
 	CRiObjectMacro *m = new CRiObjectMacro;
 	curMacro(m);
 
-	if ( curCondition() || curMacro() != 0 ) {
+	if ( executeConditionial() || curMacro() != 0 ) {
 		if ( m != 0 ) {
 			m->postpone(postponeObject());
 			m_objectMacros.insertObject(m);
@@ -183,7 +147,7 @@ void CRenderState::objectEnd()
 	popAttributes();
 	popOptions();
 	
-	if ( curCondition()  || curMacro() != 0 ) {
+	if ( executeConditionial()  || curMacro() != 0 ) {
 		if ( m_curMacro != 0 )
 			m_curMacro->close();
 		if ( !m_macros.empty() ) {
@@ -212,7 +176,7 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 	pushTransform();
 	m_modeStack->archiveBegin();
 
-	if ( curCondition() || curMacro() != 0 ) {
+	if ( executeConditionial() || curMacro() != 0 ) {
 		m_macros.push_back(m_curMacro);
 		CRiArchiveMacro *m = new CRiArchiveMacro(aName);
 		curMacro(m);
@@ -235,7 +199,7 @@ void CRenderState::archiveEnd() {
 	popAttributes();
 	popOptions();
 
-	if ( curCondition() || curMacro() != 0 ) {
+	if ( executeConditionial() || curMacro() != 0 ) {
 		if ( !m_macros.empty() ) {
 			if ( m_curMacro != 0 )
 				m_curMacro->close();
@@ -247,6 +211,123 @@ void CRenderState::archiveEnd() {
 	}
 }
 
+void CRenderState::pushConditional()
+{
+	try {
+		m_conditions.push_back(m_executeConditional);
+		m_conditions.push_back(m_ifCondition);
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in pushConditional(): %s", e.what());
+	}
+}
+
+void CRenderState::popConditional()
+{
+	try {
+		m_ifCondition = m_conditions.back();
+		m_conditions.pop_back();
+		m_executeConditional = m_conditions.back();
+		m_conditions.pop_back();
+	} catch (std::exception &e) {
+		throw ExceptRiCPPError(RIE_NESTING, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in popConditional(): %s", e.what());
+	}
+}
+
+bool CRenderState::varsplit(RtString identifier, RtToken *namespaceQual, RtToken *varname, RtToken *valuename) const
+{
+	*namespaceQual=0;
+	*varname=0;
+	*valuename=0;
+
+	if ( emptyStr(identifier) )
+		return false;
+
+	CStringList sl;
+
+	sl.explode(':', identifier, false, false, false);
+
+	if ( sl.empty() || sl.size() > 3 )
+		return false;
+
+	*valuename = sl.back().c_str();
+	*valuename = tokFind(*valuename);
+	sl.pop_back();
+
+	if ( !sl.empty() ) {
+		*varname = sl.back().c_str();
+		*varname = tokFind(*varname);
+		sl.pop_back();
+	}
+
+	if ( !sl.empty() ) {
+		*namespaceQual = sl.back().c_str();
+		*namespaceQual = tokFind(*namespaceQual);
+		sl.pop_back();
+	}
+
+	return true;
+}
+
+bool CRenderState::exists(RtString identifier) const
+{
+	CValue p;
+	return getValue(p, identifier);
+}
+
+bool CRenderState::getAttribute(CValue &p, RtToken varname, RtToken valuename) const
+{
+	const CParameter *param = attributes().get(varname, valuename);
+	if ( param ) {
+		param->get(p, 0);
+		return true;
+	}
+	return false;
+}
+
+bool CRenderState::getOption(CValue &p, RtToken varname, RtToken valuename) const
+{
+	const CParameter *param = options().get(varname, valuename);
+	if ( param ) {
+		param->get(p, 0);
+		return true;
+	}
+	return false;
+}
+
+bool CRenderState::getValue(CValue &p, RtString identifier) const
+{
+	RtToken namespaceQual, varname, valuename;
+	if ( !varsplit(identifier, &namespaceQual, &varname, &valuename) )
+		return false;
+
+	if ( !namespaceQual && !varname )
+	{
+		if ( valuename == RI_FRAME ) {
+			p.set(frameNumber());
+			return true;
+		}
+	} else if ( !namespaceQual ) {
+		if ( getAttribute(p, varname, valuename) )
+			return true;
+		if ( getOption(p, varname, valuename) )
+			return true;
+	} else {
+		if ( namespaceQual == RI_ATTRIBUTE )
+			return getAttribute(p, varname, valuename);
+		if ( namespaceQual == RI_OPTION )
+			return getOption(p, varname, valuename);
+	}
+
+	return false;
+}
+
+bool CRenderState::eval(RtString expr) const
+{
+	if ( emptyStr(expr) )
+		return true;
+
+	return false;
+}
 
 void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params)
 {

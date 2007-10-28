@@ -178,11 +178,47 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiDeformation : public CVarParamRManInterfaceCall {
 protected:
-	std::string m_name;
+	RtToken m_name;
 public:
 	inline static const char *myClassName(void) { return "CRiDeformation"; }
 	inline virtual const char *className() const { return CRiDeformation::myClassName(); }
 
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the shader as atomized string.
+	 */
+	inline CRiDeformation(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		const char *name=RI_NULL)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aName Name of the shader as atomized string.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	inline CRiDeformation(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
@@ -192,16 +228,113 @@ public:
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
-	inline virtual EnumRequests interfaceIdx() const { return REQ_DEFORMATION; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the shader as atomized string.
+	 *  @param parameters Parsed parameter list.
+	 */
+	inline CRiDeformation(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
 	{
-		ri.preDeformation(m_name.c_str(), parameters());
-		ri.doDeformation(m_name.c_str(), parameters());
 	}
-	inline CRiDeformation &operator=(const CRiDeformation &) {
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiDeformation(const CRiDeformation &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiDeformation()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiDeformation(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_DEFORMATION; }
+
+	/** @brief Gets the name of the attribute as atomized string.
+	 *
+	 *  @return The name of the attribute as atomized string.
+	 */
+	inline RtToken name() const
+	{
+		return m_name;
+	}
+
+	/** @brief Sets the name of the attribute as atomized string.
+	 *
+	 *  @param aName The name of the attribute as atomized string.
+	 */
+	inline void name(RtToken aName)
+	{
+		m_name = aName;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preDeformation(m_name, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doDeformation(m_name, parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postDeformation(m_name, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiDeformation &operator=(const CRiDeformation &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		name(c.name());
+
+		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiDeformation
+
+///////////////////////////////////////////////////////////////////////////////
+class CRiScopedCoordinateSystem : public CRManInterfaceCall {
+protected:
+	std::string m_name;
+public:
+	inline static const char *myClassName(void) { return "CRiScopedCoordinateSystem"; }
+	inline virtual const char *className() const { return CRiScopedCoordinateSystem::myClassName(); }
+
+	inline CRiScopedCoordinateSystem(long aLineNo, const char *name) : CRManInterfaceCall(aLineNo), m_name(name) {}
+	inline virtual EnumRequests interfaceIdx() const { return REQ_SCOPED_COORDINATE_SYSTEM; }
+	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preScopedCoordinateSystem(m_name.c_str());
+		ri.doScopedCoordinateSystem(m_name.c_str());
+	}
+	inline CRiScopedCoordinateSystem &operator=(const CRiScopedCoordinateSystem &) {
+		return *this;
+	}
+}; // CRiScopedCoordinateSystem
 
 ///////////////////////////////////////////////////////////////////////////////
 class CRiCoordinateSystem : public CRManInterfaceCall {
@@ -247,7 +380,7 @@ public:
 // ????
 class CRiTransformPoints : public CRManInterfaceCall {
 protected:
-	std::string m_fromSpace, m_toSpace;
+	RtToken m_fromSpace, m_toSpace;
 	RtInt m_nPoints;
 	RtPoint *m_points;
 	// std::vector<RtFloat> m_fromPoints;
@@ -270,8 +403,8 @@ public:
 	m_toPoints = m_fromPoints;
 	RtPoint *p = ri.transformPoints(m_fromSpace.c_str(), m_toSpace.c_str(), m_nPoints, (RtPoint *)&m_toPoints[0]);
 		*/
-		RtPoint *p = ri.transformPoints(m_fromSpace.c_str(), m_toSpace.c_str(), m_nPoints, m_points);
-		p = p;
+		// RtPoint *p = ri.transformPoints(m_fromSpace.c_str(), m_toSpace.c_str(), m_nPoints, m_points);
+		// p = p;
 	}
 	inline CRiTransformPoints &operator=(const CRiTransformPoints &) {
 		return *this;

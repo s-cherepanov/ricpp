@@ -212,7 +212,7 @@ public:
 		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 	CRiPatchMesh(
-		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		long aLineNo,
 		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 		const CParameterList &theParameters);
 
@@ -233,6 +233,7 @@ protected:
 	RtInt m_nu, m_uorder, m_nv, m_vorder;
 	std::vector<RtFloat> m_uknot, m_vknot;
 	RtFloat m_umin, m_umax, m_vmin, m_vmax;
+	void enterValues(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax);
 public:
 	inline static const char *myClassName(void) { return "CRiNuPatch"; }
 	inline virtual const char *className() const { return CRiNuPatch::myClassName(); }
@@ -241,6 +242,10 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+	CRiNuPatch(
+		long aLineNo,
+		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+		const CParameterList &theParameters);
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
 	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{

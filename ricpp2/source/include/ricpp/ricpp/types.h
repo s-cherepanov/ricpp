@@ -34,6 +34,10 @@
 #include "ricpp/ricpp/ricpptypes.h"
 #endif // _RICPP_RICPP_RICPPTYPES_H
 
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 #include <cstddef>
 #include <vector>
 
@@ -801,6 +805,67 @@ public:
 	bool isIdentity() const;
 	bool getInverse(RtMatrix &mat) const;
 }; // CMatrix3D
+
+
+class CValue
+{
+private:
+	RtInt m_intVal;
+	RtFloat m_floatVal;
+	std::string m_stringVal;
+	EnumBasicTypes m_type;
+public:
+	inline void set(RtInt anInt) { m_type = BASICTYPE_INTEGER; m_intVal = anInt; }
+	inline void set(RtFloat aFloat) { m_type = BASICTYPE_FLOAT; m_floatVal = aFloat; }
+	inline void set(RtString aString) { m_type = BASICTYPE_STRING; m_stringVal = noNullStr(aString); }
+	inline void clear() { m_type = BASICTYPE_UNKNOWN; }
+
+	inline CValue() { clear(); }
+	inline CValue(RtInt anInt) { set(anInt); }
+	inline CValue(RtFloat aFloat) { set(aFloat); }
+	inline CValue(RtString aString) { set(aString); }
+	inline CValue(const CValue &val) { *this = val; }
+
+	inline EnumBasicTypes type() const { return m_type; }
+
+	inline CValue &operator=(const CValue &val)
+	{
+		if ( this == &val )
+			return *this;
+		m_intVal = val.m_intVal;
+		m_floatVal = val.m_floatVal;
+		m_stringVal = val.m_stringVal;
+		m_type = val.m_type;
+		return *this;
+	}
+
+	inline bool get(RtInt &anInt)
+	{
+		if ( m_type == BASICTYPE_INTEGER ) {
+			anInt = m_intVal;
+			return true;
+		}
+		return false;
+	}
+
+	inline bool get(RtFloat &aFloat)
+	{
+		if ( m_type == BASICTYPE_INTEGER ) {
+			aFloat = m_floatVal;
+			return true;
+		}
+		return false;
+	}
+
+	inline bool get(std::string &aString)
+	{
+		if ( m_type == BASICTYPE_STRING ) {
+			aString = m_stringVal;
+			return true;
+		}
+		return false;
+	}
+}; // CValue
 
 } // namespace RiCPP
 

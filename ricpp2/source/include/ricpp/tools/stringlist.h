@@ -207,7 +207,7 @@ public:
 
 	/** @brief Removes the last inserted string.
 	 */
-	inline void pop()
+	inline void pop_back()
 	{
 		m_stringList.pop_back();
 	}
@@ -215,7 +215,7 @@ public:
 	/** @brief Use top() to access the last inserted string.
 	 *  @return The last inserted string.
 	 */
-	inline std::string &top()
+	inline std::string &back()
 	{
 		return m_stringList.back();
 	}

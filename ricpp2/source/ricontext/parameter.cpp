@@ -146,6 +146,32 @@ RtPointer CParameter::valptr()
 	}
 }
 
+void CParameter::get(CValue &p, unsigned long pos) const
+{
+	switch ( basicType() ) {
+		case BASICTYPE_INTEGER:
+			if ( pos >= m_ints.size() ) {
+				p.clear();
+				return;
+			}
+			p.set(m_ints[pos]);
+		case BASICTYPE_FLOAT:
+			if ( pos >= m_floats.size() ) {
+				p.clear();
+				return;
+			}
+			p.set(m_floats[pos]);
+		case BASICTYPE_STRING:
+			if ( pos >= m_stringPtrs.size() ) {
+				p.clear();
+				return;
+			}
+			p.set(m_stringPtrs[pos]);
+		default:
+			p.clear();
+	}
+}
+
 CParameterList::CParameterList(
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,

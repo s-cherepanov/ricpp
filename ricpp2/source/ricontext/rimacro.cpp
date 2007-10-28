@@ -72,7 +72,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo,
 	RtInt nloops, RtInt *nverts,
 	const CParameterList &theParameters)
-	: CPolygonRManInterfaceCall(aLineNo)
+	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
 	enterValues(nloops, nverts);
 }
@@ -102,11 +102,12 @@ CRiPointsPolygons::CRiPointsPolygons(
 	CPointsPolygonsClasses p(npolys, nverts, verts);
 	setParams(decl, p, curColorDescr, n, tokens, params);
 }
-inline CRiPointsPolygons::CRiPointsPolygons(
+
+CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo,
 	RtInt npolys, RtInt *nverts, RtInt *verts,
 	const CParameterList &theParameters)
-	: CPolygonRManInterfaceCall(aLineNo)
+	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
 	enterValues(npolys, nverts, verts);
 }
@@ -148,7 +149,7 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo,
 	RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
 	const CParameterList &theParameters)
-	: CPolygonRManInterfaceCall(aLineNo)
+	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
 	enterValues(npolys, nloops, nverts, verts);
 }
@@ -177,25 +178,52 @@ CRiPatchMesh::CRiPatchMesh(
 }
 
 CRiPatchMesh::CRiPatchMesh(
-	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	long aLineNo,
 	RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
 	const CParameterList &theParameters)
-	: CUVRManInterfaceCall(aLineNo)
+	: CUVRManInterfaceCall(aLineNo, theParameters)
 {
 	enterValues(ustep, vstep, type, nu, uwrap, nv, vwrap);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-CRiNuPatch::CRiNuPatch(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr, RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo), m_nu(nu), m_uorder(uorder), m_nv(nv), m_vorder(vorder), m_umin(umin), m_umax(umax), m_vmin(vmin), m_vmax(vmax)
+void CRiNuPatch::enterValues(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax)
 {
+	m_nu = nu;
+	m_uorder = uorder;
+	m_nv = nv;
+	m_vorder = vorder;
+	m_umin = umin;
+	m_umax = umax;
+	m_vmin = vmin;
+	m_vmax = vmax;
+
 	m_uknot.resize(nu+uorder);
 	m_uknot.assign(uknot, uknot+nu+uorder);
 	m_vknot.resize(nv+vorder);
 	m_vknot.assign(vknot, vknot+nv+vorder);
+}
 
+
+CRiNuPatch::CRiNuPatch(
+	long aLineNo,
+	CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+	RtInt n, RtToken tokens[], RtPointer params[])
+	: CGeometryRManInterfaceCall(aLineNo)
+{
+	enterValues(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax);
 	CNuPatchClasses p(nu, uorder, nv, vorder);
 	setParams(decl, p, curColorDescr, n, tokens, params);
+}
+
+CRiNuPatch::CRiNuPatch(
+	long aLineNo,
+	RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+	const CParameterList &theParameters)
+	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+{
+	enterValues(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -75,6 +75,8 @@ namespace RiCPP {
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr);
 
+		void get(CValue &p, unsigned long pos) const;
+
 		const char *name() const;
 		RtToken token() const;
 

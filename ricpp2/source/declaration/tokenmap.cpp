@@ -215,8 +215,10 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_GEOMETRY)] = RI_GEOMETRY;
 		m_tokenMapper[CToken(RI_TEXTURE)] = RI_TEXTURE;
 		m_tokenMapper[CToken(RI_READARCHIVE)] = RI_READARCHIVE;
+		m_tokenMapper[CToken(RI_ARCHIVEBLOCK)] = RI_ARCHIVEBLOCK;
 		m_tokenMapper[CToken(RI_DISPLAYCHANNEL)] = RI_DISPLAYCHANNEL;
 		m_tokenMapper[CToken(RI_RESOURCE)] = RI_RESOURCE;
+		m_tokenMapper[CToken(RI_FRAME)] = RI_FRAME;
 
 		m_tokenMapper[CToken(RI_DEVIATION)] = RI_DEVIATION;
 		m_tokenMapper[CToken(RI_TESSELATION)] = RI_TESSELATION;

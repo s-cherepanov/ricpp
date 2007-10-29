@@ -40,6 +40,7 @@
 
 #include <cstddef>
 #include <vector>
+#include <string>
 
 namespace RiCPP {
 

@@ -41,6 +41,7 @@
 #include <cstddef>
 #include <vector>
 #include <string>
+#include <sstream>
 
 namespace RiCPP {
 
@@ -846,13 +847,29 @@ public:
 			anInt = m_intVal;
 			return true;
 		}
+		if ( m_type == BASICTYPE_FLOAT ) {
+			anInt = (RtInt)m_floatVal;
+			return true;
+		}
+		if ( m_type == BASICTYPE_STRING ) {
+			anInt = (RtInt)atol(m_stringVal.c_str());
+			return true;
+		}
 		return false;
 	}
 
 	inline bool get(RtFloat &aFloat)
 	{
 		if ( m_type == BASICTYPE_INTEGER ) {
+			aFloat = (RtFloat)m_intVal;
+			return true;
+		}
+		if ( m_type == BASICTYPE_FLOAT ) {
 			aFloat = m_floatVal;
+			return true;
+		}
+		if ( m_type == BASICTYPE_STRING ) {
+			aFloat = (RtFloat)atof(m_stringVal.c_str());
 			return true;
 		}
 		return false;
@@ -860,6 +877,16 @@ public:
 
 	inline bool get(std::string &aString)
 	{
+		if ( m_type == BASICTYPE_INTEGER ) {
+			std::stringstream stst(aString);
+			stst << m_intVal;
+			return true;
+		}
+		if ( m_type == BASICTYPE_FLOAT ) {
+			std::stringstream stst(aString);
+			stst << m_floatVal;
+			return true;
+		}
 		if ( m_type == BASICTYPE_STRING ) {
 			aString = m_stringVal;
 			return true;

@@ -174,6 +174,355 @@ class CRenderState {
 	bool getAttribute(CValue &p, RtToken varname, RtToken valuename) const;
 	bool getOption(CValue &p, RtToken varname, RtToken valuename) const;
 
+	/** @brief Parser for RIB if-expression
+	 *
+	 @verbatim
+		if-expr        : expr '\0'
+
+		ws             : ' ' | '\t' | '\n' | '\r' | '\f'
+		wss            : ws (ws)*
+		alpha          : ['a'-'z' 'A'-'Z']
+		digit_not_null : ['1'-'9']
+		digit          : '0' | digit
+		hexdig         : ['a'-'f' 'A'-'F'] | digit
+		octdig         : ['0'-'7']
+		idchar         : alpha | digit | '_'
+		sign           : '+' | '-'
+
+		name           : (idchar)+
+						 (idchar)+ ':' (idchar)+
+						 (idchar)+ ':' (idchar)+ ':' (idchar)+
+		integer_const  : digit_not_null (digit)*
+						 '0' 'x' (hexdig)+
+						 '0' (octdig)+
+						 '0'
+		integer_part   : (digit)+
+		exponent       : ('e' | 'E') (sign)? integer_part
+		float_const    : integer_part exponent
+						 integer_part '.' (integer_part)? (exponent)?
+									  '.' integer_part (exponent)?
+		number         : float_const | integer_const
+
+		character      : '\' octdigit [ octdigit [ octdigit ] ]
+						 '\' ['\' '''' '"' 'n' 'r' 't' 'b' 'f' '\n' ]
+						 [^ '''' '\0' ]
+		quotestring    : '''' (character)* ''''
+		calcvar        : '$('expr')'
+		var            : '$' name
+						 calcvar
+		varstr         : var | quotestring
+		varstrlist     : varstr (varstr)*
+		litvar         : number | varstrlist
+
+		expr           : log_or_expr
+		log_or_expr    : log_and_expr ('||' log_and_expr)*
+		log_and_expr   : incl_or_expr ('&&' incl_or_expr)*
+		incl_or_expr   : excl_or_expr ('|' excl_or_expr)*
+		excl_or_expr   : and_expr ('^' and_expr)*
+		and_expr       : eq_expr ('&' eq_expr)*
+		eq_expr        : rel_expr (('==' | '!=') rel_expr)*
+		rel_expr       : match_expr (('>' | '<' | '>=' | '<=') match_expr)*
+		match_expr     : add_expr ('=~' add_expr)?
+		add_expr       : mul_expr (['+' '-'] mul_expr)+
+		mul_expr       : pow_expr (['*' '/'] pow_expr)+
+		pow_expr       : unary_expr (['*' '/'] unary_expr)+
+		unary_expr     : (['!' '+' '-'])? primary_expr
+		primary_expr   : litvar
+						 'concat(' expr ',' expr ')'
+						 'defined(' varstrlist ')'
+						 '(' expr ')'
+	 @endverbatim
+	 *
+	 */
+	class CIfExprParser : protected CRecursiveDescentParser {
+	private:
+		const CRenderState *m_outer;
+
+	protected:
+		inline unsigned char ws(
+			const unsigned char **str,
+			std::string &result) const
+		{
+			return matchOneOf(" \t\n\r\f", str, result);
+		}
+
+		inline bool wss(
+			const unsigned char **str,
+			std::string &result) const
+		{
+			if ( !ws(str, result) )
+				return false;
+			while ( ws(str, result) );
+			return true;
+		}
+
+		/** @brief Characters possible for identifiers.
+		*
+		* Characters that are allowed but have no special purpose.
+		* If found, the character is appended to \a result and is returned.
+		*
+		@verbatim
+		idchar = "alpha" | "digit" | "_"
+		@endverbatim
+		*
+		* @param str Address of a character pointer to the
+		* input string (address of input pointer).
+		* @retval result String to store the characters matched.
+		* @return 0 or the character that matches.
+		* @see alpha() digit()
+		*/
+		inline unsigned char idchar(
+			const unsigned char **str,
+			std::string &result) const
+		{
+			if ( match("_", str, result) ) {
+				return '_';
+			}
+
+			return alphanum(str, result);
+		}
+
+		/** @brief Character is a plus or minus sign.
+		*
+		@verbatim
+		sign_char = "+" | "-"
+		@endverbatim
+		*
+		* @param str Address of a character pointer to the
+		* input string (address of input pointer).
+		* @retval result String to store the characters matched.
+		* @return 0 or the character that matches.
+		* @see alpha() digit()
+		*/
+		inline unsigned char sign_char(
+			const unsigned char **str,
+			std::string &result,
+			signed char &d) const
+		{
+			if ( match("+", str, result) ) {
+				d = 1;
+				return '+';
+			}
+
+			if ( match("-", str, result) ) {
+				d = -1;
+				return '-';
+			}
+
+			return 0;
+		}
+
+
+		/** @brief Character of a string.
+		 */
+		inline unsigned char character(
+			const unsigned char **str,
+			std::string &result) const
+		{
+			std::string dummy;
+
+			if ( match("\\", str, dummy) ) {
+				unsigned char d;
+				unsigned char uchar;
+				if ( octdig(str, dummy, d) ) {
+					uchar = d;
+					if ( octdig(str, dummy, d) ) {
+						uchar *= 8;
+						uchar += d;
+					}
+					if ( octdig(str, dummy, d) ) {
+						uchar *= 8;
+						uchar += d;
+					}
+					result += uchar;
+					return true;
+				}
+
+				unsigned char c = matchOneOf("\\'\"nrtbf\n", str, dummy);
+				if ( c != 0 ) {
+					switch ( c ) {
+						case '\\' :
+							result += "\\";
+							break;
+						case '\'' :
+							result += "'";
+							break;
+						case '\"' :
+							result += "\"";
+							break;
+						case 'n' :
+							result += "\n";
+							break;
+						case 'r' :
+							result += "\r";
+							break;
+						case 't' :
+							result += "\t";
+							break;
+						case 'b' :
+							result += "\b";
+							break;
+						case 'f' :
+							result += "\f";
+							break;
+						case '\n' : // ignore
+							break;
+					}
+					return true;
+				}
+				result += '\\';
+				return true;
+			}
+
+			unsigned char c = la(str);
+			if ( c != '\0' && c != '\'' ) {
+				advance(str, result);
+				result += c;
+				return true;
+			}
+
+			return false;
+		}
+
+		bool name(
+			const unsigned char **str,
+			std::string &result) const;
+
+		bool integer_const(
+			const unsigned char **str,
+			std::string &result, unsigned long &longresult) const;
+
+		bool integer_part(
+			const unsigned char **str,
+			std::string &result,
+			unsigned long &longresult) const;
+
+		bool exponent(
+			const unsigned char **str,
+			std::string &result,
+			signed long &longresult) const;
+
+		bool float_const(
+			const unsigned char **str,
+			std::string &result,
+			double &floatresult) const;
+
+		bool number(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool quotestring(
+			const unsigned char **str,
+			std::string &result,
+			std::string &strval) const;
+
+		bool calcvar(
+			const unsigned char **str,
+			std::string &resul,
+			CValue &valt) const;
+
+		bool var(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool varstr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool varstrlist(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool litvar(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool log_or_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool log_and_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool incl_or_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool excl_or_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool and_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool eq_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool rel_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool match_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool add_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool mul_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool pow_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool unary_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool primary_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+
+		bool if_expr(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const;
+	public:
+		inline CIfExprParser(const CRenderState &outer)
+		{
+			m_outer = &outer;
+		}
+	};
+
 public:
 
 	/** @brief Initializes the object

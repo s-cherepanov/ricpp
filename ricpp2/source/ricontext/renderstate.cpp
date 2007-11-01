@@ -39,6 +39,493 @@
 
 using namespace RiCPP;
 
+
+bool CRenderState::CIfExprParser::name(
+	const unsigned char **str,
+	std::string &result) const
+{
+	if ( !idchar(str, result) )
+		return false;
+	while ( idchar(str, result) );
+
+	const unsigned char *sav = *str;
+	if ( match(":", str, result) ) {
+		if ( !idchar(str, result) ) {
+			*str = sav;
+			return true;
+		}
+		while ( idchar(str, result) );
+	}
+
+	sav = *str;
+	if ( match(":", str, result) ) {
+		if ( !idchar(str, result) ) {
+			*str = sav;
+			return true;
+		}
+		while ( idchar(str, result) );
+	}
+
+	return true;
+}
+
+
+bool CRenderState::CIfExprParser::integer_const(
+	const unsigned char **str,
+	std::string &result,
+	unsigned long &longresult) const
+{
+	unsigned char c, d;
+
+	longresult = 0;
+
+	if ( (c = digit_not_null(str, result, d)) != 0 ) {
+		longresult = d;
+		while ( (c = digit_not_null(str, result, d)) != 0 ) {
+			longresult *= 10;
+			longresult += d;
+		}
+		return true;
+	}
+
+	if ( match("0", str, result) ) {
+		const unsigned char *sav = *str;
+		if ( match("x", str, result) ) {
+			if ( (c = hexdig(str, result, d)) != 0 ) {
+				longresult = d;
+				while ( (c = hexdig(str, result, d)) ) {
+					longresult *= 16;
+					longresult += d;
+				}
+				return true;
+			} else {
+				*str = sav;
+				longresult = 0;
+				return true;
+			}
+		}
+
+		if ( (c = octdig(str, result, d)) != 0 ) {
+			longresult = d;
+			while ( (c = octdig(str, result, d)) != 0 ) {
+				longresult *= 8;
+				longresult += d;
+			}
+			return true;
+		}
+
+		longresult = 0;
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::integer_part(
+	const unsigned char **str,
+	std::string &result,
+	unsigned long &longresult) const
+{
+	unsigned char c, d;
+
+	longresult = 0;
+
+	if ( (c = digit(str, result, d)) == 0 )
+		return false;
+	
+	longresult = d;
+	while ( (c = digit(str, result, d)) ) {
+		longresult *= 10;
+		longresult += d;
+	}
+
+	return true;
+}
+
+
+bool CRenderState::CIfExprParser::exponent(
+	const unsigned char **str,
+	std::string &result,
+	signed long &longresult) const
+{
+	const unsigned char *sav = *str;
+	signed char d;
+
+	longresult = 0;
+
+	if ( !matchOneOf("Ee", str, result) )
+		return false;
+
+	d = 1;
+	sign_char(str, result, d);
+
+	unsigned long res;
+	if ( integer_part(str, result, res) ) {
+		longresult = d * res;
+		return true;
+	}
+
+	*str = sav;
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::float_const(
+	const unsigned char **str,
+	std::string &result,
+	double &floatresult) const
+{
+	const unsigned char *sav = *str;
+	std::string floatStr;
+	unsigned long ulval;
+	signed long slval;
+
+	if ( integer_part(str, floatStr, ulval) ) {
+		if ( match(".", str, result) ) {
+			if ( integer_part(str, floatStr, ulval) ) {
+				exponent(str, floatStr, slval);
+			}
+			result += floatStr;
+			floatresult = atof(floatStr.c_str());
+			return true;
+		}
+		if ( exponent(str, floatStr, slval) ) {
+			result += floatStr;
+			floatresult = atof(floatStr.c_str());
+			return true;
+		}
+	} else {
+		if ( match(".", str, result) ) {
+			if ( integer_part(str, floatStr, ulval) ) {
+				exponent(str, floatStr, slval);
+				result += floatStr;
+				floatresult = atof(floatStr.c_str());
+				return true;
+			}
+		}
+	}
+
+	*str = sav;
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::number(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	double floatresult;
+	if ( float_const(str, result, floatresult) ) {
+		val.set(static_cast<RtFloat>(floatresult));
+		return true;
+	}
+
+	unsigned long longresult;
+	if ( integer_const(str, result, longresult) ) {
+		val.set(static_cast<RtInt>(longresult));
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::quotestring(
+	const unsigned char **str,
+	std::string &result,
+	std::string &strval) const
+{
+	const unsigned char *sav = *str;
+	std::string rval;
+
+	if ( match("'", str, rval) ) {
+		while ( character(str, strval) );
+		if ( match("'", str, rval) ) {
+			result += "'";
+			result += rval;
+			result += "'";
+			return true;
+		}
+	}
+
+	*str = sav;
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::calcvar(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	const unsigned char *sav = *str;
+	std::string retval;
+
+	if ( match("$(", str, retval) ) {
+		wss(str, retval);
+		if ( expr(str, retval, val) ) {
+			wss(str, retval);
+			if ( match(")", str, retval) ) {
+				result += retval;
+				return true;
+			}
+		}
+	}
+
+	*str = sav;
+	return false;
+}
+
+bool CRenderState::CIfExprParser::var(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	if ( calcvar(str, result, val) ) {
+		return true;
+	}
+
+	const unsigned char *sav = *str;
+
+	std::string strname;
+	if ( match("$", str, strname) ) {
+		strname = "";
+		if ( name(str, strname) ) {
+			if ( m_outer->getValue(val, strname.c_str()) ) {
+				result += "$";
+				result += strname;
+				return true;
+			}
+			result += "$";
+			result += strname;
+			// throw error: value strname not found
+			return false;
+		}
+	}
+
+	*str = sav;
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::varstr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	if ( var(str, result, val) ) {
+		return true;
+	}
+
+	std::string strval;
+	if ( quotestring(str, result, strval) ) {
+		result += strval;
+		
+		return true;
+	}
+
+	return false;
+}
+
+bool CRenderState::CIfExprParser::varstrlist(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	if ( !varstr(str, result, val) ) {
+		return false;
+	}
+
+	int count = 1;
+	CValue val2;
+
+	do {
+		wss(str, result);
+		if ( count > 1 ) {
+			// append string to val
+		}
+		++count;
+	} while ( varstr(str, result, val2) );
+
+	return true;
+}
+
+bool CRenderState::CIfExprParser::litvar(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	if ( number(str, result, val) ) {
+		return true;
+	}
+
+	if ( varstrlist(str, result, val) ) {
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return log_or_expr(str, result, val);
+}
+
+
+bool CRenderState::CIfExprParser::log_or_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+
+	if ( log_and_expr(str, result, val) ) {
+		while ( match("||", str, result) ) {
+		}
+	}
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::log_and_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+bool CRenderState::CIfExprParser::incl_or_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::excl_or_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::and_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::eq_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::rel_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::match_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::add_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::mul_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::pow_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::unary_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::primary_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	return false;
+}
+
+
+bool CRenderState::CIfExprParser::if_expr(
+	const unsigned char **str,
+	std::string &result,
+	CValue &val) const
+{
+	if ( !str && !*str )
+		return false;
+
+	if ( !*str )
+		return false;
+
+	const unsigned char *sav = *str;
+	wss(str, result);
+	if ( !expr(str, result, val) ) {
+		*str = sav;
+		return false;
+	}
+	wss(str, result);
+
+	if ( (*str)[0] == 0 )
+		return true;
+
+	*str = sav;
+	return false;
+}
+
+
 CRenderState::CRenderState(
 	CModeStack &aModeStack,
 	COptionsFactory &optionsFactory,

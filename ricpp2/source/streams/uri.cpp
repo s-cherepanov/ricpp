@@ -90,21 +90,22 @@ bool CUri::dec_octet(
 	std::string &result)
 {
 	const unsigned char *sav = *str;
+	unsigned char d;
 	m_dec_octet = "";
-	unsigned char c1 = digit(str, m_dec_octet);
+	unsigned char c1 = digit(str, m_dec_octet, d);
 
 	if ( !c1 ) {
 		return false;
 	}
 
 	if ( c1 != '0' ) {
-		unsigned char c2 = digit(str, m_dec_octet);
+		unsigned char c2 = digit(str, m_dec_octet, d);
 		if ( c1 == '1' && c2  ) {
-			digit(str, m_dec_octet);
+			digit(str, m_dec_octet, d);
 		} else if ( c1 == '2' && c2 && c2 < '5' ) {
-			digit(str, m_dec_octet);
+			digit(str, m_dec_octet, d);
 		} else if ( c1 == '2' && c2 == '5' ) {
-			unsigned char c3 = digit(str, m_dec_octet);
+			unsigned char c3 = digit(str, m_dec_octet, d);
 			if ( c3 > '5' ) {
 				*str = sav;
 				m_dec_octet = "";
@@ -313,9 +314,10 @@ void CUri::port(
 	const unsigned char **str,
 	std::string &result)
 {
+	unsigned char d;
 	m_port = "";
 
-	while ( digit(str, m_port) );
+	while ( digit(str, m_port, d) );
 
 	result += m_port;
 }
@@ -342,6 +344,7 @@ bool CUri::ipVFuture(
 	std::string &result)
 {
 	const unsigned char *sav = *str;
+	unsigned char d;
 	m_ipVFuture = "";
 	m_ipAddrType = ipAddrTypeEmpty;
 
@@ -349,13 +352,13 @@ bool CUri::ipVFuture(
 		return false;
 	}
 
-	if ( !hexdig(str, m_ipVFuture) ) {
+	if ( !hexdig(str, m_ipVFuture, d) ) {
 		*str = sav;
 		m_ipVFuture = "";
 		return false;
 	}
 
-	while ( hexdig(str, m_ipVFuture) );
+	while ( hexdig(str, m_ipVFuture, d) );
 
 	if ( !(match(".", str, m_ipVFuture) &&
 		(match(":", str, m_ipVFuture) ||

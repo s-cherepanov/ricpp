@@ -321,8 +321,7 @@ bool CRenderState::CIfExprParser::varstr(
 
 	std::string strval;
 	if ( quotestring(str, result, strval) ) {
-		result += strval;
-		
+		result += strval;		
 		return true;
 	}
 
@@ -374,6 +373,7 @@ bool CRenderState::CIfExprParser::expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
 	return log_or_expr(str, result, val);
 }
 
@@ -383,11 +383,26 @@ bool CRenderState::CIfExprParser::log_or_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
 
-	if ( log_and_expr(str, result, val) ) {
-		while ( match("||", str, result) ) {
+	const unsigned char *sav = *str;
+	std::string res;
+	
+	if ( log_and_expr(str, res, val) ) {
+		wss(str, res);
+		while ( match("||", str, res) ) {
+			wss(str, res);
+			if ( !log_and_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
 		}
+		result += res;
+		return true;
 	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -397,6 +412,26 @@ bool CRenderState::CIfExprParser::log_and_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+
+	if ( incl_or_expr(str, res, val) ) {
+		wss(str, res);
+		while ( match("&&", str, res) ) {
+			wss(str, res);
+			if ( !incl_or_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -405,6 +440,26 @@ bool CRenderState::CIfExprParser::incl_or_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+
+	if ( excl_or_expr(str, res, val) ) {
+		wss(str, res);
+		while ( match("|", str, res) ) {
+			wss(str, res);
+			if ( !excl_or_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -414,6 +469,26 @@ bool CRenderState::CIfExprParser::excl_or_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+
+	if ( and_expr(str, res, val) ) {
+		wss(str, res);
+		while ( match("^", str, res) ) {
+			wss(str, res);
+			if ( !and_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -423,6 +498,26 @@ bool CRenderState::CIfExprParser::and_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+
+	if ( eq_expr(str, res, val) ) {
+		wss(str, res);
+		while ( match("&", str, res) ) {
+			wss(str, res);
+			if ( !eq_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -432,6 +527,30 @@ bool CRenderState::CIfExprParser::eq_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+	
+	if ( rel_expr(str, res, val) ) {
+		bool eq = false;
+		bool neq = false;
+		wss(str, res);
+		while ( (eq = match("==", str, res)) || (neq = match("!=", str, res)) ) {
+			wss(str, res);
+			if ( !rel_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+			eq = false;
+			neq = false;
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -441,6 +560,33 @@ bool CRenderState::CIfExprParser::rel_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+	if ( match_expr(str, res, val) ) {
+		bool gt = false;
+		bool ge = false;
+		bool lt = false;
+		bool le = false;
+		wss(str, res);
+		while ( (gt = match(">", str, res)) || (ge = match(">=", str, res)) || (lt = match("<", str, res)) || (le = match("<=", str, res)) ) {
+			wss(str, res);
+			if ( !match_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+			gt = false;
+			ge = false;
+			lt = false;
+			le = false;
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -450,6 +596,26 @@ bool CRenderState::CIfExprParser::match_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+
+	if ( add_expr(str, res, val) ) {
+		wss(str, res);
+		if ( match("=~", str, res) ) {
+			wss(str, res);
+			if ( !add_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -459,6 +625,29 @@ bool CRenderState::CIfExprParser::add_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+	if ( mul_expr(str, res, val) ) {
+		bool add = false;
+		bool sub = false;
+		wss(str, res);
+		while ( (add = match("+", str, res)) || (sub = match("-", str, res)) ) {
+			wss(str, res);
+			if ( !mul_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+			add = false;
+			sub = false;
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -468,6 +657,29 @@ bool CRenderState::CIfExprParser::mul_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+	if ( pow_expr(str, res, val) ) {
+		bool mul = false;
+		bool div = false;
+		wss(str, res);
+		while ( (mul = match("*", str, res)) || (div = match("/", str, res)) ) {
+			wss(str, res);
+			if ( !pow_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+			mul = false;
+			div = false;
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -477,6 +689,25 @@ bool CRenderState::CIfExprParser::pow_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+	if ( unary_expr(str, res, val) ) {
+		wss(str, res);
+		while ( match("**", str, res) ) {
+			wss(str, res);
+			if ( !unary_expr(str, res, val) ) {
+				*str = sav;
+				return false;
+			}
+			wss(str, res);
+		}
+		result += res;
+		return true;
+	}
+	
+	*str = sav;
 	return false;
 }
 
@@ -486,6 +717,26 @@ bool CRenderState::CIfExprParser::unary_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
+	const unsigned char *sav = *str;
+	std::string res;
+	
+	unsigned char c = 0;
+	
+	if ( (c = match("!", str, res)) ) {
+	} else if ( (c = match("-", str, res)) ) {
+	} else if ( (c = match("+", str, res)) ) {
+	}
+	
+	wss(str, res);
+	if ( primary_expr(str, res, val) ) {
+		wss(str, res);
+		result += res;
+		return true;
+	}
+
+	*str = sav;
 	return false;
 }
 
@@ -495,6 +746,62 @@ bool CRenderState::CIfExprParser::primary_expr(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+	
+	if ( litvar(str, result, val) ) {
+		return true;
+	}
+	
+	const unsigned char *sav = *str;
+	std::string res;
+
+	if ( match("concat", str, res) ) {
+		wss(str, res);
+		if ( match("(", str, res) ) {
+			wss(str, res);
+			if ( expr(str, res, val) ) {
+				wss(str, res);
+				if ( match(",", str, res) ) {
+					wss(str, res);
+					if ( expr(str, res, val) ) {
+							wss(str, res);
+							if ( match(")", str, res) ) {
+								wss(str, res);
+								result += res;
+								return true;
+							}
+					}
+				}
+			}
+		}
+	} else if ( match("defined", str, res) ) {
+		wss(str, res);
+		if ( match("(", str, res) ) {
+			wss(str, res);
+			std::string strname;
+			if ( name(str, strname) ) {
+				res += strname;
+				wss(str, res);
+				if ( match(")", str, res) ) {
+					wss(str, res);
+					result += res;
+					return true;
+				}
+			}
+		}
+	} else if ( match("(", str, res) ) {
+		wss(str, res);
+		if ( expr(str, res, val) ) {
+			wss(str, res);
+			if ( match(")", str, res) ) {
+				wss(str, res);
+				result += res;
+				return true;
+			}
+		}
+	}
+
+	*str = sav;
 	return false;
 }
 
@@ -521,7 +828,7 @@ bool CRenderState::CIfExprParser::if_expr(
 	if ( (*str)[0] == 0 )
 		return true;
 
-	*str = sav;
+	*str =  sav;
 	return false;
 }
 
@@ -536,7 +843,8 @@ CRenderState::CRenderState(
 	m_resourceFactories(false),
 	m_lights(lightSourceFactory),
 	m_objectMacros("OBJ_"),
-	m_archiveMacros("ARC_")
+	m_archiveMacros("ARC_"),
+	m_ifExprParser(*this)
 // throw(ExceptRiCPPError)
 {
 	m_modeStack = &aModeStack;

@@ -128,11 +128,11 @@ class CRenderState {
 	 */
 	bool m_postponeReadArchive;
 
-	bool m_postponeObject; ///< Postpone object instanciation where applicable (e.g. in RIB writer)
-	bool m_postponeArchive; ///< Postpone archive instanciation where applicable (e.g. in RIB writer, @see m_postponeReadArchive to postpone archive reading)
-	bool m_postponeCondition; ///< Postpone conditionals where applicable (e.g. in RIB writer)
+	bool m_postponeObject;    //!< Postpone object instanciation where applicable (e.g. in RIB writer)
+	bool m_postponeArchive;   //!< Postpone archive instanciation where applicable (e.g. in RIB writer, @see m_postponeReadArchive to postpone archive reading)
+	bool m_postponeCondition; //!< Postpone conditionals where applicable (e.g. in RIB writer)
 
-	CUri m_baseUri;                                ///< Base URI for RIB archive files
+	CUri m_baseUri;                 //!< Base URI for RIB archive files
 
 	/* @brief Factory for macro interfaces
 	 */
@@ -149,9 +149,9 @@ class CRenderState {
 	std::vector<CRiMacro *> m_macros;
 
 	std::vector<bool> m_conditions; //!< Stack of m_executeConditional and m_ifCondition for nested ifs.
-	bool m_executeConditional; //!< Render (true outside if-else-blocks, conditional inside the blocks).
-	bool m_accumulateConditional; //!< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
-	bool m_ifCondition;        //!< true, if an if or elseif condition was true;
+	bool m_executeConditional;      //!< Render (true outside if-else-blocks, conditional inside the blocks).
+	bool m_accumulateConditional;   //!< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
+	bool m_ifCondition;             //!< true, if an if or elseif condition was true;
 
 	void pushOptions();
 	bool popOptions();
@@ -174,63 +174,65 @@ class CRenderState {
 	bool getAttribute(CValue &p, RtToken varname, RtToken valuename) const;
 	bool getOption(CValue &p, RtToken varname, RtToken valuename) const;
 
-	/** @brief Parser for RIB if-expression
+	/** @brief Parser for RIB if-expression.
+	 *
+	 * The grammer of the if-expression, white spaces (wss) between the tokens are omitted.
 	 *
 	 @verbatim
-		if-expr        : expr '\0'
+		if-expr         : expr '\0';
 
-		ws             : ' ' | '\t' | '\n' | '\r' | '\f'
-		wss            : ws (ws)*
-		alpha          : ['a'-'z' 'A'-'Z']
-		digit_not_null : ['1'-'9']
-		digit          : '0' | digit
-		hexdig         : ['a'-'f' 'A'-'F'] | digit
-		octdig         : ['0'-'7']
-		idchar         : alpha | digit | '_'
-		sign           : '+' | '-'
+		alpha           : ['a'-'z' 'A'-'Z'];
+		digit_not_null  : ['1'-'9'];
+		digit           : '0' | digit;
+		hexdig          : ['a'-'f' 'A'-'F'] | digit;
+		octdig          : ['0'-'7'];
 
-		name           : (idchar)+
-						 (idchar)+ ':' (idchar)+
-						 (idchar)+ ':' (idchar)+ ':' (idchar)+
-		integer_const  : digit_not_null (digit)*
-						 '0' 'x' (hexdig)+
-						 '0' (octdig)+
-						 '0'
-		integer_part   : (digit)+
-		exponent       : ('e' | 'E') (sign)? integer_part
-		float_const    : integer_part exponent
-						 integer_part '.' (integer_part)? (exponent)?
-									  '.' integer_part (exponent)?
-		number         : float_const | integer_const
+		ws              : ' ' | '\t' | '\n' | '\r' | '\f';
+		wss             : ws (ws)*;
+		idchar          : alpha | digit | '_';
+		sign            : '+' | '-';
+		character       : '\' octdigit [ octdigit [ octdigit ] ];
+						| '\' ['\' '''' '"' 'n' 'r' 't' 'b' 'f' '\n'];
+		                | [^ '''' '\0'];
 
-		character      : '\' octdigit [ octdigit [ octdigit ] ]
-						 '\' ['\' '''' '"' 'n' 'r' 't' 'b' 'f' '\n' ]
-						 [^ '''' '\0' ]
-		quotestring    : '''' (character)* ''''
-		calcvar        : '$('expr')'
-		var            : '$' name
-						 calcvar
-		varstr         : var | quotestring
-		varstrlist     : varstr (varstr)*
-		litvar         : number | varstrlist
+		name            : (idchar)+;
+		                | (idchar)+ ':' (idchar)+;
+		                | (idchar)+ ':' (idchar)+ ':' (idchar)+;
+		integer_const   : digit_not_null (digit)*;
+		                | '0' 'x' (hexdig)+;
+		                | '0' (octdig)+;
+		                | '0';
+		integer_part    : (digit)+;
+		exponent        : ('e' | 'E') (sign)? integer_part;
+		float_const     : integer_part exponent;
+		                | integer_part '.' (integer_part)? (exponent)?;
+						|              '.' integer_part (exponent)?;
+		number          : float_const | integer_const;
+		quotestring     : '''' (character)* '''';
+		calcvar         : '$('expr')';
+		var             : '$' name;
+		                | calcvar;
+		varstr          : var | quotestring;
+		varstrlist      : varstr (varstr)*;
+		litvar          : number | varstrlist;
 
-		expr           : log_or_expr
-		log_or_expr    : log_and_expr ('||' log_and_expr)*
-		log_and_expr   : incl_or_expr ('&&' incl_or_expr)*
-		incl_or_expr   : excl_or_expr ('|' excl_or_expr)*
-		excl_or_expr   : and_expr ('^' and_expr)*
-		and_expr       : eq_expr ('&' eq_expr)*
-		eq_expr        : rel_expr (('==' | '!=') rel_expr)*
-		rel_expr       : match_expr (('>' | '<' | '>=' | '<=') match_expr)*
-		match_expr     : add_expr ('=~' add_expr)?
-		add_expr       : mul_expr (['+' '-'] mul_expr)+
-		mul_expr       : pow_expr (['*' '/'] pow_expr)+
-		pow_expr       : unary_expr (['*' '/'] unary_expr)+
-		unary_expr     : (['!' '+' '-'])? primary_expr
-		primary_expr   : litvar
-						 'concat(' expr ',' expr ')'
-						 'defined(' varstrlist ')'
-						 '(' expr ')'
+		expr            : log_or_expr;
+		log_or_expr     : log_and_expr ('||' log_and_expr)*;
+		log_and_expr    : incl_or_expr ('&&' incl_or_expr)*;
+		incl_or_expr    : excl_or_expr ('|' excl_or_expr)*;
+		excl_or_expr    : and_expr ('^' and_expr)*;
+		and_expr        : eq_expr ('&' eq_expr)*;
+		eq_expr         : rel_expr (('==' | '!=') rel_expr)*;
+		rel_expr        : match_expr (('>' | '<' | '>=' | '<=') match_expr)*;
+		match_expr      : add_expr ('=~' add_expr)?;
+		add_expr        : mul_expr (['+' '-'] mul_expr)+;
+		mul_expr        : pow_expr (['*' '/'] pow_expr)+;
+		pow_expr        : unary_expr (['**'] unary_expr)+;
+		unary_expr      : (['!' '-' '+'])? primary_expr;
+		primary_expr    : litvar
+		                | 'concat' '(' expr ',' expr ')'
+		                | 'defined' '(' name ')'
+		                | '(' expr ')';
 	 @endverbatim
 	 *
 	 */
@@ -239,6 +241,8 @@ class CRenderState {
 		const CRenderState *m_outer;
 
 	protected:
+		/** @brief White space.
+		 */
 		inline unsigned char ws(
 			const unsigned char **str,
 			std::string &result) const
@@ -246,6 +250,8 @@ class CRenderState {
 			return matchOneOf(" \t\n\r\f", str, result);
 		}
 
+		/** @brief Sequence of white spaces.
+		 */
 		inline bool wss(
 			const unsigned char **str,
 			std::string &result) const
@@ -262,14 +268,14 @@ class CRenderState {
 		* If found, the character is appended to \a result and is returned.
 		*
 		@verbatim
-		idchar = "alpha" | "digit" | "_"
+		idchar = '_' | alphanum
 		@endverbatim
 		*
 		* @param str Address of a character pointer to the
 		* input string (address of input pointer).
 		* @retval result String to store the characters matched.
 		* @return 0 or the character that matches.
-		* @see alpha() digit()
+		* @see alphanum()
 		*/
 		inline unsigned char idchar(
 			const unsigned char **str,
@@ -285,14 +291,13 @@ class CRenderState {
 		/** @brief Character is a plus or minus sign.
 		*
 		@verbatim
-		sign_char = "+" | "-"
+		sign_char = '+' | '-'
 		@endverbatim
 		*
 		* @param str Address of a character pointer to the
 		* input string (address of input pointer).
 		* @retval result String to store the characters matched.
 		* @return 0 or the character that matches.
-		* @see alpha() digit()
 		*/
 		inline unsigned char sign_char(
 			const unsigned char **str,
@@ -384,134 +389,188 @@ class CRenderState {
 			return false;
 		}
 
+		/** @brief Name of an identifier.
+		 */
 		bool name(
 			const unsigned char **str,
 			std::string &result) const;
 
+		/** @brief An integer.
+		 */
 		bool integer_const(
 			const unsigned char **str,
 			std::string &result, unsigned long &longresult) const;
 
+		/** @brief Integer part of a float.
+		 */
 		bool integer_part(
 			const unsigned char **str,
 			std::string &result,
 			unsigned long &longresult) const;
 
+		/** @brief Exponential part of a float.
+		 */
 		bool exponent(
 			const unsigned char **str,
 			std::string &result,
 			signed long &longresult) const;
 
+		/** @brief A float.
+		 */
 		bool float_const(
 			const unsigned char **str,
 			std::string &result,
 			double &floatresult) const;
 
+		/** @brief Integer or float.
+		 */
 		bool number(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief A string in quotes 'string'.
+		 */
 		bool quotestring(
 			const unsigned char **str,
 			std::string &result,
 			std::string &strval) const;
 
+		/** @brief Variable with a calculated name.
+		 */
 		bool calcvar(
 			const unsigned char **str,
 			std::string &resul,
 			CValue &valt) const;
 
+		/** @brief Variable.
+		 */
 		bool var(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Variable or string.
+		 */
 		bool varstr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Sequence of variables or strings.
+		 */
 		bool varstrlist(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Literal or variable (sequence of variables).
+		 */
 		bool litvar(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Expression.
+		 */
 		bool expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Expression with logical or.
+		 */
 		bool log_or_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Expression with logical and.
+		 */
 		bool log_and_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Expression with bitwise inclusive or.
+		 */
 		bool incl_or_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Expression with bitwise exclusive or.
+		 */
 		bool excl_or_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Expression with bitwise and.
+		 */
 		bool and_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Equal/not equal comparsion.
+		 */
 		bool eq_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Relational expression.
+		 */
 		bool rel_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief String matches pattern.
+		 */
 		bool match_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Addition/subtraction
+		 */
 		bool add_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Multiplication/division
+		 */
 		bool mul_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Power
+		 */
 		bool pow_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Unary expression
+		 */
 		bool unary_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Primary expression
+		 */
 		bool primary_expr(
 			const unsigned char **str,
 			std::string &result,
 			CValue &val) const;
 
+		/** @brief Complete expresion of a RIB if request, terminated by 0
+		 */
 		bool if_expr(
 			const unsigned char **str,
 			std::string &result,
@@ -521,7 +580,14 @@ class CRenderState {
 		{
 			m_outer = &outer;
 		}
-	};
+		inline bool parse(
+			const unsigned char **str,
+			std::string &result,
+			CValue &val) const
+		{
+			return if_expr(str, result, val);
+		}
+	} m_ifExprParser;
 
 public:
 

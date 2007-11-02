@@ -260,21 +260,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C37245680CD5DAD100945563 /* ricontext */;
+			remoteGlobalIDString = C37245680CD5DAD100945563;
 			remoteInfo = ricontext;
 		};
 		C37245720CD5DDE000945563 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C37245680CD5DAD100945563 /* ricontext */;
+			remoteGlobalIDString = C37245680CD5DAD100945563;
 			remoteInfo = ricontext;
 		};
 		C37245740CD5DDEC00945563 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C37DBB980C01C29D003AE4E7 /* declaration */;
+			remoteGlobalIDString = C37DBB980C01C29D003AE4E7;
 			remoteInfo = declaration;
 		};
 		C37F49870CCDD5CA00754302 /* PBXContainerItemProxy */ = {
@@ -362,7 +362,7 @@
 		C370C18B0BF469BD00AA03BC /* objptrregistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = objptrregistry.h; path = ../../../source/include/ricpp/tools/objptrregistry.h; sourceTree = SOURCE_ROOT; };
 		C370C18C0BF469BD00AA03BC /* platform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = platform.h; path = ../../../source/include/ricpp/tools/platform.h; sourceTree = SOURCE_ROOT; };
 		C370C18D0BF469BD00AA03BC /* stringlist.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = stringlist.h; path = ../../../source/include/ricpp/tools/stringlist.h; sourceTree = SOURCE_ROOT; };
-		C37245690CD5DAD100945563 /* libricontext.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libricontext.a; path = build/Debug/libricontext.a; sourceTree = "<group>"; };
+		C37245690CD5DAD100945563 /* libricontext.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricontext.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C37245760CD5DE3100945563 /* attributes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = attributes.h; path = ../../../source/include/ricpp/ricontext/attributes.h; sourceTree = SOURCE_ROOT; };
 		C37245770CD5DE3100945563 /* contextcreator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = contextcreator.h; path = ../../../source/include/ricpp/ricontext/contextcreator.h; sourceTree = SOURCE_ROOT; };
 		C37245780CD5DE3100945563 /* displaydesc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = displaydesc.h; path = ../../../source/include/ricpp/ricontext/displaydesc.h; sourceTree = SOURCE_ROOT; };

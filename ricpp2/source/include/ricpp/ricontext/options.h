@@ -14,65 +14,7 @@
 #endif // _RICPP_RICPP_FILTERS_H
 
 namespace RiCPP {
-
-	const RtInt   defXResolution = 640;
-	const RtInt   defYResolution = 480;
-	const RtFloat defPixelAspectRatio = 1.0;
-
-	const RtFloat defFrameAspectRatio = (defXResolution * defPixelAspectRatio) /
-	                                        static_cast<RtFloat>(defYResolution);
-
-	const RtFloat defScreenWindowLeft = -defFrameAspectRatio;
-	const RtFloat defScreenWindowRight = defFrameAspectRatio;
-	const RtFloat defScreenWindowBottom = -1.0;
-	const RtFloat defScreenWindowTop = 1.0;
-
-	const RtFloat defCropWindowLeft = defScreenWindowLeft;
-	const RtFloat defCropWindowRight = defScreenWindowRight;
-	const RtFloat defCropWindowBottom = defScreenWindowBottom;
-	const RtFloat defCropWindowTop = defScreenWindowTop;
-
-	const RtToken defProjection = RI_ORTHOGRAPHIC;
-	const RtFloat defCameraFOV = 90.0;
-
-	const RtFloat defNearClip = RI_EPSILON;
-	const RtFloat defFarClip = RI_INFINITY;
-
-	const RtFloat defFstop = RI_INFINITY;
-	const RtFloat defFocalLength = 0;
-	const RtFloat defFocalDistance = 0;
-
-	const RtFloat defShutterOpen = 0;
-	const RtFloat defShutterClose = 0;
-
-	const RtFloat defPixelVariance = 0;
-
-	const RtFloat defXSamples = 2;
-	const RtFloat defYSamples = 2;
-
-	const RtFloat defXFilterWidth = 2;
-	const RtFloat defYFilterWidth = 2;
-
-	const RtFloat defGain = 1;
-	const RtFloat defGamma = 1;
-
-	const RtInt defOneRGBA = 255;
-	const RtInt defMinRGBA = 0;
-	const RtInt defMaxRGBA = 255;
-	const RtFloat defDitherAmplitudeRGBA = 0.5;
-
-	const RtInt defOneZ = 0;
-	const RtInt defMinZ = 0;
-	const RtInt defMaxZ = 0;
-	const RtFloat defDitherAmplitudeZ = 0;
-
-	const RtToken defImagerName = RI_NULL;
-
-	const RtToken defHiderType = RI_HIDDEN;
-
-	const RtFloat defRelativeDetail = 1.0;
-
-	/** @brief
+	/** @brief Option set
 	 */
 	class COptions : public COptionsBase {
 	public:

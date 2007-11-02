@@ -214,7 +214,7 @@ class CRenderState {
 		                | calcvar;
 		varstr          : var | quotestring;
 		varstrlist      : varstr (varstr)*;
-		litvar          : number | varstrlist;
+		litvar          : number | 'true' | 'false' | varstrlist;
 
 		expr            : log_or_expr;
 		log_or_expr     : log_and_expr ('||' log_and_expr)*;
@@ -241,6 +241,23 @@ class CRenderState {
 		const CRenderState *m_outer;
 
 	protected:
+		inline bool matchWord(
+			const char *matchStr,
+			const unsigned char **str,
+			std::string &result) const
+		{
+			const unsigned char *sav = *str;
+			std::string res;
+			if ( match(matchStr, str, res) &&
+				 (la(str) == 0 || !(isalnum(la(str)) || la(str) == '_')) )
+			{
+				result += res;
+				return true;
+			}
+			*str = sav;
+			return false;
+		}
+
 		/** @brief White space.
 		 */
 		inline unsigned char ws(
@@ -382,7 +399,6 @@ class CRenderState {
 			unsigned char c = la(str);
 			if ( c != '\0' && c != '\'' ) {
 				advance(str, result);
-				result += c;
 				return true;
 			}
 
@@ -580,14 +596,8 @@ class CRenderState {
 		{
 			m_outer = &outer;
 		}
-		inline bool parse(
-			const unsigned char **str,
-			std::string &result,
-			CValue &val) const
-		{
-			return if_expr(str, result, val);
-		}
-	} m_ifExprParser;
+		bool parse(RtString expr) const;
+	};
 
 public:
 
@@ -758,31 +768,10 @@ public:
 		return m_accumulateConditional && m_executeConditional;
 	}
 
-	inline void ifBegin(bool condition) {
-		m_modeStack->ifBegin();
-		pushConditional();
-		m_ifCondition = condition;
-		m_executeConditional = condition;
-	}
-	inline void elseIfBegin(bool condition) {
-		m_modeStack->elseIfBegin();
-		if ( !m_ifCondition ) {
-			m_executeConditional = condition;
-			m_ifCondition = condition;
-		} else {
-			m_executeConditional = false;
-		}
-	}
-	inline void elseBegin(bool condition)
-	{
-		m_modeStack->elseBegin();
-		m_executeConditional = !m_ifCondition;
-	}
-	inline void ifEnd()
-	{
-		m_modeStack->ifEnd();
-		popConditional();
-	}
+	void ifBegin(RtString expr);
+	void elseIfBegin(RtString expr);
+	void elseBegin();
+	void ifEnd();
 
 	bool exists(RtString identifier) const;
 	bool getValue(CValue &p, RtString identifier) const;

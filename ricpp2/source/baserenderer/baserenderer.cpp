@@ -3273,6 +3273,7 @@ RtVoid CBaseRenderer::scopedCoordinateSystem(RtToken space)
 		if ( !preCheck(req) )
 			return;
 
+		space = renderState()->tokFindCreate(space);
 		CRiScopedCoordinateSystem r(renderState()->lineNo(), space);
 		processRequest(r);
 
@@ -3304,6 +3305,7 @@ RtVoid CBaseRenderer::coordinateSystem(RtToken space)
 		if ( !preCheck(req) )
 			return;
 
+		space = renderState()->tokFindCreate(space);
 		CRiCoordinateSystem r(renderState()->lineNo(), space);
 		processRequest(r);
 
@@ -3335,6 +3337,7 @@ RtVoid CBaseRenderer::coordSysTransform(RtToken space)
 		if ( !preCheck(req) )
 			return;
 
+		space = renderState()->tokFindCreate(space);
 		CRiCoordSysTransform r(renderState()->lineNo(), space);
 		processRequest(r);
 
@@ -3365,6 +3368,8 @@ RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtIn
 		if ( !preCheck(req) )
 			return &points[0];
 
+		fromspace = renderState()->tokFindCreate(fromspace);
+		tospace = renderState()->tokFindCreate(tospace);
 		CRiTransformPoints r(renderState()->lineNo(), fromspace, tospace, npoints, points);
 		processRequest(r);
 
@@ -3802,15 +3807,149 @@ RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callb
 }
 
 
-RtVoid CBaseRenderer::ifBegin(RtString expr)
+
+RtVoid CBaseRenderer::preIfBegin(RtString expr)
 {
+	renderState()->ifBegin(expr);
 }
 
+
+RtVoid CBaseRenderer::ifBegin(RtString expr)
+{
+	EnumRequests req = REQ_IF_BEGIN;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		CRiIfBegin r(renderState()->lineNo(), expr);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::preElseIfBegin(RtString expr)
+{
+	renderState()->elseIfBegin(expr);
+}
+
+
 RtVoid CBaseRenderer::elseIfBegin(RtString expr)
-{}
+{
+	EnumRequests req = REQ_ELSE_IF;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		CRiElseIfBegin r(renderState()->lineNo(), expr);
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::preElseBegin(void)
+{
+	renderState()->elseBegin();
+}
+
 
 RtVoid CBaseRenderer::elseBegin(void)
-{}
+{
+	EnumRequests req = REQ_ELSE;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		CRiElseBegin r(renderState()->lineNo());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+}
+
+
+RtVoid CBaseRenderer::preIfEnd(void)
+{
+	renderState()->ifEnd();
+}
 
 RtVoid CBaseRenderer::ifEnd(void)
-{}
+{
+	EnumRequests req = REQ_IF_END;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		CRiIfEnd r(renderState()->lineNo());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+}

@@ -2192,6 +2192,385 @@ public:
 	}
 }; // CRiMotionEnd
 
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Start of an if block.
+ */
+class CRiIfBegin : public CRManInterfaceCall {
+	std::string m_exprStr; //!< The expression of the if block
+public:
+	/** @brief Gets the name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiIfBegin"; }
+
+	inline virtual const char *className() const { return CRiIfBegin::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param anExprStr The expression of the if block.
+	 */
+	inline CRiIfBegin(long aLineNo=-1, RtString anExprStr=0) : CRManInterfaceCall(aLineNo), m_exprStr(noNullStr(anExprStr)) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiIfBegin(const CRiIfBegin &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiIfBegin()
+	{
+	}
+	
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiIfBegin(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_IF_BEGIN; }
+
+	/** @brief Gets the string with the expression.
+	 *
+	 *  @return The expression of the if block.
+	 */
+	inline RtString exprStr() const
+	{
+		return m_exprStr.c_str();
+	}
+
+	/** @brief Sets the string with the expression.
+	 *
+	 *  @param anExprStr The expression of the if block.
+	 */
+	inline void exprStr(RtString anExprStr)
+	{
+		m_exprStr = noNullStr(anExprStr);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preIfBegin(exprStr());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doIfBegin(exprStr());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postIfBegin(exprStr());
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiIfBegin &operator=(const CRiIfBegin &c)
+	{
+		if ( this == &c )
+			return *this;
+		exprStr(c.exprStr());
+
+		CRManInterfaceCall::operator=(c);
+	 	return *this;
+	}
+}; // CRiIfBegin
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Start of the else if part of an if block.
+ */
+class CRiElseIfBegin : public CRManInterfaceCall {
+	std::string m_exprStr; //!< The expression of the if block
+public:
+	/** @brief Gets the name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiElseIfBegin"; }
+
+	inline virtual const char *className() const { return CRiElseIfBegin::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param anExprStr The expression of the if block.
+	 */
+	inline CRiElseIfBegin(long aLineNo=-1, const char *anExprStr=0) : CRManInterfaceCall(aLineNo), m_exprStr(noNullStr(anExprStr)) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiElseIfBegin(const CRiElseIfBegin &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiElseIfBegin()
+	{
+	}
+	
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiElseIfBegin(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ELSE_IF; }
+
+	/** @brief Gets the string with the expression.
+	 *
+	 *  @return The expression of the if block.
+	 */
+	inline const char *exprStr() const
+	{
+		return m_exprStr.c_str();
+	}
+
+	/** @brief Sets the string with the expression.
+	 *
+	 *  @param anExprStr The expression of the if block.
+	 */
+	inline void exprStr(const char *anExprStr)
+	{
+		m_exprStr = noNullStr(anExprStr);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preElseIfBegin(exprStr());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doElseIfBegin(exprStr());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postElseIfBegin(exprStr());
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiElseIfBegin &operator=(const CRiElseIfBegin &c)
+	{
+		if ( this == &c )
+			return *this;
+		exprStr(c.exprStr());
+
+		CRManInterfaceCall::operator=(c);
+	 	return *this;
+	}
+}; // CRiElseIfBegin
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Start of the else part of an if block.
+ */
+class CRiElseBegin : public CRManInterfaceCall {
+public:
+	/** @brief Gets the name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiElseBegin"; }
+
+	inline virtual const char *className() const { return CRiElseBegin::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param anExprStr The expression of the if block.
+	 */
+	inline CRiElseBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiElseBegin(const CRiElseBegin &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiElseBegin()
+	{
+	}
+	
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiElseBegin(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ELSE; }
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preElseBegin();
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doElseBegin();
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postElseBegin();
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiElseBegin &operator=(const CRiElseBegin &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+	 	return *this;
+	}
+}; // CRiElseBegin
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief End an if block.
+ */
+class CRiIfEnd : public CRManInterfaceCall {
+public:
+	/** @brief Gets the name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiIfEnd"; }
+
+	inline virtual const char *className() const { return CRiIfEnd::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param anExprStr The expression of the if block.
+	 */
+	inline CRiIfEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiIfEnd(const CRiIfEnd &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiIfEnd()
+	{
+	}
+	
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiIfEnd(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_IF_END; }
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preIfEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doIfEnd();
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postIfEnd();
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiIfEnd &operator=(const CRiIfEnd &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+	 	return *this;
+	}
+}; // CRiElseBegin
 }
 
 #endif // // _RICPP_RICONTEXT_RIMACROMODES_H

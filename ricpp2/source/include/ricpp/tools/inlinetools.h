@@ -288,7 +288,6 @@ public:
 		return false;
 	}
 
-
 	/** @brief Matches one character of a string, advances the input pointer.
 	*
 	* Matches one character of \a matchStr and advances the pointer if
@@ -350,7 +349,7 @@ public:
 		unsigned char c = la(str);
 		if ( c>='0' && c<='9' ) {
 			advance(str, result);
-			d = c - '9';
+			d = c - '0';
 			return c;
 		}
 		return 0;
@@ -380,7 +379,7 @@ public:
 		unsigned char c = la(str);
 		if ( c>='1' && c<='9' ) {
 			advance(str, result);
-			d = c - '9';
+			d = c - '0';
 			return c;
 		}
 		return 0;

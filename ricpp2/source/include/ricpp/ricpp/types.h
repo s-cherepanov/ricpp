@@ -39,6 +39,7 @@
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
 #include <cstddef>
+#include <cmath>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -841,7 +842,7 @@ public:
 		return *this;
 	}
 
-	inline bool get(RtInt &anInt)
+	inline bool get(RtInt &anInt) const
 	{
 		if ( m_type == BASICTYPE_INTEGER ) {
 			anInt = m_intVal;
@@ -858,7 +859,7 @@ public:
 		return false;
 	}
 
-	inline bool get(RtFloat &aFloat)
+	inline bool get(RtFloat &aFloat) const
 	{
 		if ( m_type == BASICTYPE_INTEGER ) {
 			aFloat = (RtFloat)m_intVal;
@@ -875,7 +876,7 @@ public:
 		return false;
 	}
 
-	inline bool get(std::string &aString)
+	inline bool get(std::string &aString) const
 	{
 		if ( m_type == BASICTYPE_INTEGER ) {
 			std::stringstream stst(aString);
@@ -893,7 +894,375 @@ public:
 		}
 		return false;
 	}
+
+	inline void append(const std::string &aString)
+	{
+		if ( m_type != BASICTYPE_STRING ) {
+			m_stringVal = "";
+			get(m_stringVal);
+			m_type = BASICTYPE_STRING;
+		}
+
+		m_stringVal += aString;
+	}
+
+	inline CValue &operator^=(const CValue &op)
+	{
+		RtInt i1=0, i2=0;
+		get(i1);
+		op.get(i2);
+
+		set(i1^i2);
+		return *this;
+	}
+
+	inline CValue &operator|=(const CValue &op)
+	{
+		RtInt i1=0, i2=0;
+		get(i1);
+		op.get(i2);
+
+		set(i1^i2);
+		return *this;
+	}
+
+	inline CValue &operator&=(const CValue &op)
+	{
+		RtInt i1=0, i2=0;
+		get(i1);
+		op.get(i2);
+
+		set(i1&i2);
+		return *this;
+	}
+
+	inline CValue &operator+=(const CValue &op)
+	{
+		if ( m_type == BASICTYPE_INTEGER && op.type() == BASICTYPE_INTEGER ) {
+			RtInt i1=0, i2=0;
+			get(i1);
+			op.get(i2);
+			set(i1+i2);
+		} else {
+			RtFloat f1=0, f2=0;
+			get(f1);
+			op.get(f2);
+
+			set(f1+f2);
+		}
+		return *this;
+	}
+
+	inline CValue &operator-=(const CValue &op)
+	{
+		if ( m_type == BASICTYPE_INTEGER && op.type() == BASICTYPE_INTEGER ) {
+			RtInt i1=0, i2=0;
+			get(i1);
+			op.get(i2);
+			set(i1-i2);
+		} else {
+			RtFloat f1=0, f2=0;
+			get(f1);
+			op.get(f2);
+
+			set(f1-f2);
+		}
+		return *this;
+	}
+
+	inline CValue &operator*=(const CValue &op)
+	{
+		if ( m_type == BASICTYPE_INTEGER && op.type() == BASICTYPE_INTEGER ) {
+			RtInt i1=0, i2=0;
+			get(i1);
+			op.get(i2);
+			set(i1*i2);
+		} else {
+			RtFloat f1=0, f2=0;
+			get(f1);
+			op.get(f2);
+
+			set(f1*f2);
+		}
+		return *this;
+	}
+
+	inline CValue &operator/=(const CValue &op)
+	{
+		if ( m_type == BASICTYPE_INTEGER && op.type() == BASICTYPE_INTEGER ) {
+			RtInt i1=0, i2=0;
+			get(i1);
+			op.get(i2);
+			set(i1/i2);
+		} else {
+			RtFloat f1=0, f2=0;
+			get(f1);
+			op.get(f2);
+
+			set(f1/f2);
+		}
+		return *this;
+	}
+
+	inline CValue &powBy(const CValue &op)
+	{
+		RtFloat f1=0;
+		get(f1);
+
+		if ( op.type() == BASICTYPE_INTEGER ) {
+			RtInt i2 = 0;
+			op.get(i2);
+			set(pow(f1,i2));
+		} else {
+			RtFloat f2 = 0;
+			op.get(f2);
+			set(pow(f1,f2));
+		}
+
+		return *this;
+	}
+
+	inline CValue &setNegative()
+	{
+		if ( m_type == BASICTYPE_INTEGER ) {
+			RtInt v = 0;
+			get(v);
+			set(-v);
+		} else if ( m_type == BASICTYPE_FLOAT ) {
+			RtFloat v = 0;
+			get(v);
+			set(-v);
+		} else if ( m_type == BASICTYPE_STRING ) {
+			std::string v;
+			get(v);
+			if ( !v.empty() ) {
+				RtFloat v;
+				get(v);
+				set(-v);
+			}
+		}
+
+		return *this;
+	}
+
+
+	inline bool matches(const char *pattern) const
+	{
+		std::string s;
+		get(s);
+		return s == pattern;
+	}
 }; // CValue
+
+inline CValue operator||(const CValue &op1, const CValue &op2)
+{
+	RtInt i1=0, i2=0;
+	op1.get(i1);
+	op2.get(i2);
+
+	return CValue((i1||i2)?1:0);
+}
+
+inline CValue operator&&(const CValue &op1, const CValue &op2)
+{
+	RtInt i1=0, i2=0;
+	op1.get(i1);
+	op2.get(i2);
+
+	return CValue((i1&&i2)?1:0);
+}
+
+inline CValue operator^(const CValue &op1, const CValue &op2)
+{
+	RtInt i1=0, i2=0;
+	op1.get(i1);
+	op2.get(i2);
+
+	return CValue(i1^i2);
+}
+
+inline CValue operator|(const CValue &op1, const CValue &op2)
+{
+	RtInt i1=0, i2=0;
+	op1.get(i1);
+	op2.get(i2);
+
+	return CValue(i1|i2);
+}
+
+inline CValue operator&(const CValue &op1, const CValue &op2)
+{
+	RtInt i1=0, i2=0;
+	op1.get(i1);
+	op2.get(i2);
+
+	return CValue(i1&i2);
+}
+
+inline CValue operator!(const CValue &op1)
+{
+	RtInt i1=0;
+	op1.get(i1);
+
+	return CValue(i1?0:1);
+}
+
+inline CValue operator==(const CValue &op1, const CValue &op2)
+{
+	switch(op1.type()) {
+		case BASICTYPE_INTEGER:
+			switch(op1.type()) {
+				case BASICTYPE_INTEGER:
+				{
+					RtInt i1=0, i2=0;
+					op1.get(i1);
+					op2.get(i2);
+					return i1 == i2;
+				}
+				case BASICTYPE_FLOAT:
+				case BASICTYPE_STRING:
+				{
+					RtFloat f1=0, f2=0;
+					op1.get(f1);
+					op2.get(f2);
+					return f1 == f2;
+				}
+				case BASICTYPE_UNKNOWN:
+					return false;
+			}
+			return false;
+			break;
+		case BASICTYPE_FLOAT:
+			switch(op1.type()) {
+				case BASICTYPE_INTEGER:
+				case BASICTYPE_FLOAT:
+				case BASICTYPE_STRING:
+				{
+					RtFloat f1=0, f2=0;
+					op1.get(f1);
+					op2.get(f2);
+					return f1 == f2;
+				}
+				case BASICTYPE_UNKNOWN:
+					return false;
+			}
+			return false;
+			break;
+		case BASICTYPE_STRING:
+			switch(op1.type()) {
+				case BASICTYPE_INTEGER:
+				case BASICTYPE_FLOAT:
+				{
+					RtFloat f1=0, f2=0;
+					op1.get(f1);
+					op2.get(f2);
+					return f1 == f2;
+				}
+				case BASICTYPE_STRING:
+				{
+					std::string s1, s2;
+					op1.get(s1);
+					op2.get(s2);
+					return s1 == s2;
+				}
+				case BASICTYPE_UNKNOWN:
+					return false;
+			}
+			return false;
+		case BASICTYPE_UNKNOWN:
+			return op2.type() == BASICTYPE_UNKNOWN;
+	}
+	return false;
+}
+
+inline CValue operator!=(const CValue &op1, const CValue &op2)
+{
+	return !(op1 == op2);
+}
+
+inline CValue operator>(const CValue &op1, const CValue &op2)
+{
+	switch(op1.type()) {
+		case BASICTYPE_INTEGER:
+			switch(op1.type()) {
+				case BASICTYPE_INTEGER:
+				{
+					RtInt i1=0, i2=0;
+					op1.get(i1);
+					op2.get(i2);
+					return i1 > i2;
+				}
+				case BASICTYPE_FLOAT:
+				case BASICTYPE_STRING:
+				{
+					RtFloat f1=0, f2=0;
+					op1.get(f1);
+					op2.get(f2);
+					return f1 > f2;
+				}
+				case BASICTYPE_UNKNOWN:
+					return false;
+			}
+			return false;
+			break;
+		case BASICTYPE_FLOAT:
+			switch(op1.type()) {
+				case BASICTYPE_INTEGER:
+				case BASICTYPE_FLOAT:
+				case BASICTYPE_STRING:
+				{
+					RtFloat f1=0, f2=0;
+					op1.get(f1);
+					op2.get(f2);
+					return f1 > f2;
+				}
+				case BASICTYPE_UNKNOWN:
+					return false;
+			}
+			return false;
+			break;
+		case BASICTYPE_STRING:
+			switch(op1.type()) {
+				case BASICTYPE_INTEGER:
+				case BASICTYPE_FLOAT:
+				{
+					RtFloat f1=0, f2=0;
+					op1.get(f1);
+					op2.get(f2);
+					return f1 > f2;
+				}
+				case BASICTYPE_STRING:
+				{
+					std::string s1, s2;
+					op1.get(s1);
+					op2.get(s2);
+					return s1 > s2;
+				}
+				case BASICTYPE_UNKNOWN:
+					return false;
+			}
+			return false;
+		case BASICTYPE_UNKNOWN:
+			return op2.type() == BASICTYPE_UNKNOWN;
+	}
+	return false;
+}
+
+inline CValue operator>=(const CValue &op1, const CValue &op2)
+{
+	return (op1 > op2) || (op1 == op2);
+}
+
+inline CValue operator<=(const CValue &op1, const CValue &op2)
+{
+	return !(op1 > op2);
+}
+
+inline CValue operator<(const CValue &op1, const CValue &op2)
+{
+	return !(op1 >= op2);
+}
+
 
 } // namespace RiCPP
 

@@ -167,6 +167,22 @@ public:
 		return new CRiMotionEnd(aLineNo);
 	}
 
+	inline virtual CRiIfBegin *newRiIf(long aLineNo, RtString exprStr) {
+		return new CRiIfBegin(aLineNo, exprStr);
+	}
+
+	inline virtual CRiElseIfBegin *newRiElseIfBegin(long aLineNo, RtString exprStr) {
+		return new CRiElseIfBegin(aLineNo, exprStr);
+	}
+
+	inline virtual CRiElseBegin *newRiElseBegin(long aLineNo) {
+		return new CRiElseBegin(aLineNo);
+	}
+
+	inline virtual CRiIfEnd *newRiElseBegin(long aLineNo) {
+		return new CRiIfEnd(aLineNo);
+	}
+
 	inline virtual CRiFormat *newRiFormat(long aLineNo, RtInt xres, RtInt yres, RtFloat aspect) {
 		return new CRiFormat(aLineNo, xres, yres, aspect);
 	}

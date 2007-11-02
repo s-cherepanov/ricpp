@@ -573,10 +573,10 @@ public:
 	inline virtual RtVoid preArchiveRecord(RtToken type, RtString line) {}
 	inline virtual RtVoid preReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params) {}
 
-	inline virtual RtVoid preIfBegin(RtString expr) {}
-	inline virtual RtVoid preElseIfBegin(RtString expr) {}
-	inline virtual RtVoid preElseBegin(void) {}
-	inline virtual RtVoid preIfEnd(void) {}
+	virtual RtVoid preIfBegin(RtString expr);
+	virtual RtVoid preElseIfBegin(RtString expr);
+	virtual RtVoid preElseBegin(void);
+	virtual RtVoid preIfEnd(void);
 
 
 

@@ -182,7 +182,7 @@ bool CRenderState::CIfExprParser::float_const(
 	signed long slval;
 
 	if ( integer_part(str, floatStr, ulval) ) {
-		if ( match(".", str, result) ) {
+		if ( match(".", str, floatStr) ) {
 			if ( integer_part(str, floatStr, ulval) ) {
 				exponent(str, floatStr, slval);
 			}
@@ -244,7 +244,7 @@ bool CRenderState::CIfExprParser::quotestring(
 		while ( character(str, strval) );
 		if ( match("'", str, rval) ) {
 			result += "'";
-			result += rval;
+			result += strval;
 			result += "'";
 			return true;
 		}
@@ -268,8 +268,14 @@ bool CRenderState::CIfExprParser::calcvar(
 		if ( expr(str, retval, val) ) {
 			wss(str, retval);
 			if ( match(")", str, retval) ) {
+				std::string strname;
+				val.get(strname);
 				result += retval;
-				return true;
+				if ( m_outer->getValue(val, strname.c_str()) ) {
+					return true;
+				}
+				// throw error: value strname not found
+				return false;
 			}
 		}
 	}
@@ -293,13 +299,11 @@ bool CRenderState::CIfExprParser::var(
 	if ( match("$", str, strname) ) {
 		strname = "";
 		if ( name(str, strname) ) {
-			if ( m_outer->getValue(val, strname.c_str()) ) {
-				result += "$";
-				result += strname;
-				return true;
-			}
 			result += "$";
 			result += strname;
+			if ( m_outer->getValue(val, strname.c_str()) ) {
+				return true;
+			}
 			// throw error: value strname not found
 			return false;
 		}
@@ -321,7 +325,7 @@ bool CRenderState::CIfExprParser::varstr(
 
 	std::string strval;
 	if ( quotestring(str, result, strval) ) {
-		result += strval;		
+		val.set(strval.c_str());
 		return true;
 	}
 
@@ -344,6 +348,9 @@ bool CRenderState::CIfExprParser::varstrlist(
 		wss(str, result);
 		if ( count > 1 ) {
 			// append string to val
+			std::string str;
+			val2.get(str);
+			val.append(str);
 		}
 		++count;
 	} while ( varstr(str, result, val2) );
@@ -356,7 +363,22 @@ bool CRenderState::CIfExprParser::litvar(
 	std::string &result,
 	CValue &val) const
 {
+	wss(str, result);
+
 	if ( number(str, result, val) ) {
+		wss(str, result);
+		return true;
+	}
+
+	if ( matchWord("true", str, result) ) {
+		val.set(1);
+		wss(str, result);
+		return true;
+	}
+
+	if ( matchWord("false", str, result) ) {
+		val.set(0);
+		wss(str, result);
 		return true;
 	}
 
@@ -387,15 +409,17 @@ bool CRenderState::CIfExprParser::log_or_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
 	
 	if ( log_and_expr(str, res, val) ) {
 		wss(str, res);
 		while ( match("||", str, res) ) {
 			wss(str, res);
-			if ( !log_and_expr(str, res, val) ) {
+			if ( !log_and_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			val = val || val2;
 			wss(str, res);
 		}
 		result += res;
@@ -416,15 +440,17 @@ bool CRenderState::CIfExprParser::log_and_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
 
 	if ( incl_or_expr(str, res, val) ) {
 		wss(str, res);
 		while ( match("&&", str, res) ) {
 			wss(str, res);
-			if ( !incl_or_expr(str, res, val) ) {
+			if ( !incl_or_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			val = val && val2;
 			wss(str, res);
 		}
 		result += res;
@@ -444,15 +470,17 @@ bool CRenderState::CIfExprParser::incl_or_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
 
 	if ( excl_or_expr(str, res, val) ) {
 		wss(str, res);
 		while ( match("|", str, res) ) {
 			wss(str, res);
-			if ( !excl_or_expr(str, res, val) ) {
+			if ( !excl_or_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			val |= val2;
 			wss(str, res);
 		}
 		result += res;
@@ -473,15 +501,17 @@ bool CRenderState::CIfExprParser::excl_or_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
 
 	if ( and_expr(str, res, val) ) {
 		wss(str, res);
 		while ( match("^", str, res) ) {
 			wss(str, res);
-			if ( !and_expr(str, res, val) ) {
+			if ( !and_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			val ^= val2;
 			wss(str, res);
 		}
 		result += res;
@@ -502,15 +532,17 @@ bool CRenderState::CIfExprParser::and_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
 
 	if ( eq_expr(str, res, val) ) {
 		wss(str, res);
 		while ( match("&", str, res) ) {
 			wss(str, res);
-			if ( !eq_expr(str, res, val) ) {
+			if ( !eq_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			val &= val2;
 			wss(str, res);
 		}
 		result += res;
@@ -531,6 +563,7 @@ bool CRenderState::CIfExprParser::eq_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
 	
 	if ( rel_expr(str, res, val) ) {
 		bool eq = false;
@@ -538,9 +571,14 @@ bool CRenderState::CIfExprParser::eq_expr(
 		wss(str, res);
 		while ( (eq = match("==", str, res)) || (neq = match("!=", str, res)) ) {
 			wss(str, res);
-			if ( !rel_expr(str, res, val) ) {
+			if ( !rel_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
+			}
+			if ( eq ) {
+				val = val == val2;
+			} else {
+				val = val != val2;
 			}
 			wss(str, res);
 			eq = false;
@@ -564,6 +602,8 @@ bool CRenderState::CIfExprParser::rel_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
+
 	if ( match_expr(str, res, val) ) {
 		bool gt = false;
 		bool ge = false;
@@ -572,11 +612,21 @@ bool CRenderState::CIfExprParser::rel_expr(
 		wss(str, res);
 		while ( (gt = match(">", str, res)) || (ge = match(">=", str, res)) || (lt = match("<", str, res)) || (le = match("<=", str, res)) ) {
 			wss(str, res);
-			if ( !match_expr(str, res, val) ) {
+			if ( !match_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
 			wss(str, res);
+			if ( gt ) {
+				val = val > val2;
+			} else if ( ge ) {
+				val = val >= val2;
+			} else if ( lt ) {
+				val = val < val2;
+			} else {
+				// le
+				val = val <= val2;
+			}
 			gt = false;
 			ge = false;
 			lt = false;
@@ -600,15 +650,20 @@ bool CRenderState::CIfExprParser::match_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
 
 	if ( add_expr(str, res, val) ) {
 		wss(str, res);
 		if ( match("=~", str, res) ) {
 			wss(str, res);
-			if ( !add_expr(str, res, val) ) {
+			if ( !add_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			std::string s;
+			val2.get(s);
+			if ( val.matches(s.c_str()) )
+				val.set(1);
 			wss(str, res);
 		}
 		result += res;
@@ -629,16 +684,22 @@ bool CRenderState::CIfExprParser::add_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
+
 	if ( mul_expr(str, res, val) ) {
 		bool add = false;
 		bool sub = false;
 		wss(str, res);
 		while ( (add = match("+", str, res)) || (sub = match("-", str, res)) ) {
 			wss(str, res);
-			if ( !mul_expr(str, res, val) ) {
+			if ( !mul_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			if ( add )
+				val += val2;
+			else
+				val -= val2;
 			wss(str, res);
 			add = false;
 			sub = false;
@@ -661,16 +722,22 @@ bool CRenderState::CIfExprParser::mul_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
+
 	if ( pow_expr(str, res, val) ) {
 		bool mul = false;
 		bool div = false;
 		wss(str, res);
 		while ( (mul = match("*", str, res)) || (div = match("/", str, res)) ) {
 			wss(str, res);
-			if ( !pow_expr(str, res, val) ) {
+			if ( !pow_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			if ( mul )
+				val *= val2;
+			else
+				val /= val2;
 			wss(str, res);
 			mul = false;
 			div = false;
@@ -693,14 +760,17 @@ bool CRenderState::CIfExprParser::pow_expr(
 
 	const unsigned char *sav = *str;
 	std::string res;
+	CValue val2;
+
 	if ( unary_expr(str, res, val) ) {
 		wss(str, res);
 		while ( match("**", str, res) ) {
 			wss(str, res);
-			if ( !unary_expr(str, res, val) ) {
+			if ( !unary_expr(str, res, val2) ) {
 				*str = sav;
 				return false;
 			}
+			val.powBy(val2);
 			wss(str, res);
 		}
 		result += res;
@@ -724,15 +794,19 @@ bool CRenderState::CIfExprParser::unary_expr(
 	
 	unsigned char c = 0;
 	
-	if ( (c = match("!", str, res)) ) {
-	} else if ( (c = match("-", str, res)) ) {
-	} else if ( (c = match("+", str, res)) ) {
-	}
+	c = match("!", str, res);
+	c = c || match("-", str, res);
+	match("+", str, res);
 	
 	wss(str, res);
 	if ( primary_expr(str, res, val) ) {
 		wss(str, res);
 		result += res;
+		if ( c == '!' ) {
+			val = !val;
+		} else if ( c ) {
+			val.setNegative();
+		}
 		return true;
 	}
 
@@ -755,7 +829,7 @@ bool CRenderState::CIfExprParser::primary_expr(
 	const unsigned char *sav = *str;
 	std::string res;
 
-	if ( match("concat", str, res) ) {
+	if ( matchWord("concat", str, res) ) {
 		wss(str, res);
 		if ( match("(", str, res) ) {
 			wss(str, res);
@@ -763,18 +837,22 @@ bool CRenderState::CIfExprParser::primary_expr(
 				wss(str, res);
 				if ( match(",", str, res) ) {
 					wss(str, res);
-					if ( expr(str, res, val) ) {
+					CValue val2;
+					if ( expr(str, res, val2) ) {
 							wss(str, res);
 							if ( match(")", str, res) ) {
 								wss(str, res);
 								result += res;
+								std::string s2;
+								val2.get(s2);
+								val.append(s2);
 								return true;
 							}
 					}
 				}
 			}
 		}
-	} else if ( match("defined", str, res) ) {
+	} else if ( matchWord("defined", str, res) ) {
 		wss(str, res);
 		if ( match("(", str, res) ) {
 			wss(str, res);
@@ -783,9 +861,10 @@ bool CRenderState::CIfExprParser::primary_expr(
 				res += strname;
 				wss(str, res);
 				if ( match(")", str, res) ) {
+					CValue val;
 					wss(str, res);
 					result += res;
-					return true;
+					return m_outer->getValue(val, strname.c_str());
 				}
 			}
 		}
@@ -811,14 +890,14 @@ bool CRenderState::CIfExprParser::if_expr(
 	std::string &result,
 	CValue &val) const
 {
-	if ( !str && !*str )
-		return false;
-
-	if ( !*str )
-		return false;
+	if ( !str || !*str )
+		return true;
 
 	const unsigned char *sav = *str;
 	wss(str, result);
+	if ( (*str)[0] == 0 )
+		return true;
+
 	if ( !expr(str, result, val) ) {
 		*str = sav;
 		return false;
@@ -829,6 +908,41 @@ bool CRenderState::CIfExprParser::if_expr(
 		return true;
 
 	*str =  sav;
+	return false;
+}
+
+bool CRenderState::CIfExprParser::parse(RtString expr) const
+{
+	if ( !expr )
+		return true;
+
+	const unsigned char **str = (const unsigned char **)(&expr);
+	std::string result;
+	CValue val;
+
+	try {
+		if ( if_expr(str, result, val) ) {
+			RtFloat fval;
+			val.get(fval);
+			return fval != 0;
+		} else {
+			return false;
+		}
+	} catch ( ExceptRiCPPError &e2 ) {
+		throw e2;
+	} catch ( std::exception &e1 ) {
+		throw ExceptRiCPPError(
+			RIE_MATH, RIE_SEVERE,
+			m_outer->printLineNo(__LINE__),
+			m_outer->printName(__FILE__),
+			"Error %s in expression.", e1.what());
+	} catch( ... ) {
+		throw ExceptRiCPPError(
+			RIE_MATH, RIE_SEVERE,
+			m_outer->printLineNo(__LINE__),
+			m_outer->printName(__FILE__),
+			"Unknown error in expression.");
+	}
 	return false;
 }
 
@@ -843,8 +957,7 @@ CRenderState::CRenderState(
 	m_resourceFactories(false),
 	m_lights(lightSourceFactory),
 	m_objectMacros("OBJ_"),
-	m_archiveMacros("ARC_"),
-	m_ifExprParser(*this)
+	m_archiveMacros("ARC_")
 // throw(ExceptRiCPPError)
 {
 	m_modeStack = &aModeStack;
@@ -1123,10 +1236,38 @@ bool CRenderState::getValue(CValue &p, RtString identifier) const
 
 bool CRenderState::eval(RtString expr) const
 {
-	if ( emptyStr(expr) )
-		return true;
+	CIfExprParser parser(*this);
+	return parser.parse(expr);
+}
 
-	return false;
+
+void CRenderState::ifBegin(RtString expr) {
+	m_modeStack->ifBegin();
+	pushConditional();
+	m_ifCondition = eval(expr);
+	m_executeConditional = m_ifCondition;
+}
+
+void CRenderState::elseIfBegin(RtString expr) {
+	m_modeStack->elseIfBegin();
+	if ( !m_ifCondition ) {
+		m_executeConditional = eval(expr);
+		m_ifCondition = m_executeConditional;
+	} else {
+		m_executeConditional = false;
+	}
+}
+
+void CRenderState::elseBegin()
+{
+	m_modeStack->elseBegin();
+	m_executeConditional = !m_ifCondition;
+}
+
+void CRenderState::ifEnd()
+{
+	m_modeStack->ifEnd();
+	popConditional();
 }
 
 void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params)

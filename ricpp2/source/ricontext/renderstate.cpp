@@ -662,7 +662,7 @@ bool CRenderState::CIfExprParser::match_expr(
 			}
 			std::string s;
 			val2.get(s);
-			if ( val.matches(s.c_str()) )
+			if ( val.matchedBy(s.c_str()) )
 				val.set(1);
 			wss(str, res);
 		}

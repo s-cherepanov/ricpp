@@ -351,6 +351,28 @@ void testrun(CRiCPPBridge &ri)
 	ri.end();
 }
 
+void testMatch(const CStringPattern &p, const char *str)
+{
+	str = noNullStr(str);
+	if ( p.matches(str) ) {
+		std::cout << "matches \"" << str << "\"" << std::endl;
+	} else {
+		std::cout << "does not match \"" << str << "\"" << std::endl;
+	}
+}
+
+void testGlob()
+{
+	CStringPattern p("a*bc?d");
+	std::cout << "TestGlob: " << p.pattern() << std::endl;
+	char *str;
+
+	str = "abccdbccd"; // a(bccd)bc(c)d
+	testMatch(p, str);
+	str = "abccdbcd"; // no match
+	testMatch(p, str);
+}
+
 /** @brief Interface test program
  */
 int main(int argc, char * const argv[])
@@ -388,6 +410,7 @@ int main(int argc, char * const argv[])
 	testpath.explode(':', teststr.c_str(), false, false, true);
 #endif
 
+	testGlob();
 	testrun(ri);
 
 	// Print error, does not abort

@@ -284,6 +284,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\tools\stringpattern.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\tools\win32env.cpp"
 				>
 			</File>
@@ -319,6 +323,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\tools\stringlist.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\tools\stringpattern.h"
 				>
 			</File>
 			<File

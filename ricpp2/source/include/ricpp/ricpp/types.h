@@ -38,10 +38,13 @@
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
+#ifndef _RICPP_TOOLS_STRINGPATTERN_H
+#include "ricpp/tools/stringpattern.h"
+#endif // _RICPP_TOOLS_STRINGPATTERN_H
+
 #include <cstddef>
 #include <cmath>
 #include <vector>
-#include <string>
 #include <sstream>
 
 namespace RiCPP {
@@ -1046,11 +1049,12 @@ public:
 	}
 
 
-	inline bool matches(const char *pattern) const
+	inline bool matchedBy(const char *pattern) const
 	{
+		CStringPattern pat(pattern);
 		std::string s;
 		get(s);
-		return s == pattern;
+		return pat.matches(s.c_str());
 	}
 }; // CValue
 

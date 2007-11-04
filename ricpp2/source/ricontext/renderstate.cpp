@@ -39,6 +39,108 @@
 
 using namespace RiCPP;
 
+/*
+unsigned char CRenderState::character(
+	const unsigned char **str,
+	std::string &result) const
+{
+	std::string dummy;
+
+	if ( match("\\", str, dummy) ) {
+		unsigned char d;
+		unsigned char uchar;
+		if ( octdig(str, dummy, d) ) {
+			uchar = d;
+			if ( octdig(str, dummy, d) ) {
+				uchar *= 8;
+				uchar += d;
+			}
+			if ( octdig(str, dummy, d) ) {
+				uchar *= 8;
+				uchar += d;
+			}
+			result += uchar;
+			return true;
+		}
+
+		unsigned char c = matchOneOf("\\'\"nrtbf\n", str, dummy);
+		if ( c != 0 ) {
+			switch ( c ) {
+				case '\\' :
+					result += "\\";
+					break;
+				case '\'' :
+					result += "'";
+					break;
+				case '\"' :
+					result += "\"";
+					break;
+				case 'n' :
+					result += "\n";
+					break;
+				case 'r' :
+					result += "\r";
+					break;
+				case 't' :
+					result += "\t";
+					break;
+				case 'b' :
+					result += "\b";
+					break;
+				case 'f' :
+					result += "\f";
+					break;
+				case '\n' : // ignore
+					break;
+			}
+			return true;
+		}
+		result += '\\';
+		return true;
+	}
+
+	unsigned char c = la(str);
+	if ( c != '\0' && c != '\'' ) {
+		advance(str, result);
+		return true;
+	}
+
+	return false;
+}
+*/
+
+unsigned char CRenderState::CIfExprParser::character(
+	const unsigned char **str,
+	std::string &result) const
+{
+	std::string dummy;
+	unsigned char c;
+
+	if ( match("\\", str, dummy) ) {
+		c = matchOneOf("\\'", str, dummy);
+		if ( c != 0 ) {
+			switch ( c ) {
+				case '\\' :
+					result += "\\";
+					break;
+				case '\'' :
+					result += "'";
+					break;
+			}
+			return true;
+		}
+		result += '\\';
+		return true;
+	}
+
+	c = la(str);
+	if ( c != '\0' && c != '\'' ) {
+		advance(str, result);
+		return true;
+	}
+
+	return false;
+}
 
 bool CRenderState::CIfExprParser::name(
 	const unsigned char **str,
@@ -370,13 +472,13 @@ bool CRenderState::CIfExprParser::litvar(
 		return true;
 	}
 
-	if ( matchWord("true", str, result) ) {
+	if ( match_word("true", str, result) ) {
 		val.set(1);
 		wss(str, result);
 		return true;
 	}
 
-	if ( matchWord("false", str, result) ) {
+	if ( match_word("false", str, result) ) {
 		val.set(0);
 		wss(str, result);
 		return true;
@@ -474,7 +576,7 @@ bool CRenderState::CIfExprParser::incl_or_expr(
 
 	if ( excl_or_expr(str, res, val) ) {
 		wss(str, res);
-		while ( match("|", str, res) ) {
+		while ( match_op("|", str, res) ) {
 			wss(str, res);
 			if ( !excl_or_expr(str, res, val2) ) {
 				*str = sav;
@@ -536,7 +638,7 @@ bool CRenderState::CIfExprParser::and_expr(
 
 	if ( eq_expr(str, res, val) ) {
 		wss(str, res);
-		while ( match("&", str, res) ) {
+		while ( match_op("&", str, res) ) {
 			wss(str, res);
 			if ( !eq_expr(str, res, val2) ) {
 				*str = sav;
@@ -610,7 +712,7 @@ bool CRenderState::CIfExprParser::rel_expr(
 		bool lt = false;
 		bool le = false;
 		wss(str, res);
-		while ( (gt = match(">", str, res)) || (ge = match(">=", str, res)) || (lt = match("<", str, res)) || (le = match("<=", str, res)) ) {
+		while ( (ge = match(">=", str, res)) || (le = match("<=", str, res)) || (gt = match(">", str, res)) || (lt = match("<", str, res)) ) {
 			wss(str, res);
 			if ( !match_expr(str, res, val2) ) {
 				*str = sav;
@@ -728,7 +830,7 @@ bool CRenderState::CIfExprParser::mul_expr(
 		bool mul = false;
 		bool div = false;
 		wss(str, res);
-		while ( (mul = match("*", str, res)) || (div = match("/", str, res)) ) {
+		while ( (mul = match_op("*", str, res)) || (div = match_op("/", str, res)) ) {
 			wss(str, res);
 			if ( !pow_expr(str, res, val2) ) {
 				*str = sav;
@@ -829,7 +931,7 @@ bool CRenderState::CIfExprParser::primary_expr(
 	const unsigned char *sav = *str;
 	std::string res;
 
-	if ( matchWord("concat", str, res) ) {
+	if ( match_word("concat", str, res) ) {
 		wss(str, res);
 		if ( match("(", str, res) ) {
 			wss(str, res);
@@ -852,7 +954,7 @@ bool CRenderState::CIfExprParser::primary_expr(
 				}
 			}
 		}
-	} else if ( matchWord("defined", str, res) ) {
+	} else if ( match_word("defined", str, res) ) {
 		wss(str, res);
 		if ( match("(", str, res) ) {
 			wss(str, res);

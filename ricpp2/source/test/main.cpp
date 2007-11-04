@@ -340,7 +340,7 @@ void testrun(CRiCPPBridge &ri)
 
 			ri.ifBegin(" 1 + 4 * 7.0 == '29' && false");
 				ri.sphere(0.75, -1, 1, 360.0, RI_NULL);
-			ri.elseIfBegin("$Frame==1 ");
+			ri.elseIfBegin("'*abc\\'' =~ '\\*abc?' || $Frame==1 ");
 				ri.sphere(1, -1, 1, 360.0, RI_NULL);
 			ri.elseBegin();
 				ri.sphere(1, -1, 1, 180.0, RI_NULL);

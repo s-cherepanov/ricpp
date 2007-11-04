@@ -191,8 +191,7 @@ class CRenderState {
 		wss             : ws (ws)*;
 		idchar          : alpha | digit | '_';
 		sign            : '+' | '-';
-		character       : '\' octdigit [ octdigit [ octdigit ] ];
-						| '\' ['\' '''' '"' 'n' 'r' 't' 'b' 'f' '\n'];
+		character       : '\' ['\' ''''];
 		                | [^ '''' '\0'];
 
 		name            : (idchar)+;
@@ -223,7 +222,7 @@ class CRenderState {
 		excl_or_expr    : and_expr ('^' and_expr)*;
 		and_expr        : eq_expr ('&' eq_expr)*;
 		eq_expr         : rel_expr (('==' | '!=') rel_expr)*;
-		rel_expr        : match_expr (('>' | '<' | '>=' | '<=') match_expr)*;
+		rel_expr        : match_expr (('>=' | '<=' | '>' | '<' ) match_expr)*;
 		match_expr      : add_expr ('=~' add_expr)?;
 		add_expr        : mul_expr (['+' '-'] mul_expr)+;
 		mul_expr        : pow_expr (['*' '/'] pow_expr)+;
@@ -241,7 +240,7 @@ class CRenderState {
 		const CRenderState *m_outer;
 
 	protected:
-		inline bool matchWord(
+		inline bool match_word(
 			const char *matchStr,
 			const unsigned char **str,
 			std::string &result) const
@@ -250,6 +249,23 @@ class CRenderState {
 			std::string res;
 			if ( match(matchStr, str, res) &&
 				 (la(str) == 0 || !(isalnum(la(str)) || la(str) == '_')) )
+			{
+				result += res;
+				return true;
+			}
+			*str = sav;
+			return false;
+		}
+
+		inline bool match_op(
+			const char *matchStr,
+			const unsigned char **str,
+			std::string &result) const
+		{
+			const unsigned char *sav = *str;
+			std::string res;
+			if ( match(matchStr, str, res) &&
+				 (la(str) != matchStr[0]) )
 			{
 				result += res;
 				return true;
@@ -337,73 +353,9 @@ class CRenderState {
 
 		/** @brief Character of a string.
 		 */
-		inline unsigned char character(
+		unsigned char character(
 			const unsigned char **str,
-			std::string &result) const
-		{
-			std::string dummy;
-
-			if ( match("\\", str, dummy) ) {
-				unsigned char d;
-				unsigned char uchar;
-				if ( octdig(str, dummy, d) ) {
-					uchar = d;
-					if ( octdig(str, dummy, d) ) {
-						uchar *= 8;
-						uchar += d;
-					}
-					if ( octdig(str, dummy, d) ) {
-						uchar *= 8;
-						uchar += d;
-					}
-					result += uchar;
-					return true;
-				}
-
-				unsigned char c = matchOneOf("\\'\"nrtbf\n", str, dummy);
-				if ( c != 0 ) {
-					switch ( c ) {
-						case '\\' :
-							result += "\\";
-							break;
-						case '\'' :
-							result += "'";
-							break;
-						case '\"' :
-							result += "\"";
-							break;
-						case 'n' :
-							result += "\n";
-							break;
-						case 'r' :
-							result += "\r";
-							break;
-						case 't' :
-							result += "\t";
-							break;
-						case 'b' :
-							result += "\b";
-							break;
-						case 'f' :
-							result += "\f";
-							break;
-						case '\n' : // ignore
-							break;
-					}
-					return true;
-				}
-				result += '\\';
-				return true;
-			}
-
-			unsigned char c = la(str);
-			if ( c != '\0' && c != '\'' ) {
-				advance(str, result);
-				return true;
-			}
-
-			return false;
-		}
+			std::string &result) const;
 
 		/** @brief Name of an identifier.
 		 */

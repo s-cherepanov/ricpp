@@ -50,6 +50,8 @@
 		C33118230BEB10B30084F992 /* stringlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33118220BEB10B30084F992 /* stringlist.cpp */; };
 		C337F2860C460AA100E174B0 /* templatefuncs.h in Headers */ = {isa = PBXBuildFile; fileRef = C337F2850C460AA100E174B0 /* templatefuncs.h */; };
 		C337F3300C460E3D00E174B0 /* libstreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3003D680C1D6C3A004C4EF0 /* libstreams.a */; };
+		C33939BB0CDE14AF001BBED7 /* stringpattern.h in Headers */ = {isa = PBXBuildFile; fileRef = C33939BA0CDE14AF001BBED7 /* stringpattern.h */; };
+		C33939BD0CDE14C5001BBED7 /* stringpattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */; };
 		C35C7A490BD76D3A00548675 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
 		C3610AC70BF2F26D00007CEF /* ricppbridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */; };
 		C3610B2F0BF2F9D500007CEF /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3610AB50BF2F06500007CEF /* libricppbridge.a */; };
@@ -328,6 +330,8 @@
 		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C33118220BEB10B30084F992 /* stringlist.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stringlist.cpp; path = ../../../source/tools/stringlist.cpp; sourceTree = SOURCE_ROOT; };
 		C337F2850C460AA100E174B0 /* templatefuncs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = templatefuncs.h; path = ../../../source/include/ricpp/tools/templatefuncs.h; sourceTree = SOURCE_ROOT; };
+		C33939BA0CDE14AF001BBED7 /* stringpattern.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = stringpattern.h; path = ../../../source/include/ricpp/tools/stringpattern.h; sourceTree = SOURCE_ROOT; };
+		C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stringpattern.cpp; path = ../../../source/tools/stringpattern.cpp; sourceTree = SOURCE_ROOT; };
 		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AB50BF2F06500007CEF /* libricppbridge.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppbridge.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
@@ -1008,6 +1012,7 @@
 		C399BA360BE5DDD4002FEEF1 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C33939BA0CDE14AF001BBED7 /* stringpattern.h */,
 				C337F2850C460AA100E174B0 /* templatefuncs.h */,
 				C370C1890BF469BD00AA03BC /* env.h */,
 				C370C18A0BF469BD00AA03BC /* filepath.h */,
@@ -1022,6 +1027,7 @@
 		C399BA370BE5DE05002FEEF1 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */,
 				C399BA990BE5E229002FEEF1 /* macenv.cpp */,
 				C38EA2A20BE86D370057831B /* macfilepath.cpp */,
 				C33118220BEB10B30084F992 /* stringlist.cpp */,
@@ -1262,6 +1268,7 @@
 				C370C1920BF469BD00AA03BC /* stringlist.h in Headers */,
 				C37DBBBB0C01CCC1003AE4E7 /* inlinetools.h in Headers */,
 				C337F2860C460AA100E174B0 /* templatefuncs.h in Headers */,
+				C33939BB0CDE14AF001BBED7 /* stringpattern.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1734,6 +1741,7 @@
 				C399BA9A0BE5E229002FEEF1 /* macenv.cpp in Sources */,
 				C38EA2A30BE86D370057831B /* macfilepath.cpp in Sources */,
 				C33118230BEB10B30084F992 /* stringlist.cpp in Sources */,
+				C33939BD0CDE14C5001BBED7 /* stringpattern.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

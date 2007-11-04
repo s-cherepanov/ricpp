@@ -1015,11 +1015,11 @@ public:
 		if ( op.type() == BASICTYPE_INTEGER ) {
 			RtInt i2 = 0;
 			op.get(i2);
-			set(pow(f1,i2));
+			set((RtFloat)pow(f1,i2));
 		} else {
 			RtFloat f2 = 0;
 			op.get(f2);
-			set(pow(f1,f2));
+			set((RtFloat)pow(f1,f2));
 		}
 
 		return *this;

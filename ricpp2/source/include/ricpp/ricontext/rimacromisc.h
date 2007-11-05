@@ -278,7 +278,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
 	{
-		ri.preDeclare(name(), declaration(), false);
+		ri.preDeclare(name(), declaration());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)

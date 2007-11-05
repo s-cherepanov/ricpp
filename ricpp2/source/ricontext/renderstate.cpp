@@ -1229,12 +1229,6 @@ void CRenderState::pushConditional()
 		m_conditions.push_back(m_ifCondition);
 		m_accumulateConditional = m_accumulateConditional && m_executeConditional;
 		m_conditions.push_back(m_accumulateConditional);
-		if ( curMacro() ) {
-			pushAttributes();
-			m_conditions.push_back(true);
-		} else {
-			m_conditions.push_back(false);
-		}
 	} catch (std::exception &e) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in pushConditional(): %s", e.what());
 	}
@@ -1243,11 +1237,6 @@ void CRenderState::pushConditional()
 void CRenderState::popConditional()
 {
 	try {
-		if ( m_conditions.back() ) {
-			popAttributes();
-		}
-		m_conditions.pop_back();		
-
 		m_accumulateConditional = m_conditions.back();
 		m_conditions.pop_back();
 
@@ -1361,27 +1350,51 @@ void CRenderState::ifBegin(RtString expr) {
 	pushConditional();
 	m_ifCondition = eval(expr);
 	m_executeConditional = m_ifCondition;
+	if ( !m_executeConditional ) {
+		pushAttributes();
+		pushOptions();
+	}
 }
 
 void CRenderState::elseIfBegin(RtString expr) {
 	m_modeStack->elseIfBegin();
+	if ( !m_executeConditional ) {
+		popAttributes();
+		popOptions();
+	}
 	if ( !m_ifCondition ) {
 		m_executeConditional = eval(expr);
 		m_ifCondition = m_executeConditional;
 	} else {
 		m_executeConditional = false;
 	}
+	if ( !m_executeConditional ) {
+		pushAttributes();
+		pushOptions();
+	}
 }
 
 void CRenderState::elseBegin()
 {
 	m_modeStack->elseBegin();
+	if ( !m_executeConditional ) {
+		popAttributes();
+		popOptions();
+	}
 	m_executeConditional = !m_ifCondition;
+	if ( !m_executeConditional ) {
+		pushAttributes();
+		pushOptions();
+	}
 }
 
 void CRenderState::ifEnd()
 {
 	m_modeStack->ifEnd();
+	if ( !m_executeConditional ) {
+		popAttributes();
+		popOptions();
+	}
 	popConditional();
 }
 

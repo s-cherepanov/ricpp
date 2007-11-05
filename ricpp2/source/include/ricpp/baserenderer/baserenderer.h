@@ -193,6 +193,8 @@ protected:
 
 	inline virtual CRiMacro *curMacro() {return 0;}
 
+	virtual RtVoid processDeclare(RtToken name, RtString declaration, bool isDefault);
+
 	virtual void processRequest(CRManInterfaceCall &aRequest);
 	virtual void replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb);
 
@@ -435,7 +437,7 @@ public:
 
 	/** @brief Create new entry in dectaration list
 	 */
-	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault);
+	virtual RtVoid preDeclare(RtToken name, RtString declaration);
 	inline virtual RtVoid preSynchronize(RtToken name) {}
 	inline virtual RtVoid preSystem(RtToken cmd) {}
 	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params);
@@ -742,7 +744,7 @@ public:
 
 	inline virtual RtVoid postErrorHandler(const IErrorHandler &handler) {}
 
-	inline virtual RtVoid postDeclare(RtToken name, RtString declaration) {}
+	virtual RtVoid postDeclare(RtToken name, RtString declaration);
 	inline virtual RtVoid postSynchronize(RtToken name){}
 	inline virtual RtVoid postSystem(RtToken cmd){}
 	RtVoid postResource(RtString handle, RtString type, const CParameterList &params);

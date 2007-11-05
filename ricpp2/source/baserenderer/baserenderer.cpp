@@ -250,11 +250,12 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 
 void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest)
 {
+	aRequest.preProcess(*this);
+
 	if ( renderState()->curMacro() && !aRequest.isMacroDefinition() ) {
 		renderState()->curMacro()->add(aRequest.duplicate());
 	} else {
 		if ( renderState()->executeConditionial() ) {
-			aRequest.preProcess(*this);
 			aRequest.doProcess(*this);
 		}
 	}
@@ -272,9 +273,30 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 	aRequest.postProcess(*this, cb);
 }
 
-/** @brief Create new entry in dectaration list
- */
-void CBaseRenderer::preDeclare(RtToken name, RtString declaration, bool isDefault)
+void CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool isDefault)
+{
+	if ( !emptyStr(name) && !emptyStr(declaration) ) {
+
+		CDeclaration *d = new CDeclaration(name, declaration, renderState()->options().colorDescr(), renderState()->tokenMap(), isDefault);		
+		if ( !d )
+			throw ExceptRiCPPError(
+				RIE_NOMEM,
+				RIE_SEVERE,
+				renderState()->printLineNo(__LINE__),
+				renderState()->printName(__FILE__),
+				"Declaration of \"%s\": \"%s\"",
+				name,
+				declaration);
+
+		renderState()->declAdd(d);
+	}
+}
+
+void CBaseRenderer::preDeclare(RtToken name, RtString declaration)
+{
+}
+
+void CBaseRenderer::postDeclare(RtToken name, RtString declaration)
 {
 }
 
@@ -295,22 +317,8 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		}
 		name = renderState()->tokFindCreate(name);
 
-		// Do the declaration always, if there is no declaration only tokenize the name
-		if ( !emptyStr(declaration) ) {
-	
-			CDeclaration *d = new CDeclaration(name, declaration, renderState()->options().colorDescr(), renderState()->tokenMap(), false);		
-			if ( !d )
-				throw ExceptRiCPPError(
-					RIE_NOMEM,
-					RIE_SEVERE,
-					renderState()->printLineNo(__LINE__),
-					renderState()->printName(__FILE__),
-					"Declaration of \"%s\": \"%s\"",
-					name,
-					declaration);
-
-			renderState()->declAdd(d);
-		}
+		// Allways process the declaration where it occurs
+		processDeclare(name, declaration, false);
 
 		CRiDeclare r(renderState()->lineNo(), name, declaration);
 		processRequest(r);
@@ -333,48 +341,48 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 void CBaseRenderer::defaultDeclarations()
 {
 	// Default declarations
-	preDeclare(RI_FLATNESS, "float", true);
-	preDeclare(RI_FOV, "float", true);
+	processDeclare(RI_FLATNESS, "float", true);
+	processDeclare(RI_FOV, "float", true);
 
-	preDeclare(RI_INTENSITY, "float", true);
-	preDeclare(RI_LIGHTCOLOR, "color", true);
-	preDeclare(RI_FROM, "point", true);
-	preDeclare(RI_TO, "point", true);
-	preDeclare(RI_CONEANGLE, "float", true);
-	preDeclare(RI_CONEDELTAANGLE, "float", true);
-	preDeclare(RI_BEAMDISTRIBUTION, "float", true);
+	processDeclare(RI_INTENSITY, "float", true);
+	processDeclare(RI_LIGHTCOLOR, "color", true);
+	processDeclare(RI_FROM, "point", true);
+	processDeclare(RI_TO, "point", true);
+	processDeclare(RI_CONEANGLE, "float", true);
+	processDeclare(RI_CONEDELTAANGLE, "float", true);
+	processDeclare(RI_BEAMDISTRIBUTION, "float", true);
 
-	preDeclare(RI_KA, "float", true);
-	preDeclare(RI_KD, "float", true);
-	preDeclare(RI_KS, "float", true);
-	preDeclare(RI_ROUGHNESS, "float", true);
-	preDeclare(RI_KR, "float", true);
-	preDeclare(RI_TEXTURENAME, "string", true);
-	preDeclare(RI_SPECULARCOLOR, "color", true);
-	preDeclare(RI_MINDISTANCE, "float", true);
-	preDeclare(RI_MAXDISTANCE, "float", true);
-	preDeclare(RI_BACKGROUND, "color", true);
-	preDeclare(RI_DISTANCE, "float", true);
-	preDeclare(RI_AMPLITUDE, "float", true);
+	processDeclare(RI_KA, "float", true);
+	processDeclare(RI_KD, "float", true);
+	processDeclare(RI_KS, "float", true);
+	processDeclare(RI_ROUGHNESS, "float", true);
+	processDeclare(RI_KR, "float", true);
+	processDeclare(RI_TEXTURENAME, "string", true);
+	processDeclare(RI_SPECULARCOLOR, "color", true);
+	processDeclare(RI_MINDISTANCE, "float", true);
+	processDeclare(RI_MAXDISTANCE, "float", true);
+	processDeclare(RI_BACKGROUND, "color", true);
+	processDeclare(RI_DISTANCE, "float", true);
+	processDeclare(RI_AMPLITUDE, "float", true);
 
-	preDeclare(RI_P, "vertex point", true);
-	preDeclare(RI_PZ, "vertex float", true);
-	preDeclare(RI_PW, "vertex hpoint", true);
-	preDeclare(RI_N,  "varying point", true);  // Normal
-	preDeclare(RI_NP, "uniform point", true);
-	preDeclare(RI_CS, "varying color", true);  // Color
-	preDeclare(RI_OS, "varying color", true);  // Opacity
-	preDeclare(RI_S,  "varying float", true);  // Texture coordinates
-	preDeclare(RI_T,  "varying float", true);
-	preDeclare(RI_ST, "varying float[2]", true);
+	processDeclare(RI_P, "vertex point", true);
+	processDeclare(RI_PZ, "vertex float", true);
+	processDeclare(RI_PW, "vertex hpoint", true);
+	processDeclare(RI_N,  "varying point", true);  // Normal
+	processDeclare(RI_NP, "uniform point", true);
+	processDeclare(RI_CS, "varying color", true);  // Color
+	processDeclare(RI_OS, "varying color", true);  // Opacity
+	processDeclare(RI_S,  "varying float", true);  // Texture coordinates
+	processDeclare(RI_T,  "varying float", true);
+	processDeclare(RI_ST, "varying float[2]", true);
 
-	preDeclare(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
+	processDeclare(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
 
-	preDeclare(RI_NAME, "constant string", true);
-	preDeclare(RI_WIDTH, "varying float", true);
-	preDeclare(RI_CONSTANTWIDTH, "float", true);
+	processDeclare(RI_NAME, "constant string", true);
+	processDeclare(RI_WIDTH, "varying float", true);
+	processDeclare(RI_CONSTANTWIDTH, "float", true);
 
-	preDeclare(RI_FILE, "string", true);
+	processDeclare(RI_FILE, "string", true);
 }
 
 RtVoid CBaseRenderer::preBegin(RtString name, const CParameterList &params)
@@ -3809,7 +3817,6 @@ RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callb
 
 RtVoid CBaseRenderer::preIfBegin(RtString expr)
 {
-	renderState()->ifBegin(expr);
 }
 
 
@@ -3819,6 +3826,8 @@ RtVoid CBaseRenderer::ifBegin(RtString expr)
 	try {
 		if ( !preCheck(req) )
 			return;
+
+		renderState()->ifBegin(expr);
 
 		CRiIfBegin r(renderState()->lineNo(), expr);
 		processRequest(r);
@@ -3846,7 +3855,6 @@ RtVoid CBaseRenderer::ifBegin(RtString expr)
 
 RtVoid CBaseRenderer::preElseIfBegin(RtString expr)
 {
-	renderState()->elseIfBegin(expr);
 }
 
 
@@ -3856,6 +3864,8 @@ RtVoid CBaseRenderer::elseIfBegin(RtString expr)
 	try {
 		if ( !preCheck(req) )
 			return;
+
+		renderState()->elseIfBegin(expr);
 
 		CRiElseIfBegin r(renderState()->lineNo(), expr);
 		processRequest(r);
@@ -3883,7 +3893,6 @@ RtVoid CBaseRenderer::elseIfBegin(RtString expr)
 
 RtVoid CBaseRenderer::preElseBegin(void)
 {
-	renderState()->elseBegin();
 }
 
 
@@ -3893,6 +3902,8 @@ RtVoid CBaseRenderer::elseBegin(void)
 	try {
 		if ( !preCheck(req) )
 			return;
+
+		renderState()->elseBegin();
 
 		CRiElseBegin r(renderState()->lineNo());
 		processRequest(r);
@@ -3920,7 +3931,6 @@ RtVoid CBaseRenderer::elseBegin(void)
 
 RtVoid CBaseRenderer::preIfEnd(void)
 {
-	renderState()->ifEnd();
 }
 
 RtVoid CBaseRenderer::ifEnd(void)
@@ -3929,6 +3939,8 @@ RtVoid CBaseRenderer::ifEnd(void)
 	try {
 		if ( !preCheck(req) )
 			return;
+
+		renderState()->ifEnd();
 
 		CRiIfEnd r(renderState()->lineNo());
 		processRequest(r);

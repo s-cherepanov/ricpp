@@ -91,7 +91,7 @@ public:
 	 */
 	virtual RtVoid preErrorHandler(const IErrorHandler &handler) = 0;
 
-	virtual RtVoid preDeclare(RtToken name, RtString declaration, bool isDefault) = 0;
+	virtual RtVoid preDeclare(RtToken name, RtString declaration) = 0;
 	virtual RtVoid preSynchronize(RtToken name) = 0;
 	virtual RtVoid preSystem(RtToken cmd) = 0;
 	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params) = 0;

@@ -31,7 +31,6 @@ private:
 	std::list<CRManInterfaceCall *> m_callList;  //!< List of all interface calls for this macro.
 	std::string m_name;         //!< Name of the macro (eg. file name, handle name).
 	EnumMacroTypes m_macroType; //!< Type of macro, either object or archive.
-	bool m_stopInsertion;       //!< Can be set to false to indicate to stop inserting request into the macro.
 	bool m_isClosed;            //!< Set to true (close) if macro definition ended.
 	bool m_postpone;            //!< Set to true if macro should be postponed (e.g. in RIB oputput).
 
@@ -45,7 +44,7 @@ public:
 	inline CRiMacro(
 		RtString aName = 0,
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN) :
-		m_name(noNullStr(aName)), m_macroType(macroType), m_stopInsertion(false), m_isClosed(false), m_postpone(true)
+		m_name(noNullStr(aName)), m_macroType(macroType), m_isClosed(false), m_postpone(true)
 	{
 	}
 
@@ -80,24 +79,6 @@ public:
 	 *  @return true, if added and false, if not (because c == 0).
 	 */
 	bool add(CRManInterfaceCall *c);
-
-	/** @brief Gets the validity of the macro.
-	 *
-	 *  @return true, macro is valid and request objects can be inserted.
-	 */
-	bool stopInsertion() const
-	{
-		return m_stopInsertion;
-	}
-
-	/** @brief Sets the validity of the macro.
-	 *
-	 *  @param isValid false, to indicate stopping further insertion of request
-	 */
-	void stopInsertion(bool stopIt)
-	{
-		m_stopInsertion = stopIt;
-	}
 
 	/** @brief Gets the open/closed state of a macro.
 	 *

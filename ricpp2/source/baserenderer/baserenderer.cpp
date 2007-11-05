@@ -250,14 +250,11 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 
 void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest)
 {
-	aRequest.preProcess(*this);
-
 	if ( renderState()->curMacro() && !aRequest.isMacroDefinition() ) {
-		if ( !renderState()->curMacro()->stopInsertion() ) {
-			renderState()->curMacro()->add(aRequest.duplicate());
-		}
+		renderState()->curMacro()->add(aRequest.duplicate());
 	} else {
 		if ( renderState()->executeConditionial() ) {
+			aRequest.preProcess(*this);
 			aRequest.doProcess(*this);
 		}
 	}
@@ -268,8 +265,8 @@ void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest)
 void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb)
 {
 	renderState()->lineNo(aRequest.lineNo());
-	aRequest.preProcess(*this, cb);
 	if ( renderState()->executeConditionial() ) {
+		aRequest.preProcess(*this, cb);
 		aRequest.doProcess(*this, cb);
 	}
 	aRequest.postProcess(*this, cb);
@@ -279,15 +276,6 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
  */
 void CBaseRenderer::preDeclare(RtToken name, RtString declaration, bool isDefault)
 {
-	// if no declaration only tokenize the name
-	if ( !emptyStr(declaration) ) {
-	
-		CDeclaration *d = new CDeclaration(name, declaration, renderState()->options().colorDescr(), renderState()->tokenMap(), isDefault);		
-		if ( !d )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Declaration of \"%s\": \"%s\"", name, declaration);
-
-		renderState()->declAdd(d);
-	}
 }
 
 RtToken CBaseRenderer::declare(RtString name, RtString declaration)
@@ -306,6 +294,23 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 			);
 		}
 		name = renderState()->tokFindCreate(name);
+
+		// Do the declaration always, if there is no declaration only tokenize the name
+		if ( !emptyStr(declaration) ) {
+	
+			CDeclaration *d = new CDeclaration(name, declaration, renderState()->options().colorDescr(), renderState()->tokenMap(), false);		
+			if ( !d )
+				throw ExceptRiCPPError(
+					RIE_NOMEM,
+					RIE_SEVERE,
+					renderState()->printLineNo(__LINE__),
+					renderState()->printName(__FILE__),
+					"Declaration of \"%s\": \"%s\"",
+					name,
+					declaration);
+
+			renderState()->declAdd(d);
+		}
 
 		CRiDeclare r(renderState()->lineNo(), name, declaration);
 		processRequest(r);
@@ -1020,11 +1025,11 @@ RtVoid CBaseRenderer::resourceEnd(void)
 
 RtVoid CBaseRenderer::preResource(RtString handle, RtString type, const CParameterList &params)
 {
+	renderState()->resource(*this, handle, type, params);
 }
 
 RtVoid CBaseRenderer::doResource(RtString handle, RtString type, const CParameterList &params)
 {
-	renderState()->resource(*this, handle, type, params);
 }
 
 RtVoid CBaseRenderer::postResource(RtString handle, RtString type, const CParameterList &params)
@@ -1990,13 +1995,11 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 		renderState()->parseParameters(CValueCounts(), n, tokens, params);
 
 		if ( renderState()->curMacro() ) {
-				if ( !renderState()->curMacro()->stopInsertion() ) {
-					CRiLightSource *m = new CRiLightSource(*renderState(), name, n, tokens, params);
-					if ( !m )
-						throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiLightSource", __LINE__, __FILE__));
-					renderState()->curMacro()->add(m);
-					return m->handleIdx();
-				}
+				CRiLightSource *m = new CRiLightSource(*renderState(), name, n, tokens, params);
+				if ( !m )
+					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiLightSource", __LINE__, __FILE__));
+				renderState()->curMacro()->add(m);
+				return m->handleIdx();
 		} else {
 			if ( renderState()->executeConditionial() ) {
 				h = renderState()->lights().lightSource(renderState()->dict(), renderState()->options().colorDescr(),
@@ -2044,19 +2047,17 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 	if ( renderState()->curMacro() ) {
 
 		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiAreaLightSource *m = new CRiAreaLightSource(*renderState(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAreaLightSource", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-				h = m->handleIdx();
-				renderState()->startAreaLightSource(h);
+			CRiAreaLightSource *m = new CRiAreaLightSource(*renderState(), name, n, tokens, params);
+			if ( !m )
+				throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAreaLightSource", __LINE__, __FILE__));
+			renderState()->curMacro()->add(m);
+			h = m->handleIdx();
+			renderState()->startAreaLightSource(h);
 
-				if ( n != renderState()->numTokens() ) {
-					ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
-				}
-				return h;
+			if ( n != renderState()->numTokens() ) {
+				ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
 			}
+			return h;
 		} catch ( ExceptRiCPPError &e2 ) {
 			ricppErrHandler().handleError(e2);
 		}
@@ -2100,12 +2101,10 @@ RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 	if ( renderState()->curMacro() ) {
 
 		try {
-			if ( !renderState()->curMacro()->stopInsertion() ) {
-				CRiIlluminate *m = new CRiIlluminate(renderState()->lineNo(), light, onoff);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiIlluminate", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-			}
+			CRiIlluminate *m = new CRiIlluminate(renderState()->lineNo(), light, onoff);
+			if ( !m )
+				throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiIlluminate", __LINE__, __FILE__));
+			renderState()->curMacro()->add(m);
 		} catch ( ExceptRiCPPError &e2 ) {
 			ricppErrHandler().handleError(e2);
 		}

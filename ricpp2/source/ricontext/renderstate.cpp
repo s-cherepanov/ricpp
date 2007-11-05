@@ -1229,6 +1229,12 @@ void CRenderState::pushConditional()
 		m_conditions.push_back(m_ifCondition);
 		m_accumulateConditional = m_accumulateConditional && m_executeConditional;
 		m_conditions.push_back(m_accumulateConditional);
+		if ( curMacro() ) {
+			pushAttributes();
+			m_conditions.push_back(true);
+		} else {
+			m_conditions.push_back(false);
+		}
 	} catch (std::exception &e) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in pushConditional(): %s", e.what());
 	}
@@ -1237,10 +1243,17 @@ void CRenderState::pushConditional()
 void CRenderState::popConditional()
 {
 	try {
+		if ( m_conditions.back() ) {
+			popAttributes();
+		}
+		m_conditions.pop_back();		
+
 		m_accumulateConditional = m_conditions.back();
 		m_conditions.pop_back();
+
 		m_ifCondition = m_conditions.back();
 		m_conditions.pop_back();
+
 		m_executeConditional = m_conditions.back();
 		m_conditions.pop_back();
 	} catch (std::exception &e) {

@@ -12,20 +12,43 @@ namespace RiCPP {
  */
 class CStringPattern {
 private:
-	std::string m_pattern;
+	std::string m_pattern; //!< The pattern used for matching
+	
+	/** @brief Recursive matching.
+	 *
+	 * @param patternPos Position in pattern (m_pattern).
+	 * @param aString Address of the string to match.
+	 */
 	bool doMatch(const char *patternPos, const char **aString) const;
 public:
+	/** @brief Default constructor.
+	 *
+	 *  @param aPattern Pattern used for matching.
+	 */
 	inline CStringPattern(const char *aPattern = 0)
 	{
 		pattern(aPattern);
 	}
 
+	/** @brief Gets the current pattern.
+	 *
+	 *  @return Current pattern  
+	 */
 	inline const char *pattern() const
 	{
 		return m_pattern.c_str();
 	}
 
+	/** @brief Sets the current pattern.
+	 *
+	 *  @param aPattern Pattern to use.  
+	 */
 	void pattern(const char *aPattern);
+
+	/** @brief Matches the pattern stored in this object to a string.
+	 *
+	 *  @param aString String to be matched.  
+	 */
 	bool matches(const char *aString) const;
 }; // CStringPattern
 

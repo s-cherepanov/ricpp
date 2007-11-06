@@ -14,11 +14,11 @@ bool CStringPattern::doMatch(const char *patternPos, const char **aString) const
 			while ( patternPos[0] == '*' ) {
 				++patternPos;
 				if ( !patternPos[0] ) {
-					// * at end matches everything
+					// * at the end matches everything
 					return true;
 				}
 			}
-			// This can lead to heavy backtrack for complicated patterns.
+			// This can lead to heavy backtracking for patterns with many asterisks.
 			const char *sav = *aString;
 			while ( !doMatch(patternPos, aString) ) {
 				*aString = sav;
@@ -49,7 +49,7 @@ bool CStringPattern::doMatch(const char *patternPos, const char **aString) const
 		}
 	}
 
-	// Both has to be at end '\0'
+	// Both have to be at end '\0'
 	return *patternPos == *aString[0];
 }
 

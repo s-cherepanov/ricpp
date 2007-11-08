@@ -12,186 +12,897 @@ namespace RiCPP {
 // ----------------------------------------------------------------------------
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Simple polygon.
+ */
 class CRiPolygon : public CPolygonRManInterfaceCall {
-protected:
-	RtInt m_nVertices;
+private:
+	RtInt m_nVertices; //!< Number of vertices of the polygon must match the number of positions "P".
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiPolygon"; }
 	inline virtual const char *className() const { return CRiPolygon::myClassName(); }
 
-	inline CRiPolygon(
-		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nvertices,
-		RtInt n, RtToken tokens[], RtPointer params[])
-		: CPolygonRManInterfaceCall(aLineNo), m_nVertices(nvertices)
+	inline virtual bool isA(const char *atomizedClassName) const
 	{
-		CPolygonClasses p(nvertices);
-		setParams(decl, p, curColorDescr, n, tokens, params);
+		return ( atomizedClassName == myClassName() );
 	}
-	inline CRiPolygon(
-		long aLineNo,
-		RtInt nvertices,
-		const CParameterList &theParameters
-		)
-		: CPolygonRManInterfaceCall(aLineNo, theParameters)
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of vertices to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiPolygon(long aLineNo=-1)
+		: CPolygonRManInterfaceCall(aLineNo), m_nVertices(0)
 	{
 	}
 
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param theNVertices Number of vertices of the polygon
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
+	inline CRiPolygon(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtInt theNVertices,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CPolygonRManInterfaceCall(aLineNo), m_nVertices(theNVertices)
+	{
+		CPolygonClasses p(theNVertices);
+		setParams(decl, p, curColorDescr, n, tokens, params);
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param theNVertices Number of vertices of the polygon
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiPolygon(
+		long aLineNo,
+		RtInt theNVertices,
+		const CParameterList &theParameters
+		)
+		: CPolygonRManInterfaceCall(aLineNo, theParameters), m_nVertices(theNVertices)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiPolygon(const CRiPolygon &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiPolygon()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiPolygon(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POLYGON; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the number of vertices.
+	 *
+	 *  @return The number of vertices.
+	 */
+	inline RtInt nVertices() const
+	{
+		return m_nVertices;
+	}
+
+	/** @brief Sets the number of vertices.
+	 *
+	 *  @param theNVertices The number of vertices.
+	 */
+	inline void nVertices(RtInt theNVertices)
+	{
+		m_nVertices = theNVertices;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePolygon(m_nVertices, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doPolygon(m_nVertices, parameters());
 	}
-	inline CRiPolygon &operator=(const CRiPolygon &) {
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postPolygon(m_nVertices, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiPolygon &operator=(const CRiPolygon &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		nVertices(c.nVertices());
+
+		CPolygonRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiPolygon
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief General Polygon
+ */
 class CRiGeneralPolygon : public CPolygonRManInterfaceCall {
-protected:
-	RtInt m_nLoops;
-	std::vector<RtInt> m_nVerts;
-	void enterValues(RtInt nloops, RtInt *nverts);
+private:
+	std::vector<RtInt> m_nVerts; //!< Number of verts per outline (Number of loops is the size of m_nVerts).
+	/** @brief enters the values.
+	 *
+	 *  @param theNLoops Number of loops
+	 *  @param theNVerts Number of vertices/loop, size of \a nverts vector is \a nloops.
+	 */
+	void enterValues(RtInt theNLoops, RtInt *theNVerts);
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiGeneralPolygon"; }
 	inline virtual const char *className() const { return CRiGeneralPolygon::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of vertices to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiGeneralPolygon(long aLineNo=-1)
+		: CPolygonRManInterfaceCall(aLineNo)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param theNLoops Number of loops
+	 *  @param theNVerts Number of vertices/loop, size of \a nverts vector is \a nloops.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	CRiGeneralPolygon(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nloops, RtInt *nverts,
+		RtInt theNLoops, RtInt *theNVerts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param theNLoops Number of loops
+	 *  @param theNVerts Number of vertices/loop, size of \a nverts vector is \a nloops.
+	 *  @param theParameters Parsed parameter list.
+	 */
 	CRiGeneralPolygon(
 		long aLineNo,
-		RtInt nloops, RtInt *nverts,
+		RtInt theNLoops, RtInt *theNVerts,
 		const CParameterList &theParameters);
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiGeneralPolygon(const CRiGeneralPolygon &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiGeneralPolygon()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiGeneralPolygon(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GENERAL_POLYGON; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
-		ri.preGeneralPolygon(m_nLoops,
-			m_nVerts.empty() ? 0 : &m_nVerts[0],
-			parameters());
-		ri.doGeneralPolygon(m_nLoops,
+
+	/** @brief Gets the number of loops.
+	 *
+	 *  @return The number of loops.
+	 */
+	inline RtInt nLoops() const
+	{
+		return (RtInt)(m_nVerts.size());;
+	}
+
+	/** @brief Gets the number of vertices per loop.
+	 *
+	 *  @retrun The number of vertices (size is the number of loops).
+	 */
+	inline const std::vector<RtInt> &nVerts() const
+	{
+		return m_nVerts;
+	}
+
+	/** @brief Gets the number of positions.
+	 *
+	 *  @retrun The number of positions.
+	 */
+	inline RtInt numPos() const
+	{
+		(RtInt)sum(m_nVerts.size(), &(m_nVerts[0]));
+	}
+
+	/** @brief Dets the number of vertices and loops.
+	 *
+	 *  @param theNVerts The number of vertices (size is the number of loops).
+	 */
+	inline void nVerts(const std::vector<RtInt> &theNVerts)
+	{
+		m_nVerts = theNVerts;
+	}
+
+	/** @brief Sets the number of loops and vertices.
+	 *
+	 *  @param theNLoops The number of loops.
+	 *  @param theNVerts The number of vertices.
+	 */
+	inline void set(RtInt theNLoops, RtInt *theNVerts)
+	{
+		enterValues(theNLoops, theNVerts);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preGeneralPolygon((RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			parameters());
 	}
-	inline CRiGeneralPolygon &operator=(const CRiGeneralPolygon &) {
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doGeneralPolygon((RtInt)m_nVerts.size(),
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postGeneralPolygon((RtInt)m_nVerts.size(),
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiGeneralPolygon &operator=(const CRiGeneralPolygon &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		nVerts(c.nVerts());
+
+		CPolygonRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiGeneralPolygon
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Simple polygon net.
+ */
 class CRiPointsPolygons : public CPolygonRManInterfaceCall {
-protected:
-	RtInt m_nPolys;
-	std::vector<RtInt> m_nVerts;
-	std::vector<RtInt> m_verts;
-	void enterValues(RtInt npolys, RtInt *nverts, RtInt *verts);
+private:
+	std::vector<RtInt> m_nVerts; //!< Number of vertices per polygon (size is the number of polygons).
+	std::vector<RtInt> m_verts;  //!< Indices of the vertices.
+
+	/** @brief enters the values.
+	 *
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNVerts Number of verts per polygon.
+	 *  @param theVerts The vertex indices of the polygons.
+	 */
+	void enterValues(RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts);
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiPointsPolygons"; }
 	inline virtual const char *className() const { return CRiPointsPolygons::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of polygons to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiPointsPolygons(long aLineNo=-1)
+		: CPolygonRManInterfaceCall(aLineNo)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNVerts Number of verts per polygon.
+	 *  @param theVerts The verts (indices) of the polygons.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	CRiPointsPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt npolys, RtInt *nverts, RtInt *verts,
+		RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNVerts Number of verts per polygon.
+	 *  @param theVerts The verts (indices) of the polygons.
+	 *  @param theParameters Parsed parameter list.
+	 */
 	CRiPointsPolygons(
 		long aLineNo,
-		RtInt npolys, RtInt *nverts, RtInt *verts,
+		RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
 		const CParameterList &theParameters);
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiPointsPolygons(const CRiPointsPolygons &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiPointsPolygons()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiPointsPolygons(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the number of loops.
+	 *
+	 *  @return The number of loops.
+	 */
+	inline RtInt nPolys() const
+	{
+		return (RtInt)(m_nVerts.size());;
+	}
+
+	/** @brief Gets the numbers of the vertices.
+	 *
+	 *  @retrun The numbers of the vertices (size is the number of polygons).
+	 */
+	inline const std::vector<RtInt> &nVerts() const
+	{
+		return m_nVerts;
+	}
+
+	/** @brief Gets the indices of the vertices.
+	 *
+	 *  @retrun The indizes of the vertices.
+	 */
+	inline const std::vector<RtInt> &verts() const
+	{
+		return m_verts;
+	}
+
+	/** @brief Gets the number of the positions.
+	 *
+	 *  @retrun The sum of the number of the positions.
+	 */
+	inline RtInt numPos() const
+	{
+		return (RtInt)tmax(m_verts.size(), &(m_verts[0]));
+	}
+
+	/** @brief Sets the vertex indices.
+	 *
+	 *  @param theNVerts Number of vertices per polygon (size is the number of polygons).
+	 *  @param theVerts Indices of the vertices.
+	 */
+	inline void set(const std::vector<RtInt> &theNVerts, const std::vector<RtInt> &theVerts)
+	{
+		m_nVerts = theNVerts;
+		m_verts = theVerts;
+
+		assert(m_verts.size() == sum(m_nVerts.size(), &(m_nVerts[0])));
+	}
+
+	/** @brief Sets the vertex indices.
+	 *
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNVerts Number of verts per polygon.
+	 *  @param theVerts The vertex indices of the polygons.
+	 */
+	inline void set(RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts)
+	{
+		enterValues(theNPolys, theNVerts, theVerts);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePointsPolygons(
-			m_nPolys,
-			m_nVerts.empty() ? 0 : &m_nVerts[0],
-			m_verts.empty() ? 0 : &m_verts[0],
-			parameters());
-		ri.doPointsPolygons(
-			m_nPolys,
+			(RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			m_verts.empty() ? 0 : &m_verts[0],
 			parameters());
 	}
-	inline CRiPointsPolygons &operator=(const CRiPointsPolygons &) {
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doPointsPolygons(
+			(RtInt)m_nVerts.size(),
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			m_verts.empty() ? 0 : &m_verts[0],
+			parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postPointsPolygons(
+			(RtInt)m_nVerts.size(),
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			m_verts.empty() ? 0 : &m_verts[0],
+			parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiPointsPolygons &operator=(const CRiPointsPolygons &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.nVerts(), c.verts());
+
+		CPolygonRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiPointsPolygons
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief General polygon net.
+ */
 class CRiPointsGeneralPolygons : public CPolygonRManInterfaceCall {
-protected:
-	RtInt m_nPolys;
-	std::vector<RtInt> m_nLoops;
-	std::vector<RtInt> m_nVerts;
-	std::vector<RtInt> m_verts;
-	void enterValues(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts);
+private:
+	std::vector<RtInt> m_nLoops; //!< Loops per polygon (Number of polygons is the size of the vector).
+	std::vector<RtInt> m_nVerts; //!< Vertices per loop.
+	std::vector<RtInt> m_verts;  //!< Vertex indices.
+
+	/** @brief Enters the values.
+	 *
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNLoops Number of loops per polygon.
+	 *  @param theNVerts Number of verts per loop.
+	 *  @param theVerts The vertex indices of the polygons.
+	 */
+	void enterValues(RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts);
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiPointsGeneralPolygons"; }
 	inline virtual const char *className() const { return CRiPointsGeneralPolygons::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of polygons to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiPointsGeneralPolygons(long aLineNo=-1)
+		: CPolygonRManInterfaceCall(aLineNo)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNLoops Number of loops per polygon.
+	 *  @param theNVerts Number of verts per loop.
+	 *  @param theVerts The vertex indices of the polygons.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
 	CRiPointsGeneralPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+		RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNLoops Number of loops per polygon.
+	 *  @param theNVerts Number of verts per loop.
+	 *  @param theVerts The vertex indices of the polygons.
+	 *  @param theParameters Parsed parameter list.
+	 */
 	CRiPointsGeneralPolygons(
 		long aLineNo,
-		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+		RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
 		const CParameterList &theParameters);
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiPointsGeneralPolygons(const CRiPointsGeneralPolygons &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiPointsGeneralPolygons()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiPointsGeneralPolygons(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the number of the positions.
+	 *
+	 *  @retrun The sum of the number of the positions.
+	 */
+	inline RtInt numPos() const
+	{
+		return (RtInt)tmax(m_verts.size(), &(m_verts[0]));
+	}
+
+	/** @brief Gets the number of polygons.
+	 *
+	 *  @return The number of polygons.
+	 */
+	RtInt nPolys() const
+	{
+		return (RtInt)m_nLoops.size();
+	}
+
+	/** @brief Gets the number of loops per polygon.
+	 *
+	 *  @return The number of loops per polygon.
+	 */
+	const std::vector<RtInt> &nLoops() const
+	{
+		return m_nLoops;
+	}
+
+	/** @brief Gets the number of vertices per loops.
+	 *
+	 *  @return The number of vertices per loops.
+	 */
+	const std::vector<RtInt> &nVerts() const
+	{
+		return m_nVerts;
+	}
+
+	/** @brief Gets the indices of the vertices.
+	 *
+	 *  @return The indices of the vertices.
+	 */
+	const std::vector<RtInt> &verts() const
+	{
+		return m_verts;
+	}
+
+	/** @brief Sets the vertex indices.
+	 *
+	 *  @param theNLoops Number of loops per polygon.
+	 *  @param theNVerts Number of verts per loop.
+	 *  @param theVerts The vertex indices of the polygons.
+	 */
+	inline void set(
+		const std::vector<RtInt> &theNLoops,
+		const std::vector<RtInt> &theNVerts,
+		const std::vector<RtInt> &theVerts)
+	{
+		m_nLoops = theNLoops;
+		m_nVerts = theNVerts;
+		m_verts  = theVerts;
+
+		assert(m_nVerts.size() == sum(m_nLoops.size(), &(m_nLoops[0])));
+		assert(m_verts.size() == sum(m_nVerts.size(), &(m_nVerts[0])));
+	}
+
+	/** @brief Sets the vertex indices.
+	 *
+	 *  @param theNPolys Number of polygons.
+	 *  @param theNLoops Number of loops per polygon.
+	 *  @param theNVerts Number of verts per loop.
+	 *  @param theVerts The vertex indices of the polygons.
+	 */
+	inline void set(RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts)
+	{
+		enterValues(theNPolys, theNLoops, theNVerts, theVerts);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePointsGeneralPolygons(
-			m_nPolys,
-			m_nLoops.empty() ? 0 : &m_nLoops[0],
-			m_nVerts.empty() ? 0 : &m_nVerts[0],
-			m_verts.empty() ? 0 : &m_verts[0],
-			parameters());
-		ri.prePointsGeneralPolygons(
-			m_nPolys,
+			(RtInt)m_nLoops.size(),
 			m_nLoops.empty() ? 0 : &m_nLoops[0],
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			m_verts.empty() ? 0 : &m_verts[0],
 			parameters());
 	}
-	inline CRiPointsGeneralPolygons &operator=(const CRiPointsGeneralPolygons &) {
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doPointsGeneralPolygons(
+			(RtInt)m_nLoops.size(),
+			m_nLoops.empty() ? 0 : &m_nLoops[0],
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			m_verts.empty() ? 0 : &m_verts[0],
+			parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postPointsGeneralPolygons(
+			(RtInt)m_nLoops.size(),
+			m_nLoops.empty() ? 0 : &m_nLoops[0],
+			m_nVerts.empty() ? 0 : &m_nVerts[0],
+			m_verts.empty() ? 0 : &m_verts[0],
+			parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiPointsGeneralPolygons &operator=(const CRiPointsGeneralPolygons &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.nLoops(), c.nVerts(), c.verts());
+
+		CPolygonRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiPointsGeneralPolygons
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Bilinear or bicubic patch
+ */
 class CRiPatch : public CUVRManInterfaceCall {
-protected:
-	std::string m_type;
+private:
+	RtToken m_type; //!< Type of the patch, either RI_BILINEAR or RI_BICUBIC (or RI_NULL if not set).
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiPatch"; }
 	inline virtual const char *className() const { return CRiPatch::myClassName(); }
 
-	inline CRiPatch(
-		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken type,
-		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo), m_type(type)
+	inline virtual bool isA(const char *atomizedClassName) const
 	{
-		CPatchClasses p(type);
-		setParams(decl, p, curColorDescr, n, tokens, params);
+		return ( atomizedClassName == myClassName() );
 	}
-	inline CRiPatch(
-		long aLineNo,
-		RtToken type,
-		const CParameterList &theParameters)
-		: CUVRManInterfaceCall(aLineNo), m_type(type)
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of polygons to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aType Type of the patch.
+	 */
+	inline CRiPatch(long aLineNo=-1, RtToken aType=RI_NULL)
+		: CUVRManInterfaceCall(aLineNo), m_type(aType)
 	{
 	}
 
-	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aType Type of the patch.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
+	inline CRiPatch(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtToken aType,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CUVRManInterfaceCall(aLineNo), m_type(aType)
 	{
-		ri.prePatch(m_type.c_str(), parameters());
-		ri.doPatch(m_type.c_str(), parameters());
+		CPatchClasses p(aType);
+		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
-	inline CRiPatch &operator=(const CRiPatch &) {
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aType Type of the patch.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiPatch(
+		long aLineNo,
+		RtToken aType,
+		const CParameterList &theParameters)
+		: CUVRManInterfaceCall(aLineNo), m_type(aType)
+	{
+	}
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiPatch(const CRiPatch &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiPatch()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiPatch(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
+
+	/** @brief Gets the type of the attribute as atomized string.
+	 *
+	 *  @return The type of the attribute as atomized string.
+	 */
+	inline RtToken type() const
+	{
+		return m_type;
+	}
+
+	/** @brief Sets the type of the attribute as atomized string.
+	 *
+	 *  @param aName The type of the attribute as atomized string.
+	 */
+	inline void type(RtToken aType)
+	{
+		m_type = aType;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.prePatch(m_type, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doPatch(m_type, parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postPatch(m_type, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiPatch &operator=(const CRiPatch &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		type(c.type());
+
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiPatch
@@ -222,7 +933,12 @@ public:
 		ri.prePatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
 		ri.doPatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
 	}
-	inline CRiPatchMesh &operator=(const CRiPatchMesh &) {
+	inline CRiPatchMesh &operator=(const CRiPatchMesh &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiPatchMesh
@@ -262,7 +978,12 @@ public:
 			m_vmin, m_vmax,
 			parameters());
 	}
-	inline CRiNuPatch &operator=(const CRiNuPatch &) {
+	inline CRiNuPatch &operator=(const CRiNuPatch &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
 	inline virtual int segments() const { return (1+m_nu-m_uorder)*(1+m_nv-m_vorder); }
@@ -379,7 +1100,8 @@ public:
 		ri.postSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
-	inline CRiSphere &operator=(const CRiSphere &c) {
+	inline CRiSphere &operator=(const CRiSphere &c)
+	{
 		if ( this == &c )
 			return *this;
 		m_radius = c.m_radius;
@@ -596,7 +1318,8 @@ public:
 	{
 		ri.postTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
-	inline CRiTorus &operator=(const CRiTorus &c) {
+	inline CRiTorus &operator=(const CRiTorus &c)
+	{
 		if ( this == &c )
 			return *this;
 		m_majorrad = c.m_majorrad;

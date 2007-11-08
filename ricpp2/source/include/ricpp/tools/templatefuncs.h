@@ -82,7 +82,7 @@ _T tmin(
 template<typename _IT, typename _T>
 _T sum(
 	_IT n,
-	_T *v)
+	const _T *v)
 {
 	_T result = 0;
 	while ( n-- > 0 ) {

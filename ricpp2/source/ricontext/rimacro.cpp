@@ -50,108 +50,104 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiGeneralPolygon::enterValues(RtInt nloops, RtInt *nverts)
+void CRiGeneralPolygon::enterValues(RtInt theNLoops, RtInt *theNVerts)
 {
-	m_nLoops = nloops;
-	m_nVerts.resize(nloops);
-	m_nVerts.assign(nverts, nverts+nloops);
+	m_nVerts.resize(theNLoops);
+	m_nVerts.assign(theNVerts, theNVerts+theNLoops);
 }
 
 CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt nloops, RtInt *nverts,
+	RtInt theNLoops, RtInt *theNVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo)
 {
-	enterValues(nloops, nverts);
-	CGeneralPolygonClasses p(nloops, nverts);
+	enterValues(theNLoops, theNVerts);
+	CGeneralPolygonClasses p(theNLoops, theNVerts);
 	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo,
-	RtInt nloops, RtInt *nverts,
+	RtInt theNLoops, RtInt *theNVerts,
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
-	enterValues(nloops, nverts);
+	enterValues(theNLoops, theNVerts);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiPointsPolygons::enterValues(RtInt npolys, RtInt *nverts, RtInt *verts)
+void CRiPointsPolygons::enterValues(RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts)
 {
-	m_nPolys = npolys;
-	m_nVerts.resize(npolys);
-	m_nVerts.assign(nverts, nverts+npolys);
+	m_nVerts.resize(theNPolys);
+	m_nVerts.assign(theNVerts, theNVerts+theNPolys);
 
-	int i;
-	RtInt nIdx = 0; // Sum of nverts
-	for ( i = 0; i < npolys; ++i )
-		nIdx += nverts[i];
+	RtInt i, nIdx = 0; // Sum of nverts
+	for ( i = 0; i < theNPolys; ++i )
+		nIdx += theNVerts[i];
 	m_verts.resize(nIdx);
-	m_verts.assign(verts, verts+nIdx);
+	m_verts.assign(theVerts, theVerts+nIdx);
 }
 
 CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt npolys, RtInt *nverts, RtInt *verts,
+	RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo)
 {
-	enterValues(npolys, nverts, verts);
-	CPointsPolygonsClasses p(npolys, nverts, verts);
+	enterValues(theNPolys, theNVerts, theVerts);
+	CPointsPolygonsClasses p(theNPolys, theNVerts, theVerts);
 	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo,
-	RtInt npolys, RtInt *nverts, RtInt *verts,
+	RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
-	enterValues(npolys, nverts, verts);
+	enterValues(theNPolys, theNVerts, theVerts);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiPointsGeneralPolygons::enterValues(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts)
+void CRiPointsGeneralPolygons::enterValues(RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts)
 {
-	m_nPolys = npolys;
-	m_nLoops.resize(npolys);
-	m_nLoops.assign(nloops, nloops+npolys);
+	m_nLoops.resize(theNPolys);
+	m_nLoops.assign(theNLoops, theNLoops+theNPolys);
 
 	int i;
 	RtInt sumLoop = 0;
-	for ( i = 0; i < npolys; ++i )
-		sumLoop += nloops[i];
+	for ( i = 0; i < theNPolys; ++i )
+		sumLoop += theNLoops[i];
 	m_nVerts.resize(sumLoop);
-	m_nVerts.assign(nverts, nverts+sumLoop);
+	m_nVerts.assign(theNVerts, theNVerts+sumLoop);
 
-	RtInt nIdx = 0; // Sum of nverts
+	RtInt nIdx = 0; // Sum of theNVerts
 	for ( i = 0; i < sumLoop; ++i )
-		nIdx += nverts[i];
+		nIdx += theNVerts[i];
 	m_verts.resize(nIdx);
-	m_verts.assign(verts, verts+nIdx);
+	m_verts.assign(theVerts, theVerts+nIdx);
 
 }
 
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+	RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo)
 {
-	enterValues(npolys, nloops, nverts, verts);
-	CPointsGeneralPolygonsClasses p(npolys, nloops, nverts, verts);
+	enterValues(theNPolys, theNLoops, theNVerts, theVerts);
+	CPointsGeneralPolygonsClasses p(theNPolys, theNLoops, theNVerts, theVerts);
 	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo,
-	RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+	RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
-	enterValues(npolys, nloops, nverts, verts);
+	enterValues(theNPolys, theNLoops, theNVerts, theVerts);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

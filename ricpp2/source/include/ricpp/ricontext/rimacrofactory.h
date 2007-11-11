@@ -1,7 +1,34 @@
 #ifndef _RICPP_RICONTEXT_RIMACROFACTORY_H
 #define _RICPP_RICONTEXT_RIMACROFACTORY_H
 
+// RICPP - RenderMan(R) Interface CPP Language Binding
+//
+//     RenderMan(R) is a registered trademark of Pixar
+// The RenderMan(R) Interface Procedures and Protocol are:
+//         Copyright 1988, 1989, 2000, 2005 Pixar
+//                 All rights Reservered
+//
+// Copyright (c) of RiCPP 2007, Andreas Pidde
+// Contact: andreas@pidde.de
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//  
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+/** @file rimacrofactory.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Factory for macros, currently not in use, \see rimacro.h
+ */
 #ifndef _RICPP_RICONTEXT_RIMACROCONTAINER_H
 #include "ricpp/ricontext/rimacrocontainer.h"
 #endif // _RICPP_RICONTEXT_RIMACROCONTAINER_H
@@ -549,7 +576,7 @@ public:
 
 	inline virtual CRiGeneralPolygon *newRiGeneralPolygon(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nloops, RtInt *nverts,
+		RtInt nloops, const RtInt *nverts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiGeneralPolygon(aLineNo, decl, curColorDescr, nloops, nverts, n, tokens, params);
@@ -557,7 +584,7 @@ public:
 
 	inline virtual CRiPointsPolygons *newRiPointsPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt npolys, RtInt *nverts, RtInt *verts,
+		RtInt npolys, const RtInt *nverts, const RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiPointsPolygons(aLineNo, decl, curColorDescr, npolys, nverts, verts, n, tokens, params);
@@ -565,7 +592,7 @@ public:
 
 	inline virtual CRiPointsGeneralPolygons *newRiPointsGeneralPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,
+		RtInt npolys, const RtInt *nloops,const RtInt *nverts, const RtInt *verts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiPointsGeneralPolygons(aLineNo, decl, curColorDescr, npolys, nloops, nverts, verts, n, tokens, params);
@@ -589,7 +616,7 @@ public:
 
 	inline virtual CRiNuPatch *newRiNuPatch(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+		RtInt nu, RtInt uorder, const RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, const RtFloat *vknot, RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiNuPatch(aLineNo, decl, curColorDescr, nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
@@ -597,8 +624,8 @@ public:
 
 	inline virtual CRiSubdivisionMesh *newRiSubdivisionMesh(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
-		RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[],
+		RtToken scheme, RtInt nfaces, const RtInt nverts[], const RtInt verts[],
+		RtInt ntags, const RtToken tags[], const RtInt nargs[], const RtInt intargs[], const RtFloat floargs[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiSubdivisionMesh(aLineNo, decl, curColorDescr, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, n, tokens, params);
@@ -606,8 +633,8 @@ public:
 
 	inline virtual CRiHierarchicalSubdivisionMesh *newRiHierarchicalSubdivisionMesh(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
-		RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[], RtToken strargs[],
+		RtToken scheme, RtInt nfaces, const RtInt nverts[], const RtInt verts[],
+		RtInt ntags, const RtToken tags[], const RtInt nargs[], const RtInt intargs[], const RtFloat floargs[], const RtToken strargs[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiHierarchicalSubdivisionMesh(aLineNo, decl, curColorDescr, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, strargs, n, tokens, params);
@@ -679,22 +706,22 @@ public:
 
 	inline virtual CRiCurves *newRiCurves(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt ustep, RtInt vstep, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap,
+		RtInt step, RtToken type, RtInt ncurves, const RtInt nverts[], RtToken wrap,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiCurves(aLineNo, decl, curColorDescr, ustep, vstep, type, ncurves, nverts, wrap, n, tokens, params);
+		return new CRiCurves(aLineNo, decl, curColorDescr, step, type, ncurves, nverts, wrap, n, tokens, params);
 	}
 
 	inline virtual CRiBlobby *newRiBlobby(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
+		RtInt nleaf, RtInt ncode, const RtInt code[], RtInt nflt, const RtFloat flt[], RtInt nstr, const RtString str[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiBlobby(aLineNo, decl, curColorDescr, nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
 	}
 
-	inline virtual CRiProcedural *newRiProcedural(long aLineNo, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc, IRi &ri) {
-		return new CRiProcedural(aLineNo, data, bound, subdivfunc, freefunc, ri);
+	inline virtual CRiProcedural *newRiProcedural(long aLineNo, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {
+		return new CRiProcedural(aLineNo, data, bound, subdivfunc, freefunc);
 	}
 
 	inline virtual CRiGeometry *newRiGeometry(

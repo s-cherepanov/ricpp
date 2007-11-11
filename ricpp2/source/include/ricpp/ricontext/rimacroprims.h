@@ -1,6 +1,35 @@
 #ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
 #define _RICPP_RICONTEXT_RIMACROPRIMS_H
 
+// RICPP - RenderMan(R) Interface CPP Language Binding
+//
+//     RenderMan(R) is a registered trademark of Pixar
+// The RenderMan(R) Interface Procedures and Protocol are:
+//         Copyright 1988, 1989, 2000, 2005 Pixar
+//                 All rights Reservered
+//
+// Copyright (c) of RiCPP 2007, Andreas Pidde
+// Contact: andreas@pidde.de
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//  
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+/** @file rimacroprims.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief The macro classes for primitives, \see rimacro.h
+ */
+
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
 #include "ricpp/ricontext/rimacrobase.h"
 #endif // _RICPP_RICONTEXT_RIMACROBASE_H
@@ -35,7 +64,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -167,7 +196,7 @@ private:
 	 *  @param theNLoops Number of loops
 	 *  @param theNVerts Number of vertices/loop, size of \a nverts vector is \a nloops.
 	 */
-	void enterValues(RtInt theNLoops, RtInt *theNVerts);
+	void enterValues(RtInt theNLoops, const RtInt *theNVerts);
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -185,7 +214,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -212,7 +241,7 @@ public:
 	 */
 	CRiGeneralPolygon(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt theNLoops, RtInt *theNVerts,
+		RtInt theNLoops, const RtInt *theNVerts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Constructor.
@@ -224,7 +253,7 @@ public:
 	 */
 	CRiGeneralPolygon(
 		long aLineNo,
-		RtInt theNLoops, RtInt *theNVerts,
+		RtInt theNLoops, const RtInt *theNVerts,
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -290,7 +319,7 @@ public:
 	 *  @param theNLoops The number of loops.
 	 *  @param theNVerts The number of vertices.
 	 */
-	inline void set(RtInt theNLoops, RtInt *theNVerts)
+	inline void set(RtInt theNLoops, const RtInt *theNVerts)
 	{
 		enterValues(theNLoops, theNVerts);
 	}
@@ -347,7 +376,7 @@ private:
 	 *  @param theNVerts Number of verts per polygon.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	void enterValues(RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts);
+	void enterValues(RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts);
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -365,7 +394,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -393,7 +422,7 @@ public:
 	 */
 	CRiPointsPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
+		RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Constructor.
@@ -406,7 +435,7 @@ public:
 	 */
 	CRiPointsPolygons(
 		long aLineNo,
-		RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
+		RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -488,7 +517,7 @@ public:
 	 *  @param theNVerts Number of verts per polygon.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	inline void set(RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts)
+	inline void set(RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts)
 	{
 		enterValues(theNPolys, theNVerts, theVerts);
 	}
@@ -553,7 +582,7 @@ private:
 	 *  @param theNVerts Number of verts per loop.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	void enterValues(RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts);
+	void enterValues(RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts);
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -571,7 +600,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -600,7 +629,7 @@ public:
 	 */
 	CRiPointsGeneralPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
+		RtInt theNPolys, const RtInt *theNLoops,const RtInt *theNVerts, const RtInt *theVerts,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Constructor.
@@ -614,7 +643,7 @@ public:
 	 */
 	CRiPointsGeneralPolygons(
 		long aLineNo,
-		RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
+		RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts,
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -712,7 +741,7 @@ public:
 	 *  @param theNVerts Number of verts per loop.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	inline void set(RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts)
+	inline void set(RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts)
 	{
 		enterValues(theNPolys, theNLoops, theNVerts, theVerts);
 	}
@@ -789,7 +818,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -941,7 +970,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -1173,7 +1202,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -1468,7 +1497,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -1503,8 +1532,8 @@ public:
 	 *  @param params   Parameter values of the request.
 	 */
 	CRiSubdivisionMesh(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 		RtInt n, RtToken tokens[], RtPointer params[]
 		);
 
@@ -1524,8 +1553,8 @@ public:
 	 */
 	CRiSubdivisionMesh(
 		long aLineNo,
-		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+		RtToken aScheme, RtInt aNFaces, RtInt const aNVerts[], RtInt const aVerts[],
+		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -1564,8 +1593,8 @@ public:
 	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
-		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[]);
+		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], RtInt const aVerts[],
+		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[]);
 
 	/** @brief Sets the values of the member variables.
 	 *
@@ -1759,7 +1788,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -1795,8 +1824,8 @@ public:
 	 *  @param params   Parameter values of the request.
 	 */
 	CRiHierarchicalSubdivisionMesh(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[],
+		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[],
 		RtInt n, RtToken tokens[], RtPointer params[]
 		);
 
@@ -1817,8 +1846,8 @@ public:
 	 */
 	CRiHierarchicalSubdivisionMesh(
 		long aLineNo,
-		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[],
+		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[],
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -1857,8 +1886,8 @@ public:
 	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
-		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[]);
+		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[]);
 
 	/** @brief Sets the values of the member variables.
 	 *
@@ -2038,8 +2067,8 @@ public:
 class CRiSphere : public CUVRManInterfaceCall {
 private:
 	RtFloat m_radius,   //!< Radius.
-	        m_zmin,     //!< Minimum z coordinate (cut pole).
-			m_zmax,     //!< Maximum z coordinate (cut pole).
+	        m_zmin,     //!< Minimal z coordinate (cut pole).
+			m_zmax,     //!< Maximal z coordinate (cut pole).
 			m_thetamax; //!< Sweep angle.
 public:
 	/** @brief Gets name for the class.
@@ -2059,7 +2088,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -2068,12 +2097,12 @@ public:
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aRadius   Radius.
-     *  @param aZMin     Minimum z coordinate (cut pole).
-     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
      *  @param aThetaMax Sweep angle.
 	 */
 	CRiSphere(long aLineNo=-1,
-		RtFloat aRadius = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 360)
+		RtFloat aRadius = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 0)
 		: CUVRManInterfaceCall(aLineNo),
 		  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 	{
@@ -2085,8 +2114,8 @@ public:
 	 *  @param decl      Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aRadius   Radius.
-     *  @param aZMin     Minimum z coordinate (cut pole).
-     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
      *  @param aThetaMax Sweep angle.
 	 *  @param n         Number of parameters (size of @a tokens, @a params).
 	 *  @param tokens    Tokens of the request.
@@ -2107,8 +2136,8 @@ public:
 	 *  @param decl      Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aRadius   Radius.
-     *  @param aZMin     Minimum z coordinate (cut pole).
-     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
      *  @param aThetaMax Sweep angle.
 	 *  @param theParameters Parsed parameter list.
 	 */
@@ -2219,11 +2248,11 @@ public:
 	/** @brief Gets the member variables of a sphere.
 	 *
 	 *  @retval aRadius   Radius.
-     *  @retval aZMin     Minimum z coordinate (cut pole).
-     *  @retval aZMax     Maximum z coordinate (cut pole).
+     *  @retval aZMin     Minimal z coordinate (cut pole).
+     *  @retval aZMax     Maximal z coordinate (cut pole).
      *  @retval aThetaMax Sweep angle.
 	 */
-	void get(RtFloat &aRadius, RtFloat &aZMin, RtFloat &aZMax, RtFloat &aThetaMax)
+	void get(RtFloat &aRadius, RtFloat &aZMin, RtFloat &aZMax, RtFloat &aThetaMax) const
 	{
 		aRadius = m_radius;
 		aZMin = m_zmin;
@@ -2234,8 +2263,8 @@ public:
 	/** @brief Sets the member variables of a sphere.
 	 *
 	 *  @param aRadius   Radius.
-     *  @param aZMin     Minimum z coordinate (cut pole).
-     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
      *  @param aThetaMax Sweep angle.
 	 */
 	void set(RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax)
@@ -2282,207 +2311,1287 @@ public:
 /** @brief Cone.
  */
 class CRiCone : public CUVRManInterfaceCall {
-protected:
+private:
 	RtFloat m_height,   //!< Height.
 	        m_radius,   //!< Radius.
 			m_thetamax; //!< Sweep angle.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiCone"; }
 	inline virtual const char *className() const { return CRiCone::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the size of the primitive to 0.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aHeight   Height.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 */
+	inline CRiCone(
+		long aLineNo = -1, RtFloat aHeight = 0, RtFloat aRadius = 0, RtFloat aThetaMax = 0)
+		: CUVRManInterfaceCall(aLineNo),
+		  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aHeight   Height.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
 	inline CRiCone(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtFloat height, RtFloat radius, RtFloat thetamax,
+		RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo),
-		  m_height(height), m_radius(radius), m_thetamax(thetamax)
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+		  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 	{
-		CQuadricClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aHeight   Height.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiCone(
+		long aLineNo,
+		RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiCone(const CRiCone &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiCone()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiCone(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_CONE; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the height of the cone.
+	 *
+	 *  @return The height of the cone.
+	 */
+	RtFloat height() const
+	{
+		return m_height;
+	}
+
+	/** @brief Gets the height of the cone.
+	 *
+	 *  @param aHeight The height of the cone.
+	 */
+	void height(RtFloat aHeight)
+	{
+		m_height = aHeight;
+	}
+
+	/** @brief Gets the radius of the cone.
+	 *
+	 *  @return The radius of the cone.
+	 */
+	RtFloat radius() const
+	{
+		return m_radius;
+	}
+
+	/** @brief Gets the radius of the cone.
+	 *
+	 *  @param aRadius The radius of the cone.
+	 */
+	void radius(RtFloat aRadius)
+	{
+		m_radius = aRadius;
+	}
+
+	/** @brief Gets the sweep angle.
+	 *
+	 * @return The sweep angle.
+	 */
+	RtFloat thetaMax() const
+	{
+		return m_thetamax;
+	}
+
+	/** @brief Sets the sweep angle.
+	 *
+	 * @param aThetaMax The sweep angle.
+	 */
+	void thetaMax(RtFloat aThetaMax)
+	{
+		m_thetamax = aThetaMax;
+	}
+
+	/** @brief Gets the member variables of a cone.
+	 *
+	 *  @param aHeight   Height.
+	 *  @retval aRadius   Radius.
+     *  @retval aThetaMax Sweep angle.
+	 */
+	void get(RtFloat &aHeight, RtFloat &aRadius, RtFloat &aThetaMax) const
+	{
+		aHeight = m_height;
+		aRadius = m_radius;
+		aThetaMax = m_thetamax;
+	}
+
+	/** @brief Sets the member variables of a cone.
+	 *
+	 *  @param aHeight   Height.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 */
+	void set(RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax)
+	{
+		m_height = aHeight;
+		m_radius = aRadius;
+		m_thetamax = aThetaMax;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCone(m_height, m_radius, m_thetamax, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doCone(m_height, m_radius, m_thetamax, parameters());
 	}
-	inline CRiCone &operator=(const CRiCone &) {
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postCone(m_height, m_radius, m_thetamax, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiCone &operator=(const CRiCone &c) {
+		if ( this == &c )
+			return *this;
+
+		set(c.height(), c.radius(), c.thetaMax());
+
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiCone
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Cylinder.
+ */
 class CRiCylinder : public CUVRManInterfaceCall {
-protected:
+private:
 	RtFloat m_radius,   //!< Radius.
 	        m_zmin,     //!< Minimal z coordiante.
 			m_zmax,     //!< Maximal z coordiante.
 			m_thetamax; //!< Sweep angle.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiCylinder"; }
 	inline virtual const char *className() const { return CRiCylinder::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the size of the primitive to 0.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 */
+	inline CRiCylinder(
+		long aLineNo = -1, RtFloat aRadius = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 0)
+		: CUVRManInterfaceCall(aLineNo),
+		  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
 	inline CRiCylinder(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+		RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo),
-		  m_radius(radius), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+		  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 	{
-		CQuadricClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
-	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiCylinder(
+		long aLineNo,
+		RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiCylinder(const CRiCylinder &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiCylinder()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiCylinder(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_CYLINDER; }
+
+	/** @brief Gets the radius of the cylinder.
+	 *
+	 *  @return The radius of the cylinder.
+	 */
+	RtFloat radius() const
+	{
+		return m_radius;
+	}
+
+	/** @brief Gets the radius of the cylinder.
+	 *
+	 *  @param aRadius The radius of the cylinder.
+	 */
+	void radius(RtFloat aRadius)
+	{
+		m_radius = aRadius;
+	}
+
+	/** @brief Gets the minimum z coordinate.
+	 *
+	 * @return The minimum z coordinate.
+	 */
+	RtFloat zMin() const
+	{
+		return m_zmin;
+	}
+
+	/** @brief Sets the minimum z coordinate.
+	 *
+	 * @param aZMin The minimum z coordinate.
+	 */
+	void zMin(RtFloat aZMin)
+	{
+		m_zmin = aZMin;
+	}
+
+	/** @brief Gets the maximum z coordinate.
+	 *
+	 * @return The minimum z coordinate.
+	 */
+	RtFloat zMax() const
+	{
+		return m_zmax;
+	}
+
+	/** @brief Sets the maximum z coordinate.
+	 *
+	 * @param aZMax The maximum z coordinate.
+	 */
+	void zMax(RtFloat aZMax)
+	{
+		m_zmax = aZMax;
+	}
+
+	/** @brief Gets the sweep angle.
+	 *
+	 * @return The sweep angle.
+	 */
+	RtFloat thetaMax() const
+	{
+		return m_thetamax;
+	}
+
+	/** @brief Sets the sweep angle.
+	 *
+	 * @param aThetaMax The sweep angle.
+	 */
+	void thetaMax(RtFloat aThetaMax)
+	{
+		m_thetamax = aThetaMax;
+	}
+
+	/** @brief Gets the member variables of a cylinder.
+	 *
+	 *  @retval aRadius   Radius.
+     *  @retval aZMin     Minimal z coordinate (cut pole).
+     *  @retval aZMax     Maximal z coordinate (cut pole).
+     *  @retval aThetaMax Sweep angle.
+	 */
+	void get(RtFloat &aRadius, RtFloat &aZMin, RtFloat &aZMax, RtFloat &aThetaMax) const
+	{
+		aRadius = m_radius;
+		aZMin = m_zmin;
+		aZMax = m_zmax;
+		aThetaMax = m_thetamax;
+	}
+
+	/** @brief Sets the member variables of a cylinder.
+	 *
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimal z coordinate (cut pole).
+     *  @param aZMax     Maximal z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 */
+	void set(RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax)
+	{
+		m_radius = aRadius;
+		m_zmin = aZMin;
+		m_zmax = aZMax;
+		m_thetamax = aThetaMax;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
-	inline CRiCylinder &operator=(const CRiCylinder &) {
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiCylinder &operator=(const CRiCylinder &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.radius(), c.zMin(), c.zMax(), c.thetaMax());
+
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiCylinder
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Hyperboloid.
+ */
 class CRiHyperboloid : public CUVRManInterfaceCall {
-protected:
+private:
 	RtPoint m_point1,   //!< First point of the line to sweep to get a hyperbolid.
 	        m_point2;   //!< Second point of the line to sweep to get a hyperbolid.
 	RtFloat m_thetamax; //!< Sweep angle.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiHyperboloid"; }
 	inline virtual const char *className() const { return CRiHyperboloid::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the size of the primitive to 0.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiHyperboloid(long aLineNo = -1)
+		: CUVRManInterfaceCall(aLineNo)
+	{
+		m_point1[0] = m_point1[1] = m_point1[2] = 0;
+		m_point2[0] = m_point2[1] = m_point2[2] = 0;
+		m_thetamax = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aPoint1   First point of the line to sweep to get a hyperbolid.
+	 *  @param aPoint2   Second point of the line to sweep to get a hyperbolid.
+     *  @param aThetaMax Sweep angle.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
 	inline CRiHyperboloid(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtPoint point1, RtPoint point2, RtFloat thetamax,
+		const RtPoint aPoint1, const RtPoint aPoint2, RtFloat aThetaMax,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo), m_thetamax(thetamax)
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+		  m_thetamax(aThetaMax)
 	{
-		int i;
-		for ( i = 0; i < 3; ++i ) {
-			m_point1[i] = point1[i];
-			m_point2[i] = point2[i];
+		for ( int i = 0; i < 3; ++i ) {
+			m_point1[i] = aPoint1[i];
+			m_point2[i] = aPoint2[i];
 		}
-		CQuadricClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aPoint1   First point of the line to sweep to get a hyperbolid.
+	 *  @param aPoint2   Second point of the line to sweep to get a hyperbolid.
+     *  @param aThetaMax Sweep angle.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiHyperboloid(
+		long aLineNo,
+		const RtPoint aPoint1, const RtPoint aPoint2, RtFloat aThetaMax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_thetamax(aThetaMax)
+	{
+		for ( int i = 0; i < 3; ++i ) {
+			m_point1[i] = aPoint1[i];
+			m_point2[i] = aPoint2[i];
+		}
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiHyperboloid(const CRiHyperboloid &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiHyperboloid()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiHyperboloid(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_HYPERBOLOID; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the first point of the line to sweep.
+	 *
+	 *  @retval aPoint1 First point of the line to sweep to get a hyperbolid.
+	 */
+	void getPoint1(RtPoint aPoint1) const
+	{
+		for ( int i = 0; i < 3; ++i ) {
+			aPoint1[i] = m_point1[i];
+		}
+	}
+
+	/** @brief Gets the first point of the line to sweep.
+	 *
+	 *  @return First point of the line to sweep to get a hyperbolid.
+	 */
+	const RtPoint &point1() const
+	{
+		return m_point1;
+	}
+
+	/** @brief Sets the first point of the line to sweep.
+	 *
+	 *  @param aPoint1 First point of the line to sweep to get a hyperbolid.
+	 */
+	void point1(const RtPoint aPoint1)
+	{
+		for ( int i = 0; i < 3; ++i ) {
+			m_point1[i] = aPoint1[i];
+		}
+	}
+
+	/** @brief Gets the second point of the line to sweep.
+	 *
+	 *  @retval aPoint2 Second point of the line to sweep to get a hyperbolid.
+	 */
+	void getPoint2(RtPoint aPoint2) const
+	{
+		for ( int i = 0; i < 3; ++i ) {
+			aPoint2[i] = m_point2[i];
+		}
+	}
+
+	/** @brief Gets the second point of the line to sweep.
+	 *
+	 *  @return Second point of the line to sweep to get a hyperbolid.
+	 */
+	const RtPoint &point2() const
+	{
+		return m_point2;
+	}
+
+	/** @brief Sets the second point of the line to sweep.
+	 *
+	 *  @param aPoint2 Second point of the line to sweep to get a hyperbolid.
+	 */
+	void point2(const RtPoint aPoint2)
+	{
+		for ( int i = 0; i < 3; ++i ) {
+			m_point2[i] = aPoint2[i];
+		}
+	}
+
+	/** @brief Gets the sweep angle.
+	 *
+	 * @return The sweep angle.
+	 */
+	RtFloat thetaMax() const
+	{
+		return m_thetamax;
+	}
+
+	/** @brief Sets the sweep angle.
+	 *
+	 * @param aThetaMax The sweep angle.
+	 */
+	void thetaMax(RtFloat aThetaMax)
+	{
+		m_thetamax = aThetaMax;
+	}
+
+	/** @brief Gets the member variables of a cylinder.
+	 *
+	 *  @retval aPoint1   First point of the line to sweep to get a hyperbolid.
+	 *  @retval aPoint2   Second point of the line to sweep to get a hyperbolid.
+     *  @retval aThetaMax Sweep angle.
+	 */
+	void get(RtPoint aPoint1, RtPoint aPoint2, RtFloat &aThetaMax) const
+	{
+		for ( int i = 0; i < 3; ++i ) {
+			aPoint1[i] = m_point1[i];
+			aPoint2[i] = m_point2[i];
+		}
+		aThetaMax = m_thetamax;
+	}
+
+	/** @brief Sets the member variables of a cylinder.
+	 *
+	 *  @param aPoint1   First point of the line to sweep to get a hyperbolid.
+	 *  @param aPoint2   Second point of the line to sweep to get a hyperbolid.
+     *  @param aThetaMax Sweep angle.
+	 */
+	void set(const RtPoint aPoint1, const RtPoint aPoint2, RtFloat aThetaMax)
+	{
+		for ( int i = 0; i < 3; ++i ) {
+			m_point1[i] = aPoint1[i];
+			m_point2[i] = aPoint2[i];
+		}
+		m_thetamax = aThetaMax;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preHyperboloid(m_point1, m_point2, m_thetamax, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doHyperboloid(m_point1, m_point2, m_thetamax, parameters());
 	}
-	inline CRiHyperboloid &operator=(const CRiHyperboloid &) {
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postHyperboloid(m_point1, m_point2, m_thetamax, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiHyperboloid &operator=(const CRiHyperboloid &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.point1(), c.point2(), c.thetaMax());
+
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiHyperboloid
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Paraboloid.
+ */
 class CRiParaboloid : public CUVRManInterfaceCall {
-protected:
+private:
 	RtFloat m_rmax,     //!< Maximal radius (on zmax).
             m_zmin,     //!< Minimal z coordinate.
             m_zmax,     //!< Maximal z coordinate.
 	        m_thetamax; //!< Sweep angle.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiParaboloid"; }
 	inline virtual const char *className() const { return CRiParaboloid::myClassName(); }
 
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the size of the primitive to 0.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimal z coordinate.
+     *  @param aZMax     Maximal z coordinate.
+     *  @param aThetaMax Sweep angle.
+	 */
+	inline CRiParaboloid(
+		long aLineNo = -1,
+		RtFloat aRMax = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 0)
+		: CUVRManInterfaceCall(aLineNo),
+		  m_rmax(aRMax), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimal z coordinate.
+     *  @param aZMax     Maximal z coordinate.
+     *  @param aThetaMax Sweep angle.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
 	inline CRiParaboloid(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+		RtFloat aRMax, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo),
-		  m_rmax(rmax), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+		  m_rmax(aRMax), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 	{
-		CQuadricClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimal z coordinate.
+     *  @param aZMax     Maximal z coordinate.
+     *  @param aThetaMax Sweep angle.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiParaboloid(
+		long aLineNo,
+		RtFloat aRMax, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_rmax(aRMax), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiParaboloid(const CRiParaboloid &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiParaboloid()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiParaboloid(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PARABOLOID; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the maximal radius of the paraboloid.
+	 *
+	 *  @return The maximal radius of the paraboloid.
+	 */
+	RtFloat rMax() const
+	{
+		return m_rmax;
+	}
+
+	/** @brief Gets the maximal radius of the paraboloid.
+	 *
+	 *  @param aRadius The maximal radius of the paraboloid.
+	 */
+	void rMax(RtFloat aRMax)
+	{
+		m_rmax = aRMax;
+	}
+
+	/** @brief Gets the minimum z coordinate.
+	 *
+	 * @return The minimum z coordinate.
+	 */
+	RtFloat zMin() const
+	{
+		return m_zmin;
+	}
+
+	/** @brief Sets the minimum z coordinate.
+	 *
+	 * @param aZMin The minimum z coordinate.
+	 */
+	void zMin(RtFloat aZMin)
+	{
+		m_zmin = aZMin;
+	}
+
+	/** @brief Gets the maximum z coordinate.
+	 *
+	 * @return The minimum z coordinate.
+	 */
+	RtFloat zMax() const
+	{
+		return m_zmax;
+	}
+
+	/** @brief Sets the maximum z coordinate.
+	 *
+	 * @param aZMax The maximum z coordinate.
+	 */
+	void zMax(RtFloat aZMax)
+	{
+		m_zmax = aZMax;
+	}
+
+	/** @brief Gets the sweep angle.
+	 *
+	 * @return The sweep angle.
+	 */
+	RtFloat thetaMax() const
+	{
+		return m_thetamax;
+	}
+
+	/** @brief Sets the sweep angle.
+	 *
+	 * @param aThetaMax The sweep angle.
+	 */
+	void thetaMax(RtFloat aThetaMax)
+	{
+		m_thetamax = aThetaMax;
+	}
+
+	/** @brief Gets the member variables of a paraboloid.
+	 *
+	 *  @retval aRMax     Maximal radius.
+     *  @retval aZMin     Minimal z coordinate.
+     *  @retval aZMax     Maximal z coordinate.
+     *  @retval aThetaMax Sweep angle.
+	 */
+	void get(RtFloat &aRMax, RtFloat &aZMin, RtFloat &aZMax, RtFloat &aThetaMax) const
+	{
+		aRMax = m_rmax;
+		aZMin = m_zmin;
+		aZMax = m_zmax;
+		aThetaMax = m_thetamax;
+	}
+
+	/** @brief Sets the member variables of a paraboloid.
+	 *
+	 *  @param aRMax     Maximal Radius.
+     *  @param aZMin     Minimal z coordinate.
+     *  @param aZMax     Maximal z coordinate.
+     *  @param aThetaMax Sweep angle.
+	 */
+	void set(RtFloat aRMax, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax)
+	{
+		m_rmax = aRMax;
+		m_zmin = aZMin;
+		m_zmax = aZMax;
+		m_thetamax = aThetaMax;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
 	}
-	inline CRiParaboloid &operator=(const CRiParaboloid &) {
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiParaboloid &operator=(const CRiParaboloid &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.rMax(), c.zMin(), c.zMax(), c.thetaMax());
+
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiParaboloid
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Disk.
+ */
 class CRiDisk : public CUVRManInterfaceCall {
-protected:
+private:
 	RtFloat m_height,   //!< Distance from disk to origin on positive z axis.
 	        m_radius,   //!< Radius.
 	        m_thetamax; //!< Sweep angle.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiDisk"; }
 	inline virtual const char *className() const { return CRiDisk::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the size of the primitive to 0.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aHeight   Distance (z) from origin.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 */
+	inline CRiDisk(
+		long aLineNo = -1, RtFloat aHeight = 0, RtFloat aRadius = 0, RtFloat aThetaMax = 0)
+		: CUVRManInterfaceCall(aLineNo),
+		  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aHeight   Distance (z) from origin.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
 	inline CRiDisk(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtFloat height, RtFloat radius, RtFloat thetamax,
+		RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo),
-		  m_height(height), m_radius(radius), m_thetamax(thetamax)
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+		  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 	{
-		CQuadricClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aHeight   Distance (z) from origin.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiDisk(
+		long aLineNo,
+		RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiDisk(const CRiDisk &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiDisk()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiDisk(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_DISK; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
+
+	/** @brief Gets the distance (z) from origin of the disk.
+	 *
+	 *  @return The distance (z) from origin of the disk.
+	 */
+	RtFloat height() const
+	{
+		return m_height;
+	}
+
+	/** @brief Gets the distance (z) from origin of the disk.
+	 *
+	 *  @param aHeight The distance (z) from origin of the disk.
+	 */
+	void height(RtFloat aHeight)
+	{
+		m_height = aHeight;
+	}
+
+	/** @brief Gets the radius of the disk.
+	 *
+	 *  @return The radius of the disk.
+	 */
+	RtFloat radius() const
+	{
+		return m_radius;
+	}
+
+	/** @brief Gets the radius of the disk.
+	 *
+	 *  @param aRadius The radius of the disk.
+	 */
+	void radius(RtFloat aRadius)
+	{
+		m_radius = aRadius;
+	}
+
+	/** @brief Gets the sweep angle.
+	 *
+	 * @return The sweep angle.
+	 */
+	RtFloat thetaMax() const
+	{
+		return m_thetamax;
+	}
+
+	/** @brief Sets the sweep angle.
+	 *
+	 * @param aThetaMax The sweep angle.
+	 */
+	void thetaMax(RtFloat aThetaMax)
+	{
+		m_thetamax = aThetaMax;
+	}
+
+	/** @brief Gets the member variables of a disk.
+	 *
+     *  @param aHeight   Distance (z) from origin.
+	 *  @retval aRadius   Radius.
+     *  @retval aThetaMax Sweep angle.
+	 */
+	void get(RtFloat &aHeight, RtFloat &aRadius, RtFloat &aThetaMax) const
+	{
+		aHeight = m_height;
+		aRadius = m_radius;
+		aThetaMax = m_thetamax;
+	}
+
+	/** @brief Sets the member variables of a disk.
+	 *
+     *  @param aHeight   Distance (z) from origin.
+	 *  @param aRadius   Radius.
+     *  @param aThetaMax Sweep angle.
+	 */
+	void set(RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax)
+	{
+		m_height = aHeight;
+		m_radius = aRadius;
+		m_thetamax = aThetaMax;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.preDisk(m_height, m_radius, m_thetamax, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doDisk(m_height, m_radius, m_thetamax, parameters());
 	}
-	inline CRiDisk &operator=(const CRiDisk &) {
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postDisk(m_height, m_radius, m_thetamax, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiDisk &operator=(const CRiDisk &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.height(), c.radius(), c.thetaMax());
+
+		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiDisk
 
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Torus.
+ */
 class CRiTorus : public CUVRManInterfaceCall {
-protected:
+private:
 	RtFloat m_majorrad, //!< Major radius (center of the ring).
 	        m_minorrad, //!< Minor radius.
 	        m_phimin,   //!< Start angle to sweep the torus body.
 	        m_phimax,   //!< End angle to sweep the torus body.
 	        m_thetamax; //!< Sweep angle.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiTorus"; }
 	inline virtual const char *className() const { return CRiTorus::myClassName(); }
 
-	inline CRiTorus(
-		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax,
-		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
-		  m_majorrad(majorrad), m_minorrad(minorrad),
-		  m_phimin(phimin), m_phimax(phimax), m_thetamax(thetamax)
+	inline virtual bool isA(const char *atomizedClassName) const
 	{
+		return ( atomizedClassName == myClassName() );
 	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the size of the primitive to 0.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aMajorRad Major radius (center of the ring).
+	 *  @param aMinorRad Minor radius.
+	 *  @param aPhiMin   Start angle to sweep the torus body.
+	 *  @param aPhiMax   End angle to sweep the torus body.
+     *  @param aThetaMax Sweep angle.
+	 */
 	inline CRiTorus(
-		long aLineNo,
-		RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax,
-		const CParameterList &theParameters
-		)
-		: CUVRManInterfaceCall(aLineNo, theParameters),
-		  m_majorrad(majorrad), m_minorrad(minorrad),
-		  m_phimin(phimin), m_phimax(phimax), m_thetamax(thetamax)
+		long aLineNo = -1,
+		RtFloat aMajorRad = 0, RtFloat aMinorRad = 0, RtFloat aPhiMin = 0, RtFloat aPhiMax = 0, RtFloat aThetaMax = 0)
+		: CUVRManInterfaceCall(aLineNo),
+		  m_majorrad(aMajorRad), m_minorrad(aMinorRad),
+		  m_phimin(aPhiMin), m_phimax(aPhiMax), m_thetamax(aThetaMax)
 	{
 	}
 
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aMajorRad Major radius (center of the ring).
+	 *  @param aMinorRad Minor radius.
+	 *  @param aPhiMin   Start angle to sweep the torus body.
+	 *  @param aPhiMax   End angle to sweep the torus body.
+     *  @param aThetaMax Sweep angle.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
+	inline CRiTorus(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtFloat aMajorRad, RtFloat aMinorRad, RtFloat aPhiMin, RtFloat aPhiMax, RtFloat aThetaMax,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+		  m_majorrad(aMajorRad), m_minorrad(aMinorRad),
+		  m_phimin(aPhiMin), m_phimax(aPhiMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aMajorRad Major radius (center of the ring).
+	 *  @param aMinorRad Minor radius.
+	 *  @param aPhiMin   Start angle to sweep the torus body.
+	 *  @param aPhiMax   End angle to sweep the torus body.
+     *  @param aThetaMax Sweep angle.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiTorus(
+		long aLineNo,
+		RtFloat aMajorRad, RtFloat aMinorRad, RtFloat aPhiMin, RtFloat aPhiMax, RtFloat aThetaMax,
+		const CParameterList &theParameters
+		)
+		: CUVRManInterfaceCall(aLineNo, theParameters),
+		  m_majorrad(aMajorRad), m_minorrad(aMinorRad),
+		  m_phimin(aPhiMin), m_phimax(aPhiMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CRiTorus(const CRiTorus &c)
 	{
 		*this = c;
 	}
 
-	inline virtual ~CRiTorus() {}
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiTorus()
+	{
+	}
 
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
@@ -2490,6 +3599,123 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_TORUS; }
+
+	/** @brief Gets the major radius (center of the ring).
+	 *
+	 *  @return The major radius (center of the ring).
+	 */
+	inline virtual RtFloat majorRad() const
+	{
+		return m_majorrad;
+	}
+
+	/** @brief Sets the major radius (center of the ring).
+	 *
+	 *  @param aMajorRad The major radius (center of the ring).
+	 */
+	inline virtual void majorRad(RtFloat aMajorRad)
+	{
+		m_majorrad = aMajorRad;
+	}
+
+	/** @brief Gets the minor radius.
+	 *
+	 *  @return The minor radius.
+	 */
+	inline virtual RtFloat minorRad() const
+	{
+		return m_minorrad;
+	}
+
+	/** @brief Sets the minor radius.
+	 *
+	 *  @param aMinorRad The minor radius.
+	 */
+	inline virtual void minorRad(RtFloat aMinorRad)
+	{
+		m_minorrad = aMinorRad;
+	}
+
+	/** @brief Gets the start angle to sweep the torus body.
+	 *
+	 *  @return Start angle to sweep the torus body.
+	 */
+	inline virtual RtFloat phiMin() const
+	{
+		return m_phimin;
+	}
+
+	/** @brief Sets the start angle to sweep the torus body.
+	 *
+	 *  @param aMinorRad Start angle to sweep the torus body.
+	 */
+	inline virtual void phiMin(RtFloat aPhiMin)
+	{
+		m_phimin = aPhiMin;
+	}
+
+	/** @brief Gets the end angle to sweep the torus body.
+	 *
+	 *  @return End angle to sweep the torus body.
+	 */
+	inline virtual RtFloat phiMax() const
+	{
+		return m_phimax;
+	}
+
+	/** @brief Sets the end angle to sweep the torus body.
+	 *
+	 *  @param aPhiMax End angle to sweep the torus body.
+	 */
+	inline virtual void phiMax(RtFloat aPhiMax)
+	{
+		m_phimax = aPhiMax;
+	}
+
+	/** @brief Gets the sweep angle.
+	 *
+	 * @return The sweep angle.
+	 */
+	RtFloat thetaMax() const
+	{
+		return m_thetamax;
+	}
+
+	/** @brief Sets the sweep angle.
+	 *
+	 * @param aThetaMax The sweep angle.
+	 */
+	void thetaMax(RtFloat aThetaMax)
+	{
+		m_thetamax = aThetaMax;
+	}
+
+	/** @brief Gets the member variables of a disk.
+	 *
+     *  @retval aThetaMax Sweep angle.
+	 */
+	void get(RtFloat &aMajorRad, RtFloat &aMinorRad, RtFloat &aPhiMin, RtFloat &aPhiMax, RtFloat &aThetaMax) const
+	{
+		aMajorRad = m_majorrad;
+	    aMinorRad = m_minorrad;
+	    aPhiMin = m_phimin;
+	    aPhiMax = m_phimax;
+		aThetaMax = m_thetamax;
+	}
+
+	/** @brief Sets the member variables of a disk.
+	 *
+     *  @param aThetaMax Sweep angle.
+	 */
+	void set(RtFloat aMajorRad, RtFloat aMinorRad, RtFloat aPhiMin, RtFloat aPhiMax, RtFloat aThetaMax)
+	{
+		m_majorrad = aMajorRad;
+	    m_minorrad = aMinorRad;
+	    m_phimin = aPhiMin;
+	    m_phimax = aPhiMax;
+		m_thetamax = aThetaMax;
+	}
+
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
@@ -2503,143 +3729,672 @@ public:
 	{
 		ri.postTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiTorus &operator=(const CRiTorus &c)
 	{
 		if ( this == &c )
 			return *this;
-		m_majorrad = c.m_majorrad;
-		m_minorrad = c.m_minorrad;
-		m_phimin = c.m_phimin;
-		m_phimax = c.m_phimax;
-		m_thetamax = c.m_thetamax;
+
+		set(c.majorRad(), c.minorRad(), c.phiMin(), c.phiMax(), c.thetaMax());
+
 		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiTorus
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Points.
+ */
 class CRiPoints : public CGeometryRManInterfaceCall {
-protected:
+private:
 	RtInt m_npts; //!< Number of points.
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiPoints"; }
 	inline virtual const char *className() const { return CRiPoints::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the number of points to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiPoints(long aLineNo = -1)
+		: CGeometryRManInterfaceCall(aLineNo)
+	{
+		m_npts = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+     *  @param aNPts     Number of points.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
 	inline CRiPoints(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt npts,
+		RtInt aNPts,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CGeometryRManInterfaceCall(aLineNo), m_npts(npts)
+		: CGeometryRManInterfaceCall(aLineNo, decl, CPointsClasses(aNPts), curColorDescr, n, tokens, params),
+		  m_npts(aNPts)
 	{
-		CPointsClasses p(npts);
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+     *  @param aNPts     Number of points.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiPoints(
+		long aLineNo,
+		RtInt aNPts,
+		const CParameterList &theParameters
+		)
+		: CGeometryRManInterfaceCall(aLineNo, theParameters),
+		  m_npts(aNPts)
+	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiPoints(const CRiPoints &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiPoints()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiPoints(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the number of points.
+	 *
+	 *  @return Number of points.
+	 */
+	inline virtual RtInt nPts() const
+	{
+		return m_npts;
+	}
+
+	/** @brief Sets the number of points.
+	 *
+	 *  @param aNPts Number of points.
+	 */
+	inline virtual void nPts(RtInt aNPts)
+	{
+		m_npts = aNPts;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.prePoints(m_npts, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doPoints(m_npts, parameters());
 	}
-	inline CRiPoints &operator=(const CRiPoints &) {
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postPoints(m_npts, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiPoints &operator=(const CRiPoints &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		nPts(c.nPts());
+
+		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiPoints
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Curves.
+ */
 class CRiCurves : public CGeometryRManInterfaceCall {
-protected:
-	std::string m_type, m_wrap;
-	RtInt m_ncurves, m_ustep, m_vstep;
-	std::vector<RtInt> m_nverts;
+private:
+	RtToken m_type, //!< Type of the curve either RI_LINEAR or RI_CUBIC.
+	        m_wrap; //!< Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
+	RtInt   m_step; //!< Step to the next curve segment (by basis, v parameter)
+	std::vector<RtInt> m_nverts; //!< Number of vertices for each curve (size == number of curves)
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiCurves"; }
 	inline virtual const char *className() const { return CRiCurves::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the number of curves to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	CRiCurves(long aLineNo = -1) : CGeometryRManInterfaceCall(aLineNo)
+	{
+		m_type = RI_NULL,
+		m_wrap = RI_NULL;
+		m_step = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aStep    Step to the next curve segment (by basis, v parameter)
+	 *  @param aType     Type of the curve either RI_LINEAR or RI_CUBIC.
+	 *  @param aNCurves  Number of curves
+	 *  @param aNVerts   Number of vertices for each curve (size == @a NCurves)
+	 *  @param aWrap     Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
 	CRiCurves(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt ustep, RtInt vstep, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap,
+		RtInt aStep, RtToken aType, RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
-	inline virtual EnumRequests interfaceIdx() const { return REQ_CURVES; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aStep    Step to the next curve segment (by basis, v parameter)
+	 *  @param aType     Type of the curve either RI_LINEAR or RI_CUBIC.
+	 *  @param aNCurves  Number of curves
+	 *  @param aNVerts   Number of vertices for each curve (size == @a NCurves)
+	 *  @param aWrap     Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	CRiCurves(
+		long aLineNo,
+		RtInt aStep, RtToken aType, RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap,
+		const CParameterList &theParameters
+		);
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiCurves(const CRiCurves &c)
 	{
-		ri.preCurves(m_type.c_str(), m_ncurves,
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiCurves()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiCurves(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_CURVES; }
+
+
+	/** @brief Gets the type of the curves.
+	 *
+	 * @return The type of the mesh.
+	 */
+	RtToken type() const
+	{
+		return m_type;
+	}
+
+	/** @brief Gets the wrap of the curves.
+	 *
+	 * @return The wrap of the curves.
+	 */
+	RtToken wrap() const
+	{
+		return m_wrap;
+	}
+
+	/** @brief Gets the indices of the control points.
+	 *
+	 * @return The indices of the control points.
+	 */
+	RtInt nCurves() const
+	{
+		return (RtInt)m_nverts.size();
+	}
+
+	/** @brief Gets the number of the vertices for each curve.
+	 *
+	 * @return The number of the vertices for each curve.
+	 */
+	const std::vector<RtInt> &nVerts() const
+	{
+		return m_nverts;
+	}
+
+	/** @brief Number of control points to the next patch (from the basis).
+	 *
+	 * @return The number of control points to the next patch (from the basis).
+	 */
+	RtInt step() const
+	{
+		return m_step;
+	}
+
+	/** @brief Sets the values of member variables.
+	 *
+	 *  @param aStep    Step to the next curve segment (by basis, v parameter)
+	 *  @param aType     Type of the curve either RI_LINEAR or RI_CUBIC.
+	 *  @param aNCurves  Number of curves
+	 *  @param aNVerts   Number of vertices for each curve (size == @a NCurves)
+	 *  @param aWrap     Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
+	 */
+	void set(RtInt aStep, RtToken aType, RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap);
+
+	/** @brief Sets the values of member variables.
+	 *
+	 *  @param aStep    Step to the next curve segment (by basis, v parameter)
+	 *  @param aType     Type of the curve either RI_LINEAR or RI_CUBIC.
+	 *  @param aNVerts   Number of vertices for each curve (number of curves == size)
+	 *  @param aWrap     Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
+	 */
+	void set(RtInt aStep, RtToken aType, const std::vector<RtInt> &aNVerts, RtToken aWrap);
+
+	/** @brief Gets the values of member variables.
+	 *
+	 *  @retval aStep    Step to the next curve segment (by basis, v parameter)
+	 *  @retval aType     Type of the curve either RI_LINEAR or RI_CUBIC.
+	 *  @retval aNVerts   Number of vertices for each curve (number of curves == size)
+	 *  @retval aWrap     Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
+	 */
+	void get(RtInt &aStep, RtToken &aType, std::vector<RtInt> &aNVerts, RtToken &aWrap);
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preCurves(m_type, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &m_nverts[0],
-			m_wrap.c_str(),
-			parameters());
-		ri.doCurves(m_type.c_str(), m_ncurves,
-			m_nverts.empty() ? 0 : &m_nverts[0],
-			m_wrap.c_str(),
+			m_wrap,
 			parameters());
 	}
-	inline CRiCurves &operator=(const CRiCurves &) {
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doCurves(m_type, (RtInt)m_nverts.size(),
+			m_nverts.empty() ? 0 : &m_nverts[0],
+			m_wrap,
+			parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postCurves(m_type, (RtInt)m_nverts.size(),
+			m_nverts.empty() ? 0 : &m_nverts[0],
+			m_wrap,
+			parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign.
+	 *  @return A reference to this object.
+	 */
+	inline CRiCurves &operator=(const CRiCurves &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.step(), c.type(), c.nVerts(), c.wrap());
+
+		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiCurves
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Blobby.
+ */
 class CRiBlobby : public CGeometryRManInterfaceCall {
-protected:
-	RtInt m_nleaf, m_ncode, m_nflt, m_nstr;
-	std::vector<RtInt> m_code;
-	std::vector<RtFloat> m_flt;
-	std::deque<std::string> m_strcontainer;
-	std::vector<RtString> m_str;
+private:
+	RtInt                   m_nleaf;        //!< Number of primitive blobs, has to match the content of m_code.
+	std::vector<RtInt>      m_code;         //!< Code array, s.a. [RISPEC3.2] for the opcodes.
+	std::vector<RtFloat>    m_flt;          //!< The float operands for the code.
+	std::deque<std::string> m_strcontainer; //!< The string operants for the code.
+	std::vector<RtString>   m_str;          //!< C-String pointers of m_strcontainer.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiBlobby"; }
 	inline virtual const char *className() const { return CRiBlobby::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  Empty object.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiBlobby(long aLineNo = -1) : CGeometryRManInterfaceCall(aLineNo)
+	{
+		m_nleaf = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aNLeaf  Number of primitive blobs.
+	 *  @param aNCode  Size of the code array.
+	 *  @param aCode   Code array, s.a. [RISPEC3.2] for the opcodes.
+	 *  @param aNFlt   Size of the flt array.
+	 *  @param aFlt    The float operands for the code.
+	 *  @param aNStr   Size of the str array.
+	 *  @param aStr    The string operants for the code.
+	 *  @param n       Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens  Tokens of the request.
+	 *  @param params  Parameter values of the request.
+	 */
 	CRiBlobby(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
+		RtInt aNLeaf, RtInt aNCode, const RtInt aCode[],
+		RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[],
 		RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aNLeaf  Number of primitive blobs.
+	 *  @param aNCode  Size of the code array.
+	 *  @param aCode   Code array, s.a. [RISPEC3.2] for the opcodes.
+	 *  @param aNFlt   Size of the flt array.
+	 *  @param aFlt    The float operands for the code.
+	 *  @param aNStr   Size of the str array.
+	 *  @param aStr    The string operants for the code.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	CRiBlobby(long aLineNo,
+		RtInt aNLeaf, RtInt aNCode, const RtInt aCode[],
+		RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[],
+		const CParameterList &theParameters
+		);
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiBlobby(const CRiBlobby &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiBlobby()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiBlobby(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_BLOBBY; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Get the number of primitive blobs, has to match the content of m_code.
+	 *
+	 * @return The number of primitive blobs, has to match the content of m_code.
+	 */
+	inline RtInt nLeaf() const
+	{
+		return m_nleaf;
+	}
+
+	/** @brief Get the code array, s.a. [RISPEC3.2] for the opcodes.
+	 *
+	 * @return The code array, s.a. [RISPEC3.2] for the opcodes.
+	 */
+	inline const std::vector<RtInt> &code() const
+	{
+		return m_code;
+	}
+
+	/** @brief Get the float operands for the code.
+	 *
+	 * @return The float operands for the code.
+	 */
+	inline const std::vector<RtFloat> &flt() const
+	{
+		return m_flt;
+	}
+
+	/** @brief Get the string operands for the code.
+	 *
+	 * @return The string operands for the code.
+	 */
+	inline const std::vector<RtToken> &str() const
+	{
+		return m_str;
+	}
+
+	/** @brief Sets the member variables.
+	 *
+	 *  @param aNLeaf  Number of primitive blobs.
+	 *  @param aNCode  Size of the code array.
+	 *  @param aCode   Code array, s.a. [RISPEC3.2] for the opcodes.
+	 *  @param aNFlt   Size of the flt array.
+	 *  @param aFlt    The float operands for the code.
+	 *  @param aNStr   Size of the str array.
+	 *  @param aStr    The string operants for the code.
+	 */
+	void set(
+		RtInt aNLeaf, RtInt aNCode, const RtInt aCode[],
+		RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[]);
+
+	/** @brief Sets the member variables.
+	 *
+	 *  @param aNLeaf  Number of primitive blobs.
+	 *  @param aCode   Code array, s.a. [RISPEC3.2] for the opcodes.
+	 *  @param aFlt    The float operands for the code.
+	 *  @param aStr    The string operants for the code.
+	 */
+	void set(
+		RtInt aNLeaf, const std::vector<RtInt> &aCode,
+		const std::vector<RtFloat> &aFlt, const std::vector<RtString> &aStr);
+
+	/** @brief Gets the member variables.
+	 *
+	 *  @retval aNLeaf  Number of primitive blobs.
+	 *  @retval aCode   Code array, s.a. [RISPEC3.2] for the opcodes.
+	 *  @retval aFlt    The float operands for the code.
+	 *  @retval aStr    The string operants for the code.
+	 */
+	void get(
+		RtInt &aNLeaf, std::vector<RtInt> &aCode,
+		std::vector<RtFloat> &aFlt, std::vector<RtString> &aStr) const;
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preBlobby(m_nleaf,
-			m_ncode, m_code.empty() ? 0 : &m_code[0],
-			m_nflt, m_flt.empty() ? 0 : &m_flt[0],
-			m_nstr, m_str.empty() ? 0 : &m_str[0],
-			parameters());
-		ri.doBlobby(m_nleaf,
-			m_ncode, m_code.empty() ? 0 : &m_code[0],
-			m_nflt, m_flt.empty() ? 0 : &m_flt[0],
-			m_nstr, m_str.empty() ? 0 : &m_str[0],
+			(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
+			(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
+			(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
 			parameters());
 	}
-	inline CRiBlobby &operator=(const CRiBlobby &) {
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doBlobby(m_nleaf,
+			(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
+			(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
+			(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
+			parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postBlobby(m_nleaf,
+			(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
+			(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
+			(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
+			parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign.
+	 *  @return A reference to this object.
+	 */
+	inline CRiBlobby &operator=(const CRiBlobby &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.nLeaf(), c.code(), c.flt(), c.str());
+
+		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiBlobby
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Procedurals.
+ *  @todo Needs some work.
+ */
 class CRiProcedural : public CRManInterfaceCall {
-protected:
+private:
 	RtBound m_bound;
 	ISubdivFunc *m_subdivfunc;
 	IFreeFunc *m_freefunc;
 	std::deque<std::string> m_strcontainer;
 	std::vector<RtString> m_str;
 
-	void insertData(RtPointer data, IRi &ri);
+	void insertData(RtPointer data);
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiProcedural"; }
 	inline virtual const char *className() const { return CRiProcedural::myClassName(); }
 
-	inline CRiProcedural(long aLineNo, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc, IRi &ri)
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  Empty object.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiProcedural(long aLineNo = -1)
 		: CRManInterfaceCall(aLineNo)
 	{
-		m_subdivfunc = subdivfunc.duplicate();
-		if ( !m_subdivfunc ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiProcedural, m_subdivfunc", __LINE__, __FILE__);
-		}
-		m_freefunc = freefunc.duplicate();
-		if ( !m_freefunc ) {
-			delete m_subdivfunc;
-			m_subdivfunc = 0;
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiProcedural, m_freefunc", __LINE__, __FILE__);
-		}
-		memcpy(m_bound, bound, sizeof(RtBound));
-		insertData(data, ri);
+		memset(m_bound, 0, sizeof(RtBound));
+		m_subdivfunc = 0;
+		m_freefunc = 0;
 	}
+
+	CRiProcedural(long aLineNo,
+		RtPointer data, RtBound bound,
+		const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc);
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiProcedural(const CRiProcedural &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor, frees resources.
+	 */
 	inline virtual ~CRiProcedural()
 	{
 		if ( m_subdivfunc )
@@ -2647,54 +4402,199 @@ public:
 		if ( m_freefunc )
 			delete m_freefunc;
 	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiProcedural(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_PROCEDURAL; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb) {
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		assert(m_subdivfunc != 0);
 		assert(m_freefunc != 0);
 		if ( m_subdivfunc != 0 && m_freefunc != 0 )
-		ri.preProcedural(m_str.empty() ? 0 :
-			m_str.empty() ? 0 : (RtPointer)&m_str[0],
-			m_bound, *m_subdivfunc, *m_freefunc);
-		ri.doProcedural(m_str.empty() ? 0 :
-			m_str.empty() ? 0 : (RtPointer)&m_str[0],
-			m_bound, *m_subdivfunc, *m_freefunc);
+			ri.preProcedural(m_str.empty() ? 0 :
+				m_str.empty() ? 0 : (RtPointer)&m_str[0],
+				m_bound, *m_subdivfunc, *m_freefunc);
 	}
-	inline CRiProcedural &operator=(const CRiProcedural &) {
-		return *this;
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		assert(m_subdivfunc != 0);
+		assert(m_freefunc != 0);
+		if ( m_subdivfunc != 0 && m_freefunc != 0 )
+			ri.doProcedural(m_str.empty() ? 0 :
+				m_str.empty() ? 0 : (RtPointer)&m_str[0],
+				m_bound, *m_subdivfunc, *m_freefunc);
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		assert(m_subdivfunc != 0);
+		assert(m_freefunc != 0);
+		if ( m_subdivfunc != 0 && m_freefunc != 0 )
+			ri.postProcedural(m_str.empty() ? 0 :
+				m_str.empty() ? 0 : (RtPointer)&m_str[0],
+				m_bound, *m_subdivfunc, *m_freefunc);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	CRiProcedural &operator=(const CRiProcedural &c);
 }; // CRiProcedural
 
-   /*
-   // PROC_... are not called directly, only parameters for RiProcedural()
-   #define REQ_PROC_DELAYED_READ_ARCHIVE	 94
-   #define REQ_PROC_RUN_PROGRAM			 95
-   #define REQ_PROC_DYNAMIC_LOAD			 96
+/*
+	// PROC_... are not called directly, only parameters for RiProcedural()
+	#define REQ_PROC_DELAYED_READ_ARCHIVE 94
+	#define REQ_PROC_RUN_PROGRAM			 95
+	#define REQ_PROC_DYNAMIC_LOAD		 96
 */
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Special Geometry.
+ */
 class CRiGeometry : public CGeometryRManInterfaceCall {
-protected:
-	RtToken m_name; //!< Name of the geometry (only RI_TEAPOT)
+private:
+	RtToken m_name; //!< Name of the geometry as atomized string.
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiGeometry"; }
 	inline virtual const char *className() const { return CRiGeometry::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the geometry as atomized string.
+	 */
+	inline CRiGeometry(long aLineNo = -1, RtToken name = RI_NULL)
+		: CGeometryRManInterfaceCall(aLineNo), m_name(name)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl    Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aName Name of the geometry as atomized string.
+	 *  @param n       Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens  Tokens of the request.
+	 *  @param params  Parameter values of the request.
+	 */
 	inline CRiGeometry(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken name,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CGeometryRManInterfaceCall(aLineNo), m_name(name)
+		: CGeometryRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params),
+		  m_name(name)
 	{
-		CParameterClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the geometry as atomized string.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiGeometry(
+		long aLineNo,
+		RtToken name,
+		const CParameterList &theParameters)
+		: CGeometryRManInterfaceCall(aLineNo, theParameters),
+		  m_name(name)
+	{
+	}
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiGeometry(const CRiGeometry &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiGeometry()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiGeometry(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRY; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Gets the name of the attribute as atomized string.
+	 *
+	 *  @return The name of the attribute as atomized string.
+	 */
+	inline RtToken name() const
+	{
+		return m_name;
+	}
+
+	/** @brief Sets the name of the attribute as atomized string.
+	 *
+	 *  @param aName The name of the attribute as atomized string.
+	 */
+	inline void name(RtToken aName)
+	{
+		m_name = aName;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preGeometry(m_name, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doGeometry(m_name, parameters());
 	}
-	inline CRiGeometry &operator=(const CRiGeometry &) {
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postGeometry(m_name, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiGeometry &operator=(const CRiGeometry &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		name(c.name());
+
+		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiGeometry

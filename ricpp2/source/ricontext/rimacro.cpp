@@ -1,6 +1,30 @@
-/*! \file rimacro.cpp
- *  \brief Implementation of the macro classes, records interface calls
- *  \author Andreas Pidde (andreas@pidde.de)
+// RICPP - RenderMan(R) Interface CPP Language Binding
+//
+//     RenderMan(R) is a registered trademark of Pixar
+// The RenderMan(R) Interface Procedures and Protocol are:
+//         Copyright 1988, 1989, 2000, 2005 Pixar
+//                 All rights Reservered
+//
+// Copyright (c) of RiCPP 2007, Andreas Pidde
+// Contact: andreas@pidde.de
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//  
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+/** @file rimacro.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Implementation of the macro classes, records interface calls
  */
 
 #include "ricpp/ricontext/rimacro.h"
@@ -50,7 +74,7 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiGeneralPolygon::enterValues(RtInt theNLoops, RtInt *theNVerts)
+void CRiGeneralPolygon::enterValues(RtInt theNLoops, const RtInt *theNVerts)
 {
 	m_nVerts.resize(theNLoops);
 	m_nVerts.assign(theNVerts, theNVerts+theNLoops);
@@ -58,7 +82,7 @@ void CRiGeneralPolygon::enterValues(RtInt theNLoops, RtInt *theNVerts)
 
 CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt theNLoops, RtInt *theNVerts,
+	RtInt theNLoops, const RtInt *theNVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo,
 		decl, CGeneralPolygonClasses(theNLoops, theNVerts), curColorDescr,
@@ -69,7 +93,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 
 CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo,
-	RtInt theNLoops, RtInt *theNVerts,
+	RtInt theNLoops, const RtInt *theNVerts,
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
@@ -77,7 +101,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiPointsPolygons::enterValues(RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts)
+void CRiPointsPolygons::enterValues(RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts)
 {
 	m_nVerts.resize(theNPolys);
 	m_nVerts.assign(theNVerts, theNVerts+theNPolys);
@@ -91,7 +115,7 @@ void CRiPointsPolygons::enterValues(RtInt theNPolys, RtInt *theNVerts, RtInt *th
 
 CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
+	RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo,
 		decl, CPointsPolygonsClasses(theNPolys, theNVerts, theVerts), curColorDescr,
@@ -102,7 +126,7 @@ CRiPointsPolygons::CRiPointsPolygons(
 
 CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo,
-	RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
+	RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
@@ -110,7 +134,7 @@ CRiPointsPolygons::CRiPointsPolygons(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiPointsGeneralPolygons::enterValues(RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts)
+void CRiPointsGeneralPolygons::enterValues(RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts)
 {
 	m_nLoops.resize(theNPolys);
 	m_nLoops.assign(theNLoops, theNLoops+theNPolys);
@@ -132,7 +156,7 @@ void CRiPointsGeneralPolygons::enterValues(RtInt theNPolys, RtInt *theNLoops, Rt
 
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
+	RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo,
 		decl, CPointsGeneralPolygonsClasses(theNPolys, theNLoops, theNVerts, theVerts), curColorDescr,
@@ -143,7 +167,7 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo,
-	RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
+	RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts,
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
@@ -244,8 +268,8 @@ CRiNuPatch::CRiNuPatch(
 
 ///////////////////////////////////////////////////////////////////////////////
 void CRiSubdivisionMesh::set(
-	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[])
+	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[])
 {
 	m_scheme = aScheme;
 
@@ -264,6 +288,7 @@ void CRiSubdivisionMesh::set(
 	if ( m_nedges > 0 )
 		m_nvertices = 1+(RtInt)tmax(m_nedges, &(aVerts[0]));
 
+	m_tags.resize(0);
 	m_tags.reserve(aNTags);
 	for ( i = 0; i < aNTags; ++i ) {
 		m_tags.push_back(aTags[i]);
@@ -305,8 +330,8 @@ void CRiSubdivisionMesh::set(
 
 CRiSubdivisionMesh::CRiSubdivisionMesh(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CGeometryRManInterfaceCall(aLineNo,
 		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
@@ -317,8 +342,8 @@ CRiSubdivisionMesh::CRiSubdivisionMesh(
 
 CRiSubdivisionMesh::CRiSubdivisionMesh(
 	long aLineNo,
-	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	const CParameterList &theParameters)
 	: CGeometryRManInterfaceCall(aLineNo, theParameters)
 {
@@ -328,9 +353,9 @@ CRiSubdivisionMesh::CRiSubdivisionMesh(
 
 ///////////////////////////////////////////////////////////////////////////////
 void CRiHierarchicalSubdivisionMesh::set(
-	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-	RtInt aNTags, RtToken aTags[],
-	RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[])
+	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+	RtInt aNTags, const RtToken aTags[],
+	const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[])
 {
 	m_scheme = aScheme;
 
@@ -349,6 +374,7 @@ void CRiHierarchicalSubdivisionMesh::set(
 	if ( m_nedges > 0 )
 		m_nvertices = 1+(RtInt)tmax(m_nedges, &(aVerts[0]));
 
+	m_tags.resize(0);
 	m_tags.reserve(aNTags);
 	for ( i = 0; i < aNTags; ++i ) {
 		m_tags.push_back(aTags[i]);
@@ -399,9 +425,9 @@ void CRiHierarchicalSubdivisionMesh::set(
 
 CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
-	RtToken aStrArgs[],
+	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
+	const RtToken aStrArgs[],
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CGeometryRManInterfaceCall(aLineNo,
 		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
@@ -412,9 +438,9 @@ CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 
 CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 	long aLineNo,
-	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
-	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
-	RtToken aStrArgs[],
+	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
+	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
+	const RtToken aStrArgs[],
 	const CParameterList &theParameters)
 	: CGeometryRManInterfaceCall(aLineNo, theParameters)
 {
@@ -424,48 +450,145 @@ CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 ///////////////////////////////////////////////////////////////////////////////
 CRiCurves::CRiCurves(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt ustep, RtInt vstep, RtToken type,
-	RtInt ncurves, RtInt nverts[], RtToken wrap,
+	RtInt aStep, RtToken aType,
+	RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CGeometryRManInterfaceCall(aLineNo, decl,
-	    CCurvesClasses(type, ncurves, nverts, wrap, vstep), curColorDescr,
+	    CCurvesClasses(aType, aNCurves, aNVerts, aWrap, aStep), curColorDescr,
 		n, tokens, params),
-	  m_type(type), m_wrap(wrap), m_ncurves(ncurves), m_ustep(ustep), m_vstep(vstep)
+	  m_type(aType), m_wrap(aWrap), m_step(aStep)
 {
-	m_nverts.resize(ncurves);
-	m_nverts.assign(nverts, nverts+ncurves);
+	m_nverts.resize(aNCurves);
+	m_nverts.assign(aNVerts, aNVerts+aNCurves);
+}
+
+CRiCurves::CRiCurves(
+	long aLineNo,
+	RtInt aStep, RtToken aType,
+	RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap,
+	const CParameterList &theParameters)
+	: CGeometryRManInterfaceCall(aLineNo, theParameters),
+	  m_type(aType), m_wrap(aWrap), m_step(aStep)
+{
+	m_nverts.resize(aNCurves);
+	m_nverts.assign(aNVerts, aNVerts+aNCurves);
+}
+
+void CRiCurves::set(
+	RtInt aStep, RtToken aType,
+	RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap)
+{
+	m_type = aType;
+	m_wrap = aWrap;
+	m_step = aStep;
+	m_nverts.resize(aNCurves);
+	m_nverts.assign(aNVerts, aNVerts+aNCurves);
+}
+
+void CRiCurves::set(
+	RtInt aStep, RtToken aType,
+	const std::vector<RtInt> &aNVerts, RtToken aWrap)
+{
+	m_type = aType;
+	m_wrap = aWrap;
+	m_step = aStep;
+	m_nverts = aNVerts;
+}
+
+void CRiCurves::get(
+	RtInt &aStep, RtToken &aType,
+	std::vector<RtInt> &aNVerts, RtToken &aWrap)
+{
+	aType = m_type;
+	aWrap = m_wrap;
+	aStep = m_step;
+	aNVerts = m_nverts;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 CRiBlobby::CRiBlobby(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt nleaf, RtInt ncode, RtInt code[],
-	RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
+	RtInt aNLeaf, RtInt aNCode, const RtInt aCode[],
+	RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[],
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CGeometryRManInterfaceCall(aLineNo,
-		decl, CBlobbyClasses(nleaf), curColorDescr,
-		n, tokens, params),
-	  m_nleaf(nleaf), m_ncode(ncode), m_nflt(nflt), m_nstr(nstr)
+		decl, CBlobbyClasses(aNLeaf), curColorDescr,
+		n, tokens, params)
 {
+	set(aNLeaf, aNCode, aCode, aNFlt, aFlt, aNStr, aStr);
+}
+
+CRiBlobby::CRiBlobby(long aLineNo,
+	RtInt aNLeaf, RtInt aNCode, const RtInt aCode[],
+	RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[],
+	const CParameterList &theParameters
+	)
+	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+{
+	set(aNLeaf, aNCode, aCode, aNFlt, aFlt, aNStr, aStr);
+}
+
+void CRiBlobby::set(
+	RtInt aNLeaf, RtInt aNCode, const RtInt aCode[],
+	RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[])
+{
+	m_nleaf = aNLeaf;
+
+	m_code.resize(aNCode);
+	m_code.assign(aCode, aCode+aNCode);
+	m_flt.resize(aNFlt);
+	m_flt.assign(aFlt, aFlt+aNFlt);
+
 	int i;
-
-	m_code.resize(ncode);
-	m_code.assign(code, code+ncode);
-	m_flt.resize(nflt);
-	m_flt.assign(flt, flt+nflt);
-
-	// m_strcontainer.reserve(nstr);
-	m_str.reserve(nstr);
-	for ( i = 0; i < nstr; ++i ) {
-		m_strcontainer.push_back(str[i]);
+	m_strcontainer.resize(0);
+	m_str.resize(0);
+	// m_strcontainer.reserve(aNStr);
+	m_str.reserve(aNStr);
+	for ( i = 0; i < aNStr; ++i ) {
+		m_strcontainer.push_back(aStr[i]);
 	}
-	for ( i = 0; i < nstr; ++i ) {
+	for ( i = 0; i < aNStr; ++i ) {
 		m_str.push_back(m_strcontainer[i].c_str());
 	}
 }
 
+void CRiBlobby::set(
+	RtInt aNLeaf, const std::vector<RtInt> &aCode,
+	const std::vector<RtFloat> &aFlt, const std::vector<RtString> &aStr)
+{
+	m_nleaf = aNLeaf;
+
+	m_code = aCode;
+	m_flt = aFlt;
+
+	int i;
+	m_strcontainer.resize(0);
+	m_str.resize(0);
+	// m_strcontainer.reserve(aNStr);
+	RtInt aNStr = (RtInt)aStr.size();
+	m_str.reserve(aNStr);
+	for ( i = 0; i < aNStr; ++i ) {
+		m_strcontainer.push_back(aStr[i]);
+	}
+	for ( i = 0; i < aNStr; ++i ) {
+		m_str.push_back(m_strcontainer[i].c_str());
+	}
+}
+
+
+void CRiBlobby::get(
+	RtInt &aNLeaf, std::vector<RtInt> &aCode,
+	std::vector<RtFloat> &aFlt, std::vector<RtString> &aStr) const
+{
+	aNLeaf = m_nleaf;
+	aCode = m_code;
+	aFlt = m_flt;
+	aStr = m_str;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
-void CRiProcedural::insertData(RtPointer data, IRi &ri) {
+void CRiProcedural::insertData(RtPointer data)
+{
 	// std::deque<std::string> m_strcontainer;
 	// std::vector<RtString> m_str;
 	const char **cp = (const char **)data;
@@ -487,4 +610,63 @@ void CRiProcedural::insertData(RtPointer data, IRi &ri) {
 		m_strcontainer.push_back(cp && cp[1] ? cp[1] : "");
 		m_str.push_back(m_strcontainer[1].c_str());
 	}
+}
+
+CRiProcedural::CRiProcedural(
+	long aLineNo, RtPointer data, RtBound bound,
+	const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc)
+	: CRManInterfaceCall(aLineNo)
+{
+	m_subdivfunc = subdivfunc.duplicate();
+	if ( !m_subdivfunc ) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiProcedural, m_subdivfunc", __LINE__, __FILE__);
+	}
+	m_freefunc = freefunc.duplicate();
+	if ( !m_freefunc ) {
+		delete m_subdivfunc;
+		m_subdivfunc = 0;
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiProcedural, m_freefunc", __LINE__, __FILE__);
+	}
+	memcpy(m_bound, bound, sizeof(RtBound));
+	insertData(data);
+}
+
+inline CRiProcedural &CRiProcedural::operator=(const CRiProcedural &c)
+{
+	if ( this == &c )
+		return *this;
+
+	if ( m_subdivfunc )
+		delete m_subdivfunc;
+	m_subdivfunc = 0;
+	if ( m_freefunc )
+		delete m_freefunc;
+	m_freefunc = 0;
+
+	if ( c.m_subdivfunc ) {
+		m_subdivfunc = c.m_subdivfunc->duplicate();
+		if ( !m_subdivfunc ) {
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Assignment of CRiProcedural, m_subdivfunc", __LINE__, __FILE__);
+		}
+	}
+
+	if ( c.m_freefunc ) {
+		m_freefunc = c.m_freefunc->duplicate();
+		if ( !m_freefunc ) {
+			delete m_subdivfunc;
+			m_subdivfunc = 0;
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Assignment of CRiProcedural, m_freefunc", __LINE__, __FILE__);
+		}
+	}
+	memcpy(m_bound, c.m_bound, sizeof(RtBound));
+
+	m_strcontainer = c.m_strcontainer;
+
+	m_str.clear();
+	for ( int i = 0; i < (int)m_strcontainer.size(); ++i ) {
+		m_str.push_back(m_strcontainer[i].c_str());
+	}
+
+	CRManInterfaceCall::operator=(c);
+	return *this;
 }

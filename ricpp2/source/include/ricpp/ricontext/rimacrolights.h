@@ -1,6 +1,36 @@
 #ifndef _RICPP_RICONTEXT_RIMACROLIGHTS_H
 #define _RICPP_RICONTEXT_RIMACROLIGHTS_H
 
+// RICPP - RenderMan(R) Interface CPP Language Binding
+//
+//     RenderMan(R) is a registered trademark of Pixar
+// The RenderMan(R) Interface Procedures and Protocol are:
+//         Copyright 1988, 1989, 2000, 2005 Pixar
+//                 All rights Reservered
+//
+// Copyright (c) of RiCPP 2007, Andreas Pidde
+// Contact: andreas@pidde.de
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//  
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+/** @file rimacrolight.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief The macro classes for light sources, \see rimacro.h
+ *  @todo Needs some work. 
+ */
+
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
 #include "ricpp/ricontext/rimacrobase.h"
 #endif // _RICPP_RICONTEXT_RIMACROBASE_H
@@ -59,6 +89,7 @@ public:
 		RtLightHandle h = ri.preLightSource(m_name, parameters());
 		ri.renderState()->lights().setHandle(m_handleIdx, h);
 		ri.doLightSource(h, m_name, parameters());
+		ri.postLightSource(h, m_name, parameters());
 	}
 	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
 	inline virtual void handleIdx(RtLightHandle anIndex) { m_handleIdx = anIndex; }
@@ -121,6 +152,7 @@ public:
 		RtLightHandle h = ri.preAreaLightSource(m_name, parameters());
 		ri.renderState()->lights().setHandle(m_handleIdx, h);
 		ri.doAreaLightSource(h, m_name, parameters());
+		ri.postAreaLightSource(h, m_name, parameters());
 	}
 	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
 	inline virtual void handleIdx(RtLightHandle anIndex) { m_handleIdx = anIndex; }
@@ -155,10 +187,18 @@ public:
 	{
 		ri.preIlluminate(m_handleIdx, m_onoff);
 		ri.doIlluminate(m_handleIdx, m_onoff);
+		ri.postIlluminate(m_handleIdx, m_onoff);
 	}
 	inline virtual RtLightHandle handleIdx() { return m_handleIdx; }
-	inline CRiIlluminate &operator=(const CRiIlluminate &)
+	inline CRiIlluminate &operator=(const CRiIlluminate &c)
 	{
+		if ( this == &c )
+			return *this;
+
+		m_handleIdx = c.m_handleIdx;
+		m_onoff = c.m_onoff;
+
+		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiIlluminate

@@ -100,7 +100,7 @@ void CNuPatchClasses::reset(
 
 /*! reset() calculates the values for the member variables.
  */
-void CSubdivisionMeshClasses::reset(RtInt nfaces, RtInt nvertices[], RtInt vertices[]) {
+void CSubdivisionMeshClasses::reset(RtInt nfaces, const RtInt nvertices[], const RtInt vertices[]) {
 	m_nVerts = 0;
 	m_nFaceVerts = 0;
 	m_nFaces = nfaces;
@@ -108,7 +108,7 @@ void CSubdivisionMeshClasses::reset(RtInt nfaces, RtInt nvertices[], RtInt verti
 	if ( nfaces > 0 && nvertices && vertices ) {
 		int i, j;
 		m_nVerts = -1;
-		RtInt *pverts = vertices;
+		const RtInt *pverts = vertices;
 		for ( i = 0, m_nFaceVerts = 0; i < nfaces; ++i ) {
 			m_nFaceVerts += nvertices[i];
 			for ( j=0; j<nvertices[i]; ++j, pverts++ ) {
@@ -124,7 +124,7 @@ void CSubdivisionMeshClasses::reset(RtInt nfaces, RtInt nvertices[], RtInt verti
 /*! reset() calculates the values for the member variables.
  */
 void CCurvesClasses::reset(
-	RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt vstep)
+	RtToken type, RtInt ncurves, const RtInt nverts[], RtToken wrap, RtInt vstep)
 {
 	bool isbicubic  = !strcmp(type, RI_BICUBIC);  // defaults to bilinear
 	bool isperiodic = !strcmp(wrap, RI_PERIODIC); // defaults to non periodic

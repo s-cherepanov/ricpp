@@ -179,7 +179,7 @@ public:
 		return new CRiElseBegin(aLineNo);
 	}
 
-	inline virtual CRiIfEnd *newRiElseBegin(long aLineNo) {
+	inline virtual CRiIfEnd *newRiIfEnd(long aLineNo) {
 		return new CRiIfEnd(aLineNo);
 	}
 
@@ -379,12 +379,12 @@ public:
 		return new CRiAttribute(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
-	inline virtual CRiColor *newRiColor(long aLineNo, const CColorDescr &curColorDescr, RtColor Cs) {
-		return new CRiColor(aLineNo, curColorDescr, Cs);
+	inline virtual CRiColor *newRiColor(long aLineNo, RtInt nColorSamples, RtColor Cs) {
+		return new CRiColor(aLineNo, nColorSamples, Cs);
 	}
 
-	inline virtual CRiOpacity *newRiOpacity(long aLineNo, const CColorDescr &curColorDescr, RtColor Cs) {
-		return new CRiOpacity(aLineNo, curColorDescr, Cs);
+	inline virtual CRiOpacity *newRiOpacity(long aLineNo, RtInt nColorSamples, RtColor Os) {
+		return new CRiOpacity(aLineNo, nColorSamples, Os);
 	}
 
 	inline virtual CRiSurface *newRiSurface(
@@ -604,6 +604,15 @@ public:
 		return new CRiSubdivisionMesh(aLineNo, decl, curColorDescr, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, n, tokens, params);
 	}
 
+	inline virtual CRiHierarchicalSubdivisionMesh *newRiHierarchicalSubdivisionMesh(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
+		RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[], RtToken strargs[],
+		RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return new CRiHierarchicalSubdivisionMesh(aLineNo, decl, curColorDescr, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, strargs, n, tokens, params);
+	}
+
 	inline virtual CRiSphere *newRiSphere(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
@@ -690,7 +699,7 @@ public:
 
 	inline virtual CRiGeometry *newRiGeometry(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		const char *name,
+		RtToken name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiGeometry(aLineNo, decl, curColorDescr, name, n, tokens, params);

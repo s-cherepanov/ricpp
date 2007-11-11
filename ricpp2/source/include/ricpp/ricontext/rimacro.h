@@ -48,4 +48,8 @@
 #include "ricpp/ricontext/rimacroexternals.h"
 #endif // _RICPP_RICONTEXT_RIMACROEXTERNALS_H
 
+#ifndef _RICPP_RICONTEXT_RIMACROFACTORY_H
+#include "ricpp/ricontext/rimacrofactory.h"
+#endif // _RICPP_RICONTEXT_RIMACROFACTORY_H
+
 #endif // _RICPP_RICONTEXT_RIMACRO_H

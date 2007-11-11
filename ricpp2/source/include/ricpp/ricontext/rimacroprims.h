@@ -460,11 +460,13 @@ public:
 
 	/** @brief Gets the number of the positions.
 	 *
-	 *  @retrun The sum of the number of the positions.
+	 *  @retrun The number of the positions.
 	 */
 	inline RtInt numPos() const
 	{
-		return (RtInt)tmax(m_verts.size(), &(m_verts[0]));
+		if ( m_verts.size() == 0 )
+			return 0;
+		return 1+(RtInt)tmax(m_verts.size(), &(m_verts[0]));
 	}
 
 	/** @brief Sets the vertex indices.
@@ -639,11 +641,13 @@ public:
 
 	/** @brief Gets the number of the positions.
 	 *
-	 *  @retrun The sum of the number of the positions.
+	 *  @retrun The number of the positions.
 	 */
 	inline RtInt numPos() const
 	{
-		return (RtInt)tmax(m_verts.size(), &(m_verts[0]));
+		if ( m_verts.size() == 0 )
+			return 0;
+		return 1+(RtInt)tmax(m_verts.size(), &(m_verts[0]));
 	}
 
 	/** @brief Gets the number of polygons.
@@ -793,11 +797,11 @@ public:
 	 * The default constructor sets the number of polygons to 0.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param aType Type of the patch.
 	 */
-	inline CRiPatch(long aLineNo=-1, RtToken aType=RI_NULL)
-		: CUVRManInterfaceCall(aLineNo), m_type(aType)
+	inline CRiPatch(long aLineNo=-1)
+		: CUVRManInterfaceCall(aLineNo)
 	{
+		m_type = RI_NULL;
 	}
 
 	/** @brief Constructor.
@@ -833,7 +837,6 @@ public:
 		: CUVRManInterfaceCall(aLineNo), m_type(aType)
 	{
 	}
-
 
 	/** @brief Copy constructor.
 	 *
@@ -907,63 +910,485 @@ public:
 	}
 }; // CRiPatch
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief a mesh of bilinear or bicubic patches.
+ */
 class CRiPatchMesh : public CUVRManInterfaceCall {
-protected:
-	std::string m_type, m_uwrap, m_vwrap;
-	RtInt m_nu, m_nv;
-	RtInt m_ustep, m_vstep;
-	void enterValues(RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap);
+private:
+	RtToken m_type,  //!< Type of the mesh either RI_BILINEAR or RI_BICUBIC.
+	        m_uwrap, //!< Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC.
+	        m_vwrap; //!< Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
+	RtInt   m_nu,    //!< Number of control points in parametric u direction.
+	        m_nv;    //!< Number of control points in parametric v direction.
+	RtInt   m_ustep, //!< Step m_ustep control points to the next patch in u direction (from the basis).
+	        m_vstep; //!< Step m_vstep control points to the next patch in v direction (from the basis).
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiPatchMesh"; }
 	inline virtual const char *className() const { return CRiPatchMesh::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of polygons to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	CRiPatchMesh(long aLineNo = -1) :
+		CUVRManInterfaceCall(aLineNo)
+	{
+		m_type = RI_NULL;
+		m_uwrap = RI_NULL;
+		m_vwrap = RI_NULL;
+		m_nu = 0;
+		m_nv = 0;
+		m_ustep = 0;
+		m_vstep = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl     Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aUStep   Number of control points to the next patch in u direction (from the basis).
+	 *  @param aVStep   Number of control points to the next patch in v direction (from the basis).
+	 *  @param aType    Type of the mesh either RI_BILINEAR or RI_BICUBIC.
+	 *  @param aNu      Number of control points in u direction.
+	 *  @param aUWrap   Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC
+	 *  @param aNv      Number of control points in v direction.
+	 *  @param aVWrap   Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
+	 *  @param n        Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens   Tokens of the request.
+	 *  @param params   Parameter values of the request.
+	 */
 	CRiPatchMesh(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
+		RtInt aUStep, RtInt aVStep,
+		RtToken aType,
+		RtInt aNu, RtToken aUWrap,
+		RtInt aNv, RtToken aVWrap,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aUStep   Number of control points to the next patch in u direction (from the basis).
+	 *  @param aVStep   Number of control points to the next patch in v direction (from the basis).
+	 *  @param aType    Type of the mesh either RI_BILINEAR or RI_BICUBIC.
+	 *  @param aNu      Number of control points in u direction.
+	 *  @param aUWrap   Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC
+	 *  @param aNv      Number of control points in v direction.
+	 *  @param aVWrap   Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
+	 *  @param theParameters Parsed parameter list.
+	 */
 	CRiPatchMesh(
 		long aLineNo,
-		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
+		RtInt aUStep, RtInt aVStep,
+		RtToken aType,
+		RtInt aNu, RtToken aUWrap,
+		RtInt aNv, RtToken aVWrap,
 		const CParameterList &theParameters);
 
-	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiPatchMesh(const CRiPatchMesh &c)
 	{
-		ri.prePatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
-		ri.doPatchMesh(m_type.c_str(), m_nu, m_uwrap.c_str(), m_nv, m_vwrap.c_str(), parameters());
+		*this = c;
 	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiPatchMesh()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiPatchMesh(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH_MESH; }
+
+	/** @brief Get the type of the mesh.
+	 *
+	 * @return The type of the mesh, either RI_BILINEAR or RI_BICUBIC.
+	 */
+	RtToken type() const
+	{
+		return m_type;
+	}
+
+	/** @brief Wrap of the mesh in u direction.
+	 *
+	 * @return The wrap of the mesh in u direction.
+	 */
+	RtToken uWrap() const
+	{
+		return m_uwrap;
+	}
+
+	/** @brief Wrap of the mesh in v direction.
+	 *
+	 * @return The wrap of the mesh in v direction.
+	 */
+	RtToken vWrap() const
+	{
+		return m_vwrap;
+	}
+	
+	/** @brief Number of control points in parametric u direction.
+	 *
+	 * @return The number of control points in parametric u direction.
+	 */
+	RtInt nu() const
+	{
+		return m_nu;
+	}
+
+	/** @brief Number of control points in parametric v direction.
+	 *
+	 * @return The number of control points in parametric v direction.
+	 */
+	RtInt nv() const
+	{
+		return m_nv;
+	}
+
+	/** @brief Number of control points to the next patch in u direction (from the basis).
+	 *
+	 * @return The number of control points to the next patch in u direction (from the basis).
+	 */
+	RtInt uStep() const
+	{
+		return m_ustep;
+	}
+
+	/** @brief Number of control points to the next patch in v direction (from the basis).
+	 *
+	 * @return The number of control points to the next patch in v direction (from the basis).
+	 */
+	RtInt vStep() const
+	{
+		return m_vstep;
+	}
+
+	/** @brief Enter the element variable using the interface parameters.
+	 *
+	 *  @param aUStep Number of control points to the next patch in u direction.
+	 *  @param aVStep Number of control points to the next patch in v direction.
+	 *  @param aType  Type of the mesh either RI_BILINEAR or RI_BICUBIC.
+	 *  @param aNu    Number of control points in u direction.
+	 *  @param aUWrap Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC
+	 *  @param aNv    Number of control points in v direction.
+	 *  @param aVWrap Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
+	 */
+	void set(
+		RtInt aUStep, RtInt aVStep,
+		RtToken aType,
+		RtInt aNu, RtToken aUWrap,
+		RtInt aNv, RtToken aVWrap);
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.prePatchMesh(m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doPatchMesh(m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postPatchMesh(m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiPatchMesh &operator=(const CRiPatchMesh &c)
 	{
 		if ( this == &c )
 			return *this;
+
+		set(c.uStep(), c.vStep(), c.type(), c.nu(), c.uWrap(), c.nv(), c.vWrap());
 
 		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiPatchMesh
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief NURBS patch.
+ */
 class CRiNuPatch : public CGeometryRManInterfaceCall {
-protected:
-	RtInt m_nu, m_uorder, m_nv, m_vorder;
-	std::vector<RtFloat> m_uknot, m_vknot;
-	RtFloat m_umin, m_umax, m_vmin, m_vmax;
-	void enterValues(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax);
+private:
+	RtInt m_nu,     //!< Number of control points in parametric u direction.
+	      m_uorder, //!< Order of the polynomial basis for parameters u.
+	      m_nv,     //!< Number of control points in parametric v direction.
+	      m_vorder; //!< Order of the polynomial basis for parameters v.
+	std::vector<RtFloat> m_uknot, //!< Knot vector for the u parameters.
+	                     m_vknot; //!< Knot vector for the v parameters.
+
+	RtFloat m_umin, //!< Minimal value for parameter u.
+	        m_umax, //!< Maximal value for parameter u.
+	        m_vmin, //!< Minimal value for parameter v.
+	        m_vmax; //!< Maximal value for parameter v.
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiNuPatch"; }
 	inline virtual const char *className() const { return CRiNuPatch::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of control points to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	CRiNuPatch(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo)
+	{
+		m_nu = m_uorder = 0;
+		m_nv = m_vorder = 0;
+		m_umin = m_umax = 0;
+		m_vmin = m_vmax = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl     Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aNU      Number of control points in parametric u direction.
+	 *  @param aUOrder  Order of the polynomial basis for parameters u.
+	 *  @param aUKnot   Knot vector for the u parameters.
+	 *  @param aUMin    Minimal value for parameter u.
+	 *  @param aUMax    Maximal value for parameter u.
+	 *  @param aNV      Number of control points in parametric v direction.
+	 *  @param aVOrder  Order of the polynomial basis for parameters v.
+	 *  @param aVKnot   Knot vector for the v parameters.
+	 *  @param aVMin    Minimal value for parameter v.
+	 *  @param aVMax    Maximal value for parameter v.
+	 *  @param n        Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens   Tokens of the request.
+	 *  @param params   Parameter values of the request.
+	 */
 	CRiNuPatch(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
 		RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aNU      Number of control points in parametric u direction.
+	 *  @param aUOrder  Order of the polynomial basis for parameters u.
+	 *  @param aUKnot   Knot vector for the u parameters.
+	 *  @param aUMin    Minimal value for parameter u.
+	 *  @param aUMax    Maximal value for parameter u.
+	 *  @param aNV      Number of control points in parametric v direction.
+	 *  @param aVOrder  Order of the polynomial basis for parameters v.
+	 *  @param aVKnot   Knot vector for the v parameters.
+	 *  @param aVMin    Minimal value for parameter v.
+	 *  @param aVMax    Maximal value for parameter v.
+	 *  @param theParameters Parsed parameter list.
+	 */
 	CRiNuPatch(
 		long aLineNo,
-		RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
 		const CParameterList &theParameters);
-	inline virtual EnumRequests interfaceIdx() const { return REQ_PATCH; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiNuPatch(const CRiNuPatch &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiNuPatch()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiNuPatch(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_NU_PATCH; }
+
+	/** @brief Gets the number of segments for the NURBS patch.
+	 *
+	 *  @return The number of segments for the NURBS patch.
+	 */
+	inline virtual RtInt segments() const { return (1+m_nu-m_uorder)*(1+m_nv-m_vorder); }
+
+	/** @brief Enter the values into member variables.
+	 *
+	 *  @param aNU Number of control points in parametric u direction.
+	 *  @param aUOrder Order of the polynomial basis for parameters u.
+	 *  @param aUKnot Knot vector for the u parameters.
+	 *  @param aUMin Minimal value for parameter u.
+	 *  @param aUMax Maximal value for parameter u.
+	 *  @param aNV Number of control points in parametric v direction.
+	 *  @param aVOrder Order of the polynomial basis for parameters v.
+	 *  @param aVKnot Knot vector for the v parameters.
+	 *  @param aVMin Minimal value for parameter v.
+	 *  @param aVMax Maximal value for parameter v.
+	 */
+	void set(
+		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax);
+
+	/** @brief Enter the values into member variables.
+	 *
+	 *  @param aNU Number of control points in parametric u direction.
+	 *  @param aUOrder Order of the polynomial basis for parameters u.
+	 *  @param aUKnot Knot vector for the u parameters.
+	 *  @param aUMin Minimal value for parameter u.
+	 *  @param aUMax Maximal value for parameter u.
+	 *  @param aNV Number of control points in parametric v direction.
+	 *  @param aVOrder Order of the polynomial basis for parameters v.
+	 *  @param aVKnot Knot vector for the v parameters.
+	 *  @param aVMin Minimal value for parameter v.
+	 *  @param aVMax Maximal value for parameter v.
+	 */
+	void set(
+		RtInt aNU, RtInt aUOrder, const std::vector<RtFloat> &aUKnot, RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const std::vector<RtFloat> &aVKnot, RtFloat aVMin, RtFloat aVMax);
+
+	/** @brief Gets the number of control points in parametric u direction.
+	 *
+	 *  @return The number of control points in parametric u direction.
+	 */
+	RtInt nu() const
+	{
+		return m_nu;
+	}
+
+	/** @brief Gets the number of control points in parametric v direction.
+	 *
+	 *  @return The number of control points in parametric v direction.
+	 */
+	RtInt nv() const
+	{
+		return m_nv;
+	}
+
+	/** @brief Gets the order of the polynomial basis for parameters u.
+	 *
+	 *  @return the order of the polynomial basis for parameters u.
+	 */
+	RtInt uOrder() const
+	{
+		return m_uorder;
+	}
+
+	/** @brief Gets the order of the polynomial basis for parameters v.
+	 *
+	 *  @return The order of the polynomial basis for parameters v.
+	 */
+	RtInt vOrder() const
+	{
+		return m_vorder;
+	}
+
+	/** @brief Gets the minimal value for parameter u.
+	 *
+	 *  @return The minimal value for parameter u.
+	 */
+	RtFloat uMin() const
+	{
+		return m_umin;
+	}
+
+	/** @brief Gets the maximal value for parameter u.
+	 *
+	 *  @return The maximal value for parameter u.
+	 */
+	RtFloat uMax() const
+	{
+		return m_umax;
+	}
+
+	/** @brief Gets the minimal value for parameter v.
+	 *
+	 *  @return The minimal value for parameter v.
+	 */
+	RtFloat vMin() const
+	{
+		return m_vmin;
+	}
+
+	/** @brief Gets the maximal value for parameter v.
+	 *
+	 *  @return The maximal value for parameter v.
+	 */
+	RtFloat vMax() const
+	{
+		return m_vmax;
+	}
+
+	/** @brief Gets the knot vector for the u parameters.
+	 *
+	 *  @return The knot vector for the u parameters.
+	 */
+	const std::vector<RtFloat> &uKnot() const
+	{
+		return m_uknot;
+	}
+
+	/** @brief Gets the knot vector for the v parameters.
+	 *
+	 *  @return The knot vector for the v parameters.
+	 */
+	const std::vector<RtFloat> &vKnot() const
+	{
+		return m_vknot;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preNuPatch(m_nu, m_uorder,
 			m_uknot.empty() ? 0 : &m_uknot[0],
@@ -971,6 +1396,10 @@ public:
 			m_vknot.empty() ? 0 : &m_vknot[0],
 			m_vmin, m_vmax,
 			parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
 		ri.doNuPatch(m_nu, m_uorder,
 			m_uknot.empty() ? 0 : &m_uknot[0],
 			m_umin, m_umax, m_nv, m_vorder,
@@ -978,59 +1407,269 @@ public:
 			m_vmin, m_vmax,
 			parameters());
 	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postNuPatch(m_nu, m_uorder,
+			m_uknot.empty() ? 0 : &m_uknot[0],
+			m_umin, m_umax, m_nv, m_vorder,
+			m_vknot.empty() ? 0 : &m_vknot[0],
+			m_vmin, m_vmax,
+			parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiNuPatch &operator=(const CRiNuPatch &c)
 	{
 		if ( this == &c )
 			return *this;
 
+		set(c.nu(), c.uOrder(), c.uKnot(), c.uMin(), c.uMax(), c.nv(), c.vOrder(), c.vKnot(), c.vMin(), c.vMax());
+
 		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
-	inline virtual int segments() const { return (1+m_nu-m_uorder)*(1+m_nv-m_vorder); }
 }; // CRiNuPatch
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Subdivision mesh surface.
+ */
 class CRiSubdivisionMesh : public CGeometryRManInterfaceCall {
-protected:
-//	struct CRiSubdivisionMeshData {
-		std::string m_scheme;
-		RtInt m_nfaces, m_ntags, m_nvertices;
-		RtInt m_nedges; // number of edges in the surface
-		std::vector<RtInt> m_nverts, m_verts, m_nargs, m_intargs;
-		std::vector<RtFloat>    m_floargs;
-		std::deque<std::string> m_strtags;
-		std::vector<RtToken>    m_tags;
-//	};
-//	std::vector<CRiSubdivisionMeshData> m_data;
+private:
+	RtToken m_scheme;    //!< The scheme (currently RI_CATMULL_CLARK only).
+	RtInt   m_nvertices, //!< The number of vertices (maximum+1 of m_verts).
+	        m_nedges;    //!< Number of edges (eq. number of vertices) of the surface.
+	std::vector<RtInt>      m_nverts,  //!< Number of vertices for each face (size is the number of faces).
+	                        m_verts,   //!< Index for each vertex.
+	                        m_nargs,   //!< Number of integer and float args (integer, float) for each tag (size = 2*m_tags.size()).
+	                        m_intargs; //!< Integer arguments for tags.
+	std::vector<RtFloat>    m_floargs; //!< Float arguments for tags.
+	std::vector<RtToken>    m_tags;    //!< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiSubdivisionMesh"; }
 	inline virtual const char *className() const { return CRiSubdivisionMesh::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of faces to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	CRiSubdivisionMesh(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo)
+	{
+		m_scheme = RI_NULL;
+		m_nvertices = 0;
+		m_nedges = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl     Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNFaces  Number of faces
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aNTags   Number of tags.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 *  @param n        Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens   Tokens of the request.
+	 *  @param params   Parameter values of the request.
+	 */
 	CRiSubdivisionMesh(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
-		RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[],
+		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
 		RtInt n, RtToken tokens[], RtPointer params[]
 		);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNFaces  Number of faces
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aNTags   Number of tags.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	CRiSubdivisionMesh(
+		long aLineNo,
+		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+		const CParameterList &theParameters);
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiSubdivisionMesh(const CRiSubdivisionMesh &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiSubdivisionMesh()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiSubdivisionMesh(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SUBDIVISION_MESH; }
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
+	
+	/** @brief Sets the values of the member variables.
+	 *
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNFaces  Number of faces
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aNTags   Number of tags.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 *  @param aStrArgs String arguments for tags.
+	 */
+	void set(
+		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[]);
+
+	/** @brief Sets the values of the member variables.
+	 *
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 */
+	void set(
+		RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
+		const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
+		const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs);
+
+	/** @brief The scheme (currently RI_CATMULL_CLARK only).
+	 *
+	 *  @return The scheme (currently RI_CATMULL_CLARK only).
+	 */
+	RtToken scheme() const
+	{
+		return m_scheme;
+	}
+
+	/** @brief Gets the number of vertices (maximum+1 of m_verts).
+	 *
+	 * @return The number of vertices (maximum+1 of m_verts).
+	 */
+	RtInt nVertices() const
+	{
+		return m_nvertices;
+	}
+
+	/** @brief Gets the number of edges (eq. number of vertices) of the surface.
+	 *
+	 * @return The Number of edges (eq. number of vertices) of the surface.
+	 */
+	RtInt nEdges() const
+	{
+		return m_nedges;
+	}
+
+	/** @brief Gets the number of vertices for each face (size is the number of faces).
+	 *
+	 * @return Number of vertices for each face (size is the number of faces).
+	 */
+	const std::vector<RtInt> &nVerts() const
+	{
+		return m_nverts;
+	}
+
+	/** @brief Gets the index for each vertex.
+	 *
+	 * @return The index for each vertex.
+	 */
+	const std::vector<RtInt> &verts() const
+	{
+		return m_verts;
+	}
+
+	/** @brief Gets the Number of integer and float args.
+	 *
+	 * @return The Number of integer and float args (integer, float) for each tag (size = 2*m_tags.size()).
+	 */
+	const std::vector<RtInt> &nArgs() const
+	{
+		return m_nargs;
+	}
+
+	/** @brief Gets the integer arguments for tags.
+	 *
+	 * @return The integer arguments for tags.
+	 */
+	const std::vector<RtInt> &intArgs() const
+	{
+		return m_intargs;
+	}
+
+	/** @brief Gets the float arguments for tags.
+	 *
+	 * @return The float arguments for tags.
+	 */
+	const std::vector<RtFloat> &floatArgs() const
+	{
+		return m_floargs;
+	}
+
+	/** @brief Gets the tags.
+	 *
+	 * @return The tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
+	 */
+	const std::vector<RtToken> &tags() const
+	{
+		return m_tags;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.preSubdivisionMesh(
-			m_scheme.c_str(), m_nfaces,
+			m_scheme, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
-			m_ntags,
-			m_tags.empty() ? 0 : &(m_tags[0]),
-			m_nargs.empty() ? 0 : &(m_nargs[0]),
-			m_intargs.empty() ? 0 : &(m_intargs[0]),
-			m_floargs.empty() ? 0 : &(m_floargs[0]),
-			parameters()
-			);
-
-		ri.doSubdivisionMesh(
-			m_scheme.c_str(), m_nfaces,
-			m_nverts.empty() ? 0 : &(m_nverts[0]),
-			m_verts.empty() ? 0 : &(m_verts[0]),
-			m_ntags,
+			(RtInt)m_tags.size(),
 			m_tags.empty() ? 0 : &(m_tags[0]),
 			m_nargs.empty() ? 0 : &(m_nargs[0]),
 			m_intargs.empty() ? 0 : &(m_intargs[0]),
@@ -1038,46 +1677,465 @@ public:
 			parameters()
 			);
 	}
-	inline CRiSubdivisionMesh &operator=(const CRiSubdivisionMesh &) {
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doSubdivisionMesh(
+			m_scheme, (RtInt)m_nverts.size(),
+			m_nverts.empty() ? 0 : &(m_nverts[0]),
+			m_verts.empty() ? 0 : &(m_verts[0]),
+			(RtInt)m_tags.size(),
+			m_tags.empty() ? 0 : &(m_tags[0]),
+			m_nargs.empty() ? 0 : &(m_nargs[0]),
+			m_intargs.empty() ? 0 : &(m_intargs[0]),
+			m_floargs.empty() ? 0 : &(m_floargs[0]),
+			parameters()
+			);
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postSubdivisionMesh(
+			m_scheme, (RtInt)m_nverts.size(),
+			m_nverts.empty() ? 0 : &(m_nverts[0]),
+			m_verts.empty() ? 0 : &(m_verts[0]),
+			(RtInt)m_tags.size(),
+			m_tags.empty() ? 0 : &(m_tags[0]),
+			m_nargs.empty() ? 0 : &(m_nargs[0]),
+			m_intargs.empty() ? 0 : &(m_intargs[0]),
+			m_floargs.empty() ? 0 : &(m_floargs[0]),
+			parameters()
+			);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiSubdivisionMesh &operator=(const CRiSubdivisionMesh &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs()); 
+
+		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiSubdivisionMesh
 
+
 ///////////////////////////////////////////////////////////////////////////////
-class CRiSphere : public CUVRManInterfaceCall {
-protected:
-	RtFloat m_radius, m_zmin, m_zmax, m_thetamax;
+/** @brief Hierarchical subdivision mesh surface.
+ */
+class CRiHierarchicalSubdivisionMesh : public CGeometryRManInterfaceCall {
+private:
+	RtToken m_scheme;    //!< The scheme (currently RI_CATMULL_CLARK only).
+	RtInt   m_nvertices, //!< The number of vertices (maximum+1 of m_verts).
+	        m_nedges;    //!< Number of edges (eq. number of vertices) of the surface.
+	std::vector<RtInt>       m_nverts,  //!< Number of vertices for each face (size is the number of faces).
+	                         m_verts,   //!< Index for each vertex.
+	                         m_nargs,   //!< Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	                         m_intargs; //!< Integer arguments for tags.
+	std::vector<RtFloat>     m_floargs; //!< Float arguments for tags.
+	std::vector<RtToken>     m_strargs; //!< String arguments for tags.
+	std::vector<RtToken>     m_tags;    //!< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
+
 public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiHierarchicalSubdivisionMesh"; }
+	inline virtual const char *className() const { return CRiHierarchicalSubdivisionMesh::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 * The default constructor sets the number of faces to 0.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	CRiHierarchicalSubdivisionMesh(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo)
+	{
+		m_scheme = RI_NULL;
+		m_nvertices = 0;
+		m_nedges = 0;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl     Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNFaces  Number of faces
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aNTags   Number of tags.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 *  @param aStrArgs String arguments for tags.
+	 *  @param n        Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens   Tokens of the request.
+	 *  @param params   Parameter values of the request.
+	 */
+	CRiHierarchicalSubdivisionMesh(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[],
+		RtInt n, RtToken tokens[], RtPointer params[]
+		);
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNFaces  Number of faces
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aNTags   Number of tags.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 *  @param aStrArgs String arguments for tags.
+	 *  @param theParameters Parsed parameter list.
+	 */
+	CRiHierarchicalSubdivisionMesh(
+		long aLineNo,
+		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[],
+		const CParameterList &theParameters);
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiHierarchicalSubdivisionMesh(const CRiHierarchicalSubdivisionMesh &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiHierarchicalSubdivisionMesh()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiHierarchicalSubdivisionMesh(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_HIERARCHICAL_SUBDIVISION_MESH; }
+	
+	/** @brief Sets the values of the member variables.
+	 *
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNFaces  Number of faces
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aNTags   Number of tags.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 *  @param aStrArgs String arguments for tags.
+	 */
+	void set(
+		RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+		RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[]);
+
+	/** @brief Sets the values of the member variables.
+	 *
+	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
+	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
+	 *  @param aVerts   Index for each vertex.
+	 *  @param aTags    Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...)
+	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 *  @param aIntArgs Integer arguments for tags.
+	 *  @param aFloArgs Float arguments for tags.
+	 *  @param aStrArgs String arguments for tags.
+	 */
+	void set(
+		RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
+		const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
+		const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs, const std::vector<RtToken> &aStrArgs);
+
+	/** @brief The scheme (currently RI_CATMULL_CLARK only).
+	 *
+	 *  @return The scheme (currently RI_CATMULL_CLARK only).
+	 */
+	RtToken scheme() const
+	{
+		return m_scheme;
+	}
+
+	/** @brief Gets the number of vertices (maximum+1 of m_verts).
+	 *
+	 * @return The number of vertices (maximum+1 of m_verts).
+	 */
+	RtInt nVertices() const
+	{
+		return m_nvertices;
+	}
+
+	/** @brief Gets the number of edges (eq. number of vertices) of the surface.
+	 *
+	 * @return The Number of edges (eq. number of vertices) of the surface.
+	 */
+	RtInt nEdges() const
+	{
+		return m_nedges;
+	}
+
+	/** @brief Gets the number of vertices for each face (size is the number of faces).
+	 *
+	 * @return Number of vertices for each face (size is the number of faces).
+	 */
+	const std::vector<RtInt> &nVerts() const
+	{
+		return m_nverts;
+	}
+
+	/** @brief Gets the index for each vertex.
+	 *
+	 * @return The index for each vertex.
+	 */
+	const std::vector<RtInt> &verts() const
+	{
+		return m_verts;
+	}
+
+	/** @brief Gets the Number of integer and float args.
+	 *
+	 * @return The Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	 */
+	const std::vector<RtInt> &nArgs() const
+	{
+		return m_nargs;
+	}
+
+	/** @brief Gets the integer arguments for tags.
+	 *
+	 * @return The integer arguments for tags.
+	 */
+	const std::vector<RtInt> &intArgs() const
+	{
+		return m_intargs;
+	}
+
+	/** @brief Gets the float arguments for tags.
+	 *
+	 * @return The float arguments for tags.
+	 */
+	const std::vector<RtFloat> &floatArgs() const
+	{
+		return m_floargs;
+	}
+
+	/** @brief Gets the string arguments for tags.
+	 *
+	 * @return The string arguments for tags.
+	 */
+	const std::vector<RtToken> &stringArgs() const
+	{
+		return m_strargs;
+	}
+
+	/** @brief Gets the tags.
+	 *
+	 * @return The tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
+	 */
+	const std::vector<RtToken> &tags() const
+	{
+		return m_tags;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preHierarchicalSubdivisionMesh(
+			m_scheme, (RtInt)m_nverts.size(),
+			m_nverts.empty() ? 0 : &(m_nverts[0]),
+			m_verts.empty() ? 0 : &(m_verts[0]),
+			(RtInt)m_tags.size(),
+			m_tags.empty() ? 0 : &(m_tags[0]),
+			m_nargs.empty() ? 0 : &(m_nargs[0]),
+			m_intargs.empty() ? 0 : &(m_intargs[0]),
+			m_floargs.empty() ? 0 : &(m_floargs[0]),
+			m_strargs.empty() ? 0 : &(m_strargs[0]),
+			parameters()
+			);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doHierarchicalSubdivisionMesh(
+			m_scheme, (RtInt)m_nverts.size(),
+			m_nverts.empty() ? 0 : &(m_nverts[0]),
+			m_verts.empty() ? 0 : &(m_verts[0]),
+			(RtInt)m_tags.size(),
+			m_tags.empty() ? 0 : &(m_tags[0]),
+			m_nargs.empty() ? 0 : &(m_nargs[0]),
+			m_intargs.empty() ? 0 : &(m_intargs[0]),
+			m_floargs.empty() ? 0 : &(m_floargs[0]),
+			m_strargs.empty() ? 0 : &(m_strargs[0]),
+			parameters()
+			);
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postHierarchicalSubdivisionMesh(
+			m_scheme, (RtInt)m_nverts.size(),
+			m_nverts.empty() ? 0 : &(m_nverts[0]),
+			m_verts.empty() ? 0 : &(m_verts[0]),
+			(RtInt)m_tags.size(),
+			m_tags.empty() ? 0 : &(m_tags[0]),
+			m_nargs.empty() ? 0 : &(m_nargs[0]),
+			m_intargs.empty() ? 0 : &(m_intargs[0]),
+			m_floargs.empty() ? 0 : &(m_floargs[0]),
+			m_strargs.empty() ? 0 : &(m_strargs[0]),
+			parameters()
+			);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiHierarchicalSubdivisionMesh &operator=(const CRiHierarchicalSubdivisionMesh &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs(), c.stringArgs()); 
+
+		CGeometryRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiHierarchicalSubdivisionMesh
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Sphere.
+ */
+class CRiSphere : public CUVRManInterfaceCall {
+private:
+	RtFloat m_radius,   //!< Radius.
+	        m_zmin,     //!< Minimum z coordinate (cut pole).
+			m_zmax,     //!< Maximum z coordinate (cut pole).
+			m_thetamax; //!< Sweep angle.
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
 	inline static const char *myClassName(void) { return "CRiSphere"; }
 	inline virtual const char *className() const { return CRiSphere::myClassName(); }
 
-	inline CRiSphere(
-		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
-		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo),
-		  m_radius(radius), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
+
+	inline virtual bool isA(const char *atomizedClassName) const
 	{
-		CQuadricClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
+		return ( atomizedClassName == myClassName() );
 	}
 
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  The default constructor sets the size of the primitive to 0.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimum z coordinate (cut pole).
+     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 */
+	CRiSphere(long aLineNo=-1,
+		RtFloat aRadius = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 360)
+		: CUVRManInterfaceCall(aLineNo),
+		  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimum z coordinate (cut pole).
+     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 *  @param n         Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens    Tokens of the request.
+	 *  @param params    Parameter values of the request.
+	 */
+	inline CRiSphere(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+		  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl      Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimum z coordinate (cut pole).
+     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 *  @param theParameters Parsed parameter list.
+	 */
 	inline CRiSphere(
 		long aLineNo,
-		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+		RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 		const CParameterList &theParameters
 		)
 		: CUVRManInterfaceCall(aLineNo, theParameters),
-		  m_radius(radius), m_zmin(zmin), m_zmax(zmax), m_thetamax(thetamax)
+		  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 	{
 	}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
 	inline CRiSphere(const CRiSphere &c)
 	{
 		*this = c;
 	}
 
-	inline virtual ~CRiSphere() {}
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiSphere()
+	{
+	}
 
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
@@ -1085,6 +2143,108 @@ public:
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
+
+	/** @brief Gets the radius of the sphere.
+	 *
+	 *  @return The radius of the sphere.
+	 */
+	RtFloat radius() const
+	{
+		return m_radius;
+	}
+
+	/** @brief Gets the radius of the sphere.
+	 *
+	 *  @param aRadius The radius of the sphere.
+	 */
+	void radius(RtFloat aRadius)
+	{
+		m_radius = aRadius;
+	}
+
+	/** @brief Gets the minimum z coordinate (cut pole).
+	 *
+	 * @return The minimum z coordinate (cut pole).
+	 */
+	RtFloat zMin() const
+	{
+		return m_zmin;
+	}
+
+	/** @brief Sets the minimum z coordinate (cut pole).
+	 *
+	 * @param aZMin The minimum z coordinate (cut pole).
+	 */
+	void zMin(RtFloat aZMin)
+	{
+		m_zmin = aZMin;
+	}
+
+	/** @brief Gets the maximum z coordinate (cut pole).
+	 *
+	 * @return The minimum z coordinate (cut pole).
+	 */
+	RtFloat zMax() const
+	{
+		return m_zmax;
+	}
+
+	/** @brief Sets the maximum z coordinate (cut pole).
+	 *
+	 * @param aZMax The maximum z coordinate (cut pole).
+	 */
+	void zMax(RtFloat aZMax)
+	{
+		m_zmax = aZMax;
+	}
+
+	/** @brief Gets the sweep angle.
+	 *
+	 * @return The sweep angle.
+	 */
+	RtFloat thetaMax() const
+	{
+		return m_thetamax;
+	}
+
+	/** @brief Sets the sweep angle.
+	 *
+	 * @param aThetaMax The sweep angle.
+	 */
+	void thetaMax(RtFloat aThetaMax)
+	{
+		m_thetamax = aThetaMax;
+	}
+
+	/** @brief Gets the member variables of a sphere.
+	 *
+	 *  @retval aRadius   Radius.
+     *  @retval aZMin     Minimum z coordinate (cut pole).
+     *  @retval aZMax     Maximum z coordinate (cut pole).
+     *  @retval aThetaMax Sweep angle.
+	 */
+	void get(RtFloat &aRadius, RtFloat &aZMin, RtFloat &aZMax, RtFloat &aThetaMax)
+	{
+		aRadius = m_radius;
+		aZMin = m_zmin;
+		aZMax = m_zmax;
+		aThetaMax = m_thetamax;
+	}
+
+	/** @brief Sets the member variables of a sphere.
+	 *
+	 *  @param aRadius   Radius.
+     *  @param aZMin     Minimum z coordinate (cut pole).
+     *  @param aZMax     Maximum z coordinate (cut pole).
+     *  @param aThetaMax Sweep angle.
+	 */
+	void set(RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax)
+	{
+		m_radius = aRadius;
+		m_zmin = aZMin;
+		m_zmax = aZMax;
+		m_thetamax = aThetaMax;
+	}
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
@@ -1100,23 +2260,32 @@ public:
 		ri.postSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
 	inline CRiSphere &operator=(const CRiSphere &c)
 	{
 		if ( this == &c )
 			return *this;
-		m_radius = c.m_radius;
-		m_zmin = c.m_zmin;
-		m_zmax = c.m_zmax;
-		m_thetamax = c.m_thetamax;
+
+		set(c.radius(), c.zMin(), c.zMax(), c.thetaMax());
+
 		CUVRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CRiSphere
 
+
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Cone.
+ */
 class CRiCone : public CUVRManInterfaceCall {
 protected:
-	RtFloat m_height, m_radius, m_thetamax;
+	RtFloat m_height,   //!< Height.
+	        m_radius,   //!< Radius.
+			m_thetamax; //!< Sweep angle.
 public:
 	inline static const char *myClassName(void) { return "CRiCone"; }
 	inline virtual const char *className() const { return CRiCone::myClassName(); }
@@ -1142,10 +2311,14 @@ public:
 	}
 }; // CRiCone
 
+
 ///////////////////////////////////////////////////////////////////////////////
 class CRiCylinder : public CUVRManInterfaceCall {
 protected:
-	RtFloat m_radius, m_zmin, m_zmax, m_thetamax;
+	RtFloat m_radius,   //!< Radius.
+	        m_zmin,     //!< Minimal z coordiante.
+			m_zmax,     //!< Maximal z coordiante.
+			m_thetamax; //!< Sweep angle.
 public:
 	inline static const char *myClassName(void) { return "CRiCylinder"; }
 	inline virtual const char *className() const { return CRiCylinder::myClassName(); }
@@ -1171,11 +2344,13 @@ public:
 	}
 }; // CRiCylinder
 
+
 ///////////////////////////////////////////////////////////////////////////////
 class CRiHyperboloid : public CUVRManInterfaceCall {
 protected:
-	RtPoint m_point1, m_point2;
-	RtFloat m_thetamax;
+	RtPoint m_point1,   //!< First point of the line to sweep to get a hyperbolid.
+	        m_point2;   //!< Second point of the line to sweep to get a hyperbolid.
+	RtFloat m_thetamax; //!< Sweep angle.
 public:
 	inline static const char *myClassName(void) { return "CRiHyperboloid"; }
 	inline virtual const char *className() const { return CRiHyperboloid::myClassName(); }
@@ -1205,10 +2380,14 @@ public:
 	}
 }; // CRiHyperboloid
 
+
 ///////////////////////////////////////////////////////////////////////////////
 class CRiParaboloid : public CUVRManInterfaceCall {
 protected:
-	RtFloat m_rmax, m_zmin, m_zmax, m_thetamax;
+	RtFloat m_rmax,     //!< Maximal radius (on zmax).
+            m_zmin,     //!< Minimal z coordinate.
+            m_zmax,     //!< Maximal z coordinate.
+	        m_thetamax; //!< Sweep angle.
 public:
 	inline static const char *myClassName(void) { return "CRiParaboloid"; }
 	inline virtual const char *className() const { return CRiParaboloid::myClassName(); }
@@ -1234,10 +2413,13 @@ public:
 	}
 }; // CRiParaboloid
 
+
 ///////////////////////////////////////////////////////////////////////////////
 class CRiDisk : public CUVRManInterfaceCall {
 protected:
-	RtFloat m_height, m_radius, m_thetamax;
+	RtFloat m_height,   //!< Distance from disk to origin on positive z axis.
+	        m_radius,   //!< Radius.
+	        m_thetamax; //!< Sweep angle.
 public:
 	inline static const char *myClassName(void) { return "CRiDisk"; }
 	inline virtual const char *className() const { return CRiDisk::myClassName(); }
@@ -1262,10 +2444,15 @@ public:
 	}
 }; // CRiDisk
 
+
 ///////////////////////////////////////////////////////////////////////////////
 class CRiTorus : public CUVRManInterfaceCall {
 protected:
-	RtFloat m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax;
+	RtFloat m_majorrad, //!< Major radius (center of the ring).
+	        m_minorrad, //!< Minor radius.
+	        m_phimin,   //!< Start angle to sweep the torus body.
+	        m_phimax,   //!< End angle to sweep the torus body.
+	        m_thetamax; //!< Sweep angle.
 public:
 	inline static const char *myClassName(void) { return "CRiTorus"; }
 	inline virtual const char *className() const { return CRiTorus::myClassName(); }
@@ -1274,12 +2461,10 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo),
+		: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 		  m_majorrad(majorrad), m_minorrad(minorrad),
 		  m_phimin(phimin), m_phimax(phimax), m_thetamax(thetamax)
 	{
-		CQuadricClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 	inline CRiTorus(
 		long aLineNo,
@@ -1335,7 +2520,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiPoints : public CGeometryRManInterfaceCall {
 protected:
-	RtInt m_npts;
+	RtInt m_npts; //!< Number of points.
 public:
 	inline static const char *myClassName(void) { return "CRiPoints"; }
 	inline virtual const char *className() const { return CRiPoints::myClassName(); }
@@ -1489,14 +2674,14 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiGeometry : public CGeometryRManInterfaceCall {
 protected:
-	std::string m_name;
+	RtToken m_name; //!< Name of the geometry (only RI_TEAPOT)
 public:
 	inline static const char *myClassName(void) { return "CRiGeometry"; }
 	inline virtual const char *className() const { return CRiGeometry::myClassName(); }
 
 	inline CRiGeometry(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		const char *name,
+		RtToken name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CGeometryRManInterfaceCall(aLineNo), m_name(name)
 	{
@@ -1506,8 +2691,8 @@ public:
 	inline virtual EnumRequests interfaceIdx() const { return REQ_GEOMETRY; }
 	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preGeometry(m_name.c_str(), parameters());
-		ri.doGeometry(m_name.c_str(), parameters());
+		ri.preGeometry(m_name, parameters());
+		ri.doGeometry(m_name, parameters());
 	}
 	inline CRiGeometry &operator=(const CRiGeometry &) {
 		return *this;

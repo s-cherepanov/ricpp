@@ -60,11 +60,11 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNLoops, RtInt *theNVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo)
+	: CPolygonRManInterfaceCall(aLineNo,
+		decl, CGeneralPolygonClasses(theNLoops, theNVerts), curColorDescr,
+		n, tokens, params)
 {
 	enterValues(theNLoops, theNVerts);
-	CGeneralPolygonClasses p(theNLoops, theNVerts);
-	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 CRiGeneralPolygon::CRiGeneralPolygon(
@@ -93,11 +93,11 @@ CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNPolys, RtInt *theNVerts, RtInt *theVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo)
+	: CPolygonRManInterfaceCall(aLineNo,
+		decl, CPointsPolygonsClasses(theNPolys, theNVerts, theVerts), curColorDescr,
+		n, tokens, params)
 {
 	enterValues(theNPolys, theNVerts, theVerts);
-	CPointsPolygonsClasses p(theNPolys, theNVerts, theVerts);
-	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 CRiPointsPolygons::CRiPointsPolygons(
@@ -134,11 +134,11 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNPolys, RtInt *theNLoops, RtInt *theNVerts, RtInt *theVerts,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo)
+	: CPolygonRManInterfaceCall(aLineNo,
+		decl, CPointsGeneralPolygonsClasses(theNPolys, theNLoops, theNVerts, theVerts), curColorDescr,
+		n, tokens, params)
 {
 	enterValues(theNPolys, theNLoops, theNVerts, theVerts);
-	CPointsGeneralPolygonsClasses p(theNPolys, theNLoops, theNVerts, theVerts);
-	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
@@ -151,141 +151,274 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiPatchMesh::enterValues(RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap)
+void CRiPatchMesh::set(
+		RtInt aUStep, RtInt aVStep,
+		RtToken aType,
+		RtInt aNu, RtToken aUWrap,
+		RtInt aNv, RtToken aVWrap)
 {
-	m_type = type;
-	m_uwrap = uwrap;
-	m_vwrap = vwrap;
-	m_nu = nu;
-	m_nv = nv;
-	m_ustep = ustep;
-	m_vstep = vstep;
+	m_ustep = aUStep;
+	m_vstep = aVStep;
+	m_type = aType;
+	m_nu = aNu;
+	m_uwrap = aUWrap;
+	m_nv = aNv;
+	m_vwrap = aVWrap;
 }
 
 CRiPatchMesh::CRiPatchMesh(
-	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr, RtInt ustep, RtInt vstep,
-	RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	RtInt aUStep, RtInt aVStep,
+	RtToken aType,
+	RtInt aNu, RtToken aUWrap,
+	RtInt aNv, RtToken aVWrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CUVRManInterfaceCall(aLineNo)
+	: CUVRManInterfaceCall(aLineNo,
+		decl, CPatchMeshClasses(aType, aNu, aUStep, aUWrap, aNv, aVStep, aVWrap), curColorDescr,
+		n, tokens, params)
 {
-	enterValues(ustep, vstep, type, nu, uwrap, nv, vwrap);
-	CPatchMeshClasses p(type, nu, ustep, uwrap, nv, vstep, vwrap);
-	setParams(decl, p, curColorDescr, n, tokens, params);
+	set(aUStep, aVStep, aType, aNu, aUWrap, aNv, aVWrap);
 }
 
 CRiPatchMesh::CRiPatchMesh(
 	long aLineNo,
-	RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
+	RtInt aUStep, RtInt aVStep,
+	RtToken aType,
+	RtInt aNu, RtToken aUWrap,
+	RtInt aNv, RtToken aVWrap,
 	const CParameterList &theParameters)
 	: CUVRManInterfaceCall(aLineNo, theParameters)
 {
-	enterValues(ustep, vstep, type, nu, uwrap, nv, vwrap);
+	set(aUStep, aVStep, aType, aNu, aUWrap, aNv, aVWrap);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiNuPatch::enterValues(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax)
+void CRiNuPatch::set(
+		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax)
 {
-	m_nu = nu;
-	m_uorder = uorder;
-	m_nv = nv;
-	m_vorder = vorder;
-	m_umin = umin;
-	m_umax = umax;
-	m_vmin = vmin;
-	m_vmax = vmax;
+	m_nu     = aNU;
+	m_uorder = aUOrder;
+	m_nv     = aNV;
+	m_vorder = aVOrder;
+	m_umin   = aUMin;
+	m_umax   = aUMax;
+	m_vmin   = aVMin;
+	m_vmax   = aVMax;
 
-	m_uknot.resize(nu+uorder);
-	m_uknot.assign(uknot, uknot+nu+uorder);
-	m_vknot.resize(nv+vorder);
-	m_vknot.assign(vknot, vknot+nv+vorder);
+	m_uknot.resize(aNU+aUOrder);
+	m_uknot.assign(aUKnot, aUKnot+aNU+aUOrder);
+	m_vknot.resize(aNV+aVOrder);
+	m_vknot.assign(aVKnot, aVKnot+aNV+aVOrder);
 }
 
+void CRiNuPatch::set(
+		RtInt aNU, RtInt aUOrder, const std::vector<RtFloat> &aUKnot, RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const std::vector<RtFloat> &aVKnot, RtFloat aVMin, RtFloat aVMax)
+{
+	const RtFloat *aUKnotPtr = aUKnot.size() > 0 ? &(aUKnot[0]) : 0;
+	const RtFloat *aVKnotPtr = aVKnot.size() > 0 ? &(aVKnot[0]) : 0;
+	set(aNU, aUOrder, aUKnotPtr, aUMin, aUMax, aNV, aVOrder, aVKnotPtr, aVMin, aVMax);
+}
 
 CRiNuPatch::CRiNuPatch(
 	long aLineNo,
 	CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+	RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
+	RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo)
+	: CGeometryRManInterfaceCall(aLineNo, decl, CNuPatchClasses(aNU, aUOrder, aNV, aVOrder), curColorDescr, n, tokens, params)
 {
-	enterValues(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax);
-	CNuPatchClasses p(nu, uorder, nv, vorder);
-	setParams(decl, p, curColorDescr, n, tokens, params);
+	set(aNU, aUOrder, aUKnot, aUMin, aUMax, aNV, aVOrder, aVKnot, aVMin, aVMax);
 }
 
 CRiNuPatch::CRiNuPatch(
 	long aLineNo,
-	RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+	RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
+	RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
 	const CParameterList &theParameters)
 	: CGeometryRManInterfaceCall(aLineNo, theParameters)
 {
-	enterValues(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax);
+	set(aNU, aUOrder, aUKnot, aUMin, aUMax, aNV, aVOrder, aVKnot, aVMin, aVMax);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-CRiSubdivisionMesh::CRiSubdivisionMesh(
-	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtToken scheme, RtInt nfaces, RtInt nverts[], RtInt verts[],
-	RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floargs[],
-	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo)
+void CRiSubdivisionMesh::set(
+	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[])
 {
-//	CRiSubdivisionMeshData data;
-//	m_data.push_back(data);
+	m_scheme = aScheme;
 
-	m_scheme = scheme;
-	m_nfaces = nfaces;
-	m_ntags = ntags;
-
-	m_nverts.resize(nfaces);
-	m_nverts.assign(nverts, nverts+nfaces);
+	m_nverts.resize(aNFaces);
+	m_nverts.assign(aNVerts, aNVerts+aNFaces);
 
 	RtInt i;
 
 	m_nedges = 0; // number of edges equals the number of vertices per face
-	for ( i = 0; i < nfaces; ++i ) {
-		m_nedges += nverts[i];
+	for ( i = 0; i < aNFaces; ++i ) {
+		m_nedges += aNVerts[i];
 	}
 
 	m_verts.resize(m_nedges);
-	m_verts.assign(verts, verts+m_nedges);
+	m_verts.assign(aVerts, aVerts+m_nedges);
+	if ( m_nedges > 0 )
+		m_nvertices = 1+(RtInt)tmax(m_nedges, &(aVerts[0]));
 
-	m_nvertices = -1;
-	for ( i=0; i < m_nedges; ++i ) {
-		if ( m_nvertices < verts[i] )
-			m_nvertices = verts[i];
-	}
-	++m_nvertices;
-
-	// m_strtags.reserve(ntags);
-	for ( i = 0; i < ntags; ++i ) {
-		m_strtags.push_back(tags[i]);
+	m_tags.reserve(aNTags);
+	for ( i = 0; i < aNTags; ++i ) {
+		m_tags.push_back(aTags[i]);
 	}
 
-	m_tags.reserve(ntags);
-	for ( i = 0; i < ntags; ++i ) {
-		m_tags.push_back(m_strtags[i].c_str());
-	}
-
-	m_nargs.resize(ntags*2);
-	m_nargs.assign(nargs, nargs+ntags*2);
+	m_nargs.resize(aNTags*2);
+	m_nargs.assign(aNArgs, aNArgs+aNTags*2);
 
 	RtInt sumargs = 0;
-	for ( i = 0; i < ntags*2; i += 2 ) {
-		sumargs += nargs[i];
+	for ( i = 0; i < aNTags*2; i += 2 ) {
+		sumargs += aNArgs[i];
 	}
 	m_intargs.resize(sumargs);
-	m_intargs.assign(intargs, intargs+sumargs);
+	m_intargs.assign(aIntArgs, aIntArgs+sumargs);
 
 	sumargs = 0;
-	for ( i = 1; i < ntags*2; i += 2 ) {
-		sumargs += nargs[i];
+	for ( i = 1; i < aNTags*2; i += 2 ) {
+		sumargs += aNArgs[i];
 	}
 	m_floargs.resize(sumargs);
-	m_floargs.assign(floargs, floargs+sumargs);
+	m_floargs.assign(aFloArgs, aFloArgs+sumargs);
+}
 
-	CSubdivisionMeshClasses p(nfaces, nverts, verts);
-	setParams(decl, p, curColorDescr, n, tokens, params);
+void CRiSubdivisionMesh::set(
+	RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
+	const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
+	const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs)
+{
+	set(
+		m_scheme, (RtInt)m_nverts.size(),
+		m_nverts.empty() ? 0 : &(m_nverts[0]),
+		m_verts.empty() ? 0 : &(m_verts[0]),
+		(RtInt)m_tags.size(),
+		m_tags.empty() ? 0 : &(m_tags[0]),
+		m_nargs.empty() ? 0 : &(m_nargs[0]),
+		m_intargs.empty() ? 0 : &(m_intargs[0]),
+		m_floargs.empty() ? 0 : &(m_floargs[0]));
+}
+
+CRiSubdivisionMesh::CRiSubdivisionMesh(
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+	RtInt n, RtToken tokens[], RtPointer params[])
+	: CGeometryRManInterfaceCall(aLineNo,
+		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
+		n, tokens, params)
+{
+	set(aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs);
+}
+
+CRiSubdivisionMesh::CRiSubdivisionMesh(
+	long aLineNo,
+	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+	const CParameterList &theParameters)
+	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+{
+	set(aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+void CRiHierarchicalSubdivisionMesh::set(
+	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+	RtInt aNTags, RtToken aTags[],
+	RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[], RtToken aStrArgs[])
+{
+	m_scheme = aScheme;
+
+	m_nverts.resize(aNFaces);
+	m_nverts.assign(aNVerts, aNVerts+aNFaces);
+
+	RtInt i;
+
+	m_nedges = 0; // number of edges equals the number of vertices per face
+	for ( i = 0; i < aNFaces; ++i ) {
+		m_nedges += aNVerts[i];
+	}
+
+	m_verts.resize(m_nedges);
+	m_verts.assign(aVerts, aVerts+m_nedges);
+	if ( m_nedges > 0 )
+		m_nvertices = 1+(RtInt)tmax(m_nedges, &(aVerts[0]));
+
+	m_tags.reserve(aNTags);
+	for ( i = 0; i < aNTags; ++i ) {
+		m_tags.push_back(aTags[i]);
+	}
+
+	m_nargs.resize(aNTags*3);
+	m_nargs.assign(aNArgs, aNArgs+aNTags*3);
+
+	RtInt sumargs = 0;
+	for ( i = 0; i < aNTags*2; i += 3 ) {
+		sumargs += aNArgs[i];
+	}
+	m_intargs.resize(sumargs);
+	m_intargs.assign(aIntArgs, aIntArgs+sumargs);
+
+	sumargs = 0;
+	for ( i = 1; i < aNTags*2; i += 3 ) {
+		sumargs += aNArgs[i];
+	}
+	m_floargs.resize(sumargs);
+	m_floargs.assign(aFloArgs, aFloArgs+sumargs);
+
+	sumargs = 0;
+	for ( i = 1; i < aNTags*2; i += 3 ) {
+		sumargs += aNArgs[i];
+	}
+	m_strargs.resize(sumargs);
+	m_strargs.assign(aStrArgs, aStrArgs+sumargs);
+}
+
+void CRiHierarchicalSubdivisionMesh::set(
+	RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
+	const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
+	const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs,
+	const std::vector<RtToken> &aStrArgs)
+{
+	set(
+		m_scheme, (RtInt)m_nverts.size(),
+		m_nverts.empty() ? 0 : &(m_nverts[0]),
+		m_verts.empty() ? 0 : &(m_verts[0]),
+		(RtInt)m_tags.size(),
+		m_tags.empty() ? 0 : &(m_tags[0]),
+		m_nargs.empty() ? 0 : &(m_nargs[0]),
+		m_intargs.empty() ? 0 : &(m_intargs[0]),
+		m_floargs.empty() ? 0 : &(m_floargs[0]),
+		m_strargs.empty() ? 0 : &(m_strargs[0]));
+}
+
+CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
+	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+	RtToken aStrArgs[],
+	RtInt n, RtToken tokens[], RtPointer params[])
+	: CGeometryRManInterfaceCall(aLineNo,
+		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
+		n, tokens, params)
+{
+	set(aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
+}
+
+CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
+	long aLineNo,
+	RtToken aScheme, RtInt aNFaces, RtInt aNVerts[], RtInt aVerts[],
+	RtInt aNTags, RtToken aTags[], RtInt aNArgs[], RtInt aIntArgs[], RtFloat aFloArgs[],
+	RtToken aStrArgs[],
+	const CParameterList &theParameters)
+	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+{
+	set(aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -294,13 +427,13 @@ CRiCurves::CRiCurves(
 	RtInt ustep, RtInt vstep, RtToken type,
 	RtInt ncurves, RtInt nverts[], RtToken wrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo), m_type(type), m_wrap(wrap), m_ncurves(ncurves), m_ustep(ustep), m_vstep(vstep)
+	: CGeometryRManInterfaceCall(aLineNo, decl,
+	    CCurvesClasses(type, ncurves, nverts, wrap, vstep), curColorDescr,
+		n, tokens, params),
+	  m_type(type), m_wrap(wrap), m_ncurves(ncurves), m_ustep(ustep), m_vstep(vstep)
 {
 	m_nverts.resize(ncurves);
 	m_nverts.assign(nverts, nverts+ncurves);
-
-	CCurvesClasses p(type, ncurves, nverts, wrap, vstep);
-	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -309,7 +442,10 @@ CRiBlobby::CRiBlobby(
 	RtInt nleaf, RtInt ncode, RtInt code[],
 	RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo), m_nleaf(nleaf), m_ncode(ncode), m_nflt(nflt), m_nstr(nstr)
+	: CGeometryRManInterfaceCall(aLineNo,
+		decl, CBlobbyClasses(nleaf), curColorDescr,
+		n, tokens, params),
+	  m_nleaf(nleaf), m_ncode(ncode), m_nflt(nflt), m_nstr(nstr)
 {
 	int i;
 
@@ -326,9 +462,6 @@ CRiBlobby::CRiBlobby(
 	for ( i = 0; i < nstr; ++i ) {
 		m_str.push_back(m_strcontainer[i].c_str());
 	}
-
-	CBlobbyClasses p(nleaf);
-	setParams(decl, p, curColorDescr, n, tokens, params);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

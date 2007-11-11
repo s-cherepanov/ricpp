@@ -27,7 +27,7 @@
 
 /** @file rimacromisc.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for error handlers and declarations, \see rimacro.h
+ *  @brief The macro classes for error handlers, system and declarations, \see rimacro.h
  */
 
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
@@ -186,7 +186,7 @@ public:
 	 *  @return A reference to this object.
 	 *  @except ExceptRiCPPError Could not construct a handler.
 	 */
-	inline CRiErrorHandler &CRiErrorHandler::operator=(const CRiErrorHandler &c)
+	inline CRiErrorHandler &operator=(const CRiErrorHandler &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -325,7 +325,7 @@ public:
 	 * @param c Object to assign.
 	 * @return A reference to this object.
 	 */
-	inline CRiDeclare &CRiDeclare::operator=(const CRiDeclare &c)
+	inline CRiDeclare &operator=(const CRiDeclare &c)
 	{
 		if ( this == &c )
 			return *this;
@@ -338,6 +338,122 @@ public:
 	}
 }; // CRiDeclare
 
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief System command.
+ *
+ * A system command issued on the system of the renderer.
+ */
+class CRiSystem : public CRManInterfaceCall {
+private:
+	std::string m_cmd; //!< The command
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
+	inline static const char *myClassName(void) { return "CRiSystem"; }
+
+	inline virtual const char *className() const { return CRiSystem::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
+	 *  @param name The atomized name of the declared variable.
+	 *  @param declaration The declaration string.
+	 */
+	inline CRiSystem(
+		long aLineNo = -1,
+		RtString aCommand = 0)
+		: CRManInterfaceCall(aLineNo),
+		  m_cmd(noNullStr(aCommand))
+	{}
+	
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiSystem(const CRiSystem &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiSystem() {}
+
+	/** @brief Cloning.
+	 *
+	 *  @return a clone of this object
+	 */
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiSystem(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_SYSTEM; }
+
+	/** @brief Gets the command string.
+	 *
+	 *  @return The command string.
+	 */
+	inline RtString command() const
+	{
+		return m_cmd.c_str();
+	}
+
+	/** @brief Sets the command string..
+	 *
+	 *  @param aCommand The command string.
+	 */
+	inline void command(RtString aCommand)
+	{
+		m_cmd = noNullStr(aCommand);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+	{
+		ri.preSystem(command());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doSystem(command());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postSystem(command());
+	}
+
+	/** @brief Assignment.
+	 *
+	 * @param c Object to assign.
+	 * @return A reference to this object.
+	 */
+	inline CRiSystem &operator=(const CRiSystem &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		command(c.command());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiSystem
 }
 
 #endif // _RICPP_RICONTEXT_RIMACROMISC_H

@@ -86,10 +86,17 @@ public:
 
 	inline virtual CRiDeclare *newRiDeclare(
 		long aLineNo,
-		const char *name, 
-		const char *declaration)
+		RtToken name, 
+		RtString declaration)
 	{
 		return new CRiDeclare(aLineNo, name, declaration);	
+	}
+
+	inline virtual CRiSystem *newRiSystem(
+		long aLineNo,
+		RtString command)
+	{
+		return new CRiSystem(aLineNo, command);	
 	}
 
 	inline virtual CRiResourceBegin *newRiResourceBegin(long aLineNo) {

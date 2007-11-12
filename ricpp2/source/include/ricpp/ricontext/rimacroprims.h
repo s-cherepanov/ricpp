@@ -302,7 +302,7 @@ public:
 	 */
 	inline RtInt numPos() const
 	{
-		(RtInt)sum(m_nVerts.size(), &(m_nVerts[0]));
+		return (RtInt)sum(m_nVerts.size(), &(m_nVerts[0]));
 	}
 
 	/** @brief Dets the number of vertices and loops.

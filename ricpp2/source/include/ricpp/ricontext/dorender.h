@@ -461,8 +461,8 @@ public:
     virtual RtVoid postRelativeDetail(RtFloat relativedetail) = 0;
     virtual RtVoid postOption(RtString name, const CParameterList &params) = 0;
 	
-    inline virtual RtVoid postLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
-	inline virtual RtVoid postAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
+    virtual RtVoid postLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params) = 0;
 	
     virtual RtVoid postAttribute(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid postColor(RtColor Cs) = 0;

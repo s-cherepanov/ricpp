@@ -59,43 +59,100 @@ namespace RiCPP {
  *
  * Used by TemplFrontStreamBuf as simple back end streambuf (block read/write) plug-in. Can be overwritten
  * for various channels. CFileBackBuffer is the backend for files. A specialiced factory inheriting
- * from CBackBufferFactory is needed to create those the back ends,. e.g. CFileBackBufferFactory is
- * the factory for CFileBackBuffer objects.
+ * from CBackBufferFactory is needed to create those back ends,. e.g. CFileBackBufferFactory is
+ * the factory for CFileBackBuffer objects. CBackBufferRoot will not be instanciated.
  */
 class CBackBufferRoot {
 protected:
-	CUri m_lastFileName;
+	CUri m_lastFileName; //!< URI of the associated resource.
 public:
+	/** @brief Destructor
+	 *
+	 *  Makes the destructor virtual. Derived objects may free their
+	 *  resources here.
+	 */
 	inline virtual ~CBackBufferRoot() {}
+	
+	/** @brief Closes the resource.
+	 */
 	inline virtual void close() { }
+	
+	/** @brief Opens a resource.
+	 *
+	 *  Reused the TypeOpenMode of standard streams to indicate the open mode of the resource.
+	 *  This base function only stores the @a absURI in m_lastFileName. And should be called
+	 *  from derived element functions.
+	 *
+	 *  @param absUri The absolute URi of the resource to open.
+	 *  @param mode The mode used to open the resource.
+	 *  @return Return false if resource couldn't be opened, true if succeeded.
+	 */
 	inline virtual bool open(
 		const CUri &absUri,
 		TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
 	{
 		m_lastFileName = absUri;
-		return false;
+		return true;
 	}
-	inline virtual bool isOpen() const { return false; }
+	
+	/** @brief Gets the open state.
+	 *
+	 *  @return true, if the resource is open.
+	 */
+	inline virtual bool isOpen() const { return true; }
+
+	/** @brief Reads a chunk of data.
+	 *
+	 *  @param b Points to the location where the data will be stored.
+	 *  @param size Maximal number of bytes that can be storaed at *b.
+	 *  @return Number of bytes read.
+	 */
 	inline virtual std::streamsize sgetn(char *b, std::streamsize size) { return 0; }
+
+	/** @brief Writes a chunk of data.
+	 *
+	 *  @param b Points to the location where the data is stored.
+	 *  @param size Number of bytes that hould be written.
+	 *  @return Number of bytes written.
+	 */
 	inline virtual std::streamsize sputn(const char *b, std::streamsize size) { return 0; }
+	
+	/** @brief Gets the URI (read-only) of the associated resource.
+	 *
+	 *  @return The URI (read-only) of the associated resource.
+	 */
 	inline virtual const CUri &lastFileName() const { return m_lastFileName; }
 }; // CBackBufferRoot
 
 
 /** @brief Back end buffer for file i/o.
- * @see CBackBufferRoot
+ *
+ *  @see CBackBufferRoot
  */
 class CFileBackBuffer : public CBackBufferRoot {
-	std::filebuf m_filebuf;
-	TypeOpenMode m_mode;
+	std::filebuf m_filebuf; //!< Associated file buffer.
+	TypeOpenMode m_mode;    //!< Open mode
 public:
-	inline CFileBackBuffer() {}
+    /** @breif Standard constructor.
+	 *
+	 *  Just clears m_mode.
+	 */
+	inline CFileBackBuffer()
+	{
+		m_mode = (TypeOpenMode)0;
+	}
 
+	/** @brief Destructor
+	 *
+	 *  Closes the file.
+	 */
 	inline virtual ~CFileBackBuffer()
 	{
 		close();
 	}
 
+	/** @brief Closes a file buffer.
+	 */
 	inline virtual void close()
 	{
 		if ( m_filebuf.is_open() ) {
@@ -103,6 +160,12 @@ public:
 		}
 	}
 
+	/** @brief Opens a file buffer.
+	 *
+	 *  @param absUri The absolute URi of the file resource to open.
+	 *  @param mode The mode used to open the resource.
+	 *  @return Return false if resource couldn't be opened, true if succeeded.
+	 */
 	inline virtual bool open(
 		const CUri &absUri,
 		TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
@@ -149,16 +212,23 @@ public:
 }; // CFileBackBuffer
 
 
-/** @brief Base class for the factory classes of specialiced CBackBufferRoot objects
+/** @brief Base class for the factory classes of specialiced CBackBufferRoot objects.
+ *
+ *  If the factory is deleted, also all back buffers created by the factory will be deleted.
+ *  Factories can be implemented as plugin, to be loaded at runtime. 
+ *
  * @see CBackBufferRoot
  */
 class CBackBufferFactory : public IPlugin {
 
-	CStringList m_schemes;
-	TemplObjPtrRegistry<CBackBufferRoot *, CBackBufferRoot *> m_myBuffers;
+	CStringList m_schemes; //!< List of Scehmes (like "FILE" in CFileBackBufferFactory).
+	TemplObjPtrRegistry<CBackBufferRoot *, CBackBufferRoot *> m_myBuffers; //!< Buffers created by a factory.
 
 protected:
-
+	/** @brief Adds a new scheme handled by the factory.
+	 *
+	 *  @param scheme Scheme (like "FILE") handled by the factory.
+	 */
 	inline void addScheme(const char *scheme)
 	{
 		std::string str_scheme(noNullStr(scheme));
@@ -168,6 +238,12 @@ protected:
 		m_schemes.push(str_scheme, false, false, false);
 	}
 
+	/** @brief Registers a newly created back buffer.
+	 *
+	 *  member function is called by factories to register newly created buffers.
+	 *
+	 *  @param b Newly created back buffer.
+	 */
 	inline bool registerObj(CBackBufferRoot *b)
 	{
 		if ( !b )
@@ -175,6 +251,12 @@ protected:
 		return m_myBuffers.registerObj(b, b);
 	}
 
+	/** @brief Unregisters (and deletes) back buffer.
+	 *
+	 *  Buffer @a b should be created by this factory.
+	 *
+	 *  @param b back buffer.
+	 */
 	inline bool unRegisterObj(CBackBufferRoot *b)
 	{
 		if ( !b )
@@ -191,24 +273,88 @@ public:
 	 */
 	typedef CStringList::size_type size_type;
 
+	/** @brief Gets the classes plugin name (backbufferfactory).
+	 *
+	 *  @return The the classes plugin name.
+	 */
 	static const char *myName();
+	
+	/** @brief Gets the classes plugin type (also backbufferfactory).
+	 *
+	 *  @return The plugin type.
+	 */
 	static const char *myType();
+
+	/** @brief Major version of the plugin class.
+	 *
+	 *  @return The major version of the plugin class.
+	 */
 	static unsigned long myMajorVersion();
+
+	/** @brief Minor version of the plugin class.
+	 *
+	 *  @return The minor version of the plugin class.
+	 */
 	static unsigned long myMinorVersion();
+
+	/** @brief Revision number of the plugin class.
+	 *
+	 *  @return The revision number version of the plugin class.
+	 */
 	static unsigned long myRevision();
 
-	inline CBackBufferFactory::CBackBufferFactory() : m_myBuffers(true) {}
+	/** @brief Standard constructor
+	 *
+	 *  The registry @a m_myBuffers also manages object deletion of the buffers.
+	 */
+	inline CBackBufferFactory() : m_myBuffers(true) {}
+	
+	/** @brief Destructor
+	 *
+	 *  Registered buffer objects will also be deleted.
+	 */
 	inline virtual ~CBackBufferFactory() {}
 
+	/** @brief Gets the object's plugin name.
+	 *
+	 *  @return The object's plugin name.
+	 */
 	inline virtual const char *name() const { return myName(); }
+
+	/** @brief Gets the object's plugin type.
+	 *
+	 *  @return The object's plugin type.
+	 */
 	inline virtual const char *type() const { return myType(); }
+	
+	/** @brief Gets the object's major version number.
+	 *
+	 *  @return The object's major version number.
+	 */
 	inline virtual unsigned long majorVersion() const {return myMajorVersion(); }
+	
+	/** @brief Gets the object's minor version number.
+	 *
+	 *  @return The object's minor version number.
+	 */
 	inline virtual unsigned long minorVersion() const {return myMinorVersion(); }
+
+	/** @brief Gets the object's revision number.
+	 *
+	 *  @return The object's revision number.
+	 */
 	inline virtual unsigned long revision() const { return myRevision(); }
 
 	inline virtual void startup() {}
 	inline virtual void shutdown() {}
 
+	/** @brief Tests if a specific scheme is supported by this factory.
+	 *
+	 *  Testing is case insensitive.
+	 *
+	 *  @param scheme Name of a scheme (e.g. "FILE")
+	 *  @return true, scheme is supported.
+	 */
 	inline virtual bool acceptsScheme(const char *scheme) const
 	{
 		std::string str_scheme(noNullStr(scheme));
@@ -216,14 +362,42 @@ public:
 		return m_schemes.isMember(str_scheme.c_str());
 	}
 
+	/** @brief Gets the const iterator of supported schemes.
+	 *
+	 *  @return The const iterator of supported schemes.
+	 */
 	inline virtual const_iterator begin() const { return m_schemes.begin(); }
+
+	/** @brief Gets the end iterator of supported schemes.
+	 *
+	 *  @return The end iterator of supported schemes.
+	 */
 	inline virtual const_iterator end() const { return m_schemes.end(); }
+
+	/** @brief Gets the number of supported schemes.
+	 *
+	 * @return Rhe number of supported schemes.
+	 */
 	inline virtual size_type size() const { return m_schemes.size(); }
 
+	/** @brief Open a new back buffer object.
+	 *
+	 *  Overwrite this to create and open a new back buffer.
+	 *  @param absURI Absolute URI of the resource to open.
+	 *  @param mode Mode used to open the resource.
+	 *  @return A new, opened back buffer object.
+	 */
 	inline virtual CBackBufferRoot *open(const CUri &absUri, TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
 	{
 		return 0;
 	}
+
+	/** @brief Closes and deletes the back buffer object.
+	 *
+	 *  Need not to be overwritten. The back buffer @p bbr has to be created by the same factory.
+	 *  @param bbr A back buffer to close and delete
+	 *  @return true, back buffer is deleted.
+	 */
 	inline virtual bool close(CBackBufferRoot *bbr)
 	{
 		bool rval = false;
@@ -241,13 +415,41 @@ public:
  */
 class CFileBackBufferFactory : public CBackBufferFactory {
 public:
-	static const char *myType();
+	/** @brief Gets the classes plugin name (file_backbuffer).
+	 *
+	 *  @return The the classes plugin name.
+	 */
 	static const char *myName();
+	
+	/** @brief Gets the classes plugin type (backbufferfactory).
+	 *
+	 *  @return The plugin type.
+	 */
+	static const char *myType();
+
+	/** @brief Major version of the plugin class.
+	 *
+	 *  @return The major version of the plugin class.
+	 */
 	static unsigned long myMajorVersion();
+
+	/** @brief Minor version of the plugin class.
+	 *
+	 *  @return The minor version of the plugin class.
+	 */
 	static unsigned long myMinorVersion();
+
+	/** @brief Revision number of the plugin class.
+	 *
+	 *  @return The revision number version of the plugin class.
+	 */
 	static unsigned long myRevision();
 
-	inline CFileBackBufferFactory::CFileBackBufferFactory() { addScheme("FILE"); }
+	/** @brief Default constructor
+	 *
+	 *  Supports the "FILE" schem for local files only.
+	 */
+	inline CFileBackBufferFactory() { addScheme("FILE"); }
 	inline virtual ~CFileBackBufferFactory() {}
 
 	inline virtual const char *type() const { return myType(); }
@@ -259,6 +461,13 @@ public:
 	inline virtual void startup() {}
 	inline virtual void shutdown() {}
 
+	/** @brief Open a new file back buffer object.
+	 *
+	 *  Overwrite this to create and open a new back buffer.
+	 *  @param absURI Absolute URI of the file resource to open.
+	 *  @param mode Mode used to open the file resource.
+	 *  @return A new, opened file back buffer object.
+	 */
 	inline virtual CBackBufferRoot *open(
 		const CUri &absUri,
 		TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
@@ -276,9 +485,10 @@ public:
 }; // CFileBackBufferFactory
 
 
-/** @brief Registration for back buffer factories
+/** @brief Registration for back buffer factories.
  *
- * Is not a singleton, because every RiCPP front end has one.
+ * It's not a singleton, because every RiCPP front end has one. Can
+ * load all ".buffer" files containing buffer factories from a directory.
  *
  * @see CBackBufferRoot
  */
@@ -330,7 +540,7 @@ public:
  * stream and the buffer. By using open(), back end buffers for various channels can be used. However,
  * at the moment only FILE: is supported. open() uses a generic URI as resource name/locator.
  *
- * I used copied code of the zlib here.
+ * I used copied code from the zlib here.
  *
  * @see CBackBufferRoot
  */

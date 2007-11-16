@@ -29,7 +29,6 @@
 
 #include "ricpp/ricppbridge/ricppbridge.h"
 // #include "ricpp/ribwriter/ribwriter.h"
-#include "ricpp/ribparser/ribparser.h"
 #include "ricpp/tools/filepath.h"
 
 using namespace RiCPP;
@@ -320,7 +319,7 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 	try {
 		RtContextHandle h = m_ctxMgmt.beginV(name, n, tokens, params);
 		if ( m_ctxMgmt.curBackend().valid() ) {
-			m_ctxMgmt.curBackend().renderingContext()->registerProtocolHandler(m_backBufferProtocolHandlers);
+			m_ctxMgmt.curBackend().renderingContext()->registerRibParserCallback(*this);
 		}
 		return h;
 	} catch (ExceptRiCPPError &e) {
@@ -2451,79 +2450,14 @@ RtVoid CRiCPPBridge::readArchive(RtString name, const IArchiveCallback *callback
 RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
-			CRenderState *state = m_ctxMgmt.curBackend().renderingContext()->renderState();
-			if ( state ) {
-				try {
-					m_ctxMgmt.curBackend().renderingContext()->readArchiveV(name, callback, n, tokens, params);
-
-					if ( state->storedArchiveName(name) == RI_NULL && !state->postponeReadArchive() ) {
-						CParameterList p;
-
-						if ( m_ctxMgmt.curBackend().renderingContext()->preCheck(REQ_READ_ARCHIVE) ) {
-							state->parseParameters(p, CValueCounts(), n, tokens, params);
-							doReadArchive(name, callback, p);
-							if ( n != p.size() ) {
-								throw ExceptRiCPPError(RIE_BADTOKEN, RIE_ERROR, __LINE__, __FILE__, "Unrecognized tokens in 'readArchiveV'");
-							}
-						}
-					}
-				} catch (ExceptRiCPPError &e) {
-					ricppErrHandler().handleError(e);
-				}
-			} else {
-				ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::readArchiveV(name:%s, callback:%s, ...) has not a valid context", name ? name : name, callback ? callback->name() : "");
-			}
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->readArchiveV(name, callback, n, tokens, params);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::readArchiveV(name:%s, callback:%s, ...)", name ? name : name, callback ? callback->name() : "");
-	}
-}
-
-RtVoid CRiCPPBridge::doReadArchive(RtString name, const IArchiveCallback *callback, const class CParameterList &p)
-{
-	if ( emptyStr(name) )
-		return;
-
-	CRenderState *state = m_ctxMgmt.curBackend().renderingContext()->renderState();
-	CUri sav(state->baseUri());
-	const char *oldArchiveName = state->archiveName();
-	long oldLineNo = state->lineNo();
-
-	assert(m_ribFilterList.firstHandler() != 0);
-
-	CRibParser parser(ricppErrHandler(), m_backBufferProtocolHandlers, *m_ribFilterList.firstHandler(), *state, state->baseUri());
-	try {
-		if ( parser.canParse(name) ) {
-			state->baseUri() = parser.absUri();
-			state->archiveName(name);
-			state->lineNo(0);
-			parser.parse(callback, p);
-			state->archiveName(oldArchiveName);
-			state->lineNo(oldLineNo);
-			state->baseUri() = sav;
-			parser.close();
-		}
-	} catch(ExceptRiCPPError &e1) {
-		state->baseUri() = sav;
-		state->archiveName(oldArchiveName);
-		state->lineNo(oldLineNo);
-		parser.close();
-		ricppErrHandler().handleError(e1);
-		return;
-	} catch(std::exception &e2) {
-		state->baseUri() = sav;
-		state->archiveName(oldArchiveName);
-		state->lineNo(oldLineNo);
-		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__, "While parsing name: %s", name, e2.what());
-		parser.close();
-		return;
-	} catch(...) {
-		state->baseUri() = sav;
-		state->archiveName(oldArchiveName);
-		state->lineNo(oldLineNo);
-		parser.close();
-		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__, "Unknown error while parsing: %s", name);
-		return;
 	}
 }
 

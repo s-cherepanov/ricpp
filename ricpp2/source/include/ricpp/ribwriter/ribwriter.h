@@ -210,7 +210,10 @@ public:
 	inline virtual RtVoid doMakeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, const CParameterList &params) {}
 
 	inline virtual RtVoid doArchiveRecord(RtToken type, RtString line) {}
-	inline virtual RtVoid doReadArchive(IRi &callee, RtString name, const IArchiveCallback *callback, const CParameterList &params) {}
+	inline virtual RtVoid doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+	{
+		CBaseRenderer::doReadArchive(name, callback, params);
+	}
 
 	inline virtual RtVoid doIfBegin(RtString expr) {}
 	inline virtual RtVoid doElseIfBegin(RtString expr) {}

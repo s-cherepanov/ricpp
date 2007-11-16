@@ -29,7 +29,13 @@
 
 #include "ricpp/ribparser/ribparser.h"
 
+#ifndef _RICPP_RICPP_PARAMCLASSES_H
+#include "ricpp/ricpp/paramclasses.h"
+#endif // _RICPP_RICPP_PARAMCLASSES_H
+
 using namespace RiCPP;
+
+std::map<std::string, CRibRequest *> CRibParser::s_requestMap;
 
 CRibParameter::CRibParameter() {
 	m_lineCount = 0;
@@ -196,6 +202,33 @@ bool CRibParameter::convertFloatToInt() {
 }
 
 
+// ----------------------------------------------------------------------------
+
+/** @brief Handles RIB request WorldBegin.
+ */
+class CWorldBegin : public CRibRequest {
+public:
+	virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+	inline virtual EnumRequests getId() const { return REQ_WORLD_BEGIN; }
+}; // CSphereRequest
+
+void CWorldBegin::operator()(IRibParserState &parser, CRibRequestData &request) const
+{
+}
+
+// ----------------------------------------------------------------------------
+
+/** @brief Handles RIB request WorldEnd.
+ */
+class CWorldEnd : public CRibRequest {
+public:
+	virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+	inline virtual EnumRequests getId() const { return REQ_WORLD_END; }
+}; // CWorldEnd
+
+void CWorldEnd::operator()(IRibParserState &parser, CRibRequestData &request) const
+{
+}
 
 // ----------------------------------------------------------------------------
 
@@ -209,10 +242,9 @@ public:
 
 void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
-#if 0
 	CQuadricClasses p;
 
-	if ( request.size() >= 4 && !request.isArray() ) {
+	if ( request.size() >= 4 && !request[0].isArray() ) {
 		// Sphere radius zmin zmax thetamax <paramlist>
 
 		CRibParameter &p0 = request[0];
@@ -282,7 +314,7 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 				"Line %ld, File \"%s\", badarray: 'Sphere' additional arguments ignored",
 				p0.lineCount(), parser.resourceName(), RI_NULL);
 		}
-		if (  p0.typeID() != TYPEID_FLOAT ) {
+		if (  p0.typeID() != BASICTYPE_FLOAT ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Sphere' argument array 1, not all elements are numeric",
 				p0.lineCount(), parser.resourceName(), RI_NULL);
@@ -292,7 +324,7 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 		int n = request.getTokenList(1, p);
 
 		if ( !correct )
-			break;
+			return;
 
 		RtFloat *vals = (RtFloat *)p0.getValue();
 		if ( !vals ) {
@@ -300,7 +332,7 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 				RIE_BUG, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: 'Sphere' could not store arguments",
 				p0.lineCount(), parser.resourceName(), RI_NULL);
-			break;
+			return;
 		}
 
 		RtFloat radius   = vals[0],
@@ -323,7 +355,6 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 			"Line %ld, File \"%s\", badargument: 'Sphere' arguments (radius, zmin, zmax, thetamax) missing",
 			parser.lineno(), parser.resourceName(), RI_NULL);
 	}
-#endif
 }
 
 
@@ -364,7 +395,7 @@ unsigned char CArchiveParser::getchar() {
 		return val;
 	}
 
-	m_istream >> val;
+	val = m_istream.get();
 	if ( !m_istream ) {
 		val = 0;
 	}
@@ -582,26 +613,31 @@ const int CRibParser::RIBPARSER_EOF = -1;
 
 void CRibParser::initRequestMap()
 {
-	m_requestMap.clear();
-	m_requestMap.insert(std::make_pair("Sphere", CSphereRequest()));
+	static CSphereRequest sphere; 
+	if ( s_requestMap.empty() ) {
+		s_requestMap.insert(std::make_pair("Sphere", &sphere));
+	}
 }
 
 EnumRequests CRibParser::findIdentifier()
 {
 	m_token.push_back(0); // Terminate string
-	std::map<std::string, CRibRequest>::const_iterator i;
-	if ( (i = m_requestMap.find(&m_token[0])) != m_requestMap.end() ) {
-		return i->second.getId();
+	std::map<std::string, CRibRequest *>::const_iterator i;
+	if ( (i = s_requestMap.find(&m_token[0])) != s_requestMap.end() ) {
+		if ( i->second )
+			return (i->second)->getId();
 	}
 	return REQ_UNKNOWN;
 }
 
 bool CRibParser::call(const std::string &request)
 {
-	std::map<std::string, CRibRequest>::const_iterator i;
-	if ( (i = m_requestMap.find(request)) != m_requestMap.end() ) {
-		i->second(*this, m_request);
-		return true;
+	std::map<std::string, CRibRequest *>::const_iterator i;
+	if ( (i = s_requestMap.find(request)) != s_requestMap.end() ) {
+		if ( i->second ) {
+			(*(i->second))(*this, m_request);
+			return true;
+		}
 	}
 
 	return false;
@@ -1414,14 +1450,13 @@ int CRibParser::parseNextCall()
 	// handle any comments found (e.g. the first comments in a file)
 	handleDeferedComments();
 
-	int t = m_lookahead; // Call id of the current request, RIBPARSER_EOF if EOF
-
 	// Clear parameter list
 	m_braketDepth = 0;
-	m_request.clear();
+	int t = m_lookahead; // Call id of the current request, RIBPARSER_EOF if EOF
 
 	// If there is a token ( t != EOF ), read the parameters
 	if ( t >= 0 ) {
+		m_request.curRequest(&m_token[0]);
 		// find the next token as lookahead
 		do {
 			m_code = -1;            // encoded request number (binary decoder)
@@ -1457,6 +1492,10 @@ int CRibParser::parseNextCall()
 		// handles the RIB request of the previous look ahead
 		if ( !call(m_request.curRequest()) ) {
 			// *** Error
+			errHandler().handleError(
+				RIE_BADTOKEN, RIE_ERROR,
+				"Line %ld, File \"%s\", not a valid request: %s",
+				lineno(), resourceName(), m_request.curRequest().c_str(), RI_NULL);
 		}
 		handleDeferedComments(); // handles any comments found
 	}

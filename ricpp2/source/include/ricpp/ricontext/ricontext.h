@@ -30,25 +30,15 @@
  *  @brief Declaration calling interface of the backend.
  */
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
-
-#ifndef _RICPP_STREAMS_BACKBUFFER_H
-#include "ricpp/streams/backbuffer.h"
-#endif // _RICPP_STREAMS_BACKBUFFER_H
-
-#ifndef _RICPP_RICPP_ERRORHANDLERS_H
-#include "ricpp/ricpp/errorhandlers.h"
-#endif // _RICPP_RICPP_ERRORHANDLERS_H
-
 #ifndef RICPP_RENDERSTATE_RENDERSTATE_H
 #include "ricpp/ricontext/renderstate.h"
 #endif // RICPP_RENDERSTATE_RENDERSTATE_H
 
-namespace RiCPP {
+#ifndef _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
+#include "ricpp/ribparser/ribparsercallback.h"
+#endif // _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
 
-class CRenderState;
+namespace RiCPP {
 
 /** @brief RenderMan Interface for a backend rendering context.
  *
@@ -156,13 +146,13 @@ public:
 	virtual CRenderState *renderState() = 0;
 	virtual bool preCheck(EnumRequests req) = 0;
 
-	/** @brief Interfaces needed for byte streams.
+	/** @brief Interfaces of fronten needed by rib parser.
 	 *
 	 * Is called at the begin() of the front end.
 	 *
-	 * @params protocolHandler Protocol handler for byte streams.
+	 * @params cb Callback interface of the front end.
 	 */
-	virtual RtVoid registerProtocolHandler(CBackBufferProtocolHandlers &protocolHandler) = 0;
+	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb) = 0;
 }; // IRiContext
 } // namespace RiCPP
 

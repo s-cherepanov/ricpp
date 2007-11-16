@@ -42,17 +42,9 @@
 #include "ricpp/rendererloader/rendererloader.h"
 #endif
 
-#ifndef _RICPP_RICPP_ERRORHANDLERS_H
-#include "ricpp/ricpp/errorhandlers.h"
-#endif
-
-#ifndef _RICPP_RIBFILTER_RIBFILTERLIST_H
-#include "ricpp/ribfilter/ribfilterlist.h"
-#endif
-
-#ifndef _RICPP_STREAMS_BACKBUFFER_H
-#include "ricpp/streams/backbuffer.h"
-#endif
+#ifndef _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
+#include "ricpp/ribparser/ribparsercallback.h"
+#endif // _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
 
 #include <vector>
 #include <cassert>
@@ -77,7 +69,7 @@ namespace RiCPP {
  * Normally only a single instance of CRiCPPBridge is used. However didn't want to
  * restrict it to be a singleton.
  */
-class CRiCPPBridge : public IRi
+class CRiCPPBridge : public IRi, protected IRibParserCallback
 {
 private:
 	/** @addtogroup ricpp_filter
@@ -210,11 +202,7 @@ private:
 	}
 
 protected:
-	/** @brief Reads a RIB archive.
-	 */
-	virtual RtVoid doReadArchive(RtString name, const IArchiveCallback *callback, const class CParameterList &p);
-
-	/** @brief Returns the error handler to use.
+	/** @brief Gets the error handler to use.
 	 *
 	 *  This function can be overwritten to change the
 	 *  default error handler for backend exceptions.
@@ -222,7 +210,28 @@ protected:
 	 *
 	 *  @return m_ricppErrorHandler, the defualt CRiCPPBridgeErrorHandler is returned.
 	 */
-	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_ricppErrorHandler; }
+	inline virtual IRiCPPErrorHandler &ricppErrHandler()
+	{
+		return m_ricppErrorHandler;
+	}
+
+	/** @brief Gets the handler for the URI schemes.
+	 *
+	 *  @return The handler for the URI schemes.
+	 */
+	inline virtual CBackBufferProtocolHandlers &protocolHandlers()
+	{
+		return m_backBufferProtocolHandlers;
+	};
+
+	/**  @brief Gets the rib filter functions called by the parser.
+	*
+	 *   @return The rib filter functions called by the parser.
+	 */
+	inline virtual IRiRoot &ribFilter()
+	{
+		return firstRibFilter();
+	}
 
 	/** @brief Extracts all token-value pairs of an (...) interface call
 	 *
@@ -757,21 +766,24 @@ public:
 	 *  @{
 	 */
 
-	/**  @brief The first interface to a user defined RIB filter
-	 *  @return A pointer to the interface of the first user defined filter
+	/**  @brief Gets the first interface to a user defined RIB filter.
+	 *  @return A reference of the interface of the first user defined filter.
 	 */
-	inline virtual IRiRoot *firstRibFilter()
+	inline virtual IRiRoot &firstRibFilter()
 	{
-		return m_ribFilterList.firstHandler();
+		if ( m_ribFilterList.firstHandler() )
+			return *m_ribFilterList.firstHandler();
+		return *this;
 	}
 
-	/** @brief The last interface to a user defined RIB filter
-	 *  @return A pointer to the interface of the last user defined filter,
-	 *          that is 
+	/** @brief Tgets the last interface to a user defined RIB filter.
+	 *  @return A reference of the interface of the last user defined filter.
 	 */
-	inline virtual IRiRoot *lastRibFilter()
+	inline virtual IRiRoot &lastRibFilter()
 	{
-		return m_ribFilterList.lastHandler();
+		if ( m_ribFilterList.lastHandler() )
+			return *m_ribFilterList.lastHandler();
+		return *this;
 	}
 
 	/** @brief Adds a new rib filter to the front.

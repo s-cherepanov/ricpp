@@ -1450,6 +1450,18 @@ public:
 			m_callback = cb->duplicate();
 	}
 
+	inline CRiReadArchive(
+		long aLineNo,
+		RtString aFilename, const IArchiveCallback *cb,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_filename(aFilename)
+	{
+		m_callback = 0;
+		if ( cb )
+			m_callback = cb->duplicate();
+	}
+
 	inline virtual ~CRiReadArchive()
 	{
 		if ( m_callback )

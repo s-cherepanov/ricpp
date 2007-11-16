@@ -34,13 +34,14 @@
 #include "ricpp/ricontext/renderstate.h"
 #endif // _RICPP_RICONTEXT_RENDERSTATE_H
 
-#ifndef _RICPP_STREAMS_BACKBUFFER_H
-#include "ricpp/streams/backbuffer.h"
-#endif // _RICPP_STREAMS_BACKBUFFER_H
+#ifndef _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
+#include "ricpp/ribparser/ribparsercallback.h"
+#endif // _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
 
 #include <deque>
 
 namespace RiCPP {
+
 	//! Container class for one parameter (array) read by the parser (RIB)
 	/*! Types float, int or string are supported.
 	 */
@@ -106,9 +107,9 @@ namespace RiCPP {
 		}
 
 		//! Ask the type of the parameter.
-		/*! \return id of the type of the contained values (TYPEID_INT, TYPEID_FLOAT, TYPEID_STRING).
+		/*! \return id of the type of the contained values (BASICTYPE_INT, BASICTYPE_FLOAT, BASICTYPE_STRING).
 		 */
-		inline int typeID() const {
+		inline EnumBasicTypes typeID() const {
 			return m_typeID;
 		}
 
@@ -124,7 +125,7 @@ namespace RiCPP {
 				m_typeID = BASICTYPE_FLOAT;
 				// do not return
 			}
-			if ( m_typeID == -1 || m_typeID == BASICTYPE_FLOAT ) {
+			if ( m_typeID == BASICTYPE_UNKNOWN || m_typeID == BASICTYPE_FLOAT ) {
 				m_vFloat.push_back(v);
 				m_typeID = BASICTYPE_FLOAT;
 				return true;
@@ -143,7 +144,7 @@ namespace RiCPP {
 				m_vFloat.push_back((RtFloat)v);
 				return true;
 			}
-			if ( m_typeID == -1 || m_typeID == BASICTYPE_INTEGER ) {
+			if ( m_typeID == BASICTYPE_UNKNOWN || m_typeID == BASICTYPE_INTEGER ) {
 				m_vInt.push_back(v);
 				m_typeID = BASICTYPE_INTEGER;
 				return true;
@@ -156,7 +157,7 @@ namespace RiCPP {
 		 *  \return true: value could be set, false: otherwise
 		 */
 		inline bool setString(const char *v) {
-			if ( m_typeID == -1 || m_typeID == BASICTYPE_STRING ) {
+			if ( m_typeID == BASICTYPE_UNKNOWN || m_typeID == BASICTYPE_STRING ) {
 				m_vString.push_back(v);
 				m_typeID = BASICTYPE_STRING;
 				return true;
@@ -246,7 +247,6 @@ namespace RiCPP {
 		bool convertIntToFloat();
 	}; // CRibParameter
 
-
 	/** @brief Interface for the state reader of the parser CRibParser
 	 */
 	class IRibParserState {
@@ -255,9 +255,11 @@ namespace RiCPP {
 		virtual const CUri &baseUri() const = 0;
 		virtual const CUri &absUri() const = 0;
 		virtual long lineno() const = 0;
+		virtual const char *resourceName() const = 0;
 		virtual const IArchiveCallback *callback() const = 0;
 		virtual const CRenderState &renderState() const = 0;
 		virtual IRiRoot &ribFilter() = 0;
+		virtual IRiCPPErrorHandler &errHandler() = 0;
 	}; // IRibParserState
 
 
@@ -274,9 +276,9 @@ namespace RiCPP {
 		{
 			return *m_errHandler;
 		}
-		inline const char *resourceName()
+		inline const char *resourceName() const
 		{
-			return m_parserState->absUri().toString().c_str();
+			return m_parserState->resourceName();
 		}
 
 		inline const CRenderState &renderState() const
@@ -389,9 +391,9 @@ namespace RiCPP {
 			m_curRequest = req ? req : "";
 		}
 
-		const char *curRequest() const
+		const std::string &curRequest() const
 		{
-			return m_curRequest.c_str();
+			return m_curRequest;
 		}
 	}; // CRibRequestData
 
@@ -399,11 +401,7 @@ namespace RiCPP {
 	 */
 	class CRibRequest {
 	public:
-		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const {}
-		inline virtual CRibRequest &operator=(const IRibParserState &req)
-		{
-			return *this;
-		}
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const = 0;
 		virtual EnumRequests getId() const {return REQ_UNKNOWN;}
 	}; // CRibRequest
 
@@ -411,11 +409,9 @@ namespace RiCPP {
 	/** @brief Generic parser object
 	 */
 	class CArchiveParser : public IRibParserState {
-		CBackBufferProtocolHandlers *m_backBufferReg;
-		IRiRoot *m_ribFilter;
+		IRibParserCallback *m_parserCallback;
 		const CRenderState *m_renderState;
 		const IArchiveCallback *m_callback;
-		IRiCPPErrorHandler *m_errHandler;
 
 		CUri m_baseUri;
 		CUri m_absUri;
@@ -438,17 +434,13 @@ namespace RiCPP {
 
 	public:
 		inline CArchiveParser(
-			IRiCPPErrorHandler &anErrHandler,
-			CBackBufferProtocolHandlers &backBufferReg,
-			IRiRoot &ribFilter,
+			IRibParserCallback &parserCallback,
 			const CRenderState &aRenderState,
 			const CUri &baseUri) :
-			m_ob(backBufferReg),
+			m_ob(parserCallback.protocolHandlers()),
 			m_istream(&m_ob)
 		{
-			m_errHandler = &anErrHandler;
-			m_backBufferReg = &backBufferReg;
-			m_ribFilter = &ribFilter;
+			m_parserCallback = &parserCallback;
 			m_renderState = &aRenderState;
 			m_baseUri = baseUri;
 			m_lineno = 0;
@@ -476,6 +468,11 @@ namespace RiCPP {
 			return m_lineno;
 		}
 
+		inline virtual const char *resourceName() const
+		{
+			return absUri().toString().c_str();
+		}
+
 		inline virtual const IArchiveCallback *callback() const
 		{
 			return m_callback;
@@ -488,12 +485,12 @@ namespace RiCPP {
 
 		inline virtual IRiCPPErrorHandler &errHandler()
 		{
-			return *m_errHandler;
+			return m_parserCallback->ricppErrHandler();
 		}
 
 		inline virtual IRiRoot &ribFilter()
 		{
-			return *m_ribFilter;
+			return m_parserCallback->ribFilter();
 		}
 
 		virtual bool canParse(RtString name);
@@ -560,15 +557,15 @@ namespace RiCPP {
 
 		/** @brief Request handler for each token (e.g. "Sphere")
 		 */
-		std::map<std::string, CRibRequest> m_requestMap;
+		static std::map<std::string, CRibRequest *> s_requestMap;
 
-		/** @brief Calls the handler routine for a request token using m_requestMap.
+		/** @brief Calls the handler routine for a request token using s_requestMap.
 		 * @param request The string of request token
 		 * @return False, no CRibRequest handler found for \a request. True, handler found and called.
 		 */
 		bool call(const std::string &request);
 
-		/** @brief Initializes m_requestMap.
+		/** @brief Initializes s_requestMap.
 		 */
 		void initRequestMap();
 
@@ -630,21 +627,14 @@ namespace RiCPP {
 		int nextToken();
 		int parseNextCall();
 		void parseFile();
-
-		inline const char *resourceName()
-		{
-			return absUri().toString().c_str();
-		}
 	public:
 		inline CRibParser(
-			IRiCPPErrorHandler &anErrHandler,
-			CBackBufferProtocolHandlers &backBufferReg,
-			IRiRoot &ribFilter,
+			IRibParserCallback &parserCallback,
 			const CRenderState &aRenderState,
 			const CUri &baseUri)
-			: CArchiveParser(anErrHandler, backBufferReg, ribFilter, aRenderState, baseUri)
+			: CArchiveParser(parserCallback, aRenderState, baseUri)
 		{
-			m_request.init(*this, anErrHandler);
+			m_request.init(*this, parserCallback.ricppErrHandler());
 			initRequestMap();
 		}
 

@@ -348,6 +348,11 @@ void testrun(CRiCPPBridge &ri)
 
 			ri.worldEnd();
 		ri.frameEnd();
+		ri.frameBegin(2);
+			ri.worldBegin();
+				ri.readArchive("test.rib", 0, RI_NULL);
+			ri.worldEnd();
+		ri.frameEnd();
 	ri.end();
 }
 

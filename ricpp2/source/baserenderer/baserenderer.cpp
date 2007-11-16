@@ -36,7 +36,7 @@ using namespace RiCPP;
 
 CBaseRenderer::CBaseRenderer() :
 	m_renderState(0),
-	m_protocolHandler(0)
+	m_parserCallback(0)
 {
 	m_renderState = 0;
 	m_modeStack = 0;
@@ -410,7 +410,7 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 		defaultDeclarations();
 
 		// Handle the parameters
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 		preBegin(name, renderState()->curParamList());
 		doBegin(name, renderState()->curParamList());
 		postBegin(name, renderState()->curParamList());
@@ -857,10 +857,17 @@ RtVoid CBaseRenderer::preObjectInstance(RtObjectHandle handle)
 RtVoid CBaseRenderer::doObjectInstance(RtObjectHandle handle)
 {
 	CRiObjectMacro *m = renderState()->objectInstance(handle);
-	renderState()->curReplay(m);
 	if ( m ) {
 		if ( m->isClosed() ) {
-			m->replay(*this, 0);
+			CRiMacro *msav = renderState()->curReplay();
+			renderState()->curReplay(m);
+			try {
+				m->replay(*this, 0);
+				renderState()->curReplay(msav);
+			} catch (...) {
+				renderState()->curReplay(msav);
+				throw;
+			}
 		} else {
 			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Object instance used before it's ObjectEnd().");
 		}
@@ -875,8 +882,6 @@ RtVoid CBaseRenderer::postObjectInstance(RtObjectHandle handle)
 
 RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle)
 {
-	CRiMacro *m = renderState()->curReplay();
-
 	try {
 		if ( !preCheck(REQ_OBJECT_INSTANCE) )
 			return;
@@ -885,20 +890,15 @@ RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle)
 		processRequest(r);
 		
 	} catch ( ExceptRiCPPError &e2 ) {
-		renderState()->curReplay(m);
 		ricppErrHandler().handleError(e2);
 		return;
 	} catch ( std::exception &e1 ) {
-		renderState()->curReplay(m);
 		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'objectInstance': %s", e1.what());
 		return;
 	} catch ( ... ) {
-		renderState()->curReplay(m);
 		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'objectInstance'");
 		return;
 	}
-
-	renderState()->curReplay(m);
 }
 
 RtVoid CBaseRenderer::preMotionBegin(RtInt N, RtFloat times[])
@@ -1050,7 +1050,7 @@ RtVoid CBaseRenderer::resourceV(RtString handle, RtString type, RtInt n, RtToken
 		if ( !preCheck(REQ_RESOURCE) )
 			return;
 
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiResource r(renderState()->lineNo(), handle, type, renderState()->curParamList());
 		processRequest(r);
@@ -1078,7 +1078,7 @@ RtArchiveHandle CBaseRenderer::archiveBeginV(RtString name, RtInt n, RtToken tok
 		if ( !preCheck(REQ_ARCHIVE_BEGIN) )
 			return illArchiveHandle;
 
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiArchiveBegin r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -1131,10 +1131,17 @@ RtVoid CBaseRenderer::preArchiveInstance(RtArchiveHandle handle, const IArchiveC
 RtVoid CBaseRenderer::doArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
 {
 	CRiArchiveMacro *m = renderState()->archiveInstance(handle);
-	renderState()->curReplay(m);
 	if ( m ) {
 		if ( m->isClosed() ) {
-			m->replay(*this, callback);
+			CRiMacro *msav = renderState()->curReplay();
+			renderState()->curReplay(m);
+			try {
+				m->replay(*this, callback);
+				renderState()->curReplay(msav);
+			} catch(...) {
+				renderState()->curReplay(msav);
+				throw;
+			}
 		} else {
 			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Object instance used before it's ArchiveEnd().");
 		}
@@ -1149,30 +1156,25 @@ RtVoid CBaseRenderer::postArchiveInstance(RtArchiveHandle handl, const IArchiveC
 
 RtVoid CBaseRenderer::archiveInstanceV(RtArchiveHandle handle, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	CRiMacro *m = renderState()->curReplay();
-
 	try {
 		if ( !preCheck(REQ_ARCHIVE_INSTANCE) )
 			return;
 
-		CRiArchiveInstance r(renderState()->lineNo(), handle, callback);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+
+		CRiArchiveInstance r(renderState()->lineNo(), handle, callback, renderState()->curParamList());
 		processRequest(r);
 		
 	} catch ( ExceptRiCPPError &e2 ) {
-		renderState()->curReplay(m);
 		ricppErrHandler().handleError(e2);
 		return;
 	} catch ( std::exception &e1 ) {
-		renderState()->curReplay(m);
 		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'archiveInstance': %s", e1.what());
 		return;
 	} catch ( ... ) {
-		renderState()->curReplay(m);
 		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'archiveInstance'");
 		return;
 	}
-
-	renderState()->curReplay(m);
 }
 
 
@@ -1337,7 +1339,7 @@ RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPo
 
 		// Parse parameters, ignore unrecognized ones
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		// Process command
 		CRiProjection r(renderState()->lineNo(), name, renderState()->curParamList());
@@ -1674,7 +1676,7 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiImager r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -1756,7 +1758,7 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 		if ( !preCheck(req) )
 			return;
 
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiDisplayChannel r(renderState()->lineNo(), channel, renderState()->curParamList());
 		processRequest(r);
@@ -1795,7 +1797,7 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 
 		type = renderState()->tokFindCreate(type);
 		mode = renderState()->tokFindCreate(mode);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiDisplay r(renderState()->lineNo(), name, type, mode, renderState()->curParamList());
 		processRequest(r);
@@ -1834,7 +1836,7 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 			return;
 
 		type = renderState()->tokFindCreate(type);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiHider r(renderState()->lineNo(), type, renderState()->curParamList());
 		processRequest(r);
@@ -1957,7 +1959,7 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiOption r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2000,7 +2002,7 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 			return h;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		if ( renderState()->curMacro() ) {
 				CRiLightSource *m = new CRiLightSource(*renderState(), name, n, tokens, params);
@@ -2044,7 +2046,7 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 		return illLightHandle;
 
 	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
+	renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 	RtLightHandle h = renderState()->areaLightSourceHandle();
 
@@ -2138,7 +2140,7 @@ RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPoi
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiAttribute r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2257,7 +2259,7 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiSurface r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2304,7 +2306,7 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiAtmosphere r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2351,7 +2353,7 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiInterior r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2398,7 +2400,7 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiExterior r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2445,7 +2447,7 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiDisplacement r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -3239,7 +3241,7 @@ RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtP
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CValueCounts(), n, tokens, params);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiDeformation r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -3721,12 +3723,13 @@ RtVoid CBaseRenderer::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces,
 
 RtVoid CBaseRenderer::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	EnumRequests req = REQ_SPHERE;
 	try {
-
-		if ( !preCheck(REQ_SPHERE) )
+		if ( !preCheck(req) )
 			return;
 
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+
 		CRiSphere r(renderState()->lineNo(), radius, zmin, zmax, thetamax, renderState()->curParamList());
 		processRequest(r);
 
@@ -3734,11 +3737,27 @@ RtVoid CBaseRenderer::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloa
 		ricppErrHandler().handleError(e2);
 		return;
 	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'sphere': %s", e1.what());
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
 		return;
 	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'sphere'");
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
 		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
 	}
 }
 
@@ -3750,12 +3769,13 @@ RtVoid CBaseRenderer::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, Rt
 
 RtVoid CBaseRenderer::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	EnumRequests req = REQ_TORUS;
 	try {
-
-		if ( !preCheck(REQ_TORUS) )
+		if ( !preCheck(req) )
 			return;
 
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+
 		CRiTorus r(renderState()->lineNo(), majorrad, minorrad, phimin, phimax, thetamax, renderState()->curParamList());
 		processRequest(r);
 
@@ -3763,11 +3783,27 @@ RtVoid CBaseRenderer::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin,
 		ricppErrHandler().handleError(e2);
 		return;
 	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'torus': %s", e1.what());
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
 		return;
 	} catch ( ... ) {
-		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'torus'");
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
 		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
 	}
 }
 
@@ -3789,30 +3825,123 @@ RtVoid CBaseRenderer::makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString b
 
 RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line) {}
 
-RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !preCheck(REQ_READ_ARCHIVE) )
-		return;
-
-	RtToken handle = renderState()->storedArchiveName(name);
-	if ( handle != RI_NULL ) {
-		archiveInstanceV(handle, callback, n, tokens, params);
-		return;
-	}
-
-	renderState()->parseParameters(CValueCounts(), n, tokens, params);
-
-	preReadArchive(name, callback, renderState()->curParamList());
-	doReadArchive(name, callback, renderState()->curParamList());
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'readArchiveV'");
-	}
-}
-
 RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
+	if ( emptyStr(name) )
+		return;
+
+	if ( !m_parserCallback ) {
+		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Parser callbacks not defined for archive: %s", name);
+		return;
+	}
+
+	CParameterList p = params;
+
+	// 1. Look for archive in stored archives
+	RtToken tname = renderState()->storedArchiveName(name);
+	if ( tname ) {
+		doArchiveInstance(tname, callback, params);
+		return;
+	}
+
+	// 2. Read archive from stream
+	CUri sav(renderState()->baseUri());
+	const char *oldArchiveName = renderState()->archiveName();
+	long oldLineNo = renderState()->lineNo();
+
+	CRibParser parser(*m_parserCallback, *renderState(), renderState()->baseUri());
+	try {
+		if ( parser.canParse(name) ) {
+			renderState()->baseUri() = parser.absUri();
+			renderState()->archiveName(name);
+			renderState()->lineNo(0);
+			parser.parse(callback, params);
+			renderState()->archiveName(oldArchiveName);
+			renderState()->lineNo(oldLineNo);
+			renderState()->baseUri() = sav;
+			parser.close();
+			renderState()->curParamList() = p;
+		} else {
+			ricppErrHandler().handleError(RIE_SYSTEM, RIE_ERROR,
+				renderState()->printLineNo(__LINE__),
+				renderState()->printName(__FILE__),
+				"Cannot open archive: %s", name);
+		}
+	} catch(ExceptRiCPPError &e1) {
+		renderState()->baseUri() = sav;
+		renderState()->archiveName(oldArchiveName);
+		renderState()->lineNo(oldLineNo);
+		parser.close();
+		renderState()->curParamList() = p;
+		ricppErrHandler().handleError(e1);
+		return;
+	} catch(std::exception &e2) {
+		renderState()->baseUri() = sav;
+		renderState()->archiveName(oldArchiveName);
+		renderState()->lineNo(oldLineNo);
+		parser.close();
+		renderState()->curParamList() = p;
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"While parsing name: %s", name, e2.what());
+		return;
+	} catch(...) {
+		renderState()->baseUri() = sav;
+		renderState()->archiveName(oldArchiveName);
+		renderState()->lineNo(oldLineNo);
+		parser.close();
+		renderState()->curParamList() = p;
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error while parsing: %s", name);
+		return;
+	}
 }
 
+RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	EnumRequests req = REQ_READ_ARCHIVE;
+	try {
+		if ( !preCheck(req) )
+			return;
+
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+
+		CRiReadArchive r(renderState()->lineNo(), name, callback, renderState()->curParamList());
+		processRequest(r);
+
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+		return;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+		return;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error at '%s'",  CRequestInfo::requestName(req));
+		return;
+	}
+
+	if ( n != renderState()->numTokens() ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
+	}
+}
 
 
 RtVoid CBaseRenderer::preIfBegin(RtString expr)

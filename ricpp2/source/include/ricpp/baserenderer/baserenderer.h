@@ -76,9 +76,9 @@ class CBaseRenderer : public IDoRender {
 	CAttributesResourceFactory *m_attributesResourceFactory;
 
 protected:
-	/** @brief Input handler for byte streams
+	/** @brief Callbacks of the frontend
 	 */
-	CBackBufferProtocolHandlers *m_protocolHandler;
+	IRibParserCallback *m_parserCallback;
 
 	/** @brief Creates a new modestack, called by initRenderState()
 	 *
@@ -191,8 +191,6 @@ protected:
 	 */
 	virtual void defaultDeclarations();
 
-	inline virtual CRiMacro *curMacro() {return 0;}
-
 	virtual RtVoid processDeclare(RtToken name, RtString declaration, bool isDefault);
 
 	virtual void processRequest(CRManInterfaceCall &aRequest);
@@ -243,9 +241,9 @@ public:
 	 */
 	inline virtual RtVoid deactivate(void) {}
 
-	inline virtual RtVoid registerProtocolHandler(CBackBufferProtocolHandlers &protocolHandler)
+	inline virtual RtVoid registerRibParserCallback(IRibParserCallback &cb)
 	{
-		m_protocolHandler = &protocolHandler;
+		m_parserCallback = &cb;
 	}
 
 	/** @brief Error handler

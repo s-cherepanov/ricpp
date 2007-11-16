@@ -47,9 +47,9 @@ namespace RiCPP {
 	class IRibParserCallback
 	{
 	public:
-		inline virtual IRiCPPErrorHandler &ricppErrHandler() = 0;
-		inline virtual CBackBufferProtocolHandlers &protocolHandlers() = 0;
-		inline virtual IRiRoot &ribFilter() = 0;
+		virtual IRiCPPErrorHandler &ricppErrHandler() = 0;
+		virtual CBackBufferProtocolHandlers &protocolHandlers() = 0;
+		virtual IRiRoot &ribFilter() = 0;
 	}; // IRibParserCallback
 
 }

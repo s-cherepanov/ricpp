@@ -113,6 +113,12 @@ public:
 	 */
 	inline virtual EnumRequests interfaceIdx() const { return REQ_UNKNOWN;}
 
+	/** @brief Gets the name of the RI request as token.
+	 *
+	 *  @return The name of the RI request as token.
+	 */
+	inline virtual RtToken requestName() const { return CRequestInfo::requestName(interfaceIdx()); }
+
 	/** @brief Replays the interface call.
 	 *
 	 *  @param ri The renderer backend used for replay.

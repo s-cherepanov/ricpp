@@ -22,12 +22,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file ribparser.h
+/** @file ribparser.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of the parser for rib
  */
 
-#include "ricpp/ribparser/ribparser.h"
+#include "ricpp/ribparser/ribmodes.h"
 
 #ifndef _RICPP_RICPP_PARAMCLASSES_H
 #include "ricpp/ricpp/paramclasses.h"
@@ -201,46 +201,17 @@ bool CRibParameter::convertFloatToInt() {
 	return true;
 }
 
-
-// ----------------------------------------------------------------------------
-
-/** @brief Handles RIB request WorldBegin.
- */
-class CWorldBegin : public CRibRequest {
-public:
-	virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-	inline virtual EnumRequests getId() const { return REQ_WORLD_BEGIN; }
-}; // CSphereRequest
-
-void CWorldBegin::operator()(IRibParserState &parser, CRibRequestData &request) const
-{
-}
-
-// ----------------------------------------------------------------------------
-
-/** @brief Handles RIB request WorldEnd.
- */
-class CWorldEnd : public CRibRequest {
-public:
-	virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-	inline virtual EnumRequests getId() const { return REQ_WORLD_END; }
-}; // CWorldEnd
-
-void CWorldEnd::operator()(IRibParserState &parser, CRibRequestData &request) const
-{
-}
-
 // ----------------------------------------------------------------------------
 
 /** @brief Handles RIB request Sphere.
  */
-class CSphereRequest : public CRibRequest {
+class CSphereRibRequest : public CRibRequest {
 public:
 	virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-	inline virtual EnumRequests getId() const { return REQ_SPHERE; }
-}; // CSphereRequest
+	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
+}; // CSphereribRequest
 
-void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
+void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
 	CQuadricClasses p;
 
@@ -272,25 +243,25 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badargument: 'Sphere' argument 1 (radius) is not numeric",
-					p0.lineCount(), parser.resourceName(), RI_NULL);
+					p0.lineno(), parser.resourceName(), RI_NULL);
 			}
 			if ( !b1 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badargument: 'Sphere' argument 2 (zmin) is not numeric",
-					p1.lineCount(), parser.resourceName(), RI_NULL);
+					p1.lineno(), parser.resourceName(), RI_NULL);
 			}
 			if ( !b2 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badarray: 'Sphere' argument 3 (zmax) is not numeric",
-					p2.lineCount(), parser.resourceName(), RI_NULL);
+					p2.lineno(), parser.resourceName(), RI_NULL);
 			}
 			if ( !b3 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badargument: 'Sphere' argument 4 (thetamax) is not numeric",
-					p3.lineCount(), parser.resourceName(), RI_NULL);
+					p3.lineno(), parser.resourceName(), RI_NULL);
 			}
 		}
 
@@ -305,19 +276,19 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 			parser.errHandler().handleError(
 				RIE_MISSINGDATA, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: 'Sphere' arguments (radius, zmin, zmax, thetamax) missing",
-				p0.lineCount(), parser.resourceName(), RI_NULL);
+				p0.lineno(), parser.resourceName(), RI_NULL);
 			correct = false;
 		}
 		if ( p0.getCard() > 4 ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_WARNING,
 				"Line %ld, File \"%s\", badarray: 'Sphere' additional arguments ignored",
-				p0.lineCount(), parser.resourceName(), RI_NULL);
+				p0.lineno(), parser.resourceName(), RI_NULL);
 		}
 		if (  p0.typeID() != BASICTYPE_FLOAT ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Sphere' argument array 1, not all elements are numeric",
-				p0.lineCount(), parser.resourceName(), RI_NULL);
+				p0.lineno(), parser.resourceName(), RI_NULL);
 			correct = false;
 		}
 
@@ -331,7 +302,7 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 			parser.errHandler().handleError(
 				RIE_BUG, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: 'Sphere' could not store arguments",
-				p0.lineCount(), parser.resourceName(), RI_NULL);
+				p0.lineno(), parser.resourceName(), RI_NULL);
 			return;
 		}
 
@@ -352,8 +323,8 @@ void CSphereRequest::operator()(IRibParserState &parser, CRibRequestData &reques
 	} else {
 		parser.errHandler().handleError(
 			RIE_MISSINGDATA, RIE_ERROR,
-			"Line %ld, File \"%s\", badargument: 'Sphere' arguments (radius, zmin, zmax, thetamax) missing",
-			parser.lineno(), parser.resourceName(), RI_NULL);
+			"Line %ld, File \"%s\", badargument: '%s' at least one of the arguments (%s) is missing",
+			parser.lineno(), parser.resourceName(), requestName(), "radius, zmin, zmax, thetamax", RI_NULL);
 	}
 }
 
@@ -416,6 +387,7 @@ int CRibRequestData::getTokenList(
 	RtInt faceVertices,
 	RtInt faceCorners)
 {
+	CValueCounts valueCounts(vertices, corners, facets, faceVertices, faceCorners);
 	size_t size = m_parameters.size();
 	m_tokenList.clear();
 	m_valueList.clear();
@@ -436,8 +408,9 @@ int CRibRequestData::getTokenList(
 	size_t i;
 
 	int parameterCount = 0;
+	int parameterPos = 0;
 
-	for ( i = start; i < size; ++i ) {
+	for ( i = start; i < size; ++i, ++parameterPos ) {
 
 		// Find the parameter name
 		if ( !m_parameters[i].getString(token) ) {
@@ -445,7 +418,7 @@ int CRibRequestData::getTokenList(
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badparamlist: '%s' malformed parameter list, parameter name at position %d is not a string",
-				m_parameters[i].lineCount(), resourceName(), m_curRequest.c_str(),
+				m_parameters[i].lineno(), resourceName(), m_curRequest.c_str(),
 				(int)i, RI_NULL);
 			continue;
 		}
@@ -462,7 +435,7 @@ int CRibRequestData::getTokenList(
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, no value found",
-				m_parameters[i-1].lineCount(), resourceName(), m_curRequest.c_str(),
+				m_parameters[i-1].lineno(), resourceName(), m_curRequest.c_str(),
 				token, (int)i-1, RI_NULL);
 			break;
 		}
@@ -481,14 +454,14 @@ int CRibRequestData::getTokenList(
 					errHandler().handleError(
 						RIE_BUG, RIE_ERROR,
 						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't convert value to float, using 0.0",
-						m_parameters[i].lineCount(), resourceName(), m_curRequest.c_str(),
+						m_parameters[i].lineno(), resourceName(), m_curRequest.c_str(),
 						token, (int)i, RI_NULL);
 				}
 				if ( useParameter && !m_parameters[currParam].setFloat(v) ) {
 					errHandler().handleError(
 						RIE_BUG, RIE_ERROR,
 						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't set value to float, using 0.0",
-						m_parameters[currParam].lineCount(), resourceName(), m_curRequest.c_str(),
+						m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
 						token, (int)currParam, RI_NULL);
 					useParameter = false;
 				}
@@ -503,83 +476,39 @@ int CRibRequestData::getTokenList(
 			// Test token/value, if OK push to Paramter list, don't use otherwise
 			// RtInt numComps;
 			// long int numBytes;
-			const CDeclaration *d = renderState().declFind(token);
-			d = d;
-			/*
-			if ( !m_ricb->queryParam(token, vertices, corners, facets, faceVertices, faceCorners, aClass, aType, aCardinality, numComps, numBytes) ) {
+			CParameter p;
+			p.setDeclaration(token, parameterPos, valueCounts, renderState().dict(), renderState().options().colorDescr());
+			RtInt numComps = p.declaration().selectNumberOf(valueCounts) * p.declaration().elemSize();
+			// unsigned long int numBytes = numComps * p.declaration().basicTypeByteSize();
+
+			EnumBasicTypes basicType = m_parameters[currParam].typeID();
+			size_t size = m_parameters[currParam].getCard();
+
+			if ( basicType != p.declaration().basicType() ) {
+				useParameter=false;
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d has no declaration",
-					m_parameters[currParam].lineCount(), resourceName(), m_curRequest.c_str(),
-					token, (int)currParam, RI_NULL);
-				// since there is an unknown type, don't use the parameter
-				useParameter = false;
+					"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d type mismatch",
+					m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
+					token, (int)parameterPos, RI_NULL);
 			} else {
-				// assert(aCardinality>=1)
-				// Check the type
-				int simpleType = m_parameters[currParam].typeID();
-				size_t size = m_parameters[currParam].getCard();
-				switch ( aType ) {
-					case TYPE_UNKNOWN: useParameter=false; break;
-					case TYPE_BOOLEAN: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_INTEGER: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_FLOAT: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_TOKEN: useParameter=(simpleType==TYPEID_STRING); break;
-					case TYPE_COLOR: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_POINT: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_VECTOR: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_NORMAL: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_HPOINT: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_MPOINT: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_MATRIX: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_BASIS: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_BOUND: useParameter=(simpleType==TYPEID_FLOAT); break;
-					case TYPE_STRING: useParameter=(simpleType==TYPEID_STRING); break;
-					case TYPE_POINTER: useParameter=false; break;
-					case TYPE_VOID: useParameter=false; break;
-					case TYPE_FILTERFUNC: useParameter=false; break;
-					case TYPE_ERRORHANDLER: useParameter=false; break;
-					case TYPE_PROCSUBDIVFUNC: useParameter=false; break;
-					case TYPE_PROCFREEFUNC: useParameter=false; break;
-					case TYPE_ARCHIVECALLBACK: useParameter=false; break;
-					case TYPE_OBJECTHANDLE: useParameter=false; break;
-					case TYPE_LIGHTHANDLE: useParameter=false; break;
-					case TYPE_CONTEXTHANDLE: useParameter=false; break;
+				// Check the class/size
+				if ( size < (size_t)numComps ) {
+					useParameter=false;
+					errHandler().handleError(
+						RIE_CONSISTENCY, RIE_ERROR,
+						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d number of values (%d) less then expected (%d)",
+						m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
+						token, (int)currParam, (int)size, (int)numComps, RI_NULL);
 				}
-				if ( !useParameter ) {
-					if ( aType == 0 ) {
-						errHandler().handleError(
-							RIE_CONSISTENCY, RIE_ERROR,
-							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d not declared or inline syntax error",
-							m_parameters[currParam].lineCount(), resourceName(), m_curRequest.c_str(),
-							token, (int)currParam, RI_NULL);
-					} else {
-						errHandler().handleError(
-							RIE_CONSISTENCY, RIE_ERROR,
-							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d type mismatch",
-							m_parameters[currParam].lineCount(), resourceName(), m_curRequest.c_str(),
-							token, (int)currParam, RI_NULL);
-					}
-				} else {
-					// Check the class/size
-					if ( size < (size_t)numComps ) {
-						useParameter=false;
-						errHandler().handleError(
-							RIE_CONSISTENCY, RIE_ERROR,
-							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d number of values (%d) less then expected (%d)",
-							m_parameters[currParam].lineCount(), resourceName(), m_curRequest.c_str(),
-							token, (int)currParam, (int)size, (int)numComps, RI_NULL);
-					}
-					if ( size > (size_t)numComps ) {
-						errHandler().handleError(
-							RIE_CONSISTENCY, RIE_WARNING,
-							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d number of values (%d) more then expected (%d), values at end are ignored",
-							m_parameters[currParam].lineCount(), resourceName(), m_curRequest.c_str(),
-							token, (int)currParam, (int)size, (int)numComps, RI_NULL);
-					}
+				if ( size > (size_t)numComps ) {
+					errHandler().handleError(
+						RIE_CONSISTENCY, RIE_WARNING,
+						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d number of values (%d) more then expected (%d), values at end are ignored",
+						m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
+						token, (int)currParam, (int)size, (int)numComps, RI_NULL);
 				}
 			}
-			*/
 		}
 
 		if ( useParameter ) {
@@ -613,9 +542,42 @@ const int CRibParser::RIBPARSER_EOF = -1;
 
 void CRibParser::initRequestMap()
 {
-	static CSphereRequest sphere; 
 	if ( s_requestMap.empty() ) {
-		s_requestMap.insert(std::make_pair("Sphere", &sphere));
+		static CResourceBeginRibRequest resourceBegin; 
+		s_requestMap.insert(std::make_pair(resourceBegin.requestName(), &resourceBegin));
+
+		static CResourceEndRibRequest resourceEnd; 
+		s_requestMap.insert(std::make_pair(resourceEnd.requestName(), &resourceEnd));
+
+		static CResourceRibRequest resource; 
+		s_requestMap.insert(std::make_pair(resourceEnd.requestName(), &resourceEnd));
+
+		static CFrameBeginRibRequest frameBegin; 
+		s_requestMap.insert(std::make_pair(frameBegin.requestName(), &frameBegin));
+
+		static CFrameEndRibRequest frameEnd; 
+		s_requestMap.insert(std::make_pair(frameEnd.requestName(), &frameEnd));
+
+		static CWorldBeginRibRequest worldBegin; 
+		s_requestMap.insert(std::make_pair(worldBegin.requestName(), &worldBegin));
+
+		static CWorldEndRibRequest worldEnd; 
+		s_requestMap.insert(std::make_pair(worldEnd.requestName(), &worldEnd));
+
+		static CAttributeBeginRibRequest attributeBegin; 
+		s_requestMap.insert(std::make_pair(attributeBegin.requestName(), &attributeBegin));
+
+		static CAttributeEndRibRequest attributeEnd; 
+		s_requestMap.insert(std::make_pair(attributeEnd.requestName(), &attributeEnd));
+
+		static CTransformBeginRibRequest transformBegin; 
+		s_requestMap.insert(std::make_pair(transformBegin.requestName(), &transformBegin));
+
+		static CTransformEndRibRequest transformEnd; 
+		s_requestMap.insert(std::make_pair(transformEnd.requestName(), &transformEnd));
+
+		static CSphereRibRequest sphere; 
+		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));
 	}
 }
 
@@ -625,7 +587,7 @@ EnumRequests CRibParser::findIdentifier()
 	std::map<std::string, CRibRequest *>::const_iterator i;
 	if ( (i = s_requestMap.find(&m_token[0])) != s_requestMap.end() ) {
 		if ( i->second )
-			return (i->second)->getId();
+			return (i->second)->interfaceIdx();
 	}
 	return REQ_UNKNOWN;
 }

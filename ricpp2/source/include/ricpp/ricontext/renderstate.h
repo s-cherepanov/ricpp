@@ -796,6 +796,9 @@ public:
 	 *  @see CTokenMap
 	 */
 	//@{
+	inline virtual const CTokenMap &tokenMap() const {return m_declDict.tokenMap();}
+	inline CTokenMap &tokenMap() {return m_declDict.tokenMap();}
+
 	/** @brief Searches for a token and creates one if token name is not found
 	 *  @param name A pointer to a token name
 	 *  @return Unique RtToken
@@ -807,14 +810,12 @@ public:
 		return tokenMap().findCreate(name);
 	}
 
-	inline virtual const CTokenMap &tokenMap() const {return m_declDict.tokenMap();}
-	inline CTokenMap &tokenMap() {return m_declDict.tokenMap();}
-
 	/** @brief Searches for a token
 	 *  @param name A pointer to a token name
 	 *  @return RI_NULL if token not found, token otherwise
 	 */
 	inline virtual RtToken tokFind(const char *name) const { return tokenMap().find(name); }
+
 	virtual void parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 	virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 

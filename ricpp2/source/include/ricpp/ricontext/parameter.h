@@ -96,6 +96,13 @@ namespace RiCPP {
 
 		CParameter &operator=(const CParameter &param);
 
+		bool setDeclaration(
+			RtToken theName,
+			unsigned int thePosition,
+			const CParameterClasses &counts,
+			CDeclarationDictionary &dict,
+			const CColorDescr &curColorDescr);
+
 		void set(
 			RtToken theName,
 			RtPointer theData,
@@ -136,10 +143,12 @@ namespace RiCPP {
 		const std::vector<std::string> &strings() const { return m_strings; }
 		const std::vector<RtString> &stringPtrs() const { return m_stringPtrs; }
 
-		const CDeclaration *declaration() const
+		const CDeclaration *declarationPtr() const
 		{
 			return m_declaration;
 		}
+
+		const CDeclaration &declaration() const;
 
 	}; // CParameter
 

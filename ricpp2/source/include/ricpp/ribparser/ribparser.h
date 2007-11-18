@@ -85,7 +85,7 @@ namespace RiCPP {
 		//! Called to get the line counter, set by lineCount(long count).
 		/*! \return The line count.
 		 */
-		inline unsigned long lineCount() const {
+		inline unsigned long lineno() const {
 			return m_lineCount;
 		}
 
@@ -257,7 +257,7 @@ namespace RiCPP {
 		virtual long lineno() const = 0;
 		virtual const char *resourceName() const = 0;
 		virtual const IArchiveCallback *callback() const = 0;
-		virtual const CRenderState &renderState() const = 0;
+		virtual CRenderState &renderState() const = 0;
 		virtual IRiRoot &ribFilter() = 0;
 		virtual IRiCPPErrorHandler &errHandler() = 0;
 	}; // IRibParserState
@@ -281,7 +281,7 @@ namespace RiCPP {
 			return m_parserState->resourceName();
 		}
 
-		inline const CRenderState &renderState() const
+		inline CRenderState &renderState() const
 		{
 			return m_parserState->renderState();
 		}
@@ -402,7 +402,8 @@ namespace RiCPP {
 	class CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const = 0;
-		virtual EnumRequests getId() const {return REQ_UNKNOWN;}
+		virtual EnumRequests interfaceIdx() const {return REQ_UNKNOWN;}
+		inline virtual RtToken requestName() const { return CRequestInfo::requestName(interfaceIdx()); }
 	}; // CRibRequest
 
 
@@ -410,7 +411,7 @@ namespace RiCPP {
 	 */
 	class CArchiveParser : public IRibParserState {
 		IRibParserCallback *m_parserCallback;
-		const CRenderState *m_renderState;
+		CRenderState *m_renderState;
 		const IArchiveCallback *m_callback;
 
 		CUri m_baseUri;
@@ -435,7 +436,7 @@ namespace RiCPP {
 	public:
 		inline CArchiveParser(
 			IRibParserCallback &parserCallback,
-			const CRenderState &aRenderState,
+			CRenderState &aRenderState,
 			const CUri &baseUri) :
 			m_ob(parserCallback.protocolHandlers()),
 			m_istream(&m_ob)
@@ -478,7 +479,7 @@ namespace RiCPP {
 			return m_callback;
 		}
 
-		inline virtual const CRenderState &renderState() const
+		inline virtual CRenderState &renderState() const
 		{
 			return *m_renderState;
 		}
@@ -630,7 +631,7 @@ namespace RiCPP {
 	public:
 		inline CRibParser(
 			IRibParserCallback &parserCallback,
-			const CRenderState &aRenderState,
+			CRenderState &aRenderState,
 			const CUri &baseUri)
 			: CArchiveParser(parserCallback, aRenderState, baseUri)
 		{

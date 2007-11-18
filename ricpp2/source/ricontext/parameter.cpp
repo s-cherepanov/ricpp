@@ -91,17 +91,16 @@ RtToken CParameter::token() const
 	return m_declaration ? m_declaration->token() : RI_NULL;
 }
 
-void CParameter::set(
+bool CParameter::setDeclaration(
 	RtToken theName,
-	RtPointer theData,
 	unsigned int thePosition,
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr)
 {
 	clear();
-	if ( !theName )
-		return;
+	if ( emptyStr(theName) )
+		return false;
 
 	m_position = thePosition;
 	RtToken theNameToken = dict.tokenMap().find(theName);
@@ -121,6 +120,20 @@ void CParameter::set(
 	}
 
 	m_declaration = decl;
+	return true;
+}
+
+void CParameter::set(
+	RtToken theName,
+	RtPointer theData,
+	unsigned int thePosition,
+	const CParameterClasses &counts,
+	CDeclarationDictionary &dict,
+	const CColorDescr &curColorDescr)
+{
+	if ( !setDeclaration(theName, thePosition, counts, dict, curColorDescr) )
+		return;
+
 	unsigned long elems = m_declaration->selectNumberOf(counts) * m_declaration->elemSize();
 
 	if ( elems > 0 && !theData ) {
@@ -156,6 +169,13 @@ void CParameter::set(
 	}
 }
 
+const CDeclaration &CParameter::declaration() const
+{
+	if ( !m_declaration ) {
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "Declaration of parameter %s not defined.", name());
+	}
+	return *m_declaration;
+}
 
 RtPointer CParameter::valptr()
 {
@@ -224,7 +244,7 @@ void CParameterList::rebuild()
 		++i )
 	{
 		CParameter &p = (*i);
-		const CDeclaration *d = p.declaration();
+		const CDeclaration *d = p.declarationPtr();
 		if ( d ) {
 			if ( d->isInline() ) {
 				m_tokenPtr.push_back(d->name());

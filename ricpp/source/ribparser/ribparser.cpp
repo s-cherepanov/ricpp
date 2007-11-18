@@ -2396,7 +2396,7 @@ void TRibParser::handleCall(RtInt callId) {
 		// FrameEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'FrameEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
+			m_ri->frameEnd();
 		}
 		m_ri->frameEnd();
 		break;
@@ -2405,7 +2405,7 @@ void TRibParser::handleCall(RtInt callId) {
 		// WorldBegin
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'WorldBegin' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
+			m_ri->worldBegin();
 		}
 		m_ri->worldBegin();
 		break;
@@ -2414,7 +2414,7 @@ void TRibParser::handleCall(RtInt callId) {
 		// WorldEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'WorldEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
+			m_ri->worldEnd(0);
 		}
 		m_ri->worldEnd();
 		break;

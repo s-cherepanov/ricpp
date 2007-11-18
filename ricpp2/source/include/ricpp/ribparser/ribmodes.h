@@ -54,7 +54,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_RESOURCE_END; }
 	}; // CResourceEndRibRequest
 
-	/** @brief Handles RIB request Resource name type.
+	/** @brief Handles RIB request Resource name type ...
 	 */
 	class CResourceRibRequest : public CRibRequest {
 	public:
@@ -126,6 +126,109 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_TRANSFORM_END; }
 	}; // CTransformEndRibRequest
 
+	/** @brief Handles RIB request SolidBegin type.
+	 */
+	class CSolidBeginRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_BEGIN; }
+	}; // CSolidBeginRibRequest
+
+	/** @brief Handles RIB request SolidEnd.
+	 */
+	class CSolidEndRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_SOLID_END; }
+	}; // CSolidEndRibRequest
+
+	/** @brief Handles RIB request ObjectBegin objectid.
+	 */
+	class CObjectBeginRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_BEGIN; }
+	}; // CObjectBeginRibRequest
+
+	/** @brief Handles RIB request ObjectEnd.
+	 */
+	class CObjectEndRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_END; }
+	}; // CObjectEndRibRequest
+
+	/** @brief Handles RIB request ObjectInstance.
+	 */
+	class CObjectInstanceRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_INSTANCE; }
+	}; // CObjectInstanceRibRequest
+
+	/** @brief Handles RIB request ArchiveBegin name ...
+	 */
+	class CArchiveBeginRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_BEGIN; }
+	}; // CArchivetBeginRibRequest
+
+	/** @brief Handles RIB request ArchiveEnd.
+	 */
+	class CArchiveEndRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_END; }
+	}; // CArchiveEndRibRequest
+
+	/** @brief Handles RIB request MotionBegin [v1 v2 ... vn ]
+	 */
+	class CMotionBeginRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_BEGIN; }
+	}; // CArchivetBeginRibRequest
+
+	/** @brief Handles RIB request MotionEnd.
+	 */
+	class CMotionEndRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MOTION_END; }
+	}; // CArchiveEndRibRequest
+
+	/** @brief Handles RIB request IfBegin condition.
+	 */
+	class CIfBeginRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_IF_BEGIN; }
+	}; // CIfBeginRibRequest
+
+	/** @brief Handles RIB request ElseIf condition.
+	 */
+	class CElseIfRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_ELSE_IF; }
+	}; // CIfBeginRibRequest
+
+	/** @brief Handles RIB request Else.
+	 */
+	class CElseRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_ELSE; }
+	}; // CIfBeginRibRequest
+
+	/** @brief Handles RIB request IfEnd.
+	 */
+	class CIfEndRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_IF_END; }
+	}; // CIfBeginRibRequest
 }
 
 #endif // _RICPP_RIBPARSER_RIBMODES_H

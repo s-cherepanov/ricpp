@@ -38,7 +38,7 @@ using namespace RiCPP;
 std::map<std::string, CRibRequest *> CRibParser::s_requestMap;
 
 CRibParameter::CRibParameter() {
-	m_lineCount = 0;
+	m_lineNo = 0;
 	m_isArray = false;
 	m_typeID = BASICTYPE_UNKNOWN;
 	m_cstrVector = 0;
@@ -54,7 +54,7 @@ CRibParameter::~CRibParameter() {
 }
 
 CRibParameter::CRibParameter(const CRibParameter &p) {
-	m_lineCount = 0;
+	m_lineNo = 0;
 	m_cstrVector = 0;
 	m_isArray = false;
 	m_typeID = BASICTYPE_UNKNOWN;
@@ -73,7 +73,7 @@ CRibParameter &CRibParameter::operator=(const CRibParameter &p) {
 
 	freeValue();
 
-	m_lineCount = p.m_lineCount;
+	m_lineNo = p.m_lineNo;
 
 	if ( m_cstrVector )
 		delete m_cstrVector;
@@ -243,25 +243,25 @@ void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badargument: 'Sphere' argument 1 (radius) is not numeric",
-					p0.lineno(), parser.resourceName(), RI_NULL);
+					p0.lineNo(), parser.resourceName(), RI_NULL);
 			}
 			if ( !b1 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badargument: 'Sphere' argument 2 (zmin) is not numeric",
-					p1.lineno(), parser.resourceName(), RI_NULL);
+					p1.lineNo(), parser.resourceName(), RI_NULL);
 			}
 			if ( !b2 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badarray: 'Sphere' argument 3 (zmax) is not numeric",
-					p2.lineno(), parser.resourceName(), RI_NULL);
+					p2.lineNo(), parser.resourceName(), RI_NULL);
 			}
 			if ( !b3 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badargument: 'Sphere' argument 4 (thetamax) is not numeric",
-					p3.lineno(), parser.resourceName(), RI_NULL);
+					p3.lineNo(), parser.resourceName(), RI_NULL);
 			}
 		}
 
@@ -276,19 +276,19 @@ void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 			parser.errHandler().handleError(
 				RIE_MISSINGDATA, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: 'Sphere' arguments (radius, zmin, zmax, thetamax) missing",
-				p0.lineno(), parser.resourceName(), RI_NULL);
+				p0.lineNo(), parser.resourceName(), RI_NULL);
 			correct = false;
 		}
 		if ( p0.getCard() > 4 ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_WARNING,
 				"Line %ld, File \"%s\", badarray: 'Sphere' additional arguments ignored",
-				p0.lineno(), parser.resourceName(), RI_NULL);
+				p0.lineNo(), parser.resourceName(), RI_NULL);
 		}
 		if (  p0.typeID() != BASICTYPE_FLOAT ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Sphere' argument array 1, not all elements are numeric",
-				p0.lineno(), parser.resourceName(), RI_NULL);
+				p0.lineNo(), parser.resourceName(), RI_NULL);
 			correct = false;
 		}
 
@@ -302,7 +302,7 @@ void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 			parser.errHandler().handleError(
 				RIE_BUG, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: 'Sphere' could not store arguments",
-				p0.lineno(), parser.resourceName(), RI_NULL);
+				p0.lineNo(), parser.resourceName(), RI_NULL);
 			return;
 		}
 
@@ -324,7 +324,7 @@ void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 		parser.errHandler().handleError(
 			RIE_MISSINGDATA, RIE_ERROR,
 			"Line %ld, File \"%s\", badargument: '%s' at least one of the arguments (%s) is missing",
-			parser.lineno(), parser.resourceName(), requestName(), "radius, zmin, zmax, thetamax", RI_NULL);
+			parser.lineNo(), parser.resourceName(), requestName(), "radius, zmin, zmax, thetamax", RI_NULL);
 	}
 }
 
@@ -349,9 +349,9 @@ bool CArchiveParser::close()
 
 void CArchiveParser::putback(unsigned char c) {
 	m_hasPutBack = true;
-	if ( c == '\n' && m_lineno > 0 )
-		--m_lineno;
-	m_putback = c;
+	if ( c == '\n' && m_lineNo > 0 )
+		--m_lineNo;
+	m_putBack = c;
 }
 
 
@@ -359,10 +359,10 @@ unsigned char CArchiveParser::getchar() {
 	unsigned char val;
 
 	if ( m_hasPutBack ) {
-		val = m_putback;
+		val = m_putBack;
 		m_hasPutBack = false;
 		if ( val == '\n' )
-			++m_lineno;
+			++m_lineNo;
 		return val;
 	}
 
@@ -372,9 +372,113 @@ unsigned char CArchiveParser::getchar() {
 	}
 
 	if ( val == '\n' )
-		++m_lineno;
+		++m_lineNo;
 
 	return val;
+}
+
+bool CArchiveParser::bindObjectHandle(RtObjectHandle handle, RtInt number)
+{
+	m_mapObjectHandle[number] = handle;
+	return true;
+}
+
+bool CArchiveParser::bindObjectHandle(RtObjectHandle handle, const char *name)
+{
+	m_mapObjectStrHandle[name] = handle;
+	return true;
+}
+
+bool CArchiveParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
+{
+	NUM2OBJECT::const_iterator i = m_mapObjectHandle.find(number);
+	if ( i != m_mapObjectHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+bool CArchiveParser::getObjectHandle(RtObjectHandle &handle, const char *name) const
+{
+	STR2OBJECT::const_iterator i = m_mapObjectStrHandle.find(name);
+	if ( i != m_mapObjectStrHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+bool CArchiveParser::bindLightHandle(RtLightHandle handle, RtInt number) {
+	m_mapLightHandle[number] = handle;
+	return true;
+}
+
+bool CArchiveParser::bindLightHandle(RtLightHandle handle, const char *handleName) {
+	m_mapLightStrHandle[handleName] = handle;
+	return true;
+}
+
+bool CArchiveParser::getLightHandle(RtLightHandle &handle, RtInt number) const
+{
+	NUM2LIGHT::const_iterator i = m_mapLightHandle.find(number);
+	if ( i != m_mapLightHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+bool CArchiveParser::getLightHandle(RtLightHandle &handle, const char *handleName) const
+{
+	STR2LIGHT::const_iterator i = m_mapLightStrHandle.find(handleName);
+	if ( i != m_mapLightStrHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+/*
+bool CArchiveParser::bindArchiveHandle(RtArchiveHandle handle, RtInt number)
+{
+	m_mapArchiveHandle[number] = handle;
+	return true;
+}
+*/
+
+bool CArchiveParser::bindArchiveHandle(RtArchiveHandle handle, const char *name)
+{
+	m_mapArchiveStrHandle[name] = handle;
+	return true;
+}
+
+/*
+bool CArchiveParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) const
+{
+	NUM2OBJECT::const_iterator i = m_mapArchiveHandle.find(number);
+	if ( i != m_mapArchiveHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+*/
+
+bool CArchiveParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) const
+{
+	STR2OBJECT::const_iterator i = m_mapArchiveStrHandle.find(name);
+	if ( i != m_mapArchiveStrHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
 }
 
 // ----------------------------------------------------------------------------
@@ -418,7 +522,7 @@ int CRibRequestData::getTokenList(
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badparamlist: '%s' malformed parameter list, parameter name at position %d is not a string",
-				m_parameters[i].lineno(), resourceName(), m_curRequest.c_str(),
+				m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
 				(int)i, RI_NULL);
 			continue;
 		}
@@ -435,7 +539,7 @@ int CRibRequestData::getTokenList(
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, no value found",
-				m_parameters[i-1].lineno(), resourceName(), m_curRequest.c_str(),
+				m_parameters[i-1].lineNo(), resourceName(), m_curRequest.c_str(),
 				token, (int)i-1, RI_NULL);
 			break;
 		}
@@ -454,14 +558,14 @@ int CRibRequestData::getTokenList(
 					errHandler().handleError(
 						RIE_BUG, RIE_ERROR,
 						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't convert value to float, using 0.0",
-						m_parameters[i].lineno(), resourceName(), m_curRequest.c_str(),
+						m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
 						token, (int)i, RI_NULL);
 				}
 				if ( useParameter && !m_parameters[currParam].setFloat(v) ) {
 					errHandler().handleError(
 						RIE_BUG, RIE_ERROR,
 						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't set value to float, using 0.0",
-						m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
+						m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
 						token, (int)currParam, RI_NULL);
 					useParameter = false;
 				}
@@ -489,7 +593,7 @@ int CRibRequestData::getTokenList(
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d type mismatch",
-					m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
+					m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
 					token, (int)parameterPos, RI_NULL);
 			} else {
 				// Check the class/size
@@ -498,14 +602,14 @@ int CRibRequestData::getTokenList(
 					errHandler().handleError(
 						RIE_CONSISTENCY, RIE_ERROR,
 						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d number of values (%d) less then expected (%d)",
-						m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
+						m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
 						token, (int)currParam, (int)size, (int)numComps, RI_NULL);
 				}
 				if ( size > (size_t)numComps ) {
 					errHandler().handleError(
 						RIE_CONSISTENCY, RIE_WARNING,
 						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d number of values (%d) more then expected (%d), values at end are ignored",
-						m_parameters[currParam].lineno(), resourceName(), m_curRequest.c_str(),
+						m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
 						token, (int)currParam, (int)size, (int)numComps, RI_NULL);
 				}
 			}
@@ -576,6 +680,45 @@ void CRibParser::initRequestMap()
 		static CTransformEndRibRequest transformEnd; 
 		s_requestMap.insert(std::make_pair(transformEnd.requestName(), &transformEnd));
 
+		static CSolidBeginRibRequest solidBegin; 
+		s_requestMap.insert(std::make_pair(solidBegin.requestName(), &solidBegin));
+
+		static CSolidEndRibRequest solidEnd; 
+		s_requestMap.insert(std::make_pair(solidEnd.requestName(), &solidEnd));
+
+		static CObjectBeginRibRequest objectBegin; 
+		s_requestMap.insert(std::make_pair(objectBegin.requestName(), &objectBegin));
+
+		static CObjectEndRibRequest objectEnd; 
+		s_requestMap.insert(std::make_pair(objectEnd.requestName(), &objectEnd));
+
+		static CObjectInstanceRibRequest objectInstance; 
+		s_requestMap.insert(std::make_pair(objectInstance.requestName(), &objectInstance));
+
+		static CArchiveBeginRibRequest archiveBegin; 
+		s_requestMap.insert(std::make_pair(archiveBegin.requestName(), &archiveBegin));
+
+		static CArchiveEndRibRequest archiveEnd; 
+		s_requestMap.insert(std::make_pair(archiveEnd.requestName(), &archiveEnd));
+
+		static CMotionBeginRibRequest motionBegin; 
+		s_requestMap.insert(std::make_pair(motionBegin.requestName(), &motionBegin));
+
+		static CMotionEndRibRequest motionEnd; 
+		s_requestMap.insert(std::make_pair(motionEnd.requestName(), &motionEnd));
+
+		static CIfBeginRibRequest ifBegin; 
+		s_requestMap.insert(std::make_pair(ifBegin.requestName(), &ifBegin));
+
+		static CElseIfRibRequest elseIf; 
+		s_requestMap.insert(std::make_pair(elseIf.requestName(), &elseIf));
+
+		static CElseRibRequest elsePart; 
+		s_requestMap.insert(std::make_pair(elsePart.requestName(), &elsePart));
+
+		static CIfEndRibRequest ifEnd; 
+		s_requestMap.insert(std::make_pair(ifEnd.requestName(), &ifEnd));
+
 		static CSphereRibRequest sphere; 
 		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));
 	}
@@ -627,7 +770,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", protocolbotch: More bytes after the decimal point than bytes at all",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 			// skip values
 			for ( i = 0; i < w; i++ ) {
 				c = getchar();
@@ -642,7 +785,7 @@ int CRibParser::handleBinary(unsigned char c) {
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -668,7 +811,7 @@ int CRibParser::handleBinary(unsigned char c) {
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -689,7 +832,7 @@ int CRibParser::handleBinary(unsigned char c) {
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -703,7 +846,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			if ( !m_istream ) {  // EOF is not expected here
 				errHandler().handleError(RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -721,7 +864,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			if ( !m_istream ) {  // EOF is not expected here
 				errHandler().handleError(RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -759,7 +902,7 @@ int CRibParser::handleBinary(unsigned char c) {
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -776,7 +919,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
 		c = getchar();
@@ -785,7 +928,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badtoken: invalid binary token",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 			return RIBPARSER_NOT_A_TOKEN;
 		}
 		// return m_ribEncode[c]; // RIBPARSER_NOT_A_TOKEN if Token was not defined or not found
@@ -809,7 +952,7 @@ int CRibParser::handleBinary(unsigned char c) {
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -824,7 +967,7 @@ int CRibParser::handleBinary(unsigned char c) {
 					errHandler().handleError(
 						RIE_CONSISTENCY, RIE_ERROR,
 						"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-						lineno(), resourceName(), RI_NULL);
+						lineNo(), resourceName(), RI_NULL);
 					return 0;
 				}
 				c = getchar();
@@ -841,7 +984,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
 		c = getchar();
@@ -854,7 +997,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
 		c = getchar();
@@ -864,7 +1007,7 @@ int CRibParser::handleBinary(unsigned char c) {
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -880,7 +1023,7 @@ int CRibParser::handleBinary(unsigned char c) {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
 		c = getchar();
@@ -890,7 +1033,7 @@ int CRibParser::handleBinary(unsigned char c) {
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
 					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineno(), resourceName(), RI_NULL);
+					lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
 			c = getchar();
@@ -908,7 +1051,7 @@ int CRibParser::handleBinary(unsigned char c) {
 		errHandler().handleError(
 			RIE_CONSISTENCY, RIE_ERROR,
 			"Line %ld, File \"%s\", badstringtoken: Undefined encoded Stiring token",
-			lineno(), resourceName(), RI_NULL);
+			lineNo(), resourceName(), RI_NULL);
 		return RIBPARSER_NORMAL_COMMENT;
 	}
 
@@ -930,7 +1073,7 @@ int CRibParser::handleComment(std::vector<char> &token, bool isStructured)
 	CComment &c = m_deferedCommentList[m_deferedCommentList.size()-1];
 	c.m_comment = token;
 	c.m_isStructured = isStructured;
-	c.m_lineCount = lineno();
+	c.m_lineNo = lineNo();
 
 	return isStructured ? RIBPARSER_STRUCTURED_COMMENT : RIBPARSER_NORMAL_COMMENT;
 }
@@ -968,7 +1111,7 @@ int CRibParser::handleString() {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badribcode: invalid encoded RIB request code \"%s\"",
-				lineno(), resourceName(), &m_token[0], RI_NULL);
+				lineNo(), resourceName(), &m_token[0], RI_NULL);
 		}
 		m_code = -1;    // Clear
 		return RIBPARSER_NORMAL_COMMENT;
@@ -985,11 +1128,11 @@ int CRibParser::handleString() {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: Mixed types in array",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 		}
 	} else {
 		CRibParameter p;
-		p.lineCount(lineno());
+		p.lineNo(lineNo());
 		p.setString(&m_token[0]);
 		m_request.push_back(p);
 	}
@@ -999,7 +1142,7 @@ int CRibParser::handleString() {
 
 int CRibParser::handleArrayStart() {
 	CRibParameter param;
-	param.lineCount(lineno());
+	param.lineNo(lineNo());
 	m_request.push_back(param);
 	CRibParameter &p = m_request.back();
 	p.startArray();
@@ -1014,7 +1157,7 @@ int CRibParser::handleArrayEnd() {
 		errHandler().handleError(
 			RIE_CONSISTENCY, RIE_ERROR,
 			"Line %ld, File \"%s\", badarray: Too many closing brakets",
-			lineno(), resourceName(), RI_NULL);
+			lineNo(), resourceName(), RI_NULL);
 	}
 	return RIBPARSER_ARRAY_END;
 }
@@ -1029,12 +1172,12 @@ int CRibParser::insertNumber(RtFloat flt) {
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: Mixed types in array",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 		}
 	} else {
 		// Single value
 		CRibParameter p;
-		p.lineCount(lineno());
+		p.lineNo(lineNo());
 		p.setFloat(flt);
 		m_request.push_back(p);
 	}
@@ -1049,12 +1192,12 @@ int CRibParser::insertNumber(RtInt num) {
 			// This happens if an array contains number and string values
 			errHandler().handleError(RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: Mixed types in array",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 		}
 	} else {
 		// Single value
 		CRibParameter p;
-		p.lineCount(lineno());
+		p.lineNo(lineNo());
 		p.setInt(num);
 		m_request.push_back(p);
 	}
@@ -1200,7 +1343,7 @@ int CRibParser::nextToken() {
 			errHandler().handleError(
 				RIE_SYNTAX, RIE_WARNING,
 				"Line %ld, File \"%s\": Invalid character found '%c', treated as whitespace",
-				lineno(), resourceName(), c, RI_NULL);
+				lineNo(), resourceName(), c, RI_NULL);
 			break;
 
 		case 1: // Identifier
@@ -1380,7 +1523,7 @@ int CRibParser::nextToken() {
 			errHandler().handleError(
 				RIE_BUG, RIE_ERROR,
 				"Line %ld, File \"%s\": Invalid internal parser state %d in \"RtInt TRibParser::nextToken()\"",
-				lineno(), resourceName(), state, RI_NULL);
+				lineNo(), resourceName(), state, RI_NULL);
 			return 0;
 		}
 	}
@@ -1399,12 +1542,12 @@ int CRibParser::parseNextCall()
 			errHandler().handleError(
 				RIE_BADTOKEN, RIE_ERROR,
 				"Line %ld, File \"%s\", syntax: bad token \"%s\"",
-				lineno(), resourceName(), &m_token[0], RI_NULL);
+				lineNo(), resourceName(), &m_token[0], RI_NULL);
 		} else if ( !(isCommentToken(m_lookahead) || isRequestToken(m_lookahead) || m_lookahead == RIBPARSER_EOF) ) {
 			errHandler().handleError(
 				RIE_BADTOKEN, RIE_ERROR,
 				"Line %ld, File \"%s\", syntax: \"%s\"",
-				lineno(), resourceName(), &m_token[0], RI_NULL);
+				lineNo(), resourceName(), &m_token[0], RI_NULL);
 		}
 	}
 	// Lookahead is eof or an ri token
@@ -1428,7 +1571,7 @@ int CRibParser::parseNextCall()
 				errHandler().handleError(
 					RIE_BADTOKEN, RIE_ERROR,
 					"Line %ld, File \"%s\", syntax: bad token \"%s\"",
-					lineno(), resourceName(),
+					lineNo(), resourceName(),
 					&m_token[0], RI_NULL);
 				break;
 			}
@@ -1440,7 +1583,7 @@ int CRibParser::parseNextCall()
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: Missing closing brakets",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 		}
 
 		if ( m_braketDepth < 0 ) {
@@ -1448,7 +1591,7 @@ int CRibParser::parseNextCall()
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badarray: Too many closing brakets",
-				lineno(), resourceName(), RI_NULL);
+				lineNo(), resourceName(), RI_NULL);
 		}
 
 		// handles the RIB request of the previous look ahead
@@ -1457,7 +1600,7 @@ int CRibParser::parseNextCall()
 			errHandler().handleError(
 				RIE_BADTOKEN, RIE_ERROR,
 				"Line %ld, File \"%s\", not a valid request: %s",
-				lineno(), resourceName(), m_request.curRequest().c_str(), RI_NULL);
+				lineNo(), resourceName(), m_request.curRequest().c_str(), RI_NULL);
 		}
 		handleDeferedComments(); // handles any comments found
 	}
@@ -1474,10 +1617,7 @@ void CRibParser::parseFile() {
 	m_stringMap.clear();
 
 	// Clear handle maps (Handle number -> handle)
-	m_mapLightHandle.clear();
-	m_mapLightStrHandle.clear();
-	m_mapObjectHandle.clear();
-	m_mapObjectStrHandle.clear();
+	clearHandleMaps();
 
 	// Clears any defered comments
 	m_deferedCommentList.clear();
@@ -1489,10 +1629,7 @@ void CRibParser::parseFile() {
 	while ( parseNextCall() != RIBPARSER_EOF ); // Parse all requests
 
 	// Clear the handle maps
-	m_mapLightHandle.clear();
-	m_mapLightStrHandle.clear();
-	m_mapObjectHandle.clear();
-	m_mapObjectStrHandle.clear();
+	clearHandleMaps();
 }
 
 bool CRibParser::canParse(RtString name)

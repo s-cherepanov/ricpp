@@ -47,7 +47,7 @@ namespace RiCPP {
 	 */
 	class CRibParameter {
 
-		unsigned long m_lineCount; //!< Start line of the parameter.
+		unsigned long m_lineNo; //!< Start line of the parameter.
 
 		EnumBasicTypes m_typeID; //!< Type of value.
 		bool    m_isArray;       //!< Parameter is array yes/no.
@@ -82,11 +82,11 @@ namespace RiCPP {
 			m_isArray = true;
 		}
 
-		//! Called to get the line counter, set by lineCount(long count).
+		//! Called to get the line counter, set by lineNo(long count).
 		/*! \return The line count.
 		 */
-		inline unsigned long lineno() const {
-			return m_lineCount;
+		inline unsigned long lineNo() const {
+			return m_lineNo;
 		}
 
 		//! Asks if parameter is an array.
@@ -96,13 +96,13 @@ namespace RiCPP {
 			return m_isArray;
 		}
 
-		//! Called to set the line counter, set by lineCount(long count).
+		//! Called to set the line counter, set by lineNo(long count).
 		/*! \param count The new line counter value.
 		 *  \return The old line counter value.
 		 */
-		inline unsigned long lineCount(unsigned long count) {
-			unsigned long old = m_lineCount;
-			m_lineCount = count;
+		inline unsigned long lineNo(unsigned long count) {
+			unsigned long old = m_lineNo;
+			m_lineNo = count;
 			return old;
 		}
 
@@ -254,12 +254,27 @@ namespace RiCPP {
 		inline virtual ~IRibParserState() {}
 		virtual const CUri &baseUri() const = 0;
 		virtual const CUri &absUri() const = 0;
-		virtual long lineno() const = 0;
+		virtual long lineNo() const = 0;
 		virtual const char *resourceName() const = 0;
 		virtual const IArchiveCallback *callback() const = 0;
 		virtual CRenderState &renderState() const = 0;
 		virtual IRiRoot &ribFilter() = 0;
 		virtual IRiCPPErrorHandler &errHandler() = 0;
+
+		virtual bool bindObjectHandle(RtObjectHandle handle, RtInt number) = 0;
+		virtual bool bindObjectHandle(RtObjectHandle handle, const char *name) = 0;
+		virtual bool getObjectHandle(RtObjectHandle &handle, RtInt number) const = 0;
+		virtual bool getObjectHandle(RtObjectHandle &handle, const char *name) const = 0;
+
+		virtual bool bindLightHandle(RtLightHandle handle, RtInt number) = 0;
+		virtual bool bindLightHandle(RtLightHandle handle, const char *handleName) = 0;
+		virtual bool getLightHandle(RtLightHandle &handle, RtInt number) const = 0;
+		virtual bool getLightHandle(RtLightHandle &handle, const char *handleName) const = 0;
+
+		// virtual bool bindArchiveHandle(RtArchiveHandle handle, RtInt number) = 0;
+		virtual bool bindArchiveHandle(RtArchiveHandle handle, const char *handleName) = 0;
+		// virtual bool getArchiveHandle(RtArchiveHandle &handle, RtInt number) const = 0;
+		virtual bool getArchiveHandle(RtArchiveHandle &handle, const char *handleName) const = 0;
 	}; // IRibParserState
 
 
@@ -397,6 +412,7 @@ namespace RiCPP {
 		}
 	}; // CRibRequestData
 
+
 	/** @brief Root for the request handlers
 	 */
 	class CRibRequest {
@@ -410,17 +426,45 @@ namespace RiCPP {
 	/** @brief Generic parser object
 	 */
 	class CArchiveParser : public IRibParserState {
+	protected:
+		typedef long RibHandelNumber; //! Representation of a handle number in a RIB file.
+
+	private:
+		typedef std::map<RibHandelNumber, RtLightHandle> NUM2LIGHT;	  //!< Maps a long to a light handle.
+		typedef std::map<std::string, RtLightHandle> STR2LIGHT;       //!< Maps a string to a light handle.
+		typedef std::map<RibHandelNumber, RtObjectHandle> NUM2OBJECT; //!< Maps a long to an object handle.
+		typedef std::map<std::string, RtObjectHandle> STR2OBJECT;     //!< Maps a string to an object handle.
+		// typedef std::map<RibHandelNumber, RtArchiveHandle> NUM2ARCHIVE; // Maps a long to an archive handle.
+		typedef std::map<std::string, RtArchiveHandle> STR2ARCHIVE;     //!< Maps a string to an archive handle.
+
+		//! Maps number to object handle
+		NUM2OBJECT m_mapObjectHandle;
+
+		//! Maps name to object handle
+		STR2OBJECT m_mapObjectStrHandle;
+
+		//! Maps number to light handle
+		NUM2LIGHT m_mapLightHandle;
+
+		//! Maps name to light handle
+		STR2LIGHT m_mapLightStrHandle;
+
+		// Maps number to archive handle
+		// NUM2ARCHIVE m_mapArchiveHandle;
+
+		//! Maps name to archive handle
+		STR2ARCHIVE m_mapArchiveStrHandle;
+
 		IRibParserCallback *m_parserCallback;
 		CRenderState *m_renderState;
 		const IArchiveCallback *m_callback;
 
 		CUri m_baseUri;
 		CUri m_absUri;
-		long m_lineno;
+		long m_lineNo;
 
 		bool m_hasPutBack;
-		unsigned char m_putback;
-
+		unsigned char m_putBack;
 
 		inline CArchiveParser &operator=(const CArchiveParser &) { return *this; }
 
@@ -432,7 +476,17 @@ namespace RiCPP {
 
 		void putback(unsigned char c);
 		unsigned char getchar();
-
+		
+		inline void clearHandleMaps()
+		{
+			// Clear handle maps (Handle number -> handle)
+			m_mapLightHandle.clear();
+			m_mapLightStrHandle.clear();
+			m_mapObjectHandle.clear();
+			m_mapObjectStrHandle.clear();
+			// m_mapArchiveHandle.clear();
+			m_mapArchiveStrHandle.clear();
+		}
 	public:
 		inline CArchiveParser(
 			IRibParserCallback &parserCallback,
@@ -444,9 +498,9 @@ namespace RiCPP {
 			m_parserCallback = &parserCallback;
 			m_renderState = &aRenderState;
 			m_baseUri = baseUri;
-			m_lineno = 0;
+			m_lineNo = 0;
 			m_hasPutBack = false;
-			m_putback = 0;
+			m_putBack = 0;
 		}
 
 		inline virtual ~CArchiveParser()
@@ -464,9 +518,9 @@ namespace RiCPP {
 			return m_absUri;
 		}
 
-		inline virtual long lineno() const
+		inline virtual long lineNo() const
 		{
-			return m_lineno;
+			return m_lineNo;
 		}
 
 		inline virtual const char *resourceName() const
@@ -505,17 +559,25 @@ namespace RiCPP {
 			m_parameterList = params;
 		}
 
+		virtual bool bindObjectHandle(RtObjectHandle handle, RtInt number);
+		virtual bool bindObjectHandle(RtObjectHandle handle, const char *name);
+		virtual bool getObjectHandle(RtObjectHandle &handle, RtInt number) const;
+		virtual bool getObjectHandle(RtObjectHandle &handle, const char *name) const;
+
+		virtual bool bindLightHandle(RtLightHandle handle, RtInt number);
+		virtual bool bindLightHandle(RtLightHandle handle, const char *handleName);
+		virtual bool getLightHandle(RtLightHandle &handle, RtInt number) const;
+		virtual bool getLightHandle(RtLightHandle &handle, const char *handleName) const;
+
+		// virtual bool bindArchiveHandle(RtArchiveHandle handle, RtInt number);
+		virtual bool bindArchiveHandle(RtArchiveHandle handle, const char *handleName);
+		// virtual bool getArchiveHandle(RtArchiveHandle &handle, RtInt number) const;
+		virtual bool getArchiveHandle(RtArchiveHandle &handle, const char *handleName) const;
 	}; // CArchiveParser
 
 	/** @brief Rib parser object
 	 */
 	class CRibParser : public CArchiveParser {
-		typedef long RibHandelNumber; //! Representation of a handle number in a RIB file.
-
-		typedef std::map<RibHandelNumber, RtLightHandle> NUM2LIGHT;	  //!< Maps long to light handle.
-		typedef std::map<std::string, RtLightHandle> STR2LIGHT;       //!< Maps a string to a light handle.
-		typedef std::map<RibHandelNumber, RtObjectHandle> NUM2OBJECT; //!< Maps long to object handle.
-		typedef std::map<std::string, RtObjectHandle> STR2OBJECT;     //!< Maps a string to an object handle.
 		typedef std::map<RibHandelNumber, std::string> NUM2STRING;    //!< Maps an integer to a string to encode string tokens.
 
 		static const int RIBPARSER_EOF;                //!< Used as token for end of file
@@ -543,18 +605,6 @@ namespace RiCPP {
 
 		long m_defineString;                         //!< If >= 0 encode a string token
 		NUM2STRING m_stringMap;                      //!< Map of string tokens
-
-		//! Maps number to object handle
-		NUM2OBJECT m_mapObjectHandle;
-
-		//! Maps name to object handle
-		STR2OBJECT m_mapObjectStrHandle;
-
-		//! Maps number to light handle
-		NUM2LIGHT m_mapLightHandle;
-
-		//! Maps name to light handle
-		STR2LIGHT m_mapLightStrHandle;
 
 		/** @brief Request handler for each token (e.g. "Sphere")
 		 */
@@ -591,7 +641,6 @@ namespace RiCPP {
 			return token == RIBPARSER_REQUEST;
 		}
 
-
 		//! Stores a comment
 		/*! Comments found within an interface call are handled after the interface
 		 *  call itself is handled, so the comments are stored until this is happend.
@@ -600,13 +649,13 @@ namespace RiCPP {
 		public:
 			std::vector<char> m_comment; //!< Storage for a comment.
 			bool m_isStructured;         //!< Comment is structured comment (##).
-			long m_lineCount;            //!< Line count where the comment was found.
+			long m_lineNo;            //!< Line count where the comment was found.
 			//! Assignes another comment to *this.
 			//! \return A reference to this.
 			inline CComment &operator=(const CComment &c) {
 				m_comment = c.m_comment;
 				m_isStructured = c.m_isStructured;
-				m_lineCount = c.m_lineCount;
+				m_lineNo = c.m_lineNo;
 				return *this;
 			}
 		};

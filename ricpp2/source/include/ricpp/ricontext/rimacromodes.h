@@ -2570,7 +2570,7 @@ public:
 		CRManInterfaceCall::operator=(c);
 	 	return *this;
 	}
-}; // CRiElseBegin
+}; // CRiIfEnd
 }
 
 #endif // // _RICPP_RICONTEXT_RIMACROMODES_H

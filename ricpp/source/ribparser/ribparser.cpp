@@ -2396,7 +2396,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// FrameEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'FrameEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameEnd();
 		}
 		m_ri->frameEnd();
 		break;
@@ -2405,7 +2404,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// WorldBegin
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'WorldBegin' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->worldBegin();
 		}
 		m_ri->worldBegin();
 		break;
@@ -2414,7 +2412,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// WorldEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'WorldEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->worldEnd(0);
 		}
 		m_ri->worldEnd();
 		break;
@@ -2423,7 +2420,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// AttributeBegin
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'AttributeBegin' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
 		}
 		m_ri->attributeBegin();
 		break;
@@ -2432,7 +2428,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// AttributeEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'AttributeEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
 		}
 		m_ri->attributeEnd();
 		break;
@@ -2441,7 +2436,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// TransformBegin
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'TransformBegin' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
 		}
 		m_ri->transformBegin();
 		break;
@@ -2450,7 +2444,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// TransformEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'TransformEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
 		}
 		m_ri->transformEnd();
 		break;
@@ -2471,7 +2464,7 @@ void TRibParser::handleCall(RtInt callId) {
 			}
 		} else {
 			m_ricb->handleError(RIE_MISSINGDATA, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'SolidBegin' the name of the solid is not specified, using \"solid\" instead", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->solidBegin("solid");
+			m_ri->solidBegin("primitive");
 		}
 		break;
 
@@ -2479,7 +2472,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// SolidEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'SolidEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
 		}
 		m_ri->solidEnd();
 		break;
@@ -2516,7 +2508,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// ObjectEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'ObjectEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
 		}
 		m_ri->objectEnd();
 		break;
@@ -2548,7 +2539,6 @@ void TRibParser::handleCall(RtInt callId) {
 		// MotionEnd
 		if ( m_parameters.size() != 0 ) {
 			m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'MotionEnd' has additional parameters, they are ignored", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
-			m_ri->frameBegin(0);
 		}
 		m_ri->motionEnd();
 		break;
@@ -2740,7 +2730,7 @@ void TRibParser::handleCall(RtInt callId) {
 			m_ri->projectionV(name, 0, NULL, NULL);
 		}
 		break;
-						 }
+	}
 
 	case IDX_CLIPPING:
 		// Clipping [ near far ] (added)

@@ -412,7 +412,7 @@ void CMotionBeginRibRequest::operator()(IRibParserState &parser, CRibRequestData
 	// MotionBegin [ v1 v2 ... vn ]
 	if ( request.size() >= 1 ) {
 		CRibParameter &p0 = request[0];
-		bool b0 = p0.convertIntToFloat();
+		p0.convertIntToFloat();
 		if ( p0.isArray() ) {
 			if ( p0.typeID() == BASICTYPE_FLOAT ) {
 				size_t number = p0.getCard();

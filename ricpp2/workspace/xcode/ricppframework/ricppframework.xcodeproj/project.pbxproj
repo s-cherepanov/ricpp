@@ -149,6 +149,8 @@
 		C3B26A320C14600E0080C1F9 /* rendererloader.h in Headers */ = {isa = PBXBuildFile; fileRef = C3B26A310C14600E0080C1F9 /* rendererloader.h */; };
 		C3B849040BD7625A00DD22B5 /* ribwriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B849030BD7625A00DD22B5 /* ribwriter.cpp */; };
 		C3B849200BD7632B00DD22B5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B8491F0BD7632B00DD22B5 /* main.cpp */; };
+		C3B8D1C30CF1845A0004B226 /* ribmodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B8D1C20CF1845A0004B226 /* ribmodes.cpp */; };
+		C3B8D1C50CF184720004B226 /* ribmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = C3B8D1C40CF184720004B226 /* ribmodes.h */; };
 		C3BD621A0CED84EE008ECB54 /* ribparsercallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C3BD62190CED84EE008ECB54 /* ribparsercallback.h */; };
 		C3BD621D0CED8546008ECB54 /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36C39AB0CBA1F2600D2B7B2 /* libribparser.a */; };
 /* End PBXBuildFile section */
@@ -312,7 +314,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C36C39AA0CBA1F2600D2B7B2 /* ribparser */;
+			remoteGlobalIDString = C36C39AA0CBA1F2600D2B7B2;
 			remoteInfo = ribparser;
 		};
 /* End PBXContainerItemProxy section */
@@ -441,6 +443,8 @@
 		C3B849090BD762B700DD22B5 /* librendererloader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librendererloader.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B849170BD762EE00DD22B5 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3B8491F0BD7632B00DD22B5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = main.cpp; path = ../../../source/test/main.cpp; sourceTree = SOURCE_ROOT; };
+		C3B8D1C20CF1845A0004B226 /* ribmodes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribmodes.cpp; path = ../../../source/ribparser/ribmodes.cpp; sourceTree = SOURCE_ROOT; };
+		C3B8D1C40CF184720004B226 /* ribmodes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribmodes.h; path = ../../../source/include/ricpp/ribparser/ribmodes.h; sourceTree = SOURCE_ROOT; };
 		C3BD62190CED84EE008ECB54 /* ribparsercallback.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribparsercallback.h; path = ../../../source/include/ricpp/ribparser/ribparsercallback.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -761,6 +765,7 @@
 		C36C39B00CBA1F6E00D2B7B2 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C3B8D1C20CF1845A0004B226 /* ribmodes.cpp */,
 				C36C39B40CBA1FBB00D2B7B2 /* ribparser.cpp */,
 			);
 			name = Implementation;
@@ -769,6 +774,7 @@
 		C36C39B10CBA1F9100D2B7B2 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C3B8D1C40CF184720004B226 /* ribmodes.h */,
 				C3BD62190CED84EE008ECB54 /* ribparsercallback.h */,
 				C36C39B60CBA1FCA00D2B7B2 /* ribparser.h */,
 			);
@@ -1162,6 +1168,7 @@
 			files = (
 				C36C39B70CBA1FCA00D2B7B2 /* ribparser.h in Headers */,
 				C3BD621A0CED84EE008ECB54 /* ribparsercallback.h in Headers */,
+				C3B8D1C50CF184720004B226 /* ribmodes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1657,6 +1664,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C36C39B50CBA1FBB00D2B7B2 /* ribparser.cpp in Sources */,
+				C3B8D1C30CF1845A0004B226 /* ribmodes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

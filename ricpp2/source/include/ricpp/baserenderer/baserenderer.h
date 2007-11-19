@@ -65,33 +65,84 @@ class CBaseRenderer : public IDoRender {
 
 	/** @brief The render state contains all render state objects of this context
 	 *
-	 *  The render state is initialized at begin()
+	 *  The render state is initialized at begin() by a call to initRenderState().
 	 */
 	CRenderState *m_renderState;
 
+	/** @brief The mode stack.
+	 *
+	 *  Contains the current nesting of modes (frame, world, attribute, transform, ...).
+	 *  Initialized while begin() by a call of initRenderState().
+	 *
+	 *  @see getNewModeStack(), deleteModeStack()
+	 */
 	CModeStack *m_modeStack;
+
+	/** @brief Options factory.
+	 *
+	 *  Used to create option objects (COption). Derived renderers can use an
+	 *  extended set of options.
+	 *  Initialized while begin() by a call of initRenderState().
+	 *
+	 *  @see getNewOptionsFactory(), deleteOptionsFactory()
+	 */
 	COptionsFactory *m_optionsFactory;
+
+	/** @brief Attributes factory.
+	 *
+	 *  Used to create attribute objects (CAttribute). Derived renderers can use an
+	 *  extended set of attributes.
+	 *  Initialized while begin() by a call of initRenderState().
+	 *
+	 *  @see getNewAttributesFactory(), deleteAttributesFactory()
+	 */
 	CAttributesFactory *m_attributesFactory;
+
+	/** @brief Light source factory.
+	 *
+	 *  Used to create light source objects (CLightSource). Derived renderers can use an
+	 *  extended set of light sources.
+	 *  Initialized while begin() by a call of initRenderState().
+	 *
+	 *  @see getNewLightSourceFactory(), deleteLightSourceFactory()
+	 */
 	CLightSourceFactory *m_lightSourceFactory;
+
+	/** @brief Resource set of attributes.
+	 *
+	 *  Used to create attribute resources for use in IRiCPP::resourceV(). Derived renderers can use an
+	 *  extended set of attribute resources and also different resources by creating their own factories.
+	 *  Initialized while begin() by a call of initRenderState().
+	 *
+	 *  @see registerResources(), getNewAttributesResourceFactory(), delteAttributesResourceFactory()
+	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
 
 protected:
-	/** @brief Callbacks of the frontend
+	/** @brief Callbacks for the rib parser to the front end.
 	 */
 	IRibParserCallback *m_parserCallback;
 
-	/** @brief Creates a new modestack, called by initRenderState()
+	/** @brief Creates a new modestack, called by initRenderState().
 	 *
-	 *  Overwrite this method if you want to return an own modestack
+	 *  Overwrite this method if you want to return an own modestack.
 	 *
-	 * @return A stack object for render modes
+	 *  @return A stack object for render modes.
 	 */
 	inline virtual CModeStack *getNewModeStack()
 	{
 		return new CModeStack;
 	}
 
-	inline virtual void deleteModeStack(CModeStack *ptr)
+	/** @brief Deletes a mode stack, called at destruction.
+	 *
+	 *  Since the destructor of the mode stack is virtual, there
+	 *  is no need (it's even wrong) to overwrite this method, it's not
+	 *  virtual therfore.
+	 *
+	 *  @param ptr A mode stack created by getNewModeStack()
+	 */
+	inline void deleteModeStack(CModeStack *ptr)
 	{
 		if ( ptr )
 			delete ptr;
@@ -109,49 +160,74 @@ protected:
 		return new COptionsFactory;
 	}
 
-	inline virtual void deleteOptionsFactory(COptionsFactory *ptr)
+	/** @brief Deletes an options factory, called at destruction.
+	 *
+	 *  Since the destructor of the options factory is virtual, there
+	 *  is no need (it's even wrong) to overwrite this method, it's not
+	 *  virtual therfore.
+	 *
+	 *  @param ptr An options factory created by getNewOptionsFactory()
+	 */
+	inline void deleteOptionsFactory(COptionsFactory *ptr)
 	{
 		if ( ptr )
 			delete ptr;
 	}
 
-	/** @brief Creates a new attributes factory, called by initRenderState()
+	/** @brief Creates a new attributes factory, called by initRenderState().
 	 *
 	 *  Overwrite this method if you want to return an own factory
 	 *  for a customized attributes set.
 	 *
-	 * @return A factory object for the render attributes.
+	 *  @return A factory object for the render attributes.
 	 */
 	inline virtual CAttributesFactory *getNewAttributesFactory()
 	{
 		return new CAttributesFactory;
 	}
 
-	inline virtual void deleteAttributesFactory(CAttributesFactory *ptr)
+
+	/** @brief Deletes an attributes factory, called at destruction.
+	 *
+	 *  Since the destructor of the attributes factory is virtual, there
+	 *  is no need (it's even wrong) to overwrite this method, it's not
+	 *  virtual therfore.
+	 *
+	 *  @param ptr An attributes factory created by getNewAttributesFactory()
+	 */
+	inline void deleteAttributesFactory(CAttributesFactory *ptr)
 	{
 		if ( ptr )
 			delete ptr;
 	}
 
-	/** @brief Creates a new lightsource factory, called by initRenderState()
+	/** @brief Creates a new light source factory, called by initRenderState()
 	 *
 	 *  Overwrite this method if you want to return an own factory
-	 *  for a customized lightsources.
+	 *  for a customized light sources.
 	 *
-	 * @return A factory object for the lightsources.
+	 * @return A factory object for the light sources.
 	 */
 	inline virtual CLightSourceFactory *getNewLightSourceFactory()
 	{
 		return new CLightSourceFactory;
 	}
 
-	inline virtual void deleteLightSourceFactory(CLightSourceFactory *ptr)
+	/** @brief Deletes a light source factory, called at destruction.
+	 *
+	 *  Since the destructor of the light source factory is virtual, there
+	 *  is no need (it's even wrong) to overwrite this method, it's not
+	 *  virtual therfore.
+	 *
+	 *  @param ptr A light source factory created by getNewLightSourceFactory()
+	 */
+	inline void deleteLightSourceFactory(CLightSourceFactory *ptr)
 	{
 		if ( ptr )
 			delete ptr;
 	}
 
-	/* @brief Factory method to create a macro factory
+	/* @brief Factory method to create a macro factory (not used, but maybe needed in future)
 	 */
 	// virtual CRManInterfaceFactory *getNewMacroFactory();
 	// virtual void deleteMacroFactory(CRManInterfaceFactory *ptr);
@@ -163,11 +239,25 @@ protected:
 	 */
 	virtual void registerResources();
 
-	/** @brief Get a factory for the "attributes" resource.
+	/** @brief Gets a factory for the "attributes" resource.
+	 *
+	 *  Overwrite this to modify the attributes resource factory. Attribute
+	 *  resource objects are used to store and load attribute sets using the
+	 *  IRi::resourceV() conmmand.
+	 *
+	 *  @return A factory for the "attributes" resource.
 	 */
 	virtual CAttributesResourceFactory *getNewAttributesResourceFactory();
 
-	inline virtual void deleteAttributesResourceFactory(CAttributesResourceFactory *ptr)
+	/** @brief Deletes a attributes resource factory, called at destruction.
+	 *
+	 *  Since the destructor of the attributes resource factory is virtual, there
+	 *  is no need (it's even wrong) to overwrite this method, it's not
+	 *  virtual therfore.
+	 *
+	 *  @param ptr An attributes resource factory created by getNewLightSourceFactory()
+	 */
+	inline void deleteAttributesResourceFactory(CAttributesResourceFactory *ptr)
 	{
 		if ( ptr )
 			delete ptr;
@@ -176,24 +266,55 @@ protected:
 	/** @brief The backend's error handler
 	 *
 	 *  A child class can overload ricppErrHandler() to use it's own handler
-	 *  However it also should return an error handler that throws an ExceptRiCPPError
-	 * @return The error handler used by the backend
+	 *  However it also should return an error handler that throws an ExceptRiCPPError.
+	 *
+	 *  @return The error handler used by the backend
 	 */
 	virtual IRiCPPErrorHandler &ricppErrHandler()
 	{
-		// @todo fill m_errorExceptionHandler with lineno and filename
 		return m_errorExceptionHandler;
 	}
 
 	/** @brief Call the default declarations.
 	 *
-	 * Overload this to add more default declarations, by calling preDeclare().
+	 *  Overload this to add more default declarations, by calling processDeclare() with
+	 *  the @a isDefault attribute set to true.
 	 */
 	virtual void defaultDeclarations();
 
-	virtual RtVoid processDeclare(RtToken name, RtString declaration, bool isDefault);
+	/** @brief Processes a declarations.
+	 *
+	 *  Processes a single declaration. The declaration is entered
+	 *  into the declaration dictionary. The current sice of the colors is
+	 *  taken from the current options.
+	 *
+	 *  @param name Name of the declaration as in IRiCPP::declare().
+	 *  @param declaration Declaration string as in IRiCPP::declare().
+	 *  @param isDefault set this to true to indicate adefault declaration
+	 *         (eg. declaration of RI_P as point). The defaultDeclarations()
+	 *         member function is used to declare the defaults.
+	 */
+	virtual void processDeclare(RtToken name, RtString declaration, bool isDefault);
 
+	/** @brief Processes a request.
+	 *
+	 *  Since the processing of the request is nearly always the same,
+	 *  it is programmed in this member function. The interface functions
+	 *  call this member function with their data stored in a corresponding
+	 *  @a aRequest object.
+	 *
+	 *  @param aRequest Data of a parsed and validated request.
+	 */
 	virtual void processRequest(CRManInterfaceCall &aRequest);
+
+	/** @brief Replays a stored request.
+	 *
+	 *  Like processRequest() but used a previously stored request
+	 *  (archive or object)
+	 *
+	 *  @param aRequest A parsed and validated request.
+	 *  @param cp The optional callback (from IRiCPP::readArchive())
+	 */
 	virtual void replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb);
 
 public:

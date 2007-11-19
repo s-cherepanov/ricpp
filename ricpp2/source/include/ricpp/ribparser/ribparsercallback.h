@@ -27,7 +27,7 @@
 
 /** @file ribparsercallback.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Front End infos the rib parser need to know
+ *  @brief Front end infos the rib parser needs to know.
  */
 
 #ifndef _RICPP_RICPP_ERRORHANDLERS_H
@@ -44,11 +44,41 @@
 
 namespace RiCPP {
 
+	/** @brief Interface implemented by the front end to support the Rib parser CRibParser.
+	 */
 	class IRibParserCallback
 	{
 	public:
+		/** @brief Gets the error handler of the front end.
+		 *
+		 *  Errors are typically not thrown while parsing. Instead the error handler of the
+		 *  front end is called. Doing so, it is possible to continue parsing after an error
+		 *  occured.
+		 *
+		 *  @return The error handler of the front end.
+		 */
 		virtual IRiCPPErrorHandler &ricppErrHandler() = 0;
+		
+		/** @brief Gets the protocol handler for stream back buffers.
+		 *
+		 *  Since the protocol handlers for stream back buffers are managed by the
+		 *  front end, the parser needs to know this object to create the input stream.
+		 *  The FILE stream buffer for example is a build in stream buffer for standard
+		 *  io with optional zlib support.
+		 *
+		 *  @return The protocol handler for stream back buffers.
+		 */
 		virtual CBackBufferProtocolHandlers &protocolHandlers() = 0;
+		
+		/** @brief Gets the rib filter for the ri calls.
+		 *
+		 *  Gets the rib filter that is used for the parsed ri calls.
+		 *  Users of RiCPP can provide own CRibFilter filters to manipulate
+		 *  the read RIB stream. The last filter will call the interfaces
+		 *  routines of the front end.
+		 *
+		 *  @return The rib filter for the ri calls.
+		 */
 		virtual IRiRoot &ribFilter() = 0;
 	}; // IRibParserCallback
 

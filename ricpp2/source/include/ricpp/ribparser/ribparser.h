@@ -27,7 +27,7 @@
 
 /** @file ribparser.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Parser for rib
+ *  @brief Parser for rib streams.
  */
 
 #ifndef _RICPP_RICONTEXT_RENDERSTATE_H
@@ -42,84 +42,115 @@
 
 namespace RiCPP {
 
-	//! Container class for one parameter (array) read by the parser (RIB)
-	/*! Types float, int or string are supported.
+	/** @brief Container class for one parameter (array) read by the parser (RIB)
+	 *
+	 *  The basic types float, int or string are supported.
 	 */
 	class CRibParameter {
 
-		unsigned long m_lineNo; //!< Start line of the parameter.
+		unsigned long m_lineNo;  //!< Start line of the parameter.
 
 		EnumBasicTypes m_typeID; //!< Type of value.
 		bool    m_isArray;       //!< Parameter is array yes/no.
 
-		std::vector <RtFloat>     m_vFloat;  //!< Values are Floats
-		std::vector <RtInt>       m_vInt;    //!< Values are intergers
-		std::deque  <std::string> m_vString; //!< Values are strings
+		std::vector <RtFloat>     m_vFloat;  //!< Values are Floats.
+		std::vector <RtInt>       m_vInt;    //!< Values are Integers.
+		std::deque  <std::string> m_vString; //!< Values are Strings.
 
-		//! Value container if parameter is an array of string.
-		/*! pointers to the strings of m_vString, m_vString is not changed
+		/** @brief Value container, used if parameter is an array of string.
+		 *
+		 *  Pointers to the strings of m_vString, m_vString is not changed
 		 *  after a value is read (so pointers stay valid).
 		 */
 		std::vector<const char *> *m_cstrVector;
 
-		void freeValue();			//!< clears m_vFloat, m_vInt, m_vString.
+		void freeValue();			//!< Clears m_vFloat, m_vInt, m_vString.
 
 	public:	
 		CRibParameter();			//!< Standard constructor, initializes the members as empty.
 		~CRibParameter();			//!< Destructor, cleans up and frees all memory allocated.
 
-		//! Copy constructor for a CRibParameter.
-		/*! \param p The CRibParameter to copy from
+		/** @brief Copy constructor for a CRibParameter.
+		 *
+		 *  @param p The CRibParameter to copy from.
 		 */
 		CRibParameter(const CRibParameter &p);
 		// CRibParameter &duplicate() const;	// duplication is not used
 
-		//! assigns an instance to *this.
+		/** @brief Assignment.
+		 *
+		 *  @param p Assigns this parameter to *this.
+		 *  @return *this.
+		 */
 		CRibParameter &operator=(const CRibParameter &p);
 
-		//*! Is called if parameter will be an array.
-		inline void startArray() {
+		/** @brief Called if parameter will be an array.
+		 *
+		 *  If the rib parser encounters a '[' it calls this
+		 *  member function to indicate that an array of values
+		 *  will follow.
+		 */
+		inline void startArray()
+		{
 			m_isArray = true;
 		}
 
-		//! Called to get the line counter, set by lineNo(long count).
-		/*! \return The line count.
+		/** @brief Asks if parameter is an array.
+		 *
+		 *  @return true, if parameter is an array or false, if parameter is a single value.
+		 *  @see void CRibParameter::startArray().
 		 */
-		inline unsigned long lineNo() const {
-			return m_lineNo;
-		}
-
-		//! Asks if parameter is an array.
-		/*! \return true if parameter is an array, false if parameter is a single value.
-		 */
-		inline bool isArray() const {
+		inline bool isArray() const
+		{
 			return m_isArray;
 		}
 
-		//! Called to set the line counter, set by lineNo(long count).
-		/*! \param count The new line counter value.
-		 *  \return The old line counter value.
+		/** @brief Called to get the line counter.
+		 *
+		 *  Since each parameter can be written on a different line. The
+		 *  starting line is stored and can be recalled for error
+		 *  notification. The line counter can be set by calling
+		 *  unsigned long CRibParameter::lineNo(unsigned long).
+		 *
+		 *  @return The line counter.
 		 */
-		inline unsigned long lineNo(unsigned long count) {
+		inline unsigned long lineNo() const
+		{
+			return m_lineNo;
+		}
+
+		/** @brief Called to set the line counter.
+		 *
+		 *  @param count The new line counter value.
+		 *  @return The old line counter value.
+		 *  @see unsigned long CRibParameter::lineNo() const.
+		 */
+		inline unsigned long lineNo(unsigned long count)
+		{
 			unsigned long old = m_lineNo;
 			m_lineNo = count;
 			return old;
 		}
 
-		//! Ask the type of the parameter.
-		/*! \return id of the type of the contained values (BASICTYPE_INT, BASICTYPE_FLOAT, BASICTYPE_STRING).
+		/** @brief Ask the type of the parameter.
+		 *  @return id of the type of the contained values (BASICTYPE_INT, BASICTYPE_FLOAT, BASICTYPE_STRING).
 		 */
-		inline EnumBasicTypes typeID() const {
+		inline EnumBasicTypes typeID() const
+		{
 			return m_typeID;
 		}
 
-		// set single values (appends if isArray).
-		//! Sets a single float value (appends if isArray()).
-		/*! Converts array to floats if needed (i.e. array contains integers)
-		 *  \param v The float value to be set
-		 *  \return true: value could be set, false: otherwise
+		/** @brief Sets single values (appends if isArray).
+		 *
+		 *  Converts array to floats if needed (if array contains integers,
+		 *  strings are not converted, it's not possibe to mix strings with
+		 *  floats).
+		 *
+		 *  @param v The float value to be set.
+		 *  @return true, value could be set or false, otherwise.
 		 */
-		inline bool setFloat(RtFloat v) {
+		inline bool setFloat(RtFloat v)
+		{
 			if ( m_typeID == BASICTYPE_INTEGER ) {
 				convertIntToFloat();
 				m_typeID = BASICTYPE_FLOAT;
@@ -134,12 +165,16 @@ namespace RiCPP {
 		}
 
 
-		//! Sets a single float value (appends if isArray()).
-		/*! Converts v to floats if needed (i.e. array contains floats)
-		 *  \param v The integer value to be set
-		 *  \return true: value could be set, false: otherwise
+		/** @brief Sets a single integer value (appends if isArray()).
+		 *
+		 *  Converts v to a float if needed (array contains floats,
+		 *  i's not possible to mix ints with strings).
+		 *
+		 *  @param v The integer value to be set.
+		 *  @return true, value could be set or false, otherwise.
 		 */
-		inline bool setInt(RtInt v) {
+		inline bool setInt(RtInt v)
+		{
 			if ( m_typeID == BASICTYPE_FLOAT ) {
 				m_vFloat.push_back((RtFloat)v);
 				return true;
@@ -152,11 +187,15 @@ namespace RiCPP {
 			return false;
 		}
 
-		//! Sets a single string value (appends if isArray()).
-		/*! \param v The string value to be set
-		 *  \return true: value could be set, false: otherwise
+		/** @brief Sets a single string value (appends if isArray()).
+		 *
+		 *  Strings cannot be mixed with any other type.
+		 *
+		 *  @param v The string value to be set.
+		 *  @return true, value could be set or false, otherwise.
 		 */
-		inline bool setString(const char *v) {
+		inline bool setString(const char *v)
+		{
 			if ( m_typeID == BASICTYPE_UNKNOWN || m_typeID == BASICTYPE_STRING ) {
 				m_vString.push_back(v);
 				m_typeID = BASICTYPE_STRING;
@@ -165,24 +204,27 @@ namespace RiCPP {
 			return false;
 		}
 
-		//! Gets single value.
-		/*! \return Pointer to value.
+		/** @brief Gets single value of arbitrary type.
+		 *
+		 *  @return Pointer to value.
 		 */
 		void *getValue();
 
-		//! Gets array value.
-		/*! \param i Ondex of value.
-		 *  \return Pointer to value, NULL if i is out of range.
+		/** @brief Gets a single array value of arbitrary type.
+		 *  @param i Index of the value.
+		 *  @return Pointer to the value, 0 if it is out of range.
 		 */
 		void *getValue(size_t i) const;
 
-		// get single values
+		// The following member routines get single values.
 
-		//! Get a single float value, integers are converted.
-		/*! \retval v Float value is stored here.
-		 *  \return true if value could be set.
+		/** @brief Gets a single float value, integers are converted.
+		 *
+		 *  @retval v Float value is stored here.
+		 *  @return true, if value has been set.
 		 */
-		inline bool getFloat(RtFloat &v) const {
+		inline bool getFloat(RtFloat &v) const
+		{
 			if ( m_typeID == BASICTYPE_INTEGER ) {
 				if ( m_vInt.empty() )
 					return false;
@@ -198,11 +240,13 @@ namespace RiCPP {
 			return false;
 		}
 
-		//! Get a single integer value.
-		/*! \retval v Integer value is stored here.
-		 *  \return true if value could be set.
+		/** @brief Gets a single integer value, floats are converted.
+		 *
+		 *  @retval v Integer value is stored here.
+		 *  @return true, if value has been set.
 		 */
-		inline bool getInt(RtInt &v) const {
+		inline bool getInt(RtInt &v) const
+		{
 			if ( m_typeID == BASICTYPE_INTEGER ) {
 				if ( m_vInt.empty() )
 					return false;
@@ -218,36 +262,43 @@ namespace RiCPP {
 			return false;
 		}
 
-		//! Get a single string value pointer.
-		/*! \retval v String value pointer is stored here.
-		 *  \return true if value could be set.
+		/** @brief Gets a single string value pointer
+		 *
+		 *  @retval v String value pointer is stored here.
+		 *  @return true, if value has been set.
 		 */
-		inline bool getString(const char * &v) const {
+		inline bool getString(const char * &v) const
+		{
 			if ( m_typeID != BASICTYPE_STRING )
 				return false;
 			v = m_vString.empty() ? NULL : m_vString[0].c_str();
 			return true;
 		}
 
-		//! Get number of values in parameter (1 or size of array).
-		/*! \return Number of single parameters.
+		/** @briefs Get number of values contained (1 or size of array).
+		 *
+		 *  @return Number of single parameters.
 		 */
 		size_t getCard() const;
 
-		//! Converts float values to integer values.
-		/*! Sometimes integers are needed,
-		 *  numbers are always stored as float at first.
-		 *  \return true if parameters could be converted.
+		/** @brief Converts float values to integer values.
+		 *
+		 *  Sometimes integers are needed,
+		 *  since numbers are always stored as float at first.
+		 *  they need to be converted in this case.
+		 *
+		 *  @return true, if parameters have been converted.
 		 */
 		bool convertFloatToInt();
 
-		//! Converts integer values to float values.
-		/*! \return true if parameters could be converted.
+		/** @brief Converts integer values to float values.
+		 *
+		 *  @return true, if parameters have been be converted.
 		 */
 		bool convertIntToFloat();
 	}; // CRibParameter
 
-	/** @brief Interface for the state reader of the parser CRibParser
+	/** @brief Interface for the state reader/manipulator of the parser CRibParser
 	 */
 	class IRibParserState {
 	public:
@@ -281,11 +332,11 @@ namespace RiCPP {
 	class CRibRequestData {
 		IRibParserState *m_parserState;
 		IRiCPPErrorHandler *m_errHandler;
-		std::vector<CRibParameter> m_parameters;     //!< All parameteres parsed within one interface call
-		std::vector<const char *> m_tokenList;       //!< Tokens of the token-value parameterlist of an interface call, inserted by getTokenList()
-		std::vector<void *> m_valueList;             //!< Values of the token-value parameterlist of an interface call, inserted by getTokenList()
-		bool m_checkParameters;                      //!< Check the size and types of the parameter list while parsing
-		std::string m_curRequest;                    //!< Current request as string (e.g. "Sphere", "BeginWorld")
+		std::vector<CRibParameter> m_parameters;     //!< All parameters parsed within one interface call.
+		std::vector<const char *> m_tokenList;       //!< Tokens of the token-value parameterlist of an interface call, inserted by getTokenList().
+		std::vector<void *> m_valueList;             //!< Values of the token-value parameterlist of an interface call, inserted by getTokenList().
+		bool m_checkParameters;                      //!< Indicator to check the size and types of the parameter list while parsing.
+		std::string m_curRequest;                    //!< Current request as string (e.g. "Sphere", "BeginWorld").
 
 		inline IRiCPPErrorHandler &errHandler()
 		{
@@ -355,16 +406,18 @@ namespace RiCPP {
 			return m_parameters[idx];
 		}
 
-		//! Fills the token-value list
-		/*! The members m_tokenList and m_valueList are filled by
+		/** @brief Fills the token-value list.
+		 *
+		 * The members m_tokenList and m_valueList are filled by
 		 * this function. The token-value list (parameter list) starts by
 		 * the parameter at position start.
-		 * \param start Token-value list starts here
-		 * \vertices Number of vertices (shared vertices count 1) of the primary to which the parameter list belongs
-		 * \corners Number of the corners (shared corners count 1) of the primary to which the parameter list belongs
-		 * \facets Number of the faces of the primary to which the parameter list belongs
-		 * \faceVertices Number of the vertices of all faces of the primary to which the parameter list belongs
-		 * \return The number of token-value pairs stored in m_tokenList and m_valueList, -1 if an error occured
+		 *
+		 * @param start Token-value list starts here.
+		 * @param vertices Number of vertices (shared vertices count 1) of the primary to which the parameter list belongs.
+		 * @param corners Number of the corners (shared corners count 1) of the primary to which the parameter list belongs.
+		 * @param facets Number of the faces of the primary to which the parameter list belongs.
+		 * @param faceVertices Number of the vertices of all faces of the primary to which the parameter list belongs.
+		 * @return The number of token-value pairs stored in m_tokenList and m_valueList, -1 if an error occured.
 		 */
 		int getTokenList(
 			size_t start,
@@ -372,9 +425,10 @@ namespace RiCPP {
 			RtInt faceVertices=0, RtInt faceCorners=0
 		);
 
-		//! Gets the token-value list without checking, doesn't store values
-		/*! \param start Token-value list starts here
-		 *  \return The number of token-value pairs found
+		/** @brief Gets the token-value list without checking, doesn't store values.
+		 *
+		 *  @param start Token-value list starts here.
+		 *  @return The number of token-value pairs found.
 		 */
 		inline int getTokenListNoCheck(size_t start)
 		{
@@ -385,10 +439,12 @@ namespace RiCPP {
 			return r;
 		}
 
-		//! Gets the token list
-		/*! Uses an instances TParameterClasses to get vertices, corners e.t.c.
-		 *  \param start Token-value list starts here
-		 *  \param p used to get vertices, corners e.t.c.
+		/** @brief Gets the token list.
+		 *
+		 *  Uses an instances TParameterClasses to get vertices, corners etc.
+		 *
+		 *  @param start Token-value list starts here.
+		 *  @param p used to get vertices, corners etc.
 		 */
 		inline int getTokenList(size_t start, const CParameterClasses &p)
 		{
@@ -413,7 +469,9 @@ namespace RiCPP {
 	}; // CRibRequestData
 
 
-	/** @brief Root for the request handlers
+	/** @brief Base class for the request handlers.
+	 *
+	 *  Every interface call has its own class (eg. CWorldBeginRibRequest, CSphereRibRequest=
 	 */
 	class CRibRequest {
 	public:
@@ -423,11 +481,11 @@ namespace RiCPP {
 	}; // CRibRequest
 
 
-	/** @brief Generic parser object
+	/** @brief Generic parser object.
 	 */
 	class CArchiveParser : public IRibParserState {
 	protected:
-		typedef long RibHandelNumber; //! Representation of a handle number in a RIB file.
+		typedef long RibHandelNumber; //!< Representation of a handle number in a RIB file.
 
 	private:
 		typedef std::map<RibHandelNumber, RtLightHandle> NUM2LIGHT;	  //!< Maps a long to a light handle.
@@ -575,7 +633,7 @@ namespace RiCPP {
 		virtual bool getArchiveHandle(RtArchiveHandle &handle, const char *handleName) const;
 	}; // CArchiveParser
 
-	/** @brief Rib parser object
+	/** @brief The Rib parser object.
 	 */
 	class CRibParser : public CArchiveParser {
 		typedef std::map<RibHandelNumber, std::string> NUM2STRING;    //!< Maps an integer to a string to encode string tokens.
@@ -611,8 +669,9 @@ namespace RiCPP {
 		static std::map<std::string, CRibRequest *> s_requestMap;
 
 		/** @brief Calls the handler routine for a request token using s_requestMap.
-		 * @param request The string of request token
-		 * @return False, no CRibRequest handler found for \a request. True, handler found and called.
+		 *
+		 *  @param request The string of request token
+		 *  @return False, no CRibRequest handler found for \a request. True, handler found and called.
 		 */
 		bool call(const std::string &request);
 
@@ -620,39 +679,49 @@ namespace RiCPP {
 		 */
 		void initRequestMap();
 
-		//! Asks if token stands for a comment
-		/*! \return true: token stands for a comment (structured or normal), false: otherwise
+		/** @brief Asks if token stands for a comment.
+		 *
+		 *  @return true, token stands for a comment (structured or normal) or false, otherwise.
 		 */
-		inline static bool isCommentToken(int token) {
+		inline static bool isCommentToken(int token)
+		{
 			return token != RIBPARSER_NORMAL_COMMENT || token != RIBPARSER_STRUCTURED_COMMENT;
 		}
 
-		//! Token is a Ri token, comment, value, array start, array end or eof
-		/*! \return true: token stands for a valid token, false: otherwise
+		/** @brief Token is a Ri token, comment, value, array start, array end or eof.
+		 *
+		 *  @return true, token stands for a valid token or false, otherwise.
 		 */
-		inline static bool isValidToken(int token) {
+		inline static bool isValidToken(int token)
+		{
 			return (token > RIBPARSER_NOT_A_TOKEN) && (token <= RIBPARSER_REQUEST);
 		}
 
-		//! Token is a Ri token (Sphere, Patch, Format etc.)
-		/*! \return true: token stands for a Ri token, false: otherwise
+		/** @brief Token is a Ri token (Sphere, Patch, Format etc.).
+		 *
+		 *  @return true: token stands for a Ri token, false: otherwise.
 		 */
-		inline static bool isRequestToken(int token) {
+		inline static bool isRequestToken(int token)
+		{
 			return token == RIBPARSER_REQUEST;
 		}
 
-		//! Stores a comment
-		/*! Comments found within an interface call are handled after the interface
+		/** @brief Stores a comment.
+		 *
+		 *  Comments found within an interface call are handled after the interface
 		 *  call itself is handled, so the comments are stored until this is happend.
 		 */
 		class CComment {
 		public:
 			std::vector<char> m_comment; //!< Storage for a comment.
 			bool m_isStructured;         //!< Comment is structured comment (##).
-			long m_lineNo;            //!< Line count where the comment was found.
-			//! Assignes another comment to *this.
-			//! \return A reference to this.
-			inline CComment &operator=(const CComment &c) {
+			long m_lineNo;               //!< Line count where the comment was found.
+			
+			/** @brief Assignes another comment to *this.
+			 *  @return A reference to this.
+			 */
+			inline CComment &operator=(const CComment &c)
+			{
 				m_comment = c.m_comment;
 				m_isStructured = c.m_isStructured;
 				m_lineNo = c.m_lineNo;
@@ -660,7 +729,7 @@ namespace RiCPP {
 			}
 		};
 
-		std::vector<CComment> m_deferedCommentList; //!< Comments, that are defered in this interface call
+		std::vector<CComment> m_deferedCommentList; //!< Comments, that are defered in this interface call.
 
 		EnumRequests findIdentifier();
 
@@ -677,6 +746,7 @@ namespace RiCPP {
 		int nextToken();
 		int parseNextCall();
 		void parseFile();
+
 	public:
 		inline CRibParser(
 			IRibParserCallback &parserCallback,

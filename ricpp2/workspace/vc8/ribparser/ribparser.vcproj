@@ -282,6 +282,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ribparser\riboptions.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ribparser\ribparser.cpp"
 				>
 			</File>
@@ -293,6 +297,10 @@
 			>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ribparser\ribmodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ribparser\riboptions.h"
 				>
 			</File>
 			<File

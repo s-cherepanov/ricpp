@@ -138,15 +138,17 @@ public:
 	 */
 	virtual RtVoid abort(void) = 0;
 
-
 	/** @brief Gets a read only render state.
 	 *  @return Read only renderstate.
 	 */
 	virtual const CRenderState *renderState() const = 0;
-	virtual CRenderState *renderState() = 0;
-	virtual bool preCheck(EnumRequests req) = 0;
 
-	/** @brief Interfaces of fronten needed by rib parser.
+	/** @brief Gets a writeable render state.
+	 *  @return Writeable renderstate.
+	 */
+	virtual CRenderState *renderState() = 0;
+
+	/** @brief Interfaces of frontend needed by rib parser.
 	 *
 	 * Is called at the begin() of the front end.
 	 *

@@ -325,11 +325,6 @@ protected:
 
 public:
 
-	/** @brief Check validity of state for common requests.
-	 * @throw ExceptRiCPPError
-	 * @param req Number of the requests
-	 * @return false if checking fails
-	 */
 	virtual bool preCheck(EnumRequests req);
 
 	inline virtual const CRenderState *renderState() const { return m_renderState; }

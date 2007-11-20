@@ -1176,8 +1176,8 @@ void TRibParser::initTokens() {
 	m_tokenset[IDX_ROTATE] = "Rotate";
 	m_tokenset[IDX_SCALE] = "Scale";
 	m_tokenset[IDX_SKEW] = "Skew";
-	m_tokenset[IDX_DEFORMATION] = "Deformation";
-	m_tokenset[IDX_COORDINATE_SYSTEM] = "CoordinateSystem";
+	m_tokenset[IDX_DEFORMATION] = "Deion";
+	m_tokenset[IDX_COORDINATE_SYSTEM] = "formatCoordinateSystem";
 	m_tokenset[IDX_COORD_SYS_TRANSFORM] = "CoordSysTransform";
 	m_tokenset[IDX_TRANSFORM_POINTS] = "TransformPoints";
 	m_tokenset[IDX_POLYGON] = "Polygon";
@@ -2726,7 +2726,7 @@ void TRibParser::handleCall(RtInt callId) {
 				m_ri->projectionV(name, 0, NULL, NULL);
 			}
 		} else {
-			m_ricb->handleError(RIE_MISSINGDATA, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Projection' argument (projrction) missing, taking orthographic projection", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
+			m_ricb->handleError(RIE_MISSINGDATA, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Projection' argument (projection) missing, taking orthographic projection", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
 			m_ri->projectionV(name, 0, NULL, NULL);
 		}
 		break;

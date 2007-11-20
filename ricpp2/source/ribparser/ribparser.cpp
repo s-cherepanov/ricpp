@@ -27,7 +27,13 @@
  *  @brief Implementation of the parser for rib
  */
 
+#ifndef _RICPP_RIBPARSER_RIBMODES_H
 #include "ricpp/ribparser/ribmodes.h"
+#endif // _RICPP_RIBPARSER_RIBMODES_H
+
+#ifndef _RICPP_RIBPARSER_RIBOPTIONS_H
+#include "ricpp/ribparser/riboptions.h"
+#endif // _RICPP_RIBPARSER_RIBOPTIONS_H
 
 #ifndef _RICPP_RICPP_PARAMCLASSES_H
 #include "ricpp/ricpp/paramclasses.h"
@@ -735,6 +741,21 @@ void CRibParser::initRequestMap()
 
 		static CIfEndRibRequest ifEnd; 
 		s_requestMap.insert(std::make_pair(ifEnd.requestName(), &ifEnd));
+
+		static CFormatRibRequest format;
+		s_requestMap.insert(std::make_pair(format.requestName(), &format));
+
+		static CFrameAspectRatioRibRequest frameAspectRatio;
+		s_requestMap.insert(std::make_pair(frameAspectRatio.requestName(), &frameAspectRatio));
+
+		static CScreenWindowRibRequest screenWindow;
+		s_requestMap.insert(std::make_pair(screenWindow.requestName(), &screenWindow));
+
+		static CCropWindowRibRequest cropWindow;
+		s_requestMap.insert(std::make_pair(cropWindow.requestName(), &cropWindow));
+
+		static CProjectionRibRequest projection;
+		s_requestMap.insert(std::make_pair(projection.requestName(), &projection));
 
 		static CSphereRibRequest sphere; 
 		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));

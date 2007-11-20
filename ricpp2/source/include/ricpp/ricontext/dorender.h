@@ -53,21 +53,11 @@ public:
 	inline virtual ~IDoRender() {}
 
 	/** @brief Checks validity of state for common requests.
-	 * @param req Number of the requests.
-	 * @return false if checking fails.
-	 * @except ExceptRiCPPError Implementation can also throw an exception on errors.
+	 *  @param req Number of the requests.
+	 *  @return false if checking fails.
+	 *  @except ExceptRiCPPError Implementation can also throw an exception on errors.
 	 */
 	virtual bool preCheck(EnumRequests req) = 0;
-
-	/** @brief Gets a writeable renderState.
-	 *  @return Writeable renderstate.
-	 */
-	virtual CRenderState *renderState() = 0;
-
-	/** @brief Gets a read only render state.
-	 *  @return Read only renderstate.
-	 */
-	virtual const CRenderState *renderState() const = 0;
 
 	/** Replays a single interface call
 	 */

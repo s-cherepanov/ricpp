@@ -317,8 +317,7 @@ protected:
 	 */
 	virtual void replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb);
 
-public:
-
+protected:
 	virtual RtVoid archiveInstanceV(RtArchiveHandle handle, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid preArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
 	virtual RtVoid doArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
@@ -536,8 +535,6 @@ public:
 	virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid archiveRecordV(RtToken type, RtString line);
-	/** @todo parser to frontend
-	 */
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid ifBegin(RtString expr);

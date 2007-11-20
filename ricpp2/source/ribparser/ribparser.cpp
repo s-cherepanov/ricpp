@@ -35,16 +35,35 @@
 
 using namespace RiCPP;
 
+// -----------------------------------------------------------------------------
+
+// Various status codes, sequence number is important
+const int CRibParser::RIBPARSER_REQUEST = 1;
+const int CRibParser::RIBPARSER_NORMAL_COMMENT = 2;
+const int CRibParser::RIBPARSER_STRUCTURED_COMMENT = 3;
+const int CRibParser::RIBPARSER_STRING = 4;
+const int CRibParser::RIBPARSER_ARRAY_START = 5;
+const int CRibParser::RIBPARSER_ARRAY_END = 6;
+const int CRibParser::RIBPARSER_NUMBER = 7;
+
+const int CRibParser::RIBPARSER_NOT_A_TOKEN = 0;
+const int CRibParser::RIBPARSER_EOF = -1;
+
 std::map<std::string, CRibRequest *> CRibParser::s_requestMap;
 
-CRibParameter::CRibParameter() {
+// ----------------------------------------------------------------------------
+
+CRibParameter::CRibParameter()
+{
 	m_lineNo = 0;
 	m_isArray = false;
 	m_typeID = BASICTYPE_UNKNOWN;
 	m_cstrVector = 0;
 }
 
-CRibParameter::~CRibParameter() {
+
+CRibParameter::~CRibParameter()
+{
 	freeValue();
 
 	if ( m_cstrVector ) {
@@ -53,7 +72,9 @@ CRibParameter::~CRibParameter() {
 	m_cstrVector = 0;
 }
 
-CRibParameter::CRibParameter(const CRibParameter &p) {
+
+CRibParameter::CRibParameter(const CRibParameter &p)
+{
 	m_lineNo = 0;
 	m_cstrVector = 0;
 	m_isArray = false;
@@ -61,13 +82,17 @@ CRibParameter::CRibParameter(const CRibParameter &p) {
 	*this = p;
 }
 
-void CRibParameter::freeValue() {
+
+void CRibParameter::freeValue()
+{
 	m_vInt.clear();
 	m_vFloat.clear();
 	m_vString.clear();
 }
 
-CRibParameter &CRibParameter::operator=(const CRibParameter &p) {
+
+CRibParameter &CRibParameter::operator=(const CRibParameter &p)
+{
 	if ( &p == this )
 		return *this;
 
@@ -90,7 +115,8 @@ CRibParameter &CRibParameter::operator=(const CRibParameter &p) {
 }
 
 
-void *CRibParameter::getValue() {
+void *CRibParameter::getValue()
+{
 	// Is there at least one value?
 	if ( getCard() == 0 )
 		return 0;
@@ -125,7 +151,8 @@ void *CRibParameter::getValue() {
 }
 
 
-void *CRibParameter::getValue(size_t i) const {
+void *CRibParameter::getValue(size_t i) const
+{
 	if ( i >= getCard() )
 		return 0;
 
@@ -144,7 +171,8 @@ void *CRibParameter::getValue(size_t i) const {
 }
 
 
-size_t CRibParameter::getCard() const {
+size_t CRibParameter::getCard() const
+{
 
 	// No valid typeID - no value is set
 	if ( m_typeID < 0 || m_typeID >= N_BASICTYPES )
@@ -165,7 +193,8 @@ size_t CRibParameter::getCard() const {
 }
 
 
-bool CRibParameter::convertIntToFloat() {
+bool CRibParameter::convertIntToFloat()
+{
 	if ( m_typeID == BASICTYPE_FLOAT )
 		return true;
 
@@ -182,6 +211,7 @@ bool CRibParameter::convertIntToFloat() {
 	m_typeID = BASICTYPE_FLOAT;
 	return true;
 }
+
 
 bool CRibParameter::convertFloatToInt() {
 	if ( m_typeID == BASICTYPE_INTEGER )
@@ -209,7 +239,7 @@ class CSphereRibRequest : public CRibRequest {
 public:
 	virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
-}; // CSphereribRequest
+}; // CSphereRibRequest
 
 void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
@@ -331,23 +361,9 @@ void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 
 // ----------------------------------------------------------------------------
 
-bool CArchiveParser::canParse(RtString name)
-{
-	CUri refUri(name);
-	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, true) )
-	{
-		return false;
-	}
-	m_ob.base(m_baseUri);
-	return m_ob.open(refUri);
-}
 
-bool CArchiveParser::close()
+void CRibParser::putback(unsigned char c)
 {
-	return m_ob.close();
-}
-
-void CArchiveParser::putback(unsigned char c) {
 	m_hasPutBack = true;
 	if ( c == '\n' && m_lineNo > 0 )
 		--m_lineNo;
@@ -355,7 +371,8 @@ void CArchiveParser::putback(unsigned char c) {
 }
 
 
-unsigned char CArchiveParser::getchar() {
+unsigned char CRibParser::getchar()
+{
 	unsigned char val;
 
 	if ( m_hasPutBack ) {
@@ -377,19 +394,22 @@ unsigned char CArchiveParser::getchar() {
 	return val;
 }
 
-bool CArchiveParser::bindObjectHandle(RtObjectHandle handle, RtInt number)
+
+bool CRibParser::bindObjectHandle(RtObjectHandle handle, RtInt number)
 {
 	m_mapObjectHandle[number] = handle;
 	return true;
 }
 
-bool CArchiveParser::bindObjectHandle(RtObjectHandle handle, const char *name)
+
+bool CRibParser::bindObjectHandle(RtObjectHandle handle, const char *name)
 {
 	m_mapObjectStrHandle[name] = handle;
 	return true;
 }
 
-bool CArchiveParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
+
+bool CRibParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
 {
 	NUM2OBJECT::const_iterator i = m_mapObjectHandle.find(number);
 	if ( i != m_mapObjectHandle.end() ) {
@@ -400,7 +420,8 @@ bool CArchiveParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
 	return false;
 }
 
-bool CArchiveParser::getObjectHandle(RtObjectHandle &handle, const char *name) const
+
+bool CRibParser::getObjectHandle(RtObjectHandle &handle, const char *name) const
 {
 	STR2OBJECT::const_iterator i = m_mapObjectStrHandle.find(name);
 	if ( i != m_mapObjectStrHandle.end() ) {
@@ -411,17 +432,22 @@ bool CArchiveParser::getObjectHandle(RtObjectHandle &handle, const char *name) c
 	return false;
 }
 
-bool CArchiveParser::bindLightHandle(RtLightHandle handle, RtInt number) {
+
+bool CRibParser::bindLightHandle(RtLightHandle handle, RtInt number)
+{
 	m_mapLightHandle[number] = handle;
 	return true;
 }
 
-bool CArchiveParser::bindLightHandle(RtLightHandle handle, const char *handleName) {
+
+bool CRibParser::bindLightHandle(RtLightHandle handle, const char *handleName)
+{
 	m_mapLightStrHandle[handleName] = handle;
 	return true;
 }
 
-bool CArchiveParser::getLightHandle(RtLightHandle &handle, RtInt number) const
+
+bool CRibParser::getLightHandle(RtLightHandle &handle, RtInt number) const
 {
 	NUM2LIGHT::const_iterator i = m_mapLightHandle.find(number);
 	if ( i != m_mapLightHandle.end() ) {
@@ -432,7 +458,8 @@ bool CArchiveParser::getLightHandle(RtLightHandle &handle, RtInt number) const
 	return false;
 }
 
-bool CArchiveParser::getLightHandle(RtLightHandle &handle, const char *handleName) const
+
+bool CRibParser::getLightHandle(RtLightHandle &handle, const char *handleName) const
 {
 	STR2LIGHT::const_iterator i = m_mapLightStrHandle.find(handleName);
 	if ( i != m_mapLightStrHandle.end() ) {
@@ -443,22 +470,25 @@ bool CArchiveParser::getLightHandle(RtLightHandle &handle, const char *handleNam
 	return false;
 }
 
+
 /*
-bool CArchiveParser::bindArchiveHandle(RtArchiveHandle handle, RtInt number)
+bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, RtInt number)
 {
 	m_mapArchiveHandle[number] = handle;
 	return true;
 }
 */
 
-bool CArchiveParser::bindArchiveHandle(RtArchiveHandle handle, const char *name)
+
+bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, const char *name)
 {
 	m_mapArchiveStrHandle[name] = handle;
 	return true;
 }
 
+
 /*
-bool CArchiveParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) const
+bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) const
 {
 	NUM2OBJECT::const_iterator i = m_mapArchiveHandle.find(number);
 	if ( i != m_mapArchiveHandle.end() ) {
@@ -470,7 +500,8 @@ bool CArchiveParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) con
 }
 */
 
-bool CArchiveParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) const
+
+bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) const
 {
 	STR2OBJECT::const_iterator i = m_mapArchiveStrHandle.find(name);
 	if ( i != m_mapArchiveStrHandle.end() ) {
@@ -481,7 +512,6 @@ bool CArchiveParser::getArchiveHandle(RtArchiveHandle &handle, const char *name)
 	return false;
 }
 
-// ----------------------------------------------------------------------------
 
 int CRibRequestData::getTokenList(
 	size_t start,
@@ -630,19 +660,6 @@ int CRibRequestData::getTokenList(
 	return parameterCount;
 }
 
-// -----------------------------------------------------------------------------
-
-// Various status codes, sequence is important
-const int CRibParser::RIBPARSER_REQUEST = 1;
-const int CRibParser::RIBPARSER_NORMAL_COMMENT = 2;
-const int CRibParser::RIBPARSER_STRUCTURED_COMMENT = 3;
-const int CRibParser::RIBPARSER_STRING = 4;
-const int CRibParser::RIBPARSER_ARRAY_START = 5;
-const int CRibParser::RIBPARSER_ARRAY_END = 6;
-const int CRibParser::RIBPARSER_NUMBER = 7;
-
-const int CRibParser::RIBPARSER_NOT_A_TOKEN = 0;
-const int CRibParser::RIBPARSER_EOF = -1;
 
 void CRibParser::initRequestMap()
 {
@@ -724,6 +741,7 @@ void CRibParser::initRequestMap()
 	}
 }
 
+
 EnumRequests CRibParser::findIdentifier()
 {
 	m_token.push_back(0); // Terminate string
@@ -734,6 +752,7 @@ EnumRequests CRibParser::findIdentifier()
 	}
 	return REQ_UNKNOWN;
 }
+
 
 bool CRibParser::call(const std::string &request)
 {
@@ -747,7 +766,6 @@ bool CRibParser::call(const std::string &request)
 
 	return false;
 }
-
 
 
 // handleBinary()
@@ -1061,6 +1079,7 @@ int CRibParser::handleBinary(unsigned char c) {
 	return RIBPARSER_NORMAL_COMMENT; // Treat as comment
 }
 
+
 int CRibParser::handleComment(std::vector<char> &token, bool isStructured)
 {
 	// If a comment is inbetween an interface call,
@@ -1078,7 +1097,9 @@ int CRibParser::handleComment(std::vector<char> &token, bool isStructured)
 	return isStructured ? RIBPARSER_STRUCTURED_COMMENT : RIBPARSER_NORMAL_COMMENT;
 }
 
-void CRibParser::handleDeferedComments() {
+
+void CRibParser::handleDeferedComments()
+{
 	for ( unsigned int i = 0; i < m_deferedCommentList.size(); ++i ) {
 		CComment &c = m_deferedCommentList[i];
 		if ( c.m_isStructured ) {
@@ -1096,7 +1117,9 @@ void CRibParser::handleDeferedComments() {
 	m_deferedCommentList.clear();
 }
 
-int CRibParser::handleString() {
+
+int CRibParser::handleString()
+{
 	m_token.push_back((unsigned char)0);
 	if ( m_code >= 0 ) {
 		if ( m_defineString >= 0 ) {
@@ -1140,7 +1163,9 @@ int CRibParser::handleString() {
 	return RIBPARSER_STRING;
 }
 
-int CRibParser::handleArrayStart() {
+
+int CRibParser::handleArrayStart()
+{
 	CRibParameter param;
 	param.lineNo(lineNo());
 	m_request.push_back(param);
@@ -1150,7 +1175,9 @@ int CRibParser::handleArrayStart() {
 	return RIBPARSER_ARRAY_START;
 }
 
-int CRibParser::handleArrayEnd() {
+
+int CRibParser::handleArrayEnd()
+{
 	--m_braketDepth;
 	if ( m_braketDepth < 0 ) {
 		m_braketDepth = 0;
@@ -1163,7 +1190,8 @@ int CRibParser::handleArrayEnd() {
 }
 
 
-int CRibParser::insertNumber(RtFloat flt) {
+int CRibParser::insertNumber(RtFloat flt)
+{
 	if ( m_braketDepth ) {
 		// Array
 		CRibParameter &p = m_request.back();
@@ -1184,7 +1212,9 @@ int CRibParser::insertNumber(RtFloat flt) {
 	return RIBPARSER_NUMBER;
 }
 
-int CRibParser::insertNumber(RtInt num) {
+
+int CRibParser::insertNumber(RtInt num)
+{
 	if ( m_braketDepth ) {
 		// Array
 		CRibParameter &p = m_request.back();
@@ -1204,7 +1234,9 @@ int CRibParser::insertNumber(RtInt num) {
 	return RIBPARSER_NUMBER;
 }
 
-int CRibParser::handleNumber(bool isInteger) {
+
+int CRibParser::handleNumber(bool isInteger)
+{
 	m_token.push_back((unsigned char)0);
 
 	if ( isInteger ) {
@@ -1216,7 +1248,9 @@ int CRibParser::handleNumber(bool isInteger) {
 	return insertNumber(f);
 }
 
-int CRibParser::nextToken() {
+
+int CRibParser::nextToken()
+{
 	int state = 0;          // the state of the scanner (switch)
 	// bool binary = false;    // currently handling binary data
 	unsigned char c;        // the character read
@@ -1531,6 +1565,7 @@ int CRibParser::nextToken() {
 	return RIBPARSER_EOF;
 }
 
+
 int CRibParser::parseNextCall()
 {
 	// Find first/next call (lookahead)
@@ -1608,7 +1643,9 @@ int CRibParser::parseNextCall()
 	return m_lookahead;
 }
 
-void CRibParser::parseFile() {
+
+void CRibParser::parseFile()
+{
 	// Clear data array used by the binary decoder
 	for ( int i = 0; i < 256; ++i )
 		m_ribEncode[i] = REQ_UNKNOWN;
@@ -1632,17 +1669,30 @@ void CRibParser::parseFile() {
 	clearHandleMaps();
 }
 
+
+bool CRibParser::close()
+{
+	return m_ob.close();
+}
+
+
 bool CRibParser::canParse(RtString name)
 {
-	if ( !CArchiveParser::canParse(name) )
+	CUri refUri(name);
+	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, true) )
+	{
 		return false;
-	return true;
+	}
+	m_ob.base(m_baseUri);
+	return m_ob.open(refUri);
 }
+
 
 void CRibParser::parse(
 	const IArchiveCallback *callback,
 	const CParameterList &params)
 {
-	CArchiveParser::parse(callback, params);
+	m_callback = callback;
+	m_parameterList = params;
 	parseFile();
 }

@@ -298,6 +298,7 @@ namespace RiCPP {
 		bool convertIntToFloat();
 	}; // CRibParameter
 
+
 	/** @brief Interface for the state reader/manipulator of the parser CRibParser
 	 */
 	class IRibParserState {
@@ -329,9 +330,12 @@ namespace RiCPP {
 	}; // IRibParserState
 
 
+	/** @brief Used to store the content of a rib request
+	 *
+	 *  The parser uses one instance of this class.
+	 */
 	class CRibRequestData {
-		IRibParserState *m_parserState;
-		IRiCPPErrorHandler *m_errHandler;
+		IRibParserState *m_parserState;              //!< The state of the parser (and front end callbacks).
 		std::vector<CRibParameter> m_parameters;     //!< All parameters parsed within one interface call.
 		std::vector<const char *> m_tokenList;       //!< Tokens of the token-value parameterlist of an interface call, inserted by getTokenList().
 		std::vector<void *> m_valueList;             //!< Values of the token-value parameterlist of an interface call, inserted by getTokenList().
@@ -340,32 +344,36 @@ namespace RiCPP {
 
 		inline IRiCPPErrorHandler &errHandler()
 		{
-			return *m_errHandler;
+			assert(m_parserState != 0);
+			return m_parserState->errHandler();
 		}
 		inline const char *resourceName() const
 		{
+			assert(m_parserState != 0);
 			return m_parserState->resourceName();
 		}
 
 		inline CRenderState &renderState() const
 		{
+			assert(m_parserState != 0);
 			return m_parserState->renderState();
+		}
+		
+		inline IRibParserState &parserState()
+		{
+			assert(m_parserState != 0);
+			return *m_parserState;
 		}
 	public:
 		inline CRibRequestData()
 		{
 			m_parserState = 0;
-			m_errHandler = 0;
 			m_checkParameters = true;
 		}
 
-		inline void init(
-			IRibParserState &aParserState,
-			IRiCPPErrorHandler &anErrHandler
-		)
+		inline void init(IRibParserState &aParserState)
 		{
 			m_parserState = &aParserState;
-			m_errHandler = &anErrHandler;
 		}
 
 		inline void clear()
@@ -481,19 +489,21 @@ namespace RiCPP {
 	}; // CRibRequest
 
 
-	/** @brief Generic parser object.
+	/** @brief The Rib parser object.
 	 */
-	class CArchiveParser : public IRibParserState {
+	class CRibParser : public IRibParserState {
 	protected:
-		typedef long RibHandelNumber; //!< Representation of a handle number in a RIB file.
-
+		typedef long RibHandleNumber; //!< Representation of a handle number in a RIB file.
+		
 	private:
-		typedef std::map<RibHandelNumber, RtLightHandle> NUM2LIGHT;	  //!< Maps a long to a light handle.
+		typedef std::map<RibHandleNumber, RtLightHandle> NUM2LIGHT;	  //!< Maps a long to a light handle.
 		typedef std::map<std::string, RtLightHandle> STR2LIGHT;       //!< Maps a string to a light handle.
-		typedef std::map<RibHandelNumber, RtObjectHandle> NUM2OBJECT; //!< Maps a long to an object handle.
+		typedef std::map<RibHandleNumber, RtObjectHandle> NUM2OBJECT; //!< Maps a long to an object handle.
 		typedef std::map<std::string, RtObjectHandle> STR2OBJECT;     //!< Maps a string to an object handle.
-		// typedef std::map<RibHandelNumber, RtArchiveHandle> NUM2ARCHIVE; // Maps a long to an archive handle.
+		// typedef std::map<RibHandleNumber, RtArchiveHandle> NUM2ARCHIVE; // Maps a long to an archive handle.
 		typedef std::map<std::string, RtArchiveHandle> STR2ARCHIVE;     //!< Maps a string to an archive handle.
+
+		typedef std::map<RibHandleNumber, std::string> NUM2STRING;    //!< Maps an integer to a string to encode string tokens.
 
 		//! Maps number to object handle
 		NUM2OBJECT m_mapObjectHandle;
@@ -513,130 +523,21 @@ namespace RiCPP {
 		//! Maps name to archive handle
 		STR2ARCHIVE m_mapArchiveStrHandle;
 
+		//! @brief Frontnd values the parser needs to know.
 		IRibParserCallback *m_parserCallback;
+		
+		//! @brief State of the backend renderer.
 		CRenderState *m_renderState;
+		
+		//! @brief The callback for comments (@see IRiCPP::readArchiveV())
 		const IArchiveCallback *m_callback;
 
-		CUri m_baseUri;
-		CUri m_absUri;
-		long m_lineNo;
+		CUri m_baseUri; //!< The base URI for the rib resource.
+		CUri m_absUri;  //!< The absolute URI of the rib resource.
+		long m_lineNo;  //!< Current line number.
 
-		bool m_hasPutBack;
-		unsigned char m_putBack;
-
-		inline CArchiveParser &operator=(const CArchiveParser &) { return *this; }
-
-	protected:
-		CParameterList m_parameterList;
-
-		std::istream m_istream;
-		TemplFrontStreambuf<char> m_ob;
-
-		void putback(unsigned char c);
-		unsigned char getchar();
-		
-		inline void clearHandleMaps()
-		{
-			// Clear handle maps (Handle number -> handle)
-			m_mapLightHandle.clear();
-			m_mapLightStrHandle.clear();
-			m_mapObjectHandle.clear();
-			m_mapObjectStrHandle.clear();
-			// m_mapArchiveHandle.clear();
-			m_mapArchiveStrHandle.clear();
-		}
-	public:
-		inline CArchiveParser(
-			IRibParserCallback &parserCallback,
-			CRenderState &aRenderState,
-			const CUri &baseUri) :
-			m_ob(parserCallback.protocolHandlers()),
-			m_istream(&m_ob)
-		{
-			m_parserCallback = &parserCallback;
-			m_renderState = &aRenderState;
-			m_baseUri = baseUri;
-			m_lineNo = 0;
-			m_hasPutBack = false;
-			m_putBack = 0;
-		}
-
-		inline virtual ~CArchiveParser()
-		{
-			close();
-		}
-
-		inline virtual const CUri &baseUri() const
-		{
-			return m_baseUri;
-		}
-
-		inline virtual const CUri &absUri() const
-		{
-			return m_absUri;
-		}
-
-		inline virtual long lineNo() const
-		{
-			return m_lineNo;
-		}
-
-		inline virtual const char *resourceName() const
-		{
-			return absUri().toString().c_str();
-		}
-
-		inline virtual const IArchiveCallback *callback() const
-		{
-			return m_callback;
-		}
-
-		inline virtual CRenderState &renderState() const
-		{
-			return *m_renderState;
-		}
-
-		inline virtual IRiCPPErrorHandler &errHandler()
-		{
-			return m_parserCallback->ricppErrHandler();
-		}
-
-		inline virtual IRiRoot &ribFilter()
-		{
-			return m_parserCallback->ribFilter();
-		}
-
-		virtual bool canParse(RtString name);
-		bool close();
-
-		inline virtual void parse(
-			const IArchiveCallback *callback,
-			const CParameterList &params)
-		{
-			m_callback = callback;
-			m_parameterList = params;
-		}
-
-		virtual bool bindObjectHandle(RtObjectHandle handle, RtInt number);
-		virtual bool bindObjectHandle(RtObjectHandle handle, const char *name);
-		virtual bool getObjectHandle(RtObjectHandle &handle, RtInt number) const;
-		virtual bool getObjectHandle(RtObjectHandle &handle, const char *name) const;
-
-		virtual bool bindLightHandle(RtLightHandle handle, RtInt number);
-		virtual bool bindLightHandle(RtLightHandle handle, const char *handleName);
-		virtual bool getLightHandle(RtLightHandle &handle, RtInt number) const;
-		virtual bool getLightHandle(RtLightHandle &handle, const char *handleName) const;
-
-		// virtual bool bindArchiveHandle(RtArchiveHandle handle, RtInt number);
-		virtual bool bindArchiveHandle(RtArchiveHandle handle, const char *handleName);
-		// virtual bool getArchiveHandle(RtArchiveHandle &handle, RtInt number) const;
-		virtual bool getArchiveHandle(RtArchiveHandle &handle, const char *handleName) const;
-	}; // CArchiveParser
-
-	/** @brief The Rib parser object.
-	 */
-	class CRibParser : public CArchiveParser {
-		typedef std::map<RibHandelNumber, std::string> NUM2STRING;    //!< Maps an integer to a string to encode string tokens.
+		bool m_hasPutBack;       //!< One character put back.
+		unsigned char m_putBack; //!< The character has been put back (if m_hasOutBack == true).
 
 		static const int RIBPARSER_EOF;                //!< Used as token for end of file
 
@@ -747,21 +648,189 @@ namespace RiCPP {
 		int parseNextCall();
 		void parseFile();
 
-	public:
-		inline CRibParser(
-			IRibParserCallback &parserCallback,
-			CRenderState &aRenderState,
-			const CUri &baseUri)
-			: CArchiveParser(parserCallback, aRenderState, baseUri)
+		/** @brief list of parameters currently parsed.
+		 */
+		CParameterList m_parameterList;
+
+		/** @brief RIB input stream.
+		 */
+		std::istream m_istream;
+
+		/** @brief RIB input stream back buffer for m_istream.
+		 */
+		TemplFrontStreambuf<char> m_ob;
+
+		/** @brief Put back one character to the stream.
+		 *
+		 *  Only one character can be put back.
+		 *
+		 *  @param c Character to put back.
+		 */
+		void putback(unsigned char c);
+
+		/** @brief Gets the next character from input stream.
+		 *
+		 *  Get the nekt character or the put back character from the rib input stream.
+		 *
+		 *  @retrun Next character to examine.
+		 */
+		unsigned char getchar();
+		
+		/** @brief Clears the handle maps at the start of the parsing.
+		 */
+		inline void clearHandleMaps()
 		{
-			m_request.init(*this, parserCallback.ricppErrHandler());
+			m_mapLightHandle.clear();
+			m_mapLightStrHandle.clear();
+			m_mapObjectHandle.clear();
+			m_mapObjectStrHandle.clear();
+			// m_mapArchiveHandle.clear();
+			m_mapArchiveStrHandle.clear();
+		}
+
+		virtual bool bindObjectHandle(RtObjectHandle handle, RtInt number);
+		virtual bool bindObjectHandle(RtObjectHandle handle, const char *name);
+		virtual bool getObjectHandle(RtObjectHandle &handle, RtInt number) const;
+		virtual bool getObjectHandle(RtObjectHandle &handle, const char *name) const;
+
+		virtual bool bindLightHandle(RtLightHandle handle, RtInt number);
+		virtual bool bindLightHandle(RtLightHandle handle, const char *handleName);
+		virtual bool getLightHandle(RtLightHandle &handle, RtInt number) const;
+		virtual bool getLightHandle(RtLightHandle &handle, const char *handleName) const;
+
+		// virtual bool bindArchiveHandle(RtArchiveHandle handle, RtInt number);
+		virtual bool bindArchiveHandle(RtArchiveHandle handle, const char *handleName);
+		// virtual bool getArchiveHandle(RtArchiveHandle &handle, RtInt number) const;
+		virtual bool getArchiveHandle(RtArchiveHandle &handle, const char *handleName) const;
+
+	public:
+		/** @brief Constructor
+		 *
+		 *  Initializes a new parser with the current render state
+		 *
+		 *  @brief aParserCallback Callbacks of the frontend.
+		 *  @brief aRenderState The state object of the backend. 
+		 *  @brief aBaseUri The base URI of the rib resources
+		 *
+		 */
+		inline CRibParser(
+			IRibParserCallback &aParserCallback,
+			CRenderState &aRenderState,
+			const CUri &aBaseUri) :
+			m_ob(aParserCallback.protocolHandlers()),
+			m_istream(&m_ob)
+		{
+			m_parserCallback = &aParserCallback;
+			m_renderState = &aRenderState;
+			m_baseUri = aBaseUri;
+			m_lineNo = 0;
+			m_hasPutBack = false;
+			m_putBack = 0;
+			m_request.init(*this);
 			initRequestMap();
 		}
 
-		inline virtual ~CRibParser() {}
+		/** @brief Destructor.
+		 *
+		 *  Closes opened resources.
+		 */
+		inline virtual ~CRibParser()
+		{
+			close();
+		}
 
+		/** @brief Gets the base URI of the rib resources.
+		 *
+		 *  @return The base URI of the rib resources.
+		 */
+		inline virtual const CUri &baseUri() const
+		{
+			return m_baseUri;
+		}
+
+		/** @brief Gets the absoulte URI of the current rib resource.
+		 *
+		 *  @return The absoulte URI of the current rib resource.
+		 */
+		inline virtual const CUri &absUri() const
+		{
+			return m_absUri;
+		}
+
+		/** @brief Gets the current line number.
+		 *
+		 *  @return The current line number.
+		 */
+		inline virtual long lineNo() const
+		{
+			return m_lineNo;
+		}
+
+		/** @brief Gets the name of the current rib resource.
+		 *
+		 *  @return The name of the current rib resource.
+		 */
+		inline virtual const char *resourceName() const
+		{
+			return absUri().toString().c_str();
+		}
+
+		/** @brief Gets the archive callback for rib comments.
+		 *
+		 *  @return The archive callback for rib comments.
+		 */
+		inline virtual const IArchiveCallback *callback() const
+		{
+			return m_callback;
+		}
+
+		/** @brief Gets the current render state.
+		 *
+		 *  @return The current render state.
+		 */
+		inline virtual CRenderState &renderState() const
+		{
+			return *m_renderState;
+		}
+
+		/** @brief Gets the error handler of the frontend.
+		 *
+		 *  @return The error handler of the frontend.
+		 */
+		inline virtual IRiCPPErrorHandler &errHandler()
+		{
+			return m_parserCallback->ricppErrHandler();
+		}
+
+		/** @brief Gets the rib filter of the frontend.
+		 *
+		 *  Used to call the parsed rib requests.
+		 *
+		 *  @return The rib filter of the frontend.
+		 */
+		inline virtual IRiRoot &ribFilter()
+		{
+			return m_parserCallback->ribFilter();
+		}
+
+		/** @brief Closes a resource.
+		 *
+		 *  @return true, resource was closed.
+		 */
+		virtual bool close();
+
+		/** @brief Find out if the file can be parsed by this type of parser and opens it.
+		 *
+		 *  @param name Resource name.
+		 *  @return true, file has been opened and is parseable.
+		 */
 		virtual bool canParse(RtString name);
 
+		/** @brief Parses a resource (already opend by canParse())
+		 *
+		 *  @param callback The callback for comments (@see IRiCPP::readArchiveV())
+		 *  @param params   Parameters of IRiCPP::readArchiveV()
+		 */
 		virtual void parse(
 			const IArchiveCallback *callback,
 			const CParameterList &params);

@@ -77,6 +77,62 @@ namespace RiCPP {
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 		inline virtual EnumRequests interfaceIdx() const { return REQ_PROJECTION; }
 	}; // CProjectionRibRequest
+
+	/** @brief Handles RIB request Clipping near far
+	 */
+	class CClippingRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING; }
+	}; // CClippingRibRequest
+
+	/** @brief Handles RIB request ClippingPlane x y z nx ny nz
+	 */
+	class CClippingPlaneRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+	}; // CClippingPlaneRibRequest
+
+	/** @brief Handles RIB request DepthOfField fstop focallength focaldistance
+	 */
+	class CDepthOfFieldRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_DEPTH_OF_FIELD; }
+	}; // CDepthOfFieldRibRequest
+
+	/** @brief Handles RIB request Shutter smin smax
+	 */
+	class CShutterRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_SHUTTER; }
+	}; // CShutterRibRequest
+
+	/** @brief Handles RIB request PixelVariance variation
+	 */
+	class CPixelVarianceRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_VARIANCE; }
+	}; // CPixelVarianceRibRequest
+
+	/** @brief Handles RIB request PixelSamples xsamples ysamples
+	 */
+	class CPixelSamplesRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_SAMPLES; }
+	}; // CPixelSamplesRibRequest
+
+	/** @brief Handles RIB request PixelFilter functionName xwidth ywidth
+	 */
+	class CPixelFilterRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_PIXEL_FILTER; }
+	}; // CPixelFilterRibRequest
 }
 
 #endif // _RICPP_RIBPARSER_RIBOPTIONS_H

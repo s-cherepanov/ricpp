@@ -4397,10 +4397,6 @@ public:
 	 */
 	inline virtual ~CRiProcedural()
 	{
-		if ( m_subdivfunc )
-			delete m_subdivfunc;
-		if ( m_freefunc )
-			delete m_freefunc;
 	}
 
 	inline virtual CRManInterfaceCall *duplicate() const

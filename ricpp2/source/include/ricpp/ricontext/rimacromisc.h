@@ -87,9 +87,7 @@ public:
 		long aLineNo = -1)
 		: CRManInterfaceCall(aLineNo)
 	{
-		m_handler = new CPrintErrorHandler();
-		if ( !m_handler )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiErrorHandler", __LINE__, __FILE__);
+		m_handler = &CPrintErrorHandler::func;
 	}
 
 	/** @brief Constructor.
@@ -104,9 +102,7 @@ public:
 		const IErrorHandler &handler)
 		: CRManInterfaceCall(aLineNo)
 	{
-		m_handler = handler.duplicate();
-		if ( !m_handler )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiErrorHandler", __LINE__, __FILE__);
+		m_handler = &(handler.singleton());
 	}
 
 	/** @brief Copy constructor.
@@ -123,8 +119,6 @@ public:
 	 */
 	inline virtual ~CRiErrorHandler()
 	{
-		if ( m_handler )
-			delete m_handler;
 	}
 
 	/** @brief Cloning.
@@ -158,25 +152,24 @@ public:
 	 */
 	inline void handler(const IErrorHandler &handler)
 	{
-		if ( m_handler )
-			delete m_handler;
-		m_handler = handler.duplicate();
-		if ( !m_handler )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"CRiErrorHandler::handler()", __LINE__, __FILE__);
+		m_handler = &handler.singleton();
 	}
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
 	{
+		assert(m_handler != 0);
 		ri.preErrorHandler(*m_handler);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
+		assert(m_handler != 0);
 		ri.doErrorHandler(*m_handler);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
+		assert(m_handler != 0);
 		ri.postErrorHandler(*m_handler);
 	}
 

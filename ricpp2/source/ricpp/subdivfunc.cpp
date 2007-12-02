@@ -29,6 +29,11 @@
  */
 
 #include "ricpp/ricpp/subdivfunc.h"
+
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 #include <cstdlib> //< used for free()
 
 using namespace RiCPP;
@@ -40,6 +45,8 @@ RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer data, RtFloat deta
 	detail = detail;
 }
 
+CProcDelayedReadArchive CProcDelayedReadArchive::func;
+
 RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
 	ri = ri;
@@ -47,14 +54,102 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 	detail = detail;
 }
 
-RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) const {
+CProcRunProgram CProcRunProgram::func;
+
+RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) const
+{
 	ri = ri;
 	data = data;
 	detail = detail;
 }
 
-RtVoid CProcFree::operator()(IRi &ri, RtPointer data) const {
+CProcDynamicLoad CProcDynamicLoad::func;
+
+RtVoid CProcFree::operator()(IRi &ri, RtPointer data) const
+{
 	ri = ri;
 	if (data)
 		free(data);
 };
+
+CProcFree CProcFree::func;
+
+
+//
+// CFilterFuncFactory
+//
+
+ISubdivFunc *CSubdivFuncFactory::newFunc(RtToken name)
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CProcDelayedReadArchive::myName() == name )
+		return new CProcDelayedReadArchive;
+
+	if ( CProcRunProgram::myName() == name )
+		return new CProcRunProgram;
+
+	if ( CProcDynamicLoad::myName() == name )
+		return new CProcDynamicLoad;
+
+	return 0;
+}
+
+void CSubdivFuncFactory::deleteFunc(ISubdivFunc *f)
+{
+	if ( !f )
+		return;
+	delete f;
+}
+
+
+ISubdivFunc *CSubdivFuncFactory::singleton(RtToken name) const
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CProcDelayedReadArchive::myName() == name )
+		return &CProcDelayedReadArchive::func;
+
+	if ( CProcRunProgram::myName() == name )
+		return &CProcRunProgram::func;
+
+	if ( CProcDynamicLoad::myName() == name )
+		return &CProcDynamicLoad::func;
+
+	return 0;
+}
+
+//
+// CFreeFuncFactory
+//
+
+IFreeFunc *CFreeFuncFactory::newFunc(RtToken name)
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CProcFree::myName() == name )
+		return new CProcFree;
+
+	return 0;
+}
+
+void CFreeFuncFactory::deleteFunc(IFreeFunc *f)
+{
+	if ( !f )
+		return;
+	delete f;
+}
+
+IFreeFunc *CFreeFuncFactory::singleton(RtToken name) const
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CProcFree::myName() == name )
+		return &CProcFree::func;
+
+	return 0;
+}

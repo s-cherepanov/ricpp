@@ -108,6 +108,8 @@ class CRenderState {
 
 	CLights m_lights;                              ///< Global light list.
 	
+	CFilterFuncFactory *m_filterFuncFactory;       ///< Factory for pixel filter functions.
+
 	bool m_reject;                                 ///< Reject requests while running, e.g. for appropriate if-then-else blocks
 	
 	/** @brief Only update the state, do no rendering (legacy).
@@ -569,7 +571,8 @@ public:
 		CModeStack &aModeStack,
 		COptionsFactory &optionsFactory,
 		CAttributesFactory &attributesFactory,
-		CLightSourceFactory &lightSourceFactory);
+		CLightSourceFactory &lightSourceFactory,
+		CFilterFuncFactory &filterFuncFactory);
 
 	/** @brief Destroys the object
 	 *
@@ -1044,6 +1047,12 @@ public:
 
 	CMotionState &motionState() { return m_motionState; }
 	const CMotionState &motionState() const { return m_motionState; }
+
+	inline IFilterFunc *filterFunc(RtToken name) const
+	{
+		return m_filterFuncFactory->singleton(name);
+	}
+
 }; // CRenderState
 
 } // namespace RiCPP

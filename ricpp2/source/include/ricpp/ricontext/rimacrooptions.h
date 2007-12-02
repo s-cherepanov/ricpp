@@ -2032,10 +2032,7 @@ public:
 		long aLineNo = -1)
 		: CRManInterfaceCall(aLineNo)
 	{
-		m_function = new CGaussianFilter();
-		if ( !m_function ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiPixelFilter, m_function=CGaussianFilter", __LINE__, __FILE__);
-		}
+		m_function = &CGaussianFilter::func;
 		m_xwidth = COptions::defXFilterWidth;
 		m_ywidth = COptions::defYFilterWidth;
 	}
@@ -2054,10 +2051,7 @@ public:
 		: CRManInterfaceCall(aLineNo),
 		  m_xwidth(aXwidth), m_ywidth(aYwidth)
 	{
-		m_function = aFunction.duplicate();
-		if ( !m_function ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiPixelFilter, m_function", __LINE__, __FILE__);
-		}
+		m_function = &aFunction.singleton();
 	}
 
 	/** @brief Copy constructor.
@@ -2073,8 +2067,6 @@ public:
 	 */
 	inline virtual ~CRiPixelFilter()
 	{
-		if ( m_function )
-			delete m_function;
 	}
 
 	inline virtual CRManInterfaceCall *duplicate() const
@@ -2102,10 +2094,7 @@ public:
 	 */
 	inline void function(const IFilterFunc &aFunction)
 	{
-		m_function = aFunction.duplicate();
-		if ( !m_function ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"pixel filter function could not be set", __LINE__, __FILE__);
-		}
+		m_function = &aFunction.singleton();
 	}
 
 	/** @brief Gets the horizontal influence in pixels.
@@ -2155,7 +2144,7 @@ public:
 		RtFloat &aXwidth, RtFloat &aYwidth) const
 	{
 		if ( function )
-			*function = m_function;
+			*function = &(m_function->singleton());
 
 		aXwidth = m_xwidth;
 		aYwidth = m_ywidth;
@@ -2171,13 +2160,7 @@ public:
 		const IFilterFunc &function,
 		RtFloat aXwidth, RtFloat aYwidth)
 	{
-		if ( m_function )
-			delete m_function;
-
-		m_function = function.duplicate();
-		if ( !m_function ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Set pixelfilter, m_function", __LINE__, __FILE__);
-		}
+		m_function = &function.singleton();
 		m_xwidth = aXwidth;
 		m_ywidth = aYwidth;
 	}

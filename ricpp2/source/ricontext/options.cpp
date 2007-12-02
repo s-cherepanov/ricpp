@@ -94,8 +94,6 @@ const RtFloat COptions::defRelativeDetail = 1;
 
 COptions::~COptions()
 {
-	if ( m_filterFunc )
-		delete m_filterFunc;
 }
 
 COptions &COptions::operator=(const COptions &ro)
@@ -160,11 +158,9 @@ COptions &COptions::operator=(const COptions &ro)
 
 	m_quantizers = ro.m_quantizers;
 
-	if ( m_filterFunc )
-		delete m_filterFunc;
-	m_filterFunc = NULL;
+	m_filterFunc = 0;
 	if ( ro.m_filterFunc )
-		m_filterFunc = ro.m_filterFunc->duplicate();
+		m_filterFunc = &(ro.m_filterFunc->singleton());
 
 	m_xWidth = ro.m_xWidth;
 	m_yWidth = ro.m_yWidth;
@@ -521,9 +517,7 @@ RtVoid COptions::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 
 void COptions::initPixelFilter()
 {
-	if ( m_filterFunc )
-		delete m_filterFunc;
-	m_filterFunc = new CGaussianFilter();
+	m_filterFunc = &CGaussianFilter::func;
 
 	m_xWidth = defXFilterWidth;
 	m_yWidth = defYFilterWidth;
@@ -531,9 +525,7 @@ void COptions::initPixelFilter()
 
 RtVoid COptions::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
 {
-	if ( m_filterFunc )
-		delete m_filterFunc;
-	m_filterFunc = function.duplicate();
+	m_filterFunc = &function.singleton();
 
 	m_xWidth = xwidth;
 	m_yWidth = ywidth;

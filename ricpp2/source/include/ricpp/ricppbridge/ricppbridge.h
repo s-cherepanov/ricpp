@@ -72,29 +72,9 @@ namespace RiCPP {
 class CRiCPPBridge : public IRi, protected IRibParserCallback
 {
 private:
-	/** @addtogroup ricpp_filter
-	 * @brief Build in filters
-	 */
-	//@{
-	const CBoxFilter m_boxFilter; ///< The Box pixel filter
-	const CCatmullRomFilter m_catmullRomFilter; ///< The Catmull-Rom pixel filter
-	const CGaussianFilter m_gaussianFilter; ///< The Gaussian pixel filter
-	const CSincFilter m_sincFilter; ///< The Sinc pixel filter
-	const CTriangleFilter m_triangleFilter; ///< The Triangle pixel filter
-	//@}
-
-	/** @addtogroup ricpp_error
-	 * @brief Build in error handlers, can be used by CRiCPPBridge::error()
-	 */
-	//@{
-	const CAbortErrorHandler m_abortErrorHandler; ///< Prints error message to standard output and exits if the error is severe
-	const CIgnoreErrorHandler m_ignoreErrorHandler; ///< Ignores the error, does nothing
-	const CPrintErrorHandler m_printErrorHandler; ///< Prints error message to standard output
-	//@}
-
 	/** @brief Current user defined error handler
 	 *
-	 * m_printErrorHandler is the default handler. It can be changed by errorHandler()
+	 * CPrintErrorHandler is the default handler. It can be changed by errorHandler()
 	 */
 	const IErrorHandler *m_curErrorHandler; 
 	RtInt m_lastError; ///< The last error number occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
@@ -146,16 +126,6 @@ private:
 	} m_ricppErrorHandler; ///< Error handler instance, used only via ricppErrHandler()
 
 	friend class CRiCPPBridgeErrorHandler;
-
-	/** @addtogroup ricpp_proc
-	 *  @brief Build in procedurals
-	 */
-	//@{
-	const CProcDelayedReadArchive m_procDelayedReadArchive; ///< Reads a RIB archive
-	const CProcRunProgram m_procRunProgram; ///< Runs a program, pipes it output to the renderer
-	const CProcDynamicLoad m_procDynamicLoad; ///< Runs a procedure of a DLL passes 'this' as current renderer
-	const CProcFree m_procFree; ///< Cleanup function for the data used by the procedurals
-	//@}
 
 	/** @defgroup ricpp_tokenlist Tokenlist cache 
 	 * @brief Stores the token-parameter list.
@@ -749,7 +719,7 @@ protected:
 public:
 	/** @brief Creates a bridge.
 	 *
-	 * m_printErrorHandler is used as error handler, an invalid context indexed by illContextHandle
+	 * CPrintErrorHandler is used as error handler, an invalid context indexed by illContextHandle
 	 * is stored to represent 'outside' context and the rib filter list is initialized. 
 	 */
 	CRiCPPBridge();
@@ -907,30 +877,31 @@ public:
 	 *  @brief Returns the appropriate filter functions
      */
 	//@{
-	inline virtual const IFilterFunc &boxFilter() const { return m_boxFilter; }
-	inline virtual const IFilterFunc &catmullRomFilter() const { return m_catmullRomFilter; }
-	inline virtual const IFilterFunc &gaussianFilter() const { return m_gaussianFilter; }
-	inline virtual const IFilterFunc &sincFilter() const { return m_sincFilter; }
-	inline virtual const IFilterFunc &triangleFilter() const { return m_triangleFilter; }
+	inline virtual const IFilterFunc &boxFilter() const { return CBoxFilter::func; }
+	inline virtual const IFilterFunc &catmullRomFilter() const { return CCatmullRomFilter::func; }
+	inline virtual const IFilterFunc &gaussianFilter() const { return CGaussianFilter::func; }
+	inline virtual const IFilterFunc &sincFilter() const { return CSincFilter::func; }
+	inline virtual const IFilterFunc &triangleFilter() const { return CTriangleFilter::func; }
 	//@}
 
 	/** @addtogroup ricpp_proc
 	 *  @brief Returns the appropriate procedurals
      */
 	//@{
-	inline virtual const ISubdivFunc &procDelayedReadArchive() const { return m_procDelayedReadArchive; }
-	inline virtual const ISubdivFunc &procRunProgram() const { return m_procRunProgram; }
-	inline virtual const ISubdivFunc &procDynamicLoad() const { return m_procDynamicLoad; }
-	inline virtual const IFreeFunc &procFree() const { return m_procFree; }
+	inline virtual const ISubdivFunc &procDelayedReadArchive() const { return CProcDelayedReadArchive::func; }
+	inline virtual const ISubdivFunc &procRunProgram() const { return CProcRunProgram::func; }
+	inline virtual const ISubdivFunc &procDynamicLoad() const { return CProcDynamicLoad::func; }
+	inline virtual const IFreeFunc &procFree() const { return CProcFree::func; }
 	//@}
 
 	/** @addtogroup ricpp_error
 	 *  @brief Returns the appropriate error handlers
      */
 	//@{
-	inline virtual const IErrorHandler &errorAbort() const { return m_abortErrorHandler; }
-	inline virtual const IErrorHandler &errorIgnore() const { return m_ignoreErrorHandler; }
-	inline virtual const IErrorHandler &errorPrint() const {  return m_printErrorHandler; }
+
+	inline virtual const IErrorHandler &errorAbort() const { return CAbortErrorHandler::func; }
+	inline virtual const IErrorHandler &errorIgnore() const { return CIgnoreErrorHandler::func; }
+	inline virtual const IErrorHandler &errorPrint() const { return CPrintErrorHandler::func; };
 
 	/** @brief The last error is set by CRiCPPBridgeErrorHandler::handleError(), CRiCPPBridgeErrorHandler::handleErrorV()
 	 *
@@ -944,7 +915,7 @@ public:
 	 */
 	inline virtual RtVoid errorHandler(const IErrorHandler &handler)
 	{
-		m_curErrorHandler = &handler;
+		m_curErrorHandler = &handler.singleton();
 	}
 	//@}
 

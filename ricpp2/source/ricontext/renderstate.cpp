@@ -1053,7 +1053,8 @@ CRenderState::CRenderState(
 	CModeStack &aModeStack,
 	COptionsFactory &optionsFactory,
 	CAttributesFactory &attributesFactory,
-	CLightSourceFactory &lightSourceFactory
+	CLightSourceFactory &lightSourceFactory,
+	CFilterFuncFactory &filterFuncFactory
 	// , CRManInterfaceFactory &aMacroFactory
 	) :
 	m_resourceFactories(false),
@@ -1065,6 +1066,7 @@ CRenderState::CRenderState(
 	m_modeStack = &aModeStack;
 	m_optionsFactory = &optionsFactory;
 	m_attributesFactory = &attributesFactory;
+	m_filterFuncFactory = &filterFuncFactory;
 	// m_macroFactory = &aMacroFactory;
 	m_frameNumber = 0;
 	m_lineNo = -1;

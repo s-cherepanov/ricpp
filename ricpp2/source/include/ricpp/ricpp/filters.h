@@ -39,42 +39,76 @@ namespace RiCPP {
 /** @brief The gaussian pixel filter.
  */
 class CGaussianFilter : public IFilterFunc {
+public:
+	static class CGaussianFilter func;
+	inline static RtToken myName() {return RI_GAUSIAN_FILTER; }
 	inline virtual IFilterFunc *duplicate() const { return new CGaussianFilter(*this); }
-	inline virtual RtToken name() const { return RI_GAUSIAN_FILTER; }
+	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
+	inline virtual IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The box pixel filter.
  */
 class CBoxFilter : public IFilterFunc {
+public:
+	static class CBoxFilter func;
+	inline static RtToken myName() {return RI_BOX_FILTER; }
 	inline virtual IFilterFunc *duplicate() const { return new CBoxFilter(*this); }
-	inline virtual RtToken name() const { return RI_BOX_FILTER; }
+	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
+	inline virtual IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The triangle pixel filter.
  */
 class CTriangleFilter : public IFilterFunc {
+public:
+	static class CTriangleFilter func;
+	inline static RtToken myName() {return RI_TRIANGLE_FILTER; }
 	inline virtual IFilterFunc *duplicate() const { return new CTriangleFilter(*this); }
-	inline virtual RtToken name() const { return RI_TRIANGLE_FILTER; }
+	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
+	inline virtual IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The Catmull-Rom pixel filter.
  */
 class CCatmullRomFilter : public IFilterFunc {
+public:
+	static class CCatmullRomFilter func;
+	inline static RtToken myName() {return RI_CATMULL_ROM_FILTER; }
 	inline virtual IFilterFunc *duplicate() const { return new CCatmullRomFilter(*this); }
-	inline virtual RtToken name() const { return RI_CATMULL_ROM_FILTER; }
+	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
+	inline virtual IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The sinc pixel filter.
  */
 class CSincFilter : public IFilterFunc {
+public:
+	static class CSincFilter func;
+	inline static RtToken myName() {return RI_SINC_FILTER; }
 	inline virtual IFilterFunc *duplicate() const { return new CSincFilter(*this); }
-	inline virtual RtToken name() const { return RI_SINC_FILTER; }
+	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
+	inline virtual IFilterFunc &singleton() const { return func; }
 };
+
+
+/** @brief Factory for pixel filter functions.
+ */
+class CFilterFuncFactory {
+public:
+	inline virtual ~CFilterFuncFactory() {}
+
+	virtual IFilterFunc *newFunc(RtToken name);
+	virtual void deleteFunc(IFilterFunc *f);
+
+	virtual IFilterFunc *singleton(RtToken name) const;
+};
+
 } // namespace RiCPP
 
 #endif // _RICPP_RICPP_FILTERS_H

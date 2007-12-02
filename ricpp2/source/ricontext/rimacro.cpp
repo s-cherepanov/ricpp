@@ -617,16 +617,8 @@ CRiProcedural::CRiProcedural(
 	const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc)
 	: CRManInterfaceCall(aLineNo)
 {
-	m_subdivfunc = subdivfunc.duplicate();
-	if ( !m_subdivfunc ) {
-		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiProcedural, m_subdivfunc", __LINE__, __FILE__);
-	}
-	m_freefunc = freefunc.duplicate();
-	if ( !m_freefunc ) {
-		delete m_subdivfunc;
-		m_subdivfunc = 0;
-		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Constructor of CRiProcedural, m_freefunc", __LINE__, __FILE__);
-	}
+	m_subdivfunc = &subdivfunc.singleton();
+	m_freefunc = &freefunc.singleton();
 	memcpy(m_bound, bound, sizeof(RtBound));
 	insertData(data);
 }
@@ -636,27 +628,15 @@ inline CRiProcedural &CRiProcedural::operator=(const CRiProcedural &c)
 	if ( this == &c )
 		return *this;
 
-	if ( m_subdivfunc )
-		delete m_subdivfunc;
 	m_subdivfunc = 0;
-	if ( m_freefunc )
-		delete m_freefunc;
 	m_freefunc = 0;
 
 	if ( c.m_subdivfunc ) {
-		m_subdivfunc = c.m_subdivfunc->duplicate();
-		if ( !m_subdivfunc ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Assignment of CRiProcedural, m_subdivfunc", __LINE__, __FILE__);
-		}
+		m_subdivfunc = &c.m_subdivfunc->singleton();
 	}
 
 	if ( c.m_freefunc ) {
-		m_freefunc = c.m_freefunc->duplicate();
-		if ( !m_freefunc ) {
-			delete m_subdivfunc;
-			m_subdivfunc = 0;
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"Assignment of CRiProcedural, m_freefunc", __LINE__, __FILE__);
-		}
+		m_freefunc = &c.m_freefunc->singleton();
 	}
 	memcpy(m_bound, c.m_bound, sizeof(RtBound));
 

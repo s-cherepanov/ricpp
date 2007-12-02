@@ -81,6 +81,11 @@ public:
 	 * @param msg Error message, describing the specific error in detail.
 	 */
 	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const = 0;
+
+	/** @brief A singleton error handler.
+	 * @return A singleton error handler (static error handler).
+	 */
+	virtual IErrorHandler &singleton() const = 0;
 };
 
 /** @brief Interface for a pixel filter (super sampling).
@@ -112,6 +117,11 @@ public:
 	 *  @see CRiRoot::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
 	 */
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const = 0;
+
+	/** @brief A singleton pixel filter.
+	 * @return A singleton pixel filter (static pixel filter).
+	 */
+	virtual IFilterFunc &singleton() const = 0;
 };
 
 /** @brief Interface, subdivision for procedurals changed to include renderer instance.
@@ -134,6 +144,11 @@ public:
 	 * @param detail the current level of detail.
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const = 0;
+
+	/** @brief A singleton subdivision/procedural.
+	 * @return A singleton subdivision/procedural (static subdivision/procedural).
+	 */
+	virtual ISubdivFunc &singleton() const = 0;
 };
 
 /** @brief Free function for procedurals.
@@ -155,6 +170,11 @@ public:
 	 * @param data The data handled by the subdivision function that should be freed.
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data) const = 0;
+
+	/** @brief A singleton free.
+	 * @return A singleton free (static free).
+	 */
+	virtual IFreeFunc &singleton()  const  = 0;
 };
 
 /** @brief Callback function to handle structural comments in rib files (IRi::readArchive),

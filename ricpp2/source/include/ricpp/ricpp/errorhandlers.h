@@ -40,6 +40,9 @@ namespace RiCPP {
  */
 class CAbortErrorHandler : public IErrorHandler {
 public:
+	static class CAbortErrorHandler func;
+	inline static RtToken myName() {return RI_ABORT; }
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -48,7 +51,7 @@ public:
 	/**@brief The name of the handler.
 	 * @return The name of the renderer as used in RIB
 	 */
-	inline virtual const char *name() const {return RI_ABORT;}
+	inline virtual const char *name() const {return myName();}
 
 	/** @brief Handles the error (print, abort if severe)
 	 * @param ri Front end that detected the error
@@ -57,12 +60,17 @@ public:
 	 * @param msg Error message, describing the error
 	 */
 	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
+
+	inline virtual IErrorHandler &singleton()  const { return func; }
 };
 
 /** @brief The print-error handler, prints an error at standard output
  */
 class CPrintErrorHandler : public IErrorHandler  {
 public:
+	static class CPrintErrorHandler func;
+	inline static RtToken myName() {return RI_PRINT; }
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -71,7 +79,7 @@ public:
 	/**@brief The name of the handler.
 	 * @return The name of the renderer as used in RIB
 	 */
-	inline virtual const char *name() const {return RI_PRINT;}
+	inline virtual const char *name() const {return myName();}
 
 	/** @brief Handles the error (print)
 	 * @param ri Front end that detected the error
@@ -80,12 +88,17 @@ public:
 	 * @param msg Error message, describing the error
 	 */
 	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
+
+	inline virtual IErrorHandler &singleton()  const { return func; }
 };
 
 /** @brief The ignore-error handler, does nothing, ignores the error
  */
 class CIgnoreErrorHandler : public IErrorHandler  {
 public:
+	static class CIgnoreErrorHandler func;
+	inline static RtToken myName() {return RI_IGNORE; }
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -94,7 +107,7 @@ public:
 	/**@brief The name of the handler.
 	 * @return The name of the renderer as used in RIB
 	 */
-	inline virtual const char *name() const {return RI_IGNORE;}
+	inline virtual const char *name() const {return myName();}
 
 	/** @brief Handles the error (ignore)
 	 * @param ri Front end that detected the error
@@ -103,6 +116,20 @@ public:
 	 * @param msg Error message, describing the error
 	 */
 	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
+
+	inline virtual IErrorHandler &singleton()  const { return func; }
+};
+
+/** @brief Factory for error handler functions.
+ */
+class CErrorHandlerFactory {
+public:
+	inline virtual ~CErrorHandlerFactory() {}
+
+	virtual IErrorHandler *newFunc(RtToken name);
+	virtual void deleteFunc(IErrorHandler *f);
+
+	virtual IErrorHandler *singleton(RtToken name) const;
 };
 
 } // namespace RiCPP

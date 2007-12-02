@@ -174,7 +174,7 @@ CRiCPPBridge::CRiCPPBridge() :
 	doOptionV("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
 	doOptionV("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
 
-	m_curErrorHandler = &m_printErrorHandler;
+	m_curErrorHandler = &CPrintErrorHandler::func;
 
 	/* Loaded from DLL
 	TemplPluginFactory<CRibWriterCreator> *f = new TemplPluginFactory<CRibWriterCreator>;

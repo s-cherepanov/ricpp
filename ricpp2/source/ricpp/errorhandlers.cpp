@@ -28,7 +28,15 @@
  */
 
 #include "ricpp/ricpp/errorhandlers.h"
+
+#ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
+
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 #include <iostream>
 
 using namespace RiCPP;
@@ -45,6 +53,8 @@ RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 	}
 }
 
+CAbortErrorHandler CAbortErrorHandler::func;
+
 RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	const IRi *pri = &ri;
@@ -55,6 +65,8 @@ RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 		msg << "'" << std::endl;
 }
 
+CPrintErrorHandler CPrintErrorHandler::func;
+
 RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	const IRi *pri = &ri;
@@ -62,4 +74,51 @@ RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtSt
 	code = code;
 	severity = severity;
 	msg = msg;
+}
+
+CIgnoreErrorHandler CIgnoreErrorHandler::func;
+
+//
+// CErrorHandlerFactory
+//
+
+IErrorHandler *CErrorHandlerFactory::newFunc(RtToken name)
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CAbortErrorHandler::myName() == name )
+		return new CAbortErrorHandler;
+
+	if ( CPrintErrorHandler::myName() == name )
+		return new CPrintErrorHandler;
+
+	if ( CIgnoreErrorHandler::myName() == name )
+		return new CIgnoreErrorHandler;
+
+	return 0;
+}
+
+void CErrorHandlerFactory::deleteFunc(IErrorHandler *f)
+{
+	if ( !f )
+		return;
+	delete f;
+}
+
+IErrorHandler *CErrorHandlerFactory::singleton(RtToken name) const
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CAbortErrorHandler::myName() == name )
+		return &CAbortErrorHandler::func;
+
+	if ( CPrintErrorHandler::myName() == name )
+		return &CPrintErrorHandler::func;
+
+	if ( CIgnoreErrorHandler::myName() == name )
+		return &CIgnoreErrorHandler::func;
+
+	return 0;
 }

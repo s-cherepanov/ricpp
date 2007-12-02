@@ -28,6 +28,11 @@
  */
 
 #include "ricpp/ricpp/filters.h"
+
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 #include <cmath>
 
 using namespace RiCPP;
@@ -42,6 +47,7 @@ RtFloat	CGaussianFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloa
 	return (RtFloat)exp(-2.0 * (x*x + y*y));
 }
 
+CGaussianFilter CGaussianFilter::func;
 
 //
 // CBoxFilter
@@ -56,6 +62,8 @@ RtFloat	CBoxFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywi
 	return (RtFloat)1.0;
 }
 
+CBoxFilter CBoxFilter::func;
+
 
 //
 // CTriangleFilter
@@ -65,6 +73,8 @@ RtFloat	CTriangleFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloa
 	return (RtFloat)(((1.0 - fabs(x)) / (xwidth * 0.5)) *
 		   ((1.0 - fabs(y)) / (ywidth * 0.5)));
 }
+
+CTriangleFilter CTriangleFilter::func;
 
 
 //
@@ -83,6 +93,7 @@ RtFloat	CCatmullRomFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFl
 		                         (-r*r2 + 5.0*r2 - 8.0*r + 4.0));
 }
 
+CCatmullRomFilter CCatmullRomFilter::func;
 
 //
 // CSincFilter
@@ -105,4 +116,63 @@ RtFloat	CSincFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat yw
 		t = (RtFloat)(sin(y)/y);
 
 	return s*t;
+}
+
+CSincFilter CSincFilter::func;
+
+//
+// CFilterFuncFactory
+//
+
+IFilterFunc *CFilterFuncFactory::newFunc(RtToken name)
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CGaussianFilter::myName() == name )
+		return new CGaussianFilter;
+
+	if ( CBoxFilter::myName() == name )
+		return new CBoxFilter;
+
+	if ( CTriangleFilter::myName() == name )
+		return new CTriangleFilter;
+
+	if ( CCatmullRomFilter::myName() == name )
+		return new CCatmullRomFilter;
+
+	if ( CSincFilter::myName() == name )
+		return new CSincFilter;
+
+	return 0;
+}
+
+void CFilterFuncFactory::deleteFunc(IFilterFunc *f)
+{
+	if ( !f )
+		return;
+	delete f;
+}
+
+IFilterFunc *CFilterFuncFactory::singleton(RtToken name) const
+{
+	if ( emptyStr(name) )
+		return 0;
+
+	if ( CGaussianFilter::myName() == name )
+		return &CGaussianFilter::func;
+
+	if ( CBoxFilter::myName() == name )
+		return &CBoxFilter::func;
+
+	if ( CTriangleFilter::myName() == name )
+		return &CTriangleFilter::func;
+
+	if ( CCatmullRomFilter::myName() == name )
+		return &CCatmullRomFilter::func;
+
+	if ( CSincFilter::myName() == name )
+		return &CSincFilter::func;
+
+	return 0;
 }

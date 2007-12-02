@@ -391,7 +391,9 @@ namespace RiCPP {
 		RtVoid pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth);
 		inline RtVoid getPixelFilter(const IFilterFunc *&function, RtFloat &xwidth, RtFloat &ywidth) const
 		{
-			function = m_filterFunc;
+			function = 0;
+			if ( m_filterFunc )
+				function = &(m_filterFunc->singleton());
 			xwidth = m_xWidth;
 			ywidth = m_yWidth;
 		}

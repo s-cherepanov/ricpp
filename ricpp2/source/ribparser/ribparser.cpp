@@ -757,6 +757,54 @@ void CRibParser::initRequestMap()
 		static CProjectionRibRequest projection;
 		s_requestMap.insert(std::make_pair(projection.requestName(), &projection));
 
+		static CClippingRibRequest clipping;
+		s_requestMap.insert(std::make_pair(clipping.requestName(), &clipping));
+
+		static CClippingPlaneRibRequest clippingPlane;
+		s_requestMap.insert(std::make_pair(clippingPlane.requestName(), &clippingPlane));
+
+		static CDepthOfFieldRibRequest depthOfField;
+		s_requestMap.insert(std::make_pair(depthOfField.requestName(), &depthOfField));
+
+		static CShutterRibRequest shutter;
+		s_requestMap.insert(std::make_pair(shutter.requestName(), &shutter));
+
+		static CPixelVarianceRibRequest pixelVariance;
+		s_requestMap.insert(std::make_pair(pixelVariance.requestName(), &pixelVariance));
+
+		static CPixelSamplesRibRequest pixelSamples;
+		s_requestMap.insert(std::make_pair(pixelSamples.requestName(), &pixelSamples));
+
+		static CPixelFilterRibRequest pixelFilter;
+		s_requestMap.insert(std::make_pair(pixelFilter.requestName(), &pixelFilter));
+
+		static CExposureRibRequest exposure;
+		s_requestMap.insert(std::make_pair(exposure.requestName(), &exposure));
+
+		static CImagerRibRequest imager;
+		s_requestMap.insert(std::make_pair(imager.requestName(), &imager));
+
+		static CQuantizeRibRequest quantize;
+		s_requestMap.insert(std::make_pair(quantize.requestName(), &quantize));
+
+		static CDisplayChannelRibRequest displayChannel;
+		s_requestMap.insert(std::make_pair(displayChannel.requestName(), &displayChannel));
+
+		static CDisplayRibRequest display;
+		s_requestMap.insert(std::make_pair(display.requestName(), &display));
+
+		static CHiderRibRequest hider;
+		s_requestMap.insert(std::make_pair(hider.requestName(), &hider));
+
+		static CColorSamplesRibRequest colorSamples;
+		s_requestMap.insert(std::make_pair(colorSamples.requestName(), &colorSamples));
+
+		static CRelativeDetailRibRequest relativeDetail;
+		s_requestMap.insert(std::make_pair(relativeDetail.requestName(), &relativeDetail));
+
+		static COptionRibRequest option;
+		s_requestMap.insert(std::make_pair(option.requestName(), &option));
+
 		static CSphereRibRequest sphere; 
 		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));
 	}

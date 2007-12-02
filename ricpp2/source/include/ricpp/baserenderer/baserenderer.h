@@ -108,6 +108,16 @@ class CBaseRenderer : public IDoRender {
 	 */
 	CLightSourceFactory *m_lightSourceFactory;
 
+	/** @brief Factory for pixel filter functions.
+	 *
+	 *  Used to create pixel filter functions (IFilterFunc). Derived renderers can use an
+	 *  extended set of filters.
+	 *  Initialized while begin() by a call of initRenderState().
+	 *
+	 *  @see getNewFilterFuncFactory(), deleteFilterFonFactory()
+	 */
+	CFilterFuncFactory *m_filterFuncFactory;
+
 	/** @brief Resource set of attributes.
 	 *
 	 *  Used to create attribute resources for use in IRiCPP::resourceV(). Derived renderers can use an
@@ -222,6 +232,32 @@ protected:
 	 *  @param ptr A light source factory created by getNewLightSourceFactory()
 	 */
 	inline void deleteLightSourceFactory(CLightSourceFactory *ptr)
+	{
+		if ( ptr )
+			delete ptr;
+	}
+
+	/** @brief Creates a new pixel filter function factory, called by initRenderState()
+	 *
+	 *  Overwrite this method if you want to return an own factory
+	 *  for a customized pixel filters.
+	 *
+	 * @return A factory object for the pixel filters.
+	 */
+	inline virtual CFilterFuncFactory *getNewFilterFuncFactory()
+	{
+		return new CFilterFuncFactory;
+	}
+
+	/** @brief Deletes a pixel filter function factory, called at destruction.
+	 *
+	 *  Since the destructor of the filter functions factory is virtual, there
+	 *  is no need (it's even wrong) to overwrite this method, it's not
+	 *  virtual therfore.
+	 *
+	 *  @param ptr A pixel filter function factory created by getNewFilterFuncFactory()
+	 */
+	inline void deleteFilterFuncFactory(CFilterFuncFactory *ptr)
 	{
 		if ( ptr )
 			delete ptr;

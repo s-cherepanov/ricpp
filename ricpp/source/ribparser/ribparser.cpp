@@ -3061,7 +3061,7 @@ void TRibParser::handleCall(RtInt callId) {
 					   }
 
 	case IDX_IMAGER:
-		// IMAGER <type> <paramlist>
+		// IMAGER type <paramlist>
 		if ( m_parameters.size() >= 1 ) {
 			TRibParameter &p0 = m_parameters[0];
 			const char *name = "";
@@ -3196,7 +3196,7 @@ void TRibParser::handleCall(RtInt callId) {
 				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'ColorSamples' argument 2 (RGBn) not an array", p1.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				break;
 			}
-			if ( p0.getCard() == p1.getCard() ) {
+			if ( p0.getCard() != p1.getCard() ) {
 				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'ColorSamples' argument 1 (nRGB) and 2 (RGBn) have not the same size", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				break;
 			}

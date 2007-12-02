@@ -43,6 +43,7 @@ CBaseRenderer::CBaseRenderer() :
 	m_optionsFactory = 0;
 	m_attributesFactory = 0;
 	m_lightSourceFactory = 0;
+	m_filterFuncFactory = 0;
 	// m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
 }
@@ -68,6 +69,11 @@ CBaseRenderer::~CBaseRenderer()
 		deleteLightSourceFactory(m_lightSourceFactory);
 	}
 	m_lightSourceFactory = 0;
+
+	if ( m_filterFuncFactory ) {
+		deleteFilterFuncFactory(m_filterFuncFactory);
+	}
+	m_filterFuncFactory = 0;
 
 	if ( m_modeStack ) {
 		deleteModeStack(m_modeStack);
@@ -181,6 +187,20 @@ void CBaseRenderer::initRenderState()
 		}
 	}
 
+	if ( !m_filterFuncFactory ) {
+		try {
+			m_filterFuncFactory = getNewFilterFuncFactory();
+		} catch (ExceptRiCPPError &err) {
+			ricppErrHandler().handleError(err);
+			return;
+		}
+
+		if ( !m_filterFuncFactory ) {
+			ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create an pixel filter factory");
+			return;
+		}
+	}
+
 	/*
 	if ( !m_macroFactory ) {
 		try {
@@ -198,7 +218,7 @@ void CBaseRenderer::initRenderState()
 	*/
 
 	try {
-		m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_lightSourceFactory); // , *m_macroFactory);
+		m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_lightSourceFactory, *m_filterFuncFactory); // , *m_macroFactory);
 	} catch (ExceptRiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;

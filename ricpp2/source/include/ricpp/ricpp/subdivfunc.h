@@ -41,6 +41,9 @@ namespace RiCPP {
  */
 class CProcDelayedReadArchive : public ISubdivFunc {
 public:
+	static class CProcDelayedReadArchive func;
+	inline static RtToken myName() {return RI_DELAYED_READ_ARCHIVE; }
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -49,7 +52,7 @@ public:
 	/** @brief The name of the function
 	 *  @return The name of the function as used in RIB
 	 */
-	inline virtual RtToken name() const {return RI_DELAYED_READ_ARCHIVE;}
+	inline virtual RtToken name() const {return myName();}
 
 	/** @brief Delayed read of a RIB archive
 	 * @param ri Interface to be used
@@ -57,12 +60,17 @@ public:
 	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
+
+	inline virtual ISubdivFunc &singleton()  const { return func; }
 };
 
 /** @brief Implements the RunProgram procedural.
  */
 class CProcRunProgram : public ISubdivFunc {
 public:
+	static class CProcRunProgram func;
+	inline static RtToken myName() {return RI_RUN_PROGRAM; }
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -71,7 +79,7 @@ public:
 	/** @brief The name of the function
 	 *  @return The name of the function as used in RIB
 	 */
-	inline virtual RtToken name() const {return RI_RUN_PROGRAM;}
+	inline virtual RtToken name() const {return myName();}
 
 	/** @brief Run a helper program and capture output as RIB for ri
 	 * @param ri Interface to be used
@@ -79,12 +87,17 @@ public:
 	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
+
+	inline virtual ISubdivFunc &singleton()  const { return func; }
 };
 
 /** @brief Implements the DynamicLoad procedural.
  */
 class CProcDynamicLoad : public ISubdivFunc {
 public:
+	static class CProcDynamicLoad func;
+	inline static RtToken myName() {return RI_DYNAMIC_LOAD; }
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -93,7 +106,7 @@ public:
 	/** @brief The name of the function
 	 *  @return The name of the function as used in RIB
 	 */
-	inline virtual RtToken name() const {return RI_DYNAMIC_LOAD;}
+	inline virtual RtToken name() const {return myName();}
 
 	/** @brief Calls a dynamic library implementing: RtPointer ConvertParameters(IRi &ri, char *initial data), 
 	 * void Subdivide(IRi &ri, RtPointer blinddata, RtFloat detailsize), void Free(IRi &ri, RtPointer blinddata)
@@ -102,6 +115,8 @@ public:
 	 * @param detail level of detail of the bounding box of the procedural or RI_INFINITY
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
+
+	inline virtual ISubdivFunc &singleton()  const { return func; }
 };
 
 /** @brief Implements the free function that can be called by the interface to free the 'data'
@@ -109,6 +124,9 @@ public:
  */
 class CProcFree : public IFreeFunc {
 public:
+	static class CProcFree func;
+	inline static RtToken myName() {return RI_FREE; }
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -117,7 +135,7 @@ public:
 	/** @brief The name of the function
 	 *  @return The name of the function (no RIB binding)
 	 */
-	inline virtual RtToken name() const {return RI_FREE;}
+	inline virtual RtToken name() const {return myName();}
 
 	/** @brief The implementation of the free function
 	 *
@@ -126,7 +144,35 @@ public:
 	 * @param data
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data) const;
+
+	inline virtual IFreeFunc &singleton()  const { return func; }
 };
+
+
+/** @brief Factory for subdivision functions.
+ */
+class CSubdivFuncFactory {
+public:
+	inline virtual ~CSubdivFuncFactory() {}
+
+	virtual ISubdivFunc *newFunc(RtToken name);
+	virtual void deleteFunc(ISubdivFunc *f);
+
+	virtual ISubdivFunc *singleton(RtToken name) const;
+};
+
+/** @brief Factory for free functions.
+ */
+class CFreeFuncFactory {
+public:
+	inline virtual ~CFreeFuncFactory() {}
+
+	virtual IFreeFunc *newFunc(RtToken name);
+	virtual void deleteFunc(IFreeFunc *f);
+
+	virtual IFreeFunc *singleton(RtToken name) const;
+};
+
 }
 
 #endif // _RICPP_RICPP_SUBDIVFUNC_H

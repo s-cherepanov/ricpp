@@ -35,6 +35,10 @@
 #include "ricpp/ribparser/riboptions.h"
 #endif // _RICPP_RIBPARSER_RIBOPTIONS_H
 
+#ifndef _RICPP_RIBPARSER_RIBATTRIBUTES_H
+#include "ricpp/ribparser/ribattributes.h"
+#endif // _RICPP_RIBPARSER_RIBATTRIBUTES_H
+
 #ifndef _RICPP_RICPP_PARAMCLASSES_H
 #include "ricpp/ricpp/paramclasses.h"
 #endif // _RICPP_RICPP_PARAMCLASSES_H
@@ -804,6 +808,72 @@ void CRibParser::initRequestMap()
 
 		static COptionRibRequest option;
 		s_requestMap.insert(std::make_pair(option.requestName(), &option));
+
+		static CAttributeRibRequest attribute; 
+		s_requestMap.insert(std::make_pair(attribute.requestName(), &attribute));
+
+		static CColorRibRequest color; 
+		s_requestMap.insert(std::make_pair(color.requestName(), &color));
+
+		static COpacityRibRequest opacity; 
+		s_requestMap.insert(std::make_pair(opacity.requestName(), &opacity));
+
+		static CSurfaceRibRequest surface; 
+		s_requestMap.insert(std::make_pair(surface.requestName(), &surface));
+
+		static CAtmosphereRibRequest atmosphere; 
+		s_requestMap.insert(std::make_pair(atmosphere.requestName(), &atmosphere));
+
+		static CInteriorRibRequest interior; 
+		s_requestMap.insert(std::make_pair(interior.requestName(), &interior));
+
+		static CExteriorRibRequest exterior; 
+		s_requestMap.insert(std::make_pair(exterior.requestName(), &exterior));
+
+		static CDisplacementRibRequest displacement; 
+		s_requestMap.insert(std::make_pair(displacement.requestName(), &displacement));
+
+		static CTextureCoordinatesRibRequest textureCoordinates; 
+		s_requestMap.insert(std::make_pair(textureCoordinates.requestName(), &textureCoordinates));
+
+		static CShadingRateRibRequest shadingRate; 
+		s_requestMap.insert(std::make_pair(shadingRate.requestName(), &shadingRate));
+
+		static CShadingInterpolationRibRequest shadingInterpolation; 
+		s_requestMap.insert(std::make_pair(shadingInterpolation.requestName(), &shadingInterpolation));
+
+		static CMatteRibRequest matte; 
+		s_requestMap.insert(std::make_pair(matte.requestName(), &matte));
+
+		static CBoundRibRequest bound; 
+		s_requestMap.insert(std::make_pair(bound.requestName(), &bound));
+
+		static CDetailRibRequest detail; 
+		s_requestMap.insert(std::make_pair(detail.requestName(), &detail));
+
+		static CDetailRangeRibRequest detailRange; 
+		s_requestMap.insert(std::make_pair(detailRange.requestName(), &detailRange));
+
+		static CGeometricApproximationRibRequest geometricApproximation; 
+		s_requestMap.insert(std::make_pair(geometricApproximation.requestName(), &geometricApproximation));
+
+		static CGeometricRepresentationRibRequest geometricRepresentation; 
+		s_requestMap.insert(std::make_pair(geometricRepresentation.requestName(), &geometricRepresentation));
+
+		static COrientationRibRequest orientation; 
+		s_requestMap.insert(std::make_pair(orientation.requestName(), &orientation));
+
+		static CReverseOrientationRibRequest reverseOrientation; 
+		s_requestMap.insert(std::make_pair(reverseOrientation.requestName(), &reverseOrientation));
+
+		static CSidesRibRequest sides; 
+		s_requestMap.insert(std::make_pair(sides.requestName(), &sides));
+
+		static CBasisRibRequest basis; 
+		s_requestMap.insert(std::make_pair(basis.requestName(), &basis));
+
+		static CTrimCurveRibRequest trimCurve; 
+		s_requestMap.insert(std::make_pair(trimCurve.requestName(), &trimCurve));
 
 		static CSphereRibRequest sphere; 
 		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));

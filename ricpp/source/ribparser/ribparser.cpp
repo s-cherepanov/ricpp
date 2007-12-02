@@ -3378,13 +3378,18 @@ void TRibParser::handleCall(RtInt callId) {
 		// Color colorarray
 		if ( m_parameters.size() == 1 ) {
 			TRibParameter &p0 = m_parameters[0];
-			p0.convertIntToFloat();
-			if ( p0.typeID() == TYPEID_FLOAT && p0.isArray() ) {
-				m_ri->color((RtColor)p0.getValue());
-			} else {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Color' argument 1 (color) are not numeric", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+			if ( p0.isArray() ) {
+				p0.convertIntToFloat();
+				if ( p0.typeID() == TYPEID_FLOAT ) {
+					m_ri->color((RtColor)p0.getValue());
+				} else {
+					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Color' argument 1 (color) are not numeric", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+				}
+				break;
 			}
-		} else if ( m_parameters.size() > 0 ) {
+		}
+		
+		if ( m_parameters.size() > 0 ) {
 			size_t size = m_parameters.size();
 			std::vector<RtFloat> color;
 			color.reserve(size);
@@ -3399,6 +3404,8 @@ void TRibParser::handleCall(RtInt callId) {
 			}
 			// 2DO test if the number of color components is correct
 			m_ri->color((RtColor)&color[0]);
+		} else {
+			m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Color' missing parameters", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
 		}
 		break;
 
@@ -3408,12 +3415,17 @@ void TRibParser::handleCall(RtInt callId) {
 		if ( m_parameters.size() == 1 ) {
 			TRibParameter &p0 = m_parameters[0];
 			p0.convertIntToFloat();
-			if ( p0.typeID() == TYPEID_FLOAT && p0.isArray() ) {
-				m_ri->opacity((RtColor)p0.getValue());
-			} else {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Opacity' argument 1 (opacity) are not numeric", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+			if ( p0.isArray() ) {
+				if ( p0.typeID() == TYPEID_FLOAT ) {
+					m_ri->opacity((RtColor)p0.getValue());
+				} else {
+					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Opacity' argument 1 (opacity) are not numeric", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+				}
+				break;
 			}
-		} else if ( m_parameters.size() > 0 ) {
+		}
+		
+		if ( m_parameters.size() > 0 ) {
 			size_t size = m_parameters.size();
 			std::vector<RtFloat> opacity;
 			opacity.reserve(size);
@@ -3427,6 +3439,8 @@ void TRibParser::handleCall(RtInt callId) {
 				}
 			}
 			m_ri->opacity((RtColor)&opacity[0]);
+		} else {
+			m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Opacity' missing parameters", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
 		}
 		break;
 
@@ -3815,7 +3829,7 @@ void TRibParser::handleCall(RtInt callId) {
 				break;
 			}
 			RtFloat *pv = (RtFloat *)p0.getValue();
-			m_ri->screenWindow(pv[0], pv[1], pv[2], pv[3]);
+			m_ri->detailRange(pv[0], pv[1], pv[2], pv[3]);
 			if ( p0.getCard() > 4 ) {
 				m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'DetailRange' additional numbers ignored", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 			}

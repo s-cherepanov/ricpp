@@ -1466,7 +1466,7 @@ void CRenderState::pushAttributes()
 	try {
 
 		if ( m_attributesStack.empty() ) {
-			m_attributesStack.push_back(m_attributesFactory->newAttributes(m_optionsStack.back()->colorDescr()));
+			m_attributesStack.push_back(m_attributesFactory->newAttributes(options().colorDescr()));
 		} else {
 			m_attributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
 		}

@@ -22,7 +22,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file ribmodes.cpp
+/** @file riboptions.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of the handling of RIB requests for options.
  */
@@ -1507,7 +1507,7 @@ void CRelativeDetailRibRequest::operator()(IRibParserState &parser, CRibRequestD
 			RIE_MISSINGDATA, RIE_ERROR,
 			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
 			parser.lineNo(), parser.resourceName(),
-			requestName(), "(variation)", RI_NULL);
+			requestName(), "(relativedetail)", RI_NULL);
 	}
 }
 

@@ -482,10 +482,10 @@ void CTextureCoordinatesRibRequest::operator()(IRibParserState &parser, CRibRequ
 		     b1 = p1.getFloat(t1),
 			 b2 = p2.getFloat(s2),
 			 b3 = p3.getFloat(t2),
-			 b4 = p2.getFloat(s3),
-			 b5 = p3.getFloat(t3),
-			 b6 = p2.getFloat(s4),
-			 b7 = p3.getFloat(t4);
+			 b4 = p4.getFloat(s3),
+			 b5 = p5.getFloat(t3),
+			 b6 = p6.getFloat(s4),
+			 b7 = p7.getFloat(t4);
 
 		if ( b0 && b1 && b2 && b3 && b4 && b5 && b6 && b7 ) {
 
@@ -735,8 +735,8 @@ void CBoundRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 		     b1 = p1.getFloat(bound[1]),
 			 b2 = p2.getFloat(bound[2]),
 			 b3 = p3.getFloat(bound[3]),
-			 b4 = p2.getFloat(bound[4]),
-			 b5 = p3.getFloat(bound[5]);
+			 b4 = p4.getFloat(bound[4]),
+			 b5 = p5.getFloat(bound[5]);
 
 		if ( b0 && b1 && b2 && b3 && b4 && b5 ) {
 
@@ -855,8 +855,8 @@ void CDetailRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 		     b1 = p1.getFloat(bound[1]),
 			 b2 = p2.getFloat(bound[2]),
 			 b3 = p3.getFloat(bound[3]),
-			 b4 = p2.getFloat(bound[4]),
-			 b5 = p3.getFloat(bound[5]);
+			 b4 = p4.getFloat(bound[4]),
+			 b5 = p5.getFloat(bound[5]);
 
 		if ( b0 && b1 && b2 && b3 && b4 && b5 ) {
 

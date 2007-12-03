@@ -250,6 +250,12 @@ const RtToken RI_TRIANGLE_FILTER = "triangleFilter"; ///< Token for the triangle
 const RtToken RI_CATMULL_ROM_FILTER = "catmullRomFilter"; ///< Token for the Catmull Rom filter
 const RtToken RI_SINC_FILTER = "sincFilter"; ///< Token for the sinc filter
 
+const RtToken RI_BEZIER = "bezier"; //!< Bezier basis
+const RtToken RI_B_SPLINE = "b-spline"; //!< B-Spline basis
+const RtToken RI_CATMULLROM = "catmullrom"; //!< Catmull-rom basis
+const RtToken RI_CATMULL_ROM = "catmull-rom"; //!< Catmull-rom basis (alternate writing, not used for output)
+const RtToken RI_HERMITE = "hermite"; //!< Hermite basis
+const RtToken RI_POWER = "power"; //!< Power basis
 
 const RtToken RI_INT     = "int"; //!< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
 

@@ -1802,6 +1802,8 @@ void CRibParser::parseFile()
 	m_defineString = -1;	// No defind string (binary)
 	m_lookahead = RIBPARSER_NOT_A_TOKEN;  // Initialize, no Token found
 
+	m_lineNo = 1;
+
 	while ( parseNextCall() != RIBPARSER_EOF ); // Parse all requests
 
 	// Clear the handle maps

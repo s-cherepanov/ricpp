@@ -3989,8 +3989,9 @@ void TRibParser::handleCall(RtInt callId) {
 					b = &m_ri->bezierBasis[0][0];
 				}
 			} else {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Basis' argument 1 ubasis is not numeric/string or wrong number of elements, using \"bezier\"", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Basis' argument 1 ubasis is not numeric/string or wrong number of elements, using \"power\"", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				b = &m_ri->powerBasis[0][0];
+				ustep = m_ri->RI_POWERSTEP;
 			}
 
 			if ( b ) {
@@ -4015,8 +4016,9 @@ void TRibParser::handleCall(RtInt callId) {
 					b = &m_ri->bezierBasis[0][0];
 				}
 			} else {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Basis' argument 3 vbasis is not numeric/string or wrong number of elements, using \"bezier\"", p2.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Basis' argument 3 vbasis is not numeric/string or wrong number of elements, using \"power\"", p2.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				b = &m_ri->powerBasis[0][0];
+				vstep = m_ri->RI_POWERSTEP;
 			}
 
 			if ( b ) {
@@ -4055,7 +4057,7 @@ void TRibParser::handleCall(RtInt callId) {
 		// TrimCurve [ ncurves ] [ order ] [ knot ] [ min ] [ max ] [ n ] [ u ] [ v ] [ w ]
 		// TrimCurve nloops [ ncurves ] [ order ] [ knot ] [ min ] [ max ] [ n ] [ u ] [ v ] [ w ]
 		//           with nloops == card(ncurves)
-		// Special cases recognized to switch of trim curves:
+		// Special cases recognized to switch off trim curves:
 		// TrimCurve 0
 		// TrimCurve [ 0 ]
 		// TrimCurve [ 0 ] [] [] [] [] [] [] [] []

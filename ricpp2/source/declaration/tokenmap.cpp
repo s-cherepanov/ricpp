@@ -239,6 +239,13 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_CATMULL_ROM_FILTER)] = RI_CATMULL_ROM_FILTER;
 		m_tokenMapper[CToken(RI_SINC_FILTER)] = RI_SINC_FILTER;
 
+		m_tokenMapper[CToken(RI_BEZIER)] = RI_BEZIER;
+		m_tokenMapper[CToken(RI_B_SPLINE)] = RI_B_SPLINE;
+		m_tokenMapper[CToken(RI_CATMULLROM)] = RI_CATMULLROM;
+		m_tokenMapper[CToken(RI_CATMULL_ROM)] = RI_CATMULL_ROM;
+		m_tokenMapper[CToken(RI_HERMITE)] = RI_HERMITE;
+		m_tokenMapper[CToken(RI_POWER)] = RI_POWER;
+
 		m_tokenMapper[CToken(RI_INT)] = RI_INT;
 		m_tokenMapper[CToken(RI_NULL_LIT)] = RI_NULL_LIT;
 		m_tokenMapper[CToken(RI_UNKNOWN)] = RI_UNKNOWN;

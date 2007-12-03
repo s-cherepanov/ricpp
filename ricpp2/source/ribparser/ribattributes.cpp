@@ -1206,3 +1206,411 @@ void CSidesRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 			requestName(), "(onoff)", RI_NULL);
 	}
 }
+
+
+void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
+{
+	// Basis uname  ustep vname  vstep
+	// Basis uname  ustep vbasis vstep
+	// Basis ubasis ustep vname  vstep
+	// Basis ubasis ustep vbasis vstep
+
+	if ( request.size() >= 4 ) {
+
+		CRibParameter &p0 = request[0];
+		CRibParameter &p1 = request[1];
+		CRibParameter &p2 = request[2];
+		CRibParameter &p3 = request[3];
+
+		RtString uname = 0, vname = 0;
+		RtBasis ubasis, vbasis;
+		RtInt ustep, vstep;
+
+		p0.convertIntToFloat();
+		p2.convertIntToFloat();
+
+		bool b1 = p1.getInt(ustep), b3 = p3.getInt(vstep);
+
+		if ( b1 && b3 ) {
+
+			if ( p0.typeID() == BASICTYPE_FLOAT && p0.isArray() && p0.getCard() == 16 ) {
+				memcpy(vbasis[0], p2.getValue(), sizeof(RtBasis));
+			} else if ( p0.getString(uname) ) {
+				RtToken name = parser.renderState().tokFind(uname);
+				if ( !name || !parser.renderState().getBasis(name, ubasis) ) {
+					parser.errHandler().handleError(
+						RIE_CONSISTENCY, RIE_WARNING,
+						"Line %ld, File \"%s\", badarray: '%s' argument 1 ubasis '%s' is not a valid basis",
+						p0.lineNo(), parser.resourceName(),
+						requestName(), uname, RI_NULL);
+					return;
+				}
+			} else {
+				parser.errHandler().handleError(
+					RIE_CONSISTENCY, RIE_WARNING,
+					"Line %ld, File \"%s\", badarray: '%s' argument 1 ubasis is not numeric/string or wrong number of elements",
+					p0.lineNo(), parser.resourceName(),
+					requestName(), RI_NULL);
+				return;
+			}
+
+			if ( p2.typeID() == BASICTYPE_FLOAT && p2.isArray() && p2.getCard() == 16 ) {
+				memcpy(vbasis, p2.getValue(), sizeof(RtBasis));
+			} else if ( p2.getString(vname) ) {
+				RtToken name = parser.renderState().tokFind(vname);
+				if ( !name || !parser.renderState().getBasis(name, vbasis) ) {
+					parser.errHandler().handleError(
+						RIE_CONSISTENCY, RIE_WARNING,
+						"Line %ld, File \"%s\", badarray: '%s' argument 1 vbasis '%s' is not a valid basis",
+						p2.lineNo(), parser.resourceName(),
+						requestName(), uname, RI_NULL);
+					return;
+				}
+			} else {
+				parser.errHandler().handleError(
+					RIE_CONSISTENCY, RIE_WARNING,
+					"Line %ld, File \"%s\", badarray: '%s' argument 1 vbasis is not numeric/string or wrong number of elements",
+					p2.lineNo(), parser.resourceName(),
+					requestName(), RI_NULL);
+				return;
+			}
+
+			parser.ribFilter().basis(ubasis, ustep, vbasis, vstep);
+
+		} else {
+			if ( !b1 ) {
+				parser.errHandler().handleError(
+					RIE_CONSISTENCY, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
+					p1.lineNo(), parser.resourceName(),
+					requestName(), "2 (ustep)", RI_NULL);
+			}
+			if ( !b3 ) {
+				parser.errHandler().handleError(
+					RIE_CONSISTENCY, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+					p3.lineNo(), parser.resourceName(),
+					requestName(), "4 (vstep)", RI_NULL);
+			}
+		}
+		if ( request.size() > 4 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_WARNING,
+				"Line %ld, File \"%s\", badargument: '%s' has additional parameters, they are ignored",
+				parser.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+		}
+
+	} else {
+
+		parser.errHandler().handleError(
+			RIE_MISSINGDATA, RIE_ERROR,
+			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
+			parser.lineNo(), parser.resourceName(),
+			requestName(), "(ubasis ustep vbasis vstep)", RI_NULL);
+	}
+}
+
+
+void CTrimCurveRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
+{
+	// TrimCurve [ ncurves ] [ order ] [ knot ] [ min ] [ max ] [ n ] [ u ] [ v ] [ w ]
+	// TrimCurve nloops [ ncurves ] [ order ] [ knot ] [ min ] [ max ] [ n ] [ u ] [ v ] [ w ]
+	//           with nloops == card(ncurves)
+	// Special cases recognized to switch off trim curves:
+	// TrimCurve 0
+	// TrimCurve [ 0 ]
+	// TrimCurve [ 0 ] [] [] [] [] [] [] [] []
+	// TrimCurve [] [] [] [] [] [] [] [] []
+	/*
+	Example:
+
+	nloops           - 2 (elems of ncurves[])
+	TrimCurve  ncurves[nloops]  - [ 1 1 ]
+	order[sumcurves] - [ 4 4 ]
+	knot[]           - [ 0 0 0 0 1 1 1 2 2 2 3 3 3 4 4 4 5 5 5 6 6 6 7 7 7 8 8 8 9 9 9 10 10 10 11 11 11 12 12 12 13 13 13 14 14 14 15 15 15 16 16 16 16 0 0 0 0 1 1 1 2 2 2 3 3 3 4 4 4 5 5 5 5 ]
+	amin[]           - [ 0 0 ]
+	amax[]           - [ 16 5 ]
+	n[sumcurves]     - [ 49 16 ]
+	u[]              - [ 0.216594 0.228702 0.257058 0.459505 0.627541 0.70847 0.70847 0.70847 0.657874 0.61537 0.517633 0.419601 0.321863 0.026317 0 0 0 0.137641 0.331995 0.538457 0.645765 0.714586 0.72064 0.744919 0.902823 0.94335 0.969667 1 1 1 1 0.979737 0.957497 0.941311 0.904862 0.88256 0.88256 0.882561 0.88256 0.88256 0.88256 0.574906 0.489899 0.228702 0.060728 0.052635 0.107234 0.161995 0.216594 0.704454 0.704454 0.542472 0.376475 0.242911 0.184222 0.184222 0.184222 0.323902 0.410947 0.631556 0.676098 0.704454 0.704455 0.704454 0.704454 ]
+	v[]              - [ 0.314607 0.242316 0.132002 0.132002 0.132002 0.186248 0.285691 0.379725 0.394184 0.397826 0.408669 0.408668 0.430385 0.462888 0.64737 0.726947 0.889686 1 1 1 0.913195 0.846256 0.918603 0.99095 0.99095 0.99095 0.980078 0.972849 0.934315 0.934314 0.857127 0.860714 0.864356 0.864356 0.864356 0.848077 0.808289 0.627043 0.627042 0.264003 0.021688 0 0 0 0.088571 0.314607 0.314608 0.314607 0.314607 0.645549 0.772143 0.867943 0.867943 0.867943 0.806468 0.703438 0.584074 0.560565 0.549694 0.524419 0.509906 0.490039 0.541825 0.541824 0.645549 ]
+	w[]              - [ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ]
+	*/
+	if ( request.size() == 1 ) {
+		// assume nloops == 0, disable trim curve
+		RtInt nloops = 0;
+		CRibParameter &p0 = request[0]; // nloops
+		if ( !p0.getInt(nloops) ) {
+			parser.errHandler().handleError(
+				RIE_MISSINGDATA, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' argument (nloops) has to be a 0 if there is only one argument, trim curve is disabled",
+				parser.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+		} else if ( nloops != 0 ) {
+			parser.errHandler().handleError(
+				RIE_MISSINGDATA, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' argument (nloops) has to be a 0 if there is only one argument, trim curve is disabled",
+				parser.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+		}
+		// disable trim curve
+		parser.ribFilter().trimCurve(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		return;
+	}
+	
+	if ( request.size() >= 9 ) {
+		int cnt=0;
+		RtInt nloops=0;
+		bool nloopsSet = false;
+
+		CRibParameter &p = request[cnt]; // nloops (?)
+		if ( !p.isArray() && request.size() >= 10 ) {
+			cnt++;
+			if ( !p.getInt(nloops) ) {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_WARNING,
+					"Line %ld, File \"%s\", badargument: '%s' optional argument 1 (nloops) has to be an integer and has to be the size of [ncurves]",
+					p.lineNo(), parser.resourceName(),
+					requestName(), RI_NULL);
+			} else {
+				nloopsSet = true;
+			}
+		}
+
+		CRibParameter &p0 = request[cnt++]; // ncurves
+		CRibParameter &p1 = request[cnt++]; // order
+		CRibParameter &p2 = request[cnt++]; // knot
+		CRibParameter &p3 = request[cnt++]; // amin
+		CRibParameter &p4 = request[cnt++]; // amax
+		CRibParameter &p5 = request[cnt++]; // n
+		CRibParameter &p6 = request[cnt++]; // u
+		CRibParameter &p7 = request[cnt++]; // v
+		CRibParameter &p8 = request[cnt++]; // w
+
+		p0.convertIntToFloat();
+		p1.convertIntToFloat();
+		p2.convertIntToFloat();
+		p3.convertIntToFloat();
+		p4.convertIntToFloat();
+		p5.convertIntToFloat();
+		p6.convertIntToFloat();
+		p7.convertIntToFloat();
+		p8.convertIntToFloat();
+
+		int i = 0;
+		RtInt sumcurves=0, *ncurves=0, *order=0, *n=0;
+		RtFloat *knot=0, *amin=0, *amax=0, *u=0, *v=0, *w=0;
+		RtFloat *pncurves = 0, *porder = 0, *pn = 0;
+
+		// The number of loops is maybe empty
+		if ( p0.typeID() != BASICTYPE_UNKNOWN ) {
+			if ( p0.typeID() == BASICTYPE_FLOAT && p0.isArray() ) {
+				RtInt nloops2 = (RtInt)p0.getCard();
+				if ( nloopsSet ) {
+					if ( nloops != nloops2 ) {
+						parser.errHandler().handleError(
+							RIE_MISSINGDATA, RIE_WARNING,
+							"Line %ld, File \"%s\", badargument: '%s' optional argument 1 (nloops) has to be an integer and has to be the size of [ncurves]",
+							parser.lineNo(), parser.resourceName(),
+							requestName(), RI_NULL);
+					}
+				}
+				nloops = nloops2;
+				nloopsSet = true;
+				pncurves = (RtFloat *)p0.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badarray: '%s' argument %s is not an array of numeric values, trim curve is disabled",
+					parser.lineNo(), parser.resourceName(),
+					requestName(), "1 (ncurves)", RI_NULL);
+			}
+		}
+
+		if ( nloops == 0 || pncurves == 0 || (nloops == 1 && pncurves[0] == (RtFloat)0) ) {
+			// Disables trim curves, does not interpret the rest
+			nloops = 0;
+			parser.ribFilter().trimCurve(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		} else {
+
+			// The number of curves per loop
+			RtInt i_ncurves;
+			std::vector<RtInt> ncurvesVect;
+			ncurvesVect.reserve(nloops);
+			sumcurves = 0;
+			for ( i = 0; i < nloops; ++i ) {
+				i_ncurves = (RtInt)pncurves[i];
+				ncurvesVect.push_back(i_ncurves);
+				sumcurves += i_ncurves;
+			}
+			if ( (int)ncurvesVect.size() != nloops ) {
+				// not all values are defined
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s not all elements could get copied",
+					p0.lineNo(), parser.resourceName(),
+					requestName(), "1 (ncurves)", RI_NULL);
+				return;
+			}
+			ncurves = &ncurvesVect[0];
+
+			// order vector
+			if ( p1.typeID() == BASICTYPE_FLOAT && p1.isArray() ) {
+				porder = (RtFloat *)p1.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p1.lineNo(), parser.resourceName(),
+					requestName(), "2 (order)", RI_NULL);
+			}
+			if ( porder == NULL ) {
+				return;
+			}
+
+			RtInt i_order;
+			std::vector<RtInt> orderVect;
+			orderVect.reserve(sumcurves);
+			for ( i = 0; i < sumcurves; ++i ) {
+				i_order = (RtInt)porder[i];
+				orderVect.push_back(i_order);
+			}
+			if ( (int)orderVect.size() != sumcurves ) {
+				// not all values are defined
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s not all elements could get copied",
+					p1.lineNo(), parser.resourceName(),
+					requestName(), "2 (order)", RI_NULL);
+				return;
+			}
+			order = &orderVect[0];
+
+			if ( p2.typeID() == BASICTYPE_FLOAT && p2.isArray() ) {
+				knot = (RtFloat *)p2.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p2.lineNo(), parser.resourceName(),
+					requestName(), "3 (knot)", RI_NULL);
+			}
+			if ( !knot ) {
+				return;
+			}
+
+			if ( p3.typeID() == BASICTYPE_FLOAT && p3.isArray() ) {
+				amin = (RtFloat *)p3.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p3.lineNo(), parser.resourceName(),
+					requestName(), "4 (min)", RI_NULL);
+			}
+			if ( !amin ) {
+				return;
+			}
+
+			if ( p4.typeID() == BASICTYPE_FLOAT && p4.isArray() ) {
+				amax = (RtFloat *)p4.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p4.lineNo(), parser.resourceName(),
+					requestName(), "5 (max)", RI_NULL);
+			}
+			if ( !amax ) {
+				return;
+			}
+
+			// n
+			if ( p5.typeID() == BASICTYPE_FLOAT && p5.isArray() ) {
+				pn = (RtFloat *)p5.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p5.lineNo(), parser.resourceName(),
+					requestName(), "6 (n)", RI_NULL);
+			}
+			if ( pn == NULL ) {
+				return;
+			}
+
+			RtInt i_n;
+			std::vector<RtInt> nVect;
+			nVect.reserve(sumcurves);
+			for ( i = 0; i < sumcurves; ++i ) {
+				i_n = (RtInt)pn[i];
+				nVect.push_back(i_n);
+			}
+			if ( (int)nVect.size() != sumcurves ) {
+				// not all values are defined
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s not all elements could get copied",
+					p5.lineNo(), parser.resourceName(),
+					requestName(), "6 (n)", RI_NULL);
+				return;
+			}
+			n = &nVect[0];
+
+			if ( p6.typeID() == BASICTYPE_FLOAT && p6.isArray() ) {
+				u = (RtFloat *)p6.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p6.lineNo(), parser.resourceName(),
+					requestName(), "7 (u)", RI_NULL);
+			}
+			if ( !u ) {
+				return;
+			}
+
+			if ( p7.typeID() == BASICTYPE_FLOAT && p7.isArray() ) {
+				v = (RtFloat *)p7.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p7.lineNo(), parser.resourceName(),
+					requestName(), "8 (v)", RI_NULL);
+			}
+			if ( !v ) {
+				return;
+			}
+
+			if ( p8.typeID() == BASICTYPE_FLOAT && p8.isArray() ) {
+				w = (RtFloat *)p8.getValue();
+			} else {
+				parser.errHandler().handleError(
+					RIE_MISSINGDATA, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array of numeric values",
+					p8.lineNo(), parser.resourceName(),
+					requestName(), "9 (w)", RI_NULL);
+			}
+			if ( !w ) {
+				return;
+			}
+
+			parser.ribFilter().trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+		}
+
+		if ( (int)request.size() > cnt ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_WARNING,
+				"Line %ld, File \"%s\", badargument: '%s' has additional parameters, they are ignored",
+				parser.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+		}
+	} else {
+		parser.errHandler().handleError(
+			RIE_MISSINGDATA, RIE_ERROR,
+			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
+			parser.lineNo(), parser.resourceName(),
+			requestName(), "(ncurves, order, knot, min, max, n, u, v, w)", RI_NULL);
+	}
+}

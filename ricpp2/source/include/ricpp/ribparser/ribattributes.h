@@ -202,7 +202,7 @@ namespace RiCPP {
 	 */
 	class CBasisRibRequest : public CRibRequest {
 	public:
-		inline virtual void operator()(IRibParserState &parser, CRibRequestData &request) const {}
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 		inline virtual EnumRequests interfaceIdx() const { return REQ_BASIS; }
 	}; // CBasisRibRequest
 
@@ -210,7 +210,7 @@ namespace RiCPP {
 	 */
 	class CTrimCurveRibRequest : public CRibRequest {
 	public:
-		inline virtual void operator()(IRibParserState &parser, CRibRequestData &request) const {}
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 		inline virtual EnumRequests interfaceIdx() const { return REQ_TRIM_CURVE; }
 	}; // CTrimCurveRibRequest
 }

@@ -1053,6 +1053,8 @@ public:
 		return m_filterFuncFactory->singleton(name);
 	}
 
+	virtual bool getBasis(RtToken basisName, RtBasis basis) const;
+
 }; // CRenderState
 
 } // namespace RiCPP

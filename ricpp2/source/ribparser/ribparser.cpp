@@ -39,6 +39,10 @@
 #include "ricpp/ribparser/ribattributes.h"
 #endif // _RICPP_RIBPARSER_RIBATTRIBUTES_H
 
+#ifndef _RICPP_RIBPARSER_RIBTRANSFORMS_H
+#include "ricpp/ribparser/ribtransforms.h"
+#endif // _RICPP_RIBPARSER_RIBTRANSFORMS_H
+
 #ifndef _RICPP_RICPP_PARAMCLASSES_H
 #include "ricpp/ricpp/paramclasses.h"
 #endif // _RICPP_RICPP_PARAMCLASSES_H
@@ -874,6 +878,45 @@ void CRibParser::initRequestMap()
 
 		static CTrimCurveRibRequest trimCurve; 
 		s_requestMap.insert(std::make_pair(trimCurve.requestName(), &trimCurve));
+
+		static CIdentityRibRequest identity;
+		s_requestMap.insert(std::make_pair(identity.requestName(), &identity));
+
+		static CTransformRibRequest transform;
+		s_requestMap.insert(std::make_pair(transform.requestName(), &transform));
+
+		static CConcatTransformRibRequest concatTransform;
+		s_requestMap.insert(std::make_pair(concatTransform.requestName(), &concatTransform));
+
+		static CPerspectiveRibRequest perspective;
+		s_requestMap.insert(std::make_pair(perspective.requestName(), &perspective));
+
+		static CTranslateRibRequest translate;
+		s_requestMap.insert(std::make_pair(translate.requestName(), &translate));
+
+		static CRotateRibRequest rotate;
+		s_requestMap.insert(std::make_pair(rotate.requestName(), &rotate));
+
+		static CScaleRibRequest scale;
+		s_requestMap.insert(std::make_pair(scale.requestName(), &scale));
+
+		static CSkewRibRequest skew;
+		s_requestMap.insert(std::make_pair(skew.requestName(), &skew));
+
+		static CDeformationRibRequest deformation;
+		s_requestMap.insert(std::make_pair(deformation.requestName(), &deformation));
+
+		static CScopedCoordinateSystemRibRequest scopedCoordinateSystem;
+		s_requestMap.insert(std::make_pair(scopedCoordinateSystem.requestName(), &scopedCoordinateSystem));
+
+		static CCoordinateSystemRibRequest coordinateSystem;
+		s_requestMap.insert(std::make_pair(coordinateSystem.requestName(), &coordinateSystem));
+
+		static CCoordSysTransformRibRequest coordSysTransForm;
+		s_requestMap.insert(std::make_pair(coordSysTransForm.requestName(), &coordSysTransForm));
+
+		static CTransformPointsRibRequest transFormPoints;
+		s_requestMap.insert(std::make_pair(transFormPoints.requestName(), &transFormPoints));
 
 		static CSphereRibRequest sphere; 
 		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));

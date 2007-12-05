@@ -4591,7 +4591,7 @@ void TRibParser::handleCall(RtInt callId) {
 		break;
 
 	case IDX_COORD_SYS_TRANSFORM:
-		// CoordSysTransForm name
+		// CoordSysTransform name
 		if ( m_parameters.size() >= 1 ) {
 			TRibParameter &p0 = m_parameters[0];
 			const char *space;

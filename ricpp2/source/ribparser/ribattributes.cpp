@@ -390,7 +390,7 @@ void CExteriorRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 
 void CDisplacementRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
-	// Exterior name <paramlist>
+	// Displacement name <paramlist>
 
 	if ( request.size() >= 1 ) {
 
@@ -621,7 +621,7 @@ void CShadingInterpolationRibRequest::operator()(IRibParserState &parser, CRibRe
 		} else {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
-				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "1 (type)", RI_NULL);
 		}
@@ -1095,7 +1095,7 @@ void CGeometricRepresentationRibRequest::operator()(IRibParserState &parser, CRi
 		} else {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
-				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "1 (type)", RI_NULL);
 		}
@@ -1134,7 +1134,7 @@ void COrientationRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		} else {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
-				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "1 (orientation)", RI_NULL);
 		}
@@ -1152,7 +1152,7 @@ void COrientationRibRequest::operator()(IRibParserState &parser, CRibRequestData
 			RIE_MISSINGDATA, RIE_ERROR,
 			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
 			parser.lineNo(), parser.resourceName(),
-			requestName(), "(type)", RI_NULL);
+			requestName(), "(orientation)", RI_NULL);
 	}
 }
 

@@ -292,6 +292,10 @@
 				RelativePath="..\..\..\source\ribparser\ribparser.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\ribparser\ribtransforms.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -316,6 +320,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ribparser\ribparsercallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ribparser\ribtransforms.h"
 				>
 			</File>
 		</Filter>

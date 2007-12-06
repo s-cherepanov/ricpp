@@ -294,6 +294,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ribparser\ribprims.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ribparser\ribtransforms.cpp"
 				>
 			</File>
@@ -321,6 +325,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ribparser\ribparsercallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ribparser\ribprims.h"
 				>
 			</File>
 			<File

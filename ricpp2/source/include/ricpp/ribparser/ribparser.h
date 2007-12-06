@@ -465,7 +465,9 @@ namespace RiCPP {
 				p.faceCorners());
 		}
 
-		void curRequest(const char *req)
+	RtInt numVertices(RtInt start, RtInt n);
+
+	void curRequest(const char *req)
 		{
 			m_curRequest = req ? req : "";
 		}

@@ -43,6 +43,10 @@
 #include "ricpp/ribparser/ribtransforms.h"
 #endif // _RICPP_RIBPARSER_RIBTRANSFORMS_H
 
+#ifndef _RICPP_RIBPARSER_RIBPRIMS_H
+#include "ricpp/ribparser/ribprims.h"
+#endif // _RICPP_RIBPARSER_RIBPRIMS_H
+
 #ifndef _RICPP_RICPP_PARAMCLASSES_H
 #include "ricpp/ricpp/paramclasses.h"
 #endif // _RICPP_RICPP_PARAMCLASSES_H
@@ -243,133 +247,6 @@ bool CRibParameter::convertFloatToInt() {
 	m_vFloat.clear();
 	m_typeID = BASICTYPE_INTEGER;
 	return true;
-}
-
-// ----------------------------------------------------------------------------
-
-/** @brief Handles RIB request Sphere.
- */
-class CSphereRibRequest : public CRibRequest {
-public:
-	virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-	inline virtual EnumRequests interfaceIdx() const { return REQ_SPHERE; }
-}; // CSphereRibRequest
-
-void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
-{
-	CQuadricClasses p;
-
-	if ( request.size() >= 4 && !request[0].isArray() ) {
-		// Sphere radius zmin zmax thetamax <paramlist>
-
-		CRibParameter &p0 = request[0];
-		CRibParameter &p1 = request[1];
-		CRibParameter &p2 = request[2];
-		CRibParameter &p3 = request[3];
-
-		RtFloat radius, zmin, zmax, thetamax;
-		bool b0 = p0.getFloat(radius),
-		     b1 = p1.getFloat(zmin),
-		     b2 = p2.getFloat(zmax),
-			 b3 = p3.getFloat(thetamax);
-
-		if ( b0 && b1 && b2 && b3 ) {
-			int n = request.getTokenList(4, p);
-			if ( n > 0 ) {
-				parser.ribFilter().sphereV(radius, zmin, zmax, thetamax,
-					n, request.tokenList(), request.valueList());
-			} else {
-				parser.ribFilter().sphereV(radius, zmin, zmax, thetamax,
-					0, 0, 0);
-			}
-		} else {
-			if ( !b0 ) {
-				parser.errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badargument: 'Sphere' argument 1 (radius) is not numeric",
-					p0.lineNo(), parser.resourceName(), RI_NULL);
-			}
-			if ( !b1 ) {
-				parser.errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badargument: 'Sphere' argument 2 (zmin) is not numeric",
-					p1.lineNo(), parser.resourceName(), RI_NULL);
-			}
-			if ( !b2 ) {
-				parser.errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badarray: 'Sphere' argument 3 (zmax) is not numeric",
-					p2.lineNo(), parser.resourceName(), RI_NULL);
-			}
-			if ( !b3 ) {
-				parser.errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badargument: 'Sphere' argument 4 (thetamax) is not numeric",
-					p3.lineNo(), parser.resourceName(), RI_NULL);
-			}
-		}
-
-	} else if ( request.size() >= 1 && request[0].isArray() ) {
-		// Sphere [ radius zmin zmax thetamax ] <paramlist>
-
-		CRibParameter &p0 = request[0];
-		p0.convertIntToFloat();
-		bool correct = true;
-
-		if ( p0.getCard() < 4 ) {
-			parser.errHandler().handleError(
-				RIE_MISSINGDATA, RIE_ERROR,
-				"Line %ld, File \"%s\", badarray: 'Sphere' arguments (radius, zmin, zmax, thetamax) missing",
-				p0.lineNo(), parser.resourceName(), RI_NULL);
-			correct = false;
-		}
-		if ( p0.getCard() > 4 ) {
-			parser.errHandler().handleError(
-				RIE_CONSISTENCY, RIE_WARNING,
-				"Line %ld, File \"%s\", badarray: 'Sphere' additional arguments ignored",
-				p0.lineNo(), parser.resourceName(), RI_NULL);
-		}
-		if (  p0.typeID() != BASICTYPE_FLOAT ) {
-			parser.errHandler().handleError(
-				RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Sphere' argument array 1, not all elements are numeric",
-				p0.lineNo(), parser.resourceName(), RI_NULL);
-			correct = false;
-		}
-
-		int n = request.getTokenList(1, p);
-
-		if ( !correct )
-			return;
-
-		RtFloat *vals = (RtFloat *)p0.getValue();
-		if ( !vals ) {
-			parser.errHandler().handleError(
-				RIE_BUG, RIE_ERROR,
-				"Line %ld, File \"%s\", badarray: 'Sphere' could not store arguments",
-				p0.lineNo(), parser.resourceName(), RI_NULL);
-			return;
-		}
-
-		RtFloat radius   = vals[0],
-		        zmin     = vals[1],
-		        zmax     = vals[2],
-		        thetamax = vals[3];
-
-		if ( n > 0 ) {
-			parser.ribFilter().sphereV(
-				radius, zmin, zmax, thetamax,
-				n, request.tokenList(), request.valueList());
-		} else {
-			parser.ribFilter().sphereV(
-				radius, zmin, zmax, thetamax,
-				0, 0, 0);
-		}
-	} else {
-		parser.errHandler().handleError(
-			RIE_MISSINGDATA, RIE_ERROR,
-			"Line %ld, File \"%s\", badargument: '%s' at least one of the arguments (%s) is missing",
-			parser.lineNo(), parser.resourceName(), requestName(), "radius, zmin, zmax, thetamax", RI_NULL);
-	}
 }
 
 
@@ -674,6 +551,26 @@ int CRibRequestData::getTokenList(
 	return parameterCount;
 }
 
+RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
+{
+	int i;
+	for ( i = 0; i < n; ++i ) {
+		if ( !strcmp(m_tokenList[i], RI_P ) ) {
+			CRibParameter &p = m_parameters[start + 2*i + 1];
+			return (RtInt)(p.getCard()/3);
+		}
+		if ( !strcmp(m_tokenList[i], RI_PW ) ) {
+			CRibParameter &p = m_parameters[start + 2*i + 1];
+			return (RtInt)(p.getCard()/4);
+		}
+		if ( !strcmp(m_tokenList[i], RI_PZ ) ) {
+			CRibParameter &p = m_parameters[start + 2*i + 1];
+			return (RtInt)(p.getCard());
+		}
+	}
+
+	return 0;
+}
 
 void CRibParser::initRequestMap()
 {

@@ -282,6 +282,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ribparser\ribexternals.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\ribparser\riblights.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\ribparser\ribmisc.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ribparser\ribmodes.cpp"
 				>
 			</File>
@@ -309,6 +321,18 @@
 			>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ribparser\ribattributes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ribparser\ribexternals.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ribparser\riblights.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ribparser\ribmisc.h"
 				>
 			</File>
 			<File

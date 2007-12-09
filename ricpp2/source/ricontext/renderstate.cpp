@@ -1616,3 +1616,9 @@ bool CRenderState::getBasis(RtToken basisName, RtBasis basis) const
 
 	return false;
 }
+
+
+const IFilterFunc *CRenderState::filterFunc(RtToken name) const
+{
+	return m_filterFuncFactory->singleton(name);
+}

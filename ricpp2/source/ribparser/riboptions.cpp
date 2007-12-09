@@ -970,7 +970,7 @@ void CPixelFilterRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		bool b0 = p0.getString(functionName), b1 = p1.getFloat(xwidth), b2 = p2.getFloat(ywidth);
 
 		if ( b0 && b1 && b2 ) {
-			IFilterFunc *func = 0;
+			const IFilterFunc *func = 0;
 			RtToken name = parser.renderState().tokFind(functionName);
 			if ( name )
 				func = parser.renderState().filterFunc(name);

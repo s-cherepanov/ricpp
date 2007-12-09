@@ -421,7 +421,7 @@ public:
 }; // CNuPatchClasses
 
 
-//! CSubdivisionMeshClasses, parameter class for TRi::subdivisionMesh()
+//! CSubdivisionMeshClasses, parameter class for CRi::subdivisionMesh() and CRi::hierarchicalSubdivisionMesh()
 class CSubdivisionMeshClasses : public CParameterClasses {
 	RtInt m_nVerts;
 	RtInt m_nFaces;
@@ -450,6 +450,8 @@ public:
 	inline virtual RtInt faceVertices() const {return m_nFaceVerts;}
 }; // CSubdivisionMeshClasses
 
+//! Same as CSubdivisionMeshClasses
+typedef class CSubdivisionMeshClasses CHierarchicalSubdivisionMeshClasses;
 
 //! CPointsClasses, parameter class for TRi::points()
 class CPointsClasses : public CParameterClasses {

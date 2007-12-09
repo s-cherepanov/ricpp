@@ -27,6 +27,10 @@
  *  @brief Implementation of the parser for rib
  */
 
+#ifndef _RICPP_RIBPARSER_RIBMISC_H
+#include "ricpp/ribparser/ribmisc.h"
+#endif // _RICPP_RIBPARSER_RIBMISC_H
+
 #ifndef _RICPP_RIBPARSER_RIBMODES_H
 #include "ricpp/ribparser/ribmodes.h"
 #endif // _RICPP_RIBPARSER_RIBMODES_H
@@ -39,6 +43,10 @@
 #include "ricpp/ribparser/ribattributes.h"
 #endif // _RICPP_RIBPARSER_RIBATTRIBUTES_H
 
+#ifndef _RICPP_RIBPARSER_RIBLIGHTS_H
+#include "ricpp/ribparser/riblights.h"
+#endif // _RICPP_RIBPARSER_RIBLIGHTS_H
+
 #ifndef _RICPP_RIBPARSER_RIBTRANSFORMS_H
 #include "ricpp/ribparser/ribtransforms.h"
 #endif // _RICPP_RIBPARSER_RIBTRANSFORMS_H
@@ -46,6 +54,10 @@
 #ifndef _RICPP_RIBPARSER_RIBPRIMS_H
 #include "ricpp/ribparser/ribprims.h"
 #endif // _RICPP_RIBPARSER_RIBPRIMS_H
+
+#ifndef _RICPP_RIBPARSER_RIBEXTERNALS_H
+#include "ricpp/ribparser/ribexternals.h"
+#endif // _RICPP_RIBPARSER_RIBEXTERNALS_H
 
 #ifndef _RICPP_RICPP_PARAMCLASSES_H
 #include "ricpp/ricpp/paramclasses.h"
@@ -553,6 +565,9 @@ int CRibRequestData::getTokenList(
 
 RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
 {
+	if ( (int)m_tokenList.size() > n )
+		n = (int)m_tokenList.size();
+
 	int i;
 	for ( i = 0; i < n; ++i ) {
 		if ( !strcmp(m_tokenList[i], RI_P ) ) {

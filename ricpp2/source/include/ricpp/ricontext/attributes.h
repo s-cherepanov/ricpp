@@ -340,7 +340,15 @@ namespace RiCPP {
 		}
 
 		virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
-		virtual void CAttributes::getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const;
+		virtual void getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const;
+		inline virtual RtInt uStep() const
+		{
+			return m_uStep;
+		}
+		inline virtual RtInt vStep() const
+		{
+			return m_vStep;
+		}
 
 		virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
 		virtual RtVoid trimCurve(const CTrimCurveData &trimCurveData);

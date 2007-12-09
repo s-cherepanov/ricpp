@@ -1048,10 +1048,7 @@ public:
 	CMotionState &motionState() { return m_motionState; }
 	const CMotionState &motionState() const { return m_motionState; }
 
-	inline IFilterFunc *filterFunc(RtToken name) const
-	{
-		return m_filterFuncFactory->singleton(name);
-	}
+	const IFilterFunc *filterFunc(RtToken name) const;
 
 	virtual bool getBasis(RtToken basisName, RtBasis basis) const;
 

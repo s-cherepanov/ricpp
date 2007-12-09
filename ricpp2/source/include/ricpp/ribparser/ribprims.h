@@ -29,7 +29,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Handles RIB requests for prims (Sphere, PatchMesh, Polygon, ...).
  *
- *  The objects are used only by the implementation of the rib options.
+ *  The objects are used only by the implementation of the rib parser.
  */
 
 #ifndef _RICPP_RIBPARSER_RIBPARSER_H
@@ -101,6 +101,14 @@ namespace RiCPP {
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 		inline virtual EnumRequests interfaceIdx() const { return REQ_SUBDIVISION_MESH; }
 	}; // CSubdivisionMeshRibRequest
+
+	/** @brief Handles RIB request HierarchicalSubdivisionMesh scheme [ nvertices ] [ vertices ] [ tags ] [ nargs ] [ intargs ] [ floatargs ] [ strargs ] ...
+	 */
+	class CHierarchicalSubdivisionMeshRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_HIERARCHICAL_SUBDIVISION_MESH; }
+	}; // CSHierarchicalubdivisionMeshRibRequest
 
 	/** @brief Handles RIB request Sphere radius zmin zmax thetamax ...
 	 */

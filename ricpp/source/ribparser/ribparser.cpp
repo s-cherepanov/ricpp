@@ -4830,7 +4830,7 @@ void TRibParser::handleCall(RtInt callId) {
 			}
 			if ( (int)nloopsVect.size() != npolys ) {
 				// not all values are defined
-				m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'PointsGeneralPolygons' argument 1 (nloops nvertices array), couldn't store all values", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
+				m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'PointsGeneralPolygons' argument 1 (nloops array), couldn't store all values", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
 				break;
 			}
 			nloops = &nloopsVect[0];
@@ -4862,7 +4862,7 @@ void TRibParser::handleCall(RtInt callId) {
 			}
 			if ( (int)vertsVect.size() != sumverts ) {
 				// not all values are defined
-				m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'PointsGeneralPolygons' argument 3 (nvertices array), couldn't store all values", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
+				m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'PointsGeneralPolygons' argument 3 (vertices array), couldn't store all values", m_lineCount, m_strFileName.c_str(), m_ri->RI_NULL);
 				break;
 			}
 			verts = &vertsVect[0];
@@ -5006,18 +5006,18 @@ void TRibParser::handleCall(RtInt callId) {
 			if ( b0 && b1 && b2 && b3 && b4 && b5 && b6 && b7 && b8 && b9 ) {
 				bool correct = true;
 				if ( (RtInt)p2.getCard() < nu+uorder ) {
-					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'NuPatch' argument 2 (uknot), the number of knots must be nu+uorder", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'NuPatch' argument 3 (uknot), the number of knots must be nu+uorder", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 					correct = false;
 				}
 				if ( (RtInt)p2.getCard() > nu+uorder ) {
-					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'NuPatch' argument 2 (uknot), the number of knots must be nu+uorder, additional knots are ignored", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+					m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'NuPatch' argument 3 (uknot), the number of knots must be nu+uorder, additional knots are ignored", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				}
 				if ( (RtInt)p7.getCard() < nv+vorder ) {
 					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'NuPatch' argument 8 (vknot), the number of knots must be nu+uorder", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 					correct = false;
 				}
 				if ( (RtInt)p7.getCard() > nv+vorder ) {
-					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'NuPatch' argument 8 (vknot), the number of knots must be nu+uorder, additional knots are ignored", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+					m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'NuPatch' argument 8 (vknot), the number of knots must be nu+uorder, additional knots are ignored", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				}
 
 				TNuPatchClasses p(nu, uorder, nv, vorder);
@@ -5799,7 +5799,7 @@ void TRibParser::handleCall(RtInt callId) {
 				if ( !strcmp(wrap, m_ri->RI_PERIODIC) ) {
 					isPeriodic = true;
 				} else if ( strcmp(wrap, m_ri->RI_NONPERIODIC) ) {
-					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Curve' argument 3 (type \"%s\") must be \"periodic\" or \"nonperiodic\"", p2.lineCount(), m_strFileName.c_str(), wrap, m_ri->RI_NULL);
+					m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badarray: 'Curve' argument 3 (wrap \"%s\") must be \"periodic\" or \"nonperiodic\"", p2.lineCount(), m_strFileName.c_str(), wrap, m_ri->RI_NULL);
 					correct = false;
 				}
 
@@ -5941,7 +5941,7 @@ void TRibParser::handleCall(RtInt callId) {
 				args = (const char **)p1.getValue();
 				if ( !args ) {
 					correct = false;
-					m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Procedural' argument 3 (bound) could not read string", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+					m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Procedural' argument 2 (args) could not read string", p1.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				}
 			}
 		
@@ -5957,7 +5957,7 @@ void TRibParser::handleCall(RtInt callId) {
 				bound = (RtFloat *)p2.getValue();
 				if ( !bound ) {
 					correct = false;
-					m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Procedural' argument 3 (bound) could not read string", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+					m_ricb->handleError(RIE_BUG, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Procedural' argument 3 (bound) could not read floats", p2.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				}
 			}
 

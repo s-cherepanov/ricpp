@@ -121,6 +121,7 @@ ISubdivFunc *CSubdivFuncFactory::singleton(RtToken name) const
 	return 0;
 }
 
+#if 0
 //
 // CFreeFuncFactory
 //
@@ -153,3 +154,4 @@ IFreeFunc *CFreeFuncFactory::singleton(RtToken name) const
 
 	return 0;
 }
+#endif // 0

@@ -161,8 +161,8 @@ public:
 	virtual ISubdivFunc *singleton(RtToken name) const;
 };
 
-/** @brief Factory for free functions.
- */
+
+/* @brief Factory for free functions.
 class CFreeFuncFactory {
 public:
 	inline virtual ~CFreeFuncFactory() {}
@@ -172,6 +172,7 @@ public:
 
 	virtual IFreeFunc *singleton(RtToken name) const;
 };
+*/
 
 }
 

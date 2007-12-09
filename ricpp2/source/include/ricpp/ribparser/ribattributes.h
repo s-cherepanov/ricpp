@@ -29,7 +29,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Handles RIB requests for attributes (Color, Surface, ...).
  *
- *  The objects are used only by the implementation of the rib attributes.
+ *  The objects are used only by the implementation of the rib parser.
  */
 
 #ifndef _RICPP_RIBPARSER_RIBPARSER_H

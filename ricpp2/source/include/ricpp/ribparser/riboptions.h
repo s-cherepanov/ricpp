@@ -29,7 +29,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Handles RIB requests for options (Shutter, ScreenWindow, Format, ...).
  *
- *  The objects are used only by the implementation of the rib options.
+ *  The objects are used only by the implementation of the rib parser.
  */
 
 #ifndef _RICPP_RIBPARSER_RIBPARSER_H

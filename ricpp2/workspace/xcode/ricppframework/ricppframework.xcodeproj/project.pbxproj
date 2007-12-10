@@ -159,6 +159,14 @@
 		C3B8D1C50CF184720004B226 /* ribmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = C3B8D1C40CF184720004B226 /* ribmodes.h */; };
 		C3BD621A0CED84EE008ECB54 /* ribparsercallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C3BD62190CED84EE008ECB54 /* ribparsercallback.h */; };
 		C3BD621D0CED8546008ECB54 /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C36C39AB0CBA1F2600D2B7B2 /* libribparser.a */; };
+		C3F664160D0D121F00856B33 /* ribexternals.h in Headers */ = {isa = PBXBuildFile; fileRef = C3F664120D0D121F00856B33 /* ribexternals.h */; };
+		C3F664170D0D121F00856B33 /* riblights.h in Headers */ = {isa = PBXBuildFile; fileRef = C3F664130D0D121F00856B33 /* riblights.h */; };
+		C3F664180D0D121F00856B33 /* ribmisc.h in Headers */ = {isa = PBXBuildFile; fileRef = C3F664140D0D121F00856B33 /* ribmisc.h */; };
+		C3F664190D0D121F00856B33 /* ribprims.h in Headers */ = {isa = PBXBuildFile; fileRef = C3F664150D0D121F00856B33 /* ribprims.h */; };
+		C3F6641E0D0D123700856B33 /* ribexternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3F6641A0D0D123700856B33 /* ribexternals.cpp */; };
+		C3F6641F0D0D123700856B33 /* riblights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3F6641B0D0D123700856B33 /* riblights.cpp */; };
+		C3F664200D0D123700856B33 /* ribmisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3F6641C0D0D123700856B33 /* ribmisc.cpp */; };
+		C3F664210D0D123700856B33 /* ribprims.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3F6641D0D0D123700856B33 /* ribprims.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -458,6 +466,14 @@
 		C3B8D1C20CF1845A0004B226 /* ribmodes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribmodes.cpp; path = ../../../source/ribparser/ribmodes.cpp; sourceTree = SOURCE_ROOT; };
 		C3B8D1C40CF184720004B226 /* ribmodes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribmodes.h; path = ../../../source/include/ricpp/ribparser/ribmodes.h; sourceTree = SOURCE_ROOT; };
 		C3BD62190CED84EE008ECB54 /* ribparsercallback.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribparsercallback.h; path = ../../../source/include/ricpp/ribparser/ribparsercallback.h; sourceTree = SOURCE_ROOT; };
+		C3F664120D0D121F00856B33 /* ribexternals.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribexternals.h; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/include/ricpp/ribparser/ribexternals.h; sourceTree = "<absolute>"; };
+		C3F664130D0D121F00856B33 /* riblights.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = riblights.h; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/include/ricpp/ribparser/riblights.h; sourceTree = "<absolute>"; };
+		C3F664140D0D121F00856B33 /* ribmisc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribmisc.h; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/include/ricpp/ribparser/ribmisc.h; sourceTree = "<absolute>"; };
+		C3F664150D0D121F00856B33 /* ribprims.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribprims.h; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/include/ricpp/ribparser/ribprims.h; sourceTree = "<absolute>"; };
+		C3F6641A0D0D123700856B33 /* ribexternals.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribexternals.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ribparser/ribexternals.cpp; sourceTree = "<absolute>"; };
+		C3F6641B0D0D123700856B33 /* riblights.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = riblights.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ribparser/riblights.cpp; sourceTree = "<absolute>"; };
+		C3F6641C0D0D123700856B33 /* ribmisc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribmisc.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ribparser/ribmisc.cpp; sourceTree = "<absolute>"; };
+		C3F6641D0D0D123700856B33 /* ribprims.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribprims.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ribparser/ribprims.cpp; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -777,6 +793,10 @@
 		C36C39B00CBA1F6E00D2B7B2 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C3F6641A0D0D123700856B33 /* ribexternals.cpp */,
+				C3F6641B0D0D123700856B33 /* riblights.cpp */,
+				C3F6641C0D0D123700856B33 /* ribmisc.cpp */,
+				C3F6641D0D0D123700856B33 /* ribprims.cpp */,
 				C3624B330D07EBCA001DA21F /* ribtransforms.cpp */,
 				C3AD10F70D03DDE80057047B /* ribattributes.cpp */,
 				C33E976C0CF42033007E087D /* riboptions.cpp */,
@@ -789,6 +809,10 @@
 		C36C39B10CBA1F9100D2B7B2 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C3F664120D0D121F00856B33 /* ribexternals.h */,
+				C3F664130D0D121F00856B33 /* riblights.h */,
+				C3F664140D0D121F00856B33 /* ribmisc.h */,
+				C3F664150D0D121F00856B33 /* ribprims.h */,
 				C3624B310D07EBB3001DA21F /* ribtransforms.h */,
 				C3AD10F50D03DD950057047B /* ribattributes.h */,
 				C33E976A0CF42010007E087D /* riboptions.h */,
@@ -1190,6 +1214,10 @@
 				C33E976B0CF42010007E087D /* riboptions.h in Headers */,
 				C3AD10F60D03DD950057047B /* ribattributes.h in Headers */,
 				C3624B320D07EBB4001DA21F /* ribtransforms.h in Headers */,
+				C3F664160D0D121F00856B33 /* ribexternals.h in Headers */,
+				C3F664170D0D121F00856B33 /* riblights.h in Headers */,
+				C3F664180D0D121F00856B33 /* ribmisc.h in Headers */,
+				C3F664190D0D121F00856B33 /* ribprims.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1689,6 +1717,10 @@
 				C33E976D0CF42033007E087D /* riboptions.cpp in Sources */,
 				C3AD10F80D03DDE80057047B /* ribattributes.cpp in Sources */,
 				C3624B340D07EBCA001DA21F /* ribtransforms.cpp in Sources */,
+				C3F6641E0D0D123700856B33 /* ribexternals.cpp in Sources */,
+				C3F6641F0D0D123700856B33 /* riblights.cpp in Sources */,
+				C3F664200D0D123700856B33 /* ribmisc.cpp in Sources */,
+				C3F664210D0D123700856B33 /* ribprims.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

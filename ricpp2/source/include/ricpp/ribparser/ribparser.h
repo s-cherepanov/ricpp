@@ -312,6 +312,7 @@ namespace RiCPP {
 		virtual CRenderState &renderState() const = 0;
 		virtual IRiRoot &ribFilter() = 0;
 		virtual IRiCPPErrorHandler &errHandler() = 0;
+		virtual CParameterList &params() = 0;
 
 		virtual bool bindObjectHandle(RtObjectHandle handle, RtInt number) = 0;
 		virtual bool bindObjectHandle(RtObjectHandle handle, const char *name) = 0;
@@ -836,6 +837,11 @@ namespace RiCPP {
 		virtual void parse(
 			const IArchiveCallback *callback,
 			const CParameterList &params);
+
+		inline virtual CParameterList &params()
+		{
+			return m_parameterList;
+		}
 	}; // CRibParser
 }
 

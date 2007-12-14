@@ -37,6 +37,29 @@
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
 namespace RiCPP {
+	/** @brief Handles RIB request LightSource name lightid ...
+	 */
+	class CLightSourceRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_LIGHT_SOURCE; }
+	}; // CLightSourceRibRequest
+
+	/** @brief Handles RIB request AreaLightSource name lightid ...
+	 */
+	class CAreaLightSourceRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_AREA_LIGHT_SOURCE; }
+	}; // CAreaLightSourceRibRequest
+
+	/** @brief Handles RIB request Illuminate lightid onoff
+	 */
+	class CIlluminateRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_ILLUMINATE; }
+	}; // CIlluminateRibRequest
 }
 
 #endif // _RICPP_RIBPARSER_RIBLIGHTS_H

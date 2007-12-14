@@ -37,6 +37,45 @@
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
 namespace RiCPP {
+	/** @brief Handles RIB request MakeTexture picturename texturename swrap twrap filter swidth twidth <paramlist>
+	 */
+	class CMakeTextureRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_TEXTURE; }
+	}; // CMakeTextureRibRequest
+
+	/** @brief Handles RIB request MakeBumb picturename texturename swrap twrap filter swidth twidth <paramlist>
+	 */
+	class CMakeBumbRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_TEXTURE; }
+	}; // CMakeBumbRibRequest
+
+	/** @brief Handles RIB request MakeLatLongEnvironment picturename texturename filter swidth twidth <paramlist>
+	 */
+	class CMakeLatLongEnvironmentRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_LAT_LONG_ENVIRONMENT; }
+	}; // CMakeLatLongEnvironmentRibRequest
+
+	/** @brief Handles RIB request MakeCubeFaceEnvironment px nx py ny pz nz texturename fov filter swidth twidth <paramlist>
+	 */
+	class CMakeCubeFaceEnvironmentRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_CUBE_FACE_ENVIRONMENT; }
+	}; // CMakeCubeFaceEnvironmentRibRequest
+
+	/** @brief Handles RIB request MakeShadow picturename texturename <paramlist>
+	 */
+	class CMakeShadowRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_SHADOW; }
+	}; // CMakeShadowRibRequest
 }
 
 #endif // _RICPP_RIBPARSER_RIBEXTERNALS_H

@@ -37,6 +37,37 @@
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
 namespace RiCPP {
+	/** @brief Handles RIB request ErrorHandler handlername
+	 */
+	class CErrorHandlerRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_ERROR_HANDLER; }
+	}; // CErrorHandlerRibRequest
+
+	/** @brief Handles RIB request Declare name declaration
+	 */
+	class CDeclareRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_DECLARE; }
+	}; // CDeclareRibRequest
+
+	/** @brief Handles RIB request ReadArchive filename
+	 */
+	class CReadArchiveRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_READ_ARCHIVE; }
+	}; // CReadArchiveRibRequest
+
+	/** @brief Handles RIB request Version versionnumber
+	 */
+	class CVersionRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_VERSION; }
+	}; // CVersionRibRequest
 }
 
 #endif // _RICPP_RIBPARSER_RIBMISC_H

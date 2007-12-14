@@ -980,9 +980,9 @@ void CPixelFilterRibRequest::operator()(IRibParserState &parser, CRibRequestData
 			} else {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badargument: '%s' argument %s is not a known pixel filter",
+					"Line %ld, File \"%s\", badargument: '%s' argument %s=%s is not a known pixel filter",
 					p0.lineNo(), parser.resourceName(),
-					requestName(), "1 (functionName)", RI_NULL);
+					requestName(), "1 (functionName)", name, RI_NULL);
 			}
 
 		} else {

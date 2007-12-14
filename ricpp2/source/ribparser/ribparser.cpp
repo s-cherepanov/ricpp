@@ -590,6 +590,19 @@ RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
 void CRibParser::initRequestMap()
 {
 	if ( s_requestMap.empty() ) {
+
+		static CErrorHandlerRibRequest errorHandler;
+		s_requestMap.insert(std::make_pair(errorHandler.requestName(), &errorHandler));
+
+		static CDeclareRibRequest declare;
+		s_requestMap.insert(std::make_pair(declare.requestName(), &declare));
+
+		static CReadArchiveRibRequest readArchive;
+		s_requestMap.insert(std::make_pair(readArchive.requestName(), &readArchive));
+
+		static CVersionRibRequest version;
+		s_requestMap.insert(std::make_pair(version.requestName(), &version));
+
 		static CResourceBeginRibRequest resourceBegin; 
 		s_requestMap.insert(std::make_pair(resourceBegin.requestName(), &resourceBegin));
 
@@ -824,14 +837,98 @@ void CRibParser::initRequestMap()
 		static CCoordinateSystemRibRequest coordinateSystem;
 		s_requestMap.insert(std::make_pair(coordinateSystem.requestName(), &coordinateSystem));
 
-		static CCoordSysTransformRibRequest coordSysTransForm;
-		s_requestMap.insert(std::make_pair(coordSysTransForm.requestName(), &coordSysTransForm));
+		static CCoordSysTransformRibRequest coordSysTransform;
+		s_requestMap.insert(std::make_pair(coordSysTransform.requestName(), &coordSysTransform));
 
-		static CTransformPointsRibRequest transFormPoints;
-		s_requestMap.insert(std::make_pair(transFormPoints.requestName(), &transFormPoints));
+		static CTransformPointsRibRequest transformPoints;
+		s_requestMap.insert(std::make_pair(transformPoints.requestName(), &transformPoints));
+
+		static CLightSourceRibRequest lightSource;
+		s_requestMap.insert(std::make_pair(lightSource.requestName(), &lightSource));
+
+		static CAreaLightSourceRibRequest areaLightSource;
+		s_requestMap.insert(std::make_pair(areaLightSource.requestName(), &areaLightSource));
+
+		static CIlluminateRibRequest illuminate;
+		s_requestMap.insert(std::make_pair(illuminate.requestName(), &illuminate));
+
+		static CPolygonRibRequest polygon;
+		s_requestMap.insert(std::make_pair(polygon.requestName(), &polygon));
+
+		static CGeneralPolygonRibRequest generalPolygon;
+		s_requestMap.insert(std::make_pair(generalPolygon.requestName(), &generalPolygon));
+
+		static CPointsPolygonsRibRequest pointsPolygon;
+		s_requestMap.insert(std::make_pair(pointsPolygon.requestName(), &pointsPolygon));
+
+		static CPointsGeneralPolygonsRibRequest pointsGeneralPolygon;
+		s_requestMap.insert(std::make_pair(pointsGeneralPolygon.requestName(), &pointsGeneralPolygon));
+
+		static CPatchRibRequest patch;
+		s_requestMap.insert(std::make_pair(patch.requestName(), &patch));
+
+		static CPatchMeshRibRequest patchMesh;
+		s_requestMap.insert(std::make_pair(patchMesh.requestName(), &patchMesh));
+
+		static CNuPatchRibRequest nuPatch;
+		s_requestMap.insert(std::make_pair(nuPatch.requestName(), &nuPatch));
+
+		static CSubdivisionMeshRibRequest subdivisionMesh;
+		s_requestMap.insert(std::make_pair(subdivisionMesh.requestName(), &subdivisionMesh));
+
+		static CHierarchicalSubdivisionMeshRibRequest hierarchicalSubdivisionMesh;
+		s_requestMap.insert(std::make_pair(hierarchicalSubdivisionMesh.requestName(), &hierarchicalSubdivisionMesh));
 
 		static CSphereRibRequest sphere; 
 		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));
+
+		static CConeRibRequest cone;
+		s_requestMap.insert(std::make_pair(cone.requestName(), &cone));
+
+		static CCylinderRibRequest cylinder;
+		s_requestMap.insert(std::make_pair(cylinder.requestName(), &cylinder));
+
+		static CHyperboloidRibRequest hyperboloid;
+		s_requestMap.insert(std::make_pair(hyperboloid.requestName(), &hyperboloid));
+
+		static CParaboloidRibRequest paraboloid;
+		s_requestMap.insert(std::make_pair(paraboloid.requestName(), &paraboloid));
+
+		static CDiskRibRequest disk;
+		s_requestMap.insert(std::make_pair(disk.requestName(), &disk));
+
+		static CTorusRibRequest torus;
+		s_requestMap.insert(std::make_pair(torus.requestName(), &torus));
+
+		static CPointsRibRequest points;
+		s_requestMap.insert(std::make_pair(points.requestName(), &points));
+
+		static CCurvesRibRequest curves;
+		s_requestMap.insert(std::make_pair(curves.requestName(), &curves));
+
+		static CBlobbyRibRequest blobby;
+		s_requestMap.insert(std::make_pair(blobby.requestName(), &blobby));
+
+		static CProceduralRibRequest procedural;
+		s_requestMap.insert(std::make_pair(procedural.requestName(), &procedural));
+
+		static CGeometryRibRequest geometry;
+		s_requestMap.insert(std::make_pair(geometry.requestName(), &geometry));
+
+		static CMakeTextureRibRequest makeTexture;
+		s_requestMap.insert(std::make_pair(makeTexture.requestName(), &makeTexture));
+
+		static CMakeBumbRibRequest makeBumb;
+		s_requestMap.insert(std::make_pair(makeBumb.requestName(), &makeBumb));
+
+		static CMakeLatLongEnvironmentRibRequest makeLatLongEnvironment;
+		s_requestMap.insert(std::make_pair(makeLatLongEnvironment.requestName(), &makeLatLongEnvironment));
+
+		static CMakeCubeFaceEnvironmentRibRequest makeCubeFaceEnvironment;
+		s_requestMap.insert(std::make_pair(makeCubeFaceEnvironment.requestName(), &makeCubeFaceEnvironment));
+
+		static CMakeShadowRibRequest makeShadow;
+		s_requestMap.insert(std::make_pair(makeShadow.requestName(), &makeShadow));
 	}
 }
 

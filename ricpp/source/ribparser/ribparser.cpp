@@ -3532,11 +3532,11 @@ void TRibParser::handleCall(RtInt callId) {
 			TRibParameter &p0 = m_parameters[0];
 			p0.convertFloatToInt();
 			if ( p0.typeID() != TYPEID_INT ) {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Illuminate' argument 1 [ lightnumber onoff ] is not an integer", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Illuminate' argument 1 [ lightnumber onoff ] is not an array of integers", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				break;
 			}
 			if ( !p0.isArray() || p0.getCard() < 2 ) {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Illuminate' must have (an array of) 2 floats as arguments", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'Illuminate' must have (an array of) 2 integers as arguments", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 				break;
 			}
 			RtInt *pv = (RtInt *)p0.getValue();
@@ -3545,11 +3545,11 @@ void TRibParser::handleCall(RtInt callId) {
 			if ( getLightHandle(light, pv[0]) ) {
 				m_ri->illuminate(light, pv[1] ? 1 : 0);
 			} else {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badhandle: 'Illuminate' argument 1 (lightnumber=%d) is not a valid", p0.lineCount(), m_strFileName.c_str(), pv[0], m_ri->RI_NULL);
+				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badhandle: 'Illuminate' argument 1 (lightnumber=%d) is not valid", p0.lineCount(), m_strFileName.c_str(), pv[0], m_ri->RI_NULL);
 			}
 
 			if ( p0.getCard() > 2 ) {
-				m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'Illuminate' additional numbers ignored", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
+				m_ricb->handleError(RIE_CONSISTENCY, RIE_WARNING, "Line %ld, File \"%s\", badargument: 'Illuminate' additional numbers are ignored", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);
 			}
 		} else if ( m_parameters.size() >= 2 ) {
 			TRibParameter &p0 = m_parameters[0];
@@ -6369,7 +6369,7 @@ void TRibParser::handleCall(RtInt callId) {
 			TRibParameter &p0 = m_parameters[0];
 			const char *name=NULL;
 			if ( p0.getString(name) ) {
-				// Propoagate the callback for Archives in Archives
+				// Propagate the callback for Archives in Archives
 				m_ri->readArchiveV(name, m_fctpArchiveCallback, m_n, m_tokens, m_params);
 			} else {
 				m_ricb->handleError(RIE_CONSISTENCY, RIE_ERROR, "Line %ld, File \"%s\", badargument: 'ReadArchive' argument 1 (filename) is not a string", p0.lineCount(), m_strFileName.c_str(), m_ri->RI_NULL);

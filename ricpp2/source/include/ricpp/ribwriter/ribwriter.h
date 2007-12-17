@@ -251,7 +251,6 @@ public:
 	inline virtual RtToken rendererType() const { return CRibWriter::myRendererType(); }
 };
 
-
 } // namespace RiCPP
 
 #endif // _RICPP_RIBWRITER_RIBWRITER_H

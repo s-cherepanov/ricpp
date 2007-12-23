@@ -254,7 +254,7 @@ void CMakeLatLongEnvironmentRibRequest::operator()(IRibParserState &parser, CRib
 
 			if ( func ) {
 				CParameterClasses p;
-				int n = request.getTokenList(7, p);
+				int n = request.getTokenList(5, p);
 
 				if ( n > 0 )
 					parser.ribFilter().makeLatLongEnvironmentV(pic, tex, *func, swidth, twidth, n, request.tokenList(), request.valueList());
@@ -349,7 +349,7 @@ void CMakeCubeFaceEnvironmentRibRequest::operator()(IRibParserState &parser, CRi
 
 			if ( func ) {
 				CParameterClasses p;
-				int n = request.getTokenList(7, p);
+				int n = request.getTokenList(11, p);
 
 				if ( n > 0 )
 					parser.ribFilter().makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, *func, swidth, twidth, n, request.tokenList(), request.valueList());
@@ -465,7 +465,7 @@ void CMakeShadowRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 
 		if ( b0 && b1 ) {
 			CParameterClasses p;
-			int n = request.getTokenList(7, p);
+			int n = request.getTokenList(2, p);
 
 			if ( n > 0 )
 				parser.ribFilter().makeShadowV(pic, tex, n, request.tokenList(), request.valueList());
@@ -493,5 +493,69 @@ void CMakeShadowRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
 			parser.lineNo(), parser.resourceName(),
 			requestName(), "(picturename texturename)", RI_NULL);
+	}
+}
+
+
+void CMakeBrickMapRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
+{
+	// MakeBrickMap ptcname bkmname <paramlist>
+	// MakeBrickMap [ ptcnames ] bkmname <paramlist>
+
+	if ( request.size() >= 2 ) {
+		CRibParameter &p0 = request[0];
+		CRibParameter &p1 = request[1];
+
+
+		bool b0 = false;
+		RtString pic = 0;
+		RtString *pics = 0;
+
+		if ( p0.isArray() ) {
+			if ( p0.typeID() == BASICTYPE_STRING ) {
+				pics = (RtString *)p0.getValue();
+				if ( pics != 0 )
+					b0 = true;
+			}
+		} else {
+			b0 = p0.getString(pic);
+			if ( b0 )
+				pics = &pic;
+		}
+
+		RtString bkmname = 0;
+
+		bool b1=p1.getString(bkmname);
+
+		if ( b0 && b1 ) {
+			CParameterClasses p;
+			int n = request.getTokenList(2, p);
+
+			if ( n > 0 )
+				parser.ribFilter().makeBrickMapV((RtInt)p0.getCard(), pics, bkmname, n, request.tokenList(), request.valueList());
+			else
+				parser.ribFilter().makeBrickMapV((RtInt)p0.getCard(), pics, bkmname, 0, 0, 0);
+		} else {
+			if ( !b0 ) {
+				parser.errHandler().handleError(
+					RIE_CONSISTENCY, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
+					p0.lineNo(), parser.resourceName(),
+					requestName(), "1 (ptcname(s))", RI_NULL);
+			}
+			if ( !b1 ) {
+				parser.errHandler().handleError(
+					RIE_CONSISTENCY, RIE_ERROR,
+					"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
+					p0.lineNo(), parser.resourceName(),
+					requestName(), "2 (bkmname)", RI_NULL);
+			}
+		}
+	} else {
+		parser.errHandler().handleError(
+			RIE_MISSINGDATA, RIE_ERROR,
+			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
+			parser.lineNo(), parser.resourceName(),
+			requestName(), "([ptcname(s)] bkmname)", RI_NULL);
 	}
 }

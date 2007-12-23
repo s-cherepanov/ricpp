@@ -603,6 +603,9 @@ void CRibParser::initRequestMap()
 		static CVersionRibRequest version;
 		s_requestMap.insert(std::make_pair(version.requestName(), &version));
 
+		static CSystemRibRequest systemReq;
+		s_requestMap.insert(std::make_pair(systemReq.requestName(), &systemReq));
+
 		static CResourceBeginRibRequest resourceBegin; 
 		s_requestMap.insert(std::make_pair(resourceBegin.requestName(), &resourceBegin));
 
@@ -929,6 +932,9 @@ void CRibParser::initRequestMap()
 
 		static CMakeShadowRibRequest makeShadow;
 		s_requestMap.insert(std::make_pair(makeShadow.requestName(), &makeShadow));
+
+		static CMakeBrickMapRibRequest makeBrickMap;
+		s_requestMap.insert(std::make_pair(makeBrickMap.requestName(), &makeBrickMap));
 	}
 }
 
@@ -1581,7 +1587,7 @@ int CRibParser::nextToken()
 				putback(c);
 
 				m_token.push_back(0); // Terminate string
-				m_request.curRequest(&m_token[0]);
+				// m_request.curRequest(&m_token[0]);
 				return RIBPARSER_REQUEST;
 			}
 		case 2: // Number (left of a decimal point)
@@ -1787,6 +1793,7 @@ int CRibParser::parseNextCall()
 
 	// If there is a token ( t != EOF ), read the parameters
 	if ( t >= 0 ) {
+		m_request.clear();
 		m_request.curRequest(&m_token[0]);
 		// find the next token as lookahead
 		do {

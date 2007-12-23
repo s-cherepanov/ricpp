@@ -350,11 +350,7 @@ void testrun(CRiCPPBridge &ri)
 		ri.frameEnd();
 
 		ri.colorSamples(3, id, id);
-		ri.frameBegin(2);
-			ri.worldBegin();
-				ri.readArchive("test.rib", 0, RI_NULL);
-			ri.worldEnd();
-		ri.frameEnd();
+		ri.readArchive("test.rib", 0, RI_NULL);
 	ri.end();
 }
 

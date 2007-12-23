@@ -408,7 +408,7 @@ public:
 	RtToken declare(RtString name, RtString declaration);
 
 	inline virtual RtVoid synchronize(RtToken name) {}
-	inline virtual RtVoid system(RtToken cmd) {}
+	virtual RtVoid system(RtToken cmd);
 	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Initializes a new render context.

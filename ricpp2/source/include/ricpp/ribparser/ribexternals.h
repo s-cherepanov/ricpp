@@ -76,6 +76,14 @@ namespace RiCPP {
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_SHADOW; }
 	}; // CMakeShadowRibRequest
+
+	/** @brief Handles RIB request MakeBrickMap ptcname(s) bkmname <paramlist>
+	 */
+	class CMakeBrickMapRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_BRICK_MAP; }
+	}; // CMakeBrickMapRibRequest
 }
 
 #endif // _RICPP_RIBPARSER_RIBEXTERNALS_H

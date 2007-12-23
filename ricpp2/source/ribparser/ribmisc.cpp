@@ -134,6 +134,10 @@ void CReadArchiveRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		const char *name=0;
 
 		if ( p0.getString(name) ) {
+			RtArchiveHandle handle;
+			if ( parser.getArchiveHandle(handle, name) ) {
+				name = handle;
+			}
 			// Propagate the callback for Archives in Archives
 			parser.ribFilter().readArchiveV(name, parser.callback(), (RtInt)parser.params().size(), parser.params().tokenPtr(), parser.params().valuePtr());
 		} else {
@@ -199,3 +203,36 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 			requestName(), "1 (versionNo) - should be 3.03 -", RI_NULL);
 	}
 }
+
+void CSystemRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
+{
+	// System cmdstring
+	if ( request.size() >= 1 ) {
+		CRibParameter &p0 = request[0];
+		const char *cmdstring=0;
+
+		if ( p0.getString(cmdstring) ) {
+			parser.ribFilter().system(cmdstring);
+		} else {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
+				parser.lineNo(), parser.resourceName(),
+				requestName(), "1 (cmdstring)", RI_NULL);
+		}
+		if ( request.size() > 1 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_WARNING,
+				"Line %ld, File \"%s\", badargument: '%s' has additional parameters, they are ignored",
+				parser.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+		}
+	} else {
+		parser.errHandler().handleError(
+			RIE_MISSINGDATA, RIE_ERROR,
+			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
+			parser.lineNo(), parser.resourceName(),
+			requestName(), "(cmdstring)", RI_NULL);
+	}
+}
+

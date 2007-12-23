@@ -68,6 +68,14 @@ namespace RiCPP {
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 		inline virtual EnumRequests interfaceIdx() const { return REQ_VERSION; }
 	}; // CVersionRibRequest
+
+	/** @brief Handles RIB request System cmdstring
+	 */
+	class CSystemRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_SYSTEM; }
+	}; // CSystemRibRequest
 }
 
 #endif // _RICPP_RIBPARSER_RIBMISC_H

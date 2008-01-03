@@ -1,4 +1,4 @@
-// RICPP - RenderMan(R) Interface CPP Language Binding
+//  - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
@@ -28,7 +28,6 @@
  */
 
 #include "ricpp/ribparser/ribtransforms.h"
-
 
 using namespace RiCPP;
 
@@ -237,7 +236,7 @@ void CTranslateRibRequest::operator()(IRibParserState &parser, CRibRequestData &
 				requestName(), RI_NULL);
 		}
 
-	} else if ( request.size() >= 4 ) {
+	} else if ( request.size() >= 3 ) {
 
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
@@ -434,7 +433,7 @@ void CScaleRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 				requestName(), RI_NULL);
 		}
 
-	} else if ( request.size() >= 4 ) {
+	} else if ( request.size() >= 3 ) {
 
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];

@@ -1775,11 +1775,6 @@ int CRibParser::parseNextCall()
 				RIE_BADTOKEN, RIE_ERROR,
 				"Line %ld, File \"%s\", syntax: bad token \"%s\"",
 				lineNo(), resourceName(), &m_token[0], RI_NULL);
-		} else if ( !(isCommentToken(m_lookahead) || isRequestToken(m_lookahead) || m_lookahead == RIBPARSER_EOF) ) {
-			errHandler().handleError(
-				RIE_BADTOKEN, RIE_ERROR,
-				"Line %ld, File \"%s\", syntax: \"%s\"",
-				lineNo(), resourceName(), &m_token[0], RI_NULL);
 		}
 	}
 	// Lookahead is eof or an ri token
@@ -1861,7 +1856,7 @@ void CRibParser::parseFile()
 	m_defineString = -1;	// No defind string (binary)
 	m_lookahead = RIBPARSER_NOT_A_TOKEN;  // Initialize, no Token found
 
-	m_lineNo = 1;
+	m_lineNo = 0;
 
 	while ( parseNextCall() != RIBPARSER_EOF ); // Parse all requests
 

@@ -316,7 +316,11 @@ void testrun(CRiCPPBridge &ri)
 
 		RtArchiveHandle myArchive = ri.archiveBegin("MyArchive", RI_NULL);
 			ri.attributeBegin();
-				ri.torus(0.5, 0.125, 0.0, 360.0, 360.0, RI_NULL);
+				ri.ifBegin("$Frame==1");
+					ri.sphere(0.75, -1, 1, 360.0, RI_NULL);
+				ri.elseBegin();
+					ri.torus(0.5, 0.125, 0.0, 360.0, 360.0, RI_NULL);
+				ri.ifEnd();
 			ri.attributeEnd();
 		ri.archiveEnd();
 
@@ -351,6 +355,12 @@ void testrun(CRiCPPBridge &ri)
 
 		ri.colorSamples(3, id, id);
 		ri.readArchive("test.rib", 0, RI_NULL);
+
+		ri.frameBegin(3);
+			ri.worldBegin();
+				ri.readArchive(myArchive, 0, RI_NULL);
+			ri.worldEnd();
+		ri.frameEnd();
 	ri.end();
 }
 

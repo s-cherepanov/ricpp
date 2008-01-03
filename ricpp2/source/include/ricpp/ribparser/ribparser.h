@@ -592,22 +592,22 @@ namespace RiCPP {
 			return token != RIBPARSER_NORMAL_COMMENT || token != RIBPARSER_STRUCTURED_COMMENT;
 		}
 
-		/** @brief Token is a Ri token, comment, value, array start, array end or eof.
-		 *
-		 *  @return true, token stands for a valid token or false, otherwise.
-		 */
-		inline static bool isValidToken(int token)
-		{
-			return (token > RIBPARSER_NOT_A_TOKEN) && (token <= RIBPARSER_REQUEST);
-		}
-
 		/** @brief Token is a Ri token (Sphere, Patch, Format etc.).
 		 *
-		 *  @return true: token stands for a Ri token, false: otherwise.
+		 *  @return true, token stands for a Ri token, false: otherwise.
 		 */
 		inline static bool isRequestToken(int token)
 		{
 			return token == RIBPARSER_REQUEST;
+		}
+
+		/** @brief Test if token introduces a valid request or comment.
+		 *
+		 *  @return true, token is a request or a comment.
+		 */
+		inline static bool isValidToken(int token)
+		{
+			return isRequestToken(token) || isCommentToken(token);
 		}
 
 		/** @brief Stores a comment.

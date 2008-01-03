@@ -219,8 +219,8 @@ const char *CRequestInfo::ms_requestNames[N_REQUESTS] =
 	"Else",
 	"IfEnd",
 
-	// Additional (also end marker)
-	"Version"
+	// Additional (also end marker), version starts with a small 'v'
+	"version"
 };
 
 const char *CRequestInfo::requestName(EnumRequests req)

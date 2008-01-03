@@ -246,9 +246,8 @@ void CLights::clearToMark()
 		TypeLightContainer::size_type lightsz =
 			static_cast<TypeLightContainer::size_type>(m_lightMarks.back());
 
-		assert(lightsz >= m_lights.size());
+		assert(lightsz <= m_lights.size());
 		
-		m_lights.pop_back();
 		for (
 			TypeLightContainer::size_type i = lightsz;
 			i < m_lights.size();
@@ -261,9 +260,9 @@ void CLights::clearToMark()
 		TypeLightHandleContainer::size_type lighthandlesz =
 			static_cast<TypeLightHandleContainer::size_type>(m_lightMarks.back());
 
-		assert(lighthandlesz >= m_handles.size());
+		assert(lighthandlesz <= m_handles.size());
 
-		m_lightMarks.pop_back();
 		m_handles.resize(lighthandlesz);
+		m_lightMarks.pop_back();
 	}
 }

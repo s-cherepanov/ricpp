@@ -286,8 +286,8 @@ void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest)
 void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb)
 {
 	renderState()->lineNo(aRequest.lineNo());
+	aRequest.preProcess(*this, cb);
 	if ( renderState()->executeConditionial() ) {
-		aRequest.preProcess(*this, cb);
 		aRequest.doProcess(*this, cb);
 	}
 	aRequest.postProcess(*this, cb);
@@ -4703,6 +4703,7 @@ RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callba
 
 RtVoid CBaseRenderer::preIfBegin(RtString expr)
 {
+	renderState()->ifBegin(expr);
 }
 
 
@@ -4712,8 +4713,6 @@ RtVoid CBaseRenderer::ifBegin(RtString expr)
 	try {
 		if ( !preCheck(req) )
 			return;
-
-		renderState()->ifBegin(expr);
 
 		CRiIfBegin r(renderState()->lineNo(), expr);
 		processRequest(r);
@@ -4741,6 +4740,7 @@ RtVoid CBaseRenderer::ifBegin(RtString expr)
 
 RtVoid CBaseRenderer::preElseIfBegin(RtString expr)
 {
+	renderState()->elseIfBegin(expr);
 }
 
 
@@ -4750,8 +4750,6 @@ RtVoid CBaseRenderer::elseIfBegin(RtString expr)
 	try {
 		if ( !preCheck(req) )
 			return;
-
-		renderState()->elseIfBegin(expr);
 
 		CRiElseIfBegin r(renderState()->lineNo(), expr);
 		processRequest(r);
@@ -4779,6 +4777,7 @@ RtVoid CBaseRenderer::elseIfBegin(RtString expr)
 
 RtVoid CBaseRenderer::preElseBegin(void)
 {
+	renderState()->elseBegin();
 }
 
 
@@ -4788,8 +4787,6 @@ RtVoid CBaseRenderer::elseBegin(void)
 	try {
 		if ( !preCheck(req) )
 			return;
-
-		renderState()->elseBegin();
 
 		CRiElseBegin r(renderState()->lineNo());
 		processRequest(r);
@@ -4817,6 +4814,7 @@ RtVoid CBaseRenderer::elseBegin(void)
 
 RtVoid CBaseRenderer::preIfEnd(void)
 {
+	renderState()->ifEnd();
 }
 
 RtVoid CBaseRenderer::ifEnd(void)
@@ -4825,8 +4823,6 @@ RtVoid CBaseRenderer::ifEnd(void)
 	try {
 		if ( !preCheck(req) )
 			return;
-
-		renderState()->ifEnd();
 
 		CRiIfEnd r(renderState()->lineNo());
 		processRequest(r);

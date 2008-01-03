@@ -2227,7 +2227,7 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 	}
 }
 
-RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc)
+RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -2238,7 +2238,7 @@ RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc
 		}
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::procedural(..., subdivfunc:%s, freefunc:%s)", subdivfunc.name(), freefunc.name());
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::procedural(..., subdivfunc:%s, freefunc:%s)", subdivfunc.name(), freefunc ? freefunc->name() : "no freefunc");
 	}
 }
 

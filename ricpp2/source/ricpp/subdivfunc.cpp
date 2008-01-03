@@ -30,44 +30,136 @@
 
 #include "ricpp/ricpp/subdivfunc.h"
 
+#ifndef _RICPP_GENDYNLIB_DYNLIB_H
+#include "ricpp/gendynlib/dynlib.h"
+#endif // _RICPP_GENDYNLIB_DYNLIB_H
+
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
-#include <cstdlib> //< used for free()
+
+#include <cstdlib> //< used for free(), tmpnam()
 
 using namespace RiCPP;
 
 RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
-	ri = ri;
-	data = data;
 	detail = detail;
+
+	if ( !data )
+		return;
+
+	RtString filename = ((RtString *)data)[0];
+	if ( !filename || !filename[0] )
+		return;
+	ri.readArchive(filename, 0, RI_NULL);
 }
 
 CProcDelayedReadArchive CProcDelayedReadArchive::func;
 
 RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
-	ri = ri;
-	data = data;
 	detail = detail;
+
+	if ( !data )
+		return;
+
+	RtString cmd = ((RtString *)data)[0];
+	RtString genRequestData = ((RtString *)data)[1];
+
+	if ( !cmd || !cmd[0] )
+		return;
+
+	char buf[TMP_MAX+1];
+	const char *tmpfile = 0;
+	
+#ifdef WIN32
+	if ( tmpnam_s(buf, sizeof(buf)) )
+		return;
+	tmpfile = &buf[0];
+#else
+	tmpfile = tmpnam(buf);
+#endif
+	if ( !tmpfile )
+		return;
+
+	std::string cmdline;
+	if ( genRequestData && genRequestData[0] ) {
+		cmdline += "echo ";
+		cmdline += genRequestData; // Insecure !!!
+		cmdline += " | ";
+	}
+	cmdline += cmd;
+	cmdline += " >";
+	cmdline += tmpfile;
+
+	system(cmdline.c_str());
+	ri.readArchive(tmpfile, 0, RI_NULL);
+	
+	// 2do: delete tmpfile or better
+	// use CreateProcess() in win32 and similar on other OS.
 }
 
 CProcRunProgram CProcRunProgram::func;
+
+typedef RtPointer (CDECL *TypeConvertParameters)(char *);
+typedef void (CDECL *TypeSubdivide)(IRi &, RtPointer, RtFloat);
+typedef void (CDECL *TypeFree)(RtPointer);
+
 
 RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
 	ri = ri;
 	data = data;
 	detail = detail;
+
+	if ( !data )
+		return;
+
+	RtString modname = ((RtString *)data)[0];
+
+	if ( !modname || !modname[0] )
+		return;
+
+	char *initialdata = ((char **)data)[1];
+
+	CDynLib *d = CDynLibFactory::newDynLib(modname, 0);
+	if ( d ) {
+		d->load();
+		ILibFunc *convertParametersPtr = d->getFunc("ConvertParameters");
+		ILibFunc *subdividePtr = d->getFunc("Subdivide");
+		ILibFunc *freePtr = d->getFunc("Free");
+
+		RtPointer blinddata = 0;
+
+		if ( convertParametersPtr ) {
+			TypeConvertParameters cp = (TypeConvertParameters)convertParametersPtr->funcPtr();
+			if ( cp )
+				blinddata = cp(initialdata);
+		}
+
+		if ( subdividePtr ) {
+			TypeSubdivide sd = (TypeSubdivide)subdividePtr->funcPtr();
+			if ( sd )
+				sd(ri, blinddata, detail);
+		}
+
+		if ( freePtr ) {
+			TypeFree fd = (TypeFree)freePtr->funcPtr();
+			if ( fd )
+				fd(blinddata);
+		}
+
+		d->unload();
+		CDynLibFactory::deleteDynLib(d);
+	}
 }
 
 CProcDynamicLoad CProcDynamicLoad::func;
 
-RtVoid CProcFree::operator()(IRi &ri, RtPointer data) const
+RtVoid CProcFree::operator()(RtPointer data) const
 {
-	ri = ri;
 	if (data)
 		free(data);
 };

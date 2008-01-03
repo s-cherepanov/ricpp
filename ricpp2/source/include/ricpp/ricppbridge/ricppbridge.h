@@ -214,6 +214,12 @@ protected:
 	 */
 	RtInt getTokens(RtToken token, va_list marker);
 
+	/** @brief Gets the frontend for RI-Calls (as used in procedurals)
+	 *
+	 *  @return Frontend for RI-calls
+	 */
+	virtual IRi &frontend() { return *this; }
+
 	/** @addtogroup ricpp_contexts
 	 */
 	//@{
@@ -1197,7 +1203,7 @@ public:
 	virtual RtVoid blobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtToken token = RI_NULL, ...);
     virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]);
 
-	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc);
+	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
 
 	virtual RtVoid geometry(RtToken type, RtToken token = RI_NULL, ...);
     virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);

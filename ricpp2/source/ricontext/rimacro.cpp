@@ -589,38 +589,29 @@ void CRiBlobby::get(
 ///////////////////////////////////////////////////////////////////////////////
 void CRiProcedural::insertData(RtPointer data)
 {
-	// std::deque<std::string> m_strcontainer;
-	// std::vector<RtString> m_str;
-	const char **cp = (const char **)data;
-	m_strcontainer.clear();
-	m_str.clear();
+	if ( m_data )
+		delete m_data;
 
 	if ( !m_subdivfunc )
 		return;
 
-	if ( m_subdivfunc->name() == RI_READARCHIVE ) {
-		m_strcontainer.push_back(cp && cp[0] ? cp[0] : "");
-		m_str.push_back(m_strcontainer[0].c_str());
-	} else if ( m_subdivfunc->name() == RI_DYNAMIC_LOAD ) {
-		m_strcontainer.push_back(cp && cp[0] ? cp[0] : "");
-		m_str.push_back(m_strcontainer[0].c_str());
-	} else if ( m_subdivfunc->name() == RI_RUN_PROGRAM ) {
-		m_strcontainer.push_back(cp && cp[0] ? cp[0] : "");
-		m_str.push_back(m_strcontainer[0].c_str());
-		m_strcontainer.push_back(cp && cp[1] ? cp[1] : "");
-		m_str.push_back(m_strcontainer[1].c_str());
-	}
+	m_data = m_subdivfunc->createSubdivData(data);
 }
 
 CRiProcedural::CRiProcedural(
 	long aLineNo, RtPointer data, RtBound bound,
-	const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc)
+	const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 	: CRManInterfaceCall(aLineNo)
 {
+	m_data = 0;
 	m_subdivfunc = &subdivfunc.singleton();
-	m_freefunc = &freefunc.singleton();
+	// m_freefunc = freefunc ? &freefunc->singleton() : 0;
+	m_freefunc = 0; // Not used because data is copied
 	memcpy(m_bound, bound, sizeof(RtBound));
 	insertData(data);
+	// Free original data after it is copied
+	if ( freefunc )
+		(*freefunc)(data);
 }
 
 inline CRiProcedural &CRiProcedural::operator=(const CRiProcedural &c)
@@ -639,13 +630,7 @@ inline CRiProcedural &CRiProcedural::operator=(const CRiProcedural &c)
 		m_freefunc = &c.m_freefunc->singleton();
 	}
 	memcpy(m_bound, c.m_bound, sizeof(RtBound));
-
-	m_strcontainer = c.m_strcontainer;
-
-	m_str.clear();
-	for ( int i = 0; i < (int)m_strcontainer.size(); ++i ) {
-		m_str.push_back(m_strcontainer[i].c_str());
-	}
+	insertData(c.m_data);
 
 	CRManInterfaceCall::operator=(c);
 	return *this;

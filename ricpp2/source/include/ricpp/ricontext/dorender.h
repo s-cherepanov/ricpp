@@ -206,7 +206,7 @@ public:
 
 	virtual RtVoid preBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) = 0;
 
-	virtual RtVoid preProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	virtual RtVoid preProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) = 0;
 
 	virtual RtVoid preGeometry(RtToken type, const CParameterList &params) = 0;
 
@@ -370,7 +370,7 @@ public:
 
 	virtual RtVoid doBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) = 0;
 
-	virtual RtVoid doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	virtual RtVoid doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) = 0;
 
 	virtual RtVoid doGeometry(RtToken type, const CParameterList &params) = 0;
 
@@ -517,7 +517,7 @@ public:
 
 	virtual RtVoid postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) = 0;
 
-	virtual RtVoid postProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	virtual RtVoid postProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) = 0;
 
 	virtual RtVoid postGeometry(RtToken type, const CParameterList &params) = 0;
 

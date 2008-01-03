@@ -727,7 +727,7 @@ public:
 		return new CRiBlobby(aLineNo, decl, curColorDescr, nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
 	}
 
-	inline virtual CRiProcedural *newRiProcedural(long aLineNo, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {
+	inline virtual CRiProcedural *newRiProcedural(long aLineNo, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) {
 		return new CRiProcedural(aLineNo, data, bound, subdivfunc, freefunc);
 	}
 

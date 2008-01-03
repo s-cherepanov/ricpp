@@ -35,7 +35,80 @@
 #include "ricpp/ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
+#include <deque>
+#include <vector>
+
 namespace RiCPP {
+
+/** @brief Data container for delayed read archive.
+ */
+class CDataDelayedReadArchive : public ISubdivData {
+private:
+	std::deque<std::string> m_strcontainer;
+	std::vector<RtString> m_str;
+public:
+	/** @brief Constructor, copies data
+	 */
+	inline CDataDelayedReadArchive(const RtPointer da=0)
+	{
+		data(da);
+	}
+
+	/** @brief Copy constructor
+	 */
+	inline CDataDelayedReadArchive(const CDataDelayedReadArchive &da)
+	{
+		*this = da;
+	}
+
+	inline virtual ISubdivData *duplicate() const
+	{
+		return new CDataDelayedReadArchive(*this);
+	}
+
+	/** @brief Assigns an ionstance of data to another.
+	 *  @return *this.
+	 */
+	inline CDataDelayedReadArchive &operator=(const CDataDelayedReadArchive &da)
+	{
+		freeData();
+		data(da.data());
+		return *this;
+	}
+
+	inline virtual RtPointer data()
+	{
+		if ( !m_str.empty() )
+			return (RtPointer)&(m_str[0]);
+		else
+			return 0;
+	}
+
+	inline virtual const RtPointer data() const
+	{
+		if ( !m_str.empty() )
+			return (const RtPointer)&(m_str[0]);
+		else
+			return 0;
+	}
+
+	inline virtual void data(const RtPointer data)
+	{
+		freeData();
+		if ( !data )
+			return;
+
+		const char **cp = (const char **)data;
+		m_strcontainer.push_back(cp && cp[0] ? cp[0] : "");
+		m_str.push_back(m_strcontainer[0].c_str());
+	}
+
+	inline virtual void freeData()
+	{
+		m_str.clear();
+		m_strcontainer.clear();
+	}
+};
 
 /** @brief Implements the DelayedReadArchive procedural.
  */
@@ -61,7 +134,85 @@ public:
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 
+	inline virtual ISubdivData *createSubdivData(RtPointer data) const
+	{
+		return new CDataDelayedReadArchive(data);
+	}
 	inline virtual ISubdivFunc &singleton()  const { return func; }
+};
+
+
+/** @brief Data container for run program.
+ */
+class CDataRunProgram : public ISubdivData {
+private:
+	std::deque<std::string> m_strcontainer;
+	std::vector<RtString> m_str;
+public:
+	/** @brief Constructor, copies data
+	 */
+	inline CDataRunProgram(const RtPointer da=0)
+	{
+		data(da);
+	}
+
+	/** @brief Copy constructor
+	 */
+	inline CDataRunProgram(const CDataRunProgram &da)
+	{
+		*this = da;
+	}
+
+	inline virtual ISubdivData *duplicate() const
+	{
+		return new CDataRunProgram(*this);
+	}
+
+	/** @brief Assigns an ionstance of data to another.
+	 *  @return *this.
+	 */
+	inline CDataRunProgram &operator=(const CDataRunProgram &da)
+	{
+		freeData();
+		data(da.data());
+		return *this;
+	}
+
+	inline virtual RtPointer data()
+	{
+		if ( !m_str.empty() )
+			return (RtPointer)&(m_str[0]);
+		else
+			return 0;
+	}
+
+	inline virtual const RtPointer data() const
+	{
+		if ( !m_str.empty() )
+			return (const RtPointer)&(m_str[0]);
+		else
+			return 0;
+	}
+
+	inline virtual void data(const RtPointer data)
+	{
+		freeData();
+		if ( !data )
+			return;
+
+		const char **cp = (const char **)data;
+
+		m_strcontainer.push_back(cp && cp[0] ? cp[0] : "");
+		m_str.push_back(m_strcontainer[0].c_str());
+		m_strcontainer.push_back(cp && cp[1] ? cp[1] : "");
+		m_str.push_back(m_strcontainer[1].c_str());
+	}
+
+	inline virtual void freeData()
+	{
+		m_str.clear();
+		m_strcontainer.clear();
+	}
 };
 
 /** @brief Implements the RunProgram procedural.
@@ -88,8 +239,87 @@ public:
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 
+	inline virtual ISubdivData *createSubdivData(RtPointer data) const
+	{
+		return new CDataRunProgram(data);
+	}
 	inline virtual ISubdivFunc &singleton()  const { return func; }
 };
+
+
+/** @brief Data container for dynamic load.
+ */
+class CDataDynamicLoad : public ISubdivData {
+private:
+	std::deque<std::string> m_strcontainer;
+	std::vector<RtString> m_str;
+public:
+	/** @brief Constructor, copies data
+	 */
+	inline CDataDynamicLoad(const RtPointer da=0)
+	{
+		data(da);
+	}
+
+	/** @brief Copy constructor
+	 */
+	inline CDataDynamicLoad(const CDataDynamicLoad &da)
+	{
+		*this = da;
+	}
+
+	inline virtual ISubdivData *duplicate() const
+	{
+		return new CDataDynamicLoad(*this);
+	}
+
+	/** @brief Assigns an ionstance of data to another.
+	 *  @return *this.
+	 */
+	inline CDataDynamicLoad &operator=(const CDataDynamicLoad &da)
+	{
+		freeData();
+		data(da.data());
+		return *this;
+	}
+
+	inline virtual RtPointer data()
+	{
+		if ( !m_str.empty() )
+			return (RtPointer)&(m_str[0]);
+		else
+			return 0;
+	}
+
+	inline virtual const RtPointer data() const
+	{
+		if ( !m_str.empty() )
+			return (const RtPointer)&(m_str[0]);
+		else
+			return 0;
+	}
+
+	inline virtual void data(const RtPointer data)
+	{
+		freeData();
+		if ( !data )
+			return;
+
+		const char **cp = (const char **)data;
+
+		m_strcontainer.push_back(cp && cp[0] ? cp[0] : "");
+		m_str.push_back(m_strcontainer[0].c_str());
+		m_strcontainer.push_back(cp && cp[1] ? cp[1] : "");
+		m_str.push_back(m_strcontainer[1].c_str());
+	}
+
+	inline virtual void freeData()
+	{
+		m_str.clear();
+		m_strcontainer.clear();
+	}
+};
+
 
 /** @brief Implements the DynamicLoad procedural.
  */
@@ -116,6 +346,10 @@ public:
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const;
 
+	inline virtual ISubdivData *createSubdivData(RtPointer data) const
+	{
+		return new CDataDynamicLoad(data);
+	}
 	inline virtual ISubdivFunc &singleton()  const { return func; }
 };
 
@@ -143,7 +377,7 @@ public:
 	 * @param ri Interface to be used
 	 * @param data
 	 */
-	virtual RtVoid operator()(IRi &ri, RtPointer data) const;
+	virtual RtVoid operator()(RtPointer data) const;
 
 	inline virtual IFreeFunc &singleton()  const { return func; }
 };

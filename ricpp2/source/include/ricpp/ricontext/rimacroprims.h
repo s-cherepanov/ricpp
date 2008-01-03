@@ -4341,8 +4341,7 @@ private:
 	RtBound m_bound;
 	ISubdivFunc *m_subdivfunc;
 	IFreeFunc *m_freefunc;
-	std::deque<std::string> m_strcontainer;
-	std::vector<RtString> m_str;
+	ISubdivData *m_data;
 
 	void insertData(RtPointer data);
 public:
@@ -4377,11 +4376,12 @@ public:
 		memset(m_bound, 0, sizeof(RtBound));
 		m_subdivfunc = 0;
 		m_freefunc = 0;
+		m_data = 0;
 	}
 
 	CRiProcedural(long aLineNo,
 		RtPointer data, RtBound bound,
-		const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc);
+		const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
 
 
 	/** @brief Copy constructor.
@@ -4390,6 +4390,9 @@ public:
 	 */
 	inline CRiProcedural(const CRiProcedural &c)
 	{
+		m_subdivfunc = 0;
+		m_freefunc = 0;
+		m_data = 0;
 		*this = c;
 	}
 
@@ -4397,6 +4400,8 @@ public:
 	 */
 	inline virtual ~CRiProcedural()
 	{
+		if ( m_data )
+			delete m_data;
 	}
 
 	inline virtual CRManInterfaceCall *duplicate() const
@@ -4409,31 +4414,28 @@ public:
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_subdivfunc != 0);
-		assert(m_freefunc != 0);
-		if ( m_subdivfunc != 0 && m_freefunc != 0 )
-			ri.preProcedural(m_str.empty() ? 0 :
-				m_str.empty() ? 0 : (RtPointer)&m_str[0],
-				m_bound, *m_subdivfunc, *m_freefunc);
+		if ( m_subdivfunc != 0 )
+			ri.preProcedural(
+				m_data ? m_data->data() : 0,
+				m_bound, *m_subdivfunc, m_freefunc);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_subdivfunc != 0);
-		assert(m_freefunc != 0);
-		if ( m_subdivfunc != 0 && m_freefunc != 0 )
-			ri.doProcedural(m_str.empty() ? 0 :
-				m_str.empty() ? 0 : (RtPointer)&m_str[0],
-				m_bound, *m_subdivfunc, *m_freefunc);
+		if ( m_subdivfunc != 0 )
+			ri.doProcedural(
+				m_data ? m_data->data() : 0,
+				m_bound, *m_subdivfunc, m_freefunc);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_subdivfunc != 0);
-		assert(m_freefunc != 0);
-		if ( m_subdivfunc != 0 && m_freefunc != 0 )
-			ri.postProcedural(m_str.empty() ? 0 :
-				m_str.empty() ? 0 : (RtPointer)&m_str[0],
-				m_bound, *m_subdivfunc, *m_freefunc);
+		if ( m_subdivfunc != 0 )
+			ri.postProcedural(
+				m_data ? m_data->data() : 0,
+				m_bound, *m_subdivfunc, m_freefunc);
 	}
 
 	/** @brief Assignment.

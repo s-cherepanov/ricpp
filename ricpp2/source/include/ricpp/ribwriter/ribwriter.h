@@ -198,7 +198,7 @@ public:
 
 	inline virtual RtVoid doBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) {}
 
-	inline virtual RtVoid doProcedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) {}
+	inline virtual RtVoid doProcedural(IRi &callee, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) {}
 
 	inline virtual RtVoid doGeometry(RtToken type, const CParameterList &params) {}
 

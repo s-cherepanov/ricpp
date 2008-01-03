@@ -124,6 +124,41 @@ public:
 	virtual IFilterFunc &singleton() const = 0;
 };
 
+/** @brief Data container for Subdiv functions
+ *
+ *  Inherit from this object to make data for own procedurals.
+ */
+class ISubdivData {
+public:
+	/** @brief Destructor to free data.
+	 */
+	inline virtual ~ISubdivData() {}
+
+	/** @brief Clone the instance.
+	 *  @return A new cloned instance of the function.
+	 */
+	virtual ISubdivData *duplicate() const = 0;
+
+	/** @brief Gets the data of the instance.
+	 *  @return The data of the instance, not a copy.
+	 */
+	virtual RtPointer data() = 0;
+
+	/** @brief Gets the read only data of the instance.
+	 *  @return The read only data of the instance, not a copy.
+	 */
+	virtual const RtPointer data() const = 0;
+
+	/** @brief Sets the data of the instance.
+	 *  @param da The data for the instance, creates a copy.
+	 */
+	virtual void data(const RtPointer da) = 0;
+
+	/** @brief Frees the data of the instance.
+	 */
+	virtual void freeData() = 0;
+};
+
 /** @brief Interface, subdivision for procedurals changed to include renderer instance.
  */
 class ISubdivFunc {
@@ -139,14 +174,20 @@ public:
 	virtual RtToken name() const = 0;
 
 	/** @brief The subdivision function as operator()().
-	 * @param ri the frontend for interface calls of the subdivision function.
-	 * @param data The data handled by the subdivision function.
-	 * @param detail the current level of detail.
+	 *  @param ri the frontend for interface calls of the subdivision function.
+	 *  @param data The data handled by the subdivision function.
+	 *  @param detail the current level of detail.
 	 */
 	virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const = 0;
 
+	/** @brief Creates the data structure needed for subdivision.
+	 *  @param data The data handled by the subdivision function.
+	 *  @return A data structure containing a copy of @a data.
+	 */
+	virtual ISubdivData *createSubdivData(RtPointer data) const = 0;
+
 	/** @brief A singleton subdivision/procedural.
-	 * @return A singleton subdivision/procedural (static subdivision/procedural).
+	 *  @return A singleton subdivision/procedural (static subdivision/procedural).
 	 */
 	virtual ISubdivFunc &singleton() const = 0;
 };
@@ -169,7 +210,7 @@ public:
 	 * @param ri the frontend used by the subdivision function that handled the data.
 	 * @param data The data handled by the subdivision function that should be freed.
 	 */
-	virtual RtVoid operator()(IRi &ri, RtPointer data) const = 0;
+	virtual RtVoid operator()(RtPointer data) const = 0;
 
 	/** @brief A singleton free.
 	 * @return A singleton free (static free).
@@ -1284,7 +1325,7 @@ public:
 	 * @param subdivfunc
 	 * @param freefunc
 	 */
-	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc) = 0;
+	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) = 0;
 	//@}
 
 	/** @defgroup ricpp_general Ri General objects

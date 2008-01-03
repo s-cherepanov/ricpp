@@ -80,6 +80,12 @@ namespace RiCPP {
 		 *  @return The rib filter for the ri calls.
 		 */
 		virtual IRiRoot &ribFilter() = 0;
+
+		/** @brief Gets the frontend for RI-Calls (as used in procedurals)
+		 *
+		 *  @return Frontend for RI-calls
+		 */
+		virtual IRi &frontend() = 0;
 	}; // IRibParserCallback
 
 }

@@ -4242,7 +4242,14 @@ RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 	}
 }
 
-RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc &freefunc)
+RtVoid CBaseRenderer::doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+{
+	subdivfunc(m_parserCallback->frontend(), data, RI_INFINITY);
+	if ( freefunc )
+		(*freefunc)(data);
+}
+
+RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
 	EnumRequests req = REQ_PROCEDURAL;
 	try {

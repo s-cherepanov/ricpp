@@ -297,7 +297,7 @@ public:
 	/** @brief Gets the current callback
 	 * @return Callback for variable and @, & substitution
 	 */
-	inline ISearchCallback *callback(ISearchCallback *aCallback) const
+	inline ISearchCallback *callback() const
 	{
 		return m_callback;
 	}

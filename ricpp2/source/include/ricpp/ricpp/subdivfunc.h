@@ -35,6 +35,7 @@
 #include "ricpp/ricpp/ricpp.h"
 #endif // _RICPP_RICPP_RICPP_H
 
+#include <string>
 #include <deque>
 #include <vector>
 
@@ -99,7 +100,7 @@ public:
 			return;
 
 		const char **cp = (const char **)data;
-		m_strcontainer.push_back(cp && cp[0] ? cp[0] : "");
+		m_strcontainer.push_back(std::string(cp && cp[0] ? cp[0] : ""));
 		m_str.push_back(m_strcontainer[0].c_str());
 	}
 

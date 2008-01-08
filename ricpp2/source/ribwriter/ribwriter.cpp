@@ -31,6 +31,108 @@
 
 using namespace RiCPP;
 
+
+CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> &ribout)
+{
+	m_ribout = &ribout;
+	m_ascii = true;
+	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
+}
+
+
+CRibElementsWriter::~CRibElementsWriter()
+{
+}
+
+
+void CRibElementsWriter::putNewLine()
+{
+}
+
+
+void CRibElementsWriter::putSpace()
+{
+}
+
+
+void CRibElementsWriter::putChar(char c)
+{
+}
+
+
+void CRibElementsWriter::putChars(const char *cs)
+{
+}
+
+
+void CRibElementsWriter::putRequest(EnumRequests aRequest, bool encoded)
+{
+}
+
+
+void CRibElementsWriter::putFloatArray(const std::vector<float> &aFloat)
+{
+}
+
+void CRibElementsWriter::putFloatArray(size_t length, const float *aFloat)
+{
+}
+
+void CRibElementsWriter::putFloat(float aFloat)
+{
+}
+
+
+void CRibElementsWriter::putFloat(double aFloat)
+{
+}
+
+
+void CRibElementsWriter::putIntegerArray(size_t length, long integers)
+{
+}
+
+
+void CRibElementsWriter::putInteger(long anInteger)
+{
+}
+
+
+void CRibElementsWriter::fixedPoint(short number, unsigned short decimal)
+{
+}
+
+
+void CRibElementsWriter::putStringArray(size_t length, RtString aString)
+{
+}
+
+
+void CRibElementsWriter::putString(RtString aString)
+{
+}
+
+
+RtInt CRibElementsWriter::defineStringToken(RtString aString, bool encoded)
+{
+	return REQ_UNKNOWN;
+}
+
+
+RtInt CRibElementsWriter::putStringToken(RtInt aToken)
+{
+	return REQ_UNKNOWN;
+}
+
+
+RtInt CRibElementsWriter::putStringToken(RtString aString, bool encoded)
+{
+	return REQ_UNKNOWN;
+}
+
+
+// -----------------------------------------------------------------------------
+
 const char *CRibWriterCreator::myName() { return "ribwritercreator"; }
 const char *CRibWriterCreator::myType() { return CContextCreator::myType(); }
 unsigned long CRibWriterCreator::myMajorVersion() { return CContextCreator::myMajorVersion(); }

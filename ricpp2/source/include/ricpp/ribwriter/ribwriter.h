@@ -38,7 +38,57 @@
 #include "ricpp/ricontext/contextcreator.h"
 #endif // _RICPP_RICONTEXT_CONTEXTCREATOR_H
 
+#ifndef _RICPP_STREAMS_BACKBUFFER_H
+#include "ricpp/streams/backbuffer.h"
+#endif // _RICPP_STREAMS_BACKBUFFER_H
+
 namespace RiCPP {
+
+/** @brief Helper class to write RIB elements
+ *
+ *  RIB streams can contain ascii and binary data. Instances
+ *  of the class CRibElementsWriter can be used to put elementary
+ *  RIB data, like request identifiers, flosts, integers, strings,
+ *  to a stream.
+ */
+class CRibElementsWriter {
+private:
+	TemplFrontStreambuf<char> *m_ribout; //!< Associated stream buffer for output.
+	bool m_ascii; //!< true, indicates that ascii-data should be written. False, binary data.
+	unsigned char m_reqEncoding[N_REQUESTS];
+public:
+	CRibElementsWriter(TemplFrontStreambuf<char> &ribout);
+	~CRibElementsWriter();
+	inline bool ascii() const
+	{
+		return m_ascii;
+	}
+
+	inline void ascii(bool isAscii)
+	{
+		m_ascii = isAscii;
+	}
+
+	void putNewLine();
+	void putSpace();
+	void putChar(char c);
+	void putChars(const char *cs);
+
+	void putRequest(EnumRequests aRequest, bool encoded=true);
+	void putFloatArray(const std::vector<float> &aFloat);
+	void putFloatArray(size_t length, const float *aFloat);
+	void putFloat(float aFloat);
+	void putFloat(double aFloat);
+	void putIntegerArray(size_t length, long integers);
+	void putInteger(long anInteger);
+	void fixedPoint(short number, unsigned short decimal);
+	void putStringArray(size_t length, RtString strings);
+	void putString(RtString aString);
+	RtInt defineStringToken(RtString aString, bool encoded = true);
+	RtInt putStringToken(RtInt aToken);
+	RtInt putStringToken(RtString aString, bool encoded = true);
+};
+
 
 /** @brief Rendering context that writes a RIB stream
  */

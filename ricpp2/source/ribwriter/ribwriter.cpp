@@ -133,13 +133,13 @@ RtInt CRibElementsWriter::putStringToken(RtString aString, bool encoded)
 
 // -----------------------------------------------------------------------------
 
-const char *CRibWriterCreator::myName() { return "ribwritercreator"; }
+const char *CRibWriterCreator::myName() { return RIBWRITERCREATOR_NAME; }
 const char *CRibWriterCreator::myType() { return CContextCreator::myType(); }
 unsigned long CRibWriterCreator::myMajorVersion() { return CContextCreator::myMajorVersion(); }
 unsigned long CRibWriterCreator::myMinorVersion() { return 1; }
 unsigned long CRibWriterCreator::myRevision() { return 1; }
 
-const char *CRibWriter::myName() { return "ribwriter"; }
+const char *CRibWriter::myName() { return RIBWRITER_NAME; }
 const char *CRibWriter::myType() { return IRiContext::myType(); }
 unsigned long CRibWriter::myMajorVersion() { return IRiContext::myMajorVersion(); }
 unsigned long CRibWriter::myMinorVersion() { return 1; }

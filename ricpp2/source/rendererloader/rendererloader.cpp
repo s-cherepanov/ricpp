@@ -36,7 +36,7 @@ using namespace RiCPP;
 
 CRendererLoader::CRendererLoader()
 {
-	m_standardRendererName = CRibWriter::myName();
+	m_standardRendererName = RIBWRITER_NAME;
 }
 
 const char *CRendererLoader::rendererName(RtString name) const
@@ -44,7 +44,7 @@ const char *CRendererLoader::rendererName(RtString name) const
 	assert (!m_standardRendererName.empty());
 
 	if ( emptyStr(name) )
-		return m_standardRendererName.empty() ? CRibWriter::myName() : m_standardRendererName.c_str();
+		return m_standardRendererName.empty() ? RIBWRITER_NAME : m_standardRendererName.c_str();
 
 	return name;
 }
@@ -65,6 +65,6 @@ CContextCreator *CRendererLoader::getContextCreator(RtString name) {
 void CRendererLoader::standardRendererName(const char *name)
 {
 	if ( emptyStr(name) )
-		name = CRibWriter::myName();
+		name = RIBWRITER_NAME;
 	m_standardRendererName = name;
 }

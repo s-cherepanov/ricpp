@@ -169,6 +169,6 @@ namespace RiCPP {
 			return get(var, varName);
 		}
 	}; // CEnv
-}; // namespace RiCPP
+} // namespace RiCPP
 
 #endif // _RICPP_TOOLS_ENV_H

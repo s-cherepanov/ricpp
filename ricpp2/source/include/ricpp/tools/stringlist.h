@@ -56,6 +56,7 @@ public:
 	 *  @return true, if found
 	 */
 	virtual bool operator()(std::string &varName) = 0;
+	inline virtual ~ISearchCallback() {}
 }; // ISearchCallback
 
 /** @brief Class used to store strings, used like a stack with a constant iterator.

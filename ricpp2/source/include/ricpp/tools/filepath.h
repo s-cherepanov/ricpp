@@ -241,6 +241,6 @@ namespace RiCPP {
 		}
 
 	};
-}; // namespace RiCPP
+} // namespace RiCPP
 
 #endif // _RICPP_TOOLS_FILEPATH_H

@@ -44,6 +44,9 @@
 
 namespace RiCPP {
 
+#define RIBWRITER_NAME "ribwriter"
+#define RIBWRITERCREATOR_NAME "ribwritercreator"
+
 /** @brief Helper class to write RIB elements
  *
  *  RIB streams can contain ascii and binary data. Instances

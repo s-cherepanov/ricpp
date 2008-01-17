@@ -42,6 +42,8 @@
 #include "ricpp/streams/backbuffer.h"
 #endif // _RICPP_STREAMS_BACKBUFFER_H
 
+#include <map>
+
 namespace RiCPP {
 
 #define RIBWRITER_NAME "ribwriter"
@@ -56,9 +58,10 @@ namespace RiCPP {
  */
 class CRibElementsWriter {
 private:
-	TemplFrontStreambuf<char> *m_ribout; //!< Associated stream buffer for output.
+	std::ostream m_ostream; //!< RIB output stream.
 	bool m_ascii; //!< true, indicates that ascii-data should be written. False, binary data.
 	unsigned char m_reqEncoding[N_REQUESTS];
+	std::map<std::string, RtInt> m_stringTokens;
 public:
 	CRibElementsWriter(TemplFrontStreambuf<char> &ribout);
 	~CRibElementsWriter();
@@ -77,7 +80,7 @@ public:
 	void putChar(char c);
 	void putChars(const char *cs);
 
-	void putRequest(EnumRequests aRequest, bool encoded=true);
+	void putRequest(EnumRequests aRequest);
 	void putFloatArray(const std::vector<float> &aFloat);
 	void putFloatArray(size_t length, const float *aFloat);
 	void putFloat(float aFloat);
@@ -87,9 +90,9 @@ public:
 	void fixedPoint(short number, unsigned short decimal);
 	void putStringArray(size_t length, RtString strings);
 	void putString(RtString aString);
-	RtInt defineStringToken(RtString aString, bool encoded = true);
+	RtInt defineStringToken(RtString aString);
 	RtInt putStringToken(RtInt aToken);
-	RtInt putStringToken(RtString aString, bool encoded = true);
+	RtInt putStringToken(RtString aString);
 };
 
 

@@ -62,6 +62,10 @@ private:
 	bool m_ascii; //!< true, indicates that ascii-data should be written. False, binary data.
 	unsigned char m_reqEncoding[N_REQUESTS];
 	std::map<std::string, RtInt> m_stringTokens;
+	long m_countString;
+
+	void putStringTokenNum(unsigned char code, long tok);
+	
 public:
 	CRibElementsWriter(TemplFrontStreambuf<char> &ribout);
 	~CRibElementsWriter();
@@ -76,23 +80,22 @@ public:
 	}
 
 	void putNewLine();
-	void putSpace();
 	void putChar(char c);
 	void putChars(const char *cs);
 
 	void putRequest(EnumRequests aRequest);
-	void putFloatArray(const std::vector<float> &aFloat);
-	void putFloatArray(size_t length, const float *aFloat);
-	void putFloat(float aFloat);
-	void putFloat(double aFloat);
-	void putIntegerArray(size_t length, long integers);
-	void putInteger(long anInteger);
-	void fixedPoint(short number, unsigned short decimal);
-	void putStringArray(size_t length, RtString strings);
+	
+	void putArray(const std::vector<float> &floats);
+	void putArray(size_t length, const float *floats);
+	void putArray(const std::vector<double> &floats);
+	void putArray(size_t length, const double *floats);
+	void putValue(float aFloat);
+	void putValue(double aFloat);
+	void putArray(size_t length, const RtInt *integers);
+	void putValue(RtInt anInteger);
+	
 	void putString(RtString aString);
-	RtInt defineStringToken(RtString aString);
-	RtInt putStringToken(RtInt aToken);
-	RtInt putStringToken(RtString aString);
+	void putStringToken(RtString aString);
 };
 
 

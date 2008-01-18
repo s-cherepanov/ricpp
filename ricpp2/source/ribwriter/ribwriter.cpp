@@ -33,7 +33,7 @@ using namespace RiCPP;
 
 
 CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> &ribout)
-: m_ostream(&ribout), m_ascii(true)
+: m_ostream(&ribout), m_ascii(true), m_countString(0)
 {
 	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
 }
@@ -50,16 +50,9 @@ void CRibElementsWriter::putNewLine()
 }
 
 
-void CRibElementsWriter::putSpace()
-{
-	m_ostream << ' ';
-}
-
-
 void CRibElementsWriter::putChar(char c)
 {
-	if ( c >= 0 ) 
-		m_ostream << c;
+	m_ostream << c;
 }
 
 
@@ -67,10 +60,108 @@ void CRibElementsWriter::putChars(const char *cs)
 {
 	if ( !cs )
 		return;
+		
+	for ( ; *cs; ++cs ) {
+		m_ostream << *cs;
+	}
+}
+
+
+void CRibElementsWriter::putRequest(EnumRequests aRequest)
+{
 	if ( m_ascii ) {
+		putChars(CRequestInfo::requestName(aRequest));
+	} else {
+	}
+}
+
+
+void CRibElementsWriter::putArray(const std::vector<float> &floats)
+{
+	putArray(floats.size(), floats.size() ? &floats[0] : 0);
+}
+
+
+void CRibElementsWriter::putArray(size_t length, const float *floats)
+{
+	assert ((length > 0) ? floats != 0 : true); 
+	if ( m_ascii ) {
+		m_ostream << "[";
+		for ( size_t i = 0; i< length; ++i ) {
+			m_ostream << " " << floats[i];
+		}
+		m_ostream << " ]";
+	} else {
+	}
+}
+
+
+void CRibElementsWriter::putArray(const std::vector<double> &floats)
+{
+	putArray(floats.size(), floats.size() ? &floats[0] : 0);
+}
+
+
+void CRibElementsWriter::putArray(size_t length, const double *floats)
+{
+	assert ((length > 0) ? floats != 0 : true); 
+	if ( m_ascii ) {
+		m_ostream << "[";
+		for ( size_t i = 0; i< length; ++i ) {
+			m_ostream << " " << floats[i];
+		}
+		m_ostream << " ]";
+	} else {
+	}
+}
+
+void CRibElementsWriter::putValue(float aFloat)
+{
+	if ( m_ascii ) {
+		m_ostream << aFloat;
+	} else {
+	}
+}
+
+
+void CRibElementsWriter::putValue(double aFloat)
+{
+	if ( m_ascii ) {
+		m_ostream << aFloat;
+	} else {
+	}
+}
+
+
+void CRibElementsWriter::putArray(size_t length, const RtInt *integers)
+{
+	if ( m_ascii ) {
+		m_ostream << "[";
+		for ( size_t i = 0; i< length; ++i ) {
+			m_ostream << " " << integers[i];
+		}
+		m_ostream << " ]";
+	} else {
+	}
+}
+
+
+void CRibElementsWriter::putValue(RtInt anInteger)
+{
+	if ( m_ascii ) {
+		m_ostream << anInteger;
+	} else {
+	}
+}
+
+
+void CRibElementsWriter::putString(RtString aString)
+{
+	if ( m_ascii ) {
+	
 		m_ostream << "\"";
-		for ( ; *cs; ++cs ) {
-			switch(*cs) {
+		for ( ; *aString; ++aString ) {
+			switch ( *aString ) {
 				case '\n' :
 					m_ostream << "\\n";
 				case '\r' :
@@ -86,10 +177,10 @@ void CRibElementsWriter::putChars(const char *cs)
 				case '\"' :
 					m_ostream << "\\\"";
 				default:
-					if ( *cs < ' ' || *cs > '~' ) {
-						m_ostream << *cs;
+					if ( *aString >= ' ' && *aString <= '~' ) {
+						m_ostream << *aString;
 					} else {
-						unsigned char c = (unsigned char)*cs;
+						unsigned char c = (unsigned char)*aString;
 						int d3 = c / 64;
 						c %= 64;
 						int d2 = c / 8;
@@ -103,123 +194,99 @@ void CRibElementsWriter::putChars(const char *cs)
 			}
 		}
 		m_ostream << "\"";
+		
 	} else {
-		if ( strlen(cs) > 15 ) {
-		} else {
+	
+		unsigned long len = strlen(aString);
+
+		if ( len < 16 ) {
+			unsigned char code = 0220+(unsigned char)len;
+			m_ostream << code;
+			putChars(aString);
+			return;
 		}
+
+		unsigned char code = 0240;
+		unsigned char bytes = 0;
+		if ( len > 0xFFUL )
+			bytes = 1;
+		if ( len > 0xFFFFUL )
+			bytes = 2;
+		if ( len > 0xFFFFFFUL )
+			bytes = 3;
+		code += bytes;
+		m_ostream << code;
+
+		if ( bytes == 3 ) {
+			code = len >> 24;
+			m_ostream << code;			
+		}
+		if ( bytes >= 2 ) {
+			code = (unsigned char)((len & 0x00ffffffUL) >> 16);
+			m_ostream << code;			
+		}
+		if ( bytes >= 1 ) {
+			code = (unsigned char)((len & 0x0000ffffUL) >> 8);
+			m_ostream << code;			
+		}
+		code = (unsigned char)(len & 0x000000ffUL);
+		m_ostream << code;			
+
+		putChars(aString);
 	}
 }
 
 
-void CRibElementsWriter::putRequest(EnumRequests aRequest)
+void CRibElementsWriter::putStringTokenNum(unsigned char code, long tok)
 {
-	if ( m_ascii ) {
-		m_ostream << CRequestInfo::requestName(aRequest);
-	} else {
+	unsigned char bytes = 0;
+	if ( tok > 0xFFL )
+		bytes = 1;
+	code += bytes;
+	m_ostream << code;			
+
+	if ( bytes >= 1 ) {
+		code = (unsigned char)((tok & 0xffffL) >> 8);
+		m_ostream << code;			
 	}
+	code = (unsigned char)(tok & 0x00ffL);
+	m_ostream << code;
 }
 
 
-void CRibElementsWriter::putFloatArray(const std::vector<float> &aFloat)
+void CRibElementsWriter::putStringToken(RtString aString)
 {
+	if ( !aString )
+		return;
+		
 	if ( m_ascii ) {
-		m_ostream << "[";
-		m_ostream << "]";
-	} else {
+		putString(aString);
+		return;
 	}
-}
 
-void CRibElementsWriter::putFloatArray(size_t length, const float *aFloat)
-{
-	if ( m_ascii ) {
-		m_ostream << "[";
-		m_ostream << "]";
+	std::string strval(aString);
+	std::map<std::string, RtInt>::iterator i = m_stringTokens.find(strval);
+	long tok = m_countString;
+
+	if ( i == m_stringTokens.end() ) {
+
+		if ( m_countString > 0xffffL) {
+			putString(aString);
+			return;
+		}
+		m_stringTokens.insert(std::map<std::string, RtInt>::value_type(strval, m_countString));
+		tok = m_countString;
+		++m_countString;
+
+		putStringTokenNum(0315, tok);
+		putString(aString);
+
 	} else {
+
+		tok = (*i).second;
 	}
-}
-
-void CRibElementsWriter::putFloat(float aFloat)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-}
-
-
-void CRibElementsWriter::putFloat(double aFloat)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-}
-
-
-void CRibElementsWriter::putIntegerArray(size_t length, long integers)
-{
-	if ( m_ascii ) {
-		m_ostream << "[";
-		m_ostream << "]";
-	} else {
-	}
-}
-
-
-void CRibElementsWriter::putInteger(long anInteger)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-}
-
-
-void CRibElementsWriter::fixedPoint(short number, unsigned short decimal)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-}
-
-
-void CRibElementsWriter::putStringArray(size_t length, RtString aString)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-}
-
-
-void CRibElementsWriter::putString(RtString aString)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-}
-
-
-RtInt CRibElementsWriter::defineStringToken(RtString aString)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-	return -1;
-}
-
-
-RtInt CRibElementsWriter::putStringToken(RtInt aToken)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-	return aToken;
-}
-
-
-RtInt CRibElementsWriter::putStringToken(RtString aString)
-{
-	if ( m_ascii ) {
-	} else {
-	}
-	return -1;
+	
+	putStringTokenNum(0317, tok);
 }
 
 

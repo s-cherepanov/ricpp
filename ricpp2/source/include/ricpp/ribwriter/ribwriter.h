@@ -60,41 +60,110 @@ class CRibElementsWriter {
 private:
 	std::ostream m_ostream; //!< RIB output stream.
 	bool m_ascii; //!< true, indicates that ascii-data should be written. False, binary data.
-	unsigned char m_reqEncoding[N_REQUESTS];
-	std::map<std::string, RtInt> m_stringTokens;
-	long m_countString;
+	unsigned char m_reqEncoding[N_REQUESTS]; //!< Elements indicate (value!=0), that a request is defined.
+	std::map<std::string, RtInt> m_stringTokens; //!< Elements indicate, that a string token is defined
+	unsigned long m_countStrings; //!< Counter for the string numbers (used 16 bit)
 
-	void putStringTokenNum(unsigned char code, long tok);
-	
+	/** @brief Puts a binary encoded number (string length, RtInt) to the stream.
+	 */
+	void putLength(unsigned char code, unsigned long length);
+
+	/** @brief Puts a binary encoded string token to the stream.
+	 */
+	void putStringTokenNum(unsigned char code, unsigned long tok);
+
+	/** @brief Puts a binary encoded IEEE float to the stream.
+	 */
+	void putBinValue(float aFloat);
+
+	/** @brief Puts a binary encoded double precision IEEE float to the stream.
+	 */
+	void putBinValue(double aFloat);
+
 public:
+
+	/** @brief Initializes the objects with the stram buffer to write to.
+	 */
 	CRibElementsWriter(TemplFrontStreambuf<char> &ribout);
-	~CRibElementsWriter();
+
+	/** @brief Destructor, doesn't close the stream (because it is not opened by a CRibElementsWriter).
+	 */
+	inline ~CRibElementsWriter()
+	{
+	}
+	
+	/** @brief Gets the ascii mode flag.
+	 */
 	inline bool ascii() const
 	{
 		return m_ascii;
 	}
 
+	/** @brief Sets the ascii mode flag.
+	 */
 	inline void ascii(bool isAscii)
 	{
 		m_ascii = isAscii;
 	}
 
+	/** @brief Puts out a new line character.
+	 */
 	void putNewLine();
+
+	/** @brief Puts out a single character.
+	 */
 	void putChar(char c);
+	
+	/** @brief Puts out a characters untill character '\0' is reached.
+	 */
 	void putChars(const char *cs);
 
+	/** @brief Puts out a RIB request.
+	 */
 	void putRequest(EnumRequests aRequest);
 	
+	/** @brief Puts out a vector of single precision floats.
+	 */
 	void putArray(const std::vector<float> &floats);
-	void putArray(size_t length, const float *floats);
+	
+	/** @brief Puts out an array of single precision floats.
+	 */
+	void putArray(unsigned long length, const float *floats);
+
+	/** @brief Puts out a vector of double precision floats.
+	 */
 	void putArray(const std::vector<double> &floats);
-	void putArray(size_t length, const double *floats);
+	
+	/** @brief Puts out an array of double precision floats.
+	 */
+	void putArray(unsigned long length, const double *floats);
+
+	/** @brief Puts out a vector of integers.
+	 */
+	void putArray(const std::vector<RtInt> &integers);
+
+	/** @brief Puts out an array of integers.
+	 */
+	void putArray(unsigned long length, const RtInt *integers);
+
+	/** @brief Puts out one single precision float.
+	 */
 	void putValue(float aFloat);
+
+	/** @brief Puts out one double precision float.
+	 */
 	void putValue(double aFloat);
-	void putArray(size_t length, const RtInt *integers);
+
+	/** @brief Puts out one integer.
+	 */
 	void putValue(RtInt anInteger);
 	
+	/** @brief Puts out a string.
+	 */
 	void putString(RtString aString);
+
+	/** @brief Tokenize a string if binary mode and put out the string (token) in either mode.
+	 */
 	void putStringToken(RtString aString);
 };
 

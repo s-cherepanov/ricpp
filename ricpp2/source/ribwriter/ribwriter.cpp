@@ -33,14 +33,9 @@ using namespace RiCPP;
 
 
 CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> &ribout)
-: m_ostream(&ribout), m_ascii(true), m_countString(0)
+: m_ostream(&ribout), m_ascii(true), m_countStrings(0)
 {
 	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
-}
-
-
-CRibElementsWriter::~CRibElementsWriter()
-{
 }
 
 
@@ -67,12 +62,89 @@ void CRibElementsWriter::putChars(const char *cs)
 }
 
 
+void CRibElementsWriter::putBinValue(float aFloat)
+{
+	unsigned char code;
+	unsigned long tmp = *((unsigned long *)(void*)&aFloat);
+
+	code = tmp >> 24;
+	m_ostream << code;			
+
+	code = (unsigned char)((tmp & 0x00ff0000UL) >> 16);
+	m_ostream << code;			
+
+	code = (unsigned char)((tmp & 0x0000ff00UL) >> 8);
+	m_ostream << code;			
+
+	code = (unsigned char)(tmp & 0x000000ffUL);
+	m_ostream << code;			
+}
+
+
+void CRibElementsWriter::putBinValue(double aFloat)
+{
+		unsigned char *v; // value of float accessed as bytes
+		double dbl;
+		int i;
+
+		v = (unsigned char*)(void*)&aFloat;
+
+		// Write double.
+#ifdef LITTLE_ENDIAN         
+		for ( i = 7; i > -1; i-- )
+#else
+		for ( i = 0; i < 8; i++ )
+#endif        
+		{
+			m_ostream << v[i];
+		}
+}
+
+
 void CRibElementsWriter::putRequest(EnumRequests aRequest)
 {
 	if ( m_ascii ) {
 		putChars(CRequestInfo::requestName(aRequest));
 	} else {
+		if ( !m_reqEncoding[aRequest] ) {
+			unsigned char code = 0314;
+			m_reqEncoding[aRequest] =  (unsigned char)aRequest;
+			m_ostream << code << m_reqEncoding[aRequest];
+			putString(CRequestInfo::requestName(aRequest));
+		} else {
+			unsigned char code = 0246;
+			m_ostream << code << m_reqEncoding[aRequest];
+		}
 	}
+}
+
+
+void CRibElementsWriter::putLength(unsigned char code, unsigned long length)
+{
+	unsigned char bytes = 0;
+	if ( length > 0xffUL )
+		bytes = 1;
+	if ( length > 0xffffUL )
+		bytes = 2;
+	if ( length > 0xffffffUL )
+		bytes = 3;
+	code += bytes;
+	m_ostream << code;
+
+	if ( bytes == 3 ) {
+		code = length >> 24;
+		m_ostream << code;			
+	}
+	if ( bytes >= 2 ) {
+		code = (unsigned char)((length & 0x00ff0000UL) >> 16);
+		m_ostream << code;			
+	}
+	if ( bytes >= 1 ) {
+		code = (unsigned char)((length & 0x0000ff00UL) >> 8);
+		m_ostream << code;			
+	}
+	code = (unsigned char)(length & 0x000000ffUL);
+	m_ostream << code;			
 }
 
 
@@ -82,16 +154,21 @@ void CRibElementsWriter::putArray(const std::vector<float> &floats)
 }
 
 
-void CRibElementsWriter::putArray(size_t length, const float *floats)
+void CRibElementsWriter::putArray(unsigned long length, const float *floats)
 {
 	assert ((length > 0) ? floats != 0 : true); 
 	if ( m_ascii ) {
 		m_ostream << "[";
-		for ( size_t i = 0; i< length; ++i ) {
+		for ( unsigned long i = 0; i< length; ++i ) {
 			m_ostream << " " << floats[i];
 		}
 		m_ostream << " ]";
 	} else {
+		unsigned char code = 0310;
+		putLength(code, length);
+		for ( unsigned long i = 0; i< length; ++i ) {
+			putBinValue(floats[i]);
+		}
 	}
 }
 
@@ -102,24 +179,42 @@ void CRibElementsWriter::putArray(const std::vector<double> &floats)
 }
 
 
-void CRibElementsWriter::putArray(size_t length, const double *floats)
+void CRibElementsWriter::putArray(unsigned long length, const double *floats)
 {
 	assert ((length > 0) ? floats != 0 : true); 
-	if ( m_ascii ) {
-		m_ostream << "[";
-		for ( size_t i = 0; i< length; ++i ) {
-			m_ostream << " " << floats[i];
-		}
-		m_ostream << " ]";
-	} else {
+	m_ostream << "[";
+	for ( unsigned long i = 0; i < length; ++i ) {
+		putValue(floats[i]);
 	}
+	m_ostream << " ]";
 }
+
+
+void CRibElementsWriter::putArray(const std::vector<RtInt> &integers)
+{
+	putArray(integers.size(), integers.size() ? &integers[0] : 0);
+}
+
+
+void CRibElementsWriter::putArray(unsigned long length, const RtInt *integers)
+{
+	assert ((length > 0) ? integers != 0 : true); 
+	m_ostream << "[";
+	for ( size_t i = 0; i< length; ++i ) {
+		putValue(integers[i]);
+	}
+	m_ostream << " ]";
+}
+
 
 void CRibElementsWriter::putValue(float aFloat)
 {
 	if ( m_ascii ) {
 		m_ostream << aFloat;
 	} else {
+		unsigned char code = 0244;
+		m_ostream << code;
+		putBinValue(aFloat);
 	}
 }
 
@@ -129,19 +224,9 @@ void CRibElementsWriter::putValue(double aFloat)
 	if ( m_ascii ) {
 		m_ostream << aFloat;
 	} else {
-	}
-}
-
-
-void CRibElementsWriter::putArray(size_t length, const RtInt *integers)
-{
-	if ( m_ascii ) {
-		m_ostream << "[";
-		for ( size_t i = 0; i< length; ++i ) {
-			m_ostream << " " << integers[i];
-		}
-		m_ostream << " ]";
-	} else {
+		unsigned char code = 0245;
+		m_ostream << code;
+		putBinValue(aFloat);
 	}
 }
 
@@ -151,6 +236,8 @@ void CRibElementsWriter::putValue(RtInt anInteger)
 	if ( m_ascii ) {
 		m_ostream << anInteger;
 	} else {
+		unsigned char code = 0200;
+		putLength(code, (unsigned long)anInteger);
 	}
 }
 
@@ -207,49 +294,25 @@ void CRibElementsWriter::putString(RtString aString)
 		}
 
 		unsigned char code = 0240;
-		unsigned char bytes = 0;
-		if ( len > 0xFFUL )
-			bytes = 1;
-		if ( len > 0xFFFFUL )
-			bytes = 2;
-		if ( len > 0xFFFFFFUL )
-			bytes = 3;
-		code += bytes;
-		m_ostream << code;
-
-		if ( bytes == 3 ) {
-			code = len >> 24;
-			m_ostream << code;			
-		}
-		if ( bytes >= 2 ) {
-			code = (unsigned char)((len & 0x00ffffffUL) >> 16);
-			m_ostream << code;			
-		}
-		if ( bytes >= 1 ) {
-			code = (unsigned char)((len & 0x0000ffffUL) >> 8);
-			m_ostream << code;			
-		}
-		code = (unsigned char)(len & 0x000000ffUL);
-		m_ostream << code;			
-
+		putLength(code, len);
 		putChars(aString);
 	}
 }
 
 
-void CRibElementsWriter::putStringTokenNum(unsigned char code, long tok)
+void CRibElementsWriter::putStringTokenNum(unsigned char code, unsigned long tok)
 {
 	unsigned char bytes = 0;
-	if ( tok > 0xFFL )
+	if ( tok > 0xffUL )
 		bytes = 1;
 	code += bytes;
 	m_ostream << code;			
 
 	if ( bytes >= 1 ) {
-		code = (unsigned char)((tok & 0xffffL) >> 8);
+		code = (unsigned char)((tok & 0xffffUL) >> 8);
 		m_ostream << code;			
 	}
-	code = (unsigned char)(tok & 0x00ffL);
+	code = (unsigned char)(tok & 0x00ffUL);
 	m_ostream << code;
 }
 
@@ -266,17 +329,17 @@ void CRibElementsWriter::putStringToken(RtString aString)
 
 	std::string strval(aString);
 	std::map<std::string, RtInt>::iterator i = m_stringTokens.find(strval);
-	long tok = m_countString;
+	unsigned long tok = m_countStrings;
 
 	if ( i == m_stringTokens.end() ) {
 
-		if ( m_countString > 0xffffL) {
+		if ( m_countStrings > 0xffffUL) {
 			putString(aString);
 			return;
 		}
-		m_stringTokens.insert(std::map<std::string, RtInt>::value_type(strval, m_countString));
-		tok = m_countString;
-		++m_countString;
+		m_stringTokens.insert(std::map<std::string, RtInt>::value_type(strval, m_countStrings));
+		tok = m_countStrings;
+		++m_countStrings;
 
 		putStringTokenNum(0315, tok);
 		putString(aString);

@@ -584,16 +584,67 @@ public:
 }; // CQuantizer
 
 
-/** @brief Contains one trim curve.
+/** @brief Array sizes of a trim curve
  */
-class CTrimCurveData {
-public:
-	RtInt m_nLoops; //!< Number of closed loops.
+struct CTrimCurveDataInfo {
+	RtInt m_nloops; //!< Number of closed loops.
 
 	int m_total;	//!< Total number of curves.
 	int m_npoints;	//!< Total number of control points.
 	int m_nknots;	//!< Total number of knots.
 
+	/** @brief Standard constructor, initializes with 0 loops.
+	 */
+	inline CTrimCurveDataInfo() {
+		m_nloops = 0;
+		m_total = 0;
+		m_npoints = 0;
+		m_nknots = 0;
+	}
+
+	/** @brief Constructor, fills instances with the values of a trim curve interface call.
+	 *
+	 *  @param nloops   Number if loops (curves with holes).
+	 *  @param ncurves  Curves of the loops.
+	 *  @param order    Order of the curves.
+	 *  @param knot     Knot vectors of the curves.
+	 *  @param amin     Minimum parametric values of the curves.
+	 *  @param amax     Maximum parametric values of the curves.
+	 *  @param n        Number of the homogene u,v,w coordinates.
+	 *  @param u        u coordinates of the curves.
+	 *  @param v        v coordinates of the curves.
+	 *  @param w        w coordinates of the curves.
+	 */
+	inline CTrimCurveDataInfo(
+		RtInt nloops, const RtInt *ncurves,
+		const RtInt *order, const RtFloat *knot,
+		const RtFloat *amin, const RtFloat *amax,
+		const RtInt *n, const RtFloat *u, const RtFloat *v, const RtFloat *w)
+	{
+		trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+	}
+
+	/** @brief Fills instances with the values of a trim curve interface call.
+	 *
+	 *  @param nloops   Number if loops (curves with holes).
+	 *  @param ncurves  Curves of the loops.
+	 *  @param order    Order of the curves.
+	 *  @param knot     Knot vectors of the curves.
+	 *  @param amin     Minimum parameter of a curve.
+	 *  @param amax     Maximum parameter of a curve.
+	 *  @param n        Number of the homogene u,v,w coordinates.
+	 *  @param u        u coordinates of the curves.
+	 *  @param v        v coordinates of the curves.
+	 *  @param w        w coordinates of the curves.
+	 */
+	void trimCurve(RtInt nloops, const RtInt *ncurves, const RtInt *order, const RtFloat *knot, const RtFloat *amin, const RtFloat *amax,
+				   const RtInt *n, const RtFloat *u, const RtFloat *v, const RtFloat *w);
+};
+
+/** @brief Contains one trim curve.
+ */
+struct CTrimCurveData {
+	CTrimCurveDataInfo   m_data;    //!< Sizes
 	
 	std::vector<RtInt>   m_nCurves; //!< Number if loops (curves with holes).
 	std::vector<RtInt>   m_order;   //!< Order of the curves.
@@ -609,13 +660,11 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Member functions
 
-	/** @brief Standard constructor, initializes with 0 loops.
+	/** @brief Standard constructor.
 	 */
-	inline CTrimCurveData() {
-		m_nLoops = 0;
-	}
+	inline CTrimCurveData() {}
 
-	/** @breif Constructor, fills instances with the values of a trim curve interface call.
+	/** @brief Constructor, fills instances with the values of a trim curve interface call.
 	 *
 	 *  @param nloops   Number if loops (curves with holes).
 	 *  @param ncurves  Curves of the loops.
@@ -634,7 +683,6 @@ public:
 		const RtFloat *amin, const RtFloat *amax,
 		const RtInt *n, const RtFloat *u, const RtFloat *v, const RtFloat *w)
 	{
-		m_nLoops = 0;
 		trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}
 
@@ -663,18 +711,18 @@ public:
 	{
 		if ( this == &curve )
 			return *this;
-		if ( curve.m_nLoops > 0 )
+		if ( curve.m_data.m_nloops > 0 )
 			trimCurve(
-				curve.m_nLoops,
-				curve.m_nLoops == 0 || curve.m_nCurves.empty() ? NULL : &curve.m_nCurves[0],
-				curve.m_nLoops == 0 || curve.m_order.empty() ? NULL : &curve.m_order[0],
-				curve.m_nLoops == 0 || curve.m_knots.empty() ? NULL : &curve.m_knots[0],
-				curve.m_nLoops == 0 || curve.m_min.empty() ? NULL : &curve.m_min[0],
-				curve.m_nLoops == 0 || curve.m_max.empty() ? NULL : &curve.m_max[0],
-				curve.m_nLoops == 0 || curve.m_n.empty() ? NULL : &curve.m_n[0],
-				curve.m_nLoops == 0 || curve.m_u.empty() ? NULL : &curve.m_u[0],
-				curve.m_nLoops == 0 || curve.m_v.empty() ? NULL : &curve.m_v[0],
-				curve.m_nLoops == 0 || curve.m_w.empty() ? NULL : &curve.m_w[0]
+				curve.m_data.m_nloops,
+				curve.m_data.m_nloops == 0 || curve.m_nCurves.empty() ? 0 : &curve.m_nCurves[0],
+				curve.m_data.m_nloops == 0 || curve.m_order.empty() ? 0 : &curve.m_order[0],
+				curve.m_data.m_nloops == 0 || curve.m_knots.empty() ? 0 : &curve.m_knots[0],
+				curve.m_data.m_nloops == 0 || curve.m_min.empty() ? 0 : &curve.m_min[0],
+				curve.m_data.m_nloops == 0 || curve.m_max.empty() ? 0 : &curve.m_max[0],
+				curve.m_data.m_nloops == 0 || curve.m_n.empty() ? 0 : &curve.m_n[0],
+				curve.m_data.m_nloops == 0 || curve.m_u.empty() ? 0 : &curve.m_u[0],
+				curve.m_data.m_nloops == 0 || curve.m_v.empty() ? 0 : &curve.m_v[0],
+				curve.m_data.m_nloops == 0 || curve.m_w.empty() ? 0 : &curve.m_w[0]
 			);
 		else {
 			releaseAll();
@@ -684,7 +732,7 @@ public:
 
 	inline bool operator==(const CTrimCurveData &curve)
 	{
-		if ( m_nLoops != curve.m_nLoops ) return false;
+		if ( m_data.m_nloops != curve.m_data.m_nloops ) return false;
 		if ( m_nCurves != curve.m_nCurves ) return false;
 		if ( m_order != curve.m_order )  return false;
 		if ( m_knots != curve.m_knots )  return false;
@@ -704,7 +752,7 @@ public:
 	 */
 	inline void releaseAll()
 	{
-		m_nLoops = 0;
+		m_data.m_nloops = 0;
 	}
 
 	/** @brief Fills instances with the values of a trim curve interface call.

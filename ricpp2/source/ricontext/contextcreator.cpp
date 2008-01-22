@@ -109,6 +109,8 @@ IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], Rt
 
 	// Activate the context by calling its begin
 	try {
+		if ( m_ribParserCallback )
+			m_curContext->registerRibParserCallback(*m_ribParserCallback);
 		m_curContext->beginV(name, n, tokens, params);
 	} catch ( ExceptRiCPPError &e ) {
 		deleteContext();
@@ -143,4 +145,9 @@ RtVoid CContextCreator::end(void)
 	if ( e.isError() ) {
 		ricppErrHandler().handleError(e);
 	}
+}
+
+RtVoid CContextCreator::registerRibParserCallback(IRibParserCallback &cb)
+{
+	m_ribParserCallback = &cb;
 }

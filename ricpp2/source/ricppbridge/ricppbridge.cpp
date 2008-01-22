@@ -40,6 +40,7 @@ inline CRiCPPBridge::CContextManagement::CContextManagement()
 	// m_curCtx initially has nor context creator or rendering context.
 	m_ctxHandle = illContextHandle;
 	m_ctxMap[m_ctxHandle] = m_curCtx;
+	m_outer = 0;
 }
 
 RtContextHandle CRiCPPBridge::CContextManagement::addContext(const CContext &ctx)
@@ -110,6 +111,9 @@ RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, RtInt n,
 	if ( !contextCreator )
 		return illContextHandle;
 
+	if ( m_outer )
+		contextCreator->registerRibParserCallback(*m_outer);
+
 	IRiContext *backendContext;
 	try {
 		backendContext = contextCreator->beginV(name, n, tokens, params);
@@ -125,7 +129,8 @@ RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, RtInt n,
 	// A backend exists
 	assert(backendContext != 0);
 	// Inserts the context creator / context pair into the m_ctxMap
-	if ( backendContext != 0 ) { 
+	if ( backendContext != 0 ) {
+		assert(m_outer != 0);
 		CContext ctx(contextCreator, backendContext);
 		m_ctxHandle = addContext(ctx);
 		m_curCtx = m_ctxMap[m_ctxHandle];
@@ -167,6 +172,7 @@ CRiCPPBridge::CRiCPPBridge() :
 	m_ribFilterList(&m_ribFilter)
 {
 	m_ricppErrorHandler.setOuter(const_cast<CRiCPPBridge &>(*this));
+	m_ctxMgmt.setOuter(*this);
 	m_ribFilter.m_next = this;
 	// Default options
 	RtToken tsearchpath[] = {"renderer", "ribfilter"};
@@ -282,19 +288,7 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 
 		CStringList::const_iterator first = stringList.begin();
 		if ( first != stringList.end() ) {
-			const char *ptr = strrchr((*first).c_str(), '.');
-			if ( ptr && !strcmp(ptr, ".rib") ) {
-				// name was the name of a rib file
-				if ( n == 0 ) {
-					// remove the 0 entries
-					m_tokens.clear();
-					m_params.clear();
-				}
-				m_tokens.push_back(RI_FILE);
-				m_params.push_back((RtPointer)(&name));
-				// new name == 0 to load the rib writer
-				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
-			}
+			const char *ptr = (*first).c_str();
 			if ( ptr && ptr[0] == '|' ) {
 				// name was the name of a piped ribfile
 				if ( n == 0 ) {
@@ -304,6 +298,19 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 				}
 				m_tokens.push_back(RI_FILE);
 				m_params.push_back((RtPointer)(&name)); // Pipe is identified because of leading '|'
+				// new name == 0 to load the rib writer
+				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
+			}
+			ptr = strrchr((*first).c_str(), '.');
+			if ( ptr && !(strcmp(ptr, ".rib") && strcmp(ptr, ".ribz")) ) {
+				// name was the name of a rib file
+				if ( n == 0 ) {
+					// remove the 0 entries
+					m_tokens.clear();
+					m_params.clear();
+				}
+				m_tokens.push_back(RI_FILE);
+				m_params.push_back((RtPointer)(&name));
 				// new name == 0 to load the rib writer
 				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
 			}
@@ -318,9 +325,6 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 	// Start the new context
 	try {
 		RtContextHandle h = m_ctxMgmt.beginV(name, n, tokens, params);
-		if ( m_ctxMgmt.curBackend().valid() ) {
-			m_ctxMgmt.curBackend().renderingContext()->registerRibParserCallback(*this);
-		}
 		return h;
 	} catch (ExceptRiCPPError &e) {
 		// And handle the error, the context was set by m_ctxMgmt appropriately
@@ -1073,6 +1077,49 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::relativeDetail(relativedetail:%f)", (float)relativedetail);
+	}
+}
+
+RtVoid CRiCPPBridge::control(RtString name, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+
+	controlV(name, n, &m_tokens[0], &m_params[0]);
+}
+
+RtVoid CRiCPPBridge::controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->controlV(name, n, tokens, params);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		// Options for the Renderer creator and its children.
+		// Because the bridge is state less control request are handled
+		// in the same way as options if there is no active renderer.
+		try {
+			doOptionV(name, n, tokens, params);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	}
+}
+
+RtVoid CRiCPPBridge::ribVersion()
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			m_ctxMgmt.curBackend().renderingContext()->ribVersion();
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::version()");
 	}
 }
 

@@ -96,8 +96,8 @@ std::string &CEnv::getTmp(std::string &tmp)
 		return getHome(tmp);
 	}
 
-	// return CFilepathConverter::convertToInternal(tmp);
-	return tmp;
+	return CFilepathConverter::convertToInternal(tmp);
+	// return tmp;
 }
 
 
@@ -114,6 +114,7 @@ std::string &CEnv::getHome(std::string &home)
 	get(home, "HOME");
 	if ( home.size() > 0 ) {
 		return CFilepathConverter::convertToInternal(home);
+		// return home;
 	}
 
 	get(home, "HOMEDRIVE");
@@ -128,8 +129,8 @@ std::string &CEnv::getHome(std::string &home)
 		get(home, "USERPROFILE");
 	}
 
-	// return CFilepathConverter::convertToInternal(home);
-	return home;
+	return CFilepathConverter::convertToInternal(home);
+	// return home;
 }
 
 /** @brief Win32 implementation to get the search path.
@@ -140,8 +141,8 @@ std::string &CEnv::getPath(std::string &path)
 {
 	path = "";
 	get(path, "PATH");
-	// return CFilepathConverter::convertToInternal(get(path, "PATH"));
-	return path;
+	return CFilepathConverter::convertToInternal(get(path, "PATH"));
+	// return path;
 }
 
 /** @brief Win32 implementation to get the absolute path to the running executable.
@@ -191,7 +192,7 @@ std::string &CEnv::getProgDir(std::string &prog)
 		}
 
 		path = ptr;
-		// CFilepathConverter::convertToInternal(path);
+		CFilepathConverter::convertToInternal(path);
 	}
 	
 	prog = path;

@@ -55,9 +55,13 @@ const char *CFilepathConverter::nativeDynlibSuffix() { return ".dll"; }
 std::string &CFilepathConverter::convertToInternal(std::string &var)
 {
 	std::string::iterator i = var.begin();
-	for ( ; i != var.end(); i++ ) {
+	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
 		if ( (*i) == '\\' )
 			(*i) = '/';
+		/*
+		if ( (*i) == ':' && cnt == 1 )
+			(*i) = '|';
+		*/
 	}
 
 	return var;
@@ -68,9 +72,13 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 std::string &CFilepathConverter::convertToNative(std::string &var)
 {
 	std::string::iterator i = var.begin();
-	for ( ; i != var.end(); i++ ) {
+	for ( int cnt = 0; i != var.end(); i++, ++cnt ) {
 		if ( (*i) == '/' )
 			(*i) = '\\';
+		/*
+		if ( (*i) == '|' && cnt == 1 )
+			(*i) = ':';
+		*/
 	}
 
 	if ( var.length() > 4 ) {

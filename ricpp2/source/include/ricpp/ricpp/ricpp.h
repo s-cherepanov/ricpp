@@ -316,6 +316,28 @@ public:
 	 */
 	virtual RtVoid system(RtString cmd) = 0;
 
+	/** @brief Controls the backend renderer or the frontend.
+	 *
+	 *  Control request are not part of the RIB binding. It's a mechanism
+	 *  to control the non rendering parts of the renderer, the controls are not
+	 *  used for RIB output. For example a control request can be used to switch
+	 *  between ascii and binary output of the RIB binding (CRibWriter). This request
+	 *  has to be passed to the renderer somehow, but is technically not a RIB request.
+	 *  Since the renderers "know" their control requests, control tokens have not
+	 *  to be declared. Normally renderers will have no special control requests.
+	 *
+	 *  Control requests take effect immediatly, they are not stored for defered rendering.
+	 *
+	 *  @param name Name of the control request
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameter list for the control request
+	 */
+    virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+
+	/** @brief Writes RIB version information if needed
+	 */
+	virtual RtVoid ribVersion()=0;
 	//@}
 
 	/** @defgroup ricpp_resource Ri Resource handling
@@ -1540,6 +1562,21 @@ public:
 	 *  @see IRiRoot::resourceV()
 	 */
 	virtual RtVoid resource(RtString handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
+	//@}
+
+	/** @addtogroup ricpp_other
+	 *  @ingroup ricpp_interface
+	 *  @{
+	 */
+
+	/** @brief Controls the backend renderer or the frontend.
+	 *
+	 *  @see IRiRoot::controlV()
+	 *
+	 *  @param name Name of the control request
+	 *  @param token First token of RI_NULL terminated token-value list
+	 */
+    virtual RtVoid control(RtString name, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @defgroup ricpp_contexts Ri context handlers

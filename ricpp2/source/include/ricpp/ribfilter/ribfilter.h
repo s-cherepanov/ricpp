@@ -203,6 +203,16 @@ public:
 			callee()->system(cmd);
 	}
 
+    inline virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		// Control is not a part of the RIB binding.
+	}
+
+	inline virtual RtVoid ribVersion()
+	{
+		// version is used internally only
+	}
+
 	inline virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_RESOURCE) )

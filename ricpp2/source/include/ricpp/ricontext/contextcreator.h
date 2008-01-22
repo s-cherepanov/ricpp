@@ -78,6 +78,9 @@ class CContextCreator : IPlugin {
 	 */
 	CErrorExceptionHandler m_errorHandler;
 
+	/** @brief Rib callback has to be known before the begin of the context is called.
+	 */
+	IRibParserCallback *m_ribParserCallback;
 protected:
 	/** @brief Returns the error handler to use. It can but usually
 	 *  won't be overwritten in this framework.
@@ -118,7 +121,7 @@ public:
 
 	/** @brief Constructor, just initializes the current context to 0
 	 */
-	inline CContextCreator() : m_curContext(0) { }
+	inline CContextCreator() : m_curContext(0), m_ribParserCallback(0) { }
 
 	/** @brief Destructor, deletes all remaining contexts
 	 */
@@ -219,6 +222,14 @@ public:
 	 *  @return RI_NULL, overload to return the type of a concrete context (RI_ARCHIVE, RI_DRAFT, RI_REALISTIC, or user defined).
 	 */
 	inline virtual RtToken rendererType() const { return RI_NULL; }
+
+	/** @brief Interfaces of frontend needed by rib parser.
+	 *
+	 * Is called at the begin() of the front end.
+	 *
+	 * @params cb Callback interface of the front end.
+	 */
+	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb);
 	//@}
 }; // CContextCreator
 

@@ -354,7 +354,7 @@ void testrun(CRiCPPBridge &ri)
 		ri.frameEnd();
 
 		ri.colorSamples(3, id, id);
-		ri.readArchive("test.rib", 0, RI_NULL);
+		ri.readArchive("testread.rib", 0, RI_NULL);
 
 		ri.frameBegin(3);
 			ri.worldBegin();
@@ -437,8 +437,9 @@ int main(int argc, char * const argv[])
 	RtContextHandle ch1 = ri.getContext();
 	ri.end();
 
-	const char *filename = "$HOME/test.rib";
-	RtContextHandle ch2 = ri.begin("ribwriter", RI_FILE, &filename, RI_NULL);
+	const char *filename = "$TMP/test.rib";
+	RtInt compress = 3;
+	RtContextHandle ch2 = ri.begin("ribwriter", RI_FILE, &filename, "compress", &compress, RI_NULL);
 		ri.begin("test2.rib");
 			ri.declare("surface:tile", "    constant    float "); // syntax error
 			ri.declare("surface:tile:anarray", "    constant    float  [19] ");

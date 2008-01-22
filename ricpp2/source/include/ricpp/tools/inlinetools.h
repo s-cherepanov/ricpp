@@ -136,6 +136,17 @@ inline char *cutfilename(char *buf)
 	return buf;
 }
 
+inline long extractHandleNo(const char *handle)
+{
+	const char *ptr = strrchr(handle, '_');
+	if ( ptr ) ++ptr;
+	long n = 0;
+	if ( ptr[0] ) {
+		n = atol(ptr);
+	}
+	return n;
+}
+
 template<typename type> type clamptempl(type val, type boundmin, type boundmax)
 {
 	if ( boundmin > boundmax ) {

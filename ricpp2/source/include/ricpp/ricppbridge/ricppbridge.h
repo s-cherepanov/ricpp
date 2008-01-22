@@ -463,6 +463,8 @@ protected:
 		CContext m_curCtx;               ///< Current creator, context pair of the backend, it is a copy of m_ctxMap[m_ctxHandle] for faster access
 		std::map<RtContextHandle, CContext> m_ctxMap; ///< Maps used frontend context handles to it's backend CContext context creator/rendering context pair.
 
+		CRiCPPBridge *m_outer; ///< Bridge that contains the context manager.
+
 		/** @brief Loader for backends.
 		 *
 		 *  Used by to create backends of the type CContextCreator, which in turn
@@ -498,7 +500,9 @@ protected:
 		 *  The illContextHandle representing the context outside
 		 *  (the bridge itself for some means).
 		 */
-		inline CContextManagement();
+		CContextManagement();
+
+		inline void setOuter(CRiCPPBridge &outer) { m_outer = &outer; }
 
 		/** @brief  Aborts the current context
 		 *
@@ -653,6 +657,7 @@ protected:
 	
 	CContextManagement m_ctxMgmt; ///< The instance for the context management
 	//@}
+
 
 	/** @brief Like optionV() but only concerns the bridge itself.
 	 *
@@ -941,6 +946,12 @@ public:
 	virtual RtToken declare(RtString name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
 	virtual RtVoid system(RtString cmd);
+
+	virtual RtVoid control(RtString name, RtToken token = RI_NULL, ...);
+	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+
+	virtual RtVoid ribVersion();
+
 	virtual RtVoid resource(RtString handle, RtString type, RtToken token = RI_NULL, ...);
 	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]);
 

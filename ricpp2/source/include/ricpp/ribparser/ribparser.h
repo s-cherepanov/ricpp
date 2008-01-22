@@ -493,6 +493,9 @@ namespace RiCPP {
 
 
 	/** @brief The Rib parser object.
+	 *
+	 *  This class implements the parsing part of the RIB binding. RIB
+	 *  can be written using the CRibWriter 'renderer'.
 	 */
 	class CRibParser : public IRibParserState {
 	protected:

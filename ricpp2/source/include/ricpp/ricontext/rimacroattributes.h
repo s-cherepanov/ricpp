@@ -2995,7 +2995,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTrimCurve(m_trimCurve.m_nLoops,
+		ri.preTrimCurve(m_trimCurve.m_data.m_nloops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
 			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
@@ -3009,7 +3009,7 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTrimCurve(m_trimCurve.m_nLoops,
+		ri.doTrimCurve(m_trimCurve.m_data.m_nloops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
 			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
@@ -3023,7 +3023,7 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTrimCurve(m_trimCurve.m_nLoops,
+		ri.postTrimCurve(m_trimCurve.m_data.m_nloops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
 			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],

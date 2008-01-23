@@ -89,7 +89,7 @@ public:
 	 *  @param aLine Line number of the source file where the ExceptRiCPPError is constructed (the error occured), normally __LINE__
 	 *  @param aFile Filke where the ExceptRiCPPError occured, normally __FILE__
 	 */
-	 ExceptRiCPPError(
+	 inline ExceptRiCPPError(
 		 RtInt aCode = RIE_NOERROR, RtInt aSeverity = RIE_ERROR,
 		 RtString aMessage = 0,
 		 long aLine = 0, const char *aFile = 0
@@ -122,7 +122,7 @@ public:
 
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~ExceptRiCPPError() throw()
+	inline virtual ~ExceptRiCPPError()
 	{}
 
 	/** @brief Sets error codes and additional error message with source line and source file added
@@ -264,7 +264,7 @@ class IRiCPPErrorHandler {
 public:
 	/** @brief Virtual destructor
 	 */
-	virtual inline ~IRiCPPErrorHandler() {}
+	inline virtual ~IRiCPPErrorHandler() {}
 
 	/** @brief Handles an error with line and file
 	 *

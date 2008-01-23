@@ -204,9 +204,14 @@ public:
 	void putValue(double aFloat);
 
 	/** @brief Puts out one integer.
-	 *  @param anInteger Integer float value to put out.
+	 *  @param anInteger Integer value to put out.
 	 */
-	void putValue(RtInt anInteger);
+	void putValue(int anInteger);
+	
+	/** @brief Puts out one integer.
+	 *  @param anInteger Integer value to put out.
+	 */
+	void putValue(unsigned long anInteger);
 	
 	/** @brief Puts out a string.
 	 *  @param aString Character string value to put out.

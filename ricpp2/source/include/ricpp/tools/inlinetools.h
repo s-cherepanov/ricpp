@@ -136,11 +136,11 @@ inline char *cutfilename(char *buf)
 	return buf;
 }
 
-inline long extractHandleNo(const char *handle)
+inline unsigned long extractHandleNo(const char *handle)
 {
 	const char *ptr = strrchr(handle, '_');
 	if ( ptr ) ++ptr;
-	long n = 0;
+	unsigned long n = 0;
 	if ( ptr[0] ) {
 		n = atol(ptr);
 	}

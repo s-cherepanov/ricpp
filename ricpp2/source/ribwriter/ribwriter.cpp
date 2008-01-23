@@ -267,7 +267,18 @@ void CRibElementsWriter::putValue(double aFloat)
 }
 
 
-void CRibElementsWriter::putValue(RtInt anInteger)
+void CRibElementsWriter::putValue(int anInteger)
+{
+	if ( m_ascii ) {
+		m_ostream << anInteger;
+	} else {
+		unsigned char code = 0200;
+		putLength(code, (unsigned long)anInteger);
+	}
+}
+
+
+void CRibElementsWriter::putValue(unsigned long anInteger)
 {
 	if ( m_ascii ) {
 		m_ostream << anInteger;
@@ -1175,7 +1186,7 @@ RtVoid CRibWriter::postLightSource(RtLightHandle h, RtString name, const CParame
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
 	m_writer->putBlank();
-	m_writer->putValue(h);
+	m_writer->putValue((unsigned long)h);
 	writeParameterList(params);
 }
 
@@ -1190,7 +1201,7 @@ RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CPa
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
 	m_writer->putBlank();
-	m_writer->putValue(h);
+	m_writer->putValue((unsigned long)h);
 	writeParameterList(params);
 }
 
@@ -1296,7 +1307,7 @@ RtVoid CRibWriter::postIlluminate(RtLightHandle light, RtBoolean onoff)
 	writeTrailer();
 	m_writer->putRequest(REQ_ILLUMINATE);
 	m_writer->putBlank();
-	m_writer->putValue(light);
+	m_writer->putValue((unsigned long)light);
 	m_writer->putBlank();
 	m_writer->putValue((RtInt)(onoff?1:0));
 	m_writer->putNewLine();
@@ -1390,7 +1401,7 @@ RtVoid CRibWriter::postBound(RtBound bound)
 	writeTrailer();
 	m_writer->putRequest(REQ_BOUND);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof RtBound / sizeof bound[0], &bound[0]);
+	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), &bound[0]);
 	m_writer->putNewLine();
 }
 
@@ -1403,7 +1414,7 @@ RtVoid CRibWriter::postDetail(RtBound bound)
 	writeTrailer();
 	m_writer->putRequest(REQ_DETAIL);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof RtBound / sizeof bound[0], &bound[0]);
+	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), &bound[0]);
 	m_writer->putNewLine();
 }
 
@@ -1500,11 +1511,11 @@ RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt 
 	writeTrailer();
 	m_writer->putRequest(REQ_BASIS);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof RtBasis / sizeof ubasis[0][0], &ubasis[0][0]);
+	m_writer->putArray(sizeof(RtBasis)/sizeof(ubasis[0][0]), &ubasis[0][0]);
 	m_writer->putBlank();
 	m_writer->putValue(ustep);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof RtBasis / sizeof vbasis[0][0], &vbasis[0][0]);
+	m_writer->putArray(sizeof(RtBasis)/sizeof(vbasis[0][0]), &vbasis[0][0]);
 	m_writer->putBlank();
 	m_writer->putValue(vstep);
 	m_writer->putNewLine();

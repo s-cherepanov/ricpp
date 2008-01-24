@@ -243,6 +243,25 @@ void CRibElementsWriter::putArray(unsigned long length, const RtString *strings)
 	m_ostream << " ]";
 }
 
+
+void CRibElementsWriter::putTokenArray(const std::vector<RtString> &strings)
+{
+	putTokenArray((unsigned long)strings.size(), strings.size() ? &strings[0] : 0);
+}
+
+
+void CRibElementsWriter::putTokenArray(unsigned long length, const RtString *strings)
+{
+	assert ((length > 0) ? strings != 0 : true); 
+	m_ostream << "[";
+	for ( size_t i = 0; i< length; ++i ) {
+		m_ostream << " ";
+		putStringToken(strings[i]);
+	}
+	m_ostream << " ]";
+}
+
+
 void CRibElementsWriter::putValue(float aFloat)
 {
 	if ( m_ascii ) {
@@ -425,7 +444,8 @@ bool CRibWriter::testValid() const
 
 bool CRibWriter::postTestValid() const
 {
-	// 2do Test if post... should print RIB request
+	if ( m_suppressOutput )
+		return false;
 
 	return testValid();
 }
@@ -486,6 +506,8 @@ RtVoid CRibWriter::controlV(RtString name, RtInt n, RtToken tokens[], RtPointer 
 
 RtVoid CRibWriter::ribVersion()
 {
+	m_writer->putChars("version 3.03");
+	m_writer->putNewLine();
 }
 
 
@@ -599,7 +621,7 @@ RtVoid CRibWriter::postSynchronize(RtToken name)
 }
 
 
-RtVoid CRibWriter::postSystem(RtToken cmd)
+RtVoid CRibWriter::postSystem(RtString cmd)
 {
 	if ( !postTestValid() )
 		return;
@@ -763,6 +785,14 @@ RtVoid CRibWriter::postObjectEnd(void)
 	m_writer->putNewLine();
 }
 
+RtVoid CRibWriter::doObjectInstance(RtObjectHandle handle)
+{
+	bool savSuppress = m_suppressOutput;
+
+	m_suppressOutput = true;
+	CBaseRenderer::doObjectInstance(handle);
+	m_suppressOutput = savSuppress;
+}
 
 RtVoid CRibWriter::postObjectInstance(RtObjectHandle handle)
 {
@@ -1135,7 +1165,7 @@ RtVoid CRibWriter::postHider(RtToken type, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+RtVoid CRibWriter::postColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 {
 	if ( !postTestValid() )
 		return;
@@ -1522,7 +1552,7 @@ RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt 
 }
 
 
-RtVoid CRibWriter::postTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+RtVoid CRibWriter::postTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
 	if ( !postTestValid() )
 		return;
@@ -1551,3 +1581,851 @@ RtVoid CRibWriter::postTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtF
 	m_writer->putArray(tc.m_npoints, w);
 	m_writer->putNewLine();
 }
+
+
+RtVoid CRibWriter::postIdentity(void)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_IDENTITY);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postTransform(RtMatrix aTransform)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_TRANSFORM);
+	m_writer->putBlank();
+	m_writer->putArray(sizeof(aTransform)/sizeof(aTransform[0][0]), &aTransform[0][0]);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postConcatTransform(RtMatrix aTransform)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_CONCAT_TRANSFORM);
+	m_writer->putBlank();
+	m_writer->putArray(sizeof(aTransform)/sizeof(aTransform[0][0]), &aTransform[0][0]);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postPerspective(RtFloat fov)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_PERSPECTIVE);
+	m_writer->putBlank();
+	m_writer->putValue(fov);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postTranslate(RtFloat dx, RtFloat dy, RtFloat dz)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_TRANSLATE);
+	m_writer->putBlank();
+	m_writer->putValue(dx);
+	m_writer->putBlank();
+	m_writer->putValue(dy);
+	m_writer->putBlank();
+	m_writer->putValue(dz);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_ROTATE);
+	m_writer->putBlank();
+	m_writer->putValue(angle);
+	m_writer->putBlank();
+	m_writer->putValue(dx);
+	m_writer->putBlank();
+	m_writer->putValue(dy);
+	m_writer->putBlank();
+	m_writer->putValue(dz);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postScale(RtFloat dx, RtFloat dy, RtFloat dz)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_SCALE);
+	m_writer->putBlank();
+	m_writer->putValue(dx);
+	m_writer->putBlank();
+	m_writer->putValue(dy);
+	m_writer->putBlank();
+	m_writer->putValue(dz);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_SKEW);
+	m_writer->putBlank();
+	m_writer->putValue(angle);
+	m_writer->putBlank();
+	m_writer->putValue(dx1);
+	m_writer->putBlank();
+	m_writer->putValue(dy1);
+	m_writer->putBlank();
+	m_writer->putValue(dz1);
+	m_writer->putBlank();
+	m_writer->putValue(dx2);
+	m_writer->putBlank();
+	m_writer->putValue(dy2);
+	m_writer->putBlank();
+	m_writer->putValue(dz2);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postDeformation(RtString name, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_DEFORMATION);
+	m_writer->putBlank();
+	m_writer->putStringToken(name);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postScopedCoordinateSystem(RtToken space)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_SCOPED_COORDINATE_SYSTEM);
+	m_writer->putBlank();
+	m_writer->putStringToken(space);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postCoordinateSystem(RtToken space)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_COORDINATE_SYSTEM);
+	m_writer->putBlank();
+	m_writer->putStringToken(space);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postCoordSysTransform(RtToken space)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_COORD_SYS_TRANSFORM);
+	m_writer->putBlank();
+	m_writer->putStringToken(space);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postPolygon(RtInt nvertices, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_POLYGON);
+	m_writer->putBlank();
+	m_writer->putValue(nvertices);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_GENERAL_POLYGON);
+	m_writer->putBlank();
+	m_writer->putArray(nloops, nverts);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postPointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_POINTS_POLYGONS);
+	m_writer->putBlank();
+	m_writer->putArray(npolys, nverts);
+	m_writer->putBlank();
+	m_writer->putArray(sum(npolys, nverts), verts);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postPointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_POINTS_GENERAL_POLYGONS);
+	m_writer->putBlank();
+	m_writer->putArray(npolys, nloops);
+	RtInt n = sum(npolys, nloops);
+	m_writer->putBlank();
+	m_writer->putArray(n, nverts);
+	m_writer->putBlank();
+	m_writer->putArray(sum(n, nverts), verts);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postPatch(RtToken type, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_PATCH);
+	m_writer->putBlank();
+	m_writer->putStringToken(type);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postPatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_PATCH_MESH);
+	m_writer->putBlank();
+	m_writer->putStringToken(type);
+	m_writer->putBlank();
+	m_writer->putValue(nu);
+	m_writer->putBlank();
+	m_writer->putStringToken(uwrap);
+	m_writer->putBlank();
+	m_writer->putValue(nv);
+	m_writer->putBlank();
+	m_writer->putStringToken(vwrap);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postNuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_NU_PATCH);
+	m_writer->putBlank();
+	m_writer->putValue(nu);
+	m_writer->putBlank();
+	m_writer->putValue(uorder);
+	m_writer->putBlank();
+	m_writer->putArray(nu+uorder, uknot);
+	m_writer->putBlank();
+	m_writer->putValue(umin);
+	m_writer->putBlank();
+	m_writer->putValue(umax);
+	m_writer->putBlank();
+	m_writer->putValue(nv);
+	m_writer->putBlank();
+	m_writer->putValue(vorder);
+	m_writer->putBlank();
+	m_writer->putArray(nv+vorder, vknot);
+	m_writer->putBlank();
+	m_writer->putValue(vmin);
+	m_writer->putBlank();
+	m_writer->putValue(vmax);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_SUBDIVISION_MESH);
+	m_writer->putBlank();
+	m_writer->putStringToken(scheme);
+	m_writer->putBlank();
+	m_writer->putArray(nfaces, nvertices);
+	m_writer->putBlank();
+	m_writer->putArray(sum(nfaces, nvertices), vertices);
+	m_writer->putBlank();
+	m_writer->putTokenArray(ntags, tags);
+	m_writer->putBlank();
+	m_writer->putArray(ntags*2, nargs);
+	m_writer->putBlank();
+
+	RtInt nInts=0, nFlos=0;
+	for ( RtInt i = 0; i < ntags*2; ) {
+		nInts += nargs[i++];
+		nFlos += nargs[i++];
+	}
+	m_writer->putArray(nInts, intargs);
+	m_writer->putBlank();
+	m_writer->putArray(nFlos, floatargs);
+	m_writer->putBlank();
+
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_HIERARCHICAL_SUBDIVISION_MESH);
+	m_writer->putBlank();
+	m_writer->putStringToken(scheme);
+	m_writer->putBlank();
+	m_writer->putArray(nfaces, nvertices);
+	m_writer->putBlank();
+	m_writer->putArray(sum(nfaces, nvertices), vertices);
+	m_writer->putBlank();
+	m_writer->putTokenArray(ntags, tags);
+	m_writer->putBlank();
+	m_writer->putArray(ntags*3, nargs);
+	m_writer->putBlank();
+
+	RtInt nInts=0, nFlos=0, nToks=0;
+	for ( RtInt i = 0; i < ntags*3; ) {
+		nInts += nargs[i++];
+		nFlos += nargs[i++];
+		nToks += nargs[i++];
+	}
+
+	m_writer->putArray(nInts, intargs);
+	m_writer->putBlank();
+	m_writer->putArray(nFlos, floatargs);
+	m_writer->putBlank();
+	m_writer->putTokenArray(nToks, stringargs);
+	m_writer->putBlank();
+
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postSphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_SPHERE);
+	m_writer->putBlank();
+	m_writer->putValue(radius);
+	m_writer->putBlank();
+	m_writer->putValue(zmin);
+	m_writer->putBlank();
+	m_writer->putValue(zmax);
+	m_writer->putBlank();
+	m_writer->putValue(thetamax);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postCone(RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_CONE);
+	m_writer->putBlank();
+	m_writer->putValue(height);
+	m_writer->putBlank();
+	m_writer->putValue(radius);
+	m_writer->putBlank();
+	m_writer->putValue(thetamax);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postCylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_CYLINDER);
+	m_writer->putBlank();
+	m_writer->putValue(radius);
+	m_writer->putBlank();
+	m_writer->putValue(zmin);
+	m_writer->putBlank();
+	m_writer->putValue(zmax);
+	m_writer->putBlank();
+	m_writer->putValue(thetamax);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postHyperboloid(RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_HYPERBOLOID);
+		m_writer->putBlank();
+	m_writer->putArray(sizeof(RtPoint)/sizeof(point1[0]), point1);
+	m_writer->putBlank();
+	m_writer->putArray(sizeof(RtPoint)/sizeof(point2[0]), point1);
+	m_writer->putBlank();
+	m_writer->putValue(thetamax);
+	m_writer->putBlank();
+writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postParaboloid(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_PARABOLOID);
+	m_writer->putBlank();
+	m_writer->putValue(rmax);
+	m_writer->putBlank();
+	m_writer->putValue(zmin);
+	m_writer->putBlank();
+	m_writer->putValue(zmax);
+	m_writer->putBlank();
+	m_writer->putValue(thetamax);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postDisk(RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_DISK);
+	m_writer->putBlank();
+	m_writer->putValue(height);
+	m_writer->putBlank();
+	m_writer->putValue(radius);
+	m_writer->putBlank();
+	m_writer->putValue(thetamax);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postTorus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_TORUS);
+	m_writer->putBlank();
+	m_writer->putValue(majorrad);
+	m_writer->putBlank();
+	m_writer->putValue(minorrad);
+	m_writer->putBlank();
+	m_writer->putValue(phimin);
+	m_writer->putBlank();
+	m_writer->putValue(phimax);
+	m_writer->putBlank();
+	m_writer->putBlank();
+	m_writer->putValue(thetamax);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postPoints(RtInt npts, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_POINTS);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postCurves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_CURVES);
+	m_writer->putBlank();
+	m_writer->putStringToken(type);
+	m_writer->putBlank();
+	m_writer->putArray(ncurves, nverts);
+	m_writer->putBlank();
+	m_writer->putStringToken(wrap);
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_BLOBBY);
+	m_writer->putBlank();
+	m_writer->putValue(nleaf);
+	m_writer->putBlank();
+	m_writer->putArray(ncode, code);
+	m_writer->putBlank();
+	m_writer->putArray(nflt, flt);
+	m_writer->putBlank();
+	m_writer->putArray(nstr, str);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+
+RtVoid CRibWriter::doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+{
+	bool savSuppress = m_suppressOutput;
+
+	m_suppressOutput = true;
+	CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
+	m_suppressOutput = savSuppress;
+}
+
+RtVoid CRibWriter::postProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_PROCEDURAL);
+	m_writer->putBlank();
+	m_writer->putStringToken(subdivfunc.name());
+	m_writer->putBlank();
+	m_writer->putArray(subdivfunc.numArgs(), (const RtString *)data);
+	m_writer->putBlank();
+	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), bound);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postGeometry(RtToken type, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_GEOMETRY);
+	if ( params.size() > 0 )
+		m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postMakeTexture(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_MAKE_TEXTURE);
+	m_writer->putBlank();
+	m_writer->putString(pic);
+	m_writer->putBlank();
+	m_writer->putString(tex);
+	m_writer->putBlank();
+	m_writer->putStringToken(swrap);
+	m_writer->putBlank();
+	m_writer->putStringToken(twrap);
+	m_writer->putBlank();
+	m_writer->putStringToken(filterfunc.name());
+	m_writer->putBlank();
+	m_writer->putValue(swidth);
+	m_writer->putBlank();
+	m_writer->putValue(twidth);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postMakeBump(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_MAKE_BUMP);
+	m_writer->putBlank();
+	m_writer->putString(pic);
+	m_writer->putBlank();
+	m_writer->putString(tex);
+	m_writer->putBlank();
+	m_writer->putStringToken(swrap);
+	m_writer->putBlank();
+	m_writer->putStringToken(twrap);
+	m_writer->putBlank();
+	m_writer->putStringToken(filterfunc.name());
+	m_writer->putBlank();
+	m_writer->putValue(swidth);
+	m_writer->putBlank();
+	m_writer->putValue(twidth);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postMakeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_MAKE_LAT_LONG_ENVIRONMENT);
+	m_writer->putBlank();
+	m_writer->putString(pic);
+	m_writer->putBlank();
+	m_writer->putString(tex);
+	m_writer->putBlank();
+	m_writer->putStringToken(filterfunc.name());
+	m_writer->putBlank();
+	m_writer->putValue(swidth);
+	m_writer->putBlank();
+	m_writer->putValue(twidth);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postMakeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_MAKE_CUBE_FACE_ENVIRONMENT);
+	m_writer->putBlank();
+	m_writer->putString(px);
+	m_writer->putBlank();
+	m_writer->putString(nx);
+	m_writer->putBlank();
+	m_writer->putString(py);
+	m_writer->putBlank();
+	m_writer->putString(ny);
+	m_writer->putBlank();
+	m_writer->putString(pz);
+	m_writer->putBlank();
+	m_writer->putString(nz);
+	m_writer->putBlank();
+	m_writer->putString(tex);
+	m_writer->putBlank();
+	m_writer->putValue(fov);
+	m_writer->putBlank();
+	m_writer->putStringToken(filterfunc.name());
+	m_writer->putBlank();
+	m_writer->putValue(swidth);
+	m_writer->putBlank();
+	m_writer->putValue(twidth);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postMakeShadow(RtString pic, RtString tex, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_MAKE_SHADOW);
+	m_writer->putBlank();
+	m_writer->putString(pic);
+	m_writer->putBlank();
+	m_writer->putString(tex);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postMakeBrickMap(RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_MAKE_BRICK_MAP);
+	m_writer->putBlank();
+	m_writer->putArray(nNames, ptcnames);
+	m_writer->putBlank();
+	m_writer->putString(bkmname);
+	writeParameterList(params);
+}
+
+
+
+RtVoid CRibWriter::postArchiveRecord(RtToken type, RtString line)
+{
+	if ( !postTestValid() )
+		return;
+
+	// ? Write the trailer here ?
+	writeTrailer();
+
+	/*
+	m_writer->putRequest(REQ_ARCHIVE_RECORD);
+	m_writer->putBlank();
+	m_writer->putStringToken(type);
+	m_writer->putBlank();
+	m_writer->putString(line);
+	m_writer->putNewLine();
+	*/
+
+	if ( type != RI_VERBATIM ) {
+		m_writer->putChar('#');
+	}
+	if ( type == RI_STRUCTURE ) {
+		// Additional
+		m_writer->putChar('#');
+	}
+
+	m_writer->putChars(line);
+
+	if ( type != RI_VERBATIM ) {
+		m_writer->putNewLine();
+	}
+}
+
+
+RtVoid CRibWriter::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+{
+	bool savSuppress = m_suppressOutput;
+
+	m_suppressOutput = true;
+	CBaseRenderer::doReadArchive(name, callback, params);
+	m_suppressOutput = savSuppress;
+}
+
+
+RtVoid CRibWriter::postReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_READ_ARCHIVE);
+	m_writer->putBlank();
+	m_writer->putString(name);
+	m_writer->putBlank();
+	writeParameterList(params);
+}
+
+
+RtVoid CRibWriter::postIfBegin(RtString expr)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_IF_BEGIN);
+	m_writer->putBlank();
+	m_writer->putString(expr);
+	m_writer->putBlank();
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postElseIfBegin(RtString expr)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_ELSE_IF);
+	m_writer->putBlank();
+	m_writer->putString(expr);
+	m_writer->putBlank();
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postElseBegin(void)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_ELSE);
+	m_writer->putNewLine();
+}
+
+
+RtVoid CRibWriter::postIfEnd(void)
+{
+	if ( !postTestValid() )
+		return;
+
+	writeTrailer();
+	m_writer->putRequest(REQ_IF_END);
+	m_writer->putNewLine();
+}
+

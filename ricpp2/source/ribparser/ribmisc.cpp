@@ -177,10 +177,8 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 					parser.lineNo(), parser.resourceName(),
 					requestName(), RI_NULL);
 			}
-			// maybe sprintf(versionstr, "version %1.2f\n", version);
-			// Print the version number as verbatim string, so it appears if the
-			// RIB input is copied to output. Version has no C++-binding.
-			parser.ribFilter().archiveRecordV(RI_VERBATIM, "version 3.03\n");
+			// Can print the version of the current RIB writer.
+			parser.ribFilter().ribVersion();
 		} else {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,

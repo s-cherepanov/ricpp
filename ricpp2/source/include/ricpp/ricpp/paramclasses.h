@@ -206,12 +206,16 @@ class CGeneralPolygonClasses : public CParameterClasses {
 	RtInt m_nvertices;       //!< Sum of vertices.
 public:
 	//! reset() recalculates the sum of the vertices.
-	inline void reset(RtInt nloops, const RtInt *nverts) {
+	inline void reset(RtInt nloops, const RtInt nverts[])
+	{
 		m_nvertices = sum(nloops, nverts);
 	}
 
 	// CGeneralPolygonClasses(), a general polygon with holes.
-	inline CGeneralPolygonClasses(RtInt nloops, const RtInt *nverts) { reset(nloops, nverts); }
+	inline CGeneralPolygonClasses(RtInt nloops, const RtInt nverts[])
+	{
+		reset(nloops, nverts);
+	}
 
 	//! facets(), there is one face
 	inline virtual RtInt facets() const {return 1;}
@@ -240,7 +244,8 @@ class CPointsPolygonsClasses : public CParameterClasses {
 	RtInt m_nmaxvertex; //!< Sum of all vertices, shared vertices count one.
 public:
 	//! reset() recalculates the sum of the vertices and the number of vertices.
-	inline void reset(RtInt npolys, const RtInt *nverts, const RtInt *verts) {
+	inline void reset(RtInt npolys, const RtInt nverts[], const RtInt verts[])
+	{
 		m_npolys = npolys;
 		m_nvertices = sum(npolys, nverts);
 		m_nmaxvertex = tmax(m_nvertices, verts);
@@ -248,7 +253,7 @@ public:
 	}
 
     //! CPointsPolygonsClasses(), many convex polygons
-	inline CPointsPolygonsClasses(RtInt npolys, const RtInt *nverts, const RtInt *verts) { reset(npolys, nverts, verts); }
+	inline CPointsPolygonsClasses(RtInt npolys, const RtInt nverts[], const RtInt verts[]) { reset(npolys, nverts, verts); }
 
 	//! facets(), the number of polygons.
 	inline virtual RtInt facets() const {return m_npolys;}
@@ -277,7 +282,8 @@ class CPointsGeneralPolygonsClasses : public CParameterClasses {
 	RtInt m_nmaxvertex; //!< Sum of all vertices, shared vertices count one.
 public:
 	//! reset() recalculates the sum of the vertices and the number of vertices
-	inline void reset(RtInt npolys, const RtInt *nloops, const RtInt *nverts, const RtInt *verts) {
+	inline void reset(RtInt npolys, const RtInt nloops[], const RtInt nverts[], const RtInt verts[])
+	{
 		m_npolys = npolys;
 		RtInt sumloops = sum(npolys, nloops);
 		m_nvertices = sum(sumloops, nverts);
@@ -286,7 +292,7 @@ public:
 	}
 
 	//! TPointsPolygonsGeneralClasses(), many general polygons with holes.
-	inline CPointsGeneralPolygonsClasses(RtInt npolys, const RtInt *nloops, const RtInt *nverts, const RtInt *verts) { reset(npolys, nloops, nverts, verts); }
+	inline CPointsGeneralPolygonsClasses(RtInt npolys, const RtInt nloops[], const RtInt nverts[], const RtInt verts[]) { reset(npolys, nloops, nverts, verts); }
 
 	//! facets(), the number of polygons.
 	inline virtual RtInt facets() const {return m_npolys;}
@@ -314,7 +320,8 @@ class CPatchClasses : public CParameterClasses {
 	RtInt nVertices; //!< The number of vertices is either 4 (linear patch) or 16 (bicubic patch)
 public:
 	//! reset() sets the number of vertices, they default to 4, only for a bicubic type there are 16
-	inline void reset(RtToken type) {
+	inline void reset(RtToken type)
+	{
 		nVertices = !strcmp(type, RI_BICUBIC) ? 16 : 4;
 	}
 
@@ -520,7 +527,8 @@ class CBlobbyClasses : public CParameterClasses {
 	RtInt m_nleaf;
 public:
 	//! reset()
-	inline void reset(RtInt nleaf) {
+	inline void reset(RtInt nleaf)
+	{
 		m_nleaf = nleaf;
 	}
 

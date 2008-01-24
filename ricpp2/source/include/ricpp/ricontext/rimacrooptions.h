@@ -3351,7 +3351,7 @@ public:
 	 *  @param nRGB Transformation matrix from a color to a RGB value
 	 *  @param RGBn Transformation matrix from a RGB value to a color
 	 */
-	inline CRiColorSamples(long aLineNo, RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+	inline CRiColorSamples(long aLineNo, RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 		: CRManInterfaceCall(aLineNo), m_colorDecr(N, nRGB, RGBn)
 	{
 	}
@@ -3408,7 +3408,7 @@ public:
 	 * @param nRGB Matrix color to RGB (should not be 0).
 	 * @param RGBn Matrix RGB to color (should not be 0).
 	 */
-	inline RtVoid set(RtInt nColorSamples, RtFloat *nRGB, RtFloat *RGBn)
+	inline RtVoid set(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
 	{
 		m_colorDecr.colorSamples(nColorSamples, nRGB, RGBn);
 	}

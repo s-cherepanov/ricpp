@@ -74,7 +74,7 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiGeneralPolygon::enterValues(RtInt theNLoops, const RtInt *theNVerts)
+void CRiGeneralPolygon::enterValues(RtInt theNLoops, const RtInt theNVerts[])
 {
 	m_nVerts.resize(theNLoops);
 	m_nVerts.assign(theNVerts, theNVerts+theNLoops);
@@ -82,7 +82,7 @@ void CRiGeneralPolygon::enterValues(RtInt theNLoops, const RtInt *theNVerts)
 
 CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt theNLoops, const RtInt *theNVerts,
+	RtInt theNLoops, const RtInt theNVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo,
 		decl, CGeneralPolygonClasses(theNLoops, theNVerts), curColorDescr,
@@ -93,7 +93,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 
 CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo,
-	RtInt theNLoops, const RtInt *theNVerts,
+	RtInt theNLoops, const RtInt theNVerts[],
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
@@ -101,7 +101,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiPointsPolygons::enterValues(RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts)
+void CRiPointsPolygons::enterValues(RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[])
 {
 	m_nVerts.resize(theNPolys);
 	m_nVerts.assign(theNVerts, theNVerts+theNPolys);
@@ -115,7 +115,7 @@ void CRiPointsPolygons::enterValues(RtInt theNPolys, const RtInt *theNVerts, con
 
 CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
+	RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo,
 		decl, CPointsPolygonsClasses(theNPolys, theNVerts, theVerts), curColorDescr,
@@ -126,7 +126,7 @@ CRiPointsPolygons::CRiPointsPolygons(
 
 CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo,
-	RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
+	RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[],
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
@@ -134,7 +134,7 @@ CRiPointsPolygons::CRiPointsPolygons(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void CRiPointsGeneralPolygons::enterValues(RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts)
+void CRiPointsGeneralPolygons::enterValues(RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[])
 {
 	m_nLoops.resize(theNPolys);
 	m_nLoops.assign(theNLoops, theNLoops+theNPolys);
@@ -156,7 +156,7 @@ void CRiPointsGeneralPolygons::enterValues(RtInt theNPolys, const RtInt *theNLoo
 
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts,
+	RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CPolygonRManInterfaceCall(aLineNo,
 		decl, CPointsGeneralPolygonsClasses(theNPolys, theNLoops, theNVerts, theVerts), curColorDescr,
@@ -167,7 +167,7 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 
 CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo,
-	RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts,
+	RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[],
 	const CParameterList &theParameters)
 	: CPolygonRManInterfaceCall(aLineNo, theParameters)
 {
@@ -218,8 +218,8 @@ CRiPatchMesh::CRiPatchMesh(
 
 ///////////////////////////////////////////////////////////////////////////////
 void CRiNuPatch::set(
-		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
-		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax)
+		RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax)
 {
 	m_nu     = aNU;
 	m_uorder = aUOrder;
@@ -248,8 +248,8 @@ void CRiNuPatch::set(
 CRiNuPatch::CRiNuPatch(
 	long aLineNo,
 	CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-	RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
-	RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
+	RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
+	RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax,
 	RtInt n, RtToken tokens[], RtPointer params[])
 	: CGeometryRManInterfaceCall(aLineNo, decl, CNuPatchClasses(aNU, aUOrder, aNV, aVOrder), curColorDescr, n, tokens, params)
 {
@@ -258,8 +258,8 @@ CRiNuPatch::CRiNuPatch(
 
 CRiNuPatch::CRiNuPatch(
 	long aLineNo,
-	RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
-	RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
+	RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
+	RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax,
 	const CParameterList &theParameters)
 	: CGeometryRManInterfaceCall(aLineNo, theParameters)
 {
@@ -384,21 +384,21 @@ void CRiHierarchicalSubdivisionMesh::set(
 	m_nargs.assign(aNArgs, aNArgs+aNTags*3);
 
 	RtInt sumargs = 0;
-	for ( i = 0; i < aNTags*2; i += 3 ) {
+	for ( i = 0; i < aNTags*3; i += 3 ) {
 		sumargs += aNArgs[i];
 	}
 	m_intargs.resize(sumargs);
 	m_intargs.assign(aIntArgs, aIntArgs+sumargs);
 
 	sumargs = 0;
-	for ( i = 1; i < aNTags*2; i += 3 ) {
+	for ( i = 1; i < aNTags*3; i += 3 ) {
 		sumargs += aNArgs[i];
 	}
 	m_floargs.resize(sumargs);
 	m_floargs.assign(aFloArgs, aFloArgs+sumargs);
 
 	sumargs = 0;
-	for ( i = 1; i < aNTags*2; i += 3 ) {
+	for ( i = 1; i < aNTags*3; i += 3 ) {
 		sumargs += aNArgs[i];
 	}
 	m_strargs.resize(sumargs);

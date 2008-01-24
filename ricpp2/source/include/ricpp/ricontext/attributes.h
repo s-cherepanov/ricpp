@@ -350,7 +350,7 @@ namespace RiCPP {
 			return m_vStep;
 		}
 
-		virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
+		virtual RtVoid trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 		virtual RtVoid trimCurve(const CTrimCurveData &trimCurveData);
 		inline virtual const CTrimCurveData &trimCurve() const
 		{

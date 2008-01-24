@@ -513,7 +513,7 @@ void CAttributes::initTrimCurve()
 	m_trimCurve.releaseAll();
 }
 
-RtVoid CAttributes::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+RtVoid CAttributes::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
 	m_trimCurve.trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 }

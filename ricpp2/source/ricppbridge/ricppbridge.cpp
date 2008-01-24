@@ -1625,7 +1625,7 @@ RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vs
 	}
 }
 
-RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -1858,7 +1858,7 @@ RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoin
 	}
 }
 
-RtVoid CRiCPPBridge::generalPolygon(RtInt nloops, RtInt *nverts, RtToken token, ...)
+RtVoid CRiCPPBridge::generalPolygon(RtInt nloops, RtInt nverts[], RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1867,7 +1867,7 @@ RtVoid CRiCPPBridge::generalPolygon(RtInt nloops, RtInt *nverts, RtToken token, 
 	return generalPolygonV(nloops, nverts, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -1881,7 +1881,7 @@ RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtTok
 	}
 }
 
-RtVoid CRiCPPBridge::pointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, RtToken token, ...)
+RtVoid CRiCPPBridge::pointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1890,7 +1890,7 @@ RtVoid CRiCPPBridge::pointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, R
 	return pointsPolygonsV(npolys, nverts, verts, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -1904,7 +1904,7 @@ RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, 
 	}
 }
 
-RtVoid CRiCPPBridge::pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, RtToken token, ...)
+RtVoid CRiCPPBridge::pointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1913,7 +1913,7 @@ RtVoid CRiCPPBridge::pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *n
 	return pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -1973,7 +1973,7 @@ RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv,
 	}
 }
 
-RtVoid CRiCPPBridge::nuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtToken token, ...)
+RtVoid CRiCPPBridge::nuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1982,7 +1982,7 @@ RtVoid CRiCPPBridge::nuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umi
 	return nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -2429,7 +2429,7 @@ RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken to
 	}
 }
 
-RtVoid CRiCPPBridge::makeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, RtToken token, ...)
+RtVoid CRiCPPBridge::makeBrickMap(RtInt nNames, RtString ptcnames[], RtString bkmname, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -2438,7 +2438,7 @@ RtVoid CRiCPPBridge::makeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkm
 	return makeBrickMapV(nNames, ptcnames, bkmname, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {

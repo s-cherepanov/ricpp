@@ -411,7 +411,7 @@ public:
 	inline virtual RtVoid ribVersion() {}
 
 	inline virtual RtVoid synchronize(RtToken name) {}
-	virtual RtVoid system(RtToken cmd);
+	virtual RtVoid system(RtString cmd);
 	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Initializes a new render context.
@@ -486,7 +486,7 @@ public:
 	virtual RtVoid displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn);
+	virtual RtVoid colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]);
 	virtual RtVoid relativeDetail(RtFloat relativedetail);
 	virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
@@ -515,7 +515,7 @@ public:
 	virtual RtVoid reverseOrientation(void);
 	virtual RtVoid sides(RtInt nsides);
 	virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
-	virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
+	virtual RtVoid trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 
 	virtual RtVoid identity(void);
 	virtual RtVoid transform(RtMatrix aTransform);
@@ -533,13 +533,13 @@ public:
 	virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]);
 
 	virtual RtVoid polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[],  RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt n, RtToken tokens[], RtPointer params[]);
@@ -566,7 +566,7 @@ public:
 	virtual RtVoid makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid archiveRecordV(RtToken type, RtString line);
 	virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -589,7 +589,7 @@ public:
 	 */
 	virtual RtVoid preDeclare(RtToken name, RtString declaration);
 	inline virtual RtVoid preSynchronize(RtToken name) {}
-	inline virtual RtVoid preSystem(RtToken cmd) {}
+	inline virtual RtVoid preSystem(RtString cmd) {}
 	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params);
 
 	virtual RtVoid preBegin(RtString name, const CParameterList &params);
@@ -671,7 +671,7 @@ public:
 	virtual RtVoid preReverseOrientation(void);
 	virtual RtVoid preSides(RtInt nsides);
 	virtual RtVoid preBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
-	virtual RtVoid preTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
+	virtual RtVoid preTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 
 	inline virtual RtVoid preIdentity(void) {}
 	inline virtual RtVoid preTransform(RtMatrix aTransform) {}
@@ -688,13 +688,13 @@ public:
 	inline virtual RtPoint *preTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
 
 	inline virtual RtVoid prePolygon(RtInt nvertices, const CParameterList &params) {}
-	inline virtual RtVoid preGeneralPolygon(RtInt nloops, RtInt *nverts, const CParameterList &params) {}
-	inline virtual RtVoid prePointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, const CParameterList &params) {}
-	inline virtual RtVoid prePointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, const CParameterList &params) {}
+	inline virtual RtVoid preGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params) {}
+	inline virtual RtVoid prePointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params) {}
+	inline virtual RtVoid prePointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params) {}
 
 	inline virtual RtVoid prePatch(RtToken type, const CParameterList &params) {}
 	inline virtual RtVoid prePatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params) {}
-	inline virtual RtVoid preNuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, const CParameterList &params) {}
+	inline virtual RtVoid preNuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params) {}
 
 	inline virtual RtVoid preSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params) {}
 	inline virtual RtVoid preHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params) {}
@@ -721,7 +721,7 @@ public:
 	inline virtual RtVoid preMakeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) {}
 	inline virtual RtVoid preMakeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) {}
 	inline virtual RtVoid preMakeShadow(RtString pic, RtString tex, const CParameterList &params) {}
-	inline virtual RtVoid preMakeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, const CParameterList &params) {}
+	inline virtual RtVoid preMakeBrickMap(RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params) {}
 
 	inline virtual RtVoid preArchiveRecord(RtToken type, RtString line) {}
 	inline virtual RtVoid preReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params) {}
@@ -748,7 +748,7 @@ public:
 
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
-	inline virtual RtVoid doSystem(RtToken cmd) {}
+	inline virtual RtVoid doSystem(RtString cmd) {}
 	virtual RtVoid doResource(RtString handle, RtString type, const CParameterList &params);
 
 	inline virtual RtVoid doBegin(RtString name, const CParameterList &params) {}
@@ -801,7 +801,7 @@ public:
 	inline virtual RtVoid doDisplayChannel(RtString channel, const CParameterList &params) {}
 	inline virtual RtVoid doDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params) {}
 	inline virtual RtVoid doHider(RtToken type, const CParameterList &params) {}
-	inline virtual RtVoid doColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) {}
+	inline virtual RtVoid doColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]) {}
 	inline virtual RtVoid doRelativeDetail(RtFloat relativedetail) {}
 	inline virtual RtVoid doOption(RtString name, const CParameterList &params) {}
 
@@ -830,7 +830,7 @@ public:
 	inline virtual RtVoid doReverseOrientation(void) {}
 	inline virtual RtVoid doSides(RtInt nsides) {}
 	inline virtual RtVoid doBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) {}
-	inline virtual RtVoid doTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {}
+	inline virtual RtVoid doTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]) {}
 
 	inline virtual RtVoid doIdentity(void) {}
 	inline virtual RtVoid doTransform(RtMatrix aTransform) {}
@@ -846,13 +846,13 @@ public:
 	inline virtual RtVoid doCoordSysTransform(RtToken space) {}
 	inline virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
 	inline virtual RtVoid doPolygon(RtInt nvertices, const CParameterList &params) {}
-	inline virtual RtVoid doGeneralPolygon(RtInt nloops, RtInt *nverts, const CParameterList &params) {}
-	inline virtual RtVoid doPointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, const CParameterList &params) {}
-	inline virtual RtVoid doPointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, const CParameterList &params) {}
+	inline virtual RtVoid doGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params) {}
+	inline virtual RtVoid doPointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params) {}
+	inline virtual RtVoid doPointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params) {}
 
 	inline virtual RtVoid doPatch(RtToken type, const CParameterList &params) {}
 	inline virtual RtVoid doPatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params) {}
-	inline virtual RtVoid doNuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, const CParameterList &params) {}
+	inline virtual RtVoid doNuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params) {}
 
 	inline virtual RtVoid doSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params) {}
 	inline virtual RtVoid doHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params) {}
@@ -879,7 +879,7 @@ public:
 	inline virtual RtVoid doMakeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) {}
 	inline virtual RtVoid doMakeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) {}
 	inline virtual RtVoid doMakeShadow(RtString pic, RtString tex, const CParameterList &params) {}
-	inline virtual RtVoid doMakeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, const CParameterList &params) {}
+	inline virtual RtVoid doMakeBrickMap(RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params) {}
 
 	inline virtual RtVoid doArchiveRecord(RtToken type, RtString line) {}
 	virtual RtVoid doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
@@ -894,7 +894,7 @@ public:
 
 	virtual RtVoid postDeclare(RtToken name, RtString declaration);
 	inline virtual RtVoid postSynchronize(RtToken name){}
-	inline virtual RtVoid postSystem(RtToken cmd){}
+	inline virtual RtVoid postSystem(RtString cmd){}
 	RtVoid postResource(RtString handle, RtString type, const CParameterList &params);
 
 	inline virtual RtVoid postBegin(RtString name, const CParameterList &params){}
@@ -947,7 +947,7 @@ public:
     inline virtual RtVoid postDisplayChannel(RtString channel, const CParameterList &params){}
     inline virtual RtVoid postDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params){}
     inline virtual RtVoid postHider(RtToken type, const CParameterList &params){}
-    inline virtual RtVoid postColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn){}
+    inline virtual RtVoid postColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]){}
     inline virtual RtVoid postRelativeDetail(RtFloat relativedetail){}
     inline virtual RtVoid postOption(RtString name, const CParameterList &params){}
 	
@@ -976,7 +976,7 @@ public:
 	inline virtual RtVoid postReverseOrientation(void){}
 	inline virtual RtVoid postSides(RtInt nsides){}
     inline virtual RtVoid postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep){}
-    inline virtual RtVoid postTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w){}
+    inline virtual RtVoid postTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]){}
 
 	inline virtual RtVoid postIdentity(void){}
 	inline virtual RtVoid postTransform(RtMatrix aTransform){}
@@ -993,13 +993,13 @@ public:
 	inline virtual RtPoint *postTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
 
     inline virtual RtVoid postPolygon(RtInt nvertices, const CParameterList &params){}
-	inline virtual RtVoid postGeneralPolygon(RtInt nloops, RtInt *nverts, const CParameterList &params){}
-	inline virtual RtVoid postPointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, const CParameterList &params){}
-    inline virtual RtVoid postPointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, const CParameterList &params){}
+	inline virtual RtVoid postGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params){}
+	inline virtual RtVoid postPointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params){}
+    inline virtual RtVoid postPointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params){}
 
 	inline virtual RtVoid postPatch(RtToken type, const CParameterList &params){}
 	inline virtual RtVoid postPatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params){}
-    inline virtual RtVoid postNuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, const CParameterList &params){}
+    inline virtual RtVoid postNuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params){}
 
 	inline virtual RtVoid postSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params){}
 	inline virtual RtVoid postHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params){}
@@ -1026,7 +1026,7 @@ public:
     inline virtual RtVoid postMakeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params){}
     inline virtual RtVoid postMakeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params){}
     inline virtual RtVoid postMakeShadow(RtString pic, RtString tex, const CParameterList &params){}
-    inline virtual RtVoid postMakeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, const CParameterList &params){}
+    inline virtual RtVoid postMakeBrickMap(RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params){}
 
 	inline virtual RtVoid postArchiveRecord(RtToken type, RtString line){}
 	inline virtual RtVoid postReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params){}

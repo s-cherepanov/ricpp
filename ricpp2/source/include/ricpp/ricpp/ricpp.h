@@ -173,6 +173,11 @@ public:
 	 */
 	virtual RtToken name() const = 0;
 
+	/** @brief Number of (string) arguments used by the function.
+	 *  @return The number of (string) arguments used by the function.
+	 */
+	virtual RtInt numArgs() const = 0;
+
 	/** @brief The subdivision function as operator()().
 	 *  @param ri the frontend for interface calls of the subdivision function.
 	 *  @param data The data handled by the subdivision function.
@@ -672,7 +677,7 @@ public:
 	 *  @param nRGB Nx3 matrix, converts N sample to a 3 component RGB value
 	 *  @param RGBn 3xN matrix, converts 3 component RGB value to a N sample
 	 */
-    virtual RtVoid colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn) = 0;
+    virtual RtVoid colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]) = 0;
 
 	//! Set the relative detail
 	/*! Scales the result of all level of detail calculations
@@ -916,7 +921,7 @@ public:
 	 *  @param v       The v coordinates of the control points
 	 *  @param w       The w coordinates of the control points
 	 */
-    virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) = 0;
+    virtual RtVoid trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]) = 0;
 	//@}
 
 	
@@ -1067,7 +1072,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
 	 */
-	virtual RtVoid generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	/** @brief Requests a mesh of convex planar polygons with shared vertices
 	 *
@@ -1078,7 +1083,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
 	 */
-	virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	/** @brief Requests a mesh of general concave planar polygons with holes and shared vertices
 	 *  @param npolys number of polygons
@@ -1089,7 +1094,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
 	 */
-    virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 	/** @defgroup ricpp_patches Ri Patches
@@ -1133,7 +1138,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
 	 */
-    virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 
@@ -1451,7 +1456,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
 	 */
-    virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 	/** @defgroup ricpp_archive Ri RIB archives
@@ -1745,17 +1750,17 @@ public:
 	/** @brief Requests a single general concave planar polygon with holes
 	 *  @see IRiRoot::generalPolygonV()
 	 */
-	virtual RtVoid generalPolygon(RtInt nloops, RtInt *nverts, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid generalPolygon(RtInt nloops, RtInt nverts[], RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Requests a mesh of convex planar polygons with shared vertices
 	 *  @see IRiRoot::pointsPolygonsV()
 	 */
-	virtual RtVoid pointsPolygons(RtInt npolys, RtInt *nverts, RtInt *verts, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid pointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Requests a mesh of general concave planar polygons with holes and shared vertices
 	 *  @see IRiRoot::pointsGeneralPolygonsV()
 	 */
-	virtual RtVoid pointsGeneralPolygons(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid pointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @addtogroup ricpp_patches
@@ -1776,7 +1781,7 @@ public:
 	/** @brief Creates a single tensor product rational or polynomal non-uniform B-spline (NURB) surface patch
 	 *  @see IRiRoot::nuPatchV()
 	 */
-	virtual RtVoid nuPatch(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid nuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 
@@ -1911,7 +1916,7 @@ public:
 	/** @brief Creates a 3D texture map.
 	 *  @see IRiRoot::makeBrickMapV()
 	 */
-    virtual RtVoid makeBrickMap(RtInt nNames, RtString *ptcnames, RtString bkmname, RtToken token = RI_NULL, ...) = 0;
+    virtual RtVoid makeBrickMap(RtInt nNames, RtString ptcnames[], RtString bkmname, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @addtogroup ricpp_archive

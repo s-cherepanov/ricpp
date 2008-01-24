@@ -1327,7 +1327,7 @@ public:
 	 */
 	inline CRiMakeBrickMap(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt theNNames, RtString *thePtcNames, RtString aBkMName,
+		RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
@@ -1345,7 +1345,7 @@ public:
 	 */
 	inline CRiMakeBrickMap(
 		long aLineNo,
-		RtInt theNNames, RtString *thePtcNames, RtString aBkMName,
+		RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
 		const CParameterList &theParameters
 		)
 		: CVarParamRManInterfaceCall(aLineNo, theParameters)
@@ -1383,7 +1383,7 @@ public:
 	 *  @param aBkMName      Brick map file name
 	 */
 	inline void set(
-		RtInt theNNames, RtString *thePtcNames, RtString aBkMName)
+		RtInt theNNames, RtString thePtcNames[], RtString aBkMName)
 	{
 		m_ptcNames.clear();
 		m_ptcNamesPtr.clear();
@@ -1474,7 +1474,7 @@ public:
  *  @param tokens Tokens for additional parameter list
  *  @param params Value pointer for additional parameter list
  */
-// virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+// virtual RtVoid makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Archive record (comment)

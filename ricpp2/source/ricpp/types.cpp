@@ -335,7 +335,7 @@ CColorDescr::CColorDescr()
 }
 
 
-RtVoid CColorDescr::colorSamples(RtInt nColorSamples, RtFloat *nRGB, RtFloat *RGBn)
+RtVoid CColorDescr::colorSamples(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
 {
 	std::vector<RtFloat>::size_type s;
 
@@ -445,11 +445,8 @@ RtVoid CColorDescr::RGBToN(RtFloat rgb[3], RtColor c) const
 }
 
 
-RtVoid CColorDescr::RGBToN(RtInt n, RtFloat rgb[][3], RtFloat *c) const
+RtVoid CColorDescr::RGBToN(RtInt n, RtFloat rgb[][3], RtFloat c[]) const
 {
-	if ( !c )
-		return;
-
 	for ( int i = 0; i < n; ++i )
 	{
 		RGBToN(rgb[i], c);
@@ -638,15 +635,15 @@ void CQuantizer::quantize(std::vector<RtFloat> &values) const
 
 void CTrimCurveDataInfo::trimCurve(
 	RtInt nloops,
-	const RtInt *ncurves,
-	const RtInt *order,
-	const RtFloat *knot,
-	const RtFloat *amin,
-	const RtFloat *amax,
-	const RtInt *n,
-	const RtFloat *u,
-	const RtFloat *v,
-	const RtFloat *w)
+	const RtInt ncurves[],
+	const RtInt order[],
+	const RtFloat knot[],
+	const RtFloat amin[],
+	const RtFloat amax[],
+	const RtInt n[],
+	const RtFloat u[],
+	const RtFloat v[],
+	const RtFloat w[])
 {
 	m_nloops = 0;
 	m_total  = 0;
@@ -687,15 +684,15 @@ void CTrimCurveDataInfo::trimCurve(
 
 void CTrimCurveData::trimCurve(
 	RtInt nloops,
-	const RtInt *ncurves,
-	const RtInt *order,
-	const RtFloat *knot,
-	const RtFloat *amin,
-	const RtFloat *amax,
-	const RtInt *n,
-	const RtFloat *u,
-	const RtFloat *v,
-	const RtFloat *w)
+	const RtInt ncurves[],
+	const RtInt order[],
+	const RtFloat knot[],
+	const RtFloat amin[],
+	const RtFloat amax[],
+	const RtInt n[],
+	const RtFloat u[],
+	const RtFloat v[],
+	const RtFloat w[])
 {
 	releaseAll();
 

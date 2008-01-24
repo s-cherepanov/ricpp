@@ -513,11 +513,11 @@ public:
 		return new CRiBasis(aLineNo, ubasis, ustep, vbasis, vstep);
 	}
 
-	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w) {
+	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]) {
 		return new CRiTrimCurve(aLineNo, nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}
 
-	inline virtual CRiTrimCurve *newRiCRimCurve(long aLineNo, const CTrimCurveData &CRimCurve) {
+	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, const CTrimCurveData &CRimCurve) {
 		return new CRiTrimCurve(aLineNo, CRimCurve);
 	}
 
@@ -583,7 +583,7 @@ public:
 
 	inline virtual CRiGeneralPolygon *newRiGeneralPolygon(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nloops, const RtInt *nverts,
+		RtInt nloops, const RtInt nverts[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiGeneralPolygon(aLineNo, decl, curColorDescr, nloops, nverts, n, tokens, params);
@@ -591,7 +591,7 @@ public:
 
 	inline virtual CRiPointsPolygons *newRiPointsPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt npolys, const RtInt *nverts, const RtInt *verts,
+		RtInt npolys, const RtInt nverts[], const RtInt verts[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiPointsPolygons(aLineNo, decl, curColorDescr, npolys, nverts, verts, n, tokens, params);
@@ -599,7 +599,7 @@ public:
 
 	inline virtual CRiPointsGeneralPolygons *newRiPointsGeneralPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt npolys, const RtInt *nloops,const RtInt *nverts, const RtInt *verts,
+		RtInt npolys, const RtInt nloops[], const RtInt nverts[], const RtInt verts[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiPointsGeneralPolygons(aLineNo, decl, curColorDescr, npolys, nloops, nverts, verts, n, tokens, params);
@@ -623,7 +623,7 @@ public:
 
 	inline virtual CRiNuPatch *newRiNuPatch(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt nu, RtInt uorder, const RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, const RtFloat *vknot, RtFloat vmin, RtFloat vmax,
+		RtInt nu, RtInt uorder, const RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, const RtFloat vknot[], RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiNuPatch(aLineNo, decl, curColorDescr, nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
@@ -794,6 +794,14 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiMakeShadow(aLineNo, decl, curColorDescr, pic, tex, n, tokens, params);
+	}
+
+	inline virtual CRiMakeBrickMap *newRiMakeBrickMap(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
+		RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return new CRiMakeBrickMap(aLineNo, decl, curColorDescr, theNNames, thePtcNames, aBkMName, n, tokens, params);
 	}
 
 	inline virtual CRiArchiveRecord *newRiArchiveRecord(long aLineNo, RtToken type, const char *line)

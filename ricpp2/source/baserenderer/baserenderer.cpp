@@ -294,7 +294,7 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 }
 
 
-RtVoid CBaseRenderer::system(RtToken cmd)
+RtVoid CBaseRenderer::system(RtString cmd)
 {
 	try {
 
@@ -2999,12 +2999,12 @@ RtVoid CBaseRenderer::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt v
 }
 
 
-RtVoid CBaseRenderer::preTrimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+RtVoid CBaseRenderer::preTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
 	renderState()->attributes().trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 }
 
-RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
 	EnumRequests req = REQ_TRIM_CURVE;
 	try {
@@ -3489,7 +3489,7 @@ RtVoid CBaseRenderer::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoi
 }
 
 
-RtVoid CBaseRenderer::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_GENERAL_POLYGON;
 	try {
@@ -3530,7 +3530,7 @@ RtVoid CBaseRenderer::generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtTo
 }
 
 
-RtVoid CBaseRenderer::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_POINTS_POLYGONS;
 	try {
@@ -3571,7 +3571,7 @@ RtVoid CBaseRenderer::pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts,
 }
 
 
-RtVoid CBaseRenderer::pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[],  RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_POINTS_GENERAL_POLYGONS;
 	try {
@@ -3721,7 +3721,7 @@ RtVoid CBaseRenderer::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv
 }
 
 
-RtVoid CBaseRenderer::nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_NU_PATCH;
 	try {
@@ -4519,7 +4519,7 @@ RtVoid CBaseRenderer::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken t
 	}
 }
 
-RtVoid CBaseRenderer::makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_MAKE_BRICK_MAP;
 	try {
@@ -4565,6 +4565,13 @@ RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line)
 	try {
 		if ( !preCheck(req) )
 			return;
+
+		RtToken typeTok;
+
+		if ( emptyStr(type) ) {
+			typeTok = RI_COMMENT;
+		}
+		type = renderState()->tokFind(type);
 
 		CRiArchiveRecord r(renderState()->lineNo(), type, line);
 		processRequest(r);

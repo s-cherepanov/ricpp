@@ -299,7 +299,7 @@ public:
 	 * @param nRGB Transformation matrix from a color to a RGB value
 	 * @param RGBn Transformation matrix from a RGB value to a color
 	 */
-	inline CColorDescr(RtInt nColorSamples, RtFloat *nRGB, RtFloat *RGBn)
+	inline CColorDescr(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
 	{
 		colorSamples(nColorSamples, nRGB, RGBn);
 	}
@@ -365,7 +365,7 @@ public:
 	 * @param  rgb @a n RGB triples.
 	 * @retval c   m_nColorSamples time @a n color samples for the @a n color values.
 	 */
-	RtVoid RGBToN(RtInt n, RtFloat rgb[][3], RtFloat *c) const;
+	RtVoid RGBToN(RtInt n, RtFloat rgb[][3], RtFloat c[]) const;
 
 	/** @brief Sets the number color samples and transformation matrices.
 	 *
@@ -377,7 +377,7 @@ public:
 	 * @param nRGB Matrix color to RGB (should not be 0).
 	 * @param RGBn Matrix RGB to color (should not be 0).
 	 */
-	RtVoid colorSamples(RtInt nColorSamples, RtFloat *nRGB, RtFloat *RGBn);
+	RtVoid colorSamples(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[]);
 
 	/** @brief Gets the number color samples.
 	 *
@@ -637,8 +637,8 @@ struct CTrimCurveDataInfo {
 	 *  @param v        v coordinates of the curves.
 	 *  @param w        w coordinates of the curves.
 	 */
-	void trimCurve(RtInt nloops, const RtInt *ncurves, const RtInt *order, const RtFloat *knot, const RtFloat *amin, const RtFloat *amax,
-				   const RtInt *n, const RtFloat *u, const RtFloat *v, const RtFloat *w);
+	void trimCurve(RtInt nloops, const RtInt ncurves[], const RtInt order[], const RtFloat knot[], const RtFloat amin[], const RtFloat amax[],
+				   const RtInt n[], const RtFloat u[], const RtFloat v[], const RtFloat w[]);
 };
 
 /** @brief Contains one trim curve.
@@ -678,10 +678,10 @@ struct CTrimCurveData {
 	 *  @param w        w coordinates of the curves.
 	 */
 	inline CTrimCurveData(
-		RtInt nloops, const RtInt *ncurves,
-		const RtInt *order, const RtFloat *knot,
-		const RtFloat *amin, const RtFloat *amax,
-		const RtInt *n, const RtFloat *u, const RtFloat *v, const RtFloat *w)
+		RtInt nloops, const RtInt ncurves[],
+		const RtInt order[], const RtFloat knot[],
+		const RtFloat amin[], const RtFloat amax[],
+		const RtInt n[], const RtFloat u[], const RtFloat v[], const RtFloat w[])
 	{
 		trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}
@@ -768,8 +768,8 @@ struct CTrimCurveData {
 	 *  @param v        v coordinates of the curves.
 	 *  @param w        w coordinates of the curves.
 	 */
-	void trimCurve(RtInt nloops, const RtInt *ncurves, const RtInt *order, const RtFloat *knot, const RtFloat *amin, const RtFloat *amax,
-				   const RtInt *n, const RtFloat *u, const RtFloat *v, const RtFloat *w);
+	void trimCurve(RtInt nloops, const RtInt ncurves[], const RtInt order[], const RtFloat knot[], const RtFloat amin[], const RtFloat amax[],
+				   const RtInt n[], const RtFloat u[], const RtFloat v[], const RtFloat w[]);
 }; // 
 
 

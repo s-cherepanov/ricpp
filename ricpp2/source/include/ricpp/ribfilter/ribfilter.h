@@ -197,7 +197,7 @@ public:
 			callee()->synchronize(name);
 	}
 
-	inline virtual RtVoid system(RtToken cmd)
+	inline virtual RtVoid system(RtString cmd)
 	{
 		if ( canCall(REQ_SYSTEM) )
 			callee()->system(cmd);
@@ -210,7 +210,8 @@ public:
 
 	inline virtual RtVoid ribVersion()
 	{
-		// version is used internally only
+		if ( canCall(REQ_VERSION) )
+			callee()->ribVersion();
 	}
 
 	inline virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])
@@ -443,7 +444,7 @@ public:
 			callee()->hiderV(type, n, tokens, params);
 	}
 
-    inline virtual RtVoid colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+    inline virtual RtVoid colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 	{
 		if ( canCall(REQ_COLOR_SAMPLES) )
 			callee()->colorSamples(N, nRGB, RGBn);
@@ -607,7 +608,7 @@ public:
 			callee()->basis(ubasis, ustep, vbasis, vstep);
 	}
 
-    inline virtual RtVoid trimCurve(RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
+    inline virtual RtVoid trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 	{
 		if ( canCall(REQ_TRIM_CURVE) )
 			callee()->trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
@@ -698,19 +699,19 @@ public:
 			callee()->polygonV(nvertices, n, tokens, params);
 	}
 
-	inline virtual RtVoid generalPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_GENERAL_POLYGON) )
 			callee()->generalPolygonV(nloops, nverts, n, tokens, params);
 	}
 
-	inline virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_POINTS_POLYGONS) )
 			callee()->pointsPolygonsV(npolys, nverts, verts, n, tokens, params);
 	}
 
-    inline virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts,  RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_POINTS_GENERAL_POLYGONS) )
 			callee()->pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, tokens, params);
@@ -728,7 +729,7 @@ public:
 			callee()->patchMeshV(type, nu, uwrap, nv, vwrap, n, tokens, params);
 	}
 
-    inline virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_NU_PATCH) )
 			callee()->nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
@@ -869,7 +870,7 @@ public:
 			callee()->makeShadowV(pic, tex, n, tokens, params);
 	}
 
-    inline virtual RtVoid makeBrickMapV(RtInt nNames, RtString *ptcnames, RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_MAKE_SHADOW) )
 			callee()->makeBrickMapV(nNames, ptcnames, bkmname, n, tokens, params);

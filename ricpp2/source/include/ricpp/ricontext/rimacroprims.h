@@ -241,7 +241,7 @@ public:
 	 */
 	CRiGeneralPolygon(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt theNLoops, const RtInt *theNVerts,
+		RtInt theNLoops, const RtInt theNVerts[],
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Constructor.
@@ -253,7 +253,7 @@ public:
 	 */
 	CRiGeneralPolygon(
 		long aLineNo,
-		RtInt theNLoops, const RtInt *theNVerts,
+		RtInt theNLoops, const RtInt theNVerts[],
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -319,7 +319,7 @@ public:
 	 *  @param theNLoops The number of loops.
 	 *  @param theNVerts The number of vertices.
 	 */
-	inline void set(RtInt theNLoops, const RtInt *theNVerts)
+	inline void set(RtInt theNLoops, const RtInt theNVerts[])
 	{
 		enterValues(theNLoops, theNVerts);
 	}
@@ -422,7 +422,7 @@ public:
 	 */
 	CRiPointsPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
+		RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[],
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Constructor.
@@ -435,7 +435,7 @@ public:
 	 */
 	CRiPointsPolygons(
 		long aLineNo,
-		RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts,
+		RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[],
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -517,7 +517,7 @@ public:
 	 *  @param theNVerts Number of verts per polygon.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	inline void set(RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts)
+	inline void set(RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[])
 	{
 		enterValues(theNPolys, theNVerts, theVerts);
 	}
@@ -629,7 +629,7 @@ public:
 	 */
 	CRiPointsGeneralPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt theNPolys, const RtInt *theNLoops,const RtInt *theNVerts, const RtInt *theVerts,
+		RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[],
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Constructor.
@@ -643,7 +643,7 @@ public:
 	 */
 	CRiPointsGeneralPolygons(
 		long aLineNo,
-		RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts,
+		RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[],
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -741,7 +741,7 @@ public:
 	 *  @param theNVerts Number of verts per loop.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	inline void set(RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts)
+	inline void set(RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[])
 	{
 		enterValues(theNPolys, theNLoops, theNVerts, theVerts);
 	}
@@ -1240,8 +1240,8 @@ public:
 	 */
 	CRiNuPatch(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
-		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
+		RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Constructor.
@@ -1261,8 +1261,8 @@ public:
 	 */
 	CRiNuPatch(
 		long aLineNo,
-		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
-		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax,
+		RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax,
 		const CParameterList &theParameters);
 
 	/** @brief Copy constructor.
@@ -1307,8 +1307,8 @@ public:
 	 *  @param aVMax Maximal value for parameter v.
 	 */
 	void set(
-		RtInt aNU, RtInt aUOrder, const RtFloat *aUKnot, RtFloat aUMin, RtFloat aUMax,
-		RtInt aNV, RtInt aVOrder, const RtFloat *aVKnot, RtFloat aVMin, RtFloat aVMax);
+		RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
+		RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax);
 
 	/** @brief Enter the values into member variables.
 	 *

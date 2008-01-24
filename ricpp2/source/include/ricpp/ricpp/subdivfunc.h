@@ -128,6 +128,11 @@ public:
 	 */
 	inline virtual RtToken name() const {return myName();}
 
+	/** @brief Number of (string) arguments used by the function.
+	 *  @return The number of (string) arguments used by the function.
+	 */
+	inline virtual RtInt numArgs() const { return 1; }
+
 	/** @brief Delayed read of a RIB archive
 	 * @param ri Interface to be used
 	 * @param data Array of one string, the name of the archive as null terminated string
@@ -232,6 +237,11 @@ public:
 	 *  @return The name of the function as used in RIB
 	 */
 	inline virtual RtToken name() const {return myName();}
+
+	/** @brief Number of (string) arguments used by the function.
+	 *  @return The number of (string) arguments used by the function.
+	 */
+	inline virtual RtInt numArgs() const { return 2; }
 
 	/** @brief Run a helper program and capture output as RIB for ri
 	 * @param ri Interface to be used
@@ -338,6 +348,11 @@ public:
 	 *  @return The name of the function as used in RIB
 	 */
 	inline virtual RtToken name() const {return myName();}
+
+	/** @brief Number of (string) arguments used by the function.
+	 *  @return The number of (string) arguments used by the function.
+	 */
+	inline virtual RtInt numArgs() const { return 2; }
 
 	/** @brief Calls a dynamic library implementing: RtPointer ConvertParameters(IRi &ri, char *initial data), 
 	 * void Subdivide(IRi &ri, RtPointer blinddata, RtFloat detailsize), void Free(IRi &ri, RtPointer blinddata)

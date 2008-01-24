@@ -108,7 +108,7 @@ namespace RiCPP {
 		bool erase(const char *name);
 		bool erase(CNamedParameterList *paramList);
 
-		inline RtVoid colorSamples(RtInt nColorSamples, RtFloat *nRGB, RtFloat *RGBn)
+		inline RtVoid colorSamples(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
 		{
 			m_curColorDesc.colorSamples(nColorSamples, nRGB, RGBn);
 		}

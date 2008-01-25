@@ -498,9 +498,9 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRibWriter::doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	CBaseRenderer::controlV(name, n, tokens, params);
+	CBaseRenderer::doControl(name, n, tokens, params);
 }
 
 

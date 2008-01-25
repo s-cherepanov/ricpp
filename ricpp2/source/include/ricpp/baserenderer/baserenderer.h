@@ -407,7 +407,7 @@ public:
 
 	RtToken declare(RtString name, RtString declaration);
 
-	inline virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual RtVoid ribVersion() {}
 
 	inline virtual RtVoid synchronize(RtToken name) {}
@@ -745,6 +745,8 @@ public:
 	 *  @param handler The error handler
 	 */
 	inline virtual RtVoid doErrorHandler(const IErrorHandler &handler) {}
+
+	inline virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}

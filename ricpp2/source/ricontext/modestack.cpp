@@ -203,6 +203,8 @@ CValidModes::CValidModes()
 	m_requests[REQ_ARCHIVE_RECORD] = everywhereBits;
 	m_requests[REQ_READ_ARCHIVE] = everywhereBits;
 	
+	m_requests[REQ_CONTROL] = everywhereBits;
+
 	m_requests[REQ_VERSION] = MODE_BIT_BEGIN;
 }
 

@@ -287,7 +287,7 @@ public:
 	inline virtual RtToken rendererType() const { return myRendererType(); }
 
 public:
-	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid ribVersion();
 
 	/*

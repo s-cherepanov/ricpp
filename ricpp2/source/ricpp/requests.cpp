@@ -219,7 +219,10 @@ const char *CRequestInfo::ms_requestNames[N_REQUESTS] =
 	"Else",
 	"IfEnd",
 
-	// Additional (also end marker), version starts with a small 'v'
+	// Additional
+	"Control",
+
+	// also end marker, version starts with a small 'v'
 	"version"
 };
 

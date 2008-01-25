@@ -237,6 +237,13 @@ public:
 	 */
 	virtual RtVoid doErrorHandler(const IErrorHandler &handler) = 0;
 
+	/** @brief used to control the renderer has no rib binding
+	 *
+	 *  The tokens have special meaning to the renderer and are not declared
+	 *
+	 */
+	inline virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+
 	/** @brief Called after declaration is done
 	 * 
 	 * After the declaration was performed, this callback is called with the new tokenized name.

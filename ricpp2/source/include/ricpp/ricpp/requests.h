@@ -220,7 +220,10 @@ enum EnumRequests {
 	REQ_ELSE,						//!< Index for ri function IRi::elseBegin()
 	REQ_IF_END,						//!< Index for ri function IRi::ifBegin()
 
-	// Additional (also end marker)
+	// Additional
+	REQ_CONTROL,                    //!< Index for control request (additional, no RIB binding)
+
+	// (also end marker)
 	REQ_VERSION                     //!< Index for version (additional, in RIB only)
 };
 

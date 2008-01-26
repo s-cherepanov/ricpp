@@ -178,7 +178,7 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 					requestName(), RI_NULL);
 			}
 			// Can print the version of the current RIB writer.
-			parser.ribFilter().ribVersion();
+			parser.ribFilter().version();
 		} else {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,

@@ -48,6 +48,7 @@ void testStream(CBackBufferProtocolHandlers &factory)
 	ob.open("ReadMe3.txt.gz", std::ios_base::out|std::ios_base::binary, 3);
 	// ob.open("ReadMe3.txt", std::ios_base::out|std::ios_base::binary, 0);
 	std::ostream myostream(&ob);
+	// std::ostream myostream(std::cout.rdbuf());
 	if ( myostream ) {
 		for ( int i = 1; i < 10; ++i )
 			myostream <<
@@ -301,7 +302,7 @@ void testrun(CRiCPPBridge &ri)
 	// Print error, does not abort
 	ri.errorHandler(ri.errorPrint());
 
-	ri.begin("testrun.rib");
+	ri.begin(RI_NULL);
 		RtToken myOptionValue = ri.declare("myOptionValue", "float");
 		ri.colorSamples(1, frommonochr, tomonochr);
 		ri.option("myOption", myOptionValue, floats, RI_NULL);
@@ -361,6 +362,8 @@ void testrun(CRiCPPBridge &ri)
 				ri.readArchive(myArchive, 0, RI_NULL);
 			ri.worldEnd();
 		ri.frameEnd();
+
+		// ri.readArchive("", 0, RI_NULL);
 	ri.end();
 }
 
@@ -469,7 +472,10 @@ int main(int argc, char * const argv[])
 	std::string name;
 	name.reserve(200);
 	for ( int i = 1; i < 100; ++i ) {
-		ri.begin(RI_NULL);
+		ri.begin("testrun.rib");
+			ri.archiveRecord(RI_STRUCTURE, "RenderMan RIB-Structure 1.1", RI_NULL);
+			ri.archiveRecord(RI_STRUCTURE, "For %s", "somebody", RI_NULL);
+			ri.version();
 			name = "name";
 			for ( int j = 1; j < 100; ++j ) {
 				ri.declare(name.c_str(), "    constant    string  [19] ");

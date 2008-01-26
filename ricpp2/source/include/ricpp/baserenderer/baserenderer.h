@@ -408,7 +408,7 @@ public:
 	RtToken declare(RtString name, RtString declaration);
 
 	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-	inline virtual RtVoid ribVersion() {}
+	inline virtual RtVoid version() {}
 
 	inline virtual RtVoid synchronize(RtToken name) {}
 	virtual RtVoid system(RtString cmd);

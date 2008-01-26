@@ -342,7 +342,7 @@ public:
 
 	/** @brief Writes RIB version information if needed
 	 */
-	virtual RtVoid ribVersion()=0;
+	virtual RtVoid version()=0;
 	//@}
 
 	/** @defgroup ricpp_resource Ri Resource handling

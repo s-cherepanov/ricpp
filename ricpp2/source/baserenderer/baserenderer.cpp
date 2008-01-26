@@ -4628,9 +4628,6 @@ RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line)
 
 RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
-	if ( emptyStr(name) )
-		return;
-
 	if ( !m_parserCallback ) {
 		ricppErrHandler().handleError(RIE_BUG, RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
@@ -4641,11 +4638,13 @@ RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callb
 
 	CParameterList p = params;
 
-	// 1. Look for archive in stored archives
-	RtToken tname = renderState()->storedArchiveName(name);
-	if ( tname ) {
-		doArchiveInstance(tname, callback, params);
-		return;
+	if ( !emptyStr(name) ) {
+		// 1. Look for archive in stored archives
+		RtToken tname = renderState()->storedArchiveName(name);
+		if ( tname ) {
+			doArchiveInstance(tname, callback, params);
+			return;
+		}
 	}
 
 	// 2. Read archive from stream

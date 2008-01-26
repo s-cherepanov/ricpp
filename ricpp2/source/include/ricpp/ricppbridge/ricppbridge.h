@@ -909,7 +909,7 @@ public:
 	virtual RtVoid control(RtString name, RtToken token = RI_NULL, ...);
 	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	virtual RtVoid ribVersion();
+	virtual RtVoid version();
 
 	virtual RtVoid resource(RtString handle, RtString type, RtToken token = RI_NULL, ...);
 	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]);

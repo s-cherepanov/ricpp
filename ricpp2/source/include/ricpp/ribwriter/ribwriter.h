@@ -95,7 +95,8 @@ public:
 
 	/** @brief Constructor, initializes the objects with the stram buffer to write to.
 	 */
-	CRibElementsWriter(TemplFrontStreambuf<char> &ribout);
+	CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout);
+	// CRibElementsWriter(TemplFrontStreambuf<char> *ribout);
 
 	/** @brief Destructor, doesn't close the stream (because it is not opened by a CRibElementsWriter).
 	 */
@@ -288,7 +289,7 @@ public:
 
 public:
 	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid ribVersion();
+	virtual RtVoid version();
 
 	/*
 	inline virtual RtVoid doAbort(void) { CBaseRenderer::doAbort(); }

@@ -1109,11 +1109,11 @@ RtVoid CRiCPPBridge::controlV(RtString name, RtInt n, RtToken tokens[], RtPointe
 	}
 }
 
-RtVoid CRiCPPBridge::ribVersion()
+RtVoid CRiCPPBridge::version()
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
-			m_ctxMgmt.curBackend().renderingContext()->ribVersion();
+			m_ctxMgmt.curBackend().renderingContext()->version();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}

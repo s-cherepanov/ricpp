@@ -208,10 +208,10 @@ public:
 		// Control is not a part of the RIB binding.
 	}
 
-	inline virtual RtVoid ribVersion()
+	inline virtual RtVoid version()
 	{
 		if ( canCall(REQ_VERSION) )
-			callee()->ribVersion();
+			callee()->version();
 	}
 
 	inline virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])

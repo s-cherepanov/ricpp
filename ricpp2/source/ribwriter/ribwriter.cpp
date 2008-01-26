@@ -31,12 +31,19 @@
 
 using namespace RiCPP;
 
-
-CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> &ribout)
-: m_ostream(&ribout), m_ascii(true), m_countStrings(0)
+CRibElementsWriter::CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout)
+: m_ostream(ribout), m_ascii(true), m_countStrings(0)
 {
 	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
 }
+
+/*
+CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> *ribout)
+: m_ostream(ribout), m_ascii(true), m_countStrings(0)
+{
+	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
+}
+*/
 
 
 void CRibElementsWriter::putNewLine()
@@ -439,7 +446,7 @@ RtToken CRibWriter::RI_COMPRESS = "compress";
 
 bool CRibWriter::testValid() const
 {
-	return  m_writer != 0 && m_buffer != 0;
+	return  m_writer != 0;
 }
 
 bool CRibWriter::postTestValid() const
@@ -504,7 +511,7 @@ RtVoid CRibWriter::doControl(RtString name, RtInt n, RtToken tokens[], RtPointer
 }
 
 
-RtVoid CRibWriter::ribVersion()
+RtVoid CRibWriter::version()
 {
 	m_writer->putChars("version 3.03");
 	m_writer->putNewLine();
@@ -555,7 +562,7 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		if ( !m_buffer->open(filename.c_str(), std::ios_base::out|std::ios_base::binary, compress) ) {
 			return;
 		}
-		m_writer = new CRibElementsWriter(*m_buffer);
+		m_writer = new CRibElementsWriter(m_buffer);
 		if ( !m_writer ) {
 			return;
 		}
@@ -563,6 +570,10 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		// stdio or pipe
 		if ( filename.size() == 0 ) {
 			// stdio
+			m_writer = new CRibElementsWriter(std::cout.rdbuf());
+			if ( !m_writer ) {
+				return;
+			}
 		} else {
 			// pipe
 		}

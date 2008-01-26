@@ -58,12 +58,21 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
 		if ( (*i) == '\\' )
 			(*i) = '/';
-		/*
-		if ( (*i) == ':' && cnt == 1 )
-			(*i) = '|';
-		*/
 	}
 
+	return var;
+}
+
+std::string &CFilepathConverter::convertToURL(std::string &var)
+{
+	convertToInternal(var);
+	if ( var.length() > 2 ) {
+		if ( var[1] == ':' && ((var[0] >= 'a' && var[0] <= 'z') || (var[0] >= 'A' && var[0] <= 'Z')) && var[2] == '/') {
+			std::string var2 = "///";
+			var2 += var;
+			var = var2;
+		}
+	}
 	return var;
 }
 
@@ -75,15 +84,12 @@ std::string &CFilepathConverter::convertToNative(std::string &var)
 	for ( int cnt = 0; i != var.end(); i++, ++cnt ) {
 		if ( (*i) == '/' )
 			(*i) = '\\';
-		/*
-		if ( (*i) == '|' && cnt == 1 )
-			(*i) = ':';
-		*/
 	}
 
 	if ( var.length() > 4 ) {
-		if ( var[0] == '\\' && var[1] == '\\' && var[2] == '\\' && var[4] == ':' )
+		if ( var[0] == '\\' && var[1] == '\\' && var[2] == '\\' && ((var[3] >= 'a' && var[3] <= 'z') || (var[3] >= 'A' && var[3] <= 'Z')) && (var[4] == ':') ) {
 			var = var.substr(3);
+		}
 	}
 	return var;
 }

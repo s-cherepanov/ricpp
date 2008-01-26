@@ -60,7 +60,7 @@ echo ---------------------------------------------------------------------------
 echo Prepare vc8 directory
 echo ---------------------------------------------------------------------------
 
-if not exist .\vc8\exe\ mkdir .\vc\exe
+if not exist .\vc8\exe\ mkdir .\vc8\exe
 if not exist .\vc8\exe\Debug\ mkdir .\vc8\exe\Debug
 if not exist .\vc8\exe\Debug\Batches\ mkdir .\vc8\exe\Debug\Batches
 if not exist .\vc8\exe\Debug\Contexts\ mkdir .\vc8\exe\Debug\Contexts

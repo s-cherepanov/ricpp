@@ -159,6 +159,9 @@ CStringList::size_type CStringList::explode(
 						if ( !varName.empty() ) {
 							// replace variable
 							getVar(varName, useEnv);
+							if ( isPathlist ) {
+								CFilepathConverter::convertToInternal(varName);
+							}
 
 							std::string::difference_type d = distance(strval.begin(), saviter);
 							saviter = strval.erase(saviter, iter);
@@ -179,6 +182,9 @@ CStringList::size_type CStringList::explode(
 
 						// replace variable
 						getVar(varName, useEnv);
+						if ( isPathlist ) {
+							CFilepathConverter::convertToInternal(varName);
+						}
 
 						std::string::difference_type d = distance(strval.begin(), saviter);
 						saviter = strval.erase(saviter, iter);
@@ -203,6 +209,9 @@ CStringList::size_type CStringList::explode(
 		if ( state == varchar || state == varcharpar ) {
 			// copy from varchar replace variable
 			getVar(varName, useEnv);
+			if ( isPathlist ) {
+				CFilepathConverter::convertToInternal(varName);
+			}
 
 			std::string::difference_type d = distance(strval.begin(), saviter);
 			saviter = strval.erase(saviter, iter);
@@ -230,7 +239,7 @@ CStringList::size_type CStringList::explode(
 	// is converted to ':'
 	// Also schemes can have a : as seperator, e.g. "http:/", it is
 	// assumend that these schems are already given as "http|/", since
-	// not standard RIB
+	// URLs instead of filenames are not standard RIB
 	if ( isPathlist && seperator == ':' ) {
 		state = normal;
 
@@ -244,7 +253,7 @@ CStringList::size_type CStringList::explode(
 				saviter = iter;
 				++iter;
 				iterinc = false;
-				if ( *iter == '/' || *iter == '\\' ) {
+				if ( *iter == '/' ) {
 					*saviter = '|';
 				}
 				firstletter = false;
@@ -268,7 +277,7 @@ CStringList::size_type CStringList::explode(
 				continue;
 			}
 		}
-		CFilepathConverter::convertToInternal(strval);
+		// CFilepathConverter::convertToInternal(strval);
 	}
 #endif
 

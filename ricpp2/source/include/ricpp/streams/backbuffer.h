@@ -1029,7 +1029,7 @@ public:
 			setBaseCwd();
 		}
 
-		if ( !CUri::makeAbsolute(m_resolutionUri, m_baseUri, refUri, true) )
+		if ( !CUri::makeAbsolute(m_resolutionUri, m_baseUri, refUri, false) )
 		{
 			return false;
 		}
@@ -1127,6 +1127,9 @@ public:
 			m_factory = 0;
 			m_transferOutBuffer.resize(0);
 			return rval;
+		}
+		if ( m_coupledBuffer ) {
+			disconnect();
 		}
 		return false;
 	}

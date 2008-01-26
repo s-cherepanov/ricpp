@@ -669,47 +669,6 @@ protected:
 	 */
 	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	/** @brief Replacement for variables.
-	 *
-	 * In this case only '&' is replaced by the last variable of a given type
-	 * And @ by the standardpath.
-	 * @see http://accad.osu.edu/~smay/RManNotes/prman_config.html#searchpaths
-	 */
-	class CPathReplace : public ISearchCallback {
-		std::string m_path; ///< Path used to replace
-		std::string m_standardpath; ///< Standard-Path used to replace
-	public:
-		/** Standard constructor
-		 */
-		inline CPathReplace() {}
-		/** Get the path
-		 * @return The current path
-		 */
-		inline const char *path() const { return m_path.c_str(); }
-		/** Set the path
-		 * @param aPath The path to set
-		 */
-		inline void path(const char *aPath) { m_path = noNullStr(aPath); }
-		/** Get the standardpath
-		 * @return The current standardpath
-		 */
-		inline const char *standardpath() const { return m_standardpath.c_str(); }
-		/** Set the standardpath
-		 * @param aPath The path to standardpath
-		 */
-		inline void standardpath(const char *aPath) { m_standardpath = noNullStr(aPath); }
-		inline virtual bool operator()(std::string &varName)
-		{
-			if ( varName == "&" ) {
-				varName = m_path;
-				return true;
-			} else if ( varName == "@" ) {
-				varName = m_standardpath;
-				return true;
-			}
-			return false;
-		}
-	};
 	/** @brief Helper object to get standard pathes
 	 *  @see doOptionV()
 	 */

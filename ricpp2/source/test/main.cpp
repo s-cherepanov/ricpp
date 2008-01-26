@@ -113,7 +113,7 @@ void testURI()
 {
 	CUri testUri("http://myname:abcd@www.nowhere-1.com.:8080/A%20directory;find;more=1/subdirectory/index.php?i=wqqw&j=1234+6#frag");
 	CUri testUri2("http://127.0.0.1");
-	CUri testUri3("file:///C:/");
+	CUri testUri3("file:///C|/test");
 	CUri testUri4("ftp:/");
 	CUri testUri5("http://1testdom.2sub.3top/anotherpath/4711");
 	CUri testUri6("http://1testdom.sub.3top/anotherpath/4711");
@@ -406,7 +406,7 @@ int main(int argc, char * const argv[])
 	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName()) << std::endl;
 
 	std::string tmp(CEnv::tmpName());
-	tmp = "Z:\\test.gz";
+	tmp = "gztest.gz";
 	gzFile f = gzopen(tmp.c_str(), "w");
 	if ( f ) {
 		gzwrite(f, "Teste", 4);
@@ -415,7 +415,7 @@ int main(int argc, char * const argv[])
 
 #ifdef WIN32
 	CStringList testpath;
-	testpath.explode(':', "$HOME:C:/testdir:C:\\Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
+	testpath.explode(':', "$HOME:C:/testdir:C:Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
 
 	std::string teststr;
 	testpath.implode(':', teststr, true);

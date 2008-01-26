@@ -526,11 +526,12 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		if ( p.token() == RI_FILE && p.strings().size()>0 ) {
 			filename = p.strings()[0];
 			CStringList stringList;
-			stringList.explode(0, filename.c_str(), true, true, true); // Only one string, replace environment variables
+			stringList.expand(filename.c_str(), true);
 			filename.clear();
 			CStringList::const_iterator first = stringList.begin();
 			if ( first != stringList.end() ) {
 				filename = (*first).c_str();
+				CFilepathConverter::convertToURL(filename);
 			}
 		}
 		if ( !strcmp(p.token(), RI_COMPRESS) && p.ints().size()>0 ) {

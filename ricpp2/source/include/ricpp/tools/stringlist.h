@@ -59,6 +59,48 @@ public:
 	inline virtual ~ISearchCallback() {}
 }; // ISearchCallback
 
+/** @brief Replacement for variables.
+ *
+ * In this case only '&' is replaced by the last variable of a given type
+ * And @ by the standardpath.
+ * @see http://accad.osu.edu/~smay/RManNotes/prman_config.html#searchpaths
+ */
+class CPathReplace : public ISearchCallback {
+	std::string m_path; ///< Path used to replace
+	std::string m_standardpath; ///< Standard-Path used to replace
+public:
+	/** Standard constructor
+	 */
+	inline CPathReplace() {}
+	/** Get the path
+	 * @return The current path
+	 */
+	inline const char *path() const { return m_path.c_str(); }
+	/** Set the path
+	 * @param aPath The path to set
+	 */
+	inline void path(const char *aPath) { m_path = noNullStr(aPath); }
+	/** Get the standardpath
+	 * @return The current standardpath
+	 */
+	inline const char *standardpath() const { return m_standardpath.c_str(); }
+	/** Set the standardpath
+	 * @param aPath The path to standardpath
+	 */
+	inline void standardpath(const char *aPath) { m_standardpath = noNullStr(aPath); }
+	inline virtual bool operator()(std::string &varName)
+	{
+		if ( varName == "&" ) {
+			varName = m_path;
+			return true;
+		} else if ( varName == "@" ) {
+			varName = m_standardpath;
+			return true;
+		}
+		return false;
+	}
+};
+
 /** @brief Class used to store strings, used like a stack with a constant iterator.
  *
  *  The Strings can contain variables ($VARIABLE ${VARIABLE}), which are
@@ -166,6 +208,14 @@ public:
 		bool useEnv,
 		bool isPathlist
 		);
+
+	/** @brief Expands the variables within a string, @see explode()
+	 *  @param str The string that is seperated.
+	 *  @param isPathlist true, for handling pathlists.
+	 */
+	inline void expand(const char *str, bool isPathList) {
+		explode(':', str, true, true, isPathList);
+	}
 
 	/** @brief Concatenates stringlist
 	 *

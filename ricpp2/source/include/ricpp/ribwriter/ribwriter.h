@@ -246,7 +246,7 @@ class CRibWriter : public CBaseRenderer {
 private:
 	CRibElementsWriter *m_writer;
 	TemplFrontStreambuf<char> *m_buffer;
-	static RtToken RI_COMPRESS;
+	RtToken RI_COMPRESS;
 
 	bool m_suppressOutput;
 
@@ -263,6 +263,7 @@ public:
 	{
 		m_writer = 0;
 		m_buffer = 0;
+		RI_COMPRESS = RI_NULL;
 		m_suppressOutput = false;
 	}
 	inline virtual ~CRibWriter()

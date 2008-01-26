@@ -196,9 +196,10 @@ public:
 	 *  @param str The string that is seperated.
 	 *  @param doSubstitute true, if variables should be substituted.
 	 *  @param useEnv true, if the environment variables should be also searched for $variables.
-	 *  @param isPathlist true, for handling pathlists. WIN32: messy because rib has double use for ':'
-	 *         as path seperator and windows drive letter seperator. Also the special chars @ and &
-	 *         are tried to be replaced by calling m_callback.
+	 *  @param isPathlist true, to handle pathlists. For WIN32 a bit messy because rib uses ':'
+	 *         as path seperator, but windows uses them as drive letter seperators as well. Also the
+	 *         special chars @ and & are tried to be replaced by calling m_callback (if set) and
+	 *         the backslashes within variables are substituted by forward slashes.
 	 *  @return The number of strings inserted.
 	 */
 	size_type explode(
@@ -209,17 +210,30 @@ public:
 		bool isPathlist
 		);
 
-	/** @brief Expands the variables within a string, @see explode()
-	 *  @param str The string that is seperated.
-	 *  @param isPathlist true, for handling pathlists.
+	/** @brief Expands the variables within a single string, @see explode().
+	 *
+	 *  @a str is a single string, e.g. a single filepath with variables like $TMP.
+	 *  For string lists (like file path list $PATH) explode() can be used.
+	 *
+	 *  @retval result String to store the expanded string.
+	 *  @param str The single string to expand.
+	 *  @param isPath True, to handle a filepath (@see isPathList in explode() for details).
+	 *  @return The expanded string, a reference to @a result
 	 */
-	inline void expand(const char *str, bool isPathList) {
-		explode(':', str, true, true, isPathList);
+	inline std::string &expand(std::string &result, const char *str, bool isPathList) {
+		explode(0, str, true, true, isPathList);
+		result.clear();
+		const_iterator first = begin();
+		if ( first != end() ) {
+			result = (*first).c_str();
+		}
+		return result;
 	}
 
 	/** @brief Concatenates stringlist
 	 *
-	 * The stringlist is concatenated to single string using \a seperator
+	 * The stringlist is concatenated to single string using \a seperator.
+	 *
 	 * @param seperator Character that is used as seperator for the new \a str
 	 * @retval str Container for the new concatenated string
 	 * @param isPathlist true, for handling pathlists.

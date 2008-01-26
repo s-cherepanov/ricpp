@@ -284,36 +284,34 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 
 	if ( name && *name ) {
 		CStringList stringList;
-		stringList.expand(name, true); // Only one string, replace environment variables
+		std::string filename;
+		stringList.expand(filename, name, true); // Only one string, replace environment variables
 
-		CStringList::const_iterator first = stringList.begin();
-		if ( first != stringList.end() ) {
-			const char *ptr = (*first).c_str();
-			if ( ptr && ptr[0] == '|' ) {
-				// name was the name of a piped ribfile
-				if ( n == 0 ) {
-					// remove the 0 entries
-					m_tokens.clear();
-					m_params.clear();
-				}
-				m_tokens.push_back(RI_FILE);
-				m_params.push_back((RtPointer)(&name)); // Pipe is identified because of leading '|'
-				// new name == 0 to load the rib writer
-				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
+		const char *ptr = filename.c_str();
+		if ( ptr && ptr[0] == '|' ) {
+			// name was the name of a piped ribfile
+			if ( n == 0 ) {
+				// remove the 0 entries
+				m_tokens.clear();
+				m_params.clear();
 			}
-			ptr = strrchr((*first).c_str(), '.');
-			if ( ptr && !(strcmp(ptr, ".rib") && strcmp(ptr, ".ribz")) ) {
-				// name was the name of a rib file
-				if ( n == 0 ) {
-					// remove the 0 entries
-					m_tokens.clear();
-					m_params.clear();
-				}
-				m_tokens.push_back(RI_FILE);
-				m_params.push_back((RtPointer)(&name));
-				// new name == 0 to load the rib writer
-				return beginV(0, ++n, &m_tokens[0], &m_params[0]);
+			m_tokens.push_back(RI_FILE);
+			m_params.push_back((RtPointer)(&name)); // Pipe is identified because of leading '|'
+			// new name == 0 to load the rib writer
+			return beginV(0, ++n, &m_tokens[0], &m_params[0]);
+		}
+		ptr = strrchr(filename.c_str(), '.');
+		if ( ptr && !(strcmp(ptr, ".rib") && strcmp(ptr, ".ribz")) ) {
+			// name was the name of a rib file
+			if ( n == 0 ) {
+				// remove the 0 entries
+				m_tokens.clear();
+				m_params.clear();
 			}
+			m_tokens.push_back(RI_FILE);
+			m_params.push_back((RtPointer)(&name));
+			// new name == 0 to load the rib writer
+			return beginV(0, ++n, &m_tokens[0], &m_params[0]);
 		}
 	}
 

@@ -329,8 +329,9 @@ protected:
 	 *  @param isDefault set this to true to indicate adefault declaration
 	 *         (eg. declaration of RI_P as point). The defaultDeclarations()
 	 *         member function is used to declare the defaults.
+	 *  @return The token value for @name
 	 */
-	virtual void processDeclare(RtToken name, RtString declaration, bool isDefault);
+	virtual RtToken processDeclare(RtToken name, RtString declaration, bool isDefault);
 
 	/** @brief Processes a request.
 	 *

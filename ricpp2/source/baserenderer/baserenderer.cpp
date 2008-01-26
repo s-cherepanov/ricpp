@@ -317,7 +317,7 @@ RtVoid CBaseRenderer::system(RtString cmd)
 }
 
 
-void CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool isDefault)
+RtToken CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool isDefault)
 {
 	if ( !emptyStr(name) && !emptyStr(declaration) ) {
 
@@ -333,7 +333,9 @@ void CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool isDe
 				declaration);
 
 		renderState()->declAdd(d);
+		return d->token();
 	}
+	return RI_NULL;
 }
 
 void CBaseRenderer::preDeclare(RtToken name, RtString declaration)
@@ -362,7 +364,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 		name = renderState()->tokFindCreate(name);
 
 		// Allways process the declaration where it occurs
-		processDeclare(name, declaration, false);
+		name = processDeclare(name, declaration, false);
 
 		CRiDeclare r(renderState()->lineNo(), name, declaration);
 		processRequest(r);

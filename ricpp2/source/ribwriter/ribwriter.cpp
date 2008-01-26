@@ -441,9 +441,6 @@ unsigned long CRibWriter::myMinorVersion() { return 1; }
 unsigned long CRibWriter::myRevision() { return 1; }
 RtToken CRibWriter::myRendererType() { return RI_ARCHIVE; }
 
-RtToken CRibWriter::RI_COMPRESS = "compress";
-
-
 bool CRibWriter::testValid() const
 {
 	return  m_writer != 0;
@@ -461,7 +458,7 @@ void CRibWriter::defaultDeclarations()
 {
 	CBaseRenderer::defaultDeclarations();
 
-	processDeclare(RI_COMPRESS, "integer", true);
+	RI_COMPRESS = processDeclare("compress", "integer", true);
 }
 
 void CRibWriter::writeTrailer()
@@ -526,22 +523,16 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 	m_writer = 0;
 
 	RtInt compress = 0;
-	std::string filename = "";
+	std::string filename;
 	CParameterList::const_iterator  i = params.begin();
 	for ( ; i != params.end(); ++i ) {
 		const CParameter &p = (*i);
 		if ( p.token() == RI_FILE && p.strings().size()>0 ) {
-			filename = p.strings()[0];
 			CStringList stringList;
-			stringList.expand(filename.c_str(), true);
-			filename.clear();
-			CStringList::const_iterator first = stringList.begin();
-			if ( first != stringList.end() ) {
-				filename = (*first).c_str();
-				CFilepathConverter::convertToURL(filename);
-			}
+			stringList.expand(filename, p.strings()[0].c_str(), true);
+			CFilepathConverter::convertToURL(filename);
 		}
-		if ( !strcmp(p.token(), RI_COMPRESS) && p.ints().size()>0 ) {
+		if ( p.token() == RI_COMPRESS && p.ints().size() > 0 ) {
 			compress = p.ints()[0];
 		}
 	}

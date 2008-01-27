@@ -29,8 +29,14 @@
  */
 
 #include "ricpp/gendynlib/dynlib.h"
+
+#ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
+#endif
+
+#ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
+#endif
 
 using namespace RiCPP;
 
@@ -67,16 +73,13 @@ void CDynLib::load()
 	if ( isLoaded() ) {
 		++m_useCount;
 		return;
-		// return true;
 	}
 	m_useCount = 0;
 	if ( doLoad() ) {
 		++m_useCount;
 		return;
-		// return true;
 	}
 	throw ExceptRiCPPError(RIE_NOFILE, RIE_SEVERE, __LINE__, __FILE__, "Lib: '%s' Path: '%s'", libname(), libpath());
-	// return false;
 }
 
 bool CDynLib::unload()

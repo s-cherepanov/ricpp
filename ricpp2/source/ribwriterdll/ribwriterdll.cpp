@@ -31,9 +31,9 @@
 
 using namespace RiCPP;
 
-#ifdef WIN32
+#if defined(WIN32)
 
-#ifdef _MANAGED
+#if defined(_MANAGED)
 #pragma managed(push, off)
 #endif
 
@@ -47,7 +47,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-#ifdef _MANAGED
+#if defined(_MANAGED)
 #pragma managed(pop)
 #endif
 

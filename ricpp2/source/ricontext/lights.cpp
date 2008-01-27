@@ -82,6 +82,17 @@ void CLightSource::lightSource(
 	m_lightParameters.set(CValueCounts(), dict, colorDescr, name, n, tokens, params);
 }
 
+void CLightSource::lightSource(
+    bool isIlluminated, bool isGlobal, bool isArea,
+    const char *name, const CParameterList &params)
+{
+	m_isIlluminated = isIlluminated;
+	m_isGlobalLight = isGlobal;
+	m_isAreaLight   = isArea;
+
+	m_lightParameters.set(name, params);
+}
+
 CLightSource *CLightSourceFactory::newLightSource(const char *name) const
 {
 	CLightSource *light = new CLightSource(name);
@@ -108,6 +119,24 @@ CLightSource *CLightSourceFactory::newLightSource(
 		isIlluminated, isGlobal, isArea,
 		name,
 		n, tokens, params);
+
+	return light;
+}
+
+
+CLightSource *CLightSourceFactory::newLightSource(
+	bool isIlluminated, bool isGlobal, bool isArea,
+	const char *name,
+	const CParameterList &params) const
+{
+	CLightSource *light = newLightSource();
+	if ( !light ) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "%s", "CLightSource::newLightSource()");
+	}
+
+	light->lightSource(
+		isIlluminated, isGlobal, isArea,
+		name, params);
 
 	return light;
 }
@@ -186,6 +215,33 @@ RtLightHandle CLights::getHandle(RtLightHandle idx)
 	return m_handles[static_cast<TypeLightContainer::size_type>(idx)];
 }
 
+
+RtLightHandle CLights::lightSource(
+	bool isIlluminated, bool isGlobal, bool isArea,
+	const char *name,
+	const CParameterList &params)
+{
+	assert(m_lightsFactory != 0);
+
+	try {
+		m_lights.push_back(0);
+	} catch(std::exception e) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "%s: %s", "CLightSource::lightSource()", noNullStr(e.what()));
+	}
+
+	CLightSource *s = m_lightsFactory->newLightSource(
+		isIlluminated, isGlobal, isArea,
+		name,
+		params);
+
+	m_lights[m_lights.size()-1] = s;
+
+	RtLightHandle handle = static_cast<RtLightHandle>(m_lights.size());
+	// handle > 0
+	s->handle(handle);
+	
+	return handle;
+}
 
 RtLightHandle CLights::lightSource(
 	CDeclarationDictionary &dict, const CColorDescr &colorDescr,

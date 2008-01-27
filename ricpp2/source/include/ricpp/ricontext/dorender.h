@@ -85,6 +85,7 @@ public:
 	virtual RtVoid preSynchronize(RtToken name) = 0;
 	virtual RtVoid preSystem(RtString cmd) = 0;
 	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params) = 0;
+    virtual RtVoid preControl(RtToken name, const CParameterList &params) = 0;
 
 	virtual RtVoid preBegin(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid preEnd(void) = 0;
@@ -138,7 +139,7 @@ public:
     virtual RtVoid preHider(RtToken type, const CParameterList &params) = 0;
     virtual RtVoid preColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]) = 0;
     virtual RtVoid preRelativeDetail(RtFloat relativedetail) = 0;
-    virtual RtVoid preOption(RtString name, const CParameterList &params) = 0;
+    virtual RtVoid preOption(RtToken name, const CParameterList &params) = 0;
 	
     virtual RtLightHandle preLightSource(RtString name, const CParameterList &params) = 0;
 	virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params) = 0;
@@ -239,10 +240,12 @@ public:
 
 	/** @brief used to control the renderer has no rib binding
 	 *
-	 *  The tokens have special meaning to the renderer and are not declared
+	 *  The tokens have special meaning to the renderer and are pre-declared.
 	 *
+	 * @param name Unique token for the control request.
+	 * @param params Parameter list.
 	 */
-	inline virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
+    virtual RtVoid doControl(RtString name, const CParameterList &params) = 0;
 
 	/** @brief Called after declaration is done
 	 * 
@@ -403,6 +406,7 @@ public:
 	virtual RtVoid postSynchronize(RtToken name) = 0;
 	virtual RtVoid postSystem(RtString cmd) = 0;
 	virtual RtVoid postResource(RtString handle, RtString type, const CParameterList &params) = 0;
+    virtual RtVoid postControl(RtString name, const CParameterList &params) = 0;
 
 	virtual RtVoid postBegin(RtString name, const CParameterList &params) = 0;
 	virtual RtVoid postEnd(void) = 0;

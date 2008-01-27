@@ -592,6 +592,7 @@ public:
 	inline virtual RtVoid preSynchronize(RtToken name) {}
 	inline virtual RtVoid preSystem(RtString cmd) {}
 	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params);
+    inline virtual RtVoid preControl(RtString name, const CParameterList &params) {}
 
 	virtual RtVoid preBegin(RtString name, const CParameterList &params);
 	virtual RtVoid preEnd(void);
@@ -647,9 +648,9 @@ public:
 	virtual RtVoid preRelativeDetail(RtFloat relativedetail);
 	virtual RtVoid preOption(RtString name, const CParameterList &params);
 
-	inline virtual RtLightHandle preLightSource(RtString name, const CParameterList &params) { return illLightHandle; }
-	inline virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params) { return illLightHandle; }
-	inline virtual RtVoid preIlluminate(RtLightHandle light, RtBoolean onoff) {}
+	virtual RtLightHandle preLightSource(RtString name, const CParameterList &params);
+	virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params);
+	virtual RtVoid preIlluminate(RtLightHandle light, RtBoolean onoff);
 
 	virtual RtVoid preAttribute(RtString name, const CParameterList &params);
 	virtual RtVoid preColor(RtColor Cs);
@@ -753,6 +754,7 @@ public:
 	inline virtual RtVoid doSynchronize(RtToken name) {}
 	inline virtual RtVoid doSystem(RtString cmd) {}
 	virtual RtVoid doResource(RtString handle, RtString type, const CParameterList &params);
+    inline virtual RtVoid doControl(RtString name, const CParameterList &params) {}
 
 	inline virtual RtVoid doBegin(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doEnd(void) {}
@@ -898,7 +900,8 @@ public:
 	virtual RtVoid postDeclare(RtToken name, RtString declaration);
 	inline virtual RtVoid postSynchronize(RtToken name){}
 	inline virtual RtVoid postSystem(RtString cmd){}
-	RtVoid postResource(RtString handle, RtString type, const CParameterList &params);
+	virtual RtVoid postResource(RtString handle, RtString type, const CParameterList &params);
+    inline virtual RtVoid postControl(RtString name, const CParameterList &params) {}
 
 	inline virtual RtVoid postBegin(RtString name, const CParameterList &params){}
 	inline virtual RtVoid postEnd(void){}

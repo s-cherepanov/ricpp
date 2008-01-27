@@ -447,6 +447,158 @@ public:
 		return *this;
 	}
 }; // CRiSystem
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Backend/Frontend control.
+ *
+ *  Not a Rib command and not used in macros.
+ */
+class CRiControl : public CVarParamRManInterfaceCall {
+private:
+	RtToken m_name; //!< Name of the control request as atomized string.
+
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiControl"; }
+
+	inline virtual const char *className() const { return CRiControl::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the control request as atomized string.
+	 */
+	inline CRiControl(
+		long aLineNo = -1,
+		RtToken aName = RI_NULL)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aName Name of the control request as atomized string.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
+	inline CRiControl(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtToken name,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+	{
+		CParameterClasses p;
+		setParams(decl, p, curColorDescr, n, tokens, params);
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the control request as atomized string.
+	 *  @param parameters Parsed parameter list.
+	 */
+	inline CRiControl(
+		long aLineNo,
+		RtToken aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+	{
+	}
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiControl(const CRiControl &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiControl()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiControl(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_CONTROL; }
+
+	/** @brief Gets the name of the control request as atomized string.
+	 *
+	 *  @return The name of the control request as atomized string.
+	 */
+	inline RtToken name() const
+	{
+		return m_name;
+	}
+
+	/** @brief Sets the name of the control request as atomized string.
+	 *
+	 *  @param aName The name of the control request as atomized string.
+	 */
+	inline void name(RtToken aName)
+	{
+		m_name = aName;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preControl(m_name, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doControl(m_name, parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postControl(m_name, parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiControl &operator=(const CRiControl &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		name(c.name());
+
+		CVarParamRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiControl
 }
 
 #endif // _RICPP_RICONTEXT_RIMACROMISC_H

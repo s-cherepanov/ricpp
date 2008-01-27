@@ -43,7 +43,7 @@
 
 namespace RiCPP {
 
-#ifndef _MSC_VER
+#if defined(__GNUC__)
 /** @brief Symbolic name for visibility("default") attribute.
  * (MAC)
  * see http://developer.apple.com/technotes/tn2007/tn2185.html
@@ -335,7 +335,7 @@ public:
 	virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
 }; // CErrorExceptionHandler
 
-#ifndef _MSC_VER
+#if defined(__GNUC__)
 #pragma GCC visibility pop
 #endif
 

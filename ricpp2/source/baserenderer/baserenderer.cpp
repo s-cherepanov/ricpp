@@ -350,9 +350,11 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 {
 	try {
 
+		// Test for correct state
 		if ( !preCheck(REQ_DECLARE) )
 			return RI_NULL;
 
+		// Name has to exist
 		if ( emptyStr(name) ) {
 			throw ExceptRiCPPError(
 				RIE_MISSINGDATA,
@@ -361,14 +363,18 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 				"name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration)
 			);
 		}
+		
+		// Create or get a token for the name
 		name = renderState()->tokFindCreate(name);
 
-		// Allways process the declaration where it occurs
+		// Always process the declaration where it occurs
 		name = processDeclare(name, declaration, false);
 
+		// Process
 		CRiDeclare r(renderState()->lineNo(), name, declaration);
 		processRequest(r);
 
+		// Return the token
 		return name;
 
 	} catch ( ExceptRiCPPError &e2 ) {
@@ -386,7 +392,7 @@ RtToken CBaseRenderer::declare(RtString name, RtString declaration)
 
 void CBaseRenderer::defaultDeclarations()
 {
-	// Default declarations
+	// Default declarations (Tokens are already defined!)
 	processDeclare(RI_FLATNESS, "float", true);
 	processDeclare(RI_FOV, "float", true);
 
@@ -438,9 +444,8 @@ RtVoid CBaseRenderer::preBegin(RtString name, const CParameterList &params)
 RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ExceptRiCPPError
 {
-	// Render state is initialized here, there is no mode so it must be not valid
-	// This is the case because begin is only called through the frame work
-	// A begin at the frontend always creates a new backend.
+	// Render state is initialized here, there is no mode so it must be not valid.
+	// This beginV() is only called through the framework by the frontend after creation of this backend.
 	if ( renderState() ) {
 		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, "State already initialized in begin, begin called twice. That can an implementation error.");
 		return 0;
@@ -449,17 +454,20 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 	try {
 		// Init
 
+		// Create a new state object
 		initRenderState();
 
+		// Indicates that begin has been called
 		renderState()->contextBegin();
 
+		// Set the default declarations
 		defaultDeclarations();
 
 		// Handle the parameters
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
-		preBegin(name, renderState()->curParamList());
-		doBegin(name, renderState()->curParamList());
-		postBegin(name, renderState()->curParamList());
+
+		CRiBegin r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -476,19 +484,24 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'begin'");
 	}
 
-	return 0;
+	// There is no handle here, the frontend creates the backend
+	return 1;
 }
+
 
 RtVoid CBaseRenderer::preEnd(void)
 {
+	// Close an area light source if exists
 	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
 	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
 	{
 		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
 		renderState()->endAreaLightSource();
 	}
+	
 	renderState()->contextEnd();
 }
+
 
 RtVoid CBaseRenderer::end(void)
 // throw ExceptRiCPPError
@@ -505,9 +518,8 @@ RtVoid CBaseRenderer::end(void)
 	}
 
 	try {
-		preEnd();
-		doEnd();
-		postEnd();
+		CRiEnd r(renderState()->lineNo());
+		processRequest(r);
 	} catch ( ExceptRiCPPError &e2 ) {
 		err = e2;
 	} catch ( std::exception &e1 ) {
@@ -576,6 +588,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 
 		if ( !preCheck(REQ_FRAME_END) )
 			return;
+			
 		CRiFrameEnd r(renderState()->lineNo());
 		processRequest(r);
 
@@ -2046,7 +2059,11 @@ RtVoid CBaseRenderer::controlV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		if ( !preCheck(req) )
 			return;
 
-		doControl(name, n, tokens, params);
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+
+		CRiControl r(renderState()->lineNo(), name, renderState()->curParamList());
+		processRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -2069,6 +2086,15 @@ RtVoid CBaseRenderer::controlV(RtString name, RtInt n, RtToken tokens[], RtPoint
 }
 
 
+RtLightHandle CBaseRenderer::preLightSource(RtString name, const CParameterList &params)
+{
+	RtLightHandle h = renderState()->lights().lightSource(
+		true, !renderState()->inWorldBlock(), false, name, params
+	);
+	return h;
+}
+
+	
 RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	RtLightHandle h = illLightHandle;
@@ -2080,32 +2106,19 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
-		if ( renderState()->curMacro() ) {
-				CRiLightSource *m = new CRiLightSource(*renderState(), name, n, tokens, params);
-				if ( !m )
-					throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiLightSource", __LINE__, __FILE__));
-				renderState()->curMacro()->add(m);
-				return m->handleIdx();
-		} else {
-			if ( renderState()->executeConditionial() ) {
-				h = renderState()->lights().lightSource(renderState()->dict(), renderState()->options().colorDescr(),
-					true, !renderState()->inWorldBlock(), false, name, n, tokens, params);
-
-				if ( renderState()->updateStateOnly() )
-					return h;
-
-				doLightSource(h, name, renderState()->curParamList());
-			}
-		}
-
+		CRiLightSource r(*renderState(), name, n, tokens, params);
+		processRequest(r);
+		h = r.handleIdx();
+		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
+		return illLightHandle;
 	} catch ( std::exception &e1 ) {
 		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare': %s", e1.what());
-		return 0;
+		return illLightHandle;
 	} catch ( ... ) {
 		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare'");
-		return 0;
+		return illLightHandle;
 	}
 
 	if ( n != renderState()->numTokens() ) {
@@ -2116,89 +2129,68 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 }
 
 
+RtLightHandle CBaseRenderer::preAreaLightSource(RtString name, const CParameterList &params)
+{
+	RtLightHandle h = renderState()->lights().lightSource(
+		true, !renderState()->inWorldBlock(), true, name, params
+	);
+	return h;
+}
+
+	
 RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	if ( !preCheck(REQ_AREA_LIGHT_SOURCE) )
-		return illLightHandle;
-
-	name = renderState()->tokFindCreate(name);
-	renderState()->parseParameters(CParameterClasses(), n, tokens, params);
-
-	RtLightHandle h = renderState()->areaLightSourceHandle();
-
-	if ( h != illLightHandle ) {
-		renderState()->endAreaLightSource();
-	}
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			CRiAreaLightSource *m = new CRiAreaLightSource(*renderState(), name, n, tokens, params);
-			if ( !m )
-				throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiAreaLightSource", __LINE__, __FILE__));
-			renderState()->curMacro()->add(m);
-			h = m->handleIdx();
-			renderState()->startAreaLightSource(h);
-
-			if ( n != renderState()->numTokens() ) {
-				ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
-			}
-			return h;
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-		if ( n != renderState()->numTokens() ) {
-			ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
-		}
-		return illLightHandle;
-	}
+	RtLightHandle h = illLightHandle;
 
 	try {
-		if ( !emptyStr(name) ) {
-			h = renderState()->lights().lightSource(renderState()->dict(), renderState()->options().colorDescr(),
-				true, !renderState()->inWorldBlock(), true, name, n, tokens, params);
-		}
-		renderState()->startAreaLightSource(h);
-
-		if ( renderState()->updateStateOnly() )
+		if ( !preCheck(REQ_AREA_LIGHT_SOURCE) )
 			return h;
 
-		doAreaLightSource(h, name, renderState()->curParamList());
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+
+		CRiAreaLightSource r(*renderState(), name, n, tokens, params);
+		processRequest(r);
+		h = r.handleIdx();
+		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
+		return illLightHandle;
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare': %s", e1.what());
+		return illLightHandle;
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare'");
+		return illLightHandle;
 	}
 
 	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'areaLightSourceV'");
+		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'lightSourceV'");
 	}
 
 	return h;
 }
 
+RtVoid CBaseRenderer::preIlluminate(RtLightHandle light, RtBoolean onoff)
+{
+	renderState()->attributes().illuminate(light, onoff);
+}
 
 RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 {
-	if ( !preCheck(REQ_ILLUMINATE) )
-		return;
-
-	renderState()->attributes().illuminate(light, onoff);
-
-	if ( renderState()->curMacro() ) {
-
-		try {
-			CRiIlluminate *m = new CRiIlluminate(renderState()->lineNo(), light, onoff);
-			if ( !m )
-				throw (ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "CRiIlluminate", __LINE__, __FILE__));
-			renderState()->curMacro()->add(m);
-		} catch ( ExceptRiCPPError &e2 ) {
-			ricppErrHandler().handleError(e2);
-		}
-
-	} else {
-		if ( renderState()->updateStateOnly() )
+	try {
+		if ( !preCheck(REQ_ILLUMINATE) )
 			return;
-		doIlluminate(light, onoff);
+
+		CRiIlluminate r(renderState()->lineNo(), light, onoff);
+		processRequest(r);
+		
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare': %s", e1.what());
+	} catch ( ... ) {
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'declare'");
 	}
 }
 
@@ -2207,6 +2199,7 @@ RtVoid CBaseRenderer::preAttribute(RtString name, const CParameterList &params)
 {
 	renderState()->attributes().set(name, params);
 }
+
 
 RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {

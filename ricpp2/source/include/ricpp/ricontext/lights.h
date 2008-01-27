@@ -98,6 +98,11 @@ public:
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
+	void lightSource(
+		bool isIlluminated, bool isGlobal, bool isArea,
+		const char *name,
+		const CParameterList &params);
+
 	//! Access the parameter list
 	/* \return A reference to the parameter list of the light source
 	 */
@@ -162,6 +167,11 @@ public:
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[]) const;
 
+	virtual CLightSource *newLightSource(
+		bool isIlluminated, bool isGlobal, bool isArea,
+		const char *name,
+		const CParameterList &params) const;
+
 	inline virtual void deleteLightSource(CLightSource *l)
 	{
 		delete l;
@@ -216,6 +226,12 @@ public:
 	RtLightHandle newLightHandleIdx();
 	void setHandle(RtLightHandle idx, RtLightHandle handle);
 	RtLightHandle getHandle(RtLightHandle idx);
+
+	RtLightHandle lightSource(
+		bool isIlluminated, bool isGlobal, bool isArea,
+		const char *name,
+		const CParameterList &params);
+
 
 	RtLightHandle lightSource(
 		CDeclarationDictionary &dict, const CColorDescr &colorDescr,

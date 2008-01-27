@@ -41,6 +41,249 @@ namespace RiCPP {
 // ----------------------------------------------------------------------------
 
 ///////////////////////////////////////////////////////////////////////////////
+/** @brief Begins the context
+ *
+ * CRiBegin is not used as a macro, but used for state control. 
+ *
+ */
+///////////////////////////////////////////////////////////////////////////////
+/** @brief User defined option.
+ */
+class CRiBegin : public CVarParamRManInterfaceCall {
+private:
+	std::string m_name; //!< Name of the backend as string.
+
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiBegin"; }
+
+	inline virtual const char *className() const { return CRiBegin::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the backedn.
+	 */
+	inline CRiBegin(
+		long aLineNo = -1,
+		RtString aName = RI_NULL)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(noNullStr(aName))
+	{
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param dict Dictonary with the current declarations.
+	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aName Name of the backend.
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
+	inline CRiBegin(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtString name,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CVarParamRManInterfaceCall(aLineNo), m_name(noNullStr(name))
+	{
+		CParameterClasses p;
+		setParams(decl, p, curColorDescr, n, tokens, params);
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aName Name of the backend.
+	 *  @param parameters Parsed parameter list.
+	 */
+	inline CRiBegin(
+		long aLineNo,
+		RtString aName,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(noNullStr(aName))
+	{
+	}
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiBegin(const CRiBegin &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiBegin()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiBegin(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_BEGIN; }
+
+	/** @brief Gets the name of the backend.
+	 *
+	 *  @return The name of the backend.
+	 */
+	inline RtString name() const
+	{
+		return m_name.c_str();
+	}
+
+	/** @brief Sets the name of the backend.
+	 *
+	 *  @param aName The name of the backend.
+	 */
+	inline void name(RtString aName)
+	{
+		m_name = noNullStr(aName);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preBegin(m_name.c_str(), parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doBegin(m_name.c_str(), parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postBegin(m_name.c_str(), parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiBegin &operator=(const CRiBegin &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		name(c.name());
+
+		CVarParamRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiBegin
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Ends the context
+ *
+ * CRiEnd is not used as a macro, but used for state control. 
+ *
+ */
+class CRiEnd : public CRManInterfaceCall {
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiEnd"; }
+
+	inline virtual const char *className() const { return CRiEnd::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
+	 */
+	inline CRiEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy
+	 */
+	inline CRiEnd(const CRiEnd &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiEnd()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiEnd(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_END; }
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preEnd();
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doEnd();
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postEnd();
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiEnd &CRiEnd::operator=(const CRiEnd &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiEnd
+
+
+///////////////////////////////////////////////////////////////////////////////
 /** @brief Begin of a resource block
  */
 class CRiResourceBegin : public CRManInterfaceCall {
@@ -205,6 +448,7 @@ public:
 		return *this;
 	}
 }; // CRiResourceEnd
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Resource handling

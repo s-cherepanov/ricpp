@@ -33,15 +33,15 @@
 #include <cstring>
 #include <ios>
 
-#ifdef WIN32
-#ifndef _WINDOWS_
+#if defined(WIN32)
+#if !defined(_WINDOWS_)
 #include <windows.h>
 #endif // _WINDOWS_
 #endif
 
 namespace RiCPP {
 
-#ifdef WIN32
+#if defined(WIN32)
 
 /** @brief Case insensitive strcmp() - Compare s1 with s2, under Mac and Linux/Unix there is no _stricmp(), it is named strcasecmp().
  *  @param s1 first NUL terminated string
@@ -57,6 +57,8 @@ inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2);
 typedef std::ios_base::openmode TypeOpenMode;
 
 #else
+
+// __GNUC__
 
 /** @brief Generic pointer to a function.
  *

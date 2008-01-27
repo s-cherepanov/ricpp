@@ -240,7 +240,7 @@ public:
 
 	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
 
-	inline virtual void onOff(RtLightHandle onoff) { m_onoff = onoff; }
+	inline virtual void onOff(RtBoolean onoff) { m_onoff = onoff; }
 
 	inline virtual RtBoolean onOff() const { return m_onoff; }
 

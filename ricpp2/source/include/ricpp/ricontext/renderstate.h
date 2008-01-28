@@ -653,6 +653,7 @@ public:
 	inline void worldBegin()
 	{
 		pushTransform();
+		m_transformStack.back().identity();
 		m_transformStack.back().spaceType(RI_WORLD);
 		pushAttributes();
 

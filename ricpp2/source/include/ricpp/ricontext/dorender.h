@@ -180,7 +180,7 @@ public:
 	virtual RtVoid preScopedCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid preCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid preCoordSysTransform(RtToken space) = 0;
-	virtual RtPoint *preTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
+	virtual RtVoid preTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
 
     virtual RtVoid prePolygon(RtInt nvertices, const CParameterList &params) = 0;
 	virtual RtVoid preGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params) = 0;
@@ -353,7 +353,7 @@ public:
 	virtual RtVoid doScopedCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid doCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid doCoordSysTransform(RtToken space) = 0;
-	virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
+	virtual RtVoid doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
 
     virtual RtVoid doPolygon(RtInt nvertices, const CParameterList &params) = 0;
 	virtual RtVoid doGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params) = 0;
@@ -501,7 +501,7 @@ public:
 	virtual RtVoid postScopedCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid postCoordinateSystem(RtToken space) = 0;
 	virtual RtVoid postCoordSysTransform(RtToken space) = 0;
-	virtual RtPoint *postTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
+	virtual RtVoid postTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
 
     virtual RtVoid postPolygon(RtInt nvertices, const CParameterList &params) = 0;
 	virtual RtVoid postGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params) = 0;

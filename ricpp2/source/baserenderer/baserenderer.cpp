@@ -3059,6 +3059,13 @@ RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], Rt
 	}
 }
 
+
+RtVoid CBaseRenderer::preIdentity(void)
+{
+	renderState()->curTransform().identity();
+}
+
+
 RtVoid CBaseRenderer::identity(void)
 {
 	EnumRequests req = REQ_IDENTITY;
@@ -3088,6 +3095,13 @@ RtVoid CBaseRenderer::identity(void)
 		return;
 	}
 }
+
+
+RtVoid CBaseRenderer::preTransform(RtMatrix aTransform)
+{
+	renderState()->curTransform().transform(aTransform);
+}
+
 
 RtVoid CBaseRenderer::transform(RtMatrix aTransform)
 {
@@ -3119,6 +3133,13 @@ RtVoid CBaseRenderer::transform(RtMatrix aTransform)
 	}
 }
 
+
+RtVoid CBaseRenderer::preConcatTransform(RtMatrix aTransform)
+{
+	renderState()->curTransform().concatTransform(aTransform);
+}
+
+
 RtVoid CBaseRenderer::concatTransform(RtMatrix aTransform)
 {
 	EnumRequests req = REQ_CONCAT_TRANSFORM;
@@ -3148,6 +3169,13 @@ RtVoid CBaseRenderer::concatTransform(RtMatrix aTransform)
 		return;
 	}
 }
+
+
+RtVoid CBaseRenderer::prePerspective(RtFloat fov)
+{
+	renderState()->curTransform().perspective(fov);
+}
+
 
 RtVoid CBaseRenderer::perspective(RtFloat fov)
 {
@@ -3179,6 +3207,13 @@ RtVoid CBaseRenderer::perspective(RtFloat fov)
 	}
 }
 
+
+RtVoid CBaseRenderer::preTranslate(RtFloat dx, RtFloat dy, RtFloat dz)
+{
+	renderState()->curTransform().translate(dx, dy, dz);
+}
+
+
 RtVoid CBaseRenderer::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	EnumRequests req = REQ_TRANSLATE;
@@ -3207,6 +3242,12 @@ RtVoid CBaseRenderer::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 			"Unknown error at '%s'",  CRequestInfo::requestName(req));
 		return;
 	}
+}
+
+
+RtVoid CBaseRenderer::preRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+{
+	renderState()->curTransform().rotate(angle, dx, dy, dz);
 }
 
 
@@ -3240,6 +3281,13 @@ RtVoid CBaseRenderer::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 	}
 }
 
+
+RtVoid CBaseRenderer::preScale(RtFloat dx, RtFloat dy, RtFloat dz)
+{
+	renderState()->curTransform().scale(dx, dy, dz);
+}
+
+
 RtVoid CBaseRenderer::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	EnumRequests req = REQ_SCALE;
@@ -3268,6 +3316,12 @@ RtVoid CBaseRenderer::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 			"Unknown error at '%s'",  CRequestInfo::requestName(req));
 		return;
 	}
+}
+
+
+RtVoid CBaseRenderer::preSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+{
+	renderState()->curTransform().skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
 }
 
 
@@ -3301,6 +3355,15 @@ RtVoid CBaseRenderer::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1,
 	}
 }
 
+
+RtVoid CBaseRenderer::doDeformation(RtString name, const CParameterList &params)
+{
+	ricppErrHandler().handleError(
+		RIE_UNIMPLEMENT, RIE_WARNING,
+		renderState()->printLineNo(__LINE__),
+		renderState()->printName(__FILE__),
+		"RiDeformation is not supported, name = '%s'",  noNullStr(name));
+}
 
 RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
@@ -3344,6 +3407,11 @@ RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtP
 }
 
 
+RtVoid CBaseRenderer::preScopedCoordinateSystem(RtToken space)
+{
+	renderState()->scopedCoordinateSystem(space);
+}
+
 RtVoid CBaseRenderer::scopedCoordinateSystem(RtToken space)
 {
 	EnumRequests req = REQ_SCOPED_COORDINATE_SYSTEM;
@@ -3375,6 +3443,11 @@ RtVoid CBaseRenderer::scopedCoordinateSystem(RtToken space)
 	}
 }
 
+
+RtVoid CBaseRenderer::preCoordinateSystem(RtToken space)
+{
+	renderState()->coordinateSystem(space);
+}
 
 RtVoid CBaseRenderer::coordinateSystem(RtToken space)
 {
@@ -3408,6 +3481,22 @@ RtVoid CBaseRenderer::coordinateSystem(RtToken space)
 }
 
 
+RtVoid CBaseRenderer::preCoordSysTransform(RtToken space)
+{
+	const CTransformation *t = renderState()->findTransform(space);
+	if ( t ) {
+		RtToken curSpaceType = renderState()->curTransform().spaceType();
+
+		if ( curSpaceType != t->spaceType() ) {
+			// To do handle different space types.
+		} else {
+			renderState()->curTransform() = *t;
+			renderState()->curTransform().spaceType(curSpaceType);
+		}
+
+	}
+}
+
 RtVoid CBaseRenderer::coordSysTransform(RtToken space)
 {
 	EnumRequests req = REQ_COORD_SYS_TRANSFORM;
@@ -3439,12 +3528,26 @@ RtVoid CBaseRenderer::coordSysTransform(RtToken space)
 	}
 }
 
+RtVoid CBaseRenderer::doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
+{
+	if ( npoints <= 0 ) {
+		return;
+	}
+	const CTransformation *from = renderState()->findTransform(fromspace);
+	const CTransformation *to   = renderState()->findTransform(tospace);
+	if ( from == 0 || to == 0 ) {
+		throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "transformPoints(%s (%s found), %s (%s found)), spaces not found", noNullStr(fromspace), from ? "was" : "not", noNullStr(tospace), to ? "was" : "not");
+		return;
+	}
+
+	// 2Do
+}
 
 RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) {
 	EnumRequests req = REQ_TRANSFORM_POINTS;
 	try {
 		if ( !preCheck(req) )
-			return &points[0];
+			return 0;
 
 		fromspace = renderState()->tokFindCreate(fromspace);
 		tospace = renderState()->tokFindCreate(tospace);
@@ -3453,21 +3556,21 @@ RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtIn
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
-		return &points[0];
+		return 0;
 	} catch ( std::exception &e1 ) {
 		ricppErrHandler().handleError(
 			RIE_SYSTEM, RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
 			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return &points[0];
+		return 0;
 	} catch ( ... ) {
 		ricppErrHandler().handleError(
 			RIE_SYSTEM, RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
 			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return &points[0];
+		return 0;
 	}
 
 	return &points[0];

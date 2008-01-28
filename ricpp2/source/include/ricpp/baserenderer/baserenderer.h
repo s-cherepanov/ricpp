@@ -675,19 +675,19 @@ public:
 	virtual RtVoid preBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
 	virtual RtVoid preTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 
-	inline virtual RtVoid preIdentity(void) {}
-	inline virtual RtVoid preTransform(RtMatrix aTransform) {}
-	inline virtual RtVoid preConcatTransform(RtMatrix aTransform) {}
-	inline virtual RtVoid prePerspective(RtFloat fov) {}
-	inline virtual RtVoid preTranslate(RtFloat dx, RtFloat dy, RtFloat dz) {}
-	inline virtual RtVoid preRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}
-	inline virtual RtVoid preScale(RtFloat dx, RtFloat dy, RtFloat dz) {}
-	inline virtual RtVoid preSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {}
+	virtual RtVoid preIdentity(void);
+	virtual RtVoid preTransform(RtMatrix aTransform);
+	virtual RtVoid preConcatTransform(RtMatrix aTransform);
+	virtual RtVoid prePerspective(RtFloat fov);
+	virtual RtVoid preTranslate(RtFloat dx, RtFloat dy, RtFloat dz);
+	virtual RtVoid preRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
+	virtual RtVoid preScale(RtFloat dx, RtFloat dy, RtFloat dz);
+	virtual RtVoid preSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
 	inline virtual RtVoid preDeformation(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid preScopedCoordinateSystem(RtToken space) {}
-	inline virtual RtVoid preCoordinateSystem(RtToken space) {}
-	inline virtual RtVoid preCoordSysTransform(RtToken space) {}
-	inline virtual RtPoint *preTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
+	virtual RtVoid preScopedCoordinateSystem(RtToken space);
+	virtual RtVoid preCoordinateSystem(RtToken space);
+	virtual RtVoid preCoordSysTransform(RtToken space);
+	inline virtual RtVoid preTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { }
 
 	inline virtual RtVoid prePolygon(RtInt nvertices, const CParameterList &params) {}
 	inline virtual RtVoid preGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params) {}
@@ -845,11 +845,11 @@ public:
 	inline virtual RtVoid doRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}
 	inline virtual RtVoid doScale(RtFloat dx, RtFloat dy, RtFloat dz) {}
 	inline virtual RtVoid doSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {}
-	inline virtual RtVoid doDeformation(RtString name, const CParameterList &params) {}
+	virtual RtVoid doDeformation(RtString name, const CParameterList &params);
 	inline virtual RtVoid doScopedCoordinateSystem(RtToken space) {}
 	inline virtual RtVoid doCoordinateSystem(RtToken space) {}
 	inline virtual RtVoid doCoordSysTransform(RtToken space) {}
-	inline virtual RtPoint *doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
+	virtual RtVoid doTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]);
 	inline virtual RtVoid doPolygon(RtInt nvertices, const CParameterList &params) {}
 	inline virtual RtVoid doGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params) {}
 	inline virtual RtVoid doPointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params) {}
@@ -996,7 +996,7 @@ public:
 	inline virtual RtVoid postScopedCoordinateSystem(RtToken space){}
 	inline virtual RtVoid postCoordinateSystem(RtToken space){}
 	inline virtual RtVoid postCoordSysTransform(RtToken space){}
-	inline virtual RtPoint *postTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { return &points[0]; }
+	inline virtual RtVoid postTransformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) { }
 
     inline virtual RtVoid postPolygon(RtInt nvertices, const CParameterList &params){}
 	inline virtual RtVoid postGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params){}

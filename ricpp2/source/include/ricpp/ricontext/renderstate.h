@@ -66,6 +66,8 @@
 #include "ricpp/ricontext/motionstate.h"
 #endif // _RICPP_RICONTEXT_MOTIONSTATE_H
 
+#include <list>
+
 namespace RiCPP {
 
 class CRManInterfaceFactory;
@@ -80,6 +82,8 @@ class CRiArchiveMacro;
  * @todo Remove STL from public interfaces of shared libraries (@see Creating Compatible Libraries in Apples C++ Runtime Environment Programming Guide)
  */
 class CRenderState {
+	typedef std::map<RtToken, CTransformation> TypeTransformationMap;
+
 	CModeStack *m_modeStack;                       ///< Pointer to a mode stack.
 
 	RtInt m_frameNumber;                           ///< Frame number.
@@ -103,6 +107,9 @@ class CRenderState {
 	std::vector<CAttributes *> m_attributesStack;  ///< Current attributes stack.
 
 	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses.
+
+	TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
+	std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.
 
 	CParameterList m_curParams;                    ///< Params of the last interface request with variable parameters.
 
@@ -608,11 +615,14 @@ public:
 		pushOptions();
 		pushAttributes();
 		pushTransform();
+		m_transformStack.back().spaceType(RI_CAMERA);
+
 		m_modeStack->contextBegin();
 	}
 	inline void contextEnd()
 	{
 		m_modeStack->contextEnd();
+
 		popTransform();
 		popAttributes();
 		popOptions();
@@ -625,6 +635,7 @@ public:
 		pushOptions();
 		pushAttributes();
 		pushTransform();
+
 		m_modeStack->frameBegin();
 		frameNumber(number);
 	}
@@ -632,6 +643,7 @@ public:
 	{
 		frameNumber(0);
 		m_modeStack->frameEnd();
+
 		popTransform();
 		popAttributes();
 		popOptions();
@@ -641,12 +653,15 @@ public:
 	inline void worldBegin()
 	{
 		pushTransform();
+		m_transformStack.back().spaceType(RI_WORLD);
 		pushAttributes();
+
 		m_modeStack->worldBegin();
 	}
 	inline void worldEnd()
 	{
 		m_modeStack->worldEnd();
+
 		popAttributes();
 		popTransform();
 		m_lights.clearToMark();
@@ -656,11 +671,13 @@ public:
 	{
 		pushTransform();
 		pushAttributes();
+
 		m_modeStack->attributeBegin();
 	}
 	inline void attributeEnd()
 	{
 		m_modeStack->attributeEnd();
+
 		popAttributes();
 		popTransform();
 	}
@@ -894,17 +911,30 @@ public:
 		return *(m_attributesStack.back());
 	}
 
-	inline CTransformation &transform()
+	inline CTransformation &curTransform()
 	{
 		assert(!m_transformStack.empty());
 		return m_transformStack.back();
 	}
 
-	inline virtual const CTransformation &transform() const
+	inline virtual const CTransformation &curTransform() const
 	{
 		assert(!m_transformStack.empty());
 		return m_transformStack.back();
 	}
+
+	inline virtual void coordinateSystem(RtToken space)
+	{
+		m_globalTransforms[space] = curTransform();
+	}
+
+	inline virtual void scopedCoordinateSystem(RtToken space)
+	{
+		assert(!m_scopedTransforms.empty());
+		m_scopedTransforms.back()[space] = curTransform();
+	}
+
+	virtual const CTransformation *findTransform(RtToken space) const;
 
 	inline CLights &lights() { return m_lights; }
 

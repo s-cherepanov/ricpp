@@ -1283,7 +1283,7 @@ void CMatrix3D::skew(RtFloat w,
 void CMatrix3D::perspective(RtFloat fov) {
         RtMatrix mat;
 
-        if ( fov >= 180.0F ) {
+        if ( fov >= (RtFloat)180.0 ) {
                 // It's an error - so do nothing
                 return;
         }
@@ -1295,6 +1295,31 @@ void CMatrix3D::perspective(RtFloat fov) {
         mat[1][0] = 0.0; mat[1][1] = 1.0; mat[1][2] = 0.0; mat[1][3] = 0.0;
         mat[2][0] = 0.0; mat[2][1] = 0.0; mat[2][2] =  f;  mat[2][3] = f;
         mat[3][0] = 0.0; mat[3][1] = 0.0; mat[3][2] = -f;  mat[3][3] = 0.0;
+
+        concatTransform(mat);
+}
+
+void CMatrix3D::inversePerspective(RtFloat fov)
+{
+        RtMatrix mat;
+
+        if ( fov >= (RtFloat)180.0 ) {
+                // It's an error - so do nothing
+                return;
+        }
+
+        RtFloat f = deg2rad(fov);
+        f = (RtFloat)tan(f/2.0);
+		if ( ( f == 0.0 ) ) {
+			return;
+		}
+
+		f = (RtFloat)1.0/f;
+
+        mat[0][0] = 1.0; mat[0][1] = 0.0; mat[0][2] = 0.0; mat[0][3] = 0.0;
+        mat[1][0] = 0.0; mat[1][1] = 1.0; mat[1][2] = 0.0; mat[1][3] = 0.0;
+        mat[2][0] = 0.0; mat[2][1] = 0.0; mat[2][2] = 0.0; mat[2][3] = -f;
+        mat[3][0] = 0.0; mat[3][1] = 0.0; mat[3][2] = f;   mat[3][3] = f;
 
         concatTransform(mat);
 }

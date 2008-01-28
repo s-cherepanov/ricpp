@@ -47,14 +47,19 @@ class CTransformation {
 	//! false, did an operation that could not calculate the inverse.
 	bool m_isValid;
 
+	//! Space type of the coordinate system (current, world, camera, screen, raster, etc.)
+	RtToken m_spaceType;
+
 public:
 	//! matrices will be identity.
 	CTransformation();
 
+	//! Copy constructor
 	inline CTransformation(const CTransformation &rt)
 	{
 		*this = rt;
 	}
+
 	//! Destructor
 	inline virtual ~CTransformation() { }
 
@@ -62,7 +67,7 @@ public:
 	/*! \retrun a copy of this.
 	 *  \exception ExceptRiCPPError Thrown if there is not enough memory.
 	 */
-	inline CTransformation &duplicate() const;
+	virtual CTransformation &duplicate() const;
 
 	//! Assigns instance o to this instance.
 	/*! \param o Instance to copy from.
@@ -100,6 +105,9 @@ public:
 	RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
 	RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz);
 	RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
+
+	RtToken spaceType() const { return m_spaceType; }
+	void spaceType(RtToken aSpaceType) { m_spaceType = aSpaceType; }
 }; // CTransformation
 
 }

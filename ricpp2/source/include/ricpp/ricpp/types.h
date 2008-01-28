@@ -854,6 +854,7 @@ public:
 	void skew(RtFloat w, RtFloat x1, RtFloat y1, RtFloat z1, RtFloat x2, RtFloat y2, RtFloat z2);
 
 	void perspective(RtFloat fov);
+	void inversePerspective(RtFloat fov);
 
 	RtFloat determinant() const;
 	bool isIdentity() const;

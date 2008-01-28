@@ -1134,6 +1134,7 @@ RtObjectHandle CRenderState::objectBegin()
 	pushOptions();
 	pushAttributes();
 	pushTransform();
+
 	m_modeStack->objectBegin();
 
 	m_macros.push_back(m_curMacro);
@@ -1156,6 +1157,7 @@ RtObjectHandle CRenderState::objectBegin()
 void CRenderState::objectEnd()
 {
 	m_modeStack->objectEnd();
+
 	popTransform();
 	popAttributes();
 	popOptions();
@@ -1187,6 +1189,7 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 	pushOptions();
 	pushAttributes();
 	pushTransform();
+
 	m_modeStack->archiveBegin();
 
 	if ( executeConditionial() || curMacro() != 0 ) {
@@ -1208,6 +1211,7 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 
 void CRenderState::archiveEnd() {
 	m_modeStack->archiveEnd();
+
 	popTransform();
 	popAttributes();
 	popOptions();
@@ -1464,6 +1468,8 @@ bool CRenderState::popOptions()
 void CRenderState::pushAttributes()
 {
 	try {
+		TypeTransformationMap tm;
+		m_scopedTransforms.push_back(tm);
 
 		if ( m_attributesStack.empty() ) {
 			m_attributesStack.push_back(m_attributesFactory->newAttributes(options().colorDescr()));
@@ -1488,13 +1494,20 @@ bool CRenderState::popAttributes()
 		m_attributesFactory->deleteAttributes(m_attributesStack.back());
 		m_attributesStack.pop_back();
 	}
+	if ( !m_scopedTransforms.empty() ) {
+		m_scopedTransforms.pop_back();
+	}
 	return !m_attributesStack.empty();
 }
 
 void CRenderState::pushTransform()
 {
 	try {
-		m_transformStack.push_back(CTransformation());
+		if ( m_transformStack.empty() ) {
+			m_transformStack.push_back(CTransformation());
+		} else {
+			m_transformStack.push_back(m_transformStack.back());
+		}
 	} catch (std::exception &e) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,  __LINE__, __FILE__, "in pushTransform(): %s", e.what());
 	}
@@ -1508,6 +1521,28 @@ bool CRenderState::popTransform()
 	return !m_transformStack.empty();
 }
 
+const CTransformation *CRenderState::findTransform(RtToken space) const
+{
+	std::map<RtString, CTransformation>::const_iterator pos;
+
+	if ( !m_scopedTransforms.empty() ) {
+		for( std::list<TypeTransformationMap>::const_reverse_iterator i = m_scopedTransforms.rbegin();
+		     i != m_scopedTransforms.rend();
+			 i++ )
+		{
+			pos = (*i).find(space);
+			if ( pos != (*i).end() ) {
+				return &((*pos).second);
+			}
+		}
+	}
+
+	pos = m_globalTransforms.find(space);
+	if ( pos != m_globalTransforms.end() ) {
+		return &((*pos).second);
+	}
+	return 0;
+}
 
 void CRenderState::startAreaLightSource(RtLightHandle h)
 {

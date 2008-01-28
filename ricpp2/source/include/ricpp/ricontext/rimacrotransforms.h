@@ -1767,10 +1767,10 @@ public:
  */
 class CRiTransformPoints : public CRManInterfaceCall {
 private:
-	RtToken m_fromspace, //!< The space from which the coordiantes are transformed.
-	        m_tospace;   //!< The space to which the coordiantes are transformed.
-	RtInt m_npoints;     //!< The number of Points
-	RtPoint *m_points;   //!< The point er to the result
+	RtToken m_fromspace, //!< Space from which the coordiantes are transformed.
+	        m_tospace;   //!< Space to which the coordiantes are transformed.
+	RtInt m_npoints;     //!< Number of Points
+	RtPoint *m_points;   //!< Address of the result
 
 	std::vector<RtFloat> m_pointsvector; //!< The source points (copy)
 

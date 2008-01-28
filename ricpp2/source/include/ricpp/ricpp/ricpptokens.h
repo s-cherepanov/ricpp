@@ -1,7 +1,6 @@
 #ifndef _RICPP_RICPP_RICPPTOKENS_H
 #define _RICPP_RICPP_RICPPTOKENS_H
 
-
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
@@ -172,12 +171,10 @@ const RtToken  RI_LINEAR = "linear", ///< Linear curves @see CRiCPP::curvesV()
 const RtToken  RI_WIDTH = "width",
 			   RI_CONSTANTWIDTH = "constantwidth";
 
-/*
 const RtToken  RI_CURRENT = "current", // Current coordinate system
 			   RI_EYE = "eye",         // Eye coordinate system
 			   RI_SHADER = "shader",   // Shader coordinate system
                RI_NDC = "NDC";         // NDC coordinate system
-*/
 
 const RtToken  RI_FILEPOINTER = "filepointer", ///< Input/Output to a file FILE * (resource)
                RI_MEMORY = "memory";           ///< Input from memory resource, not allowed for RIB

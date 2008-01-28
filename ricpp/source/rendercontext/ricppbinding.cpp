@@ -152,7 +152,7 @@ RtInt TRiCPPBinding::getSizes(RtInt vertices, RtInt corners, RtInt facets, RtInt
 			paramSize.m_memoryNeeded = 0;
 			RtInt j;
 			for ( j=0; j<paramSize.m_numberOfElements; ++j ) {
-				paramSize.m_memoryNeeded += ptr[j] ? strlen(ptr[j])+1 : 1;
+				paramSize.m_memoryNeeded += (IndexType)(ptr[j] ? strlen(ptr[j])+1 : 1);
 			}
 		}
 		m_sizes.push_back(paramSize);

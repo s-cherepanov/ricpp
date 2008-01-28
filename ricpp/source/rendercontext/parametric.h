@@ -362,7 +362,7 @@ template<class _T> inline _T &findUV(std::deque<_T> &uvMeshDeque, IndexType tess
 	}
 
 	isNew = true;
-	idx = uvMeshDeque.size();
+	idx = (IndexType)uvMeshDeque.size();
 	IndexType savIdx=idx;
 	uvMeshDeque.resize(uvMeshDeque.size()+numMesh);
 	for ( ; savIdx < uvMeshDeque.size(); ++savIdx ) {

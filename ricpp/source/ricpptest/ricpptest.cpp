@@ -239,7 +239,7 @@ int WINAPI WinMain(
 	}
 
 	// The end
-	return msg.wParam;
+	return (int)(msg.wParam);
 }
 
 

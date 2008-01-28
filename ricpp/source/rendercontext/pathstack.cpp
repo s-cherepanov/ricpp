@@ -121,8 +121,8 @@ void TPathStack::expandPath(std::string &path) const {
  */
 void TPathStack::expandDirectory(std::string &path) const {
 	expandPath(path);
-	int pos = path.find_last_of('\\');
-	int pos2 = path.find_last_of('/');
+	int pos = (int)path.find_last_of('\\');
+	int pos2 = (int)path.find_last_of('/');
 	if ( pos < pos2 ) {
 		pos = pos2;
 	}

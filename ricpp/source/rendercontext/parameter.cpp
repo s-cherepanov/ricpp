@@ -240,7 +240,7 @@ bool TParameter::set(const TParameterDeclaration *declaration, RtInt vertices, R
 					for ( i = 0; i < m_valueSize/sizeof(char *); ++i ) {
 						cp = cplist[i];
 						if ( cp ) {
-							m_stringsSize += (strlen(cp)+1);
+							m_stringsSize += (unsigned long)(strlen(cp)+1);
 						}
 					}
 					m_strings = new char[m_stringsSize];

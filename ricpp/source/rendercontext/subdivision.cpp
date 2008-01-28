@@ -586,9 +586,9 @@ void TSubdivMesh::subdivideCatmullClarkConnectivity(const TSubdivMesh &aMesh)
 		return;
 
 	// The sizes of the old mesh
-	long sizeVertices = aMesh.m_vertices.size();
-	long sizeEdges    = aMesh.m_edges.size();
-	long sizeFaces    = aMesh.m_facets.size();
+	long sizeVertices = (long)aMesh.m_vertices.size();
+	long sizeEdges    = (long)aMesh.m_edges.size();
+	long sizeFaces    = (long)aMesh.m_facets.size();
 
 	// m_vertices [ number of old vertices + number of midpoints of old edges + number of centers of old faces ]
 	m_vertices.clear();
@@ -603,7 +603,7 @@ void TSubdivMesh::subdivideCatmullClarkConnectivity(const TSubdivMesh &aMesh)
 	m_facets.resize(aMesh.m_sumVerticesPerFace);
 
 	// There are always four vertices and four edges for each face after the first subdivision step is performed
-	m_sumVerticesPerFace = m_facets.size() * 4;
+	m_sumVerticesPerFace = (long)(m_facets.size() * 4);
 
 	// Reserve space for the vertex indices per face
 	m_idxFaceVertices.clear();
@@ -780,9 +780,9 @@ void TSubdivMesh::subdivideCatmullClark(
 	long elemSize = components*cardinality;
 
 	// The sizes of the old mesh
-	long sizeVertices = aMesh.m_vertices.size(); // number of vertices
-	long sizeEdges    = aMesh.m_edges.size();    // number of edges
-	long sizeFaces    = aMesh.m_facets.size();    // number of faces
+	long sizeVertices = (long)aMesh.m_vertices.size(); // number of vertices
+	long sizeEdges    = (long)aMesh.m_edges.size();    // number of edges
+	long sizeFaces    = (long)aMesh.m_facets.size();    // number of faces
 
 	long offsVertices = 0;                                 // offset vertex points
 	long offsEdges    = sizeVertices*elemSize;             // offset edge points
@@ -984,9 +984,9 @@ void TSubdivMesh::subdivideCatmullClarkLinear(
 	long elemSize = components*cardinality;
 
 	// The sizes of the old mesh
-	long sizeVertices = aMesh.m_vertices.size();
-	long sizeEdges    = aMesh.m_edges.size();
-	long sizeFaces    = aMesh.m_facets.size();
+	long sizeVertices = (long)aMesh.m_vertices.size();
+	long sizeEdges    = (long)aMesh.m_edges.size();
+	long sizeFaces    = (long)aMesh.m_facets.size();
 
 	long offsVertices = 0;
 	long offsEdges = sizeVertices*elemSize;
@@ -1086,7 +1086,7 @@ void TSubdivMesh::calcVertexNormals() {
 		return;
 	}
 
-	m_vertexNormalData.initialize(TRi::RI_N, 3, 1, m_vertices.size());
+	m_vertexNormalData.initialize(TRi::RI_N, 3, 1, (IndexType)m_vertices.size());
 
 	long j, k=0;
 	std::vector<TSubdivVertex>::iterator i = m_vertices.begin();
@@ -1273,7 +1273,7 @@ void TSubdivMesh::fillPrimFaces(std::vector< TSubdivPrimFace > &primFaces, RtInt
 
 		// Copy all values to the primFace
 		std::deque< TNamedVector<RtFloat> >::iterator valueIter;
-		long valueStart = primFace.m_vertexData.size();
+		long valueStart = (long)primFace.m_vertexData.size();
 		primFace.m_vertexData.resize(valueStart+m_interVertexData.size()+m_varyingData.size());
 		long dataIdx = valueStart;
 
@@ -1304,7 +1304,7 @@ void TSubdivMesh::fillPrimFaces(std::vector< TSubdivPrimFace > &primFaces, RtInt
 		}
 
 		if ( calcMissing ) {
-			dataIdx = primFace.m_vertexData.size();
+			dataIdx = (long)primFace.m_vertexData.size();
 			primFace.m_vertexData.resize(primFace.m_vertexData.size()+1);
 			primFace.m_vertexData[dataIdx].initialize(TRi::RI_N, 3, 1, (IndexType)vertexCnt);
 			IndexType elements = 3, elemCnt;
@@ -1486,9 +1486,9 @@ void TSubdivMesh::fillPrimFaces(RtInt nfaces, TSubdivisionMesh &prim) {
 		}
 
 		std::deque< TNamedVector<RtFloat> >::iterator valueIter;
-		long dataSize = m_primFaces[face].m_vertexData.size();
-		long vertexSize = m_interVertexData.size();
-		long varyingSize = m_varyingData.size();
+		long dataSize = (long)m_primFaces[face].m_vertexData.size();
+		long vertexSize = (long)m_interVertexData.size();
+		long varyingSize = (long)m_varyingData.size();
 		m_primFaces[face].m_vertexData.resize(dataSize+vertexSize+varyingSize);
 		for ( valueIter = m_interVertexData.begin(); valueIter != m_interVertexData.end(); valueIter++, ++dataSize ) {
 			if ( isSpecial((*valueIter).name()) )
@@ -1597,7 +1597,7 @@ unsigned int TSubdivisionMesh::subdivDepth(RtFloat x, RtFloat y) const {
 // ----------------------------------------------------------------------------
 TSubdivMesh &TSubdivisionMesh::subdivide(RtFloat x, RtFloat y) {
 	unsigned int maxi = subdivDepth(x, y);
-	unsigned int osize = m_meshes.size();
+	unsigned int osize = (unsigned int)m_meshes.size();
 
 	if ( osize < 1 )
 		osize = 0;

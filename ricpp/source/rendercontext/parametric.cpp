@@ -282,7 +282,7 @@ void TBSplineBasis::reset(RtInt ncpts, RtInt order, const std::vector<RtFloat> &
 	RtInt i, end=m_ncpts+m_order;
 	RtFloat lastKnot = 0;
 	if ( knotOffs + end > (RtInt)knots.size() ) {
-		end = knots.size() - knotOffs;
+		end = (RtInt)(knots.size() - knotOffs);
 		if ( end < 0 )
 			end = 0;
 	}
@@ -2588,8 +2588,8 @@ void TParameterGrid::reset(
 
 	m_cells.clear();
 
-	m_width  = m_uaxis.size();
-	m_height = m_vaxis.size();
+	m_width  = (IndexType)m_uaxis.size();
+	m_height = (IndexType)m_vaxis.size();
 
 	if ( m_width <= 0 || m_height <= 0 )
 		return;
@@ -2988,7 +2988,7 @@ void TParameterGrid::split() {
 		if ( vertexIter == loop.m_trimVertices.end() )
 			continue;
 
-		m_cells[(*vertexIter).m_idx].insertTrim(vertexIter, loop.m_trimVertices, loop.m_trimVertices.size());
+		m_cells[(*vertexIter).m_idx].insertTrim(vertexIter, loop.m_trimVertices, (IndexType)loop.m_trimVertices.size());
 		IndexType startVertexIdx = (*vertexIter).m_vidx;
 		IndexType idx = (*vertexIter).m_idx;
 		while ( m_cells[idx].insertTrim(vertexIter, loop.m_trimVertices, startVertexIdx) ) {

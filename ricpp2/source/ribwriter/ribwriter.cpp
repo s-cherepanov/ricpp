@@ -29,17 +29,173 @@
 
 #include "ricpp/ribwriter/ribwriter.h"
 
+#ifndef _RICPP_RICONTEXT_RIMACRO_H
+#include "ricpp/ricontext/rimacro.h"
+#endif // _RICPP_RICONTEXT_RIMACRO_H
+
+
+
+/* To translate (cache rib archive is part of baserenderer)
+
+postpone: ObjectInstance, ReadArchive, Procedural - Befehl ausgeben statt ausführen, wenn
+          referenziertes Objekt vorhanden ist.
+
+RIB control
+-----------
+
+control object postpone_object 1 | 0, default 1
+
+<>0 - Object Definition ausgeben und ausführen, Instance-Befehl ausgeben (falls object postponed)
+0   - Inszanzieren des objekts (keine object definition)
+
+Control ribarchive postpone_procedural    1 | 0, default 1
+
+<>0 - falls delayed read archive & !postponed Macro: delayed ReadArchive ausführen
+      sonst: als Text ausgeben, nicht ausführen
+
+ 0 - delayed readarchive ReadArchive ausführen, falls Macro
+
+Control ribarchive postpone_delayed_file    1 | 0, default 1
+
+<>0 - delayed ReadArchive als Text ausgeben, nicht ausführen, falls Datei
+
+ 0 - delayed readarchive ReadArchive ausführen, falls Datei
+
+Control ribarchive postpone_file    1 | 0 | -1, default 0
+
+>0 - ReadArchive als Text ausgeben, nicht ausführen, falls Datei
+
+ 0 - ReadArchive ausführen, falls Datei
+
+<0 - ReadArchive 1x ausführen, falls Datei, dann postpone_file auf 1 (nicht mehr ausführen)
+     Damit kann die erste Datei gelesen werden
+
+Control ribarchive postpone_macro [constant integer] 1 | 0 default 1
+
+<>0 - ArchiveBegin-End ausgeben und Makro aufbauen
+    falls postponed Macro: delayed ReadArchive als Text ausgeben, nicht ausführen
+    falls nicht posponed Macro: Ausführen (da Definition nicht ausgegeben wurde)
+
+0 - ArchiveBegin-End nicht ausgeben, nur Makro aufbauen
+    ReadArchive ausführen falls macro
+
+Control ribarchive skip_header [constant integer] 1 | 0 | -1 default -1
+
+>0 - Header nicht ausgeben (-> Strukturelle Kommentare bis zu 1. Befehl unterdrücken)
+ 0 - Header ausgeben
+<0 - Header nur 1x ausgeben.
+
+
+control ribarchive skip_version [constant integer] 1 | 0 | -1 default -1
+>0 - version wird nicht ausgegeben.
+ 0 - version wird ausgegeben.
+<0 - version wird nur 1x ausgegeben.
+
+
+Control ribarchive cachefile 1 0
+<>0 Caches files like inline archive
+1   Won't cahce files
+
+Macro: Postponed definition, read from file
+
+ribarchive - macro
+
+---------------
+Archive.rib
+---------------
+##RenderMan RIB
+version 3.03
+
+ArchiveBegin "InlineArchive"
+	ArchiveBegin "InInlineArchive"
+		ReadArchive "TestArchive.rib"
+	ArchiveEnd
+	AttributeBegin
+		Surface "matte"
+		Color [1 1 1]
+		Torus .5 .125 0 360 360
+	AttributeEnd
+	ReadArchive "InInlineArchive"
+ArchiveEnd
+
+Display "a.tif" "framebuffer" "rgba"
+Format 256 256 1
+Clipping 0.001 1000
+PixelSamples 1 1
+Projection "perspective"
+Translate 0 0 5
+
+WorldBegin
+	LightSource "pointlight" 1
+	Translate 0 0 5
+	ReadArchive "InlineArchive"
+	Translate 0 0 5
+	Illuminate 1 1
+	ReadArchive "InInlineArchive"
+WorldEnd
+
+-----------
+TestArchive.rib
+-----------
+##RenderMan RIB
+version 3.03
+AttributeBegin
+	Color [1 0 0]
+	Paraboloid 1 0 1 360
+AttributeEnd
+
+
+---> Output
+##RenderMan RIB
+version 3.03
+ArchiveBegin "InlineArchive"
+ArchiveBegin "InInlineArchive"
+AttributeBegin
+Color [ 1 0 0 ]
+Paraboloid 1 0 1 360
+AttributeEnd
+ArchiveEnd
+AttributeBegin
+Surface "matte"
+Color [ 1 1 1 ]
+Torus 0.5 0.125 0 360  360
+AttributeEnd
+ReadArchive "InInlineArchive"
+ArchiveEnd
+Display "a.tif" "a.tif" "a.tif"
+Format 256 256 1
+Clipping 0.001 1000
+PixelSamples 1 1
+Projection "perspective"
+Translate 0 0 5
+WorldBegin
+LightSource "pointlight" 1
+Translate 0 0 5
+ReadArchive "InlineArchive"
+Translate 0 0 5
+Illuminate 1 1
+ReadArchive "InInlineArchive"
+WorldEnd
+
+*/
+
+
+
+
+
+
+
 using namespace RiCPP;
 
-CRibElementsWriter::CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout)
-: m_ostream(ribout), m_ascii(true), m_countStrings(0)
+CRibElementsWriter::CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout, IRequestNotification &notify)
+: m_ostream(ribout), m_ascii(true), m_countStrings(0), m_firstRequestWritten(false), m_notify(notify)
 {
-	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
+	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));	
 }
 
 /*
-CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> *ribout)
-: m_ostream(ribout), m_ascii(true), m_countStrings(0)
+CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> *ribout, IRequestNotification &notify)
+: m_ostream(ribout), m_ascii(true), m_countStrings(0), m_notify(notify)
 {
 	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
 }
@@ -65,7 +221,7 @@ void CRibElementsWriter::putBlank()
 
 void CRibElementsWriter::putChar(char c)
 {
-	assert(c >= 0);
+	assert (c >= 0);
 	m_ostream << c;
 }
 
@@ -127,6 +283,7 @@ void CRibElementsWriter::putBinValue(double aFloat)
 
 void CRibElementsWriter::putRequest(EnumRequests aRequest)
 {
+	m_firstRequestWritten = 1;
 	if ( m_ascii ) {
 		putChars(CRequestInfo::requestName(aRequest));
 	} else {
@@ -441,6 +598,36 @@ unsigned long CRibWriter::myMinorVersion() { return 1; }
 unsigned long CRibWriter::myRevision() { return 1; }
 RtToken CRibWriter::myRendererType() { return RI_ARCHIVE; }
 
+
+CRibWriter::CRibWriter()
+{
+	m_writer = 0;
+	m_buffer = 0;
+	RI_COMPRESS = RI_NULL;
+	m_suppressOutput = false;
+
+	m_postponeProcedural = 1;
+	m_postponeObject = 1;
+	m_postponeFile = 0;
+	m_postponeMacro = 1;
+	m_skipHeader = -1;
+	m_skipVersion = -1;
+	m_header = true;
+	m_headerCnt = 0;
+	m_execute = false;
+}
+
+CRibWriter::~CRibWriter()
+{
+	if ( m_writer ) delete m_writer;
+	if ( m_buffer ) delete m_buffer;
+}
+
+void CRibWriter::requestWritten(EnumRequests aRequest)
+{
+	m_header = false;
+}
+
 bool CRibWriter::testValid() const
 {
 	return  m_writer != 0;
@@ -510,8 +697,15 @@ RtVoid CRibWriter::doControl(RtString name, RtInt n, RtToken tokens[], RtPointer
 
 RtVoid CRibWriter::version()
 {
+	if ( m_skipVersion > 0 )
+		return;
+
 	m_writer->putChars("version 3.03");
 	m_writer->putNewLine();
+	if ( m_skipVersion < 0 ) {
+		m_skipVersion = 1;
+	}
+	m_headerCnt++;
 }
 
 
@@ -553,7 +747,7 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		if ( !m_buffer->open(filename.c_str(), std::ios_base::out|std::ios_base::binary, compress) ) {
 			return;
 		}
-		m_writer = new CRibElementsWriter(m_buffer);
+		m_writer = new CRibElementsWriter(m_buffer, *this);
 		if ( !m_writer ) {
 			return;
 		}
@@ -561,7 +755,7 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		// stdio or pipe
 		if ( filename.size() == 0 ) {
 			// stdio
-			m_writer = new CRibElementsWriter(std::cout.rdbuf());
+			m_writer = new CRibElementsWriter(std::cout.rdbuf(), *this);
 			if ( !m_writer ) {
 				return;
 			}
@@ -765,48 +959,105 @@ RtVoid CRibWriter::postSolidEnd(void)
 	m_writer->putNewLine();
 }
 
+
 RtVoid CRibWriter::postObjectBegin(RtObjectHandle h)
 {
-	if ( !postTestValid() )
+	if ( !testValid() )
 		return;
 
-	writeTrailer();
-	m_writer->putRequest(REQ_OBJECT_BEGIN);
-	m_writer->putBlank();
-	m_writer->putValue(extractHandleNo(h));
-	m_writer->putNewLine();
+	CRiMacro *m = renderState()->curMacro();
+	assert (m != 0);
+
+	if ( m ) {
+		m->postpone(m_postponeObject != 0);
+	}
+
+	m_suppressOutputVector.push_back(m_suppressOutput);
+
+	if ( !m || m->postpone() ) {
+		writeTrailer();
+		m_writer->putRequest(REQ_OBJECT_BEGIN);
+		m_writer->putBlank();
+		m_writer->putValue(extractHandleNo(h));
+		m_writer->putNewLine();
+		m_suppressOutput = false;
+	} else {
+		m_suppressOutput = true;
+	}
 }
 
 
-RtVoid CRibWriter::postObjectEnd(void)
+RtVoid CRibWriter::preObjectEnd()
 {
-	if ( !postTestValid() )
+	CRiMacro *m = renderState()->curMacro();
+
+	CBaseRenderer::preObjectEnd();
+
+	if ( !postTestValid() ) 
 		return;
 
-	writeTrailer();
-	m_writer->putRequest(REQ_OBJECT_END);
-	m_writer->putNewLine();
+	assert (m != 0);
+	if ( !m || m->postpone() ) {
+		if ( testValid() ) {
+			writeTrailer();
+			m_writer->putRequest(REQ_OBJECT_END);
+			m_writer->putNewLine();
+		}
+	}
+}
+
+RtVoid CRibWriter::postObjectEnd()
+{
+	if ( !m_suppressOutputVector.empty() ) {
+		m_suppressOutput = m_suppressOutputVector.back();
+		m_suppressOutputVector.pop_back();
+	}
+}
+
+RtVoid CRibWriter::preObjectInstance(RtObjectHandle handle)
+{
+	CBaseRenderer::preObjectInstance(handle);
 }
 
 RtVoid CRibWriter::doObjectInstance(RtObjectHandle handle)
 {
-	bool savSuppress = m_suppressOutput;
+	// Only write the ObjectInstance Request
+	// Do this only if a definition was written to output (macro is postponed).
+	// This is the "normal" case.
+	if ( m_postponeObject ) {
+		CRiObjectMacro *m = renderState()->objectInstance(handle);
+		if ( !m || m->postpone() ) {
+			return;
+		}
+	}
 
-	m_suppressOutput = true;
+
+	// Put out the requests that form the object.
+	// It doesn't matter if the Object definition was
+	// written to output or not.
 	CBaseRenderer::doObjectInstance(handle);
-	m_suppressOutput = savSuppress;
 }
+
 
 RtVoid CRibWriter::postObjectInstance(RtObjectHandle handle)
 {
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
-	m_writer->putRequest(REQ_OBJECT_INSTANCE);
-	m_writer->putBlank();
-	m_writer->putValue(extractHandleNo(handle));
-	m_writer->putNewLine();
+	if ( m_postponeObject ) {
+		CRiObjectMacro *m = renderState()->objectInstance(handle);
+		if ( !m || m->postpone() ) {
+			// Put out ObjectInstance only if the object was postponed.
+			writeTrailer();
+			m_writer->putRequest(REQ_OBJECT_INSTANCE);
+			m_writer->putBlank();
+			m_writer->putValue(extractHandleNo(handle));
+			m_writer->putNewLine();
+		} else if ( renderState()->curMacro() ) {
+			doObjectInstance(handle);
+		}
+	}
+
 }
 
 
@@ -858,25 +1109,57 @@ RtVoid CRibWriter::postResourceEnd(void)
 
 RtVoid CRibWriter::postArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params)
 {
-	if ( !postTestValid() )
+	if ( !testValid() )
 		return;
 
-	writeTrailer();
-	m_writer->putRequest(REQ_ARCHIVE_BEGIN);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
+	CRiMacro *m = renderState()->curMacro();
+	assert (m != 0);
+
+	if ( m ) {
+		m->postpone(m_postponeMacro != 0);
+	}
+
+	m_suppressOutputVector.push_back(m_suppressOutput);
+
+	if ( !m || m->postpone() ) {
+		writeTrailer();
+		m_writer->putRequest(REQ_ARCHIVE_BEGIN);
+		m_writer->putBlank();
+		m_writer->putStringToken(name);
+		writeParameterList(params);
+		m_suppressOutput = false;
+	} else {
+		m_suppressOutput = true;
+	}
+}
+
+
+RtVoid CRibWriter::preArchiveEnd(void)
+{
+	CRiMacro *m = renderState()->curMacro();
+
+	CBaseRenderer::preArchiveEnd();
+
+	if ( !postTestValid() ) 
+		return;
+
+	assert (m != 0);
+	if ( !m || m->postpone() ) {
+		if ( testValid() ) {
+			writeTrailer();
+			m_writer->putRequest(REQ_ARCHIVE_END);
+			m_writer->putNewLine();
+		}
+	}
 }
 
 
 RtVoid CRibWriter::postArchiveEnd(void)
 {
-	if ( !postTestValid() )
-		return;
-
-	writeTrailer();
-	m_writer->putRequest(REQ_ARCHIVE_END);
-	m_writer->putNewLine();
+	if ( !m_suppressOutputVector.empty() ) {
+		m_suppressOutput = m_suppressOutputVector.back();
+		m_suppressOutputVector.pop_back();
+	}
 }
 
 
@@ -2331,6 +2614,15 @@ RtVoid CRibWriter::postArchiveRecord(RtToken type, RtString line)
 	if ( !postTestValid() )
 		return;
 
+	// Skip the Header
+	if ( (m_header && type == RI_STRUCTURE && m_skipHeader != 0) ) {
+		if ( m_skipHeader > 0 )
+			return;
+		// m_skipHeader < 0
+		if ( m_headerCnt > 0 )
+			return;
+	}
+
 	// ? Write the trailer here ?
 	writeTrailer();
 
@@ -2359,27 +2651,72 @@ RtVoid CRibWriter::postArchiveRecord(RtToken type, RtString line)
 }
 
 
+bool CRibWriter::willExecuteMacro(RtString name) {
+	bool isFile = true;
+	bool macroPostponed = true;
+	RtToken tname = renderState()->storedArchiveName(name);
+	if ( tname ) {
+		CRiArchiveMacro *m = renderState()->archiveInstance(tname);
+		assert (m != 0);
+		if ( m ) {
+			isFile = m->macroType() == CRiArchiveMacro::MACROTYPE_FILE;
+			macroPostponed = m->postpone();
+		}
+	}
+
+	bool doExecute = false;
+
+	if ( isFile ) {
+		m_header = true;
+		if ( !macroPostponed || m_postponeFile <= 0) {
+			doExecute = true;
+			if ( m_postponeFile < 0 ) {
+				m_postponeFile = 1;
+			}
+		}
+	} else {
+		if ( !macroPostponed || m_postponeMacro == 0 ) {
+			doExecute = true;
+		}
+	}
+
+	return doExecute;
+}
+
+RtVoid CRibWriter::preReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+{
+	CBaseRenderer::preReadArchive(name, callback, params);
+	m_execute = willExecuteMacro(name);
+}
+
+
 RtVoid CRibWriter::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
-	bool savSuppress = m_suppressOutput;
-
-	m_suppressOutput = true;
-	CBaseRenderer::doReadArchive(name, callback, params);
-	m_suppressOutput = savSuppress;
+	if ( m_execute ) {
+		bool exec = m_execute;
+		CBaseRenderer::doReadArchive(name, callback, params);
+		m_execute = exec;
+	}
 }
 
 
 RtVoid CRibWriter::postReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
-	if ( !postTestValid() )
-		return;
-
-	writeTrailer();
-	m_writer->putRequest(REQ_READ_ARCHIVE);
-	m_writer->putBlank();
-	m_writer->putString(name);
-	m_writer->putBlank();
-	writeParameterList(params);
+	if ( !m_execute ) {
+		if ( !postTestValid() )
+			return;
+		writeTrailer();
+		m_writer->putRequest(REQ_READ_ARCHIVE);
+		m_writer->putBlank();
+		m_writer->putString(name);
+		m_writer->putBlank();
+		writeParameterList(params);
+	} else if ( renderState()->curMacro() && renderState()->curMacro()->isDefinition() ) {
+		bool p = renderState()->postponeReadArchive();
+		renderState()->postponeReadArchive(m_postponeFile != 0);
+		doReadArchive(name, callback, params);
+		renderState()->postponeReadArchive(p);
+	}
 }
 
 

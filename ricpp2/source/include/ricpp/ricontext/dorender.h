@@ -427,7 +427,7 @@ public:
     virtual RtVoid postSolidEnd(void) = 0;
 
 	virtual RtVoid postObjectBegin(RtObjectHandle h) = 0;
-	virtual RtVoid postObjectEnd(void) = 0;
+	virtual RtVoid postObjectEnd() = 0;
     virtual RtVoid postObjectInstance(RtObjectHandle handle) = 0;
 
     virtual RtVoid postMotionBegin(RtInt N, RtFloat times[]) = 0;

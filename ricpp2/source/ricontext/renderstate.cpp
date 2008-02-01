@@ -1138,7 +1138,8 @@ RtObjectHandle CRenderState::objectBegin()
 	m_modeStack->objectBegin();
 
 	m_macros.push_back(m_curMacro);
-	CRiObjectMacro *m = new CRiObjectMacro;
+	bool isMacroDefinition = true;
+	CRiObjectMacro *m = new CRiObjectMacro(isMacroDefinition);
 	curMacro(m);
 
 	if ( executeConditionial() || curMacro() != 0 ) {
@@ -1194,7 +1195,8 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 
 	if ( executeConditionial() || curMacro() != 0 ) {
 		m_macros.push_back(m_curMacro);
-		CRiArchiveMacro *m = new CRiArchiveMacro(aName);
+		bool isMacroDefinition = true;
+		CRiArchiveMacro *m = new CRiArchiveMacro(aName, isMacroDefinition);
 		curMacro(m);
 
 		if ( m != 0 ) {
@@ -1209,13 +1211,50 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 	return illArchiveHandle;
 }
 
-void CRenderState::archiveEnd() {
+void CRenderState::archiveEnd()
+{
 	m_modeStack->archiveEnd();
 
 	popTransform();
 	popAttributes();
 	popOptions();
 
+	if ( executeConditionial() || curMacro() != 0 ) {
+		if ( !m_macros.empty() ) {
+			if ( m_curMacro != 0 )
+				m_curMacro->close();
+			m_curMacro = m_macros.back();
+			m_macros.pop_back();
+		} else {
+			m_curMacro = 0;
+		}
+	}
+}
+
+RtArchiveHandle CRenderState::archiveFileBegin(const char *aName)
+{
+	if ( executeConditionial() || curMacro() != 0 ) {
+		m_macros.push_back(m_curMacro);
+		bool isMacroDefinition = false; // Read file only, store makro and call do...()
+		if ( m_curMacro )
+			isMacroDefinition = m_curMacro->isDefinition();
+		CRiArchiveMacro *m = new CRiArchiveMacro(aName, isMacroDefinition, CRiMacro::MACROTYPE_FILE);
+		curMacro(m);
+
+		if ( m != 0 ) {
+			m->postpone(postponeReadArchive());
+			m_archiveMacros.insertObject(m);
+			return m->handle();
+		} else {
+			return illArchiveHandle;
+		}
+	}
+
+	return illArchiveHandle;
+}
+
+void CRenderState::archiveFileEnd()
+{
 	if ( executeConditionial() || curMacro() != 0 ) {
 		if ( !m_macros.empty() ) {
 			if ( m_curMacro != 0 )

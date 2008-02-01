@@ -177,7 +177,8 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 					parser.lineNo(), parser.resourceName(),
 					requestName(), RI_NULL);
 			}
-			// Can print the version of the current RIB writer.
+			// version is used for parser only, to test compability.
+			// But call Ri anyway, so that a ribwriter can put it's own version.
 			parser.ribFilter().version();
 		} else {
 			parser.errHandler().handleError(

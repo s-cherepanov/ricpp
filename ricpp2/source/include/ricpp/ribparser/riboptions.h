@@ -147,7 +147,7 @@ namespace RiCPP {
 	class CImagerRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_PROJECTION; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_IMAGER; }
 	}; // CImagerRibRequest
 
 	/** @brief Handles RIB request Quantize type one qmin qmax amplifier
@@ -155,7 +155,7 @@ namespace RiCPP {
 	class CQuantizeRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_QUANTIZE; }
 	}; // CQuantizeRibRequest
 
 	/** @brief Handles RIB request DisplayChannel channel ...
@@ -163,7 +163,7 @@ namespace RiCPP {
 	class CDisplayChannelRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLAY_CHANNEL; }
 	}; // CDisplayChannelRibRequest
 
 	/** @brief Handles RIB request Display name type mode ...
@@ -171,7 +171,7 @@ namespace RiCPP {
 	class CDisplayRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_DISPLAY; }
 	}; // CDisplayRibRequest
 
 	/** @brief Handles RIB request Hider type ...
@@ -179,7 +179,7 @@ namespace RiCPP {
 	class CHiderRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_HIDER; }
 	}; // CHiderRibRequest
 
 	/** @brief Handles RIB request ColorSamples [nRGB] [RGBn]
@@ -187,7 +187,7 @@ namespace RiCPP {
 	class CColorSamplesRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_COLOR_SAMPLES; }
 	}; // CColorSamplesRibRequest
 
 	/** @brief Handles RIB request RelativeDetail relativedetail
@@ -195,7 +195,7 @@ namespace RiCPP {
 	class CRelativeDetailRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_RELATIVE_DETAIL; }
 	}; // CRelativeDetailRibRequest
 
 	/** @brief Handles RIB request Option name ...
@@ -203,7 +203,7 @@ namespace RiCPP {
 	class COptionRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_CLIPPING_PLANE; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_OPTION; }
 	}; // COptionRibRequest
 }
 

@@ -395,12 +395,17 @@ int main(int argc, char * const argv[])
 {
 	std::cout << "Hello, World!" << std::endl;
 
+	CRiCPPBridge ri;
+
+	ri.begin(RI_NULL);
+	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB", RI_NULL);
+	ri.version();
+	ri.readArchive("../../../RibSamples/Archive.rib", 0, RI_NULL);
+	ri.end();
 
 	CBackBufferProtocolHandlers globalFactory;
 	testURI();
 	testStream(globalFactory);
-
-	CRiCPPBridge ri;
 
 	std::string str;
 	std::cout << CEnv::tmpName() << ": " << CEnv::find(str, CEnv::tmpName()) << std::endl;

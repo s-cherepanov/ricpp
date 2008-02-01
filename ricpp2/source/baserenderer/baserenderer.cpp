@@ -46,6 +46,7 @@ CBaseRenderer::CBaseRenderer() :
 	m_filterFuncFactory = 0;
 	// m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
+	m_cacheFiles = true;
 }
 
 CBaseRenderer::~CBaseRenderer()
@@ -272,9 +273,14 @@ void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest)
 {
 	aRequest.preProcess(*this);
 
+	bool callDo = true;
 	if ( renderState()->curMacro() && !aRequest.isMacroDefinition() ) {
 		renderState()->curMacro()->add(aRequest.duplicate());
-	} else {
+		callDo = !renderState()->curMacro()->isDefinition();
+	}
+	
+	if ( callDo )
+	{
 		if ( renderState()->executeConditionial() ) {
 			aRequest.doProcess(*this);
 		}
@@ -4756,7 +4762,15 @@ RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callb
 			renderState()->baseUri() = parser.absUri();
 			renderState()->archiveName(name);
 			renderState()->lineNo(0);
+			bool savCache = m_cacheFiles;
+			if ( savCache ) {
+				renderState()->archiveFileBegin(name);
+			}
 			parser.parse(callback, params);
+			if ( savCache ) {
+				renderState()->archiveFileEnd();
+			}
+			m_cacheFiles = savCache;
 			renderState()->archiveName(oldArchiveName.c_str());
 			renderState()->lineNo(oldLineNo);
 			renderState()->baseUri() = sav;

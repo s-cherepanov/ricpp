@@ -1,0 +1,6 @@
+##RenderMan RIB
+version 3.03
+AttributeBegin
+	Color [1 0 0]
+	Paraboloid 1 0 1 360
+AttributeEnd

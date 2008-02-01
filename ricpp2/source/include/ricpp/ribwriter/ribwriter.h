@@ -49,6 +49,13 @@ namespace RiCPP {
 #define RIBWRITER_NAME "ribwriter"
 #define RIBWRITERCREATOR_NAME "ribwritercreator"
 
+class IRequestNotification
+{
+public:
+	inline virtual ~IRequestNotification() {}
+	virtual void requestWritten(EnumRequests aRequest) = 0;
+};
+
 /** @brief Helper class to write RIB elements
  *
  *  RIB streams can contain ascii and binary data. Instances
@@ -74,6 +81,8 @@ private:
 	unsigned char m_reqEncoding[N_REQUESTS]; //!< Elements indicate (value!=0), that a request is defined.
 	std::map<std::string, RtInt> m_stringTokens; //!< Elements indicate, that a string token is defined
 	unsigned long m_countStrings; //!< Counter for the string numbers (used 16 bit)
+	bool m_firstRequestWritten; //!< Gets true after first real request is written to suppress header
+	IRequestNotification &m_notify;  //!< Notify request
 
 	/** @brief Puts a binary encoded number (string length, RtInt) to the stream.
 	 */
@@ -93,10 +102,18 @@ private:
 
 public:
 
+	/** @brief test if there is already a request written.
+	 *
+	 *  This is used to suppress structural comments and version info.
+	 */
+	inline bool firstRequestWritten() const {
+		return m_firstRequestWritten;
+	}
+
 	/** @brief Constructor, initializes the objects with the stram buffer to write to.
 	 */
-	CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout);
-	// CRibElementsWriter(TemplFrontStreambuf<char> *ribout);
+	CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout, IRequestNotification &notify);
+	// CRibElementsWriter(TemplFrontStreambuf<char> *ribout, IRequestNotification &notify);
 
 	/** @brief Destructor, doesn't close the stream (because it is not opened by a CRibElementsWriter).
 	 */
@@ -242,14 +259,28 @@ public:
  *  This class implements the output part of the RIB binding
  *  (see [RISPEC3.2], appendix C.2), RIB can be parsed using CRibParser.
  */
-class CRibWriter : public CBaseRenderer {
+class CRibWriter : public CBaseRenderer, public IRequestNotification {
 private:
 	CRibElementsWriter *m_writer;
 	TemplFrontStreambuf<char> *m_buffer;
 	RtToken RI_COMPRESS;
 
 	bool m_suppressOutput;
+	std::vector<bool> m_suppressOutputVector;
 
+	// Control
+
+	int m_postponeProcedural;
+	int m_postponeObject;
+	int m_postponeFile;
+	int m_postponeMacro;
+	unsigned long m_headerCnt; // Counts the header found
+	bool m_header; //!< True, till first request called (in archives and main)
+	int m_skipHeader;
+	int m_skipVersion; //!< skips version request: 1: skip version, 0: write version, -1 write only once (default)
+	bool m_execute;
+
+	bool willExecuteMacro(RtString name);
 protected:
 	virtual void defaultDeclarations();
 	bool testValid() const;
@@ -259,18 +290,8 @@ protected:
 
 public:
 
-	inline CRibWriter()
-	{
-		m_writer = 0;
-		m_buffer = 0;
-		RI_COMPRESS = RI_NULL;
-		m_suppressOutput = false;
-	}
-	inline virtual ~CRibWriter()
-	{
-		if ( m_writer ) delete m_writer;
-		if ( m_buffer ) delete m_buffer;
-	}
+	CRibWriter();
+	virtual ~CRibWriter();
 
 	static const char *myName();
 	static const char *myType();
@@ -287,6 +308,8 @@ public:
 	inline virtual unsigned long revision() const { return myRevision(); }
 
 	inline virtual RtToken rendererType() const { return myRendererType(); }
+
+	virtual void requestWritten(EnumRequests aRequest);
 
 public:
 	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -324,8 +347,11 @@ public:
     virtual RtVoid postSolidEnd(void);
 
 	virtual RtVoid postObjectBegin(RtObjectHandle h);
-	virtual RtVoid postObjectEnd(void);
 
+	virtual RtVoid preObjectEnd();
+	virtual RtVoid postObjectEnd();
+
+	virtual RtVoid preObjectInstance(RtObjectHandle handle);
 	virtual RtVoid doObjectInstance(RtObjectHandle handle);
 	virtual RtVoid postObjectInstance(RtObjectHandle handle);
 
@@ -336,6 +362,8 @@ public:
 	virtual RtVoid postResourceEnd(void);
 
 	virtual RtVoid postArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params);
+	
+	virtual RtVoid preArchiveEnd(void);
 	virtual RtVoid postArchiveEnd(void);
 
     virtual RtVoid postFormat(RtInt xres, RtInt yres, RtFloat aspect);
@@ -439,6 +467,7 @@ public:
 
 	virtual RtVoid postArchiveRecord(RtToken type, RtString line);
 
+	virtual RtVoid preReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
 	virtual RtVoid doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
 	virtual RtVoid postReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
 

@@ -707,6 +707,9 @@ public:
 	RtArchiveHandle archiveBegin(const char *aName);
 	void archiveEnd();
 
+	RtArchiveHandle archiveFileBegin(const char *aName);
+	void archiveFileEnd();
+
 	CRiArchiveMacro *archiveInstance(RtArchiveHandle handle);
 	const CRiArchiveMacro *archiveInstance(RtArchiveHandle handle) const;
 

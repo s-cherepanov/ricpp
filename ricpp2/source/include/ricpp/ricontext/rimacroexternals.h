@@ -1620,10 +1620,16 @@ public:
 	inline static const char *myClassName(void) { return "CRiReadArchive"; }
 	inline virtual const char *className() const { return CRiReadArchive::myClassName(); }
 
+	/** @brief Default Constructor.
+	 *
+	 *  Empty object
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
 	inline CRiReadArchive(long aLineNo=-1)
 		: CVarParamRManInterfaceCall(aLineNo)
 	{
-		m_callback =0;
+		m_callback = 0;
 	}
 
 	inline CRiReadArchive(
@@ -1649,10 +1655,27 @@ public:
 			m_callback = cb->duplicate();
 	}
 
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiReadArchive(const CRiReadArchive &c)
+	{
+		m_callback = 0;
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
 	inline virtual ~CRiReadArchive()
 	{
 		if ( m_callback )
 			delete m_callback;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiReadArchive(*this);
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_READ_ARCHIVE; }
@@ -1661,6 +1684,7 @@ public:
 	{
 		return m_callback;
 	}
+
 	inline void callback(const IArchiveCallback *cb)
 	{
 		if ( m_callback )
@@ -1674,6 +1698,7 @@ public:
 	{
 		return m_filename.c_str();
 	}
+
 	inline void filename(RtString aFilename)
 	{
 		m_filename = noNullStr(aFilename);

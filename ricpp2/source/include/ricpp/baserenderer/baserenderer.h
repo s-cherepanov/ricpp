@@ -128,6 +128,8 @@ class CBaseRenderer : public IDoRender {
 	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
 
+	bool m_cacheFiles; //!< Cache archive files
+
 protected:
 	/** @brief Callbacks for the rib parser to the front end.
 	 */
@@ -922,7 +924,7 @@ public:
     inline virtual RtVoid postSolidEnd(void){}
 
 	inline virtual RtVoid postObjectBegin(RtObjectHandle h){}
-	inline virtual RtVoid postObjectEnd(void){}
+	inline virtual RtVoid postObjectEnd(){}
     virtual RtVoid postObjectInstance(RtObjectHandle handle);
 
     virtual RtVoid postMotionBegin(RtInt N, RtFloat times[]);

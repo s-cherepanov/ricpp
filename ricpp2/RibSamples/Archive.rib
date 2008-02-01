@@ -1,0 +1,30 @@
+##RenderMan RIB
+version 3.03
+
+ArchiveBegin "InlineArchive"
+	ArchiveBegin "InInlineArchive"
+		ReadArchive "TestArchive.rib"
+	ArchiveEnd
+	AttributeBegin
+		Surface "matte"
+		Color [1 1 1]
+		Torus .5 .125 0 360 360
+	AttributeEnd
+	ReadArchive "InInlineArchive"
+ArchiveEnd
+
+Display "a.tif" "framebuffer" "rgba"
+Format 256 256 1
+Clipping 0.001 1000
+PixelSamples 1 1
+Projection "perspective"
+Translate 0 0 5
+
+WorldBegin
+	LightSource "pointlight" 1
+	Translate 0 0 5
+	ReadArchive "InlineArchive"
+	Translate 0 0 5
+	Illuminate 1 1
+	ReadArchive "InInlineArchive"
+WorldEnd

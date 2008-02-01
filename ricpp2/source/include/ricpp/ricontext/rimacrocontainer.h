@@ -62,6 +62,7 @@ private:
 	EnumMacroTypes m_macroType; //!< Type of macro, either object or archive.
 	bool m_isClosed;            //!< Set to true (close) if macro definition ended.
 	bool m_postpone;            //!< Set to true if macro should be postponed (e.g. in RIB oputput).
+	bool m_isDefinition;		//!< true, if macro definition, false, if cache ReadArchive within no macro definition (do-Methodes are called)
 
 public:
 
@@ -71,10 +72,31 @@ public:
 	 *  @param isObject Macro defines a geometric object.
 	 */
 	inline CRiMacro(
-		RtString aName = 0,
+		RtString aName = 0, bool definition = false,
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN) :
-		m_name(noNullStr(aName)), m_macroType(macroType), m_isClosed(false), m_postpone(true)
+		m_name(noNullStr(aName)), m_isDefinition(definition), m_macroType(macroType), m_isClosed(false), m_postpone(true)
 	{
+	}
+
+
+	/** @brief Tests if within a macro definition
+	 *
+	 *  @return If false is returned, the requests will be stored, but also the do-methods of
+	 *          the renderer will be called.
+	 */
+	bool isDefinition() const
+	{
+		return m_isDefinition;
+	}
+
+	/** @brief Sets flag if within a macro definition
+	 *
+	 *  @param definition If false, the requests will be stored, but also the do-methods of
+	 *          the renderer will be called.
+	 */
+	void isDefinition(bool definition)
+	{
+		m_isDefinition = definition;
 	}
 
 	/** @brief Destructor, frees resources.
@@ -196,7 +218,7 @@ public:
 	 *
 	 * The type for the object macro is allways MACROTYPE_OBJECT
 	 */
-	inline CRiObjectMacro() : CRiMacro(0, MACROTYPE_OBJECT) { m_handle = illObjectHandle; }
+	inline CRiObjectMacro(bool definition) : CRiMacro(0, definition, MACROTYPE_OBJECT) { m_handle = illObjectHandle; }
 
 	/** @brief Gets the associated handle of the object.
 	 *
@@ -223,7 +245,7 @@ public:
 	 * @param name Filename or archive name
 	 * @param aMacroType Type of the macro, will be MACROTYPE_ARCHIVE or MACROTYPE_FILE
 	 */
-	inline CRiArchiveMacro(const char *name = 0, EnumMacroTypes aMacroType=MACROTYPE_ARCHIVE) : CRiMacro(name, aMacroType)
+	inline CRiArchiveMacro(const char *name = 0, bool definition = true, EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE) : CRiMacro(name, definition, aMacroType)
 	{
 		m_handle = illArchiveHandle; 
  	}

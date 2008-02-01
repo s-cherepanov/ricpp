@@ -59,44 +59,24 @@ public:
 private:
 	std::list<CRManInterfaceCall *> m_callList;  //!< List of all interface calls for this macro.
 	std::string m_name;         //!< Name of the macro (eg. file name, handle name).
-	EnumMacroTypes m_macroType; //!< Type of macro, either object or archive.
-	bool m_isClosed;            //!< Set to true (close) if macro definition ended.
-	bool m_postpone;            //!< Set to true if macro should be postponed (e.g. in RIB oputput).
-	bool m_isDefinition;		//!< true, if macro definition, false, if cache ReadArchive within no macro definition (do-Methodes are called)
+	EnumMacroTypes m_macroType; //!< Type of macro, either object or (inline, file) archive.
+	bool m_isClosed;            //!< true, if macro definition is completed.
+	bool m_postpone;            //!< true, if macro should be postponed (e.g. in RIB oputput).
 
 public:
 
 	/** @brief Constructor initializes the macro.
 	 *
-	 *  @param aName Name of the macro, eg. file name.
-	 *  @param isObject Macro defines a geometric object.
+	 *  @param aName Name of the macro, file name or handle name.
+	 *  @param macroType Type of the macro.
 	 */
 	inline CRiMacro(
-		RtString aName = 0, bool definition = false,
-		EnumMacroTypes macroType = MACROTYPE_UNKNOWN) :
-		m_name(noNullStr(aName)), m_isDefinition(definition), m_macroType(macroType), m_isClosed(false), m_postpone(true)
+		RtString aName = 0,
+		EnumMacroTypes macroType = MACROTYPE_UNKNOWN
+	) :
+		m_name(noNullStr(aName)), m_macroType(macroType),
+		m_isClosed(false), m_postpone(true)
 	{
-	}
-
-
-	/** @brief Tests if within a macro definition
-	 *
-	 *  @return If false is returned, the requests will be stored, but also the do-methods of
-	 *          the renderer will be called.
-	 */
-	bool isDefinition() const
-	{
-		return m_isDefinition;
-	}
-
-	/** @brief Sets flag if within a macro definition
-	 *
-	 *  @param definition If false, the requests will be stored, but also the do-methods of
-	 *          the renderer will be called.
-	 */
-	void isDefinition(bool definition)
-	{
-		m_isDefinition = definition;
 	}
 
 	/** @brief Destructor, frees resources.
@@ -104,9 +84,13 @@ public:
 	virtual ~CRiMacro();
 
 	/** @brief Gets the name of the macro.
+	 *
 	 *  @return The name of the macro.
 	 */
-	inline RtString name() const { return m_name.c_str(); }
+	inline RtString name() const
+	{
+		return m_name.c_str();
+	}
 
 	/** @brief Sets the name of the macro.
 	 *
@@ -133,8 +117,8 @@ public:
 
 	/** @brief Gets the open/closed state of a macro.
 	 *
-	 * A macro is closed, if all request are read and an End (Like IRi::objectEnd() ) was called.
-	 * A closed macro can be instanciated.
+	 *  A macro is closed, if all request are read and an End (Like IRi::objectEnd() ) was called.
+	 *  A closed macro can be instanciated.
 	 *
 	 *  @return true, if the macro is closed
 	 */
@@ -145,7 +129,7 @@ public:
 	
 	/** @brief Opens a macro for writing (adding requests).
 	 *
-	 * A macro is opened after created. @see isClosed()
+	 *  A macro is opened after created. @see isClosed()
 	 */
 	void open()
 	{
@@ -154,7 +138,7 @@ public:
 
 	/** @brief Closes a macro.
 	 *
-	 * A macro is closed by the framework after called an End-Request. @see isClosed()
+	 *  A macro is closed by the framework after called an End-Request. @see isClosed()
 	 */
 	void close()
 	{
@@ -163,11 +147,11 @@ public:
 
 	/** @brief Postpone a macro instanciation (hint only).
 	 *
-	 * postpone() gives a hint, that the instanciation should be postponed. E.g.
-	 * indicates, that a RIB writer should print a ReadArchive request instead
-	 * of reading the macro and print the content. Also possible for ObjectInstance.
+	 *  postpone() gives a hint, that the instanciation should be postponed. E.g.
+	 *  indicates, that a RIB writer should print a ReadArchive request instead
+	 *  of reading the macro and print the content. Also possible for ObjectInstance.
 	 *
-	 * @return true, if a macro instanciation is postponed (e.g. by a RIB writer).
+	 *  @return true, if a macro instanciation is postponed (e.g. by a RIB writer).
 	 */
 	bool postpone() const
 	{
@@ -176,9 +160,9 @@ public:
 	
 	/** @brief Sets the postpone state.
 	 *
-	 * @see postpone()
+	 *  @see postpone()
 	 *
-	 * @param doPostpone true, if a macro instanciation should be postponed (e.g. by a RIB writer).
+	 *  @param doPostpone true, if a macro instanciation should be postponed (e.g. by a RIB writer).
 	 */
 	void postpone(bool doPostpone)
 	{
@@ -187,9 +171,9 @@ public:
 
 	/** @brief Gets the type of the macro.
 	 *
-	 * Gets the type of the macro (EnumMacroTypes) for some checking.
+	 *  Gets the type of the macro (EnumMacroTypes) for some checking.
 	 *
-	 * @return Type of the macro (EnumMacroTypes object, inline archive or archive file).
+	 *  @return Type of the macro (EnumMacroTypes object, inline archive or archive file).
 	 */
 	EnumMacroTypes macroType() const
 	{
@@ -198,7 +182,7 @@ public:
 
 	/** @brief Sets the type of the macro.
 	 *
-	 * @param aMacroType Type of the macro (EnumMacroTypes object, inline archive or archive file).
+	 *  @param aMacroType Type of the macro (EnumMacroTypes object, inline archive or archive file).
 	 */
 	void macroType(EnumMacroTypes aMacroType)
 	{
@@ -216,22 +200,27 @@ private:
 public:
 	/** @brief Creates a macro container for an object (retained geometry).
 	 *
-	 * The type for the object macro is allways MACROTYPE_OBJECT
+	 *  The type for the object macro is always MACROTYPE_OBJECT
 	 */
-	inline CRiObjectMacro(bool definition) : CRiMacro(0, definition, MACROTYPE_OBJECT) { m_handle = illObjectHandle; }
+	inline CRiObjectMacro()
+		: CRiMacro(0, MACROTYPE_OBJECT)
+	{
+		m_handle = illObjectHandle;
+	}
 
 	/** @brief Gets the associated handle of the object.
 	 *
-	 * @return The associated handle of the object.
+	 *  @return The associated handle of the object.
 	 */
 	inline RtObjectHandle handle() const { return m_handle; }
 
 	/** @brief Sets the associated handle of the object.
 	 *
-	 * @param h The associated handle of the object.
+	 *  @param h The associated handle of the object.
 	 */
 	inline void handle(RtObjectHandle h) { m_handle = h; }
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Macro container for archives (file or inline).
@@ -243,9 +232,12 @@ public:
 	/** @brief Creates a macro container for a RIB archive.
 	 *
 	 * @param name Filename or archive name
-	 * @param aMacroType Type of the macro, will be MACROTYPE_ARCHIVE or MACROTYPE_FILE
+	 * @param aMacroType Type of the macro, will be either MACROTYPE_ARCHIVE or MACROTYPE_FILE, but is not tested
 	 */
-	inline CRiArchiveMacro(const char *name = 0, bool definition = true, EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE) : CRiMacro(name, definition, aMacroType)
+	inline CRiArchiveMacro(
+		const char *name = 0,
+		EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE
+	) : CRiMacro(name, aMacroType)
 	{
 		m_handle = illArchiveHandle; 
  	}
@@ -263,6 +255,6 @@ public:
 	inline void handle(RtArchiveHandle h) { m_handle = h; }
 };
 
-}
+} // namespace RiCPP
 
 #endif // _RICPP_RICONTEXT_RIMACROCONTAINER_H

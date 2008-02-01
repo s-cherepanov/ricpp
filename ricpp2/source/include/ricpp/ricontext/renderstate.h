@@ -84,51 +84,58 @@ class CRiArchiveMacro;
 class CRenderState {
 	typedef std::map<RtToken, CTransformation> TypeTransformationMap;
 
-	CModeStack *m_modeStack;                       ///< Pointer to a mode stack.
+	CModeStack *m_modeStack;                       ///< Pointer to the mode stack, has to be set
 
-	RtInt m_frameNumber;                           ///< Frame number.
+	RtInt m_frameNumber;                           ///< Current frame number.
 
 	std::string m_archiveName;                     ///< Current archive name, optional.
 	long m_lineNo;                                 ///< Current line number in the file, -1 if not available.
 
-	std::vector<RtToken> m_solidTypes;             ///< Stack with the types of solid blocks (if currently opened)
+	std::vector<RtToken> m_solidTypes;             ///< Stack with the nested types of solid blocks (if currently opened solid block)
 
 	CDeclarationDictionary m_declDict;             ///< Dictionary for declarations.
 
 	CMotionState m_motionState;                    ///< Current request id and motion state.
 
-	TemplObjPtrRegistry<RtToken, IResourceFactory *> m_resourceFactories; ///< new RiResource handlers
-	TemplHandleStack<CResource> m_resourceStack;
+	TemplObjPtrRegistry<RtToken, IResourceFactory *> m_resourceFactories; ///< Creates new RiResource handlers
+	TemplHandleStack<CResource> m_resourceStack;   ///< Saved resources
 
-	COptionsFactory *m_optionsFactory;             ///< Create new Options.
+	COptionsFactory *m_optionsFactory;             ///< Creates new Options.
 	std::vector<COptions *> m_optionsStack;        ///< Current option stack.
 
 	CAttributesFactory *m_attributesFactory;       ///< Create new attributes.
 	std::vector<CAttributes *> m_attributesStack;  ///< Current attributes stack.
 
-	std::vector<CTransformation> m_transformStack; ///< Current Stack of transformations and theire inverses.
+	std::vector<CTransformation> m_transformStack; ///< Current stack of transformations and their inverses.
 
 	TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
 	std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.
 
 	CParameterList m_curParams;                    ///< Params of the last interface request with variable parameters.
 
-	CLights m_lights;                              ///< Global light list.
+	CLights m_lights;                              ///< Global light list (state of the lightsources is part of the attributes)
 	
 	CFilterFuncFactory *m_filterFuncFactory;       ///< Factory for pixel filter functions.
 
-	bool m_reject;                                 ///< Reject requests while running, e.g. for appropriate if-then-else blocks
+	bool m_reject;                                 ///< true, rejects requests while running, e.g. for appropriate if-then-else blocks
 	
-	/** @brief Only update the state, do no rendering (legacy).
-	 *
-	 * Update the state (handled by the base renderer), but do no more. E.g. if the RIB
-	 * writer wants to postpone the archive reading, object instanciating etc.
-	 *
-	 * @todo remove this
-	 */
-	bool m_updateStateOnly;
+	unsigned long m_nestingDepth;                  ///< Begin/end nesting depth, can be controlled by the back end renderer (e.g. by rib writer for pretty print)
 
-	/** @brief Postpone the archive reading to the backend.
+	/** @brief Backend is in record mode.
+	 *
+	 *  The request are recorded in a macro only, the do-methods are not called (@see CBaserenderer::processRequest())
+	 *  If a rib stream content is cached in a macro via readArchive, the do-methods have to be called if not
+	 *  within a macro definition (ArchiveBegin/End or ObjectBegin/End with a relaxed set of valid interface calls).
+	 *
+	 *  @see objectbegin(), objectEnd(), archiveBegin(), archiveEnd(), archiveFileBegin(), archiveFileEnd()
+	 */
+	bool m_recordMode;
+	
+	/** @brief Stack of recordmodes, @see m_recordMode
+	 */
+	std::vector<bool> m_recordModes;
+
+	/** @brief Postpone the archive file reading.
 	 *
 	 *  The RIB writer must be capable to print a ReadArchive request instead of
 	 *  printing the contents of the archive. However, the
@@ -141,9 +148,9 @@ class CRenderState {
 	bool m_postponeArchive;   //!< Postpone archive instanciation where applicable (e.g. in RIB writer, @see m_postponeReadArchive to postpone archive reading)
 	bool m_postponeCondition; //!< Postpone conditionals where applicable (e.g. in RIB writer)
 
-	CUri m_baseUri;                 //!< Base URI for RIB archive files
+	CUri m_baseUri;           //!< Base URI for current RIB archive file
 
-	/* @brief Factory for macro interfaces
+	/* @brief Factory for macro interfaces (not used)
 	 */
 	// CRManInterfaceFactory *m_macroFactory;
 
@@ -151,33 +158,31 @@ class CRenderState {
 	 */
 	CRiMacro *m_curMacro;
 
+	/** @brief Points to current replayed macro
+	 */
 	CRiMacro *m_curReplay;
 
-	TemplHandleStack<CRiObjectMacro> m_objectMacros;
-	TemplHandleStack<CRiArchiveMacro> m_archiveMacros;
-	std::vector<CRiMacro *> m_macros;
+	TemplHandleStack<CRiObjectMacro> m_objectMacros;   //!< Stack of all object macros (objectBegin/End)
+	TemplHandleStack<CRiArchiveMacro> m_archiveMacros; //!< Stack of all archive macros (archiveBegin/End or cached rib)
+	
+	std::vector<CRiMacro *> m_macros; //!< Vector with pointer to all macros (m_objectMacros and m_archiveMacros)
 
 	std::vector<bool> m_conditions; //!< Stack of m_executeConditional and m_ifCondition for nested ifs.
 	bool m_executeConditional;      //!< Render (true outside if-else-blocks, conditional inside the blocks).
 	bool m_accumulateConditional;   //!< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
 	bool m_ifCondition;             //!< true, if an if or elseif condition was true;
 
-	void pushOptions();
-	bool popOptions();
+	void pushOptions();    //!< Pushes the current options set.
+	bool popOptions();     //!< Pops an options set, restores the set to the last condition.
 
-	void pushAttributes();
-	bool popAttributes();
+	void pushAttributes(); //!< Pushes the current attributes set.
+	bool popAttributes();  //!< Pops an attributes set, restores the set to the last condition.
 
-	void pushTransform();
-	bool popTransform();
-
-	void pushConditional();
-	void popConditional();
-
-	void curMacro(CRiMacro *m)
-	{
-		m_curMacro = m;
-	}
+	void pushTransform();   //!< Pushes the current transformation matrix and is inverse.
+	bool popTransform();    //!< Pops the current transformation matrices, restores the matrices to the last condition.
+	
+	void pushConditional(); //!< Pushes conditionals within nested if-then-else blocks
+	void popConditional();  //!< Restores the last state of the conditionals
 
 	bool varsplit(RtString identifier, RtToken *namespaceQual, RtToken *varname, RtToken *valuename) const;
 	bool getAttribute(CValue &p, RtToken varname, RtToken valuename) const;
@@ -983,14 +988,9 @@ public:
 		m_reject = doRecect;
 	}
 	
-	inline virtual bool updateStateOnly() const
+	inline virtual bool recordMode() const
 	{
-		return m_updateStateOnly;
-	}
-
-	inline virtual void updateStateOnly(bool doOnlyUpdate)
-	{
-		m_updateStateOnly = doOnlyUpdate;
+		return m_recordMode;
 	}
 	
 	inline virtual bool postponeReadArchive() const
@@ -1073,6 +1073,21 @@ public:
 	inline const CRiMacro *curReplay() const
 	{
 		return m_curReplay;
+	}
+	
+	inline unsigned long incNestingDepth()
+	{
+		return ++m_nestingDepth;
+	}
+
+	inline unsigned long decNestingDepth()
+	{
+		return m_nestingDepth > 0 ? --m_nestingDepth : 0UL;
+	}
+
+	inline unsigned long nestingDepth() const
+	{
+		return m_nestingDepth;
 	}
 
 	RtToken storedArchiveName(RtString archiveName) const;

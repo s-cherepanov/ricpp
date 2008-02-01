@@ -1,30 +1,59 @@
 ##RenderMan RIB
 version 3.03
-
+#
 ArchiveBegin "InlineArchive"
+    # Inline Archive
+    #
 	ArchiveBegin "InInlineArchive"
+        # Archive within Archive, definition is global
+	    # Read the file TestArchive.rib
 		ReadArchive "TestArchive.rib"
 	ArchiveEnd
+	#
+	ObjectBegin "A_Disk"
+    	# Object within archive, definition is global
+	    Disk 0 0.5 360
+	ObjectEnd
+	#
 	AttributeBegin
 		Surface "matte"
 		Color [1 1 1]
 		Torus .5 .125 0 360 360
 	AttributeEnd
+	#
+	# Read the "InInlineArchive"
 	ReadArchive "InInlineArchive"
+	#
+	# Read the disk object
+	ObjectInstance "A_Disk"
 ArchiveEnd
-
+#
+ObjectBegin "A_Sphere"
+    # Simple Sphere Object
+    Sphere 0.5 -.5 .5 360
+ObjectEnd
+#
+# Start
 Display "a.tif" "framebuffer" "rgba"
 Format 256 256 1
 Clipping 0.001 1000
 PixelSamples 1 1
 Projection "perspective"
 Translate 0 0 5
-
+#
+# World
 WorldBegin
 	LightSource "pointlight" 1
 	Translate 0 0 5
+	# Read the inline archive
 	ReadArchive "InlineArchive"
 	Translate 0 0 5
 	Illuminate 1 1
+	# Read the deeper nested inline archive
 	ReadArchive "InInlineArchive"
+	# Read the sphere object
+	ObjectInstance "A_Sphere"
+	# Read the disk object
+	ObjectInstance "A_Disk"
 WorldEnd
+# -----------------------------------------------

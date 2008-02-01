@@ -312,7 +312,7 @@ public:
 	virtual void requestWritten(EnumRequests aRequest);
 
 public:
-	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid doControl(RtString name, const CParameterList &params);
 	virtual RtVoid version();
 
 	/*
@@ -348,10 +348,9 @@ public:
 
 	virtual RtVoid postObjectBegin(RtObjectHandle h);
 
-	virtual RtVoid preObjectEnd();
-	virtual RtVoid postObjectEnd();
+	virtual RtVoid preObjectEnd(void);
+	virtual RtVoid postObjectEnd(void);
 
-	virtual RtVoid preObjectInstance(RtObjectHandle handle);
 	virtual RtVoid doObjectInstance(RtObjectHandle handle);
 	virtual RtVoid postObjectInstance(RtObjectHandle handle);
 

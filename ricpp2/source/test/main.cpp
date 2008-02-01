@@ -393,7 +393,7 @@ void testGlob()
  */
 int main(int argc, char * const argv[])
 {
-	std::cout << "Hello, World!" << std::endl;
+//	std::cout << "Hello, World!" << std::endl;
 
 	CRiCPPBridge ri;
 	
@@ -405,12 +405,18 @@ int main(int argc, char * const argv[])
 #endif
 	ribfilename += "../../../RibSamples/Archive.rib";
 
+	ri.errorHandler(ri.errorPrint());
 	ri.begin(RI_NULL);
-	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB", RI_NULL);
+	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB-Structure 1.1");
+	ri.archiveRecord(RI_STRUCTURE, "Scene %s", "Test");
+	ri.archiveRecord(RI_STRUCTURE, "Creator %s", "RiCPP");
+	ri.archiveRecord(RI_STRUCTURE, "Frames %d", 1);
 	ri.version();
 	ri.readArchive(ribfilename.c_str(), 0, RI_NULL);
 	ri.end();
 
+
+#if 0
 	CBackBufferProtocolHandlers globalFactory;
 	testURI();
 	testStream(globalFactory);
@@ -522,8 +528,9 @@ int main(int argc, char * const argv[])
 	ri.begin("ribwriter");
 //	ri.readArchive("../../../../ribsamples/hermite.rib", 0, RI_NULL);
 	ri.end();
+#endif
 
-	std::cout << "Good bye, World!" << std::endl;
+//	std::cout << "Good bye, World!" << std::endl;
 
     return 0;
 }

@@ -343,8 +343,9 @@ protected:
 	 *  @a aRequest object.
 	 *
 	 *  @param aRequest Data of a parsed and validated request.
+	 *  @param immediatly, execute immediatly, do not store within macro, do not use if/then/else
 	 */
-	virtual void processRequest(CRManInterfaceCall &aRequest);
+	virtual void processRequest(CRManInterfaceCall &aRequest, bool immediatly = false);
 
 	/** @brief Replays a stored request.
 	 *
@@ -749,8 +750,6 @@ public:
 	 *  @param handler The error handler
 	 */
 	inline virtual RtVoid doErrorHandler(const IErrorHandler &handler) {}
-
-	inline virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {}
 
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}

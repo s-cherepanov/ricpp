@@ -269,21 +269,16 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 	return !renderState()->reject();
 }
 
-void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest)
+void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest, bool immediately)
 {
 	aRequest.preProcess(*this);
 
-	bool callDo = true;
-	if ( renderState()->curMacro() && !aRequest.isMacroDefinition() ) {
+	if ( !immediately && renderState()->curMacro() ) {
 		renderState()->curMacro()->add(aRequest.duplicate());
-		callDo = !renderState()->curMacro()->isDefinition();
 	}
 	
-	if ( callDo )
-	{
-		if ( renderState()->executeConditionial() ) {
-			aRequest.doProcess(*this);
-		}
+	if ( immediately || (!renderState()->recordMode() && renderState()->executeConditionial()) ) {
+		aRequest.doProcess(*this);
 	}
 
 	aRequest.postProcess(*this);
@@ -293,7 +288,7 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 {
 	renderState()->lineNo(aRequest.lineNo());
 	aRequest.preProcess(*this, cb);
-	if ( renderState()->executeConditionial() ) {
+	if ( !renderState()->recordMode() && renderState()->executeConditionial() ) {
 		aRequest.doProcess(*this, cb);
 	}
 	aRequest.postProcess(*this, cb);
@@ -1208,7 +1203,7 @@ RtVoid CBaseRenderer::doArchiveInstance(RtArchiveHandle handle, const IArchiveCa
 				throw;
 			}
 		} else {
-			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Object instance used before it's ArchiveEnd().");
+			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance used before it's ArchiveEnd().");
 		}
 	} else {
 		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance not found.");
@@ -2069,7 +2064,9 @@ RtVoid CBaseRenderer::controlV(RtString name, RtInt n, RtToken tokens[], RtPoint
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiControl r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
+		// Do not store controls as macros execute immediatly
+		processRequest(r, true);
+		
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);

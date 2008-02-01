@@ -1075,7 +1075,7 @@ CRenderState::CRenderState(
 	m_curReplay = 0;
 
 	m_reject = false;
-	m_updateStateOnly = false;
+	m_recordMode = false;
 
 	m_postponeReadArchive = true;
 	m_postponeObject = true;
@@ -1085,6 +1085,8 @@ CRenderState::CRenderState(
 	m_executeConditional = true;
 	m_accumulateConditional = true;
 	m_ifCondition = false;
+	
+	m_nestingDepth = 0;
 
 	CFilepath fp;
 	std::string s(fp.filepath());
@@ -1136,13 +1138,14 @@ RtObjectHandle CRenderState::objectBegin()
 	pushTransform();
 
 	m_modeStack->objectBegin();
-
+	
 	m_macros.push_back(m_curMacro);
-	bool isMacroDefinition = true;
-	CRiObjectMacro *m = new CRiObjectMacro(isMacroDefinition);
-	curMacro(m);
+	m_recordModes.push_back(m_recordMode);
+	m_recordMode = true;
+	CRiObjectMacro *m = new CRiObjectMacro();
+	m_curMacro = m;
 
-	if ( executeConditionial() || curMacro() != 0 ) {
+	if ( executeConditionial() || m_curMacro != 0 ) {
 		if ( m != 0 ) {
 			m->postpone(postponeObject());
 			m_objectMacros.insertObject(m);
@@ -1162,8 +1165,16 @@ void CRenderState::objectEnd()
 	popTransform();
 	popAttributes();
 	popOptions();
-	
-	if ( executeConditionial()  || curMacro() != 0 ) {
+
+	assert (!m_recordModes.empty());
+	if ( !m_recordModes.empty() ) {
+		m_recordMode = m_recordModes.back();
+		m_recordModes.pop_back();
+	} else {
+		m_recordMode = false;
+	}
+
+	if ( executeConditionial()  || m_curMacro != 0 ) {
 		if ( m_curMacro != 0 )
 			m_curMacro->close();
 		if ( !m_macros.empty() ) {
@@ -1192,12 +1203,13 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 	pushTransform();
 
 	m_modeStack->archiveBegin();
-
-	if ( executeConditionial() || curMacro() != 0 ) {
+	
+	if ( executeConditionial() || m_curMacro != 0 ) {
 		m_macros.push_back(m_curMacro);
-		bool isMacroDefinition = true;
-		CRiArchiveMacro *m = new CRiArchiveMacro(aName, isMacroDefinition);
-		curMacro(m);
+		m_recordModes.push_back(m_recordMode);
+		m_recordMode = true;
+		CRiArchiveMacro *m = new CRiArchiveMacro(aName);
+		m_curMacro = m;
 
 		if ( m != 0 ) {
 			m->postpone(postponeArchive());
@@ -1219,10 +1231,18 @@ void CRenderState::archiveEnd()
 	popAttributes();
 	popOptions();
 
-	if ( executeConditionial() || curMacro() != 0 ) {
+	assert (!m_recordModes.empty());
+	if ( !m_recordModes.empty() ) {
+		m_recordMode = m_recordModes.back();
+		m_recordModes.pop_back();
+	} else {
+		m_recordMode = false;
+	}
+
+	if ( executeConditionial() || m_curMacro != 0 ) {
+		if ( m_curMacro != 0 )
+			m_curMacro->close();
 		if ( !m_macros.empty() ) {
-			if ( m_curMacro != 0 )
-				m_curMacro->close();
 			m_curMacro = m_macros.back();
 			m_macros.pop_back();
 		} else {
@@ -1233,13 +1253,12 @@ void CRenderState::archiveEnd()
 
 RtArchiveHandle CRenderState::archiveFileBegin(const char *aName)
 {
-	if ( executeConditionial() || curMacro() != 0 ) {
+	if ( executeConditionial() || m_curMacro != 0 ) {
 		m_macros.push_back(m_curMacro);
-		bool isMacroDefinition = false; // Read file only, store makro and call do...()
-		if ( m_curMacro )
-			isMacroDefinition = m_curMacro->isDefinition();
-		CRiArchiveMacro *m = new CRiArchiveMacro(aName, isMacroDefinition, CRiMacro::MACROTYPE_FILE);
-		curMacro(m);
+		CRiArchiveMacro *m = new CRiArchiveMacro(aName, CRiMacro::MACROTYPE_FILE);
+		m_curMacro = m;
+		
+		// Does not influence nesting, because called within a IRi::sreadArchiveV()
 
 		if ( m != 0 ) {
 			m->postpone(postponeReadArchive());
@@ -1255,10 +1274,11 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName)
 
 void CRenderState::archiveFileEnd()
 {
-	if ( executeConditionial() || curMacro() != 0 ) {
+    // Does not influence nesting
+	if ( executeConditionial() || m_curMacro != 0 ) {
+		if ( m_curMacro != 0 )
+			m_curMacro->close();
 		if ( !m_macros.empty() ) {
-			if ( m_curMacro != 0 )
-				m_curMacro->close();
 			m_curMacro = m_macros.back();
 			m_macros.pop_back();
 		} else {
@@ -1392,6 +1412,7 @@ bool CRenderState::eval(RtString expr) const
 
 void CRenderState::ifBegin(RtString expr) {
 	m_modeStack->ifBegin();
+
 	pushConditional();
 	m_ifCondition = eval(expr);
 	m_executeConditional = m_ifCondition;
@@ -1436,6 +1457,7 @@ void CRenderState::elseBegin()
 void CRenderState::ifEnd()
 {
 	m_modeStack->ifEnd();
+
 	if ( !m_executeConditional ) {
 		popAttributes();
 		popOptions();

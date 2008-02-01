@@ -443,6 +443,7 @@
 		C3808A920D3CBC6E00B6C3BA /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AC00D3CC05700B6C3BA /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpassthrough.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C383EBE70D53414A006A899A /* index.dox */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = index.dox; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/Documentation/index.dox; sourceTree = "<absolute>"; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C39753FE0C14005E0089A579 /* pluginhandler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pluginhandler.h; path = ../../../source/include/ricpp/pluginhandler/pluginhandler.h; sourceTree = SOURCE_ROOT; };
 		C39754110C1402250089A579 /* ribfilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribfilter.cpp; path = ../../../source/ribfilter/ribfilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -1147,6 +1148,7 @@
 		C6859E8C029090F304C91782 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
+				C383EBE70D53414A006A899A /* index.dox */,
 			);
 			name = Documentation;
 			sourceTree = "<group>";

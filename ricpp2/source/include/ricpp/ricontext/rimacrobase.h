@@ -226,18 +226,6 @@ public:
 	{
 		postProcess(ri, 0);
 	}
-
-	/** @brief Test if interface call belongs to a macro definition
-	 *
-	 *  Macro definitions are not stored themselfes in macros.
-	 *  (i.e. ObjectBegin, ObjectEnd, ArchiveBegin, Archive End)
-	 *
-	 *  @return true, if the request starts or ends a macro definition
-	 */
-	inline virtual bool isMacroDefinition()
-	{
-		return false;
-	}
 }; // CRManInterfaceCall
 
 

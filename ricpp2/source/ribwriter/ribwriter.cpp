@@ -520,7 +520,7 @@ CRibWriter::CRibWriter()
 	RI_COMPRESS = RI_NULL;
 	m_suppressOutput = false;
 
-	m_postponeProcedural = 1;
+	m_postponeProcedural = 0;
 	m_postponeObject = 1;
 	m_postponeFile = 0;
 	m_postponeMacro = 1;
@@ -966,10 +966,9 @@ RtVoid CRibWriter::doObjectInstance(RtObjectHandle handle)
 
 RtVoid CRibWriter::postObjectInstance(RtObjectHandle handle)
 {
-	if ( !postTestValid() )
-		return;
-
 	if ( m_postponeObject ) {
+		if ( !postTestValid() )
+			return;
 		CRiObjectMacro *m = renderState()->objectInstance(handle);
 		if ( !m || m->postpone() ) {
 			// Put out ObjectInstance only if the object was postponed.
@@ -2359,27 +2358,31 @@ RtVoid CRibWriter::postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 
 RtVoid CRibWriter::doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
-	bool savSuppress = m_suppressOutput;
-
-	m_suppressOutput = true;
-	CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
-	m_suppressOutput = savSuppress;
+	if ( !m_postponeProcedural )
+		CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
 }
 
 RtVoid CRibWriter::postProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
-	if ( !postTestValid() )
-		return;
+	if ( m_postponeProcedural ) {
+		if ( !postTestValid() )
+			return;
 
-	writeTrailer();
-	m_writer->putRequest(REQ_PROCEDURAL);
-	m_writer->putBlank();
-	m_writer->putStringToken(subdivfunc.name());
-	m_writer->putBlank();
-	m_writer->putArray(subdivfunc.numArgs(), (const RtString *)data);
-	m_writer->putBlank();
-	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), bound);
-	m_writer->putNewLine();
+		writeTrailer();
+		m_writer->putRequest(REQ_PROCEDURAL);
+		m_writer->putBlank();
+		m_writer->putStringToken(subdivfunc.name());
+		m_writer->putBlank();
+		m_writer->putArray(subdivfunc.numArgs(), (const RtString *)data);
+		m_writer->putBlank();
+		m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), bound);
+		m_writer->putNewLine();
+	} else if ( renderState()->recordMode() ) {
+		bool p = renderState()->postponeReadArchive();
+		renderState()->postponeReadArchive(false);
+		CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
+		renderState()->postponeReadArchive(p);
+	}
 }
 
 
@@ -2640,7 +2643,7 @@ RtVoid CRibWriter::postReadArchive(RtString name, const IArchiveCallback *callba
 		m_writer->putBlank();
 		writeParameterList(params);
 	} else if ( renderState()->recordMode() ) {
-	    // Also print the recorded macros (do was not called)
+	    // Also print the recorded macros (do-methodes were not called)
 		bool p = renderState()->postponeReadArchive();
 		renderState()->postponeReadArchive(m_postponeFile != 0);
 		doReadArchive(name, callback, params);

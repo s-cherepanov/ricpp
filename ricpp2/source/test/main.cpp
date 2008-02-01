@@ -415,6 +415,11 @@ int main(int argc, char * const argv[])
 	ri.readArchive(ribfilename.c_str(), 0, RI_NULL);
 	ri.end();
 
+#if defined (WIN32)
+	char a;
+	std::cin >> a;
+#endif
+
 
 #if 0
 	CBackBufferProtocolHandlers globalFactory;

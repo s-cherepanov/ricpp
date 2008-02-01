@@ -2325,9 +2325,8 @@ void CProceduralRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		p2.convertIntToFloat();
 
 		RtFloat *bound = 0;
-		const char *procnamePtr = 0, **args = 0;
+		const char *procname = 0, **args = 0;
 		bool correct = true;
-		RtToken procname = RI_NULL;
 
 		if ( p0.typeID() != BASICTYPE_STRING ) {
 			correct = false;
@@ -2335,13 +2334,15 @@ void CProceduralRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
 				p0.lineNo(), parser.resourceName(), requestName(), "1 (procname)", RI_NULL);
-		} else if ( !p0.getString(procnamePtr) ) {
+		} else if ( !p0.getString(procname) ) {
 			correct = false;
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' argument %s could not read string",
 				p0.lineNo(), parser.resourceName(), requestName(), "1 (procname)", RI_NULL);
 		}
+
+		procname = noNullStr(procname);
 
 		if ( p1.typeID() != BASICTYPE_STRING || !p1.isArray() ) {
 			correct = false;
@@ -2398,7 +2399,7 @@ void CProceduralRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 
 		const CProcFree *freeFunc = 0;
 
-		if ( procname == CProcDelayedReadArchive::myName() ) {
+		if ( !strcmp(procname, CProcDelayedReadArchive::myName()) ) {
 			if ( p1.getCard() < 1 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,

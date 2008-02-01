@@ -1636,11 +1636,6 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
-
-	inline virtual bool isMacroDefinition()
-	{
-		return true;
-	}
 }; // CRiObjectBegin
 
 
@@ -1726,11 +1721,6 @@ public:
 			return *this;
 		CRManInterfaceCall::operator=(c);
 		return *this;
-	}
-
-	inline virtual bool isMacroDefinition()
-	{
-		return true;
 	}
 }; // CRiObjectEnd
 
@@ -1999,11 +1989,6 @@ public:
 		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
 	}
-
-	inline virtual bool isMacroDefinition()
-	{
-		return true;
-	}
 }; // CRiArchiveBegin
 
 
@@ -2089,11 +2074,6 @@ public:
 			return *this;
 		CRManInterfaceCall::operator=(c);
 		return *this;
-	}
-
-	inline virtual bool isMacroDefinition()
-	{
-		return true;
 	}
 }; // CRiArchiveEnd
 

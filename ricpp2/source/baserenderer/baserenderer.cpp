@@ -867,7 +867,7 @@ RtObjectHandle CBaseRenderer::objectBegin(void) {
 			return illObjectHandle;
 
 		CRiObjectBegin r(renderState()->lineNo());
-		processRequest(r);
+		processRequest(r, true);
 		return r.handle();
 		
 	} catch ( ExceptRiCPPError &e2 ) {
@@ -896,7 +896,7 @@ RtVoid CBaseRenderer::objectEnd(void)
 			return;
 
 		CRiObjectEnd r(renderState()->lineNo());
-		processRequest(r);
+		processRequest(r, true);
 		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -1141,7 +1141,7 @@ RtArchiveHandle CBaseRenderer::archiveBeginV(RtString name, RtInt n, RtToken tok
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiArchiveBegin r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
+		processRequest(r, true);
 		return r.handle();
 		
 	} catch ( ExceptRiCPPError &e2 ) {
@@ -1170,7 +1170,7 @@ RtVoid CBaseRenderer::archiveEnd(void)
 			return;
 
 		CRiArchiveEnd r(renderState()->lineNo());
-		processRequest(r);
+		processRequest(r, true);
 		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);

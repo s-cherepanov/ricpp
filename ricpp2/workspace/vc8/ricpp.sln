@@ -82,6 +82,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ricontext", "ricontext\rico
 		{F132C58F-975C-4752-BB09-0A9DB2EE477D} = {F132C58F-975C-4752-BB09-0A9DB2EE477D}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{07B9E30C-F265-407B-AE4F-3AB402450B81}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\source\Documentation\index.dox = ..\..\source\Documentation\index.dox
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RibSamples", "RibSamples", "{F89EFFA7-52EC-4005-B160-72B697BED6A1}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\RibSamples\Archive.rib = ..\..\RibSamples\Archive.rib
+		..\..\RibSamples\TestArchive.rib = ..\..\RibSamples\TestArchive.rib
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32

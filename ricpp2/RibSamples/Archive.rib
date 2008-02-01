@@ -8,6 +8,8 @@ ArchiveBegin "InlineArchive"
         # Archive within Archive, definition is global
 	    # Read the file TestArchive.rib
 		ReadArchive "TestArchive.rib"
+		# Procedural "DelayedReadArchive"
+		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
 	ArchiveEnd
 	#
 	ObjectBegin "A_Disk"
@@ -55,5 +57,7 @@ WorldBegin
 	ObjectInstance "A_Sphere"
 	# Read the disk object
 	ObjectInstance "A_Disk"
+	# Procedural "DelayedReadArchive"
+	Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
 WorldEnd
 # -----------------------------------------------

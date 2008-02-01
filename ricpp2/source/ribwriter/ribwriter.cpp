@@ -520,7 +520,7 @@ CRibWriter::CRibWriter()
 	RI_COMPRESS = RI_NULL;
 	m_suppressOutput = false;
 
-	m_postponeProcedural = 0;
+	m_postponeProcedural = 1;
 	m_postponeObject = 1;
 	m_postponeFile = 0;
 	m_postponeMacro = 1;

@@ -35,6 +35,18 @@ ObjectBegin "A_Sphere"
     Sphere 0.5 -.5 .5 360
 ObjectEnd
 #
+ArchiveBegin "Primitives"
+    # Collection of primitives to test parser/writer
+    Sphere 0.8 -.75 .75 180 
+    Cone 0.7 0.8 270
+    Torus .5 .125 0 180 360
+    Paraboloid .9 .2 1.0 90
+    Hyperboloid [1 2 3] [4 5 6] 45
+    Disk .4 .2 360
+    Cylinder .4 -.3 .3 123   
+ArchiveEnd
+#
+#
 # Start
 Display "a.tif" "framebuffer" "rgba"
 Format 256 256 1
@@ -59,5 +71,7 @@ WorldBegin
 	ObjectInstance "A_Disk"
 	# Procedural "DelayedReadArchive"
 	Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
+	# Primitives
+	ReadArchive "Primitives"
 WorldEnd
 # -----------------------------------------------

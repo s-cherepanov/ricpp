@@ -1591,7 +1591,8 @@ void CCylinderRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 
 void CHyperboloidRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
-	// Hyperboloid point1 point2 thetamax <paramlist>
+	// Hyperboloid x1 y1 z1 x2 y2 z3 thetamax <paramlist>
+	// Hyperboloid [ point1 ] [point2] [thetamax] <paramlist>
 	// Hyperboloid [ point1 point2 thetamax ] <paramlist>
 	CQuadricClasses p;
 	if ( request.size() >= 7 && !request[0].isArray() ) {
@@ -1661,6 +1662,89 @@ void CHyperboloidRibRequest::operator()(IRibParserState &parser, CRibRequestData
 					p6.lineNo(), parser.resourceName(), requestName(), "7 (thetamax)", RI_NULL);
 			}
 		}
+	} else if ( request.size() >= 3 && request[0].isArray() && request[1].isArray() ) {
+		CRibParameter &p0 = request[0];
+		p0.convertIntToFloat();
+
+		CRibParameter &p1 = request[1];
+		p1.convertIntToFloat();
+		
+		CRibParameter &p2 = request[2];
+
+		RtFloat thetamax = 0;
+		bool b2=p2.getFloat(thetamax);
+		bool correct = b2;
+
+		if ( p0.getCard() < 3 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' arguments %s missing",
+				p0.lineNo(), parser.resourceName(), requestName(), "*[p0.x p0.y p0.z] [p1.x p1.y p1.z] thetamax)", RI_NULL);
+			correct = false;
+		}
+		if (  p0.typeID() != BASICTYPE_FLOAT ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_WARNING,
+				"Line %ld, File \"%s\", badargument: '%s' in argument %s not all elements are numeric",
+				p0.lineNo(), parser.resourceName(), requestName(), "point 1", RI_NULL);
+			correct = false;
+		}
+
+		if ( p1.getCard() < 3 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' arguments %s missing",
+				p0.lineNo(), parser.resourceName(), requestName(), "[p0.x p0.y p0.z] *[p1.x p1.y p1.z] thetamax)", RI_NULL);
+			correct = false;
+		}
+		if (  p1.typeID() != BASICTYPE_FLOAT ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_WARNING,
+				"Line %ld, File \"%s\", badargument: '%s' in argument %s not all elements are numeric",
+				p0.lineNo(), parser.resourceName(), requestName(), "point 2", RI_NULL);
+			correct = false;
+		}
+		if ( !b2 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+				p2.lineNo(), parser.resourceName(), requestName(), "3 (thetamax)", RI_NULL);
+		}
+
+		int n = request.getTokenList(3, p);
+
+		if ( !correct )
+			return;
+
+		RtFloat *vals0 = (RtFloat *)p0.getValue();
+		if ( !vals0 ) {
+			parser.errHandler().handleError(
+				RIE_BUG, RIE_ERROR,
+				"Line %ld, File \"%s\", badarray: '%s' could not store arguments of %s",
+				p0.lineNo(), parser.resourceName(), requestName(), "point1", RI_NULL);
+			return;
+		}
+		
+		RtFloat *vals1 = (RtFloat *)p1.getValue();
+		if ( !vals1 ) {
+			parser.errHandler().handleError(
+				RIE_BUG, RIE_ERROR,
+				"Line %ld, File \"%s\", badarray: '%s' could not store arguments of %s",
+				p0.lineNo(), parser.resourceName(), requestName(), "point2", RI_NULL);
+			return;
+		}
+
+		RtPoint point1 = {vals0[0],vals0[1],vals0[2]}, point2 = {vals1[0],vals1[1],vals1[2]};
+
+		if ( n > 0 )
+			parser.ribFilter().hyperboloidV(
+				point1, point2, thetamax,
+				n, request.tokenList(), request.valueList());
+		else
+			parser.ribFilter().hyperboloidV(
+				point1, point2, thetamax,
+				0, 0, 0);
+
 	} else if ( request.size() >= 1 && request[0].isArray() ) {
 		CRibParameter &p0 = request[0];
 		p0.convertIntToFloat();

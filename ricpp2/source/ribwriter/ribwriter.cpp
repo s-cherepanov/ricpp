@@ -1677,7 +1677,7 @@ RtVoid CRibWriter::postDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptr
 		return;
 
 	writeTrailer();
-	m_writer->putRequest(REQ_SHADING_RATE);
+	m_writer->putRequest(REQ_DETAIL_RANGE);
 	m_writer->putBlank();
 	m_writer->putValue(minvis);
 	m_writer->putBlank();

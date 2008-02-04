@@ -367,6 +367,9 @@
 		C36C39C20CBA210400D2B7B2 /* paramclasses.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = paramclasses.h; path = ../../../source/include/ricpp/ricpp/paramclasses.h; sourceTree = SOURCE_ROOT; };
 		C36C39C40CBA211300D2B7B2 /* requests.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = requests.h; path = ../../../source/include/ricpp/ricpp/requests.h; sourceTree = SOURCE_ROOT; };
 		C36C39C60CBA212800D2B7B2 /* types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = types.h; path = ../../../source/include/ricpp/ricpp/types.h; sourceTree = SOURCE_ROOT; };
+		C36F02D40D57C66A00554D4B /* index.dox */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = index.dox; path = ../../../source/Documentation/index.dox; sourceTree = SOURCE_ROOT; };
+		C36F02D70D57C6BC00554D4B /* Archive.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Archive.rib; path = ../../../RibSamples/Archive.rib; sourceTree = SOURCE_ROOT; };
+		C36F02D80D57C6BC00554D4B /* TestArchive.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = TestArchive.rib; path = ../../../RibSamples/TestArchive.rib; sourceTree = SOURCE_ROOT; };
 		C370C1690BF4693200AA03BC /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
 		C370C1730BF4694400AA03BC /* dynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dynlib.h; path = ../../../source/include/ricpp/gendynlib/dynlib.h; sourceTree = SOURCE_ROOT; };
 		C370C1740BF4694400AA03BC /* macdynlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = macdynlib.h; path = ../../../source/include/ricpp/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
@@ -443,7 +446,6 @@
 		C3808A920D3CBC6E00B6C3BA /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AC00D3CC05700B6C3BA /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpassthrough.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C383EBE70D53414A006A899A /* index.dox */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = index.dox; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/Documentation/index.dox; sourceTree = "<absolute>"; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C39753FE0C14005E0089A579 /* pluginhandler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pluginhandler.h; path = ../../../source/include/ricpp/pluginhandler/pluginhandler.h; sourceTree = SOURCE_ROOT; };
 		C39754110C1402250089A579 /* ribfilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribfilter.cpp; path = ../../../source/ribfilter/ribfilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -602,6 +604,7 @@
 			children = (
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6859E8C029090F304C91782 /* Documentation */,
+				C36F02D60D57C69300554D4B /* RibFiles */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 			);
 			name = ricppframework;
@@ -806,6 +809,15 @@
 				C36C39B60CBA1FCA00D2B7B2 /* ribparser.h */,
 			);
 			name = Header;
+			sourceTree = "<group>";
+		};
+		C36F02D60D57C69300554D4B /* RibFiles */ = {
+			isa = PBXGroup;
+			children = (
+				C36F02D70D57C6BC00554D4B /* Archive.rib */,
+				C36F02D80D57C6BC00554D4B /* TestArchive.rib */,
+			);
+			name = RibFiles;
 			sourceTree = "<group>";
 		};
 		C372456D0CD5DD6C00945563 /* ricontext */ = {
@@ -1148,7 +1160,7 @@
 		C6859E8C029090F304C91782 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
-				C383EBE70D53414A006A899A /* index.dox */,
+				C36F02D40D57C66A00554D4B /* index.dox */,
 			);
 			name = Documentation;
 			sourceTree = "<group>";

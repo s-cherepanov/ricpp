@@ -972,9 +972,11 @@ void CPixelFilterRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		if ( b0 && b1 && b2 ) {
 			const IFilterFunc *func = 0;
 			RtToken name = parser.renderState().tokFind(functionName);
-			if ( name )
+			if ( name ) {
+				std::cout << "# Name found " << name << std::endl;
 				func = parser.renderState().filterFunc(name);
-
+			}
+			
 			if ( func ) {
 				parser.ribFilter().pixelFilter(*func, xwidth, ywidth);
 			} else {

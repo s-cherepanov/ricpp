@@ -3591,6 +3591,7 @@ RtVoid CBaseRenderer::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoi
 		CRiPolygon r(renderState()->lineNo(), nvertices, renderState()->curParamList());
 		processRequest(r);
 
+		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
 		return;
@@ -3755,7 +3756,6 @@ RtVoid CBaseRenderer::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 
 		CRiPatch r(renderState()->lineNo(), type, renderState()->curParamList());
 		processRequest(r);
-
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
 		return;

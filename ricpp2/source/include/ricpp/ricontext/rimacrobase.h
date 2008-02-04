@@ -770,7 +770,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CPolygonRManInterfaceCall::operator=(c);
+		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
 	}
 }; // CPolygonRManInterfaceCall

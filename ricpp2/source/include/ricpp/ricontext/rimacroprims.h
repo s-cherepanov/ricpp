@@ -92,10 +92,9 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt theNVertices,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CPolygonRManInterfaceCall(aLineNo), m_nVertices(theNVertices)
+		: CPolygonRManInterfaceCall(aLineNo, decl, CPolygonClasses(theNVertices), curColorDescr, n, tokens, params),
+		  m_nVertices(theNVertices)
 	{
-		CPolygonClasses p(theNVertices);
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 
 	/** @brief Constructor.
@@ -847,10 +846,9 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aType,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CUVRManInterfaceCall(aLineNo), m_type(aType)
+		: CUVRManInterfaceCall(aLineNo, decl, CPatchClasses(aType), curColorDescr, n, tokens, params),
+		  m_type(aType)
 	{
-		CPatchClasses p(aType);
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 
 	/** @brief Constructor.
@@ -863,7 +861,7 @@ public:
 		long aLineNo,
 		RtToken aType,
 		const CParameterList &theParameters)
-		: CUVRManInterfaceCall(aLineNo), m_type(aType)
+		: CUVRManInterfaceCall(aLineNo, theParameters), m_type(aType)
 	{
 	}
 

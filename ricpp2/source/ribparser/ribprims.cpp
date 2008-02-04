@@ -50,7 +50,7 @@ void CPolygonRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 					n, request.tokenList(), request.valueList());
 			} else {
 				parser.ribFilter().polygonV(
-					npts,
+					0,
 					0, 0, 0);
 			}
 		} else {

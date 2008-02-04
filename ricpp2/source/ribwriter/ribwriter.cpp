@@ -564,14 +564,17 @@ void CRibWriter::defaultDeclarations()
 
 void CRibWriter::writeTrailer()
 {
-	const char *nesting = "    ";
-	for ( unsigned long i = 0; i < renderState()->nestingDepth(); ++i ) {
-		m_writer->putChars(nesting);
+	if ( m_writer->ascii() ) {
+		const char *nesting = "    ";
+		for ( unsigned long i = 0; i < renderState()->nestingDepth(); ++i ) {
+			m_writer->putChars(nesting);
+		}
 	}
 }
 
 void CRibWriter::writeParameterList(const CParameterList &params)
 {
+	bool paramError = false;
 	for ( CParameterList::const_iterator i = params.begin();
 		  i != params.end();
 		  i++ )
@@ -598,12 +601,16 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 				break;
 			default:
 				// Error
+				paramError = true;
 				m_writer->putChars("[ ]");
 				break;
 		}
 	}
 
 	m_writer->putNewLine();
+	if ( paramError ) {
+		// throw error
+	}
 }
 
 
@@ -1983,8 +1990,6 @@ RtVoid CRibWriter::postPolygon(RtInt nvertices, const CParameterList &params)
 
 	writeTrailer();
 	m_writer->putRequest(REQ_POLYGON);
-	m_writer->putBlank();
-	m_writer->putValue(nvertices);
 	writeParameterList(params);
 }
 
@@ -2403,6 +2408,8 @@ RtVoid CRibWriter::postGeometry(RtToken type, const CParameterList &params)
 
 	writeTrailer();
 	m_writer->putRequest(REQ_GEOMETRY);
+	m_writer->putBlank();
+	m_writer->putStringToken(type);
 	if ( params.size() > 0 )
 		m_writer->putBlank();
 	writeParameterList(params);

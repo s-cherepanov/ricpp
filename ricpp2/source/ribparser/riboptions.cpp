@@ -1377,16 +1377,20 @@ void CHiderRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 
 void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
-	// Quantize [nRGB] [RGBn]
+	// ColorSamples [nRGB] [RGBn]
 
 	if ( request.size() >= 2 ) {
 
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
+		p0.convertIntToFloat();
 		p1.convertIntToFloat();
 		void *v0 = p0.getValue();
 		void *v1 = p1.getValue();
+
+		RtInt n = 0;
+		bool isError = false;
 
 		if ( p0.typeID() != BASICTYPE_FLOAT ) {
 			parser.errHandler().handleError(
@@ -1394,7 +1398,7 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 				"Line %ld, File \"%s\", badargument: '%s' elements of argument %s are not numeric",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "1 ([nRGB])", RI_NULL);
-			return;
+			isError = true;
 		}
 
 		if ( !p0.isArray() ) {
@@ -1403,7 +1407,7 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 				"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "1 ([nRGB])", RI_NULL);
-			return;
+			isError = true;
 		}
 
 		if ( p1.typeID() != BASICTYPE_FLOAT ) {
@@ -1412,7 +1416,7 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 				"Line %ld, File \"%s\", badargument: '%s' elements of argument %s are not numeric",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "2 ([RGBn])", RI_NULL);
-			return;
+			isError = true;
 		}
 
 		if ( !p1.isArray() ) {
@@ -1421,7 +1425,7 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 				"Line %ld, File \"%s\", badargument: '%s' argument %s is not an array",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "2 ([RGBn])", RI_NULL);
-			return;
+			isError = true;
 		}
 
 		if ( p0.getCard() != p1.getCard() ) {
@@ -1430,7 +1434,7 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 				"Line %ld, File \"%s\", badargument: '%s' arguments %s have not the same size",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "([nRGB] [RGBn])", RI_NULL);
-			return;
+			isError = true;
 		}
 
 		if ( !v0 ) {
@@ -1439,7 +1443,7 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 				"Line %ld, File \"%s\", badargument: '%s' argument %s could not be extracted",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "1 ([nRGB])", RI_NULL);
-			return;
+			isError = true;
 		}
 
 		if ( !v1 ) {
@@ -1448,10 +1452,24 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 				"Line %ld, File \"%s\", badargument: '%s' argument %s could not be extracted",
 				p0.lineNo(), parser.resourceName(),
 				requestName(), "2 ([RGBn])", RI_NULL);
-			return;
+			isError = true;
 		}
 
-		parser.ribFilter().colorSamples((RtInt)p0.getCard(), (RtFloat *)v0, (RtFloat *)v1);
+		n = (RtInt)(p0.getCard()/3);
+
+		if ( n*3 != p0.getCard() || n*3 != p1.getCard() ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' size of the matrices have to be a multiple of 3.",
+				p0.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+			isError = true;
+		}
+
+		if ( isError )
+			return;
+
+		parser.ribFilter().colorSamples(n, (RtFloat *)v0, (RtFloat *)v1);
 
 		if ( request.size() > 2 ) {
 			parser.errHandler().handleError(

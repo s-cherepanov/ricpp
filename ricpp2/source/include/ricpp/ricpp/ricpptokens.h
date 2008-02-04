@@ -241,7 +241,7 @@ const RtToken RI_RUN_PROGRAM = "RunProgram"; ///< Token for procedural CProcRunP
 const RtToken RI_DYNAMIC_LOAD = "DynamicLoad"; ///< Token for procedural CProcDynamicLoad
 const RtToken RI_FREE = "Free"; ///< Token for CProcFree
 
-const RtToken RI_GAUSIAN_FILTER = "gausianFilter"; ///< Token for the gausian filter
+const RtToken RI_GAUSSIAN_FILTER = "gaussianFilter"; ///< Token for the gaussian filter
 const RtToken RI_BOX_FILTER = "boxFilter"; ///< Token for the box filter
 const RtToken RI_TRIANGLE_FILTER = "triangleFilter"; ///< Token for the triangle filter
 const RtToken RI_CATMULL_ROM_FILTER = "catmullRomFilter"; ///< Token for the Catmull Rom filter

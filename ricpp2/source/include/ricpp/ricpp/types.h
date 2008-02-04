@@ -262,6 +262,13 @@ public:
 	 * @return NAMESPACE_UNKNOWN if no prefix found, matching EnumNamespaces if found.
 	 */
 	static EnumNamespaces namespacePrefix(const char *avar, size_t &pos);
+
+	/** @brief Try to find the token of a specific basis.
+	 *
+	 *  @param aBasis Spline basis matrix
+	 *  @return Token for a specific basis @a aBasis (e.g. RI_BEZIER), RI_NULL, if there is none
+	 */
+	static RtToken basisToToken(const RtBasis aBasis);
 }; // CTypeInfo
 
 

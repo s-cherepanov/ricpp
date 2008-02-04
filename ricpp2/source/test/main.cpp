@@ -404,15 +404,21 @@ int main(int argc, char * const argv[])
 	ribfilename = "../../";
 #endif
 	ribfilename += "../../../RibSamples/Archive.rib";
+	const char *filename = ribfilename.c_str();
+
+	if ( argc > 1 )
+		filename = argv[1];
 
 	ri.errorHandler(ri.errorPrint());
 	ri.begin(RI_NULL);
 	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB-Structure 1.1");
-	ri.archiveRecord(RI_STRUCTURE, "Scene %s", "Test");
-	ri.archiveRecord(RI_STRUCTURE, "Creator %s", "RiCPP");
-	ri.archiveRecord(RI_STRUCTURE, "Frames %d", 1);
+	if ( argc < 2 ) {
+		ri.archiveRecord(RI_STRUCTURE, "Scene %s", "Test");
+		ri.archiveRecord(RI_STRUCTURE, "Creator %s", "RiCPP");
+		ri.archiveRecord(RI_STRUCTURE, "Frames %d", 1);
+	}
 	ri.version();
-	ri.readArchive(ribfilename.c_str(), 0, RI_NULL);
+	ri.readArchive(filename, 0, RI_NULL);
 	ri.end();
 
 #if defined (WIN32)

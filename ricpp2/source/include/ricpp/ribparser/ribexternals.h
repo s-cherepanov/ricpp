@@ -45,13 +45,13 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_TEXTURE; }
 	}; // CMakeTextureRibRequest
 
-	/** @brief Handles RIB request MakeBumb picturename texturename swrap twrap filter swidth twidth <paramlist>
+	/** @brief Handles RIB request MakeBump picturename texturename swrap twrap filter swidth twidth <paramlist>
 	 */
-	class CMakeBumbRibRequest : public CRibRequest {
+	class CMakeBumpRibRequest : public CRibRequest {
 	public:
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
-		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_TEXTURE; }
-	}; // CMakeBumbRibRequest
+		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_BUMP; }
+	}; // CMakeBumpRibRequest
 
 	/** @brief Handles RIB request MakeLatLongEnvironment picturename texturename filter swidth twidth <paramlist>
 	 */

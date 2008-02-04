@@ -351,17 +351,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTransform(m_transform);
+		ri.preConcatTransform(m_transform);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTransform(m_transform);
+		ri.doConcatTransform(m_transform);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTransform(m_transform);
+		ri.postConcatTransform(m_transform);
 	}
 
 	/** @brief Assignment.

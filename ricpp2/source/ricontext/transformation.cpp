@@ -105,7 +105,7 @@ RtVoid CTransformation::concatTransform(RtMatrix aTransform)
 
 RtVoid CTransformation::perspective(RtFloat fov)
 {
-	if ( fov >= (RtFloat)180.0 || fov <= (RtFloat)180.0 ) {
+	if ( fov >= (RtFloat)180.0 || fov <= -(RtFloat)180.0 ) {
 		throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::perspective(%f), fov out of range", fov);
 	}
 	m_CTM.perspective(fov);
@@ -154,7 +154,7 @@ RtVoid CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 
 RtVoid CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
-	if ( angle >= (RtFloat)90.0  || angle <= (RtFloat)90.0 ) {
+	if ( angle >= (RtFloat)90.0  || angle <= (RtFloat)-90.0 ) {
 		throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::skew(%f), skew out of range", angle);
 	}
 	m_CTM.skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);

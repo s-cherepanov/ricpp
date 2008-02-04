@@ -54,6 +54,7 @@ void CTransformRibRequest::operator()(IRibParserState &parser, CRibRequestData &
 	if ( request.size() >= 1 ) {
 
 		CRibParameter &p0 = request[0];
+		p0.convertIntToFloat();
 
 		if ( p0.typeID() == BASICTYPE_FLOAT && p0.isArray() && p0.getCard() == 16 ) {
 			RtFloat *m = (RtFloat *)p0.getValue();
@@ -110,6 +111,7 @@ void CConcatTransformRibRequest::operator()(IRibParserState &parser, CRibRequest
 	if ( request.size() >= 1 ) {
 
 		CRibParameter &p0 = request[0];
+		p0.convertIntToFloat();
 
 		if ( p0.typeID() == BASICTYPE_FLOAT && p0.isArray() && p0.getCard() == 16 ) {
 			RtFloat *m = (RtFloat *)p0.getValue();
@@ -492,6 +494,7 @@ void CScaleRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 void CSkewRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
 	// Skew [ angle dx1 dy1 dz1 dx2 dy2 dz2 ]
+	// Skew angle [dx1 dy1 dz1] [dx2 dy2 dz2]
 	// Skew angle dx1 dy1 dz1 dx2 dy2 dz2
 
 	if ( request.size() == 1 ) {
@@ -507,7 +510,7 @@ void CSkewRibRequest::operator()(IRibParserState &parser, CRibRequestData &reque
 				requestName(), "1 [ angle dx1 dy1 dz1 dx2 dy2 dz2 ]", RI_NULL);
 			return;
 		}
-		if ( !p0.isArray() || p0.getCard() < 8 ) {
+		if ( !p0.isArray() || p0.getCard() < 7 ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' must have %s as arguments",
@@ -517,6 +520,14 @@ void CSkewRibRequest::operator()(IRibParserState &parser, CRibRequestData &reque
 		}
 
 		RtFloat *pv = (RtFloat *)p0.getValue();
+		if ( !pv ) {
+			parser.errHandler().handleError(
+				RIE_BUG, RIE_ERROR,
+				"Line %ld, File \"%s\", cannot extract the parameters",
+				p0.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+			return;
+		}
 		
 		parser.ribFilter().skew(pv[0], pv[1], pv[2], pv[3], pv[4], pv[5], pv[6]);
 		
@@ -527,6 +538,77 @@ void CSkewRibRequest::operator()(IRibParserState &parser, CRibRequestData &reque
 				p0.lineNo(), parser.resourceName(),
 				requestName(), RI_NULL);
 		}
+
+	} else if ( request.size() == 3 ) {
+		CRibParameter &p0 = request[0];
+		CRibParameter &p1 = request[1];
+		p1.convertIntToFloat();
+		CRibParameter &p2 = request[2];
+		p2.convertIntToFloat();
+
+		RtFloat angle = (RtFloat)90.0;
+		bool b0 = p0.getFloat(angle);
+		bool isError = false;
+
+		if ( !b0 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+				p0.lineNo(), parser.resourceName(),
+				requestName(), "1 (angle)", RI_NULL);
+			isError = true;
+		}
+
+		if ( p1.typeID() != BASICTYPE_FLOAT ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+				p0.lineNo(), parser.resourceName(),
+				requestName(), "2 [ dx1 dy1 dz1 ]", RI_NULL);
+			isError = true;
+		}
+		if ( !p1.isArray() || p1.getCard() != 3 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' must have %s",
+				p0.lineNo(), parser.resourceName(),
+				requestName(), "an array of 3 floats [ dx1 dy1 dz1 ] as point 1", RI_NULL);
+			isError = true;
+		}
+
+		if ( p2.typeID() != BASICTYPE_FLOAT ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
+				p1.lineNo(), parser.resourceName(),
+				requestName(), "3 [ dx2 dy2 dz2 ]", RI_NULL);
+			isError = true;
+		}
+		if ( !p2.isArray() || p2.getCard() != 3 ) {
+			parser.errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badargument: '%s' must have %s",
+				p2.lineNo(), parser.resourceName(),
+				requestName(), "an array of 3 floats [ dx2 dy2 dz2 ] as point 2", RI_NULL);
+			isError = true;
+		}
+
+		if ( isError )
+			return;
+
+		RtFloat *pv1 = (RtFloat *)p1.getValue();
+		RtFloat *pv2 = (RtFloat *)p2.getValue();
+		
+		if ( !pv1 || !pv2 ) {
+			parser.errHandler().handleError(
+				RIE_BUG, RIE_ERROR,
+				"Line %ld, File \"%s\", cannot extract the parameters",
+				p0.lineNo(), parser.resourceName(),
+				requestName(), RI_NULL);
+			return;
+		}
+
+		parser.ribFilter().skew(angle, pv1[0], pv1[1], pv1[2], pv2[0], pv2[1], pv2[2]);
 
 	} else if ( request.size() >= 7 ) {
 

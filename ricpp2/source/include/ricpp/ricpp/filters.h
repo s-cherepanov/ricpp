@@ -41,7 +41,7 @@ namespace RiCPP {
 class CGaussianFilter : public IFilterFunc {
 public:
 	static class CGaussianFilter func;
-	inline static RtToken myName() {return RI_GAUSIAN_FILTER; }
+	inline static RtToken myName() {return RI_GAUSSIAN_FILTER; }
 	inline virtual IFilterFunc *duplicate() const { return new CGaussianFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;

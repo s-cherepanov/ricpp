@@ -233,7 +233,7 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_DYNAMIC_LOAD)] = RI_DYNAMIC_LOAD;
 		m_tokenMapper[CToken(RI_FREE)] = RI_FREE;
 
-		m_tokenMapper[CToken(RI_GAUSIAN_FILTER)] = RI_GAUSIAN_FILTER;
+		m_tokenMapper[CToken(RI_GAUSSIAN_FILTER)] = RI_GAUSSIAN_FILTER;
 		m_tokenMapper[CToken(RI_BOX_FILTER)] = RI_BOX_FILTER;
 		m_tokenMapper[CToken(RI_TRIANGLE_FILTER)] = RI_TRIANGLE_FILTER;
 		m_tokenMapper[CToken(RI_CATMULL_ROM_FILTER)] = RI_CATMULL_ROM_FILTER;

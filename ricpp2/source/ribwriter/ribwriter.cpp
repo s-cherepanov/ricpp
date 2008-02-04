@@ -119,8 +119,8 @@ CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> *ribout, IReque
 void CRibElementsWriter::putNewLine()
 {
 	if ( m_ascii ) {
-		// m_ostream << std::endl;
-		m_ostream << '\n';
+		m_ostream << std::endl;
+		// m_ostream << '\n';
 	}
 }
 
@@ -582,10 +582,12 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 		m_writer->putBlank();
 
 		const CParameter &p = (*i);
-		if ( p.declaration().isInline() )
-			m_writer->putString(p.name());
+		if ( p.declaration().isInline() ) {
+			std::string decl;
+			m_writer->putString(p.declaration().getInlineString(decl));
+		}
 		else
-			m_writer->putStringToken(p.token());
+			m_writer->putStringToken(p.name());
 
 		m_writer->putBlank();
 
@@ -1758,14 +1760,26 @@ RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt 
 	if ( !postTestValid() )
 		return;
 
+	RtToken basisToken;
+
 	writeTrailer();
 	m_writer->putRequest(REQ_BASIS);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof(RtBasis)/sizeof(ubasis[0][0]), &ubasis[0][0]);
+	basisToken = CTypeInfo::basisToToken(ubasis);
+	if ( basisToken != RI_NULL ) {
+		m_writer->putStringToken(basisToken);
+	} else {
+		m_writer->putArray(sizeof(RtBasis)/sizeof(ubasis[0][0]), &(ubasis[0][0]));
+	}
 	m_writer->putBlank();
 	m_writer->putValue(ustep);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof(RtBasis)/sizeof(vbasis[0][0]), &vbasis[0][0]);
+	basisToken = CTypeInfo::basisToToken(vbasis);
+	if ( basisToken != RI_NULL ) {
+		m_writer->putStringToken(basisToken);
+	} else {
+		m_writer->putArray(sizeof(RtBasis)/sizeof(vbasis[0][0]), &(vbasis[0][0]));
+	}
 	m_writer->putBlank();
 	m_writer->putValue(vstep);
 	m_writer->putNewLine();
@@ -1822,7 +1836,7 @@ RtVoid CRibWriter::postTransform(RtMatrix aTransform)
 	writeTrailer();
 	m_writer->putRequest(REQ_TRANSFORM);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof(aTransform)/sizeof(aTransform[0][0]), &aTransform[0][0]);
+	m_writer->putArray(sizeof(RtMatrix)/sizeof(aTransform[0][0]), &(aTransform[0][0]));
 	m_writer->putNewLine();
 }
 
@@ -1835,7 +1849,7 @@ RtVoid CRibWriter::postConcatTransform(RtMatrix aTransform)
 	writeTrailer();
 	m_writer->putRequest(REQ_CONCAT_TRANSFORM);
 	m_writer->putBlank();
-	m_writer->putArray(sizeof(aTransform)/sizeof(aTransform[0][0]), &aTransform[0][0]);
+	m_writer->putArray(sizeof(RtMatrix)/sizeof(aTransform[0][0]), &(aTransform[0][0]));
 	m_writer->putNewLine();
 }
 

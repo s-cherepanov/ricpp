@@ -86,6 +86,7 @@ bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap
 {
 	// Set the name, 0 for inline declarations
 	m_name = noNullStr(name);
+	m_declString = noNullStr(decl);
 	
 	m_arraySize = 1;
 	m_typeSize = 0;
@@ -225,6 +226,7 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 	if ( this == &decl )
 		return *this;
 	m_name = decl.m_name;
+	m_declString = decl.m_declString;
 	m_namespace = decl.m_namespace;
 	m_table = decl.m_table;
 	m_var = decl.m_var;
@@ -266,4 +268,21 @@ int CDeclaration::selectNumberOf(int vertices, int corners, int facets, int face
 	}
 
 	return n;
+}
+
+const char *CDeclaration::getInlineString(std::string &declaration) const
+{
+	declaration = "";
+	declaration += CTypeInfo::className(m_class);
+	declaration += " ";
+	declaration += CTypeInfo::typeName(m_type);
+	if ( m_arraySize > 1 ) {
+		declaration += " [";
+		char num[64];
+		declaration += valToStr(num, sizeof(num), m_arraySize);
+		declaration += "]";
+	}
+	declaration += " ";
+	declaration += m_name;
+	return declaration.c_str();
 }

@@ -613,7 +613,7 @@ void CRibParser::initRequestMap()
 		s_requestMap.insert(std::make_pair(resourceEnd.requestName(), &resourceEnd));
 
 		static CResourceRibRequest resource; 
-		s_requestMap.insert(std::make_pair(resourceEnd.requestName(), &resourceEnd));
+		s_requestMap.insert(std::make_pair(resource.requestName(), &resource));
 
 		static CFrameBeginRibRequest frameBegin; 
 		s_requestMap.insert(std::make_pair(frameBegin.requestName(), &frameBegin));
@@ -921,8 +921,8 @@ void CRibParser::initRequestMap()
 		static CMakeTextureRibRequest makeTexture;
 		s_requestMap.insert(std::make_pair(makeTexture.requestName(), &makeTexture));
 
-		static CMakeBumbRibRequest makeBumb;
-		s_requestMap.insert(std::make_pair(makeBumb.requestName(), &makeBumb));
+		static CMakeBumpRibRequest makeBump;
+		s_requestMap.insert(std::make_pair(makeBump.requestName(), &makeBump));
 
 		static CMakeLatLongEnvironmentRibRequest makeLatLongEnvironment;
 		s_requestMap.insert(std::make_pair(makeLatLongEnvironment.requestName(), &makeLatLongEnvironment));
@@ -1651,6 +1651,12 @@ int CRibParser::nextToken()
 			if ( c == '\n' ) {
 				return handleComment(m_token, false);
 			}
+#ifdef _DEBUG
+			if ( c == '*' ) {
+				// to set breakpoints
+				c = c;
+			}
+#endif
 			m_token.push_back(c);
 			state = 10;
 			break;

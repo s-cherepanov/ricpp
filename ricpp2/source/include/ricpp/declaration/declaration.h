@@ -63,6 +63,8 @@ class CDeclaration {
 	 * @see var()
 	 */
 	std::string m_name;         
+	std::string m_declString;   ///< String of the original declaration
+
 	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...)
 	RtToken m_table;            ///< Optional name of the table
 	RtToken m_var;              ///< Stripped name of the variable
@@ -71,7 +73,7 @@ class CDeclaration {
 	EnumTypes m_type;           ///< Type of the elements
 	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type)
 	unsigned long m_arraySize;  ///< Number of elements in an array, 1 if no array declaration
-	CColorDescr m_colorDescr;   ///< Color descriptior valid while variable is definded
+	CColorDescr m_colorDescr;   ///< Color descrvalid while variable is definded
 	
 	/** @brief Number of basic types per element type.
 	 *
@@ -289,10 +291,24 @@ public:
 			                aCount.faceVertices(), aCount.faceCorners());
 	}
 
-
 	/** @brief The color descriptor valid for this declaration instance
 	 */
 	const CColorDescr &colorDescr() const { return m_colorDescr; }
+
+	/** @brief Gets the inline declaration as string.
+	 *
+	 * <class> <type> ['[' size ']' name
+	 *
+	 *  @retval declaration Declaration as string.
+	 *  @return @a declaration.c_str()
+	 */
+	const char *getInlineString(std::string &declaration) const;
+
+	/** @brief Gets the string of the original declaration.
+	 *
+	 *  @return Original declaration.
+	 */
+	inline const char *declString() const { return m_declString.c_str(); }
 }; // CDeclarartion
 
 } // namespace RiCPP

@@ -37,8 +37,13 @@ ObjectBegin "A_Sphere"
     Sphere 0.5 -.5 .5 360
 ObjectEnd
 #
+# Set of graphic primitives
+#
 ArchiveBegin "Primitives"
     # Collection of primitives to test parser/writer
+    #
+    # Quadrics
+    #
     Sphere 0.8 -.75 .75 180 "Cs" [ 1 0 0  0 1 0  0 0 1  1 1 1]
     Sphere [ 0.8 -.75 .75 180 ] 
     Cone 0.7 0.8 270
@@ -55,6 +60,8 @@ ArchiveBegin "Primitives"
     Cylinder .4 -.3 .3 123
     Cylinder [ .004e2 -.3E0 .3 123 ]
     #
+    # Patches
+    #
     Patch "bilinear" "P" [1.1 1.2 1.3 2.1 2.2 2.3 3.1 3.2 3.3 4.1 4.2 4.3] "Cs" [ 1 0 0  0 1 0  0 0 1  1 1 1]
     Patch "bicubic"
         "Pw" [
@@ -63,39 +70,238 @@ ArchiveBegin "Primitives"
              9.1  9.2  9.3 1 10.1 10.2 10.3 1 11.1 11.2 11.3 1 12.1 12.2 12.3 1
             13.1 13.2 13.3 1 14.1 14.2 14.3 1 15.1 15.2 15.3 1 16.1 16.2 16.3 1
         ]
+	PatchMesh "bilinear" 5 "nonperiodic" 5 "nonperiodic" "P" [ -1 1 0 -0.5 1 0 0 1 0.8 0.5 1 0 1 1 0 -1 0.5 0 -0.5 0.5 0.1 0 0.5 0.4 0.5 0.5 0.1 1 0.5 0 -1 0 0 -0.5 0 0.2 0 0 0.2 0.5 0 0.2 1 0 0 -1 -0.5 0 -0.5 -0.5 0.4 0 -0.5 0.1 0.5 -0.5 0.4 1 -0.5 0 -1 -1 0 -0.5 -1 0.8 0 -1 0 0.5 -1 0.8 1 -1 0 ] "uniform color Cs" [ 0 0 1 0 0.2 0.8 0 0.4 0.4 0 0.8 0.2 0 1 0 0.2 0.8 0 0.4 0.4 0 0.8 0.2 0 1 0 0 0.8 0 0.2 0.4 0 0.4 0.2 0 0.8 1 1 1 0.8 0.8 0.8 0.4 0.4 0.4 0.2 0.2 0.2 ] 
+	AttributeBegin
+		Basis "bezier" 3 [ -1 3 -3 1 3 -6 3 0 -3 3 0 0 1 0 0 0 ] 3
+		PatchMesh "bicubic" 12 "periodic" 10 "nonperiodic" "P" [ 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0 0 1.5 0.0703 0 1.5 0.0703 0.038826 1.5 0.038826 0.0703 1.5 0 0.0703 1.5 -0.038826 0.0703 1.5 -0.0703 0.038826 1.5 -0.0703 0 1.5 -0.0703 -0.038826 1.5 -0.038826 -0.0703 1.5 0 -0.0703 1.5 0.038826 -0.0703 1.5 0.0703 -0.038826 1.5 0.1273 0 1.4293 0.1273 0.070306 1.4293 0.070306 0.1273 1.4293 0 0.1273 1.4293 -0.070306 0.1273 1.4293 -0.1273 0.070306 1.4293 -0.1273 0 1.4293 -0.1273 -0.070306 1.4293 -0.070306 -0.1273 1.4293 0 -0.1273 1.4293 0.070306 -0.1273 1.4293 0.1273 -0.070306 1.4293 0.1273 0 1.3727 0.1273 0.070306 1.3727 0.070306 0.1273 1.3727 0 0.1273 1.3727 -0.070306 0.1273 1.3727 -0.1273 0.070306 1.3727 -0.1273 0 1.3727 -0.1273 -0.070306 1.3727 -0.070306 -0.1273 1.3727 0 -0.1273 1.3727 0.070306 -0.1273 1.3727 0.1273 -0.070306 1.3727 0.1273 0 1.23 0.1273 0.070306 1.23 0.070306 0.1273 1.23 0 0.1273 1.23 -0.070306 0.1273 1.23 -0.1273 0.070306 1.23 -0.1273 0 1.23 -0.1273 -0.070306 1.23 -0.070306 -0.1273 1.23 0 -0.1273 1.23 0.070306 -0.1273 1.23 0.1273 -0.070306 1.23 0.0899 0 1.16 0.0899 0.04965 1.16 0.04965 0.0899 1.16 0 0.0899 1.16 -0.04965 0.0899 1.16 -0.0899 0.04965 1.16 -0.0899 0 1.16 -0.0899 -0.04965 1.16 -0.04965 -0.0899 1.16 0 -0.0899 1.16 0.04965 -0.0899 1.16 0.0899 -0.04965 1.16 0.0899 0 1 0.0899 0.04965 1 0.04965 0.0899 1 0 0.0899 1 -0.04965 0.0899 1 -0.0899 0.04965 1 -0.0899 0 1 -0.0899 -0.04965 1 -0.04965 -0.0899 1 0 -0.0899 1 0.04965 -0.0899 1 0.0899 -0.04965 1 0.0899 0 0.75 0.0899 0.04965 0.75 0.04965 0.0899 0.75 0 0.0899 0.75 -0.04965 0.0899 0.75 -0.0899 0.04965 0.75 -0.0899 0 0.75 -0.0899 -0.04965 0.75 -0.04965 -0.0899 0.75 0 -0.0899 0.75 0.04965 -0.0899 0.75 0.0899 -0.04965 0.75 0.41 0 0.678 0.41 0.226437 0.678 0.226437 0.41 0.678 0 0.41 0.678 -0.226437 0.41 0.678 -0.41 0.226437 0.678 -0.41 0 0.678 -0.41 -0.226437 0.678 -0.226437 -0.41 0.678 0 -0.41 0.678 0.226437 -0.41 0.678 0.41 -0.226437 0.678 0.125 0 0 0.125 0.069036 0 0.069036 0.125 0 0 0.125 0 -0.069036 0.125 0 -0.125 0.069036 0 -0.125 0 0 -0.125 -0.069036 0 -0.069036 -0.125 0 0 -0.125 0 0.069036 -0.125 0 0.125 -0.069036 0 ] 
+	AttributeEnd
+    #
+    # Geometry
     #
     Geometry "teapot"
     #
+    # Polygons
+    #
     Polygon "P" [1.1 1.2 1.3 2.1 2.2 2.3 3.1 3.2 3.3]
     GeneralPolygon [3 4] "P" [1.1 1.2 1.3 2.1 2.2 2.3 3.1 3.2 3.3 4.1 4.2 4.3 5.1 5.2 5.3 6.1 6.2 6.3 7.1 7.2 7.3]
+	PointsPolygons [ 4 4 4 4 4 4 ] [ 0 1 2 3 4 0 3 7 5 4 7 6 1 5 6 2 4 5 1 0 3 2 6 7 ] "P" [ -1 1 1 1 1 1 1 -1 1 -1 -1 1 -1 1 3 1 1 3 1 -1 3 -1 -1 3 ]
+	PointsGeneralPolygons [ 1 1 1 1 1 1 ] [ 4 4 4 4 4 4 ] [ 0 1 2 3 4 0 3 7 5 4 7 6 1 5 6 2 4 5 1 0 3 2 6 7 ] "P" [ -1 1 1 1 1 1 1 -1 1 -1 -1 1 -1 1 3 1 1 3 1 -1 3 -1 -1 3 ]
+    #
+    # Surface subdivision
+    #
+    SubdivisionMesh "catmull-clark"
+        [ 4 4 4 4 4 4 4 4 4 ]
+        [ 0 4 5 1 1 5 6 2 2 6 7 3 4 8 9 5 5 9 10 6 6 10 11 7 8 12 13 9 9 13 14 10 10 14 15 11 ]
+        [ "interpolateboundary" ] [ 0 0 ] [ ] [ ]
+        "P" [ -0.6 0.6 0 -0.6 0.2 0 -0.6 -0.2 0 -0.6 -0.6 0 -0.2 0.6 0 -0.2 0.2 0.45 -0.2 -0.2 0.45 -0.2 -0.6 0 0.2 0.6 0 0.2 0.2 0.45 0.2 -0.2 0.45 0.2 -0.6 0 0.6 0.6 0 0.6 0.2 0 0.6 -0.2 0 0.6 -0.6 0 ] 
+    HierarchicalSubdivisionMesh "catmull-clark"
+        [ 4 4 4 4 4 4 4 4 4 ]
+        [ 0 4 5 1 1 5 6 2 2 6 7 3 4 8 9 5 5 9 10 6 6 10 11 7 8 12 13 9 9 13 14 10 10 14 15 11 ]
+        [ "interpolateboundary" ] [ 0 0 0 ] [ ] [ ] []
+        "P" [ -0.6 0.6 0 -0.6 0.2 0 -0.6 -0.2 0 -0.6 -0.6 0 -0.2 0.6 0 -0.2 0.2 0.45 -0.2 -0.2 0.45 -0.2 -0.6 0 0.2 0.6 0 0.2 0.2 0.45 0.2 -0.2 0.45 0.2 -0.6 0 0.6 0.6 0 0.6 0.2 0 0.6 -0.2 0 0.6 -0.6 0 ] 
+    #
+    # Blobby
+    #
+	Blobby 3
+		[1001 0
+			1001 16
+			1001 32
+			0 3 0 1 2]
+		[1 0 0 0  0 1 0 0  0 0 1 0  0.176 0.252 0.468 1
+			1 0 0 0  0 1 0 0  0 0 1 0  0.916 0.477 0.174 1
+			1 0 0 0  0 1 0 0  0 0 1 0  0.478 0.462 0.806 1]
+		[ "" ]
+		"varying color Cs" [ 1 0 0 0 1 0 0 0 1 ]
+    #
+    # Curves
+    #
+	Curves "linear" [ 4 4 4 4 ] "nonperiodic"
+		"P" [ -1.0 1.0 0.0 -0.33 1.0 -1.0 0.33 1.0 1.0 1.0 1.0 0.0 -1.0 0.33 1.0 -0.33 0.33 -1.0 0.33 0.33 0.0 1.0 0.33 -1.0 -1.0 -0.33 1.0 -0.33 -0.33 -1.0 0.33 -0.33 -1.0 1.0 -0.33 -1.0 -1.0 -1.0 0.0 -0.33 -1.0 0.0 0.33 -1.0 -1.0 1.0 -1.0 0.0 ]
+		"constant float constantwidth" 0.01
+	#
+	# Points
+	#
+	Points "constant float constantwidth" [ 0.3 ] "P" [ 1.1 1.2 1.3 2.1 2.2 2.3 3.1 3.2 3.3 4.1 4.2 4.3 ] 
+	#
+	# Nurbs
+	#
+	NuPatch 4 4 [ 0 0 0 0 1 1 1 1 ] 0 1 4 4 [ 0 0 0 0 1 1 1 1 ] 0 1 "P" [ -1.0 1.0 0.0 -0.33 1.0 -1.0 0.33 1.0 1.0 1.0 1.0 0.0 -1.0 0.33 1.0 -0.33 0.33 -1.0 0.33 0.33 0.0 1.0 0.33 -1.0 -1.0 -0.33 1.0 -0.33 -0.33 -1.0 0.33 -0.33 -1.0 1.0 -0.33 -1.0 -1.0 -1.0 0.0 -0.33 -1.0 0.0 0.33 -1.0 -1.0 1.0 -1.0 0.0 ] 
+	AttributeBegin
+		TrimCurve [ 1 ] [ 3 ] [ 0 0 0 1 1 2 2 3 3 4 4 4 ] [ 0 ] [ 4 ] [ 9 ] [ 1.0 1.0 1.0 0.0 0.0 0.0 1.0 1.0 1.0 ] [ 0.5 1.0 2.0 1.0 0.5 0.0 0.0 0.0 0.5 ] [ 1.0 1.0 2.0 1.0 1.0 1.0 2.0 1.0 1.0 ] 
+		NuPatch 3 3 [ 0 0 0 1 1 1 ] 0 1 3 3 [ 0 0 0 1 1 1 ] 0 1 "P" [ -1 1 0 0 1 0 1 1 0 -1 0 0 0 0 -5 1 0 0 -1 -1 0 0 -1 0 1 -1 0 ] 
+	AttributeEnd
 ArchiveEnd
 #
+# Set of Attributes
 #
-# Start
+ArchiveBegin "Attributes"
+	Attribute "renderer" "constant string test" "test"
+	Color 0.2 0.3 .5
+	Color [ 0.2 0.3 .5 ]
+	Opacity 0.2 0.3 .5
+	Opacity [ 0.2 0.3 .5 ]
+	Surface "Surface_shader"
+	Atmosphere "Atmosphere_shader"
+	Interior "Interior_shader"
+	Exterior "Exterior_shader"
+	Displacement "Displacement_shader"
+	TextureCoordinates 1 2 3 4 5 6 7 8
+	TextureCoordinates [ 1 2 3 4 5 6 7 8 ]
+	ShadingRate 1
+	ShadingInterpolation "smooth"
+	Matte 0
+	#*01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ :: Error fill buffer !
+	Bound 1 2 3 4 5 6
+	Bound [ 1 2 3 4 5 6 ]
+	Detail 1 2 3 4 5 6
+	Detail [ 1 2 3 4 5 6 ]
+	DetailRange 1 2 3 4	
+	DetailRange [ 1 2 3 4 ]
+	GeometricApproximation "tesselation" 1
+	GeometricRepresentation "lines"
+	Orientation "rh"
+	ReverseOrientation
+	Sides 2
+	Basis "bezier" 3 [ 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 ] 3
+	TrimCurve [ 1 ] [ 3 ] [ 0 0 0 1 1 2 2 3 3 4 4 4 ] [ 0 ] [ 4 ] [ 9 ] [ 1.0 1.0 1.0 0.0 0.0 0.0 1.0 1.0 1.0 ] [ 0.5 1.0 2.0 1.0 0.5 0.0 0.0 0.0 0.5 ] [ 1.0 1.0 2.0 1.0 1.0 1.0 2.0 1.0 1.0 ] 
+ArchiveEnd
+#
+# Set of Options
+#
+ArchiveBegin "Options"
+	Format 640 400 1
+	Format [ 640 400 1 ]
+	FrameAspectRatio 0.75
+	ScreenWindow 0 1 2 -2
+	ScreenWindow [ 0 1 2 -2 ]
+	CropWindow 0 1 2 -2
+	CropWindow [ 0 1 2 -2 ]
+	Projection "perspective"
+	Clipping [ 1 1000 ]
+	Clipping 1 1000
+	ClippingPlane [ 1 2 3 4 5 6 ]
+	ClippingPlane 1 2 3 4 5 6
+	DepthOfField [ 1 2 3 ]
+	DepthOfField 1 2 3
+	Shutter [ 0 1 ]
+	Shutter 0 1
+	PixelVariance .5
+	PixelSamples 1 2
+	PixelSamples [ 1 2 ]
+	PixelFilter "boxFilter" 1 2
+	Exposure 1 1.2
+	Exposure [ 1 1.2 ]
+	Imager "Imager_shader"
+	Quantize "AQuantizer" 1 2 3 4
+	DisplayChannel "color aColor"
+	Display "a.tif" "framebuffer" "rgba"
+	Hider "hidden"
+	ColorSamples [1 0 0 0 1 0 0 0 1] [1 0 0 0 1 0 0 0 1]
+	RelativeDetail 1
+	Option "MyOption" "string myOptionVal" [ "aVal" ]
+ArchiveEnd
+#
+# Set of Transforms
+#
+ArchiveBegin "Transforms"
+	Translate 1 2 3
+	Translate [ 1 2 3 ]
+	Transform [ 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1 ]
+	ConcatTransform [ 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1 ]
+	Perspective 45
+	ScopedCoordinateSystem "mycoord1"
+	Rotate 90 1 2 3
+	Rotate [ 90 1 2 3 ]
+	Scale 1 2 3
+	Scale [ 1 2 3 ]
+	CoordinateSystem "mycoord2"
+	Skew [ 10 1 0 0 0 1 0]
+	Skew 10 [1 0 0] [0 1 0]
+	Skew 10 1 0 0 0 1 0
+	CoordSysTransform "mycoord1"
+	Deformation "deformation_shader"
+	Identity
+ArchiveEnd
+#
+# Set of other Requests
+#
+ArchiveBegin "Other"
+MakeTexture "picturename" "texturename" "swrap" "twrap" "gaussianFilter" 1 2
+MakeBump "picturename" "texturename" "swrap" "twrap" "triangleFilter" 1 2
+MakeLatLongEnvironment "picturename" "texturename" "sincFilter" 1 2
+MakeCubeFaceEnvironment "px" "nx" "py" "ny" "pz" "nz" "texturename" 25 "catmullRomFilter" 1 2
+MakeShadow "picturename" "texturename"
+MakeBrickMap "ptcname" "bkmname"
+MakeBrickMap ["ptcname1" "ptcname2" "ptcname3" "ptcname4" "ptcname5" "ptcname6"] "bkmname"
+ArchiveEnd
+#
+#*Start 1234567890
+#
 Display "a.tif" "framebuffer" "rgba"
 Format 256 256 1
 Clipping 0.001 1000
 PixelSamples 1 1
-Projection "perspective"
-Translate 0 0 5
-#
-# World
-WorldBegin
-	LightSource "pointlight" 1
+ErrorHandler "print" # 2 Do control for ErrorHandler request
+System "dir" # 2 Do control for System request
+Declare "colorful" "varying color"
+FrameBegin 1
+	Projection "perspective"
 	Translate 0 0 5
-	# Read the inline archive
-	ReadArchive "InlineArchive"
-	Translate 0 0 5
-	Illuminate 1 1
-	# Read the deeper nested inline archive
-	ReadArchive "InInlineArchive"
-	# Read the sphere object
-	ObjectInstance "A_Sphere"
-	# Read the disk object
-	ObjectInstance "A_Disk"
-	# Procedural "DelayedReadArchive"
-	Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
-	# Primitives
-	ReadArchive "Primitives"
-WorldEnd
+	#
+	# World
+	LightSource "distantlight" 1 "intensity" 1
+	WorldBegin
+		AttributeBegin
+			TransformBegin
+				Rotate 90 1 2 3
+				LightSource "pointlight" 2 "intensity" 1
+			TransformEnd
+		AttributeEnd	
+		Translate 0 0 5
+		# Read the inline archive
+		ReadArchive "InlineArchive"
+		Translate 0 0 5
+		Illuminate 2 1
+		Surface "bluemarble"
+		Resource "bmarble" "attributes" "string operation" "save"
+		ResourceBegin
+			AttributeBegin
+				Surface "redmarble"
+				Resource "rmarble" "attributes" "string operation" "save"
+				TransformBegin
+					Translate 1 2 3
+					Resource "bmarble" "attributes" "string operation" "restore" "string subset" "shading"
+					Sphere .5 -.5 .5 360
+					Resource "rmarble" "attributes" "string operation" "load"
+					Translate 4 5 6
+					Sphere .5 -.5 .5 360
+				TransformEnd
+			AttributeEnd
+		ResourceEnd
+		# Read the deeper nested inline archiv
+		ReadArchive "InInlineArchive"
+		# Read the sphere object
+		AttributeBegin
+			AreaLightSource "myarealight" "myarealight" "intensity" 1
+			ObjectInstance "A_Sphere"
+		AttributeEnd
+		Illuminate "myarealight" 1
+		# Read the disk object
+		ObjectInstance "A_Disk"
+		# Procedural "DelayedReadArchive"
+		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
+		Procedural "RunProgram" [ "php genpic.php" "" ] [ 1 2 3 4 5 6 ]
+		Procedural "DynamicLoad" [ "mydynlib" "" ] [ 1 2 3 4 5 6 ]
+		# Primitives
+		ReadArchive "Primitives"
+		# if then else
+		IfBegin " 1 + 4 * 7.0 == '29' && false"
+			Sphere 0.75 -1 1 360.0
+		ElseIf "'*abc\\'' =~ '\\*abc?' || $Frame==1 "
+			Sphere 1 -1 1 360.0
+		Else
+			Sphere 1 -1 1 180.0
+		IfEnd
+	WorldEnd
+FrameEnd
 # -----------------------------------------------

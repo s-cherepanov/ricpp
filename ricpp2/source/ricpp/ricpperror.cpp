@@ -128,17 +128,12 @@ RtString CRiCPPErrMsg::errorSeverity(RtInt aSeverity)
 
 const char *ExceptRiCPPError::formatErrorMessage(std::string &strCode) const
 {
-	char buffer[128];
+	char buffer[64];
 	strCode.clear();
 
 	if ( !m_file.empty() ) {
 		strCode += "File [";
-#ifdef WIN32
-	sprintf_s(buffer, sizeof(buffer), "%ld", m_line);
-#else
-	snprintf(buffer, sizeof(buffer)-1, "%ld", m_line);
-#endif
-		strCode += buffer;
+		strCode += valToStr(buffer, sizeof(buffer), m_line);;
 		strCode += ": ";
 		strCode += m_file;
 		strCode += "]";
@@ -159,25 +154,12 @@ const char *ExceptRiCPPError::formatError(std::string &strCode) const
 	char buffer[64];
 	
 	strCode = "Error [";
-	buffer[0]=(char)0;
-#ifdef WIN32
-	sprintf_s(buffer, sizeof(buffer), "%d", m_code);
-#else
-	snprintf(buffer, sizeof(buffer)-1, "%d", m_code);
-#endif
-	buffer[sizeof(buffer)-1] = (char)0;
-	strCode += buffer;
+	strCode += valToStr(buffer, sizeof(buffer), m_code);
 	strCode += ": ";
 	strCode += CRiCPPErrMsg::errorMessage(m_code);
 	strCode += "] Severity [";
-	buffer[0]=(char)0;
-#ifdef WIN32
-	sprintf_s(buffer, sizeof(buffer), "%d", m_severity);
-#else
-	snprintf(buffer, sizeof(buffer)-1, "%d", m_severity);
-#endif
-	buffer[sizeof(buffer)-1] = (char)0;
 	strCode += buffer;
+	strCode += valToStr(buffer, sizeof(buffer), m_severity);
 	strCode += ": ";
 	strCode += CRiCPPErrMsg::errorSeverity(m_severity);
 	strCode += "]";

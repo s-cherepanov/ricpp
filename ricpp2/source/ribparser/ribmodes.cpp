@@ -57,7 +57,7 @@ void CResourceEndRibRequest::operator()(IRibParserState &parser, CRibRequestData
 
 void CResourceRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
-	// Resource handle type
+	// Resource handle type ...
 
 	if ( request.size() < 2 ) {
 		parser.errHandler().handleError(
@@ -66,14 +66,6 @@ void CResourceRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 			parser.lineNo(), parser.resourceName(), requestName(), "handle type", RI_NULL);
 		return;
 	}
-
-	if ( request.size() > 2 ) {
-		parser.errHandler().handleError(
-			RIE_CONSISTENCY, RIE_WARNING,
-			"Line %ld, File \"%s\", badargument: '%s' has additional parameters, they are ignored",
-			parser.lineNo(), parser.resourceName(), requestName(), RI_NULL);
-	}
-
 
 	CRibParameter &p0 = request[0];
 	CRibParameter &p1 = request[1];

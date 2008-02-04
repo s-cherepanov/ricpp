@@ -240,7 +240,7 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 	}
 
 	if ( !renderState()->validRequest(req) ) {
-		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s", CRequestInfo::requestName(req));
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s not in valid block", CRequestInfo::requestName(req));
 	}
 
 	renderState()->motionState().request(req);

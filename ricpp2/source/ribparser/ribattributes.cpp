@@ -720,7 +720,7 @@ void CBoundRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 				requestName(), RI_NULL);
 		}
 
-	} else if ( request.size() >= 8 ) {
+	} else if ( request.size() >= 6 ) {
 
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
@@ -840,7 +840,7 @@ void CDetailRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 				requestName(), RI_NULL);
 		}
 
-	} else if ( request.size() >= 8 ) {
+	} else if ( request.size() >= 6 ) {
 
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
@@ -1234,7 +1234,7 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 		if ( b1 && b3 ) {
 
 			if ( p0.typeID() == BASICTYPE_FLOAT && p0.isArray() && p0.getCard() == 16 ) {
-				memcpy(vbasis[0], p2.getValue(), sizeof(RtBasis));
+				memcpy(ubasis[0], p0.getValue(), sizeof(RtBasis));
 			} else if ( p0.getString(uname) ) {
 				RtToken name = parser.renderState().tokFind(uname);
 				if ( !name || !parser.renderState().getBasis(name, ubasis) ) {

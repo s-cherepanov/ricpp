@@ -86,7 +86,6 @@ enum EnumModeBits {
 	MODE_BIT_ELSE      = 4096, //!< Bit for else block
 
 	MODE_BIT_OBJECT    = 8192  //!< Bit for object block
-
 };
 
 typedef unsigned short TypeModeBits;

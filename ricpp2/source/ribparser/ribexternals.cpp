@@ -131,9 +131,9 @@ void CMakeTextureRibRequest::operator()(IRibParserState &parser, CRibRequestData
 	}
 }
 
-void CMakeBumbRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
+void CMakeBumpRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
-	// MakeTexture picturename texturename swrap twrap filter swidth twidth <paramlist>
+	// MakeBump picturename texturename swrap twrap filter swidth twidth <paramlist>
 	if ( request.size() >= 7 ) {
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];

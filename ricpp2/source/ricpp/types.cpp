@@ -27,12 +27,21 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  */
 #include "ricpp/ricpp/types.h"
+
+#ifndef _RICPP_RICPP_RICPPCONST_H
+#include "ricpp/ricpp/ricppconst.h"
+#endif // _RICPP_RICPP_RICPPCONST_H
+
+#ifndef _RICPP_RICPP_RICPPTOKENS_H
 #include "ricpp/ricpp/ricpptokens.h"
+#endif // _RICPP_RICPP_RICPPTOKENS_H
+
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
 
 #include <cstring>
 #include <cctype>
-
 #include <string>
 
 using namespace RiCPP;
@@ -313,6 +322,22 @@ unsigned int CTypeInfo::typeByteSize(EnumTypes e)
 EnumBasicTypes CTypeInfo::basicTypeForType(EnumTypes e)
 {
 	return ms_basicTypesForTypes[e];
+}
+
+RtToken CTypeInfo::basisToToken(const RtBasis aBasis)
+{
+	if ( !memcmp(&(aBasis[0][0]), &(RiBezierBasis[0][0]), sizeof(RtBasis)) )
+		return RI_BEZIER;
+	if ( !memcmp(&(aBasis[0][0]), &(RiBSplineBasis[0][0]), sizeof(RiBSplineBasis)) )
+		return RI_B_SPLINE;
+	if ( !memcmp(&(aBasis[0][0]), &(RiCatmullRomBasis[0][0]), sizeof(RiCatmullRomBasis)) )
+		return RI_CATMULLROM;
+	if ( !memcmp(&(aBasis[0][0]), &(RiHermiteBasis[0][0]), sizeof(RiHermiteBasis)) )
+		return RI_HERMITE;
+	if ( !memcmp(&(aBasis[0][0]), &(RiPowerBasis[0][0]), sizeof(RiPowerBasis)) )
+		return RI_POWER;
+
+	return RI_NULL;
 }
 
 // ----------------------------------------------------------------------------

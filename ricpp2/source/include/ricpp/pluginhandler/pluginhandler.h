@@ -69,9 +69,13 @@ namespace RiCPP {
  */
 class IPlugin {
 public:
-	/** @brief virtual destructor
+	/** @brief Standard Constructor
 	 */
-	inline virtual ~IPlugin() {}
+	IPlugin();
+
+	/** @brief Virtual destructor
+	 */
+	virtual ~IPlugin();
 
 	/** @brief Major version number of the plugin interface.
 	 *

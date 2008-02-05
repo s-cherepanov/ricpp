@@ -43,6 +43,7 @@
 
 using namespace RiCPP;
 
+RtToken CProcDelayedReadArchive::myName() {return RI_DELAYED_READ_ARCHIVE; }
 RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
 	detail = detail;
@@ -58,6 +59,7 @@ RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer data, RtFloat deta
 
 CProcDelayedReadArchive CProcDelayedReadArchive::func;
 
+RtToken CProcRunProgram::myName() {return RI_RUN_PROGRAM; }
 RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
 	detail = detail;
@@ -108,6 +110,7 @@ typedef void (CDECL *TypeSubdivide)(IRi &, RtPointer, RtFloat);
 typedef void (CDECL *TypeFree)(RtPointer);
 
 
+RtToken CProcDynamicLoad::myName() {return RI_DYNAMIC_LOAD; }
 RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
 	ri = ri;
@@ -158,6 +161,7 @@ RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) con
 
 CProcDynamicLoad CProcDynamicLoad::func;
 
+RtToken CProcFree::myName() {return RI_FREE; }
 RtVoid CProcFree::operator()(RtPointer data) const
 {
 	if (data)

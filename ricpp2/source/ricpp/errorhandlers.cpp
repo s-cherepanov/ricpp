@@ -41,6 +41,7 @@
 
 using namespace RiCPP;
 
+RtToken CAbortErrorHandler::myName() {return RI_ABORT; }
 RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	std::cout << "*** Code " <<
@@ -55,6 +56,7 @@ RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 
 CAbortErrorHandler CAbortErrorHandler::func;
 
+RtToken CPrintErrorHandler::myName() {return RI_PRINT; }
 RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	const IRi *pri = &ri;
@@ -67,6 +69,7 @@ RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 
 CPrintErrorHandler CPrintErrorHandler::func;
 
+RtToken CIgnoreErrorHandler::myName() {return RI_IGNORE; }
 RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
 	const IRi *pri = &ri;

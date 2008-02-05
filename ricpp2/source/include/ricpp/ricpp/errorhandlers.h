@@ -41,7 +41,7 @@ namespace RiCPP {
 class CAbortErrorHandler : public IErrorHandler {
 public:
 	static class CAbortErrorHandler func;
-	inline static RtToken myName() {return RI_ABORT; }
+	static RtToken myName();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
@@ -69,7 +69,7 @@ public:
 class CPrintErrorHandler : public IErrorHandler  {
 public:
 	static class CPrintErrorHandler func;
-	inline static RtToken myName() {return RI_PRINT; }
+	static RtToken myName();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
@@ -97,7 +97,7 @@ public:
 class CIgnoreErrorHandler : public IErrorHandler  {
 public:
 	static class CIgnoreErrorHandler func;
-	inline static RtToken myName() {return RI_IGNORE; }
+	static RtToken myName();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.

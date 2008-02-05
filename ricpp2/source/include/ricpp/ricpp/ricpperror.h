@@ -264,7 +264,7 @@ class IRiCPPErrorHandler {
 public:
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~IRiCPPErrorHandler() {}
+	virtual ~IRiCPPErrorHandler();
 
 	/** @brief Handles an error with line and file
 	 *
@@ -301,10 +301,7 @@ public:
 	 * @param message Format string (like in printf())
 	 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 	 */
-	inline virtual RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0)
-	{
-		handleErrorV(code, severity, 0, 0, message, argList);
-	}
+	inline virtual RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0);
 
 	/** @brief Handles an error must be overloaded for concrete error handling
 	 * @param code Error Code (RIE_...)
@@ -324,6 +321,9 @@ public:
  */
 class CErrorExceptionHandler : public IRiCPPErrorHandler {
 public:
+	/** @brief Virtual destructor
+	 */
+	virtual ~CErrorExceptionHandler();
 	/** @brief Handles an error, sets m_lastError and calls the current error handler
 	 * @param code Error Code (RIE_...)
 	 * @param severity Severity level of the error (RIE_INFO, ..., RIE_SEVERE)

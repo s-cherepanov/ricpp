@@ -116,7 +116,7 @@ public:
 class CProcDelayedReadArchive : public ISubdivFunc {
 public:
 	static class CProcDelayedReadArchive func;
-	inline static RtToken myName() {return RI_DELAYED_READ_ARCHIVE; }
+	static RtToken myName();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
@@ -226,7 +226,7 @@ public:
 class CProcRunProgram : public ISubdivFunc {
 public:
 	static class CProcRunProgram func;
-	inline static RtToken myName() {return RI_RUN_PROGRAM; }
+	static RtToken myName();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
@@ -337,7 +337,7 @@ public:
 class CProcDynamicLoad : public ISubdivFunc {
 public:
 	static class CProcDynamicLoad func;
-	inline static RtToken myName() {return RI_DYNAMIC_LOAD; }
+	static RtToken myName();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
@@ -375,7 +375,7 @@ public:
 class CProcFree : public IFreeFunc {
 public:
 	static class CProcFree func;
-	inline static RtToken myName() {return RI_FREE; }
+	static RtToken myName();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.

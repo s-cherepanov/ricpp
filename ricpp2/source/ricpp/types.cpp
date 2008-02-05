@@ -324,20 +324,48 @@ EnumBasicTypes CTypeInfo::basicTypeForType(EnumTypes e)
 	return ms_basicTypesForTypes[e];
 }
 
-RtToken CTypeInfo::basisToToken(const RtBasis aBasis)
+RtToken CTypeInfo::basisName(const RtBasis aBasis)
 {
 	if ( !memcmp(&(aBasis[0][0]), &(RiBezierBasis[0][0]), sizeof(RtBasis)) )
 		return RI_BEZIER;
-	if ( !memcmp(&(aBasis[0][0]), &(RiBSplineBasis[0][0]), sizeof(RiBSplineBasis)) )
+	if ( !memcmp(&(aBasis[0][0]), &(RiBSplineBasis[0][0]), sizeof(RtBasis)) )
 		return RI_B_SPLINE;
-	if ( !memcmp(&(aBasis[0][0]), &(RiCatmullRomBasis[0][0]), sizeof(RiCatmullRomBasis)) )
+	if ( !memcmp(&(aBasis[0][0]), &(RiCatmullRomBasis[0][0]), sizeof(RtBasis)) )
 		return RI_CATMULLROM;
-	if ( !memcmp(&(aBasis[0][0]), &(RiHermiteBasis[0][0]), sizeof(RiHermiteBasis)) )
+	if ( !memcmp(&(aBasis[0][0]), &(RiHermiteBasis[0][0]), sizeof(RtBasis)) )
 		return RI_HERMITE;
-	if ( !memcmp(&(aBasis[0][0]), &(RiPowerBasis[0][0]), sizeof(RiPowerBasis)) )
+	if ( !memcmp(&(aBasis[0][0]), &(RiPowerBasis[0][0]), sizeof(RtBasis)) )
 		return RI_POWER;
 
 	return RI_NULL;
+}
+
+
+bool CTypeInfo::getBasis(RtToken basisToken, RtBasis aBasis)
+{
+	if ( basisToken == RI_BEZIER ) {
+		memcpy(&(aBasis[0][0]), &(RiBezierBasis[0][0]), sizeof(RtBasis));
+		return true;
+	}
+	if ( basisToken == RI_B_SPLINE ) {
+		memcpy(&(aBasis[0][0]), &(RiBSplineBasis[0][0]), sizeof(RtBasis));
+		return true;
+	}
+	if ( basisToken == RI_CATMULLROM || basisToken == RI_CATMULL_ROM ) {
+		memcpy(&(aBasis[0][0]), &(RiCatmullRomBasis[0][0]), sizeof(RtBasis));
+		return true;
+	}
+	if ( basisToken == RI_HERMITE ) {
+		memcpy(&(aBasis[0][0]), &(RiHermiteBasis[0][0]), sizeof(RtBasis));
+		return true;
+	}
+	if ( basisToken == RI_POWER ) {
+		memcpy(&(aBasis[0][0]), &(RiPowerBasis[0][0]), sizeof(RtBasis));
+		return true;
+	}
+	
+	
+	return false;
 }
 
 // ----------------------------------------------------------------------------

@@ -38,6 +38,19 @@ unsigned long CContextCreator::myMajorVersion() { return 1; }
 unsigned long CContextCreator::myMinorVersion() { return 1; }
 unsigned long CContextCreator::myRevision() { return 1; }
 
+const char *CContextCreator::name() const { return myName(); }
+const char *CContextCreator::type() const { return myType(); }
+unsigned long CContextCreator::majorVersion() const {return myMajorVersion(); }
+unsigned long CContextCreator::minorVersion() const {return myMinorVersion(); }
+unsigned long CContextCreator::revision() const {return myRevision(); }
+
+IRiCPPErrorHandler &CContextCreator::ricppErrHandler() { return m_errorHandler; }
+IRiContext *CContextCreator::getNewContext() { return 0; }
+void CContextCreator::startup() {}
+void CContextCreator::shutdown() {}
+
+CContextCreator::CContextCreator() : m_curContext(0), m_ribParserCallback(0) { }
+
 CContextCreator::~CContextCreator()
 {
 	m_curContext = 0;
@@ -50,6 +63,9 @@ CContextCreator::~CContextCreator()
 
 	m_contextList.clear();
 }
+
+
+IRiContext *CContextCreator::getContext() { return m_curContext; }
 
 void CContextCreator::deleteContext()
 {
@@ -146,6 +162,13 @@ RtVoid CContextCreator::end(void)
 		ricppErrHandler().handleError(e);
 	}
 }
+
+unsigned long CContextCreator::majorContextVersion(void) const { return IRiContext::myMajorVersion(); }
+unsigned long CContextCreator::minorContextVersion() const { return 0; }
+unsigned long CContextCreator::contextRevision() const { return 0; }
+RtToken CContextCreator::contextName() const { return RI_NULL; }
+RtToken CContextCreator::contextType() const { return IRiContext::myType(); }
+RtToken CContextCreator::rendererType() const { return RI_NULL; }
 
 RtVoid CContextCreator::registerRibParserCallback(IRibParserCallback &cb)
 {

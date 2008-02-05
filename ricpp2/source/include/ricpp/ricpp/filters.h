@@ -41,7 +41,7 @@ namespace RiCPP {
 class CGaussianFilter : public IFilterFunc {
 public:
 	static class CGaussianFilter func;
-	inline static RtToken myName() {return RI_GAUSSIAN_FILTER; }
+	static RtToken myName();
 	inline virtual IFilterFunc *duplicate() const { return new CGaussianFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
@@ -53,7 +53,7 @@ public:
 class CBoxFilter : public IFilterFunc {
 public:
 	static class CBoxFilter func;
-	inline static RtToken myName() {return RI_BOX_FILTER; }
+	static RtToken myName();
 	inline virtual IFilterFunc *duplicate() const { return new CBoxFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
@@ -65,7 +65,7 @@ public:
 class CTriangleFilter : public IFilterFunc {
 public:
 	static class CTriangleFilter func;
-	inline static RtToken myName() {return RI_TRIANGLE_FILTER; }
+	static RtToken myName();
 	inline virtual IFilterFunc *duplicate() const { return new CTriangleFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
@@ -77,7 +77,7 @@ public:
 class CCatmullRomFilter : public IFilterFunc {
 public:
 	static class CCatmullRomFilter func;
-	inline static RtToken myName() {return RI_CATMULL_ROM_FILTER; }
+	static RtToken myName();
 	inline virtual IFilterFunc *duplicate() const { return new CCatmullRomFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
@@ -89,7 +89,7 @@ public:
 class CSincFilter : public IFilterFunc {
 public:
 	static class CSincFilter func;
-	inline static RtToken myName() {return RI_SINC_FILTER; }
+	static RtToken myName();
 	inline virtual IFilterFunc *duplicate() const { return new CSincFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;

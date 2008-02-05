@@ -224,6 +224,15 @@ void ExceptRiCPPError::set(
 	set(aCode, aSeverity, aMessage, aLine, aFile);
 }
 
+// ----------------------------------------------------------------------------
+
+IRiCPPErrorHandler::~IRiCPPErrorHandler() {}
+
+RtVoid IRiCPPErrorHandler::handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0)
+{
+	handleErrorV(code, severity, 0, 0, message, argList);
+}
+
 RtVoid IRiCPPErrorHandler::handleError(RtInt code, RtInt severity, int line, const char *file, RtString message, ...)
 {
 	va_list argList;
@@ -243,6 +252,8 @@ RtVoid IRiCPPErrorHandler::handleError(const ExceptRiCPPError &err)
 {
 	handleErrorV(err.code(), err.severity(), err.line(), err.file(), err.what(), 0);
 }
+
+CErrorExceptionHandler::~CErrorExceptionHandler() {}
 
 RtVoid CErrorExceptionHandler::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList) {
 	static const int ERROR_STR_SIZE = 256;

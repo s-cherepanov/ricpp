@@ -40,6 +40,7 @@ using namespace RiCPP;
 //
 // CGaussianFilter
 //
+RtToken CGaussianFilter::myName() {return RI_GAUSSIAN_FILTER; }
 RtFloat	CGaussianFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
 {
 	x *= (RtFloat)(2.0 / xwidth);
@@ -52,6 +53,7 @@ CGaussianFilter CGaussianFilter::func;
 //
 // CBoxFilter
 //
+RtToken CBoxFilter::myName() {return RI_BOX_FILTER; }
 RtFloat	CBoxFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
 {
 	x = x;
@@ -68,6 +70,7 @@ CBoxFilter CBoxFilter::func;
 //
 // CTriangleFilter
 //
+RtToken CTriangleFilter::myName() {return RI_TRIANGLE_FILTER; }
 RtFloat	CTriangleFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
 {
 	return (RtFloat)(((1.0 - fabs(x)) / (xwidth * 0.5)) *
@@ -80,6 +83,7 @@ CTriangleFilter CTriangleFilter::func;
 //
 // CCatmullRomFilter
 //
+RtToken CCatmullRomFilter::myName() {return RI_CATMULL_ROM_FILTER; }
 RtFloat	CCatmullRomFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
 {
 	RtFloat r2 = (x*x + y*y);
@@ -98,6 +102,7 @@ CCatmullRomFilter CCatmullRomFilter::func;
 //
 // CSincFilter
 //
+RtToken CSincFilter::myName() {return RI_SINC_FILTER; }
 RtFloat	CSincFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
 {
 	RtFloat s, t;

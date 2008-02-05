@@ -1689,28 +1689,13 @@ void CRenderState::registerResourceFactory(IResourceFactory *f)
 
 bool CRenderState::getBasis(RtToken basisName, RtBasis basis) const
 {
-	if ( basisName == RI_BEZIER ) {
-		memcpy(basis, RiBezierBasis, sizeof(RtBasis));
-		return true;
-	}
-	if ( basisName == RI_B_SPLINE ) {
-		memcpy(basis, RiBSplineBasis, sizeof(RtBasis));
-		return true;
-	}
-	if ( basisName == RI_CATMULLROM || basisName == RI_CATMULL_ROM ) {
-		memcpy(basis, RiCatmullRomBasis, sizeof(RtBasis));
-		return true;
-	}
-	if ( basisName == RI_HERMITE ) {
-		memcpy(basis, RiHermiteBasis, sizeof(RtBasis));
-		return true;
-	}
-	if ( basisName == RI_POWER ) {
-		memcpy(basis, RiPowerBasis, sizeof(RtBasis));
-		return true;
-	}
+	return CTypeInfo::getBasis(basisName, basis);
+}
 
-	return false;
+
+RtToken CRenderState::basisName(const RtBasis basis) const
+{
+	return CTypeInfo::basisName(basis);
 }
 
 

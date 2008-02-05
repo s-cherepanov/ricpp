@@ -1765,7 +1765,7 @@ RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt 
 	writeTrailer();
 	m_writer->putRequest(REQ_BASIS);
 	m_writer->putBlank();
-	basisToken = CTypeInfo::basisToToken(ubasis);
+	basisToken = renderState()->basisName(ubasis);
 	if ( basisToken != RI_NULL ) {
 		m_writer->putStringToken(basisToken);
 	} else {
@@ -1774,7 +1774,7 @@ RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt 
 	m_writer->putBlank();
 	m_writer->putValue(ustep);
 	m_writer->putBlank();
-	basisToken = CTypeInfo::basisToToken(vbasis);
+	basisToken = renderState()->basisName(vbasis);
 	if ( basisToken != RI_NULL ) {
 		m_writer->putStringToken(basisToken);
 	} else {

@@ -81,19 +81,20 @@ class CContextCreator : IPlugin {
 	/** @brief Rib callback has to be known before the begin of the context is called.
 	 */
 	IRibParserCallback *m_ribParserCallback;
+
 protected:
 	/** @brief Returns the error handler to use. It can but usually
 	 *  won't be overwritten in this framework.
 	 *
 	 *  @return \a m_errorHandler, the default CErrorExceptionHandler is returned.
 	 */
-	inline virtual IRiCPPErrorHandler &ricppErrHandler() { return m_errorHandler; }
+	virtual IRiCPPErrorHandler &ricppErrHandler();
 
 	/** @brief Factory method, must be overwritten to return a new concrete renderer context.
 	 *
 	 * @return This one returns 0, an overwritten method returns a new concrete render context.
 	 */
-	inline virtual IRiContext *getNewContext() { return 0; }
+	virtual IRiContext *getNewContext();
 
 	/** @brief Discards the current context.
 	 * 
@@ -110,18 +111,18 @@ public:
 	static unsigned long myMinorVersion();
 	static unsigned long myRevision();
 
-	inline virtual const char *name() const { return myName(); }
-	inline virtual const char *type() const { return myType(); }
-	inline virtual unsigned long majorVersion() const {return myMajorVersion(); }
-	inline virtual unsigned long minorVersion() const {return myMinorVersion(); }
-	inline virtual unsigned long revision() const {return myRevision(); }
+	virtual const char *name() const;
+	virtual const char *type() const;
+	virtual unsigned long majorVersion() const;
+	virtual unsigned long minorVersion() const;
+	virtual unsigned long revision() const;
 
-	inline virtual void startup() {}
-	inline virtual void shutdown() {}
+	virtual void startup();
+	virtual void shutdown();
 
 	/** @brief Constructor, just initializes the current context to 0
 	 */
-	inline CContextCreator() : m_curContext(0), m_ribParserCallback(0) { }
+	CContextCreator();
 
 	/** @brief Destructor, deletes all remaining contexts
 	 */
@@ -140,7 +141,7 @@ public:
 	 *
 	 * @return The current context (m_curContext) to work with. Mind, it can return 0 if there is no active context.
 	 */
-	virtual IRiContext *getContext() { return m_curContext; }
+	virtual IRiContext *getContext();
 
 	/** @brief Context switching
 	 *
@@ -196,32 +197,32 @@ public:
 	 *
 	 * @return the major version of IRiContext
 	 */
-	virtual unsigned long majorContextVersion(void) const { return IRiContext::myMajorVersion(); }
+	virtual unsigned long majorContextVersion(void) const;
 
 	/** @brief The minor version is the version of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the minor version of a concrete context.
 	 */
-	inline virtual unsigned long minorContextVersion() const { return 0; }
+	virtual unsigned long minorContextVersion() const;
 
 	/** @brief The revision of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the revision of a concrete context.
 	 */
-	inline virtual unsigned long contextRevision() const { return 0; }
+	virtual unsigned long contextRevision() const;
 
 	/** @brief The name of a concrete context (must be overwritten)
 	 *  @return 0, overload to return the name of a concrete context.
 	 */
-	inline virtual RtToken contextName() const { return RI_NULL; }
+	virtual RtToken contextName() const;
 
 	/** @brief The type of a concrete context interface (that's IRiContext)
 	 *  @return Type of IRiContext
 	 */
-	inline virtual RtToken contextType() const { return IRiContext::myType(); }
+	virtual RtToken contextType() const;
 
 	/** @brief The renderer type of a concrete context (must be overwritten)
 	 *  @return RI_NULL, overload to return the type of a concrete context (RI_ARCHIVE, RI_DRAFT, RI_REALISTIC, or user defined).
 	 */
-	inline virtual RtToken rendererType() const { return RI_NULL; }
+	virtual RtToken rendererType() const;
 
 	/** @brief Interfaces of frontend needed by rib parser.
 	 *

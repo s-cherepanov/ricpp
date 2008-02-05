@@ -542,6 +542,8 @@ public:
  *
  * I used copied code from the zlib here.
  *
+ * @todo There is a bug with m_additionalChars while filling the buffer
+ *
  * @see CBackBufferRoot
  */
 template<class charT, class traits=std::char_traits<charT> >
@@ -594,6 +596,7 @@ private:
 
 	int_type m_buffersize;
 	int_type m_putbackSize;
+	int_type m_additionalChars;
 
 	TemplBuffer<charT> m_frontInBuffer;
 	z_stream m_strmIn;
@@ -624,6 +627,10 @@ private:
 
 		m_buffersize = 8192;
 		m_putbackSize = 128;
+		m_additionalChars = 0; // = 8; // Bug if > 0
+		if ( m_buffersize < 16 ) {
+			m_additionalChars += 16;
+		}
 
 		m_frontInBuffer.clear();
 		m_frontInBuffer.resize(m_buffersize);
@@ -758,21 +765,17 @@ private:
 
 		bool startstream = false;
 		if ( m_transferInBuffer.size() == 0 ) {
-			int additionalchars = 8;
-			if ( m_buffersize < 16 ) {
-				additionalchars += 16;
-			}
-			m_transferInBuffer.resize(m_buffersize*sizeof(charT)+additionalchars);
-			m_strmIn.next_in = m_transferInBuffer.begin()+8;
+			m_transferInBuffer.resize(m_buffersize*sizeof(charT)+m_additionalChars);
+			m_strmIn.next_in = m_transferInBuffer.begin()+m_additionalChars;
 			startstream = true;
-		} else if ( m_strmIn.next_in < m_transferInBuffer.begin()+(m_transferInBuffer.size()-8) ) {
+		} else if ( m_strmIn.next_in < m_transferInBuffer.begin()+(m_transferInBuffer.size()-m_additionalChars) ) {
 			m_inIsEOF = true;
 			return 0;
 		} else {
-			TemplBuffer<unsigned char>::iterator e = m_transferInBuffer.begin()+(m_transferInBuffer.size()-8);
+			TemplBuffer<unsigned char>::iterator e = m_transferInBuffer.begin()+(m_transferInBuffer.size()-m_additionalChars);
 			TemplBuffer<unsigned char>::iterator b = m_transferInBuffer.begin();
 
-			for ( int i=0; i<8; ++i ) {
+			for ( int i=0; i<m_additionalChars; ++i ) {
 				*(b++) = *(e++);
 			}
 			m_strmIn.next_in = m_transferInBuffer.begin();
@@ -781,20 +784,20 @@ private:
 		if ( m_backBuffer ) {
 			m_strmIn.avail_in =
 				(uInt)m_backBuffer->sgetn(
-					(char *)m_transferInBuffer.begin()+8,
-					(std::streamsize)m_transferInBuffer.size()-8);
+					(char *)m_transferInBuffer.begin()+m_additionalChars,
+					(std::streamsize)m_transferInBuffer.size()-m_additionalChars);
 		} else if ( m_coupledBuffer ) {
 			#ifdef _MSC_VER
 				m_strmIn.avail_in =
 					(uInt)m_coupledBuffer->_Sgetn_s(
-						(char *)m_transferInBuffer.begin()+8,
-						m_transferInBuffer.size()-8,
-						(std::streamsize)m_transferInBuffer.size()-8);
+						(char *)m_transferInBuffer.begin()+m_additionalChars,
+						m_transferInBuffer.size()-m_additionalChars,
+						(std::streamsize)m_transferInBuffer.size()-m_additionalChars);
 			#else
 				m_strmIn.avail_in =
 					m_coupledBuffer->sgetn(
-						(char *)m_transferInBuffer.begin()+8,
-						m_transferInBuffer.size()-8);
+						(char *)m_transferInBuffer.begin()+m_additionalChars,
+						m_transferInBuffer.size()-m_additionalChars);
 			#endif
 		}
 

@@ -31,44 +31,5 @@
 
 using namespace RiCPP;
 
-/** @brief Test class for the plugin templates
- */
-class CPlugin : public IPlugin {
-public:
-	static const char *myName();
-	static const char *myType();
-	static unsigned long myMajorVersion();
-	static unsigned long myMinorVersion();
-	static unsigned long myRevision();
-
-	inline CPlugin::CPlugin() {}
-	inline virtual ~CPlugin() {}
-
-	inline virtual const char *name() const { return myName(); }
-	inline virtual const char *type() const { return myType(); }
-	inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
-	inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
-	inline virtual unsigned long revision() const { return myRevision(); }
-
-	inline virtual void startup() {}
-	inline virtual void shutdown() {}
-};
-
-const char *CPlugin::myName() { return "demo"; }
-const char *CPlugin::myType() { return "plugin"; }
-unsigned long CPlugin::myMajorVersion() { return 1; }
-unsigned long CPlugin::myMinorVersion() { return 1; }
-unsigned long CPlugin::myRevision() { return 1; }
-
-void testTemplPluginFactory()
-{
-	try {
-		CPlugin plugin;
-		TemplPluginFactory<CPlugin> pluginFactory;
-		TemplPluginLoaderFactory<CPlugin> pluginLoaderFactory("demo");
-		TemplPluginHandler<CPlugin> pluginHandler;
-		TemplPluginHandlerSingleton<CPlugin> pluginHandlerSingleton;
-	} catch ( ExceptRiCPPError &e ) {
-		e = e;
-	}
-}
+IPlugin::IPlugin() {}
+IPlugin::~IPlugin() {}

@@ -268,7 +268,15 @@ public:
 	 *  @param aBasis Spline basis matrix
 	 *  @return Token for a specific basis @a aBasis (e.g. RI_BEZIER), RI_NULL, if there is none
 	 */
-	static RtToken basisToToken(const RtBasis aBasis);
+	static RtToken basisName(const RtBasis aBasis);
+
+	/** @brief Try to find a basis fot a token.
+	 *
+	 *  @param Token for a specific basis @a aBasis (e.g. RI_BEZIER)
+	 *  @retval aBasis Spline basis matrix
+	 *  @return true, matrix was found and returnd in @a aBasis
+	 */
+	static bool getBasis(RtToken basisToken, RtBasis aBasis);
 }; // CTypeInfo
 
 
@@ -822,10 +830,10 @@ public:
 	}
 
 	inline void set(const RtMatrix mat) {
-		memcpy(m_Matrix, mat, 16*sizeof(RtFloat));
+		memcpy(m_Matrix, mat, sizeof(RtMatrix));
 	}
 	inline void set(const RtFloat *mat) {
-		memcpy(m_Matrix, mat, 16*sizeof(RtFloat));
+		memcpy(m_Matrix, mat, sizeof(RtMatrix));
 	}
 	void get(RtMatrix &mat) const;
 

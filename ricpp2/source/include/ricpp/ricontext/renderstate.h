@@ -1100,6 +1100,7 @@ public:
 	const IFilterFunc *filterFunc(RtToken name) const;
 
 	virtual bool getBasis(RtToken basisName, RtBasis basis) const;
+	virtual RtToken basisName(const RtBasis basis) const;
 
 }; // CRenderState
 

@@ -1,4 +1,4 @@
-##RenderMan RIB
+##RenderMan RIB-Structure 1.1
 version 3.03
 #
 # Rib file to test parsing/writing 
@@ -234,8 +234,8 @@ MakeShadow "picturename" "texturename"
 MakeBrickMap "ptcname" "bkmname"
 MakeBrickMap ["ptcname1" "ptcname2" "ptcname3" "ptcname4" "ptcname5" "ptcname6"] "bkmname"
 ArchiveEnd
-#
-#*Start 1234567890
+#*
+##Start 1234567890
 #
 Display "a.tif" "framebuffer" "rgba"
 Format 256 256 1

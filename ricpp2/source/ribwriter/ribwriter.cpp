@@ -79,17 +79,15 @@ Control ribarchive postpone_macro [constant integer] 1 | 0 default 1
 0 - ArchiveBegin-End nicht ausgeben, nur Makro aufbauen
     ReadArchive ausführen falls macro
 
-Control ribarchive skip_header [constant integer] 1 | 0 | -1 default -1
+Control ribarchive skip_header [constant integer] 1 | 0 | -1 default 1 (zum Test -1)
 
->0 - Header nicht ausgeben (-> Strukturelle Kommentare bis zu 1. Befehl unterdrücken)
- 0 - Header ausgeben
-<0 - Header nur 1x ausgeben.
+ >0 - Header aus Dateien nicht ausgeben
+  0 - Header immer ausgeben
+ <0 - Nur der erste Header wird ausgeben
 
-
-control ribarchive skip_version [constant integer] 1 | 0 | -1 default -1
->0 - version wird nicht ausgegeben.
- 0 - version wird ausgegeben.
-<0 - version wird nur 1x ausgegeben.
+control ribarchive skip_version [constant integer] 1 | 0 default 0
+<>0 - version wird nicht ausgegeben.
+  0 - version wird nur 1x ausgegeben.
 
 
 Control ribarchive cachefile 1 0
@@ -102,14 +100,14 @@ Control ribarchive cachefile 1 0
 using namespace RiCPP;
 
 CRibElementsWriter::CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout, IRequestNotification &notify)
-: m_ostream(ribout), m_ascii(true), m_countStrings(0), m_firstRequestWritten(false), m_notify(notify)
+: m_ostream(ribout), m_ascii(true), m_countStrings(0), m_firstRequestWritten(false), m_notify(notify), m_linecnt(1)
 {
 	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));	
 }
 
 /*
 CRibElementsWriter::CRibElementsWriter(TemplFrontStreambuf<char> *ribout, IRequestNotification &notify)
-: m_ostream(ribout), m_ascii(true), m_countStrings(0), m_notify(notify)
+: m_ostream(ribout), m_ascii(true), m_countStrings(0), m_firstRequestWritten(false), m_notify(notify), m_linecnt(1)
 {
 	memset(m_reqEncoding, 0, sizeof(m_reqEncoding)*sizeof(unsigned char));
 }
@@ -120,7 +118,7 @@ void CRibElementsWriter::putNewLine()
 {
 	if ( m_ascii ) {
 		m_ostream << std::endl;
-		// m_ostream << '\n';
+		++m_linecnt;
 	}
 }
 
@@ -137,6 +135,8 @@ void CRibElementsWriter::putChar(char c)
 {
 	assert (c >= 0);
 	m_ostream << c;
+	if ( c == '\n' )
+		++m_linecnt;
 }
 
 
@@ -144,16 +144,34 @@ void CRibElementsWriter::putChars(const char *cs)
 {
 	if ( !cs )
 		return;
+	
+	for ( ; *cs; ++cs )
+		putChar(*cs);
 		
-	m_ostream << cs;
+	// m_ostream << cs;
 }
 
 
-void CRibElementsWriter::putComment(const char *cs)
+void CRibElementsWriter::putComment(RtToken type, const char *cs)
 {
-	m_ostream << '#';
+	bool sav_ascii = m_ascii;
+	m_ascii = true;
+
+	if ( type != RI_VERBATIM ) {
+		putChar('#');
+	}
+	if ( type == RI_STRUCTURE ) {
+		// Additional
+		putChar('#');
+	}
+
 	putChars(cs);
-	m_ostream << std::endl;
+
+	if ( type != RI_VERBATIM || !cs || !*cs || cs[strlen(cs)-1] == '\n' ) {
+		putNewLine();
+	}
+
+	m_ascii = sav_ascii;
 }
 
 
@@ -197,7 +215,7 @@ void CRibElementsWriter::putBinValue(double aFloat)
 
 void CRibElementsWriter::putRequest(EnumRequests aRequest)
 {
-	m_firstRequestWritten = 1;
+	m_firstRequestWritten = true;
 	if ( m_ascii ) {
 		putChars(CRequestInfo::requestName(aRequest));
 	} else {
@@ -211,6 +229,7 @@ void CRibElementsWriter::putRequest(EnumRequests aRequest)
 			m_ostream << code << m_reqEncoding[aRequest];
 		}
 	}
+	m_notify.requestWritten(aRequest);
 }
 
 
@@ -525,10 +544,13 @@ CRibWriter::CRibWriter()
 	m_postponeFile = 0;
 	m_postponeMacro = 1;
 	m_skipHeader = -1;
-	m_skipVersion = -1;
-	m_header = true;
-	m_headerCnt = 0;
+	m_skipVersion = 0;
+	m_header = false;
 	m_execute = false;
+	m_indent = true;
+	m_indentString = "    ";
+	
+	nestingDepth(0);
 }
 
 CRibWriter::~CRibWriter()
@@ -540,6 +562,9 @@ CRibWriter::~CRibWriter()
 void CRibWriter::requestWritten(EnumRequests aRequest)
 {
 	m_header = false;
+	// Header is skipt after first regular request
+	if ( m_skipHeader < 0 )
+		m_skipHeader = 1;
 }
 
 bool CRibWriter::testValid() const
@@ -562,12 +587,14 @@ void CRibWriter::defaultDeclarations()
 	RI_COMPRESS = processDeclare("compress", "integer", true);
 }
 
-void CRibWriter::writeTrailer()
+void CRibWriter::writePrefix(bool isArchiveRecord)
 {
-	if ( m_writer->ascii() ) {
-		const char *nesting = "    ";
-		for ( unsigned long i = 0; i < renderState()->nestingDepth(); ++i ) {
-			m_writer->putChars(nesting);
+	if ( !isArchiveRecord && !m_writer->firstRequestWritten() ) {
+		version();
+	}
+	if ( m_indent && m_writer->ascii() ) {
+		for ( unsigned long i = 0; i < nestingDepth(); ++i ) {
+			m_writer->putChars(m_indentString.c_str());
 		}
 	}
 }
@@ -624,15 +651,17 @@ RtVoid CRibWriter::doControl(RtString name, const CParameterList &params)
 
 RtVoid CRibWriter::version()
 {
-	if ( m_skipVersion > 0 )
+	if ( m_skipHeader < 0 )
+		m_skipHeader = 1;
+		
+	m_header = false;
+
+	if ( m_skipVersion != 0 )
 		return;
 
 	m_writer->putChars("version 3.03");
 	m_writer->putNewLine();
-	if ( m_skipVersion < 0 ) {
-		m_skipVersion = 1;
-	}
-	m_headerCnt++;
+	m_skipVersion = 1; // only output once
 }
 
 
@@ -642,6 +671,8 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 	m_buffer = 0;
 	if ( m_writer ) delete m_writer;
 	m_writer = 0;
+	
+	nestingDepth(0);
 
 	RtInt compress = 0;
 	std::string filename;
@@ -687,7 +718,11 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 				return;
 			}
 		} else {
-			// pipe
+			// @todo pipe
+			m_writer = new CRibElementsWriter(std::cout.rdbuf(), *this);
+			if ( !m_writer ) {
+				return;
+			}
 		}
 	}
 }
@@ -709,7 +744,7 @@ RtVoid CRibWriter::postErrorHandler(const IErrorHandler &handler)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_ERROR_HANDLER);
 	m_writer->putBlank();
 	m_writer->putStringToken(handler.name());
@@ -722,7 +757,7 @@ RtVoid CRibWriter::postDeclare(RtToken name, RtString declaration)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DECLARE);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -737,7 +772,7 @@ RtVoid CRibWriter::postSynchronize(RtToken name)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SYNCHRONIZE);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -750,7 +785,7 @@ RtVoid CRibWriter::postSystem(RtString cmd)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SYSTEM);
 	m_writer->putBlank();
 	m_writer->putString(cmd);
@@ -763,7 +798,7 @@ RtVoid CRibWriter::postResource(RtString handle, RtString type, const CParameter
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_RESOURCE);
 	m_writer->putBlank();
 	m_writer->putStringToken(handle);
@@ -778,12 +813,12 @@ RtVoid CRibWriter::postFrameBegin(RtInt number)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_FRAME_BEGIN);
 	m_writer->putBlank();
 	m_writer->putValue(number);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -792,8 +827,8 @@ RtVoid CRibWriter::postFrameEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_FRAME_END);
 	m_writer->putNewLine();
 }
@@ -804,10 +839,10 @@ RtVoid CRibWriter::postWorldBegin(void)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_WORLD_BEGIN);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -816,8 +851,8 @@ RtVoid CRibWriter::postWorldEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_WORLD_END);
 	m_writer->putNewLine();
 }
@@ -828,10 +863,10 @@ RtVoid CRibWriter::postAttributeBegin(void)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_ATTRIBUTE_BEGIN);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -840,8 +875,8 @@ RtVoid CRibWriter::postAttributeEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_ATTRIBUTE_END);
 	m_writer->putNewLine();
 }
@@ -852,10 +887,10 @@ RtVoid CRibWriter::postTransformBegin(void)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_TRANSFORM_BEGIN);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -864,8 +899,8 @@ RtVoid CRibWriter::postTransformEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_TRANSFORM_END);
 	m_writer->putNewLine();
 }
@@ -876,12 +911,12 @@ RtVoid CRibWriter::postSolidBegin(RtToken type)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SOLID_BEGIN);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -890,8 +925,8 @@ RtVoid CRibWriter::postSolidEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_SOLID_END);
 	m_writer->putNewLine();
 }
@@ -912,13 +947,13 @@ RtVoid CRibWriter::postObjectBegin(RtObjectHandle h)
 	m_suppressOutputVector.push_back(m_suppressOutput);
 
 	if ( !m || m->postpone() ) {
-		writeTrailer();
+		writePrefix();
 		m_writer->putRequest(REQ_OBJECT_BEGIN);
 		m_writer->putBlank();
 		m_writer->putValue(extractHandleNo(h));
 		m_writer->putNewLine();
 		m_suppressOutput = false;
-		renderState()->incNestingDepth();
+		incNestingDepth();
 	} else {
 		m_suppressOutput = true;
 	}
@@ -937,8 +972,8 @@ RtVoid CRibWriter::preObjectEnd(void)
 	assert (m != 0);
 	if ( !m || m->postpone() ) {
 		if ( testValid() ) {
-			renderState()->decNestingDepth();
-			writeTrailer();
+			decNestingDepth();
+			writePrefix();
 			m_writer->putRequest(REQ_OBJECT_END);
 			m_writer->putNewLine();
 		}
@@ -981,7 +1016,7 @@ RtVoid CRibWriter::postObjectInstance(RtObjectHandle handle)
 		CRiObjectMacro *m = renderState()->objectInstance(handle);
 		if ( !m || m->postpone() ) {
 			// Put out ObjectInstance only if the object was postponed.
-			writeTrailer();
+			writePrefix();
 			m_writer->putRequest(REQ_OBJECT_INSTANCE);
 			m_writer->putBlank();
 			m_writer->putValue(extractHandleNo(handle));
@@ -1000,12 +1035,12 @@ RtVoid CRibWriter::postMotionBegin(RtInt N, RtFloat times[])
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MOTION_BEGIN);
 	m_writer->putBlank();
 	m_writer->putArray(N, N>0 ? &times[0] : 0);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -1014,8 +1049,8 @@ RtVoid CRibWriter::postMotionEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_MOTION_END);
 	m_writer->putNewLine();
 }
@@ -1026,10 +1061,10 @@ RtVoid CRibWriter::postResourceBegin(void)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_RESOURCE_BEGIN);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -1038,8 +1073,8 @@ RtVoid CRibWriter::postResourceEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_RESOURCE_END);
 	m_writer->putNewLine();
 }
@@ -1059,13 +1094,13 @@ RtVoid CRibWriter::postArchiveBegin(RtArchiveHandle h, RtToken name, const CPara
 	if ( !m || m->postpone() ) {
 		m_suppressOutput = false;
 		if ( postTestValid() ) {
-			writeTrailer();
+			writePrefix();
 			m_writer->putRequest(REQ_ARCHIVE_BEGIN);
 			m_writer->putBlank();
 			m_writer->putStringToken(name);
 			writeParameterList(params);
 		}
-		renderState()->incNestingDepth();
+		incNestingDepth();
 	} else {
 		m_suppressOutput = true;
 	}
@@ -1080,9 +1115,9 @@ RtVoid CRibWriter::preArchiveEnd(void)
 
 	assert (m != 0);
 	if ( !m || m->postpone() ) {
-		renderState()->decNestingDepth();
+		decNestingDepth();
 		if ( postTestValid() ) {
-			writeTrailer();
+			writePrefix();
 			m_writer->putRequest(REQ_ARCHIVE_END);
 			m_writer->putNewLine();
 		}
@@ -1104,7 +1139,7 @@ RtVoid CRibWriter::postFormat(RtInt xres, RtInt yres, RtFloat aspect)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_FORMAT);
 	m_writer->putBlank();
 	m_writer->putValue(xres);
@@ -1121,7 +1156,7 @@ RtVoid CRibWriter::postFrameAspectRatio(RtFloat aspect)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_FRAME_ASPECT_RATIO);
 	m_writer->putBlank();
 	m_writer->putValue(aspect);
@@ -1134,7 +1169,7 @@ RtVoid CRibWriter::postScreenWindow(RtFloat left, RtFloat right, RtFloat bot, Rt
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SCREEN_WINDOW);
 	m_writer->putBlank();
 	m_writer->putValue(left);
@@ -1153,7 +1188,7 @@ RtVoid CRibWriter::postCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFl
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_CROP_WINDOW);
 	m_writer->putBlank();
 	m_writer->putValue(xmin);
@@ -1172,7 +1207,7 @@ RtVoid CRibWriter::postProjection(RtToken name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PROJECTION);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1185,7 +1220,7 @@ RtVoid CRibWriter::postClipping(RtFloat hither, RtFloat yon)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_CLIPPING);
 	m_writer->putBlank();
 	m_writer->putValue(hither);
@@ -1200,7 +1235,7 @@ RtVoid CRibWriter::postClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_CLIPPING_PLANE);
 	m_writer->putBlank();
 	m_writer->putValue(x);
@@ -1223,7 +1258,7 @@ RtVoid CRibWriter::postDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat 
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DEPTH_OF_FIELD);
 	m_writer->putBlank();
 	m_writer->putValue(fstop);
@@ -1240,7 +1275,7 @@ RtVoid CRibWriter::postShutter(RtFloat smin, RtFloat smax)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SHUTTER);
 	m_writer->putBlank();
 	m_writer->putValue(smin);
@@ -1255,7 +1290,7 @@ RtVoid CRibWriter::postPixelVariance(RtFloat variation)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PIXEL_VARIANCE);
 	m_writer->putBlank();
 	m_writer->putValue(variation);
@@ -1268,7 +1303,7 @@ RtVoid CRibWriter::postPixelSamples(RtFloat xsamples, RtFloat ysamples)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PIXEL_SAMPLES);
 	m_writer->putBlank();
 	m_writer->putValue(xsamples);
@@ -1283,7 +1318,7 @@ RtVoid CRibWriter::postPixelFilter(const IFilterFunc &function, RtFloat xwidth, 
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PIXEL_FILTER);
 	m_writer->putBlank();
 	m_writer->putStringToken(function.name());
@@ -1300,7 +1335,7 @@ RtVoid CRibWriter::postExposure(RtFloat gain, RtFloat gamma)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_EXPOSURE);
 	m_writer->putBlank();
 	m_writer->putValue(gain);
@@ -1315,7 +1350,7 @@ RtVoid CRibWriter::postImager(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_IMAGER);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1328,7 +1363,7 @@ RtVoid CRibWriter::postQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax,
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_QUANTIZE);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -1349,7 +1384,7 @@ RtVoid CRibWriter::postDisplayChannel(RtString channel, const CParameterList &pa
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DISPLAY_CHANNEL);
 	m_writer->putBlank();
 	m_writer->putString(channel);
@@ -1362,7 +1397,7 @@ RtVoid CRibWriter::postDisplay(RtString name, RtToken type, RtString mode, const
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DISPLAY);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1379,7 +1414,7 @@ RtVoid CRibWriter::postHider(RtToken type, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_HIDER);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -1392,7 +1427,7 @@ RtVoid CRibWriter::postColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_COLOR_SAMPLES);
 	m_writer->putBlank();
 	m_writer->putArray(N*3, nRGB);
@@ -1407,7 +1442,7 @@ RtVoid CRibWriter::postRelativeDetail(RtFloat relativedetail)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_RELATIVE_DETAIL);
 	m_writer->putBlank();
 	m_writer->putValue(relativedetail);
@@ -1420,7 +1455,7 @@ RtVoid CRibWriter::postOption(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_OPTION);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1433,7 +1468,7 @@ RtVoid CRibWriter::postLightSource(RtLightHandle h, RtString name, const CParame
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_LIGHT_SOURCE);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1448,7 +1483,7 @@ RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CPa
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_AREA_LIGHT_SOURCE);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1463,7 +1498,7 @@ RtVoid CRibWriter::postAttribute(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_ATTRIBUTE);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1476,7 +1511,7 @@ RtVoid CRibWriter::postColor(RtColor Cs)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_COLOR);
 	m_writer->putBlank();
 	unsigned long n = (unsigned long)(renderState()->options().colorDescr().colorSamples());
@@ -1490,7 +1525,7 @@ RtVoid CRibWriter::postOpacity(RtColor Os)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_OPACITY);
 	m_writer->putBlank();
 	unsigned long n = (unsigned long)(renderState()->options().colorDescr().colorSamples());
@@ -1504,7 +1539,7 @@ RtVoid CRibWriter::postSurface(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SURFACE);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1517,7 +1552,7 @@ RtVoid CRibWriter::postAtmosphere(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_ATMOSPHERE);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1530,7 +1565,7 @@ RtVoid CRibWriter::postInterior(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_INTERIOR);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1543,7 +1578,7 @@ RtVoid CRibWriter::postExterior(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_EXTERIOR);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1556,7 +1591,7 @@ RtVoid CRibWriter::postIlluminate(RtLightHandle light, RtBoolean onoff)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_ILLUMINATE);
 	m_writer->putBlank();
 	m_writer->putValue((unsigned long)light);
@@ -1571,7 +1606,7 @@ RtVoid CRibWriter::postDisplacement(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DISPLACEMENT);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1584,7 +1619,7 @@ RtVoid CRibWriter::postTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, Rt
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_TEXTURE_COORDINATES);
 	m_writer->putBlank();
 	m_writer->putValue(s1);
@@ -1611,7 +1646,7 @@ RtVoid CRibWriter::postShadingRate(RtFloat size)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SHADING_RATE);
 	m_writer->putBlank();
 	m_writer->putValue(size);
@@ -1624,7 +1659,7 @@ RtVoid CRibWriter::postShadingInterpolation(RtToken type)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SHADING_INTERPOLATION);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -1637,7 +1672,7 @@ RtVoid CRibWriter::postMatte(RtBoolean onoff)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MATTE);
 	m_writer->putBlank();
 	m_writer->putValue((RtInt)(onoff?1:0));
@@ -1650,7 +1685,7 @@ RtVoid CRibWriter::postBound(RtBound bound)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_BOUND);
 	m_writer->putBlank();
 	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), &bound[0]);
@@ -1663,7 +1698,7 @@ RtVoid CRibWriter::postDetail(RtBound bound)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DETAIL);
 	m_writer->putBlank();
 	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), &bound[0]);
@@ -1676,7 +1711,7 @@ RtVoid CRibWriter::postDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptr
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DETAIL_RANGE);
 	m_writer->putBlank();
 	m_writer->putValue(minvis);
@@ -1695,7 +1730,7 @@ RtVoid CRibWriter::postGeometricApproximation(RtToken type, RtFloat value)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_GEOMETRIC_APPROXIMATION);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -1710,7 +1745,7 @@ RtVoid CRibWriter::postGeometricRepresentation(RtToken type)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_GEOMETRIC_REPRESENTATION);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -1723,7 +1758,7 @@ RtVoid CRibWriter::postOrientation(RtToken anOrientation)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_ORIENTATION);
 	m_writer->putBlank();
 	m_writer->putStringToken(anOrientation);
@@ -1736,7 +1771,7 @@ RtVoid CRibWriter::postReverseOrientation(void)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_REVERSE_ORIENTATION);
 	m_writer->putNewLine();
 }
@@ -1747,7 +1782,7 @@ RtVoid CRibWriter::postSides(RtInt nsides)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SIDES);
 	m_writer->putBlank();
 	m_writer->putValue(nsides);
@@ -1762,7 +1797,7 @@ RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt 
 
 	RtToken basisToken;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_BASIS);
 	m_writer->putBlank();
 	basisToken = renderState()->basisName(ubasis);
@@ -1793,7 +1828,7 @@ RtVoid CRibWriter::postTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], R
 
 	CTrimCurveDataInfo tc(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_TRIM_CURVE);
 	m_writer->putBlank();
 	m_writer->putArray(tc.m_nloops, ncurves);
@@ -1822,7 +1857,7 @@ RtVoid CRibWriter::postIdentity(void)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_IDENTITY);
 	m_writer->putNewLine();
 }
@@ -1833,7 +1868,7 @@ RtVoid CRibWriter::postTransform(RtMatrix aTransform)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_TRANSFORM);
 	m_writer->putBlank();
 	m_writer->putArray(sizeof(RtMatrix)/sizeof(aTransform[0][0]), &(aTransform[0][0]));
@@ -1846,7 +1881,7 @@ RtVoid CRibWriter::postConcatTransform(RtMatrix aTransform)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_CONCAT_TRANSFORM);
 	m_writer->putBlank();
 	m_writer->putArray(sizeof(RtMatrix)/sizeof(aTransform[0][0]), &(aTransform[0][0]));
@@ -1859,7 +1894,7 @@ RtVoid CRibWriter::postPerspective(RtFloat fov)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PERSPECTIVE);
 	m_writer->putBlank();
 	m_writer->putValue(fov);
@@ -1872,7 +1907,7 @@ RtVoid CRibWriter::postTranslate(RtFloat dx, RtFloat dy, RtFloat dz)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_TRANSLATE);
 	m_writer->putBlank();
 	m_writer->putValue(dx);
@@ -1889,7 +1924,7 @@ RtVoid CRibWriter::postRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_ROTATE);
 	m_writer->putBlank();
 	m_writer->putValue(angle);
@@ -1908,7 +1943,7 @@ RtVoid CRibWriter::postScale(RtFloat dx, RtFloat dy, RtFloat dz)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SCALE);
 	m_writer->putBlank();
 	m_writer->putValue(dx);
@@ -1925,7 +1960,7 @@ RtVoid CRibWriter::postSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SKEW);
 	m_writer->putBlank();
 	m_writer->putValue(angle);
@@ -1950,7 +1985,7 @@ RtVoid CRibWriter::postDeformation(RtString name, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DEFORMATION);
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
@@ -1963,7 +1998,7 @@ RtVoid CRibWriter::postScopedCoordinateSystem(RtToken space)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SCOPED_COORDINATE_SYSTEM);
 	m_writer->putBlank();
 	m_writer->putStringToken(space);
@@ -1976,7 +2011,7 @@ RtVoid CRibWriter::postCoordinateSystem(RtToken space)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_COORDINATE_SYSTEM);
 	m_writer->putBlank();
 	m_writer->putStringToken(space);
@@ -1989,7 +2024,7 @@ RtVoid CRibWriter::postCoordSysTransform(RtToken space)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_COORD_SYS_TRANSFORM);
 	m_writer->putBlank();
 	m_writer->putStringToken(space);
@@ -2002,7 +2037,7 @@ RtVoid CRibWriter::postPolygon(RtInt nvertices, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_POLYGON);
 	writeParameterList(params);
 }
@@ -2013,7 +2048,7 @@ RtVoid CRibWriter::postGeneralPolygon(RtInt nloops, RtInt nverts[], const CParam
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_GENERAL_POLYGON);
 	m_writer->putBlank();
 	m_writer->putArray(nloops, nverts);
@@ -2026,7 +2061,7 @@ RtVoid CRibWriter::postPointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_POINTS_POLYGONS);
 	m_writer->putBlank();
 	m_writer->putArray(npolys, nverts);
@@ -2041,7 +2076,7 @@ RtVoid CRibWriter::postPointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_POINTS_GENERAL_POLYGONS);
 	m_writer->putBlank();
 	m_writer->putArray(npolys, nloops);
@@ -2059,7 +2094,7 @@ RtVoid CRibWriter::postPatch(RtToken type, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PATCH);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -2072,7 +2107,7 @@ RtVoid CRibWriter::postPatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PATCH_MESH);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -2093,7 +2128,7 @@ RtVoid CRibWriter::postNuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat 
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_NU_PATCH);
 	m_writer->putBlank();
 	m_writer->putValue(nu);
@@ -2124,7 +2159,7 @@ RtVoid CRibWriter::postSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvert
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SUBDIVISION_MESH);
 	m_writer->putBlank();
 	m_writer->putStringToken(scheme);
@@ -2157,7 +2192,7 @@ RtVoid CRibWriter::postHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces,
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_HIERARCHICAL_SUBDIVISION_MESH);
 	m_writer->putBlank();
 	m_writer->putStringToken(scheme);
@@ -2194,7 +2229,7 @@ RtVoid CRibWriter::postSphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloa
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_SPHERE);
 	m_writer->putBlank();
 	m_writer->putValue(radius);
@@ -2214,7 +2249,7 @@ RtVoid CRibWriter::postCone(RtFloat height, RtFloat radius, RtFloat thetamax, co
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_CONE);
 	m_writer->putBlank();
 	m_writer->putValue(height);
@@ -2232,7 +2267,7 @@ RtVoid CRibWriter::postCylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFl
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_CYLINDER);
 	m_writer->putBlank();
 	m_writer->putValue(radius);
@@ -2252,7 +2287,7 @@ RtVoid CRibWriter::postHyperboloid(RtPoint point1, RtPoint point2, RtFloat theta
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_HYPERBOLOID);
 		m_writer->putBlank();
 	// m_writer->putArray(sizeof(RtPoint)/sizeof(point1[0]), point1);
@@ -2280,7 +2315,7 @@ RtVoid CRibWriter::postParaboloid(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFl
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_PARABOLOID);
 	m_writer->putBlank();
 	m_writer->putValue(rmax);
@@ -2300,7 +2335,7 @@ RtVoid CRibWriter::postDisk(RtFloat height, RtFloat radius, RtFloat thetamax, co
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_DISK);
 	m_writer->putBlank();
 	m_writer->putValue(height);
@@ -2318,7 +2353,7 @@ RtVoid CRibWriter::postTorus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin,
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_TORUS);
 	m_writer->putBlank();
 	m_writer->putValue(majorrad);
@@ -2340,7 +2375,7 @@ RtVoid CRibWriter::postPoints(RtInt npts, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_POINTS);
 	m_writer->putBlank();
 	writeParameterList(params);
@@ -2352,7 +2387,7 @@ RtVoid CRibWriter::postCurves(RtToken type, RtInt ncurves, RtInt nverts[], RtTok
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_CURVES);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -2369,7 +2404,7 @@ RtVoid CRibWriter::postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_BLOBBY);
 	m_writer->putBlank();
 	m_writer->putValue(nleaf);
@@ -2397,7 +2432,7 @@ RtVoid CRibWriter::postProcedural(RtPointer data, RtBound bound, const ISubdivFu
 		if ( !postTestValid() )
 			return;
 
-		writeTrailer();
+		writePrefix();
 		m_writer->putRequest(REQ_PROCEDURAL);
 		m_writer->putBlank();
 		m_writer->putStringToken(subdivfunc.name());
@@ -2407,10 +2442,7 @@ RtVoid CRibWriter::postProcedural(RtPointer data, RtBound bound, const ISubdivFu
 		m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), bound);
 		m_writer->putNewLine();
 	} else if ( renderState()->recordMode() ) {
-		bool p = renderState()->postponeReadArchive();
-		renderState()->postponeReadArchive(false);
-		CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
-		renderState()->postponeReadArchive(p);
+		doProcedural(data, bound, subdivfunc, freefunc);
 	}
 }
 
@@ -2420,7 +2452,7 @@ RtVoid CRibWriter::postGeometry(RtToken type, const CParameterList &params)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_GEOMETRY);
 	m_writer->putBlank();
 	m_writer->putStringToken(type);
@@ -2435,7 +2467,7 @@ RtVoid CRibWriter::postMakeTexture(RtString pic, RtString tex, RtToken swrap, Rt
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MAKE_TEXTURE);
 	m_writer->putBlank();
 	m_writer->putString(pic);
@@ -2461,7 +2493,7 @@ RtVoid CRibWriter::postMakeBump(RtString pic, RtString tex, RtToken swrap, RtTok
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MAKE_BUMP);
 	m_writer->putBlank();
 	m_writer->putString(pic);
@@ -2487,7 +2519,7 @@ RtVoid CRibWriter::postMakeLatLongEnvironment(RtString pic, RtString tex, const 
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MAKE_LAT_LONG_ENVIRONMENT);
 	m_writer->putBlank();
 	m_writer->putString(pic);
@@ -2509,7 +2541,7 @@ RtVoid CRibWriter::postMakeCubeFaceEnvironment(RtString px, RtString nx, RtStrin
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MAKE_CUBE_FACE_ENVIRONMENT);
 	m_writer->putBlank();
 	m_writer->putString(px);
@@ -2543,7 +2575,7 @@ RtVoid CRibWriter::postMakeShadow(RtString pic, RtString tex, const CParameterLi
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MAKE_SHADOW);
 	m_writer->putBlank();
 	m_writer->putString(pic);
@@ -2559,7 +2591,7 @@ RtVoid CRibWriter::postMakeBrickMap(RtInt nNames, RtString ptcnames[], RtString 
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_MAKE_BRICK_MAP);
 	m_writer->putBlank();
 	m_writer->putArray(nNames, ptcnames);
@@ -2576,39 +2608,14 @@ RtVoid CRibWriter::postArchiveRecord(RtToken type, RtString line)
 		return;
 
 	// Skip the Header
-	if ( (m_header && type == RI_STRUCTURE && m_skipHeader != 0) ) {
-		if ( m_skipHeader > 0 )
-			return;
-		// m_skipHeader < 0
-		if ( m_headerCnt > 0 )
+	if ( m_header && type == RI_STRUCTURE && m_skipHeader > 0 ) {
 			return;
 	}
 
-	// ? Write the trailer here ?
-	writeTrailer();
 
-	/*
-	m_writer->putRequest(REQ_ARCHIVE_RECORD);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putBlank();
-	m_writer->putString(line);
-	m_writer->putNewLine();
-	*/
-
-	if ( type != RI_VERBATIM ) {
-		m_writer->putChar('#');
-	}
-	if ( type == RI_STRUCTURE ) {
-		// Additional
-		m_writer->putChar('#');
-	}
-
-	m_writer->putChars(line);
-
-	if ( type != RI_VERBATIM ) {
-		m_writer->putNewLine();
-	}
+	m_header = false;
+	writePrefix(type == RI_STRUCTURE);
+	m_writer->putComment(type, line);
 }
 
 
@@ -2629,7 +2636,6 @@ bool CRibWriter::willExecuteMacro(RtString name) {
 	bool doExecute = false;
 
 	if ( isFile ) {
-		m_header = true;
 		if ( !macroPostponed || m_postponeFile <= 0) {
 			doExecute = true;
 			if ( m_postponeFile < 0 ) {
@@ -2656,6 +2662,7 @@ RtVoid CRibWriter::doReadArchive(RtString name, const IArchiveCallback *callback
 {
 	if ( m_execute ) {
 		bool exec = m_execute;
+		m_header = true;
 		CBaseRenderer::doReadArchive(name, callback, params);
 		m_execute = exec;
 	}
@@ -2667,18 +2674,16 @@ RtVoid CRibWriter::postReadArchive(RtString name, const IArchiveCallback *callba
 	if ( !m_execute ) {
 		if ( !postTestValid() )
 			return;
-		writeTrailer();
+		writePrefix();
 		m_writer->putRequest(REQ_READ_ARCHIVE);
 		m_writer->putBlank();
 		m_writer->putString(name);
 		m_writer->putBlank();
 		writeParameterList(params);
 	} else if ( renderState()->recordMode() ) {
-	    // Also print the recorded macros (do-methodes were not called)
-		bool p = renderState()->postponeReadArchive();
-		renderState()->postponeReadArchive(m_postponeFile != 0);
+	    // Also print the recorded macros (do-methodes are not called)
+		// m_execute is true here, doReadArchive is not called because in record state
 		doReadArchive(name, callback, params);
-		renderState()->postponeReadArchive(p);
 	}
 }
 
@@ -2688,13 +2693,13 @@ RtVoid CRibWriter::postIfBegin(RtString expr)
 	if ( !postTestValid() )
 		return;
 
-	writeTrailer();
+	writePrefix();
 	m_writer->putRequest(REQ_IF_BEGIN);
 	m_writer->putBlank();
 	m_writer->putString(expr);
 	m_writer->putBlank();
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -2703,14 +2708,14 @@ RtVoid CRibWriter::postElseIfBegin(RtString expr)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_ELSE_IF);
 	m_writer->putBlank();
 	m_writer->putString(expr);
 	m_writer->putBlank();
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -2719,11 +2724,11 @@ RtVoid CRibWriter::postElseBegin(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_ELSE);
 	m_writer->putNewLine();
-	renderState()->incNestingDepth();
+	incNestingDepth();
 }
 
 
@@ -2732,8 +2737,8 @@ RtVoid CRibWriter::postIfEnd(void)
 	if ( !postTestValid() )
 		return;
 
-	renderState()->decNestingDepth();
-	writeTrailer();
+	decNestingDepth();
+	writePrefix();
 	m_writer->putRequest(REQ_IF_END);
 	m_writer->putNewLine();
 }

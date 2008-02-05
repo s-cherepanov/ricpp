@@ -83,6 +83,7 @@ private:
 	unsigned long m_countStrings; //!< Counter for the string numbers (used 16 bit)
 	bool m_firstRequestWritten; //!< Gets true after first real request is written to suppress header
 	IRequestNotification &m_notify;  //!< Notify request
+	unsigned long m_linecnt; //!< line counter
 
 	/** @brief Puts a binary encoded number (string length, RtInt) to the stream.
 	 */
@@ -102,14 +103,6 @@ private:
 
 public:
 
-	/** @brief test if there is already a request written.
-	 *
-	 *  This is used to suppress structural comments and version info.
-	 */
-	inline bool firstRequestWritten() const {
-		return m_firstRequestWritten;
-	}
-
 	/** @brief Constructor, initializes the objects with the stram buffer to write to.
 	 */
 	CRibElementsWriter(std::basic_streambuf<char, std::char_traits<char> > *ribout, IRequestNotification &notify);
@@ -120,7 +113,23 @@ public:
 	inline ~CRibElementsWriter()
 	{
 	}
+
+	/** @brief test if there is already a request written.
+	 *
+	 *  This is used to suppress structural comments and version info.
+	 */
+	inline bool firstRequestWritten() const {
+		return m_firstRequestWritten;
+	}
 	
+	/** @brief Gets the current line counter
+	 *  @return the current line counter
+	 */
+	inline unsigned long linecnt() const {
+		return m_linecnt;
+	}
+	
+
 	/** @brief Gets the ascii mode flag.
 	 */
 	inline bool ascii() const
@@ -160,7 +169,7 @@ public:
 	/** @brief Puts out a comment line, started with '#' and terminated by endl.
 	 *  @param cs Character string to put out (without the first '#').
 	 */
-	void putComment(const char *cs);
+	void putComment(RtToken type, const char *cs);
 
 	/** @brief Puts out a RIB request.
 	 *  @param aRequest Identifier number of the request.
@@ -274,18 +283,42 @@ private:
 	int m_postponeObject;
 	int m_postponeFile;
 	int m_postponeMacro;
-	unsigned long m_headerCnt; // Counts the header found
 	bool m_header; //!< True, till first request called (in archives and main)
 	int m_skipHeader;
 	int m_skipVersion; //!< skips version request: 1: skip version, 0: write version, -1 write only once (default)
 	bool m_execute;
+	bool m_indent;
+	std::string m_indentString;
 
 	bool willExecuteMacro(RtString name);
+
+
+	unsigned long m_nestingDepth; //!< Depth of begin/end blocks
+
+	inline unsigned long nestingDepth() const
+	{
+		return m_nestingDepth;
+	}
+
+	inline void nestingDepth(unsigned long aDepth)
+	{
+		m_nestingDepth = aDepth;
+	}
+	
+	inline unsigned long incNestingDepth()
+	{
+		return ++m_nestingDepth;
+	}
+
+	inline unsigned long decNestingDepth()
+	{
+		return --m_nestingDepth;
+	}
 protected:
 	virtual void defaultDeclarations();
 	bool testValid() const;
 	bool postTestValid() const;
-	void writeTrailer();
+	void writePrefix(bool isArchiveRecord=false);
 	void writeParameterList(const CParameterList &params);
 
 public:

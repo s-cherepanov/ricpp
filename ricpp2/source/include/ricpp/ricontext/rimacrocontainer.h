@@ -61,7 +61,7 @@ private:
 	std::string m_name;         //!< Name of the macro (eg. file name, handle name).
 	EnumMacroTypes m_macroType; //!< Type of macro, either object or (inline, file) archive.
 	bool m_isClosed;            //!< true, if macro definition is completed.
-	bool m_postpone;            //!< true, if macro should be postponed (e.g. in RIB oputput).
+	bool m_postpone;            //!< true, if macro should be postponed (e.g. in RIB oputput), default is false
 
 public:
 
@@ -75,7 +75,7 @@ public:
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN
 	) :
 		m_name(noNullStr(aName)), m_macroType(macroType),
-		m_isClosed(false), m_postpone(true)
+		m_isClosed(false), m_postpone(false)
 	{
 	}
 

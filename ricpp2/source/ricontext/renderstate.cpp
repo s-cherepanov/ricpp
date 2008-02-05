@@ -1077,17 +1077,10 @@ CRenderState::CRenderState(
 	m_reject = false;
 	m_recordMode = false;
 
-	m_postponeReadArchive = true;
-	m_postponeObject = true;
-	m_postponeArchive = true;
-	m_postponeCondition = true;
-
 	m_executeConditional = true;
 	m_accumulateConditional = true;
 	m_ifCondition = false;
 	
-	m_nestingDepth = 0;
-
 	CFilepath fp;
 	std::string s(fp.filepath());
 	s+= "/";
@@ -1147,7 +1140,6 @@ RtObjectHandle CRenderState::objectBegin()
 
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		if ( m != 0 ) {
-			m->postpone(postponeObject());
 			m_objectMacros.insertObject(m);
 			return m->handle();
 		} else {
@@ -1212,7 +1204,6 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 		m_curMacro = m;
 
 		if ( m != 0 ) {
-			m->postpone(postponeArchive());
 			m_archiveMacros.insertObject(m);
 			return m->handle();
 		} else {
@@ -1261,7 +1252,6 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName)
 		// Does not influence nesting, because called within a IRi::sreadArchiveV()
 
 		if ( m != 0 ) {
-			m->postpone(postponeReadArchive());
 			m_archiveMacros.insertObject(m);
 			return m->handle();
 		} else {

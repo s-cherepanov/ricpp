@@ -118,8 +118,6 @@ class CRenderState {
 	CFilterFuncFactory *m_filterFuncFactory;       ///< Factory for pixel filter functions.
 
 	bool m_reject;                                 ///< true, rejects requests while running, e.g. for appropriate if-then-else blocks
-	
-	unsigned long m_nestingDepth;                  ///< Begin/end nesting depth, can be controlled by the back end renderer (e.g. by rib writer for pretty print)
 
 	/** @brief Backend is in record mode.
 	 *
@@ -134,19 +132,6 @@ class CRenderState {
 	/** @brief Stack of recordmodes, @see m_recordMode
 	 */
 	std::vector<bool> m_recordModes;
-
-	/** @brief Postpone the archive file reading.
-	 *
-	 *  The RIB writer must be capable to print a ReadArchive request instead of
-	 *  printing the contents of the archive. However, the
-	 *  archive must be interpreted to maintain the render state.
-	 *  m_postponeArchive is used to postpone BeginArchive/EndArchive macros.
-	 */
-	bool m_postponeReadArchive;
-
-	bool m_postponeObject;    //!< Postpone object instanciation where applicable (e.g. in RIB writer)
-	bool m_postponeArchive;   //!< Postpone archive instanciation where applicable (e.g. in RIB writer, @see m_postponeReadArchive to postpone archive reading)
-	bool m_postponeCondition; //!< Postpone conditionals where applicable (e.g. in RIB writer)
 
 	CUri m_baseUri;           //!< Base URI for current RIB archive file
 
@@ -993,46 +978,6 @@ public:
 		return m_recordMode;
 	}
 	
-	inline virtual bool postponeReadArchive() const
-	{
-		return m_postponeReadArchive;
-	}
-
-	inline virtual void postponeReadArchive(bool doPostponeReadArchive)
-	{
-		m_postponeReadArchive = doPostponeReadArchive;
-	}
-
-	inline virtual bool postponeArchive() const
-	{
-		return m_postponeArchive;
-	}
-
-	inline virtual void postponeArchive(bool doPostponeArchive)
-	{
-		m_postponeArchive = doPostponeArchive;
-	}
-
-	inline virtual bool postponeObject() const
-	{
-		return m_postponeObject;
-	}
-
-	inline virtual void postponeObject(bool doPostponeObject)
-	{
-		m_postponeObject = doPostponeObject;
-	}
-
-	inline virtual bool postponeCondition() const
-	{
-		return m_postponeCondition;
-	}
-
-	inline virtual void postponeCondition(bool doPostponeCondition)
-	{
-		m_postponeCondition = doPostponeCondition;
-	}
-
 	inline virtual const char *printName(const char *aFileName) const
 	{
 		if ( !m_archiveName.empty() )
@@ -1075,21 +1020,6 @@ public:
 		return m_curReplay;
 	}
 	
-	inline unsigned long incNestingDepth()
-	{
-		return ++m_nestingDepth;
-	}
-
-	inline unsigned long decNestingDepth()
-	{
-		return m_nestingDepth > 0 ? --m_nestingDepth : 0UL;
-	}
-
-	inline unsigned long nestingDepth() const
-	{
-		return m_nestingDepth;
-	}
-
 	RtToken storedArchiveName(RtString archiveName) const;
 
 	void registerResourceFactory(IResourceFactory *f);

@@ -228,7 +228,7 @@ void ExceptRiCPPError::set(
 
 IRiCPPErrorHandler::~IRiCPPErrorHandler() {}
 
-RtVoid IRiCPPErrorHandler::handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0)
+RtVoid IRiCPPErrorHandler::handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList)
 {
 	handleErrorV(code, severity, 0, 0, message, argList);
 }

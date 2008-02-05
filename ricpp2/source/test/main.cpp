@@ -537,15 +537,20 @@ int main(int argc, char * const argv[])
 	// ri.version();
 	*/
 	
-	for ( int i = 1; i < argc; ++i ) {
-		ri.readArchive(argv[i], 0, RI_NULL);
+	if ( argc > 1 ) {
+		for ( int i = 1; i < argc; ++i ) {
+			ri.readArchive(argv[i], 0, RI_NULL);
+		}
+	} else {
+		// ri.readArchive(RI_NULL, 0, RI_NULL);
 	}
 
 	ri.end();
-
+#if defined (_DEBUG)
 #if defined (WIN32)
 	char a;
 	std::cin >> a;
+#endif
 #endif
 
     return 0;

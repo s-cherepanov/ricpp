@@ -46,7 +46,7 @@ CBaseRenderer::CBaseRenderer() :
 	m_filterFuncFactory = 0;
 	// m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
-	m_cacheFiles = true;
+	m_cacheFiles = false; // Controls cache archive files true/false
 }
 
 CBaseRenderer::~CBaseRenderer()

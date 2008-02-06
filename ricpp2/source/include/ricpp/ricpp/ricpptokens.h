@@ -241,16 +241,16 @@ const RtToken RI_RUN_PROGRAM = "RunProgram"; ///< Token for procedural CProcRunP
 const RtToken RI_DYNAMIC_LOAD = "DynamicLoad"; ///< Token for procedural CProcDynamicLoad
 const RtToken RI_FREE = "Free"; ///< Token for CProcFree
 
-const RtToken RI_GAUSSIAN_FILTER = "gaussianFilter"; ///< Token for the gaussian filter
-const RtToken RI_BOX_FILTER = "boxFilter"; ///< Token for the box filter
-const RtToken RI_TRIANGLE_FILTER = "triangleFilter"; ///< Token for the triangle filter
-const RtToken RI_CATMULL_ROM_FILTER = "catmullRomFilter"; ///< Token for the Catmull Rom filter
-const RtToken RI_SINC_FILTER = "sincFilter"; ///< Token for the sinc filter
+const RtToken RI_GAUSSIAN = "gaussian"; ///< Token for the gaussian filter
+const RtToken RI_BOX = "box"; ///< Token for the box filter
+const RtToken RI_TRIANGLE = "triangle"; ///< Token for the triangle filter
+// const RtToken RI_CATMULL_ROM = "catmull-rom"; //  Token for the Catmull Rom filter s. RI_CATMULL_ROM
+const RtToken RI_SINC = "sinc"; ///< Token for the sinc filter
 
 const RtToken RI_BEZIER = "bezier"; //!< Bezier basis
 const RtToken RI_B_SPLINE = "b-spline"; //!< B-Spline basis
-const RtToken RI_CATMULLROM = "catmullrom"; //!< Catmull-rom basis
-const RtToken RI_CATMULL_ROM = "catmull-rom"; //!< Catmull-rom basis (alternate writing, not used for output)
+const RtToken RI_CATMULL_ROM = "catmull-rom"; //!< Catmull-rom basis and filter
+const RtToken RI_CATMULLROM = "catmullrom"; //!< Catmull-rom basis, filter (alternate writing, not used for output)
 const RtToken RI_HERMITE = "hermite"; //!< Hermite basis
 const RtToken RI_POWER = "power"; //!< Power basis
 

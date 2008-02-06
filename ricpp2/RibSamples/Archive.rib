@@ -188,7 +188,7 @@ ArchiveBegin "Options"
 	PixelVariance .5
 	PixelSamples 1 2
 	PixelSamples [ 1 2 ]
-	PixelFilter "boxFilter" 1 2
+	PixelFilter "box" 1 2
 	Exposure 1 1.2
 	Exposure [ 1 1.2 ]
 	Imager "Imager_shader"
@@ -226,10 +226,10 @@ ArchiveEnd
 # Set of other Requests
 #
 ArchiveBegin "Other"
-MakeTexture "picturename" "texturename" "swrap" "twrap" "gaussianFilter" 1 2
-MakeBump "picturename" "texturename" "swrap" "twrap" "triangleFilter" 1 2
-MakeLatLongEnvironment "picturename" "texturename" "sincFilter" 1 2
-MakeCubeFaceEnvironment "px" "nx" "py" "ny" "pz" "nz" "texturename" 25 "catmullRomFilter" 1 2
+MakeTexture "picturename" "texturename" "swrap" "twrap" "gaussian" 1 2
+MakeBump "picturename" "texturename" "swrap" "twrap" "triangle" 1 2
+MakeLatLongEnvironment "picturename" "texturename" "sinc" 1 2
+MakeCubeFaceEnvironment "px" "nx" "py" "ny" "pz" "nz" "texturename" 25 "catmull-rom" 1 2
 MakeShadow "picturename" "texturename"
 MakeBrickMap "ptcname" "bkmname"
 MakeBrickMap ["ptcname1" "ptcname2" "ptcname3" "ptcname4" "ptcname5" "ptcname6"] "bkmname"

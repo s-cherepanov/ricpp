@@ -331,7 +331,7 @@ RtToken CTypeInfo::basisName(const RtBasis aBasis)
 	if ( !memcmp(&(aBasis[0][0]), &(RiBSplineBasis[0][0]), sizeof(RtBasis)) )
 		return RI_B_SPLINE;
 	if ( !memcmp(&(aBasis[0][0]), &(RiCatmullRomBasis[0][0]), sizeof(RtBasis)) )
-		return RI_CATMULLROM;
+		return RI_CATMULL_ROM;
 	if ( !memcmp(&(aBasis[0][0]), &(RiHermiteBasis[0][0]), sizeof(RtBasis)) )
 		return RI_HERMITE;
 	if ( !memcmp(&(aBasis[0][0]), &(RiPowerBasis[0][0]), sizeof(RtBasis)) )
@@ -351,7 +351,7 @@ bool CTypeInfo::getBasis(RtToken basisToken, RtBasis aBasis)
 		memcpy(&(aBasis[0][0]), &(RiBSplineBasis[0][0]), sizeof(RtBasis));
 		return true;
 	}
-	if ( basisToken == RI_CATMULLROM || basisToken == RI_CATMULL_ROM ) {
+	if ( basisToken == RI_CATMULL_ROM || basisToken == RI_CATMULLROM ) {
 		memcpy(&(aBasis[0][0]), &(RiCatmullRomBasis[0][0]), sizeof(RtBasis));
 		return true;
 	}

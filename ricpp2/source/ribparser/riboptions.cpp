@@ -972,6 +972,8 @@ void CPixelFilterRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		if ( b0 && b1 && b2 ) {
 			const IFilterFunc *func = 0;
 			RtToken name = parser.renderState().tokFind(functionName);
+			if ( name == RI_CATMULLROM )
+				name = RI_CATMULL_ROM;
 			if ( name ) {
 				func = parser.renderState().filterFunc(name);
 			}

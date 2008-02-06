@@ -1237,7 +1237,7 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 				memcpy(ubasis[0], p0.getValue(), sizeof(RtBasis));
 			} else if ( p0.getString(uname) ) {
 				RtToken name = parser.renderState().tokFind(uname);
-				if ( name == RI_CATMULL_ROM )
+				if ( name == RI_CATMULLROM )
 					name = RI_CATMULL_ROM;
 				if ( !name || !parser.renderState().getBasis(name, ubasis) ) {
 					parser.errHandler().handleError(
@@ -1260,7 +1260,7 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 				memcpy(vbasis, p2.getValue(), sizeof(RtBasis));
 			} else if ( p2.getString(vname) ) {
 				RtToken name = parser.renderState().tokFind(vname);
-				if ( name == RI_CATMULL_ROM )
+				if ( name == RI_CATMULLROM )
 					name = RI_CATMULL_ROM;
 				if ( !name || !parser.renderState().getBasis(name, vbasis) ) {
 					parser.errHandler().handleError(

@@ -36,7 +36,6 @@ COptionsBase &COptionsBase::operator=(const COptionsBase &ga)
 		return *this;
 	
 	clearMembers();
-
 	
 	m_curColorDesc = ga.m_curColorDesc;
 	
@@ -56,9 +55,9 @@ COptionsBase &COptionsBase::operator=(const COptionsBase &ga)
 
 void COptionsBase::set(
 	CDeclarationDictionary &dict,
-	RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	CNamedParameterList *pl = getWriteable(name);
+	CNamedParameterList *pl = get(name);
 	if ( !pl ) {
 		m_paramList.push_back(CNamedParameterList(name));
 		pl = &m_paramList.back();
@@ -69,10 +68,11 @@ void COptionsBase::set(
 	pl->add(counts, dict, m_curColorDesc, n, tokens, params);
 }
 
+
 void COptionsBase::set(
-	RtString name, const CParameterList &params)
+	RtToken name, const CParameterList &params)
 {
-	CNamedParameterList *pl = getWriteable(name);
+	CNamedParameterList *pl = get(name);
 	if ( !pl ) {
 		m_paramList.push_back(CNamedParameterList(name));
 		pl = &m_paramList.back();
@@ -82,7 +82,18 @@ void COptionsBase::set(
 	pl->add(params);
 }
 
-const CNamedParameterList *COptionsBase::get(const char *name) const
+
+CNamedParameterList *COptionsBase::get(RtToken name)
+{
+	Map_type::iterator i = m_paramMap.find(name);
+	if ( i != m_paramMap.end() ) {
+		return i->second;
+	}
+	return 0;
+}
+
+
+const CNamedParameterList *COptionsBase::get(RtToken name) const
 {
 	Map_type::const_iterator i = m_paramMap.find(name);
 	if ( i != m_paramMap.end() ) {
@@ -92,7 +103,7 @@ const CNamedParameterList *COptionsBase::get(const char *name) const
 }
 
 
-const CParameter *COptionsBase::get(const char *name, const char *token) const
+const CParameter *COptionsBase::get(RtToken name, RtToken token) const
 {
 	const CNamedParameterList *pl = get(name);
 	if ( !pl )
@@ -101,16 +112,8 @@ const CParameter *COptionsBase::get(const char *name, const char *token) const
 	return pl->get(token);
 }
 
-CNamedParameterList *COptionsBase::getWriteable(const char *name)
-{
-	Map_type::iterator i = m_paramMap.find(name);
-	if ( i != m_paramMap.end() ) {
-		return i->second;
-	}
-	return 0;
-}
 
-bool COptionsBase::erase(const char *name)
+bool COptionsBase::erase(RtToken name)
 {
 	if ( !name )
 		return false;

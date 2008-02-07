@@ -345,7 +345,7 @@ public:
 	virtual void requestWritten(EnumRequests aRequest);
 
 public:
-	virtual RtVoid doControl(RtString name, const CParameterList &params);
+	virtual RtVoid doControl(RtToken name, const CParameterList &params);
 	virtual RtVoid version();
 
 	/*
@@ -359,7 +359,7 @@ public:
 	virtual RtVoid postDeclare(RtToken name, RtString declaration);
 	virtual RtVoid postSynchronize(RtToken name);
 	virtual RtVoid postSystem(RtString cmd);
-	virtual RtVoid postResource(RtString handle, RtString type, const CParameterList &params);
+	virtual RtVoid postResource(RtToken handle, RtToken type, const CParameterList &params);
 
 	virtual RtVoid postBegin(RtString name, const CParameterList &params);
 	virtual RtVoid postEnd(void);
@@ -418,12 +418,12 @@ public:
     virtual RtVoid postHider(RtToken type, const CParameterList &params);
     virtual RtVoid postColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]);
     virtual RtVoid postRelativeDetail(RtFloat relativedetail);
-    virtual RtVoid postOption(RtString name, const CParameterList &params);
+    virtual RtVoid postOption(RtToken name, const CParameterList &params);
 	
     virtual RtVoid postLightSource(RtLightHandle h, RtString name, const CParameterList &params);
 	virtual RtVoid postAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params);
 
-    virtual RtVoid postAttribute(RtString name, const CParameterList &params);
+    virtual RtVoid postAttribute(RtToken name, const CParameterList &params);
 	virtual RtVoid postColor(RtColor Cs);
 	virtual RtVoid postOpacity(RtColor Os);
     virtual RtVoid postSurface(RtString name, const CParameterList &params);

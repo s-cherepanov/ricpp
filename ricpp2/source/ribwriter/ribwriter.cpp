@@ -609,12 +609,19 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 		m_writer->putBlank();
 
 		const CParameter &p = (*i);
+		/*
 		if ( p.declaration().isInline() ) {
 			std::string decl;
 			m_writer->putString(p.declaration().getInlineString(decl));
 		}
 		else
 			m_writer->putStringToken(p.name());
+		*/
+
+		if ( p.isInline() )
+			m_writer->putString(p.tokenStr());
+		else
+			m_writer->putStringToken(p.tokenStr());
 
 		m_writer->putBlank();
 
@@ -643,7 +650,7 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::doControl(RtString name, const CParameterList &params)
+RtVoid CRibWriter::doControl(RtToken name, const CParameterList &params)
 {
 	CBaseRenderer::doControl(name, params);
 }
@@ -793,7 +800,7 @@ RtVoid CRibWriter::postSystem(RtString cmd)
 }
 
 
-RtVoid CRibWriter::postResource(RtString handle, RtString type, const CParameterList &params)
+RtVoid CRibWriter::postResource(RtToken handle, RtString type, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1450,7 +1457,7 @@ RtVoid CRibWriter::postRelativeDetail(RtFloat relativedetail)
 }
 
 
-RtVoid CRibWriter::postOption(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postOption(RtToken name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1493,7 +1500,7 @@ RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CPa
 }
 
 
-RtVoid CRibWriter::postAttribute(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postAttribute(RtToken name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;

@@ -24,7 +24,7 @@
 
 /** @file parameter.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implements the RI prameters and parameter lists.
+ *  @brief Implements the RI parameters and parameter lists.
  */
 #include "ricpp/ricontext/parameter.h"
 
@@ -34,6 +34,7 @@
 
 using namespace RiCPP;
 
+
 void CParameter::copyStringPtr()
 {
 	m_stringPtrs.reserve(m_strings.size());
@@ -41,6 +42,7 @@ void CParameter::copyStringPtr()
 		m_stringPtrs.push_back( (*i).c_str() );
 	}
 }
+
 
 void CParameter::clear()
 {
@@ -50,11 +52,13 @@ void CParameter::clear()
 	m_declaration = 0;
 	m_position = 0;
 
+	m_tokenStr.clear();
 	m_ints.clear();
 	m_floats.clear();
 	m_stringPtrs.clear();
 	m_strings.clear();
 }
+
 
 CParameter &CParameter::operator=(const CParameter &param)
 {
@@ -73,6 +77,7 @@ CParameter &CParameter::operator=(const CParameter &param)
 
 	m_position = param.m_position;
 
+	m_tokenStr = param.m_tokenStr;
 	m_ints = param.m_ints;
 	m_floats = param.m_floats;
 	m_strings = param.m_strings;
@@ -81,30 +86,25 @@ CParameter &CParameter::operator=(const CParameter &param)
 	return *this;
 }
 
-const char *CParameter::name() const
-{
-	return m_declaration ? m_declaration->name() : "";
-}
-
-RtToken CParameter::token() const
-{
-	return m_declaration ? m_declaration->token() : RI_NULL;
-}
 
 bool CParameter::setDeclaration(
-	RtToken theName,
+	RtString theName,
 	unsigned int thePosition,
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr)
 {
 	clear();
+
 	if ( emptyStr(theName) )
 		return false;
 
 	m_position = thePosition;
+	m_tokenStr = theName;
+	
 	RtToken theNameToken = dict.tokenMap().find(theName);
 	const CDeclaration *decl = 0;
+	
 	if ( theNameToken )
 		decl = dict.findAndUpdate(theNameToken, curColorDescr);
 	if ( !decl ) {
@@ -112,9 +112,9 @@ bool CParameter::setDeclaration(
 		decl = new CDeclaration(theName, curColorDescr, dict.tokenMap());
 		if ( !decl ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Parameter of %s", theName);
-		}
-		if ( !decl->isInline() ) {
+		} else if ( !decl->isInline() ) {
 			delete decl;
+			decl = 0;
 			throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR, __LINE__, __FILE__, "Parameter of %s, no declaration or illegal inline declaration", theName);
 		}
 	}
@@ -123,8 +123,9 @@ bool CParameter::setDeclaration(
 	return true;
 }
 
+
 void CParameter::set(
-	RtToken theName,
+	RtString theName,
 	RtPointer theData,
 	unsigned int thePosition,
 	const CParameterClasses &counts,
@@ -169,6 +170,7 @@ void CParameter::set(
 	}
 }
 
+
 const CDeclaration &CParameter::declaration() const
 {
 	if ( !m_declaration ) {
@@ -176,6 +178,7 @@ const CDeclaration &CParameter::declaration() const
 	}
 	return *m_declaration;
 }
+
 
 RtPointer CParameter::valptr()
 {
@@ -197,31 +200,49 @@ RtPointer CParameter::valptr()
 	}
 }
 
-void CParameter::get(CValue &p, unsigned long pos) const
+unsigned long CParameter::size()
+{
+	switch ( basicType() ) {
+		case BASICTYPE_INTEGER:
+			return static_cast<unsigned long >(m_ints.size());
+		case BASICTYPE_FLOAT:
+			return static_cast<unsigned long >(m_floats.size());
+		case BASICTYPE_STRING:
+			return static_cast<unsigned long >(m_stringPtrs.size());
+		default:
+			return 0;
+	}
+}
+
+bool CParameter::get(CValue &p, unsigned long pos) const
 {
 	switch ( basicType() ) {
 		case BASICTYPE_INTEGER:
 			if ( pos >= m_ints.size() ) {
 				p.clear();
-				return;
+				return false;
 			}
 			p.set(m_ints[pos]);
 		case BASICTYPE_FLOAT:
 			if ( pos >= m_floats.size() ) {
 				p.clear();
-				return;
+				return false;
 			}
 			p.set(m_floats[pos]);
 		case BASICTYPE_STRING:
 			if ( pos >= m_stringPtrs.size() ) {
 				p.clear();
-				return;
+				return false;
 			}
 			p.set(m_stringPtrs[pos]);
 		default:
 			p.clear();
+			return false;
 	}
+	return true;
 }
+
+// ----------------------------------------------------------------------------
 
 CParameterList::CParameterList(
 	const CParameterClasses &counts,
@@ -270,6 +291,7 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 	return *this;
 }
 
+
 void CParameterList::set(
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
@@ -279,6 +301,7 @@ void CParameterList::set(
 	clear();
 	add(counts, dict, curColorDescr, n, tokens, params);
 }
+
 
 void CParameterList::add(
 	const CParameterClasses &counts,
@@ -325,6 +348,7 @@ void CParameterList::add(const CParameterList &params)
 	rebuild();
 }
 
+
 CParameter *CParameterList::get(RtToken var)
 {
 	Map_type::iterator i = m_paramMap.find(var);
@@ -334,6 +358,7 @@ CParameter *CParameterList::get(RtToken var)
 	return 0;
 }
 
+
 const CParameter *CParameterList::get(RtToken var) const
 {
 	Map_type::const_iterator i = m_paramMap.find(var);
@@ -342,6 +367,7 @@ const CParameter *CParameterList::get(RtToken var) const
 	}
 	return 0;
 }
+
 
 bool CParameterList::erase(RtToken var)
 {
@@ -362,6 +388,7 @@ bool CParameterList::erase(RtToken var)
 	return false;
 }
 
+
 bool CParameterList::erase(CParameter *param)
 {
 	if (!param )
@@ -380,6 +407,7 @@ bool CParameterList::erase(CParameter *param)
 	return false;
 }
 
+
 bool CParameterList::hasColor() const
 {
 	std::list<CParameter>::const_iterator i;
@@ -391,33 +419,15 @@ bool CParameterList::hasColor() const
 	return false;
 }
 
+// ----------------------------------------------------------------------------
+
 CNamedParameterList &CNamedParameterList::operator=(const CNamedParameterList &params)
 {
 	if ( this == &params )
 		return *this;
 
-	m_name = params.m_name;
+	name(params.name());
 
 	CParameterList::operator=(params);
 	return *this;
-}
-
-void CNamedParameterList::set(
-	const CParameterClasses &counts,
-	CDeclarationDictionary &dict,
-	const CColorDescr &curColorDescr,
-	const char *aName,
-	RtInt n, RtToken tokens[], RtPointer params[])
-{
-	name(aName);
-	CParameterList::set(counts, dict, curColorDescr, n, tokens, params);
-}
-
-void CNamedParameterList::add(
-	const CParameterClasses &counts,
-	CDeclarationDictionary &dict,
-	const CColorDescr &curColorDescr,
-	RtInt n, RtToken tokens[], RtPointer params[])
-{
-	CParameterList::add(counts, dict, curColorDescr, n, tokens, params);
 }

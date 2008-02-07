@@ -409,14 +409,14 @@ public:
 	 */
 	inline virtual RtVoid errorHandler(const IErrorHandler &handler) {}
 
-	RtToken declare(RtString name, RtString declaration);
+	RtToken declare(RtToken RtToken, RtString declaration);
 
 	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual RtVoid version() {}
 
 	inline virtual RtVoid synchronize(RtToken name) {}
 	virtual RtVoid system(RtString cmd);
-	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Initializes a new render context.
 	 *
@@ -469,14 +469,14 @@ public:
 	virtual RtVoid resourceBegin(void);
 	virtual RtVoid resourceEnd(void);
 
-	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtArchiveHandle archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid archiveEnd(void);
 
 	virtual RtVoid format(RtInt xres, RtInt yres, RtFloat aspect);
 	virtual RtVoid frameAspectRatio(RtFloat aspect);
 	virtual RtVoid screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top);
 	virtual RtVoid cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
-	virtual RtVoid projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid clipping(RtFloat hither, RtFloat yon);
 	virtual RtVoid clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz);
 	virtual RtVoid depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance);
@@ -492,12 +492,12 @@ public:
 	virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]);
 	virtual RtVoid relativeDetail(RtFloat relativedetail);
-	virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtLightHandle lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
-	virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid color(RtColor Cs);
 	virtual RtVoid opacity(RtColor Os);
 	virtual RtVoid surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -594,8 +594,8 @@ public:
 	virtual RtVoid preDeclare(RtToken name, RtString declaration);
 	inline virtual RtVoid preSynchronize(RtToken name) {}
 	inline virtual RtVoid preSystem(RtString cmd) {}
-	virtual RtVoid preResource(RtString handle, RtString type, const CParameterList &params);
-    inline virtual RtVoid preControl(RtString name, const CParameterList &params) {}
+	virtual RtVoid preResource(RtToken handle, RtToken type, const CParameterList &params);
+    virtual RtVoid preControl(RtToken name, const CParameterList &params);
 
 	virtual RtVoid preBegin(RtString name, const CParameterList &params);
 	virtual RtVoid preEnd(void);
@@ -649,13 +649,13 @@ public:
 	virtual RtVoid preHider(RtToken type, const CParameterList &params);
 	virtual RtVoid preColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn);
 	virtual RtVoid preRelativeDetail(RtFloat relativedetail);
-	virtual RtVoid preOption(RtString name, const CParameterList &params);
+	virtual RtVoid preOption(RtToken name, const CParameterList &params);
 
 	virtual RtLightHandle preLightSource(RtString name, const CParameterList &params);
 	virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params);
 	virtual RtVoid preIlluminate(RtLightHandle light, RtBoolean onoff);
 
-	virtual RtVoid preAttribute(RtString name, const CParameterList &params);
+	virtual RtVoid preAttribute(RtToken name, const CParameterList &params);
 	virtual RtVoid preColor(RtColor Cs);
 	virtual RtVoid preOpacity(RtColor Os);
 	virtual RtVoid preSurface(RtString name, const CParameterList &params);
@@ -754,8 +754,8 @@ public:
 	inline virtual RtVoid doDeclare(RtToken name, RtString declaration) {}
 	inline virtual RtVoid doSynchronize(RtToken name) {}
 	inline virtual RtVoid doSystem(RtString cmd) {}
-	virtual RtVoid doResource(RtString handle, RtString type, const CParameterList &params);
-    inline virtual RtVoid doControl(RtString name, const CParameterList &params) {}
+	virtual RtVoid doResource(RtToken handle, RtToken type, const CParameterList &params);
+    inline virtual RtVoid doControl(RtToken name, const CParameterList &params) {}
 
 	inline virtual RtVoid doBegin(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doEnd(void) {}
@@ -809,12 +809,12 @@ public:
 	inline virtual RtVoid doHider(RtToken type, const CParameterList &params) {}
 	inline virtual RtVoid doColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]) {}
 	inline virtual RtVoid doRelativeDetail(RtFloat relativedetail) {}
-	inline virtual RtVoid doOption(RtString name, const CParameterList &params) {}
+	inline virtual RtVoid doOption(RtToken name, const CParameterList &params) {}
 
 	inline virtual RtVoid doLightSource(RtLightHandle h, RtString name, const CParameterList &params) { }
 	inline virtual RtVoid doAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params) { }
 
-	inline virtual RtVoid doAttribute(RtString name, const CParameterList &params) {}
+	inline virtual RtVoid doAttribute(RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doColor(RtColor Cs) {}
 	inline virtual RtVoid doOpacity(RtColor Os) {}
 	inline virtual RtVoid doSurface(RtString name, const CParameterList &params) {}
@@ -901,8 +901,8 @@ public:
 	virtual RtVoid postDeclare(RtToken name, RtString declaration);
 	inline virtual RtVoid postSynchronize(RtToken name){}
 	inline virtual RtVoid postSystem(RtString cmd){}
-	virtual RtVoid postResource(RtString handle, RtString type, const CParameterList &params);
-    inline virtual RtVoid postControl(RtString name, const CParameterList &params) {}
+	virtual RtVoid postResource(RtToken handle, RtToken type, const CParameterList &params);
+    inline virtual RtVoid postControl(RtToken name, const CParameterList &params) {}
 
 	inline virtual RtVoid postBegin(RtString name, const CParameterList &params){}
 	inline virtual RtVoid postEnd(void){}
@@ -956,12 +956,12 @@ public:
     inline virtual RtVoid postHider(RtToken type, const CParameterList &params){}
     inline virtual RtVoid postColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]){}
     inline virtual RtVoid postRelativeDetail(RtFloat relativedetail){}
-    inline virtual RtVoid postOption(RtString name, const CParameterList &params){}
+    inline virtual RtVoid postOption(RtToken name, const CParameterList &params){}
 	
     inline virtual RtVoid postLightSource(RtLightHandle h, RtString name, const CParameterList &params){}
 	inline virtual RtVoid postAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params){}
 	
-    inline virtual RtVoid postAttribute(RtString name, const CParameterList &params){}
+    inline virtual RtVoid postAttribute(RtToken name, const CParameterList &params){}
 	inline virtual RtVoid postColor(RtColor Cs){}
 	inline virtual RtVoid postOpacity(RtColor Os){}
     inline virtual RtVoid postSurface(RtString name, const CParameterList &params){}

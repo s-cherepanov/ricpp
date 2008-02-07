@@ -902,17 +902,17 @@ public:
 	 * Errors are catched and the current error handler is called with the error found.
      */
 	//@{
-	virtual RtToken declare(RtString name, RtString declaration);
+	virtual RtToken declare(RtToken name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
 	virtual RtVoid system(RtString cmd);
 
-	virtual RtVoid control(RtString name, RtToken token = RI_NULL, ...);
-	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid control(RtToken name, RtToken token = RI_NULL, ...);
+	virtual RtVoid controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid version();
 
-	virtual RtVoid resource(RtString handle, RtString type, RtToken token = RI_NULL, ...);
-	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...);
+	virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Returns the current context handle
 	 *
@@ -1010,8 +1010,8 @@ public:
 	virtual RtVoid resourceBegin(void);
 	virtual RtVoid resourceEnd(void);
 
-	virtual RtArchiveHandle archiveBegin(RtString name, RtToken token = RI_NULL, ...);
-	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtArchiveHandle archiveBegin(RtToken name, RtToken token = RI_NULL, ...);
+	virtual RtArchiveHandle archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid archiveEnd(void);
 
 	/******************************************************************************/
@@ -1021,8 +1021,8 @@ public:
     virtual RtVoid screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top);
     virtual RtVoid cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
 
-	virtual RtVoid projection(RtString name, RtToken token = RI_NULL, ...);
-    virtual RtVoid projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid projection(RtToken name, RtToken token = RI_NULL, ...);
+    virtual RtVoid projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid clipping(RtFloat hither, RtFloat yon);
     virtual RtVoid clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz);
@@ -1051,7 +1051,7 @@ public:
 
 	virtual RtVoid relativeDetail(RtFloat relativedetail);
 
-	virtual RtVoid option(RtString name, RtToken token = RI_NULL, ...);
+	virtual RtVoid option(RtToken name, RtToken token = RI_NULL, ...);
 
 	/** @brief Sets an Option
 	 *
@@ -1061,7 +1061,7 @@ public:
 	 *
 	 * @see IRiRoot::optionV()
 	 */
-	virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/******************************************************************************/
 
@@ -1072,8 +1072,8 @@ public:
 
 	/******************************************************************************/
 
-	virtual RtVoid attribute(RtString name, RtToken token = RI_NULL, ...);
-    virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid attribute(RtToken name, RtToken token = RI_NULL, ...);
+    virtual RtVoid attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid color(RtColor Cs);
 	virtual RtVoid opacity(RtColor Os);

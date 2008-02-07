@@ -261,7 +261,7 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 }
 
 
-RtToken CRiCPPBridge::declare(RtString name, RtString declaration)
+RtToken CRiCPPBridge::declare(RtToken name, RtString declaration)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -654,7 +654,7 @@ RtVoid CRiCPPBridge::resourceEnd(void)
 	}
 }
 
-RtArchiveHandle CRiCPPBridge::archiveBegin(RtString name, RtToken token, ...)
+RtArchiveHandle CRiCPPBridge::archiveBegin(RtToken name, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -663,7 +663,7 @@ RtArchiveHandle CRiCPPBridge::archiveBegin(RtString name, RtToken token, ...)
 	return archiveBeginV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtArchiveHandle CRiCPPBridge::archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtArchiveHandle CRiCPPBridge::archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -727,7 +727,7 @@ RtVoid CRiCPPBridge::system(RtString cmd)
 	}
 }
 
-RtVoid CRiCPPBridge::resource(RtString handle, RtString type, RtToken token, ...)
+RtVoid CRiCPPBridge::resource(RtToken handle, RtString type, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -736,7 +736,7 @@ RtVoid CRiCPPBridge::resource(RtString handle, RtString type, RtToken token, ...
 	resourceV(handle, type, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::resourceV(RtToken handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -809,7 +809,7 @@ RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloa
 	}
 }
 
-RtVoid CRiCPPBridge::projection(RtString name, RtToken token, ...)
+RtVoid CRiCPPBridge::projection(RtToken name, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -818,7 +818,7 @@ RtVoid CRiCPPBridge::projection(RtString name, RtToken token, ...)
 	projectionV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -1078,7 +1078,7 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
 	}
 }
 
-RtVoid CRiCPPBridge::control(RtString name, RtToken token, ...)
+RtVoid CRiCPPBridge::control(RtToken name, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1087,7 +1087,7 @@ RtVoid CRiCPPBridge::control(RtString name, RtToken token, ...)
 	controlV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -1121,7 +1121,7 @@ RtVoid CRiCPPBridge::version()
 	}
 }
 
-RtVoid CRiCPPBridge::option(RtString name, RtToken token, ...)
+RtVoid CRiCPPBridge::option(RtToken name, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1130,7 +1130,7 @@ RtVoid CRiCPPBridge::option(RtString name, RtToken token, ...)
 	optionV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
@@ -1148,7 +1148,7 @@ RtVoid CRiCPPBridge::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer
 	}
 }
 
-RtVoid CRiCPPBridge::doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::doOptionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !name )
 		return;
@@ -1259,7 +1259,7 @@ RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tok
 	return illLightHandle;
 }
 
-RtVoid CRiCPPBridge::attribute(RtString name, RtToken token, ...)
+RtVoid CRiCPPBridge::attribute(RtToken name, RtToken token, ...)
 {
 	va_list marker;
 	va_start(marker, token);
@@ -1268,7 +1268,7 @@ RtVoid CRiCPPBridge::attribute(RtString name, RtToken token, ...)
 	return attributeV(name, n, &m_tokens[0], &m_params[0]);
 }
 
-RtVoid CRiCPPBridge::attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {

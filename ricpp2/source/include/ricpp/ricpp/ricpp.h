@@ -309,7 +309,7 @@ public:
 	 *  s.a. STE2003, Declaring parameter types, 150-152,
 	 *  s.a. UPS89, Extending the set of variables, 242-244
 	 */
-	virtual RtToken declare(RtString name, RtString declaration) = 0;
+	virtual RtToken declare(RtToken name, RtString declaration) = 0;
  
 	//! @brief Synchronize the rendering state [QRM], front end function like errorHandler
 	/*! @param name Type of synchronization, e.g. RI_ABORT to abort the rendering
@@ -338,7 +338,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list for the control request
 	 */
-    virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	/** @brief Writes RIB version information if needed
 	 */
@@ -376,7 +376,7 @@ public:
 	 *  @param params Value pointer for additional parameter list for the resource
 	 *  @see resourcebegin(), resourceEnd()
 	 */
-	virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 
 	/** @defgroup ricpp_modes Ri Modes
@@ -502,7 +502,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
 	 */
-	virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+	virtual RtArchiveHandle archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	/** @brief Ends an archive
 	 *  The commands are not longer stored if the outer most archive block is closed
@@ -558,7 +558,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list for the projection, e.g. RI_FOV float
 	 */
-    virtual RtVoid projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	//! The hither and yonder clipping plane, orthogonal to the camera view
 	/*! @param hither distance of the front clipping plane
@@ -691,7 +691,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list for the option
 	 */
-    virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 	//@}
 	
 	/** @defgroup ricpp_lights Ri Lights
@@ -737,7 +737,7 @@ public:
 	 *  @param tokens Tokens for additional parameter list
 	 *  @param params Value pointer for additional parameter list
 	 */
-    virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
+    virtual RtVoid attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 	//! Sets the current color
 	/*! @param Cs The current color
@@ -1566,7 +1566,7 @@ public:
 	/*  @brief Resource handle
 	 *  @see IRiRoot::resourceV()
 	 */
-	virtual RtVoid resource(RtString handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid resource(RtToken handle, RtToken type, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @addtogroup ricpp_other
@@ -1581,7 +1581,7 @@ public:
 	 *  @param name Name of the control request
 	 *  @param token First token of RI_NULL terminated token-value list
 	 */
-    virtual RtVoid control(RtString name, RtToken token = RI_NULL, ...) = 0;
+    virtual RtVoid control(RtToken name, RtToken token = RI_NULL, ...) = 0;
 	//@}
 
 	/** @defgroup ricpp_contexts Ri context handlers
@@ -1608,7 +1608,7 @@ public:
 	/** @brief Starts an archive in memory
 	 * @see IRiRoot::archiveBeginV()
 	 */
-	virtual RtArchiveHandle archiveBegin(RtString name, RtToken token = RI_NULL, ...) = 0;
+	virtual RtArchiveHandle archiveBegin(RtToken name, RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Starts a new renderer
 	 *
@@ -1634,7 +1634,7 @@ public:
 	/** @brief Projection type
 	 *  @see IRiRoot::projectionV()
 	 */
-    virtual RtVoid projection(RtString name, RtToken token = RI_NULL, ...) = 0;
+    virtual RtVoid projection(RtToken name, RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Imager function
 	 *  @see IRiRoot::imagerV()
@@ -1659,7 +1659,7 @@ public:
 	/** @brief Sets a implementation-specific option
 	 *  @see IRiRoot::optionV()
 	 */
-    virtual RtVoid option(RtString name, RtToken token = RI_NULL, ...) = 0;
+    virtual RtVoid option(RtToken name, RtToken token = RI_NULL, ...) = 0;
 	//@}
 	
 	/** @addtogroup ricpp_lights
@@ -1687,7 +1687,7 @@ public:
 	/** @brief Sets a implementation-specific attribute
 	 *  @see IRiRoot::attributeV
 	 */
-	virtual RtVoid attribute(RtString name, RtToken token = RI_NULL, ...) = 0;
+	virtual RtVoid attribute(RtToken name, RtToken token = RI_NULL, ...) = 0;
 
 	/** @brief Sets the current surface shader
 	 *  @see IRiRoot::surfaceV()

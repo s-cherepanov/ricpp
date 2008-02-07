@@ -36,14 +36,24 @@
 
 namespace RiCPP {
 
-	class COptionsBaseReader;
-
-	/** @brief
+	/** @brief Base class for attributes, options and controlls
+	 *
+	 *  Base class can be used to store generic options (attributes and controlls as well).
 	 */
 	class COptionsBase {
 	private:
-		typedef std::map<std::string, CNamedParameterList *> Map_type;
+		/** @brief Type to map option names (tokenized) to their parameters, stored at m_paramList.
+		 */ 
+		typedef std::map<RtToken, CNamedParameterList *> Map_type;
+		
+		/** @brief Options and their parameters.
+		 *
+		 *  The name of a CNamedParameterList is the name of a option.
+		 */ 
 		std::list<CNamedParameterList> m_paramList;
+		
+		/** @brief Maps object tokens to their parameters.
+		 */
 		Map_type m_paramMap;
 
 		inline void clearMembers()
@@ -80,14 +90,15 @@ namespace RiCPP {
 
 		void set(
 			CDeclarationDictionary &dict,
-			RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+			RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
+			
 		void set(
-			RtString name, const CParameterList &params);
+			RtToken name, const CParameterList &params);
 
-		CNamedParameterList *getWriteable(const char *name);
-		const CNamedParameterList *get(const char *name) const;
+		CNamedParameterList *get(RtToken name);
+		const CNamedParameterList *get(RtToken name) const;
 
-		const CParameter *get(const char *name, const char *token) const;
+		const CParameter *get(RtToken name, RtToken token) const;
 
 
 		inline const_iterator begin() const
@@ -105,7 +116,7 @@ namespace RiCPP {
 			return m_paramMap.size();
 		}
 
-		bool erase(const char *name);
+		bool erase(RtToken name);
 		bool erase(CNamedParameterList *paramList);
 
 		inline RtVoid colorSamples(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
@@ -128,48 +139,6 @@ namespace RiCPP {
 			return m_curColorDesc;
 		}
 	}; // COptionsBase
-
-#if 0
-	/** @brief
-	 */
-	class COptionsBaseReader {
-	private:
-		const COptionsBase *m_attribs;
-
-	public:
-		inline COptionsBaseReader(const COptionsBase &attribs)
-		{
-			m_attribs = &attribs;
-		}
-		inline virtual ~COptionsBaseReader() {}
-
-		inline const CParameterList *get(const char *name) const
-		{
-			return m_attribs->get(name);
-		}
-
-		inline const CParameter *get(const char *name, const char *token) const
-		{
-			return m_attribs->get(name, token);
-		}
-
-		inline virtual RtVoid getColorSamples(RtInt &nColorSamples, std::vector<RtFloat> &nRGB, std::vector<RtFloat> &RGBn) const
-		{
-			return m_attribs->getColorSamples(nColorSamples, nRGB, RGBn);
-		}
-
-		inline virtual RtInt colorSamples() const
-		{
-			return m_attribs->colorSamples();
-		}
-
-		const CColorDescr &colorDescr() const
-		{
-			return m_attribs->colorDescr();
-		}
-	}; // COptionsBaseReader
-#endif // 0
-
 }
 
 #endif // _RICPP_RICONTEXT_OPTIONSBASE_H

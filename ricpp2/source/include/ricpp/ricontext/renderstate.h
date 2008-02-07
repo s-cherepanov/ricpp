@@ -100,6 +100,8 @@ class CRenderState {
 	TemplObjPtrRegistry<RtToken, IResourceFactory *> m_resourceFactories; ///< Creates new RiResource handlers
 	TemplHandleStack<CResource> m_resourceStack;   ///< Saved resources
 
+	COptionsBase m_controls;                       ///< Current control values.
+
 	COptionsFactory *m_optionsFactory;             ///< Creates new Options.
 	std::vector<COptions *> m_optionsStack;        ///< Current option stack.
 
@@ -880,6 +882,16 @@ public:
 		return m_declDict;
 	}
 	//@}
+
+	inline COptionsBase &controls()
+	{
+		return m_controls;
+	}
+	
+	inline const COptionsBase &controls() const
+	{
+		return m_controls;
+	}
 
 	inline COptions &options()
 	{

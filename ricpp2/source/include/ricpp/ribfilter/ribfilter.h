@@ -178,7 +178,7 @@ public:
 	/** @defgroup ricpp_ricalls Filtered ri calls
 	 *  @{
 	 */
-	inline RtToken declare(RtString name, RtString declaration)
+	inline RtToken declare(RtToken name, RtString declaration)
 	{
 		return canCall(REQ_DECLARE) ?
 			callee()->declare(name, declaration) :
@@ -203,7 +203,7 @@ public:
 			callee()->system(cmd);
 	}
 
-    inline virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		// Control is not a part of the RIB binding.
 	}
@@ -214,7 +214,7 @@ public:
 			callee()->version();
 	}
 
-	inline virtual RtVoid resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_RESOURCE) )
 			callee()->resourceV(handle, type, n, tokens, params);
@@ -323,7 +323,7 @@ public:
 			callee()->resourceEnd();
 	}
 
-	inline virtual RtArchiveHandle archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtArchiveHandle archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return canCall(REQ_ARCHIVE_BEGIN) ?
 			callee()->archiveBeginV(name, n, tokens, params) :
@@ -360,7 +360,7 @@ public:
 			callee()->cropWindow(xmin, xmax, ymin, ymax);
 	}
 
-    inline virtual RtVoid projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_PROJECTION) )
 			callee()->projectionV(name, n, tokens, params);
@@ -456,7 +456,7 @@ public:
 			callee()->relativeDetail(relativedetail);
 	}
 
-    inline virtual RtVoid optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_OPTION) )
 			callee()->optionV(name, n, tokens, params);
@@ -476,7 +476,7 @@ public:
 			illLightHandle;
 	}
 	
-    inline virtual RtVoid attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_ATTRIBUTE) )
 			callee()->attributeV(name, n, tokens, params);

@@ -347,7 +347,7 @@ void CBaseRenderer::postDeclare(RtToken name, RtString declaration)
 {
 }
 
-RtToken CBaseRenderer::declare(RtString name, RtString declaration)
+RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
 {
 	try {
 
@@ -802,7 +802,7 @@ RtVoid CBaseRenderer::solidBegin(RtToken type)
 		if ( emptyStr(type) ) {
 			typeTok = RI_PRIMITIVE;
 		}
-		type = renderState()->tokFind(type);
+		type = renderState()->tokFindCreate(type);
 		if ( type != RI_PRIMITIVE && type != RI_INTERSECTION && type != RI_UNION && type != RI_DIFFERENCE ) {
 			typeTok = RI_PRIMITIVE;
 		} else {
@@ -1091,25 +1091,27 @@ RtVoid CBaseRenderer::resourceEnd(void)
 	}
 }
 
-RtVoid CBaseRenderer::preResource(RtString handle, RtString type, const CParameterList &params)
+RtVoid CBaseRenderer::preResource(RtToken handle, RtToken type, const CParameterList &params)
 {
 	renderState()->resource(*this, handle, type, params);
 }
 
-RtVoid CBaseRenderer::doResource(RtString handle, RtString type, const CParameterList &params)
+RtVoid CBaseRenderer::doResource(RtToken handle, RtToken type, const CParameterList &params)
 {
 }
 
-RtVoid CBaseRenderer::postResource(RtString handle, RtString type, const CParameterList &params)
+RtVoid CBaseRenderer::postResource(RtToken handle, RtToken type, const CParameterList &params)
 {
 }
 
-RtVoid CBaseRenderer::resourceV(RtString handle, RtString type, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	try {
 		if ( !preCheck(REQ_RESOURCE) )
 			return;
 
+		handle = renderState()->tokFindCreate(handle);
+		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiResource r(renderState()->lineNo(), handle, type, renderState()->curParamList());
@@ -1133,13 +1135,14 @@ RtArchiveHandle CBaseRenderer::preArchiveBegin(RtToken name, const CParameterLis
 	return renderState()->archiveBegin(name);
 }
 
-RtArchiveHandle CBaseRenderer::archiveBeginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) {
+RtArchiveHandle CBaseRenderer::archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) {
 	try {
 		if ( !preCheck(REQ_ARCHIVE_BEGIN) )
 			return illArchiveHandle;
 
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
+		name = renderState()->tokFindCreate(name);
 		CRiArchiveBegin r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r, true);
 		return r.handle();
@@ -1389,7 +1392,7 @@ RtVoid CBaseRenderer::preProjection(RtToken name, const CParameterList &params)
 	renderState()->options().projection(name, params);
 }
 
-RtVoid CBaseRenderer::projectionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_PROJECTION;
 	try {
@@ -1782,6 +1785,7 @@ RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, 
 		if ( !preCheck(req) )
 			return;
 
+		type = renderState()->tokFindCreate(type);
 		CRiQuantize r(renderState()->lineNo(), type, one, qmin, qmax, ampl);
 		processRequest(r);
 
@@ -1818,6 +1822,7 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 		if ( !preCheck(req) )
 			return;
 
+		channel = renderState()->tokFindCreate(channel);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiDisplayChannel r(renderState()->lineNo(), channel, renderState()->curParamList());
@@ -2006,12 +2011,12 @@ RtVoid CBaseRenderer::relativeDetail(RtFloat relativedetail)
 }
 
 
-RtVoid CBaseRenderer::preOption(RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preOption(RtToken name, const CParameterList &params)
 {
 	renderState()->options().set(name, params);
 }
 
-RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_OPTION;
 	try {
@@ -2050,6 +2055,12 @@ RtVoid CBaseRenderer::optionV(RtString name, RtInt n, RtToken tokens[], RtPointe
 			renderState()->printName(__FILE__),
 			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
 	}
+}
+
+
+RtVoid CBaseRenderer::preControl(RtToken name, const CParameterList &params)
+{
+	renderState()->controls().set(name, params);
 }
 
 
@@ -2198,13 +2209,13 @@ RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 }
 
 
-RtVoid CBaseRenderer::preAttribute(RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preAttribute(RtToken name, const CParameterList &params)
 {
 	renderState()->attributes().set(name, params);
 }
 
 
-RtVoid CBaseRenderer::attributeV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_ATTRIBUTE;
 	try {
@@ -4702,7 +4713,7 @@ RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line)
 		if ( emptyStr(type) ) {
 			typeTok = RI_COMMENT;
 		}
-		type = renderState()->tokFind(type);
+		type = renderState()->tokFindCreate(type);
 
 		CRiArchiveRecord r(renderState()->lineNo(), type, line);
 		processRequest(r);

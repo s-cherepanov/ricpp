@@ -174,6 +174,7 @@ class CRenderState {
 	bool varsplit(RtString identifier, RtToken *namespaceQual, RtToken *varname, RtToken *valuename) const;
 	bool getAttribute(CValue &p, RtToken varname, RtToken valuename) const;
 	bool getOption(CValue &p, RtToken varname, RtToken valuename) const;
+	bool getControl(CValue &p, RtToken varname, RtToken valuename) const;
 
 	/** @brief Parser for RIB if-expression.
 	 *

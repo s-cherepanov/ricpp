@@ -529,6 +529,12 @@ int main(int argc, char * const argv[])
 	ri.errorHandler(ri.errorPrint());
 	ri.begin(RI_NULL);
 
+	RtInt yes = 1;
+	RtInt no = 0;
+	RtInt special = -1;
+
+	ri.control("ribwriter", "skip-header", &special, RI_NULL);
+
 	/*
 	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB-Structure 1.1");
 	ri.archiveRecord(RI_STRUCTURE, "Scene %s", "Test");

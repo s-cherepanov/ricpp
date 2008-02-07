@@ -180,7 +180,11 @@ namespace RiCPP {
 		 *  @param pos Position of the value.
 		 *  @return True, value has been copied.
 		 */
-		bool get(CValue &p, unsigned long pos) const;
+		bool get(unsigned long pos, CValue &p) const;
+		bool get(unsigned long pos, RtInt &result) const;
+		bool get(unsigned long pos, RtFloat &result) const;
+		bool get(unsigned long pos, std::string &result) const;
+		bool get(unsigned long pos, RtString &result) const;
 
 		/** @brief Name of the declaration (with qualifiers if available)
 		 *

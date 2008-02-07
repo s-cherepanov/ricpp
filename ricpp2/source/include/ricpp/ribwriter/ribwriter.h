@@ -272,23 +272,39 @@ class CRibWriter : public CBaseRenderer, public IRequestNotification {
 private:
 	CRibElementsWriter *m_writer;
 	TemplFrontStreambuf<char> *m_buffer;
+
 	RtToken RI_COMPRESS;
+	RtToken RI_POSTPONE_PROCEDURALS;
+	RtToken RI_POSTPONE_OBJECTS;
+	RtToken RI_POSTPONE_FILE_ARCHIVES;
+	RtToken RI_POSTPONE_INLINE_ARCHIVES;
+	RtToken RI_SKIP_HEADERS;
+	RtToken RI_SKIP_VERSION;
+	RtToken RI_INDENT;
+	RtToken RI_INDENT_STRING;
+	RtToken RI_SUPPRESS_OUTPUT;
+	RtToken RI_BINARY_OUTPUT;
+
+	RtToken RI_RIBWRITER;
 
 	bool m_suppressOutput;
+	bool m_controlSuppressOutput;
 	std::vector<bool> m_suppressOutputVector;
 
 	// Control
 
 	int m_postponeProcedural;
 	int m_postponeObject;
-	int m_postponeFile;
-	int m_postponeMacro;
+	int m_postponeFileArchive;
+	int m_postponeInlineArchive;
 	bool m_header; //!< True, till first request called (in archives and main)
 	int m_skipHeader;
 	int m_skipVersion; //!< skips version request: 1: skip version, 0: write version, -1 write only once (default)
 	bool m_execute;
 	bool m_indent;
 	std::string m_indentString;
+
+	bool m_binary;
 
 	bool willExecuteMacro(RtString name);
 

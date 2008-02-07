@@ -10,7 +10,7 @@
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public
-// License as published by the Free Software Foundation; either
+// License as published by the Free Software ; either
 // version 2 of the License, or (at your option) any later version.
 //  
 // This library is distributed in the hope that it will be useful,
@@ -218,6 +218,7 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_ARCHIVEBLOCK)] = RI_ARCHIVEBLOCK;
 		m_tokenMapper[CToken(RI_DISPLAYCHANNEL)] = RI_DISPLAYCHANNEL;
 		m_tokenMapper[CToken(RI_RESOURCE)] = RI_RESOURCE;
+		m_tokenMapper[CToken(RI_CONTROL)] = RI_CONTROL;
 		m_tokenMapper[CToken(RI_FRAME)] = RI_FRAME;
 
 		m_tokenMapper[CToken(RI_DEVIATION)] = RI_DEVIATION;

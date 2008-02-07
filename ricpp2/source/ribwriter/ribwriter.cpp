@@ -536,20 +536,36 @@ CRibWriter::CRibWriter()
 {
 	m_writer = 0;
 	m_buffer = 0;
+
 	RI_COMPRESS = RI_NULL;
-	m_suppressOutput = false;
+	RI_POSTPONE_PROCEDURALS = RI_NULL;
+	RI_POSTPONE_OBJECTS = RI_NULL;
+	RI_POSTPONE_FILE_ARCHIVES = RI_NULL;
+	RI_POSTPONE_INLINE_ARCHIVES = RI_NULL;
+	RI_SKIP_HEADERS = RI_NULL;
+	RI_SKIP_VERSION = RI_NULL;
+	RI_INDENT = RI_NULL;
+	RI_INDENT_STRING = RI_NULL;
+	RI_SUPPRESS_OUTPUT = RI_NULL;
+	RI_BINARY_OUTPUT = RI_NULL;
+
+	RI_RIBWRITER = RI_NULL;
 
 	m_postponeProcedural = 1;
 	m_postponeObject = 1;
-	m_postponeFile = 0;
-	m_postponeMacro = 1;
-	m_skipHeader = -1;
+	m_postponeFileArchive = 0;
+	m_postponeInlineArchive = 1;
+	m_skipHeader =  0;
 	m_skipVersion = 0;
-	m_header = false;
-	m_execute = false;
 	m_indent = true;
 	m_indentString = "    ";
+	m_binary = false;
+
+	m_controlSuppressOutput = false;
+	m_suppressOutput = false;
 	
+	m_header = false;
+	m_execute = false;
 	nestingDepth(0);
 }
 
@@ -569,6 +585,8 @@ void CRibWriter::requestWritten(EnumRequests aRequest)
 
 bool CRibWriter::testValid() const
 {
+	if ( m_controlSuppressOutput )
+		return false;
 	return  m_writer != 0;
 }
 
@@ -584,7 +602,22 @@ void CRibWriter::defaultDeclarations()
 {
 	CBaseRenderer::defaultDeclarations();
 
-	RI_COMPRESS = processDeclare("compress", "integer", true);
+	// Declarations
+	RI_COMPRESS = processDeclare("compress", "constant integer", true);
+
+	RI_POSTPONE_PROCEDURALS =     processDeclare("postpone-procedurals",     "constant integer", true);
+	RI_POSTPONE_OBJECTS =         processDeclare("postpone-objects",         "constant integer", true);
+	RI_POSTPONE_FILE_ARCHIVES =   processDeclare("postpone-file-archives",   "constant integer", true);
+	RI_POSTPONE_INLINE_ARCHIVES = processDeclare("postpone-inline-archives", "constant integer", true);
+	RI_SKIP_HEADERS =             processDeclare("skip-headers",             "constant integer", true);
+	RI_SKIP_VERSION =             processDeclare("skip-version",             "constant integer", true);
+	RI_INDENT =                   processDeclare("indent",                   "constant integer", true);
+	RI_INDENT_STRING =            processDeclare("indent-string",            "constant string", true);
+	RI_SUPPRESS_OUTPUT =          processDeclare("suppress-output",          "constant integer", true);
+	RI_BINARY_OUTPUT =            processDeclare("binary-output",            "constant integer", true);
+
+	// Tokens
+	RI_RIBWRITER = renderState()->tokFindCreate("ribwriter");
 }
 
 void CRibWriter::writePrefix(bool isArchiveRecord)
@@ -653,11 +686,54 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 RtVoid CRibWriter::doControl(RtToken name, const CParameterList &params)
 {
 	CBaseRenderer::doControl(name, params);
+
+	if ( name == RI_RIBWRITER ) {
+		CParameterList::const_iterator i;
+		for ( i = params.begin(); i != params.end(); i++ ) {
+			if ( (*i).token() == RI_POSTPONE_PROCEDURALS ) {
+				(*i).get(0, m_postponeProcedural);
+			} else if ( (*i).token() == RI_POSTPONE_OBJECTS ) {
+				(*i).get(0, m_postponeObject);
+			} else if ( (*i).token() == RI_POSTPONE_FILE_ARCHIVES ) {
+				(*i).get(0, m_postponeFileArchive);
+			} else if ( (*i).token() == RI_POSTPONE_INLINE_ARCHIVES ) {
+				(*i).get(0, m_postponeInlineArchive);
+			} else if ( (*i).token() == RI_SKIP_HEADERS ) {
+				(*i).get(0, m_skipHeader);
+			} else if ( (*i).token() == RI_SKIP_VERSION ) {
+				(*i).get(0, m_skipVersion);
+			} else if ( (*i).token() == RI_INDENT ) {
+				RtInt intval;
+				if ( (*i).get(0, intval) ) {
+					m_indent = intval != 0;
+				}
+			} else if ( (*i).token() == RI_INDENT_STRING ) {
+				RtString strval = 0;
+				if ( (*i).get(0, strval) ) {
+					m_indentString = noNullStr(strval);;
+				}
+			} else if ( (*i).token() == RI_SUPPRESS_OUTPUT ) {
+				RtInt intval;
+				if ( (*i).get(0, intval) ) {
+					m_controlSuppressOutput = intval != 0;
+				}
+			} else if ( (*i).token() == RI_BINARY_OUTPUT ) {
+				RtInt intval;
+				if ( (*i).get(0, intval) ) {
+					m_binary = intval != 0;
+					m_writer->ascii(!m_binary);
+				}
+			}
+		}
+	}
 }
 
 
 RtVoid CRibWriter::version()
 {
+	if ( !postTestValid() )
+		return;
+
 	if ( m_skipHeader < 0 )
 		m_skipHeader = 1;
 		
@@ -716,6 +792,7 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		if ( !m_writer ) {
 			return;
 		}
+		m_writer->ascii(!m_binary);
 	} else {
 		// stdio or pipe
 		if ( filename.size() == 0 ) {
@@ -724,12 +801,14 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 			if ( !m_writer ) {
 				return;
 			}
+			m_writer->ascii(!m_binary);
 		} else {
 			// @todo pipe
 			m_writer = new CRibElementsWriter(std::cout.rdbuf(), *this);
 			if ( !m_writer ) {
 				return;
 			}
+			m_writer->ascii(!m_binary);
 		}
 	}
 }
@@ -1093,7 +1172,7 @@ RtVoid CRibWriter::postArchiveBegin(RtArchiveHandle h, RtToken name, const CPara
 	assert (m != 0);
 
 	if ( m ) {
-		m->postpone(m_postponeMacro != 0);
+		m->postpone(m_postponeInlineArchive != 0);
 	}
 
 	m_suppressOutputVector.push_back(m_suppressOutput);
@@ -2643,14 +2722,14 @@ bool CRibWriter::willExecuteMacro(RtString name) {
 	bool doExecute = false;
 
 	if ( isFile ) {
-		if ( !macroPostponed || m_postponeFile <= 0) {
+		if ( !macroPostponed || m_postponeFileArchive <= 0) {
 			doExecute = true;
-			if ( m_postponeFile < 0 ) {
-				m_postponeFile = 1;
+			if ( m_postponeFileArchive < 0 ) {
+				m_postponeFileArchive = 1;
 			}
 		}
 	} else {
-		if ( !macroPostponed || m_postponeMacro == 0 ) {
+		if ( !macroPostponed || m_postponeInlineArchive == 0 ) {
 			doExecute = true;
 		}
 	}

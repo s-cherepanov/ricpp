@@ -1349,21 +1349,19 @@ bool CRenderState::exists(RtString identifier) const
 bool CRenderState::getAttribute(CValue &p, RtToken varname, RtToken valuename) const
 {
 	const CParameter *param = attributes().get(varname, valuename);
-	if ( param ) {
-		param->get(p, 0);
-		return true;
-	}
-	return false;
+	return param != 0 ? param->get(0, p) : false;
 }
 
 bool CRenderState::getOption(CValue &p, RtToken varname, RtToken valuename) const
 {
 	const CParameter *param = options().get(varname, valuename);
-	if ( param ) {
-		param->get(p, 0);
-		return true;
-	}
-	return false;
+	return param != 0 ? param->get(0, p) : false;
+}
+
+bool CRenderState::getControl(CValue &p, RtToken varname, RtToken valuename) const
+{
+	const CParameter *param = m_controls.get(varname, valuename);
+	return param != 0 ? param->get(0, p) : false;
 }
 
 bool CRenderState::getValue(CValue &p, RtString identifier) const
@@ -1388,6 +1386,8 @@ bool CRenderState::getValue(CValue &p, RtString identifier) const
 			return getAttribute(p, varname, valuename);
 		if ( namespaceQual == RI_OPTION )
 			return getOption(p, varname, valuename);
+		if ( namespaceQual == RI_CONTROL )
+			return getControl(p, varname, valuename);
 	}
 
 	return false;

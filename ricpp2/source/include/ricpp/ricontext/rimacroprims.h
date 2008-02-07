@@ -1550,7 +1550,7 @@ public:
 	 *  @param theParameters Parsed parameter list.
 	 */
 	CRiSubdivisionMesh(
-		long aLineNo,
+		long aLineNo, CDeclarationDictionary *decl, 
 		RtToken aScheme, RtInt aNFaces, RtInt const aNVerts[], RtInt const aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 		const CParameterList &theParameters);
@@ -1579,6 +1579,7 @@ public:
 	
 	/** @brief Sets the values of the member variables.
 	 *
+	 *  @param decl     For tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1591,11 +1592,13 @@ public:
 	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
+		CDeclarationDictionary *decl, 
 		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], RtInt const aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[]);
 
 	/** @brief Sets the values of the member variables.
 	 *
+	 *  @param decl     For tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
 	 *  @param aVerts   Index for each vertex.
@@ -1605,6 +1608,7 @@ public:
 	 *  @param aFloArgs Float arguments for tags.
 	 */
 	void set(
+		CDeclarationDictionary *decl, 
 		RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
 		const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
 		const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs);
@@ -1745,7 +1749,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		set(c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs()); 
+		set(0, c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs()); 
 
 		CGeometryRManInterfaceCall::operator=(c);
 		return *this;
@@ -1766,7 +1770,8 @@ private:
 	                         m_nargs,   //!< Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
 	                         m_intargs; //!< Integer arguments for tags.
 	std::vector<RtFloat>     m_floargs; //!< Float arguments for tags.
-	std::vector<RtToken>     m_strargs; //!< String arguments for tags.
+	std::vector<std::string> m_strargs; //!< String arguments for tags.
+	std::vector<RtToken>     m_strptrargs; //!< String arguments for tags.
 	std::vector<RtToken>     m_tags;    //!< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
 
 public:
@@ -1830,6 +1835,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl     Declaration dictionary (for tags)
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1843,7 +1849,7 @@ public:
 	 *  @param theParameters Parsed parameter list.
 	 */
 	CRiHierarchicalSubdivisionMesh(
-		long aLineNo,
+		long aLineNo, CDeclarationDictionary *decl, 
 		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[],
 		const CParameterList &theParameters);
@@ -1872,6 +1878,7 @@ public:
 	
 	/** @brief Sets the values of the member variables.
 	 *
+	 *  @param decl     Declaration dictionary for the tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1884,11 +1891,13 @@ public:
 	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
+		CDeclarationDictionary *decl, 
 		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[]);
 
 	/** @brief Sets the values of the member variables.
 	 *
+	 *  @param decl     Declaration dictionary for the tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
 	 *  @param aVerts   Index for each vertex.
@@ -1899,6 +1908,7 @@ public:
 	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
+		CDeclarationDictionary *decl, 
 		RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
 		const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
 		const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs, const std::vector<RtToken> &aStrArgs);
@@ -1979,9 +1989,9 @@ public:
 	 *
 	 * @return The string arguments for tags.
 	 */
-	const std::vector<RtToken> &stringArgs() const
+	const std::vector<RtToken> &stringPtrArgs() const
 	{
-		return m_strargs;
+		return m_strptrargs;
 	}
 
 	/** @brief Gets the tags.
@@ -2004,7 +2014,7 @@ public:
 			m_nargs.empty() ? 0 : &(m_nargs[0]),
 			m_intargs.empty() ? 0 : &(m_intargs[0]),
 			m_floargs.empty() ? 0 : &(m_floargs[0]),
-			m_strargs.empty() ? 0 : &(m_strargs[0]),
+			m_strptrargs.empty() ? 0 : &(m_strptrargs[0]),
 			parameters()
 			);
 	}
@@ -2020,7 +2030,7 @@ public:
 			m_nargs.empty() ? 0 : &(m_nargs[0]),
 			m_intargs.empty() ? 0 : &(m_intargs[0]),
 			m_floargs.empty() ? 0 : &(m_floargs[0]),
-			m_strargs.empty() ? 0 : &(m_strargs[0]),
+			m_strptrargs.empty() ? 0 : &(m_strptrargs[0]),
 			parameters()
 			);
 	}
@@ -2036,7 +2046,7 @@ public:
 			m_nargs.empty() ? 0 : &(m_nargs[0]),
 			m_intargs.empty() ? 0 : &(m_intargs[0]),
 			m_floargs.empty() ? 0 : &(m_floargs[0]),
-			m_strargs.empty() ? 0 : &(m_strargs[0]),
+			m_strptrargs.empty() ? 0 : &(m_strptrargs[0]),
 			parameters()
 			);
 	}
@@ -2051,7 +2061,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		set(c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs(), c.stringArgs()); 
+		set(0, c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs(), c.stringPtrArgs()); 
 
 		CGeometryRManInterfaceCall::operator=(c);
 		return *this;

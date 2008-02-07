@@ -128,7 +128,11 @@ class CBaseRenderer : public IDoRender {
 	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
 
-	bool m_cacheFiles; //!< Cache archive files
+	bool m_cacheFileArchives; //!< Cache archive files
+
+	// Tokens
+	RtToken RI_BASE_RENDERER; //!< Token "base-renderer" as control name
+	RtToken RI_CACHE_FILE_ARCHIVES; //!< Token "cache-file-archives" for control
 
 protected:
 	/** @brief Callbacks for the rib parser to the front end.
@@ -755,7 +759,7 @@ public:
 	inline virtual RtVoid doSynchronize(RtToken name) {}
 	inline virtual RtVoid doSystem(RtString cmd) {}
 	virtual RtVoid doResource(RtToken handle, RtToken type, const CParameterList &params);
-    inline virtual RtVoid doControl(RtToken name, const CParameterList &params) {}
+    virtual RtVoid doControl(RtToken name, const CParameterList &params);
 
 	inline virtual RtVoid doBegin(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doEnd(void) {}

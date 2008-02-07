@@ -46,7 +46,7 @@ CBaseRenderer::CBaseRenderer() :
 	m_filterFuncFactory = 0;
 	// m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
-	m_cacheFiles = false; // Controls cache archive files true/false
+	m_cacheFileArchives = false; // Controls cache archive files true/false
 }
 
 CBaseRenderer::~CBaseRenderer()
@@ -436,6 +436,12 @@ void CBaseRenderer::defaultDeclarations()
 	processDeclare(RI_CONSTANTWIDTH, "float", true);
 
 	processDeclare(RI_FILE, "string", true);
+
+	// Additional render specific declarations
+	RI_CACHE_FILE_ARCHIVES = processDeclare("cache-file-archives", "constant integer", true);
+
+	// Tokens
+	RI_BASE_RENDERER = renderState()->tokFindCreate("base-renderer");
 }
 
 RtVoid CBaseRenderer::preBegin(RtString name, const CParameterList &params)
@@ -2063,6 +2069,19 @@ RtVoid CBaseRenderer::preControl(RtToken name, const CParameterList &params)
 	renderState()->controls().set(name, params);
 }
 
+RtVoid CBaseRenderer::doControl(RtToken name, const CParameterList &params)
+{
+	if ( name == RI_BASE_RENDERER ) {
+		CParameterList::const_iterator i;
+		for ( i = params.begin(); i != params.end(); i++ ) {
+			if ( (*i).token() == RI_CACHE_FILE_ARCHIVES ) {
+				RtInt intVal;
+				(*i).get(0, intVal);
+				m_cacheFileArchives = intVal != 0;
+			}
+		}
+	}
+}
 
 RtVoid CBaseRenderer::controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
@@ -3911,9 +3930,11 @@ RtVoid CBaseRenderer::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvert
 		if ( !preCheck(req) )
 			return;
 
+		scheme = renderState()->tokFindCreate(scheme);
+
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
 
-		CRiSubdivisionMesh r(renderState()->lineNo(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, renderState()->curParamList());
+		CRiSubdivisionMesh r(renderState()->lineNo(), &renderState()->dict(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, renderState()->curParamList());
 		processRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
@@ -3951,9 +3972,11 @@ RtVoid CBaseRenderer::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces,
 		if ( !preCheck(req) )
 			return;
 
+		scheme = renderState()->tokFindCreate(scheme);
+
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
 
-		CRiHierarchicalSubdivisionMesh r(renderState()->lineNo(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, renderState()->curParamList());
+		CRiHierarchicalSubdivisionMesh r(renderState()->lineNo(), &renderState()->dict(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, renderState()->curParamList());
 		processRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
@@ -4770,7 +4793,7 @@ RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callb
 			renderState()->baseUri() = parser.absUri();
 			renderState()->archiveName(name);
 			renderState()->lineNo(0);
-			bool savCache = m_cacheFiles;
+			bool savCache = m_cacheFileArchives;
 			if ( savCache ) {
 				renderState()->archiveFileBegin(name);
 			}
@@ -4778,7 +4801,7 @@ RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callb
 			if ( savCache ) {
 				renderState()->archiveFileEnd();
 			}
-			m_cacheFiles = savCache;
+			m_cacheFileArchives = savCache;
 			renderState()->archiveName(oldArchiveName.c_str());
 			renderState()->lineNo(oldLineNo);
 			renderState()->baseUri() = sav;

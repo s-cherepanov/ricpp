@@ -225,6 +225,7 @@ const RtToken RI_READARCHIVE = "Readarchive"; // Read archive namespace
 const RtToken RI_ARCHIVEBLOCK   = "Archive"; // Archive block namespace
 const RtToken RI_DISPLAYCHANNEL = "Displaychannel"; // Display channel namespace
 const RtToken RI_RESOURCE = "Resource"; ///< Resource namespace
+const RtToken RI_CONTROL = "Control"; ///< Control namespace
 const RtToken RI_FRAME = "Frame"; ///< Frame number
 
 const RtToken RI_DEVIATION = "deviation";     ///< Type for RiCPP::geometricApproximation()

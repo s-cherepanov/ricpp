@@ -214,33 +214,66 @@ unsigned long CParameter::size()
 	}
 }
 
-bool CParameter::get(CValue &p, unsigned long pos) const
+bool CParameter::get(unsigned long pos, CValue &result) const
 {
 	switch ( basicType() ) {
 		case BASICTYPE_INTEGER:
 			if ( pos >= m_ints.size() ) {
-				p.clear();
+				result.clear();
 				return false;
 			}
-			p.set(m_ints[pos]);
+			result.set(m_ints[pos]);
 		case BASICTYPE_FLOAT:
 			if ( pos >= m_floats.size() ) {
-				p.clear();
+				result.clear();
 				return false;
 			}
-			p.set(m_floats[pos]);
+			result.set(m_floats[pos]);
 		case BASICTYPE_STRING:
 			if ( pos >= m_stringPtrs.size() ) {
-				p.clear();
+				result.clear();
 				return false;
 			}
-			p.set(m_stringPtrs[pos]);
+			result.set(m_stringPtrs[pos]);
 		default:
-			p.clear();
+			result.clear();
 			return false;
 	}
 	return true;
 }
+
+bool CParameter::get(unsigned long pos, RtInt &result) const
+{
+	if ( basicType() != BASICTYPE_INTEGER || pos >= m_ints.size() )
+		return false;
+	result = m_ints[pos];
+	return true;
+}
+
+bool CParameter::get(unsigned long pos, RtFloat &result) const
+{
+	if ( basicType() != BASICTYPE_FLOAT || pos >= m_floats.size() )
+		return false;
+	result = m_floats[pos];
+	return true;
+}
+
+bool CParameter::get(unsigned long pos, std::string &result) const
+{
+	if ( basicType() != BASICTYPE_STRING || pos >= m_strings.size() )
+		return false;
+	result = m_strings[pos];
+	return true;
+}
+
+bool CParameter::get(unsigned long pos, RtString &result) const
+{
+	if ( basicType() != BASICTYPE_STRING || pos >= m_stringPtrs.size() )
+		return false;
+	result = m_stringPtrs[pos];
+	return true;
+}
+
 
 // ----------------------------------------------------------------------------
 

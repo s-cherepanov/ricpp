@@ -39,9 +39,6 @@
 #endif //_RICPP_TOOLS_INLINETOOLS_H
 
 #include <vector>
-#include <string>
-
-#include <cstdlib>
 
 namespace RiCPP {
 

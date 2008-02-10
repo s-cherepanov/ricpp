@@ -186,7 +186,7 @@ public:
 	}
 
 	/** @brief Gets the file name string.
-	 *  @return Pointer to the file name stored in \a ExceptRiCPPError::m_file
+	 *  @return Pointer to the file name stored in @a ExceptRiCPPError::m_file
 	 */
 	inline const char *file() const
 	{
@@ -202,7 +202,7 @@ public:
 	}
 
 	/** @brief Gets the line number.
-	 *  @return Line number stored in \a ExceptRiCPPError::m_line
+	 *  @return Line number stored in @a ExceptRiCPPError::m_line
 	 */
 	inline long line() const
 	{
@@ -210,7 +210,7 @@ public:
 	}
 
 	/** Gets the current error string
-	 *  @return Pointer to the error message stored in \a ExceptRiCPPError::m_message
+	 *  @return Pointer to the error message stored in @a ExceptRiCPPError::m_message
 	 */
 	inline virtual const char *what() const throw()
 	{
@@ -218,7 +218,7 @@ public:
 	}
 
 	/** @brief Gets the current error code.
-	 *  @return error code stored in \a RendererError::m_code
+	 *  @return error code stored in @a RendererError::m_code
 	 */
 	inline RtInt code() const
 	{
@@ -234,7 +234,7 @@ public:
 	}
 
 	/** @brief Get the current error severity.
-	 *  @return error severity stored in \a ExceptRiCPPError::m_severity
+	 *  @return error severity stored in @a ExceptRiCPPError::m_severity
 	 */
 	inline RtInt severity() const
 	{
@@ -268,7 +268,7 @@ public:
 
 	/** @brief Handles an error with line and file
 	 *
-	 * Forward to \a handleErrorV(). Variable parameters like in printf(),
+	 * Forward to @a handleErrorV(). Variable parameters like in printf(),
 	 * if not known if message contains a format string use
 	 * handleError(code, severity, line, file, "%s", message) or handleErrorV
 	 * @param code Error Code (RIE_...)
@@ -281,7 +281,7 @@ public:
 
 	/** @brief handle an error
 	 *
-	 * Forward to \a handleErrorV(). Variable parameters like in printf(),
+	 * Forward to @a handleErrorV(). Variable parameters like in printf(),
 	 * if not known if message contains a format string use
 	 * handleError(code, severity, "%s", message) or handleErrorV
 	 * @param code Error Code (RIE_...)

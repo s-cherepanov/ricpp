@@ -27,7 +27,7 @@
 
 /** @file rimacrocontainer.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The container for ri macros, \see rimacro.h
+ *  @brief The container for ri macros, @see rimacro.h
  */
 
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
@@ -50,18 +50,18 @@ public:
 	/** @brief Macro types
 	 */
 	enum EnumMacroTypes {
-		MACROTYPE_UNKNOWN = 0, //!< Macro type is yet unknown
-		MACROTYPE_OBJECT,      //!< Macro contains interface calls for an object definition
-		MACROTYPE_ARCHIVE,     //!< Macro contains interface calls for an rib inline archive definition
-		MACROTYPE_FILE         //!< Macro contains interface calls for an rib file archive definition
+		MACROTYPE_UNKNOWN = 0, ///< Macro type is yet unknown
+		MACROTYPE_OBJECT,      ///< Macro contains interface calls for an object definition
+		MACROTYPE_ARCHIVE,     ///< Macro contains interface calls for an rib inline archive definition
+		MACROTYPE_FILE         ///< Macro contains interface calls for an rib file archive definition
 	};
 
 private:
-	std::list<CRManInterfaceCall *> m_callList;  //!< List of all interface calls for this macro.
-	std::string m_name;         //!< Name of the macro (eg. file name, handle name).
-	EnumMacroTypes m_macroType; //!< Type of macro, either object or (inline, file) archive.
-	bool m_isClosed;            //!< true, if macro definition is completed.
-	bool m_postpone;            //!< true, if macro should be postponed (e.g. in RIB oputput), default is false
+	std::list<CRManInterfaceCall *> m_callList;  ///< List of all interface calls for this macro.
+	std::string m_name;         ///< Name of the macro (eg. file name, handle name).
+	EnumMacroTypes m_macroType; ///< Type of macro, either object or (inline, file) archive.
+	bool m_isClosed;            ///< true, if macro definition is completed.
+	bool m_postpone;            ///< true, if macro should be postponed (e.g. in RIB oputput), default is false
 
 public:
 
@@ -94,7 +94,7 @@ public:
 
 	/** @brief Sets the name of the macro.
 	 *
-	 *  @param name The new name for the macro.
+	 *  @param aName The new name for the macro.
 	 */
 	inline void name(RtString aName)
 	{
@@ -196,7 +196,7 @@ public:
  */
 class CRiObjectMacro : public CRiMacro {
 private:
-	RtObjectHandle m_handle; //!< Associated handle to identify the macro.
+	RtObjectHandle m_handle; ///< Associated handle to identify the macro.
 public:
 	/** @brief Creates a macro container for an object (retained geometry).
 	 *
@@ -227,17 +227,17 @@ public:
  */
 class CRiArchiveMacro : public CRiMacro {
 private:
-	RtArchiveHandle m_handle; //!< Associated handle to identify the macro.
+	RtArchiveHandle m_handle; ///< Associated handle to identify the macro.
 public:
 	/** @brief Creates a macro container for a RIB archive.
 	 *
-	 * @param name Filename or archive name
+	 * @param aName Filename or archive name
 	 * @param aMacroType Type of the macro, will be either MACROTYPE_ARCHIVE or MACROTYPE_FILE, but is not tested
 	 */
 	inline CRiArchiveMacro(
-		const char *name = 0,
+		const char *aName = 0,
 		EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE
-	) : CRiMacro(name, aMacroType)
+	) : CRiMacro(aName, aMacroType)
 	{
 		m_handle = illArchiveHandle; 
  	}

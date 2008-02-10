@@ -27,7 +27,7 @@
 
 /** @file rimacromisc.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for error handlers, system and declarations, \see rimacro.h
+ *  @brief The macro classes for error handlers, system and declarations, @see rimacro.h
  */
 
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
@@ -55,7 +55,7 @@ namespace RiCPP {
  */
 class CRiErrorHandler : public CRManInterfaceCall {
 private:
-	IErrorHandler *m_handler; //!< Pointer to the error handler function
+	IErrorHandler *m_handler; ///< Pointer to the error handler function
 
 public:
 	/** @brief Gets name for the class.
@@ -81,7 +81,7 @@ public:
 	/** @brief Default Constructor, default handler is a CPrintErrorHandler.
 	 *
 	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
-	 *  @except ExceptRiCPPError Could not construct a handler.
+	 *  @exception ExceptRiCPPError Could not construct a handler.
 	 */
 	inline CRiErrorHandler(
 		long aLineNo = -1)
@@ -95,7 +95,7 @@ public:
 	 *  @param aLineNo The line number at a rib file where the declare statement starts,
 	 *                 -1 if there is no file.
 	 *  @param handler Pointer to the error handler function that should be used.
-	 *  @except ExceptRiCPPError Could not construct a handler.
+	 *  @exception ExceptRiCPPError Could not construct a handler.
 	 */
 	inline CRiErrorHandler(
 		long aLineNo,
@@ -108,7 +108,7 @@ public:
 	/** @brief Copy constructor.
 	 *
 	 *  @param c Object to copy.
-	 *  @except ExceptRiCPPError Could not construct a handler.
+	 *  @exception ExceptRiCPPError Could not construct a handler.
 	 */
 	inline CRiErrorHandler(const CRiErrorHandler &c)
 	{
@@ -148,7 +148,7 @@ public:
 	 *  ExceptRiCPPError is thrown.
 	 *
 	 *  @param handler A clone of the handler will be created and assigned.
-	 *  @except ExceptRiCPPError Could not construct a handler.
+	 *  @exception ExceptRiCPPError Could not construct a handler.
 	 */
 	inline void handler(const IErrorHandler &handler)
 	{
@@ -177,7 +177,7 @@ public:
 	 *
 	 *  @param c Object to assign.
 	 *  @return A reference to this object.
-	 *  @except ExceptRiCPPError Could not construct a handler.
+	 *  @exception ExceptRiCPPError Could not construct a handler.
 	 */
 	inline CRiErrorHandler &operator=(const CRiErrorHandler &c)
 	{
@@ -200,8 +200,8 @@ public:
  */
 class CRiDeclare : public CRManInterfaceCall {
 private:
-	RtToken m_name;            //!< Atomized name of the declarated variable
-	std::string m_declaration; //!< The declaration, like: varying float[3]
+	RtToken m_name;            ///< Atomized name of the declarated variable
+	std::string m_declaration; ///< The declaration, like: varying float[3]
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -226,8 +226,8 @@ public:
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
-	 *  @param name The atomized name of the declared variable.
-	 *  @param declaration The declaration string.
+	 *  @param aName The atomized name of the declared variable.
+	 *  @param aDeclaration The declaration string.
 	 */
 	inline CRiDeclare(
 		long aLineNo = -1,
@@ -273,7 +273,7 @@ public:
 
 	/** @brief Sets the token of the name iof the declaration.
 	 *
-	 *  @param name Token of the name of the declaration.
+	 *  @param aName Token of the name of the declaration.
 	 */
 	inline void name(RtToken aName)
 	{
@@ -339,7 +339,7 @@ public:
  */
 class CRiSystem : public CRManInterfaceCall {
 private:
-	std::string m_cmd; //!< The command
+	std::string m_cmd; ///< The command
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -364,8 +364,7 @@ public:
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
-	 *  @param name The atomized name of the declared variable.
-	 *  @param declaration The declaration string.
+	 *  @param aCommand System command.
 	 */
 	inline CRiSystem(
 		long aLineNo = -1,
@@ -456,7 +455,7 @@ public:
  */
 class CRiControl : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the control request as atomized string.
+	RtToken m_name; ///< Name of the control request as atomized string.
 
 public:
 	/** @brief Gets name for the class.
@@ -494,8 +493,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the control request as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -504,9 +502,9 @@ public:
 	 */
 	inline CRiControl(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -516,7 +514,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the control request as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiControl(
 		long aLineNo,

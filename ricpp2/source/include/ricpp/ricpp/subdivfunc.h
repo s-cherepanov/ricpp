@@ -390,7 +390,7 @@ public:
 	/** @brief The implementation of the free function
 	 *
 	 * Just call free() for the data.
-	 * @param ri Interface to be used
+	 *
 	 * @param data
 	 */
 	virtual RtVoid operator()(RtPointer data) const;

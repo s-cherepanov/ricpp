@@ -66,7 +66,7 @@ public:
 
 	/** @brief Sets the name of the resource.
 	 *
-	 *  @param name The new name for the resource.
+	 *  @param aName The new name for the resource.
 	 */
 	inline void name(RtString aName)
 	{

@@ -103,8 +103,8 @@ inline void unmaskColon(char &c)
 /**@brief Helper function, cuts away the filename of a path.
  * @param buf Pointer to the characrer buffer with the filepath.
  *            The buffer will be modified.
- * @return \a buf or "" is returned, the filename is cut away.
- *         \a buf can be empty (point to NUL) after calling this
+ * @return @a buf or "" is returned, the filename is cut away.
+ *         @a buf can be empty (point to NUL) after calling this
  *         function.
  */
 inline char *cutfilename(char *buf)
@@ -275,20 +275,20 @@ template <typename type> type pi_2()     { return static_cast<type>(1.5707963267
 template <typename type> type pi_4()     { return static_cast<type>(0.78539816339744830961566084581988); }
 
 //! Convert degrees to radians
-/*! \param Degree The degree value to convert
- *  \return The radian value ((degree * pi) / 180.0)
+/*! @param degree The degree value to convert
+ *  @return The radian value ((degree * pi) / 180.0)
  */
 template <typename type> type deg2rad(type degree) {return static_cast<type>((degree * pi<type>()) / 180.0);}
 
 //! Convert radians to degrees
-/*! \param Degree The radian value to convert
- *  \return The degree value (radian * 180.0) / pi)
+/*! @param radian The radian value to convert
+ *  @return The degree value (radian * 180.0) / pi)
  */
 template <typename type> type rad2deg(type radian) {return static_cast<type>((radian * 180.0) / pi<type>());}
 
 //! Get the sign of a value
-/*! \param f The value to test
- *  \return -1 if f is negative, 1 otherwise
+/*! @param f The value to test
+ *  @return -1 if f is negative, 1 otherwise
  */
 template <typename type> int sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
 
@@ -300,8 +300,8 @@ class CRecursiveDescentParser {
 public:
 	/** @brief Advances the input pointer and copies to result.
 	*
-	* Advances the input pointer \a *str \a n times and
-	* stores the characters in \a result.
+	* Advances the input pointer @a *str @a n times and
+	* stores the characters in @a result.
 	*
 	* @param str Address of a character pointer to the
 	* input string (address of input pointer).
@@ -320,11 +320,11 @@ public:
 
 	/** @brief Lookahead
 	*
-	* Gets the first character of \a *str.
+	* Gets the first character of @a *str.
 	*
 	* @param str Address of a character pointer to the
 	* input string (address of input pointer).
-	* @return First character of \a *str
+	* @return First character of @a *str
 	*/
 	inline unsigned char la(const unsigned char **str) const
 	{
@@ -333,17 +333,17 @@ public:
 
 	/** @brief Matches a sequence, advances the input pointer.
 	*
-	* Matches the sequence \a matchStr and advances the input
+	* Matches the sequence @a matchStr and advances the input
 	* pointer. If the whole string could not be matched,
 	* the input pointer is restored. If all characters
-	* of \a mathString could be matched, they are stored
-	* in \a result.
+	* of @a mathString could be matched, they are stored
+	* in @a result.
 	*
 	* @param matchStr String to match
 	* @param str Address of a character pointer to the
 	* input string (address of input pointer).
 	* @retval result String to store the characters matched.
-	* @return true, the \a matchStr matches.
+	* @return true, the @a matchStr matches.
 	*/
 	inline bool match(
 		const char *matchStr,
@@ -371,11 +371,11 @@ public:
 
 	/** @brief Matches one character of a string, advances the input pointer.
 	*
-	* Matches one character of \a matchStr and advances the pointer if
+	* Matches one character of @a matchStr and advances the pointer if
 	* one character matches. If matchStr is empty no
 	* character matches. If one character
-	* of \a mathString could be matched, the matched character is stored
-	* in \a result and returned.
+	* of @a mathString could be matched, the matched character is stored
+	* in @a result and returned.
 	*
 	*
 	* @param matchStr One character of the string to match.
@@ -410,7 +410,7 @@ public:
 	*
 	* Tests if current input character is a digit.
 	* If the current input character is a digit, it is stored
-	* in \a result and returned.
+	* in @a result and returned.
 	*
 	@verbatim
 	digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |
@@ -420,6 +420,7 @@ public:
 	* @param str Address of a character pointer to the
 	* input string (address of input pointer).
 	* @retval result String to store the characters matched.
+	* @retval d The digit found as number.
 	* @return 0, no digit that matches.
 	*/
 	inline unsigned char digit(
@@ -440,7 +441,7 @@ public:
 	*
 	* Tests if current input character is a digit, not a '0'.
 	* If the current input character is a digit, it is stored
-	* in \a result and returned.
+	* in @a result and returned.
 	*
 	@verbatim
 	digit = "1" | "2" | "3" | "4" | "5" | "6" | "7" |
@@ -450,6 +451,7 @@ public:
 	* @param str Address of a character pointer to the
 	* input string (address of input pointer).
 	* @retval result String to store the characters matched.
+	* @retval d The digit found as number.
 	* @return 0, no digit that matches.
 	*/
 	inline unsigned char digit_not_null(
@@ -470,7 +472,7 @@ public:
 	*
 	* Tests if current input character is an octal digit.
 	* If the current input character is an octal digit, it is stored
-	* in \a result and returned.
+	* in @a result and returned.
 	*
 	@verbatim
 	oct_digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7"
@@ -479,6 +481,7 @@ public:
 	* @param str Address of a character pointer to the
 	* input string (address of input pointer).
 	* @retval result String to store the characters matched.
+	* @retval d The digit found as number.
 	* @return 0, no octal digit that matches.
 	*/
 	inline unsigned char octdig(
@@ -499,7 +502,7 @@ public:
 	*
 	* Test if current input character is an uppercase letter.
 	* If the current input character is an uppercase letter ('A'-'Z'),
-	* it is appended to \a result and is returned.
+	* it is appended to @a result and is returned.
 	*
 	@verbatim
 	upalpha = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
@@ -528,7 +531,7 @@ public:
 	*
 	* Test if current input character is a lowercase letter.
 	* If the current input character is an lowercase letter ('a'-'z'),
-	* it is appended to \a result and is returned.
+	* it is appended to @a result and is returned.
 	*
 	@verbatim
 	lowalpha = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" |
@@ -557,7 +560,7 @@ public:
 	*
 	* Test if current input character is a lowercase or uppercase letter.
 	* If the current input character is a letter ('A'-'Z' or 'a'-'z'),
-	* it is appended to \a result and is returned.
+	* it is appended to @a result and is returned.
 	*
 	@verbatim
 	alpha = lowalpha | upalpha
@@ -580,7 +583,7 @@ public:
 	*
 	* Test if current input character is a letter or a digit.
 	* If the current input character is alphanumeric ('A'-'Z' or 'a'-'z', '0'-'9'),
-	* it is appended to \a result and is returned.
+	* it is appended to @a result and is returned.
 	*
 	@verbatim
 	alphanum = alpha | digit
@@ -606,7 +609,7 @@ public:
 	* Test if current input character is hexadecimal digit.
 	* If the current input character is a hexadecimal digit
 	* ('0'-'9', 'A'-'f' or 'a'-'f'),
-	* it is appended to \a result and is returned.
+	* it is appended to @a result and is returned.
 	*
 	@verbatim
 	hexdig = digit |
@@ -617,6 +620,7 @@ public:
 	* @param str Address of a character pointer to the
 	* input string (address of input pointer).
 	* @retval result String to store the characters matched.
+	* @retval d The digit found as number.
 	* @return 0, no hexdigit or the hexdigit that matches.
 	* @see digit()
 	*/

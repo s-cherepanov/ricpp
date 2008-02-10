@@ -614,7 +614,7 @@ protected:
 		 *
 		 *  Registers a context creator factory for a specific name. Normally
 		 *  TemplPluginFactory are registered to create specific plugins with
-		 *  \c new instead of loading them from a dynamic library.
+		 *  @c new instead of loading them from a dynamic library.
 		 *
 		 * @param name Name of the renderer factory (context creator)
 		 * @param f Factory for the context creators
@@ -772,7 +772,7 @@ public:
 
 	/** @brief Register a filter factory
 	 *
-	 *  The filter factory of the name \a name is used to create
+	 *  The filter factory of the name @a name is used to create
 	 *  filters directly in memory.
 	 *
 	 *  @return true, filter factory was registerd
@@ -791,7 +791,7 @@ public:
 	 *
 	 *  Registers a context creator factory for a specific name. Normally
 	 *  TemplPluginFactory are registered to create specific plugins with
-	 *  \c new instead of loading them from a dynamic library.
+	 *  @c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the renderer factory (context creator)
 	 * @param f Factory for the context creators
@@ -932,7 +932,7 @@ public:
 	 * Can be called from everywhere.
 	 *
 	 * @param handle Handle that references a rendering context (the backend renderer),
-	 *        you should not use destroyed contexts (end()). \a handle can be
+	 *        you should not use destroyed contexts (end()). @a handle can be
 	 *        illContextHandle to disable the backend.
 	 *
 	 * @see getContext(), beginV(), end(),

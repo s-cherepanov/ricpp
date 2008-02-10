@@ -22,26 +22,26 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/*! \file paramclasses.cpp
- *  \brief Implementation of a bunch of objects that can be used to calculate the
+/*! @file paramclasses.cpp
+ *  @brief Implementation of a bunch of objects that can be used to calculate the
  *         sizes of parameters for the (sl)classes of geometric primitives:
  *         constant, uniform, varying, vertex, facevarying, facevertex
- *  \author Andreas Pidde (andreas@pidde.de)
- *  \sa pramclasses.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @see pramclasses.h
  */
 #include "ricpp/ricpp/paramclasses.h"
 
 using namespace RiCPP;
 
-/*!	\param type The type of the patch either TRi:RI_BILINEAR or TRi:RI_BICUBIC
-	\param nu Number of control points in u direction
-	\param nustep The steps over the control points in u direction to the next patch,
+/*!	@param type The type of the patch either TRi:RI_BILINEAR or TRi:RI_BICUBIC
+	@param nu Number of control points in u direction
+	@param nustep The steps over the control points in u direction to the next patch,
 	              taken from the last TRi::basis() call
-	\param uwrap Periodic TRi::RI_PERIODIC or nonperiodic TRi::RI_NOPERIODIC in u direction
-	\param nv Number of control points in v direction
-	\param nvstep The steps over the control points in v direction to the next patch,
+	@param uwrap Periodic TRi::RI_PERIODIC or nonperiodic TRi::RI_NOPERIODIC in u direction
+	@param nv Number of control points in v direction
+	@param nvstep The steps over the control points in v direction to the next patch,
 	              taken from the last TRi::basis() call
-	\param vwrap Periodic TRi::RI_PERIODIC or nonperiodic TRi::RI_NOPERIODIC in v direction
+	@param vwrap Periodic TRi::RI_PERIODIC or nonperiodic TRi::RI_NOPERIODIC in v direction
  */
 void CPatchMeshClasses::reset(
 	RtToken type,

@@ -53,15 +53,15 @@ namespace RiCPP {
 	 */
 	class CParameter {
 	private:
-		const CDeclaration *m_declaration; //!< Declaration (and name) of the parameter, possibly inline.
-		unsigned int m_position;           //!< Original position within a parameter list.
+		const CDeclaration *m_declaration; ///< Declaration (and name) of the parameter, possibly inline.
+		unsigned int m_position;           ///< Original position within a parameter list.
 		
-		std::string m_tokenStr;             //!< Token as found in original parameter list.
+		std::string m_tokenStr;             ///< Token as found in original parameter list.
 
-		std::vector<RtInt> m_ints;          //!< Container for integer values.
-		std::vector<RtFloat> m_floats;      //!< Container for float values.
-		std::vector<std::string> m_strings; //!< Container for string values.
-		std::vector<RtString> m_stringPtrs; //!< Containter for the pointers to the string values.
+		std::vector<RtInt> m_ints;          ///< Container for integer values.
+		std::vector<RtFloat> m_floats;      ///< Container for float values.
+		std::vector<std::string> m_strings; ///< Container for string values.
+		std::vector<RtString> m_stringPtrs; ///< Containter for the pointers to the string values.
 
 		/** @brief Fills the m_stringPtrs with pointers to the c-strings of m_strings.
 		 */
@@ -134,10 +134,9 @@ namespace RiCPP {
 
 		/** @brief Assigns a parameter.
 		 *
-		 *  Assigns the values of @param to this object. Makes a deep copy
-		 *  of inline declarations.
+		 *  Makes a deep copy of inline declarations.
 		 *
-		 *  @param param Parameter to assign
+		 *  @param param The parameter to assign.
 		 *  @return *this
 		 */
 		CParameter &operator=(const CParameter &param);
@@ -316,19 +315,19 @@ namespace RiCPP {
 	 */
 	class CParameterList {
 	public:
-		typedef std::list<CParameter>::iterator iterator;             //!< Iterator for parameters.
-		typedef std::list<CParameter>::const_iterator const_iterator; //!< Constant iterator for parameters.
-		typedef std::list<CParameter>::size_type size_type;           //!< Type for the size of the parameter list.
+		typedef std::list<CParameter>::iterator iterator;             ///< Iterator for parameters.
+		typedef std::list<CParameter>::const_iterator const_iterator; ///< Constant iterator for parameters.
+		typedef std::list<CParameter>::size_type size_type;           ///< Type for the size of the parameter list.
 
 	private:
 		/** @brief Type to map tokens to their parameters.
 		 */
 		typedef std::map<RtToken, CParameter *> Map_type;
 		
-		std::list<CParameter> m_params;    //!< List of parameters
-		Map_type m_paramMap;               //!< Maps tokens to their parameters.
-		std::vector<RtToken> m_tokenPtr;   //!< Vector of the tokens for ri token/value parameters.
-		std::vector<RtPointer> m_paramPtr; //!< Pointer to the values for ri token/value parameters.
+		std::list<CParameter> m_params;    ///< List of parameters
+		Map_type m_paramMap;               ///< Maps tokens to their parameters.
+		std::vector<RtToken> m_tokenPtr;   ///< Vector of the tokens for ri token/value parameters.
+		std::vector<RtPointer> m_paramPtr; ///< Pointer to the values for ri token/value parameters.
 
 		/** @brief Rebuilds the parameter pointer vectors m_tokenPtr and m_paramPtr from m_params.
 		 */
@@ -559,7 +558,7 @@ namespace RiCPP {
 	 */
 	class CNamedParameterList : public CParameterList {
 	private:
-		RtToken m_name; //!< Token as identifier
+		RtToken m_name; ///< Token as identifier
 
 		/** @brief Copies the parameters.
 		 *
@@ -679,9 +678,9 @@ namespace RiCPP {
 
 		/** @brief Copies a parameter list.
 		 *  
-		 *  @param params Parameter list to copy.
+		 *  @param params Named parameter list to copy.
 		 */
-		inline virtual void set(const char *aName, const CNamedParameterList &params)
+		inline virtual void set(const CNamedParameterList &params)
 		{
 			*this = params;
 		}

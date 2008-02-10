@@ -25,9 +25,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file rimacrotransform.h
+/** @file rimacrotransforms.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for transformations, \see rimacro.h
+ *  @brief The macro classes for transformations, @see rimacro.h
  */
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
 #include "ricpp/ricontext/rimacrobase.h"
@@ -128,7 +128,7 @@ public:
  */
 class CRiTransform : public CRManInterfaceCall {
 private:
-	RtMatrix m_transform; //!< Transformation matrix.
+	RtMatrix m_transform; ///< Transformation matrix.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -257,7 +257,7 @@ public:
  */
 class CRiConcatTransform : public CRManInterfaceCall {
 private:
-	RtMatrix m_transform; //!< Transformation matrix.
+	RtMatrix m_transform; ///< Transformation matrix.
 
 public:
 	/** @brief Gets name for the class.
@@ -387,7 +387,7 @@ public:
  */
 class CRiPerspective : public CRManInterfaceCall {
 private:
-	RtFloat m_fov; //!< Field of view
+	RtFloat m_fov; ///< Field of view
 
 public:
 	/** @brief Gets name for the class.
@@ -494,9 +494,9 @@ public:
  */
 class CRiTranslate : public CRManInterfaceCall {
 private:
-	RtFloat m_dx, //!< Translation in direction x.
-	        m_dy, //!< Translation in direction y.
-	        m_dz; //!< Translation in direction z.
+	RtFloat m_dx, ///< Translation in direction x.
+	        m_dy, ///< Translation in direction y.
+	        m_dz; ///< Translation in direction z.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -666,10 +666,10 @@ public:
  */
 class CRiRotate : public CRManInterfaceCall {
 private:
-	RtFloat m_angle, //!< Angle of rotation.
-	        m_dx,    //!< Rotation axis x coordiante.
-	        m_dy,    //!< Rotation axis z coordiante.
-	        m_dz;    //!< Rotation axis y coordiante.
+	RtFloat m_angle, ///< Angle of rotation.
+	        m_dx,    ///< Rotation axis x coordiante.
+	        m_dy,    ///< Rotation axis z coordiante.
+	        m_dz;    ///< Rotation axis y coordiante.
 
 public:
 	/** @brief Gets name for the class.
@@ -863,9 +863,9 @@ public:
  */
 class CRiScale : public CRManInterfaceCall {
 private:
-	RtFloat m_dx, //!< Scaling in direction x.
-	        m_dy, //!< Scaling in direction y.
-	        m_dz; //!< Scaling in direction z.
+	RtFloat m_dx, ///< Scaling in direction x.
+	        m_dy, ///< Scaling in direction y.
+	        m_dz; ///< Scaling in direction z.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1035,13 +1035,13 @@ public:
  */
 class CRiSkew : public CRManInterfaceCall {
 private:
-	RtFloat m_angle; //!< Skew angle
-	RtFloat m_dx1,  //!< X coordiante axis 1
-		    m_dy1,  //!< Y coordiante axis 1
-			m_dz1;  //!< Z coordiante axis 1
-	RtFloat m_dx2,  //!< X coordiante axis 2
-	        m_dy2,  //!< Y coordiante axis 2
-			m_dz2;  //!< Z coordiante axis 2
+	RtFloat m_angle; ///< Skew angle
+	RtFloat m_dx1,  ///< X coordiante axis 1
+		    m_dy1,  ///< Y coordiante axis 1
+			m_dz1;  ///< Z coordiante axis 1
+	RtFloat m_dx2,  ///< X coordiante axis 2
+	        m_dy2,  ///< Y coordiante axis 2
+			m_dz2;  ///< Z coordiante axis 2
 
 public:
 	/** @brief Gets name for the class.
@@ -1066,6 +1066,13 @@ public:
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param anAngle The skew angle.
+	 *  @param aDx1 The x coordiante of the first skew axis.
+	 *  @param aDy1 The y coordiante of the first skew axis.
+	 *  @param aDz1 The z coordiante of the first skew axis.
+	 *  @param aDx2 The x coordiante of the second skew axis.
+	 *  @param aDy2 The y coordiante of the second skew axis.
+	 *  @param aDz2 The z coordiante of the second skew axis.
 	 */
 	inline CRiSkew(long aLineNo=-1, RtFloat anAngle=0, RtFloat aDx1=0, RtFloat aDy1=0, RtFloat aDz1=1, RtFloat aDx2=0, RtFloat aDy2=1, RtFloat aDz2=0) : CRManInterfaceCall(aLineNo), m_angle(anAngle), m_dx1(aDx1), m_dy1(aDy1), m_dz1(aDz1), m_dx2(aDx2), m_dy2(aDy2), m_dz2(aDz2) {}
 
@@ -1296,7 +1303,7 @@ public:
  */
 class CRiDeformation : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the deformation as token.
+	RtToken m_name; ///< Name of the deformation as token.
 
 public:
 	/** @brief Gets name for the class.
@@ -1333,8 +1340,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the deformation as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -1343,9 +1349,9 @@ public:
 	 */
 	inline CRiDeformation(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		const char *name,
+		const char *aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -1355,7 +1361,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the deformation as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiDeformation(
 		long aLineNo,
@@ -1441,7 +1447,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiScopedCoordinateSystem : public CRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the coordinate system.
+	RtToken m_name; ///< Name of the coordinate system.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1549,7 +1555,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiCoordinateSystem : public CRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the coordinate system.
+	RtToken m_name; ///< Name of the coordinate system.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1657,7 +1663,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiCoordSysTransform : public CRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the coordinate system.
+	RtToken m_name; ///< Name of the coordinate system.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1767,12 +1773,12 @@ public:
  */
 class CRiTransformPoints : public CRManInterfaceCall {
 private:
-	RtToken m_fromspace, //!< Space from which the coordiantes are transformed.
-	        m_tospace;   //!< Space to which the coordiantes are transformed.
-	RtInt m_npoints;     //!< Number of Points
-	RtPoint *m_points;   //!< Address of the result
+	RtToken m_fromspace, ///< Space from which the coordiantes are transformed.
+	        m_tospace;   ///< Space to which the coordiantes are transformed.
+	RtInt m_npoints;     ///< Number of Points
+	RtPoint *m_points;   ///< Address of the result
 
-	std::vector<RtFloat> m_pointsvector; //!< The source points (copy)
+	std::vector<RtFloat> m_pointsvector; ///< The source points (copy)
 
 	/** @brief Sets the member variables (used by assignment.
 	 *

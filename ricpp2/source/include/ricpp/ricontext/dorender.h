@@ -36,9 +36,9 @@
 
 namespace RiCPP {
 
-/** @brief Members called called with checked parameters (here from \a CBaseRenderer).
+/** @brief Members called called with checked parameters (here from @a CBaseRenderer).
  *
- *  Renderer contexts can inherit from \a CBaseRenderer to implement these
+ *  Renderer contexts can inherit from @a CBaseRenderer to implement these
  *  functions to do the rendering. Since this are callbacks, all functions have no return values.
 */
 class IDoRender : public IRiContext {
@@ -55,7 +55,7 @@ public:
 	/** @brief Checks validity of state for common requests.
 	 *  @param req Number of the requests.
 	 *  @return false if checking fails.
-	 *  @except ExceptRiCPPError Implementation can also throw an exception on errors.
+	 *  @exception ExceptRiCPPError Implementation can also throw an exception on errors.
 	 */
 	virtual bool preCheck(EnumRequests req) = 0;
 
@@ -232,7 +232,7 @@ public:
 
 	/** @brief Error handler
 	 *
-	 *  @se preErrorHandler()
+	 *  @see preErrorHandler()
 	 *
 	 *  @param handler The error handler
 	 */

@@ -64,8 +64,8 @@ class CContextCreator : IPlugin {
 	 * or 0. There is at most one active context at a time for each bridge. The
 	 * CRiCPPBridge can be used to get this context: CRiCPPBridge::getContext().
 	 * CRiCPPBridge::context() manages the context switching.
-	 * - \a m_curContext is a member of \a m_contextList or 0.
-	 * - \a m_curContext == 0 means that there is no active context.
+	 * - @a m_curContext is a member of @a m_contextList or 0.
+	 * - @a m_curContext == 0 means that there is no active context.
 	 */
 	IRiContext *m_curContext;
 
@@ -86,7 +86,7 @@ protected:
 	/** @brief Returns the error handler to use. It can but usually
 	 *  won't be overwritten in this framework.
 	 *
-	 *  @return \a m_errorHandler, the default CErrorExceptionHandler is returned.
+	 *  @return @a m_errorHandler, the default CErrorExceptionHandler is returned.
 	 */
 	virtual IRiCPPErrorHandler &ricppErrHandler();
 
@@ -163,7 +163,7 @@ public:
 	 * Called by the CRiCPPBridge::beginV() of the framework front end.
 	 * deactivates the current context createsa new one by calling getContext().
 	 * The new context is activated by calling it's beginV() (no explicite activate()),
-	 * \a name is used as parameter for this method again. Can call the error handler
+	 * @a name is used as parameter for this method again. Can call the error handler
 	 * if no new context can be created. The current context is cleared in this case.
 	 *
 	 * @param name Name of a renderer
@@ -228,7 +228,7 @@ public:
 	 *
 	 * Is called at the begin() of the front end.
 	 *
-	 * @params cb Callback interface of the front end.
+	 * @param cb Callback interface of the front end.
 	 */
 	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb);
 	//@}

@@ -153,7 +153,7 @@ protected:
 	 *
 	 * If the destructMembers parameter in TemplPluginFactory() was true,
 	 * plugins registered are deleted automatically, if the factory is deleted.
-	 * \a key and \a value is the same pointer, m_pluginRegistry is used
+	 * @a key and @a value is the same pointer, m_pluginRegistry is used
 	 * to find registerd pointers quickly.
 	 */
 	TemplObjPtrRegistry<Plugin *, Plugin *> m_pluginRegistry;
@@ -170,7 +170,7 @@ public:
 
 	/** @brief Constructor of the factory.
 	 *
-	 * \a destructMembers should be set true if the object shall be
+	 * @a destructMembers should be set true if the object shall be
 	 * deleted automatically, while the TPluginFactor is deleted.
 	 * This parameter does not affect deletePlugin().
 	 *
@@ -260,9 +260,9 @@ public:
 
 	/** @brief Create a new plugin in memory.
 	 *
-	 * Use \c new to create a new instance of the plugin. The startup() of this
+	 * Use @c new to create a new instance of the plugin. The startup() of this
 	 * plugin is called after creation. The plugin must be deleted by deletePlugin(),
-	 * or automatically by ~TemplPluginFactory(), if the \a destructMembers parameter of
+	 * or automatically by ~TemplPluginFactory(), if the @a destructMembers parameter of
 	 * the constructor was set to true.
 	 *
 	 *  @return The new plugin.
@@ -404,7 +404,7 @@ public:
 	/** @brief Constructor to load a dynamic library.
 	 *
 	 * The destruction of the plugins is handled by a library function,
-	 * therefore \a destructMembers of TemplPluginFactory is set to false.
+	 * therefore @a destructMembers of TemplPluginFactory is set to false.
 	 *
 	 * @param libname Basename of the library
 	 * @param pathlist Pathlist (optionally with $-variables) to search for the library
@@ -767,12 +767,12 @@ public:
 	 *
 	 * Registers a plugin factory for a specific name. Normally
 	 * TemplPluginFactory are registered to create specific plugins with
-	 * \c new instead of loading them from a dynamic library.
+	 * @c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the plugins factory.
 	 * @param f Factory to create the plugins (or 0 to load)
 	 * @return true, if the plugin factory could be registered
-	 * (no \a name of factory \a f) or is already registered.
+	 * (no @a name of factory @a f) or is already registered.
 	 * @exception ExceptRiCPPError No memory or wrong version
 	 */
 	inline virtual bool registerFactory(const char *name, TemplPluginFactory<Plugin> *f=0)
@@ -866,8 +866,8 @@ public:
 
 	/** @brief Load all plugins from a directory.
 	 *
-	 * Load all plugins of appropriate version and name suffix \a nameSuffix
-	 * from a directory \a direct.
+	 * Load all plugins of appropriate version and name suffix @a nameSuffix
+	 * from a directory @a direct.
 	 * @return Number of registered factories;
 	 * @exception ExceptRiCPPError No memory
 	 */
@@ -1014,7 +1014,7 @@ public:
 	 *
 	 * Registers a plugin factory for a specific name. Normally
 	 * TemplPluginFactory are registered to create specific plugins with
-	 * \c new instead of loading them from a dynamic library.
+	 * @c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the plugins
 	 * @param f Factory to create the plugins
@@ -1080,7 +1080,7 @@ public:
 
 	/** @brief Load all plugins from a directory.
 	 *
-	 * Load all plugins of appropriate version and suffix \a suffix from a directory \a direct
+	 * Load all plugins of appropriate version and suffix @a suffix from a directory @a direct
 	 *
 	 * @return Number of loaded plugins
 	 */

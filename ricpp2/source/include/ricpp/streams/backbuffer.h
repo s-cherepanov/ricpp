@@ -64,7 +64,7 @@ namespace RiCPP {
  */
 class CBackBufferRoot {
 protected:
-	CUri m_lastFileName; //!< URI of the associated resource.
+	CUri m_lastFileName; ///< URI of the associated resource.
 public:
 	/** @brief Destructor
 	 *
@@ -130,10 +130,10 @@ public:
  *  @see CBackBufferRoot
  */
 class CFileBackBuffer : public CBackBufferRoot {
-	std::filebuf m_filebuf; //!< Associated file buffer.
-	TypeOpenMode m_mode;    //!< Open mode
+	std::filebuf m_filebuf; ///< Associated file buffer.
+	TypeOpenMode m_mode;    ///< Open mode
 public:
-    /** @breif Standard constructor.
+    /** @brief Standard constructor.
 	 *
 	 *  Just clears m_mode.
 	 */
@@ -221,8 +221,8 @@ public:
  */
 class CBackBufferFactory : public IPlugin {
 
-	CStringList m_schemes; //!< List of Scehmes (like "FILE" in CFileBackBufferFactory).
-	TemplObjPtrRegistry<CBackBufferRoot *, CBackBufferRoot *> m_myBuffers; //!< Buffers created by a factory.
+	CStringList m_schemes; ///< List of Scehmes (like "FILE" in CFileBackBufferFactory).
+	TemplObjPtrRegistry<CBackBufferRoot *, CBackBufferRoot *> m_myBuffers; ///< Buffers created by a factory.
 
 protected:
 	/** @brief Adds a new scheme handled by the factory.
@@ -383,7 +383,7 @@ public:
 	/** @brief Open a new back buffer object.
 	 *
 	 *  Overwrite this to create and open a new back buffer.
-	 *  @param absURI Absolute URI of the resource to open.
+	 *  @param absUri Absolute URI of the resource to open.
 	 *  @param mode Mode used to open the resource.
 	 *  @return A new, opened back buffer object.
 	 */
@@ -464,7 +464,7 @@ public:
 	/** @brief Open a new file back buffer object.
 	 *
 	 *  Overwrite this to create and open a new back buffer.
-	 *  @param absURI Absolute URI of the file resource to open.
+	 *  @param absUri Absolute URI of the file resource to open.
 	 *  @param mode Mode used to open the file resource.
 	 *  @return A new, opened file back buffer object.
 	 */

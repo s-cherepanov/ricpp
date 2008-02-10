@@ -37,7 +37,7 @@
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
 namespace RiCPP {
-	/** @brief Handles RIB request MakeTexture picturename texturename swrap twrap filter swidth twidth <paramlist>
+	/** @brief Handles RIB request MakeTexture picturename texturename swrap twrap filter swidth twidth \<paramlist\>
 	 */
 	class CMakeTextureRibRequest : public CRibRequest {
 	public:
@@ -45,7 +45,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_TEXTURE; }
 	}; // CMakeTextureRibRequest
 
-	/** @brief Handles RIB request MakeBump picturename texturename swrap twrap filter swidth twidth <paramlist>
+	/** @brief Handles RIB request MakeBump picturename texturename swrap twrap filter swidth twidth \<paramlist\>
 	 */
 	class CMakeBumpRibRequest : public CRibRequest {
 	public:
@@ -53,7 +53,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_BUMP; }
 	}; // CMakeBumpRibRequest
 
-	/** @brief Handles RIB request MakeLatLongEnvironment picturename texturename filter swidth twidth <paramlist>
+	/** @brief Handles RIB request MakeLatLongEnvironment picturename texturename filter swidth twidth \<paramlist\>
 	 */
 	class CMakeLatLongEnvironmentRibRequest : public CRibRequest {
 	public:
@@ -61,7 +61,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_LAT_LONG_ENVIRONMENT; }
 	}; // CMakeLatLongEnvironmentRibRequest
 
-	/** @brief Handles RIB request MakeCubeFaceEnvironment px nx py ny pz nz texturename fov filter swidth twidth <paramlist>
+	/** @brief Handles RIB request MakeCubeFaceEnvironment px nx py ny pz nz texturename fov filter swidth twidth \<paramlist\>
 	 */
 	class CMakeCubeFaceEnvironmentRibRequest : public CRibRequest {
 	public:
@@ -69,7 +69,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_CUBE_FACE_ENVIRONMENT; }
 	}; // CMakeCubeFaceEnvironmentRibRequest
 
-	/** @brief Handles RIB request MakeShadow picturename texturename <paramlist>
+	/** @brief Handles RIB request MakeShadow picturename texturename \<paramlist\>
 	 */
 	class CMakeShadowRibRequest : public CRibRequest {
 	public:
@@ -77,7 +77,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_SHADOW; }
 	}; // CMakeShadowRibRequest
 
-	/** @brief Handles RIB request MakeBrickMap ptcname(s) bkmname <paramlist>
+	/** @brief Handles RIB request MakeBrickMap ptcname(s) bkmname \<paramlist\>
 	 */
 	class CMakeBrickMapRibRequest : public CRibRequest {
 	public:

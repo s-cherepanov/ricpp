@@ -25,11 +25,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/*! \file paramclasses.h
- *  \brief A bunch of objects that can be used to calculate the
+/*! @file paramclasses.h
+ *  @brief A bunch of objects that can be used to calculate the
  *         sizes of parameters for the (sl)classes:
  *         constant, uniform, varying, vertex, facevarying, facevertex
- *  \author Andreas Pidde (andreas@pidde.de)
+ *  @author Andreas Pidde (andreas@pidde.de)
  *
  *  The (sl)class determines how many values has to be in the parameterlist for
  *  a given variable, and how intermediate values are interpolated.
@@ -171,7 +171,7 @@ public:
 	but it's easier to use to have a different class.
  */
 class CPolygonClasses : public CParameterClasses {
-	RtInt m_nvertices;  //!< Sum of all vertices.
+	RtInt m_nvertices;  ///< Sum of all vertices.
 public:
 	//! reset(), sets the number of vertices.
 	inline void reset(RtInt nvertices) {m_nvertices = nvertices;}
@@ -203,7 +203,7 @@ public:
 	all vertices of the general polygon.
  */
 class CGeneralPolygonClasses : public CParameterClasses {
-	RtInt m_nvertices;       //!< Sum of vertices.
+	RtInt m_nvertices;       ///< Sum of vertices.
 public:
 	//! reset() recalculates the sum of the vertices.
 	inline void reset(RtInt nloops, const RtInt nverts[])
@@ -239,9 +239,9 @@ public:
 /*! There are many convex polygons.
  */
 class CPointsPolygonsClasses : public CParameterClasses {
-	RtInt m_npolys;     //!< Number of polygons.
-	RtInt m_nvertices;  //!< Sum of all vertices per face.
-	RtInt m_nmaxvertex; //!< Sum of all vertices, shared vertices count one.
+	RtInt m_npolys;     ///< Number of polygons.
+	RtInt m_nvertices;  ///< Sum of all vertices per face.
+	RtInt m_nmaxvertex; ///< Sum of all vertices, shared vertices count one.
 public:
 	//! reset() recalculates the sum of the vertices and the number of vertices.
 	inline void reset(RtInt npolys, const RtInt nverts[], const RtInt verts[])
@@ -277,9 +277,9 @@ public:
 /*! There are many faces (polygons) which can contain holes.
  */
 class CPointsGeneralPolygonsClasses : public CParameterClasses {
-	RtInt m_npolys;     //!< Number of polygons.
-	RtInt m_nvertices;  //!< Sum of all vertices per face.
-	RtInt m_nmaxvertex; //!< Sum of all vertices, shared vertices count one.
+	RtInt m_npolys;     ///< Number of polygons.
+	RtInt m_nvertices;  ///< Sum of all vertices per face.
+	RtInt m_nmaxvertex; ///< Sum of all vertices, shared vertices count one.
 public:
 	//! reset() recalculates the sum of the vertices and the number of vertices
 	inline void reset(RtInt npolys, const RtInt nloops[], const RtInt nverts[], const RtInt verts[])
@@ -317,7 +317,7 @@ public:
 	bilinear with 4 vertices or bicubic with 16 vertices.
  */
 class CPatchClasses : public CParameterClasses {
-	RtInt nVertices; //!< The number of vertices is either 4 (linear patch) or 16 (bicubic patch)
+	RtInt nVertices; ///< The number of vertices is either 4 (linear patch) or 16 (bicubic patch)
 public:
 	//! reset() sets the number of vertices, they default to 4, only for a bicubic type there are 16
 	inline void reset(RtToken type)
@@ -353,17 +353,17 @@ public:
 	interface call of TRi::basis()
  */
 class CPatchMeshClasses : public CParameterClasses {
-	RtInt m_nPatches;      //!< Number of patches (faces)
-	RtInt m_nCorners;      //!< Number of corners
-	RtInt m_nVertices;     //!< Number of vertices
-	RtInt m_nFaceCorners;  //!< Number of corners per face, m_nPatches * 4
-	RtInt m_nFaceVertices; //!< Number of vertices per face, m_nPatches * 4 (bilinear) or m_nPatches * 16 (bicubic)
+	RtInt m_nPatches;      ///< Number of patches (faces)
+	RtInt m_nCorners;      ///< Number of corners
+	RtInt m_nVertices;     ///< Number of vertices
+	RtInt m_nFaceCorners;  ///< Number of corners per face, m_nPatches * 4
+	RtInt m_nFaceVertices; ///< Number of vertices per face, m_nPatches * 4 (bilinear) or m_nPatches * 16 (bicubic)
 public:
 	//! reset() sets the values of the member variables
 	void reset(RtToken type, RtInt nu, RtInt nustep, RtToken uwrap, RtInt nv, RtInt nvstep, RtToken vwrap);
 
 	//! CPatchMeshClasses(), either bilinear or bicubic patch meshes.
-	// \sa reset()
+	// @see reset()
 	inline CPatchMeshClasses(
 		RtToken type,
 		RtInt nu, RtInt nustep, RtToken uwrap,
@@ -391,11 +391,11 @@ public:
 
 //! CNuPatchClasses, parameter class for TRi::nuPatch()
 class CNuPatchClasses : public CParameterClasses {
-	RtInt m_nvertices;  //!< The number of vertices nu*nv
-	RtInt m_nsegments;  //!< The number of patches
-	RtInt m_ncorners;   //!< the number of corners
-	RtInt m_nFaceCorners;  //!< Number of corners per face, 4 * m_nsegments
-	RtInt m_nFaceVertices; //!< Number of vertices per face, m_nsegments * uorder * vorder
+	RtInt m_nvertices;  ///< The number of vertices nu*nv
+	RtInt m_nsegments;  ///< The number of patches
+	RtInt m_ncorners;   ///< the number of corners
+	RtInt m_nFaceCorners;  ///< Number of corners per face, 4 * m_nsegments
+	RtInt m_nFaceVertices; ///< Number of vertices per face, m_nsegments * uorder * vorder
 public:
 	//! resets the number of vertices, segments and corners
 	void reset(
@@ -403,7 +403,7 @@ public:
 		RtInt nv, RtInt vorder);
 
 	//! CNuPatchClasses() parameters
-	//! \sa reset()
+	//! @see reset()
 	inline CNuPatchClasses(
 		RtInt nu, RtInt uorder,
 		RtInt nv, RtInt vorder)
@@ -558,11 +558,11 @@ public:
  */
 class CValueCounts : public CParameterClasses {
 private:
-	RtInt m_vertices;      //!< Number of vertices in primitive (vertex class).
-	RtInt m_corners;       //!< Number of corners in primitive (varying class).
-	RtInt m_facets;        //!< Number of facets in primitive (uniform class).
-	RtInt m_faceVertices;  //!< Number of vertices per face in primitive (facevertex class).
-	RtInt m_faceCorners;   //!< Number of corners per face in primitive (facevarying class).
+	RtInt m_vertices;      ///< Number of vertices in primitive (vertex class).
+	RtInt m_corners;       ///< Number of corners in primitive (varying class).
+	RtInt m_facets;        ///< Number of facets in primitive (uniform class).
+	RtInt m_faceVertices;  ///< Number of vertices per face in primitive (facevertex class).
+	RtInt m_faceCorners;   ///< Number of corners per face in primitive (facevarying class).
 
 public:
 	/** @brief Standard constructor sets all to zero.
@@ -577,11 +577,11 @@ public:
 	}
 
 	/** @brief Constructor, sets the member variables to the values of the corresponding parameters.
-	 * @param vertices       Number of vertices (used by vertex class).
-	 * @param corners        Number of corners (used by varying class).
-	 * @param facets         Number of facets (used by uniform class).
-	 * @param facevertices   Number of vertices per face (used by facevertex class).
-	 * @param facecorners    Number of corners per face (used by facevarying class).
+	 * @param theVertices       Number of vertices (used by vertex class).
+	 * @param theCorners        Number of corners (used by varying class).
+	 * @param theFacets         Number of facets (used by uniform class).
+	 * @param theFaceVertices   Number of vertices per face (used by facevertex class).
+	 * @param theFaceCorners    Number of corners per face (used by facevarying class).
 	 */
 	inline CValueCounts(
 		RtInt theVertices,

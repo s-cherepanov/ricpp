@@ -92,19 +92,19 @@ public:
 	typedef std::vector<EnumModes>::size_type size_type;
 
 private:
-	CValidModes m_validModes; //!< Used to check validy of a request inside a given mode.
-	std::vector<EnumModes> m_modes; //!< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
-	std::vector<TypeModeBits> m_modeBits; //!< All modes (nesting of modes), transparent modes are 'ored' to the mode bits of outer blocks.
+	CValidModes m_validModes; ///< Used to check validy of a request inside a given mode.
+	std::vector<EnumModes> m_modes; ///< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
+	std::vector<TypeModeBits> m_modeBits; ///< All modes (nesting of modes), transparent modes are 'ored' to the mode bits of outer blocks.
 
-	size_type m_areaLightSourceDepth; //!< Nesting depth of the enclosing mode block of an area light source, 0 if not in area light source definition.
-	RtLightHandle m_areaLightSourceHandle; //!< Handle of area light source to be defined, illLightHandle if not defining an area light source.
+	size_type m_areaLightSourceDepth; ///< Nesting depth of the enclosing mode block of an area light source, 0 if not in area light source definition.
+	RtLightHandle m_areaLightSourceHandle; ///< Handle of area light source to be defined, illLightHandle if not defining an area light source.
 
 protected:
 	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before).
 	 *
 	 * @param newMode New mode for nesting.
 	 * @param newModeBits Bits corresponding mode, transparent blocks have mode bits of outer block added.
-	 * @except ExceptRiCPPError Something went worong while pushing on a vector.
+	 * @exception ExceptRiCPPError Something went worong while pushing on a vector.
 	 */
 	 virtual void push(EnumModes newMode, TypeModeBits newModeBits);
 
@@ -335,7 +335,7 @@ public:
 	 *
 	 * @see startAreaLightSource(RtLightHandle h)
 	 * 
-	 * @except ExceptRiCPPError Closed at wrong nesting level.
+	 * @exception ExceptRiCPPError Closed at wrong nesting level.
 	 */
 	virtual void endAreaLightSource();
 }; // CModeStack

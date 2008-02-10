@@ -52,10 +52,10 @@ namespace RiCPP {
 /** @brief Possible basic types. All types consists of these basic types.
  */
 enum EnumBasicTypes {
-	BASICTYPE_UNKNOWN = 0,//!< Unknown basic type
-	BASICTYPE_INTEGER,    //!< Integer basic type
-	BASICTYPE_FLOAT,      //!< Float basic type
-	BASICTYPE_STRING      //!< String basic type
+	BASICTYPE_UNKNOWN = 0,///< Unknown basic type
+	BASICTYPE_INTEGER,    ///< Integer basic type
+	BASICTYPE_FLOAT,      ///< Float basic type
+	BASICTYPE_STRING      ///< String basic type
 };
 
 /** @brief Number of basic types
@@ -65,34 +65,34 @@ const int N_BASICTYPES = (int)BASICTYPE_STRING+1;
 /** @brief Possible types
  */
 enum EnumTypes {
-	TYPE_UNKNOWN       = 0, //!< Unknown type
-	TYPE_FLOAT,				//!< Float
-	TYPE_INTEGER,			//!< Integer
-	TYPE_STRING,			//!< String (const char * pointer)
-	TYPE_POINT,				//!< Point (three floats)
-	TYPE_VECTOR,			//!< Vector (three floats)
-	TYPE_NORMAL,			//!< Normal (three floats)
-	TYPE_HPOINT,			//!< Homogene point (four floats)
-	TYPE_MATRIX,			//!< Homogene matrix (16 floats)
-	TYPE_COLOR				//!< Colour (Pointer to float)
+	TYPE_UNKNOWN       = 0, ///< Unknown type
+	TYPE_FLOAT,				///< Float
+	TYPE_INTEGER,			///< Integer
+	TYPE_STRING,			///< String (const char * pointer)
+	TYPE_POINT,				///< Point (three floats)
+	TYPE_VECTOR,			///< Vector (three floats)
+	TYPE_NORMAL,			///< Normal (three floats)
+	TYPE_HPOINT,			///< Homogene point (four floats)
+	TYPE_MATRIX,			///< Homogene matrix (16 floats)
+	TYPE_COLOR				///< Colour (Pointer to float)
 
 /*
 	// Not in parameter lists
-	TYPE_MPOINT,			//!< Map point (16 floats)
-	TYPE_BOOLEAN,			//!< Boolean
-	TYPE_BASIS,				//!< Base matrix (16 floats)
-	TYPE_BOUND,				//!< Bounding box (6 floats)
-	TYPE_TOKEN,				//!< Token
-	TYPE_POINTER,			//!< Arbitrary pointer
-	TYPE_VOID,				//!< Void type
-	TYPE_FILTERFUNC,		//!< Pointer to a filter function RtFilterFunc
-	TYPE_ERRORHANDLER,		//!< Pointer to an errorhandler RtErrorHandler
-	TYPE_PROCSUBDIVFUNC,	//!< Pointer to a subdivision procedure RtProcSubdivFunc
-	TYPE_PROCFREEFUNC,		//!< Pointer to a cleanup function RtProcFreeFunc
-	TYPE_ARCHIVECALLBACK,	//!< Pointer to an archive callback function RtArchiveCallback
-	TYPE_OBJECTHANDLE,		//!< Handle of an object RtObjectHandle
-	TYPE_LIGHTHANDLE,		//!< Handle of a light source RtLightSource
-	TYPE_CONTEXTHANDLE		//!< Handle of a renderer context RtContextHandle
+	TYPE_MPOINT,			///< Map point (16 floats)
+	TYPE_BOOLEAN,			///< Boolean
+	TYPE_BASIS,				///< Base matrix (16 floats)
+	TYPE_BOUND,				///< Bounding box (6 floats)
+	TYPE_TOKEN,				///< Token
+	TYPE_POINTER,			///< Arbitrary pointer
+	TYPE_VOID,				///< Void type
+	TYPE_FILTERFUNC,		///< Pointer to a filter function RtFilterFunc
+	TYPE_ERRORHANDLER,		///< Pointer to an errorhandler RtErrorHandler
+	TYPE_PROCSUBDIVFUNC,	///< Pointer to a subdivision procedure RtProcSubdivFunc
+	TYPE_PROCFREEFUNC,		///< Pointer to a cleanup function RtProcFreeFunc
+	TYPE_ARCHIVECALLBACK,	///< Pointer to an archive callback function RtArchiveCallback
+	TYPE_OBJECTHANDLE,		///< Handle of an object RtObjectHandle
+	TYPE_LIGHTHANDLE,		///< Handle of a light source RtLightSource
+	TYPE_CONTEXTHANDLE		///< Handle of a renderer context RtContextHandle
 */
 };
 
@@ -103,13 +103,13 @@ const int N_TYPES  = (int)TYPE_COLOR+1;
 /** @brief Possible parameter storage classes
  */
 enum EnumClasses {
-	CLASS_UNKNOWN	 = 0, //!< Unknown class
-	CLASS_CONSTANT,	      //!< Constant class (one value)
-	CLASS_UNIFORM,	      //!< Constant class (one value per face, shared corners count one)
-	CLASS_VARYING,	      //!< Varying class (one value per corner, shared vertex count one)
-	CLASS_VERTEX,	      //!< Vertex class (one value per vertex)
-	CLASS_FACEVARYING,	  //!< Vertex class (one value per corner of each face)
-	CLASS_FACEVERTEX	  //!< Face Vertex class (one value per vertex of each face)
+	CLASS_UNKNOWN	 = 0, ///< Unknown class
+	CLASS_CONSTANT,	      ///< Constant class (one value)
+	CLASS_UNIFORM,	      ///< Constant class (one value per face, shared corners count one)
+	CLASS_VARYING,	      ///< Varying class (one value per corner, shared vertex count one)
+	CLASS_VERTEX,	      ///< Vertex class (one value per vertex)
+	CLASS_FACEVARYING,	  ///< Vertex class (one value per corner of each face)
+	CLASS_FACEVERTEX	  ///< Face Vertex class (one value per vertex of each face)
 };
 
 /** @brief Number of different classes
@@ -249,10 +249,13 @@ public:
 	/** @brief Tries to find an array specifier [n] as prefix of atype.
 	 * @param acard string possibly having an array specifier as prefix
 	 * @retval pos if found position right behind the prefix
-	 * @return The size of the array
-	 *  -  < 0, syntax error or [0]
-	 *  - == 0, no cardinality found
-	 *  -  > 0, [n] found, returns the n
+	 *  @retval arraySize Size n of the array
+	 *  @return The size of the array
+	 @verbatim
+	   -  < 0, syntax error or [0]
+	   - == 0, no cardinality found
+	   -  > 0, [n] found, returns the n
+	 @endverbatim
 	 */
 	static bool arrayPrefix(const char *acard, size_t &pos, unsigned long &arraySize);
 
@@ -272,7 +275,7 @@ public:
 
 	/** @brief Try to find a basis fot a token.
 	 *
-	 *  @param Token for a specific basis @a aBasis (e.g. RI_BEZIER)
+	 *  @param basisToken Token for a specific basis @a aBasis (e.g. RI_BEZIER)
 	 *  @retval aBasis Spline basis matrix
 	 *  @return true, matrix was found and returnd in @a aBasis
 	 */
@@ -602,11 +605,11 @@ public:
 /** @brief Array sizes of a trim curve
  */
 struct CTrimCurveDataInfo {
-	RtInt m_nloops; //!< Number of closed loops.
+	RtInt m_nloops; ///< Number of closed loops.
 
-	int m_total;	//!< Total number of curves.
-	int m_npoints;	//!< Total number of control points.
-	int m_nknots;	//!< Total number of knots.
+	int m_total;	///< Total number of curves.
+	int m_npoints;	///< Total number of control points.
+	int m_nknots;	///< Total number of knots.
 
 	/** @brief Standard constructor, initializes with 0 loops.
 	 */
@@ -659,18 +662,18 @@ struct CTrimCurveDataInfo {
 /** @brief Contains one trim curve.
  */
 struct CTrimCurveData {
-	CTrimCurveDataInfo   m_data;    //!< Sizes
+	CTrimCurveDataInfo   m_data;    ///< Sizes
 	
-	std::vector<RtInt>   m_nCurves; //!< Number if loops (curves with holes).
-	std::vector<RtInt>   m_order;   //!< Order of the curves.
-	std::vector<RtFloat> m_knots;   //!< Knot vectors of the curves.
-	std::vector<RtFloat> m_min;     //!< Minimum parametric values of the curves.
-	std::vector<RtFloat> m_max;     //!< Maximum parametric values of the curves.
-	std::vector<RtInt>   m_n;       //!< Number of coordinates.
-	std::vector<RtFloat> m_u;       //!< u coordinates of the curves.
-	std::vector<RtFloat> m_v;       //!< v coordinates of the curves.
-	std::vector<RtFloat> m_w;       //!< w coordinates of the curves.
-	std::vector<RtFloat> m_points;  //!< Points filled with (u[0], v[0], w[0], ... ).
+	std::vector<RtInt>   m_nCurves; ///< Number if loops (curves with holes).
+	std::vector<RtInt>   m_order;   ///< Order of the curves.
+	std::vector<RtFloat> m_knots;   ///< Knot vectors of the curves.
+	std::vector<RtFloat> m_min;     ///< Minimum parametric values of the curves.
+	std::vector<RtFloat> m_max;     ///< Maximum parametric values of the curves.
+	std::vector<RtInt>   m_n;       ///< Number of coordinates.
+	std::vector<RtFloat> m_u;       ///< u coordinates of the curves.
+	std::vector<RtFloat> m_v;       ///< v coordinates of the curves.
+	std::vector<RtFloat> m_w;       ///< w coordinates of the curves.
+	std::vector<RtFloat> m_points;  ///< Points filled with (u[0], v[0], w[0], ... ).
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Member functions

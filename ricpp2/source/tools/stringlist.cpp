@@ -74,7 +74,7 @@ CStringList::size_type CStringList::explode(
 	const char *str,
 	bool doSubstitute,
 	bool useEnv,
-	bool isPathlist
+	bool isPathList
 )
 {
 	size_type count = 0;
@@ -121,7 +121,7 @@ CStringList::size_type CStringList::explode(
 					} else if ( *iter == varChar ) {
 						saviter = iter;
 						state = varchar;
-					} else if ( isPathlist && (*iter == '@' || *iter == '&') ) {
+					} else if ( isPathList && (*iter == '@' || *iter == '&') ) {
 						saviter = iter;
 						varName = *iter;
 						++iter;
@@ -159,7 +159,7 @@ CStringList::size_type CStringList::explode(
 						if ( !varName.empty() ) {
 							// replace variable
 							getVar(varName, useEnv);
-							if ( isPathlist ) {
+							if ( isPathList ) {
 								CFilepathConverter::convertToInternal(varName);
 							}
 
@@ -182,7 +182,7 @@ CStringList::size_type CStringList::explode(
 
 						// replace variable
 						getVar(varName, useEnv);
-						if ( isPathlist ) {
+						if ( isPathList ) {
 							CFilepathConverter::convertToInternal(varName);
 						}
 
@@ -209,7 +209,7 @@ CStringList::size_type CStringList::explode(
 		if ( state == varchar || state == varcharpar ) {
 			// copy from varchar replace variable
 			getVar(varName, useEnv);
-			if ( isPathlist ) {
+			if ( isPathList ) {
 				CFilepathConverter::convertToInternal(varName);
 			}
 
@@ -240,7 +240,7 @@ CStringList::size_type CStringList::explode(
 	// Also schemes can have a : as seperator, e.g. "http:/", it is
 	// assumend that these schems are already given as "http|/", since
 	// URLs instead of filenames are not standard RIB
-	if ( isPathlist && seperator == ':' ) {
+	if ( isPathList && seperator == ':' ) {
 		state = normal;
 
 		bool startpath = true;
@@ -290,7 +290,7 @@ CStringList::size_type CStringList::explode(
 				if ( *iter == seperator ) {
 					++count;
 					// Not only Win32, unmasks also scheme (e.g. 'http|' -> 'http:')
-					if ( isPathlist && seperator == ':' )
+					if ( isPathList && seperator == ':' )
 						unmaskColon(v);
 					m_stringList.push_back(v);
 					v.clear();
@@ -339,7 +339,7 @@ CStringList::size_type CStringList::explode(
 	if ( v.size() > 0 ) {
 		++count;
 		// Not only Win32, unmasks also scheme (e.g. 'http|' -> 'http:')
-		if ( isPathlist && seperator == ':' )
+		if ( isPathList && seperator == ':' )
 			unmaskColon(v);
 		m_stringList.push_back(v);
 	}
@@ -347,14 +347,14 @@ CStringList::size_type CStringList::explode(
 	return count;
 }
 
-void CStringList::implode(char seperator, std::string &str, bool isPathlist)
+void CStringList::implode(char seperator, std::string &str, bool isPathList)
 {
 	const_iterator i = begin();
 	std::string mask;
 
 	str = "";
 	while ( i != end() ) {
-		if ( isPathlist && seperator == ':' ) {
+		if ( isPathList && seperator == ':' ) {
 			// Not only Win32, masks also scheme (e.g. 'http:' -> 'http|')
 			mask = (*i);
 			maskColon(mask);

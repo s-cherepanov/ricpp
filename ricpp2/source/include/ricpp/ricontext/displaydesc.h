@@ -55,7 +55,7 @@ namespace RiCPP {
 		CDisplayChannelDescr &operator=(const CDisplayChannelDescr &dcd);
 		bool operator==(const CDisplayChannelDescr &dcd) const;
 		bool operator==(const char *name) const;
-		bool CDisplayChannelDescr::operator==(std::string name) const;
+		bool operator==(const std::string name) const;
 
 		RtVoid displayChannelV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString aChannel, RtInt n, RtToken tokens[], RtPointer params[]);
 		RtVoid displayChannel(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString aChannel, const CParameterList &params);
@@ -78,33 +78,37 @@ namespace RiCPP {
 		typedef std::list<CDisplayChannelDescr> TypeDisplayChannels;
 
 	private:
-		RtToken m_type;      //!< Type of the display, e.g. TRi::RI_FILE, TRi::RI_FRAMEBUFFER, default is TRi::RI_NULL
-		RtString m_mode;      //!< Mode of the output, e.g. TRi::RI_RGBA etc., default si TRi::RI_NULL
+		RtToken m_type;      ///< Type of the display, e.g. TRi::RI_FILE, TRi::RI_FRAMEBUFFER, default is TRi::RI_NULL
+		RtString m_mode;      ///< Mode of the output, e.g. TRi::RI_RGBA etc., default si TRi::RI_NULL
 
-		RtInt m_origin[2];   //!< Origin (offset from upper left), default is (0, 0)
+		RtInt m_origin[2];   ///< Origin (offset from upper left), default is (0, 0)
 
 		std::list<CDisplayChannelDescr> m_channels;
 		CStringList m_channelNames;
 
 	public:
-		CDisplayDescr(); //!< Standard Constructor, fills in default values
+		CDisplayDescr(); ///< Standard Constructor, fills in default values
 
 		//! Copy constructor for deep copy
-		/*! \param tdd Display description to copy
+		/*! @param dd Display description to copy
 		 */
 		CDisplayDescr(const CDisplayDescr &dd);
 
 		//! Assignment, deep copy.
-		/*! \param dd Display description to copy
+		/*! @param dd Display description to copy
 		 */
 		CDisplayDescr &operator=(const CDisplayDescr &dd);
 
 		//! Take parameters of TRi::displayV() to fill the member variables.
-		/*! \param dict Current declarations
-		 *  \param curColorSize  Number of color components.
-		 *  \param aName Name of the display, \sa m_name
-		 *  \param aType The display type, \sa m_type
-		 *  \param aMode The display mode, \sa m_mode
+		/*! @param dict Current declarations
+		 *  @param colorDescr Current color descriptor.
+		 *  @param channels Descriptors (declarations) of the display channels.
+		 *  @param aName Name of the display, @see m_name
+		 *  @param aType The display type, @see m_type
+		 *  @param aMode The display mode, @see m_mode
+		 *  @param n Number of token/parameter pairs in @a tokens and @a params.
+		 *  @param tokens Tokens of the token/parameter pairs.
+		 *  @param params Pointer to parameters of the token/parameter pairs.
 		 */
 		void displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]);
 		void display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode);
@@ -134,11 +138,11 @@ namespace RiCPP {
 	/*! @brief Class for Viewport Data
 	 */
 	class CViewPort {
-		RtInt   m_originX,     //!< X-origin, initialized with 0.
-				m_originY;     //!< Y-origin, initialized with 0.
-		RtInt   m_width,       //!< Width, initialized with -1: Size of device
-				m_height;      //!< Height, initialized with -1: Size of device
-		RtFloat m_pixelAspectRatio; //!< The pixel aspect ration, initialized with -1: Ratio of device pixel
+		RtInt   m_originX,     ///< X-origin, initialized with 0.
+				m_originY;     ///< Y-origin, initialized with 0.
+		RtInt   m_width,       ///< Width, initialized with -1: Size of device
+				m_height;      ///< Height, initialized with -1: Size of device
+		RtFloat m_pixelAspectRatio; ///< The pixel aspect ration, initialized with -1: Ratio of device pixel
 
 	public:
 		//! Constructor to set the initial values of the members
@@ -177,7 +181,7 @@ namespace RiCPP {
 		//! The aspect ratio of the viewport
 		/*! Calculates the physical aspect ratio of the viewport, works only if
 		 *  m_iHeight and m_iWidth are set with values > 0.0.
-		 *  \return Aspect ratio of the viewport: (m_iWidth*m_fPixelAspect)/(RtFloat)m_iHeight
+		 *  @return Aspect ratio of the viewport: (m_iWidth*m_fPixelAspect)/(RtFloat)m_iHeight
 		 */
 		inline RtFloat viewPortAspectRatio() const
 		{

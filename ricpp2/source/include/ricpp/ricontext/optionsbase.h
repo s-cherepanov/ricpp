@@ -25,7 +25,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file optionbase.h
+/** @file optionsbase.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief The base class for options and attributes used for the render state.
  */

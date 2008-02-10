@@ -25,9 +25,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file rimacrolight.h
+/** @file rimacrolights.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for light sources, \see rimacro.h
+ *  @brief The macro classes for light sources, @see rimacro.h
  *  @todo Needs some work. 
  */
 

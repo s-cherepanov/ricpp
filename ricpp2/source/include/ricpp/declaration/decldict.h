@@ -132,7 +132,6 @@ public:
 	 * @param tableNamespace The namespace
 	 * @param table The table
 	 * @param var The stripped name of the variable
-	 * @param tokenmap The token map with all tokens of a rendering context
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
@@ -160,7 +159,6 @@ public:
 	 * @param tableNamespace The namespace
 	 * @param table The table
 	 * @param var The stripped name of the variable
-	 * @param tokenmap The tokenmap with all tokens of a rendering context
 	 * @param curColorDescr The current number of color components and RGB transformation.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(const char *, const char *, const char *, const CTokenMap &), CDeclaration

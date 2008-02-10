@@ -48,14 +48,14 @@ namespace RiCPP {
 	 */
 	class CRibParameter {
 
-		unsigned long m_lineNo;  //!< Start line of the parameter.
+		unsigned long m_lineNo;  ///< Start line of the parameter.
 
-		EnumBasicTypes m_typeID; //!< Type of value.
-		bool    m_isArray;       //!< Parameter is array yes/no.
+		EnumBasicTypes m_typeID; ///< Type of value.
+		bool    m_isArray;       ///< Parameter is array yes/no.
 
-		std::vector <RtFloat>     m_vFloat;  //!< Values are Floats.
-		std::vector <RtInt>       m_vInt;    //!< Values are Integers.
-		std::deque  <std::string> m_vString; //!< Values are Strings.
+		std::vector <RtFloat>     m_vFloat;  ///< Values are Floats.
+		std::vector <RtInt>       m_vInt;    ///< Values are Integers.
+		std::deque  <std::string> m_vString; ///< Values are Strings.
 
 		/** @brief Value container, used if parameter is an array of string.
 		 *
@@ -64,11 +64,11 @@ namespace RiCPP {
 		 */
 		std::vector<const char *> *m_cstrVector;
 
-		void freeValue();			//!< Clears m_vFloat, m_vInt, m_vString.
+		void freeValue();			///< Clears m_vFloat, m_vInt, m_vString.
 
 	public:	
-		CRibParameter();			//!< Standard constructor, initializes the members as empty.
-		~CRibParameter();			//!< Destructor, cleans up and frees all memory allocated.
+		CRibParameter();			///< Standard constructor, initializes the members as empty.
+		~CRibParameter();			///< Destructor, cleans up and frees all memory allocated.
 
 		/** @brief Copy constructor for a CRibParameter.
 		 *
@@ -275,7 +275,7 @@ namespace RiCPP {
 			return true;
 		}
 
-		/** @briefs Get number of values contained (1 or size of array).
+		/** @brief Get number of values contained (1 or size of array).
 		 *
 		 *  @return Number of single parameters.
 		 */
@@ -336,12 +336,12 @@ namespace RiCPP {
 	 *  The parser uses one instance of this class.
 	 */
 	class CRibRequestData {
-		IRibParserState *m_parserState;              //!< The state of the parser (and front end callbacks).
-		std::vector<CRibParameter> m_parameters;     //!< All parameters parsed within one interface call.
-		std::vector<const char *> m_tokenList;       //!< Tokens of the token-value parameterlist of an interface call, inserted by getTokenList().
-		std::vector<void *> m_valueList;             //!< Values of the token-value parameterlist of an interface call, inserted by getTokenList().
-		bool m_checkParameters;                      //!< Indicator to check the size and types of the parameter list while parsing.
-		std::string m_curRequest;                    //!< Current request as string (e.g. "Sphere", "BeginWorld").
+		IRibParserState *m_parserState;              ///< The state of the parser (and front end callbacks).
+		std::vector<CRibParameter> m_parameters;     ///< All parameters parsed within one interface call.
+		std::vector<const char *> m_tokenList;       ///< Tokens of the token-value parameterlist of an interface call, inserted by getTokenList().
+		std::vector<void *> m_valueList;             ///< Values of the token-value parameterlist of an interface call, inserted by getTokenList().
+		bool m_checkParameters;                      ///< Indicator to check the size and types of the parameter list while parsing.
+		std::string m_curRequest;                    ///< Current request as string (e.g. "Sphere", "BeginWorld").
 
 		inline IRiCPPErrorHandler &errHandler()
 		{
@@ -426,6 +426,7 @@ namespace RiCPP {
 		 * @param corners Number of the corners (shared corners count 1) of the primary to which the parameter list belongs.
 		 * @param facets Number of the faces of the primary to which the parameter list belongs.
 		 * @param faceVertices Number of the vertices of all faces of the primary to which the parameter list belongs.
+		 * @param faceCorners Number of the corners of all faces of the primary to which the parameter list belongs.
 		 * @return The number of token-value pairs stored in m_tokenList and m_valueList, -1 if an error occured.
 		 */
 		int getTokenList(
@@ -499,17 +500,17 @@ namespace RiCPP {
 	 */
 	class CRibParser : public IRibParserState {
 	protected:
-		typedef long RibHandleNumber; //!< Representation of a handle number in a RIB file.
+		typedef long RibHandleNumber; ///< Representation of a handle number in a RIB file.
 		
 	private:
-		typedef std::map<RibHandleNumber, RtLightHandle> NUM2LIGHT;	  //!< Maps a long to a light handle.
-		typedef std::map<std::string, RtLightHandle> STR2LIGHT;       //!< Maps a string to a light handle.
-		typedef std::map<RibHandleNumber, RtObjectHandle> NUM2OBJECT; //!< Maps a long to an object handle.
-		typedef std::map<std::string, RtObjectHandle> STR2OBJECT;     //!< Maps a string to an object handle.
+		typedef std::map<RibHandleNumber, RtLightHandle> NUM2LIGHT;	  ///< Maps a long to a light handle.
+		typedef std::map<std::string, RtLightHandle> STR2LIGHT;       ///< Maps a string to a light handle.
+		typedef std::map<RibHandleNumber, RtObjectHandle> NUM2OBJECT; ///< Maps a long to an object handle.
+		typedef std::map<std::string, RtObjectHandle> STR2OBJECT;     ///< Maps a string to an object handle.
 		// typedef std::map<RibHandleNumber, RtArchiveHandle> NUM2ARCHIVE; // Maps a long to an archive handle.
-		typedef std::map<std::string, RtArchiveHandle> STR2ARCHIVE;     //!< Maps a string to an archive handle.
+		typedef std::map<std::string, RtArchiveHandle> STR2ARCHIVE;     ///< Maps a string to an archive handle.
 
-		typedef std::map<RibHandleNumber, std::string> NUM2STRING;    //!< Maps an integer to a string to encode string tokens.
+		typedef std::map<RibHandleNumber, std::string> NUM2STRING;    ///< Maps an integer to a string to encode string tokens.
 
 		//! Maps number to object handle
 		NUM2OBJECT m_mapObjectHandle;
@@ -538,38 +539,38 @@ namespace RiCPP {
 		//! @brief The callback for comments (@see IRiCPP::readArchiveV())
 		const IArchiveCallback *m_callback;
 
-		CUri m_baseUri; //!< The base URI for the rib resource.
-		CUri m_absUri;  //!< The absolute URI of the rib resource.
-		long m_lineNo;  //!< Current line number.
+		CUri m_baseUri; ///< The base URI for the rib resource.
+		CUri m_absUri;  ///< The absolute URI of the rib resource.
+		long m_lineNo;  ///< Current line number.
 
-		bool m_hasPutBack;       //!< One character put back.
-		unsigned char m_putBack; //!< The character has been put back (if m_hasOutBack == true).
+		bool m_hasPutBack;       ///< One character put back.
+		unsigned char m_putBack; ///< The character has been put back (if m_hasOutBack == true).
 
-		static const int RIBPARSER_EOF;                //!< Used as token for end of file
+		static const int RIBPARSER_EOF;                ///< Used as token for end of file
 
-		static const int RIBPARSER_NORMAL_COMMENT;     //!< Used as token for a normal comment, return code for handleComment()
-		static const int RIBPARSER_STRUCTURED_COMMENT; //!< Used as token for a structured comment, return code for handleComment()
+		static const int RIBPARSER_NORMAL_COMMENT;     ///< Used as token for a normal comment, return code for handleComment()
+		static const int RIBPARSER_STRUCTURED_COMMENT; ///< Used as token for a structured comment, return code for handleComment()
 
-		static const int RIBPARSER_NUMBER;             //!< Used as token for a number, return code for insertNumber(), handleNumber()
-		static const int RIBPARSER_STRING;             //!< Used as token for a string, return code for handleString()
-		static const int RIBPARSER_ARRAY_START;        //!< Used as token for a '[', return code for handleArrayStart()
-		static const int RIBPARSER_ARRAY_END;          //!< Used as token for a ']', return code for handleArrayEnd()
+		static const int RIBPARSER_NUMBER;             ///< Used as token for a number, return code for insertNumber(), handleNumber()
+		static const int RIBPARSER_STRING;             ///< Used as token for a string, return code for handleString()
+		static const int RIBPARSER_ARRAY_START;        ///< Used as token for a '[', return code for handleArrayStart()
+		static const int RIBPARSER_ARRAY_END;          ///< Used as token for a ']', return code for handleArrayEnd()
 
 
-		static const int RIBPARSER_NOT_A_TOKEN;        //!< Used if a token is not found in token list.
-		static const int RIBPARSER_REQUEST;            //!< Token is a request string stored in m_request
+		static const int RIBPARSER_NOT_A_TOKEN;        ///< Used if a token is not found in token list.
+		static const int RIBPARSER_REQUEST;            ///< Token is a request string stored in m_request
 
-		CRibRequestData m_request;                   //!< Data of a parsed line.
+		CRibRequestData m_request;                   ///< Data of a parsed line.
 
-		std::vector<char> m_token;                   //!< Current token to be handled as string
-		int m_lookahead;                             //!< One character look ahead
-		int m_braketDepth;                           //!< Braket [] nesting depth
+		std::vector<char> m_token;                   ///< Current token to be handled as string
+		int m_lookahead;                             ///< One character look ahead
+		int m_braketDepth;                           ///< Braket [] nesting depth
 
-		int m_code;                                  //!< If >= 0 Code of a RIB call to encode (next String) (used by binary encoding)
-		EnumRequests m_ribEncode[256];               //!< 256 (0-255) Rib-Codes can be defined (used by binary encoding)
+		int m_code;                                  ///< If >= 0 Code of a RIB call to encode (next String) (used by binary encoding)
+		EnumRequests m_ribEncode[256];               ///< 256 (0-255) Rib-Codes can be defined (used by binary encoding)
 
-		long m_defineString;                         //!< If >= 0 encode a string token
-		NUM2STRING m_stringMap;                      //!< Map of string tokens
+		long m_defineString;                         ///< If >= 0 encode a string token
+		NUM2STRING m_stringMap;                      ///< Map of string tokens
 
 		/** @brief Request handler for each token (e.g. "Sphere")
 		 */
@@ -578,7 +579,7 @@ namespace RiCPP {
 		/** @brief Calls the handler routine for a request token using s_requestMap.
 		 *
 		 *  @param request The string of request token
-		 *  @return False, no CRibRequest handler found for \a request. True, handler found and called.
+		 *  @return False, no CRibRequest handler found for @a request. True, handler found and called.
 		 */
 		bool call(const std::string &request);
 
@@ -620,9 +621,9 @@ namespace RiCPP {
 		 */
 		class CComment {
 		public:
-			std::vector<char> m_comment; //!< Storage for a comment.
-			bool m_isStructured;         //!< Comment is structured comment (##).
-			long m_lineNo;               //!< Line count where the comment was found.
+			std::vector<char> m_comment; ///< Storage for a comment.
+			bool m_isStructured;         ///< Comment is structured comment (##).
+			long m_lineNo;               ///< Line count where the comment was found.
 			
 			/** @brief Assignes another comment to *this.
 			 *  @return A reference to this.
@@ -636,7 +637,7 @@ namespace RiCPP {
 			}
 		};
 
-		std::vector<CComment> m_deferedCommentList; //!< Comments, that are defered in this interface call.
+		std::vector<CComment> m_deferedCommentList; ///< Comments, that are defered in this interface call.
 
 		EnumRequests findIdentifier();
 
@@ -678,7 +679,7 @@ namespace RiCPP {
 		 *
 		 *  Get the nekt character or the put back character from the rib input stream.
 		 *
-		 *  @retrun Next character to examine.
+		 *  @return Next character to examine.
 		 */
 		unsigned char getchar();
 		

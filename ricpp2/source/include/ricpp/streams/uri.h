@@ -263,7 +263,7 @@ namespace RiCPP {
 		/** @brief Unreserved characters.
 		*
 		* Characters that are allowed in a URI but have no special purpose.
-		* If found, the character is appended to \a result and is returned. Unreserved
+		* If found, the character is appended to @a result and is returned. Unreserved
 		* characters can be pct_encoded without changing the semantics of a URI,
 		* but there is no need to do that in general.
 		*
@@ -363,7 +363,7 @@ namespace RiCPP {
 		/** @brief Reserved characters.
 		*
 		* Characters that are allowed in a URI and have the special purpose of
-		* delimeters. If found, the character is appended to \a result and
+		* delimeters. If found, the character is appended to @a result and
 		* is returned.
 		* Reserved characters have to be pct_encoded, if they occur in the data part
 		* (than no delimiting purposes any more).
@@ -387,7 +387,7 @@ namespace RiCPP {
 		/** @brief Escape sequence.
 		*
 		* Test if current input is an escape character (e.g. "%20" for blank)
-		* If found, the current escape sequence it is appended to \a result and stored in
+		* If found, the current escape sequence it is appended to @a result and stored in
 		* m_pct_encoded and true is returned.
 		*
 		@verbatim
@@ -426,7 +426,7 @@ namespace RiCPP {
 
 		/** @brief 16bit hexadecimal sequence (1-4 hexdigits).
 		*
-		* If found, the current h16 it is appended to \a result and stored in
+		* If found, the current h16 it is appended to @a result and stored in
 		* m_h16 and true is returned.
 		*
 		@verbatim
@@ -461,7 +461,7 @@ namespace RiCPP {
 
 		/** @brief 8 Bit decimal 0-255.
 		*
-		* If found, the current octet it is appended to \a result and stored in
+		* If found, the current octet it is appended to @a result and stored in
 		* m_dec_octet and true is returned.
 		*
 		@verbatim
@@ -486,7 +486,7 @@ namespace RiCPP {
 		*
 		* Character that is part of a path component.
 		* If found, the character (or percent encoded character sequence)
-		* is appended to \a result and true is returned.
+		* is appended to @a result and true is returned.
 		*
 		@verbatim
 		pchar = unreserved | pct_encoded | sub_delims |
@@ -516,7 +516,7 @@ namespace RiCPP {
 		* However, handled with the URI because it is directly written after the
 		* regular URI, separated by a crosshatch '#'. It is interpreted by the
 		* user agent to identify a part of the retrieved ressource. The fragment
-		* is appended on \a result and stored in m_fragment.
+		* is appended on @a result and stored in m_fragment.
 		* The fragment can be an empty string.
 		* m_hasFragment has been set in uri_reference(), if '#' was found.
 		*
@@ -537,7 +537,7 @@ namespace RiCPP {
 		*
 		* The query component, separated by a question mark '?'.
 		* The query component
-		* is appended on \a result and stored in m_query.
+		* is appended on @a result and stored in m_query.
 		* The query can be an empty string.
 		* m_hasQuery has been set in absolute_uri() or relative_uri(),
 		* if '?' was found.
@@ -557,7 +557,7 @@ namespace RiCPP {
 
 		/** @brief Single path segment.
 		*
-		* The segment is appended on \a result and stored
+		* The segment is appended on @a result and stored
 		* temporarily in m_segment. The segment can be an empty string.
 		*
 		@verbatim
@@ -575,7 +575,7 @@ namespace RiCPP {
 
 		/** @brief Single path segment not empty.
 		*
-		* The segment is appended on \a result and stored
+		* The segment is appended on @a result and stored
 		* temporarily in m_segment. The segment can be an empty string.
 		*
 		@verbatim
@@ -594,7 +594,7 @@ namespace RiCPP {
 
 		/** @brief Single path segment not empty, without any colon ':'.
 		*
-		* The segment is appended on \a result and stored
+		* The segment is appended on @a result and stored
 		* temporarily in m_segment. The segment can be an empty string.
 		*
 		@verbatim
@@ -638,7 +638,7 @@ namespace RiCPP {
 		/** @brief Absolute path or empty.
 		*
 		* The absolute path begins with a '/'.
-		* If a path has been found, it is appended to \a result and is stored in m_path,
+		* If a path has been found, it is appended to @a result and is stored in m_path,
 		* the type of the path pathtypeEmpty or pathTypeAbsolute is stored in m_pathType,
 		* true is returned.
 		*
@@ -659,7 +659,7 @@ namespace RiCPP {
 		/** @brief Absolute path.
 		*
 		* The absolute path begins with a '/'.
-		* If a path has been found, it is appended to \a result and is stored in m_path,
+		* If a path has been found, it is appended to @a result and is stored in m_path,
 		* the type of the path pathTypeAbsolute is stored in m_pathType, true is returned.
 		*
 		@verbatim
@@ -678,7 +678,7 @@ namespace RiCPP {
 
 		/** @brief Path begins with non-colon ':' segment.
 		*
-		* If a path has been found, it is appended to \a result and is stored in m_path,
+		* If a path has been found, it is appended to @a result and is stored in m_path,
 		* the type of the path pathTypeNoScheme is stored in m_pathType, true is returned.
 		*
 		@verbatim
@@ -697,7 +697,7 @@ namespace RiCPP {
 
 		/** @brief Relative path.
 		*
-		* If a path has been found, it is appended to \a result and is stored in m_path,
+		* If a path has been found, it is appended to @a result and is stored in m_path,
 		* the type of the path pathTypeRootless is stored in m_pathType, true is returned.
 		*
 		@verbatim
@@ -737,7 +737,7 @@ namespace RiCPP {
 		*
 		* The port number for the server. Is separated by a colon ':'
 		* from the host. The port number can be omitted (default port assumed).
-		* If found, the number is appended to \a result stored in m_port.
+		* If found, the number is appended to @a result stored in m_port.
 		*
 		@verbatim
 		port = *digit
@@ -754,7 +754,7 @@ namespace RiCPP {
 
 		/** @brief Generic IP address.
 		*
-		* If a generic IP address has been found, it is appended to \a result
+		* If a generic IP address has been found, it is appended to @a result
 		* and stored in m_ipVFuture, true is returned. Sets m_ipAddrType
 		* to ipAddrTypeVFuture.
 		*
@@ -774,7 +774,7 @@ namespace RiCPP {
 
 		/** @brief IPv6 address.
 		*
-		* If an IPv6 address has been found, it is appended to \a result
+		* If an IPv6 address has been found, it is appended to @a result
 		* and stored in m_ipV6Address, true is returned. Sets m_ipAddrType
 		* to ipAddrTypeV6Address.
 		*
@@ -804,7 +804,7 @@ namespace RiCPP {
 		/** @brief IP literal.
 		*
 		* The IP literal is a IPv6 or a generic IP address.
-		* If an IP literal has been found, it is appended to \a result
+		* If an IP literal has been found, it is appended to @a result
 		* and stored in m_ip_literal, true is returned.
 		*
 		@verbatim
@@ -824,7 +824,7 @@ namespace RiCPP {
 		/** @brief IPv4 address.
 		*
 		* The IPv4 address are for numbers separated by a dot each.
-		* If an IPv4 address has been found, it is appended to \a result
+		* If an IPv4 address has been found, it is appended to @a result
 		* and stored in m_ipV4Address, true is returned. Sets m_ipAddrType
 		* to ipAddrTypeV4Address.
 		*
@@ -845,7 +845,7 @@ namespace RiCPP {
 		// Not used
 		/* @brief Least significant 32 bits (or IP 4 address) of an IPv6 address.
 		*
-		* If found, it it is appended to \a result
+		* If found, it it is appended to @a result
 		* and stored in m_ls32, true is returned.
 		*
 		@verbatim
@@ -865,7 +865,7 @@ namespace RiCPP {
 		/** @brief Host.
 		*
 		* A host is represented by a hostname or an IP address.
-		* If a host has been found, it is appended to \a result and stored
+		* If a host has been found, it is appended to @a result and stored
 		* in m_host, true is returned.
 		*
 		@verbatim
@@ -885,7 +885,7 @@ namespace RiCPP {
 		/** @brief Userinfo for an authority.
 		*
 		* The userinfo is followed by an at-sign "@".
-		* If found, it is appended to \a result and stored in m_userinfo.
+		* If found, it is appended to @a result and stored in m_userinfo.
 		* The at-sign is not stored in m_userinfo. The string can be empty.
 		*
 		@verbatim
@@ -904,7 +904,7 @@ namespace RiCPP {
 		/** @brief Registry-based naming authority.
 		*
 		* The structure is specific to the URI scheme, e.g. mailto.
-		* It is appended to \a result and stored in m_reg_name.
+		* It is appended to @a result and stored in m_reg_name.
 		*
 		@verbatim
 		reg_name = *( unreserved | pct_encoded | sub_delims )
@@ -923,7 +923,7 @@ namespace RiCPP {
 		/** @brief Authority component.
 		*
 		* Top hierarchical element for naming authority. 
-		* If found, it is appended to \a result and stored in m_authority.
+		* If found, it is appended to @a result and stored in m_authority.
 		* The string can be empty (because host can be empty). m_hasUserinfo
 		* is set if a m_hasUserinfo (maybe empty) has been found. Also
 		* m_hasPort is set if a port has been found (port is not empty then).
@@ -944,7 +944,7 @@ namespace RiCPP {
 		/** @brief Scheme component.
 		*
 		* Scheme to identify ressources, part of an absolute URI. 
-		* If found, it is appended to \a result and stored in m_scheme,
+		* If found, it is appended to @a result and stored in m_scheme,
 		* true is returned.
 		*
 		@verbatim
@@ -963,7 +963,7 @@ namespace RiCPP {
 
 		/** @brief Hierarchical part.
 		*
-		* If found, it is appended to \a result, stored in 
+		* If found, it is appended to @a result, stored in 
 		* m_hier_part and true is returned. m_hasQuery is set
 		* if an query component has been found.
 		*
@@ -988,7 +988,7 @@ namespace RiCPP {
 		*
 		* A URI reference relative to an absolute base URI.
 		*
-		* If found, it is appended to \a result, stored in
+		* If found, it is appended to @a result, stored in
 		* m_relative_uri and true is returned. m_hasQuery is set
 		* if an query component has been found.
 		*
@@ -1010,7 +1010,7 @@ namespace RiCPP {
 		*
 		* An absoulte URI with a scheme.
 		*
-		* If found, it is appended to \a result, stored in m_absolute_uri.
+		* If found, it is appended to @a result, stored in m_absolute_uri.
 		* m_hasScheme is set and true is returned.
 		*
 		@verbatim
@@ -1031,7 +1031,7 @@ namespace RiCPP {
 		*
 		* Tests and parses the generic syntax of a URI reference.
 		*
-		* If found, it is appended to \a result and stored in m_uri_reference.
+		* If found, it is appended to @a result and stored in m_uri_reference.
 		* If a (possibly empty) fragment has been found, it
 		* is stored in m_fragment and m_hasFrament is set. An empty URI reference
 		* (absolute or relative URI) references the "current document".
@@ -1060,7 +1060,7 @@ namespace RiCPP {
 
 		/** @brief Reparses a scheme.
 		*
-		* Reparses the scheme \a aScheme as part of an URI.
+		* Reparses the scheme @a aScheme as part of an URI.
 		*
 		* @return true if scheme is valid.
 		* @see setScheme() set()
@@ -1069,7 +1069,7 @@ namespace RiCPP {
 
 		/** @brief Reparses an authority.
 		*
-		* Reparses the authority \a anAuthority as part of an URI. Always set
+		* Reparses the authority @a anAuthority as part of an URI. Always set
 		* the authority before you set the path. If a path
 		* is relativ it is converted to an absolute path by
 		* appending a slash '(' if an authority is present.
@@ -1081,7 +1081,7 @@ namespace RiCPP {
 
 		/** @brief Reparses a path.
 		* 
-		* Reparses the path \a aPath as part of an URI.
+		* Reparses the path @a aPath as part of an URI.
 		* The path component is either an absolute or relative path.
 		* Always set the path after you have set the authority, because
 		* a path is converted to an absolute path by appending a
@@ -1094,7 +1094,7 @@ namespace RiCPP {
 
 		/** @brief Reparses a query.
 		*
-		* Reparses the query \a aQuery as part of an URI.
+		* Reparses the query @a aQuery as part of an URI.
 		*
 		* @return true if query is valid.
 		* @see setQuery() set()
@@ -1103,7 +1103,7 @@ namespace RiCPP {
 
 		/** @brief Reparses a fragment.
 		*
-		* Reparses the fragment \a aFragment as part of an URI.
+		* Reparses the fragment @a aFragment as part of an URI.
 		*
 		* @return true if fragment is valid.
 		* @see setFragment() set()
@@ -1123,8 +1123,8 @@ namespace RiCPP {
 
 		/** @brief Removes the segments "." and "..".
 		*
-		* Iterates \a fromSegList and appends a copy of the segments at 
-		* \a segList. The "." and ".." segments are handled appropriately.
+		* Iterates @a fromSegList and appends a copy of the segments at 
+		* @a segList. The "." and ".." segments are handled appropriately.
 		*
 		* @param fromSegList Segments to add
 		* @retval segList Returned list of segments reflecting the hierarchy levels
@@ -1281,7 +1281,7 @@ namespace RiCPP {
 		/** @brief Assigns URI.
 		*
 		* Assigns a URI by parsing the string representation.
-		* Assumes that the \a uri is valid.
+		* Assumes that the @a uri is valid.
 		*
 		* @param uri CUri instance containing a vaild URI.
 		* @return This URI.
@@ -1302,13 +1302,13 @@ namespace RiCPP {
 		/** @brief Resolving relative references to absolute form.
 		*
 		* Resolving a relative URI reference to the absolute
-		* form using the absolute base URI \a baseURI.
+		* form using the absolute base URI @a baseURI.
 		*
 		* @retval resultUri Resolved URI
 		* @param baseUri CUri instance containig the absolute base URI
 		* @param relativeUri CUri instance containig the relative URI
 		* @param isStrict Use the strict reference resolution
-		* @return true, if \a resultUri is valid.
+		* @return true, if @a resultUri is valid.
 		* @see parse() isValid()
 		*/
 		static bool makeAbsolute(

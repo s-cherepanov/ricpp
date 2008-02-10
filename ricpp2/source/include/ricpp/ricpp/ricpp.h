@@ -212,7 +212,6 @@ public:
 	virtual RtToken name() const = 0;
 
 	/** @brief The free function as operator()().
-	 * @param ri the frontend used by the subdivision function that handled the data.
 	 * @param data The data handled by the subdivision function that should be freed.
 	 */
 	virtual RtVoid operator()(RtPointer data) const = 0;
@@ -1031,7 +1030,7 @@ public:
 	 *
 	 *  @param fromspace Name of the coordinate system from which points are transformed
 	 *  @param tospace Name of the coordinate system to which points are transformed
-	 *  @param npoints Number of points in \a points
+	 *  @param npoints Number of points in @a points
 	 *  @param points The points that are to be transformed, the values are modified
 	 *  @return Points, containing the modified points, NULL if an error orccured
 	 */

@@ -80,56 +80,56 @@ namespace RiCPP {
 		typedef std::vector<RtLightHandle> TypeLightHandles;
 
 	private:
-		std::vector<RtFloat> m_color;          //!< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
-		std::vector<RtFloat> m_opacity;        //!< Current opacity of an object (opaque - all 1.0), components as in color.
+		std::vector<RtFloat> m_color;          ///< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
+		std::vector<RtFloat> m_opacity;        ///< Current opacity of an object (opaque - all 1.0), components as in color.
 
-		TypeLightHandles m_illuminated;        //!< Illuminated lights, default: empty.
+		TypeLightHandles m_illuminated;        ///< Illuminated lights, default: empty.
 
-		RtToken m_surfaceName;                 //!< Surface shader name.
-		CParameterList m_surfaceParams;        //!< Surface shader parameters.
+		RtToken m_surfaceName;                 ///< Surface shader name.
+		CParameterList m_surfaceParams;        ///< Surface shader parameters.
 
-		RtToken m_atmosphereName;              //!< Atmosphere shader name.
-		CParameterList m_atmosphereParams;     //!< Atmosphere shader parameters.
+		RtToken m_atmosphereName;              ///< Atmosphere shader name.
+		CParameterList m_atmosphereParams;     ///< Atmosphere shader parameters.
 
-		RtToken m_interiorName;                //!< Interior shader name.
-		CParameterList m_interiorParams;       //!< Interior shader parameters.
+		RtToken m_interiorName;                ///< Interior shader name.
+		CParameterList m_interiorParams;       ///< Interior shader parameters.
 
-		RtToken m_exteriorName;                //!< Exterior shader name.
-		CParameterList m_exteriorParams;       //!< Exterior shader parameters.
+		RtToken m_exteriorName;                ///< Exterior shader name.
+		CParameterList m_exteriorParams;       ///< Exterior shader parameters.
 
-		RtToken m_displacementName;            //!< Displacement shader name.
-		CParameterList m_displacementParams;   //!< Displacement shader parameters.
+		RtToken m_displacementName;            ///< Displacement shader name.
+		CParameterList m_displacementParams;   ///< Displacement shader parameters.
 
-		RtFloat m_textureCoordinates[8];       //!< Texture coordinates s1,t1 .. s4,t4 unit square [0,0, 1,0, 0,1, 1,1].
+		RtFloat m_textureCoordinates[8];       ///< Texture coordinates s1,t1 .. s4,t4 unit square [0,0, 1,0, 0,1, 1,1].
 
-		RtFloat m_shadingRate;                 //!< Current shading rate in pixels (def. 1), infinity -> once per primitive.
-		RtToken m_shadingInterpolation;        //!< Interpolation between pixels, "constant", "smooth" (def. RI_SMOOTH).
-		RtBoolean m_matte;                     //!< subsequent object are 'matte' objects? (def. RI_FALSE).
+		RtFloat m_shadingRate;                 ///< Current shading rate in pixels (def. 1), infinity -> once per primitive.
+		RtToken m_shadingInterpolation;        ///< Interpolation between pixels, "constant", "smooth" (def. RI_SMOOTH).
+		RtBoolean m_matte;                     ///< subsequent object are 'matte' objects? (def. RI_FALSE).
 
-		RtBound   m_bound;                     //!< Bounding box for subsequent primitives
-		bool      m_boundCalled;               //!< Bounding box is set by an interface call
+		RtBound   m_bound;                     ///< Bounding box for subsequent primitives
+		bool      m_boundCalled;               ///< Bounding box is set by an interface call
 
-		RtBound   m_detail;                    //!< Level of detail
-		bool      m_detailCalled;              //!< Level of detail is set by an interface call
+		RtBound   m_detail;                    ///< Level of detail
+		bool      m_detailCalled;              ///< Level of detail is set by an interface call
 
-		RtFloat   m_detailRange[4];            //!< The detail ranges
-		bool      m_detailRangeCalled;         //!< Detail ranges are set by an interface call
+		RtFloat   m_detailRange[4];            ///< The detail ranges
+		bool      m_detailRangeCalled;         ///< Detail ranges are set by an interface call
 
-		RtToken m_geometricApproximationType;  //!< The geometric approximation type (e.g. RI_FLATNESS)
-		RtFloat m_geometricApproximationValue; //!< The value for the approximation type
+		RtToken m_geometricApproximationType;  ///< The geometric approximation type (e.g. RI_FLATNESS)
+		RtFloat m_geometricApproximationValue; ///< The value for the approximation type
 
-		RtToken m_geometricRepresentation;     //!< The geometric representation
+		RtToken m_geometricRepresentation;     ///< The geometric representation
 
-		RtToken m_orientation;                 //!< started RI_OUTSIDE, set by orientation and changed by transformations
+		RtToken m_orientation;                 ///< started RI_OUTSIDE, set by orientation and changed by transformations
 
-		RtInt   m_nSides;                      //!< 1 or 2, def. is 2 (inside and outside)
+		RtInt   m_nSides;                      ///< 1 or 2, def. is 2 (inside and outside)
 
-		RtInt m_uStep,                         //!< Step size in u direction used for control points of bicubic spline meshes
-			  m_vStep;                         //!< Step size in V direction used for control points of spline meshes
-		RtBasis m_uBasis,                      //!< Basis matrix for bicubic splines in u direction
-				m_vBasis;                      //!< Basis matrix for splines in v direction
+		RtInt m_uStep,                         ///< Step size in u direction used for control points of bicubic spline meshes
+			  m_vStep;                         ///< Step size in V direction used for control points of spline meshes
+		RtBasis m_uBasis,                      ///< Basis matrix for bicubic splines in u direction
+				m_vBasis;                      ///< Basis matrix for splines in v direction
 
-		CTrimCurveData m_trimCurve;            //!< Tirmcurve, default: empty
+		CTrimCurveData m_trimCurve;            ///< Tirmcurve, default: empty
 
 		void init();
 

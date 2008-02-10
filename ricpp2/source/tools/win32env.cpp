@@ -80,7 +80,7 @@ std::string &CEnv::get(std::string &var, const char *varName)
 /** @brief Win32 implementation to get the path of a temporary directory.
  *
  *  First TMP is considered (because TMP is the variable for RiCPP), than
- *  TEMP. If nothing is set the home directory \see getHome() is returned.
+ *  TEMP. If nothing is set the home directory @see getHome() is returned.
  *  The path can be empty.
  */
 std::string &CEnv::getTmp(std::string &tmp)

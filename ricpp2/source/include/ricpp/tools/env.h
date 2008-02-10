@@ -57,14 +57,14 @@ namespace RiCPP {
 	class CEnv {
 		/** @brief Find the value of a variable
 		 *
-		 *         Accesses the variable with the name \a varName
-		 *         and stores the value found in \a var. If the variable
-		 *         has not been found, \a var is cleared.
+		 *         Accesses the variable with the name @a varName
+		 *         and stores the value found in @a var. If the variable
+		 *         has not been found, @a var is cleared.
 		 *  @retval var String reference where the value of the environment variable
-		 *         \a varName is stored
+		 *         @a varName is stored
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign)
-		 *  @return A reference to \a var
+		 *  @return A reference to @a var
 		 */
 		static std::string &get(std::string &var, const char *varName);
 
@@ -95,7 +95,7 @@ namespace RiCPP {
 		 *  The native name of this variable can be different.
 		 *
 		 *  @param tmp String reference where the value of the special environment variable TMP is stored.
-		 *  @return A reference to \a tmp.
+		 *  @return A reference to @a tmp.
 		 */
 		static std::string &getTmp(std::string &tmp);
 
@@ -107,7 +107,7 @@ namespace RiCPP {
 		 *
 		 *  @param home String reference where the value of the special environment variable
 		 *         HOME is stored.
-		 *  @return A reference to \a home.
+		 *  @return A reference to @a home.
 		 */
 		static std::string &getHome(std::string &home);
 
@@ -118,7 +118,7 @@ namespace RiCPP {
 		 *
 		 *  @param path String reference where the value of the special environment
 		 *         variable PATH is stored.
-		 *  @return A reference to \a path.
+		 *  @return A reference to @a path.
 		 */
 		static std::string &getPath(std::string &path);
 
@@ -129,22 +129,22 @@ namespace RiCPP {
 		 *
 		 *  @param prog String reference where the value of the special environment variable
 		 *         PROG is stored
-		 *  @return A reference to \a prog.
+		 *  @return A reference to @a prog.
 		 */
 		static std::string &getProgDir(std::string &prog);
 
 		/** @brief Finds the value for the environment variable.
 		 *
-		 *  Returns the value of the environment variable with the name \a varName or
-		 *  the special values for the variables TMP, HOME, PATH, PROGDIR in \a var
+		 *  Returns the value of the environment variable with the name @a varName or
+		 *  the special values for the variables TMP, HOME, PATH, PROGDIR in @a var
 		 *  (these four names are not case sensitive, that's maybe not the case for
 		 *  other variables or different for different OSes).
-		 *  If no variable \a varName has been found, var is cleared.
+		 *  If no variable @a varName has been found, var is cleared.
 		 *
 		 *  @retVal var Value of the environment variable is stored here
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign).
-		 *  @return A reference to \a var, the value of the variable.
+		 *  @return A reference to @a var, the value of the variable.
 		 */
 		inline static std::string &find(std::string &var, const char *varName)
 		{

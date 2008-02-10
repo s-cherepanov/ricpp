@@ -44,25 +44,25 @@ namespace RiCPP {
  */
 const RtToken  RI_NULL = (RtToken)0L; ///< Used to mark undefined tokens and end marker of parameter list.
 
-const RtToken  RI_FRAMEBUFFER = "framebuffer", ///< Framebuffer output device as \a type in \c  CRiRoot::display()
-               RI_FILE = "file";               ///< File output as \a type in \c CRiRoot::display()
+const RtToken  RI_FRAMEBUFFER = "framebuffer", ///< Framebuffer output device as @a type in @c  CRiRoot::display()
+               RI_FILE = "file";               ///< File output as @a type in @c CRiRoot::display()
 
-const RtToken  RI_RGB = "rgb",     ///< Output RGB (red green blue) channels for \a mode in \c CRiRoot::display()
-               RI_RGBA = "rgba",   ///< Output RGBA (RGB + alpha opacitiy) channels for \a mode in \c CRiRoot::display()
-			   RI_RGBZ = "rgbz",   ///< Output RGBZ (RGB + depth) channels for \a mode in \c CRiRoot::display()
-			   RI_RGBAZ = "rgbaz", ///< Output RGBAZ channels for \a mode in \c CRiRoot:::display()
-               RI_A = "a",         ///< Alpha (opacity) channel for \a mode in \c CRiRoot::display()
-			   RI_Z = "z",         ///< Depth channel for \a mode in \c CRiRoot::display()
-			   RI_AZ = "az";       ///< Alpha and Depth channels for \a mode in \c CRiRoot::display()
+const RtToken  RI_RGB = "rgb",     ///< Output RGB (red green blue) channels for @a mode in @c CRiRoot::display()
+               RI_RGBA = "rgba",   ///< Output RGBA (RGB + alpha opacitiy) channels for @a mode in @c CRiRoot::display()
+			   RI_RGBZ = "rgbz",   ///< Output RGBZ (RGB + depth) channels for @a mode in @c CRiRoot::display()
+			   RI_RGBAZ = "rgbaz", ///< Output RGBAZ channels for @a mode in @c CRiRoot:::display()
+               RI_A = "a",         ///< Alpha (opacity) channel for @a mode in @c CRiRoot::display()
+			   RI_Z = "z",         ///< Depth channel for @a mode in @c CRiRoot::display()
+			   RI_AZ = "az";       ///< Alpha and Depth channels for @a mode in @c CRiRoot::display()
 
-const RtToken  RI_PERSPECTIVE = "perspective",   ///< Perspective projection for parameter \a name for CRiRoot::projectionV()
-               RI_ORTHOGRAPHIC = "orthographic"; ///< Orthographic projection for parameter \a name for CRiRoot::projectionV()
+const RtToken  RI_PERSPECTIVE = "perspective",   ///< Perspective projection for parameter @a name for CRiRoot::projectionV()
+               RI_ORTHOGRAPHIC = "orthographic"; ///< Orthographic projection for parameter @a name for CRiRoot::projectionV()
 
 const RtToken  RI_HIDDEN = "hidden", ///< Standard hider 'hidden' for CRiRoot::hiderV()
                RI_PAINT = "paint";   ///< Standard hider painters algorithm for CRiRoot::hiderV()
 
-const RtToken  RI_CONSTANT = "constant", ///< Constant shading parameter \a type for CRiRoot::shadingInterpolation()
-               RI_SMOOTH = "smooth";     ///< Smooth shading parameter \a type for CRiRoot::shadingInterpolation()
+const RtToken  RI_CONSTANT = "constant", ///< Constant shading parameter @a type for CRiRoot::shadingInterpolation()
+               RI_SMOOTH = "smooth";     ///< Smooth shading parameter @a type for CRiRoot::shadingInterpolation()
 
 const RtToken  RI_FLATNESS = "flatness"; ///< Standard approximation criterion for CRiRoot::geometricApproximation()
 
@@ -181,9 +181,9 @@ const RtToken  RI_FILEPOINTER = "filepointer", ///< Input/Output to a file FILE 
 
 // note: Named pipe as PIPE:pipename as normal filename, |cmd for anonymous pipe output, | for input
 
-const RtToken RI_ARCHIVE = "archive",   ///< archive 'renderer' type (\a IRiContext::rendererType()) to archive RIB code, or archive namespace
-              RI_DRAFT = "draft",       ///< fast draft renderer type (\a IRiContext::rendererType()) with limited implementation of the RI
-              RI_REALISTIC = "realistic"; ///< photo realistic renderer type (\a IRiContext::rendererType())  implementing the full RI
+const RtToken RI_ARCHIVE = "archive",   ///< archive 'renderer' type (@a IRiContext::rendererType()) to archive RIB code, or archive namespace
+              RI_DRAFT = "draft",       ///< fast draft renderer type (@a IRiContext::rendererType()) with limited implementation of the RI
+              RI_REALISTIC = "realistic"; ///< photo realistic renderer type (@a IRiContext::rendererType())  implementing the full RI
 
 const RtToken RI_FLOAT   = "float"; ///< Name for type RtFloat
 const RtToken RI_INTEGER = "integer"; ///< Name for type RtInteger
@@ -248,18 +248,18 @@ const RtToken RI_TRIANGLE = "triangle"; ///< Token for the triangle filter
 // const RtToken RI_CATMULL_ROM = "catmull-rom"; //  Token for the Catmull Rom filter s. RI_CATMULL_ROM
 const RtToken RI_SINC = "sinc"; ///< Token for the sinc filter
 
-const RtToken RI_BEZIER = "bezier"; //!< Bezier basis
-const RtToken RI_B_SPLINE = "b-spline"; //!< B-Spline basis
-const RtToken RI_CATMULL_ROM = "catmull-rom"; //!< Catmull-rom basis and filter
-const RtToken RI_CATMULLROM = "catmullrom"; //!< Catmull-rom basis, filter (alternate writing, not used for output)
-const RtToken RI_HERMITE = "hermite"; //!< Hermite basis
-const RtToken RI_POWER = "power"; //!< Power basis
+const RtToken RI_BEZIER = "bezier"; ///< Bezier basis
+const RtToken RI_B_SPLINE = "b-spline"; ///< B-Spline basis
+const RtToken RI_CATMULL_ROM = "catmull-rom"; ///< Catmull-rom basis and filter
+const RtToken RI_CATMULLROM = "catmullrom"; ///< Catmull-rom basis, filter (alternate writing, not used for output)
+const RtToken RI_HERMITE = "hermite"; ///< Hermite basis
+const RtToken RI_POWER = "power"; ///< Power basis
 
-const RtToken RI_INT     = "int"; //!< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
+const RtToken RI_INT     = "int"; ///< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
 
-const RtToken RI_NULL_LIT = "null"; //!< The literal "null". Used as standard hider type,  "not" use this instead of RI_NULL!!!
-const RtToken RI_UNKNOWN = "unknown"; //!< If something is unknown (some error strings) "not" used instead of RI_NULL, used internally
-const RtToken RI_EMPTY   = ""; //!< Empty String marker, not a real token, only used internally,  "not" use this instead of RI_NULL!!!
+const RtToken RI_NULL_LIT = "null"; ///< The literal "null". Used as standard hider type,  "not" use this instead of RI_NULL!!!
+const RtToken RI_UNKNOWN = "unknown"; ///< If something is unknown (some error strings) "not" used instead of RI_NULL, used internally
+const RtToken RI_EMPTY   = ""; ///< Empty String marker, not a real token, only used internally,  "not" use this instead of RI_NULL!!!
 //@}
 //@}
 

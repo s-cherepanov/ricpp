@@ -27,7 +27,7 @@
 
 /** @file rimacroattributes.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for attributes, \see rimacro.h
+ *  @brief The macro classes for attributes, @see rimacro.h
  */
 
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
@@ -45,7 +45,7 @@ namespace RiCPP {
  */
 class CRiAttribute : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the attribute as atomized string.
+	RtToken m_name; ///< Name of the attribute as atomized string.
 
 public:
 	/** @brief Gets name for the class.
@@ -82,9 +82,8 @@ public:
 
 	/** @brief Constructor.
 	 *
-	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the attribute as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -93,9 +92,9 @@ public:
 	 */
 	inline CRiAttribute(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -105,7 +104,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the attribute as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiAttribute(
 		long aLineNo,
@@ -194,7 +193,7 @@ public:
  */
 class CRiColor : public CRManInterfaceCall {
 private:
-	std::vector<RtFloat> m_color; //!< Color
+	std::vector<RtFloat> m_color; ///< Color
 
 public:
 	/** @brief Gets name for the class.
@@ -432,7 +431,7 @@ public:
  */
 class CRiSurface : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the shader as token.
+	RtToken m_name; ///< Name of the shader as token.
 
 public:
 	/** @brief Gets name for the class.
@@ -490,7 +489,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the shader as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiSurface(
 		long aLineNo,
@@ -579,7 +578,7 @@ public:
  */
 class CRiAtmosphere : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the shader as token.
+	RtToken m_name; ///< Name of the shader as token.
 
 public:
 	/** @brief Gets name for the class.
@@ -616,8 +615,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the shader as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -626,9 +624,9 @@ public:
 	 */
 	inline CRiAtmosphere(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -638,7 +636,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the shader as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiAtmosphere(
 		long aLineNo,
@@ -727,7 +725,7 @@ public:
  */
 class CRiInterior : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the shader as token.
+	RtToken m_name; ///< Name of the shader as token.
 
 public:
 	/** @brief Gets name for the class.
@@ -764,8 +762,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the shader as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -774,9 +771,9 @@ public:
 	 */
 	inline CRiInterior(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -786,7 +783,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the shader as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiInterior(
 		long aLineNo,
@@ -875,7 +872,7 @@ public:
  */
 class CRiExterior : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the shader as token.
+	RtToken m_name; ///< Name of the shader as token.
 
 public:
 	/** @brief Gets name for the class.
@@ -912,8 +909,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the shader as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -922,9 +918,9 @@ public:
 	 */
 	inline CRiExterior(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -934,7 +930,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the shader as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiExterior(
 		long aLineNo,
@@ -1023,7 +1019,7 @@ public:
  */
 class CRiDisplacement : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the shader as token.
+	RtToken m_name; ///< Name of the shader as token.
 
 public:
 	/** @brief Gets name for the class.
@@ -1060,8 +1056,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the shader as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -1070,9 +1065,9 @@ public:
 	 */
 	inline CRiDisplacement(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -1082,7 +1077,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the shader as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiDisplacement(
 		long aLineNo,
@@ -1171,14 +1166,14 @@ public:
  */
 class CRiTextureCoordinates : public CRManInterfaceCall {
 private:
-	RtFloat m_s1, //!< s coordinate top left
-	        m_t1, //!< t coordinate top left
-	        m_s2, //!< s coordinate top right
-	        m_t2, //!< t coordinate top right
-	        m_s3, //!< s coordinate bottom left
-	        m_t3, //!< t coordinate bottom left
-	        m_s4, //!< s coordinate bottom left
-	        m_t4; //!< t coordinate bottom left
+	RtFloat m_s1, ///< s coordinate top left
+	        m_t1, ///< t coordinate top left
+	        m_s2, ///< s coordinate top right
+	        m_t2, ///< t coordinate top right
+	        m_s3, ///< s coordinate bottom left
+	        m_t3, ///< t coordinate bottom left
+	        m_s4, ///< s coordinate bottom left
+	        m_t4; ///< t coordinate bottom left
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1348,7 +1343,7 @@ public:
 
 	/** @brief Sets the t coordinate of the bottom left
 	 *
-	 *  @param at1 t coordinate of the bottom left
+	 *  @param at3 t coordinate of the bottom left
 	 */
 	void t3(RtFloat at3)
 	{
@@ -1384,7 +1379,7 @@ public:
 
 	/** @brief Sets the t coordinate of the bottom right
 	 *
-	 *  @param at1 t coordinate of the bottom right
+	 *  @param at4 t coordinate of the bottom right
 	 */
 	void t4(RtFloat at4)
 	{
@@ -1454,7 +1449,7 @@ public:
 
 	/** @brief Assignment.
 	 *
-	 *  @param c CRManInterfaceCall to assign
+	 *  @param c CRManInterfaceCall to assign.
 	 *  @return A reference to this object.
 	 */
 	inline CRiTextureCoordinates &operator=(const CRiTextureCoordinates &c)
@@ -1475,7 +1470,7 @@ public:
  */
 class CRiShadingRate : public CRManInterfaceCall {
 private:
-	RtFloat m_size; //!< Minimum rate of surface shading.
+	RtFloat m_size; ///< Minimum rate of surface shading.
 
 public:
 	/** @brief Gets name for the class.
@@ -1586,7 +1581,7 @@ public:
  */
 class CRiShadingInterpolation : public CRManInterfaceCall {
 private:
-	RtToken m_type; //!< Type of the shading interpolation (RI_CONSTANT, RI_SMOOTH).
+	RtToken m_type; ///< Type of the shading interpolation (RI_CONSTANT, RI_SMOOTH).
 
 public:
 	/** @brief Gets name for the class.
@@ -1698,7 +1693,7 @@ public:
  */
 class CRiMatte : public CRManInterfaceCall {
 private:
-	RtBoolean m_onoff; //!< Switches the matte mode on (RI_TRUE) or off (RI_FALSE)
+	RtBoolean m_onoff; ///< Switches the matte mode on (RI_TRUE) or off (RI_FALSE)
 
 public:
 	/** @brief Gets name for the class.
@@ -1723,10 +1718,10 @@ public:
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param anOnoff RI_TRUE, matte is on and RI_FALSE, matte is off
+	 *  @param anOnOff RI_TRUE, matte is on and RI_FALSE, matte is off
 	 */
-	inline CRiMatte(long aLineNo = -1, RtBoolean anOnoff = CAttributes::defMatte)
-		: CRManInterfaceCall(aLineNo), m_onoff(anOnoff)
+	inline CRiMatte(long aLineNo = -1, RtBoolean anOnOff = CAttributes::defMatte)
+		: CRManInterfaceCall(aLineNo), m_onoff(anOnOff)
 	{
 	}
 	
@@ -1763,7 +1758,7 @@ public:
 
 	/** @brief Sets the matte mode.
 	 *
-	 *  @param anOnoff RI_TRUE, matte is on and RI_FALSE, matte is off
+	 *  @param anOnOff RI_TRUE, matte is on and RI_FALSE, matte is off
 	 */
 	void onoff(RtBoolean anOnOff)
 	{
@@ -1808,7 +1803,7 @@ public:
  */
 class CRiBound : public CRManInterfaceCall {
 private:
-	RtBound m_bound; //!< The bounding box
+	RtBound m_bound; ///< The bounding box
 
 public:
 	/** @brief Gets name for the class.
@@ -1849,7 +1844,7 @@ public:
 	 * The default constructor sets the size of a bounding box to infinity.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  qparam aBound The bounding box of the subsequent primitives
+	 *  @param aBound The bounding box of the subsequent primitives
 	 */
 	inline CRiBound(
 		long aLineNo,
@@ -1947,7 +1942,7 @@ public:
  */
 class CRiDetail : public CRManInterfaceCall {
 private:
-	RtBound m_bound; //!< The bounding box
+	RtBound m_bound; ///< The bounding box
 
 public:
 	/** @brief Gets name for the class.
@@ -1988,7 +1983,7 @@ public:
 	 * The default constructor sets the size of a bounding box to infinity.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  qparam aBound The bounding box of the subsequent primitives
+	 *  @param aBound The bounding box of the subsequent primitives
 	 */
 	inline CRiDetail(
 		long aLineNo,
@@ -2085,10 +2080,10 @@ public:
  */
 class CRiDetailRange : public CRManInterfaceCall {
 private:
-	RtFloat m_minvis,  //!< Minimal detail value at which the primitives are visible (rendered)
-	        m_lowtran, //!< Detail value at which the primitives becomes visible (rendered)
-	        m_uptran,  //!< Detail value at which the primitives becomes invisible (not rendered)
-	        m_maxvis;  //!< Maximal detail value at which the primitives are visible (rendered)
+	RtFloat m_minvis,  ///< Minimal detail value at which the primitives are visible (rendered)
+	        m_lowtran, ///< Detail value at which the primitives becomes visible (rendered)
+	        m_uptran,  ///< Detail value at which the primitives becomes invisible (not rendered)
+	        m_maxvis;  ///< Maximal detail value at which the primitives are visible (rendered)
 
 public:
 	/** @brief Gets name for the class.
@@ -2113,10 +2108,10 @@ public:
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param aMinVis,  //!< Minimal detail value at which the primitives are visible (rendered)
-	 *  @param aLowTran, //!< Detail value at which the primitives becomes visible (rendered)
-	 *  @param anUpTran, //!< Detail value at which the primitives becomes invisible (not rendered)
-	 *  @param aMaxVis;  //!< Maximal detail value at which the primitives are visible (rendered)
+	 *  @param aMinVis,  ///< Minimal detail value at which the primitives are visible (rendered)
+	 *  @param aLowTran, ///< Detail value at which the primitives becomes visible (rendered)
+	 *  @param anUpTran, ///< Detail value at which the primitives becomes invisible (not rendered)
+	 *  @param aMaxVis;  ///< Maximal detail value at which the primitives are visible (rendered)
 	 */
 	inline CRiDetailRange(
 		long aLineNo = -1,
@@ -2193,10 +2188,10 @@ public:
 
 	/** @brief Gets the detail range.
 	 *
-	 *  @retVal aMinVis,  //!< Minimal detail value at which the primitives are visible (rendered)
-	 *  @retVal aLowTran, //!< Detail value at which the primitives becomes visible (rendered)
-	 *  @retVal anUpTran, //!< Detail value at which the primitives becomes invisible (not rendered)
-	 *  @retVal aMaxVis;  //!< Maximal detail value at which the primitives are visible (rendered)
+	 *  @retVal aMinVis,  ///< Minimal detail value at which the primitives are visible (rendered)
+	 *  @retVal aLowTran, ///< Detail value at which the primitives becomes visible (rendered)
+	 *  @retVal anUpTran, ///< Detail value at which the primitives becomes invisible (not rendered)
+	 *  @retVal aMaxVis;  ///< Maximal detail value at which the primitives are visible (rendered)
 	 */
 	inline void get(
 		RtFloat &aMinVis,
@@ -2212,10 +2207,10 @@ public:
 
 	/** @brief Sets the detail range.
 	 *
-	 *  @param aMinVis,  //!< Minimal detail value at which the primitives are visible (rendered)
-	 *  @param aLowTran, //!< Detail value at which the primitives becomes visible (rendered)
-	 *  @param anUpTran, //!< Detail value at which the primitives becomes invisible (not rendered)
-	 *  @param aMaxVis;  //!< Maximal detail value at which the primitives are visible (rendered)
+	 *  @param aMinVis,  ///< Minimal detail value at which the primitives are visible (rendered)
+	 *  @param aLowTran, ///< Detail value at which the primitives becomes visible (rendered)
+	 *  @param anUpTran, ///< Detail value at which the primitives becomes invisible (not rendered)
+	 *  @param aMaxVis;  ///< Maximal detail value at which the primitives are visible (rendered)
 	 */
 	inline void set(
 		RtFloat aMinVis,
@@ -2292,9 +2287,11 @@ public:
 
 	/** @brief Default constructor.
 	 *
-	 * The default constructor sets the size of a bounding box to infinity.
+	 *  The default constructor sets the size of a bounding box to infinity.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aType The type of the geometric approximation (RI_TESSELATION, RI_DEVIATION)
+	 *  @param aValue Measure for the approximation type (e.g. number of tesselations)
 	 */
 	inline CRiGeometricApproximation(
 		long aLineNo = -1,
@@ -2415,6 +2412,7 @@ public:
 	 * The default constructor sets the size of a bounding box to infinity.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aType The type of the geometric approximation (RI_POINTS, RI_LINES, RI_PRIMITIVE)
 	 */
 	inline CRiGeometricRepresentation(
 		long aLineNo = -1,
@@ -2518,6 +2516,7 @@ public:
 	 * The default constructor sets the size of a bounding box to infinity.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param anOrientation Orientation of the Surface (RI_RH, RI_LH, RI_OUTSIDE, RI_INSIDE)
 	 */
 	inline CRiOrientation(
 		long aLineNo=-1,
@@ -2704,6 +2703,7 @@ public:
 	 * The default constructor sets the size of a bounding box to infinity.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param theNSides Number of sides displayed (1 (outside only) or 2 (inside and outside) )
 	 */
 	inline CRiSides(
 		long aLineNo = -1,

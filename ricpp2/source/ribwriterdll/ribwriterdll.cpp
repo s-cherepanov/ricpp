@@ -59,7 +59,7 @@ extern "C" {
  *  @brief Returns an instance of a new plugin
  *  @param majorversion Major version number of the returned interface (base class CContextCreator)
  *  @param type Type must match the type of the plugins interface (base class CContextCreator)
- *  @return Returns a plugin if \a majorversion has the right value
+ *  @return Returns a plugin if @a majorversion has the right value
  */
 EXPORT
 CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)

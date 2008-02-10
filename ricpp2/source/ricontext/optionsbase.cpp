@@ -22,7 +22,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file optionbase.cpp
+/** @file optionsbase.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implements the base class for options and attributes used for the render state.
  */

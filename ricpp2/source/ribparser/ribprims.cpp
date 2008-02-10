@@ -22,7 +22,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file riboptions.cpp
+/** @file ribprims.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of the handling of RIB requests for prims.
  */

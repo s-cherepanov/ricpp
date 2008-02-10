@@ -64,14 +64,14 @@ public:
 	inline virtual ~CTransformation() { }
 
 	//! Returns a (deep) copy of this.
-	/*! \retrun a copy of this.
-	 *  \exception ExceptRiCPPError Thrown if there is not enough memory.
+	/*! @return a copy of this.
+	 *  @exception ExceptRiCPPError Thrown if there is not enough memory.
 	 */
 	virtual CTransformation &duplicate() const;
 
 	//! Assigns instance o to this instance.
-	/*! \param o Instance to copy from.
-	 *  \return A reference to *this.
+	/*! @param o Instance to copy from.
+	 *  @return A reference to *this.
 	 */
 	CTransformation &operator=(const CTransformation &o);
 

@@ -177,7 +177,7 @@ namespace RiCPP {
 		 */
 		virtual bool valid() const;
 
-		/** @brief Gets a system dependend object to call an exported library function with the functionname \a name
+		/** @brief Gets a system dependend object to call an exported library function with the functionname @a name
 		 *
 		 * @param name Functionname of the exported function
 		 * @return System dependend function object, used to call the function name the

@@ -50,18 +50,18 @@ public:
 	/**! @brief State of the motion block.
 	 */
 	enum EnumMotionState {
-		MOT_OUTSIDE = 0,      //!< Outside a motion block, however, m_curRequest bears the current request id.
-		MOT_INSIDE = 1,       //!< Inside a motion block, no error.
-		MOT_TOO_MANY_REQ = 2, //!< Inside a motion block, too many requests (more than the number of the samples).
-		MOT_NO_REQ_MATCH = 4  //!< Inside a motion block, requests don't match or are not valid for motion blocks.
+		MOT_OUTSIDE = 0,      ///< Outside a motion block, however, m_curRequest bears the current request id.
+		MOT_INSIDE = 1,       ///< Inside a motion block, no error.
+		MOT_TOO_MANY_REQ = 2, ///< Inside a motion block, too many requests (more than the number of the samples).
+		MOT_NO_REQ_MATCH = 4  ///< Inside a motion block, requests don't match or are not valid for motion blocks.
 	};
 
 private:
-	std::vector<RtFloat> m_times; //!< Samples of the last (current) motion block request.
-	RtInt m_curSample;            //!< Current sample (if inside the mootion block, can be hugher than the size of m_times, if there are to many requests within a motion block).
-	EnumRequests m_firstRequest;  //!< Id of the first request inside the last (current) motion block.
-	EnumRequests m_curRequest;    //!< Id of the current request inside or outside the last (current) motion block..
-	unsigned int m_curState;      //!< The state of the motion block.
+	std::vector<RtFloat> m_times; ///< Samples of the last (current) motion block request.
+	RtInt m_curSample;            ///< Current sample (if inside the mootion block, can be hugher than the size of m_times, if there are to many requests within a motion block).
+	EnumRequests m_firstRequest;  ///< Id of the first request inside the last (current) motion block.
+	EnumRequests m_curRequest;    ///< Id of the current request inside or outside the last (current) motion block..
+	unsigned int m_curState;      ///< The state of the motion block.
 
 protected:
 	void incCurSampleIdx();

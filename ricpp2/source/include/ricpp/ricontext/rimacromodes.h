@@ -27,7 +27,7 @@
 
 /** @file rimacromodes.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for modes, \see rimacro.h
+ *  @brief The macro classes for modes, @see rimacro.h
  */
 
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
@@ -51,7 +51,7 @@ namespace RiCPP {
  */
 class CRiBegin : public CVarParamRManInterfaceCall {
 private:
-	std::string m_name; //!< Name of the backend as string.
+	std::string m_name; ///< Name of the backend as string.
 
 public:
 	/** @brief Gets name for the class.
@@ -89,8 +89,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the backend.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -99,9 +98,9 @@ public:
 	 */
 	inline CRiBegin(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtString name,
+		RtString aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(noNullStr(name))
+		: CVarParamRManInterfaceCall(aLineNo), m_name(noNullStr(aName))
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -111,7 +110,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the backend.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiBegin(
 		long aLineNo,
@@ -455,8 +454,8 @@ public:
  */
 class CRiResource : public CVarParamRManInterfaceCall {
 private:
-	std::string m_handle; //!< Handle id of a resource
-	std::string m_type;   //!< Type of a resource
+	std::string m_handle; ///< Handle id of a resource
+	std::string m_type;   ///< Type of a resource
 
 public:
 	/** @brief Gets name for the class.
@@ -500,8 +499,7 @@ public:
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aHandle Atomized handle (id) of the resource
 	 *  @param aType Atomized type of the resource
@@ -525,7 +523,7 @@ public:
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aHandle Atomized handle (id) of the resource
 	 *  @param aType Atomized type of the resource
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiResource(
 		long aLineNo,
@@ -573,7 +571,7 @@ public:
 
 	/** @brief Sets the handle of the resource.
 	 *
-	 *  @param An atomized handle of a resource.
+	 *  @param aHandle An atomized handle of a resource.
 	 */
 	inline void handle(RtString aHandle)
 	{
@@ -591,7 +589,7 @@ public:
 
 	/** @brief Sets the type of the resource.
 	 *
-	 *  @param An atomized type of a resource.
+	 *  @param aType An atomized type of a resource.
 	 */
 	inline void type(RtString aType)
 	{
@@ -635,7 +633,7 @@ public:
 /** @brief Starts a frame block.
  */
 class CRiFrameBegin : public CRManInterfaceCall {
-	RtInt m_frameNumber; //!< A number to identify the frame.
+	RtInt m_frameNumber; ///< A number to identify the frame.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -833,8 +831,8 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Begin of a world block.
  *
- *  \sa CRManInterfaceCall
- *  \sa IRi::worldBegin()
+ *  @see CRManInterfaceCall
+ *  @see IRi::worldBegin()
  */
 class CRiWorldBegin : public CRManInterfaceCall {
 public:
@@ -919,8 +917,8 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief End of a world block.
  *
- *  \sa CRManInterfaceCall
- *  \sa IRi::worldEnd()
+ *  @see CRManInterfaceCall
+ *  @see IRi::worldEnd()
  */
 class CRiWorldEnd : public CRManInterfaceCall {
 public:
@@ -1339,7 +1337,7 @@ public:
  */
 class CRiSolidBegin : public CRManInterfaceCall {
 private:
-	RtToken m_type; //!< Token that indicates the solid operation (like RI_UNION), must be atomized (@see CToken)
+	RtToken m_type; ///< Token that indicates the solid operation (like RI_UNION), must be atomized (@see CToken)
 
 public:
 	/** @brief Gets name for the class.
@@ -1365,7 +1363,7 @@ public:
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
-	 *  @param anOperation The token of the operation (must be an atomized string, @see CToken).
+	 *  @param aType The token of the operation (must be an atomized string, @see CToken).
 	 */
 	inline CRiSolidBegin(long aLineNo=-1, RtToken aType=RI_PRIMITIVE) : CRManInterfaceCall(aLineNo), m_type(aType) { }
 
@@ -1400,7 +1398,7 @@ public:
 	}
 
 	/** @brief Sets solid operation.
-	 * @param anOperation The token of the operation (must be an atomized string, @see CToken)
+	 * @param aType The token of the operation (must be an atomized string, @see CToken)
 	 */
 	inline void type(RtToken aType)
 	{
@@ -1531,7 +1529,7 @@ public:
  */
 class CRiObjectBegin : public CRManInterfaceCall {
 private:
-	RtObjectHandle m_handle; //!< Handle used to identify the object
+	RtObjectHandle m_handle; ///< Handle used to identify the object
 
 public:
 	/** @brief Gets name for the class.
@@ -1730,7 +1728,7 @@ public:
  */
 class CRiObjectInstance : public CRManInterfaceCall {
 private:
-	RtObjectHandle m_handle; //!< Object handle
+	RtObjectHandle m_handle; ///< Object handle
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1836,8 +1834,8 @@ public:
  */
 class CRiArchiveBegin : public CVarParamRManInterfaceCall {
 private:
-	RtArchiveHandle m_handle; //!< Associated archive handle to identify the object (constructed by IDoRender::preArchiveBegin()).
-	std::string m_name;       //!< Name of the archive, used to generate the handle.
+	RtArchiveHandle m_handle; ///< Associated archive handle to identify the object (constructed by IDoRender::preArchiveBegin()).
+	std::string m_name;       ///< Name of the archive, used to generate the handle.
 
 public:
 	/** @brief Gets name for the class.
@@ -1875,7 +1873,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the archive. If empty, a name will generated by the framework (TemplHandleStack).
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -2203,7 +2201,7 @@ public:
  */
 class CRiMotionBegin : public CRManInterfaceCall {
 private:
-	std::vector<RtFloat> m_motionVars; //!< The motion "time stamps"
+	std::vector<RtFloat> m_motionVars; ///< The motion "time stamps"
 
 public:
 	/** @brief Gets the name for the class.
@@ -2241,7 +2239,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
 	 *  @param n Number of "time stamps".
-	 *  @param Vector of "time stamps", size is @a n.
+	 *  @param f Vector of "time stamps", size is @a n.
 	 */
 	inline CRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) :
 		CRManInterfaceCall(aLineNo)
@@ -2291,7 +2289,7 @@ public:
 
 	/** Gets a copy of the vector with the motion vars.
 	 *
-	 * @retval A reference to a vector to retrieve the motion vars.
+	 * @retval m A reference to a vector to retrieve the motion vars.
 	 */
 	inline void get(std::vector<RtFloat> &m) const
 	{
@@ -2300,7 +2298,7 @@ public:
 
 	/** Sets the vector with the motion vars.
 	 *
-	 * @param A reference to a vector with motion vars.
+	 * @param m A reference to a vector with motion vars.
 	 */
 	inline void set(const std::vector<RtFloat> m)
 	{
@@ -2310,7 +2308,7 @@ public:
 	/** Sets the vector with the motion vars.
 	 *
 	 *  @param n Number of "time stamps".
-	 *  @param Vector of "time stamps", size is @a n.
+	 *  @param f Vector of "time stamps", size is @a n.
 	 */
 	inline void set(RtInt n, const RtFloat *f)
 	{
@@ -2450,7 +2448,7 @@ public:
 /** @brief Start of an if block.
  */
 class CRiIfBegin : public CRManInterfaceCall {
-	std::string m_exprStr; //!< The expression of the if block
+	std::string m_exprStr; ///< The expression of the if block
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -2555,7 +2553,7 @@ public:
 /** @brief Start of the else if part of an if block.
  */
 class CRiElseIfBegin : public CRManInterfaceCall {
-	std::string m_exprStr; //!< The expression of the if block
+	std::string m_exprStr; ///< The expression of the if block
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -2684,7 +2682,6 @@ public:
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param anExprStr The expression of the if block.
 	 */
 	inline CRiElseBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 
@@ -2769,7 +2766,6 @@ public:
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param anExprStr The expression of the if block.
 	 */
 	inline CRiIfEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
 

@@ -50,7 +50,7 @@ class ISearchCallback
 {
 public:
 	/** @brief Searches for a variable varName and returns the value found
-	 *  in \a varName.
+	 *  in @a varName.
 	 *  @retval varName (input/output) variable name to search for, also used return
 	 *         the found value. Is not cleared if not found.
 	 *  @return true, if found
@@ -131,11 +131,11 @@ private:
 
 	/** @brief Searches a variable varName. 
 	 *
-	 * -# via \a m_callback (also @ and & als variable names, see explode())
-	 * -# in \a m_substMap
+	 * -# via @a m_callback (also @ and & als variable names, see explode())
+	 * -# in @a m_substMap
 	 * -# in shell environment (if useEnv is set)
 	 *
-	 *  and returns the found value in \a varName.
+	 *  and returns the found value in @a varName.
 	 *
 	 *  @retval varName (input/output) variable name to search for, also used return
 	 *         the found value. Is cleared if not empty.
@@ -179,7 +179,7 @@ public:
 
 	/** @brief Seperates a string.
 	 *
-	 *  Seperates a string \a str using the seperator character \a seperator. The seperated
+	 *  Seperates a string @a str using the seperator character @a seperator. The seperated
 	 *  strings are stored internally. Does substitution of $variable, if doSubstitute is true.
 	 *  If useEnv is true, the variables are search among the environment variables as well.
 	 *  Special chars like '$' can be mask by '\' to loose their special meaning. You can use
@@ -196,7 +196,7 @@ public:
 	 *  @param str The string that is seperated.
 	 *  @param doSubstitute true, if variables should be substituted.
 	 *  @param useEnv true, if the environment variables should be also searched for $variables.
-	 *  @param isPathlist true, to handle pathlists. For WIN32 a bit messy because rib uses ':'
+	 *  @param isPathList true, to handle pathlists. For WIN32 a bit messy because rib uses ':'
 	 *         as path seperator, but windows uses them as drive letter seperators as well. Also the
 	 *         special chars @ and & are tried to be replaced by calling m_callback (if set) and
 	 *         the backslashes within variables are substituted by forward slashes.
@@ -207,7 +207,7 @@ public:
 		const char *str,
 		bool doSubstitute,
 		bool useEnv,
-		bool isPathlist
+		bool isPathList
 		);
 
 	/** @brief Expands the variables within a single string, @see explode().
@@ -217,7 +217,7 @@ public:
 	 *
 	 *  @retval result String to store the expanded string.
 	 *  @param str The single string to expand.
-	 *  @param isPath True, to handle a filepath (@see isPathList in explode() for details).
+	 *  @param isPathList True, to handle a filepath (@see isPathList in explode() for details).
 	 *  @return The expanded string, a reference to @a result
 	 */
 	inline std::string &expand(std::string &result, const char *str, bool isPathList) {
@@ -232,16 +232,16 @@ public:
 
 	/** @brief Concatenates stringlist
 	 *
-	 * The stringlist is concatenated to single string using \a seperator.
+	 * The stringlist is concatenated to single string using @a seperator.
 	 *
-	 * @param seperator Character that is used as seperator for the new \a str
+	 * @param seperator Character that is used as seperator for the new @a str
 	 * @retval str Container for the new concatenated string
-	 * @param isPathlist true, for handling pathlists.
+	 * @param isPathList true, for handling pathlists.
 	 */
 	void implode(
 		char seperator,
 		std::string &str,
-		bool isPathlist
+		bool isPathList
 	);
 
 	/** @brief Pushes a string to the stored strings. Variables are substituted.
@@ -249,12 +249,12 @@ public:
 	 *  @param useEnv true if the environment variables of the system should
 	 *         also be used a variables
 	 *  @param doSubstitute true, if variables should be substituted.
-	 *  @param isPathlist true, for handling pathlists.
+	 *  @param isPathList true, for handling pathlists.
 	 *  @see explode()
 	 */
-	inline void push(const char *str, bool doSubstitute, bool useEnv, bool isPathlist)
+	inline void push(const char *str, bool doSubstitute, bool useEnv, bool isPathList)
 	{
-		explode(0, str, doSubstitute, useEnv, isPathlist);
+		explode(0, str, doSubstitute, useEnv, isPathList);
 	}
 
 	/** @brief Pushes a string to the stored strings.
@@ -262,12 +262,12 @@ public:
 	 *  @param useEnv true if the environment variables of the system should
 	 *         also be used a variables
 	 *  @param doSubstitute true, if variables should be substituted.
-	 *  @param isPathlist true, for handling pathlists.
+	 *  @param isPathList true, for handling pathlists.
 	 *  @see explode()
 	 */
-	inline void push(const std::string &v, bool doSubstitute, bool useEnv, bool isPathlist)
+	inline void push(const std::string &v, bool doSubstitute, bool useEnv, bool isPathList)
 	{
-		explode(0, v.c_str(), doSubstitute, useEnv, isPathlist);
+		explode(0, v.c_str(), doSubstitute, useEnv, isPathList);
 	}
 
 	/** @brief Removes the last inserted string.
@@ -312,10 +312,10 @@ public:
 
 	/** @brief Adds a substitute for a variable.
 	 * 
-	 *  A variable \a strvar that can occur inside the strings 
-	 *  will be replaced with \a strsubst before stored.
+	 *  A variable @a strvar that can occur inside the strings 
+	 *  will be replaced with @a strsubst before stored.
 	 *
-	 * @param strvar The name of the variable. E.g. $MYVAR is the variable, \a strvar is "MYVAR"
+	 * @param strvar The name of the variable. E.g. $MYVAR is the variable, @a strvar is "MYVAR"
 	 * @param strsubst The string that is used as substitute for the variable.
 	 */
 	inline void addSubst(const char *strvar, const char *strsubst)

@@ -128,11 +128,11 @@ class CBaseRenderer : public IDoRender {
 	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
 
-	bool m_cacheFileArchives; //!< Cache archive files
+	bool m_cacheFileArchives; ///< Cache archive files
 
 	// Tokens
-	RtToken RI_BASE_RENDERER; //!< Token "base-renderer" as control name
-	RtToken RI_CACHE_FILE_ARCHIVES; //!< Token "cache-file-archives" for control
+	RtToken RI_BASE_RENDERER; ///< Token "base-renderer" as control name
+	RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control
 
 protected:
 	/** @brief Callbacks for the rib parser to the front end.
@@ -347,7 +347,7 @@ protected:
 	 *  @a aRequest object.
 	 *
 	 *  @param aRequest Data of a parsed and validated request.
-	 *  @param immediatly, execute immediatly, do not store within macro, do not use if/then/else
+	 *  @param immediatly Executes immediatly, does not store request at a macro, does nt use if/then/else state.
 	 */
 	virtual void processRequest(CRManInterfaceCall &aRequest, bool immediatly = false);
 
@@ -357,7 +357,7 @@ protected:
 	 *  (archive or object)
 	 *
 	 *  @param aRequest A parsed and validated request.
-	 *  @param cp The optional callback (from IRiCPP::readArchive())
+	 *  @param cb The optional callback (from IRiCPP::readArchive())
 	 */
 	virtual void replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb);
 
@@ -407,7 +407,7 @@ public:
 
 	/** @brief Error handler
 	 *
-	 *  @se IRiContext::preErrorHandler()
+	 *  @see IRiContext::preErrorHandler()
 	 *
 	 *  @param handler The error handler
 	 */
@@ -587,7 +587,7 @@ public:
 public:
 	/** @brief Error handler
 	 *
-	 *  @se IRiContext::preErrorHandler()
+	 *  @see IRiContext::preErrorHandler()
 	 *
 	 *  @param handler The error handler
 	 */
@@ -651,7 +651,7 @@ public:
 	virtual RtVoid preDisplayChannel(RtString channel, const CParameterList &params);
 	virtual RtVoid preDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params);
 	virtual RtVoid preHider(RtToken type, const CParameterList &params);
-	virtual RtVoid preColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn);
+	virtual RtVoid preColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]);
 	virtual RtVoid preRelativeDetail(RtFloat relativedetail);
 	virtual RtVoid preOption(RtToken name, const CParameterList &params);
 
@@ -749,7 +749,7 @@ public:
 
 	/** @brief Error handler
 	 *
-	 *  @se IRiContext::preErrorHandler()
+	 *  @see IRiContext::preErrorHandler()
 	 *
 	 *  @param handler The error handler
 	 */

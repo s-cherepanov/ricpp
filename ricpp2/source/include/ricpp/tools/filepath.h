@@ -141,7 +141,7 @@ namespace RiCPP {
 		/** @brief Gets the basename of the path
 		 *  @param suffix Suffix to cut away
 		 *	@retval aBasename Basename is stored here
-		 *  @return C-String pointer of \a aBasename
+		 *  @return C-String pointer of @a aBasename
 		 */
 		inline const char *basename(const char *suffix, std::string &aBasename) const
 		{

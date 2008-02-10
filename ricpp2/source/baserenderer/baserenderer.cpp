@@ -1941,12 +1941,12 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 }
 
 
-RtVoid CBaseRenderer::preColorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+RtVoid CBaseRenderer::preColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 {
 	renderState()->options().colorSamples(N, nRGB, RGBn);
 }
 
-RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 {
 	EnumRequests req = REQ_COLOR_SAMPLES;
 	try {

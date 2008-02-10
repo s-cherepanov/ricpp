@@ -102,7 +102,7 @@ namespace RiCPP {
 
 		/** @brief Assignment.
 		 *
-		 * Assigns a buffer \a bb to this object.
+		 * Assigns a buffer @a bb to this object.
 		 *
 		 * @param bb Buffer to assign.
 		 * @return Reference of this object.
@@ -149,10 +149,10 @@ namespace RiCPP {
 			return m_buffer+m_size;
 		}
 
-		/** @brief Gets the reference to the element at positon \a pos.
+		/** @brief Gets the reference to the element at positon @a pos.
 		 * @param pos position (< size()).
-		 * @return Reference of element at the position \a pos.
-		 * @exception ExceptRiCPPError Throws severe RIE_RANGE if \a pos >= size()
+		 * @return Reference of element at the position @a pos.
+		 * @exception ExceptRiCPPError Throws severe RIE_RANGE if @a pos >= size()
 		 */
 		T_char &operator[](size_type pos);
 	}; // TemplBuffer

@@ -27,7 +27,7 @@
 
 /** @file rimacrooptions.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for options, \see rimacro.h
+ *  @brief The macro classes for options, @see rimacro.h
  */
 
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
@@ -45,9 +45,9 @@ namespace RiCPP {
  */
 class CRiFormat : public CRManInterfaceCall {
 private:
-	RtInt m_xres,     //!< Width of the image to be rendered.
-	      m_yres;     //!< Height of the image to be rendered.
-	RtFloat m_aspect; //!< Pixel aspect ratio (width to the height).
+	RtInt m_xres,     ///< Width of the image to be rendered.
+	      m_yres;     ///< Height of the image to be rendered.
+	RtFloat m_aspect; ///< Pixel aspect ratio (width to the height).
 
 public:
 	/** @brief Gets the name for the class.
@@ -242,7 +242,7 @@ public:
  */
 class CRiFrameAspectRatio : public CRManInterfaceCall {
 private:
-	RtFloat m_aspect; //!< frame aspect ratio
+	RtFloat m_aspect; ///< frame aspect ratio
 
 public:
 	/** @brief Gets name for the class.
@@ -272,8 +272,8 @@ public:
 	 */
 	inline CRiFrameAspectRatio(
 		long aLineNo = -1,
-		RtFloat aspect = COptions::defFrameAspectRatio) :
-		CRManInterfaceCall(aLineNo), m_aspect(aspect)
+		RtFloat anAspect = COptions::defFrameAspectRatio) :
+		CRManInterfaceCall(aLineNo), m_aspect(anAspect)
 	{
 	}
 
@@ -362,10 +362,10 @@ public:
  */
 class CRiScreenWindow : public CRManInterfaceCall {
 private:
-	RtFloat m_left,   //!< coordinate of the left screen window edge
-	        m_right,  //!< coordinate of the right screen window edge
-	        m_bottom, //!< coordinate of the bottom screen window edge
-	        m_top;    //!< coordinate of the top screen window edge
+	RtFloat m_left,   ///< coordinate of the left screen window edge
+	        m_right,  ///< coordinate of the right screen window edge
+	        m_bottom, ///< coordinate of the bottom screen window edge
+	        m_top;    ///< coordinate of the top screen window edge
 
 public:
 	/** @brief Gets name for the class.
@@ -393,7 +393,7 @@ public:
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aLeft The left edge of the screen window (screen coordinates)
 	 *  @param aRight The right edge of the screen window (screen coordinates)
-	 *  @param aBot The bottom edge of the screen window (screen coordinates)
+	 *  @param aBottom The bottom edge of the screen window (screen coordinates)
 	 *  @param aTop The top edge of the screen window (screen coordinates)
 	 */
 	inline CRiScreenWindow(
@@ -476,7 +476,7 @@ public:
 
 	/** @brief Sets The bottom edge.
 	 *
-	 *  @param aBot The bottom edge of the screen window (screen coordinates).
+	 *  @param aBottom The bottom edge of the screen window (screen coordinates).
 	 */
 	inline void bottom(RtFloat aBottom)
 	{
@@ -524,7 +524,7 @@ public:
 	 *
 	 *  @param aLeft The left edge of the screen window (screen coordinates)
 	 *  @param aRight The right edge of the screen window (screen coordinates)
-	 *  @param aBot The bottom edge of the screen window (screen coordinates)
+	 *  @param aBottom The bottom edge of the screen window (screen coordinates)
 	 *  @param aTop The top edge of the screen window (screen coordinates)
 	 */
 	inline void set(
@@ -577,10 +577,10 @@ public:
  */
 class CRiCropWindow : public CRManInterfaceCall {
 private:
-	RtFloat m_xmin,  //!< Crop window minimal x
-	        m_xmax,  //!< Crop window maximal x
-	        m_ymin,  //!< Crop window minimal y
-	        m_ymax;  //!< Crop window maximal y
+	RtFloat m_xmin,  ///< Crop window minimal x
+	        m_xmax,  ///< Crop window maximal x
+	        m_ymin,  ///< Crop window minimal y
+	        m_ymax;  ///< Crop window maximal y
 
 public:
 	/** @brief Gets name for the class.
@@ -787,7 +787,7 @@ public:
  */
 class CRiProjection : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Atomized projection name (RI_PERSPECTIVE, RI_ORTHOGRAPHIC)
+	RtToken m_name; ///< Atomized projection name (RI_PERSPECTIVE, RI_ORTHOGRAPHIC)
 
 public:
 	/** @brief Gets name for the class.
@@ -813,7 +813,7 @@ public:
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param name Atomized name of the projection
+	 *  @param aName Atomized name of the projection
 	 */
 	inline CRiProjection(
 		long aLineNo = -1,
@@ -826,8 +826,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Atomized name of the projection
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -847,7 +846,7 @@ public:
 	 *
 	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 * @param aName Atomized name of the projection
-	 * @param parameters Parsed parameter list.
+	 * @param theParameters Parsed parameter list.
 	 */
 	inline CRiProjection(
 		long aLineNo,
@@ -893,7 +892,7 @@ public:
 
 	/** @brief Sets the name of the projection.
 	 *
-	 *  @param An atomized name of a projection.
+	 *  @param aName An atomized name of a projection.
 	 */
 	inline void name(RtToken aName)
 	{
@@ -938,8 +937,8 @@ public:
  */
 class CRiClipping : public CRManInterfaceCall {
 private:
-	RtFloat m_hither, //!< Near clipping plane
-	        m_yon;    //!< Far clipping plane
+	RtFloat m_hither, ///< Near clipping plane
+	        m_yon;    ///< Far clipping plane
 
 public:
 	/** @brief Gets name for the class.
@@ -965,8 +964,8 @@ public:
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param hither Near clipping plane
-	 *  @param yon Far clipping plane
+	 *  @param aHither Near clipping plane
+	 *  @param aYon Far clipping plane
 	 */
 	inline CRiClipping(
 		long aLineNo=-1,
@@ -1036,8 +1035,8 @@ public:
 
 	/** @brief Gets the values of the camera clipping planes.
 	 *
-	 *  @retval hither Near clipping plane
-	 *  @retval yon Far clipping plane
+	 *  @retval aHither Near clipping plane
+	 *  @retval aYon Far clipping plane
 	 */
 	inline void get(RtFloat &aHither, RtFloat &aYon) const
 	{
@@ -1047,8 +1046,8 @@ public:
 
 	/** @brief Sets the values of the camera clipping planes.
 	 *
-	 *  @param hither Near clipping plane
-	 *  @param yon Far clipping plane
+	 *  @param aHither Near clipping plane
+	 *  @param aYon Far clipping plane
 	 */
 	inline void set(RtFloat aHither, RtFloat aYon)
 	{
@@ -1093,12 +1092,12 @@ public:
  */
 class CRiClippingPlane : public CRManInterfaceCall {
 private:
-	RtFloat m_x,  //!< Point of an additional clipping plane (x coordinate).
-	        m_y,  //!< Point of an additional clipping plane (y coordinate).
-	        m_z,  //!< Point of an additional clipping plane (z coordinate).
-	        m_nx, //!< Normal of an additional clipping plane (x coordinate).
-	        m_ny, //!< Normal of an additional clipping plane (y coordinate).
-	        m_nz; //!< Normal of an additional clipping plane (z coordinate).
+	RtFloat m_x,  ///< Point of an additional clipping plane (x coordinate).
+	        m_y,  ///< Point of an additional clipping plane (y coordinate).
+	        m_z,  ///< Point of an additional clipping plane (z coordinate).
+	        m_nx, ///< Normal of an additional clipping plane (x coordinate).
+	        m_ny, ///< Normal of an additional clipping plane (y coordinate).
+	        m_nz; ///< Normal of an additional clipping plane (z coordinate).
 
 public:
 	/** @brief Gets name for the class.
@@ -1124,12 +1123,12 @@ public:
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param x x component of a point at the clipping plane.
-	 *  @param y y component of a point at the clipping plane.
-	 *  @param z z component of a point at the clipping plane.
-	 *  @param nx x component of the normal vector of the clipping plane.
-	 *  @param ny y component of the normal vector of the clipping plane.
-	 *  @param nz z component of the normal vector of the clipping plane.
+	 *  @param aX x component of a point at the clipping plane.
+	 *  @param aY y component of a point at the clipping plane.
+	 *  @param aZ z component of a point at the clipping plane.
+	 *  @param aNx x component of the normal vector of the clipping plane.
+	 *  @param aNy y component of the normal vector of the clipping plane.
+	 *  @param aNz z component of the normal vector of the clipping plane.
 	 */
 	inline CRiClippingPlane(
 		long aLineNo = -1,
@@ -1319,12 +1318,12 @@ public:
 
 	/** @brief Gets the values of the clipping plane
 	 *
-	 *  @retval x x component of a point at the clipping plane.
-	 *  @retval y y component of a point at the clipping plane.
-	 *  @retval z z component of a point at the clipping plane.
-	 *  @retval nx x component of the normal vector of the clipping plane.
-	 *  @retval ny y component of the normal vector of the clipping plane.
-	 *  @retval nz z component of the normal vector of the clipping plane.
+	 *  @retval aX x component of a point at the clipping plane.
+	 *  @retval aY y component of a point at the clipping plane.
+	 *  @retval aZ z component of a point at the clipping plane.
+	 *  @retval aNx x component of the normal vector of the clipping plane.
+	 *  @retval aNy y component of the normal vector of the clipping plane.
+	 *  @retval aNz z component of the normal vector of the clipping plane.
 	 */
 	inline void get(
 		RtFloat &aX,
@@ -1344,12 +1343,12 @@ public:
 
 	/** @brief Sets the values of the clipping plane
 	 *
-	 *  @param x x component of a point at the clipping plane.
-	 *  @param y y component of a point at the clipping plane.
-	 *  @param z z component of a point at the clipping plane.
-	 *  @param nx x component of the normal vector of the clipping plane.
-	 *  @param ny y component of the normal vector of the clipping plane.
-	 *  @param nz z component of the normal vector of the clipping plane.
+	 *  @param aX x component of a point at the clipping plane.
+	 *  @param aY y component of a point at the clipping plane.
+	 *  @param aZ z component of a point at the clipping plane.
+	 *  @param aNx x component of the normal vector of the clipping plane.
+	 *  @param aNy y component of the normal vector of the clipping plane.
+	 *  @param aNz z component of the normal vector of the clipping plane.
 	 */
 	inline void set(
 		RtFloat aX,
@@ -1406,9 +1405,9 @@ public:
 class CRiDepthOfField : public CRManInterfaceCall {
 private:
 	RtFloat
-		m_fstop,         //!< Aperture number to calculate the lens diameter.
-		m_focallength,   //!< Focal length of the camera.
-		m_focaldistance; //!< Distance along the cameras z axis in which objects will be in focus.
+		m_fstop,         ///< Aperture number to calculate the lens diameter.
+		m_focallength,   ///< Focal length of the camera.
+		m_focaldistance; ///< Distance along the cameras z axis in which objects will be in focus.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1498,7 +1497,7 @@ public:
 
 	/** @brief Sets the focal length.
 	 *
-	 *  @param  aFocallength The focal length.
+	 *  @param aFocallength The focal length.
 	 */
 	inline void focallength(RtFloat aFocallength)
 	{
@@ -1516,7 +1515,7 @@ public:
 
 	/** @brief Sets the focal distance.
 	 *
-	 *  @param  aFocallength The focal distance.
+	 *  @param aFocaldistance The focal distance.
 	 */
 	inline void focaldistance(RtFloat aFocaldistance)
 	{
@@ -1594,8 +1593,8 @@ public:
 class CRiShutter : public CRManInterfaceCall {
 private:
 	RtFloat
-		m_smin, //!< Time when shutter opens.
-		m_smax; //!< Time when shutter closes.
+		m_smin, ///< Time when shutter opens.
+		m_smax; ///< Time when shutter closes.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1754,7 +1753,7 @@ public:
  */
 class CRiPixelVariance : public CRManInterfaceCall {
 private:
-	RtFloat m_variation; //!< Estimated variance of the computed pixel value from the true pixel value.
+	RtFloat m_variation; ///< Estimated variance of the computed pixel value from the true pixel value.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1868,8 +1867,8 @@ public:
 class CRiPixelSamples : public CRManInterfaceCall {
 private:
 	RtFloat
-		m_xsamples, //!< Samples per pixel in horizontal direction.
-		m_ysamples; //!< Samples per pixel in vertical direction.
+		m_xsamples, ///< Samples per pixel in horizontal direction.
+		m_ysamples; ///< Samples per pixel in vertical direction.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2027,9 +2026,9 @@ public:
  */
 class CRiPixelFilter : public CRManInterfaceCall {
 private:
-	IFilterFunc *m_function; //!< Filter function.
-	RtFloat m_xwidth,        //!< Horizontal influence in pixels.
-	        m_ywidth;        //!< Vertical influence in pixels.
+	IFilterFunc *m_function; ///< Filter function.
+	RtFloat m_xwidth,        ///< Horizontal influence in pixels.
+	        m_ywidth;        ///< Vertical influence in pixels.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2169,11 +2168,11 @@ public:
 	 *  @param aYwidth Vertical influence in pixels.
 	 */
 	inline void get(
-		const IFilterFunc **function,
+		const IFilterFunc **aFunction,
 		RtFloat &aXwidth, RtFloat &aYwidth) const
 	{
-		if ( function )
-			*function = &(m_function->singleton());
+		if ( aFunction )
+			*aFunction = &(m_function->singleton());
 
 		aXwidth = m_xwidth;
 		aYwidth = m_ywidth;
@@ -2186,10 +2185,10 @@ public:
 	 *  @param aYwidth Vertical influence in pixels.
 	 */
 	inline void set(
-		const IFilterFunc &function,
+		const IFilterFunc &aFunction,
 		RtFloat aXwidth, RtFloat aYwidth)
 	{
-		m_function = &function.singleton();
+		m_function = &aFunction.singleton();
 		m_xwidth = aXwidth;
 		m_ywidth = aYwidth;
 	}
@@ -2240,8 +2239,8 @@ public:
  */
 class CRiExposure : public CRManInterfaceCall {
 private:
-	RtFloat m_gain,  //!< Gain of the brightness correction.
-	        m_gamma; //!< Gamma value of the brightness correction.
+	RtFloat m_gain,  ///< Gain of the brightness correction.
+	        m_gamma; ///< Gamma value of the brightness correction.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2399,7 +2398,7 @@ public:
  */
 class CRiImager : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Atomized name of the imager shader.
+	RtToken m_name; ///< Atomized name of the imager shader.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2437,8 +2436,7 @@ public:
 	/** @brief Constructor
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Atomized name of the imager.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -2459,7 +2457,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Atomized name of the imager.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiImager(
 		long aLineNo,
@@ -2548,11 +2546,11 @@ public:
  */
 class CRiQuantize : public CRManInterfaceCall {
 private:
-	RtToken m_type;     //!< Atomized type of quantization (RI_RGBA or RI_Z).
-	RtInt m_one,        //!< The corresponding resulting integer value for RtFloat 1.0.
-	      m_qmin,       //!< Lower clamp for the dither value (absoule).
-	      m_qmax;       //!< Higher clamp for the dither value (absoule).
-	RtFloat m_ditheramplitude; //!< Amplitude (+/-) for the dither offset.
+	RtToken m_type;     ///< Atomized type of quantization (RI_RGBA or RI_Z).
+	RtInt m_one,        ///< The corresponding resulting integer value for RtFloat 1.0.
+	      m_qmin,       ///< Lower clamp for the dither value (absoule).
+	      m_qmax;       ///< Higher clamp for the dither value (absoule).
+	RtFloat m_ditheramplitude; ///< Amplitude (+/-) for the dither offset.
 
 public:
 	/** @brief Gets name for the class.
@@ -2582,7 +2580,7 @@ public:
 	 *  @param aOne The corresponding resulting integer value for RtFloat 1.0.
 	 *  @param aQmin Lower clamp for the dither value (absoule).
 	 *  @param aQmax Higher clamp for the dither value (absoule).
-	 *  @param anAmpl Amplitude (+/-) for the dither offset.
+	 *  @param aDitherAmplitude Amplitude (+/-) for the dither offset.
 	 */
 	inline CRiQuantize(
 		long aLineNo = -1,
@@ -2789,7 +2787,7 @@ public:
  */
 class CRiDisplayChannel : public CVarParamRManInterfaceCall {
 private:
-	std::string m_channel; //!< Name of the display channel
+	std::string m_channel; ///< Name of the display channel
 
 public:
 	/** @brief Gets name for the class.
@@ -2828,8 +2826,7 @@ public:
 	/** @brief Constructor
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aChannel Name of the display channel.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -2851,7 +2848,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aChannel Name of the display channel.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiDisplayChannel(
 		long aLineNo,
@@ -2940,9 +2937,9 @@ public:
  */
 class CRiDisplay : public CVarParamRManInterfaceCall {
 private:
-	std::string m_name; //!< Name of the display.
-	RtToken m_type, //!< Atomized type of the display.
-	        m_mode; //!< Atomized mode of the output.
+	std::string m_name; ///< Name of the display.
+	RtToken m_type, ///< Atomized type of the display.
+	        m_mode; ///< Atomized mode of the output.
 
 public:
 	/** @brief Gets name for the class.
@@ -2983,8 +2980,7 @@ public:
 	/** @brief Constructor
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the display.
 	 *  @param aType Atomized type of the display.
@@ -3010,7 +3006,7 @@ public:
 	 *  @param aName Name of the display.
 	 *  @param aType Atomized type of the display.
 	 *  @param aMode Atomized mode of the output.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiDisplay(
 		long aLineNo,
@@ -3162,7 +3158,7 @@ public:
  */
 class CRiHider : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_type; //!< Atomized type of the hidden surface algorithm.
+	RtToken m_type; ///< Atomized type of the hidden surface algorithm.
 
 public:
 	/** @brief Gets name for the class.
@@ -3200,8 +3196,7 @@ public:
 	/** @brief Constructor
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aType Atomized type of the hidden surface algorithm.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -3222,7 +3217,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aType Atomized type of the hidden surface algorithm.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiHider(
 		long aLineNo,
@@ -3310,7 +3305,7 @@ public:
  */
 class CRiColorSamples : public CRManInterfaceCall {
 private:
-	CColorDescr m_colorDecr; //!< Stored color descriptor.
+	CColorDescr m_colorDecr; ///< Stored color descriptor.
 
 public:
 	/** @brief Gets name for the class.
@@ -3495,7 +3490,7 @@ public:
  */
 class CRiRelativeDetail : public CRManInterfaceCall {
 private:
-	RtFloat m_relativedetail; //!< The relative detail scale.
+	RtFloat m_relativedetail; ///< The relative detail scale.
 
 public:
 	/** @brief Gets name for the class.
@@ -3606,7 +3601,7 @@ public:
  */
 class CRiOption : public CVarParamRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the option as atomized string.
+	RtToken m_name; ///< Name of the option as atomized string.
 
 public:
 	/** @brief Gets name for the class.
@@ -3644,8 +3639,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param aName Name of the option as atomized string.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -3654,9 +3648,9 @@ public:
 	 */
 	inline CRiOption(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(name)
+		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
 	{
 		CParameterClasses p;
 		setParams(decl, p, curColorDescr, n, tokens, params);
@@ -3666,7 +3660,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the option as atomized string.
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline CRiOption(
 		long aLineNo,

@@ -25,7 +25,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file riboptions.h
+/** @file ribprims.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Handles RIB requests for prims (Sphere, PatchMesh, Polygon, ...).
  *
@@ -46,7 +46,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_POLYGON; }
 	}; // CPolygonRibRequest
 
-	/** @brief Handles RIB request GeneralPolygon [ nvertices ] <paramlist>
+	/** @brief Handles RIB request GeneralPolygon [ nvertices ] \<paramlist\>
 	 */
 	class CGeneralPolygonRibRequest : public CRibRequest {
 	public:
@@ -62,7 +62,7 @@ namespace RiCPP {
 		inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
 	}; // CPolygonRibRequest
 
-	/** @brief Handles RIB request PointsGeneralPolygons [ nloops ] [ nvertices ] [ vertices ] <paramlist>
+	/** @brief Handles RIB request PointsGeneralPolygons [ nloops ] [ nvertices ] [ vertices ] \<paramlist\>
 	 */
 	class CPointsGeneralPolygonsRibRequest : public CRibRequest {
 	public:

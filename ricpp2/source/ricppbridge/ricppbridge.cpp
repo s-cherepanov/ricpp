@@ -1050,7 +1050,7 @@ RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 	}
 }
 
-RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {

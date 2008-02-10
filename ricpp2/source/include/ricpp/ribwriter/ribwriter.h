@@ -76,14 +76,14 @@ public:
  */
 class CRibElementsWriter {
 private:
-	std::ostream m_ostream; //!< RIB output stream.
-	bool m_ascii; //!< true, indicates that ascii-data should be written. False, binary data.
-	unsigned char m_reqEncoding[N_REQUESTS]; //!< Elements indicate (value!=0), that a request is defined.
-	std::map<std::string, RtInt> m_stringTokens; //!< Elements indicate, that a string token is defined
-	unsigned long m_countStrings; //!< Counter for the string numbers (used 16 bit)
-	bool m_firstRequestWritten; //!< Gets true after first real request is written to suppress header
-	IRequestNotification &m_notify;  //!< Notify request
-	unsigned long m_linecnt; //!< line counter
+	std::ostream m_ostream; ///< RIB output stream.
+	bool m_ascii; ///< true, indicates that ascii-data should be written. False, binary data.
+	unsigned char m_reqEncoding[N_REQUESTS]; ///< Elements indicate (value!=0), that a request is defined.
+	std::map<std::string, RtInt> m_stringTokens; ///< Elements indicate, that a string token is defined
+	unsigned long m_countStrings; ///< Counter for the string numbers (used 16 bit)
+	bool m_firstRequestWritten; ///< Gets true after first real request is written to suppress header
+	IRequestNotification &m_notify;  ///< Notify request
+	unsigned long m_linecnt; ///< line counter
 
 	/** @brief Puts a binary encoded number (string length, RtInt) to the stream.
 	 */
@@ -161,12 +161,13 @@ public:
 	 */
 	void putChar(char c);
 	
-	/** @brief Puts out a characters untill character '\0' is reached.
+	/** @brief Puts out a characters until character '\\0' is reached.
 	 *  @param cs Character string to put out.
 	 */
 	void putChars(const char *cs);
 
 	/** @brief Puts out a comment line, started with '#' and terminated by endl.
+	 *  @param type Type of the comment (RICOMMENT, RI_STRUCTURE, RI_VERBATIM)
 	 *  @param cs Character string to put out (without the first '#').
 	 */
 	void putComment(RtToken type, const char *cs);
@@ -205,7 +206,7 @@ public:
 
 	/** @brief Puts out an array of integers.
 	 *  @param length Length of @a integers.
-	 *  @param floats Array of integers to put out.
+	 *  @param integers Array of integers to put out.
 	 */
 	void putArray(unsigned long length, const RtInt *integers);
 
@@ -297,9 +298,9 @@ private:
 	int m_postponeObject;
 	int m_postponeFileArchive;
 	int m_postponeInlineArchive;
-	bool m_header; //!< True, till first request called (in archives and main)
+	bool m_header; ///< True, till first request called (in archives and main)
 	int m_skipHeader;
-	int m_skipVersion; //!< skips version request: 1: skip version, 0: write version, -1 write only once (default)
+	int m_skipVersion; ///< skips version request: 1: skip version, 0: write version, -1 write only once (default)
 	bool m_execute;
 	bool m_indent;
 	std::string m_indentString;
@@ -309,7 +310,7 @@ private:
 	bool willExecuteMacro(RtString name);
 
 
-	unsigned long m_nestingDepth; //!< Depth of begin/end blocks
+	unsigned long m_nestingDepth; ///< Depth of begin/end blocks
 
 	inline unsigned long nestingDepth() const
 	{

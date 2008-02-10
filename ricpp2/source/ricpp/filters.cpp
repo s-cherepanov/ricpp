@@ -22,9 +22,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** \file filters.cpp
- *  \author Andreas Pidde (andreas@pidde.de)
- *  \brief Pixel filters for RiCPP, see [RISPEC3.2] Appendix E
+/** @file filters.cpp
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Pixel filters for RiCPP, see [RISPEC3.2] Appendix E
  */
 
 #include "ricpp/ricpp/filters.h"

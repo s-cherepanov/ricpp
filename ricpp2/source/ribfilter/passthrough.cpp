@@ -60,7 +60,7 @@ extern "C" {
  *  @brief Returns an instance of a new plugin
  *  @param majorversion Major version number of the returnd type
  *  @param type Type must match the type of the plugin
- *  @return Returns a plugin if \a majorversion has the right value
+ *  @return Returns a plugin if @a majorversion has the right value
  */
 EXPORT
 CRibFilter * CDECL newPlugin(unsigned long majorversion, const char *type)

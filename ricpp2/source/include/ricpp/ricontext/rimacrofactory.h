@@ -27,7 +27,7 @@
 
 /** @file rimacrofactory.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Factory for macros, currently not in use, \see rimacro.h
+ *  @brief Factory for macros, currently not in use, @see rimacro.h
  */
 #ifndef _RICPP_RICONTEXT_RIMACROCONTAINER_H
 #include "ricpp/ricontext/rimacrocontainer.h"

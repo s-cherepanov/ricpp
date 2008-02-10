@@ -119,30 +119,34 @@ class CDeclaration {
 
 public:
 	/** @brief Standard constructor for inline declarations
-	 * @param parameterDeclstr Inline declaration of a parameter. Only a declaration name
-	 * is considered as an error because the existence of a declaration for
-	 * \a parameterDeclstr has been tested before. Can throw a RIE_SYNTAX parsing error.
-	 * @param curColorDescr The current size of color (number of floats) and it's RGB transformation
-	 * @exception ExceptRiCPPError
+	 *  @param parameterDeclstr Inline declaration of a parameter. Only a declaration name
+	 *         is considered as an error because the existence of a declaration for
+	 *         @a parameterDeclstr has been tested before. Can throw a RIE_SYNTAX parsing error.
+	 *  @param curColorDescr The current size of color (number of floats) and it's RGB transformation
+	 *  @param tokenmap Maps Strings to their tokens.
+	 *  @exception ExceptRiCPPError
 	 */
 	CDeclaration(const char *parameterDeclstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap);
 	/** @brief Standard constructor for declarations CBaseRenderer::Declare().
-	 * Can throw a RIE_SYNTAX parsing error.
-	 * @param token The token (unique string, see CTokenMap) for the declaration name, must not represent an empty string.
-	 * @param declstr The declaration.
-	 * @param curColorDescr The current size of color (number of floats) and it's RGB transformation
-	 * @param isDefault A default declaration of the interface?
-	 * @exception ExceptRiCPPError
+	 *
+	 *  Can throw a RIE_SYNTAX parsing error.
+	 *
+	 *  @param token The token (unique string, see CTokenMap) for the declaration name, must not represent an empty string.
+	 *  @param declstr The declaration.
+	 *  @param curColorDescr The current size of color (number of floats) and it's RGB transformation
+	 *  @param tokenmap Maps Strings to their tokens.
+	 *  @param isDefault A default declaration of the interface?
+	 *  @exception ExceptRiCPPError
 	 */
 	CDeclaration(RtToken token, const char *declstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap, bool isDefault);
 	/** @brief Copy constructor for declaration with different color size
-	 * @param decl The CDeclaration instance to copy
-	 * @param newColorDescr The new current size of color (number of floats) and RGB transformation.
+	 *  @param decl The CDeclaration instance to copy
+	 *  @param newColorDescr The new current size of color (number of floats) and RGB transformation.
 	 */
 	CDeclaration(const CDeclaration &decl, const CColorDescr &newColorDescr);
 
 	/** @brief Copy constructor
-	 * @param decl The CDeclaration instance to copy.
+	 *  @param decl The CDeclaration instance to copy.
 	 */
 	CDeclaration(const CDeclaration &decl);
 
@@ -268,8 +272,8 @@ public:
 	 * @param vertices       Number of vertices (used by vertex class)
 	 * @param corners        Number of corners (used by varying class)
 	 * @param facets         Number of facets (used by uniform class)
-	 * @param facevertices   Number of vertices per face (used by facevertex class)
-	 * @param facecorners    Number of corners per face (used by facevarying class)
+	 * @param faceVertices   Number of vertices per face (used by facevertex class)
+	 * @param faceCorners    Number of corners per face (used by facevarying class)
 	 *
 	 * @return Number of elements of a parameter depending on storage class.
 	 */
@@ -297,7 +301,9 @@ public:
 
 	/** @brief Gets the inline declaration as string.
 	 *
-	 * <class> <type> ['[' size ']' name
+	 @verbatim
+	 <class> <type> ['[' size ']' name
+	 @endverbatim
 	 *
 	 *  @retval declaration Declaration as string.
 	 *  @return @a declaration.c_str()

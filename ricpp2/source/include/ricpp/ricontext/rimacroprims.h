@@ -27,7 +27,7 @@
 
 /** @file rimacroprims.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for primitives, \see rimacro.h
+ *  @brief The macro classes for primitives, @see rimacro.h
  */
 
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
@@ -45,7 +45,7 @@ namespace RiCPP {
  */
 class CRiPolygon : public CPolygonRManInterfaceCall {
 private:
-	RtInt m_nVertices; //!< Number of vertices of the polygon must match the number of positions "P".
+	RtInt m_nVertices; ///< Number of vertices of the polygon must match the number of positions "P".
 
 public:
 	/** @brief Gets name for the class.
@@ -189,13 +189,13 @@ public:
  */
 class CRiGeneralPolygon : public CPolygonRManInterfaceCall {
 private:
-	std::vector<RtInt> m_nVerts; //!< Number of verts per outline (Number of loops is the size of m_nVerts).
+	std::vector<RtInt> m_nVerts; ///< Number of verts per outline (Number of loops is the size of m_nVerts).
 	/** @brief enters the values.
 	 *
 	 *  @param theNLoops Number of loops
-	 *  @param theNVerts Number of vertices/loop, size of \a nverts vector is \a nloops.
+	 *  @param theNVerts Number of vertices/loop, size of @a nverts vector is @a nloops.
 	 */
-	void enterValues(RtInt theNLoops, const RtInt *theNVerts);
+	void enterValues(RtInt theNLoops, const RtInt theNVerts[]);
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -233,7 +233,7 @@ public:
 	 *  @param decl Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param theNLoops Number of loops
-	 *  @param theNVerts Number of vertices/loop, size of \a nverts vector is \a nloops.
+	 *  @param theNVerts Number of vertices/loop, size of @a nverts vector is @a nloops.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
 	 *  @param tokens Tokens of the request.
 	 *  @param params Parameter values of the request.
@@ -247,7 +247,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param theNLoops Number of loops
-	 *  @param theNVerts Number of vertices/loop, size of \a nverts vector is \a nloops.
+	 *  @param theNVerts Number of vertices/loop, size of @a nverts vector is @a nloops.
 	 *  @param theParameters Parsed parameter list.
 	 */
 	CRiGeneralPolygon(
@@ -288,7 +288,7 @@ public:
 
 	/** @brief Gets the number of vertices per loop.
 	 *
-	 *  @retrun The number of vertices (size is the number of loops).
+	 *  @return The number of vertices (size is the number of loops).
 	 */
 	inline const std::vector<RtInt> &nVerts() const
 	{
@@ -297,7 +297,7 @@ public:
 
 	/** @brief Gets the number of positions.
 	 *
-	 *  @retrun The number of positions.
+	 *  @return The number of positions.
 	 */
 	inline RtInt numPos() const
 	{
@@ -366,8 +366,8 @@ public:
  */
 class CRiPointsPolygons : public CPolygonRManInterfaceCall {
 private:
-	std::vector<RtInt> m_nVerts; //!< Number of vertices per polygon (size is the number of polygons).
-	std::vector<RtInt> m_verts;  //!< Indices of the vertices.
+	std::vector<RtInt> m_nVerts; ///< Number of vertices per polygon (size is the number of polygons).
+	std::vector<RtInt> m_verts;  ///< Indices of the vertices.
 
 	/** @brief enters the values.
 	 *
@@ -375,7 +375,7 @@ private:
 	 *  @param theNVerts Number of verts per polygon.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	void enterValues(RtInt theNPolys, const RtInt *theNVerts, const RtInt *theVerts);
+	void enterValues(RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[]);
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -470,7 +470,7 @@ public:
 
 	/** @brief Gets the numbers of the vertices.
 	 *
-	 *  @retrun The numbers of the vertices (size is the number of polygons).
+	 *  @return The numbers of the vertices (size is the number of polygons).
 	 */
 	inline const std::vector<RtInt> &nVerts() const
 	{
@@ -479,7 +479,7 @@ public:
 
 	/** @brief Gets the indices of the vertices.
 	 *
-	 *  @retrun The indizes of the vertices.
+	 *  @return The indizes of the vertices.
 	 */
 	inline const std::vector<RtInt> &verts() const
 	{
@@ -488,7 +488,7 @@ public:
 
 	/** @brief Gets the number of the positions.
 	 *
-	 *  @retrun The number of the positions.
+	 *  @return The number of the positions.
 	 */
 	inline RtInt numPos() const
 	{
@@ -570,9 +570,9 @@ public:
  */
 class CRiPointsGeneralPolygons : public CPolygonRManInterfaceCall {
 private:
-	std::vector<RtInt> m_nLoops; //!< Loops per polygon (Number of polygons is the size of the vector).
-	std::vector<RtInt> m_nVerts; //!< Vertices per loop.
-	std::vector<RtInt> m_verts;  //!< Vertex indices.
+	std::vector<RtInt> m_nLoops; ///< Loops per polygon (Number of polygons is the size of the vector).
+	std::vector<RtInt> m_nVerts; ///< Vertices per loop.
+	std::vector<RtInt> m_verts;  ///< Vertex indices.
 
 	/** @brief Enters the values.
 	 *
@@ -581,7 +581,7 @@ private:
 	 *  @param theNVerts Number of verts per loop.
 	 *  @param theVerts The vertex indices of the polygons.
 	 */
-	void enterValues(RtInt theNPolys, const RtInt *theNLoops, const RtInt *theNVerts, const RtInt *theVerts);
+	void enterValues(RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[]);
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -669,7 +669,7 @@ public:
 
 	/** @brief Gets the number of the positions.
 	 *
-	 *  @retrun The number of the positions.
+	 *  @return The number of the positions.
 	 */
 	inline RtInt numPos() const
 	{
@@ -798,7 +798,7 @@ public:
  */
 class CRiPatch : public CUVRManInterfaceCall {
 private:
-	RtToken m_type; //!< Type of the patch, either RI_BILINEAR or RI_BICUBIC (or RI_NULL if not set).
+	RtToken m_type; ///< Type of the patch, either RI_BILINEAR or RI_BICUBIC (or RI_NULL if not set).
 
 public:
 	/** @brief Gets name for the class.
@@ -898,7 +898,7 @@ public:
 
 	/** @brief Sets the type of the attribute as atomized string.
 	 *
-	 *  @param aName The type of the attribute as atomized string.
+	 *  @param aType The type of the attribute as atomized string.
 	 */
 	inline void type(RtToken aType)
 	{
@@ -943,13 +943,13 @@ public:
  */
 class CRiPatchMesh : public CUVRManInterfaceCall {
 private:
-	RtToken m_type,  //!< Type of the mesh either RI_BILINEAR or RI_BICUBIC.
-	        m_uwrap, //!< Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC.
-	        m_vwrap; //!< Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
-	RtInt   m_nu,    //!< Number of control points in parametric u direction.
-	        m_nv;    //!< Number of control points in parametric v direction.
-	RtInt   m_ustep, //!< Step m_ustep control points to the next patch in u direction (from the basis).
-	        m_vstep; //!< Step m_vstep control points to the next patch in v direction (from the basis).
+	RtToken m_type,  ///< Type of the mesh either RI_BILINEAR or RI_BICUBIC.
+	        m_uwrap, ///< Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC.
+	        m_vwrap; ///< Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
+	RtInt   m_nu,    ///< Number of control points in parametric u direction.
+	        m_nv;    ///< Number of control points in parametric v direction.
+	RtInt   m_ustep, ///< Step m_ustep control points to the next patch in u direction (from the basis).
+	        m_vstep; ///< Step m_vstep control points to the next patch in v direction (from the basis).
 
 public:
 	/** @brief Gets name for the class.
@@ -1172,17 +1172,17 @@ public:
  */
 class CRiNuPatch : public CGeometryRManInterfaceCall {
 private:
-	RtInt m_nu,     //!< Number of control points in parametric u direction.
-	      m_uorder, //!< Order of the polynomial basis for parameters u.
-	      m_nv,     //!< Number of control points in parametric v direction.
-	      m_vorder; //!< Order of the polynomial basis for parameters v.
-	std::vector<RtFloat> m_uknot, //!< Knot vector for the u parameters.
-	                     m_vknot; //!< Knot vector for the v parameters.
+	RtInt m_nu,     ///< Number of control points in parametric u direction.
+	      m_uorder, ///< Order of the polynomial basis for parameters u.
+	      m_nv,     ///< Number of control points in parametric v direction.
+	      m_vorder; ///< Order of the polynomial basis for parameters v.
+	std::vector<RtFloat> m_uknot, ///< Knot vector for the u parameters.
+	                     m_vknot; ///< Knot vector for the v parameters.
 
-	RtFloat m_umin, //!< Minimal value for parameter u.
-	        m_umax, //!< Maximal value for parameter u.
-	        m_vmin, //!< Minimal value for parameter v.
-	        m_vmax; //!< Maximal value for parameter v.
+	RtFloat m_umin, ///< Minimal value for parameter u.
+	        m_umax, ///< Maximal value for parameter u.
+	        m_vmin, ///< Minimal value for parameter v.
+	        m_vmax; ///< Maximal value for parameter v.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1468,15 +1468,15 @@ public:
  */
 class CRiSubdivisionMesh : public CGeometryRManInterfaceCall {
 private:
-	RtToken m_scheme;    //!< The scheme (currently RI_CATMULL_CLARK only).
-	RtInt   m_nvertices, //!< The number of vertices (maximum+1 of m_verts).
-	        m_nedges;    //!< Number of edges (eq. number of vertices) of the surface.
-	std::vector<RtInt>      m_nverts,  //!< Number of vertices for each face (size is the number of faces).
-	                        m_verts,   //!< Index for each vertex.
-	                        m_nargs,   //!< Number of integer and float args (integer, float) for each tag (size = 2*m_tags.size()).
-	                        m_intargs; //!< Integer arguments for tags.
-	std::vector<RtFloat>    m_floargs; //!< Float arguments for tags.
-	std::vector<RtToken>    m_tags;    //!< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
+	RtToken m_scheme;    ///< The scheme (currently RI_CATMULL_CLARK only).
+	RtInt   m_nvertices, ///< The number of vertices (maximum+1 of m_verts).
+	        m_nedges;    ///< Number of edges (eq. number of vertices) of the surface.
+	std::vector<RtInt>      m_nverts,  ///< Number of vertices for each face (size is the number of faces).
+	                        m_verts,   ///< Index for each vertex.
+	                        m_nargs,   ///< Number of integer and float args (integer, float) for each tag (size = 2*m_tags.size()).
+	                        m_intargs; ///< Integer arguments for tags.
+	std::vector<RtFloat>    m_floargs; ///< Float arguments for tags.
+	std::vector<RtToken>    m_tags;    ///< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
 
 public:
 	/** @brief Gets name for the class.
@@ -1538,6 +1538,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param decl     Dictonary with the current declarations.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1589,11 +1590,10 @@ public:
 	 *  @param aNArgs   Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
 	 *  @param aIntArgs Integer arguments for tags.
 	 *  @param aFloArgs Float arguments for tags.
-	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
 		CDeclarationDictionary *decl, 
-		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], RtInt const aVerts[],
+		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[]);
 
 	/** @brief Sets the values of the member variables.
@@ -1762,17 +1762,17 @@ public:
  */
 class CRiHierarchicalSubdivisionMesh : public CGeometryRManInterfaceCall {
 private:
-	RtToken m_scheme;    //!< The scheme (currently RI_CATMULL_CLARK only).
-	RtInt   m_nvertices, //!< The number of vertices (maximum+1 of m_verts).
-	        m_nedges;    //!< Number of edges (eq. number of vertices) of the surface.
-	std::vector<RtInt>       m_nverts,  //!< Number of vertices for each face (size is the number of faces).
-	                         m_verts,   //!< Index for each vertex.
-	                         m_nargs,   //!< Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
-	                         m_intargs; //!< Integer arguments for tags.
-	std::vector<RtFloat>     m_floargs; //!< Float arguments for tags.
-	std::vector<std::string> m_strargs; //!< String arguments for tags.
-	std::vector<RtToken>     m_strptrargs; //!< String arguments for tags.
-	std::vector<RtToken>     m_tags;    //!< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
+	RtToken m_scheme;    ///< The scheme (currently RI_CATMULL_CLARK only).
+	RtInt   m_nvertices, ///< The number of vertices (maximum+1 of m_verts).
+	        m_nedges;    ///< Number of edges (eq. number of vertices) of the surface.
+	std::vector<RtInt>       m_nverts,  ///< Number of vertices for each face (size is the number of faces).
+	                         m_verts,   ///< Index for each vertex.
+	                         m_nargs,   ///< Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
+	                         m_intargs; ///< Integer arguments for tags.
+	std::vector<RtFloat>     m_floargs; ///< Float arguments for tags.
+	std::vector<std::string> m_strargs; ///< String arguments for tags.
+	std::vector<RtToken>     m_strptrargs; ///< String arguments for tags.
+	std::vector<RtToken>     m_tags;    ///< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
 
 public:
 	/** @brief Gets name for the class.
@@ -2074,10 +2074,10 @@ public:
  */
 class CRiSphere : public CUVRManInterfaceCall {
 private:
-	RtFloat m_radius,   //!< Radius.
-	        m_zmin,     //!< Minimal z coordinate (cut pole).
-			m_zmax,     //!< Maximal z coordinate (cut pole).
-			m_thetamax; //!< Sweep angle.
+	RtFloat m_radius,   ///< Radius.
+	        m_zmin,     ///< Minimal z coordinate (cut pole).
+			m_zmax,     ///< Maximal z coordinate (cut pole).
+			m_thetamax; ///< Sweep angle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2141,8 +2141,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
 	 *  @param aRadius   Radius.
      *  @param aZMin     Minimal z coordinate (cut pole).
      *  @param aZMax     Maximal z coordinate (cut pole).
@@ -2320,9 +2318,9 @@ public:
  */
 class CRiCone : public CUVRManInterfaceCall {
 private:
-	RtFloat m_height,   //!< Height.
-	        m_radius,   //!< Radius.
-			m_thetamax; //!< Sweep angle.
+	RtFloat m_height,   ///< Height.
+	        m_radius,   ///< Radius.
+			m_thetamax; ///< Sweep angle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2383,8 +2381,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
 	 *  @param aHeight   Height.
 	 *  @param aRadius   Radius.
      *  @param aThetaMax Sweep angle.
@@ -2538,10 +2534,10 @@ public:
  */
 class CRiCylinder : public CUVRManInterfaceCall {
 private:
-	RtFloat m_radius,   //!< Radius.
-	        m_zmin,     //!< Minimal z coordiante.
-			m_zmax,     //!< Maximal z coordiante.
-			m_thetamax; //!< Sweep angle.
+	RtFloat m_radius,   ///< Radius.
+	        m_zmin,     ///< Minimal z coordiante.
+			m_zmax,     ///< Maximal z coordiante.
+			m_thetamax; ///< Sweep angle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2604,8 +2600,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
 	 *  @param aRadius   Radius.
      *  @param aZMin     Minimal z coordinate (cut pole).
      *  @param aZMax     Maximal z coordinate (cut pole).
@@ -2784,9 +2778,9 @@ public:
  */
 class CRiHyperboloid : public CUVRManInterfaceCall {
 private:
-	RtPoint m_point1,   //!< First point of the line to sweep to get a hyperbolid.
-	        m_point2;   //!< Second point of the line to sweep to get a hyperbolid.
-	RtFloat m_thetamax; //!< Sweep angle.
+	RtPoint m_point1,   ///< First point of the line to sweep to get a hyperbolid.
+	        m_point2;   ///< Second point of the line to sweep to get a hyperbolid.
+	RtFloat m_thetamax; ///< Sweep angle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -2849,8 +2843,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
 	 *  @param aPoint1   First point of the line to sweep to get a hyperbolid.
 	 *  @param aPoint2   Second point of the line to sweep to get a hyperbolid.
      *  @param aThetaMax Sweep angle.
@@ -3040,10 +3032,10 @@ public:
  */
 class CRiParaboloid : public CUVRManInterfaceCall {
 private:
-	RtFloat m_rmax,     //!< Maximal radius (on zmax).
-            m_zmin,     //!< Minimal z coordinate.
-            m_zmax,     //!< Maximal z coordinate.
-	        m_thetamax; //!< Sweep angle.
+	RtFloat m_rmax,     ///< Maximal radius (on zmax).
+            m_zmin,     ///< Minimal z coordinate.
+            m_zmax,     ///< Maximal z coordinate.
+	        m_thetamax; ///< Sweep angle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -3057,7 +3049,7 @@ public:
 	 *  The default constructor sets the size of the primitive to 0.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param aRadius   Radius.
+	 *  @param aRMax     Maximal radius.
      *  @param aZMin     Minimal z coordinate.
      *  @param aZMax     Maximal z coordinate.
      *  @param aThetaMax Sweep angle.
@@ -3075,7 +3067,7 @@ public:
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param decl      Dictonary with the current declarations.
 	 *  @param curColorDescr Current color descriptor.
-	 *  @param aRadius   Radius.
+	 *  @param aRMax     Maximal radius.
      *  @param aZMin     Minimal z coordinate.
      *  @param aZMax     Maximal z coordinate.
      *  @param aThetaMax Sweep angle.
@@ -3095,9 +3087,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
-	 *  @param aRadius   Radius.
+	 *  @param aRMax     Maximal radius.
      *  @param aZMin     Minimal z coordinate.
      *  @param aZMax     Maximal z coordinate.
      *  @param aThetaMax Sweep angle.
@@ -3146,7 +3136,7 @@ public:
 
 	/** @brief Gets the maximal radius of the paraboloid.
 	 *
-	 *  @param aRadius The maximal radius of the paraboloid.
+	 *  @param aRMax The maximal radius of the paraboloid.
 	 */
 	void rMax(RtFloat aRMax)
 	{
@@ -3274,9 +3264,9 @@ public:
  */
 class CRiDisk : public CUVRManInterfaceCall {
 private:
-	RtFloat m_height,   //!< Distance from disk to origin on positive z axis.
-	        m_radius,   //!< Radius.
-	        m_thetamax; //!< Sweep angle.
+	RtFloat m_height,   ///< Distance from disk to origin on positive z axis.
+	        m_radius,   ///< Radius.
+	        m_thetamax; ///< Sweep angle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -3337,8 +3327,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
 	 *  @param aHeight   Distance (z) from origin.
 	 *  @param aRadius   Radius.
      *  @param aThetaMax Sweep angle.
@@ -3494,11 +3482,11 @@ public:
  */
 class CRiTorus : public CUVRManInterfaceCall {
 private:
-	RtFloat m_majorrad, //!< Major radius (center of the ring).
-	        m_minorrad, //!< Minor radius.
-	        m_phimin,   //!< Start angle to sweep the torus body.
-	        m_phimax,   //!< End angle to sweep the torus body.
-	        m_thetamax; //!< Sweep angle.
+	RtFloat m_majorrad, ///< Major radius (center of the ring).
+	        m_minorrad, ///< Minor radius.
+	        m_phimin,   ///< Start angle to sweep the torus body.
+	        m_phimax,   ///< End angle to sweep the torus body.
+	        m_thetamax; ///< Sweep angle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -3566,8 +3554,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
 	 *  @param aMajorRad Major radius (center of the ring).
 	 *  @param aMinorRad Minor radius.
 	 *  @param aPhiMin   Start angle to sweep the torus body.
@@ -3655,7 +3641,7 @@ public:
 
 	/** @brief Sets the start angle to sweep the torus body.
 	 *
-	 *  @param aMinorRad Start angle to sweep the torus body.
+	 *  @param aPhiMin Start angle to sweep the torus body.
 	 */
 	inline virtual void phiMin(RtFloat aPhiMin)
 	{
@@ -3700,6 +3686,10 @@ public:
 
 	/** @brief Gets the member variables of a disk.
 	 *
+	 *  @retval aMajorRad Major radius (center of the ring).
+	 *  @retval aMinorRad Minor radius.
+	 *  @retval aPhiMin   Start angle to sweep the torus body.
+	 *  @retval aPhiMax   End angle to sweep the torus body.
      *  @retval aThetaMax Sweep angle.
 	 */
 	void get(RtFloat &aMajorRad, RtFloat &aMinorRad, RtFloat &aPhiMin, RtFloat &aPhiMax, RtFloat &aThetaMax) const
@@ -3713,6 +3703,10 @@ public:
 
 	/** @brief Sets the member variables of a disk.
 	 *
+	 *  @param aMajorRad Major radius (center of the ring).
+	 *  @param aMinorRad Minor radius.
+	 *  @param aPhiMin   Start angle to sweep the torus body.
+	 *  @param aPhiMax   End angle to sweep the torus body.
      *  @param aThetaMax Sweep angle.
 	 */
 	void set(RtFloat aMajorRad, RtFloat aMinorRad, RtFloat aPhiMin, RtFloat aPhiMax, RtFloat aThetaMax)
@@ -3761,7 +3755,7 @@ public:
  */
 class CRiPoints : public CGeometryRManInterfaceCall {
 private:
-	RtInt m_npts; //!< Number of points.
+	RtInt m_npts; ///< Number of points.
 
 public:
 	/** @brief Gets name for the class.
@@ -3817,8 +3811,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
      *  @param aNPts     Number of points.
 	 *  @param theParameters Parsed parameter list.
 	 */
@@ -3909,10 +3901,10 @@ public:
  */
 class CRiCurves : public CGeometryRManInterfaceCall {
 private:
-	RtToken m_type, //!< Type of the curve either RI_LINEAR or RI_CUBIC.
-	        m_wrap; //!< Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
-	RtInt   m_step; //!< Step to the next curve segment (by basis, v parameter)
-	std::vector<RtInt> m_nverts; //!< Number of vertices for each curve (size == number of curves)
+	RtToken m_type, ///< Type of the curve either RI_LINEAR or RI_CUBIC.
+	        m_wrap; ///< Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
+	RtInt   m_step; ///< Step to the next curve segment (by basis, v parameter)
+	std::vector<RtInt> m_nverts; ///< Number of vertices for each curve (size == number of curves)
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -3968,8 +3960,6 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl      Dictonary with the current declarations.
-	 *  @param curColorDescr Current color descriptor.
 	 *  @param aStep    Step to the next curve segment (by basis, v parameter)
 	 *  @param aType     Type of the curve either RI_LINEAR or RI_CUBIC.
 	 *  @param aNCurves  Number of curves
@@ -4126,11 +4116,11 @@ public:
  */
 class CRiBlobby : public CGeometryRManInterfaceCall {
 private:
-	RtInt                   m_nleaf;        //!< Number of primitive blobs, has to match the content of m_code.
-	std::vector<RtInt>      m_code;         //!< Code array, s.a. [RISPEC3.2] for the opcodes.
-	std::vector<RtFloat>    m_flt;          //!< The float operands for the code.
-	std::deque<std::string> m_strcontainer; //!< The string operants for the code.
-	std::vector<RtString>   m_str;          //!< C-String pointers of m_strcontainer.
+	RtInt                   m_nleaf;        ///< Number of primitive blobs, has to match the content of m_code.
+	std::vector<RtInt>      m_code;         ///< Code array, s.a. [RISPEC3.2] for the opcodes.
+	std::vector<RtFloat>    m_flt;          ///< The float operands for the code.
+	std::deque<std::string> m_strcontainer; ///< The string operants for the code.
+	std::vector<RtString>   m_str;          ///< C-String pointers of m_strcontainer.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -4466,7 +4456,7 @@ public:
  */
 class CRiGeometry : public CGeometryRManInterfaceCall {
 private:
-	RtToken m_name; //!< Name of the geometry as atomized string.
+	RtToken m_name; ///< Name of the geometry as atomized string.
 
 public:
 	/** @brief Gets name for the class.
@@ -4493,8 +4483,8 @@ public:
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param aName Name of the geometry as atomized string.
 	 */
-	inline CRiGeometry(long aLineNo = -1, RtToken name = RI_NULL)
-		: CGeometryRManInterfaceCall(aLineNo), m_name(name)
+	inline CRiGeometry(long aLineNo = -1, RtToken aName = RI_NULL)
+		: CGeometryRManInterfaceCall(aLineNo), m_name(aName)
 	{
 	}
 
@@ -4510,10 +4500,10 @@ public:
 	 */
 	inline CRiGeometry(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtToken name,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
 		: CGeometryRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params),
-		  m_name(name)
+		  m_name(aName)
 	{
 	}
 
@@ -4525,10 +4515,10 @@ public:
 	 */
 	inline CRiGeometry(
 		long aLineNo,
-		RtToken name,
+		RtToken aName,
 		const CParameterList &theParameters)
 		: CGeometryRManInterfaceCall(aLineNo, theParameters),
-		  m_name(name)
+		  m_name(aName)
 	{
 	}
 

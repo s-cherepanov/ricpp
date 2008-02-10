@@ -41,7 +41,7 @@ namespace RiCPP {
  */
 class CStringPattern {
 private:
-	std::string m_pattern; //!< The pattern used for matching
+	std::string m_pattern; ///< The pattern used for matching
 	
 	/** @brief Recursive matching.
 	 *

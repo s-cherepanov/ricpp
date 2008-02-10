@@ -27,7 +27,7 @@
 
 /** @file rimacroexternals.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The macro classes for externals (like textures), \see rimacro.h
+ *  @brief The macro classes for externals (like textures), @see rimacro.h
  */
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
 #include "ricpp/ricontext/rimacrobase.h"
@@ -44,13 +44,13 @@ namespace RiCPP {
  */
 class CRiMakeTexture : public CVarParamRManInterfaceCall {
 private:
-	std::string m_pic,         //!< File with the picture (input).
-	            m_tex;         //!< File with the texture (output, internal representation).
-	RtToken     m_swrap,       //!< Wrap type of the texture in direction s.
-	            m_twrap;       //!< Wrap type of the texture in direction t.
-	IFilterFunc *m_filterfunc; //!< Filter function.
-	RtFloat m_swidth,          //!< Width of influence of the pixel filer, direction s.
-	        m_twidth;          //!< Width of influence of the pixel filer, direction t.
+	std::string m_pic,         ///< File with the picture (input).
+	            m_tex;         ///< File with the texture (output, internal representation).
+	RtToken     m_swrap,       ///< Wrap type of the texture in direction s.
+	            m_twrap;       ///< Wrap type of the texture in direction t.
+	IFilterFunc *m_filterfunc; ///< Filter function.
+	RtFloat m_swidth,          ///< Width of influence of the pixel filer, direction s.
+	        m_twidth;          ///< Width of influence of the pixel filer, direction t.
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -90,7 +90,8 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo     The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict        Dictonary with the current declarations.
+	 *  @param decl        Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
 	 *  @param aPic        File with the picture (input).
 	 *  @param aTex        File with the texture (output, internal representation).
 	 *  @param aSWrap      Wrap type of the texture in direction s.
@@ -305,13 +306,13 @@ public:
  */
 class CRiMakeBump : public CVarParamRManInterfaceCall {
 private:
-	std::string m_pic,         //!< File with the picture (input).
-	            m_tex;         //!< File with the texture (output, internal representation).
-	RtToken     m_swrap,       //!< Wrap type of the texture in direction s.
-	            m_twrap;       //!< Wrap type of the texture in direction t.
-	IFilterFunc *m_filterfunc; //!< Filter function.
-	RtFloat m_swidth,          //!< Width of influence of the pixel filer, direction s.
-	        m_twidth;          //!< Width of influence of the pixel filer, direction t.
+	std::string m_pic,         ///< File with the picture (input).
+	            m_tex;         ///< File with the texture (output, internal representation).
+	RtToken     m_swrap,       ///< Wrap type of the texture in direction s.
+	            m_twrap;       ///< Wrap type of the texture in direction t.
+	IFilterFunc *m_filterfunc; ///< Filter function.
+	RtFloat m_swidth,          ///< Width of influence of the pixel filer, direction s.
+	        m_twidth;          ///< Width of influence of the pixel filer, direction t.
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -352,7 +353,8 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo     The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict        Dictonary with the current declarations.
+	 *  @param decl        Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
 	 *  @param aPic        File with the picture (input).
 	 *  @param aTex        File with the texture (output, internal representation).
 	 *  @param aSWrap      Wrap type of the texture in direction s.
@@ -569,11 +571,11 @@ public:
  */
 class CRiMakeLatLongEnvironment : public CVarParamRManInterfaceCall {
 private:
-	std::string m_pic,         //!< File with the picture (input).
-	            m_tex;         //!< File with the texture (output, internal representation).
-	IFilterFunc *m_filterfunc; //!< Filter function.
-	RtFloat m_swidth,          //!< Width of influence of the pixel filer, direction s.
-	        m_twidth;          //!< Width of influence of the pixel filer, direction t.
+	std::string m_pic,         ///< File with the picture (input).
+	            m_tex;         ///< File with the texture (output, internal representation).
+	IFilterFunc *m_filterfunc; ///< Filter function.
+	RtFloat m_swidth,          ///< Width of influence of the pixel filer, direction s.
+	        m_twidth;          ///< Width of influence of the pixel filer, direction t.
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -612,7 +614,8 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo     The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict        Dictonary with the current declarations.
+	 *  @param decl        Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
 	 *  @param aPic        File with the picture (input).
 	 *  @param aTex        File with the texture (output, internal representation).
 	 *  @param aFilterFunc Filter function.
@@ -681,8 +684,6 @@ public:
 	 *
 	 *  @param aPic        File with the picture (input).
 	 *  @param aTex        File with the texture (output, internal representation).
-	 *  @param aSWrap      Wrap type of the texture in direction s.
-	 *  @param aTWrap      Wrap type of the texture in direction t.
 	 *  @param aFilterFunc Filter function.
 	 *  @param aSWidth     Width of influence of the pixel filer, direction s.
 	 *  @param aTWidth     Width of influence of the pixel filer, direction t.
@@ -799,17 +800,17 @@ public:
  */
 class CRiMakeCubeFaceEnvironment : public CVarParamRManInterfaceCall {
 private:
-	std::string m_px,          //!< Texture of the cube face to positive x axis.
-	            m_nx,          //!< Texture of the cube face to negative x axis.
-				m_py,          //!< Texture of the cube face to positive y axis.
-				m_ny,          //!< Texture of the cube face to negative y axis.
-				m_pz,          //!< Texture of the cube face to positive z axis.
-				m_nz,          //!< Texture of the cube face to negative z axis.
-				m_tex;         //!< Wrap type of the texture in direction t.
-	RtFloat     m_fov;         //!< Field of view of the texture projection.
-	IFilterFunc *m_filterfunc; //!< Filter function.
-	RtFloat     m_swidth,      //!< Width of influence of the pixel filer, direction s.
-	            m_twidth;      //!< Width of influence of the pixel filer, direction t.
+	std::string m_px,          ///< Texture of the cube face to positive x axis.
+	            m_nx,          ///< Texture of the cube face to negative x axis.
+				m_py,          ///< Texture of the cube face to positive y axis.
+				m_ny,          ///< Texture of the cube face to negative y axis.
+				m_pz,          ///< Texture of the cube face to positive z axis.
+				m_nz,          ///< Texture of the cube face to negative z axis.
+				m_tex;         ///< Wrap type of the texture in direction t.
+	RtFloat     m_fov;         ///< Field of view of the texture projection.
+	IFilterFunc *m_filterfunc; ///< Filter function.
+	RtFloat     m_swidth,      ///< Width of influence of the pixel filer, direction s.
+	            m_twidth;      ///< Width of influence of the pixel filer, direction t.
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -848,7 +849,8 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo     The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict        Dictonary with the current declarations.
+	 *  @param decl        Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
 	 *  @param aPx         Texture of the cube face to positive x axis.
 	 *  @param aNx         Texture of the cube face to negative x axis.
 	 *  @param aPy         Texture of the cube face to positive y axis.
@@ -1119,8 +1121,8 @@ public:
  */
 class CRiMakeShadow : public CVarParamRManInterfaceCall {
 private:
-	std::string m_pic,         //!< File with the picture (input).
-	            m_tex;         //!< File with the texture (output, internal representation).
+	std::string m_pic,         ///< File with the picture (input).
+	            m_tex;         ///< File with the texture (output, internal representation).
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -1155,7 +1157,8 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo     The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict        Dictonary with the current declarations.
+	 *  @param decl        Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
 	 *  @param aPic        File with the picture (input).
 	 *  @param aTex        File with the texture (output, internal representation).
 	 *  @param n           Number of parameters (size of @a tokens, @a params).
@@ -1280,9 +1283,9 @@ public:
  */
 class CRiMakeBrickMap : public CVarParamRManInterfaceCall {
 private:
-	std::vector<std::string> m_ptcNames; //!< File with the pictures (input).
-	std::vector<RtString> m_ptcNamesPtr; //!< Pointers to the strings.
-	std::string m_BkMName;               //!< File with the texture (output, internal representation).
+	std::vector<std::string> m_ptcNames; ///< File with the pictures (input).
+	std::vector<RtString> m_ptcNamesPtr; ///< Pointers to the strings.
+	std::string m_BkMName;               ///< File with the texture (output, internal representation).
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -1317,7 +1320,8 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo     The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param dict        Dictonary with the current declarations.
+	 *  @param decl        Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
 	 *  @param theNNames   Number of point cloud file names
 	 *  @param thePtcNames Point cloud file names
 	 *  @param aBkMName    Brick map file name
@@ -1481,8 +1485,8 @@ public:
  */
 class CRiArchiveRecord : public CRManInterfaceCall {
 private:
-	RtToken     m_type; //!< Type of the archive record.
-	std::string m_line; //!< Text content of the archive record.
+	RtToken     m_type; ///< Type of the archive record.
+	std::string m_line; ///< Text content of the archive record.
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -1564,7 +1568,7 @@ public:
 
 	/** @brief Gets the text content of the archive record.
 	 *
-	 *  @retrun The text content of the archive record.
+	 *  @return The text content of the archive record.
 	 */
 	RtString line() const
 	{
@@ -1610,8 +1614,8 @@ public:
  */
 class CRiReadArchive : public CVarParamRManInterfaceCall {
 private:
-	std::string       m_filename; //!< Filename of the RIB archive.
-	IArchiveCallback *m_callback; //!< Optional callbback for archive records.
+	std::string       m_filename; ///< Filename of the RIB archive.
+	IArchiveCallback *m_callback; ///< Optional callbback for archive records.
 public:
 	/** @brief Gets the name for the class.
 	 *

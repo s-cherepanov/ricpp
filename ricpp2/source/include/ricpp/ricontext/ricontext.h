@@ -48,7 +48,7 @@ namespace RiCPP {
  * the context and the handle is managed by CContextCreator.
  */
 class IRiContext : public IRiRoot {
-	friend class CContextCreator; //!< A CContextCreator can activate and deactivate the context
+	friend class CContextCreator; ///< A CContextCreator can activate and deactivate the context
 
 protected:
 	/** @brief Activate the context
@@ -152,7 +152,7 @@ public:
 	 *
 	 * Is called at the begin() of the front end.
 	 *
-	 * @params cb Callback interface of the front end.
+	 * @param cb Callback interface of the front end.
 	 */
 	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb) = 0;
 }; // IRiContext

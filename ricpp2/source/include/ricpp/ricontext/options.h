@@ -106,74 +106,74 @@ namespace RiCPP {
 		typedef std::vector<CClippingPlane> TypeClippingPlanes;
 		typedef std::list<CDisplayDescr> TypeDisplays;
 	private:
-		// CViewPort m_curViewPort;      //!< Viewport data
+		// CViewPort m_curViewPort;      ///< Viewport data
 
-		CDisplayDescr::TypeDisplayChannels m_displayChannels; //!< Display channels can be as mode by display
-		TypeDisplays m_displays; //!< Current displays (CDisplayDescr), set by CRi::display()
+		CDisplayDescr::TypeDisplayChannels m_displayChannels; ///< Display channels can be as mode by display
+		TypeDisplays m_displays; ///< Current displays (CDisplayDescr), set by CRi::display()
 
-		std::map<RtToken, CQuantizer> m_quantizers; //!< Quantizer (def. "RGBA" and "z")
+		std::map<RtToken, CQuantizer> m_quantizers; ///< Quantizer (def. "RGBA" and "z")
 
-		TypeClippingPlanes m_clippingPlanes;   //!< Additional clipping planes
+		TypeClippingPlanes m_clippingPlanes;   ///< Additional clipping planes
 
-		bool    m_formatCalled;        //!< true, if CRi::format() has been called
-		RtInt	m_xResolution;		   //!< Horizontal Resolution of last CRi::display() call
-		RtInt	m_yResolution;		   //!< Vertical Resolution of last CRi::display() call
-		RtFloat	m_pixelAspectRatio;    //!< Pixel Aspect Ratio of last CRi::display() call
+		bool    m_formatCalled;        ///< true, if CRi::format() has been called
+		RtInt	m_xResolution;		   ///< Horizontal Resolution of last CRi::display() call
+		RtInt	m_yResolution;		   ///< Vertical Resolution of last CRi::display() call
+		RtFloat	m_pixelAspectRatio;    ///< Pixel Aspect Ratio of last CRi::display() call
 
-		bool m_frameAspectRatioCalled; //!< true, if CRi::frameAspectRatio() has been called
-		RtFloat m_frameAspectRatio;    //!< Frame Aspect Ratio, only valid if CRi::frameAspectRatio() called
+		bool m_frameAspectRatioCalled; ///< true, if CRi::frameAspectRatio() has been called
+		RtFloat m_frameAspectRatio;    ///< Frame Aspect Ratio, only valid if CRi::frameAspectRatio() called
 
-		bool m_screenWindowCalled;     //!< true, if CRi::screenWindow() has been called
-		RtFloat m_screenWindowLeft;    //!< Screen coordinates, left edge, only valid if CRi::screenWindow() called
-		RtFloat m_screenWindowRight;   //!< Screen coordinates, right edge, only valid if CRi::screenWindow() called
-		RtFloat m_screenWindowBottom;  //!< Screen coordinates, bottom edge, only valid if CRi::screenWindow() called
-		RtFloat m_screenWindowTop;     //!< Screen coordinates, top edge, only valid if CRi::screenWindow() called
+		bool m_screenWindowCalled;     ///< true, if CRi::screenWindow() has been called
+		RtFloat m_screenWindowLeft;    ///< Screen coordinates, left edge, only valid if CRi::screenWindow() called
+		RtFloat m_screenWindowRight;   ///< Screen coordinates, right edge, only valid if CRi::screenWindow() called
+		RtFloat m_screenWindowBottom;  ///< Screen coordinates, bottom edge, only valid if CRi::screenWindow() called
+		RtFloat m_screenWindowTop;     ///< Screen coordinates, top edge, only valid if CRi::screenWindow() called
 
-		bool m_cropWindowCalled;    //!< true, if CRi::cropWindow() has been called
-		RtFloat m_cropWindowLeft;   //!< Crop Window (NDC), left edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
-		RtFloat m_cropWindowRight;  //!< Crop Window (NDC), right edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
-		RtFloat m_cropWindowBottom; //!< Crop Window (NDC), bottom edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
-		RtFloat m_cropWindowTop;    //!< Crop Window (NDC), top edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
+		bool m_cropWindowCalled;    ///< true, if CRi::cropWindow() has been called
+		RtFloat m_cropWindowLeft;   ///< Crop Window (NDC), left edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
+		RtFloat m_cropWindowRight;  ///< Crop Window (NDC), right edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
+		RtFloat m_cropWindowBottom; ///< Crop Window (NDC), bottom edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
+		RtFloat m_cropWindowTop;    ///< Crop Window (NDC), top edge, only valid if CRi::cropWindow() called (otherwise whol raster window is rendered)
 
-		bool m_projectionCalled;           //!< CRi::projection() is called
-		RtToken m_projectionName;          //!< Projection type, default "orthographic"
-		CParameterList m_projectionParams; //!< Projection parameters
-		RtBoolean m_FOVSet;                //!< RI_FOV is set in CRi::projection("perspective");
-		RtFloat m_FOV;                     //!< Field of View (perspective projection), default is 90.0 (degrees)
+		bool m_projectionCalled;           ///< CRi::projection() is called
+		RtToken m_projectionName;          ///< Projection type, default "orthographic"
+		CParameterList m_projectionParams; ///< Projection parameters
+		RtBoolean m_FOVSet;                ///< RI_FOV is set in CRi::projection("perspective");
+		RtFloat m_FOV;                     ///< Field of View (perspective projection), default is 90.0 (degrees)
 
-		bool m_nearFarSet;          //!< Near and far clipping plane are set
-		RtFloat m_nearClip;         //!< Near Clipping plane, default is epsilon
-		RtFloat m_farClip;          //!< Far Clipping plane, default is infinity
+		bool m_nearFarSet;          ///< Near and far clipping plane are set
+		RtFloat m_nearClip;         ///< Near Clipping plane, default is epsilon
+		RtFloat m_farClip;          ///< Far Clipping plane, default is infinity
 
-		bool m_depthOfFieldCalled;  //!< CRi::depthOfField() has been called
-		RtFloat	m_fstop;			//!< f-Stop (aperture number) for depth of field
-		RtFloat	m_focalLength;      //!< focal length for DOF
-		RtFloat	m_focalDistance;    //!< focal distance for DOF
+		bool m_depthOfFieldCalled;  ///< CRi::depthOfField() has been called
+		RtFloat	m_fstop;			///< f-Stop (aperture number) for depth of field
+		RtFloat	m_focalLength;      ///< focal length for DOF
+		RtFloat	m_focalDistance;    ///< focal distance for DOF
 
-		RtFloat	m_shutterOpen;      //!< Shutter open, motion blur, default 0
-		RtFloat	m_shutterClose;     //!< Shutter close, motion blur, default 0
+		RtFloat	m_shutterOpen;      ///< Shutter open, motion blur, default 0
+		RtFloat	m_shutterClose;     ///< Shutter close, motion blur, default 0
 
-		bool m_pixelVarianceCalled;	//!< CRi::pixelVariance() has been called
-		RtFloat m_pixelVariance;	//!< Accepted astimated variance of the pixel values from the true pixel values (no default)
+		bool m_pixelVarianceCalled;	///< CRi::pixelVariance() has been called
+		RtFloat m_pixelVariance;	///< Accepted astimated variance of the pixel values from the true pixel values (no default)
 
-		RtFloat m_xSamples,         //!< sampling rate in horizontal direction 2
-				m_ySamples;         //!< sampling rate in vertical direction 2
+		RtFloat m_xSamples,         ///< sampling rate in horizontal direction 2
+				m_ySamples;         ///< sampling rate in vertical direction 2
 
-		IFilterFunc *m_filterFunc;  //!< Default filter func for CRi::pixelFilter(), default CGaussianFilter
-		RtFloat m_xWidth,           //!< X-width of the filter in pixels, default 2
-				m_yWidth;           //!< Y-width of the filter in pixels, default 2
+		IFilterFunc *m_filterFunc;  ///< Default filter func for CRi::pixelFilter(), default CGaussianFilter
+		RtFloat m_xWidth,           ///< X-width of the filter in pixels, default 2
+				m_yWidth;           ///< Y-width of the filter in pixels, default 2
 
-		RtToken m_imagerName;          //!< Name of Imager Shader, default RI_NULL
-		CParameterList m_imagerParams; //!< Imager Shader, default no params
+		RtToken m_imagerName;          ///< Name of Imager Shader, default RI_NULL
+		CParameterList m_imagerParams; ///< Imager Shader, default no params
 
-		bool m_exposureCalled;		//!< CRi::exposure() has been called
-		RtFloat m_gain,             //!< Exposure (gain) color = (color*gain)**(1/gamma), default 1.0
-				m_gamma;            //!< Exposure (gamma) color = (color*gain)**(1/gamma), default 1.0
+		bool m_exposureCalled;		///< CRi::exposure() has been called
+		RtFloat m_gain,             ///< Exposure (gain) color = (color*gain)**(1/gamma), default 1.0
+				m_gamma;            ///< Exposure (gamma) color = (color*gain)**(1/gamma), default 1.0
 
-		RtToken m_hiderType;          //!< Type of the hidden surface algorithm
-		CParameterList m_hiderParams; //!< Hidden surface algorithm, default "hidden" (others are "null" and "paint")
+		RtToken m_hiderType;          ///< Type of the hidden surface algorithm
+		CParameterList m_hiderParams; ///< Hidden surface algorithm, default "hidden" (others are "null" and "paint")
 
-		RtFloat m_relativeDetail;   //!< Sets the relative Detail, default 1.0
+		RtFloat m_relativeDetail;   ///< Sets the relative Detail, default 1.0
 
 		void init();
 

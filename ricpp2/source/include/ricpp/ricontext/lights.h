@@ -46,11 +46,11 @@ namespace RiCPP {
  *  A rendering context stores all lights in a CLights instance.
  */
 class CLightSource {
-	bool m_isIlluminated;            //!< true, if the light source is on
-	bool m_isGlobalLight;            //!< true, if the light source is created outside a world block
-	bool m_isAreaLight;              //!< true, if the light source is created via TRi::AreaLightSource()
+	bool m_isIlluminated;            ///< true, if the light source is on
+	bool m_isGlobalLight;            ///< true, if the light source is created outside a world block
+	bool m_isAreaLight;              ///< true, if the light source is created via TRi::AreaLightSource()
 
-	CNamedParameterList m_lightParameters; //!< Parameter list of the light source, contains the name of the light source
+	CNamedParameterList m_lightParameters; ///< Parameter list of the light source, contains the name of the light source
 	RtLightHandle m_handle;
 	
 public:
@@ -63,7 +63,7 @@ public:
 	}
 
 	//! Copy constructor (deep copy)
-	/*! \param light The light to copy from
+	/*! @param light The light to copy from
 	 */
 	CLightSource(const CLightSource &light);
 
@@ -71,26 +71,26 @@ public:
 	~CLightSource();
 
 	//! Returns a copy of 'this'
-	/*! \return Deep copy of the instance the member function is called for.
-	 *  \exception TSystemException If there is not enough memory
+	/*! @return Deep copy of the instance the member function is called for.
+	 *  @exception TSystemException If there is not enough memory
 	 */
 	CLightSource &duplicate() const;
 
 	//! Assignment (deep copy)
-	/*! \param light The light to copy from
+	/*! @param light The light to copy from
 	 */
 	CLightSource &operator=(const CLightSource &light);
 
 	//! Fills the parameters of a TRi::LightSource() or TRi::AreaLightSource()
-	/*! \param dict Current declaration dictionary
-	 *  \param colorComps Components of a color value
-	 *  \param isIluminated true, if light source is on (illuminated), \sa m_isIlluminated
-	 *  \param isGlobal true, if a global light source, \sa m_isGlobalLight
-	 *  \param isArea true, if an area light source, \sa m_isAreaLight
-	 *  \param name Name of the light source, e.g. TRi::RI_POINCLightSource
-	 *  \param n Number of token-value pairs (size of tokens and params)
-	 *  \param tokens The tokens of the token-value pairs
-	 *  \param params The values of the token-value pairs
+	/*! @param dict Current declaration dictionary.
+	 *  @param colorDescr Current color descriptor.
+	 *  @param isIlluminated true, if light source is on (illuminated), @see m_isIlluminated
+	 *  @param isGlobal true, if a global light source, @see m_isGlobalLight
+	 *  @param isArea true, if an area light source, @see m_isAreaLight
+	 *  @param name Name of the light source, e.g. TRi::RI_POINCLightSource
+	 *  @param n Number of token-value pairs (size of tokens and params)
+	 *  @param tokens The tokens of the token-value pairs
+	 *  @param params The values of the token-value pairs
      */
 	void lightSource(
 		CDeclarationDictionary &dict, const CColorDescr &colorDescr,
@@ -104,12 +104,12 @@ public:
 		const CParameterList &params);
 
 	//! Access the parameter list
-	/* \return A reference to the parameter list of the light source
+	/* @return A reference to the parameter list of the light source
 	 */
 	inline const CNamedParameterList &lightParameters() const { return m_lightParameters; }
 
 	//! Access the parameter list
-	/* \return A reference to the parameter list of the light source (writeable)
+	/* @return A reference to the parameter list of the light source (writeable)
 	 */
 	inline CNamedParameterList &lightParametersWriteable() { return m_lightParameters; }
 
@@ -120,22 +120,22 @@ public:
 	inline void illuminated(bool isIlluminated) { m_isIlluminated = isIlluminated; }
 
 	//! A global light source?
-	/* \return true if a global source is stored by this instance
+	/* @return true if a global source is stored by this instance
 	 */
 	inline bool globalLight() const { return m_isGlobalLight; }
 
 	//! Change the global light source flag.
-	/* \param isGlobal The new global light source flag
+	/* @param isGlobal The new global light source flag
 	 */
 	inline void globalLight(bool isGlobal) { m_isGlobalLight = isGlobal; }
 
 	//! An area light source?
-	/* \return true if the light source is created via TRi::AreaLightSource()
+	/* @return true if the light source is created via TRi::AreaLightSource()
 	 */
 	inline bool areaLight() const { return m_isAreaLight; }
 
 	//! Change the area light source flag.
-	/* \param isArea The new area light source flag
+	/* @param isArea The new area light source flag
 	 */
 	inline void areaLight(bool isArea) { m_isAreaLight = isArea; }
 
@@ -209,9 +209,9 @@ private:
 	std::vector<unsigned long> m_lightMarks;
 	/** @brief Transforms a handle to an index for m_lights, throws if out of range.
 	 *
-	 * @param handle \a handle can be negative (indirection) or postive (Light handle)
+	 * @param handle @a handle can be negative (indirection) or postive (Light handle)
 	 * @return Index for m_lights
-	 * @except ExceptRiCPPError Out of range
+	 * @exception ExceptRiCPPError Out of range
 	 */
 	TypeLightContainer::size_type handleToLightIndex(RtLightHandle handle) const;
 

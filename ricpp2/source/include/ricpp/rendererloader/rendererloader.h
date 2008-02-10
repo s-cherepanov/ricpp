@@ -54,7 +54,7 @@ protected:
 	 * The null string stands for the standard renderer
 	 *
 	 * @param name
-	 * @return The renderer name for \a name
+	 * @return The renderer name for @a name
 	 */
 	virtual const char *rendererName(RtString name) const;
 	
@@ -92,7 +92,7 @@ public:
 	 *
 	 *  Registers a plugin factory for a specific name. Normally
 	 *  TemplPluginFactory are registered to create specific plugins with
-	 *  \c new instead of loading them from a dynamic library.
+	 *  @c new instead of loading them from a dynamic library.
 	 *
 	 * @param name Name of the plugins
 	 * @param f Factory to create the plugins

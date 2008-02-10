@@ -69,9 +69,9 @@ _T tmax(
 
 
 //! Returns the minimum of two elements
-/*! \param a First element
- *  \param b Second element
- *  \return Minimum of a and b
+/*! @param a First element
+ *  @param b Second element
+ *  @return Minimum of a and b
  */
 template<class _T>
 _T tmin(
@@ -83,9 +83,9 @@ _T tmin(
 
 
 //! Returns the minimum of a vector
-/*! \param n The index type of the vector
- *  \param v The vector
- *  \return Minimum found in v
+/*! @param n The index type of the vector
+ *  @param v The vector
+ *  @return Minimum found in v
  */
 template<typename _IT, typename _T>
 _T tmin(

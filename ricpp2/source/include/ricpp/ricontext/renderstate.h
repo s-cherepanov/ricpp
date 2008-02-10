@@ -135,7 +135,7 @@ class CRenderState {
 	 */
 	std::vector<bool> m_recordModes;
 
-	CUri m_baseUri;           //!< Base URI for current RIB archive file
+	CUri m_baseUri;           ///< Base URI for current RIB archive file
 
 	/* @brief Factory for macro interfaces (not used)
 	 */
@@ -149,27 +149,27 @@ class CRenderState {
 	 */
 	CRiMacro *m_curReplay;
 
-	TemplHandleStack<CRiObjectMacro> m_objectMacros;   //!< Stack of all object macros (objectBegin/End)
-	TemplHandleStack<CRiArchiveMacro> m_archiveMacros; //!< Stack of all archive macros (archiveBegin/End or cached rib)
+	TemplHandleStack<CRiObjectMacro> m_objectMacros;   ///< Stack of all object macros (objectBegin/End)
+	TemplHandleStack<CRiArchiveMacro> m_archiveMacros; ///< Stack of all archive macros (archiveBegin/End or cached rib)
 	
-	std::vector<CRiMacro *> m_macros; //!< Vector with pointer to all macros (m_objectMacros and m_archiveMacros)
+	std::vector<CRiMacro *> m_macros; ///< Vector with pointer to all macros (m_objectMacros and m_archiveMacros)
 
-	std::vector<bool> m_conditions; //!< Stack of m_executeConditional and m_ifCondition for nested ifs.
-	bool m_executeConditional;      //!< Render (true outside if-else-blocks, conditional inside the blocks).
-	bool m_accumulateConditional;   //!< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
-	bool m_ifCondition;             //!< true, if an if or elseif condition was true;
+	std::vector<bool> m_conditions; ///< Stack of m_executeConditional and m_ifCondition for nested ifs.
+	bool m_executeConditional;      ///< Render (true outside if-else-blocks, conditional inside the blocks).
+	bool m_accumulateConditional;   ///< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
+	bool m_ifCondition;             ///< true, if an if or elseif condition was true;
 
-	void pushOptions();    //!< Pushes the current options set.
-	bool popOptions();     //!< Pops an options set, restores the set to the last condition.
+	void pushOptions();    ///< Pushes the current options set.
+	bool popOptions();     ///< Pops an options set, restores the set to the last condition.
 
-	void pushAttributes(); //!< Pushes the current attributes set.
-	bool popAttributes();  //!< Pops an attributes set, restores the set to the last condition.
+	void pushAttributes(); ///< Pushes the current attributes set.
+	bool popAttributes();  ///< Pops an attributes set, restores the set to the last condition.
 
-	void pushTransform();   //!< Pushes the current transformation matrix and is inverse.
-	bool popTransform();    //!< Pops the current transformation matrices, restores the matrices to the last condition.
+	void pushTransform();   ///< Pushes the current transformation matrix and is inverse.
+	bool popTransform();    ///< Pops the current transformation matrices, restores the matrices to the last condition.
 	
-	void pushConditional(); //!< Pushes conditionals within nested if-then-else blocks
-	void popConditional();  //!< Restores the last state of the conditionals
+	void pushConditional(); ///< Pushes conditionals within nested if-then-else blocks
+	void popConditional();  ///< Restores the last state of the conditionals
 
 	bool varsplit(RtString identifier, RtToken *namespaceQual, RtToken *varname, RtToken *valuename) const;
 	bool getAttribute(CValue &p, RtToken varname, RtToken valuename) const;
@@ -300,7 +300,7 @@ class CRenderState {
 		/** @brief Characters possible for identifiers.
 		*
 		* Characters that are allowed but have no special purpose.
-		* If found, the character is appended to \a result and is returned.
+		* If found, the character is appended to @a result and is returned.
 		*
 		@verbatim
 		idchar = '_' | alphanum
@@ -332,6 +332,7 @@ class CRenderState {
 		* @param str Address of a character pointer to the
 		* input string (address of input pointer).
 		* @retval result String to store the characters matched.
+		* @retval d Returns 1 if character was positive, -1 if negative, 0 if no sign character was found.
 		* @return 0 or the character that matches.
 		*/
 		inline unsigned char sign_char(
@@ -349,6 +350,7 @@ class CRenderState {
 				return '-';
 			}
 
+			d = 0;
 			return 0;
 		}
 
@@ -564,8 +566,12 @@ public:
 	 * Rendering is not possible (context should be aborted)
 	 * in the case that the state cannot be fully initialized.
 	 *
-	 *  @param aModeStack A reference to a valid mode stack
-	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory while filling map).
+	 *  @param aModeStack A reference to a valid mode stack.
+	 *  @param optionsFactory References a factory to create options containers.
+	 *  @param attributesFactory References a factory to create attributes containers.
+	 *  @param lightSourceFactory References a factory to create light source objects.
+	 *  @param filterFuncFactory References a factory to create filter functions.
+	 *  @exception ExceptRiCPPError If the token cannot be created (out of memory while filling map).
 	 */
 	CRenderState(
 		CModeStack &aModeStack,

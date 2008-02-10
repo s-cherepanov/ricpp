@@ -27,7 +27,7 @@
 
 /** @file rimacrobase.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief The base classes for macro processing, \see rimacro.h
+ *  @brief The base classes for macro processing, @see rimacro.h
  */
 #ifndef _RICPP_RICONTEXT_DORENDER_H
 #include "ricpp/ricontext/dorender.h"
@@ -44,7 +44,7 @@ namespace RiCPP {
  */
 class CRManInterfaceCall {
 private:
-	long m_lineNo; //!< Place to store the line number of a call in a RIB file, -1 if there is no line number.
+	long m_lineNo; ///< Place to store the line number of a call in a RIB file, -1 if there is no line number.
 
 public:
 	/** @brief Gets name for the class.
@@ -234,7 +234,7 @@ public:
  */
 class CVarParamRManInterfaceCall : public CRManInterfaceCall {
 private:
-	CParameterList m_parameters;             //!< Parameters of an interface call.
+	CParameterList m_parameters;             ///< Parameters of an interface call.
 
 public:
 	/** @brief Gets name for the class.
@@ -285,7 +285,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param dict Dictonary with the current declarations.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -306,7 +306,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param parameters Parsed parameter list.
+	 * @param theParameters Parsed parameter list.
 	 */
 	inline CVarParamRManInterfaceCall(
 		long aLineNo,
@@ -389,7 +389,7 @@ public:
 
 	/** @brief Fills the parameter list.
 	 *
-	 *  @param dict Dictonary with the current declarations.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -407,7 +407,7 @@ public:
 	
 	/** @brief Fills the parameter list.
 	 *
-	 *  @param parameters Parsed parameter list.
+	 *  @param theParameters Parsed parameter list.
 	 */
 	inline void parameters(const CParameterList &theParameters)
 	{
@@ -479,7 +479,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param dict Dictonary with the current declarations.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -499,7 +499,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param parameters Parsed parameter list.
+	 * @param theParameters Parsed parameter list.
 	 */
 	inline CGeometryRManInterfaceCall(
 		long aLineNo,
@@ -594,7 +594,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param dict Dictonary with the current declarations.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -614,7 +614,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param parameters Parsed parameter list.
+	 * @param theParameters Parsed parameter list.
 	 */
 	inline CUVRManInterfaceCall(
 		long aLineNo,
@@ -709,7 +709,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo The line number to store.
-	 *  @param dict Dictonary with the current declarations.
+	 *  @param decl Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
 	 *  @param curColorDescr Current color descriptor.
 	 *  @param n Number of parameters (size of @a tokens, @a params).
@@ -729,7 +729,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param parameters Parsed parameter list.
+	 * @param theParameters Parsed parameter list.
 	 */
 	inline CPolygonRManInterfaceCall(
 		long aLineNo,

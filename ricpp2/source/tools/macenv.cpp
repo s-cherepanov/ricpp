@@ -79,7 +79,7 @@ std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
 std::string &CEnv::getTmp(std::string &tmp)
 {
 	tmp = "";
-	if ( get(tmp, "TMP").empty() ) {
+	if ( get(tmp, "TMP", true).empty() ) {
 		get(tmp, "HOME", true);
 		
 		std::string path = tmp;

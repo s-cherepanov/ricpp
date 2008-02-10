@@ -162,7 +162,7 @@ public:
 	 *
 	 *  The format is "Error [number:description] Severity [number:description] formated error message",
 	 *  File and message parts are optional.
-	 *  @retVal strCode The error is formatted to this string
+	 *  @retval strCode The error is formatted to this string
 	 *  @return strCode.c_str()
 	 */
 	const char *formatError(std::string &strCode) const;
@@ -171,7 +171,7 @@ public:
 	 *
 	 *  The format is "File [<line>: <file>] - <message>" if file and massege are set,
 	 *  it can missing the file info, message or can be empty.
-	 *  @retVal strCode The error is formatted to this string
+	 *  @retval strCode The error is formatted to this string
 	 *  @return strCode.c_str()
 	 */
 	const char *formatErrorMessage(std::string &strCode) const;

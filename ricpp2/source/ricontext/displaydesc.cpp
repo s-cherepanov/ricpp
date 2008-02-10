@@ -121,9 +121,6 @@ CDisplayDescr::CDisplayDescr()
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-/*! @param tdd instance to copy from
- */
 CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd) {
 	m_type = RI_NULL;
 	m_mode = RI_NULL;
@@ -132,10 +129,6 @@ CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd) {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-/*! @param dd instance to assign from
- *  @return A reference of '*this"
- */
 CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd) {
 	if ( &dd == this )
 		return *this;
@@ -189,20 +182,6 @@ void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, 
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/*! Fills a CDisplayDescr instance with a display description given in
- *  a TRi::displayV() call
- *
- *  @param dict       Current declarations
- *  @param curColorSize Number of components per color
- *  @param aName      Token with name of the
- *  @param aType      Token with type of the display
- *  @param aMode      Token with the display mode
- *  @param n          Number of additional parameters
- *  @param tokens     Tokens of the additional parameters
- *  @param params     Values of the parameters
- *  @return false if parameters could not be parsed, true if ok
- */
 void CDisplayDescr::displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]) {
 	set(CValueCounts(), dict, colorDescr, aName, n, tokens, params);
 	display(channels, aName, aType, aMode);

@@ -2188,10 +2188,10 @@ public:
 
 	/** @brief Gets the detail range.
 	 *
-	 *  @retVal aMinVis,  ///< Minimal detail value at which the primitives are visible (rendered)
-	 *  @retVal aLowTran, ///< Detail value at which the primitives becomes visible (rendered)
-	 *  @retVal anUpTran, ///< Detail value at which the primitives becomes invisible (not rendered)
-	 *  @retVal aMaxVis;  ///< Maximal detail value at which the primitives are visible (rendered)
+	 *  @retval aMinVis,  ///< Minimal detail value at which the primitives are visible (rendered)
+	 *  @retval aLowTran, ///< Detail value at which the primitives becomes visible (rendered)
+	 *  @retval anUpTran, ///< Detail value at which the primitives becomes invisible (not rendered)
+	 *  @retval aMaxVis;  ///< Maximal detail value at which the primitives are visible (rendered)
 	 */
 	inline void get(
 		RtFloat &aMinVis,

@@ -141,7 +141,7 @@ namespace RiCPP {
 		 *  other variables or different for different OSes).
 		 *  If no variable @a varName has been found, var is cleared.
 		 *
-		 *  @retVal var Value of the environment variable is stored here
+		 *  @retval var Value of the environment variable is stored here
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign).
 		 *  @return A reference to @a var, the value of the variable.

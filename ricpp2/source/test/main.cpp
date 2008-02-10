@@ -392,9 +392,8 @@ void testGlob()
 
 void sometests(CRiCPPBridge ri)
 {
-//	std::cout << "Hello, World!" << std::endl;
+	std::cout << "Hello, World!" << std::endl;
 
-#if 0
 	CBackBufferProtocolHandlers globalFactory;
 	testURI();
 	testStream(globalFactory);
@@ -506,7 +505,6 @@ void sometests(CRiCPPBridge ri)
 	ri.begin("ribwriter");
 //	ri.readArchive("../../../../ribsamples/hermite.rib", 0, RI_NULL);
 	ri.end();
-#endif
 
 	std::cout << "Good bye, World!" << std::endl;
 }
@@ -533,7 +531,11 @@ int main(int argc, char * const argv[])
 	RtInt no = 0;
 	RtInt special = -1;
 
-	ri.control("ribwriter", "skip-header", &special, RI_NULL);
+	ri.control("ribwriter", "skip-headers", &special, RI_NULL);
+	// ri.control("ribwriter", "postpone-inline-archives", &no, RI_NULL);
+	// ri.control("ribwriter", "postpone-objects", &no, RI_NULL);
+	// ri.control("ribwriter", "postpone-procedurals", &no, RI_NULL);
+	ri.control("base-renderer", "cache-file-archives", &yes, RI_NULL);
 
 	/*
 	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB-Structure 1.1");

@@ -270,12 +270,18 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 	return !renderState()->reject();
 }
 
+
+void CBaseRenderer::recordRequest(CRManInterfaceCall &aRequest)
+{
+	renderState()->curMacro()->add(aRequest.duplicate());
+}
+
 void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest, bool immediately)
 {
 	aRequest.preProcess(*this);
 
 	if ( !immediately && renderState()->curMacro() ) {
-		renderState()->curMacro()->add(aRequest.duplicate());
+		recordRequest(aRequest);
 	}
 	
 	if ( immediately || (!renderState()->recordMode() && renderState()->executeConditionial()) ) {
@@ -287,12 +293,32 @@ void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest, bool immediatel
 
 void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb)
 {
-	renderState()->lineNo(aRequest.lineNo());
-	aRequest.preProcess(*this, cb);
-	if ( !renderState()->recordMode() && renderState()->executeConditionial() ) {
-		aRequest.doProcess(*this, cb);
+	try {
+		renderState()->lineNo(aRequest.lineNo());
+		aRequest.preProcess(*this, cb);
+		if ( !renderState()->recordMode() && renderState()->executeConditionial() ) {
+			aRequest.doProcess(*this, cb);
+		}
+		aRequest.postProcess(*this, cb);
+	} catch ( ExceptRiCPPError &e2 ) {
+		if ( m_parserCallback ) {
+			m_parserCallback->ricppErrHandler().handleError(e2);
+		} else {
+			ricppErrHandler().handleError(e2);
+		}
+	} catch ( std::exception &e1 ) {
+		if ( m_parserCallback ) {
+			m_parserCallback->ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'frameBegin': %s", e1.what());
+		} else {
+			ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'frameBegin': %s", e1.what());
+		}
+	} catch ( ... ) {
+		if ( m_parserCallback ) {
+			m_parserCallback->ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'frameBegin'");
+		} else {
+			ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'frameBegin'");
+		}
 	}
-	aRequest.postProcess(*this, cb);
 }
 
 
@@ -2084,7 +2110,7 @@ RtVoid CBaseRenderer::doControl(RtToken name, const CParameterList &params)
 	}
 }
 
-RtVoid CBaseRenderer::controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	EnumRequests req = REQ_CONTROL;
 	try {
@@ -2668,6 +2694,7 @@ RtVoid CBaseRenderer::shadingInterpolation(RtToken type)
 		if ( !preCheck(req) )
 			return;
 
+		type = renderState()->tokFindCreate(type);
 		CRiShadingInterpolation r(renderState()->lineNo(), type);
 		processRequest(r);
 
@@ -3935,7 +3962,7 @@ RtVoid CBaseRenderer::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvert
 
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
 
-		CRiSubdivisionMesh r(renderState()->lineNo(), &renderState()->dict(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, renderState()->curParamList());
+		CRiSubdivisionMesh r(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, renderState()->curParamList());
 		processRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
@@ -3977,7 +4004,7 @@ RtVoid CBaseRenderer::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces,
 
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
 
-		CRiHierarchicalSubdivisionMesh r(renderState()->lineNo(), &renderState()->dict(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, renderState()->curParamList());
+		CRiHierarchicalSubdivisionMesh r(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, renderState()->curParamList());
 		processRequest(r);
 
 	} catch ( ExceptRiCPPError &e2 ) {
@@ -4335,6 +4362,8 @@ RtVoid CBaseRenderer::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtTok
 		if ( !preCheck(req) )
 			return;
 
+		type = renderState()->tokFindCreate(type);
+
 		renderState()->parseParameters(CCurvesClasses(type, ncurves, nverts, wrap, renderState()->attributes().vStep()), n, tokens, params);
 
 		CRiCurves r(renderState()->lineNo(), renderState()->attributes().vStep(), type, ncurves, nverts, wrap, renderState()->curParamList());
@@ -4408,6 +4437,20 @@ RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 	}
 }
 
+
+RtVoid CBaseRenderer::preProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+{
+	if ( !m_parserCallback ) {
+		throw ExceptRiCPPError(
+			RIE_BUG,
+			RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"The frontend is unknown, while executing a procedural %s.", subdivfunc.name());
+
+	}
+}
+
 RtVoid CBaseRenderer::doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
 	subdivfunc(m_parserCallback->frontend(), data, RI_INFINITY);
@@ -4452,6 +4495,7 @@ RtVoid CBaseRenderer::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPoint
 		if ( !preCheck(req) )
 			return;
 
+		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
 		CRiGeometry r(renderState()->lineNo(), type, renderState()->curParamList());

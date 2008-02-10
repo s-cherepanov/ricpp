@@ -289,7 +289,7 @@ public:
 	 */
 	virtual RtVoid handleError(RtInt code, RtInt severity, RtString message, ...);
 
-	/** @brief Forward the contetns of an ExceptRiCPPError to handleErrorV()
+	/** @brief Forward the contents of an ExceptRiCPPError to handleErrorV()
 	 *  @param err Error Exception
 	 */
 	virtual RtVoid handleError(const ExceptRiCPPError &err);

@@ -54,14 +54,19 @@ using namespace RiCPP;
  * Uses the standard function getenv() to acces the environment variables,
  * can return an empty string.
  */
-std::string &CEnv::get(std::string &var, const char *varName)
+std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
 {
 	var.empty();
 	if ( !varName )
 		return var;
 
 	const char *p = getenv(varName);
-	return var = p ? p : "";
+	var = p ? p : "";
+
+	if ( isPath )
+		return CFilepathConverter::convertToInternal(var);
+
+	return var;
 }
 
 
@@ -75,7 +80,7 @@ std::string &CEnv::getTmp(std::string &tmp)
 {
 	tmp = "";
 	if ( get(tmp, "TMP").empty() ) {
-		get(tmp, "HOME");
+		get(tmp, "HOME", true);
 		
 		std::string path = tmp;
 		path += "/tmp";
@@ -97,7 +102,7 @@ std::string &CEnv::getTmp(std::string &tmp)
 std::string &CEnv::getHome(std::string &home)
 {
 	home = "";
-	get(home, "HOME");
+	get(home, "HOME", true);
 	// return CFilepathConverter::convertToInternal(home);
 	return home;
 }
@@ -109,7 +114,7 @@ std::string &CEnv::getHome(std::string &home)
 std::string &CEnv::getPath(std::string &path)
 {
 	path = "";
-	get(path, "PATH");
+	get(path, "PATH", true);
 
 	// return CFilepathConverter::convertToInternal(path);
 	return path;
@@ -160,7 +165,7 @@ std::string &CEnv::getProgDir(std::string &prog)
 				delete buf;
 			}
 		}
-		// CFilepathConverter::convertToInternal(path);
+		CFilepathConverter::convertToInternal(path);
 	}
 	
 	prog = path;

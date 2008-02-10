@@ -1866,7 +1866,39 @@ void CRibParser::parseFile()
 
 	m_lineNo = 0;
 
-	while ( parseNextCall() != RIBPARSER_EOF ); // Parse all requests
+	bool running = true;
+	do {
+		// Do not stop parsing if an error occurs
+		try {
+			running = parseNextCall() != RIBPARSER_EOF;
+		} catch ( ExceptRiCPPError &e1 ) {
+			if ( m_parserCallback ) {
+				m_parserCallback->ricppErrHandler().handleError(e1);
+			} else {
+				throw e1;
+			}
+		} catch ( std::exception &e2 ) {
+			if ( m_parserCallback ) {
+				m_parserCallback->ricppErrHandler().handleError(
+					RIE_SYSTEM, RIE_ERROR,
+					lineNo(),
+					resourceName(),
+					"Unknown error while parsing: %s", e2.what());
+			} else {
+				throw e2;
+			}
+		} catch ( ... ) {
+			if ( m_parserCallback ) {
+				m_parserCallback->ricppErrHandler().handleError(
+					RIE_SYSTEM, RIE_ERROR,
+					lineNo(),
+					resourceName(),
+					"Unknown error while parsing.");
+			} else {
+				throw;
+			}
+		}
+	} while ( running ); // Parse all requests
 
 	// Clear the handle maps
 	clearHandleMaps();

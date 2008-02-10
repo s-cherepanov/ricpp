@@ -573,6 +573,7 @@ CRibWriter::~CRibWriter()
 	if ( m_buffer ) delete m_buffer;
 }
 
+
 void CRibWriter::requestWritten(EnumRequests aRequest)
 {
 	m_header = false;

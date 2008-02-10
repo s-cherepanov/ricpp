@@ -335,6 +335,14 @@ protected:
 	 */
 	virtual RtToken processDeclare(RtToken name, RtString declaration, bool isDefault);
 
+	/** @brief Records request in current macro.
+	 *
+	 *  Called by processRequest
+	 *
+	 *  @param aRequest Data of a parsed and validated request.
+	 */
+	virtual void recordRequest(CRManInterfaceCall &aRequest);
+
 	/** @brief Processes a request.
 	 *
 	 *  Since the processing of the request is nearly always the same,
@@ -411,7 +419,7 @@ public:
 
 	RtToken declare(RtToken RtToken, RtString declaration);
 
-	virtual RtVoid controlV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 	inline virtual RtVoid version() {}
 
 	inline virtual RtVoid synchronize(RtToken name) {}
@@ -717,7 +725,7 @@ public:
 
 	inline virtual RtVoid preBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) {}
 
-	inline virtual RtVoid preProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) {}
+	virtual RtVoid preProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
 
 	inline virtual RtVoid preGeometry(RtToken type, const CParameterList &params) {}
 

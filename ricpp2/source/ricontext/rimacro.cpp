@@ -268,11 +268,11 @@ CRiNuPatch::CRiNuPatch(
 
 ///////////////////////////////////////////////////////////////////////////////
 void CRiSubdivisionMesh::set(
-	CDeclarationDictionary *decl, 
+	CTokenMap *tokenMap, 
 	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[])
 {
-	m_scheme = decl ? decl->tokenMap().findCreate(aScheme) : aScheme;
+	m_scheme = tokenMap ? tokenMap->findCreate(aScheme) : aScheme;
 
 	m_nverts.resize(aNFaces);
 	m_nverts.assign(aNVerts, aNVerts+aNFaces);
@@ -292,7 +292,7 @@ void CRiSubdivisionMesh::set(
 	m_tags.resize(0);
 	m_tags.reserve(aNTags);
 	for ( i = 0; i < aNTags; ++i ) {
-		m_tags.push_back(decl ? decl->tokenMap().findCreate(aTags[i]) : aTags[i]);
+		m_tags.push_back(tokenMap ? tokenMap->findCreate(aTags[i]) : aTags[i]);
 	}
 
 	m_nargs.resize(aNTags*2);
@@ -314,21 +314,21 @@ void CRiSubdivisionMesh::set(
 }
 
 void CRiSubdivisionMesh::set(
-	CDeclarationDictionary *decl, 
+	CTokenMap *tokenMap, 
 	RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
 	const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
 	const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs)
 {
 	set(
-		decl,
-		m_scheme, (RtInt)m_nverts.size(),
-		m_nverts.empty() ? 0 : &(m_nverts[0]),
-		m_verts.empty() ? 0 : &(m_verts[0]),
-		(RtInt)m_tags.size(),
-		m_tags.empty() ? 0 : &(m_tags[0]),
-		m_nargs.empty() ? 0 : &(m_nargs[0]),
-		m_intargs.empty() ? 0 : &(m_intargs[0]),
-		m_floargs.empty() ? 0 : &(m_floargs[0]));
+		tokenMap,
+		aScheme, (RtInt)aNVerts.size(),
+		aNVerts.empty() ? 0 : &(aNVerts[0]),
+		aVerts.empty() ? 0 : &(aVerts[0]),
+		(RtInt)aTags.size(),
+		aTags.empty() ? 0 : &(aTags[0]),
+		aNArgs.empty() ? 0 : &(aNArgs[0]),
+		aIntArgs.empty() ? 0 : &(aIntArgs[0]),
+		aFloArgs.empty() ? 0 : &(aFloArgs[0]));
 }
 
 CRiSubdivisionMesh::CRiSubdivisionMesh(
@@ -340,28 +340,28 @@ CRiSubdivisionMesh::CRiSubdivisionMesh(
 		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
 		n, tokens, params)
 {
-	set(&decl, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs);
+	set(&decl.tokenMap(), aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs);
 }
 
 CRiSubdivisionMesh::CRiSubdivisionMesh(
-	long aLineNo, CDeclarationDictionary *decl, 
+	long aLineNo, CTokenMap *tokenMap, 
 	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	const CParameterList &theParameters)
 	: CGeometryRManInterfaceCall(aLineNo, theParameters)
 {
-	set(decl, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs);
+	set(tokenMap, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void CRiHierarchicalSubdivisionMesh::set(
-	CDeclarationDictionary *decl, 
+	CTokenMap *tokenMap, 
 	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 	RtInt aNTags, const RtToken aTags[],
 	const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[])
 {
-	m_scheme = decl ? decl->tokenMap().findCreate(aScheme) : aScheme;
+	m_scheme = tokenMap ? tokenMap->findCreate(aScheme) : aScheme;
 
 	m_nverts.resize(aNFaces);
 	m_nverts.assign(aNVerts, aNVerts+aNFaces);
@@ -381,7 +381,7 @@ void CRiHierarchicalSubdivisionMesh::set(
 	m_tags.resize(0);
 	m_tags.reserve(aNTags);
 	for ( i = 0; i < aNTags; ++i ) {
-		m_tags.push_back(decl ? decl->tokenMap().findCreate(aTags[i]) : aTags[i]);
+		m_tags.push_back(tokenMap ? tokenMap->findCreate(aTags[i]) : aTags[i]);
 	}
 
 	m_nargs.resize(aNTags*3);
@@ -418,23 +418,23 @@ void CRiHierarchicalSubdivisionMesh::set(
 }
 
 void CRiHierarchicalSubdivisionMesh::set(
-	CDeclarationDictionary *decl, 
+	CTokenMap *tokenMap, 
 	RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
 	const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
 	const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs,
 	const std::vector<RtToken> &aStrArgs)
 {
 	set(
-		decl,
-		m_scheme, (RtInt)m_nverts.size(),
-		m_nverts.empty() ? 0 : &(m_nverts[0]),
-		m_verts.empty() ? 0 : &(m_verts[0]),
-		(RtInt)m_tags.size(),
-		m_tags.empty() ? 0 : &(m_tags[0]),
-		m_nargs.empty() ? 0 : &(m_nargs[0]),
-		m_intargs.empty() ? 0 : &(m_intargs[0]),
-		m_floargs.empty() ? 0 : &(m_floargs[0]),
-		m_strptrargs.empty() ? 0 : &(m_strptrargs[0]));
+		tokenMap,
+		aScheme, (RtInt)aNVerts.size(),
+		aNVerts.empty() ? 0 : &(aNVerts[0]),
+		aVerts.empty() ? 0 : &(aVerts[0]),
+		(RtInt)aTags.size(),
+		aTags.empty() ? 0 : &(aTags[0]),
+		aNArgs.empty() ? 0 : &(aNArgs[0]),
+		aIntArgs.empty() ? 0 : &(aIntArgs[0]),
+		aFloArgs.empty() ? 0 : &(aFloArgs[0]),
+		aStrArgs.empty() ? 0 : &(aStrArgs[0]));
 }
 
 CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
@@ -447,18 +447,18 @@ CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
 		n, tokens, params)
 {
-	set(&decl, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
+	set(&decl.tokenMap(), aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
 }
 
 CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
-	long aLineNo, CDeclarationDictionary *decl, 
+	long aLineNo, CTokenMap *tokenMap, 
 	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	const RtToken aStrArgs[],
 	const CParameterList &theParameters)
 	: CGeometryRManInterfaceCall(aLineNo, theParameters)
 {
-	set(decl, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
+	set(tokenMap, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -610,6 +610,15 @@ void CRiProcedural::insertData(RtPointer data)
 		return;
 
 	m_data = m_subdivfunc->createSubdivData(data);
+}
+
+void CRiProcedural::insertData(const ISubdivData *data)
+{
+	if ( m_data )
+		delete m_data;
+	m_data = 0;
+	if ( data )
+		m_data = data->duplicate();
 }
 
 CRiProcedural::CRiProcedural(

@@ -34,6 +34,10 @@
 #include "ricpp/gendynlib/dynlib.h"
 #endif // _RICPP_GENDYNLIB_DYNLIB_H
 
+#ifndef _RICPP_TOOLS_FILEPATH_H
+#include "ricpp/tools/filepath.h"
+#endif // _RICPP_TOOLS_FILEPATH_H
+
 using namespace RiCPP;
 
 RtToken CProcDelayedReadArchive::myName() {return RI_DELAYED_READ_ARCHIVE; }
@@ -68,16 +72,27 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 
 	char buf[TMP_MAX+1];
 	const char *tmpfile = 0;
+	std::string tmpPath;
 	
 #ifdef WIN32
 	if ( tmpnam_s(buf, sizeof(buf)) )
 		return;
 	tmpfile = &buf[0];
+	if ( tmpfile[0] == '\\' )
+		tmpfile++;
 #else
 	tmpfile = tmpnam(buf);
 #endif
 	if ( !tmpfile )
 		return;
+
+	CEnv::find(tmpPath, CEnv::tmpName());
+	tmpPath += "/";
+	tmpPath += tmpfile;
+	tmpPath += "rib";
+
+	std::string nativepath = tmpPath;
+	CFilepathConverter::convertToNative(nativepath);
 
 	std::string cmdline;
 	if ( genRequestData && genRequestData[0] ) {
@@ -87,13 +102,16 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 	}
 	cmdline += cmd;
 	cmdline += " >";
-	cmdline += tmpfile;
+	cmdline += nativepath;
 
-	system(cmdline.c_str());
-	ri.readArchive(tmpfile, 0, RI_NULL);
+
+	int retval = system(cmdline.c_str());
+	retval = retval;
+
+	CFilepathConverter::convertToURL(tmpPath);
+	ri.readArchive(tmpPath.c_str(), 0, RI_NULL);
 	
-	// 2do: delete tmpfile or better
-	// use CreateProcess() in win32 and similar on other OS.
+	/// @todo delete tmpfile or better use CreateProcess() in win32 and similar on other OS.
 }
 
 CProcRunProgram CProcRunProgram::func;

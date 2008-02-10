@@ -1538,7 +1538,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl     Dictonary with the current declarations.
+	 *  @param tokenMap Current tokens.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1551,7 +1551,7 @@ public:
 	 *  @param theParameters Parsed parameter list.
 	 */
 	CRiSubdivisionMesh(
-		long aLineNo, CDeclarationDictionary *decl, 
+		long aLineNo, CTokenMap *tokenMap, 
 		RtToken aScheme, RtInt aNFaces, RtInt const aNVerts[], RtInt const aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 		const CParameterList &theParameters);
@@ -1580,7 +1580,7 @@ public:
 	
 	/** @brief Sets the values of the member variables.
 	 *
-	 *  @param decl     For tags.
+	 *  @param tokenMap For tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1592,13 +1592,13 @@ public:
 	 *  @param aFloArgs Float arguments for tags.
 	 */
 	void set(
-		CDeclarationDictionary *decl, 
+		CTokenMap *tokenMap, 
 		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[]);
 
 	/** @brief Sets the values of the member variables.
 	 *
-	 *  @param decl     For tags.
+	 *  @param tokenMap  For tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
 	 *  @param aVerts   Index for each vertex.
@@ -1608,7 +1608,7 @@ public:
 	 *  @param aFloArgs Float arguments for tags.
 	 */
 	void set(
-		CDeclarationDictionary *decl, 
+		CTokenMap *tokenMap, 
 		RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
 		const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
 		const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs);
@@ -1835,7 +1835,7 @@ public:
 	/** @brief Constructor.
 	 *
 	 *  @param aLineNo  The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 *  @param decl     Declaration dictionary (for tags)
+	 *  @param tokenMap Current toklens (for tags)
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1849,7 +1849,7 @@ public:
 	 *  @param theParameters Parsed parameter list.
 	 */
 	CRiHierarchicalSubdivisionMesh(
-		long aLineNo, CDeclarationDictionary *decl, 
+		long aLineNo, CTokenMap *tokenMap, 
 		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[],
 		const CParameterList &theParameters);
@@ -1878,7 +1878,7 @@ public:
 	
 	/** @brief Sets the values of the member variables.
 	 *
-	 *  @param decl     Declaration dictionary for the tags.
+	 *  @param tokenMap Current tokensfor the tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNFaces  Number of faces
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
@@ -1891,13 +1891,13 @@ public:
 	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
-		CDeclarationDictionary *decl, 
+		CTokenMap *tokenMap, 
 		RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 		RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[], const RtToken aStrArgs[]);
 
 	/** @brief Sets the values of the member variables.
 	 *
-	 *  @param decl     Declaration dictionary for the tags.
+	 *  @param tokenMap Current tokens for the tags.
 	 *  @param aScheme  The scheme (currently RI_CATMULL_CLARK only).
 	 *  @param aNVerts  Number of vertices for each face (size is the number of faces).
 	 *  @param aVerts   Index for each vertex.
@@ -1908,7 +1908,7 @@ public:
 	 *  @param aStrArgs String arguments for tags.
 	 */
 	void set(
-		CDeclarationDictionary *decl, 
+		CTokenMap *tokenMap, 
 		RtToken aScheme, const std::vector<RtInt> &aNVerts, const std::vector<RtInt> &aVerts,
 		const std::vector<RtToken> &aTags, const std::vector<RtInt> &aNArgs,
 		const std::vector<RtInt> &aIntArgs, const std::vector<RtFloat> &aFloArgs, const std::vector<RtToken> &aStrArgs);
@@ -4342,6 +4342,7 @@ private:
 	ISubdivData *m_data;
 
 	void insertData(RtPointer data);
+	void insertData(const ISubdivData *data);
 public:
 	/** @brief Gets name for the class.
 	 *

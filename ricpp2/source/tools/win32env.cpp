@@ -43,7 +43,7 @@ using namespace RiCPP;
  * Uses the Win32 function getenv_s() to access the environment variables,
  * can return an empty string.
  */
-std::string &CEnv::get(std::string &var, const char *varName)
+std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
 {
 	var = "";
 	if ( !varName )
@@ -77,6 +77,9 @@ std::string &CEnv::get(std::string &var, const char *varName)
 	if ( &p[0] != ptr )
 		delete[] ptr;
 
+	if ( isPath )
+		return CFilepathConverter::convertToInternal(var);
+
 	return var;
 }
 
@@ -89,9 +92,9 @@ std::string &CEnv::get(std::string &var, const char *varName)
 std::string &CEnv::getTmp(std::string &tmp)
 {
 	tmp = "";
-	get(tmp, "TMP"); // first look TMP - can be set set by the program itself
+	get(tmp, "TMP", true); // first look TMP - can be set set by the program itself
 	if ( tmp.size() < 1 ) {
-		get(tmp, "TEMP");
+		get(tmp, "TEMP", true);
 	}
 
 	if ( tmp.size() < 1 ) {
@@ -114,25 +117,26 @@ std::string &CEnv::getHome(std::string &home)
 {
 	home = "";
 
-	get(home, "HOME");
+	get(home, "HOME", true);
 	if ( home.size() > 0 ) {
 		// return CFilepathConverter::convertToInternal(home);
 		return home;
 	}
 
-	get(home, "HOMEDRIVE");
+	get(home, "HOMEDRIVE", false);
 	if ( home.size() > 0 ) {
 		std::string homepath = "";
-		get(homepath, "HOMEPATH");
+		get(homepath, "HOMEPATH", false);
 		home += homepath;
 	}
 
 	if ( home.size() < 1 ) {
 		// No home, take the Userprofile (To do: "My Files" ?)
-		get(home, "USERPROFILE");
+		get(home, "USERPROFILE", true);
+		return home;
 	}
 
-	// return CFilepathConverter::convertToInternal(home);
+	return CFilepathConverter::convertToInternal(home);
 	return home;
 }
 
@@ -144,7 +148,7 @@ std::string &CEnv::getPath(std::string &path)
 {
 	path = "";
 	// return CFilepathConverter::convertToInternal(get(path, "PATH"));
-	get(path, "PATH");
+	get(path, "PATH", true);
 	return path;
 }
 
@@ -195,7 +199,7 @@ std::string &CEnv::getProgDir(std::string &prog)
 		}
 
 		path = ptr;
-		// CFilepathConverter::convertToInternal(path);
+		CFilepathConverter::convertToInternal(path);
 	}
 	
 	prog = path;

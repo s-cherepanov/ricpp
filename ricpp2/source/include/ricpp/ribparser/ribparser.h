@@ -653,7 +653,7 @@ namespace RiCPP {
 		int parseNextCall();
 		void parseFile();
 
-		/** @brief list of parameters currently parsed.
+		/** @brief List of parameters currently parsed.
 		 */
 		CParameterList m_parameterList;
 
@@ -840,6 +840,10 @@ namespace RiCPP {
 			const IArchiveCallback *callback,
 			const CParameterList &params);
 
+		/** @brief Gets the list of parameters currently parsed.
+		 *
+		 *  @return A reference of the list of parameters currently parsed.
+		 */
 		inline virtual CParameterList &params()
 		{
 			return m_parameterList;

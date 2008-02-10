@@ -40,12 +40,12 @@ using namespace RiCPP;
 RtToken CAbortErrorHandler::myName() {return RI_ABORT; }
 RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
-	std::cout << "*** Code " <<
+	std::cerr << "# *** Code " <<
 		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
 		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
 		msg << "'" << std::endl;
 	if ( severity == RIE_SEVERE ) {
-		std::cout << "abort renderer." << std::endl;
+		std::cerr << "# abort renderer." << std::endl;
 		ri.synchronize(RI_ABORT);
 	}
 }
@@ -57,7 +57,7 @@ RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 {
 	const IRi *pri = &ri;
 	pri = pri;
-	std::cout << "*** Code " <<
+	std::cerr << "# *** Code " <<
 		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
 		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
 		msg << "'" << std::endl;

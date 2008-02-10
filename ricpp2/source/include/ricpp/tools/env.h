@@ -66,7 +66,7 @@ namespace RiCPP {
 		 *         (without the leading $ sign)
 		 *  @return A reference to @a var
 		 */
-		static std::string &get(std::string &var, const char *varName);
+		static std::string &get(std::string &var, const char *varName, bool isPath);
 
 	public:
 		/** @brief Gets the string "TMP", the name of the TMP-variable (see getTmp()).
@@ -146,7 +146,7 @@ namespace RiCPP {
 		 *         (without the leading $ sign).
 		 *  @return A reference to @a var, the value of the variable.
 		 */
-		inline static std::string &find(std::string &var, const char *varName)
+		inline static std::string &find(std::string &var, const char *varName, bool isPath = false)
 		{
 			// Clear the variable
 			var = "";
@@ -166,7 +166,7 @@ namespace RiCPP {
 				return getProgDir(var);
 
 			// Get an environment variable
-			return get(var, varName);
+			return get(var, varName, isPath);
 		}
 	}; // CEnv
 } // namespace RiCPP

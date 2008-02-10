@@ -291,6 +291,7 @@ FrameBegin 1
 		# Procedural "DelayedReadArchive"
 		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
 		Procedural "RunProgram" [ "php genpic.php" "" ] [ 1 2 3 4 5 6 ]
+		Procedural "RunProgram" [ "echo Sphere .5 -.5 .5 360" "" ] [ -.5 -.5 -.5 .5 .5 .5 ]
 		Procedural "DynamicLoad" [ "mydynlib" "" ] [ 1 2 3 4 5 6 ]
 		# Primitives
 		ReadArchive "Primitives"

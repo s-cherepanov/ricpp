@@ -39,7 +39,7 @@ using namespace RiCPP;
 
 
 const RtFloat CAttributes::defColorComponent = (RtFloat)1.0;
-const RtFloat CAttributes::defOpacityComponent = (RtFloat)0.0;
+const RtFloat CAttributes::defOpacityComponent = (RtFloat)1.0;
 
 const RtFloat CAttributes::defTextureS1 = 0;
 const RtFloat CAttributes::defTextureT1 = 0;
@@ -60,17 +60,13 @@ const RtFloat CAttributes::defUpTran  = RI_INFINITY;
 const RtFloat CAttributes::defMaxVis  = RI_INFINITY;
 
 const RtToken CAttributes::defGeometricApproximationType = RI_NULL;
-const RtFloat CAttributes::defGeometricApproximationValue = 1;
+const RtFloat CAttributes::defGeometricApproximationValue = 0.5;
 
-const RtToken CAttributes::defGeometricRepresentation = RI_SMOOTH;
+const RtToken CAttributes::defGeometricRepresentation = RI_PRIMITIVE;
 
 const RtToken CAttributes::defOrientation = RI_OUTSIDE;
 
 const RtInt CAttributes::defNSides = 2;
-
-CAttributes::~CAttributes()
-{
-}
 
 void CAttributes::init()
 {

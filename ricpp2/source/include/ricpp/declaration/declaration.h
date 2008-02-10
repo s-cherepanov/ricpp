@@ -41,8 +41,6 @@
 #include "ricpp/ricpp/types.h"
 #endif // _RICPP_RICPP_TYPES_H
 
-#include <string>
-
 namespace RiCPP {
 /** @brief Representation of a (possibly inline) declaration
  *

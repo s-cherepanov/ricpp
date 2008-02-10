@@ -66,8 +66,6 @@
 #include "ricpp/ricontext/motionstate.h"
 #endif // _RICPP_RICONTEXT_MOTIONSTATE_H
 
-#include <list>
-
 namespace RiCPP {
 
 class CRManInterfaceFactory;

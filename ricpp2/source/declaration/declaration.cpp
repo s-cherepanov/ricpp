@@ -27,8 +27,10 @@
  *  @brief Implements a declaration
  */
 #include "ricpp/declaration/declaration.h"
+
+#ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
-#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
 
 #include <cassert>
 

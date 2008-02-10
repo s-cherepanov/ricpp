@@ -28,7 +28,10 @@
  */
 
 #include "ricpp/tools/stringlist.h"
+
+#ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
+#endif // _RICPP_TOOLS_FILEPATH_H
 
 using namespace RiCPP;
 

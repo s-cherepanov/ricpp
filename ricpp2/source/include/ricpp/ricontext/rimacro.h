@@ -36,6 +36,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  */
 
+/*
 #ifndef _RICPP_RICONTEXT_RIMACROCONTAINER_H
 #include "ricpp/ricontext/rimacrocontainer.h"
 #endif // _RICPP_RICONTEXT_RIMACROCONTAINER_H
@@ -71,6 +72,7 @@
 #ifndef _RICPP_RICONTEXT_RIMACROEXTERNALS_H
 #include "ricpp/ricontext/rimacroexternals.h"
 #endif // _RICPP_RICONTEXT_RIMACROEXTERNALS_H
+*/
 
 #ifndef _RICPP_RICONTEXT_RIMACROFACTORY_H
 #include "ricpp/ricontext/rimacrofactory.h"

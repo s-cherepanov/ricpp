@@ -43,7 +43,6 @@
 #endif // _RICPP_TOOLS_STRINGPATTERN_H
 
 #include <cstddef>
-#include <cmath>
 #include <vector>
 #include <sstream>
 

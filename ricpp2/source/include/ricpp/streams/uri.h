@@ -34,7 +34,6 @@
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
-#include <string>
 #include <list>
 #include <cassert>
 

@@ -30,10 +30,6 @@
  *  @brief Dictionary for declarations
  */
 
-#ifndef _RICPP_DECLARATION_TOKENMAP_H
-#include "ricpp/declaration/tokenmap.h"
-#endif // _RICPP_DECLARATION_TOKENMAP_H
-
 #ifndef _RICPP_DECLARATION_DECLARATION_H
 #include "ricpp/declaration/declaration.h"
 #endif // _RICPP_DECLARATION_DECLARATION_H
@@ -41,10 +37,6 @@
 #ifndef _RICPP_TOOLS_OBJPTRREGISTRY_H
 #include "ricpp/tools/objptrregistry.h"
 #endif // _RICPP_TOOLS_OBJPTRREGISTRY_H
-
-#ifndef _RICPP_TOOLS_INLINETOOLS_H
-#include "ricpp/tools/inlinetools.h"
-#endif // _RICPP_TOOLS_INLINETOOLS_H
 
 namespace RiCPP {
 

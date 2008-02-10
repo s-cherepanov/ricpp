@@ -38,8 +38,6 @@
 #include "ricpp/ricpp/ricpptokens.h"
 #endif // _RICPP_RICPP_RICPPTOKENS_H
 
-#include <string>
-
 namespace RiCPP {
 
 class IRiContext;

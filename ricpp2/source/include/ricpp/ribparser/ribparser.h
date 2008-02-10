@@ -38,8 +38,6 @@
 #include "ricpp/ribparser/ribparsercallback.h"
 #endif // _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
 
-#include <deque>
-
 namespace RiCPP {
 
 	/** @brief Container class for one parameter (array) read by the parser (RIB)

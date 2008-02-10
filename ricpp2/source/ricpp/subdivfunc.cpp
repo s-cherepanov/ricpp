@@ -34,13 +34,6 @@
 #include "ricpp/gendynlib/dynlib.h"
 #endif // _RICPP_GENDYNLIB_DYNLIB_H
 
-#ifndef _RICPP_TOOLS_INLINETOOLS_H
-#include "ricpp/tools/inlinetools.h"
-#endif // _RICPP_TOOLS_INLINETOOLS_H
-
-
-#include <cstdlib> //< used for free(), tmpnam()
-
 using namespace RiCPP;
 
 RtToken CProcDelayedReadArchive::myName() {return RI_DELAYED_READ_ARCHIVE; }

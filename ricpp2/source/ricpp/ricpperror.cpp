@@ -28,7 +28,11 @@
  */
 
 #include "ricpp/ricpp/ricpperror.h"
+
+#ifndef _RICPP_RICPP_RICPPTOKENS_H
 #include "ricpp/ricpp/ricpptokens.h"
+#endif // _RICPP_RICPP_RICPPTOKENS_H
+
 #include <cstdarg>
 
 using namespace RiCPP;

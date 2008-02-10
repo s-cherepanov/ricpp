@@ -28,7 +28,6 @@
  */
 
 #include "ricpp/ricontext/contextcreator.h"
-#include <algorithm>
 
 using namespace RiCPP;
 

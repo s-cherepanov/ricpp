@@ -34,8 +34,6 @@
 #include "ricpp/ricontext/rimacrobase.h"
 #endif // _RICPP_RICONTEXT_RIMACROBASE_H
 
-#include <list>
-
 namespace RiCPP {
 
 // ----------------------------------------------------------------------------

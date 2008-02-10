@@ -29,12 +29,7 @@
 
 #include "ricpp/ribparser/riboptions.h"
 
-#ifndef _RICPP_RICONTEXT_OPTIONS_H
-#include "ricpp/ricontext/options.h"
-#endif // _RICPP_RICONTEXT_OPTIONS_H
-
 using namespace RiCPP;
-
 
 void CFormatRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {

@@ -38,12 +38,6 @@
 #include "ricpp/ricontext/contextcreator.h"
 #endif // _RICPP_RICONTEXT_CONTEXTCREATOR_H
 
-#ifndef _RICPP_STREAMS_BACKBUFFER_H
-#include "ricpp/streams/backbuffer.h"
-#endif // _RICPP_STREAMS_BACKBUFFER_H
-
-#include <map>
-
 namespace RiCPP {
 
 #define RIBWRITER_NAME "ribwriter"

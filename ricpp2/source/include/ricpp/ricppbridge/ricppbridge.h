@@ -30,24 +30,14 @@
  *  @brief Bridges the interface functions to a current renderer
  */
 
-#ifndef _RICPP_RICPP_FILTERS_H
-#include "ricpp/ricpp/filters.h"
-#endif
-
 #ifndef _RICPP_RICPP_SUBDIVFUNC_H
 #include "ricpp/ricpp/subdivfunc.h"
-#endif
+#endif // _RICPP_RICPP_SUBDIVFUNC_H
 
 #ifndef _RICPP_RENDERERLOADER_RENDERERLOADER_H
 #include "ricpp/rendererloader/rendererloader.h"
-#endif
+#endif // _RICPP_RENDERERLOADER_RENDERERLOADER_H
 
-#ifndef _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
-#include "ricpp/ribparser/ribparsercallback.h"
-#endif // _RICPP_RIBPARSER_RIBPARSERCALLBACK_H
-
-#include <vector>
-#include <cassert>
 #include <cstdarg>
 
 namespace RiCPP {

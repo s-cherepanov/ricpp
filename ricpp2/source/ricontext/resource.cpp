@@ -27,19 +27,11 @@
  *  @brief Implements the resource handling and specifically the attribute resource.
  */
 
-#include "ricpp/ricontext/resource.h"
-
-#ifndef _RICPP_DECLARATION_TOKENMAP_H
-#include "ricpp/declaration/tokenmap.h"
-#endif // _RICPP_DECLARATION_TOKENMAP_H
+// #include "ricpp/ricontext/resource.h"
 
 #ifndef _RICPP_RICONTEXT_RICONTEXT_H
 #include "ricpp/ricontext/ricontext.h"
 #endif // _RICPP_RICONTEXT_RICONTEXT_H
-
-#ifndef _RICPP_RICONTEXT_ATTRIBUTES_H
-#include "ricpp/ricontext/attributes.h"
-#endif //  _RICPP_RICONTEXT_ATTRIBUTES_H
 
 using namespace RiCPP;
 

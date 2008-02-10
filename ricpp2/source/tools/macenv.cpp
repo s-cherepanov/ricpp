@@ -29,8 +29,14 @@
  */
 
 #include "ricpp/tools/env.h"
+
+#ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
+#endif // _RICPP_TOOLS_FILEPATH_H
+
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
 
 #include <mach-o/dyld.h>
 

@@ -34,10 +34,6 @@
 #include "ricpp/ricontext/dorender.h"
 #endif // _RICPP_RICONTEXT_DORENDER_H
 
-#ifndef _RICPP_RICPP_RICPPERROR_H
-#include "ricpp/ricpp/ricpperror.h"
-#endif // _RICPP_RICPP_RICPPERROR_H
-
 #ifndef _RICPP_RIBPARSER_RIBPARSER_H
 #include "ricpp/ribparser/ribparser.h"
 #endif // _RICPP_RIBPARSER_RIBPARSER_H

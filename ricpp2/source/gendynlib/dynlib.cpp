@@ -32,11 +32,11 @@
 
 #ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
-#endif
+#endif // _RICPP_RICPP_RICPPERROR_H
 
 #ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
-#endif
+#endif // _RICPP_TOOLS_FILEPATH_H
 
 using namespace RiCPP;
 

@@ -34,8 +34,6 @@
 #include "ricpp/declaration/decldict.h"
 #endif // _RICPP_DECLARATION_DECLDICT_H
 
-#include <string>
-#include <list>
 #include <cassert>
 
 namespace RiCPP {

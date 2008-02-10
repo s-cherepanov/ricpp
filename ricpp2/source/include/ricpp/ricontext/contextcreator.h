@@ -32,10 +32,6 @@
  *  The CContextCreator is part of the backend. It is managed by CRiCPPBridge and CRendererLoader.
  */
 
-#ifndef _RICPP_PLUGINHANDLER_PLUGINHANDLER_H
-#include "ricpp/pluginhandler/pluginhandler.h"
-#endif // _RICPP_PLUGINHANDLER_PLUGINHANDLER_H
-
 #ifndef _RICPP_RICONTEXT_RICONTEXT_H
 #include "ricpp/ricontext/ricontext.h"
 #endif // _RICPP_RICONTEXT_RICONTEXT_H

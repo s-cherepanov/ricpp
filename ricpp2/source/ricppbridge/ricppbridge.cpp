@@ -28,8 +28,10 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
+
+// #ifndef _RICPP_RIBWRITER_RIBWRITER_H
 // #include "ricpp/ribwriter/ribwriter.h"
-#include "ricpp/tools/filepath.h"
+// #endif // _RICPP_RIBWRITER_RIBWRITER_H
 
 using namespace RiCPP;
 

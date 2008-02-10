@@ -28,9 +28,10 @@
  */
 
 #include "ricpp/rendererloader/rendererloader.h"
-#include "ricpp/ribwriter/ribwriter.h"
 
-#include <cassert>
+#ifndef _RICPP_RIBWRITER_RIBWRITER_H
+#include "ricpp/ribwriter/ribwriter.h"
+#endif // _RICPP_RIBWRITER_RIBWRITER_H
 
 using namespace RiCPP;
 

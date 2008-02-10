@@ -35,10 +35,6 @@
 #include "ricpp/ricontext/parameter.h"
 #endif // _RICPP_RICONTEXT_PARAMETER_H
 
-#ifndef _RICPP_DECLARATION_DECLDICT_H
-#include "ricpp/declaration/decldict.h"
-#endif // _RICPP_DECLARATION_DECLDICT_H
-
 #ifndef _RICPP_TOOLS_STRINGLIST_H
 #include "ricpp/tools/stringlist.h"
 #endif // _RICPP_TOOLS_STRINGLIST_H

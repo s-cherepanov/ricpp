@@ -29,10 +29,6 @@
 
 #include "ricpp/ribparser/ribattributes.h"
 
-#ifndef _RICPP_RICONTEXT_ATTRIBUTES_H
-#include "ricpp/ricontext/attributes.h"
-#endif // _RICPP_RICONTEXT_ATTRIBUTES_H
-
 using namespace RiCPP;
 
 

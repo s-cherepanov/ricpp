@@ -28,7 +28,10 @@
  */
 
 #include "ricpp/tools/stringpattern.h"
+
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
 
 using namespace RiCPP;
 

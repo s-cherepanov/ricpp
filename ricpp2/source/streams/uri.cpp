@@ -28,7 +28,10 @@
  */
 
 #include "ricpp/streams/uri.h"
+
+#ifndef _RICPP_TOOLS_PLATFORM_H
 #include "ricpp/tools/platform.h"
+#endif // _RICPP_TOOLS_PLATFORM_H
 
 
 using namespace RiCPP;

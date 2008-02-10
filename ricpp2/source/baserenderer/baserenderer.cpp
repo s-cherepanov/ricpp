@@ -28,9 +28,10 @@
  */
 
 #include "ricpp/baserenderer/baserenderer.h"
-#include "ricpp/ricontext/rimacro.h"
 
-#include <cassert>
+#ifndef _RICPP_RICONTEXT_RIMACRO_H
+#include "ricpp/ricontext/rimacro.h"
+#endif // _RICPP_RICONTEXT_RIMACRO_H
 
 using namespace RiCPP;
 

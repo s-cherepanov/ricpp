@@ -59,14 +59,14 @@ const CDeclaration *CDeclarationDictionary::find(const char *tableNamespace, con
 		if ( d.isInline() ) {
 			return 0;
 		}
-	} catch ( ExceptRiCPPError &e ) {
+	} catch ( ExceptRiCPPError & ) {
 	    // ok, not an inline declaration
 	}
 		
 	RtToken token;
 	std::string s;
 
-	if ( !strrchr(var, ":") ) {
+	if ( !strrchr(var, ':') ) {
 		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
 			s = tableNamespace;
 			s += ':';
@@ -146,14 +146,14 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 		if ( d.isInline() ) {
 			return 0;
 		}
-	} catch ( ExceptRiCPPError &e ) {
+	} catch ( ExceptRiCPPError & ) {
 	    // ok, not an inline declaration
 	}
 
 	RtToken token;
 	std::string s;
 
-	if ( !strrchr(var, ":") ) {
+	if ( !strrchr(var, ':') ) {
 		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
 			s = tableNamespace;
 			s += ':';

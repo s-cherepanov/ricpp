@@ -127,6 +127,9 @@ namespace RiCPP {
 			convertToNative();
 		}
 
+		/** @brief Copy constructor
+		 *  @param aFilepath Path to copy
+		 */
 		inline CFilepath(const std::string &aFilepath)
 			: m_filepath(aFilepath)
 		{
@@ -188,6 +191,8 @@ namespace RiCPP {
 	}; // CFilepath
 
 
+	/** @breif Stores the contents of a directory.
+	 */
 	class CDirectory {
 	public:
 		/** @brief Const iterator for the strings.
@@ -198,8 +203,14 @@ namespace RiCPP {
 		typedef std::list<CFilepath>::size_type size_type;
 
 	private:
-		std::list<CFilepath> m_dirList;
-		CFilepath m_directory;
+		std::list<CFilepath> m_dirList; ///< Content of the directory
+		CFilepath m_directory;          ///< Path of the directory
+		
+		/** @brief Reads a directory by using filepattern @a pattern
+		 *  @pattern Simple, glob style pattern
+		 *  @return true, directory could be read.
+		 *  @todo use glob style patterns like in stringpattern.h
+		 */
 		bool readDirectory(const char *pattern = 0);
 
 	public:
@@ -216,11 +227,19 @@ namespace RiCPP {
 			readDirectory(pattern);
 		}
 
+		/** @brief Init with an internal path representation.
+		 * @param pattern Simple search pattern (like abc*.txt).
+		 * @param aFilepath Internal representation of a filepath, you can use
+		 *        CFilepathConverter::convertToInternal()
+		 *        to convert a native into an internal representation.
+		 *        If the path is empty the current working directory is used as path
+		 */
 		inline CDirectory(const char *pattern, const std::string &aFilepath)
 			: m_directory(aFilepath)
 		{
 			readDirectory(pattern);
 		}
+
 		/** @brief Constant iterator to access the strings (beginning).
 		 *  @return Iterator with the first inserted string as current element.
 		 */

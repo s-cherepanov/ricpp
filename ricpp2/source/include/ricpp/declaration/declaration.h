@@ -178,12 +178,12 @@ public:
 	 *  following order:
 	 *  <ol>
 	 *  <li> namespace:table:var </li>
-	 *  <li> table:var </li>
+	 *  <li> namespace:var </li>
 	 *  <li> var </li>
 	 *  </ol>
 	 *
-	 *  If the qualified name is used where needed also in parameter lists, simple search 
-	 *  is enought. The stripped variable name is used in shaders.
+	 *  If the qualified name is used in a parameter lists, simple search 
+	 *  is enought.
 	 *
 	 *  @return Stripped variable name
 	 *  @see CDeclarationDictionary
@@ -251,7 +251,7 @@ public:
 
 	/** @brief Gets the type size of an declaration (in basic type elements)
 	 *
-	 * e.g. 3 is returned for TYPE_POINT (consits of 3 BASICTYPE_FLOAT)
+	 *  E.g. 3 is returned for TYPE_POINT (consits of 3 BASICTYPE_FLOAT)
 	 *
 	 *  @return Type size
 	 */
@@ -306,7 +306,7 @@ public:
 	/** @brief Gets the inline declaration as string.
 	 *
 	 @verbatim
-	 <class> <type> ['[' size ']' name
+	 <class> <type> ['[' size ']'] name
 	 @endverbatim
 	 *
 	 *  @retval declaration Declaration as string.

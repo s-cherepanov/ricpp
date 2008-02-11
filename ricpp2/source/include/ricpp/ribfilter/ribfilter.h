@@ -69,19 +69,45 @@ protected:
 	inline bool canCall(EnumRequests req) { return callee() != 0 && passthrough() && enabled(req); }
 
 public:
+	/** @brief Gets the name of the plugin.
+	 *  @return Plugin name ("ribfilterroot")
+	 */
 	static const char *myName();
+
+	/** @brief Gets the type of the plugin.
+	 *
+	 *  The type stays equal for al rib filter plugins.
+	 *
+	 *  @return Plugin type ("ribfilter")
+	 */
 	static const char *myType();
+	
+	/** @brief Gets the major version of the plugin.
+	 *  @return Major version number.
+	 */
 	static unsigned long myMajorVersion();
+
+	/** @brief Gets the minor version of the plugin.
+	 *  @return Minor version number.
+	 */
 	static unsigned long myMinorVersion();
+
+	/** @brief Gets the revision number of the plugin.
+	 *  @return Revision number.
+	 */
 	static unsigned long myRevision();
 
+	/** @brief Constructor, enables all requests
+	 */
 	inline CRibFilter::CRibFilter()
 		: m_next(0), m_suspended(false)
 	{
-		int i;
-		for ( i = 0; i < N_REQUESTS; ++i )
+		for ( int i = 0; i < N_REQUESTS; ++i )
 			m_enabled[i] = true;
 	}
+
+	/** @brief Virtual destructor
+	 */
 	inline virtual ~CRibFilter() {}
 
 	inline virtual const char *name() const  { return myName(); }
@@ -101,10 +127,12 @@ public:
 	}
 
 	/** @brief No transfering until resume().
+	 *  @return true, interface calls are stopped.
 	 */
 	inline virtual bool suspended() const { return m_suspended; }
 
 	/** @brief Transfering until suspend().
+	 *  @return true, interface calls are called.
 	 */
 	inline virtual bool passthrough() const { return !m_suspended; }
 
@@ -145,7 +173,7 @@ public:
 
 	/** @brief Sets argument.
 	 *
-	 *  Overload this functions to set own parameters.
+	 *  Overload this functions to set own parameters (like command line parameters).
 	 *
 	 *  @param name Name of the argument.
 	 *  @param value Pointer to the parameter.
@@ -158,7 +186,7 @@ public:
 
 	/** @brief Sets arguments.
 	 *
-	 *  Overload this functions to set own parameters.
+	 *  Overload this functions to set own parameters (like command line parameters).
 	 *
 	 *  @param n Number of name value pairs
 	 *  @param name Name of the argument.

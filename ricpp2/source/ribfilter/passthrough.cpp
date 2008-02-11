@@ -40,9 +40,16 @@ using namespace RiCPP;
 #pragma managed(push, off)
 #endif
 
+/** @fn BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+ *  @brief Entry point for the DLL.
+ *  @param hModule
+ *  @param ul_reason_for_call
+ *  @param lpReserved
+ *  @return TRUE
+ */
 BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+                       DWORD   ul_reason_for_call,
+                       LPVOID  lpReserved
 					 )
 {
     return TRUE;

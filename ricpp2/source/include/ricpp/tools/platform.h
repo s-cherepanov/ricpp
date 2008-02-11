@@ -54,6 +54,8 @@ inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2);
  */
 #define EXPORT __declspec ( dllexport )
 
+/** @brief Open mode type for streams.
+ */
 typedef std::ios_base::openmode TypeOpenMode;
 
 #else
@@ -75,6 +77,8 @@ typedef int (*FARPROC)();
  */
 #define EXPORT __attribute__((visibility("default")))
 
+/** @brief Open mode type for streams.
+ */
 typedef std::_Ios_Openmode TypeOpenMode;
 #endif
 }

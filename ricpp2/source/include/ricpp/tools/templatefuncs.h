@@ -32,7 +32,7 @@
 
 namespace RiCPP {
 
-/** @brief Returns the maximum of two elements.
+/** @brief Gets the maximum of two elements.
  *  @param a First element
  *  @param b Second element
  *  @return Maximum of a and b
@@ -46,8 +46,8 @@ _T tmax(
 }
 
 
-/** @brief Returns the maximum of a vector.
- *  @param n The index type of the vector
+/** @brief Gets the maximal value out of a vector.
+ *  @param n The size of the vector
  *  @param v The vector
  *  @return Maximum found in v
  */
@@ -68,8 +68,8 @@ _T tmax(
 }
 
 
-//! Returns the minimum of two elements
-/*! @param a First element
+/** @brief Gets the minimum of two elements.
+ *  @param a First element
  *  @param b Second element
  *  @return Minimum of a and b
  */
@@ -82,8 +82,8 @@ _T tmin(
 }
 
 
-//! Returns the minimum of a vector
-/*! @param n The index type of the vector
+/** @brief Gets the minimal value out of a vector.
+ *  @param n The size of the vector
  *  @param v The vector
  *  @return Minimum found in v
  */
@@ -103,8 +103,8 @@ _T tmin(
 	return result;
 }
 
-/** @brief Returns the sum of the elements in a vector
- *  @param n The index type of the vector
+/** @brief Gets the sum of the elements in a vector
+ *  @param n The size of the vector
  *  @param v The vector
  *  @return Sum of elements of v
  */
@@ -120,7 +120,12 @@ _T sum(
 	return result;
 }
 
-//! Linear interpolation
+/** @brief Linear interpolation between two values.
+ *  @param u Position (if 0 <= @a u <= 1 between @a minu and @a maxu)
+ *  @param minu Minimal value for interpolation (if u == 0)
+ *  @param maxu Maximal value for interpolation (if u == 1)
+ *  @return Interpolated value.
+ */
 template<typename _C> _C lerp(
 	_C u,
 	_C minu,
@@ -129,7 +134,11 @@ template<typename _C> _C lerp(
 	return minu + u * (maxu - minu);
 }
 
-//! Bilinear interpolation
+/** @brief Bilinear interpolation between four values by three linear interpolations.
+ *  @param u Position (if 0 <= @a u <= 1 between @a x1 and @a x2 as well as between @a x4 and @a x4)
+ *  @param V Position (if 0 <= @a v <= 1 between the interpolated positions betwwen x1...x2 and x3...x4)
+ *  @return The interpolated value.
+ */
 template<typename _C>
 _C bilerp(
 	_C u,

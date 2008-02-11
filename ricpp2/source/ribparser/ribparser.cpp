@@ -87,7 +87,7 @@ std::map<std::string, CRibRequest *> CRibParser::s_requestMap;
 
 CRibParameter::CRibParameter()
 {
-	m_lineNo = 0;
+	m_lineNo = 1;
 	m_isArray = false;
 	m_typeID = BASICTYPE_UNKNOWN;
 	m_cstrVector = 0;
@@ -107,7 +107,7 @@ CRibParameter::~CRibParameter()
 
 CRibParameter::CRibParameter(const CRibParameter &p)
 {
-	m_lineNo = 0;
+	m_lineNo = 1;
 	m_cstrVector = 0;
 	m_isArray = false;
 	m_typeID = BASICTYPE_UNKNOWN;
@@ -420,6 +420,8 @@ bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) con
 
 int CRibRequestData::getTokenList(
 	size_t start,
+	const char *tableNamespace,
+	const char *table, 
 	RtInt vertices,
 	RtInt corners,
 	RtInt facets,
@@ -481,25 +483,58 @@ int CRibRequestData::getTokenList(
 
 		bool useParameter = true;
 		size_t currParam = i;
-		m_parameters[currParam].convertIntToFloat(); // if values are integers convert them to floats, else do nothing.
 
+		// If Parameter is a string take only one
 		if ( m_parameters[currParam].typeID() != BASICTYPE_STRING && !m_parameters[currParam].isArray() ) {
+			// Copy numeric parameters until a string has been found.
 			while ( ++i < size ) {
 				if ( m_parameters[i].typeID() == BASICTYPE_STRING ) {
 					break;
 				}
-				RtFloat v = 0.0;
-				if ( !m_parameters[i].getFloat(v) ) {
+				
+				if ( m_parameters[i].typeID() == BASICTYPE_FLOAT || m_parameters[currParam].typeID() == BASICTYPE_FLOAT ) {
+				    // If one float has been found take all as float
+					if ( m_parameters[currParam].typeID() == BASICTYPE_INTEGER ) {
+						m_parameters[currParam].convertIntToFloat();
+					}
+					RtFloat v = 0.0;
+					if ( !m_parameters[i].getFloat(v) ) {
+						errHandler().handleError(
+							RIE_BUG, RIE_ERROR,
+							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't convert value to float, using 0.0 instaead",
+							m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
+							token, (int)i, RI_NULL);
+					}
+					if ( useParameter && !m_parameters[currParam].setFloat(v) ) {
+						errHandler().handleError(
+							RIE_BUG, RIE_ERROR,
+							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't set value to float, skip parameter",
+							m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
+							token, (int)currParam, RI_NULL);
+						useParameter = false;
+					}
+				} else if ( m_parameters[i].typeID() == BASICTYPE_INTEGER ) {
+					RtInt v = 0;
+					if ( !m_parameters[i].getInt(v) ) {
+						errHandler().handleError(
+							RIE_BUG, RIE_ERROR,
+							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't convert value to integer, using 0 instead",
+							m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
+							token, (int)i, RI_NULL);
+					}
+					if ( useParameter && !m_parameters[currParam].setInt(v) ) {
+						errHandler().handleError(
+							RIE_BUG, RIE_ERROR,
+							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't set value to integer, skip parameter",
+							m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
+							token, (int)currParam, RI_NULL);
+						useParameter = false;
+					}
+				} else {
+					// An unknown type
 					errHandler().handleError(
 						RIE_BUG, RIE_ERROR,
-						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't convert value to float, using 0.0",
-						m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
-						token, (int)i, RI_NULL);
-				}
-				if ( useParameter && !m_parameters[currParam].setFloat(v) ) {
-					errHandler().handleError(
-						RIE_BUG, RIE_ERROR,
-						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't set value to float, using 0.0",
+						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't find type, skip parameter",
 						m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
 						token, (int)currParam, RI_NULL);
 					useParameter = false;
@@ -516,20 +551,39 @@ int CRibRequestData::getTokenList(
 			// RtInt numComps;
 			// long int numBytes;
 			CParameter p;
-			p.setDeclaration(token, parameterPos, valueCounts, renderState().dict(), renderState().options().colorDescr());
+			p.setDeclaration(tableNamespace, table, token, parameterPos, valueCounts, renderState().dict(), renderState().options().colorDescr());
 			RtInt numComps = p.declaration().selectNumberOf(valueCounts) * p.declaration().elemSize();
 			// unsigned long int numBytes = numComps * p.declaration().basicTypeByteSize();
 
 			EnumBasicTypes basicType = m_parameters[currParam].typeID();
 			size_t size = m_parameters[currParam].getCard();
 
+			// Convert float to int, if needed
+			if ( basicType == BASICTYPE_INTEGER && p.declaration().basicType() == BASICTYPE_FLOAT ) {
+				m_parameters[currParam].convertIntToFloat();
+				basicType = m_parameters[currParam].typeID();
+				value = m_parameters[currParam].getValue();  // Get the value as a pointer
+			}
+
+			// Convert int to float with warning
+			if ( basicType == BASICTYPE_FLOAT && p.declaration().basicType() == BASICTYPE_INTEGER ) {
+				m_parameters[currParam].convertFloatToInt();
+				basicType = m_parameters[currParam].typeID();
+				value = m_parameters[currParam].getValue();  // Get the value as a pointer
+					errHandler().handleError(
+						RIE_CONSISTENCY, RIE_WARNING,
+						"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d integer expected, but float found, converting float to integer",
+						m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
+						token, (int)currParam, RI_NULL);
+			}
+
 			if ( basicType != p.declaration().basicType() ) {
 				useParameter=false;
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d type mismatch",
+					"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d type mismatch, %s found vs. %s expected",
 					m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
-					token, (int)parameterPos, RI_NULL);
+					token, (int)parameterPos, CTypeInfo::basicTypeName(basicType), CTypeInfo::basicTypeName(p.declaration().basicType()), RI_NULL);
 			} else {
 				// Check the class/size
 				if ( size < (size_t)numComps ) {
@@ -1864,7 +1918,7 @@ void CRibParser::parseFile()
 	m_defineString = -1;	// No defind string (binary)
 	m_lookahead = RIBPARSER_NOT_A_TOKEN;  // Initialize, no Token found
 
-	m_lineNo = 0;
+	m_lineNo = 1;
 
 	bool running = true;
 	do {

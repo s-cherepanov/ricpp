@@ -45,11 +45,11 @@ namespace RiCPP {
 /** @brief Representation of a (possibly inline) declaration
  *
  * All declarations are stored and handled in a CDeclarationDictionary
- * of the state of a rendering context.
- * If the declaration has a color type, the number of elements @c m_typesize is the
- * size, at the time the declaration is used. If the size changes, a new declaration is
- * created, if a parameter of the declaration is used. Declarations that are not
- * inline, are not destroyed before the rendering context ends.
+ * owned by the state of the current rendering context.
+ * If the declaration has a color type, the number of elements @c m_typesize is equal to the
+ * size, valid at the time the declaration is used. If the color size changes, a new declaration is
+ * created, if a parameter of this declaration is used to track the number of color components.
+ * Declarations that are not inline, are not destroyed until the rendering context ends.
  * @see CDeclarationDictionary, @subpage page_decl
  */
 class CDeclaration {
@@ -61,17 +61,17 @@ class CDeclaration {
 	 * @see var()
 	 */
 	std::string m_name;         
-	std::string m_declString;   ///< String of the original declaration
 
-	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...)
-	RtToken m_table;            ///< Optional name of the table
-	RtToken m_var;              ///< Stripped name of the variable
-	RtToken m_token;            ///< Token for the declaration ([namespace:][table:]var)
-	EnumClasses m_class;        ///< Storage class of the declaration
-	EnumTypes m_type;           ///< Type of the elements
-	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type)
-	unsigned long m_arraySize;  ///< Number of elements in an array, 1 if no array declaration
-	CColorDescr m_colorDescr;   ///< Color descrvalid while variable is definded
+	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...).
+	RtToken m_table;            ///< Optional name of the table.
+	RtToken m_var;              ///< Stripped name of the variable.
+	RtToken m_token;            ///< Unique token for the declaration ([namespace:][table:]var).
+	EnumClasses m_class;        ///< Storage class of the declaration.
+	EnumTypes m_type;           ///< Type of the elements.
+	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type).
+	bool m_isArray;             ///< Declaration contained array
+	unsigned long m_arraySize;  ///< Number of elements in an array, 1 if no array declaration.
+	CColorDescr m_colorDescr;   ///< Color descriptor, valid while variable is definded.
 	
 	/** @brief Number of basic types per element type.
 	 *
@@ -235,6 +235,12 @@ public:
 		return CTypeInfo::basicTypeByteSize(m_basicType);
 	}
 
+	/** @brief Query if declaration contained an array part.
+	 *
+	 *  @return true, array part found within declaration.
+	 */
+	inline unsigned long isArray() const { return m_isArray; }
+
 	/** @brief Gets the array size of an declaration
 	 *
 	 * 1 is returned for no array declaration 
@@ -308,11 +314,22 @@ public:
 	 */
 	const char *getInlineString(std::string &declaration) const;
 
-	/** @brief Gets the string of the original declaration.
+	/** @brief Gets the string of the declaration.
 	 *
-	 *  @return Original declaration.
+	 *  The string is rebuild by the using information used stored
+	 *  in this object.
+	 *
+	 *  @return Declaration string.
 	 */
-	inline const char *declString() const { return m_declString.c_str(); }
+	const char *declString(std::string &declaration) const;
+	
+	/** @brief Query if variable matches declaration
+	 *
+	 *  @param aNamespace Namespace id of the variable.
+	 *  @param aTable Table token of the variable.
+	 *  @param var Variable identifier.
+	 */
+	bool matches(EnumNamespaces aNamespace, RtToken aTable, RtToken aVar); 
 }; // CDeclarartion
 
 } // namespace RiCPP

@@ -44,7 +44,7 @@ void CAttributeRibRequest::operator()(IRibParserState &parser, CRibRequestData &
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_ATTRIBUTE, name);
 			if ( n > 0 ) {
 				parser.ribFilter().attributeV(name, n, request.tokenList(), request.valueList());
 			} else {
@@ -244,7 +244,7 @@ void CSurfaceRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_SURFACE, name);
 			if ( n > 0 ) {
 				parser.ribFilter().surfaceV(name, n, request.tokenList(), request.valueList());
 			} else {
@@ -282,7 +282,7 @@ void CAtmosphereRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_ATMOSPHERE, name);
 			if ( n > 0 ) {
 				parser.ribFilter().atmosphereV(name, n, request.tokenList(), request.valueList());
 			} else {
@@ -320,7 +320,7 @@ void CInteriorRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_INTERIOR, name);
 			if ( n > 0 ) {
 				parser.ribFilter().interiorV(name, n, request.tokenList(), request.valueList());
 			} else {
@@ -358,7 +358,7 @@ void CExteriorRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_EXTERIOR, name);
 			if ( n > 0 ) {
 				parser.ribFilter().exteriorV(name, n, request.tokenList(), request.valueList());
 			} else {
@@ -396,7 +396,7 @@ void CDisplacementRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_DISPLACEMENT, name);
 			if ( n > 0 ) {
 				parser.ribFilter().displacementV(name, n, request.tokenList(), request.valueList());
 			} else {

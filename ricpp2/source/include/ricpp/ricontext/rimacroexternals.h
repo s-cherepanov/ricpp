@@ -108,7 +108,7 @@ public:
 		RtString aPic, RtString aTex, RtToken aSWrap, RtToken aTWrap,
 		const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_TEXTURE, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		m_filterfunc = 0;
 		set(aPic, aTex, aSWrap, aTWrap, &aFilterFunc, aSWidth, aTWidth);
@@ -371,7 +371,7 @@ public:
 		RtString aPic, RtString aTex, RtToken aSWrap, RtToken aTWrap,
 		const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_BUMP, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		m_filterfunc = 0;
 		set(aPic, aTex, aSWrap, aTWrap, &aFilterFunc, aSWidth, aTWidth);
@@ -630,7 +630,7 @@ public:
 		RtString aPic, RtString aTex,
 		const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_LAT_LONG_ENVIRONMENT, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		m_filterfunc = 0;
 		set(aPic, aTex, &aFilterFunc, aSWidth, aTWidth);
@@ -872,7 +872,7 @@ public:
 		RtString aTex, RtFloat aFov,
 		const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_CUBE_FACE_ENVIRONMENT, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		m_filterfunc = 0;
 		set(aPx, aNx, aPy, aNy, aPz, aNz, aTex, aFov, &aFilterFunc, aSWidth, aTWidth);
@@ -1169,7 +1169,7 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtString aPic, RtString aTex,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_SHADOW, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		set(aPic, aTex);
 	}
@@ -1333,7 +1333,7 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_BRICK_MAP, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		set(theNNames, thePtcNames, aBkMName);
 	}

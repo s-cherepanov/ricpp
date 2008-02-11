@@ -68,8 +68,6 @@
 		C3685F460D3C23B200B2E025 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
 		C3685F490D3C23E800B2E025 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F3E0D3C237000B2E025 /* libgendynlib.a */; };
 		C3685F4D0D3C240800B2E025 /* libpluginhandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F340D3C231500B2E025 /* libpluginhandler.a */; };
-		C3685F5E0D3C24DF00B2E025 /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1690BF4693200AA03BC /* baserenderer.h */; };
-		C3685F5F0D3C24DF00B2E025 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
 		C38088CB0D3CA7BE00B6C3BA /* ribfilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754110C1402250089A579 /* ribfilter.cpp */; };
 		C38088CC0D3CA7BE00B6C3BA /* ribfilterlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754120C1402250089A579 /* ribfilterlist.cpp */; };
 		C38088CD0D3CA7CB00B6C3BA /* ribfilter.h in Headers */ = {isa = PBXBuildFile; fileRef = C39754150C14025D0089A579 /* ribfilter.h */; };
@@ -168,6 +166,25 @@
 		C3808ADC0D3CDB1A00B6C3BA /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38088C80D3CA7A600B6C3BA /* libribfilter.a */; };
 		C3808ADD0D3CDB2900B6C3BA /* passthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		C3EFAC680D5C39BA00E07AE4 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		C3EFAC690D5C39BA00E07AE4 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+/* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
 		C3685F530D3C248C00B2E025 /* PBXContainerItemProxy */ = {
@@ -1225,7 +1242,6 @@
 			files = (
 				C3685F440D3C23AE00B2E025 /* dynlib.h in Headers */,
 				C3685F450D3C23AE00B2E025 /* macdynlib.h in Headers */,
-				C3685F5E0D3C24DF00B2E025 /* baserenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1594,6 +1610,8 @@
 				C3808A900D3CBC6E00B6C3BA /* Frameworks */,
 			);
 			buildRules = (
+				C3EFAC680D5C39BA00E07AE4 /* PBXBuildRule */,
+				C3EFAC690D5C39BA00E07AE4 /* PBXBuildRule */,
 			);
 			dependencies = (
 				C3808AB40D3CBF9900B6C3BA /* PBXTargetDependency */,
@@ -1721,7 +1739,6 @@
 			files = (
 				C3685F420D3C23A000B2E025 /* dynlib.cpp in Sources */,
 				C3685F430D3C23A000B2E025 /* macdynlib.cpp in Sources */,
-				C3685F5F0D3C24DF00B2E025 /* baserenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

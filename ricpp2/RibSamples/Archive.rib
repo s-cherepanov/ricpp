@@ -1,9 +1,19 @@
 ##RenderMan RIB-Structure 1.1
 version 3.03
+
+Declare "Option:MyOption:MyVariable" "constant string"
+Declare "Option:MyVariable" "constant string"
+Declare "Attribute:MyVariable" "constant integer"
+Declare "MyArray" "constant integer[3]"
+
+Option "MyOption" "MyVariable" "value"
+Option "MyOtherOption" "MyVariable" "Another value"
+
 #
 # Rib file to test parsing/writing 
 #
 ArchiveBegin "InlineArchive"
+	Attribute "MyAttribute" "Attribute:MyVariable" [ 1 ] "MyArray" 1 2 3
     # Inline Archive
     #
 	ArchiveBegin "InInlineArchive"
@@ -11,7 +21,7 @@ ArchiveBegin "InlineArchive"
 	    # Read the file TestArchive.rib
 		ReadArchive "TestArchive.rib"
 		# Procedural "DelayedReadArchive"
-		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
+		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -1 -1 0 1 1 1 ]
 	ArchiveEnd
 	#
 	ObjectBegin "A_Disk"
@@ -289,7 +299,7 @@ FrameBegin 1
 		# Read the disk object
 		ObjectInstance "A_Disk"
 		# Procedural "DelayedReadArchive"
-		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -.5 -.5 -1 .5 .5 0 ]
+		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [-1 -1 0 1 1 1 ]
 		Procedural "RunProgram" [ "php genpic.php" "" ] [ 1 2 3 4 5 6 ]
 		Procedural "RunProgram" [ "echo Sphere .5 -.5 .5 360" "" ] [ -.5 -.5 -.5 .5 .5 .5 ]
 		Procedural "DynamicLoad" [ "mydynlib" "" ] [ 1 2 3 4 5 6 ]

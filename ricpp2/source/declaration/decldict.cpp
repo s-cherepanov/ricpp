@@ -45,41 +45,53 @@ CDeclarationDictionary::~CDeclarationDictionary()
 	}
 }
 
-const CDeclaration *CDeclarationDictionary::find(RtToken tableNamespace, const char *table, const char *var) const
+const CDeclaration *CDeclarationDictionary::find(const char *tableNamespace, const char *table, const char *var)
 {
+	assert(!(tableNamespace == 0 && table != 0));
 	if ( emptyStr(var) )
 		return 0;
 
+	CColorDescr descr;
+
+	// Test inline declaration
+	try {
+		CDeclaration d(var, descr, m_tokenMap);
+		if ( d.isInline() ) {
+			return 0;
+		}
+	} catch ( ExceptRiCPPError &e ) {
+	    // ok, not an inline declaration
+	}
+		
 	RtToken token;
 	std::string s;
 
-	if ( notEmptyStr(tableNamespace) ) {
-		s = tableNamespace;
-		s += ':';
-		if ( notEmptyStr(tableNamespace) ) {
+	if ( !strrchr(var, ":") ) {
+		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
+			s = tableNamespace;
+			s += ':';
 			s += table;
 			s += ':';
-		}
-		s += var;
+			s += var;
 
-		token = m_tokenMap.find(s.c_str());
-		if ( token != RI_NULL ) {
-			return find(token);
+			token = m_tokenMap.find(s.c_str());
+			if ( token != RI_NULL ) {
+				return find(token);
+			}
+		}
+
+		if ( notEmptyStr(tableNamespace) ) {
+			s = tableNamespace;
+			s += ':';
+			s += var;
+
+			token = m_tokenMap.find(s.c_str());
+			if ( token != RI_NULL ) {
+				return find(token);
+			}
 		}
 	}
-
-	if ( notEmptyStr(table) ) {
-		s = table;
-		s += ':';
-		s += noNullStr(var);
-		token = m_tokenMap.find(s.c_str());
-		if ( token != RI_NULL ) {
-			return find(token);
-		}
-	}
-
-	s = var;
-	token = m_tokenMap.find(s.c_str());
+	token = m_tokenMap.find(var);
 	if ( token != RI_NULL ) {
 		return find(token);
 	}
@@ -117,45 +129,57 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 }
 
 const CDeclaration *CDeclarationDictionary::findAndUpdate(
-	RtToken tableNamespace,
+	const char *tableNamespace,
 	const char *table,
 	const char *var,
 	const CColorDescr &curColorDescr
 )
 {
-	if ( emptyStr(var) )
+	assert(!(tableNamespace == 0 && table != 0));
+	if ( emptyStr(var) ) {
 		return 0;
+	}
+
+	// Test inline declaration
+	try {
+		CDeclaration d(var, curColorDescr, m_tokenMap);
+		if ( d.isInline() ) {
+			return 0;
+		}
+	} catch ( ExceptRiCPPError &e ) {
+	    // ok, not an inline declaration
+	}
 
 	RtToken token;
 	std::string s;
 
-	if ( notEmptyStr(tableNamespace) ) {
-		s = tableNamespace;
-		s += ':';
-		if ( notEmptyStr(tableNamespace) ) {
+	if ( !strrchr(var, ":") ) {
+		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
+			s = tableNamespace;
+			s += ':';
 			s += table;
 			s += ':';
-		}
-		s += var;
+			s += var;
 
-		token = m_tokenMap.find(s.c_str());
-		if ( token != RI_NULL ) {
-			return findAndUpdate(token, curColorDescr);
+			token = m_tokenMap.find(s.c_str());
+			if ( token != RI_NULL ) {
+				return findAndUpdate(token, curColorDescr);
+			}
+		}
+
+		if ( notEmptyStr(tableNamespace)  ) {
+			s = tableNamespace;
+			s += ':';
+			s += var;
+
+			token = m_tokenMap.find(s.c_str());
+			if ( token != RI_NULL ) {
+				return findAndUpdate(token, curColorDescr);
+			}
 		}
 	}
-
-	if ( notEmptyStr(table) ) {
-		s = table;
-		s += ':';
-		s += noNullStr(var);
-		token = m_tokenMap.find(s.c_str());
-		if ( token != RI_NULL ) {
-			return findAndUpdate(token, curColorDescr);
-		}
-	}
-
-	s = var;
-	token = m_tokenMap.find(s.c_str());
+	
+	token = m_tokenMap.find(var);
 	if ( token != RI_NULL ) {
 		return findAndUpdate(token, curColorDescr);
 	}

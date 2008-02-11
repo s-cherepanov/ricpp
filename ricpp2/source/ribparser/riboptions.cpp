@@ -389,7 +389,7 @@ void CProjectionRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_PROJECTION, name);
 			if ( n > 0 ) {
 				parser.ribFilter().projectionV(name, n, request.tokenList(), request.valueList());
 			} else {
@@ -1127,7 +1127,7 @@ void CImagerRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_IMAGER, name);
 			if ( n > 0 ) {
 				parser.ribFilter().imagerV(name, n, request.tokenList(), request.valueList());
 			} else {
@@ -1291,7 +1291,7 @@ void CDisplayRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 		if ( b0 && b1 && b2 ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(3, p);
+			int n = request.getTokenList(3, p, RI_DISPLAY, type);
 			if ( n > 0 ) {
 				parser.ribFilter().displayV(name, type, mode, n, request.tokenList(), request.valueList());
 			} else {
@@ -1345,7 +1345,7 @@ void CHiderRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 		if ( p0.getString(type) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_HIDER, type);
 			if ( n > 0 ) {
 				parser.ribFilter().hiderV(type, n, request.tokenList(), request.valueList());
 			} else {
@@ -1539,7 +1539,9 @@ void COptionRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+
+			int n = request.getTokenList(1, p, RI_OPTION, name);
+
 			if ( n > 0 ) {
 				parser.ribFilter().optionV(name, n, request.tokenList(), request.valueList());
 			} else {

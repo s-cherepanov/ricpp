@@ -87,7 +87,7 @@ void CResourceRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 		return;
 	}
 
-	int n = request.getTokenList(2, CParameterClasses());
+	int n = request.getTokenList(2, CParameterClasses(), RI_RESOURCE, type);
 	if ( n > 0 ) {
 		parser.ribFilter().resourceV(handle, type,
 			n, request.tokenList(), request.valueList());

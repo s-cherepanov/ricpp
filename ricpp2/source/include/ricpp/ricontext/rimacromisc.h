@@ -504,10 +504,8 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo, RI_CONTROL, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(aName)
 	{
-		CParameterClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 
 	/** @brief Constructor.

@@ -127,7 +127,7 @@ public:
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
-	const CDeclaration *find(RtToken tableNamespace, const char *table, const char *var) const;
+	const CDeclaration *find(const char *tableNamespace, const char *table, const char *var);
 
 	/** @brief Finds a declaration for a token, may change number of color components.
 	 *
@@ -156,7 +156,7 @@ public:
 	 * @see find(const char *, const char *, const char *, const CTokenMap &), CDeclaration
 	 */
 	const CDeclaration *findAndUpdate(
-		RtToken tableNamespace,
+		const char *tableNamespace,
 		const char *table,
 		const char *var,
 		const CColorDescr &curColorDescr)

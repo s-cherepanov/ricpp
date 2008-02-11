@@ -79,7 +79,7 @@ void CLightSource::lightSource(
 	m_isGlobalLight = isGlobal;
 	m_isAreaLight   = isArea;
 
-	m_lightParameters.set(CValueCounts(), dict, colorDescr, name, n, tokens, params);
+	m_lightParameters.set(isArea ? RI_AREA_LIGHT_SOURCE : RI_LIGHT_SOURCE, name, CValueCounts(), dict, colorDescr, name, n, tokens, params);
 }
 
 void CLightSource::lightSource(

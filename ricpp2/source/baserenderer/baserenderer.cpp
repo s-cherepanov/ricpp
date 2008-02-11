@@ -361,6 +361,7 @@ RtToken CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool i
 				declaration);
 
 		renderState()->declAdd(d);
+		// std::cout << d->token() << " "  << noNullStr(CTypeInfo::tableNamespace(d->tableNamespace())) << " " << noNullStr(d->table()) << " " << noNullStr(d->var()) << std::endl;
 		return d->token();
 	}
 	return RI_NULL;
@@ -401,7 +402,7 @@ RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
 		// Process
 		CRiDeclare r(renderState()->lineNo(), name, declaration);
 		processRequest(r);
-
+		
 		// Return the token
 		return name;
 
@@ -420,6 +421,9 @@ RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
 
 void CBaseRenderer::defaultDeclarations()
 {
+	// Additional Tokens
+	RI_BASE_RENDERER = renderState()->tokFindCreate("base-renderer");
+
 	// Default declarations (Tokens are already defined!)
 	processDeclare(RI_FLATNESS, "float", true);
 	processDeclare(RI_FOV, "float", true);
@@ -465,10 +469,7 @@ void CBaseRenderer::defaultDeclarations()
 	processDeclare(RI_FILE, "string", true);
 
 	// Additional render specific declarations
-	RI_CACHE_FILE_ARCHIVES = processDeclare("cache-file-archives", "constant integer", true);
-
-	// Tokens
-	RI_BASE_RENDERER = renderState()->tokFindCreate("base-renderer");
+	RI_CACHE_FILE_ARCHIVES = processDeclare("Control:base-renderer:cache-file-archives", "constant integer", true);
 }
 
 RtVoid CBaseRenderer::preBegin(RtString name, const CParameterList &params)
@@ -498,7 +499,7 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 		defaultDeclarations();
 
 		// Handle the parameters
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_BEGIN, name, CParameterClasses(), n, tokens, params);
 
 		CRiBegin r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -1145,7 +1146,7 @@ RtVoid CBaseRenderer::resourceV(RtToken handle, RtToken type, RtInt n, RtToken t
 
 		handle = renderState()->tokFindCreate(handle);
 		type = renderState()->tokFindCreate(type);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_RESOURCE, type, CParameterClasses(), n, tokens, params);
 
 		CRiResource r(renderState()->lineNo(), handle, type, renderState()->curParamList());
 		processRequest(r);
@@ -1435,7 +1436,7 @@ RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPoi
 
 		// Parse parameters, ignore unrecognized ones
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_PROJECTION, name, CParameterClasses(), n, tokens, params);
 
 		// Process command
 		CRiProjection r(renderState()->lineNo(), name, renderState()->curParamList());
@@ -1772,7 +1773,7 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_IMAGER, name, CParameterClasses(), n, tokens, params);
 
 		CRiImager r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -1895,7 +1896,7 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 
 		type = renderState()->tokFindCreate(type);
 		mode = renderState()->tokFindCreate(mode);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_DISPLAY, type, CParameterClasses(), n, tokens, params);
 
 		CRiDisplay r(renderState()->lineNo(), name, type, mode, renderState()->curParamList());
 		processRequest(r);
@@ -1934,7 +1935,7 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 			return;
 
 		type = renderState()->tokFindCreate(type);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_HIDER, type, CParameterClasses(), n, tokens, params);
 
 		CRiHider r(renderState()->lineNo(), type, renderState()->curParamList());
 		processRequest(r);
@@ -2057,7 +2058,7 @@ RtVoid CBaseRenderer::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_OPTION, name, CParameterClasses(), n, tokens, params);
 
 		CRiOption r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2118,7 +2119,7 @@ RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointe
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_CONTROL, name, CParameterClasses(), n, tokens, params);
 
 		CRiControl r(renderState()->lineNo(), name, renderState()->curParamList());
 		// Do not store controls as macros execute immediatly
@@ -2164,7 +2165,7 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 			return h;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
 
 		CRiLightSource r(*renderState(), name, n, tokens, params);
 		processRequest(r);
@@ -2207,7 +2208,7 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 			return h;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_AREA_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
 
 		CRiAreaLightSource r(*renderState(), name, n, tokens, params);
 		processRequest(r);
@@ -2269,7 +2270,7 @@ RtVoid CBaseRenderer::attributeV(RtToken name, RtInt n, RtToken tokens[], RtPoin
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_ATTRIBUTE, name, CParameterClasses(), n, tokens, params);
 
 		CRiAttribute r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2388,7 +2389,7 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_SURFACE, name, CParameterClasses(), n, tokens, params);
 
 		CRiSurface r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2435,7 +2436,7 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_ATMOSPHERE, name, CParameterClasses(), n, tokens, params);
 
 		CRiAtmosphere r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2482,7 +2483,7 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_INTERIOR, name, CParameterClasses(), n, tokens, params);
 
 		CRiInterior r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2529,7 +2530,7 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_EXTERIOR, name, CParameterClasses(), n, tokens, params);
 
 		CRiExterior r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -2576,7 +2577,7 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_DISPLACEMENT, name, CParameterClasses(), n, tokens, params);
 
 		CRiDisplacement r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -3434,7 +3435,7 @@ RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtP
 			return;
 
 		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_DEFORMATION, name, CParameterClasses(), n, tokens, params);
 
 		CRiDeformation r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r);
@@ -4536,7 +4537,7 @@ RtVoid CBaseRenderer::makeTextureV(RtString pic, RtString tex, RtToken swrap, Rt
 		if ( !preCheck(req) )
 			return;
 
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_TEXTURE, RI_TEXTURE, CParameterClasses(), n, tokens, params);
 
 		CRiMakeTexture r(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList());
 		processRequest(r);
@@ -4576,7 +4577,7 @@ RtVoid CBaseRenderer::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtTok
 		if ( !preCheck(req) )
 			return;
 
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_TEXTURE, RI_BUMP, CParameterClasses(), n, tokens, params);
 
 		CRiMakeBump r(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList());
 		processRequest(r);
@@ -4616,7 +4617,7 @@ RtVoid CBaseRenderer::makeLatLongEnvironmentV(RtString pic, RtString tex, const 
 		if ( !preCheck(req) )
 			return;
 
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_TEXTURE, RI_LAT_LONG_ENVIRONMENT, CParameterClasses(), n, tokens, params);
 
 		CRiMakeLatLongEnvironment r(renderState()->lineNo(), pic, tex, filterfunc, swidth, twidth, renderState()->curParamList());
 		processRequest(r);
@@ -4656,7 +4657,7 @@ RtVoid CBaseRenderer::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtStrin
 		if ( !preCheck(req) )
 			return;
 
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_TEXTURE, RI_CUBE_FACE_ENVIRONMENT, CParameterClasses(), n, tokens, params);
 
 		CRiMakeCubeFaceEnvironment r(renderState()->lineNo(), px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, renderState()->curParamList());
 		processRequest(r);
@@ -4696,7 +4697,7 @@ RtVoid CBaseRenderer::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken t
 		if ( !preCheck(req) )
 			return;
 
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_TEXTURE, RI_SHADOW, CParameterClasses(), n, tokens, params);
 
 		CRiMakeShadow r(renderState()->lineNo(), pic, tex, renderState()->curParamList());
 		processRequest(r);
@@ -4736,7 +4737,7 @@ RtVoid CBaseRenderer::makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString 
 		if ( !preCheck(req) )
 			return;
 
-		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		renderState()->parseParameters(RI_TEXTURE, RI_BRICK_MAP, CParameterClasses(), n, tokens, params);
 
 		CRiMakeBrickMap r(renderState()->lineNo(), nNames, ptcnames, bkmname, renderState()->curParamList());
 		processRequest(r);

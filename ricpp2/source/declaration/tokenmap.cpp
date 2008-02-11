@@ -24,7 +24,7 @@
 
 /** @file tokenmap.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implementation of the representation of a Token (index and its string)
+ *  @brief Maps strings to a unique token, implementation.
  */
 
 #include "ricpp/declaration/tokenmap.h"
@@ -33,18 +33,26 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
+
 using namespace RiCPP;
 
-CTokenMap::CTokenMap()
+
+CTokenMap::~CTokenMap()
 {
+	std::list<const char *>::iterator i;
+	for ( i = m_strList.begin(); i != m_strList.end(); i++ ) {
+		if ( (*i) != 0 )
+			delete [](*i);
+	}
 }
 
+
 void CTokenMap::defaultTokens()
-// throw ExceptRiCPPError;
 {
 	try {
 
 		// Standard Tokens
+		
 		m_tokenMapper[CToken(RI_NULL)] = RI_NULL;
 
 		m_tokenMapper[CToken(RI_FRAMEBUFFER)] = RI_FRAMEBUFFER;
@@ -197,14 +205,13 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_FACEVARYING)] = RI_FACEVARYING;
 		m_tokenMapper[CToken(RI_FACEVERTEX)] = RI_FACEVERTEX;
 
-
 		m_tokenMapper[CToken(RI_PROJECTION)] = RI_PROJECTION;
 		m_tokenMapper[CToken(RI_IMAGER)] = RI_IMAGER;
 		m_tokenMapper[CToken(RI_DISPLAY)] = RI_DISPLAY;
 		m_tokenMapper[CToken(RI_HIDER)] = RI_HIDER;
 		m_tokenMapper[CToken(RI_OPTION)] = RI_OPTION;
-		m_tokenMapper[CToken(RI_LIGHT)] = RI_LIGHT;
-		m_tokenMapper[CToken(RI_AREALIGHT)] = RI_AREALIGHT;
+		m_tokenMapper[CToken(RI_LIGHT_SOURCE)] = RI_LIGHT_SOURCE;
+		m_tokenMapper[CToken(RI_AREA_LIGHT_SOURCE)] = RI_AREA_LIGHT_SOURCE;
 		m_tokenMapper[CToken(RI_SURFACE)] = RI_SURFACE;
 		m_tokenMapper[CToken(RI_ATMOSPHERE)] = RI_ATMOSPHERE;
 		m_tokenMapper[CToken(RI_INTERIOR)] = RI_INTERIOR;
@@ -212,16 +219,12 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_DISPLACEMENT)] = RI_DISPLACEMENT;
 		m_tokenMapper[CToken(RI_DEFORMATION)] = RI_DEFORMATION;
 		m_tokenMapper[CToken(RI_VOLUME)] = RI_VOLUME;
-		m_tokenMapper[CToken(RI_GEOMETRICAPPROXYMATION)] = RI_GEOMETRICAPPROXYMATION;
-		m_tokenMapper[CToken(RI_COORDINATESYSTEM)] = RI_PROJECTION;
 		m_tokenMapper[CToken(RI_ATTRIBUTE)] = RI_ATTRIBUTE;
-		m_tokenMapper[CToken(RI_GEOMETRY)] = RI_GEOMETRY;
 		m_tokenMapper[CToken(RI_TEXTURE)] = RI_TEXTURE;
-		m_tokenMapper[CToken(RI_READARCHIVE)] = RI_READARCHIVE;
-		m_tokenMapper[CToken(RI_ARCHIVEBLOCK)] = RI_ARCHIVEBLOCK;
-		m_tokenMapper[CToken(RI_DISPLAYCHANNEL)] = RI_DISPLAYCHANNEL;
-		m_tokenMapper[CToken(RI_RESOURCE)] = RI_RESOURCE;
 		m_tokenMapper[CToken(RI_CONTROL)] = RI_CONTROL;
+		m_tokenMapper[CToken(RI_BEGIN)] = RI_BEGIN;
+		m_tokenMapper[CToken(RI_RESOURCE)] = RI_RESOURCE;
+		
 		m_tokenMapper[CToken(RI_FRAME)] = RI_FRAME;
 
 		m_tokenMapper[CToken(RI_DEVIATION)] = RI_DEVIATION;
@@ -249,16 +252,20 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_HERMITE)] = RI_HERMITE;
 		m_tokenMapper[CToken(RI_POWER)] = RI_POWER;
 
+		m_tokenMapper[CToken(RI_BUMP)] = RI_BUMP;
+		m_tokenMapper[CToken(RI_SHADOW)] = RI_SHADOW;
+		m_tokenMapper[CToken(RI_LAT_LONG_ENVIRONMENT)] = RI_LAT_LONG_ENVIRONMENT;
+		m_tokenMapper[CToken(RI_CUBE_FACE_ENVIRONMENT)] = RI_CUBE_FACE_ENVIRONMENT;
+		m_tokenMapper[CToken(RI_BRICK_MAP)] = RI_BRICK_MAP;
+
 		m_tokenMapper[CToken(RI_INT)] = RI_INT;
 		m_tokenMapper[CToken(RI_NULL_LIT)] = RI_NULL_LIT;
 		m_tokenMapper[CToken(RI_UNKNOWN)] = RI_UNKNOWN;
 		// RI_EMPTY same token as RI_NULL
 
-	} catch(...) {
-
-		// If there was an error, the token was not created. Handled by the next few lines.
+	} catch (...) {
+		// If there was an error, a token was not created.
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not initialize tokenmap");
-
 	}
 }
 
@@ -303,6 +310,7 @@ RtToken CTokenMap::findCreate(const char *name)
 	return iter->second;
 }
 
+
 RtToken CTokenMap::find(const char *name) const
 {
 	if ( !name )
@@ -313,31 +321,6 @@ RtToken CTokenMap::find(const char *name) const
 	const_iterator iter;
 	if ( (iter = m_tokenMapper.find(CToken(name))) == m_tokenMapper.end() ) {
 		return RI_NULL;
-	}
-
-	return iter->second;
-}
-
-RtToken CTokenMap::staticFindCreate(RtToken token)
-// throw ExceptRiCPPError;
-{
-	if ( !token )
-		return RI_NULL;
-	if ( !*token )
-		return RI_NULL; // don't use RI_EMPTY as token to simplify compare
-		
-	try {
-		m_tokenMapper[CToken(token)] = token;
-	} catch(...) {
-		// If there was an error, the token was not created. Handled by the next few lines.
-	}
-
-	const_iterator iter;
-	if ( (iter = m_tokenMapper.find(token)) == m_tokenMapper.end() ) {
-		iter = m_tokenMapper.find(CToken(token));
-		if ( iter == m_tokenMapper.end() ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not create token \"%s\"", token);
-		}
 	}
 
 	return iter->second;

@@ -86,10 +86,10 @@ bool CDeclaration::stripName(CTokenMap &tokenmap)
 
 bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap)
 {
-	// Set the name, 0 for inline declarations
+	// Set the name, 0 for parametrs and inline declarations (m_name will be parsed out of decl later)
 	m_name = noNullStr(name);
-	m_declString = noNullStr(decl);
 	
+	m_isArray = false;
 	m_arraySize = 1;
 	m_typeSize = 0;
 	m_class = CLASS_UNKNOWN;
@@ -136,8 +136,10 @@ bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap
 			++decl;
 
 		// The optional array specifier [n], defaults to 1
-		if ( CTypeInfo::arrayPrefix(decl, pos, m_arraySize) )
+		if ( CTypeInfo::arrayPrefix(decl, pos, m_arraySize) ) {
+			m_isArray = true;
 			decl += pos;
+		}
 
 		if ( m_arraySize == 0 )
 			return false;
@@ -228,7 +230,6 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 	if ( this == &decl )
 		return *this;
 	m_name = decl.m_name;
-	m_declString = decl.m_declString;
 	m_namespace = decl.m_namespace;
 	m_table = decl.m_table;
 	m_var = decl.m_var;
@@ -236,6 +237,7 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 	m_class = decl.m_class;
 	m_type = decl.m_type;
 	m_basicType = decl.m_basicType;
+	m_isArray = decl.m_isArray;
 	m_arraySize = decl.m_arraySize;
 	m_typeSize = decl.m_typeSize;
 	m_isInline = decl.m_isInline;
@@ -272,13 +274,14 @@ int CDeclaration::selectNumberOf(int vertices, int corners, int facets, int face
 	return n;
 }
 
+
 const char *CDeclaration::getInlineString(std::string &declaration) const
 {
 	declaration = "";
 	declaration += CTypeInfo::className(m_class);
 	declaration += " ";
 	declaration += CTypeInfo::typeName(m_type);
-	if ( m_arraySize > 1 ) {
+	if ( m_isArray || m_arraySize > 1 ) {
 		declaration += " [";
 		char num[64];
 		declaration += valToStr(num, sizeof(num), m_arraySize);
@@ -288,3 +291,23 @@ const char *CDeclaration::getInlineString(std::string &declaration) const
 	declaration += m_name;
 	return declaration.c_str();
 }
+
+
+const char *CDeclaration::declString(std::string &declaration) const
+{
+	if ( isInline() ) {
+		return getInlineString(declaration);
+	}
+	declaration = m_name;
+	return declaration.c_str();
+}
+
+bool CDeclaration::matches(EnumNamespaces aNamespace, RtToken aTable, RtToken aVar)
+{
+	if ( aNamespace != NAMESPACE_UNKNOWN && tableNamespace() != NAMESPACE_UNKNOWN && aNamespace != tableNamespace() )
+		return false;
+	if ( aTable != RI_NULL && table() != RI_NULL && aTable != table() )
+		return false;
+	return aVar == var();
+}
+

@@ -32,6 +32,7 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
+
 using namespace RiCPP;
 
 
@@ -52,7 +53,6 @@ void CParameter::clear()
 	m_declaration = 0;
 	m_position = 0;
 
-	m_tokenStr.clear();
 	m_ints.clear();
 	m_floats.clear();
 	m_stringPtrs.clear();
@@ -77,7 +77,6 @@ CParameter &CParameter::operator=(const CParameter &param)
 
 	m_position = param.m_position;
 
-	m_tokenStr = param.m_tokenStr;
 	m_ints = param.m_ints;
 	m_floats = param.m_floats;
 	m_strings = param.m_strings;
@@ -88,6 +87,7 @@ CParameter &CParameter::operator=(const CParameter &param)
 
 
 bool CParameter::setDeclaration(
+	const char *aNamespace, const char *aTable, 
 	RtString theName,
 	unsigned int thePosition,
 	const CParameterClasses &counts,
@@ -100,14 +100,13 @@ bool CParameter::setDeclaration(
 		return false;
 
 	m_position = thePosition;
-	m_tokenStr = theName;
 	
-	RtToken theNameToken = dict.tokenMap().find(theName);
+	const CDeclaration *existingDecl = dict.findAndUpdate(aNamespace, aTable, theName, curColorDescr);
 	const CDeclaration *decl = 0;
 	
-	if ( theNameToken )
-		decl = dict.findAndUpdate(theNameToken, curColorDescr);
-	if ( !decl ) {
+	if ( existingDecl ) {
+		decl = existingDecl;
+	} else {
 		// inline
 		decl = new CDeclaration(theName, curColorDescr, dict.tokenMap());
 		if ( !decl ) {
@@ -125,6 +124,7 @@ bool CParameter::setDeclaration(
 
 
 void CParameter::set(
+	const char *aNamespace, const char *aTable, 
 	RtString theName,
 	RtPointer theData,
 	unsigned int thePosition,
@@ -132,7 +132,7 @@ void CParameter::set(
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr)
 {
-	if ( !setDeclaration(theName, thePosition, counts, dict, curColorDescr) )
+	if ( !setDeclaration(aNamespace, aTable, theName, thePosition, counts, dict, curColorDescr) )
 		return;
 
 	unsigned long elems = m_declaration->selectNumberOf(counts) * m_declaration->elemSize();
@@ -278,12 +278,13 @@ bool CParameter::get(unsigned long pos, RtString &result) const
 // ----------------------------------------------------------------------------
 
 CParameterList::CParameterList(
+	const char *aNamespace, const char *aTable, 
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	set(counts, dict, curColorDescr, n, tokens, params);
+	set(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params);
 }
 
 
@@ -326,17 +327,19 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 
 
 void CParameterList::set(
+	const char *aNamespace, const char *aTable, 
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
 	clear();
-	add(counts, dict, curColorDescr, n, tokens, params);
+	add(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params);
 }
 
 
 void CParameterList::add(
+	const char *aNamespace, const char *aTable, 
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
@@ -348,8 +351,8 @@ void CParameterList::add(
 			erase(param);
 		}
 		try {
-			m_params.push_back(CParameter(tokens[i], params[i], i, counts, dict, curColorDescr));
-			RtToken var = m_params.back().token();
+			m_params.push_back(CParameter(aNamespace, aTable, tokens[i], params[i], i, counts, dict, curColorDescr));
+			RtToken var = m_params.back().var(); // The unqualified variable name as key
 			assert(var);
 			if ( var )
 				m_paramMap[var] = &m_params.back();
@@ -373,7 +376,7 @@ void CParameterList::add(const CParameterList &params)
 	{
 		if ( i->token() != RI_NULL ) {
 			m_params.push_back(*i);
-			RtToken var = m_params.back().token();
+			RtToken var = m_params.back().var(); // The unqualified variable name as key
 			m_paramMap[var] = &m_params.back();
 		}
 	}

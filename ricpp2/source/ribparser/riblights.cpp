@@ -56,7 +56,7 @@ void CLightSourceRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		if ( b0 && (b1||b2) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(2, p);
+			int n = request.getTokenList(2, p, RI_LIGHT_SOURCE, name);
 			if ( n >= 0 ) {
 				RtLightHandle light = 0;
 				if ( n > 0 )
@@ -139,7 +139,7 @@ void CAreaLightSourceRibRequest::operator()(IRibParserState &parser, CRibRequest
 		if ( b0 && (b1||b2) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(2, p);
+			int n = request.getTokenList(2, p, RI_AREA_LIGHT_SOURCE, name);
 			if ( n >= 0 ) {
 				RtLightHandle light = 0;
 				if ( n > 0 )

@@ -90,7 +90,7 @@ control ribarchive skip_version [constant integer] 1 | 0 default 0
 
 Control ribarchive cachefile 1 0
 <>0 Caches files like inline archive
-1   Won't cahce files
+1   Won't cache files
 
 */
 
@@ -601,22 +601,22 @@ void CRibWriter::defaultDeclarations()
 {
 	CBaseRenderer::defaultDeclarations();
 
-	// Declarations
-	RI_COMPRESS = processDeclare("compress", "constant integer", true);
-
-	RI_POSTPONE_PROCEDURALS =     processDeclare("postpone-procedurals",     "constant integer", true);
-	RI_POSTPONE_OBJECTS =         processDeclare("postpone-objects",         "constant integer", true);
-	RI_POSTPONE_FILE_ARCHIVES =   processDeclare("postpone-file-archives",   "constant integer", true);
-	RI_POSTPONE_INLINE_ARCHIVES = processDeclare("postpone-inline-archives", "constant integer", true);
-	RI_SKIP_HEADERS =             processDeclare("skip-headers",             "constant integer", true);
-	RI_SKIP_VERSION =             processDeclare("skip-version",             "constant integer", true);
-	RI_INDENT =                   processDeclare("indent",                   "constant integer", true);
-	RI_INDENT_STRING =            processDeclare("indent-string",            "constant string", true);
-	RI_SUPPRESS_OUTPUT =          processDeclare("suppress-output",          "constant integer", true);
-	RI_BINARY_OUTPUT =            processDeclare("binary-output",            "constant integer", true);
-
 	// Tokens
 	RI_RIBWRITER = renderState()->tokFindCreate("ribwriter");
+
+	// Declarations
+	RI_COMPRESS =                 processDeclare("Control:ribwriter:compress",                 "constant integer", true);
+
+	RI_POSTPONE_PROCEDURALS =     processDeclare("Control:ribwriter:postpone-procedurals",     "constant integer", true);
+	RI_POSTPONE_OBJECTS =         processDeclare("Control:ribwriter:postpone-objects",         "constant integer", true);
+	RI_POSTPONE_FILE_ARCHIVES =   processDeclare("Control:ribwriter:postpone-file-archives",   "constant integer", true);
+	RI_POSTPONE_INLINE_ARCHIVES = processDeclare("Control:ribwriter:postpone-inline-archives", "constant integer", true);
+	RI_SKIP_HEADERS =             processDeclare("Control:ribwriter:skip-headers",             "constant integer", true);
+	RI_SKIP_VERSION =             processDeclare("Control:ribwriter:skip-version",             "constant integer", true);
+	RI_INDENT =                   processDeclare("Control:ribwriter:indent",                   "constant integer", true);
+	RI_INDENT_STRING =            processDeclare("Control:ribwriter:indent-string",            "constant string",  true);
+	RI_SUPPRESS_OUTPUT =          processDeclare("Control:ribwriter:suppress-output",          "constant integer", true);
+	RI_BINARY_OUTPUT =            processDeclare("Control:ribwriter:binary-output",            "constant integer", true);
 }
 
 void CRibWriter::writePrefix(bool isArchiveRecord)
@@ -641,19 +641,12 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 		m_writer->putBlank();
 
 		const CParameter &p = (*i);
-		/*
-		if ( p.declaration().isInline() ) {
-			std::string decl;
-			m_writer->putString(p.declaration().getInlineString(decl));
-		}
-		else
-			m_writer->putStringToken(p.name());
-		*/
+		std::string decl;
 
 		if ( p.isInline() )
-			m_writer->putString(p.tokenStr());
+			m_writer->putString(p.declString(decl));
 		else
-			m_writer->putStringToken(p.tokenStr());
+			m_writer->putStringToken(p.declString(decl));
 
 		m_writer->putBlank();
 
@@ -668,7 +661,7 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 				m_writer->putArray(p.stringPtrs());
 				break;
 			default:
-				// Error
+				// Error unknown type
 				paramError = true;
 				m_writer->putChars("[ ]");
 				break;
@@ -678,6 +671,7 @@ void CRibWriter::writeParameterList(const CParameterList &params)
 	m_writer->putNewLine();
 	if ( paramError ) {
 		// throw error
+		throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown basic type of parameters indicated by [ ].");
 	}
 }
 
@@ -709,7 +703,7 @@ RtVoid CRibWriter::doControl(RtToken name, const CParameterList &params)
 			} else if ( (*i).token() == RI_INDENT_STRING ) {
 				RtString strval = 0;
 				if ( (*i).get(0, strval) ) {
-					m_indentString = noNullStr(strval);;
+					m_indentString = noNullStr(strval);
 				}
 			} else if ( (*i).token() == RI_SUPPRESS_OUTPUT ) {
 				RtInt intval;

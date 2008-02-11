@@ -429,6 +429,8 @@ namespace RiCPP {
 		 */
 		int getTokenList(
 			size_t start,
+			const char *tableNamespace = 0,
+			const char *table = 0, 
 			RtInt vertices=0, RtInt corners=0, RtInt facets=0,
 			RtInt faceVertices=0, RtInt faceCorners=0
 		);
@@ -454,10 +456,12 @@ namespace RiCPP {
 		 *  @param start Token-value list starts here.
 		 *  @param p used to get vertices, corners etc.
 		 */
-		inline int getTokenList(size_t start, const CParameterClasses &p)
+		inline int getTokenList(size_t start, const CParameterClasses &p, const char *tableNamespace = 0, const char *table = 0)
 		{
 			return getTokenList(
 				start,
+				tableNamespace,
+				table,
 				p.vertices(),
 				p.corners(),
 				p.facets(),

@@ -98,7 +98,7 @@ RtVoid CDisplayChannelDescr::displayChannelV(CDeclarationDictionary &dict, const
 		delete m_channel;
 
 	m_channel = new CDeclaration(aChannel, colorDescr, dict.tokenMap());
-	set(CValueCounts(), dict, colorDescr, aChannel, n, tokens, params);
+	set(0, 0, CValueCounts(), dict, colorDescr, aChannel, n, tokens, params);
 }
 
 RtVoid CDisplayChannelDescr::displayChannel(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString aChannel, const CParameterList &params)
@@ -183,7 +183,7 @@ void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, 
 }
 
 void CDisplayDescr::displayV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, RtInt n, RtToken tokens[], RtPointer params[]) {
-	set(CValueCounts(), dict, colorDescr, aName, n, tokens, params);
+	set(RI_DISPLAY, aType, CValueCounts(), dict, colorDescr, aName, n, tokens, params);
 	display(channels, aName, aType, aMode);
 }
 

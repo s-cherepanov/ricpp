@@ -837,7 +837,7 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: CVarParamRManInterfaceCall(aLineNo, RI_PROJECTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		m_name = aName;
 	}
@@ -2446,11 +2446,8 @@ public:
 	inline CRiImager(long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo)
+		: CVarParamRManInterfaceCall(aLineNo, RI_IMAGER, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(aName)
 	{
-		CParameterClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
-		m_name = aName;
 	}
 
 	/** @brief Constructor.
@@ -2837,11 +2834,8 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtString aChannel,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo)
+		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_channel(noNullStr(aChannel))
 	{
-		CParameterClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
-		m_channel = noNullStr(aChannel);
 	}
 
 	/** @brief Constructor.
@@ -2993,11 +2987,9 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtString aName, RtToken aType, RtToken aMode,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo),
+		: CVarParamRManInterfaceCall(aLineNo, RI_DISPLAY, aType, decl, CParameterClasses(), curColorDescr, n, tokens, params),
 		  m_name(noNullStr(aName)), m_type(aType), m_mode(aMode)
 	{
-		CParameterClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 
 	/** @brief Constructor.
@@ -3207,10 +3199,8 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aType,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_type(aType)
+		: CVarParamRManInterfaceCall(aLineNo, RI_HIDER, aType, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_type(aType)
 	{
-		CParameterClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 
 	/** @brief Constructor.
@@ -3650,10 +3640,8 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo, RI_OPTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(aName)
 	{
-		CParameterClasses p;
-		setParams(decl, p, curColorDescr, n, tokens, params);
 	}
 
 	/** @brief Constructor.

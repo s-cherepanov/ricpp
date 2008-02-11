@@ -65,7 +65,7 @@ void COptionsBase::set(
 	}
 
 	CValueCounts counts;
-	pl->add(counts, dict, m_curColorDesc, n, tokens, params);
+	pl->add(RI_OPTION, name, counts, dict, m_curColorDesc, n, tokens, params);
 }
 
 

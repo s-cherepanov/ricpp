@@ -59,7 +59,7 @@ void CMakeTextureRibRequest::operator()(IRibParserState &parser, CRibRequestData
 
 			if ( func ) {
 				CParameterClasses p;
-				int n = request.getTokenList(7, p);
+				int n = request.getTokenList(7, p, RI_TEXTURE, RI_TEXTURE);
 
 				if ( n > 0 )
 					parser.ribFilter().makeTextureV(pic, tex, swrap, twrap, *func, swidth, twidth, n, request.tokenList(), request.valueList());
@@ -161,7 +161,7 @@ void CMakeBumpRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 
 			if ( func ) {
 				CParameterClasses p;
-				int n = request.getTokenList(7, p);
+				int n = request.getTokenList(7, p, RI_TEXTURE, RI_BUMP);
 
 				if ( n > 0 )
 					parser.ribFilter().makeBumpV(pic, tex, swrap, twrap, *func, swidth, twidth, n, request.tokenList(), request.valueList());
@@ -260,7 +260,7 @@ void CMakeLatLongEnvironmentRibRequest::operator()(IRibParserState &parser, CRib
 
 			if ( func ) {
 				CParameterClasses p;
-				int n = request.getTokenList(5, p);
+				int n = request.getTokenList(5, p, RI_TEXTURE, RI_LAT_LONG_ENVIRONMENT);
 
 				if ( n > 0 )
 					parser.ribFilter().makeLatLongEnvironmentV(pic, tex, *func, swidth, twidth, n, request.tokenList(), request.valueList());
@@ -357,7 +357,7 @@ void CMakeCubeFaceEnvironmentRibRequest::operator()(IRibParserState &parser, CRi
 
 			if ( func ) {
 				CParameterClasses p;
-				int n = request.getTokenList(11, p);
+				int n = request.getTokenList(11, p, RI_TEXTURE, RI_CUBE_FACE_ENVIRONMENT);
 
 				if ( n > 0 )
 					parser.ribFilter().makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, *func, swidth, twidth, n, request.tokenList(), request.valueList());
@@ -473,7 +473,7 @@ void CMakeShadowRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 
 		if ( b0 && b1 ) {
 			CParameterClasses p;
-			int n = request.getTokenList(2, p);
+			int n = request.getTokenList(2, p, RI_TEXTURE, RI_SHADOW);
 
 			if ( n > 0 )
 				parser.ribFilter().makeShadowV(pic, tex, n, request.tokenList(), request.valueList());
@@ -537,7 +537,7 @@ void CMakeBrickMapRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 
 		if ( b0 && b1 ) {
 			CParameterClasses p;
-			int n = request.getTokenList(2, p);
+			int n = request.getTokenList(2, p, RI_TEXTURE, RI_BRICK_MAP);
 
 			if ( n > 0 )
 				parser.ribFilter().makeBrickMapV((RtInt)p0.getCard(), pics, bkmname, n, request.tokenList(), request.valueList());

@@ -64,12 +64,9 @@ public:
 		CRenderState &state,
 		RtToken aName, 
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(state.lineNo()), m_name(aName)
+		: CVarParamRManInterfaceCall(state.lineNo(), RI_LIGHT_SOURCE, aName, state.dict(), CParameterClasses(), state.options().colorDescr(), n, tokens, params), m_name(aName), m_tmpHandle(illLightHandle)
 	{
 		m_handleIdx = state.lights().newLightHandleIdx();
-		m_tmpHandle = illLightHandle;
-		CParameterClasses p;
-		setParams(state.dict(), p, state.options().colorDescr(), n, tokens, params);
 	}
 
 	inline CRiLightSource(
@@ -154,12 +151,9 @@ public:
 		CRenderState &state,
 		RtToken aName, 
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(state.lineNo()), m_name(aName)
+		: CVarParamRManInterfaceCall(state.lineNo(), RI_AREA_LIGHT_SOURCE, aName, state.dict(), CParameterClasses(), state.options().colorDescr(), n, tokens, params), m_name(aName), m_tmpHandle(illLightHandle)
 	{
 		m_handleIdx = state.lights().newLightHandleIdx();
-		m_tmpHandle = illLightHandle;
-		CParameterClasses p;
-		setParams(state.dict(), p, state.options().colorDescr(), n, tokens, params);
 	}
 
 	inline CRiAreaLightSource(

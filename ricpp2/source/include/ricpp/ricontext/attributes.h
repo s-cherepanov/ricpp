@@ -45,19 +45,22 @@ namespace RiCPP {
 	 *
 	 *  CAttribute is the basic set of RI attributes as described in [RiSpec].
 	 *  A renderer can use an enlarged set of attributes by supplying an own
-	 *  class inheriting from CAttributes with a matching factory
-	 *  (specializes CAttributesFactory) and overloading the factory methods
+	 *  class inheriting from CAttributes, an additional matching factory
+	 *  (specializes CAttributesFactory), and overloading the factory methods
 	 *  CBaseRenderer::getNewAttributesFactory() and CBaseRenderer::deleteAttributesFactory().
-	 *  Also some members need to be overwritten (Copy constructor, assignment, duplication).
+	 *  Also some CAttributes members need to be overwritten (Copy constructor, assignment, duplication).
+	 *  However, since generic attributes (Attribute request) are used and can be queried, a special class
+	 *  for render specific attributes is possibly not necessary.
 	 *
+	 *  @see COptions
 	 */
 	class CAttributes : public COptionsBase {
 	public:
 		// Default color values
-		static const RtFloat defColorComponent;   ///< Default value for color components (1.0).
+		static const RtFloat defColorComponent;   ///< Default value for color components (1.0) - not the number of components.
 
 		// Default opacity values
-		static const RtFloat defOpacityComponent; ///< Default value for opacity components (1.0).
+		static const RtFloat defOpacityComponent; ///< Default value for opacity components (1.0) - not the number of components.
 
 		// Default texture coordinates, corresponding the rectangle of parameteric
 		// coordinates (u, v) of a parametric surface.

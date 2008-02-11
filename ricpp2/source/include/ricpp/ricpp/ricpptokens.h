@@ -207,8 +207,8 @@ const RtToken RI_IMAGER = "Imager"; ///< Imager namespace
 const RtToken RI_DISPLAY = "Display"; ///< Display namespace
 const RtToken RI_HIDER = "Hider"; ///< Hider namespace
 const RtToken RI_OPTION = "Option"; ///< Option namespace
-const RtToken RI_LIGHT = "Light"; ///< Light source namespace
-const RtToken RI_AREALIGHT = "Arealight"; ///< Area light source namespace
+const RtToken RI_LIGHT_SOURCE = "LightSource"; ///< Light source namespace
+const RtToken RI_AREA_LIGHT_SOURCE = "AreaLightSource"; ///< Area light source namespace
 const RtToken RI_SURFACE = "Surface"; ///< Surface shader namespace
 const RtToken RI_ATMOSPHERE = "Atmosphere"; ///< Atmosphere shader namespace
 const RtToken RI_INTERIOR = "Interior"; ///< Interior shader namespace
@@ -216,16 +216,12 @@ const RtToken RI_EXTERIOR = "Exterior"; ///< Exterior shader namespace
 const RtToken RI_DISPLACEMENT = "Displacement"; ///< Displacement shader namespace
 const RtToken RI_DEFORMATION = "Deformation"; ///< Deformation shader namespace
 const RtToken RI_VOLUME = "Volume"; ///< Volume shader namespace
-const RtToken RI_GEOMETRICAPPROXYMATION = "Geometricapproximation"; ///< Geometric approcximation namespace
-const RtToken RI_COORDINATESYSTEM = "Coordinatesystem"; ///< Coordinate system namespace
 const RtToken RI_ATTRIBUTE = "Attribute"; ///< Attribute namespace
-const RtToken RI_GEOMETRY = "Geometry"; ///< Geometry namespace
 const RtToken RI_TEXTURE = "Texture"; ///< Texture namespace
-const RtToken RI_READARCHIVE = "Readarchive"; // Read archive namespace
-const RtToken RI_ARCHIVEBLOCK   = "Archive"; // Archive block namespace
-const RtToken RI_DISPLAYCHANNEL = "Displaychannel"; // Display channel namespace
-const RtToken RI_RESOURCE = "Resource"; ///< Resource namespace
 const RtToken RI_CONTROL = "Control"; ///< Control namespace
+const RtToken RI_BEGIN = "Begin"; ///< Namespace forte Begin statement
+const RtToken RI_RESOURCE = "Resource"; ///< Resource namespace
+
 const RtToken RI_FRAME = "Frame"; ///< Frame number
 
 const RtToken RI_DEVIATION = "deviation";     ///< Type for RiCPP::geometricApproximation()
@@ -254,6 +250,14 @@ const RtToken RI_CATMULL_ROM = "catmull-rom"; ///< Catmull-rom basis and filter
 const RtToken RI_CATMULLROM = "catmullrom"; ///< Catmull-rom basis, filter (alternate writing, not used for output)
 const RtToken RI_HERMITE = "hermite"; ///< Hermite basis
 const RtToken RI_POWER = "power"; ///< Power basis
+
+// Texture tabes
+// RI_TEXTURE already declared
+const RtToken RI_BUMP = "Bump";
+const RtToken RI_SHADOW = "Shadow";
+const RtToken RI_LAT_LONG_ENVIRONMENT  = "LatLongEnvironment";
+const RtToken RI_CUBE_FACE_ENVIRONMENT = "CubeFaceEnvironment";
+const RtToken RI_BRICK_MAP = "BrickMap";
 
 const RtToken RI_INT     = "int"; ///< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
 

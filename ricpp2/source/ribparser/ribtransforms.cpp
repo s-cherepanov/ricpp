@@ -714,7 +714,7 @@ void CDeformationRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		if ( p0.getString(name) ) {
 
 			CParameterClasses p;
-			int n = request.getTokenList(1, p);
+			int n = request.getTokenList(1, p, RI_DEFORMATION, name);
 			if ( n > 0 ) {
 				parser.ribFilter().deformationV(name, n, request.tokenList(), request.valueList());
 			} else {

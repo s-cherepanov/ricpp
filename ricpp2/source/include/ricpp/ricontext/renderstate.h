@@ -839,6 +839,8 @@ public:
 
 	virtual void parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 	virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
+	virtual void parseParameters(CParameterList &p, const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
+	virtual void parseParameters(const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 
 	inline virtual RtInt numTokens() const
 	{
@@ -861,7 +863,7 @@ public:
 	 */
 	//@{
 	inline virtual const CDeclaration *declFind(RtToken name) const { return m_declDict.find(name); }
-	inline virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) const { return m_declDict.find(tableNamespace, table, var); }
+	inline virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) { return m_declDict.find(tableNamespace, table, var); }
 	
 	inline const CDeclaration *declFindAndUpdate(RtToken name, const CColorDescr &curColorDescr) { return m_declDict.findAndUpdate(name, curColorDescr); }
 	inline const CDeclaration *declFindAndUpdate(

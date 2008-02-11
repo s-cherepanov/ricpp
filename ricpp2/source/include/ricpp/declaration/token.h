@@ -49,7 +49,7 @@ namespace RiCPP {
 	class CToken
 	{
 		friend class CTokenMap;
-		RtToken m_token;
+		RtToken m_token; ///< Unique token
 
 		/** @brief Constructor, is constructed by searching in CTokenMap
 		 * @param aToken token
@@ -81,44 +81,44 @@ namespace RiCPP {
 		 */
 		inline CToken(const CToken &t) { *this = t; }
 
-		/** @brief Compare a token by its id using ==
+		/** @brief Compare a token by its name using ==
 		 * @param t Token to compare with
 		 * @return true, if tokens are equal because their ids are equal
 		 */
 		inline bool operator==(const CToken &t) const { return strcmp(name(), t.name()) == 0; }
 
-		/** @brief Compare a token by its id using !=
+		/** @brief Compare a token by its name using !=
 		 * @param t Token to compare with
 		 * @return true, if tokens are not equal because their ids are not equal
 		 */
 		inline bool operator!=(const CToken &t) const { return strcmp(name(), t.name()) != 0; }
 
-		/** @brief Compare a token by its id using <
+		/** @brief Compare a token by its name using <
 		 * @param t Token to compare with
 		 * @return true, m_id is less than the m_id of t
 		 */
 		inline bool operator<(const CToken &t) const { return strcmp(name(), t.name()) < 0; }
 
-		/** @brief Compare a token by its id using <=
+		/** @brief Compare a token by its name using <=
 		 * @param t Token to compare with
 		 * @return true, m_id is less than or equal to the m_id of t
 		 */
 		inline bool operator<=(const CToken &t) const { return strcmp(name(), t.name()) <= 0; }
 
-		/** @brief Compare a token by its id using >
+		/** @brief Compare a token by its name using >
 		 * @param t Token to compare with
 		 * @return true, m_id is greater than the m_id of t
 		 */
 		inline bool operator>(const CToken &t) const { return strcmp(name(), t.name()) > 0; }
 
-		/** @brief Compare a token by its id using >=
+		/** @brief Compare a token by its name using >=
 		 * @param t Token to compare with
 		 * @return true, m_id is greater than or equal to the m_id of t
 		 */
 		inline bool operator>=(const CToken &t) const { return strcmp(name(), t.name()) >= 0; }
 
-		/** @brief Copy a token
-		 * @param t Token to copy
+		/** @brief Copy a token.
+		 * @param t Token to copy.
 		 * @return *this
 		 */
 		inline CToken &operator=(const CToken &t)
@@ -129,13 +129,13 @@ namespace RiCPP {
 			return *this;
 		}
 
-		/** Gets the id of a token, thats the pointer to the unique token
-		 * @return The id of a token
+		/** @brief Gets the id of a token, thats the pointer to the unique token.
+		 * @return The id of a token.
 		 */
 		inline RtToken id() const { return m_token; }
 
-		/** Gets the name of a token
-		 * @return The name of a token ( not 0 )
+		/** @brief Gets the name of a token for printing or c-string functions.
+		 * @return The name of a token ( not 0 ).
 		 */
 		inline const char *name() const { return m_token && *m_token ? m_token : RI_EMPTY; }
 	}; // CToken

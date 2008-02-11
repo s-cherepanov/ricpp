@@ -1625,7 +1625,7 @@ void CRenderState::endAreaLightSource()
 void CRenderState::parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
 {
 	try {
-		p.set(counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+		p.set(0, 0, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
 	} catch (ExceptRiCPPError &err) {
 		if ( archiveName() != 0 ) {
 			err.line(lineNo());
@@ -1638,7 +1638,33 @@ void CRenderState::parseParameters(CParameterList &p, const CValueCounts &counts
 void CRenderState::parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
 {
 	try {
-		m_curParams.set(counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+		m_curParams.set(0, 0, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+	} catch (ExceptRiCPPError &err) {
+		if ( archiveName() != 0 ) {
+			err.line(lineNo());
+			err.file(archiveName());
+		}
+		throw err;
+	}
+}
+
+void CRenderState::parseParameters(CParameterList &p, const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
+{
+	try {
+		p.set(aNamespace, aTable, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+	} catch (ExceptRiCPPError &err) {
+		if ( archiveName() != 0 ) {
+			err.line(lineNo());
+			err.file(archiveName());
+		}
+		throw err;
+	}
+}
+
+void CRenderState::parseParameters(const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
+{
+	try {
+		m_curParams.set(aNamespace, aTable, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
 	} catch (ExceptRiCPPError &err) {
 		if ( archiveName() != 0 ) {
 			err.line(lineNo());

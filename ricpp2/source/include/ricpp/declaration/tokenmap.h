@@ -27,7 +27,7 @@
 
 /** @file tokenmap.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Token dictionary
+ *  @brief Maps strings to a unique token
  */
 
 #ifndef _RICPP_DECLARATION_TOKEN_H
@@ -39,59 +39,48 @@
 
 namespace RiCPP {
 
-/** @brief A tokenmap to create unique tokens for strings
+/** @brief A tokenmap to create unique tokens for strings.
  *  @see CToken
  */
 class CTokenMap {
 	std::map<CToken, RtToken> m_tokenMapper; ///< @brief Maps a token name to it's id
-	std::list<const char *> m_strList; ///< @brief List of strings to delete at destructor
+	std::list<const char *> m_strList;       ///< @brief List of strings to delete at destructor
 
 public:
 	/** @brief Const iterator for the token maps.
 	 */
 	typedef std::map<CToken, RtToken>::const_iterator const_iterator;
+
+	/** @brief Size type of the map.
+	 */
 	typedef std::map<CToken, RtToken>::size_type size_type;
 
-	/** @brief Constructor
-	 * 
-	 * Maps the RtToken out of ricpp.h at the beginning
-	 * @exception ExceptRiCPPError if a token cannot be created (out of memory while filling map).
+	/** @brief Standard Constructor, empty map
 	 */
-	CTokenMap();
+	inline CTokenMap() {}
 
 	/** @brief Default Ri Tokens
 	 * 
-	 * Maps the RtToken out of ricpp.h at the beginning
+	 * Maps the RtToken out of ricpptokens.h, called at the creation time of a renderer context
 	 * @exception ExceptRiCPPError if a token cannot be created (out of memory while filling map).
 	 */
-	void defaultTokens();
-
-	/** @brief Destructor
-	 */
-	inline ~CTokenMap()
-	{
-		std::list<const char *>::iterator i;
-		for ( i = m_strList.begin(); i != m_strList.end(); i++ ) {
-			if ( (*i) != 0 )
-				delete [](*i);
-		}
-	}
-
-	/** @brief Searches for a token and creates one if token name is not found.
-	 *  @param name A pointer to a token name, the name is copied to a new memory area,
-	 *  if a new token must be created.
-	 *  @return Unique token
-	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory).
-	 */
-	RtToken findCreate(const char *name) // throw(ERendererException)
+	void defaultTokens() // throw(class ExceptRiCPPError)
 	;
 
-	/** @brief Searches for a token and creates one if token name is not found.
-	 *  @param token A pointer to a token name, the pointer is stored as is
-	 *  @return Unique token (pointer of @a token)
-	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory while filling map).
+	/** @brief Destructor, deletes the tokens.
 	 */
-	RtToken staticFindCreate(RtToken token) // throw(ERendererException)
+	~CTokenMap();
+
+	/** @brief Searches for a token and creates one, if the token name was not found.
+	 *
+	 *  To create a new token you can call: myToken = myMap.findCreate("tokenString");
+	 *
+	 *  @param name A pointer to a token name, the name is copied to a new memory area,
+	 *  if a token for the string did not already exist.
+	 *  @return Unique token.
+	 *  @exception ExceptRiCPPError if the token cannot be created (out of memory).
+	 */
+	RtToken findCreate(const char *name) // throw(ExceptRiCPPError)
 	;
 
 	/** @brief Searches for a token.
@@ -106,7 +95,7 @@ public:
 	inline const const_iterator begin() const { return m_tokenMapper.begin(); }
 
 	/** @brief Gets the end const iterator.
-	 *  @return end condition for const_iterator for the token map.
+	 *  @return End condition for const_iterator for the token map.
 	 */
 	inline const const_iterator end() const { return m_tokenMapper.end(); }
 

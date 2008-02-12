@@ -45,17 +45,21 @@ CDeclarationDictionary::~CDeclarationDictionary()
 	}
 }
 
-const CDeclaration *CDeclarationDictionary::find(const char *tableNamespace, const char *table, const char *var)
+const CDeclaration *CDeclarationDictionary::find(
+	const char *tableNamespace,
+	const char *table,
+	const char *var,
+	const CColorDescr &curColorDescr,
+	bool update
+)
 {
-	assert(!(tableNamespace == 0 && table != 0));
+	// A least there has to be a variable name
 	if ( emptyStr(var) )
 		return 0;
 
-	CColorDescr descr;
-
 	// Test inline declaration
 	try {
-		CDeclaration d(var, descr, m_tokenMap);
+		CDeclaration d(var, curColorDescr, m_tokenMap);
 		if ( d.isInline() ) {
 			return 0;
 		}
@@ -63,11 +67,15 @@ const CDeclaration *CDeclarationDictionary::find(const char *tableNamespace, con
 	    // ok, not an inline declaration
 	}
 		
-	RtToken token;
+	CDeclaration *d = 0;
+	RtToken token = RI_NULL;
 	std::string s;
 
 	if ( !strrchr(var, ':') ) {
+		// Variable contains no ':' - test scope
+		
 		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
+			// Namespace and tablename (lokal var)
 			s = tableNamespace;
 			s += ':';
 			s += table;
@@ -76,28 +84,58 @@ const CDeclaration *CDeclarationDictionary::find(const char *tableNamespace, con
 
 			token = m_tokenMap.find(s.c_str());
 			if ( token != RI_NULL ) {
-				return find(token);
+				d = update ? findAndUpdate(token, curColorDescr) : find(token);
+				if ( d ) return d;
 			}
 		}
+		
+		if ( notEmptyStr(table) ) {
+			// Search for Tablename only
+			s = table;
+			s += ':';
+			s += var;
 
+			token = m_tokenMap.find(s.c_str());
+			if ( token != RI_NULL ) {
+				d = update ? findAndUpdate(token, curColorDescr) : find(token);
+				if ( d ) return d;
+			}
+		}
+		
 		if ( notEmptyStr(tableNamespace) ) {
+			// Search for namespace only
 			s = tableNamespace;
 			s += ':';
 			s += var;
 
 			token = m_tokenMap.find(s.c_str());
 			if ( token != RI_NULL ) {
-				return find(token);
+				d = update ? findAndUpdate(token, curColorDescr) : find(token);
+				if ( d ) return d;
 			}
 		}
 	}
+
+	// Variable contains a ':' (parameter passed to the interface with attached namespace prefix)
+	// or namespace, table are not set,
+	// or declaration not found previously 
+	// Search for name only (globally declared (old style) variable)
 	token = m_tokenMap.find(var);
 	if ( token != RI_NULL ) {
-		return find(token);
+		d = update ? findAndUpdate(token, curColorDescr) : find(token);
+		if ( d ) return d;
 	}
 
 	return 0;
 }
+
+
+const CDeclaration *CDeclarationDictionary::find(const char *tableNamespace, const char *table, const char *var)
+{
+	CColorDescr descr;
+	return find(tableNamespace, table, var, descr, false);
+}
+
 
 const CDeclaration *CDeclarationDictionary::findAndUpdate(
 	RtToken token, const CColorDescr &curColorDescr)
@@ -135,56 +173,7 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 	const CColorDescr &curColorDescr
 )
 {
-	assert(!(tableNamespace == 0 && table != 0));
-	if ( emptyStr(var) ) {
-		return 0;
-	}
-
-	// Test inline declaration
-	try {
-		CDeclaration d(var, curColorDescr, m_tokenMap);
-		if ( d.isInline() ) {
-			return 0;
-		}
-	} catch ( ExceptRiCPPError & ) {
-	    // ok, not an inline declaration
-	}
-
-	RtToken token;
-	std::string s;
-
-	if ( !strrchr(var, ':') ) {
-		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
-			s = tableNamespace;
-			s += ':';
-			s += table;
-			s += ':';
-			s += var;
-
-			token = m_tokenMap.find(s.c_str());
-			if ( token != RI_NULL ) {
-				return findAndUpdate(token, curColorDescr);
-			}
-		}
-
-		if ( notEmptyStr(tableNamespace)  ) {
-			s = tableNamespace;
-			s += ':';
-			s += var;
-
-			token = m_tokenMap.find(s.c_str());
-			if ( token != RI_NULL ) {
-				return findAndUpdate(token, curColorDescr);
-			}
-		}
-	}
-	
-	token = m_tokenMap.find(var);
-	if ( token != RI_NULL ) {
-		return findAndUpdate(token, curColorDescr);
-	}
-
-	return 0;
+	return find(tableNamespace, table, var, curColorDescr, true);
 }
 
 void CDeclarationDictionary::add(CDeclaration *decl)

@@ -118,15 +118,27 @@ public:
 	 *  <ol>
 	 *  <li> Search for namespace:table:var </li>
 	 *  <li> table:var </li>
+	 *  <li> namespace:var </li>
 	 *  <li> var </li>
 	 *  </ol>
 	 *
 	 * @param tableNamespace The namespace
 	 * @param table The table
 	 * @param var The stripped name of the variable
+	 * @param curColorDescr The current number of color components and RGB transformation
+	 *                      can be arbitrary if @a update is false
+	 * @param update true, if the declaration should be updated if the color declaration changed.
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
+	const CDeclaration *CDeclarationDictionary::find(
+		const char *tableNamespace,
+		const char *table,
+		const char *var,
+		const CColorDescr &curColorDescr,
+		bool update
+	);
+
 	const CDeclaration *find(const char *tableNamespace, const char *table, const char *var);
 
 	/** @brief Finds a declaration for a token, may change number of color components.

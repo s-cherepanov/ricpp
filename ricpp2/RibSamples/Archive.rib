@@ -4,16 +4,18 @@ version 3.03
 Declare "Option:MyOption:MyVariable" "constant string"
 Declare "Option:MyVariable" "constant string"
 Declare "Attribute:MyVariable" "constant integer"
-Declare "MyArray" "constant integer[3]"
+Declare "MyAttribute:MyFloatVariable" "varying float"
+Declare "MyArray" "integer[3]"
+Declare "MyMatrix" "matrix"
 
 Option "MyOption" "MyVariable" "value"
-Option "MyOtherOption" "MyVariable" "Another value"
+Option "MyOtherOption" "MyVariable" [ "Another value" ] "MyArray" 1 2 3 "MyMatrix" [ 1 2 3.14 4.13 5.12 6.11 7 8 9 10 11 12 13 14 15 16 ]
 
 #
 # Rib file to test parsing/writing 
 #
 ArchiveBegin "InlineArchive"
-	Attribute "MyAttribute" "Attribute:MyVariable" [ 1 ] "MyArray" 1 2 3
+	Attribute "MyAttribute" "Attribute:MyVariable" [ 1 ] "MyArray" 1 2 3 "MyFloatVariable" 4.2
     # Inline Archive
     #
 	ArchiveBegin "InInlineArchive"
@@ -54,8 +56,14 @@ ArchiveBegin "Primitives"
     #
     # Quadrics
     #
-    Sphere 0.8 -.75 .75 180 "Cs" [ 1 0 0  0 1 0  0 0 1  1 1 1]
-    Sphere [ 0.8 -.75 .75 180 ] 
+	SolidBegin "difference"
+		SolidBegin "primitive"
+			Sphere 0.8 -.75 .75 360 "Cs" [ 1 0 0  0 1 0  0 0 1  1 1 1]  "MyArray" 1 2 3 "MyAttribute:MyFloatVariable" 1.1 1.2 1.3 1.4
+		SolidEnd
+		SolidBegin "primitive"
+			Sphere [ 0.4 -.75 .75 360 ]
+		SolidEnd
+	SolidEnd
     Cone 0.7 0.8 270
     Cone [ 0.7 0.8 270 ]
     Torus .5 .125 0 180 360
@@ -214,9 +222,11 @@ ArchiveEnd
 # Set of Transforms
 #
 ArchiveBegin "Transforms"
-	Translate 1 2 3
-	Translate [ 1 2 3 ]
-	Transform [ 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1 ]
+	MotionBegin [.3 .5 .7]
+		Translate 1 2 3
+		Translate [ 1 2 3 ]
+		Transform [ 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1 ]
+	MotionEnd
 	ConcatTransform [ 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1 ]
 	Perspective 45
 	ScopedCoordinateSystem "mycoord1"

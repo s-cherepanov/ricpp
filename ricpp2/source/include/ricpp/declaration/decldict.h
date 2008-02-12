@@ -131,7 +131,7 @@ public:
 	 * @return 0, if not found, pointer to declaration of @a name otherwise
 	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
-	const CDeclaration *CDeclarationDictionary::find(
+	const CDeclaration *find(
 		const char *tableNamespace,
 		const char *table,
 		const char *var,

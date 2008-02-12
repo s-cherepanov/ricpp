@@ -67,7 +67,7 @@ const CDeclaration *CDeclarationDictionary::find(
 	    // ok, not an inline declaration
 	}
 		
-	CDeclaration *d = 0;
+	const CDeclaration *d = 0;
 	RtToken token = RI_NULL;
 	std::string s;
 
@@ -75,7 +75,7 @@ const CDeclaration *CDeclarationDictionary::find(
 		// Variable contains no ':' - test scope
 		
 		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
-			// Namespace and tablename (lokal var)
+			// Namespace and tablename (local var)
 			s = tableNamespace;
 			s += ':';
 			s += table;

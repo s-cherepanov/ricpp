@@ -319,15 +319,16 @@ public:
 	 *  The string is rebuild by the using information used stored
 	 *  in this object.
 	 *
-	 *  @return Declaration string.
+	 *  @retval declaration String buffer for the declaration.
+	 *  @return Declaration string (c-string of declaration).
 	 */
-	const char *declString(std::string &declaration) const;
+	const char *getDeclString(std::string &declaration) const;
 	
 	/** @brief Query if variable matches declaration
 	 *
 	 *  @param aNamespace Namespace id of the variable.
 	 *  @param aTable Table token of the variable.
-	 *  @param var Variable identifier.
+	 *  @param aVar Variable identifier.
 	 */
 	bool matches(EnumNamespaces aNamespace, RtToken aTable, RtToken aVar); 
 }; // CDeclarartion

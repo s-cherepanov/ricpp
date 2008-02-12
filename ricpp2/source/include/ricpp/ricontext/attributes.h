@@ -285,7 +285,7 @@ namespace RiCPP {
 
 		/** @brief Gets a component of the current surface color.
 		 *
-		 *  @return The component @a i of the current surface color, 0 if @i is out of range.
+		 *  @return The component @a i of the current surface color, 0 if @a i is out of range.
 		 */
 		virtual RtFloat color(RtInt i) const;
 
@@ -308,7 +308,7 @@ namespace RiCPP {
 		 *
 		 *  The number of components is the same as the one of a surface color.
 		 *
-		 *  @return The component @a i of the current surface opacity, 0 if @i is out of range.
+		 *  @return The component @a i of the current surface opacity, 0 if @a i is out of range.
 		 */
 		virtual RtFloat opacity(RtInt i) const;
 

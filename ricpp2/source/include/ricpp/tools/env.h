@@ -55,15 +55,17 @@ namespace RiCPP {
 	 *  is done e.g. in CStringList
 	 */
 	class CEnv {
-		/** @brief Find the value of a variable
+		/** @brief Finds the value of a variable.
 		 *
 		 *         Accesses the variable with the name @a varName
 		 *         and stores the value found in @a var. If the variable
 		 *         has not been found, @a var is cleared.
+		 *
 		 *  @retval var String reference where the value of the environment variable
 		 *         @a varName is stored
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign)
+		 *  @param isPath Variable is a path name, the content will be translated into the internal format.
 		 *  @return A reference to @a var
 		 */
 		static std::string &get(std::string &var, const char *varName, bool isPath);
@@ -144,6 +146,7 @@ namespace RiCPP {
 		 *  @retval var Value of the environment variable is stored here
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign).
+		 *  @param isPath Variable is a path name, the content will be translated into the internal format.
 		 *  @return A reference to @a var, the value of the variable.
 		 */
 		inline static std::string &find(std::string &var, const char *varName, bool isPath = false)

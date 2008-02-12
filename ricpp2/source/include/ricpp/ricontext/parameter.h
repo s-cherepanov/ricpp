@@ -85,8 +85,6 @@ namespace RiCPP {
 
 		/** @brief Constructs a parameter.
 		 *
-		 *  @param aNamespace Optional namespace
-		 *  @param aTable Optional tble name
 		 *  @param theName Name (not yet a token) or inline declaration of the parameter.
 		 *  @param theData Pointer to the parameter values (type is given by the declaration of @a theName).
 		 *  @param thePosition Position within the original parameter list of the ri request.
@@ -234,12 +232,12 @@ namespace RiCPP {
 		 */
 		const char *declString(std::string &decl) const
 		{
-			return m_declaration ? m_declaration->declString(decl) : RI_NULL;
+			return m_declaration ? m_declaration->getDeclString(decl) : RI_NULL;
 		}
 
 		/** @brief Gets the token of the declaration.
 		 *
-		 *  @brief Token of the declaration.
+		 *  @brief Token of the declaration.8
 		 */
 		RtToken token() const
 		{

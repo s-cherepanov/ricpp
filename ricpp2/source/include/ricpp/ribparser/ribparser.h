@@ -420,6 +420,8 @@ namespace RiCPP {
 		 * the parameter at position start.
 		 *
 		 * @param start Token-value list starts here.
+		 * @param tableNamespace The namespace
+		 * @param table The table
 		 * @param vertices Number of vertices (shared vertices count 1) of the primary to which the parameter list belongs.
 		 * @param corners Number of the corners (shared corners count 1) of the primary to which the parameter list belongs.
 		 * @param facets Number of the faces of the primary to which the parameter list belongs.
@@ -455,6 +457,8 @@ namespace RiCPP {
 		 *
 		 *  @param start Token-value list starts here.
 		 *  @param p used to get vertices, corners etc.
+		 *  @param tableNamespace The namespace
+		 *  @param table The table
 		 */
 		inline int getTokenList(size_t start, const CParameterClasses &p, const char *tableNamespace = 0, const char *table = 0)
 		{

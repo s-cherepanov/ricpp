@@ -136,7 +136,11 @@ template<typename _C> _C lerp(
 
 /** @brief Bilinear interpolation between four values by three linear interpolations.
  *  @param u Position (if 0 <= @a u <= 1 between @a x1 and @a x2 as well as between @a x4 and @a x4)
- *  @param V Position (if 0 <= @a v <= 1 between the interpolated positions betwwen x1...x2 and x3...x4)
+ *  @param v Position (if 0 <= @a v <= 1 between the interpolated positions between x1...x2 and x3...x4)
+ *  @param x1 first value for linear interpolation in direction u.
+ *  @param x2 second value for linear interpolation in direction u.
+ *  @param x3 first value for linear interpolation in direction v.
+ *  @param x4 second value for linear interpolation in direction v.
  *  @return The interpolated value.
  */
 template<typename _C>

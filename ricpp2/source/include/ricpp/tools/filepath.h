@@ -191,7 +191,7 @@ namespace RiCPP {
 	}; // CFilepath
 
 
-	/** @breif Stores the contents of a directory.
+	/** @brief Stores the contents of a directory.
 	 */
 	class CDirectory {
 	public:
@@ -207,9 +207,9 @@ namespace RiCPP {
 		CFilepath m_directory;          ///< Path of the directory
 		
 		/** @brief Reads a directory by using filepattern @a pattern
-		 *  @pattern Simple, glob style pattern
+		 *  @param pattern Simple, glob style pattern.
 		 *  @return true, directory could be read.
-		 *  @todo use glob style patterns like in stringpattern.h
+		 *  @todo Use glob style patterns of stringpattern.h
 		 */
 		bool readDirectory(const char *pattern = 0);
 

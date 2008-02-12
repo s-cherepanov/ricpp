@@ -194,7 +194,7 @@ inline const char *valToStr(char *buffer, size_t bufsize, long aLong)
 /** @brief Converts a number (unsigned int) to a c-string
  *  @param buffer String buffer.
  *  @param bufsize Size of the string buffer.
- *  @param aInt Number to convert
+ *  @param anInt Number to convert
  *  @return @a buffer with the copied number.
  */
 inline const char *valToStr(char *buffer, size_t bufsize, unsigned int anInt)
@@ -215,7 +215,7 @@ inline const char *valToStr(char *buffer, size_t bufsize, unsigned int anInt)
 /** @brief Converts a number (int) to a c-string
  *  @param buffer String buffer.
  *  @param bufsize Size of the string buffer.
- *  @param aInt Number to convert
+ *  @param anInt Number to convert
  *  @return @a buffer with the copied number.
  */
 inline const char *valToStr(char *buffer, size_t bufsize, int anInt)

@@ -293,7 +293,7 @@ const char *CDeclaration::getInlineString(std::string &declaration) const
 }
 
 
-const char *CDeclaration::declString(std::string &declaration) const
+const char *CDeclaration::getDeclString(std::string &declaration) const
 {
 	if ( isInline() ) {
 		return getInlineString(declaration);

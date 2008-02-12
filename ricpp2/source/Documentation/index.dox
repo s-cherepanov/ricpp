@@ -4,7 +4,7 @@
 @section intro_sec Introduction
 
 Important note: RiCPP is not developed (only a few classes exist),
-the documentation also in a very draft state is not describing what is,
+the documentation - also in a very draft state - is not describing what is,
 but more what will be, hopefully.
 
 RenderMan(R) can be seen generally as an interface between modeller
@@ -17,56 +17,61 @@ a higher level as using OpenGL for instance. The sequence of scenes
 of an animation is given frame by frame in a rendering method independent
 form. Also, the language that is used to write procedural shading
 and texture mapping tools is part of the RenderMan Interface. The
-Interface and a photorealistic renderer for it were invented by the
+interface and a photorealistic renderer for it were invented by the
 people of the company Pixar in the late 80's.
 
-The RenderMan interface is implemented using a variety of languages,
+The RenderMan interface can be implemented using a variety of languages,
 so called language bindings. Most common are the C-binding for the
 programming language 'C' and the RIB-binding. RIB is the acronym for
 RenderMan Interface Bytstream, a data stream format to transport and
 archive the serialized RenderMan interface calls. RIB output can be
 written to files (either in a human readable ASCII format or in a more
 compact binary format or in a mixed form) and used by renderers for
-the later offline rendering. It also can be transported over a network
+the later offline rendering. It can be transported over a network
 to one or more renderer servers.
 
 Renderers that can cope with the RenderMan interface are called RenderMan complient
 renderers. The first renderer written for the RenderMan Interface, implemented the
 REYES (Renders Everything You Ever Saw) algorithm. For a longer time this renderer
 'prman' of the company Pixar was the only renderer providing a RenderMan interface,
-it became very famous. There are some renderers available nowadays, that use
+it became very famous indeed. There are some renderers available nowadays, that use
 different rendering methods.
 
 RiCPP is not a renderer, it is a C++ framework for the RenderMan(R) interface,
-a C++ language binding. RiCPP can be used to write renderers or to produce or
-change RIB-code. Like the C-language QuickRenderMan Interface, that was part
+a C++ language binding. RiCPP can be used to write renderers or to produce and
+parse RIB-code. Like the C-language QuickRenderMan Interface, that was part
 of the NextStep operation system, it provides a front end, that calls the
 rendering routines of one or more concrete back end renderers.
 RiCPP uses dynamic libraries in form of plug-ins to bind the back ends
-to the front end.
+to the front end. However, a program may use more than one front end.
 
 Also some basics of the back end are part of RiCPP. The two 'renderers'
 that (will) come with RiCPP are the RIBWriter (a 'renderer' that uses RIB as
 output format) and a draft renderer for OpenGL output. The later will be a very
-simple one, that does not provide the features, like procedural shading, of a
+simple one, that will not provide the features, like procedural shading, of a
 'real' RenderMan complient renderer.
 
 @section implementation_sec Implementation
 
-These web pages are the doxygen output of the technical documentation of RiCPP
-I'm currently working on. RiCPP is also the name of the namespace for all
-elements of this framework. The classes CRiCPPBridge and CRendererLoader are the
-two main parts of the front end, that bridges to the back end, which is in turn
-a class derived from CBaseRenderer. An instance of CRiCPPBridge implements the
-interface IRi, and that is the only interface you need to see, if you only want
-to use RiCPP as an API connected with a back end renderer. IRi (include
-"ricpp/ricpp/ricpp.h") is similar to the declarations of the C-binding in ri.h.
+These web pages are the <a href="http://doxygen.sourceforge.net">doxygen</a>
+output of the technical documentation of RiCPP
+I'm currently working on. RiCPP is the name of the OpenSource project and the
+namespace for all elements of this framework. The classes CRiCPPBridge and
+CRendererLoader are the two main parts of the front end, that bridges to
+the back end, which is in turn a class derived from CBaseRenderer.
+An instance of CRiCPPBridge implements the interface IRi, and that is the only
+interface you need to see, if you only want to use RiCPP as an API connected
+with a back end renderer. IRi (included in "ricpp/ricpp/ricpp.h") is similar
+to the declarations of the C-binding in ri.h. Therfore knowing the RenderMan Interface
+Specification [RISPEC] is important to understand the interface.
 
-At the moment I'm developing RiCPP using Visual Studio 2005 (the express edition
-with PSDK for the 32Bit version will do) for MS Windows and XCode on Apple's
+At the moment I'm developing RiCPP using Visual Studio 2005/2008 (the express edition
+with PSDK for the 32Bit version will do) for MS Windows and XCode 3 on Apple's
 MacOS 10.x. There is of course a plan to port to Linux later. You can find
-the sources on the SVN server of project ricpp on SourceForge in the ricpp2
-subfolder. The ricpp subfolder contains an older version of RiCPP.
+the current sources of RiCPP on the SourceForge SVN server at 
+in the ricpp2 subfolder of the ricpp project. A ricpp subfolder
+contains an older version of RiCPP. See also:
+<a href="http://sourceforge.net/svn/?group_id=69228">http://sourceforge.net/svn/?group_id=69228</a>.
 
 @section literature_sec Literature
 
@@ -74,17 +79,18 @@ You can learn a lot of RenderMan by these books and documents:
 
  <ul>
  <li> [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman</li>
+ <li> [COR2008] Rudy Cortes, Saty Raghavachary; <a href="http://rslprogramming.com/">The RenderMan Shading Language Guide</a>; 2008, Thomson Course Technology PTR</li>
  <li> [EBE1994] David S. Ebert (Ed.), Texturing and Modeling: A Procedural Approach; 1994 Academic Press, Inc. (There is a 2nd edition available)</li>
+ <li> [KAUSHIK] Sudhir R Kaushik; <a href="http://web.cs.wpi.edu/~matt/courses/cs563/talks/renderman/rendmain.html">The RenderMan page</a></li>
+ <li> [PRMAN] [AppNote(nr)] Pixar, prman documentation and appnotes at <a href="https://renderman.pixar.com/forum/docs/RfM_1.0/">Manual RenderMan for Maya</a> (registration required)</li>
  <li> [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep)</li>
  <li> [RAG2005] Saty Raghavachary; <a href="http://www.smartcg.com/tech/cg/books/RfB/home/index.html">Rendering for Beginners</a>; 2005, Elsevier</li>
- <li> [COR2008] Rudy Cortes, Saty Raghavachary; <a href="http://rslprogramming.com/">The RenderMan Shading Language Guide</a>; 2008, Thomson Course Technology PTR</li>
- <li> [kaushik] Sudhir R Kaushik; <a href="http://web.cs.wpi.edu/~matt/courses/cs563/talks/renderman/rendmain.html">The RenderMan page</a></li>
  <li> [RISPEC] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document, the reference <a href="https://renderman.pixar.com/products/rispec/index.htm">Pixar's The RenderMan Interface Specification</a></li>
- <li> [AppNote(nr)] [PRMAN] Pixar, prman documentation and appnotes at <a href="https://renderman.pixar.com/forum/docs/RfM_1.0/">Manual RenderMan for Maya</a> (registration required)</li>
  <li> [STE2003] Ian Stephenson; Essential RenderMan fast; 2003, Springer</li>
- <li> [STE2005] Ian Stephenson (Ed.); Production Rendering; 2005, Springer (another OO-framework)</li>
+ <li> [STE2005] Ian Stephenson (Ed); Production Rendering; 2005, Springer (another OO-framework)</li>
  <li> [STE2007] Ian Stephenson; Essential RenderMan 2nd ed.; 2007, Springer</li>
- <li> [UPS89] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley</li>
+ <li> [VIN2003] John Vince (Ed); Handbook of Computer Animation, 2003, Springer</li>
+ <li> [UPS1989] Steve Upstill; The RenderMan Companion; 1989, Addison Wesley</li>
 </ul>
 
 @section renderers_sec RenderMan complient renderers
@@ -119,23 +125,29 @@ Selection of modellers:
 @section websites_sec Websites for RenderMan
 
 <ul>
-<li> <a href="http://www.renderman.org/">RenderMan Repository</a> </li>
-<li> <a href=http://www.rendermania.com/">RenderMania</a> </li>
-<li> <a href=http://graphics.pixar.com/">Pixar's On-line library</a> </li>
-<li> <a href=http://www.fundza.com/">CG References & Tutorials by Mark Kesson</a> </li>
+<li> <a href="http://www.renderman.org/">RenderMan Repository</a></li>
+<li> <a href="http://www.rendermania.com/">RenderMania</a></li>
+<li> <a href="http://graphics.pixar.com/">Pixar's On-line library</a></li>
+<li> <a href="http://www.fundza.com/">CG References & Tutorials by Mark Kesson</a></li>
 <li> <a href="http://www.rendermanacademy.com/">The RenderMan Academy</a></li>
 </ul>
 
-And don't forget the newsgroup <a href=http://groups.google.com/group/comp.graphics.rendering.renderman/topics">comp.graphics.rendering.renderman</a> and the
-<a href="http://www.faqs.org/faqs/graphics/renderman-faq/">RenderMan-FAQ</a>
-including more links. 
+And don't forget the newsgroup <a href="http://groups.google.com/group/comp.graphics.rendering.renderman/topics">comp.graphics.rendering.renderman</a> and the
+<a href="http://www.faqs.org/faqs/graphics/renderman-faq/">RenderMan-FAQ</a>. 
 
 @section Other Toolkits
 
 <ul>
-<li> <a href="http://www.affine.org/">The Affine Toolkit</a> </li>
+<li> <a href="http://www.affine.org/">The Affine Toolkit</a></li>
 <li> <a href="http://posthorizon.com/RenderMan-java/">Java binding for the RenderMan interface</a>
 </ul>
+
+@section The RiCPP homepage
+
+<ul>
+<li> <a href="http://ricpp.sourceforge.net/">RiCPP - A RenderMan(TM) C++ Binding</a></li>
+</ul>
+
 
 @section copyright_sec Copyright notice
 
@@ -295,7 +307,7 @@ these variables are changed.
 
 The declarations are destroyed at the CRiContext::end() of the context.
 
-Literature: [RiSPEC] [ARM2000] [UPS89] [AppNote7] [AppNote22] [kaushik] [PRMAN]
+Literature: [RISPEC] [ARM2000] [UPS1989] [AppNote7] [AppNote22] [KAUSHIK] [PRMAN]
 
 @section page_decl_sec3 Notes and problems
 

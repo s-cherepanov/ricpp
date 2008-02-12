@@ -215,7 +215,6 @@ const RtToken RI_INTERIOR = "Interior"; ///< Interior shader namespace
 const RtToken RI_EXTERIOR = "Exterior"; ///< Exterior shader namespace
 const RtToken RI_DISPLACEMENT = "Displacement"; ///< Displacement shader namespace
 const RtToken RI_DEFORMATION = "Deformation"; ///< Deformation shader namespace
-const RtToken RI_VOLUME = "Volume"; ///< Volume shader namespace
 const RtToken RI_ATTRIBUTE = "Attribute"; ///< Attribute namespace
 const RtToken RI_TEXTURE = "Texture"; ///< Texture namespace
 const RtToken RI_CONTROL = "Control"; ///< Control namespace
@@ -253,11 +252,11 @@ const RtToken RI_POWER = "power"; ///< Power basis
 
 // Texture tabes
 // RI_TEXTURE already declared
-const RtToken RI_BUMP = "Bump";
-const RtToken RI_SHADOW = "Shadow";
-const RtToken RI_LAT_LONG_ENVIRONMENT  = "LatLongEnvironment";
-const RtToken RI_CUBE_FACE_ENVIRONMENT = "CubeFaceEnvironment";
-const RtToken RI_BRICK_MAP = "BrickMap";
+const RtToken RI_BUMP = "Bump"; ///< Bumpmap texture
+const RtToken RI_SHADOW = "Shadow"; ///< Shadowmap texture
+const RtToken RI_LAT_LONG_ENVIRONMENT  = "LatLongEnvironment"; ///< Latitude/longitude environment texture
+const RtToken RI_CUBE_FACE_ENVIRONMENT = "CubeFaceEnvironment";  ///< Cubeface environment texture
+const RtToken RI_BRICK_MAP = "BrickMap"; ///< Brickmap texture
 
 const RtToken RI_INT     = "int"; ///< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token
 

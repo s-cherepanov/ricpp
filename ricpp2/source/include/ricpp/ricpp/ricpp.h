@@ -639,7 +639,7 @@ public:
 	 *  @param one  Multiply every value by this number
 	 *  @param qmin Minimum value, smaller values are clamed
 	 *  @param qmax Maximum value, higher values are clamed
-	 *  @param ampl Ditheramplitude, random value added
+	 *  @param ampl Ditheramplitude, random value (between -1.0 and 1.0) added
 	 */
 	virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
 

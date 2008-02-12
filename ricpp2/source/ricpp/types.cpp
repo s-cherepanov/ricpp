@@ -143,7 +143,6 @@ RtToken CTypeInfo::ms_namespaces[N_NAMESPACES] =
 	RI_EXTERIOR,
 	RI_DISPLACEMENT,
 	RI_DEFORMATION,
-	RI_VOLUME,
 	RI_ATTRIBUTE,
 	RI_TEXTURE,
 	RI_CONTROL,
@@ -590,7 +589,7 @@ CClippingPlane::CClippingPlane()
 	m_z = 0;
 	m_nx = 0;
 	m_ny = 0;
-	m_nz = 0;
+	m_nz = 1;
 }
 
 CClippingPlane::CClippingPlane(RtFloat aX, RtFloat aY, RtFloat aZ, RtFloat aNX, RtFloat aNY, RtFloat aNZ)
@@ -629,10 +628,12 @@ CQuantizer::CQuantizer()
 	m_max = 0;
 	m_ditherAmplitude = 0;
 }
-CQuantizer::CQuantizer(RtToken atype, RtInt aOne, RtInt aMin, RtInt aMax, RtFloat aDitherAmplitude)
+
+CQuantizer::CQuantizer(RtToken aType, RtInt aOne, RtInt aMin, RtInt aMax, RtFloat aDitherAmplitude)
 {
-	set(atype, aOne, aMin, aMax, aDitherAmplitude);
+	set(aType, aOne, aMin, aMax, aDitherAmplitude);
 }
+
 void CQuantizer::set(RtToken aType, RtInt aOne, RtInt aMin, RtInt aMax, RtFloat aDitherAmplitude)
 {
 	m_type = aType;
@@ -797,33 +798,22 @@ void CTrimCurveData::trimCurve(
  * Standard functions
  */
 
-//! The standard constructor.
-/*! Initializes the matric with the identity matrix, sets premultiplication.
- */
-CMatrix3D::CMatrix3D() {
+CMatrix3D::CMatrix3D()
+{
 	m_preMultiply = true;
 	identity();
 }
 
-//! The copy constructor (deep copy)
-/*! @param mat Matrix to copy from
- */
-CMatrix3D::CMatrix3D(const CMatrix3D &mat) {
+CMatrix3D::CMatrix3D(const CMatrix3D &mat)
+{
 	*this = mat;
 }
 
-//! The constructor to copy from a RenderMan RtMatrix.
-/*! @param mat Matrix to copy from.
- */
-CMatrix3D::CMatrix3D(RtMatrix mat) {
+CMatrix3D::CMatrix3D(RtMatrix mat)
+{
 	m_preMultiply = true;
 	set(mat);
 }
-
-//! Destructor, has nothing to do.
-CMatrix3D::~CMatrix3D() {
-}
-
 
 /*
 CMatrix3D &CMatrix3D::duplicate() const {
@@ -835,10 +825,8 @@ CMatrix3D &CMatrix3D::duplicate() const {
 */
 
 
-//! The assignment (deep copy).
-/*! @param mat Matrix to copy from.
- */
-CMatrix3D &CMatrix3D::operator=(const CMatrix3D &mat) {
+CMatrix3D &CMatrix3D::operator=(const CMatrix3D &mat)
+{
 	if ( this == &mat )
 		return *this;
 
@@ -848,18 +836,18 @@ CMatrix3D &CMatrix3D::operator=(const CMatrix3D &mat) {
 }
 
 
-//! The assignment for a RenderMan RtMatrix.
-/*! @param mat Matrix to copy from.
- */
-CMatrix3D &CMatrix3D::operator=(RtMatrix mat) {
-	// m_preMultiply is not changed
+CMatrix3D &CMatrix3D::operator=(RtMatrix mat)
+{
+	// m_preMultiply not changed (not part of RtMatrix)
+
 	set(mat);
 	return *this;
 }
 
 
 #if 0
-void CMatrix3D::set(const RtMatrix mat) {
+void CMatrix3D::set(const RtMatrix mat)
+{
 	// m_preMultiply is not changed
 	/*
 	int i, j;
@@ -871,10 +859,8 @@ void CMatrix3D::set(const RtMatrix mat) {
 #endif
 
 
-//! Get the content of a matrix for a RenderMan RtMatrix.
-/*! @param mat Matrix to fill.
- */
-void CMatrix3D::get(RtMatrix &mat) const {
+void CMatrix3D::get(RtMatrix &mat) const
+{
 	int i, j;
 	for ( i = 0; i < 4; ++i )
 		for ( j = 0; j < 4; ++j )
@@ -882,11 +868,8 @@ void CMatrix3D::get(RtMatrix &mat) const {
 }
 
 
-//! Compares two matrices.
-/*! @param mat Matrix to compare with.
- *  @return true if all components of mat are equal to the components of the instance.
- */
-bool CMatrix3D::operator==(const CMatrix3D &mat) const {
+bool CMatrix3D::operator==(const CMatrix3D &mat) const
+{
 	if ( this == &mat )
 		return true;
 	int i, j;
@@ -898,11 +881,8 @@ bool CMatrix3D::operator==(const CMatrix3D &mat) const {
 }
 
 
-//! Compares with RtMatrix
-/*! @param mat RenderMan RtMatrix matrix to compare with.
- *  @return true if all components of mat are equal to the components of the instance.
- */
-bool CMatrix3D::operator==(RtMatrix mat) const {
+bool CMatrix3D::operator==(RtMatrix mat) const
+{
         int i, j;
         for ( i=0; i<4; ++i )
                 for ( j=0; j<4; ++j )
@@ -911,54 +891,33 @@ bool CMatrix3D::operator==(RtMatrix mat) const {
 }
 
 
-//! Compares two matrices.
-/*! @param mat Matrix to compare with.
- *  @return false if all components of mat are equal to the components of the instance.
- */
-bool CMatrix3D::operator!=(const CMatrix3D &mat) const {
+bool CMatrix3D::operator!=(const CMatrix3D &mat) const
+{
         return !(*this == mat);
 }
 
-//! Compares with RtMatrix
-/*! @param mat RenderMan RtMatrix matrix to compare with.
- *  @return false if all components of mat are equal to the components of the instance.
- */
-bool CMatrix3D::operator!=(RtMatrix mat) const {
+bool CMatrix3D::operator!=(RtMatrix mat) const
+{
         return !(*this == mat);
 }
 
 // matrix operations
 
-//! Clears a matrix.
-/*! Sets all components to zero.\n
- *  0 0 0 0\n
- *  0 0 0 0\n
- *  0 0 0 0\n
- *  0 0 0 0\n
- */
-void CMatrix3D::clear() {
+void CMatrix3D::clear()
+{
         int i, j;
         for ( i=0; i<4; ++i ) for ( j=0; j<4; ++j ) m_Matrix[i][j] = 0.0;
 }
 
-//! Set the identity matrix.
-/* Sets the components to:\n
- * 1 0 0 0\n
- * 0 1 0 0\n
- * 0 0 1 0\n
- * 0 0 0 1\n
- */
-void CMatrix3D::identity() {
+void CMatrix3D::identity()
+{
         int i;
         clear();
         for ( i=0; i<4; ++i ) m_Matrix[i][i] = 1.0;
 }
 
-//! Transposes the matrix
-/*!  Swaps the components as follows:
- *   m[i][j] = m[j][i]
- */
-void CMatrix3D::transpose() {
+void CMatrix3D::transpose()
+{
         int i, j;
         RtFloat s;
         for ( i=0; i<3; ++i ) for ( j=1+i; j<4; ++j ) {
@@ -969,31 +928,19 @@ void CMatrix3D::transpose() {
 }
 
 
-//! Transform
-/*! Transform is to copy a matrix:
- * M = mat
- * @param mat Matrix (RenderMan RtMatrix) used for transformation.
- */
-void CMatrix3D::transform(RtMatrix mat) {
+void CMatrix3D::transform(RtMatrix mat)
+{
         set(mat);
 }
 
-//! Transform
-/*! Transform is to copy a matrix:
- * M = mat
- * @param mat Matrix used for transformation.
- */
-void CMatrix3D::transform(CMatrix3D &mat) {
+void CMatrix3D::transform(CMatrix3D &mat)
+{
         *this = mat;
 }
 
 
-//! Postmultiplicaton, rightmultiplication
-/*! Postmultiplication is used by inverse transformations.
- * M' = M x mat
- * @param mat Matrix (RenderMan RtMatrix) to concatenate on the right.
- */
-void CMatrix3D::postMultiply(RtMatrix mat) {
+void CMatrix3D::postMultiply(RtMatrix mat)
+{
         int i, j, k;
         RtMatrix s;
         for ( i=0; i<4; ++i )
@@ -1005,22 +952,14 @@ void CMatrix3D::postMultiply(RtMatrix mat) {
         *this = s;
 }
 
-//! Postmultiplicaton, rightmultiplication
-/*! Postmultiplication is used by inverse transformations.
- * M' = M x mat
- * @param mat Matrix to concatenate on the right.
- */
-void CMatrix3D::postMultiply(CMatrix3D mat) {
+void CMatrix3D::postMultiply(CMatrix3D mat)
+{
         postMultiply(mat.m_Matrix);
 }
 
 
-//! Premultiplication (leftmultiplication)
-/* Premultiplication is used by the implementation of the RenderMan interface to concatenate transformations.
- * M' = mat x M
- * @param mat Matrix (RenderMan RtMatrix) to concatenate on the left.
- */
-void CMatrix3D::preMultiply(RtMatrix mat) {
+void CMatrix3D::preMultiply(RtMatrix mat)
+{
         int i, j, k;
         RtMatrix s;
         for ( i=0; i<4; ++i )
@@ -1032,36 +971,24 @@ void CMatrix3D::preMultiply(RtMatrix mat) {
         *this = s;
 }
 
-//! Premultiplication (leftmultiplication)
-/* Premultiplication is used by the implementation of the RenderMan interface to concatenate transformations.
- * M' = mat x M
- * @param mat Matrix to concatenate on the left.
- */
-void CMatrix3D::preMultiply(CMatrix3D mat) {
+void CMatrix3D::preMultiply(CMatrix3D mat)
+{
         preMultiply(mat.m_Matrix);
 }
 
 
 // Standard multiplication
 
-//! Matrix multiplication
-/* m_preMultiply is used o multiply on the left or on the right
- * M' = mat x M (if m_preMultiply) or M' = M x Mat (if not m_preMultiply)
- * @param mat Matrix (RenderMan RtMatrix) to concatenate.
- */
-void CMatrix3D::concatTransform(RtMatrix mat) {
+void CMatrix3D::concatTransform(RtMatrix mat)
+{
 		if ( m_preMultiply )
 			preMultiply(mat);
 		else
 			postMultiply(mat);
 }
 
-//! Matrix multiplication
-/* m_preMultiply is used o multiply on the left or on the right
- * M' = mat x M (if m_preMultiply) or M' = M x Mat (if not m_preMultiply)
- * @param mat Matrix to concatenate.
- */
-void CMatrix3D::concatTransform(CMatrix3D mat) {
+void CMatrix3D::concatTransform(CMatrix3D mat)
+{
 		if ( m_preMultiply )
 	        preMultiply(mat.m_Matrix);
 		else
@@ -1069,20 +996,8 @@ void CMatrix3D::concatTransform(CMatrix3D mat) {
 }
 
 
-//! Concatenate a translation
-/*  The result matrix is:\n
- *  \verbatim
- *  a    b    c    d
- *  e    f    g    h
- *  i    j    k    l
- *  m+dx n+dy o+dz p
- *  \endverbatim
- *
- *  @param dx translate in x direction
- *  @param dy translate in y direction
- *  @param dz translate in z direction
- */
-void CMatrix3D::translate(RtFloat dx, RtFloat dy, RtFloat dz) {
+void CMatrix3D::translate(RtFloat dx, RtFloat dy, RtFloat dz)
+{
         RtMatrix mat;
 
         mat[0][0] = 1.0; mat[0][1] = 0.0; mat[0][2] = 0.0; mat[0][3] = 0.0;
@@ -1094,20 +1009,8 @@ void CMatrix3D::translate(RtFloat dx, RtFloat dy, RtFloat dz) {
 }
 
 
-//! Concatenate a scale
-/*!  The result matrix is:\n
- *  \verbatim
- *  a*sx b    c    d
- *  e    f*sy g    h
- *  i    j    k*sz l
- *  m    n    o    p
- *  \endverbatim
- *
- *  @param sx scale in x direction
- *  @param sy scale in y direction
- *  @param sz scale in z direction
- */
-void CMatrix3D::scale(RtFloat sx, RtFloat sy, RtFloat sz) {
+void CMatrix3D::scale(RtFloat sx, RtFloat sy, RtFloat sz)
+{
         RtMatrix mat;
 
         mat[0][0] = sx;  mat[0][1] = 0.0; mat[0][2] = 0.0; mat[0][3] = 0.0;
@@ -1119,14 +1022,8 @@ void CMatrix3D::scale(RtFloat sx, RtFloat sy, RtFloat sz) {
 }
 
 
-//! Transforms a point by the matrix
-/*! If m_preMultiply it uses a row vector and left multiplication,
- *  if not m_preMultiply a column vector and left multiplication
- *  @retval x coordinate x and result
- *  @retval y coordinate y and result
- *  @retval z coordinate z and result
- */
-void CMatrix3D::transformPoints(RtFloat &x, RtFloat &y, RtFloat &z) {
+void CMatrix3D::transformPoints(RtFloat &x, RtFloat &y, RtFloat &z)
+{
         int i, k;
         RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
         RtFloat p[4] = {x, y, z, 1.0};
@@ -1143,17 +1040,8 @@ void CMatrix3D::transformPoints(RtFloat &x, RtFloat &y, RtFloat &z) {
 }
 
 
-//! Concatenates a rotation around the x-axis
-/*! The rotation matrix is:
- *  \verbatim
- *  1  0      0      0
- *  0  cos(w) sin(w) 0
- *  0 -sin(w) cos(w) 0
- *  0  0      0      1
- *  \endverbatim
- *  @param w degrees to rotate
- */
-void CMatrix3D::rotateX(RtFloat w) {
+void CMatrix3D::rotateX(RtFloat w)
+{
         CMatrix3D r;
 
         w = deg2rad(w);
@@ -1168,17 +1056,8 @@ void CMatrix3D::rotateX(RtFloat w) {
 }
 
 
-//! Concatenates a rotation around the y-axis
-/*! The rotation matrix is:
- *  \verbatim
- *  cos(w) 0 -sin(w) 0
- *  0      1  0      0
- *  sin(w) 0  cos(w) 0
- *  0      0  0      1
- *  \endverbatim
- *  @param w degrees to rotate
- */
-void CMatrix3D::rotateY(RtFloat w) {
+void CMatrix3D::rotateY(RtFloat w)
+{
         CMatrix3D r;
 
         w = deg2rad(w);
@@ -1193,17 +1072,8 @@ void CMatrix3D::rotateY(RtFloat w) {
 }
 
 
-//! Concatenates a rotation around the z-axis
-/*! The rotation matrix is:
- *  \verbatim
- *  cos(w) sin(w) 0 0
- * -sin(w) cos(w) 0 0
- *  0      0      1 0
- *  0      0      0 1
- *  \endverbatim
- *  @param w degrees to rotate
- */
-void CMatrix3D::rotateZ(RtFloat w) {
+void CMatrix3D::rotateZ(RtFloat w)
+{
         CMatrix3D r;
 
         w = deg2rad(w);
@@ -1218,25 +1088,8 @@ void CMatrix3D::rotateZ(RtFloat w) {
 }
 
 
-//! Rotates w degrees around the axis vector x, y, z
-/*! The matrix is:\n
- *  \verbatim
- *  [0][0] = (RtFloat)(x*x + cosw*(1.0 - x*x));
- *  [0][1] = (RtFloat)(x*y*(1.0 - cosw) + z*sinw);
- *  [0][2] = (RtFloat)(z*x*(1.0 - cosw) - y*sinw);
- *  [1][0] = (RtFloat)(x*y*(1.0 - cosw) - z*sinw);
- *  [1][1] = (RtFloat)(y*y + cosw*(1.0 - y*y));
- *  [1][2] = (RtFloat)(y*z*(1.0 - cosw) + x*sinw);
- *  [2][0] = (RtFloat)(z*x*(1.0 - cosw) + y*sinw);
- *  [2][1] = (RtFloat)(y*z*(1.0 - cosw) - x*sinw);
- *  [2][2] = (RtFloat)(z*z + cosw*(1.0 - z*z));
- *  \endverbatim
- *  @param w degrees to rotate
- *  @param x x-coordinate of the axis vector
- *  @param y y-coordinate of the axis vector
- *  @param z z-coordinate of the axis vector
- */
-void CMatrix3D::rotate(RtFloat w, RtFloat x, RtFloat y, RtFloat z) {
+void CMatrix3D::rotate(RtFloat w, RtFloat x, RtFloat y, RtFloat z)
+{
         CMatrix3D r;
 
         if ( x > 0.0 && y == 0.0 && z == 0.0 ) { rotateX(w); return; }
@@ -1269,18 +1122,11 @@ void CMatrix3D::rotate(RtFloat w, RtFloat x, RtFloat y, RtFloat z) {
         concatTransform(r.m_Matrix);
 }
 
-//! Skews a vector (x1, y1, z1) w degrees towards (x2, y2, z2)
-/*! s.a. More Matrices and Transformations: Shear and Pseudo-Perspective
- *      Ronald N. Goldman in Graphics Gems II, Academic Press Inc.
- * \verbatim
- * Shear(Q,v,w,phi) (Q = (0, 0, 0), v = (x1, y1, z1), w = (x2, y2, z2), phi = w)
- * | I+tan phi(v (X) w) 0 | I : id matrix, (X) : tensor product
- * | -(Q.v)w            1 | . : dot product
- * \endverbatim
- */
-void CMatrix3D::skew(RtFloat w,
-                                         RtFloat x1, RtFloat y1, RtFloat z1,
-                                         RtFloat x2, RtFloat y2, RtFloat z2) {
+void CMatrix3D::skew(
+	RtFloat w,
+	RtFloat x1, RtFloat y1, RtFloat z1,
+	RtFloat x2, RtFloat y2, RtFloat z2)
+{
         RtMatrix mat;
         RtFloat t;
 
@@ -1311,19 +1157,8 @@ void CMatrix3D::skew(RtFloat w,
 }
 
 
-//!Concatenates the RMan perspective transformation
-/*! Code copied from the aqsis renderer, concatenates the matrix:
- * \verbatim
- * f = (RtFloat)tan(degtorad(fov)/2.0);
- *
- * 1.0 0.0 0.0 0.0
- * 0.0 1.0 0.0 0.0
- * 0.0 0.0   f   f
- * 0.0 0.0  -f 0.0
- * \endverbatim
- * @param fov The field of view for the perspective nmatrix
- */
-void CMatrix3D::perspective(RtFloat fov) {
+void CMatrix3D::perspective(RtFloat fov)
+{
         RtMatrix mat;
 
         if ( fov >= (RtFloat)180.0 ) {
@@ -1368,14 +1203,14 @@ void CMatrix3D::inversePerspective(RtFloat fov)
 }
 
 //---------------------------------------------------------------------
-//! A utility function, used by determinant()
-/*! Calculates the determinant of a 2x2 matrix. Source copied from
+/** @brief A utility function, used by determinant()
+ * Calculates the determinant of a 2x2 matrix. Source copied from
  *  the Aqsis renderer.
  *  The matrix:
- *  \verbatim
- *  a b
- *  c d
- *  \endverbatim
+ @verbatim
+ a b
+ c d
+ @endverbatim
  *  @param a Component of a 2x2 matrix
  *  @param b Component of a 2x2 matrix
  *  @param c Component of a 2x2 matrix
@@ -1389,15 +1224,15 @@ static RtFloat det2x2(RtFloat a, RtFloat b, RtFloat c, RtFloat d)
 }
 
 //---------------------------------------------------------------------
-//! A utility function, used by determinant()
-/*! Calculates the determinant of a 3x3 matrix. Source copied from
+/** @brief A utility function, used by determinant()
+ * Calculates the determinant of a 3x3 matrix. Source copied from
  *  the Aqsis renderer
  *  The matrix is:
- *  \verbatim
- *  a1 a2 a3
- *  b1 b2 b3
- *  c1 c2 c3
- *  \endverbatim
+ @verbatim
+ a1 a2 a3
+ b1 b2 b3
+ c1 c2 c3
+ @endverbatim
  *  @param a1 Component of a 3x3 matrix
  *  @param a2 Component of a 3x3 matrix
  *  @param a3 Component of a 3x3 matrix
@@ -1419,13 +1254,7 @@ static RtFloat det3x3(RtFloat a1, RtFloat a2, RtFloat a3,
            c1 * det2x2(a2, a3, b2, b3);
 }
 
-
 //---------------------------------------------------------------------
-//! Returns the determinant of this matrix
-/*! Using an algorithm from Graphics Gems I (p768). Source copied from
- *  Aqsis renderer.
- *  @return The determinant of the homogene matrix
- */
 
 RtFloat CMatrix3D::determinant() const
 {
@@ -1458,10 +1287,8 @@ RtFloat CMatrix3D::determinant() const
 
 
 
-//! Test if matrix is the identity matrix
-/*! @return true: if matrix is the identity matrix, false: otherwise
- */
-bool CMatrix3D::isIdentity() const {
+bool CMatrix3D::isIdentity() const
+{
         int i, j;
         bool eq = true;
 
@@ -1475,13 +1302,6 @@ bool CMatrix3D::isIdentity() const {
 }
 
 
-//! Returns the inverse of this matrix
-/*! Using an algorithm from Graphics Gems IV (p554),
- * Gauss-Jordan elimination with partial pivoting.
- * Source copied from Aqsis renderer
- * @retval mat The inverse matrix
- * @return true: Inverse could be calculated, false: otherwise
- */
 bool CMatrix3D::getInverse(RtMatrix &mat) const
 {
         if ( isIdentity() )

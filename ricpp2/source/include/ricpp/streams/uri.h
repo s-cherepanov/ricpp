@@ -514,7 +514,7 @@ namespace RiCPP {
 		* Is not a regular part of an URI because it is not used to identify the URI.
 		* However, handled with the URI because it is directly written after the
 		* regular URI, separated by a crosshatch '#'. It is interpreted by the
-		* user agent to identify a part of the retrieved ressource. The fragment
+		* user agent to identify a part of the retrieved resource. The fragment
 		* is appended on @a result and stored in m_fragment.
 		* The fragment can be an empty string.
 		* m_hasFragment has been set in uri_reference(), if '#' was found.
@@ -942,7 +942,7 @@ namespace RiCPP {
 
 		/** @brief Scheme component.
 		*
-		* Scheme to identify ressources, part of an absolute URI. 
+		* Scheme to identify resources, part of an absolute URI. 
 		* If found, it is appended to @a result and stored in m_scheme,
 		* true is returned.
 		*

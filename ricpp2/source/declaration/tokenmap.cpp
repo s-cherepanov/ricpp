@@ -218,7 +218,6 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_EXTERIOR)] = RI_EXTERIOR;
 		m_tokenMapper[CToken(RI_DISPLACEMENT)] = RI_DISPLACEMENT;
 		m_tokenMapper[CToken(RI_DEFORMATION)] = RI_DEFORMATION;
-		m_tokenMapper[CToken(RI_VOLUME)] = RI_VOLUME;
 		m_tokenMapper[CToken(RI_ATTRIBUTE)] = RI_ATTRIBUTE;
 		m_tokenMapper[CToken(RI_TEXTURE)] = RI_TEXTURE;
 		m_tokenMapper[CToken(RI_CONTROL)] = RI_CONTROL;

@@ -57,11 +57,11 @@ enum EnumBasicTypes {
 	BASICTYPE_STRING      ///< String basic type
 };
 
-/** @brief Number of basic types
+/** @brief Number of basic types.
  */
 const int N_BASICTYPES = (int)BASICTYPE_STRING+1;
 
-/** @brief Possible types
+/** @brief Possible types.
  */
 enum EnumTypes {
 	TYPE_UNKNOWN       = 0, ///< Unknown type
@@ -95,11 +95,11 @@ enum EnumTypes {
 */
 };
 
-/** @brief Number of different types
+/** @brief Number of different types.
  */
 const int N_TYPES  = (int)TYPE_COLOR+1;
 
-/** @brief Possible parameter storage classes
+/** @brief Possible parameter storage classes.
  */
 enum EnumClasses {
 	CLASS_UNKNOWN	 = 0, ///< Unknown class
@@ -111,36 +111,35 @@ enum EnumClasses {
 	CLASS_FACEVERTEX	  ///< Face Vertex class (one value per vertex of each face)
 };
 
-/** @brief Number of different classes
+/** @brief Number of different classes.
  */
 const int N_CLASSES = (int)CLASS_FACEVERTEX+1;
 
-/** @brief Possible table namespaces for declarations
+/** @brief Possible table namespaces for declarations.
  */
 enum EnumNamespaces {
-	NAMESPACE_UNKNOWN = 0,
-	NAMESPACE_PROJECTION,
-	NAMESPACE_IMAGER,
-	NAMESPACE_DISPLAY,
-	NAMESPACE_HIDER,
-	NAMESPACE_OPTION,
-	NAMESPACE_LIGHT_SOURCE,
-	NAMESPACE_AREA_LIGHT_SOURCE,
-	NAMESPACE_SURFACE,
-	NAMESPACE_ATMOSPHERE,
-	NAMESPACE_INTERIOR,
-	NAMESPACE_EXTERIOR,
-	NAMESPACE_DISPLACEMENT,
-	NAMESPACE_DEFORMATION,
-	NAMESPACE_VOLUME,
-	NAMESPACE_ATTRIBUTE,
-	NAMESPACE_TEXTURE,
-	NAMESPACE_CONTROL,
-	NAMESPACE_BEGIN,
-	NAMESPACE_RESOURCE
+	NAMESPACE_UNKNOWN = 0,         ///< Unknown or undefined namespace
+	NAMESPACE_PROJECTION,          ///< Arbitrary projections
+	NAMESPACE_IMAGER,              ///< Imager shader
+	NAMESPACE_DISPLAY,             ///< Display drivers
+	NAMESPACE_HIDER,               ///< Hider algorithms
+	NAMESPACE_OPTION,              ///< User defined options
+	NAMESPACE_LIGHT_SOURCE,        ///< Light source shaders
+	NAMESPACE_AREA_LIGHT_SOURCE,   ///< Area light source shaders
+	NAMESPACE_SURFACE,             ///< Surface shaders
+	NAMESPACE_ATMOSPHERE,          ///< Atmosphere volume shaders
+	NAMESPACE_INTERIOR,            ///< Interior volume shaders
+	NAMESPACE_EXTERIOR,            ///< Exterior volume shaders
+	NAMESPACE_DISPLACEMENT,        ///< Displacement shaders
+	NAMESPACE_DEFORMATION,         ///< Nonlinear deformation shaders
+	NAMESPACE_ATTRIBUTE,           ///< User defined attributes
+	NAMESPACE_TEXTURE,             ///< Texture resources
+	NAMESPACE_CONTROL,             ///< System controls
+	NAMESPACE_BEGIN,               ///< Renderer initialization
+	NAMESPACE_RESOURCE             ///< Resource handlers
 };
 
-/** @brief Number of basic types
+/** @brief Number of basic types.
  */
 const int N_NAMESPACES = (int)NAMESPACE_RESOURCE+1;
 
@@ -156,7 +155,7 @@ class CTypeInfo {
 	static const EnumBasicTypes ms_basicTypesForTypes[N_TYPES+1]; ///< Basic types the types consists of.
 	static RtToken ms_namespaces[N_NAMESPACES]; ///< Table namespaces
 
-	/** @brief Compares prefixes
+	/** @brief Compares prefixes.
 	 * Compares if @a token is a prefix of @a search. Behind the
 	 * prefix a blank, [ or : must be there as a seperator.
 	 * @param token Prefix to search
@@ -169,28 +168,28 @@ class CTypeInfo {
 	static int tokcmp(const char *token, const char *search);
 
 public:
-	/** @brief Gets the name of a basic type
+	/** @brief Gets the name of a basic type.
 	 * @param e Ri basic type
 	 * @return The name (like in RIB or declarations) of a basic type
 	 * @see EnumBasicTypes
 	 */
 	static RtToken basicTypeName(EnumBasicTypes e);
 
-	/** @brief Gets the size of a basic types in bytes
+	/** @brief Gets the size of a basic types in bytes.
 	 * @param e Ri basic type
 	 * @return The size of a basic types in bytes
 	 * @see EnumBasicTypes
 	 */
 	static unsigned int basicTypeByteSize(EnumBasicTypes e);
 
-	/** @brief Gets the name of a type that can occur in declarations and RIB files
+	/** @brief Gets the name of a type that can occur in declarations and RIB files.
 	 * @param e Ri type
 	 * @return The name (like in RIB or declarations) of a type
 	 * @see EnumTypes
 	 */
 	static RtToken typeName(EnumTypes e);
 
-	/** @brief Gets the size of a types in elements
+	/** @brief Gets the size of a types in elements.
 	 *
 	 * TYPE_POINT returns 3 (for Three floats) for example, TYPE_STRING is one.
 	 * TYPE_COLOR has the size of three here, because the status of the renderer with
@@ -202,26 +201,26 @@ public:
 	 */
 	static unsigned int typeSize(EnumTypes e);
 
-	/** @brief Gets the size of a types in bytes
+	/** @brief Gets the size of a types in bytes.
 	 * @param e Ri type
 	 * @return The size of a types in bytes, color needs special handling
 	 * @see EnumTypes, typeSize(EnumTypes e)
 	 */
 	static unsigned int typeByteSize(EnumTypes e);
 
-	/** @brief Gets the basic type a type consists of
+	/** @brief Gets the basic type.
 	 * @param e Ri type
 	 * @return The basic type of a type
 	 */
 	static EnumBasicTypes basicTypeForType(EnumTypes e);
 
-	/** @brief Gets the name of the storage class
+	/** @brief Gets the name of the storage class.
 	 * @param e Ri storage class
 	 * @return The name of a storage class as used in declarations and RIB
 	 */
 	static RtToken className(EnumClasses e);
 
-	/** @brief Gets the name of the table namespace [QRM]
+	/** @brief Gets the name of the table namespace [QRM].
 	 * @param e (Q)Ri table namespace
 	 * @return The name of a table namespace as used in declarations and RIB
 	 */
@@ -288,9 +287,9 @@ public:
  */
 class CColorDescr {
 private:
-	RtInt m_nColorSamples;       ///< @brief The number of color samples (>0).
+	RtInt m_nColorSamples;       ///< @brief The number of color samples (\>0).
 	std::vector<RtFloat> m_nRGB; ///< @brief n times 3 matrix to transform a color into it's RGB values.
-	std::vector<RtFloat> m_RGBn; ///< @brief 3 times n matrix to transform a RGB value to a color
+	std::vector<RtFloat> m_RGBn; ///< @brief 3 times n matrix to transform a RGB value to a color.
 	bool m_isIdentity;           ///< @brief true, if no color transformation needed (3 samples, transformation matrix is identity).
 
 	/** @brief Test color transformation for identity.
@@ -324,6 +323,14 @@ public:
 	inline CColorDescr(const CColorDescr &cd)
 	{
 		*this = cd;
+	}
+
+	/** @brief Duplication.
+	 *  @return Clone of this
+	 */
+	CColorDescr *duplicate() const
+	{
+		return new CColorDescr(*this);
 	}
 
 	/** @brief Assignment.
@@ -441,7 +448,7 @@ public:
 		return m_RGBn;
 	}
 
-	/** @brief Gets the RGBn matrix
+	/** @brief Gets the RGBn matrix.
 	 *
 	 *  @return RGBn matrix.
 	 */
@@ -455,74 +462,160 @@ public:
 /** @brief Additional clipping plane.
  */
 class CClippingPlane {
-	RtFloat m_x;
-	RtFloat m_y;
-	RtFloat m_z;
-	RtFloat m_nx;
-	RtFloat m_ny;
-	RtFloat m_nz;
+	RtFloat m_x;  ///< @brief X component of a point on the plane.
+	RtFloat m_y;  ///< @brief Y component of a point on the plane.
+	RtFloat m_z;  ///< @brief Z component of a point on the plane.
+	RtFloat m_nx; ///< @brief X component of the normal vector of the plane.
+	RtFloat m_ny; ///< @brief X component of the normal vector of the plane.
+	RtFloat m_nz; ///< @brief X component of the normal vector of the plane.
 public:
 
+	/** @brief Constructor.
+	 *
+	 *  Initializes plane in origin with [0 0 1] as normal.
+	 */
 	CClippingPlane();
+
+	/** @brief Constructor, sets values.
+	 *
+	 *  Initializes plane containing point [aX aY aZ], and has vector [aNX aNY aNZ] as normal.
+	 *
+	 * @param aX  X component of a point on the plane.
+	 * @param aY  Y component of a point on the plane.
+	 * @param aZ  Z component of a point on the plane.
+	 * @param aNX X component of the normal vector of the plane.
+	 * @param aNY Y component of the normal vector of the plane.
+	 * @param aNZ Z component of the normal vector of the plane.
+	 */
 	CClippingPlane(RtFloat aX, RtFloat aY, RtFloat aZ, RtFloat aNX, RtFloat aNY, RtFloat aNZ);
+
+	/** @brief Copy constructor.
+	 *  @param p Used to initialize copy
+	 */
 	inline CClippingPlane(const CClippingPlane &p)
 	{
 		*this = p;
 	}
 
+	/** @brief Duplication.
+	 *  @return Clone of this
+	 */
+	CClippingPlane *duplicate() const
+	{
+		return new CClippingPlane(*this);
+	}
+
+
+	/** @brief Assignes another plane.
+	 *  @param p Plane to assign.
+	 *  @return *this
+	 */
 	CClippingPlane &operator=(const CClippingPlane &p);
 
+	/** @brief Sets values.
+	 *
+	 *  Initializes plane containing point [aX aY aZ], and has vector [aNX aNY aNZ] as normal.
+	 *
+	 * @param aX  X component of a point on the plane.
+	 * @param aY  Y component of a point on the plane.
+	 * @param aZ  Z component of a point on the plane.
+	 * @param aNX X component of the normal vector of the plane.
+	 * @param aNY Y component of the normal vector of the plane.
+	 * @param aNZ Z component of the normal vector of the plane.
+	 */
 	void set(RtFloat aX, RtFloat aY, RtFloat aZ, RtFloat aNX, RtFloat aNY, RtFloat aNZ);
 
+	/** @brief Sets single component.
+	 *  @param aX  X component of a point on the plane.
+	 */
 	inline RtVoid x(RtFloat aX)
 	{
 		m_x = aX;
 	}
+
+	/** @brief Gets single component.
+	 *  @return X component of a point on the plane.
+	 */
 	inline RtFloat x() const
 	{
 		return m_x;
 	}
 
+	/** @brief Sets single component.
+	 *  @param aY  Y component of a point on the plane.
+	 */
 	inline RtVoid y(RtFloat aY)
 	{
 		m_y = aY;
 	}
+
+	/** @brief Gets single component.
+	 *  @return Y component of a point on the plane.
+	 */
 	inline RtFloat y() const
 	{
 		return m_y;
 	}
 
+	/** @brief Sets single component.
+	 *  @param aZ  Z component of a point on the plane.
+	 */
 	inline RtVoid z(RtFloat aZ)
 	{
 		m_z = aZ;
 	}
+
+	/** @brief Gets single component.
+	 *  @return Z component of a point on the plane.
+	 */
 	inline RtFloat z() const
 	{
 		return m_z;
 	}
 
+	/** @brief Sets single component.
+	 *  @param aNX X component of the normal vector of the plane.
+	 */
 	inline RtVoid nx(RtFloat aNX)
 	{
 		m_nx = aNX;
 	}
+
+	/** @brief Gets single component.
+	 *  @return X component of the normal vector of the plane.
+	 */
 	inline RtFloat nx() const
 	{
 		return m_nx;
 	}
 
+	/** @brief Sets single component.
+	 *  @param aNY Y component of the normal vector of the plane.
+	 */
 	inline RtVoid ny(RtFloat aNY)
 	{
 		m_ny = aNY;
 	}
+
+	/** @brief Gets single component.
+	 *  @return Y component of the normal vector of the plane.
+	 */
 	inline RtFloat ny() const
 	{
 		return m_ny;
 	}
 
+	/** @brief Sets single component.
+	 *  @param aNZ Z component of the normal vector of the plane.
+	 */
 	inline RtVoid nz(RtFloat aNZ)
 	{
 		m_nz = aNZ;
 	}
+
+	/** @brief Gets single component.
+	 *  @return Z component of the normal vector of the plane.
+	 */
 	inline RtFloat nz() const
 	{
 		return m_nz;
@@ -531,73 +624,160 @@ public:
 
 
 /** @brief Quantizer.
+ *
+ *  Container of the parameters of a IRi::quantize() interface call,
+ *  and methods to quantize.
+
+ *
  */
 class CQuantizer {
-	RtToken m_type;
-	RtInt m_one, m_min,  m_max;
-	RtFloat m_ditherAmplitude;
+	RtToken m_type; ///< Token of the quantizer type (color RI_RGB or depth RI_Z).
+	RtInt m_one,    ///< Integer value to mutiply with input float parameters, 0: no quantization output as floats.
+	      m_min,    ///< Minimal integer value output (result is clambed).
+	      m_max;    ///< Maximal integer value output (result is clambed).
+	RtFloat m_ditherAmplitude; ///< Ditheramplitude to add before clambing (multiplied with a random number between -1 and 1).
+
 public:
+
+	/** @brief, initializes al parameters to 0 (no quantization).
+	 */
 	CQuantizer();
-	CQuantizer(RtToken atype, RtInt aOne, RtInt aMin, RtInt aMax, RtFloat aDitherAmplitude);
+
+	/** @brief Constructor, sets values.
+	 *
+	 * @param aType Token of the quantizer type (color RI_RGB or depth RI_Z)
+	 * @param aOne Integer value to mutiply with input float parameters, 0: no quantization output as floats.
+	 * @param aMin Minimal integer value output (result is clambed)
+	 * @param aMax Maximal integer value output (result is clambed)
+	 * @param aDitherAmplitude Ditheramplitude to add before clambing (multiplied with a random number between -1 and 1)
+	 */
+	CQuantizer(RtToken aType, RtInt aOne, RtInt aMin, RtInt aMax, RtFloat aDitherAmplitude);
+
+	/** @brief Copy constructor.
+	 *  @param quantizer Used to initialize copy
+	 */
 	inline CQuantizer(const CQuantizer &quantizer)
 	{
 		*this = quantizer;
 	}
+
+	/** @brief Duplication.
+	 *  @return Clone of this
+	 */
+	CQuantizer *duplicate() const
+	{
+		return new CQuantizer(*this);
+	}
+
+	/** @brief Assigns values of another object.
+	 *  @param q Object to assign.
+	 */
 	CQuantizer &operator=(const CQuantizer &q);
 
-	void set(RtToken atype, RtInt aOne, RtInt aMin, RtInt aMax, RtFloat aDitherAmplitude);
+	/** @brief Sets values.
+	 *
+	 * @param aType Token of the quantizer type (color RI_RGB or depth RI_Z)
+	 * @param aOne Integer value to mutiply with input float parameters, 0: no quantization output as floats.
+	 * @param aMin Minimal integer value output (result is clambed)
+	 * @param aMax Maximal integer value output (result is clambed)
+	 * @param aDitherAmplitude Ditheramplitude to add before clambing (multiplied with a random number between -1 and 1)
+	 */
+	void set(RtToken aType, RtInt aOne, RtInt aMin, RtInt aMax, RtFloat aDitherAmplitude);
 
+	/** @brief Sets single value.
+	 *  @param aType Token of the quantizer type (color RI_RGB or depth RI_Z)
+	 */
 	inline RtVoid type(RtToken aType)
 	{
 		m_type = aType;
 	}
+
+	/** @brief Gets single value.
+	 *  @return Token of the quantizer type.
+	 */
 	inline RtToken type() const
 	{
 		return m_type;
 	}
 
+	/** @brief Sets single value.
+	 *  @param aOne Integer value to mutiply with input float parameters, 0: no quantization output as floats.
+	 */
 	inline RtVoid one(RtInt aOne)
 	{
 		m_one = aOne;
 	}
+
+	/** @brief Gets single value.
+	 *  @return Integer value to mutiply with input float parameters, 0: no quantization.
+	 */
 	inline RtInt one() const
 	{
 		return m_one;
 	}
 
+	/** @brief Sets single value.
+	 *  @param aMin Minimal integer value output (result is clambed).
+	 */
 	inline RtVoid minVal(RtInt aMin)
 	{
 		m_min = aMin;
 	}
+
+	/** @brief Gets single value.
+	 *  @return Minimal integer value output.
+	 */
 	inline RtInt minVal() const
 	{
 		return m_min;
 	}
 
+	/** @brief Sets single value.
+	 *  @param aMax Maximal integer value output (result is clambed).
+	 */
 	inline RtVoid maxVal(RtInt aMax)
 	{
 		m_max = aMax;
 	}
+
+	/** @brief Gets single value.
+	 *  @return Maximal integer value output.
+	 */
 	inline RtInt maxVal() const
 	{
 		return m_max;
 	}
 
+	/** @brief Sets single value.
+	 *  @param aDitherAmplitude Ditheramplitude to add before clambing (multiplied with a random number between -1 and 1).
+	 */
 	inline RtVoid ditherAmplitude(RtFloat aDitherAmplitude)
 	{
 		m_ditherAmplitude = aDitherAmplitude;
 	}
+
+	/** @brief Gets single value.
+	 *  @return Ditheramplitude.
+	 */
 	inline RtFloat ditherAmplitude() const
 	{
 		return m_ditherAmplitude;
 	}
 
+	/** @brief Quantize a single value.
+	 *  @param value Value to quantize.
+	 *  @return Quantized value (or copy of @a value, if aOne==0).
+	 */
 	RtFloat quantize(RtFloat value) const;
+
+	/** @brief Quantize a vector of values.
+	 *  @retval values Values to quantize (nothing done if aOne == 0).
+	 */
 	void quantize(std::vector<RtFloat> &values) const;
 }; // CQuantizer
 
 
-/** @brief Array sizes of a trim curve
+/** @brief Array sizes of a trim curve.
  */
 struct CTrimCurveDataInfo {
 	RtInt m_nloops; ///< Number of closed loops.
@@ -657,7 +837,7 @@ struct CTrimCurveDataInfo {
 /** @brief Contains one trim curve.
  */
 struct CTrimCurveData {
-	CTrimCurveDataInfo   m_data;    ///< Sizes
+	CTrimCurveDataInfo   m_data;    ///< Sizes.
 	
 	std::vector<RtInt>   m_nCurves; ///< Number if loops (curves with holes).
 	std::vector<RtInt>   m_order;   ///< Order of the curves.
@@ -701,7 +881,7 @@ struct CTrimCurveData {
 
 	/** @brief Copy constructor.
 	 *
-	 *  @param curve The curve to assign from.
+	 *  @param curve Used to initialize copy.
 	 */
 	CTrimCurveData(const CTrimCurveData &curve)
 	{
@@ -713,6 +893,15 @@ struct CTrimCurveData {
 	~CTrimCurveData()
 	{
 		releaseAll();
+	}
+
+
+	/** @brief Duplication.
+	 *  @return Clone of this.
+	 */
+	CTrimCurveData *duplicate() const
+	{
+		return new CTrimCurveData(*this);
 	}
 
 	/** @brief Assignment of another curve.
@@ -743,6 +932,11 @@ struct CTrimCurveData {
 		return *this;
 	}
 
+	/** @brief Compares to objects by components.
+	 *
+	 *  @param curve The curve to compare to.
+	 *  @return true, all components of *this and @a curve are equal.
+	 */
 	inline bool operator==(const CTrimCurveData &curve)
 	{
 		if ( m_data.m_nloops != curve.m_data.m_nloops ) return false;
@@ -791,13 +985,15 @@ struct CTrimCurveData {
  *  The class implements all matrix operations needed by the implementation of the RenderMan interface.
  */
 class CMatrix3D {
-	/** @brief The value of the 4x4 matrix, init with identity.
+	/** @brief The value of the 4x4 row major matrix, init with identity.
 	 *
-	 *  Index [i][j]:\n
-	 *  [0][0] [0][1] [0][2] [0][3]\n
-	 *  [1][0] [1][1] [1][2] [1][3]\n
-	 *  [2][0] [2][1] [2][2] [2][3]\n
-	 *  [3][0] [3][1] [3][2] [3][3]\n
+	 @verbatim
+	 Index [i][j]:
+	 [0][0] [0][1] [0][2] [0][3]
+	 [1][0] [1][1] [1][2] [1][3]
+	 [2][0] [2][1] [2][2] [2][3]
+	 [3][0] [3][1] [3][2] [3][3]
+	 @endverbatim
 	 */
 	RtMatrix m_Matrix;
 
@@ -808,69 +1004,366 @@ class CMatrix3D {
 	// void extract(RtFloat *result, const RtFloat *mat, int i, int size) const;
 	// RtFloat det(const RtFloat *mat, int size) const;
 public:
-	CMatrix3D();
-	CMatrix3D(const CMatrix3D &mat);
-	CMatrix3D(RtMatrix mat);
-	~CMatrix3D();
 
-	// CMatrix3D &duplicate() const;
+	/** @brief The standard constructor.
+	 *
+	 *  Initializes the matric with the identity matrix, sets premultiplication.
+	 */
+	CMatrix3D();
+
+	/** @brief The copy constructor (deep copy).
+	 *  @param mat Matrix to copy from.
+	 */
+	CMatrix3D(const CMatrix3D &mat);
+
+	/** @brief The constructor to copy from a RenderMan RtMatrix.
+	 *  @param mat Matrix to copy from.
+	 */
+	CMatrix3D(RtMatrix mat);
+	
+	/** @brief Dupliactes a matrix.
+	 *  @return a clone of *this.
+	 */
+	inline CMatrix3D *duplicate() const
+	{
+		return new CMatrix3D(*this);
+	}
+
+	/** @brief Destructor, has nothing to do.
+	 */
+	inline ~CMatrix3D() { }
+
+	/** @brief The assignment (deep copy).
+	 *  @param mat Matrix to copy from.
+	 */
 	CMatrix3D &operator=(const CMatrix3D &mat);
+
+	/** @brief The assignment for a RenderMan RtMatrix.
+	 *
+	 *  @c m_preMultiply is not changed because there
+	 *  no flag in RtMatrix.
+	 *
+	 *  @param mat Matrix to copy from.
+	 */
 	CMatrix3D &operator=(RtMatrix mat);
 
+	/** @brief Gets a pointer to the first component of a matrix.
+	 *  @return Pointer to the first float value of the matrix.
+	 */
 	operator const RtFloat *() const { return (const RtFloat *)&m_Matrix[0]; }
 	// RtFloat *getPointer() const { return (RtFloat *)&m_Matrix[0]; }
 
+	/** @brief Sets the pre multification flag.
+	 *  @param preMultiply true, for standard pre multiplication (left multiplication).
+	 */
 	inline void setPreMultiply(bool preMultiply=true) {
 		m_preMultiply = preMultiply;
 	}
+
+	/** @brief Gets the pre multification flag.
+	 *  @return true, if standard pre multiplication (left multiplication).
+	 */
 	inline bool getPreMultiply() const {
 		return m_preMultiply;
 	}
 
+	/** @brief Sets the components by coping a RenderMan RtMatrix.
+	 *  @param mat Matric to copy
+	 */
 	inline void set(const RtMatrix mat) {
 		memcpy(m_Matrix, mat, sizeof(RtMatrix));
 	}
+
+	/** @brief Sets the components by coping a RtFloat array (16 values).
+	 *  @param mat RtFloat array with at least 16 values.
+	 */
 	inline void set(const RtFloat *mat) {
 		memcpy(m_Matrix, mat, sizeof(RtMatrix));
 	}
+
+	/** @brief Gets the content of a matrix for a RenderMan RtMatrix.
+	 *  @retval mat Matrix to fill.
+	 */
 	void get(RtMatrix &mat) const;
 
+	/** @brief Compares two matrices.
+	 *  @param mat Matrix to compare with.
+	 *  @return true, if all components of mat are equal to the components of the instance.
+	 */
 	bool operator==(const CMatrix3D &mat) const;
+
+	/** @brief Compares with RtMatrix.
+	 *  @param mat RenderMan RtMatrix matrix to compare with.
+	 *  @return true, if all components of mat are equal to the components of the instance.
+	 */
 	bool operator==(RtMatrix mat) const;
+
+	/** @brief Compares two matrices.
+	 *  @param mat Matrix to compare with.
+	 *  @return false, if all components of mat are equal to the components of the instance.
+	 */
 	bool operator!=(const CMatrix3D &mat) const;
+
+	/** @brief Compares with RtMatrix.
+	 *  @param mat RenderMan RtMatrix matrix to compare with.
+	 *  @return false if all components of mat are equal to the components of the instance.
+	 */
 	bool operator!=(RtMatrix mat) const;
 
+	/** @brief Clears a matrix.
+	 * Sets all components to zero.
+	 @verbatim
+	 0 0 0 0
+	 0 0 0 0
+	 0 0 0 0
+	 0 0 0 0
+	 @endverbatim
+	 */
 	void clear();
-	void identity();
-	void transpose();
-	void translate(RtFloat dx, RtFloat dy, RtFloat dz);
-	void scale(RtFloat sx, RtFloat sy, RtFloat sz);
 
+	/** @brief Set the identity matrix.
+	/* Sets the components to:
+	 @verbatim
+	 1 0 0 0
+	 0 1 0 0
+	 0 0 1 0
+	 0 0 0 1
+	 @endverbatim
+	 */
+	void identity();
+
+	/** @brief Transposes the matrix.
+	 *  Swaps the components as follows:
+	 @verbatim
+	 m[i][j] = m[j][i]
+	 @endverbatim
+	 */
+	void transpose();
+
+	/** @brief Transform.
+	 * Transform is to copy a matrix:
+	 @verbatim
+	 M = mat
+	 @endverbatim
+	 * @param mat Matrix (RenderMan RtMatrix) used for transformation.
+	 */
 	void transform(RtMatrix mat);
+
+	/** @brief Transform.
+	 * Transform is to copy a matrix:
+	 @verbatim
+	 M = mat
+	 @endverbatim
+	 * @param mat Matrix used for transformation.
+	 */
 	void transform(CMatrix3D &mat);
 
+	/** @brief Postmultiplicaton, right multiplication.
+	 * Postmultiplication is used by inverse transformations.
+	 @verbatim
+	 M' = M x mat
+	 @endverbatim
+	 * @param mat Matrix (RenderMan RtMatrix) to concatenate on the right.
+	 */
 	void postMultiply(RtMatrix mat);
+
+	/** @brief Postmultiplicaton, right multiplication.
+	 * Postmultiplication is used by inverse transformations.
+	 @verbatim
+	 M' = M x mat
+	 @endverbatim
+	 * @param mat Matrix to concatenate on the right.
+	 */
 	void postMultiply(CMatrix3D mat);
+
+	/** @brief Premultiplication (left multiplication).
+	/* Premultiplication is used by the implementation of the RenderMan interface to concatenate transformations.
+	 @verbatim
+	 M' = mat x M
+	 @endverbatim
+	 * @param mat Matrix (RenderMan RtMatrix) to concatenate on the left.
+	 */
 	void preMultiply(RtMatrix mat);
+
+	/** @brief Premultiplication (left multiplication).
+	/* Premultiplication is used by the implementation of the RenderMan interface to concatenate transformations.
+	 @verbatim
+	 M' = mat x M
+	 @endverbatim
+	 * @param mat Matrix to concatenate on the left.
+	 */
 	void preMultiply(CMatrix3D mat);
 
+	/** @brief Matrix multiplication.
+	/* m_preMultiply is used o multiply on the left or on the right
+	 @verbatim
+	 M' = mat x M (if m_preMultiply) or M' = M x Mat (if not m_preMultiply)
+	 @endverbatim
+	 * @param mat Matrix (RenderMan RtMatrix) to concatenate.
+	 */
 	void concatTransform(RtMatrix mat);
+
+	/** @brief Matrix multiplication.
+	/* m_preMultiply is used o multiply on the left or on the right
+	 @verbatim
+	 M' = mat x M (if m_preMultiply) or M' = M x Mat (if not m_preMultiply)
+	 @endverbatim
+	 * @param mat Matrix to concatenate.
+	 */
 	void concatTransform(CMatrix3D mat);
 
+	/** @brief Concatenate a translation.
+	/*  The result matrix is:
+	 @verbatim
+	 a    b    c    d
+	 e    f    g    h
+	 i    j    k    l
+	 m+dx n+dy o+dz p
+	 @endverbatim
+	 *
+	 *  @param dx translate in x direction
+	 *  @param dy translate in y direction
+	 *  @param dz translate in z direction
+	 */
+	void translate(RtFloat dx, RtFloat dy, RtFloat dz);
+
+	/** @brief Concatenate a scale.
+	 *  The result matrix is:
+	 @verbatim
+	 a*sx b    c    d
+	 e    f*sy g    h
+	 i    j    k*sz l
+	 m    n    o    p
+	 @endverbatim
+	 *
+	 *  @param sx scale in x direction
+	 *  @param sy scale in y direction
+	 *  @param sz scale in z direction
+	 */
+	void scale(RtFloat sx, RtFloat sy, RtFloat sz);
+
+	/** @brief Transforms a point by the matrix.
+	 *
+	 *  If m_preMultiply it uses a row vector and left multiplication,
+	 *  if not m_preMultiply a column vector and left multiplication
+	 *
+	 *  @retval x coordinate x and result
+	 *  @retval y coordinate y and result
+	 *  @retval z coordinate z and result
+	 */
 	void transformPoints(RtFloat &x, RtFloat &y, RtFloat &z);
 
+	/** @brief Concatenates a rotation around the x-axis.
+	 * The rotation matrix is:
+	 @verbatim
+	 1  0      0      0
+	 0  cos(w) sin(w) 0
+	 0 -sin(w) cos(w) 0
+	 0  0      0      1
+	 @endverbatim
+	 *  @param w degrees to rotate
+	 */
 	void rotateX(RtFloat w);
+
+	/** @brief Concatenates a rotation around the y-axis.
+	 * The rotation matrix is:
+	 @verbatim
+	 cos(w) 0 -sin(w) 0
+	 0      1  0      0
+	 sin(w) 0  cos(w) 0
+	 0      0  0      1
+	 @endverbatim
+	 *  @param w degrees to rotate
+	 */
 	void rotateY(RtFloat w);
+
+	/** @brief Concatenates a rotation around the z-axis.
+	 * The rotation matrix is:
+	 @verbatim
+	  cos(w) sin(w) 0 0
+	 -sin(w) cos(w) 0 0
+	 0      0      1 0
+	 0      0      0 1
+	 @endverbatim
+	 *  @param w degrees to rotate
+	 */
 	void rotateZ(RtFloat w);
+
+	/** @brief Rotates w degrees around the axis vector x, y, z.
+	 * The matrix is:
+	 @verbatim
+	 [0][0] = (RtFloat)(x*x + cosw*(1.0 - x*x));
+	 [0][1] = (RtFloat)(x*y*(1.0 - cosw) + z*sinw);
+	 [0][2] = (RtFloat)(z*x*(1.0 - cosw) - y*sinw);
+	 [1][0] = (RtFloat)(x*y*(1.0 - cosw) - z*sinw);
+	 [1][1] = (RtFloat)(y*y + cosw*(1.0 - y*y));
+	 [1][2] = (RtFloat)(y*z*(1.0 - cosw) + x*sinw);
+	 [2][0] = (RtFloat)(z*x*(1.0 - cosw) + y*sinw);
+	 [2][1] = (RtFloat)(y*z*(1.0 - cosw) - x*sinw);
+	 [2][2] = (RtFloat)(z*z + cosw*(1.0 - z*z));
+	 @endverbatim
+	 *  @param w degrees to rotate
+	 *  @param x x-coordinate of the axis vector
+	 *  @param y y-coordinate of the axis vector
+	 *  @param z z-coordinate of the axis vector
+	 */
 	void rotate(RtFloat w, RtFloat x, RtFloat y, RtFloat z);
 
+	/** @brief Skews a vector (x1, y1, z1) w degrees towards (x2, y2, z2).
+	 * s.a. More Matrices and Transformations: Shear and Pseudo-Perspective
+	 *      Ronald N. Goldman in Graphics Gems II, Academic Press Inc.
+	 * @verbatim
+	 Shear(Q,v,w,phi) (Q = (0, 0, 0), v = (x1, y1, z1), w = (x2, y2, z2), phi = w)
+	 | I+tan phi(v (X) w) 0 | I : id matrix, (X) : tensor product
+	 | -(Q.v)w            1 | . : dot product
+	 @endverbatim
+	 */
 	void skew(RtFloat w, RtFloat x1, RtFloat y1, RtFloat z1, RtFloat x2, RtFloat y2, RtFloat z2);
 
+	/** @brief Concatenates the RMan perspective transformation.
+	 *  Code copied from the aqsis renderer, concatenates the matrix:
+	 @verbatim
+	 f = (RtFloat)tan(degtorad(fov)/2.0);
+	 1.0 0.0 0.0 0.0
+	 0.0 1.0 0.0 0.0
+	 0.0 0.0   f   f
+	 0.0 0.0  -f 0.0
+	 @endverbatim
+	 * @param fov The field of view for the perspective nmatrix
+	 */
 	void perspective(RtFloat fov);
+
+	/** @brief Concatenates the inverse RMan perspective transformation.
+	 @verbatim
+	 f = (RtFloat)tan(degtorad(fov)/2.0);
+	 1.0 0.0 0.0 0.0
+	 0.0 1.0 0.0 0.0
+	 0.0 0.0 0.0  -f
+	 0.0 0.0   f   f
+	 @endverbatim
+	 * @param fov The field of view for the perspective nmatrix
+	 */
 	void inversePerspective(RtFloat fov);
 
+	/** @brief Returns the determinant of this matrix.
+	 *  Using an algorithm from Graphics Gems I (p768). Source copied from
+	 *  Aqsis renderer.
+	 *  @return The determinant of the homogene matrix.
+	 */
 	RtFloat determinant() const;
+
+	/** @brief Test if matrix is the identity matrix
+	 * @return true: if matrix is the identity matrix, false: otherwise
+	 */
 	bool isIdentity() const;
+
+	/** @brief Returns the inverse of this matrix.
+	 * Using an algorithm from Graphics Gems IV (p554),
+	 * Gauss-Jordan elimination with partial pivoting.
+	 * Source copied from Aqsis renderer.
+	 * @retval mat The inverse matrix.
+	 * @return true: Inverse could be calculated, false: otherwise.
+	 */
 	bool getInverse(RtMatrix &mat) const;
 }; // CMatrix3D
 

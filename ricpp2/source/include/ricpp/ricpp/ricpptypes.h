@@ -61,7 +61,7 @@ typedef void   *RtPointer;       ///< Pointer to arbitrary data
  *  @see ricpp_illhandle
  *  @{
  */
-typedef long RtLightHandle;            ///< Handle for a light handle (was RtPointer) can be positive or negative, see CLights.
+typedef long RtLightHandle;            ///< Handle for a light handle (was RtPointer) can be positive or negative, see CLights. @todo Light handles as strings.
 typedef unsigned long RtContextHandle; ///< Handle for a render context handle (was RtPointer).
 typedef RtToken RtObjectHandle;        ///< Handle for an object instance (was RtPointer) can be positive or negative.
 typedef RtToken RtArchiveHandle;       ///< Handle for a rib archive (was RtPointer), is the tokenized name.

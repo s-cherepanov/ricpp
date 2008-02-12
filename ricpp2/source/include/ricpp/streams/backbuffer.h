@@ -179,11 +179,22 @@ public:
 		return m_filebuf.is_open();
 	}
 
+	/** @brief Query if the file buffer is open.
+	 *
+	 *  @return true, the file buffer is open.
+	 */
 	inline virtual bool isOpen() const
 	{
 		return m_filebuf.is_open();
 	}
 
+	/** @brief Reads bytes from the opened stream.
+	 *
+	 *  Reads at most @a size bytes from the associated stream and stores them
+	 *  in @a b using sgetn() of std::filebuf.
+	 *
+	 *  @return Number of bytes read.
+	 */
 	inline virtual std::streamsize sgetn(char *b, std::streamsize size) 
 	{
 		if ( !isOpen() || !b || !size ) {
@@ -199,6 +210,13 @@ public:
 #endif
 	}
 
+	/** @brief Writes bytes to the opened stream.
+	 *
+	 *  Writes @a size bytes of buffer @a b to the associated stream
+	 *  using sputn() of std::filebuf.
+	 *
+	 *  @return Number of bytes read.
+	 */
 	inline virtual std::streamsize sputn(const char *b, std::streamsize size) 
 	{
 		if ( !isOpen() || !b || !size ) {
@@ -488,16 +506,28 @@ public:
 /** @brief Registration for back buffer factories.
  *
  * It's not a singleton, because every RiCPP front end has one. Can
- * load all ".buffer" files containing buffer factories from a directory.
+ * load all ".buffer" files (dynamic libraries) containing buffer factories
+ * from a directory.
  *
  * @see CBackBufferRoot
+ *
+ * @todo Implement handlers.
  */
 class CBackBufferProtocolHandlers {
-	std::string m_direct;
-	bool m_hasDirect;
+	std::string m_direct; ///< @brief Path of the directory used to load buffer factories.
+	bool m_hasDirect; ///< @brief @c m_direct has been set.
+
+	/** @brief Plugin-loader for the factories.
+	 */
 	TemplPluginHandler<CBackBufferFactory> m_backBufferPluginHandler;
+
+	/** @brief Factory for file buffers is immanent.
+	 */
 	TemplPluginFactory<CFileBackBufferFactory> m_fileBuffer;
 	
+	/** @brief Sets a directory, registers the file buffer factory and loads factories from the directory.
+	 *  @param direct Name of the directory containing the ".buffer" buffer factory files.
+	 */
 	inline void init(const char *direct)
 	{
 		m_direct = direct ? direct : "";
@@ -515,8 +545,26 @@ class CBackBufferProtocolHandlers {
 	}
 
 public:
+	/** @brief Constructor, sets a directory and initializes the object.
+	 *  @param direct Name of the directory to load from.
+	 */
 	inline CBackBufferProtocolHandlers(const char *direct=0) {init(direct);}
+
+	/** @brief Virtual destructor.
+	 *
+	 *  The loaded libraries are destructed automatically.
+	 *
+	 */
 	inline ~CBackBufferProtocolHandlers() {}
+
+
+	/** @brief Gets a buffer factory for a specific protocol scheme.
+	 *
+	 *  At the moment only FILE: is supported.
+	 *
+	 *  @param scheme Protocol name
+	 *  @return Buffer factory for the protocol @a scheme
+	 */
 	inline CBackBufferFactory *getBufferFactory(const char *scheme)
 	{
 		TemplPluginHandler<CBackBufferFactory>::const_iterator i;
@@ -527,13 +575,18 @@ public:
 		}
 		return 0;
 	}
+
+	/** @brief Gets the plugin loader object
+	 *  @return A reference to the plugin loader (loader of buffer factories).
+	 */
 	inline TemplPluginHandler<CBackBufferFactory> &getHandler()
 	{
 		return m_backBufferPluginHandler;
 	}
 }; // CBackBufferProtocolHandlers
 
-/** @brief Templates for zlib streams
+
+/** @brief Template for zlib stream buffers.
  *
  * Can be used by istream, ostream as streambuf. A coupled back end buffer CBackBufferRoot or a
  * basic_streambuf can be used as data source/drain. TemplFrontStreambuf adds zlib in between the
@@ -542,7 +595,7 @@ public:
  *
  * I used copied code from the zlib here.
  *
- * @todo There is a bug with m_additionalChars while filling the buffer
+ * @todo Debug, there is a bug with m_additionalChars while filling the buffer. Using of basic_streambuf won't work.
  *
  * @see CBackBufferRoot
  */
@@ -558,17 +611,17 @@ public:
 	  
 private:
 	static const int gz_magic_0 = 0x1f;
-	static const int gz_magic_1 = 0x8b; /* gzip magic header */
+	static const int gz_magic_1 = 0x8b; ///< @brief gzip magic header
 
 	/* gzip flag byte */
-	static int const ASCII_FLAG   = 0x01; /* bit 0 set: file probably ascii text */
-	static int const HEAD_CRC     = 0x02; /* bit 1 set: header CRC present */
-	static int const EXTRA_FIELD  = 0x04; /* bit 2 set: extra field present */
-	static int const ORIG_NAME    = 0x08; /* bit 3 set: original file name present */
-	static int const COMMENT      = 0x10; /* bit 4 set: file comment present */
-	static int const RESERVED     = 0xE0; /* bits 5..7: reserved */
+	static int const ASCII_FLAG   = 0x01; ///< @brief bit 0 set: file probably ascii text
+	static int const HEAD_CRC     = 0x02; ///< @brief bit 1 set: header CRC present
+	static int const EXTRA_FIELD  = 0x04; ///< @brief bit 2 set: extra field present
+	static int const ORIG_NAME    = 0x08; ///< @brief bit 3 set: original file name present
+	static int const COMMENT      = 0x10; ///< @brief bit 4 set: file comment present
+	static int const RESERVED     = 0xE0; ///< @brief bits 5..7: reserved
 
-	// RiCPP will be only WIN32, MACOS or Unix
+	// RiCPP will be only implemented for WIN32, MACOS or Unix
 	#if defined(WIN32)
 		static int const OS_CODE = 0x0b;
 	#else

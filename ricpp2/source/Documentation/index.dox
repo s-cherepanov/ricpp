@@ -62,7 +62,7 @@ the back end, which is in turn a class derived from CBaseRenderer.
 An instance of CRiCPPBridge implements the interface IRi, and that is the only
 interface you need to see, if you only want to use RiCPP as an API connected
 with a back end renderer. IRi (included in "ricpp/ricpp/ricpp.h") is similar
-to the declarations of the C-binding in ri.h. Therfore knowing the RenderMan Interface
+to the declarations of the C-binding in ri.h. Therefore knowing the RenderMan Interface
 Specification [RISPEC] is important to understand the interface.
 
 At the moment I'm developing RiCPP using Visual Studio 2005/2008 (the express edition
@@ -82,7 +82,7 @@ You can learn a lot of RenderMan by these books and documents:
  <li> [COR2008] Rudy Cortes, Saty Raghavachary; <a href="http://rslprogramming.com/">The RenderMan Shading Language Guide</a>; 2008, Thomson Course Technology PTR</li>
  <li> [EBE1994] David S. Ebert (Ed.), Texturing and Modeling: A Procedural Approach; 1994 Academic Press, Inc. (There is a 2nd edition available)</li>
  <li> [KAUSHIK] Sudhir R Kaushik; <a href="http://web.cs.wpi.edu/~matt/courses/cs563/talks/renderman/rendmain.html">The RenderMan page</a></li>
- <li> [PRMAN] [AppNote(nr)] Pixar, prman documentation and appnotes at <a href="https://renderman.pixar.com/forum/docs/RfM_1.0/">Manual RenderMan for Maya</a> (registration required)</li>
+ <li> [PRMAN] [AppNote(nr)] Pixar, prman documentation and appnotes at <a href="https://renderman.pixar.com/forum/docs/RfM_1.0/">RenderMan Manual for Maya</a> (registration required), latest docs.</li>
  <li> [QRM] Quick RenderMan (once supplied as QRMSpec.rtfd with NextStep)</li>
  <li> [RAG2005] Saty Raghavachary; <a href="http://www.smartcg.com/tech/cg/books/RfB/home/index.html">Rendering for Beginners</a>; 2005, Elsevier</li>
  <li> [RISPEC] Pixar; The RenderMan Interface Version 3.2.1; Nov 2005, PDF document, the reference <a href="https://renderman.pixar.com/products/rispec/index.htm">Pixar's The RenderMan Interface Specification</a></li>
@@ -118,7 +118,7 @@ Some free one's:
 Selection of modellers:
 
 <ul>
-<li> <a href="http://aqsis.sourceforge.net/">Ayam</a> is free an can produce RIB</li>
+<li> <a href="http://ayam.sourceforge.net/">Ayam</a> is free and can produce and import RIB</li>
 <li> <a href="http://www.imagos.fl.net.au/">Breeze designer</a>, also free, easy to use and some basic RIB output</li>
 </ul>
 
@@ -261,13 +261,15 @@ you can adopt the naming scheme of QuickRenderMan's qualified token names:
 [namespace:][table:]var like shadertype:shadername:variablename, shadername:varaiblename, shadertype:variablename
 to avoid some conflicts, s.a. [kaushik]. E.g.
 "Surface:Dotted:dotsize" for a variable "dotsize" of a "Surface" shader named "Dotted".
-"Surface:dotsize" is a variable "dotsize" valid for all "Surface" shader, Dotted:dotsize for
-a variable named dotsize in any namespace for something named Dotted, or
-dotsize as a valid variable in all namespaces. If the RI finds a variable "dotsize" within
+"Surface:dotsize" is a variable "dotsize" valid for all "Surface" shaders, "Dotted:dotsize" for
+a variable named "dotsize" in any namespace for something named "Dotted", or
+"dotsize" as a valid variable in all namespaces. If the RI finds a variable "dotsize" within
 the parameter list of a surface shader it looks for the declaration of this parameter
 Surface:Shadername:Variablename, then Shadername:Variablename, then Surface:variablename and if
 still no declaration found, finally for the variablename itself. Of course there will be
-still problems with different shaders sharing the same name.
+still problems with different shaders sharing the same name. If you use a parameter name including
+a colon, the parameter name is accessed directly (without searching), e.g. "Surface:dotsize" takes
+only the declartion of "Surface:dotsize" into account.
 
 @section page_decl_sec2 Implementation hint
 
@@ -276,7 +278,7 @@ parameter "vertex point P" for your request. RiCPP must figure out that the
 "P" in "vertex point P" is RI_P, with the same semantics - usually not a problem.
 RI_P is not only forwarded to a shader variable "P" but is also used to
 generate the positions of the vertices of a graphics primary. It will
-lead to trouble, if you declare "uniform point P", wheras there is nothing wrong
+lead to trouble, if you declare "uniform point P", whereas there is nothing wrong
 in declaring "uniform color Cs" or "constant color Cs" as you like, but
 "constant string Cs" will not work. In [AppNote7] it is strongly recommended
 not to change the type of parameters that have special meaning to
@@ -284,6 +286,7 @@ the renderer. You can also find a list of these variables there:
 
 @subsection page_decl_sec2_1 GENERAL RI PARAMETERS
 
+@verbatim
 Cs az epsilon2 near hither subwindow
 N bias0 eyesplits origin t
 Ng bias1 flatness print texture
@@ -294,13 +297,16 @@ Pw displacement interleave rgbz
 Pz dynamic jitter s
 a endofframe merge shader
 algorithm epsilon1 name st
+@verbatim
 
 @subsection page_decl_sec2_2 SHADER PARAMETERS
 
+@verbatim
 Ka amplitude conedeltaangle lightcolor specularcolor
 Kd background distance maxdistance texturename
 Kr beamdistribution from mindistance to
 Ks coneangle intensity roughness
+@endverbatim
 
 Nevertheless, the framework must handle the cases if the declaration of
 these variables are changed.
@@ -314,13 +320,13 @@ Literature: [RISPEC] [ARM2000] [UPS1989] [AppNote7] [AppNote22] [KAUSHIK] [PRMAN
 facevarying and facevertex are not yet mentioned in the specs.
 facevarying announced in RenderMan Release Notes 10 [PRMAN10]
 facevertex seems only be adopted by a minor number of renderers,
-afaik it makes only sense in bicubic patch meshes, nupatches
+imho it makes only sense in bicubic patch meshes, nu patches
 and maybe subdivision surfaces
 "All standard variable types are supported: constant, uniform, varying, vertex,
 facevarying and facevertex. facevertex is used exactly as facevarying but
-interpolates the variables according to surface's subdivision rules. " [3dlight]
+interpolates the variables according to surface's subdivision rules. " [3dlight documentation]
 
-If the declarations get "overwritten" the cannot be deleted since e.g.
+If the declarations get "overwritten", they cannot be simply deleted since e.g.
 parameter names within objects bear a pointer to their declaration.
 
 Problems with the scope of declarations
@@ -329,9 +335,9 @@ Problems if procedure calls are not executed or are executed by level of
 detail - different variables might be declarated - doesn't matter, simply
 issue everyone (linear with the requests).
 
-Caching of ReadArchive calls for the same RIB archive, parameters are bound only
+Caching of ReadArchive calls for the same RIB archive, parameters are bound (to their declarations) only
 the first time the ReadArchive is executed, since maybe a different variable set is
-declared at the different ReadArchive calls, that can lead to confilcts.
+declared at the different ReadArchive calls, that can lead to conflicts.
 
 If spliting a ribfile frame by frame for rendering single frames
 over the network, the state (also the declarations) must be stored
@@ -401,12 +407,12 @@ the beginning. If this archive sets some more declarations, [variable set 4]
 results. Some more declares leads to [variable set 5]. If the next ReadArchive uses
 the parsed data of the first read, [variable set 3] is used instead of [variable
 set 5]. Of course the variables from set 3 and 5 must be declared in a manner, that
-the archive can be read without errors, the sizes of the valuelists don't change.
+the archive can be read without errors, the sizes of the value lists don't change.
 However the class (vertex or varying) and color definition can be different and
 therefore the resulting objects may be rendered in a different way.
-Caching the archive file may gain a lot performance, and changeing
+Caching the archive file may gain a lot performance, and changing
 the class of a declaration for the same archive included at differend
-places is incommon. I include a boolean control attribute ricpp:control:cachearchive
+places is incommon. I include a boolean control attribute control:baserenderer:cachearchive
 which can be used to enable archive caching, dispite the
 problems with the declares. Differently to ObjectInstance, the declares issued in a
 RIB-Archive do effect the declaration dictionary.

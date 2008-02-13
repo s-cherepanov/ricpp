@@ -297,7 +297,7 @@ Pw displacement interleave rgbz
 Pz dynamic jitter s
 a endofframe merge shader
 algorithm epsilon1 name st
-@verbatim
+@endverbatim
 
 @subsection page_decl_sec2_2 SHADER PARAMETERS
 

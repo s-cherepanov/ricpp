@@ -49,16 +49,19 @@ class CHandle
 private:
 	RtToken m_identifier;     ///< @brief Token as identifier.
 	unsigned long m_handleNo; ///< @brief Sequence number.
+	bool m_fromHandleId;      ///< @brief Created from parameter list RI_HANDLEID
 public:
 	inline CHandle() {
 		m_identifier = RI_NULL;
 		m_handleNo = 0;
+		m_fromHandleId = false;
 	}
 
-	inline CHandle(RtToken anId, unsigned long aHandleNo)
+	inline CHandle(RtToken anId, unsigned long aHandleNo, bool isFromHandleId)
 	{
 		m_identifier = anId;
 		m_handleNo = aHandleNo;
+		m_fromHandleId = isFromHandleId;
 	}
 
 	inline CHandle(const CHandle &h)
@@ -82,10 +85,14 @@ public:
 	inline unsigned long handleNo() const { return m_handleNo; }
 	inline void handleNo(unsigned long aHandleNo) { m_handleNo = aHandleNo; }
 
+	inline bool fromHandleId() const { return m_fromHandleId; }
+	inline void fromHandleId(bool isFromHandleId) { m_fromHandleId = isFromHandleId; }
+
 	inline CHandle &operator=(const CHandle &h)
 	{
 		handle(h.handle());
 		handleNo(h.handleNo());
+		fromHandleId(h.fromHandleId());
 		return *this;
 	}
 }; // TemplHandle

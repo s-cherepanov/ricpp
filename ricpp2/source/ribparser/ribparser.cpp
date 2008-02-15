@@ -267,156 +267,53 @@ bool CRibParameter::convertFloatToInt() {
 // ----------------------------------------------------------------------------
 
 
-void CRibParser::putback(unsigned char c)
+bool CRibRequestData::removePair(size_t start, RtToken token)
 {
-	m_hasPutBack = true;
-	if ( c == '\n' && m_lineNo > 0 )
-		--m_lineNo;
-	m_putBack = c;
-}
-
-
-unsigned char CRibParser::getchar()
-{
-	unsigned char val;
-
-	if ( m_hasPutBack ) {
-		val = m_putBack;
-		m_hasPutBack = false;
-		if ( val == '\n' )
-			++m_lineNo;
-		return val;
+	size_t size = m_parameters.size();
+	if ( start >= size ) {
+		return false;
 	}
+	
+	RtToken t, t2;
 
-	val = m_istream.get();
-	if ( !m_istream ) {
-		val = 0;
+	std::vector<CRibParameter>::iterator sav;
+	std::vector<CRibParameter>::iterator iter = m_parameters.begin();
+	for ( RtInt i = 0; i < start; ++i ) {
+		++iter;
 	}
+	
+	while ( iter != m_parameters.end() ) {
+		if ( !(*iter).getString(t) ) {
+			// parameter name must be a string
+			errHandler().handleError(
+				RIE_CONSISTENCY, RIE_ERROR,
+				"Line %ld, File \"%s\", badparamlist: '%s' malformed parameter list, parameter name at position %d is not a string",
+				m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
+				(int)i, RI_NULL);
+			++iter;
+			continue;
+		}
+		
+		std::vector<CRibParameter>::iterator sav=iter;
 
-	if ( val == '\n' )
-		++m_lineNo;
+		++iter;
+		if ( !(*iter).getString(t2) ) {
+			++iter;
+			while ( !(*iter).getString(t2) ) {
+				++iter;
+			}
+		} else {
+			++iter;
+		}
 
-	return val;
-}
-
-
-bool CRibParser::bindObjectHandle(RtObjectHandle handle, RtInt number)
-{
-	m_mapObjectHandle[number] = handle;
-	return true;
-}
-
-
-bool CRibParser::bindObjectHandle(RtObjectHandle handle, const char *name)
-{
-	m_mapObjectStrHandle[name] = handle;
-	return true;
-}
-
-
-bool CRibParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
-{
-	NUM2OBJECT::const_iterator i = m_mapObjectHandle.find(number);
-	if ( i != m_mapObjectHandle.end() ) {
-		handle = (*i).second;
-		return true;
+		if ( t == token ) {
+			m_parameters.erase(sav, iter);
+			return true;
+		}
 	}
-
+	
 	return false;
 }
-
-
-bool CRibParser::getObjectHandle(RtObjectHandle &handle, const char *name) const
-{
-	STR2OBJECT::const_iterator i = m_mapObjectStrHandle.find(name);
-	if ( i != m_mapObjectStrHandle.end() ) {
-		handle = (*i).second;
-		return true;
-	}
-
-	return false;
-}
-
-
-bool CRibParser::bindLightHandle(RtLightHandle handle, RtInt number)
-{
-	m_mapLightHandle[number] = handle;
-	return true;
-}
-
-
-bool CRibParser::bindLightHandle(RtLightHandle handle, const char *handleName)
-{
-	m_mapLightStrHandle[handleName] = handle;
-	return true;
-}
-
-
-bool CRibParser::getLightHandle(RtLightHandle &handle, RtInt number) const
-{
-	NUM2LIGHT::const_iterator i = m_mapLightHandle.find(number);
-	if ( i != m_mapLightHandle.end() ) {
-		handle = (*i).second;
-		return true;
-	}
-
-	return false;
-}
-
-
-bool CRibParser::getLightHandle(RtLightHandle &handle, const char *handleName) const
-{
-	STR2LIGHT::const_iterator i = m_mapLightStrHandle.find(handleName);
-	if ( i != m_mapLightStrHandle.end() ) {
-		handle = (*i).second;
-		return true;
-	}
-
-	return false;
-}
-
-
-/*
-bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, RtInt number)
-{
-	m_mapArchiveHandle[number] = handle;
-	return true;
-}
-*/
-
-
-bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, const char *name)
-{
-	m_mapArchiveStrHandle[name] = handle;
-	return true;
-}
-
-
-/*
-bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) const
-{
-	NUM2OBJECT::const_iterator i = m_mapArchiveHandle.find(number);
-	if ( i != m_mapArchiveHandle.end() ) {
-		handle = (*i).second;
-		return true;
-	}
-
-	return false;
-}
-*/
-
-
-bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) const
-{
-	STR2OBJECT::const_iterator i = m_mapArchiveStrHandle.find(name);
-	if ( i != m_mapArchiveStrHandle.end() ) {
-		handle = (*i).second;
-		return true;
-	}
-
-	return false;
-}
-
 
 int CRibRequestData::getTokenList(
 	size_t start,
@@ -641,6 +538,160 @@ RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
 	}
 
 	return 0;
+}
+
+
+// ----------------------------------------------------------------------------
+
+
+void CRibParser::putback(unsigned char c)
+{
+	m_hasPutBack = true;
+	if ( c == '\n' && m_lineNo > 0 )
+		--m_lineNo;
+	m_putBack = c;
+}
+
+
+unsigned char CRibParser::getchar()
+{
+	unsigned char val;
+
+	if ( m_hasPutBack ) {
+		val = m_putBack;
+		m_hasPutBack = false;
+		if ( val == '\n' )
+			++m_lineNo;
+		return val;
+	}
+
+	val = m_istream.get();
+	if ( !m_istream ) {
+		val = 0;
+	}
+
+	if ( val == '\n' )
+		++m_lineNo;
+
+	return val;
+}
+
+
+bool CRibParser::bindObjectHandle(RtObjectHandle handle, RtInt number)
+{
+	m_mapObjectHandle[number] = handle;
+	return true;
+}
+
+
+bool CRibParser::bindObjectHandle(RtObjectHandle handle, const char *name)
+{
+	m_mapObjectStrHandle[name] = handle;
+	return true;
+}
+
+
+bool CRibParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
+{
+	NUM2OBJECT::const_iterator i = m_mapObjectHandle.find(number);
+	if ( i != m_mapObjectHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CRibParser::getObjectHandle(RtObjectHandle &handle, const char *name) const
+{
+	STR2OBJECT::const_iterator i = m_mapObjectStrHandle.find(name);
+	if ( i != m_mapObjectStrHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CRibParser::bindLightHandle(RtLightHandle handle, RtInt number)
+{
+	m_mapLightHandle[number] = handle;
+	return true;
+}
+
+
+bool CRibParser::bindLightHandle(RtLightHandle handle, const char *handleName)
+{
+	m_mapLightStrHandle[handleName] = handle;
+	return true;
+}
+
+
+bool CRibParser::getLightHandle(RtLightHandle &handle, RtInt number) const
+{
+	NUM2LIGHT::const_iterator i = m_mapLightHandle.find(number);
+	if ( i != m_mapLightHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CRibParser::getLightHandle(RtLightHandle &handle, const char *handleName) const
+{
+	STR2LIGHT::const_iterator i = m_mapLightStrHandle.find(handleName);
+	if ( i != m_mapLightStrHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+
+
+/*
+bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, RtInt number)
+{
+	m_mapArchiveHandle[number] = handle;
+	return true;
+}
+*/
+
+
+bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, const char *name)
+{
+	m_mapArchiveStrHandle[name] = handle;
+	return true;
+}
+
+
+/*
+bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) const
+{
+	NUM2OBJECT::const_iterator i = m_mapArchiveHandle.find(number);
+	if ( i != m_mapArchiveHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
+}
+*/
+
+
+bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) const
+{
+	STR2OBJECT::const_iterator i = m_mapArchiveStrHandle.find(name);
+	if ( i != m_mapArchiveStrHandle.end() ) {
+		handle = (*i).second;
+		return true;
+	}
+
+	return false;
 }
 
 void CRibParser::initRequestMap()

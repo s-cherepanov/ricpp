@@ -448,6 +448,8 @@ void CBaseRenderer::defaultDeclarations()
 
 	processDeclare(RI_FILE, "string", true);
 
+	processDeclare(RI_HANDLEID, "string", true);
+
 	// Additional render specific declarations
 	RI_CACHE_FILE_ARCHIVES = processDeclare("Control:base-renderer:cache-file-archives", "constant integer", true);
 }
@@ -1125,9 +1127,9 @@ RtArchiveHandle CBaseRenderer::archiveBeginV(RtToken name, RtInt n, RtToken toke
 		if ( !preCheck(REQ_ARCHIVE_BEGIN) )
 			return illArchiveHandle;
 
+		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 
-		name = renderState()->tokFindCreate(name);
 		CRiArchiveBegin r(renderState()->lineNo(), name, renderState()->curParamList());
 		processRequest(r, true);
 		return r.handle();
@@ -2211,7 +2213,7 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 		renderState()->parseParameters(RI_AREA_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
 
 		h = renderState()->newLightHandle(name, renderState()->curParamList());
-
+		
 		CRiAreaLightSource r(renderState()->lineNo(), h, name, renderState()->curParamList());
 		processRequest(r);
 		
@@ -2235,6 +2237,16 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 
 RtVoid CBaseRenderer::preIlluminate(RtLightHandle light, RtBoolean onoff)
 {
+	CHandle *handle = renderState()->lightSourceHandle(light);
+	if ( !handle ) {
+		throw ExceptRiCPPError(
+			RIE_BADHANDLE,
+			RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Illuminate a light source (Handle: %s)",
+			noNullStr(light));
+	}
 	renderState()->attributes().illuminate(light, onoff);
 }
 

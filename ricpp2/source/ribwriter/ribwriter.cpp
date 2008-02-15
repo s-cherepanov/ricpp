@@ -632,17 +632,24 @@ void CRibWriter::writePrefix(bool isArchiveRecord)
 	}
 }
 
-void CRibWriter::writeParameterList(const CParameterList &params)
+void CRibWriter::writeParameterList(const CParameterList &params, RtInt n, RtToken ignoreTokens[])
 {
 	bool paramError = false;
 	for ( CParameterList::const_iterator i = params.begin();
 		  i != params.end();
 		  i++ )
 	{
-		m_writer->putBlank();
-
 		const CParameter &p = (*i);
 		std::string decl;
+
+		RtInt cnt = 0;
+		for ( ; cnt < n; ++cnt ) {
+			if ( p.token() == ignoreTokens[cnt] )
+				break;
+		}
+		if ( cnt < n ) continue;
+		
+		m_writer->putBlank();
 
 		if ( p.isInline() )
 			m_writer->putString(p.declString(decl));
@@ -1558,9 +1565,14 @@ RtVoid CRibWriter::postLightSource(RtLightHandle h, RtString name, const CParame
 		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for LightSource \"%s\"", noNullStr(name));
 	} else {
-		m_writer->putValue(handle->handleNo());
+		if ( handle->fromHandleId() ) {
+			m_writer->putStringToken(handle->handle());
+		} else {
+			m_writer->putValue(handle->handleNo());
+		}
 	}
-	writeParameterList(params);
+	RtToken ignoreTokens[] = {RI_HANDLEID};
+	writeParameterList(params, 1, ignoreTokens);
 }
 
 
@@ -1579,9 +1591,14 @@ RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CPa
 		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for AreaLightSource \"%s\"", noNullStr(name));
 	} else {
-		m_writer->putValue(handle->handleNo());
+		if ( handle->fromHandleId() ) {
+			m_writer->putStringToken(handle->handle());
+		} else {
+			m_writer->putValue(handle->handleNo());
+		}
 	}
-	writeParameterList(params);
+	RtToken ignoreTokens[] = {RI_HANDLEID};
+	writeParameterList(params, 1, ignoreTokens);
 }
 
 
@@ -1691,7 +1708,11 @@ RtVoid CRibWriter::postIlluminate(RtLightHandle light, RtBoolean onoff)
 		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to illuminate \"%s\"", noNullStr(light));
 	} else {
-		m_writer->putValue(handle->handleNo());
+		if ( handle->fromHandleId() ) {
+			m_writer->putStringToken(handle->handle());
+		} else {
+			m_writer->putValue(handle->handleNo());
+		}
 	}
 	m_writer->putBlank();
 	m_writer->putValue((RtInt)(onoff?1:0));

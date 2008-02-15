@@ -631,6 +631,8 @@ public:
 
 	virtual CRiObjectMacro *objectInstance(RtObjectHandle handle);
 	virtual const CRiObjectMacro *objectInstance(RtObjectHandle handle) const;
+	
+	virtual RtString findHandleId(CParameterList &params) const;
 
 	virtual RtLightHandle newLightHandle(RtToken lightSourceName, CParameterList &params);
 	virtual CHandle *lightSourceHandle(RtLightHandle handle);

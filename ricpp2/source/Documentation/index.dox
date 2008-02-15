@@ -431,3 +431,103 @@ with @c CDeclarationDict, @c CTokenizer and @c CToken.
 </ul>
 
 */
+
+/*! @page page_stringhandles  The RIB String handles
+
+@section page_stringhandles_sec1 How to use?
+
+I'm not shure that I understood the usage of RIB string handles correctly.
+
+Say, in a RIB file there is the request
+
+@verbatim
+...archive...
+LightSource "distantlight" "mylight"
+...archive...
+@endverbatim
+
+1) Does that mean, that after reading the archive with ReadArchive you can use in the reading context
+
+@verbatim
+Illuminate "mylight" 1
+@endverbatim
+
+or in C-binding (using the RIB archive for rendering within a procedural) after a RiReadArchive(). Can you use
+
+@verbatim
+RiIlluminate("mylight", RI_TRUE);
+@endverbatim
+
+as valid function call? Seems to be Yes. However, in the [RiSpec] (LightSource): "Both client and server maintain independent
+mappings between the handle and their corresponding RtLightHandles." - then it would be No... but also in [RiSpec] (RIB String handles)
+"Also, starting with PRMan 11.5, RtLightHandles and can now be cast directly to RtStrings in all contexts.
+In the case of lights, the value of the RtString will be the same as the string handle supplied in RIB
+(if the light was created that way)." ... Will lead to Yes ?!?
+
+2) Because of the equivalence of handle numbers and strings
+
+@verbatim
+...archive...
+LightSource "distantlight" "1"
+...archive...
+@endverbatim
+
+e.g. after reading the archive
+
+@verbatim
+RiIlluminate("1", RI_TRUE);
+@endverbatim
+
+is valid? (Tend to yes)
+
+3) But, using the numeric notation
+
+@verbatim
+...archive...
+LightSource "distantlight" 1
+...archive...
+@endverbatim
+
+is after reading the archive
+
+@verbatim
+RiIlluminate("1", RI_TRUE);
+@endverbatim
+
+valid? (Here I really don't know what will be consistent, tend to no in both cases, because of "(if the light was created that way)" in [RiSpec])
+
+Possibly overwriting previous light source handles of the reading context by an archive, doesn't matter?
+Maybe not, because the user knows when to use string handles.
+
+4) And, if you make up a light source in C-binding for RIB output using the string handles
+
+@verbatim
+RtString id = "mylight";
+RtLightHandle handle = RiLightSource("spotlight", RI_HANDLEID, &id, RI_NULL);
+@endverbatim
+
+(handle will be "mylight")
+
+will produce  RIB
+
+@verbatim
+LightSource "distantlight" "mylight"
+@endverbatim
+
+without "__handleid" appearing in parameter list again? (Tend to yes)
+
+5) Will
+
+@verbatim
+RtLightHandle handle = RiLightSource("spotlight", RI_NULL);
+@endverbatim
+
+produces old style RIB with a generated number?
+
+@verbatim
+LightSource "distantlight" 1
+@endverbatim
+
+(Tend to yes)
+
+*/

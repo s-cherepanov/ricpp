@@ -1273,13 +1273,22 @@ const CRiObjectMacro *CRenderState::objectInstance(RtObjectHandle handle) const
 	return m_objectMacros.find(handle);
 }
 
+RtString CRenderState::findHandleId(CParameterList &params) const
+{
+	const CParameter *p = params.get(RI_HANDLEID);
+	if ( p && p->basicType() == BASICTYPE_STRING )
+		return p->stringPtrs()[0];
+	return RI_NULL;
+}
+
 RtLightHandle CRenderState::newLightHandle(RtToken lightSourceName, CParameterList &params)
 {
-	const char handlename = 0; // Can be a parameter
+	RtString handlename = findHandleId(params);
 	unsigned long num = 0;
+	
 	RtLightHandle l =  m_lightSourceHandles.newHandle(handlename, num);
 	if ( l != illLightHandle ) {
-		CHandle *h = new CHandle(l, num);
+		CHandle *h = new CHandle(l, num, handlename != RI_NULL);
 		if ( !h ) {
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in newLightHandle(): %s", noNullStr(lightSourceName));
 		}

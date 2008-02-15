@@ -331,7 +331,7 @@ protected:
 	bool testValid() const;
 	bool postTestValid() const;
 	void writePrefix(bool isArchiveRecord=false);
-	void writeParameterList(const CParameterList &params);
+	void writeParameterList(const CParameterList &params, RtInt n=0, RtToken ignoreTokens[]=0);
 
 public:
 

@@ -202,6 +202,8 @@ const RtToken RI_VERTEX = "vertex"; ///< Name for storage class vertex
 const RtToken RI_FACEVARYING = "facevarying"; ///< Name for storage class facevarying
 const RtToken RI_FACEVERTEX = "facevertex"; ///< Name for storage class facevertex
 
+const RtToken RI_HANDLEID = "__handleid"; ///< Handle id
+
 const RtToken RI_PROJECTION = "Projection"; ///< Projection namespace
 const RtToken RI_IMAGER = "Imager"; ///< Imager namespace
 const RtToken RI_DISPLAY = "Display"; ///< Display namespace

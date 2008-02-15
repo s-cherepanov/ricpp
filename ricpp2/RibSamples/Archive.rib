@@ -7,8 +7,9 @@ Declare "Attribute:MyVariable" "constant integer"
 Declare "MyAttribute:MyFloatVariable" "varying float"
 Declare "MyArray" "integer[3]"
 Declare "MyMatrix" "matrix"
+Declare "Something:really:stupid:now" "constant string"
 
-Option "MyOption" "MyVariable" "value"
+Option "MyOption" "MyVariable" "value" "Something:really:stupid:now" "AnotherValue"
 Option "MyOtherOption" "MyVariable" [ "Another value" ] "MyArray" 1 2 3 "MyMatrix" [ 1 2 3.14 4.13 5.12 6.11 7 8 9 10 11 12 13 14 15 16 ]
 
 #
@@ -19,6 +20,7 @@ ArchiveBegin "InlineArchive"
     # Inline Archive
     #
 	ArchiveBegin "InInlineArchive"
+		LightSource "distantlight" "InnerLight"
         # Archive within Archive, definition is global
 	    # Read the file TestArchive.rib
 		ReadArchive "TestArchive.rib"
@@ -269,7 +271,7 @@ FrameBegin 1
 	Translate 0 0 5
 	#
 	# World
-	LightSource "distantlight" 1 "intensity" 1
+	LightSource "distantlight" "myDistant" "intensity" 1  "__handleid" "IgnoreMe"
 	WorldBegin
 		AttributeBegin
 			TransformBegin
@@ -280,8 +282,11 @@ FrameBegin 1
 		Translate 0 0 5
 		# Read the inline archive
 		ReadArchive "InlineArchive"
+		Illuminate "InnerLight" 1
 		Translate 0 0 5
+		Illuminate "2" 1
 		Illuminate 2 1
+		Illuminate "myDistant" 0
 		Surface "bluemarble"
 		Resource "bmarble" "attributes" "string operation" "save"
 		ResourceBegin
@@ -302,10 +307,12 @@ FrameBegin 1
 		ReadArchive "InInlineArchive"
 		# Read the sphere object
 		AttributeBegin
-			AreaLightSource "myarealight" "myarealight" "intensity" 1
+			AreaLightSource "myarealight" 3 "intensity" 1 "__handleid" "NewId"
 			ObjectInstance "A_Sphere"
 		AttributeEnd
-		Illuminate "myarealight" 1
+		#Works both
+		Illuminate "NewId" 1
+		Illuminate 3 1
 		# Read the disk object
 		ObjectInstance "A_Disk"
 		# Procedural "DelayedReadArchive"

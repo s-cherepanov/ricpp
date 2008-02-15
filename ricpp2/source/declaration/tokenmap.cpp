@@ -205,6 +205,8 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_FACEVARYING)] = RI_FACEVARYING;
 		m_tokenMapper[CToken(RI_FACEVERTEX)] = RI_FACEVERTEX;
 
+		m_tokenMapper[CToken(RI_HANDLEID)] = RI_HANDLEID;
+
 		m_tokenMapper[CToken(RI_PROJECTION)] = RI_PROJECTION;
 		m_tokenMapper[CToken(RI_IMAGER)] = RI_IMAGER;
 		m_tokenMapper[CToken(RI_DISPLAY)] = RI_DISPLAY;

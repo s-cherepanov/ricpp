@@ -382,7 +382,7 @@ namespace RiCPP {
 			m_valueList.clear();
 			m_curRequest.clear();
 		}
-
+		bool removePair(size_t start, RtToken token);
 		void push_back(CRibParameter &p)
 		{
 			m_parameters.push_back(p);
@@ -473,9 +473,9 @@ namespace RiCPP {
 				p.faceCorners());
 		}
 
-	RtInt numVertices(RtInt start, RtInt n);
+		RtInt numVertices(RtInt start, RtInt n);
 
-	void curRequest(const char *req)
+		void curRequest(const char *req)
 		{
 			m_curRequest = req ? req : "";
 		}

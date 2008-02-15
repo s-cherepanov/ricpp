@@ -256,13 +256,20 @@ void CObjectBeginRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		CRibParameter &p0 = request[0];
 
 		RtInt number = 0;
+		char namebuf[32];
 		const char *name = 0;
 
 		if ( p0.getInt(number) ) {
+
 			RtObjectHandle handle = parser.ribFilter().objectBegin();
-			parser.bindObjectHandle(handle, number);
+
+			// Convert handle to string (equivalence of numbers to appropriate strings 42 == "42")
+			name = valToStr(namebuf, sizeof(namebuf), number);
+			parser.bindObjectHandle(handle, name);
 		} else if ( p0.getString(name) ) {
+
 			RtObjectHandle handle = parser.ribFilter().objectBegin();
+
 			parser.bindObjectHandle(handle, name);
 		} else {
 			parser.errHandler().handleError(
@@ -305,17 +312,24 @@ void CObjectInstanceRibRequest::operator()(IRibParserState &parser, CRibRequestD
 		CRibParameter &p0 = request[0];
 
 		RtInt number = 0;
+		char namebuf[32];
 		const char *name = 0;
 		RtObjectHandle object = 0;
 
 		bool b2 = false;
 
 		bool b1 = p0.getInt(number);
-		if ( !b1 )
+		if ( b1 ) {
+			// Temporary object name
+			name = valToStr(namebuf, sizeof(namebuf), number);
+		} else {
 			b2 = p0.getString(name);
+		}
+		
 		if ( b1 || b2 ) {
 			if ( b1 ) {
-				if ( !parser.getObjectHandle(object, number) ) {
+				// Temporary name only
+				if ( !parser.getObjectHandle(object, name) ) {
 					parser.errHandler().handleError(
 						RIE_CONSISTENCY, RIE_ERROR,
 						"Line %ld, File \"%s\", badargument: '%s' argument %s, could not find objecthandle for number %d",
@@ -324,11 +338,8 @@ void CObjectInstanceRibRequest::operator()(IRibParserState &parser, CRibRequestD
 				}
 			} else {
 				if ( !parser.getObjectHandle(object, name) ) {
-					parser.errHandler().handleError(
-						RIE_CONSISTENCY, RIE_ERROR,
-						"Line %ld, File \"%s\", badargument: '%s' argument %s, could not find objecthandle for name \"%s\"",
-						p0.lineNo(), parser.resourceName(), requestName(), "1 (objectname)", name, RI_NULL);
-					return;
+					// Try the found string as handle
+					object = name;
 				}
 			}
 

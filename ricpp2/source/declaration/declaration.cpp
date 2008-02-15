@@ -66,7 +66,9 @@ bool CDeclaration::stripName(CTokenMap &tokenmap)
 				m_var = tokenmap.findCreate(var.c_str());
 				return true;
 			}
-			return false;
+			// Simply take the rest as variable name
+			m_var = tokenmap.findCreate(str);
+			return true;
 		}
 		table += str[pos];
 	}

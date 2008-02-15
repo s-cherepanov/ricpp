@@ -44,13 +44,30 @@ void CLightSourceRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		RtInt number;
 		const char *name;
 		const char *lightname = 0;
+		char lightnamebuf[32];
 
 		bool b0 = p0.getString(name);
 		bool b1 = p1.getInt(number);
 		bool b2 = false;
 
+		// Convert handle to string (equivalence of numbers to appropriate strings 42 == "42")
 		if ( !b1 ) {
 			b2 = p1.getString(lightname);
+			if ( b2 ) {
+				// If a Handle is a string take it as handle
+				CRibParameter tok;
+				CRibParameter val;
+				tok.setString(RI_HANDLEID);
+				val.setString(lightname);
+				request.removePair(2, RI_HANDLEID);
+				request.push_back(tok);
+				request.push_back(val);
+			}			
+		} else {
+			lightname = valToStr(lightnamebuf, sizeof(lightnamebuf), number);
+			b2 = true;
+			b1 = false;
+			// A RI_HANDLEID may occur, should work
 		}
 
 		if ( b0 && (b1||b2) ) {
@@ -126,14 +143,31 @@ void CAreaLightSourceRibRequest::operator()(IRibParserState &parser, CRibRequest
 
 		RtInt number;
 		const char *name;
+		char lightnamebuf[32];
 		const char *lightname = 0;
 
 		bool b0 = p0.getString(name);
 		bool b1 = p1.getInt(number);
 		bool b2 = false;
 
+		// Convert handle to string (equivalence of numbers to appropriate strings 42 == "42")
 		if ( !b1 ) {
 			b2 = p1.getString(lightname);
+			if ( b2 ) {
+				// If a Handle is a string take it as handle
+				CRibParameter tok;
+				CRibParameter val;
+				tok.setString(RI_HANDLEID);
+				val.setString(lightname);
+				request.removePair(2, RI_HANDLEID);
+				request.push_back(tok);
+				request.push_back(val);
+			}			
+		} else {
+			lightname = valToStr(lightnamebuf, sizeof(lightnamebuf), number);
+			b2 = true;
+			b1 = false;
+			// RI_HANDLEID in paramlist should work...
 		}
 
 		if ( b0 && (b1||b2) ) {
@@ -223,8 +257,10 @@ void CIlluminateRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		}
 		RtInt *pv = (RtInt *)p0.getValue();
 		RtLightHandle light;
+		char lightnamebuf[32];
+		const char *lightname = valToStr(lightnamebuf, sizeof(lightnamebuf),  pv[0]);
 
-		if ( parser.getLightHandle(light, pv[0]) ) {
+		if ( parser.getLightHandle(light, lightname) ) {
 			parser.ribFilter().illuminate(light, pv[1] ? 1 : 0);
 		} else {
 			parser.errHandler().handleError(
@@ -246,6 +282,7 @@ void CIlluminateRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
+		char lightnamebuf[32];
 		const char *lightname = 0;
 		RtInt number;
 		RtInt onoff;
@@ -254,12 +291,18 @@ void CIlluminateRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		bool b0 = p0.getInt(number), b1 = p1.getInt(onoff);
 		bool b2 = false;
 
-		if ( !b0 ) {
+		// Convert handle to string (equivalence of numbers to appropriate strings 42 == "42")
+		if ( b0 ) {
+			// Generated temporary light name
+			lightname = valToStr(lightnamebuf, sizeof(lightnamebuf), number);
+		} else {
+			// Handle should be a string
 			b2 = p0.getString(lightname);
 		}
+
 		if ( (b0 || b2) && b1 ) {
 			if ( b0 ) {
-				if ( parser.getLightHandle(light, number) ) {
+				if ( parser.getLightHandle(light, lightname) ) {
 					parser.ribFilter().illuminate(light, onoff ? 1 : 0);
 				} else {
 					parser.errHandler().handleError(
@@ -270,13 +313,11 @@ void CIlluminateRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 				}
 			} else {
 				if ( parser.getLightHandle(light, lightname) ) {
+					// Temporary
 					parser.ribFilter().illuminate(light, onoff ? 1 : 0);
 				} else {
-					parser.errHandler().handleError(
-						RIE_CONSISTENCY, RIE_ERROR,
-						"Line %ld, File \"%s\", badargument: '%s' argument %s=\"%s\" is not a valid",
-						parser.lineNo(), parser.resourceName(),
-						requestName(), "1 (lightname)", lightname, RI_NULL);
+					// Try the light name directly
+					parser.ribFilter().illuminate(lightname, onoff ? 1 : 0);
 				}
 			}
 		} else {

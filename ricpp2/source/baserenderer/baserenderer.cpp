@@ -843,17 +843,18 @@ RtVoid CBaseRenderer::solidEnd(void)
 }
 
 
-RtObjectHandle CBaseRenderer::preObjectBegin(void)
+RtObjectHandle CBaseRenderer::preObjectBegin(RtString name)
 {
-	return renderState()->objectBegin();
+	return renderState()->objectBegin(name);
 }
 
-RtObjectHandle CBaseRenderer::objectBegin(void) {
+RtObjectHandle CBaseRenderer::objectBegin(RtString name)
+{
 	try {
 		if ( !preCheck(REQ_OBJECT_BEGIN) )
 			return illObjectHandle;
 
-		CRiObjectBegin r(renderState()->lineNo());
+		CRiObjectBegin r(renderState()->lineNo(), name);
 		processRequest(r, true);
 		return r.handle();
 		
@@ -2078,7 +2079,6 @@ RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointe
 		// Do not store controls as macros execute immediatly
 		processRequest(r, true);
 		
-
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
 		return;

@@ -1286,7 +1286,7 @@ RtLightHandle CRenderState::newLightHandle(RtToken lightSourceName, CParameterLi
 	RtString handlename = findHandleId(params);
 	unsigned long num = 0;
 	
-	RtLightHandle l =  m_lightSourceHandles.newHandle(handlename, num);
+	RtLightHandle l = m_lightSourceHandles.newHandle(handlename, num);
 	if ( l != illLightHandle ) {
 		CHandle *h = new CHandle(l, num, handlename != RI_NULL);
 		if ( !h ) {
@@ -1345,7 +1345,7 @@ CLightSource *CRenderState::newLightSource(
 }
 
 
-RtObjectHandle CRenderState::objectBegin()
+RtObjectHandle CRenderState::objectBegin(RtString name)
 {
 	pushOptions();
 	pushAttributes();
@@ -1356,12 +1356,14 @@ RtObjectHandle CRenderState::objectBegin()
 	m_macros.push_back(m_curMacro);
 	m_recordModes.push_back(m_recordMode);
 	m_recordMode = true;
-	CRiObjectMacro *m = new CRiObjectMacro();
+	unsigned long num;
+	RtToken t = m_objectMacros.newHandle(name, num);
+	CRiObjectMacro *m = new CRiObjectMacro(t, num, notEmptyStr(name));
 	m_curMacro = m;
 
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		if ( m != 0 ) {
-			m_objectMacros.insertObject(m);
+			m_objectMacros.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
 			return illObjectHandle;
@@ -1425,11 +1427,13 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 		m_macros.push_back(m_curMacro);
 		m_recordModes.push_back(m_recordMode);
 		m_recordMode = true;
-		CRiArchiveMacro *m = new CRiArchiveMacro(aName);
+		unsigned long num;
+		RtToken t = m_archiveMacros.newHandle(aName, num);
+		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName));
 		m_curMacro = m;
 
 		if ( m != 0 ) {
-			m_archiveMacros.insertObject(m);
+			m_archiveMacros.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
 			return illArchiveHandle;
@@ -1471,13 +1475,15 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName)
 {
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		m_macros.push_back(m_curMacro);
-		CRiArchiveMacro *m = new CRiArchiveMacro(aName, CRiMacro::MACROTYPE_FILE);
+		unsigned long num;
+		RtToken t = m_cachedArchive.newHandle(aName, num);
+		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName), CRiMacro::MACROTYPE_FILE);
 		m_curMacro = m;
 		
 		// Does not influence nesting, because called within a IRi::readArchiveV()
 
 		if ( m != 0 ) {
-			m_cachedArchive.insertObject(m);
+			m_cachedArchive.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
 			return illArchiveHandle;
@@ -1692,7 +1698,7 @@ void CRenderState::resourceEnd()
 	m_resourceStack.clearToMark();
 }
 
-void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params)
+RtToken CRenderState::resource(IRiContext &ri, RtToken handle, RtToken type, const CParameterList &params)
 {
 	RtToken t = tokFind(type);
 	if ( !t ) {
@@ -1708,11 +1714,13 @@ void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, cons
 	if ( f && f->overwrites(params) ) {
 		r = m_resourceStack.find(m_resourceStack.identify(handle), true);
 		if ( !r ) {
-			r = f->getResource(handle);
+			unsigned long num;
+			RtToken t = m_resourceStack.newHandle(handle, num);
+			r = f->getResource(t, num, notEmptyStr(handle));
 			if ( !r ) {
-				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "no resource factory in resource(Handle: %s, Token: %s)", noNullStr(handle), noNullStr(type));
+				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "creation of resource failed in resource(Handle: %s, Token: %s)", noNullStr(handle), noNullStr(type));
 			}
-			m_resourceStack.insertObject(r);
+			m_resourceStack.insertObject(r->handle(), r);
 		}
 	} else {
 		r = m_resourceStack.find(m_resourceStack.identify(handle), false);
@@ -1721,6 +1729,7 @@ void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, cons
 		}
 	}
 	r->operate(ri, params);
+	return r->handle();
 }
 
 void CRenderState::motionBegin(RtInt N, RtFloat times[])

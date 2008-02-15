@@ -43,7 +43,7 @@ namespace RiCPP {
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Macro container.
  */
-class CRiMacro {
+class CRiMacro : public CHandle {
 public:
 	/** @brief Macro types
 	 */
@@ -56,7 +56,6 @@ public:
 
 private:
 	std::list<CRManInterfaceCall *> m_callList;  ///< List of all interface calls for this macro.
-	std::string m_name;         ///< Name of the macro (eg. file name, handle name).
 	EnumMacroTypes m_macroType; ///< Type of macro, either object or (inline, file) archive.
 	bool m_isClosed;            ///< true, if macro definition is completed.
 	bool m_postpone;            ///< true, if macro should be postponed (e.g. in RIB oputput), default is false
@@ -69,10 +68,11 @@ public:
 	 *  @param macroType Type of the macro.
 	 */
 	inline CRiMacro(
-		RtString aName = 0,
+		RtString anId = 0,
+		unsigned long aHandleNo = 0, bool isFromHandleId = false,
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN
 	) :
-		m_name(noNullStr(aName)), m_macroType(macroType),
+		CHandle(anId, aHandleNo, isFromHandleId), m_macroType(macroType),
 		m_isClosed(false), m_postpone(true)
 	{
 	}
@@ -80,24 +80,6 @@ public:
 	/** @brief Destructor, frees resources.
 	 */
 	virtual ~CRiMacro();
-
-	/** @brief Gets the name of the macro.
-	 *
-	 *  @return The name of the macro.
-	 */
-	inline RtString name() const
-	{
-		return m_name.c_str();
-	}
-
-	/** @brief Sets the name of the macro.
-	 *
-	 *  @param aName The new name for the macro.
-	 */
-	inline void name(RtString aName)
-	{
-		m_name = noNullStr(aName);
-	}
 
 	/** @brief Replays archive with callback for RIB archives at a back end renderer.
 	 *
@@ -193,30 +175,16 @@ public:
 /** @brief Macro container for objects.
  */
 class CRiObjectMacro : public CRiMacro {
-private:
-	RtObjectHandle m_handle; ///< Associated handle to identify the macro.
 public:
 	/** @brief Creates a macro container for an object (retained geometry).
 	 *
 	 *  The type for the object macro is always MACROTYPE_OBJECT
 	 */
-	inline CRiObjectMacro()
-		: CRiMacro(0, MACROTYPE_OBJECT)
+	inline CRiObjectMacro(
+		RtToken anId=RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false)
+		: CRiMacro(anId, aHandleNo, isFromHandleId, MACROTYPE_OBJECT)
 	{
-		m_handle = illObjectHandle;
 	}
-
-	/** @brief Gets the associated handle of the object.
-	 *
-	 *  @return The associated handle of the object.
-	 */
-	inline RtObjectHandle handle() const { return m_handle; }
-
-	/** @brief Sets the associated handle of the object.
-	 *
-	 *  @param h The associated handle of the object.
-	 */
-	inline void handle(RtObjectHandle h) { m_handle = h; }
 };
 
 
@@ -224,8 +192,6 @@ public:
 /** @brief Macro container for archives (file or inline).
  */
 class CRiArchiveMacro : public CRiMacro {
-private:
-	RtArchiveHandle m_handle; ///< Associated handle to identify the macro.
 public:
 	/** @brief Creates a macro container for a RIB archive.
 	 *
@@ -233,24 +199,11 @@ public:
 	 * @param aMacroType Type of the macro, will be either MACROTYPE_ARCHIVE or MACROTYPE_FILE, but is not tested
 	 */
 	inline CRiArchiveMacro(
-		const char *aName = 0,
-		EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE
-	) : CRiMacro(aName, aMacroType)
+		RtToken anId = RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false,
+		EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE)
+		: CRiMacro(anId, aHandleNo, isFromHandleId, aMacroType)
 	{
-		m_handle = illArchiveHandle; 
  	}
-
-	/** @brief Gets the associated handle of the archive.
-	 *
-	 * @return The associated handle of the archive.
-	 */
-	inline RtArchiveHandle handle() const { return m_handle; }
-
-	/** @brief Sets the associated handle of the archive.
-	 *
-	 * @param h The associated handle of the archive.
-	 */
-	inline void handle(RtArchiveHandle h) { m_handle = h; }
 };
 
 } // namespace RiCPP

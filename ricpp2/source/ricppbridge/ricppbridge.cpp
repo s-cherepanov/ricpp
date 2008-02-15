@@ -536,18 +536,18 @@ RtVoid CRiCPPBridge::solidEnd(void)
 	}
 }
 
-RtObjectHandle CRiCPPBridge::objectBegin(void)
+RtObjectHandle CRiCPPBridge::objectBegin(RtString name)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
-			return m_ctxMgmt.curBackend().renderingContext()->objectBegin();
+			return m_ctxMgmt.curBackend().renderingContext()->objectBegin(name);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 			return illObjectHandle;
 		}
 	} else {
 		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleErrorV(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::objectBegin()");
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::objectBegin(%s)", noNullStr(name));
 	}
 	return illObjectHandle;
 }

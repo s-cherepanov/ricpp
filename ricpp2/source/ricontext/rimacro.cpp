@@ -55,7 +55,7 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 	if ( !state )
 		return;
 
-	state->archiveName(m_name.c_str());
+	state->archiveName(handle());
 	std::list<CRManInterfaceCall *>::iterator i;
 	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
 		try {

@@ -278,7 +278,8 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 
 	std::vector<CRibParameter>::iterator sav;
 	std::vector<CRibParameter>::iterator iter = m_parameters.begin();
-	for ( RtInt i = 0; i < start; ++i ) {
+	size_t i = 0;
+	for ( ; i < start; ++i ) {
 		++iter;
 	}
 	
@@ -288,22 +289,22 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 			errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badparamlist: '%s' malformed parameter list, parameter name at position %d is not a string",
-				m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
+				(*iter).lineNo(), resourceName(), m_curRequest.c_str(),
 				(int)i, RI_NULL);
-			++iter;
+			++iter; ++i;
 			continue;
 		}
 		
 		std::vector<CRibParameter>::iterator sav=iter;
 
-		++iter;
+		++iter; ++i;
 		if ( !(*iter).getString(t2) ) {
-			++iter;
+			++iter; ++i;
 			while ( !(*iter).getString(t2) ) {
-				++iter;
+				++iter; ++i;
 			}
 		} else {
-			++iter;
+			++iter; ++i;
 		}
 
 		if ( t == token ) {

@@ -626,7 +626,7 @@ public:
     virtual void solidEnd();
 	virtual RtToken solid() const;
 
-	virtual RtObjectHandle objectBegin();
+	virtual RtObjectHandle objectBegin(RtString name);
 	virtual void objectEnd();
 
 	virtual CRiObjectMacro *objectInstance(RtObjectHandle handle);
@@ -658,7 +658,7 @@ public:
 	virtual void resourceBegin();
     virtual void resourceEnd();
 
-	virtual void resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params);
+	virtual RtToken resource(IRiContext &ri, RtToken handle, RtToken type, const CParameterList &params);
 
 	virtual void motionBegin(RtInt N, RtFloat times[]);
     virtual void motionEnd();

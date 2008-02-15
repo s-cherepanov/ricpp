@@ -989,7 +989,7 @@ public:
 	virtual RtVoid solidBegin(RtToken type);
 	virtual RtVoid solidEnd(void);
 
-	virtual RtObjectHandle objectBegin(void);
+	virtual RtObjectHandle objectBegin(RtString name = RI_NULL);
 	virtual RtVoid objectEnd(void);
 	virtual RtVoid objectInstance(RtObjectHandle handle);
 

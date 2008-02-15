@@ -45,43 +45,17 @@ class CParameterList;
 class CTokenMap;
 class CAttributes;
 
-class CResource
+class CResource : public CHandle
 {
-	RtToken m_handle;
-	std::string m_name;
 public:
-	inline CResource(RtString aName=0) : m_name(noNullStr(aName)) {
-		m_handle = RI_NULL;
+	inline CResource(
+		RtToken anId = RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false)
+		: CHandle(anId, aHandleNo, isFromHandleId)
+	{
 	}
 	inline virtual ~CResource() {}
 	virtual void operate(IRiContext &ri, const CParameterList &parameters) = 0;
 	virtual RtToken type() const = 0;
-
-	/** @brief Gets the name of the resource.
-	 *  @return The name of the resource.
-	 */
-	inline RtString name() const { return m_name.c_str(); }
-
-	/** @brief Sets the name of the resource.
-	 *
-	 *  @param aName The new name for the resource.
-	 */
-	inline void name(RtString aName)
-	{
-		m_name = noNullStr(aName);
-	}
-
-	/** @brief Gets the associated handle of the resource.
-	 *
-	 * @return The associated handle of the resource.
-	 */
-	inline RtToken handle() const { return m_handle; }
-
-	/** @brief Sets the associated handle of the resource.
-	 *
-	 * @param h The associated handle of the resource.
-	 */
-	inline void handle(RtToken h) { m_handle = h; }
 };
 
 class CAttributesResource : public CResource
@@ -111,7 +85,7 @@ public:
 	static RtToken myType();
 	static bool overwrites(const CParameterList &parameters);
 	
-	CAttributesResource(RtString aName=0);
+	CAttributesResource(RtToken anId = RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false);
 	virtual ~CAttributesResource();
 	virtual void operate(IRiContext &ri, const CParameterList &parameters);
 	virtual RtToken type() const;
@@ -121,7 +95,7 @@ class IResourceFactory
 {
 public:
 	virtual void registerOperations(CTokenMap &m) = 0;
-	virtual CResource *getResource(RtString aName) = 0;
+	virtual CResource *getResource(RtToken anId, unsigned long aHandleNo, bool isFromHandleId) = 0;
 	virtual RtToken type() const = 0;
 	virtual bool overwrites(const CParameterList &parameters) const = 0;
 };
@@ -130,7 +104,7 @@ class CAttributesResourceFactory : public IResourceFactory
 {
 public:
 	virtual void registerOperations(CTokenMap &m);
-	virtual CResource *getResource(RtString aName);
+	virtual CResource *getResource(RtToken anId, unsigned long aHandleNo, bool isFromHandleId);
 	virtual RtToken type() const;
 	virtual bool overwrites(const CParameterList &parameters) const;
 };

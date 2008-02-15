@@ -431,7 +431,7 @@ public:
 	virtual RtVoid solidBegin(RtToken type);
 	virtual RtVoid solidEnd(void);
 
-	virtual RtObjectHandle objectBegin(void);
+	virtual RtObjectHandle objectBegin(RtString name);
 	virtual RtVoid objectEnd(void);
 	virtual RtVoid objectInstance(RtObjectHandle handle);
 
@@ -587,7 +587,7 @@ public:
 	virtual RtVoid preSolidBegin(RtToken type);
 	virtual RtVoid preSolidEnd(void);
 
-	virtual RtObjectHandle preObjectBegin(void);
+	virtual RtObjectHandle preObjectBegin(RtString name);
 	virtual RtVoid preObjectEnd(void);
 	virtual RtVoid preObjectInstance(RtObjectHandle handle);
 
@@ -747,7 +747,7 @@ public:
 	inline virtual RtVoid doSolidBegin(RtToken type) {}
 	inline virtual RtVoid doSolidEnd(void) {}
 
-	inline virtual RtVoid doObjectBegin(RtObjectHandle h) {}
+	inline virtual RtVoid doObjectBegin(RtObjectHandle h, RtString name) {}
 	inline virtual RtVoid doObjectEnd(void) {}
 	virtual RtVoid doObjectInstance(RtObjectHandle handle);
 
@@ -894,7 +894,7 @@ public:
     inline virtual RtVoid postSolidBegin(RtToken type){}
     inline virtual RtVoid postSolidEnd(void){}
 
-	inline virtual RtVoid postObjectBegin(RtObjectHandle h){}
+	inline virtual RtVoid postObjectBegin(RtObjectHandle h, RtString name){}
 	inline virtual RtVoid postObjectEnd(){}
     virtual RtVoid postObjectInstance(RtObjectHandle handle);
 

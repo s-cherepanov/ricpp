@@ -28,7 +28,7 @@ ArchiveBegin "InlineArchive"
 		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [ -1 -1 0 1 1 1 ]
 	ArchiveEnd
 	#
-	ObjectBegin "A_Disk"
+	ObjectBegin 1
     	# Object within archive, definition is global
 	    Disk 0 0.5 360
 	ObjectEnd
@@ -43,7 +43,7 @@ ArchiveBegin "InlineArchive"
 	ReadArchive "InInlineArchive"
 	#
 	# Read the disk object
-	ObjectInstance "A_Disk"
+	ObjectInstance 1
 ArchiveEnd
 #
 ObjectBegin "A_Sphere"
@@ -314,7 +314,7 @@ FrameBegin 1
 		Illuminate "NewId" 1
 		Illuminate 3 1
 		# Read the disk object
-		ObjectInstance "A_Disk"
+		ObjectInstance 1
 		# Procedural "DelayedReadArchive"
 		Procedural "DelayedReadArchive" [ "TestArchive.rib" ] [-1 -1 0 1 1 1 ]
 		Procedural "RunProgram" [ "php genpic.php" "" ] [ 1 2 3 4 5 6 ]

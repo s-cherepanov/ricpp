@@ -51,13 +51,7 @@ private:
 	unsigned long m_handleNo; ///< @brief Sequence number.
 	bool m_fromHandleId;      ///< @brief Created from parameter list RI_HANDLEID
 public:
-	inline CHandle() {
-		m_identifier = RI_NULL;
-		m_handleNo = 0;
-		m_fromHandleId = false;
-	}
-
-	inline CHandle(RtToken anId, unsigned long aHandleNo, bool isFromHandleId)
+	inline CHandle(RtToken anId = RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false)
 	{
 		m_identifier = anId;
 		m_handleNo = aHandleNo;
@@ -78,7 +72,7 @@ public:
 		return new CHandle(*this);
 	}
 
-	inline const char *name() const { return m_identifier; }
+	// inline const char *name() const { return m_identifier; }
 	inline RtToken handle() const { return m_identifier; }
 	inline void handle(RtToken anId) { m_identifier = anId; }
 	
@@ -245,7 +239,7 @@ public:
 		if ( !o )
 			return RI_NULL;
 
-		RtToken tok = newHandle(o->name());
+		RtToken tok = newHandle(o->handle());
 		o->handle(tok);
 		m_stack.push_back(o);
 		return tok; 
@@ -253,8 +247,12 @@ public:
 
 	RtToken insertObject(RtToken handle, ValueType *o)
 	{
-		if ( !o || !m_tokens.find(handle) )
+		if ( !o )
 			return RI_NULL;
+
+		if ( !m_tokens.find(handle) ) {
+			handle = newHandle(handle);
+		}
 
 		o->handle(handle);
 		m_stack.push_back(o);

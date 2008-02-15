@@ -165,8 +165,8 @@ public:
 		return new CRiSolidEnd(aLineNo);
 	}
 
-	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo) {
-		return new CRiObjectBegin(aLineNo);
+	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo, RtString name) {
+		return new CRiObjectBegin(aLineNo, name);
 	}
 
 	inline virtual CRiObjectEnd *newRiObjectEnd(long aLineNo) {

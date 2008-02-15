@@ -452,9 +452,11 @@ public:
 	 *
 	 *  The rib writer will have an option to expand macros.
 	 *
+	 *  @param name For handle string (added).
+	 *
 	 *  @return The handle is used to later reference the object in IRi::objectInstance()
 	 */
-	virtual RtObjectHandle objectBegin(void) = 0;
+	virtual RtObjectHandle objectBegin(RtString name) = 0;
 
 	//! @brief Ends an object block, the object can now be created with IRi::objectInstance()
 	virtual RtVoid objectEnd(void) = 0;

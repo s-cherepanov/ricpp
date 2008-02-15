@@ -1019,7 +1019,7 @@ RtVoid CRibWriter::postSolidEnd(void)
 }
 
 
-RtVoid CRibWriter::postObjectBegin(RtObjectHandle h)
+RtVoid CRibWriter::postObjectBegin(RtObjectHandle h, RtString name)
 {
 	if ( !testValid() )
 		return;
@@ -1037,10 +1037,21 @@ RtVoid CRibWriter::postObjectBegin(RtObjectHandle h)
 		writePrefix();
 		m_writer->putRequest(REQ_OBJECT_BEGIN);
 		m_writer->putBlank();
-		m_writer->putValue(extractHandleNo(h));
+		if ( m ) {
+			if ( m->fromHandleId() ) {
+				m_writer->putStringToken(m->handle());
+			} else {
+				m_writer->putValue(m->handleNo());
+			}
+		} else {
+			m_writer->putStringToken(m->handle());
+		}
 		m_writer->putNewLine();
 		m_suppressOutput = false;
 		incNestingDepth();
+		if ( !m ) {
+			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Container not created for ObjectSource \"%s\"", noNullStr(h));
+		}
 	} else {
 		m_suppressOutput = true;
 	}
@@ -1106,7 +1117,15 @@ RtVoid CRibWriter::postObjectInstance(RtObjectHandle handle)
 			writePrefix();
 			m_writer->putRequest(REQ_OBJECT_INSTANCE);
 			m_writer->putBlank();
-			m_writer->putValue(extractHandleNo(handle));
+			if ( m ) {
+				if ( m->fromHandleId() ) {
+					m_writer->putStringToken(m->handle());
+				} else {
+					m_writer->putValue(m->handleNo());
+				}
+			} else {
+				m_writer->putStringToken(m->handle());
+			}
 			m_writer->putNewLine();
 		} else if ( renderState()->recordMode() ) {
 			CBaseRenderer::doObjectInstance(handle);

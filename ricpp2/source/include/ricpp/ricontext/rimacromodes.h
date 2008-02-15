@@ -1528,7 +1528,7 @@ public:
 class CRiObjectBegin : public CRManInterfaceCall {
 private:
 	RtObjectHandle m_handle; ///< Handle used to identify the object
-
+	std::string m_name;       ///< Name of the object, used to generate the handle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1560,7 +1560,7 @@ public:
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiObjectBegin(long aLineNo = -1) : CRManInterfaceCall(aLineNo)
+	inline CRiObjectBegin(long aLineNo = -1, RtString name = RI_NULL) : CRManInterfaceCall(aLineNo), m_name(noNullStr(name))
 	{
 		m_handle = illObjectHandle;
 	}
@@ -1569,7 +1569,7 @@ public:
 	 *
 	 *  @param c Object to copy.
 	 */
-	inline CRiObjectBegin(const CRiSolidEnd &c)
+	inline CRiObjectBegin(const CRiObjectBegin &c)
 	{
 		*this = c;
 	}
@@ -1602,19 +1602,34 @@ public:
 	 */
 	inline virtual void handle(RtObjectHandle aHandle) { m_handle = aHandle; }
 	
+	/** Gets the name of the object.
+	 *
+	 * @return Name of the object.
+	 */
+	inline virtual RtString name() const { return m_name.c_str(); }
+
+	/** Sets the name of the object.
+	 *
+	 * The name is set by the constructor and usually not changed. The name
+	 * is used to create the handle. An object can overwrite another one with the same name.
+	 *
+	 * @param aName Name of the object.
+	 */
+	inline virtual void name(const char *aName) { m_name = noNullStr(aName); }
+
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		handle(ri.preObjectBegin());
+		handle(ri.preObjectBegin(name()));
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doObjectBegin(handle());
+		ri.doObjectBegin(handle(), name());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postObjectBegin(handle());
+		ri.postObjectBegin(handle(), name());
 	}
 
 	/** @brief Assignment
@@ -1628,6 +1643,7 @@ public:
 			return *this;
 		
 		handle(c.handle());
+		name(c.name());
 
 		CRManInterfaceCall::operator=(c);
 		return *this;

@@ -67,7 +67,8 @@ void CAttributesResource::registerOperations(CTokenMap &m)
 	s_geometrydefinition = m.findCreate("geometrydefinition");
 }
 
-CAttributesResource::CAttributesResource(RtString aName) : CResource(aName)
+CAttributesResource::CAttributesResource(RtToken anId, unsigned long aHandleNo, bool isFromHandleId)
+	: CResource(anId, aHandleNo, isFromHandleId)
 {
 	m_attributes = 0;
 }
@@ -189,9 +190,9 @@ void CAttributesResourceFactory::registerOperations(CTokenMap &m)
 	CAttributesResource::registerOperations(m);
 }
 
-CResource *CAttributesResourceFactory::getResource(RtString aName)
+CResource *CAttributesResourceFactory::getResource(RtToken anId, unsigned long aHandleNo, bool isFromHandleId)
 {
-	return new CAttributesResource(aName);
+	return new CAttributesResource(anId, aHandleNo, isFromHandleId);
 }
 
 RtToken CAttributesResourceFactory::type() const

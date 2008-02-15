@@ -391,7 +391,7 @@ public:
     virtual RtVoid postSolidBegin(RtToken type);
     virtual RtVoid postSolidEnd(void);
 
-	virtual RtVoid postObjectBegin(RtObjectHandle h);
+	virtual RtVoid postObjectBegin(RtObjectHandle h, RtString name);
 
 	virtual RtVoid preObjectEnd(void);
 	virtual RtVoid postObjectEnd(void);

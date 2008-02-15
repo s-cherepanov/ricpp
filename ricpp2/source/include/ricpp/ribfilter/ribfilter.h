@@ -308,10 +308,10 @@ public:
 			callee()->solidEnd();
 	}
 
-	inline virtual RtObjectHandle objectBegin(void)
+	inline virtual RtObjectHandle objectBegin(RtString name)
 	{
 		return canCall(REQ_OBJECT_BEGIN) ?
-			callee()->objectBegin() :
+			callee()->objectBegin(name) :
 			illObjectHandle;
 	}
 

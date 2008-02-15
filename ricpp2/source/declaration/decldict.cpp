@@ -46,7 +46,7 @@ CDeclarationDictionary::~CDeclarationDictionary()
 }
 
 const CDeclaration *CDeclarationDictionary::find(
-	const char *tableNamespace,
+	const char *aQualifier,
 	const char *table,
 	const char *var,
 	const CColorDescr &curColorDescr,
@@ -74,9 +74,9 @@ const CDeclaration *CDeclarationDictionary::find(
 	if ( !strrchr(var, ':') ) {
 		// Variable contains no ':' - test scope
 		
-		if ( notEmptyStr(tableNamespace) && notEmptyStr(table) ) {
-			// Namespace and tablename (local var)
-			s = tableNamespace;
+		if ( notEmptyStr(aQualifier) && notEmptyStr(table) ) {
+			// Qualifier and tablename (local var)
+			s = aQualifier;
 			s += ':';
 			s += table;
 			s += ':';
@@ -102,9 +102,9 @@ const CDeclaration *CDeclarationDictionary::find(
 			}
 		}
 		
-		if ( notEmptyStr(tableNamespace) ) {
-			// Search for namespace only
-			s = tableNamespace;
+		if ( notEmptyStr(aQualifier) ) {
+			// Search for qualifier only
+			s = aQualifier;
 			s += ':';
 			s += var;
 
@@ -116,8 +116,8 @@ const CDeclaration *CDeclarationDictionary::find(
 		}
 	}
 
-	// Variable contains a ':' (parameter passed to the interface with attached namespace prefix)
-	// or namespace, table are not set,
+	// Variable contains a ':' (parameter passed to the interface with attached qualifier prefix)
+	// or qualifier, table are not set,
 	// or declaration not found previously 
 	// Search for name only (globally declared (old style) variable)
 	token = m_tokenMap.find(var);
@@ -130,10 +130,10 @@ const CDeclaration *CDeclarationDictionary::find(
 }
 
 
-const CDeclaration *CDeclarationDictionary::find(const char *tableNamespace, const char *table, const char *var)
+const CDeclaration *CDeclarationDictionary::find(const char *aQualifier, const char *table, const char *var)
 {
 	CColorDescr descr;
-	return find(tableNamespace, table, var, descr, false);
+	return find(aQualifier, table, var, descr, false);
 }
 
 
@@ -167,13 +167,13 @@ const CDeclaration *CDeclarationDictionary::findAndUpdate(
 }
 
 const CDeclaration *CDeclarationDictionary::findAndUpdate(
-	const char *tableNamespace,
+	const char *aQualifier,
 	const char *table,
 	const char *var,
 	const CColorDescr &curColorDescr
 )
 {
-	return find(tableNamespace, table, var, curColorDescr, true);
+	return find(aQualifier, table, var, curColorDescr, true);
 }
 
 void CDeclarationDictionary::add(CDeclaration *decl)

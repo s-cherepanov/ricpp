@@ -74,7 +74,7 @@ bool CDisplayChannelDescr::operator==(const CDisplayChannelDescr &dcd) const
 	if ( !dcd.channel() )
 		return false;
 
-	return !strcmp(noNullStr(m_channel->name()), noNullStr(dcd.channel()->name()));
+	return !strcmp(noNullStr(m_channel->qualifiedName()), noNullStr(dcd.channel()->qualifiedName()));
 }
 
 bool CDisplayChannelDescr::operator==(const std::string name) const
@@ -82,14 +82,14 @@ bool CDisplayChannelDescr::operator==(const std::string name) const
 	return *this == name.c_str();
 }
 
-bool CDisplayChannelDescr::operator==(const char *name) const
+bool CDisplayChannelDescr::operator==(const char *qualifiedName) const
 {
 	if ( !m_channel )
 		return false;
-	if ( name == m_channel->name() )
+	if ( qualifiedName == m_channel->qualifiedName() )
 		return true;
 
-	return !strcmp(noNullStr(m_channel->name()), noNullStr(name));
+	return !strcmp(noNullStr(m_channel->qualifiedName()), noNullStr(qualifiedName));
 }
 
 RtVoid CDisplayChannelDescr::displayChannelV(CDeclarationDictionary &dict, const CColorDescr &colorDescr, RtString aChannel, RtInt n, RtToken tokens[], RtPointer params[])

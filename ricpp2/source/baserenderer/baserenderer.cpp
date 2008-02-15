@@ -341,7 +341,7 @@ RtToken CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool i
 				noNullStr(declaration));
 
 		renderState()->declAdd(d);
-		// std::cout << d->token() << " "  << noNullStr(CTypeInfo::tableNamespace(d->tableNamespace())) << " " << noNullStr(d->table()) << " " << noNullStr(d->var()) << std::endl;
+		// std::cout << d->token() << " "  << noNullStr(CTypeInfo::qualifier(d->qualifier())) << " " << noNullStr(d->table()) << " " << noNullStr(d->var()) << std::endl;
 		return d->token();
 	}
 	return RI_NULL;

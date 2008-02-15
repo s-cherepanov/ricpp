@@ -127,7 +127,7 @@ RtToken CTypeInfo::ms_classNames[N_CLASSES] =
 	RI_FACEVERTEX
 };
 
-RtToken CTypeInfo::ms_namespaces[N_NAMESPACES] =
+RtToken CTypeInfo::ms_qualifiers[N_QUALIFIERS] =
 {
 	RI_EMPTY,
 	RI_PROJECTION,
@@ -174,25 +174,25 @@ int CTypeInfo::tokcmp(const char *token, const char *search)
 }
 
 
-EnumNamespaces CTypeInfo::namespacePrefix(const char *avar, size_t &pos)
+EnumQualifiers CTypeInfo::qualifierPrefix(const char *avar, size_t &pos)
 {
 	int i;
 	if ( emptyStr(avar) )
-		return NAMESPACE_UNKNOWN;
-	for ( i = 1; i < N_NAMESPACES; ++i ) {
-		if ( !tokcmp(ms_namespaces[i], avar) ) {
-			pos = strlen(ms_namespaces[i]);
+		return QUALIFIER_UNKNOWN;
+	for ( i = 1; i < N_QUALIFIERS; ++i ) {
+		if ( !tokcmp(ms_qualifiers[i], avar) ) {
+			pos = strlen(ms_qualifiers[i]);
 			if ( avar[pos] == ':' ) {
 				++pos;
 			} else {
 				if ( avar[pos] && avar[pos] != ':' ) {
-					return NAMESPACE_UNKNOWN;
+					return QUALIFIER_UNKNOWN;
 				}
 			}
-			return (EnumNamespaces)i;
+			return (EnumQualifiers)i;
 		}
 	}
-	return NAMESPACE_UNKNOWN;
+	return QUALIFIER_UNKNOWN;
 }
 
 EnumClasses CTypeInfo::classPrefix(const char *aclass, size_t &pos)
@@ -298,9 +298,9 @@ RtToken CTypeInfo::className(EnumClasses e)
 	return ms_classNames[e];
 }
 
-RtToken CTypeInfo::tableNamespace(EnumNamespaces e)
+RtToken CTypeInfo::qualifier(EnumQualifiers e)
 {
-	return ms_namespaces[e];
+	return ms_qualifiers[e];
 }
 
 unsigned int CTypeInfo::typeByteSize(EnumTypes e)

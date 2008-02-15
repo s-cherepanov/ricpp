@@ -107,9 +107,9 @@ namespace RiCPP {
 
 		/** @brief Constructs a parameter.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param theName Name (not yet a token) or inline declaration of the parameter.
 		 *  @param theData Pointer to the parameter values (type is given by the declaration of @a theName).
@@ -119,7 +119,7 @@ namespace RiCPP {
 		 *  @param curColorDescr Descriptor for "color" values.
 		 */
 		inline CParameter(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			RtString theName,
 			RtPointer theData,
 			unsigned int thePosition,
@@ -129,7 +129,7 @@ namespace RiCPP {
 		{
 			m_declaration = 0;
 			m_position = 0;
-			set(aNamespace, aTable, theName, theData, thePosition, counts, dict, curColorDescr);
+			set(aQualifier, aTable, theName, theData, thePosition, counts, dict, curColorDescr);
 		}
 
 		/** @brief Destructor
@@ -166,7 +166,7 @@ namespace RiCPP {
 
 		/** @brief finds the declaration of a parameter.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param theName Name (not yet a token) of a declaration or inline declaration.
 		 *  @param thePosition Position within the original parameter list of the ri request.
@@ -175,7 +175,7 @@ namespace RiCPP {
 		 *  @param curColorDescr Descriptor for "color" values.
 		 */
 		bool setDeclaration(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			RtString theName,
 			unsigned int thePosition,
 			const CParameterClasses &counts,
@@ -184,7 +184,7 @@ namespace RiCPP {
 
 		/** @brief Sets the contents of a parameter.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param theName Name (not yet a token) or inline declaration of the parameter.
 		 *  @param theData Pointer to the parameter values (type is given by the declaration of @a theName).
@@ -194,7 +194,7 @@ namespace RiCPP {
 		 *  @param curColorDescr Descriptor for "color" values.
 		 */
 		void set(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			RtString theName,
 			RtPointer theData,
 			unsigned int thePosition,
@@ -218,9 +218,9 @@ namespace RiCPP {
 		 *
 		 *  @return Name of the declaration.
 		 */
-		inline const char *name() const
+		inline const char *qualifiedName() const
 		{
-			return m_declaration ? m_declaration->name() : "";
+			return m_declaration ? m_declaration->qualifiedName() : "";
 		}
 
 		/** @brief Gets the declaration as c-string.
@@ -382,7 +382,7 @@ namespace RiCPP {
 		
 		/** Costructor, sets the contents of the list.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
@@ -392,7 +392,7 @@ namespace RiCPP {
 		 *  @param params Pointers to the parameters.
 		 */
 		CParameterList(
-			const char *aNamespace, const char *aTable,
+			const char *aQualifier, const char *aTable,
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
@@ -475,7 +475,7 @@ namespace RiCPP {
 
 		/** @brief Copies the parameters.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
@@ -485,7 +485,7 @@ namespace RiCPP {
 		 *  @param params Pointers to the parameters.
 		 */
 		virtual void set(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
@@ -502,7 +502,7 @@ namespace RiCPP {
 
 		/** @brief Adds parameters list to the existing list.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
@@ -512,7 +512,7 @@ namespace RiCPP {
 		 *  @param params Pointers to the parameters.
 		 */
 		virtual void add(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
@@ -609,7 +609,7 @@ namespace RiCPP {
 
 		/** @brief Copies the parameters.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
@@ -619,13 +619,13 @@ namespace RiCPP {
 		 *  @param params Pointers to the parameters.
 		 */
 		inline virtual void set(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[])
 		{
-			CParameterList::set(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params);
+			CParameterList::set(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
 		}
 
 	public:
@@ -659,7 +659,7 @@ namespace RiCPP {
 
 		/** @brief Constructs a parameter list.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
@@ -670,13 +670,13 @@ namespace RiCPP {
 		 *  @param params Pointers to the parameters.
 		 */
 		inline CNamedParameterList(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtToken aName,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CParameterList(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params)
+			: CParameterList(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params)
 		{
 			m_name = aName;
 		}
@@ -699,7 +699,7 @@ namespace RiCPP {
 
 		/** @brief Sets a parameter list to specific values.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
@@ -710,7 +710,7 @@ namespace RiCPP {
 		 *  @param params Pointers to the parameters.
 		 */
 		inline virtual void set(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
@@ -718,7 +718,7 @@ namespace RiCPP {
 			RtInt n, RtToken tokens[], RtPointer params[])
 		{
 			name(aName);
-			CParameterList::set(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params);
+			CParameterList::set(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
 		}
 
 		/** @brief Sets a name and copies an unnamed parameter list.
@@ -743,7 +743,7 @@ namespace RiCPP {
 
 		/** @brief Adds parameters to the existing list.
 		 *
-		 *  @param aNamespace Optional namespace
+		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
@@ -753,13 +753,13 @@ namespace RiCPP {
 		 *  @param params Pointers to the parameters.
 		 */
 		inline virtual void add(
-			const char *aNamespace, const char *aTable, 
+			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[])
 		{
-			CParameterList::add(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params);
+			CParameterList::add(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
 		}
 
 		/** @brief Adds the contents of an parameter list to the existing list.

@@ -420,7 +420,7 @@ namespace RiCPP {
 		 * the parameter at position start.
 		 *
 		 * @param start Token-value list starts here.
-		 * @param tableNamespace The namespace
+		 * @param aQualifier The qualifier
 		 * @param table The table
 		 * @param vertices Number of vertices (shared vertices count 1) of the primary to which the parameter list belongs.
 		 * @param corners Number of the corners (shared corners count 1) of the primary to which the parameter list belongs.
@@ -431,7 +431,7 @@ namespace RiCPP {
 		 */
 		int getTokenList(
 			size_t start,
-			const char *tableNamespace = 0,
+			const char *aQualifier = 0,
 			const char *table = 0, 
 			RtInt vertices=0, RtInt corners=0, RtInt facets=0,
 			RtInt faceVertices=0, RtInt faceCorners=0
@@ -457,14 +457,14 @@ namespace RiCPP {
 		 *
 		 *  @param start Token-value list starts here.
 		 *  @param p used to get vertices, corners etc.
-		 *  @param tableNamespace The namespace
+		 *  @param aQualifier The qualifier
 		 *  @param table The table
 		 */
-		inline int getTokenList(size_t start, const CParameterClasses &p, const char *tableNamespace = 0, const char *table = 0)
+		inline int getTokenList(size_t start, const CParameterClasses &p, const char *aQualifier = 0, const char *table = 0)
 		{
 			return getTokenList(
 				start,
-				tableNamespace,
+				aQualifier,
 				table,
 				p.vertices(),
 				p.corners(),
@@ -507,7 +507,7 @@ namespace RiCPP {
 	class CRibParser : public IRibParserState {
 	protected:
 		typedef long RibHandleNumber; ///< Representation of a handle number in a RIB file.
-		
+
 	private:
 		typedef std::map<RibHandleNumber, RtLightHandle> NUM2LIGHT;	  ///< Maps a long to a light handle.
 		typedef std::map<std::string, RtLightHandle> STR2LIGHT;       ///< Maps a string to a light handle.
@@ -517,6 +517,8 @@ namespace RiCPP {
 		typedef std::map<std::string, RtArchiveHandle> STR2ARCHIVE;     ///< Maps a string to an archive handle.
 
 		typedef std::map<RibHandleNumber, std::string> NUM2STRING;    ///< Maps an integer to a string to encode string tokens.
+
+		typedef std::string TOKENTYPE; ///< Type of the token parsed
 
 		//! Maps number to object handle
 		NUM2OBJECT m_mapObjectHandle;
@@ -568,7 +570,7 @@ namespace RiCPP {
 
 		CRibRequestData m_request;                   ///< Data of a parsed line.
 
-		std::vector<char> m_token;                   ///< Current token to be handled as string
+		TOKENTYPE m_token;                           ///< Current token to be handled as string
 		int m_lookahead;                             ///< One character look ahead
 		int m_braketDepth;                           ///< Braket [] nesting depth
 
@@ -627,9 +629,9 @@ namespace RiCPP {
 		 */
 		class CComment {
 		public:
-			std::vector<char> m_comment; ///< Storage for a comment.
-			bool m_isStructured;         ///< Comment is structured comment (##).
-			long m_lineNo;               ///< Line count where the comment was found.
+			TOKENTYPE m_comment; ///< Storage for a comment.
+			bool m_isStructured; ///< Comment is structured comment (##).
+			long m_lineNo;       ///< Line count where the comment was found.
 			
 			/** @brief Assignes another comment to *this.
 			 *  @return A reference to this.
@@ -648,7 +650,7 @@ namespace RiCPP {
 		EnumRequests findIdentifier();
 
 		int handleBinary(unsigned char c);
-		int handleComment(std::vector<char> &token, bool isStructured);
+		int handleComment(TOKENTYPE &token, bool isStructured);
 		void handleDeferedComments();
 		int handleString();
 		int handleArrayStart();

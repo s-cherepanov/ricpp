@@ -305,7 +305,7 @@ public:
 
 	/** @brief Constructor.
 	 *
-	 *  @param tableNamespace The namespace
+	 *  @param aQualifier The qualifier
 	 *  @param table The table
 	 *  @param aLineNo The line number to store.
 	 *  @param decl Dictonary with the current declarations.
@@ -317,14 +317,14 @@ public:
 	 */
 	inline CVarParamRManInterfaceCall(
 		long aLineNo,
-		const char *tableNamespace, const char *table,
+		const char *aQualifier, const char *table,
 		CDeclarationDictionary &decl,
 		const CParameterClasses &p,
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[]) :
 		CRManInterfaceCall(aLineNo)
 	{
-		setParams(tableNamespace, table, decl, p, curColorDescr, n, tokens, params);
+		setParams(aQualifier, table, decl, p, curColorDescr, n, tokens, params);
 	}
 
 	/** @brief Constructor.
@@ -413,7 +413,7 @@ public:
 
 	/** @brief Fills the parameter list.
 	 *
-	 *  @param tableNamespace The namespace
+	 *  @param aQualifier The qualifier
 	 *  @param table The table
 	 *  @param decl Dictonary with the current declarations.
 	 *  @param p Counters (vertices, corners etc.) of the request.
@@ -423,13 +423,13 @@ public:
 	 *  @param params Parameter values of the request.
 	 */
 	inline void setParams(
-		const char *tableNamespace, const char *table,
+		const char *aQualifier, const char *table,
 		CDeclarationDictionary &decl,
 		const CParameterClasses &p,
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		m_parameters.set(tableNamespace, table, p, decl, curColorDescr, n, tokens, params);
+		m_parameters.set(aQualifier, table, p, decl, curColorDescr, n, tokens, params);
 	}
 	
 	/** @brief Fills the parameter list.

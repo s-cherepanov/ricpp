@@ -167,10 +167,10 @@ class CRenderState {
 	void pushConditional(); ///< Pushes conditionals within nested if-then-else blocks
 	void popConditional();  ///< Restores the last state of the conditionals
 
-	bool varsplit(RtString identifier, RtToken *namespaceQual, RtToken *varname, RtToken *valuename) const;
-	bool getAttribute(CValue &p, RtToken varname, RtToken valuename) const;
-	bool getOption(CValue &p, RtToken varname, RtToken valuename) const;
-	bool getControl(CValue &p, RtToken varname, RtToken valuename) const;
+	bool devideName(RtString identifier, RtToken *aQualifier, RtToken *tablename, RtToken *varname) const;
+	bool getAttribute(CValue &p, RtToken tablename, RtToken varname) const;
+	bool getOption(CValue &p, RtToken tablename, RtToken varname) const;
+	bool getControl(CValue &p, RtToken tablename, RtToken varname) const;
 
 	/** @brief Parser for RIB if-expression.
 	 *
@@ -671,6 +671,12 @@ public:
 
 	virtual bool exists(RtString identifier) const;
 	virtual bool getValue(CValue &p, RtString identifier) const;
+
+	inline virtual bool varSubst(std::string cstr) const
+	{
+		/// @todo Rib variables, like $var $table:var ${table:var}, if Option "rib" "string varsubst" is set to a character (e.g. "$"). @see getValue()
+		return false;
+	}
 	virtual bool eval(RtString expr) const;
 
 	/** @brief Tests if a request @a req is valid in the current mode.
@@ -762,8 +768,8 @@ public:
 
 	virtual void parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 	virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
-	virtual void parseParameters(CParameterList &p, const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
-	virtual void parseParameters(const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
+	virtual void parseParameters(CParameterList &p, const char *aQualifier, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
+	virtual void parseParameters(const char *aQualifier, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 
 	inline virtual RtInt numTokens() const
 	{
@@ -786,16 +792,16 @@ public:
 	 */
 	//@{
 	inline virtual const CDeclaration *declFind(RtToken name) const { return m_declDict.find(name); }
-	inline virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) { return m_declDict.find(tableNamespace, table, var); }
+	inline virtual const CDeclaration *declFind(RtToken aQualifier, RtToken table, RtToken var) { return m_declDict.find(aQualifier, table, var); }
 	
 	inline virtual const CDeclaration *declFindAndUpdate(RtToken name, const CColorDescr &curColorDescr) { return m_declDict.findAndUpdate(name, curColorDescr); }
 	inline virtual const CDeclaration *declFindAndUpdate(
-		const char*tableNamespace,
+		const char*aQualifier,
 		const char *table,
 		const char *var,
 		const CColorDescr &curColorDescr)
 	{
-		return m_declDict.findAndUpdate(tableNamespace, table, var, curColorDescr);
+		return m_declDict.findAndUpdate(aQualifier, table, var, curColorDescr);
 	}
 	
 	inline virtual void declAdd(CDeclaration *decl)

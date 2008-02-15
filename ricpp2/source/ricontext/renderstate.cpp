@@ -1536,11 +1536,11 @@ void CRenderState::popConditional()
 	}
 }
 
-bool CRenderState::varsplit(RtString identifier, RtToken *namespaceQual, RtToken *varname, RtToken *valuename) const
+bool CRenderState::devideName(RtString identifier, RtToken *aQualifier, RtToken *tablename, RtToken *varname) const
 {
-	*namespaceQual=0;
+	*aQualifier=0;
+	*tablename=0;
 	*varname=0;
-	*valuename=0;
 
 	if ( emptyStr(identifier) )
 		return false;
@@ -1552,19 +1552,19 @@ bool CRenderState::varsplit(RtString identifier, RtToken *namespaceQual, RtToken
 	if ( sl.empty() || sl.size() > 3 )
 		return false;
 
-	*valuename = sl.back().c_str();
-	*valuename = tokFind(*valuename);
+	*varname = sl.back().c_str();
+	*varname = tokFind(*varname);
 	sl.pop_back();
 
 	if ( !sl.empty() ) {
-		*varname = sl.back().c_str();
-		*varname = tokFind(*varname);
+		*tablename = sl.back().c_str();
+		*tablename = tokFind(*tablename);
 		sl.pop_back();
 	}
 
 	if ( !sl.empty() ) {
-		*namespaceQual = sl.back().c_str();
-		*namespaceQual = tokFind(*namespaceQual);
+		*aQualifier = sl.back().c_str();
+		*aQualifier = tokFind(*aQualifier);
 		sl.pop_back();
 	}
 
@@ -1577,48 +1577,46 @@ bool CRenderState::exists(RtString identifier) const
 	return getValue(p, identifier);
 }
 
-bool CRenderState::getAttribute(CValue &p, RtToken varname, RtToken valuename) const
+bool CRenderState::getAttribute(CValue &p, RtToken tablename, RtToken varname) const
 {
-	const CParameter *param = attributes().get(varname, valuename);
+	const CParameter *param = attributes().get(tablename, varname);
 	return param != 0 ? param->get(0, p) : false;
 }
 
-bool CRenderState::getOption(CValue &p, RtToken varname, RtToken valuename) const
+bool CRenderState::getOption(CValue &p, RtToken tablename, RtToken varname) const
 {
-	const CParameter *param = options().get(varname, valuename);
+	const CParameter *param = options().get(tablename, varname);
 	return param != 0 ? param->get(0, p) : false;
 }
 
-bool CRenderState::getControl(CValue &p, RtToken varname, RtToken valuename) const
+bool CRenderState::getControl(CValue &p, RtToken tablename, RtToken varname) const
 {
-	const CParameter *param = m_controls.get(varname, valuename);
+	const CParameter *param = m_controls.get(tablename, varname);
 	return param != 0 ? param->get(0, p) : false;
 }
 
 bool CRenderState::getValue(CValue &p, RtString identifier) const
 {
-	RtToken namespaceQual, varname, valuename;
-	if ( !varsplit(identifier, &namespaceQual, &varname, &valuename) )
+	RtToken aQualifier, tablename, varname;
+	if ( !devideName(identifier, &aQualifier, &tablename, &varname) )
 		return false;
 
-	if ( !namespaceQual && !varname )
+	if ( !aQualifier && !tablename )
 	{
-		if ( valuename == RI_FRAME ) {
+		if ( varname == RI_FRAME ) {
 			p.set(frameNumber());
 			return true;
 		}
-	} else if ( !namespaceQual ) {
-		if ( getAttribute(p, varname, valuename) )
+	} else if ( !aQualifier ) {
+		if ( getAttribute(p, tablename, varname) )
 			return true;
-		if ( getOption(p, varname, valuename) )
+		if ( getOption(p, tablename, varname) )
 			return true;
 	} else {
-		if ( namespaceQual == RI_ATTRIBUTE )
-			return getAttribute(p, varname, valuename);
-		if ( namespaceQual == RI_OPTION )
-			return getOption(p, varname, valuename);
-		if ( namespaceQual == RI_CONTROL )
-			return getControl(p, varname, valuename);
+		if ( aQualifier == RI_ATTRIBUTE )
+			return getAttribute(p, tablename, varname);
+		if ( aQualifier == RI_OPTION )
+			return getOption(p, tablename, varname);
 	}
 
 	return false;
@@ -1907,10 +1905,10 @@ void CRenderState::parseParameters(const CValueCounts &counts, RtInt n, RtToken 
 	}
 }
 
-void CRenderState::parseParameters(CParameterList &p, const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
+void CRenderState::parseParameters(CParameterList &p, const char *aQualifier, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
 {
 	try {
-		p.set(aNamespace, aTable, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+		p.set(aQualifier, aTable, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
 	} catch (ExceptRiCPPError &err) {
 		if ( archiveName() != 0 ) {
 			err.line(lineNo());
@@ -1920,10 +1918,10 @@ void CRenderState::parseParameters(CParameterList &p, const char *aNamespace, co
 	}
 }
 
-void CRenderState::parseParameters(const char *aNamespace, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
+void CRenderState::parseParameters(const char *aQualifier, const char *aTable, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[])
 {
 	try {
-		m_curParams.set(aNamespace, aTable, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
+		m_curParams.set(aQualifier, aTable, counts, m_declDict, options().colorDescr(), n, theTokens, theParams);
 	} catch (ExceptRiCPPError &err) {
 		if ( archiveName() != 0 ) {
 			err.line(lineNo());

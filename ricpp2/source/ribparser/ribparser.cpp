@@ -318,7 +318,7 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 
 int CRibRequestData::getTokenList(
 	size_t start,
-	const char *tableNamespace,
+	const char *aQualifier,
 	const char *table, 
 	RtInt vertices,
 	RtInt corners,
@@ -449,7 +449,7 @@ int CRibRequestData::getTokenList(
 			// RtInt numComps;
 			// long int numBytes;
 			CParameter p;
-			p.setDeclaration(tableNamespace, table, token, parameterPos, valueCounts, renderState().dict(), renderState().options().colorDescr());
+			p.setDeclaration(aQualifier, table, token, parameterPos, valueCounts, renderState().dict(), renderState().options().colorDescr());
 			RtInt numComps = p.declaration().selectNumberOf(valueCounts) * p.declaration().elemSize();
 			// unsigned long int numBytes = numComps * p.declaration().basicTypeByteSize();
 
@@ -1385,7 +1385,7 @@ int CRibParser::handleBinary(unsigned char c) {
 }
 
 
-int CRibParser::handleComment(std::vector<char> &token, bool isStructured)
+int CRibParser::handleComment(TOKENTYPE &token, bool isStructured)
 {
 	// If a comment is inbetween an interface call,
 	// it is handled after that call
@@ -1461,6 +1461,9 @@ int CRibParser::handleString()
 	} else {
 		CRibParameter p;
 		p.lineNo(lineNo());
+		// Handle RIB String Variables, if Option "rib" "string varsubst" ["$"]
+		if ( m_renderState )
+			m_renderState->varSubst(m_token);
 		p.setString(&m_token[0]);
 		m_request.push_back(p);
 	}
@@ -1599,7 +1602,7 @@ int CRibParser::nextToken()
 		{
 			// 'inline' comment
 			{
-				std::vector<char> tempToken;
+				TOKENTYPE tempToken;
 				bool startToken = true;
 				bool isStructured = false;
 				while ( m_istream ) {

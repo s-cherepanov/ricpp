@@ -116,13 +116,13 @@ public:
 	 *
 	 *  The three steps are
 	 *  <ol>
-	 *  <li> Search for namespace:table:var </li>
+	 *  <li> Search for qualifier:table:var </li>
 	 *  <li> table:var </li>
-	 *  <li> namespace:var </li>
+	 *  <li> qualifier:var </li>
 	 *  <li> var </li>
 	 *  </ol>
 	 *
-	 * @param tableNamespace The namespace
+	 * @param aQualifier The qualifer
 	 * @param table The table
 	 * @param var The stripped name of the variable
 	 * @param curColorDescr The current number of color components and RGB transformation
@@ -132,14 +132,14 @@ public:
 	 * @see find(RtToken, unsigned int), CDeclaration
 	 */
 	const CDeclaration *find(
-		const char *tableNamespace,
+		const char *aQualifier,
 		const char *table,
 		const char *var,
 		const CColorDescr &curColorDescr,
 		bool update
 	);
 
-	const CDeclaration *find(const char *tableNamespace, const char *table, const char *var);
+	const CDeclaration *find(const char *aQualifier, const char *table, const char *var);
 
 	/** @brief Finds a declaration for a token, may change number of color components.
 	 *
@@ -160,7 +160,7 @@ public:
 
 	/** @brief Searches a declaration with color update, using three steps.
 	 *
-	 * @param tableNamespace The namespace
+	 * @param aQualifier The qualifier
 	 * @param table The table
 	 * @param var The stripped name of the variable
 	 * @param curColorDescr The current number of color components and RGB transformation.
@@ -168,7 +168,7 @@ public:
 	 * @see find(const char *, const char *, const char *, const CTokenMap &), CDeclaration
 	 */
 	const CDeclaration *findAndUpdate(
-		const char *tableNamespace,
+		const char *aQualifier,
 		const char *table,
 		const char *var,
 		const CColorDescr &curColorDescr)

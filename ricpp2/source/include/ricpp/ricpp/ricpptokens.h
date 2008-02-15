@@ -181,7 +181,7 @@ const RtToken  RI_FILEPOINTER = "filepointer", ///< Input/Output to a file FILE 
 
 // note: Named pipe as PIPE:pipename as normal filename, |cmd for anonymous pipe output, | for input
 
-const RtToken RI_ARCHIVE = "archive",   ///< archive 'renderer' type (@a IRiContext::rendererType()) to archive RIB code, or archive namespace
+const RtToken RI_ARCHIVE = "archive",   ///< archive 'renderer' type (@a IRiContext::rendererType()) to archive RIB code, or archive qualifier
               RI_DRAFT = "draft",       ///< fast draft renderer type (@a IRiContext::rendererType()) with limited implementation of the RI
               RI_REALISTIC = "realistic"; ///< photo realistic renderer type (@a IRiContext::rendererType())  implementing the full RI
 
@@ -204,24 +204,24 @@ const RtToken RI_FACEVERTEX = "facevertex"; ///< Name for storage class facevert
 
 const RtToken RI_HANDLEID = "__handleid"; ///< Handle id
 
-const RtToken RI_PROJECTION = "Projection"; ///< Projection namespace
-const RtToken RI_IMAGER = "Imager"; ///< Imager namespace
-const RtToken RI_DISPLAY = "Display"; ///< Display namespace
-const RtToken RI_HIDER = "Hider"; ///< Hider namespace
-const RtToken RI_OPTION = "Option"; ///< Option namespace
-const RtToken RI_LIGHT_SOURCE = "LightSource"; ///< Light source namespace
-const RtToken RI_AREA_LIGHT_SOURCE = "AreaLightSource"; ///< Area light source namespace
-const RtToken RI_SURFACE = "Surface"; ///< Surface shader namespace
-const RtToken RI_ATMOSPHERE = "Atmosphere"; ///< Atmosphere shader namespace
-const RtToken RI_INTERIOR = "Interior"; ///< Interior shader namespace
-const RtToken RI_EXTERIOR = "Exterior"; ///< Exterior shader namespace
-const RtToken RI_DISPLACEMENT = "Displacement"; ///< Displacement shader namespace
-const RtToken RI_DEFORMATION = "Deformation"; ///< Deformation shader namespace
-const RtToken RI_ATTRIBUTE = "Attribute"; ///< Attribute namespace
-const RtToken RI_TEXTURE = "Texture"; ///< Texture namespace
-const RtToken RI_CONTROL = "Control"; ///< Control namespace
-const RtToken RI_BEGIN = "Begin"; ///< Namespace forte Begin statement
-const RtToken RI_RESOURCE = "Resource"; ///< Resource namespace
+const RtToken RI_PROJECTION = "Projection"; ///< Projection qualifier
+const RtToken RI_IMAGER = "Imager"; ///< Imager qualifier
+const RtToken RI_DISPLAY = "Display"; ///< Display qualifier
+const RtToken RI_HIDER = "Hider"; ///< Hider qualifier
+const RtToken RI_OPTION = "Option"; ///< Option qualifier
+const RtToken RI_LIGHT_SOURCE = "LightSource"; ///< Light source qualifier
+const RtToken RI_AREA_LIGHT_SOURCE = "AreaLightSource"; ///< Area light source qualifier
+const RtToken RI_SURFACE = "Surface"; ///< Surface shader qualifier
+const RtToken RI_ATMOSPHERE = "Atmosphere"; ///< Atmosphere shader qualifier
+const RtToken RI_INTERIOR = "Interior"; ///< Interior shader qualifier
+const RtToken RI_EXTERIOR = "Exterior"; ///< Exterior shader qualifier
+const RtToken RI_DISPLACEMENT = "Displacement"; ///< Displacement shader qualifier
+const RtToken RI_DEFORMATION = "Deformation"; ///< Deformation shader qualifier
+const RtToken RI_ATTRIBUTE = "Attribute"; ///< Attribute qualifier
+const RtToken RI_TEXTURE = "Texture"; ///< Texture qualifier
+const RtToken RI_CONTROL = "Control"; ///< Control qualifier
+const RtToken RI_BEGIN = "Begin"; ///< qualifier for Begin statement
+const RtToken RI_RESOURCE = "Resource"; ///< Resource qualifier
 
 const RtToken RI_FRAME = "Frame"; ///< Frame number
 

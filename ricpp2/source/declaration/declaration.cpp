@@ -36,22 +36,22 @@
 
 using namespace RiCPP;
 
-bool CDeclaration::stripName(CTokenMap &tokenmap)
+bool CDeclaration::devideName(CTokenMap &tokenmap)
 {
-	m_namespace = NAMESPACE_UNKNOWN;
+	m_qualifier = QUALIFIER_UNKNOWN;
 	m_table = RI_NULL;
 	m_var = RI_NULL;
 
-	if ( m_name.empty() ) {
+	if ( m_qualifiedName.empty() ) {
 		return false;
 	}
 
 	size_t pos = 0;
 	std::string table, var;
-	const char *str = m_name.c_str();
+	const char *str = m_qualifiedName.c_str();
 
-	m_namespace = CTypeInfo::namespacePrefix(str, pos);
-	if ( m_namespace != NAMESPACE_UNKNOWN ) {
+	m_qualifier = CTypeInfo::qualifierPrefix(str, pos);
+	if ( m_qualifier != QUALIFIER_UNKNOWN ) {
 		str += pos;
 	}
 	
@@ -61,7 +61,7 @@ bool CDeclaration::stripName(CTokenMap &tokenmap)
 			str += pos+1;
 			var = str;
 			if ( !table.empty() && !var.empty() && var.find(':') == std::string::npos ) {
-				// not an empty table or name, no more :, namespace:table:var or table:var
+				// not an empty table or name, no more :, qualifier:table:var or table:var
 				m_table = tokenmap.findCreate(table.c_str());
 				m_var = tokenmap.findCreate(var.c_str());
 				return true;
@@ -77,10 +77,6 @@ bool CDeclaration::stripName(CTokenMap &tokenmap)
 	if ( notEmptyStr(str) )
 		m_var = tokenmap.findCreate(str);
 
-	// no table, there should also be no namespace, only a variable name (?)
-	//! @todo Does namespace:variable or namespace:tablename:variable or tablename:variable work? Makes sense.
-	// return m_namespace == NAMESPACE_UNKNOWN;
-
 	// At least a variable should be found.
 	return m_var != RI_NULL;
 }
@@ -88,8 +84,8 @@ bool CDeclaration::stripName(CTokenMap &tokenmap)
 
 bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap)
 {
-	// Set the name, 0 for parametrs and inline declarations (m_name will be parsed out of decl later)
-	m_name = noNullStr(name);
+	// Set the name, 0 for parametrs and inline declarations (m_qualifiedName will be parsed out of decl later)
+	m_qualifiedName = noNullStr(name);
 	
 	m_isArray = false;
 	m_arraySize = 1;
@@ -152,16 +148,16 @@ bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap
 			++decl;
 
 		// The name follows in inline declarations
-		if ( m_name.empty() ) {
+		if ( m_qualifiedName.empty() ) {
 			// inline declaration or only a typename
 			while ( *decl && !isspace(*decl) ) {
-				m_name += *decl;
+				m_qualifiedName += *decl;
 				++decl;
 			}
 			// No name in an inline declaration is considered as error
-			if ( m_name.empty() )
+			if ( m_qualifiedName.empty() )
 				return false;
-			m_token = tokenmap.findCreate(m_name.c_str());
+			m_token = tokenmap.findCreate(m_qualifiedName.c_str());
 		}
 
 		// Now only white spaces may follow
@@ -173,14 +169,14 @@ bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap
 
 	}
 
-	return stripName(tokenmap);
+	return devideName(tokenmap);
 }
 
 CDeclaration::CDeclaration(const char *parameterDeclstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap)
 {
 	assert(parameterDeclstr != 0);
 
-	m_namespace = NAMESPACE_UNKNOWN;
+	m_qualifier = QUALIFIER_UNKNOWN;
 	m_table = RI_NULL;
 	m_var = RI_NULL;
 	m_colorDescr = curColorDescr;
@@ -196,7 +192,7 @@ CDeclaration::CDeclaration(const char *parameterDeclstr, const CColorDescr &curC
 
 CDeclaration::CDeclaration(RtToken token, const char *declstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap, bool isDefault)
 {
-	m_namespace = NAMESPACE_UNKNOWN;
+	m_qualifier = QUALIFIER_UNKNOWN;
 	m_table = RI_NULL;
 	m_var = RI_NULL;
 
@@ -231,8 +227,8 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 {
 	if ( this == &decl )
 		return *this;
-	m_name = decl.m_name;
-	m_namespace = decl.m_namespace;
+	m_qualifiedName = decl.m_qualifiedName;
+	m_qualifier = decl.m_qualifier;
 	m_table = decl.m_table;
 	m_var = decl.m_var;
 	m_token = decl.m_token;
@@ -290,7 +286,7 @@ const char *CDeclaration::getInlineString(std::string &declaration) const
 		declaration += "]";
 	}
 	declaration += " ";
-	declaration += m_name;
+	declaration += m_qualifiedName;
 	return declaration.c_str();
 }
 
@@ -300,13 +296,13 @@ const char *CDeclaration::getDeclString(std::string &declaration) const
 	if ( isInline() ) {
 		return getInlineString(declaration);
 	}
-	declaration = m_name;
+	declaration = m_qualifiedName;
 	return declaration.c_str();
 }
 
-bool CDeclaration::matches(EnumNamespaces aNamespace, RtToken aTable, RtToken aVar)
+bool CDeclaration::matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar)
 {
-	if ( aNamespace != NAMESPACE_UNKNOWN && tableNamespace() != NAMESPACE_UNKNOWN && aNamespace != tableNamespace() )
+	if ( aQualifier != QUALIFIER_UNKNOWN && qualifier() != QUALIFIER_UNKNOWN && aQualifier != qualifier() )
 		return false;
 	if ( aTable != RI_NULL && table() != RI_NULL && aTable != table() )
 		return false;

@@ -54,18 +54,18 @@ namespace RiCPP {
  */
 class CDeclaration {
 	/** @brief Name of the declaration.
-	 * The name has the form [namespace:][table:]var
-	 * (QRM notation, namespace ENamespaces, table e.g. surface shader name, var variable name),
+	 * The name has the form [qualifier:][table:]var
+	 * (QRM notation),
 	 * the name as given in the declaration is the token that is stored in the
 	 * dictionary. The declaration can be overwritten by excactly the same name.
 	 * @see var()
 	 */
-	std::string m_name;         
+	std::string m_qualifiedName;         
 
-	EnumNamespaces m_namespace; ///< Optional name of the namespace (surface, option, ...).
+	EnumQualifiers m_qualifier; ///< Optional name of the qualifier (surface, option, ...).
 	RtToken m_table;            ///< Optional name of the table.
 	RtToken m_var;              ///< Stripped name of the variable.
-	RtToken m_token;            ///< Unique token for the declaration ([namespace:][table:]var).
+	RtToken m_token;            ///< Unique token for the declaration ([qualifier:][table:]var).
 	EnumClasses m_class;        ///< Storage class of the declaration.
 	EnumTypes m_type;           ///< Type of the elements.
 	EnumBasicTypes m_basicType; ///< Basic type of the elements (according to type).
@@ -84,13 +84,13 @@ class CDeclaration {
 	bool m_isDefault;           ///< True, if a default declaration of the renderer (like @c RI_P)
 
 
-	/** @brief Parses m_name into m_namespace, m_table and m_var
+	/** @brief Parses m_qualifiedName into m_qualifier, m_table and m_var
 	 *  
 	 * @param tokenmap Map of all tokens of a context
-	 * @return false, if parsing cannot be done (namespace but no table name, another ':' behind the table name)
+	 * @return false, if parsing cannot be done (qualifier but no table name, another ':' behind the table name)
 	 * @see var()
 	 */
-	bool stripName(CTokenMap &tokenmap);
+	bool devideName(CTokenMap &tokenmap);
 
 	/** @brief Parses a declaration.
 	 *
@@ -151,20 +151,20 @@ public:
 	/** @brief Gets the name of the declaration
 	 *  @return Name of the declaration
 	 */
-	inline const char *name() const { return m_name.c_str() ? m_name.c_str() : ""; }
+	inline const char *qualifiedName() const { return m_qualifiedName.c_str() ? m_qualifiedName.c_str() : ""; }
 
-	/** @brief Gets the namespace of the variable
+	/** @brief Gets the qualifier of the variable
 	 *
-	 *  [QRM] Can be the name of a request with declareable parameters surface, option, attribute
+	 *  [QRM] Can be the name of a request with declarable parameters surface, option, attribute
 	 * 
-	 *  @return Namespace identifier
+	 *  @return Qualifier identifier
 	 */
-	inline EnumNamespaces tableNamespace() const { return m_namespace; }
+	inline EnumQualifiers qualifier() const { return m_qualifier; }
 
 	/** @brief Additional tablename if variable name is still not unique
 	 *
 	 *  [QRM] E.G. for an option "renderer" "searchpath": "option" is the
-	 *  namespace, renderer is the "table" and "searchpath" the variable name
+	 *  qualifier, renderer is the "table" and "searchpath" the variable name
 	 * 
 	 *  @return Table identifier
 	 */
@@ -177,8 +177,8 @@ public:
 	 *  the searching for a variable in the dictionary must be done in 3 steps having the
 	 *  following order:
 	 *  <ol>
-	 *  <li> namespace:table:var </li>
-	 *  <li> namespace:var </li>
+	 *  <li> qualifier:table:var </li>
+	 *  <li> qualifier:var </li>
 	 *  <li> var </li>
 	 *  </ol>
 	 *
@@ -326,11 +326,11 @@ public:
 	
 	/** @brief Query if variable matches declaration
 	 *
-	 *  @param aNamespace Namespace id of the variable.
+	 *  @param aQualifier Qualifier id of the variable.
 	 *  @param aTable Table token of the variable.
 	 *  @param aVar Variable identifier.
 	 */
-	bool matches(EnumNamespaces aNamespace, RtToken aTable, RtToken aVar); 
+	bool matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar); 
 }; // CDeclarartion
 
 } // namespace RiCPP

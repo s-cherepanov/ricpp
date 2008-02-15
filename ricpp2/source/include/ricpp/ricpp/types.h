@@ -115,33 +115,33 @@ enum EnumClasses {
  */
 const int N_CLASSES = (int)CLASS_FACEVERTEX+1;
 
-/** @brief Possible table namespaces for declarations.
+/** @brief Possible qualifiers for declarations.
  */
-enum EnumNamespaces {
-	NAMESPACE_UNKNOWN = 0,         ///< Unknown or undefined namespace
-	NAMESPACE_PROJECTION,          ///< Arbitrary projections
-	NAMESPACE_IMAGER,              ///< Imager shader
-	NAMESPACE_DISPLAY,             ///< Display drivers
-	NAMESPACE_HIDER,               ///< Hider algorithms
-	NAMESPACE_OPTION,              ///< User defined options
-	NAMESPACE_LIGHT_SOURCE,        ///< Light source shaders
-	NAMESPACE_AREA_LIGHT_SOURCE,   ///< Area light source shaders
-	NAMESPACE_SURFACE,             ///< Surface shaders
-	NAMESPACE_ATMOSPHERE,          ///< Atmosphere volume shaders
-	NAMESPACE_INTERIOR,            ///< Interior volume shaders
-	NAMESPACE_EXTERIOR,            ///< Exterior volume shaders
-	NAMESPACE_DISPLACEMENT,        ///< Displacement shaders
-	NAMESPACE_DEFORMATION,         ///< Nonlinear deformation shaders
-	NAMESPACE_ATTRIBUTE,           ///< User defined attributes
-	NAMESPACE_TEXTURE,             ///< Texture resources
-	NAMESPACE_CONTROL,             ///< System controls
-	NAMESPACE_BEGIN,               ///< Renderer initialization
-	NAMESPACE_RESOURCE             ///< Resource handlers
+enum EnumQualifiers {
+	QUALIFIER_UNKNOWN = 0,         ///< Unknown or undefined qualifier
+	QUALIFIER_PROJECTION,          ///< Arbitrary projections
+	QUALIFIER_IMAGER,              ///< Imager shader
+	QUALIFIER_DISPLAY,             ///< Display drivers
+	QUALIFIER_HIDER,               ///< Hider algorithms
+	QUALIFIER_OPTION,              ///< User defined options
+	QUALIFIER_LIGHT_SOURCE,        ///< Light source shaders
+	QUALIFIER_AREA_LIGHT_SOURCE,   ///< Area light source shaders
+	QUALIFIER_SURFACE,             ///< Surface shaders
+	QUALIFIER_ATMOSPHERE,          ///< Atmosphere volume shaders
+	QUALIFIER_INTERIOR,            ///< Interior volume shaders
+	QUALIFIER_EXTERIOR,            ///< Exterior volume shaders
+	QUALIFIER_DISPLACEMENT,        ///< Displacement shaders
+	QUALIFIER_DEFORMATION,         ///< Nonlinear deformation shaders
+	QUALIFIER_ATTRIBUTE,           ///< User defined attributes
+	QUALIFIER_TEXTURE,             ///< Texture resources
+	QUALIFIER_CONTROL,             ///< System controls
+	QUALIFIER_BEGIN,               ///< Renderer initialization
+	QUALIFIER_RESOURCE             ///< Resource handlers
 };
 
 /** @brief Number of basic types.
  */
-const int N_NAMESPACES = (int)NAMESPACE_RESOURCE+1;
+const int N_QUALIFIERS = (int)QUALIFIER_RESOURCE+1;
 
 /** @brief Class to query info about Ri-types that can occur in declarations.
  */
@@ -153,7 +153,7 @@ class CTypeInfo {
 	static RtToken ms_classNames[N_CLASSES]; ///< Storage class names
 	static const unsigned int ms_typeByteSizes[N_TYPES+1]; ///< Number of bytes for the types
 	static const EnumBasicTypes ms_basicTypesForTypes[N_TYPES+1]; ///< Basic types the types consists of.
-	static RtToken ms_namespaces[N_NAMESPACES]; ///< Table namespaces
+	static RtToken ms_qualifiers[N_QUALIFIERS]; ///< Table qualifiers
 
 	/** @brief Compares prefixes.
 	 * Compares if @a token is a prefix of @a search. Behind the
@@ -220,11 +220,11 @@ public:
 	 */
 	static RtToken className(EnumClasses e);
 
-	/** @brief Gets the name of the table namespace [QRM].
-	 * @param e (Q)Ri table namespace
-	 * @return The name of a table namespace as used in declarations and RIB
+	/** @brief Gets the name of the qualifier (qualifier was named table namespace in [QRM]).
+	 * @param qualifier Ri qualifier
+	 * @return The name of a qualifier as used in declarations and RIB
 	 */
-	static RtToken tableNamespace(EnumNamespaces e);
+	static RtToken qualifier(EnumQualifiers aQualifier);
 
 	/** @brief Tries to find a class name as prefix of aclass.
 	 * @param aclass string possibly having class name as prefix
@@ -253,12 +253,12 @@ public:
 	 */
 	static bool arrayPrefix(const char *acard, size_t &pos, unsigned long &arraySize);
 
-	/** @brief Tries to find a namespace+':' as prefix of avar.
-	 * @param avar string possibly having namespace+':' as prefix
+	/** @brief Tries to find a qualifier+':' as prefix of avar.
+	 * @param avar string possibly having qualifier+':' as prefix
 	 * @retval pos if found position right behind the prefix
-	 * @return NAMESPACE_UNKNOWN if no prefix found, matching EnumNamespaces if found.
+	 * @return QUALIFIER_UNKNOWN if no prefix found, matching EnumQualifierss if found.
 	 */
-	static EnumNamespaces namespacePrefix(const char *avar, size_t &pos);
+	static EnumQualifiers qualifierPrefix(const char *avar, size_t &pos);
 
 	/** @brief Try to find the token of a specific basis.
 	 *

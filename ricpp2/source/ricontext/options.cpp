@@ -652,7 +652,7 @@ RtVoid COptions::displayChannel(CDeclarationDictionary &dict, const CColorDescr 
 			// == 0
 			break;
 		}
-		if ( (*iter).channel() && dcd.channel() && !strcmp((*iter).channel()->name(), dcd.channel()->name()) )
+		if ( (*iter).channel() && dcd.channel() && !strcmp((*iter).channel()->qualifiedName(), dcd.channel()->qualifiedName()) )
 		{
 			break;
 		}
@@ -675,7 +675,7 @@ CDisplayDescr::TypeDisplayChannels::const_iterator COptions::findDisplayChannel(
 	      iter != displayChannelEnd();
 		  ++iter )
 	{
-		if ( (*iter).channel() && !strcmp((*iter).channel()->name(), channelName) )
+		if ( (*iter).channel() && !strcmp((*iter).channel()->qualifiedName(), channelName) )
 		{
 			return iter;
 		}

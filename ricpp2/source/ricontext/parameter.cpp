@@ -70,7 +70,7 @@ CParameter &CParameter::operator=(const CParameter &param)
 	if ( param.m_declaration && param.m_declaration->isInline() ) {
 		m_declaration = new CDeclaration(*param.m_declaration);
 		if ( !m_declaration )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.name());
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.qualifiedName());
 	} else {
 		m_declaration = param.m_declaration;
 	}
@@ -87,7 +87,7 @@ CParameter &CParameter::operator=(const CParameter &param)
 
 
 bool CParameter::setDeclaration(
-	const char *aNamespace, const char *aTable, 
+	const char *aQualifier, const char *aTable, 
 	RtString theName,
 	unsigned int thePosition,
 	const CParameterClasses &counts,
@@ -101,7 +101,7 @@ bool CParameter::setDeclaration(
 
 	m_position = thePosition;
 	
-	const CDeclaration *existingDecl = dict.findAndUpdate(aNamespace, aTable, theName, curColorDescr);
+	const CDeclaration *existingDecl = dict.findAndUpdate(aQualifier, aTable, theName, curColorDescr);
 	const CDeclaration *decl = 0;
 	
 	if ( existingDecl ) {
@@ -124,7 +124,7 @@ bool CParameter::setDeclaration(
 
 
 void CParameter::set(
-	const char *aNamespace, const char *aTable, 
+	const char *aQualifier, const char *aTable, 
 	RtString theName,
 	RtPointer theData,
 	unsigned int thePosition,
@@ -132,7 +132,7 @@ void CParameter::set(
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr)
 {
-	if ( !setDeclaration(aNamespace, aTable, theName, thePosition, counts, dict, curColorDescr) )
+	if ( !setDeclaration(aQualifier, aTable, theName, thePosition, counts, dict, curColorDescr) )
 		return;
 
 	unsigned long elems = m_declaration->selectNumberOf(counts) * m_declaration->elemSize();
@@ -174,7 +174,7 @@ void CParameter::set(
 const CDeclaration &CParameter::declaration() const
 {
 	if ( !m_declaration ) {
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "Declaration of parameter %s not defined.", name());
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "Declaration of parameter %s not defined.", qualifiedName());
 	}
 	return *m_declaration;
 }
@@ -278,13 +278,13 @@ bool CParameter::get(unsigned long pos, RtString &result) const
 // ----------------------------------------------------------------------------
 
 CParameterList::CParameterList(
-	const char *aNamespace, const char *aTable, 
+	const char *aQualifier, const char *aTable, 
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	set(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params);
+	set(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
 }
 
 
@@ -302,7 +302,7 @@ void CParameterList::rebuild()
 		const CDeclaration *d = p.declarationPtr();
 		if ( d ) {
 			if ( d->isInline() ) {
-				m_tokenPtr.push_back(d->name());
+				m_tokenPtr.push_back(d->qualifiedName());
 			} else {
 				m_tokenPtr.push_back(d->token());
 			}
@@ -327,19 +327,19 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 
 
 void CParameterList::set(
-	const char *aNamespace, const char *aTable, 
+	const char *aQualifier, const char *aTable, 
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
 	clear();
-	add(aNamespace, aTable, counts, dict, curColorDescr, n, tokens, params);
+	add(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
 }
 
 
 void CParameterList::add(
-	const char *aNamespace, const char *aTable, 
+	const char *aQualifier, const char *aTable, 
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
@@ -351,7 +351,7 @@ void CParameterList::add(
 			erase(param);
 		}
 		try {
-			m_params.push_back(CParameter(aNamespace, aTable, tokens[i], params[i], i, counts, dict, curColorDescr));
+			m_params.push_back(CParameter(aQualifier, aTable, tokens[i], params[i], i, counts, dict, curColorDescr));
 			RtToken var = m_params.back().var(); // The unqualified variable name as key
 			assert(var);
 			if ( var )

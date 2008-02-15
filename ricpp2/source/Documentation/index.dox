@@ -258,11 +258,11 @@ Declare requests don't need to be replayed.
 
 If you like to declare variables for your selfwritten shaders,
 you can adopt the naming scheme of QuickRenderMan's qualified token names:
-[namespace:][table:]var like shadertype:shadername:variablename, shadername:varaiblename, shadertype:variablename
+[qualifer:][table:]var like shadertype:shadername:variablename, shadername:varaiblename, shadertype:variablename
 to avoid some conflicts, s.a. [kaushik]. E.g.
 "Surface:Dotted:dotsize" for a variable "dotsize" of a "Surface" shader named "Dotted".
 "Surface:dotsize" is a variable "dotsize" valid for all "Surface" shaders, "Dotted:dotsize" for
-a variable named "dotsize" in any namespace for something named "Dotted", or
+a variable named "dotsize" in any qualifier for something named "Dotted", or
 "dotsize" as a valid variable in all namespaces. If the RI finds a variable "dotsize" within
 the parameter list of a surface shader it looks for the declaration of this parameter
 Surface:Shadername:Variablename, then Shadername:Variablename, then Surface:variablename and if

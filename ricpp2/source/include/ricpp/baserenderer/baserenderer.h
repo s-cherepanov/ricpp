@@ -793,7 +793,7 @@ public:
 	inline virtual RtVoid doAtmosphere(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doInterior(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doExterior(RtString name, const CParameterList &params) {}
-	inline virtual RtVoid doIlluminate(RtLightHandle light, RtBoolean onoff) {}
+	virtual RtVoid doIlluminate(RtLightHandle light, RtBoolean onoff);
 	inline virtual RtVoid doDisplacement(RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {}
 	inline virtual RtVoid doShadingRate(RtFloat size) {}

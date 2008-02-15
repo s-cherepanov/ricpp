@@ -2237,6 +2237,7 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 
 RtVoid CBaseRenderer::preIlluminate(RtLightHandle light, RtBoolean onoff)
 {
+	// Only a test if LightSource was declared
 	CHandle *handle = renderState()->lightSourceHandle(light);
 	if ( !handle ) {
 		throw ExceptRiCPPError(
@@ -2247,8 +2248,15 @@ RtVoid CBaseRenderer::preIlluminate(RtLightHandle light, RtBoolean onoff)
 			"Illuminate a light source (Handle: %s)",
 			noNullStr(light));
 	}
-	renderState()->attributes().illuminate(light, onoff);
 }
+
+
+RtVoid CBaseRenderer::doIlluminate(RtLightHandle light, RtBoolean onoff)
+{
+	CLightSource *l = renderState()->lightSourceInstance(light);
+	renderState()->attributes().illuminate(l, onoff);
+}
+
 
 RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 {

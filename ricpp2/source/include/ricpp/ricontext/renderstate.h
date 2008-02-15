@@ -46,10 +46,6 @@
 #include "ricpp/ricontext/transformation.h"
 #endif // _RICPP_RICONTEXT_TRANSFORMATION_H
 
-#ifndef _RICPP_RICONTEXT_LIGHTS_H
-#include "ricpp/ricontext/lights.h"
-#endif // _RICPP_RICONTEXT_LIGHTS_H
-
 #ifndef _RICPP_RICONTEXT_HANDLESTACK_H
 #include "ricpp/ricontext/handlestack.h"
 #endif // _RICPP_RICONTEXT_HANDLESTACK_H
@@ -638,8 +634,8 @@ public:
 	virtual CHandle *lightSourceHandle(RtLightHandle handle);
 	virtual const CHandle *lightSourceHandle(RtLightHandle handle) const;
 
-	virtual CLightSource *lightSourceInstance(CHandle &handle);
-	virtual const CLightSource *lightSourceInstance(const CHandle &handle) const;
+	virtual CLightSource *lightSourceInstance(RtLightHandle handle);
+	virtual const CLightSource *lightSourceInstance(RtLightHandle handle) const;
 
 	virtual CLightSource *newLightSource(
 		RtLightHandle handle,

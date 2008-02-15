@@ -221,7 +221,7 @@ RtFloat CAttributes::opacity(RtInt i) const
 	return m_opacity[i];
 }
 
-RtVoid CAttributes::illuminate(RtLightHandle light, RtBoolean onoff)
+RtVoid CAttributes::illuminate(CLightSource *light, RtBoolean onoff)
 {
 	TypeLightHandles::iterator i = find(m_illuminated.begin(), m_illuminated.end(), light);
 	if ( onoff ) {
@@ -235,7 +235,7 @@ RtVoid CAttributes::illuminate(RtLightHandle light, RtBoolean onoff)
 	}
 }
 
-RtBoolean CAttributes::illuminated(RtLightHandle light) const
+RtBoolean CAttributes::illuminated(CLightSource *light) const
 {
 	TypeLightHandles::const_iterator i = find(m_illuminated.begin(), m_illuminated.end(), light);
 	return (i != m_illuminated.end()) ? RI_TRUE : RI_FALSE;

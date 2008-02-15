@@ -1315,17 +1315,17 @@ const CHandle *CRenderState::lightSourceHandle(RtLightHandle handle) const
 	return 0;
 }
 
-CLightSource *CRenderState::lightSourceInstance(CHandle &handle)
+CLightSource *CRenderState::lightSourceInstance(RtLightHandle handle)
 {
-	RtLightHandle l = m_lightSources.identify(handle.handle());
+	RtLightHandle l = m_lightSources.identify(handle);
 	if ( l != illLightHandle )
 		return m_lightSources.find(l);
 	return 0;
 }
 
-const CLightSource *CRenderState::lightSourceInstance(const CHandle &handle) const
+const CLightSource *CRenderState::lightSourceInstance(RtLightHandle handle) const
 {
-	RtLightHandle l = m_lightSources.identify(handle.handle());
+	RtLightHandle l = m_lightSources.identify(handle);
 	if ( l != illLightHandle )
 		return m_lightSources.find(l);
 	return 0;

@@ -35,9 +35,9 @@
 #include "ricpp/ricontext/optionsbase.h"
 #endif // _RICPP_RICONTEXT_OPTIONSBASE_H
 
-#ifndef _RICPP_RICPP_RICPPCONST_H
-#include "ricpp/ricpp/ricppconst.h"
-#endif // _RICPP_RICPP_RICPPCONST_H
+#ifndef _RICPP_RICONTEXT_LIGHTS_H
+#include "ricpp/ricontext/lights.h"
+#endif // _RICPP_RICONTEXT_LIGHTS_H
 
 namespace RiCPP {
 
@@ -94,7 +94,7 @@ namespace RiCPP {
 
 		static const RtInt defNSides;        ///< Default number of rendered surface sides (2)
 
-		typedef std::vector<RtLightHandle> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
+		typedef std::vector<CLightSource *> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
 
 	private:
 		std::vector<RtFloat> m_color;          ///< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
@@ -326,14 +326,14 @@ namespace RiCPP {
 		 *  @param light Handle of a light source to switch
 		 *  @param onoff True, to switch on. False, to switch off.
 		 */
-		virtual RtVoid illuminate(RtLightHandle light, RtBoolean onoff);
+		virtual RtVoid illuminate(CLightSource *light, RtBoolean onoff);
 
 		/** @brief Gets the state of a light source.
 		 *
 		 *  @param light Handle of the light source
 		 *  @return True, if switched on. false, to switched off.
 		 */
-		virtual RtBoolean illuminated(RtLightHandle light) const;
+		virtual RtBoolean illuminated(CLightSource *light) const;
 
 		/** @brief Gets the number of illuminated light sources.
 		 *

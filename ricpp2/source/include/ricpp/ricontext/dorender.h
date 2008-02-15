@@ -141,8 +141,8 @@ public:
     virtual RtVoid preRelativeDetail(RtFloat relativedetail) = 0;
     virtual RtVoid preOption(RtToken name, const CParameterList &params) = 0;
 	
-    virtual RtLightHandle preLightSource(RtString name, const CParameterList &params) = 0;
-	virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params) = 0;
+    virtual RtVoid preLightSource(RtLightHandle light, RtString name, const CParameterList &params) = 0;
+	virtual RtVoid preAreaLightSource(RtLightHandle light, RtString name, const CParameterList &params) = 0;
 	
     virtual RtVoid preAttribute(RtToken name, const CParameterList &params) = 0;
 	virtual RtVoid preColor(RtColor Cs) = 0;

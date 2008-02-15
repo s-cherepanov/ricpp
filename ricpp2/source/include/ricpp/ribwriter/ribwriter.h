@@ -296,6 +296,7 @@ private:
 	int m_skipHeader;
 	int m_skipVersion; ///< skips version request: 1: skip version, 0: write version, -1 write only once (default)
 	bool m_execute;
+	bool m_delayedReadArchive;
 	bool m_indent;
 	std::string m_indentString;
 

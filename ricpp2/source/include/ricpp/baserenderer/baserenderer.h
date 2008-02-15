@@ -94,16 +94,6 @@ class CBaseRenderer : public IDoRender {
 	 */
 	CAttributesFactory *m_attributesFactory;
 
-	/** @brief Light source factory.
-	 *
-	 *  Used to create light source objects (CLightSource). Derived renderers can use an
-	 *  extended set of light sources.
-	 *  Initialized while begin() by a call of initRenderState().
-	 *
-	 *  @see getNewLightSourceFactory(), deleteLightSourceFactory()
-	 */
-	CLightSourceFactory *m_lightSourceFactory;
-
 	/** @brief Factory for pixel filter functions.
 	 *
 	 *  Used to create pixel filter functions (IFilterFunc). Derived renderers can use an
@@ -213,32 +203,6 @@ protected:
 			delete ptr;
 	}
 
-	/** @brief Creates a new light source factory, called by initRenderState()
-	 *
-	 *  Overwrite this method if you want to return an own factory
-	 *  for a customized light sources.
-	 *
-	 * @return A factory object for the light sources.
-	 */
-	inline virtual CLightSourceFactory *getNewLightSourceFactory()
-	{
-		return new CLightSourceFactory;
-	}
-
-	/** @brief Deletes a light source factory, called at destruction.
-	 *
-	 *  Since the destructor of the light source factory is virtual, there
-	 *  is no need (it's even wrong) to overwrite this method, it's not
-	 *  virtual therfore.
-	 *
-	 *  @param ptr A light source factory created by getNewLightSourceFactory()
-	 */
-	inline void deleteLightSourceFactory(CLightSourceFactory *ptr)
-	{
-		if ( ptr )
-			delete ptr;
-	}
-
 	/** @brief Creates a new pixel filter function factory, called by initRenderState()
 	 *
 	 *  Overwrite this method if you want to return an own factory
@@ -293,7 +257,7 @@ protected:
 	 *  is no need (it's even wrong) to overwrite this method, it's not
 	 *  virtual therfore.
 	 *
-	 *  @param ptr An attributes resource factory created by getNewLightSourceFactory()
+	 *  @param ptr An attributes resource factory created by getNewResourceFactory()
 	 */
 	inline void deleteAttributesResourceFactory(CAttributesResourceFactory *ptr)
 	{
@@ -659,8 +623,8 @@ public:
 	virtual RtVoid preRelativeDetail(RtFloat relativedetail);
 	virtual RtVoid preOption(RtToken name, const CParameterList &params);
 
-	virtual RtLightHandle preLightSource(RtString name, const CParameterList &params);
-	virtual RtLightHandle preAreaLightSource(RtString name, const CParameterList &params);
+	virtual RtVoid preLightSource(RtLightHandle light, RtString name, const CParameterList &params);
+	virtual RtVoid preAreaLightSource(RtLightHandle light, RtString name, const CParameterList &params);
 	virtual RtVoid preIlluminate(RtLightHandle light, RtBoolean onoff);
 
 	virtual RtVoid preAttribute(RtToken name, const CParameterList &params);
@@ -819,8 +783,8 @@ public:
 	inline virtual RtVoid doRelativeDetail(RtFloat relativedetail) {}
 	inline virtual RtVoid doOption(RtToken name, const CParameterList &params) {}
 
-	inline virtual RtVoid doLightSource(RtLightHandle h, RtString name, const CParameterList &params) { }
-	inline virtual RtVoid doAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params) { }
+	virtual RtVoid doLightSource(RtLightHandle h, RtString name, const CParameterList &params);
+	virtual RtVoid doAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params);
 
 	inline virtual RtVoid doAttribute(RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doColor(RtColor Cs) {}

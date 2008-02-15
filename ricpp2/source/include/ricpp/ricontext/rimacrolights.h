@@ -45,38 +45,35 @@ namespace RiCPP {
 class CRiLightSource : public CVarParamRManInterfaceCall {
 protected:
 	RtToken m_name;
-	RtLightHandle m_handleIdx;
-	RtLightHandle m_tmpHandle;
+	RtLightHandle m_handle;
 public:
 	inline static const char *myClassName(void) { return "CRiLightSource"; }
 	inline virtual const char *className() const { return CRiLightSource::myClassName(); }
 
 	inline CRiLightSource(
 		long aLineNo = -1,
-		RtToken aName=RI_NULL)
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		RtLightHandle aHandle = illLightHandle,
+		RtToken aName = RI_NULL)
+		: CVarParamRManInterfaceCall(aLineNo), m_handle(aHandle), m_name(aName)
 	{
-		m_handleIdx = illLightHandle;
-		m_tmpHandle = illLightHandle;
 	}
 
 	inline CRiLightSource(
-		CRenderState &state,
-		RtToken aName, 
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtLightHandle aHandle,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(state.lineNo(), RI_LIGHT_SOURCE, aName, state.dict(), CParameterClasses(), state.options().colorDescr(), n, tokens, params), m_name(aName), m_tmpHandle(illLightHandle)
+		: CVarParamRManInterfaceCall(aLineNo, RI_OPTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_handle(aHandle), m_name(aName)
 	{
-		m_handleIdx = state.lights().newLightHandleIdx();
 	}
 
 	inline CRiLightSource(
-		CRenderState &state,
+		long aLineNo,
+		RtLightHandle aHandle,
 		RtToken aName, 
 		const CParameterList &theParameters)
-		: CVarParamRManInterfaceCall(state.lineNo(), theParameters), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_handle(aHandle), m_name(aName)
 	{
-		m_handleIdx = state.lights().newLightHandleIdx();
-		m_tmpHandle = illLightHandle;
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_LIGHT_SOURCE; }
@@ -91,37 +88,32 @@ public:
 		m_name = aName;
 	}
 
-	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
+	inline virtual RtLightHandle handle() const { return m_handle; }
 
-	inline virtual void handleIdx(RtLightHandle anIndex) { m_handleIdx = anIndex; }
-
-	inline virtual RtLightHandle handle() const { return m_tmpHandle; }
+	inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		m_tmpHandle = ri.preLightSource(m_name, parameters());
-		ri.renderState()->lights().setHandle(m_handleIdx, m_tmpHandle);
+		ri.preLightSource(m_handle, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		RtLightHandle h = ri.renderState()->lights().getHandle(m_handleIdx);
-		ri.doLightSource(h, m_name, parameters());
+		ri.doLightSource(m_handle, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		RtLightHandle h = ri.renderState()->lights().getHandle(m_handleIdx);
-		ri.postLightSource(h, m_name, parameters());
-		m_tmpHandle = illLightHandle;
+		ri.postLightSource(m_handle, m_name, parameters());
 	}
 
-	inline CRiLightSource &operator=(const CRiLightSource &c) {
+	inline CRiLightSource &operator=(const CRiLightSource &c)
+	{
 		if ( this == &c )
 			return *this;
 
 		name(c.name());
-		handleIdx(c.handleIdx());
+		handle(c.handle());
 
 		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
@@ -132,38 +124,35 @@ public:
 class CRiAreaLightSource : public CVarParamRManInterfaceCall {
 protected:
 	RtToken m_name;
-	RtLightHandle m_handleIdx;
-	RtLightHandle m_tmpHandle;
+	RtLightHandle m_handle;
 public:
 	inline static const char *myClassName(void) { return "CRiAreaLightSource"; }
 	inline virtual const char *className() const { return CRiAreaLightSource::myClassName(); }
 
 	inline CRiAreaLightSource(
 		long aLineNo = -1,
-		RtToken aName=RI_NULL)
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		RtLightHandle aHandle = illLightHandle,
+		RtToken aName = RI_NULL)
+		: CVarParamRManInterfaceCall(aLineNo), m_handle(aHandle), m_name(aName)
 	{
-		m_handleIdx = illLightHandle;
-		m_tmpHandle = illLightHandle;
 	}
 
 	inline CRiAreaLightSource(
-		CRenderState &state,
-		RtToken aName, 
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtLightHandle aHandle,
+		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(state.lineNo(), RI_AREA_LIGHT_SOURCE, aName, state.dict(), CParameterClasses(), state.options().colorDescr(), n, tokens, params), m_name(aName), m_tmpHandle(illLightHandle)
+		: CVarParamRManInterfaceCall(aLineNo, RI_OPTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_handle(aHandle), m_name(aName)
 	{
-		m_handleIdx = state.lights().newLightHandleIdx();
 	}
 
 	inline CRiAreaLightSource(
-		CRenderState &state,
+		long aLineNo,
+		RtLightHandle aHandle,
 		RtToken aName, 
 		const CParameterList &theParameters)
-		: CVarParamRManInterfaceCall(state.lineNo(), theParameters), m_name(aName)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_handle(aHandle), m_name(aName)
 	{
-		m_handleIdx = state.lights().newLightHandleIdx();
-		m_tmpHandle = illLightHandle;
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_AREA_LIGHT_SOURCE; }
@@ -178,28 +167,22 @@ public:
 		m_name = aName;
 	}
 
-	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
-	inline virtual void handleIdx(RtLightHandle anIndex) { m_handleIdx = anIndex; }
-
-	inline virtual RtLightHandle handle() const { return m_tmpHandle; }
+	inline virtual RtLightHandle handle() const { return m_handle; }
+	inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		m_tmpHandle = ri.preAreaLightSource(m_name, parameters());
-		ri.renderState()->lights().setHandle(m_handleIdx, m_tmpHandle);
+		ri.preAreaLightSource(m_handle, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		RtLightHandle h = ri.renderState()->lights().getHandle(m_handleIdx);
-		ri.doAreaLightSource(h, m_name, parameters());
+		ri.doAreaLightSource(m_handle, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		RtLightHandle h = ri.renderState()->lights().getHandle(m_handleIdx);
-		ri.postAreaLightSource(h, m_name, parameters());
-		m_tmpHandle = illLightHandle;
+		ri.postAreaLightSource(m_handle, m_name, parameters());
 	}
 
 	inline CRiAreaLightSource &operator=(const CRiAreaLightSource &c)
@@ -208,7 +191,7 @@ public:
 			return *this;
 
 		name(c.name());
-		handleIdx(c.handleIdx());
+		handle(c.handle());
 
 		CVarParamRManInterfaceCall::operator=(c);
 		return *this;
@@ -218,21 +201,21 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 class CRiIlluminate : public CRManInterfaceCall {
 protected:
-	RtLightHandle m_handleIdx;
+	RtLightHandle m_handle;
 	RtBoolean m_onoff;
 public:
 	inline static const char *myClassName(void) { return "CRiIlluminate"; }
 	inline virtual const char *className() const { return CRiIlluminate::myClassName(); }
 
-	inline CRiIlluminate(long aLineNo, RtLightHandle handleIdx, RtBoolean onoff) :
-		CRManInterfaceCall(aLineNo), m_handleIdx(handleIdx), m_onoff(onoff)
+	inline CRiIlluminate(long aLineNo, RtLightHandle aHandle, RtBoolean onoff) :
+		CRManInterfaceCall(aLineNo), m_handle(aHandle), m_onoff(onoff)
 	{
 	}
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ILLUMINATE; }
 
-	inline virtual void handleIdx(RtLightHandle handleIdx) { m_handleIdx = handleIdx; }
+	inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }
 
-	inline virtual RtLightHandle handleIdx() const { return m_handleIdx; }
+	inline virtual RtLightHandle handle() const { return m_handle; }
 
 	inline virtual void onOff(RtBoolean onoff) { m_onoff = onoff; }
 
@@ -240,20 +223,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		RtLightHandle h = ri.renderState()->lights().getHandle(m_handleIdx);
-		ri.preIlluminate(h, m_onoff);
+		ri.preIlluminate(m_handle, m_onoff);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		RtLightHandle h = ri.renderState()->lights().getHandle(m_handleIdx);
-		ri.doIlluminate(h, m_onoff);
+		ri.doIlluminate(m_handle, m_onoff);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		RtLightHandle h = ri.renderState()->lights().getHandle(m_handleIdx);
-		ri.postIlluminate(h, m_onoff);
+		ri.postIlluminate(m_handle, m_onoff);
 	}
 
 	inline CRiIlluminate &operator=(const CRiIlluminate &c)
@@ -261,7 +241,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		handleIdx(c.handleIdx());
+		handle(c.handle());
 		onOff(c.onOff());
 
 		CRManInterfaceCall::operator=(c);

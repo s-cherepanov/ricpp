@@ -564,6 +564,7 @@ CRibWriter::CRibWriter()
 	
 	m_header = false;
 	m_execute = false;
+	m_delayedReadArchive = false;
 	nestingDepth(0);
 }
 
@@ -1552,7 +1553,13 @@ RtVoid CRibWriter::postLightSource(RtLightHandle h, RtString name, const CParame
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
 	m_writer->putBlank();
-	m_writer->putValue((unsigned long)h);
+	CHandle *handle = renderState()->lightSourceHandle(h);
+	if ( !handle ) {
+		m_writer->putValue((unsigned long)0);
+		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for LightSource \"%s\"", noNullStr(name));
+	} else {
+		m_writer->putValue(handle->handleNo());
+	}
 	writeParameterList(params);
 }
 
@@ -1567,7 +1574,13 @@ RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CPa
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
 	m_writer->putBlank();
-	m_writer->putValue((unsigned long)h);
+	CHandle *handle = renderState()->lightSourceHandle(h);
+	if ( !handle ) {
+		m_writer->putValue((unsigned long)0);
+		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for AreaLightSource \"%s\"", noNullStr(name));
+	} else {
+		m_writer->putValue(handle->handleNo());
+	}
 	writeParameterList(params);
 }
 
@@ -1673,7 +1686,13 @@ RtVoid CRibWriter::postIlluminate(RtLightHandle light, RtBoolean onoff)
 	writePrefix();
 	m_writer->putRequest(REQ_ILLUMINATE);
 	m_writer->putBlank();
-	m_writer->putValue((unsigned long)light);
+	CHandle *handle = renderState()->lightSourceHandle(light);
+	if ( !handle ) {
+		m_writer->putValue((unsigned long)0);
+		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to illuminate \"%s\"", noNullStr(light));
+	} else {
+		m_writer->putValue(handle->handleNo());
+	}
 	m_writer->putBlank();
 	m_writer->putValue((RtInt)(onoff?1:0));
 	m_writer->putNewLine();
@@ -2501,8 +2520,13 @@ RtVoid CRibWriter::postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 
 RtVoid CRibWriter::doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
-	if ( !m_postponeProcedural )
+	if ( !m_postponeProcedural ) {
+		if ( subdivfunc.name() == RI_DELAYED_READ_ARCHIVE )
+			m_delayedReadArchive = true;
+		// Can call doReadArchive()
 		CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
+		m_delayedReadArchive = false;
+	}
 }
 
 RtVoid CRibWriter::postProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
@@ -2699,6 +2723,9 @@ RtVoid CRibWriter::postArchiveRecord(RtToken type, RtString line)
 
 
 bool CRibWriter::willExecuteMacro(RtString name) {
+	if ( m_delayedReadArchive )
+		return true;
+
 	bool isFile = true;
 	bool macroPostponed = true;
 
@@ -2739,6 +2766,7 @@ RtVoid CRibWriter::preReadArchive(RtString name, const IArchiveCallback *callbac
 
 RtVoid CRibWriter::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
+	m_delayedReadArchive = false; // Clear the procedural flag
 	if ( m_execute ) {
 		bool exec = m_execute;
 		m_header = true;

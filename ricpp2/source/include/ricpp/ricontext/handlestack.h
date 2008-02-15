@@ -42,6 +42,55 @@
 
 namespace RiCPP {
 
+/** @brief Class that is used for indirect light handles.
+ */
+class CHandle
+{
+private:
+	RtToken m_identifier;     ///< @brief Token as identifier.
+	unsigned long m_handleNo; ///< @brief Sequence number.
+public:
+	inline CHandle() {
+		m_identifier = RI_NULL;
+		m_handleNo = 0;
+	}
+
+	inline CHandle(RtToken anId, unsigned long aHandleNo)
+	{
+		m_identifier = anId;
+		m_handleNo = aHandleNo;
+	}
+
+	inline CHandle(const CHandle &h)
+	{
+		*this = h;
+	}
+
+	inline virtual ~CHandle()
+	{
+	}
+
+	inline virtual CHandle *duplicate() const
+	{
+		return new CHandle(*this);
+	}
+
+	inline const char *name() const { return m_identifier; }
+	inline RtToken handle() const { return m_identifier; }
+	inline void handle(RtToken anId) { m_identifier = anId; }
+	
+	inline unsigned long handleNo() const { return m_handleNo; }
+	inline void handleNo(unsigned long aHandleNo) { m_handleNo = aHandleNo; }
+
+	inline CHandle &operator=(const CHandle &h)
+	{
+		handle(h.handle());
+		handleNo(h.handleNo());
+		return *this;
+	}
+}; // TemplHandle
+
+
 /** @brief Template to handle RI objects and archives
  */
 template<typename ValueType> class TemplHandleStack {
@@ -54,7 +103,7 @@ private:
 	CTokenMap m_tokens;           ///< RtToken as handles
 	std::string m_prefix;         ///< Prefix for the tokens
 
-	typename TypeHandleStack::reverse_iterator rfind(RtToken tok, bool toMark)
+	inline typename TypeHandleStack::reverse_iterator rfind(RtToken tok, bool toMark)
 	{
 		typename TypeHandleStack::reverse_iterator i;
 
@@ -121,7 +170,15 @@ public:
 		}
 
 		RtToken tok = m_tokens.findCreate(name);
+		++m_maxHandleIdx;
 		return tok;
+	}
+
+	RtToken newHandle(RtString name, unsigned long &num)
+	{
+		RtToken t = newHandle(name);
+		num = m_maxHandleIdx;
+		return t;
 	}
 
 	RtToken identify(RtString name) const
@@ -187,6 +244,16 @@ public:
 		return tok; 
 	}
 
+	RtToken insertObject(RtToken handle, ValueType *o)
+	{
+		if ( !o || !m_tokens.find(handle) )
+			return RI_NULL;
+
+		o->handle(handle);
+		m_stack.push_back(o);
+		return handle; 
+	}
+
 	void mark()
 	{
 		m_stack.push_back(0);
@@ -202,6 +269,11 @@ public:
 			}
 			delete v;
 		}
+	}
+
+	unsigned long maxIdx() const
+	{
+		return m_maxHandleIdx;
 	}
 };
 

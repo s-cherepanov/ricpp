@@ -113,8 +113,6 @@ class CRenderState {
 
 	CParameterList m_curParams;                    ///< Params of the last interface request with variable parameters.
 
-	CLights m_lights;                              ///< Global light list (state of the lightsources is part of the attributes)
-	
 	CFilterFuncFactory *m_filterFuncFactory;       ///< Factory for pixel filter functions.
 
 	bool m_reject;                                 ///< true, rejects requests while running, e.g. for appropriate if-then-else blocks
@@ -148,8 +146,12 @@ class CRenderState {
 	CRiMacro *m_curReplay;
 
 	TemplHandleStack<CRiObjectMacro> m_objectMacros;   ///< Stack of all object macros (objectBegin/End)
-	TemplHandleStack<CRiArchiveMacro> m_archiveMacros; ///< Stack of all archive macros (archiveBegin/End or cached rib)
+	TemplHandleStack<CRiArchiveMacro> m_archiveMacros; ///< Stack of all archive macros (archiveBegin/End)
+	TemplHandleStack<CRiArchiveMacro> m_cachedArchive; ///< Stack of all archive macros (cached rib)
 	
+	TemplHandleStack<CHandle> m_lightSourceHandles;  ///< Stack of indirect light source handles
+	TemplHandleStack<CLightSource> m_lightSources;   ///< Stack of all created light sources
+
 	std::vector<CRiMacro *> m_macros; ///< Vector with pointer to all macros (m_objectMacros and m_archiveMacros)
 
 	std::vector<bool> m_conditions; ///< Stack of m_executeConditional and m_ifCondition for nested ifs.
@@ -575,7 +577,6 @@ public:
 		CModeStack &aModeStack,
 		COptionsFactory &optionsFactory,
 		CAttributesFactory &attributesFactory,
-		CLightSourceFactory &lightSourceFactory,
 		CFilterFuncFactory &filterFuncFactory);
 
 	/** @brief Destroys the object
@@ -606,149 +607,73 @@ public:
 	 *  @see CModeStack
 	 */
 	//@{
-	inline void contextBegin()
-	{
-		m_lights.mark();
-		pushOptions();
-		pushAttributes();
-		pushTransform();
-		m_transformStack.back().spaceType(RI_CAMERA);
+	virtual void contextBegin();
+	virtual void contextEnd();
 
-		m_modeStack->contextBegin();
-	}
-	inline void contextEnd()
-	{
-		m_modeStack->contextEnd();
+	virtual void frameBegin(RtInt number);
+	virtual void frameEnd();
 
-		popTransform();
-		popAttributes();
-		popOptions();
-		m_lights.clearToMark();
-	}
+	virtual void worldBegin();
+	virtual void worldEnd();
 
-	inline void frameBegin(RtInt number)
-	{
-		m_lights.mark();
-		pushOptions();
-		pushAttributes();
-		pushTransform();
+	virtual void attributeBegin();
+	virtual void attributeEnd();
 
-		m_modeStack->frameBegin();
-		frameNumber(number);
-	}
-	inline void frameEnd()
-	{
-		frameNumber(0);
-		m_modeStack->frameEnd();
+	virtual void transformBegin();
+	virtual void transformEnd();
 
-		popTransform();
-		popAttributes();
-		popOptions();
-		m_lights.clearToMark();
-	}
+    virtual void solidBegin(RtToken type);
+    virtual void solidEnd();
+	virtual RtToken solid() const;
 
-	inline void worldBegin()
-	{
-		pushTransform();
-		m_transformStack.back().identity();
-		m_transformStack.back().spaceType(RI_WORLD);
-		pushAttributes();
+	virtual RtObjectHandle objectBegin();
+	virtual void objectEnd();
 
-		m_modeStack->worldBegin();
-	}
-	inline void worldEnd()
-	{
-		m_modeStack->worldEnd();
+	virtual CRiObjectMacro *objectInstance(RtObjectHandle handle);
+	virtual const CRiObjectMacro *objectInstance(RtObjectHandle handle) const;
 
-		popAttributes();
-		popTransform();
-		m_lights.clearToMark();
-	}
+	virtual RtLightHandle newLightHandle(RtToken lightSourceName, CParameterList &params);
+	virtual CHandle *lightSourceHandle(RtLightHandle handle);
+	virtual const CHandle *lightSourceHandle(RtLightHandle handle) const;
 
-	inline void attributeBegin()
-	{
-		pushTransform();
-		pushAttributes();
+	virtual CLightSource *lightSourceInstance(CHandle &handle);
+	virtual const CLightSource *lightSourceInstance(const CHandle &handle) const;
 
-		m_modeStack->attributeBegin();
-	}
-	inline void attributeEnd()
-	{
-		m_modeStack->attributeEnd();
+	virtual CLightSource *newLightSource(
+		RtLightHandle handle,
+		bool isArea,
+		const char *name, const CParameterList &params);
 
-		popAttributes();
-		popTransform();
-	}
+	virtual RtArchiveHandle archiveBegin(const char *aName);
+	virtual void archiveEnd();
 
-	inline void transformBegin()
-	{
-		pushTransform();
-		m_modeStack->transformBegin();
-	}
-	inline void transformEnd()
-	{
-		m_modeStack->transformEnd();
-		popTransform();
-	}
+	virtual RtArchiveHandle archiveFileBegin(const char *aName);
+	virtual void archiveFileEnd();
 
-    void solidBegin(RtToken type);
-    void solidEnd();
-	RtToken solid() const;
+	virtual CRiArchiveMacro *archiveInstance(RtArchiveHandle handle);
+	virtual const CRiArchiveMacro *archiveInstance(RtArchiveHandle handle) const;
 
-	RtObjectHandle objectBegin();
-	void objectEnd();
+	virtual void resourceBegin();
+    virtual void resourceEnd();
 
-	CRiObjectMacro *objectInstance(RtObjectHandle handle);
-	const CRiObjectMacro *objectInstance(RtObjectHandle handle) const;
+	virtual void resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params);
 
-	RtArchiveHandle archiveBegin(const char *aName);
-	void archiveEnd();
+	virtual void motionBegin(RtInt N, RtFloat times[]);
+    virtual void motionEnd();
 
-	RtArchiveHandle archiveFileBegin(const char *aName);
-	void archiveFileEnd();
-
-	CRiArchiveMacro *archiveInstance(RtArchiveHandle handle);
-	const CRiArchiveMacro *archiveInstance(RtArchiveHandle handle) const;
-
-	inline void resourceBegin()
-	{
-		m_modeStack->resourceBegin();
-		m_resourceStack.mark();
-	}
-
-    inline void resourceEnd()
-	{
-		m_modeStack->resourceEnd();
-		m_resourceStack.clearToMark();
-	}
-
-	void resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params);
-
-	inline void motionBegin(RtInt N, RtFloat times[])
-	{
-		m_modeStack->motionBegin();
-		m_motionState.open(N, times);
-	}
-
-    inline void motionEnd()
-	{
-		m_modeStack->motionEnd();
-		m_motionState.close();
-	}
-
-	inline bool executeConditionial() const
+	inline virtual bool executeConditionial() const
 	{
 		return m_accumulateConditional && m_executeConditional;
 	}
 
-	void ifBegin(RtString expr);
-	void elseIfBegin(RtString expr);
-	void elseBegin();
-	void ifEnd();
+	virtual void ifBegin(RtString expr);
+	virtual void elseIfBegin(RtString expr);
+	virtual void elseBegin();
+	virtual void ifEnd();
 
-	bool exists(RtString identifier) const;
-	bool getValue(CValue &p, RtString identifier) const;
-	bool eval(RtString expr) const;
+	virtual bool exists(RtString identifier) const;
+	virtual bool getValue(CValue &p, RtString identifier) const;
+	virtual bool eval(RtString expr) const;
 
 	/** @brief Tests if a request @a req is valid in the current mode.
 	 *  @param req Index of the request to test.
@@ -865,8 +790,8 @@ public:
 	inline virtual const CDeclaration *declFind(RtToken name) const { return m_declDict.find(name); }
 	inline virtual const CDeclaration *declFind(RtToken tableNamespace, RtToken table, RtToken var) { return m_declDict.find(tableNamespace, table, var); }
 	
-	inline const CDeclaration *declFindAndUpdate(RtToken name, const CColorDescr &curColorDescr) { return m_declDict.findAndUpdate(name, curColorDescr); }
-	inline const CDeclaration *declFindAndUpdate(
+	inline virtual const CDeclaration *declFindAndUpdate(RtToken name, const CColorDescr &curColorDescr) { return m_declDict.findAndUpdate(name, curColorDescr); }
+	inline virtual const CDeclaration *declFindAndUpdate(
 		const char*tableNamespace,
 		const char *table,
 		const char *var,
@@ -875,7 +800,7 @@ public:
 		return m_declDict.findAndUpdate(tableNamespace, table, var, curColorDescr);
 	}
 	
-	inline void declAdd(CDeclaration *decl)
+	inline virtual void declAdd(CDeclaration *decl)
 	{
 		return m_declDict.add(decl);
 	}
@@ -884,23 +809,23 @@ public:
 	inline virtual CDeclarationDictionary::const_iterator declEnd() const { return m_declDict.end(); }
 	inline virtual CDeclarationDictionary::size_type declSize() const { return m_declDict.size(); }
 
-	inline CDeclarationDictionary &dict()
+	inline virtual CDeclarationDictionary &dict()
 	{
 		return m_declDict;
 	}
 	//@}
 
-	inline COptionsBase &controls()
+	inline virtual COptionsBase &controls()
 	{
 		return m_controls;
 	}
 	
-	inline const COptionsBase &controls() const
+	inline virtual const COptionsBase &controls() const
 	{
 		return m_controls;
 	}
 
-	inline COptions &options()
+	inline virtual COptions &options()
 	{
 		assert(m_optionsStack.back() != 0);
 		return *(m_optionsStack.back());
@@ -912,7 +837,7 @@ public:
 		return *(m_optionsStack.back());
 	}
 
-	inline CAttributes &attributes()
+	inline virtual CAttributes &attributes()
 	{
 		assert(m_attributesStack.back() != 0);
 		return *(m_attributesStack.back());
@@ -924,7 +849,7 @@ public:
 		return *(m_attributesStack.back());
 	}
 
-	inline CTransformation &curTransform()
+	inline virtual CTransformation &curTransform()
 	{
 		assert(!m_transformStack.empty());
 		return m_transformStack.back();
@@ -948,10 +873,6 @@ public:
 	}
 
 	virtual const CTransformation *findTransform(RtToken space) const;
-
-	inline CLights &lights() { return m_lights; }
-
-	inline virtual const CLights &lights() const { return m_lights; }
 
 	// inline virtual bool hasMacroFactory() const {return m_macroFactory != 0;}
 
@@ -1014,39 +935,39 @@ public:
 	// virtual CRManInterfaceFactory &macroFactory();
 	// virtual const CRManInterfaceFactory &macroFactory() const;
 
-	inline CRiMacro *curMacro()
+	inline virtual CRiMacro *curMacro()
 	{
 		return m_curMacro;
 	}
 
-	inline const CRiMacro *curMacro() const
+	inline virtual const CRiMacro *curMacro() const
 	{
 		return m_curMacro;
 	}
 
-	inline void curReplay(CRiMacro *m)
+	inline virtual void curReplay(CRiMacro *m)
 	{
 		m_curReplay = m;
 	}
 
-	inline CRiMacro *curReplay()
+	inline virtual CRiMacro *curReplay()
 	{
 		return m_curReplay;
 	}
 
-	inline const CRiMacro *curReplay() const
+	inline virtual const CRiMacro *curReplay() const
 	{
 		return m_curReplay;
 	}
 	
-	RtToken storedArchiveName(RtString archiveName) const;
+	virtual RtToken storedArchiveName(RtString archiveName) const;
 
-	void registerResourceFactory(IResourceFactory *f);
+	virtual void registerResourceFactory(IResourceFactory *f);
 
-	CMotionState &motionState() { return m_motionState; }
-	const CMotionState &motionState() const { return m_motionState; }
+	virtual CMotionState &motionState() { return m_motionState; }
+	virtual const CMotionState &motionState() const { return m_motionState; }
 
-	const IFilterFunc *filterFunc(RtToken name) const;
+	virtual const IFilterFunc *filterFunc(RtToken name) const;
 
 	virtual bool getBasis(RtToken basisName, RtBasis basis) const;
 	virtual RtToken basisName(const RtBasis basis) const;

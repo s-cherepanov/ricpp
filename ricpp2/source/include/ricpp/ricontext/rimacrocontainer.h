@@ -73,7 +73,7 @@ public:
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN
 	) :
 		m_name(noNullStr(aName)), m_macroType(macroType),
-		m_isClosed(false), m_postpone(false)
+		m_isClosed(false), m_postpone(true)
 	{
 	}
 

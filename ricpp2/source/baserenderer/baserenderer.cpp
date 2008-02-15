@@ -43,7 +43,6 @@ CBaseRenderer::CBaseRenderer() :
 	m_modeStack = 0;
 	m_optionsFactory = 0;
 	m_attributesFactory = 0;
-	m_lightSourceFactory = 0;
 	m_filterFuncFactory = 0;
 	// m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
@@ -66,11 +65,6 @@ CBaseRenderer::~CBaseRenderer()
 		deleteAttributesFactory(m_attributesFactory);
 	}
 	m_attributesFactory = 0;
-
-	if ( m_lightSourceFactory ) {
-		deleteLightSourceFactory(m_lightSourceFactory);
-	}
-	m_lightSourceFactory = 0;
 
 	if ( m_filterFuncFactory ) {
 		deleteFilterFuncFactory(m_filterFuncFactory);
@@ -175,20 +169,6 @@ void CBaseRenderer::initRenderState()
 		}
 	}
 
-	if ( !m_lightSourceFactory ) {
-		try {
-			m_lightSourceFactory = getNewLightSourceFactory();
-		} catch (ExceptRiCPPError &err) {
-			ricppErrHandler().handleError(err);
-			return;
-		}
-
-		if ( !m_lightSourceFactory ) {
-			ricppErrHandler().handleError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create an light source factory");
-			return;
-		}
-	}
-
 	if ( !m_filterFuncFactory ) {
 		try {
 			m_filterFuncFactory = getNewFilterFuncFactory();
@@ -220,7 +200,7 @@ void CBaseRenderer::initRenderState()
 	*/
 
 	try {
-		m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_lightSourceFactory, *m_filterFuncFactory); // , *m_macroFactory);
+		m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_filterFuncFactory); // , *m_macroFactory);
 	} catch (ExceptRiCPPError &err) {
 		ricppErrHandler().handleError(err);
 		return;
@@ -357,8 +337,8 @@ RtToken CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool i
 				renderState()->printLineNo(__LINE__),
 				renderState()->printName(__FILE__),
 				"Declaration of \"%s\": \"%s\"",
-				name,
-				declaration);
+				noNullStr(name),
+				noNullStr(declaration));
 
 		renderState()->declAdd(d);
 		// std::cout << d->token() << " "  << noNullStr(CTypeInfo::tableNamespace(d->tableNamespace())) << " " << noNullStr(d->table()) << " " << noNullStr(d->var()) << std::endl;
@@ -526,14 +506,6 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 
 RtVoid CBaseRenderer::preEnd(void)
 {
-	// Close an area light source if exists
-	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
-	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
-	{
-		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
-		renderState()->endAreaLightSource();
-	}
-	
 	renderState()->contextEnd();
 }
 
@@ -606,13 +578,6 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 
 RtVoid CBaseRenderer::preFrameEnd(void)
 {
-	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
-	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
-	{
-		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
-		renderState()->endAreaLightSource();
-	}
-
 	renderState()->frameEnd();
 }
 
@@ -668,13 +633,6 @@ RtVoid CBaseRenderer::worldBegin(void)
 
 RtVoid CBaseRenderer::preWorldEnd(void)
 {
-	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
-	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
-	{
-		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
-		renderState()->endAreaLightSource();
-	}
-
 	renderState()->worldEnd();
 }
 
@@ -731,13 +689,6 @@ RtVoid CBaseRenderer::attributeBegin(void)
 
 RtVoid CBaseRenderer::preAttributeEnd(void)
 {
-	if ( renderState()->areaLightSourceHandle() != illLightHandle &&
-	     renderState()->areaLightSourceDepth() == renderState()->modesSize() )
-	{
-		doAreaLightSource(renderState()->areaLightSourceHandle(), RI_NULL, CParameterList());
-		renderState()->endAreaLightSource();
-	}
-
 	renderState()->attributeEnd();
 }
 
@@ -2147,15 +2098,34 @@ RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointe
 }
 
 
-RtLightHandle CBaseRenderer::preLightSource(RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preLightSource(RtLightHandle h, RtString name, const CParameterList &params)
 {
-	RtLightHandle h = renderState()->lights().lightSource(
-		true, !renderState()->inWorldBlock(), false, name, params
-	);
-	return h;
+	CHandle *handle = renderState()->lightSourceHandle(h);
+	if ( !handle ) {
+		throw ExceptRiCPPError(
+			RIE_BADHANDLE,
+			RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Handle not created for LightSource \"%s\"",
+			noNullStr(name));
+	}
 }
 
 	
+RtVoid CBaseRenderer::doLightSource(RtLightHandle h, RtString name, const CParameterList &params)
+{
+	if ( !renderState()->newLightSource(h, false, name, params) ) {
+		throw ExceptRiCPPError(
+			RIE_NOMEM,
+			RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"LightSource of \"%s\"",
+			noNullStr(name));
+	}
+}
+
 RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	RtLightHandle h = illLightHandle;
@@ -2167,9 +2137,10 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
 
-		CRiLightSource r(*renderState(), name, n, tokens, params);
+		h = renderState()->newLightHandle(name, renderState()->curParamList());
+
+		CRiLightSource r(renderState()->lineNo(), h, name, renderState()->curParamList());
 		processRequest(r);
-		h = r.handleIdx();
 		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -2190,14 +2161,43 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 }
 
 
-RtLightHandle CBaseRenderer::preAreaLightSource(RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params)
 {
-	RtLightHandle h = renderState()->lights().lightSource(
-		true, !renderState()->inWorldBlock(), true, name, params
-	);
-	return h;
+	if ( name != RI_NULL ) {
+		// Test the handle
+		CHandle *handle = renderState()->lightSourceHandle(h);
+		if ( !handle ) {
+			throw ExceptRiCPPError(
+				RIE_BADHANDLE,
+				RIE_SEVERE,
+				renderState()->printLineNo(__LINE__),
+				renderState()->printName(__FILE__),
+				"Handle not created for AreaLightSource \"%s\"",
+				noNullStr(name));
+		}
+	} else {
+		// AreaLightSource ended
+		renderState()->endAreaLightSource();
+	}
 }
 
+RtVoid CBaseRenderer::doAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params)
+{
+	// name == RI_NULL : Area light source was closed
+	if ( name != RI_NULL ) {
+		// Create an area light source
+		if ( !renderState()->newLightSource(h, true, name, params) ) {
+			throw ExceptRiCPPError(
+				RIE_NOMEM,
+				RIE_SEVERE,
+				renderState()->printLineNo(__LINE__),
+				renderState()->printName(__FILE__),
+				"AreaLightSource of \"%s\"",
+				noNullStr(name));
+		}
+		renderState()->startAreaLightSource(h);
+	}
+}
 	
 RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
@@ -2210,9 +2210,10 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_AREA_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
 
-		CRiAreaLightSource r(*renderState(), name, n, tokens, params);
+		h = renderState()->newLightHandle(name, renderState()->curParamList());
+
+		CRiAreaLightSource r(renderState()->lineNo(), h, name, renderState()->curParamList());
 		processRequest(r);
-		h = r.handleIdx();
 		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);

@@ -1053,14 +1053,16 @@ CRenderState::CRenderState(
 	CModeStack &aModeStack,
 	COptionsFactory &optionsFactory,
 	CAttributesFactory &attributesFactory,
-	CLightSourceFactory &lightSourceFactory,
 	CFilterFuncFactory &filterFuncFactory
 	// , CRManInterfaceFactory &aMacroFactory
 	) :
 	m_resourceFactories(false),
-	m_lights(lightSourceFactory),
+	m_resourceStack("RES_"),
 	m_objectMacros("OBJ_"),
-	m_archiveMacros("ARC_")
+	m_archiveMacros("ARC_"),
+	m_cachedArchive("CACHE_"),
+	m_lightSourceHandles("LIH_"),
+	m_lightSources("LIH_")
 // throw(ExceptRiCPPError)
 {
 	m_modeStack = &aModeStack;
@@ -1094,6 +1096,153 @@ CRenderState::~CRenderState()
 	m_transformStack.clear();
 }
 
+void CRenderState::contextBegin()
+{
+	pushOptions();
+	pushAttributes();
+	pushTransform();
+	m_transformStack.back().spaceType(RI_CAMERA);
+
+	m_objectMacros.mark();
+	m_archiveMacros.mark();
+	m_lightSources.mark();
+	m_lightSourceHandles.mark();
+
+	m_modeStack->contextBegin();
+}
+
+void CRenderState::contextEnd()
+{
+	// AreaLightSource declared within this block
+	if ( areaLightSourceHandle() != illLightHandle &&
+	     areaLightSourceDepth() == modesSize() )
+	{
+		// close the light source
+		endAreaLightSource();
+	}
+
+	m_modeStack->contextEnd();
+
+	m_lightSourceHandles.clearToMark();
+	m_lightSources.clearToMark();
+	m_archiveMacros.clearToMark();
+	m_objectMacros.clearToMark();
+
+	popTransform();
+	popAttributes();
+	popOptions();
+}
+
+void CRenderState::frameBegin(RtInt number)
+{
+	pushOptions();
+	pushAttributes();
+	pushTransform();
+
+	m_objectMacros.mark();
+	m_archiveMacros.mark();
+	m_lightSources.mark();
+	m_lightSourceHandles.mark();
+
+	m_modeStack->frameBegin();
+	frameNumber(number);
+}
+
+void CRenderState::frameEnd()
+{
+	// AreaLightSource declared within this block
+	if ( areaLightSourceHandle() != illLightHandle &&
+	     areaLightSourceDepth() == modesSize() )
+	{
+		// close the light source
+		endAreaLightSource();
+	}
+
+	frameNumber(0);
+	m_modeStack->frameEnd();
+
+	m_lightSourceHandles.clearToMark();
+	m_lightSources.clearToMark();
+	m_archiveMacros.clearToMark();
+	m_objectMacros.clearToMark();
+
+	popTransform();
+	popAttributes();
+	popOptions();
+}
+
+void CRenderState::worldBegin()
+{
+	pushTransform();
+	m_transformStack.back().identity();
+	m_transformStack.back().spaceType(RI_WORLD);
+	pushAttributes();
+
+	m_objectMacros.mark();
+	m_archiveMacros.mark();
+	m_lightSources.mark();
+	m_lightSourceHandles.mark();
+
+	m_modeStack->worldBegin();
+}
+
+void CRenderState::worldEnd()
+{
+	// AreaLightSource declared within this block
+	if ( areaLightSourceHandle() != illLightHandle &&
+	     areaLightSourceDepth() == modesSize() )
+	{
+		// close the light source
+		endAreaLightSource();
+	}
+
+	m_modeStack->worldEnd();
+
+	m_lightSourceHandles.clearToMark();
+	m_lightSources.clearToMark();
+	m_archiveMacros.clearToMark();
+	m_objectMacros.clearToMark();
+
+	popAttributes();
+	popTransform();
+}
+
+void CRenderState::attributeBegin()
+{
+	pushTransform();
+	pushAttributes();
+
+	m_modeStack->attributeBegin();
+}
+
+void CRenderState::attributeEnd()
+{
+	// AreaLightSource declared within this block
+	if ( areaLightSourceHandle() != illLightHandle &&
+	     areaLightSourceDepth() == modesSize() )
+	{
+		// close the light source
+		endAreaLightSource();
+	}
+
+	m_modeStack->attributeEnd();
+
+	popAttributes();
+	popTransform();
+}
+
+void CRenderState::transformBegin()
+{
+	pushTransform();
+	m_modeStack->transformBegin();
+}
+
+void CRenderState::transformEnd()
+{
+	m_modeStack->transformEnd();
+	popTransform();
+}
+
 void CRenderState::solidBegin(RtToken type)
 {
 	m_modeStack->solidBegin();
@@ -1123,6 +1272,69 @@ const CRiObjectMacro *CRenderState::objectInstance(RtObjectHandle handle) const
 {
 	return m_objectMacros.find(handle);
 }
+
+RtLightHandle CRenderState::newLightHandle(RtToken lightSourceName, CParameterList &params)
+{
+	const char handlename = 0; // Can be a parameter
+	unsigned long num = 0;
+	RtLightHandle l =  m_lightSourceHandles.newHandle(handlename, num);
+	if ( l != illLightHandle ) {
+		CHandle *h = new CHandle(l, num);
+		if ( !h ) {
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in newLightHandle(): %s", noNullStr(lightSourceName));
+		}
+		l = m_lightSourceHandles.insertObject(h->handle(), h);
+	} else {
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in newLightHandle(): %s", noNullStr(lightSourceName));
+	}
+	return l;
+}
+
+CHandle *CRenderState::lightSourceHandle(RtLightHandle handle)
+{
+	handle = m_lightSourceHandles.identify(handle);
+	if ( handle != illLightHandle )
+		return m_lightSourceHandles.find(handle);
+	return 0;
+}
+
+const CHandle *CRenderState::lightSourceHandle(RtLightHandle handle) const
+{
+	handle = m_lightSourceHandles.identify(handle);
+	if ( handle != illLightHandle )
+		return m_lightSourceHandles.find(handle);
+	return 0;
+}
+
+CLightSource *CRenderState::lightSourceInstance(CHandle &handle)
+{
+	RtLightHandle l = m_lightSources.identify(handle.handle());
+	if ( l != illLightHandle )
+		return m_lightSources.find(l);
+	return 0;
+}
+
+const CLightSource *CRenderState::lightSourceInstance(const CHandle &handle) const
+{
+	RtLightHandle l = m_lightSources.identify(handle.handle());
+	if ( l != illLightHandle )
+		return m_lightSources.find(l);
+	return 0;
+}
+
+
+CLightSource *CRenderState::newLightSource(
+	RtLightHandle handle,
+    bool isArea,
+    const char *name, const CParameterList &params)
+{
+	CLightSource *l = new CLightSource(handle, true, !inWorldBlock(), isArea, name, params);
+	if ( l ) {
+		m_lightSources.insertObject(l);
+	}
+	return l;
+}
+
 
 RtObjectHandle CRenderState::objectBegin()
 {
@@ -1180,12 +1392,16 @@ void CRenderState::objectEnd()
 
 CRiArchiveMacro *CRenderState::archiveInstance(RtArchiveHandle handle)
 {
-	return m_archiveMacros.find(handle);
+	CRiArchiveMacro *m = m_archiveMacros.find(handle);
+	if ( m ) return m;
+	return m_cachedArchive.find(handle);
 }
 
 const CRiArchiveMacro *CRenderState::archiveInstance(RtArchiveHandle handle) const
 {
-	return m_archiveMacros.find(handle);
+	const CRiArchiveMacro *m = m_archiveMacros.find(handle);
+	if ( m ) return m;
+	return m_cachedArchive.find(handle);
 }
 
 RtArchiveHandle CRenderState::archiveBegin(const char *aName)
@@ -1249,10 +1465,10 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName)
 		CRiArchiveMacro *m = new CRiArchiveMacro(aName, CRiMacro::MACROTYPE_FILE);
 		m_curMacro = m;
 		
-		// Does not influence nesting, because called within a IRi::sreadArchiveV()
+		// Does not influence nesting, because called within a IRi::readArchiveV()
 
 		if ( m != 0 ) {
-			m_archiveMacros.insertObject(m);
+			m_cachedArchive.insertObject(m);
 			return m->handle();
 		} else {
 			return illArchiveHandle;
@@ -1455,6 +1671,18 @@ void CRenderState::ifEnd()
 	popConditional();
 }
 
+void CRenderState::resourceBegin()
+{
+	m_modeStack->resourceBegin();
+	m_resourceStack.mark();
+}
+
+void CRenderState::resourceEnd()
+{
+	m_modeStack->resourceEnd();
+	m_resourceStack.clearToMark();
+}
+
 void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, const CParameterList &params)
 {
 	RtToken t = tokFind(type);
@@ -1485,6 +1713,19 @@ void CRenderState::resource(IRiContext &ri, RtString handle, RtString type, cons
 	}
 	r->operate(ri, params);
 }
+
+void CRenderState::motionBegin(RtInt N, RtFloat times[])
+{
+	m_modeStack->motionBegin();
+	m_motionState.open(N, times);
+}
+
+void CRenderState::motionEnd()
+{
+	m_modeStack->motionEnd();
+	m_motionState.close();
+}
+
 
 void CRenderState::pushOptions()
 {
@@ -1690,7 +1931,9 @@ const CRManInterfaceFactory &CRenderState::macroFactory() const
 
 RtToken CRenderState::storedArchiveName(RtString archiveName) const
 {
-	return m_archiveMacros.identify(archiveName);
+	RtToken t = m_archiveMacros.identify(archiveName);
+	if ( t ) return t;
+	return m_cachedArchive.identify(archiveName);
 }
 
 void CRenderState::registerResourceFactory(IResourceFactory *f)

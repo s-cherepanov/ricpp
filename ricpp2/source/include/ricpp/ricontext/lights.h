@@ -37,6 +37,10 @@
 #include "ricpp/ricontext/parameter.h"
 #endif // _RICPP_RICONTEXT_PARAMETER_H
 
+#ifndef _RICPP_RICPP_RICPPCONST_H
+#include "ricpp/ricpp/ricppconst.h"
+#endif // _RICPP_RICPP_RICPPCONST_H
+
 #include <deque>
 
 namespace RiCPP {
@@ -50,38 +54,19 @@ class CLightSource {
 	bool m_isGlobalLight;            ///< true, if the light source is created outside a world block
 	bool m_isAreaLight;              ///< true, if the light source is created via TRi::AreaLightSource()
 
+	RtLightHandle m_handle;          ///< Handle as identifier
 	CNamedParameterList m_lightParameters; ///< Parameter list of the light source, contains the name of the light source
-	RtLightHandle m_handle;
 	
 public:
 	//! Default constructor initializes with empty values
-	inline CLightSource(const char *name=0)
+	inline CLightSource()
 		: m_isIlluminated(false),
 		  m_isGlobalLight(false), m_isAreaLight(false),
-		  m_lightParameters(name), m_handle(0)
+		  m_handle(illLightHandle), m_lightParameters(0)
 	{
 	}
 
-	//! Copy constructor (deep copy)
-	/*! @param light The light to copy from
-	 */
-	CLightSource(const CLightSource &light);
-
-	//! Destructor frees all members
-	~CLightSource();
-
-	//! Returns a copy of 'this'
-	/*! @return Deep copy of the instance the member function is called for.
-	 *  @exception TSystemException If there is not enough memory
-	 */
-	CLightSource &duplicate() const;
-
-	//! Assignment (deep copy)
-	/*! @param light The light to copy from
-	 */
-	CLightSource &operator=(const CLightSource &light);
-
-	//! Fills the parameters of a TRi::LightSource() or TRi::AreaLightSource()
+	//! Constructor, fills the parameters
 	/*! @param dict Current declaration dictionary.
 	 *  @param colorDescr Current color descriptor.
 	 *  @param isIlluminated true, if light source is on (illuminated), @see m_isIlluminated
@@ -92,16 +77,36 @@ public:
 	 *  @param tokens The tokens of the token-value pairs
 	 *  @param params The values of the token-value pairs
      */
-	void lightSource(
+	CLightSource(
 		CDeclarationDictionary &dict, const CColorDescr &colorDescr,
+		RtLightHandle aHandle,
 		bool isIlluminated, bool isGlobal, bool isArea,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
-	void lightSource(
+	CLightSource(
+		RtLightHandle aHandle,
 		bool isIlluminated, bool isGlobal, bool isArea,
 		const char *name,
 		const CParameterList &params);
+
+	//! Copy constructor (deep copy)
+	/*! @param light The light to copy from
+	 */
+	CLightSource(const CLightSource &light);
+
+	//! Destructor frees all members
+	virtual ~CLightSource();
+
+	//! Returns a copy of 'this'
+	/*! @return Clone of *this.
+	 */
+	CLightSource *CLightSource::duplicate() const;
+
+	//! Assignment (deep copy)
+	/*! @param light The light to copy from
+	 */
+	CLightSource &operator=(const CLightSource &light);
 
 	//! Access the parameter list
 	/* @return A reference to the parameter list of the light source
@@ -139,118 +144,22 @@ public:
 	 */
 	inline void areaLight(bool isArea) { m_isAreaLight = isArea; }
 
-	RtLightHandle handle() const
+	inline const char *name() const
 	{
 		return m_handle;
 	}
 
-	void handle(RtLightHandle h)
+	inline RtLightHandle handle() const
+	{
+		return m_handle;
+	}
+
+	inline void handle(RtLightHandle h)
 	{
 		m_handle = h;
 	}
 
 }; // CLightSource
-
-
-/** @brief Factory allows to create customized light sources.
- */
-class CLightSourceFactory {
-public:
-	inline CLightSourceFactory() {}
-	inline virtual ~CLightSourceFactory() {}
-
-	virtual CLightSource *newLightSource(const char *name=0) const;
-
-	virtual CLightSource *newLightSource(
-		CDeclarationDictionary &dict, const CColorDescr &colorDescr,
-		bool isIlluminated, bool isGlobal, bool isArea,
-		const char *name,
-		RtInt n, RtToken tokens[], RtPointer params[]) const;
-
-	virtual CLightSource *newLightSource(
-		bool isIlluminated, bool isGlobal, bool isArea,
-		const char *name,
-		const CParameterList &params) const;
-
-	inline virtual void deleteLightSource(CLightSource *l)
-	{
-		delete l;
-	}
-
-	virtual CLightSource *newObject() const
-	{
-		return newLightSource(0);
-	}
-}; // CLightSourceFactory
-
-
-/** @brief Container for the light sources of a rendering context
- */
-class CLights {
-public:
-	typedef std::deque<CLightSource *> TypeLightContainer;
-	typedef std::deque<RtLightHandle> TypeLightHandleContainer;
-
-private:
-	/** @brief Indirection for light handles
-	 *
-	 * m_handles contains indizees for m_lights.
-	 * A RtLightHandle used as index for m_handles is negative to
-	 * distinguish it from RtLightHandle for m_lights. index = -(RtLightHandle+1) for
-	 * negative RtLightHandle.
-	 * The indirection is needed because of archives (and objects). Inbetween archives
-	 * no light instances exist, but may be referenced to get illuminated.
-	 * Mind also, there can be many instances of one archive.
-	 */
-	TypeLightHandleContainer m_handles;
-	TypeLightContainer m_lights; ///< Ptr to light sources (CLightSource), Index is a positive RtLightHandle (-1)
-	CLightSourceFactory *m_lightsFactory; ///< Create new lights
-
-	std::vector<unsigned long> m_lightMarks;
-	/** @brief Transforms a handle to an index for m_lights, throws if out of range.
-	 *
-	 * @param handle @a handle can be negative (indirection) or postive (Light handle)
-	 * @return Index for m_lights
-	 * @exception ExceptRiCPPError Out of range
-	 */
-	TypeLightContainer::size_type handleToLightIndex(RtLightHandle handle) const;
-
-public:
-	inline CLights(CLightSourceFactory &lightsFactory)
-	{
-		m_lightsFactory = &lightsFactory;
-	}
-	
-	virtual ~CLights();
-
-	RtLightHandle newLightHandleIdx();
-	void setHandle(RtLightHandle idx, RtLightHandle handle);
-	RtLightHandle getHandle(RtLightHandle idx);
-
-	RtLightHandle lightSource(
-		bool isIlluminated, bool isGlobal, bool isArea,
-		const char *name,
-		const CParameterList &params);
-
-
-	RtLightHandle lightSource(
-		CDeclarationDictionary &dict, const CColorDescr &colorDescr,
-		bool isIlluminated, bool isGlobal, bool isArea,
-		const char *name,
-		RtInt n, RtToken tokens[], RtPointer params[]);
-
-	virtual const CLightSource *getLight(RtLightHandle handle) const;
-	virtual CLightSource *getLight(RtLightHandle handle);
-
-	void mark();
-	void clearToMark();
-
-	virtual inline TypeLightContainer::iterator begin() { return m_lights.begin(); }
-	virtual inline TypeLightContainer::iterator end() { return m_lights.end(); }
-	virtual inline TypeLightContainer::const_iterator begin() const { return m_lights.begin(); }
-	virtual inline TypeLightContainer::const_iterator end() const { return m_lights.end(); }
-	virtual inline TypeLightContainer::size_type size() const { return m_lights.size(); }
-}; // CLights
 
 }
 

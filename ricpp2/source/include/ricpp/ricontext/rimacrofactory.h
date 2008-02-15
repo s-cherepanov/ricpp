@@ -374,35 +374,39 @@ public:
 	}
 
 	inline virtual CRiLightSource *newRiLightSource(
-		CRenderState &state, const char *name,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtLightHandle handle, const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiLightSource(state, name, n, tokens, params);
+		return new CRiLightSource(aLineNo, decl, curColorDescr, handle, name, n, tokens, params);
 	}
 
 	inline virtual CRiLightSource *newRiLightSource(
-		CRenderState &state, const char *name,
+		long aLineNo,
+		RtLightHandle handle, const char *name,
 		const CParameterList &parameters)
 	{
-		return new CRiLightSource(state, name, parameters);
+		return new CRiLightSource(aLineNo, handle, name, parameters);
 	}
 
 	inline virtual CRiAreaLightSource *newRiAreaLightSource(
-		CRenderState &state, const char *name,
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtLightHandle handle, const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiAreaLightSource(state, name, n, tokens, params);
+		return new CRiAreaLightSource(aLineNo, decl, curColorDescr, handle, name, n, tokens, params);
 	}
 
 	inline virtual CRiAreaLightSource *newRiAreaLightSource(
-		CRenderState &state, const char *name,
+		long aLineNo,
+		RtLightHandle handle, const char *name,
 		const CParameterList &parameters)
 	{
-		return new CRiAreaLightSource(state, name, parameters);
+		return new CRiAreaLightSource(aLineNo, handle, name, parameters);
 	}
 
-	inline virtual CRiIlluminate *newRiIlluminate(long aLineNo, RtLightHandle handleIdx, RtBoolean onoff) {
-		return new CRiIlluminate(aLineNo, handleIdx, onoff);
+	inline virtual CRiIlluminate *newRiIlluminate(long aLineNo, RtLightHandle handle, RtBoolean onoff) {
+		return new CRiIlluminate(aLineNo, handle, onoff);
 	}
 
 	inline virtual CRiAttribute *newRiAttribute(

@@ -51,7 +51,7 @@ RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer data, RtFloat deta
 	RtString filename = ((RtString *)data)[0];
 	if ( !filename || !filename[0] )
 		return;
-	ri.readArchive(filename, 0, RI_NULL);
+	ri.readArchiveV(filename, 0, 0, 0, 0);
 }
 
 CProcDelayedReadArchive CProcDelayedReadArchive::func;

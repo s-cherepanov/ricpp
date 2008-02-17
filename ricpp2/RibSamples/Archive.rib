@@ -11,8 +11,20 @@ Declare "MyArray" "integer[3]"
 Declare "MyMatrix" "matrix"
 Declare "Something:really:stupid:now" "constant string"
 
+Declare "Option:MyOption:OptionName" "string"
+Declare "Option:MyOption:TableName" "string"
+
+Option "MyOption" "TableName" "MyOption" "OptionName" "MyVariable"
 Option "MyOption" "MyVariable" "value" "Something:really:stupid:now" "AnotherValue"
 Option "MyOtherOption" "MyVariable" [ "Another value" ] "MyArray" 1 2 3 "MyMatrix" [ 1 2 3.14 4.13 5.12 6.11 7 8 9 10 11 12 13 14 15 16 ]
+
+IfBegin "'${Option:$TableName:$OptionName}' =~ 'value'"
+	# Recursive
+IfEnd
+
+IfBegin "'${Option:${TableName}:$OptionName}' =~ 'value'"
+	# Recursive 2
+IfEnd
 
 IfBegin "'$Something:really:stupid:now' =~ 'AnotherValue'"
 	# Yep

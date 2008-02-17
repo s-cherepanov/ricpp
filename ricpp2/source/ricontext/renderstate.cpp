@@ -1661,11 +1661,18 @@ bool CRenderState::varSubst(std::string &aStr, char varId) const
 				varname = "";
 				p.clear();
 				if ( (*i) == '{' ) {
-					for ( ; i != aStr.end() && (*i) != '}'; ++i ) {
+					++i;
+					int depth = 0;
+					for ( ; i != aStr.end() && !((*i) == '}' && !depth); ++i ) {
+						if ((*i) == '{')
+							++depth;
+						if ((*i) == '}')
+							--depth;
 						varname += (*i);
 					}
 					if ( i != aStr.end() )
 						++i;
+					varSubst(varname, varId); // recursive e.g. ${$var1$var2};
 					if ( getValue(p, varname.c_str() ) ) {
 						found = true;
 						p.get(resval);
@@ -1677,7 +1684,16 @@ bool CRenderState::varSubst(std::string &aStr, char varId) const
 					}
 				} else {
 					for ( ; i != aStr.end() && (isalnum(*i) || (*i) == ':'); ++i ) {
-						varname += (*i);
+						char c = (*i);
+						if ( c == ':' ) {
+							++i;
+							if ( (*i) == varId ) {
+								--i;
+								break;
+							}
+							--i;
+						}
+						varname += c;
 					}
 					// No i++
 					if ( getValue(p, varname.c_str() ) ) {

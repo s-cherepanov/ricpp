@@ -1546,14 +1546,25 @@ bool CRenderState::devideName(RtString identifier, RtToken *aQualifier, RtToken 
 		return false;
 
 	CStringList sl;
+	std::string result;
 
 	sl.explode(':', identifier, false, false, false);
 
-	if ( sl.empty() || sl.size() > 3 )
+	if ( sl.empty() )
 		return false;
+
+	if ( sl.size() > 3 ) {
+		*varname = tokFind(identifier);
+		return *varname != RI_NULL;
+	}
 
 	*varname = sl.back().c_str();
 	*varname = tokFind(*varname);
+	if ( *varname == RI_NULL ) {
+		*varname = tokFind(identifier);
+		return *varname != RI_NULL;
+	}
+
 	sl.pop_back();
 
 	if ( !sl.empty() ) {
@@ -1598,7 +1609,7 @@ bool CRenderState::getControl(CValue &p, RtToken tablename, RtToken varname) con
 bool CRenderState::getValue(CValue &p, RtString identifier) const
 {
 	RtToken aQualifier, tablename, varname;
-	if ( !devideName(identifier, &aQualifier, &tablename, &varname) )
+	if ( emptyStr(identifier) || !devideName(identifier, &aQualifier, &tablename, &varname) )
 		return false;
 
 	if ( !aQualifier && !tablename )
@@ -1607,7 +1618,9 @@ bool CRenderState::getValue(CValue &p, RtString identifier) const
 			p.set(frameNumber());
 			return true;
 		}
-	} else if ( !aQualifier ) {
+	}
+	
+	if ( !aQualifier ) {
 		if ( getAttribute(p, tablename, varname) )
 			return true;
 		if ( getOption(p, tablename, varname) )
@@ -1619,6 +1632,84 @@ bool CRenderState::getValue(CValue &p, RtString identifier) const
 			return getOption(p, tablename, varname);
 	}
 
+	return false;
+}
+
+bool CRenderState::varSubst(std::string &aStr, char varId) const
+{
+	/** @todo Rib variables (RiSPEC draft) are written like $var $table:var ${table:var} (however,
+	 * in RiSPEC draft variables in if expressions are given differently as $(table:var) -
+	 * that's maybe on purpose see $Frame below).
+	 * Expansion only if Option "rib" "string varsubst" is set to a character (e.g. "$"). Will need some changes
+	 * in future, also some in CStringList. Maybe - also move the expansion of the variable
+	 * from parsing to the backend, to allow the C++ binding to use variables - that will be more difficult
+	 * to implement of course. Problem: in an if expression in an Archive $Frame occurs. That is substituted
+	 * with the current frame number - different to the number of the time of instanciation (leads also to errors in
+	 * cached file archives). However, e.g. $Frame and ${Frame} is expanded while parsing, $(Frame) while instanciating,
+	 * that would solve the problems.
+	 * @see getValue() CStringList
+	 */
+	bool found = false;
+	std::string result, resval;
+	std::string varname;
+	CValue p;
+	std::string::const_iterator i = aStr.begin();
+	while ( i != aStr.end() ) {
+		if ( (*i) == varId ) {
+			++i;
+			if ( i != aStr.end() ) {
+				varname = "";
+				p.clear();
+				if ( (*i) == '{' ) {
+					for ( ; i != aStr.end() && (*i) != '}'; ++i ) {
+						varname += (*i);
+					}
+					if ( i != aStr.end() )
+						++i;
+					if ( getValue(p, varname.c_str() ) ) {
+						found = true;
+						p.get(resval);
+						result += resval;
+					} else {
+						result += "${";
+						result += varname;
+						result += "}";
+					}
+				} else {
+					for ( ; i != aStr.end() && (isalnum(*i) || (*i) == ':'); ++i ) {
+						varname += (*i);
+					}
+					// No i++
+					if ( getValue(p, varname.c_str() ) ) {
+						found = true;
+						p.get(resval);
+						result += resval;
+					} else {
+						result += "$";
+						result += varname;
+					}
+				}
+			}
+		} else {
+			result += (*i);
+			++i;
+		}
+	}
+	if ( found )
+		aStr = result;
+	return found;
+}
+
+bool CRenderState::varSubst(std::string &aStr) const
+{
+	/** @todo call varSubst(std::string aStr, char varId) if option "rib" "string varsubst" is set.
+	 */
+	const CParameter *p;
+	if ( (p=options().get(RI_RIB, RI_VARSUBST)) ) {
+		if ( p->basicType() == BASICTYPE_STRING && !p->strings()[0].empty() ) {
+			return varSubst(aStr, (p->strings()[0])[0]);
+		}
+	}
 	return false;
 }
 

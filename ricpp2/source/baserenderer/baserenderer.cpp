@@ -403,6 +403,7 @@ void CBaseRenderer::defaultDeclarations()
 {
 	// Additional Tokens
 	RI_BASE_RENDERER = renderState()->tokFindCreate("base-renderer");
+	renderState()->RI_RIB = renderState()->tokFindCreate("rib");
 
 	// Default declarations (Tokens are already defined!)
 	processDeclare(RI_FLATNESS, "float", true);
@@ -452,6 +453,7 @@ void CBaseRenderer::defaultDeclarations()
 
 	// Additional render specific declarations
 	RI_CACHE_FILE_ARCHIVES = processDeclare("Control:base-renderer:cache-file-archives", "constant integer", true);
+	renderState()->RI_VARSUBST = processDeclare("varsubst", "string", true);
 }
 
 RtVoid CBaseRenderer::preBegin(RtString name, const CParameterList &params)

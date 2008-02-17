@@ -1437,13 +1437,13 @@ public:
 	inline bool get(std::string &aString) const
 	{
 		if ( m_type == BASICTYPE_INTEGER ) {
-			std::stringstream stst(aString);
-			stst << m_intVal;
+			char buf[32];
+			aString=valToStr(buf, sizeof(buf), m_intVal);
 			return true;
 		}
 		if ( m_type == BASICTYPE_FLOAT ) {
-			std::stringstream stst(aString);
-			stst << m_floatVal;
+			char buf[32];
+			aString=valToStr(buf, sizeof(buf), m_floatVal);
 			return true;
 		}
 		if ( m_type == BASICTYPE_STRING ) {

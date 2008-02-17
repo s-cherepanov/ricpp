@@ -98,7 +98,7 @@ namespace RiCPP {
 		CNamedParameterList *get(RtToken name);
 		const CNamedParameterList *get(RtToken name) const;
 
-		const CParameter *get(RtToken name, RtToken token) const;
+		const CParameter *get(RtToken tablename, RtToken varname) const;
 
 
 		inline const_iterator begin() const

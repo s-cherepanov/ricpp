@@ -223,18 +223,21 @@ bool CParameter::get(unsigned long pos, CValue &result) const
 				return false;
 			}
 			result.set(m_ints[pos]);
+			break;
 		case BASICTYPE_FLOAT:
 			if ( pos >= m_floats.size() ) {
 				result.clear();
 				return false;
 			}
 			result.set(m_floats[pos]);
+			break;
 		case BASICTYPE_STRING:
 			if ( pos >= m_stringPtrs.size() ) {
 				result.clear();
 				return false;
 			}
 			result.set(m_stringPtrs[pos]);
+			break;
 		default:
 			result.clear();
 			return false;
@@ -356,6 +359,9 @@ void CParameterList::add(
 			assert(var);
 			if ( var )
 				m_paramMap[var] = &m_params.back();
+			RtToken token = m_params.back().token(); // The qualified variable name as key
+			if ( token != var )
+				m_paramMap[token] = &m_params.back();
 		} catch(ExceptRiCPPError &) {
 			// Consume Error, ignore illegal parameters
 		}
@@ -377,7 +383,12 @@ void CParameterList::add(const CParameterList &params)
 		if ( i->token() != RI_NULL ) {
 			m_params.push_back(*i);
 			RtToken var = m_params.back().var(); // The unqualified variable name as key
-			m_paramMap[var] = &m_params.back();
+			assert(var);
+			if ( var )
+				m_paramMap[var] = &m_params.back();
+			RtToken token = m_params.back().token(); // The qualified variable name as key
+			if ( token != var )
+				m_paramMap[token] = &m_params.back();
 		}
 	}
 

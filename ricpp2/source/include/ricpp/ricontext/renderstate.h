@@ -553,6 +553,9 @@ class CRenderState {
 
 public:
 
+	RtToken RI_RIB; ///< Token "rib" for options
+	RtToken RI_VARSUBST; ///< Token "varsubst" for option
+
 	/** @brief Initializes the object
 	 *
 	 * The state object is created and
@@ -671,12 +674,8 @@ public:
 
 	virtual bool exists(RtString identifier) const;
 	virtual bool getValue(CValue &p, RtString identifier) const;
-
-	inline virtual bool varSubst(std::string cstr) const
-	{
-		/// @todo Rib variables, like $var $table:var ${table:var}, if Option "rib" "string varsubst" is set to a character (e.g. "$"). @see getValue()
-		return false;
-	}
+	virtual bool varSubst(std::string &aStr, char varId) const;
+	virtual bool varSubst(std::string &aStr) const;
 	virtual bool eval(RtString expr) const;
 
 	/** @brief Tests if a request @a req is valid in the current mode.

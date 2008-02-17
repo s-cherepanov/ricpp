@@ -177,6 +177,8 @@ public:
 
 	RtToken newHandle(RtString name, unsigned long &num)
 	{
+		/** @todo Implement a function that returns real unique (worldwide) string handles.
+		 */
 		RtToken t = newHandle(name);
 		num = m_maxHandleIdx;
 		return t;

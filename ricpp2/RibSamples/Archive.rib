@@ -1,6 +1,8 @@
 ##RenderMan RIB-Structure 1.1
 version 3.03
 
+Option "rib" "string varsubst" "$"
+
 Declare "Option:MyOption:MyVariable" "constant string"
 Declare "Option:MyVariable" "constant string"
 Declare "Attribute:MyVariable" "constant integer"
@@ -11,6 +13,18 @@ Declare "Something:really:stupid:now" "constant string"
 
 Option "MyOption" "MyVariable" "value" "Something:really:stupid:now" "AnotherValue"
 Option "MyOtherOption" "MyVariable" [ "Another value" ] "MyArray" 1 2 3 "MyMatrix" [ 1 2 3.14 4.13 5.12 6.11 7 8 9 10 11 12 13 14 15 16 ]
+
+IfBegin "'$Something:really:stupid:now' =~ 'AnotherValue'"
+	# Yep
+IfEnd
+
+IfBegin "'$MyOtherOption:MyVariable' =~ 'Another value'"
+	# Yep
+IfEnd
+
+IfBegin "'$MyVariable' =~ 'Another value' || '$MyVariable' =~ 'value'"
+	# Clash
+IfEnd
 
 #
 # Rib file to test parsing/writing 
@@ -325,7 +339,8 @@ FrameBegin 1
 		# if then else
 		IfBegin " 1 + 4 * 7.0 == '29' && false"
 			Sphere 0.75 -1 1 360.0
-		ElseIf "'*abc\\'' =~ '\\*abc?' || $Frame==1 "
+		ElseIf "'*abc\\'' =~ '\\*abc?' || $Frame==$(Frame) "
+		    # $Frame and ${Frame} is expanded while parsing $(Frame) while instanciating...
 			Sphere 1 -1 1 360.0
 		Else
 			Sphere 1 -1 1 180.0

@@ -103,13 +103,25 @@ const CNamedParameterList *COptionsBase::get(RtToken name) const
 }
 
 
-const CParameter *COptionsBase::get(RtToken name, RtToken token) const
+const CParameter *COptionsBase::get(RtToken tablename, RtToken varname) const
 {
-	const CNamedParameterList *pl = get(name);
-	if ( !pl )
-		return 0;
+	if ( !emptyStr(tablename) ) {
+		const CNamedParameterList *pl = get(tablename);
+		if ( !pl )
+			return 0;
 
-	return pl->get(token);
+		return pl->get(varname);
+	} else {
+		Map_type::const_iterator i = m_paramMap.begin();
+		for ( ; i != m_paramMap.end(); ++i ) {
+			if ( !emptyStr(i->first) ) {
+				const CParameter *p = get(i->first, varname);
+				if ( p )
+					return p;
+			}
+		}
+		return 0;
+	}
 }
 
 

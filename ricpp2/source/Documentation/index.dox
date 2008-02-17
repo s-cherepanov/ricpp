@@ -142,12 +142,22 @@ And don't forget the newsgroup <a href="http://groups.google.com/group/comp.grap
 <li> <a href="http://posthorizon.com/RenderMan-java/">Java binding for the RenderMan interface</a>
 </ul>
 
-@section The RiCPP homepage
+@section ricpp_homepage_sec The RiCPP homepage
 
 <ul>
 <li> <a href="http://ricpp.sourceforge.net/">RiCPP - A RenderMan(TM) C++ Binding</a></li>
 </ul>
 
+@section credits_sec Credits
+
+Special thanks to
+
+<ul>
+<li>Andrew Chapman for some helpful hints</li>
+<li>Paul C. Gregory et all for Aqsis</li>
+<li>Jean-loup Gailly et all for zlib</li>
+<li>Scott Iverson for some ribs</li>
+</ul>
 
 @section copyright_sec Copyright notice
 

@@ -535,10 +535,11 @@ int main(int argc, char * const argv[])
 	RtInt special = -1;
 
 	ri.control("ribwriter", "skip-headers", &special, RI_NULL);
-	// ri.control("ribwriter", "postpone-inline-archives", &no, RI_NULL);
-	// ri.control("ribwriter", "postpone-objects", &no, RI_NULL);
-	// ri.control("ribwriter", "postpone-procedurals", &no, RI_NULL);
-	ri.control("base-renderer", "cache-file-archives", &yes, RI_NULL);
+	ri.control("ribwriter", "postpone-inline-archives", &no, RI_NULL);
+	ri.control("ribwriter", "postpone-file-archives", &no, RI_NULL);
+	ri.control("ribwriter", "postpone-objects", &no, RI_NULL);
+	ri.control("ribwriter", "postpone-procedurals", &yes, RI_NULL);
+	ri.control("base-renderer", "cache-file-archives", &no, RI_NULL);
 
 	/*
 	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB-Structure 1.1");
@@ -552,6 +553,7 @@ int main(int argc, char * const argv[])
 	if ( argc > 1 ) {
 		for ( int i = 1; i < argc; ++i ) {
 			filename = noNullStr(argv[i]);
+			CFilepathConverter::convertToInternal(filename);
 			CFilepathConverter::convertToURL(filename);
 			ri.readArchive(filename.c_str(), 0, RI_NULL);
 		}

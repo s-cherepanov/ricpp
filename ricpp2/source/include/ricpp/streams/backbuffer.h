@@ -593,7 +593,7 @@ public:
  * stream and the buffer. By using open(), back end buffers for various channels can be used. However,
  * at the moment only FILE: is supported. open() uses a generic URI as resource name/locator.
  *
- * I used copied code from the zlib here.
+ * I used copied code from the zlib (gzio.c) here.
  *
  * @todo Debug, there is a bug with m_additionalChars while filling the buffer. Using of basic_streambuf won't work.
  *
@@ -746,6 +746,7 @@ private:
 		int method; // method byte
 		int flags;  // flags byte
 		uInt len;
+		char c;
 
 		// Stream buffer is greater than 2, if it is less tahn 2,
 		// the file is smaller as 2 Bytes
@@ -791,10 +792,10 @@ private:
 			while ( len-- != 0 && get_byte() != EOF ) ;
 		}
 		if ((flags & ORIG_NAME) != 0) { // skip the extra field
-			while ( get_byte() != EOF ) ;
+			while ( (c = get_byte()) != 0 && c != EOF ) ;
 		}
 		if ((flags & COMMENT) != 0) {   // skip the .gz file comment
-			while ( get_byte() != EOF ) ;
+			while ( (c = get_byte()) != 0 && c != EOF ) ;
 		}
 		if ((flags & HEAD_CRC) != 0) {  // skip the header crc 16Bit
 			for (len = 0; len < 2; len++) {

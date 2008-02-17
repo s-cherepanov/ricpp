@@ -1,0 +1,44 @@
+##RenderMan RIB-Structure 1.1
+version 3.03
+
+Display "Square" "framebuffer" "rgba" 
+
+ArchiveBegin "UnitCube"
+	TransformBegin
+		# far square
+		Polygon "P" [ .5 .5 .5   -.5 .5 .5   -.5 -.5 .5   .5 -.5 .5 ]
+		# right face
+		Rotate 90 0 1 0
+		Polygon "P" [ .5 .5 .5   -.5 .5 .5   -.5 -.5 .5   .5 -.5 .5 ]
+		# near face
+		Rotate 90 0 1 0
+		Polygon "P" [ .5 .5 .5   -.5 .5 .5   -.5 -.5 .5   .5 -.5 .5 ]
+		# left face
+		Rotate 90 0 1 0
+		Polygon "P" [ .5 .5 .5   -.5 .5 .5   -.5 -.5 .5   .5 -.5 .5 ]
+	TransformEnd
+
+	TransformBegin
+		# bottom face
+		Rotate 90 1 0 0
+		Polygon "P" [ .5 .5 .5   -.5 .5 .5   -.5 -.5 .5   .5 -.5 .5 ]
+	TransformEnd
+	
+	TransformBegin
+		# top face
+		Rotate -90 1 0 0
+		Polygon "P" [ .5 .5 .5   -.5 .5 .5   -.5 -.5 .5   .5 -.5 .5 ]
+	TransformEnd
+ArchiveEnd
+
+LightSource "distantlight" 1
+
+Projection "perspective"
+Translate 0 0 1.5
+Rotate 40 -1 1 0
+
+WorldBegin
+	Surface "matte"
+	Color .2 .4 .6
+	ReadArchive "UnitCube"
+WorldEnd

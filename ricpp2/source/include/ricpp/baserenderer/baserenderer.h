@@ -587,7 +587,7 @@ public:
 	virtual RtVoid preSolidBegin(RtToken type);
 	virtual RtVoid preSolidEnd(void);
 
-	virtual RtObjectHandle preObjectBegin(RtString name);
+	virtual RtVoid preObjectBegin(RtObjectHandle h, RtString name);
 	virtual RtVoid preObjectEnd(void);
 	virtual RtVoid preObjectInstance(RtObjectHandle handle);
 

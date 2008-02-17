@@ -1652,7 +1652,7 @@ public:
 		RtString aFilename, const IArchiveCallback *cb,
 		const CParameterList &theParameters
 		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_filename(aFilename)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_filename(noNullStr(aFilename))
 	{
 		m_callback = 0;
 		if ( cb )

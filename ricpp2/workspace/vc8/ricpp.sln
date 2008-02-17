@@ -90,6 +90,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RibSamples", "RibSamples", "{F89EFFA7-52EC-4005-B160-72B697BED6A1}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\RibSamples\Archive.rib = ..\..\RibSamples\Archive.rib
+		..\..\RibSamples\Polygon.rib = ..\..\RibSamples\Polygon.rib
+		..\..\RibSamples\Square.rib = ..\..\RibSamples\Square.rib
 		..\..\RibSamples\TestArchive.rib = ..\..\RibSamples\TestArchive.rib
 	EndProjectSection
 EndProject

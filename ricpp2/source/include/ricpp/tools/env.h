@@ -171,6 +171,31 @@ namespace RiCPP {
 			// Get an environment variable
 			return get(var, varName, isPath);
 		}
+
+		static inline const char *getTempFilename(std::string &tmpPath, const char *extension)
+		{
+			char buf[TMP_MAX+1];
+			const char *tmpfile = 0;
+			
+			
+		#ifdef WIN32
+			if ( tmpnam_s(buf, sizeof(buf)) )
+				return 0;
+			tmpfile = &buf[0];
+			if ( tmpfile[0] == '\\' )
+				tmpfile++;
+		#else
+			tmpfile = tmpnam(buf);
+		#endif
+			if ( !tmpfile )
+				return 0;
+
+			CEnv::find(tmpPath, CEnv::tmpName());
+			tmpPath += "/";
+			tmpPath += tmpfile;
+			tmpPath += extension ? extension : "";
+			return tmpPath.c_str();
+		}
 	}; // CEnv
 } // namespace RiCPP
 

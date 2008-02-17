@@ -568,7 +568,6 @@ public:
 	 *  @param aModeStack A reference to a valid mode stack.
 	 *  @param optionsFactory References a factory to create options containers.
 	 *  @param attributesFactory References a factory to create attributes containers.
-	 *  @param lightSourceFactory References a factory to create light source objects.
 	 *  @param filterFuncFactory References a factory to create filter functions.
 	 *  @exception ExceptRiCPPError If the token cannot be created (out of memory while filling map).
 	 */

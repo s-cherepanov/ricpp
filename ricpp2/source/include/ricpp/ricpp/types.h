@@ -221,7 +221,7 @@ public:
 	static RtToken className(EnumClasses e);
 
 	/** @brief Gets the name of the qualifier (qualifier was named table namespace in [QRM]).
-	 * @param qualifier Ri qualifier
+	 * @param aQualifier Ri qualifier
 	 * @return The name of a qualifier as used in declarations and RIB
 	 */
 	static RtToken qualifier(EnumQualifiers aQualifier);

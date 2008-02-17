@@ -104,22 +104,22 @@ public:
 
 	/** @brief Destructor, doesn't close the stream (because it is not opened by a CRibElementsWriter).
 	 */
-	inline ~CRibElementsWriter()
-	{
-	}
+	inline ~CRibElementsWriter() {}
 
 	/** @brief test if there is already a request written.
 	 *
 	 *  This is used to suppress structural comments and version info.
 	 */
-	inline bool firstRequestWritten() const {
+	inline bool firstRequestWritten() const
+	{
 		return m_firstRequestWritten;
 	}
 	
 	/** @brief Gets the current line counter
 	 *  @return the current line counter
 	 */
-	inline unsigned long linecnt() const {
+	inline unsigned long linecnt() const
+	{
 		return m_linecnt;
 	}
 	
@@ -267,6 +267,8 @@ class CRibWriter : public CBaseRenderer, public IRequestNotification {
 private:
 	CRibElementsWriter *m_writer;
 	TemplFrontStreambuf<char> *m_buffer;
+	std::string m_cmd;
+	std::string m_nativepath;
 
 	RtToken RI_COMPRESS;
 	RtToken RI_POSTPONE_PROCEDURALS;

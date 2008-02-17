@@ -33,6 +33,8 @@
 #include "ricpp/ricontext/rimacro.h"
 #endif // _RICPP_RICONTEXT_RIMACRO_H
 
+#include <cstdlib>
+
 /* To translate (cache rib archive is part of baserenderer)
 
 postpone: ObjectInstance, ReadArchive, Procedural - Befehl ausgeben statt ausführen, wenn
@@ -534,6 +536,8 @@ CRibWriter::CRibWriter()
 {
 	m_writer = 0;
 	m_buffer = 0;
+	m_cmd = "";
+	m_nativepath = "";
 
 	RI_COMPRESS = RI_NULL;
 	RI_POSTPONE_PROCEDURALS = RI_NULL;
@@ -758,12 +762,15 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 	
 	nestingDepth(0);
 
+	m_cmd = "";
+	m_nativepath = "";
+
 	RtInt compress = 0;
 	std::string filename;
 	CParameterList::const_iterator  i = params.begin();
 	for ( ; i != params.end(); ++i ) {
 		const CParameter &p = (*i);
-		if ( p.token() == RI_FILE && p.strings().size()>0 ) {
+		if ( p.token() == RI_FILE && p.strings().size() > 0 ) {
 			CStringList stringList;
 			stringList.expand(filename, p.strings()[0].c_str(), true);
 			CFilepathConverter::convertToURL(filename);
@@ -777,40 +784,62 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		return;
 	}
 
-	if ( filename.size() > 0 && filename[0] != '|' ) {
+	if ( filename.size() > 0 ) {
 		m_buffer = new TemplFrontStreambuf<char>(m_parserCallback->protocolHandlers());
 		if ( !m_buffer ) {
 			return;
 		}
-		const char *ptr = strrchr(filename.c_str(), '.');
-		if ( ptr && !strcmp(ptr, ".ribz") && compress < 0 ) {
-			compress = -1;
+
+		if ( filename[0] == '|' ) {
+			const char *cmd = filename.c_str()+1;
+			if ( *cmd ) {
+				m_cmd = cmd;
+
+				filename = "";
+				const char *tmpfile = CEnv::getTempFilename(filename, "rib");
+				if ( tmpfile ) {
+					m_nativepath = filename;
+					CFilepathConverter::convertToNative(m_nativepath);
+					CFilepathConverter::convertToURL(filename);
+				} else {
+					m_cmd = "";
+					// Error
+				}
+			} else {
+				filename = "";
+				// stdio
+			}
+
+		} else {
+
+			const char *ptr = strrchr(filename.c_str(), '.');
+			if ( ptr && !(strcmp(ptr, ".ribz") && strcmp(ptr, ".z") && strcmp(ptr, ".gz")) && compress < 0 ) {
+				compress = -1;
+			}
+
 		}
-		if ( !m_buffer->open(filename.c_str(), std::ios_base::out|std::ios_base::binary, compress) ) {
-			return;
+
+		if ( filename.size() > 0 ) {
+			if ( !m_buffer->open(filename.c_str(), std::ios_base::out|std::ios_base::binary, compress) ) {
+				return;
+			}
+			m_writer = new CRibElementsWriter(m_buffer, *this);
+			if ( !m_writer ) {
+				// Error
+				return;
+			}
+			m_writer->ascii(!m_binary);
 		}
-		m_writer = new CRibElementsWriter(m_buffer, *this);
+	}
+	
+	if ( filename.size() == 0 ) {
+		// stdio
+		m_writer = new CRibElementsWriter(std::cout.rdbuf(), *this);
 		if ( !m_writer ) {
+			// Error
 			return;
 		}
 		m_writer->ascii(!m_binary);
-	} else {
-		// stdio or pipe
-		if ( filename.size() == 0 ) {
-			// stdio
-			m_writer = new CRibElementsWriter(std::cout.rdbuf(), *this);
-			if ( !m_writer ) {
-				return;
-			}
-			m_writer->ascii(!m_binary);
-		} else {
-			// @todo pipe
-			m_writer = new CRibElementsWriter(std::cout.rdbuf(), *this);
-			if ( !m_writer ) {
-				return;
-			}
-			m_writer->ascii(!m_binary);
-		}
 	}
 }
 
@@ -823,6 +852,18 @@ RtVoid CRibWriter::postEnd(void)
 		delete m_buffer;
 	}
 	m_buffer = 0;
+
+	if ( m_cmd.size() > 0 ) {
+		std::string cmdline;
+		cmdline += m_cmd;
+		cmdline += " ";
+		cmdline += m_nativepath;
+
+		::system(cmdline.c_str());
+	}
+
+	m_cmd = "";
+	m_nativepath = "";
 }
 
 

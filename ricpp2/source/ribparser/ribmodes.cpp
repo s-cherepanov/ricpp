@@ -261,7 +261,7 @@ void CObjectBeginRibRequest::operator()(IRibParserState &parser, CRibRequestData
 
 		if ( p0.getInt(number) ) {
 
-			RtObjectHandle handle = parser.ribFilter().objectBegin(0);
+			RtObjectHandle handle = parser.ribFilter().objectBegin(RI_NULL);
 
 			// Convert handle to string (equivalence of numbers to appropriate strings 42 == "42")
 			name = valToStr(namebuf, sizeof(namebuf), number);

@@ -845,20 +845,22 @@ RtVoid CBaseRenderer::solidEnd(void)
 }
 
 
-RtObjectHandle CBaseRenderer::preObjectBegin(RtString name)
+RtVoid CBaseRenderer::preObjectBegin(RtObjectHandle h, RtString name)
 {
-	return renderState()->objectBegin(name);
 }
 
 RtObjectHandle CBaseRenderer::objectBegin(RtString name)
 {
+	RtObjectHandle handle = illObjectHandle;
 	try {
 		if ( !preCheck(REQ_OBJECT_BEGIN) )
 			return illObjectHandle;
 
-		CRiObjectBegin r(renderState()->lineNo(), name);
+		name = renderState()->tokFindCreate(name);
+		handle = renderState()->objectBegin(name);
+
+		CRiObjectBegin r(renderState()->lineNo(), handle, name);
 		processRequest(r, true);
-		return r.handle();
 		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
@@ -871,12 +873,11 @@ RtObjectHandle CBaseRenderer::objectBegin(RtString name)
 		return illObjectHandle;
 	}
 	
-	return illObjectHandle;
+	return handle;
 }
 
 RtVoid CBaseRenderer::preObjectEnd(void)
 {
-	renderState()->objectEnd();
 }
 
 RtVoid CBaseRenderer::objectEnd(void)
@@ -887,6 +888,8 @@ RtVoid CBaseRenderer::objectEnd(void)
 
 		CRiObjectEnd r(renderState()->lineNo());
 		processRequest(r, true);
+
+		renderState()->objectEnd();
 		
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);

@@ -1528,7 +1528,7 @@ public:
 class CRiObjectBegin : public CRManInterfaceCall {
 private:
 	RtObjectHandle m_handle; ///< Handle used to identify the object
-	std::string m_name;       ///< Name of the object, used to generate the handle.
+	RtToken m_name;          ///< Name of the object, used to generate the handle.
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1559,10 +1559,17 @@ public:
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aHandle An object handle
+	 *  @param aName Name may be a RIB string handle
 	 */
-	inline CRiObjectBegin(long aLineNo = -1, RtString name = RI_NULL) : CRManInterfaceCall(aLineNo), m_name(noNullStr(name))
+	inline CRiObjectBegin(
+		long aLineNo = -1,
+		RtObjectHandle aHandle = illObjectHandle,
+		RtToken aName = RI_NULL)
+		: CRManInterfaceCall(aLineNo)
 	{
-		m_handle = illObjectHandle;
+		m_handle = aHandle;
+		m_name = aName;
 	}
 
 	/** @brief Copy constructor.
@@ -1606,7 +1613,7 @@ public:
 	 *
 	 * @return Name of the object.
 	 */
-	inline virtual RtString name() const { return m_name.c_str(); }
+	inline virtual RtToken name() const { return m_name; }
 
 	/** Sets the name of the object.
 	 *
@@ -1615,11 +1622,11 @@ public:
 	 *
 	 * @param aName Name of the object.
 	 */
-	inline virtual void name(const char *aName) { m_name = noNullStr(aName); }
+	inline virtual void name(RtToken aName) { m_name = aName; }
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		handle(ri.preObjectBegin(name()));
+		ri.preObjectBegin(handle(), name());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)

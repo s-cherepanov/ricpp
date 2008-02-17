@@ -105,7 +105,7 @@ public:
     virtual RtVoid preSolidBegin(RtToken type) = 0;
     virtual RtVoid preSolidEnd(void) = 0;
 
-	virtual RtObjectHandle preObjectBegin(RtString name) = 0;
+	virtual RtVoid preObjectBegin(RtObjectHandle h, RtString name) = 0;
 	virtual RtVoid preObjectEnd(void) = 0;
     virtual RtVoid preObjectInstance(RtObjectHandle handle) = 0;
 

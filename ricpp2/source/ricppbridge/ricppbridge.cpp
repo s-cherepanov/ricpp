@@ -284,7 +284,8 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
 
-	if ( name && *name ) {
+	if ( name && *name && token == RI_NULL ) {
+		// Test name for rib filename or pipe - if found call ribwriter
 		CStringList stringList;
 		std::string filename;
 		stringList.expand(filename, name, true); // Only one string, replace environment variables
@@ -303,7 +304,7 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 			return beginV(0, ++n, &m_tokens[0], &m_params[0]);
 		}
 		ptr = strrchr(filename.c_str(), '.');
-		if ( ptr && !(strcmp(ptr, ".rib") && strcmp(ptr, ".ribz")) ) {
+		if ( ptr && !(strcmp(ptr, ".rib") && strcmp(ptr, ".ribz") && strcmp(ptr, ".z") && strcmp(ptr, ".gz")) ) {
 			// name was the name of a rib file
 			if ( n == 0 ) {
 				// remove the 0 entries

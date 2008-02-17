@@ -2025,16 +2025,14 @@ bool CRibParser::canParse(RtString name)
 	if ( !name || !*name ) {
 		m_istream.rdbuf(std::cin.rdbuf());
 		return true;
-	} else {
-		CUri refUri(name);
-		if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, true) )
-		{
-			return false;
-		}
-		m_ob.base(m_baseUri);
-		m_istream.rdbuf(&m_ob);
-		return m_ob.open(refUri);
 	}
+	CUri refUri(name);
+	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, true) ) {
+		return false;
+	}
+	m_ob.base(m_baseUri);
+	m_istream.rdbuf(&m_ob);
+	return m_ob.open(refUri);
 }
 
 

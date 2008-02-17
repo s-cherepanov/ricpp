@@ -1,0 +1,16 @@
+##RenderMan RIB-Structure 1.1
+version 3.03
+
+Display "Square" "framebuffer" "rgba" 
+
+LightSource "distantlight" 1
+
+Projection "perspective"
+Translate 0 0 1
+Rotate 40 -1 1 0
+
+WorldBegin
+	Surface "matte"
+	Color .2 .4 .6
+	Polygon "P" [ .5 .5 0   .5 -.5 0   -.5 -.5 0   -.5 .5 0 ]
+WorldEnd

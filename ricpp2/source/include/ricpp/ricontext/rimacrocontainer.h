@@ -64,7 +64,9 @@ public:
 
 	/** @brief Constructor initializes the macro.
 	 *
-	 *  @param aName Name of the macro, file name or handle name.
+	 *  @param anId Name of the macro, file name or handle name. (@see CHandle)
+	 *  @param aHandleNo Corresponding running number of the handle (@see CHandle)
+	 *  @param isFromHandleId Flag should be true if anId was created from __handleid parameter or RIB string handle (@see CHandle)
 	 *  @param macroType Type of the macro.
 	 */
 	inline CRiMacro(
@@ -179,6 +181,10 @@ public:
 	/** @brief Creates a macro container for an object (retained geometry).
 	 *
 	 *  The type for the object macro is always MACROTYPE_OBJECT
+	 *
+	 *  @param anId Name of the macro, file name or handle name. (@see CHandle)
+	 *  @param aHandleNo Corresponding running number of the handle (@see CHandle)
+	 *  @param isFromHandleId Flag should be true if anId was created from __handleid parameter or RIB string handle (@see CHandle)
 	 */
 	inline CRiObjectMacro(
 		RtToken anId=RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false)
@@ -195,8 +201,10 @@ class CRiArchiveMacro : public CRiMacro {
 public:
 	/** @brief Creates a macro container for a RIB archive.
 	 *
-	 * @param aName Filename or archive name
-	 * @param aMacroType Type of the macro, will be either MACROTYPE_ARCHIVE or MACROTYPE_FILE, but is not tested
+	 *  @param anId Name of the macro, file name or handle name. (@see CHandle)
+	 *  @param aHandleNo Corresponding running number of the handle (@see CHandle)
+	 *  @param isFromHandleId Flag should be true if anId was created from __handleid parameter or RIB string handle (@see CHandle)
+	 *  @param aMacroType Type of the macro, will be either MACROTYPE_ARCHIVE or MACROTYPE_FILE, but that is not tested
 	 */
 	inline CRiArchiveMacro(
 		RtToken anId = RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false,

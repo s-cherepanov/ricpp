@@ -69,6 +69,7 @@ public:
 	//! Constructor, fills the parameters
 	/*! @param dict Current declaration dictionary.
 	 *  @param colorDescr Current color descriptor.
+	 *  @param aHandle Light handle
 	 *  @param isIlluminated true, if light source is on (illuminated), @see m_isIlluminated
 	 *  @param isGlobal true, if a global light source, @see m_isGlobalLight
 	 *  @param isArea true, if an area light source, @see m_isAreaLight
@@ -84,6 +85,14 @@ public:
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[]);
 
+	//! Constructor, fills the parameters
+	/*! @param aHandle Light handle
+	 *  @param isIlluminated true, if light source is on (illuminated), @see m_isIlluminated
+	 *  @param isGlobal true, if a global light source, @see m_isGlobalLight
+	 *  @param isArea true, if an area light source, @see m_isAreaLight
+	 *  @param name Name of the light source, e.g. TRi::RI_POINCLightSource
+	 *  @param params Parsed parameter list
+     */
 	CLightSource(
 		RtLightHandle aHandle,
 		bool isIlluminated, bool isGlobal, bool isArea,
@@ -101,7 +110,7 @@ public:
 	//! Returns a copy of 'this'
 	/*! @return Clone of *this.
 	 */
-	CLightSource *CLightSource::duplicate() const;
+	CLightSource *duplicate() const;
 
 	//! Assignment (deep copy)
 	/*! @param light The light to copy from

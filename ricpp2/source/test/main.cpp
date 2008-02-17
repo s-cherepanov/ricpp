@@ -525,6 +525,9 @@ int main(int argc, char * const argv[])
 */
 
 	ri.errorHandler(ri.errorPrint());
+
+//	ri.begin("|aqsis");
+
 	ri.begin(RI_NULL);
 
 	RtInt yes = 1;
@@ -545,12 +548,15 @@ int main(int argc, char * const argv[])
 	// ri.version();
 	*/
 	
+	std::string filename;
 	if ( argc > 1 ) {
 		for ( int i = 1; i < argc; ++i ) {
-			ri.readArchive(argv[i], 0, RI_NULL);
+			filename = noNullStr(argv[i]);
+			CFilepathConverter::convertToURL(filename);
+			ri.readArchive(filename.c_str(), 0, RI_NULL);
 		}
 	} else {
-		// ri.readArchive(RI_NULL, 0, RI_NULL);
+		ri.readArchive(RI_NULL, 0, RI_NULL);
 	}
 
 	ri.end();

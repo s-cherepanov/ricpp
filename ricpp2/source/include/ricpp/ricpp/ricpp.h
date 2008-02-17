@@ -452,7 +452,8 @@ public:
 	 *
 	 *  The rib writer will have an option to expand macros.
 	 *
-	 *  @param name For handle string (added).
+	 *  @param name A name parameter make sense for RIB string handles, but is not
+	 *  standard, maybe I delete it again.
 	 *
 	 *  @return The handle is used to later reference the object in IRi::objectInstance()
 	 */

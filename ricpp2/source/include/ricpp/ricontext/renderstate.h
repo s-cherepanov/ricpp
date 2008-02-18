@@ -68,6 +68,8 @@ class CRManInterfaceFactory;
 class CRiMacro;
 class CRiObjectMacro;
 class CRiArchiveMacro;
+class IDoRender;
+class IRibParserCallback;
 
 /** @brief The facade for the render state objects.
  *
@@ -84,6 +86,8 @@ class CRenderState {
 
 	std::string m_archiveName;                     ///< Current archive name, optional.
 	long m_lineNo;                                 ///< Current line number in the file, -1 if not available.
+
+	bool m_cacheFileArchives;                      ///< Cache archive files
 
 	std::vector<RtToken> m_solidTypes;             ///< Stack with the nested types of solid blocks (if currently opened solid block)
 
@@ -553,8 +557,10 @@ class CRenderState {
 
 public:
 
-	RtToken RI_RIB; ///< Token "rib" for options
-	RtToken RI_VARSUBST; ///< Token "varsubst" for option
+	// Tokens
+	RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control
+	RtToken RI_RIB;                 ///< Token "rib" for options
+	RtToken RI_VARSUBST;            ///< Token "varsubst" for option
 
 	/** @brief Initializes the object
 	 *
@@ -582,6 +588,13 @@ public:
 	 *  State objects are deleted
 	 */
 	virtual ~CRenderState();
+
+	/** @brief Call the default declarations.
+	 *
+	 *  Overload this to add more default declarations, by calling processDeclare() with
+	 *  the @a isDefault attribute set to true.
+	 */
+	virtual void defaultDeclarations();
 
 	/** @brief The current frame number (frames are not nested)
 	 *
@@ -650,8 +663,8 @@ public:
 	virtual RtArchiveHandle archiveFileBegin(const char *aName);
 	virtual void archiveFileEnd();
 
-	virtual CRiArchiveMacro *archiveInstance(RtArchiveHandle handle);
-	virtual const CRiArchiveMacro *archiveInstance(RtArchiveHandle handle) const;
+	virtual CRiArchiveMacro *findArchiveInstance(RtArchiveHandle handle);
+	virtual const CRiArchiveMacro *findArchiveInstance(RtArchiveHandle handle) const;
 
 	virtual void resourceBegin();
     virtual void resourceEnd();
@@ -827,6 +840,8 @@ public:
 		return m_controls;
 	}
 
+	virtual RtVoid control(RtToken name, const CParameterList &params);
+
 	inline virtual COptions &options()
 	{
 		assert(m_optionsStack.back() != 0);
@@ -839,6 +854,8 @@ public:
 		return *(m_optionsStack.back());
 	}
 
+	virtual RtVoid option(RtToken name, const CParameterList &params);
+
 	inline virtual CAttributes &attributes()
 	{
 		assert(m_attributesStack.back() != 0);
@@ -850,6 +867,8 @@ public:
 		assert(m_attributesStack.back() != 0);
 		return *(m_attributesStack.back());
 	}
+
+	virtual RtVoid attribute(RtToken name, const CParameterList &params);
 
 	inline virtual CTransformation &curTransform()
 	{
@@ -962,7 +981,7 @@ public:
 		return m_curReplay;
 	}
 	
-	virtual RtToken storedArchiveName(RtString archiveName) const;
+	virtual RtArchiveHandle storedArchiveName(RtString archiveName) const;
 
 	virtual void registerResourceFactory(IResourceFactory *f);
 
@@ -974,6 +993,27 @@ public:
 	virtual bool getBasis(RtToken basisName, RtBasis basis) const;
 	virtual RtToken basisName(const RtBasis basis) const;
 
+	virtual inline bool cacheFileArchives() const { return m_cacheFileArchives; }
+	virtual inline void cacheFileArchives(bool cache) { m_cacheFileArchives = cache; }
+
+	/** @brief Processes a declarations.
+	 *
+	 *  Processes a single declaration. The declaration is entered
+	 *  into the declaration dictionary. The current sice of the colors is
+	 *  taken from the current options.
+	 *
+	 *  @param name Name of the declaration as in IRiCPP::declare().
+	 *  @param declaration Declaration string as in IRiCPP::declare().
+	 *  @param isDefault set this to true to indicate adefault declaration
+	 *         (eg. declaration of RI_P as point). The defaultDeclarations()
+	 *         member function is used to declare the defaults.
+	 *  @return The token value for @name
+	 */
+	virtual RtToken declare(RtToken name, RtString declaration, bool isDefault);
+
+	virtual RtVoid archiveInstance(RtArchiveHandle handle, IDoRender &renderInterface, const IArchiveCallback *callback, const CParameterList &params);
+
+	virtual RtVoid processReadArchive(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params);
 }; // CRenderState
 
 } // namespace RiCPP

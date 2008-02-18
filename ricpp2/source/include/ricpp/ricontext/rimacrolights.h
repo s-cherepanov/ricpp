@@ -50,6 +50,18 @@ public:
 	inline static const char *myClassName(void) { return "CRiLightSource"; }
 	inline virtual const char *className() const { return CRiLightSource::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
 	inline CRiLightSource(
 		long aLineNo = -1,
 		RtLightHandle aHandle = illLightHandle,
@@ -74,6 +86,24 @@ public:
 		const CParameterList &theParameters)
 		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_handle(aHandle), m_name(aName)
 	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiLightSource(const CRiLightSource &c)
+	{
+		*this = c;
+	}
+
+	inline virtual ~CRiLightSource()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiLightSource(*this);
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_LIGHT_SOURCE; }
@@ -129,6 +159,18 @@ public:
 	inline static const char *myClassName(void) { return "CRiAreaLightSource"; }
 	inline virtual const char *className() const { return CRiAreaLightSource::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
 	inline CRiAreaLightSource(
 		long aLineNo = -1,
 		RtLightHandle aHandle = illLightHandle,
@@ -153,6 +195,24 @@ public:
 		const CParameterList &theParameters)
 		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_handle(aHandle), m_name(aName)
 	{
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiAreaLightSource(const CRiAreaLightSource &c)
+	{
+		*this = c;
+	}
+
+	inline virtual ~CRiAreaLightSource()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiAreaLightSource(*this);
 	}
 
 	inline virtual EnumRequests interfaceIdx() const { return REQ_AREA_LIGHT_SOURCE; }
@@ -207,10 +267,41 @@ public:
 	inline static const char *myClassName(void) { return "CRiIlluminate"; }
 	inline virtual const char *className() const { return CRiIlluminate::myClassName(); }
 
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
 	inline CRiIlluminate(long aLineNo, RtLightHandle aHandle, RtBoolean onoff) :
 		CRManInterfaceCall(aLineNo), m_handle(aHandle), m_onoff(onoff)
 	{
 	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiIlluminate(const CRiIlluminate &c)
+	{
+		*this = c;
+	}
+
+	inline virtual ~CRiIlluminate()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiIlluminate(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_ILLUMINATE; }
 
 	inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }

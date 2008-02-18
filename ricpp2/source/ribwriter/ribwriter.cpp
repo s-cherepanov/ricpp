@@ -610,18 +610,17 @@ void CRibWriter::defaultDeclarations()
 	RI_RIBWRITER = renderState()->tokFindCreate("ribwriter");
 
 	// Declarations
-	RI_COMPRESS =                 processDeclare("Control:ribwriter:compress",                 "constant integer", true);
-
-	RI_POSTPONE_PROCEDURALS =     processDeclare("Control:ribwriter:postpone-procedurals",     "constant integer", true);
-	RI_POSTPONE_OBJECTS =         processDeclare("Control:ribwriter:postpone-objects",         "constant integer", true);
-	RI_POSTPONE_FILE_ARCHIVES =   processDeclare("Control:ribwriter:postpone-file-archives",   "constant integer", true);
-	RI_POSTPONE_INLINE_ARCHIVES = processDeclare("Control:ribwriter:postpone-inline-archives", "constant integer", true);
-	RI_SKIP_HEADERS =             processDeclare("Control:ribwriter:skip-headers",             "constant integer", true);
-	RI_SKIP_VERSION =             processDeclare("Control:ribwriter:skip-version",             "constant integer", true);
-	RI_INDENT =                   processDeclare("Control:ribwriter:indent",                   "constant integer", true);
-	RI_INDENT_STRING =            processDeclare("Control:ribwriter:indent-string",            "constant string",  true);
-	RI_SUPPRESS_OUTPUT =          processDeclare("Control:ribwriter:suppress-output",          "constant integer", true);
-	RI_BINARY_OUTPUT =            processDeclare("Control:ribwriter:binary-output",            "constant integer", true);
+	RI_COMPRESS =                 renderState()->declare("Control:ribwriter:compress",                 "constant integer", true);
+	RI_POSTPONE_PROCEDURALS =     renderState()->declare("Control:ribwriter:postpone-procedurals",     "constant integer", true);
+	RI_POSTPONE_OBJECTS =         renderState()->declare("Control:ribwriter:postpone-objects",         "constant integer", true);
+	RI_POSTPONE_FILE_ARCHIVES =   renderState()->declare("Control:ribwriter:postpone-file-archives",   "constant integer", true);
+	RI_POSTPONE_INLINE_ARCHIVES = renderState()->declare("Control:ribwriter:postpone-inline-archives", "constant integer", true);
+	RI_SKIP_HEADERS =             renderState()->declare("Control:ribwriter:skip-headers",             "constant integer", true);
+	RI_SKIP_VERSION =             renderState()->declare("Control:ribwriter:skip-version",             "constant integer", true);
+	RI_INDENT =                   renderState()->declare("Control:ribwriter:indent",                   "constant integer", true);
+	RI_INDENT_STRING =            renderState()->declare("Control:ribwriter:indent-string",            "constant string",  true);
+	RI_SUPPRESS_OUTPUT =          renderState()->declare("Control:ribwriter:suppress-output",          "constant integer", true);
+	RI_BINARY_OUTPUT =           renderState()-> declare("Control:ribwriter:binary-output",            "constant integer", true);
 }
 
 void CRibWriter::writePrefix(bool isArchiveRecord)
@@ -2812,7 +2811,7 @@ bool CRibWriter::willExecuteMacro(RtString name) {
 
 	RtToken tname = renderState()->storedArchiveName(name);
 	if ( tname ) {
-		CRiArchiveMacro *m = renderState()->archiveInstance(tname);
+		CRiArchiveMacro *m = renderState()->findArchiveInstance(tname);
 		assert (m != 0);
 		if ( m ) {
 			isFile = m->macroType() == CRiArchiveMacro::MACROTYPE_FILE;

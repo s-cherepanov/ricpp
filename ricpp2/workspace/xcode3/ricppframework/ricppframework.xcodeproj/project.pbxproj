@@ -23,6 +23,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		C34D15280D697A5C002CF63B /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C34D15270D697A5C002CF63B /* baserenderer.cpp */; };
 		C3685ECC0D3C1F9100B2E025 /* stringpattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */; };
 		C3685ECD0D3C1F9100B2E025 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
 		C3685ECE0D3C1F9100B2E025 /* macfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2A20BE86D370057831B /* macfilepath.cpp */; };
@@ -150,7 +151,6 @@
 		C38089A60D3CB5C000B6C3BA /* rendererloader.h in Headers */ = {isa = PBXBuildFile; fileRef = C3B26A310C14600E0080C1F9 /* rendererloader.h */; };
 		C38089AD0D3CB68B00B6C3BA /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
 		C38089CD0D3CB8B400B6C3BA /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C380897F0D3CAEF000B6C3BA /* libribparser.a */; };
-		C38089CE0D3CB8C800B6C3BA /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C35C7A480BD76D3A00548675 /* baserenderer.cpp */; };
 		C38089CF0D3CB8D200B6C3BA /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1690BF4693200AA03BC /* baserenderer.h */; };
 		C38089E00D3CBA8300B6C3BA /* ribwriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3B849030BD7625A00DD22B5 /* ribwriter.cpp */; };
 		C38089E10D3CBA8800B6C3BA /* ribwriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1790BF4696000AA03BC /* ribwriter.h */; };
@@ -354,7 +354,7 @@
 		C34D15110D695953002CF63B /* Polygon.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Polygon.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Polygon.rib; sourceTree = "<absolute>"; };
 		C34D15120D695953002CF63B /* Square.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Square.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Square.rib; sourceTree = "<absolute>"; };
 		C34D15130D695953002CF63B /* UnitCube.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = UnitCube.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/UnitCube.rib; sourceTree = "<absolute>"; };
-		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
+		C34D15270D697A5C002CF63B /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = baserenderer.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/baserenderer/baserenderer.cpp; sourceTree = "<absolute>"; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
 		C36326DB0C3A3CAB00364168 /* backbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = backbuffer.cpp; path = ../../../source/streams/backbuffer.cpp; sourceTree = SOURCE_ROOT; };
@@ -969,7 +969,7 @@
 		C372B8FB0BD7618F009B2459 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C35C7A480BD76D3A00548675 /* baserenderer.cpp */,
+				C34D15270D697A5C002CF63B /* baserenderer.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -1816,7 +1816,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C38089CE0D3CB8C800B6C3BA /* baserenderer.cpp in Sources */,
+				C34D15280D697A5C002CF63B /* baserenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

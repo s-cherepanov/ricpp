@@ -747,6 +747,7 @@ public:
 		return new CRiObjectInstance(aLineNo, handle);
 	}
 
+	/*
 	inline virtual CRiArchiveInstance *newRiArchiveInstance(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtArchiveHandle handle, const IArchiveCallback *aCallback,
@@ -754,6 +755,7 @@ public:
 	{
 		return new CRiArchiveInstance(aLineNo, decl, curColorDescr, handle, aCallback, n, tokens, params);
 	}
+	*/
 
 	inline virtual CRiMakeTexture *newRiMakeTexture(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,

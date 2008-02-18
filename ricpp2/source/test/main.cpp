@@ -534,12 +534,14 @@ int main(int argc, char * const argv[])
 	RtInt no = 0;
 	RtInt special = -1;
 
+	/// @todo Skip header (special i.e. only one header, suppress the rest) with uncached archives doesn't work correctly
 	ri.control("ribwriter", "skip-headers", &special, RI_NULL);
 	ri.control("ribwriter", "postpone-inline-archives", &no, RI_NULL);
 	ri.control("ribwriter", "postpone-file-archives", &no, RI_NULL);
 	ri.control("ribwriter", "postpone-objects", &no, RI_NULL);
-	ri.control("ribwriter", "postpone-procedurals", &yes, RI_NULL);
-	ri.control("base-renderer", "cache-file-archives", &no, RI_NULL);
+	/// @todo postpone-procedurals and postpone-delayed postpone-run postpone-dynamic
+	// ri.control("ribwriter", "postpone-procedurals", &yes, RI_NULL);
+	// ri.control("rib", "cache-file-archives", &yes, RI_NULL);
 
 	/*
 	ri.archiveRecord(RI_STRUCTURE, "RenderMan %s", "RIB-Structure 1.1");

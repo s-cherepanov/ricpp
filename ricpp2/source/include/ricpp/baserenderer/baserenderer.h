@@ -34,11 +34,9 @@
 #include "ricpp/ricontext/dorender.h"
 #endif // _RICPP_RICONTEXT_DORENDER_H
 
-#ifndef _RICPP_RIBPARSER_RIBPARSER_H
-#include "ricpp/ribparser/ribparser.h"
-#endif // _RICPP_RIBPARSER_RIBPARSER_H
-
 namespace RiCPP {
+
+class IRibParserCallback;
 
 /** @brief This class is used to implement the basis of a renderer context.
  *  
@@ -113,12 +111,6 @@ class CBaseRenderer : public IDoRender {
 	 *  @see registerResources(), getNewAttributesResourceFactory(), delteAttributesResourceFactory()
 	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
-
-	bool m_cacheFileArchives; ///< Cache archive files
-
-	// Tokens
-	RtToken RI_BASE_RENDERER; ///< Token "base-renderer" as control name
-	RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control
 
 protected:
 	/** @brief Callbacks for the rib parser to the front end.
@@ -284,21 +276,6 @@ protected:
 	 */
 	virtual void defaultDeclarations();
 
-	/** @brief Processes a declarations.
-	 *
-	 *  Processes a single declaration. The declaration is entered
-	 *  into the declaration dictionary. The current sice of the colors is
-	 *  taken from the current options.
-	 *
-	 *  @param name Name of the declaration as in IRiCPP::declare().
-	 *  @param declaration Declaration string as in IRiCPP::declare().
-	 *  @param isDefault set this to true to indicate adefault declaration
-	 *         (eg. declaration of RI_P as point). The defaultDeclarations()
-	 *         member function is used to declare the defaults.
-	 *  @return The token value for @name
-	 */
-	virtual RtToken processDeclare(RtToken name, RtString declaration, bool isDefault);
-
 	/** @brief Records request in current macro.
 	 *
 	 *  Called by processRequest
@@ -330,11 +307,12 @@ protected:
 	virtual void replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb);
 
 protected:
-	virtual RtVoid archiveInstanceV(RtArchiveHandle handle, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
-	virtual RtVoid preArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
-	virtual RtVoid doArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
-	virtual RtVoid postArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
-
+	// virtual RtVoid archiveInstanceV(RtArchiveHandle handle, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
+	// virtual RtVoid preArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	// virtual RtVoid doArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	// virtual RtVoid postArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	virtual RtVoid processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
+	
 public:
 
 	virtual bool preCheck(EnumRequests req);
@@ -368,10 +346,7 @@ public:
 	 */
 	inline virtual RtVoid deactivate(void) {}
 
-	inline virtual RtVoid registerRibParserCallback(IRibParserCallback &cb)
-	{
-		m_parserCallback = &cb;
-	}
+	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb);
 
 	/** @brief Error handler
 	 *

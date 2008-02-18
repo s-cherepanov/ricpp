@@ -33,6 +33,10 @@
 #include "ricpp/ricontext/rimacro.h"
 #endif _RICPP_RICONTEXT_RIMACRO_H
 
+#ifndef _RICPP_RIBPARSER_RIBPARSER_H
+#include "ricpp/ribparser/ribparser.h"
+#endif // _RICPP_RIBPARSER_RIBPARSER_H
+
 #ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
@@ -1075,6 +1079,7 @@ CRenderState::CRenderState(
 
 	m_curMacro = 0;
 	m_curReplay = 0;
+	m_cacheFileArchives = false;
 
 	m_reject = false;
 	m_recordMode = false;
@@ -1401,14 +1406,14 @@ void CRenderState::objectEnd()
 	}
 }
 
-CRiArchiveMacro *CRenderState::archiveInstance(RtArchiveHandle handle)
+CRiArchiveMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle)
 {
 	CRiArchiveMacro *m = m_archiveMacros.find(handle);
 	if ( m ) return m;
 	return m_cachedArchive.find(handle);
 }
 
-const CRiArchiveMacro *CRenderState::archiveInstance(RtArchiveHandle handle) const
+const CRiArchiveMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle) const
 {
 	const CRiArchiveMacro *m = m_archiveMacros.find(handle);
 	if ( m ) return m;
@@ -2052,10 +2057,10 @@ const CRManInterfaceFactory &CRenderState::macroFactory() const
 }
 */
 
-RtToken CRenderState::storedArchiveName(RtString archiveName) const
+RtArchiveHandle CRenderState::storedArchiveName(RtString archiveName) const
 {
-	RtToken t = m_archiveMacros.identify(archiveName);
-	if ( t ) return t;
+	RtArchiveHandle handle = m_archiveMacros.identify(archiveName);
+	if ( handle ) return handle;
 	return m_cachedArchive.identify(archiveName);
 }
 
@@ -2084,4 +2089,151 @@ RtToken CRenderState::basisName(const RtBasis basis) const
 const IFilterFunc *CRenderState::filterFunc(RtToken name) const
 {
 	return m_filterFuncFactory->singleton(name);
+}
+
+void CRenderState::defaultDeclarations()
+{
+	// Additional Tokens
+	RI_RIB = tokFindCreate("rib");
+
+	// Additional render specific declarations
+	RI_CACHE_FILE_ARCHIVES = declare("Control:rib:cache-file-archives", "constant integer", true);
+	RI_VARSUBST = declare("varsubst", "string", true);
+}
+
+
+RtToken CRenderState::declare(RtToken name, RtString declaration, bool isDefault)
+{
+	if ( !emptyStr(name) && !emptyStr(declaration) ) {
+
+		CDeclaration *d = new CDeclaration(name, declaration, options().colorDescr(), tokenMap(), isDefault);		
+		if ( !d )
+			throw ExceptRiCPPError(
+				RIE_NOMEM,
+				RIE_SEVERE,
+				printLineNo(__LINE__),
+				printName(__FILE__),
+				"Declaration of \"%s\": \"%s\"",
+				noNullStr(name),
+				noNullStr(declaration));
+
+		declAdd(d);
+		return d->token();
+	}
+	
+	return RI_NULL;
+}
+
+RtVoid CRenderState::control(RtToken name, const CParameterList &params)
+{
+	controls().set(name, params);
+	if ( name == RI_RIB ) {
+		CParameterList::const_iterator i;
+		for ( i = params.begin(); i != params.end(); i++ ) {
+			if ( (*i).token() == RI_CACHE_FILE_ARCHIVES ) {
+				RtInt intVal;
+				(*i).get(0, intVal);
+				m_cacheFileArchives = intVal != 0;
+			}
+		}
+	}
+}
+
+
+RtVoid CRenderState::option(RtToken name, const CParameterList &params)
+{
+	options().set(name, params);
+}
+
+
+RtVoid CRenderState::attribute(RtToken name, const CParameterList &params)
+{
+	attributes().set(name, params);
+}
+
+
+RtVoid CRenderState::archiveInstance(RtArchiveHandle handle, IDoRender &renderInterface, const IArchiveCallback *callback, const CParameterList &params)
+{
+	CRiArchiveMacro *m = findArchiveInstance(handle);
+	if ( m ) {
+		if ( m->isClosed() ) {
+			CRiMacro *msav = curReplay();
+			curReplay(m);
+			try {
+				m->replay(renderInterface, callback);
+				curReplay(msav);
+			} catch(...) {
+				curReplay(msav);
+				throw;
+			}
+		} else {
+			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "Archive instance %s used before it's ArchiveEnd() (self inclusion, recursion doesn't work).", handle);
+		}
+	} else {
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "Archive instance %s not found.", handle);
+	}
+}
+
+
+RtVoid CRenderState::processReadArchive(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params)
+{
+ 	// Read archive from stream (name == RI_NULL for stdin)
+	CParameterList p = params;
+	CUri sav(baseUri());
+	std::string oldArchiveName = archiveName();
+	long oldLineNo = lineNo();
+
+	CRibParser parser(parserCallback, *this, baseUri());
+	try {
+		if ( parser.canParse(name) ) {
+			baseUri() = parser.absUri();
+			bool savCache = cacheFileArchives();
+			if ( savCache ) {
+				archiveFileBegin(name);
+			}
+			archiveName(name);
+			lineNo(1);
+			parser.parse(callback, params);
+			if ( savCache ) {
+				archiveFileEnd();
+			}
+			archiveName(oldArchiveName.c_str());
+			lineNo(oldLineNo);
+			baseUri() = sav;
+			parser.close();
+			curParamList() = p;
+		} else {
+			throw ExceptRiCPPError(RIE_SYSTEM, RIE_ERROR,
+				printLineNo(__LINE__),
+				printName(__FILE__),
+				"Cannot open archive: %s", name);
+		}
+	} catch (ExceptRiCPPError &e1) {
+		baseUri() = sav;
+		archiveName(oldArchiveName.c_str());
+		lineNo(oldLineNo);
+		parser.close();
+		curParamList() = p;
+		throw e1;
+	} catch (std::exception &e2) {
+		baseUri() = sav;
+		archiveName(oldArchiveName.c_str());
+		lineNo(oldLineNo);
+		parser.close();
+		curParamList() = p;
+		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
+			printLineNo(__LINE__),
+			printName(__FILE__),
+			"While parsing name: %s", name, e2.what());
+	} catch(...) {
+		baseUri() = sav;
+		archiveName(oldArchiveName.c_str());
+		lineNo(oldLineNo);
+		parser.close();
+		curParamList() = p;
+		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
+			printLineNo(__LINE__),
+			printName(__FILE__),
+			"Unknown error while parsing: %s", name);
+	}
 }

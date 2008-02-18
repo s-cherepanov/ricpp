@@ -2097,11 +2097,11 @@ public:
 }; // CRiArchiveEnd
 
 ///////////////////////////////////////////////////////////////////////////////
-/** @brief Archive instances
+/*  @brief Archive instances
  *
  *  Used only internally to read archives from memory, instead of
  *  CRiReadArchive.
- */
+ *//*
 class CRiArchiveInstance : public CVarParamRManInterfaceCall {
 protected:
 	RtArchiveHandle m_handle;
@@ -2213,7 +2213,7 @@ public:
 		return *this;
 	}
 }; // CRiArchiveInstance
-
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Start of a motion block.

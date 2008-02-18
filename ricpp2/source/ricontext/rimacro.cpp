@@ -55,22 +55,23 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 	if ( !state )
 		return;
 
+	RtToken archiveNameStored = state->archiveName();
+	long linNoStored = state->lineNo();
+	
 	state->archiveName(handle());
 	std::list<CRManInterfaceCall *>::iterator i;
 	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
 		try {
 			state->lineNo((*i)->lineNo());
-			if ( ri.preCheck((*i)->interfaceIdx()) ) {
-				(*i)->replay(ri, callback);
-			}
+			(*i)->replay(ri, callback);
 		} catch ( ExceptRiCPPError &e2 ) {
-			state->lineNo(-1);
-			state->archiveName(0);
+			state->lineNo(linNoStored);
+			state->archiveName(archiveNameStored);
 			throw e2;
 		}
 	}
-	state->lineNo(-1);
-	state->archiveName(0);
+	state->lineNo(linNoStored);
+	state->archiveName(archiveNameStored);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

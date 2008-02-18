@@ -678,6 +678,11 @@ public:
 			delete m_filterfunc;
 	}
 
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiMakeLatLongEnvironment(*this);
+	}
+
 	inline virtual EnumRequests interfaceIdx() const { return REQ_MAKE_LAT_LONG_ENVIRONMENT; }
 
 	/** @brief Sets the element variables

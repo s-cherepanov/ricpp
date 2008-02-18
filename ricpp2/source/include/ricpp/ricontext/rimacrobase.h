@@ -98,10 +98,11 @@ public:
 	 * 
 	 *  @return New instance as clone of this instance.
 	 */
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRManInterfaceCall(*this);
-	}
+	// inline
+	virtual CRManInterfaceCall *duplicate() const = 0;
+	// {
+	//	return new CRManInterfaceCall(*this);
+	// }
 
 	/** @brief Destructor.
 	 */
@@ -111,7 +112,11 @@ public:
 	 *
 	 *  @return Interface number of the corresponding RI request.
 	 */
-	inline virtual EnumRequests interfaceIdx() const { return REQ_UNKNOWN;}
+	// inline 
+	virtual EnumRequests CRManInterfaceCall::interfaceIdx() const = 0;
+	// {
+	//	return REQ_UNKNOWN;
+	// }
 
 	/** @brief Gets the name of the RI request as token.
 	 *
@@ -353,14 +358,14 @@ public:
 	 */
 	inline virtual ~CVarParamRManInterfaceCall() {}
 	
-	/** @brief Duplication.
+	/*  @brief Duplication.
 	 * 
 	 *  @return New instance as clone of this instance.
-	 */
+	 *//*
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CVarParamRManInterfaceCall(*this);
-	}
+	} */
 
 	/** @brief Gets the size of tokens and parameters of the request.
 	 *
@@ -547,11 +552,11 @@ public:
 	/** @brief Duplication.
 	 * 
 	 *  @return New instance as clone of this instance.
-	 */
+	 *//*
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CGeometryRManInterfaceCall(*this);
-	}
+	} */
 
 	/** @brief Destructor.
 	 */
@@ -662,11 +667,11 @@ public:
 	/** @brief Duplication.
 	 * 
 	 *  @return New instance as clone of this instance.
-	 */
+	 *//*
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CUVRManInterfaceCall(*this);
-	}
+	} */
 
 	/** @brief Destructor.
 	 */
@@ -777,11 +782,11 @@ public:
 	/** @brief Duplication.
 	 * 
 	 *  @return New instance as clone of this instance.
-	 */
+	 *//*
 	inline virtual CRManInterfaceCall *duplicate() const
 	{
 		return new CPolygonRManInterfaceCall(*this);
-	}
+	} */
 
 	/** @brief Destructor.
 	 */

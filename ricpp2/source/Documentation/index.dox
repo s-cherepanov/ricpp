@@ -540,4 +540,21 @@ LightSource "distantlight" 1
 
 (Tend to yes)
 
+@verbatim
+ArchiveBegin "ALight"
+    AttributeBegin
+        LightSource "distantlight" 1
+    AttributeEnd
+ArchiveEnd
+
+WorldBegin
+
+    ReadArchive "ALight" # Instanciate Light source 
+    Illuminate 1
+
+    ReadArchive "ALight" # Instanciate another light source (must have the same handle?)
+    Illuminate 1
+WorldEnd
+@endverbatim
+
 */

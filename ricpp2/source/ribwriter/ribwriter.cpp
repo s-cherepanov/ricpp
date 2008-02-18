@@ -610,7 +610,8 @@ void CRibWriter::defaultDeclarations()
 	RI_RIBWRITER = renderState()->tokFindCreate("ribwriter");
 
 	// Declarations
-	RI_COMPRESS =                 renderState()->declare("Control:ribwriter:compress",                 "constant integer", true);
+	RI_COMPRESS =                 renderState()->declare("compress", "constant integer", true);
+
 	RI_POSTPONE_PROCEDURALS =     renderState()->declare("Control:ribwriter:postpone-procedurals",     "constant integer", true);
 	RI_POSTPONE_OBJECTS =         renderState()->declare("Control:ribwriter:postpone-objects",         "constant integer", true);
 	RI_POSTPONE_FILE_ARCHIVES =   renderState()->declare("Control:ribwriter:postpone-file-archives",   "constant integer", true);

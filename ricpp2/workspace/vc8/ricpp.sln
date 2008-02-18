@@ -96,6 +96,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RibSamples", "RibSamples", 
 		..\..\RibSamples\UnitCube.rib = ..\..\RibSamples\UnitCube.rib
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribtool", "ribtool\ribtool.vcproj", "{264B76D6-7B60-46FC-A6D1-FA97753D5531}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -232,6 +234,12 @@ Global
 		{3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4}.Release|Win32.Build.0 = Release|Win32
 		{3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4}.Release|x64.ActiveCfg = Release|x64
 		{3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4}.Release|x64.Build.0 = Release|x64
+		{264B76D6-7B60-46FC-A6D1-FA97753D5531}.Debug|Win32.ActiveCfg = Debug|Win32
+		{264B76D6-7B60-46FC-A6D1-FA97753D5531}.Debug|Win32.Build.0 = Debug|Win32
+		{264B76D6-7B60-46FC-A6D1-FA97753D5531}.Debug|x64.ActiveCfg = Debug|Win32
+		{264B76D6-7B60-46FC-A6D1-FA97753D5531}.Release|Win32.ActiveCfg = Release|Win32
+		{264B76D6-7B60-46FC-A6D1-FA97753D5531}.Release|Win32.Build.0 = Release|Win32
+		{264B76D6-7B60-46FC-A6D1-FA97753D5531}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

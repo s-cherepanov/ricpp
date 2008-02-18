@@ -351,6 +351,9 @@
 		C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stringpattern.cpp; path = ../../../source/tools/stringpattern.cpp; sourceTree = SOURCE_ROOT; };
 		C33E976A0CF42010007E087D /* riboptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = riboptions.h; path = ../../../source/include/ricpp/ribparser/riboptions.h; sourceTree = SOURCE_ROOT; };
 		C33E976C0CF42033007E087D /* riboptions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = riboptions.cpp; path = ../../../source/ribparser/riboptions.cpp; sourceTree = SOURCE_ROOT; };
+		C34D15110D695953002CF63B /* Polygon.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Polygon.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Polygon.rib; sourceTree = "<absolute>"; };
+		C34D15120D695953002CF63B /* Square.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Square.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Square.rib; sourceTree = "<absolute>"; };
+		C34D15130D695953002CF63B /* UnitCube.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = UnitCube.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/UnitCube.rib; sourceTree = "<absolute>"; };
 		C35C7A480BD76D3A00548675 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
@@ -832,7 +835,10 @@
 			isa = PBXGroup;
 			children = (
 				C36F02D70D57C6BC00554D4B /* Archive.rib */,
+				C34D15110D695953002CF63B /* Polygon.rib */,
+				C34D15120D695953002CF63B /* Square.rib */,
 				C36F02D80D57C6BC00554D4B /* TestArchive.rib */,
+				C34D15130D695953002CF63B /* UnitCube.rib */,
 			);
 			name = RibFiles;
 			sourceTree = "<group>";

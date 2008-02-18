@@ -327,6 +327,7 @@ RtVoid CBaseRenderer::system(RtString cmd)
 
 RtToken CBaseRenderer::processDeclare(RtToken name, RtString declaration, bool isDefault)
 {
+	/// @todo Belongs to renderstate !
 	if ( !emptyStr(name) && !emptyStr(declaration) ) {
 
 		CDeclaration *d = new CDeclaration(name, declaration, renderState()->options().colorDescr(), renderState()->tokenMap(), isDefault);		
@@ -401,6 +402,7 @@ RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
 
 void CBaseRenderer::defaultDeclarations()
 {
+	/// @todo add defaultDeclarations() to RenderState and call it from here (renderState()->RI_RIB, renderState()->RI_VARSUBST, RI_CACHE_FILE_ARCHIVES (change to RIB control)), processDeclare will be part of the renderState
 	// Additional Tokens
 	RI_BASE_RENDERER = renderState()->tokFindCreate("base-renderer");
 	renderState()->RI_RIB = renderState()->tokFindCreate("rib");

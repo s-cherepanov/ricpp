@@ -159,7 +159,7 @@ void CParameter::set(
 			case BASICTYPE_STRING:
 				m_strings.resize(elems);
 				for (unsigned long cnt = 0; cnt < elems; ++cnt ) {
-					m_strings[cnt] = ((const char **)theData)[cnt];
+					m_strings[cnt] = ((const char **)theData)[cnt] ? ((const char **)theData)[cnt] : "";
 				}
 				copyStringPtr();
 				break;

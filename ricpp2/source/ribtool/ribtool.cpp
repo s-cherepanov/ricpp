@@ -32,7 +32,8 @@ Synopsis: ribtool options files...
 
 This is only a roadmap, only a minor number of options work at the moment.
 I will implement the options one by one to test the behaviour of the
-RiCPP RIB parsing and writing capabilities.
+RiCPP RIB parsing and writing capabilities. Put executable together
+with dynlibs into the same directory, you can use symlinks for ribtool.
 
 Reads, interprets and processes binary and ASCII RIB files
 and prints the result to standard output or an output file.
@@ -251,6 +252,20 @@ RtInt special = -1;
  */
 void printUsage()
 {
+	std::cout << "Parses, processes and outputs RenderMan(R) Interface Bytstreams (RIB files)." << std::endl;
+	std::cout << "RenderMan(R) is a registered trademark of Pixar." << std::endl;
+	std::cout << std::endl;
+	std::cout << "usage: ribtool [-o[0-9] outfile -p[afo] +p[afo] - filename]..." << std::endl;
+	std::cout << "-o Sets outputfile, standard is stdout" << std::endl;
+	std::cout << "   0-9 gzip compression level, 0 is default compression" << std::endl;
+	std::cout << "       omit for no compression" << std::endl;
+	std::cout << "+p Enables postpone of" << std::endl;
+	std::cout << "-p Disables postpone of" << std::endl;
+	std::cout << "   a Inline archives" << std::endl;
+	std::cout << "   f File (RIB) archives" << std::endl;
+	std::cout << "   o RI objects" << std::endl;
+	std::cout << "- Reads from stdin" << std::endl;
+	std::cout << "filename Reads from filename" << std::endl;
 }
 
 

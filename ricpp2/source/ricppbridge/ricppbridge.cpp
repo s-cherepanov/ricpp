@@ -35,6 +35,7 @@
 
 using namespace RiCPP;
 
+// ----------------------------------------------------------------------------
 inline CRiCPPBridge::CContextManagement::CContextManagement()
 {
 	m_nextCtxHandle = 1;
@@ -169,6 +170,7 @@ void CRiCPPBridge::CContextManagement::end()
 		throw e;
 }
 
+// ----------------------------------------------------------------------------
 CRiCPPBridge::CRiCPPBridge() :
 	m_lastError(RIE_NOERROR),
 	m_ribFilterList(&m_ribFilter)
@@ -179,8 +181,8 @@ CRiCPPBridge::CRiCPPBridge() :
 	// Default options
 	RtToken tsearchpath[] = {"renderer", "ribfilter"};
 	RtPointer psearchpath[] = {(RtPointer)"$PROGDIR", (RtPointer)".:$PROGDIR"};
-	doOptionV("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
-	doOptionV("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+	doOption("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+	doOption("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
 
 	m_curErrorHandler = &CPrintErrorHandler::func;
 
@@ -224,6 +226,114 @@ RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
 	}
 
 	return n;
+}
+
+
+
+// ----------------------------------------------------------------------------
+
+IRiRoot &CRiCPPBridge::firstRibFilter()
+{
+	if ( m_ribFilterList.firstHandler() )
+		return *m_ribFilterList.firstHandler();
+	return *this;
+}
+
+IRiRoot &CRiCPPBridge::lastRibFilter()
+{
+	if ( m_ribFilterList.lastHandler() )
+		return *m_ribFilterList.lastHandler();
+	return *this;
+}
+
+bool CRiCPPBridge::addFrontRibFilter(CRibFilter *aFilter)
+{
+	try {
+		return m_ribFilterList.addFront(aFilter);
+	} catch ( ExceptRiCPPError &e ) {
+		ricppErrHandler().handleError(e);
+	}
+	return false;
+}
+
+bool CRiCPPBridge::addFrontRibFilter(const char *name)
+{
+	try {
+		return m_ribFilterList.addFront(name);
+	} catch ( ExceptRiCPPError &e ) {
+		ricppErrHandler().handleError(e);
+	}
+	return false;
+}
+
+bool CRiCPPBridge::removeFrontRibFilter()
+{
+	return m_ribFilterList.removeFront();
+}
+
+bool CRiCPPBridge::registerRibFilterFactory(const char *name, TemplPluginFactory<CRibFilter> *f)
+{
+	try {
+		return m_ribFilterList.registerFactory(name, f);
+	} catch ( ExceptRiCPPError &e ) {
+		ricppErrHandler().handleError(e);
+	}
+	return false;
+}
+
+bool CRiCPPBridge::registerRendererFactory(const char *name, TemplPluginFactory<CContextCreator> *f)
+{
+	try {
+		return m_ctxMgmt.registerFactory(name, f);
+	} catch ( ExceptRiCPPError &e ) {
+		ricppErrHandler().handleError(e);
+	}
+	return false;
+}
+
+bool CRiCPPBridge::unregisterRendererFactory(const char *name)
+{
+	try {
+		return m_ctxMgmt.unregisterFactory(name);
+	} catch ( ExceptRiCPPError &e ) {
+		ricppErrHandler().handleError(e);
+	}
+	return false;
+}
+
+const char *CRiCPPBridge::standardRendererName() const
+{
+	return m_ctxMgmt.standardRendererName();
+}
+
+void CRiCPPBridge::standardRendererName(const char *name)
+{
+	m_ctxMgmt.standardRendererName(name);
+}
+
+
+// ----------------------------------------------------------------------------
+
+const IFilterFunc &CRiCPPBridge::boxFilter() const { return CBoxFilter::func; }
+const IFilterFunc &CRiCPPBridge::catmullRomFilter() const { return CCatmullRomFilter::func; }
+const IFilterFunc &CRiCPPBridge::gaussianFilter() const { return CGaussianFilter::func; }
+const IFilterFunc &CRiCPPBridge::sincFilter() const { return CSincFilter::func; }
+const IFilterFunc &CRiCPPBridge::triangleFilter() const { return CTriangleFilter::func; }
+
+const ISubdivFunc &CRiCPPBridge::procDelayedReadArchive() const { return CProcDelayedReadArchive::func; }
+const ISubdivFunc &CRiCPPBridge::procRunProgram() const { return CProcRunProgram::func; }
+const ISubdivFunc &CRiCPPBridge::procDynamicLoad() const { return CProcDynamicLoad::func; }
+const IFreeFunc   &CRiCPPBridge::procFree() const { return CProcFree::func; }
+
+const IErrorHandler &CRiCPPBridge::errorAbort() const { return CAbortErrorHandler::func; }
+const IErrorHandler &CRiCPPBridge::errorIgnore() const { return CIgnoreErrorHandler::func; }
+const IErrorHandler &CRiCPPBridge::errorPrint() const { return CPrintErrorHandler::func; };
+
+RtInt CRiCPPBridge::lastError() { return m_lastError; }
+
+RtVoid CRiCPPBridge::errorHandler(const IErrorHandler &handler)
+{
+	m_curErrorHandler = &handler.singleton();
 }
 
 
@@ -1099,11 +1209,9 @@ RtVoid CRiCPPBridge::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer
 			ricppErrHandler().handleError(e);
 		}
 	} else {
-		// Options for the Renderer creator and its children.
-		// Because the bridge is state less control request are handled
-		// in the same way as options if there is no active renderer.
+		// Controls for the Renderer creator and its children.
 		try {
-			doOptionV(name, n, tokens, params);
+			doControl(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
@@ -1144,14 +1252,14 @@ RtVoid CRiCPPBridge::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer 
 	} else {
 		// options for the Renderer creator and its children
 		try {
-			doOptionV(name, n, tokens, params);
+			doOption(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	}
 }
 
-RtVoid CRiCPPBridge::doOptionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !name )
 		return;
@@ -1212,6 +1320,12 @@ RtVoid CRiCPPBridge::doOptionV(RtToken name, RtInt n, RtToken tokens[], RtPointe
 			m_pathReplace.standardpath("");
 		}
 	}
+}
+
+RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( !name )
+		return;
 }
 
 RtLightHandle CRiCPPBridge::lightSource(RtString name, RtToken token, ...)

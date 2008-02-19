@@ -16,6 +16,7 @@
 				C3808AFC0D3CDE1E00B6C3BA /* PBXTargetDependency */,
 				C3808AE10D3CDB5300B6C3BA /* PBXTargetDependency */,
 				C3808ABA0D3CC00D00B6C3BA /* PBXTargetDependency */,
+				C37A0D3D0D6AC5940027CE77 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -69,6 +70,8 @@
 		C3685F460D3C23B200B2E025 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
 		C3685F490D3C23E800B2E025 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F3E0D3C237000B2E025 /* libgendynlib.a */; };
 		C3685F4D0D3C240800B2E025 /* libpluginhandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F340D3C231500B2E025 /* libpluginhandler.a */; };
+		C37A0D410D6AC5C80027CE77 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
+		C37A0D430D6AC6030027CE77 /* ribtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37A0D420D6AC6030027CE77 /* ribtool.cpp */; };
 		C38088CB0D3CA7BE00B6C3BA /* ribfilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754110C1402250089A579 /* ribfilter.cpp */; };
 		C38088CC0D3CA7BE00B6C3BA /* ribfilterlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754120C1402250089A579 /* ribfilterlist.cpp */; };
 		C38088CD0D3CA7CB00B6C3BA /* ribfilter.h in Headers */ = {isa = PBXBuildFile; fileRef = C39754150C14025D0089A579 /* ribfilter.h */; };
@@ -214,6 +217,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = C3685EC30D3C1F4D00B2E025;
 			remoteInfo = tools;
+		};
+		C37A0D3C0D6AC5940027CE77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C37A0D370D6AC5880027CE77 /* ribtool */;
+			remoteInfo = ribtool;
+		};
+		C37A0D3E0D6AC5A80027CE77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
+			remoteInfo = ricppbridge;
 		};
 		C38088CF0D3CA7D700B6C3BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -449,6 +466,8 @@
 		C372B8D90BD7610D009B2459 /* errorhandlers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = errorhandlers.cpp; path = ../../../source/ricpp/errorhandlers.cpp; sourceTree = SOURCE_ROOT; };
 		C372B8DB0BD7610D009B2459 /* filters.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = filters.cpp; path = ../../../source/ricpp/filters.cpp; sourceTree = SOURCE_ROOT; };
 		C372B8E30BD7610D009B2459 /* subdivfunc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = subdivfunc.cpp; path = ../../../source/ricpp/subdivfunc.cpp; sourceTree = SOURCE_ROOT; };
+		C37A0D380D6AC5880027CE77 /* ribtool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ribtool; sourceTree = BUILT_PRODUCTS_DIR; };
+		C37A0D420D6AC6030027CE77 /* ribtool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribtool.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ribtool/ribtool.cpp; sourceTree = "<absolute>"; };
 		C37DBBA80C01CC6E003AE4E7 /* declaration.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = declaration.h; path = ../../../source/include/ricpp/declaration/declaration.h; sourceTree = SOURCE_ROOT; };
 		C37DBBA90C01CC6E003AE4E7 /* decldict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = decldict.h; path = ../../../source/include/ricpp/declaration/decldict.h; sourceTree = SOURCE_ROOT; };
 		C37DBBAA0C01CC6E003AE4E7 /* token.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = token.h; path = ../../../source/include/ricpp/declaration/token.h; sourceTree = SOURCE_ROOT; };
@@ -522,6 +541,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3685F460D3C23B200B2E025 /* libricpp.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37A0D360D6AC5880027CE77 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37A0D410D6AC5C80027CE77 /* libricppbridge.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,6 +668,7 @@
 				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
 				C39753DD0C13FEE00089A579 /* ribfilter */,
 				C36C39AC0CBA1F3B00D2B7B2 /* ribparser */,
+				C37A0D320D6AC54B0027CE77 /* ribtool */,
 				C3B848F90BD7621600DD22B5 /* ribwriter */,
 				C32093DA0BDCCF8100A0BB35 /* ribwriterdll */,
 				C372456D0CD5DD6C00945563 /* ricontext */,
@@ -672,6 +700,7 @@
 				C3808A920D3CBC6E00B6C3BA /* test */,
 				C3808AC00D3CC05700B6C3BA /* libribwriter.1.dylib */,
 				C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */,
+				C37A0D380D6AC5880027CE77 /* ribtool */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -970,6 +999,30 @@
 			isa = PBXGroup;
 			children = (
 				C34D15270D697A5C002CF63B /* baserenderer.cpp */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C37A0D320D6AC54B0027CE77 /* ribtool */ = {
+			isa = PBXGroup;
+			children = (
+				C37A0D330D6AC55F0027CE77 /* Header */,
+				C37A0D340D6AC5660027CE77 /* Implementation */,
+			);
+			name = ribtool;
+			sourceTree = "<group>";
+		};
+		C37A0D330D6AC55F0027CE77 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Header;
+			sourceTree = "<group>";
+		};
+		C37A0D340D6AC5660027CE77 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C37A0D420D6AC6030027CE77 /* ribtool.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -1461,6 +1514,23 @@
 			productReference = C3685F3E0D3C237000B2E025 /* libgendynlib.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		C37A0D370D6AC5880027CE77 /* ribtool */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C37A0D400D6AC5C60027CE77 /* Build configuration list for PBXNativeTarget "ribtool" */;
+			buildPhases = (
+				C37A0D350D6AC5880027CE77 /* Sources */,
+				C37A0D360D6AC5880027CE77 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C37A0D3F0D6AC5A80027CE77 /* PBXTargetDependency */,
+			);
+			name = ribtool;
+			productName = ribtool;
+			productReference = C37A0D380D6AC5880027CE77 /* ribtool */;
+			productType = "com.apple.product-type.tool";
+		};
 		C38088C70D3CA7A600B6C3BA /* ribfilter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C38088F10D3CA7EC00B6C3BA /* Build configuration list for PBXNativeTarget "ribfilter" */;
@@ -1691,6 +1761,7 @@
 				C3808A7F0D3CBB4100B6C3BA /* ricppbridge */,
 				C3808ABF0D3CC05700B6C3BA /* ribwriterdll */,
 				C3808AD00D3CDAA700B6C3BA /* passthrough */,
+				C37A0D370D6AC5880027CE77 /* ribtool */,
 				C3808A910D3CBC6E00B6C3BA /* test */,
 			);
 		};
@@ -1745,6 +1816,14 @@
 			files = (
 				C3685F420D3C23A000B2E025 /* dynlib.cpp in Sources */,
 				C3685F430D3C23A000B2E025 /* macdynlib.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37A0D350D6AC5880027CE77 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37A0D430D6AC6030027CE77 /* ribtool.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1882,6 +1961,16 @@
 			isa = PBXTargetDependency;
 			target = C3685EC30D3C1F4D00B2E025 /* tools */;
 			targetProxy = C3685F590D3C24A100B2E025 /* PBXContainerItemProxy */;
+		};
+		C37A0D3D0D6AC5940027CE77 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C37A0D370D6AC5880027CE77 /* ribtool */;
+			targetProxy = C37A0D3C0D6AC5940027CE77 /* PBXContainerItemProxy */;
+		};
+		C37A0D3F0D6AC5A80027CE77 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
+			targetProxy = C37A0D3E0D6AC5A80027CE77 /* PBXContainerItemProxy */;
 		};
 		C38088D00D3CA7D700B6C3BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2258,6 +2347,35 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = gendynlib;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C37A0D3A0D6AC5880027CE77 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = ribtool;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C37A0D3B0D6AC5880027CE77 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = ribtool;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2703,6 +2821,15 @@
 			buildConfigurations = (
 				C3685F3F0D3C237000B2E025 /* Debug */,
 				C3685F400D3C237000B2E025 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C37A0D400D6AC5C60027CE77 /* Build configuration list for PBXNativeTarget "ribtool" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C37A0D3A0D6AC5880027CE77 /* Debug */,
+				C37A0D3B0D6AC5880027CE77 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

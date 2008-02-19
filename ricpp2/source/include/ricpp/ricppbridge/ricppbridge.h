@@ -62,12 +62,17 @@ namespace RiCPP {
 class CRiCPPBridge : public IRi, protected IRibParserCallback
 {
 private:
-	/** @brief Current user defined error handler
+	/** @brief Current user defined error handler.
 	 *
-	 * CPrintErrorHandler is the default handler. It can be changed by errorHandler()
+	 * CPrintErrorHandler is the default handler. It can be changed by errorHandler().
 	 */
-	const IErrorHandler *m_curErrorHandler; 
-	RtInt m_lastError; ///< The last error number occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
+	const IErrorHandler *m_curErrorHandler;
+	
+	/** @brief Number of last error occured.
+	 *
+	 *  The last error number (RIE_...)  occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
+	 */
+	RtInt m_lastError;
 
 	/** @brief Error handler used by the bridge
 	 *
@@ -76,7 +81,9 @@ private:
 	 */
 	class CRiCPPBridgeErrorHandler : public IRiCPPErrorHandler {
 		friend class CRiCPPBridge;
+
 	private:
+	
 		/** @brief Surronding CRiCPPBridge instance
 		 *
 		 * The outer instance is the CRiCPPBridge instance belonging to this error handler.
@@ -113,6 +120,7 @@ private:
 		 * @param argList variable list of parameters, if 0 message is treted like a string without format symbols
 		 */
 		virtual RtVoid handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList=0);
+
 	} m_ricppErrorHandler; ///< Error handler instance, used only via ricppErrHandler()
 
 	friend class CRiCPPBridgeErrorHandler;
@@ -162,6 +170,7 @@ private:
 	}
 
 protected:
+
 	/** @brief Gets the error handler to use.
 	 *
 	 *  This function can be overwritten to change the
@@ -273,6 +282,8 @@ protected:
 		}
 
 		/** @brief Copy constructor
+		 *
+		 *  @param ctx Context to copy
 		 */
 		inline CContext(const CContext &ctx)
 		{
@@ -300,7 +311,7 @@ protected:
 			return m_contextCreator;
 		}
 
-		/** @brief Gets the assigned rendering context.
+		/** @brief Gets the read only assigned rendering context.
 		 *
 		 *  Since a context creator can bear many contexts, all context creator/rendering context
 		 *  pairs are stored (CContext objects in CContextManager::m_ctxMap).
@@ -309,13 +320,16 @@ protected:
 		 *  contextCreator()->getContext() are the same. Only those active contexts are
 		 *  used by other functions than context() and beginV().
 		 *
-		 *  @return Pointer to the stored backend rendering context
+		 *  @return Pointer to the stored backend rendering context (read only)
 		 */
 		inline const IRiContext *renderingContext() const
 		{
 			return m_renderingContext;
 		}
 		
+		/** @brief Gets the writeable assigned rendering context.
+		 *  @return Pointer to the stored backend rendering context (writeable)
+		 */
 		inline IRiContext *renderingContext()
 		{
 			return m_renderingContext;
@@ -437,7 +451,7 @@ protected:
 		}
 	}; // class CContext
 
-	/** @brief Context Management, maps frontend to backend.
+	/** @brief Context Management, maps frontend to backend (instance is m_ctxMgmt).
 	 *
 	 *  A RtContextHandle is mapped to a CContext, the backend context creator/rendering context pairs.
 	 *  A RtContextHandle of the frontend references one of those pairs. The CRiCPPBridge
@@ -484,6 +498,7 @@ protected:
 		 * @see beginV()
 		 */
 		RtContextHandle addContext(const CContext &ctx);
+
 	public:
 		/** @brief Initializes context management.
 		 *
@@ -492,7 +507,16 @@ protected:
 		 */
 		CContextManagement();
 
-		inline void setOuter(CRiCPPBridge &outer) { m_outer = &outer; }
+		/** @brief Sets the owner of the objects.
+		 *
+		 *  The CRiCPPBridge is used for error handling.
+		 *
+		 *  @param outer CRiCPPBridge that owns the CContextManagement object.
+		 */
+		inline void setOuter(CRiCPPBridge &outer)
+		{
+			m_outer = &outer;
+		}
 
 		/** @brief  Aborts the current context
 		 *
@@ -648,16 +672,33 @@ protected:
 	CContextManagement m_ctxMgmt; ///< The instance for the context management
 	//@}
 
-
 	/** @brief Like optionV() but only concerns the bridge itself.
 	 *
 	 * Forwarded by optionV() if there is no active rendering context.
+	 * Since there is no context option and control is likely to be the same.
+	 *
 	 * @param name Option name (likely "searchpath" for the renderer searchpath)
 	 * @param n Number token-value pairs
 	 * @param tokens Tokens
 	 * @param params Parameter values
+	 *
+	 * @see optionV(), doControl()
 	 */
-	virtual RtVoid doOptionV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid doOption(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+
+	/** @brief Like controlV() but only concerns the bridge itself.
+	 *
+	 * Forwarded by controlV() if there is no active rendering context.
+	 * Since there is no context option and control is likely to be the same.
+	 *
+	 * @param name Control name
+	 * @param n Number token-value pairs
+	 * @param tokens Tokens
+	 * @param params Parameter values
+	 *
+	 * @see controlV(), doOption()
+	 */
+	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Helper object to get standard pathes
 	 *  @see doOptionV()
@@ -685,6 +726,8 @@ public:
 	CRiCPPBridge();
 
 	/** @brief Destructor
+	 *
+	 *  Does nothing, members are sestructed automatically.
 	 */
 	virtual ~CRiCPPBridge();
 
@@ -699,22 +742,12 @@ public:
 	/**  @brief Gets the first interface to a user defined RIB filter.
 	 *  @return A reference of the interface of the first user defined filter.
 	 */
-	inline virtual IRiRoot &firstRibFilter()
-	{
-		if ( m_ribFilterList.firstHandler() )
-			return *m_ribFilterList.firstHandler();
-		return *this;
-	}
+	virtual IRiRoot &firstRibFilter();
 
 	/** @brief Tgets the last interface to a user defined RIB filter.
 	 *  @return A reference of the interface of the last user defined filter.
 	 */
-	inline virtual IRiRoot &lastRibFilter()
-	{
-		if ( m_ribFilterList.lastHandler() )
-			return *m_ribFilterList.lastHandler();
-		return *this;
-	}
+	virtual IRiRoot &lastRibFilter();
 
 	/** @brief Adds a new rib filter to the front.
 	 *
@@ -722,15 +755,7 @@ public:
 	 *
 	 *  @return true, filter was inserted
 	 */
-	inline virtual bool addFrontRibFilter(CRibFilter *aFilter)
-	{
-		try {
-			return m_ribFilterList.addFront(aFilter);
-		} catch ( ExceptRiCPPError &e ) {
-			ricppErrHandler().handleError(e);
-		}
-		return false;
-	}
+	virtual bool addFrontRibFilter(CRibFilter *aFilter);
 
 	/** @brief Adds a new rib filter plugin to the front.
 	 *
@@ -739,15 +764,7 @@ public:
 	 *  @param name The name of the Rib filter (dll or in memory)
 	 *  @return true, filter was inserted
 	 */
-	inline virtual bool addFrontRibFilter(const char *name)
-	{
-		try {
-			return m_ribFilterList.addFront(name);
-		} catch ( ExceptRiCPPError &e ) {
-			ricppErrHandler().handleError(e);
-		}
-		return false;
-	}
+	virtual bool addFrontRibFilter(const char *name);
 
 	/** @brief Removes a rib filter from the top
 	 *
@@ -755,10 +772,7 @@ public:
 	 *
 	 *  @return true, filter was removed
 	 */
-	inline virtual bool removeFrontRibFilter()
-	{
-		return m_ribFilterList.removeFront();
-	}
+	virtual bool removeFrontRibFilter();
 
 	/** @brief Register a filter factory
 	 *
@@ -767,15 +781,7 @@ public:
 	 *
 	 *  @return true, filter factory was registerd
 	 */
-	inline virtual bool registerRibFilterFactory(const char *name, TemplPluginFactory<CRibFilter> *f)
-	{
-		try {
-			return m_ribFilterList.registerFactory(name, f);
-		} catch ( ExceptRiCPPError &e ) {
-			ricppErrHandler().handleError(e);
-		}
-		return false;
-	}
+	virtual bool registerRibFilterFactory(const char *name, TemplPluginFactory<CRibFilter> *f);
 
 	/** @brief Registers a plugin factory for the context creator
 	 *
@@ -787,41 +793,25 @@ public:
 	 * @param f Factory for the context creators
 	 * @return true, if the plugin factory could be registered
 	 */
-	inline virtual bool registerRendererFactory(const char *name, TemplPluginFactory<CContextCreator> *f)
-	{
-		try {
-			return m_ctxMgmt.registerFactory(name, f);
-		} catch ( ExceptRiCPPError &e ) {
-			ricppErrHandler().handleError(e);
-		}
-		return false;
-	}
+	virtual bool registerRendererFactory(const char *name, TemplPluginFactory<CContextCreator> *f);
 
 	/** @brief unregisters a plugin factory
 	 * @param name Name of the plugins
 	 * @return true, if factory was unregistered
 	 */
-	inline virtual bool unregisterRendererFactory(const char *name)
-	{
-		try {
-			return m_ctxMgmt.unregisterFactory(name);
-		} catch ( ExceptRiCPPError &e ) {
-			ricppErrHandler().handleError(e);
-		}
-		return false;
-	}
+	virtual bool unregisterRendererFactory(const char *name);
 
 	/** @brief Gets the name of the standard renderer.
 	 *
 	 * @return Name of the standard renderer
 	 */
-	inline const char *standardRendererName() const { return m_ctxMgmt.standardRendererName(); }
+	virtual const char *standardRendererName() const;
 
 	/** @brief Sets the name of the standard renderer.
 	 *
 	 * @param name Name of the standard renderer, 0 is substituted by "ribwriter"
 	 */
-	inline void standardRendererName(const char *name) { m_ctxMgmt.standardRendererName(name); }
+	virtual void standardRendererName(const char *name);
 	//@}
 
 	/******************************************************************************
@@ -837,21 +827,21 @@ public:
 	 *  @brief Returns the appropriate filter functions
      */
 	//@{
-	inline virtual const IFilterFunc &boxFilter() const { return CBoxFilter::func; }
-	inline virtual const IFilterFunc &catmullRomFilter() const { return CCatmullRomFilter::func; }
-	inline virtual const IFilterFunc &gaussianFilter() const { return CGaussianFilter::func; }
-	inline virtual const IFilterFunc &sincFilter() const { return CSincFilter::func; }
-	inline virtual const IFilterFunc &triangleFilter() const { return CTriangleFilter::func; }
+	virtual const IFilterFunc &boxFilter() const;
+	virtual const IFilterFunc &catmullRomFilter() const;
+	virtual const IFilterFunc &gaussianFilter() const;
+	virtual const IFilterFunc &sincFilter() const;
+	virtual const IFilterFunc &triangleFilter() const;
 	//@}
 
 	/** @addtogroup ricpp_proc
 	 *  @brief Returns the appropriate procedurals
      */
 	//@{
-	inline virtual const ISubdivFunc &procDelayedReadArchive() const { return CProcDelayedReadArchive::func; }
-	inline virtual const ISubdivFunc &procRunProgram() const { return CProcRunProgram::func; }
-	inline virtual const ISubdivFunc &procDynamicLoad() const { return CProcDynamicLoad::func; }
-	inline virtual const IFreeFunc &procFree() const { return CProcFree::func; }
+	virtual const ISubdivFunc &procDelayedReadArchive() const;
+	virtual const ISubdivFunc &procRunProgram() const;
+	virtual const ISubdivFunc &procDynamicLoad() const;
+	virtual const IFreeFunc &procFree() const;
 	//@}
 
 	/** @addtogroup ricpp_error
@@ -859,24 +849,21 @@ public:
      */
 	//@{
 
-	inline virtual const IErrorHandler &errorAbort() const { return CAbortErrorHandler::func; }
-	inline virtual const IErrorHandler &errorIgnore() const { return CIgnoreErrorHandler::func; }
-	inline virtual const IErrorHandler &errorPrint() const { return CPrintErrorHandler::func; };
+	virtual const IErrorHandler &errorAbort() const;
+	virtual const IErrorHandler &errorIgnore() const;
+	virtual const IErrorHandler &errorPrint() const;
 
 	/** @brief The last error is set by CRiCPPBridgeErrorHandler::handleError(), CRiCPPBridgeErrorHandler::handleErrorV()
 	 *
 	 * @return Most recent error number
      */
-	inline virtual RtInt lastError() { return m_lastError; }
+	virtual RtInt lastError();
 
 	/** @brief Sets the current error handler, default is errorPrint()
 	 *
 	 *  @param handler Reference to an error handler, pointer is stored
 	 */
-	inline virtual RtVoid errorHandler(const IErrorHandler &handler)
-	{
-		m_curErrorHandler = &handler.singleton();
-	}
+	virtual RtVoid errorHandler(const IErrorHandler &handler);
 	//@}
 
 	/******************************************************************************/
@@ -897,6 +884,14 @@ public:
 	virtual RtVoid system(RtString cmd);
 
 	virtual RtVoid control(RtToken name, RtToken token = RI_NULL, ...);
+
+	/** @brief Sets a control value.
+	 *
+	 * Sets a control calue for the renderer. If there is no active rendering context, the caontrol is
+	 * interpreted by the bridge. At the moment no controls are used.
+	 *
+	 * @see IRiRoot::controlV(), doControl(), optionV()
+	 */
 	virtual RtVoid controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtVoid version();
@@ -909,7 +904,8 @@ public:
 	 * Can be called from everywhere.
 	 *
 	 * @return handle of the current active context, illContextHandle (== RI_NULL)
-	 * is returned if there is no active context
+	 * is returned if there is no active context.
+	 *
 	 * @see context(), beginV(), end(), CContextManager::getContext(), IRiRoot::getContext()
 	 */
 	inline virtual RtContextHandle getContext(void) { return m_ctxMgmt.getContext(); }
@@ -925,8 +921,7 @@ public:
 	 *        you should not use destroyed contexts (end()). @a handle can be
 	 *        illContextHandle to disable the backend.
 	 *
-	 * @see getContext(), beginV(), end(),
-	 * CContextManager::context(), IRiRoot::context()
+	 * @see getContext(), beginV(), end(), CContextManager::context(), IRiRoot::context()
 	 */
 	virtual RtVoid context(RtContextHandle handle);
 
@@ -941,6 +936,7 @@ public:
 	 * @param token First token in parameterlist (e.G. RI_FILE for filename) followed by a parameter
 	 *        pointer (value array), and so on. Must be ended by a token RI_NULL.
 	 * @return The new context handle
+	 *
 	 * @see beginV()
 	 */
 	virtual RtContextHandle begin(RtString name, RtToken token = RI_NULL, ...);
@@ -959,8 +955,7 @@ public:
 	 * @param params The parameter areay pointers for the tokens (e.g. pointer (char **) to the filename)
 	 * @return The new context handle
 	 *
-	 * @see context(), getContext(), beginV(), end(),
-	 * CContextManager::beginV(), IRiRoot::beginV()
+	 * @see context(), getContext(), beginV(), end(), CContextManager::beginV(), IRiRoot::beginV()
 	 */
 	virtual RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
@@ -1049,7 +1044,7 @@ public:
 	 * interpreted by the bridge. The option "renderer" "searchpath" is used by the
 	 * renderer creator CRendererLoader (concrete CRendererLoader)
 	 *
-	 * @see IRiRoot::optionV()
+	 * @see IRiRoot::optionV(), doOption(), controlV()
 	 */
 	virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 

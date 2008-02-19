@@ -222,14 +222,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C37A0D370D6AC5880027CE77 /* ribtool */;
+			remoteGlobalIDString = C37A0D370D6AC5880027CE77;
 			remoteInfo = ribtool;
 		};
 		C37A0D3E0D6AC5A80027CE77 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
+			remoteGlobalIDString = C3808A7F0D3CBB4100B6C3BA;
 			remoteInfo = ricppbridge;
 		};
 		C38088CF0D3CA7D700B6C3BA /* PBXContainerItemProxy */ = {

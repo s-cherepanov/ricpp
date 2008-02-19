@@ -153,10 +153,12 @@ And don't forget the newsgroup <a href="http://groups.google.com/group/comp.grap
 Special thanks to
 
 <ul>
+<li>Okan Arikan for Pixie</li>
 <li>Andrew Chapman for some helpful hints</li>
-<li>Paul C. Gregory et all for Aqsis</li>
 <li>Jean-loup Gailly et all for zlib</li>
+<li>Paul C. Gregory et all for Aqsis</li>
 <li>Scott Iverson for some ribs</li>
+<li>Dietmar Planitzer, RenderMall and some hints</li>
 </ul>
 
 @section copyright_sec Copyright notice
@@ -557,4 +559,55 @@ WorldBegin
 WorldEnd
 @endverbatim
 
+*/
+
+/*! @page page_notebooks  Notebook for some ideas I do not want to forget
+
+@section page_notebook_sec1 Ideas and further to do
+
+- Implementation of Linux port, that's mainly find a tool for dependencies (makedepend is not exactly what I want),
+writing makefiles. Implementing $PROGDIR has to be done (similar stuff can be found in Open Watcom e.g.)
+
+@verbatim
+/* ******************************************************************** *
+ *
+ *                           Open Watcom Project
+ *
+ *   Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+ *
+ * ******************************************************************** */
+
+char *_cmdname( char *name )
+{
+   int save_errno = errno;
+   int result = readlink( "/proc/self/exe", name, PATH_MAX );
+   if( result == -1 ) {
+       /* try another way for BSD */
+       result = readlink( "/proc/curproc/file", name, PATH_MAX );
+   }
+   errno = save_errno;
+
+   /* fall back to argv[0] if readlink doesn't work */
+   if( result == -1 || result == PATH_MAX )
+       return( strcpy( name, _argv[0] ) );
+
+   /* readlink does not add a NUL so we need to do it ourselves */
+   name[result] = '\0';
+   return( name );
+}
+@endverbatim
+
+- Try to defer tesselation of geometry to Hider (Idea: Hider knows display and Shaders and do
+the rendering, CBaseRenderer child to feed the hider), maybe using GTS (Stephan Popinet)
+
+- Add C binding (pixie) with two dynamic libs (program, procedural). Later (after
+draft renderer is irunning) build a bridge to ObjectiveC and Gnu 3DKit
+http://www.gnu.org/software/gnu3dkit/ (Philippe C.D. Robert) finally to integrate
+in Cocoa, Mac OS X.
+
+- Seperate messages for localization, clean up error messages, add file and line where missing
+
+- Find a way to integrate the macro classes with the rib reader classes, add rib output.
+
+- Ribfilter, should it really call the frontend?
 */

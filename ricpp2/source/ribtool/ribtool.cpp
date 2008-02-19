@@ -30,12 +30,15 @@
 Synopsis: ribtool options files...
 @endverbatim
 
-This is only a roadmap, only a minor number of options work at the moment.
+This is only a roadmap (ideas), only a minor number of options work at the moment,
+lsit can be found in printUsage().
 I will implement the options one by one to test the behaviour of the
-RiCPP RIB parsing and writing capabilities. Put executable together
+RiCPP RIB parsing and writing capabilities.
+
+To execute ribtool, put executable together
 with dynlibs into the same directory, you can use symlinks for ribtool.
 
-Reads, interprets and processes binary and ASCII RIB files
+Ribtool reads, interprets and processes binary and ASCII RIB files
 and prints the result to standard output or an output file.
 Jobs for processing can be for example expanding archives and
 converting from ASCII to binary representation. The command
@@ -52,7 +55,10 @@ You have to seperate options from filenames and the '-' (for standard
 input). Options need not to be seperated, because the - and the +
 are used as boundary. filenames can contain simple
 wildcards (* and ?). Files (not stdin and stdout at the moment) can
-be compressed with zlib.
+be compressed with zlib. You can concat filenames and stdin symbol
+with '+'. e.g. lightsource.rib+objects.rib+world.rib to parse
+them within one parsing context (to do "append" parameter of ReadArchive)
+to use the handles of one file within another.
 
 Rib dynamic procedurals and ribfilters have to be compiled using the RiCPP
 library.
@@ -221,7 +227,61 @@ Writes either binary (+b) or ASCII (-b) output
 
 @verbatim
 +b Binary output
--b Ascii outpu
+-b Ascii output
+@endverbatim
+
+The option x (Extract frames)
+
+Extracts frames (positive and negative lists). The
+extraction string has the form n,n-m,n-,-n, e.g.
+"-2,7,9-11,15-" extracts 1,2, 7, 9,10,11, 15,16,17,...
+The frames are written in the sequence they are found.
+If only a postive list and all frames out of the list
+has been found, the ouput stops. The extracted frames
+from FrameBegin to FrameEnd as well as the rib code
+in frontof between and possibly after the frames is written.
+
+@verbatim
++x list Extracts the frames given by the list
+-x list writes frames except the ones given by the list
+@endverbatim
+
+The option v (Rib variable extraction while parsing option used) +v
+
+For compatibility the option "rib" "string varsubst"  can
+be used. If you want to disable the option and do variable
+extraction later, you can use -v. Mind +v does not turn
+on the RIB variable extraction, this is done if the
+varsubst option is found. If RIB variable
+extraction turned off: Within an if-expression ${id} is not
+extracted, however, $id and $(id) are used for evaluation.
+
+@verbatim
+-v disables handling of varsubst option
++v enables handling of varsubst option
+@endverbatim
+
+The option g (generate header)
+
+For complexer header a header-only ribfile
+can be included by normal filename.
+
++g without any further arguments writes simple header info
+
+@verbatim
+##RenderMan RIB-Structure 1.1
+version 3.03
+@endverbatim
+
+If you included a header, you can disable further
+headers/version by +khv
+
+Version is written in general only once.
+
+@verbatim
+h Header string Rib file: ##RenderMan RIB-Structure 1.1
+e Header for entity: ##RenderMan RIB-Structure 1.1 Entity
+v Writes current version string of the ribwriter: version 3.03
 @endverbatim
 
 The option m (cache (memory) rib archives), default -m

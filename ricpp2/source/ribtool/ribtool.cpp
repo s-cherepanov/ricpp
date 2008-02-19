@@ -23,7 +23,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /** @file ribtool.cpp
- *  @author Andreas Pidde (andreas@pidde.de)
+ *  @author Andreas Pidde (andreas@pidde.de).
  *  @brief RIBtool, a shell tool to do some RIB processing.
 
 This is only a roadmap (some ideas), a minor number of
@@ -32,13 +32,13 @@ be found in printUsage(). I will implement the options one
 by one to test the behaviour of the RiCPP RIB parsing and
 writing capabilities.
 
-RIBtool is a little shell tool, that parses, processes and
-writes RenderMan(R) Interface Bytstreams (RIB files).
+RIBtool is a little shell tool, which parses, processes and
+writes RenderMan(R) Interface Byte streams (RIB files).
 For example, jobs for RIBtool can be expanding archives and
 converting from them from ASCII to binary representation or
 vice versa. To execute RIBtool, put the executable together
 with the RiCPP dynlibs into the same directory. You can use
-symlinks for RIBtool.
+symbolic links for RIBtool.
 
 @verbatim
 Synopsis: ribtool options files...
@@ -56,7 +56,7 @@ by one or more characters as arguments. The output is the concatenation
 of all processed input files.
 
 You have to separate options from filenames with a blank. A single
-'-' with no following character stands for standard input. Options
+'-' followed by no character stands for standard input. Options
 do not need to be separated, because the - and the + are used as
 boundary. Filenames can contain simple wildcards (* and ?).
 Files (not stdin and stdout at the moment) could be compressed
@@ -74,24 +74,24 @@ Option p stands for postponing or defering special output,
 e.g. -pa won't postpone archives. The requests between
 ArchiveBegin and ArchiveEnd (archive definition) are cached
 (not written) and will be written if a ReadArchive will be found.
-In contrast, if an archive is posponed with +pa, the archive
+In contrast, if an archive is postponed with +pa, the archive
 definition is written as well as the appropriate ReadArchive
-request, but not the content. Later the renderer, reading the
+request, but not the contents. Later the renderer, reading the
 processed RIB, will have to do the archive processing. If an
 archive has been read with -pa, that means the archive definition
-was not written, but the instanciation with the appropriate
+was not written, but the instantiation with the appropriate
 ReadArchive was found while +pa was set, the archive will be
-written anyway. Because otherwise, since the definition was not written,
-an error will occur. The content of the archive will be written as well,
-if ArchiveBegin/ArchiveEnd (archive was written) was found while +pa was
-active, but the appropriate ReadArchive was found with a -pa set.
-Objects are processed in the same way.
+written anyway. Otherwise an error will occur, because the
+definition was not written. The contents of the archive will
+be written as well, if ArchiveBegin/ArchiveEnd (archive was written)
+was found while +pa was active, but the appropriate ReadArchive
+was found with a -pa set. Objects are processed in the same way.
 
 The arguments can be juxtaposed. E.g. -pdafo disables the
 defered output for dynamic procedurals, inline archives, RIB
-files and objects. The RIB code gets printed when instanciated.
+files and objects. The RIB code gets printed when instantiated.
 If no argument follows the p, everything is influenced. E.g.
--p has the same effecte as -pafodryi or -pafopi. All command
+-p has the same effect as -pafodryi or -pafopi. All command
 options with arguments are handled in this way.
 
 @verbatim
@@ -118,11 +118,11 @@ but shall not occur at output. There are no arguments.
 For example: ribtool -i Declarations.rib +i -pdafo Objects.rib
 can be a command line used to read Declarations.rib containing
 the declarations of a special renderer and write the
-expanded content of Objects.rib to standard out.
+expanded contents of Objects.rib to standard out.
 
 @verbatim
 -i stops output, only reads and interprets RIB
-+i continues output
++i continues writing output
 @endverbatim
 
 - The option - (stdin)
@@ -139,7 +139,7 @@ ribtool -
 
 - The option o (output)
 
-Only as usual as -o filename. You can add a number 0-9 for
+Only used as usual as -o filename. You can add a number 0-9 for
 GZIP compression, 0 is default compression no number stands
 for no compression. filename should normally have the .rib
 extension. If you use .rib.gz, the file will also be
@@ -153,14 +153,15 @@ compressed at the moment.
 
 - The option c (cull), default -c
 
-Culls the geometry that is not visible in the viewing volume.
+Culls the geometry that is not visible inside the viewing volume.
 
 -pdr+c-cp Culls geometry, procedurals (delayed read, run program)
 are executed everytime (-pdr and -cp), but the geometries found
 are culled (+c).
 
 -pdr+c Culls geometry and procedurals having their bounding box
-outside the viewing volume are not executed since not visible.
+outside the viewing volume. Procedurals are not executed because
+they are not visible.
 
 @verbatim
 +c Cull geometry (Sphere, Cone, Paraboloid, PatchMesh...);
@@ -172,14 +173,14 @@ g other geometries
 
 - The option s (simulate), default +s (must change RiCPP to do this)
 
-This option is usefull only for posponed requests (and only affects
+This option is usefull only for postponed requests (and only affects
 these requests therefore). It can happen that read archives influencing
 the way the following RIB code is processed (e.g. user defined attributes
 can influence the way an if expression evaluates). You can simulate the
-processing of otherwise posponed RIB code. However, it can happen that
-you don't want to simulate e.g. the RIB archive files are not available,
-the procedural is not runable by RIBtool. The arguments are the same as
-for the postpone option.
+processing of otherwise postponed RIB code. However, it can happen that
+you don't want to simulate, e.g. because the RIB archive files are
+not available, or the procedural is not executable  by RIBtool. The
+arguments are the same as for the postpone option.
 
 @verbatim
 +s Simulates input
@@ -190,7 +191,7 @@ Arguments: see option p
 
 - The option k (skip), default -k
 
-Skips comments, headers and version requests. At the moment,
+Skips writing comments, headers and version requests. At the moment,
 always the version of the RIB generator (RiCPP ribwriter) is
 written, not the version found. That's because the output is
 written with the version of the generator, not the one of the
@@ -220,21 +221,21 @@ that can be used as RIB filter. RIB filters can be Daisy-Chained.
 
 - The option h (handles), default +h
 
-Controlls the way handles are processed (oldstyle numeric or
-RIB string handles, if found). Numeric handles will be
+Controls the way handles are processed (old style numeric or
+newer RIB string handles, if found). Numeric handles will be
 renumbered.
 
 @verbatim
-+h Use string handles if found, numeric handles
++h Uses string handles if found, numeric handles
    will stay numeric and will be renumbered.
--h Print only numeric handles, even for string handles.
+-h Prints only numeric handles, even for string handles.
    The handles will be renumbered.
 @endverbatim
 
 - The option n (indent RIB archives), default +n4
 
-Indents the written RIB blocks by a number of blanks +n0
-and -n is for no indent.
++n indents the written RIB blocks by a number of blanks.
+The +n0 and -n options are used to indicate to use no indent.
 
 @verbatim
 +n[0-9] Indents RIB output by blanks
@@ -247,30 +248,32 @@ Writes either binary (+b) or ASCII (-b) output
 
 @verbatim
 +b Binary output
--b Ascii output
+-b ASCII output
 @endverbatim
 
 - The option x (Extract frames)
 
-Extracts frames (positive and negative lists). The
+Extracts frames (using positive and negative lists). The
 extraction string has the form /n,n-m,n-,-n/, e.g.
 +x/-2,7,9-11,15-/-x/20/ extracts 1,2, 7, 9,10,11, 15,16,17,...
 but not 20. The frames are written in the sequence they are
 found. If only a postive list is given and all frames out of
-the list has been found, ribtool terminates. The extracted
-frames from FrameBegin to FrameEnd as well as the RIB code
-in front of, between and possibly after the frames is written.
+the list have been found, RIBtool terminates without writing
+the requests that may follow the last FrameEnd. The extracted
+frames from FrameBegin to FrameEnd, as well as the RIB code
+in front of, between, and possibly after the frames will be
+written.
 
 Use no x option to let RIBtool write all frames. -x can
 also be used for extraction.
 
 @verbatim
 +x/list/ Extracts the frames given by the list. If
-         the list is empty // or missing, no frames are
-		 written.
+         the list is empty // or missing, no frames
+		 will be written.
 -x/list/ writes all frames except the ones
          given by the list, if the list is empty //
-		 or missing, all frames are written
+		 or missing, all frames will be written
 @endverbatim
 
 - The option v (RIB variable extraction while parsing option used) +v
@@ -293,7 +296,7 @@ indeed.
 
 - The option g (generate header)
 
-For a complexer header a header-only ribfile
+For a larger header, a header-only RIB file
 can be included.
 
 +g without any further arguments writes simple header info:
@@ -342,7 +345,7 @@ RtInt special = -1; ///< Used as parmeter for IRi::control() (special behaviour)
  */
 void printUsage()
 {
-	std::cout << "Parses, processes and outputs RenderMan(R) Interface Bytstreams (RIB files)." << std::endl;
+	std::cout << "Parses, processes and outputs RenderMan(R) Interface Byte streams (RIB files)." << std::endl;
 	std::cout << "RenderMan(R) is a registered trademark of Pixar." << std::endl;
 	std::cout << std::endl;
 	std::cout << "usage: ribtool [-o[0-9] outfile -p[afo] +p[afo] - filename]..." << std::endl;

@@ -609,5 +609,6 @@ in Cocoa, Mac OS X.
 
 - Find a way to integrate the macro classes with the rib reader classes, add rib output.
 
-- Ribfilter, should it really call the frontend?
+- Ribfilter, should it really call the frontend? Think yes, because of the handling of rib filters.
+If sending over Network there will be two frontends as bridge heads.
 */

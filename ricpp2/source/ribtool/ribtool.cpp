@@ -24,66 +24,75 @@
 
 /** @file ribtool.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Shell tool to do some rib processing.
+ *  @brief RIBtool, a shell tool to do some RIB processing.
+
+This is only a roadmap (some ideas), a minor number of
+options work at the moment. A list of working options can
+be found in printUsage(). I will implement the options one
+by one to test the behaviour of the RiCPP RIB parsing and
+writing capabilities.
+
+RIBtool is a little shell tool, that parses, processes and
+writes RenderMan(R) Interface Bytstreams (RIB files).
+For example, jobs for RIBtool can be expanding archives and
+converting from them from ASCII to binary representation or
+vice versa. To execute RIBtool, put the executable together
+with the RiCPP dynlibs into the same directory. You can use
+symlinks for RIBtool.
 
 @verbatim
 Synopsis: ribtool options files...
 @endverbatim
 
-This is only a roadmap (ideas), only a minor number of options work at the moment,
-lsit can be found in printUsage().
-I will implement the options one by one to test the behaviour of the
-RiCPP RIB parsing and writing capabilities.
+If you run RIBtool, the command line is first searched for an optional
+output file given by the option -o filename. The first file found will
+be taken, default value is standard output. The command line gets then
+read from the beginning left to right ignoring the -o options.
+The found options control the way the following RIB files are processed.
+The options start with a - (disable) or + (enable) followed
+directly by one character, the command, that identifies the operation
+that has to be done. Optionally the command can be followed directly
+by one or more characters as arguments. The output is the concatenation
+of all processed input files.
 
-To execute ribtool, put executable together
-with dynlibs into the same directory, you can use symlinks for ribtool.
+You have to separate options from filenames with a blank. A single
+'-' with no following character stands for standard input. Options
+do not need to be separated, because the - and the + are used as
+boundary. Filenames can contain simple wildcards (* and ?).
+Files (not stdin and stdout at the moment) could be compressed
+with zlib. You can concatenate filenames and the stdin symbol
+with a '+', like lightsource.rib+objects.rib+world.rib to parse
+them within a single parsing context (to do: "append" parameter of
+ReadArchive) to use the handles defined in one file within another.
 
-Ribtool reads, interprets and processes binary and ASCII RIB files
-and prints the result to standard output or an output file.
-Jobs for processing can be for example expanding archives and
-converting from ASCII to binary representation. The command
-line is first searched for an optional output file
--o filename (standard is stdout, first file found is taken).
-It is than read from the beginning left to right ignoring th -o.
-Options control the way the following RIB files are processed.
-The options start with - (disable) or + (enable) followed
-directly by an character that identifies the operation,
-optionaly followed directly by single characters as arguments. The
-output is the concatenation of all input files.
+RIB dynamic procedurals and RIB filters have to be linked against
+the RiCPP library to work correctly.
 
-You have to seperate options from filenames and the '-' (for standard
-input). Options need not to be seperated, because the - and the +
-are used as boundary. filenames can contain simple
-wildcards (* and ?). Files (not stdin and stdout at the moment) can
-be compressed with zlib. You can concat filenames and stdin symbol
-with '+'. e.g. lightsource.rib+objects.rib+world.rib to parse
-them within one parsing context (to do "append" parameter of ReadArchive)
-to use the handles of one file within another.
+- The option p (postpone), default +p-pf
 
-Rib dynamic procedurals and ribfilters have to be compiled using the RiCPP
-library.
-
-The option p (postpone), default +p-pf
-
-Option p for postpone to defer output, e.g. -pa won't postpone
-archives. The requests between ArchiveBegin and ArchiveEnd
-(archive definition) are cached (not written) and put out if
-a ReadArchive is found. If an archive is posponed with +pa, the
-archive definition is written as well as a ReadArchive request
-for this archive, so later the renderer will have to do the archive
-processing. If an archive was read with -pa, that means the
-archive definition is not written, but the instanciation with
-ReadArchive was found while +pa is set, the archive is written
-anyway. It is also written if found +pa ArchiveBegin ArchiveEnd
-(archive is written) +pa ReadArchive. Objects are processed the same
-way.
+Option p stands for postponing or defering special output,
+e.g. -pa won't postpone archives. The requests between
+ArchiveBegin and ArchiveEnd (archive definition) are cached
+(not written) and will be written if a ReadArchive will be found.
+In contrast, if an archive is posponed with +pa, the archive
+definition is written as well as the appropriate ReadArchive
+request, but not the content. Later the renderer, reading the
+processed RIB, will have to do the archive processing. If an
+archive has been read with -pa, that means the archive definition
+was not written, but the instanciation with the appropriate
+ReadArchive was found while +pa was set, the archive will be
+written anyway. Because otherwise, since the definition was not written,
+an error will occur. The content of the archive will be written as well,
+if ArchiveBegin/ArchiveEnd (archive was written) was found while +pa was
+active, but the appropriate ReadArchive was found with a -pa set.
+Objects are processed in the same way.
 
 The arguments can be juxtaposed. E.g. -pdafo disables the
 defered output for dynamic procedurals, inline archives, RIB
-files and objects. They are printed when they are instanciated.
-If no arguments follow the p, everything is influenced. E.g.
--p is the same as -pafodryi or -pafopi All options with
-arguments are handled this way.
+files and objects. The RIB code gets printed when instanciated.
+If no argument follows the p, everything is influenced. E.g.
+-p has the same effecte as -pafodryi or -pafopi. All command
+options with arguments are handled in this way.
 
 @verbatim
 +p postpones
@@ -92,136 +101,147 @@ arguments are handled this way.
 a Inline archives (ArchiveBegin, ArchiveEnd, ReadArchive)
 f RIB files (ReadArchive)
 o Objects (ObjectBegin, ObjectEnd, ObjectInstance)
-p Shortcut for all procedurals dry (Procedural "DelayedRead", "Run", "Dynamic")
-d delayed read procedural (Procedural "DelayedRead")
-r run program procedural (Procedural "Run")
-y dynamic procedural (Procedural "Dynamic" works for RiCPP dynamic procedurals only)
+p Shortcut for all procedurals "dry"
+  (Procedural "DelayedReadArchive", "RunProgram", "DynamicLoad")
+d delayed read procedural (Procedural "DelayedReadArchive")
+r run program procedural (Procedural "RunProgram")
+y dynamic procedural (Procedural "DynamicLoad" - dynamic
+  procedurals work only if linked with RiCPP)
 i If blocks (IfBegin, ElseIf, Else, IfEnd)
 @endverbatim
 
-The option i (inhibit), default +i
+- The option i (inhibit), default +i
 
-The option i can be used to inhibit output. That can be used to read declarations
-that are used for further RIB reading but shall not occur at output. There are no arguments.
-E.g. -i Declarations.rib +i -pdafo Objects.rib
+The option i can be used to inhibit writing. This can be used
+to read declarations that are used for further RIB reading
+but shall not occur at output. There are no arguments.
+For example: ribtool -i Declarations.rib +i -pdafo Objects.rib
+can be a command line used to read Declarations.rib containing
+the declarations of a special renderer and write the
+expanded content of Objects.rib to standard out.
 
 @verbatim
 -i stops output, only reads and interprets RIB
 +i continues output
 @endverbatim
 
-The option - (stdin)
+- The option - (stdin)
 
-A single - (followed by a blank) stands for reading from standard input. Stdin can not be
-compressed at the moment (todo).
+A single - (followed by a blank) stands for reading from
+standard input. Stdin can not be compressed at the moment.
 
-Read from stdin, write to stdout: ribtool - 
+Example command line to read from stdin and write to stdout:
+ribtool - 
 
 @verbatim
 - Reading from standard input
 @endverbatim
 
-The option o (output)
+- The option o (output)
 
-Only as usual as -o filename. You can add a number 0-9 for ZIP compression,
-0 is default compression no number for no compression. filename should
-normally have the .rib extension. If you use .rib.gz, the
-file will also be compressed (with default compression, if no compression
-value is given). Stdout can not be
-compressed at the moment (todo).
+Only as usual as -o filename. You can add a number 0-9 for
+GZIP compression, 0 is default compression no number stands
+for no compression. filename should normally have the .rib
+extension. If you use .rib.gz, the file will also be
+compressed (with default compression, if no compression
+value is given). Stdout as well as stdin can not be
+compressed at the moment.
 
 @verbatim
 -o[0-9] filename Print output to file
 @endverbatim
 
-The option c (cull), default -c
+- The option c (cull), default -c
 
 Culls the geometry that is not visible in the viewing volume.
 
 -pdr+c-cp Culls geometry, procedurals (delayed read, run program)
-are executed and the geometries found are culled.
+are executed everytime (-pdr and -cp), but the geometries found
+are culled (+c).
 
--pdr+c Culls geometry, procedurals having their bounding box
-outside the viewing volume are not executed.
+-pdr+c Culls geometry and procedurals having their bounding box
+outside the viewing volume are not executed since not visible.
 
 @verbatim
-+c Cull geometry (Sphere, cone, ...);
++c Cull geometry (Sphere, Cone, Paraboloid, PatchMesh...);
 -c Do not cull
 
 p procedurals
 g other geometries
 @endverbatim
 
-The option s (simulate), default +s (must change RiCPP to do this)
+- The option s (simulate), default +s (must change RiCPP to do this)
 
-This option is usefull (and only affects therefore) only for
-posponed requests. It can happen the read archives influencing
-the way the following rib code is processed (e.g. user
-defined attributes can influence the way an if expression
-evaluates). You can simulate the
-processing of otherwise posponed RIB code. However, it can happen
-that you don't want to simulate
-e.g. the RIB archive files are not available, the procedural is not
-runable by RiCPP. The Arguments are the same as for the postpone option.
+This option is usefull only for posponed requests (and only affects
+these requests therefore). It can happen that read archives influencing
+the way the following RIB code is processed (e.g. user defined attributes
+can influence the way an if expression evaluates). You can simulate the
+processing of otherwise posponed RIB code. However, it can happen that
+you don't want to simulate e.g. the RIB archive files are not available,
+the procedural is not runable by RIBtool. The arguments are the same as
+for the postpone option.
 
 @verbatim
 +s Simulates input
 -s Doesn't simulate input
 
-Arguments see option p
+Arguments: see option p
 @endverbatim
 
-The option k (skip), default -k
+- The option k (skip), default -k
 
-Skip comments, headers and version. At the moment, allways the version
-of the RIB generator (RiCPP ribwriter) is written, not the version found.
-That's because the output is written with the version of
-the generator, not of the input (this behaviour will maybe be changed)
+Skips comments, headers and version requests. At the moment,
+always the version of the RIB generator (RiCPP ribwriter) is
+written, not the version found. That's because the output is
+written with the version of the generator, not the one of the
+input.
 
 @verbatim
 +k Skips
 -k Doesn't skip
 
-h Header (structured comments at the beginning of a file)
+h Header (structured comments '##' at the beginning of a file)
 v Version
-1 Uses only the first header and version (if no version 3.03 follows, one is generated)
-c Comments (regular comments)
-s Structured comments other than header
+1 Uses only the first header and version
+  (if no 'version 3.03' follows a header, one is generated)
+c Comments (regular comments '#')
+s Structured comments other than headers
 @endverbatim
 
-The option f filtername (ribfilter)
+- The option f filtername (RIB filter)
 
-Adds or removes a special ribfilter. RiCPP supports special DLL's that
-can be used as RIB filter. Ribfilters can be Daisy-Chained.
+Adds or removes a special RIB filter. RiCPP supports special DLLs,
+that can be used as RIB filter. RIB filters can be Daisy-Chained.
 
 @verbatim
-+f filtername Adds a ribfilter
--f filtername Removes ribfilter
++f filtername Adds a RIB filter
+-f filtername Removes RIB filter
 @endverbatim
 
-The option h (handles), default +h
+- The option h (handles), default +h
 
-Controlls the way handles are processed (oldstyle numeric or Rib string handles if found).
-Numeric handles will be renumbered.
+Controlls the way handles are processed (oldstyle numeric or
+RIB string handles, if found). Numeric handles will be
+renumbered.
 
 @verbatim
 +h Use string handles if found, numeric handles
-   will stay numeric and get renumbered.
+   will stay numeric and will be renumbered.
 -h Print only numeric handles, even for string handles.
-   The handles get renumbered.
+   The handles will be renumbered.
 @endverbatim
 
-The option n (indent rib archives), default +n4
+- The option n (indent RIB archives), default +n4
 
-Indents the output Rib blocks by a number of blanks +n0 and -n is
-for no indent.
+Indents the written RIB blocks by a number of blanks +n0
+and -n is for no indent.
 
 @verbatim
-+n[0-9] Indents Rib output by Blanks
--n Does not indent Rib output
++n[0-9] Indents RIB output by blanks
+-n Does not indent RIB output
 @endverbatim
 
-The option b (binary RIB archives), default -b
+- The option b (binary RIB archives), default -b
 
 Writes either binary (+b) or ASCII (-b) output
 
@@ -230,43 +250,53 @@ Writes either binary (+b) or ASCII (-b) output
 -b Ascii output
 @endverbatim
 
-The option x (Extract frames)
+- The option x (Extract frames)
 
 Extracts frames (positive and negative lists). The
-extraction string has the form n,n-m,n-,-n, e.g.
-"-2,7,9-11,15-" extracts 1,2, 7, 9,10,11, 15,16,17,...
-The frames are written in the sequence they are found.
-If only a postive list and all frames out of the list
-has been found, the ouput stops. The extracted frames
-from FrameBegin to FrameEnd as well as the rib code
-in frontof between and possibly after the frames is written.
+extraction string has the form /n,n-m,n-,-n/, e.g.
++x/-2,7,9-11,15-/-x/20/ extracts 1,2, 7, 9,10,11, 15,16,17,...
+but not 20. The frames are written in the sequence they are
+found. If only a postive list is given and all frames out of
+the list has been found, ribtool terminates. The extracted
+frames from FrameBegin to FrameEnd as well as the RIB code
+in front of, between and possibly after the frames is written.
+
+Use no x option to let RIBtool write all frames. -x can
+also be used for extraction.
 
 @verbatim
-+x list Extracts the frames given by the list
--x list writes frames except the ones given by the list
++x/list/ Extracts the frames given by the list. If
+         the list is empty // or missing, no frames are
+		 written.
+-x/list/ writes all frames except the ones
+         given by the list, if the list is empty //
+		 or missing, all frames are written
 @endverbatim
 
-The option v (Rib variable extraction while parsing option used) +v
+- The option v (RIB variable extraction while parsing option used) +v
 
-For compatibility the option "rib" "string varsubst"  can
-be used. If you want to disable the option and do variable
-extraction later, you can use -v. Mind +v does not turn
-on the RIB variable extraction, this is done if the
-varsubst option is found. If RIB variable
-extraction turned off: Within an if-expression ${id} is not
-extracted, however, $id and $(id) are used for evaluation.
+For compatibility the option "rib" "string varsubst" can
+be used to enable RIB variables. If you want to disable
+this option and variable extraction done later, you can
+use -v. Mind +v does not turn on the RIB variable extraction,
+this is done only if the varsubst option is found. If RIB
+variable extraction is turned off if-expressions are
+still evaluated, but within an if-expression a variable ${id}
+(curly brackets) is not extracted. However, $id and $(id)
+(parenthesis) are not affected and are used for evaluation
+indeed.
 
 @verbatim
 -v disables handling of varsubst option
 +v enables handling of varsubst option
 @endverbatim
 
-The option g (generate header)
+- The option g (generate header)
 
-For complexer header a header-only ribfile
-can be included by normal filename.
+For a complexer header a header-only ribfile
+can be included.
 
-+g without any further arguments writes simple header info
++g without any further arguments writes simple header info:
 
 @verbatim
 ##RenderMan RIB-Structure 1.1
@@ -274,24 +304,25 @@ version 3.03
 @endverbatim
 
 If you included a header, you can disable further
-headers/version by +khv
+headers/version by the skip option +khv
 
-Version is written in general only once.
+The version line is written in general only once.
 
 @verbatim
-h Header string Rib file: ##RenderMan RIB-Structure 1.1
+h Header string RIB file: ##RenderMan RIB-Structure 1.1
 e Header for entity: ##RenderMan RIB-Structure 1.1 Entity
 v Writes current version string of the ribwriter: version 3.03
 @endverbatim
 
-The option m (cache (memory) rib archives), default -m
+- The option m (cache (memory) RIB archives), default -m
 
 Experimental, caches the archive files read by ReadArchive,
-can lead to errors. Needs more considerations...
+can lead wrong behaviour, because variables are evaluated
+while parsing. This needs more considerations...
 
 @verbatim
-+m Caches Rib archives.
--m Doesn't cache Rib archives.
++m Caches RIB archives.
+-m Doesn't cache RIB archives.
 @endverbatim
 */
 
@@ -300,15 +331,14 @@ can lead to errors. Needs more considerations...
 
 using namespace RiCPP;
 
-CRiCPPBridge ri;
+CRiCPPBridge ri; ///< The bridge to the rendering context
 
-RtInt yes = 1;
-RtInt no = 0;
-RtInt special = -1;
+RtInt yes = 1; ///< Used as parmeter for IRi::control() (positive)
+RtInt no = 0; ///< Used as parmeter for IRi::control() (negative)
+RtInt special = -1; ///< Used as parmeter for IRi::control() (special behaviour)
 
 
-/** @brief Prints the usage of ribtool.
- *  @todo print the usage
+/** @brief Prints the usage of RIBtool.
  */
 void printUsage()
 {
@@ -338,15 +368,18 @@ void printError(const char *msg)
 		std::cerr << "# *** Error: " << msg << std::endl;
 }
 
-/** @brief Option 'p' postpone
+/** @brief Option 'p' postpone.
  *  @param aSwitch '+' or '-'
- *  @param argument The argument character
+ *  @param argument The argument character.
  */
 void postpone(int aSwitch, int argument)
 {
-	RtInt *param = (aSwitch == '-') ? &no : &yes;
+	assert ( aSwitch == '-' || aSwitch == '+' );
+
+	RtInt *param = (aSwitch == '-') ? &no : &yes; // '-' means no, '+' means yes
 	RtInt *paramFile = (aSwitch == '-') ? &no : &special; // The file itself should be read
 
+	// Process the argument
 	switch(argument) {
 		case 0: // all
 			ri.control("ribwriter", "postpone-inline-archives", param, RI_NULL);
@@ -366,7 +399,8 @@ void postpone(int aSwitch, int argument)
 			ri.control("ribwriter", "postpone-objects", param, RI_NULL);
 			break;
 
-		default: {
+		default: // not recognized
+		{
 			std::string msg = "Sorry, unrecogniced postpone argument ";
 			msg += (char)argument;
 			printError(msg.c_str());
@@ -376,9 +410,9 @@ void postpone(int aSwitch, int argument)
 }
 
 /** @brief Process command.
- *  @retval i Input/Output of current argument index
- *  @param argc number of arguments @a argv
- *  @param argv The arguments that will be parsed
+ *  @retval i Input/Output of current argument index.
+ *  @param argc number of arguments @a argv.
+ *  @param argv The arguments that will be parsed.
  */
 void command(int &i, int argc, char * const argv[])
 {
@@ -404,8 +438,8 @@ void command(int &i, int argc, char * const argv[])
 
 		switch ( aCmd ) {
 
-			case 'o': {
-				// output (ignore)
+			case 'o': // output (ignore)
+			{
 				if ( isdigit(arg[cnt]) )
 					++cnt;
 				if ( arg[cnt] ) {
@@ -418,7 +452,8 @@ void command(int &i, int argc, char * const argv[])
 			}
 			break;
 
-			case 'p': {
+			case 'p': // postpone
+				{
 				bool found = false;
 				for ( ; arg[cnt] && arg[cnt] != '-' && arg[cnt] != '+'; ++cnt ) {
 					found = true;
@@ -430,7 +465,8 @@ void command(int &i, int argc, char * const argv[])
 			}
 			break;
 
-			default: {
+			default: // unknown
+			{
 				std::string msg = "Sorry, unrecogniced command sequence ";
 				msg += arg;
 				printError(msg.c_str());
@@ -453,27 +489,34 @@ int main(int argc, char * const argv[])
 {
 	RtInt compression = 0;
 
+	// No arguments, print usage
 	if ( argc < 2 ) {
 		printUsage();
 		return 1;
 	}
 
-	// argc > 1
+	assert(argc > 1);
 
-	bool ofound = false;
-	std::string outfilename = "";
+	bool optfound = false;        // Flag for: An option was found, here -o
+	std::string outfilename = ""; // Container for output filename
 
+	// Scan for the output filenname
 	for ( int i = 1; i < argc; ++i ) {
+		
 		const char *arg = argv[i];
 		size_t len = arg ? strlen(arg) : 0;
-		if ( ofound ) {
+
+		if ( optfound ) {
+			// -o was found
 			if ( arg )
 				outfilename = arg;
 			break;
 		}
+
 		if ( len > 1 && arg[0] == '-' ) {
 			if ( arg[1] == 'o' ) {
-				ofound = true;
+				// option for output found
+				optfound = true;
 				if ( len > 2 && isdigit(arg[2]) ) {
 					compression = arg[2]-'0';
 					++arg;
@@ -490,14 +533,20 @@ int main(int argc, char * const argv[])
 		}
 	}
 
+	// Print errors
 	ri.errorHandler(ri.errorPrint());
-	CFilepathConverter::convertToInternal(outfilename);
-	CFilepathConverter::convertToURL(outfilename);
+	
+	// convert the filename to an URI used by RiCPP
+	CFilepathConverter::convertToURI(outfilename);
 	const char *outfile = outfilename.empty() ? RI_NULL : outfilename.c_str();
+
+	// Start the ribwriter
 	ri.begin("ribwriter", RI_FILE, &outfile, "compress", &compression, RI_NULL );
 
+	// Scan the options from left to right
 	std::string filename;
-	bool fileWasFound = false;
+	bool fileWasFound = false; // At least one filename was found
+
 	for ( int i = 1; i < argc; ++i ) {
 		const char *arg = argv[i];
 		size_t len = arg ? strlen(arg) : 0;
@@ -505,15 +554,18 @@ int main(int argc, char * const argv[])
 		if ( !len )
 			continue;
 
+		// Commands start either with '-' or '+' followed by the command character
 		if ( len > 1 && (arg[0]=='-' || arg[0]=='+') ) {
 			command(i, argc, argv);
 			continue;
 		}
 
+		// If it was not a command, a filename is assumed
 		fileWasFound = true;
 
 		if ( len == 1 && arg[0]=='-' ) {
 
+			// Reads from standard input
 			ri.readArchive(RI_NULL, 0, RI_NULL);
 
 		} else {
@@ -523,18 +575,23 @@ int main(int argc, char * const argv[])
 				printError("Inputfile == outputfile");
 				continue;
 			}
-			CFilepathConverter::convertToInternal(filename);
-			CFilepathConverter::convertToURL(filename);
+			CFilepathConverter::convertToURI(filename);
+
+			// Reads from the file
 			ri.readArchive(filename.c_str(), 0, RI_NULL);
 
 		}
 	}
 
+	// If no filename was found, process the standard input
 	if ( !fileWasFound ) {
 		ri.readArchive(RI_NULL, 0, RI_NULL);
 	}
 
+	// Closes the context
 	ri.end();
+
+	// and ends the program.
 	return 0;
 }
 

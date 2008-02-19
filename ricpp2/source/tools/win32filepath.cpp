@@ -63,7 +63,7 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 	return var;
 }
 
-std::string &CFilepathConverter::convertToURL(std::string &var)
+std::string &CFilepathConverter::convertToURI(std::string &var)
 {
 	convertToInternal(var);
 	if ( var.length() > 2 ) {

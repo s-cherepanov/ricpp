@@ -93,7 +93,7 @@ namespace RiCPP {
 		 * @param var (input/output) with the path string, will be converted into internal representation.
 		 * @return Reference to var.
 		 */
-		static std::string &convertToURL(std::string &var);
+		static std::string &convertToURI(std::string &var);
 
 		/** @brief Converts an internally used path (or list) into the native representation
 		 * @param var (input/output) with the path string, will be converted into native representation.

@@ -92,7 +92,7 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 
 	system(cmdline.c_str()); // Insecure !!!
 
-	CFilepathConverter::convertToURL(tmpPath);
+	CFilepathConverter::convertToURI(tmpPath);
 	ri.readArchive(tmpPath.c_str(), 0, RI_NULL);
 	
 	/// @todo delete tmpfile or better use CreateProcess() in win32 and similar on other OS.

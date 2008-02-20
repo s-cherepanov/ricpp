@@ -139,7 +139,9 @@ ribtool -
 
 - The option o (output)
 
-Only used as usual as -o filename. You can add a number 0-9 for
+The option for file output can used as -o filename or +o filename.
+-o won't overwrite existing files, +o will. You can add a number
+0-9 for
 GZIP compression, 0 is default compression no number stands
 for no compression. filename should normally have the .rib
 extension. If you use .rib.gz, the file will also be
@@ -148,7 +150,8 @@ value is given). Stdout as well as stdin can not be
 compressed at the moment.
 
 @verbatim
--o[0-9] filename Print output to file
+-o[0-9] filename Writes output to file, if file doe not exist
++o[0-9] filename Writes output to file, will overwrite an existing file
 @endverbatim
 
 - The option c (cull), default -c
@@ -349,7 +352,7 @@ void printUsage()
 	std::cout << "RenderMan(R) is a registered trademark of Pixar." << std::endl;
 	std::cout << std::endl;
 	std::cout << "usage: ribtool [-o[0-9] outfile -p[afo] +p[afo] - filename]..." << std::endl;
-	std::cout << "-o Sets outputfile, standard is stdout" << std::endl;
+	std::cout << "+o Sets outputfile, standard is stdout, the file will be overwritten" << std::endl;
 	std::cout << "   0-9 gzip compression level, 0 is default compression" << std::endl;
 	std::cout << "       omit for no compression" << std::endl;
 	std::cout << "+p Enables postpone of" << std::endl;
@@ -451,6 +454,10 @@ void command(int &i, int argc, char * const argv[])
 				}
 				// filename in next argument
 				++i;
+
+				if ( aSwitch == '-' ) {
+					printError("Sorry, -o is not implemented.");
+				}
 				return;
 			}
 			break;
@@ -490,7 +497,7 @@ void command(int &i, int argc, char * const argv[])
  */
 int main(int argc, char * const argv[])
 {
-	CUri absUri, baseUri;
+	// CUri absUri, baseUri;
 	RtInt compression = 0;
 
 	// No arguments, print usage
@@ -501,10 +508,12 @@ int main(int argc, char * const argv[])
 
 	assert(argc > 1);
 
+	/*
 	CFilepath fp;
 	std::string s(fp.filepath());
 	s+= "/";
 	baseUri.set("file", "", s.c_str(), 0, 0);
+	*/
 
 	bool optfound = false;        // Flag for: An option was found, here -o
 	std::string outfilename = ""; // Container for output filename
@@ -522,7 +531,7 @@ int main(int argc, char * const argv[])
 			break;
 		}
 
-		if ( len > 1 && arg[0] == '-' ) {
+		if ( len > 1 && arg[0] == '+' ) {
 			if ( arg[1] == 'o' ) {
 				// option for output found
 				optfound = true;
@@ -546,11 +555,13 @@ int main(int argc, char * const argv[])
 	ri.errorHandler(ri.errorPrint());
 	
 	// convert the filename to an URI used by RiCPP
+	/*
 	if ( !outfilename.empty() ) {
 		CFilepathConverter::convertToURI(outfilename);
-		CUri::makeAbsolute(absUri, baseUri, outfilename, true);
+		CUri::makeAbsolute(absUri, baseUri, outfilename, false);
 		outfilename = absUri.toString();
 	}
+	*/
 
 	const char *outfile = outfilename.empty() ? RI_NULL : outfilename.c_str();
 
@@ -585,10 +596,11 @@ int main(int argc, char * const argv[])
 		} else {
 
 			filename = noNullStr(argv[i]);
+			/*
 			CFilepathConverter::convertToURI(filename);
 			CUri::makeAbsolute(absUri, baseUri, filename, false);
-
 			filename = absUri.toString();
+			*/
 
 			if ( filename == outfilename ) {
 				printError("Inputfile == outputfile");

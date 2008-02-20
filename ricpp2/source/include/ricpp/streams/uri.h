@@ -278,7 +278,7 @@ namespace RiCPP {
 		*/
 		inline unsigned char unreserved(
 			const unsigned char **str,
-			std::string &result)
+			std::string &result) const
 		{
 			unsigned char c = la(str);
 			switch (c) {
@@ -306,7 +306,7 @@ namespace RiCPP {
 		*/
 		inline unsigned char gen_delims(
 			const unsigned char **str,
-			std::string &result)
+			std::string &result) const
 		{
 			unsigned char c = la(str);
 			switch (c) {
@@ -337,7 +337,7 @@ namespace RiCPP {
 		* @return 0 or the reserved character that matches.
 		*/
 		inline unsigned char sub_delims(const unsigned char **str,
-			std::string &result)
+			std::string &result) const
 		{
 			unsigned char c = la(str);
 			switch (c) {
@@ -378,7 +378,7 @@ namespace RiCPP {
 		*/
 		inline unsigned char reserved(
 			const unsigned char **str,
-			std::string &result)
+			std::string &result) const
 		{
 			return gen_delims(str, result) || sub_delims(str, result);
 		}
@@ -1656,6 +1656,37 @@ namespace RiCPP {
 		{
 			return m_relative_uri;
 		}
+
+		/** @brief Escapes the reserved characters in string.
+		 *
+		 *  @retval aString String to escape
+		 *  @return A C-string pointer to @a aString
+		 */
+		const char *escapeString(std::string &aString) const;
+
+		/** @brief Unescapes the escaped characters of a string.
+		 *
+		 *  @retval aString String to unescape
+		 *  @return A C-string pointer to @a aString
+		 */
+		const char *unescapeString(std::string &aString) const;
+
+		/** @brief Encodes a filepath (internal format)
+		 *
+		 * The filepath is encoded and used as URI (without scheme)
+		 *
+		 * @param aPath Path (internal representation) to encode
+		 * @param scheme to add (without colon, likely file)
+		 * @return true, resulting URI is valid
+		 */
+		bool encodeFilepath(const char *aPath, const char *scheme);
+
+		/** @brief Decodes the hierarchical part of this URI .
+		 *
+		 * @retval aPath Path (internal representation) with the decoded hierarchical part
+		 * @return A pointer to the c_str() of @a path
+		 */
+		const char *decodeFilepath(std::string &path) const;
 	};
 }
 

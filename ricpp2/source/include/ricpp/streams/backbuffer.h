@@ -173,7 +173,9 @@ public:
 		close();
 		CBackBufferRoot::open(absUri, mode);
 		m_mode = mode;
-		std::string filename(absUri.getHierPart());
+		std::string filename;
+		absUri.decodeFilepath(filename);
+
 		CFilepathConverter::convertToNative(filename);
 		m_filebuf.open(filename.c_str(), mode);
 		return m_filebuf.is_open();

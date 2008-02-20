@@ -773,7 +773,8 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		if ( p.token() == RI_FILE && p.strings().size() > 0 ) {
 			CStringList stringList;
 			stringList.expand(filename, p.strings()[0].c_str(), true);
-			CFilepathConverter::convertToURI(filename);
+			CFilepathConverter::convertToInternal(filename);
+			// CFilepathConverter::convertToURI(filename);
 		}
 		if ( p.token() == RI_COMPRESS && p.ints().size() > 0 ) {
 			compress = p.ints()[0];
@@ -800,7 +801,7 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 				if ( tmpfile ) {
 					m_nativepath = filename;
 					CFilepathConverter::convertToNative(m_nativepath);
-					CFilepathConverter::convertToURI(filename);
+					// CFilepathConverter::convertToURI(filename);
 				} else {
 					m_cmd = "";
 					// Error
@@ -820,7 +821,9 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		}
 
 		if ( filename.size() > 0 ) {
-			if ( !m_buffer->open(filename.c_str(), std::ios_base::out|std::ios_base::binary, compress) ) {
+			CUri fileuri;
+			fileuri.encodeFilepath(filename.c_str(), "file");
+			if ( !m_buffer->open(fileuri, std::ios_base::out|std::ios_base::binary, compress) ) {
 				return;
 			}
 			m_writer = new CRibElementsWriter(m_buffer, *this);

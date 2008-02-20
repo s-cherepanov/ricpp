@@ -555,7 +555,7 @@ int main(int argc, char * const argv[])
 	if ( argc > 1 ) {
 		for ( int i = 1; i < argc; ++i ) {
 			filename = noNullStr(argv[i]);
-			CFilepathConverter::convertToURI(filename);
+			// CFilepathConverter::convertToURI(filename);
 			ri.readArchive(filename.c_str(), 0, RI_NULL);
 		}
 	} else {

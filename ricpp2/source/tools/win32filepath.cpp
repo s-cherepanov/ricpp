@@ -69,6 +69,7 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 	return var;
 }
 
+/*
 std::string &CFilepathConverter::convertToURI(std::string &var)
 {
 	convertToInternal(var);
@@ -81,6 +82,7 @@ std::string &CFilepathConverter::convertToURI(std::string &var)
 	}
 	return var;
 }
+*/
 
 /** @brief path conversion is done by replacing all '/' by '\'.
  */

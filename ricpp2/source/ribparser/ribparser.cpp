@@ -65,6 +65,10 @@
 #include "ricpp/ricpp/paramclasses.h"
 #endif // _RICPP_RICPP_PARAMCLASSES_H
 
+#ifndef _RICPP_TOOLS_FILEPATH_H
+#include "ricpp/tools/filepath.h"
+#endif // _RICPP_TOOLS_FILEPATH_H
+
 using namespace RiCPP;
 
 // -----------------------------------------------------------------------------
@@ -2026,8 +2030,16 @@ bool CRibParser::canParse(RtString name)
 		m_istream.rdbuf(std::cin.rdbuf());
 		return true;
 	}
-	CUri refUri(name);
-	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, false) ) {
+	std::string filename = name;
+	CFilepathConverter::convertToInternal(filename);
+
+	CUri refUri;
+	if ( !refUri.encodeFilepath(filename.c_str(), 0) )
+	{
+		return false;
+	}
+
+	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, refUri, false) ) {
 		return false;
 	}
 	m_ob.base(m_baseUri);

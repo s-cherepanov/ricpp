@@ -89,7 +89,7 @@ namespace RiCPP {
 		 */
 		static std::string &convertToInternal(std::string &var);
 
-		/** @brief The string is converted into the hierarchical part of a relative URI.
+		/* @brief The string is converted into the hierarchical part of a relative URI.
 		 * 
 		 * Converts a native path (not a list) into the internal, hierarchival part of
 		 * a relative URI representation. It can be used for the constructor of a CUri.
@@ -97,7 +97,7 @@ namespace RiCPP {
 		 * @param var (input/output) with the path string, will be converted into internal representation.
 		 * @return Reference to var.
 		 */
-		static std::string &convertToURI(std::string &var);
+		// static std::string &convertToURI(std::string &var);
 
 		/** @brief Converts an internally used path (or list) into the native representation
 		 * @param var (input/output) with the path string, will be converted into native representation.

@@ -1138,3 +1138,35 @@ bool CUri::set(
 
 	return retVal ? parse(result) : false;
 }
+
+
+const char *CUri::escapeString(std::string &aString) const
+{
+	/// @todo encode string
+	return aString.c_str();
+}
+
+
+const char *CUri::unescapeString(std::string &aString) const
+{
+	/// @todo decode string
+	return aString.c_str();
+}
+
+
+bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
+{
+	clear();
+	/// @todo encode path consists of optional authority (UNC) and path
+
+	// set
+	return set(aScheme, 0, aPath, 0, 0);
+}
+
+
+const char *CUri::decodeFilepath(std::string &path) const
+{
+	path = getHierPart();
+	/// @todo decode
+	return path.c_str();
+}

@@ -67,10 +67,11 @@ std::string &CFilepathConverter::convertToNative(std::string &var) {
 	return var;
 }
 
+/*
 std::string &CFilepathConverter::convertToURI(std::string &var) {
 	return var;
 }
-
+*/
 
 /** @brief See description of CFilepath::convertToNative() in header file filepath.h.
  */

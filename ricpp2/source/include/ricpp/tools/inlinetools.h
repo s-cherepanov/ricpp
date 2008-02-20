@@ -148,7 +148,7 @@ inline char *removeQuotes(char *str)
 	if ( emptyStr(str) )
 		return str;
 
-	int len = strlen(str);
+	size_t len = strlen(str);
 	if ( len < 2 )
 		return str;
 

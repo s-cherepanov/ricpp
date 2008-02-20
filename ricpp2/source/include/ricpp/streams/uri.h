@@ -1179,7 +1179,7 @@ namespace RiCPP {
 		*
 		* @param baseUri Absolute base URI
 		* @param relative_uri Relative URI
-		* @param isStrict Use the strict reference resolution (strict: Scheme has to match)
+		* @param isStrict Use the strict reference resolution
 		* @see CUri::operator=()
 		*/
 		inline CUri(

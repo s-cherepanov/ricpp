@@ -586,7 +586,7 @@ int main(int argc, char * const argv[])
 
 			filename = noNullStr(argv[i]);
 			CFilepathConverter::convertToURI(filename);
-			CUri::makeAbsolute(absUri, baseUri, filename, true);
+			CUri::makeAbsolute(absUri, baseUri, filename, false);
 
 			filename = absUri.toString();
 

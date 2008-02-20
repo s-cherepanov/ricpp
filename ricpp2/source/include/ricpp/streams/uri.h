@@ -1179,13 +1179,13 @@ namespace RiCPP {
 		*
 		* @param baseUri Absolute base URI
 		* @param relative_uri Relative URI
-		* @param isStrict Use the strict reference resolution
+		* @param isStrict Use the strict reference resolution (strict: Scheme has to match)
 		* @see CUri::operator=()
 		*/
 		inline CUri(
 			const CUri &baseUri,
 			const CUri &relative_uri,
-			bool isStrict=true)
+			bool isStrict)
 		{
 			makeAbsolute(*this, baseUri, relative_uri, isStrict);
 		}
@@ -1314,7 +1314,7 @@ namespace RiCPP {
 			CUri &resultUri,
 			const CUri &baseUri,
 			const CUri &relativeUri,
-			bool isStrict = true);
+			bool isStrict);
 
 		/** @brief Tests if valid contents.
 		*

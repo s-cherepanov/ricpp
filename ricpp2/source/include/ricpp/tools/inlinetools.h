@@ -136,10 +136,34 @@ inline char *cutfilename(char *buf)
 	return buf;
 }
 
-/** @brief Extracts a handle number from ahandle string.
+/** @brief Removes quotes at start and end of a string
+ *
+ * Removes the quotes, e.g of filenames from command line
+ *
+ * @param str C-String, gets the quotes removed (at end)
+ * @return Pointer to the beginning of the string without quotes
+ */
+inline char *removeQuotes(char *str)
+{
+	if ( emptyStr(str) )
+		return str;
+
+	int len = strlen(str);
+	if ( len < 2 )
+		return str;
+
+	if ( str[0] == '\"' && str[len-1]== '\"' ) {
+		str[len-1] = 0;
+		return str+1;
+	}
+
+	return str;
+}
+
+/* @brief Extracts a handle number from a handle string.
  *  @param handle Handle in String form (a '_' sperates a prefix from a number)
  *  @return The extracted number
- */
+ *//*
 inline unsigned long extractHandleNo(const char *handle)
 {
 	const char *ptr = strrchr(handle, '_');
@@ -149,7 +173,7 @@ inline unsigned long extractHandleNo(const char *handle)
 		n = atol(ptr);
 	}
 	return n;
-}
+}*/
 
 /** @brief Converts a number (unsigned long) to a c-string
  *  @param buffer String buffer.

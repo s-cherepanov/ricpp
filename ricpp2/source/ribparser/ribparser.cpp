@@ -2027,7 +2027,7 @@ bool CRibParser::canParse(RtString name)
 		return true;
 	}
 	CUri refUri(name);
-	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, true) ) {
+	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, name, false) ) {
 		return false;
 	}
 	m_ob.base(m_baseUri);

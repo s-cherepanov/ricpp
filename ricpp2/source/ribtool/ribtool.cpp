@@ -35,7 +35,7 @@ writing capabilities.
 RIBtool is a little shell tool, which parses, processes and
 writes RenderMan(R) Interface Byte streams (RIB files).
 For example, jobs for RIBtool can be expanding archives and
-converting from them from ASCII to binary representation or
+converting them from ASCII to binary representation or
 vice versa. To execute RIBtool, put the executable together
 with the RiCPP dynlibs into the same directory. You can use
 symbolic links for RIBtool.
@@ -490,6 +490,7 @@ void command(int &i, int argc, char * const argv[])
  */
 int main(int argc, char * const argv[])
 {
+	CUri absUri, baseUri;
 	RtInt compression = 0;
 
 	// No arguments, print usage
@@ -499,6 +500,11 @@ int main(int argc, char * const argv[])
 	}
 
 	assert(argc > 1);
+
+	CFilepath fp;
+	std::string s(fp.filepath());
+	s+= "/";
+	baseUri.set("file", "", s.c_str(), 0, 0);
 
 	bool optfound = false;        // Flag for: An option was found, here -o
 	std::string outfilename = ""; // Container for output filename
@@ -540,7 +546,12 @@ int main(int argc, char * const argv[])
 	ri.errorHandler(ri.errorPrint());
 	
 	// convert the filename to an URI used by RiCPP
-	CFilepathConverter::convertToURI(outfilename);
+	if ( !outfilename.empty() ) {
+		CFilepathConverter::convertToURI(outfilename);
+		CUri::makeAbsolute(absUri, baseUri, outfilename, true);
+		outfilename = absUri.toString();
+	}
+
 	const char *outfile = outfilename.empty() ? RI_NULL : outfilename.c_str();
 
 	// Start the ribwriter
@@ -574,11 +585,15 @@ int main(int argc, char * const argv[])
 		} else {
 
 			filename = noNullStr(argv[i]);
+			CFilepathConverter::convertToURI(filename);
+			CUri::makeAbsolute(absUri, baseUri, filename, true);
+
+			filename = absUri.toString();
+
 			if ( filename == outfilename ) {
 				printError("Inputfile == outputfile");
 				continue;
 			}
-			CFilepathConverter::convertToURI(filename);
 
 			// Reads from the file
 			ri.readArchive(filename.c_str(), 0, RI_NULL);

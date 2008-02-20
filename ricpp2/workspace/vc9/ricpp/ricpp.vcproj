@@ -106,6 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
 				AdditionalIncludeDirectories="../../../source/include;&quot;../../../3rdparty/win32/zlib123-dll/include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
@@ -360,6 +361,42 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="Documentation"
+			>
+			<File
+				RelativePath="..\..\..\source\Documentation\index.dox"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="RibSamples"
+			>
+			<File
+				RelativePath="..\..\..\RibSamples\Archive.rib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\RibSamples\Polygon.rib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\RibSamples\Square.rib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\RibSamples\TestArchive.rib"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\RibSamples\tetra.gz"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\RibSamples\UnitCube.rib"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"

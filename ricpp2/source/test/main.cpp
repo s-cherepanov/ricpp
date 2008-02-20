@@ -127,32 +127,32 @@ void testURI()
 	CUri relUri4;
 
 	CUri refUri;
-	if ( CUri::makeAbsolute(refUri, testUri, relUri) )
+	if ( CUri::makeAbsolute(refUri, testUri, relUri, true) )
 		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( CUri::makeAbsolute(refUri, testUri2, relUri) )
+	if ( CUri::makeAbsolute(refUri, testUri2, relUri, true) )
 		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( CUri::makeAbsolute(refUri, testUri3, relUri) )
+	if ( CUri::makeAbsolute(refUri, testUri3, relUri, true) )
 		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( CUri::makeAbsolute(refUri, testUri4, relUri) )
+	if ( CUri::makeAbsolute(refUri, testUri4, relUri, true) )
 		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( CUri::makeAbsolute(refUri, testUri4, relUri2) )
+	if ( CUri::makeAbsolute(refUri, testUri4, relUri2, true) )
 		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
 
-	if ( CUri::makeAbsolute(refUri, testUri4, relUri3) )
+	if ( CUri::makeAbsolute(refUri, testUri4, relUri3, true) )
 		std::cout << refUri.toString() << std::endl;
 	else
 		std::cout << "Error in uri" << std::endl;
@@ -563,12 +563,13 @@ int main(int argc, char * const argv[])
 	}
 
 	ri.end();
+/* // Wait for a key
 #if defined (_DEBUG)
 #if defined (WIN32)
 	char a;
 	std::cin >> a;
 #endif
 #endif
-
+*/
     return 0;
 }

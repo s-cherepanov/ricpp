@@ -508,13 +508,6 @@ int main(int argc, char * const argv[])
 
 	assert(argc > 1);
 
-	/*
-	CFilepath fp;
-	std::string s(fp.filepath());
-	s+= "/";
-	baseUri.set("file", "", s.c_str(), 0, 0);
-	*/
-
 	bool optfound = false;        // Flag for: An option was found, here -o
 	std::string outfilename = ""; // Container for output filename
 
@@ -554,15 +547,6 @@ int main(int argc, char * const argv[])
 	// Print errors
 	ri.errorHandler(ri.errorPrint());
 	
-	// convert the filename to an URI used by RiCPP
-	/*
-	if ( !outfilename.empty() ) {
-		CFilepathConverter::convertToURI(outfilename);
-		CUri::makeAbsolute(absUri, baseUri, outfilename, false);
-		outfilename = absUri.toString();
-	}
-	*/
-
 	const char *outfile = outfilename.empty() ? RI_NULL : outfilename.c_str();
 
 	// Start the ribwriter
@@ -594,13 +578,7 @@ int main(int argc, char * const argv[])
 			ri.readArchive(RI_NULL, 0, RI_NULL);
 
 		} else {
-
 			filename = noNullStr(argv[i]);
-			/*
-			CFilepathConverter::convertToURI(filename);
-			CUri::makeAbsolute(absUri, baseUri, filename, false);
-			filename = absUri.toString();
-			*/
 
 			if ( filename == outfilename ) {
 				printError("Inputfile == outputfile");

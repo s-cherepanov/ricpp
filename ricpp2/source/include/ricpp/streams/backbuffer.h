@@ -177,6 +177,7 @@ public:
 		absUri.decodeFilepath(filename);
 
 		CFilepathConverter::convertToNative(filename);
+		// std::cerr << "# FILENAME: '" << filename << "'" << std::endl;
 		m_filebuf.open(filename.c_str(), mode);
 		return m_filebuf.is_open();
 	}

@@ -33,6 +33,7 @@
 #include "ricpp/tools/platform.h"
 #endif // _RICPP_TOOLS_PLATFORM_H
 
+#include <iostream>
 
 using namespace RiCPP;
 
@@ -1072,6 +1073,28 @@ bool CUri::setPath(const char *aPath)
 	return reparsePath(aPath, result) ? reparse() : false;
 }
 
+bool CUri::reparseHierPart(const char *aHierPart, std::string &result)
+{
+	if ( aHierPart && *aHierPart ) {
+		if ( !hier_part((const unsigned char **)&aHierPart, result) ) {
+			return false;
+		}
+		return *aHierPart == 0;
+	}
+	
+	m_authority = "";
+	m_hasAuthority = false;
+	m_path = "";
+	m_pathType = pathTypeEmpty;
+	return true;
+}
+
+bool CUri::setHierPart(const char *aHierPart)
+{
+	std::string result;
+	return reparseHierPart(aHierPart, result) ? reparse() : false;
+}
+
 
 bool CUri::reparseQuery(const char *aQuery, std::string &result)
 {
@@ -1140,33 +1163,115 @@ bool CUri::set(
 }
 
 
-const char *CUri::escapeString(std::string &aString) const
+bool CUri::set(
+	const char *aScheme,
+	const char *aHierPart,
+	const char *aQuery,
+	const char *aFragment)
 {
-	/// @todo encode string
-	return aString.c_str();
+	std::string result;
+
+	bool retVal =
+		reparseScheme(aScheme, result) &&
+		reparseHierPart(aHierPart, result) &&
+		reparseQuery(aQuery, result) &&
+		reparseFragment(aFragment, result);
+
+	return retVal ? parse(result) : false;
 }
 
-
-const char *CUri::unescapeString(std::string &aString) const
+unsigned int CUri::escape(
+	const unsigned char **str,
+	unsigned int n,
+	std::string &result) const
 {
-	/// @todo decode string
-	return aString.c_str();
+	static const char *hexes = "0123456789abcdef";
+	if ( !*str )
+		return 0;
+		
+	for ( unsigned int i = 0; i < n && **str; ++i, ++(*str) ) {
+		const unsigned char uc = **str;
+		const unsigned char h = uc/16;
+		const unsigned char m = uc%16;
+		result += "%";
+		result += hexes[h];
+		result += hexes[m];
+	}
+	
+	return i;
 }
-
 
 bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
 {
 	clear();
 	/// @todo encode path consists of optional authority (UNC) and path
+	
+	if ( !aPath)
+		return false;
+	
+	std::string encoded = "";
+	for ( const unsigned char *c = (const unsigned char *)aPath; *c; ) {
+		if ( *c != '%' && pchar(&c, encoded)  )
+			continue;
+		if ( *c == '/' ) {
+			encoded += *c;
+			++c;
+			continue;
+		}
+		escape(&c, 1, encoded);
+	}
+	
+	clear();
+
+	// std::cerr << "# ENCODED: '" << encoded << "'" << std::endl;
 
 	// set
-	return set(aScheme, 0, aPath, 0, 0);
+	return set(aScheme, encoded.c_str(), 0, 0);
 }
 
 
 const char *CUri::decodeFilepath(std::string &path) const
 {
-	path = getHierPart();
-	/// @todo decode
+	path = "";
+	
+	const char *hierPart = getHierPart().c_str();
+	if ( !hierPart )
+		return path.c_str();
+
+	std::string decoded = "";
+	
+	for ( const unsigned char *c = (const unsigned char *)hierPart; *c; ++c ) {
+		if ( *c == '%' ) {
+			++c;
+			const unsigned char h = *c;
+			++c;
+			const unsigned char m = *c;
+			
+			assert( (h >= 'A' && h <='Z') || (h >= 'a' && h <='z') || (h >= '0' && h <='9') );
+			assert( (m >= 'A' && m <='Z') || (m >= 'a' && m <='z') || (m >= '0' && m <='9') );
+					
+			const unsigned char uch = (h >= 'A' && h <= 'F') ? h - 'A' + 10 : ((h >= 'a' && h <= 'f') ? h - 'a' + 10 : h - '0');
+			const unsigned char ucl = (m >= 'A' && m <= 'F') ? m - 'A' + 10 : ((m >= 'a' && m <= 'f') ? m - 'a' + 10 : m - '0');
+			const unsigned char uc = uch * 16 + ucl;
+
+			decoded += uc;
+			// std::cerr << "# DECODE: %" << h << m << " '" << uc << "' - " << (int)uc << ", " << (int)uch << ", " << (int)ucl << std::endl;
+			continue;
+		}
+		decoded += *c;
+	}
+	
+	const char *filepath = decoded.c_str();
+	
+	if ( decoded.size() > 3 ) {
+		// empty authority ?
+		if ( filepath[0] == '/' && filepath[1] == '/' && filepath[2] == '/' )
+			filepath += 2;
+	}
+
+	path = filepath;
+
+	// std::cerr << "# DECODED: '" << path << "'" << std::endl;
+
 	return path.c_str();
 }

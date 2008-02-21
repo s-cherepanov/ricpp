@@ -1091,7 +1091,7 @@ CRenderState::CRenderState(
 	CFilepath fp;
 	std::string s(fp.filepath());
 	s+= "/";
-	m_baseUri.set("file", "", s.c_str(), 0, 0);
+	m_baseUri.encodeFilepath(s.c_str(), "file");
 }
 
 CRenderState::~CRenderState()

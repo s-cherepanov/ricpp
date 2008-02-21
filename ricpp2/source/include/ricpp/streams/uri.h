@@ -1091,6 +1091,13 @@ namespace RiCPP {
 		*/
 		bool reparsePath(const char *aPath, std::string &result);
 
+		/** @brief Reparses authority and path.
+		* 
+		* @return true if aHierPart was valid
+		* @see setHierPart() set() reparseAuthority() reparsePath()
+		*/
+		bool reparseHierPart(const char *aHierPart, std::string &result);
+
 		/** @brief Reparses a query.
 		*
 		* Reparses the query @a aQuery as part of an URI.
@@ -1108,7 +1115,7 @@ namespace RiCPP {
 		* @see setFragment() set()
 		*/
 		bool reparseFragment(const char *aFragment, std::string &result);
-
+	
 		/** @brief Adds path segment to the segment list.
 		*
 		* Adds a path segment to the segment list, handles the special meaning
@@ -1153,6 +1160,17 @@ namespace RiCPP {
 			const std::list<std::string> &fromSegList,
 			std::string &resultStr,
 			bool lastWasDot);
+
+		/** @brief Escapes the next character and stores the result.
+		 *  @param str Address of a character pointer to escape, gets advanced
+		 *  @param n Number of characters to ecape
+		 *  @retval resultStr The resulting path string.
+		 *  @return Number of characters that were escaped
+		 */
+		unsigned int escape(
+			const unsigned char **str,
+			unsigned int n,
+			std::string &result) const;
 
 	public:
 		/** @brief Constructor, parses URI.
@@ -1338,13 +1356,13 @@ namespace RiCPP {
 		}
 
 		/** @brief Sets the five components of an URI.
-		* @param aScheme A scheme, 0 to remove scheme
-		* @param anAuthority A authority, 0 to remove authority (network path)
-		* @param aPath A path
-		* @param aQuery A query, 0 to remove query
-		* @param aFragment A fragment, 0 to remove fragment
-		* @return true, if URI is valid.
-		*/
+		 *  @param aScheme A scheme, 0 to remove scheme
+		 *  @param anAuthority A authority, 0 to remove authority (network path)
+		 *  @param aPath A path
+		 *  @param aQuery A query, 0 to remove query
+		 *  @param aFragment A fragment, 0 to remove fragment
+		 *  @return true, if URI is valid.
+		 */
 		bool set(
 			const char *aScheme,
 			const char *anAuthority,
@@ -1352,6 +1370,19 @@ namespace RiCPP {
 			const char *aQuery,
 			const char *aFragment);
 
+		/** @brief Sets the five components of an URI.
+		 *  @param aScheme A scheme, 0 to remove scheme
+		 *  @param aHierPart Authority and path
+		 *  @param aQuery A query, 0 to remove query
+		 *  @param aFragment A fragment, 0 to remove fragment
+		 *  @return true, if URI is valid.
+		 */
+		bool set(
+			const char *aScheme,
+			const char *aHierPart,
+			const char *aQuery,
+			const char *aFragment);
+	
 		/** @brief Tests, if URI has defined a scheme component (is an absolute URI).
 		* @return true, URI has a scheme component.
 		*/
@@ -1424,6 +1455,13 @@ namespace RiCPP {
 		* @return true, if URI is valid.
 		*/
 		bool setPath(const char *aPath);
+
+		/** @brief Sets the authority and path component.
+		*
+		* @param aHierPart An authority path
+		* @return true, if URI is valid.
+		*/
+		bool setHierPart(const char *aHierPart);
 
 		/** @brief Tests, if URI has defined a query component.
 		* @return true, if path component was relative.
@@ -1656,20 +1694,6 @@ namespace RiCPP {
 		{
 			return m_relative_uri;
 		}
-
-		/** @brief Escapes the reserved characters in string.
-		 *
-		 *  @retval aString String to escape
-		 *  @return A C-string pointer to @a aString
-		 */
-		const char *escapeString(std::string &aString) const;
-
-		/** @brief Unescapes the escaped characters of a string.
-		 *
-		 *  @retval aString String to unescape
-		 *  @return A C-string pointer to @a aString
-		 */
-		const char *unescapeString(std::string &aString) const;
 
 		/** @brief Encodes a filepath (internal format)
 		 *

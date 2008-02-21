@@ -2031,7 +2031,6 @@ bool CRibParser::canParse(RtString name)
 		return true;
 	}
 	std::string filename = name;
-	CFilepathConverter::convertToInternal(filename);
 
 	CUri refUri;
 	if ( !refUri.encodeFilepath(filename.c_str(), 0) )

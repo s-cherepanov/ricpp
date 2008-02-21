@@ -1210,14 +1210,40 @@ bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
 		return false;
 	
 	std::string encoded = "";
+
+
+#ifdef WIN32
+	{
+		size_t len = strlen(aPath);
+		if ( len > 1 ) {
+			if ( (aPath[1] == ':' || aPath[1] == '|' )  &&
+			     ((aPath[0] >= 'A' && aPath[0] <= 'Z') ||
+				  (aPath[0] >= 'a' && aPath[0] <= 'z')) )
+			{
+				encoded = '/';
+				encoded += aPath[0];
+				encoded += ':';
+				aPath += 2;
+			}
+		}
+	}
+#endif
+
 	for ( const unsigned char *c = (const unsigned char *)aPath; *c; ) {
-		if ( *c != '%' && pchar(&c, encoded)  )
+#ifdef WIN32
+		if ( *c == '\\' ) {
+			encoded += '/';
+			++c;
 			continue;
+		}
+#endif
 		if ( *c == '/' ) {
 			encoded += *c;
 			++c;
 			continue;
 		}
+		if ( *c != '%' && pchar(&c, encoded)  )
+			continue;
 		escape(&c, 1, encoded);
 	}
 	
@@ -1263,13 +1289,41 @@ const char *CUri::decodeFilepath(std::string &path) const
 	
 	const char *filepath = decoded.c_str();
 	
-	if ( decoded.size() > 3 ) {
+	if ( decoded.length() > 3 ) {
 		// empty authority ?
 		if ( filepath[0] == '/' && filepath[1] == '/' && filepath[2] == '/' )
 			filepath += 2;
 	}
 
+
+#ifdef WIN32
+	{
+		size_t len = strlen(filepath);
+		if ( len > 2 ) {
+			if ( filepath[0] == '/' &&
+			     (filepath[2] == ':') &&
+			     ((filepath[1] >= 'A' && filepath[1] <= 'Z') ||
+			      (filepath[1] >= 'a' && filepath[1] <= 'z')) )
+			{
+				++filepath;
+				--len;
+			}
+		}
+	}
+#endif
+
 	path = filepath;
+
+#ifdef WIN32
+	{
+		size_t len = path.length();
+		while ( len > 0 ) {
+			--len;
+			if ( path[len] == '/' )
+				path[len] = '\\';
+		}
+	}
+#endif
 
 	// std::cerr << "# DECODED: '" << path << "'" << std::endl;
 

@@ -229,6 +229,16 @@ CStringList::size_type CStringList::explode(
 	}
 
 #ifdef WIN32
+	if ( isPathList && seperator == ':' ) {
+		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
+			if ( *iter == ';'  ) {
+				*iter = ':';
+			}
+		}
+	}
+#endif
+
+#if 0
 	// The messy part...
 	// In RIB files the seperator for pathes is unfortunatly ':'.
 	// ':' can have a double meaning as seperator for drive letters

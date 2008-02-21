@@ -176,7 +176,6 @@ public:
 		std::string filename;
 		absUri.decodeFilepath(filename);
 
-		CFilepathConverter::convertToNative(filename);
 		// std::cerr << "# FILENAME: '" << filename << "'" << std::endl;
 		m_filebuf.open(filename.c_str(), mode);
 		return m_filebuf.is_open();
@@ -1044,7 +1043,7 @@ protected:
 		CFilepath p;
 		std::string path(p.filepath());
 		path += CFilepathConverter::internalPathSeperator();
-		m_baseUri.set("file", "", path.c_str(), 0, 0);
+		m_baseUri.encodeFilepath(path.c_str(), "file");
 	}
 
 public:

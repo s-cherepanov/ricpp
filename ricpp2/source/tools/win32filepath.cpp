@@ -59,12 +59,8 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
 		if ( (*i) == '\\' )
 			(*i) = '/';
-	}
-
-	if ( var.length() > 1 ) {
-		if ( var[1] == ':' ) {
-			var = std::string("/") + var;
-		}
+		if ( (*i) == ':' )
+			(*i) = '|';
 	}
 
 	return var;
@@ -78,12 +74,8 @@ std::string &CFilepathConverter::convertToNative(std::string &var)
 	for ( int cnt = 0; i != var.end(); i++, ++cnt ) {
 		if ( (*i) == '/' )
 			(*i) = '\\';
-	}
-
-	if ( var.length() > 2 ) {
-		if ( var[0] == '\\' && ((var[1] >= 'a' && var[1] <= 'z') || (var[1] >= 'A' && var[1] <= 'Z')) && (var[2] == ':') ) {
-			var = var.substr(1);
-		}
+		if ( (*i) == '|' )
+			(*i) = ':';
 	}
 
 	return var;

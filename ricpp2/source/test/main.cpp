@@ -414,7 +414,7 @@ void sometests(CRiCPPBridge ri)
 
 #ifdef WIN32
 	CStringList testpath;
-	testpath.explode(':', "$HOME:C:/testdir:C:Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
+	testpath.explode(':', "$HOME:C|/testdir:C:Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
 
 	std::string teststr;
 	testpath.implode(':', teststr, true);

@@ -414,7 +414,7 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 			return beginV(0, ++n, &m_tokens[0], &m_params[0]);
 		}
 		ptr = strrchr(filename.c_str(), '.');
-		if ( ptr && !(strcmp(ptr, ".rib") && strcmp(ptr, ".ribz") && strcmp(ptr, ".z") && strcmp(ptr, ".gz")) ) {
+		if ( ptr && !(strcasecmp(ptr, ".rib") && strcasecmp(ptr, ".ribz") && strcasecmp(ptr, ".z") && strcasecmp(ptr, ".gz")) ) {
 			// name was the name of a rib file
 			if ( n == 0 ) {
 				// remove the 0 entries

@@ -814,7 +814,7 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		} else {
 
 			const char *ptr = strrchr(filename.c_str(), '.');
-			if ( ptr && !(strcmp(ptr, ".ribz") && strcmp(ptr, ".z") && strcmp(ptr, ".gz")) && compress < 0 ) {
+			if ( ptr && !(strcasecmp(ptr, ".ribz") && strcasecmp(ptr, ".z") && strcasecmp(ptr, ".gz")) && compress < 0 ) {
 				compress = -1;
 			}
 

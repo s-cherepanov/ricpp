@@ -54,11 +54,6 @@ const char *CFilepathConverter::nativeDynlibSuffix() { return ".dll"; }
  */
 std::string &CFilepathConverter::convertToInternal(std::string &var)
 {
-	if ( var.length() >= 2 ) {
-		if ( var[0] == '\"' && var[var.length()-1] == '\"' ) {
-			var = var.substr(1, var.length()-2);
-		}
-	}
 	std::string::iterator i = var.begin();
 
 	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
@@ -66,23 +61,14 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 			(*i) = '/';
 	}
 
-	return var;
-}
-
-/*
-std::string &CFilepathConverter::convertToURI(std::string &var)
-{
-	convertToInternal(var);
-	if ( var.length() > 2 ) {
-		if ( var[1] == ':' && ((var[0] >= 'a' && var[0] <= 'z') || (var[0] >= 'A' && var[0] <= 'Z')) && var[2] == '/') {
-			std::string var2 = "///";
-			var2 += var;
-			var = var2;
+	if ( var.length() > 1 ) {
+		if ( var[1] == ':' ) {
+			var = std::string("/") + var;
 		}
 	}
+
 	return var;
 }
-*/
 
 /** @brief path conversion is done by replacing all '/' by '\'.
  */
@@ -94,11 +80,12 @@ std::string &CFilepathConverter::convertToNative(std::string &var)
 			(*i) = '\\';
 	}
 
-	if ( var.length() > 4 ) {
-		if ( var[0] == '\\' && var[1] == '\\' && var[2] == '\\' && ((var[3] >= 'a' && var[3] <= 'z') || (var[3] >= 'A' && var[3] <= 'Z')) && (var[4] == ':') ) {
-			var = var.substr(3);
+	if ( var.length() > 2 ) {
+		if ( var[0] == '\\' && ((var[1] >= 'a' && var[1] <= 'z') || (var[1] >= 'A' && var[1] <= 'Z')) && (var[2] == ':') ) {
+			var = var.substr(1);
 		}
 	}
+
 	return var;
 }
 

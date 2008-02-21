@@ -83,21 +83,11 @@ namespace RiCPP {
 		 */
 		static char nativePathlistSeperator();
 
-		/** @brief Converts a native path (not a list) into the internal representation.
+		/** @brief Converts a native path (not a list) into the internal URI compatible representation.
 		 * @param var (input/output) with the path string, will be converted into internal representation.
 		 * @return Reference to var.
 		 */
 		static std::string &convertToInternal(std::string &var);
-
-		/* @brief The string is converted into the hierarchical part of a relative URI.
-		 * 
-		 * Converts a native path (not a list) into the internal, hierarchival part of
-		 * a relative URI representation. It can be used for the constructor of a CUri.
-		 *
-		 * @param var (input/output) with the path string, will be converted into internal representation.
-		 * @return Reference to var.
-		 */
-		// static std::string &convertToURI(std::string &var);
 
 		/** @brief Converts an internally used path (or list) into the native representation
 		 * @param var (input/output) with the path string, will be converted into native representation.

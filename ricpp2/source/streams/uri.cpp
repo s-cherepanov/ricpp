@@ -1188,8 +1188,9 @@ unsigned int CUri::escape(
 	static const char *hexes = "0123456789abcdef";
 	if ( !*str )
 		return 0;
-		
-	for ( unsigned int i = 0; i < n && **str; ++i, ++(*str) ) {
+	
+	unsigned int i = 0;
+	for ( ; i < n && **str; ++i, ++(*str) ) {
 		const unsigned char uc = **str;
 		const unsigned char h = uc/16;
 		const unsigned char m = uc%16;
@@ -1204,7 +1205,6 @@ unsigned int CUri::escape(
 bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
 {
 	clear();
-	/// @todo encode path consists of optional authority (UNC) and path
 	
 	if ( !aPath)
 		return false;

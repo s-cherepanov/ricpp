@@ -1090,7 +1090,7 @@ CRenderState::CRenderState(
 	
 	CFilepath fp;
 	std::string s(fp.filepath());
-	s += CFilepathConverter::internalPathSeperator();
+	s += CFilepathConverter::internalPathSeparator();
 	m_baseUri.encodeFilepath(s.c_str(), "file");
 }
 

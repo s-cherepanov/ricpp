@@ -199,7 +199,7 @@ namespace RiCPP {
 				return 0;
 
 			CEnv::find(tmpPath, CEnv::tmpName(), false);
-			tmpPath += CFilepathConverter::nativePathSeperator();
+			tmpPath += CFilepathConverter::nativePathSeparator();
 			tmpPath += tmpfile;
 			tmpPath += extension ? extension : "";
 			if ( convertPath )

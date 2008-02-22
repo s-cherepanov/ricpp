@@ -40,7 +40,7 @@ void testStream(CBackBufferProtocolHandlers &factory)
 	TemplFrontStreambuf<char> ob(factory);
 	std::string str;
 	CEnv::find(str, CEnv::tmpName(), true);
-	str += CFilepathConverter::nativePathSeperator();
+	str += CFilepathConverter::nativePathSeparator();
 	CFilepathConverter::convertToInternal(str);
 
 	CUri base("file", "", str.c_str(), 0, 0);

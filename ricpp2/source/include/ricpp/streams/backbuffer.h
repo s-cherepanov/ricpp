@@ -1042,7 +1042,7 @@ protected:
 	{
 		CFilepath p;
 		std::string path(p.filepath());
-		path += CFilepathConverter::internalPathSeperator();
+		path += CFilepathConverter::internalPathSeparator();
 		m_baseUri.encodeFilepath(path.c_str(), "file");
 	}
 

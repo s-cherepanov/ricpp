@@ -34,13 +34,13 @@
 
 using namespace RiCPP;
 
-/** @brief The native path seperator in windows is the backslash '\'
+/** @brief The native path separator in windows is the backslash '\'
  */
-char CFilepathConverter::nativePathSeperator() { return '\\'; }
+char CFilepathConverter::nativePathSeparator() { return '\\'; }
 
-/** @brief Different pathes are seperated by ':' like in %PATH%
+/** @brief Different pathes are separated by ':' like in %PATH%
  */
-char CFilepathConverter::nativePathlistSeperator() { return ';'; }
+char CFilepathConverter::nativePathlistSeparator() { return ';'; }
 
 /** @brief Dynamic libraries have no specific prefix in win32 systems
  */
@@ -64,18 +64,18 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 	return var;
 }
 
-std::string &CFilepathConverter::convertListToInternal(std::string &var, char internalListSeperator)
+std::string &CFilepathConverter::convertListToInternal(std::string &var, char internalListSeparator)
 {
 	std::string::iterator i = var.begin();
 
 	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
 		if ( (*i) == '\\' )
 			(*i) = '/';
-		else if ( internalListSeperator ) {
-			if ( (*i) == internalListSeperator )
+		else if ( internalListSeparator ) {
+			if ( (*i) == internalListSeparator )
 				(*i) = '|';
 			else if ( (*i) == ';' )
-				(*i) = internalListSeperator;
+				(*i) = internalListSeparator;
 		}
 	}
 
@@ -95,17 +95,17 @@ std::string &CFilepathConverter::convertToNative(std::string &var)
 	return var;
 }
 
-std::string &CFilepathConverter::convertListToNative(std::string &var, char internalListSeperator)
+std::string &CFilepathConverter::convertListToNative(std::string &var, char internalListSeparator)
 {
 	std::string::iterator i = var.begin();
 
 	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
 		if ( (*i) == '/' )
 			(*i) = '\\';
-		else if ( internalListSeperator ) {
+		else if ( internalListSeparator ) {
 			if ( (*i) == '|' )
-				(*i) = internalListSeperator;
-			else if ( (*i) == internalListSeperator )
+				(*i) = internalListSeparator;
+			else if ( (*i) == internalListSeparator )
 				(*i) = ';';
 		}
 	}

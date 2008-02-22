@@ -44,7 +44,7 @@ CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
 	: m_useCount(0), m_version(version), m_libname(libname)
 {
 	m_libpath.clear();
-	m_searchpath.explode(CFilepathConverter::internalPathlistSeperator(), searchpath, false, false, true);
+	m_searchpath.explode(CFilepathConverter::internalPathlistSeparator(), searchpath, false, false, true);
 }
 
 unsigned long CDynLib::useCount() const

@@ -42,31 +42,31 @@ namespace RiCPP {
 	 */
 	class CFilepathConverter {
 	public:
-		/** @brief The character to seperate parts of a directory, internally used.
+		/** @brief The character to separate parts of a directory, internally used.
 		 *
 		 * The '/' (like in Unix) is used internally because '\' must be masked in strings.
 		 *
-		 * @return Internally used path seperator
+		 * @return Internally used path separator
 		 */
-		inline static char internalPathSeperator() {return '/';}
+		inline static char internalPathSeparator() {return '/';}
 
-		/** @brief The internal character to seperate multiple pathes (e.g. search path)
+		/** @brief The internal character to separate multiple pathes (e.g. search path)
 		 *
-		 * In rib ':' is used as seperator. That's a bit unlucky, because ':' is used to
-		 * seperate drive letters from the rest of the path. However CStringList::explode()
+		 * In rib ':' is used as separator. That's a bit unlucky, because ':' is used to
+		 * separate drive letters from the rest of the path. However CStringList::explode()
 		 * tries to cope with this double meaning of ':'. I've considered to
-		 * use ';' as path seperator, but this would be incompatible to others renderers
+		 * use ';' as path separator, but this would be incompatible to others renderers
 		 * and the RIB files.
 		 *
-		 * @return Internally used seperator for multiple pathes
+		 * @return Internally used separator for multiple pathes
 		 * @see CStringList::explode()
 		 */
-		inline static char internalPathlistSeperator() {return ':';}
+		inline static char internalPathlistSeparator() {return ':';}
 
-		/** @brief The character to seperate parts of a native directory.
-		 * @return Native path seperator.
+		/** @brief The character to separate parts of a native directory.
+		 * @return Native path separator.
 		 */
-		static char nativePathSeperator();
+		static char nativePathSeparator();
 
 		/** @brief The native prefix for dynamic libraries.
 		 * @return Native prefix for dynamic libraries.
@@ -78,10 +78,10 @@ namespace RiCPP {
 		 */
 		static const char *nativeDynlibSuffix();
 
-		/** @brief The character to seperate native directory in directory lists.
-		 * @return Native pathlist seperator.
+		/** @brief The character to separate native directory in directory lists.
+		 * @return Native pathlist separator.
 		 */
-		static char nativePathlistSeperator();
+		static char nativePathlistSeparator();
 
 		/** @brief Converts a native path (not a list) into the internal representation.
 		 * @param var (input/output) with the path string, will be converted into internal representation.
@@ -91,10 +91,10 @@ namespace RiCPP {
 
 		/** @brief Converts a native pathlist into the internal representation.
 		 * @param var (input/output) with the pathlist string, will be converted into internal representation for CStringList.
-		 * @param internalListSeperator list seperator used internally
+		 * @param internalListSeparator list separator used internally
 		 * @return Reference to var.
 		 */
-		static std::string &convertListToInternal(std::string &var, char internalListSeperator = ':');
+		static std::string &convertListToInternal(std::string &var, char internalListSeparator = ':');
 
 		/** @brief Converts an internally used path into the native representation
 		 * @param var (input/output) with the path string, will be converted into native representation.
@@ -104,10 +104,10 @@ namespace RiCPP {
 
 		/** @brief Converts an internally used pathlist into the native representation
 		 * @param var (input/output) with the path string, will be converted into native representation.
-		 * @param internalListSeperator list seperator used internally
+		 * @param internalListSeparator list separator used internally
 		 * @return Reference to var.
 		 */
-		std::string &convertListToNative(std::string &var, char internalListSeperator = ':');
+		std::string &convertListToNative(std::string &var, char internalListSeparator = ':');
 	}; // CFilepathConverter
 
 
@@ -157,7 +157,7 @@ namespace RiCPP {
 		inline const char *basename(const char *suffix, std::string &aBasename) const
 		{
 			const char *path = filepath();
-			const char *left = strrchr(path, CFilepathConverter::internalPathSeperator());
+			const char *left = strrchr(path, CFilepathConverter::internalPathSeparator());
 			aBasename = "";
 			if ( !(left && *left) ) {
 				left = path;

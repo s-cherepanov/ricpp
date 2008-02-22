@@ -44,13 +44,13 @@
 
 using namespace RiCPP;
 
-/** @brief The '/' is the path seperator at MacOS
+/** @brief The '/' is the path separator at MacOS
  */
-char CFilepathConverter::nativePathSeperator() { return '/'; }
+char CFilepathConverter::nativePathSeparator() { return '/'; }
 
-/** @brief The ':' seperates different pathes in MacOS
+/** @brief The ':' separates different pathes in MacOS
  */
-char CFilepathConverter::nativePathlistSeperator() { return ':'; }
+char CFilepathConverter::nativePathlistSeparator() { return ':'; }
 
 /** @brief Dynamic libraries have the prefix "lib" in mac systems
  */
@@ -68,7 +68,7 @@ std::string &CFilepathConverter::convertToInternal(std::string &var) {
 
 /** @brief No operation, the internal representation and the MAC representation are equal.
  */
-std::string &CFilepathConverter::convertListToInternal(std::string &var) {
+std::string &CFilepathConverter::convertListToInternal(std::string &var, char internalListSeparator) {
 	return var;
 }
 
@@ -78,7 +78,7 @@ std::string &CFilepathConverter::convertToNative(std::string &var) {
 	return var;
 }
 
-std::string &CFilepathConverter::convertListToNative(std::string &var) {
+std::string &CFilepathConverter::convertListToNative(std::string &var, char internalListSeparator) {
 	return var;
 }
 
@@ -104,7 +104,7 @@ void CFilepath::convertToNative() {
 	}
 }
 
-/** @brief In MacOs a path is absolut if it has a path seperator '/' as  its first character.
+/** @brief In MacOs a path is absolut if it has a path separator '/' as  its first character.
  */
 bool CFilepath::isAbsolute() const {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '/');

@@ -1276,14 +1276,14 @@ RtVoid CRiCPPBridge::doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer
 			if ( !strcmp(tokens[i], "renderer") ) {
 				m_pathReplace.path(m_ctxMgmt.searchpath());
 				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
-				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
+				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
 				m_ctxMgmt.searchpath(s.c_str());
 			} else if ( !strcmp(tokens[i], "ribfilter") ) {
 				m_pathReplace.path(m_ribFilterList.searchpath());
 				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
-				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
+				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
 				m_ribFilterList.searchpath(s.c_str());
 			}
 			sl.clear();
@@ -1304,15 +1304,15 @@ RtVoid CRiCPPBridge::doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer
 			if ( !strcmp(tokens[i], "renderer") ) {
 				m_pathReplace.path(m_ctxMgmt.searchpath());
 				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
-				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
+				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
 				m_standardPathRenderer = noNullStr(s.c_str());
 			} else if ( !strcmp(tokens[i], "ribfilter") ) {
 				m_pathReplace.path(m_ribFilterList.searchpath());
 				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
 				m_pathReplace.path(m_ribFilterList.searchpath());
-				sl.explode(CFilepathConverter::internalPathlistSeperator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeperator(), s, true);
+				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
+				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
 				m_standardPathRibFilter = noNullStr(s.c_str());
 			}
 			sl.clear();

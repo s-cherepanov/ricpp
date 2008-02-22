@@ -568,7 +568,7 @@ CRibWriter::CRibWriter()
 	
 	m_header = false;
 	m_execute = false;
-	m_delayedReadArchive = false;
+	m_doReadArchive = false;
 	nestingDepth(0);
 }
 
@@ -607,7 +607,7 @@ void CRibWriter::defaultDeclarations()
 	CBaseRenderer::defaultDeclarations();
 
 	// Tokens
-	RI_RIBWRITER = renderState()->tokFindCreate("ribwriter");
+	RI_RIBWRITER =                renderState()->tokFindCreate("ribwriter");
 
 	// Declarations
 	RI_COMPRESS =                 renderState()->declare("compress", "constant integer", true);
@@ -621,7 +621,7 @@ void CRibWriter::defaultDeclarations()
 	RI_INDENT =                   renderState()->declare("Control:ribwriter:indent",                   "constant integer", true);
 	RI_INDENT_STRING =            renderState()->declare("Control:ribwriter:indent-string",            "constant string",  true);
 	RI_SUPPRESS_OUTPUT =          renderState()->declare("Control:ribwriter:suppress-output",          "constant integer", true);
-	RI_BINARY_OUTPUT =           renderState()-> declare("Control:ribwriter:binary-output",            "constant integer", true);
+	RI_BINARY_OUTPUT =            renderState()->declare("Control:ribwriter:binary-output",            "constant integer", true);
 }
 
 void CRibWriter::writePrefix(bool isArchiveRecord)
@@ -773,8 +773,6 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 		if ( p.token() == RI_FILE && p.strings().size() > 0 ) {
 			CStringList stringList;
 			stringList.expand(filename, p.strings()[0].c_str(), true);
-			CFilepathConverter::convertToInternal(filename);
-			// CFilepathConverter::convertToURI(filename);
 		}
 		if ( p.token() == RI_COMPRESS && p.ints().size() > 0 ) {
 			compress = p.ints()[0];
@@ -797,11 +795,9 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 				m_cmd = cmd;
 
 				filename = "";
-				const char *tmpfile = CEnv::getTempFilename(filename, "rib");
+				const char *tmpfile = CEnv::getTempFilename(filename, "rib", false);
 				if ( tmpfile ) {
 					m_nativepath = filename;
-					CFilepathConverter::convertToNative(m_nativepath);
-					// CFilepathConverter::convertToURI(filename);
 				} else {
 					m_cmd = "";
 					// Error
@@ -2605,11 +2601,10 @@ RtVoid CRibWriter::postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 RtVoid CRibWriter::doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
 	if ( !m_postponeProcedural ) {
-		if ( subdivfunc.name() == RI_DELAYED_READ_ARCHIVE )
-			m_delayedReadArchive = true;
+		m_doReadArchive = true;
 		// Can call doReadArchive()
 		CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
-		m_delayedReadArchive = false;
+		m_doReadArchive = false;
 	}
 }
 
@@ -2807,7 +2802,7 @@ RtVoid CRibWriter::postArchiveRecord(RtToken type, RtString line)
 
 
 bool CRibWriter::willExecuteMacro(RtString name) {
-	if ( m_delayedReadArchive )
+	if ( m_doReadArchive )
 		return true;
 
 	bool isFile = true;
@@ -2850,7 +2845,7 @@ RtVoid CRibWriter::preReadArchive(RtString name, const IArchiveCallback *callbac
 
 RtVoid CRibWriter::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
-	m_delayedReadArchive = false; // Clear the procedural flag
+	m_doReadArchive = false; // Clear the procedural flag
 	if ( m_execute ) {
 		bool exec = m_execute;
 		m_header = true;

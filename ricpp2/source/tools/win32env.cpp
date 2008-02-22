@@ -29,10 +29,6 @@
 
 #include "ricpp/tools/env.h"
 
-#ifndef _RICPP_TOOLS_FILEPATH_H
-#include "ricpp/tools/filepath.h"
-#endif // _RICPP_TOOLS_FILEPATH_H
-
 #include <windows.h>
 #include <cstdlib>
 
@@ -43,7 +39,7 @@ using namespace RiCPP;
  * Uses the Win32 function getenv_s() to access the environment variables,
  * can return an empty string.
  */
-std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
+std::string &CEnv::get(std::string &var, const char *varName, bool convertPath)
 {
 	var = "";
 	if ( !varName )
@@ -77,7 +73,7 @@ std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
 	if ( &p[0] != ptr )
 		delete[] ptr;
 
-	if ( isPath )
+	if ( convertPath )
 		return CFilepathConverter::convertToInternal(var);
 
 	return var;
@@ -89,20 +85,19 @@ std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
  *  TEMP. If nothing is set the home directory @see getHome() is returned.
  *  The path can be empty.
  */
-std::string &CEnv::getTmp(std::string &tmp)
+std::string &CEnv::getTmp(std::string &tmp, bool convertPath)
 {
 	tmp = "";
-	get(tmp, "TMP", true); // first look TMP - can be set set by the program itself
+	get(tmp, "TMP", convertPath); // first look TMP - can be set set by the program itself
 	if ( tmp.size() < 1 ) {
-		get(tmp, "TEMP", true);
+		get(tmp, "TEMP", convertPath);
 	}
 
 	if ( tmp.size() < 1 ) {
 		// if there is not temp take the home as temp
-		return getHome(tmp);
+		return getHome(tmp, convertPath);
 	}
 
-	// return CFilepathConverter::convertToInternal(tmp);
 	return tmp;
 }
 
@@ -113,13 +108,12 @@ std::string &CEnv::getTmp(std::string &tmp)
  *  (Windows home path) are examined, if they are not set the profile path
  *  will be used if existent. The path can be empty.
  */
-std::string &CEnv::getHome(std::string &home)
+std::string &CEnv::getHome(std::string &home, bool convertPath)
 {
 	home = "";
 
-	get(home, "HOME", true);
+	get(home, "HOME", convertPath);
 	if ( home.size() > 0 ) {
-		// return CFilepathConverter::convertToInternal(home);
 		return home;
 	}
 
@@ -130,26 +124,25 @@ std::string &CEnv::getHome(std::string &home)
 		home += homepath;
 	}
 
-	if ( home.size() < 1 ) {
+	if ( home.size() < 2 ) {
 		// No home, take the Userprofile (To do: "My Files" ?)
-		get(home, "USERPROFILE", true);
+		get(home, "USERPROFILE", convertPath);
 		return home;
 	}
 
-	return CFilepathConverter::convertToInternal(home);
-	return home;
+	return convertPath ? CFilepathConverter::convertToInternal(home) : home;
 }
 
 /** @brief Win32 implementation to get the search path.
  *
  *  The variable PATH is examined. The search path can be empty.
  */
-std::string &CEnv::getPath(std::string &path)
+std::string &CEnv::getPath(std::string &path, bool convertPath)
 {
 	path = "";
-	// return CFilepathConverter::convertToInternal(get(path, "PATH"));
-	get(path, "PATH", true);
-	return path;
+	get(path, "PATH", false);
+
+	return convertPath ? CFilepathConverter::convertListToInternal(path) : path;
 }
 
 /** @brief Win32 implementation to get the absolute path to the running executable.
@@ -159,9 +152,10 @@ std::string &CEnv::getPath(std::string &path)
  *  Uses still ANSI and cannot resolve junction points (file links). Can return
  *  an empty string. Uses a singleton to store the path.
  */
-std::string &CEnv::getProgDir(std::string &prog)
+std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 {
 	static std::string path = "";
+	static std::string internalPath = "";
 	static bool isset = false;
 	
 	if ( !isset ) {
@@ -199,9 +193,10 @@ std::string &CEnv::getProgDir(std::string &prog)
 		}
 
 		path = ptr;
-		CFilepathConverter::convertToInternal(path);
+		internalPath = path;
+		CFilepathConverter::convertToInternal(internalPath);
 	}
 	
-	prog = path;
+	prog = convertPath ? internalPath : path;
 	return prog;
 }

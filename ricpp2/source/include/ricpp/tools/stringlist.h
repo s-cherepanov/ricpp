@@ -139,9 +139,12 @@ private:
 	 *
 	 *  @retval varName (input/output) variable name to search for, also used return
 	 *         the found value. Is cleared if not empty.
+	 *  @param seperator path seperator.
+	 *  @param useEnv true, use environment variables.
+	 *  @param isPathList true, to handle pathlists.
 	 *  @return true, variable was replaced
 	 */
-	bool getVar(std::string &varName, bool useEnv);
+	bool getVar(std::string &varName, char seperator, bool useEnv, bool isPathList);
 
 	/** @brief Converts all ':' to '|'
 	 *
@@ -197,7 +200,8 @@ public:
 	 *  @param doSubstitute true, if variables should be substituted.
 	 *  @param useEnv true, if the environment variables should be also searched for $variables.
 	 *  @param isPathList true, to handle pathlists. For WIN32 a bit messy because rib uses ':'
-	 *         as path seperator, but windows uses them as drive letter seperators as well. Also the
+	 *         as path seperator, but windows uses them as drive letter seperators as well.
+	 *         ':' within files has do be substituted by '|'. Also the
 	 *         special chars @ and & are tried to be replaced by calling m_callback (if set) and
 	 *         the backslashes within variables are substituted by forward slashes.
 	 *  @return The number of strings inserted.

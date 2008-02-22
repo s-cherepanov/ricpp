@@ -39,6 +39,10 @@
 #include "ricpp/tools/platform.h"
 #endif // _RICPP_TOOLS_PLATFORM_H
 
+#ifndef _RICPP_TOOLS_FILEPATH_H
+#include "ricpp/tools/filepath.h"
+#endif // _RICPP_TOOLS_FILEPATH_H
+
 #include <string>
 
 namespace RiCPP {
@@ -65,10 +69,10 @@ namespace RiCPP {
 		 *         @a varName is stored
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign)
-		 *  @param isPath Variable is a path name, the content will be translated into the internal format.
+		 *  @param convertPath Variable is a path name, the content will be translated into the internal format.
 		 *  @return A reference to @a var
 		 */
-		static std::string &get(std::string &var, const char *varName, bool isPath);
+		static std::string &get(std::string &var, const char *varName, bool convertPath);
 
 	public:
 		/** @brief Gets the string "TMP", the name of the TMP-variable (see getTmp()).
@@ -97,9 +101,10 @@ namespace RiCPP {
 		 *  The native name of this variable can be different.
 		 *
 		 *  @param tmp String reference where the value of the special environment variable TMP is stored.
+		 *  @param convertPath true, convert path to internal representation
 		 *  @return A reference to @a tmp.
 		 */
-		static std::string &getTmp(std::string &tmp);
+		static std::string &getTmp(std::string &tmp, bool convertPath = true);
 
 		/** @brief Gets the value of the special variable HOME (so called in RiCPP).
 		 *
@@ -109,9 +114,10 @@ namespace RiCPP {
 		 *
 		 *  @param home String reference where the value of the special environment variable
 		 *         HOME is stored.
+		 *  @param convertPath true, convert path to internal representation
 		 *  @return A reference to @a home.
 		 */
-		static std::string &getHome(std::string &home);
+		static std::string &getHome(std::string &home, bool convertPath = true);
 
 		/** @brief Gets the value of the special variable PATH (so called in RiCPP).
 		 *
@@ -120,9 +126,10 @@ namespace RiCPP {
 		 *
 		 *  @param path String reference where the value of the special environment
 		 *         variable PATH is stored.
+		 *  @param convertPath true, convert path to internal representation
 		 *  @return A reference to @a path.
 		 */
-		static std::string &getPath(std::string &path);
+		static std::string &getPath(std::string &path, bool convertPath = true);
 
 		/** @brief Gets the value of the special variable PROGDIR (so called in RiCPP).
 		 *
@@ -131,9 +138,10 @@ namespace RiCPP {
 		 *
 		 *  @param prog String reference where the value of the special environment variable
 		 *         PROG is stored
+		 *  @param convertPath true, convert path to internal representation
 		 *  @return A reference to @a prog.
 		 */
-		static std::string &getProgDir(std::string &prog);
+		static std::string &getProgDir(std::string &prog, bool convertPath = true);
 
 		/** @brief Finds the value for the environment variable.
 		 *
@@ -146,10 +154,10 @@ namespace RiCPP {
 		 *  @retval var Value of the environment variable is stored here
 		 *  @param varName Pointer to the name of the environment variable
 		 *         (without the leading $ sign).
-		 *  @param isPath Variable is a path name, the content will be translated into the internal format.
+		 *  @param convertPath Variable is a path name, the content will be translated into the internal format.
 		 *  @return A reference to @a var, the value of the variable.
 		 */
-		inline static std::string &find(std::string &var, const char *varName, bool isPath = false)
+		inline static std::string &find(std::string &var, const char *varName, bool convertPath)
 		{
 			// Clear the variable
 			var = "";
@@ -160,19 +168,19 @@ namespace RiCPP {
 
 			// Special variables HOME, TMP, PATH, PROGDIR
 			if ( !strcasecmp(varName, homeName()) )
-				return getHome(var);
+				return getHome(var, convertPath);
 			if ( !strcasecmp(varName, tmpName()) )
-				return getTmp(var);
+				return getTmp(var, convertPath);
 			if ( !strcasecmp(varName, pathName()) )
-				return getPath(var);
+				return getPath(var, convertPath);
 			if ( !strcasecmp(varName, progDirName()) )
-				return getProgDir(var);
+				return getProgDir(var, convertPath);
 
 			// Get an environment variable
-			return get(var, varName, isPath);
+			return get(var, varName, convertPath);
 		}
 
-		static inline const char *getTempFilename(std::string &tmpPath, const char *extension)
+		static inline const char *getTempFilename(std::string &tmpPath, const char *extension, bool convertPath)
 		{
 			char buf[TMP_MAX+1];
 			const char *tmpfile = 0;
@@ -190,10 +198,12 @@ namespace RiCPP {
 			if ( !tmpfile )
 				return 0;
 
-			CEnv::find(tmpPath, CEnv::tmpName());
-			tmpPath += "/";
+			CEnv::find(tmpPath, CEnv::tmpName(), false);
+			tmpPath += CFilepathConverter::nativePathSeperator();
 			tmpPath += tmpfile;
 			tmpPath += extension ? extension : "";
+			if ( convertPath )
+				CFilepathConverter::convertToInternal(tmpPath);
 			return tmpPath.c_str();
 		}
 	}; // CEnv

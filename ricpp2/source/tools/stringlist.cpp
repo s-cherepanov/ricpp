@@ -35,7 +35,7 @@
 
 using namespace RiCPP;
 
-bool CStringList::getVar(std::string &varName, bool useEnv)
+bool CStringList::getVar(std::string &varName, char seperator, bool useEnv, bool isPathList)
 {
 	if ( m_callback ) {
 		if ( (*m_callback)(varName) )
@@ -59,7 +59,9 @@ bool CStringList::getVar(std::string &varName, bool useEnv)
 	if ( useEnv ) {
 		std::string var;
 		std::string strname;
-		CEnv::find(var, varName.c_str());
+		CEnv::find(var, varName.c_str(), false);
+		if ( isPathList )
+			CFilepathConverter::convertListToInternal(var, seperator);
 		if ( !var.empty() ) {
 			varName = var;
 			return true;
@@ -130,7 +132,7 @@ CStringList::size_type CStringList::explode(
 						++iter;
 
 						// replace variable
-						getVar(varName, useEnv);
+						getVar(varName, seperator, useEnv, isPathList);
 
 						std::string::difference_type d = distance(strval.begin(), saviter);
 						saviter = strval.erase(saviter, iter);
@@ -161,10 +163,7 @@ CStringList::size_type CStringList::explode(
 
 						if ( !varName.empty() ) {
 							// replace variable
-							getVar(varName, useEnv);
-							if ( isPathList ) {
-								CFilepathConverter::convertToInternal(varName);
-							}
+							getVar(varName, seperator, useEnv, isPathList);
 
 							std::string::difference_type d = distance(strval.begin(), saviter);
 							saviter = strval.erase(saviter, iter);
@@ -184,10 +183,7 @@ CStringList::size_type CStringList::explode(
 						iter++;
 
 						// replace variable
-						getVar(varName, useEnv);
-						if ( isPathList ) {
-							CFilepathConverter::convertToInternal(varName);
-						}
+						getVar(varName, seperator, useEnv, isPathList);
 
 						std::string::difference_type d = distance(strval.begin(), saviter);
 						saviter = strval.erase(saviter, iter);
@@ -211,10 +207,7 @@ CStringList::size_type CStringList::explode(
 		}
 		if ( state == varchar || state == varcharpar ) {
 			// copy from varchar replace variable
-			getVar(varName, useEnv);
-			if ( isPathList ) {
-				CFilepathConverter::convertToInternal(varName);
-			}
+			getVar(varName, seperator, useEnv, isPathList);
 
 			std::string::difference_type d = distance(strval.begin(), saviter);
 			saviter = strval.erase(saviter, iter);
@@ -227,72 +220,6 @@ CStringList::size_type CStringList::explode(
 			// iterinc = false;
 		}
 	}
-
-#ifdef WIN32
-	if ( isPathList && seperator == ':' ) {
-		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
-			if ( *iter == ';'  ) {
-				*iter = ':';
-			}
-		}
-	}
-#endif
-
-#if 0
-	// The messy part...
-	// In RIB files the seperator for pathes is unfortunatly ':'.
-	// ':' can have a double meaning as seperator for drive letters
-	// and seperator for pathes.
-	// ':' is converted to '|', if "<letter>:/" is the prefix of a path
-	// i.e. a windows path letter. Since there are no drive letters
-	// in other OSes as WIN32 this is done only for WIN32 binaries
-	// If RIB files have to be exchanged across OSe, drive letters
-	// won't work anyway.
-	// Also in windows the path seperator can be a ';', which
-	// is converted to ':'
-	// Also schemes can have a : as seperator, e.g. "http:/", it is
-	// assumend that these schems are already given as "http|/", since
-	// URLs instead of filenames are not standard RIB
-	if ( isPathList && seperator == ':' ) {
-		state = normal;
-
-		bool startpath = true;
-		bool firstletter = false;
-
-		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
-			iterinc = true;
-
-			if ( firstletter && *iter == ':' ) {
-				saviter = iter;
-				++iter;
-				iterinc = false;
-				if ( *iter == '/' ) {
-					*saviter = '|';
-				}
-				firstletter = false;
-				continue;
-			}
-
-			firstletter = false;
-			if ( startpath ) {
-				if ( (*iter >= 'a' && *iter <= 'z') || (*iter >= 'A' && *iter <= 'Z') ) {
-					firstletter = true;
-					startpath = false;
-					continue;
-				}
-			}
-
-			startpath = false;
-			if ( *iter == ':' || *iter ==';' ) {
-				startpath = true;
-				// also convert a seperator ';' to ':'
-				*iter = ':';
-				continue;
-			}
-		}
-		// CFilepathConverter::convertToInternal(strval);
-	}
-#endif
 
 	state = normal;
 

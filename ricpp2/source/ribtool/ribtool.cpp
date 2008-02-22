@@ -360,6 +360,7 @@ void printUsage()
 	std::cout << "   a Inline archives" << std::endl;
 	std::cout << "   f File (RIB) archives" << std::endl;
 	std::cout << "   o RI objects" << std::endl;
+	std::cout << "   p Procedurals" << std::endl;
 	std::cout << "- Reads from stdin" << std::endl;
 	std::cout << "filename Reads from filename" << std::endl;
 }
@@ -391,6 +392,7 @@ void postpone(int aSwitch, int argument)
 			ri.control("ribwriter", "postpone-inline-archives", param, RI_NULL);
 			ri.control("ribwriter", "postpone-file-archives", paramFile, RI_NULL);
 			ri.control("ribwriter", "postpone-objects", param, RI_NULL);
+			ri.control("ribwriter", "postpone-procedurals", param, RI_NULL);
 			break;
 
 		case 'a': // Inline archives (ArchiveBegin, ArchiveEnd, ReadArchive)
@@ -403,6 +405,10 @@ void postpone(int aSwitch, int argument)
 
 		case 'o': // Objects (ObjectBegin, ObjectEnd, ObjectInstance)
 			ri.control("ribwriter", "postpone-objects", param, RI_NULL);
+			break;
+
+		case 'p': // Procedurals (delayedReadArchive, RunProgramm, DynamicLoad)
+			ri.control("ribwriter", "postpone-procedurals", param, RI_NULL);
 			break;
 
 		default: // not recognized

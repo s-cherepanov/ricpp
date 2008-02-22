@@ -39,7 +39,7 @@ void testStream(CBackBufferProtocolHandlers &factory)
 {
 	TemplFrontStreambuf<char> ob(factory);
 	std::string str;
-	CEnv::find(str, CEnv::tmpName());
+	CEnv::find(str, CEnv::tmpName(), true);
 	str += CFilepathConverter::nativePathSeperator();
 	CFilepathConverter::convertToInternal(str);
 
@@ -399,10 +399,10 @@ void sometests(CRiCPPBridge ri)
 	testStream(globalFactory);
 
 	std::string str;
-	std::cout << CEnv::tmpName() << ": " << CEnv::find(str, CEnv::tmpName()) << std::endl;
-	std::cout << CEnv::homeName() << ": " << CEnv::find(str, CEnv::homeName()) << std::endl;
-	std::cout << CEnv::pathName() << ": "  << CEnv::find(str, CEnv::pathName()) << std::endl;
-	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName()) << std::endl;
+	std::cout << CEnv::tmpName() << ": " << CEnv::find(str, CEnv::tmpName(), true) << std::endl;
+	std::cout << CEnv::homeName() << ": " << CEnv::find(str, CEnv::homeName(), true) << std::endl;
+	std::cout << CEnv::pathName() << ": "  << CEnv::find(str, CEnv::pathName(), true) << std::endl;
+	std::cout << CEnv::progDirName() << ": "  << CEnv::find(str, CEnv::progDirName(), true) << std::endl;
 
 	std::string tmp(CEnv::tmpName());
 	tmp = "gztest.gz";

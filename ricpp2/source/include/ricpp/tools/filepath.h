@@ -83,17 +83,31 @@ namespace RiCPP {
 		 */
 		static char nativePathlistSeperator();
 
-		/** @brief Converts a native path (not a list) into the internal URI compatible representation.
+		/** @brief Converts a native path (not a list) into the internal representation.
 		 * @param var (input/output) with the path string, will be converted into internal representation.
 		 * @return Reference to var.
 		 */
 		static std::string &convertToInternal(std::string &var);
 
-		/** @brief Converts an internally used path (or list) into the native representation
+		/** @brief Converts a native pathlist into the internal representation.
+		 * @param var (input/output) with the pathlist string, will be converted into internal representation for CStringList.
+		 * @param internalListSeperator list seperator used internally
+		 * @return Reference to var.
+		 */
+		static std::string &convertListToInternal(std::string &var, char internalListSeperator = ':');
+
+		/** @brief Converts an internally used path into the native representation
 		 * @param var (input/output) with the path string, will be converted into native representation.
 		 * @return Reference to var.
 		 */
 		static std::string &convertToNative(std::string &var);
+
+		/** @brief Converts an internally used pathlist into the native representation
+		 * @param var (input/output) with the path string, will be converted into native representation.
+		 * @param internalListSeperator list seperator used internally
+		 * @return Reference to var.
+		 */
+		std::string &convertListToNative(std::string &var, char internalListSeperator = ':');
 	}; // CFilepathConverter
 
 

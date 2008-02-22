@@ -29,6 +29,11 @@
  */
 
 #include "ricpp/tools/filepath.h"
+
+#ifndef _RICPP_TOOLS_STRINGPATTERN_H
+#include "ricpp/tools/stringpattern.h"
+#endif // _RICPP_TOOLS_STRINGPATTERN_H
+
 #include <cstdlib>
 #include <cerrno>
 
@@ -63,15 +68,19 @@ std::string &CFilepathConverter::convertToInternal(std::string &var) {
 
 /** @brief No operation, the internal representation and the MAC representation are equal.
  */
+std::string &CFilepathConverter::convertListToInternal(std::string &var) {
+	return var;
+}
+
+/** @brief No operation, the internal representation and the MAC representation are equal.
+ */
 std::string &CFilepathConverter::convertToNative(std::string &var) {
 	return var;
 }
 
-/*
-std::string &CFilepathConverter::convertToURI(std::string &var) {
+std::string &CFilepathConverter::convertListToNative(std::string &var) {
 	return var;
 }
-*/
 
 /** @brief See description of CFilepath::convertToNative() in header file filepath.h.
  */
@@ -101,6 +110,7 @@ bool CFilepath::isAbsolute() const {
 	return (m_nativepath.size() > 0 && m_nativepath[0] == '/');
 }
 
+/* Replaced by CStringPattern
 static bool filenamecmp(const char *direntry, const char *pattern)
 {
 	int ret;
@@ -123,6 +133,7 @@ static bool filenamecmp(const char *direntry, const char *pattern)
 
 	return false;
 }
+*/
 
 bool CDirectory::readDirectory(const char *pattern) {
 	struct dirent *dir_entry_p;
@@ -136,6 +147,8 @@ bool CDirectory::readDirectory(const char *pattern) {
 		pattern = "*";
 	}
 
+	CStringPattern strPat(pattern);
+
 	dir_p = opendir(direntry.c_str());
 	if ( dir_p == 0 )  {
 		return false;
@@ -143,7 +156,7 @@ bool CDirectory::readDirectory(const char *pattern) {
 	
 	while ( (dir_entry_p = readdir(dir_p)) != 0 ) {
 		direntry = dir_entry_p->d_name ? dir_entry_p->d_name : "";
-		if ( direntry != "." && direntry != ".." && filenamecmp(direntry.c_str(), pattern) ) {
+		if ( direntry != "." && direntry != ".." && strPat.matches(direntry.c_str()) ) {
 			m_dirList.push_back(CFilepath(direntry));
 		}
 	}

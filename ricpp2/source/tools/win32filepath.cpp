@@ -59,8 +59,24 @@ std::string &CFilepathConverter::convertToInternal(std::string &var)
 	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
 		if ( (*i) == '\\' )
 			(*i) = '/';
-		if ( (*i) == ':' )
-			(*i) = '|';
+	}
+
+	return var;
+}
+
+std::string &CFilepathConverter::convertListToInternal(std::string &var, char internalListSeperator)
+{
+	std::string::iterator i = var.begin();
+
+	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
+		if ( (*i) == '\\' )
+			(*i) = '/';
+		else if ( internalListSeperator ) {
+			if ( (*i) == internalListSeperator )
+				(*i) = '|';
+			else if ( (*i) == ';' )
+				(*i) = internalListSeperator;
+		}
 	}
 
 	return var;
@@ -74,12 +90,29 @@ std::string &CFilepathConverter::convertToNative(std::string &var)
 	for ( int cnt = 0; i != var.end(); i++, ++cnt ) {
 		if ( (*i) == '/' )
 			(*i) = '\\';
-		if ( (*i) == '|' )
-			(*i) = ':';
 	}
 
 	return var;
 }
+
+std::string &CFilepathConverter::convertListToNative(std::string &var, char internalListSeperator)
+{
+	std::string::iterator i = var.begin();
+
+	for ( int cnt = 0; i != var.end(); i++, cnt++ ) {
+		if ( (*i) == '/' )
+			(*i) = '\\';
+		else if ( internalListSeperator ) {
+			if ( (*i) == '|' )
+				(*i) = internalListSeperator;
+			else if ( (*i) == internalListSeperator )
+				(*i) = ';';
+		}
+	}
+
+	return var;
+}
+
 
 /** @brief See description of CFilepath::convertToNative() in header file filepath.h
  */

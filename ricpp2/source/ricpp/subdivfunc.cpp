@@ -71,13 +71,9 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 		return;
 
 	std::string tmpPath;
-	const char *tmpfile = CEnv::getTempFilename(tmpPath, "rib");
-	if ( !tmpfile ) {
+	if ( !CEnv::getTempFilename(tmpPath, "rib", false) ) {
 		return;
 	}
-
-	std::string nativepath = tmpPath;
-	CFilepathConverter::convertToNative(nativepath);
 
 	std::string cmdline;
 	if ( genRequestData && genRequestData[0] ) {
@@ -87,7 +83,7 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 	}
 	cmdline += cmd;
 	cmdline += " >";
-	cmdline += nativepath;
+	cmdline += tmpPath;
 
 
 	system(cmdline.c_str()); // Insecure !!!

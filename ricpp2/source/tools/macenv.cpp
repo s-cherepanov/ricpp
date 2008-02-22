@@ -30,10 +30,6 @@
 
 #include "ricpp/tools/env.h"
 
-#ifndef _RICPP_TOOLS_FILEPATH_H
-#include "ricpp/tools/filepath.h"
-#endif // _RICPP_TOOLS_FILEPATH_H
-
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
@@ -54,7 +50,7 @@ using namespace RiCPP;
  * Uses the standard function getenv() to acces the environment variables,
  * can return an empty string.
  */
-std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
+std::string &CEnv::get(std::string &var, const char *varName, bool convertPath)
 {
 	var.empty();
 	if ( !varName )
@@ -63,7 +59,7 @@ std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
 	const char *p = getenv(varName);
 	var = p ? p : "";
 
-	if ( isPath )
+	if ( convertPath )
 		return CFilepathConverter::convertToInternal(var);
 
 	return var;
@@ -76,11 +72,11 @@ std::string &CEnv::get(std::string &var, const char *varName, bool isPath)
  * or if this also do not exist, returns $home. If there is no
  * home directory the empty string is returned.
  */
-std::string &CEnv::getTmp(std::string &tmp)
+std::string &CEnv::getTmp(std::string &tmp, bool convertPath)
 {
 	tmp = "";
-	if ( get(tmp, "TMP", true).empty() ) {
-		get(tmp, "HOME", true);
+	if ( get(tmp, "TMP", convertPath).empty() ) {
+		get(tmp, "HOME", convertPath);
 		
 		std::string path = tmp;
 		path += "/tmp";
@@ -91,7 +87,6 @@ std::string &CEnv::getTmp(std::string &tmp)
 			closedir(d);
 		} 
 	}
-	// return CFilepathConverter::convertToInternal(tmp);
 	return tmp;
 }
 
@@ -99,11 +94,10 @@ std::string &CEnv::getTmp(std::string &tmp)
  *
  * Examines the variable HOME.
  */
-std::string &CEnv::getHome(std::string &home)
+std::string &CEnv::getHome(std::string &home, bool convertPath)
 {
 	home = "";
-	get(home, "HOME", true);
-	// return CFilepathConverter::convertToInternal(home);
+	get(home, "HOME", convertPath);
 	return home;
 }
 
@@ -111,13 +105,12 @@ std::string &CEnv::getHome(std::string &home)
  *
  * Examines the variable PATH.
  */
-std::string &CEnv::getPath(std::string &path)
+std::string &CEnv::getPath(std::string &path, bool convertPath)
 {
 	path = "";
-	get(path, "PATH", true);
+	get(path, "PATH", false);
 
-	// return CFilepathConverter::convertToInternal(path);
-	return path;
+	return convertPath ? CFilepathConverter::convertListToInternal(path) : path;
 }
 
 /** @brief Mac implementation to get the absolute path of the running executable.
@@ -126,7 +119,7 @@ std::string &CEnv::getPath(std::string &path)
  * symlinks. The filename itself is deleted. Can return
  * an empty string. Uses a singleton to store the path.
  */
-std::string &CEnv::getProgDir(std::string &prog)
+std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 {
 	/* See Man page NSModule:
        extern int _NSGetExecutablePath(
@@ -136,6 +129,7 @@ std::string &CEnv::getProgDir(std::string &prog)
 	*/
 	
 	static std::string path = "";
+	static std::string internalPath = "";
 	static bool isset = false;
 
 	if ( !isset ) {
@@ -165,9 +159,10 @@ std::string &CEnv::getProgDir(std::string &prog)
 				delete buf;
 			}
 		}
-		CFilepathConverter::convertToInternal(path);
+		internalPath = path;
+		CFilepathConverter::convertToInternal(internalPath);
 	}
 	
-	prog = path;
+	prog = convertPath ? internalPath : path;
 	return prog;
 }

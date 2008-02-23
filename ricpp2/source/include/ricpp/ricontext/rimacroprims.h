@@ -184,6 +184,7 @@ public:
 	}
 }; // CRiPolygon
 
+
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief General Polygon
  */
@@ -4329,128 +4330,6 @@ public:
 	}
 }; // CRiBlobby
 
-
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Procedurals.
- *  @todo Needs some work.
- */
-class CRiProcedural : public CRManInterfaceCall {
-private:
-	RtBound m_bound;
-	ISubdivFunc *m_subdivfunc;
-	IFreeFunc *m_freefunc;
-	ISubdivData *m_data;
-
-	void insertData(RtPointer data);
-	void insertData(const ISubdivData *data);
-public:
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string)
-	 */
-	inline static const char *myClassName(void) { return "CRiProcedural"; }
-	inline virtual const char *className() const { return CRiProcedural::myClassName(); }
-
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
-
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
-	}
-
-	/** @brief Default constructor.
-	 *
-	 *  Empty object.
-	 *
-	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-	 */
-	inline CRiProcedural(long aLineNo = -1)
-		: CRManInterfaceCall(aLineNo)
-	{
-		memset(m_bound, 0, sizeof(RtBound));
-		m_subdivfunc = 0;
-		m_freefunc = 0;
-		m_data = 0;
-	}
-
-	CRiProcedural(long aLineNo,
-		RtPointer data, RtBound bound,
-		const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
-
-
-	/** @brief Copy constructor.
-	 *
-	 *  @param c Object to copy.
-	 */
-	inline CRiProcedural(const CRiProcedural &c)
-	{
-		m_subdivfunc = 0;
-		m_freefunc = 0;
-		m_data = 0;
-		*this = c;
-	}
-
-	/** @brief Destructor, frees resources.
-	 */
-	inline virtual ~CRiProcedural()
-	{
-		if ( m_data )
-			delete m_data;
-	}
-
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRiProcedural(*this);
-	}
-
-	inline virtual EnumRequests interfaceIdx() const { return REQ_PROCEDURAL; }
-
-	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		assert(m_subdivfunc != 0);
-		if ( m_subdivfunc != 0 )
-			ri.preProcedural(
-				m_data ? m_data->data() : 0,
-				m_bound, *m_subdivfunc, m_freefunc);
-	}
-
-	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		assert(m_subdivfunc != 0);
-		if ( m_subdivfunc != 0 )
-			ri.doProcedural(
-				m_data ? m_data->data() : 0,
-				m_bound, *m_subdivfunc, m_freefunc);
-	}
-
-	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		assert(m_subdivfunc != 0);
-		if ( m_subdivfunc != 0 )
-			ri.postProcedural(
-				m_data ? m_data->data() : 0,
-				m_bound, *m_subdivfunc, m_freefunc);
-	}
-
-	/** @brief Assignment.
-	 *
-	 *  @param c CRManInterfaceCall to assign
-	 *  @return A reference to this object.
-	 */
-	CRiProcedural &operator=(const CRiProcedural &c);
-}; // CRiProcedural
-
-/*
-	// PROC_... are not called directly, only parameters for RiProcedural()
-	#define REQ_PROC_DELAYED_READ_ARCHIVE 94
-	#define REQ_PROC_RUN_PROGRAM			 95
-	#define REQ_PROC_DYNAMIC_LOAD		 96
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Special Geometry.

@@ -1,5 +1,5 @@
-#ifndef _RICPP_TOOLS_RIBELEMENTS_H
-#define _RICPP_TOOLS_RIBELEMENTS_H
+#ifndef _RICPP_RICONTEXT_RIBELEMENTS_H
+#define _RICPP_RICONTEXT_RIBELEMENTS_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -260,4 +260,4 @@ public:
 
 }
 
-#endif // _RICPP_TOOLS_RIBELEMENTS_H
+#endif // _RICPP_RICONTEXT_RIBELEMENTS_H

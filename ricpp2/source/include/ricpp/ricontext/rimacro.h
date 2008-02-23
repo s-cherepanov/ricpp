@@ -36,44 +36,6 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  */
 
-/*
-#ifndef _RICPP_RICONTEXT_RIMACROCONTAINER_H
-#include "ricpp/ricontext/rimacrocontainer.h"
-#endif // _RICPP_RICONTEXT_RIMACROCONTAINER_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROMISC_H
-#include "ricpp/ricontext/rimacromisc.h"
-#endif // _RICPP_RICONTEXT_RIMACROMISC_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROMODES_H
-#include "ricpp/ricontext/rimacromodes.h"
-#endif // _RICPP_RICONTEXT_RIMACROMODES_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROOPTIONS_H
-#include "ricpp/ricontext/rimacrooptions.h"
-#endif // _RICPP_RICONTEXT_RIMACROOPTIONS_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROLIGHTS_H
-#include "ricpp/ricontext/rimacrolights.h"
-#endif // _RICPP_RICONTEXT_RIMACROLIGHTS_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
-#include "ricpp/ricontext/rimacroattributes.h"
-#endif // _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROTRANSFORMS_H
-#include "ricpp/ricontext/rimacrotransforms.h"
-#endif // _RICPP_RICONTEXT_RIMACROTRANSFORMS_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
-#include "ricpp/ricontext/rimacroprims.h"
-#endif // _RICPP_RICONTEXT_RIMACROPRIMS_H
-
-#ifndef _RICPP_RICONTEXT_RIMACROEXTERNALS_H
-#include "ricpp/ricontext/rimacroexternals.h"
-#endif // _RICPP_RICONTEXT_RIMACROEXTERNALS_H
-*/
-
 #ifndef _RICPP_RICONTEXT_RIMACROFACTORY_H
 #include "ricpp/ricontext/rimacrofactory.h"
 #endif // _RICPP_RICONTEXT_RIMACROFACTORY_H

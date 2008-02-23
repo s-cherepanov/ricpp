@@ -279,6 +279,111 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 	}
 }
 
+RtVoid CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
+{
+	CRiArchiveMacro *m = renderState()->findArchiveInstance(handle);
+	if ( m ) {
+		if ( m->isClosed() ) {
+			CRiMacro *msav = renderState()->curReplay();
+			renderState()->curReplay(m);
+			try {
+				m->replay(*this, callback);
+				renderState()->curReplay(msav);
+			} catch(...) {
+				renderState()->curReplay(msav);
+				throw;
+			}
+		} else {
+			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance %s used before it's ArchiveEnd() (self inclusion, recursion doesn't work).", handle);
+		}
+	} else {
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance %s not found.", handle);
+	}
+}
+
+RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params)
+{
+	CParameterList p = params;
+	CUri sav(renderState()->baseUri());
+	std::string oldArchiveName = renderState()->archiveName();
+	long oldLineNo = renderState()->lineNo();
+
+	CRibParser parser(parserCallback, *renderState(), renderState()->baseUri());
+	try {
+		if ( parser.canParse(name) ) {
+			renderState()->baseUri() = parser.absUri();
+			bool savCache = renderState()->cacheFileArchives();
+			if ( savCache ) {
+				renderState()->archiveFileBegin(name);
+			}
+			renderState()->archiveName(name);
+			renderState()->lineNo(1);
+			parser.parse(callback, params);
+			if ( savCache ) {
+				renderState()->archiveFileEnd();
+			}
+			renderState()->archiveName(oldArchiveName.c_str());
+			renderState()->lineNo(oldLineNo);
+			renderState()->baseUri() = sav;
+			parser.close();
+			renderState()->curParamList() = p;
+		} else {
+			throw ExceptRiCPPError(RIE_SYSTEM, RIE_ERROR,
+				renderState()->printLineNo(__LINE__),
+				renderState()->printName(__FILE__),
+				"Cannot open archive: %s", name);
+		}
+	} catch (ExceptRiCPPError &e1) {
+		renderState()->baseUri() = sav;
+		renderState()->archiveName(oldArchiveName.c_str());
+		renderState()->lineNo(oldLineNo);
+		parser.close();
+		renderState()->curParamList() = p;
+		throw e1;
+	} catch (std::exception &e2) {
+		renderState()->baseUri() = sav;
+		renderState()->archiveName(oldArchiveName.c_str());
+		renderState()->lineNo(oldLineNo);
+		parser.close();
+		renderState()->curParamList() = p;
+		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"While parsing name: %s", name, e2.what());
+	} catch(...) {
+		renderState()->baseUri() = sav;
+		renderState()->archiveName(oldArchiveName.c_str());
+		renderState()->lineNo(oldLineNo);
+		parser.close();
+		renderState()->curParamList() = p;
+		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Unknown error while parsing: %s", name);
+	}
+}
+
+RtVoid CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+{
+	if ( !emptyStr(name) ) {
+		// 1. Look for archive in stored archives
+		RtArchiveHandle handle = renderState()->storedArchiveName(name);
+		if ( handle ) {
+			processArchiveInstance(handle, callback, params);
+			return;
+		}
+	}
+
+	if ( !m_parserCallback ) {
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"Parser callbacks not defined for archive: %s", name);
+	}
+
+ 	// 2. Read archive from stream (name == RI_NULL for stdin)
+	readArchiveFromStream(name, *m_parserCallback, callback, params);
+}
 
 // ----------------------------------------------------------------------------
 
@@ -5009,29 +5114,6 @@ RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line)
 			"Unknown error at '%s'",  CRequestInfo::requestName(req));
 		return;
 	}
-}
-
-
-RtVoid CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
-{
-	if ( !emptyStr(name) ) {
-		// 1. Look for archive in stored archives
-		RtArchiveHandle handle = renderState()->storedArchiveName(name);
-		if ( handle ) {
-			renderState()->archiveInstance(handle, *this, callback, params);
-			return;
-		}
-	}
-
-	if ( !m_parserCallback ) {
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Parser callbacks not defined for archive: %s", name);
-	}
-
- 	// 2. Read archive from stream (name == RI_NULL for stdin)
-	renderState()->processReadArchive(name, *m_parserCallback, callback, params);
 }
 
 RtVoid CBaseRenderer::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)

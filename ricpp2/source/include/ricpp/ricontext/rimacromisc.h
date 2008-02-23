@@ -595,6 +595,683 @@ public:
 		return *this;
 	}
 }; // CRiControl
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Resource handling
+ */
+class CRiResource : public CVarParamRManInterfaceCall {
+private:
+	std::string m_handle; ///< Handle id of a resource
+	std::string m_type;   ///< Type of a resource
+
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiResource"; }
+
+	inline virtual const char *className() const { return CRiResource::myClassName(); }
+
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aHandle Atomized handle (id) of the resource
+	 *  @param aType Atomized type of the resource
+	 */
+	inline CRiResource(
+		long aLineNo = -1,
+		RtToken aHandle = 0,
+		RtToken aType = 0
+		)
+		: CVarParamRManInterfaceCall(aLineNo)
+	{
+		m_handle = noNullStr(aHandle);
+		m_type = noNullStr(aType);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number to store.
+	 *  @param decl Dictonary with the current declarations.
+	 *  @param curColorDescr Current color descriptor.
+	 *  @param aHandle Atomized handle (id) of the resource
+	 *  @param aType Atomized type of the resource
+	 *  @param n Number of parameters (size of @a tokens, @a params).
+	 *  @param tokens Tokens of the request.
+	 *  @param params Parameter values of the request.
+	 */
+	inline CRiResource(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtToken aHandle,
+		RtToken aType,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CVarParamRManInterfaceCall(aLineNo, RI_RESOURCE, aType, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+	{
+		m_handle = aHandle;
+		m_type = aType;
+	}
+
+	/** @brief Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aHandle Atomized handle (id) of the resource
+	 *  @param aType Atomized type of the resource
+	 *  @param theParameters Parsed parameter list.
+	 */
+	inline CRiResource(
+		long aLineNo,
+		RtToken aHandle,
+		RtToken aType,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters)
+	{
+		m_handle = aHandle;
+		m_type = aType;
+	}
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiResource(const CRiResource &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiResource()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiResource(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_RESOURCE; }
+
+	/** @brief Gets the handle of the resource.
+	 *
+	 *  @return The atomized handle of the resource.
+	 */
+	inline RtString handle() const
+	{
+		return m_handle.c_str();
+	}
+
+	/** @brief Sets the handle of the resource.
+	 *
+	 *  @param aHandle An atomized handle of a resource.
+	 */
+	inline void handle(RtString aHandle)
+	{
+		m_handle = noNullStr(aHandle);
+	}
+
+	/** @brief Gets the type of the resource.
+	 *
+	 *  @return The atomized type of the resource.
+	 */
+	inline RtString type() const
+	{
+		return m_type.c_str();
+	}
+
+	/** @brief Sets the type of the resource.
+	 *
+	 *  @param aType An atomized type of a resource.
+	 */
+	inline void type(RtString aType)
+	{
+		m_type = noNullStr(aType);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preResource(handle(), type(), parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doResource(handle(), type(), parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postResource(handle(), type(), parameters());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiResource &operator=(const CRiResource &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		handle(c.handle());
+		type(c.type());
+
+		CVarParamRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiResource
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Archive record (comment)
+ */
+class CRiArchiveRecord : public CRManInterfaceCall {
+private:
+	RtToken     m_type; ///< Type of the archive record.
+	std::string m_line; ///< Text content of the archive record.
+public:
+	/** @brief Gets the name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiArchiveRecord"; }
+	inline virtual const char *className() const { return CRiArchiveRecord::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  Empty object
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiArchiveRecord(long aLineNo=-1)
+		: CRManInterfaceCall(aLineNo)
+	{
+		m_type = 0;
+	}
+
+	inline CRiArchiveRecord(long aLineNo, RtToken aType, RtString aLine)
+		: CRManInterfaceCall(aLineNo), m_type(aType), m_line(noNullStr(aLine))
+	{
+	}
+	
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiArchiveRecord(const CRiArchiveRecord &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiArchiveRecord()
+	{
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiArchiveRecord(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_RECORD; }
+
+	/** @brief sets the member variables.
+	 *
+	 *  @param aType The type of the archive record.
+	 *  @param aLine  The text content of the archive record.
+	 */
+	void set(RtToken aType, RtString aLine)
+	{
+		m_type = aType;
+		m_line = noNullStr(aLine);
+	}
+
+	/** @brief Gets the type of the archive record.
+	 *
+	 *  @return The type of the archive record.
+	 */
+	RtToken type() const
+	{
+		return m_type;
+	}
+
+	/** @brief Gets the text content of the archive record.
+	 *
+	 *  @return The text content of the archive record.
+	 */
+	RtString line() const
+	{
+		return m_line.c_str(); 
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preArchiveRecord(m_type, m_line.c_str());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doArchiveRecord(m_type, m_line.c_str());
+		if ( cb ) 
+			(*cb)(ri, m_type, m_line.c_str());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postArchiveRecord(m_type, m_line.c_str());
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	inline CRiArchiveRecord &operator=(const CRiArchiveRecord &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		set(c.type(), c.line());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiArchiveRecord
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Read a RIB archive
+ */
+class CRiReadArchive : public CVarParamRManInterfaceCall {
+private:
+	std::string       m_filename; ///< Filename of the RIB archive.
+	IArchiveCallback *m_callback; ///< Optional callbback for archive records.
+public:
+	/** @brief Gets the name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiReadArchive"; }
+	inline virtual const char *className() const { return CRiReadArchive::myClassName(); }
+
+	/** @brief Default Constructor.
+	 *
+	 *  Empty object
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiReadArchive(long aLineNo=-1)
+		: CVarParamRManInterfaceCall(aLineNo)
+	{
+		m_callback = 0;
+	}
+
+	inline CRiReadArchive(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		RtString aFilename, const IArchiveCallback *cb,
+		RtInt n, RtToken tokens[], RtPointer params[])
+		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_filename(noNullStr(aFilename))
+	{
+		m_callback = 0;
+		if ( cb )
+			m_callback = cb->duplicate();
+	}
+
+	inline CRiReadArchive(
+		long aLineNo,
+		RtString aFilename, const IArchiveCallback *cb,
+		const CParameterList &theParameters
+		)
+		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_filename(noNullStr(aFilename))
+	{
+		m_callback = 0;
+		if ( cb )
+			m_callback = cb->duplicate();
+	}
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiReadArchive(const CRiReadArchive &c)
+	{
+		m_callback = 0;
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiReadArchive()
+	{
+		if ( m_callback )
+			delete m_callback;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiReadArchive(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_READ_ARCHIVE; }
+	
+	inline const IArchiveCallback *callback() const
+	{
+		return m_callback;
+	}
+
+	inline void callback(const IArchiveCallback *cb)
+	{
+		if ( m_callback )
+			delete m_callback;
+		m_callback = 0;
+		if ( cb )
+			m_callback = cb->duplicate();
+	}
+
+	inline RtString filename() const
+	{
+		return m_filename.c_str();
+	}
+
+	inline void filename(RtString aFilename)
+	{
+		m_filename = noNullStr(aFilename);
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preReadArchive(m_filename.c_str(), cb, parameters());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doReadArchive(m_filename.c_str(), cb, parameters());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postReadArchive(m_filename.c_str(), cb, parameters());
+	}
+
+	inline virtual void preProcess(IDoRender &ri)
+	{
+		preProcess(ri, m_callback);
+	}
+
+	inline virtual void doProcess(IDoRender &ri)
+	{
+		doProcess(ri, m_callback);
+	}
+
+	inline virtual void postProcess(IDoRender &ri)
+	{
+		postProcess(ri, m_callback);
+	}
+
+	inline CRiReadArchive &operator=(const CRiReadArchive &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		filename(c.filename());
+		callback(c.callback());
+		
+		CVarParamRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiReadArchive
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Instanciate an object.
+ */
+class CRiObjectInstance : public CRManInterfaceCall {
+private:
+	RtObjectHandle m_handle; ///< Object handle
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiObjectInstance"; }
+
+	inline virtual const char *className() const { return CRiObjectInstance::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default Constructor.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 *  @param aHandle Handle to identify the object
+	 */
+	inline CRiObjectInstance(
+		long aLineNo=-1,
+		RtObjectHandle aHandle=illObjectHandle)
+		: CRManInterfaceCall(aLineNo), m_handle(aHandle)
+	{
+	}
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiObjectInstance(const CRiObjectInstance &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiObjectInstance() {}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiObjectInstance(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_OBJECT_INSTANCE; }
+
+	/** @brief Gets the object handle.
+	 */
+	inline virtual RtObjectHandle handle() const { return m_handle; }
+
+	/** @brief Sets the object handle.
+	 *
+	 *  @param h An object handle to identify the object.
+	 */
+	inline virtual void handle(RtObjectHandle h) { m_handle = h; }
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.preObjectInstance(handle());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doObjectInstance(handle());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postObjectInstance(handle());
+	}
+
+	/** @brief Assignment
+	 *
+	 * @param c Object to assign
+	 * @return A reference to this object
+	 */
+	inline CRiObjectInstance &operator=(const CRiObjectInstance &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		handle(c.handle());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiObjectInstance
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Procedurals.
+ *  @todo Needs some work.
+ */
+class CRiProcedural : public CRManInterfaceCall {
+private:
+	RtBound m_bound;
+	ISubdivFunc *m_subdivfunc;
+	IFreeFunc *m_freefunc;
+	ISubdivData *m_data;
+
+	void insertData(RtPointer data);
+	void insertData(const ISubdivData *data);
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string)
+	 */
+	inline static const char *myClassName(void) { return "CRiProcedural"; }
+	inline virtual const char *className() const { return CRiProcedural::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  Empty object.
+	 *
+	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+	 */
+	inline CRiProcedural(long aLineNo = -1)
+		: CRManInterfaceCall(aLineNo)
+	{
+		memset(m_bound, 0, sizeof(RtBound));
+		m_subdivfunc = 0;
+		m_freefunc = 0;
+		m_data = 0;
+	}
+
+	CRiProcedural(long aLineNo,
+		RtPointer data, RtBound bound,
+		const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
+
+
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiProcedural(const CRiProcedural &c)
+	{
+		m_subdivfunc = 0;
+		m_freefunc = 0;
+		m_data = 0;
+		*this = c;
+	}
+
+	/** @brief Destructor, frees resources.
+	 */
+	inline virtual ~CRiProcedural()
+	{
+		if ( m_data )
+			delete m_data;
+	}
+
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiProcedural(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_PROCEDURAL; }
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		assert(m_subdivfunc != 0);
+		if ( m_subdivfunc != 0 )
+			ri.preProcedural(
+				m_data ? m_data->data() : 0,
+				m_bound, *m_subdivfunc, m_freefunc);
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		assert(m_subdivfunc != 0);
+		if ( m_subdivfunc != 0 )
+			ri.doProcedural(
+				m_data ? m_data->data() : 0,
+				m_bound, *m_subdivfunc, m_freefunc);
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		assert(m_subdivfunc != 0);
+		if ( m_subdivfunc != 0 )
+			ri.postProcedural(
+				m_data ? m_data->data() : 0,
+				m_bound, *m_subdivfunc, m_freefunc);
+	}
+
+	/** @brief Assignment.
+	 *
+	 *  @param c CRManInterfaceCall to assign
+	 *  @return A reference to this object.
+	 */
+	CRiProcedural &operator=(const CRiProcedural &c);
+}; // CRiProcedural
+
+/*
+	// PROC_... are not called directly, only parameters for RiProcedural()
+	#define REQ_PROC_DELAYED_READ_ARCHIVE 94
+	#define REQ_PROC_RUN_PROGRAM			 95
+	#define REQ_PROC_DYNAMIC_LOAD		 96
+*/
 }
 
 #endif // _RICPP_RICONTEXT_RIMACROMISC_H

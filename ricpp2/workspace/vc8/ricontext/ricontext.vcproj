@@ -420,6 +420,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\rimacroclasses.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\rimacrocontainer.h"
 				>
 			</File>

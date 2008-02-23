@@ -329,13 +329,27 @@ protected:
 	 */
 	virtual void replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb);
 
-protected:
-	// virtual RtVoid archiveInstanceV(RtArchiveHandle handle, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[]);
-	// virtual RtVoid preArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
-	// virtual RtVoid doArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
-	// virtual RtVoid postArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	/** @brief Processes the replay of an archive.
+	 */
+	virtual RtVoid processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+
+	/** @brief Reads an archive from a stream.
+	 *
+	 *  @param name Name of the stream (@a name == RI_NULL for stdin)
+	 *  @param parserCallback Info for parser
+	 *  @param callback Ri archive callback
+	 *  @param params Copy of the parameters of the readArchiveV() call
+	 */
+	virtual RtVoid readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params);
+
+	/** @brief Reads an archive from memory or stream.
+	 *
+	 *  @param name Name of the archive (@a name == RI_NULL for stdin)
+	 *  @param callback Ri archive callback
+	 *  @param params Copy of the parameters of the readArchiveV() call
+	 */
 	virtual RtVoid processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
-	
+
 public:
 
 	virtual bool preCheck(EnumRequests req);

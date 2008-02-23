@@ -38,7 +38,7 @@
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
 #ifndef _RICPP_TOOLS_FILEPATH_H
-#include "ricpp/tools/filepath.h"
+// #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
 
 using namespace RiCPP;
@@ -2149,91 +2149,4 @@ RtVoid CRenderState::option(RtToken name, const CParameterList &params)
 RtVoid CRenderState::attribute(RtToken name, const CParameterList &params)
 {
 	attributes().set(name, params);
-}
-
-
-RtVoid CRenderState::archiveInstance(RtArchiveHandle handle, IDoRender &renderInterface, const IArchiveCallback *callback, const CParameterList &params)
-{
-	CRiArchiveMacro *m = findArchiveInstance(handle);
-	if ( m ) {
-		if ( m->isClosed() ) {
-			CRiMacro *msav = curReplay();
-			curReplay(m);
-			try {
-				m->replay(renderInterface, callback);
-				curReplay(msav);
-			} catch(...) {
-				curReplay(msav);
-				throw;
-			}
-		} else {
-			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "Archive instance %s used before it's ArchiveEnd() (self inclusion, recursion doesn't work).", handle);
-		}
-	} else {
-		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "Archive instance %s not found.", handle);
-	}
-}
-
-
-RtVoid CRenderState::processReadArchive(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params)
-{
- 	// Read archive from stream (name == RI_NULL for stdin)
-	CParameterList p = params;
-	CUri sav(baseUri());
-	std::string oldArchiveName = archiveName();
-	long oldLineNo = lineNo();
-
-	CRibParser parser(parserCallback, *this, baseUri());
-	try {
-		if ( parser.canParse(name) ) {
-			baseUri() = parser.absUri();
-			bool savCache = cacheFileArchives();
-			if ( savCache ) {
-				archiveFileBegin(name);
-			}
-			archiveName(name);
-			lineNo(1);
-			parser.parse(callback, params);
-			if ( savCache ) {
-				archiveFileEnd();
-			}
-			archiveName(oldArchiveName.c_str());
-			lineNo(oldLineNo);
-			baseUri() = sav;
-			parser.close();
-			curParamList() = p;
-		} else {
-			throw ExceptRiCPPError(RIE_SYSTEM, RIE_ERROR,
-				printLineNo(__LINE__),
-				printName(__FILE__),
-				"Cannot open archive: %s", name);
-		}
-	} catch (ExceptRiCPPError &e1) {
-		baseUri() = sav;
-		archiveName(oldArchiveName.c_str());
-		lineNo(oldLineNo);
-		parser.close();
-		curParamList() = p;
-		throw e1;
-	} catch (std::exception &e2) {
-		baseUri() = sav;
-		archiveName(oldArchiveName.c_str());
-		lineNo(oldLineNo);
-		parser.close();
-		curParamList() = p;
-		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
-			printLineNo(__LINE__),
-			printName(__FILE__),
-			"While parsing name: %s", name, e2.what());
-	} catch(...) {
-		baseUri() = sav;
-		archiveName(oldArchiveName.c_str());
-		lineNo(oldLineNo);
-		parser.close();
-		curParamList() = p;
-		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
-			printLineNo(__LINE__),
-			printName(__FILE__),
-			"Unknown error while parsing: %s", name);
-	}
 }

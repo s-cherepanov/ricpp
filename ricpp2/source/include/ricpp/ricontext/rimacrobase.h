@@ -29,12 +29,16 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief The base classes for macro processing, @see rimacro.h
  */
+#ifndef _RICPP_RICONTEXT_RIBELEMENTS_H
+#include "ricpp/ricontext/ribelements.h"
+#endif // _RICPP_RICONTEXT_RIBELEMENTS_H
+
 #ifndef _RICPP_RICONTEXT_DORENDER_H
 #include "ricpp/ricontext/dorender.h"
 #endif // _RICPP_RICONTEXT_DORENDER_H
 
 namespace RiCPP {
-
+	
 // ----------------------------------------------------------------------------
 // Macro base classes
 // ----------------------------------------------------------------------------
@@ -129,10 +133,7 @@ public:
 	 *  @param ri The renderer backend used for replay.
 	 *  @param cb Archive callback.
 	 */
-	inline virtual void replay(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.replayRequest(*this, cb);
-	}
+	virtual void replay(IDoRender &ri, const IArchiveCallback *cb);
 
 	/** @brief Asks for the line number.
 	 *
@@ -230,6 +231,15 @@ public:
 	inline virtual void postProcess(IDoRender &ri)
 	{
 		postProcess(ri, 0);
+	}
+
+	/** @brief Write the RIB Code of the request.
+	 *
+	 *  @param ribWriter Elementary stream object for RIB writing.
+	 *  @param n Number of tokens to ignore ( sizeof(ignoreTokens) )
+	 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
+	 */
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const {
 	}
 }; // CRManInterfaceCall
 
@@ -460,7 +470,15 @@ public:
 		CRManInterfaceCall::operator=(c);
 		return *this;
 	}
-}; // TVarParamInterfaceCall
+
+	/** @brief Write the RIB Code of the request.
+	 *
+	 *  @param ribWriter Elementary stream object for RIB writing.
+	 *  @param n Number of tokens to ignore ( sizeof(ignoreTokens) )
+	 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
+	 */
+	virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const;
+}; // CVarParamRManInterfaceCall
 
 
 ///////////////////////////////////////////////////////////////////////////////

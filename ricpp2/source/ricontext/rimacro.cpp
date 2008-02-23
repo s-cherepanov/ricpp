@@ -75,6 +75,65 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+void CRManInterfaceCall::replay(IDoRender &ri, const IArchiveCallback *cb)
+{
+	ri.replayRequest(*this, cb);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+void CVarParamRManInterfaceCall::writeRIB(CRibElementsWriter &ribWriter, RtInt n, const RtToken ignoreTokens[]) const
+{
+	bool paramError = false;
+	for ( CParameterList::const_iterator i = parameters().begin();
+		  i != parameters().end();
+		  i++ )
+	{
+		const CParameter &p = (*i);
+		std::string decl;
+
+		RtInt cnt = 0;
+		for ( ; cnt < n; ++cnt ) {
+			if ( p.token() == ignoreTokens[cnt] )
+				break;
+		}
+		if ( cnt < n ) continue;
+		
+		ribWriter.putBlank();
+
+		if ( p.isInline() )
+			ribWriter.putString(p.declString(decl));
+		else
+			ribWriter.putStringToken(p.declString(decl));
+
+		ribWriter.putBlank();
+
+		switch ( p.basicType() ) {
+			case BASICTYPE_INTEGER:
+				ribWriter.putArray(p.ints());
+				break;
+			case BASICTYPE_FLOAT:
+				ribWriter.putArray(p.floats());
+				break;
+			case BASICTYPE_STRING:
+				ribWriter.putArray(p.stringPtrs());
+				break;
+			default:
+				// Error unknown type
+				paramError = true;
+				ribWriter.putChars("[ ]");
+				break;
+		}
+	}
+
+	ribWriter.putNewLine();
+	if ( paramError ) {
+		// throw error
+		throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Unknown basic type of parameters indicated by [ ].");
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
 void CRiGeneralPolygon::enterValues(RtInt theNLoops, const RtInt theNVerts[])
 {
 	m_nVerts.resize(theNLoops);

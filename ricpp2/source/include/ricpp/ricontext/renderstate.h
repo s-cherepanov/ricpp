@@ -62,14 +62,11 @@
 #include "ricpp/ricontext/motionstate.h"
 #endif // _RICPP_RICONTEXT_MOTIONSTATE_H
 
-namespace RiCPP {
+#ifndef _RICPP_RICONTEXT_RIMACROCLASSES_H
+#include "ricpp/ricontext/rimacroclasses.h"
+#endif // _RICPP_RICONTEXT_RIMACROCLASSES_H
 
-class CRManInterfaceFactory;
-class CRiMacro;
-class CRiObjectMacro;
-class CRiArchiveMacro;
-class IDoRender;
-class IRibParserCallback;
+namespace RiCPP {
 
 /** @brief The facade for the render state objects.
  *
@@ -1010,10 +1007,6 @@ public:
 	 *  @return The token value for @name
 	 */
 	virtual RtToken declare(RtToken name, RtString declaration, bool isDefault);
-
-	virtual RtVoid archiveInstance(RtArchiveHandle handle, IDoRender &renderInterface, const IArchiveCallback *callback, const CParameterList &params);
-
-	virtual RtVoid processReadArchive(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params);
 }; // CRenderState
 
 } // namespace RiCPP

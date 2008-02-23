@@ -24,7 +24,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		C34D15280D697A5C002CF63B /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C34D15270D697A5C002CF63B /* baserenderer.cpp */; };
 		C3685ECC0D3C1F9100B2E025 /* stringpattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */; };
 		C3685ECD0D3C1F9100B2E025 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
 		C3685ECE0D3C1F9100B2E025 /* macfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2A20BE86D370057831B /* macfilepath.cpp */; };
@@ -71,7 +70,6 @@
 		C3685F490D3C23E800B2E025 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F3E0D3C237000B2E025 /* libgendynlib.a */; };
 		C3685F4D0D3C240800B2E025 /* libpluginhandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F340D3C231500B2E025 /* libpluginhandler.a */; };
 		C37A0D410D6AC5C80027CE77 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
-		C37A0D430D6AC6030027CE77 /* ribtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37A0D420D6AC6030027CE77 /* ribtool.cpp */; };
 		C38088CB0D3CA7BE00B6C3BA /* ribfilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754110C1402250089A579 /* ribfilter.cpp */; };
 		C38088CC0D3CA7BE00B6C3BA /* ribfilterlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754120C1402250089A579 /* ribfilterlist.cpp */; };
 		C38088CD0D3CA7CB00B6C3BA /* ribfilter.h in Headers */ = {isa = PBXBuildFile; fileRef = C39754150C14025D0089A579 /* ribfilter.h */; };
@@ -168,6 +166,11 @@
 		C3808AC80D3CC1CA00B6C3BA /* libribwriter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089DB0D3CBA6300B6C3BA /* libribwriter.a */; };
 		C3808ADC0D3CDB1A00B6C3BA /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38088C80D3CA7A600B6C3BA /* libribfilter.a */; };
 		C3808ADD0D3CDB2900B6C3BA /* passthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */; };
+		C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE380D70BC9F00A04717 /* ribelements.cpp */; };
+		C3C9AE3C0D70BCCE00A04717 /* ribelements.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9AE3A0D70BCCE00A04717 /* ribelements.h */; };
+		C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */; };
+		C3C9AE440D70BD5D00A04717 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */; };
+		C3C9AE480D70BDE000A04717 /* ribtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE470D70BDE000A04717 /* ribtool.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -371,7 +374,6 @@
 		C34D15110D695953002CF63B /* Polygon.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Polygon.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Polygon.rib; sourceTree = "<absolute>"; };
 		C34D15120D695953002CF63B /* Square.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Square.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Square.rib; sourceTree = "<absolute>"; };
 		C34D15130D695953002CF63B /* UnitCube.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = UnitCube.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/UnitCube.rib; sourceTree = "<absolute>"; };
-		C34D15270D697A5C002CF63B /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = baserenderer.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/baserenderer/baserenderer.cpp; sourceTree = "<absolute>"; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
 		C36326DB0C3A3CAB00364168 /* backbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = backbuffer.cpp; path = ../../../source/streams/backbuffer.cpp; sourceTree = SOURCE_ROOT; };
@@ -467,7 +469,6 @@
 		C372B8DB0BD7610D009B2459 /* filters.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = filters.cpp; path = ../../../source/ricpp/filters.cpp; sourceTree = SOURCE_ROOT; };
 		C372B8E30BD7610D009B2459 /* subdivfunc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = subdivfunc.cpp; path = ../../../source/ricpp/subdivfunc.cpp; sourceTree = SOURCE_ROOT; };
 		C37A0D380D6AC5880027CE77 /* ribtool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ribtool; sourceTree = BUILT_PRODUCTS_DIR; };
-		C37A0D420D6AC6030027CE77 /* ribtool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribtool.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ribtool/ribtool.cpp; sourceTree = "<absolute>"; };
 		C37DBBA80C01CC6E003AE4E7 /* declaration.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = declaration.h; path = ../../../source/include/ricpp/declaration/declaration.h; sourceTree = SOURCE_ROOT; };
 		C37DBBA90C01CC6E003AE4E7 /* decldict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = decldict.h; path = ../../../source/include/ricpp/declaration/decldict.h; sourceTree = SOURCE_ROOT; };
 		C37DBBAA0C01CC6E003AE4E7 /* token.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = token.h; path = ../../../source/include/ricpp/declaration/token.h; sourceTree = SOURCE_ROOT; };
@@ -502,6 +503,11 @@
 		C3B8D1C20CF1845A0004B226 /* ribmodes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribmodes.cpp; path = ../../../source/ribparser/ribmodes.cpp; sourceTree = SOURCE_ROOT; };
 		C3B8D1C40CF184720004B226 /* ribmodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = ribmodes.h; path = ../../../source/include/ricpp/ribparser/ribmodes.h; sourceTree = SOURCE_ROOT; };
 		C3BD62190CED84EE008ECB54 /* ribparsercallback.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = ribparsercallback.h; path = ../../../source/include/ricpp/ribparser/ribparsercallback.h; sourceTree = SOURCE_ROOT; };
+		C3C9AE380D70BC9F00A04717 /* ribelements.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribelements.cpp; path = ../../../source/ricontext/ribelements.cpp; sourceTree = SOURCE_ROOT; };
+		C3C9AE3A0D70BCCE00A04717 /* ribelements.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ribelements.h; path = ../../../source/include/ricpp/ricontext/ribelements.h; sourceTree = SOURCE_ROOT; };
+		C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = rimacroclasses.h; path = ../../../source/include/ricpp/ricontext/rimacroclasses.h; sourceTree = SOURCE_ROOT; };
+		C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
+		C3C9AE470D70BDE000A04717 /* ribtool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ribtool.cpp; path = ../../../source/ribtool/ribtool.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -884,6 +890,7 @@
 		C372456E0CD5DD7E00945563 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C3C9AE380D70BC9F00A04717 /* ribelements.cpp */,
 				C37245AE0CD5DE5500945563 /* attributes.cpp */,
 				C37245AF0CD5DE5500945563 /* contextcreator.cpp */,
 				C37245B00CD5DE5500945563 /* displaydesc.cpp */,
@@ -905,6 +912,8 @@
 		C372456F0CD5DD8E00945563 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C3C9AE3A0D70BCCE00A04717 /* ribelements.h */,
+				C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */,
 				C37245760CD5DE3100945563 /* attributes.h */,
 				C37245770CD5DE3100945563 /* contextcreator.h */,
 				C37245780CD5DE3100945563 /* displaydesc.h */,
@@ -998,7 +1007,7 @@
 		C372B8FB0BD7618F009B2459 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C34D15270D697A5C002CF63B /* baserenderer.cpp */,
+				C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -1022,7 +1031,7 @@
 		C37A0D340D6AC5660027CE77 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C37A0D420D6AC6030027CE77 /* ribtool.cpp */,
+				C3C9AE470D70BDE000A04717 /* ribtool.cpp */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -1356,6 +1365,8 @@
 				C38089640D3CAB7400B6C3BA /* rimacroprims.h in Headers */,
 				C38089650D3CAB7400B6C3BA /* rimacrotransforms.h in Headers */,
 				C38089660D3CAB7400B6C3BA /* transformation.h in Headers */,
+				C3C9AE3C0D70BCCE00A04717 /* ribelements.h in Headers */,
+				C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1823,7 +1834,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C37A0D430D6AC6030027CE77 /* ribtool.cpp in Sources */,
+				C3C9AE480D70BDE000A04717 /* ribtool.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1864,6 +1875,7 @@
 				C38089720D3CAB8B00B6C3BA /* ricontext.cpp in Sources */,
 				C38089730D3CAB8B00B6C3BA /* rimacro.cpp in Sources */,
 				C38089740D3CAB8B00B6C3BA /* transformation.cpp in Sources */,
+				C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1895,7 +1907,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C34D15280D697A5C002CF63B /* baserenderer.cpp in Sources */,
+				C3C9AE440D70BD5D00A04717 /* baserenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

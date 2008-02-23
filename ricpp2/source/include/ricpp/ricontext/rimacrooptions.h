@@ -156,17 +156,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preOption(m_name, parameters());
+		ri.preOption(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doOption(m_name, parameters());
+		ri.doOption(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postOption(m_name, parameters());
+		ri.postOption(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -346,17 +346,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preFormat(m_xres, m_yres, m_aspect);
+		ri.preFormat(*this, m_xres, m_yres, m_aspect);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doFormat(m_xres, m_yres, m_aspect);
+		ri.doFormat(*this, m_xres, m_yres, m_aspect);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postFormat(m_xres, m_yres, m_aspect);
+		ri.postFormat(*this, m_xres, m_yres, m_aspect);
 	}
 
 	/** @brief Assignment.
@@ -466,17 +466,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preFrameAspectRatio(m_aspect);
+		ri.preFrameAspectRatio(*this, m_aspect);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doFrameAspectRatio(m_aspect);
+		ri.doFrameAspectRatio(*this, m_aspect);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postFrameAspectRatio(m_aspect);
+		ri.postFrameAspectRatio(*this, m_aspect);
 	}
 
 	/** @brief Assignment.
@@ -688,17 +688,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preScreenWindow(m_left, m_right, m_bottom, m_top);
+		ri.preScreenWindow(*this, m_left, m_right, m_bottom, m_top);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doScreenWindow(m_left, m_right, m_bottom, m_top);
+		ri.doScreenWindow(*this, m_left, m_right, m_bottom, m_top);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postScreenWindow(m_left, m_right, m_bottom, m_top);
+		ri.postScreenWindow(*this, m_left, m_right, m_bottom, m_top);
 	}
 
 	/** @brief Assignment.
@@ -903,17 +903,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preCropWindow(m_xmin, m_xmax, m_ymin, m_ymax);
+		ri.preCropWindow(*this, m_xmin, m_xmax, m_ymin, m_ymax);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doCropWindow(m_xmin, m_xmax, m_ymin, m_ymax);
+		ri.doCropWindow(*this, m_xmin, m_xmax, m_ymin, m_ymax);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postCropWindow(m_xmin, m_xmax, m_ymin, m_ymax);
+		ri.postCropWindow(*this, m_xmin, m_xmax, m_ymin, m_ymax);
 	}
 
 	inline CRiCropWindow &operator=(const CRiCropWindow &c)
@@ -1048,17 +1048,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preProjection(name(), parameters());
+		ri.preProjection(*this, name(), parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doProjection(name(), parameters());
+		ri.doProjection(*this, name(), parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postProjection(name(), parameters());
+		ri.postProjection(*this, name(), parameters());
 	}
 
 	/** @brief Assignment.
@@ -1204,17 +1204,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preClipping(m_hither, m_yon);
+		ri.preClipping(*this, m_hither, m_yon);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doClipping(m_hither, m_yon);
+		ri.doClipping(*this, m_hither, m_yon);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postClipping(m_hither, m_yon);
+		ri.postClipping(*this, m_hither, m_yon);
 	}
 
 	/** @brief Assignment.
@@ -1515,17 +1515,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preClippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz);
+		ri.preClippingPlane(*this, m_x, m_y, m_z, m_nx, m_ny, m_nz);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doClippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz);
+		ri.doClippingPlane(*this, m_x, m_y, m_z, m_nx, m_ny, m_nz);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postClippingPlane(m_x, m_y, m_z, m_nx, m_ny, m_nz);
+		ri.postClippingPlane(*this, m_x, m_y, m_z, m_nx, m_ny, m_nz);
 	}
 
 	/** @brief Assignment.
@@ -1703,17 +1703,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDepthOfField(m_fstop, m_focallength, m_focaldistance);
+		ri.preDepthOfField(*this, m_fstop, m_focallength, m_focaldistance);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDepthOfField(m_fstop, m_focallength, m_focaldistance);
+		ri.doDepthOfField(*this, m_fstop, m_focallength, m_focaldistance);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDepthOfField(m_fstop, m_focallength, m_focaldistance);
+		ri.postDepthOfField(*this, m_fstop, m_focallength, m_focaldistance);
 	}
 
 	/** @brief Assignment.
@@ -1864,17 +1864,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preShutter(m_smin, m_smax);
+		ri.preShutter(*this, m_smin, m_smax);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doShutter(m_smin, m_smax);
+		ri.doShutter(*this, m_smin, m_smax);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postShutter(m_smin, m_smax);
+		ri.postShutter(*this, m_smin, m_smax);
 	}
 
 	/** @brief Assignment.
@@ -1977,17 +1977,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePixelVariance(m_variation);
+		ri.prePixelVariance(*this, m_variation);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPixelVariance(m_variation);
+		ri.doPixelVariance(*this, m_variation);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPixelVariance(m_variation);
+		ri.postPixelVariance(*this, m_variation);
 	}
 
 	/** @brief Assignment.
@@ -2138,17 +2138,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePixelSamples(m_xsamples, m_ysamples);
+		ri.prePixelSamples(*this, m_xsamples, m_ysamples);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPixelSamples(m_xsamples, m_ysamples);
+		ri.doPixelSamples(*this, m_xsamples, m_ysamples);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPixelSamples(m_xsamples, m_ysamples);
+		ri.postPixelSamples(*this, m_xsamples, m_ysamples);
 	}
 
 	/** @brief Assignment.
@@ -2344,7 +2344,7 @@ public:
 	{
 		assert(m_function != 0);
 		if ( m_function ) {
-			ri.prePixelFilter(*m_function, m_xwidth, m_ywidth);
+			ri.prePixelFilter(*this, *m_function, m_xwidth, m_ywidth);
 		}
 	}
 
@@ -2352,7 +2352,7 @@ public:
 	{
 		assert(m_function != 0);
 		if ( m_function ) {
-			ri.doPixelFilter(*m_function, m_xwidth, m_ywidth);
+			ri.doPixelFilter(*this, *m_function, m_xwidth, m_ywidth);
 		}
 	}
 
@@ -2360,7 +2360,7 @@ public:
 	{
 		assert(m_function != 0);
 		if ( m_function ) {
-			ri.postPixelFilter(*m_function, m_xwidth, m_ywidth);
+			ri.postPixelFilter(*this, *m_function, m_xwidth, m_ywidth);
 		}
 	}
 
@@ -2510,17 +2510,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preExposure(m_gain, m_gamma);
+		ri.preExposure(*this, m_gain, m_gamma);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doExposure(m_gain, m_gamma);
+		ri.doExposure(*this, m_gain, m_gamma);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postExposure(m_gain, m_gamma);
+		ri.postExposure(*this, m_gain, m_gamma);
 	}
 
 	/** @brief Assignment.
@@ -2655,17 +2655,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preImager(m_name, parameters());
+		ri.preImager(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doImager(m_name, parameters());
+		ri.doImager(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postImager(m_name, parameters());
+		ri.postImager(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -2896,17 +2896,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preQuantize(m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
+		ri.preQuantize(*this, m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doQuantize(m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
+		ri.doQuantize(*this, m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postQuantize(m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
+		ri.postQuantize(*this, m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
 	}
 
 	/** @brief Assignment.
@@ -3043,17 +3043,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDisplayChannel(m_channel.c_str(), parameters());
+		ri.preDisplayChannel(*this, m_channel.c_str(), parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDisplayChannel(m_channel.c_str(), parameters());
+		ri.doDisplayChannel(*this, m_channel.c_str(), parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDisplayChannel(m_channel.c_str(), parameters());
+		ri.postDisplayChannel(*this, m_channel.c_str(), parameters());
 	}
 
 	/** @brief Assignment.
@@ -3262,17 +3262,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDisplay(m_name.c_str(), m_type, m_mode, parameters());
+		ri.preDisplay(*this, m_name.c_str(), m_type, m_mode, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDisplay(m_name.c_str(), m_type, m_mode, parameters());
+		ri.doDisplay(*this, m_name.c_str(), m_type, m_mode, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDisplay(m_name.c_str(), m_type, m_mode, parameters());
+		ri.postDisplay(*this, m_name.c_str(), m_type, m_mode, parameters());
 	}
 
 	/** @brief Assignment.
@@ -3407,17 +3407,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preHider(m_type, parameters());
+		ri.preHider(*this, m_type, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doHider(m_type, parameters());
+		ri.doHider(*this, m_type, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postHider(m_type, parameters());
+		ri.postHider(*this, m_type, parameters());
 	}
 
 	/** @brief Assignment.
@@ -3577,7 +3577,7 @@ public:
 		std::vector<RtFloat> &nRGB = m_colorDecr.nRGBMatrix();
 		std::vector<RtFloat> &RGBn = m_colorDecr.RGBnMatrix();
 
-		ri.preColorSamples(
+		ri.preColorSamples(*this, 
 			colorSamples(),
 			nRGB.empty() ? 0 : &nRGB[0],
 			RGBn.empty() ? 0 : &RGBn[0]);
@@ -3588,7 +3588,7 @@ public:
 		std::vector<RtFloat> &nRGB = m_colorDecr.nRGBMatrix();
 		std::vector<RtFloat> &RGBn = m_colorDecr.RGBnMatrix();
 
-		ri.doColorSamples(
+		ri.doColorSamples(*this, 
 			colorSamples(),
 			nRGB.empty() ? 0 : &nRGB[0],
 			RGBn.empty() ? 0 : &RGBn[0]);
@@ -3599,7 +3599,7 @@ public:
 		std::vector<RtFloat> &nRGB = m_colorDecr.nRGBMatrix();
 		std::vector<RtFloat> &RGBn = m_colorDecr.RGBnMatrix();
 
-		ri.postColorSamples(
+		ri.postColorSamples(*this, 
 			colorSamples(),
 			nRGB.empty() ? 0 : &nRGB[0],
 			RGBn.empty() ? 0 : &RGBn[0]);
@@ -3704,17 +3704,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preRelativeDetail(m_relativedetail);
+		ri.preRelativeDetail(*this, m_relativedetail);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doRelativeDetail(m_relativedetail);
+		ri.doRelativeDetail(*this, m_relativedetail);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postRelativeDetail(m_relativedetail);
+		ri.postRelativeDetail(*this, m_relativedetail);
 	}
 
 	/** @brief Assignment.

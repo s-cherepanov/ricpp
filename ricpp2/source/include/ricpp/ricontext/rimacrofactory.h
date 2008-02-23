@@ -77,8 +77,17 @@ public:
 	inline CRManInterfaceFactory() {}
 	inline virtual ~CRManInterfaceFactory() {}
 
-	inline virtual void deleteRequest(CRManInterfaceCall *r) {
-		if ( r ) delete r;
+	inline virtual void deleteRequest(CRManInterfaceCall *r)
+	{
+		if ( r )
+			delete r;
+	}
+
+	inline virtual CRManInterfaceCall *duplicateRequest(CRManInterfaceCall *r)
+	{
+		if ( r )
+			return r->duplicate();
+		return 0;
 	}
 
 	inline virtual CRiErrorHandler *newRiErrorHandler(

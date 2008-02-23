@@ -54,6 +54,9 @@ namespace RiCPP {
 	// Declarations
 	class CRiDeclare;
 
+	// Synchronization
+	class CRiSynchronize;
+
 	// System command
 	class CRiSystem;
 
@@ -183,6 +186,14 @@ namespace RiCPP {
 	class CRiCurves;
 	class CRiBlobby;
 	class CRiGeometry;
+
+	// Externals
+	class CRiMakeTexture;
+	class CRiMakeBump;
+	class CRiMakeLatLongEnvironment;
+	class CRiMakeCubeFaceEnvironment;
+	class CRiMakeShadow;
+	class CRiMakeBrickMap;
 }
 
 #endif // _RICPP_RICONTEXT_RIMACROCLASSES_H

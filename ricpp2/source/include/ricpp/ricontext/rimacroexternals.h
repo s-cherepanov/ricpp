@@ -264,7 +264,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.preMakeTexture(m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.preMakeTexture(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -272,7 +272,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.doMakeTexture(m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeTexture(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -280,7 +280,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.postMakeTexture(m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.postMakeTexture(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -528,7 +528,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.preMakeBump(m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.preMakeBump(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -536,7 +536,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.doMakeBump(m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeBump(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -544,7 +544,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.postMakeBump(m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.postMakeBump(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -762,7 +762,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.preMakeLatLongEnvironment(m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.preMakeLatLongEnvironment(*this, m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -770,7 +770,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.doMakeLatLongEnvironment(m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeLatLongEnvironment(*this, m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -778,7 +778,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.postMakeLatLongEnvironment(m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.postMakeLatLongEnvironment(*this, m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -1084,7 +1084,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.preMakeCubeFaceEnvironment(m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.preMakeCubeFaceEnvironment(*this, m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -1092,7 +1092,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.doMakeCubeFaceEnvironment(m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.doMakeCubeFaceEnvironment(*this, m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -1100,7 +1100,7 @@ public:
 	{
 		assert(m_filterfunc != 0);
 		if ( m_filterfunc ) {
-			ri.postMakeCubeFaceEnvironment(m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
+			ri.postMakeCubeFaceEnvironment(*this, m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
 		}
 	}
 
@@ -1252,17 +1252,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preMakeShadow(m_pic.c_str(), m_tex.c_str(), parameters());
+		ri.preMakeShadow(*this, m_pic.c_str(), m_tex.c_str(), parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doMakeShadow(m_pic.c_str(), m_tex.c_str(), parameters());
+		ri.doMakeShadow(*this, m_pic.c_str(), m_tex.c_str(), parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postMakeShadow(m_pic.c_str(), m_tex.c_str(), parameters());
+		ri.postMakeShadow(*this, m_pic.c_str(), m_tex.c_str(), parameters());
 	}
 
 	/** @brief Assignment.
@@ -1440,17 +1440,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preMakeBrickMap(nNames(), ptcNames(), bkMName(), parameters());
+		ri.preMakeBrickMap(*this, nNames(), ptcNames(), bkMName(), parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doMakeBrickMap(nNames(), ptcNames(), bkMName(), parameters());
+		ri.doMakeBrickMap(*this, nNames(), ptcNames(), bkMName(), parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postMakeBrickMap(nNames(), ptcNames(), bkMName(), parameters());
+		ri.postMakeBrickMap(*this, nNames(), ptcNames(), bkMName(), parameters());
 	}
 
 	/** @brief Assignment.
@@ -1469,21 +1469,6 @@ public:
 		return *this;
 	}
 }; // CRiMakeBrickMap
-
-
-///////////////////////////////////////////////////////////////////////////////
-/* @todo Creates a 3D texture map.
- *
- *  Can be used by the texture3D function of the Shading Language.
- *
- *  @param nNames Number of poinbt clouds
- *  @param ptcnames Pointer to filenames of the point clouds
- *  @param bkmname Filename for the 3d texture map (output).
- *  @param n Number of tokens
- *  @param tokens Tokens for additional parameter list
- *  @param params Value pointer for additional parameter list
- */
-// virtual RtVoid makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[]) = 0;
 
 }
 

@@ -158,19 +158,19 @@ public:
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
 	{
 		assert(m_handler != 0);
-		ri.preErrorHandler(*m_handler);
+		ri.preErrorHandler(*this, *m_handler);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_handler != 0);
-		ri.doErrorHandler(*m_handler);
+		ri.doErrorHandler(*this, *m_handler);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		assert(m_handler != 0);
-		ri.postErrorHandler(*m_handler);
+		ri.postErrorHandler(*this, *m_handler);
 	}
 
 	/** @brief Assignment.
@@ -300,17 +300,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
 	{
-		ri.preDeclare(name(), declaration());
+		ri.preDeclare(*this, name(), declaration());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDeclare(name(), declaration());
+		ri.doDeclare(*this, name(), declaration());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDeclare(name(), declaration());
+		ri.postDeclare(*this, name(), declaration());
 	}
 
 	/** @brief Assignment.
@@ -330,6 +330,120 @@ public:
 		return *this;
 	}
 }; // CRiDeclare
+
+
+///////////////////////////////////////////////////////////////////////////////
+/** @brief Synchronize command.
+ */
+class CRiSynchronize : public CRManInterfaceCall {
+private:
+	RtToken m_name; ///< The synchronization command
+public:
+	/** @brief Gets name for the class.
+	 *
+	 *  @return The name of the class (can be used as atomized string).
+	 */
+	inline static const char *myClassName(void) { return "CRiSynchronize"; }
+
+	inline virtual const char *className() const { return CRiSynchronize::myClassName(); }
+
+	inline virtual bool isA(const char *atomizedClassName) const
+	{
+		return ( atomizedClassName == myClassName() );
+	}
+
+	inline virtual bool isKindOf(const char *atomizedClassName) const
+	{
+		if ( atomizedClassName == myClassName() )
+			return true;
+		return CRManInterfaceCall::isKindOf(atomizedClassName);
+	}
+
+	/** @brief Default constructor.
+	 *
+	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
+	 *  @param aName Synchronization
+	 */
+	inline CRiSynchronize(
+		long aLineNo = -1,
+		RtToken aName = 0)
+		: CRManInterfaceCall(aLineNo),
+		  m_name(aName)
+	{}
+	
+	/** @brief Copy constructor.
+	 *
+	 *  @param c Object to copy.
+	 */
+	inline CRiSynchronize(const CRiSynchronize &c)
+	{
+		*this = c;
+	}
+
+	/** @brief Destructor.
+	 */
+	inline virtual ~CRiSynchronize() {}
+
+	/** @brief Cloning.
+	 *
+	 *  @return a clone of this object
+	 */
+	inline virtual CRManInterfaceCall *duplicate() const
+	{
+		return new CRiSynchronize(*this);
+	}
+
+	inline virtual EnumRequests interfaceIdx() const { return REQ_SYNCHRONIZE; }
+
+	/** @brief Gets the synchronization token.
+	 *
+	 *  @return The synchronization token.
+	 */
+	inline RtToken name() const
+	{
+		return m_name;
+	}
+
+	/** @brief Sets the synchronization token.
+	 *
+	 *  @param aCommand The synchronization token.
+	 */
+	inline void name(RtToken aName)
+	{
+		m_name = aName;
+	}
+
+	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+	{
+		ri.preSynchronize(*this, name());
+	}
+
+	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.doSynchronize(*this, name());
+	}
+
+	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+	{
+		ri.postSynchronize(*this, name());
+	}
+
+	/** @brief Assignment.
+	 *
+	 * @param c Object to assign.
+	 * @return A reference to this object.
+	 */
+	inline CRiSynchronize &operator=(const CRiSynchronize &c)
+	{
+		if ( this == &c )
+			return *this;
+
+		name(c.name());
+
+		CRManInterfaceCall::operator=(c);
+		return *this;
+	}
+}; // CRiSynchronize
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -417,17 +531,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
 	{
-		ri.preSystem(command());
+		ri.preSystem(*this, command());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSystem(command());
+		ri.doSystem(*this, command());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSystem(command());
+		ri.postSystem(*this, command());
 	}
 
 	/** @brief Assignment.
@@ -566,17 +680,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preControl(m_name, parameters());
+		ri.preControl(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doControl(m_name, parameters());
+		ri.doControl(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postControl(m_name, parameters());
+		ri.postControl(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -746,17 +860,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preResource(handle(), type(), parameters());
+		ri.preResource(*this, handle(), type(), parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doResource(handle(), type(), parameters());
+		ri.doResource(*this, handle(), type(), parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postResource(handle(), type(), parameters());
+		ri.postResource(*this, handle(), type(), parameters());
 	}
 
 	/** @brief Assignment.
@@ -874,19 +988,19 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preArchiveRecord(m_type, m_line.c_str());
+		ri.preArchiveRecord(*this, m_type, m_line.c_str());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doArchiveRecord(m_type, m_line.c_str());
+		ri.doArchiveRecord(*this, m_type, m_line.c_str());
 		if ( cb ) 
 			(*cb)(ri, m_type, m_line.c_str());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postArchiveRecord(m_type, m_line.c_str());
+		ri.postArchiveRecord(*this, m_type, m_line.c_str());
 	}
 
 	/** @brief Assignment.
@@ -1007,17 +1121,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preReadArchive(m_filename.c_str(), cb, parameters());
+		ri.preReadArchive(*this, m_filename.c_str(), cb, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doReadArchive(m_filename.c_str(), cb, parameters());
+		ri.doReadArchive(*this, m_filename.c_str(), cb, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postReadArchive(m_filename.c_str(), cb, parameters());
+		ri.postReadArchive(*this, m_filename.c_str(), cb, parameters());
 	}
 
 	inline virtual void preProcess(IDoRender &ri)
@@ -1121,17 +1235,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preObjectInstance(handle());
+		ri.preObjectInstance(*this, handle());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doObjectInstance(handle());
+		ri.doObjectInstance(*this, handle());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postObjectInstance(handle());
+		ri.postObjectInstance(*this, handle());
 	}
 
 	/** @brief Assignment
@@ -1235,7 +1349,7 @@ public:
 	{
 		assert(m_subdivfunc != 0);
 		if ( m_subdivfunc != 0 )
-			ri.preProcedural(
+			ri.preProcedural(*this, 
 				m_data ? m_data->data() : 0,
 				m_bound, *m_subdivfunc, m_freefunc);
 	}
@@ -1244,7 +1358,7 @@ public:
 	{
 		assert(m_subdivfunc != 0);
 		if ( m_subdivfunc != 0 )
-			ri.doProcedural(
+			ri.doProcedural(*this, 
 				m_data ? m_data->data() : 0,
 				m_bound, *m_subdivfunc, m_freefunc);
 	}
@@ -1253,7 +1367,7 @@ public:
 	{
 		assert(m_subdivfunc != 0);
 		if ( m_subdivfunc != 0 )
-			ri.postProcedural(
+			ri.postProcedural(*this, 
 				m_data ? m_data->data() : 0,
 				m_bound, *m_subdivfunc, m_freefunc);
 	}

@@ -644,6 +644,13 @@ namespace RiCPP {
 			if ( a )
 				delete a;
 		}
+
+		inline virtual CAttributes *duplicateAttributes(CAttributes *a)
+		{
+			if ( a )
+				return a->duplicate();
+			return 0;
+		}
 	}; // CAttributesFactory
 }
 

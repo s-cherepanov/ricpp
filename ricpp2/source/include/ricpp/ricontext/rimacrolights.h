@@ -124,17 +124,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preLightSource(m_handle, m_name, parameters());
+		ri.preLightSource(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doLightSource(m_handle, m_name, parameters());
+		ri.doLightSource(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postLightSource(m_handle, m_name, parameters());
+		ri.postLightSource(*this, m_name, parameters());
 	}
 
 	inline CRiLightSource &operator=(const CRiLightSource &c)
@@ -232,17 +232,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preAreaLightSource(m_handle, m_name, parameters());
+		ri.preAreaLightSource(*this, m_handle, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doAreaLightSource(m_handle, m_name, parameters());
+		ri.doAreaLightSource(*this, m_handle, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postAreaLightSource(m_handle, m_name, parameters());
+		ri.postAreaLightSource(*this, m_handle, parameters());
 	}
 
 	inline CRiAreaLightSource &operator=(const CRiAreaLightSource &c)

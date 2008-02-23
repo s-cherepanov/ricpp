@@ -155,17 +155,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preAttribute(m_name, parameters());
+		ri.preAttribute(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doAttribute(m_name, parameters());
+		ri.doAttribute(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postAttribute(m_name, parameters());
+		ri.postAttribute(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -274,17 +274,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preColor(m_color.empty() ? 0 : &m_color[0]);
+		ri.preColor(*this, m_color.empty() ? 0 : &m_color[0]);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doColor(m_color.empty() ? 0 : &m_color[0]);
+		ri.doColor(*this, m_color.empty() ? 0 : &m_color[0]);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postColor(m_color.empty() ? 0 : &m_color[0]);
+		ri.postColor(*this, m_color.empty() ? 0 : &m_color[0]);
 	}
 
 	/** @brief Assignment.
@@ -393,17 +393,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preOpacity(m_opacity.empty() ? 0 : &m_opacity[0]);
+		ri.preOpacity(*this, m_opacity.empty() ? 0 : &m_opacity[0]);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doOpacity(m_opacity.empty() ? 0 : &m_opacity[0]);
+		ri.doOpacity(*this, m_opacity.empty() ? 0 : &m_opacity[0]);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postOpacity(m_opacity.empty() ? 0 : &m_opacity[0]);
+		ri.postOpacity(*this, m_opacity.empty() ? 0 : &m_opacity[0]);
 	}
 
 	/** @brief Assignment.
@@ -538,17 +538,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preSurface(m_name, parameters());
+		ri.preSurface(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSurface(m_name, parameters());
+		ri.doSurface(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSurface(m_name, parameters());
+		ri.postSurface(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -683,17 +683,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preAtmosphere(m_name, parameters());
+		ri.preAtmosphere(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doAtmosphere(m_name, parameters());
+		ri.doAtmosphere(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postAtmosphere(m_name, parameters());
+		ri.postAtmosphere(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -828,17 +828,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preInterior(m_name, parameters());
+		ri.preInterior(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doInterior(m_name, parameters());
+		ri.doInterior(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postInterior(m_name, parameters());
+		ri.postInterior(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -973,17 +973,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preExterior(m_name, parameters());
+		ri.preExterior(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doExterior(m_name, parameters());
+		ri.doExterior(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postExterior(m_name, parameters());
+		ri.postExterior(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -1118,17 +1118,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDisplacement(m_name, parameters());
+		ri.preDisplacement(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDisplacement(m_name, parameters());
+		ri.doDisplacement(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDisplacement(m_name, parameters());
+		ri.postDisplacement(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -1422,17 +1422,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTextureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
+		ri.preTextureCoordinates(*this, m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTextureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
+		ri.doTextureCoordinates(*this, m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTextureCoordinates(m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
+		ri.postTextureCoordinates(*this, m_s1, m_t1, m_s2, m_t2, m_s3, m_t3, m_s4, m_t4);
 	}
 
 	/** @brief Assignment.
@@ -1534,17 +1534,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preShadingRate(m_size);
+		ri.preShadingRate(*this, m_size);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doShadingRate(m_size);
+		ri.doShadingRate(*this, m_size);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postShadingRate(m_size);
+		ri.postShadingRate(*this, m_size);
 	}
 
 	/** @brief Assignment.
@@ -1645,17 +1645,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preShadingInterpolation(m_type);
+		ri.preShadingInterpolation(*this, m_type);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doShadingInterpolation(m_type);
+		ri.doShadingInterpolation(*this, m_type);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postShadingInterpolation(m_type);
+		ri.postShadingInterpolation(*this, m_type);
 	}
 
 	/** @brief Assignment.
@@ -1755,17 +1755,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preMatte(m_onoff);
+		ri.preMatte(*this, m_onoff);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doMatte(m_onoff);
+		ri.doMatte(*this, m_onoff);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postMatte(m_onoff);
+		ri.postMatte(*this, m_onoff);
 	}
 
 	/** @brief Assignment.
@@ -1893,17 +1893,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preBound(m_bound);
+		ri.preBound(*this, m_bound);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doBound(m_bound);
+		ri.doBound(*this, m_bound);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postBound(m_bound);
+		ri.postBound(*this, m_bound);
 	}
 
 	/** @brief Assignment.
@@ -2032,17 +2032,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDetail(m_bound);
+		ri.preDetail(*this, m_bound);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDetail(m_bound);
+		ri.doDetail(*this, m_bound);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDetail(m_bound);
+		ri.postDetail(*this, m_bound);
 	}
 
 	/** @brief Assignment.
@@ -2214,17 +2214,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDetailRange(m_minvis, m_lowtran, m_uptran, m_maxvis);
+		ri.preDetailRange(*this, m_minvis, m_lowtran, m_uptran, m_maxvis);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDetailRange(m_minvis, m_lowtran, m_uptran, m_maxvis);
+		ri.doDetailRange(*this, m_minvis, m_lowtran, m_uptran, m_maxvis);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDetailRange(m_minvis, m_lowtran, m_uptran, m_maxvis);
+		ri.postDetailRange(*this, m_minvis, m_lowtran, m_uptran, m_maxvis);
 	}
 
 	/** @brief Assignment.
@@ -2339,17 +2339,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preGeometricApproximation(m_type, m_value);
+		ri.preGeometricApproximation(*this, m_type, m_value);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doGeometricApproximation(m_type, m_value);
+		ri.doGeometricApproximation(*this, m_type, m_value);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postGeometricApproximation(m_type, m_value);
+		ri.postGeometricApproximation(*this, m_type, m_value);
 	}
 
 	/** @brief Assignment.
@@ -2443,17 +2443,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preGeometricRepresentation(m_type);
+		ri.preGeometricRepresentation(*this, m_type);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doGeometricRepresentation(m_type);
+		ri.doGeometricRepresentation(*this, m_type);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postGeometricRepresentation(m_type);
+		ri.postGeometricRepresentation(*this, m_type);
 	}
 
 	/** @brief Assignment.
@@ -2547,17 +2547,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preOrientation(m_orientation);
+		ri.preOrientation(*this, m_orientation);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doOrientation(m_orientation);
+		ri.doOrientation(*this, m_orientation);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postOrientation(m_orientation);
+		ri.postOrientation(*this, m_orientation);
 	}
 
 	/** @brief Assignment.
@@ -2632,17 +2632,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preReverseOrientation();
+		ri.preReverseOrientation(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doReverseOrientation();
+		ri.doReverseOrientation(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postReverseOrientation();
+		ri.postReverseOrientation(*this);
 	}
 
 	/** @brief Assignment.
@@ -2734,17 +2734,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preSides(m_nsides);
+		ri.preSides(*this, m_nsides);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSides(m_nsides);
+		ri.doSides(*this, m_nsides);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSides(m_nsides);
+		ri.postSides(*this, m_nsides);
 	}
 
 	/** @brief Assignment.
@@ -2893,17 +2893,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
+		ri.preBasis(*this, m_ubasis, m_ustep, m_vbasis, m_vstep);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
+		ri.doBasis(*this, m_ubasis, m_ustep, m_vbasis, m_vstep);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postBasis(m_ubasis, m_ustep, m_vbasis, m_vstep);
+		ri.postBasis(*this, m_ubasis, m_ustep, m_vbasis, m_vstep);
 	}
 
 	inline CRiBasis &operator=(const CRiBasis &c)
@@ -2983,7 +2983,8 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTrimCurve(m_trimCurve.m_data.m_nloops,
+		ri.preTrimCurve(*this, 
+			m_trimCurve.m_data.m_nloops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
 			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
@@ -2997,7 +2998,8 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTrimCurve(m_trimCurve.m_data.m_nloops,
+		ri.doTrimCurve(*this, 
+			m_trimCurve.m_data.m_nloops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
 			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
@@ -3011,7 +3013,8 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTrimCurve(m_trimCurve.m_data.m_nloops,
+		ri.postTrimCurve(*this, 
+			m_trimCurve.m_data.m_nloops,
 			m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0],
 			m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0],
 			m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0],
@@ -3092,17 +3095,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preIlluminate(m_handle, m_onoff);
+		ri.preIlluminate(*this, m_handle, m_onoff);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doIlluminate(m_handle, m_onoff);
+		ri.doIlluminate(*this, m_handle, m_onoff);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postIlluminate(m_handle, m_onoff);
+		ri.postIlluminate(*this, m_handle, m_onoff);
 	}
 
 	inline CRiIlluminate &operator=(const CRiIlluminate &c)

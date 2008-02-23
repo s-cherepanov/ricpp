@@ -94,17 +94,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preIdentity();
+		ri.preIdentity(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doIdentity();
+		ri.doIdentity(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postIdentity();
+		ri.postIdentity(*this);
 	}
 
 	/** @brief Assignment.
@@ -221,17 +221,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTransform(m_transform);
+		ri.preTransform(*this, m_transform);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTransform(m_transform);
+		ri.doTransform(*this, m_transform);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTransform(m_transform);
+		ri.postTransform(*this, m_transform);
 	}
 
 	/** @brief Assignment.
@@ -351,17 +351,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preConcatTransform(m_transform);
+		ri.preConcatTransform(*this, m_transform);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doConcatTransform(m_transform);
+		ri.doConcatTransform(*this, m_transform);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postConcatTransform(m_transform);
+		ri.postConcatTransform(*this, m_transform);
 	}
 
 	/** @brief Assignment.
@@ -458,17 +458,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePerspective(m_fov);
+		ri.prePerspective(*this, m_fov);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPerspective(m_fov);
+		ri.doPerspective(*this, m_fov);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPerspective(m_fov);
+		ri.postPerspective(*this, m_fov);
 	}
 
 	/** @brief Assignment.
@@ -631,17 +631,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTranslate(m_dx, m_dy, m_dz);
+		ri.preTranslate(*this, m_dx, m_dy, m_dz);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTranslate(m_dx, m_dy, m_dz);
+		ri.doTranslate(*this, m_dx, m_dy, m_dz);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTranslate(m_dx, m_dy, m_dz);
+		ri.postTranslate(*this, m_dx, m_dy, m_dz);
 	}
 
 	/** @brief Assignment.
@@ -827,17 +827,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preRotate(m_angle, m_dx, m_dy, m_dz);
+		ri.preRotate(*this, m_angle, m_dx, m_dy, m_dz);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doRotate(m_angle, m_dx, m_dy, m_dz);
+		ri.doRotate(*this, m_angle, m_dx, m_dy, m_dz);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postRotate(m_angle, m_dx, m_dy, m_dz);
+		ri.postRotate(*this, m_angle, m_dx, m_dy, m_dz);
 	}
 
 	/** @brief Assignment.
@@ -1000,17 +1000,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preScale(m_dx, m_dy, m_dz);
+		ri.preScale(*this, m_dx, m_dy, m_dz);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doScale(m_dx, m_dy, m_dz);
+		ri.doScale(*this, m_dx, m_dy, m_dz);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postScale(m_dx, m_dy, m_dz);
+		ri.postScale(*this, m_dx, m_dy, m_dz);
 	}
 
 	/** @brief Assignment.
@@ -1100,17 +1100,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preSkew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+		ri.preSkew(*this, m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSkew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+		ri.doSkew(*this, m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSkew(m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+		ri.postSkew(*this, m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
 	}
 
 	/** @brief Gets the skew angle.
@@ -1412,17 +1412,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDeformation(m_name, parameters());
+		ri.preDeformation(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDeformation(m_name, parameters());
+		ri.doDeformation(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDeformation(m_name, parameters());
+		ri.postDeformation(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.
@@ -1520,17 +1520,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preScopedCoordinateSystem(m_name);
+		ri.preScopedCoordinateSystem(*this, m_name);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doScopedCoordinateSystem(m_name);
+		ri.doScopedCoordinateSystem(*this, m_name);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postScopedCoordinateSystem(m_name);
+		ri.postScopedCoordinateSystem(*this, m_name);
 	}
 
 	/** @brief Assignment.
@@ -1628,17 +1628,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preCoordinateSystem(m_name);
+		ri.preCoordinateSystem(*this, m_name);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doCoordinateSystem(m_name);
+		ri.doCoordinateSystem(*this, m_name);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postCoordinateSystem(m_name);
+		ri.postCoordinateSystem(*this, m_name);
 	}
 
 	/** @brief Assignment.
@@ -1736,17 +1736,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preCoordSysTransform(m_name);
+		ri.preCoordSysTransform(*this, m_name);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doCoordSysTransform(m_name);
+		ri.doCoordSysTransform(*this, m_name);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postCoordSysTransform(m_name);
+		ri.postCoordSysTransform(*this, m_name);
 	}
 
 	/** @brief Assignment.
@@ -1944,19 +1944,19 @@ public:
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		reset();
-		ri.preTransformPoints(m_fromspace, m_tospace, m_npoints, m_points);
+		ri.preTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		reset();
-		ri.doTransformPoints(m_fromspace, m_tospace, m_npoints, m_points);
+		ri.doTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		reset();
-		ri.postTransformPoints(m_fromspace, m_tospace, m_npoints, m_points);
+		ri.postTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
 	}
 
 	/** @brief Assignment.

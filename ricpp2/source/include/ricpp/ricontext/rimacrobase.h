@@ -241,6 +241,18 @@ public:
 	 */
 	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const {
 	}
+
+	/** @brief Query if bounds are available.
+	 *  @return true, if bounds are available
+	 *  @see getBounds()
+	 */
+	inline virtual bool boundable() const { return false; }
+
+	/** @brief Gets the bounds, if available.
+	 *  @retval bounds The bounderies of the object representated.
+	 *  @see boundable()
+	 */
+	inline virtual void getBounds(RtBound bounds) const {}
 }; // CRManInterfaceCall
 
 
@@ -478,6 +490,15 @@ public:
 	 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
 	 */
 	virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const;
+
+	/** @brief Gets the bounds, by bounding parameter RI_P, RI_PW
+	 *
+	 *  The boundable() must be implemented by the appropriate class.
+	 *
+	 *  @retval bounds The bounderies of the object representated.
+	 *  @see boundable()
+	 */
+	virtual void getBounds(RtBound bounds) const;
 }; // CVarParamRManInterfaceCall
 
 

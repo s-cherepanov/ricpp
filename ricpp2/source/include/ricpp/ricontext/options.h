@@ -513,6 +513,12 @@ namespace RiCPP {
 			if ( o )
 				delete o;
 		}
+		inline virtual COptions *duplicateOptions(COptions *o)
+		{
+			if ( o )
+				return o->duplicate();
+			return 0;
+		}
 	}; // COptionsFactory
 }
 

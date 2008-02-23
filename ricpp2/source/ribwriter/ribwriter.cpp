@@ -268,9 +268,9 @@ void CRibWriter::writeParameterList(const CParameterList &params, RtInt n, RtTok
 }
 
 
-RtVoid CRibWriter::doControl(RtToken name, const CParameterList &params)
+RtVoid CRibWriter::doControl(CRiControl &obj, RtToken name, const CParameterList &params)
 {
-	CBaseRenderer::doControl(name, params);
+	CBaseRenderer::doControl(obj, name, params);
 
 	if ( name == RI_RIBWRITER ) {
 		CParameterList::const_iterator i;
@@ -333,7 +333,7 @@ RtVoid CRibWriter::version()
 }
 
 
-RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList &params)
 {
 	if ( m_buffer ) delete m_buffer;
 	m_buffer = 0;
@@ -422,7 +422,7 @@ RtVoid CRibWriter::postBegin(RtString name, const CParameterList &params)
 	}
 }
 
-RtVoid CRibWriter::postEnd(void)
+RtVoid CRibWriter::postEnd(CRiEnd &obj)
 {
 	if ( m_writer ) delete m_writer;
 	m_writer = 0;
@@ -446,7 +446,7 @@ RtVoid CRibWriter::postEnd(void)
 }
 
 
-RtVoid CRibWriter::postErrorHandler(const IErrorHandler &handler)
+RtVoid CRibWriter::postErrorHandler(CRiErrorHandler &obj, const IErrorHandler &handler)
 {
 	if ( !postTestValid() )
 		return;
@@ -459,7 +459,7 @@ RtVoid CRibWriter::postErrorHandler(const IErrorHandler &handler)
 }
 
 
-RtVoid CRibWriter::postDeclare(RtToken name, RtString declaration)
+RtVoid CRibWriter::postDeclare(CRiDeclare &obj, RtToken name, RtString declaration)
 {
 	if ( !postTestValid() )
 		return;
@@ -474,7 +474,7 @@ RtVoid CRibWriter::postDeclare(RtToken name, RtString declaration)
 }
 
 
-RtVoid CRibWriter::postSynchronize(RtToken name)
+RtVoid CRibWriter::postSynchronize(CRiSynchronize &obj, RtToken name)
 {
 	if ( !postTestValid() )
 		return;
@@ -487,7 +487,7 @@ RtVoid CRibWriter::postSynchronize(RtToken name)
 }
 
 
-RtVoid CRibWriter::postSystem(RtString cmd)
+RtVoid CRibWriter::postSystem(CRiSystem &obj, RtString cmd)
 {
 	if ( !postTestValid() )
 		return;
@@ -500,7 +500,7 @@ RtVoid CRibWriter::postSystem(RtString cmd)
 }
 
 
-RtVoid CRibWriter::postResource(RtToken handle, RtString type, const CParameterList &params)
+RtVoid CRibWriter::postResource(CRiResource &obj, RtToken handle, RtString type, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -515,7 +515,7 @@ RtVoid CRibWriter::postResource(RtToken handle, RtString type, const CParameterL
 }
 
 
-RtVoid CRibWriter::postFrameBegin(RtInt number)
+RtVoid CRibWriter::postFrameBegin(CRiFrameBegin &obj, RtInt number)
 {
 	if ( !postTestValid() )
 		return;
@@ -529,7 +529,7 @@ RtVoid CRibWriter::postFrameBegin(RtInt number)
 }
 
 
-RtVoid CRibWriter::postFrameEnd(void)
+RtVoid CRibWriter::postFrameEnd(CRiFrameEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -541,7 +541,7 @@ RtVoid CRibWriter::postFrameEnd(void)
 }
 
 
-RtVoid CRibWriter::postWorldBegin(void)
+RtVoid CRibWriter::postWorldBegin(CRiWorldBegin &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -553,7 +553,7 @@ RtVoid CRibWriter::postWorldBegin(void)
 }
 
 
-RtVoid CRibWriter::postWorldEnd(void)
+RtVoid CRibWriter::postWorldEnd(CRiWorldEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -565,7 +565,7 @@ RtVoid CRibWriter::postWorldEnd(void)
 }
 
 
-RtVoid CRibWriter::postAttributeBegin(void)
+RtVoid CRibWriter::postAttributeBegin(CRiAttributeBegin &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -577,7 +577,7 @@ RtVoid CRibWriter::postAttributeBegin(void)
 }
 
 
-RtVoid CRibWriter::postAttributeEnd(void)
+RtVoid CRibWriter::postAttributeEnd(CRiAttributeEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -589,7 +589,7 @@ RtVoid CRibWriter::postAttributeEnd(void)
 }
 
 
-RtVoid CRibWriter::postTransformBegin(void)
+RtVoid CRibWriter::postTransformBegin(CRiTransformBegin &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -601,7 +601,7 @@ RtVoid CRibWriter::postTransformBegin(void)
 }
 
 
-RtVoid CRibWriter::postTransformEnd(void)
+RtVoid CRibWriter::postTransformEnd(CRiTransformEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -613,7 +613,7 @@ RtVoid CRibWriter::postTransformEnd(void)
 }
 
 
-RtVoid CRibWriter::postSolidBegin(RtToken type)
+RtVoid CRibWriter::postSolidBegin(CRiSolidBegin &obj, RtToken type)
 {
 	if ( !postTestValid() )
 		return;
@@ -627,7 +627,7 @@ RtVoid CRibWriter::postSolidBegin(RtToken type)
 }
 
 
-RtVoid CRibWriter::postSolidEnd(void)
+RtVoid CRibWriter::postSolidEnd(CRiSolidEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -639,7 +639,7 @@ RtVoid CRibWriter::postSolidEnd(void)
 }
 
 
-RtVoid CRibWriter::postObjectBegin(RtObjectHandle h, RtString name)
+RtVoid CRibWriter::postObjectBegin(CRiObjectBegin &obj, RtString name)
 {
 	if ( !testValid() )
 		return;
@@ -670,7 +670,7 @@ RtVoid CRibWriter::postObjectBegin(RtObjectHandle h, RtString name)
 		m_suppressOutput = false;
 		incNestingDepth();
 		if ( !m ) {
-			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Container not created for ObjectSource \"%s\"", noNullStr(h));
+			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Container not created for ObjectSource \"%s\"", noNullStr(obj.handle()));
 		}
 	} else {
 		m_suppressOutput = true;
@@ -678,11 +678,11 @@ RtVoid CRibWriter::postObjectBegin(RtObjectHandle h, RtString name)
 }
 
 
-RtVoid CRibWriter::preObjectEnd(void)
+RtVoid CRibWriter::preObjectEnd(CRiObjectEnd &obj)
 {
 	CRiMacro *m = renderState()->curMacro();
 
-	CBaseRenderer::preObjectEnd();
+	CBaseRenderer::preObjectEnd(obj);
 
 	if ( !testValid() ) 
 		return;
@@ -698,7 +698,7 @@ RtVoid CRibWriter::preObjectEnd(void)
 	}
 }
 
-RtVoid CRibWriter::postObjectEnd(void)
+RtVoid CRibWriter::postObjectEnd(CRiObjectEnd &obj)
 {
 	if ( !m_suppressOutputVector.empty() ) {
 		m_suppressOutput = m_suppressOutputVector.back();
@@ -706,7 +706,7 @@ RtVoid CRibWriter::postObjectEnd(void)
 	}
 }
 
-RtVoid CRibWriter::doObjectInstance(RtObjectHandle handle)
+RtVoid CRibWriter::doObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle)
 {
 	// Only write the ObjectInstance Request
 	// Do this only if a definition was written to output (macro is postponed).
@@ -722,11 +722,11 @@ RtVoid CRibWriter::doObjectInstance(RtObjectHandle handle)
 	// Put out the requests that form the object.
 	// It doesn't matter if the Object definition was
 	// written to output or not.
-	CBaseRenderer::doObjectInstance(handle);
+	CBaseRenderer::doObjectInstance(obj, handle);
 }
 
 
-RtVoid CRibWriter::postObjectInstance(RtObjectHandle handle)
+RtVoid CRibWriter::postObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle)
 {
 	if ( m_postponeObject ) {
 		if ( !postTestValid() )
@@ -748,15 +748,15 @@ RtVoid CRibWriter::postObjectInstance(RtObjectHandle handle)
 			}
 			m_writer->putNewLine();
 		} else if ( renderState()->recordMode() ) {
-			CBaseRenderer::doObjectInstance(handle);
+			CBaseRenderer::doObjectInstance(obj, handle);
 		}
 	} else if ( renderState()->recordMode() ) {
-		CBaseRenderer::doObjectInstance(handle);
+		CBaseRenderer::doObjectInstance(obj, handle);
 	}
 }
 
 
-RtVoid CRibWriter::postMotionBegin(RtInt N, RtFloat times[])
+RtVoid CRibWriter::postMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times[])
 {
 	if ( !postTestValid() )
 		return;
@@ -770,7 +770,7 @@ RtVoid CRibWriter::postMotionBegin(RtInt N, RtFloat times[])
 }
 
 
-RtVoid CRibWriter::postMotionEnd(void)
+RtVoid CRibWriter::postMotionEnd(CRiMotionEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -782,7 +782,7 @@ RtVoid CRibWriter::postMotionEnd(void)
 }
 
 
-RtVoid CRibWriter::postResourceBegin(void)
+RtVoid CRibWriter::postResourceBegin(CRiResourceBegin &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -794,7 +794,7 @@ RtVoid CRibWriter::postResourceBegin(void)
 }
 
 
-RtVoid CRibWriter::postResourceEnd(void)
+RtVoid CRibWriter::postResourceEnd(CRiResourceEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -806,7 +806,7 @@ RtVoid CRibWriter::postResourceEnd(void)
 }
 
 
-RtVoid CRibWriter::postArchiveBegin(RtArchiveHandle h, RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CParameterList &params)
 {
 	CRiMacro *m = renderState()->curMacro();
 	assert (m != 0);
@@ -833,11 +833,11 @@ RtVoid CRibWriter::postArchiveBegin(RtArchiveHandle h, RtToken name, const CPara
 }
 
 
-RtVoid CRibWriter::preArchiveEnd(void)
+RtVoid CRibWriter::preArchiveEnd(CRiArchiveEnd &obj)
 {
 	CRiMacro *m = renderState()->curMacro();
 
-	CBaseRenderer::preArchiveEnd();
+	CBaseRenderer::preArchiveEnd(obj);
 
 	assert (m != 0);
 	if ( !m || m->postpone() ) {
@@ -851,7 +851,7 @@ RtVoid CRibWriter::preArchiveEnd(void)
 }
 
 
-RtVoid CRibWriter::postArchiveEnd(void)
+RtVoid CRibWriter::postArchiveEnd(CRiArchiveEnd &obj)
 {
 	if ( !m_suppressOutputVector.empty() ) {
 		m_suppressOutput = m_suppressOutputVector.back();
@@ -860,7 +860,7 @@ RtVoid CRibWriter::postArchiveEnd(void)
 }
 
 
-RtVoid CRibWriter::postFormat(RtInt xres, RtInt yres, RtFloat aspect)
+RtVoid CRibWriter::postFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat aspect)
 {
 	if ( !postTestValid() )
 		return;
@@ -877,7 +877,7 @@ RtVoid CRibWriter::postFormat(RtInt xres, RtInt yres, RtFloat aspect)
 }
 
 
-RtVoid CRibWriter::postFrameAspectRatio(RtFloat aspect)
+RtVoid CRibWriter::postFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspect)
 {
 	if ( !postTestValid() )
 		return;
@@ -890,7 +890,7 @@ RtVoid CRibWriter::postFrameAspectRatio(RtFloat aspect)
 }
 
 
-RtVoid CRibWriter::postScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
+RtVoid CRibWriter::postScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
 {
 	if ( !postTestValid() )
 		return;
@@ -909,7 +909,7 @@ RtVoid CRibWriter::postScreenWindow(RtFloat left, RtFloat right, RtFloat bot, Rt
 }
 
 
-RtVoid CRibWriter::postCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
+RtVoid CRibWriter::postCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
 {
 	if ( !postTestValid() )
 		return;
@@ -928,7 +928,7 @@ RtVoid CRibWriter::postCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFl
 }
 
 
-RtVoid CRibWriter::postProjection(RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -941,7 +941,7 @@ RtVoid CRibWriter::postProjection(RtToken name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postClipping(RtFloat hither, RtFloat yon)
+RtVoid CRibWriter::postClipping(CRiClipping &obj, RtFloat hither, RtFloat yon)
 {
 	if ( !postTestValid() )
 		return;
@@ -956,7 +956,7 @@ RtVoid CRibWriter::postClipping(RtFloat hither, RtFloat yon)
 }
 
 
-RtVoid CRibWriter::postClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
+RtVoid CRibWriter::postClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
 {
 	if ( !postTestValid() )
 		return;
@@ -979,7 +979,7 @@ RtVoid CRibWriter::postClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx
 }
 
 
-RtVoid CRibWriter::postDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
+RtVoid CRibWriter::postDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
 {
 	if ( !postTestValid() )
 		return;
@@ -996,7 +996,7 @@ RtVoid CRibWriter::postDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat 
 }
 
 
-RtVoid CRibWriter::postShutter(RtFloat smin, RtFloat smax)
+RtVoid CRibWriter::postShutter(CRiShutter &obj, RtFloat smin, RtFloat smax)
 {
 	if ( !postTestValid() )
 		return;
@@ -1011,7 +1011,7 @@ RtVoid CRibWriter::postShutter(RtFloat smin, RtFloat smax)
 }
 
 
-RtVoid CRibWriter::postPixelVariance(RtFloat variation)
+RtVoid CRibWriter::postPixelVariance(CRiPixelVariance &obj, RtFloat variation)
 {
 	if ( !postTestValid() )
 		return;
@@ -1024,7 +1024,7 @@ RtVoid CRibWriter::postPixelVariance(RtFloat variation)
 }
 
 
-RtVoid CRibWriter::postPixelSamples(RtFloat xsamples, RtFloat ysamples)
+RtVoid CRibWriter::postPixelSamples(CRiPixelSamples &obj, RtFloat xsamples, RtFloat ysamples)
 {
 	if ( !postTestValid() )
 		return;
@@ -1039,7 +1039,7 @@ RtVoid CRibWriter::postPixelSamples(RtFloat xsamples, RtFloat ysamples)
 }
 
 
-RtVoid CRibWriter::postPixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
+RtVoid CRibWriter::postPixelFilter(CRiPixelFilter &obj, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
 {
 	if ( !postTestValid() )
 		return;
@@ -1056,7 +1056,7 @@ RtVoid CRibWriter::postPixelFilter(const IFilterFunc &function, RtFloat xwidth, 
 }
 
 
-RtVoid CRibWriter::postExposure(RtFloat gain, RtFloat gamma)
+RtVoid CRibWriter::postExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma)
 {
 	if ( !postTestValid() )
 		return;
@@ -1071,7 +1071,7 @@ RtVoid CRibWriter::postExposure(RtFloat gain, RtFloat gamma)
 }
 
 
-RtVoid CRibWriter::postImager(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postImager(CRiImager &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1084,7 +1084,7 @@ RtVoid CRibWriter::postImager(RtString name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
+RtVoid CRibWriter::postQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
 {
 	if ( !postTestValid() )
 		return;
@@ -1105,7 +1105,7 @@ RtVoid CRibWriter::postQuantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax,
 }
 
 
-RtVoid CRibWriter::postDisplayChannel(RtString channel, const CParameterList &params)
+RtVoid CRibWriter::postDisplayChannel(CRiDisplayChannel &obj, RtString channel, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1118,7 +1118,7 @@ RtVoid CRibWriter::postDisplayChannel(RtString channel, const CParameterList &pa
 }
 
 
-RtVoid CRibWriter::postDisplay(RtString name, RtToken type, RtString mode, const CParameterList &params)
+RtVoid CRibWriter::postDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1135,7 +1135,7 @@ RtVoid CRibWriter::postDisplay(RtString name, RtToken type, RtString mode, const
 }
 
 
-RtVoid CRibWriter::postHider(RtToken type, const CParameterList &params)
+RtVoid CRibWriter::postHider(CRiHider &obj, RtToken type, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1148,7 +1148,7 @@ RtVoid CRibWriter::postHider(RtToken type, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
+RtVoid CRibWriter::postColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 {
 	if ( !postTestValid() )
 		return;
@@ -1163,7 +1163,7 @@ RtVoid CRibWriter::postColorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 }
 
 
-RtVoid CRibWriter::postRelativeDetail(RtFloat relativedetail)
+RtVoid CRibWriter::postRelativeDetail(CRiRelativeDetail &obj, RtFloat relativedetail)
 {
 	if ( !postTestValid() )
 		return;
@@ -1176,7 +1176,7 @@ RtVoid CRibWriter::postRelativeDetail(RtFloat relativedetail)
 }
 
 
-RtVoid CRibWriter::postOption(RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postOption(CRiOption &obj, RtToken name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1189,7 +1189,7 @@ RtVoid CRibWriter::postOption(RtToken name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postLightSource(RtLightHandle h, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postLightSource(CRiLightSource &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1199,7 +1199,7 @@ RtVoid CRibWriter::postLightSource(RtLightHandle h, RtString name, const CParame
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
 	m_writer->putBlank();
-	CHandle *handle = renderState()->lightSourceHandle(h);
+	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
 		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for LightSource \"%s\"", noNullStr(name));
@@ -1215,7 +1215,7 @@ RtVoid CRibWriter::postLightSource(RtLightHandle h, RtString name, const CParame
 }
 
 
-RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postAreaLightSource(CRiAreaLightSource &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1225,7 +1225,7 @@ RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CPa
 	m_writer->putBlank();
 	m_writer->putStringToken(name);
 	m_writer->putBlank();
-	CHandle *handle = renderState()->lightSourceHandle(h);
+	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
 		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for AreaLightSource \"%s\"", noNullStr(name));
@@ -1241,7 +1241,7 @@ RtVoid CRibWriter::postAreaLightSource(RtLightHandle h, RtString name, const CPa
 }
 
 
-RtVoid CRibWriter::postAttribute(RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postAttribute(CRiAttribute &obj, RtToken name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1254,7 +1254,7 @@ RtVoid CRibWriter::postAttribute(RtToken name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postColor(RtColor Cs)
+RtVoid CRibWriter::postColor(CRiColor &obj, RtColor Cs)
 {
 	if ( !postTestValid() )
 		return;
@@ -1268,7 +1268,7 @@ RtVoid CRibWriter::postColor(RtColor Cs)
 }
 
 
-RtVoid CRibWriter::postOpacity(RtColor Os)
+RtVoid CRibWriter::postOpacity(CRiOpacity &obj, RtColor Os)
 {
 	if ( !postTestValid() )
 		return;
@@ -1282,7 +1282,7 @@ RtVoid CRibWriter::postOpacity(RtColor Os)
 }
 
 
-RtVoid CRibWriter::postSurface(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postSurface(CRiSurface &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1295,7 +1295,7 @@ RtVoid CRibWriter::postSurface(RtString name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postAtmosphere(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1308,7 +1308,7 @@ RtVoid CRibWriter::postAtmosphere(RtString name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postInterior(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postInterior(CRiInterior &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1321,7 +1321,7 @@ RtVoid CRibWriter::postInterior(RtString name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postExterior(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postExterior(CRiExterior &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1334,7 +1334,7 @@ RtVoid CRibWriter::postExterior(RtString name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postIlluminate(RtLightHandle light, RtBoolean onoff)
+RtVoid CRibWriter::postIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff)
 {
 	if ( !postTestValid() )
 		return;
@@ -1359,7 +1359,7 @@ RtVoid CRibWriter::postIlluminate(RtLightHandle light, RtBoolean onoff)
 }
 
 
-RtVoid CRibWriter::postDisplacement(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1372,7 +1372,7 @@ RtVoid CRibWriter::postDisplacement(RtString name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+RtVoid CRibWriter::postTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
 {
 	if ( !postTestValid() )
 		return;
@@ -1399,7 +1399,7 @@ RtVoid CRibWriter::postTextureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, Rt
 }
 
 
-RtVoid CRibWriter::postShadingRate(RtFloat size)
+RtVoid CRibWriter::postShadingRate(CRiShadingRate &obj, RtFloat size)
 {
 	if ( !postTestValid() )
 		return;
@@ -1412,7 +1412,7 @@ RtVoid CRibWriter::postShadingRate(RtFloat size)
 }
 
 
-RtVoid CRibWriter::postShadingInterpolation(RtToken type)
+RtVoid CRibWriter::postShadingInterpolation(CRiShadingInterpolation &obj, RtToken type)
 {
 	if ( !postTestValid() )
 		return;
@@ -1425,7 +1425,7 @@ RtVoid CRibWriter::postShadingInterpolation(RtToken type)
 }
 
 
-RtVoid CRibWriter::postMatte(RtBoolean onoff)
+RtVoid CRibWriter::postMatte(CRiMatte &obj, RtBoolean onoff)
 {
 	if ( !postTestValid() )
 		return;
@@ -1438,7 +1438,7 @@ RtVoid CRibWriter::postMatte(RtBoolean onoff)
 }
 
 
-RtVoid CRibWriter::postBound(RtBound bound)
+RtVoid CRibWriter::postBound(CRiBound &obj, RtBound bound)
 {
 	if ( !postTestValid() )
 		return;
@@ -1451,7 +1451,7 @@ RtVoid CRibWriter::postBound(RtBound bound)
 }
 
 
-RtVoid CRibWriter::postDetail(RtBound bound)
+RtVoid CRibWriter::postDetail(CRiDetail &obj, RtBound bound)
 {
 	if ( !postTestValid() )
 		return;
@@ -1464,7 +1464,7 @@ RtVoid CRibWriter::postDetail(RtBound bound)
 }
 
 
-RtVoid CRibWriter::postDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+RtVoid CRibWriter::postDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
 	if ( !postTestValid() )
 		return;
@@ -1483,7 +1483,7 @@ RtVoid CRibWriter::postDetailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptr
 }
 
 
-RtVoid CRibWriter::postGeometricApproximation(RtToken type, RtFloat value)
+RtVoid CRibWriter::postGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value)
 {
 	if ( !postTestValid() )
 		return;
@@ -1498,7 +1498,7 @@ RtVoid CRibWriter::postGeometricApproximation(RtToken type, RtFloat value)
 }
 
 
-RtVoid CRibWriter::postGeometricRepresentation(RtToken type)
+RtVoid CRibWriter::postGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type)
 {
 	if ( !postTestValid() )
 		return;
@@ -1511,7 +1511,7 @@ RtVoid CRibWriter::postGeometricRepresentation(RtToken type)
 }
 
 
-RtVoid CRibWriter::postOrientation(RtToken anOrientation)
+RtVoid CRibWriter::postOrientation(CRiOrientation &obj, RtToken anOrientation)
 {
 	if ( !postTestValid() )
 		return;
@@ -1524,7 +1524,7 @@ RtVoid CRibWriter::postOrientation(RtToken anOrientation)
 }
 
 
-RtVoid CRibWriter::postReverseOrientation(void)
+RtVoid CRibWriter::postReverseOrientation(CRiReverseOrientation &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -1535,7 +1535,7 @@ RtVoid CRibWriter::postReverseOrientation(void)
 }
 
 
-RtVoid CRibWriter::postSides(RtInt nsides)
+RtVoid CRibWriter::postSides(CRiSides &obj, RtInt nsides)
 {
 	if ( !postTestValid() )
 		return;
@@ -1548,7 +1548,7 @@ RtVoid CRibWriter::postSides(RtInt nsides)
 }
 
 
-RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+RtVoid CRibWriter::postBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
 {
 	if ( !postTestValid() )
 		return;
@@ -1579,7 +1579,7 @@ RtVoid CRibWriter::postBasis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt 
 }
 
 
-RtVoid CRibWriter::postTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
+RtVoid CRibWriter::postTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
 	if ( !postTestValid() )
 		return;
@@ -1610,7 +1610,7 @@ RtVoid CRibWriter::postTrimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], R
 }
 
 
-RtVoid CRibWriter::postIdentity(void)
+RtVoid CRibWriter::postIdentity(CRiIdentity &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -1621,7 +1621,7 @@ RtVoid CRibWriter::postIdentity(void)
 }
 
 
-RtVoid CRibWriter::postTransform(RtMatrix aTransform)
+RtVoid CRibWriter::postTransform(CRiTransform &obj, RtMatrix aTransform)
 {
 	if ( !postTestValid() )
 		return;
@@ -1634,7 +1634,7 @@ RtVoid CRibWriter::postTransform(RtMatrix aTransform)
 }
 
 
-RtVoid CRibWriter::postConcatTransform(RtMatrix aTransform)
+RtVoid CRibWriter::postConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform)
 {
 	if ( !postTestValid() )
 		return;
@@ -1647,7 +1647,7 @@ RtVoid CRibWriter::postConcatTransform(RtMatrix aTransform)
 }
 
 
-RtVoid CRibWriter::postPerspective(RtFloat fov)
+RtVoid CRibWriter::postPerspective(CRiPerspective &obj, RtFloat fov)
 {
 	if ( !postTestValid() )
 		return;
@@ -1660,7 +1660,7 @@ RtVoid CRibWriter::postPerspective(RtFloat fov)
 }
 
 
-RtVoid CRibWriter::postTranslate(RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CRibWriter::postTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( !postTestValid() )
 		return;
@@ -1677,7 +1677,7 @@ RtVoid CRibWriter::postTranslate(RtFloat dx, RtFloat dy, RtFloat dz)
 }
 
 
-RtVoid CRibWriter::postRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CRibWriter::postRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( !postTestValid() )
 		return;
@@ -1696,7 +1696,7 @@ RtVoid CRibWriter::postRotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 }
 
 
-RtVoid CRibWriter::postScale(RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CRibWriter::postScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( !postTestValid() )
 		return;
@@ -1713,7 +1713,7 @@ RtVoid CRibWriter::postScale(RtFloat dx, RtFloat dy, RtFloat dz)
 }
 
 
-RtVoid CRibWriter::postSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+RtVoid CRibWriter::postSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
 	if ( !postTestValid() )
 		return;
@@ -1738,7 +1738,7 @@ RtVoid CRibWriter::postSkew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1
 }
 
 
-RtVoid CRibWriter::postDeformation(RtString name, const CParameterList &params)
+RtVoid CRibWriter::postDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1751,7 +1751,7 @@ RtVoid CRibWriter::postDeformation(RtString name, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postScopedCoordinateSystem(RtToken space)
+RtVoid CRibWriter::postScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space)
 {
 	if ( !postTestValid() )
 		return;
@@ -1764,7 +1764,7 @@ RtVoid CRibWriter::postScopedCoordinateSystem(RtToken space)
 }
 
 
-RtVoid CRibWriter::postCoordinateSystem(RtToken space)
+RtVoid CRibWriter::postCoordinateSystem(CRiCoordinateSystem &obj, RtToken space)
 {
 	if ( !postTestValid() )
 		return;
@@ -1777,7 +1777,7 @@ RtVoid CRibWriter::postCoordinateSystem(RtToken space)
 }
 
 
-RtVoid CRibWriter::postCoordSysTransform(RtToken space)
+RtVoid CRibWriter::postCoordSysTransform(CRiCoordSysTransform &obj, RtToken space)
 {
 	if ( !postTestValid() )
 		return;
@@ -1790,7 +1790,7 @@ RtVoid CRibWriter::postCoordSysTransform(RtToken space)
 }
 
 
-RtVoid CRibWriter::postPolygon(RtInt nvertices, const CParameterList &params)
+RtVoid CRibWriter::postPolygon(CRiPolygon &obj, RtInt nvertices, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1801,7 +1801,7 @@ RtVoid CRibWriter::postPolygon(RtInt nvertices, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postGeneralPolygon(RtInt nloops, RtInt nverts[], const CParameterList &params)
+RtVoid CRibWriter::postGeneralPolygon(CRiGeneralPolygon &obj, RtInt nloops, RtInt nverts[], const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1814,7 +1814,7 @@ RtVoid CRibWriter::postGeneralPolygon(RtInt nloops, RtInt nverts[], const CParam
 }
 
 
-RtVoid CRibWriter::postPointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params)
+RtVoid CRibWriter::postPointsPolygons(CRiPointsPolygons &obj, RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1829,7 +1829,7 @@ RtVoid CRibWriter::postPointsPolygons(RtInt npolys, RtInt nverts[], RtInt verts[
 }
 
 
-RtVoid CRibWriter::postPointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params)
+RtVoid CRibWriter::postPointsGeneralPolygons(CRiPointsGeneralPolygons &obj, RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1847,7 +1847,7 @@ RtVoid CRibWriter::postPointsGeneralPolygons(RtInt npolys, RtInt nloops[], RtInt
 }
 
 
-RtVoid CRibWriter::postPatch(RtToken type, const CParameterList &params)
+RtVoid CRibWriter::postPatch(CRiPatch &obj, RtToken type, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1860,7 +1860,7 @@ RtVoid CRibWriter::postPatch(RtToken type, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postPatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params)
+RtVoid CRibWriter::postPatchMesh(CRiPatchMesh &obj, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1881,7 +1881,7 @@ RtVoid CRibWriter::postPatchMesh(RtToken type, RtInt nu, RtToken uwrap, RtInt nv
 }
 
 
-RtVoid CRibWriter::postNuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params)
+RtVoid CRibWriter::postNuPatch(CRiNuPatch &obj, RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1912,7 +1912,7 @@ RtVoid CRibWriter::postNuPatch(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat 
 }
 
 
-RtVoid CRibWriter::postSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params)
+RtVoid CRibWriter::postSubdivisionMesh(CRiSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1945,7 +1945,7 @@ RtVoid CRibWriter::postSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvert
 }
 
 
-RtVoid CRibWriter::postHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params)
+RtVoid CRibWriter::postHierarchicalSubdivisionMesh(CRiHierarchicalSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -1982,7 +1982,7 @@ RtVoid CRibWriter::postHierarchicalSubdivisionMesh(RtToken scheme, RtInt nfaces,
 }
 
 
-RtVoid CRibWriter::postSphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postSphere(CRiSphere &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2002,7 +2002,7 @@ RtVoid CRibWriter::postSphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloa
 }
 
 
-RtVoid CRibWriter::postCone(RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postCone(CRiCone &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2020,7 +2020,7 @@ RtVoid CRibWriter::postCone(RtFloat height, RtFloat radius, RtFloat thetamax, co
 }
 
 
-RtVoid CRibWriter::postCylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postCylinder(CRiCylinder &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2040,7 +2040,7 @@ RtVoid CRibWriter::postCylinder(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFl
 }
 
 
-RtVoid CRibWriter::postHyperboloid(RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postHyperboloid(CRiHyperboloid &obj, RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2068,7 +2068,7 @@ writeParameterList(params);
 }
 
 
-RtVoid CRibWriter::postParaboloid(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postParaboloid(CRiParaboloid &obj, RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2088,7 +2088,7 @@ RtVoid CRibWriter::postParaboloid(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFl
 }
 
 
-RtVoid CRibWriter::postDisk(RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postDisk(CRiDisk &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2106,7 +2106,7 @@ RtVoid CRibWriter::postDisk(RtFloat height, RtFloat radius, RtFloat thetamax, co
 }
 
 
-RtVoid CRibWriter::postTorus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postTorus(CRiTorus &obj, RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2128,7 +2128,7 @@ RtVoid CRibWriter::postTorus(RtFloat majorrad, RtFloat minorrad, RtFloat phimin,
 }
 
 
-RtVoid CRibWriter::postPoints(RtInt npts, const CParameterList &params)
+RtVoid CRibWriter::postPoints(CRiPoints &obj, RtInt npts, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2140,7 +2140,7 @@ RtVoid CRibWriter::postPoints(RtInt npts, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postCurves(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params)
+RtVoid CRibWriter::postCurves(CRiCurves &obj, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2157,7 +2157,7 @@ RtVoid CRibWriter::postCurves(RtToken type, RtInt ncurves, RtInt nverts[], RtTok
 }
 
 
-RtVoid CRibWriter::postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params)
+RtVoid CRibWriter::postBlobby(CRiBlobby &obj, RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2178,17 +2178,17 @@ RtVoid CRibWriter::postBlobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 
 
 
-RtVoid CRibWriter::doProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CRibWriter::doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
 	if ( !m_postponeProcedural ) {
 		m_doReadArchive = true;
 		// Can call doReadArchive()
-		CBaseRenderer::doProcedural(data, bound, subdivfunc, freefunc);
+		CBaseRenderer::doProcedural(obj, data, bound, subdivfunc, freefunc);
 		m_doReadArchive = false;
 	}
 }
 
-RtVoid CRibWriter::postProcedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CRibWriter::postProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
 	if ( m_postponeProcedural ) {
 		if ( !postTestValid() )
@@ -2204,12 +2204,12 @@ RtVoid CRibWriter::postProcedural(RtPointer data, RtBound bound, const ISubdivFu
 		m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), bound);
 		m_writer->putNewLine();
 	} else if ( renderState()->recordMode() ) {
-		doProcedural(data, bound, subdivfunc, freefunc);
+		doProcedural(obj, data, bound, subdivfunc, freefunc);
 	}
 }
 
 
-RtVoid CRibWriter::postGeometry(RtToken type, const CParameterList &params)
+RtVoid CRibWriter::postGeometry(CRiGeometry &obj, RtToken type, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2224,7 +2224,7 @@ RtVoid CRibWriter::postGeometry(RtToken type, const CParameterList &params)
 }
 
 
-RtVoid CRibWriter::postMakeTexture(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postMakeTexture(CRiMakeTexture &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2250,7 +2250,7 @@ RtVoid CRibWriter::postMakeTexture(RtString pic, RtString tex, RtToken swrap, Rt
 }
 
 
-RtVoid CRibWriter::postMakeBump(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postMakeBump(CRiMakeBump &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2276,7 +2276,7 @@ RtVoid CRibWriter::postMakeBump(RtString pic, RtString tex, RtToken swrap, RtTok
 }
 
 
-RtVoid CRibWriter::postMakeLatLongEnvironment(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postMakeLatLongEnvironment(CRiMakeLatLongEnvironment &obj, RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2298,7 +2298,7 @@ RtVoid CRibWriter::postMakeLatLongEnvironment(RtString pic, RtString tex, const 
 }
 
 
-RtVoid CRibWriter::postMakeCubeFaceEnvironment(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postMakeCubeFaceEnvironment(CRiMakeCubeFaceEnvironment &obj, RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2332,7 +2332,7 @@ RtVoid CRibWriter::postMakeCubeFaceEnvironment(RtString px, RtString nx, RtStrin
 }
 
 
-RtVoid CRibWriter::postMakeShadow(RtString pic, RtString tex, const CParameterList &params)
+RtVoid CRibWriter::postMakeShadow(CRiMakeShadow &obj, RtString pic, RtString tex, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2348,7 +2348,7 @@ RtVoid CRibWriter::postMakeShadow(RtString pic, RtString tex, const CParameterLi
 }
 
 
-RtVoid CRibWriter::postMakeBrickMap(RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params)
+RtVoid CRibWriter::postMakeBrickMap(CRiMakeBrickMap &obj, RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params)
 {
 	if ( !postTestValid() )
 		return;
@@ -2364,7 +2364,7 @@ RtVoid CRibWriter::postMakeBrickMap(RtInt nNames, RtString ptcnames[], RtString 
 
 
 
-RtVoid CRibWriter::postArchiveRecord(RtToken type, RtString line)
+RtVoid CRibWriter::postArchiveRecord(CRiArchiveRecord &obj, RtToken type, RtString line)
 {
 	if ( !postTestValid() )
 		return;
@@ -2416,26 +2416,26 @@ bool CRibWriter::willExecuteMacro(RtString name) {
 	return doExecute;
 }
 
-RtVoid CRibWriter::preReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+RtVoid CRibWriter::preReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
-	CBaseRenderer::preReadArchive(name, callback, params);
+	CBaseRenderer::preReadArchive(obj, name, callback, params);
 	m_execute = willExecuteMacro(name);
 }
 
 
-RtVoid CRibWriter::doReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+RtVoid CRibWriter::doReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
 	m_doReadArchive = false; // Clear the procedural flag
 	if ( m_execute ) {
 		bool exec = m_execute;
 		m_header = true;
-		CBaseRenderer::doReadArchive(name, callback, params);
+		CBaseRenderer::doReadArchive(obj, name, callback, params);
 		m_execute = exec;
 	}
 }
 
 
-RtVoid CRibWriter::postReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+RtVoid CRibWriter::postReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
 	if ( !m_execute ) {
 		if ( !postTestValid() )
@@ -2449,12 +2449,12 @@ RtVoid CRibWriter::postReadArchive(RtString name, const IArchiveCallback *callba
 	} else if ( renderState()->recordMode() ) {
 	    // Also print the recorded macros (do-methodes are not called)
 		// m_execute is true here, doReadArchive is not called because in record state
-		doReadArchive(name, callback, params);
+		doReadArchive(obj, name, callback, params);
 	}
 }
 
 
-RtVoid CRibWriter::postIfBegin(RtString expr)
+RtVoid CRibWriter::postIfBegin(CRiIfBegin &obj, RtString expr)
 {
 	if ( !postTestValid() )
 		return;
@@ -2469,7 +2469,7 @@ RtVoid CRibWriter::postIfBegin(RtString expr)
 }
 
 
-RtVoid CRibWriter::postElseIfBegin(RtString expr)
+RtVoid CRibWriter::postElseIfBegin(CRiElseIfBegin &obj, RtString expr)
 {
 	if ( !postTestValid() )
 		return;
@@ -2485,7 +2485,7 @@ RtVoid CRibWriter::postElseIfBegin(RtString expr)
 }
 
 
-RtVoid CRibWriter::postElseBegin(void)
+RtVoid CRibWriter::postElseBegin(CRiElseBegin &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -2498,7 +2498,7 @@ RtVoid CRibWriter::postElseBegin(void)
 }
 
 
-RtVoid CRibWriter::postIfEnd(void)
+RtVoid CRibWriter::postIfEnd(CRiIfEnd &obj)
 {
 	if ( !postTestValid() )
 		return;

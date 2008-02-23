@@ -133,6 +133,11 @@ void CVarParamRManInterfaceCall::writeRIB(CRibElementsWriter &ribWriter, RtInt n
 	}
 }
 
+void CVarParamRManInterfaceCall::getBounds(RtBound bounds) const
+{
+	// @todo Bounds, first consider RI_P then (if not found) RI_PW
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void CRiGeneralPolygon::enterValues(RtInt theNLoops, const RtInt theNVerts[])
 {

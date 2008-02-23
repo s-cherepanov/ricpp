@@ -154,17 +154,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePolygon(m_nVertices, parameters());
+		ri.prePolygon(*this, m_nVertices, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPolygon(m_nVertices, parameters());
+		ri.doPolygon(*this, m_nVertices, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPolygon(m_nVertices, parameters());
+		ri.postPolygon(*this, m_nVertices, parameters());
 	}
 
 	/** @brief Assignment.
@@ -326,21 +326,24 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preGeneralPolygon((RtInt)m_nVerts.size(),
+		ri.preGeneralPolygon(*this, 
+			(RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doGeneralPolygon((RtInt)m_nVerts.size(),
+		ri.doGeneralPolygon(*this, 
+			(RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postGeneralPolygon((RtInt)m_nVerts.size(),
+		ri.postGeneralPolygon(*this, 
+			(RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			parameters());
 	}
@@ -524,7 +527,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePointsPolygons(
+		ri.prePointsPolygons(*this, 
 			(RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			m_verts.empty() ? 0 : &m_verts[0],
@@ -533,7 +536,7 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPointsPolygons(
+		ri.doPointsPolygons(*this, 
 			(RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			m_verts.empty() ? 0 : &m_verts[0],
@@ -542,7 +545,7 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPointsPolygons(
+		ri.postPointsPolygons(*this, 
 			(RtInt)m_nVerts.size(),
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
 			m_verts.empty() ? 0 : &m_verts[0],
@@ -748,7 +751,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePointsGeneralPolygons(
+		ri.prePointsGeneralPolygons(*this, 
 			(RtInt)m_nLoops.size(),
 			m_nLoops.empty() ? 0 : &m_nLoops[0],
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
@@ -758,7 +761,7 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPointsGeneralPolygons(
+		ri.doPointsGeneralPolygons(*this, 
 			(RtInt)m_nLoops.size(),
 			m_nLoops.empty() ? 0 : &m_nLoops[0],
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
@@ -768,7 +771,7 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPointsGeneralPolygons(
+		ri.postPointsGeneralPolygons(*this, 
 			(RtInt)m_nLoops.size(),
 			m_nLoops.empty() ? 0 : &m_nLoops[0],
 			m_nVerts.empty() ? 0 : &m_nVerts[0],
@@ -908,17 +911,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePatch(m_type, parameters());
+		ri.prePatch(*this, m_type, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPatch(m_type, parameters());
+		ri.doPatch(*this, m_type, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPatch(m_type, parameters());
+		ri.postPatch(*this, m_type, parameters());
 	}
 
 	/** @brief Assignment.
@@ -1137,17 +1140,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePatchMesh(m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+		ri.prePatchMesh(*this, m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPatchMesh(m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+		ri.doPatchMesh(*this, m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPatchMesh(m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+		ri.postPatchMesh(*this, m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
 	}
 
 	/** @brief Assignment.
@@ -1418,7 +1421,8 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preNuPatch(m_nu, m_uorder,
+		ri.preNuPatch(*this, 
+			m_nu, m_uorder,
 			m_uknot.empty() ? 0 : &m_uknot[0],
 			m_umin, m_umax, m_nv, m_vorder,
 			m_vknot.empty() ? 0 : &m_vknot[0],
@@ -1428,7 +1432,8 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doNuPatch(m_nu, m_uorder,
+		ri.doNuPatch(*this, 
+			m_nu, m_uorder,
 			m_uknot.empty() ? 0 : &m_uknot[0],
 			m_umin, m_umax, m_nv, m_vorder,
 			m_vknot.empty() ? 0 : &m_vknot[0],
@@ -1438,7 +1443,8 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postNuPatch(m_nu, m_uorder,
+		ri.postNuPatch(*this, 
+			m_nu, m_uorder,
 			m_uknot.empty() ? 0 : &m_uknot[0],
 			m_umin, m_umax, m_nv, m_vorder,
 			m_vknot.empty() ? 0 : &m_vknot[0],
@@ -1697,7 +1703,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preSubdivisionMesh(
+		ri.preSubdivisionMesh(*this, 
 			m_scheme, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
@@ -1712,7 +1718,7 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSubdivisionMesh(
+		ri.doSubdivisionMesh(*this, 
 			m_scheme, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
@@ -1727,7 +1733,7 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSubdivisionMesh(
+		ri.postSubdivisionMesh(*this, 
 			m_scheme, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
@@ -2006,7 +2012,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preHierarchicalSubdivisionMesh(
+		ri.preHierarchicalSubdivisionMesh(*this, 
 			m_scheme, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
@@ -2022,7 +2028,7 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doHierarchicalSubdivisionMesh(
+		ri.doHierarchicalSubdivisionMesh(*this, 
 			m_scheme, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
@@ -2038,7 +2044,7 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postHierarchicalSubdivisionMesh(
+		ri.postHierarchicalSubdivisionMesh(*this, 
 			m_scheme, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &(m_nverts[0]),
 			m_verts.empty() ? 0 : &(m_verts[0]),
@@ -2284,16 +2290,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.preSphere(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.doSphere(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSphere(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.postSphere(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
 	/** @brief Assignment.
@@ -2501,16 +2507,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preCone(m_height, m_radius, m_thetamax, parameters());
+		ri.preCone(*this, m_height, m_radius, m_thetamax, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doCone(m_height, m_radius, m_thetamax, parameters());
+		ri.doCone(*this, m_height, m_radius, m_thetamax, parameters());
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postCone(m_height, m_radius, m_thetamax, parameters());
+		ri.postCone(*this, m_height, m_radius, m_thetamax, parameters());
 	}
 
 	/** @brief Assignment.
@@ -2743,17 +2749,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.preCylinder(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.doCylinder(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postCylinder(m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.postCylinder(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
 	/** @brief Assignment.
@@ -2997,17 +3003,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preHyperboloid(m_point1, m_point2, m_thetamax, parameters());
+		ri.preHyperboloid(*this, m_point1, m_point2, m_thetamax, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doHyperboloid(m_point1, m_point2, m_thetamax, parameters());
+		ri.doHyperboloid(*this, m_point1, m_point2, m_thetamax, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postHyperboloid(m_point1, m_point2, m_thetamax, parameters());
+		ri.postHyperboloid(*this, m_point1, m_point2, m_thetamax, parameters());
 	}
 
 	/** @brief Assignment.
@@ -3230,16 +3236,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.preParaboloid(*this, m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.doParaboloid(*this, m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postParaboloid(m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+		ri.postParaboloid(*this, m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
 	}
 
 	/** @brief Assignment.
@@ -3447,17 +3453,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preDisk(m_height, m_radius, m_thetamax, parameters());
+		ri.preDisk(*this, m_height, m_radius, m_thetamax, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doDisk(m_height, m_radius, m_thetamax, parameters());
+		ri.doDisk(*this, m_height, m_radius, m_thetamax, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postDisk(m_height, m_radius, m_thetamax, parameters());
+		ri.postDisk(*this, m_height, m_radius, m_thetamax, parameters());
 	}
 
 	/** @brief Assignment.
@@ -3721,16 +3727,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+		ri.preTorus(*this, m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+		ri.doTorus(*this, m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTorus(m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+		ri.postTorus(*this, m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 	}
 
 	/** @brief Assignment.
@@ -3867,16 +3873,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.prePoints(m_npts, parameters());
+		ri.prePoints(*this, m_npts, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doPoints(m_npts, parameters());
+		ri.doPoints(*this, m_npts, parameters());
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postPoints(m_npts, parameters());
+		ri.postPoints(*this, m_npts, parameters());
 	}
 
 	/** @brief Assignment.
@@ -4072,7 +4078,8 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preCurves(m_type, (RtInt)m_nverts.size(),
+		ri.preCurves(*this, 
+			m_type, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &m_nverts[0],
 			m_wrap,
 			parameters());
@@ -4080,7 +4087,8 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doCurves(m_type, (RtInt)m_nverts.size(),
+		ri.doCurves(*this, 
+			m_type, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &m_nverts[0],
 			m_wrap,
 			parameters());
@@ -4088,7 +4096,8 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postCurves(m_type, (RtInt)m_nverts.size(),
+		ri.postCurves(*this, 
+			m_type, (RtInt)m_nverts.size(),
 			m_nverts.empty() ? 0 : &m_nverts[0],
 			m_wrap,
 			parameters());
@@ -4288,7 +4297,8 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preBlobby(m_nleaf,
+		ri.preBlobby(*this, 
+			m_nleaf,
 			(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
 			(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
 			(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
@@ -4297,7 +4307,8 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doBlobby(m_nleaf,
+		ri.doBlobby(*this, 
+			m_nleaf,
 			(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
 			(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
 			(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
@@ -4306,7 +4317,8 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postBlobby(m_nleaf,
+		ri.postBlobby(*this, 
+			m_nleaf,
 			(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
 			(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
 			(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
@@ -4445,17 +4457,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preGeometry(m_name, parameters());
+		ri.preGeometry(*this, m_name, parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doGeometry(m_name, parameters());
+		ri.doGeometry(*this, m_name, parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postGeometry(m_name, parameters());
+		ri.postGeometry(*this, m_name, parameters());
 	}
 
 	/** @brief Assignment.

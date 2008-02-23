@@ -162,17 +162,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preBegin(m_name.c_str(), parameters());
+		ri.preBegin(*this, m_name.c_str(), parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doBegin(m_name.c_str(), parameters());
+		ri.doBegin(*this, m_name.c_str(), parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postBegin(m_name.c_str(), parameters());
+		ri.postBegin(*this, m_name.c_str(), parameters());
 	}
 
 	/** @brief Assignment.
@@ -251,17 +251,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preEnd();
+		ri.preEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doEnd();
+		ri.doEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postEnd();
+		ri.postEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -335,17 +335,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preResourceBegin();
+		ri.preResourceBegin(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doResourceBegin();
+		ri.doResourceBegin(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postResourceBegin();
+		ri.postResourceBegin(*this);
 	}
 
 	/** @brief Assignment
@@ -418,17 +418,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preResourceEnd();
+		ri.preResourceEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doResourceEnd();
+		ri.doResourceEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postResourceEnd();
+		ri.postResourceEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -528,16 +528,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preFrameBegin(m_frameNumber);
+		ri.preFrameBegin(*this, m_frameNumber);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doFrameBegin(m_frameNumber);
+		ri.doFrameBegin(*this, m_frameNumber);
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postFrameBegin(m_frameNumber);
+		ri.postFrameBegin(*this, m_frameNumber);
 	}
 
 	/** @brief Assignment
@@ -617,16 +617,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preFrameEnd();
+		ri.preFrameEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doFrameEnd();
+		ri.doFrameEnd(*this);
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postFrameEnd();
+		ri.postFrameEnd(*this);
 	}
 
 	/** @brief Assignment.
@@ -703,16 +703,16 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preWorldBegin();
+		ri.preWorldBegin(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doWorldBegin();
+		ri.doWorldBegin(*this);
 	}
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postWorldBegin();
+		ri.postWorldBegin(*this);
 	}
 
 	/** @brief Assignment
@@ -789,17 +789,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preWorldEnd();
+		ri.preWorldEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doWorldEnd();
+		ri.doWorldEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postWorldEnd();
+		ri.postWorldEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -872,17 +872,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preAttributeBegin();
+		ri.preAttributeBegin(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doAttributeBegin();
+		ri.doAttributeBegin(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postAttributeBegin();
+		ri.postAttributeBegin(*this);
 	}
 
 	/** @brief Assignment
@@ -955,17 +955,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preAttributeEnd();
+		ri.preAttributeEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doAttributeEnd();
+		ri.doAttributeEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postAttributeEnd();
+		ri.postAttributeEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -1038,17 +1038,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTransformBegin();
+		ri.preTransformBegin(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTransformBegin();
+		ri.doTransformBegin(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTransformBegin();
+		ri.postTransformBegin(*this);
 	}
 
 	/** @brief Assignment
@@ -1121,17 +1121,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preTransformEnd();
+		ri.preTransformEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doTransformEnd();
+		ri.doTransformEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postTransformEnd();
+		ri.postTransformEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -1224,17 +1224,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preSolidBegin(m_type);
+		ri.preSolidBegin(*this, m_type);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSolidBegin(m_type);
+		ri.doSolidBegin(*this, m_type);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSolidBegin(m_type);
+		ri.postSolidBegin(*this, m_type);
 	}
 
 	/** @brief Assignment
@@ -1309,17 +1309,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preSolidEnd();
+		ri.preSolidEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doSolidEnd();
+		ri.doSolidEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postSolidEnd();
+		ri.postSolidEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -1445,17 +1445,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preObjectBegin(handle(), name());
+		ri.preObjectBegin(*this, name());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doObjectBegin(handle(), name());
+		ri.doObjectBegin(*this, name());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postObjectBegin(handle(), name());
+		ri.postObjectBegin(*this, name());
 	}
 
 	/** @brief Assignment
@@ -1535,17 +1535,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preObjectEnd();
+		ri.preObjectEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doObjectEnd();
+		ri.doObjectEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postObjectEnd();
+		ri.postObjectEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -1695,17 +1695,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		handle(ri.preArchiveBegin(name(), parameters()));
+		ri.preArchiveBegin(*this, name(), parameters());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doArchiveBegin(handle(), name(), parameters());
+		ri.doArchiveBegin(*this, name(), parameters());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postArchiveBegin(handle(), name(), parameters());
+		ri.postArchiveBegin(*this, name(), parameters());
 	}
 
 	/** @brief Assignment
@@ -1785,17 +1785,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preArchiveEnd();
+		ri.preArchiveEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doArchiveEnd();
+		ri.doArchiveEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postArchiveEnd();
+		ri.postArchiveEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -1811,125 +1811,6 @@ public:
 		return *this;
 	}
 }; // CRiArchiveEnd
-
-///////////////////////////////////////////////////////////////////////////////
-/*  @brief Archive instances
- *
- *  Used only internally to read archives from memory, instead of
- *  CRiReadArchive.
- *//*
-class CRiArchiveInstance : public CVarParamRManInterfaceCall {
-protected:
-	RtArchiveHandle m_handle;
-	IArchiveCallback *m_callback;
-public:
-	inline static const char *myClassName(void) { return "CRiArchiveInstance"; }
-	inline virtual const char *className() const { return CRiArchiveInstance::myClassName(); }
-
-	inline CRiArchiveInstance(long aLineNo=-1, RtObjectHandle aHandle=illArchiveHandle,	const IArchiveCallback *aCallback = 0) : CVarParamRManInterfaceCall(aLineNo), m_handle(aHandle)
-	{
-		m_callback = aCallback ? aCallback->duplicate() : 0;
-	}
-
-	inline CRiArchiveInstance(
-		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtObjectHandle aHandle,	const IArchiveCallback *aCallback,
-		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params)
-	{
-		m_handle = aHandle;
-		m_callback = aCallback ? aCallback->duplicate() : 0;
-	}
-
-	inline CRiArchiveInstance(
-		long aLineNo,
-		RtObjectHandle aHandle, const IArchiveCallback *aCallback,
-		const CParameterList &theParameters
-		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters)
-	{
-		m_handle = aHandle;
-		m_callback = aCallback ? aCallback->duplicate() : 0;
-	}
-
-	inline CRiArchiveInstance(const CRiArchiveInstance &c)
-	{
-		*this = c;
-	}
-
-	inline virtual ~CRiArchiveInstance()
-	{
-		if ( m_callback ) {
-			delete m_callback;
-		}
-	}
-
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CRiArchiveInstance(*this);
-	}
-
-	inline virtual EnumRequests interfaceIdx() const { return REQ_ARCHIVE_INSTANCE; }
-	
-	inline virtual RtObjectHandle handle() const { return m_handle; }
-	
-	inline virtual void handle(RtObjectHandle h) { m_handle = h; }
-
-	inline const IArchiveCallback *callback() const
-	{
-		return m_callback;
-	}
-	
-	inline void callback(const IArchiveCallback *cb)
-	{
-		if ( m_callback )
-			delete m_callback;
-		m_callback = 0;
-		if ( cb )
-			m_callback = cb->duplicate();
-	}
-
-	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.preArchiveInstance(handle(), m_callback, parameters());
-	}
-
-	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.doArchiveInstance(handle(), m_callback, parameters());
-	}
-
-	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-		ri.postArchiveInstance(handle(), m_callback, parameters());
-	}
-	
-	inline virtual void preProcess(IDoRender &ri)
-	{
-		preProcess(ri, m_callback);
-	}
-
-	inline virtual void doProcess(IDoRender &ri)
-	{
-		doProcess(ri, m_callback);
-	}
-
-	inline virtual void postProcess(IDoRender &ri)
-	{
-		postProcess(ri, m_callback);
-	}
-
-	inline CRiArchiveInstance &operator=(const CRiArchiveInstance &c) {
-		if ( this == &c )
-			return *this;
-
-		handle(c.handle());
-		callback(c.callback());
-		CVarParamRManInterfaceCall::operator=(c);
-		return *this;
-	}
-}; // CRiArchiveInstance
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 /** @brief Start of a motion block.
@@ -2058,7 +1939,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preMotionBegin(
+		ri.preMotionBegin(*this, 
 			static_cast<RtInt>(m_motionVars.size()),
 			m_motionVars.empty() ? 0 : &m_motionVars[0]
 		);
@@ -2066,7 +1947,7 @@ public:
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doMotionBegin(
+		ri.doMotionBegin(*this, 
 			static_cast<RtInt>(m_motionVars.size()),
 			m_motionVars.empty() ? 0 : &m_motionVars[0]
 		);
@@ -2074,7 +1955,7 @@ public:
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postMotionBegin(
+		ri.postMotionBegin(*this, 
 			static_cast<RtInt>(m_motionVars.size()),
 			m_motionVars.empty() ? 0 : &m_motionVars[0]
 		);
@@ -2153,17 +2034,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preMotionEnd();
+		ri.preMotionEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doMotionEnd();
+		ri.doMotionEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postMotionEnd();
+		ri.postMotionEnd(*this);
 	}
 
 	/** @brief Assignment
@@ -2256,17 +2137,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preIfBegin(exprStr());
+		ri.preIfBegin(*this, exprStr());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doIfBegin(exprStr());
+		ri.doIfBegin(*this, exprStr());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postIfBegin(exprStr());
+		ri.postIfBegin(*this, exprStr());
 	}
 
 	/** @brief Assignment
@@ -2361,17 +2242,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preElseIfBegin(exprStr());
+		ri.preElseIfBegin(*this, exprStr());
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doElseIfBegin(exprStr());
+		ri.doElseIfBegin(*this, exprStr());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postElseIfBegin(exprStr());
+		ri.postElseIfBegin(*this, exprStr());
 	}
 
 	/** @brief Assignment
@@ -2446,17 +2327,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preElseBegin();
+		ri.preElseBegin(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doElseBegin();
+		ri.doElseBegin(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postElseBegin();
+		ri.postElseBegin(*this);
 	}
 
 	/** @brief Assignment
@@ -2530,17 +2411,17 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.preIfEnd();
+		ri.preIfEnd(*this);
 	}
 
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.doIfEnd();
+		ri.doIfEnd(*this);
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
-		ri.postIfEnd();
+		ri.postIfEnd(*this);
 	}
 
 	/** @brief Assignment

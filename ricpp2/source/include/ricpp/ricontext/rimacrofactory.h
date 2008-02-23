@@ -77,6 +77,10 @@ public:
 	inline CRManInterfaceFactory() {}
 	inline virtual ~CRManInterfaceFactory() {}
 
+	inline virtual void deleteRequest(CRManInterfaceCall *r) {
+		if ( r ) delete r;
+	}
+
 	inline virtual CRiErrorHandler *newRiErrorHandler(
 		long aLineNo,
 		const IErrorHandler &handler)

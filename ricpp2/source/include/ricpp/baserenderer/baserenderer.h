@@ -36,8 +36,6 @@
 
 namespace RiCPP {
 
-class IRibParserCallback;
-
 /** @brief This class is used to implement the basis of a renderer context.
  *  
  *  Finds the unique strings (tokens) for RtTokens and
@@ -91,6 +89,12 @@ class CBaseRenderer : public IDoRender {
 	 *  @see getNewAttributesFactory(), deleteAttributesFactory()
 	 */
 	CAttributesFactory *m_attributesFactory;
+
+	/** @brief Factory for ri macros
+	 *
+	 *  Used to create ri request objects (interface functions implemented as objects)
+	 */
+	CRManInterfaceFactory *m_macroFactory;
 
 	/** @brief Factory for pixel filter functions.
 	 *
@@ -221,10 +225,29 @@ protected:
 			delete ptr;
 	}
 
-	/* @brief Factory method to create a macro factory (not used, but maybe needed in future)
+	/** @brief Create the standard macro factory
+	 *  @return Newly created macro factory.
 	 */
-	// virtual CRManInterfaceFactory *getNewMacroFactory();
-	// virtual void deleteMacroFactory(CRManInterfaceFactory *ptr);
+	virtual CRManInterfaceFactory *getNewMacroFactory();
+
+	/** @brief Method to delete a macro factory
+	 * @param ptr Macro factory to delete (created by getNewMacroFactory())
+	 */
+	virtual void deleteMacroFactory(CRManInterfaceFactory *ptr);
+
+	/** @brief Gets the current macro factory
+	 *  @return macro factory that should be used by the interface
+	 */
+	virtual CRManInterfaceFactory &macroFactory();
+
+	/** @brief Query if macroFactory() is available
+	 *
+	 *  This is called by preCheck() to query if the macro factory is available.
+	 *
+	 *  @return true, macro factory is available via macroFactory()
+	 */
+	virtual bool hasMacroFactory() const { return m_macroFactory != 0; }
+
 
 	/** @brief Registers resource factories.
 	 *

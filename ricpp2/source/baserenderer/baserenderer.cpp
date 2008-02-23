@@ -48,7 +48,7 @@ CBaseRenderer::CBaseRenderer() :
 	m_optionsFactory = 0;
 	m_attributesFactory = 0;
 	m_filterFuncFactory = 0;
-	// m_macroFactory = 0;
+	m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
 }
 
@@ -79,12 +79,10 @@ CBaseRenderer::~CBaseRenderer()
 	}
 	m_modeStack = 0;
 
-	/*
 	if ( m_macroFactory ) {
 		deleteMacroFactory(m_macroFactory);
 	}
 	m_macroFactory = 0;
-	*/
 
 	if ( m_attributesResourceFactory )
 	{
@@ -93,7 +91,6 @@ CBaseRenderer::~CBaseRenderer()
 	m_attributesResourceFactory = 0;
 }
 
-/*
 CRManInterfaceFactory *CBaseRenderer::getNewMacroFactory()
 {
 	return new CRManInterfaceFactory;
@@ -103,7 +100,11 @@ void CBaseRenderer::deleteMacroFactory(CRManInterfaceFactory *ptr)
 	if ( ptr )
 		delete ptr;
 }
-*/
+CRManInterfaceFactory &CBaseRenderer::macroFactory()
+{
+	return *m_macroFactory;
+}
+
 
 RtVoid CBaseRenderer::registerRibParserCallback(IRibParserCallback &cb)
 {
@@ -169,7 +170,6 @@ void CBaseRenderer::initRenderState()
 		}
 	}
 
-	/*
 	if ( !m_macroFactory ) {
 		m_macroFactory = getNewMacroFactory();
 
@@ -177,7 +177,6 @@ void CBaseRenderer::initRenderState()
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create an macro factory");
 		}
 	}
-	*/
 
 	m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_filterFuncFactory); // , *m_macroFactory);
 
@@ -216,11 +215,9 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - transformations not available.", CRequestInfo::requestName(req));
 	}
 
-	/*
-	if ( !renderState()->hasMacroFactory() ) {
+	if ( !hasMacroFactory() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - macro factory not available.", CRequestInfo::requestName(req));
 	}
-	*/
 
 	return !renderState()->reject();
 }

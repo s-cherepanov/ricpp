@@ -322,6 +322,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\ribelements.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\ricontext.cpp"
 				>
 			</File>
@@ -393,6 +397,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\ribelements.h"
 				>
 			</File>
 			<File

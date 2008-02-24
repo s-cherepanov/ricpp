@@ -105,6 +105,13 @@ public:
 		return new CRiDeclare(aLineNo, name, declaration);	
 	}
 
+	inline virtual CRiSynchronize *newRiSynchronize(
+		long aLineNo,
+		RtToken name)
+	{
+		return new CRiSynchronize(aLineNo, name);	
+	}
+
 	inline virtual CRiSystem *newRiSystem(
 		long aLineNo,
 		RtString command)
@@ -136,6 +143,26 @@ public:
 		const CParameterList &parameters)
 	{
 		return new CRiResource(aLineNo, handle, type, parameters);
+	}
+
+	inline virtual CRiBegin *newRiBegin(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		const char *name,
+		RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return new CRiBegin(aLineNo, decl, curColorDescr, name, n, tokens, params);
+	}
+
+	inline virtual CRiBegin *newRiBegin(
+		long aLineNo,
+		const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiBegin(aLineNo, name, parameters);
+	}
+
+	inline virtual CRiEnd *newRiEnd(long aLineNo) {
+		return new CRiEnd(aLineNo);
 	}
 
 	inline virtual CRiFrameBegin *newRiFrameBegin(long aLineNo, RtInt number) {
@@ -178,8 +205,8 @@ public:
 		return new CRiSolidEnd(aLineNo);
 	}
 
-	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo, RtString name) {
-		return new CRiObjectBegin(aLineNo, name);
+	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo, RtObjectHandle handle, RtString name) {
+		return new CRiObjectBegin(aLineNo, handle, name);
 	}
 
 	inline virtual CRiObjectEnd *newRiObjectEnd(long aLineNo) {
@@ -188,18 +215,19 @@ public:
 
 	inline virtual CRiArchiveBegin *newRiArchiveBegin(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		const char *name,
+		RtArchiveHandle handle, const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
-		return new CRiArchiveBegin(aLineNo, decl, curColorDescr, name, n, tokens, params);
+		return new CRiArchiveBegin(aLineNo, decl, curColorDescr, handle, name, n, tokens, params);
 	}
 
 	inline virtual CRiArchiveBegin *newRiArchiveBegin(
 		long aLineNo,
+		RtArchiveHandle handle,
 		const char *name,
 		const CParameterList &parameters)
 	{
-		return new CRiArchiveBegin(aLineNo, name, parameters);
+		return new CRiArchiveBegin(aLineNo, handle, name, parameters);
 	}
 
 	inline virtual CRiArchiveEnd *newRiArchiveEnd(long aLineNo) {

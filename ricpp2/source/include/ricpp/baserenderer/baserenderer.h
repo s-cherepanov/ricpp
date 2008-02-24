@@ -306,6 +306,7 @@ protected:
 	 *  @param aRequest Data of a parsed and validated request.
 	 */
 	virtual void recordRequest(CRManInterfaceCall &aRequest);
+	virtual void recordRequest(CRManInterfaceCall *aRequest);
 
 	/** @brief Processes a request.
 	 *
@@ -318,6 +319,7 @@ protected:
 	 *  @param immediatly Executes immediatly, does not store request at a macro, does nt use if/then/else state.
 	 */
 	virtual void processRequest(CRManInterfaceCall &aRequest, bool immediatly = false);
+	virtual void processRequest(CRManInterfaceCall *aRequest, bool immediatly = false);
 
 	/** @brief Replays a stored request.
 	 *
@@ -365,6 +367,8 @@ public:
 	 */
 	virtual ~CBaseRenderer();
 
+	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb);
+
 	/** @brief Is called by the frontend, if the renderer is aborted due to severe errors.
 	 */
 	inline virtual RtVoid abort(void) {}
@@ -383,20 +387,13 @@ public:
 	 */
 	inline virtual RtVoid deactivate(void) {}
 
-	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb);
+	inline virtual RtVoid version() {}
 
-	/** @brief Error handler
-	 *
-	 *  @see IRiContext::preErrorHandler()
-	 *
-	 *  @param handler The error handler
-	 */
-	inline virtual RtVoid errorHandler(const IErrorHandler &handler) {}
+	virtual RtVoid errorHandler(const IErrorHandler &handler);
 
-	RtToken declare(RtToken RtToken, RtString declaration);
+	virtual RtToken declare(RtToken RtToken, RtString declaration);
 
 	virtual RtVoid controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
-	inline virtual RtVoid version() {}
 
 	virtual RtVoid synchronize(RtToken name);
 	virtual RtVoid system(RtString cmd);

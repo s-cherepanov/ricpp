@@ -641,9 +641,6 @@ RtVoid CRibWriter::postSolidEnd(CRiSolidEnd &obj)
 
 RtVoid CRibWriter::postObjectBegin(CRiObjectBegin &obj, RtString name)
 {
-	if ( !testValid() )
-		return;
-
 	CRiMacro *m = renderState()->curMacro();
 	assert (m != 0);
 
@@ -653,22 +650,27 @@ RtVoid CRibWriter::postObjectBegin(CRiObjectBegin &obj, RtString name)
 
 	m_suppressOutputVector.push_back(m_suppressOutput);
 
+	if ( !testValid() ) 
+		return;
+
 	if ( !m || m->postpone() ) {
-		writePrefix();
-		m_writer->putRequest(REQ_OBJECT_BEGIN);
-		m_writer->putBlank();
-		if ( m ) {
-			if ( m->fromHandleId() ) {
-				m_writer->putStringToken(m->handle());
+		if ( postTestValid() ) {
+			writePrefix();
+			m_writer->putRequest(REQ_OBJECT_BEGIN);
+			m_writer->putBlank();
+			if ( m ) {
+				if ( m->fromHandleId() ) {
+					m_writer->putStringToken(m->handle());
+				} else {
+					m_writer->putValue(m->handleNo());
+				}
 			} else {
-				m_writer->putValue(m->handleNo());
+				m_writer->putStringToken(m->handle());
 			}
-		} else {
-			m_writer->putStringToken(m->handle());
+			m_writer->putNewLine();
+			incNestingDepth();
 		}
-		m_writer->putNewLine();
 		m_suppressOutput = false;
-		incNestingDepth();
 		if ( !m ) {
 			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Container not created for ObjectSource \"%s\"", noNullStr(obj.handle()));
 		}
@@ -680,16 +682,15 @@ RtVoid CRibWriter::postObjectBegin(CRiObjectBegin &obj, RtString name)
 
 RtVoid CRibWriter::preObjectEnd(CRiObjectEnd &obj)
 {
-	CRiMacro *m = renderState()->curMacro();
-
 	CBaseRenderer::preObjectEnd(obj);
 
 	if ( !testValid() ) 
 		return;
 
+	CRiMacro *m = renderState()->curMacro();
 	assert (m != 0);
 	if ( !m || m->postpone() ) {
-		if ( testValid() ) {
+		if ( postTestValid() ) {
 			decNestingDepth();
 			writePrefix();
 			m_writer->putRequest(REQ_OBJECT_END);
@@ -808,6 +809,9 @@ RtVoid CRibWriter::postResourceEnd(CRiResourceEnd &obj)
 
 RtVoid CRibWriter::postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CParameterList &params)
 {
+	if ( !testValid() ) 
+		return;
+
 	CRiMacro *m = renderState()->curMacro();
 	assert (m != 0);
 
@@ -825,8 +829,8 @@ RtVoid CRibWriter::postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CP
 			m_writer->putBlank();
 			m_writer->putStringToken(name);
 			writeParameterList(params);
+			incNestingDepth();
 		}
-		incNestingDepth();
 	} else {
 		m_suppressOutput = true;
 	}
@@ -835,14 +839,16 @@ RtVoid CRibWriter::postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CP
 
 RtVoid CRibWriter::preArchiveEnd(CRiArchiveEnd &obj)
 {
-	CRiMacro *m = renderState()->curMacro();
-
 	CBaseRenderer::preArchiveEnd(obj);
 
+	if ( !testValid() ) 
+		return;
+
+	CRiMacro *m = renderState()->curMacro();
 	assert (m != 0);
 	if ( !m || m->postpone() ) {
-		decNestingDepth();
 		if ( postTestValid() ) {
+			decNestingDepth();
 			writePrefix();
 			m_writer->putRequest(REQ_ARCHIVE_END);
 			m_writer->putNewLine();

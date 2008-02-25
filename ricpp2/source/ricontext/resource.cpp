@@ -117,7 +117,7 @@ void CAttributesResource::save(IRiContext &ri)
 	if ( m_attributes )
 		delete m_attributes;
 
-	m_attributes = ri.renderState()->attributes().duplicate();
+	m_attributes = dynamic_cast<CAttributes *>(ri.renderState()->attributes().duplicate());
 }
 
 void CAttributesResource::restore(IRiContext &ri, RtToken subset)

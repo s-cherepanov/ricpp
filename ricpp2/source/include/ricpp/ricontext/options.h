@@ -516,7 +516,7 @@ namespace RiCPP {
 		inline virtual COptions *duplicateOptions(const COptions *o) const
 		{
 			if ( o )
-				return dynamic_cast<const COptions *>(o->duplicate());
+				return dynamic_cast<COptions *>(o->duplicate());
 			return 0;
 		}
 	}; // COptionsFactory

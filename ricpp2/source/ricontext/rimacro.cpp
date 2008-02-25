@@ -59,7 +59,7 @@ CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
 		return *this;
 
 	clear();
-	m_factory = aMacro.factory();
+	m_factory = aMacro.m_factory;
 	m_macroType = aMacro.m_macroType;
 	m_isClosed = aMacro.m_isClosed;
 	m_postpone = aMacro.m_postpone;
@@ -77,6 +77,7 @@ CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
 				add((*i)->duplicate());
 		}
 	}
+	return *this;
 }
 
 bool CRiMacro::add(CRManInterfaceCall *c)

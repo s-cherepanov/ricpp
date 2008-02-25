@@ -656,7 +656,7 @@ namespace RiCPP {
 		inline virtual CAttributes *duplicateAttributes(const CAttributes *a) const
 		{
 			if ( a )
-				return dynamic_cast<const CAttributes *>(a->duplicate());
+				return dynamic_cast<CAttributes *>(a->duplicate());
 			return 0;
 		}
 	}; // CAttributesFactory

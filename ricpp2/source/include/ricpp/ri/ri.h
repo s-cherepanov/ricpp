@@ -38,6 +38,8 @@
  *
  * Original dekalarations are part of [RiSPec].
  * Portions of this file are copied from the renderer Pixie.
+ *
+ * @todo copy the routines that can be used with no context to riprog, ridynload
  */
 
 #ifndef _RICPP_RICPP_RICPPCONST_H
@@ -193,6 +195,7 @@ RICPP_EXTERN(RtVoid)
     RiOrientation (RtToken orientation), RiReverseOrientation (void),
     RiSides (RtInt nsides);
 
+/*
 RICPP_EXTERN(RtVoid)
     RiIdentity (void),
     RiTransform (RtMatrix transform), RiConcatTransform (RtMatrix transform),
@@ -208,7 +211,7 @@ RICPP_EXTERN(RtVoid)
     RiCoordinateSystem (RtToken space),
     RiCoordSysTransform (RtToken space);
 
-RICPP_EXTERN(void) 
+RICPP_EXTERN(RtPoint *) 
 	RiTransformPoints (RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint *points);
 
 RICPP_EXTERN(RtVoid) 
@@ -335,6 +338,7 @@ RICPP_EXTERN(RtVoid)
     RiArchiveRecord (RtToken type, char *format, ...),
     RiReadArchive (RtString filename, RtArchiveCallback callback, ...),
     RiReadArchiveV (RtString filename, RtArchiveCallback callback, int n, RtToken tokens[], RtPointer params[]);
+*/
 
 #ifdef __cplusplus
 } // extern "C"

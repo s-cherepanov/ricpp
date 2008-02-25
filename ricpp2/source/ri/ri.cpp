@@ -427,5 +427,271 @@ RICPP_EXTERN(RtVoid) RiDisplayChannelV (RtToken channel,RtInt n, RtToken tokens[
 	POSTAMBLE
 }
 
+// ----------------------------------------------------------------------------
+
+RICPP_EXTERN(RtVoid) RiHider (RtToken type, ...)
+{
+	PREAMBLE
+		GETARGS(type)
+		_ricppRoot()->hiderV(type, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiHiderV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	PREAMBLE
+		_ricppRoot()->hiderV(type, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiColorSamples (RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+{
+	PREAMBLE
+		_ricppRoot()->colorSamples(N, nRGB, RGBn);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiRelativeDetail (RtFloat relativedetail)
+{
+	PREAMBLE
+		_ricppRoot()->relativeDetail(relativedetail);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiOption (char *name, ...)
+{
+	PREAMBLE
+		GETARGS(name)
+		_ricppRoot()->optionV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiOptionV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	PREAMBLE
+		_ricppRoot()->optionV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+// ----------------------------------------------------------------------------
+
+RICPP_EXTERN(RtVoid) RiAttributeBegin (void)
+{
+	PREAMBLE
+		_ricppRoot()->attributeBegin();
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiAttributeEnd (void)
+{
+	PREAMBLE
+		_ricppRoot()->attributeEnd();
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiColor (RtColor Cs)
+{
+	PREAMBLE
+		_ricppRoot()->color(Cs);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiOpacity (RtColor Cs)
+{
+	PREAMBLE
+		_ricppRoot()->opacity(Cs);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiTextureCoordinates (RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+{
+	PREAMBLE
+		_ricppRoot()->textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
+	POSTAMBLE
+}
+
+// ----------------------------------------------------------------------------
+
+RICPP_EXTERN(RtLightHandle) RiLightSource (char *name, ...)
+{
+	RtLightHandle h = illLightHandle;
+	PREAMBLE_RET(h)
+		GETARGS(name)
+		_ricppRoot()->lightSourceV(name, n, tokens, params);
+	POSTAMBLE_RET(h)
+}
+
+RICPP_EXTERN(RtLightHandle) RiLightSourceV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	RtLightHandle h = illLightHandle;
+	PREAMBLE_RET(h)
+		_ricppRoot()->lightSourceV(name, n, tokens, params);
+	POSTAMBLE_RET(h)
+}
+
+RICPP_EXTERN(RtLightHandle) RiAreaLightSource (char *name, ...)
+{
+	RtLightHandle h = illLightHandle;
+	PREAMBLE_RET(h)
+		GETARGS(name)
+		_ricppRoot()->areaLightSourceV(name, n, tokens, params);
+	POSTAMBLE_RET(h)
+}
+
+RICPP_EXTERN(RtLightHandle) RiAreaLightSourceV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	RtLightHandle h = illLightHandle;
+	PREAMBLE_RET(h)
+		_ricppRoot()->areaLightSourceV(name, n, tokens, params);
+	POSTAMBLE_RET(h)
+}
+
+// ----------------------------------------------------------------------------
+
+RICPP_EXTERN(RtVoid) RiIlluminate (RtLightHandle light, RtBoolean onoff)
+{
+	PREAMBLE
+		_ricppRoot()->illuminate(light, onoff);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiSurface (char *name, ...)
+{
+	PREAMBLE
+		GETARGS(name)
+		_ricppRoot()->surfaceV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiSurfaceV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	PREAMBLE
+		_ricppRoot()->surfaceV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiAtmosphere (char *name, ...)
+{
+	PREAMBLE
+		GETARGS(name)
+		_ricppRoot()->atmosphereV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiAtmosphereV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	PREAMBLE
+		_ricppRoot()->atmosphereV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiInterior (char *name, ...)
+{
+	PREAMBLE
+		GETARGS(name)
+		_ricppRoot()->interiorV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiInteriorV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	PREAMBLE
+		_ricppRoot()->interiorV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiExterior (char *name, ...)
+{
+	PREAMBLE
+		GETARGS(name)
+		_ricppRoot()->exteriorV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiExteriorV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	PREAMBLE
+		_ricppRoot()->exteriorV(name, n, tokens, params);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiShadingRate (RtFloat size)
+{
+	PREAMBLE
+		_ricppRoot()->shadingRate(size);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiShadingInterpolation (RtToken type)
+{
+	PREAMBLE
+		_ricppRoot()->shadingInterpolation(type);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiMatte (RtBoolean onoff)
+{
+	PREAMBLE
+		_ricppRoot()->matte(onoff);
+	POSTAMBLE
+}
+
+// ----------------------------------------------------------------------------
+
+RICPP_EXTERN(RtVoid) RiBound (RtBound bound)
+{
+	PREAMBLE
+		_ricppRoot()->bound(bound);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiDetail (RtBound bound)
+{
+	PREAMBLE
+		_ricppRoot()->detail(bound);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiDetailRange (RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+{
+	PREAMBLE
+		_ricppRoot()->detailRange(minvis, lowtran, uptran, maxvis);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiGeometricApproximation (RtToken type, RtFloat value)
+{
+	PREAMBLE
+		_ricppRoot()->geometricApproximation(type, value);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiGeometricRepresentation (RtToken type)
+{
+	PREAMBLE
+		_ricppRoot()->geometricRepresentation(type);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiOrientation (RtToken orientation)
+{
+	PREAMBLE
+		_ricppRoot()->orientation(orientation);
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiReverseOrientation (void)
+{
+	PREAMBLE
+		_ricppRoot()->reverseOrientation();
+	POSTAMBLE
+}
+
+RICPP_EXTERN(RtVoid) RiSides (RtInt nsides)
+{
+	PREAMBLE
+		_ricppRoot()->sides(nsides);
+	POSTAMBLE
+}
 
 } // extern "C"

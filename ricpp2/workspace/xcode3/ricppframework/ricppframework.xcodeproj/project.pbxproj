@@ -912,8 +912,6 @@
 		C372456F0CD5DD8E00945563 /* Header */ = {
 			isa = PBXGroup;
 			children = (
-				C3C9AE3A0D70BCCE00A04717 /* ribelements.h */,
-				C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */,
 				C37245760CD5DE3100945563 /* attributes.h */,
 				C37245770CD5DE3100945563 /* contextcreator.h */,
 				C37245780CD5DE3100945563 /* displaydesc.h */,
@@ -928,11 +926,13 @@
 				C37245810CD5DE3100945563 /* parameter.h */,
 				C37245820CD5DE3100945563 /* renderstate.h */,
 				C37245830CD5DE3100945563 /* resource.h */,
+				C3C9AE3A0D70BCCE00A04717 /* ribelements.h */,
 				C37245840CD5DE3100945563 /* ricontext.h */,
 				C37245850CD5DE3100945563 /* rimacro.h */,
 				C37245860CD5DE3100945563 /* rimacroattributes.h */,
 				C37245870CD5DE3100945563 /* rimacrobase.h */,
 				C37245880CD5DE3100945563 /* rimacrocontainer.h */,
+				C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */,
 				C37245890CD5DE3100945563 /* rimacroexternals.h */,
 				C372458A0CD5DE3100945563 /* rimacrofactory.h */,
 				C372458B0CD5DE3100945563 /* rimacrolights.h */,

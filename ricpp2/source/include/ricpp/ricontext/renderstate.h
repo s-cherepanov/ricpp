@@ -130,10 +130,6 @@ class CRenderState {
 
 	CUri m_baseUri;           ///< Base URI for current RIB archive file
 
-	/* @brief Factory for macro interfaces (not used)
-	 */
-	// CRManInterfaceFactory *m_macroFactory;
-
 	/** @brief Points to current writeable macro
 	 */
 	CRiMacro *m_curMacro;
@@ -634,7 +630,7 @@ public:
     virtual void solidEnd();
 	virtual RtToken solid() const;
 
-	virtual RtObjectHandle objectBegin(RtString name);
+	virtual RtObjectHandle objectBegin(RtString name, CRManInterfaceFactory &aFactory);
 	virtual void objectEnd();
 
 	virtual CRiObjectMacro *objectInstance(RtObjectHandle handle);
@@ -654,10 +650,10 @@ public:
 		bool isArea,
 		const char *name, const CParameterList &params);
 
-	virtual RtArchiveHandle archiveBegin(const char *aName);
+	virtual RtArchiveHandle archiveBegin(const char *aName, CRManInterfaceFactory &aFactory);
 	virtual void archiveEnd();
 
-	virtual RtArchiveHandle archiveFileBegin(const char *aName);
+	virtual RtArchiveHandle archiveFileBegin(const char *aName, CRManInterfaceFactory &aFactory);
 	virtual void archiveFileEnd();
 
 	virtual CRiArchiveMacro *findArchiveInstance(RtArchiveHandle handle);
@@ -949,9 +945,6 @@ public:
 			return m_lineNo;
 		return aLineNo;
 	}
-
-	// virtual CRManInterfaceFactory &macroFactory();
-	// virtual const CRManInterfaceFactory &macroFactory() const;
 
 	inline virtual CRiMacro *curMacro()
 	{

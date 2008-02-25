@@ -56,9 +56,11 @@ public:
 
 private:
 	std::list<CRManInterfaceCall *> m_callList;  ///< List of all interface calls for this macro.
-	EnumMacroTypes m_macroType; ///< Type of macro, either object or (inline, file) archive.
-	bool m_isClosed;            ///< true, if macro definition is completed.
-	bool m_postpone;            ///< true, if macro should be postponed (e.g. in RIB oputput), default is false
+	
+	CRManInterfaceFactory *m_factory; ///< Container used to create the contents of the macro
+	EnumMacroTypes m_macroType;       ///< Type of macro, either object or (inline, file) archive.
+	bool m_isClosed;                  ///< true, if macro definition is completed.
+	bool m_postpone;                  ///< true, if macro should be postponed (e.g. in RIB oputput), default is false
 
 public:
 
@@ -67,21 +69,39 @@ public:
 	 *  @param anId Name of the macro, file name or handle name. (@see CHandle)
 	 *  @param aHandleNo Corresponding running number of the handle (@see CHandle)
 	 *  @param isFromHandleId Flag should be true if anId was created from __handleid parameter or RIB string handle (@see CHandle)
+	 *  @param aFactory The factory that will be used to create and destroy the contents of the macro
 	 *  @param macroType Type of the macro.
 	 */
 	inline CRiMacro(
 		RtString anId = 0,
 		unsigned long aHandleNo = 0, bool isFromHandleId = false,
+		CRManInterfaceFactory *aFactory = 0,
 		EnumMacroTypes macroType = MACROTYPE_UNKNOWN
 	) :
-		CHandle(anId, aHandleNo, isFromHandleId), m_macroType(macroType),
+		CHandle(anId, aHandleNo, isFromHandleId), m_factory(aFactory), m_macroType(macroType),
 		m_isClosed(false), m_postpone(true)
 	{
+	}
+
+	inline CRiMacro(const CRiMacro &aMacro)
+	{
+		*this = aMacro;
 	}
 
 	/** @brief Destructor, frees resources.
 	 */
 	virtual ~CRiMacro();
+	
+	/** @brief Duplicates the handle
+	 *  @return Clone of *this
+	 */
+	inline virtual CHandle *duplicate() const
+	{
+		return new CRiMacro(*this);
+	}
+	
+	virtual void clear();
+	CRiMacro &operator=(const CRiMacro &aMacro);
 
 	/** @brief Replays archive with callback for RIB archives at a back end renderer.
 	 *
@@ -151,6 +171,10 @@ public:
 		m_postpone = doPostpone;
 	}
 
+	const CRManInterfaceFactory *factory() const { return m_factory; }
+	CRManInterfaceFactory *factory() { return m_factory; }
+	void factory(CRManInterfaceFactory *aFactory) { m_factory = aFactory; }
+	
 	/** @brief Gets the type of the macro.
 	 *
 	 *  Gets the type of the macro (EnumMacroTypes) for some checking.
@@ -187,8 +211,10 @@ public:
 	 *  @param isFromHandleId Flag should be true if anId was created from __handleid parameter or RIB string handle (@see CHandle)
 	 */
 	inline CRiObjectMacro(
-		RtToken anId=RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false)
-		: CRiMacro(anId, aHandleNo, isFromHandleId, MACROTYPE_OBJECT)
+		RtToken anId=RI_NULL,
+		unsigned long aHandleNo = 0, bool isFromHandleId = false,
+		CRManInterfaceFactory *aFactory = 0)
+		: CRiMacro(anId, aHandleNo, isFromHandleId, aFactory, MACROTYPE_OBJECT)
 	{
 	}
 };
@@ -208,8 +234,9 @@ public:
 	 */
 	inline CRiArchiveMacro(
 		RtToken anId = RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false,
+		CRManInterfaceFactory *aFactory = 0,
 		EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE)
-		: CRiMacro(anId, aHandleNo, isFromHandleId, aMacroType)
+		: CRiMacro(anId, aHandleNo, isFromHandleId, aFactory, aMacroType)
 	{
  	}
 };

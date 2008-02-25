@@ -34,11 +34,49 @@ using namespace RiCPP;
 ///////////////////////////////////////////////////////////////////////////////
 CRiMacro::~CRiMacro()
 {
+	clear();
+}
+
+
+void CRiMacro::clear()
+{
 	std::list<CRManInterfaceCall *>::iterator i;
-	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
-		delete *i;
+	if ( m_factory ) {
+		for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
+			m_factory->deleteRequest(*i);
+		}
+	} else {
+		for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
+			delete *i;
+		}
 	}
 	m_callList.clear();
+}
+
+CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
+{
+	if ( &aMacro == this )
+		return *this;
+
+	clear();
+	m_factory = aMacro.factory();
+	m_macroType = aMacro.m_macroType;
+	m_isClosed = aMacro.m_isClosed;
+	m_postpone = aMacro.m_postpone;
+	
+	std::list<CRManInterfaceCall *>::const_iterator i;
+
+	if ( m_factory ) {
+		for ( i = aMacro.m_callList.begin(); i != aMacro.m_callList.end(); ++i ) {
+			if ( *i )
+				add(m_factory->duplicateRequest(*i));
+		}
+	} else {
+		for ( i = aMacro.m_callList.begin(); i != aMacro.m_callList.end(); ++i ) {
+			if ( *i )
+				add((*i)->duplicate());
+		}
+	}
 }
 
 bool CRiMacro::add(CRManInterfaceCall *c)

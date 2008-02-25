@@ -272,10 +272,11 @@ namespace RiCPP {
 		 *
 		 *  @return A clone of *this.
 		 */
-		inline virtual CAttributes *duplicate()
+		inline virtual COptionsBase *duplicate() const
 		{
 			return new CAttributes(*this);
 		}
+
 
 		/** @brief Sets the current surface color.
 		 *
@@ -635,9 +636,9 @@ namespace RiCPP {
 
 		/** @brief Deletes an attribute set delivered by this factory.
 		 *
-		 *  Since the destructor is virtual, this method don_t need to be overwritten.
+		 *  Because the destructor is virtual, this method don_t need to be overwritten.
 		 *
-		 *	@brief a Attribute set to delete, had to be constructed previously by this factory.
+		 *	@param a Attribute set to delete, had to be constructed previously by this factory.
 		 */
 		inline virtual void deleteAttributes(CAttributes *a)
 		{
@@ -645,10 +646,17 @@ namespace RiCPP {
 				delete a;
 		}
 
-		inline virtual CAttributes *duplicateAttributes(CAttributes *a)
+		/** @brief Duplicates an attribute set delivered by this factory.
+		 *
+		 *  Because the duplication is virtual, this method don_t need to be overwritten.
+		 *
+		 *  @param a Attribute to duplicate
+		 *	@return A clone of @a a.
+		 */
+		inline virtual CAttributes *duplicateAttributes(const CAttributes *a) const
 		{
 			if ( a )
-				return a->duplicate();
+				return dynamic_cast<const CAttributes *>(a->duplicate());
 			return 0;
 		}
 	}; // CAttributesFactory

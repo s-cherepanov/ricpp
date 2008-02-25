@@ -79,7 +79,11 @@ namespace RiCPP {
 			*this = ga;
 		}
 		inline virtual ~COptionsBase() {}
-
+		
+		inline virtual COptionsBase *duplicate() const
+		{
+			return new COptionsBase(*this);
+		}
 
 		inline virtual void clear()
 		{

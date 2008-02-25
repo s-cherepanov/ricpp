@@ -472,7 +472,7 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 			renderState()->baseUri() = parser.absUri();
 			bool savCache = renderState()->cacheFileArchives();
 			if ( savCache ) {
-				renderState()->archiveFileBegin(name);
+				renderState()->archiveFileBegin(name, macroFactory());
 			}
 			renderState()->archiveName(name);
 			renderState()->lineNo(1);
@@ -868,7 +868,7 @@ RtObjectHandle CBaseRenderer::objectBegin(RtString name)
 	RtObjectHandle handle = illObjectHandle;
 	RICPP_PREAMBLE_RET(REQ_OBJECT_BEGIN, illObjectHandle)
 		name = renderState()->tokFindCreate(name);
-		handle = renderState()->objectBegin(name);
+		handle = renderState()->objectBegin(name, macroFactory());
 		RICPP_PROCESS_IMMEDIATE(newRiObjectBegin(renderState()->lineNo(), handle, name));
 	RICPP_POSTAMBLE_RET(illObjectHandle)
 	return handle;
@@ -1003,7 +1003,7 @@ RtArchiveHandle CBaseRenderer::archiveBeginV(RtToken name, RtInt n, RtToken toke
 	RtArchiveHandle handle = illArchiveHandle;
 	RICPP_PREAMBLE_RET(REQ_ARCHIVE_BEGIN, illArchiveHandle)
 		name = renderState()->tokFindCreate(name);
-		handle = renderState()->archiveBegin(name);
+		handle = renderState()->archiveBegin(name, macroFactory());
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
 		RICPP_PROCESS_IMMEDIATE(newRiArchiveBegin(renderState()->lineNo(), handle, name, renderState()->curParamList()));
 	RICPP_POSTAMBLE_RET(illArchiveHandle)

@@ -212,7 +212,7 @@ namespace RiCPP {
 
 		virtual ~COptions();
 
-		inline virtual COptions *duplicate()
+		inline virtual COptionsBase *duplicate() const
 		{
 			return new COptions(*this);
 		}
@@ -513,10 +513,10 @@ namespace RiCPP {
 			if ( o )
 				delete o;
 		}
-		inline virtual COptions *duplicateOptions(COptions *o)
+		inline virtual COptions *duplicateOptions(const COptions *o) const
 		{
 			if ( o )
-				return o->duplicate();
+				return dynamic_cast<const COptions *>(o->duplicate());
 			return 0;
 		}
 	}; // COptionsFactory

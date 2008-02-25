@@ -1058,7 +1058,6 @@ CRenderState::CRenderState(
 	COptionsFactory &optionsFactory,
 	CAttributesFactory &attributesFactory,
 	CFilterFuncFactory &filterFuncFactory
-	// , CRManInterfaceFactory &aMacroFactory
 	) :
 	m_resourceFactories(false),
 	m_resourceStack("RES_"),
@@ -1067,13 +1066,11 @@ CRenderState::CRenderState(
 	m_cachedArchive("CACHE_"),
 	m_lightSourceHandles("LIH_"),
 	m_lightSources("LIH_")
-// throw(ExceptRiCPPError)
 {
 	m_modeStack = &aModeStack;
 	m_optionsFactory = &optionsFactory;
 	m_attributesFactory = &attributesFactory;
 	m_filterFuncFactory = &filterFuncFactory;
-	// m_macroFactory = &aMacroFactory;
 	m_frameNumber = 0;
 	m_lineNo = -1;
 
@@ -1350,7 +1347,7 @@ CLightSource *CRenderState::newLightSource(
 }
 
 
-RtObjectHandle CRenderState::objectBegin(RtString name)
+RtObjectHandle CRenderState::objectBegin(RtString name, CRManInterfaceFactory &aFactory)
 {
 	pushOptions();
 	pushAttributes();
@@ -1363,7 +1360,7 @@ RtObjectHandle CRenderState::objectBegin(RtString name)
 	m_recordMode = true;
 	unsigned long num;
 	RtToken t = m_objectMacros.newHandle(name, num);
-	CRiObjectMacro *m = new CRiObjectMacro(t, num, notEmptyStr(name));
+	CRiObjectMacro *m = new CRiObjectMacro(t, num, notEmptyStr(name), &aFactory);
 	m_curMacro = m;
 
 	if ( executeConditionial() || m_curMacro != 0 ) {
@@ -1420,7 +1417,7 @@ const CRiArchiveMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle)
 	return m_cachedArchive.find(handle);
 }
 
-RtArchiveHandle CRenderState::archiveBegin(const char *aName)
+RtArchiveHandle CRenderState::archiveBegin(const char *aName, CRManInterfaceFactory &aFactory)
 {
 	pushOptions();
 	pushAttributes();
@@ -1434,7 +1431,7 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName)
 		m_recordMode = true;
 		unsigned long num;
 		RtToken t = m_archiveMacros.newHandle(aName, num);
-		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName));
+		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName), &aFactory);
 		m_curMacro = m;
 
 		if ( m != 0 ) {
@@ -1476,13 +1473,13 @@ void CRenderState::archiveEnd()
 	}
 }
 
-RtArchiveHandle CRenderState::archiveFileBegin(const char *aName)
+RtArchiveHandle CRenderState::archiveFileBegin(const char *aName, CRManInterfaceFactory &aFactory)
 {
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		m_macros.push_back(m_curMacro);
 		unsigned long num;
 		RtToken t = m_cachedArchive.newHandle(aName, num);
-		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName), CRiMacro::MACROTYPE_FILE);
+		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_FILE);
 		m_curMacro = m;
 		
 		// Does not influence nesting, because called within a IRi::readArchiveV()
@@ -2042,20 +2039,6 @@ void CRenderState::parseParameters(const char *aQualifier, const char *aTable, c
 		throw err;
 	}
 }
-
-/*
-CRManInterfaceFactory &CRenderState::macroFactory()
-{
-	assert(m_macroFactory != 0);
-	return *m_macroFactory;
-}
-
-const CRManInterfaceFactory &CRenderState::macroFactory() const
-{
-	assert(m_macroFactory != 0);
-	return *m_macroFactory;
-}
-*/
 
 RtArchiveHandle CRenderState::storedArchiveName(RtString archiveName) const
 {

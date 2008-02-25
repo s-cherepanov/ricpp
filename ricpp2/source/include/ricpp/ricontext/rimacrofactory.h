@@ -83,7 +83,7 @@ public:
 			delete r;
 	}
 
-	inline virtual CRManInterfaceCall *duplicateRequest(CRManInterfaceCall *r)
+	inline virtual CRManInterfaceCall *duplicateRequest(const CRManInterfaceCall *r) const
 	{
 		if ( r )
 			return r->duplicate();
@@ -119,11 +119,13 @@ public:
 		return new CRiSystem(aLineNo, command);	
 	}
 
-	inline virtual CRiResourceBegin *newRiResourceBegin(long aLineNo) {
+	inline virtual CRiResourceBegin *newRiResourceBegin(long aLineNo)
+	{
 		return new CRiResourceBegin(aLineNo);
 	}
 
-	inline virtual CRiResourceEnd *newRiResourceEnd(long aLineNo) {
+	inline virtual CRiResourceEnd *newRiResourceEnd(long aLineNo)
+	{
 		return new CRiResourceEnd(aLineNo);
 	}
 
@@ -165,51 +167,63 @@ public:
 		return new CRiEnd(aLineNo);
 	}
 
-	inline virtual CRiFrameBegin *newRiFrameBegin(long aLineNo, RtInt number) {
+	inline virtual CRiFrameBegin *newRiFrameBegin(long aLineNo, RtInt number)
+	{
 		return new CRiFrameBegin(aLineNo, number);
 	}
 
-	inline virtual CRiFrameEnd *newRiFrameEnd(long aLineNo) {
+	inline virtual CRiFrameEnd *newRiFrameEnd(long aLineNo)
+	{
 		return new CRiFrameEnd(aLineNo);
 	}
 
-	inline virtual CRiWorldBegin *newRiWorldBegin(long aLineNo) {
+	inline virtual CRiWorldBegin *newRiWorldBegin(long aLineNo)
+	{
 		return new CRiWorldBegin(aLineNo);
 	}
 
-	inline virtual CRiWorldEnd *newRiWorldEnd(long aLineNo) {
+	inline virtual CRiWorldEnd *newRiWorldEnd(long aLineNo)
+	{
 		return new CRiWorldEnd(aLineNo);
 	}
 
-	inline virtual CRiAttributeBegin *newRiAttributeBegin(long aLineNo) {
+	inline virtual CRiAttributeBegin *newRiAttributeBegin(long aLineNo)
+	{
 		return new CRiAttributeBegin(aLineNo);
 	}
 
-	inline virtual CRiAttributeEnd *newRiAttributeEnd(long aLineNo) {
+	inline virtual CRiAttributeEnd *newRiAttributeEnd(long aLineNo)
+	{
 		return new CRiAttributeEnd(aLineNo);
 	}
 
-	inline virtual CRiTransformBegin *newRiTransformBegin(long aLineNo) {
+	inline virtual CRiTransformBegin *newRiTransformBegin(long aLineNo)
+	{
 		return new CRiTransformBegin(aLineNo);
 	}
 
-	inline virtual CRiTransformEnd *newRiTransformEnd(long aLineNo) {
+	inline virtual CRiTransformEnd *newRiTransformEnd(long aLineNo)
+	{
 		return new CRiTransformEnd(aLineNo);
 	}
 
-	inline virtual CRiSolidBegin *newRiSolidBegin(long aLineNo, RtToken operation) {
+	inline virtual CRiSolidBegin *newRiSolidBegin(long aLineNo, RtToken operation)
+	{
 		return new CRiSolidBegin(aLineNo, operation);
 	}
 
-	inline virtual CRiSolidEnd *newRiSolidEnd(long aLineNo) {
+	inline virtual CRiSolidEnd *newRiSolidEnd(long aLineNo)
+	{
 		return new CRiSolidEnd(aLineNo);
 	}
 
-	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo, RtObjectHandle handle, RtString name) {
+	inline virtual CRiObjectBegin *newRiObjectBegin(long aLineNo, RtObjectHandle handle, RtString name)
+	{
 		return new CRiObjectBegin(aLineNo, handle, name);
 	}
 
-	inline virtual CRiObjectEnd *newRiObjectEnd(long aLineNo) {
+	inline virtual CRiObjectEnd *newRiObjectEnd(long aLineNo)
+	{
 		return new CRiObjectEnd(aLineNo);
 	}
 
@@ -230,47 +244,58 @@ public:
 		return new CRiArchiveBegin(aLineNo, handle, name, parameters);
 	}
 
-	inline virtual CRiArchiveEnd *newRiArchiveEnd(long aLineNo) {
+	inline virtual CRiArchiveEnd *newRiArchiveEnd(long aLineNo)
+	{
 		return new CRiArchiveEnd(aLineNo);
 	}
 
-	inline virtual CRiMotionBegin *newRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) {
+	inline virtual CRiMotionBegin *newRiMotionBegin(long aLineNo, RtInt n, RtFloat *f)
+	{
 		return new CRiMotionBegin(aLineNo, n, f);
 	}
 
-	inline virtual CRiMotionEnd *newRiMotionEnd(long aLineNo) {
+	inline virtual CRiMotionEnd *newRiMotionEnd(long aLineNo)
+	{
 		return new CRiMotionEnd(aLineNo);
 	}
 
-	inline virtual CRiIfBegin *newRiIfBegin(long aLineNo, RtString exprStr) {
+	inline virtual CRiIfBegin *newRiIfBegin(long aLineNo, RtString exprStr)
+	{
 		return new CRiIfBegin(aLineNo, exprStr);
 	}
 
-	inline virtual CRiElseIfBegin *newRiElseIfBegin(long aLineNo, RtString exprStr) {
+	inline virtual CRiElseIfBegin *newRiElseIfBegin(long aLineNo, RtString exprStr)
+	{
 		return new CRiElseIfBegin(aLineNo, exprStr);
 	}
 
-	inline virtual CRiElseBegin *newRiElseBegin(long aLineNo) {
+	inline virtual CRiElseBegin *newRiElseBegin(long aLineNo)
+	{
 		return new CRiElseBegin(aLineNo);
 	}
 
-	inline virtual CRiIfEnd *newRiIfEnd(long aLineNo) {
+	inline virtual CRiIfEnd *newRiIfEnd(long aLineNo)
+	{
 		return new CRiIfEnd(aLineNo);
 	}
 
-	inline virtual CRiFormat *newRiFormat(long aLineNo, RtInt xres, RtInt yres, RtFloat aspect) {
+	inline virtual CRiFormat *newRiFormat(long aLineNo, RtInt xres, RtInt yres, RtFloat aspect)
+	{
 		return new CRiFormat(aLineNo, xres, yres, aspect);
 	}
 
-	inline virtual CRiFrameAspectRatio *newRiFrameAspectRatio(long aLineNo, RtFloat aspect) {
+	inline virtual CRiFrameAspectRatio *newRiFrameAspectRatio(long aLineNo, RtFloat aspect)
+	{
 		return new CRiFrameAspectRatio(aLineNo, aspect);
 	}
 
-	inline virtual CRiScreenWindow *newRiScreenWindow(long aLineNo, RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {
+	inline virtual CRiScreenWindow *newRiScreenWindow(long aLineNo, RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
+	{
 		return new CRiScreenWindow(aLineNo, left, right, bot, top);
 	}
 
-	inline virtual CRiCropWindow *newRiCropWindow(long aLineNo, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {
+	inline virtual CRiCropWindow *newRiCropWindow(long aLineNo, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
+	{
 		return new CRiCropWindow(aLineNo, xmin, xmax, ymin, ymax);
 	}
 
@@ -290,35 +315,43 @@ public:
 		return new CRiProjection(aLineNo, name, parameters);
 	}
 
-	inline virtual CRiClipping *newRiClipping(long aLineNo, RtFloat hither, RtFloat yon) {
+	inline virtual CRiClipping *newRiClipping(long aLineNo, RtFloat hither, RtFloat yon)
+	{
 		return new CRiClipping(aLineNo, hither, yon);
 	}
 
-	inline virtual CRiClippingPlane *newRiClippingPlane(long aLineNo, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {
+	inline virtual CRiClippingPlane *newRiClippingPlane(long aLineNo, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
+	{
 		return new CRiClippingPlane(aLineNo, x, y, z, nx, ny, nz);
 	}
 
-	inline virtual CRiDepthOfField *newRiDepthOfField(long aLineNo, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {
+	inline virtual CRiDepthOfField *newRiDepthOfField(long aLineNo, RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
+	{
 		return new CRiDepthOfField(aLineNo, fstop, focallength, focaldistance);
 	}
 
-	inline virtual CRiShutter *newRiShutter(long aLineNo, RtFloat smin, RtFloat smax) {
+	inline virtual CRiShutter *newRiShutter(long aLineNo, RtFloat smin, RtFloat smax)
+	{
 		return new CRiShutter(aLineNo, smin, smax);
 	}
 
-	inline virtual CRiPixelVariance *newRiPixelVariance(long aLineNo, RtFloat variation) {
+	inline virtual CRiPixelVariance *newRiPixelVariance(long aLineNo, RtFloat variation)
+	{
 		return new CRiPixelVariance(aLineNo, variation);
 	}
 
-	inline virtual CRiPixelSamples *newRiPixelSamples(long aLineNo, RtFloat xsamples, RtFloat ysamples) {
+	inline virtual CRiPixelSamples *newRiPixelSamples(long aLineNo, RtFloat xsamples, RtFloat ysamples)
+	{
 		return new CRiPixelSamples(aLineNo, xsamples, ysamples);
 	}
 
-	inline virtual CRiPixelFilter *newRiPixelFilter(long aLineNo, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) {
+	inline virtual CRiPixelFilter *newRiPixelFilter(long aLineNo, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
+	{
 		return new CRiPixelFilter(aLineNo, function, xwidth, ywidth);
 	}
 
-	inline virtual CRiExposure *newRiExposure(long aLineNo, RtFloat gain, RtFloat gamma) {
+	inline virtual CRiExposure *newRiExposure(long aLineNo, RtFloat gain, RtFloat gamma)
+	{
 		return new CRiExposure(aLineNo, gain, gamma);
 	}
 
@@ -338,7 +371,8 @@ public:
 		return new CRiImager(aLineNo, name, parameters);
 	}
 
-	inline virtual CRiQuantize *newRiQuantize(long aLineNo, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) {
+	inline virtual CRiQuantize *newRiQuantize(long aLineNo, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
+	{
 		return new CRiQuantize(aLineNo, type, one, qmin, qmax, ampl);
 	}
 
@@ -390,11 +424,13 @@ public:
 		return new CRiHider(aLineNo, type, parameters);
 	}
 
-	inline virtual CRiColorSamples *newRiColorSamples(long aLineNo, RtInt N, RtFloat *nRGB, RtFloat *RGBn) {
+	inline virtual CRiColorSamples *newRiColorSamples(long aLineNo, RtInt N, RtFloat *nRGB, RtFloat *RGBn)
+	{
 		return new CRiColorSamples(aLineNo, N, nRGB, RGBn);
 	}
 
-	inline virtual CRiRelativeDetail *newRiRelativeDetail(long aLineNo, RtFloat relativedetail) {
+	inline virtual CRiRelativeDetail *newRiRelativeDetail(long aLineNo, RtFloat relativedetail)
+	{
 		return new CRiRelativeDetail(aLineNo, relativedetail);
 	}
 
@@ -564,95 +600,118 @@ public:
 		return new CRiDisplacement(aLineNo, name, parameters);
 	}
 
-	inline virtual CRiTextureCoordinates *newRiTextureCoordinates(long aLineNo, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {
+	inline virtual CRiTextureCoordinates *newRiTextureCoordinates(long aLineNo, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+	{
 		return new CRiTextureCoordinates(aLineNo, s1, t1, s2, t2, s3, t3, s4, t4);
 	}
 
-	inline virtual CRiShadingRate *newRiShadingRate(long aLineNo, RtFloat size) {
+	inline virtual CRiShadingRate *newRiShadingRate(long aLineNo, RtFloat size)
+	{
 		return new CRiShadingRate(aLineNo, size);
 	}
 
-	inline virtual CRiShadingInterpolation *newRiShadingInterpolation(long aLineNo, RtToken type) {
+	inline virtual CRiShadingInterpolation *newRiShadingInterpolation(long aLineNo, RtToken type)
+	{
 		return new CRiShadingInterpolation(aLineNo, type);
 	}
 
-	inline virtual CRiMatte *newRiMatte(long aLineNo, RtBoolean onoff) {
+	inline virtual CRiMatte *newRiMatte(long aLineNo, RtBoolean onoff)
+	{
 		return new CRiMatte(aLineNo, onoff);
 	}
 
-	inline virtual CRiBound *newRiBound(long aLineNo, RtBound bound) {
+	inline virtual CRiBound *newRiBound(long aLineNo, RtBound bound)
+	{
 		return new CRiBound(aLineNo, bound);
 	}
 
-	inline virtual CRiDetail *newRiDetail(long aLineNo, RtBound bound) {
+	inline virtual CRiDetail *newRiDetail(long aLineNo, RtBound bound)
+	{
 		return new CRiDetail(aLineNo, bound);
 	}
 
-	inline virtual CRiDetailRange *newRiDetailRange(long aLineNo, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) {
+	inline virtual CRiDetailRange *newRiDetailRange(long aLineNo, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+	{
 		return new CRiDetailRange(aLineNo, minvis, lowtran, uptran, maxvis);
 	}
 
-	inline virtual CRiGeometricApproximation *newRiGeometricApproximation(long aLineNo, RtToken type, RtFloat value) {
+	inline virtual CRiGeometricApproximation *newRiGeometricApproximation(long aLineNo, RtToken type, RtFloat value)
+	{
 		return new CRiGeometricApproximation(aLineNo, type, value);
 	}
 
-	inline virtual CRiGeometricRepresentation *newRiGeometricRepresentation(long aLineNo, RtToken type) {
+	inline virtual CRiGeometricRepresentation *newRiGeometricRepresentation(long aLineNo, RtToken type)
+	{
 		return new CRiGeometricRepresentation(aLineNo, type);
 	}
 
-	inline virtual CRiOrientation *newRiOrientation(long aLineNo, RtToken orientation) {
+	inline virtual CRiOrientation *newRiOrientation(long aLineNo, RtToken orientation)
+	{
 		return new CRiOrientation(aLineNo, orientation);
 	}
 
-	inline virtual CRiReverseOrientation *newRiReverseOrientation(long aLineNo) {
+	inline virtual CRiReverseOrientation *newRiReverseOrientation(long aLineNo)
+	{
 		return new CRiReverseOrientation(aLineNo);
 	}
 
-	inline virtual CRiSides *newRiSides(long aLineNo, RtInt nsides) {
+	inline virtual CRiSides *newRiSides(long aLineNo, RtInt nsides)
+	{
 		return new CRiSides(aLineNo, nsides);
 	}
 
-	inline virtual CRiBasis *newRiBasis(long aLineNo, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) {
+	inline virtual CRiBasis *newRiBasis(long aLineNo, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+	{
 		return new CRiBasis(aLineNo, ubasis, ustep, vbasis, vstep);
 	}
 
-	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]) {
+	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
+	{
 		return new CRiTrimCurve(aLineNo, nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}
 
-	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, const CTrimCurveData &CRimCurve) {
+	inline virtual CRiTrimCurve *newRiTrimCurve(long aLineNo, const CTrimCurveData &CRimCurve)
+	{
 		return new CRiTrimCurve(aLineNo, CRimCurve);
 	}
 
-	inline virtual CRiIdentity *newRiIdentity(long aLineNo) {
+	inline virtual CRiIdentity *newRiIdentity(long aLineNo)
+	{
 		return new CRiIdentity(aLineNo);
 	}
 
-	inline virtual CRiTransform *newRiTransform(long aLineNo, RtMatrix transform) {
+	inline virtual CRiTransform *newRiTransform(long aLineNo, RtMatrix transform)
+	{
 		return new CRiTransform(aLineNo, transform);
 	}
 
-	inline virtual CRiConcatTransform *newRiConcatTransform(long aLineNo, RtMatrix transform) {
+	inline virtual CRiConcatTransform *newRiConcatTransform(long aLineNo, RtMatrix transform)
+	{
 		return new CRiConcatTransform(aLineNo, transform);
 	}
 
-	inline virtual CRiPerspective *newRiPerspective(long aLineNo, RtFloat fov) {
+	inline virtual CRiPerspective *newRiPerspective(long aLineNo, RtFloat fov)
+	{
 		return new CRiPerspective(aLineNo, fov);
 	}
 
-	inline virtual CRiTranslate *newRiTranslate(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz) {
+	inline virtual CRiTranslate *newRiTranslate(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz)
+	{
 		return new CRiTranslate(aLineNo, dx, dy, dz);
 	}
 
-	inline virtual CRiRotate *newRiRotate(long aLineNo, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {
+	inline virtual CRiRotate *newRiRotate(long aLineNo, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+	{
 		return new CRiRotate(aLineNo, angle, dx, dy, dz);
 	}
 
-	inline virtual CRiScale *newRiScale(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz) {
+	inline virtual CRiScale *newRiScale(long aLineNo, RtFloat dx, RtFloat dy, RtFloat dz)
+	{
 		return new CRiScale(aLineNo, dx, dy, dz);
 	}
 
-	inline virtual CRiSkew *newRiSkew(long aLineNo, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {
+	inline virtual CRiSkew *newRiSkew(long aLineNo, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+	{
 		return new CRiSkew(aLineNo, angle, dx1, dy1, dz1, dx2, dy2, dz2);
 	}
 
@@ -671,19 +730,23 @@ public:
 		return new CRiDeformation(aLineNo, name, parameters);
 	}
 
-	inline virtual CRiCoordinateSystem *newRiCoordinateSystem(long aLineNo, const char *name) {
+	inline virtual CRiCoordinateSystem *newRiCoordinateSystem(long aLineNo, const char *name)
+	{
 		return new CRiCoordinateSystem(aLineNo, name);
 	}
 
-	inline virtual CRiScopedCoordinateSystem *newRiScopedCoordinateSystem(long aLineNo, const char *name) {
+	inline virtual CRiScopedCoordinateSystem *newRiScopedCoordinateSystem(long aLineNo, const char *name)
+	{
 		return new CRiScopedCoordinateSystem(aLineNo, name);
 	}
 
-	inline virtual CRiCoordSysTransform *newRiCoordSysTransform(long aLineNo, const char *name) {
+	inline virtual CRiCoordSysTransform *newRiCoordSysTransform(long aLineNo, const char *name)
+	{
 		return new CRiCoordSysTransform(aLineNo, name);
 	}
 
-	inline virtual CRiTransformPoints *newRiTransformPoints(long aLineNo, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint *points) {
+	inline virtual CRiTransformPoints *newRiTransformPoints(long aLineNo, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint *points)
+	{
 		return new CRiTransformPoints(aLineNo, fromspace, tospace, npoints, points);
 	}
 

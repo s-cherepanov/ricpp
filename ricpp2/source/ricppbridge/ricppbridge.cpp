@@ -221,8 +221,8 @@ RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
 	if ( n == 0 ) {
 		m_tokens.resize(1);
 		m_params.resize(1);
-		m_tokens[0] = NULL;
-		m_params[0] = NULL;
+		m_tokens[0] = 0;
+		m_params[0] = 0;
 	}
 
 	return n;
@@ -339,7 +339,7 @@ RtVoid CRiCPPBridge::errorHandler(const IErrorHandler &handler)
 
 RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt severity, int line, const char *file, RtString message, va_list argList)
 {
-	assert(m_outer != NULL);
+	assert(m_outer != 0);
 	m_outer->m_lastError = code;
 
 	// Do no more error handling if the context is already aborted
@@ -706,7 +706,7 @@ RtVoid CRiCPPBridge::motionBegin(RtInt N, RtFloat sample, ...)
 	}
 	va_end(marker);
 
-	motionBeginV(N, samples.empty() ? NULL : &samples[0]);
+	motionBeginV(N, samples.empty() ? 0 : &samples[0]);
 	// No try and catch, simple call to ...V() function, exception handling is done there
 }
 
@@ -1945,7 +1945,7 @@ RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt
 		if ( !m_ctxMgmt.curBackend().aborted() )
 			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::transformPoints(fromspace:%s, tospace:%s, npoints:%d, ...)", fromspace ? fromspace : "", tospace ? tospace : "", (int)npoints);
 	}
-	return NULL;
+	return 0;
 }
 
 /******************************************************************************/

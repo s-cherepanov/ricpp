@@ -45,7 +45,7 @@ public:
 	inline virtual IFilterFunc *duplicate() const { return new CGaussianFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
-	inline virtual IFilterFunc &singleton() const { return func; }
+	inline virtual const IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The box pixel filter.
@@ -57,7 +57,7 @@ public:
 	inline virtual IFilterFunc *duplicate() const { return new CBoxFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
-	inline virtual IFilterFunc &singleton() const { return func; }
+	inline virtual const IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The triangle pixel filter.
@@ -69,7 +69,7 @@ public:
 	inline virtual IFilterFunc *duplicate() const { return new CTriangleFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
-	inline virtual IFilterFunc &singleton() const { return func; }
+	inline virtual const IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The Catmull-Rom pixel filter.
@@ -81,7 +81,7 @@ public:
 	inline virtual IFilterFunc *duplicate() const { return new CCatmullRomFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
-	inline virtual IFilterFunc &singleton() const { return func; }
+	inline virtual const IFilterFunc &singleton() const { return func; }
 };
 
 /** @brief The sinc pixel filter.
@@ -93,7 +93,7 @@ public:
 	inline virtual IFilterFunc *duplicate() const { return new CSincFilter(*this); }
 	inline virtual RtToken name() const { return myName(); }
 	virtual RtFloat operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const;
-	inline virtual IFilterFunc &singleton() const { return func; }
+	inline virtual const IFilterFunc &singleton() const { return func; }
 };
 
 
@@ -106,7 +106,7 @@ public:
 	virtual IFilterFunc *newFunc(RtToken name);
 	virtual void deleteFunc(IFilterFunc *f);
 
-	virtual IFilterFunc *singleton(RtToken name) const;
+	virtual const IFilterFunc *singleton(RtToken name) const;
 };
 
 } // namespace RiCPP

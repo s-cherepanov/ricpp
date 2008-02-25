@@ -1049,7 +1049,13 @@ RtVoid CRibWriter::postPixelFilter(CRiPixelFilter &obj, const IFilterFunc &funct
 {
 	if ( !postTestValid() )
 		return;
-
+	if ( emptyStr(function.name()) ) {
+		// throw error
+		throw ExceptRiCPPError(
+			RIE_MISSINGDATA, RIE_ERROR,
+			renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__),
+			"Unknown name of pixel filter.");
+	}
 	writePrefix();
 	m_writer->putRequest(REQ_PIXEL_FILTER);
 	m_writer->putBlank();

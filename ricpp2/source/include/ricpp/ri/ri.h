@@ -36,7 +36,8 @@
                    All rights Reservered
  @endverbatim
  *
- * Portions of this file are copied from the renderer Pixie
+ * Original dekalarations are part of [RiSPec].
+ * Portions of this file are copied from the renderer Pixie.
  */
 
 #ifndef _RICPP_RICPP_RICPPCONST_H
@@ -48,23 +49,21 @@
 #endif _RICPP_RICPP_RICPPTOKENS_H
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
 namespace RiCPP {
 #endif
 
-#define RICPP_EXTERN(type) extern type
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 //
 //	Missing type definitions
 //
 ////////////////////////////////////////////////////////////////////////
-typedef RtFloat		(*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
 typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, char *msg);
-typedef RtVoid		(*RtFunc)(const char *);
+typedef RtVoid      (*RtProcSubdivFunc)(RtPointer, RtFloat);
+typedef RtVoid      (*RtProcFreeFunc)(RtPointer);
 typedef RtVoid		(*RtArchiveCallback)(const char *,...);
 
 
@@ -74,6 +73,28 @@ typedef RtVoid		(*RtArchiveCallback)(const char *,...);
 //
 ////////////////////////////////////////////////////////////////////////
 RICPP_EXTERN(RtInt)		RiLastError;
+
+////////////////////////////////////////////////////////////////////////
+//
+//	Additional functions
+//
+////////////////////////////////////////////////////////////////////////
+RICPP_EXTERN(RtContextHandle)
+    RiCPPBegin (RtToken name, ...),
+	RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[]);
+
+RICPP_EXTERN(RtVoid)
+	RiCPPEnd (void);
+
+RICPP_EXTERN(RtObjectHandle) 
+	RiCPPObjectBegin (RtToken name);
+
+RICPP_EXTERN(RtVoid)
+	RiCPPObjectEnd (void);
+
+RICPP_EXTERN(RtVoid)
+    RiCPPControl (RtToken name, ...),
+	RiCPPControlV (RtToken name, int n, RtToken tokens[], RtPointer params[]);
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -88,11 +109,9 @@ RICPP_EXTERN(RtContextHandle)
 	RiGetContext(void);
 
 RICPP_EXTERN(RtVoid)
-	RiContext(RtContextHandle);
-
-RICPP_EXTERN(RtContextHandle)
-    RiCPPBegin (RtToken name, ...),
-	RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[]);
+	RiContext(RtContextHandle),
+	RiSynchronize(RtToken),
+	RiSystem(RtString);
 
 RICPP_EXTERN(RtVoid)
     RiBegin (RtToken name),
@@ -125,13 +144,12 @@ RICPP_EXTERN(RtVoid)
 	RiDisplayChannel (RtToken channel, ...),
     RiDisplayChannelV (RtToken channel,RtInt n, RtToken tokens[], RtPointer params[]);
 
+// Implemented in filters.cpp
 RICPP_EXTERN(RtFloat)
     RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
     RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
     RiTriangleFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-	RiMitchellFilter( RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
     RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiBlackmanHarrisFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
     RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth);
 
 RICPP_EXTERN(RtVoid)
@@ -236,7 +254,7 @@ RICPP_EXTERN(RtVoid)
     RiTorusV (RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]),
     RiCurves (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, ...),
     RiCurvesV (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiProcedural (RtPointer data, RtBound bound, RtVoid (*subdivfunc) (RtPointer, RtFloat), RtVoid (*freefunc) (RtPointer)),
+	RiProcedural(RtPointer data, RtBound bound, RtVoid (*subdivfunc)(RtPointer, RtFloat), RtVoid (*freefunc)(RtPointer)),
     RiGeometry (RtToken type, ...),
     RiGeometryV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 
@@ -247,6 +265,8 @@ RICPP_EXTERN(RtVoid)
     RiPointsV (RtInt npts, RtInt n, RtToken tokens[], RtPointer params[]),
     RiSubdivisionMesh (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], ...),
     RiSubdivisionMeshV (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt n, RtToken tokens[], RtPointer params[]),
+    RiHierarchicalSubdivisionMesh (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], ...),
+    RiHierarchicalSubdivisionMeshV (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt n, RtToken tokens[], RtPointer params[]),
     RiBlobby (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], ...),
     RiBlobbyV (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]);
 
@@ -317,11 +337,12 @@ RICPP_EXTERN(RtVoid)
     RiReadArchiveV (RtString filename, RtArchiveCallback callback, int n, RtToken tokens[], RtPointer params[]);
 
 #ifdef __cplusplus
-} // namespace RiCPP
+} // extern "C"
 #endif
 
 #ifdef __cplusplus
-} // extern "C"
+} // namespace RiCPP
 #endif
+
 
 #endif // _RICPP_RICPP_RICPPTYPES_H

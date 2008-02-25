@@ -159,7 +159,7 @@ namespace RiCPP {
 		RtFloat m_xSamples,         ///< sampling rate in horizontal direction 2
 				m_ySamples;         ///< sampling rate in vertical direction 2
 
-		IFilterFunc *m_filterFunc;  ///< Default filter func for CRi::pixelFilter(), default CGaussianFilter
+		const IFilterFunc *m_filterFunc;  ///< Default filter func for CRi::pixelFilter(), default CGaussianFilter
 		RtFloat m_xWidth,           ///< X-width of the filter in pixels, default 2
 				m_yWidth;           ///< Y-width of the filter in pixels, default 2
 

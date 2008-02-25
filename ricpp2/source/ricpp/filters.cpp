@@ -35,25 +35,24 @@
 
 using namespace RiCPP;
 
-//
-// CGaussianFilter
-//
-RtToken CGaussianFilter::myName() {return RI_GAUSSIAN; }
-RtFloat	CGaussianFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
-{
+// Various filters
+
+extern "C" {
+
+#ifdef RICPP_EXTERN
+#undef RICPP_EXTERN
+#endif
+#define RICPP_EXTERN(atype) atype
+
+RICPP_EXTERN(RtFloat)
+RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	x *= (RtFloat)(2.0 / xwidth);
 	y *= (RtFloat)(2.0 / ywidth);
 	return (RtFloat)exp(-2.0 * (x*x + y*y));
 }
 
-CGaussianFilter CGaussianFilter::func;
-
-//
-// CBoxFilter
-//
-RtToken CBoxFilter::myName() {return RI_BOX; }
-RtFloat	CBoxFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
-{
+RICPP_EXTERN(RtFloat)
+RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	x = x;
 	y = y;
 	xwidth = xwidth;
@@ -62,28 +61,14 @@ RtFloat	CBoxFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywi
 	return (RtFloat)1.0;
 }
 
-CBoxFilter CBoxFilter::func;
-
-
-//
-// CTriangleFilter
-//
-RtToken CTriangleFilter::myName() {return RI_TRIANGLE; }
-RtFloat	CTriangleFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
-{
+RICPP_EXTERN(RtFloat)
+RiTriangleFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	return (RtFloat)(((1.0 - fabs(x)) / (xwidth * 0.5)) *
 		   ((1.0 - fabs(y)) / (ywidth * 0.5)));
 }
 
-CTriangleFilter CTriangleFilter::func;
-
-
-//
-// CCatmullRomFilter
-//
-RtToken CCatmullRomFilter::myName() {return RI_CATMULL_ROM; }
-RtFloat	CCatmullRomFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
-{
+RICPP_EXTERN(RtFloat)
+RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	RtFloat r2 = (x*x + y*y);
 	RtFloat r = (RtFloat)sqrt(r2);
 
@@ -95,14 +80,9 @@ RtFloat	CCatmullRomFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFl
 		                         (-r*r2 + 5.0*r2 - 8.0*r + 4.0));
 }
 
-CCatmullRomFilter CCatmullRomFilter::func;
 
-//
-// CSincFilter
-//
-RtToken CSincFilter::myName() {return RI_SINC; }
-RtFloat	CSincFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
-{
+RICPP_EXTERN(RtFloat)
+RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	RtFloat s, t;
 
 	xwidth = xwidth;
@@ -119,6 +99,63 @@ RtFloat	CSincFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat yw
 		t = (RtFloat)(sin(y)/y);
 
 	return s*t;
+}
+
+}
+
+//
+// CGaussianFilter
+//
+RtToken CGaussianFilter::myName() {return RI_GAUSSIAN; }
+RtFloat	CGaussianFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
+{
+	return RiGaussianFilter(x, y, xwidth, ywidth);
+}
+
+CGaussianFilter CGaussianFilter::func;
+
+//
+// CBoxFilter
+//
+RtToken CBoxFilter::myName() {return RI_BOX; }
+RtFloat	CBoxFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
+{
+	return RiBoxFilter(x, y, xwidth, ywidth);
+}
+
+CBoxFilter CBoxFilter::func;
+
+
+//
+// CTriangleFilter
+//
+RtToken CTriangleFilter::myName() {return RI_TRIANGLE; }
+RtFloat	CTriangleFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
+{
+	return RiTriangleFilter(x, y, xwidth, ywidth);
+}
+
+CTriangleFilter CTriangleFilter::func;
+
+
+//
+// CCatmullRomFilter
+//
+RtToken CCatmullRomFilter::myName() {return RI_CATMULL_ROM; }
+RtFloat	CCatmullRomFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
+{
+	return RiCatmullRomFilter(x, y, xwidth, ywidth);
+}
+
+CCatmullRomFilter CCatmullRomFilter::func;
+
+//
+// CSincFilter
+//
+RtToken CSincFilter::myName() {return RI_SINC; }
+RtFloat	CSincFilter::operator()(RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) const
+{
+	return RiSincFilter(x, y, xwidth, ywidth);
 }
 
 CSincFilter CSincFilter::func;
@@ -157,7 +194,7 @@ void CFilterFuncFactory::deleteFunc(IFilterFunc *f)
 	delete f;
 }
 
-IFilterFunc *CFilterFuncFactory::singleton(RtToken name) const
+const IFilterFunc *CFilterFuncFactory::singleton(RtToken name) const
 {
 	if ( emptyStr(name) )
 		return 0;

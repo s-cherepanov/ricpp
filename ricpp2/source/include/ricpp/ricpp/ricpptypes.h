@@ -25,6 +25,8 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+#define RICPP_EXTERN(type) extern type
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -60,6 +62,10 @@ typedef const char *RtString;    ///< Character string, which is not a predefine
 
 typedef void   *RtPointer;       ///< Pointer to arbitrary data
 #define RtVoid  void             ///< Simple 'void' datatype, used as 'return type' for functions returning nothing (C++: typedef is not working for void)
+
+/** @brief Pixel filter
+ */
+typedef RtFloat (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
 
 /** @defgroup ricpp_handles Ri handle types
  *  @ingroup ricpp_types

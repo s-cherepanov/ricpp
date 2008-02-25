@@ -2173,7 +2173,7 @@ public:
  */
 class CRiPixelFilter : public CRManInterfaceCall {
 private:
-	IFilterFunc *m_function; ///< Filter function.
+	const IFilterFunc *m_function; ///< Filter function.
 	RtFloat m_xwidth,        ///< Horizontal influence in pixels.
 	        m_ywidth;        ///< Vertical influence in pixels.
 public:

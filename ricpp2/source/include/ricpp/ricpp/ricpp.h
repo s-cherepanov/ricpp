@@ -121,7 +121,7 @@ public:
 	/** @brief A singleton pixel filter.
 	 * @return A singleton pixel filter (static pixel filter).
 	 */
-	virtual IFilterFunc &singleton() const = 0;
+	virtual const IFilterFunc &singleton() const = 0;
 };
 
 /** @brief Data container for Subdiv functions
@@ -1590,7 +1590,6 @@ public:
 	 *  @ingroup ricpp_interface
 	 *  @{
 	 */
-
 	/** @brief Gets the current context
 	 *  @return The current handle
 	 */

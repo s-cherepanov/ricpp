@@ -25,6 +25,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef __cplusplus
 /** @file ricpptypes.h
@@ -71,8 +74,12 @@ typedef RtToken RtArchiveHandle;       ///< Handle for a rib archive (was RtPoin
 //@}
 //@}
 
+#ifdef __cplusplus
 } // namespace RiCPP
+#endif
 
 #ifdef __cplusplus
-#endif // _RICPP_RICPP_RICPPTYPES_H
+} // extern "C"
 #endif
+
+#endif // _RICPP_RICPP_RICPPTYPES_H

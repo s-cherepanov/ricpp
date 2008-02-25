@@ -35,6 +35,10 @@
 #endif _RICPP_RICPP_RICPPTYPES_H
 
 #ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
 namespace RiCPP {
 #endif
 
@@ -68,7 +72,7 @@ const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)0; ///< illegal archiv
  *  @{
  */
 const RtBoolean RI_FALSE       = 0;           ///< false
-const RtBoolean RI_TRUE        = (!RI_FALSE); ///< true
+const RtBoolean RI_TRUE        = 1;           ///< true
 //@}
 
 /** @defgroup ricpp_limits Ri limits
@@ -228,4 +232,8 @@ const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code (
 } // namespace RiCPP
 #endif
 
- #endif // _RICPP_RICPP_RICPPCONST_H
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#endif // _RICPP_RICPP_RICPPCONST_H

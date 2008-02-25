@@ -35,6 +35,10 @@
 #endif _RICPP_RICPP_RICPPTYPES_H
 
 #ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
 namespace RiCPP {
 #endif
 
@@ -270,8 +274,13 @@ const RtToken RI_EMPTY   = ""; ///< Empty String marker, not a real token, only 
 //@}
 //@}
 
-}
+#ifdef __cplusplus
+} // namespace RiCPP
+#endif
 
 #ifdef __cplusplus
-#endif // _RICPP_RICPP_RICPPTOKENS_H
+} // extern "C"
 #endif
+
+
+#endif // _RICPP_RICPP_RICPPTOKENS_H

@@ -6,3 +6,8 @@
 using namespace RiCPP;
 
 extern IRiRoot *riRoot;
+
+#ifdef RICPP_EXTERN
+#undef RICPP_EXTERN
+#endif
+#define RICPP_EXTERN(atype) extern "C" atype

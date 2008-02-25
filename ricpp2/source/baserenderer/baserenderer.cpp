@@ -116,6 +116,17 @@ using namespace RiCPP;
 			return ERR_RETVAL; \
 	}
 
+#define RICPP_UNREC_TOKENS { \
+\
+	if ( n != renderState()->numTokens() ) { \
+		ricppErrHandler().handleError( \
+			RIE_BADTOKEN, RIE_WARNING, \
+			renderState()->printLineNo(__LINE__), \
+			renderState()->printName(__FILE__), \
+			"Unrecognized tokens in '%s'",  CRequestInfo::requestName(req)); \
+	} \
+}
+
 CBaseRenderer::CBaseRenderer() :
 	m_renderState(0),
 	m_parserCallback(0)
@@ -417,24 +428,11 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 		aRequest.postProcess(*this, cb);
 
 	} catch ( ExceptRiCPPError &e2 ) {
-		if ( m_parserCallback ) {
-			m_parserCallback->ricppErrHandler().handleError(e2);
-		} else {
-			ricppErrHandler().handleError(e2);
-		}
+		ricppErrHandler().handleError(e2);
 	} catch ( std::exception &e1 ) {
-		if ( m_parserCallback ) {
-			m_parserCallback->ricppErrHandler().handleError(
-				RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at 'replayRequest(%s)': %s", noNullStr(aRequest.requestName()), e1.what());
-		} else {
-			ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at 'replayRequest(%s)': %s", noNullStr(aRequest.requestName()), e1.what());
-		}
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at 'replayRequest(%s)': %s", noNullStr(aRequest.requestName()), e1.what());
 	} catch ( ... ) {
-		if ( m_parserCallback ) {
-			m_parserCallback->ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'replayRequest(%s)'", noNullStr(aRequest.requestName()));
-		} else {
-			ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'replayRequest(%s)'", noNullStr(aRequest.requestName()));
-		}
+		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'replayRequest(%s)'", noNullStr(aRequest.requestName()));
 	}
 }
 
@@ -596,12 +594,7 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 		return illContextHandle;
 	}
 
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_ERROR,
-			__LINE__, __FILE__,
-			"Unrecognized tokens at '%s'",  CRequestInfo::requestName(req));
-	}
+	RICPP_UNREC_TOKENS
 
 	// There is no handle here, the frontend creates the backend
 	return 1; // indicates success
@@ -1037,32 +1030,9 @@ RtVoid CBaseRenderer::preFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat 
 
 RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 {
-	EnumRequests req = REQ_FORMAT;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiFormat r(renderState()->lineNo(), xres, yres, aspect);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_FORMAT)
+		RICPP_PROCESS(newRiFormat(renderState()->lineNo(), xres, yres, aspect));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1073,32 +1043,9 @@ RtVoid CBaseRenderer::preFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspe
 
 RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 {
-	EnumRequests req = REQ_FRAME_ASPECT_RATIO;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiFrameAspectRatio r(renderState()->lineNo(), aspect);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_FRAME_ASPECT_RATIO)
+		RICPP_PROCESS(newRiFrameAspectRatio(renderState()->lineNo(), aspect));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1109,32 +1056,9 @@ RtVoid CBaseRenderer::preScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloa
 
 RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
 {
-	EnumRequests req = REQ_SCREEN_WINDOW;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiScreenWindow r(renderState()->lineNo(), left, right, bot, top);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_SCREEN_WINDOW)
+		RICPP_PROCESS(newRiScreenWindow(renderState()->lineNo(), left, right, bot, top));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1145,32 +1069,9 @@ RtVoid CBaseRenderer::preCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xm
 
 RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
 {
-	EnumRequests req = REQ_CROP_WINDOW;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiCropWindow r(renderState()->lineNo(), xmin, xmax, ymin, ymax);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_CROP_WINDOW)
+		RICPP_PROCESS(newRiCropWindow(renderState()->lineNo(), xmin, xmax, ymin, ymax));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1182,47 +1083,12 @@ RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CPar
 
 RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_PROJECTION;
-	try {
-		// Check validity and accessibility (if-then-else)
-		if ( !preCheck(req) )
-			return;
-
-		// Parse parameters, ignore unrecognized ones
+	RICPP_PREAMBLE(REQ_PROJECTION)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_PROJECTION, name, CParameterClasses(), n, tokens, params);
-
-		// Process command
-		CRiProjection r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	// If there were any unrecognized tokens, give an error message
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiProjection(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -1233,32 +1099,9 @@ RtVoid CBaseRenderer::preClipping(CRiClipping &obj, RtFloat hither, RtFloat yon)
 
 RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
 {
-	EnumRequests req = REQ_CLIPPING;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiClipping r(renderState()->lineNo(), hither, yon);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_CLIPPING)
+		RICPP_PROCESS(newRiClipping(renderState()->lineNo(), hither, yon));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1269,32 +1112,9 @@ RtVoid CBaseRenderer::preClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat
 
 RtVoid CBaseRenderer::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
 {
-	EnumRequests req = REQ_CLIPPING_PLANE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiClippingPlane r(renderState()->lineNo(), x, y, z, nx, ny, nz);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_CLIPPING_PLANE)
+		RICPP_PROCESS(newRiClippingPlane(renderState()->lineNo(), x, y, z, nx, ny, nz));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1305,32 +1125,9 @@ RtVoid CBaseRenderer::preDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFlo
 
 RtVoid CBaseRenderer::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
 {
-	EnumRequests req = REQ_DEPTH_OF_FIELD;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiDepthOfField r(renderState()->lineNo(), fstop, focallength, focaldistance);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_DEPTH_OF_FIELD)
+		RICPP_PROCESS(newRiDepthOfField(renderState()->lineNo(), fstop, focallength, focaldistance));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1341,32 +1138,9 @@ RtVoid CBaseRenderer::preShutter(CRiShutter &obj, RtFloat smin, RtFloat smax)
 
 RtVoid CBaseRenderer::shutter(RtFloat smin, RtFloat smax)
 {
-	EnumRequests req = REQ_SHUTTER;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiShutter r(renderState()->lineNo(), smin, smax);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_SHUTTER)
+		RICPP_PROCESS(newRiShutter(renderState()->lineNo(), smin, smax));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1377,32 +1151,9 @@ RtVoid CBaseRenderer::prePixelVariance(CRiPixelVariance &obj, RtFloat variation)
 
 RtVoid CBaseRenderer::pixelVariance(RtFloat variation)
 {
-	EnumRequests req = REQ_PIXEL_VARIANCE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiPixelVariance r(renderState()->lineNo(), variation);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_PIXEL_VARIANCE)
+		RICPP_PROCESS(newRiPixelVariance(renderState()->lineNo(), variation));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1413,32 +1164,9 @@ RtVoid CBaseRenderer::prePixelSamples(CRiPixelSamples &obj, RtFloat xsamples, Rt
 
 RtVoid CBaseRenderer::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 {
-	EnumRequests req = REQ_PIXEL_SAMPLES;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiPixelSamples r(renderState()->lineNo(), xsamples, ysamples);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_PIXEL_SAMPLES)
+		RICPP_PROCESS(newRiPixelSamples(renderState()->lineNo(), xsamples, ysamples));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1449,32 +1177,9 @@ RtVoid CBaseRenderer::prePixelFilter(CRiPixelFilter &obj, const IFilterFunc &fun
 
 RtVoid CBaseRenderer::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
 {
-	EnumRequests req = REQ_PIXEL_FILTER;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiPixelFilter r(renderState()->lineNo(), function, xwidth, ywidth);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_PIXEL_FILTER)
+		RICPP_PROCESS(newRiPixelFilter(renderState()->lineNo(), function, xwidth, ywidth));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1485,32 +1190,9 @@ RtVoid CBaseRenderer::preExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma)
 
 RtVoid CBaseRenderer::exposure(RtFloat gain, RtFloat gamma)
 {
-	EnumRequests req = REQ_EXPOSURE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiExposure r(renderState()->lineNo(), gain, gamma);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_EXPOSURE)
+		RICPP_PROCESS(newRiExposure(renderState()->lineNo(), gain, gamma));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1521,43 +1203,12 @@ RtVoid CBaseRenderer::preImager(CRiImager &obj, RtString name, const CParameterL
 
 RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_IMAGER;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_IMAGER)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_IMAGER, name, CParameterClasses(), n, tokens, params);
-
-		CRiImager r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiImager(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -1568,33 +1219,10 @@ RtVoid CBaseRenderer::preQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtI
 
 RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
 {
-	EnumRequests req = REQ_QUANTIZE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_QUANTIZE)
 		type = renderState()->tokFindCreate(type);
-		CRiQuantize r(renderState()->lineNo(), type, one, qmin, qmax, ampl);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiQuantize(renderState()->lineNo(), type, one, qmin, qmax, ampl));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1605,35 +1233,12 @@ RtVoid CBaseRenderer::preDisplayChannel(CRiDisplayChannel &obj, RtString channel
 
 RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_DISPLAY_CHANNEL;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_DISPLAY_CHANNEL)
 		channel = renderState()->tokFindCreate(channel);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
-
-		CRiDisplayChannel r(renderState()->lineNo(), channel, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiDisplayChannel(renderState()->lineNo(), channel, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::preDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params)
@@ -1643,36 +1248,13 @@ RtVoid CBaseRenderer::preDisplay(CRiDisplay &obj, RtString name, RtToken type, R
 
 RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_DISPLAY;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_DISPLAY)
 		type = renderState()->tokFindCreate(type);
 		mode = renderState()->tokFindCreate(mode);
 		renderState()->parseParameters(RI_DISPLAY, type, CParameterClasses(), n, tokens, params);
-
-		CRiDisplay r(renderState()->lineNo(), name, type, mode, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiDisplay(renderState()->lineNo(), name, type, mode, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -1683,43 +1265,12 @@ RtVoid CBaseRenderer::preHider(CRiHider &obj, RtToken type, const CParameterList
 
 RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_HIDER;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_HIDER)
 		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(RI_HIDER, type, CParameterClasses(), n, tokens, params);
-
-		CRiHider r(renderState()->lineNo(), type, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiHider(renderState()->lineNo(), type, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -1730,35 +1281,15 @@ RtVoid CBaseRenderer::preColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRG
 
 RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 {
-	EnumRequests req = REQ_COLOR_SAMPLES;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiColorSamples r(renderState()->lineNo(), N, nRGB, RGBn);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_COLOR_SAMPLES)
+		RICPP_PROCESS(newRiColorSamples(renderState()->lineNo(), N, nRGB, RGBn));
+	RICPP_POSTAMBLE
 
 	if ( N <= 0 || nRGB == 0 || RGBn == 0 ) {
-		ricppErrHandler().handleError(RIE_RANGE, RIE_WARNING, "Illegal values for the parameters of colorSamples(), using identity mapping.");
+		ricppErrHandler().handleError(
+			RIE_RANGE, RIE_WARNING,
+			"Illegal values for the parameters of colorSamples(), using identity mapping."
+		);
 	}
 }
 
@@ -1770,32 +1301,9 @@ RtVoid CBaseRenderer::preRelativeDetail(CRiRelativeDetail &obj, RtFloat relative
 
 RtVoid CBaseRenderer::relativeDetail(RtFloat relativedetail)
 {
-	EnumRequests req = REQ_RELATIVE_DETAIL;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiRelativeDetail r(renderState()->lineNo(), relativedetail);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_RELATIVE_DETAIL)
+		RICPP_PROCESS(newRiRelativeDetail(renderState()->lineNo(), relativedetail));
+	RICPP_POSTAMBLE
 }
 
 
@@ -1806,43 +1314,12 @@ RtVoid CBaseRenderer::preOption(CRiOption &obj, RtToken name, const CParameterLi
 
 RtVoid CBaseRenderer::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_OPTION;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_OPTION)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_OPTION, name, CParameterClasses(), n, tokens, params);
-
-		CRiOption r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiOption(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -1853,36 +1330,12 @@ RtVoid CBaseRenderer::preControl(CRiControl &obj, RtToken name, const CParameter
 
 RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_CONTROL;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_CONTROL)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_CONTROL, name, CParameterClasses(), n, tokens, params);
-
-		CRiControl r(renderState()->lineNo(), name, renderState()->curParamList());
-		// Do not store controls as macros execute immediatly
-		processRequest(r, true);
-		
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS_IMMEDIATE(newRiControl(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -1916,43 +1369,15 @@ RtVoid CBaseRenderer::doLightSource(CRiLightSource &obj, RtString name, const CP
 
 RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_LIGHT_SOURCE;
 	RtLightHandle h = illLightHandle;
 
-	try {
-		if ( !preCheck(REQ_LIGHT_SOURCE) )
-			return h;
-
+	RICPP_PREAMBLE_RET(REQ_LIGHT_SOURCE, illLightHandle)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
-
 		h = renderState()->newLightHandle(name, renderState()->curParamList());
-
-		CRiLightSource r(renderState()->lineNo(), h, name, renderState()->curParamList());
-		processRequest(r);
-		
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return h;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return h;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return h;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'lightSourceV'");
-	}
+		RICPP_PROCESS(newRiLightSource(renderState()->lineNo(), h, name, renderState()->curParamList()));
+	RICPP_POSTAMBLE_RET(illLightHandle)
+	RICPP_UNREC_TOKENS
 
 	return h;
 }
@@ -1998,44 +1423,15 @@ RtVoid CBaseRenderer::doAreaLightSource(CRiAreaLightSource &obj, RtString name, 
 	
 RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_AREA_LIGHT_SOURCE;
 	RtLightHandle h = illLightHandle;
 
-	try {
-		if ( !preCheck(req) )
-			return h;
-
+	RICPP_PREAMBLE_RET(REQ_AREA_LIGHT_SOURCE, illLightHandle)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_AREA_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
-
 		h = renderState()->newLightHandle(name, renderState()->curParamList());
-		
-		CRiAreaLightSource r(renderState()->lineNo(), h, name, renderState()->curParamList());
-		processRequest(r);
-		
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return h;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return h;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return h;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(RIE_BADTOKEN, RIE_ERROR, "Unrecognized tokens in 'lightSourceV'");
-	}
-
+		RICPP_PROCESS(newRiAreaLightSource(renderState()->lineNo(), h, name, renderState()->curParamList()));
+	RICPP_POSTAMBLE_RET(illLightHandle)
+	RICPP_UNREC_TOKENS
 	return h;
 }
 
@@ -2064,32 +1460,9 @@ RtVoid CBaseRenderer::doIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBo
 
 RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 {
-	EnumRequests req = REQ_ILLUMINATE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiIlluminate r(renderState()->lineNo(), light, onoff);
-		processRequest(r);
-		
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_ILLUMINATE)
+		RICPP_PROCESS(newRiIlluminate(renderState()->lineNo(), light, onoff));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2101,43 +1474,12 @@ RtVoid CBaseRenderer::preAttribute(CRiAttribute &obj, RtToken name, const CParam
 
 RtVoid CBaseRenderer::attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_ATTRIBUTE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_ATTRIBUTE)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_ATTRIBUTE, name, CParameterClasses(), n, tokens, params);
-
-		CRiAttribute r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiAttribute(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -2148,32 +1490,9 @@ RtVoid CBaseRenderer::preColor(CRiColor &obj, RtColor Cs)
 
 RtVoid CBaseRenderer::color(RtColor Cs)
 {
-	EnumRequests req = REQ_COLOR;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiColor r(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Cs);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_COLOR)
+		RICPP_PROCESS(newRiColor(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Cs));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2184,32 +1503,9 @@ RtVoid CBaseRenderer::preOpacity(CRiOpacity &obj, RtColor Os)
 
 RtVoid CBaseRenderer::opacity(RtColor Os)
 {
-	EnumRequests req = REQ_OPACITY;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiOpacity r(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Os);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_OPACITY)
+		RICPP_PROCESS(newRiOpacity(renderState()->lineNo(), renderState()->options().colorDescr().colorSamples(), Os));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2220,43 +1516,12 @@ RtVoid CBaseRenderer::preSurface(CRiSurface &obj, RtString name, const CParamete
 
 RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_SURFACE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_SURFACE)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_SURFACE, name, CParameterClasses(), n, tokens, params);
-
-		CRiSurface r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiSurface(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -2267,43 +1532,12 @@ RtVoid CBaseRenderer::preAtmosphere(CRiAtmosphere &obj, RtString name, const CPa
 
 RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_ATMOSPHERE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_ATMOSPHERE)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_ATMOSPHERE, name, CParameterClasses(), n, tokens, params);
-
-		CRiAtmosphere r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiAtmosphere(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -2314,43 +1548,12 @@ RtVoid CBaseRenderer::preInterior(CRiInterior &obj, RtString name, const CParame
 
 RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_INTERIOR;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_INTERIOR)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_INTERIOR, name, CParameterClasses(), n, tokens, params);
-
-		CRiInterior r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiInterior(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -2361,43 +1564,12 @@ RtVoid CBaseRenderer::preExterior(CRiExterior &obj, RtString name, const CParame
 
 RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_EXTERIOR;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_EXTERIOR)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_EXTERIOR, name, CParameterClasses(), n, tokens, params);
-
-		CRiExterior r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiExterior(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -2408,43 +1580,12 @@ RtVoid CBaseRenderer::preDisplacement(CRiDisplacement &obj, RtString name, const
 
 RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_DISPLACEMENT;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_DISPLACEMENT)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_DISPLACEMENT, name, CParameterClasses(), n, tokens, params);
-
-		CRiDisplacement r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiDisplacement(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -2455,32 +1596,9 @@ RtVoid CBaseRenderer::preTextureCoordinates(CRiTextureCoordinates &obj, RtFloat 
 
 RtVoid CBaseRenderer::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
 {
-	EnumRequests req = REQ_TEXTURE_COORDINATES;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiTextureCoordinates r(renderState()->lineNo(), s1, t1, s2, t2, s3, t3, s4, t4);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_TEXTURE_COORDINATES)
+		RICPP_PROCESS(newRiTextureCoordinates(renderState()->lineNo(), s1, t1, s2, t2, s3, t3, s4, t4));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2491,32 +1609,9 @@ RtVoid CBaseRenderer::preShadingRate(CRiShadingRate &obj, RtFloat size)
 
 RtVoid CBaseRenderer::shadingRate(RtFloat size)
 {
-	EnumRequests req = REQ_SHADING_RATE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiShadingRate r(renderState()->lineNo(), size);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_SHADING_RATE)
+		RICPP_PROCESS(newRiShadingRate(renderState()->lineNo(), size));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2527,33 +1622,10 @@ RtVoid CBaseRenderer::preShadingInterpolation(CRiShadingInterpolation &obj, RtTo
 
 RtVoid CBaseRenderer::shadingInterpolation(RtToken type)
 {
-	EnumRequests req = REQ_SHADING_INTERPOLATION;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_SHADING_INTERPOLATION)
 		type = renderState()->tokFindCreate(type);
-		CRiShadingInterpolation r(renderState()->lineNo(), type);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiShadingInterpolation(renderState()->lineNo(), type));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2564,32 +1636,9 @@ RtVoid CBaseRenderer::preMatte(CRiMatte &obj, RtBoolean onoff)
 
 RtVoid CBaseRenderer::matte(RtBoolean onoff)
 {
-	EnumRequests req = REQ_MATTE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiMatte r(renderState()->lineNo(), onoff);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_MATTE)
+		RICPP_PROCESS(newRiMatte(renderState()->lineNo(), onoff == RI_FALSE ? RI_FALSE : RI_TRUE));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2600,32 +1649,9 @@ RtVoid CBaseRenderer::preBound(CRiBound &obj, RtBound aBound)
 
 RtVoid CBaseRenderer::bound(RtBound aBound)
 {
-	EnumRequests req = REQ_BOUND;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiBound r(renderState()->lineNo(), aBound);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_BOUND)
+		RICPP_PROCESS(newRiBound(renderState()->lineNo(), aBound));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2636,32 +1662,9 @@ RtVoid CBaseRenderer::preDetail(CRiDetail &obj, RtBound aBound)
 
 RtVoid CBaseRenderer::detail(RtBound aBound)
 {
-	EnumRequests req = REQ_DETAIL;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiDetail r(renderState()->lineNo(), aBound);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_DETAIL)
+		RICPP_PROCESS(newRiDetail(renderState()->lineNo(), aBound));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2672,31 +1675,31 @@ RtVoid CBaseRenderer::preDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloa
 
 RtVoid CBaseRenderer::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
-	EnumRequests req = REQ_DETAIL_RANGE;
-	try {
-		if ( !preCheck(req) )
-			return;
+	bool changed = false;
+	if ( minvis > lowtran ) {
+		changed = true;
+		std::swap(minvis, lowtran);
+	}
+	if ( lowtran > uptran ) {
+		changed = true;
+		std::swap(lowtran, uptran);
+	}
+	if ( uptran > maxvis ) {
+		changed = true;
+		std::swap(uptran, maxvis);
+	}
 
-		CRiDetailRange r(renderState()->lineNo(), minvis, lowtran, uptran, maxvis);
-		processRequest(r);
+	RICPP_PREAMBLE(REQ_DETAIL_RANGE)
+		RICPP_PROCESS(newRiDetailRange(renderState()->lineNo(), minvis, lowtran, uptran, maxvis));
+	RICPP_POSTAMBLE
 
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
+	if ( changed ) {
 		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
+			RIE_BADTOKEN, RIE_ERROR,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
+			"'%s': Detail range malformed, changed to (%f, %f, %f, %f)", 
+			CRequestInfo::requestName(req), minvis, lowtran, uptran, maxvis);
 	}
 }
 
@@ -2708,34 +1711,10 @@ RtVoid CBaseRenderer::preGeometricApproximation(CRiGeometricApproximation &obj, 
 
 RtVoid CBaseRenderer::geometricApproximation(RtToken type, RtFloat value)
 {
-	EnumRequests req = REQ_GEOMETRIC_APPROXIMATION;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_GEOMETRIC_APPROXIMATION)
 		type = renderState()->tokFindCreate(type);
-
-		CRiGeometricApproximation r(renderState()->lineNo(), type, value);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiGeometricApproximation(renderState()->lineNo(), type, value));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2746,34 +1725,10 @@ RtVoid CBaseRenderer::preGeometricRepresentation(CRiGeometricRepresentation &obj
 
 RtVoid CBaseRenderer::geometricRepresentation(RtToken type)
 {
-	EnumRequests req = REQ_GEOMETRIC_REPRESENTATION;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_GEOMETRIC_REPRESENTATION)
 		type = renderState()->tokFindCreate(type);
-
-		CRiGeometricRepresentation r(renderState()->lineNo(), type);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiGeometricRepresentation(renderState()->lineNo(), type));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2784,33 +1739,25 @@ RtVoid CBaseRenderer::preOrientation(CRiOrientation &obj, RtToken anOrientation)
 
 RtVoid CBaseRenderer::orientation(RtToken anOrientation)
 {
-	EnumRequests req = REQ_ORIENTATION;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RtToken tokOrientation = RI_INSIDE;
+	RICPP_PREAMBLE(REQ_ORIENTATION)
 		anOrientation = renderState()->tokFindCreate(anOrientation);
+		if ( anOrientation == RI_LH ||
+		     anOrientation == RI_RH ||
+		     anOrientation == RI_OUTSIDE )
+		{
+			tokOrientation = anOrientation;
+		}
+		RICPP_PROCESS(newRiOrientation(renderState()->lineNo(), tokOrientation));
+	RICPP_POSTAMBLE
 
-		CRiOrientation r(renderState()->lineNo(), anOrientation);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
+	if ( tokOrientation != anOrientation ) {
 		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
+			RIE_BADTOKEN, RIE_ERROR,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
+			"Unrecognized tokens in '%s': %s, using %s instead.", 
+			CRequestInfo::requestName(req), noNullStr(anOrientation), noNullStr(tokOrientation));
 	}
 }
 
@@ -2822,32 +1769,9 @@ RtVoid CBaseRenderer::preReverseOrientation(CRiReverseOrientation &obj)
 
 RtVoid CBaseRenderer::reverseOrientation(void)
 {
-	EnumRequests req = REQ_REVERSE_ORIENTATION;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiReverseOrientation r(renderState()->lineNo());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_REVERSE_ORIENTATION)
+		RICPP_PROCESS(newRiReverseOrientation(renderState()->lineNo()));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2858,32 +1782,9 @@ RtVoid CBaseRenderer::preSides(CRiSides &obj, RtInt nsides)
 
 RtVoid CBaseRenderer::sides(RtInt nsides)
 {
-	EnumRequests req = REQ_SIDES;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiSides r(renderState()->lineNo(), nsides);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_SIDES)
+		RICPP_PROCESS(newRiSides(renderState()->lineNo(), nsides));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2894,32 +1795,9 @@ RtVoid CBaseRenderer::preBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBas
 
 RtVoid CBaseRenderer::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
 {
-	EnumRequests req = REQ_BASIS;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiBasis r(renderState()->lineNo(), ubasis, ustep, vbasis, vstep);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_BASIS)
+		RICPP_PROCESS(newRiBasis(renderState()->lineNo(), ubasis, ustep, vbasis, vstep));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2930,32 +1808,9 @@ RtVoid CBaseRenderer::preTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurve
 
 RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
-	EnumRequests req = REQ_TRIM_CURVE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiTrimCurve r(renderState()->lineNo(), nloops, ncurves, order, knot, amin, amax, n, u, v, w);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_TRIM_CURVE)
+		RICPP_PROCESS(newRiTrimCurve(renderState()->lineNo(), nloops, ncurves, order, knot, amin, amax, n, u, v, w));
+	RICPP_POSTAMBLE
 }
 
 
@@ -2967,32 +1822,9 @@ RtVoid CBaseRenderer::preIdentity(CRiIdentity &obj)
 
 RtVoid CBaseRenderer::identity(void)
 {
-	EnumRequests req = REQ_IDENTITY;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiIdentity r(renderState()->lineNo());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_IDENTITY)
+		RICPP_PROCESS(newRiIdentity(renderState()->lineNo()));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3004,32 +1836,9 @@ RtVoid CBaseRenderer::preTransform(CRiTransform &obj, RtMatrix aTransform)
 
 RtVoid CBaseRenderer::transform(RtMatrix aTransform)
 {
-	EnumRequests req = REQ_TRANSFORM;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiTransform r(renderState()->lineNo(), aTransform);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_TRANSFORM)
+		RICPP_PROCESS(newRiTransform(renderState()->lineNo(), aTransform));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3041,32 +1850,9 @@ RtVoid CBaseRenderer::preConcatTransform(CRiConcatTransform &obj, RtMatrix aTran
 
 RtVoid CBaseRenderer::concatTransform(RtMatrix aTransform)
 {
-	EnumRequests req = REQ_CONCAT_TRANSFORM;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiConcatTransform r(renderState()->lineNo(), aTransform);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_CONCAT_TRANSFORM)
+		RICPP_PROCESS(newRiConcatTransform(renderState()->lineNo(), aTransform));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3078,32 +1864,9 @@ RtVoid CBaseRenderer::prePerspective(CRiPerspective &obj, RtFloat fov)
 
 RtVoid CBaseRenderer::perspective(RtFloat fov)
 {
-	EnumRequests req = REQ_PERSPECTIVE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiPerspective r(renderState()->lineNo(), fov);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_PERSPECTIVE)
+		RICPP_PROCESS(newRiPerspective(renderState()->lineNo(), fov));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3115,32 +1878,9 @@ RtVoid CBaseRenderer::preTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, Rt
 
 RtVoid CBaseRenderer::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	EnumRequests req = REQ_TRANSLATE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiTranslate r(renderState()->lineNo(), dx, dy, dz);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_TRANSLATE)
+		RICPP_PROCESS(newRiTranslate(renderState()->lineNo(), dx, dy, dz));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3152,32 +1892,9 @@ RtVoid CBaseRenderer::preRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFlo
 
 RtVoid CBaseRenderer::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	EnumRequests req = REQ_ROTATE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiRotate r(renderState()->lineNo(), angle, dx, dy, dz);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_ROTATE)
+		RICPP_PROCESS(newRiRotate(renderState()->lineNo(), angle, dx, dy, dz));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3189,32 +1906,9 @@ RtVoid CBaseRenderer::preScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz
 
 RtVoid CBaseRenderer::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	EnumRequests req = REQ_SCALE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiScale r(renderState()->lineNo(), dx, dy, dz);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_SCALE)
+		RICPP_PROCESS(newRiScale(renderState()->lineNo(), dx, dy, dz));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3226,32 +1920,9 @@ RtVoid CBaseRenderer::preSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat 
 
 RtVoid CBaseRenderer::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
-	EnumRequests req = REQ_SKEW;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiSkew r(renderState()->lineNo(), angle, dx1, dy1, dz1, dx2, dy2, dz2);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_SKEW)
+		RICPP_PROCESS(newRiSkew(renderState()->lineNo(), angle, dx1, dy1, dz1, dx2, dy2, dz2));
+	RICPP_POSTAMBLE
 }
 
 RtVoid CBaseRenderer::preDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
@@ -3269,43 +1940,12 @@ RtVoid CBaseRenderer::doDeformation(CRiDeformation &obj, RtString name, const CP
 
 RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_DEFORMATION;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_DEFORMATION)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_DEFORMATION, name, CParameterClasses(), n, tokens, params);
-
-		CRiDeformation r(renderState()->lineNo(), name, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiDeformation(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -3316,33 +1956,10 @@ RtVoid CBaseRenderer::preScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, 
 
 RtVoid CBaseRenderer::scopedCoordinateSystem(RtToken space)
 {
-	EnumRequests req = REQ_SCOPED_COORDINATE_SYSTEM;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_SCOPED_COORDINATE_SYSTEM)
 		space = renderState()->tokFindCreate(space);
-		CRiScopedCoordinateSystem r(renderState()->lineNo(), space);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiScopedCoordinateSystem(renderState()->lineNo(), space));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3353,33 +1970,10 @@ RtVoid CBaseRenderer::preCoordinateSystem(CRiCoordinateSystem &obj, RtToken spac
 
 RtVoid CBaseRenderer::coordinateSystem(RtToken space)
 {
-	EnumRequests req = REQ_COORDINATE_SYSTEM;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_COORDINATE_SYSTEM)
 		space = renderState()->tokFindCreate(space);
-		CRiCoordinateSystem r(renderState()->lineNo(), space);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiCoordinateSystem(renderState()->lineNo(), space));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3401,33 +1995,10 @@ RtVoid CBaseRenderer::preCoordSysTransform(CRiCoordSysTransform &obj, RtToken sp
 
 RtVoid CBaseRenderer::coordSysTransform(RtToken space)
 {
-	EnumRequests req = REQ_COORD_SYS_TRANSFORM;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_COORD_SYS_TRANSFORM)
 		space = renderState()->tokFindCreate(space);
-		CRiCoordSysTransform r(renderState()->lineNo(), space);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+		RICPP_PROCESS(newRiCoordSysTransform(renderState()->lineNo(), space));
+	RICPP_POSTAMBLE
 }
 
 
@@ -3437,7 +2008,7 @@ RtVoid CBaseRenderer::preTransformPoints(CRiTransformPoints &obj, RtToken fromsp
 
 RtVoid CBaseRenderer::doTransformPoints(CRiTransformPoints &obj, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
 {
-	if ( npoints <= 0 ) {
+	if ( npoints <= 0 || points == 0 ) {
 		return;
 	}
 	const CTransformation *from = renderState()->findTransform(fromspace);
@@ -3447,255 +2018,77 @@ RtVoid CBaseRenderer::doTransformPoints(CRiTransformPoints &obj, RtToken fromspa
 		return;
 	}
 
-	// 2Do
+	/// @todo Implementation of doTransformPoints()
 }
 
 RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) {
-	EnumRequests req = REQ_TRANSFORM_POINTS;
-	try {
-		if ( !preCheck(req) )
-			return 0;
-
+	RICPP_PREAMBLE_RET(REQ_TRANSFORM_POINTS, 0)
 		fromspace = renderState()->tokFindCreate(fromspace);
 		tospace = renderState()->tokFindCreate(tospace);
-		CRiTransformPoints r(renderState()->lineNo(), fromspace, tospace, npoints, points);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return 0;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return 0;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return 0;
-	}
-
-	return &points[0];
+		RICPP_PROCESS(newRiTransformPoints(renderState()->lineNo(), fromspace, tospace, npoints, points));
+	RICPP_POSTAMBLE_RET(0);
+	return points ? &points[0] : 0;
 }
+
 
 RtVoid CBaseRenderer::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_POLYGON;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_POLYGON)
 		renderState()->parseParameters(CPolygonClasses(nvertices), n, tokens, params);
-
-		CRiPolygon r(renderState()->lineNo(), nvertices, renderState()->curParamList());
-		processRequest(r);
-
-		
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiPolygon(renderState()->lineNo(), nvertices, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
 RtVoid CBaseRenderer::generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_GENERAL_POLYGON;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_GENERAL_POLYGON)
 		renderState()->parseParameters(CGeneralPolygonClasses(nloops, nverts), n, tokens, params);
-
-		CRiGeneralPolygon r(renderState()->lineNo(), nloops, nverts, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiGeneralPolygon(renderState()->lineNo(), nloops, nverts, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
 RtVoid CBaseRenderer::pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_POINTS_POLYGONS;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_POINTS_POLYGONS)
 		renderState()->parseParameters(CPointsPolygonsClasses(npolys, nverts, verts), n, tokens, params);
-
-		CRiPointsPolygons r(renderState()->lineNo(), npolys, nverts, verts, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiPointsPolygons(renderState()->lineNo(), npolys, nverts, verts, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
 RtVoid CBaseRenderer::pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[],  RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_POINTS_GENERAL_POLYGONS;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_POINTS_GENERAL_POLYGONS)
 		renderState()->parseParameters(CPointsGeneralPolygonsClasses(npolys, nloops, nverts, verts), n, tokens, params);
-
-		CRiPointsGeneralPolygons r(renderState()->lineNo(), npolys, nloops, nverts, verts, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiPointsGeneralPolygons(renderState()->lineNo(), npolys, nloops, nverts, verts, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
 RtVoid CBaseRenderer::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_PATCH;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_PATCH)
 		type = renderState()->tokFindCreate(type);
+		if ( type != RI_BILINEAR && type != RI_BICUBIC )
+		{
+			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "type neither RI_BILINEAR nor RI_BICUBIC at %s(), type == '%s'", CRequestInfo::requestName(req), type);
+		}
 		renderState()->parseParameters(CPatchClasses(type), n, tokens, params);
-
-		CRiPatch r(renderState()->lineNo(), type, renderState()->curParamList());
-		processRequest(r);
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiPatch(renderState()->lineNo(), type, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
 RtVoid CBaseRenderer::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_PATCH_MESH;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_PATCH_MESH)
 		type = renderState()->tokFindCreate(type);
 		if ( type != RI_BILINEAR && type != RI_BICUBIC )
 		{
@@ -3723,564 +2116,131 @@ RtVoid CBaseRenderer::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv
 		}
 
 		renderState()->parseParameters(CPatchMeshClasses(type, nu, ustep, uwrap, nv, vstep, vwrap), n, tokens, params);
-
-		CRiPatchMesh r(renderState()->lineNo(), ustep, vstep, type, nu, uwrap, nv, vwrap, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiPatchMesh(renderState()->lineNo(), ustep, vstep, type, nu, uwrap, nv, vwrap, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
 RtVoid CBaseRenderer::nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_NU_PATCH;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_NU_PATCH)
 		renderState()->parseParameters(CNuPatchClasses(nu, uorder, nv, vorder), n, tokens, params);
-
-		CRiNuPatch r(renderState()->lineNo(), nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiNuPatch(renderState()->lineNo(), nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
 RtVoid CBaseRenderer::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_SUBDIVISION_MESH;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_SUBDIVISION_MESH)
 		scheme = renderState()->tokFindCreate(scheme);
-
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
-
-		CRiSubdivisionMesh r(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiSubdivisionMesh(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_HIERARCHICAL_SUBDIVISION_MESH;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_HIERARCHICAL_SUBDIVISION_MESH)
 		scheme = renderState()->tokFindCreate(scheme);
-
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
-
-		CRiHierarchicalSubdivisionMesh r(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiHierarchicalSubdivisionMesh(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_SPHERE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_SPHERE)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
-
-		CRiSphere r(renderState()->lineNo(), radius, zmin, zmax, thetamax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiSphere(renderState()->lineNo(), radius, zmin, zmax, thetamax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_CONE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_CONE)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
-
-		CRiCone r(renderState()->lineNo(), height, radius, thetamax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiCone(renderState()->lineNo(), height, radius, thetamax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_CYLINDER;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_CYLINDER)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
-
-		CRiCylinder r(renderState()->lineNo(), radius, zmin, zmax, thetamax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiCylinder(renderState()->lineNo(), radius, zmin, zmax, thetamax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_HYPERBOLOID;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_HYPERBOLOID)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
-
-		CRiHyperboloid r(renderState()->lineNo(), point1, point2, thetamax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiHyperboloid(renderState()->lineNo(), point1, point2, thetamax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_PARABOLOID;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_PARABOLOID)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
-
-		CRiParaboloid r(renderState()->lineNo(), rmax, zmin, zmax, thetamax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiParaboloid(renderState()->lineNo(), rmax, zmin, zmax, thetamax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_DISK;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_DISK)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
-
-		CRiDisk r(renderState()->lineNo(), height, radius, thetamax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiDisk(renderState()->lineNo(), height, radius, thetamax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_TORUS;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_TORUS)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
-
-		CRiTorus r(renderState()->lineNo(), majorrad, minorrad, phimin, phimax, thetamax, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiTorus(renderState()->lineNo(), majorrad, minorrad, phimin, phimax, thetamax, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_POINTS;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_POINTS)
 		renderState()->parseParameters(CPointsClasses(npts), n, tokens, params);
-
-		CRiPoints r(renderState()->lineNo(), npts, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiPoints(renderState()->lineNo(), npts, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_CURVES;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_CURVES)
 		type = renderState()->tokFindCreate(type);
-
 		renderState()->parseParameters(CCurvesClasses(type, ncurves, nverts, wrap, renderState()->attributes().vStep()), n, tokens, params);
-
-		CRiCurves r(renderState()->lineNo(), renderState()->attributes().vStep(), type, ncurves, nverts, wrap, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiCurves(renderState()->lineNo(), renderState()->attributes().vStep(), type, ncurves, nverts, wrap, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_BLOBBY;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_BLOBBY)
 		renderState()->parseParameters(CBlobbyClasses(nleaf), n, tokens, params);
-
-		CRiBlobby r(renderState()->lineNo(), nleaf, ncode, code, nflt, flt, nstr, str, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiBlobby(renderState()->lineNo(), nleaf, ncode, code, nflt, flt, nstr, str, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -4306,349 +2266,96 @@ RtVoid CBaseRenderer::doProcedural(CRiProcedural &obj, RtPointer data, RtBound b
 
 RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
 {
-	EnumRequests req = REQ_PROCEDURAL;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiProcedural r(renderState()->lineNo(), data, bound, subdivfunc, freefunc);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_PROCEDURAL)
+		RICPP_PROCESS(newRiProcedural(renderState()->lineNo(), data, bound, subdivfunc, freefunc));
+	RICPP_POSTAMBLE
 }
 
 RtVoid CBaseRenderer::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_GEOMETRY;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_GEOMETRY)
 		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
-
-		CRiGeometry r(renderState()->lineNo(), type, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiGeometry(renderState()->lineNo(), type, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_MAKE_TEXTURE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_MAKE_TEXTURE)
+		swrap = renderState()->tokFindCreate(swrap);
+		twrap = renderState()->tokFindCreate(twrap);
 		renderState()->parseParameters(RI_TEXTURE, RI_TEXTURE, CParameterClasses(), n, tokens, params);
-
-		CRiMakeTexture r(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiMakeTexture(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_MAKE_BUMP;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_MAKE_BUMP)
+		swrap = renderState()->tokFindCreate(swrap);
+		twrap = renderState()->tokFindCreate(twrap);
 		renderState()->parseParameters(RI_TEXTURE, RI_BUMP, CParameterClasses(), n, tokens, params);
-
-		CRiMakeBump r(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiMakeBump(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_MAKE_LAT_LONG_ENVIRONMENT;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_MAKE_LAT_LONG_ENVIRONMENT)
 		renderState()->parseParameters(RI_TEXTURE, RI_LAT_LONG_ENVIRONMENT, CParameterClasses(), n, tokens, params);
-
-		CRiMakeLatLongEnvironment r(renderState()->lineNo(), pic, tex, filterfunc, swidth, twidth, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiMakeLatLongEnvironment(renderState()->lineNo(), pic, tex, filterfunc, swidth, twidth, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_MAKE_CUBE_FACE_ENVIRONMENT;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_MAKE_CUBE_FACE_ENVIRONMENT)
 		renderState()->parseParameters(RI_TEXTURE, RI_CUBE_FACE_ENVIRONMENT, CParameterClasses(), n, tokens, params);
-
-		CRiMakeCubeFaceEnvironment r(renderState()->lineNo(), px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiMakeCubeFaceEnvironment(renderState()->lineNo(), px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_MAKE_SHADOW;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_MAKE_SHADOW)
 		renderState()->parseParameters(RI_TEXTURE, RI_SHADOW, CParameterClasses(), n, tokens, params);
-
-		CRiMakeShadow r(renderState()->lineNo(), pic, tex, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiMakeShadow(renderState()->lineNo(), pic, tex, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_MAKE_BRICK_MAP;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_MAKE_BRICK_MAP)
 		renderState()->parseParameters(RI_TEXTURE, RI_BRICK_MAP, CParameterClasses(), n, tokens, params);
-
-		CRiMakeBrickMap r(renderState()->lineNo(), nNames, ptcnames, bkmname, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiMakeBrickMap(renderState()->lineNo(), nNames, ptcnames, bkmname, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line)
 {
-	EnumRequests req = REQ_ARCHIVE_RECORD;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		RtToken typeTok;
-
-		if ( emptyStr(type) ) {
-			typeTok = RI_COMMENT;
-		}
+	RtToken typeTok = RI_COMMENT;
+	RICPP_PREAMBLE(REQ_ARCHIVE_RECORD)
 		type = renderState()->tokFindCreate(type);
+		if ( type == RI_VERBATIM || type == RI_STRUCTURE )
+			typeTok = type;
+		RICPP_PROCESS(newRiArchiveRecord(renderState()->lineNo(), typeTok, line));
+	RICPP_POSTAMBLE
 
-		CRiArchiveRecord r(renderState()->lineNo(), type, line);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
+	if ( typeTok != type ) {
 		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
+			RIE_BADTOKEN, RIE_ERROR,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
+			"'%s': unknown comment type %s, taking %s", 
+			CRequestInfo::requestName(req), noNullStr(type), noNullStr(typeTok));
 	}
 }
 
@@ -4659,42 +2366,11 @@ RtVoid CBaseRenderer::doReadArchive(CRiReadArchive &obj, RtString name, const IA
 
 RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	EnumRequests req = REQ_READ_ARCHIVE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
+	RICPP_PREAMBLE(REQ_READ_ARCHIVE)
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
-
-		CRiReadArchive r(renderState()->lineNo(), name, callback, renderState()->curParamList());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
-
-	if ( n != renderState()->numTokens() ) {
-		ricppErrHandler().handleError(
-			RIE_BADTOKEN, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unrecognized tokens in %s'",  CRequestInfo::requestName(req));
-	}
+		RICPP_PROCESS(newRiReadArchive(renderState()->lineNo(), name, callback, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
 }
 
 
@@ -4706,32 +2382,9 @@ RtVoid CBaseRenderer::preIfBegin(CRiIfBegin &obj, RtString expr)
 
 RtVoid CBaseRenderer::ifBegin(RtString expr)
 {
-	EnumRequests req = REQ_IF_BEGIN;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiIfBegin r(renderState()->lineNo(), expr);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_IF_BEGIN)
+		RICPP_PROCESS(newRiIfBegin(renderState()->lineNo(), expr));
+	RICPP_POSTAMBLE
 }
 
 
@@ -4743,32 +2396,9 @@ RtVoid CBaseRenderer::preElseIfBegin(CRiElseIfBegin &obj, RtString expr)
 
 RtVoid CBaseRenderer::elseIfBegin(RtString expr)
 {
-	EnumRequests req = REQ_ELSE_IF;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiElseIfBegin r(renderState()->lineNo(), expr);
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_ELSE_IF)
+		RICPP_PROCESS(newRiElseIfBegin(renderState()->lineNo(), expr));
+	RICPP_POSTAMBLE
 }
 
 
@@ -4780,32 +2410,9 @@ RtVoid CBaseRenderer::preElseBegin(CRiElseBegin &obj)
 
 RtVoid CBaseRenderer::elseBegin(void)
 {
-	EnumRequests req = REQ_ELSE;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiElseBegin r(renderState()->lineNo());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_ELSE)
+		RICPP_PROCESS(newRiElseBegin(renderState()->lineNo()));
+	RICPP_POSTAMBLE
 }
 
 
@@ -4816,30 +2423,7 @@ RtVoid CBaseRenderer::preIfEnd(CRiIfEnd &obj)
 
 RtVoid CBaseRenderer::ifEnd(void)
 {
-	EnumRequests req = REQ_IF_END;
-	try {
-		if ( !preCheck(req) )
-			return;
-
-		CRiIfEnd r(renderState()->lineNo());
-		processRequest(r);
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return;
-	}
+	RICPP_PREAMBLE(REQ_IF_END)
+		RICPP_PROCESS(newRiIfEnd(renderState()->lineNo()));
+	RICPP_POSTAMBLE
 }

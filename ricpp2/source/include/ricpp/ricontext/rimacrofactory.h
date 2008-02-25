@@ -242,7 +242,7 @@ public:
 		return new CRiMotionEnd(aLineNo);
 	}
 
-	inline virtual CRiIfBegin *newRiIf(long aLineNo, RtString exprStr) {
+	inline virtual CRiIfBegin *newRiIfBegin(long aLineNo, RtString exprStr) {
 		return new CRiIfBegin(aLineNo, exprStr);
 	}
 
@@ -414,6 +414,22 @@ public:
 		return new CRiOption(aLineNo, name, parameters);
 	}
 
+	inline virtual CRiControl *newRiControl(
+		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+		const char *name,
+		RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		return new CRiControl(aLineNo, decl, curColorDescr, name, n, tokens, params);
+	}
+
+	inline virtual CRiControl *newRiControl(
+		long aLineNo,
+		const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiControl(aLineNo, name, parameters);
+	}
+
 	inline virtual CRiLightSource *newRiLightSource(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtLightHandle handle, const char *name,
@@ -458,6 +474,13 @@ public:
 		return new CRiAttribute(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
+	inline virtual CRiAttribute *newRiAttribute(
+		long aLineNo, const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiAttribute(aLineNo, name, parameters);
+	}
+
 	inline virtual CRiColor *newRiColor(long aLineNo, RtInt nColorSamples, RtColor Cs) {
 		return new CRiColor(aLineNo, nColorSamples, Cs);
 	}
@@ -474,12 +497,26 @@ public:
 		return new CRiSurface(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
+	inline virtual CRiSurface *newRiSurface(
+		long aLineNo, const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiSurface(aLineNo, name, parameters);
+	}
+
 	inline virtual CRiAtmosphere *newRiAtmosphere(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiAtmosphere(aLineNo, decl, curColorDescr, name, n, tokens, params);
+	}
+
+	inline virtual CRiAtmosphere *newRiAtmosphere(
+		long aLineNo, const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiAtmosphere(aLineNo, name, parameters);
 	}
 
 	inline virtual CRiInterior *newRiInterior(
@@ -490,6 +527,13 @@ public:
 		return new CRiInterior(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
+	inline virtual CRiInterior *newRiInterior(
+		long aLineNo, const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiInterior(aLineNo, name, parameters);
+	}
+
 	inline virtual CRiExterior *newRiExterior(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
@@ -498,12 +542,26 @@ public:
 		return new CRiExterior(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
+	inline virtual CRiExterior *newRiExterior(
+		long aLineNo, const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiExterior(aLineNo, name, parameters);
+	}
+
 	inline virtual CRiDisplacement *newRiDisplacement(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *name,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiDisplacement(aLineNo, decl, curColorDescr, name, n, tokens, params);
+	}
+
+	inline virtual CRiDisplacement *newRiDisplacement(
+		long aLineNo, const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiDisplacement(aLineNo, name, parameters);
 	}
 
 	inline virtual CRiTextureCoordinates *newRiTextureCoordinates(long aLineNo, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {
@@ -606,8 +664,19 @@ public:
 		return new CRiDeformation(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
+	inline virtual CRiDeformation *newRiDeformation(
+		long aLineNo, const char *name,
+		const CParameterList &parameters)
+	{
+		return new CRiDeformation(aLineNo, name, parameters);
+	}
+
 	inline virtual CRiCoordinateSystem *newRiCoordinateSystem(long aLineNo, const char *name) {
 		return new CRiCoordinateSystem(aLineNo, name);
+	}
+
+	inline virtual CRiScopedCoordinateSystem *newRiScopedCoordinateSystem(long aLineNo, const char *name) {
+		return new CRiScopedCoordinateSystem(aLineNo, name);
 	}
 
 	inline virtual CRiCoordSysTransform *newRiCoordSysTransform(long aLineNo, const char *name) {
@@ -626,12 +695,28 @@ public:
 		return new CRiPolygon(aLineNo, decl, curColorDescr, nvertices, n, tokens, params);
 	}
 
+	inline virtual CRiPolygon *newRiPolygon(
+		long aLineNo,
+		RtInt nvertices,
+		const CParameterList &parameters)
+	{
+		return new CRiPolygon(aLineNo, nvertices, parameters);
+	}
+
 	inline virtual CRiGeneralPolygon *newRiGeneralPolygon(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nloops, const RtInt nverts[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiGeneralPolygon(aLineNo, decl, curColorDescr, nloops, nverts, n, tokens, params);
+	}
+
+	inline virtual CRiGeneralPolygon *newRiGeneralPolygon(
+		long aLineNo,
+		RtInt nloops, const RtInt nverts[],
+		const CParameterList &parameters)
+	{
+		return new CRiGeneralPolygon(aLineNo, nloops, nverts, parameters);
 	}
 
 	inline virtual CRiPointsPolygons *newRiPointsPolygons(
@@ -642,12 +727,28 @@ public:
 		return new CRiPointsPolygons(aLineNo, decl, curColorDescr, npolys, nverts, verts, n, tokens, params);
 	}
 
+	inline virtual CRiPointsPolygons *newRiPointsPolygons(
+		long aLineNo,
+		RtInt npolys, const RtInt nverts[], const RtInt verts[],
+		const CParameterList &parameters)
+	{
+		return new CRiPointsPolygons(aLineNo, npolys, nverts, verts, parameters);
+	}
+
 	inline virtual CRiPointsGeneralPolygons *newRiPointsGeneralPolygons(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npolys, const RtInt nloops[], const RtInt nverts[], const RtInt verts[],
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiPointsGeneralPolygons(aLineNo, decl, curColorDescr, npolys, nloops, nverts, verts, n, tokens, params);
+	}
+
+	inline virtual CRiPointsGeneralPolygons *newRiPointsGeneralPolygons(
+		long aLineNo,
+		RtInt npolys, const RtInt nloops[], const RtInt nverts[], const RtInt verts[],
+		const CParameterList &parameters)
+	{
+		return new CRiPointsGeneralPolygons(aLineNo, npolys, nloops, nverts, verts, parameters);
 	}
 
 	inline virtual CRiPatch *newRiPatch(
@@ -658,6 +759,14 @@ public:
 		return new CRiPatch(aLineNo, decl, curColorDescr, type, n, tokens, params);
 	}
 
+	inline virtual CRiPatch *newRiPatch(
+		long aLineNo,
+		RtToken type,
+		const CParameterList &parameters)
+	{
+		return new CRiPatch(aLineNo, type, parameters);
+	}
+
 	inline virtual CRiPatchMesh *newRiPatchMesh(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
@@ -666,12 +775,28 @@ public:
 		return new CRiPatchMesh(aLineNo, decl, curColorDescr, ustep, vstep, type, nu, uwrap, nv, vwrap, n, tokens, params);
 	}
 
+	inline virtual CRiPatchMesh *newRiPatchMesh(
+		long aLineNo,
+		RtInt ustep, RtInt vstep, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap,
+		const CParameterList &parameters)
+	{
+		return new CRiPatchMesh(aLineNo, ustep, vstep, type, nu, uwrap, nv, vwrap, parameters);
+	}
+
 	inline virtual CRiNuPatch *newRiNuPatch(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nu, RtInt uorder, const RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, const RtFloat vknot[], RtFloat vmin, RtFloat vmax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiNuPatch(aLineNo, decl, curColorDescr, nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
+	}
+
+	inline virtual CRiNuPatch *newRiNuPatch(
+		long aLineNo,
+		RtInt nu, RtInt uorder, const RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, const RtFloat vknot[], RtFloat vmin, RtFloat vmax,
+		const CParameterList &parameters)
+	{
+		return new CRiNuPatch(aLineNo, nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, parameters);
 	}
 
 	inline virtual CRiSubdivisionMesh *newRiSubdivisionMesh(
@@ -683,6 +808,15 @@ public:
 		return new CRiSubdivisionMesh(aLineNo, decl, curColorDescr, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, n, tokens, params);
 	}
 
+	inline virtual CRiSubdivisionMesh *newRiSubdivisionMesh(
+		long aLineNo, CTokenMap *tokenMap,
+		RtToken scheme, RtInt nfaces, const RtInt nverts[], const RtInt verts[],
+		RtInt ntags, const RtToken tags[], const RtInt nargs[], const RtInt intargs[], const RtFloat floargs[],
+		const CParameterList &parameters)
+	{
+		return new CRiSubdivisionMesh(aLineNo, tokenMap, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, parameters);
+	}
+
 	inline virtual CRiHierarchicalSubdivisionMesh *newRiHierarchicalSubdivisionMesh(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken scheme, RtInt nfaces, const RtInt nverts[], const RtInt verts[],
@@ -690,6 +824,15 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiHierarchicalSubdivisionMesh(aLineNo, decl, curColorDescr, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, strargs, n, tokens, params);
+	}
+
+	inline virtual CRiHierarchicalSubdivisionMesh *newRiHierarchicalSubdivisionMesh(
+		long aLineNo, CTokenMap *tokenMap,
+		RtToken scheme, RtInt nfaces, const RtInt nverts[], const RtInt verts[],
+		RtInt ntags, const RtToken tags[], const RtInt nargs[], const RtInt intargs[], const RtFloat floargs[], const RtToken strargs[],
+		const CParameterList &parameters)
+	{
+		return new CRiHierarchicalSubdivisionMesh(aLineNo, tokenMap, scheme, nfaces, nverts, verts, ntags, tags, nargs, intargs, floargs, strargs, parameters);
 	}
 
 	inline virtual CRiSphere *newRiSphere(
@@ -700,12 +843,28 @@ public:
 		return new CRiSphere(aLineNo, decl, curColorDescr, radius, zmin, zmax, thetamax, n, tokens, params);
 	}
 
+	inline virtual CRiSphere *newRiSphere(
+		long aLineNo,
+		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+		const CParameterList &parameters)
+	{
+		return new CRiSphere(aLineNo, radius, zmin, zmax, thetamax, parameters);
+	}
+
 	inline virtual CRiCone *newRiCone(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat height, RtFloat radius, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiCone(aLineNo, decl, curColorDescr, height, radius, thetamax, n, tokens, params);
+	}
+
+	inline virtual CRiCone *newRiCone(
+		long aLineNo,
+		RtFloat height, RtFloat radius, RtFloat thetamax,
+		const CParameterList &parameters)
+	{
+		return new CRiCone(aLineNo, height, radius, thetamax, parameters);
 	}
 
 	inline virtual CRiCylinder *newRiCylinder(
@@ -716,12 +875,28 @@ public:
 		return new CRiCylinder(aLineNo, decl, curColorDescr, radius, zmin, zmax, thetamax, n, tokens, params);
 	}
 
+	inline virtual CRiCylinder *newRiCylinder(
+		long aLineNo,
+		RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+		const CParameterList &parameters)
+	{
+		return new CRiCylinder(aLineNo, radius, zmin, zmax, thetamax, parameters);
+	}
+
 	inline virtual CRiHyperboloid *newRiHyperboloid(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtPoint point1, RtPoint point2, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiHyperboloid(aLineNo, decl, curColorDescr, point1, point2, thetamax, n, tokens, params);
+	}
+
+	inline virtual CRiHyperboloid *newRiHyperboloid(
+		long aLineNo,
+		RtPoint point1, RtPoint point2, RtFloat thetamax,
+		const CParameterList &parameters)
+	{
+		return new CRiHyperboloid(aLineNo, point1, point2, thetamax, parameters);
 	}
 
 	inline virtual CRiParaboloid *newRiParaboloid(
@@ -732,12 +907,28 @@ public:
 		return new CRiParaboloid(aLineNo, decl, curColorDescr, rmax, zmin, zmax, thetamax, n, tokens, params);
 	}
 
+	inline virtual CRiParaboloid *newRiParaboloid(
+		long aLineNo,
+		RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+		const CParameterList &parameters)
+	{
+		return new CRiParaboloid(aLineNo, rmax, zmin, zmax, thetamax, parameters);
+	}
+
 	inline virtual CRiDisk *newRiDisk(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtFloat height, RtFloat radius, RtFloat thetamax,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiDisk(aLineNo, decl, curColorDescr, height, radius, thetamax, n, tokens, params);
+	}
+
+	inline virtual CRiDisk *newRiDisk(
+		long aLineNo,
+		RtFloat height, RtFloat radius, RtFloat thetamax,
+		const CParameterList &parameters)
+	{
+		return new CRiDisk(aLineNo, height, radius, thetamax, parameters);
 	}
 
 	inline virtual CRiTorus *newRiTorus(
@@ -748,12 +939,28 @@ public:
 		return new CRiTorus(aLineNo, decl, curColorDescr, majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
 	}
 
+	inline virtual CRiTorus *newRiTorus(
+		long aLineNo,
+		RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax,
+		const CParameterList &parameters)
+	{
+		return new CRiTorus(aLineNo, majorrad, minorrad, phimin, phimax, thetamax, parameters);
+	}
+
 	inline virtual CRiPoints *newRiPoints(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt npts,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiPoints(aLineNo, decl, curColorDescr, npts, n, tokens, params);
+	}
+
+	inline virtual CRiPoints *newRiPoints(
+		long aLineNo,
+		RtInt npts,
+		const CParameterList &parameters)
+	{
+		return new CRiPoints(aLineNo, npts, parameters);
 	}
 
 	inline virtual CRiCurves *newRiCurves(
@@ -764,6 +971,14 @@ public:
 		return new CRiCurves(aLineNo, decl, curColorDescr, step, type, ncurves, nverts, wrap, n, tokens, params);
 	}
 
+	inline virtual CRiCurves *newRiCurves(
+		long aLineNo,
+		RtInt step, RtToken type, RtInt ncurves, const RtInt nverts[], RtToken wrap,
+		const CParameterList &parameters)
+	{
+		return new CRiCurves(aLineNo, step, type, ncurves, nverts, wrap, parameters);
+	}
+
 	inline virtual CRiBlobby *newRiBlobby(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt nleaf, RtInt ncode, const RtInt code[], RtInt nflt, const RtFloat flt[], RtInt nstr, const RtString str[],
@@ -772,7 +987,18 @@ public:
 		return new CRiBlobby(aLineNo, decl, curColorDescr, nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
 	}
 
-	inline virtual CRiProcedural *newRiProcedural(long aLineNo, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) {
+	inline virtual CRiBlobby *newRiBlobby(
+		long aLineNo,
+		RtInt nleaf, RtInt ncode, const RtInt code[], RtInt nflt, const RtFloat flt[], RtInt nstr, const RtString str[],
+		const CParameterList &parameters)
+	{
+		return new CRiBlobby(aLineNo, nleaf, ncode, code, nflt, flt, nstr, str, parameters);
+	}
+
+	inline virtual CRiProcedural *newRiProcedural(
+		long aLineNo,
+		RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+	{
 		return new CRiProcedural(aLineNo, data, bound, subdivfunc, freefunc);
 	}
 
@@ -784,19 +1010,17 @@ public:
 		return new CRiGeometry(aLineNo, decl, curColorDescr, name, n, tokens, params);
 	}
 
+	inline virtual CRiGeometry *newRiGeometry(
+		long aLineNo,
+		RtToken name,
+		const CParameterList &parameters)
+	{
+		return new CRiGeometry(aLineNo, name, parameters);
+	}
+
 	inline virtual CRiObjectInstance *newRiObjectInstance(long aLineNo, RtObjectHandle handle) {
 		return new CRiObjectInstance(aLineNo, handle);
 	}
-
-	/*
-	inline virtual CRiArchiveInstance *newRiArchiveInstance(
-		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-		RtArchiveHandle handle, const IArchiveCallback *aCallback,
-		RtInt n, RtToken tokens[], RtPointer params[])
-	{
-		return new CRiArchiveInstance(aLineNo, decl, curColorDescr, handle, aCallback, n, tokens, params);
-	}
-	*/
 
 	inline virtual CRiMakeTexture *newRiMakeTexture(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
@@ -805,6 +1029,15 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiMakeTexture(aLineNo, decl, curColorDescr, pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
+	}
+
+	inline virtual CRiMakeTexture *newRiMakeTexture(
+		long aLineNo,
+		const char *pic, const char *tex, RtToken swrap, RtToken twrap,
+		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
+		const CParameterList &parameters)
+	{
+		return new CRiMakeTexture(aLineNo, pic, tex, swrap, twrap, filterfunc, swidth, twidth, parameters);
 	}
 
 	inline virtual CRiMakeBump *newRiMakeBump(
@@ -816,6 +1049,15 @@ public:
 		return new CRiMakeBump(aLineNo, decl, curColorDescr, pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
 	}
 
+	inline virtual CRiMakeBump *newRiMakeBump(
+		long aLineNo,
+		const char *pic, const char *tex, RtToken swrap, RtToken twrap,
+		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
+		const CParameterList &parameters)
+	{
+		return new CRiMakeBump(aLineNo, pic, tex, swrap, twrap, filterfunc, swidth, twidth, parameters);
+	}
+
 	inline virtual CRiMakeLatLongEnvironment *newRiMakeLatLongEnvironment(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex,
@@ -823,6 +1065,15 @@ public:
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiMakeLatLongEnvironment(aLineNo, decl, curColorDescr, pic, tex, filterfunc, swidth, twidth, n, tokens, params);
+	}
+
+	inline virtual CRiMakeLatLongEnvironment *newRiMakeLatLongEnvironment(
+		long aLineNo,
+		const char *pic, const char *tex,
+		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
+		const CParameterList &parameters)
+	{
+		return new CRiMakeLatLongEnvironment(aLineNo, pic, tex, filterfunc, swidth, twidth, parameters);
 	}
 
 	inline virtual CRiMakeCubeFaceEnvironment *newRiMakeCubeFaceEnvironment(
@@ -835,6 +1086,16 @@ public:
 		return new CRiMakeCubeFaceEnvironment(aLineNo, decl, curColorDescr, px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
 	}
 
+	inline virtual CRiMakeCubeFaceEnvironment *newRiMakeCubeFaceEnvironment(
+		long aLineNo,
+		const char *px, const char *nx, const char *py, const char *ny, const char *pz, const char *nz,
+		const char *tex, RtFloat fov,
+		const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth,
+		const CParameterList &parameters)
+	{
+		return new CRiMakeCubeFaceEnvironment(aLineNo, px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, parameters);
+	}
+
 	inline virtual CRiMakeShadow *newRiMakeShadow(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		const char *pic, const char *tex,
@@ -843,12 +1104,28 @@ public:
 		return new CRiMakeShadow(aLineNo, decl, curColorDescr, pic, tex, n, tokens, params);
 	}
 
+	inline virtual CRiMakeShadow *newRiMakeShadow(
+		long aLineNo,
+		const char *pic, const char *tex,
+		const CParameterList &parameters)
+	{
+		return new CRiMakeShadow(aLineNo, pic, tex, parameters);
+	}
+
 	inline virtual CRiMakeBrickMap *newRiMakeBrickMap(
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
 		RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return new CRiMakeBrickMap(aLineNo, decl, curColorDescr, theNNames, thePtcNames, aBkMName, n, tokens, params);
+	}
+
+	inline virtual CRiMakeBrickMap *newRiMakeBrickMap(
+		long aLineNo,
+		RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
+		const CParameterList &parameters)
+	{
+		return new CRiMakeBrickMap(aLineNo, theNNames, thePtcNames, aBkMName, parameters);
 	}
 
 	inline virtual CRiArchiveRecord *newRiArchiveRecord(long aLineNo, RtToken type, const char *line)
@@ -864,6 +1141,13 @@ public:
 		return new CRiReadArchive(aLineNo, decl, curColorDescr, filename, callback, n, tokens, params);
 	}
 
+	inline virtual CRiReadArchive *newRiReadArchive(
+		long aLineNo,
+		RtString filename, const IArchiveCallback *callback,
+		const CParameterList &parameters)
+	{
+		return new CRiReadArchive(aLineNo, filename, callback, parameters);
+	}
 }; // CRManInterfaceFactory
 
 }

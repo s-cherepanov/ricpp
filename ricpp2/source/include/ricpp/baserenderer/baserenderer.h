@@ -289,6 +289,8 @@ protected:
 	 */
 	virtual IRiCPPErrorHandler &ricppErrHandler()
 	{
+		if ( m_parserCallback )
+			return m_parserCallback->ricppErrHandler();
 		return m_errorExceptionHandler;
 	}
 

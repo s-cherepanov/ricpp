@@ -26,11 +26,11 @@
  *  @author Andreas Pidde (andreas@pidde.de).
  *  @brief RIBtool, a shell tool to do some RIB processing.
 
-This is only a roadmap (some ideas), a minor number of
-options work at the moment. A list of working options can
+Attention: This is only a roadmap (some ideas), a minor number
+of options work at the moment! A list of working options can
 be found in printUsage(). I will implement the options one
 by one to test the behaviour of the RiCPP RIB parsing and
-writing capabilities.
+writing capabilities, occasionally.
 
 RIBtool is a little shell tool, which parses, processes and
 writes RenderMan(R) Interface Byte streams (RIB files).
@@ -320,15 +320,50 @@ e Header for entity: ##RenderMan RIB-Structure 1.1 Entity
 v Writes current version string of the ribwriter: version 3.03
 @endverbatim
 
-- The option m (cache (memory) RIB archives), default -m
+- The option m (motion blocks), default +e
+
+Can be used to roll out motion blocks. Geometry is written
+in enclosing attribute blocks. Instead of the
+motion block with attributes and transformations, the first
+command is written. Geometry is written multiple times with
+the appropriate options/transforms set. Camera motion causes
+the whole content of a world blocks written multiple times within
+attribute blocks.
+
+@verbatim
++e Motion blocks are written as usual, the renderer has to perform the motions
+-e Motion blocks are rolled out
+   t Just in front of geometry a opacity command is used to set
+     the opacity/transparency. I used the letter t because of option o is
+	 the important output option and typos can cause unwanting overwriting
+	 of RIB-files.
+@endverbatim
+
+
+- The option l (level of detail), default +l
+
+Can be used to roll out motion blocks. Geometry is written
+in enclosing attribute blocks. Instead of the
+motion block with attributes and transformations, the first
+command is written. Geometry is written multiple times with
+the appropriate options/transforms set. Camera motion causes
+the whole content of a world blocks written multiple times within
+attribute blocks.
+
+@verbatim
++l Level of detail commands are written
+-l The appropriate level of detail geometry is used
+@endverbatim
+
+- The option e (cache (memory) RIB archives), default -e
 
 Experimental, caches the archive files read by ReadArchive,
 can lead wrong behaviour, because variables are evaluated
 while parsing. This needs more considerations...
 
 @verbatim
-+m Caches RIB archives.
--m Doesn't cache RIB archives.
++e Caches RIB archives.
+-e Doesn't cache RIB archives.
 @endverbatim
 */
 
@@ -337,10 +372,10 @@ while parsing. This needs more considerations...
 
 using namespace RiCPP;
 
-CRiCPPBridge ri; ///< The bridge to the rendering context
+CRiCPPBridge ri;    ///< The bridge to the rendering context
 
-RtInt yes = 1; ///< Used as parmeter for IRi::control() (positive)
-RtInt no = 0; ///< Used as parmeter for IRi::control() (negative)
+RtInt yes = 1;      ///< Used as parmeter for IRi::control() (positive)
+RtInt no = 0;       ///< Used as parmeter for IRi::control() (negative)
 RtInt special = -1; ///< Used as parmeter for IRi::control() (special behaviour)
 
 
@@ -360,7 +395,7 @@ void printUsage()
 	std::cout << "   a Inline archives" << std::endl;
 	std::cout << "   f File (RIB) archives" << std::endl;
 	std::cout << "   o RI objects" << std::endl;
-	std::cout << "   p Procedurals" << std::endl;
+	std::cout << "   p Procedurals (experimental)" << std::endl;
 	std::cout << "- Reads from stdin" << std::endl;
 	std::cout << "filename Reads from filename" << std::endl;
 }

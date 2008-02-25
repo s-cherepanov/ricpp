@@ -25,6 +25,7 @@
 /** @file baserenderer.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of the backend base class of a renderer context.
+ *  @todo Orientation, basis for motion blur and DOF
  */
 
 #include "ricpp/baserenderer/baserenderer.h"
@@ -1683,10 +1684,19 @@ RtVoid CBaseRenderer::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptra
 	if ( lowtran > uptran ) {
 		changed = true;
 		std::swap(lowtran, uptran);
+		if ( minvis > lowtran ) {
+			std::swap(minvis, lowtran);
+		}
 	}
 	if ( uptran > maxvis ) {
 		changed = true;
 		std::swap(uptran, maxvis);
+		if ( lowtran > uptran ) {
+			std::swap(lowtran, uptran);
+			if ( minvis > lowtran ) {
+				std::swap(minvis, lowtran);
+			}
+		}
 	}
 
 	RICPP_PREAMBLE(REQ_DETAIL_RANGE)

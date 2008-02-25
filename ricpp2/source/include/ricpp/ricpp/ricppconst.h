@@ -34,7 +34,9 @@
 #include "ricpp/ricpp/ricpptypes.h"
 #endif _RICPP_RICPP_RICPPTYPES_H
 
+#ifdef __cplusplus
 namespace RiCPP {
+#endif
 
 const RtMatrix RiIdentityMatrix = {
 	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0},
@@ -222,6 +224,8 @@ const RtInt RIE_SEVERE         =  3;       ///< So bad you should probably abort
 const RtInt RIE_LASTSEVERITY   =  3;       ///< Endmarker, not a severity code (added)
 //@}
 
- } // namespace RiCPP
+#ifdef __cplusplus
+} // namespace RiCPP
+#endif
 
  #endif // _RICPP_RICPP_RICPPCONST_H

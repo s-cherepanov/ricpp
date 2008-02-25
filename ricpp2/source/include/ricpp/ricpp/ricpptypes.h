@@ -25,11 +25,14 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+
+#ifdef __cplusplus
 /** @file ricpptypes.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Rt type definitions
  */
- namespace RiCPP {
+namespace RiCPP {
+#endif
 
 /** @defgroup ricpp_type Ri types
  *  @brief Some basic types are copied from ri.h (s.a. RISPEC3.2, Appendix C)
@@ -70,4 +73,6 @@ typedef RtToken RtArchiveHandle;       ///< Handle for a rib archive (was RtPoin
 
 } // namespace RiCPP
 
+#ifdef __cplusplus
 #endif // _RICPP_RICPP_RICPPTYPES_H
+#endif

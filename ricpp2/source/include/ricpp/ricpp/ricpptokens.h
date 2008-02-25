@@ -34,7 +34,9 @@
 #include "ricpp/ricpp/ricpptypes.h"
 #endif _RICPP_RICPP_RICPPTYPES_H
 
+#ifdef __cplusplus
 namespace RiCPP {
+#endif
 
 /** @defgroup ricpp_tokens Ri tokens
  *  @brief Definition of the tokens of the RenderMan interface
@@ -270,4 +272,6 @@ const RtToken RI_EMPTY   = ""; ///< Empty String marker, not a real token, only 
 
 }
 
+#ifdef __cplusplus
 #endif // _RICPP_RICPP_RICPPTOKENS_H
+#endif

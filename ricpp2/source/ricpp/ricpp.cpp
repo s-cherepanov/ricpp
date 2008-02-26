@@ -12,3 +12,4 @@ using namespace RiCPP;
 
 IFilterFunc::IFilterFunc() {}
 IFilterFunc::~IFilterFunc() {}
+

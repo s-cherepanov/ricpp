@@ -33,7 +33,7 @@
 
 #ifndef _RICPP_RIBASE_RICPPTYPES_H
 #include "ricpp/ribase/ricpptypes.h"
-#endif _RICPP_RIBASE_RICPPTYPES_H
+#endif // _RICPP_RIBASE_RICPPTYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -201,11 +201,11 @@ RICPP_EXTERN(RtInt) RIE_LASTSEVERITY;       /**< Endmarker, not a severity code 
 /** @} */
 
 #ifdef __cplusplus
-/* } /* namespace RiCPP */
+} /* namespace RiCPP */
 #endif
 
 #ifdef __cplusplus
-} /* extern "C" */
+/* } /* extern "C" */
 #endif
 
 #endif /* _RICPP_RIBASE_RICPPCONST_H */

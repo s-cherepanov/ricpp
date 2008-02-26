@@ -27,12 +27,18 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Definitions of the C-binding of the RenderMan(R) interface
  */
+#define RI_EXPORTS
 #include "ricpp/ribase/ricppconst.h"
 #include "ricpp/ribase/ricpptokens.h"
+#include "ricpp/ribase/ricppdecls.h"
 
-#include <math.h>
+#include <cmath>
 
-/* */
+/* using namespace RiCPP; /* */
+
+extern "C" {
+
+RICPP_INTERN(RtInt) RiLastError = RIE_NOERROR;
 
 RICPP_INTERN(RtFloat)
 RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
@@ -432,3 +438,5 @@ RICPP_INTERN(RtToken) RI_INT     = "int";
 RICPP_INTERN(RtToken) RI_NULL_LIT = "null";
 RICPP_INTERN(RtToken) RI_UNKNOWN = "unknown";
 RICPP_INTERN(RtToken) RI_EMPTY   = "";
+
+}

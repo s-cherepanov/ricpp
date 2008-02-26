@@ -32,9 +32,9 @@
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
-#ifndef _RICPP_RI_RI_H
-#include "ricpp/ri/ri.h"
-#endif // _RICPP_TOOLS_INLINETOOLS_H
+#ifndef _RICPP_RIBASE_RICPPDECLS_H
+#include "ricpp/ribase/ricppdecls.h"
+#endif _RICPP_RIBASE_RICPPDECLS_H
 
 using namespace RiCPP;
 

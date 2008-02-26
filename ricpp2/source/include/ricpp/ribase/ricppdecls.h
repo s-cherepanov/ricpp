@@ -1,5 +1,5 @@
-#ifndef _RICPP_RIBASE_RICPPDEFS_H
-#define _RICPP_RIBASE_RICPPDEFS_H
+#ifndef _RICPP_RIBASE_RICPPDECLS_H
+#define _RICPP_RIBASE_RICPPDECLS_H
 
 /*
 // RICPP - RenderMan(R) Interface CPP Language Binding
@@ -27,7 +27,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/** @file ricppdefs.h
+/** @file ricppdecls.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief RenderMan(R) interface declarations of RiLastError and functions that can be used as parameter
  */
@@ -75,4 +75,4 @@ RICPP_EXTERN(RtVoid)
 /* } /* extern "C" */
 #endif
 
-#endif // _RICPP_RIBASE_RICPPDEFS_H
+#endif // _RICPP_RIBASE_RICPPDECLS_H

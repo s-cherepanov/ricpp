@@ -158,7 +158,7 @@ public:
 			char strnum[64];
 
 			strnum[0] = (char)0;
-#ifdef WIN32
+#ifdef _WIN32
 			sprintf_s(strnum, sizeof(strnum), "%ld", ++m_maxHandleIdx);
 #else
 			snprintf(strnum, sizeof(strnum)-1, "%ld", ++m_maxHandleIdx);

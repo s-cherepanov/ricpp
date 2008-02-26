@@ -34,7 +34,7 @@
 
 #ifndef _RICPP_RIBASE_RICPPTYPES_H
 #include "ricpp/ribase/ricpptypes.h"
-#endif _RICPP_RIBASE_RICPPTYPES_H
+#endif // _RICPP_RIBASE_RICPPTYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,6 +43,29 @@ extern "C" {
 #ifdef __cplusplus
 /* namespace RiCPP { /* */
 #endif
+
+RICPP_EXTERN(RtInt)		RiLastError;
+
+RICPP_EXTERN(RtFloat)
+    RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
+    RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
+    RiTriangleFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
+    RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
+    RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth);
+
+/*
+RICPP_EXTERN(RtVoid) 
+	RiProcDelayedReadArchive (RtPointer data, RtFloat detail),
+    RiProcRunProgram (RtPointer data, RtFloat detail),
+    RiProcDynamicLoad (RtPointer data, RtFloat detail),
+	RiProcFree(RtPointer);
+
+RICPP_EXTERN(RtVoid)
+    RiErrorHandler (RtErrorHandler handler),
+    RiErrorIgnore (RtInt code, RtInt severity, char *message),
+    RiErrorPrint (RtInt code, RtInt severity, char *message),
+    RiErrorAbort (RtInt code, RtInt severity, char *message);
+*/
 
 /** @defgroup ricpp_tokens Ri tokens
  *  @brief Definition of the tokens of the RenderMan interface
@@ -278,12 +301,11 @@ RICPP_EXTERN(RtToken) RI_EMPTY; /**< Empty String marker, not a real token, only
 /** @} */
 
 #ifdef __cplusplus
-/* } /* namespace RiCPP */
+} /* namespace RiCPP */
 #endif
 
 #ifdef __cplusplus
-} /* extern "C" */
+/* } /* extern "C" */
 #endif
-
 
 #endif /* _RICPP_RIBASE_RICPPTOKENS_H */

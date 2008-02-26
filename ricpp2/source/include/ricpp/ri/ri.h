@@ -45,6 +45,36 @@
  * @todo copy the routines that can be used with no context to riprog, ridynload
  */
 
+#ifdef _WIN32
+
+#if defined(RI_EXPORTS)
+#if !defined(RICPP_EXTERN)
+#define	RICPP_EXTERN(type) extern __declspec(dllexport) type
+#endif
+#if !defined(RICPP_INTERN)
+#define	RICPP_INTERN(type) __declspec(dllexport) type
+#endif
+#else
+#if !defined(RICPP_EXTERN)
+#define	RICPP_EXTERN(type) extern __declspec(dllimport) type
+#endif
+#if !defined(RICPP_INTERN)
+#define	RICPP_INTERN(type) __declspec(dllimport) type
+#endif
+#endif
+
+#else
+
+#if !defined(RICPP_EXTERN)
+#define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
+#endif
+
+#if !defined(RICPP_INTERN)
+#define RICPP_INTERN(type) __attribute__((visibility("default"))) type
+#endif
+
+#endif
+
 #ifndef _RICPP_RIBASE_RICPPCONST_H
 #include "ricpp/ribase/ricppconst.h"
 #endif _RICPP_RIBASE_RICPPCONST_H
@@ -52,6 +82,11 @@
 #ifndef _RICPP_RIBASE_RICPPTOKENS_H
 #include "ricpp/ribase/ricpptokens.h"
 #endif _RICPP_RIBASE_RICPPTOKENS_H
+
+#ifndef _RICPP_RIBASE_RICPPDECLS_H
+#include "ricpp/ribase/ricppdecls.h"
+#endif _RICPP_RIBASE_RICPPDECLS_H
+
 
 #ifdef __cplusplus
 /* namespace RiCPP { /* */
@@ -61,12 +96,6 @@
 extern "C" {
 #endif
 
-/*//////////////////////////////////////////////////////////////////////
-//
-//	Delarations of symbols of the RenderMan Interface Subroutines
-//
-//////////////////////////////////////////////////////////////////////*/
-RICPP_EXTERN(RtInt)		RiLastError;
 
 /*//////////////////////////////////////////////////////////////////////
 //
@@ -137,14 +166,6 @@ RICPP_EXTERN(RtVoid)
     RiDisplayV (char *name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]),
 	RiDisplayChannel (RtToken channel, ...),
     RiDisplayChannelV (RtToken channel,RtInt n, RtToken tokens[], RtPointer params[]);
-
-/* Implemented in filters.cpp */
-RICPP_EXTERN(RtFloat)
-    RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiTriangleFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth);
 
 RICPP_EXTERN(RtVoid)
     RiHider (RtToken type, ...),
@@ -265,12 +286,6 @@ RICPP_EXTERN(RtVoid)
     RiBlobby (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], ...),
     RiBlobbyV (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]);
 
-RICPP_EXTERN(RtVoid) 
-	RiProcDelayedReadArchive (RtPointer data, RtFloat detail),
-    RiProcRunProgram (RtPointer data, RtFloat detail),
-    RiProcDynamicLoad (RtPointer data, RtFloat detail),
-	RiProcFree(RtPointer);
-
 RICPP_EXTERN(RtVoid)
 	RiSolidBegin(RtToken type), 
 	RiSolidEnd(void);
@@ -298,12 +313,6 @@ RICPP_EXTERN(RtVoid)
     RiMakeShadowV (char *pic, char *tex, RtInt n, RtToken tokens[], RtPointer params[]),
 	RiMakeBrickMap (int n,char **src, char *dest, ...),
 	RiMakeBrickMapV(int n,char **src, char *dest,RtInt numTokens, RtToken tokens[], RtPointer params[]);
-
-RICPP_EXTERN(RtVoid)
-    RiErrorHandler (RtErrorHandler handler),
-    RiErrorIgnore (RtInt code, RtInt severity, char *message),
-    RiErrorPrint (RtInt code, RtInt severity, char *message),
-    RiErrorAbort (RtInt code, RtInt severity, char *message);
 
 RICPP_EXTERN(RtVoid)
 	RiResource(RtToken handle, RtToken type, ...),

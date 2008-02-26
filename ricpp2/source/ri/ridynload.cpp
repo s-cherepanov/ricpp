@@ -1,4 +1,6 @@
 // Adapter ri - ricpp Adapter for dynamic load procedurals (CRiCPPBridge Instance from procedural), empty begin, end
+
+#define RI_EXPORTS
 #include "ricpp/ri/ri.h"
 
 #ifndef _RICPP_RICPP_RICPP_H
@@ -15,46 +17,46 @@ using namespace RiCPP;
 extern "C" {
 
 // ----------------------------------------------------------------------------
-RICPP_EXTERN(RtVoid) RiBegin(RtToken name)
+RICPP_INTERN(RtVoid) RiBegin(RtToken name)
 {
 	// ERROR there is no begin/end in daynmic load procedurals (only one context)
 }
 
-RICPP_EXTERN(RtVoid) RiEnd(void)
+RICPP_INTERN(RtVoid) RiEnd(void)
 {
 	// ERROR there is no begin/end in daynmic load procedurals (only one context)
 }
 
 
 // ----------------------------------------------------------------------------
-RICPP_EXTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
+RICPP_INTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
 {
 	// ERROR there is no begin/end in daynmic load procedurals (only one context)
 	return 0;
 }
 
 
-RICPP_EXTERN(RtContextHandle)
+RICPP_INTERN(RtContextHandle)
 	RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[])
 {
 	// ERROR there is no begin/end in daynmic load procedurals (only one context)
 	return 0;
 }
 
-RICPP_EXTERN(RtVoid)
+RICPP_INTERN(RtVoid)
 	RiCPPEnd (void)
 {
 	// ERROR there is no begin/end in daynmic load procedurals (only one context)
 }
 
 // ----------------------------------------------------------------------------
-RICPP_EXTERN(RtContextHandle) RiGetContext(void)
+RICPP_INTERN(RtContextHandle) RiGetContext(void)
 {
 	// ERROR no context switching allowed in dynamic load (only one context)
 	return illContextHandle;
 }
 
-RICPP_EXTERN(RtVoid) RiContext(RtContextHandle h)
+RICPP_INTERN(RtVoid) RiContext(RtContextHandle h)
 {
 	// ERROR no context switching allowed in dynamic load (only one context)
 }

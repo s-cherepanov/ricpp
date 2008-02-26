@@ -186,7 +186,7 @@ namespace RiCPP {
 			const char *tmpfile = 0;
 			
 			
-		#ifdef WIN32
+		#ifdef _WIN32
 			if ( tmpnam_s(buf, sizeof(buf)) )
 				return 0;
 			tmpfile = &buf[0];

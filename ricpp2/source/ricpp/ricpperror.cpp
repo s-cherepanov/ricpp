@@ -192,7 +192,7 @@ ExceptRiCPPError::ExceptRiCPPError(
 	if ( aMessage && *aMessage && argList ) {
 		char str[ERROR_STR_SIZE];
 		str[0] = (char)0;
-#ifdef WIN32
+#ifdef _WIN32
 		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, aMessage, argList);
 #else
 		vsnprintf(str, ERROR_STR_SIZE-1, aMessage, argList);
@@ -216,7 +216,7 @@ void ExceptRiCPPError::set(
 	if ( aMessage && *aMessage && argList ) {
 		char str[ERROR_STR_SIZE];
 		str[0] = (char)0;
-#ifdef WIN32
+#ifdef _WIN32
 		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, aMessage, argList);
 #else
 		vsnprintf(str, ERROR_STR_SIZE-1, aMessage, argList);
@@ -264,7 +264,7 @@ RtVoid CErrorExceptionHandler::handleErrorV(RtInt code, RtInt severity, int line
 	if ( message && *message && argList ) {
 		char str[ERROR_STR_SIZE];
 		str[0] = (char)0;
-#ifdef WIN32
+#ifdef _WIN32
 		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, message, argList);
 #else
 		vsnprintf(str, ERROR_STR_SIZE-1, message, argList);

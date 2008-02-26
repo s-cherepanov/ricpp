@@ -1212,7 +1212,7 @@ bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
 	std::string encoded = "";
 
 
-#ifdef WIN32
+#ifdef _WIN32
 	{
 		size_t len = strlen(aPath);
 		if ( len > 1 ) {
@@ -1230,7 +1230,7 @@ bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
 #endif
 
 	for ( const unsigned char *c = (const unsigned char *)aPath; *c; ) {
-#ifdef WIN32
+#ifdef _WIN32
 		if ( *c == '\\' ) {
 			encoded += '/';
 			++c;
@@ -1296,7 +1296,7 @@ const char *CUri::decodeFilepath(std::string &path) const
 	}
 
 
-#ifdef WIN32
+#ifdef _WIN32
 	{
 		size_t len = strlen(filepath);
 		if ( len > 2 ) {
@@ -1314,7 +1314,7 @@ const char *CUri::decodeFilepath(std::string &path) const
 
 	path = filepath;
 
-#ifdef WIN32
+#ifdef _WIN32
 	{
 		size_t len = path.length();
 		while ( len > 0 ) {

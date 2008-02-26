@@ -29,9 +29,9 @@
 
 #include "ricpp/ricpp/requests.h"
 
-#ifndef _RICPP_RICPP_RICPPTOKENS_H
-#include "ricpp/ricpp/ricpptokens.h"
-#endif // _RICPP_RICPP_RICPPTOKENS_H
+#ifndef _RICPP_RIBASE_RICPPTOKENS_H
+#include "ricpp/ribase/ricpptokens.h"
+#endif // _RICPP_RIBASE_RICPPTOKENS_H
 
 using namespace RiCPP;
 

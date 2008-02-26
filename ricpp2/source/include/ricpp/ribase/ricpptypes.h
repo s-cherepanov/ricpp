@@ -30,20 +30,33 @@
  *  @brief Rt type definitions
  */
 
-#ifdef WIN32
+#ifdef _WIN32
 
-#ifdef _DLL
-#define	RICPP_EXTERN(type) extern type
-#define	RICPP_INTERN(type) type
+#if defined(RI_EXPORTS)
+#if !defined(RICPP_EXTERN)
+#define	RICPP_EXTERN(type) extern __declspec(dllexport) type
+#endif
+#if !defined(RICPP_INTERN)
+#define	RICPP_INTERN(type) __declspec(dllexport) type
+#endif
 #else
+// Use local binding internally
+#if !defined(RICPP_EXTERN)
 #define	RICPP_EXTERN(type) extern type
+#endif
+#if !defined(RICPP_INTERN)
 #define	RICPP_INTERN(type) type
+#endif
 #endif
 
 #else
 
+#if !defined(RICPP_EXTERN)
 #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
+#endif
+#if !defined(RICPP_INTERN)
 #define RICPP_INTERN(type) __attribute__((visibility("default"))) type
+#endif
 
 #endif
 
@@ -102,11 +115,11 @@ typedef RtToken RtArchiveHandle;       /**< Handle for a rib archive (was RtPoin
 /** @} */
 
 #ifdef __cplusplus
-/* } /* namespace RiCPP */
+} /* namespace RiCPP */
 #endif
 
 #ifdef __cplusplus
-} /* extern "C" */
+/* } /* extern "C" */
 #endif
 
 #endif /* _RICPP_RIBASE_RICPPTYPES_H */

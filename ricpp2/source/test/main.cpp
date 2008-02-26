@@ -412,7 +412,7 @@ void sometests(CRiCPPBridge ri)
 		gzclose(f);
 	}
 
-#ifdef WIN32
+#ifdef _WIN32
 	CStringList testpath;
 	testpath.explode(':', "$HOME:C|/testdir:C:Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
 

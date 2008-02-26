@@ -13,6 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				C352E6AC0D7467BA00CDED20 /* PBXTargetDependency */,
 				C3808AFC0D3CDE1E00B6C3BA /* PBXTargetDependency */,
 				C3808AE10D3CDB5300B6C3BA /* PBXTargetDependency */,
 				C3808ABA0D3CC00D00B6C3BA /* PBXTargetDependency */,
@@ -254,8 +255,15 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C32B8B0D0D7451C70059B201 /* ri */;
+			remoteGlobalIDString = C32B8B0D0D7451C70059B201;
 			remoteInfo = ri;
+		};
+		C352E6AB0D7467BA00CDED20 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C352E6920D7465B500CDED20 /* ridynload */;
+			remoteInfo = ridynload;
 		};
 		C3685F530D3C248C00B2E025 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -451,7 +459,7 @@
 		C34D15120D695953002CF63B /* Square.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Square.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Square.rib; sourceTree = "<absolute>"; };
 		C34D15130D695953002CF63B /* UnitCube.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = UnitCube.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/UnitCube.rib; sourceTree = "<absolute>"; };
 		C35100210D70DD2B008AC346 /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
-		C352E6930D7465B500CDED20 /* libridynload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libridynload.a; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/workspace/xcode3/ricppframework/build/Debug/libridynload.a; sourceTree = "<absolute>"; };
+		C352E6930D7465B500CDED20 /* libridynload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libridynload.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
 		C36326DB0C3A3CAB00364168 /* backbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = backbuffer.cpp; path = ../../../source/streams/backbuffer.cpp; sourceTree = SOURCE_ROOT; };
@@ -2405,6 +2413,11 @@
 			isa = PBXTargetDependency;
 			target = C32B8B0D0D7451C70059B201 /* ri */;
 			targetProxy = C352E6960D7465CA00CDED20 /* PBXContainerItemProxy */;
+		};
+		C352E6AC0D7467BA00CDED20 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C352E6920D7465B500CDED20 /* ridynload */;
+			targetProxy = C352E6AB0D7467BA00CDED20 /* PBXContainerItemProxy */;
 		};
 		C3685F540D3C248C00B2E025 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

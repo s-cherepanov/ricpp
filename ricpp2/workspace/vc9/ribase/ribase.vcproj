@@ -153,7 +153,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\source\ri\ri.c"
+				RelativePath="..\..\..\source\ribase\ribase.cpp"
 				>
 			</File>
 		</Filter>
@@ -163,15 +163,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\ricppconst.h"
+				RelativePath="..\..\..\source\include\ricpp\ribase\ricppconst.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpptokens.h"
+				RelativePath="..\..\..\source\include\ricpp\ribase\ricpptokens.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\source\include\ricpp\ricpp\ricpptypes.h"
+				RelativePath="..\..\..\source\include\ricpp\ribase\ricpptypes.h"
 				>
 			</File>
 		</Filter>

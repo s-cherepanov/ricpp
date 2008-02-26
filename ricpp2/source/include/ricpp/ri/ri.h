@@ -30,6 +30,8 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Interface for the RenderMan(R) C Binding
  *
+ *  Adapter from C-Binding to CPP-Binding
+ *
  @verbatim
        RenderMan(R) is a registered trademark of Pixar
    The RenderMan(R) Interface Procedures and Protocol are:
@@ -37,19 +39,19 @@
                    All rights Reservered
  @endverbatim
  *
- * Original dekalarations are part of [RiSPec].
+ * Original decalarations are part of [RiSPec].
  * Portions of this file are copied from the renderer Pixie.
  *
  * @todo copy the routines that can be used with no context to riprog, ridynload
  */
 
-#ifndef _RICPP_RICPP_RICPPCONST_H
-#include "ricpp/ricpp/ricppconst.h"
-#endif _RICPP_RICPP_RICPPCONST_H
+#ifndef _RICPP_RIBASE_RICPPCONST_H
+#include "ricpp/ribase/ricppconst.h"
+#endif _RICPP_RIBASE_RICPPCONST_H
  
-#ifndef _RICPP_RICPP_RICPPTOKENS_H
-#include "ricpp/ricpp/ricpptokens.h"
-#endif _RICPP_RICPP_RICPPTOKENS_H
+#ifndef _RICPP_RIBASE_RICPPTOKENS_H
+#include "ricpp/ribase/ricpptokens.h"
+#endif _RICPP_RIBASE_RICPPTOKENS_H
 
 #ifdef __cplusplus
 /* namespace RiCPP { /* */
@@ -58,17 +60,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*//////////////////////////////////////////////////////////////////////
-//
-//	Type definitions
-//
-//////////////////////////////////////////////////////////////////////*/
-typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, char *msg);
-typedef RtVoid      (*RtProcSubdivFunc)(RtPointer, RtFloat);
-typedef RtVoid      (*RtProcFreeFunc)(RtPointer);
-typedef RtVoid		(*RtArchiveCallback)(const char *,...);
-
 
 /*//////////////////////////////////////////////////////////////////////
 //

@@ -1,5 +1,5 @@
-#ifndef _RICPP_RICPP_RICPPTOKENS_H
-#define _RICPP_RICPP_RICPPTOKENS_H
+#ifndef _RICPP_RIBASE_RICPPTOKENS_H
+#define _RICPP_RIBASE_RICPPTOKENS_H
 
 /*
 // RICPP - RenderMan(R) Interface CPP Language Binding
@@ -32,9 +32,9 @@
  *  @brief Tokens of the RenderMan(R) interface
  */
 
-#ifndef _RICPP_RICPP_RICPPTYPES_H
-#include "ricpp/ricpp/ricpptypes.h"
-#endif _RICPP_RICPP_RICPPTYPES_H
+#ifndef _RICPP_RIBASE_RICPPTYPES_H
+#include "ricpp/ribase/ricpptypes.h"
+#endif _RICPP_RIBASE_RICPPTYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -286,4 +286,4 @@ RICPP_EXTERN(RtToken) RI_EMPTY; /**< Empty String marker, not a real token, only
 #endif
 
 
-#endif /* _RICPP_RICPP_RICPPTOKENS_H */
+#endif /* _RICPP_RIBASE_RICPPTOKENS_H */

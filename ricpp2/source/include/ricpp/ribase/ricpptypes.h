@@ -1,5 +1,5 @@
-#ifndef _RICPP_RICPP_RICPPTYPES_H
-#define _RICPP_RICPP_RICPPTYPES_H
+#ifndef _RICPP_RIBASE_RICPPTYPES_H
+#define _RICPP_RIBASE_RICPPTYPES_H
 
 /* RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -83,6 +83,11 @@ typedef void   *RtPointer;       /**< Pointer to arbitrary data */
  */
 typedef RtFloat (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
 
+typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, char *msg);
+typedef RtVoid      (*RtProcSubdivFunc)(RtPointer, RtFloat);
+typedef RtVoid      (*RtProcFreeFunc)(RtPointer);
+typedef RtVoid		(*RtArchiveCallback)(const char *,...);
+
 /** @defgroup ricpp_handles Ri handle types
  *  @ingroup ricpp_types
  *  @brief handles are only valid for the rendering context, where they are defined
@@ -90,7 +95,7 @@ typedef RtFloat (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
  *  @{
  */
 typedef RtToken RtLightHandle;         /**< Handle for an indirect light handle (was RtPointer). */
-typedef unsigned long RtContextHandle; /**< Handle for a render context handle (was RtPointer). */
+typedef unsigned long RtContextHandle; /**< Handle for a render context handle (was RtPointer). @todo Maybe also as RtToken */
 typedef RtToken RtObjectHandle;        /**< Handle for an object instance (was RtPointer) can be positive or negative. */
 typedef RtToken RtArchiveHandle;       /**< Handle for a rib archive (was RtPointer), is the tokenized name. */
 /** @} */
@@ -104,4 +109,4 @@ typedef RtToken RtArchiveHandle;       /**< Handle for a rib archive (was RtPoin
 } /* extern "C" */
 #endif
 
-#endif /* _RICPP_RICPP_RICPPTYPES_H */
+#endif /* _RICPP_RIBASE_RICPPTYPES_H */

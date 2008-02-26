@@ -39,13 +39,13 @@
  * ricpp.h means the same to RiCPP as ri.h to the standard C binding.
  */
 
-#ifndef _RICPP_RICPP_RICPPCONST_H
-#include "ricpp/ricpp/ricppconst.h"
-#endif _RICPP_RICPP_RICPPCONST_H
+#ifndef _RICPP_RIBASE_RICPPCONST_H
+#include "ricpp/ribase/ricppconst.h"
+#endif _RICPP_RIBASE_RICPPCONST_H
  
-#ifndef _RICPP_RICPP_RICPPTOKENS_H
-#include "ricpp/ricpp/ricpptokens.h"
-#endif _RICPP_RICPP_RICPPTOKENS_H
+#ifndef _RICPP_RIBASE_RICPPTOKENS_H
+#include "ricpp/ribase/ricpptokens.h"
+#endif _RICPP_RIBASE_RICPPTOKENS_H
 
 /** @namespace RiCPP
  *  @brief All of the interface is placed within the RiCPP namespace.

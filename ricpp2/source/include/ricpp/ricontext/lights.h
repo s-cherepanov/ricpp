@@ -37,9 +37,9 @@
 #include "ricpp/ricontext/parameter.h"
 #endif // _RICPP_RICONTEXT_PARAMETER_H
 
-#ifndef _RICPP_RICPP_RICPPCONST_H
-#include "ricpp/ricpp/ricppconst.h"
-#endif // _RICPP_RICPP_RICPPCONST_H
+#ifndef _RICPP_RIBASE_RICPPCONST_H
+#include "ricpp/ribase/ricppconst.h"
+#endif // _RICPP_RIBASE_RICPPCONST_H
 
 #include <deque>
 

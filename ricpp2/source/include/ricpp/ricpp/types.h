@@ -30,9 +30,9 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  */
  
-#ifndef _RICPP_RICPP_RICPPTYPES_H
-#include "ricpp/ricpp/ricpptypes.h"
-#endif // _RICPP_RICPP_RICPPTYPES_H
+#ifndef _RICPP_RIBASE_RICPPTYPES_H
+#include "ricpp/ribase/ricpptypes.h"
+#endif // _RICPP_RIBASE_RICPPTYPES_H
 
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"

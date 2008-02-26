@@ -38,9 +38,9 @@
 #include "ricpp/ricontext/modes.h"
 #endif // RICPP_RENDERSTATE_MODES_H
 
-#ifndef RICPP_RICPP_RICPPCONST_H
-#include "ricpp/ricpp/ricppconst.h"
-#endif // RICPP_RICPP_RICPPCONST_H
+#ifndef RICPP_RIBASE_RICPPCONST_H
+#include "ricpp/ribase/ricppconst.h"
+#endif // RICPP_RIBASE_RICPPCONST_H
 
 #include <vector>
 

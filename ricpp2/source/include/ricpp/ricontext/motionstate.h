@@ -30,9 +30,9 @@
  *  @brief Handling of the motion blocks (used by render state).
  */
 
-#ifndef _RICPP_RICPP_RICPPTYPES_H
-#include "ricpp/ricpp/ricpptypes.h"
-#endif // _RICPP_RICPP_RICPPTYPES_H
+#ifndef _RICPP_RIBASE_RICPPTYPES_H
+#include "ricpp/ribase/ricpptypes.h"
+#endif // _RICPP_RIBASE_RICPPTYPES_H
 
 #ifndef _RICPP_RICPP_REQUESTS_H
 #include "ricpp/ricpp/requests.h"

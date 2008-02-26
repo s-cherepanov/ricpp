@@ -1,5 +1,5 @@
-#ifndef _RICPP_RICPP_RICPPCONST_H
-#define _RICPP_RICPP_RICPPCONST_H
+#ifndef _RICPP_RIBASE_RICPPCONST_H
+#define _RICPP_RIBASE_RICPPCONST_H
 
 /* RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -31,9 +31,9 @@
  *  @brief Constants of the RenderMan(R) interface
  */
 
-#ifndef _RICPP_RICPP_RICPPTYPES_H
-#include "ricpp/ricpp/ricpptypes.h"
-#endif _RICPP_RICPP_RICPPTYPES_H
+#ifndef _RICPP_RIBASE_RICPPTYPES_H
+#include "ricpp/ribase/ricpptypes.h"
+#endif _RICPP_RIBASE_RICPPTYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -208,4 +208,4 @@ RICPP_EXTERN(RtInt) RIE_LASTSEVERITY;       /**< Endmarker, not a severity code 
 } /* extern "C" */
 #endif
 
-#endif /* _RICPP_RICPP_RICPPCONST_H */
+#endif /* _RICPP_RIBASE_RICPPCONST_H */

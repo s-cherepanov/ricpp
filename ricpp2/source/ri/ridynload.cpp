@@ -18,13 +18,11 @@ extern "C" {
 RICPP_EXTERN(RtVoid) RiBegin(RtToken name)
 {
 	// ERROR there is no begin/end in daynmic load procedurals (only one context)
-	return 0;
 }
 
 RICPP_EXTERN(RtVoid) RiEnd(void)
 {
 	// ERROR there is no begin/end in daynmic load procedurals (only one context)
-	return 0;
 }
 
 

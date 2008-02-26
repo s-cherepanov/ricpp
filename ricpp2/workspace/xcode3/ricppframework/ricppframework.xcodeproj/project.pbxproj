@@ -26,7 +26,6 @@
 
 /* Begin PBXBuildFile section */
 		C31C224A0D7404BB009D99C2 /* riprog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C31C21EE0D73F839009D99C2 /* riprog.cpp */; };
-		C31C22560D7405E4009D99C2 /* ridynload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C31C21ED0D73F822009D99C2 /* ridynload.cpp */; };
 		C31C22A20D74094C009D99C2 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
 		C31C22A60D740A4B009D99C2 /* ricpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C31C22A50D740A4B009D99C2 /* ricpp.cpp */; };
 		C31C22BB0D740F13009D99C2 /* testribind.c in Sources */ = {isa = PBXBuildFile; fileRef = C31C221F0D73FA25009D99C2 /* testribind.c */; };
@@ -34,15 +33,16 @@
 		C32B8B110D7451D90059B201 /* ri.h in Headers */ = {isa = PBXBuildFile; fileRef = C31C21EB0D73F7E1009D99C2 /* ri.h */; };
 		C32B8B120D7451D90059B201 /* ri.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C31C21EC0D73F804009D99C2 /* ri.cpp */; };
 		C32B8B1C0D74521B0059B201 /* libri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libri.a */; };
-		C32B8B200D7452460059B201 /* libri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libri.a */; };
 		C32B8B3C0D7454830059B201 /* ricppconst.h in Headers */ = {isa = PBXBuildFile; fileRef = C36326DD0C3A3CCF00364168 /* ricppconst.h */; };
 		C32B8B3D0D7454830059B201 /* ricpptokens.h in Headers */ = {isa = PBXBuildFile; fileRef = C36326DE0C3A3CCF00364168 /* ricpptokens.h */; };
 		C32B8B3E0D7454830059B201 /* ricpptypes.h in Headers */ = {isa = PBXBuildFile; fileRef = C36326DF0C3A3CCF00364168 /* ricpptypes.h */; };
 		C32B8B3F0D7454830059B201 /* ri.c in Sources */ = {isa = PBXBuildFile; fileRef = C32B8AB80D744DE90059B201 /* ri.c */; };
 		C32B8B420D7454980059B201 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
 		C32B8B750D74590E0059B201 /* riinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = C32B8B740D74590E0059B201 /* riinternal.h */; };
-		C32B8BB70D74604D0059B201 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
 		C35100220D70DD2B008AC346 /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C35100210D70DD2B008AC346 /* baserenderer.h */; };
+		C352E6980D7465E900CDED20 /* libri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libri.a */; };
+		C352E6990D7465FA00CDED20 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
+		C352E69B0D74661A00CDED20 /* ridynload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C31C21ED0D73F822009D99C2 /* ridynload.cpp */; };
 		C3685ECC0D3C1F9100B2E025 /* stringpattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */; };
 		C3685ECD0D3C1F9100B2E025 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
 		C3685ECE0D3C1F9100B2E025 /* macfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2A20BE86D370057831B /* macfilepath.cpp */; };
@@ -226,36 +226,36 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C3685EF40D3C216000B2E025 /* ricpp */;
+			remoteGlobalIDString = C3685EF40D3C216000B2E025;
 			remoteInfo = ricpp;
 		};
 		C32B8B1A0D7452150059B201 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C32B8B0D0D7451C70059B201 /* ri */;
-			remoteInfo = ri;
-		};
-		C32B8B1D0D74522B0059B201 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C32B8B0D0D7451C70059B201 /* ri */;
+			remoteGlobalIDString = C32B8B0D0D7451C70059B201;
 			remoteInfo = ri;
 		};
 		C32B8B400D7454920059B201 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C32B8B380D74546A0059B201 /* ribase */;
+			remoteGlobalIDString = C32B8B380D74546A0059B201;
 			remoteInfo = ribase;
 		};
 		C32B8B530D74582D0059B201 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C31C22B60D740F03009D99C2 /* testribind */;
+			remoteGlobalIDString = C31C22B60D740F03009D99C2;
 			remoteInfo = testribind;
+		};
+		C352E6960D7465CA00CDED20 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C32B8B0D0D7451C70059B201 /* ri */;
+			remoteInfo = ri;
 		};
 		C3685F530D3C248C00B2E025 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -433,7 +433,6 @@
 		C31C21EE0D73F839009D99C2 /* riprog.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = riprog.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ri/riprog.cpp; sourceTree = "<absolute>"; };
 		C31C221F0D73FA25009D99C2 /* testribind.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testribind.c; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/test/testribind.c; sourceTree = "<absolute>"; };
 		C31C22460D740489009D99C2 /* libriprog.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libriprog.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C31C22510D7405AF009D99C2 /* libridynload.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libridynload.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C31C22A50D740A4B009D99C2 /* ricpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ricpp.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ricpp/ricpp.cpp; sourceTree = "<absolute>"; };
 		C31C22B70D740F03009D99C2 /* testribind */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testribind; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
@@ -452,6 +451,7 @@
 		C34D15120D695953002CF63B /* Square.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Square.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/Square.rib; sourceTree = "<absolute>"; };
 		C34D15130D695953002CF63B /* UnitCube.rib */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = UnitCube.rib; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/RibSamples/UnitCube.rib; sourceTree = "<absolute>"; };
 		C35100210D70DD2B008AC346 /* baserenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
+		C352E6930D7465B500CDED20 /* libridynload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libridynload.a; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/workspace/xcode3/ricppframework/build/Debug/libridynload.a; sourceTree = "<absolute>"; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
 		C36326DB0C3A3CAB00364168 /* backbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = backbuffer.cpp; path = ../../../source/streams/backbuffer.cpp; sourceTree = SOURCE_ROOT; };
@@ -597,15 +597,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C31C224F0D7405AF009D99C2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C32B8B200D7452460059B201 /* libri.a in Frameworks */,
-				C32B8BB70D74604D0059B201 /* libricpp.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C31C22B50D740F03009D99C2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -625,6 +616,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C352E6910D7465B500CDED20 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C352E6980D7465E900CDED20 /* libri.a in Frameworks */,
+				C352E6990D7465FA00CDED20 /* libricpp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -831,10 +831,10 @@
 				C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */,
 				C37A0D380D6AC5880027CE77 /* ribtool */,
 				C31C22460D740489009D99C2 /* libriprog.1.dylib */,
-				C31C22510D7405AF009D99C2 /* libridynload.1.dylib */,
 				C31C22B70D740F03009D99C2 /* testribind */,
 				C32B8B0E0D7451C70059B201 /* libri.a */,
 				C32B8B390D74546A0059B201 /* libribase.a */,
+				C352E6930D7465B500CDED20 /* libridynload.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1511,13 +1511,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C31C224D0D7405AF009D99C2 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C32B8B0A0D7451C70059B201 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1534,6 +1527,13 @@
 				C32B8B3C0D7454830059B201 /* ricppconst.h in Headers */,
 				C32B8B3D0D7454830059B201 /* ricpptokens.h in Headers */,
 				C32B8B3E0D7454830059B201 /* ricpptypes.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C352E68F0D7465B500CDED20 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1736,24 +1736,6 @@
 			productReference = C31C22460D740489009D99C2 /* libriprog.1.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		C31C22500D7405AF009D99C2 /* ridynload */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C31C22940D7405F9009D99C2 /* Build configuration list for PBXNativeTarget "ridynload" */;
-			buildPhases = (
-				C31C224D0D7405AF009D99C2 /* Headers */,
-				C31C224E0D7405AF009D99C2 /* Sources */,
-				C31C224F0D7405AF009D99C2 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				C32B8B1E0D74522B0059B201 /* PBXTargetDependency */,
-			);
-			name = ridynload;
-			productName = ridynload;
-			productReference = C31C22510D7405AF009D99C2 /* libridynload.1.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		C31C22B60D740F03009D99C2 /* testribind */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C31C22BC0D740F31009D99C2 /* Build configuration list for PBXNativeTarget "testribind" */;
@@ -1804,6 +1786,24 @@
 			name = ribase;
 			productName = ribase;
 			productReference = C32B8B390D74546A0059B201 /* libribase.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		C352E6920D7465B500CDED20 /* ridynload */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C352E69A0D74661800CDED20 /* Build configuration list for PBXNativeTarget "ridynload" */;
+			buildPhases = (
+				C352E68F0D7465B500CDED20 /* Headers */,
+				C352E6900D7465B500CDED20 /* Sources */,
+				C352E6910D7465B500CDED20 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C352E6970D7465CA00CDED20 /* PBXTargetDependency */,
+			);
+			name = ridynload;
+			productName = ridynload;
+			productReference = C352E6930D7465B500CDED20 /* libridynload.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		C3685EC30D3C1F4D00B2E025 /* tools */ = {
@@ -2142,7 +2142,7 @@
 				C3808ABF0D3CC05700B6C3BA /* ribwriterdll */,
 				C38089430D3CAB4B00B6C3BA /* ricontext */,
 				C3685EF40D3C216000B2E025 /* ricpp */,
-				C31C22500D7405AF009D99C2 /* ridynload */,
+				C352E6920D7465B500CDED20 /* ridynload */,
 				C31C22450D740489009D99C2 /* riprog */,
 				C3808A7F0D3CBB4100B6C3BA /* ricppbridge */,
 				C3685F260D3C22B800B2E025 /* streams */,
@@ -2160,14 +2160,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C31C224A0D7404BB009D99C2 /* riprog.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C31C224E0D7405AF009D99C2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C31C22560D7405E4009D99C2 /* ridynload.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2192,6 +2184,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				C32B8B3F0D7454830059B201 /* ri.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C352E6900D7465B500CDED20 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C352E69B0D74661A00CDED20 /* ridynload.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2391,11 +2391,6 @@
 			target = C32B8B0D0D7451C70059B201 /* ri */;
 			targetProxy = C32B8B1A0D7452150059B201 /* PBXContainerItemProxy */;
 		};
-		C32B8B1E0D74522B0059B201 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C32B8B0D0D7451C70059B201 /* ri */;
-			targetProxy = C32B8B1D0D74522B0059B201 /* PBXContainerItemProxy */;
-		};
 		C32B8B410D7454920059B201 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C32B8B380D74546A0059B201 /* ribase */;
@@ -2405,6 +2400,11 @@
 			isa = PBXTargetDependency;
 			target = C31C22B60D740F03009D99C2 /* testribind */;
 			targetProxy = C32B8B530D74582D0059B201 /* PBXContainerItemProxy */;
+		};
+		C352E6970D7465CA00CDED20 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C32B8B0D0D7451C70059B201 /* ri */;
+			targetProxy = C352E6960D7465CA00CDED20 /* PBXContainerItemProxy */;
 		};
 		C3685F540D3C248C00B2E025 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2645,39 +2645,6 @@
 			};
 			name = Release;
 		};
-		C31C22520D7405AF009D99C2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				EXECUTABLE_EXTENSION = 1.dylib;
-				EXECUTABLE_PREFIX = lib;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = ridynload;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
-		C31C22530D7405AF009D99C2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EXECUTABLE_EXTENSION = 1.dylib;
-				EXECUTABLE_PREFIX = lib;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
-				PRODUCT_NAME = ridynload;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		C31C22B90D740F04009D99C2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2761,6 +2728,35 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = ribase;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C352E6940D7465B600CDED20 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = ridynload;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C352E6950D7465B600CDED20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = ridynload;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -3422,15 +3418,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C31C22940D7405F9009D99C2 /* Build configuration list for PBXNativeTarget "ridynload" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C31C22520D7405AF009D99C2 /* Debug */,
-				C31C22530D7405AF009D99C2 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
 		C31C22BC0D740F31009D99C2 /* Build configuration list for PBXNativeTarget "testribind" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -3454,6 +3441,15 @@
 			buildConfigurations = (
 				C32B8B3A0D74546A0059B201 /* Debug */,
 				C32B8B3B0D74546A0059B201 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C352E69A0D74661800CDED20 /* Build configuration list for PBXNativeTarget "ridynload" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C352E6940D7465B600CDED20 /* Debug */,
+				C352E6950D7465B600CDED20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -52,7 +52,7 @@
 #endif _RICPP_RICPP_RICPPTOKENS_H
 
 #ifdef __cplusplus
-// namespace RiCPP { /* */
+/* namespace RiCPP { /* */
 #endif
 
 #ifdef __cplusplus

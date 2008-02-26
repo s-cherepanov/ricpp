@@ -13,13 +13,20 @@
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
-#include <cstdarg>
+#ifndef _RICPP_RICPP_RICPP_H
+#include "ricpp/ricpp/ricpp.h"
+#endif // _RICPP_RICPP_RICPP_H
+
+#ifndef _RICPP_RI_RIINTERNAL_H
+#include "ricpp/ri/riinternal.h"
+#endif // _RICPP_RI_RIINTERNAL_H
+
 #include <cassert>
 #include <cmath>
 #include <vector>
 #include <map>
 
-using namespace RiCPP;
+namespace RiCPP {
 
 /** @brief An arbitrary pixel filter for C binding
  */
@@ -72,39 +79,7 @@ void _ricppRoot(IRiRoot *aRoot) {
 	_riRoot = aRoot;
 }
 
-#ifdef WIN32
-#ifdef RICPP_EXTERN
-#undef RICPP_EXTERN
-#endif
-#define RICPP_EXTERN(atype) atype
-#endif
-
-#define PREAMBLE { \
-	if ( _ricppRoot() == 0 ) { \
-		return; \
-	} \
-}
-
-#define POSTAMBLE
-
-#define PREAMBLE_RET(RETVAL) { \
-	if ( _ricppRoot() == 0 ) { \
-		return RETVAL; \
-	} \
-}
-
-#define POSTAMBLE_RET(RETVAL) \
-	return RETVAL;
-
-#define GETARGS(VAR) \
-	RtToken *tokens; \
-	RtPointer *params; \
-	va_list	args; \
-	va_start(args,VAR); \
-	RtInt n = getArgs(args,VAR, &tokens, &params);
-
-
-static RtInt getArgs(va_list marker, RtToken token, RtToken **tokens, RtPointer **params) {
+RtInt _ricppGetArgs(va_list marker, RtToken token, RtToken **tokens, RtPointer **params) {
 	static std::vector<RtToken> vec_tokens;   // The tokens of the parameter list of an interface call
 	static std::vector<RtPointer> vec_params; // The values of the parameter list of an interface call
 
@@ -137,31 +112,13 @@ static RtInt getArgs(va_list marker, RtToken token, RtToken **tokens, RtPointer 
 	return n;
 }
 
+}
+
+using namespace RiCPP;
+
 extern "C" {
 
 RICPP_EXTERN(RtInt) RiLastError = RIE_NOERROR;
-
-// ----------------------------------------------------------------------------
-RICPP_EXTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
-{
-	GETARGS(name)
-	return RiCPPBeginV(name, n, tokens, params);
-}
-
-// ----------------------------------------------------------------------------
-RICPP_EXTERN(RtVoid) RiBegin(RtToken name)
-{
-	// RiCPPBeginV() is defined in riprog.cpp for programs (sets _ricppRoot())
-	// RiCPPBeginV() is defined as an error in ridynload.cpp
-	RtContextHandle r = RiCPPBeginV(name, 0, 0, 0);
-}
-
-RICPP_EXTERN(RtVoid) RiEnd(void)
-{
-	// RiCPPEnd() is defined in riprog.cpp for programs (clears _ricppRoot())
-	// RiCPPEnd() is defined as an error in ridynload.cpp
-	RiCPPEnd();
-}
 
 // ----------------------------------------------------------------------------
 RICPP_EXTERN(RtObjectHandle) RiObjectBegin()

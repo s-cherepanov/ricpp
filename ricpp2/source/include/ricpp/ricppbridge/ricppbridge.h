@@ -908,7 +908,7 @@ public:
 	 *
 	 * @see context(), beginV(), end(), CContextManager::getContext(), IRiRoot::getContext()
 	 */
-	inline virtual RtContextHandle getContext(void) { return m_ctxMgmt.getContext(); }
+	virtual RtContextHandle getContext(void);
 
 	/** @brief Sets the current context handle.
 	 *

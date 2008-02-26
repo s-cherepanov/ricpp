@@ -468,6 +468,11 @@ RtVoid CRiCPPBridge::end(void)
 	}
 }
 
+
+RtContextHandle CRiCPPBridge::getContext(void) {
+	return m_ctxMgmt.getContext();
+}
+
 RtVoid CRiCPPBridge::context(RtContextHandle handle)
 {
 	// Since handle can activate a different context creator, deactivate the old context

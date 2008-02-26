@@ -1,13 +1,40 @@
 // Adapter ri - ricpp Adapter for dynamic load procedurals (CRiCPPBridge Instance from procedural), empty begin, end
 #include "ricpp/ri/ri.h"
+
+#ifndef _RICPP_RICPP_RICPP_H
 #include "ricpp/ricpp/ricpp.h"
+#endif // _RICPP_RICPP_RICPP_H
+
+#ifndef _RICPP_RI_RIINTERNAL_H
+#include "ricpp/ri/riinternal.h"
+#endif // _RICPP_RI_RIINTERNAL_H
 
 using namespace RiCPP;
 
-extern IRiRoot *_ricppRoot();
-extern void _ricppRoot(IRiRoot *aRoot);
 
 extern "C" {
+
+// ----------------------------------------------------------------------------
+RICPP_EXTERN(RtVoid) RiBegin(RtToken name)
+{
+	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	return 0;
+}
+
+RICPP_EXTERN(RtVoid) RiEnd(void)
+{
+	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	return 0;
+}
+
+
+// ----------------------------------------------------------------------------
+RICPP_EXTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
+{
+	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	return 0;
+}
+
 
 RICPP_EXTERN(RtContextHandle)
 	RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[])

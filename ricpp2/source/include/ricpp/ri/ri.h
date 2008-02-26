@@ -1,7 +1,7 @@
 #ifndef _RICPP_RI_RI_H
 #define _RICPP_RI_RI_H
 
-// RICPP - RenderMan(R) Interface CPP Language Binding
+/* RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
@@ -24,6 +24,7 @@
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 /** @file ri.h
  *  @author Andreas Pidde (andreas@pidde.de)
@@ -58,29 +59,30 @@ namespace RiCPP {
 extern "C" {
 #endif
 
-////////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////////
 //
 //	Missing type definitions
 //
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////*/
 typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, char *msg);
 typedef RtVoid      (*RtProcSubdivFunc)(RtPointer, RtFloat);
 typedef RtVoid      (*RtProcFreeFunc)(RtPointer);
 typedef RtVoid		(*RtArchiveCallback)(const char *,...);
 
 
-////////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////////
 //
-//	Delarations of missing symbols of the RenderMan Interface Subroutines
+//	Delarations of missing symbols of the
+//  RenderMan Interface Subroutines
 //
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////*/
 RICPP_EXTERN(RtInt)		RiLastError;
 
-////////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////////
 //
 //	Additional functions
 //
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////*/
 RICPP_EXTERN(RtContextHandle)
     RiCPPBegin (RtToken name, ...),
 	RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[]);
@@ -98,11 +100,11 @@ RICPP_EXTERN(RtVoid)
     RiCPPControl (RtToken name, ...),
 	RiCPPControlV (RtToken name, int n, RtToken tokens[], RtPointer params[]);
 
-////////////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////////////
 //
 //	Delarations of All of the RenderMan Interface Subroutines
 //
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////*/
 
 RICPP_EXTERN(RtToken)
     RiDeclare (const char *name,const char *declaration);
@@ -146,7 +148,7 @@ RICPP_EXTERN(RtVoid)
 	RiDisplayChannel (RtToken channel, ...),
     RiDisplayChannelV (RtToken channel,RtInt n, RtToken tokens[], RtPointer params[]);
 
-// Implemented in filters.cpp
+/* Implemented in filters.cpp */
 RICPP_EXTERN(RtFloat)
     RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
     RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
@@ -341,12 +343,12 @@ RICPP_EXTERN(RtVoid)
 */
 
 #ifdef __cplusplus
-} // extern "C"
+} /* extern "C" */
 #endif
 
 #ifdef __cplusplus
-} // namespace RiCPP
+} /* namespace RiCPP */
 #endif
 
 
-#endif // _RICPP_RICPP_RICPPTYPES_H
+#endif /* _RICPP_RICPP_RICPPTYPES_H */

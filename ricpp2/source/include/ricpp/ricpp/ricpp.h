@@ -92,6 +92,9 @@ public:
  */
 class IFilterFunc {
 public:
+	IFilterFunc();
+	virtual ~IFilterFunc();
+	
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the filter function.
 	 */

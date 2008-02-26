@@ -1,5 +1,5 @@
 // Adapter ri - ricpp Adapter for dynamic load procedurals (CRiCPPBridge Instance from procedural), empty begin, end
-
+#define RICPP_CREATEDLL
 #include "ricpp/ri/ri.h"
 #include "ricpp/ricpp/ricpp.h"
 
@@ -7,11 +7,6 @@ using namespace RiCPP;
 
 extern IRiRoot *_ricppRoot();
 extern void _ricppRoot(IRiRoot *aRoot);
-
-#ifdef RICPP_EXTERN
-#undef RICPP_EXTERN
-#endif
-#define RICPP_EXTERN(atype) atype
 
 extern "C" {
 

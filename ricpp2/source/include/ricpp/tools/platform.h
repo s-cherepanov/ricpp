@@ -1,6 +1,7 @@
 #ifndef _RICPP_TOOLS_PLATFORM_H
 #define _RICPP_TOOLS_PLATFORM_H
 
+/*
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
@@ -24,6 +25,7 @@
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
 /** @file platform.h
  *  @author Andreas Pidde (andreas@pidde.de)

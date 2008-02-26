@@ -1,5 +1,5 @@
 // Adapter ri - ricpp Common for programs and dynamic load procedurals, external IRi
-
+#define RICPP_CREATEDLL
 #include "ricpp/ri/ri.h"
 
 #ifndef _RICPP_RICPP_RICPP_H
@@ -73,10 +73,12 @@ void _ricppRoot(IRiRoot *aRoot) {
 	_riRoot = aRoot;
 }
 
+#ifdef WIN32
 #ifdef RICPP_EXTERN
 #undef RICPP_EXTERN
 #endif
 #define RICPP_EXTERN(atype) atype
+#endif
 
 #define PREAMBLE { \
 	if ( _ricppRoot() == 0 ) { \

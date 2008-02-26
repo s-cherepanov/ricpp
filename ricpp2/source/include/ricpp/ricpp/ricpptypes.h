@@ -1,7 +1,7 @@
 #ifndef _RICPP_RICPP_RICPPTYPES_H
 #define _RICPP_RICPP_RICPPTYPES_H
 
-// RICPP - RenderMan(R) Interface CPP Language Binding
+/* RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
 // The RenderMan(R) Interface Procedures and Protocol are:
@@ -24,8 +24,21 @@
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 
-#define RICPP_EXTERN(type) extern type
+#ifdef RICPP_CREATEDLL
+#ifdef WIN32
+#define	RICPP_EXTERN(type) extern __declspec(dllexport) type
+#else
+#define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
+#endif
+#else
+#ifdef WIN32
+#define	RICPP_EXTERN(type) extern __declspec(dllimport) type
+#else
+#define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
+#endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,25 +56,25 @@ namespace RiCPP {
  *  @brief Some basic types are copied from ri.h (s.a. RISPEC3.2, Appendix C)
  *  @{
  */
-typedef short   RtBoolean; ///< Booleans can be RI_TRUE or RI_FALSE
-typedef int     RtInt;     ///< Integers
-typedef float   RtFloat;   ///< Floats
+typedef short   RtBoolean;       /**< Booleans can be RI_TRUE or RI_FALSE */
+typedef int     RtInt;           /**< Integers */
+typedef float   RtFloat;         /**< Floats */
 
-typedef const char *RtToken;     ///< Tokens, changed from 'char *' to 'const char *', Tokens are either pre-declared or declared with IRi::declare()
+typedef const char *RtToken;     /**< Tokens, changed from 'char *' to 'const char *', Tokens are either pre-declared or declared with IRi::declare() */
 
-typedef RtFloat *RtColor;        ///< Colors, changed from 'RtFloat[3]' to 'RtFloat *' to manage color using other than 3 components
-typedef RtFloat  RtPoint[3];     ///< Points in 3D
-typedef RtFloat  RtVector[3];    ///< Vectors in 3D
-typedef RtFloat  RtNormal[3];    ///< Normals in 3D
-typedef RtFloat  RtHpoint[4];    ///< Points in homgenous 3D
-typedef RtFloat  RtMpoint[4][4]; ///< 'Map Points' introduced in App Note #31, used by CRiCPP::blobbyV() (added)
-typedef RtFloat  RtMatrix[4][4]; ///< Homogenous matrix for 3D transformations
-typedef RtFloat  RtBasis[4][4];  ///< Base matrix for spline interpolations
-typedef RtFloat  RtBound[6];     ///< Bound of 3D object: Left, right, bottom, top, front, back
-typedef const char *RtString;    ///< Character string, which is not a predefined token, changed from 'char *' to 'const char *'
+typedef RtFloat *RtColor;        /**< Colors, changed from 'RtFloat[3]' to 'RtFloat *' to manage color using other than 3 components */
+typedef RtFloat  RtPoint[3];     /**< Points in 3D */
+typedef RtFloat  RtVector[3];    /**< Vectors in 3D */
+typedef RtFloat  RtNormal[3];    /**< Normals in 3D */
+typedef RtFloat  RtHpoint[4];    /**< Points in homgenous 3D */
+typedef RtFloat  RtMpoint[4][4]; /**< 'Map Points' introduced in App Note #31, used by CRiCPP::blobbyV() (added) */
+typedef RtFloat  RtMatrix[4][4]; /**< Homogenous matrix for 3D transformations */
+typedef RtFloat  RtBasis[4][4];  /**< Base matrix for spline interpolations */
+typedef RtFloat  RtBound[6];     /**< Bound of 3D object: Left, right, bottom, top, front, back */
+typedef const char *RtString;    /**< Character string, which is not a predefined token, changed from 'char *' to 'const char *' */
 
-typedef void   *RtPointer;       ///< Pointer to arbitrary data
-#define RtVoid  void             ///< Simple 'void' datatype, used as 'return type' for functions returning nothing (C++: typedef is not working for void)
+typedef void   *RtPointer;       /**< Pointer to arbitrary data */
+#define RtVoid  void             /**< Simple 'void' datatype, used as 'return type' for functions returning nothing (C++: typedef is not working for void) */
 
 /** @brief Pixel filter
  */
@@ -73,19 +86,19 @@ typedef RtFloat (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
  *  @see ricpp_illhandle
  *  @{
  */
-typedef RtToken RtLightHandle;         ///< Handle for an indirect light handle (was RtPointer)
-typedef unsigned long RtContextHandle; ///< Handle for a render context handle (was RtPointer).
-typedef RtToken RtObjectHandle;        ///< Handle for an object instance (was RtPointer) can be positive or negative.
-typedef RtToken RtArchiveHandle;       ///< Handle for a rib archive (was RtPointer), is the tokenized name.
-//@}
-//@}
+typedef RtToken RtLightHandle;         /**< Handle for an indirect light handle (was RtPointer). */
+typedef unsigned long RtContextHandle; /**< Handle for a render context handle (was RtPointer). */
+typedef RtToken RtObjectHandle;        /**< Handle for an object instance (was RtPointer) can be positive or negative. */
+typedef RtToken RtArchiveHandle;       /**< Handle for a rib archive (was RtPointer), is the tokenized name. */
+/** @} */
+/** @} */
 
 #ifdef __cplusplus
-} // namespace RiCPP
+} /* namespace RiCPP */
 #endif
 
 #ifdef __cplusplus
-} // extern "C"
+} /* extern "C" */
 #endif
 
-#endif // _RICPP_RICPP_RICPPTYPES_H
+#endif /* _RICPP_RICPP_RICPPTYPES_H */

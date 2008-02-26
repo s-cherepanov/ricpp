@@ -1,5 +1,5 @@
 // Adapter ri - ricpp Adapter for programs (CRiCPPBridge Instance), begin, end
-
+#define RICPP_CREATEDLL
 #include "ricpp/ricppbridge/ricppbridge.h"
 #include "ricpp/ri/ri.h"
 
@@ -7,11 +7,6 @@ using namespace RiCPP;
 
 extern IRiRoot *_ricppRoot();
 extern void _ricppRoot(IRiRoot *aRoot);
-
-#ifdef RICPP_EXTERN
-#undef RICPP_EXTERN
-#endif
-#define RICPP_EXTERN(atype) atype
 
 static CRiCPPBridge ri; // The bridge to the rendering context
 

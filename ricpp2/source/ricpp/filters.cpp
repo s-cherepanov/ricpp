@@ -39,11 +39,6 @@ using namespace RiCPP;
 
 extern "C" {
 
-#ifdef RICPP_EXTERN
-#undef RICPP_EXTERN
-#endif
-#define RICPP_EXTERN(atype) atype
-
 RICPP_EXTERN(RtFloat)
 RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	x *= (RtFloat)(2.0 / xwidth);

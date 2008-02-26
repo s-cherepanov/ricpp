@@ -34,7 +34,7 @@
 
 #ifndef _RICPP_RIBASE_RICPPTYPES_H
 #include "ricpp/ribase/ricpptypes.h"
-#endif // _RICPP_RIBASE_RICPPTYPES_H
+#endif /* _RICPP_RIBASE_RICPPTYPES_H */
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,4 +75,4 @@ RICPP_EXTERN(RtVoid)
 /* } /* extern "C" */
 #endif
 
-#endif // _RICPP_RIBASE_RICPPDECLS_H
+#endif /* _RICPP_RIBASE_RICPPDECLS_H */

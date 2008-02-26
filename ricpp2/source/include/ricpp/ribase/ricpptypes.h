@@ -40,7 +40,7 @@
 #define	RICPP_INTERN(type) __declspec(dllexport) type
 #endif
 #else
-// Use local binding internally
+/* Use local binding internally */
 #if !defined(RICPP_EXTERN)
 #define	RICPP_EXTERN(type) extern type
 #endif

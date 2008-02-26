@@ -26,18 +26,21 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifdef RICPP_CREATEDLL
 #ifdef WIN32
-#define	RICPP_EXTERN(type) extern __declspec(dllexport) type
+
+#ifdef _DLL
+#define	RICPP_EXTERN(type) extern type
+#define	RICPP_INTERN(type) type
 #else
-#define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
+#define	RICPP_EXTERN(type) extern type
+#define	RICPP_INTERN(type) type
 #endif
+
 #else
-#ifdef WIN32
-#define	RICPP_EXTERN(type) extern __declspec(dllimport) type
-#else
+
 #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
-#endif
+#define RICPP_INTERN(type) __attribute__((visibility("default"))) type
+
 #endif
 
 #ifdef __cplusplus
@@ -49,7 +52,7 @@ extern "C" {
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Rt type definitions
  */
-namespace RiCPP {
+/* namespace RiCPP { /* */
 #endif
 
 /** @defgroup ricpp_type Ri types
@@ -94,7 +97,7 @@ typedef RtToken RtArchiveHandle;       /**< Handle for a rib archive (was RtPoin
 /** @} */
 
 #ifdef __cplusplus
-} /* namespace RiCPP */
+/* } /* namespace RiCPP */
 #endif
 
 #ifdef __cplusplus

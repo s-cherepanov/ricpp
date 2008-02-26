@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ricpp", "ricpp\ricpp.vcproj", "{07C205B0-8383-4394-A8E2-A62CF64E3C8E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9C56FA12-1685-4E40-8691-8780D929EE60} = {9C56FA12-1685-4E40-8691-8780D929EE60}
+		{4BCA43C5-B155-4D18-9D6A-692599E782F5} = {4BCA43C5-B155-4D18-9D6A-692599E782F5}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{52AF05EE-E743-413C-ACC5-AC279583A850}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -87,6 +91,29 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribtool", "ribtool\ribtool.
 		{4BB1A752-6ACA-4857-8375-84D3BCC8C5B1} = {4BB1A752-6ACA-4857-8375-84D3BCC8C5B1}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribase", "ribase\ribase.vcproj", "{4BCA43C5-B155-4D18-9D6A-692599E782F5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ri", "ri\ri.vcproj", "{6884ABE1-0BBF-44BE-87CC-18B42D265F9E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{07C205B0-8383-4394-A8E2-A62CF64E3C8E} = {07C205B0-8383-4394-A8E2-A62CF64E3C8E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ridynload", "ridynload\ridynload.vcproj", "{D5B5CCFA-9ADF-4128-B4DF-696D324766ED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6884ABE1-0BBF-44BE-87CC-18B42D265F9E} = {6884ABE1-0BBF-44BE-87CC-18B42D265F9E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "riprog", "riprog\riprog.vcproj", "{AC50912D-0632-43F6-B609-15FE8D0707F5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4BB1A752-6ACA-4857-8375-84D3BCC8C5B1} = {4BB1A752-6ACA-4857-8375-84D3BCC8C5B1}
+		{6884ABE1-0BBF-44BE-87CC-18B42D265F9E} = {6884ABE1-0BBF-44BE-87CC-18B42D265F9E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testribind", "testribind\testribind.vcproj", "{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC50912D-0632-43F6-B609-15FE8D0707F5} = {AC50912D-0632-43F6-B609-15FE8D0707F5}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -161,6 +188,26 @@ Global
 		{05F682B5-ECF7-4E4A-968E-F4890AC3CBB9}.Debug|Win32.Build.0 = Debug|Win32
 		{05F682B5-ECF7-4E4A-968E-F4890AC3CBB9}.Release|Win32.ActiveCfg = Release|Win32
 		{05F682B5-ECF7-4E4A-968E-F4890AC3CBB9}.Release|Win32.Build.0 = Release|Win32
+		{4BCA43C5-B155-4D18-9D6A-692599E782F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4BCA43C5-B155-4D18-9D6A-692599E782F5}.Debug|Win32.Build.0 = Debug|Win32
+		{4BCA43C5-B155-4D18-9D6A-692599E782F5}.Release|Win32.ActiveCfg = Release|Win32
+		{4BCA43C5-B155-4D18-9D6A-692599E782F5}.Release|Win32.Build.0 = Release|Win32
+		{6884ABE1-0BBF-44BE-87CC-18B42D265F9E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6884ABE1-0BBF-44BE-87CC-18B42D265F9E}.Debug|Win32.Build.0 = Debug|Win32
+		{6884ABE1-0BBF-44BE-87CC-18B42D265F9E}.Release|Win32.ActiveCfg = Release|Win32
+		{6884ABE1-0BBF-44BE-87CC-18B42D265F9E}.Release|Win32.Build.0 = Release|Win32
+		{D5B5CCFA-9ADF-4128-B4DF-696D324766ED}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D5B5CCFA-9ADF-4128-B4DF-696D324766ED}.Debug|Win32.Build.0 = Debug|Win32
+		{D5B5CCFA-9ADF-4128-B4DF-696D324766ED}.Release|Win32.ActiveCfg = Release|Win32
+		{D5B5CCFA-9ADF-4128-B4DF-696D324766ED}.Release|Win32.Build.0 = Release|Win32
+		{AC50912D-0632-43F6-B609-15FE8D0707F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AC50912D-0632-43F6-B609-15FE8D0707F5}.Debug|Win32.Build.0 = Debug|Win32
+		{AC50912D-0632-43F6-B609-15FE8D0707F5}.Release|Win32.ActiveCfg = Release|Win32
+		{AC50912D-0632-43F6-B609-15FE8D0707F5}.Release|Win32.Build.0 = Release|Win32
+		{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}.Debug|Win32.Build.0 = Debug|Win32
+		{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}.Release|Win32.ActiveCfg = Release|Win32
+		{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

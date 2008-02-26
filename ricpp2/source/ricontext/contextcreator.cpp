@@ -117,7 +117,7 @@ IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], Rt
 
 	if ( !m_curContext ) {
 		ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::begin(), could not get a new context handle");
-		return illContextHandle;
+		return 0;
 	}
 
 	m_contextList.push_back(m_curContext);
@@ -130,7 +130,7 @@ IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], Rt
 	} catch ( ExceptRiCPPError &e ) {
 		deleteContext();
 		ricppErrHandler().handleError(e);
-		return illContextHandle;
+		return 0;
 	}
 
 	return m_curContext;

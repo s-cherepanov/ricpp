@@ -26,77 +26,19 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Pixel filters for RiCPP, see [RISPEC3.2] Appendix E
  */
-
 #include "ricpp/ricpp/filters.h"
 
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
+#ifndef _RICPP_RI_RI_H
+#include "ricpp/ri/ri.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 using namespace RiCPP;
 
 // Various filters
-
-extern "C" {
-
-RICPP_EXTERN(RtFloat)
-RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
-	x *= (RtFloat)(2.0 / xwidth);
-	y *= (RtFloat)(2.0 / ywidth);
-	return (RtFloat)exp(-2.0 * (x*x + y*y));
-}
-
-RICPP_EXTERN(RtFloat)
-RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
-	x = x;
-	y = y;
-	xwidth = xwidth;
-	ywidth = ywidth;
-
-	return (RtFloat)1.0;
-}
-
-RICPP_EXTERN(RtFloat)
-RiTriangleFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
-	return (RtFloat)(((1.0 - fabs(x)) / (xwidth * 0.5)) *
-		   ((1.0 - fabs(y)) / (ywidth * 0.5)));
-}
-
-RICPP_EXTERN(RtFloat)
-RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
-	RtFloat r2 = (x*x + y*y);
-	RtFloat r = (RtFloat)sqrt(r2);
-
-	xwidth = xwidth;
-	ywidth = ywidth;
-
-	return (RtFloat)((r > 2.0) ? 0.0 :
-	                 (r < 1.0) ? (3.0*r*r2 - 5.0*r2 + 2.0) :
-		                         (-r*r2 + 5.0*r2 - 8.0*r + 4.0));
-}
-
-
-RICPP_EXTERN(RtFloat)
-RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
-	RtFloat s, t;
-
-	xwidth = xwidth;
-	ywidth = ywidth;
-
-	if ( x > -0.001 && x < 0.001)
-		s = 1.0;
-	else
-		s = (RtFloat)(sin(x)/x);
-
-	if ( y > -0.001 && y < 0.001 )
-		t = 1.0;
-	else
-		t = (RtFloat)(sin(y)/y);
-
-	return s*t;
-}
-
-}
 
 //
 // CGaussianFilter

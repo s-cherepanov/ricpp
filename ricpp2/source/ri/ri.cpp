@@ -1,5 +1,4 @@
 // Adapter ri - ricpp Common for programs and dynamic load procedurals, external IRi
-#define RICPP_CREATEDLL
 #include "ricpp/ri/ri.h"
 
 #ifndef _RICPP_RICPP_RICPP_H
@@ -143,10 +142,10 @@ extern "C" {
 RICPP_EXTERN(RtInt) RiLastError = RIE_NOERROR;
 
 // ----------------------------------------------------------------------------
-RICPP_EXTERN(RtVoid) RiCPPBegin(RtToken name, ...)
+RICPP_EXTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
 {
 	GETARGS(name)
-	RiCPPBeginV(name, n, tokens, params);
+	return RiCPPBeginV(name, n, tokens, params);
 }
 
 // ----------------------------------------------------------------------------

@@ -52,7 +52,7 @@
 #endif _RICPP_RICPP_RICPPTOKENS_H
 
 #ifdef __cplusplus
-namespace RiCPP {
+// namespace RiCPP { /* */
 #endif
 
 #ifdef __cplusplus
@@ -347,8 +347,8 @@ RICPP_EXTERN(RtVoid)
 #endif
 
 #ifdef __cplusplus
-} /* namespace RiCPP */
+/* } /* namespace RiCPP */
 #endif
 
 
-#endif /* _RICPP_RICPP_RICPPTYPES_H */
+#endif /* _RICPP_RI_RI_H */

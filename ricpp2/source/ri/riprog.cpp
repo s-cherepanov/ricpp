@@ -1,5 +1,4 @@
 // Adapter ri - ricpp Adapter for programs (CRiCPPBridge Instance), begin, end
-#define RICPP_CREATEDLL
 #include "ricpp/ricppbridge/ricppbridge.h"
 #include "ricpp/ri/ri.h"
 

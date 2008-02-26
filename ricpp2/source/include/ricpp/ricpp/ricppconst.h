@@ -40,10 +40,10 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
-namespace RiCPP {
+/* namespace RiCPP { /* */
 #endif
 
-RICPP_EXTERN(const RtMatrix) RiIdentityMatrix; /**< Identity matrix (added) */
+RICPP_EXTERN(RtMatrix) RiIdentityMatrix; /**< Identity matrix (added) */
 
 /* ---------------------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------------------
@@ -53,10 +53,10 @@ RICPP_EXTERN(const RtMatrix) RiIdentityMatrix; /**< Identity matrix (added) */
  *  @brief Definitions of illegal handles (additional constants)
  *  @{
  */
-const RtContextHandle illContextHandle = (RtContextHandle)0; /**< illegal context handle */
-const RtObjectHandle illObjectHandle = (RtObjectHandle)0;    /**< illegal object handle */
-const RtLightHandle illLightHandle = (RtLightHandle)0;       /**< illegal light source handle */
-const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)0; /**< illegal archive handle */
+RICPP_EXTERN(RtContextHandle) illContextHandle; /**< illegal context handle */
+RICPP_EXTERN(RtObjectHandle)  illObjectHandle;  /**< illegal object handle */
+RICPP_EXTERN(RtLightHandle)   illLightHandle;   /**< illegal light source handle */
+RICPP_EXTERN(RtArchiveHandle) illArchiveHandle; /**< illegal archive handle */
 /** @} */
 
 
@@ -68,16 +68,16 @@ const RtArchiveHandle illArchiveHandle = (RtArchiveHandle)0; /**< illegal archiv
  *  @brief Boolean true, false values
  *  @{
  */
-const RtBoolean RI_FALSE       = 0;           /**<  false */
-const RtBoolean RI_TRUE        = 1;           /**<  true  */
+RICPP_EXTERN(RtBoolean) RI_FALSE;           /**<  false */
+RICPP_EXTERN(RtBoolean) RI_TRUE;           /**<  true  */
 /** @} */
 
 /** @defgroup ricpp_limits Ri limits
  *  @brief Limits for clipping planes
  *  @{
  */
-const RtFloat RI_INFINITY      = (RtFloat)(1.0e38);  /**< Maximal value used for RtFloat */
-const RtFloat RI_EPSILON       = (RtFloat)(1.0e-10); /**< Minimal value used for RtFloat */
+RICPP_EXTERN(RtFloat) RI_INFINITY;  /**< Maximal value used for RtFloat */
+RICPP_EXTERN(RtFloat) RI_EPSILON; /**< Minimal value used for RtFloat */
  /*
  Note: Other consts in <limits>
  std::numeric_limits<RtFloat>::max()
@@ -90,11 +90,11 @@ const RtFloat RI_EPSILON       = (RtFloat)(1.0e-10); /**< Minimal value used for
  *  @see CRiCPP::basis(), ricpp_basis
  *  @{
  */
-const RtInt RI_BEZIERSTEP      = 3; /**< Stepsize for control points of bezier meshes */
-const RtInt RI_BSPLINESTEP     = 1; /**< Stepsize for control points of b-spline meshes */
-const RtInt RI_CATMULLROMSTEP  = 1; /**< Stepsize for control points of catmull-rom spline meshes */
-const RtInt RI_HERMITESTEP     = 2; /**< Stepsize for control points of hermite spline meshes */
-const RtInt RI_POWERSTEP       = 4; /**< Stepsize for control points of power matrix spline meshes */
+RICPP_EXTERN(RtInt) RI_BEZIERSTEP;     /**< Stepsize for control points of bezier meshes */
+RICPP_EXTERN(RtInt) RI_BSPLINESTEP;    /**< Stepsize for control points of b-spline meshes */
+RICPP_EXTERN(RtInt) RI_CATMULLROMSTEP; /**< Stepsize for control points of catmull-rom spline meshes */
+RICPP_EXTERN(RtInt) RI_HERMITESTEP;    /**< Stepsize for control points of hermite spline meshes */
+RICPP_EXTERN(RtInt) RI_POWERSTEP;      /**< Stepsize for control points of power matrix spline meshes */
 /** @} */
 
 /** @defgroup ricpp_basis Ri basis matrices for bicubic patches
@@ -102,36 +102,11 @@ const RtInt RI_POWERSTEP       = 4; /**< Stepsize for control points of power ma
  *  @see CRiCPP::basis(), ricpp_steps
  *  @{
  */
-const RtBasis RiBezierBasis = {
-	{(RtFloat)-1.0, (RtFloat) 3.0, (RtFloat)-3.0, (RtFloat) 1.0},
-	{(RtFloat) 3.0, (RtFloat)-6.0, (RtFloat) 3.0, (RtFloat) 0.0},
-	{(RtFloat)-3.0, (RtFloat) 3.0, (RtFloat) 0.0, (RtFloat) 0.0},
-	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0}
-}; /**< Basis matrix for bezier patch meshes */
-const RtBasis RiBSplineBasis = {
-	{(RtFloat)(-1.0/6.0), (RtFloat)( 3.0/6.0), (RtFloat)(-3.0/6.0), (RtFloat)(1.0/6.0)},
-	{(RtFloat)( 3.0/6.0), (RtFloat)(-6.0/6.0), (RtFloat)( 3.0/6.0), (RtFloat) 0.0},
-	{(RtFloat)(-3.0/6.0), (RtFloat)  0.0,      (RtFloat)( 3.0/6.0), (RtFloat) 0.0},
-	{(RtFloat)( 1.0/6.0), (RtFloat)( 4.0/6.0), (RtFloat)( 1.0/6.0), (RtFloat) 0.0}
-}; /**<  Basis matrix B-spline patch meshes */
-const RtBasis RiCatmullRomBasis = {
-	{(RtFloat)(-1.0/2.0), (RtFloat)( 3.0/2.0), (RtFloat)(-3.0/2.0), (RtFloat)( 1.0/2.0)},
-	{(RtFloat)( 2.0/2.0), (RtFloat)(-5.0/2.0), (RtFloat)( 4.0/2.0), (RtFloat)(-1.0/2.0)},
-	{(RtFloat)(-1.0/2.0), (RtFloat)  0.0,      (RtFloat)( 1.0/2.0), (RtFloat)  0.0},
-	{(RtFloat)  0.0,      (RtFloat)( 2.0/2.0), (RtFloat)  0.0,      (RtFloat)  0.0}
-}; /**<  Basis matrix Catmull-Rom patch meshes */
-const RtBasis RiHermiteBasis = {
-	{(RtFloat) 2.0, (RtFloat) 1.0, (RtFloat)-2.0, (RtFloat) 1.0},
-	{(RtFloat)-3.0, (RtFloat)-2.0, (RtFloat) 3.0, (RtFloat)-1.0},
-	{(RtFloat) 0.0, (RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0},
-	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0}
-}; /**<  Basis matrix Hermite patch meshes */
-const RtBasis RiPowerBasis = {
-	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0},
-	{(RtFloat) 0.0, (RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0},
-	{(RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 1.0, (RtFloat) 0.0},
-	{(RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 1.0}
-}; /**<  Basis matrix Power-basis patch meshes */
+RICPP_EXTERN(RtBasis) RiBezierBasis; /**< Basis matrix for bezier patch meshes */
+RICPP_EXTERN(RtBasis) RiBSplineBasis; /**<  Basis matrix B-spline patch meshes */
+RICPP_EXTERN(RtBasis) RiCatmullRomBasis; /**<  Basis matrix Catmull-Rom patch meshes */
+RICPP_EXTERN(RtBasis) RiHermiteBasis; /**<  Basis matrix Hermite patch meshes */
+RICPP_EXTERN(RtBasis) RiPowerBasis; /**<  Basis matrix Power-basis patch meshes */
 /** @} */
 
 /** @defgroup ricpp_blobbyconst Ri constants for CRiRoot::blobbyV() (added)
@@ -139,10 +114,10 @@ const RtBasis RiPowerBasis = {
  *  @see CRiRoot::blobbyV(), ricpp_blobbyop
  *  @{
  */
-const RtInt RI_BLOBBY_CONSTANT        = 1000; /**< 1 index to  1 float */
-const RtInt RI_BLOBBY_ELLIPSOID       = 1001; /**<  1 index to 16 floats */
-const RtInt RI_BLOBBY_SEGMENT_BLOB    = 1002; /**<  1 index to 23 floats */
-const RtInt RI_BLOBBY_REPELLING_PLANE = 1003; /**<  2 Indices, first for 1 string param, 2nd for 4 floats */
+RICPP_EXTERN(RtInt) RI_BLOBBY_CONSTANT;        /**< 1 index to  1 float */
+RICPP_EXTERN(RtInt) RI_BLOBBY_ELLIPSOID;       /**<  1 index to 16 floats */
+RICPP_EXTERN(RtInt) RI_BLOBBY_SEGMENT_BLOB;    /**<  1 index to 23 floats */
+RICPP_EXTERN(RtInt) RI_BLOBBY_REPELLING_PLANE; /**<  2 Indices, first for 1 string param, 2nd for 4 floats */
 /** @} */
 
 
@@ -151,14 +126,14 @@ const RtInt RI_BLOBBY_REPELLING_PLANE = 1003; /**<  2 Indices, first for 1 strin
  *  @see CRiRoot::blobbyV(), ricpp_blobbyconst
  *  @{
  */
-const RtInt RI_BLOBBY_OP_ADD = 0; /**<  Addition:  count, ... */
-const RtInt RI_BLOBBY_OP_MUL = 1; /**<  Multiply:  count, ... */
-const RtInt RI_BLOBBY_OP_MAX = 2; /**<  Maximum:   count, ... */
-const RtInt RI_BLOBBY_OP_MIN = 3; /**<  Minimum:   count, ... */
-const RtInt RI_BLOBBY_OP_SUB = 4; /**<  Substract: subtrahend, minuend */
-const RtInt RI_BLOBBY_OP_DIV = 5; /**<  Divide:    dividend, divisor */
-const RtInt RI_BLOBBY_OP_NEG = 6; /**<  Negate:    negand */
-const RtInt RI_BLOBBY_OP_IDP = 7; /**<  Identity:  idempotentate */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_ADD; /**<  Addition:  count, ... */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_MUL; /**<  Multiply:  count, ... */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_MAX; /**<  Maximum:   count, ... */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_MIN; /**<  Minimum:   count, ... */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_SUB; /**<  Substract: subtrahend, minuend */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_DIV; /**<  Divide:    dividend, divisor */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_NEG; /**<  Negate:    negand */
+RICPP_EXTERN(RtInt) RI_BLOBBY_OP_IDP; /**<  Identity:  idempotentate */
 /** @} */
 
 /** @defgroup ricpp_errorconst Ri error constants
@@ -178,39 +153,39 @@ const RtInt RI_BLOBBY_OP_IDP = 7; /**<  Identity:  idempotentate */
  *  @see CRiCPP::errorHandler(), IErrorHandler, ricpp_severity
  * @{
  */
-const RtInt RIE_NOERROR        =  0;       /**< No error occured */
+RICPP_EXTERN(RtInt) RIE_NOERROR;       /**< No error occured */
 
-const RtInt RIE_NOMEM          =  1;       /**< Out of memory */
-const RtInt RIE_SYSTEM         =  2;       /**< Miscellaneous system error */
-const RtInt RIE_NOFILE         =  3;       /**< File not exists */
-const RtInt RIE_BADFILE        =  4;       /**< Bad file format */
-const RtInt RIE_VERSION        =  5;       /**< File version mismatch */
-const RtInt RIE_DISKFULL       =  6;       /**< Target disk is full */
+RICPP_EXTERN(RtInt) RIE_NOMEM;       /**< Out of memory */
+RICPP_EXTERN(RtInt) RIE_SYSTEM;       /**< Miscellaneous system error */
+RICPP_EXTERN(RtInt) RIE_NOFILE;       /**< File not exists */
+RICPP_EXTERN(RtInt) RIE_BADFILE;       /**< Bad file format */
+RICPP_EXTERN(RtInt) RIE_VERSION;       /**< File version mismatch */
+RICPP_EXTERN(RtInt) RIE_DISKFULL;       /**< Target disk is full */
 
-const RtInt RIE_INCAPABLE      = 11;       /**< Optional RI feature */
-const RtInt RIE_UNIMPLEMENT    = 12;       /**< Unimplemented feature */
-const RtInt RIE_LIMIT          = 13;       /**< Arbitrary program limit */
-const RtInt RIE_BUG            = 14;       /**< Probably a bug in renderer */
+RICPP_EXTERN(RtInt) RIE_INCAPABLE;       /**< Optional RI feature */
+RICPP_EXTERN(RtInt) RIE_UNIMPLEMENT;       /**< Unimplemented feature */
+RICPP_EXTERN(RtInt) RIE_LIMIT;       /**< Arbitrary program limit */
+RICPP_EXTERN(RtInt) RIE_BUG;       /**< Probably a bug in renderer */
 
-const RtInt RIE_NOTSTARTED     = 23;       /**< 'RiBegin' not called */
-const RtInt RIE_NESTING        = 24;       /**< Bad begin-end nesting */
-const RtInt RIE_NOTOPTIONS     = 25;       /**< Invalid state for options */
-const RtInt RIE_NOTATTRIBS     = 26;       /**< Invalid state for attributes */
-const RtInt RIE_NOTPRIMS       = 27;       /**< Invalid state for primitives */
-const RtInt RIE_ILLSTATE       = 28;       /**< Other invalid state */
-const RtInt RIE_BADMOTION      = 29;       /**< Badly formed motion block */
-const RtInt RIE_BADSOLID       = 30;       /**< Badly formed solid block */
+RICPP_EXTERN(RtInt) RIE_NOTSTARTED;       /**< 'RiBegin' not called */
+RICPP_EXTERN(RtInt) RIE_NESTING;       /**< Bad begin-end nesting */
+RICPP_EXTERN(RtInt) RIE_NOTOPTIONS;       /**< Invalid state for options */
+RICPP_EXTERN(RtInt) RIE_NOTATTRIBS;       /**< Invalid state for attributes */
+RICPP_EXTERN(RtInt) RIE_NOTPRIMS;       /**< Invalid state for primitives */
+RICPP_EXTERN(RtInt) RIE_ILLSTATE;       /**< Other invalid state */
+RICPP_EXTERN(RtInt) RIE_BADMOTION;       /**< Badly formed motion block */
+RICPP_EXTERN(RtInt) RIE_BADSOLID;       /**< Badly formed solid block */
 
-const RtInt RIE_BADTOKEN       = 41;       /**< Invalid token for request */
-const RtInt RIE_RANGE          = 42;       /**< Parameter out of range */
-const RtInt RIE_CONSISTENCY    = 43;       /**< Parameters inconsistent */
-const RtInt RIE_BADHANDLE      = 44;       /**< Bad object/light/context handle */
-const RtInt RIE_NOSHADER       = 45;       /**< Can't load requested shader */
-const RtInt RIE_MISSINGDATA    = 46;       /**< Required parameters not provided */
-const RtInt RIE_SYNTAX         = 47;       /**< Declare type syntax error */
+RICPP_EXTERN(RtInt) RIE_BADTOKEN;       /**< Invalid token for request */
+RICPP_EXTERN(RtInt) RIE_RANGE;       /**< Parameter out of range */
+RICPP_EXTERN(RtInt) RIE_CONSISTENCY;       /**< Parameters inconsistent */
+RICPP_EXTERN(RtInt) RIE_BADHANDLE;       /**< Bad object/light/context handle */
+RICPP_EXTERN(RtInt) RIE_NOSHADER;       /**< Can't load requested shader */
+RICPP_EXTERN(RtInt) RIE_MISSINGDATA;       /**< Required parameters not provided */
+RICPP_EXTERN(RtInt) RIE_SYNTAX;       /**< Declare type syntax error */
 
-const RtInt RIE_MATH           = 61;       /**< Zerodivide, noninvert matrix, etc. */
-const RtInt RIE_LASTERROR      = 61;       /**< Endmarker, not an error code (added) */
+RICPP_EXTERN(RtInt) RIE_MATH;       /**< Zerodivide, noninvert matrix, etc. */
+RICPP_EXTERN(RtInt) RIE_LASTERROR;       /**< Endmarker, not an error code (added) */
 /** @} */
 
 /** @defgroup ricpp_severity Ri error severity
@@ -218,15 +193,15 @@ const RtInt RIE_LASTERROR      = 61;       /**< Endmarker, not an error code (ad
  *  @see CRiCPP::errorHandler(), IErrorHandler, ricpp_errorconst
  *  @{
  */
-const RtInt RIE_INFO           =  0;       /**< Rendering stats & other info */
-const RtInt RIE_WARNING        =  1;       /**< Something seems wrong, maybe okay */
-const RtInt RIE_ERROR          =  2;       /**< Problem.  Results may be wrong */
-const RtInt RIE_SEVERE         =  3;       /**< So bad you should probably abort */
-const RtInt RIE_LASTSEVERITY   =  3;       /**< Endmarker, not a severity code (added) */
+RICPP_EXTERN(RtInt) RIE_INFO;       /**< Rendering stats & other info */
+RICPP_EXTERN(RtInt) RIE_WARNING;       /**< Something seems wrong, maybe okay */
+RICPP_EXTERN(RtInt) RIE_ERROR;       /**< Problem.  Results may be wrong */
+RICPP_EXTERN(RtInt) RIE_SEVERE;       /**< So bad you should probably abort */
+RICPP_EXTERN(RtInt) RIE_LASTSEVERITY;       /**< Endmarker, not a severity code (added) */
 /** @} */
 
 #ifdef __cplusplus
-} /* namespace RiCPP */
+/* } /* namespace RiCPP */
 #endif
 
 #ifdef __cplusplus

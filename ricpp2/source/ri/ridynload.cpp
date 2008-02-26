@@ -1,5 +1,4 @@
 // Adapter ri - ricpp Adapter for dynamic load procedurals (CRiCPPBridge Instance from procedural), empty begin, end
-#define RICPP_CREATEDLL
 #include "ricpp/ri/ri.h"
 #include "ricpp/ricpp/ricpp.h"
 

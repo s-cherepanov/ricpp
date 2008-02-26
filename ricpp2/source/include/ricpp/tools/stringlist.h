@@ -139,17 +139,17 @@ private:
 	 *
 	 *  @retval varName (input/output) variable name to search for, also used return
 	 *         the found value. Is cleared if not empty.
-	 *  @param seperator path seperator.
+	 *  @param separator path separator.
 	 *  @param useEnv true, use environment variables.
 	 *  @param isPathList true, to handle pathlists.
 	 *  @return true, variable was replaced
 	 */
-	bool getVar(std::string &varName, char seperator, bool useEnv, bool isPathList);
+	bool getVar(std::string &varName, char separator, bool useEnv, bool isPathList);
 
 	/** @brief Converts all ':' to '|'
 	 *
-	 * Used in path lists to mask the ':' which is a path seperator
-	 * and a scheme and drive letter seperator.
+	 * Used in path lists to mask the ':' which is a path separator
+	 * and a scheme and drive letter separator.
 	 *
 	 * @param str String where the '|' are converted
 	 */
@@ -182,32 +182,32 @@ public:
 
 	/** @brief Seperates a string.
 	 *
-	 *  Seperates a string @a str using the seperator character @a seperator. The seperated
+	 *  Seperates a string @a str using the separator character @a separator. The seperated
 	 *  strings are stored internally. Does substitution of $variable, if doSubstitute is true.
 	 *  If useEnv is true, the variables are search among the environment variables as well.
 	 *  Special chars like '$' can be mask by '\' to loose their special meaning. You can use
-	 *  double quoted parts of the string to enclose a string that contains a seperator or
+	 *  double quoted parts of the string to enclose a string that contains a separator or
 	 *  single quoted parts to supress also the variable processing.
 	 *
 	 *  In pathlist also '@' is replaced by standard shader or texture location
 	 *  and '&' by the last search path, this is done by calling m_callback.
 	 *  
-	 *  @param seperator Character that seperates the strings, usually ':' (the RiCPP
-	 *         seperator for path lists) or ' ' (to seperate parameters like in name of
-	 *         TRiCPP::begin(RtString name)). If the seperator is NUL, no seperation
+	 *  @param separator Character that seperates the strings, usually ':' (the RiCPP
+	 *         separator for path lists) or ' ' (to seperate parameters like in name of
+	 *         TRiCPP::begin(RtString name)). If the separator is NUL, no seperation
 	 *         is done, only the variables are substituted before inserting.
 	 *  @param str The string that is seperated.
 	 *  @param doSubstitute true, if variables should be substituted.
 	 *  @param useEnv true, if the environment variables should be also searched for $variables.
 	 *  @param isPathList true, to handle pathlists. For WIN32 a bit messy because rib uses ':'
-	 *         as path seperator, but windows uses them as drive letter seperators as well.
+	 *         as path separator, but windows uses them as drive letter separators as well.
 	 *         ':' within files has do be substituted by '|'. Also the
 	 *         special chars @ and & are tried to be replaced by calling m_callback (if set) and
 	 *         the backslashes within variables are substituted by forward slashes.
 	 *  @return The number of strings inserted.
 	 */
 	size_type explode(
-		char seperator,
+		char separator,
 		const char *str,
 		bool doSubstitute,
 		bool useEnv,
@@ -236,14 +236,14 @@ public:
 
 	/** @brief Concatenates stringlist
 	 *
-	 * The stringlist is concatenated to single string using @a seperator.
+	 * The stringlist is concatenated to single string using @a separator.
 	 *
-	 * @param seperator Character that is used as seperator for the new @a str
+	 * @param separator Character that is used as separator for the new @a str
 	 * @retval str Container for the new concatenated string
 	 * @param isPathList true, for handling pathlists.
 	 */
 	void implode(
-		char seperator,
+		char separator,
 		std::string &str,
 		bool isPathList
 	);

@@ -58,9 +58,7 @@
 #if !defined(RICPP_EXTERN)
 #define	RICPP_EXTERN(type) extern __declspec(dllimport) type
 #endif
-#if !defined(RICPP_INTERN)
-#define	RICPP_INTERN(type) __declspec(dllimport) type
-#endif
+/* In implementation dllexport only */
 #endif
 
 #else

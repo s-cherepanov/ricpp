@@ -383,8 +383,8 @@ public:
 		}
 	}
 
-	inline RtProcSubdivFunc procPtr() const { return m_proc; }
-	inline void procPtr(RtProcSubdivFunc aProc) { m_proc = aProc; }
+	inline RtProcFreeFunc procPtr() const { return m_proc; }
+	inline void procPtr(RtProcFreeFunc aProc) { m_proc = aProc; }
 
 	inline CFreeFuncSlot &operator=(const CFreeFuncSlot &o)
 	{

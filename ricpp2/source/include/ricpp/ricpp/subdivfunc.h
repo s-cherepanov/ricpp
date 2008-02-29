@@ -93,7 +93,7 @@ public:
 			return 0;
 	}
 
-	inline virtual void data(const RtPointer data)
+	inline virtual void data(RtPointer data)
 	{
 		freeData();
 		if ( !data )
@@ -200,7 +200,7 @@ public:
 			return 0;
 	}
 
-	inline virtual void data(const RtPointer data)
+	inline virtual void data(RtPointer data)
 	{
 		freeData();
 		if ( !data )
@@ -310,7 +310,7 @@ public:
 			return 0;
 	}
 
-	inline virtual void data(const RtPointer data)
+	inline virtual void data(RtPointer data)
 	{
 		freeData();
 		if ( !data )

@@ -157,7 +157,7 @@ public:
 	/** @brief Sets the data of the instance.
 	 *  @param da The data for the instance, creates a copy.
 	 */
-	virtual void data(const RtPointer da) = 0;
+	virtual void data(RtPointer da) = 0;
 
 	/** @brief Frees the data of the instance.
 	 */

@@ -94,12 +94,23 @@ typedef void   *RtPointer;       /**< Pointer to arbitrary data */
 
 /** @brief Pixel filter
  */
-typedef RtFloat (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
+typedef RtFloat     (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
 
+/** @brief Error handler
+ */
 typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, RtString msg);
+
+/** @brief Procedural
+ */
 typedef RtVoid      (*RtProcSubdivFunc)(RtPointer, RtFloat);
+
+/** @brief Procedural free data
+ */
 typedef RtVoid      (*RtProcFreeFunc)(RtPointer);
-typedef RtVoid		(*RtArchiveCallback)(RtString,...);
+
+/** @brief Archive callback for archive records
+ */
+typedef RtVoid		(*RtArchiveCallback)(RtToken, RtString,...);
 
 /** @defgroup ricpp_handles Ri handle types
  *  @ingroup ricpp_types

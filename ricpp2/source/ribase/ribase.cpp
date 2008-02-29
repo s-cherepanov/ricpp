@@ -25,7 +25,11 @@
 
 /** @file ribase.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Definitions of the C-binding of the RenderMan(R) interface
+ *  @brief Definitions of the C-binding of the RenderMan(R) interface internal use only.
+ *
+ * Error and procedural functions are used only as pointers for the C binding.
+ * The Ri Routins maps these pointers to the corresponding RiCPP objects.
+ * @see riinternal.h CErrorHandlerSlot CSubdivFuncSlot CFreeFuncSlot
  */
 #define RI_EXPORTS
 #include "ricpp/ribase/ricppconst.h"
@@ -36,6 +40,7 @@
 #include <iostream>
 
 extern "C" {
+
 
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtInt) RiLastError = RIE_NOERROR;
@@ -67,6 +72,31 @@ RICPP_INTERN(RtVoid) RiErrorPrint (RtInt code, RtInt severity, RtString message)
 RICPP_INTERN(RtVoid) RiErrorIgnore (RtInt code, RtInt severity, RtString message)
 {
 	RiLastError = code;
+	// Dummy
+}
+
+/* --------------------------------------------------------------------------------------------------- */
+
+RICPP_INTERN(RtVoid) RiProcDelayedReadArchive (RtPointer data, RtFloat detail)
+{
+	// Dummy
+}
+
+
+RICPP_INTERN(RtVoid) RiProcRunProgram (RtPointer data, RtFloat detail)
+{
+	// Dummy
+}
+
+
+RICPP_INTERN(RtVoid) RiProcDynamicLoad (RtPointer data, RtFloat detail)
+{
+	// Dummy
+}
+
+
+RICPP_INTERN(RtVoid) RiProcFree(RtPointer)
+{
 	// Dummy
 }
 

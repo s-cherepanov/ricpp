@@ -44,7 +44,6 @@ extern "C" {
 /* namespace RiCPP { /* */
 #endif
 
-// Last error
 RICPP_EXTERN(RtInt)		RiLastError;
 
 RICPP_EXTERN(RtFloat)
@@ -54,13 +53,11 @@ RICPP_EXTERN(RtFloat)
     RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
     RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth);
 
-/*
 RICPP_EXTERN(RtVoid) 
 	RiProcDelayedReadArchive (RtPointer data, RtFloat detail),
     RiProcRunProgram (RtPointer data, RtFloat detail),
     RiProcDynamicLoad (RtPointer data, RtFloat detail),
 	RiProcFree(RtPointer);
-*/
 
 RICPP_EXTERN(RtVoid)
     RiErrorIgnore (RtInt code, RtInt severity, RtString message),
@@ -68,11 +65,11 @@ RICPP_EXTERN(RtVoid)
     RiErrorAbort (RtInt code, RtInt severity, RtString message);
 
 #ifdef __cplusplus
-} /* namespace RiCPP */
+/* } namespace RiCPP */
 #endif
 
 #ifdef __cplusplus
-/* } /* extern "C" */
+} /* extern "C" */
 #endif
 
 #endif /* _RICPP_RIBASE_RICPPDECLS_H */

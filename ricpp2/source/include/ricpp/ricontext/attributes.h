@@ -39,7 +39,61 @@
 #include "ricpp/ricontext/lights.h"
 #endif // _RICPP_RICONTEXT_LIGHTS_H
 
+#include <deque>
+
 namespace RiCPP {
+
+	class CAttributeClass {
+	public:
+		inline CAttributeClass() {}
+		virtual ~CAttributeClass() {}
+		virtual CAttributeClass *duplicate() const = 0;
+
+		virtual void clear() = 0;
+		virtual void sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes) = 0;
+		virtual void sampleReset() = 0;
+	};
+
+	class CAttributeFloatClass : public CAttributeClass {
+	public:
+		RtFloat m_value;
+		std::vector<RtFloat> m_movedValue;
+		std::vector<RtFloat>::size_type m_elemSize, m_motionBegin, m_motionEnd;
+
+		inline CAttributeFloatClass() {}
+		inline CAttributeFloatClass(const CAttributeFloatClass &c) { *this = c; }
+		virtual ~CAttributeFloatClass() {}
+		virtual CAttributeFloatClass *duplicate() const { return new CAttributeFloatClass(*this); }
+
+		virtual void clear();
+		virtual RtVoid sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes);
+		virtual RtVoid sampleReset();
+		CAttributeFloatClass &operator=(const CAttributeFloatClass &c);
+		void set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt moEnd);
+		void set(RtFloat aValue);
+	};
+
+	class CAttributeFloatArrayClass : public CAttributeClass {
+	public:
+		std::vector<RtFloat> m_value;
+		std::vector<RtFloat> m_movedValue;
+		RtInt m_card, m_motionBegin, m_motionEnd;
+
+		inline CAttributeFloatArrayClass() {}
+		inline CAttributeFloatArrayClass(const CAttributeFloatClass &c) { *this = c; }
+		virtual ~CAttributeFloatArrayClass() {}
+		virtual CAttributeClass *duplicate() const { return new CAttributeFloatArrayClass(*this); }
+
+		virtual void clear();
+		virtual RtVoid sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes);
+		virtual RtVoid sampleReset();
+		CAttributeFloatArrayClass &operator=(const CAttributeFloatArrayClass &c);
+		void set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt moEnd);
+		void set(RtFloat *aValue, RtInt &n, RtInt moBegin, RtInt moEnd);
+		void set(RtFloat aValue, RtInt aCard);
+		void set(RtFloat *aValue, RtInt aCard);
+		inline RtInt card() const { return m_card; }
+	};
 
 	/** @brief Render attributes.
 	 *
@@ -96,9 +150,26 @@ namespace RiCPP {
 
 		typedef std::vector<CLightSource *> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
 
+	protected:
+		std::deque<RtFloat> m_motionTimes;    ///< times of all motion blocks occured in this attribute block
+		RtInt m_curMotionCnt;              ///< Current Index in m_motionTimes;
+		RtInt m_motionBegin;            ///< Current Index in m_motionTimes;
+		RtInt m_motionEnd;                ///< End of motion in m_motionTimes, m_motionTimes[m_motionStop] == undefined (end())
+
+		enum EnumAttributeIndex {
+			AIDX_COLOR,
+			AIDX_OPACITY,
+
+			AIDX_ENDMARKER
+		};
+		std::vector<CAttributeClass *> m_allAttributes; ///< Pointer to all attributes of this class
+
+		virtual void initAttributeVector();
+		virtual void initMotion();
 	private:
-		std::vector<RtFloat> m_color;          ///< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
-		std::vector<RtFloat> m_opacity;        ///< Current opacity of an object (opaque - all 1.0), components as in color.
+		CAttributeFloatArrayClass m_color;     ///< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
+
+		CAttributeFloatArrayClass m_opacity;   ///< Current opacity of an object (opaque - all 1.0), components as in color.
 
 		TypeLightHandles m_illuminated;        ///< Illuminated lights, default: empty.
 
@@ -244,6 +315,7 @@ namespace RiCPP {
 		inline CAttributes(const CColorDescr &c)
 			: COptionsBase(c)
 		{
+			initAttributeVector();
 			init();
 		}
 
@@ -254,6 +326,7 @@ namespace RiCPP {
 		inline CAttributes(const CAttributes &ra)
 			: COptionsBase(ra.colorDescr())
 		{
+			initAttributeVector();
 			*this = ra;
 		}
 
@@ -296,7 +369,7 @@ namespace RiCPP {
 		 */
 		inline virtual const std::vector<RtFloat> &color() const
 		{
-			return m_color;
+			return m_color.m_value;
 		}
 
 		/** @brief Sets the current surface opacity.
@@ -319,7 +392,7 @@ namespace RiCPP {
 		 */
 		inline virtual const std::vector<RtFloat> &opacity() const
 		{
-			return m_opacity;
+			return m_opacity.m_value;
 		}
 
 		/** @brief Switch a lightsource on or off.
@@ -583,6 +656,12 @@ namespace RiCPP {
 		{
 			return m_trimCurve;
 		}
+
+		virtual RtVoid motionBegin(RtInt N, RtFloat times[]);
+		virtual RtVoid motionEnd();
+
+		virtual RtVoid sample(RtFloat shutterTime);
+		virtual RtVoid sampleReset();
 	}; // CAttributes
 
 

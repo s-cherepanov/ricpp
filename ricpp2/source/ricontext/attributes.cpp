@@ -38,6 +38,174 @@ using namespace RiCPP;
 // ----------------------------------------------------------------------------
 
 
+RtVoid CAttributeFloatClass::sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes)
+{
+}
+
+RtVoid CAttributeFloatClass::sampleReset()
+{
+	if ( m_movedValue.size() >= 1 )
+		m_value = m_movedValue[0];
+}
+
+CAttributeFloatClass &CAttributeFloatClass::operator=(const CAttributeFloatClass &c)
+{
+	clear();
+	m_value = c.m_value;
+	m_movedValue = c.m_movedValue;
+	m_motionBegin = c.m_motionBegin;
+	m_motionEnd = c.m_motionEnd;
+	return *this;
+}
+
+void CAttributeFloatClass::clear()
+{
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+}
+
+void CAttributeFloatClass::set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt moEnd)
+{
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+
+	if ( n == 0 ) {
+		m_value = aValue;
+	}
+
+	if ( moBegin < moEnd ) {
+		if ( (RtInt)m_movedValue.size() < moEnd-moBegin ) {
+			m_movedValue.resize(moEnd-moBegin);
+		}
+		m_movedValue[n] = aValue;
+		++n;
+	}
+}
+
+void CAttributeFloatClass::set(RtFloat aValue)
+{
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+
+	m_value = aValue;
+}
+
+//
+
+RtVoid CAttributeFloatArrayClass::sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes)
+{
+}
+
+RtVoid CAttributeFloatArrayClass::sampleReset()
+{
+	if ( (RtInt)m_movedValue.size() >= m_card ) {
+		m_value.resize(m_card);
+		for ( RtInt i=0; i < m_card; ++i ) {
+			m_value[i] = m_movedValue[i];
+		}
+	}
+}
+
+CAttributeFloatArrayClass &CAttributeFloatArrayClass::operator=(const CAttributeFloatArrayClass &c)
+{
+	clear();
+	m_value = c.m_value;
+	m_movedValue = c.m_movedValue;
+	m_card = c.m_card;
+	m_motionBegin = c.m_motionBegin;
+	m_motionEnd = c.m_motionEnd;
+	return *this;
+}
+
+void CAttributeFloatArrayClass::clear()
+{
+	m_value.clear();
+	m_movedValue.clear();
+	m_card = 0;
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+}
+
+void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt moEnd)
+{
+	if ( m_card <= 0 )
+		return;
+
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+
+	if ( n == 0 ) {
+		m_value.resize(m_card);
+		m_value.assign(m_card, aValue);
+	}
+
+	if ( moBegin < moEnd ) {
+		if ( (RtInt)m_movedValue.size() < (moEnd-moBegin) * m_card ) {
+			m_movedValue.resize((moEnd-moBegin) * m_card);
+		}
+		for ( RtInt i=0; i<m_card; ++i )
+			m_movedValue[n * m_card + i] = aValue;
+		++n;
+	}
+}
+
+void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt aCard)
+{
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+	m_card = aCard;
+
+	if ( m_card <= 0 )
+		return;
+
+
+	m_value.resize(m_card);
+	m_value.assign(m_card, aValue);
+}
+
+void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt &n, RtInt moBegin, RtInt moEnd)
+{
+	if ( m_card <= 0 )
+		return;
+
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+
+	if ( n == 0 ) {
+		m_value.resize(m_card);
+		for ( RtInt i=0; i<m_card; ++i ) {
+			m_value[i] = aValue[i];
+		}
+	}
+
+	if ( moBegin < moEnd ) {
+		if ( (RtInt)m_movedValue.size() < (moEnd-moBegin) * m_card ) {
+			m_movedValue.resize((moEnd-moBegin) * m_card);
+		}
+		for ( RtInt i=0; i<m_card; ++i )
+			m_movedValue[n * m_card + i] = aValue[i];
+		++n;
+	}
+}
+
+void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt aCard)
+{
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+	m_card = aCard;
+
+	if ( m_card <= 0 )
+		return;
+
+
+	m_value.resize(m_card);
+	for ( RtInt i=0; i<m_card; ++i ) {
+		m_value[i] = aValue[i];
+	}
+}
+
+//
+
 const RtFloat CAttributes::defColorComponent = (RtFloat)1.0;
 const RtFloat CAttributes::defOpacityComponent = (RtFloat)1.0;
 
@@ -72,6 +240,7 @@ void CAttributes::init()
 {
 	m_illuminated.clear();
 
+	initMotion();
 	initColor();
 	initOpacity();
 	initTextureCoordinates();
@@ -150,31 +319,38 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 
 	m_trimCurve = ra.m_trimCurve;
 
+	m_curMotionCnt = ra.m_curMotionCnt;
+	m_motionBegin = ra.m_motionBegin;
+	m_motionEnd = ra.m_motionEnd;
+	m_motionTimes = ra.m_motionTimes;
+
 	COptionsBase::operator=(ra);
 
 	return *this;
 }
 
+void CAttributes::initAttributeVector()
+{
+	m_allAttributes.resize((int)AIDX_ENDMARKER);
+	m_allAttributes[(int)AIDX_COLOR] = &m_color;
+	m_allAttributes[(int)AIDX_OPACITY] = &m_opacity;
+}
+
+void CAttributes::initMotion()
+{
+	m_curMotionCnt = 0;
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+}
+
 void CAttributes::initColor()
 {
-	RtInt n = colorSamples();
-	m_color.resize(n);
-
-	for ( RtInt i = 0; i < n; ++i )
-	{
-		m_color[i] = defColorComponent;
-	}
+	m_color.set(defColorComponent, colorSamples());
 }
 
 RtVoid CAttributes::color(RtColor Cs)
 {
-	RtInt n = colorSamples();
-	m_color.resize(n);
-
-	for ( RtInt i = 0; i < n; ++i )
-	{
-		m_color[i] = Cs[i];
-	}
+	m_color.set(Cs, m_curMotionCnt, m_motionBegin, m_motionEnd);
 }
 
 RtFloat CAttributes::color(RtInt i) const
@@ -182,32 +358,20 @@ RtFloat CAttributes::color(RtInt i) const
 	if ( i < 0 )
 		return 0;
 
-	if ( i >= colorSamples() )
+	if ( i >= m_color.card() )
 		return 0;
 
-	return m_color[i];
+	return m_color.m_value[i];
 }
 
 void CAttributes::initOpacity()
 {
-	RtInt n = colorSamples();
-	m_opacity.resize(n);
-
-	for ( RtInt i = 0; i < n; ++i )
-	{
-		m_opacity[i] = defOpacityComponent;
-	}
+	m_opacity.set(defOpacityComponent, colorSamples());
 }
 
 RtVoid CAttributes::opacity(RtColor Os)
 {
-	RtInt n = colorSamples();
-	m_opacity.resize(n);
-
-	for ( RtInt i = 0; i < n; ++i )
-	{
-		m_opacity[i] = Os[i];
-	}
+	m_opacity.set(Os, m_curMotionCnt, m_motionBegin, m_motionEnd);
 }
 
 RtFloat CAttributes::opacity(RtInt i) const
@@ -215,10 +379,10 @@ RtFloat CAttributes::opacity(RtInt i) const
 	if ( i < 0 )
 		return 0;
 
-	if ( i >= colorSamples() )
+	if ( i >= m_opacity.card() )
 		return 0;
 
-	return m_opacity[i];
+	return m_opacity.m_value[i];
 }
 
 RtVoid CAttributes::illuminate(CLightSource *light, RtBoolean onoff)
@@ -520,6 +684,39 @@ RtVoid CAttributes::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFl
 RtVoid CAttributes::trimCurve(const CTrimCurveData &trimCurveData)
 {
 	m_trimCurve = trimCurveData;
+}
+
+
+RtVoid CAttributes::motionBegin(RtInt N, RtFloat times[])
+{
+	m_curMotionCnt = 0;
+	m_motionEnd = m_motionBegin+N;
+	m_motionTimes.resize(m_motionEnd);
+	for ( RtInt i=0; i<N; ++i ) {
+		m_motionTimes[i] = times[i];
+	}
+}
+
+RtVoid CAttributes::motionEnd()
+{
+	m_curMotionCnt = 0;
+	m_motionBegin = m_motionEnd;
+}
+
+RtVoid CAttributes::sample(RtFloat shutterTime)
+{
+	std::vector<CAttributeClass *>::iterator i = m_allAttributes.begin();
+	for ( ; i != m_allAttributes.end(); ++i ) {
+		(*i)->sample(shutterTime, m_motionTimes);
+	}
+}
+
+RtVoid CAttributes::sampleReset()
+{
+	std::vector<CAttributeClass *>::iterator i = m_allAttributes.begin();
+	for ( ; i != m_allAttributes.end(); ++i ) {
+		(*i)->sampleReset();
+	}
 }
 
 // ----------------------------------------------------------------------------

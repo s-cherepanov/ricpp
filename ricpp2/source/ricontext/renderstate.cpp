@@ -1849,12 +1849,14 @@ void CRenderState::motionBegin(RtInt N, RtFloat times[])
 {
 	m_modeStack->motionBegin();
 	m_motionState.open(N, times);
+	attributes().motionBegin(N, times);
 }
 
 void CRenderState::motionEnd()
 {
 	m_modeStack->motionEnd();
 	m_motionState.close();
+	attributes().motionEnd();
 }
 
 

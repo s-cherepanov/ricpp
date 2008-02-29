@@ -1,5 +1,5 @@
-#ifndef _RICPP_RICPPBASE_RICPPERROR_H
-#define _RICPP_RICPPBASE_RICPPERROR_H
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#define _RICPP_RICPP_RICPPERROR_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -340,4 +340,4 @@ public:
 
 } // namespace RiCPP
 
-#endif // _RICPP_RICPPBASE_RICPPERROR_H
+#endif // _RICPP_RICPP_RICPPERROR_H

@@ -282,10 +282,6 @@
 				RelativePath="..\..\..\source\ribase\ribase.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\source\ribase\ricpperror.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -298,10 +294,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ribase\ricppdecls.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\source\include\ricpp\ribase\ricpperror.h"
 				>
 			</File>
 			<File

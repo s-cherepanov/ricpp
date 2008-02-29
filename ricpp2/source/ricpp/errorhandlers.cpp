@@ -29,9 +29,9 @@
 
 #include "ricpp/ricpp/errorhandlers.h"
 
-#ifndef _RICPP_RIBASE_RICPPERROR_H
-#include "ricpp/ribase/ricpperror.h"
-#endif // _RICPP_RIBASE_RICPPERROR_H
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#include "ricpp/ricpp/ricpperror.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
 
 #ifndef _RICPP_RICPPBASE_RICPPDECLS_H
 #include "ricpp/ribase/ricppdecls.h"
@@ -42,12 +42,18 @@
 using namespace RiCPP;
 
 RtToken CAbortErrorHandler::myName() {return RI_ABORT; }
-RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
+RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
+	RiLastError = code;
+	std::cerr << "# *** Code " <<
+		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
+		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
+		noNullStr(message) << "'" << std::endl;
 	if ( severity == RIE_SEVERE ) {
+		std::cerr << "# abort renderer." << std::endl;
 		ri.synchronize(RI_ABORT);
+		exit(code);
 	}
-	RiErrorAbort(code, severity, msg);
 }
 
 CAbortErrorHandler CAbortErrorHandler::func;
@@ -57,7 +63,11 @@ RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 {
 	const IRi *pri = &ri;
 	pri = pri;
-	RiErrorPrint(code, severity, message);
+	RiLastError = code;
+	std::cerr << "# *** Code " <<
+		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
+		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
+		noNullStr(message) << "'" << std::endl;
 }
 
 CPrintErrorHandler CPrintErrorHandler::func;
@@ -67,7 +77,10 @@ RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtSt
 {
 	const IRi *pri = &ri;
 	pri = pri;
-	RiErrorIgnore(code, severity, message);
+	code = code;
+	severity = severity;
+	message = message;
+	RiLastError = code;
 }
 
 CIgnoreErrorHandler CIgnoreErrorHandler::func;

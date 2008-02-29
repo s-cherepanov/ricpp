@@ -31,12 +31,9 @@
 #include "ricpp/ribase/ricppconst.h"
 #include "ricpp/ribase/ricpptokens.h"
 #include "ricpp/ribase/ricppdecls.h"
-#include "ricpp/ribase/ricpperror.h"
 
 #include <cmath>
 #include <iostream>
-
-using namespace RiCPP; /* */
 
 extern "C" {
 
@@ -49,10 +46,9 @@ RICPP_INTERN(RtInt) RiLastError = RIE_NOERROR;
 RICPP_INTERN(RtVoid) RiErrorAbort (RtInt code, RtInt severity, RtString message)
 {
 	RiLastError = code;
-	std::cerr << "# *** Code " <<
-		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
-		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
-		message << "'" << std::endl;
+	// Dummy
+	std::cerr << "# *** Code [" << code << "], severity [" << severity << "] '" <<
+		(message ? message : "") << "'" << std::endl;
 	if ( severity == RIE_SEVERE ) {
 		std::cerr << "# abort renderer." << std::endl;
 		exit(code);
@@ -63,15 +59,15 @@ RICPP_INTERN(RtVoid) RiErrorAbort (RtInt code, RtInt severity, RtString message)
 RICPP_INTERN(RtVoid) RiErrorPrint (RtInt code, RtInt severity, RtString message)
 {
 	RiLastError = code;
-	std::cerr << "# *** Code " <<
-		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
-		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
-		message << "'" << std::endl;
+	// Dummy
+	std::cerr << "# *** Code [" << code << "], severity [" << severity << "] '" <<
+		(message ? message : "") << "'" << std::endl;
 }
 
 RICPP_INTERN(RtVoid) RiErrorIgnore (RtInt code, RtInt severity, RtString message)
 {
 	RiLastError = code;
+	// Dummy
 }
 
 /* --------------------------------------------------------------------------------------------------- */

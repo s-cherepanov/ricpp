@@ -39,18 +39,6 @@
 #define RI_EXPORTS
 #include "ricpp/ri/ri.h"
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
-
-#ifndef _RICPP_RICPP_FILTERS_H
-#include "ricpp/ricpp/filters.h"
-#endif // _RICPP_RICPP_FILTERS_H
-
-#ifndef _RICPP_TOOLS_INLINETOOLS_H
-#include "ricpp/tools/inlinetools.h"
-#endif // _RICPP_TOOLS_INLINETOOLS_H
-
 #ifndef _RICPP_RI_RIINTERNAL_H
 #include "ricpp/ri/riinternal.h"
 #endif // _RICPP_RI_RIINTERNAL_H

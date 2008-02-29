@@ -11,81 +11,104 @@
 #include "ricpp/ri/riinternal.h"
 #endif // _RICPP_RI_RIINTERNAL_H
 
-using namespace RiCPP;
+namespace RiCPP {
 
-static CRiCPPBridge ri; // The bridge to the rendering context
+	static CRiCPPBridge ri; // The bridge to the rendering context
+
+	void SetRoot()
+	{
+		if ( RiCPPRoot() == (IRiRoot *)0 ) {
+			RiCPPRoot(&ri);
+		}
+	}
+
+}
+
+using namespace RiCPP;
 
 extern "C" {
 
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtVoid) RiBegin(RtToken name)
 {
-	// RiCPPBeginV() is defined in riprog.cpp for programs (sets _ricppRoot())
-	// RiCPPBeginV() is defined as an error in ridynload.cpp
-	RtContextHandle r = RiCPPBeginV(name, 0, 0, 0);
+	SetRoot();
+	RiCPPInternalBeginV(name, 0, 0, 0);
 }
 
 RICPP_INTERN(RtVoid) RiEnd(void)
 {
-	// RiCPPEnd() is defined in riprog.cpp for programs (clears _ricppRoot())
-	// RiCPPEnd() is defined as an error in ridynload.cpp
-	RiCPPEnd();
+	SetRoot();
+	RiCPPInternalEnd();
 }
 
 
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
 {
+	SetRoot();
 	GETARGS(name)
-	return RiCPPBeginV(name, n, tokens, params);
+	return RiCPPInternalBeginV(name, n, tokens, params);
 }
 
-RICPP_INTERN(RtContextHandle)
-RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[]) {
-	if ( _ricppRoot() != 0 ) {
-		// ERROR
-		return illContextHandle;
-	}
-	_ricppRoot(&ri);
-	return _ricppRoot()->beginV(name, n, tokens, params);
+RICPP_INTERN(RtContextHandle) RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[])
+{
+	SetRoot();
+	return RiCPPInternalBeginV(name, n, tokens, params);
 }
 
-RICPP_INTERN(RtVoid)
-RiCPPEnd (void) {
-	if ( !_ricppRoot() ) {
-		// ERROR
-		return;
-	}
-	_ricppRoot()->end();
-	_ricppRoot(0);
+RICPP_INTERN(RtVoid) RiCPPEnd (void)
+{
+	SetRoot();
+	RiCPPInternalEnd();
 }
 
-// ----------------------------------------------------------------------------
+	
 RICPP_INTERN(RtContextHandle) RiGetContext(void)
 {
-	if ( _ricppRoot() != &ri ) {
-		return illContextHandle;
+	RtContextHandle h = illContextHandle;
+	SetRoot();
+	if ( RiCPPRoot() != &ri ) {
+		// ERROR
+		return h;
 	}
-	return ri.getContext();
+	PREAMBLE_RET(h)
+		h = ri.getContext();
+	POSTAMBLE_RET(h)
 }
 
-RICPP_INTERN(RtVoid) RiContext(RtContextHandle h)
+RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 {
-	if ( _ricppRoot() != &ri ) {
-		// Error
+	SetRoot();
+	if ( RiCPPRoot() != &ri ) {
+		// ERROR
 		return;
 	}
-	ri.context(h);
+	PREAMBLE
+	ri.context(handle);
+	POSTAMBLE
 }
 
+// ----------------------------------------------------------------------------
+
+RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
+{
+	SetRoot();
+	RiCPPInternalErrorHandler(handler);
+}
 
 // ----------------------------------------------------------------------------
-// Other external functions
 
-// ErrorHandler
+RICPP_INTERN(RtVoid) RiControl (char *name, ...)
+{
+	SetRoot();
+	GETARGS(name)
+	RiCPPInternalControlV(name, n, tokens, params);
+}
 
-// Declare
-
-/// Options
+RICPP_INTERN(RtVoid) RiControlV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	SetRoot();
+	RiCPPInternalControlV(name, n, tokens, params);
+}
 
 } // extern "C"

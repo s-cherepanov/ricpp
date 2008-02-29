@@ -13,3 +13,20 @@ using namespace RiCPP;
 IFilterFunc::IFilterFunc() {}
 IFilterFunc::~IFilterFunc() {}
 
+ISubdivData::ISubdivData() {}
+ISubdivData::~ISubdivData() {}
+
+ISubdivFunc::ISubdivFunc() {}
+ISubdivFunc::~ISubdivFunc() {}
+
+IFreeFunc::IFreeFunc() {}
+IFreeFunc::~IFreeFunc() {}
+
+IArchiveCallback::IArchiveCallback() {}
+IArchiveCallback::~IArchiveCallback() {}
+
+IRiRoot::IRiRoot() {}
+IRiRoot::~IRiRoot() {}
+
+IRi::IRi() {}
+IRi::~IRi() {}

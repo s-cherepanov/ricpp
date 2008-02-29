@@ -44,6 +44,7 @@ extern "C" {
 /* namespace RiCPP { /* */
 #endif
 
+// Last error
 RICPP_EXTERN(RtInt)		RiLastError;
 
 RICPP_EXTERN(RtFloat)
@@ -59,13 +60,12 @@ RICPP_EXTERN(RtVoid)
     RiProcRunProgram (RtPointer data, RtFloat detail),
     RiProcDynamicLoad (RtPointer data, RtFloat detail),
 	RiProcFree(RtPointer);
+*/
 
 RICPP_EXTERN(RtVoid)
-    RiErrorHandler (RtErrorHandler handler),
-    RiErrorIgnore (RtInt code, RtInt severity, char *message),
-    RiErrorPrint (RtInt code, RtInt severity, char *message),
-    RiErrorAbort (RtInt code, RtInt severity, char *message);
-*/
+    RiErrorIgnore (RtInt code, RtInt severity, RtString message),
+    RiErrorPrint (RtInt code, RtInt severity, RtString message),
+    RiErrorAbort (RtInt code, RtInt severity, RtString message);
 
 #ifdef __cplusplus
 } /* namespace RiCPP */

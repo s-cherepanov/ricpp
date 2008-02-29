@@ -31,14 +31,50 @@
 #include "ricpp/ribase/ricppconst.h"
 #include "ricpp/ribase/ricpptokens.h"
 #include "ricpp/ribase/ricppdecls.h"
+#include "ricpp/ribase/ricpperror.h"
 
 #include <cmath>
+#include <iostream>
 
-/* using namespace RiCPP; /* */
+using namespace RiCPP; /* */
 
 extern "C" {
 
+// ----------------------------------------------------------------------------
 RICPP_INTERN(RtInt) RiLastError = RIE_NOERROR;
+
+
+// ----------------------------------------------------------------------------
+
+RICPP_INTERN(RtVoid) RiErrorAbort (RtInt code, RtInt severity, RtString message)
+{
+	RiLastError = code;
+	std::cerr << "# *** Code " <<
+		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
+		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
+		message << "'" << std::endl;
+	if ( severity == RIE_SEVERE ) {
+		std::cerr << "# abort renderer." << std::endl;
+		exit(code);
+	}
+}
+
+
+RICPP_INTERN(RtVoid) RiErrorPrint (RtInt code, RtInt severity, RtString message)
+{
+	RiLastError = code;
+	std::cerr << "# *** Code " <<
+		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
+		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
+		message << "'" << std::endl;
+}
+
+RICPP_INTERN(RtVoid) RiErrorIgnore (RtInt code, RtInt severity, RtString message)
+{
+	RiLastError = code;
+}
+
+/* --------------------------------------------------------------------------------------------------- */
 
 RICPP_INTERN(RtFloat)
 RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
@@ -46,6 +82,7 @@ RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	y *= (RtFloat)(2.0 / ywidth);
 	return (RtFloat)exp(-2.0 * (x*x + y*y));
 }
+
 
 RICPP_INTERN(RtFloat)
 RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {

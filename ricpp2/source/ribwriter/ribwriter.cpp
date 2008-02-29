@@ -146,7 +146,7 @@ CRibWriter::CRibWriter()
 	m_controlSuppressOutput = false;
 	m_suppressOutput = false;
 	
-	m_header = false;
+	m_header = true;
 	m_execute = false;
 	m_doReadArchive = false;
 	nestingDepth(0);
@@ -319,9 +319,13 @@ RtVoid CRibWriter::version()
 	if ( !postTestValid() )
 		return;
 
+	if ( m_header && m_skipHeader <= 0 ) {
+		m_writer->putComment(RI_STRUCTURE, "RenderMan RIB-Structure 1.1");
+	}
+
 	if ( m_skipHeader < 0 )
 		m_skipHeader = 1;
-		
+
 	m_header = false;
 
 	if ( m_skipVersion != 0 )

@@ -219,6 +219,11 @@ public:
 			callee()->errorHandler(handler);
 	}
 
+	inline virtual RtInt lastError()
+	{
+		return callee()->lastError();
+	}
+
 	inline virtual RtVoid synchronize(RtToken name)
 	{
 		if ( canCall(REQ_SYNCHRONIZE) )

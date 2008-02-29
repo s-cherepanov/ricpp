@@ -96,10 +96,10 @@ typedef void   *RtPointer;       /**< Pointer to arbitrary data */
  */
 typedef RtFloat (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
 
-typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, char *msg);
+typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, RtString msg);
 typedef RtVoid      (*RtProcSubdivFunc)(RtPointer, RtFloat);
 typedef RtVoid      (*RtProcFreeFunc)(RtPointer);
-typedef RtVoid		(*RtArchiveCallback)(const char *,...);
+typedef RtVoid		(*RtArchiveCallback)(RtString,...);
 
 /** @defgroup ricpp_handles Ri handle types
  *  @ingroup ricpp_types

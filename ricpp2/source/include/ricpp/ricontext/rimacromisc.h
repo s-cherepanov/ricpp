@@ -55,7 +55,7 @@ namespace RiCPP {
  */
 class CRiErrorHandler : public CRManInterfaceCall {
 private:
-	IErrorHandler *m_handler; ///< Pointer to the error handler function
+	const IErrorHandler *m_handler; ///< Pointer to the error handler function
 
 public:
 	/** @brief Gets name for the class.
@@ -1026,7 +1026,7 @@ public:
 class CRiReadArchive : public CVarParamRManInterfaceCall {
 private:
 	std::string       m_filename; ///< Filename of the RIB archive.
-	IArchiveCallback *m_callback; ///< Optional callbback for archive records.
+	const IArchiveCallback *m_callback; ///< Optional callbback for archive records.
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -1055,7 +1055,7 @@ public:
 	{
 		m_callback = 0;
 		if ( cb )
-			m_callback = cb->duplicate();
+			m_callback = &(cb->singleton());
 	}
 
 	inline CRiReadArchive(
@@ -1067,7 +1067,7 @@ public:
 	{
 		m_callback = 0;
 		if ( cb )
-			m_callback = cb->duplicate();
+			m_callback = &(cb->singleton());
 	}
 
 	/** @brief Copy constructor.
@@ -1084,8 +1084,6 @@ public:
 	 */
 	inline virtual ~CRiReadArchive()
 	{
-		if ( m_callback )
-			delete m_callback;
 	}
 
 	inline virtual CRManInterfaceCall *duplicate() const
@@ -1102,11 +1100,9 @@ public:
 
 	inline void callback(const IArchiveCallback *cb)
 	{
-		if ( m_callback )
-			delete m_callback;
 		m_callback = 0;
 		if ( cb )
-			m_callback = cb->duplicate();
+			m_callback = &(cb->singleton());
 	}
 
 	inline RtString filename() const
@@ -1121,6 +1117,7 @@ public:
 
 	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
+		/** @todo Pass the callback of the first read @a cb or take the one of the instance @c m_callback ? */
 		ri.preReadArchive(*this, m_filename.c_str(), cb, parameters());
 	}
 

@@ -85,7 +85,7 @@ public:
 	/** @brief A singleton error handler.
 	 * @return A singleton error handler (static error handler).
 	 */
-	virtual IErrorHandler &singleton() const = 0;
+	virtual const IErrorHandler &singleton() const = 0;
 };
 
 /** @brief Interface for a pixel filter (super sampling).
@@ -133,9 +133,11 @@ public:
  */
 class ISubdivData {
 public:
+	ISubdivData();
+
 	/** @brief Destructor to free data.
 	 */
-	inline virtual ~ISubdivData() {}
+	virtual ~ISubdivData();
 
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
@@ -166,6 +168,9 @@ public:
  */
 class ISubdivFunc {
 public:
+	ISubdivFunc();
+	virtual ~ISubdivFunc();
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -204,6 +209,9 @@ public:
  */
 class IFreeFunc {
 public:
+	IFreeFunc();
+	virtual ~IFreeFunc();
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -230,6 +238,9 @@ public:
  */
 class IArchiveCallback {
 public:
+	IArchiveCallback();
+	virtual ~IArchiveCallback();
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the function.
 	 */
@@ -240,13 +251,18 @@ public:
 	virtual RtToken name() const = 0;
 
 	/** @brief The callback function as operator()()
-	 * @param ri the frontend used by the subdivision function that handled the data.
-	 * @param type The type of the comment, either RI_COMMENT or RI_STRUCTURE. RI_VERBATIM
-	 * cannot be handled.
-	 * @param line The (formatted) comment line, smae as the formatted string
-	 * given by IRi::archiveRecordV()
+	 *  @param ri the frontend used by the subdivision function that handled the data.
+	 *  @param type The type of the comment, either RI_COMMENT or RI_STRUCTURE. RI_VERBATIM
+	 *              cannot be handled.
+	 *  @param line The (formatted) comment line, smae as the formatted string
+	 *              given by IRi::archiveRecordV()
 	 */
 	virtual RtVoid operator()(IRiRoot &ri, RtToken type, RtString line) const = 0;
+
+	/** @brief Returns a singleton object
+	 *  @return Singleton archive callback
+	 */
+	inline virtual const IArchiveCallback &singleton() const = 0;
 };
 
 // ---------------------------------------------------------------------------------------------------
@@ -260,9 +276,11 @@ public:
  */
 class IRiRoot {
 public:
+	IRiRoot();
+
 	/** @brief The virtual destructor of the interface
 	 */
-	inline virtual ~IRiRoot() {}
+	virtual ~IRiRoot();
 
 	/** @defgroup ricpp_interface Ri interface functions
 	 *  @brief The interface functions, part 1
@@ -294,6 +312,11 @@ public:
 	 *  @see ricpp_errorconst, IErrorHandler, ricpp_severity
 	 */
 	virtual RtVoid errorHandler(const IErrorHandler &handler) = 0;
+
+	/** @brief Gets the last error number occured.
+	 */
+	virtual RtInt lastError() = 0;
+	//@}
 	//@}
 
 	/** @defgroup ricpp_other Ri other routines
@@ -1513,10 +1536,11 @@ public:
  */
 class IRi : public IRiRoot {
 public:
+	IRi();
 
 	/** @brief The virtual destructor
 	 */
-	inline virtual ~IRi() {}
+	virtual ~IRi();
 
 	/** @defgroup ricpp_filter Ri pixel filters
 	 *
@@ -1553,15 +1577,6 @@ public:
 	/** @addtogroup ricpp_interface
 	 * @{
 	 */
-
-	/** @addtogroup ricpp_error
-	 *  @ingroup ricpp_interface
-	 *  @{
-	 */
-	/** @brief Gets the last error number occured.
-	 */
-	virtual RtInt lastError() = 0;
-	//@}
 
 	/*  @addtogroup ricpp_resource
 	 *  @ingroup ricpp_interface
@@ -1623,11 +1638,10 @@ public:
 	virtual RtContextHandle begin(RtString name, RtToken token = RI_NULL, ...) = 0;
 
 	//! Starts a motion block for a moving primitive
-	/*! @param N     Number of samples (length of times)
-	 *  @param sample First of the N samples
+	/*! @param N     Number of RtFloat samples (length of times)
 	 *  @see IRiRoot::motionBeginV()
 	 */
-    virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...) = 0;
+    virtual RtVoid motionBegin(RtInt N, ...) = 0;
 	//@}
 
 	/** @addtogroup ricpp_options

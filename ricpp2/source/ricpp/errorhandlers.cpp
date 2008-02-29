@@ -29,9 +29,13 @@
 
 #include "ricpp/ricpp/errorhandlers.h"
 
-#ifndef _RICPP_RICPP_RICPPERROR_H
-#include "ricpp/ricpp/ricpperror.h"
-#endif // _RICPP_RICPP_RICPPERROR_H
+#ifndef _RICPP_RIBASE_RICPPERROR_H
+#include "ricpp/ribase/ricpperror.h"
+#endif // _RICPP_RIBASE_RICPPERROR_H
+
+#ifndef _RICPP_RICPPBASE_RICPPDECLS_H
+#include "ricpp/ribase/ricppdecls.h"
+#endif // _RICPP_RICPPBASE_RICPPDECLS_H
 
 #include <iostream>
 
@@ -40,39 +44,30 @@ using namespace RiCPP;
 RtToken CAbortErrorHandler::myName() {return RI_ABORT; }
 RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
 {
-	std::cerr << "# *** Code " <<
-		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
-		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
-		msg << "'" << std::endl;
 	if ( severity == RIE_SEVERE ) {
-		std::cerr << "# abort renderer." << std::endl;
 		ri.synchronize(RI_ABORT);
 	}
+	RiErrorAbort(code, severity, msg);
 }
 
 CAbortErrorHandler CAbortErrorHandler::func;
 
 RtToken CPrintErrorHandler::myName() {return RI_PRINT; }
-RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
+RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
 	const IRi *pri = &ri;
 	pri = pri;
-	std::cerr << "# *** Code " <<
-		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
-		", severity [" << severity << "] " << CRiCPPErrMsg::errorSeverity(severity) << ", '" <<
-		msg << "'" << std::endl;
+	RiErrorPrint(code, severity, message);
 }
 
 CPrintErrorHandler CPrintErrorHandler::func;
 
 RtToken CIgnoreErrorHandler::myName() {return RI_IGNORE; }
-RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const
+RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
 	const IRi *pri = &ri;
 	pri = pri;
-	code = code;
-	severity = severity;
-	msg = msg;
+	RiErrorIgnore(code, severity, message);
 }
 
 CIgnoreErrorHandler CIgnoreErrorHandler::func;
@@ -81,7 +76,7 @@ CIgnoreErrorHandler CIgnoreErrorHandler::func;
 // CErrorHandlerFactory
 //
 
-IErrorHandler *CErrorHandlerFactory::newFunc(RtToken name)
+const IErrorHandler *CErrorHandlerFactory::newFunc(RtToken name)
 {
 	if ( emptyStr(name) )
 		return 0;
@@ -105,7 +100,7 @@ void CErrorHandlerFactory::deleteFunc(IErrorHandler *f)
 	delete f;
 }
 
-IErrorHandler *CErrorHandlerFactory::singleton(RtToken name) const
+const IErrorHandler *CErrorHandlerFactory::singleton(RtToken name) const
 {
 	if ( emptyStr(name) )
 		return 0;

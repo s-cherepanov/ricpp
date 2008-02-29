@@ -181,8 +181,8 @@ CRiCPPBridge::CRiCPPBridge() :
 	// Default options
 	RtToken tsearchpath[] = {"renderer", "ribfilter"};
 	RtPointer psearchpath[] = {(RtPointer)"$PROGDIR", (RtPointer)".:$PROGDIR"};
-	doOption("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
-	doOption("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+	doControl("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+	doControl("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
 
 	m_curErrorHandler = &CPrintErrorHandler::func;
 
@@ -373,6 +373,11 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 }
 
 
+RtVoid CRiCPPBridge::doDeclare(RtToken name, RtString declaration)
+{
+}
+
+
 RtToken CRiCPPBridge::declare(RtToken name, RtString declaration)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
@@ -394,7 +399,14 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 	va_start(marker, token);
 	RtInt n = getTokens(token, marker);
 
-	if ( name && *name && token == RI_NULL ) {
+	return beginV(name, n, &m_tokens[0], &m_params[0]);
+}
+
+RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	RtString myName = name;
+	// Start the new context
+	if ( n==0 && (name && *name) ) {
 		// Test name for rib filename or pipe - if found call ribwriter
 		CStringList stringList;
 		std::string filename;
@@ -403,39 +415,36 @@ RtContextHandle CRiCPPBridge::begin(RtString name, RtToken token, ...)
 		const char *ptr = filename.c_str();
 		if ( ptr && ptr[0] == '|' ) {
 			// name was the name of a piped ribfile
-			if ( n == 0 ) {
-				// remove the 0 entries
-				m_tokens.clear();
-				m_params.clear();
-			}
+			// remove the 0 entries
+			m_tokens.clear();
+			m_params.clear();
 			m_tokens.push_back(RI_FILE);
 			m_params.push_back((RtPointer)(&name)); // Pipe is identified because of leading '|'
+			tokens = &m_tokens[0];
+			params = &m_params[0];
+			n = 1;
 			// new name == 0 to load the rib writer
-			return beginV(0, ++n, &m_tokens[0], &m_params[0]);
-		}
-		ptr = strrchr(filename.c_str(), '.');
-		if ( ptr && !(strcasecmp(ptr, ".rib") && strcasecmp(ptr, ".ribz") && strcasecmp(ptr, ".z") && strcasecmp(ptr, ".gz")) ) {
-			// name was the name of a rib file
-			if ( n == 0 ) {
+			myName = 0;
+		} else {
+			ptr = strrchr(filename.c_str(), '.');
+			if ( ptr && !(strcasecmp(ptr, ".rib") && strcasecmp(ptr, ".ribz") && strcasecmp(ptr, ".z") && strcasecmp(ptr, ".gz")) ) {
+				// name was the name of a rib file
 				// remove the 0 entries
 				m_tokens.clear();
 				m_params.clear();
+				m_tokens.push_back(RI_FILE);
+				m_params.push_back((RtPointer)(&name));
+				tokens = &m_tokens[0];
+				params = &m_params[0];
+				n = 1;
+				// new name == 0 to load the rib writer
+				myName = 0;
 			}
-			m_tokens.push_back(RI_FILE);
-			m_params.push_back((RtPointer)(&name));
-			// new name == 0 to load the rib writer
-			return beginV(0, ++n, &m_tokens[0], &m_params[0]);
 		}
 	}
 
-	return beginV(name, n, &m_tokens[0], &m_params[0]);
-}
-
-RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	// Start the new context
 	try {
-		RtContextHandle h = m_ctxMgmt.beginV(name, n, tokens, params);
+		RtContextHandle h = m_ctxMgmt.beginV(myName, n, tokens, params);
 		return h;
 	} catch (ExceptRiCPPError &e) {
 		// And handle the error, the context was set by m_ctxMgmt appropriately
@@ -696,22 +705,28 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle)
 	}
 }
 
-RtVoid CRiCPPBridge::motionBegin(RtInt N, RtFloat sample, ...)
+RtVoid CRiCPPBridge::motionBegin(RtInt N, ...)
 {
+	if ( N == 0 ) {
+		motionBeginV(N, 0);
+		return;
+	}
+
 	va_list marker;
-	std::vector<RtFloat> samples;
+	std::vector<RtFloat> times;
 	RtInt n;
 
-	samples.reserve(N);
+	times.reserve(N);
 
-	va_start(marker, sample);
+	RtFloat sample;
+	va_start(marker, N);
 	for ( n = 0; n < N; ++n ) {
-		samples.push_back(sample);
 		sample = (RtFloat)va_arg(marker, double); // 'default argument promotions' float -> double
+		times.push_back(sample);
 	}
 	va_end(marker);
 
-	motionBeginV(N, samples.empty() ? 0 : &samples[0]);
+	motionBeginV(N, &times[0]);
 	// No try and catch, simple call to ...V() function, exception handling is done there
 }
 
@@ -1255,16 +1270,12 @@ RtVoid CRiCPPBridge::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer 
 			ricppErrHandler().handleError(e);
 		}
 	} else {
-		// options for the Renderer creator and its children
-		try {
-			doOption(name, n, tokens, params);
-		} catch (ExceptRiCPPError &e) {
-			ricppErrHandler().handleError(e);
-		}
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::version()");
 	}
 }
 
-RtVoid CRiCPPBridge::doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	if ( !name )
 		return;
@@ -1325,12 +1336,6 @@ RtVoid CRiCPPBridge::doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer
 			m_pathReplace.standardpath("");
 		}
 	}
-}
-
-RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !name )
-		return;
 }
 
 RtLightHandle CRiCPPBridge::lightSource(RtString name, RtToken token, ...)

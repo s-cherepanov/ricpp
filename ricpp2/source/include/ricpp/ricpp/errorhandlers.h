@@ -57,11 +57,11 @@ public:
 	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
-	 * @param msg Error message, describing the error
+	 * @param message Error message, describing the error
 	 */
-	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
+	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const;
 
-	inline virtual IErrorHandler &singleton()  const { return func; }
+	inline virtual const IErrorHandler &singleton()  const { return func; }
 };
 
 /** @brief The print-error handler, prints an error at standard output
@@ -85,11 +85,11 @@ public:
 	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
-	 * @param msg Error message, describing the error
+	 * @param message Error message, describing the error
 	 */
-	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
+	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const;
 
-	inline virtual IErrorHandler &singleton()  const { return func; }
+	inline virtual const IErrorHandler &singleton()  const { return func; }
 };
 
 /** @brief The ignore-error handler, does nothing, ignores the error
@@ -113,11 +113,11 @@ public:
 	 * @param ri Front end that detected the error
 	 * @param code Error code (RIE_...)
 	 * @param severity Error severity level (RIE_INFO ... RIE_SEVERE)
-	 * @param msg Error message, describing the error
+	 * @param message Error message, describing the error
 	 */
-	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString msg) const;
+	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const;
 
-	inline virtual IErrorHandler &singleton()  const { return func; }
+	inline virtual const IErrorHandler &singleton()  const { return func; }
 };
 
 /** @brief Factory for error handler functions.
@@ -126,10 +126,10 @@ class CErrorHandlerFactory {
 public:
 	inline virtual ~CErrorHandlerFactory() {}
 
-	virtual IErrorHandler *newFunc(RtToken name);
+	virtual const IErrorHandler *newFunc(RtToken name);
 	virtual void deleteFunc(IErrorHandler *f);
 
-	virtual IErrorHandler *singleton(RtToken name) const;
+	virtual const IErrorHandler *singleton(RtToken name) const;
 };
 
 } // namespace RiCPP

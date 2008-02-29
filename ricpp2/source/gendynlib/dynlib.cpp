@@ -30,9 +30,9 @@
 
 #include "ricpp/gendynlib/dynlib.h"
 
-#ifndef _RICPP_RICPP_RICPPERROR_H
-#include "ricpp/ricpp/ricpperror.h"
-#endif // _RICPP_RICPP_RICPPERROR_H
+#ifndef _RICPP_RIBASE_RICPPERROR_H
+#include "ricpp/ribase/ricpperror.h"
+#endif // _RICPP_RIBASE_RICPPERROR_H
 
 #ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"

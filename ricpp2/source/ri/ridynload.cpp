@@ -31,7 +31,7 @@ RICPP_INTERN(RtVoid) RiEnd(void)
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
 {
-	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	// ERROR there is no begin/end in dynamic load procedurals (only one context)
 	return 0;
 }
 
@@ -39,26 +39,43 @@ RICPP_INTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
 RICPP_INTERN(RtContextHandle)
 	RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[])
 {
-	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	// ERROR there is no begin/end in dynamic load procedurals (only one context)
 	return 0;
 }
 
 RICPP_INTERN(RtVoid)
 	RiCPPEnd (void)
 {
-	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	// ERROR there is no begin/end in dynamic load procedurals (only one context)
 }
 
-// ----------------------------------------------------------------------------
 RICPP_INTERN(RtContextHandle) RiGetContext(void)
 {
-	// ERROR no context switching allowed in dynamic load (only one context)
+	// ERROR only one context in dynamic load procedurals
 	return illContextHandle;
 }
 
-RICPP_INTERN(RtVoid) RiContext(RtContextHandle h)
+RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 {
-	// ERROR no context switching allowed in dynamic load (only one context)
+	// ERROR only one context in dynamic load procedurals
 }
 
+
+}
+
+// ----------------------------------------------------------------------------
+RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
+{
+	RiCPPInternalErrorHandler(handler);
+}
+
+RICPP_INTERN(RtVoid) RiControl (char *name, ...)
+{
+	GETARGS(name)
+	RiCPPInternalControlV(name, n, tokens, params);
+}
+
+RICPP_INTERN(RtVoid) RiControlV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	RiCPPInternalControlV(name, n, tokens, params);
 }

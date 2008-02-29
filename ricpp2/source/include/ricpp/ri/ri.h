@@ -94,7 +94,6 @@
 extern "C" {
 #endif
 
-
 /*//////////////////////////////////////////////////////////////////////
 //
 //	Additional functions
@@ -122,6 +121,9 @@ RICPP_EXTERN(RtVoid)
 //	Delarations of All of the RenderMan Interface Subroutines
 //
 //////////////////////////////////////////////////////////////////////*/
+
+RICPP_EXTERN(RtVoid)
+	RiErrorHandler(RtErrorHandler handler);
 
 RICPP_EXTERN(RtToken)
     RiDeclare (const char *name,const char *declaration);
@@ -206,7 +208,6 @@ RICPP_EXTERN(RtVoid)
     RiOrientation (RtToken orientation), RiReverseOrientation (void),
     RiSides (RtInt nsides);
 
-/*
 RICPP_EXTERN(RtVoid)
     RiIdentity (void),
     RiTransform (RtMatrix transform), RiConcatTransform (RtMatrix transform),
@@ -266,8 +267,6 @@ RICPP_EXTERN(RtVoid)
     RiDiskV (RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]),
     RiTorus (RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, ...),
     RiTorusV (RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiCurves (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, ...),
-    RiCurvesV (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]),
 	RiProcedural(RtPointer data, RtBound bound, RtVoid (*subdivfunc)(RtPointer, RtFloat), RtVoid (*freefunc)(RtPointer)),
     RiGeometry (RtToken type, ...),
     RiGeometryV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -309,27 +308,25 @@ RICPP_EXTERN(RtVoid)
     RiMakeCubeFaceEnvironmentV (char *px, char *nx, char *py, char *ny, char *pz, char *nz, char *tex, RtFloat fov, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
     RiMakeShadow (char *pic, char *tex, ...),
     RiMakeShadowV (char *pic, char *tex, RtInt n, RtToken tokens[], RtPointer params[]),
-	RiMakeBrickMap (int n,char **src, char *dest, ...),
-	RiMakeBrickMapV(int n,char **src, char *dest,RtInt numTokens, RtToken tokens[], RtPointer params[]);
+	RiMakeBrickMap (int num, char **src, char *dest, ...),
+	RiMakeBrickMapV(int num, char **src, char *dest, RtInt n, RtToken tokens[], RtPointer params[]);
 
 RICPP_EXTERN(RtVoid)
 	RiResource(RtToken handle, RtToken type, ...),
-	RiResourceV(RtToken handle, RtToken type,RtInt n, RtToken tokens[], RtPointer parms[]),
+	RiResourceV(RtToken handle, RtToken type,RtInt n, RtToken tokens[], RtPointer params[]),
 	RiResourceBegin(void),
 	RiResourceEnd(void);
 
 RICPP_EXTERN(RtArchiveHandle)
 	RiArchiveBegin(RtToken name, ...),
-	RiArchiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer parms[]);
+	RiArchiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 RICPP_EXTERN(RtVoid)
 	RiArchiveEnd(void);
 
 RICPP_EXTERN(RtVoid)
-	RiIfBegin(char *expr, ...),
-	RiIfBeginV(char *expr, RtInt n, RtToken tokens[], RtPointer parms[]),
-	RiElseIf(char *expr, ...),
-	RiElseIfV(char *expr, RtInt n, RtToken tokens[], RtPointer parms[]),
+	RiIfBegin(char *expr),
+	RiElseIf(char *expr),
 	RiElse(void),
 	RiIfEnd(void);
 
@@ -337,7 +334,6 @@ RICPP_EXTERN(RtVoid)
     RiArchiveRecord (RtToken type, char *format, ...),
     RiReadArchive (RtString filename, RtArchiveCallback callback, ...),
     RiReadArchiveV (RtString filename, RtArchiveCallback callback, int n, RtToken tokens[], RtPointer params[]);
-*/
 
 #ifdef __cplusplus
 } /* extern "C" */

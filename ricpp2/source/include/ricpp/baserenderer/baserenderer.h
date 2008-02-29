@@ -391,6 +391,13 @@ public:
 
 	inline virtual RtVoid version() {}
 
+	inline virtual RtInt lastError()
+	{
+		if ( m_parserCallback )
+			return m_parserCallback->frontend().lastError();
+		return RIE_NOERROR;
+	}
+
 	virtual RtVoid errorHandler(const IErrorHandler &handler);
 
 	virtual RtToken declare(RtToken RtToken, RtString declaration);

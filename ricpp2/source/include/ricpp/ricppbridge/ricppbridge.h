@@ -672,36 +672,26 @@ protected:
 	CContextManagement m_ctxMgmt; ///< The instance for the context management
 	//@}
 
-	/** @brief Like optionV() but only concerns the bridge itself.
-	 *
-	 * Forwarded by optionV() if there is no active rendering context.
-	 * Since there is no context option and control is likely to be the same.
-	 *
-	 * @param name Option name (likely "searchpath" for the renderer searchpath)
-	 * @param n Number token-value pairs
-	 * @param tokens Tokens
-	 * @param params Parameter values
-	 *
-	 * @see optionV(), doControl()
-	 */
-	virtual RtVoid doOption(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-
 	/** @brief Like controlV() but only concerns the bridge itself.
 	 *
 	 * Forwarded by controlV() if there is no active rendering context.
-	 * Since there is no context option and control is likely to be the same.
 	 *
-	 * @param name Control name
+	 * @param name Control name (likely "searchpath" for the renderer searchpath)
 	 * @param n Number token-value pairs
 	 * @param tokens Tokens
 	 * @param params Parameter values
-	 *
-	 * @see controlV(), doOption()
 	 */
 	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
+	/** @brief Set global declarations (for all contexts)
+	 *  @todo Implement
+	 *  @param name Name of the declaration
+	 *  @param declaration Seclaration string
+	 */
+	virtual RtVoid doDeclare(RtToken name, RtString declaration);
+
 	/** @brief Helper object to get standard pathes
-	 *  @see doOptionV()
+	 *  @see doControl()
 	 */
 	CPathReplace m_pathReplace;
 	
@@ -988,7 +978,7 @@ public:
 	virtual RtVoid objectEnd(void);
 	virtual RtVoid objectInstance(RtObjectHandle handle);
 
-	virtual RtVoid motionBegin(RtInt N, RtFloat sample, ...);
+	virtual RtVoid motionBegin(RtInt N, ...);
 	virtual RtVoid motionBeginV(RtInt N, RtFloat times[]);
 	virtual RtVoid motionEnd(void);
 
@@ -1044,7 +1034,7 @@ public:
 	 * interpreted by the bridge. The option "renderer" "searchpath" is used by the
 	 * renderer creator CRendererLoader (concrete CRendererLoader)
 	 *
-	 * @see IRiRoot::optionV(), doOption(), controlV()
+	 * @see IRiRoot::optionV(), controlV()
 	 */
 	virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 

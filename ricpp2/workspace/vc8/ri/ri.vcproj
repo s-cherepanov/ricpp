@@ -291,6 +291,10 @@
 				RelativePath="..\..\..\source\include\ricpp\ri\ri.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ri\riinternal.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

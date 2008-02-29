@@ -303,6 +303,16 @@ RtToken CTypeInfo::qualifier(EnumQualifiers e)
 	return ms_qualifiers[e];
 }
 
+EnumQualifiers CTypeInfo::qualifier(RtToken aName)
+{
+	for ( int i = 0; i < N_QUALIFIERS; ++i ) {
+		if ( ms_qualifiers[i] == aName )
+			return (EnumQualifiers)i;
+	}
+	return QUALIFIER_UNKNOWN;
+}
+
+
 unsigned int CTypeInfo::typeByteSize(EnumTypes e)
 {
 	return ms_typeByteSizes[e];

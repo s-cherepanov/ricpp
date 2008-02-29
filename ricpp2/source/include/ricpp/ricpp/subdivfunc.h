@@ -144,7 +144,7 @@ public:
 	{
 		return new CDataDelayedReadArchive(data);
 	}
-	inline virtual ISubdivFunc &singleton()  const { return func; }
+	inline virtual ISubdivFunc &singleton()  { return func; }
 };
 
 
@@ -254,7 +254,7 @@ public:
 	{
 		return new CDataRunProgram(data);
 	}
-	inline virtual ISubdivFunc &singleton()  const { return func; }
+	inline virtual ISubdivFunc &singleton()  { return func; }
 };
 
 
@@ -366,7 +366,7 @@ public:
 	{
 		return new CDataDynamicLoad(data);
 	}
-	inline virtual ISubdivFunc &singleton()  const { return func; }
+	inline virtual ISubdivFunc &singleton()  { return func; }
 };
 
 /** @brief Implements the free function that can be called by the interface to free the 'data'
@@ -395,7 +395,7 @@ public:
 	 */
 	virtual RtVoid operator()(RtPointer data) const;
 
-	inline virtual IFreeFunc &singleton()  const { return func; }
+	inline virtual IFreeFunc &singleton()  { return func; }
 };
 
 

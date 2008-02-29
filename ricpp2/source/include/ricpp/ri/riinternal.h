@@ -31,6 +31,10 @@
  *  @brief Helpers for the C-binding, for internal use only
  */
 
+#ifndef _RICPP_RICPP_RICPP_H
+#include "ricpp/ricpp/ricpp.h"
+#endif
+
 #ifndef _RICPP_RICPP_FILTERS_H
 #include "ricpp/ricpp/filters.h"
 #endif
@@ -39,26 +43,30 @@
 #include "ricpp/ricpp/errorhandlers.h"
 #endif
 
+#ifndef _RICPP_RICPP_ERRORHANDLERS_H
+#include "ricpp/ricpp/errorhandlers.h"
+#endif
+
+#ifndef _RICPP_RICPP_SUBDIVFUNC_H
+#include "ricpp/ricpp/subdivfunc.h"
+#endif
+
 #include <map>
 #include <cstdarg>
 
 namespace RiCPP {
 
- /** @brief Gets pointer to the current renderer frontend or backend
-  *
-  * Eventually will be IRi frontend later. The RiCPPInternal...() function
-  * can then be removed. Will then be named IRi::RiRoot(). However,
-  * I'm not shure whether the backend can be of use here or not.
+ /** @brief Gets pointer to the current renderer frontend
   *
   * @return Current renderer interface. Returns 0 if no renderer is set.
   */
-IRiRoot *RiCPPRoot();
+IRi *RiCPPRoot();
 
  /** @brief Sets the current renderer frontend or backend
   *
   * @param aRoot Current renderer interface.
   */
-void RiCPPRoot(IRiRoot *aRoot);
+void RiCPPRoot(IRi *aRoot);
 
  /** @brief Sets the current renderer frontend or backend
   *
@@ -108,7 +116,7 @@ RtVoid RiCPPInternalControlV(RtToken name, int n, RtToken tokens[], RtPointer pa
 /** @brief An arbitrary pixel filter for C binding
  */
 class CFilterSlot : public IFilterFunc {
-	static std::map<RtFilterFunc, CFilterSlot> s_filters; ///< Maps filterfunctions to their objects
+	static std::map<RtFilterFunc, CFilterSlot> ms_filters; ///< Maps filter pointers to their objects
 	RtFilterFunc m_filter; ///< Pointer to the filter function
 public:
 	inline CFilterSlot(RtFilterFunc aFilter=0) { m_filter = aFilter; }
@@ -118,19 +126,19 @@ public:
 	inline virtual IFilterFunc *duplicate() const { return new CFilterSlot(*this); }
 
 	inline virtual const IFilterFunc &singleton() const { return *this; }
-	inline static const IFilterFunc &getSingleton(RtFilterFunc function)
+	inline static const IFilterFunc &getSingleton(IRi *ri, RtFilterFunc function)
 	{
 		if ( function == RiGaussianFilter )
-			return CGaussianFilter::func;
+			return ri ? ri->gaussianFilter() : CGaussianFilter::func;
 		else if ( function == RiBoxFilter )
-			return CBoxFilter::func;
+			return ri ? ri->boxFilter() : CBoxFilter::func;
 		else if ( function == RiTriangleFilter )
-			return CCatmullRomFilter::func;
+			return ri ? ri->catmullRomFilter() : CCatmullRomFilter::func;
 		else if ( function == RiSincFilter )
-			return CSincFilter::func;
+			return ri ? ri->sincFilter() : CSincFilter::func;
 
-		s_filters[function] = CFilterSlot(function);
-		return s_filters[function];
+		ms_filters[function] = CFilterSlot(function);
+		return ms_filters[function];
 	}
 
 	inline static RtToken myName() { return "CFilterSlot"; }
@@ -160,7 +168,7 @@ public:
 /** @brief An arbitrary error handler for C binding
  */
 class CErrorHandlerSlot : public IErrorHandler {
-	static std::map<RtErrorHandler, CErrorHandlerSlot> s_errorHandlers; ///< Maps filterfunctions to their objects
+	static std::map<RtErrorHandler, CErrorHandlerSlot> ms_errorHandlers; ///< Maps handler pointers to their objects
 	RtErrorHandler m_errorHandler; ///< Pointer to the filter function (dummy pointer for the standard handlers)
 public:
 	inline CErrorHandlerSlot(RtErrorHandler aHandler=0) { m_errorHandler = aHandler; }
@@ -170,18 +178,18 @@ public:
 	inline virtual IErrorHandler *duplicate() const { return new CErrorHandlerSlot(*this); }
 
 	inline virtual const IErrorHandler &singleton() const { return *this; }
-	inline static const IErrorHandler &getSingleton(RtErrorHandler function)
+	inline static const IErrorHandler &getSingleton(IRi *ri, RtErrorHandler function)
 	{
 		if ( function == RiErrorAbort )
-			return CAbortErrorHandler::func;
+			return ri ? ri->errorAbort() : CAbortErrorHandler::func;
 		else if ( function == RiErrorPrint )
-			return CPrintErrorHandler::func;
+			return ri ? ri->errorPrint() : CPrintErrorHandler::func;
 		else if ( function == RiErrorIgnore )
-			return CIgnoreErrorHandler::func;
+			return ri ? ri->errorIgnore() : CIgnoreErrorHandler::func;
 
 		// Use the C function if not a standard handler
-		s_errorHandlers[function] = CErrorHandlerSlot(function);
-		return s_errorHandlers[function];
+		ms_errorHandlers[function] = CErrorHandlerSlot(function);
+		return ms_errorHandlers[function];
 	}
 
 	inline static RtToken myName() { return "CErrorHandlerSlot"; }
@@ -210,7 +218,7 @@ public:
 /** @brief An arbitrary archive callback for C binding
  */
 class CArchiveCallbackSlot : public IArchiveCallback {
-	static std::map<RtArchiveCallback, CArchiveCallbackSlot> s_callbacks; ///< Maps filterfunctions to their objects
+	static std::map<RtArchiveCallback, CArchiveCallbackSlot> ms_callbacks; ///< Maps callback pointers to their objects
 	RtArchiveCallback m_callback; ///< Pointer to the archive callback
 public:
 	inline CArchiveCallbackSlot(RtArchiveCallback aCallback=0) : m_callback(aCallback) { }
@@ -222,14 +230,14 @@ public:
 	inline virtual const IArchiveCallback &singleton() const { return *this; }
 	inline static const IArchiveCallback &getSingleton(RtArchiveCallback function)
 	{
-		s_callbacks[function] = CArchiveCallbackSlot(function);
-		return s_callbacks[function];
+		ms_callbacks[function] = CArchiveCallbackSlot(function);
+		return ms_callbacks[function];
 	}
 
 	inline static RtToken myName() {return "CArchiveCallbackSlot"; }
 	inline virtual RtToken name() const { return myName(); }
 
-	inline virtual RtVoid operator()(IRiRoot &ri, RtToken type, RtString line) const
+	inline virtual RtVoid operator()(IRi &ri, RtToken type, RtString line) const
 	{
 		if ( m_callback ) {
 			(*m_callback)(type, "%s", line);
@@ -252,7 +260,140 @@ public:
 
 // ----------------------------------------------------------------------------
 
+/** @brief Implements the slot for a procedural data pointer.
+ */
+class CSubdivDataSlot : public ISubdivData {
+	static std::map<RtPointer, CSubdivDataSlot> ms_data; ///< Maps data pointers to their objects
+	RtPointer m_data; ///< Pointer to the data
+public:
+	inline CSubdivDataSlot(RtPointer theData=0) : m_data(theData) { }
+	inline CSubdivDataSlot(const CSubdivDataSlot &o) { *this = o; }
+	inline virtual ~CSubdivDataSlot() { }
+	inline virtual ISubdivData *duplicate() const { return new CSubdivDataSlot(*this); }
+
+	inline virtual ISubdivData &singleton() { return *this; }
+	inline static ISubdivData &getSingleton(RtPointer theData)
+	{
+		ms_data[theData] = CSubdivDataSlot(theData);
+		return ms_data[theData];
+	}
+
+	inline static bool erase(RtPointer theData) {
+		bool found = ms_data.find(theData) != ms_data.end();
+		ms_data.erase(theData);
+		return found;
+	}
+
+	inline virtual RtPointer data() { return m_data; }
+	inline virtual const RtPointer data() const { return m_data; }
+	inline virtual void data(RtPointer da) { m_data = da; }
+	inline virtual void freeData() {}
+};
+
 // ----------------------------------------------------------------------------
+
+/** @brief Implements the slot for a procedural.
+ */
+class CSubdivFuncSlot : public ISubdivFunc {
+	static std::map<RtProcSubdivFunc, CSubdivFuncSlot> ms_procs; ///< Maps procedural pointers to their objects
+	RtProcSubdivFunc m_proc; ///< Pointer to the procedural
+public:
+	inline CSubdivFuncSlot(RtProcSubdivFunc aProc=0) : m_proc(aProc) { }
+	inline CSubdivFuncSlot(const CSubdivFuncSlot &o) { *this = o; }
+	inline virtual ~CSubdivFuncSlot() { }
+
+	inline virtual ISubdivFunc *duplicate() const { return new CSubdivFuncSlot(*this); }
+
+	inline virtual ISubdivFunc &singleton() { return *this; }
+	inline static ISubdivFunc &getSingleton(IRi *ri, RtProcSubdivFunc function)
+	{
+		if ( function == RiProcDelayedReadArchive )
+			return ri ? ri->procDelayedReadArchive() : CProcDelayedReadArchive::func;
+		else if ( function == RiProcRunProgram )
+			return ri ? ri->procRunProgram() : CProcRunProgram::func;
+		else if ( function == RiProcDynamicLoad )
+			return ri ? ri->procDynamicLoad() : CProcDynamicLoad::func;
+
+		ms_procs[function] = CSubdivFuncSlot(function);
+		return ms_procs[function];
+	}
+
+	inline static RtToken myName() { return "CSubdivFuncSlot";}
+	inline virtual RtToken name() const {return myName();}
+
+	inline virtual RtInt numArgs() const { return 1; }
+	inline virtual ISubdivData *createSubdivData(RtPointer data) const
+	{
+		return CSubdivDataSlot::getSingleton(data).duplicate();
+	}
+
+	inline virtual RtVoid operator()(IRi &ri, RtPointer data, RtFloat detail) const
+	{
+		if ( m_proc ) {
+			(*m_proc)(data, detail);
+		}
+		// Error
+	}
+
+	inline RtProcSubdivFunc procPtr() const { return m_proc; }
+	inline void procPtr(RtProcSubdivFunc aProc) { m_proc = aProc; }
+
+	inline CSubdivFuncSlot &operator=(const CSubdivFuncSlot &o)
+	{
+		if ( this == &o )
+			return *this;
+		procPtr(o.procPtr());
+		return *this;
+	}
+};
+
+// ----------------------------------------------------------------------------
+
+/** @brief Free function for procedurals.
+ */
+class CFreeFuncSlot : public IFreeFunc {
+	static std::map<RtProcFreeFunc, CFreeFuncSlot> ms_procs; ///< Maps free functions to their objects
+	RtProcFreeFunc m_proc; ///< Pointer to the free function
+public:
+	inline CFreeFuncSlot(RtProcFreeFunc aProc=0) : m_proc(aProc) { }
+	inline CFreeFuncSlot(const CFreeFuncSlot &o) { *this = o; }
+	inline virtual ~CFreeFuncSlot() { }
+
+	inline virtual IFreeFunc *duplicate() const { return new CFreeFuncSlot(*this); }
+
+	inline virtual IFreeFunc &singleton() { return *this; }
+	inline static IFreeFunc &getSingleton(IRi *ri, RtProcFreeFunc function)
+	{
+		if ( function == RiProcFree )
+			return ri ? ri->procFree() : CProcFree::func;
+
+		ms_procs[function] = CFreeFuncSlot(function);
+		return ms_procs[function];
+	}
+
+	inline static RtToken myName() { return "CFreeFuncSlot";}
+	inline virtual RtToken name() const {return myName();}
+
+	inline virtual RtVoid operator()(RtPointer data) const {
+		if ( CSubdivDataSlot::erase(data) ) {
+			if ( m_proc ) {
+				(*m_proc)(data);
+			}
+			// Error
+		}
+	}
+
+	inline RtProcSubdivFunc procPtr() const { return m_proc; }
+	inline void procPtr(RtProcSubdivFunc aProc) { m_proc = aProc; }
+
+	inline CFreeFuncSlot &operator=(const CFreeFuncSlot &o)
+	{
+		if ( this == &o )
+			return *this;
+		procPtr(o.procPtr());
+		return *this;
+	}
+};
 
 // ----------------------------------------------------------------------------
 

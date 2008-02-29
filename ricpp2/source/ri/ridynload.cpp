@@ -13,8 +13,26 @@
 
 using namespace RiCPP;
 
-
 extern "C" {
+
+// ----------------------------------------------------------------------------
+/** @brief Implemetation of the Setting of the renderer.
+ *
+ * The entry point for procedurals is posponed to the user who will create the dll.
+ @verbatim
+  RICPP_INTERN(RtPointer) ConvertParameters(char *c) {}
+  RICPP_INTERN(RtVoid) Subdivide(RtPointer data, RtFloat detail) {}
+  RICPP_INTERN(RtVoid) Free(RtPointer data) {}
+ @endverbatim
+ *
+ * The dynlib must then be compiled as C++ - At least must be linked with the C++ stdlibs.
+ *
+ * @param ri the renderer frontend
+ */
+RICPP_INTERN(RtVoid) SetRenderer(IRi &ri)
+{
+	RiCPPRoot(&ri);
+}
 
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtVoid) RiBegin(RtToken name)
@@ -61,8 +79,6 @@ RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 }
 
 
-}
-
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 {
@@ -79,3 +95,6 @@ RICPP_INTERN(RtVoid) RiControlV (char *name, RtInt n, RtToken tokens[], RtPointe
 {
 	RiCPPInternalControlV(name, n, tokens, params);
 }
+
+
+} /* extern "C" */

@@ -202,7 +202,7 @@ public:
 	/** @brief A singleton subdivision/procedural.
 	 *  @return A singleton subdivision/procedural (static subdivision/procedural).
 	 */
-	virtual ISubdivFunc &singleton() const = 0;
+	virtual ISubdivFunc &singleton() = 0;
 };
 
 /** @brief Free function for procedurals.
@@ -230,7 +230,7 @@ public:
 	/** @brief A singleton free.
 	 * @return A singleton free (static free).
 	 */
-	virtual IFreeFunc &singleton()  const  = 0;
+	virtual IFreeFunc &singleton() = 0;
 };
 
 /** @brief Callback function to handle structural comments in rib files (IRi::readArchive),
@@ -257,7 +257,7 @@ public:
 	 *  @param line The (formatted) comment line, smae as the formatted string
 	 *              given by IRi::archiveRecordV()
 	 */
-	virtual RtVoid operator()(IRiRoot &ri, RtToken type, RtString line) const = 0;
+	virtual RtVoid operator()(IRi &ri, RtToken type, RtString line) const = 0;
 
 	/** @brief Returns a singleton object
 	 *  @return Singleton archive callback
@@ -1380,7 +1380,7 @@ public:
 	 * @param subdivfunc
 	 * @param freefunc
 	 */
-	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc) = 0;
+	virtual RtVoid procedural(RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc) = 0;
 	//@}
 
 	/** @defgroup ricpp_general Ri General objects
@@ -1559,10 +1559,10 @@ public:
 	 * @brief Standard build-in procedural primitives
 	 */
 	//@{
-	virtual const ISubdivFunc &procDelayedReadArchive() const = 0;
-	virtual const ISubdivFunc &procRunProgram() const = 0;
-	virtual const ISubdivFunc &procDynamicLoad() const = 0;
-	virtual const IFreeFunc &procFree() const = 0;
+	virtual ISubdivFunc &procDelayedReadArchive() const = 0;
+	virtual ISubdivFunc &procRunProgram() const = 0;
+	virtual ISubdivFunc &procDynamicLoad() const = 0;
+	virtual IFreeFunc &procFree() const = 0;
 	//@}
 
 	/** @defgroup ricpp_stderrors Ri error handlers

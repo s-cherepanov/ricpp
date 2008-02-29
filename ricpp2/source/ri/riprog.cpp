@@ -17,7 +17,7 @@ namespace RiCPP {
 
 	void SetRoot()
 	{
-		if ( RiCPPRoot() == (IRiRoot *)0 ) {
+		if ( RiCPPRoot() == 0 ) {
 			RiCPPRoot(&ri);
 		}
 	}
@@ -25,6 +25,34 @@ namespace RiCPP {
 }
 
 using namespace RiCPP;
+
+#ifdef _WIN32
+
+#ifdef _MANAGED
+#pragma managed(push, off)
+#endif
+
+/** @fn BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+ *  @brief Entry point for the DLL.
+ *  @param hModule
+ *  @param ul_reason_for_call
+ *  @param lpReserved
+ *  @return TRUE
+ */
+BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD   ul_reason_for_call,
+                       LPVOID  lpReserved
+					 )
+{
+	// If there is something alike at Apple: SetRoot() can be done here
+    return TRUE;
+}
+
+#ifdef _MANAGED
+#pragma managed(pop)
+#endif
+
+#endif // WIN32
 
 extern "C" {
 
@@ -67,24 +95,16 @@ RICPP_INTERN(RtContextHandle) RiGetContext(void)
 {
 	RtContextHandle h = illContextHandle;
 	SetRoot();
-	if ( RiCPPRoot() != &ri ) {
-		// ERROR
-		return h;
-	}
 	PREAMBLE_RET(h)
-		h = ri.getContext();
+		h = RiCPPRoot()->getContext();
 	POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 {
 	SetRoot();
-	if ( RiCPPRoot() != &ri ) {
-		// ERROR
-		return;
-	}
 	PREAMBLE
-	ri.context(handle);
+	RiCPPRoot()->context(handle);
 	POSTAMBLE
 }
 

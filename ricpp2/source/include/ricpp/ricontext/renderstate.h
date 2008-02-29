@@ -551,9 +551,13 @@ class CRenderState {
 public:
 
 	// Tokens
-	RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control
 	RtToken RI_RIB;                 ///< Token "rib" for options
+
+	RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control
 	RtToken RI_VARSUBST;            ///< Token "varsubst" for option
+
+	RtToken RI_QUAL_CACHE_FILE_ARCHIVES; ///< Qualified Token "Control:rib:cache-file-archives" for control
+	RtToken RI_QUAL_VARSUBST;            ///< Token "Option:rib:varsubst" for option
 
 	/** @brief Initializes the object
 	 *

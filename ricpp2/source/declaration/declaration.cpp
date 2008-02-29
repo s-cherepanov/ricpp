@@ -300,7 +300,7 @@ const char *CDeclaration::getDeclString(std::string &declaration) const
 	return declaration.c_str();
 }
 
-bool CDeclaration::matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar)
+bool CDeclaration::matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar) const
 {
 	if ( aQualifier != QUALIFIER_UNKNOWN && qualifier() != QUALIFIER_UNKNOWN && aQualifier != qualifier() )
 		return false;
@@ -308,4 +308,21 @@ bool CDeclaration::matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aV
 		return false;
 	return aVar == var();
 }
+
+bool CDeclaration::matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const
+{
+	EnumQualifiers aQualifier = CTypeInfo::qualifier(aQualifierName);
+	return matches(aQualifier, aTable, aVar);
+}
+
+/*
+bool CDeclaration::check(RtToken qualified, RtToken unqualified) const
+{
+	if ( isInline() ) {
+		return unqualified == var();
+	}
+	
+	return qualified == token();
+}
+*/
 

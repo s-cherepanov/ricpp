@@ -51,6 +51,8 @@ namespace RiCPP {
  *
  *  This class implements the output part of the RIB binding
  *  (see [RISPEC3.2], appendix C.2), RIB can be parsed using CRibParser.
+ *
+ *  @todo Move the concrete ribwriting code into the CRi classes.
  */
 class CRibWriter : public CBaseRenderer, public IRequestNotification {
 private:
@@ -59,7 +61,21 @@ private:
 	std::string m_cmd;
 	std::string m_nativepath;
 
+	RtToken RI_RIBWRITER;
+
 	RtToken RI_COMPRESS;
+	
+	RtToken RI_QUAL_POSTPONE_PROCEDURALS;
+	RtToken RI_QUAL_POSTPONE_OBJECTS;
+	RtToken RI_QUAL_POSTPONE_FILE_ARCHIVES;
+	RtToken RI_QUAL_POSTPONE_INLINE_ARCHIVES;
+	RtToken RI_QUAL_SKIP_HEADERS;
+	RtToken RI_QUAL_SKIP_VERSION;
+	RtToken RI_QUAL_INDENT;
+	RtToken RI_QUAL_INDENT_STRING;
+	RtToken RI_QUAL_SUPPRESS_OUTPUT;
+	RtToken RI_QUAL_BINARY_OUTPUT;
+
 	RtToken RI_POSTPONE_PROCEDURALS;
 	RtToken RI_POSTPONE_OBJECTS;
 	RtToken RI_POSTPONE_FILE_ARCHIVES;
@@ -70,8 +86,6 @@ private:
 	RtToken RI_INDENT_STRING;
 	RtToken RI_SUPPRESS_OUTPUT;
 	RtToken RI_BINARY_OUTPUT;
-
-	RtToken RI_RIBWRITER;
 
 	bool m_suppressOutput;
 	bool m_controlSuppressOutput;
@@ -157,7 +171,7 @@ public:
 	virtual RtVoid doControl(CRiControl &obj, RtToken name, const CParameterList &params);
 	virtual RtVoid doReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params);
 	virtual RtVoid doObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle);
-	virtual RtVoid doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
+	virtual RtVoid doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc);
 
 	///////////////////////////////////
 
@@ -290,7 +304,7 @@ public:
 
 	virtual RtVoid postBlobby(CRiBlobby &obj, RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params);
 
-	virtual RtVoid postProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
+	virtual RtVoid postProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc);
 
 	virtual RtVoid postGeometry(CRiGeometry &obj, RtToken type, const CParameterList &params);
 

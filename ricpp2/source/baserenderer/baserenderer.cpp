@@ -2254,7 +2254,7 @@ RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 }
 
 
-RtVoid CBaseRenderer::preProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CBaseRenderer::preProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 {
 	if ( !m_parserCallback ) {
 		throw ExceptRiCPPError(
@@ -2267,14 +2267,14 @@ RtVoid CBaseRenderer::preProcedural(CRiProcedural &obj, RtPointer data, RtBound 
 	}
 }
 
-RtVoid CBaseRenderer::doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CBaseRenderer::doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 {
 	subdivfunc(m_parserCallback->frontend(), data, RI_INFINITY);
 	if ( freefunc )
 		(*freefunc)(data);
 }
 
-RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 {
 	RICPP_PREAMBLE(REQ_PROCEDURAL)
 		RICPP_PROCESS(newRiProcedural(renderState()->lineNo(), data, bound, subdivfunc, freefunc));

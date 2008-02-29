@@ -226,6 +226,12 @@ public:
 	 */
 	static RtToken qualifier(EnumQualifiers aQualifier);
 
+	/** @brief Gets the name of the qualifier (qualifier was named table namespace in [QRM]).
+	 * @return aName The unique name of a qualifier
+	 * @return  Ri qualifier
+	 */
+	static EnumQualifiers qualifier(RtToken aName);
+
 	/** @brief Tries to find a class name as prefix of aclass.
 	 * @param aclass string possibly having class name as prefix
 	 * @retval pos if found position right behind the prefix

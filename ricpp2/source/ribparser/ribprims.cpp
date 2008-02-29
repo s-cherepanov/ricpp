@@ -2481,7 +2481,7 @@ void CProceduralRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 			return;
 		}
 
-		const CProcFree *freeFunc = 0;
+		CProcFree *freeFunc = 0;
 
 		if ( !strcmp(procname, CProcDelayedReadArchive::myName()) ) {
 			if ( p1.getCard() < 1 ) {

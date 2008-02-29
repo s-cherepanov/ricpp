@@ -119,7 +119,10 @@ CRibWriter::CRibWriter()
 	m_cmd = "";
 	m_nativepath = "";
 
+	RI_RIBWRITER = RI_NULL;
+
 	RI_COMPRESS = RI_NULL;
+	
 	RI_POSTPONE_PROCEDURALS = RI_NULL;
 	RI_POSTPONE_OBJECTS = RI_NULL;
 	RI_POSTPONE_FILE_ARCHIVES = RI_NULL;
@@ -131,8 +134,18 @@ CRibWriter::CRibWriter()
 	RI_SUPPRESS_OUTPUT = RI_NULL;
 	RI_BINARY_OUTPUT = RI_NULL;
 
-	RI_RIBWRITER = RI_NULL;
+	RI_QUAL_POSTPONE_PROCEDURALS = RI_NULL;
+	RI_QUAL_POSTPONE_OBJECTS = RI_NULL;
+	RI_QUAL_POSTPONE_FILE_ARCHIVES = RI_NULL;
+	RI_QUAL_POSTPONE_INLINE_ARCHIVES = RI_NULL;
+	RI_QUAL_SKIP_HEADERS = RI_NULL;
+	RI_QUAL_SKIP_VERSION = RI_NULL;
+	RI_QUAL_INDENT = RI_NULL;
+	RI_QUAL_INDENT_STRING = RI_NULL;
+	RI_QUAL_SUPPRESS_OUTPUT = RI_NULL;
+	RI_QUAL_BINARY_OUTPUT = RI_NULL;
 
+	
 	m_postponeProcedural = 1;
 	m_postponeObject = 1;
 	m_postponeFileArchive = 0;
@@ -186,22 +199,33 @@ void CRibWriter::defaultDeclarations()
 {
 	CBaseRenderer::defaultDeclarations();
 
-	// Tokens
+	// Additional tokens
 	RI_RIBWRITER =                renderState()->tokFindCreate("ribwriter");
-
+	
+	RI_POSTPONE_PROCEDURALS =     renderState()->tokFindCreate("postpone-procedurals");
+	RI_POSTPONE_OBJECTS =         renderState()->tokFindCreate("postpone-objects");
+	RI_POSTPONE_FILE_ARCHIVES =   renderState()->tokFindCreate("postpone-file-archives");
+	RI_POSTPONE_INLINE_ARCHIVES = renderState()->tokFindCreate("postpone-inline-archives");
+	RI_SKIP_HEADERS =             renderState()->tokFindCreate("skip-headers");
+	RI_SKIP_VERSION =             renderState()->tokFindCreate("skip-version");
+	RI_INDENT =                   renderState()->tokFindCreate("indent");
+	RI_INDENT_STRING =            renderState()->tokFindCreate("indent-string");
+	RI_SUPPRESS_OUTPUT =          renderState()->tokFindCreate("suppress-output");
+	RI_BINARY_OUTPUT =            renderState()->tokFindCreate("binary-output");
+	
 	// Declarations
 	RI_COMPRESS =                 renderState()->declare("compress", "constant integer", true);
 
-	RI_POSTPONE_PROCEDURALS =     renderState()->declare("Control:ribwriter:postpone-procedurals",     "constant integer", true);
-	RI_POSTPONE_OBJECTS =         renderState()->declare("Control:ribwriter:postpone-objects",         "constant integer", true);
-	RI_POSTPONE_FILE_ARCHIVES =   renderState()->declare("Control:ribwriter:postpone-file-archives",   "constant integer", true);
-	RI_POSTPONE_INLINE_ARCHIVES = renderState()->declare("Control:ribwriter:postpone-inline-archives", "constant integer", true);
-	RI_SKIP_HEADERS =             renderState()->declare("Control:ribwriter:skip-headers",             "constant integer", true);
-	RI_SKIP_VERSION =             renderState()->declare("Control:ribwriter:skip-version",             "constant integer", true);
-	RI_INDENT =                   renderState()->declare("Control:ribwriter:indent",                   "constant integer", true);
-	RI_INDENT_STRING =            renderState()->declare("Control:ribwriter:indent-string",            "constant string",  true);
-	RI_SUPPRESS_OUTPUT =          renderState()->declare("Control:ribwriter:suppress-output",          "constant integer", true);
-	RI_BINARY_OUTPUT =            renderState()->declare("Control:ribwriter:binary-output",            "constant integer", true);
+	RI_QUAL_POSTPONE_PROCEDURALS =     renderState()->declare("Control:ribwriter:postpone-procedurals",     "constant integer", true);
+	RI_QUAL_POSTPONE_OBJECTS =         renderState()->declare("Control:ribwriter:postpone-objects",         "constant integer", true);
+	RI_QUAL_POSTPONE_FILE_ARCHIVES =   renderState()->declare("Control:ribwriter:postpone-file-archives",   "constant integer", true);
+	RI_QUAL_POSTPONE_INLINE_ARCHIVES = renderState()->declare("Control:ribwriter:postpone-inline-archives", "constant integer", true);
+	RI_QUAL_SKIP_HEADERS =             renderState()->declare("Control:ribwriter:skip-headers",             "constant integer", true);
+	RI_QUAL_SKIP_VERSION =             renderState()->declare("Control:ribwriter:skip-version",             "constant integer", true);
+	RI_QUAL_INDENT =                   renderState()->declare("Control:ribwriter:indent",                   "constant integer", true);
+	RI_QUAL_INDENT_STRING =            renderState()->declare("Control:ribwriter:indent-string",            "constant string",  true);
+	RI_QUAL_SUPPRESS_OUTPUT =          renderState()->declare("Control:ribwriter:suppress-output",          "constant integer", true);
+	RI_QUAL_BINARY_OUTPUT =            renderState()->declare("Control:ribwriter:binary-output",            "constant integer", true);
 }
 
 void CRibWriter::writePrefix(bool isArchiveRecord)
@@ -224,7 +248,6 @@ void CRibWriter::writeParameterList(const CParameterList &params, RtInt n, RtTok
 		  i++ )
 	{
 		const CParameter &p = (*i);
-		std::string decl;
 
 		RtInt cnt = 0;
 		for ( ; cnt < n; ++cnt ) {
@@ -236,9 +259,9 @@ void CRibWriter::writeParameterList(const CParameterList &params, RtInt n, RtTok
 		m_writer->putBlank();
 
 		if ( p.isInline() )
-			m_writer->putString(p.declString(decl));
+			m_writer->putString(p.parameterName());
 		else
-			m_writer->putStringToken(p.declString(decl));
+			m_writer->putStringToken(p.parameterName());
 
 		m_writer->putBlank();
 
@@ -275,34 +298,34 @@ RtVoid CRibWriter::doControl(CRiControl &obj, RtToken name, const CParameterList
 	if ( name == RI_RIBWRITER ) {
 		CParameterList::const_iterator i;
 		for ( i = params.begin(); i != params.end(); i++ ) {
-			if ( (*i).token() == RI_POSTPONE_PROCEDURALS ) {
+			if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_POSTPONE_PROCEDURALS) ) {
 				(*i).get(0, m_postponeProcedural);
-			} else if ( (*i).token() == RI_POSTPONE_OBJECTS ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_POSTPONE_OBJECTS) ) {
 				(*i).get(0, m_postponeObject);
-			} else if ( (*i).token() == RI_POSTPONE_FILE_ARCHIVES ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_POSTPONE_FILE_ARCHIVES) ) {
 				(*i).get(0, m_postponeFileArchive);
-			} else if ( (*i).token() == RI_POSTPONE_INLINE_ARCHIVES ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_POSTPONE_INLINE_ARCHIVES) ) {
 				(*i).get(0, m_postponeInlineArchive);
-			} else if ( (*i).token() == RI_SKIP_HEADERS ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_SKIP_HEADERS) ) {
 				(*i).get(0, m_skipHeader);
-			} else if ( (*i).token() == RI_SKIP_VERSION ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_SKIP_VERSION) ) {
 				(*i).get(0, m_skipVersion);
-			} else if ( (*i).token() == RI_INDENT ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_INDENT) ) {
 				RtInt intval;
 				if ( (*i).get(0, intval) ) {
 					m_indent = intval != 0;
 				}
-			} else if ( (*i).token() == RI_INDENT_STRING ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_INDENT_STRING) ) {
 				RtString strval = 0;
 				if ( (*i).get(0, strval) ) {
 					m_indentString = noNullStr(strval);
 				}
-			} else if ( (*i).token() == RI_SUPPRESS_OUTPUT ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_SUPPRESS_OUTPUT) ) {
 				RtInt intval;
 				if ( (*i).get(0, intval) ) {
 					m_controlSuppressOutput = intval != 0;
 				}
-			} else if ( (*i).token() == RI_BINARY_OUTPUT ) {
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_BINARY_OUTPUT) ) {
 				RtInt intval;
 				if ( (*i).get(0, intval) ) {
 					m_binary = intval != 0;
@@ -2194,7 +2217,7 @@ RtVoid CRibWriter::postBlobby(CRiBlobby &obj, RtInt nleaf, RtInt ncode, RtInt co
 
 
 
-RtVoid CRibWriter::doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CRibWriter::doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 {
 	if ( !m_postponeProcedural ) {
 		m_doReadArchive = true;
@@ -2204,7 +2227,7 @@ RtVoid CRibWriter::doProcedural(CRiProcedural &obj, RtPointer data, RtBound boun
 	}
 }
 
-RtVoid CRibWriter::postProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CRibWriter::postProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 {
 	if ( m_postponeProcedural ) {
 		if ( !postTestValid() )

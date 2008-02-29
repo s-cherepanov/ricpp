@@ -1413,13 +1413,13 @@ void CRibParser::handleDeferedComments()
 		CComment &c = m_deferedCommentList[i];
 		if ( c.m_isStructured ) {
 			ribFilter().archiveRecordV(RI_STRUCTURE, c.m_comment.empty() ? 0 : &c.m_comment[0]);
-			if ( callback() ) {
-				(*callback())(ribFilter(), RI_STRUCTURE, c.m_comment.empty() ? 0 : &c.m_comment[0]);
+			if ( callback() && m_parserCallback ) {
+				(*callback())(m_parserCallback->frontend(), RI_STRUCTURE, c.m_comment.empty() ? 0 : &c.m_comment[0]);
 			}
 		} else {
 			ribFilter().archiveRecordV(RI_COMMENT, c.m_comment.empty() ? 0 : &c.m_comment[0]);
 			if ( callback() ) {
-				(*callback())(ribFilter(), RI_COMMENT, c.m_comment.empty() ? 0 : &c.m_comment[0]);
+				(*callback())(m_parserCallback->frontend(), RI_COMMENT, c.m_comment.empty() ? 0 : &c.m_comment[0]);
 			}
 		}
 	}

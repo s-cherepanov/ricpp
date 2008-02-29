@@ -155,6 +155,22 @@ public:
 	 * @param cb Callback interface of the front end.
 	 */
 	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb) = 0;
+
+	/** @brief Frontend of the backend.
+	 *
+	 * Is part of IRibParserCallback.
+	 *
+	 * @return Pointer to frontend.
+	 */
+	virtual IRi *frontend() = 0;
+
+	/** @brief Protocol handler (for URI) of the backend.
+	 *
+	 * Is part of IRibParserCallback.
+	 *
+	 * @return Pointer to protocol handler.
+	 */
+	virtual CBackBufferProtocolHandlers *protocolHandlers() = 0;
 }; // IRiContext
 } // namespace RiCPP
 

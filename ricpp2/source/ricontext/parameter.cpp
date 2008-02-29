@@ -57,6 +57,8 @@ void CParameter::clear()
 	m_floats.clear();
 	m_stringPtrs.clear();
 	m_strings.clear();
+	
+	m_parameterName.clear();
 }
 
 
@@ -70,24 +72,25 @@ CParameter &CParameter::operator=(const CParameter &param)
 	if ( param.m_declaration && param.m_declaration->isInline() ) {
 		m_declaration = new CDeclaration(*param.m_declaration);
 		if ( !m_declaration )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.qualifiedName());
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.parameterName());
 	} else {
 		m_declaration = param.m_declaration;
 	}
 
 	m_position = param.m_position;
+	m_parameterName = param.m_parameterName;
 
 	m_ints = param.m_ints;
 	m_floats = param.m_floats;
 	m_strings = param.m_strings;
-
+	
 	copyStringPtr();
 	return *this;
 }
 
 
 bool CParameter::setDeclaration(
-	const char *aQualifier, const char *aTable, 
+	RtToken aQualifier, RtToken aTable, 
 	RtString theName,
 	unsigned int thePosition,
 	const CParameterClasses &counts,
@@ -100,6 +103,7 @@ bool CParameter::setDeclaration(
 		return false;
 
 	m_position = thePosition;
+	m_parameterName = theName;
 	
 	const CDeclaration *existingDecl = dict.findAndUpdate(aQualifier, aTable, theName, curColorDescr);
 	const CDeclaration *decl = 0;
@@ -119,12 +123,13 @@ bool CParameter::setDeclaration(
 	}
 
 	m_declaration = decl;
+	
 	return true;
 }
 
 
 void CParameter::set(
-	const char *aQualifier, const char *aTable, 
+	RtToken aQualifier, RtToken aTable, 
 	RtString theName,
 	RtPointer theData,
 	unsigned int thePosition,
@@ -174,7 +179,7 @@ void CParameter::set(
 const CDeclaration &CParameter::declaration() const
 {
 	if ( !m_declaration ) {
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "Declaration of parameter %s not defined.", qualifiedName());
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "Declaration of parameter %s not defined.", parameterName());
 	}
 	return *m_declaration;
 }

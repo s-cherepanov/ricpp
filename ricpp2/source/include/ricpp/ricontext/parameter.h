@@ -53,6 +53,7 @@ namespace RiCPP {
 	private:
 		const CDeclaration *m_declaration; ///< Declaration (and name) of the parameter, possibly inline.
 		unsigned int m_position;           ///< Original position within a parameter list.
+		std::string m_parameterName;       ///< Parametername as found in list
 		
 		std::vector<RtInt> m_ints;          ///< Container for integer values.
 		std::vector<RtFloat> m_floats;      ///< Container for float values.
@@ -119,7 +120,7 @@ namespace RiCPP {
 		 *  @param curColorDescr Descriptor for "color" values.
 		 */
 		inline CParameter(
-			const char *aQualifier, const char *aTable, 
+			RtToken aQualifier, RtToken aTable, 
 			RtString theName,
 			RtPointer theData,
 			unsigned int thePosition,
@@ -175,7 +176,7 @@ namespace RiCPP {
 		 *  @param curColorDescr Descriptor for "color" values.
 		 */
 		bool setDeclaration(
-			const char *aQualifier, const char *aTable, 
+			RtToken aQualifier, RtToken aTable, 
 			RtString theName,
 			unsigned int thePosition,
 			const CParameterClasses &counts,
@@ -194,7 +195,7 @@ namespace RiCPP {
 		 *  @param curColorDescr Descriptor for "color" values.
 		 */
 		void set(
-			const char *aQualifier, const char *aTable, 
+			RtToken aQualifier, RtToken aTable, 
 			RtString theName,
 			RtPointer theData,
 			unsigned int thePosition,
@@ -214,13 +215,14 @@ namespace RiCPP {
 		bool get(unsigned long pos, std::string &result) const;
 		bool get(unsigned long pos, RtString &result) const;
 
-		/** @brief Name of the declaration (with qualifiers if available)
+		/** @brief Name of the declaration (as found with qualifiers, maybe inline)
 		 *
-		 *  @return Name of the declaration.
+		 *  @return Name of the declaration, not necessarily a token.
+		 *  @see token()
 		 */
-		inline const char *qualifiedName() const
+		inline const char *parameterName() const
 		{
-			return m_declaration ? m_declaration->qualifiedName() : "";
+			return m_parameterName.c_str();
 		}
 
 		/** @brief Gets the declaration as c-string.
@@ -230,16 +232,16 @@ namespace RiCPP {
 		 *
 		 *  @return Declaration as C-string.
 		 */
-		const char *declString(std::string &decl) const
+		inline const char *declString(std::string &decl) const
 		{
 			return m_declaration ? m_declaration->getDeclString(decl) : RI_NULL;
 		}
 
 		/** @brief Gets the token of the declaration.
 		 *
-		 *  @brief Token of the declaration.8
+		 *  @return (Qualified) token of the declaration.
 		 */
-		RtToken token() const
+		inline RtToken token() const
 		{
 			return m_declaration ? m_declaration->token() : RI_NULL;
 		}
@@ -248,7 +250,7 @@ namespace RiCPP {
 		 *
 		 *  @brief Token of the variable name of the declaration.
 		 */
-		RtToken var() const
+		inline RtToken var() const
 		{
 			return m_declaration ? m_declaration->var() : RI_NULL;
 		}
@@ -257,9 +259,34 @@ namespace RiCPP {
 		 *
 		 *  @brief True, parameter was declared inline.
 		 */
-		bool isInline() const
+		inline bool isInline() const
 		{
 			return m_declaration ? m_declaration->isInline() : false;
+		}
+
+		/*  @brief Checks the qualified token or the unqualified var, if inline declaration.
+		 *  -> matches
+		 *  @return true, if the parameter name passes the test.
+		 *//*
+		inline bool check(RtToken qualified, RtToken unqualified) const
+		{
+			return m_declaration ? m_declaration->check(qualified, unqualified) : false;
+		} */
+
+		/** @brief Query if variable matches declaration
+		 *
+		 *  @param aQualifier Qualifier id of the variable.
+		 *  @param aTable Table token of the variable.
+		 *  @param aVar Variable identifier.
+		 */
+		inline bool matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar) const
+		{
+			return m_declaration ? m_declaration->matches(aQualifier, aTable, aVar) : false;
+		}
+
+		inline bool matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const
+		{
+			return m_declaration ? m_declaration->matches(aQualifierName, aTable, aVar) : false;
 		}
 
 		/** @brief Gets a pointer to the values.
@@ -308,7 +335,7 @@ namespace RiCPP {
 		 *
 		 *  @return Float values.
 		 */
-		const std::vector<RtFloat> &floats() const { return m_floats; }
+		inline const std::vector<RtFloat> &floats() const { return m_floats; }
 
 		/** @brief Gets the string values.
 		 *
@@ -316,7 +343,7 @@ namespace RiCPP {
 		 *
 		 *  @return String values.
 		 */
-		const std::vector<std::string> &strings() const { return m_strings; }
+		inline const std::vector<std::string> &strings() const { return m_strings; }
 
 		/** @brief Gets the c-string pointer values.
 		 *
@@ -324,13 +351,13 @@ namespace RiCPP {
 		 *
 		 *  @return C-string pointers.
 		 */
-		const std::vector<RtString> &stringPtrs() const { return m_stringPtrs; }
+		inline const std::vector<RtString> &stringPtrs() const { return m_stringPtrs; }
 
 		/** @brief Gets a pointer to the declaration of the praameter.
 		 *
 		 *  @return Pointer to the declaration of the parameter.
 		 */
-		const CDeclaration *declarationPtr() const
+		inline const CDeclaration *declarationPtr() const
 		{
 			return m_declaration;
 		}

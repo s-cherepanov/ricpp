@@ -1060,7 +1060,7 @@ public:
 
 	inline virtual CRiProcedural *newRiProcedural(
 		long aLineNo,
-		RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+		RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 	{
 		return new CRiProcedural(aLineNo, data, bound, subdivfunc, freefunc);
 	}

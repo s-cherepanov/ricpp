@@ -63,19 +63,22 @@ namespace RiCPP {
 
 // ----------------------------------------------------------------------------
 
-std::map<RtFilterFunc, CFilterSlot> CFilterSlot::s_filters;
-std::map<RtArchiveCallback, CArchiveCallbackSlot> CArchiveCallbackSlot::s_callbacks;
-std::map<RtErrorHandler, CErrorHandlerSlot> CErrorHandlerSlot::s_errorHandlers;
+std::map<RtFilterFunc, CFilterSlot> CFilterSlot::ms_filters;
+std::map<RtArchiveCallback, CArchiveCallbackSlot> CArchiveCallbackSlot::ms_callbacks;
+std::map<RtErrorHandler, CErrorHandlerSlot> CErrorHandlerSlot::ms_errorHandlers;
+std::map<RtProcSubdivFunc, CSubdivFuncSlot> CSubdivFuncSlot::ms_procs;
+std::map<RtProcFreeFunc, CFreeFuncSlot> CFreeFuncSlot::ms_procs;
+std::map<RtPointer, CSubdivDataSlot> CSubdivDataSlot::ms_data;
 
 // ----------------------------------------------------------------------------
 
-static IRiRoot *_riRoot = 0; ///< The connection to the C++ interface
+static IRi *_riRoot = 0; ///< The connection to the C++ interface
 
-IRiRoot *RiCPPRoot() {
+IRi *RiCPPRoot() {
 	return _riRoot;
 }
 
-void RiCPPRoot(IRiRoot *aRoot) {
+void RiCPPRoot(IRi *aRoot) {
 	_riRoot = aRoot;
 }
 
@@ -135,7 +138,7 @@ RtVoid RiCPPInternalEnd(void)
 RtVoid RiCPPInternalErrorHandler(RtErrorHandler handler)
 {
 	PREAMBLE
-		RiCPPRoot()->errorHandler(CErrorHandlerSlot::getSingleton(handler));
+		RiCPPRoot()->errorHandler(CErrorHandlerSlot::getSingleton(RiCPPRoot(), handler));
 	POSTAMBLE
 }
 
@@ -327,7 +330,7 @@ RICPP_INTERN(RtVoid) RiPixelSamples(RtFloat xsamples, RtFloat ysamples)
 RICPP_INTERN(RtVoid) RiPixelFilter(RtFilterFunc function, RtFloat xwidth, RtFloat ywidth)
 {
 	PREAMBLE
-		RiCPPRoot()->pixelFilter(CFilterSlot::getSingleton(function), xwidth, ywidth);
+		RiCPPRoot()->pixelFilter(CFilterSlot::getSingleton(RiCPPRoot(), function), xwidth, ywidth);
 	POSTAMBLE
 }
 
@@ -1033,7 +1036,7 @@ RICPP_INTERN(RtVoid) RiTorusV (RtFloat majorrad, RtFloat minorrad, RtFloat phimi
 RICPP_INTERN(RtVoid) RiProcedural(RtPointer data, RtBound bound, RtVoid (*subdivfunc)(RtPointer, RtFloat), RtVoid (*freefunc)(RtPointer))
 {
 	PREAMBLE
-		/** @todo Implement procedural c-binding */
+		RiCPPRoot()->procedural(data, bound, CSubdivFuncSlot::getSingleton(RiCPPRoot(), subdivfunc), freefunc ? &CFreeFuncSlot::getSingleton(RiCPPRoot(), freefunc) : 0);
 	POSTAMBLE
 }
 

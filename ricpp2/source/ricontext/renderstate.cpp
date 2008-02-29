@@ -1074,6 +1074,12 @@ CRenderState::CRenderState(
 	m_frameNumber = 0;
 	m_lineNo = -1;
 
+	RI_RIB = RI_NULL;
+	RI_CACHE_FILE_ARCHIVES = RI_NULL;
+	RI_VARSUBST = RI_NULL;
+	RI_QUAL_CACHE_FILE_ARCHIVES = RI_NULL;
+	RI_QUAL_VARSUBST = RI_NULL;
+
 	m_curMacro = 0;
 	m_curReplay = 0;
 	m_cacheFileArchives = false;
@@ -2078,10 +2084,12 @@ void CRenderState::defaultDeclarations()
 {
 	// Additional Tokens
 	RI_RIB = tokFindCreate("rib");
+	RI_CACHE_FILE_ARCHIVES = tokFindCreate("cache-file-archives");
+	RI_VARSUBST = tokFindCreate("varsubst");
 
 	// Additional render specific declarations
-	RI_CACHE_FILE_ARCHIVES = declare("Control:rib:cache-file-archives", "constant integer", true);
-	RI_VARSUBST = declare("varsubst", "string", true);
+	RI_QUAL_CACHE_FILE_ARCHIVES = declare("Control:rib:cache-file-archives", "constant integer", true);
+	RI_QUAL_VARSUBST = declare("Option:rib:varsubst", "string", true);
 }
 
 
@@ -2113,7 +2121,7 @@ RtVoid CRenderState::control(RtToken name, const CParameterList &params)
 	if ( name == RI_RIB ) {
 		CParameterList::const_iterator i;
 		for ( i = params.begin(); i != params.end(); i++ ) {
-			if ( (*i).token() == RI_CACHE_FILE_ARCHIVES ) {
+			if ( (*i).matches(QUALIFIER_CONTROL, RI_RIB, RI_CACHE_FILE_ARCHIVES) ) {
 				RtInt intVal;
 				(*i).get(0, intVal);
 				m_cacheFileArchives = intVal != 0;

@@ -129,7 +129,6 @@ void CVarParamRManInterfaceCall::writeRIB(CRibElementsWriter &ribWriter, RtInt n
 		  i++ )
 	{
 		const CParameter &p = (*i);
-		std::string decl;
 
 		RtInt cnt = 0;
 		for ( ; cnt < n; ++cnt ) {
@@ -141,9 +140,9 @@ void CVarParamRManInterfaceCall::writeRIB(CRibElementsWriter &ribWriter, RtInt n
 		ribWriter.putBlank();
 
 		if ( p.isInline() )
-			ribWriter.putString(p.declString(decl));
+			ribWriter.putString(p.parameterName());
 		else
-			ribWriter.putStringToken(p.declString(decl));
+			ribWriter.putStringToken(p.parameterName());
 
 		ribWriter.putBlank();
 
@@ -709,7 +708,8 @@ void CRiProcedural::insertData(RtPointer data)
 {
 	if ( m_data )
 		delete m_data;
-
+	m_data = 0;
+	
 	if ( !m_subdivfunc )
 		return;
 
@@ -721,24 +721,21 @@ void CRiProcedural::insertData(const ISubdivData *data)
 	if ( m_data )
 		delete m_data;
 	m_data = 0;
+
 	if ( data )
 		m_data = data->duplicate();
 }
 
 CRiProcedural::CRiProcedural(
 	long aLineNo, RtPointer data, RtBound bound,
-	const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+	ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 	: CRManInterfaceCall(aLineNo)
 {
 	m_data = 0;
 	m_subdivfunc = &subdivfunc.singleton();
-	// m_freefunc = freefunc ? &freefunc->singleton() : 0;
-	m_freefunc = 0; // Not used because data is copied
+	m_freefunc = freefunc ? &freefunc->singleton() : 0;
 	memcpy(m_bound, bound, sizeof(RtBound));
 	insertData(data);
-	// Free original data after it is copied
-	if ( freefunc )
-		(*freefunc)(data);
 }
 
 inline CRiProcedural &CRiProcedural::operator=(const CRiProcedural &c)

@@ -320,10 +320,10 @@ const IFilterFunc &CRiCPPBridge::gaussianFilter() const { return CGaussianFilter
 const IFilterFunc &CRiCPPBridge::sincFilter() const { return CSincFilter::func; }
 const IFilterFunc &CRiCPPBridge::triangleFilter() const { return CTriangleFilter::func; }
 
-const ISubdivFunc &CRiCPPBridge::procDelayedReadArchive() const { return CProcDelayedReadArchive::func; }
-const ISubdivFunc &CRiCPPBridge::procRunProgram() const { return CProcRunProgram::func; }
-const ISubdivFunc &CRiCPPBridge::procDynamicLoad() const { return CProcDynamicLoad::func; }
-const IFreeFunc   &CRiCPPBridge::procFree() const { return CProcFree::func; }
+ISubdivFunc &CRiCPPBridge::procDelayedReadArchive() const { return CProcDelayedReadArchive::func; }
+ISubdivFunc &CRiCPPBridge::procRunProgram() const { return CProcRunProgram::func; }
+ISubdivFunc &CRiCPPBridge::procDynamicLoad() const { return CProcDynamicLoad::func; }
+IFreeFunc   &CRiCPPBridge::procFree() const { return CProcFree::func; }
 
 const IErrorHandler &CRiCPPBridge::errorAbort() const { return CAbortErrorHandler::func; }
 const IErrorHandler &CRiCPPBridge::errorIgnore() const { return CIgnoreErrorHandler::func; }
@@ -2399,7 +2399,7 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 	}
 }
 
-RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {

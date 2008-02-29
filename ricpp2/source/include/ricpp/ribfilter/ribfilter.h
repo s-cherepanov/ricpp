@@ -840,7 +840,7 @@ public:
 			callee()->blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
 	}
 
-	inline virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc)
+	inline virtual RtVoid procedural(RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 	{
 		// Need finer grane - delayed rib reading may be allowed, but not to run programs
 

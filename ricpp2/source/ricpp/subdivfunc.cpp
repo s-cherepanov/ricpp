@@ -95,14 +95,17 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 
 CProcRunProgram CProcRunProgram::func;
 
+typedef void (CDECL *TypeSetRenderer)(IRi &);
 typedef RtPointer (CDECL *TypeConvertParameters)(char *);
-typedef void (CDECL *TypeSubdivide)(IRi &, RtPointer, RtFloat);
+typedef void (CDECL *TypeSubdivide)(RtPointer, RtFloat);
 typedef void (CDECL *TypeFree)(RtPointer);
-
 
 RtToken CProcDynamicLoad::myName() {return RI_DYNAMIC_LOAD; }
 RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
+
+	/** @todo searchpath for dynamic load procedurals */
+	
 	ri = ri;
 	data = data;
 	detail = detail;
@@ -120,11 +123,18 @@ RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) con
 	CDynLib *d = CDynLibFactory::newDynLib(modname, 0);
 	if ( d ) {
 		d->load();
+		ILibFunc *setRendererPtr = d->getFunc("SetRenderer");
 		ILibFunc *convertParametersPtr = d->getFunc("ConvertParameters");
 		ILibFunc *subdividePtr = d->getFunc("Subdivide");
 		ILibFunc *freePtr = d->getFunc("Free");
 
 		RtPointer blinddata = 0;
+
+		if ( setRendererPtr ) {
+			TypeSetRenderer cp = (TypeSetRenderer)setRendererPtr->funcPtr();
+			if ( cp )
+				cp(ri);
+		}
 
 		if ( convertParametersPtr ) {
 			TypeConvertParameters cp = (TypeConvertParameters)convertParametersPtr->funcPtr();
@@ -135,7 +145,7 @@ RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) con
 		if ( subdividePtr ) {
 			TypeSubdivide sd = (TypeSubdivide)subdividePtr->funcPtr();
 			if ( sd )
-				sd(ri, blinddata, detail);
+				sd(blinddata, detail);
 		}
 
 		if ( freePtr ) {

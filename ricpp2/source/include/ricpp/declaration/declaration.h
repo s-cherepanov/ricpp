@@ -330,7 +330,14 @@ public:
 	 *  @param aTable Table token of the variable.
 	 *  @param aVar Variable identifier.
 	 */
-	bool matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar); 
+	bool matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar) const; 
+	bool matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const; 
+
+	/*  @brief Checks the qualified token or the unqualified var, if inline declaration.
+	 *  -> matches
+	 *  @return true, if the parameter name passes the test.
+	 */
+	// bool check(RtToken qualified, RtToken unqualified) const;
 }; // CDeclarartion
 
 } // namespace RiCPP

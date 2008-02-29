@@ -994,8 +994,8 @@ public:
 	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 	{
 		ri.doArchiveRecord(*this, m_type, m_line.c_str());
-		if ( cb ) 
-			(*cb)(ri, m_type, m_line.c_str());
+		if ( cb && ri.frontend() ) 
+			(*cb)(*ri.frontend(), m_type, m_line.c_str());
 	}
 
 	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
@@ -1312,7 +1312,7 @@ public:
 
 	CRiProcedural(long aLineNo,
 		RtPointer data, RtBound bound,
-		const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
+		ISubdivFunc &subdivfunc, IFreeFunc *freefunc);
 
 
 	/** @brief Copy constructor.

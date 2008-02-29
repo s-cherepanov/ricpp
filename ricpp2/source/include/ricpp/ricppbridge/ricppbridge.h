@@ -828,10 +828,10 @@ public:
 	 *  @brief Returns the appropriate procedurals
      */
 	//@{
-	virtual const ISubdivFunc &procDelayedReadArchive() const;
-	virtual const ISubdivFunc &procRunProgram() const;
-	virtual const ISubdivFunc &procDynamicLoad() const;
-	virtual const IFreeFunc &procFree() const;
+	virtual ISubdivFunc &procDelayedReadArchive() const;
+	virtual ISubdivFunc &procRunProgram() const;
+	virtual ISubdivFunc &procDynamicLoad() const;
+	virtual IFreeFunc &procFree() const;
 	//@}
 
 	/** @addtogroup ricpp_error
@@ -1148,7 +1148,7 @@ public:
 	virtual RtVoid blobby(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtToken token = RI_NULL, ...);
     virtual RtVoid blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]);
 
-	virtual RtVoid procedural(RtPointer data, RtBound bound, const ISubdivFunc &subdivfunc, const IFreeFunc *freefunc);
+	virtual RtVoid procedural(RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc);
 
 	virtual RtVoid geometry(RtToken type, RtToken token = RI_NULL, ...);
     virtual RtVoid geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);

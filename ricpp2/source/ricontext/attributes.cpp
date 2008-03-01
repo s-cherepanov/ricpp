@@ -266,6 +266,9 @@ const RtInt CAttributes::defNSides = 2;
 
 void CAttributes::init()
 {
+	initAttributeVector();
+	m_storeCounter = 0;
+
 	m_illuminated.clear();
 	m_inAreaLight = false;
 	
@@ -327,12 +330,14 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_matte = ra.m_matte;
 
 	memcpy(m_bound, ra.m_bound, sizeof(m_bound));
-	memcpy(m_detail, ra.m_detail, sizeof(m_detail));
 	m_boundCalled = ra.m_boundCalled;
+
+	memcpy(m_detail, ra.m_detail, sizeof(m_detail));
 	m_detailCalled = ra.m_detailCalled;
 
-	memcpy(m_detailRange, ra.m_detailRange, sizeof(m_detailRange));
-	m_detailRangeCalled = ra.m_detailRangeCalled;
+	// Detail range only affects the attribute block where it was defined
+	// no: memcpy(m_detailRange, ra.m_detailRange, sizeof(m_detailRange));
+	// no: m_detailRangeCalled = ra.m_detailRangeCalled;
 
 	m_geometricApproximationType = ra.m_geometricApproximationType;
 	m_geometricApproximationValue = ra.m_geometricApproximationValue;
@@ -353,8 +358,9 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_motionBlocks = ra.m_motionBlocks;
 	m_motionTimes = ra.m_motionTimes;
 
-	// m_storeCounter is not copied or affected, because additional blocks are not stored by this block.
-
+	// m_storeCounter is not affected, because additional blocks are not stored by this block.
+	// no: m_storeCounter = ra.m_storeCounter;
+	
 	COptionsBase::operator=(ra);
 
 	return *this;

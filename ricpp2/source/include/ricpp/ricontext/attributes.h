@@ -331,8 +331,6 @@ namespace RiCPP {
 		inline CAttributes(const CColorDescr &c)
 			: COptionsBase(c)
 		{
-			initAttributeVector();
-			m_storeCounter = 0;
 			init();
 		}
 
@@ -343,8 +341,7 @@ namespace RiCPP {
 		inline CAttributes(const CAttributes &ra)
 			: COptionsBase(ra.colorDescr())
 		{
-			initAttributeVector();
-			m_storeCounter = 0;
+			init();
 			*this = ra;
 		}
 

@@ -70,6 +70,7 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 	m_spaceType = o.m_spaceType;
 	
 	// m_storeCounter is not copied ore affected, because additional blocks are not stored by this block.
+	// no: m_storeCounter = ra.m_storeCounter;
 	
 	return *this;
 }

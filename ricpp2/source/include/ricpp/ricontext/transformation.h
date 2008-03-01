@@ -36,7 +36,8 @@
 
 namespace RiCPP {
 
-//! Class with the transformation stack and composit transformation matrix
+/** @brief Class with the transformation stack and composit transformation matrix
+ */
 class CTransformation {
 	//! Composit transformation matrix
 	CMatrix3D m_CTM;
@@ -49,31 +50,54 @@ class CTransformation {
 
 	//! Space type of the coordinate system (current, world, camera, screen, raster, etc.)
 	RtToken m_spaceType;
+	
+	//! A simple counter (not copied) for additional transform blocks stored for this at a stack (used for detailrange)
+	unsigned long m_storeCounter;
 
 public:
-	//! matrices will be identity.
+	/** @brief Constructor, matrices are set to identity.
+	 */
 	CTransformation();
 
-	//! Copy constructor
+	/** @brief Copy constructor.
+	 */
 	inline CTransformation(const CTransformation &rt)
 	{
+		m_storeCounter = 0;
 		*this = rt;
 	}
 
-	//! Destructor
+	/** @brief Destructor.
+	 */
 	inline virtual ~CTransformation() { }
 
-	//! Returns a (deep) copy of this.
-	/*! @return a copy of this.
+	/** @brief Returns a (deep) copy of this.
+	 *  @return a copy of this.
 	 *  @exception ExceptRiCPPError Thrown if there is not enough memory.
 	 */
 	virtual CTransformation &duplicate() const;
 
-	//! Assigns instance o to this instance.
-	/*! @param o Instance to copy from.
+	/** @brief Assigns instance o to this instance.
+	 *  @param o Instance to copy from.
 	 *  @return A reference to *this.
 	 */
 	CTransformation &operator=(const CTransformation &o);
+
+	/** @brief Store counter is incremented by one to indicate that another transform block is stored
+	 */
+	inline void incStoreCounter() { m_storeCounter++; }
+
+	/** @brief Store counter is decremented by one to indicate that another transform block is removed
+	 */
+	inline void decStoreCounter() { m_storeCounter--; }
+	
+	/** @brief Number of additional transform blocks stored
+	 */
+	inline unsigned long storeCounter() const { return m_storeCounter; }
+
+	/** @brief Sets the number of additional attribute blocks stored
+	 */
+	inline void storeCounter(unsigned long cnt) { m_storeCounter = cnt; }
 
 	inline CMatrix3D &getCTM()
 	{

@@ -1099,8 +1099,8 @@ CRenderState::CRenderState(
 
 CRenderState::~CRenderState()
 {
-	while ( popOptions() );
-	while ( popAttributes() );
+	while ( !m_optionsStack.empty() ) popOptions();
+	while ( !m_attributesStack.empty() ) popAttributes();
 	m_transformStack.clear();
 }
 
@@ -1237,6 +1237,22 @@ void CRenderState::attributeEnd()
 
 	popAttributes();
 	popTransform();
+}
+
+void CRenderState::storeAttributes()
+{
+	pushAttributes(true);
+	pushTransform(true);
+	assert(attributes().storeCounter() == curTransform().storeCounter());
+}
+
+void CRenderState::restoreAttributes()
+{
+	assert(attributes().storeCounter() >= 1);
+	assert(curTransform().storeCounter() >= 1);
+	popAttributes(false);
+	popTransform(false);
+	storeAttributes();
 }
 
 void CRenderState::transformBegin()
@@ -1883,6 +1899,7 @@ void CRenderState::pushOptions()
 
 bool CRenderState::popOptions()
 {
+	assert(!m_optionsStack.empty());
 	if ( !m_optionsStack.empty() ) {
 		m_optionsFactory->deleteOptions(m_optionsStack.back());
 		m_optionsStack.pop_back();
@@ -1890,21 +1907,27 @@ bool CRenderState::popOptions()
 	return !m_optionsStack.empty();
 }
 
-void CRenderState::pushAttributes()
+void CRenderState::pushAttributes(bool useCounter)
 {
+	unsigned long cnt = 1;
 	try {
+	
 		TypeTransformationMap tm;
 		m_scopedTransforms.push_back(tm);
 
 		if ( m_attributesStack.empty() ) {
 			m_attributesStack.push_back(m_attributesFactory->newAttributes(options().colorDescr()));
 		} else {
+			if ( useCounter )
+				cnt = attributes().storeCounter() + 1;
 			m_attributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
 		}
 		if ( m_attributesStack.back() == 0 ) {
 			m_attributesStack.pop_back();
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in pushAttributes()", __LINE__, __FILE__);
 		}
+
+		attributes().storeCounter(cnt);
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		throw e2;
@@ -1913,35 +1936,60 @@ void CRenderState::pushAttributes()
 	}
 }
 
-bool CRenderState::popAttributes()
+bool CRenderState::popAttributes(bool useCounter)
 {
+	unsigned long cnt = 1;
+	assert(!m_attributesStack.empty());
+
 	if ( !m_attributesStack.empty() ) {
-		m_attributesFactory->deleteAttributes(m_attributesStack.back());
-		m_attributesStack.pop_back();
-	}
-	if ( !m_scopedTransforms.empty() ) {
-		m_scopedTransforms.pop_back();
+		if ( useCounter ) {
+			cnt = attributes().storeCounter();
+		}
+		
+		while ( cnt > 0 && !m_attributesStack.empty() ) {
+			assert(!useCounter || (attributes().storeCounter() == cnt));
+			--cnt;
+			m_attributesFactory->deleteAttributes(m_attributesStack.back());
+			m_attributesStack.pop_back();
+			assert(!m_scopedTransforms.empty());
+			if ( !m_scopedTransforms.empty() ) {
+				m_scopedTransforms.pop_back();
+			}
+		}
 	}
 	return !m_attributesStack.empty();
 }
 
-void CRenderState::pushTransform()
+void CRenderState::pushTransform(bool useCounter)
 {
+	unsigned long cnt = 1;
 	try {
 		if ( m_transformStack.empty() ) {
 			m_transformStack.push_back(CTransformation());
 		} else {
+			if ( useCounter )
+				cnt = curTransform().storeCounter() + 1;
 			m_transformStack.push_back(m_transformStack.back());
 		}
+		curTransform().storeCounter(cnt);
 	} catch (std::exception &e) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,  __LINE__, __FILE__, "in pushTransform(): %s", e.what());
 	}
 }
 
-bool CRenderState::popTransform()
+bool CRenderState::popTransform(bool useCounter)
 {
+	unsigned long cnt = 1;
+	assert(!m_transformStack.empty());
 	if ( !m_transformStack.empty() ) {
-		m_transformStack.pop_back();
+		if ( useCounter ) {
+			cnt = curTransform().storeCounter();
+		}
+		while ( cnt > 0 && !m_transformStack.empty() ) {
+			assert(!useCounter || (curTransform().storeCounter() == cnt));
+			--cnt;
+			m_transformStack.pop_back();
+		}
 	}
 	return !m_transformStack.empty();
 }
@@ -1972,6 +2020,7 @@ const CTransformation *CRenderState::findTransform(RtToken space) const
 void CRenderState::startAreaLightSource(RtLightHandle h)
 {
 	try {
+		attributes().inAreaLight(true);
 		m_modeStack->startAreaLightSource(h);
 	} catch (ExceptRiCPPError &err) {
 		if ( archiveName() != 0 ) {
@@ -1985,6 +2034,7 @@ void CRenderState::startAreaLightSource(RtLightHandle h)
 void CRenderState::endAreaLightSource()
 {
 	try {
+		attributes().inAreaLight(false);
 		m_modeStack->endAreaLightSource();
 	} catch (ExceptRiCPPError &err) {
 		if ( archiveName() != 0 ) {

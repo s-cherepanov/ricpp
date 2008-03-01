@@ -155,11 +155,11 @@ class CRenderState {
 	void pushOptions();    ///< Pushes the current options set.
 	bool popOptions();     ///< Pops an options set, restores the set to the last condition.
 
-	void pushAttributes(); ///< Pushes the current attributes set.
-	bool popAttributes();  ///< Pops an attributes set, restores the set to the last condition.
+	void pushAttributes(bool useCounter=false); ///< Pushes the current attributes set.
+	bool popAttributes(bool useCounter=true);  ///< Pops an attributes set, restores the set to the last condition.
 
-	void pushTransform();   ///< Pushes the current transformation matrix and is inverse.
-	bool popTransform();    ///< Pops the current transformation matrices, restores the matrices to the last condition.
+	void pushTransform(bool useCounter=false);   ///< Pushes the current transformation matrix and is inverse.
+	bool popTransform(bool useCounter=true);    ///< Pops the current transformation matrices, restores the matrices to the last condition.
 	
 	void pushConditional(); ///< Pushes conditionals within nested if-then-else blocks
 	void popConditional();  ///< Restores the last state of the conditionals
@@ -626,6 +626,8 @@ public:
 
 	virtual void attributeBegin();
 	virtual void attributeEnd();
+	virtual void storeAttributes();
+	virtual void restoreAttributes();
 
 	virtual void transformBegin();
 	virtual void transformEnd();

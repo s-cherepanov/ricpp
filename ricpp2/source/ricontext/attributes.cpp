@@ -204,6 +204,34 @@ void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt aCard)
 	}
 }
 
+void CAttributeFloatArrayClass::set(RtFloat aValue)
+{
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+
+	if ( m_card <= 0 )
+		return;
+
+
+	for ( RtInt i=0; i<m_card; ++i ) {
+		m_value[i] = aValue;
+	}
+}
+
+void CAttributeFloatArrayClass::set(RtFloat *aValue)
+{
+	m_motionBegin = 0;
+	m_motionEnd = 0;
+
+	if ( m_card <= 0 )
+		return;
+
+
+	for ( RtInt i=0; i<m_card; ++i ) {
+		m_value[i] = aValue[i];
+	}
+}
+
 //
 
 const RtFloat CAttributes::defColorComponent = (RtFloat)1.0;
@@ -239,7 +267,8 @@ const RtInt CAttributes::defNSides = 2;
 void CAttributes::init()
 {
 	m_illuminated.clear();
-
+	m_inAreaLight = false;
+	
 	initMotion();
 	initColor();
 	initOpacity();
@@ -273,6 +302,8 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_opacity = ra.m_opacity;
 
 	m_illuminated = ra.m_illuminated;
+	m_inAreaLight = ra.m_inAreaLight;
+
 
 	m_surfaceName = ra.m_surfaceName;
 	m_surfaceParams = ra.m_surfaceParams;
@@ -319,10 +350,10 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 
 	m_trimCurve = ra.m_trimCurve;
 
-	m_curMotionCnt = ra.m_curMotionCnt;
-	m_motionBegin = ra.m_motionBegin;
-	m_motionEnd = ra.m_motionEnd;
+	m_motionBlocks = ra.m_motionBlocks;
 	m_motionTimes = ra.m_motionTimes;
+
+	// m_storeCounter is not copied or affected, because additional blocks are not stored by this block.
 
 	COptionsBase::operator=(ra);
 
@@ -338,9 +369,16 @@ void CAttributes::initAttributeVector()
 
 void CAttributes::initMotion()
 {
-	m_curMotionCnt = 0;
-	m_motionBegin = 0;
-	m_motionEnd = 0;
+}
+
+bool CAttributes::inAreaLight() const
+{
+	return m_inAreaLight;
+}
+
+void CAttributes::inAreaLight(bool flag)
+{
+	m_inAreaLight = flag;
 }
 
 void CAttributes::initColor()
@@ -350,7 +388,11 @@ void CAttributes::initColor()
 
 RtVoid CAttributes::color(RtColor Cs)
 {
-	m_color.set(Cs, m_curMotionCnt, m_motionBegin, m_motionEnd);
+	if ( !m_motionBlocks.empty() ) {
+		m_color.set(Cs, m_motionBlocks.back().m_curMotionCnt, m_motionBlocks.back().m_motionBegin, m_motionBlocks.back().m_motionEnd);
+	} else {
+		m_color.set(Cs);
+	}
 }
 
 RtFloat CAttributes::color(RtInt i) const
@@ -371,7 +413,11 @@ void CAttributes::initOpacity()
 
 RtVoid CAttributes::opacity(RtColor Os)
 {
-	m_opacity.set(Os, m_curMotionCnt, m_motionBegin, m_motionEnd);
+	if ( !m_motionBlocks.empty() ) {
+		m_opacity.set(Os, m_motionBlocks.back().m_curMotionCnt, m_motionBlocks.back().m_motionBegin, m_motionBlocks.back().m_motionEnd);
+	} else {
+		m_opacity.set(Os);
+	}
 }
 
 RtFloat CAttributes::opacity(RtInt i) const
@@ -689,18 +735,23 @@ RtVoid CAttributes::trimCurve(const CTrimCurveData &trimCurveData)
 
 RtVoid CAttributes::motionBegin(RtInt N, RtFloat times[])
 {
-	m_curMotionCnt = 0;
-	m_motionEnd = m_motionBegin+N;
-	m_motionTimes.resize(m_motionEnd);
+	CMotionAttribute ma;
+	ma.m_curMotionCnt = 0;
+	ma.m_motionBegin = m_motionTimes.size();
+	ma.m_motionEnd = ma.m_motionBegin+N;
+	
+	m_motionTimes.resize(ma.m_motionEnd);
+	m_motionBlocks.push_back(ma);
+	
 	for ( RtInt i=0; i<N; ++i ) {
-		m_motionTimes[i] = times[i];
+		m_motionTimes[ma.m_motionBegin+i] = times[i];
 	}
 }
 
 RtVoid CAttributes::motionEnd()
 {
-	m_curMotionCnt = 0;
-	m_motionBegin = m_motionEnd;
+	if ( !m_motionBlocks.empty() )
+		m_motionBlocks.pop_back();
 }
 
 RtVoid CAttributes::sample(RtFloat shutterTime)

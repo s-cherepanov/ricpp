@@ -3,10 +3,10 @@ void main(int argc, const char *argv[])
 {
 	RtPoint points[] = { { 0, 0, 0}, {-.5, .5, 0}, {.5, .5, 0} };
 	RtFloat color[]  = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
-	RtFloat Cs1[] = {1.0F, 1.0F, 1.0F};
-	RtFloat Cs2[] = {1.0F, 1.0F, 0.0F};
-	RtFloat Cs3[] = {1.0F, 0.0F, 0.0F};
-
+	RtFloat Cs1[] = {1, 1, 1};
+	RtFloat Cs2[] = {1, 1, 0};
+	RtFloat Cs3[] = {1, 0, 0};
+	RtBound bound = { -.5, 0, 0, .5, .5, 0 };
 	RtInt renderer = 0;
 	switch(renderer) {
 		case 1:
@@ -24,8 +24,8 @@ void main(int argc, const char *argv[])
 			RiDisplay("Polygon", RI_FRAMEBUFFER, RI_RGB, RI_NULL);
 			RiTranslate(0, 0, 5);
 			RiWorldBegin();
-				RiSides(1);
 				RiOrientation(RI_LH);
+				RiSides(1);
 				RiMotionBegin(3, 0.0, 0.5, 1.0);
 					RiColor(Cs1);
 					RiColor(Cs2);
@@ -36,6 +36,10 @@ void main(int argc, const char *argv[])
 					RiRotate(20, 0, 0, 1);
 					RiRotate(30, 0, 0, 1);
 				RiMotionEnd();
+				RiDetail(bound);
+				RiDetailRange(0, 0, 100, 150);
+				RiPolygon(3, RI_P, points, RI_NULL);
+				RiDetailRange(100, 150, RI_INFINITY, RI_INFINITY);
 				RiPolygon(3, RI_P, points, RI_CS, color, RI_NULL);
 			RiWorldEnd();
 		RiFrameEnd();

@@ -92,7 +92,22 @@ namespace RiCPP {
 		void set(RtFloat *aValue, RtInt &n, RtInt moBegin, RtInt moEnd);
 		void set(RtFloat aValue, RtInt aCard);
 		void set(RtFloat *aValue, RtInt aCard);
+		void set(RtFloat aValue);
+		void set(RtFloat *aValue);
 		inline RtInt card() const { return m_card; }
+	};
+	
+	/** @brief Stores the state of a motion block
+	 *
+	 *  Because RireadArchive(), RiObjectInstance(), RiProcedural() can
+	 *  be used within motion blocks, motion blocks may be nested.
+	 *
+	 */
+	class CMotionAttribute {
+	public:
+		RtInt m_curMotionCnt;                 ///< Current Index in m_motionTimes;
+		RtInt m_motionBegin;                  ///< Current Index in m_motionTimes;
+		RtInt m_motionEnd;                    ///< End of motion in m_motionTimes, m_motionTimes[m_motionStop] == undefined (end())		
 	};
 
 	/** @brief Render attributes.
@@ -151,10 +166,8 @@ namespace RiCPP {
 		typedef std::vector<CLightSource *> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
 
 	protected:
-		std::deque<RtFloat> m_motionTimes;    ///< times of all motion blocks occured in this attribute block
-		RtInt m_curMotionCnt;              ///< Current Index in m_motionTimes;
-		RtInt m_motionBegin;            ///< Current Index in m_motionTimes;
-		RtInt m_motionEnd;                ///< End of motion in m_motionTimes, m_motionTimes[m_motionStop] == undefined (end())
+		std::deque<RtFloat> m_motionTimes;            ///< times of all motion blocks occured in this attribute block
+		std::vector<CMotionAttribute> m_motionBlocks; ///< current motion blocks
 
 		enum EnumAttributeIndex {
 			AIDX_COLOR,
@@ -218,6 +231,10 @@ namespace RiCPP {
 				m_vBasis;                      ///< Basis matrix for splines in v direction
 
 		CTrimCurveData m_trimCurve;            ///< Tirmcurve, default: empty
+		
+		bool m_inAreaLight;                    ///< An Arealight source was created
+		
+		unsigned long m_storeCounter;          ///< A simple counter (not copied) for additional attribute blocks stored for this at a stack (used for detailrange)
 
 		/** @brief Initializes all members with their standard values.
 		 */
@@ -299,7 +316,6 @@ namespace RiCPP {
 		 */
 		void initBasis();
 
-
 		/** @brief Initializes the NURBS trim curve.
 		 */
 		void initTrimCurve();
@@ -316,6 +332,7 @@ namespace RiCPP {
 			: COptionsBase(c)
 		{
 			initAttributeVector();
+			m_storeCounter = 0;
 			init();
 		}
 
@@ -327,6 +344,7 @@ namespace RiCPP {
 			: COptionsBase(ra.colorDescr())
 		{
 			initAttributeVector();
+			m_storeCounter = 0;
 			*this = ra;
 		}
 
@@ -350,6 +368,31 @@ namespace RiCPP {
 			return new CAttributes(*this);
 		}
 
+		/** @brief Gets the area light definition state.
+		 *  @return true, an area light definition is active
+		 */
+		bool CAttributes::inAreaLight() const;
+
+		/** @brief Sets the area light definition state.
+		 *  @param flag true, an area light definition is active
+		 */
+		void CAttributes::inAreaLight(bool flag);
+		
+		/** @brief Store counter is incremented by one to indicate that another attribute block is stored
+		 */
+		inline void incStoreCounter() { m_storeCounter++; }
+
+		/** @brief Store counter is decremented by one to indicate that another attribute block is removed
+		 */
+		inline void decStoreCounter() { m_storeCounter--; }
+		
+		/** @brief Number of additional attribute blocks stored
+		 */
+		inline unsigned long storeCounter() const { return m_storeCounter; }
+
+		/** @brief Sets the number of additional attribute blocks stored
+		 */
+		inline void storeCounter(unsigned long cnt) { m_storeCounter = cnt; }
 
 		/** @brief Sets the current surface color.
 		 *

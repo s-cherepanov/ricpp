@@ -42,6 +42,7 @@ using namespace RiCPP;
 //! Initialization with defaults, called by constructor
 CTransformation::CTransformation()
 {
+	m_storeCounter = 0;
 	m_spaceType = RI_CURRENT;
 	m_isValid = true;
 	m_CTM.identity();
@@ -67,7 +68,9 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 	m_CTM = o.m_CTM;
 	m_inverseCTM = o.m_inverseCTM;
 	m_spaceType = o.m_spaceType;
-
+	
+	// m_storeCounter is not copied ore affected, because additional blocks are not stored by this block.
+	
 	return *this;
 }
 

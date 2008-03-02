@@ -98,12 +98,12 @@ class CRenderState {
 	COptionsBase m_controls;                       ///< Current control values.
 
 	COptionsFactory *m_optionsFactory;             ///< Creates new Options.
-	std::vector<COptions *> m_optionsStack;        ///< Current option stack.
+	std::deque<COptions *> m_optionsStack;         ///< Current option stack (deque: elments should not be copied unexpectedly).
 
 	CAttributesFactory *m_attributesFactory;       ///< Create new attributes.
-	std::vector<CAttributes *> m_attributesStack;  ///< Current attributes stack.
+	std::deque<CAttributes *> m_attributesStack;   ///< Current attributes stack (deque: elments should not be copied unexpectedly).
 
-	std::vector<CTransformation> m_transformStack; ///< Current stack of transformations and their inverses.
+	std::deque<CTransformation> m_transformStack; ///< Current stack of transformations and their inverses (deque: elments should not be copied unexpectedly).
 
 	TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
 	std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.

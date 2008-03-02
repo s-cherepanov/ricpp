@@ -335,24 +335,28 @@ attribute blocks.
 -e Motion blocks are rolled out
    t Just in front of geometry a opacity command is used to set
      the opacity/transparency. I used the letter t because of option o is
-	 the important output option and typos can cause unwanting overwriting
-	 of RIB-files.
+	 the important output option and typos can cause overwriting
+	 of RIB-files unwantingly.
 @endverbatim
 
 
 - The option l (level of detail), default +l
 
-Can be used to roll out motion blocks. Geometry is written
-in enclosing attribute blocks. Instead of the
-motion block with attributes and transformations, the first
-command is written. Geometry is written multiple times with
-the appropriate options/transforms set. Camera motion causes
-the whole content of a world blocks written multiple times within
-attribute blocks.
-
 @verbatim
 +l Level of detail commands are written
 -l The appropriate level of detail geometry is used
+   t Uses transparency to blend models
+@endverbatim
+
+- The option r (select renderer), default ribwriter
+
+@verbatim
+-r               Selects the renderer (no name: ribwriter)
+   "name"        name (like "|myrenderer -anstartoption")
++r token "value" Adds renderer specific options, value mus be written within ""
+                 s/value{/value}/ for string values, / is the seperator
+                 fvalue{,value}*  for float values
+                 ivalue(,value)*  for integer values
 @endverbatim
 
 - The option e (cache (memory) RIB archives), default -e
@@ -590,7 +594,7 @@ int main(int argc, char * const argv[])
 	
 	const char *outfile = outfilename.empty() ? RI_NULL : outfilename.c_str();
 
-	// Start the ribwriter
+	// Start the ribwriter - maybe integrate renderers to the options later
 	ri.begin("ribwriter", RI_FILE, &outfile, "compress", &compression, RI_NULL );
 
 	// Scan the options from left to right

@@ -69,8 +69,8 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 	m_inverseCTM = o.m_inverseCTM;
 	m_spaceType = o.m_spaceType;
 	
-	// m_storeCounter is not copied ore affected, because additional blocks are not stored by this block.
-	// no: m_storeCounter = ra.m_storeCounter;
+	// The storeCounter is set within CRenderState()::pushTransform as needed
+	m_storeCounter = o.m_storeCounter;
 	
 	return *this;
 }

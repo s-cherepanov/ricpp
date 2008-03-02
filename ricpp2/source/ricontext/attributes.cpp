@@ -336,8 +336,9 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_detailCalled = ra.m_detailCalled;
 
 	// Detail range only affects the attribute block where it was defined
-	// no: memcpy(m_detailRange, ra.m_detailRange, sizeof(m_detailRange));
-	// no: m_detailRangeCalled = ra.m_detailRangeCalled;
+	// The values should be reinitialized if a model is instanciated within a detail range
+	memcpy(m_detailRange, ra.m_detailRange, sizeof(m_detailRange));
+	m_detailRangeCalled = ra.m_detailRangeCalled;
 
 	m_geometricApproximationType = ra.m_geometricApproximationType;
 	m_geometricApproximationValue = ra.m_geometricApproximationValue;
@@ -358,8 +359,8 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_motionBlocks = ra.m_motionBlocks;
 	m_motionTimes = ra.m_motionTimes;
 
-	// m_storeCounter is not affected, because additional blocks are not stored by this block.
-	// no: m_storeCounter = ra.m_storeCounter;
+	// The storeCounter is set within CRenderState()::pushAttributes as needed
+	m_storeCounter = ra.m_storeCounter;
 	
 	COptionsBase::operator=(ra);
 
@@ -743,7 +744,7 @@ RtVoid CAttributes::motionBegin(RtInt N, RtFloat times[])
 {
 	CMotionAttribute ma;
 	ma.m_curMotionCnt = 0;
-	ma.m_motionBegin = m_motionTimes.size();
+	ma.m_motionBegin = (RtInt)m_motionTimes.size();
 	ma.m_motionEnd = ma.m_motionBegin+N;
 	
 	m_motionTimes.resize(ma.m_motionEnd);

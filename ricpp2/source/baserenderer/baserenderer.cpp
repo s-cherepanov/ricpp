@@ -1672,11 +1672,12 @@ RtVoid CBaseRenderer::detail(RtBound aBound)
 RtVoid CBaseRenderer::preDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
 	if ( !renderState()->attributes().detailRangeCalled() ) {
+		renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
 		renderState()->storeAttributes();
 	} else {
 		renderState()->restoreAttributes();
+		renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
 	}
-	renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
 }
 
 RtVoid CBaseRenderer::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)

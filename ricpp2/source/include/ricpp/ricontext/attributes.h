@@ -236,6 +236,7 @@ namespace RiCPP {
 		
 		unsigned long m_storeCounter;          ///< A simple counter (not copied) for additional attribute blocks stored for this at a stack (used for detailrange)
 
+	public:
 		/** @brief Initializes all members with their standard values.
 		 */
 		void init();
@@ -320,7 +321,6 @@ namespace RiCPP {
 		 */
 		void initTrimCurve();
 
-	public:
 		/** @brief Constructor.
 		 *
 		 *  A color descriptor must be supplied to handle

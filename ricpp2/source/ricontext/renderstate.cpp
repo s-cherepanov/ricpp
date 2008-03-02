@@ -1104,7 +1104,9 @@ CRenderState::~CRenderState()
 	deleteTransMapCont(m_globalTransforms);
 	while ( !m_optionsStack.empty() ) popOptions();
 	while ( !m_attributesStack.empty() ) popAttributes();
-	m_transformationStack.clear();
+	// while ( !m_motionAttributesStack.empty() ) popMotionAttributes();
+	while ( !m_transformationStack.empty() ) popTransform();
+	// while ( !m_motionTransformationStack.empty() ) popMotionTransform();
 }
 
 void CRenderState::deleteTransMapCont(TypeTransformationMap &m)
@@ -1115,6 +1117,31 @@ void CRenderState::deleteTransMapCont(TypeTransformationMap &m)
 			m_transformationFactory->deleteTransformation((*pos).second);
 	}
 	m.clear();
+}
+
+
+bool CRenderState::validRequest(EnumRequests req)
+{
+	assert(m_modeStack != 0);
+
+	if ( !m_modeStack )
+		return false;
+
+	if ( !m_modeStack->validRequest(req) )
+		return false;
+
+	// Test motion block
+	if ( m_modeStack->curMode() == MODE_MOTION )
+	{
+		m_motionState.request(req);
+		if ( motionState().curState() != CMotionState::MOT_OUTSIDE &&
+		    (motionState().curState() & ~CMotionState::MOT_INSIDE) != 0 )
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void CRenderState::contextBegin()
@@ -1884,8 +1911,15 @@ void CRenderState::motionBegin(RtInt N, RtFloat times[])
 void CRenderState::motionEnd()
 {
 	m_modeStack->motionEnd();
+	bool err = false;
+	if ( m_motionState.curSampleIdx() < ((RtInt)m_motionState.times().size()) - 1 ) {
+		err = true;
+	}
 	m_motionState.close();
 	attributes().motionEnd();
+	if ( err ) {
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_WARNING, "in motionEnd(), too few requests in motion block, last request has been duplicated.", __LINE__, __FILE__);
+	}
 }
 
 

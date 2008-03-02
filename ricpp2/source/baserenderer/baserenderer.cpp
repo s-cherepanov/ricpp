@@ -301,11 +301,6 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "request %s not in valid block", CRequestInfo::requestName(req));
 	}
 
-	renderState()->motionState().request(req);
-	if ( (renderState()->motionState().curState() & ~CMotionState::MOT_INSIDE) != 0 ) {
-		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "inside a motion block: %s", CRequestInfo::requestName(req));
-	}
-
 	if ( !renderState()->hasOptions() ) {
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "%s() - options not available.", CRequestInfo::requestName(req));
 	}
@@ -924,9 +919,19 @@ RtVoid CBaseRenderer::preMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times
 
 RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[])
 {
+	if ( N < 0 || times == 0 )
+		N=0;
 	RICPP_PREAMBLE(REQ_MOTION_BEGIN)
 		RICPP_PROCESS(newRiMotionBegin(renderState()->lineNo(), N, times));
 	RICPP_POSTAMBLE
+
+	if ( N == 0 ) {
+		ricppErrHandler().handleError(
+			RIE_BADTOKEN, RIE_WARNING,
+			renderState()->printLineNo(__LINE__),
+			renderState()->printName(__FILE__),
+			"N less or equal 0 or empty times[] array in '%s'",  CRequestInfo::requestName(req));
+	}
 }
 
 RtVoid CBaseRenderer::preMotionEnd(CRiMotionEnd &obj)

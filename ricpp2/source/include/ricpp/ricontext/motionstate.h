@@ -39,6 +39,8 @@
 #endif // _RICPP_RICPP_REQUESTS_H
 
 #include <vector>
+#include <deque>
+#include <cassert>
 
 namespace RiCPP {
 
@@ -57,11 +59,20 @@ public:
 	};
 
 private:
-	std::vector<RtFloat> m_times; ///< Samples of the last (current) motion block request.
-	RtInt m_curSample;            ///< Current sample (if inside the mootion block, can be hugher than the size of m_times, if there are to many requests within a motion block).
-	EnumRequests m_firstRequest;  ///< Id of the first request inside the last (current) motion block.
-	EnumRequests m_curRequest;    ///< Id of the current request inside or outside the last (current) motion block..
-	unsigned int m_curState;      ///< The state of the motion block.
+	class CMotionStateElem {
+	public:
+		std::vector<RtFloat> m_times; ///< Samples of the last (current) motion block request.
+		RtInt m_curSample;            ///< Current sample (if inside the mootion block, can be hugher than the size of m_times, if there are to many requests within a motion block).
+		EnumRequests m_firstRequest;  ///< Id of the first request inside the last (current) motion block.
+		EnumRequests m_curRequest;    ///< Id of the current request inside or outside the last (current) motion block..
+		unsigned int m_curState;      ///< The state of the motion block.
+
+		CMotionStateElem();
+		~CMotionStateElem();
+		CMotionStateElem &operator=(const CMotionStateElem &elem);
+	};
+
+	std::deque<CMotionStateElem> m_elems;
 
 protected:
 	void incCurSampleIdx();
@@ -88,12 +99,14 @@ public:
 
 	inline std::vector<RtFloat> &times()
 	{
-		return m_times;
+		assert( !m_elems.empty() );
+		return m_elems.back().m_times;
 	}
 
 	inline const std::vector<RtFloat> &times() const
 	{
-		return m_times;
+		assert( !m_elems.empty() );
+		return m_elems.back().m_times;
 	}
 
 	void open(RtInt N, RtFloat times[]);
@@ -102,7 +115,8 @@ public:
 
 	inline RtInt curSampleIdx() const
 	{
-		return m_curSample;
+		assert( !m_elems.empty() );
+		return m_elems.back().m_curSample;
 	}
 
 	RtFloat curSample();
@@ -111,17 +125,22 @@ public:
 
 	inline EnumRequests firstRequest() const
 	{
-		return m_firstRequest;
+		assert( !m_elems.empty() );
+		return m_elems.back().m_firstRequest;
 	}
 
 	inline EnumRequests curRequest() const
 	{
-		return m_curRequest;
+		assert( !m_elems.empty() );
+		return m_elems.back().m_curRequest;
 	}
 
 	inline unsigned int curState() const
 	{
-		return m_curState;
+		if ( m_elems.empty() ) {
+			return MOT_OUTSIDE;
+		}
+		return m_elems.back().m_curState;
 	}
 }; // CMotionState
 

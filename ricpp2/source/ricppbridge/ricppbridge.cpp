@@ -707,8 +707,8 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle)
 
 RtVoid CRiCPPBridge::motionBegin(RtInt N, ...)
 {
-	if ( N == 0 ) {
-		motionBeginV(N, 0);
+	if ( N <= 0 ) {
+		motionBeginV(0, 0);
 		return;
 	}
 
@@ -732,6 +732,10 @@ RtVoid CRiCPPBridge::motionBegin(RtInt N, ...)
 
 RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[])
 {
+	if ( N <= 0 || times == 0 ) {
+		N=0;
+	}
+
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
 			m_ctxMgmt.curBackend().renderingContext()->motionBeginV(N, times);

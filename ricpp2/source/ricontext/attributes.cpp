@@ -58,6 +58,17 @@ CAttributeFloatClass &CAttributeFloatClass::operator=(const CAttributeFloatClass
 	return *this;
 }
 
+void CAttributeFloatClass::fill(RtInt n)
+{
+	// Fill unused values at [n...end]
+	if ( n == 0 ) {
+		return;
+	}
+	for ( RtInt i = n; n < m_motionBegin-m_motionEnd; ++i ) {
+		m_movedValue[i] = m_movedValue[i-1];
+	}
+}
+
 void CAttributeFloatClass::clear()
 {
 	m_motionBegin = 0;
@@ -77,9 +88,14 @@ void CAttributeFloatClass::set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt mo
 		if ( (RtInt)m_movedValue.size() < moEnd-moBegin ) {
 			m_movedValue.resize(moEnd-moBegin);
 		}
+		if ( n >= moBegin-moEnd ) {
+			// ERROR
+			return;
+		}
 		m_movedValue[n] = aValue;
 		++n;
 	}
+	fill(n);
 }
 
 void CAttributeFloatClass::set(RtFloat aValue)
@@ -126,6 +142,19 @@ void CAttributeFloatArrayClass::clear()
 	m_motionEnd = 0;
 }
 
+void CAttributeFloatArrayClass::fill(RtInt n)
+{
+	// Fill unused values at [n...end]
+	if ( n == 0 ) {
+		return;
+	}
+	for ( RtInt i = n; n < m_motionBegin-m_motionEnd; ++i ) {
+		for ( RtInt j = 0; j < m_card; ++j ) {
+			m_movedValue[i*m_card+j] = m_movedValue[(i-1)*m_card+j];
+		}
+	}
+}
+
 void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt moEnd)
 {
 	if ( m_card <= 0 )
@@ -143,10 +172,15 @@ void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt &n, RtInt moBegin, RtI
 		if ( (RtInt)m_movedValue.size() < (moEnd-moBegin) * m_card ) {
 			m_movedValue.resize((moEnd-moBegin) * m_card);
 		}
+		if ( n >= moBegin-moEnd ) {
+			// ERROR
+			return;
+		}
 		for ( RtInt i=0; i<m_card; ++i )
 			m_movedValue[n * m_card + i] = aValue;
 		++n;
 	}
+	fill(n);
 }
 
 void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt aCard)
@@ -157,7 +191,6 @@ void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt aCard)
 
 	if ( m_card <= 0 )
 		return;
-
 
 	m_value.resize(m_card);
 	m_value.assign(m_card, aValue);
@@ -182,10 +215,15 @@ void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt &n, RtInt moBegin, Rt
 		if ( (RtInt)m_movedValue.size() < (moEnd-moBegin) * m_card ) {
 			m_movedValue.resize((moEnd-moBegin) * m_card);
 		}
+		if ( n >= moBegin-moEnd ) {
+			// ERROR
+			return;
+		}
 		for ( RtInt i=0; i<m_card; ++i )
 			m_movedValue[n * m_card + i] = aValue[i];
 		++n;
 	}
+	fill(n);
 }
 
 void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt aCard)

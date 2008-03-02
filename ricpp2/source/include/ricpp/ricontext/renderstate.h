@@ -102,9 +102,11 @@ class CRenderState {
 
 	CAttributesFactory *m_attributesFactory;        ///< Create new attributes set.
 	std::vector<CAttributes *> m_attributesStack;   ///< Current attributes stack.
+	std::vector<CAttributes *> m_motionAttributesStack;   ///< Current attributes stack saved for motion blocks (moved instances)
 
 	CTransformationFactory *m_transformationFactory;  ///< Create new transformation set.
 	std::vector<CTransformation *> m_transformationStack;  ///< Current stack of transformations and their inverses.
+	std::vector<CTransformation *> m_motionTransformationStack;  ///< Current stack of transformations and their inverses for motion blocks (moved instances)
 
 	TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
 	std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.
@@ -698,10 +700,7 @@ public:
 	 *  @return true, if the request req is valid in the current mode.
 	 *  @see CModeStack::validRequest(), EnumRequests  
 	 */
-	inline virtual bool validRequest(EnumRequests req) const
-	{
-		return m_modeStack->validRequest(req);
-	}
+	virtual bool validRequest(EnumRequests req);
 
 	/** @brief Gets the current mode.
 	 *

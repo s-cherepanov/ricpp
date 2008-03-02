@@ -441,10 +441,7 @@ void CMotionBeginRibRequest::operator()(IRibParserState &parser, CRibRequestData
 			return;
 		}
 	} else {
-		parser.errHandler().handleError(
-			RIE_MISSINGDATA, RIE_ERROR,
-			"Line %ld, File \"%s\", badargument: '%s' the float array is missing",
-			parser.lineNo(), parser.resourceName(), requestName(), RI_NULL);
+		parser.ribFilter().motionBeginV(0, 0);
 		return;
 	}
 }

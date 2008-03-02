@@ -50,6 +50,7 @@ namespace RiCPP {
 		virtual CAttributeClass *duplicate() const = 0;
 
 		virtual void clear() = 0;
+		virtual void fill(RtInt n) = 0;
 		virtual void sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes) = 0;
 		virtual void sampleReset() = 0;
 	};
@@ -66,6 +67,7 @@ namespace RiCPP {
 		virtual CAttributeFloatClass *duplicate() const { return new CAttributeFloatClass(*this); }
 
 		virtual void clear();
+		virtual void fill(RtInt n);
 		virtual RtVoid sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes);
 		virtual RtVoid sampleReset();
 		CAttributeFloatClass &operator=(const CAttributeFloatClass &c);
@@ -85,6 +87,7 @@ namespace RiCPP {
 		virtual CAttributeClass *duplicate() const { return new CAttributeFloatArrayClass(*this); }
 
 		virtual void clear();
+		virtual void fill(RtInt n);
 		virtual RtVoid sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes);
 		virtual RtVoid sampleReset();
 		CAttributeFloatArrayClass &operator=(const CAttributeFloatArrayClass &c);

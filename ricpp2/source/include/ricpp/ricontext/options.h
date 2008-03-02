@@ -488,7 +488,8 @@ namespace RiCPP {
 
 	
 
-	/** @brief
+	/** @brief Factory to create new options sets
+	 *  @see CAttributesFactory
 	 */
 	class COptionsFactory
 	{
@@ -508,16 +509,10 @@ namespace RiCPP {
 
 		virtual COptions *newOptions();
 		virtual COptions *newOptions(const COptions &opt);
-		inline virtual void deleteOptions(COptions *o)
+		inline virtual void deleteOptions(COptions *opt)
 		{
-			if ( o )
-				delete o;
-		}
-		inline virtual COptions *duplicateOptions(const COptions *o) const
-		{
-			if ( o )
-				return dynamic_cast<COptions *>(o->duplicate());
-			return 0;
+			if ( opt )
+				delete opt;
 		}
 	}; // COptionsFactory
 }

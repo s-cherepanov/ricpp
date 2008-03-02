@@ -336,9 +336,11 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_detailCalled = ra.m_detailCalled;
 
 	// Detail range only affects the attribute block where it was defined
-	// The values should be reinitialized if a model is instanciated within a detail range
 	memcpy(m_detailRange, ra.m_detailRange, sizeof(m_detailRange));
 	m_detailRangeCalled = ra.m_detailRangeCalled;
+
+	// This value have to be set to false if a new attribute/frame/world block is started (done by CRenderState::pushAttributes(false)).
+	m_detailRangeCalledInBlock = ra.m_detailRangeCalledInBlock;
 
 	m_geometricApproximationType = ra.m_geometricApproximationType;
 	m_geometricApproximationValue = ra.m_geometricApproximationValue;
@@ -620,6 +622,7 @@ RtVoid CAttributes::detail(RtBound aBound)
 void CAttributes::initDetailRange()
 {
 	m_detailRangeCalled = false;
+	m_detailRangeCalledInBlock = false;
 	m_detailRange[0] = defMinVis;
 	m_detailRange[1] = defLowTran; 
 	m_detailRange[2] = defUpTran;
@@ -629,6 +632,7 @@ void CAttributes::initDetailRange()
 RtVoid CAttributes::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
 	m_detailRangeCalled = true;
+	m_detailRangeCalledInBlock = true;
 	m_detailRange[0] = minvis;
 	m_detailRange[1] = lowtran; 
 	m_detailRange[2] = uptran;

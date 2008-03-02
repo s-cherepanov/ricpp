@@ -75,7 +75,7 @@ namespace RiCPP {
  * @todo Remove STL from public interfaces of shared libraries (@see Creating Compatible Libraries in Apples C++ Runtime Environment Programming Guide)
  */
 class CRenderState {
-	typedef std::map<RtToken, CTransformation> TypeTransformationMap;
+	typedef std::map<RtToken, CTransformation*> TypeTransformationMap;
 
 	CModeStack *m_modeStack;                       ///< Pointer to the mode stack, has to be set
 
@@ -97,13 +97,14 @@ class CRenderState {
 
 	COptionsBase m_controls;                       ///< Current control values.
 
-	COptionsFactory *m_optionsFactory;             ///< Creates new Options.
-	std::deque<COptions *> m_optionsStack;         ///< Current option stack (deque: elments should not be copied unexpectedly).
+	COptionsFactory *m_optionsFactory;              ///< Creates new options set.
+	std::vector<COptions *> m_optionsStack;         ///< Current option stack.
 
-	CAttributesFactory *m_attributesFactory;       ///< Create new attributes.
-	std::deque<CAttributes *> m_attributesStack;   ///< Current attributes stack (deque: elments should not be copied unexpectedly).
+	CAttributesFactory *m_attributesFactory;        ///< Create new attributes set.
+	std::vector<CAttributes *> m_attributesStack;   ///< Current attributes stack.
 
-	std::deque<CTransformation> m_transformStack; ///< Current stack of transformations and their inverses (deque: elments should not be copied unexpectedly).
+	CTransformationFactory *m_transformationFactory;  ///< Create new transformation set.
+	std::vector<CTransformation *> m_transformationStack;  ///< Current stack of transformations and their inverses.
 
 	TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
 	std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.
@@ -168,6 +169,8 @@ class CRenderState {
 	bool getAttribute(CValue &p, RtToken tablename, RtToken varname) const;
 	bool getOption(CValue &p, RtToken tablename, RtToken varname) const;
 	bool getControl(CValue &p, RtToken tablename, RtToken varname) const;
+
+	void deleteTransMapCont(TypeTransformationMap &m);
 
 	/** @brief Parser for RIB if-expression.
 	 *
@@ -578,6 +581,7 @@ public:
 		CModeStack &aModeStack,
 		COptionsFactory &optionsFactory,
 		CAttributesFactory &attributesFactory,
+		CTransformationFactory &transformationFactory,
 		CFilterFuncFactory &filterFuncFactory);
 
 	/** @brief Destroys the object
@@ -843,13 +847,13 @@ public:
 
 	inline virtual COptions &options()
 	{
-		assert(m_optionsStack.back() != 0);
+		assert(!m_optionsStack.empty() && m_optionsStack.back() != 0);
 		return *(m_optionsStack.back());
 	}
 
 	inline virtual const COptions &options() const
 	{
-		assert(m_optionsStack.back() != 0);
+		assert(!m_optionsStack.empty() && m_optionsStack.back() != 0);
 		return *(m_optionsStack.back());
 	}
 
@@ -857,13 +861,13 @@ public:
 
 	inline virtual CAttributes &attributes()
 	{
-		assert(m_attributesStack.back() != 0);
+		assert(!m_attributesStack.empty() && m_attributesStack.back() != 0);
 		return *(m_attributesStack.back());
 	}
 
 	inline virtual const CAttributes &attributes() const
 	{
-		assert(m_attributesStack.back() != 0);
+		assert(!m_attributesStack.empty() && m_attributesStack.back() != 0);
 		return *(m_attributesStack.back());
 	}
 
@@ -871,25 +875,25 @@ public:
 
 	inline virtual CTransformation &curTransform()
 	{
-		assert(!m_transformStack.empty());
-		return m_transformStack.back();
+		assert(!m_transformationStack.empty() && m_transformationStack.back() != 0);
+		return *(m_transformationStack.back());
 	}
 
 	inline virtual const CTransformation &curTransform() const
 	{
-		assert(!m_transformStack.empty());
-		return m_transformStack.back();
+		assert(!m_transformationStack.empty() && m_transformationStack.back() != 0);
+		return *(m_transformationStack.back());
 	}
 
 	inline virtual void coordinateSystem(RtToken space)
 	{
-		m_globalTransforms[space] = curTransform();
+		m_globalTransforms[space] = m_transformationFactory->newTransformation(curTransform());
 	}
 
 	inline virtual void scopedCoordinateSystem(RtToken space)
 	{
 		assert(!m_scopedTransforms.empty());
-		m_scopedTransforms.back()[space] = curTransform();
+		m_scopedTransforms.back()[space] = m_transformationFactory->newTransformation(curTransform());
 	}
 
 	virtual const CTransformation *findTransform(RtToken space) const;
@@ -898,7 +902,7 @@ public:
 
 	inline virtual bool hasOptions() const {return !m_optionsStack.empty() && m_optionsStack.back() != 0;}
 	inline virtual bool hasAttributes() const {return !m_attributesStack.empty() && m_attributesStack.back() != 0;}
-	inline virtual bool hasTransform() const {return !m_transformStack.empty();}
+	inline virtual bool hasTransform() const {return !m_transformationStack.empty() && m_transformationStack.back() != 0;}
 
 	inline virtual const CUri &baseUri() const { return m_baseUri; }
 	inline virtual CUri &baseUri() { return m_baseUri; }

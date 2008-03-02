@@ -90,6 +90,16 @@ class CBaseRenderer : public IDoRender {
 	 */
 	CAttributesFactory *m_attributesFactory;
 
+	/** @brief Transformation factory.
+	 *
+	 *  Used to create transformation objects (CTransformation). Derived renderers can use an
+	 *  extended set of transformation.
+	 *  Initialized while begin() by a call of initRenderState().
+	 *
+	 *  @see getNewTransformationFactory(), deleteTransformationFactory()
+	 */
+	CTransformationFactory *m_transformationFactory;
+
 	/** @brief Factory for ri macros
 	 *
 	 *  Used to create ri request objects (interface functions implemented as objects)
@@ -135,8 +145,9 @@ protected:
 	/** @brief Deletes a mode stack, called at destruction.
 	 *
 	 *  Since the destructor of the mode stack is virtual, there
-	 *  is no need (it's even wrong) to overwrite this method, it's not
-	 *  virtual therfore.
+	 *  is no need to overwrite this method.
+	 *  Because the method is called
+	 *  out of the destructor, the method is not virtual.
 	 *
 	 *  @param ptr A mode stack created by getNewModeStack()
 	 */
@@ -161,8 +172,9 @@ protected:
 	/** @brief Deletes an options factory, called at destruction.
 	 *
 	 *  Since the destructor of the options factory is virtual, there
-	 *  is no need (it's even wrong) to overwrite this method, it's not
-	 *  virtual therfore.
+	 *  is no need to overwrite this method.
+	 *  Because the method is called
+	 *  out of the destructor, the method is not virtual.
 	 *
 	 *  @param ptr An options factory created by getNewOptionsFactory()
 	 */
@@ -188,12 +200,40 @@ protected:
 	/** @brief Deletes an attributes factory, called at destruction.
 	 *
 	 *  Since the destructor of the attributes factory is virtual, there
-	 *  is no need (it's even wrong) to overwrite this method, it's not
-	 *  virtual therfore.
+	 *  is no need  to overwrite this method.
+	 *  Because the method is called
+	 *  out of the destructor, the method is not virtual.
 	 *
 	 *  @param ptr An attributes factory created by getNewAttributesFactory()
 	 */
 	inline void deleteAttributesFactory(CAttributesFactory *ptr)
+	{
+		if ( ptr )
+			delete ptr;
+	}
+
+	/** @brief Creates a new transformation factory, called by initRenderState()
+	 *
+	 *  Overwrite this method if you want to return an own factory
+	 *  for a customized transformation set.
+	 *
+	 * @return A factory object for the render options.
+	 */
+	inline virtual CTransformationFactory *getNewTransformationFactory()
+	{
+		return new CTransformationFactory;
+	}
+
+	/** @brief Deletes a transformation factory, called at destruction.
+	 *
+	 *  Since the destructor of the transformation factory is virtual, there
+	 *  is no need to overwrite this method.
+	 *  Because the method is called
+	 *  out of the destructor, the method is not virtual.
+	 *
+	 *  @param ptr An transformation factory created by getNewTransformationFactory()
+	 */
+	inline void deleteTransformationFactory(CTransformationFactory *ptr)
 	{
 		if ( ptr )
 			delete ptr;
@@ -214,8 +254,9 @@ protected:
 	/** @brief Deletes a pixel filter function factory, called at destruction.
 	 *
 	 *  Since the destructor of the filter functions factory is virtual, there
-	 *  is no need (it's even wrong) to overwrite this method, it's not
-	 *  virtual therfore.
+	 *  is no need to overwrite this method.
+	 *  Because the method is called
+	 *  out of the destructor, the method is not virtual.
 	 *
 	 *  @param ptr A pixel filter function factory created by getNewFilterFuncFactory()
 	 */
@@ -231,9 +272,13 @@ protected:
 	virtual CRManInterfaceFactory *getNewMacroFactory();
 
 	/** @brief Method to delete a macro factory
+	 *
+	 *  Because the method is called
+	 *  out of the destructor, the method is not virtual.
+	 *
 	 * @param ptr Macro factory to delete (created by getNewMacroFactory())
 	 */
-	virtual void deleteMacroFactory(CRManInterfaceFactory *ptr);
+	void deleteMacroFactory(CRManInterfaceFactory *ptr);
 
 	/** @brief Gets the current macro factory
 	 *  @return macro factory that should be used by the interface
@@ -269,8 +314,9 @@ protected:
 	/** @brief Deletes a attributes resource factory, called at destruction.
 	 *
 	 *  Since the destructor of the attributes resource factory is virtual, there
-	 *  is no need (it's even wrong) to overwrite this method, it's not
-	 *  virtual therfore.
+	 *  is no need to overwrite this method.
+	 *  Because the method is called
+	 *  out of the destructor, the method is not virtual.
 	 *
 	 *  @param ptr An attributes resource factory created by getNewResourceFactory()
 	 */

@@ -51,12 +51,9 @@ CTransformation::CTransformation()
 	m_inverseCTM.setPreMultiply(false);
 }
 
-CTransformation &CTransformation::duplicate() const
+CTransformation *CTransformation::duplicate() const
 { 
-	CTransformation *t = new CTransformation(*this);
-	if ( !t )
-		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "%s", "CTransformation::duplicate()");
-	return *t;
+	return new CTransformation(*this);
 }
 
 CTransformation &CTransformation::operator=(const CTransformation &o)
@@ -163,4 +160,24 @@ RtVoid CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz
 	}
 	m_CTM.skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
 	m_inverseCTM.skew(-angle, dx1, dy1, dz1, dx2, dy2, dz2);
+}
+
+// ----------------------------------------------------------------------------
+
+CTransformation *CTransformationFactory::newTransformation()
+{
+	CTransformation *trans = newTransformationInstance();
+	if ( !trans ) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in newTransformation()", __LINE__, __FILE__);
+	}
+	return trans;
+}
+
+CTransformation *CTransformationFactory::newTransformation(const CTransformation &trans)
+{
+	CTransformation *transPtr = newTransformationInstance(trans);
+	if ( !transPtr ) {
+		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in newTransformation(const CTransformation &)", __LINE__, __FILE__);
+	}
+	return transPtr;
 }

@@ -1057,6 +1057,7 @@ CRenderState::CRenderState(
 	CModeStack &aModeStack,
 	COptionsFactory &optionsFactory,
 	CAttributesFactory &attributesFactory,
+	CTransformationFactory &transformationFactory,
 	CFilterFuncFactory &filterFuncFactory
 	) :
 	m_resourceFactories(false),
@@ -1070,6 +1071,7 @@ CRenderState::CRenderState(
 	m_modeStack = &aModeStack;
 	m_optionsFactory = &optionsFactory;
 	m_attributesFactory = &attributesFactory;
+	m_transformationFactory = &transformationFactory;
 	m_filterFuncFactory = &filterFuncFactory;
 	m_frameNumber = 0;
 	m_lineNo = -1;
@@ -1099,9 +1101,20 @@ CRenderState::CRenderState(
 
 CRenderState::~CRenderState()
 {
+	deleteTransMapCont(m_globalTransforms);
 	while ( !m_optionsStack.empty() ) popOptions();
 	while ( !m_attributesStack.empty() ) popAttributes();
-	m_transformStack.clear();
+	m_transformationStack.clear();
+}
+
+void CRenderState::deleteTransMapCont(TypeTransformationMap &m)
+{
+	TypeTransformationMap::iterator pos;
+	for( pos = m.begin(); pos != m.end(); pos++ ) {
+		if ( (*pos).second != 0 )
+			m_transformationFactory->deleteTransformation((*pos).second);
+	}
+	m.clear();
 }
 
 void CRenderState::contextBegin()
@@ -1109,7 +1122,7 @@ void CRenderState::contextBegin()
 	pushOptions();
 	pushAttributes();
 	pushTransform();
-	m_transformStack.back().spaceType(RI_CAMERA);
+	curTransform().spaceType(RI_CAMERA);
 
 	m_objectMacros.mark();
 	m_archiveMacros.mark();
@@ -1182,8 +1195,8 @@ void CRenderState::frameEnd()
 void CRenderState::worldBegin()
 {
 	pushTransform();
-	m_transformStack.back().identity();
-	m_transformStack.back().spaceType(RI_WORLD);
+	curTransform().identity();
+	curTransform().spaceType(RI_WORLD);
 	pushAttributes();
 
 	m_objectMacros.mark();
@@ -1883,6 +1896,7 @@ void CRenderState::pushOptions()
 		if ( m_optionsStack.empty() ) {
 			m_optionsStack.push_back(m_optionsFactory->newOptions());
 		} else {
+			assert(m_optionsStack.back() != 0);
 			m_optionsStack.push_back(m_optionsFactory->newOptions(*m_optionsStack.back()));
 		}
 		if ( m_optionsStack.back() == 0 ) {
@@ -1911,13 +1925,13 @@ void CRenderState::pushAttributes(bool useCounter)
 {
 	unsigned long cnt = 1;
 	try {
-	
 		TypeTransformationMap tm;
 		m_scopedTransforms.push_back(tm);
 
 		if ( m_attributesStack.empty() ) {
 			m_attributesStack.push_back(m_attributesFactory->newAttributes(options().colorDescr()));
 		} else {
+			assert(m_attributesStack.back() != 0);
 			if ( useCounter )
 				cnt = attributes().storeCounter() + 1;
 			m_attributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
@@ -1928,6 +1942,10 @@ void CRenderState::pushAttributes(bool useCounter)
 		}
 
 		attributes().storeCounter(cnt);
+		if ( !useCounter ) {
+			// A new attribute, frame, or worldblock is started
+			attributes().clearDetailRangeCalledInBlock();
+		}
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		throw e2;
@@ -1953,6 +1971,8 @@ bool CRenderState::popAttributes(bool useCounter)
 			m_attributesStack.pop_back();
 			assert(!m_scopedTransforms.empty());
 			if ( !m_scopedTransforms.empty() ) {
+				TypeTransformationMap &m = m_scopedTransforms.back();
+				deleteTransMapCont(m);
 				m_scopedTransforms.pop_back();
 			}
 		}
@@ -1964,12 +1984,17 @@ void CRenderState::pushTransform(bool useCounter)
 {
 	unsigned long cnt = 1;
 	try {
-		if ( m_transformStack.empty() ) {
-			m_transformStack.push_back(CTransformation());
+		if ( m_transformationStack.empty() ) {
+			m_transformationStack.push_back(m_transformationFactory->newTransformation());
 		} else {
+			assert(m_transformationStack.back() != 0);
 			if ( useCounter )
 				cnt = curTransform().storeCounter() + 1;
-			m_transformStack.push_back(m_transformStack.back());
+			m_transformationStack.push_back(m_transformationFactory->newTransformation(*m_transformationStack.back()));
+		}
+		if ( m_transformationStack.back() == 0 ) {
+			m_transformationStack.pop_back();
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in pushTransform()", __LINE__, __FILE__);
 		}
 		curTransform().storeCounter(cnt);
 	} catch (std::exception &e) {
@@ -1980,23 +2005,24 @@ void CRenderState::pushTransform(bool useCounter)
 bool CRenderState::popTransform(bool useCounter)
 {
 	unsigned long cnt = 1;
-	assert(!m_transformStack.empty());
-	if ( !m_transformStack.empty() ) {
+	assert(!m_transformationStack.empty());
+	if ( !m_transformationStack.empty() ) {
 		if ( useCounter ) {
 			cnt = curTransform().storeCounter();
 		}
-		while ( cnt > 0 && !m_transformStack.empty() ) {
+		while ( cnt > 0 && !m_transformationStack.empty() ) {
 			assert(!useCounter || (curTransform().storeCounter() == cnt));
 			--cnt;
-			m_transformStack.pop_back();
+			m_transformationFactory->deleteTransformation(m_transformationStack.back());
+			m_transformationStack.pop_back();
 		}
 	}
-	return !m_transformStack.empty();
+	return !m_transformationStack.empty();
 }
 
 const CTransformation *CRenderState::findTransform(RtToken space) const
 {
-	std::map<RtString, CTransformation>::const_iterator pos;
+	TypeTransformationMap::const_iterator pos;
 
 	if ( !m_scopedTransforms.empty() ) {
 		for( std::list<TypeTransformationMap>::const_reverse_iterator i = m_scopedTransforms.rbegin();
@@ -2005,14 +2031,14 @@ const CTransformation *CRenderState::findTransform(RtToken space) const
 		{
 			pos = (*i).find(space);
 			if ( pos != (*i).end() ) {
-				return &((*pos).second);
+				return (*pos).second;
 			}
 		}
 	}
 
 	pos = m_globalTransforms.find(space);
 	if ( pos != m_globalTransforms.end() ) {
-		return &((*pos).second);
+		return (*pos).second;
 	}
 	return 0;
 }

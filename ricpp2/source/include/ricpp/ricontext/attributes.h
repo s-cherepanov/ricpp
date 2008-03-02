@@ -215,6 +215,7 @@ namespace RiCPP {
 
 		RtFloat   m_detailRange[4];            ///< The detail ranges
 		bool      m_detailRangeCalled;         ///< Detail ranges are set by an interface call
+		bool      m_detailRangeCalledInBlock;  ///< Detail ranges are set by an interface call within the current attribute block.
 
 		RtToken m_geometricApproximationType;  ///< The geometric approximation type (e.g. RI_FLATNESS)
 		RtFloat m_geometricApproximationValue; ///< The value for the approximation type
@@ -647,6 +648,14 @@ namespace RiCPP {
 		{
 			return m_detailRangeCalled;
 		}
+		inline virtual bool detailRangeCalledInBlock() const
+		{
+			return m_detailRangeCalledInBlock;
+		}
+		inline virtual void clearDetailRangeCalledInBlock()
+		{
+			m_detailRangeCalledInBlock = false;
+		}
 		virtual void getDetailRange(RtFloat &minvis, RtFloat &lowtran, RtFloat &uptran, RtFloat &maxvis) const;
 
 		virtual RtVoid geometricApproximation(RtToken type, RtFloat value);
@@ -744,12 +753,14 @@ namespace RiCPP {
 		/** @brief Gets a new attribute set.
 		 *  @param c Current color descriptor.
 		 *  @return A new Attribute set
+		 *  @exception ExceptRiCPPError If there was not enough memory
 		 */
 		virtual CAttributes *newAttributes(const CColorDescr &c);
 
-		/** @brief Gets a copy of an attribute set.
+		/** @brief Gets a copy of an attribute set, handles memory array.
 		 *  @param attr Attribute set to copy.
 		 *  @return A new Attribute set
+		 *  @exception ExceptRiCPPError If there was not enough memory
 		 */
 		virtual CAttributes *newAttributes(const CAttributes &attr);
 
@@ -763,20 +774,6 @@ namespace RiCPP {
 		{
 			if ( a )
 				delete a;
-		}
-
-		/** @brief Duplicates an attribute set delivered by this factory.
-		 *
-		 *  Because the duplication is virtual, this method don_t need to be overwritten.
-		 *
-		 *  @param a Attribute to duplicate
-		 *	@return A clone of @a a.
-		 */
-		inline virtual CAttributes *duplicateAttributes(const CAttributes *a) const
-		{
-			if ( a )
-				return dynamic_cast<CAttributes *>(a->duplicate());
-			return 0;
 		}
 	}; // CAttributesFactory
 }

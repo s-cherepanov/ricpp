@@ -136,6 +136,7 @@ CBaseRenderer::CBaseRenderer() :
 	m_modeStack = 0;
 	m_optionsFactory = 0;
 	m_attributesFactory = 0;
+	m_transformationFactory = 0;
 	m_filterFuncFactory = 0;
 	m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
@@ -157,6 +158,11 @@ CBaseRenderer::~CBaseRenderer()
 		deleteAttributesFactory(m_attributesFactory);
 	}
 	m_attributesFactory = 0;
+
+	if ( m_transformationFactory ) {
+		deleteTransformationFactory(m_transformationFactory);
+	}
+	m_transformationFactory = 0;
 
 	if ( m_filterFuncFactory ) {
 		deleteFilterFuncFactory(m_filterFuncFactory);
@@ -251,6 +257,14 @@ void CBaseRenderer::initRenderState()
 		}
 	}
 
+	if ( !m_transformationFactory ) {
+			m_transformationFactory = getNewTransformationFactory();
+
+		if ( !m_transformationFactory ) {
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a transformation factory");
+		}
+	}
+
 	if ( !m_filterFuncFactory ) {
 		m_filterFuncFactory = getNewFilterFuncFactory();
 
@@ -267,7 +281,7 @@ void CBaseRenderer::initRenderState()
 		}
 	}
 
-	m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_filterFuncFactory); // , *m_macroFactory);
+	m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_transformationFactory, *m_filterFuncFactory); // , *m_macroFactory seems not to be needed as part of the state
 
 	if ( !m_renderState ) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a render state");
@@ -1671,7 +1685,11 @@ RtVoid CBaseRenderer::detail(RtBound aBound)
 
 RtVoid CBaseRenderer::preDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
-	if ( !renderState()->attributes().detailRangeCalled() ) {
+	/** The first call of detailRange() within an attribute (world) block stores the attributes.
+	 *  Subsequent calls restore these attribute state. An attributeEnd will pop the additional
+	 *  attribute state.
+	 */
+	if ( !renderState()->attributes().detailRangeCalledInBlock() ) {
 		renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
 		renderState()->storeAttributes();
 	} else {

@@ -391,10 +391,6 @@ RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList 
 	}
 
 	if ( filename.size() > 0 ) {
-		m_buffer = new TemplFrontStreambuf<char>(m_parserCallback->protocolHandlers());
-		if ( !m_buffer ) {
-			return;
-		}
 
 		if ( filename[0] == '|' ) {
 			const char *cmd = filename.c_str()+1;
@@ -417,13 +413,17 @@ RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList 
 		} else {
 
 			const char *ptr = strrchr(filename.c_str(), '.');
-			if ( ptr && !(strcasecmp(ptr, ".ribz") && strcasecmp(ptr, ".z") && strcasecmp(ptr, ".gz")) && compress < 0 ) {
+			if ( ptr && !(strcasecmp(ptr, ".ribz") && strcasecmp(ptr, ".z") && strcasecmp(ptr, ".gz")) && compress == 0 ) {
 				compress = -1;
 			}
 
 		}
 
 		if ( filename.size() > 0 ) {
+			m_buffer = new TemplFrontStreambuf<char>(m_parserCallback->protocolHandlers());
+			if ( !m_buffer ) {
+				return;
+			}
 			CUri fileuri;
 			fileuri.encodeFilepath(filename.c_str(), "file");
 			if ( !m_buffer->open(fileuri, std::ios_base::out|std::ios_base::binary, compress) ) {

@@ -210,7 +210,7 @@ CValidModes::CValidModes()
 	
 	m_requests[REQ_CONTROL] = everywhereBits & ~MODE_BIT_MOTION;
 
-	m_requests[REQ_SYSTEM] = MODE_BIT_BEGIN | MODE_BIT_FRAME;
+	m_requests[REQ_SYSTEM] = MODE_BIT_OUTSIDE | MODE_BIT_BEGIN | MODE_BIT_FRAME;
 	m_requests[REQ_VERSION] = MODE_BIT_BEGIN;
 }
 

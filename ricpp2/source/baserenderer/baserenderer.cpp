@@ -457,6 +457,12 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 	CRibParser parser(parserCallback, *renderState(), renderState()->baseUri());
 	renderState()->moveArchiveBegin();
 	try {
+		std::string filename;
+		if ( notEmptyStr(name) ) {
+			CStringList sl;
+			sl.expand(filename, name, true);
+			name = filename.c_str();
+		}
 		if ( parser.canParse(name) ) {
 			renderState()->baseUri() = parser.absUri();
 			bool savCache = renderState()->cacheFileArchives();

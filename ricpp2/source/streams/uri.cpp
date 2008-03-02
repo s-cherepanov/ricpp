@@ -1224,6 +1224,14 @@ bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
 				encoded += aPath[0];
 				encoded += ':';
 				aPath += 2;
+			} else if ( (aPath[1] == '/' || aPath[1] == '\\')  &&
+			     ((aPath[0] >= 'A' && aPath[0] <= 'Z') ||
+				  (aPath[0] >= 'a' && aPath[0] <= 'z')) )
+			{
+				encoded = '/';
+				encoded += aPath[0];
+				encoded += ':';
+				aPath += 1;
 			}
 		}
 	}

@@ -278,12 +278,12 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 		return false;
 	}
 	
-	RtToken t, t2;
+	RtToken t;
 
 	std::vector<CRibParameter>::iterator sav;
 	std::vector<CRibParameter>::iterator iter = m_parameters.begin();
 	size_t i = 0;
-	for ( ; i < start; ++i ) {
+	for ( ; i < start || iter == m_parameters.end(); ++i ) {
 		++iter;
 	}
 	
@@ -299,16 +299,11 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 			continue;
 		}
 		
-		std::vector<CRibParameter>::iterator sav=iter;
+		std::vector<CRibParameter>::iterator sav=iter; // sav points to the token
 
-		++iter; ++i;
-		if ( !(*iter).getString(t2) ) {
-			++iter; ++i;
-			while ( !(*iter).getString(t2) ) {
-				++iter; ++i;
-			}
-		} else {
-			++iter; ++i;
+		++iter; ++i; // iter points to value
+		if ( iter != m_parameters.end() ) {
+			++iter; ++i; // iter points to next token or end
 		}
 
 		if ( t == token ) {

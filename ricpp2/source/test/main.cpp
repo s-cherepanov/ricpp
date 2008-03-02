@@ -528,7 +528,7 @@ int main(int argc, char * const argv[])
 
 //	ri.begin("|aqsis");
 
-	ri.begin(RI_NULL);
+	ri.begin("$TMP/testout.rib");
 
 	RtInt yes = 1;
 	RtInt no = 0;
@@ -536,9 +536,12 @@ int main(int argc, char * const argv[])
 
 	/// @todo Skip header (special i.e. only one header, suppress the rest) with uncached archives doesn't work correctly
 	ri.control("ribwriter", "skip-headers", &special, RI_NULL);
+	// ri.control("ribwriter", "binary-output", &yes, RI_NULL);
+	/*
 	ri.control("ribwriter", "postpone-inline-archives", &no, RI_NULL);
 	ri.control("ribwriter", "postpone-file-archives", &no, RI_NULL);
 	ri.control("ribwriter", "postpone-objects", &no, RI_NULL);
+	*/
 	/// @todo postpone-procedurals and postpone-delayed postpone-run postpone-dynamic
 	// ri.control("ribwriter", "postpone-procedurals", &yes, RI_NULL);
 	// ri.control("rib", "cache-file-archives", &yes, RI_NULL);

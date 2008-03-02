@@ -871,6 +871,8 @@ public:
 	//@{
 	virtual RtToken declare(RtToken name, RtString declaration);
 	virtual RtVoid synchronize(RtToken name);
+
+	RtVoid doSystem(RtString cmd);
 	virtual RtVoid system(RtString cmd);
 
 	virtual RtVoid control(RtToken name, RtToken token = RI_NULL, ...);

@@ -64,7 +64,7 @@ void CAttributeFloatClass::fill(RtInt n)
 	if ( n == 0 ) {
 		return;
 	}
-	for ( RtInt i = n; n < m_motionBegin-m_motionEnd; ++i ) {
+	for ( RtInt i = n; n < (RtInt)(m_motionBegin-m_motionEnd); ++i ) {
 		m_movedValue[i] = m_movedValue[i-1];
 	}
 }

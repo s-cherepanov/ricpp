@@ -180,30 +180,29 @@ public:
 	 */
 	inline CStringList(ISearchCallback *aCallback) { m_callback = aCallback; }
 
-	/** @brief Seperates a string.
+	/** @brief Separates a string.
 	 *
-	 *  Seperates a string @a str using the separator character @a separator. The seperated
+	 *  Separates a string @a str using the separator character @a separator. The separated
 	 *  strings are stored internally. Does substitution of $variable, if doSubstitute is true.
 	 *  If useEnv is true, the variables are search among the environment variables as well.
-	 *  Special chars like '$' can be mask by '\' to loose their special meaning. You can use
-	 *  double quoted parts of the string to enclose a string that contains a separator or
-	 *  single quoted parts to supress also the variable processing.
+	 *  Special chars like '$' can be mask by another '$' to loose their special meaning.
 	 *
 	 *  In pathlist also '@' is replaced by standard shader or texture location
-	 *  and '&' by the last search path, this is done by calling m_callback.
+	 *  and '&' by the last search path, this is done by calling m_callback. These
+	 *  special characters can also be mask by an '$'
 	 *  
-	 *  @param separator Character that seperates the strings, usually ':' (the RiCPP
-	 *         separator for path lists) or ' ' (to seperate parameters like in name of
-	 *         TRiCPP::begin(RtString name)). If the separator is NUL, no seperation
+	 *  @param separator Character that separates the strings, usually ':' (the RiCPP
+	 *         separator for path lists) or ' ' (to separate parameters like in name of
+	 *         TRiCPP::begin(RtString name)). If the separator is NUL, no separation
 	 *         is done, only the variables are substituted before inserting.
-	 *  @param str The string that is seperated.
+	 *  @param str The string that is separated.
 	 *  @param doSubstitute true, if variables should be substituted.
 	 *  @param useEnv true, if the environment variables should be also searched for $variables.
 	 *  @param isPathList true, to handle pathlists. For WIN32 a bit messy because rib uses ':'
 	 *         as path separator, but windows uses them as drive letter separators as well.
-	 *         ':' within files has do be substituted by '|'. Also the
-	 *         special chars @ and & are tried to be replaced by calling m_callback (if set) and
-	 *         the backslashes within variables are substituted by forward slashes.
+	 *         ':' within files has do be substituted temporarily by '|' if ':' is also the separator.
+	 *          Also the special chars @ and & are tried to be replaced by calling m_callback (if set)
+	 *         and the backslashes within variables are substituted by forward slashes.
 	 *  @return The number of strings inserted.
 	 */
 	size_type explode(
@@ -221,18 +220,10 @@ public:
 	 *
 	 *  @retval result String to store the expanded string.
 	 *  @param str The single string to expand.
-	 *  @param isPathList True, to handle a filepath (@see isPathList in explode() for details).
+	 *  @param isPath True, to handle a filepath (@see isPathList in explode() for details).
 	 *  @return The expanded string, a reference to @a result
 	 */
-	inline std::string &expand(std::string &result, const char *str, bool isPathList) {
-		explode(0, str, true, true, isPathList);
-		result.clear();
-		const_iterator first = begin();
-		if ( first != end() ) {
-			result = (*first).c_str();
-		}
-		return result;
-	}
+	std::string &expand(std::string &result, const char *str, bool isPath);
 
 	/** @brief Concatenates stringlist
 	 *

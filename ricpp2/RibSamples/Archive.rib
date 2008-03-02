@@ -196,7 +196,7 @@ ArchiveBegin "Attributes"
 	ShadingRate 1
 	ShadingInterpolation "smooth"
 	Matte 0
-	#*01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ :: Error fill buffer !
+	#*01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ
 	Bound 1 2 3 4 5 6
 	Bound [ 1 2 3 4 5 6 ]
 	Detail 1 2 3 4 5 6

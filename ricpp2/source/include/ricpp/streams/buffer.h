@@ -43,18 +43,18 @@ namespace RiCPP {
 	template<typename T_char=unsigned char>
 	class TemplBuffer {
 	public:
-		typedef size_t size_type; ///< @brief Size type for the buffer.
-		typedef T_char *iterator; ///< @brief Iterator.
-		typedef const T_char *const_iterator; ///< @brief Constant iterator.
+		typedef size_t size_type;             ///< @brief Size type for the buffer.
+		typedef T_char *iterator;             ///< @brief Iterator for the content in @c m_buffer.
+		typedef const T_char *const_iterator; ///< @brief Constant iterator for the content in @c m_buffer.
 
 	private:
-		T_char *m_buffer; ///< @brief Pointer to the buffer.
-		size_type m_size;  ///< @brief Current size of the buffer.
+		T_char *m_buffer;     ///< @brief Pointer to the buffer.
+		size_type m_size;     ///< @brief Current size of the buffer.
 		size_type m_reserved; ///< @brief Reserved size of the buffer.
 
 	public:
-		/** @brief Construct a buffer of the given size.
-		 * @param size Size of the buffer.
+		/** @brief Constructs a buffer of the given @a size.
+		 *  @param size Size of the buffer.
 		 */
 		inline TemplBuffer(size_type size=0)
 		{
@@ -65,7 +65,7 @@ namespace RiCPP {
 		}
 
 		/** @brief Copy constructor.
-		 * @param bb Buffer to copy.
+		 *  @param bb Buffer to copy.
 		 */
 		inline TemplBuffer(const TemplBuffer<T_char> &bb)
 		{
@@ -75,9 +75,7 @@ namespace RiCPP {
 			*this = bb;
 		}
 
-		/** @brief Destructor.
-		 *
-		 * Frees the memory.
+		/** @brief Destructor, frees the memory.
 		 */
 		inline ~TemplBuffer()
 		{
@@ -87,13 +85,13 @@ namespace RiCPP {
 		}
 
 		/** @brief Resize the buffer.
-		 * @param newsize New buffer size.
-		 * @exception ExceptRiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
+		 *  @param newsize New buffer size.
+		 *  @exception ExceptRiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
 		 */
 		void resize(size_type newsize);
 
 		/** @brief Gets the current size.
-		 * @return Current buffer size.
+		 *  @return Current buffer size.
 		 */
 		inline size_type size() const
 		{
@@ -102,31 +100,36 @@ namespace RiCPP {
 
 		/** @brief Assignment.
 		 *
-		 * Assigns a buffer @a bb to this object.
+		 *  Assigns a buffer @a bb to this object.
 		 *
-		 * @param bb Buffer to assign.
-		 * @return Reference of this object.
-		 * @exception ExceptRiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
+		 *  @param bb Buffer to assign.
+		 *  @return Reference of this object (*this).
+		 *  @exception ExceptRiCPPError Throws severe RIE_MEMORY if memory could not be allocated.
 		 */
 		TemplBuffer<T_char> &operator=(const TemplBuffer<T_char> &bb);
 
+		/** @brief Clears the buffer by setting it's size to 0.
+		 */
 		inline void clear()
 		{
+			/*
 			if ( !m_size )
 				return;
 			memset(m_buffer, 0, m_size*sizeof(T_char));
+			*/
+			m_size = 0;
 		}
 
 		/** @brief Gets an iterator initialized with the first element.
-		 * @return Iterator initialized with the first element.
+		 *  @return Iterator initialized with the first element.
 		 */
 		inline iterator begin()
 		{
 			return m_buffer;
 		}
 
-		/** @brief Gets an iterator pointing behind last element.
-		 * @return Iterator pointing behind last element.
+		/** @brief Gets an iterator pointing behind the last element.
+		 * @return Iterator pointing behind the last element.
 		 */
 		inline iterator end()
 		{
@@ -134,15 +137,15 @@ namespace RiCPP {
 		}
 
 		/** @brief Gets a constant iterator initialized with the first element.
-		 * @return Constant iterator initialized with the first element.
+		 *  @return Constant iterator initialized with the first element.
 		 */
 		inline const_iterator begin() const
 		{
 			return m_buffer;
 		}
 
-		/** @brief Gets a constant iterator pointing behind last element.
-		 * @return Constant iterator pointing behind last element.
+		/** @brief Gets a constant iterator pointing behind the last element.
+		 *  @return Constant iterator pointing behind the last element.
 		 */
 		inline const_iterator end() const
 		{
@@ -150,9 +153,9 @@ namespace RiCPP {
 		}
 
 		/** @brief Gets the reference to the element at positon @a pos.
-		 * @param pos position (< size()).
-		 * @return Reference of element at the position @a pos.
-		 * @exception ExceptRiCPPError Throws severe RIE_RANGE if @a pos >= size()
+		 *  @param pos position (< size()).
+		 *  @return Reference of element at the position @a pos.
+		 *  @exception ExceptRiCPPError Throws severe RIE_RANGE if @a pos >= size()
 		 */
 		T_char &operator[](size_type pos);
 	}; // TemplBuffer
@@ -182,7 +185,8 @@ namespace RiCPP {
 		if ( size && tempbuffer )
 			memcpy(tempbuffer, m_buffer, size*sizeof(T_char));
 
-		if ( m_buffer && tempbuffer) {
+		if ( m_buffer && tempbuffer ) {
+			// Delete the old buffer (new buffer is bigger)
 			m_reserved = 0;
 			m_size = 0;
 			delete[] m_buffer;
@@ -190,6 +194,7 @@ namespace RiCPP {
 		}
 
 		if ( tempbuffer ) {
+			// Set the new buffer
 			m_buffer = tempbuffer;
 			m_reserved = newsize;
 		}
@@ -204,7 +209,7 @@ namespace RiCPP {
 	{
 		if ( this == &bb )
 			return *this;
-		resize(0);
+		clear(0);
 		try {
 			resize(bb.size());
 		} catch (ExceptRiCPPError &e) {

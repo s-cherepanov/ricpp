@@ -56,12 +56,12 @@ bool CStringList::getVar(std::string &varName, char separator, bool useEnv, bool
 		return true;
 	}
 	
-	if ( useEnv && separator ) {
+	if ( useEnv ) {
 		std::string var;
 		std::string strname;
 		CEnv::find(var, varName.c_str(), false);
 		if ( isPathList )
-			CFilepathConverter::convertListToInternal(var, separator);
+			CFilepathConverter::convertToInternal(var);
 		if ( !var.empty() ) {
 			varName = var;
 			return true;
@@ -87,20 +87,13 @@ CStringList::size_type CStringList::explode(
 		return count;
 
 	const char varChar = '$';
-	const char maskChar = '\\';
-	const char singleQuote = '\'';
-	const char doubleQuote = '\"';
 	const char varBegin = '{';
 	const char varEnd = '}';
 
 	enum EState {
 		normal,
-		maskchar,
 		varchar,
-		varcharpar,
-		singlequote,
-		doublequote,
-		maskinquote
+		varcharpar
 	};
 	EState state = normal;
 
@@ -113,19 +106,26 @@ CStringList::size_type CStringList::explode(
 	std::string::iterator iter;
 	bool iterinc = true;
 
+	if ( isPathList )
+		CFilepathConverter::convertToInternal(strval);
+
 	if ( doSubstitute ) {
 		for ( iter = strval.begin(); iter != strval.end(); iterinc ? ++iter : iter ) {
 			iterinc = true;
 			switch ( state ) {
 				case normal:
-					if ( *iter == maskChar ) {
-						state = maskchar;
-						continue;
-					} else if ( *iter == singleQuote ) {
-						state = singlequote;
-					} else if ( *iter == varChar ) {
+					if ( *iter == varChar || *iter == '@' || *iter == '&' ) {
 						saviter = iter;
 						state = varchar;
+						++iter;
+						iterinc = false;
+						if ( iter == strval.end() ) {
+						} else if ( (*iter) == varChar ) {
+							std::string::difference_type d = distance(strval.begin(), saviter);
+							saviter = strval.erase(saviter, iter);
+							iter = strval.begin();
+							advance(iter, d);
+						}
 					} else if ( isPathList && (*iter == '@' || *iter == '&') ) {
 						saviter = iter;
 						varName = *iter;
@@ -144,9 +144,6 @@ CStringList::size_type CStringList::explode(
 						varName.clear();
 						iterinc = false;
 					}
-					break;
-				case maskchar:
-					state = normal;
 					break;
 				case varchar:
 					if ( *iter == varBegin ) {
@@ -198,11 +195,6 @@ CStringList::size_type CStringList::explode(
 						varName.push_back(*iter);
 					}
 					break;
-				case singlequote:
-					if ( *iter == singleQuote ) {
-						state = normal;
-					}
-					break;
 			}
 		}
 		if ( state == varchar || state == varcharpar ) {
@@ -223,63 +215,79 @@ CStringList::size_type CStringList::explode(
 
 	state = normal;
 	
-	/// @todo Win32 scan here for C/path -> C|/path and  C:/path -> C|/path (svn like in ld version, put in separate file)
-#if 0
-ifdef WIN32
-  232 	// The messy part...
-  233 	// In RIB files the seperator for pathes is unfortunatly ':'.
-  234 	// ':' can have a double meaning as seperator for drive letters
-  235 	// and seperator for pathes.
-  236 	// ':' is converted to '|', if "<letter>:/" is the prefix of a path
-  237 	// i.e. a windows path letter. Since there are no drive letters
-  238 	// in other OSes as WIN32 this is done only for WIN32 binaries
-  239 	// If RIB files have to be exchanged across OSe, drive letters
-  240 	// won't work anyway.
-  241 	// Also in windows the path seperator can be a ';', which
-  242 	// is converted to ':'
-  243 	// Also schemes can have a : as seperator, e.g. "http:/", it is
-  244 	// assumend that these schems are already given as "http|/", since
-  245 	// URLs instead of filenames are not standard RIB
-  246 	if ( isPathList && seperator == ':' ) {
-  247 		state = normal;
-  248 
-  249 		bool startpath = true;
-  250 		bool firstletter = false;
-  251 
-  252 		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
-  253 			iterinc = true;
-  254 
-  255 			if ( firstletter && *iter == ':' ) {
-  256 				saviter = iter;
-  257 				++iter;
-  258 				iterinc = false;
-  259 				if ( *iter == '/' ) {
-  260 					*saviter = '|';
-  261 				}
-  262 				firstletter = false;
-  263 				continue;
-  264 			}
-  265 
-  266 			firstletter = false;
-  267 			if ( startpath ) {
-  268 				if ( (*iter >= 'a' && *iter <= 'z') || (*iter >= 'A' && *iter <= 'Z') ) {
-  269 					firstletter = true;
-  270 					startpath = false;
-  271 					continue;
-  272 				}
-  273 			}
-  274 
-  275 			startpath = false;
-  276 			if ( *iter == ':' || *iter ==';' ) {
-  277 				startpath = true;
-  278 				// also convert a seperator ';' to ':'
-  279 				*iter = ':';
-  280 				continue;
-  281 			}
-  282 		}
-  284 	}
-endif
+//if 0
+#ifdef WIN32
+	if ( isPathList && separator == ':' ) {
+		// The messy part...
+		// Win32 scans here for C/path -> C|/path and  C:/path -> C|/path
+		// In RIB files the separator for pathes is unfortunatly ':'.
+		// ':' can have a double meaning as separator for drive letters
+		// and separator for pathes.
+		// ':' is converted to '|', if "<letter>:/" is the prefix of a path
+		// i.e. a windows path letter. Since there are no drive letters
+		// in other OSes as WIN32 this is done only for WIN32 binaries
+		// If RIB files have to be exchanged across OSe, drive letters
+		// won't work anyway.
+		// Also in windows the path separator can be a ';', which
+		// is converted to ':'
+		// Also URI schemes can have a : as separator, e.g. "http:/", it is
+		// assumend that these schems are already given as "http|/", since
+		// URIs instead of filenames are not standard RIB
+
+		state = normal;
+
+		bool startpath = true;
+		bool firstletter = false;
+
+		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
+			iterinc = true;
+
+			if ( firstletter && *iter == ':' ) {
+				// <letter>:/path -> <letter>|/path
+				saviter = iter;
+				++iter;
+				iterinc = false;
+				if ( *iter == '/' ) {
+					*saviter = '|';
+				}
+				firstletter = false;
+				continue;
+			}
+
+			if ( firstletter && *iter == '/' ) {
+				// <letter>/path -> <letter>|/path
+				std::string::difference_type d = distance(strval.begin(), iter);
+				d += 1;
+				if ( separator == ':' )
+					strval.insert(iter, 1, '|');
+				else
+					strval.insert(iter, 1, ':');
+				iter = strval.begin();
+				advance(iter, d);
+				firstletter = false;
+				continue;
+			}
+
+			firstletter = false;
+			if ( startpath ) {
+				if ( (*iter >= 'a' && *iter <= 'z') || (*iter >= 'A' && *iter <= 'Z') ) {
+					firstletter = true;
+					startpath = false;
+					continue;
+				}
+			}
+
+			startpath = false;
+			if ( *iter == ':' || *iter ==';' ) {
+				startpath = true;
+				// Also converts a separator ';' to ':'
+				*iter = ':';
+				continue;
+			}
+		}
+	}
 #endif
+//endif
 
 	for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
 		iterinc = true;
@@ -292,44 +300,9 @@ endif
 						unmaskColon(v);
 					m_stringList.push_back(v);
 					v.clear();
-					continue;
-				} else if ( *iter == maskChar ) {
-					state = maskchar;
-				} else if ( *iter == singleQuote ) {
-					state = singlequote;
-				} else if ( *iter == doubleQuote ) {
-					state = doublequote;
 				} else {
 					v.push_back(*iter);
 				}
-				break;
-			case maskchar:
-				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar && *iter != separator )
-				//	v.push_back(maskChar);
-				v.push_back(*iter);
-				state = normal;
-				break;
-			case singlequote:
-				if ( *iter == singleQuote ) {
-					state = normal;
-				} else {
-					v.push_back(*iter);
-				}
-				break;
-			case doublequote:
-				if ( *iter == maskChar ) {
-					state = maskinquote;
-				} else if ( *iter == doubleQuote ) {
-					state = normal;
-				} else {
-					v.push_back(*iter);
-				}
-				break;
-			case maskinquote:
-				// if ( *iter != singleQuote && *iter != doubleQuote && *iter != maskChar && *iter != separator )
-				//	v.push_back(maskChar);
-				v.push_back(*iter);
-				state = doublequote;
 				break;
 		}
 	}
@@ -341,6 +314,8 @@ endif
 			unmaskColon(v);
 		m_stringList.push_back(v);
 	}
+
+	// Win32: In m_stringList the pathes are <letter>:/path
 
 	return count;
 }
@@ -365,4 +340,21 @@ void CStringList::implode(char separator, std::string &str, bool isPathList)
 			str += separator;
 		}
 	}
+}
+
+std::string &CStringList::expand(std::string &result, const char *str, bool isPath) {
+	result = "";
+	if ( emptyStr(str) )
+		return result;
+	std::string tempPath = str;
+	if (isPath) {
+		CFilepathConverter::convertToInternal(tempPath);
+	}
+	explode(0, tempPath.c_str(), true, true, isPath);
+	result.clear();
+	const_iterator first = begin();
+	if ( first != end() ) {
+		result = (*first).c_str();
+	}
+	return result;
 }

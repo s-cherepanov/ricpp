@@ -333,7 +333,16 @@ RtInt CRiCPPBridge::lastError() { return m_lastError; }
 
 RtVoid CRiCPPBridge::errorHandler(const IErrorHandler &handler)
 {
-	m_curErrorHandler = &handler.singleton();
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			return m_ctxMgmt.curBackend().renderingContext()->errorHandler(handler);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+			return;
+		}
+	} else {
+		m_curErrorHandler = &handler.singleton();
+	}
 }
 
 
@@ -850,6 +859,10 @@ RtVoid CRiCPPBridge::synchronize(RtToken name)
 	}
 }
 
+RtVoid CRiCPPBridge::doSystem(RtString cmd)
+{
+}
+
 RtVoid CRiCPPBridge::system(RtString cmd)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
@@ -859,8 +872,7 @@ RtVoid CRiCPPBridge::system(RtString cmd)
 			ricppErrHandler().handleError(e);
 		}
 	} else {
-		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "system(system:%s)", cmd ? cmd : "");
+		doSystem(cmd);
 	}
 }
 

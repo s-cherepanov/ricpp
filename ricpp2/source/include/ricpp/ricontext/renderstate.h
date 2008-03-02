@@ -678,6 +678,8 @@ public:
 
 	virtual void motionBegin(RtInt N, RtFloat times[]);
     virtual void motionEnd();
+	virtual void moveArchiveBegin();
+	virtual void moveArchiveEnd();
 
 	inline virtual bool executeConditionial() const
 	{

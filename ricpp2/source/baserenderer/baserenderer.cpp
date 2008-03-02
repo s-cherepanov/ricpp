@@ -429,13 +429,16 @@ RtVoid CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArch
 		if ( m->isClosed() ) {
 			CRiMacro *msav = renderState()->curReplay();
 			renderState()->curReplay(m);
+			renderState()->moveArchiveBegin();
 			try {
 				m->replay(*this, callback);
 				renderState()->curReplay(msav);
 			} catch(...) {
 				renderState()->curReplay(msav);
+				renderState()->moveArchiveEnd();
 				throw;
 			}
+			renderState()->moveArchiveEnd();
 		} else {
 			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance %s used before it's ArchiveEnd() (self inclusion, recursion doesn't work).", handle);
 		}
@@ -452,6 +455,7 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 	long oldLineNo = renderState()->lineNo();
 
 	CRibParser parser(parserCallback, *renderState(), renderState()->baseUri());
+	renderState()->moveArchiveBegin();
 	try {
 		if ( parser.canParse(name) ) {
 			renderState()->baseUri() = parser.absUri();
@@ -482,6 +486,7 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 		renderState()->lineNo(oldLineNo);
 		parser.close();
 		renderState()->curParamList() = p;
+		renderState()->moveArchiveEnd();
 		throw e1;
 	} catch (std::exception &e2) {
 		renderState()->baseUri() = sav;
@@ -489,6 +494,7 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 		renderState()->lineNo(oldLineNo);
 		parser.close();
 		renderState()->curParamList() = p;
+		renderState()->moveArchiveEnd();
 		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
@@ -499,11 +505,13 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 		renderState()->lineNo(oldLineNo);
 		parser.close();
 		renderState()->curParamList() = p;
+		renderState()->moveArchiveEnd();
 		throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
 			"Unknown error while parsing: %s", name);
 	}
+	renderState()->moveArchiveEnd();
 }
 
 RtVoid CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
@@ -882,13 +890,16 @@ RtVoid CBaseRenderer::doObjectInstance(CRiObjectInstance &obj, RtObjectHandle ha
 		if ( m->isClosed() ) {
 			CRiMacro *msav = renderState()->curReplay();
 			renderState()->curReplay(m);
+			renderState()->moveArchiveBegin();
 			try {
 				m->replay(*this, 0);
 				renderState()->curReplay(msav);
 			} catch (...) {
 				renderState()->curReplay(msav);
+				renderState()->moveArchiveEnd();
 				throw;
 			}
+			renderState()->moveArchiveEnd();
 		} else {
 			throw ExceptRiCPPError(
 				RIE_BADHANDLE, RIE_SEVERE,

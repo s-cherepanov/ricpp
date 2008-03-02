@@ -66,6 +66,7 @@ private:
 		EnumRequests m_firstRequest;  ///< Id of the first request inside the last (current) motion block.
 		EnumRequests m_curRequest;    ///< Id of the current request inside or outside the last (current) motion block..
 		unsigned int m_curState;      ///< The state of the motion block.
+		bool m_attributesStored;      ///< Additional attribute block because of moved model instances (ReadArchive, ObjectInstance, Procedural)
 
 		CMotionStateElem();
 		~CMotionStateElem();
@@ -141,6 +142,24 @@ public:
 			return MOT_OUTSIDE;
 		}
 		return m_elems.back().m_curState;
+	}
+
+	inline bool attributesStored() const
+	{
+		assert( !m_elems.empty() );
+		if ( m_elems.empty() ) {
+			return false;
+		}
+		return m_elems.back().m_attributesStored;
+	}
+
+	inline void attributesStored(bool flag)
+	{
+		assert( !m_elems.empty() );
+		if ( m_elems.empty() ) {
+			return;
+		}
+		m_elems.back().m_attributesStored = flag;
 	}
 }; // CMotionState
 

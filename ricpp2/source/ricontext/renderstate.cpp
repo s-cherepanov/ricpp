@@ -1104,9 +1104,17 @@ CRenderState::~CRenderState()
 	deleteTransMapCont(m_globalTransforms);
 	while ( !m_optionsStack.empty() ) popOptions();
 	while ( !m_attributesStack.empty() ) popAttributes();
-	// while ( !m_motionAttributesStack.empty() ) popMotionAttributes();
+	while ( !m_motionAttributesStack.empty() ) {
+		CAttributes *a = m_motionAttributesStack.back();
+		m_attributesFactory->deleteAttributes(a);
+		m_motionAttributesStack.pop_back();
+	}
 	while ( !m_transformationStack.empty() ) popTransform();
-	// while ( !m_motionTransformationStack.empty() ) popMotionTransform();
+	while ( !m_motionTransformationStack.empty() ) {
+		CTransformation *trans = m_motionTransformationStack.back();
+		m_transformationFactory->deleteTransformation(trans);
+		m_motionTransformationStack.pop_back();
+	}
 }
 
 void CRenderState::deleteTransMapCont(TypeTransformationMap &m)
@@ -1915,10 +1923,62 @@ void CRenderState::motionEnd()
 	if ( m_motionState.curSampleIdx() < ((RtInt)m_motionState.times().size()) - 1 ) {
 		err = true;
 	}
+	if ( m_motionState.attributesStored() ) {
+		// get Attributes()
+		assert(!m_motionAttributesStack.empty() && m_motionAttributesStack.back() != 0);
+		assert(!m_motionTransformationStack.empty() && m_motionTransformationStack.back() != 0);
+
+		CTransformation *trans = m_motionTransformationStack.back();
+		m_motionTransformationStack.pop_back();
+		m_transformationFactory->deleteTransformation(m_transformationStack.back());
+		m_transformationStack.pop_back();
+		m_transformationStack.push_back(trans);
+
+		CAttributes *attr = m_motionAttributesStack.back();
+		m_motionAttributesStack.pop_back();
+		m_attributesFactory->deleteAttributes(m_attributesStack.back());
+		m_attributesStack.pop_back();
+		m_attributesStack.push_back(attr);
+	}
 	m_motionState.close();
 	attributes().motionEnd();
 	if ( err ) {
 		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_WARNING, "in motionEnd(), too few requests in motion block, last request has been duplicated.", __LINE__, __FILE__);
+	}
+}
+
+void CRenderState::moveArchiveBegin()
+{
+	if ( m_motionState.curState() == CMotionState::MOT_OUTSIDE )
+		return;
+
+	if ( m_motionState.curSampleIdx() >= 0 ) {
+		// Start and continue
+		attributeBegin();
+	} else {
+		// Error
+	}
+}
+
+void CRenderState::moveArchiveEnd()
+{
+	if ( m_motionState.curState() == CMotionState::MOT_OUTSIDE )
+		return;
+
+	if ( m_motionState.curSampleIdx() == 0 ) {
+		// Start
+
+		// Store Attibutes
+		assert(!m_attributesStack.empty() && m_attributesStack.back() != 0);
+		m_motionAttributesStack.push_back(m_attributesFactory->newAttributes(*m_attributesStack.back()));
+		m_motionTransformationStack.push_back(m_transformationFactory->newTransformation(*m_transformationStack.back()));
+		m_motionState.attributesStored(true);
+		attributeEnd();
+	} else if ( m_motionState.curSampleIdx() > 0 ) {
+		// Continue
+		attributeEnd();
+	} else {
+		// Error
 	}
 }
 

@@ -56,10 +56,10 @@ CValidModes::CValidModes()
 
 	m_requests[REQ_UNKNOWN] = nowhereBits;
 	
-	m_requests[REQ_ERROR_HANDLER] = everywhereBits;
+	m_requests[REQ_ERROR_HANDLER] = everywhereBits & ~MODE_BIT_MOTION;
 	
-	m_requests[REQ_DECLARE] = insideBits;
-	m_requests[REQ_RESOURCE] = insideBits;
+	m_requests[REQ_DECLARE] = insideBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_RESOURCE] = insideBits & ~MODE_BIT_MOTION;
 
 	m_requests[REQ_GET_CONTEXT] = everywhereBits;
 	m_requests[REQ_CONTEXT] = everywhereBits;
@@ -73,28 +73,28 @@ CValidModes::CValidModes()
 	m_requests[REQ_WORLD_BEGIN] = MODE_BIT_BEGIN | MODE_BIT_FRAME;
 	m_requests[REQ_WORLD_END] = MODE_BIT_WORLD;
 
-	m_requests[REQ_ATTRIBUTE_BEGIN] = geometryBits;
-	m_requests[REQ_ATTRIBUTE_END] = MODE_BIT_ATTRIBUTE | MODE_BIT_OBJECT;
+	m_requests[REQ_ATTRIBUTE_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_ATTRIBUTE_END] = MODE_BIT_ATTRIBUTE;
 
-	m_requests[REQ_TRANSFORM_BEGIN] = geometryBits;
-	m_requests[REQ_TRANSFORM_END] = MODE_BIT_TRANSFORM | MODE_BIT_OBJECT;
+	m_requests[REQ_TRANSFORM_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_TRANSFORM_END] = MODE_BIT_TRANSFORM;
 
-	m_requests[REQ_SOLID_BEGIN] = geometryBits;
+	m_requests[REQ_SOLID_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_SOLID_END] = MODE_BIT_SOLID;
 
-	m_requests[REQ_OBJECT_BEGIN] = insideBits & ~MODE_BIT_OBJECT;
+	m_requests[REQ_OBJECT_BEGIN] = insideBits & ~MODE_BIT_OBJECT & ~MODE_BIT_MOTION;
 	m_requests[REQ_OBJECT_END] = MODE_BIT_OBJECT;
 
-	m_requests[REQ_RESOURCE_BEGIN] = insideBits & ~MODE_BIT_RESOURCE;
+	m_requests[REQ_RESOURCE_BEGIN] = insideBits & ~MODE_BIT_RESOURCE & ~MODE_BIT_MOTION;
 	m_requests[REQ_RESOURCE_END] = MODE_BIT_RESOURCE;
 
-	m_requests[REQ_ARCHIVE_BEGIN] = insideBits;
+	m_requests[REQ_ARCHIVE_BEGIN] = insideBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_ARCHIVE_END] = MODE_BIT_ARCHIVE;
 
 	m_requests[REQ_MOTION_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_MOTION_END] = MODE_BIT_MOTION;
 	
-	m_requests[REQ_IF_BEGIN] = insideBits;
+	m_requests[REQ_IF_BEGIN] = insideBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_ELSE_IF] = MODE_BIT_IF;
 	m_requests[REQ_ELSE] = MODE_BIT_IF | MODE_BIT_ELSE_IF;
 	m_requests[REQ_IF_END] = MODE_BIT_IF | MODE_BIT_ELSE_IF | MODE_BIT_ELSE;
@@ -140,7 +140,7 @@ CValidModes::CValidModes()
 	m_requests[REQ_MATTE] = attributeBits;
 	m_requests[REQ_BOUND] = attributeBits;
 	m_requests[REQ_DETAIL] = attributeBits;
-	m_requests[REQ_DETAIL_RANGE] = attributeBits;
+	m_requests[REQ_DETAIL_RANGE] = attributeBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_GEOMETRIC_APPROXIMATION] = attributeBits;
 	m_requests[REQ_GEOMETRIC_REPRESENTATION] = attributeBits;
 	m_requests[REQ_ORIENTATION] = attributeBits;
@@ -158,10 +158,10 @@ CValidModes::CValidModes()
 	m_requests[REQ_SCALE] = transformBits;
 	m_requests[REQ_SKEW] = transformBits;
 	m_requests[REQ_DEFORMATION] = transformBits;
-	m_requests[REQ_COORDINATE_SYSTEM] = transformBits;
-	m_requests[REQ_SCOPED_COORDINATE_SYSTEM] = transformBits;
-	m_requests[REQ_COORD_SYS_TRANSFORM] = transformBits;
-	m_requests[REQ_TRANSFORM_POINTS] = transformBits;
+	m_requests[REQ_COORDINATE_SYSTEM] = transformBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_SCOPED_COORDINATE_SYSTEM] = transformBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_COORD_SYS_TRANSFORM] = transformBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_TRANSFORM_POINTS] = transformBits & ~MODE_BIT_MOTION;
 
 	m_requests[REQ_POLYGON] = geometryBits;
 	m_requests[REQ_GENERAL_POLYGON] = geometryBits;
@@ -205,10 +205,10 @@ CValidModes::CValidModes()
 	m_requests[REQ_MAKE_SHADOW] = textureBits;
 	m_requests[REQ_MAKE_BRICK_MAP] = textureBits;
 
-	m_requests[REQ_ARCHIVE_RECORD] = everywhereBits;
+	m_requests[REQ_ARCHIVE_RECORD] = everywhereBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_READ_ARCHIVE] = everywhereBits;
 	
-	m_requests[REQ_CONTROL] = everywhereBits;
+	m_requests[REQ_CONTROL] = everywhereBits & ~MODE_BIT_MOTION;
 
 	m_requests[REQ_SYSTEM] = MODE_BIT_BEGIN | MODE_BIT_FRAME;
 	m_requests[REQ_VERSION] = MODE_BIT_BEGIN;

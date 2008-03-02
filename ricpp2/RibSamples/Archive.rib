@@ -253,7 +253,7 @@ ArchiveBegin "Transforms"
 	MotionBegin [.3 .5 .7]
 		Translate 1 2 3
 		Translate [ 1 2 3 ]
-		Transform [ 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1 ]
+		Translate [ 1 2 3 ]
 	MotionEnd
 	ConcatTransform [ 1 0 0 0  0 1 0 0  0 0 1 0  0 0 0 1 ]
 	Perspective 45

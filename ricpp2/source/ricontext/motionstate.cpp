@@ -44,6 +44,7 @@ CMotionState::CMotionStateElem &CMotionState::CMotionStateElem::operator=(const 
 	m_firstRequest = elem.m_firstRequest;
 	m_curRequest = elem.m_curRequest;
 	m_curState = elem.m_curState;
+	m_attributesStored = elem.m_attributesStored;
 
 	return *this;
 }
@@ -53,6 +54,7 @@ CMotionState::CMotionStateElem::CMotionStateElem()
 	m_curSample = -1;
 	m_firstRequest = m_curRequest = REQ_UNKNOWN;
 	m_curState = MOT_OUTSIDE;
+	m_attributesStored = false;
 }
 
 CMotionState::CMotionStateElem::~CMotionStateElem()

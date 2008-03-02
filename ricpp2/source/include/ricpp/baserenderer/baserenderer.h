@@ -353,7 +353,6 @@ protected:
 	 *
 	 *  @param aRequest Data of a parsed and validated request.
 	 */
-	virtual void recordRequest(CRManInterfaceCall &aRequest);
 	virtual void recordRequest(CRManInterfaceCall *aRequest);
 
 	/** @brief Processes a request.
@@ -366,7 +365,6 @@ protected:
 	 *  @param aRequest Data of a parsed and validated request.
 	 *  @param immediatly Executes immediatly, does not store request at a macro, does nt use if/then/else state.
 	 */
-	virtual void processRequest(CRManInterfaceCall &aRequest, bool immediatly = false);
 	virtual void processRequest(CRManInterfaceCall *aRequest, bool immediatly = false);
 
 	/** @brief Replays a stored request.

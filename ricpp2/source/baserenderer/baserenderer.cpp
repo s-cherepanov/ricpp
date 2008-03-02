@@ -377,34 +377,10 @@ void CBaseRenderer::defaultDeclarations()
 	renderState()->declare(RI_HANDLEID, "string", true);
 }
 
-
-void CBaseRenderer::recordRequest(CRManInterfaceCall &aRequest)
-{
-	renderState()->curMacro()->add(aRequest.duplicate());
-}
-
-
 void CBaseRenderer::recordRequest(CRManInterfaceCall *aRequest)
 {
 	renderState()->curMacro()->add(aRequest);
 }
-
-
-void CBaseRenderer::processRequest(CRManInterfaceCall &aRequest, bool immediately)
-{
-	aRequest.preProcess(*this);
-
-	if ( !immediately && renderState()->curMacro() ) {
-		recordRequest(aRequest);
-	}
-	
-	if ( immediately || (!renderState()->recordMode() && renderState()->executeConditionial()) ) {
-		aRequest.doProcess(*this);
-	}
-
-	aRequest.postProcess(*this);
-}
-
 
 void CBaseRenderer::processRequest(CRManInterfaceCall *aRequest, bool immediately)
 {

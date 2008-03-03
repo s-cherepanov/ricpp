@@ -530,7 +530,8 @@ int main(int argc, char * const argv[])
 
 //	ri.begin("|aqsis");
 
-	ri.begin("$TMP/testout.rib");
+	// ri.begin("$TMP/testout.rib");
+	ri.begin(RI_NULL);
 
 	RtInt yes = 1;
 	RtInt no = 0;

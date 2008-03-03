@@ -162,10 +162,10 @@ void CRibElementsWriter::putRequest(EnumRequests aRequest)
 			m_reqEncoding[aRequest] =  (unsigned char)aRequest;
 			m_ostream << code << m_reqEncoding[aRequest];
 			putString(CRequestInfo::requestName(aRequest));
-		} else {
-			unsigned char code = 0246;
-			m_ostream << code << m_reqEncoding[aRequest];
+			// Also write the request hereafter
 		}
+		unsigned char code = 0246;
+		m_ostream << code << m_reqEncoding[aRequest];
 	}
 	m_notify.requestWritten(aRequest);
 }

@@ -87,8 +87,8 @@ CStringList::size_type CStringList::explode(
 		return count;
 
 	const char varChar = '$';
-	const char varBegin = '{';
-	const char varEnd = '}';
+	const char varBegin = '(';
+	const char varEnd = ')';
 
 	enum EState {
 		normal,

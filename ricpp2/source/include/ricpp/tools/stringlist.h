@@ -103,7 +103,7 @@ public:
 
 /** @brief Class used to store strings, used like a stack with a constant iterator.
  *
- *  The Strings can contain variables ($VARIABLE ${VARIABLE}), which are
+ *  The Strings can contain variables ($VARIABLE $(VARIABLE)), which are
  *  substituted before inserted. Strings can be pushed or obtained from a string
  *  list by 'exploding' a string like a search path for executables. Can also
  *  substitute environment variables like $HOME or $PROGDIR, see env.h.

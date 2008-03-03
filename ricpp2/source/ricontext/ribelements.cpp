@@ -352,18 +352,25 @@ void CRibElementsWriter::putString(RtString aString)
 			switch ( *aString ) {
 				case '\n' :
 					m_ostream << "\\n";
+					break;
 				case '\r' :
 					m_ostream << "\\r";
+					break;
 				case '\t' :
 					m_ostream << "\\t";
+					break;
 				case '\b' :
 					m_ostream << "\\b";
+					break;
 				case '\f' :
 					m_ostream << "\\f";
+					break;
 				case '\\' :
 					m_ostream << "\\\\";
-				case '\"' :
+					break;
+				case '"' :
 					m_ostream << "\\\"";
+					break;
 				default:
 					if ( *aString >= ' ' && *aString <= '~' ) {
 						m_ostream << *aString;

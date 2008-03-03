@@ -1787,7 +1787,7 @@ int CRibParser::nextToken()
 				// error \n in string
 				return handleString();
 			}
-			if ( c == '\"' ) {
+			if ( c == '"' ) {
 				// End of string
 				return handleString();
 			}

@@ -1365,7 +1365,7 @@ int CRibParser::handleBinary(unsigned char c) {
 
 		NUM2STRING::const_iterator i = m_stringMap.find(tmp);
 		if ( i != m_stringMap.end() ) {
-			m_token.assign((*i).second.c_str(), (*i).second.c_str()+(*i).second.length());
+			m_token.assign((*i).second.c_str(), (*i).second.c_str()+strlen((*i).second.c_str()));
 			return handleString();
 		}
 

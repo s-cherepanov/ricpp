@@ -1297,7 +1297,7 @@ const char *CUri::decodeFilepath(std::string &path) const
 	
 	const char *filepath = decoded.c_str();
 	
-	if ( decoded.length() > 3 ) {
+	if ( strlen(decoded.c_str()) > 3 ) {
 		// empty authority ?
 		if ( filepath[0] == '/' && filepath[1] == '/' && filepath[2] == '/' )
 			filepath += 2;
@@ -1324,7 +1324,7 @@ const char *CUri::decodeFilepath(std::string &path) const
 
 #ifdef _WIN32
 	{
-		size_t len = path.length();
+		size_t len = strlen(path.c_str());
 		while ( len > 0 ) {
 			--len;
 			if ( path[len] == '/' )

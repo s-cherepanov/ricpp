@@ -99,7 +99,7 @@ public:
 
 	inline virtual CRiDeclare *newRiDeclare(
 		long aLineNo,
-		RtToken name, 
+		RtString name, 
 		RtString declaration)
 	{
 		return new CRiDeclare(aLineNo, name, declaration);	

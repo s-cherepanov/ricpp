@@ -685,6 +685,7 @@ void CBaseRenderer::preDeclare(CRiDeclare &obj, RtToken name, RtString declarati
 
 RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
 {
+	RtToken token = RI_NULL;
 	RICPP_PREAMBLE_RET(REQ_DECLARE, RI_NULL)
 		if ( emptyStr(name) ) {
 			throw ExceptRiCPPError(
@@ -694,13 +695,13 @@ RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
 				"name is missing in declare(\"%s\", \"%s\")", markEmptyStr(name), markEmptyStr(declaration)
 			);
 		}
-		name = renderState()->tokFindCreate(name);
 		// Always process the declaration only once where it occurs
-		renderState()->declare(name, declaration, false);
+		token = renderState()->declare(name, declaration, false);
+		// Use the original name as token (maybe with blanks)
 		RICPP_PROCESS(newRiDeclare(renderState()->lineNo(), name, declaration));
 	RICPP_POSTAMBLE_RET(RI_NULL)
 
-	return name;
+	return token;
 }
 
 

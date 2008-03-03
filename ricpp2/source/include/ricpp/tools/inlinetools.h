@@ -277,6 +277,42 @@ inline const char *valToStr(char *buffer, size_t bufsize, double aDouble)
 	return buffer;
 }
 
+
+inline std::string &trimRight(std::string &aStr)
+{
+	if ( !aStr.empty() ) {
+		std::string::reverse_iterator riter = aStr.rbegin();
+		unsigned long int cnt = 0;
+		while ( riter != aStr.rend() && isspace(*riter) ) {
+			++riter;
+			++cnt;
+		}
+		if ( cnt )
+			aStr.erase(aStr.length()-cnt, aStr.length());
+	}
+	return aStr;
+}
+
+inline std::string &trimLeft(std::string &aStr)
+{
+	if ( !aStr.empty() ) {
+		std::string::iterator iter = aStr.begin();
+		unsigned long int cnt = 0;
+		while ( iter != aStr.end() && isspace(*iter) ) {
+			++iter;
+			++cnt;
+		}
+		if ( cnt )
+			aStr.erase(0, cnt);
+	}
+	return aStr;
+}
+
+inline std::string &trimBoth(std::string &aStr)
+{
+	return trimLeft(trimRight(aStr));
+}
+
 /** @brief Clambs a value the values boundmin, boundmax.
  *
  *  The bounds are exchanged if @a boundmin > @a boundmax.

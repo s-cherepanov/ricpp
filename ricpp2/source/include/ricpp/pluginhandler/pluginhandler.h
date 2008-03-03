@@ -894,7 +894,7 @@ public:
 			(*i).basename(suffix.c_str(), base);
 			if ( !base.empty() ) {
 				const char *basename = base.c_str();
-				if ( base.length() >= strlen(CFilepathConverter::nativeDynlibPrefix()) ) {
+				if ( strlen(base.c_str()) >= strlen(CFilepathConverter::nativeDynlibPrefix()) ) {
 					basename += strlen(CFilepathConverter::nativeDynlibPrefix());
 				}
 				try {

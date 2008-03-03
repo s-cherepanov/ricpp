@@ -2224,6 +2224,10 @@ void CRenderState::defaultDeclarations()
 RtToken CRenderState::declare(RtToken name, RtString declaration, bool isDefault)
 {
 	if ( !emptyStr(name) && !emptyStr(declaration) ) {
+		std::string aName = name;
+		trimBoth(aName);
+		name = aName.c_str();
+		name = tokFindCreate(name);
 
 		CDeclaration *d = new CDeclaration(name, declaration, options().colorDescr(), tokenMap(), isDefault);		
 		if ( !d )

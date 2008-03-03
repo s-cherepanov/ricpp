@@ -200,7 +200,7 @@ public:
  */
 class CRiDeclare : public CRManInterfaceCall {
 private:
-	RtToken m_name;            ///< Atomized name of the declarated variable
+	std::string m_name;        ///< Name of the declarated variable (not the token)
 	std::string m_declaration; ///< The declaration, like: varying float[3]
 public:
 	/** @brief Gets name for the class.
@@ -231,10 +231,10 @@ public:
 	 */
 	inline CRiDeclare(
 		long aLineNo = -1,
-		RtToken aName = 0, 
+		RtString aName = 0, 
 		RtString aDeclaration = 0)
 		: CRManInterfaceCall(aLineNo),
-		  m_name(aName),
+		  m_name(noNullStr(aName)),
 		  m_declaration(noNullStr(aDeclaration))
 	{}
 	
@@ -266,18 +266,18 @@ public:
 	 *
 	 *  @return Token of the name of the declaration.
 	 */
-	inline RtToken name() const
+	inline RtString name() const
 	{
-		return m_name;
+		return m_name.c_str();
 	}
 
 	/** @brief Sets the token of the name iof the declaration.
 	 *
-	 *  @param aName Token of the name of the declaration.
+	 *  @param aName The name of the declaration (not the token).
 	 */
-	inline void name(RtToken aName)
+	inline void name(RtString aName)
 	{
-		m_name = aName;
+		m_name = noNullStr(aName);
 	}
 
 	/** @brief Gets the declaration string.

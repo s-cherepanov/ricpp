@@ -147,13 +147,17 @@ bool CDeclaration::parse(const char *name, const char *decl, CTokenMap &tokenmap
 		while ( *decl && isspace(*decl) )
 			++decl;
 
-		// The name follows in inline declarations
+		// The name follows an inline declarations
 		if ( m_qualifiedName.empty() ) {
-			// inline declaration or only a typename
-			while ( *decl && !isspace(*decl) ) {
+			// inline declaration or only a typename - names can contain blanks e.g. "an option"
+			while ( *decl ) {
 				m_qualifiedName += *decl;
 				++decl;
 			}
+
+			// CBaseRenderer::declare() also strips trailing and leading blanks of names
+			trimRight(m_qualifiedName);
+			
 			// No name in an inline declaration is considered as error
 			if ( m_qualifiedName.empty() )
 				return false;

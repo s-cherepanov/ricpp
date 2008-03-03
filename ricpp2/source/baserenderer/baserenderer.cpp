@@ -459,9 +459,8 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 	try {
 		std::string filename;
 		if ( notEmptyStr(name) ) {
-			CStringList sl;
-			sl.expand(filename, name, true);
-			name = filename.c_str();
+			filename = name;
+			renderState()->varSubst(filename, '$');
 		}
 		if ( parser.canParse(name) ) {
 			renderState()->baseUri() = parser.absUri();

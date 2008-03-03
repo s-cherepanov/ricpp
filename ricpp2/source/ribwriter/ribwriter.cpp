@@ -377,9 +377,9 @@ RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList 
 	CParameterList::const_iterator  i = params.begin();
 	for ( ; i != params.end(); ++i ) {
 		const CParameter &p = (*i);
-		if ( p.token() == RI_FILE && p.strings().size() > 0 ) {
-			CStringList stringList;
-			stringList.expand(filename, p.strings()[0].c_str(), true);
+		if ( p.token() == RI_FILE && p.strings().size() > 0 && !p.strings()[0].empty() ) {
+			filename = p.strings()[0].c_str();
+			renderState()->varSubst(filename, '$');
 		}
 		if ( p.token() == RI_COMPRESS && p.ints().size() > 0 ) {
 			compress = p.ints()[0];

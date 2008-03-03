@@ -74,7 +74,7 @@ RICPP_INTERN(RtVoid) RiEnd(void)
 RICPP_INTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
 {
 	SetRoot();
-	GETARGS(name)
+	RI_GETARGS(name)
 	return RiCPPInternalBeginV(name, n, tokens, params);
 }
 
@@ -95,17 +95,17 @@ RICPP_INTERN(RtContextHandle) RiGetContext(void)
 {
 	RtContextHandle h = illContextHandle;
 	SetRoot();
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		h = RiCPPRoot()->getContext();
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 {
 	SetRoot();
-	PREAMBLE
+	RI_PREAMBLE
 	RiCPPRoot()->context(handle);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 RICPP_INTERN(RtVoid) RiControl (char *name, ...)
 {
 	SetRoot();
-	GETARGS(name)
+	RI_GETARGS(name)
 	RiCPPInternalControlV(name, n, tokens, params);
 }
 

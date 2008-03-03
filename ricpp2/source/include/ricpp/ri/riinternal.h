@@ -397,40 +397,40 @@ public:
 
 // ----------------------------------------------------------------------------
 
-/** @brief Preamble of the Ri interface routines
+/** @brief RI_PREAMBLE of the Ri interface routines
  *  
  *  Tests whether a renderer is defined.
  */
-#define PREAMBLE { \
+#define RI_PREAMBLE { \
 	if ( RiCPP::RiCPPRoot() == 0 ) { \
 		return; \
 	} \
 }
 
-/** @brief Postamble of the Ri interface routines
+/** @brief RI_POSTAMBLE of the Ri interface routines
  *  
  *  Sets the error number.
  */
-#define POSTAMBLE \
+#define RI_POSTAMBLE \
 	RiLastError = RiCPP::RiCPPRoot()->lastError();
 
-/** @brief Preamble with return outlet of the Ri interface routines
+/** @brief RI_PREAMBLE with return outlet of the Ri interface routines
  *  
- *  Like PREAMBLE, tests whether a renderer is defined.
+ *  Like RI_PREAMBLE, tests whether a renderer is defined.
  *  Can return a value @a RETVAL if test fails.
  */
-#define PREAMBLE_RET(RETVAL) { \
+#define RI_PREAMBLE_RET(RETVAL) { \
 	if ( RiCPP::RiCPPRoot() == 0 ) { \
 		return (RETVAL); \
 	} \
 }
 
-/** @brief Postamble with return outlet  of the Ri interface routines
+/** @brief RI_POSTAMBLE with return outlet  of the Ri interface routines
  *  
- *  Like POSTAMBLE, sets the error number.
+ *  Like RI_POSTAMBLE, sets the error number.
  *  Returns a value @a RETVAL
  */
-#define POSTAMBLE_RET(RETVAL) \
+#define RI_POSTAMBLE_RET(RETVAL) \
 	RiLastError = RiCPP::RiCPPRoot()->lastError(); \
 	return (RETVAL);
 
@@ -440,7 +440,7 @@ public:
  *  copy the variable, RI_NULL terminated arguments. n, tokens, params can then
  *  be used to call the appropriate Ri...V() routine.
  */
-#define GETARGS(VAR) \
+#define RI_GETARGS(VAR) \
 	RtToken *tokens = 0; \
 	RtPointer *params = 0; \
 	RtInt n = 0; \

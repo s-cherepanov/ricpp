@@ -87,7 +87,7 @@ RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 
 RICPP_INTERN(RtVoid) RiControl (char *name, ...)
 {
-	GETARGS(name)
+	RI_GETARGS(name)
 	RiCPPInternalControlV(name, n, tokens, params);
 }
 

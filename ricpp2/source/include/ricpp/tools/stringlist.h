@@ -88,17 +88,15 @@ public:
 	 * @param aPath The path to standardpath
 	 */
 	inline void standardpath(const char *aPath) { m_standardpath = noNullStr(aPath); }
-	inline virtual bool operator()(std::string &varName)
-	{
-		if ( varName == "&" ) {
-			varName = m_path;
-			return true;
-		} else if ( varName == "@" ) {
-			varName = m_standardpath;
-			return true;
-		}
-		return false;
-	}
+
+	/** Gets a value for a variable name
+	 *
+	 *  @param varName Name of the variable
+	 *  @param usedEnv Use environment variables
+	 *  @param variable is a file path or path list
+	 *  @return false, variable not found
+	 */
+	virtual bool operator()(std::string &varName);
 };
 
 /** @brief Class used to store strings, used like a stack with a constant iterator.
@@ -141,10 +139,9 @@ private:
 	 *         the found value. Is cleared if not empty.
 	 *  @param separator path separator.
 	 *  @param useEnv true, use environment variables.
-	 *  @param isPathList true, to handle pathlists.
 	 *  @return true, variable was replaced
 	 */
-	bool getVar(std::string &varName, char separator, bool useEnv, bool isPathList);
+	bool getVar(std::string &varName, char separator, bool useEnv);
 
 	/** @brief Converts all ':' to '|'
 	 *

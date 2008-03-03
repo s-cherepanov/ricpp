@@ -693,8 +693,8 @@ public:
 
 	virtual bool exists(RtString identifier) const;
 	virtual bool getValue(CValue &p, RtString identifier) const;
-	virtual bool varSubst(std::string &aStr, char varId) const;
-	virtual bool varSubst(std::string &aStr) const;
+	virtual bool varSubst(std::string &aStr, char varId, RtString stdPath=RI_NULL, RtString curPath=RI_NULL) const;
+	virtual bool varSubst(std::string &aStr, RtString stdPath=RI_NULL, RtString curPath=RI_NULL) const;
 	virtual bool eval(RtString expr) const;
 
 	/** @brief Tests if a request @a req is valid in the current mode.

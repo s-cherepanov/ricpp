@@ -110,33 +110,33 @@ RtInt RiCPPGetArgs(va_list marker, RtToken **tokens, RtPointer **params) {
 RtContextHandle RiCPPInternalBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[])
 {
 	RtContextHandle h = illContextHandle;
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		h = RiCPPRoot()->beginV(name, n, tokens, params);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RtVoid RiCPPInternalEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->end();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 RtVoid RiCPPInternalErrorHandler(RtErrorHandler handler)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->errorHandler(CErrorHandlerSlot::getSingleton(RiCPPRoot(), handler));
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RtVoid RiCPPInternalControlV(RtToken name, int n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->controlV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 
@@ -153,16 +153,16 @@ extern "C" {
 RICPP_INTERN(RtObjectHandle) RiCPPObjectBegin(RtToken name)
 {
 	RtObjectHandle h = illObjectHandle;
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		h = RiCPPRoot()->objectBegin(name);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtVoid) RiCPPObjectEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->objectEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
@@ -170,27 +170,27 @@ RICPP_INTERN(RtVoid) RiCPPObjectEnd(void)
 RICPP_INTERN(RtToken) RiDeclare (const char *name,const char *declaration)
 {
 	RtToken h = RI_NULL;
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		h = RiCPPRoot()->declare(name, declaration);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiSynchronize(RtToken type)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->synchronize(type);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiSystem(RtString cmd)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->system(cmd);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 
@@ -198,270 +198,270 @@ RICPP_INTERN(RtVoid) RiSystem(RtString cmd)
 
 RICPP_INTERN(RtVoid) RiFrameBegin(RtInt number)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->frameBegin(number);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiFrameEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 	RiCPPRoot()->frameEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiWorldBegin(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->worldBegin();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiWorldEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->worldEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiFormat(RtInt xres, RtInt yres, RtFloat aspect)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->format(xres, yres, aspect);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiFrameAspectRatio(RtFloat aspect)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->frameAspectRatio(aspect);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiScreenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->screenWindow(left, right, bot, top);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiCropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->cropWindow(xmin, xmax, ymin, ymax);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiProjection(char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->projectionV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiProjectionV(char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->projectionV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiClipping(RtFloat hither, RtFloat yon)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->clipping(hither, yon);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiClippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->clippingPlane(x, y, z, nx, ny, nz);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDepthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->depthOfField(fstop, focallength, focaldistance);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiShutter(RtFloat smin, RtFloat smax)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->shutter(smin, smax);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiPixelVariance(RtFloat variation)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->pixelVariance(variation);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPixelSamples(RtFloat xsamples, RtFloat ysamples)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->pixelSamples(xsamples, ysamples);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPixelFilter(RtFilterFunc function, RtFloat xwidth, RtFloat ywidth)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->pixelFilter(CFilterSlot::getSingleton(RiCPPRoot(), function), xwidth, ywidth);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiExposure (RtFloat gain, RtFloat gamma)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->exposure(gain, gamma);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiImager(char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->imagerV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiImagerV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->imagerV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiQuantize (RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->quantize(type, one, qmin, qmax, ampl);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDisplay (char *name, RtToken type, RtToken mode, ...)
 {
-	PREAMBLE
-		GETARGS(mode)
+	RI_PREAMBLE
+		RI_GETARGS(mode)
 		RiCPPRoot()->displayV(name, type, mode, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDisplayV (char *name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->displayV(name, type, mode, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDisplayChannel (RtToken channel, ...)
 {
-	PREAMBLE
-		GETARGS(channel)
+	RI_PREAMBLE
+		RI_GETARGS(channel)
 		RiCPPRoot()->displayChannelV(channel, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDisplayChannelV (RtToken channel,RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->displayChannelV(channel, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiHider (RtToken type, ...)
 {
-	PREAMBLE
-		GETARGS(type)
+	RI_PREAMBLE
+		RI_GETARGS(type)
 		RiCPPRoot()->hiderV(type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiHiderV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->hiderV(type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiColorSamples (RtInt N, RtFloat *nRGB, RtFloat *RGBn)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->colorSamples(N, nRGB, RGBn);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiRelativeDetail (RtFloat relativedetail)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->relativeDetail(relativedetail);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiOption (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->optionV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiOptionV(char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->optionV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiAttributeBegin (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->attributeBegin();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiAttributeEnd (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->attributeEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiColor (RtColor Cs)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->color(Cs);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiOpacity (RtColor Cs)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->opacity(Cs);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiTextureCoordinates (RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
@@ -469,285 +469,285 @@ RICPP_INTERN(RtVoid) RiTextureCoordinates (RtFloat s1, RtFloat t1, RtFloat s2, R
 RICPP_INTERN(RtLightHandle) RiLightSource (char *name, ...)
 {
 	RtLightHandle h = illLightHandle;
-	PREAMBLE_RET(h)
-		GETARGS(name)
+	RI_PREAMBLE_RET(h)
+		RI_GETARGS(name)
 		RiCPPRoot()->lightSourceV(name, n, tokens, params);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtLightHandle) RiLightSourceV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	RtLightHandle h = illLightHandle;
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		RiCPPRoot()->lightSourceV(name, n, tokens, params);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtLightHandle) RiAreaLightSource (char *name, ...)
 {
 	RtLightHandle h = illLightHandle;
-	PREAMBLE_RET(h)
-		GETARGS(name)
+	RI_PREAMBLE_RET(h)
+		RI_GETARGS(name)
 		RiCPPRoot()->areaLightSourceV(name, n, tokens, params);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtLightHandle) RiAreaLightSourceV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	RtLightHandle h = illLightHandle;
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		RiCPPRoot()->areaLightSourceV(name, n, tokens, params);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiIlluminate (RtLightHandle light, RtBoolean onoff)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->illuminate(light, onoff);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSurface (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->surfaceV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSurfaceV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->surfaceV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiAtmosphere (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->atmosphereV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiAtmosphereV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->atmosphereV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiInterior (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->interiorV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiInteriorV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->interiorV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiExterior (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->exteriorV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiExteriorV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->exteriorV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiShadingRate (RtFloat size)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->shadingRate(size);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiShadingInterpolation (RtToken type)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->shadingInterpolation(type);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMatte (RtBoolean onoff)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->matte(onoff);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiBound (RtBound bound)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->bound(bound);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDetail (RtBound bound)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->detail(bound);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDetailRange (RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->detailRange(minvis, lowtran, uptran, maxvis);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiGeometricApproximation (RtToken type, RtFloat value)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->geometricApproximation(type, value);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiGeometricRepresentation (RtToken type)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->geometricRepresentation(type);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiOrientation (RtToken orientation)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->orientation(orientation);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiReverseOrientation (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->reverseOrientation();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSides (RtInt nsides)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->sides(nsides);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiIdentity (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->identity();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiTransform (RtMatrix transform)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->transform(transform);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiConcatTransform (RtMatrix transform)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->concatTransform(transform);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPerspective (RtFloat fov)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->perspective(fov);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiTranslate (RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->translate(dx, dy, dz);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiRotate (RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->rotate(angle, dx, dy, dz);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiScale (RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->scale(dx, dy, dz);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSkew (RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDeformation (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->deformationV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDeformationV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->deformationV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDisplacement (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->displacementV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDisplacementV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->displacementV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiCoordinateSystem (RtToken space)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->coordinateSystem(space);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiCoordSysTransform (RtToken space)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->coordSysTransform(space);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
@@ -755,412 +755,412 @@ RICPP_INTERN(RtVoid) RiCoordSysTransform (RtToken space)
 RICPP_INTERN(RtPoint *) RiTransformPoints (RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint *points)
 {
 	RtPoint *p=0;
-	PREAMBLE_RET(p)
+	RI_PREAMBLE_RET(p)
 		RiCPPRoot()->transformPoints(fromspace, tospace, npoints, points);
-	POSTAMBLE_RET(p)
+	RI_POSTAMBLE_RET(p)
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiTransformBegin (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->transformBegin();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiTransformEnd (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->transformEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiAttribute (char *name, ...)
 {
-	PREAMBLE
-		GETARGS(name)
+	RI_PREAMBLE
+		RI_GETARGS(name)
 		RiCPPRoot()->attributeV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiAttributeV(char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->attributeV(name, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiPolygon (RtInt nvertices, ...)
 {
-	PREAMBLE
-		GETARGS(nvertices)
+	RI_PREAMBLE
+		RI_GETARGS(nvertices)
 		RiCPPRoot()->polygonV(nvertices, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPolygonV (RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->polygonV(nvertices, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiGeneralPolygon (RtInt nloops, RtInt *nverts, ...)
 {
-	PREAMBLE
-		GETARGS(nverts)
+	RI_PREAMBLE
+		RI_GETARGS(nverts)
 		RiCPPRoot()->generalPolygonV(nloops, nverts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiGeneralPolygonV (RtInt nloops, RtInt *nverts, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->generalPolygonV(nloops, nverts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPointsPolygons (RtInt npolys, RtInt *nverts, RtInt *verts, ...)
 {
-	PREAMBLE
-		GETARGS(verts)
+	RI_PREAMBLE
+		RI_GETARGS(verts)
 		RiCPPRoot()->pointsPolygonsV(npolys, nverts, verts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPointsPolygonsV (RtInt npolys, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->pointsPolygonsV(npolys, nverts, verts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPointsGeneralPolygons (RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, ...)
 {
-	PREAMBLE
-		GETARGS(verts)
+	RI_PREAMBLE
+		RI_GETARGS(verts)
 		RiCPPRoot()->pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPointsGeneralPolygonsV (RtInt npolys, RtInt *nloops, RtInt *nverts, RtInt *verts, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiBasis (RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->basis(ubasis, ustep, vbasis, vstep);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPatch (RtToken type, ...)
 {
-	PREAMBLE
-		GETARGS(type)
+	RI_PREAMBLE
+		RI_GETARGS(type)
 		RiCPPRoot()->patchV(type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPatchV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->patchV(type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPatchMesh (RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, ...)
 {
-	PREAMBLE
-		GETARGS(vwrap)
+	RI_PREAMBLE
+		RI_GETARGS(vwrap)
 		RiCPPRoot()->patchMeshV(type, nu, uwrap, nv, vwrap, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPatchMeshV (RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->patchMeshV(type, nu, uwrap, nv, vwrap, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiNuPatch (RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, ...)
 {
-	PREAMBLE
-		GETARGS(vmax)
+	RI_PREAMBLE
+		RI_GETARGS(vmax)
 		RiCPPRoot()->nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiNuPatchV (RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiTrimCurve (RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiSphere (RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, ...)
 {
-	PREAMBLE
-		GETARGS(thetamax)
+	RI_PREAMBLE
+		RI_GETARGS(thetamax)
 		RiCPPRoot()->sphereV(radius, zmin, zmax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSphereV (RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->sphereV(radius, zmin, zmax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiCone (RtFloat height, RtFloat radius, RtFloat thetamax, ...)
 {
-	PREAMBLE
-		GETARGS(thetamax)
+	RI_PREAMBLE
+		RI_GETARGS(thetamax)
 		RiCPPRoot()->coneV(height, radius, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiConeV (RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->coneV(height, radius, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiCylinder (RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, ...)
 {
-	PREAMBLE
-		GETARGS(thetamax)
+	RI_PREAMBLE
+		RI_GETARGS(thetamax)
 		RiCPPRoot()->cylinderV(radius, zmin, zmax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiCylinderV (RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->cylinderV(radius, zmin, zmax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiHyperboloid (RtPoint point1, RtPoint point2, RtFloat thetamax, ...)
 {
-	PREAMBLE
-		GETARGS(thetamax)
+	RI_PREAMBLE
+		RI_GETARGS(thetamax)
 		RiCPPRoot()->hyperboloidV(point1, point2, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiHyperboloidV (RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->hyperboloidV(point1, point2, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiParaboloid (RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, ...)
 {
-	PREAMBLE
-		GETARGS(thetamax)
+	RI_PREAMBLE
+		RI_GETARGS(thetamax)
 		RiCPPRoot()->paraboloidV(rmax, zmin, zmax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiParaboloidV (RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->paraboloidV(rmax, zmin, zmax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDisk (RtFloat height, RtFloat radius, RtFloat thetamax, ...)
 {
-	PREAMBLE
-		GETARGS(thetamax)
+	RI_PREAMBLE
+		RI_GETARGS(thetamax)
 		RiCPPRoot()->diskV(height, radius, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiDiskV (RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->diskV(height, radius, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiTorus (RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, ...)
 {
-	PREAMBLE
-		GETARGS(thetamax)
+	RI_PREAMBLE
+		RI_GETARGS(thetamax)
 		RiCPPRoot()->torusV(majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiTorusV (RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->torusV(majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiProcedural(RtPointer data, RtBound bound, RtVoid (*subdivfunc)(RtPointer, RtFloat), RtVoid (*freefunc)(RtPointer))
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->procedural(data, bound, CSubdivFuncSlot::getSingleton(RiCPPRoot(), subdivfunc), freefunc ? &CFreeFuncSlot::getSingleton(RiCPPRoot(), freefunc) : 0);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiGeometry (RtToken type, ...)
 {
-	PREAMBLE
-		GETARGS(type)
+	RI_PREAMBLE
+		RI_GETARGS(type)
 		RiCPPRoot()->geometryV(type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiGeometryV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->geometryV(type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiCurves (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, ...)
 {
-	PREAMBLE
-		GETARGS(wrap)
+	RI_PREAMBLE
+		RI_GETARGS(wrap)
 		RiCPPRoot()->curvesV(degree, ncurves, nverts, wrap, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiCurvesV (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->curvesV(degree, ncurves, nverts, wrap, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPoints (RtInt npts,...)
 {
-	PREAMBLE
-		GETARGS(npts)
+	RI_PREAMBLE
+		RI_GETARGS(npts)
 		RiCPPRoot()->pointsV(npts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiPointsV (RtInt npts, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->pointsV(npts, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSubdivisionMesh (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], ...)
 {
-	PREAMBLE
-		GETARGS(floatargs)
+	RI_PREAMBLE
+		RI_GETARGS(floatargs)
 		RiCPPRoot()->subdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSubdivisionMeshV (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->subdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiHierarchicalSubdivisionMesh (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], ...)
 {
-	PREAMBLE
-		GETARGS(stringargs)
+	RI_PREAMBLE
+		RI_GETARGS(stringargs)
 		RiCPPRoot()->hierarchicalSubdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiHierarchicalSubdivisionMeshV (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->hierarchicalSubdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiBlobby (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], ...)
 {
-	PREAMBLE
-		GETARGS(str)
+	RI_PREAMBLE
+		RI_GETARGS(str)
 		RiCPPRoot()->blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiBlobbyV (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiSolidBegin(RtToken type)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->solidBegin(type);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiSolidEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->solidEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtObjectHandle) RiObjectBegin (void)
 {
 	RtObjectHandle h = illObjectHandle;
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		h = RiCPPRoot()->objectBegin(0);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtVoid) RiObjectEnd (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->objectEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiObjectInstance (RtObjectHandle handle)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->objectInstance(handle);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMotionBegin (RtInt N, ...)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		if ( N == 0 ) {
 			RiCPPRoot()->motionBeginV(N, 0);
 		} else {
@@ -1180,144 +1180,144 @@ RICPP_INTERN(RtVoid) RiMotionBegin (RtInt N, ...)
 
 			RiCPPRoot()->motionBeginV(N, &times[0]);
 		}
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMotionBeginV (RtInt N, RtFloat times[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->motionBeginV(N, times);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMotionEnd (void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->motionEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiMakeTexture (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...)
 {
-	PREAMBLE
-		GETARGS(twidth)
+	RI_PREAMBLE
+		RI_GETARGS(twidth)
 		// RiCPPRoot()->makeTextureV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeTextureV (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		// RiCPPRoot()->makeTextureV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeBump (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...)
 {
-	PREAMBLE
-		GETARGS(twidth)
+	RI_PREAMBLE
+		RI_GETARGS(twidth)
 		// RiCPPRoot()->makeBumpV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeBumpV (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		// RiCPPRoot()->makeBumpV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeLatLongEnvironment (char *pic, char *tex, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...)
 {
-	PREAMBLE
-		GETARGS(twidth)
+	RI_PREAMBLE
+		RI_GETARGS(twidth)
 		// RiCPPRoot()->makeLatLongEnvironmenV(pic, tex, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeLatLongEnvironmentV (char *pic, char *tex, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		// RiCPPRoot()->makeLatLongEnvironmenV(pic, tex, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeCubeFaceEnvironment (char *px, char *nx, char *py, char *ny, char *pz, char *nz, char *tex, RtFloat fov, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...)
 {
-	PREAMBLE
-		GETARGS(twidth)
+	RI_PREAMBLE
+		RI_GETARGS(twidth)
 		// RiCPPRoot()->makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeCubeFaceEnvironmentV (char *px, char *nx, char *py, char *ny, char *pz, char *nz, char *tex, RtFloat fov, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		// RiCPPRoot()->makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeShadow (char *pic, char *tex, ...)
 {
-	PREAMBLE
-		GETARGS(tex)
+	RI_PREAMBLE
+		RI_GETARGS(tex)
 		RiCPPRoot()->makeShadowV(pic, tex, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeShadowV (char *pic, char *tex, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->makeShadowV(pic, tex, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeBrickMap (int num, char **src, char *dest, ...)
 {
-	PREAMBLE
-		GETARGS(dest)
+	RI_PREAMBLE
+		RI_GETARGS(dest)
 		RiCPPRoot()->makeBrickMapV(num, (RtString *)src, dest, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiMakeBrickMapV(int num, char **src, char *dest, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->makeBrickMapV(num, (RtString *)src, dest, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiResource(RtToken handle, RtToken type, ...)
 {
-	PREAMBLE
-		GETARGS(type)
+	RI_PREAMBLE
+		RI_GETARGS(type)
 		RiCPPRoot()->resourceV(handle, type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiResourceV(RtToken handle, RtToken type,RtInt n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->resourceV(handle, type, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiResourceBegin(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->resourceBegin();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiResourceEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->resourceEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
@@ -1325,62 +1325,62 @@ RICPP_INTERN(RtVoid) RiResourceEnd(void)
 RICPP_INTERN(RtArchiveHandle) RiArchiveBegin(RtToken name, ...)
 {
 	RtArchiveHandle h = illArchiveHandle;
-	PREAMBLE_RET(h)
-		GETARGS(name)
+	RI_PREAMBLE_RET(h)
+		RI_GETARGS(name)
 		h = RiCPPRoot()->archiveBeginV(name, n, tokens, params);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtArchiveHandle) RiArchiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	RtArchiveHandle h = illArchiveHandle;
-	PREAMBLE_RET(h)
+	RI_PREAMBLE_RET(h)
 		h = RiCPPRoot()->archiveBeginV(name, n, tokens, params);
-	POSTAMBLE_RET(h)
+	RI_POSTAMBLE_RET(h)
 }
 
 RICPP_INTERN(RtVoid) RiArchiveEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->archiveEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiIfBegin(char *expr)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->ifBegin(expr);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiElseIf(char *expr)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->elseIfBegin(expr);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiElse(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->elseBegin();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiIfEnd(void)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->ifEnd();
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiArchiveRecord (RtToken type, char *format, ...)
 {
-	PREAMBLE
+	RI_PREAMBLE
 		static const int ARCHIVE_BUF_SIZE = 512;
 		char archiveBuf[ARCHIVE_BUF_SIZE];
 		va_list argList;
@@ -1394,22 +1394,22 @@ RICPP_INTERN(RtVoid) RiArchiveRecord (RtToken type, char *format, ...)
 		archiveBuf[ARCHIVE_BUF_SIZE-1] = (char)0;
 		va_end(argList);
 		RiCPPRoot()->archiveRecordV(type, archiveBuf);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiReadArchive (RtString filename, RtArchiveCallback callback, ...)
 {
-	PREAMBLE
-		GETARGS(callback)
+	RI_PREAMBLE
+		RI_GETARGS(callback)
 		RiCPPRoot()->readArchiveV(filename, callback ? &CArchiveCallbackSlot::getSingleton(callback) : 0, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 RICPP_INTERN(RtVoid) RiReadArchiveV (RtString filename, RtArchiveCallback callback, int n, RtToken tokens[], RtPointer params[])
 {
-	PREAMBLE
+	RI_PREAMBLE
 		RiCPPRoot()->readArchiveV(filename, callback ? &CArchiveCallbackSlot::getSingleton(callback) : 0, n, tokens, params);
-	POSTAMBLE
+	RI_POSTAMBLE
 }
 
 } // extern "C"

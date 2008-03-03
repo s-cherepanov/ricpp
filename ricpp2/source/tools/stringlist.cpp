@@ -35,19 +35,36 @@
 
 using namespace RiCPP;
 
-bool CStringList::getVar(std::string &varName, char separator, bool useEnv, bool isPathList)
+
+bool CPathReplace::operator()(std::string &varName)
+{
+	if ( varName == "&" ) {
+		varName = m_path;
+		return true;
+	} else if ( varName == "@" ) {
+		varName = m_standardpath;
+		return true;
+	}
+	
+	return false;
+}
+
+bool CStringList::getVar(std::string &varName, char separator, bool useEnv)
 {
 	if ( m_callback ) {
-		if ( (*m_callback)(varName) )
+		if ( (*m_callback)(varName) ) {
 			return true;
+		}
 	}
 
 	if ( varName.size() <= 0 )
 		return false;
 
 	if ( varName.size() == 1 ) {
-		if ( varName[0] == '@' || varName[0] == '&' )
+		if ( varName[0] == '@' || varName[0] == '&' ) {
+			varName.clear();
 			return false;
+		}
 	}
 
 	if ( m_substMap.find(varName) != m_substMap.end() ) {
@@ -60,8 +77,6 @@ bool CStringList::getVar(std::string &varName, char separator, bool useEnv, bool
 		std::string var;
 		std::string strname;
 		CEnv::find(var, varName.c_str(), false);
-		if ( isPathList )
-			CFilepathConverter::convertToInternal(var);
 		if ( !var.empty() ) {
 			varName = var;
 			return true;
@@ -106,33 +121,22 @@ CStringList::size_type CStringList::explode(
 	std::string::iterator iter;
 	bool iterinc = true;
 
-	if ( isPathList )
-		CFilepathConverter::convertToInternal(strval);
-
+	/// @todo Substitution part of the renderstate maybe give frontend a state for default options and declarations
 	if ( doSubstitute ) {
 		for ( iter = strval.begin(); iter != strval.end(); iterinc ? ++iter : iter ) {
 			iterinc = true;
 			switch ( state ) {
 				case normal:
-					if ( *iter == varChar || *iter == '@' || *iter == '&' ) {
+					if ( *iter == varChar ) {
 						saviter = iter;
 						state = varchar;
-						++iter;
-						iterinc = false;
-						if ( iter == strval.end() ) {
-						} else if ( (*iter) == varChar ) {
-							std::string::difference_type d = distance(strval.begin(), saviter);
-							saviter = strval.erase(saviter, iter);
-							iter = strval.begin();
-							advance(iter, d);
-						}
 					} else if ( isPathList && (*iter == '@' || *iter == '&') ) {
 						saviter = iter;
 						varName = *iter;
 						++iter;
 
-						// replace variable
-						getVar(varName, separator, useEnv, isPathList);
+						// replace variable @ or &
+						getVar(varName, separator, useEnv);
 
 						std::string::difference_type d = distance(strval.begin(), saviter);
 						saviter = strval.erase(saviter, iter);
@@ -160,7 +164,7 @@ CStringList::size_type CStringList::explode(
 
 						if ( !varName.empty() ) {
 							// replace variable
-							getVar(varName, separator, useEnv, isPathList);
+							getVar(varName, separator, useEnv);
 
 							std::string::difference_type d = distance(strval.begin(), saviter);
 							saviter = strval.erase(saviter, iter);
@@ -180,7 +184,7 @@ CStringList::size_type CStringList::explode(
 						iter++;
 
 						// replace variable
-						getVar(varName, separator, useEnv, isPathList);
+						getVar(varName, separator, useEnv);
 
 						std::string::difference_type d = distance(strval.begin(), saviter);
 						saviter = strval.erase(saviter, iter);
@@ -199,7 +203,7 @@ CStringList::size_type CStringList::explode(
 		}
 		if ( state == varchar || state == varcharpar ) {
 			// copy from varchar replace variable
-			getVar(varName, separator, useEnv, isPathList);
+			getVar(varName, separator, useEnv);
 
 			std::string::difference_type d = distance(strval.begin(), saviter);
 			saviter = strval.erase(saviter, iter);

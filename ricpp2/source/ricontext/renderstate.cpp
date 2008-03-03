@@ -1710,55 +1710,86 @@ bool CRenderState::getControl(CValue &p, RtToken tablename, RtToken varname) con
 
 bool CRenderState::getValue(CValue &p, RtString identifier) const
 {
-	RtToken aQualifier, tablename, varname;
-	if ( emptyStr(identifier) || !devideName(identifier, &aQualifier, &tablename, &varname) )
+	if ( emptyStr(identifier) )
 		return false;
 
-	if ( !aQualifier && !tablename )
-	{
-		if ( varname == RI_FRAME ) {
-			p.set(frameNumber());
-			return true;
+	RtToken aQualifier, tablename, varname;
+	if ( devideName(identifier, &aQualifier, &tablename, &varname) ) {
+		// frame number?
+		if ( !aQualifier && !tablename )
+		{
+			if ( varname == RI_FRAME ) {
+				p.set(frameNumber());
+				return true;
+			}
+		}
+		
+		// Try attribute first, then option
+		if ( !aQualifier ) {
+			if ( getAttribute(p, tablename, varname) )
+				return true;
+			if ( getOption(p, tablename, varname) )
+				return true;
+		} else {
+			if ( aQualifier == RI_ATTRIBUTE )
+				return getAttribute(p, tablename, varname);
+			if ( aQualifier == RI_OPTION )
+				return getOption(p, tablename, varname);
 		}
 	}
 	
-	if ( !aQualifier ) {
-		if ( getAttribute(p, tablename, varname) )
-			return true;
-		if ( getOption(p, tablename, varname) )
-			return true;
-	} else {
-		if ( aQualifier == RI_ATTRIBUTE )
-			return getAttribute(p, tablename, varname);
-		if ( aQualifier == RI_OPTION )
-			return getOption(p, tablename, varname);
+	// Try environment variable
+	std::string var;
+	CEnv::find(var, identifier, false);
+	if ( !var.empty() ) {
+		p.set(var.c_str());
+		return true;
 	}
-
 	return false;
 }
 
-bool CRenderState::varSubst(std::string &aStr, char varId) const
+bool CRenderState::varSubst(std::string &aStr, char varId, RtString stdPath, RtString curPath) const
 {
 	/** @todo Rib variables (RiSPEC draft) are written like $var $table:var ${table:var} (however,
 	 * in RiSPEC variables in 'if expressions' are also given as $(calcvar) - these calculated variables are not evaluated
 	 * here).
 	 *
 	 * Expansion only if Option "rib" "string varsubst" is set to a character (e.g. "$"). Will need some changes
-	 * in future, also some in CStringList. Maybe - also move the expansion of the variable
+	 * in future, also some in CStringList (remove the substitution). Maybe - also move the expansion of the variable
 	 * from parsing to the backend, to allow the C++ binding to use variables - that will be more difficult
-	 * to implement of course. Problem: in an if expression in an Archive $Frame occurs. That is substituted
-	 * with the current frame number - different to the number of the time of instanciation (leads also to errors in
+	 * to implement of course. Problem: in an if expression in an Archive the variable $Frame occurs. $Frame is substituted
+	 * with the current frame number - being different to the number of the time of instanciation (leads also to errors in
 	 * cached file archives). However, e.g. $Frame and ${Frame} is expanded while parsing, $(Frame) in if expressions while
 	 * instanciating. Maybe will add a control to disable the evaluation of variables for the ribwriter. 
 	 * @see getValue() CStringList
 	 */
+	 
+	// No substitution?
+	if ( !varId && !stdPath && !curPath )
+		return false;
+
 	bool found = false;
 	std::string result, resval;
 	std::string varname;
 	CValue p;
 	std::string::const_iterator i = aStr.begin();
 	while ( i != aStr.end() ) {
-		if ( (*i) == varId ) {
+		if ( (*i) == '@' && stdPath ) {
+			found = true;
+			p.get(resval);
+			result += stdPath;
+			++i;
+			continue;
+		}
+		
+		if ( (*i) == '&' && curPath ) {
+			found = true;
+			result += curPath;
+			++i;
+			continue;
+		}
+		
+		if ( varId && (*i) == varId ) {
 			++i;
 			if ( i != aStr.end() ) {
 				varname = "";
@@ -1776,7 +1807,7 @@ bool CRenderState::varSubst(std::string &aStr, char varId) const
 					if ( i != aStr.end() )
 						++i;
 					varSubst(varname, varId); // recursive e.g. ${$var1$var2};
-					if ( getValue(p, varname.c_str() ) ) {
+					if ( getValue(p, varname.c_str()) ) {
 						found = true;
 						p.get(resval);
 						result += resval;
@@ -1799,7 +1830,7 @@ bool CRenderState::varSubst(std::string &aStr, char varId) const
 						varname += c;
 					}
 					// No i++
-					if ( getValue(p, varname.c_str() ) ) {
+					if ( getValue(p, varname.c_str()) ) {
 						found = true;
 						p.get(resval);
 						result += resval;
@@ -1819,17 +1850,17 @@ bool CRenderState::varSubst(std::string &aStr, char varId) const
 	return found;
 }
 
-bool CRenderState::varSubst(std::string &aStr) const
+bool CRenderState::varSubst(std::string &aStr, RtString stdPath, RtString curPath) const
 {
 	/** @todo call varSubst(std::string aStr, char varId) if option "rib" "string varsubst" is set.
 	 */
 	const CParameter *p;
 	if ( (p=options().get(RI_RIB, RI_VARSUBST)) ) {
 		if ( p->basicType() == BASICTYPE_STRING && !p->strings()[0].empty() ) {
-			return varSubst(aStr, (p->strings()[0])[0]);
+			return varSubst(aStr, (p->strings()[0])[0], stdPath, curPath);
 		}
 	}
-	return false;
+	return varSubst(aStr, 0, stdPath, curPath); // maybe stdPath, curPath have to be inserted (not done via parsing)
 }
 
 bool CRenderState::eval(RtString expr) const

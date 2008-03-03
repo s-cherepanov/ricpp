@@ -97,7 +97,7 @@ void CBackBufferFactory::addScheme(const char *scheme)
 	if ( str_scheme.empty() )
 		return;
 	std::for_each(str_scheme.begin(), str_scheme.end(), std::ptr_fun(toupper));
-	m_schemes.push(str_scheme, false, false, false);
+	m_schemes.push(str_scheme.c_str());
 }
 
 bool CBackBufferFactory::acceptsScheme(const char *scheme) const

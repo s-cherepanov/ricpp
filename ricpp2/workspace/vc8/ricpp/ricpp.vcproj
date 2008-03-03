@@ -310,6 +310,10 @@
 				RelativePath="..\..\..\source\ricpp\types.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\ricpp\varsubst.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -346,6 +350,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricpp\types.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricpp\varsubst.h"
 				>
 			</File>
 		</Filter>

@@ -29,71 +29,11 @@
 
 #include "ricpp/tools/stringlist.h"
 
-#ifndef _RICPP_TOOLS_FILEPATH_H
-#include "ricpp/tools/filepath.h"
-#endif // _RICPP_TOOLS_FILEPATH_H
-
 using namespace RiCPP;
-
-
-bool CPathReplace::operator()(std::string &varName)
-{
-	if ( varName == "&" ) {
-		varName = m_path;
-		return true;
-	} else if ( varName == "@" ) {
-		varName = m_standardpath;
-		return true;
-	}
-	
-	return false;
-}
-
-bool CStringList::getVar(std::string &varName, char separator, bool useEnv)
-{
-	if ( m_callback ) {
-		if ( (*m_callback)(varName) ) {
-			return true;
-		}
-	}
-
-	if ( varName.size() <= 0 )
-		return false;
-
-	if ( varName.size() == 1 ) {
-		if ( varName[0] == '@' || varName[0] == '&' ) {
-			varName.clear();
-			return false;
-		}
-	}
-
-	if ( m_substMap.find(varName) != m_substMap.end() ) {
-		std::string &subst = m_substMap[varName];
-		varName = subst;
-		return true;
-	}
-	
-	if ( useEnv ) {
-		std::string var;
-		std::string strname;
-		CEnv::find(var, varName.c_str(), false);
-		if ( !var.empty() ) {
-			varName = var;
-			return true;
-		} else {
-			varName.clear();
-		}
-	} else {
-		varName.clear();
-	}
-	return false;
-}
 
 CStringList::size_type CStringList::explode(
 	char separator,
 	const char *str,
-	bool doSubstitute,
-	bool useEnv,
 	bool isPathList
 )
 {
@@ -101,128 +41,15 @@ CStringList::size_type CStringList::explode(
 	if ( !str )
 		return count;
 
-	const char varChar = '$';
-	const char varBegin = '{';
-	const char varEnd = '}';
-
-	enum EState {
-		normal,
-		varchar,
-		varcharpar
-	};
-	EState state = normal;
-
 	std::string strval(str ? str : "");
 
-	std::string v("");
-	std::string varName("");
-
-	std::string::iterator saviter;
 	std::string::iterator iter;
-	bool iterinc = true;
+	bool iterinc;
 
-	/// @todo Substitution part of the renderstate maybe give frontend a state for default options and declarations
-	if ( doSubstitute ) {
-		for ( iter = strval.begin(); iter != strval.end(); iterinc ? ++iter : iter ) {
-			iterinc = true;
-			switch ( state ) {
-				case normal:
-					if ( *iter == varChar ) {
-						saviter = iter;
-						state = varchar;
-					} else if ( isPathList && (*iter == '@' || *iter == '&') ) {
-						saviter = iter;
-						varName = *iter;
-						++iter;
-
-						// replace variable @ or &
-						getVar(varName, separator, useEnv);
-
-						std::string::difference_type d = distance(strval.begin(), saviter);
-						saviter = strval.erase(saviter, iter);
-						d += varName.size();
-						strval.insert(saviter, varName.begin(), varName.end());
-						iter = strval.begin();
-						advance(iter, d);
-
-						varName.clear();
-						iterinc = false;
-					}
-					break;
-				case varchar:
-					if ( *iter == varBegin ) {
-						state = varcharpar;
-					} else if (
-						(*iter >= 'a' && *iter <= 'z') ||
-						(*iter >= 'A' && *iter <= 'Z') ||
-						(*iter >= '0' && *iter <= '9') ||
-						*iter == '_'
-					) {
-						varName.push_back(*iter);
-					} else {
-						state = normal;
-
-						if ( !varName.empty() ) {
-							// replace variable
-							getVar(varName, separator, useEnv);
-
-							std::string::difference_type d = distance(strval.begin(), saviter);
-							saviter = strval.erase(saviter, iter);
-							d += varName.size();
-							strval.insert(saviter, varName.begin(), varName.end());
-							iter = strval.begin();
-							advance(iter, d);
-
-							varName.clear();
-							iterinc = false;
-						}
-					}
-					break;
-				case varcharpar:
-					if ( *iter == varEnd ) {
-						state = normal;
-						iter++;
-
-						// replace variable
-						getVar(varName, separator, useEnv);
-
-						std::string::difference_type d = distance(strval.begin(), saviter);
-						saviter = strval.erase(saviter, iter);
-						d += varName.size();
-						strval.insert(saviter, varName.begin(), varName.end());
-						iter = strval.begin();
-						advance(iter, d);
-
-						varName.clear();
-						iterinc = false;
-					} else {
-						varName.push_back(*iter);
-					}
-					break;
-			}
-		}
-		if ( state == varchar || state == varcharpar ) {
-			// copy from varchar replace variable
-			getVar(varName, separator, useEnv);
-
-			std::string::difference_type d = distance(strval.begin(), saviter);
-			saviter = strval.erase(saviter, iter);
-			d += varName.size();
-			strval.insert(saviter, varName.begin(), varName.end());
-			// iter = strval.begin();
-			// advance(iter, d);
-
-			varName.clear();
-			// iterinc = false;
-		}
-	}
-
-	state = normal;
-	
-//if 0
 #ifdef WIN32
-	if ( isPathList && separator == ':' ) {
-		// The messy part...
+	if ( isPathList  && separator == ':' ) {
+		// Special case for windows.
+		//
 		// Win32 scans here for C/path -> C|/path and  C:/path -> C|/path
 		// In RIB files the separator for pathes is unfortunatly ':'.
 		// ':' can have a double meaning as separator for drive letters
@@ -232,17 +59,23 @@ CStringList::size_type CStringList::explode(
 		// in other OSes as WIN32 this is done only for WIN32 binaries
 		// If RIB files have to be exchanged across OSe, drive letters
 		// won't work anyway.
+		// The pipe symbol '|' is usually not part of a search path.
 		// Also in windows the path separator can be a ';', which
 		// is converted to ':'
-		// Also URI schemes can have a : as separator, e.g. "http:/", it is
-		// assumend that these schems are already given as "http|/", since
-		// URIs instead of filenames are not standard RIB
+		//
+		// Remark: If URIs should be used for pathnames, eventually.
+		// Also URI schemes have a ':' as separator, e.g. "http:", it is
+		// assumend that these schemes are already given as "http|", since
+		// URIs instead of filenames are not standard RIB.
+		//
+		// Note, the CUri has a method to convert pathes to 'file:' URIs.
 
-		state = normal;
+		std::string::iterator saviter;
 
 		bool startpath = true;
 		bool firstletter = false;
 
+		iterinc = true;
 		for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
 			iterinc = true;
 
@@ -251,14 +84,14 @@ CStringList::size_type CStringList::explode(
 				saviter = iter;
 				++iter;
 				iterinc = false;
-				if ( *iter == '/' ) {
+				if ( *iter == '/' || *iter == '\\' ) {
 					*saviter = '|';
 				}
 				firstletter = false;
 				continue;
 			}
 
-			if ( firstletter && *iter == '/' ) {
+			if ( firstletter && (*iter == '/' || *iter == '\\') ) {
 				// <letter>/path -> <letter>|/path
 				std::string::difference_type d = distance(strval.begin(), iter);
 				d += 1;
@@ -291,35 +124,34 @@ CStringList::size_type CStringList::explode(
 		}
 	}
 #endif
-//endif
 
+	iterinc = true;
+	std::string v;
 	for ( iter = strval.begin();  iter != strval.end(); iterinc ? ++iter : iter ) {
 		iterinc = true;
-		switch ( state ) {
-			case normal:
-				if ( *iter == separator ) {
-					++count;
-					// Not only Win32, unmasks also scheme (e.g. 'http|' -> 'http:')
-					if ( isPathList && separator == ':' )
-						unmaskColon(v);
-					m_stringList.push_back(v);
-					v.clear();
-				} else {
-					v.push_back(*iter);
-				}
-				break;
+		if ( *iter == separator ) {
+			++count;
+			// Not only Win32, unmasks also scheme (e.g. 'http:' could be written as 'http|' )
+			// The pipe symbol is usually not part of a search path
+			if ( isPathList && separator == ':' )
+				unmaskColon(v);
+			m_stringList.push_back(v);
+			v.clear();
+		} else {
+			v.push_back(*iter);
 		}
 	}
 	
 	if ( v.size() > 0 ) {
 		++count;
-		// Not only Win32, unmasks also scheme (e.g. 'http|' -> 'http:')
+		// Not only Win32, unmasks also scheme (e.g. 'http:' could be written as 'http|' )
+		// The pipe symbol is usually not part of a search path
 		if ( isPathList && separator == ':' )
 			unmaskColon(v);
 		m_stringList.push_back(v);
 	}
 
-	// Win32: In m_stringList the pathes are <letter>:/path
+	// Win32: In m_stringList the pathes are again <letter>:/path
 
 	return count;
 }
@@ -344,21 +176,4 @@ void CStringList::implode(char separator, std::string &str, bool isPathList)
 			str += separator;
 		}
 	}
-}
-
-std::string &CStringList::expand(std::string &result, const char *str, bool isPath) {
-	result = "";
-	if ( emptyStr(str) )
-		return result;
-	std::string tempPath = str;
-	if (isPath) {
-		CFilepathConverter::convertToInternal(tempPath);
-	}
-	explode(0, tempPath.c_str(), true, true, isPath);
-	result.clear();
-	const_iterator first = begin();
-	if ( first != end() ) {
-		result = (*first).c_str();
-	}
-	return result;
 }

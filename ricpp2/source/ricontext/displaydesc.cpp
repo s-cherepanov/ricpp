@@ -166,7 +166,7 @@ void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, 
 	m_channels.clear();
 
 	m_channelNames.clear();
-	m_channelNames.explode(',', aMode, false, false, false);
+	m_channelNames.explode(',', aMode, false);
 	for ( CStringList::const_iterator iter = m_channelNames.begin();
 	      iter != m_channelNames.end();
 	      ++iter )

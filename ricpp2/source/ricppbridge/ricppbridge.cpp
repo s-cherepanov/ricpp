@@ -417,9 +417,8 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 	// Start the new context
 	if ( n==0 && (name && *name) ) {
 		// Test name for rib filename or pipe - if found call ribwriter
-		CStringList stringList;
-		std::string filename;
-		stringList.expand(filename, name, true); // Only one string, replace environment variables
+		std::string filename = name;
+		RiCPP::varSubst(filename);
 
 		const char *ptr = filename.c_str();
 		if ( ptr && ptr[0] == '|' ) {
@@ -1301,26 +1300,18 @@ RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointe
 		if ( n < 1 )
 			return;
 
-		CStringList sl(&m_pathReplace);
 		std::string s;
 		int i;
 		for ( i = 0; i<n; ++i) {
 			if ( !strcmp(tokens[i], "renderer") ) {
-				m_pathReplace.path(m_ctxMgmt.searchpath());
-				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
-				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
+				s = noNullStr((const char *)params[i]);
+				RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
 				m_ctxMgmt.searchpath(s.c_str());
 			} else if ( !strcmp(tokens[i], "ribfilter") ) {
-				m_pathReplace.path(m_ribFilterList.searchpath());
-				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
-				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
+				s = noNullStr((const char *)params[i]);
+				RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
 				m_ribFilterList.searchpath(s.c_str());
 			}
-			sl.clear();
-			m_pathReplace.path("");
-			m_pathReplace.standardpath("");
 		}
 	}
 
@@ -1329,27 +1320,18 @@ RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointe
 		if ( n < 1 )
 			return;
 
-		CStringList sl(&m_pathReplace);
 		std::string s;
 		int i;
 		for ( i = 0; i<n; ++i) {
 			if ( !strcmp(tokens[i], "renderer") ) {
-				m_pathReplace.path(m_ctxMgmt.searchpath());
-				m_pathReplace.standardpath(m_standardPathRenderer.c_str());
-				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
-				m_standardPathRenderer = noNullStr(s.c_str());
+				s = noNullStr((const char *)params[i]);
+				m_standardPathRenderer =
+					RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
 			} else if ( !strcmp(tokens[i], "ribfilter") ) {
-				m_pathReplace.path(m_ribFilterList.searchpath());
-				m_pathReplace.standardpath(m_standardPathRibFilter.c_str());
-				m_pathReplace.path(m_ribFilterList.searchpath());
-				sl.explode(CFilepathConverter::internalPathlistSeparator(), (const char *)params[i], true, true, true);
-				sl.implode(CFilepathConverter::internalPathlistSeparator(), s, true);
-				m_standardPathRibFilter = noNullStr(s.c_str());
+				s = noNullStr((const char *)params[i]);
+				m_standardPathRibFilter =
+					RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
 			}
-			sl.clear();
-			m_pathReplace.path("");
-			m_pathReplace.standardpath("");
 		}
 	}
 }

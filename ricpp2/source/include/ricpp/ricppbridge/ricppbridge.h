@@ -690,11 +690,6 @@ protected:
 	 */
 	virtual RtVoid doDeclare(RtToken name, RtString declaration);
 
-	/** @brief Helper object to get standard pathes
-	 *  @see doControl()
-	 */
-	CPathReplace m_pathReplace;
-	
 	/** @brief Standard path for Rib filters
 	 *  
 	 *  Set in Constructor by Option "standardpath" "ribfilter" "path"

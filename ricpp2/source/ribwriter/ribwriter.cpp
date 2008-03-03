@@ -33,6 +33,10 @@
 #include "ricpp/ricontext/rimacro.h"
 #endif // _RICPP_RICONTEXT_RIMACRO_H
 
+#ifndef _RICPP_TOOLS_ENV_H
+#include "ricpp/tools/env.h"
+#endif // _RICPP_TOOLS_ENV_H
+
 /* To translate (cache rib archive is part of baserenderer)
 
 postpone: ObjectInstance, ReadArchive, Procedural - Befehl ausgeben statt ausführen, wenn

@@ -41,10 +41,8 @@
 using namespace RiCPP;
 
 CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
-	: m_useCount(0), m_version(version), m_libname(libname)
+	: m_useCount(0), m_version(version), m_libname(libname), m_searchpath(':', searchpath, true), m_libpath("")
 {
-	m_libpath.clear();
-	m_searchpath.explode(CFilepathConverter::internalPathlistSeparator(), searchpath, false, false, true);
 }
 
 unsigned long CDynLib::useCount() const

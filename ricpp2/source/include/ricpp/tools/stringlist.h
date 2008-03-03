@@ -29,82 +29,21 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Declaration of the string list class
  */
-
-#ifndef _RICPP_TOOLS_ENV_H
-#include "ricpp/tools/env.h"
-#endif _RICPP_TOOLS_ENV_H
-
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
 #include <list>
-#include <map>
 #include <algorithm>
 
 namespace RiCPP {
 
-/** @brief Interface for variable substitution.
- */
-class ISearchCallback
-{
-public:
-	/** @brief Searches for a variable varName and returns the value found
-	 *  in @a varName.
-	 *  @retval varName (input/output) variable name to search for, also used return
-	 *         the found value. Is not cleared if not found.
-	 *  @return true, if found
-	 */
-	virtual bool operator()(std::string &varName) = 0;
-	inline virtual ~ISearchCallback() {}
-}; // ISearchCallback
-
-/** @brief Replacement for variables.
- *
- * In this case only '&' is replaced by the last variable of a given type
- * And @ by the standardpath.
- * @see http://accad.osu.edu/~smay/RManNotes/prman_config.html#searchpaths
- */
-class CPathReplace : public ISearchCallback {
-	std::string m_path; ///< Path used to replace
-	std::string m_standardpath; ///< Standard-Path used to replace
-public:
-	/** Standard constructor
-	 */
-	inline CPathReplace() {}
-	/** Get the path
-	 * @return The current path
-	 */
-	inline const char *path() const { return m_path.c_str(); }
-	/** Set the path
-	 * @param aPath The path to set
-	 */
-	inline void path(const char *aPath) { m_path = noNullStr(aPath); }
-	/** Get the standardpath
-	 * @return The current standardpath
-	 */
-	inline const char *standardpath() const { return m_standardpath.c_str(); }
-	/** Set the standardpath
-	 * @param aPath The path to standardpath
-	 */
-	inline void standardpath(const char *aPath) { m_standardpath = noNullStr(aPath); }
-
-	/** Gets a value for a variable name
-	 *
-	 *  @param varName Name of the variable
-	 *  @param usedEnv Use environment variables
-	 *  @param variable is a file path or path list
-	 *  @return false, variable not found
-	 */
-	virtual bool operator()(std::string &varName);
-};
-
 /** @brief Class used to store strings, used like a stack with a constant iterator.
  *
- *  The Strings can contain variables ($VARIABLE $(VARIABLE)), which are
- *  substituted before inserted. Strings can be pushed or obtained from a string
- *  list by 'exploding' a string like a search path for executables. Can also
- *  substitute environment variables like $HOME or $PROGDIR, see env.h.
+ *  Strings can be pushed or obtained from a string
+ *  list by 'exploding' a string like a search path for executables.
+ *
+ *  For substitution of variables see RiCPP::varSubst()
  */
 class CStringList {
 public:
@@ -116,32 +55,9 @@ public:
 	typedef std::list<std::string>::size_type size_type;
 
 private:
-	/** @brief Search callback for variable and @, & substitution
-	 */
-	ISearchCallback *m_callback;
-
 	/** @brief The strings are stored in a std::list.
 	 */
 	std::list<std::string> m_stringList;
-	/** @brief A map to substitute environment variables, stores name as key and the substitute.
-	 */
-	std::map<std::string, std::string> m_substMap;
-
-	/** @brief Searches a variable varName. 
-	 *
-	 * -# via @a m_callback (also @ and & als variable names, see explode())
-	 * -# in @a m_substMap
-	 * -# in shell environment (if useEnv is set)
-	 *
-	 *  and returns the found value in @a varName.
-	 *
-	 *  @retval varName (input/output) variable name to search for, also used return
-	 *         the found value. Is cleared if not empty.
-	 *  @param separator path separator.
-	 *  @param useEnv true, use environment variables.
-	 *  @return true, variable was replaced
-	 */
-	bool getVar(std::string &varName, char separator, bool useEnv);
 
 	/** @brief Converts all ':' to '|'
 	 *
@@ -162,65 +78,36 @@ private:
 	{
 		std::for_each(str.begin(), str.end(), std::ptr_fun(RiCPP::unmaskColon));
 	}
+
 public:
 	/** @brief Standard constructor
 	 *
 	 * No search callback.
 	 */
-	inline CStringList() { m_callback = 0; }
-
-	/** @brief Standard constructor
-	 *
-	 * With search callback.
-	 *
-	 * @param aCallback Callback for variable and @, & substitution
-	 */
-	inline CStringList(ISearchCallback *aCallback) { m_callback = aCallback; }
+	inline CStringList() {  }
+	inline CStringList(char separator, const char *str,	bool isPathList)
+	{
+		explode(separator, str, isPathList);
+	}
 
 	/** @brief Separates a string.
 	 *
 	 *  Separates a string @a str using the separator character @a separator. The separated
-	 *  strings are stored internally. Does substitution of $variable, if doSubstitute is true.
-	 *  If useEnv is true, the variables are search among the environment variables as well.
-	 *  Special chars like '$' can be mask by another '$' to loose their special meaning.
-	 *
-	 *  In pathlist also '@' is replaced by standard shader or texture location
-	 *  and '&' by the last search path, this is done by calling m_callback. These
-	 *  special characters can also be mask by an '$'
+	 *  strings are stored internally.
 	 *  
 	 *  @param separator Character that separates the strings, usually ':' (the RiCPP
 	 *         separator for path lists) or ' ' (to separate parameters like in name of
 	 *         TRiCPP::begin(RtString name)). If the separator is NUL, no separation
 	 *         is done, only the variables are substituted before inserting.
-	 *  @param str The string that is separated.
-	 *  @param doSubstitute true, if variables should be substituted.
-	 *  @param useEnv true, if the environment variables should be also searched for $variables.
+	 *  @param str The string that will be separated.
 	 *  @param isPathList true, to handle pathlists. For WIN32 a bit messy because rib uses ':'
 	 *         as path separator, but windows uses them as drive letter separators as well.
-	 *         ':' within files has do be substituted temporarily by '|' if ':' is also the separator.
-	 *          Also the special chars @ and & are tried to be replaced by calling m_callback (if set)
-	 *         and the backslashes within variables are substituted by forward slashes.
+	 *         For under Win32 the String is scanned from left to right to find pathes
+	 *         like C:\path or c/path, ... so C:/test:. will explode to be C:/test and .
+	 *         Disadvantage: Directorynames A, B, C, .... at the beginning of a path are not possible.
 	 *  @return The number of strings inserted.
 	 */
-	size_type explode(
-		char separator,
-		const char *str,
-		bool doSubstitute,
-		bool useEnv,
-		bool isPathList
-		);
-
-	/** @brief Expands the variables within a single string, @see explode().
-	 *
-	 *  @a str is a single string, e.g. a single filepath with variables like $TMP.
-	 *  For string lists (like file path list $PATH) explode() can be used.
-	 *
-	 *  @retval result String to store the expanded string.
-	 *  @param str The single string to expand.
-	 *  @param isPath True, to handle a filepath (@see isPathList in explode() for details).
-	 *  @return The expanded string, a reference to @a result
-	 */
-	std::string &expand(std::string &result, const char *str, bool isPath);
+	size_type explode(char separator, const char *str, bool isPathList);
 
 	/** @brief Concatenates stringlist
 	 *
@@ -236,30 +123,13 @@ public:
 		bool isPathList
 	);
 
-	/** @brief Pushes a string to the stored strings. Variables are substituted.
-	 *  @param str A copy of the NUL terminated string is stored.
-	 *  @param useEnv true if the environment variables of the system should
-	 *         also be used a variables
-	 *  @param doSubstitute true, if variables should be substituted.
-	 *  @param isPathList true, for handling pathlists.
-	 *  @see explode()
-	 */
-	inline void push(const char *str, bool doSubstitute, bool useEnv, bool isPathList)
-	{
-		explode(0, str, doSubstitute, useEnv, isPathList);
-	}
-
 	/** @brief Pushes a string to the stored strings.
-	 *  @param v A copy of the string is stored.
-	 *  @param useEnv true if the environment variables of the system should
-	 *         also be used a variables
-	 *  @param doSubstitute true, if variables should be substituted.
-	 *  @param isPathList true, for handling pathlists.
-	 *  @see explode()
+	 *
+	 *  @param str A copy of the NUL terminated string is stored.
 	 */
-	inline void push(const std::string &v, bool doSubstitute, bool useEnv, bool isPathList)
+	inline void push(const char *str)
 	{
-		explode(0, v.c_str(), doSubstitute, useEnv, isPathList);
+		m_stringList.push_back(noNullStr(str));
 	}
 
 	/** @brief Removes the last inserted string.
@@ -302,40 +172,6 @@ public:
 		return m_stringList.size();
 	}
 
-	/** @brief Adds a substitute for a variable.
-	 * 
-	 *  A variable @a strvar that can occur inside the strings 
-	 *  will be replaced with @a strsubst before stored.
-	 *
-	 * @param strvar The name of the variable. E.g. $MYVAR is the variable, @a strvar is "MYVAR"
-	 * @param strsubst The string that is used as substitute for the variable.
-	 */
-	inline void addSubst(const char *strvar, const char *strsubst)
-	{
-		std::string var(strvar ? strvar : "");
-		std::string subst(strsubst ? strsubst : "");
-		m_substMap[var] = subst;
-	}
-
-	/** @brief Removes a substitute for a variable.
-	 *
-	 * @param strvar The name of the variable.
-	 */
-	inline void removeSubst(const char *strvar)
-	{
-		std::string var(strvar ? strvar : "");
-		if ( m_substMap.find(var) != m_substMap.end() ) {
-			m_substMap.erase(var);
-		}
-	}
-
-	/** @brief Removes all variables.
-	 */
-	inline void clearSubst()
-	{
-		m_substMap.clear();
-	}
-
 	/** @brief Removes all strings.
 	 */
 	inline void clear()
@@ -343,28 +179,12 @@ public:
 		m_stringList.clear();
 	}
 
-	/** @brief Find out if no strings are stored
+	/** @brief Is the stringlist empty?
 	 *  @return true, if there are no stored strings (also size() == 0).
 	 */
 	inline bool empty() const
 	{
 		return m_stringList.empty();
-	}
-
-	/** @brief Gets the current callback
-	 * @return Callback for variable and @, & substitution
-	 */
-	inline ISearchCallback *callback() const
-	{
-		return m_callback;
-	}
-
-	/** @brief Removes all strings.
-	 * @param aCallback Callback for variable and @, & substitution
-	 */
-	inline void callback(ISearchCallback *aCallback)
-	{
-		m_callback = aCallback;
 	}
 
 	/** @brief Checks if a string is in the string list.

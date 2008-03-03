@@ -38,6 +38,10 @@
 #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
 
+#ifndef _RICPP_TOOLS_ENV_H
+#include "ricpp/tools/env.h"
+#endif // _RICPP_TOOLS_ENV_H
+
 using namespace RiCPP;
 
 RtToken CProcDelayedReadArchive::myName() {return RI_DELAYED_READ_ARCHIVE; }

@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/ricppbridge/ricppbridge.h"
+#include "ricpp/tools/env.h"
 
 // #include <iostream>
 
@@ -413,13 +414,14 @@ void sometests(CRiCPPBridge ri)
 	}
 
 #ifdef _WIN32
-	CStringList testpath;
-	testpath.explode(':', "$HOME:C|/testdir:C:Anothertest:C|/test;.:$PROGDIR:$PATH", true, true, true);
+	std::string pathlist("$HOME:C|/testdir:C:Anothertest:C|/test;.:$PROGDIR:$PATH");
+	varSubst(pathlist);
+	CStringList testpath(':', pathlist.c_str(), true);
 
 	std::string teststr;
 	testpath.implode(':', teststr, true);
 	testpath.clear();
-	testpath.explode(':', teststr.c_str(), false, false, true);
+	testpath.explode(':', teststr.c_str(), true);
 #endif
 
 	testGlob();

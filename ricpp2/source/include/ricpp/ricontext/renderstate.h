@@ -66,6 +66,11 @@
 #include "ricpp/ricontext/rimacroclasses.h"
 #endif // _RICPP_RICONTEXT_RIMACROCLASSES_H
 
+#ifndef _RICPP_RICPP_VARSUBST_H
+#include "ricpp/ricpp/varsubst.h"
+#endif // _RICPP_RICPP_VARSUBST_H
+
+
 namespace RiCPP {
 
 /** @brief The facade for the render state objects.
@@ -74,7 +79,7 @@ namespace RiCPP {
  *
  * @todo Remove STL from public interfaces of shared libraries (@see Creating Compatible Libraries in Apples C++ Runtime Environment Programming Guide)
  */
-class CRenderState {
+	class CRenderState : public IVarSubstCallback {
 	typedef std::map<RtToken, CTransformation*> TypeTransformationMap;
 
 	CModeStack *m_modeStack;                       ///< Pointer to the mode stack, has to be set
@@ -693,8 +698,8 @@ public:
 
 	virtual bool exists(RtString identifier) const;
 	virtual bool getValue(CValue &p, RtString identifier) const;
-	virtual bool varSubst(std::string &aStr, char varId, RtString stdPath=RI_NULL, RtString curPath=RI_NULL) const;
-	virtual bool varSubst(std::string &aStr, RtString stdPath=RI_NULL, RtString curPath=RI_NULL) const;
+	virtual std::string &varSubst(std::string &aStr, char varId, RtString stdPath=RI_NULL, RtString curPath=RI_NULL) const;
+	virtual std::string &varSubst(std::string &aStr, RtString stdPath=RI_NULL, RtString curPath=RI_NULL) const;
 	virtual bool eval(RtString expr) const;
 
 	/** @brief Tests if a request @a req is valid in the current mode.

@@ -369,22 +369,30 @@ bool CRenderState::CIfExprParser::calcvar(
 	const unsigned char *sav = *str;
 	std::string retval;
 
-	if ( match("$(", str, retval) ) {
+	bool case1 = false;
+	bool case2 = match("$(", str, retval);
+	if ( !case2 )
+		case1 = match("${", str, retval); // However, these are already avaluated while parsing
+		
+	assert( !(case1 && case2) );
+	
+	if ( case1 || case2 ) {
 		wss(str, retval);
 		if ( expr(str, retval, val) ) {
 			wss(str, retval);
-			if ( match(")", str, retval) ) {
+			if ( case1 ? match("}", str, retval) : match(")", str, retval) ) {
 				std::string strname;
 				val.get(strname);
-				result += retval;
 				if ( m_outer->getValue(val, strname.c_str()) ) {
+					result += retval;
 					return true;
 				}
-				// throw error: value strname not found
+				// error: value strname not found
+				*str = sav;
 				return false;
 			}
 		}
-	}
+	} else 
 
 	*str = sav;
 	return false;
@@ -405,15 +413,37 @@ bool CRenderState::CIfExprParser::var(
 	if ( match("$", str, strname) ) {
 		strname = "";
 		if ( name(str, strname) ) {
-			result += "$";
-			result += strname;
 			if ( m_outer->getValue(val, strname.c_str()) ) {
+				result += "$";
+				result += strname;
 				return true;
 			}
-			// throw error: value strname not found
+			// error: value strname not found
+			*str = sav;
 			return false;
 		}
-	}
+	} /* else if ( match("${", str, strname) ) {
+	    // nonrecursive
+		strname = "";
+		unsigned char c;
+		while ( (c = la(str)) != '}' ) {
+			if ( !c ) {
+				// error variable name not closed
+				*str = sav;
+				return false;
+			}
+			advance(str, strname, 1);
+		}
+		if ( m_outer->getValue(val, strname.c_str()) ) {
+			result += "${";
+			result += strname;
+			advance(str, result, 1); // '}'
+			return true;
+		}
+		// error: value strname not found
+		*str = sav;
+		return false;
+	} */
 
 	*str = sav;
 	return false;
@@ -1710,15 +1740,16 @@ bool CRenderState::getValue(CValue &p, RtString identifier) const
 bool CRenderState::varSubst(std::string &aStr, char varId) const
 {
 	/** @todo Rib variables (RiSPEC draft) are written like $var $table:var ${table:var} (however,
-	 * in RiSPEC draft variables in if expressions are given differently as $(table:var) -
-	 * that's maybe on purpose see $Frame below).
+	 * in RiSPEC variables in 'if expressions' are also given as $(calcvar) - these calculated variables are not evaluated
+	 * here).
+	 *
 	 * Expansion only if Option "rib" "string varsubst" is set to a character (e.g. "$"). Will need some changes
 	 * in future, also some in CStringList. Maybe - also move the expansion of the variable
 	 * from parsing to the backend, to allow the C++ binding to use variables - that will be more difficult
 	 * to implement of course. Problem: in an if expression in an Archive $Frame occurs. That is substituted
 	 * with the current frame number - different to the number of the time of instanciation (leads also to errors in
-	 * cached file archives). However, e.g. $Frame and ${Frame} is expanded while parsing, $(Frame) while instanciating,
-	 * that would solve the problems.
+	 * cached file archives). However, e.g. $Frame and ${Frame} is expanded while parsing, $(Frame) in if expressions while
+	 * instanciating. Maybe will add a control to disable the evaluation of variables for the ribwriter. 
 	 * @see getValue() CStringList
 	 */
 	bool found = false;

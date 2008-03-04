@@ -433,12 +433,12 @@
 
 /* Begin PBXFileReference section */
 		C3003D300C1D63C4004C4EF0 /* ricpperror.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ricpperror.cpp; path = ../../../source/ricpp/ricpperror.cpp; sourceTree = SOURCE_ROOT; };
-		C3003D340C1D63FF004C4EF0 /* ricpperror.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricpperror.h; path = ../../../source/include/ricpp/ricpp/ricpperror.h; sourceTree = SOURCE_ROOT; };
-		C3003D420C1D6458004C4EF0 /* buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = buffer.h; path = ../../../source/include/ricpp/streams/buffer.h; sourceTree = SOURCE_ROOT; };
-		C3003D450C1D6458004C4EF0 /* uri.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = uri.h; path = ../../../source/include/ricpp/streams/uri.h; sourceTree = SOURCE_ROOT; };
+		C3003D340C1D63FF004C4EF0 /* ricpperror.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricpperror.h; path = ../../../source/include/ricpp/ricpp/ricpperror.h; sourceTree = SOURCE_ROOT; };
+		C3003D420C1D6458004C4EF0 /* buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = buffer.h; path = ../../../source/include/ricpp/streams/buffer.h; sourceTree = SOURCE_ROOT; };
+		C3003D450C1D6458004C4EF0 /* uri.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = uri.h; path = ../../../source/include/ricpp/streams/uri.h; sourceTree = SOURCE_ROOT; };
 		C3003D7B0C1D6CF9004C4EF0 /* tokenmap.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = tokenmap.cpp; path = ../../../source/declaration/tokenmap.cpp; sourceTree = SOURCE_ROOT; };
-		C3003D7E0C1D6D21004C4EF0 /* tokenmap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = tokenmap.h; path = ../../../source/include/ricpp/declaration/tokenmap.h; sourceTree = SOURCE_ROOT; };
-		C3185B700D7D3312001784AB /* varsubst.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = varsubst.h; path = ../../../source/include/ricpp/ricpp/varsubst.h; sourceTree = SOURCE_ROOT; };
+		C3003D7E0C1D6D21004C4EF0 /* tokenmap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = tokenmap.h; path = ../../../source/include/ricpp/declaration/tokenmap.h; sourceTree = SOURCE_ROOT; };
+		C3185B700D7D3312001784AB /* varsubst.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = varsubst.h; path = ../../../source/include/ricpp/ricpp/varsubst.h; sourceTree = SOURCE_ROOT; };
 		C3185B720D7D3451001784AB /* varsubst.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = varsubst.cpp; path = ../../../source/ricpp/varsubst.cpp; sourceTree = SOURCE_ROOT; };
 		C31C22460D740489009D99C2 /* libriprog.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libriprog.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C31C22B70D740F03009D99C2 /* testribind */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testribind; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -447,27 +447,27 @@
 		C32B8B0E0D7451C70059B201 /* libri.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libri.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32B8B390D74546A0059B201 /* libribase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libribase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C33118220BEB10B30084F992 /* stringlist.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = stringlist.cpp; path = ../../../source/tools/stringlist.cpp; sourceTree = SOURCE_ROOT; };
-		C337F2850C460AA100E174B0 /* templatefuncs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = templatefuncs.h; path = ../../../source/include/ricpp/tools/templatefuncs.h; sourceTree = SOURCE_ROOT; };
-		C33939BA0CDE14AF001BBED7 /* stringpattern.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = stringpattern.h; path = ../../../source/include/ricpp/tools/stringpattern.h; sourceTree = SOURCE_ROOT; };
+		C337F2850C460AA100E174B0 /* templatefuncs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = templatefuncs.h; path = ../../../source/include/ricpp/tools/templatefuncs.h; sourceTree = SOURCE_ROOT; };
+		C33939BA0CDE14AF001BBED7 /* stringpattern.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = stringpattern.h; path = ../../../source/include/ricpp/tools/stringpattern.h; sourceTree = SOURCE_ROOT; };
 		C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = stringpattern.cpp; path = ../../../source/tools/stringpattern.cpp; sourceTree = SOURCE_ROOT; };
-		C33E976A0CF42010007E087D /* riboptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = riboptions.h; path = ../../../source/include/ricpp/ribparser/riboptions.h; sourceTree = SOURCE_ROOT; };
+		C33E976A0CF42010007E087D /* riboptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = riboptions.h; path = ../../../source/include/ricpp/ribparser/riboptions.h; sourceTree = SOURCE_ROOT; };
 		C33E976C0CF42033007E087D /* riboptions.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = riboptions.cpp; path = ../../../source/ribparser/riboptions.cpp; sourceTree = SOURCE_ROOT; };
 		C34D15110D695953002CF63B /* Polygon.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = Polygon.rib; path = ../../../RibSamples/Polygon.rib; sourceTree = SOURCE_ROOT; };
 		C34D15120D695953002CF63B /* Square.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = Square.rib; path = ../../../RibSamples/Square.rib; sourceTree = SOURCE_ROOT; };
 		C34D15130D695953002CF63B /* UnitCube.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = UnitCube.rib; path = ../../../RibSamples/UnitCube.rib; sourceTree = SOURCE_ROOT; };
-		C35100210D70DD2B008AC346 /* baserenderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
+		C35100210D70DD2B008AC346 /* baserenderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
 		C352E6930D7465B500CDED20 /* libridynload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libridynload.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
-		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
+		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
 		C36326DB0C3A3CAB00364168 /* backbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = backbuffer.cpp; path = ../../../source/streams/backbuffer.cpp; sourceTree = SOURCE_ROOT; };
 		C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = passthrough.cpp; path = ../../../source/ribfilter/passthrough.cpp; sourceTree = SOURCE_ROOT; };
 		C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribwriterdll.cpp; path = ../../../source/ribwriterdll/ribwriterdll.cpp; sourceTree = SOURCE_ROOT; };
 		C366B42C0C26642600F41773 /* uri.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = uri.cpp; path = ../../../source/streams/uri.cpp; sourceTree = SOURCE_ROOT; };
-		C3685E6C0D3C143500B2E025 /* ribexternals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribexternals.h; path = ../../../source/include/ricpp/ribparser/ribexternals.h; sourceTree = SOURCE_ROOT; };
-		C3685E6D0D3C143500B2E025 /* riblights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = riblights.h; path = ../../../source/include/ricpp/ribparser/riblights.h; sourceTree = SOURCE_ROOT; };
-		C3685E6E0D3C143500B2E025 /* ribmisc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribmisc.h; path = ../../../source/include/ricpp/ribparser/ribmisc.h; sourceTree = SOURCE_ROOT; };
-		C3685E6F0D3C143500B2E025 /* ribprims.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribprims.h; path = ../../../source/include/ricpp/ribparser/ribprims.h; sourceTree = SOURCE_ROOT; };
-		C3685E700D3C143500B2E025 /* ribtransforms.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribtransforms.h; path = ../../../source/include/ricpp/ribparser/ribtransforms.h; sourceTree = SOURCE_ROOT; };
+		C3685E6C0D3C143500B2E025 /* ribexternals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribexternals.h; path = ../../../source/include/ricpp/ribparser/ribexternals.h; sourceTree = SOURCE_ROOT; };
+		C3685E6D0D3C143500B2E025 /* riblights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = riblights.h; path = ../../../source/include/ricpp/ribparser/riblights.h; sourceTree = SOURCE_ROOT; };
+		C3685E6E0D3C143500B2E025 /* ribmisc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribmisc.h; path = ../../../source/include/ricpp/ribparser/ribmisc.h; sourceTree = SOURCE_ROOT; };
+		C3685E6F0D3C143500B2E025 /* ribprims.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribprims.h; path = ../../../source/include/ricpp/ribparser/ribprims.h; sourceTree = SOURCE_ROOT; };
+		C3685E700D3C143500B2E025 /* ribtransforms.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribtransforms.h; path = ../../../source/include/ricpp/ribparser/ribtransforms.h; sourceTree = SOURCE_ROOT; };
 		C3685E770D3C14D700B2E025 /* ribexternals.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribexternals.cpp; path = ../../../source/ribparser/ribexternals.cpp; sourceTree = SOURCE_ROOT; };
 		C3685E780D3C14D700B2E025 /* riblights.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = riblights.cpp; path = ../../../source/ribparser/riblights.cpp; sourceTree = SOURCE_ROOT; };
 		C3685E790D3C14D700B2E025 /* ribmisc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribmisc.cpp; path = ../../../source/ribparser/ribmisc.cpp; sourceTree = SOURCE_ROOT; };
@@ -479,57 +479,57 @@
 		C3685F340D3C231500B2E025 /* libpluginhandler.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpluginhandler.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3685F3E0D3C237000B2E025 /* libgendynlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgendynlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C36C39B40CBA1FBB00D2B7B2 /* ribparser.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribparser.cpp; path = ../../../source/ribparser/ribparser.cpp; sourceTree = SOURCE_ROOT; };
-		C36C39B60CBA1FCA00D2B7B2 /* ribparser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribparser.h; path = ../../../source/include/ricpp/ribparser/ribparser.h; sourceTree = SOURCE_ROOT; };
+		C36C39B60CBA1FCA00D2B7B2 /* ribparser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribparser.h; path = ../../../source/include/ricpp/ribparser/ribparser.h; sourceTree = SOURCE_ROOT; };
 		C36C39BC0CBA20D400D2B7B2 /* paramclasses.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = paramclasses.cpp; path = ../../../source/ricpp/paramclasses.cpp; sourceTree = SOURCE_ROOT; };
 		C36C39BE0CBA20DB00D2B7B2 /* requests.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = requests.cpp; path = ../../../source/ricpp/requests.cpp; sourceTree = SOURCE_ROOT; };
 		C36C39C00CBA20E500D2B7B2 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = types.cpp; path = ../../../source/ricpp/types.cpp; sourceTree = SOURCE_ROOT; };
-		C36C39C20CBA210400D2B7B2 /* paramclasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = paramclasses.h; path = ../../../source/include/ricpp/ricpp/paramclasses.h; sourceTree = SOURCE_ROOT; };
-		C36C39C40CBA211300D2B7B2 /* requests.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = requests.h; path = ../../../source/include/ricpp/ricpp/requests.h; sourceTree = SOURCE_ROOT; };
-		C36C39C60CBA212800D2B7B2 /* types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = types.h; path = ../../../source/include/ricpp/ricpp/types.h; sourceTree = SOURCE_ROOT; };
+		C36C39C20CBA210400D2B7B2 /* paramclasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = paramclasses.h; path = ../../../source/include/ricpp/ricpp/paramclasses.h; sourceTree = SOURCE_ROOT; };
+		C36C39C40CBA211300D2B7B2 /* requests.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = requests.h; path = ../../../source/include/ricpp/ricpp/requests.h; sourceTree = SOURCE_ROOT; };
+		C36C39C60CBA212800D2B7B2 /* types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = types.h; path = ../../../source/include/ricpp/ricpp/types.h; sourceTree = SOURCE_ROOT; };
 		C36F02D40D57C66A00554D4B /* index.dox */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = index.dox; path = ../../../source/Documentation/index.dox; sourceTree = SOURCE_ROOT; };
 		C36F02D70D57C6BC00554D4B /* Archive.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = Archive.rib; path = ../../../RibSamples/Archive.rib; sourceTree = SOURCE_ROOT; };
 		C36F02D80D57C6BC00554D4B /* TestArchive.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = TestArchive.rib; path = ../../../RibSamples/TestArchive.rib; sourceTree = SOURCE_ROOT; };
-		C370C1730BF4694400AA03BC /* dynlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = dynlib.h; path = ../../../source/include/ricpp/gendynlib/dynlib.h; sourceTree = SOURCE_ROOT; };
-		C370C1740BF4694400AA03BC /* macdynlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = macdynlib.h; path = ../../../source/include/ricpp/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
-		C370C1790BF4696000AA03BC /* ribwriter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribwriter.h; path = ../../../source/include/ricpp/ribwriter/ribwriter.h; sourceTree = SOURCE_ROOT; };
-		C370C17F0BF4698F00AA03BC /* errorhandlers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = errorhandlers.h; path = ../../../source/include/ricpp/ricpp/errorhandlers.h; sourceTree = SOURCE_ROOT; };
-		C370C1800BF4698F00AA03BC /* filters.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = filters.h; path = ../../../source/include/ricpp/ricpp/filters.h; sourceTree = SOURCE_ROOT; };
-		C370C1810BF4698F00AA03BC /* ricpp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricpp.h; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/include/ricpp/ricpp/ricpp.h; sourceTree = "<absolute>"; };
-		C370C1820BF4698F00AA03BC /* subdivfunc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = subdivfunc.h; path = ../../../source/include/ricpp/ricpp/subdivfunc.h; sourceTree = SOURCE_ROOT; };
-		C370C1870BF469A100AA03BC /* ricppbridge.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricppbridge.h; path = ../../../source/include/ricpp/ricppbridge/ricppbridge.h; sourceTree = SOURCE_ROOT; };
-		C370C1890BF469BD00AA03BC /* env.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = env.h; path = ../../../source/include/ricpp/tools/env.h; sourceTree = SOURCE_ROOT; };
-		C370C18A0BF469BD00AA03BC /* filepath.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = filepath.h; path = ../../../source/include/ricpp/tools/filepath.h; sourceTree = SOURCE_ROOT; };
-		C370C18B0BF469BD00AA03BC /* objptrregistry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = objptrregistry.h; path = ../../../source/include/ricpp/tools/objptrregistry.h; sourceTree = SOURCE_ROOT; };
-		C370C18C0BF469BD00AA03BC /* platform.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = platform.h; path = ../../../source/include/ricpp/tools/platform.h; sourceTree = SOURCE_ROOT; };
-		C370C18D0BF469BD00AA03BC /* stringlist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = stringlist.h; path = ../../../source/include/ricpp/tools/stringlist.h; sourceTree = SOURCE_ROOT; };
-		C37245760CD5DE3100945563 /* attributes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = attributes.h; path = ../../../source/include/ricpp/ricontext/attributes.h; sourceTree = SOURCE_ROOT; };
-		C37245770CD5DE3100945563 /* contextcreator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = contextcreator.h; path = ../../../source/include/ricpp/ricontext/contextcreator.h; sourceTree = SOURCE_ROOT; };
-		C37245780CD5DE3100945563 /* displaydesc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = displaydesc.h; path = ../../../source/include/ricpp/ricontext/displaydesc.h; sourceTree = SOURCE_ROOT; };
-		C37245790CD5DE3100945563 /* dorender.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = dorender.h; path = ../../../source/include/ricpp/ricontext/dorender.h; sourceTree = SOURCE_ROOT; };
-		C372457A0CD5DE3100945563 /* handlestack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = handlestack.h; path = ../../../source/include/ricpp/ricontext/handlestack.h; sourceTree = SOURCE_ROOT; };
-		C372457B0CD5DE3100945563 /* lights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = lights.h; path = ../../../source/include/ricpp/ricontext/lights.h; sourceTree = SOURCE_ROOT; };
-		C372457C0CD5DE3100945563 /* modes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = modes.h; path = ../../../source/include/ricpp/ricontext/modes.h; sourceTree = SOURCE_ROOT; };
-		C372457D0CD5DE3100945563 /* modestack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = modestack.h; path = ../../../source/include/ricpp/ricontext/modestack.h; sourceTree = SOURCE_ROOT; };
-		C372457E0CD5DE3100945563 /* motionstate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = motionstate.h; path = ../../../source/include/ricpp/ricontext/motionstate.h; sourceTree = SOURCE_ROOT; };
-		C372457F0CD5DE3100945563 /* options.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = options.h; path = ../../../source/include/ricpp/ricontext/options.h; sourceTree = SOURCE_ROOT; };
-		C37245800CD5DE3100945563 /* optionsbase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = optionsbase.h; path = ../../../source/include/ricpp/ricontext/optionsbase.h; sourceTree = SOURCE_ROOT; };
-		C37245810CD5DE3100945563 /* parameter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = parameter.h; path = ../../../source/include/ricpp/ricontext/parameter.h; sourceTree = SOURCE_ROOT; };
-		C37245820CD5DE3100945563 /* renderstate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = renderstate.h; path = ../../../source/include/ricpp/ricontext/renderstate.h; sourceTree = SOURCE_ROOT; };
-		C37245830CD5DE3100945563 /* resource.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = resource.h; path = ../../../source/include/ricpp/ricontext/resource.h; sourceTree = SOURCE_ROOT; };
-		C37245840CD5DE3100945563 /* ricontext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricontext.h; path = ../../../source/include/ricpp/ricontext/ricontext.h; sourceTree = SOURCE_ROOT; };
-		C37245850CD5DE3100945563 /* rimacro.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacro.h; path = ../../../source/include/ricpp/ricontext/rimacro.h; sourceTree = SOURCE_ROOT; };
-		C37245860CD5DE3100945563 /* rimacroattributes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacroattributes.h; path = ../../../source/include/ricpp/ricontext/rimacroattributes.h; sourceTree = SOURCE_ROOT; };
-		C37245870CD5DE3100945563 /* rimacrobase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacrobase.h; path = ../../../source/include/ricpp/ricontext/rimacrobase.h; sourceTree = SOURCE_ROOT; };
-		C37245880CD5DE3100945563 /* rimacrocontainer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacrocontainer.h; path = ../../../source/include/ricpp/ricontext/rimacrocontainer.h; sourceTree = SOURCE_ROOT; };
-		C37245890CD5DE3100945563 /* rimacroexternals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacroexternals.h; path = ../../../source/include/ricpp/ricontext/rimacroexternals.h; sourceTree = SOURCE_ROOT; };
-		C372458A0CD5DE3100945563 /* rimacrofactory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacrofactory.h; path = ../../../source/include/ricpp/ricontext/rimacrofactory.h; sourceTree = SOURCE_ROOT; };
-		C372458B0CD5DE3100945563 /* rimacrolights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacrolights.h; path = ../../../source/include/ricpp/ricontext/rimacrolights.h; sourceTree = SOURCE_ROOT; };
-		C372458C0CD5DE3100945563 /* rimacromisc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacromisc.h; path = ../../../source/include/ricpp/ricontext/rimacromisc.h; sourceTree = SOURCE_ROOT; };
-		C372458D0CD5DE3100945563 /* rimacromodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacromodes.h; path = ../../../source/include/ricpp/ricontext/rimacromodes.h; sourceTree = SOURCE_ROOT; };
-		C372458E0CD5DE3100945563 /* rimacrooptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacrooptions.h; path = ../../../source/include/ricpp/ricontext/rimacrooptions.h; sourceTree = SOURCE_ROOT; };
-		C372458F0CD5DE3100945563 /* rimacroprims.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacroprims.h; path = ../../../source/include/ricpp/ricontext/rimacroprims.h; sourceTree = SOURCE_ROOT; };
-		C37245900CD5DE3100945563 /* rimacrotransforms.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacrotransforms.h; path = ../../../source/include/ricpp/ricontext/rimacrotransforms.h; sourceTree = SOURCE_ROOT; };
-		C37245910CD5DE3100945563 /* transformation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = transformation.h; path = ../../../source/include/ricpp/ricontext/transformation.h; sourceTree = SOURCE_ROOT; };
+		C370C1730BF4694400AA03BC /* dynlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = dynlib.h; path = ../../../source/include/ricpp/gendynlib/dynlib.h; sourceTree = SOURCE_ROOT; };
+		C370C1740BF4694400AA03BC /* macdynlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macdynlib.h; path = ../../../source/include/ricpp/gendynlib/macdynlib.h; sourceTree = SOURCE_ROOT; };
+		C370C1790BF4696000AA03BC /* ribwriter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribwriter.h; path = ../../../source/include/ricpp/ribwriter/ribwriter.h; sourceTree = SOURCE_ROOT; };
+		C370C17F0BF4698F00AA03BC /* errorhandlers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = errorhandlers.h; path = ../../../source/include/ricpp/ricpp/errorhandlers.h; sourceTree = SOURCE_ROOT; };
+		C370C1800BF4698F00AA03BC /* filters.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = filters.h; path = ../../../source/include/ricpp/ricpp/filters.h; sourceTree = SOURCE_ROOT; };
+		C370C1810BF4698F00AA03BC /* ricpp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricpp.h; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/include/ricpp/ricpp/ricpp.h; sourceTree = "<absolute>"; };
+		C370C1820BF4698F00AA03BC /* subdivfunc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = subdivfunc.h; path = ../../../source/include/ricpp/ricpp/subdivfunc.h; sourceTree = SOURCE_ROOT; };
+		C370C1870BF469A100AA03BC /* ricppbridge.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricppbridge.h; path = ../../../source/include/ricpp/ricppbridge/ricppbridge.h; sourceTree = SOURCE_ROOT; };
+		C370C1890BF469BD00AA03BC /* env.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = env.h; path = ../../../source/include/ricpp/tools/env.h; sourceTree = SOURCE_ROOT; };
+		C370C18A0BF469BD00AA03BC /* filepath.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = filepath.h; path = ../../../source/include/ricpp/tools/filepath.h; sourceTree = SOURCE_ROOT; };
+		C370C18B0BF469BD00AA03BC /* objptrregistry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = objptrregistry.h; path = ../../../source/include/ricpp/tools/objptrregistry.h; sourceTree = SOURCE_ROOT; };
+		C370C18C0BF469BD00AA03BC /* platform.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = platform.h; path = ../../../source/include/ricpp/tools/platform.h; sourceTree = SOURCE_ROOT; };
+		C370C18D0BF469BD00AA03BC /* stringlist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = stringlist.h; path = ../../../source/include/ricpp/tools/stringlist.h; sourceTree = SOURCE_ROOT; };
+		C37245760CD5DE3100945563 /* attributes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = attributes.h; path = ../../../source/include/ricpp/ricontext/attributes.h; sourceTree = SOURCE_ROOT; };
+		C37245770CD5DE3100945563 /* contextcreator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = contextcreator.h; path = ../../../source/include/ricpp/ricontext/contextcreator.h; sourceTree = SOURCE_ROOT; };
+		C37245780CD5DE3100945563 /* displaydesc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = displaydesc.h; path = ../../../source/include/ricpp/ricontext/displaydesc.h; sourceTree = SOURCE_ROOT; };
+		C37245790CD5DE3100945563 /* dorender.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = dorender.h; path = ../../../source/include/ricpp/ricontext/dorender.h; sourceTree = SOURCE_ROOT; };
+		C372457A0CD5DE3100945563 /* handlestack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = handlestack.h; path = ../../../source/include/ricpp/ricontext/handlestack.h; sourceTree = SOURCE_ROOT; };
+		C372457B0CD5DE3100945563 /* lights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = lights.h; path = ../../../source/include/ricpp/ricontext/lights.h; sourceTree = SOURCE_ROOT; };
+		C372457C0CD5DE3100945563 /* modes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = modes.h; path = ../../../source/include/ricpp/ricontext/modes.h; sourceTree = SOURCE_ROOT; };
+		C372457D0CD5DE3100945563 /* modestack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = modestack.h; path = ../../../source/include/ricpp/ricontext/modestack.h; sourceTree = SOURCE_ROOT; };
+		C372457E0CD5DE3100945563 /* motionstate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = motionstate.h; path = ../../../source/include/ricpp/ricontext/motionstate.h; sourceTree = SOURCE_ROOT; };
+		C372457F0CD5DE3100945563 /* options.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = options.h; path = ../../../source/include/ricpp/ricontext/options.h; sourceTree = SOURCE_ROOT; };
+		C37245800CD5DE3100945563 /* optionsbase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = optionsbase.h; path = ../../../source/include/ricpp/ricontext/optionsbase.h; sourceTree = SOURCE_ROOT; };
+		C37245810CD5DE3100945563 /* parameter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = parameter.h; path = ../../../source/include/ricpp/ricontext/parameter.h; sourceTree = SOURCE_ROOT; };
+		C37245820CD5DE3100945563 /* renderstate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = renderstate.h; path = ../../../source/include/ricpp/ricontext/renderstate.h; sourceTree = SOURCE_ROOT; };
+		C37245830CD5DE3100945563 /* resource.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = resource.h; path = ../../../source/include/ricpp/ricontext/resource.h; sourceTree = SOURCE_ROOT; };
+		C37245840CD5DE3100945563 /* ricontext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricontext.h; path = ../../../source/include/ricpp/ricontext/ricontext.h; sourceTree = SOURCE_ROOT; };
+		C37245850CD5DE3100945563 /* rimacro.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacro.h; path = ../../../source/include/ricpp/ricontext/rimacro.h; sourceTree = SOURCE_ROOT; };
+		C37245860CD5DE3100945563 /* rimacroattributes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacroattributes.h; path = ../../../source/include/ricpp/ricontext/rimacroattributes.h; sourceTree = SOURCE_ROOT; };
+		C37245870CD5DE3100945563 /* rimacrobase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacrobase.h; path = ../../../source/include/ricpp/ricontext/rimacrobase.h; sourceTree = SOURCE_ROOT; };
+		C37245880CD5DE3100945563 /* rimacrocontainer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacrocontainer.h; path = ../../../source/include/ricpp/ricontext/rimacrocontainer.h; sourceTree = SOURCE_ROOT; };
+		C37245890CD5DE3100945563 /* rimacroexternals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacroexternals.h; path = ../../../source/include/ricpp/ricontext/rimacroexternals.h; sourceTree = SOURCE_ROOT; };
+		C372458A0CD5DE3100945563 /* rimacrofactory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacrofactory.h; path = ../../../source/include/ricpp/ricontext/rimacrofactory.h; sourceTree = SOURCE_ROOT; };
+		C372458B0CD5DE3100945563 /* rimacrolights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacrolights.h; path = ../../../source/include/ricpp/ricontext/rimacrolights.h; sourceTree = SOURCE_ROOT; };
+		C372458C0CD5DE3100945563 /* rimacromisc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacromisc.h; path = ../../../source/include/ricpp/ricontext/rimacromisc.h; sourceTree = SOURCE_ROOT; };
+		C372458D0CD5DE3100945563 /* rimacromodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacromodes.h; path = ../../../source/include/ricpp/ricontext/rimacromodes.h; sourceTree = SOURCE_ROOT; };
+		C372458E0CD5DE3100945563 /* rimacrooptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacrooptions.h; path = ../../../source/include/ricpp/ricontext/rimacrooptions.h; sourceTree = SOURCE_ROOT; };
+		C372458F0CD5DE3100945563 /* rimacroprims.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacroprims.h; path = ../../../source/include/ricpp/ricontext/rimacroprims.h; sourceTree = SOURCE_ROOT; };
+		C37245900CD5DE3100945563 /* rimacrotransforms.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacrotransforms.h; path = ../../../source/include/ricpp/ricontext/rimacrotransforms.h; sourceTree = SOURCE_ROOT; };
+		C37245910CD5DE3100945563 /* transformation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = transformation.h; path = ../../../source/include/ricpp/ricontext/transformation.h; sourceTree = SOURCE_ROOT; };
 		C37245AE0CD5DE5500945563 /* attributes.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = attributes.cpp; path = ../../../source/ricontext/attributes.cpp; sourceTree = SOURCE_ROOT; };
 		C37245AF0CD5DE5500945563 /* contextcreator.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = contextcreator.cpp; path = ../../../source/ricontext/contextcreator.cpp; sourceTree = SOURCE_ROOT; };
 		C37245B00CD5DE5500945563 /* displaydesc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = displaydesc.cpp; path = ../../../source/ricontext/displaydesc.cpp; sourceTree = SOURCE_ROOT; };
@@ -548,12 +548,12 @@
 		C372B8DB0BD7610D009B2459 /* filters.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = filters.cpp; path = ../../../source/ricpp/filters.cpp; sourceTree = SOURCE_ROOT; };
 		C372B8E30BD7610D009B2459 /* subdivfunc.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = subdivfunc.cpp; path = ../../../source/ricpp/subdivfunc.cpp; sourceTree = SOURCE_ROOT; };
 		C37A0D380D6AC5880027CE77 /* ribtool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ribtool; sourceTree = BUILT_PRODUCTS_DIR; };
-		C37DBBA80C01CC6E003AE4E7 /* declaration.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = declaration.h; path = ../../../source/include/ricpp/declaration/declaration.h; sourceTree = SOURCE_ROOT; };
-		C37DBBA90C01CC6E003AE4E7 /* decldict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = decldict.h; path = ../../../source/include/ricpp/declaration/decldict.h; sourceTree = SOURCE_ROOT; };
-		C37DBBAA0C01CC6E003AE4E7 /* token.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = token.h; path = ../../../source/include/ricpp/declaration/token.h; sourceTree = SOURCE_ROOT; };
+		C37DBBA80C01CC6E003AE4E7 /* declaration.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = declaration.h; path = ../../../source/include/ricpp/declaration/declaration.h; sourceTree = SOURCE_ROOT; };
+		C37DBBA90C01CC6E003AE4E7 /* decldict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = decldict.h; path = ../../../source/include/ricpp/declaration/decldict.h; sourceTree = SOURCE_ROOT; };
+		C37DBBAA0C01CC6E003AE4E7 /* token.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = token.h; path = ../../../source/include/ricpp/declaration/token.h; sourceTree = SOURCE_ROOT; };
 		C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = declaration.cpp; path = ../../../source/declaration/declaration.cpp; sourceTree = SOURCE_ROOT; };
 		C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = decldict.cpp; path = ../../../source/declaration/decldict.cpp; sourceTree = SOURCE_ROOT; };
-		C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = inlinetools.h; path = ../../../source/include/ricpp/tools/inlinetools.h; sourceTree = SOURCE_ROOT; };
+		C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = inlinetools.h; path = ../../../source/include/ricpp/tools/inlinetools.h; sourceTree = SOURCE_ROOT; };
 		C38088C80D3CA7A600B6C3BA /* libribfilter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libribfilter.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C38089010D3CA8EA00B6C3BA /* libdeclaration.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdeclaration.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C38089440D3CAB4B00B6C3BA /* libricontext.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricontext.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -565,38 +565,39 @@
 		C3808A920D3CBC6E00B6C3BA /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AC00D3CC05700B6C3BA /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpassthrough.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C38B25EE0D7DA9ED00A12882 /* ricppframework_classmodel.xcclassmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcclassmodel; path = ricppframework_classmodel.xcclassmodel; sourceTree = "<group>"; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
-		C39753FE0C14005E0089A579 /* pluginhandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = pluginhandler.h; path = ../../../source/include/ricpp/pluginhandler/pluginhandler.h; sourceTree = SOURCE_ROOT; };
+		C39753FE0C14005E0089A579 /* pluginhandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = pluginhandler.h; path = ../../../source/include/ricpp/pluginhandler/pluginhandler.h; sourceTree = SOURCE_ROOT; };
 		C39754110C1402250089A579 /* ribfilter.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribfilter.cpp; path = ../../../source/ribfilter/ribfilter.cpp; sourceTree = SOURCE_ROOT; };
 		C39754120C1402250089A579 /* ribfilterlist.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribfilterlist.cpp; path = ../../../source/ribfilter/ribfilterlist.cpp; sourceTree = SOURCE_ROOT; };
-		C39754150C14025D0089A579 /* ribfilter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribfilter.h; path = ../../../source/include/ricpp/ribfilter/ribfilter.h; sourceTree = SOURCE_ROOT; };
-		C39754160C14025D0089A579 /* ribfilterlist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribfilterlist.h; path = ../../../source/include/ricpp/ribfilter/ribfilterlist.h; sourceTree = SOURCE_ROOT; };
+		C39754150C14025D0089A579 /* ribfilter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribfilter.h; path = ../../../source/include/ricpp/ribfilter/ribfilter.h; sourceTree = SOURCE_ROOT; };
+		C39754160C14025D0089A579 /* ribfilterlist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribfilterlist.h; path = ../../../source/include/ricpp/ribfilter/ribfilterlist.h; sourceTree = SOURCE_ROOT; };
 		C39754B60C1409570089A579 /* pluginhandler.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = pluginhandler.cpp; path = ../../../source/pluginhandler/pluginhandler.cpp; sourceTree = SOURCE_ROOT; };
 		C399BA990BE5E229002FEEF1 /* macenv.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macenv.cpp; path = ../../../source/tools/macenv.cpp; sourceTree = SOURCE_ROOT; };
-		C3A8FA720D74CBF700C1013B /* ricppconst.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricppconst.h; path = ../../../source/include/ricpp/ribase/ricppconst.h; sourceTree = SOURCE_ROOT; };
-		C3A8FA730D74CBF700C1013B /* ricppdecls.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricppdecls.h; path = ../../../source/include/ricpp/ribase/ricppdecls.h; sourceTree = SOURCE_ROOT; };
-		C3A8FA740D74CBF700C1013B /* ricpptokens.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricpptokens.h; path = ../../../source/include/ricpp/ribase/ricpptokens.h; sourceTree = SOURCE_ROOT; };
-		C3A8FA750D74CBF700C1013B /* ricpptypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ricpptypes.h; path = ../../../source/include/ricpp/ribase/ricpptypes.h; sourceTree = SOURCE_ROOT; };
+		C3A8FA720D74CBF700C1013B /* ricppconst.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricppconst.h; path = ../../../source/include/ricpp/ribase/ricppconst.h; sourceTree = SOURCE_ROOT; };
+		C3A8FA730D74CBF700C1013B /* ricppdecls.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricppdecls.h; path = ../../../source/include/ricpp/ribase/ricppdecls.h; sourceTree = SOURCE_ROOT; };
+		C3A8FA740D74CBF700C1013B /* ricpptokens.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricpptokens.h; path = ../../../source/include/ricpp/ribase/ricpptokens.h; sourceTree = SOURCE_ROOT; };
+		C3A8FA750D74CBF700C1013B /* ricpptypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricpptypes.h; path = ../../../source/include/ricpp/ribase/ricpptypes.h; sourceTree = SOURCE_ROOT; };
 		C3A8FA7A0D74CC1D00C1013B /* ribase.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribase.cpp; path = ../../../source/ribase/ribase.cpp; sourceTree = SOURCE_ROOT; };
 		C3A8FA7D0D74CCA400C1013B /* ricpp.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ricpp.cpp; path = ../../../source/ricpp/ricpp.cpp; sourceTree = SOURCE_ROOT; };
 		C3A8FA820D74CD0000C1013B /* ri.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ri.cpp; path = ../../../source/ri/ri.cpp; sourceTree = SOURCE_ROOT; };
-		C3A8FA840D74CD1700C1013B /* ri.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 5; lineEnding = 1; name = ri.h; path = ../../../source/include/ricpp/ri/ri.h; sourceTree = SOURCE_ROOT; };
-		C3A8FA850D74CD1700C1013B /* riinternal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = riinternal.h; path = ../../../source/include/ricpp/ri/riinternal.h; sourceTree = SOURCE_ROOT; };
+		C3A8FA840D74CD1700C1013B /* ri.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ri.h; path = ../../../source/include/ricpp/ri/ri.h; sourceTree = SOURCE_ROOT; };
+		C3A8FA850D74CD1700C1013B /* riinternal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = riinternal.h; path = ../../../source/include/ricpp/ri/riinternal.h; sourceTree = SOURCE_ROOT; };
 		C3A8FA880D74CD4F00C1013B /* testribind.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = testribind.c; path = ../../../source/test/testribind.c; sourceTree = SOURCE_ROOT; };
 		C3A8FA8A0D74CD8600C1013B /* riprog.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = riprog.cpp; path = ../../../source/ri/riprog.cpp; sourceTree = SOURCE_ROOT; };
 		C3A8FA8C0D74CD9F00C1013B /* ridynload.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ridynload.cpp; path = ../../../source/ri/ridynload.cpp; sourceTree = SOURCE_ROOT; };
-		C3AD10F50D03DD950057047B /* ribattributes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribattributes.h; path = ../../../source/include/ricpp/ribparser/ribattributes.h; sourceTree = SOURCE_ROOT; };
+		C3AD10F50D03DD950057047B /* ribattributes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribattributes.h; path = ../../../source/include/ricpp/ribparser/ribattributes.h; sourceTree = SOURCE_ROOT; };
 		C3AD10F70D03DDE80057047B /* ribattributes.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribattributes.cpp; path = ../../../source/ribparser/ribattributes.cpp; sourceTree = SOURCE_ROOT; };
 		C3B26A2A0C145F700080C1F9 /* rendererloader.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = rendererloader.cpp; path = ../../../source/rendererloader/rendererloader.cpp; sourceTree = SOURCE_ROOT; };
-		C3B26A310C14600E0080C1F9 /* rendererloader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rendererloader.h; path = ../../../source/include/ricpp/rendererloader/rendererloader.h; sourceTree = SOURCE_ROOT; };
+		C3B26A310C14600E0080C1F9 /* rendererloader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rendererloader.h; path = ../../../source/include/ricpp/rendererloader/rendererloader.h; sourceTree = SOURCE_ROOT; };
 		C3B849030BD7625A00DD22B5 /* ribwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribwriter.cpp; path = ../../../source/ribwriter/ribwriter.cpp; sourceTree = SOURCE_ROOT; };
 		C3B8491F0BD7632B00DD22B5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = main.cpp; path = ../../../source/test/main.cpp; sourceTree = SOURCE_ROOT; };
 		C3B8D1C20CF1845A0004B226 /* ribmodes.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribmodes.cpp; path = ../../../source/ribparser/ribmodes.cpp; sourceTree = SOURCE_ROOT; };
-		C3B8D1C40CF184720004B226 /* ribmodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribmodes.h; path = ../../../source/include/ricpp/ribparser/ribmodes.h; sourceTree = SOURCE_ROOT; };
-		C3BD62190CED84EE008ECB54 /* ribparsercallback.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribparsercallback.h; path = ../../../source/include/ricpp/ribparser/ribparsercallback.h; sourceTree = SOURCE_ROOT; };
+		C3B8D1C40CF184720004B226 /* ribmodes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribmodes.h; path = ../../../source/include/ricpp/ribparser/ribmodes.h; sourceTree = SOURCE_ROOT; };
+		C3BD62190CED84EE008ECB54 /* ribparsercallback.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribparsercallback.h; path = ../../../source/include/ricpp/ribparser/ribparsercallback.h; sourceTree = SOURCE_ROOT; };
 		C3C9AE380D70BC9F00A04717 /* ribelements.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribelements.cpp; path = ../../../source/ricontext/ribelements.cpp; sourceTree = SOURCE_ROOT; };
-		C3C9AE3A0D70BCCE00A04717 /* ribelements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = ribelements.h; path = ../../../source/include/ricpp/ricontext/ribelements.h; sourceTree = SOURCE_ROOT; };
-		C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; lineEnding = 1; name = rimacroclasses.h; path = ../../../source/include/ricpp/ricontext/rimacroclasses.h; sourceTree = SOURCE_ROOT; };
+		C3C9AE3A0D70BCCE00A04717 /* ribelements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribelements.h; path = ../../../source/include/ricpp/ricontext/ribelements.h; sourceTree = SOURCE_ROOT; };
+		C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacroclasses.h; path = ../../../source/include/ricpp/ricontext/rimacroclasses.h; sourceTree = SOURCE_ROOT; };
 		C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3C9AE470D70BDE000A04717 /* ribtool.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribtool.cpp; path = ../../../source/ribtool/ribtool.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -822,7 +823,7 @@
 				C33773C30BE5DD6B0011B646 /* tools */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Source;
 			sourceTree = SOURCE_ROOT;
@@ -863,7 +864,7 @@
 				C3003D380C1D642A004C4EF0 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = streams;
 			sourceTree = SOURCE_ROOT;
@@ -875,7 +876,7 @@
 				C366B42C0C26642600F41773 /* uri.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -888,7 +889,7 @@
 				C3003D450C1D6458004C4EF0 /* uri.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -900,7 +901,7 @@
 				C31C21E30D73F743009D99C2 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ri;
 			sourceTree = SOURCE_ROOT;
@@ -912,7 +913,7 @@
 				C3A8FA850D74CD1700C1013B /* riinternal.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -923,7 +924,7 @@
 				C3A8FA820D74CD0000C1013B /* ri.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -935,7 +936,7 @@
 				C31C21E70D73F79B009D99C2 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ridynload;
 			sourceTree = SOURCE_ROOT;
@@ -947,7 +948,7 @@
 				C31C21E90D73F7AC009D99C2 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = riprog;
 			sourceTree = SOURCE_ROOT;
@@ -958,7 +959,7 @@
 				C3A8FA8C0D74CD9F00C1013B /* ridynload.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -968,7 +969,7 @@
 			children = (
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -979,7 +980,7 @@
 				C3A8FA8A0D74CD8600C1013B /* riprog.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -989,7 +990,7 @@
 			children = (
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1001,7 +1002,7 @@
 				C31C221D0D73F9FD009D99C2 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = testribind;
 			sourceTree = SOURCE_ROOT;
@@ -1012,7 +1013,7 @@
 				C3A8FA880D74CD4F00C1013B /* testribind.c */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1022,7 +1023,7 @@
 			children = (
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1034,7 +1035,7 @@
 				C32093D30BDCCF3000A0BB35 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = gendynlib;
 			sourceTree = SOURCE_ROOT;
@@ -1046,7 +1047,7 @@
 				C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1058,7 +1059,7 @@
 				C370C1740BF4694400AA03BC /* macdynlib.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1070,7 +1071,7 @@
 				C32093EA0BDCCFCE00A0BB35 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ribwriterdll;
 			sourceTree = SOURCE_ROOT;
@@ -1080,7 +1081,7 @@
 			children = (
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1091,7 +1092,7 @@
 				C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1103,7 +1104,7 @@
 				C32B8AB60D744DA10059B201 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ribase;
 			sourceTree = SOURCE_ROOT;
@@ -1114,7 +1115,7 @@
 				C3A8FA7A0D74CC1D00C1013B /* ribase.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1128,7 +1129,7 @@
 				C3A8FA750D74CBF700C1013B /* ricpptypes.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1140,7 +1141,7 @@
 				C399BA370BE5DE05002FEEF1 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = tools;
 			sourceTree = SOURCE_ROOT;
@@ -1152,7 +1153,7 @@
 				C3610ABB0BF2F0B000007CEF /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ricppbridge;
 			sourceTree = SOURCE_ROOT;
@@ -1163,7 +1164,7 @@
 				C370C1870BF469A100AA03BC /* ricppbridge.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1174,7 +1175,7 @@
 				C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1186,7 +1187,7 @@
 				C36C39B00CBA1F6E00D2B7B2 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ribparser;
 			sourceTree = SOURCE_ROOT;
@@ -1205,7 +1206,7 @@
 				C36C39B40CBA1FBB00D2B7B2 /* ribparser.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1225,7 +1226,7 @@
 				C36C39B60CBA1FCA00D2B7B2 /* ribparser.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1251,7 +1252,7 @@
 				C372456E0CD5DD7E00945563 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ricontext;
 			sourceTree = SOURCE_ROOT;
@@ -1276,7 +1277,7 @@
 				C37245BB0CD5DE5500945563 /* transformation.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1316,7 +1317,7 @@
 				C37245910CD5DE3100945563 /* transformation.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1328,7 +1329,7 @@
 				C372B8D50BD760D7009B2459 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ricpp;
 			sourceTree = SOURCE_ROOT;
@@ -1347,7 +1348,7 @@
 				C3185B700D7D3312001784AB /* varsubst.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1366,7 +1367,7 @@
 				C3185B720D7D3451001784AB /* varsubst.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1378,7 +1379,7 @@
 				C372B8FB0BD7618F009B2459 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = baserenderer;
 			sourceTree = SOURCE_ROOT;
@@ -1389,7 +1390,7 @@
 				C35100210D70DD2B008AC346 /* baserenderer.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1400,7 +1401,7 @@
 				C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1412,7 +1413,7 @@
 				C37A0D340D6AC5660027CE77 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ribtool;
 			sourceTree = SOURCE_ROOT;
@@ -1422,7 +1423,7 @@
 			children = (
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1433,7 +1434,7 @@
 				C3C9AE470D70BDE000A04717 /* ribtool.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1445,7 +1446,7 @@
 				C37DBBA10C01CBCE003AE4E7 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = declaration;
 			sourceTree = SOURCE_ROOT;
@@ -1459,7 +1460,7 @@
 				C3003D7E0C1D6D21004C4EF0 /* tokenmap.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1472,7 +1473,7 @@
 				C3003D7B0C1D6CF9004C4EF0 /* tokenmap.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1484,7 +1485,7 @@
 				C39753D90C13FEA60089A579 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = passthrough;
 			sourceTree = SOURCE_ROOT;
@@ -1494,7 +1495,7 @@
 			children = (
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1505,7 +1506,7 @@
 				C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1517,7 +1518,7 @@
 				C39753DB0C13FEC30089A579 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = pluginhandler;
 			sourceTree = SOURCE_ROOT;
@@ -1528,7 +1529,7 @@
 				C39754B60C1409570089A579 /* pluginhandler.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1539,7 +1540,7 @@
 				C39753FE0C14005E0089A579 /* pluginhandler.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1551,7 +1552,7 @@
 				C39753DE0C13FEE90089A579 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ribfilter;
 			sourceTree = SOURCE_ROOT;
@@ -1563,7 +1564,7 @@
 				C39754120C1402250089A579 /* ribfilterlist.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1575,7 +1576,7 @@
 				C39754160C14025D0089A579 /* ribfilterlist.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1593,7 +1594,7 @@
 				C370C18D0BF469BD00AA03BC /* stringlist.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1607,7 +1608,7 @@
 				C33118220BEB10B30084F992 /* stringlist.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1619,7 +1620,7 @@
 				C3B848FE0BD7622B00DD22B5 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = ribwriter;
 			sourceTree = SOURCE_ROOT;
@@ -1630,7 +1631,7 @@
 				C370C1790BF4696000AA03BC /* ribwriter.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1641,7 +1642,7 @@
 				C3B849030BD7625A00DD22B5 /* ribwriter.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1653,7 +1654,7 @@
 				C3B8490E0BD762C100DD22B5 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = rendererloader;
 			sourceTree = SOURCE_ROOT;
@@ -1664,7 +1665,7 @@
 				C3B26A2A0C145F700080C1F9 /* rendererloader.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1675,7 +1676,7 @@
 				C3B26A310C14600E0080C1F9 /* rendererloader.h */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1687,7 +1688,7 @@
 				C3B8491D0BD7630300DD22B5 /* Implementation */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = test;
 			sourceTree = SOURCE_ROOT;
@@ -1698,7 +1699,7 @@
 				C3B8491F0BD7632B00DD22B5 /* main.cpp */,
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
@@ -1708,7 +1709,7 @@
 			children = (
 			);
 			fileEncoding = 5;
-			includeInIndex = 0;
+			includeInIndex = 1;
 			lineEnding = 1;
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -1716,6 +1717,7 @@
 		C6859E8C029090F304C91782 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
+				C38B25EE0D7DA9ED00A12882 /* ricppframework_classmodel.xcclassmodel */,
 				C36F02D40D57C66A00554D4B /* index.dox */,
 			);
 			fileEncoding = 5;

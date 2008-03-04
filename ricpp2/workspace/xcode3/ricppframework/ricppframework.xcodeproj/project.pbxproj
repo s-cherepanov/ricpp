@@ -2349,7 +2349,7 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* ricppframework */;
 			projectDirPath = "";
-			projectRoot = "";
+			projectRoot = ../../../..;
 			targets = (
 				C3808AB60D3CC00500B6C3BA /* All */,
 				C38089C70D3CB88F00B6C3BA /* baserenderer */,

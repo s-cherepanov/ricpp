@@ -1,4 +1,4 @@
-#LyX 1.5.1 created this file. For more info see http://www.lyx.org/
+#LyX 1.5.4 created this file. For more info see http://www.lyx.org/
 \lyxformat 276
 \begin_document
 \begin_header
@@ -38,6 +38,7 @@
 \tracking_changes false
 \output_changes false
 \author "" 
+\author "" 
 \end_header
 
 \begin_body
@@ -51,7 +52,7 @@ Andreas Pidde
 \end_layout
 
 \begin_layout Date
-February, 19th 2006
+March, 05th 2008
 \end_layout
 
 \begin_layout Section*
@@ -1824,7 +1825,8 @@ A Bézier (Bernstein) basis
 \align center
 \begin_inset Graphics
 	filename BezierBase.pdf
-	lyxscale 300
+	BoundingBox 0bp 0bp 142bp 192bp
+	clip
 
 \end_inset
 
@@ -1884,7 +1886,8 @@ Segments
 \align center
 \begin_inset Graphics
 	filename NURBSBaseDeriv.pdf
-	lyxscale 300
+	BoundingBox 0bp 0bp 402bp 152bp
+	clip
 
 \end_inset
 
@@ -2854,7 +2857,13 @@ For the OpenGL output of RiCPP the trim curves are calculated using the
  The resulting polygons are then used to trim the rectangular parametric
  (u, v) grid of the NURBS surfaces.
  The next step is to triangulate the trimmed grids using a general ear-clipping
- algorithm.
+ algorithm, for ear-clipping see 
+\begin_inset LatexCommand cite
+key "Eber08"
+
+\end_inset
+
+.
  Finally the parameters are evaluated for each triangle vertex.
 \end_layout
 
@@ -2899,7 +2908,8 @@ Trim Curve 'a'
 \align center
 \begin_inset Graphics
 	filename nurbs_a.pdf
-	lyxscale 200
+	BoundingBox 0bp 0bp 160bp 325bp
+	clip
 
 \end_inset
 
@@ -3098,7 +3108,7 @@ TrimCurve
 \end_layout
 
 \begin_layout Standard
-The B-Spline patch is planar bilinear blended single segment.
+The B-Spline patch is a planar bilinear blended single segment.
 \end_layout
 
 \begin_layout LyX-Code
@@ -3183,7 +3193,8 @@ Rendered Patch
 \align center
 \begin_inset Graphics
 	filename nurbs_a_render.pdf
-	lyxscale 300
+	BoundingBox 0bp 0bp 95bp 110bp
+	clip
 
 \end_inset
 
@@ -3268,6 +3279,17 @@ Rogers, D.
 An Introduction to NURBS: With Historical Perspective
 \emph default
 , Academic Press, Morgan Kaufmann Publishers, Inc., San Fransisco, 2001
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+label "Eber08"
+key "Eber08"
+
+\end_inset
+
+Eberly, David, Triangulation by EarClipping, Geometric Tools, LLC 2008,
+ http://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
 \end_layout
 
 \end_body

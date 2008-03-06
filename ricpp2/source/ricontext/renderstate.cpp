@@ -1868,15 +1868,14 @@ RtToken CRenderState::resource(IRiContext &ri, RtToken handle, RtToken type, con
 void CRenderState::motionBegin(RtInt N, RtFloat times[])
 {
 	m_modeStack->motionBegin();
-	m_motionState.open(N, times);
-	attributes().motionBegin(N, times);
+	m_motionState.motionBegin(N, times);
+	attributes().motionBegin(m_motionState);
 }
 
 void CRenderState::motionEnd()
 {
-	m_modeStack->motionEnd();
 	bool err = false;
-	if ( m_motionState.curSampleIdx() < ((RtInt)m_motionState.times().size()) - 1 ) {
+	if ( m_motionState.curSampleCnt() < ((RtInt)m_motionState.curTimes().size()) - 1 ) {
 		err = true;
 	}
 	if ( m_motionState.attributesStored() ) {
@@ -1896,8 +1895,11 @@ void CRenderState::motionEnd()
 		m_attributesStack.pop_back();
 		m_attributesStack.push_back(attr);
 	}
-	m_motionState.close();
+
 	attributes().motionEnd();
+	m_motionState.motionEnd();
+	m_modeStack->motionEnd();
+
 	if ( err ) {
 		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_WARNING, "in motionEnd(), too few requests in motion block, last request has been duplicated.", __LINE__, __FILE__);
 	}
@@ -1908,7 +1910,7 @@ void CRenderState::moveArchiveBegin()
 	if ( m_motionState.curState() == CMotionState::MOT_OUTSIDE )
 		return;
 
-	if ( m_motionState.curSampleIdx() >= 0 ) {
+	if ( m_motionState.curSampleCnt() >= 0 ) {
 		// Start and continue
 		attributeBegin();
 	} else {
@@ -1921,7 +1923,7 @@ void CRenderState::moveArchiveEnd()
 	if ( m_motionState.curState() == CMotionState::MOT_OUTSIDE )
 		return;
 
-	if ( m_motionState.curSampleIdx() == 0 ) {
+	if ( m_motionState.curSampleCnt() == 0 ) {
 		// Start
 
 		// Store Attibutes
@@ -1930,7 +1932,7 @@ void CRenderState::moveArchiveEnd()
 		m_motionTransformationStack.push_back(m_transformationFactory->newTransformation(*m_transformationStack.back()));
 		m_motionState.attributesStored(true);
 		attributeEnd();
-	} else if ( m_motionState.curSampleIdx() > 0 ) {
+	} else if ( m_motionState.curSampleCnt() > 0 ) {
 		// Continue
 		attributeEnd();
 	} else {
@@ -1974,6 +1976,10 @@ bool CRenderState::popOptions()
 void CRenderState::pushAttributes(bool useCounter)
 {
 	unsigned long cnt = 1;
+	if ( !useCounter ) {
+		// A new attribute, frame, or worldblock is started
+		m_motionState.mark();
+	}
 	try {
 		TypeTransformationMap tm;
 		m_scopedTransforms.push_back(tm);
@@ -1996,6 +2002,7 @@ void CRenderState::pushAttributes(bool useCounter)
 			// A new attribute, frame, or worldblock is started
 			attributes().clearDetailRangeCalledInBlock();
 		}
+		attributes().motionSuspend();
 
 	} catch ( ExceptRiCPPError &e2 ) {
 		throw e2;
@@ -2008,6 +2015,11 @@ bool CRenderState::popAttributes(bool useCounter)
 {
 	unsigned long cnt = 1;
 	assert(!m_attributesStack.empty());
+
+	if ( !useCounter ) {
+		// A new attribute, frame, or worldblock is started
+		m_motionState.clearToMark();
+	}
 
 	if ( !m_attributesStack.empty() ) {
 		if ( useCounter ) {

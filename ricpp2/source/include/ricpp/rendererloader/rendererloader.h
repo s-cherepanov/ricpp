@@ -65,7 +65,7 @@ public:
 
 	/** @brief Virtual destructor
 	 */
-	inline virtual ~CRendererLoader() {}
+	virtual ~CRendererLoader();
 
 	/** @brief CContextCreator creation.
 	 * 

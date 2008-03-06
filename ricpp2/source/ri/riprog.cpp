@@ -13,7 +13,7 @@
 
 namespace RiCPP {
 
-	static CRiCPPBridge ri; // The bridge to the rendering context
+	static CRiCPPBridge ri; ///< The bridge to the rendering context
 
 	void SetRoot()
 	{
@@ -22,11 +22,15 @@ namespace RiCPP {
 		}
 	}
 
+	void UnsetRoot()
+	{
+		RiCPPRoot(0);
+	}
 }
 
 using namespace RiCPP;
 
-#ifdef _WIN32
+#ifdef WIN32
 
 #ifdef _MANAGED
 #pragma managed(push, off)
@@ -44,7 +48,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                        LPVOID  lpReserved
 					 )
 {
-	// If there is something alike at Apple: SetRoot() can be done here
+	if ( ul_reason_for_call == DLL_PROCESS_ATTACH ) {
+		// std::cout << "INITIALIZER" << std::endl;
+		SetRoot();
+	} else if ( ul_reason_for_call == DLL_PROCESS_DETACH ) {
+		// std::cout << "FINALIZER" << std::endl;
+		UnsetRoot();
+	}
     return TRUE;
 }
 
@@ -54,18 +64,35 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 #endif // WIN32
 
+#ifdef __APPLE__
 extern "C" {
+	
+	__attribute__((constructor)) 
+	static void initializer() {
+		// std::cout << "INITIALIZER" << std::endl;
+		SetRoot();
+	}
+	
+	
+	__attribute__((destructor)) 
+	static void finalizer() { 
+		UnsetRoot();
+		// std::cout << "FINALIZER" << std::endl;
+	} 
+	
+}
+#endif // __APPLE__
 
+extern "C" {
+	
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtVoid) RiBegin(RtToken name)
 {
-	SetRoot();
 	RiCPPInternalBeginV(name, 0, 0, 0);
 }
 
 RICPP_INTERN(RtVoid) RiEnd(void)
 {
-	SetRoot();
 	RiCPPInternalEnd();
 }
 
@@ -73,20 +100,17 @@ RICPP_INTERN(RtVoid) RiEnd(void)
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtContextHandle) RiCPPBegin(RtToken name, ...)
 {
-	SetRoot();
 	RI_GETARGS(name)
 	return RiCPPInternalBeginV(name, n, tokens, params);
 }
 
 RICPP_INTERN(RtContextHandle) RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[])
 {
-	SetRoot();
 	return RiCPPInternalBeginV(name, n, tokens, params);
 }
 
 RICPP_INTERN(RtVoid) RiCPPEnd (void)
 {
-	SetRoot();
 	RiCPPInternalEnd();
 }
 
@@ -94,7 +118,6 @@ RICPP_INTERN(RtVoid) RiCPPEnd (void)
 RICPP_INTERN(RtContextHandle) RiGetContext(void)
 {
 	RtContextHandle h = illContextHandle;
-	SetRoot();
 	RI_PREAMBLE_RET(h)
 		h = RiCPPRoot()->getContext();
 	RI_POSTAMBLE_RET(h)
@@ -102,7 +125,6 @@ RICPP_INTERN(RtContextHandle) RiGetContext(void)
 
 RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 {
-	SetRoot();
 	RI_PREAMBLE
 	RiCPPRoot()->context(handle);
 	RI_POSTAMBLE
@@ -112,7 +134,6 @@ RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 
 RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 {
-	SetRoot();
 	RiCPPInternalErrorHandler(handler);
 }
 
@@ -120,14 +141,12 @@ RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 
 RICPP_INTERN(RtVoid) RiControl (char *name, ...)
 {
-	SetRoot();
 	RI_GETARGS(name)
 	RiCPPInternalControlV(name, n, tokens, params);
 }
 
 RICPP_INTERN(RtVoid) RiControlV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	SetRoot();
 	RiCPPInternalControlV(name, n, tokens, params);
 }
 

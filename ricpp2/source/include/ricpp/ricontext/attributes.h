@@ -39,60 +39,54 @@
 #include "ricpp/ricontext/lights.h"
 #endif // _RICPP_RICONTEXT_LIGHTS_H
 
+#ifndef _RICPP_RICONTEXT_MOTIONSTATE_H
+#include "ricpp/ricontext/motionstate.h"
+#endif // _RICPP_RICONTEXT_MOTIONSTATE_H
+
 #include <deque>
 
 namespace RiCPP {
 
-	class CAttributeClass {
-	public:
-		inline CAttributeClass() {}
-		virtual ~CAttributeClass() {}
-		virtual CAttributeClass *duplicate() const = 0;
-
-		virtual void clear() = 0;
-		virtual void fill(RtInt n) = 0;
-		virtual void sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes) = 0;
-		virtual void sampleReset() = 0;
-	};
-
-	class CAttributeFloatClass : public CAttributeClass {
+	class CAttributeFloatClass : public IMovedValueClass {
 	public:
 		RtFloat m_value;
 		std::vector<RtFloat> m_movedValue;
-		std::vector<RtFloat>::size_type m_elemSize, m_motionBegin, m_motionEnd;
+		std::vector<RtFloat>::size_type m_elemSize;
+		unsigned long m_motionBegin, m_motionEnd;
 
 		inline CAttributeFloatClass() {}
 		inline CAttributeFloatClass(const CAttributeFloatClass &c) { *this = c; }
 		virtual ~CAttributeFloatClass() {}
-		virtual CAttributeFloatClass *duplicate() const { return new CAttributeFloatClass(*this); }
+		virtual IMovedValueClass *duplicate() const { return new CAttributeFloatClass(*this); }
 
 		virtual void clear();
 		virtual void fill(RtInt n);
-		virtual RtVoid sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes);
+		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		virtual RtVoid sampleReset();
 		CAttributeFloatClass &operator=(const CAttributeFloatClass &c);
-		void set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt moEnd);
+		void set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
 		void set(RtFloat aValue);
 	};
 
-	class CAttributeFloatArrayClass : public CAttributeClass {
+	class CAttributeFloatArrayClass : public IMovedValueClass {
 	public:
 		std::vector<RtFloat> m_value;
 		std::vector<RtFloat> m_movedValue;
-		RtInt m_card, m_motionBegin, m_motionEnd;
+		unsigned long m_motionBegin, m_motionEnd;
+		RtInt m_card;
 
 		inline CAttributeFloatArrayClass() {}
 		inline CAttributeFloatArrayClass(const CAttributeFloatClass &c) { *this = c; }
 		virtual ~CAttributeFloatArrayClass() {}
-		virtual CAttributeClass *duplicate() const { return new CAttributeFloatArrayClass(*this); }
+		virtual IMovedValueClass *duplicate() const { return new CAttributeFloatArrayClass(*this); }
 
 		virtual void clear();
 		virtual void fill(RtInt n);
-		virtual RtVoid sample(RtFloat shutterTime, std::deque<RtFloat> &motionTimes);
+		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		virtual RtVoid sampleReset();
 		CAttributeFloatArrayClass &operator=(const CAttributeFloatArrayClass &c);
-		void set(RtFloat aValue, RtInt &n, RtInt moBegin, RtInt moEnd);
-		void set(RtFloat *aValue, RtInt &n, RtInt moBegin, RtInt moEnd);
+		void set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
+		void set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
 		void set(RtFloat aValue, RtInt aCard);
 		void set(RtFloat *aValue, RtInt aCard);
 		void set(RtFloat aValue);
@@ -169,16 +163,15 @@ namespace RiCPP {
 		typedef std::vector<CLightSource *> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
 
 	protected:
-		std::deque<RtFloat> m_motionTimes;            ///< times of all motion blocks occured in this attribute block
-		std::vector<CMotionAttribute> m_motionBlocks; ///< current motion blocks
-
+		const CMotionState *m_motionState;
+		
 		enum EnumAttributeIndex {
 			AIDX_COLOR,
 			AIDX_OPACITY,
 
 			AIDX_ENDMARKER
 		};
-		std::vector<CAttributeClass *> m_allAttributes; ///< Pointer to all attributes of this class
+		std::vector<IMovedValueClass *> m_allAttributes; ///< Pointer to all attributes of this class
 
 		virtual void initAttributeVector();
 		virtual void initMotion();
@@ -709,10 +702,11 @@ namespace RiCPP {
 			return m_trimCurve;
 		}
 
-		virtual RtVoid motionBegin(RtInt N, RtFloat times[]);
+		virtual RtVoid motionBegin(const CMotionState &state);
 		virtual RtVoid motionEnd();
-
-		virtual RtVoid sample(RtFloat shutterTime);
+		virtual RtVoid motionSuspend();
+		
+		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		virtual RtVoid sampleReset();
 	}; // CAttributes
 

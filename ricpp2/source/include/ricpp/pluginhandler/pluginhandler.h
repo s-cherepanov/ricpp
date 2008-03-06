@@ -353,7 +353,7 @@ public:
 
 /** @brief Plugin factory to create plugins loaded from dynamic libraries.
  *
- * Can be used to create plugins that are stored in danamic libraries.
+ * Can be used to create plugins that are stored in dynamic libraries.
  */
 template
 <class Plugin>

@@ -36,7 +36,7 @@
 using namespace RiCPP;
 
 // ----------------------------------------------------------------------------
-inline CRiCPPBridge::CContextManagement::CContextManagement()
+CRiCPPBridge::CContextManagement::CContextManagement()
 {
 	m_nextCtxHandle = 1;
 	// illContextHandle is always the first context (outside begin-end)
@@ -44,6 +44,9 @@ inline CRiCPPBridge::CContextManagement::CContextManagement()
 	m_ctxHandle = illContextHandle;
 	m_ctxMap[m_ctxHandle] = m_curCtx;
 	m_outer = 0;
+}
+
+CRiCPPBridge::CContextManagement::~CContextManagement() {
 }
 
 RtContextHandle CRiCPPBridge::CContextManagement::addContext(const CContext &ctx)

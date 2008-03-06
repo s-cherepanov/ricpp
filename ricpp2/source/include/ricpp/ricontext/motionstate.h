@@ -44,125 +44,177 @@
 
 namespace RiCPP {
 
-/**! @brief Motion block state
- */
-class CMotionState
-{
-public:
-	/**! @brief State of the motion block.
+	typedef std::deque<RtFloat>                 TypeMotionTimes;
+
+	/**! @brief Final motion block state, being part of the TRenderState.
 	 */
-	enum EnumMotionState {
-		MOT_OUTSIDE = 0,      ///< Outside a motion block, however, m_curRequest bears the current request id.
-		MOT_INSIDE = 1,       ///< Inside a motion block, no error.
-		MOT_TOO_MANY_REQ = 2, ///< Inside a motion block, too many requests (more than the number of the samples).
-		MOT_NO_REQ_MATCH = 4  ///< Inside a motion block, requests don't match or are not valid for motion blocks.
-	};
-
-private:
-	class CMotionStateElem {
+	class CMotionState
+	{
 	public:
-		std::vector<RtFloat> m_times; ///< Samples of the last (current) motion block request.
-		RtInt m_curSample;            ///< Current sample (if inside the mootion block, can be hugher than the size of m_times, if there are to many requests within a motion block).
-		EnumRequests m_firstRequest;  ///< Id of the first request inside the last (current) motion block.
-		EnumRequests m_curRequest;    ///< Id of the current request inside or outside the last (current) motion block..
-		unsigned int m_curState;      ///< The state of the motion block.
-		bool m_attributesStored;      ///< Additional attribute block because of moved model instances (ReadArchive, ObjectInstance, Procedural)
+		/** @brief State of the motion block.
+		 */
+		enum EnumMotionState {
+			MOT_OUTSIDE = 0,      ///< Outside a motion block, however, m_curRequest bears the current request id.
+			MOT_INSIDE = 1,       ///< Inside a motion block, no error.
+			MOT_TOO_MANY_REQ = 2, ///< Inside a motion block, too many requests (more than the number of the samples).
+			MOT_NO_REQ_MATCH = 4  ///< Inside a motion block, requests don't match or are not valid for motion blocks.
+		};
 
-		CMotionStateElem();
-		~CMotionStateElem();
-		CMotionStateElem &operator=(const CMotionStateElem &elem);
-	};
+	private:
+		/** @brief Descriptor of an open motion block
+		 */
+		class CMotionStateElem {
+		public:
+			std::vector<RtFloat> m_times; ///< Samples of the last (current) motion block request, copies part of CMotionState::m_motionTimes
+			RtInt m_curSample;            ///< Current sample index (if inside the motion block, can be hugher than the size of m_times, if there are to many requests within a motion block).
+			unsigned long m_first;        ///< Start index of samples in @c m_motionTimes.
+			unsigned long m_last;         ///< End index of samples in @c m_motionTimes.
+			EnumRequests m_firstRequest;  ///< Id of the first request inside the last (current) motion block.
+			EnumRequests m_curRequest;    ///< Id of the current request inside or outside the last (current) motion block.
+			unsigned int m_curState;      ///< The state of the motion block.
+			bool m_attributesStored;      ///< Additional attribute block because of moved model instances (ReadArchive, ObjectInstance, Procedural).
 
-	std::deque<CMotionStateElem> m_elems;
+			/** @brief Default constructor
+			 *
+			 *  Sets some standard values for an empty motion element.
+			 *
+			 */
+			CMotionStateElem();
 
-protected:
-	void incCurSampleIdx();
+			/** @brief Destructor
+			 */
+			inline ~CMotionStateElem() {}
 
-public:
+			/** @brief Assignment
+			 *  @param elem Object to assign to *this.
+			 *  @return *this
+			 */
+			CMotionStateElem &operator=(const CMotionStateElem &elem);
+		};
 
-	CMotionState();
+		std::deque<CMotionStateElem> m_elems; ///< Nested motion blocks (motion blocks can be nested if a model instance is moved) @see @c m_attributesStored
+		
+		TypeMotionTimes m_motionTimes;        ///< Times of all motion blocks occured in this attribute block
+		std::vector<unsigned long> m_marks;   ///< Marks for m_motionTimes, marked on AttributeBegin, a chunk of elements can be removed if an attribute block ends
 
-	inline CMotionState(const CMotionState &aMotionState)
-	{
-		*this = aMotionState;
-	}
+		void incCurSampleIdx();               ///< Increments the sample index in a motion block (CMotionStateElem::m_curSample)
 
-	inline virtual ~CMotionState()
-	{
-	}
+	public:
 
-	inline virtual CMotionState *duplicate()
-	{
-		return new CMotionState(*this);
-	}
+		inline CMotionState() {}
 
-	CMotionState &operator=(const CMotionState &aMotionState);
-
-	inline std::vector<RtFloat> &times()
-	{
-		assert( !m_elems.empty() );
-		return m_elems.back().m_times;
-	}
-
-	inline const std::vector<RtFloat> &times() const
-	{
-		assert( !m_elems.empty() );
-		return m_elems.back().m_times;
-	}
-
-	void open(RtInt N, RtFloat times[]);
-
-	void close();
-
-	inline RtInt curSampleIdx() const
-	{
-		assert( !m_elems.empty() );
-		return m_elems.back().m_curSample;
-	}
-
-	RtFloat curSample();
-
-	void request(EnumRequests req);
-
-	inline EnumRequests firstRequest() const
-	{
-		assert( !m_elems.empty() );
-		return m_elems.back().m_firstRequest;
-	}
-
-	inline EnumRequests curRequest() const
-	{
-		assert( !m_elems.empty() );
-		return m_elems.back().m_curRequest;
-	}
-
-	inline unsigned int curState() const
-	{
-		if ( m_elems.empty() ) {
-			return MOT_OUTSIDE;
+		inline CMotionState(const CMotionState &aMotionState)
+		{
+			*this = aMotionState;
 		}
-		return m_elems.back().m_curState;
-	}
 
-	inline bool attributesStored() const
-	{
-		assert( !m_elems.empty() );
-		if ( m_elems.empty() ) {
-			return false;
+		inline ~CMotionState() {}
+
+		inline CMotionState *duplicate() const
+		{
+			return new CMotionState(*this);
 		}
-		return m_elems.back().m_attributesStored;
-	}
 
-	inline void attributesStored(bool flag)
-	{
-		assert( !m_elems.empty() );
-		if ( m_elems.empty() ) {
-			return;
+		CMotionState &operator=(const CMotionState &aMotionState);
+
+		inline std::vector<RtFloat> &curTimes()
+		{
+			assert( !m_elems.empty() );
+			return m_elems.back().m_times;
 		}
-		m_elems.back().m_attributesStored = flag;
-	}
-}; // CMotionState
 
+		inline const std::vector<RtFloat> &curTimes() const
+		{
+			assert( !m_elems.empty() );
+			return m_elems.back().m_times;
+		}
+
+		void motionBegin(RtInt N, RtFloat times[]);
+
+		void motionEnd();
+
+		void mark();
+
+		void clearToMark();
+
+		const TypeMotionTimes &allTimes() const {
+			return m_motionTimes;
+		}
+
+		inline RtInt curSampleCnt() const
+		{
+			assert( !m_elems.empty() );
+			return m_elems.back().m_curSample;
+		}
+
+		inline unsigned long firstSampleIdx() const
+		{
+			assert( !m_elems.empty() );
+			return m_elems.back().m_first;
+		}
+
+		inline unsigned long lastSampleIdx() const
+		{
+			assert( !m_elems.empty() );
+			return m_elems.back().m_last;
+		}
+
+		RtFloat curSample() const;
+
+		void request(EnumRequests req);
+
+		inline EnumRequests firstRequest() const
+		{
+			assert( !m_elems.empty() );
+			return m_elems.back().m_firstRequest;
+		}
+
+		inline EnumRequests curRequest() const
+		{
+			assert( !m_elems.empty() );
+			return m_elems.back().m_curRequest;
+		}
+
+		inline unsigned int curState() const
+		{
+			if ( m_elems.empty() ) {
+				return MOT_OUTSIDE;
+			}
+			return m_elems.back().m_curState;
+		}
+
+		inline bool attributesStored() const
+		{
+			assert( !m_elems.empty() );
+			if ( m_elems.empty() ) {
+				return false;
+			}
+			return m_elems.back().m_attributesStored;
+		}
+
+		inline void attributesStored(bool flag)
+		{
+			assert( !m_elems.empty() );
+			if ( m_elems.empty() ) {
+				return;
+			}
+			m_elems.back().m_attributesStored = flag;
+		}
+	}; // CMotionState
+
+
+	class IMovedValueClass {
+	public:
+		inline IMovedValueClass() {}
+		inline virtual ~IMovedValueClass() {}
+		virtual IMovedValueClass *duplicate() const = 0;
+			
+		virtual void clear() = 0;
+		virtual void fill(RtInt n) = 0;
+		virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times) = 0;
+		virtual void sampleReset() = 0;
+	}; // IMovedValueClass
+		
 }
 
 #endif // _RICPP_RICONTEXT_MOTIONSTATE_H

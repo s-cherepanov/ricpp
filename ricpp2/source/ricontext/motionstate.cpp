@@ -32,15 +32,28 @@
 using namespace RiCPP;
 
 
+CMotionState::CMotionStateElem::CMotionStateElem()
+{
+	m_curSample = -1;
+	m_first = 0;
+	m_last = 0;
+	m_firstRequest = m_curRequest = REQ_UNKNOWN;
+	m_curState = MOT_OUTSIDE;
+	m_attributesStored = false;
+}
 
-
-CMotionState::CMotionStateElem &CMotionState::CMotionStateElem::operator=(const CMotionState::CMotionStateElem &elem)
+CMotionState::CMotionStateElem &
+CMotionState::CMotionStateElem::operator=(const CMotionState::CMotionStateElem &elem)
 {
 	if ( this == &elem )
 		return *this;
 
 	m_times = elem.m_times;
+
 	m_curSample = elem.m_curSample;
+	m_first = elem.m_first;
+	m_last = elem.m_last;
+
 	m_firstRequest = elem.m_firstRequest;
 	m_curRequest = elem.m_curRequest;
 	m_curState = elem.m_curState;
@@ -49,22 +62,8 @@ CMotionState::CMotionStateElem &CMotionState::CMotionStateElem::operator=(const 
 	return *this;
 }
 
-CMotionState::CMotionStateElem::CMotionStateElem()
-{
-	m_curSample = -1;
-	m_firstRequest = m_curRequest = REQ_UNKNOWN;
-	m_curState = MOT_OUTSIDE;
-	m_attributesStored = false;
-}
 
-CMotionState::CMotionStateElem::~CMotionStateElem()
-{
-}
-
-
-CMotionState::CMotionState()
-{
-}
+// -----------------------------------------------------------------------------
 
 void CMotionState::incCurSampleIdx()
 {
@@ -72,8 +71,9 @@ void CMotionState::incCurSampleIdx()
 
 	if ( !m_elems.empty() ) {
 		m_elems.back().m_curSample++;
-		if ( m_elems.back().m_curSample >= static_cast<RtInt>(m_elems.back().m_times.size()) )
+		if ( m_elems.back().m_curSample >= static_cast<RtInt>(m_elems.back().m_times.size()) ) {
 			m_elems.back().m_curState |= MOT_TOO_MANY_REQ;
+		}
 	}
 }
 
@@ -83,19 +83,29 @@ CMotionState &CMotionState::operator=(const CMotionState &aMotionState)
 		return *this;
 
 	m_elems = aMotionState.m_elems;
+	m_motionTimes = aMotionState.m_motionTimes;
+	m_marks = aMotionState.m_marks;
 
 	return *this;
 }
 
-void CMotionState::open(RtInt N, RtFloat times[])
+void CMotionState::motionBegin(RtInt N, RtFloat times[])
 {
 	if ( !times )
 		N=0;
 
 	m_elems.push_back(CMotionStateElem());
-
 	assert(!m_elems.empty());
-
+	
+	unsigned long sz = m_motionTimes.size();
+	if ( N ) {
+		m_motionTimes.resize(sz+N);
+	}
+	assert(sz+N == m_motionTimes.size());
+	for ( unsigned long int i = sz; i <= m_motionTimes.size(); ++i ) {
+		m_motionTimes[i] = times[i-sz];
+	}
+	
 	if ( !m_elems.empty() ) {
 		m_elems.back().m_times.clear();
 		m_elems.back().m_times.resize(N);
@@ -103,14 +113,15 @@ void CMotionState::open(RtInt N, RtFloat times[])
 			m_elems.back().m_times[i] = times[i];
 		}
 		m_elems.back().m_curSample = -1;
+		m_elems.back().m_first = sz;
+		m_elems.back().m_last = m_motionTimes.size();		
 		m_elems.back().m_curState = MOT_INSIDE;
 		m_elems.back().m_firstRequest = REQ_UNKNOWN;
 	}
 }
 
-void CMotionState::close()
+void CMotionState::motionEnd()
 {
-	// m_curState = MOT_OUTSIDE;
 	assert(!m_elems.empty());
 
 	if ( !m_elems.empty() ) {
@@ -118,13 +129,31 @@ void CMotionState::close()
 	}
 }
 
-RtFloat CMotionState::curSample()
+void CMotionState::mark()
+{
+	m_marks.push_back(m_motionTimes.size());
+}
+
+void CMotionState::clearToMark()
+{
+	assert(!m_marks.empty());
+	if (!m_marks.empty()) {
+		unsigned int sz = m_marks.back();
+		assert (sz <= m_motionTimes.size());
+		m_marks.pop_back();
+		if ( sz < m_motionTimes.size() ) {
+			m_motionTimes.erase(m_motionTimes.begin()+sz, m_motionTimes.end());
+		}
+	}
+}
+
+
+RtFloat CMotionState::curSample() const
 {
 	assert(!m_elems.empty());
 
-	if ( m_elems.empty() ) {
+	if ( m_elems.empty() )
 		return 0;
-	}
 
 	if ( m_elems.back().m_times.empty() )
 		return 0;
@@ -142,9 +171,8 @@ void CMotionState::request(EnumRequests req)
 {
 	assert(!m_elems.empty());
 
-	if ( m_elems.empty() ) {
+	if ( m_elems.empty() )
 		return;
-	}
 
 	m_elems.back().m_curRequest = req;
 	if ( req != REQ_MOTION_END ) {

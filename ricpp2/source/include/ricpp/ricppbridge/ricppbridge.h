@@ -507,6 +507,10 @@ protected:
 		 */
 		CContextManagement();
 
+		/** @brief Destructor.
+		 */
+		~CContextManagement();
+
 		/** @brief Sets the owner of the objects.
 		 *
 		 *  The CRiCPPBridge is used for error handling.

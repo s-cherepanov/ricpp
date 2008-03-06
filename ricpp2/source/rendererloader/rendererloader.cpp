@@ -40,6 +40,10 @@ CRendererLoader::CRendererLoader()
 	m_standardRendererName = RIBWRITER_NAME;
 }
 
+CRendererLoader::~CRendererLoader()
+{
+}
+
 const char *CRendererLoader::rendererName(RtString name) const
 {
 	assert (!m_standardRendererName.empty());

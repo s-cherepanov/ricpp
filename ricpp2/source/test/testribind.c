@@ -1,4 +1,7 @@
 #include "ricpp/ri/ri.h"
+
+extern void exit(int rval);
+
 void main(int argc, const char *argv[])
 {
 	RtPoint points[] = { { 0, 0, 0}, {-.5, .5, 0}, {.5, .5, 0} };
@@ -44,4 +47,5 @@ void main(int argc, const char *argv[])
 			RiWorldEnd();
 		RiFrameEnd();
 	RiEnd();
+	exit(0);
 }

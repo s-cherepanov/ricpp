@@ -64,7 +64,7 @@ void CAttributeFloatClass::fill(RtInt n)
 	if ( n == 0 ) {
 		return;
 	}
-	for ( RtInt i = n; i < (RtInt)(m_motionEnd - m_motionBegin); ++i ) {
+	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
 		m_movedValue[i] = m_movedValue[i-1];
 	}
 }
@@ -94,7 +94,7 @@ void CAttributeFloatClass::set(RtFloat aValue, RtInt n, unsigned long moBegin, u
 		if ( m_movedValue.size() < moEnd - moBegin ) {
 			m_movedValue.resize(moEnd - moBegin);
 		}
-		if ( n >= moEnd - moBegin ) {
+		if ( (unsigned long)n >= moEnd - moBegin ) {
 			// ERROR
 			return;
 		}
@@ -153,7 +153,7 @@ void CAttributeFloatArrayClass::fill(RtInt n)
 	if ( n == 0 ) {
 		return;
 	}
-	for ( RtInt i = n; i < m_motionEnd - m_motionBegin; ++i ) {
+	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
 		for ( RtInt j = 0; j < m_card; ++j ) {
 			m_movedValue[i*m_card+j] = m_movedValue[(i-1)*m_card+j];
 		}
@@ -180,14 +180,14 @@ void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt n, unsigned long moBeg
 	}
 
 	if ( moBegin < moEnd ) {
-		if ( (RtInt)m_movedValue.size() < (moEnd - moBegin) * m_card ) {
+		if ( m_movedValue.size() < (moEnd - moBegin) * (unsigned long)m_card ) {
 			m_movedValue.resize((moEnd-moBegin) * m_card);
 		}
-		if ( n >= moEnd - moBegin ) {
+		if ( (unsigned long)n >= moEnd - moBegin ) {
 			// ERROR
 			return;
 		}
-		for ( RtInt i=0; i < m_card; ++i )
+		for ( RtInt i = 0; i < m_card; ++i )
 			m_movedValue[n * m_card + i] = aValue;
 		++n;
 	}
@@ -232,11 +232,11 @@ void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt n, unsigned long moBe
 		if ( (RtInt)m_movedValue.size() < (moEnd-moBegin) * m_card ) {
 			m_movedValue.resize((moEnd-moBegin) * m_card);
 		}
-		if ( n >= moEnd - moBegin ) {
+		if ( (unsigned long)n >= moEnd - moBegin ) {
 			// ERROR
 			return;
 		}
-		for ( RtInt i=0; i<m_card; ++i )
+		for ( RtInt i = 0; i < m_card; ++i )
 			m_movedValue[n * m_card + i] = aValue[i];
 		++n;
 	}

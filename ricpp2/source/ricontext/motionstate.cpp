@@ -102,7 +102,7 @@ void CMotionState::motionBegin(RtInt N, RtFloat times[])
 		m_motionTimes.resize(sz+N);
 	}
 	assert(sz+N == m_motionTimes.size());
-	for ( unsigned long int i = sz; i <= m_motionTimes.size(); ++i ) {
+	for ( unsigned long int i = sz; i < m_motionTimes.size(); ++i ) {
 		m_motionTimes[i] = times[i-sz];
 	}
 	

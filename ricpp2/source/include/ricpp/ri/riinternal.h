@@ -97,20 +97,6 @@ RtContextHandle RiCPPInternalBeginV(RtToken name, int n, RtToken tokens[], RtPoi
  */
 RtVoid RiCPPInternalEnd(void);
 
-/** @brief Calls the IRi::errorHandler() routine
- *
- *  riprog and ridynload implement the normal RiErrorHandler() and call RiCPPInternalErrorHandler()
- *  @param handler the C-binding ErrorHandler (dummy pointer)
- */
-RtVoid RiCPPInternalErrorHandler(RtErrorHandler handler);
-
-/** @brief Calls the IRi::errorHandler() routine
- *
- *  riprog and ridynload implement the normal RiControl(), RiControlV() and call RiCPPInternalControlV()
- *  @param handler the C-binding ErrorHandler (dummy pointer)
- */
-RtVoid RiCPPInternalControlV(RtToken name, int n, RtToken tokens[], RtPointer params[]);
-
 // ----------------------------------------------------------------------------
 
 /** @brief An arbitrary pixel filter for C binding

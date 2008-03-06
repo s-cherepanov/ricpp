@@ -130,24 +130,4 @@ RICPP_INTERN(RtVoid) RiContext(RtContextHandle handle)
 	RI_POSTAMBLE
 }
 
-// ----------------------------------------------------------------------------
-
-RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
-{
-	RiCPPInternalErrorHandler(handler);
-}
-
-// ----------------------------------------------------------------------------
-
-RICPP_INTERN(RtVoid) RiControl (char *name, ...)
-{
-	RI_GETARGS(name)
-	RiCPPInternalControlV(name, n, tokens, params);
-}
-
-RICPP_INTERN(RtVoid) RiControlV (char *name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	RiCPPInternalControlV(name, n, tokens, params);
-}
-
 } // extern "C"

@@ -306,7 +306,7 @@ namespace RiCPP {
 					return *this;
 
 				if ( m_shaderTransform ) delete m_shaderTransform;
-				m_shaderTransform = c.m_shaderTransform ? m_shaderTransform->duplicate() : 0;
+				m_shaderTransform = c.m_shaderTransform ? c.m_shaderTransform->duplicate() : 0;
 
 				TypeParent::operator=(c);
 				return *this;

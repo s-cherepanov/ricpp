@@ -104,6 +104,9 @@ void CAttributes::CAttributeShader::set(RtToken name, const CParameterList &para
 	m_value.m_params = params;
 	CTransformationFactory::deleteTransformation(m_shaderTransform);
 	m_shaderTransform = transform.duplicate();
+	if ( m_shaderTransform ) {
+		m_shaderTransform->spaceType(RI_SHADER);
+	}
 }
 
 // -----------------------------------------------------------------------------

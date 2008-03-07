@@ -97,12 +97,12 @@ void CMotionState::motionBegin(RtInt N, RtFloat times[])
 	m_elems.push_back(CMotionStateElem());
 	assert(!m_elems.empty());
 	
-	unsigned long sz = m_motionTimes.size();
+	unsigned long sz = (unsigned long)m_motionTimes.size();
 	if ( N ) {
 		m_motionTimes.resize(sz+N);
 	}
 	assert(sz+N == m_motionTimes.size());
-	for ( unsigned long int i = sz; i < m_motionTimes.size(); ++i ) {
+	for ( unsigned long i = sz; i < m_motionTimes.size(); ++i ) {
 		m_motionTimes[i] = times[i-sz];
 	}
 	
@@ -114,7 +114,7 @@ void CMotionState::motionBegin(RtInt N, RtFloat times[])
 		}
 		m_elems.back().m_curSample = -1;
 		m_elems.back().m_first = sz;
-		m_elems.back().m_last = m_motionTimes.size();		
+		m_elems.back().m_last = (unsigned long)m_motionTimes.size();		
 		m_elems.back().m_curState = MOT_INSIDE;
 		m_elems.back().m_firstRequest = REQ_UNKNOWN;
 	}
@@ -131,7 +131,7 @@ void CMotionState::motionEnd()
 
 void CMotionState::mark()
 {
-	m_marks.push_back(m_motionTimes.size());
+	m_marks.push_back((unsigned long)m_motionTimes.size());
 }
 
 void CMotionState::clearToMark()

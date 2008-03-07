@@ -218,7 +218,7 @@ namespace RiCPP {
 				m_motionBegin = m_motionEnd = 0;
 			}
 			
-			inline CMovedTranslate(const CMovedPerspective &o)
+			inline CMovedPerspective(const CMovedPerspective &o)
 			{
 				*this = o;
 			}

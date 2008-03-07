@@ -77,7 +77,7 @@ void CTransformation::CMovedRotate::fill(RtInt n)
 void CTransformation::CMovedRotate::set(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
-	assert ( n < moEnd - moBegin );
+	assert ( (unsigned long)n < moEnd - moBegin );
 	
 	if ( moBegin > moEnd ) {
 		std::swap(moBegin, moEnd);		
@@ -120,10 +120,15 @@ void CTransformation::CMovedRotate::sampleReset(CMatrix3D &ctm, CMatrix3D &inver
 
 CTransformation::CMovedMatrix &CTransformation::CMovedMatrix::operator=(const CTransformation::CMovedMatrix &o)		
 {
+	if ( this == &o )
+		return *this;
+
 	m_transform = o.m_transform;
 	m_concat = o.m_concat;
 	m_motionBegin = o.m_motionBegin;
 	m_motionEnd = o.m_motionEnd;
+
+	return *this;
 }
 
 void CTransformation::CMovedMatrix::clear()
@@ -152,7 +157,7 @@ void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 										CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
-	assert ( n < moEnd - moBegin );
+	assert ( (unsigned long)n < moEnd - moBegin );
 	
 	if ( moBegin > moEnd ) {
 		std::swap(moBegin, moEnd);		
@@ -249,7 +254,7 @@ void CTransformation::CMovedScale::fill(RtInt n)
 void CTransformation::CMovedScale::set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
-	assert ( n < moEnd - moBegin );
+	assert ( (unsigned long)n < moEnd - moBegin );
 	
 	if ( moBegin > moEnd ) {
 		std::swap(moBegin, moEnd);		
@@ -297,7 +302,7 @@ void CTransformation::CMovedScale::sampleReset(CMatrix3D &ctm, CMatrix3D &invers
 			dz = static_cast<RtFloat>(1.0);
 			throwErr = true;
 		}
-		inverse.scale(1.0/dx, 1.0/dy, 1.0/dz);
+		inverse.scale((RtFloat)1.0/dx, (RtFloat)1.0/dy, (RtFloat)1.0/dz);
 		if ( throwErr ) {
 			// ERROR
 		}
@@ -338,7 +343,7 @@ void CTransformation::CMovedTranslate::fill(RtInt n)
 void CTransformation::CMovedTranslate::set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
-	assert ( n < moEnd - moBegin );
+	assert ( (unsigned long)n < moEnd - moBegin );
 	
 	if ( moBegin > moEnd ) {
 		std::swap(moBegin, moEnd);		
@@ -410,7 +415,7 @@ void CTransformation::CMovedPerspective::fill(RtInt n)
 void CTransformation::CMovedPerspective::set(RtFloat fov, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
-	assert ( n < moEnd - moBegin );
+	assert ( (unsigned long)n < moEnd - moBegin );
 	
 	if ( moBegin > moEnd ) {
 		std::swap(moBegin, moEnd);		
@@ -485,7 +490,7 @@ void CTransformation::CMovedSkew::fill(RtInt n)
 void CTransformation::CMovedSkew::set(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
-	assert ( n < moEnd - moBegin );
+	assert ( (unsigned long)n < moEnd - moBegin );
 	
 	if ( moBegin > moEnd ) {
 		std::swap(moBegin, moEnd);		

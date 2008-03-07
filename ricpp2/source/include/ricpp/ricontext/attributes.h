@@ -100,7 +100,7 @@ namespace RiCPP {
 		void set(RtFloat *aValue, RtInt aCard);
 		void set(RtFloat aValue);
 		void set(RtFloat *aValue);
-		inline unsigned long card() const { return m_value.size(); }
+		inline unsigned long card() const { return (unsigned long)m_value.size(); }
 	};
 	
 	/** @brief Stores the state of a motion block

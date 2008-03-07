@@ -440,7 +440,7 @@ RtFloat CAttributes::color(RtInt i) const
 	if ( i < 0 )
 		return 0;
 
-	if ( i >= m_color.card() )
+	if ( (unsigned long)i >= m_color.card() )
 		return 0;
 
 	return m_color.m_value[i];
@@ -466,7 +466,7 @@ RtFloat CAttributes::opacity(RtInt i) const
 	if ( i < 0 )
 		return 0;
 
-	if ( i >= m_opacity.card() )
+	if ( (unsigned long)i >= m_opacity.card() )
 		return 0;
 
 	return m_opacity.m_value[i];

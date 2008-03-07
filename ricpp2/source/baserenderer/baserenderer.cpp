@@ -1601,6 +1601,20 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 	RICPP_UNREC_TOKENS
 }
 
+RtVoid CBaseRenderer::preDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
+{
+	renderState()->attributes().deformation(name, params);
+}
+
+RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	RICPP_PREAMBLE(REQ_DEFORMATION)
+		name = renderState()->tokFindCreate(name);
+		renderState()->parseParameters(RI_DEFORMATION, name, CParameterClasses(), n, tokens, params);
+		RICPP_PROCESS(newRiDeformation(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS
+}
 
 RtVoid CBaseRenderer::preTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
 {
@@ -1955,29 +1969,6 @@ RtVoid CBaseRenderer::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1,
 	RICPP_PREAMBLE(REQ_SKEW)
 		RICPP_PROCESS(newRiSkew(renderState()->lineNo(), angle, dx1, dy1, dz1, dx2, dy2, dz2));
 	RICPP_POSTAMBLE
-}
-
-RtVoid CBaseRenderer::preDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
-{
-}
-
-RtVoid CBaseRenderer::doDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
-{
-	ricppErrHandler().handleError(
-		RIE_UNIMPLEMENT, RIE_WARNING,
-		renderState()->printLineNo(__LINE__),
-		renderState()->printName(__FILE__),
-		"RiDeformation is not supported, name = '%s'",  noNullStr(name));
-}
-
-RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	RICPP_PREAMBLE(REQ_DEFORMATION)
-		name = renderState()->tokFindCreate(name);
-		renderState()->parseParameters(RI_DEFORMATION, name, CParameterClasses(), n, tokens, params);
-		RICPP_PROCESS(newRiDeformation(renderState()->lineNo(), name, renderState()->curParamList()));
-	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
 }
 
 

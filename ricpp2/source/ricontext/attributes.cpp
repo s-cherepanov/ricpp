@@ -35,97 +35,37 @@
 
 using namespace RiCPP;
 
-// -----------------------------------------------------------------------------
-
-
-RtVoid CAttributeFloat::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+void CAttributes::CAttributeInt::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 }
 
-RtVoid CAttributeFloat::sampleReset()
+void CAttributes::CAttributeToken::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
-	if ( m_movedValue.size() >= 1 )
-		m_value = m_movedValue[0];
 }
 
-CAttributeFloat &CAttributeFloat::operator=(const CAttributeFloat &c)
+void CAttributes::CAttributeFloat::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
-	if ( this == &c )
-		return *this;
-	clear();
-	m_value = c.m_value;
-	m_movedValue = c.m_movedValue;
-	m_motionBegin = c.m_motionBegin;
-	m_motionEnd = c.m_motionEnd;
-	return *this;
 }
 
-void CAttributeFloat::fill(RtInt n)
+void CAttributes::CAttributeIlluminate::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
-	// Fill unused values at [n...end]
-	if ( n == 0 ) {
-		return;
-	}
-	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
-		m_movedValue[i] = m_movedValue[i-1];
-	}
 }
 
-void CAttributeFloat::clear()
-{
-	m_motionBegin = 0;
-	m_motionEnd = 0;
-}
-
-void CAttributeFloat::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
-{
-	assert ( moBegin <= moEnd);
-	
-	if ( moBegin > moEnd ) {
-		std::swap(moBegin, moEnd);		
-	}
-	
-	m_motionBegin = moBegin;
-	m_motionEnd = moEnd;
-
-	if ( n == 0 ) {
-		m_value = aValue;
-	}
-
-	if ( moBegin < moEnd ) {
-		if ( m_movedValue.size() < moEnd - moBegin ) {
-			m_movedValue.resize(moEnd - moBegin);
-		}
-		if ( (unsigned long)n >= moEnd - moBegin ) {
-			// ERROR
-			return;
-		}
-		m_movedValue[n] = aValue;
-	}
-}
-
-void CAttributeFloat::set(RtFloat aValue)
-{
-	m_motionBegin = 0;
-	m_motionEnd = 0;
-
-	m_value = aValue;
-}
 
 // -----------------------------------------------------------------------------
 
-RtVoid CAttributeFloatArray::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+void CAttributes::CAttributeFloatArray::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 }
 
-RtVoid CAttributeFloatArray::sampleReset()
+void CAttributes::CAttributeFloatArray::sampleReset()
 {
 	if ( (RtInt)m_movedValue.size() >= m_value.size() ) {
 		m_value.assign(m_movedValue.begin(), m_movedValue.begin() + m_value.size());
 	}
 }
 
-CAttributeFloatArray &CAttributeFloatArray::operator=(const CAttributeFloatArray &c)
+CAttributes::CAttributeFloatArray &CAttributes::CAttributeFloatArray::operator=(const CAttributes::CAttributeFloatArray &c)
 {
 	if ( this == &c )
 		return *this;
@@ -137,7 +77,7 @@ CAttributeFloatArray &CAttributeFloatArray::operator=(const CAttributeFloatArray
 	return *this;
 }
 
-void CAttributeFloatArray::clear()
+void CAttributes::CAttributeFloatArray::clear()
 {
 	m_value.clear();
 	m_movedValue.clear();
@@ -145,7 +85,7 @@ void CAttributeFloatArray::clear()
 	m_motionEnd = 0;
 }
 
-void CAttributeFloatArray::fill(RtInt n)
+void CAttributes::CAttributeFloatArray::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
 	if ( n == 0 ) {
@@ -158,7 +98,7 @@ void CAttributeFloatArray::fill(RtInt n)
 	}
 }
 
-void CAttributeFloatArray::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
+void CAttributes::CAttributeFloatArray::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
 {
 	assert ( moBegin <= moEnd);
 	
@@ -186,7 +126,7 @@ void CAttributeFloatArray::set(RtFloat aValue, RtInt n, unsigned long moBegin, u
 	}
 }
 
-void CAttributeFloatArray::set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
+void CAttributes::CAttributeFloatArray::set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
 {
 	assert ( moBegin <= moEnd);
 	
@@ -214,10 +154,11 @@ void CAttributeFloatArray::set(RtFloat *aValue, RtInt n, unsigned long moBegin, 
 	}
 }
 
-void CAttributeFloatArray::set(RtFloat aValue, RtInt aCard)
+void CAttributes::CAttributeFloatArray::set(RtFloat aValue, RtInt aCard)
 {
 	m_motionBegin = 0;
 	m_motionEnd = 0;
+	m_movedValue.clear();
 	
 	if ( aCard <= 0 ) {
 		m_value.resize(0);
@@ -228,18 +169,20 @@ void CAttributeFloatArray::set(RtFloat aValue, RtInt aCard)
 	m_value.assign(aCard, aValue);
 }
 
-void CAttributeFloatArray::set(RtFloat aValue)
+void CAttributes::CAttributeFloatArray::set(RtFloat aValue)
 {
 	m_motionBegin = 0;
 	m_motionEnd   = 0;
+	m_movedValue.clear();
 	
 	m_value.assign(m_value.size(), aValue);
 }
 
-void CAttributeFloatArray::set(RtFloat *aValue, RtInt aCard)
+void CAttributes::CAttributeFloatArray::set(RtFloat *aValue, RtInt aCard)
 {
 	m_motionBegin = 0;
 	m_motionEnd = 0;
+	m_movedValue.clear();
 
 	if ( aCard <= 0 ) {
 		m_value.resize(0);
@@ -250,12 +193,21 @@ void CAttributeFloatArray::set(RtFloat *aValue, RtInt aCard)
 	m_value.assign(aValue, aValue + m_value.size());
 }
 
-void CAttributeFloatArray::set(RtFloat *aValue)
+void CAttributes::CAttributeFloatArray::set(RtFloat *aValue)
 {
 	m_motionBegin = 0;
 	m_motionEnd   = 0;
+	m_movedValue.clear();
 
 	m_value.assign(aValue, aValue + m_value.size());
+}
+
+bool CAttributes::CAttributeFloatArray::get(RtFloat *aValue) const
+{
+	for ( size_t i = 0; i < m_value.size(); ++i )
+		aValue[i] = m_value[i];
+
+	return !m_value.empty();
 }
 
 // -----------------------------------------------------------------------------
@@ -308,6 +260,7 @@ void CAttributes::init()
 	initInterior();
 	initExterior();
 	initDisplacement();
+	initDeformation();
 	initShadingRate();
 	initShadingInterpolation();
 	initMatte();
@@ -350,20 +303,20 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_displacementName = ra.m_displacementName;
 	m_displacementParams = ra.m_displacementParams;
 
-	memcpy(m_textureCoordinates, ra.m_textureCoordinates, sizeof(m_textureCoordinates));
+	m_textureCoordinates = ra.m_textureCoordinates;
 
 	m_shadingRate = ra.m_shadingRate;
 	m_shadingInterpolation = ra.m_shadingInterpolation;
 	m_matte = ra.m_matte;
 
-	memcpy(m_bound, ra.m_bound, sizeof(m_bound));
+	m_bound = ra.m_bound;
 	m_boundCalled = ra.m_boundCalled;
 
-	memcpy(m_detail, ra.m_detail, sizeof(m_detail));
+	m_detail = ra.m_detail;
 	m_detailCalled = ra.m_detailCalled;
 
 	// Detail range only affects the attribute block where it was defined
-	memcpy(m_detailRange, ra.m_detailRange, sizeof(m_detailRange));
+	m_detailRange = ra.m_detailRange;
 	m_detailRangeCalled = ra.m_detailRangeCalled;
 
 	// This value have to be set to false if a new attribute/frame/world block is started (done by CRenderState::pushAttributes(false)).
@@ -401,8 +354,15 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 void CAttributes::initAttributeVector()
 {
 	m_allAttributes.resize((int)AIDX_ENDMARKER);
+
 	m_allAttributes[(int)AIDX_COLOR] = &m_color;
 	m_allAttributes[(int)AIDX_OPACITY] = &m_opacity;
+	m_allAttributes[(int)AIDX_TEXTURE_COORDINATES] = &m_textureCoordinates;
+	m_allAttributes[(int)AIDX_SHADING_RATE] = &m_shadingRate;
+	m_allAttributes[(int)AIDX_BOUND] = &m_bound;
+	m_allAttributes[(int)AIDX_DETAIL] = &m_detail;
+	m_allAttributes[(int)AIDX_DETAIL_RANGE] = &m_detailRange;
+	m_allAttributes[(int)AIDX_GEOMETRIC_APPROXIMATION_VALUE] = &m_geometricApproximationValue;
 }
 
 void CAttributes::initMotion()
@@ -440,10 +400,19 @@ RtFloat CAttributes::color(RtInt i) const
 	if ( i < 0 )
 		return 0;
 
-	if ( (unsigned long)i >= m_color.card() )
+	if ( (unsigned long)i >= m_color.m_value.size() )
 		return 0;
 
 	return m_color.m_value[i];
+}
+
+bool CAttributes::getColor(RtColor Cs) const
+{
+
+	if ( colorSamples() >= (RtInt)m_color.m_value.size() )
+		return false;
+
+	return m_color.get(&Cs[0]);
 }
 
 void CAttributes::initOpacity()
@@ -466,10 +435,19 @@ RtFloat CAttributes::opacity(RtInt i) const
 	if ( i < 0 )
 		return 0;
 
-	if ( (unsigned long)i >= m_opacity.card() )
+	if ( (unsigned long)i >= m_opacity.m_value.size() )
 		return 0;
 
 	return m_opacity.m_value[i];
+}
+
+bool CAttributes::getOpacity(RtColor Os) const
+{
+
+	if ( colorSamples() >= (RtInt)m_opacity.m_value.size() )
+		return false;
+
+	return m_opacity.get(&Os[0]);
 }
 
 RtVoid CAttributes::illuminate(CLightSource *light, RtBoolean onoff)
@@ -552,54 +530,91 @@ RtVoid CAttributes::displacement(RtToken name, const CParameterList &params)
 	m_displacementParams = params;
 }
 
+void CAttributes::initDeformation()
+{
+	m_deformationName = RI_NULL;
+	m_deformationParams.clear();
+}
+
+RtVoid CAttributes::deformation(RtToken name, const CParameterList &params)
+{
+	m_deformationName = name;
+	m_deformationParams = params;
+}
+
 RtVoid CAttributes::initTextureCoordinates()
 {
-	m_textureCoordinates[0] = defTextureS1;
-	m_textureCoordinates[1] = defTextureT1;
-	m_textureCoordinates[2] = defTextureS2;
-	m_textureCoordinates[3] = defTextureT2;
-	m_textureCoordinates[4] = defTextureS3;
-	m_textureCoordinates[5] = defTextureT3;
-	m_textureCoordinates[6] = defTextureS4;
-	m_textureCoordinates[7] = defTextureT4;
+	RtFloat tc[8];
+	tc[0] = defTextureS1;
+	tc[1] = defTextureT1;
+	tc[2] = defTextureS2;
+	tc[3] = defTextureT2;
+	tc[4] = defTextureS3;
+	tc[5] = defTextureT3;
+	tc[6] = defTextureS4;
+	tc[7] = defTextureT4;
+	m_textureCoordinates.set(tc, 8);
 }
 
 RtVoid CAttributes::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
 {
-	m_textureCoordinates[0] = s1;
-	m_textureCoordinates[1] = t1;
-	m_textureCoordinates[2] = s2;
-	m_textureCoordinates[3] = t2;
-	m_textureCoordinates[4] = s3;
-	m_textureCoordinates[5] = t3;
-	m_textureCoordinates[6] = s4;
-	m_textureCoordinates[7] = t4;
+	RtFloat tc[8];
+	tc[0] = s1;
+	tc[1] = t1;
+	tc[2] = s2;
+	tc[3] = t2;
+	tc[4] = s3;
+	tc[5] = t3;
+	tc[6] = s4;
+	tc[7] = t4;
+
+	if ( m_motionState != 0 ) {
+		m_textureCoordinates.set(tc, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_textureCoordinates;
+	} else {
+		m_textureCoordinates.set(tc);
+	}
 }
 
-void CAttributes::getTextureCoordinates(RtFloat &s1, RtFloat &t1, RtFloat &s2, RtFloat &t2, RtFloat &s3, RtFloat &t3, RtFloat &s4, RtFloat &t4) const
+bool CAttributes::getTextureCoordinates(RtFloat &s1, RtFloat &t1, RtFloat &s2, RtFloat &t2, RtFloat &s3, RtFloat &t3, RtFloat &s4, RtFloat &t4) const
 {
-	s1 = m_textureCoordinates[0];
-	t1 = m_textureCoordinates[1];
-	s2 = m_textureCoordinates[2];
-	t2 = m_textureCoordinates[3];
-	s3 = m_textureCoordinates[4];
-	t3 = m_textureCoordinates[5];
-	s4 = m_textureCoordinates[6];
-	t4 = m_textureCoordinates[7];
+	if ( 8 >= m_textureCoordinates.m_value.size() )
+		return false;
+
+	s1 = m_textureCoordinates.m_value[0];
+	t1 = m_textureCoordinates.m_value[1];
+	s2 = m_textureCoordinates.m_value[2];
+	t2 = m_textureCoordinates.m_value[3];
+	s3 = m_textureCoordinates.m_value[4];
+	t3 = m_textureCoordinates.m_value[5];
+	s4 = m_textureCoordinates.m_value[6];
+	t4 = m_textureCoordinates.m_value[7];
+
+	return true;
 }
 
 
 void CAttributes::initShadingRate()
 {
-	m_shadingRate = defShadingRate;
+	m_shadingRate.set(defShadingRate);
 }
 
 RtVoid CAttributes::shadingRate(RtFloat size)
 {
-	m_shadingRate = size;
+	if ( m_motionState != 0 ) {
+		m_shadingRate.set(size, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_shadingRate;
+	} else {
+		m_shadingRate.set(size);
+	}
 }
 
+RtFloat CAttributes::shadingRate() const
+{
+	return m_shadingRate.m_value;
+}
 
+		
 void CAttributes::initShadingInterpolation()
 {
 	m_shadingInterpolation = defShadingInterpolation;
@@ -623,72 +638,118 @@ RtVoid CAttributes::matte(RtBoolean onoff)
 
 void CAttributes::initBound()
 {
-	m_bound[0] = m_bound[1] = m_bound[2] = -RI_INFINITY;
-	m_bound[3] = m_bound[4] = m_bound[5] =  RI_INFINITY;
+	RtFloat bnd[6];
+	bnd[0] = bnd[1] = bnd[2] = -RI_INFINITY;
+	bnd[3] = bnd[4] = bnd[5] =  RI_INFINITY;
+	m_bound.set(bnd, 6);
 	m_boundCalled = false;
 }
 
 RtVoid CAttributes::bound(RtBound aBound)
 {
 	m_boundCalled = true;
-	for ( RtInt i=0; i<6 ; ++i ) {
-		m_bound[i] = aBound[i];
+
+	if ( m_motionState != 0 ) {
+		m_bound.set(&aBound[0], m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_bound;
+	} else {
+		m_bound.set(&aBound[0]);
 	}
+}
+
+bool CAttributes::getBound(RtBound aBound) const
+{
+	return m_bound.get(&aBound[0]);
 }
 
 void CAttributes::initDetail()
 {
-	m_detail[0] = m_detail[1] = m_detail[2] = -RI_INFINITY;
-	m_detail[3] = m_detail[4] = m_detail[5] =  RI_INFINITY;
+	RtFloat bnd[6];
+	bnd[0] = bnd[1] = bnd[2] = -RI_INFINITY;
+	bnd[3] = bnd[4] = bnd[5] =  RI_INFINITY;
+	m_detail.set(bnd, 6);
 	m_detailCalled = false;
 }
 
 RtVoid CAttributes::detail(RtBound aBound)
 {
 	m_detailCalled = true;
-	for ( RtInt i=0; i<6 ; ++i ) {
-		m_detail[i] = aBound[i];
+	if ( m_motionState != 0 ) {
+		m_detail.set(&aBound[0], m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_detail;
+	} else {
+		m_detail.set(&aBound[0]);
 	}
+}
+
+bool CAttributes::getDetail(RtBound aBound) const
+{
+	return m_detail.get(&aBound[0]);
 }
 
 void CAttributes::initDetailRange()
 {
+	RtFloat d[4];
+	d[0] = defMinVis;
+	d[1] = defLowTran; 
+	d[2] = defUpTran;
+	d[3] = defMaxVis; 
+	m_detailRange.set(d, 4);
+
 	m_detailRangeCalled = false;
 	m_detailRangeCalledInBlock = false;
-	m_detailRange[0] = defMinVis;
-	m_detailRange[1] = defLowTran; 
-	m_detailRange[2] = defUpTran;
-	m_detailRange[3] = defMaxVis; 
 }
 
 RtVoid CAttributes::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
 {
 	m_detailRangeCalled = true;
 	m_detailRangeCalledInBlock = true;
-	m_detailRange[0] = minvis;
-	m_detailRange[1] = lowtran; 
-	m_detailRange[2] = uptran;
-	m_detailRange[3] = maxvis; 
+	RtFloat d[4];
+	d[0] = minvis;
+	d[1] = lowtran; 
+	d[2] = uptran;
+	d[3] = maxvis; 
+
+	if ( m_motionState != 0 ) {
+		m_detailRange.set(d, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_detailRange;
+	} else {
+		m_detailRange.set(d);
+	}
 }
 
-void CAttributes::getDetailRange(RtFloat &minvis, RtFloat &lowtran, RtFloat &uptran, RtFloat &maxvis) const
+bool CAttributes::getDetailRange(RtFloat &minvis, RtFloat &lowtran, RtFloat &uptran, RtFloat &maxvis) const
 {
-	minvis = m_detailRange[0];
-	lowtran = m_detailRange[1]; 
-	uptran = m_detailRange[2];
-	maxvis = m_detailRange[3];
+	if ( 4 >= m_detailRange.m_value.size() )
+		return false;
+
+	minvis = m_detailRange.m_value[0];
+	lowtran = m_detailRange.m_value[1]; 
+	uptran = m_detailRange.m_value[2];
+	maxvis = m_detailRange.m_value[3];
+	return true;
 }
 
 void CAttributes::initGeometricApproximation()
 {
 	m_geometricApproximationType = defGeometricApproximationType;
-	m_geometricApproximationValue = defGeometricApproximationValue;
+	m_geometricApproximationValue.set(defGeometricApproximationValue);
 }
 
 RtVoid CAttributes::geometricApproximation(RtToken type, RtFloat value)
 {
-	m_geometricApproximationType = type;
-	m_geometricApproximationValue = value;
+	if ( m_motionState != 0 ) {
+		m_geometricApproximationValue.set(value, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_geometricApproximationValue;
+		if ( m_motionState->curSampleCnt() == 0 ) {
+			m_geometricApproximationType = type;
+		} else if ( m_geometricApproximationType != type ) {
+			// Error
+		}
+	} else {
+		m_geometricApproximationValue.set(value);
+		m_geometricApproximationType = type;
+	}
 }
 
 void CAttributes::initGeometricRepresentation()

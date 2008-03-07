@@ -46,76 +46,7 @@
 #include <deque>
 
 namespace RiCPP {
-
-	class IMovedValue {
-	public:
-		inline IMovedValue() {}
-		inline virtual ~IMovedValue() {}
-		
-		virtual void clear() = 0;
-		virtual void fill(RtInt n) = 0;
-		virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times) = 0;
-		virtual void sampleReset() = 0;
-	}; // IMovedValue
 	
-	class CAttributeFloat : public IMovedValue {
-	public:
-		RtFloat m_value;
-		std::vector<RtFloat> m_movedValue;
-		unsigned long m_motionBegin, m_motionEnd;
-
-		inline CAttributeFloat() {}
-		inline CAttributeFloat(const CAttributeFloat &c) { *this = c; }
-		virtual ~CAttributeFloat() {}
-		virtual IMovedValue *duplicate() const { return new CAttributeFloat(*this); }
-
-		virtual void clear();
-		virtual void fill(RtInt n);
-		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
-		virtual RtVoid sampleReset();
-		CAttributeFloat &operator=(const CAttributeFloat &c);
-		void set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
-		void set(RtFloat aValue);
-	};
-
-	class CAttributeFloatArray : public IMovedValue {
-	public:
-		std::vector<RtFloat> m_value;
-		std::vector<RtFloat> m_movedValue;
-		unsigned long m_motionBegin, m_motionEnd;
-
-		inline CAttributeFloatArray() {}
-		inline CAttributeFloatArray(const CAttributeFloatArray &c) { *this = c; }
-		virtual ~CAttributeFloatArray() {}
-		virtual IMovedValue *duplicate() const { return new CAttributeFloatArray(*this); }
-
-		virtual void clear();
-		virtual void fill(RtInt n);
-		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
-		virtual RtVoid sampleReset();
-		CAttributeFloatArray &operator=(const CAttributeFloatArray &c);
-		void set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
-		void set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
-		void set(RtFloat aValue, RtInt aCard);
-		void set(RtFloat *aValue, RtInt aCard);
-		void set(RtFloat aValue);
-		void set(RtFloat *aValue);
-		inline unsigned long card() const { return (unsigned long)m_value.size(); }
-	};
-	
-	/** @brief Stores the state of a motion block
-	 *
-	 *  Because RireadArchive(), RiObjectInstance(), RiProcedural() can
-	 *  be used within motion blocks, motion blocks may be nested.
-	 *
-	 */
-	class CMotionAttribute {
-	public:
-		RtInt m_curMotionCnt;                 ///< Current Index in m_motionTimes;
-		RtInt m_motionBegin;                  ///< Current Index in m_motionTimes;
-		RtInt m_motionEnd;                    ///< End of motion in m_motionTimes, m_motionTimes[m_motionStop] == undefined (end())		
-	};
-
 	/** @brief Render attributes.
 	 *
 	 *  CAttribute is the basic set of RI attributes as described in [RiSpec].
@@ -172,12 +103,166 @@ namespace RiCPP {
 		typedef std::vector<CLightSource *> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
 
 	protected:
+		class IMovedValue {
+		public:
+			inline IMovedValue() {}
+			inline virtual ~IMovedValue() {}
+			
+			virtual void clear() = 0;
+			virtual void fill(RtInt n) = 0;
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times) = 0;
+			virtual void sampleReset() = 0;
+		}; // IMovedValue
+		
+		template<typename ValueType> class TMovedAttribute : public IMovedValue {
+		public:
+			ValueType m_value;
+			std::vector<ValueType> m_movedValue;
+			unsigned long m_motionBegin, m_motionEnd;
+
+			inline TMovedAttribute() {}
+			inline TMovedAttribute(const TMovedAttribute &c) { *this = c; }
+			inline virtual ~TMovedAttribute() {}
+			inline virtual IMovedValue *duplicate() const { return new TMovedAttribute(*this); }
+			
+			inline virtual void clear()
+			{
+				m_motionBegin = m_motionEnd = 0;
+				m_movedValue.clear();
+			}
+
+			inline virtual void fill(RtInt n)
+			{
+				if ( n == 0 ) {
+					return;
+				}
+				for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
+					m_movedValue[i] = m_movedValue[i-1];
+				}
+			}
+
+			inline virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times)
+			{
+			}
+
+			inline virtual void sampleReset()
+			{
+				if ( m_movedValue.size() >= 1 )
+					m_value = m_movedValue[0];
+			}
+
+			inline TMovedAttribute &operator=(const TMovedAttribute &c)
+			{
+				if ( this == &c )
+					return *this;
+
+				clear();
+				m_value = c.m_value;
+				m_movedValue = c.m_movedValue;
+				m_motionBegin = c.m_motionBegin;
+				m_motionEnd = c.m_motionEnd;
+
+				return *this;
+			}
+
+			inline void set(ValueType aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
+			{
+				if ( moBegin > moEnd ) {
+					std::swap(moBegin, moEnd);		
+				}
+				
+				m_motionBegin = moBegin;
+				m_motionEnd = moEnd;
+
+				if ( n == 0 ) {
+					m_value = aValue;
+				}
+
+				if ( moBegin < moEnd ) {
+					if ( m_movedValue.size() < moEnd - moBegin ) {
+						m_movedValue.resize(moEnd - moBegin);
+					}
+					if ( (unsigned long)n >= moEnd - moBegin ) {
+						// ERROR
+						return;
+					}
+					m_movedValue[n] = aValue;
+				}
+			}
+
+			inline void set(ValueType aValue)
+			{
+				m_motionBegin = 0;
+				m_motionEnd = 0;
+				m_movedValue.clear();
+
+				m_value = aValue;
+			}
+			
+			inline void get(ValueType &aValue) const
+			{
+				aValue = m_value;
+			}
+		}; // TMovedAttribute
+
+		class CAttributeInt : public TMovedAttribute<RtInt> {
+		public:
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		}; // CAttributeInt
+		
+		class CAttributeToken : public TMovedAttribute<RtToken> {
+		public:
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		}; // CAttributeToken
+
+		class CAttributeFloat : public TMovedAttribute<RtFloat> {
+		public:
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		}; // CAttributeFloat
+
+		class CAttributeIlluminate : public TMovedAttribute<CLightSource *> {
+		public:
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		}; // CAttributeFloat
+
+		class CAttributeFloatArray : public IMovedValue {
+		public:
+			std::vector<RtFloat> m_value;
+			std::vector<RtFloat> m_movedValue;
+			unsigned long m_motionBegin, m_motionEnd;
+
+			inline CAttributeFloatArray() {}
+			inline CAttributeFloatArray(const CAttributeFloatArray &c) { *this = c; }
+			inline virtual ~CAttributeFloatArray() {}
+			inline virtual IMovedValue *duplicate() const { return new CAttributeFloatArray(*this); }
+
+			virtual void clear();
+			virtual void fill(RtInt n);
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+			virtual void sampleReset();
+			CAttributeFloatArray &operator=(const CAttributeFloatArray &c);
+			void set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
+			void set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
+			void set(RtFloat aValue, RtInt aCard);
+			void set(RtFloat *aValue, RtInt aCard);
+			void set(RtFloat aValue);
+			void set(RtFloat *aValue);
+			bool get(RtFloat *aValue) const;
+			inline unsigned long card() const { return (unsigned long)m_value.size(); }
+		}; // CAttributeFloatArray
+
 		const CMotionState *m_motionState;
 		IMovedValue *m_lastValue;
 		
 		enum EnumAttributeIndex {
 			AIDX_COLOR,
 			AIDX_OPACITY,
+			AIDX_TEXTURE_COORDINATES,
+			AIDX_SHADING_RATE,
+			AIDX_BOUND,
+			AIDX_DETAIL,
+			AIDX_DETAIL_RANGE,
+			AIDX_GEOMETRIC_APPROXIMATION_VALUE,
 
 			AIDX_ENDMARKER
 		};
@@ -185,12 +270,12 @@ namespace RiCPP {
 
 		virtual void initAttributeVector();
 		virtual void initMotion();
-	private:
-		CAttributeFloatArray m_color;          ///< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
 
-		CAttributeFloatArray m_opacity;        ///< Current opacity of an object (opaque - all 1.0), components as in color.
+		CAttributeFloatArray m_color;          ///< Current reflective color (white - all 1.0), RtColor, number of components may changed by option, norm is r, g, b.
 
-		TypeLightHandles m_illuminated;        ///< Illuminated lights, default: empty.
+		CAttributeFloatArray m_opacity;        ///< Current opacity of an object (opaque - all 1.0), RtColor, components as in color.
+
+		TypeLightHandles m_illuminated;        ///< Illuminated lights, default: empty. @todo default light source
 
 		RtToken m_surfaceName;                 ///< Surface shader name.
 		CParameterList m_surfaceParams;        ///< Surface shader parameters.
@@ -207,24 +292,28 @@ namespace RiCPP {
 		RtToken m_displacementName;            ///< Displacement shader name.
 		CParameterList m_displacementParams;   ///< Displacement shader parameters.
 
-		RtFloat m_textureCoordinates[8];       ///< Texture coordinates s1,t1 .. s4,t4 unit square [0,0, 1,0, 0,1, 1,1].
+		RtToken m_deformationName;            ///< Displacement shader name.
+		CParameterList m_deformationParams;   ///< Displacement shader parameters.
 
-		RtFloat m_shadingRate;                 ///< Current shading rate in pixels (def. 1). If infinity, once per primitive.
+		CAttributeFloatArray m_textureCoordinates; ///< Texture coordinates s1,t1 .. s4,t4 unit square [0,0, 1,0, 0,1, 1,1].
+
+		CAttributeFloat m_shadingRate;         ///< Current shading rate in pixels (def. 1). If infinity, once per primitive.
+
 		RtToken m_shadingInterpolation;        ///< Interpolation between pixels, "constant", "smooth" (def. RI_SMOOTH).
 		RtBoolean m_matte;                     ///< subsequent object are 'matte' objects? (def. RI_FALSE).
 
-		RtBound   m_bound;                     ///< Bounding box for subsequent primitives
-		bool      m_boundCalled;               ///< Bounding box is set by an interface call
+		CAttributeFloatArray m_bound;          ///< Bounding box for subsequent primitives (RtBound)
+		bool                 m_boundCalled;    ///< Bounding box is set by an interface call
 
-		RtBound   m_detail;                    ///< Level of detail
-		bool      m_detailCalled;              ///< Level of detail is set by an interface call
+		CAttributeFloatArray m_detail;         ///< Level of detail (RtBound)
+		bool                 m_detailCalled;   ///< Level of detail is set by an interface call
 
-		RtFloat   m_detailRange[4];            ///< The detail ranges
+		CAttributeFloatArray m_detailRange;    ///< The detail ranges (4 floats)
 		bool      m_detailRangeCalled;         ///< Detail ranges are set by an interface call
 		bool      m_detailRangeCalledInBlock;  ///< Detail ranges are set by an interface call within the current attribute block.
 
 		RtToken m_geometricApproximationType;  ///< The geometric approximation type (e.g. RI_FLATNESS)
-		RtFloat m_geometricApproximationValue; ///< The value for the approximation type
+		CAttributeFloat m_geometricApproximationValue; ///< The value for the approximation type
 
 		RtToken m_geometricRepresentation;     ///< The geometric representation
 
@@ -237,7 +326,7 @@ namespace RiCPP {
 		RtBasis m_uBasis,                      ///< Basis matrix for bicubic splines in u direction
 				m_vBasis;                      ///< Basis matrix for splines in v direction
 
-		CTrimCurveData m_trimCurve;            ///< Tirmcurve, default: empty
+		CTrimCurveData m_trimCurve;            ///< Trimcurve, default: empty
 		
 		bool m_inAreaLight;                    ///< An Arealight source was created
 		
@@ -279,6 +368,10 @@ namespace RiCPP {
 		/** @brief Initializes the displacement shader (empty).
 		 */
 		void initDisplacement();
+
+		/** @brief Initializes the deformation shader (empty).
+		 */
+		void initDeformation();
 
 		/** @brief Initializes the shading rate.
 		 */
@@ -419,6 +512,8 @@ namespace RiCPP {
 			return m_color.m_value;
 		}
 
+		virtual bool getColor(RtColor Cs) const;
+
 		/** @brief Sets the current surface opacity.
 		 *
 		 *  @param Os Surface opacity.
@@ -441,6 +536,8 @@ namespace RiCPP {
 		{
 			return m_opacity.m_value;
 		}
+
+		virtual bool getOpacity(RtColor Os) const;
 
 		/** @brief Switch a lightsource on or off.
 		 *
@@ -605,7 +702,7 @@ namespace RiCPP {
 		 */
 		inline virtual RtToken displacementName() const
 		{
-			return m_exteriorName;
+			return m_displacementName;
 		}
 
 		/** @brief Gets the constant parameter list of the current displacement shader.
@@ -613,17 +710,41 @@ namespace RiCPP {
 		 */
 		inline virtual const CParameterList &displacementParameters() const
 		{
-			return m_exteriorParams;
+			return m_displacementParams;
+		}
+
+		/** @brief Sets the current displacement shader.
+		 *
+		 *  @param name Name of the shader.
+		 *  @param params Parameter list of the shader.
+		 */
+		virtual RtVoid deformation(RtToken name, const CParameterList &params);
+
+		/** @brief Gets the name of the current displacement shader.
+		 *  @return The name of the current exterior displacement shader.
+		 */
+		inline virtual RtToken deformationName() const
+		{
+			return m_deformationName;
+		}
+
+		/** @brief Gets the constant parameter list of the current displacement shader.
+		 *  @return The constant parameter list of the current displacement shader.
+		 */
+		inline virtual const CParameterList &deformationParameters() const
+		{
+			return m_deformationParams;
 		}
 
 		virtual RtVoid textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
-		virtual void getTextureCoordinates(RtFloat &s1, RtFloat &t1, RtFloat &s2, RtFloat &t2, RtFloat &s3, RtFloat &t3, RtFloat &s4, RtFloat &t4) const;
+		inline virtual const std::vector<RtFloat> &textureCoordinates() const
+		{
+			return m_textureCoordinates.m_value;
+		}
+		virtual bool getTextureCoordinates(RtFloat &s1, RtFloat &t1, RtFloat &s2, RtFloat &t2, RtFloat &s3, RtFloat &t3, RtFloat &s4, RtFloat &t4) const;
 
 		virtual RtVoid shadingRate(RtFloat size);
-		inline virtual RtFloat shadingRate() const
-		{
-				return m_shadingRate;
-		}
+		virtual RtFloat shadingRate() const;
 
 		virtual RtVoid shadingInterpolation(RtToken type);
 		inline virtual RtToken shadingInterpolation() const
@@ -638,12 +759,22 @@ namespace RiCPP {
 		}
 
 		virtual RtVoid bound(RtBound aBound);
+		inline virtual const std::vector<RtFloat> &bound() const
+		{
+			return m_bound.m_value;
+		}
+		virtual bool getBound(RtBound aBound) const;
 		inline virtual bool boundCalled() const
 		{
 			return m_boundCalled;
 		}
 
 		virtual RtVoid detail(RtBound aBound);
+		inline virtual const std::vector<RtFloat> &detail() const
+		{
+			return m_detail.m_value;
+		}
+		virtual bool getDetail(RtBound aBound) const;
 		inline virtual bool detailCalled() const
 		{
 			return m_detailCalled;
@@ -662,7 +793,11 @@ namespace RiCPP {
 		{
 			m_detailRangeCalledInBlock = false;
 		}
-		virtual void getDetailRange(RtFloat &minvis, RtFloat &lowtran, RtFloat &uptran, RtFloat &maxvis) const;
+		inline virtual const std::vector<RtFloat> &detailRange() const
+		{
+			return m_detailRange.m_value;
+		}
+		virtual bool getDetailRange(RtFloat &minvis, RtFloat &lowtran, RtFloat &uptran, RtFloat &maxvis) const;
 
 		virtual RtVoid geometricApproximation(RtToken type, RtFloat value);
 		inline virtual RtToken geometricApproximationType() const
@@ -671,7 +806,7 @@ namespace RiCPP {
 		}
 		inline virtual RtFloat geometricApproximationValue() const
 		{
-			return m_geometricApproximationValue;
+			return m_geometricApproximationValue.m_value;
 		}
 
 		virtual RtVoid geometricRepresentation(RtToken type);

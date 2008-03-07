@@ -868,7 +868,7 @@ public:
 	inline virtual RtVoid doRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) {}
 	inline virtual RtVoid doScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz) {}
     inline virtual RtVoid doSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) {}
-	virtual RtVoid doDeformation(CRiDeformation &obj, RtString name, const CParameterList &params);
+	inline virtual RtVoid doDeformation(CRiDeformation &obj, RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space) {}
 	inline virtual RtVoid doCoordinateSystem(CRiCoordinateSystem &obj, RtToken space) {}
 	inline virtual RtVoid doCoordSysTransform(CRiCoordSysTransform &obj, RtToken space) {}

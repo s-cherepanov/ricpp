@@ -817,10 +817,6 @@ RtVoid CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz
 	}
 }
 
-RtVoid CTransformation::deformation(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-}
-
 RtVoid CTransformation::motionBegin(const CMotionState &state)
 {
 	assert(m_motionState==0);

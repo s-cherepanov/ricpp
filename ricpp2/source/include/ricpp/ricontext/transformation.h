@@ -291,7 +291,7 @@ namespace RiCPP {
 		CMatrix3D m_inverseCTM_onMotionStart;
 
 		
-		//! Defered transformations (motion block, deformation)
+		//! Defered transformations (motion block)
 		std::vector<IMovedTransform *> m_deferedTrans;
 		
 		const CMotionState *m_motionState;
@@ -374,8 +374,6 @@ namespace RiCPP {
 		virtual RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
 		virtual RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz);
 		virtual RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
-
-		virtual RtVoid deformation(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 		virtual RtVoid motionBegin(const CMotionState &state);
 		virtual RtVoid motionEnd();

@@ -42,10 +42,6 @@
 #include "ricpp/ricontext/attributes.h"
 #endif //  _RICPP_RICONTEXT_ATTRIBUTES_H
 
-#ifndef _RICPP_RICONTEXT_TRANSFORMATION_H
-#include "ricpp/ricontext/transformation.h"
-#endif // _RICPP_RICONTEXT_TRANSFORMATION_H
-
 #ifndef _RICPP_RICONTEXT_HANDLESTACK_H
 #include "ricpp/ricontext/handlestack.h"
 #endif // _RICPP_RICONTEXT_HANDLESTACK_H

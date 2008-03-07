@@ -540,6 +540,7 @@ void CTransformation::CMovedSkew::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse
 
 CTransformation::CTransformation()
 {
+	m_factory = 0;
 	m_motionState = 0;
 	m_storeCounter = 0;
 	m_spaceType = RI_CURRENT;
@@ -566,6 +567,8 @@ CTransformation::~CTransformation()
 
 CTransformation *CTransformation::duplicate() const
 { 
+	if ( m_factory )
+		return m_factory->newTransformation(*this);
 	return new CTransformation(*this);
 }
 
@@ -574,6 +577,7 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 	if ( &o == this )
 		return *this;
 
+	m_factory = o.m_factory;
 	m_isValid = o.m_isValid;
 	
 	m_CTM = o.m_CTM;
@@ -877,11 +881,24 @@ CTransformation *CTransformationFactory::newTransformation()
 	return trans;
 }
 
-CTransformation *CTransformationFactory::newTransformation(const CTransformation &trans)
+CTransformation *CTransformationFactory::newTransformation(const CTransformation &trans) const
 {
 	CTransformation *transPtr = newTransformationInstance(trans);
 	if ( !transPtr ) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in newTransformation(const CTransformation &)", __LINE__, __FILE__);
 	}
 	return transPtr;
+}
+
+void CTransformationFactory::deleteTransformation(CTransformation *trans)
+{
+	if ( !trans )
+		return;
+
+	if ( trans->factory() ) {
+		const CTransformationFactory *f = trans->factory();
+		f->deleteTransformationInstance(trans);
+	} else {
+		delete trans;
+	}
 }

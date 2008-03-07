@@ -51,6 +51,60 @@ void CAttributes::CAttributeIlluminate::sample(RtFloat shutterTime, const TypeMo
 {
 }
 
+void CAttributes::CAttributeTrimCurve::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+{
+}
+
+void CAttributes::CAttributeBase::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+{
+}
+
+// -----------------------------------------------------------------------------
+
+void CAttributes::CAttributeShader::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+{
+}
+
+void CAttributes::CAttributeShader::set(RtToken name, const CParameterList &params, const CTransformation &transform, RtInt n, unsigned long moBegin, unsigned long moEnd)
+{
+	if ( moBegin > moEnd ) {
+		std::swap(moBegin, moEnd);		
+	}
+
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+
+	if ( n == 0 ) {
+		m_value.m_name = name;
+		m_value.m_params = params;
+		CTransformationFactory::deleteTransformation(m_shaderTransform);
+		m_shaderTransform = transform.duplicate();
+		if ( m_shaderTransform ) {
+			m_shaderTransform->spaceType(RI_SHADER);
+		}
+	}
+
+	if ( moBegin < moEnd ) {
+		if ( m_movedValue.size() < moEnd - moBegin ) {
+			m_movedValue.resize(moEnd - moBegin);
+		}
+		if ( (unsigned long)n >= moEnd - moBegin ) {
+			// ERROR
+			return;
+		}
+		m_movedValue[n].m_name = name;
+		m_movedValue[n].m_params = params;
+	}
+}
+
+void CAttributes::CAttributeShader::set(RtToken name, const CParameterList &params, const CTransformation &transform)
+{
+	clear();
+	m_value.m_name = name;
+	m_value.m_params = params;
+	CTransformationFactory::deleteTransformation(m_shaderTransform);
+	m_shaderTransform = transform.duplicate();
+}
 
 // -----------------------------------------------------------------------------
 
@@ -242,8 +296,17 @@ const RtToken CAttributes::defOrientation = RI_OUTSIDE;
 
 const RtInt CAttributes::defNSides = 2;
 
+COptionsBase *CAttributes::duplicate() const
+{ 
+	if ( m_factory )
+		return m_factory->newAttributes(*this);
+	return new CAttributes(*this);
+}
+
 void CAttributes::init()
 {
+	m_factory = 0;
+
 	initAttributeVector();
 	m_storeCounter = 0;
 	m_lastValue = 0;
@@ -281,6 +344,8 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	if ( this == &ra )
 		return *this;
 	
+	m_factory = ra.m_factory;
+
 	m_color = ra.m_color;
 	m_opacity = ra.m_opacity;
 
@@ -288,20 +353,12 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_inAreaLight = ra.m_inAreaLight;
 
 
-	m_surfaceName = ra.m_surfaceName;
-	m_surfaceParams = ra.m_surfaceParams;
-
-	m_atmosphereName = ra.m_atmosphereName;
-	m_atmosphereParams = ra.m_atmosphereParams;
-
-	m_interiorName = ra.m_interiorName;
-	m_interiorParams = ra.m_interiorParams;
-
-	m_exteriorName = ra.m_exteriorName;
-	m_exteriorParams = ra.m_exteriorParams;
-
-	m_displacementName = ra.m_displacementName;
-	m_displacementParams = ra.m_displacementParams;
+	m_surface = ra.m_surface;
+	m_atmosphere = ra.m_atmosphere;
+	m_interior = ra.m_interior;
+	m_exterior = ra.m_exterior;
+	m_displacement = ra.m_displacement;
+	m_deformation = ra.m_deformation;
 
 	m_textureCoordinates = ra.m_textureCoordinates;
 
@@ -363,6 +420,13 @@ void CAttributes::initAttributeVector()
 	m_allAttributes[(int)AIDX_DETAIL] = &m_detail;
 	m_allAttributes[(int)AIDX_DETAIL_RANGE] = &m_detailRange;
 	m_allAttributes[(int)AIDX_GEOMETRIC_APPROXIMATION_VALUE] = &m_geometricApproximationValue;
+
+	m_allAttributes[(int)AIDX_SURFACE] = &m_surface;
+	m_allAttributes[(int)AIDX_ATMOSPHERE] = &m_atmosphere;
+	m_allAttributes[(int)AIDX_INTERIOR] = &m_interior;
+	m_allAttributes[(int)AIDX_EXTERIOR] = &m_exterior;
+	m_allAttributes[(int)AIDX_DISPLACEMENT] = &m_displacement;
+	m_allAttributes[(int)AIDX_DEFORMATION] = &m_deformation;
 }
 
 void CAttributes::initMotion()
@@ -472,74 +536,92 @@ RtBoolean CAttributes::illuminated(CLightSource *light) const
 
 void CAttributes::initSurface()
 {
-	m_surfaceName = RI_NULL;
-	m_surfaceParams.clear();
+	// None
 }
 
-RtVoid CAttributes::surface(RtToken name, const CParameterList &params)
+RtVoid CAttributes::surface(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
-	m_surfaceName = name;
-	m_surfaceParams = params;
+	if ( m_motionState != 0 ) {
+		m_surface.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_surface;
+	} else {
+		m_surface.set(name, params, transform);
+	}
 }
 
 void CAttributes::initAtmosphere()
 {
-	m_atmosphereName = RI_NULL;
-	m_atmosphereParams.clear();
+	// None
 }
 
-RtVoid CAttributes::atmosphere(RtToken name, const CParameterList &params)
+RtVoid CAttributes::atmosphere(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
-	m_atmosphereName = name;
-	m_atmosphereParams = params;
+	if ( m_motionState != 0 ) {
+		m_atmosphere.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_atmosphere;
+	} else {
+		m_atmosphere.set(name, params, transform);
+	}
 }
 
 void CAttributes::initInterior()
 {
-	m_interiorName = RI_NULL;
-	m_interiorParams.clear();
+	// None
 }
 
-RtVoid CAttributes::interior(RtToken name, const CParameterList &params)
+RtVoid CAttributes::interior(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
-	m_interiorName = name;
-	m_interiorParams = params;
+	if ( m_motionState != 0 ) {
+		m_interior.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_interior;
+	} else {
+		m_interior.set(name, params, transform);
+	}
 }
 
 void CAttributes::initExterior()
 {
-	m_exteriorName = RI_NULL;
-	m_exteriorParams.clear();
+	// None
 }
 
-RtVoid CAttributes::exterior(RtToken name, const CParameterList &params)
+RtVoid CAttributes::exterior(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
-	m_exteriorName = name;
-	m_exteriorParams = params;
+	if ( m_motionState != 0 ) {
+		m_exterior.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_exterior;
+	} else {
+		m_exterior.set(name, params, transform);
+	}
 }
 
 void CAttributes::initDisplacement()
 {
-	m_displacementName = RI_NULL;
-	m_displacementParams.clear();
+	// None
 }
 
-RtVoid CAttributes::displacement(RtToken name, const CParameterList &params)
+RtVoid CAttributes::displacement(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
-	m_displacementName = name;
-	m_displacementParams = params;
+	if ( m_motionState != 0 ) {
+		m_displacement.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_displacement;
+	} else {
+		m_displacement.set(name, params, transform);
+	}
 }
 
 void CAttributes::initDeformation()
 {
-	m_deformationName = RI_NULL;
-	m_deformationParams.clear();
+	// None
 }
 
-RtVoid CAttributes::deformation(RtToken name, const CParameterList &params)
+RtVoid CAttributes::deformation(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
-	m_deformationName = name;
-	m_deformationParams = params;
+	if ( m_motionState != 0 ) {
+		m_deformation.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_deformation;
+	} else {
+		m_deformation.set(name, params, transform);
+	}
 }
 
 RtVoid CAttributes::initTextureCoordinates()
@@ -876,7 +958,7 @@ RtVoid CAttributes::sampleReset()
 
 // ----------------------------------------------------------------------------
 
-CAttributes *CAttributesFactory::newAttributes(const CColorDescr &c)
+CAttributes *CAttributesFactory::newAttributes(const CColorDescr &c) const
 {
 	CAttributes *a = newAttributesInstance(c);
 	if ( !a ) {
@@ -884,7 +966,8 @@ CAttributes *CAttributesFactory::newAttributes(const CColorDescr &c)
 	}
 	return a;
 }
-CAttributes *CAttributesFactory::newAttributes(const CAttributes &attr)
+
+CAttributes *CAttributesFactory::newAttributes(const CAttributes &attr) const
 {
 	CAttributes *a = newAttributesInstance(attr);
 	if ( !a ) {
@@ -892,3 +975,17 @@ CAttributes *CAttributesFactory::newAttributes(const CAttributes &attr)
 	}
 	return a;
 }
+
+void CAttributesFactory::deleteAttributes(CAttributes *a)
+{
+	if ( !a )
+		return;
+
+	if ( a->factory() ) {
+		const CAttributesFactory *f = a->factory();
+		f->deleteAttributesInstance(a);
+	} else {
+		delete a;
+	}
+}
+

@@ -43,9 +43,20 @@
 #endif // _RICPP_RICPP_FILTERS_H
 
 namespace RiCPP {
+	class COptionsFactory;
+
 	/** @brief Option set
 	 */
 	class COptions : public COptionsBase {
+		friend class COptionsFactory;
+
+		COptionsFactory *m_factory;
+	public:
+		const COptionsFactory *factory() const { return m_factory; }
+
+	protected:
+		void factory(COptionsFactory *aFactory) { m_factory = aFactory; }
+
 	public:
 		static const RtInt   defXResolution;
 		static const RtInt   defYResolution;
@@ -200,22 +211,21 @@ namespace RiCPP {
 	public:
 		inline COptions()
 		{
+			m_factory = 0;
 			m_filterFunc = 0;
 			init();
 		}
 
 		inline COptions(const COptions &ro)
 		{
+			m_factory = 0;
 			m_filterFunc = 0;
 			*this = ro;
 		}
 
 		virtual ~COptions();
 
-		inline virtual COptionsBase *duplicate() const
-		{
-			return new COptions(*this);
-		}
+		virtual COptionsBase *duplicate() const;
 
 		COptions &operator=(const COptions &ra);
 
@@ -494,26 +504,28 @@ namespace RiCPP {
 	class COptionsFactory
 	{
 	protected:
-		inline virtual COptions *newOptionsInstance()
+		inline virtual COptions *newOptionsInstance() const
 		{
 			return new COptions;
 		}
 
-		inline virtual COptions *newOptionsInstance(const COptions &opt)
+		inline virtual COptions *newOptionsInstance(const COptions &opt) const
 		{
 			return new COptions(opt);
+		}
+
+		inline virtual void deleteOptionsInstance(COptions *opt) const
+		{
+			if ( opt )
+				delete opt;
 		}
 
 	public:
 		inline virtual ~COptionsFactory() {}
 
-		virtual COptions *newOptions();
-		virtual COptions *newOptions(const COptions &opt);
-		inline virtual void deleteOptions(COptions *opt)
-		{
-			if ( opt )
-				delete opt;
-		}
+		COptions *newOptions() const;
+		COptions *newOptions(const COptions &opt) const;
+		static void deleteOptions(COptions *opt);
 	}; // COptionsFactory
 }
 

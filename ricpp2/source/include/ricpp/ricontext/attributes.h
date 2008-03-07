@@ -39,14 +39,15 @@
 #include "ricpp/ricontext/lights.h"
 #endif // _RICPP_RICONTEXT_LIGHTS_H
 
-#ifndef _RICPP_RICONTEXT_MOTIONSTATE_H
-#include "ricpp/ricontext/motionstate.h"
-#endif // _RICPP_RICONTEXT_MOTIONSTATE_H
+#ifndef _RICPP_RICONTEXT_TRANSFORMATION_H
+#include "ricpp/ricontext/transformation.h"
+#endif // _RICPP_RICONTEXT_TRANSFORMATION_H
 
 #include <deque>
 
 namespace RiCPP {
-	
+	class CAttributesFactory;
+
 	/** @brief Render attributes.
 	 *
 	 *  CAttribute is the basic set of RI attributes as described in [RiSpec].
@@ -61,6 +62,15 @@ namespace RiCPP {
 	 *  @see COptions
 	 */
 	class CAttributes : public COptionsBase {
+		friend class CAttributesFactory;
+		CAttributesFactory *m_factory;
+
+	public:
+		const CAttributesFactory *factory() const { return m_factory; }
+
+	protected:
+		void factory(CAttributesFactory *aFactory) { m_factory = aFactory; }
+
 	public:
 		// Default color values
 		static const RtFloat defColorComponent;   ///< Default value for color components (1.0) - not the number of components.
@@ -103,6 +113,49 @@ namespace RiCPP {
 		typedef std::vector<CLightSource *> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
 
 	protected:
+		struct SBaseParts {
+			RtInt m_step;      ///< Step size used for control points of bicubic spline meshes
+			RtBasis m_basis;   ///< Basis matrix for bicubic splines
+
+			inline SBaseParts() {
+				m_step = 0;
+				memset(m_basis, 0, sizeof(m_basis));
+			}
+			inline SBaseParts(const SBaseParts &c) { *this = c; }
+			inline virtual ~SBaseParts() {}
+			inline virtual SBaseParts *duplicate() const { return new SBaseParts(*this); }
+			inline SBaseParts &operator=(const SBaseParts &s)
+			{
+				if ( this == &s )
+					return *this;
+
+				m_step = s.m_step;
+				memcpy(m_basis, s.m_basis, sizeof(RtBasis));
+
+				return *this;
+			}
+		}; // SBaseParts
+
+		struct SShaderParts {
+			RtToken m_name;
+			CParameterList m_params;
+
+			inline SShaderParts() { m_name = RI_NULL; }
+			inline SShaderParts(const SShaderParts &c) { *this = c; }
+			inline virtual ~SShaderParts() {}
+			inline virtual SShaderParts *duplicate() const { return new SShaderParts(*this); }
+			inline SShaderParts &operator=(const SShaderParts &s)
+			{
+				if ( this == &s )
+					return *this;
+
+				m_name = s.m_name;
+				m_params = s.m_params;
+
+				return *this;
+			}
+		}; // SShaderParts
+
 		class IMovedValue {
 		public:
 			inline IMovedValue() {}
@@ -223,7 +276,42 @@ namespace RiCPP {
 		class CAttributeIlluminate : public TMovedAttribute<CLightSource *> {
 		public:
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
-		}; // CAttributeFloat
+		}; // CAttributeIlluminate
+
+		class CAttributeTrimCurve : public TMovedAttribute<CTrimCurveData> {
+		public:
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		}; // CAttributeTrimCurve
+		
+		class CAttributeBase : public TMovedAttribute<SBaseParts> {
+		public:
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		}; // CAttributeTrimCurve
+		
+		class CAttributeShader : public TMovedAttribute<SShaderParts> {
+		public:
+			typedef TMovedAttribute<SShaderParts> TypeParent;
+
+			CTransformation *m_shaderTransform;
+
+			inline CAttributeShader() { m_shaderTransform = 0; }
+			inline virtual ~CAttributeShader() {}
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+
+			void set(RtToken name, const CParameterList &params, const CTransformation &transform, RtInt n, unsigned long moBegin, unsigned long moEnd);
+			void set(RtToken name, const CParameterList &params, const CTransformation &transform);
+
+			inline CAttributeShader &operator=(const CAttributeShader &c) {
+				if ( this == &c )
+					return *this;
+
+				if ( m_shaderTransform ) delete m_shaderTransform;
+				m_shaderTransform = c.m_shaderTransform ? m_shaderTransform->duplicate() : 0;
+
+				TypeParent::operator=(c);
+				return *this;
+			}
+		}; // CAttributeShader
 
 		class CAttributeFloatArray : public IMovedValue {
 		public:
@@ -264,6 +352,13 @@ namespace RiCPP {
 			AIDX_DETAIL_RANGE,
 			AIDX_GEOMETRIC_APPROXIMATION_VALUE,
 
+			AIDX_SURFACE,
+			AIDX_ATMOSPHERE,
+			AIDX_INTERIOR,
+			AIDX_EXTERIOR,
+			AIDX_DISPLACEMENT,
+			AIDX_DEFORMATION,
+
 			AIDX_ENDMARKER
 		};
 		std::vector<IMovedValue *> m_allAttributes; ///< Pointer to all attributes of this class
@@ -277,23 +372,12 @@ namespace RiCPP {
 
 		TypeLightHandles m_illuminated;        ///< Illuminated lights, default: empty. @todo default light source
 
-		RtToken m_surfaceName;                 ///< Surface shader name.
-		CParameterList m_surfaceParams;        ///< Surface shader parameters.
-
-		RtToken m_atmosphereName;              ///< Atmosphere shader name.
-		CParameterList m_atmosphereParams;     ///< Atmosphere shader parameters.
-
-		RtToken m_interiorName;                ///< Interior shader name.
-		CParameterList m_interiorParams;       ///< Interior shader parameters.
-
-		RtToken m_exteriorName;                ///< Exterior shader name.
-		CParameterList m_exteriorParams;       ///< Exterior shader parameters.
-
-		RtToken m_displacementName;            ///< Displacement shader name.
-		CParameterList m_displacementParams;   ///< Displacement shader parameters.
-
-		RtToken m_deformationName;            ///< Displacement shader name.
-		CParameterList m_deformationParams;   ///< Displacement shader parameters.
+		CAttributeShader m_surface;            ///< Surface shader
+		CAttributeShader m_atmosphere;         ///< Atmosphere shader
+		CAttributeShader m_interior;           ///< Interior shader name.
+		CAttributeShader m_exterior;           ///< Exterior shader
+		CAttributeShader m_displacement;       ///< Displacement shader name.
+		CAttributeShader m_deformation;        ///< Deformation shader name.
 
 		CAttributeFloatArray m_textureCoordinates; ///< Texture coordinates s1,t1 .. s4,t4 unit square [0,0, 1,0, 0,1, 1,1].
 
@@ -326,9 +410,9 @@ namespace RiCPP {
 		RtBasis m_uBasis,                      ///< Basis matrix for bicubic splines in u direction
 				m_vBasis;                      ///< Basis matrix for splines in v direction
 
-		CTrimCurveData m_trimCurve;            ///< Trimcurve, default: empty
+		CTrimCurveData m_trimCurve;            ///< Trim curve, default: empty
 		
-		bool m_inAreaLight;                    ///< An Arealight source was created
+		bool m_inAreaLight;                    ///< An area light source was created.
 		
 		unsigned long m_storeCounter;          ///< A simple counter (not copied) for additional attribute blocks stored for this at a stack (used for detailrange)
 
@@ -460,10 +544,7 @@ namespace RiCPP {
 		 *
 		 *  @return A clone of *this.
 		 */
-		inline virtual COptionsBase *duplicate() const
-		{
-			return new CAttributes(*this);
-		}
+		virtual COptionsBase *duplicate() const;
 
 		/** @brief Gets the area light definition state.
 		 *  @return true, an area light definition is active
@@ -602,15 +683,16 @@ namespace RiCPP {
 		 *
 		 *  @param name Name of the surface shader.
 		 *  @param params Parameter list of the surface shader.
+		 *  @param transform Current transformation
 		 */
-		virtual RtVoid surface(RtToken name, const CParameterList &params);
+		virtual RtVoid surface(RtToken name, const CParameterList &params, const CTransformation &transform);
 
 		/** @brief Gets the name of the current surface shader.
 		 *  @return The name of the current surface shader.
 		 */
 		inline virtual RtToken surfaceName() const
 		{
-			return m_surfaceName;
+			return m_surface.m_value.m_name;
 		}
 
 		/** @brief Gets the constant parameter list of the current surface shader.
@@ -618,7 +700,15 @@ namespace RiCPP {
 		 */
 		inline virtual const CParameterList &surfaceParameters() const
 		{
-			return m_surfaceParams;
+			return m_surface.m_value.m_params;
+		}
+
+		/** @brief Gets the transformation of the current surface shader.
+		 *  @return The constant transformation of the current surface shader.
+		 */
+		inline virtual const CTransformation *surfaceTransformation() const
+		{
+			return m_surface.m_shaderTransform;
 		}
 
 		/** @brief Sets the current atmosphere volume shader.
@@ -626,14 +716,14 @@ namespace RiCPP {
 		 *  @param name Name of the shader.
 		 *  @param params Parameter list of the shader.
 		 */
-		virtual RtVoid atmosphere(RtToken name, const CParameterList &params);
+		virtual RtVoid atmosphere(RtToken name, const CParameterList &params, const CTransformation &transform);
 
 		/** @brief Gets the name of the current atmosphere volume shader.
 		 *  @return The name of the current atmosphere volume shader.
 		 */
 		inline virtual RtToken atmosphereName() const
 		{
-			return m_atmosphereName;
+			return m_atmosphere.m_value.m_name;
 		}
 
 		/** @brief Gets the constant parameter list of the current atmosphere volume shader.
@@ -641,7 +731,15 @@ namespace RiCPP {
 		 */
 		inline virtual const CParameterList &atmosphereParameters() const
 		{
-			return m_atmosphereParams;
+			return m_atmosphere.m_value.m_params;
+		}
+
+		/** @brief Gets the transformation of the current atmosphere shader.
+		 *  @return The constant transformation of the current atmosphere shader.
+		 */
+		inline virtual const CTransformation *atmosphereTransformation() const
+		{
+			return m_atmosphere.m_shaderTransform;
 		}
 
 		/** @brief Sets the current interior volume shader.
@@ -649,14 +747,14 @@ namespace RiCPP {
 		 *  @param name Name of the shader.
 		 *  @param params Parameter list of the shader.
 		 */
-		virtual RtVoid interior(RtToken name, const CParameterList &params);
+		virtual RtVoid interior(RtToken name, const CParameterList &params, const CTransformation &transform);
 
 		/** @brief Gets the name of the current interior volume shader.
 		 *  @return The name of the current interior volume shader.
 		 */
 		inline virtual RtToken interiorName() const
 		{
-			return m_interiorName;
+			return m_interior.m_value.m_name;
 		}
 
 		/** @brief Gets the constant parameter list of the current interior volume shader.
@@ -664,7 +762,15 @@ namespace RiCPP {
 		 */
 		inline virtual const CParameterList &interiorParameters() const
 		{
-			return m_interiorParams;
+			return m_interior.m_value.m_params;
+		}
+
+		/** @brief Gets the transformation of the current interior shader.
+		 *  @return The constant transformation of the current interior shader.
+		 */
+		inline virtual const CTransformation *interiorTransformation() const
+		{
+			return m_interior.m_shaderTransform;
 		}
 
 		/** @brief Sets the current exterior volume shader.
@@ -672,14 +778,14 @@ namespace RiCPP {
 		 *  @param name Name of the shader.
 		 *  @param params Parameter list of the shader.
 		 */
-		virtual RtVoid exterior(RtToken name, const CParameterList &params);
+		virtual RtVoid exterior(RtToken name, const CParameterList &params, const CTransformation &transform);
 
 		/** @brief Gets the name of the current exterior volume shader.
 		 *  @return The name of the current exterior volume shader.
 		 */
 		inline virtual RtToken exteriorName() const
 		{
-			return m_exteriorName;
+			return m_exterior.m_value.m_name;
 		}
 
 		/** @brief Gets the constant parameter list of the current exterior volume shader.
@@ -687,7 +793,15 @@ namespace RiCPP {
 		 */
 		inline virtual const CParameterList &exteriorParameters() const
 		{
-			return m_exteriorParams;
+			return m_exterior.m_value.m_params;
+		}
+
+		/** @brief Gets the transformation of the current exterior shader.
+		 *  @return The constant transformation of the exterior interior shader.
+		 */
+		inline virtual const CTransformation *exteriorTransformation() const
+		{
+			return m_exterior.m_shaderTransform;
 		}
 
 		/** @brief Sets the current displacement shader.
@@ -695,14 +809,14 @@ namespace RiCPP {
 		 *  @param name Name of the shader.
 		 *  @param params Parameter list of the shader.
 		 */
-		virtual RtVoid displacement(RtToken name, const CParameterList &params);
+		virtual RtVoid displacement(RtToken name, const CParameterList &params, const CTransformation &transform);
 
 		/** @brief Gets the name of the current displacement shader.
 		 *  @return The name of the current exterior displacement shader.
 		 */
 		inline virtual RtToken displacementName() const
 		{
-			return m_displacementName;
+			return m_displacement.m_value.m_name;
 		}
 
 		/** @brief Gets the constant parameter list of the current displacement shader.
@@ -710,30 +824,46 @@ namespace RiCPP {
 		 */
 		inline virtual const CParameterList &displacementParameters() const
 		{
-			return m_displacementParams;
+			return m_displacement.m_value.m_params;
 		}
 
-		/** @brief Sets the current displacement shader.
+		/** @brief Gets the transformation of the current displacement shader.
+		 *  @return The constant transformation of the displacement interior shader.
+		 */
+		inline virtual const CTransformation *displacementTransformation() const
+		{
+			return m_displacement.m_shaderTransform;
+		}
+
+		/** @brief Sets the current deformation shader.
 		 *
 		 *  @param name Name of the shader.
 		 *  @param params Parameter list of the shader.
 		 */
-		virtual RtVoid deformation(RtToken name, const CParameterList &params);
+		virtual RtVoid deformation(RtToken name, const CParameterList &params, const CTransformation &transform);
 
-		/** @brief Gets the name of the current displacement shader.
-		 *  @return The name of the current exterior displacement shader.
+		/** @brief Gets the name of the current deformation shader.
+		 *  @return The name of the current exterior deformation shader.
 		 */
 		inline virtual RtToken deformationName() const
 		{
-			return m_deformationName;
+			return m_deformation.m_value.m_name;
 		}
 
-		/** @brief Gets the constant parameter list of the current displacement shader.
-		 *  @return The constant parameter list of the current displacement shader.
+		/** @brief Gets the constant parameter list of the current deformation shader.
+		 *  @return The constant parameter list of the current deformation shader.
 		 */
 		inline virtual const CParameterList &deformationParameters() const
 		{
-			return m_deformationParams;
+			return m_deformation.m_value.m_params;
+		}
+
+		/** @brief Gets the transformation of the current deformation shader.
+		 *  @return The constant transformation of the deformation interior shader.
+		 */
+		inline virtual const CTransformation *deformationTransformation() const
+		{
+			return m_deformation.m_shaderTransform;
 		}
 
 		virtual RtVoid textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
@@ -871,7 +1001,7 @@ namespace RiCPP {
 		 *
 		 *  @param c Current color descriptor
 		 */
-		inline virtual CAttributes *newAttributesInstance(const CColorDescr &c)
+		inline virtual CAttributes *newAttributesInstance(const CColorDescr &c) const
 		{
 			return new CAttributes(c);
 		}
@@ -882,11 +1012,22 @@ namespace RiCPP {
 		 *
 		 *  @param attr Attribute set to copy.
 		 */
-		inline virtual CAttributes *newAttributesInstance(const CAttributes &attr)
+		inline virtual CAttributes *newAttributesInstance(const CAttributes &attr) const
 		{
 			return new CAttributes(attr);
 		}
 
+		/** @brief Deletes an attribute set delivered by this factory.
+		 *
+		 *  Because the destructor is virtual, this method don_t need to be overwritten.
+		 *
+		 *	@param a Attribute set to delete, had to be constructed previously by this factory.
+		 */
+		inline virtual void deleteAttributesInstance(CAttributes *a) const
+		{
+			if ( a )
+				delete a;
+		}
 	public:
 		/** @brief Virtual destructor.
 		 */
@@ -897,26 +1038,17 @@ namespace RiCPP {
 		 *  @return A new Attribute set
 		 *  @exception ExceptRiCPPError If there was not enough memory
 		 */
-		virtual CAttributes *newAttributes(const CColorDescr &c);
+		CAttributes *newAttributes(const CColorDescr &c) const;
 
 		/** @brief Gets a copy of an attribute set, handles memory array.
 		 *  @param attr Attribute set to copy.
 		 *  @return A new Attribute set
 		 *  @exception ExceptRiCPPError If there was not enough memory
 		 */
-		virtual CAttributes *newAttributes(const CAttributes &attr);
+		CAttributes *newAttributes(const CAttributes &attr) const;
 
-		/** @brief Deletes an attribute set delivered by this factory.
-		 *
-		 *  Because the destructor is virtual, this method don_t need to be overwritten.
-		 *
-		 *	@param a Attribute set to delete, had to be constructed previously by this factory.
-		 */
-		inline virtual void deleteAttributes(CAttributes *a)
-		{
-			if ( a )
-				delete a;
-		}
+		static void deleteAttributes(CAttributes *a);
+
 	}; // CAttributesFactory
 }
 

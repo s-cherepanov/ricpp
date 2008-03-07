@@ -39,16 +39,26 @@
 #endif // _RICPP_RICONTEXT_MOTIONSTATE_H
 
 namespace RiCPP {
+	class CTransformationFactory;
 
 	/** @brief Class with the transformation stack and composit transformation matrix
 	 */
 	class CTransformation {
+		friend class CTransformationFactory;
 		
 		//! Space type of the coordinate system (current, world, camera, screen, raster, etc.)
 		RtToken m_spaceType;
 		
 		//! A simple counter for additional transform blocks stored for this at a stack (used for detailrange)
 		unsigned long m_storeCounter;
+
+		CTransformationFactory *m_factory;
+
+	public:
+		const CTransformationFactory *factory() const { return m_factory; }
+
+	protected:
+		void factory(CTransformationFactory *aFactory) { m_factory = aFactory; }
 		
 	protected:
 
@@ -400,7 +410,10 @@ namespace RiCPP {
 		 */
 		inline virtual CTransformation *newTransformationInstance()
 		{
-			return new CTransformation();
+			CTransformation *t = new CTransformation();
+			if ( t )
+				t->factory(this);
+			return t;
 		}
 
 		/** @brief Factory method to get a copy of an transformation set.
@@ -410,11 +423,22 @@ namespace RiCPP {
 		 *  @param trans Transformation set to copy.
 		 *  @return New transformation set as copy of @a trans.
 		 */
-		inline virtual CTransformation *newTransformationInstance(const CTransformation &trans)
+		inline virtual CTransformation *newTransformationInstance(const CTransformation &trans) const
 		{
 			return new CTransformation(trans);
 		}
 
+		/** @brief Deletes a transformation set delivered by this factory.
+		 *
+		 *  Because the destructor is virtual, this method don_t need to be overwritten.
+		 *
+		 *	@param trans Transformation set to delete, had to be constructed previously by this factory.
+		 */
+		inline virtual void deleteTransformationInstance(CTransformation *trans) const
+		{
+			if ( trans )
+				delete trans;
+		}
 	public:
 		/** @brief Virtual destructor.
 		 */
@@ -429,19 +453,9 @@ namespace RiCPP {
 		 *  @param trans Transformation set to copy.
 		 *  @return A new transformation set as copy of @a trans
 		 */
-		virtual CTransformation *newTransformation(const CTransformation &trans);
+		CTransformation *newTransformation(const CTransformation &trans) const;
+		static void deleteTransformation(CTransformation *trans);
 
-		/** @brief Deletes a transformation set delivered by this factory.
-		 *
-		 *  Because the destructor is virtual, this method don_t need to be overwritten.
-		 *
-		 *	@param trans Transformation set to delete, had to be constructed previously by this factory.
-		 */
-		inline virtual void deleteTransformation(CTransformation *trans)
-		{
-			if ( trans )
-				delete trans;
-		}
 	}; // CTransformationFactory
 
 }

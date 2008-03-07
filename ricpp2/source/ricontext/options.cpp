@@ -94,9 +94,15 @@ const RtToken COptions::defHiderType = RI_HIDDEN;
 const RtFloat COptions::defRelativeDetail = 1;
 
 
-
 COptions::~COptions()
 {
+}
+
+COptionsBase *COptions::duplicate() const
+{ 
+	if ( m_factory )
+		return m_factory->newOptions(*this);
+	return new COptions(*this);
 }
 
 COptions &COptions::operator=(const COptions &ro)
@@ -753,7 +759,7 @@ RtVoid COptions::relativeDetail(RtFloat relativedetail)
 
 // ----------------------------------------------------------------------------
 
-COptions *COptionsFactory::newOptions()
+COptions *COptionsFactory::newOptions() const
 {
 	COptions *o = newOptionsInstance();
 	if ( !o ) {
@@ -762,7 +768,7 @@ COptions *COptionsFactory::newOptions()
 	return o;
 }
 
-COptions *COptionsFactory::newOptions(const COptions &opt)
+COptions *COptionsFactory::newOptions(const COptions &opt) const
 {
 	COptions *o = new COptions(opt);
 	if ( !o ) {
@@ -770,3 +776,17 @@ COptions *COptionsFactory::newOptions(const COptions &opt)
 	}
 	return o;
 }
+
+void COptionsFactory::deleteOptions(COptions *o)
+{
+	if ( !o )
+		return;
+
+	if ( o->factory() ) {
+		const COptionsFactory *f = o->factory();
+		f->deleteOptionsInstance(o);
+	} else {
+		delete o;
+	}
+}
+

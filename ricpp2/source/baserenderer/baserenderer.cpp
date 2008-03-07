@@ -1524,7 +1524,7 @@ RtVoid CBaseRenderer::opacity(RtColor Os)
 
 RtVoid CBaseRenderer::preSurface(CRiSurface &obj, RtString name, const CParameterList &params)
 {
-	renderState()->attributes().surface(name, params);
+	renderState()->attributes().surface(name, params, renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1540,7 +1540,7 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 
 RtVoid CBaseRenderer::preAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params)
 {
-	renderState()->attributes().atmosphere(name, params);
+	renderState()->attributes().atmosphere(name, params, renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1556,7 +1556,7 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 
 RtVoid CBaseRenderer::preInterior(CRiInterior &obj, RtString name, const CParameterList &params)
 {
-	renderState()->attributes().interior(name, params);
+	renderState()->attributes().interior(name, params, renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1572,7 +1572,7 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 
 RtVoid CBaseRenderer::preExterior(CRiExterior &obj, RtString name, const CParameterList &params)
 {
-	renderState()->attributes().exterior(name, params);
+	renderState()->attributes().exterior(name, params, renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1588,7 +1588,7 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 
 RtVoid CBaseRenderer::preDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params)
 {
-	renderState()->attributes().displacement(name, params);
+	renderState()->attributes().displacement(name, params, renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1603,7 +1603,7 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 
 RtVoid CBaseRenderer::preDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
 {
-	renderState()->attributes().deformation(name, params);
+	renderState()->attributes().deformation(name, params, renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])

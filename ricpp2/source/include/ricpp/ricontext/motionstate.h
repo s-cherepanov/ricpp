@@ -201,19 +201,6 @@ namespace RiCPP {
 			m_elems.back().m_attributesStored = flag;
 		}
 	}; // CMotionState
-
-
-	class IMovedValueClass {
-	public:
-		inline IMovedValueClass() {}
-		inline virtual ~IMovedValueClass() {}
-		virtual IMovedValueClass *duplicate() const = 0;
-			
-		virtual void clear() = 0;
-		virtual void fill(RtInt n) = 0;
-		virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times) = 0;
-		virtual void sampleReset() = 0;
-	}; // IMovedValueClass
 		
 }
 

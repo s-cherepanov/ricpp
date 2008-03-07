@@ -1259,7 +1259,6 @@
 		C372456E0CD5DD7E00945563 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C3C9AE380D70BC9F00A04717 /* ribelements.cpp */,
 				C37245AE0CD5DE5500945563 /* attributes.cpp */,
 				C37245AF0CD5DE5500945563 /* contextcreator.cpp */,
 				C37245B00CD5DE5500945563 /* displaydesc.cpp */,
@@ -1271,6 +1270,7 @@
 				C37245B60CD5DE5500945563 /* parameter.cpp */,
 				C37245B70CD5DE5500945563 /* renderstate.cpp */,
 				C37245B80CD5DE5500945563 /* resource.cpp */,
+				C3C9AE380D70BC9F00A04717 /* ribelements.cpp */,
 				C37245B90CD5DE5500945563 /* ricontext.cpp */,
 				C37245BA0CD5DE5500945563 /* rimacro.cpp */,
 				C37245BB0CD5DE5500945563 /* transformation.cpp */,

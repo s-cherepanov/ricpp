@@ -38,18 +38,20 @@ using namespace RiCPP;
 // -----------------------------------------------------------------------------
 
 
-RtVoid CAttributeFloatClass::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+RtVoid CAttributeFloat::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 }
 
-RtVoid CAttributeFloatClass::sampleReset()
+RtVoid CAttributeFloat::sampleReset()
 {
 	if ( m_movedValue.size() >= 1 )
 		m_value = m_movedValue[0];
 }
 
-CAttributeFloatClass &CAttributeFloatClass::operator=(const CAttributeFloatClass &c)
+CAttributeFloat &CAttributeFloat::operator=(const CAttributeFloat &c)
 {
+	if ( this == &c )
+		return *this;
 	clear();
 	m_value = c.m_value;
 	m_movedValue = c.m_movedValue;
@@ -58,7 +60,7 @@ CAttributeFloatClass &CAttributeFloatClass::operator=(const CAttributeFloatClass
 	return *this;
 }
 
-void CAttributeFloatClass::fill(RtInt n)
+void CAttributeFloat::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
 	if ( n == 0 ) {
@@ -69,13 +71,13 @@ void CAttributeFloatClass::fill(RtInt n)
 	}
 }
 
-void CAttributeFloatClass::clear()
+void CAttributeFloat::clear()
 {
 	m_motionBegin = 0;
 	m_motionEnd = 0;
 }
 
-void CAttributeFloatClass::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
+void CAttributeFloat::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
 {
 	assert ( moBegin <= moEnd);
 	
@@ -99,11 +101,11 @@ void CAttributeFloatClass::set(RtFloat aValue, RtInt n, unsigned long moBegin, u
 			return;
 		}
 		m_movedValue[n] = aValue;
+		fill(n+1);
 	}
-	fill(n+1);
 }
 
-void CAttributeFloatClass::set(RtFloat aValue)
+void CAttributeFloat::set(RtFloat aValue)
 {
 	m_motionBegin = 0;
 	m_motionEnd = 0;
@@ -113,58 +115,52 @@ void CAttributeFloatClass::set(RtFloat aValue)
 
 // -----------------------------------------------------------------------------
 
-RtVoid CAttributeFloatArrayClass::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+RtVoid CAttributeFloatArray::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 }
 
-RtVoid CAttributeFloatArrayClass::sampleReset()
+RtVoid CAttributeFloatArray::sampleReset()
 {
-	if ( (RtInt)m_movedValue.size() >= m_card ) {
-		m_value.resize(m_card);
-		for ( RtInt i = 0; i < m_card; ++i ) {
-			m_value[i] = m_movedValue[i];
-		}
+	if ( (RtInt)m_movedValue.size() >= m_value.size() ) {
+		m_value.assign(m_movedValue.begin(), m_movedValue.begin() + m_value.size());
 	}
 }
 
-CAttributeFloatArrayClass &CAttributeFloatArrayClass::operator=(const CAttributeFloatArrayClass &c)
+CAttributeFloatArray &CAttributeFloatArray::operator=(const CAttributeFloatArray &c)
 {
+	if ( this == &c )
+		return *this;
 	clear();
 	m_value = c.m_value;
 	m_movedValue = c.m_movedValue;
-	m_card = c.m_card;
 	m_motionBegin = c.m_motionBegin;
 	m_motionEnd = c.m_motionEnd;
 	return *this;
 }
 
-void CAttributeFloatArrayClass::clear()
+void CAttributeFloatArray::clear()
 {
 	m_value.clear();
 	m_movedValue.clear();
-	m_card = 0;
 	m_motionBegin = 0;
 	m_motionEnd = 0;
 }
 
-void CAttributeFloatArrayClass::fill(RtInt n)
+void CAttributeFloatArray::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
 	if ( n == 0 ) {
 		return;
 	}
 	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
-		for ( RtInt j = 0; j < m_card; ++j ) {
-			m_movedValue[i*m_card+j] = m_movedValue[(i-1)*m_card+j];
+		for ( std::vector<RtFloat>::size_type j = 0; j < m_value.size(); ++j ) {
+			m_movedValue[i * m_value.size() + j] = m_movedValue[(i - 1) * m_value.size() + j];
 		}
 	}
 }
 
-void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
+void CAttributeFloatArray::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
 {
-	if ( m_card <= 0 )
-		return;
-
 	assert ( moBegin <= moEnd);
 	
 	if ( moBegin > moEnd ) {
@@ -175,43 +171,25 @@ void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt n, unsigned long moBeg
 	m_motionEnd = moEnd;
 
 	if ( n == 0 ) {
-		m_value.resize(m_card);
-		m_value.assign(m_card, aValue);
+		m_value.assign(m_value.size(), aValue);
 	}
 
 	if ( moBegin < moEnd ) {
-		if ( m_movedValue.size() < (moEnd - moBegin) * (unsigned long)m_card ) {
-			m_movedValue.resize((moEnd-moBegin) * m_card);
+		if ( m_movedValue.size() < (moEnd - moBegin) * m_value.size() ) {
+			m_movedValue.resize((moEnd - moBegin) * m_value.size());
 		}
 		if ( (unsigned long)n >= moEnd - moBegin ) {
 			// ERROR
 			return;
 		}
-		for ( RtInt i = 0; i < m_card; ++i )
-			m_movedValue[n * m_card + i] = aValue;
-		++n;
+		for ( std::vector<RtFloat>::size_type i = 0; i < m_value.size(); ++i )
+			m_movedValue[n * m_value.size() + i] = aValue;
+		fill(n+1);
 	}
-	fill(n+1);
 }
 
-void CAttributeFloatArrayClass::set(RtFloat aValue, RtInt aCard)
+void CAttributeFloatArray::set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
 {
-	m_motionBegin = 0;
-	m_motionEnd = 0;
-	m_card = aCard;
-
-	if ( m_card <= 0 )
-		return;
-
-	m_value.resize(m_card);
-	m_value.assign(m_card, aValue);
-}
-
-void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
-{
-	if ( m_card <= 0 )
-		return;
-
 	assert ( moBegin <= moEnd);
 	
 	if ( moBegin > moEnd ) {
@@ -222,69 +200,65 @@ void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt n, unsigned long moBe
 	m_motionEnd = moEnd;
 
 	if ( n == 0 ) {
-		m_value.resize(m_card);
-		for ( RtInt i=0; i<m_card; ++i ) {
-			m_value[i] = aValue[i];
-		}
+		m_value.assign(aValue, aValue + m_value.size());
 	}
 
 	if ( moBegin < moEnd ) {
-		if ( (RtInt)m_movedValue.size() < (moEnd-moBegin) * m_card ) {
-			m_movedValue.resize((moEnd-moBegin) * m_card);
+		if ( m_movedValue.size() < (moEnd - moBegin) * m_value.size() ) {
+			m_movedValue.resize((moEnd - moBegin) * m_value.size());
 		}
 		if ( (unsigned long)n >= moEnd - moBegin ) {
 			// ERROR
 			return;
 		}
-		for ( RtInt i = 0; i < m_card; ++i )
-			m_movedValue[n * m_card + i] = aValue[i];
-		++n;
+		for ( std::vector<RtFloat>::size_type i = 0; i < m_value.size(); ++i )
+			m_movedValue[n * m_value.size() + i] = aValue[i];
+		fill(n+1);
 	}
-	fill(n+1);
 }
 
-void CAttributeFloatArrayClass::set(RtFloat *aValue, RtInt aCard)
+void CAttributeFloatArray::set(RtFloat aValue, RtInt aCard)
 {
 	m_motionBegin = 0;
 	m_motionEnd = 0;
-	m_card = aCard;
-
-	if ( m_card <= 0 )
+	
+	if ( aCard <= 0 ) {
+		m_value.resize(0);
 		return;
-
-
-	m_value.resize(m_card);
-	for ( RtInt i=0; i<m_card; ++i ) {
-		m_value[i] = aValue[i];
 	}
+	
+	m_value.resize(aCard);
+	m_value.assign(aCard, aValue);
 }
 
-void CAttributeFloatArrayClass::set(RtFloat aValue)
+void CAttributeFloatArray::set(RtFloat aValue)
 {
 	m_motionBegin = 0;
-	m_motionEnd = 0;
-
-	if ( m_card <= 0 )
-		return;
-
-
-	for ( RtInt i=0; i<m_card; ++i ) {
-		m_value[i] = aValue;
-	}
+	m_motionEnd   = 0;
+	
+	m_value.assign(m_value.size(), aValue);
 }
 
-void CAttributeFloatArrayClass::set(RtFloat *aValue)
+void CAttributeFloatArray::set(RtFloat *aValue, RtInt aCard)
 {
 	m_motionBegin = 0;
 	m_motionEnd = 0;
 
-	if ( m_card <= 0 )
+	if ( aCard <= 0 ) {
+		m_value.resize(0);
 		return;
-
-
-	for ( RtInt i=0; i<m_card; ++i ) {
-		m_value[i] = aValue[i];
 	}
+	
+	m_value.resize(aCard);
+	m_value.assign(aValue, aValue + m_value.size());
+}
+
+void CAttributeFloatArray::set(RtFloat *aValue)
+{
+	m_motionBegin = 0;
+	m_motionEnd   = 0;
+
+	m_value.assign(aValue, aValue + m_value.size());
 }
 
 // -----------------------------------------------------------------------------
@@ -818,16 +792,16 @@ RtVoid CAttributes::motionSuspend()
 
 RtVoid CAttributes::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
-	std::vector<IMovedValueClass *>::iterator i = m_allAttributes.begin();
-	for ( ; i != m_allAttributes.end(); ++i ) {
+	std::vector<IMovedValue *>::iterator i;
+	for ( i = m_allAttributes.begin(); i != m_allAttributes.end(); ++i ) {
 		(*i)->sample(shutterTime, times);
 	}
 }
 
 RtVoid CAttributes::sampleReset()
 {
-	std::vector<IMovedValueClass *>::iterator i = m_allAttributes.begin();
-	for ( ; i != m_allAttributes.end(); ++i ) {
+	std::vector<IMovedValue *>::iterator i;
+	for ( i = m_allAttributes.begin(); i != m_allAttributes.end(); ++i ) {
 		(*i)->sampleReset();
 	}
 }

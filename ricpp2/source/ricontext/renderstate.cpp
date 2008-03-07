@@ -1870,6 +1870,7 @@ void CRenderState::motionBegin(RtInt N, RtFloat times[])
 	m_modeStack->motionBegin();
 	m_motionState.motionBegin(N, times);
 	attributes().motionBegin(m_motionState);
+	curTransform().motionBegin(m_motionState);
 }
 
 void CRenderState::motionEnd()
@@ -1896,6 +1897,7 @@ void CRenderState::motionEnd()
 		m_attributesStack.push_back(attr);
 	}
 
+	curTransform().motionEnd();
 	attributes().motionEnd();
 	m_motionState.motionEnd();
 	m_modeStack->motionEnd();
@@ -2059,6 +2061,7 @@ void CRenderState::pushTransform(bool useCounter)
 			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, "in pushTransform()", __LINE__, __FILE__);
 		}
 		curTransform().storeCounter(cnt);
+		curTransform().motionSuspend();
 	} catch (std::exception &e) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,  __LINE__, __FILE__, "in pushTransform(): %s", e.what());
 	}

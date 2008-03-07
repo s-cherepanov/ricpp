@@ -47,51 +47,60 @@
 
 namespace RiCPP {
 
-	class CAttributeFloatClass : public IMovedValueClass {
+	class IMovedValue {
+	public:
+		inline IMovedValue() {}
+		inline virtual ~IMovedValue() {}
+		
+		virtual void clear() = 0;
+		virtual void fill(RtInt n) = 0;
+		virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times) = 0;
+		virtual void sampleReset() = 0;
+	}; // IMovedValue
+	
+	class CAttributeFloat : public IMovedValue {
 	public:
 		RtFloat m_value;
 		std::vector<RtFloat> m_movedValue;
-		std::vector<RtFloat>::size_type m_elemSize;
 		unsigned long m_motionBegin, m_motionEnd;
 
-		inline CAttributeFloatClass() {}
-		inline CAttributeFloatClass(const CAttributeFloatClass &c) { *this = c; }
-		virtual ~CAttributeFloatClass() {}
-		virtual IMovedValueClass *duplicate() const { return new CAttributeFloatClass(*this); }
+		inline CAttributeFloat() {}
+		inline CAttributeFloat(const CAttributeFloat &c) { *this = c; }
+		virtual ~CAttributeFloat() {}
+		virtual IMovedValue *duplicate() const { return new CAttributeFloat(*this); }
 
 		virtual void clear();
 		virtual void fill(RtInt n);
 		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		virtual RtVoid sampleReset();
-		CAttributeFloatClass &operator=(const CAttributeFloatClass &c);
+		CAttributeFloat &operator=(const CAttributeFloat &c);
 		void set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
 		void set(RtFloat aValue);
 	};
 
-	class CAttributeFloatArrayClass : public IMovedValueClass {
+	class CAttributeFloatArray : public IMovedValue {
 	public:
 		std::vector<RtFloat> m_value;
 		std::vector<RtFloat> m_movedValue;
 		unsigned long m_motionBegin, m_motionEnd;
-		RtInt m_card;
 
-		inline CAttributeFloatArrayClass() {}
-		inline CAttributeFloatArrayClass(const CAttributeFloatClass &c) { *this = c; }
-		virtual ~CAttributeFloatArrayClass() {}
-		virtual IMovedValueClass *duplicate() const { return new CAttributeFloatArrayClass(*this); }
+		inline CAttributeFloatArray() {}
+		inline CAttributeFloatArray(const CAttributeFloatArray &c) { *this = c; }
+		virtual ~CAttributeFloatArray() {}
+		virtual IMovedValue *duplicate() const { return new CAttributeFloatArray(*this); }
 
 		virtual void clear();
 		virtual void fill(RtInt n);
 		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		virtual RtVoid sampleReset();
-		CAttributeFloatArrayClass &operator=(const CAttributeFloatArrayClass &c);
+		CAttributeFloatArray &operator=(const CAttributeFloatArray &c);
 		void set(RtFloat aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
 		void set(RtFloat *aValue, RtInt n, unsigned long moBegin, unsigned long moEnd);
 		void set(RtFloat aValue, RtInt aCard);
 		void set(RtFloat *aValue, RtInt aCard);
 		void set(RtFloat aValue);
 		void set(RtFloat *aValue);
-		inline RtInt card() const { return m_card; }
+		inline unsigned long card() const { return m_value.size(); }
 	};
 	
 	/** @brief Stores the state of a motion block
@@ -171,14 +180,14 @@ namespace RiCPP {
 
 			AIDX_ENDMARKER
 		};
-		std::vector<IMovedValueClass *> m_allAttributes; ///< Pointer to all attributes of this class
+		std::vector<IMovedValue *> m_allAttributes; ///< Pointer to all attributes of this class
 
 		virtual void initAttributeVector();
 		virtual void initMotion();
 	private:
-		CAttributeFloatArrayClass m_color;     ///< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
+		CAttributeFloatArray m_color;          ///< Current reflective color (white - all 1.0), number of components may changed by option, norm is r, g, b.
 
-		CAttributeFloatArrayClass m_opacity;   ///< Current opacity of an object (opaque - all 1.0), components as in color.
+		CAttributeFloatArray m_opacity;        ///< Current opacity of an object (opaque - all 1.0), components as in color.
 
 		TypeLightHandles m_illuminated;        ///< Illuminated lights, default: empty.
 

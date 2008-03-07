@@ -34,25 +34,90 @@
 #include "ricpp/ricpp/types.h"
 #endif //  _RICPP_DECLAREATION_TYPES_H
 
+#ifndef _RICPP_RICONTEXT_MOTIONSTATE_H
+#include "ricpp/ricontext/motionstate.h"
+#endif // _RICPP_RICONTEXT_MOTIONSTATE_H
+
 namespace RiCPP {
 
 	/** @brief Class with the transformation stack and composit transformation matrix
 	 */
 	class CTransformation {
+		
+		//! false, did an operation that could not calculate the inverse.
+		bool m_isValid;
+		
+		//! Space type of the coordinate system (current, world, camera, screen, raster, etc.)
+		RtToken m_spaceType;
+		
+		//! A simple counter for additional transform blocks stored for this at a stack (used for detailrange)
+		unsigned long m_storeCounter;
+		
+	protected:
+
+		class IMovedTransform {
+		public:
+			inline IMovedTransform() {}
+			inline virtual ~IMovedTransform() {}
+			
+			virtual IMovedTransform *duplicate() const = 0;
+			virtual EnumRequests reqType() const = 0;
+
+			virtual void clear() = 0;
+			virtual void fill(RtInt n) = 0;
+			
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse) = 0;
+			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse) = 0;
+		};
+		
+		class CMovedRotate : public IMovedTransform {
+		public:
+			struct SRotate {
+				RtFloat m_angle;
+				RtFloat m_dx;
+				RtFloat m_dy;
+				RtFloat m_dz;
+			};
+			
+			std::vector<SRotate> m_rotate;
+			unsigned long m_motionBegin, m_motionEnd;
+			
+			inline CMovedRotate()
+			{
+				m_motionBegin = m_motionEnd = 0;
+			}
+
+			inline CMovedRotate(const CMovedRotate &o)
+			{
+				*this = o;
+			}
+
+			inline virtual ~CMovedRotate() {}
+
+			virtual IMovedTransform *duplicate() const { return new CMovedRotate(*this); }
+			
+			CMovedRotate &operator=(const CMovedRotate &o);
+
+			inline virtual EnumRequests reqType() const { return REQ_ROTATE; }
+
+			virtual void clear();
+			virtual void fill(RtInt n);
+			
+			void set(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
+		};
+		
 		//! Composit transformation matrix
 		CMatrix3D m_CTM;
 
 		//! Inverse of the composit transformation matrix
 		CMatrix3D m_inverseCTM;
 
-		//! false, did an operation that could not calculate the inverse.
-		bool m_isValid;
-
-		//! Space type of the coordinate system (current, world, camera, screen, raster, etc.)
-		RtToken m_spaceType;
+		//! Defered transformations (motion block, deformation)
+		std::vector<IMovedTransform *> m_deferedTrans;
 		
-		//! A simple counter (not copied) for additional transform blocks stored for this at a stack (used for detailrange)
-		unsigned long m_storeCounter;
+		const CMotionState *m_motionState;
 
 	public:
 		/** @brief Constructor, matrices are set to identity.
@@ -69,7 +134,7 @@ namespace RiCPP {
 
 		/** @brief Destructor.
 		 */
-		inline virtual ~CTransformation() { }
+		virtual ~CTransformation();
 
 		/** @brief Returns a (deep) copy of this.
 		 *  @return a copy of this.
@@ -132,6 +197,13 @@ namespace RiCPP {
 
 		RtToken spaceType() const { return m_spaceType; }
 		void spaceType(RtToken aSpaceType) { m_spaceType = aSpaceType; }
+
+		virtual RtVoid motionBegin(const CMotionState &state);
+		virtual RtVoid motionEnd();
+		virtual RtVoid motionSuspend();
+		
+		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		virtual RtVoid sampleReset();
 	}; // CTransformation
 
 	/** @brief Create new attributes containers.

@@ -41,11 +41,11 @@
 #include "ricpp/tools/templatefuncs.h"
 #endif // _RICPP_TOOLS_TEMPLATEFUNCS_H
 
-// #include <iostream>
-
 using namespace RiCPP;
 
-inline CTransformation::CMovedRotate &CTransformation::CMovedRotate::operator=(const CMovedRotate &o)
+// -----------------------------------------------------------------------------
+
+CTransformation::CMovedRotate &CTransformation::CMovedRotate::operator=(const CMovedRotate &o)
 {
 	if ( this == &o )
 		return *this;
@@ -97,12 +97,10 @@ void CTransformation::CMovedRotate::set(RtFloat angle, RtFloat dx, RtFloat dy, R
 		m_rotate[n].m_angle = angle;
 		m_rotate[n].m_dx = dx;
 		m_rotate[n].m_dy = dy;
-		m_rotate[0].m_dz = dz;
+		m_rotate[n].m_dz = dz;
 	}
 	if ( n == 0 )
 		sampleReset(ctm, inverse);
-	
-	// std::cout << "# Rotate Set (" << n << ", " << angle << ", " << dx << ", " << dy << ", " << dz << ")" << std::endl;
 }
 
 
@@ -219,6 +217,322 @@ void CTransformation::CMovedMatrix::sampleReset(CMatrix3D &ctm, CMatrix3D &inver
 
 // -----------------------------------------------------------------------------
 
+CTransformation::CMovedScale &CTransformation::CMovedScale::operator=(const CMovedScale &o)
+{
+	if ( this == &o )
+		return *this;
+	
+	clear();
+	m_scale = o.m_scale;
+	m_motionBegin = o.m_motionBegin;
+	m_motionBegin = o.m_motionEnd;
+	
+	return *this;
+}
+
+void CTransformation::CMovedScale::clear()
+{
+	m_scale.clear();
+}
+
+void CTransformation::CMovedScale::fill(RtInt n)
+{
+	// Fill unused values at [n...end]
+	if ( n == 0 ) {
+		return;
+	}
+	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
+		m_scale[i] = m_scale[i-1];
+	}
+}
+
+void CTransformation::CMovedScale::set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	assert ( moBegin <= moEnd);
+	assert ( n < moEnd - moBegin );
+	
+	if ( moBegin > moEnd ) {
+		std::swap(moBegin, moEnd);		
+	}
+	
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+	
+	if ( moBegin < moEnd ) {
+		if ( m_scale.size() < moEnd - moBegin ) {
+			m_scale.resize(moEnd - moBegin);
+		}
+		if ( (unsigned long)n >= moEnd - moBegin ) {
+			// ERROR
+			return;
+		}
+		m_scale[n].m_dx = dx;
+		m_scale[n].m_dy = dy;
+		m_scale[n].m_dz = dz;
+	}
+	if ( n == 0 )
+		sampleReset(ctm, inverse);
+}
+
+
+void CTransformation::CMovedScale::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+}
+
+void CTransformation::CMovedScale::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	if ( m_scale.size() >= 1 ) {
+		ctm.scale(m_scale[0].m_dx, m_scale[0].m_dy, m_scale[0].m_dz);
+		RtFloat dx = m_scale[0].m_dx, dy = m_scale[0].m_dy, dz = m_scale[0].m_dz;
+		bool throwErr = false;
+		if ( dx == 0 ) {
+			dx = static_cast<RtFloat>(1.0);
+			throwErr = true;
+		}
+		if ( dy == 0 ) {
+			dy = static_cast<RtFloat>(1.0);
+			throwErr = true;
+		}
+		if ( dz == 0 ) {
+			dz = static_cast<RtFloat>(1.0);
+			throwErr = true;
+		}
+		inverse.scale(1.0/dx, 1.0/dy, 1.0/dz);
+		if ( throwErr ) {
+			// ERROR
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+CTransformation::CMovedTranslate &CTransformation::CMovedTranslate::operator=(const CMovedTranslate &o)
+{
+	if ( this == &o )
+		return *this;
+	
+	clear();
+	m_translate = o.m_translate;
+	m_motionBegin = o.m_motionBegin;
+	m_motionBegin = o.m_motionEnd;
+	
+	return *this;
+}
+
+void CTransformation::CMovedTranslate::clear()
+{
+	m_translate.clear();
+}
+
+void CTransformation::CMovedTranslate::fill(RtInt n)
+{
+	// Fill unused values at [n...end]
+	if ( n == 0 ) {
+		return;
+	}
+	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
+		m_translate[i] = m_translate[i-1];
+	}
+}
+
+void CTransformation::CMovedTranslate::set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	assert ( moBegin <= moEnd);
+	assert ( n < moEnd - moBegin );
+	
+	if ( moBegin > moEnd ) {
+		std::swap(moBegin, moEnd);		
+	}
+	
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+	
+	if ( moBegin < moEnd ) {
+		if ( m_translate.size() < moEnd - moBegin ) {
+			m_translate.resize(moEnd - moBegin);
+		}
+		if ( (unsigned long)n >= moEnd - moBegin ) {
+			// ERROR
+			return;
+		}
+		m_translate[n].m_dx = dx;
+		m_translate[n].m_dy = dy;
+		m_translate[n].m_dz = dz;
+	}
+	if ( n == 0 )
+		sampleReset(ctm, inverse);
+}
+
+
+void CTransformation::CMovedTranslate::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+}
+
+void CTransformation::CMovedTranslate::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	if ( m_translate.size() >= 1 ) {
+		ctm.translate(m_translate[0].m_dx, m_translate[0].m_dy, m_translate[0].m_dz);
+		inverse.translate(-m_translate[0].m_dx, -m_translate[0].m_dy, -m_translate[0].m_dz);
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+CTransformation::CMovedPerspective &CTransformation::CMovedPerspective::operator=(const CMovedPerspective &o)
+{
+	if ( this == &o )
+		return *this;
+	
+	clear();
+	m_fov = o.m_fov;
+	m_motionBegin = o.m_motionBegin;
+	m_motionBegin = o.m_motionEnd;
+	
+	return *this;
+}
+
+void CTransformation::CMovedPerspective::clear()
+{
+	m_fov.clear();
+}
+
+void CTransformation::CMovedPerspective::fill(RtInt n)
+{
+	// Fill unused values at [n...end]
+	if ( n == 0 ) {
+		return;
+	}
+	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
+		m_fov[i] = m_fov[i-1];
+	}
+}
+
+void CTransformation::CMovedPerspective::set(RtFloat fov, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	assert ( moBegin <= moEnd);
+	assert ( n < moEnd - moBegin );
+	
+	if ( moBegin > moEnd ) {
+		std::swap(moBegin, moEnd);		
+	}
+	
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+	
+	if ( moBegin < moEnd ) {
+		if ( m_fov.size() < moEnd - moBegin ) {
+			m_fov.resize(moEnd - moBegin);
+		}
+		if ( (unsigned long)n >= moEnd - moBegin ) {
+			// ERROR
+			return;
+		}
+		m_fov[n] = fov;
+	}
+	if ( n == 0 )
+		sampleReset(ctm, inverse);
+}
+
+
+void CTransformation::CMovedPerspective::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+}
+
+void CTransformation::CMovedPerspective::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	if ( m_fov.size() >= 1 ) {
+		if ( m_fov[0] < (RtFloat)180.0 && m_fov[0] > -(RtFloat)180.0 ) {
+			ctm.perspective(m_fov[0]);
+			inverse.inversePerspective(m_fov[0]);
+		} else {
+			// ERROR
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+
+CTransformation::CMovedSkew &CTransformation::CMovedSkew::operator=(const CMovedSkew &o)
+{
+	if ( this == &o )
+		return *this;
+	
+	clear();
+	m_skew = o.m_skew;
+	m_motionBegin = o.m_motionBegin;
+	m_motionBegin = o.m_motionEnd;
+	
+	return *this;
+}
+
+void CTransformation::CMovedSkew::clear()
+{
+	m_skew.clear();
+}
+
+void CTransformation::CMovedSkew::fill(RtInt n)
+{
+	// Fill unused values at [n...end]
+	if ( n == 0 ) {
+		return;
+	}
+	for ( unsigned long i = (unsigned long)n; i < m_motionEnd - m_motionBegin; ++i ) {
+		m_skew[i] = m_skew[i-1];
+	}
+}
+
+void CTransformation::CMovedSkew::set(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	assert ( moBegin <= moEnd);
+	assert ( n < moEnd - moBegin );
+	
+	if ( moBegin > moEnd ) {
+		std::swap(moBegin, moEnd);		
+	}
+	
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+	
+	if ( moBegin < moEnd ) {
+		if ( m_skew.size() < moEnd - moBegin ) {
+			m_skew.resize(moEnd - moBegin);
+		}
+		if ( (unsigned long)n >= moEnd - moBegin ) {
+			// ERROR
+			return;
+		}
+		m_skew[n].m_angle = angle;
+		m_skew[n].m_dx1 = dx1;
+		m_skew[n].m_dy1 = dy1;
+		m_skew[n].m_dz1 = dz1;
+		m_skew[n].m_dx2 = dx2;
+		m_skew[n].m_dy2 = dy2;
+		m_skew[n].m_dz2 = dz2;
+	}
+	if ( n == 0 )
+		sampleReset(ctm, inverse);
+}
+
+
+void CTransformation::CMovedSkew::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
+{
+}
+
+void CTransformation::CMovedSkew::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
+{
+	if ( m_skew.size() >= 1 ) {
+		if ( m_skew[0].m_angle < (RtFloat)90.0  && m_skew[0].m_angle > (RtFloat)-90.0 ) {
+			ctm.skew(m_skew[0].m_angle, m_skew[0].m_dx1, m_skew[0].m_dy1, m_skew[0].m_dz1, m_skew[0].m_dx2, m_skew[0].m_dy2, m_skew[0].m_dz2);
+			inverse.skew(-m_skew[0].m_angle, m_skew[0].m_dx1, m_skew[0].m_dy1, m_skew[0].m_dz1, m_skew[0].m_dx2, m_skew[0].m_dy2, m_skew[0].m_dz2);
+		} else {
+			// ERROR
+		}
+	}
+}
+
+// -----------------------------------------------------------------------------
+
 CTransformation::CTransformation()
 {
 	m_motionState = 0;
@@ -230,6 +544,7 @@ CTransformation::CTransformation()
 	m_CTM.setPreMultiply(true);
 	m_inverseCTM.identity();
 	m_inverseCTM.setPreMultiply(false);
+	// The ...onMotionStart variables are initialized at motionBegin
 	// m_CTM_onMotionStart = m_CTM;
 	// m_inverseCTM_onMotionStart = m_inverseCTM;
 }
@@ -368,19 +683,47 @@ RtVoid CTransformation::concatTransform(RtMatrix aTransform)
 
 RtVoid CTransformation::perspective(RtFloat fov)
 {
-	if ( fov >= (RtFloat)180.0 || fov <= -(RtFloat)180.0 ) {
-		throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::perspective(%f), fov out of range", fov);
+	if ( !m_motionState ) {
+		if ( fov >= (RtFloat)180.0 || fov <= -(RtFloat)180.0 ) {
+			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::perspective(%f), fov out of range", fov);
+		}
+		m_CTM.perspective(fov);
+		m_inverseCTM.inversePerspective(fov);
+	} else {
+		if ( m_motionState->curSampleCnt() == 0 ) {
+			m_deferedTrans.push_back(new CMovedPerspective);
+		}
+		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE );
+		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE ) {
+			dynamic_cast<CMovedPerspective *>(m_deferedTrans.back())->set(
+				fov,
+				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_CTM, m_inverseCTM);
+		} else {
+			// ERROR
+		}
 	}
-	m_CTM.perspective(fov);
-	CMatrix3D mat;
-	mat.perspective(fov);
-	m_inverseCTM.inversePerspective(fov);
 }
 
 RtVoid CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	m_CTM.translate(dx, dy, dz);
-	m_inverseCTM.translate(-dx, -dy, -dz);
+	if ( !m_motionState ) {
+		m_CTM.translate(dx, dy, dz);
+		m_inverseCTM.translate(-dx, -dy, -dz);
+	} else {
+		if ( m_motionState->curSampleCnt() == 0 ) {
+			m_deferedTrans.push_back(new CMovedTranslate);
+		}
+		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE );
+		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE ) {
+			dynamic_cast<CMovedTranslate *>(m_deferedTrans.back())->set(
+				dx, dy, dz,
+				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_CTM, m_inverseCTM);
+		} else {
+			// ERROR
+		}
+	}
 }
 
 RtVoid CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
@@ -406,37 +749,67 @@ RtVoid CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz
 
 RtVoid CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 {
-	m_CTM.scale(dx, dy, dz);
-
-	bool throwErr = false;
-	if ( dx == 0 ) {
-		dx = static_cast<RtFloat>(1.0);
-		throwErr = true;
-	}
-	if ( dy == 0 ) {
-		dy = static_cast<RtFloat>(1.0);
-		throwErr = true;
-	}
-	if ( dz == 0 ) {
-		dz = static_cast<RtFloat>(1.0);
-		throwErr = true;
-	}
-
-	m_inverseCTM.scale(static_cast<RtFloat>(1.0/dx), static_cast<RtFloat>(1.0/dy), static_cast<RtFloat>(1.0/dz));
-
-	if ( throwErr ) {
-		m_isValid = false;
-		throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "Could not calculate inverse matrix in %s", "CTransformation::scale()");
+	if ( !m_motionState ) {
+		m_CTM.scale(dx, dy, dz);
+		
+		bool throwErr = false;
+		if ( dx == 0 ) {
+			dx = static_cast<RtFloat>(1.0);
+			throwErr = true;
+		}
+		if ( dy == 0 ) {
+			dy = static_cast<RtFloat>(1.0);
+			throwErr = true;
+		}
+		if ( dz == 0 ) {
+			dz = static_cast<RtFloat>(1.0);
+			throwErr = true;
+		}
+		
+		m_inverseCTM.scale(static_cast<RtFloat>(1.0/dx), static_cast<RtFloat>(1.0/dy), static_cast<RtFloat>(1.0/dz));
+		
+		if ( throwErr ) {
+			m_isValid = false;
+			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "Could not calculate inverse matrix in %s", "CTransformation::scale()");
+		}
+	} else {
+		if ( m_motionState->curSampleCnt() == 0 ) {
+			m_deferedTrans.push_back(new CMovedScale);
+		}
+		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SCALE );
+		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SCALE ) {
+			dynamic_cast<CMovedScale *>(m_deferedTrans.back())->set(
+				dx, dy, dz,
+				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_CTM, m_inverseCTM);
+		} else {
+			// ERROR
+		}
 	}
 }
 
 RtVoid CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
-	if ( angle >= (RtFloat)90.0  || angle <= (RtFloat)-90.0 ) {
-		throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::skew(%f), skew out of range", angle);
+	if ( !m_motionState ) {
+		if ( angle >= (RtFloat)90.0  || angle <= (RtFloat)-90.0 ) {
+			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::skew(%f), skew out of range", angle);
+		}
+		m_CTM.skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
+		m_inverseCTM.skew(-angle, dx1, dy1, dz1, dx2, dy2, dz2);
+	} else {
+		if ( m_motionState->curSampleCnt() == 0 ) {
+			m_deferedTrans.push_back(new CMovedSkew);
+		}
+		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SKEW );
+		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SKEW ) {
+			dynamic_cast<CMovedSkew *>(m_deferedTrans.back())->set(
+				angle, dx1, dy1, dz1, dx2, dy2, dz2,
+				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_CTM, m_inverseCTM);
+		} else {
+			// ERROR
+		}
 	}
-	m_CTM.skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
-	m_inverseCTM.skew(-angle, dx1, dy1, dz1, dx2, dy2, dz2);
 }
 
 RtVoid CTransformation::deformation(RtString name, RtInt n, RtToken tokens[], RtPointer params[])

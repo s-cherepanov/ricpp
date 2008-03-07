@@ -18,7 +18,7 @@ Declare "Option:MyOption:TableName" "string"
 Option "MyOption" "TableName" "MyOption" "OptionName" "MyVariable"
 Option "MyOption" "MyVariable" "value" "Something:really:stupid:now" "AnotherValue"
 Option "MyOption" "MyVariable" "value2" "A declaration with blanks" " Value "
-Option "MyOption" "MyVariable" "  value2  " "   point   Another declaration with blanks    " [1 2 3]
+Option "MyOption" "MyVariable" "value" "   point   Another declaration with blanks    " [1 2 3]
 Option "MyOtherOption" "MyVariable" [ "Another value" ] "MyArray" 1 2 3 "MyMatrix" [ 1 2 3.14 4.13 5.12 6.11 7 8 9 10 11 12 13 14 15 16 ]
 
 IfBegin "'${Option:$TableName:$OptionName}' =~ 'value'"

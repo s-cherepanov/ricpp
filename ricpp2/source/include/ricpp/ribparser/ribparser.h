@@ -553,6 +553,7 @@ namespace RiCPP {
 
 		bool m_hasPutBack;       ///< One character put back.
 		unsigned char m_putBack; ///< The character has been put back (if m_hasOutBack == true).
+		unsigned char m_lastChar; ///< The character read before to recognize \r\n \n\r.
 
 		static const int RIBPARSER_EOF;                ///< Used as token for end of file
 

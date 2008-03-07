@@ -560,8 +560,10 @@ unsigned char CRibParser::getchar()
 	if ( m_hasPutBack ) {
 		val = m_putBack;
 		m_hasPutBack = false;
-		if ( val == '\n' )
+		if ( val == '\n' ) {
 			++m_lineNo;
+			val = '\n';
+		}
 		return val;
 	}
 
@@ -570,9 +572,18 @@ unsigned char CRibParser::getchar()
 		val = 0;
 	}
 
-	if ( val == '\n' )
-		++m_lineNo;
-
+	unsigned char c = m_lastChar;
+	m_lastChar = val;
+	
+	if ( val == '\n' ) {
+		if ( c != '\r' )
+			++m_lineNo;
+	} else if ( val == '\r' ) {
+		if ( c != '\n' )
+			++m_lineNo;
+		val = '\n';
+	}
+	
 	return val;
 }
 
@@ -1973,6 +1984,8 @@ void CRibParser::parseFile()
 	m_lookahead = RIBPARSER_NOT_A_TOKEN;  // Initialize, no Token found
 
 	m_lineNo = 1;
+	m_lastChar = 0;
+	m_hasPutBack = false;
 
 	bool running = true;
 	do {

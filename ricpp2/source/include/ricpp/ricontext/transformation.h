@@ -65,7 +65,7 @@ namespace RiCPP {
 			
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse) = 0;
 			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse) = 0;
-		};
+		}; // IMovedTransform
 		
 		class CMovedRotate : public IMovedTransform {
 		public:
@@ -102,7 +102,7 @@ namespace RiCPP {
 			void set(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
 			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
-		};
+		}; // CMovedRotate
 			
 		class CMovedMatrix : public IMovedTransform {
 		public:
@@ -134,8 +134,150 @@ namespace RiCPP {
 			void set(const RtMatrix transform, bool concat, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
 			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
-		};
+		}; // CMovedMatrix
 
+		class CMovedScale : public IMovedTransform {
+		public:
+			struct SScale {
+				RtFloat m_dx;
+				RtFloat m_dy;
+				RtFloat m_dz;
+			};
+			
+			std::vector<SScale> m_scale;
+			unsigned long m_motionBegin, m_motionEnd;
+			
+			inline CMovedScale()
+			{
+				m_motionBegin = m_motionEnd = 0;
+			}
+			
+			inline CMovedScale(const CMovedScale &o)
+			{
+				*this = o;
+			}
+			
+			inline virtual ~CMovedScale() {}
+			inline virtual EnumRequests reqType() const { return REQ_SCALE; }
+			
+			virtual IMovedTransform *duplicate() const { return new CMovedScale(*this); }
+			
+			CMovedScale &operator=(const CMovedScale &o);
+			
+			virtual void clear();
+			virtual void fill(RtInt n);
+			
+			void set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
+		}; // CMovedScale
+
+		class CMovedTranslate : public IMovedTransform {
+		public:
+			struct STranslate {
+				RtFloat m_dx;
+				RtFloat m_dy;
+				RtFloat m_dz;
+			};
+			
+			std::vector<STranslate> m_translate;
+			unsigned long m_motionBegin, m_motionEnd;
+			
+			inline CMovedTranslate()
+			{
+				m_motionBegin = m_motionEnd = 0;
+			}
+			
+			inline CMovedTranslate(const CMovedTranslate &o)
+			{
+				*this = o;
+			}
+			
+			inline virtual ~CMovedTranslate() {}
+			inline virtual EnumRequests reqType() const { return REQ_TRANSLATE; }
+			
+			virtual IMovedTransform *duplicate() const { return new CMovedTranslate(*this); }
+			
+			CMovedTranslate &operator=(const CMovedTranslate &o);
+			
+			virtual void clear();
+			virtual void fill(RtInt n);
+			
+			void set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
+		}; // CMovedTranslate
+		
+		class CMovedPerspective : public IMovedTransform {
+		public:
+			std::vector<RtFloat> m_fov;
+			unsigned long m_motionBegin, m_motionEnd;
+			
+			inline CMovedPerspective()
+			{
+				m_motionBegin = m_motionEnd = 0;
+			}
+			
+			inline CMovedTranslate(const CMovedPerspective &o)
+			{
+				*this = o;
+			}
+			
+			inline virtual ~CMovedPerspective() {}
+			inline virtual EnumRequests reqType() const { return REQ_PERSPECTIVE; }
+			
+			virtual IMovedTransform *duplicate() const { return new CMovedPerspective(*this); }
+			
+			CMovedPerspective &operator=(const CMovedPerspective &o);
+			
+			virtual void clear();
+			virtual void fill(RtInt n);
+			
+			void set(RtFloat fov, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
+		}; // CMovedPerspective
+		
+		class CMovedSkew : public IMovedTransform {
+		public:
+			struct SSkew {
+				RtFloat m_angle;
+				RtFloat m_dx1;
+				RtFloat m_dy1;
+				RtFloat m_dz1;
+				RtFloat m_dx2;
+				RtFloat m_dy2;
+				RtFloat m_dz2;
+			};
+
+			std::vector<SSkew> m_skew;
+			unsigned long m_motionBegin, m_motionEnd;
+			
+			inline CMovedSkew()
+			{
+				m_motionBegin = m_motionEnd = 0;
+			}
+			
+			inline CMovedSkew(const CMovedSkew &o)
+			{
+				*this = o;
+			}
+			
+			inline virtual ~CMovedSkew() {}
+			inline virtual EnumRequests reqType() const { return REQ_SKEW; }
+			
+			virtual IMovedTransform *duplicate() const { return new CMovedSkew(*this); }
+			
+			CMovedSkew &operator=(const CMovedSkew &o);
+			
+			virtual void clear();
+			virtual void fill(RtInt n);
+			
+			void set(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
+		}; // CMovedSkew
+		
 		//! false, did an operation that could not calculate the inverse.
 		bool m_isValid;
 		bool m_isValid_onMotionStart;

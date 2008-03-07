@@ -173,6 +173,7 @@ namespace RiCPP {
 
 	protected:
 		const CMotionState *m_motionState;
+		IMovedValue *m_lastValue;
 		
 		enum EnumAttributeIndex {
 			AIDX_COLOR,

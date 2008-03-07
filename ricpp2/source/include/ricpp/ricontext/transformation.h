@@ -44,9 +44,6 @@ namespace RiCPP {
 	 */
 	class CTransformation {
 		
-		//! false, did an operation that could not calculate the inverse.
-		bool m_isValid;
-		
 		//! Space type of the coordinate system (current, world, camera, screen, raster, etc.)
 		RtToken m_spaceType;
 		
@@ -59,9 +56,9 @@ namespace RiCPP {
 		public:
 			inline IMovedTransform() {}
 			inline virtual ~IMovedTransform() {}
+			virtual EnumRequests reqType() const = 0;
 			
 			virtual IMovedTransform *duplicate() const = 0;
-			virtual EnumRequests reqType() const = 0;
 
 			virtual void clear() = 0;
 			virtual void fill(RtInt n) = 0;
@@ -93,12 +90,11 @@ namespace RiCPP {
 			}
 
 			inline virtual ~CMovedRotate() {}
+			inline virtual EnumRequests reqType() const { return REQ_ROTATE; }
 
 			virtual IMovedTransform *duplicate() const { return new CMovedRotate(*this); }
 			
 			CMovedRotate &operator=(const CMovedRotate &o);
-
-			inline virtual EnumRequests reqType() const { return REQ_ROTATE; }
 
 			virtual void clear();
 			virtual void fill(RtInt n);
@@ -107,13 +103,52 @@ namespace RiCPP {
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
 			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
 		};
+			
+		class CMovedMatrix : public IMovedTransform {
+		public:
+			std::vector<RtFloat> m_transform;
+			bool m_concat;
+			unsigned long m_motionBegin, m_motionEnd;
+			
+			inline CMovedMatrix()
+			{
+				m_concat = false;
+				m_motionBegin = m_motionEnd = 0;
+			}
+			
+			inline CMovedMatrix(const CMovedMatrix &o)
+			{
+				*this = o;
+			}
+			
+			inline virtual ~CMovedMatrix() {}
+			inline virtual EnumRequests reqType() const { return REQ_TRANSFORM; }
+			
+			virtual IMovedTransform *duplicate() const { return new CMovedMatrix(*this); }
+			
+			CMovedMatrix &operator=(const CMovedMatrix &o);		
+			
+			virtual void clear();
+			virtual void fill(RtInt n);
+			
+			void set(const RtMatrix transform, bool concat, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
+			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
+		};
+
+		//! false, did an operation that could not calculate the inverse.
+		bool m_isValid;
+		bool m_isValid_onMotionStart;
 		
 		//! Composit transformation matrix
 		CMatrix3D m_CTM;
-
+		CMatrix3D m_CTM_onMotionStart;
+		
 		//! Inverse of the composit transformation matrix
 		CMatrix3D m_inverseCTM;
+		CMatrix3D m_inverseCTM_onMotionStart;
 
+		
 		//! Defered transformations (motion block, deformation)
 		std::vector<IMovedTransform *> m_deferedTrans;
 		
@@ -164,12 +199,15 @@ namespace RiCPP {
 		 */
 		inline void storeCounter(unsigned long cnt) { m_storeCounter = cnt; }
 
+		RtToken spaceType() const { return m_spaceType; }
+		void spaceType(RtToken aSpaceType) { m_spaceType = aSpaceType; }
+
 		inline CMatrix3D &getCTM()
 		{
 			return m_CTM;
 		}
 
-		inline virtual const CMatrix3D &getCTM() const
+		inline const CMatrix3D &getCTM() const
 		{
 			return m_CTM;
 		}
@@ -179,24 +217,23 @@ namespace RiCPP {
 			return m_inverseCTM;
 		}
 
-		inline virtual const CMatrix3D &getInverseCTM() const
+		inline const CMatrix3D &getInverseCTM() const
 		{
 			return m_inverseCTM;
 		}
 
-		inline virtual bool isValid() const { return m_isValid; }
+		inline bool isValid() const { return m_isValid; }
 
-		RtVoid identity(void);
-		RtVoid transform(RtMatrix aTransform);
-		RtVoid concatTransform(RtMatrix aTransform);
-		RtVoid perspective(RtFloat fov);
-		RtVoid translate(RtFloat dx, RtFloat dy, RtFloat dz);
-		RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
-		RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz);
-		RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
+		virtual RtVoid identity(void);
+		virtual RtVoid transform(RtMatrix aTransform);
+		virtual RtVoid concatTransform(RtMatrix aTransform);
+		virtual RtVoid perspective(RtFloat fov);
+		virtual RtVoid translate(RtFloat dx, RtFloat dy, RtFloat dz);
+		virtual RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
+		virtual RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz);
+		virtual RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
 
-		RtToken spaceType() const { return m_spaceType; }
-		void spaceType(RtToken aSpaceType) { m_spaceType = aSpaceType; }
+		virtual RtVoid deformation(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 		virtual RtVoid motionBegin(const CMotionState &state);
 		virtual RtVoid motionEnd();

@@ -101,7 +101,6 @@ void CAttributeFloat::set(RtFloat aValue, RtInt n, unsigned long moBegin, unsign
 			return;
 		}
 		m_movedValue[n] = aValue;
-		fill(n+1);
 	}
 }
 
@@ -184,7 +183,6 @@ void CAttributeFloatArray::set(RtFloat aValue, RtInt n, unsigned long moBegin, u
 		}
 		for ( std::vector<RtFloat>::size_type i = 0; i < m_value.size(); ++i )
 			m_movedValue[n * m_value.size() + i] = aValue;
-		fill(n+1);
 	}
 }
 
@@ -213,7 +211,6 @@ void CAttributeFloatArray::set(RtFloat *aValue, RtInt n, unsigned long moBegin, 
 		}
 		for ( std::vector<RtFloat>::size_type i = 0; i < m_value.size(); ++i )
 			m_movedValue[n * m_value.size() + i] = aValue[i];
-		fill(n+1);
 	}
 }
 
@@ -297,6 +294,7 @@ void CAttributes::init()
 {
 	initAttributeVector();
 	m_storeCounter = 0;
+	m_lastValue = 0;
 
 	m_illuminated.clear();
 	m_inAreaLight = false;
@@ -392,6 +390,9 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	// The storeCounter is set within CRenderState()::pushAttributes as needed
 	m_storeCounter = ra.m_storeCounter;
 	
+	// The pointer ra.m_lastValue is not valid for this object
+	m_lastValue = 0;
+	
 	COptionsBase::operator=(ra);
 
 	return *this;
@@ -428,6 +429,7 @@ RtVoid CAttributes::color(RtColor Cs)
 {
 	if ( m_motionState != 0 ) {
 		m_color.set(Cs, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_color;
 	} else {
 		m_color.set(Cs);
 	}
@@ -453,6 +455,7 @@ RtVoid CAttributes::opacity(RtColor Os)
 {
 	if ( m_motionState != 0 ) {
 		m_opacity.set(Os, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = &m_opacity;
 	} else {
 		m_opacity.set(Os);
 	}
@@ -777,11 +780,15 @@ RtVoid CAttributes::motionBegin(const CMotionState &state)
 {
 	assert(m_motionState == 0);
 	m_motionState = &state;
+	m_lastValue = 0;
 }
 
 RtVoid CAttributes::motionEnd()
 {
 	assert(m_motionState!=0);
+	if ( m_motionState != 0 && m_lastValue != 0 ) {
+		m_lastValue->fill(m_motionState->curSampleCnt());
+	}
 	m_motionState = 0;
 }
 

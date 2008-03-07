@@ -103,15 +103,15 @@ namespace RiCPP {
 	COptionsBase m_controls;                       ///< Current control values.
 
 	COptionsFactory *m_optionsFactory;              ///< Creates new options set.
-	std::vector<COptions *> m_optionsStack;         ///< Current option stack.
+	std::deque<COptions *> m_optionsStack;         ///< Current option stack.
 
 	CAttributesFactory *m_attributesFactory;        ///< Create new attributes set.
-	std::vector<CAttributes *> m_attributesStack;   ///< Current attributes stack.
-	std::vector<CAttributes *> m_motionAttributesStack;   ///< Current attributes stack saved for motion blocks (moved instances)
+	std::deque<CAttributes *> m_attributesStack;   ///< Current attributes stack.
+	std::deque<CAttributes *> m_motionAttributesStack;   ///< Current attributes stack saved for motion blocks (moved instances)
 
 	CTransformationFactory *m_transformationFactory;  ///< Create new transformation set.
-	std::vector<CTransformation *> m_transformationStack;  ///< Current stack of transformations and their inverses.
-	std::vector<CTransformation *> m_motionTransformationStack;  ///< Current stack of transformations and their inverses for motion blocks (moved instances)
+	std::deque<CTransformation *> m_transformationStack;  ///< Current stack of transformations and their inverses.
+	std::deque<CTransformation *> m_motionTransformationStack;  ///< Current stack of transformations and their inverses for motion blocks (moved instances)
 
 	TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
 	std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.

@@ -297,7 +297,8 @@ namespace RiCPP {
 			inline CAttributeShader() { m_shaderTransform = 0; }
 			inline virtual ~CAttributeShader() {}
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
-
+			virtual void sampleReset();
+			
 			void set(RtToken name, const CParameterList &params, const CTransformation &transform, RtInt n, unsigned long moBegin, unsigned long moEnd);
 			void set(RtToken name, const CParameterList &params, const CTransformation &transform);
 
@@ -339,9 +340,6 @@ namespace RiCPP {
 			inline unsigned long card() const { return (unsigned long)m_value.size(); }
 		}; // CAttributeFloatArray
 
-		const CMotionState *m_motionState;
-		IMovedValue *m_lastValue;
-		
 		enum EnumAttributeIndex {
 			AIDX_COLOR,
 			AIDX_OPACITY,
@@ -351,18 +349,21 @@ namespace RiCPP {
 			AIDX_DETAIL,
 			AIDX_DETAIL_RANGE,
 			AIDX_GEOMETRIC_APPROXIMATION_VALUE,
-
+			
 			AIDX_SURFACE,
 			AIDX_ATMOSPHERE,
 			AIDX_INTERIOR,
 			AIDX_EXTERIOR,
 			AIDX_DISPLACEMENT,
 			AIDX_DEFORMATION,
-
+			
 			AIDX_ENDMARKER
 		};
 		std::vector<IMovedValue *> m_allAttributes; ///< Pointer to all attributes of this class
 
+		const CMotionState *m_motionState;
+		EnumAttributeIndex m_lastValue;
+		
 		virtual void initAttributeVector();
 		virtual void initMotion();
 

@@ -65,6 +65,15 @@ void CAttributes::CAttributeShader::sample(RtFloat shutterTime, const TypeMotion
 {
 }
 
+void CAttributes::CAttributeShader::sampleReset()
+{
+	if ( m_movedValue.size() >= 1 )
+		m_value = m_movedValue[0];
+
+	if ( m_shaderTransform )
+		m_shaderTransform->sampleReset();
+}
+
 void CAttributes::CAttributeShader::set(RtToken name, const CParameterList &params, const CTransformation &transform, RtInt n, unsigned long moBegin, unsigned long moEnd)
 {
 	if ( moBegin > moEnd ) {
@@ -312,7 +321,7 @@ void CAttributes::init()
 
 	initAttributeVector();
 	m_storeCounter = 0;
-	m_lastValue = 0;
+	m_lastValue = AIDX_ENDMARKER;
 
 	m_illuminated.clear();
 	m_inAreaLight = false;
@@ -403,8 +412,7 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	// The storeCounter is set within CRenderState()::pushAttributes as needed
 	m_storeCounter = ra.m_storeCounter;
 	
-	// The pointer ra.m_lastValue is not valid for this object
-	m_lastValue = 0;
+	m_lastValue = ra.m_lastValue;
 	
 	COptionsBase::operator=(ra);
 
@@ -456,7 +464,7 @@ RtVoid CAttributes::color(RtColor Cs)
 {
 	if ( m_motionState != 0 ) {
 		m_color.set(Cs, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_color;
+		m_lastValue = AIDX_COLOR;
 	} else {
 		m_color.set(Cs);
 	}
@@ -491,7 +499,7 @@ RtVoid CAttributes::opacity(RtColor Os)
 {
 	if ( m_motionState != 0 ) {
 		m_opacity.set(Os, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_opacity;
+		m_lastValue = AIDX_OPACITY;
 	} else {
 		m_opacity.set(Os);
 	}
@@ -546,7 +554,7 @@ RtVoid CAttributes::surface(RtToken name, const CParameterList &params, const CT
 {
 	if ( m_motionState != 0 ) {
 		m_surface.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_surface;
+		m_lastValue = AIDX_SURFACE;
 	} else {
 		m_surface.set(name, params, transform);
 	}
@@ -561,7 +569,7 @@ RtVoid CAttributes::atmosphere(RtToken name, const CParameterList &params, const
 {
 	if ( m_motionState != 0 ) {
 		m_atmosphere.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_atmosphere;
+		m_lastValue = AIDX_ATMOSPHERE;
 	} else {
 		m_atmosphere.set(name, params, transform);
 	}
@@ -576,7 +584,7 @@ RtVoid CAttributes::interior(RtToken name, const CParameterList &params, const C
 {
 	if ( m_motionState != 0 ) {
 		m_interior.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_interior;
+		m_lastValue = AIDX_INTERIOR;
 	} else {
 		m_interior.set(name, params, transform);
 	}
@@ -591,7 +599,7 @@ RtVoid CAttributes::exterior(RtToken name, const CParameterList &params, const C
 {
 	if ( m_motionState != 0 ) {
 		m_exterior.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_exterior;
+		m_lastValue = AIDX_EXTERIOR;
 	} else {
 		m_exterior.set(name, params, transform);
 	}
@@ -606,7 +614,7 @@ RtVoid CAttributes::displacement(RtToken name, const CParameterList &params, con
 {
 	if ( m_motionState != 0 ) {
 		m_displacement.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_displacement;
+		m_lastValue = AIDX_DISPLACEMENT;
 	} else {
 		m_displacement.set(name, params, transform);
 	}
@@ -621,7 +629,7 @@ RtVoid CAttributes::deformation(RtToken name, const CParameterList &params, cons
 {
 	if ( m_motionState != 0 ) {
 		m_deformation.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_deformation;
+		m_lastValue = AIDX_DEFORMATION;
 	} else {
 		m_deformation.set(name, params, transform);
 	}
@@ -655,7 +663,7 @@ RtVoid CAttributes::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFlo
 
 	if ( m_motionState != 0 ) {
 		m_textureCoordinates.set(tc, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_textureCoordinates;
+		m_lastValue = AIDX_TEXTURE_COORDINATES;
 	} else {
 		m_textureCoordinates.set(tc);
 	}
@@ -688,7 +696,7 @@ RtVoid CAttributes::shadingRate(RtFloat size)
 {
 	if ( m_motionState != 0 ) {
 		m_shadingRate.set(size, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_shadingRate;
+		m_lastValue = AIDX_SHADING_RATE;
 	} else {
 		m_shadingRate.set(size);
 	}
@@ -736,7 +744,7 @@ RtVoid CAttributes::bound(RtBound aBound)
 
 	if ( m_motionState != 0 ) {
 		m_bound.set(&aBound[0], m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_bound;
+		m_lastValue = AIDX_BOUND;
 	} else {
 		m_bound.set(&aBound[0]);
 	}
@@ -761,7 +769,7 @@ RtVoid CAttributes::detail(RtBound aBound)
 	m_detailCalled = true;
 	if ( m_motionState != 0 ) {
 		m_detail.set(&aBound[0], m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_detail;
+		m_lastValue = AIDX_DETAIL;
 	} else {
 		m_detail.set(&aBound[0]);
 	}
@@ -797,7 +805,7 @@ RtVoid CAttributes::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran,
 
 	if ( m_motionState != 0 ) {
 		m_detailRange.set(d, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_detailRange;
+		m_lastValue = AIDX_DETAIL_RANGE;
 	} else {
 		m_detailRange.set(d);
 	}
@@ -825,7 +833,7 @@ RtVoid CAttributes::geometricApproximation(RtToken type, RtFloat value)
 {
 	if ( m_motionState != 0 ) {
 		m_geometricApproximationValue.set(value, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = &m_geometricApproximationValue;
+		m_lastValue = AIDX_GEOMETRIC_APPROXIMATION_VALUE;
 		if ( m_motionState->curSampleCnt() == 0 ) {
 			m_geometricApproximationType = type;
 		} else if ( m_geometricApproximationType != type ) {
@@ -926,14 +934,16 @@ RtVoid CAttributes::motionBegin(const CMotionState &state)
 {
 	assert(m_motionState == 0);
 	m_motionState = &state;
-	m_lastValue = 0;
+	m_lastValue = AIDX_ENDMARKER;
 }
 
 RtVoid CAttributes::motionEnd()
 {
 	assert(m_motionState!=0);
-	if ( m_motionState != 0 && m_lastValue != 0 ) {
-		m_lastValue->fill(m_motionState->curSampleCnt());
+	if ( m_motionState != 0 && m_lastValue != AIDX_ENDMARKER ) {
+		assert(m_allAttributes[(int)m_lastValue] != 0);
+		if (m_allAttributes[(int)m_lastValue] != 0)
+			m_allAttributes[(int)m_lastValue]->fill(m_motionState->curSampleCnt());
 	}
 	m_motionState = 0;
 }

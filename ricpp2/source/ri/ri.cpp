@@ -47,6 +47,8 @@
 #include <cmath>
 #include <vector>
 
+using namespace RiCPP;
+
 namespace RiCPP {
 
 // ----------------------------------------------------------------------------
@@ -152,8 +154,6 @@ RtVoid RiControlV(RtToken name, int n, RtToken tokens[], RtPointer params[])
 // ----------------------------------------------------------------------------
 } // namespace RiCPP
 // ----------------------------------------------------------------------------
-
-using namespace RiCPP;
 
 extern "C" {
 

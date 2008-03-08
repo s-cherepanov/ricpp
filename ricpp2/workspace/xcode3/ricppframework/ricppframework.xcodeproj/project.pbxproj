@@ -30,10 +30,10 @@
 		C3185B730D7D3451001784AB /* varsubst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3185B720D7D3451001784AB /* varsubst.cpp */; };
 		C31C22A20D74094C009D99C2 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
 		C31C22C00D740F6F009D99C2 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
-		C32B8B1C0D74521B0059B201 /* libri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libri.a */; };
+		C32B8B1C0D74521B0059B201 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
 		C32B8B420D7454980059B201 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
 		C35100220D70DD2B008AC346 /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C35100210D70DD2B008AC346 /* baserenderer.h */; };
-		C352E6980D7465E900CDED20 /* libri.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libri.a */; };
+		C352E6980D7465E900CDED20 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
 		C352E6990D7465FA00CDED20 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
 		C3685ECC0D3C1F9100B2E025 /* stringpattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */; };
 		C3685ECD0D3C1F9100B2E025 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
@@ -444,7 +444,7 @@
 		C31C22B70D740F03009D99C2 /* testribind */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testribind; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32093D80BDCCF6900A0BB35 /* dynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = dynlib.cpp; path = ../../../source/gendynlib/dynlib.cpp; sourceTree = SOURCE_ROOT; };
 		C32093F80BDCD07A00A0BB35 /* macdynlib.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = macdynlib.cpp; path = ../../../source/gendynlib/macdynlib.cpp; sourceTree = SOURCE_ROOT; };
-		C32B8B0E0D7451C70059B201 /* libri.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libri.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C32B8B0E0D7451C70059B201 /* libric.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libric.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32B8B390D74546A0059B201 /* libribase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libribase.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C33118220BEB10B30084F992 /* stringlist.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = stringlist.cpp; path = ../../../source/tools/stringlist.cpp; sourceTree = SOURCE_ROOT; };
 		C337F2850C460AA100E174B0 /* templatefuncs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = templatefuncs.h; path = ../../../source/include/ricpp/tools/templatefuncs.h; sourceTree = SOURCE_ROOT; };
@@ -606,7 +606,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C32B8B1C0D74521B0059B201 /* libri.a in Frameworks */,
+				C32B8B1C0D74521B0059B201 /* libric.a in Frameworks */,
 				C31C22A20D74094C009D99C2 /* libricppbridge.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -637,7 +637,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C352E6980D7465E900CDED20 /* libri.a in Frameworks */,
+				C352E6980D7465E900CDED20 /* libric.a in Frameworks */,
 				C352E6990D7465FA00CDED20 /* libricpp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -849,7 +849,7 @@
 				C37A0D380D6AC5880027CE77 /* ribtool */,
 				C31C22460D740489009D99C2 /* libriprog.1.dylib */,
 				C31C22B70D740F03009D99C2 /* testribind */,
-				C32B8B0E0D7451C70059B201 /* libri.a */,
+				C32B8B0E0D7451C70059B201 /* libric.a */,
 				C32B8B390D74546A0059B201 /* libribase.a */,
 				C352E6930D7465B500CDED20 /* libridynload.a */,
 			);
@@ -1992,7 +1992,7 @@
 			);
 			name = ri;
 			productName = ri;
-			productReference = C32B8B0E0D7451C70059B201 /* libri.a */;
+			productReference = C32B8B0E0D7451C70059B201 /* libric.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		C32B8B380D74546A0059B201 /* ribase */ = {
@@ -2914,7 +2914,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = ri;
+				PRODUCT_NAME = ric;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -2928,7 +2928,7 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = ri;
+				PRODUCT_NAME = ric;
 				ZERO_LINK = NO;
 			};
 			name = Release;

@@ -47,17 +47,50 @@ void CAttributes::CAttributeFloat::sample(RtFloat shutterTime, const TypeMotionT
 {
 }
 
-void CAttributes::CAttributeIlluminate::sample(RtFloat shutterTime, const TypeMotionTimes &times)
-{
-}
-
 void CAttributes::CAttributeTrimCurve::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 }
 
-void CAttributes::CAttributeBase::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+// -----------------------------------------------------------------------------
+
+void CAttributes::CAttributeBasis::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 }
+
+void CAttributes::CAttributeBasis::set(const RtBasis basis, RtInt step, RtInt n, unsigned long moBegin, unsigned long moEnd)
+{
+	if ( moBegin > moEnd ) {
+		std::swap(moBegin, moEnd);		
+	}
+	
+	m_motionBegin = moBegin;
+	m_motionEnd = moEnd;
+	
+	if ( n == 0 ) {
+		memcpy(m_value.m_basis, basis, sizeof(RtBasis));
+		m_value.m_step = step;
+	}
+	
+	if ( moBegin < moEnd ) {
+		if ( m_movedValue.size() < moEnd - moBegin ) {
+			m_movedValue.resize(moEnd - moBegin);
+		}
+		if ( (unsigned long)n >= moEnd - moBegin ) {
+			// ERROR
+			return;
+		}
+		memcpy(m_movedValue[n].m_basis, basis, sizeof(RtBasis));
+		m_movedValue[n].m_step = step;
+	}
+}
+
+void CAttributes::CAttributeBasis::set(const RtBasis basis, RtInt step)
+{
+	clear();
+	memcpy(m_value.m_basis, basis, sizeof(RtBasis));
+	m_value.m_step = step;
+}
+
 
 // -----------------------------------------------------------------------------
 
@@ -318,7 +351,9 @@ COptionsBase *CAttributes::duplicate() const
 void CAttributes::init()
 {
 	m_factory = 0;
+	m_motionState = 0;
 
+	
 	initAttributeVector();
 	m_storeCounter = 0;
 	m_lastValue = AIDX_ENDMARKER;
@@ -326,7 +361,6 @@ void CAttributes::init()
 	m_illuminated.clear();
 	m_inAreaLight = false;
 	
-	initMotion();
 	initColor();
 	initOpacity();
 	initTextureCoordinates();
@@ -400,11 +434,10 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_orientation = ra.m_orientation;
 	m_nSides = ra.m_nSides;
 
-	memcpy(m_uBasis, ra.m_uBasis, sizeof(m_uBasis));
-	m_uStep = ra.m_uStep;
-	memcpy(m_vBasis, ra.m_vBasis, sizeof(m_vBasis));
-	m_vStep = ra.m_vStep;
+	m_uBasis = ra.m_uBasis;
+	m_vBasis = ra.m_vBasis;
 
+	
 	m_trimCurve = ra.m_trimCurve;
 
 	m_motionState = ra.m_motionState;
@@ -438,11 +471,18 @@ void CAttributes::initAttributeVector()
 	m_allAttributes[(int)AIDX_EXTERIOR] = &m_exterior;
 	m_allAttributes[(int)AIDX_DISPLACEMENT] = &m_displacement;
 	m_allAttributes[(int)AIDX_DEFORMATION] = &m_deformation;
-}
 
-void CAttributes::initMotion()
-{
-	m_motionState = 0;
+	m_allAttributes[(int)AIDX_SHADING_INTERPOLATION] = &m_shadingInterpolation;
+	m_allAttributes[(int)AIDX_GEOMETRIC_APPROXIMATION_TYPE] = &m_geometricApproximationType;
+	m_allAttributes[(int)AIDX_GEOMETRIC_REPRESENTATION] = &m_geometricRepresentation;
+	m_allAttributes[(int)AIDX_ORIENTATION] = &m_orientation;
+	
+	m_allAttributes[(int)AIDX_MATTE] = &m_matte;
+	m_allAttributes[(int)AIDX_SIDES] = &m_nSides;
+
+	m_allAttributes[(int)AIDX_BASIS] = &m_uBasis;
+	
+	m_allAttributes[(int)AIDX_TRIM_CURVE] = &m_trimCurve;
 }
 
 bool CAttributes::inAreaLight() const
@@ -710,23 +750,33 @@ RtFloat CAttributes::shadingRate() const
 		
 void CAttributes::initShadingInterpolation()
 {
-	m_shadingInterpolation = defShadingInterpolation;
+	m_shadingInterpolation.set(defShadingInterpolation);
 }
 
 RtVoid CAttributes::shadingInterpolation(RtToken type)
 {
-	m_shadingInterpolation = type;
+	if ( m_motionState != 0 ) {
+		m_shadingInterpolation.set(type, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = AIDX_SHADING_INTERPOLATION;
+	} else {
+		m_shadingInterpolation.set(type);
+	}
 }
 
 
 void CAttributes::initMatte()
 {
-	m_matte = defMatte;
+	m_matte.set(defMatte);
 }
 
 RtVoid CAttributes::matte(RtBoolean onoff)
 {
-	m_matte = onoff;
+	if ( m_motionState != 0 ) {
+		m_matte.set(onoff, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = AIDX_MATTE;
+	} else {
+		m_matte.set(onoff);
+	}
 }
 
 void CAttributes::initBound()
@@ -825,108 +875,135 @@ bool CAttributes::getDetailRange(RtFloat &minvis, RtFloat &lowtran, RtFloat &upt
 
 void CAttributes::initGeometricApproximation()
 {
-	m_geometricApproximationType = defGeometricApproximationType;
+	m_geometricApproximationType.set(defGeometricApproximationType);
 	m_geometricApproximationValue.set(defGeometricApproximationValue);
 }
 
 RtVoid CAttributes::geometricApproximation(RtToken type, RtFloat value)
 {
 	if ( m_motionState != 0 ) {
+		m_geometricApproximationType.set(type, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_geometricApproximationValue.set(value, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_GEOMETRIC_APPROXIMATION_VALUE;
-		if ( m_motionState->curSampleCnt() == 0 ) {
-			m_geometricApproximationType = type;
-		} else if ( m_geometricApproximationType != type ) {
-			// Error
-		}
 	} else {
+		m_geometricApproximationType.set(type);
 		m_geometricApproximationValue.set(value);
-		m_geometricApproximationType = type;
 	}
 }
 
 void CAttributes::initGeometricRepresentation()
 {
-	m_geometricRepresentation = defGeometricRepresentation;
+	m_geometricRepresentation.set(defGeometricRepresentation);
 }
 
 RtVoid CAttributes::geometricRepresentation(RtToken type)
 {
-	m_geometricRepresentation = type;
+	if ( m_motionState != 0 ) {
+		m_geometricRepresentation.set(type, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = AIDX_GEOMETRIC_REPRESENTATION;
+	} else {
+		m_geometricRepresentation.set(type);
+	}
 }
 
 void CAttributes::initOrientation()
 {
-	m_orientation = defOrientation;
+	m_orientation.set(defOrientation);
 }
 
 RtVoid CAttributes::orientation(RtToken anOrientation)
 {
-	if ( anOrientation != RI_OUTSIDE &&
-		 anOrientation != RI_INSIDE &&
-		 anOrientation != RI_LH &&
-		 anOrientation != RI_RH )
-	{
-		anOrientation = RI_OUTSIDE;
+	if ( m_motionState != 0 ) {
+		m_orientation.set(anOrientation, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = AIDX_ORIENTATION;
+	} else {
+		m_orientation.set(anOrientation);
 	}
-	m_orientation = anOrientation;
 }
 
 RtVoid CAttributes::reverseOrientation(void)
 {
-	if ( m_orientation == RI_INSIDE ) m_orientation = RI_OUTSIDE;
-	else if ( m_orientation == RI_OUTSIDE ) m_orientation = RI_INSIDE;
-	else if ( m_orientation == RI_LH ) m_orientation = RI_RH;
-	else if ( m_orientation == RI_RH ) m_orientation = RI_LH;
+	if ( m_motionState == 0 || m_motionState->curSampleCnt() == 0 ) {
+		if ( m_orientation.m_value == RI_INSIDE ) m_orientation.m_value = RI_OUTSIDE;
+		else if ( m_orientation.m_value == RI_OUTSIDE ) m_orientation.m_value = RI_INSIDE;
+		else if ( m_orientation.m_value == RI_LH ) m_orientation.m_value = RI_RH;
+		else if ( m_orientation.m_value == RI_RH ) m_orientation.m_value = RI_LH;
+		
+		unsigned long size = m_orientation.m_motionEnd - m_orientation.m_motionBegin;
+		for ( unsigned long i = 0; i < size; ++i ) {
+			if ( m_orientation.m_movedValue[i] == RI_INSIDE ) m_orientation.m_movedValue[i] = RI_OUTSIDE;
+			else if ( m_orientation.m_movedValue[i] == RI_OUTSIDE ) m_orientation.m_movedValue[i] = RI_INSIDE;
+			else if ( m_orientation.m_movedValue[i] == RI_LH ) m_orientation.m_movedValue[i] = RI_RH;
+			else if ( m_orientation.m_movedValue[i] == RI_RH ) m_orientation.m_movedValue[i] = RI_LH;
+		}
+		m_lastValue = AIDX_ENDMARKER;
+	}
 }
 
 void CAttributes::initSides()
 {
-	m_nSides = defNSides;
+	m_nSides.set(defNSides);
 }
 
 RtVoid CAttributes::sides(RtInt nsides)
 {
-	m_nSides = nsides;
+	if ( m_motionState != 0 ) {
+		m_nSides.set(nsides, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = AIDX_SIDES;
+	} else {
+		m_nSides.set(nsides);
+	}
 }
 
 void CAttributes::initBasis()
 {
-	memcpy(m_uBasis, RiBezierBasis, sizeof(RtBasis));
-	m_uStep = RI_BEZIERSTEP;
-	memcpy(m_vBasis, RiBezierBasis, sizeof(RtBasis));
-	m_vStep = RI_BEZIERSTEP;
+	m_uBasis.set(RiBezierBasis, RI_BEZIERSTEP);
+	m_vBasis.set(RiBezierBasis, RI_BEZIERSTEP);
 }
 
 RtVoid CAttributes::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
 {
-	memcpy(m_uBasis, ubasis, sizeof(RtBasis));
-	m_uStep = ustep;
-	memcpy(m_vBasis, ubasis, sizeof(RtBasis));
-	m_vStep = vstep;
+	if ( m_motionState != 0 ) {
+		m_uBasis.set(ubasis, ustep, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_vBasis.set(vbasis, vstep, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = AIDX_BASIS;
+	} else {
+		m_uBasis.set(ubasis, ustep);
+		m_vBasis.set(vbasis, vstep);
+	}
 }
 
-void CAttributes::getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const
+bool CAttributes::getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const
 {
-	memcpy(ubasis, m_uBasis, sizeof(RtBasis));
-	ustep = m_uStep;
-	memcpy(ubasis, m_vBasis, sizeof(RtBasis));
-	vstep = m_vStep;
+	memcpy(ubasis, m_uBasis.m_value.m_basis, sizeof(RtBasis));
+	ustep = m_uBasis.m_value.m_step;
+	memcpy(vbasis, m_vBasis.m_value.m_basis, sizeof(RtBasis));
+	vstep = m_vBasis.m_value.m_step;
+	return true;
 }
 
 void CAttributes::initTrimCurve()
 {
-	m_trimCurve.releaseAll();
+	m_trimCurve.clear();
+	m_trimCurve.m_value.releaseAll();
 }
 
 RtVoid CAttributes::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
 {
-	m_trimCurve.trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+	if ( m_motionState != 0 ) {
+		CTrimCurveData td(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+		m_trimCurve.set(td, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_lastValue = AIDX_TRIM_CURVE;
+	} else {
+		m_trimCurve.clear();
+		m_trimCurve.m_value.trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+	}	
 }
 
 RtVoid CAttributes::trimCurve(const CTrimCurveData &trimCurveData)
 {
-	m_trimCurve = trimCurveData;
+	m_trimCurve.clear();
+	m_trimCurve.m_value = trimCurveData;
 }
 
 
@@ -944,8 +1021,14 @@ RtVoid CAttributes::motionEnd()
 		assert(m_allAttributes[(int)m_lastValue] != 0);
 		if (m_allAttributes[(int)m_lastValue] != 0)
 			m_allAttributes[(int)m_lastValue]->fill(m_motionState->curSampleCnt());
+		if ( m_lastValue == AIDX_GEOMETRIC_APPROXIMATION_VALUE ) {
+			m_geometricApproximationType.fill(m_motionState->curSampleCnt());
+		} else if ( m_lastValue == AIDX_BASIS ) {
+			m_vBasis.fill(m_motionState->curSampleCnt());
+		}
 	}
 	m_motionState = 0;
+	m_lastValue = AIDX_ENDMARKER;
 }
 
 RtVoid CAttributes::motionSuspend()

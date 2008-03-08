@@ -113,18 +113,18 @@ namespace RiCPP {
 		typedef std::vector<CLightSource *> TypeLightHandles; ///< Vector of (illuminated, switched on) light sources, not the list of global lights.
 
 	protected:
-		struct SBaseParts {
+		struct SBasisParts {
 			RtInt m_step;      ///< Step size used for control points of bicubic spline meshes
 			RtBasis m_basis;   ///< Basis matrix for bicubic splines
 
-			inline SBaseParts() {
+			inline SBasisParts() {
 				m_step = 0;
 				memset(m_basis, 0, sizeof(m_basis));
 			}
-			inline SBaseParts(const SBaseParts &c) { *this = c; }
-			inline virtual ~SBaseParts() {}
-			inline virtual SBaseParts *duplicate() const { return new SBaseParts(*this); }
-			inline SBaseParts &operator=(const SBaseParts &s)
+			inline SBasisParts(const SBasisParts &c) { *this = c; }
+			inline virtual ~SBasisParts() {}
+			inline virtual SBasisParts *duplicate() const { return new SBasisParts(*this); }
+			inline SBasisParts &operator=(const SBasisParts &s)
 			{
 				if ( this == &s )
 					return *this;
@@ -134,7 +134,7 @@ namespace RiCPP {
 
 				return *this;
 			}
-		}; // SBaseParts
+		}; // SBasisParts
 
 		struct SShaderParts {
 			RtToken m_name;
@@ -218,7 +218,7 @@ namespace RiCPP {
 				return *this;
 			}
 
-			inline void set(ValueType aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
+			inline void set(const ValueType aValue, RtInt n, unsigned long moBegin, unsigned long moEnd)
 			{
 				if ( moBegin > moEnd ) {
 					std::swap(moBegin, moEnd);		
@@ -243,7 +243,7 @@ namespace RiCPP {
 				}
 			}
 
-			inline void set(ValueType aValue)
+			inline void set(const ValueType aValue)
 			{
 				m_motionBegin = 0;
 				m_motionEnd = 0;
@@ -273,20 +273,17 @@ namespace RiCPP {
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		}; // CAttributeFloat
 
-		class CAttributeIlluminate : public TMovedAttribute<CLightSource *> {
-		public:
-			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
-		}; // CAttributeIlluminate
-
 		class CAttributeTrimCurve : public TMovedAttribute<CTrimCurveData> {
 		public:
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		}; // CAttributeTrimCurve
 		
-		class CAttributeBase : public TMovedAttribute<SBaseParts> {
+		class CAttributeBasis : public TMovedAttribute<SBasisParts> {
 		public:
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
-		}; // CAttributeTrimCurve
+			void set(const RtBasis basis, RtInt step, RtInt n, unsigned long moBegin, unsigned long moEnd);
+			void set(const RtBasis basis, RtInt step);
+		}; // CAttributeBasis
 		
 		class CAttributeShader : public TMovedAttribute<SShaderParts> {
 		public:
@@ -357,16 +354,27 @@ namespace RiCPP {
 			AIDX_DISPLACEMENT,
 			AIDX_DEFORMATION,
 			
+			AIDX_SHADING_INTERPOLATION,
+			AIDX_GEOMETRIC_APPROXIMATION_TYPE,
+			AIDX_GEOMETRIC_REPRESENTATION,
+			AIDX_ORIENTATION,
+			
+			AIDX_MATTE,
+			AIDX_SIDES,
+			
+			AIDX_BASIS,
+
+			AIDX_TRIM_CURVE,
+
 			AIDX_ENDMARKER
-		};
-		std::vector<IMovedValue *> m_allAttributes; ///< Pointer to all attributes of this class
-
-		const CMotionState *m_motionState;
-		EnumAttributeIndex m_lastValue;
+		}; ///!< Indizees for al atributes, used for @c m_allAttributes
 		
-		virtual void initAttributeVector();
-		virtual void initMotion();
+		std::vector<IMovedValue *> m_allAttributes; ///< Pointer to all attributes of this class
+		virtual void initAttributeVector();    ///< Initializes @c m_allAttributes with pointers to all attributes
 
+		const CMotionState *m_motionState; ///< Points to motion state in motion blocks, 0 otherwise
+		EnumAttributeIndex m_lastValue;    ///< Index o the previous request in motion block (used to fill blocks at motionEnd())
+		
 		CAttributeFloatArray m_color;          ///< Current reflective color (white - all 1.0), RtColor, number of components may changed by option, norm is r, g, b.
 
 		CAttributeFloatArray m_opacity;        ///< Current opacity of an object (opaque - all 1.0), RtColor, components as in color.
@@ -384,8 +392,8 @@ namespace RiCPP {
 
 		CAttributeFloat m_shadingRate;         ///< Current shading rate in pixels (def. 1). If infinity, once per primitive.
 
-		RtToken m_shadingInterpolation;        ///< Interpolation between pixels, "constant", "smooth" (def. RI_SMOOTH).
-		RtBoolean m_matte;                     ///< subsequent object are 'matte' objects? (def. RI_FALSE).
+		CAttributeToken m_shadingInterpolation; ///< Interpolation between pixels, "constant", "smooth" (def. RI_SMOOTH).
+		CAttributeInt   m_matte;                ///< subsequent object are 'matte' objects? (def. RI_FALSE).
 
 		CAttributeFloatArray m_bound;          ///< Bounding box for subsequent primitives (RtBound)
 		bool                 m_boundCalled;    ///< Bounding box is set by an interface call
@@ -397,21 +405,19 @@ namespace RiCPP {
 		bool      m_detailRangeCalled;         ///< Detail ranges are set by an interface call
 		bool      m_detailRangeCalledInBlock;  ///< Detail ranges are set by an interface call within the current attribute block.
 
-		RtToken m_geometricApproximationType;  ///< The geometric approximation type (e.g. RI_FLATNESS)
+		CAttributeToken m_geometricApproximationType;  ///< The geometric approximation type (e.g. RI_FLATNESS)
 		CAttributeFloat m_geometricApproximationValue; ///< The value for the approximation type
 
-		RtToken m_geometricRepresentation;     ///< The geometric representation
+		CAttributeToken m_geometricRepresentation;     ///< The geometric representation
 
-		RtToken m_orientation;                 ///< started RI_OUTSIDE, set by orientation and changed by transformations
+		CAttributeToken m_orientation;                 ///< started RI_OUTSIDE, set by orientation and changed by transformations
 
-		RtInt   m_nSides;                      ///< 1 or 2, def. is 2 (inside and outside)
+		CAttributeInt   m_nSides;                      ///< 1 or 2, def. is 2 (inside and outside)
 
-		RtInt m_uStep,                         ///< Step size in u direction used for control points of bicubic spline meshes
-			  m_vStep;                         ///< Step size in V direction used for control points of spline meshes
-		RtBasis m_uBasis,                      ///< Basis matrix for bicubic splines in u direction
-				m_vBasis;                      ///< Basis matrix for splines in v direction
+		CAttributeBasis m_uBasis,                      ///< Basis matrix for bicubic splines in u direction
+		                m_vBasis;                      ///< Basis matrix for splines in v direction
 
-		CTrimCurveData m_trimCurve;            ///< Trim curve, default: empty
+		CAttributeTrimCurve m_trimCurve;               ///< Trim curve, default: empty
 		
 		bool m_inAreaLight;                    ///< An area light source was created.
 		
@@ -880,13 +886,13 @@ namespace RiCPP {
 		virtual RtVoid shadingInterpolation(RtToken type);
 		inline virtual RtToken shadingInterpolation() const
 		{
-				return m_shadingInterpolation;
+				return m_shadingInterpolation.m_value;
 		}
 
 		virtual RtVoid matte(RtBoolean onoff);
 		inline virtual RtBoolean matte() const
 		{
-				return m_matte;
+			return m_matte.m_value ? RI_TRUE: RI_FALSE;
 		}
 
 		virtual RtVoid bound(RtBound aBound);
@@ -933,7 +939,7 @@ namespace RiCPP {
 		virtual RtVoid geometricApproximation(RtToken type, RtFloat value);
 		inline virtual RtToken geometricApproximationType() const
 		{
-			return m_geometricApproximationType;
+			return m_geometricApproximationType.m_value;
 		}
 		inline virtual RtFloat geometricApproximationValue() const
 		{
@@ -943,13 +949,13 @@ namespace RiCPP {
 		virtual RtVoid geometricRepresentation(RtToken type);
 		inline virtual RtToken geometricRepresentation() const
 		{
-			return m_geometricRepresentation;
+			return m_geometricRepresentation.m_value;
 		}
 
 		virtual RtVoid orientation(RtToken anOrientation);
 		inline virtual RtToken orientation(RtToken anOrientation) const
 		{
-			return m_orientation;
+			return m_orientation.m_value;
 		}
 
 		virtual RtVoid reverseOrientation(void);
@@ -957,25 +963,25 @@ namespace RiCPP {
 		virtual RtVoid sides(RtInt nsides);
 		inline virtual RtInt sides() const
 		{
-			return m_nSides;
+			return m_nSides.m_value;
 		}
 
 		virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
-		virtual void getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const;
+		virtual bool getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const;
 		inline virtual RtInt uStep() const
 		{
-			return m_uStep;
+			return m_uBasis.m_value.m_step;
 		}
 		inline virtual RtInt vStep() const
 		{
-			return m_vStep;
+			return m_vBasis.m_value.m_step;
 		}
 
 		virtual RtVoid trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 		virtual RtVoid trimCurve(const CTrimCurveData &trimCurveData);
 		inline virtual const CTrimCurveData &trimCurve() const
 		{
-			return m_trimCurve;
+			return m_trimCurve.m_value;
 		}
 
 		virtual RtVoid motionBegin(const CMotionState &state);

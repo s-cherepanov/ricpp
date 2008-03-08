@@ -23,12 +23,16 @@ void main(int argc, const char *argv[])
 	}
 		RiPixelFilter(RiGaussianFilter, 3, 3),
 		RiShutter(0, 1);
+		RiProjection(RI_ORTHOGRAPHIC, RI_NULL);
 		RiFrameBegin(1);
 			RiDisplay("Polygon", RI_FRAMEBUFFER, RI_RGB, RI_NULL);
-			RiTranslate(0, 0, 5);
+			RiTranslate(0, 0, (RtFloat)4.5);
+			RiLightSource("pointlight", RI_NULL);
+			RiTranslate(0, 0, (RtFloat).5);
 			RiWorldBegin();
 				RiOrientation(RI_LH);
 				RiSides(1);
+				RiSurface("matte", RI_NULL);
 				RiMotionBegin(3, 0.0, 0.5, 1.0);
 					RiColor(Cs1);
 					RiColor(Cs2);

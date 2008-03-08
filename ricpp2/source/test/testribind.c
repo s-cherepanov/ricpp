@@ -10,7 +10,7 @@ void main(int argc, const char *argv[])
 	RtFloat Cs2[] = {1, 1, 0};
 	RtFloat Cs3[] = {1, 0, 0};
 	RtBound bound = { -.5, 0, 0, .5, .5, 0 };
-	RtInt renderer = 2;
+	RtInt renderer = 0;
 	switch(renderer) {
 		case 1:
 			RiBegin("|aqsis -progress");

@@ -402,7 +402,7 @@ RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList 
 				m_cmd = cmd;
 
 				filename = "";
-				const char *tmpfile = CEnv::getTempFilename(filename, "rib", false);
+				const char *tmpfile = CEnv::getTempFilename(filename, ".rib", false);
 				if ( tmpfile ) {
 					m_nativepath = filename;
 				} else {
@@ -469,6 +469,7 @@ RtVoid CRibWriter::postEnd(CRiEnd &obj)
 		cmdline += " ";
 		cmdline += m_nativepath;
 
+		// std::cerr << "# " << cmdline << std::endl;
 		::system(cmdline.c_str());
 	}
 

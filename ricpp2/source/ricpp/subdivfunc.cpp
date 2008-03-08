@@ -75,7 +75,7 @@ RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) cons
 		return;
 
 	std::string tmpPath;
-	if ( !CEnv::getTempFilename(tmpPath, "rib", false) ) {
+	if ( !CEnv::getTempFilename(tmpPath, ".rib", false) ) {
 		return;
 	}
 

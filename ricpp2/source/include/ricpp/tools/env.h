@@ -182,8 +182,9 @@ namespace RiCPP {
 
 		static inline const char *getTempFilename(std::string &tmpPath, const char *extension, bool convertPath)
 		{
-			char buf[TMP_MAX+1];
+			char buf[PATH_MAX+1];
 			const char *tmpfile = 0;
+			buf[0] = 0;
 			
 			
 		#ifdef _WIN32
@@ -197,10 +198,16 @@ namespace RiCPP {
 		#endif
 			if ( !tmpfile )
 				return 0;
-
+			
+			buf[PATH_MAX] = 0;
+			
+#ifdef _WIN32
 			CEnv::find(tmpPath, CEnv::tmpName(), false);
 			tmpPath += CFilepathConverter::nativePathSeparator();
 			tmpPath += tmpfile;
+#else
+			tmpPath = tmpfile;
+#endif
 			tmpPath += extension ? extension : "";
 			if ( convertPath )
 				CFilepathConverter::convertToInternal(tmpPath);

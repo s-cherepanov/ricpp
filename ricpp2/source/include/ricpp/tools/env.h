@@ -182,24 +182,27 @@ namespace RiCPP {
 
 		static inline const char *getTempFilename(std::string &tmpPath, const char *extension, bool convertPath)
 		{
-			char buf[PATH_MAX+1];
 			const char *tmpfile = 0;
-			buf[0] = 0;
 			
 			
 		#ifdef _WIN32
+			char buf[L_tmpnam_s];
+			buf[0] = 0;
 			if ( tmpnam_s(buf, sizeof(buf)) )
 				return 0;
+			buf[L_tmpnam_s-1] = 0;
 			tmpfile = &buf[0];
 			if ( tmpfile[0] == '\\' )
 				tmpfile++;
 		#else
+			char buf[PATH_MAX+1];
+			buf[0] = 0;
+			buf[PATH_MAX] = 0;
 			tmpfile = tmpnam(buf);
 		#endif
 			if ( !tmpfile )
 				return 0;
 			
-			buf[PATH_MAX] = 0;
 			
 #ifdef _WIN32
 			CEnv::find(tmpPath, CEnv::tmpName(), false);

@@ -38,838 +38,838 @@
 #endif // _RICPP_RICONTEXT_DORENDER_H
 
 namespace RiCPP {
-	
-// ----------------------------------------------------------------------------
-// Macro base classes
-// ----------------------------------------------------------------------------
+		
+	// ----------------------------------------------------------------------------
+	// Macro base classes
+	// ----------------------------------------------------------------------------
 
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Base class of all interface calls.
- */
-class CRManInterfaceCall {
-private:
-	long m_lineNo; ///< Place to store the line number of a call in a RIB file, -1 if there is no line number.
-
-public:
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls.
 	 */
-	inline static const char *myClassName(void) { return "CRManInterfaceCall"; }
+	class CRManInterfaceCall {
+	private:
+		long m_lineNo; ///< Place to store the line number of a call in a RIB file, -1 if there is no line number.
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
-	inline virtual const char *className() const { return CRManInterfaceCall::myClassName(); }
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CRManInterfaceCall"; }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to specific class atomizedClassName.
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CRManInterfaceCall::myClassName(); }
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to a kind of class atomizedClassName.
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
 
-	/** @brief Constructor, to set a line number (defaults to -1).
-	 *
-	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 */
-	inline CRManInterfaceCall(long aLineNo = -1): m_lineNo(aLineNo) {}
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to a kind of class atomizedClassName.
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
 
-	/** @brief Copy constructor
-	 *
-	 *  @param c Object to copy
-	 */
-	inline CRManInterfaceCall(const CRManInterfaceCall &c)
-	{
-		*this = c;
-	}
+		/** @brief Constructor, to set a line number (defaults to -1).
+		 *
+		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 */
+		inline CRManInterfaceCall(long aLineNo = -1): m_lineNo(aLineNo) {}
 
-	/** @brief Duplication.
-	 * 
-	 *  @return New instance as clone of this instance.
-	 */
-	// inline
-	virtual CRManInterfaceCall *duplicate() const = 0;
-	// {
-	//	return new CRManInterfaceCall(*this);
-	// }
+		/** @brief Copy constructor
+		 *
+		 *  @param c Object to copy
+		 */
+		inline CRManInterfaceCall(const CRManInterfaceCall &c)
+		{
+			*this = c;
+		}
 
-	/** @brief Destructor.
-	 */
-	inline virtual ~CRManInterfaceCall() {}
+		/** @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 */
+		// inline
+		virtual CRManInterfaceCall *duplicate() const = 0;
+		// {
+		//	return new CRManInterfaceCall(*this);
+		// }
 
-	/** @brief Gets the interface number of the corresponding RI request.
-	 *
-	 *  @return Interface number of the corresponding RI request.
-	 */
-	// inline 
-	virtual EnumRequests CRManInterfaceCall::interfaceIdx() const = 0;
-	// {
-	//	return REQ_UNKNOWN;
-	// }
+		/** @brief Destructor.
+		 */
+		inline virtual ~CRManInterfaceCall() {}
 
-	/** @brief Gets the name of the RI request as token.
-	 *
-	 *  @return The name of the RI request as token.
-	 */
-	inline virtual RtToken requestName() const { return CRequestInfo::requestName(interfaceIdx()); }
+		/** @brief Gets the interface number of the corresponding RI request.
+		 *
+		 *  @return Interface number of the corresponding RI request.
+		 */
+		// inline 
+		virtual EnumRequests CRManInterfaceCall::interfaceIdx() const = 0;
+		// {
+		//	return REQ_UNKNOWN;
+		// }
 
-	/** @brief Replays the interface call.
-	 *
-	 *  @param ri The renderer backend used for replay.
-	 *  @param cb Archive callback.
-	 */
-	virtual void replay(IDoRender &ri, const IArchiveCallback *cb);
+		/** @brief Gets the name of the RI request as token.
+		 *
+		 *  @return The name of the RI request as token.
+		 */
+		inline virtual RtToken requestName() const { return CRequestInfo::requestName(interfaceIdx()); }
 
-	/** @brief Asks for the line number.
-	 *
-	 *  @return The line number, -1 if there is none.
-	 */
-	inline long lineNo() const { return m_lineNo; }
+		/** @brief Replays the interface call.
+		 *
+		 *  @param ri The renderer backend used for replay.
+		 *  @param cb Archive callback.
+		 */
+		virtual void replay(IDoRender &ri, const IArchiveCallback *cb);
 
-	/** @brief Sets the line number.
-	 *
-	 *  @param aLineNo The new line number, -1 if there is none.
-	 */
-	inline void lineNo(long aLineNo) { m_lineNo=aLineNo; }
+		/** @brief Asks for the line number.
+		 *
+		 *  @return The line number, -1 if there is none.
+		 */
+		inline long lineNo() const { return m_lineNo; }
 
-	/** @brief Assignment.
-	 *
-	 *  @param c CRManInterfaceCall to assign.
-	 *  @return A reference to this object.
-	 */
-	inline CRManInterfaceCall &operator=(const CRManInterfaceCall &c)
-	{
-		if ( this == &c )
+		/** @brief Sets the line number.
+		 *
+		 *  @param aLineNo The new line number, -1 if there is none.
+		 */
+		inline void lineNo(long aLineNo) { m_lineNo=aLineNo; }
+
+		/** @brief Assignment.
+		 *
+		 *  @param c CRManInterfaceCall to assign.
+		 *  @return A reference to this object.
+		 */
+		inline CRManInterfaceCall &operator=(const CRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
+
+			lineNo(c.lineNo());
 			return *this;
+		}
 
-		lineNo(c.lineNo());
-		return *this;
-	}
+		/** @brief Pre-Processes an interface call
+		 *
+		 *  Pre-Processing normally involves state update of the renderer.
+		 *  Is also performed before macro insertion.
+		 *
+		 *  @param cb Callback interface for comments.
+		 *  @param ri The renderer backend used for pre-processing.
+		 */
+		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+		}
 
-	/** @brief Pre-Processes an interface call
-	 *
-	 *  Pre-Processing normally involves state update of the renderer.
-	 *  Is also performed before macro insertion.
-	 *
-	 *  @param cb Callback interface for comments.
-	 *  @param ri The renderer backend used for pre-processing.
+		/** @brief Processes an interface call
+		 *
+		 *  Processing the interface call, e.g. do the rendering. This is
+		 *  not called at a macro (object) definition.
+		 *
+		 *  @param cb Callback interface for comments.
+		 *  @param ri The renderer backend used for processing.
+		 */
+		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+		}
+
+		/** @brief Post-Processes an interface call
+		 *
+		 *  Post-Processing the interface call, is called after
+		 *  Macro insertion or processing.
+		 *
+		 *  @param cb Callback interface for comments.
+		 *  @param ri The renderer backend used for pre-processing.
+		 */
+		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+		}
+
+		/** @brief Pre-Processes an interface call
+		 *
+		 *  Pre-Processing normally involves state update of the renderer.
+		 *  Is also performed before macro insertion.
+		 *
+		 *  @param ri The renderer backend used for pre-processing.
+		 */
+		inline virtual void preProcess(IDoRender &ri)
+		{
+			preProcess(ri, 0);
+		}
+
+		/** @brief Processes an interface call
+		 *
+		 *  Processing the interface call, e.g. do the rendering. This is
+		 *  not called at a macro (object) definition.
+		 *
+		 *  @param ri The renderer backend used for processing.
+		 */
+		inline virtual void doProcess(IDoRender &ri)
+		{
+			doProcess(ri, 0);
+		}
+
+		/** @brief Post-Processes an interface call
+		 *
+		 *  Post-Processing the interface call, is called after
+		 *  Macro insertion or processing.
+		 *
+		 *  @param ri The renderer backend used for pre-processing.
+		 */
+		inline virtual void postProcess(IDoRender &ri)
+		{
+			postProcess(ri, 0);
+		}
+
+		/** @brief Write the RIB Code of the request.
+		 *
+		 *  @param ribWriter Elementary stream object for RIB writing.
+		 *  @param n Number of tokens to ignore ( sizeof(ignoreTokens) )
+		 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
+		 */
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putNewLine();
+		}
+
+		/** @brief Query if bounds are available.
+		 *  @return true, if bounds are available
+		 *  @see getBounds()
+		 */
+		inline virtual bool boundable() const { return false; }
+
+		/** @brief Gets the bounds, if available.
+		 *  @retval bounds The bounderies of the object representated.
+		 *  @see boundable()
+		 */
+		inline virtual void getBounds(RtBound bounds) const {}
+	}; // CRManInterfaceCall
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls with parameter lists.
 	 */
-	inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-	}
+	class CVarParamRManInterfaceCall : public CRManInterfaceCall {
+	private:
+		CParameterList m_parameters;             ///< Parameters of an interface call.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CVarParamRManInterfaceCall"; }
 
-	/** @brief Processes an interface call
-	 *
-	 *  Processing the interface call, e.g. do the rendering. This is
-	 *  not called at a macro (object) definition.
-	 *
-	 *  @param cb Callback interface for comments.
-	 *  @param ri The renderer backend used for processing.
-	 */
-	inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-	}
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CVarParamRManInterfaceCall::myClassName(); }
 
-	/** @brief Post-Processes an interface call
-	 *
-	 *  Post-Processing the interface call, is called after
-	 *  Macro insertion or processing.
-	 *
-	 *  @param cb Callback interface for comments.
-	 *  @param ri The renderer backend used for pre-processing.
-	 */
-	inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
-	{
-	}
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
 
-	/** @brief Pre-Processes an interface call
-	 *
-	 *  Pre-Processing normally involves state update of the renderer.
-	 *  Is also performed before macro insertion.
-	 *
-	 *  @param ri The renderer backend used for pre-processing.
-	 */
-	inline virtual void preProcess(IDoRender &ri)
-	{
-		preProcess(ri, 0);
-	}
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+		 *  @return true, if instance belongs to a kind of class atomizedClassName
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
 
-	/** @brief Processes an interface call
-	 *
-	 *  Processing the interface call, e.g. do the rendering. This is
-	 *  not called at a macro (object) definition.
-	 *
-	 *  @param ri The renderer backend used for processing.
-	 */
-	inline virtual void doProcess(IDoRender &ri)
-	{
-		doProcess(ri, 0);
-	}
+		/** @brief Constructor.
+		 *
+		 *  Constructs an empty parameter list, with line number, defaults to -1.
+		 *
+		 *  @param aLineNo The line number to store.
+		 */
+		inline CVarParamRManInterfaceCall(long aLineNo=-1) :
+			TypeParent(aLineNo)
+		{
+		}
 
-	/** @brief Post-Processes an interface call
-	 *
-	 *  Post-Processing the interface call, is called after
-	 *  Macro insertion or processing.
-	 *
-	 *  @param ri The renderer backend used for pre-processing.
-	 */
-	inline virtual void postProcess(IDoRender &ri)
-	{
-		postProcess(ri, 0);
-	}
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CVarParamRManInterfaceCall(
+			long aLineNo,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo)
+		{
+			setParams(0, 0, decl, p, curColorDescr, n, tokens, params);
+		}
 
-	/** @brief Write the RIB Code of the request.
-	 *
-	 *  @param ribWriter Elementary stream object for RIB writing.
-	 *  @param n Number of tokens to ignore ( sizeof(ignoreTokens) )
-	 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
-	 */
-	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
-	{
-		ribWriter.putNewLine();
-	}
+		/** @brief Constructor.
+		 *
+		 *  @param aQualifier The qualifier
+		 *  @param table The table
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CVarParamRManInterfaceCall(
+			long aLineNo,
+			const char *aQualifier, const char *table,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo)
+		{
+			setParams(aQualifier, table, decl, p, curColorDescr, n, tokens, params);
+		}
 
-	/** @brief Query if bounds are available.
-	 *  @return true, if bounds are available
-	 *  @see getBounds()
-	 */
-	inline virtual bool boundable() const { return false; }
+		/** @brief Constructor.
+		 *
+		 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 * @param theParameters Parsed parameter list.
+		 */
+		inline CVarParamRManInterfaceCall(
+			long aLineNo,
+			const CParameterList &theParameters) :
+			TypeParent(aLineNo)
+		{
+			parameters(theParameters);
+		}
 
-	/** @brief Gets the bounds, if available.
-	 *  @retval bounds The bounderies of the object representated.
-	 *  @see boundable()
-	 */
-	inline virtual void getBounds(RtBound bounds) const {}
-}; // CRManInterfaceCall
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CVarParamRManInterfaceCall(const CVarParamRManInterfaceCall &c)
+		{
+			*this = c;
+		}
 
+		/** @brief Destructor.
+		 */
+		inline virtual ~CVarParamRManInterfaceCall() {}
+		
+		/*  @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 *//*
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CVarParamRManInterfaceCall(*this);
+		} */
 
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Base class of all interface calls with parameter lists.
- */
-class CVarParamRManInterfaceCall : public CRManInterfaceCall {
-private:
-	CParameterList m_parameters;             ///< Parameters of an interface call.
-protected:
-	typedef CRManInterfaceCall TypeParent;
-public:
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
-	inline static const char *myClassName(void) { return "CVarParamRManInterfaceCall"; }
+		/** @brief Gets the size of tokens and parameters of the request.
+		 *
+		 * @return The size of tokens and parameters of the request.
+		 */
+		inline virtual CParameterList::size_type size() const
+		{
+			return m_parameters.size();
+		}
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
-	inline virtual const char *className() const { return CVarParamRManInterfaceCall::myClassName(); }
+		/** @brief Gets the tokens of the request.
+		 *
+		 * For the size of the array @see size(), for the parameter pointers @see getParams().
+		 *
+		 * @return The tokens of the request.
+		 */
+		inline RtToken *getTokens()
+		{
+			return m_parameters.tokenPtr();
+		}
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to specific class atomizedClassName.
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
+		/** @brief Gets the parameter pointers of the request.
+		 *
+		 * For the size of the array @see size(), for the tokenss @see getTokens().
+		 *
+		 * @return The parameters of the request.
+		 */
+		inline RtPointer *getParams()
+		{
+			return m_parameters.valuePtr();
+		}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return TypeParent::isKindOf(atomizedClassName);
-	}
+		/** @brief Gets a writeable reference of the parameter list.
+		 *
+		 *  @return Writeable reference of the parameter list interface.
+		 */
+		inline CParameterList &parameters()
+		{
+			return m_parameters;
+		}
 
-	/** @brief Constructor.
-	 *
-	 *  Constructs an empty parameter list, with line number, defaults to -1.
-	 *
-	 *  @param aLineNo The line number to store.
-	 */
-	inline CVarParamRManInterfaceCall(long aLineNo=-1) :
-		TypeParent(aLineNo)
-	{
-	}
+		/** @brief Gets a read only reference of the parameter list.
+		 *
+		 *  @return Read only reference of the parameter list interface.
+		 */
+		inline const CParameterList &parameters() const
+		{
+			return m_parameters;
+		}
 
-	/** @brief Constructor.
-	 *
-	 *  @param aLineNo The line number to store.
-	 *  @param decl Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
-	 *  @param curColorDescr Current color descriptor.
-	 *  @param n Number of parameters (size of @a tokens, @a params).
-	 *  @param tokens Tokens of the request.
-	 *  @param params Parameter values of the request.
-	 */
-	inline CVarParamRManInterfaceCall(
-		long aLineNo,
-		CDeclarationDictionary &decl,
-		const CParameterClasses &p,
-		const CColorDescr &curColorDescr,
-		RtInt n, RtToken tokens[], RtPointer params[]) :
-		TypeParent(aLineNo)
-	{
-		setParams(0, 0, decl, p, curColorDescr, n, tokens, params);
-	}
+		/** @brief Fills the parameter list.
+		 *
+		 *  @param aQualifier The qualifier
+		 *  @param table The table
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline void setParams(
+			const char *aQualifier, const char *table,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[])
+		{
+			m_parameters.set(aQualifier, table, p, decl, curColorDescr, n, tokens, params);
+		}
+		
+		/** @brief Fills the parameter list.
+		 *
+		 *  @param theParameters Parsed parameter list.
+		 */
+		inline void parameters(const CParameterList &theParameters)
+		{
+			m_parameters = theParameters;
+		}
 
-	/** @brief Constructor.
-	 *
-	 *  @param aQualifier The qualifier
-	 *  @param table The table
-	 *  @param aLineNo The line number to store.
-	 *  @param decl Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
-	 *  @param curColorDescr Current color descriptor.
-	 *  @param n Number of parameters (size of @a tokens, @a params).
-	 *  @param tokens Tokens of the request.
-	 *  @param params Parameter values of the request.
-	 */
-	inline CVarParamRManInterfaceCall(
-		long aLineNo,
-		const char *aQualifier, const char *table,
-		CDeclarationDictionary &decl,
-		const CParameterClasses &p,
-		const CColorDescr &curColorDescr,
-		RtInt n, RtToken tokens[], RtPointer params[]) :
-		TypeParent(aLineNo)
-	{
-		setParams(aQualifier, table, decl, p, curColorDescr, n, tokens, params);
-	}
+		/** @brief Assignment.
+		 *
+		 *  @param c CVarParamRManInterfaceCall to assign.
+		 *  @return A reference to this object.
+		 */
+		inline CVarParamRManInterfaceCall &operator=(const CVarParamRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
 
-	/** @brief Constructor.
-	 *
-	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param theParameters Parsed parameter list.
-	 */
-	inline CVarParamRManInterfaceCall(
-		long aLineNo,
-		const CParameterList &theParameters) :
-		TypeParent(aLineNo)
-	{
-		parameters(theParameters);
-	}
-
-	/** @brief Copy constructor.
-	 *
-	 *  @param c Object to copy.
-	 */
-	inline CVarParamRManInterfaceCall(const CVarParamRManInterfaceCall &c)
-	{
-		*this = c;
-	}
-
-	/** @brief Destructor.
-	 */
-	inline virtual ~CVarParamRManInterfaceCall() {}
-	
-	/*  @brief Duplication.
-	 * 
-	 *  @return New instance as clone of this instance.
-	 *//*
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CVarParamRManInterfaceCall(*this);
-	} */
-
-	/** @brief Gets the size of tokens and parameters of the request.
-	 *
-	 * @return The size of tokens and parameters of the request.
-	 */
-	inline virtual CParameterList::size_type size() const
-	{
-		return m_parameters.size();
-	}
-
-	/** @brief Gets the tokens of the request.
-	 *
-	 * For the size of the array @see size(), for the parameter pointers @see getParams().
-	 *
-	 * @return The tokens of the request.
-	 */
-	inline RtToken *getTokens()
-	{
-		return m_parameters.tokenPtr();
-	}
-
-	/** @brief Gets the parameter pointers of the request.
-	 *
-	 * For the size of the array @see size(), for the tokenss @see getTokens().
-	 *
-	 * @return The parameters of the request.
-	 */
-	inline RtPointer *getParams()
-	{
-		return m_parameters.valuePtr();
-	}
-
-	/** @brief Gets a writeable reference of the parameter list.
-	 *
-	 *  @return Writeable reference of the parameter list interface.
-	 */
-	inline CParameterList &parameters()
-	{
-		return m_parameters;
-	}
-
-	/** @brief Gets a read only reference of the parameter list.
-	 *
-	 *  @return Read only reference of the parameter list interface.
-	 */
-	inline const CParameterList &parameters() const
-	{
-		return m_parameters;
-	}
-
-	/** @brief Fills the parameter list.
-	 *
-	 *  @param aQualifier The qualifier
-	 *  @param table The table
-	 *  @param decl Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
-	 *  @param curColorDescr Current color descriptor.
-	 *  @param n Number of parameters (size of @a tokens, @a params).
-	 *  @param tokens Tokens of the request.
-	 *  @param params Parameter values of the request.
-	 */
-	inline void setParams(
-		const char *aQualifier, const char *table,
-		CDeclarationDictionary &decl,
-		const CParameterClasses &p,
-		const CColorDescr &curColorDescr,
-		RtInt n, RtToken tokens[], RtPointer params[])
-	{
-		m_parameters.set(aQualifier, table, p, decl, curColorDescr, n, tokens, params);
-	}
-	
-	/** @brief Fills the parameter list.
-	 *
-	 *  @param theParameters Parsed parameter list.
-	 */
-	inline void parameters(const CParameterList &theParameters)
-	{
-		m_parameters = theParameters;
-	}
-
-	/** @brief Assignment.
-	 *
-	 *  @param c CVarParamRManInterfaceCall to assign.
-	 *  @return A reference to this object.
-	 */
-	inline CVarParamRManInterfaceCall &operator=(const CVarParamRManInterfaceCall &c)
-	{
-		if ( this == &c )
+			parameters(c.parameters());
+			TypeParent::operator=(c);
 			return *this;
+		}
 
-		parameters(c.parameters());
-		TypeParent::operator=(c);
-		return *this;
-	}
+		/** @brief Write the RIB Code of the request.
+		 *
+		 *  @param ribWriter Elementary stream object for RIB writing.
+		 *  @param n Number of tokens to ignore ( sizeof(ignoreTokens) )
+		 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
+		 */
+		virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const;
 
-	/** @brief Write the RIB Code of the request.
-	 *
-	 *  @param ribWriter Elementary stream object for RIB writing.
-	 *  @param n Number of tokens to ignore ( sizeof(ignoreTokens) )
-	 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
+		/** @brief Gets the bounds, by bounding parameter RI_P, RI_PW
+		 *
+		 *  The boundable() must be implemented by the appropriate class.
+		 *
+		 *  @retval bounds The bounderies of the object representated.
+		 *  @see boundable()
+		 */
+		virtual void getBounds(RtBound bounds) const;
+	}; // CVarParamRManInterfaceCall
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls for geometry.
 	 */
-	virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const;
+	class CGeometryRManInterfaceCall : public CVarParamRManInterfaceCall {
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CGeometryRManInterfaceCall"; }
 
-	/** @brief Gets the bounds, by bounding parameter RI_P, RI_PW
-	 *
-	 *  The boundable() must be implemented by the appropriate class.
-	 *
-	 *  @retval bounds The bounderies of the object representated.
-	 *  @see boundable()
-	 */
-	virtual void getBounds(RtBound bounds) const;
-}; // CVarParamRManInterfaceCall
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CGeometryRManInterfaceCall::myClassName(); }
 
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
 
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Base class of all interface calls for geometry.
- */
-class CGeometryRManInterfaceCall : public CVarParamRManInterfaceCall {
-protected:
-	typedef CVarParamRManInterfaceCall TypeParent;
-public:
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
-	inline static const char *myClassName(void) { return "CGeometryRManInterfaceCall"; }
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+		 *  @return true, if instance belongs to a kind of class atomizedClassName
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
-	inline virtual const char *className() const { return CGeometryRManInterfaceCall::myClassName(); }
+		/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+		 *
+		 *  @param aLineNo The line number to store.
+		 */
+		inline CGeometryRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to specific class atomizedClassName.
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CGeometryRManInterfaceCall(
+			long aLineNo,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		{
+		}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
-	 *  @return true, if instance belongs to a kind of class atomizedClassName
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return TypeParent::isKindOf(atomizedClassName);
-	}
+		/** @brief Constructor.
+		 *
+		 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 * @param theParameters Parsed parameter list.
+		 */
+		inline CGeometryRManInterfaceCall(
+			long aLineNo,
+			const CParameterList &theParameters) :
+			TypeParent(aLineNo, theParameters)
+		{
+		}
 
-	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
-	 *
-	 *  @param aLineNo The line number to store.
-	 */
-	inline CGeometryRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CGeometryRManInterfaceCall(const CGeometryRManInterfaceCall &c)
+		{
+			*this = c;
+		}
 
-	/** @brief Constructor.
-	 *
-	 *  @param aLineNo The line number to store.
-	 *  @param decl Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
-	 *  @param curColorDescr Current color descriptor.
-	 *  @param n Number of parameters (size of @a tokens, @a params).
-	 *  @param tokens Tokens of the request.
-	 *  @param params Parameter values of the request.
-	 */
-	inline CGeometryRManInterfaceCall(
-		long aLineNo,
-		CDeclarationDictionary &decl,
-		const CParameterClasses &p,
-		const CColorDescr &curColorDescr,
-		RtInt n, RtToken tokens[], RtPointer params[]) :
-		TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
-	{
-	}
+		/** @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 *//*
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CGeometryRManInterfaceCall(*this);
+		} */
 
-	/** @brief Constructor.
-	 *
-	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param theParameters Parsed parameter list.
-	 */
-	inline CGeometryRManInterfaceCall(
-		long aLineNo,
-		const CParameterList &theParameters) :
-		TypeParent(aLineNo, theParameters)
-	{
-	}
+		/** @brief Destructor.
+		 */
+		inline virtual ~CGeometryRManInterfaceCall() {}
 
-	/** @brief Copy constructor.
-	 *
-	 *  @param c Object to copy.
-	 */
-	inline CGeometryRManInterfaceCall(const CGeometryRManInterfaceCall &c)
-	{
-		*this = c;
-	}
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
 
-	/** @brief Duplication.
-	 * 
-	 *  @return New instance as clone of this instance.
-	 *//*
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CGeometryRManInterfaceCall(*this);
-	} */
+		/** @brief Assignment.
+		 *
+		 * @param c Object to assign.
+		 * @return A reference to this object.
+		 */
+		inline CGeometryRManInterfaceCall &CGeometryRManInterfaceCall::operator=(const CGeometryRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
 
-	/** @brief Destructor.
-	 */
-	inline virtual ~CGeometryRManInterfaceCall() {}
-
-	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
-	{
-		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
-	}
-
-	/** @brief Assignment.
-	 *
-	 * @param c Object to assign.
-	 * @return A reference to this object.
-	 */
-	inline CGeometryRManInterfaceCall &CGeometryRManInterfaceCall::operator=(const CGeometryRManInterfaceCall &c)
-	{
-		if ( this == &c )
+			TypeParent::operator=(c);
 			return *this;
-
-		TypeParent::operator=(c);
-		return *this;
-	}
-}; // CGeometryRManInterfaceCall
+		}
+	}; // CGeometryRManInterfaceCall
 
 
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Base class of all interface calls based on UV Meshes (Splines, Quadrics).
- */
-class CUVRManInterfaceCall : public CGeometryRManInterfaceCall {
-protected:
-	typedef CGeometryRManInterfaceCall TypeParent;
-public:
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls based on UV Meshes (Splines, Quadrics).
 	 */
-	inline static const char *myClassName(void) { return "CUVRManInterfaceCall"; }
+	class CUVRManInterfaceCall : public CGeometryRManInterfaceCall {
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CUVRManInterfaceCall"; }
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
-	inline virtual const char *className() const { return CUVRManInterfaceCall::myClassName(); }
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CUVRManInterfaceCall::myClassName(); }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to specific class atomizedClassName.
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to a kind of class atomizedClassName.
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return TypeParent::isKindOf(atomizedClassName);
-	}
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to a kind of class atomizedClassName.
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
 
-	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
-	 *
-	 *  @param aLineNo The line number to store.
-	 */
-	inline CUVRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
+		/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+		 *
+		 *  @param aLineNo The line number to store.
+		 */
+		inline CUVRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
 
-	/** @brief Constructor.
-	 *
-	 *  @param aLineNo The line number to store.
-	 *  @param decl Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
-	 *  @param curColorDescr Current color descriptor.
-	 *  @param n Number of parameters (size of @a tokens, @a params).
-	 *  @param tokens Tokens of the request.
-	 *  @param params Parameter values of the request.
-	 */
-	inline CUVRManInterfaceCall(
-		long aLineNo,
-		CDeclarationDictionary &decl,
-		const CParameterClasses &p,
-		const CColorDescr &curColorDescr,
-		RtInt n, RtToken tokens[], RtPointer params[]) :
-		TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
-	{
-	}
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CUVRManInterfaceCall(
+			long aLineNo,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		{
+		}
 
-	/** @brief Constructor.
-	 *
-	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param theParameters Parsed parameter list.
-	 */
-	inline CUVRManInterfaceCall(
-		long aLineNo,
-		const CParameterList &theParameters) :
-		TypeParent(aLineNo, theParameters)
-	{
-	}
+		/** @brief Constructor.
+		 *
+		 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 * @param theParameters Parsed parameter list.
+		 */
+		inline CUVRManInterfaceCall(
+			long aLineNo,
+			const CParameterList &theParameters) :
+			TypeParent(aLineNo, theParameters)
+		{
+		}
 
-	/** @brief Copy constructor.
-	 *
-	 *  @param c Object to copy.
-	 */
-	inline CUVRManInterfaceCall(const CUVRManInterfaceCall &c)
-	{
-		*this = c;
-	}
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CUVRManInterfaceCall(const CUVRManInterfaceCall &c)
+		{
+			*this = c;
+		}
 
-	/*  @brief Duplication.
-	 * 
-	 *  @return New instance as clone of this instance.
-	 *//*
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CUVRManInterfaceCall(*this);
-	} */
+		/*  @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 *//*
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CUVRManInterfaceCall(*this);
+		} */
 
-	/** @brief Destructor.
-	 */
-	inline virtual ~CUVRManInterfaceCall() {}
+		/** @brief Destructor.
+		 */
+		inline virtual ~CUVRManInterfaceCall() {}
 
-	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
-	{
-		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
-	}
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
 
-	/** @brief Assignment.
-	 *
-	 * @param c Object to assign.
-	 * @return A reference to this object.
-	 */
-	inline CUVRManInterfaceCall &CUVRManInterfaceCall::operator=(const CUVRManInterfaceCall &c)
-	{
-		if ( this == &c )
+		/** @brief Assignment.
+		 *
+		 * @param c Object to assign.
+		 * @return A reference to this object.
+		 */
+		inline CUVRManInterfaceCall &CUVRManInterfaceCall::operator=(const CUVRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
+
+			TypeParent::operator=(c);
 			return *this;
-
-		TypeParent::operator=(c);
-		return *this;
-	}
-}; // CUVRManInterfaceCall
+		}
+	}; // CUVRManInterfaceCall
 
 
-///////////////////////////////////////////////////////////////////////////////
-/** @brief Base class of all interface calls based on Polygon meshes.
- */
-class CPolygonRManInterfaceCall : public CGeometryRManInterfaceCall {
-
-protected:
-	typedef CGeometryRManInterfaceCall TypeParent;
-public:
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls based on Polygon meshes.
 	 */
-	inline static const char *myClassName(void) { return "CPolygonRManInterfaceCall"; }
+	class CPolygonRManInterfaceCall : public CGeometryRManInterfaceCall {
 
-	/** @brief Gets name for the class.
-	 *
-	 *  @return The name of the class (can be used as atomized string).
-	 */
-	inline virtual const char *className() const { return CPolygonRManInterfaceCall::myClassName(); }
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CPolygonRManInterfaceCall"; }
 
-	/** @brief Checks if instance belongs to a specific class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to specific class atomizedClassName.
-	 */
-	inline virtual bool isA(const char *atomizedClassName) const
-	{
-		return ( atomizedClassName == myClassName() );
-	}
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CPolygonRManInterfaceCall::myClassName(); }
 
-	/** @brief Checks if instance belongs to a kind of a class.
-	 *
-	 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
-	 *  @return true, if instance belongs to a kind of class atomizedClassName.
-	 */
-	inline virtual bool isKindOf(const char *atomizedClassName) const
-	{
-		if ( atomizedClassName == myClassName() )
-			return true;
-		return TypeParent::isKindOf(atomizedClassName);
-	}
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
 
-	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
-	 *
-	 *  @param aLineNo The line number to store..
-	 */
-	inline CPolygonRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to a kind of class atomizedClassName.
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
 
-	/** @brief Constructor.
-	 *
-	 *  @param aLineNo The line number to store.
-	 *  @param decl Dictonary with the current declarations.
-	 *  @param p Counters (vertices, corners etc.) of the request.
-	 *  @param curColorDescr Current color descriptor.
-	 *  @param n Number of parameters (size of @a tokens, @a params).
-	 *  @param tokens Tokens of the request.
-	 *  @param params Parameter values of the request.
-	 */
-	inline CPolygonRManInterfaceCall(
-		long aLineNo,
-		CDeclarationDictionary &decl,
-		const CParameterClasses &p,
-		const CColorDescr &curColorDescr,
-		RtInt n, RtToken tokens[], RtPointer params[]) :
-		TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
-	{
-	}
+		/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+		 *
+		 *  @param aLineNo The line number to store..
+		 */
+		inline CPolygonRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
 
-	/** @brief Constructor.
-	 *
-	 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
-	 * @param theParameters Parsed parameter list.
-	 */
-	inline CPolygonRManInterfaceCall(
-		long aLineNo,
-		const CParameterList &theParameters) :
-		TypeParent(aLineNo, theParameters)
-	{
-	}
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CPolygonRManInterfaceCall(
+			long aLineNo,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		{
+		}
 
-	/** @brief Copy constructor.
-	 *
-	 *  @param c Object to copy.
-	 */
-	inline CPolygonRManInterfaceCall(const CPolygonRManInterfaceCall &c)
-	{
-		*this = c;
-	}
+		/** @brief Constructor.
+		 *
+		 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 * @param theParameters Parsed parameter list.
+		 */
+		inline CPolygonRManInterfaceCall(
+			long aLineNo,
+			const CParameterList &theParameters) :
+			TypeParent(aLineNo, theParameters)
+		{
+		}
 
-	/** @brief Duplication.
-	 * 
-	 *  @return New instance as clone of this instance.
-	 *//*
-	inline virtual CRManInterfaceCall *duplicate() const
-	{
-		return new CPolygonRManInterfaceCall(*this);
-	} */
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CPolygonRManInterfaceCall(const CPolygonRManInterfaceCall &c)
+		{
+			*this = c;
+		}
 
-	/** @brief Destructor.
-	 */
-	inline virtual ~CPolygonRManInterfaceCall() {}
+		/** @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 *//*
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CPolygonRManInterfaceCall(*this);
+		} */
 
-	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
-	{
-		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
-	}
+		/** @brief Destructor.
+		 */
+		inline virtual ~CPolygonRManInterfaceCall() {}
 
-	/** @brief Assignment.
-	 *
-	 * @param c Object to assign.
-	 * @return A reference to this object.
-	 */
-	inline CPolygonRManInterfaceCall &CPolygonRManInterfaceCall::operator=(const CPolygonRManInterfaceCall &c)
-	{
-		if ( this == &c )
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+
+		/** @brief Assignment.
+		 *
+		 * @param c Object to assign.
+		 * @return A reference to this object.
+		 */
+		inline CPolygonRManInterfaceCall &CPolygonRManInterfaceCall::operator=(const CPolygonRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
+
+			TypeParent::operator=(c);
 			return *this;
-
-		TypeParent::operator=(c);
-		return *this;
-	}
-}; // CPolygonRManInterfaceCall
+		}
+	}; // CPolygonRManInterfaceCall
 
 }
 

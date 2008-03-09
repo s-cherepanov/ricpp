@@ -790,182 +790,47 @@ RtVoid CRibWriter::postArchiveEnd(CRiArchiveEnd &obj)
 
 
 RtVoid CRibWriter::postFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat aspect)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_FORMAT);
-	m_writer->putBlank();
-	m_writer->putValue(xres);
-	m_writer->putBlank();
-	m_writer->putValue(yres);
-	m_writer->putBlank();
-	m_writer->putValue(aspect);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspect)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_FRAME_ASPECT_RATIO);
-	m_writer->putBlank();
-	m_writer->putValue(aspect);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SCREEN_WINDOW);
-	m_writer->putBlank();
-	m_writer->putValue(left);
-	m_writer->putBlank();
-	m_writer->putValue(right);
-	m_writer->putBlank();
-	m_writer->putValue(bot);
-	m_writer->putBlank();
-	m_writer->putValue(top);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_CROP_WINDOW);
-	m_writer->putBlank();
-	m_writer->putValue(xmin);
-	m_writer->putBlank();
-	m_writer->putValue(xmax);
-	m_writer->putBlank();
-	m_writer->putValue(ymin);
-	m_writer->putBlank();
-	m_writer->putValue(ymax);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_PROJECTION);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postClipping(CRiClipping &obj, RtFloat hither, RtFloat yon)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_CLIPPING);
-	m_writer->putBlank();
-	m_writer->putValue(hither);
-	m_writer->putBlank();
-	m_writer->putValue(yon);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_CLIPPING_PLANE);
-	m_writer->putBlank();
-	m_writer->putValue(x);
-	m_writer->putBlank();
-	m_writer->putValue(y);
-	m_writer->putBlank();
-	m_writer->putValue(z);
-	m_writer->putBlank();
-	m_writer->putValue(nx);
-	m_writer->putBlank();
-	m_writer->putValue(ny);
-	m_writer->putBlank();
-	m_writer->putValue(nz);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_DEPTH_OF_FIELD);
-	m_writer->putBlank();
-	m_writer->putValue(fstop);
-	m_writer->putBlank();
-	m_writer->putValue(focallength);
-	m_writer->putBlank();
-	m_writer->putValue(focaldistance);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postShutter(CRiShutter &obj, RtFloat smin, RtFloat smax)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SHUTTER);
-	m_writer->putBlank();
-	m_writer->putValue(smin);
-	m_writer->putBlank();
-	m_writer->putValue(smax);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPixelVariance(CRiPixelVariance &obj, RtFloat variation)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_PIXEL_VARIANCE);
-	m_writer->putBlank();
-	m_writer->putValue(variation);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPixelSamples(CRiPixelSamples &obj, RtFloat xsamples, RtFloat ysamples)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_PIXEL_SAMPLES);
-	m_writer->putBlank();
-	m_writer->putValue(xsamples);
-	m_writer->putBlank();
-	m_writer->putValue(ysamples);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPixelFilter(CRiPixelFilter &obj, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
@@ -979,149 +844,44 @@ RtVoid CRibWriter::postPixelFilter(CRiPixelFilter &obj, const IFilterFunc &funct
 			renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__),
 			"Unknown name of pixel filter.");
 	}
-	writePrefix();
-	m_writer->putRequest(REQ_PIXEL_FILTER);
-	m_writer->putBlank();
-	m_writer->putStringToken(function.name());
-	m_writer->putBlank();
-	m_writer->putValue(xwidth);
-	m_writer->putBlank();
-	m_writer->putValue(ywidth);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
 RtVoid CRibWriter::postExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_EXPOSURE);
-	m_writer->putBlank();
-	m_writer->putValue(gain);
-	m_writer->putBlank();
-	m_writer->putValue(gamma);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postImager(CRiImager &obj, RtString name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_IMAGER);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_QUANTIZE);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putBlank();
-	m_writer->putValue(one);
-	m_writer->putBlank();
-	m_writer->putValue(qmin);
-	m_writer->putBlank();
-	m_writer->putValue(qmax);
-	m_writer->putBlank();
-	m_writer->putValue(ampl);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postDisplayChannel(CRiDisplayChannel &obj, RtString channel, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_DISPLAY_CHANNEL);
-	m_writer->putBlank();
-	m_writer->putString(channel);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_DISPLAY);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putBlank();
-	m_writer->putStringToken(mode);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postHider(CRiHider &obj, RtToken type, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_HIDER);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRGB[], RtFloat RGBn[])
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_COLOR_SAMPLES);
-	m_writer->putBlank();
-	m_writer->putArray(N*3, nRGB);
-	m_writer->putBlank();
-	m_writer->putArray(N*3, RGBn);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postRelativeDetail(CRiRelativeDetail &obj, RtFloat relativedetail)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_RELATIVE_DETAIL);
-	m_writer->putBlank();
-	m_writer->putValue(relativedetail);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postOption(CRiOption &obj, RtToken name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_OPTION);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postLightSource(CRiLightSource &obj, RtString name, const CParameterList &params)
@@ -1129,24 +889,19 @@ RtVoid CRibWriter::postLightSource(CRiLightSource &obj, RtString name, const CPa
 	if ( !postTestValid() )
 		return;
 
-	writePrefix();
-	m_writer->putRequest(REQ_LIGHT_SOURCE);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	m_writer->putBlank();
 	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
-		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for LightSource \"%s\"", noNullStr(name));
-	} else {
-		if ( handle->fromHandleId() ) {
-			m_writer->putStringToken(handle->handle());
-		} else {
-			m_writer->putValue(handle->handleNo());
-		}
+		return;
 	}
+	
 	RtToken ignoreTokens[] = {RI_HANDLEID};
-	writeParameterList(params, 1, ignoreTokens);
+
+	if ( handle->fromHandleId() ) {
+		obj.writeRIB(*m_writer, handle->handle(), 1, ignoreTokens);
+	} else {
+		obj.writeRIB(*m_writer, handle->handleNo(), 1, ignoreTokens);
+	}
 }
 
 
@@ -1154,394 +909,135 @@ RtVoid CRibWriter::postAreaLightSource(CRiAreaLightSource &obj, RtString name, c
 {
 	if ( !postTestValid() )
 		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_AREA_LIGHT_SOURCE);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	m_writer->putBlank();
+	
 	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
-		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for AreaLightSource \"%s\"", noNullStr(name));
-	} else {
-		if ( handle->fromHandleId() ) {
-			m_writer->putStringToken(handle->handle());
-		} else {
-			m_writer->putValue(handle->handleNo());
-		}
+		return;
 	}
+	
 	RtToken ignoreTokens[] = {RI_HANDLEID};
-	writeParameterList(params, 1, ignoreTokens);
+	
+	if ( handle->fromHandleId() ) {
+		obj.writeRIB(*m_writer, handle->handle(), 1, ignoreTokens);
+	} else {
+		obj.writeRIB(*m_writer, handle->handleNo(), 1, ignoreTokens);
+	}
+	
+	if ( !postTestValid() )
+		return;
 }
 
 
 RtVoid CRibWriter::postAttribute(CRiAttribute &obj, RtToken name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_ATTRIBUTE);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postColor(CRiColor &obj, RtColor Cs)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_COLOR);
-	m_writer->putBlank();
-	unsigned long n = (unsigned long)(renderState()->options().colorDescr().colorSamples());
-	m_writer->putArray(n, Cs);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postOpacity(CRiOpacity &obj, RtColor Os)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_OPACITY);
-	m_writer->putBlank();
-	unsigned long n = (unsigned long)(renderState()->options().colorDescr().colorSamples());
-	m_writer->putArray(n, Os);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postSurface(CRiSurface &obj, RtString name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SURFACE);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_ATMOSPHERE);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postInterior(CRiInterior &obj, RtString name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_INTERIOR);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postExterior(CRiExterior &obj, RtString name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
+TEST_WRITE_RIB
 
-	writePrefix();
-	m_writer->putRequest(REQ_EXTERIOR);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
+
+RtVoid CRibWriter::postDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postShadingRate(CRiShadingRate &obj, RtFloat size)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postShadingInterpolation(CRiShadingInterpolation &obj, RtToken type)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postMatte(CRiMatte &obj, RtBoolean onoff)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postBound(CRiBound &obj, RtBound bound)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postDetail(CRiDetail &obj, RtBound bound)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postOrientation(CRiOrientation &obj, RtToken anOrientation)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postReverseOrientation(CRiReverseOrientation &obj)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postSides(CRiSides &obj, RtInt nsides)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+TEST_WRITE_RIB
+
+
+RtVoid CRibWriter::postTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff)
 {
 	if ( !postTestValid() )
 		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_ILLUMINATE);
-	m_writer->putBlank();
+	
 	CHandle *handle = renderState()->lightSourceHandle(light);
 	if ( !handle ) {
-		m_writer->putValue((unsigned long)0);
 		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to illuminate \"%s\"", noNullStr(light));
-	} else {
-		if ( handle->fromHandleId() ) {
-			m_writer->putStringToken(handle->handle());
-		} else {
-			m_writer->putValue(handle->handleNo());
-		}
+		return;
 	}
-	m_writer->putBlank();
-	m_writer->putValue((RtInt)(onoff?1:0));
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
+	
 	writePrefix();
-	m_writer->putRequest(REQ_DISPLACEMENT);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
-}
-
-
-RtVoid CRibWriter::postTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_TEXTURE_COORDINATES);
-	m_writer->putBlank();
-	m_writer->putValue(s1);
-	m_writer->putBlank();
-	m_writer->putValue(t1);
-	m_writer->putBlank();
-	m_writer->putValue(s2);
-	m_writer->putBlank();
-	m_writer->putValue(t2);
-	m_writer->putBlank();
-	m_writer->putValue(s3);
-	m_writer->putBlank();
-	m_writer->putValue(t3);
-	m_writer->putBlank();
-	m_writer->putValue(s4);
-	m_writer->putBlank();
-	m_writer->putValue(t4);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postShadingRate(CRiShadingRate &obj, RtFloat size)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SHADING_RATE);
-	m_writer->putBlank();
-	m_writer->putValue(size);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postShadingInterpolation(CRiShadingInterpolation &obj, RtToken type)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SHADING_INTERPOLATION);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postMatte(CRiMatte &obj, RtBoolean onoff)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_MATTE);
-	m_writer->putBlank();
-	m_writer->putValue((RtInt)(onoff?1:0));
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postBound(CRiBound &obj, RtBound bound)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_BOUND);
-	m_writer->putBlank();
-	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), &bound[0]);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postDetail(CRiDetail &obj, RtBound bound)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_DETAIL);
-	m_writer->putBlank();
-	m_writer->putArray(sizeof(RtBound)/sizeof(bound[0]), &bound[0]);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_DETAIL_RANGE);
-	m_writer->putBlank();
-	m_writer->putValue(minvis);
-	m_writer->putBlank();
-	m_writer->putValue(lowtran);
-	m_writer->putBlank();
-	m_writer->putValue(uptran);
-	m_writer->putBlank();
-	m_writer->putValue(maxvis);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_GEOMETRIC_APPROXIMATION);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putBlank();
-	m_writer->putValue(value);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_GEOMETRIC_REPRESENTATION);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postOrientation(CRiOrientation &obj, RtToken anOrientation)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_ORIENTATION);
-	m_writer->putBlank();
-	m_writer->putStringToken(anOrientation);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postReverseOrientation(CRiReverseOrientation &obj)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_REVERSE_ORIENTATION);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postSides(CRiSides &obj, RtInt nsides)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SIDES);
-	m_writer->putBlank();
-	m_writer->putValue(nsides);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
-{
-	if ( !postTestValid() )
-		return;
-
-	RtToken basisToken;
-
-	writePrefix();
-	m_writer->putRequest(REQ_BASIS);
-	m_writer->putBlank();
-	basisToken = renderState()->basisName(ubasis);
-	if ( basisToken != RI_NULL ) {
-		m_writer->putStringToken(basisToken);
+	if ( handle->fromHandleId() ) {
+		obj.writeRIB(*m_writer, handle->handle());
 	} else {
-		m_writer->putArray(sizeof(RtBasis)/sizeof(ubasis[0][0]), &(ubasis[0][0]));
+		obj.writeRIB(*m_writer, handle->handleNo());
 	}
-	m_writer->putBlank();
-	m_writer->putValue(ustep);
-	m_writer->putBlank();
-	basisToken = renderState()->basisName(vbasis);
-	if ( basisToken != RI_NULL ) {
-		m_writer->putStringToken(basisToken);
-	} else {
-		m_writer->putArray(sizeof(RtBasis)/sizeof(vbasis[0][0]), &(vbasis[0][0]));
-	}
-	m_writer->putBlank();
-	m_writer->putValue(vstep);
-	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
-{
-	if ( !postTestValid() )
-		return;
-
-	CTrimCurveDataInfo tc(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
-
-	writePrefix();
-	m_writer->putRequest(REQ_TRIM_CURVE);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_nloops, ncurves);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_total, order);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_nknots, knot);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_total, amin);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_total, amax);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_total, n);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_npoints, u);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_npoints, v);
-	m_writer->putBlank();
-	m_writer->putArray(tc.m_npoints, w);
-	m_writer->putNewLine();
 }
 
 
@@ -1670,19 +1166,6 @@ RtVoid CRibWriter::postSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy
 	m_writer->putBlank();
 	m_writer->putValue(dz2);
 	m_writer->putNewLine();
-}
-
-
-RtVoid CRibWriter::postDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_DEFORMATION);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	writeParameterList(params);
 }
 
 

@@ -992,9 +992,6 @@ public:
 
 	virtual const IFilterFunc *filterFunc(RtToken name) const;
 
-	virtual bool getBasis(RtToken basisName, RtBasis basis) const;
-	virtual RtToken basisName(const RtBasis basis) const;
-
 	virtual inline bool cacheFileArchives() const { return m_cacheFileArchives; }
 	virtual inline void cacheFileArchives(bool cache) { m_cacheFileArchives = cache; }
 

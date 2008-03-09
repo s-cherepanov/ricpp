@@ -2205,19 +2205,6 @@ void CRenderState::registerResourceFactory(IResourceFactory *f)
 	m_resourceFactories.registerObj(t, f);
 }
 
-
-bool CRenderState::getBasis(RtToken basisName, RtBasis basis) const
-{
-	return CTypeInfo::getBasis(basisName, basis);
-}
-
-
-RtToken CRenderState::basisName(const RtBasis basis) const
-{
-	return CTypeInfo::basisName(basis);
-}
-
-
 const IFilterFunc *CRenderState::filterFunc(RtToken name) const
 {
 	return m_filterFuncFactory->singleton(name);
@@ -2234,7 +2221,6 @@ void CRenderState::defaultDeclarations()
 	RI_QUAL_CACHE_FILE_ARCHIVES = declare("Control:rib:cache-file-archives", "constant integer", true);
 	RI_QUAL_VARSUBST = declare("Option:rib:varsubst", "string", true);
 }
-
 
 RtToken CRenderState::declare(RtToken name, RtString declaration, bool isDefault)
 {

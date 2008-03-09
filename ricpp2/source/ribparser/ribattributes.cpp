@@ -1235,7 +1235,7 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 				RtToken name = parser.renderState().tokFind(uname);
 				if ( name == RI_CATMULLROM )
 					name = RI_CATMULL_ROM;
-				if ( !name || !parser.renderState().getBasis(name, ubasis) ) {
+				if ( !name || !CTypeInfo::getBasis(name, ubasis) ) {
 					parser.errHandler().handleError(
 						RIE_CONSISTENCY, RIE_WARNING,
 						"Line %ld, File \"%s\", badarray: '%s' argument 1 ubasis '%s' is not a valid basis",
@@ -1258,7 +1258,7 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 				RtToken name = parser.renderState().tokFind(vname);
 				if ( name == RI_CATMULLROM )
 					name = RI_CATMULL_ROM;
-				if ( !name || !parser.renderState().getBasis(name, vbasis) ) {
+				if ( !name || !CTypeInfo::getBasis(name, vbasis) ) {
 					parser.errHandler().handleError(
 						RIE_CONSISTENCY, RIE_WARNING,
 						"Line %ld, File \"%s\", badarray: '%s' argument 1 vbasis '%s' is not a valid basis",

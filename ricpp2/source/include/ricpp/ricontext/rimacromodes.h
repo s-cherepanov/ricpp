@@ -47,11 +47,13 @@ namespace RiCPP {
  *
  */
 ///////////////////////////////////////////////////////////////////////////////
-/** @brief User defined option.
+/** @brief Begins a context.
  */
 class CRiBegin : public CVarParamRManInterfaceCall {
 private:
 	std::string m_name; ///< Name of the backend as string.
+protected:
+	typedef CVarParamRManInterfaceCall TypeParent;
 
 public:
 	/** @brief Gets name for the class.
@@ -71,7 +73,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -82,7 +84,7 @@ public:
 	inline CRiBegin(
 		long aLineNo = -1,
 		RtString aName = RI_NULL)
-		: CVarParamRManInterfaceCall(aLineNo), m_name(noNullStr(aName))
+		: TypeParent(aLineNo), m_name(noNullStr(aName))
 	{
 	}
 
@@ -100,7 +102,7 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtString aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, RI_BEGIN, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(noNullStr(aName))
+		: TypeParent(aLineNo, RI_BEGIN, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(noNullStr(aName))
 	{
 	}
 
@@ -115,7 +117,7 @@ public:
 		RtString aName,
 		const CParameterList &theParameters
 		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(noNullStr(aName))
+		: TypeParent(aLineNo, theParameters), m_name(noNullStr(aName))
 	{
 	}
 
@@ -175,6 +177,15 @@ public:
 		ri.postBegin(*this, m_name.c_str(), parameters());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		// Normally not called because Begin is not a RIB command
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(name());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 *  @param c CRManInterfaceCall to assign
@@ -187,7 +198,7 @@ public:
 
 		name(c.name());
 
-		CVarParamRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiBegin
@@ -200,6 +211,8 @@ public:
  *
  */
 class CRiEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -218,14 +231,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -264,6 +277,13 @@ public:
 		ri.postEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		// Normally not called because Begin is not a RIB command
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -274,7 +294,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiEnd
@@ -284,6 +304,8 @@ public:
 /** @brief Begin of a resource block
  */
 class CRiResourceBegin : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -302,14 +324,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiResourceBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiResourceBegin(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -348,6 +370,12 @@ public:
 		ri.postResourceBegin(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -358,7 +386,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiResourceBegin
@@ -367,6 +395,8 @@ public:
 /** @brief End of a resource block
  */
 class CRiResourceEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -385,14 +415,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiResourceEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiResourceEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -431,6 +461,12 @@ public:
 		ri.postResourceEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -441,7 +477,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiResourceEnd
@@ -451,6 +487,8 @@ public:
  */
 class CRiFrameBegin : public CRManInterfaceCall {
 	RtInt m_frameNumber; ///< A number to identify the frame.
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -469,7 +507,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -478,7 +516,7 @@ public:
 	 *  @param number A frame number.
 	 */
 	inline CRiFrameBegin(long aLineNo=-1, RtInt number=0)
-		: CRManInterfaceCall(aLineNo), m_frameNumber(number)
+		: TypeParent(aLineNo), m_frameNumber(number)
 	{
 	}
 
@@ -540,6 +578,14 @@ public:
 		ri.postFrameBegin(*this, m_frameNumber);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putValue(frameNumber());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -552,7 +598,7 @@ public:
 
 		frameNumber(c.frameNumber());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiFrameBegin
@@ -562,6 +608,8 @@ public:
 /** @brief Ends a frame block.
  */
 class CRiFrameEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -580,14 +628,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo The line number at a rib file where the declare statement starts, -1 if there is no file.
 	 */
-	inline CRiFrameEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiFrameEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor
 	 *
@@ -629,6 +677,12 @@ public:
 		ri.postFrameEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -639,7 +693,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiFrameEnd
@@ -652,6 +706,8 @@ public:
  *  @see IRi::worldBegin()
  */
 class CRiWorldBegin : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -670,14 +726,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiWorldBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiWorldBegin(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -715,6 +771,12 @@ public:
 		ri.postWorldBegin(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -725,7 +787,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiWorldBegin
@@ -738,6 +800,8 @@ public:
  *  @see IRi::worldEnd()
  */
 class CRiWorldEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -756,14 +820,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiWorldEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiWorldEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -802,6 +866,12 @@ public:
 		ri.postWorldEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -812,7 +882,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiWorldEnd
@@ -821,6 +891,8 @@ public:
 /** @brief Begin of an attribute block
  */
 class CRiAttributeBegin : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -839,14 +911,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiAttributeBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiAttributeBegin(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -885,6 +957,12 @@ public:
 		ri.postAttributeBegin(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -895,7 +973,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiAttributeBegin
@@ -904,6 +982,8 @@ public:
 /** @brief End of an attribute block
  */
 class CRiAttributeEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -922,14 +1002,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiAttributeEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiAttributeEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -968,6 +1048,12 @@ public:
 		ri.postAttributeEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -978,7 +1064,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiAttributeEnd
@@ -987,6 +1073,8 @@ public:
 /** @brief Begin of a transformation block
  */
 class CRiTransformBegin : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1005,14 +1093,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiTransformBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiTransformBegin(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -1051,6 +1139,12 @@ public:
 		ri.postTransformBegin(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1061,7 +1155,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiTransformBegin
@@ -1070,6 +1164,8 @@ public:
 /** @brief End of a transformation block
  */
 class CRiTransformEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1088,14 +1184,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file
 	 */
-	inline CRiTransformEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiTransformEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -1134,6 +1230,12 @@ public:
 		ri.postTransformEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1144,7 +1246,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiTransformEnd
@@ -1155,7 +1257,8 @@ public:
 class CRiSolidBegin : public CRManInterfaceCall {
 private:
 	RtToken m_type; ///< Token that indicates the solid operation (like RI_UNION), must be atomized (@see CToken)
-
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1174,7 +1277,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -1182,7 +1285,7 @@ public:
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
 	 *  @param aType The token of the operation (must be an atomized string, @see CToken).
 	 */
-	inline CRiSolidBegin(long aLineNo=-1, RtToken aType=RI_PRIMITIVE) : CRManInterfaceCall(aLineNo), m_type(aType) { }
+	inline CRiSolidBegin(long aLineNo=-1, RtToken aType=RI_PRIMITIVE) : TypeParent(aLineNo), m_type(aType) { }
 
 	/** @brief Copy constructor.
 	 *
@@ -1237,6 +1340,14 @@ public:
 		ri.postSolidBegin(*this, m_type);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(type());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1249,7 +1360,7 @@ public:
 
 		type(c.type());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiSolidBegin
@@ -1258,6 +1369,8 @@ public:
 /** @brief End of a solid block.
  */
 class CRiSolidEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1276,14 +1389,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
 	 *
 	 *  @param aLineNo Line number of a Rib Archive, -1 if there is no such file.
 	 */
-	inline CRiSolidEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiSolidEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -1322,6 +1435,12 @@ public:
 		ri.postSolidEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1332,7 +1451,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiSolidEnd
@@ -1345,6 +1464,8 @@ public:
  *  instances are not stored at a macro themselves.
  */
 class CRiObjectBegin : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 private:
 	RtObjectHandle m_handle; ///< Handle used to identify the object
 	RtToken m_name;          ///< Name of the object, used to generate the handle.
@@ -1372,7 +1493,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -1385,7 +1506,7 @@ public:
 		long aLineNo = -1,
 		RtObjectHandle aHandle = illObjectHandle,
 		RtToken aName = RI_NULL)
-		: CRManInterfaceCall(aLineNo)
+		: TypeParent(aLineNo)
 	{
 		m_handle = aHandle;
 		m_name = aName;
@@ -1458,6 +1579,33 @@ public:
 		ri.postObjectBegin(*this, name());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		// Special handling by rib writer
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(name());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, const char *aName, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		// Special handling by rib writer
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(aName);
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, unsigned long handleNo, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		// Special handling by rib writer
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putValue(handleNo);
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1471,7 +1619,7 @@ public:
 		handle(c.handle());
 		name(c.name());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiObjectBegin
@@ -1484,6 +1632,8 @@ public:
  *  instances are not stored at a macro themselves.
  */
 class CRiObjectEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1502,14 +1652,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiObjectEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiObjectEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -1548,6 +1698,12 @@ public:
 		ri.postObjectEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1557,7 +1713,7 @@ public:
 	{
 		if ( this == &c )
 			return *this;
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiObjectEnd
@@ -1573,7 +1729,8 @@ class CRiArchiveBegin : public CVarParamRManInterfaceCall {
 private:
 	RtArchiveHandle m_handle; ///< Associated archive handle to identify the object (constructed by IDoRender::preArchiveBegin()).
 	std::string m_name;       ///< Name of the archive, used to generate the handle.
-
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1713,6 +1870,14 @@ public:
 		ri.postArchiveBegin(*this, name(), parameters());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(name());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1739,6 +1904,8 @@ public:
  *  instances are not stored at a macro themselves.
  */
 class CRiArchiveEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -1757,14 +1924,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiArchiveEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiArchiveEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -1803,6 +1970,12 @@ public:
 		ri.postArchiveEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1812,7 +1985,7 @@ public:
 	{
 		if ( this == &c )
 			return *this;
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiArchiveEnd
@@ -1825,7 +1998,8 @@ public:
 class CRiMotionBegin : public CRManInterfaceCall {
 private:
 	std::vector<RtFloat> m_motionVars; ///< The motion "time stamps"
-
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -1844,14 +2018,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiMotionBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo)
+	inline CRiMotionBegin(long aLineNo=-1) : TypeParent(aLineNo)
 	{
 	}
 
@@ -1865,7 +2039,7 @@ public:
 	 *  @param f Vector of "time stamps", size is @a n.
 	 */
 	inline CRiMotionBegin(long aLineNo, RtInt n, RtFloat *f) :
-		CRManInterfaceCall(aLineNo)
+		TypeParent(aLineNo)
 	{
 		set(n, f);
 	}
@@ -1966,6 +2140,15 @@ public:
 		);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putArray(static_cast<RtInt>(m_motionVars.size()),
+						   m_motionVars.empty() ? 0 : &m_motionVars[0]);
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -1978,7 +2161,7 @@ public:
 
 		set(c.motionVars());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 	 	return *this;
 	}
 }; // CRiMotionBegin
@@ -1988,6 +2171,8 @@ public:
 /** @brief End of a motion block.
  */
 class CRiMotionEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -2006,14 +2191,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiMotionEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiMotionEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -2052,6 +2237,12 @@ public:
 		ri.postMotionEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -2061,7 +2252,7 @@ public:
 	{
 		if ( this == &c )
 			return *this;
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 	 	return *this;
 	}
 }; // CRiMotionEnd
@@ -2072,6 +2263,8 @@ public:
  */
 class CRiIfBegin : public CRManInterfaceCall {
 	std::string m_exprStr; ///< The expression of the if block
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -2090,7 +2283,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -2098,7 +2291,7 @@ public:
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param anExprStr The expression of the if block.
 	 */
-	inline CRiIfBegin(long aLineNo=-1, RtString anExprStr=0) : CRManInterfaceCall(aLineNo), m_exprStr(noNullStr(anExprStr)) {}
+	inline CRiIfBegin(long aLineNo=-1, RtString anExprStr=0) : TypeParent(aLineNo), m_exprStr(noNullStr(anExprStr)) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -2155,6 +2348,14 @@ public:
 		ri.postIfBegin(*this, exprStr());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putString(exprStr());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -2166,7 +2367,7 @@ public:
 			return *this;
 		exprStr(c.exprStr());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 	 	return *this;
 	}
 }; // CRiIfBegin
@@ -2177,6 +2378,8 @@ public:
  */
 class CRiElseIfBegin : public CRManInterfaceCall {
 	std::string m_exprStr; ///< The expression of the if block
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -2195,7 +2398,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -2203,7 +2406,7 @@ public:
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 *  @param anExprStr The expression of the if block.
 	 */
-	inline CRiElseIfBegin(long aLineNo=-1, const char *anExprStr=0) : CRManInterfaceCall(aLineNo), m_exprStr(noNullStr(anExprStr)) {}
+	inline CRiElseIfBegin(long aLineNo=-1, const char *anExprStr=0) : TypeParent(aLineNo), m_exprStr(noNullStr(anExprStr)) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -2260,6 +2463,14 @@ public:
 		ri.postElseIfBegin(*this, exprStr());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putString(exprStr());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -2271,7 +2482,7 @@ public:
 			return *this;
 		exprStr(c.exprStr());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 	 	return *this;
 	}
 }; // CRiElseIfBegin
@@ -2281,6 +2492,8 @@ public:
 /** @brief Start of the else part of an if block.
  */
 class CRiElseBegin : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -2299,14 +2512,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiElseBegin(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiElseBegin(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -2345,6 +2558,12 @@ public:
 		ri.postElseBegin(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -2355,7 +2574,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 	 	return *this;
 	}
 }; // CRiElseBegin
@@ -2365,6 +2584,8 @@ public:
 /** @brief End an if block.
  */
 class CRiIfEnd : public CRManInterfaceCall {
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets the name for the class.
 	 *
@@ -2383,14 +2604,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
 	 *
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
-	inline CRiIfEnd(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+	inline CRiIfEnd(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Copy constructor.
 	 *
@@ -2429,6 +2650,12 @@ public:
 		ri.postIfEnd(*this);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment
 	 *
 	 * @param c Object to assign
@@ -2439,7 +2666,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 	 	return *this;
 	}
 }; // CRiIfEnd

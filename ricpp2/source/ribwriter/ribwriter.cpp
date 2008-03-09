@@ -100,6 +100,20 @@ Control ribarchive cachefile 1 0
 
 using namespace RiCPP;
 
+
+#define WRITE_RIB { \
+writePrefix(); \
+obj.writeRIB(*m_writer); \
+}
+
+#define TEST_WRITE_RIB { \
+if ( !postTestValid() ) \
+	return; \
+writePrefix(); \
+obj.writeRIB(*m_writer); \
+}
+
+
 // -----------------------------------------------------------------------------
 
 const char *CRibWriterCreator::myName() { return RIBWRITERCREATOR_NAME; }
@@ -479,84 +493,23 @@ RtVoid CRibWriter::postEnd(CRiEnd &obj)
 
 
 RtVoid CRibWriter::postErrorHandler(CRiErrorHandler &obj, const IErrorHandler &handler)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_ERROR_HANDLER);
-	m_writer->putBlank();
-	m_writer->putStringToken(handler.name());
-	m_writer->putNewLine();
-}
-
+TEST_WRITE_RIB
 
 RtVoid CRibWriter::postDeclare(CRiDeclare &obj, RtToken name, RtString declaration)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_DECLARE);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	m_writer->putBlank();
-	m_writer->putString(declaration);
-	m_writer->putNewLine();
-}
-
+TEST_WRITE_RIB
 
 RtVoid CRibWriter::postSynchronize(CRiSynchronize &obj, RtToken name)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SYNCHRONIZE);
-	m_writer->putBlank();
-	m_writer->putStringToken(name);
-	m_writer->putNewLine();
-}
-
+TEST_WRITE_RIB
 
 RtVoid CRibWriter::postSystem(CRiSystem &obj, RtString cmd)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SYSTEM);
-	m_writer->putBlank();
-	m_writer->putString(cmd);
-	m_writer->putNewLine();
-}
-
+TEST_WRITE_RIB
 
 RtVoid CRibWriter::postResource(CRiResource &obj, RtToken handle, RtString type, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_RESOURCE);
-	m_writer->putBlank();
-	m_writer->putStringToken(handle);
-	m_writer->putBlank();
-	m_writer->putString(type);
-	writeParameterList(params);
-}
-
+TEST_WRITE_RIB
 
 RtVoid CRibWriter::postFrameBegin(CRiFrameBegin &obj, RtInt number)
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_FRAME_BEGIN);
-	m_writer->putBlank();
-	m_writer->putValue(number);
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -567,20 +520,13 @@ RtVoid CRibWriter::postFrameEnd(CRiFrameEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_FRAME_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
 RtVoid CRibWriter::postWorldBegin(CRiWorldBegin &obj)
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_WORLD_BEGIN);
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -591,20 +537,13 @@ RtVoid CRibWriter::postWorldEnd(CRiWorldEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_WORLD_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
 RtVoid CRibWriter::postAttributeBegin(CRiAttributeBegin &obj)
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_ATTRIBUTE_BEGIN);
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -615,20 +554,13 @@ RtVoid CRibWriter::postAttributeEnd(CRiAttributeEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_ATTRIBUTE_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
 RtVoid CRibWriter::postTransformBegin(CRiTransformBegin &obj)
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_TRANSFORM_BEGIN);
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -639,22 +571,13 @@ RtVoid CRibWriter::postTransformEnd(CRiTransformEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_TRANSFORM_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
 RtVoid CRibWriter::postSolidBegin(CRiSolidBegin &obj, RtToken type)
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SOLID_BEGIN);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -665,9 +588,7 @@ RtVoid CRibWriter::postSolidEnd(CRiSolidEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_SOLID_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
@@ -675,37 +596,31 @@ RtVoid CRibWriter::postObjectBegin(CRiObjectBegin &obj, RtString name)
 {
 	CRiMacro *m = renderState()->curMacro();
 	assert (m != 0);
+	
+	m_suppressOutputVector.push_back(m_suppressOutput);
 
-	if ( m ) {
-		m->postpone(m_postponeObject != 0);
+	if ( !m ) {
+		m_suppressOutput = false;
+		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Container not created for ObjectSource \"%s\"", noNullStr(obj.handle()));
+		return;
 	}
 
-	m_suppressOutputVector.push_back(m_suppressOutput);
+	m->postpone(m_postponeObject != 0);
 
 	if ( !testValid() ) 
 		return;
 
-	if ( !m || m->postpone() ) {
+	if ( m->postpone() ) {
 		if ( postTestValid() ) {
 			writePrefix();
-			m_writer->putRequest(REQ_OBJECT_BEGIN);
-			m_writer->putBlank();
-			if ( m ) {
-				if ( m->fromHandleId() ) {
-					m_writer->putStringToken(m->handle());
-				} else {
-					m_writer->putValue(m->handleNo());
-				}
+			if ( m->fromHandleId() ) {
+				obj.writeRIB(*m_writer, m->handle());
 			} else {
-				m_writer->putStringToken(m->handle());
+				obj.writeRIB(*m_writer, m->handleNo());
 			}
-			m_writer->putNewLine();
 			incNestingDepth();
 		}
 		m_suppressOutput = false;
-		if ( !m ) {
-			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Container not created for ObjectSource \"%s\"", noNullStr(obj.handle()));
-		}
 	} else {
 		m_suppressOutput = true;
 	}
@@ -724,9 +639,7 @@ RtVoid CRibWriter::preObjectEnd(CRiObjectEnd &obj)
 	if ( !m || m->postpone() ) {
 		if ( postTestValid() ) {
 			decNestingDepth();
-			writePrefix();
-			m_writer->putRequest(REQ_OBJECT_END);
-			m_writer->putNewLine();
+			WRITE_RIB
 		}
 	}
 }
@@ -791,14 +704,7 @@ RtVoid CRibWriter::postObjectInstance(CRiObjectInstance &obj, RtObjectHandle han
 
 RtVoid CRibWriter::postMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times[])
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_MOTION_BEGIN);
-	m_writer->putBlank();
-	m_writer->putArray(N, N>0 ? &times[0] : 0);
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -809,20 +715,13 @@ RtVoid CRibWriter::postMotionEnd(CRiMotionEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_MOTION_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
 RtVoid CRibWriter::postResourceBegin(CRiResourceBegin &obj)
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_RESOURCE_BEGIN);
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -833,9 +732,7 @@ RtVoid CRibWriter::postResourceEnd(CRiResourceEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_RESOURCE_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
 
 
@@ -856,11 +753,7 @@ RtVoid CRibWriter::postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CP
 	if ( !m || m->postpone() ) {
 		m_suppressOutput = false;
 		if ( postTestValid() ) {
-			writePrefix();
-			m_writer->putRequest(REQ_ARCHIVE_BEGIN);
-			m_writer->putBlank();
-			m_writer->putStringToken(name);
-			writeParameterList(params);
+			WRITE_RIB
 			incNestingDepth();
 		}
 	} else {
@@ -881,9 +774,7 @@ RtVoid CRibWriter::preArchiveEnd(CRiArchiveEnd &obj)
 	if ( !m || m->postpone() ) {
 		if ( postTestValid() ) {
 			decNestingDepth();
-			writePrefix();
-			m_writer->putRequest(REQ_ARCHIVE_END);
-			m_writer->putNewLine();
+			WRITE_RIB
 		}
 	}
 }
@@ -1840,8 +1731,7 @@ RtVoid CRibWriter::postPolygon(CRiPolygon &obj, RtInt nvertices, const CParamete
 		return;
 
 	writePrefix();
-	m_writer->putRequest(REQ_POLYGON);
-	writeParameterList(params);
+	obj.writeRIB(*m_writer);
 }
 
 
@@ -2500,15 +2390,7 @@ RtVoid CRibWriter::postReadArchive(CRiReadArchive &obj, RtString name, const IAr
 
 RtVoid CRibWriter::postIfBegin(CRiIfBegin &obj, RtString expr)
 {
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_IF_BEGIN);
-	m_writer->putBlank();
-	m_writer->putString(expr);
-	m_writer->putBlank();
-	m_writer->putNewLine();
+	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
@@ -2519,12 +2401,7 @@ RtVoid CRibWriter::postElseIfBegin(CRiElseIfBegin &obj, RtString expr)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_ELSE_IF);
-	m_writer->putBlank();
-	m_writer->putString(expr);
-	m_writer->putBlank();
-	m_writer->putNewLine();
+	WRITE_RIB
 	incNestingDepth();
 }
 
@@ -2535,9 +2412,7 @@ RtVoid CRibWriter::postElseBegin(CRiElseBegin &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_ELSE);
-	m_writer->putNewLine();
+	WRITE_RIB
 	incNestingDepth();
 }
 
@@ -2548,8 +2423,5 @@ RtVoid CRibWriter::postIfEnd(CRiIfEnd &obj)
 		return;
 
 	decNestingDepth();
-	writePrefix();
-	m_writer->putRequest(REQ_IF_END);
-	m_writer->putNewLine();
+	WRITE_RIB
 }
-

@@ -56,7 +56,8 @@ namespace RiCPP {
 class CRiErrorHandler : public CRManInterfaceCall {
 private:
 	const IErrorHandler *m_handler; ///< Pointer to the error handler function
-
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -75,7 +76,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor, default handler is a CPrintErrorHandler.
@@ -85,7 +86,7 @@ public:
 	 */
 	inline CRiErrorHandler(
 		long aLineNo = -1)
-		: CRManInterfaceCall(aLineNo)
+		: TypeParent(aLineNo)
 	{
 		m_handler = &CPrintErrorHandler::func;
 	}
@@ -100,7 +101,7 @@ public:
 	inline CRiErrorHandler(
 		long aLineNo,
 		const IErrorHandler &handler)
-		: CRManInterfaceCall(aLineNo)
+		: TypeParent(aLineNo)
 	{
 		m_handler = &(handler.singleton());
 	}
@@ -173,6 +174,14 @@ public:
 		ri.postErrorHandler(*this, *m_handler);
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(handler().name());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}	
+
 	/** @brief Assignment.
 	 *
 	 *  @param c Object to assign.
@@ -186,7 +195,7 @@ public:
 
 		handler(c.handler());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiErrorHandler
@@ -202,6 +211,8 @@ class CRiDeclare : public CRManInterfaceCall {
 private:
 	std::string m_name;        ///< Name of the declarated variable (not the token)
 	std::string m_declaration; ///< The declaration, like: varying float[3]
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -220,7 +231,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -233,7 +244,7 @@ public:
 		long aLineNo = -1,
 		RtString aName = 0, 
 		RtString aDeclaration = 0)
-		: CRManInterfaceCall(aLineNo),
+		: TypeParent(aLineNo),
 		  m_name(noNullStr(aName)),
 		  m_declaration(noNullStr(aDeclaration))
 	{}
@@ -313,6 +324,16 @@ public:
 		ri.postDeclare(*this, name(), declaration());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(name());
+		ribWriter.putBlank();
+		ribWriter.putString(declaration());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -326,7 +347,7 @@ public:
 		name(c.name());
 		declaration(c.declaration());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiDeclare
@@ -338,6 +359,8 @@ public:
 class CRiSynchronize : public CRManInterfaceCall {
 private:
 	RtToken m_name; ///< The synchronization command
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -356,7 +379,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -367,7 +390,7 @@ public:
 	inline CRiSynchronize(
 		long aLineNo = -1,
 		RtToken aName = 0)
-		: CRManInterfaceCall(aLineNo),
+		: TypeParent(aLineNo),
 		  m_name(aName)
 	{}
 	
@@ -428,6 +451,14 @@ public:
 		ri.postSynchronize(*this, name());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(name());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -440,7 +471,7 @@ public:
 
 		name(c.name());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiSynchronize
@@ -454,6 +485,8 @@ public:
 class CRiSystem : public CRManInterfaceCall {
 private:
 	std::string m_cmd; ///< The command
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -472,7 +505,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -483,7 +516,7 @@ public:
 	inline CRiSystem(
 		long aLineNo = -1,
 		RtString aCommand = 0)
-		: CRManInterfaceCall(aLineNo),
+		: TypeParent(aLineNo),
 		  m_cmd(noNullStr(aCommand))
 	{}
 	
@@ -544,6 +577,14 @@ public:
 		ri.postSystem(*this, command());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(command());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -556,7 +597,7 @@ public:
 
 		command(c.command());
 
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiSystem
@@ -570,7 +611,8 @@ public:
 class CRiControl : public CVarParamRManInterfaceCall {
 private:
 	RtToken m_name; ///< Name of the control request as atomized string.
-
+protected:
+	typedef CVarParamRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -589,7 +631,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -600,7 +642,7 @@ public:
 	inline CRiControl(
 		long aLineNo = -1,
 		RtToken aName = RI_NULL)
-		: CVarParamRManInterfaceCall(aLineNo), m_name(aName)
+		: TypeParent(aLineNo), m_name(aName)
 	{
 	}
 
@@ -618,7 +660,7 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtToken aName,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, RI_CONTROL, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(aName)
+		: TypeParent(aLineNo, RI_CONTROL, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(aName)
 	{
 	}
 
@@ -633,7 +675,7 @@ public:
 		RtToken aName,
 		const CParameterList &theParameters
 		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters), m_name(aName)
+		: TypeParent(aLineNo, theParameters), m_name(aName)
 	{
 	}
 
@@ -693,6 +735,15 @@ public:
 		ri.postControl(*this, m_name, parameters());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		// Normally not called because Control is not a RIB control
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(name());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment.
 	 *
 	 *  @param c CRManInterfaceCall to assign
@@ -705,7 +756,7 @@ public:
 
 		name(c.name());
 
-		CVarParamRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiControl
@@ -718,7 +769,8 @@ class CRiResource : public CVarParamRManInterfaceCall {
 private:
 	std::string m_handle; ///< Handle id of a resource
 	std::string m_type;   ///< Type of a resource
-
+protected:
+	typedef CVarParamRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -738,7 +790,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default Constructor.
@@ -752,7 +804,7 @@ public:
 		RtToken aHandle = 0,
 		RtToken aType = 0
 		)
-		: CVarParamRManInterfaceCall(aLineNo)
+		: TypeParent(aLineNo)
 	{
 		m_handle = noNullStr(aHandle);
 		m_type = noNullStr(aType);
@@ -774,7 +826,7 @@ public:
 		RtToken aHandle,
 		RtToken aType,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CVarParamRManInterfaceCall(aLineNo, RI_RESOURCE, aType, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+		: TypeParent(aLineNo, RI_RESOURCE, aType, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 	{
 		m_handle = aHandle;
 		m_type = aType;
@@ -793,7 +845,7 @@ public:
 		RtToken aType,
 		const CParameterList &theParameters
 		)
-		: CVarParamRManInterfaceCall(aLineNo, theParameters)
+		: TypeParent(aLineNo, theParameters)
 	{
 		m_handle = aHandle;
 		m_type = aType;
@@ -872,7 +924,17 @@ public:
 	{
 		ri.postResource(*this, handle(), type(), parameters());
 	}
-
+	
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		ribWriter.putBlank();
+		ribWriter.putStringToken(handle());
+		ribWriter.putBlank();
+		ribWriter.putString(type());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+	
 	/** @brief Assignment.
 	 *
 	 *  @param c CRManInterfaceCall to assign
@@ -886,7 +948,7 @@ public:
 		handle(c.handle());
 		type(c.type());
 
-		CVarParamRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiResource

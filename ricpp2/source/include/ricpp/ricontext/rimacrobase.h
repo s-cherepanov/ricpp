@@ -239,7 +239,9 @@ public:
 	 *  @param n Number of tokens to ignore ( sizeof(ignoreTokens) )
 	 *  @param ignoreTokens Tokens to ignore if a parameterlist is printed (namely RI_HANDLEID)
 	 */
-	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const {
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putNewLine();
 	}
 
 	/** @brief Query if bounds are available.
@@ -262,7 +264,8 @@ public:
 class CVarParamRManInterfaceCall : public CRManInterfaceCall {
 private:
 	CParameterList m_parameters;             ///< Parameters of an interface call.
-
+protected:
+	typedef CRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -295,7 +298,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Constructor.
@@ -305,7 +308,7 @@ public:
 	 *  @param aLineNo The line number to store.
 	 */
 	inline CVarParamRManInterfaceCall(long aLineNo=-1) :
-		CRManInterfaceCall(aLineNo)
+		TypeParent(aLineNo)
 	{
 	}
 
@@ -325,7 +328,7 @@ public:
 		const CParameterClasses &p,
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[]) :
-		CRManInterfaceCall(aLineNo)
+		TypeParent(aLineNo)
 	{
 		setParams(0, 0, decl, p, curColorDescr, n, tokens, params);
 	}
@@ -349,7 +352,7 @@ public:
 		const CParameterClasses &p,
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[]) :
-		CRManInterfaceCall(aLineNo)
+		TypeParent(aLineNo)
 	{
 		setParams(aQualifier, table, decl, p, curColorDescr, n, tokens, params);
 	}
@@ -362,7 +365,7 @@ public:
 	inline CVarParamRManInterfaceCall(
 		long aLineNo,
 		const CParameterList &theParameters) :
-		CRManInterfaceCall(aLineNo)
+		TypeParent(aLineNo)
 	{
 		parameters(theParameters);
 	}
@@ -479,7 +482,7 @@ public:
 			return *this;
 
 		parameters(c.parameters());
-		CRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 
@@ -506,6 +509,8 @@ public:
 /** @brief Base class of all interface calls for geometry.
  */
 class CGeometryRManInterfaceCall : public CVarParamRManInterfaceCall {
+protected:
+	typedef CVarParamRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -538,14 +543,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
 	 *
 	 *  @param aLineNo The line number to store.
 	 */
-	inline CGeometryRManInterfaceCall(long aLineNo=-1) : CVarParamRManInterfaceCall(aLineNo) {}
+	inline CGeometryRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Constructor.
 	 *
@@ -563,7 +568,7 @@ public:
 		const CParameterClasses &p,
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[]) :
-		CVarParamRManInterfaceCall(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
 	{
 	}
 
@@ -575,7 +580,7 @@ public:
 	inline CGeometryRManInterfaceCall(
 		long aLineNo,
 		const CParameterList &theParameters) :
-		CVarParamRManInterfaceCall(aLineNo, theParameters)
+		TypeParent(aLineNo, theParameters)
 	{
 	}
 
@@ -601,6 +606,11 @@ public:
 	 */
 	inline virtual ~CGeometryRManInterfaceCall() {}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -611,7 +621,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CVarParamRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CGeometryRManInterfaceCall
@@ -621,6 +631,8 @@ public:
 /** @brief Base class of all interface calls based on UV Meshes (Splines, Quadrics).
  */
 class CUVRManInterfaceCall : public CGeometryRManInterfaceCall {
+protected:
+	typedef CGeometryRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -653,14 +665,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
 	 *
 	 *  @param aLineNo The line number to store.
 	 */
-	inline CUVRManInterfaceCall(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo) {}
+	inline CUVRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Constructor.
 	 *
@@ -678,7 +690,7 @@ public:
 		const CParameterClasses &p,
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[]) :
-		CGeometryRManInterfaceCall(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
 	{
 	}
 
@@ -690,7 +702,7 @@ public:
 	inline CUVRManInterfaceCall(
 		long aLineNo,
 		const CParameterList &theParameters) :
-		CGeometryRManInterfaceCall(aLineNo, theParameters)
+		TypeParent(aLineNo, theParameters)
 	{
 	}
 
@@ -703,7 +715,7 @@ public:
 		*this = c;
 	}
 
-	/** @brief Duplication.
+	/*  @brief Duplication.
 	 * 
 	 *  @return New instance as clone of this instance.
 	 *//*
@@ -716,6 +728,11 @@ public:
 	 */
 	inline virtual ~CUVRManInterfaceCall() {}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -726,7 +743,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CGeometryRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CUVRManInterfaceCall
@@ -736,6 +753,9 @@ public:
 /** @brief Base class of all interface calls based on Polygon meshes.
  */
 class CPolygonRManInterfaceCall : public CGeometryRManInterfaceCall {
+
+protected:
+	typedef CGeometryRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -768,14 +788,14 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
 	 *
 	 *  @param aLineNo The line number to store..
 	 */
-	inline CPolygonRManInterfaceCall(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo) {}
+	inline CPolygonRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 	/** @brief Constructor.
 	 *
@@ -793,7 +813,7 @@ public:
 		const CParameterClasses &p,
 		const CColorDescr &curColorDescr,
 		RtInt n, RtToken tokens[], RtPointer params[]) :
-		CGeometryRManInterfaceCall(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
 	{
 	}
 
@@ -805,7 +825,7 @@ public:
 	inline CPolygonRManInterfaceCall(
 		long aLineNo,
 		const CParameterList &theParameters) :
-		CGeometryRManInterfaceCall(aLineNo, theParameters)
+		TypeParent(aLineNo, theParameters)
 	{
 	}
 
@@ -831,6 +851,11 @@ public:
 	 */
 	inline virtual ~CPolygonRManInterfaceCall() {}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 * @param c Object to assign.
@@ -841,7 +866,7 @@ public:
 		if ( this == &c )
 			return *this;
 
-		CGeometryRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CPolygonRManInterfaceCall

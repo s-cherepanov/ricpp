@@ -46,7 +46,8 @@ namespace RiCPP {
 class CRiPolygon : public CPolygonRManInterfaceCall {
 private:
 	RtInt m_nVertices; ///< Number of vertices of the polygon must match the number of positions "P".
-
+protected:
+	typedef CPolygonRManInterfaceCall TypeParent;
 public:
 	/** @brief Gets name for the class.
 	 *
@@ -64,7 +65,7 @@ public:
 	{
 		if ( atomizedClassName == myClassName() )
 			return true;
-		return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
+		return TypeParent::isKindOf(atomizedClassName);
 	}
 
 	/** @brief Default constructor.
@@ -74,7 +75,7 @@ public:
 	 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 	 */
 	inline CRiPolygon(long aLineNo=-1)
-		: CPolygonRManInterfaceCall(aLineNo), m_nVertices(0)
+		: TypeParent(aLineNo), m_nVertices(0)
 	{
 	}
 
@@ -92,7 +93,7 @@ public:
 		long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 		RtInt theNVertices,
 		RtInt n, RtToken tokens[], RtPointer params[])
-		: CPolygonRManInterfaceCall(aLineNo, decl, CPolygonClasses(theNVertices), curColorDescr, n, tokens, params),
+		: TypeParent(aLineNo, decl, CPolygonClasses(theNVertices), curColorDescr, n, tokens, params),
 		  m_nVertices(theNVertices)
 	{
 	}
@@ -108,7 +109,7 @@ public:
 		RtInt theNVertices,
 		const CParameterList &theParameters
 		)
-		: CPolygonRManInterfaceCall(aLineNo, theParameters), m_nVertices(theNVertices)
+		: TypeParent(aLineNo, theParameters), m_nVertices(theNVertices)
 	{
 	}
 
@@ -167,6 +168,12 @@ public:
 		ri.postPolygon(*this, m_nVertices, parameters());
 	}
 
+	inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+	{
+		ribWriter.putRequest(interfaceIdx());
+		TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+	}
+
 	/** @brief Assignment.
 	 *
 	 *  @param c CRManInterfaceCall to assign
@@ -179,7 +186,7 @@ public:
 
 		nVertices(c.nVertices());
 
-		CPolygonRManInterfaceCall::operator=(c);
+		TypeParent::operator=(c);
 		return *this;
 	}
 }; // CRiPolygon

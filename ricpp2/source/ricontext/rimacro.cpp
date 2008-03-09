@@ -164,11 +164,12 @@ void CVarParamRManInterfaceCall::writeRIB(CRibElementsWriter &ribWriter, RtInt n
 		}
 	}
 
-	ribWriter.putNewLine();
 	if ( paramError ) {
 		// throw error
 		throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Unknown basic type of parameters indicated by [ ].");
 	}
+
+	TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 }
 
 void CVarParamRManInterfaceCall::getBounds(RtBound bounds) const

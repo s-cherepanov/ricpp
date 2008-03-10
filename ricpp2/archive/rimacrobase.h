@@ -503,6 +503,374 @@ namespace RiCPP {
 		 */
 		virtual void getBounds(RtBound bounds) const;
 	}; // CVarParamRManInterfaceCall
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls for geometry.
+	 */
+	class CGeometryRManInterfaceCall : public CVarParamRManInterfaceCall {
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CGeometryRManInterfaceCall"; }
+
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CGeometryRManInterfaceCall::myClassName(); }
+
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
+
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call)
+		 *  @return true, if instance belongs to a kind of class atomizedClassName
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
+
+		/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+		 *
+		 *  @param aLineNo The line number to store.
+		 */
+		inline CGeometryRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
+
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CGeometryRManInterfaceCall(
+			long aLineNo,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		{
+		}
+
+		/** @brief Constructor.
+		 *
+		 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 * @param theParameters Parsed parameter list.
+		 */
+		inline CGeometryRManInterfaceCall(
+			long aLineNo,
+			const CParameterList &theParameters) :
+			TypeParent(aLineNo, theParameters)
+		{
+		}
+
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CGeometryRManInterfaceCall(const CGeometryRManInterfaceCall &c)
+		{
+			*this = c;
+		}
+
+		/** @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 *//*
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CGeometryRManInterfaceCall(*this);
+		} */
+
+		/** @brief Destructor.
+		 */
+		inline virtual ~CGeometryRManInterfaceCall() {}
+
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+
+		/** @brief Assignment.
+		 *
+		 * @param c Object to assign.
+		 * @return A reference to this object.
+		 */
+		inline CGeometryRManInterfaceCall &CGeometryRManInterfaceCall::operator=(const CGeometryRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
+
+			TypeParent::operator=(c);
+			return *this;
+		}
+	}; // CGeometryRManInterfaceCall
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls based on UV Meshes (Splines, Quadrics).
+	 */
+	class CUVRManInterfaceCall : public CGeometryRManInterfaceCall {
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CUVRManInterfaceCall"; }
+
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CUVRManInterfaceCall::myClassName(); }
+
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
+
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to a kind of class atomizedClassName.
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
+
+		/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+		 *
+		 *  @param aLineNo The line number to store.
+		 */
+		inline CUVRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
+
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CUVRManInterfaceCall(
+			long aLineNo,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		{
+		}
+
+		/** @brief Constructor.
+		 *
+		 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 * @param theParameters Parsed parameter list.
+		 */
+		inline CUVRManInterfaceCall(
+			long aLineNo,
+			const CParameterList &theParameters) :
+			TypeParent(aLineNo, theParameters)
+		{
+		}
+
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CUVRManInterfaceCall(const CUVRManInterfaceCall &c)
+		{
+			*this = c;
+		}
+
+		/*  @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 *//*
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CUVRManInterfaceCall(*this);
+		} */
+
+		/** @brief Destructor.
+		 */
+		inline virtual ~CUVRManInterfaceCall() {}
+
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+
+		/** @brief Assignment.
+		 *
+		 * @param c Object to assign.
+		 * @return A reference to this object.
+		 */
+		inline CUVRManInterfaceCall &CUVRManInterfaceCall::operator=(const CUVRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
+
+			TypeParent::operator=(c);
+			return *this;
+		}
+	}; // CUVRManInterfaceCall
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Base class of all interface calls based on Polygon meshes.
+	 */
+	class CPolygonRManInterfaceCall : public CGeometryRManInterfaceCall {
+
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline static const char *myClassName(void) { return "CPolygonRManInterfaceCall"; }
+
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string).
+		 */
+		inline virtual const char *className() const { return CPolygonRManInterfaceCall::myClassName(); }
+
+		/** @brief Checks if instance belongs to a specific class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to specific class atomizedClassName.
+		 */
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
+
+		/** @brief Checks if instance belongs to a kind of a class.
+		 *
+		 *  @param atomizedClassName Atomized class name (got from a static myClassName() call).
+		 *  @return true, if instance belongs to a kind of class atomizedClassName.
+		 */
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
+
+		/** @brief Default constructor. Empty parameter list, with line number defaults to -1.
+		 *
+		 *  @param aLineNo The line number to store..
+		 */
+		inline CPolygonRManInterfaceCall(long aLineNo=-1) : TypeParent(aLineNo) {}
+
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store.
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param p Counters (vertices, corners etc.) of the request.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CPolygonRManInterfaceCall(
+			long aLineNo,
+			CDeclarationDictionary &decl,
+			const CParameterClasses &p,
+			const CColorDescr &curColorDescr,
+			RtInt n, RtToken tokens[], RtPointer params[]) :
+			TypeParent(aLineNo, decl, p, curColorDescr, n, tokens, params)
+		{
+		}
+
+		/** @brief Constructor.
+		 *
+		 * @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
+		 * @param theParameters Parsed parameter list.
+		 */
+		inline CPolygonRManInterfaceCall(
+			long aLineNo,
+			const CParameterList &theParameters) :
+			TypeParent(aLineNo, theParameters)
+		{
+		}
+
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CPolygonRManInterfaceCall(const CPolygonRManInterfaceCall &c)
+		{
+			*this = c;
+		}
+
+		/** @brief Duplication.
+		 * 
+		 *  @return New instance as clone of this instance.
+		 *//*
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CPolygonRManInterfaceCall(*this);
+		} */
+
+		/** @brief Destructor.
+		 */
+		inline virtual ~CPolygonRManInterfaceCall() {}
+
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+
+		/** @brief Assignment.
+		 *
+		 * @param c Object to assign.
+		 * @return A reference to this object.
+		 */
+		inline CPolygonRManInterfaceCall &CPolygonRManInterfaceCall::operator=(const CPolygonRManInterfaceCall &c)
+		{
+			if ( this == &c )
+				return *this;
+
+			TypeParent::operator=(c);
+			return *this;
+		}
+	}; // CPolygonRManInterfaceCall
+
 }
 
 #endif // _RICPP_RICONTEXT_RIMACROBASE_H

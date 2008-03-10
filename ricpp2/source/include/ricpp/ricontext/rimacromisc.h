@@ -960,6 +960,8 @@ namespace RiCPP {
 	private:
 		RtToken     m_type; ///< Type of the archive record.
 		std::string m_line; ///< Text content of the archive record.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -977,7 +979,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -987,13 +989,13 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiArchiveRecord(long aLineNo=-1)
-			: CRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_type = 0;
 		}
 
 		inline CRiArchiveRecord(long aLineNo, RtToken aType, RtString aLine)
-			: CRManInterfaceCall(aLineNo), m_type(aType), m_line(noNullStr(aLine))
+			: TypeParent(aLineNo), m_type(aType), m_line(noNullStr(aLine))
 		{
 		}
 		
@@ -1065,6 +1067,12 @@ namespace RiCPP {
 			ri.postArchiveRecord(*this, m_type, m_line.c_str());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putComment(type(), line());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1077,7 +1085,7 @@ namespace RiCPP {
 
 			set(c.type(), c.line());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiArchiveRecord
@@ -1089,6 +1097,8 @@ namespace RiCPP {
 	private:
 		std::string       m_filename; ///< Filename of the RIB archive.
 		const IArchiveCallback *m_callback; ///< Optional callbback for archive records.
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -1104,7 +1114,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiReadArchive(long aLineNo=-1)
-			: CVarParamRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_callback = 0;
 		}
@@ -1113,7 +1123,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtString aFilename, const IArchiveCallback *cb,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CVarParamRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_filename(noNullStr(aFilename))
+			: TypeParent(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_filename(noNullStr(aFilename))
 		{
 			m_callback = 0;
 			if ( cb )
@@ -1125,7 +1135,7 @@ namespace RiCPP {
 			RtString aFilename, const IArchiveCallback *cb,
 			const CParameterList &theParameters
 			)
-			: CVarParamRManInterfaceCall(aLineNo, theParameters), m_filename(noNullStr(aFilename))
+			: TypeParent(aLineNo, theParameters), m_filename(noNullStr(aFilename))
 		{
 			m_callback = 0;
 			if ( cb )
@@ -1167,12 +1177,12 @@ namespace RiCPP {
 				m_callback = &(cb->singleton());
 		}
 
-		inline RtString filename() const
+		inline RtString name() const
 		{
 			return m_filename.c_str();
 		}
 
-		inline void filename(RtString aFilename)
+		inline void name(RtString aFilename)
 		{
 			m_filename = noNullStr(aFilename);
 		}
@@ -1208,15 +1218,23 @@ namespace RiCPP {
 			postProcess(ri, m_callback);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(name());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+
 		inline CRiReadArchive &operator=(const CRiReadArchive &c)
 		{
 			if ( this == &c )
 				return *this;
 
-			filename(c.filename());
+			name(c.name());
 			callback(c.callback());
 			
-			CVarParamRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiReadArchive
@@ -1228,6 +1246,8 @@ namespace RiCPP {
 	class CRiObjectInstance : public CRManInterfaceCall {
 	private:
 		RtObjectHandle m_handle; ///< Object handle
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1246,7 +1266,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -1257,7 +1277,7 @@ namespace RiCPP {
 		inline CRiObjectInstance(
 			long aLineNo=-1,
 			RtObjectHandle aHandle=illObjectHandle)
-			: CRManInterfaceCall(aLineNo), m_handle(aHandle)
+			: TypeParent(aLineNo), m_handle(aHandle)
 		{
 		}
 
@@ -1307,6 +1327,33 @@ namespace RiCPP {
 			ri.postObjectInstance(*this, handle());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			// Special handling by rib writer
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(handle());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, const char *aName, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			// Special handling by rib writer
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(aName);
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, unsigned long handleNo, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			// Special handling by rib writer
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(handleNo);
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+
 		/** @brief Assignment
 		 *
 		 * @param c Object to assign
@@ -1319,7 +1366,7 @@ namespace RiCPP {
 
 			handle(c.handle());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiObjectInstance
@@ -1337,6 +1384,8 @@ namespace RiCPP {
 
 		void insertData(RtPointer data);
 		void insertData(const ISubdivData *data);
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1354,7 +1403,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -1364,7 +1413,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiProcedural(long aLineNo = -1)
-			: CRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			memset(m_bound, 0, sizeof(RtBound));
 			m_subdivfunc = 0;
@@ -1429,6 +1478,23 @@ namespace RiCPP {
 				ri.postProcedural(*this, 
 					m_data ? m_data->data() : 0,
 					m_bound, *m_subdivfunc, m_freefunc);
+		}
+
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			if ( !m_subdivfunc )
+				return;
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(m_subdivfunc->name());
+			ribWriter.putBlank();
+			if ( m_data )
+				ribWriter.putArray(m_subdivfunc->numArgs(), (const RtString *)m_data->data());
+			else
+				ribWriter.putArray();
+			ribWriter.putBlank();
+			ribWriter.putArray(m_bound);
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 
 		/** @brief Assignment.

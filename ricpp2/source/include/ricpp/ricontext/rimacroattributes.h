@@ -301,7 +301,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(m_color.size(), color());
+			ribWriter.putArray((unsigned long)m_color.size(), color());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}	
 
@@ -429,7 +429,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(m_opacity.size(), opacity());
+			ribWriter.putArray((unsigned long)m_opacity.size(), opacity());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 
@@ -3511,8 +3511,7 @@ namespace RiCPP {
 		{
 			ri.postIlluminate(*this, m_handle, m_onoff);
 		}
-
-		
+	
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			// Special handling by rib writer

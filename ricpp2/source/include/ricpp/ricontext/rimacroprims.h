@@ -43,11 +43,11 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Simple polygon.
 	 */
-	class CRiPolygon : public CPolygonRManInterfaceCall {
+	class CRiPolygon : public CVarParamRManInterfaceCall {
 	private:
 		RtInt m_nVertices; ///< Number of vertices of the polygon must match the number of positions "P".
 	protected:
-		typedef CPolygonRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -195,7 +195,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief General Polygon
 	 */
-	class CRiGeneralPolygon : public CPolygonRManInterfaceCall {
+	class CRiGeneralPolygon : public CVarParamRManInterfaceCall {
 	private:
 		std::vector<RtInt> m_nVerts; ///< Number of verts per outline (Number of loops is the size of m_nVerts).
 		/** @brief enters the values.
@@ -205,7 +205,7 @@ namespace RiCPP {
 		 */
 		void enterValues(RtInt theNLoops, const RtInt theNVerts[]);
 	protected:
-		typedef CPolygonRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -386,12 +386,12 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Simple polygon net.
 	 */
-	class CRiPointsPolygons : public CPolygonRManInterfaceCall {
+	class CRiPointsPolygons : public CVarParamRManInterfaceCall {
 	private:
 		std::vector<RtInt> m_nVerts; ///< Number of vertices per polygon (size is the number of polygons).
 		std::vector<RtInt> m_verts;  ///< Indices of the vertices.
 	protected:
-		typedef CPolygonRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 		/** @brief enters the values.
 		 *
 		 *  @param theNPolys Number of polygons.
@@ -602,13 +602,13 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief General polygon net.
 	 */
-	class CRiPointsGeneralPolygons : public CPolygonRManInterfaceCall {
+	class CRiPointsGeneralPolygons : public CVarParamRManInterfaceCall {
 	private:
 		std::vector<RtInt> m_nLoops; ///< Loops per polygon (Number of polygons is the size of the vector).
 		std::vector<RtInt> m_nVerts; ///< Vertices per loop.
 		std::vector<RtInt> m_verts;  ///< Vertex indices.
 	protected:
-		typedef CPolygonRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 
 		/** @brief Enters the values.
 		 *
@@ -844,11 +844,11 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Bilinear or bicubic patch
 	 */
-	class CRiPatch : public CUVRManInterfaceCall {
+	class CRiPatch : public CVarParamRManInterfaceCall {
 	private:
 		RtToken m_type; ///< Type of the patch, either RI_BILINEAR or RI_BICUBIC (or RI_NULL if not set).
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -998,7 +998,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief a mesh of bilinear or bicubic patches.
 	 */
-	class CRiPatchMesh : public CUVRManInterfaceCall {
+	class CRiPatchMesh : public CVarParamRManInterfaceCall {
 	private:
 		RtToken m_type,  ///< Type of the mesh either RI_BILINEAR or RI_BICUBIC.
 				m_uwrap, ///< Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC.
@@ -1008,7 +1008,7 @@ namespace RiCPP {
 		RtInt   m_ustep, ///< Step m_ustep control points to the next patch in u direction (from the basis).
 				m_vstep; ///< Step m_vstep control points to the next patch in v direction (from the basis).
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 		
 	public:
 		/** @brief Gets name for the class.
@@ -1245,7 +1245,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief NURBS patch.
 	 */
-	class CRiNuPatch : public CGeometryRManInterfaceCall {
+	class CRiNuPatch : public CVarParamRManInterfaceCall {
 	private:
 		RtInt m_nu,     ///< Number of control points in parametric u direction.
 			  m_uorder, ///< Order of the polynomial basis for parameters u.
@@ -1259,7 +1259,7 @@ namespace RiCPP {
 				m_vmin, ///< Minimal value for parameter v.
 				m_vmax; ///< Maximal value for parameter v.
 	protected:
-		typedef CGeometryRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1572,7 +1572,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Subdivision mesh surface.
 	 */
-	class CRiSubdivisionMesh : public CGeometryRManInterfaceCall {
+	class CRiSubdivisionMesh : public CVarParamRManInterfaceCall {
 	private:
 		RtToken m_scheme;    ///< The scheme (currently RI_CATMULL_CLARK only).
 		RtInt   m_nvertices, ///< The number of vertices (maximum+1 of m_verts).
@@ -1584,7 +1584,7 @@ namespace RiCPP {
 		std::vector<RtFloat>    m_floargs; ///< Float arguments for tags.
 		std::vector<RtToken>    m_tags;    ///< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
 	protected:
-		typedef CGeometryRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1846,6 +1846,26 @@ namespace RiCPP {
 				);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(scheme());
+			ribWriter.putBlank();
+			ribWriter.putArray(nVerts());
+			ribWriter.putBlank();
+			ribWriter.putArray(verts());
+			ribWriter.putBlank();
+			ribWriter.putTokenArray(tags());
+			ribWriter.putBlank();
+			ribWriter.putArray(nArgs());
+			ribWriter.putBlank();
+			ribWriter.putArray(intArgs());
+			ribWriter.putBlank();
+			ribWriter.putArray(floatArgs());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1867,7 +1887,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Hierarchical subdivision mesh surface.
 	 */
-	class CRiHierarchicalSubdivisionMesh : public CGeometryRManInterfaceCall {
+	class CRiHierarchicalSubdivisionMesh : public CVarParamRManInterfaceCall {
 	private:
 		RtToken m_scheme;    ///< The scheme (currently RI_CATMULL_CLARK only).
 		RtInt   m_nvertices, ///< The number of vertices (maximum+1 of m_verts).
@@ -1881,7 +1901,7 @@ namespace RiCPP {
 		std::vector<RtToken>     m_strptrargs; ///< String arguments for tags.
 		std::vector<RtToken>     m_tags;    ///< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
 	protected:
-		typedef CGeometryRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2159,6 +2179,28 @@ namespace RiCPP {
 				);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(scheme());
+			ribWriter.putBlank();
+			ribWriter.putArray(nVerts());
+			ribWriter.putBlank();
+			ribWriter.putArray(verts());
+			ribWriter.putBlank();
+			ribWriter.putTokenArray(tags());
+			ribWriter.putBlank();
+			ribWriter.putArray(nArgs());
+			ribWriter.putBlank();
+			ribWriter.putArray(intArgs());
+			ribWriter.putBlank();
+			ribWriter.putArray(floatArgs());
+			ribWriter.putBlank();
+			ribWriter.putArray(stringPtrArgs());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -2180,14 +2222,14 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Sphere.
 	 */
-	class CRiSphere : public CUVRManInterfaceCall {
+	class CRiSphere : public CVarParamRManInterfaceCall {
 	private:
 		RtFloat m_radius,   ///< Radius.
 				m_zmin,     ///< Minimal z coordinate (cut pole).
 				m_zmax,     ///< Maximal z coordinate (cut pole).
 				m_thetamax; ///< Sweep angle.
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2405,6 +2447,20 @@ namespace RiCPP {
 			ri.postSphere(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(radius());
+			ribWriter.putBlank();
+			ribWriter.putValue(zMin());
+			ribWriter.putBlank();
+			ribWriter.putValue(zMax());
+			ribWriter.putBlank();
+			ribWriter.putValue(thetaMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -2426,13 +2482,13 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Cone.
 	 */
-	class CRiCone : public CUVRManInterfaceCall {
+	class CRiCone : public CVarParamRManInterfaceCall {
 	private:
 		RtFloat m_height,   ///< Height.
 				m_radius,   ///< Radius.
 				m_thetamax; ///< Sweep angle.
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2624,6 +2680,18 @@ namespace RiCPP {
 			ri.postCone(*this, m_height, m_radius, m_thetamax, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(height());
+			ribWriter.putBlank();
+			ribWriter.putValue(radius());
+			ribWriter.putBlank();
+			ribWriter.putValue(thetaMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -2644,14 +2712,14 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Cylinder.
 	 */
-	class CRiCylinder : public CUVRManInterfaceCall {
+	class CRiCylinder : public CVarParamRManInterfaceCall {
 	private:
 		RtFloat m_radius,   ///< Radius.
 				m_zmin,     ///< Minimal z coordiante.
 				m_zmax,     ///< Maximal z coordiante.
 				m_thetamax; ///< Sweep angle.
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2869,6 +2937,20 @@ namespace RiCPP {
 			ri.postCylinder(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(radius());
+			ribWriter.putBlank();
+			ribWriter.putValue(zMin());
+			ribWriter.putBlank();
+			ribWriter.putValue(zMax());
+			ribWriter.putBlank();
+			ribWriter.putValue(thetaMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -2890,13 +2972,13 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Hyperboloid.
 	 */
-	class CRiHyperboloid : public CUVRManInterfaceCall {
+	class CRiHyperboloid : public CVarParamRManInterfaceCall {
 	private:
 		RtPoint m_point1,   ///< First point of the line to sweep to get a hyperbolid.
 				m_point2;   ///< Second point of the line to sweep to get a hyperbolid.
 		RtFloat m_thetamax; ///< Sweep angle.
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3125,6 +3207,26 @@ namespace RiCPP {
 			ri.postHyperboloid(*this, m_point1, m_point2, m_thetamax, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(point1()[0]);
+			ribWriter.putBlank();
+			ribWriter.putValue(point1()[1]);
+			ribWriter.putBlank();
+			ribWriter.putValue(point1()[2]);
+			ribWriter.putBlank();
+			ribWriter.putValue(point2()[0]);
+			ribWriter.putBlank();
+			ribWriter.putValue(point2()[1]);
+			ribWriter.putBlank();
+			ribWriter.putValue(point2()[2]);
+			ribWriter.putBlank();
+			ribWriter.putValue(thetaMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -3146,14 +3248,14 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Paraboloid.
 	 */
-	class CRiParaboloid : public CUVRManInterfaceCall {
+	class CRiParaboloid : public CVarParamRManInterfaceCall {
 	private:
 		RtFloat m_rmax,     ///< Maximal radius (on zmax).
 				m_zmin,     ///< Minimal z coordinate.
 				m_zmax,     ///< Maximal z coordinate.
 				m_thetamax; ///< Sweep angle.
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3359,6 +3461,20 @@ namespace RiCPP {
 			ri.postParaboloid(*this, m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(rMax());
+			ribWriter.putBlank();
+			ribWriter.putValue(zMin());
+			ribWriter.putBlank();
+			ribWriter.putValue(zMax());
+			ribWriter.putBlank();
+			ribWriter.putValue(thetaMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -3380,13 +3496,13 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Disk.
 	 */
-	class CRiDisk : public CUVRManInterfaceCall {
+	class CRiDisk : public CVarParamRManInterfaceCall {
 	private:
 		RtFloat m_height,   ///< Distance from disk to origin on positive z axis.
 				m_radius,   ///< Radius.
 				m_thetamax; ///< Sweep angle.
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3579,6 +3695,18 @@ namespace RiCPP {
 			ri.postDisk(*this, m_height, m_radius, m_thetamax, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(height());
+			ribWriter.putBlank();
+			ribWriter.putValue(radius());
+			ribWriter.putBlank();
+			ribWriter.putValue(thetaMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -3600,7 +3728,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Torus.
 	 */
-	class CRiTorus : public CUVRManInterfaceCall {
+	class CRiTorus : public CVarParamRManInterfaceCall {
 	private:
 		RtFloat m_majorrad, ///< Major radius (center of the ring).
 				m_minorrad, ///< Minor radius.
@@ -3608,7 +3736,7 @@ namespace RiCPP {
 				m_phimax,   ///< End angle to sweep the torus body.
 				m_thetamax; ///< Sweep angle.
 	protected:
-		typedef CUVRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3854,6 +3982,22 @@ namespace RiCPP {
 			ri.postTorus(*this, m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(majorRad());
+			ribWriter.putBlank();
+			ribWriter.putValue(minorRad());
+			ribWriter.putBlank();
+			ribWriter.putValue(phiMin());
+			ribWriter.putBlank();
+			ribWriter.putValue(phiMax());
+			ribWriter.putBlank();
+			ribWriter.putValue(thetaMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -3875,11 +4019,11 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Points.
 	 */
-	class CRiPoints : public CGeometryRManInterfaceCall {
+	class CRiPoints : public CVarParamRManInterfaceCall {
 	private:
 		RtInt m_npts; ///< Number of points.
 	protected:
-		typedef CGeometryRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -4001,6 +4145,12 @@ namespace RiCPP {
 			ri.postPoints(*this, m_npts, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -4022,14 +4172,14 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Curves.
 	 */
-	class CRiCurves : public CGeometryRManInterfaceCall {
+	class CRiCurves : public CVarParamRManInterfaceCall {
 	private:
 		RtToken m_type, ///< Type of the curve either RI_LINEAR or RI_CUBIC.
 				m_wrap; ///< Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
 		RtInt   m_step; ///< Step to the next curve segment (by basis, v parameter)
 		std::vector<RtInt> m_nverts; ///< Number of vertices for each curve (size == number of curves)
 	protected:
-		typedef CGeometryRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -4221,6 +4371,18 @@ namespace RiCPP {
 				parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(type());
+			ribWriter.putBlank();
+			ribWriter.putArray(nVerts());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(wrap());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign.
@@ -4242,7 +4404,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Blobby.
 	 */
-	class CRiBlobby : public CGeometryRManInterfaceCall {
+	class CRiBlobby : public CVarParamRManInterfaceCall {
 	private:
 		RtInt                   m_nleaf;        ///< Number of primitive blobs, has to match the content of m_code.
 		std::vector<RtInt>      m_code;         ///< Code array, s.a. [RISPEC3.2] for the opcodes.
@@ -4250,7 +4412,7 @@ namespace RiCPP {
 		std::deque<std::string> m_strcontainer; ///< The string operants for the code.
 		std::vector<RtString>   m_str;          ///< C-String pointers of m_strcontainer.
 	protected:
-		typedef CGeometryRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -4445,6 +4607,20 @@ namespace RiCPP {
 				parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(nLeaf());
+			ribWriter.putBlank();
+			ribWriter.putArray(code());
+			ribWriter.putBlank();
+			ribWriter.putArray(flt());
+			ribWriter.putBlank();
+			ribWriter.putArray(str());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign.
@@ -4466,11 +4642,11 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Special Geometry.
 	 */
-	class CRiGeometry : public CGeometryRManInterfaceCall {
+	class CRiGeometry : public CVarParamRManInterfaceCall {
 	private:
 		RtToken m_name; ///< Name of the geometry as atomized string.
 	protected:
-		typedef CGeometryRManInterfaceCall TypeParent;
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -4591,6 +4767,14 @@ namespace RiCPP {
 			ri.postGeometry(*this, m_name, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(name());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign

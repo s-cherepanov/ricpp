@@ -188,7 +188,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNLoops, const RtInt theNVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CGeneralPolygonClasses(theNLoops, theNVerts), curColorDescr,
 		n, tokens, params)
 {
@@ -199,7 +199,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo,
 	RtInt theNLoops, const RtInt theNVerts[],
 	const CParameterList &theParameters)
-	: CPolygonRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	enterValues(theNLoops, theNVerts);
 }
@@ -221,7 +221,7 @@ CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CPointsPolygonsClasses(theNPolys, theNVerts, theVerts), curColorDescr,
 		n, tokens, params)
 {
@@ -232,7 +232,7 @@ CRiPointsPolygons::CRiPointsPolygons(
 	long aLineNo,
 	RtInt theNPolys, const RtInt theNVerts[], const RtInt theVerts[],
 	const CParameterList &theParameters)
-	: CPolygonRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	enterValues(theNPolys, theNVerts, theVerts);
 }
@@ -262,7 +262,7 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CPolygonRManInterfaceCall(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CPointsGeneralPolygonsClasses(theNPolys, theNLoops, theNVerts, theVerts), curColorDescr,
 		n, tokens, params)
 {
@@ -273,7 +273,7 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	long aLineNo,
 	RtInt theNPolys, const RtInt theNLoops[], const RtInt theNVerts[], const RtInt theVerts[],
 	const CParameterList &theParameters)
-	: CPolygonRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	enterValues(theNPolys, theNLoops, theNVerts, theVerts);
 }
@@ -301,7 +301,7 @@ CRiPatchMesh::CRiPatchMesh(
 	RtInt aNu, RtToken aUWrap,
 	RtInt aNv, RtToken aVWrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CUVRManInterfaceCall(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CPatchMeshClasses(aType, aNu, aUStep, aUWrap, aNv, aVStep, aVWrap), curColorDescr,
 		n, tokens, params)
 {
@@ -315,7 +315,7 @@ CRiPatchMesh::CRiPatchMesh(
 	RtInt aNu, RtToken aUWrap,
 	RtInt aNv, RtToken aVWrap,
 	const CParameterList &theParameters)
-	: CUVRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	set(aUStep, aVStep, aType, aNu, aUWrap, aNv, aVWrap);
 }
@@ -355,7 +355,7 @@ CRiNuPatch::CRiNuPatch(
 	RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
 	RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo, decl, CNuPatchClasses(aNU, aUOrder, aNV, aVOrder), curColorDescr, n, tokens, params)
+	: TypeParent(aLineNo, decl, CNuPatchClasses(aNU, aUOrder, aNV, aVOrder), curColorDescr, n, tokens, params)
 {
 	set(aNU, aUOrder, aUKnot, aUMin, aUMax, aNV, aVOrder, aVKnot, aVMin, aVMax);
 }
@@ -365,7 +365,7 @@ CRiNuPatch::CRiNuPatch(
 	RtInt aNU, RtInt aUOrder, const RtFloat aUKnot[], RtFloat aUMin, RtFloat aUMax,
 	RtInt aNV, RtInt aVOrder, const RtFloat aVKnot[], RtFloat aVMin, RtFloat aVMax,
 	const CParameterList &theParameters)
-	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	set(aNU, aUOrder, aUKnot, aUMin, aUMax, aNV, aVOrder, aVKnot, aVMin, aVMax);
 }
@@ -440,7 +440,7 @@ CRiSubdivisionMesh::CRiSubdivisionMesh(
 	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
 		n, tokens, params)
 {
@@ -452,7 +452,7 @@ CRiSubdivisionMesh::CRiSubdivisionMesh(
 	RtToken aScheme, RtInt aNFaces, const RtInt aNVerts[], const RtInt aVerts[],
 	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	const CParameterList &theParameters)
-	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	set(tokenMap, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs);
 }
@@ -547,7 +547,7 @@ CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	const RtToken aStrArgs[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CSubdivisionMeshClasses(aNFaces, aNVerts, aVerts), curColorDescr,
 		n, tokens, params)
 {
@@ -560,7 +560,7 @@ CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 	RtInt aNTags, const RtToken aTags[], const RtInt aNArgs[], const RtInt aIntArgs[], const RtFloat aFloArgs[],
 	const RtToken aStrArgs[],
 	const CParameterList &theParameters)
-	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	set(tokenMap, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
 }
@@ -571,7 +571,7 @@ CRiCurves::CRiCurves(
 	RtInt aStep, RtToken aType,
 	RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap,
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo, decl,
+	: TypeParent(aLineNo, decl,
 	    CCurvesClasses(aType, aNCurves, aNVerts, aWrap, aStep), curColorDescr,
 		n, tokens, params),
 	  m_type(aType), m_wrap(aWrap), m_step(aStep)
@@ -585,7 +585,7 @@ CRiCurves::CRiCurves(
 	RtInt aStep, RtToken aType,
 	RtInt aNCurves, const RtInt aNVerts[], RtToken aWrap,
 	const CParameterList &theParameters)
-	: CGeometryRManInterfaceCall(aLineNo, theParameters),
+	: TypeParent(aLineNo, theParameters),
 	  m_type(aType), m_wrap(aWrap), m_step(aStep)
 {
 	m_nverts.resize(aNCurves);
@@ -629,7 +629,7 @@ CRiBlobby::CRiBlobby(
 	RtInt aNLeaf, RtInt aNCode, const RtInt aCode[],
 	RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: CGeometryRManInterfaceCall(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CBlobbyClasses(aNLeaf), curColorDescr,
 		n, tokens, params)
 {
@@ -641,7 +641,7 @@ CRiBlobby::CRiBlobby(long aLineNo,
 	RtInt aNFlt, const RtFloat aFlt[], RtInt aNStr, const RtString aStr[],
 	const CParameterList &theParameters
 	)
-	: CGeometryRManInterfaceCall(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters)
 {
 	set(aNLeaf, aNCode, aCode, aNFlt, aFlt, aNStr, aStr);
 }

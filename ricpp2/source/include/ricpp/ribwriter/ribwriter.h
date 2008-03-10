@@ -109,7 +109,6 @@ private:
 
 	bool willExecuteMacro(RtString name);
 
-
 	unsigned long m_nestingDepth; ///< Depth of begin/end blocks
 
 	inline unsigned long nestingDepth() const
@@ -131,12 +130,12 @@ private:
 	{
 		return --m_nestingDepth;
 	}
+
 protected:
 	virtual void defaultDeclarations();
 	bool testValid() const;
 	bool postTestValid() const;
 	void writePrefix(bool isArchiveRecord=false);
-	void writeParameterList(const CParameterList &params, RtInt n=0, RtToken ignoreTokens[]=0);
 
 public:
 

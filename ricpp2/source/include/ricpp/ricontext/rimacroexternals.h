@@ -51,6 +51,8 @@ namespace RiCPP {
 		IFilterFunc *m_filterfunc; ///< Filter function.
 		RtFloat m_swidth,          ///< Width of influence of the pixel filer, direction s.
 				m_twidth;          ///< Width of influence of the pixel filer, direction t.
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -68,7 +70,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -78,7 +80,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiMakeTexture(long aLineNo=-1)
-			: CVarParamRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_swrap = 0;
 			m_twrap = 0;
@@ -108,7 +110,7 @@ namespace RiCPP {
 			RtString aPic, RtString aTex, RtToken aSWrap, RtToken aTWrap,
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_TEXTURE, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+			: TypeParent(aLineNo, RI_TEXTURE, RI_TEXTURE, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 		{
 			m_filterfunc = 0;
 			set(aPic, aTex, aSWrap, aTWrap, &aFilterFunc, aSWidth, aTWidth);
@@ -132,7 +134,7 @@ namespace RiCPP {
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			const CParameterList &theParameters
 			)
-			: CVarParamRManInterfaceCall(aLineNo, theParameters)
+			: TypeParent(aLineNo, theParameters)
 		{
 			m_filterfunc = 0;
 			set(aPic, aTex, aSWrap, aTWrap, &aFilterFunc, aSWidth, aTWidth);
@@ -219,7 +221,7 @@ namespace RiCPP {
 		 *
 		 *  @return The wrap type of the texture in direction s.
 		 */
-		const RtToken swrap() const
+		const RtToken sWrap() const
 		{
 			return m_swrap;
 		}
@@ -228,7 +230,7 @@ namespace RiCPP {
 		 *
 		 *  @return The wrap type of the texture in direction t.
 		 */
-		const RtToken twrap() const
+		const RtToken tWrap() const
 		{
 			return m_twrap;
 		}
@@ -237,7 +239,7 @@ namespace RiCPP {
 		 *
 		 *  @return The filter function. 
 		 */
-		const IFilterFunc *filterfunc() const
+		const IFilterFunc *filterFunc() const
 		{
 			return m_filterfunc;
 		}
@@ -246,7 +248,7 @@ namespace RiCPP {
 		 *
 		 *  @return The width of influence of the pixel filer, direction s.
 		 */
-		const RtFloat swidth() const
+		const RtFloat sWidth() const
 		{
 			return m_swidth;
 		}
@@ -255,7 +257,7 @@ namespace RiCPP {
 		 *
 		 *  @return The width of influence of the pixel filer, direction t.
 		 */
-		const RtFloat twidth() const
+		const RtFloat tWidth() const
 		{
 			return m_twidth;
 		}
@@ -284,6 +286,29 @@ namespace RiCPP {
 			}
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putString(pic());
+			ribWriter.putBlank();
+			ribWriter.putString(tex());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(sWrap());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(tWrap());
+			ribWriter.putBlank();
+			if ( filterFunc() )
+				ribWriter.putStringToken(filterFunc()->name());
+			else
+				ribWriter.putString(RI_EMPTY);
+			ribWriter.putBlank();
+			ribWriter.putValue(sWidth());
+			ribWriter.putBlank();
+			ribWriter.putValue(tWidth());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -294,9 +319,9 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			set(c.pic(), c.tex(), c.swrap(), c.twrap(), c.filterfunc(), c.swidth(), c.twidth());
+			set(c.pic(), c.tex(), c.sWrap(), c.tWrap(), c.filterFunc(), c.sWidth(), c.tWidth());
 
-			CVarParamRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiMakeTexture
@@ -313,6 +338,8 @@ namespace RiCPP {
 		IFilterFunc *m_filterfunc; ///< Filter function.
 		RtFloat m_swidth,          ///< Width of influence of the pixel filer, direction s.
 				m_twidth;          ///< Width of influence of the pixel filer, direction t.
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -331,7 +358,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -341,7 +368,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiMakeBump(long aLineNo=-1)
-			: CVarParamRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_swrap = 0;
 			m_twrap = 0;
@@ -371,7 +398,7 @@ namespace RiCPP {
 			RtString aPic, RtString aTex, RtToken aSWrap, RtToken aTWrap,
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_BUMP, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+			: TypeParent(aLineNo, RI_TEXTURE, RI_BUMP, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 		{
 			m_filterfunc = 0;
 			set(aPic, aTex, aSWrap, aTWrap, &aFilterFunc, aSWidth, aTWidth);
@@ -395,7 +422,7 @@ namespace RiCPP {
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			const CParameterList &theParameters
 			)
-			: CVarParamRManInterfaceCall(aLineNo, theParameters)
+			: TypeParent(aLineNo, theParameters)
 		{
 			m_filterfunc = 0;
 			set(aPic, aTex, aSWrap, aTWrap, &aFilterFunc, aSWidth, aTWidth);
@@ -548,6 +575,29 @@ namespace RiCPP {
 			}
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putString(pic());
+			ribWriter.putBlank();
+			ribWriter.putString(tex());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(sWrap());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(tWrap());
+			ribWriter.putBlank();
+			if ( filterFunc() )
+				ribWriter.putStringToken(filterFunc()->name());
+			else
+				ribWriter.putString(RI_EMPTY);
+			ribWriter.putBlank();
+			ribWriter.putValue(sWidth());
+			ribWriter.putBlank();
+			ribWriter.putValue(tWidth());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -560,7 +610,7 @@ namespace RiCPP {
 
 			set(c.pic(), c.tex(), c.sWrap(), c.tWrap(), c.filterFunc(), c.sWidth(), c.tWidth());
 
-			CVarParamRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiMakeBump
@@ -576,6 +626,8 @@ namespace RiCPP {
 		IFilterFunc *m_filterfunc; ///< Filter function.
 		RtFloat m_swidth,          ///< Width of influence of the pixel filer, direction s.
 				m_twidth;          ///< Width of influence of the pixel filer, direction t.
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -594,7 +646,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -604,7 +656,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiMakeLatLongEnvironment(long aLineNo=-1)
-			: CVarParamRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_filterfunc = 0;
 			m_swidth = 0;
@@ -630,7 +682,7 @@ namespace RiCPP {
 			RtString aPic, RtString aTex,
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_LAT_LONG_ENVIRONMENT, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+			: TypeParent(aLineNo, RI_TEXTURE, RI_LAT_LONG_ENVIRONMENT, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 		{
 			m_filterfunc = 0;
 			set(aPic, aTex, &aFilterFunc, aSWidth, aTWidth);
@@ -652,7 +704,7 @@ namespace RiCPP {
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			const CParameterList &theParameters
 			)
-			: CVarParamRManInterfaceCall(aLineNo, theParameters)
+			: TypeParent(aLineNo, theParameters)
 		{
 			m_filterfunc = 0;
 			set(aPic, aTex, &aFilterFunc, aSWidth, aTWidth);
@@ -782,6 +834,25 @@ namespace RiCPP {
 			}
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putString(pic());
+			ribWriter.putBlank();
+			ribWriter.putString(tex());
+			ribWriter.putBlank();
+			if ( filterFunc() )
+				ribWriter.putStringToken(filterFunc()->name());
+			else
+				ribWriter.putString(RI_EMPTY);
+			ribWriter.putBlank();
+			ribWriter.putValue(sWidth());
+			ribWriter.putBlank();
+			ribWriter.putValue(tWidth());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -794,7 +865,7 @@ namespace RiCPP {
 
 			set(c.pic(), c.tex(), c.filterFunc(), c.sWidth(), c.tWidth());
 
-			CVarParamRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiMakeLatLongEnvironment
@@ -816,6 +887,8 @@ namespace RiCPP {
 		IFilterFunc *m_filterfunc; ///< Filter function.
 		RtFloat     m_swidth,      ///< Width of influence of the pixel filer, direction s.
 					m_twidth;      ///< Width of influence of the pixel filer, direction t.
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -833,7 +906,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -843,7 +916,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiMakeCubeFaceEnvironment(long aLineNo=-1)
-			: CVarParamRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_fov = 0;
 			m_filterfunc = 0;
@@ -877,7 +950,7 @@ namespace RiCPP {
 			RtString aTex, RtFloat aFov,
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_CUBE_FACE_ENVIRONMENT, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+			: TypeParent(aLineNo, RI_TEXTURE, RI_CUBE_FACE_ENVIRONMENT, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 		{
 			m_filterfunc = 0;
 			set(aPx, aNx, aPy, aNy, aPz, aNz, aTex, aFov, &aFilterFunc, aSWidth, aTWidth);
@@ -907,7 +980,7 @@ namespace RiCPP {
 			const IFilterFunc &aFilterFunc, RtFloat aSWidth, RtFloat aTWidth,
 			const CParameterList &theParameters
 			)
-			: CVarParamRManInterfaceCall(aLineNo, theParameters)
+			: TypeParent(aLineNo, theParameters)
 		{
 			m_filterfunc = 0;
 			set(aPx, aNx, aPy, aNy, aPz, aNz, aTex, aFov, &aFilterFunc, aSWidth, aTWidth);
@@ -1104,6 +1177,37 @@ namespace RiCPP {
 			}
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putString(px());
+			ribWriter.putBlank();
+			ribWriter.putString(nx());
+			ribWriter.putBlank();
+			ribWriter.putString(py());
+			ribWriter.putBlank();
+			ribWriter.putString(ny());
+			ribWriter.putBlank();
+			ribWriter.putString(pz());
+			ribWriter.putBlank();
+			ribWriter.putString(nz());
+			ribWriter.putBlank();
+			ribWriter.putString(tex());
+			ribWriter.putBlank();
+			ribWriter.putValue(fov());
+			ribWriter.putBlank();
+			if ( filterFunc() )
+				ribWriter.putStringToken(filterFunc()->name());
+			else
+				ribWriter.putString(RI_EMPTY);
+			ribWriter.putBlank();
+			ribWriter.putValue(sWidth());
+			ribWriter.putBlank();
+			ribWriter.putValue(tWidth());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1116,7 +1220,7 @@ namespace RiCPP {
 
 			set(c.px(), c.nx(), c.py(), c.ny(), c.pz(), c.nz(), c.tex(), c.fov(), c.filterFunc(), c.sWidth(), c.tWidth());
 
-			CVarParamRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiMakeCubeFaceEnvironment
@@ -1128,6 +1232,8 @@ namespace RiCPP {
 	private:
 		std::string m_pic,         ///< File with the picture (input).
 					m_tex;         ///< File with the texture (output, internal representation).
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -1145,7 +1251,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -1155,7 +1261,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiMakeShadow(long aLineNo=-1)
-			: CVarParamRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 		}
 
@@ -1174,11 +1280,10 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtString aPic, RtString aTex,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_SHADOW, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+			: TypeParent(aLineNo, RI_TEXTURE, RI_SHADOW, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 		{
 			set(aPic, aTex);
 		}
-
 
 		/** @brief Constructor.
 		 *
@@ -1192,7 +1297,7 @@ namespace RiCPP {
 			RtString aPic, RtString aTex,
 			const CParameterList &theParameters
 			)
-			: CVarParamRManInterfaceCall(aLineNo, theParameters)
+			: TypeParent(aLineNo, theParameters)
 		{
 			set(aPic, aTex);
 		}
@@ -1265,6 +1370,16 @@ namespace RiCPP {
 			ri.postMakeShadow(*this, m_pic.c_str(), m_tex.c_str(), parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putString(pic());
+			ribWriter.putBlank();
+			ribWriter.putString(tex());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1277,7 +1392,7 @@ namespace RiCPP {
 
 			set(c.pic(), c.tex());
 
-			CVarParamRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiMakeShadow
@@ -1291,6 +1406,8 @@ namespace RiCPP {
 		std::vector<std::string> m_ptcNames; ///< File with the pictures (input).
 		std::vector<RtString> m_ptcNamesPtr; ///< Pointers to the strings.
 		std::string m_BkMName;               ///< File with the texture (output, internal representation).
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets the name for the class.
 		 *
@@ -1308,7 +1425,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CVarParamRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default Constructor.
@@ -1318,7 +1435,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiMakeBrickMap(long aLineNo=-1)
-			: CVarParamRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 		}
 
@@ -1338,7 +1455,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CVarParamRManInterfaceCall(aLineNo, RI_TEXTURE, RI_BRICK_MAP, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+			: TypeParent(aLineNo, RI_TEXTURE, RI_BRICK_MAP, decl, CParameterClasses(), curColorDescr, n, tokens, params)
 		{
 			set(theNNames, thePtcNames, aBkMName);
 		}
@@ -1357,7 +1474,7 @@ namespace RiCPP {
 			RtInt theNNames, RtString thePtcNames[], RtString aBkMName,
 			const CParameterList &theParameters
 			)
-			: CVarParamRManInterfaceCall(aLineNo, theParameters)
+			: TypeParent(aLineNo, theParameters)
 		{
 			set(theNNames, thePtcNames, aBkMName);
 		}
@@ -1429,6 +1546,13 @@ namespace RiCPP {
 			return 0;
 		}
 
+		const RtString *ptcNames() const
+		{
+			if ( m_ptcNamesPtr.size() )
+				return &(m_ptcNamesPtr[0]);
+			return 0;
+		}
+
 		/** @brief Gets the file name/resource name of the brick map texture (output).
 		 *
 		 *  @return The file name/resource name of the brick map texture (output).
@@ -1453,6 +1577,16 @@ namespace RiCPP {
 			ri.postMakeBrickMap(*this, nNames(), ptcNames(), bkMName(), parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putArray(nNames(), ptcNames());
+			ribWriter.putBlank();
+			ribWriter.putString(bkMName());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1465,7 +1599,7 @@ namespace RiCPP {
 
 			set(nNames(), ptcNames(), bkMName());
 
-			CVarParamRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiMakeBrickMap

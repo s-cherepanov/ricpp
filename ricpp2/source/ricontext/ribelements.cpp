@@ -382,6 +382,9 @@ void CRibElementsWriter::putValue(unsigned long anInteger)
 
 void CRibElementsWriter::putString(RtString aString)
 {
+	if ( !aString )
+		aString = RI_EMPTY;
+
 	if ( m_ascii ) {
 	
 		m_ostream << "\"";
@@ -465,7 +468,7 @@ void CRibElementsWriter::putStringTokenNum(unsigned char code, unsigned long tok
 void CRibElementsWriter::putStringToken(RtString aString)
 {
 	if ( !aString )
-		return;
+		aString = RI_EMPTY;
 		
 	if ( m_ascii ) {
 		putString(aString);

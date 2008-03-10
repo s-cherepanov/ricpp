@@ -43,6 +43,8 @@ namespace RiCPP {
 	/** @brief Reset transformation to identity.
 	 */
 	class CRiIdentity : public CRManInterfaceCall {
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -61,14 +63,14 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		inline CRiIdentity(long aLineNo=-1) : CRManInterfaceCall(aLineNo) {}
+		inline CRiIdentity(long aLineNo=-1) : TypeParent(aLineNo) {}
 
 		/** @brief Copy constructor.
 		 *
@@ -106,7 +108,13 @@ namespace RiCPP {
 		{
 			ri.postIdentity(*this);
 		}
-
+		
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -117,7 +125,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiIdentity
@@ -129,6 +137,8 @@ namespace RiCPP {
 	class CRiTransform : public CRManInterfaceCall {
 	private:
 		RtMatrix m_transform; ///< Transformation matrix.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -146,7 +156,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -155,7 +165,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		inline CRiTransform(long aLineNo = -1) : CRManInterfaceCall(aLineNo)
+		inline CRiTransform(long aLineNo = -1) : TypeParent(aLineNo)
 		{
 			memcpy(m_transform, RiIdentityMatrix, sizeof(RtMatrix));
 		}
@@ -165,7 +175,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 *  @param aTransform The transformation matrix
 		 */
-		inline CRiTransform(long aLineNo, const RtMatrix aTransform) : CRManInterfaceCall(aLineNo)
+		inline CRiTransform(long aLineNo, const RtMatrix aTransform) : TypeParent(aLineNo)
 		{
 			memcpy(m_transform, aTransform, sizeof(RtMatrix));
 		}
@@ -234,6 +244,14 @@ namespace RiCPP {
 			ri.postTransform(*this, m_transform);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putArray(transform());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -246,7 +264,7 @@ namespace RiCPP {
 
 			transform(transform());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiTransform
@@ -258,7 +276,8 @@ namespace RiCPP {
 	class CRiConcatTransform : public CRManInterfaceCall {
 	private:
 		RtMatrix m_transform; ///< Transformation matrix.
-
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -276,7 +295,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -285,7 +304,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		inline CRiConcatTransform(long aLineNo = -1) : CRManInterfaceCall(aLineNo)
+		inline CRiConcatTransform(long aLineNo = -1) : TypeParent(aLineNo)
 		{
 			memcpy(m_transform, RiIdentityMatrix, sizeof(RtMatrix));
 		}
@@ -295,7 +314,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 *  @param aTransform The transformation matrix
 		 */
-		inline CRiConcatTransform(long aLineNo, const RtMatrix aTransform) : CRManInterfaceCall(aLineNo)
+		inline CRiConcatTransform(long aLineNo, const RtMatrix aTransform) : TypeParent(aLineNo)
 		{
 			memcpy(m_transform, aTransform, sizeof(RtMatrix));
 		}
@@ -364,6 +383,14 @@ namespace RiCPP {
 			ri.postConcatTransform(*this, m_transform);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putArray(transform());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -376,7 +403,7 @@ namespace RiCPP {
 
 			transform(transform());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiConcatTransform
@@ -388,7 +415,8 @@ namespace RiCPP {
 	class CRiPerspective : public CRManInterfaceCall {
 	private:
 		RtFloat m_fov; ///< Field of view
-
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -406,7 +434,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -414,7 +442,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 *  @param aFov Field of view
 		 */
-		inline CRiPerspective(long aLineNo=-1, RtFloat aFov=90) : CRManInterfaceCall(aLineNo), m_fov(aFov) {}
+		inline CRiPerspective(long aLineNo=-1, RtFloat aFov=90) : TypeParent(aLineNo), m_fov(aFov) {}
 
 		/** @brief Copy constructor.
 		 *
@@ -471,6 +499,14 @@ namespace RiCPP {
 			ri.postPerspective(*this, m_fov);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(fov());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -483,7 +519,7 @@ namespace RiCPP {
 
 			fov(c.fov());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiPerspective
@@ -497,6 +533,8 @@ namespace RiCPP {
 		RtFloat m_dx, ///< Translation in direction x.
 				m_dy, ///< Translation in direction y.
 				m_dz; ///< Translation in direction z.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -514,7 +552,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -524,7 +562,7 @@ namespace RiCPP {
 		 *  @param aDy Translation in direction y.
 		 *  @param aDz Translation in direction z.
 		 */
-		inline CRiTranslate(long aLineNo=-1, RtFloat aDx=0, RtFloat aDy=0, RtFloat aDz=0) : CRManInterfaceCall(aLineNo), m_dx(aDx), m_dy(aDy), m_dz(aDz) {}
+		inline CRiTranslate(long aLineNo=-1, RtFloat aDx=0, RtFloat aDy=0, RtFloat aDz=0) : TypeParent(aLineNo), m_dx(aDx), m_dy(aDy), m_dz(aDz) {}
 
 		
 		/** @brief Copy constructor.
@@ -644,6 +682,18 @@ namespace RiCPP {
 			ri.postTranslate(*this, m_dx, m_dy, m_dz);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(dx());
+			ribWriter.putBlank();
+			ribWriter.putValue(dy());
+			ribWriter.putBlank();
+			ribWriter.putValue(dz());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -656,7 +706,7 @@ namespace RiCPP {
 
 			set(c.dx(), c.dy(), c.dz());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiTranslate
@@ -670,7 +720,8 @@ namespace RiCPP {
 				m_dx,    ///< Rotation axis x coordiante.
 				m_dy,    ///< Rotation axis z coordiante.
 				m_dz;    ///< Rotation axis y coordiante.
-
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -688,7 +739,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -699,7 +750,7 @@ namespace RiCPP {
 		 *  @param aDy The y coordiante of the rotation axis.
 		 *  @param aDz The z coordiante of the rotation axis.
 		 */
-		inline CRiRotate(long aLineNo, RtFloat anAngle = 0, RtFloat aDx = 0, RtFloat aDy = 0, RtFloat aDz = 1) : CRManInterfaceCall(aLineNo), m_angle(anAngle), m_dx(aDx), m_dy(aDy), m_dz(aDz) {}
+		inline CRiRotate(long aLineNo, RtFloat anAngle = 0, RtFloat aDx = 0, RtFloat aDy = 0, RtFloat aDz = 1) : TypeParent(aLineNo), m_angle(anAngle), m_dx(aDx), m_dy(aDy), m_dz(aDz) {}
 
 		/** @brief Copy constructor.
 		 *
@@ -840,6 +891,20 @@ namespace RiCPP {
 			ri.postRotate(*this, m_angle, m_dx, m_dy, m_dz);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(angle());
+			ribWriter.putBlank();
+			ribWriter.putValue(dx());
+			ribWriter.putBlank();
+			ribWriter.putValue(dy());
+			ribWriter.putBlank();
+			ribWriter.putValue(dz());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -852,7 +917,7 @@ namespace RiCPP {
 
 			set(c.angle(), c.dx(), c.dy(), c.dz());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiRotate
@@ -866,6 +931,8 @@ namespace RiCPP {
 		RtFloat m_dx, ///< Scaling in direction x.
 				m_dy, ///< Scaling in direction y.
 				m_dz; ///< Scaling in direction z.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -883,7 +950,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -893,7 +960,7 @@ namespace RiCPP {
 		 *  @param aDy Scaling in direction y.
 		 *  @param aDz Scaling in direction z.
 		 */
-		inline CRiScale(long aLineNo=-1, RtFloat aDx=1, RtFloat aDy=1, RtFloat aDz=1) : CRManInterfaceCall(aLineNo), m_dx(aDx), m_dy(aDy), m_dz(aDz) {}
+		inline CRiScale(long aLineNo=-1, RtFloat aDx=1, RtFloat aDy=1, RtFloat aDz=1) : TypeParent(aLineNo), m_dx(aDx), m_dy(aDy), m_dz(aDz) {}
 
 		
 		/** @brief Copy constructor.
@@ -1013,6 +1080,18 @@ namespace RiCPP {
 			ri.postScale(*this, m_dx, m_dy, m_dz);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(dx());
+			ribWriter.putBlank();
+			ribWriter.putValue(dy());
+			ribWriter.putBlank();
+			ribWriter.putValue(dz());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1025,7 +1104,7 @@ namespace RiCPP {
 
 			set(c.dx(), c.dy(), c.dz());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiScale
@@ -1042,7 +1121,8 @@ namespace RiCPP {
 		RtFloat m_dx2,  ///< X coordiante axis 2
 				m_dy2,  ///< Y coordiante axis 2
 				m_dz2;  ///< Z coordiante axis 2
-
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1060,7 +1140,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -1074,7 +1154,7 @@ namespace RiCPP {
 		 *  @param aDy2 The y coordiante of the second skew axis.
 		 *  @param aDz2 The z coordiante of the second skew axis.
 		 */
-		inline CRiSkew(long aLineNo=-1, RtFloat anAngle=0, RtFloat aDx1=0, RtFloat aDy1=0, RtFloat aDz1=1, RtFloat aDx2=0, RtFloat aDy2=1, RtFloat aDz2=0) : CRManInterfaceCall(aLineNo), m_angle(anAngle), m_dx1(aDx1), m_dy1(aDy1), m_dz1(aDz1), m_dx2(aDx2), m_dy2(aDy2), m_dz2(aDz2) {}
+		inline CRiSkew(long aLineNo=-1, RtFloat anAngle=0, RtFloat aDx1=0, RtFloat aDy1=0, RtFloat aDz1=1, RtFloat aDx2=0, RtFloat aDy2=1, RtFloat aDz2=0) : TypeParent(aLineNo), m_angle(anAngle), m_dx1(aDx1), m_dy1(aDy1), m_dz1(aDz1), m_dx2(aDx2), m_dy2(aDy2), m_dz2(aDz2) {}
 
 		/** @brief Copy constructor.
 		 *
@@ -1281,6 +1361,26 @@ namespace RiCPP {
 			m_dz2 = aDz2;
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(angle());
+			ribWriter.putBlank();
+			ribWriter.putValue(dx1());
+			ribWriter.putBlank();
+			ribWriter.putValue(dy1());
+			ribWriter.putBlank();
+			ribWriter.putValue(dz1());
+			ribWriter.putBlank();
+			ribWriter.putValue(dx2());
+			ribWriter.putBlank();
+			ribWriter.putValue(dy2());
+			ribWriter.putBlank();
+			ribWriter.putValue(dz2());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1293,7 +1393,7 @@ namespace RiCPP {
 
 			set(c.angle(), c.dx1(), c.dy1(), c.dz1(), c.dx2(), c.dy2(), c.dz2());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiSkew
@@ -1301,7 +1401,9 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	class CRiScopedCoordinateSystem : public CRManInterfaceCall {
 	private:
-		RtToken m_name; ///< Name of the coordinate system.
+		RtToken m_space; ///< Name of the coordinate system.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1319,18 +1421,18 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-		 *  @param aName Name of the coordinate system.
+		 *  @param aSpace Name of the coordinate system.
 		 */
 		inline CRiScopedCoordinateSystem(
 			long aLineNo = -1,
-			RtToken aName = RI_NULL)
-			: CRManInterfaceCall(aLineNo), m_name(aName)
+			RtToken aSpace = RI_NULL)
+			: TypeParent(aLineNo), m_space(aSpace)
 		{
 		}
 
@@ -1360,35 +1462,43 @@ namespace RiCPP {
 		 *
 		 *  @return The name of the coordinate system.
 		 */
-		inline RtToken name() const
+		inline RtToken space() const
 		{
-			return m_name;
+			return m_space;
 		}
 
 		/** @brief Sets the name of the coordinate system.
 		 *
-		 *  @param aName The name of the coordinate system.
+		 *  @param aSpace The name of the coordinate system.
 		 */
-		inline void name(RtToken aName)
+		inline void space(RtToken aSpace)
 		{
-			m_name = aName;
+			m_space = aSpace;
 		}
 
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preScopedCoordinateSystem(*this, m_name);
+			ri.preScopedCoordinateSystem(*this, m_space);
 		}
 
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doScopedCoordinateSystem(*this, m_name);
+			ri.doScopedCoordinateSystem(*this, m_space);
 		}
 
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postScopedCoordinateSystem(*this, m_name);
+			ri.postScopedCoordinateSystem(*this, m_space);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(space());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1399,9 +1509,9 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			name(c.name());
+			space(c.space());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiScopedCoordinateSystem
@@ -1409,7 +1519,9 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	class CRiCoordinateSystem : public CRManInterfaceCall {
 	private:
-		RtToken m_name; ///< Name of the coordinate system.
+		RtToken m_space; ///< Name of the coordinate system.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1427,18 +1539,18 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-		 *  @param aName Name of the coordinate system.
+		 *  @param aSpace Name of the coordinate system.
 		 */
 		inline CRiCoordinateSystem(
 			long aLineNo = -1,
-			RtToken aName = RI_NULL)
-			: CRManInterfaceCall(aLineNo), m_name(aName)
+			RtToken aSpace = RI_NULL)
+			: TypeParent(aLineNo), m_space(aSpace)
 		{
 		}
 
@@ -1468,35 +1580,43 @@ namespace RiCPP {
 		 *
 		 *  @return The name of the coordinate system.
 		 */
-		inline RtToken name() const
+		inline RtToken space() const
 		{
-			return m_name;
+			return m_space;
 		}
 
 		/** @brief Sets the name of the coordinate system.
 		 *
 		 *  @param aName The name of the coordinate system.
 		 */
-		inline void name(RtToken aName)
+		inline void space(RtToken aSpace)
 		{
-			m_name = aName;
+			m_space = aSpace;
 		}
 
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCoordinateSystem(*this, m_name);
+			ri.preCoordinateSystem(*this, m_space);
 		}
 
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCoordinateSystem(*this, m_name);
+			ri.doCoordinateSystem(*this, m_space);
 		}
 
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCoordinateSystem(*this, m_name);
+			ri.postCoordinateSystem(*this, m_space);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(space());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1507,9 +1627,9 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			name(c.name());
+			space(c.space());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiCoordinateSystem
@@ -1517,7 +1637,9 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	class CRiCoordSysTransform : public CRManInterfaceCall {
 	private:
-		RtToken m_name; ///< Name of the coordinate system.
+		RtToken m_space; ///< Name of the coordinate system.
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1535,18 +1657,18 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-		 *  @param aName Name of the coordinate system.
+		 *  @param aSpace Name of the coordinate system.
 		 */
 		inline CRiCoordSysTransform(
 			long aLineNo = -1,
-			RtToken aName = RI_NULL)
-			: CRManInterfaceCall(aLineNo), m_name(aName)
+			RtToken aSpace = RI_NULL)
+			: TypeParent(aLineNo), m_space(aSpace)
 		{
 		}
 
@@ -1576,35 +1698,43 @@ namespace RiCPP {
 		 *
 		 *  @return The name of the coordinate system.
 		 */
-		inline RtToken name() const
+		inline RtToken space() const
 		{
-			return m_name;
+			return m_space;
 		}
 
 		/** @brief Sets the name of the coordinate system.
 		 *
-		 *  @param aName The name of the coordinate system.
+		 *  @param aSpace The name of the coordinate system.
 		 */
-		inline void name(RtToken aName)
+		inline void space(RtToken aSpace)
 		{
-			m_name = aName;
+			m_space = aSpace;
 		}
 
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCoordSysTransform(*this, m_name);
+			ri.preCoordSysTransform(*this, m_space);
 		}
 
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCoordSysTransform(*this, m_name);
+			ri.doCoordSysTransform(*this, m_space);
 		}
 
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCoordSysTransform(*this, m_name);
+			ri.postCoordSysTransform(*this, m_space);
 		}
-
+		
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(space());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1615,9 +1745,9 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			name(c.name());
+			space(c.space());
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiCoordSysTransform
@@ -1626,6 +1756,8 @@ namespace RiCPP {
 	/** @brief transformation of points
 	 */
 	class CRiTransformPoints : public CRManInterfaceCall {
+	protected:
+		typedef CRManInterfaceCall TypeParent;
 	private:
 		RtToken m_fromspace, ///< Space from which the coordiantes are transformed.
 				m_tospace;   ///< Space to which the coordiantes are transformed.
@@ -1682,7 +1814,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -1691,7 +1823,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		inline CRiTransformPoints(long aLineNo=-1) : CRManInterfaceCall(aLineNo)
+		inline CRiTransformPoints(long aLineNo=-1) : TypeParent(aLineNo)
 		{
 			m_fromspace = RI_NULL;
 			m_tospace = RI_NULL;
@@ -1711,7 +1843,7 @@ namespace RiCPP {
 			long aLineNo,
 			RtToken aFromSpace, RtToken aToSpace,
 			RtInt aNPoints, RtPoint *aPoints)
-			: CRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			set(aFromSpace, aToSpace, aNPoints, aPoints);
 		}
@@ -1815,6 +1947,11 @@ namespace RiCPP {
 			ri.postTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			// Has no Rib binding
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1827,7 +1964,7 @@ namespace RiCPP {
 
 			set(c.fromSpace(), c.toSpace(), c.nPoints(), c.points(), c.m_pointsvector);
 
-			CRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiTransformPoints

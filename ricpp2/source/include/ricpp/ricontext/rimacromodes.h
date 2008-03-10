@@ -2144,8 +2144,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(static_cast<RtInt>(m_motionVars.size()),
-							   m_motionVars.empty() ? 0 : &m_motionVars[0]);
+			ribWriter.putArray(motionVars());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		

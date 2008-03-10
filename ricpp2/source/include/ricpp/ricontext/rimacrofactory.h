@@ -599,7 +599,22 @@ namespace RiCPP {
 		{
 			return new CRiDisplacement(aLineNo, name, parameters);
 		}
-
+		
+		inline virtual CRiDeformation *newRiDeformation(
+			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+			const char *name,
+			RtInt n, RtToken tokens[], RtPointer params[])
+		{
+			return new CRiDeformation(aLineNo, decl, curColorDescr, name, n, tokens, params);
+		}
+		
+		inline virtual CRiDeformation *newRiDeformation(
+			long aLineNo, const char *name,
+			const CParameterList &parameters)
+		{
+			return new CRiDeformation(aLineNo, name, parameters);
+		}
+		
 		inline virtual CRiTextureCoordinates *newRiTextureCoordinates(long aLineNo, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
 		{
 			return new CRiTextureCoordinates(aLineNo, s1, t1, s2, t2, s3, t3, s4, t4);
@@ -715,34 +730,19 @@ namespace RiCPP {
 			return new CRiSkew(aLineNo, angle, dx1, dy1, dz1, dx2, dy2, dz2);
 		}
 
-		inline virtual CRiDeformation *newRiDeformation(
-			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-			const char *name,
-			RtInt n, RtToken tokens[], RtPointer params[])
+		inline virtual CRiCoordinateSystem *newRiCoordinateSystem(long aLineNo, const char *space)
 		{
-			return new CRiDeformation(aLineNo, decl, curColorDescr, name, n, tokens, params);
+			return new CRiCoordinateSystem(aLineNo, space);
 		}
 
-		inline virtual CRiDeformation *newRiDeformation(
-			long aLineNo, const char *name,
-			const CParameterList &parameters)
+		inline virtual CRiScopedCoordinateSystem *newRiScopedCoordinateSystem(long aLineNo, const char *space)
 		{
-			return new CRiDeformation(aLineNo, name, parameters);
+			return new CRiScopedCoordinateSystem(aLineNo, space);
 		}
 
-		inline virtual CRiCoordinateSystem *newRiCoordinateSystem(long aLineNo, const char *name)
+		inline virtual CRiCoordSysTransform *newRiCoordSysTransform(long aLineNo, const char *space)
 		{
-			return new CRiCoordinateSystem(aLineNo, name);
-		}
-
-		inline virtual CRiScopedCoordinateSystem *newRiScopedCoordinateSystem(long aLineNo, const char *name)
-		{
-			return new CRiScopedCoordinateSystem(aLineNo, name);
-		}
-
-		inline virtual CRiCoordSysTransform *newRiCoordSysTransform(long aLineNo, const char *name)
-		{
-			return new CRiCoordSysTransform(aLineNo, name);
+			return new CRiCoordSysTransform(aLineNo, space);
 		}
 
 		inline virtual CRiTransformPoints *newRiTransformPoints(long aLineNo, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint *points)

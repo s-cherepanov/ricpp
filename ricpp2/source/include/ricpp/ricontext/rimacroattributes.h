@@ -301,7 +301,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(size(), &m_color[0]);
+			ribWriter.putArray(m_color.size(), color());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}	
 
@@ -429,7 +429,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(size(), &m_opacity[0]);
+			ribWriter.putArray(m_opacity.size(), opacity());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 
@@ -2188,7 +2188,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(sizeof(RtBound)/sizeof(bound()[0]), bound());
+			ribWriter.putArray(bound());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
@@ -2336,7 +2336,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(sizeof(RtBound)/sizeof(bound()[0]), bound());
+			ribWriter.putArray(bound());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
@@ -3268,19 +3268,11 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			RtToken aUBasis = CTypeInfo::basisName(uBasis());
-			if ( aUBasis )
-				ribWriter.putStringToken(aUBasis);
-			else
-				ribWriter.putArray(sizeof(RtBasis)/sizeof(uBasis()[0][0]), &(uBasis()[0][0]));
+			ribWriter.putBasis(uBasis());
 			ribWriter.putBlank();
 			ribWriter.putValue(uStep());
 			ribWriter.putBlank();
-			RtToken aVBasis = CTypeInfo::basisName(vBasis());
-			if ( aVBasis )
-				ribWriter.putStringToken(aVBasis);
-			else
-				ribWriter.putArray(sizeof(RtBasis)/sizeof(vBasis()[0][0]), &(vBasis()[0][0]));
+			ribWriter.putBasis(vBasis());
 			ribWriter.putBlank();
 			ribWriter.putValue(vStep());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
@@ -3416,23 +3408,23 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_nCurves.size(), m_trimCurve.m_nCurves.empty() ? 0 : &m_trimCurve.m_nCurves[0]);
+			ribWriter.putArray(m_trimCurve.m_nCurves);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_order.size(), m_trimCurve.m_order.empty() ? 0 : &m_trimCurve.m_order[0]);
+			ribWriter.putArray(m_trimCurve.m_order);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_knots.size(), m_trimCurve.m_knots.empty() ? 0 : &m_trimCurve.m_knots[0]);
+			ribWriter.putArray(m_trimCurve.m_knots);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_min.size(), m_trimCurve.m_min.empty() ? 0 : &m_trimCurve.m_min[0]);
+			ribWriter.putArray(m_trimCurve.m_min);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_max.size(), m_trimCurve.m_max.empty() ? 0 : &m_trimCurve.m_max[0]);
+			ribWriter.putArray(m_trimCurve.m_max);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_n.size(), m_trimCurve.m_n.empty() ? 0 : &m_trimCurve.m_n[0]);
+			ribWriter.putArray(m_trimCurve.m_n);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_u.size(), m_trimCurve.m_u.empty() ? 0 : &m_trimCurve.m_u[0]);
+			ribWriter.putArray(m_trimCurve.m_u);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_v.size(), m_trimCurve.m_v.empty() ? 0 : &m_trimCurve.m_v[0]);
+			ribWriter.putArray(m_trimCurve.m_v);
 			ribWriter.putBlank();
-			ribWriter.putArray(m_trimCurve.m_w.size(), m_trimCurve.m_w.empty() ? 0 : &m_trimCurve.m_w[0]);
+			ribWriter.putArray(m_trimCurve.m_w);
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		

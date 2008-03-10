@@ -200,6 +200,29 @@ void CRibElementsWriter::putLength(unsigned char code, unsigned long length)
 }
 
 
+void CRibElementsWriter::putArray()
+{
+	m_ostream << "[ ]";
+}
+
+void CRibElementsWriter::putArray(const RtMatrix m)
+{
+	if ( !m ) {
+		putArray();
+		return;
+	}
+	putArray(sizeof(RtMatrix)/sizeof(m[0][0]), &(m[0][0]));
+}
+
+void CRibElementsWriter::putArray(const RtBound b)
+{
+	if ( !b ) {
+		putArray();
+		return;
+	}
+	putArray(sizeof(RtBound)/sizeof(b[0]), &(b[0]));
+}
+
 void CRibElementsWriter::putArray(const std::vector<float> &floats)
 {
 	putArray((unsigned long)floats.size(), floats.size() ? &floats[0] : 0);
@@ -276,6 +299,20 @@ void CRibElementsWriter::putArray(unsigned long length, const RtString *strings)
 		putString(strings[i]);
 	}
 	m_ostream << " ]";
+}
+
+
+void CRibElementsWriter::putBasis(const RtBasis basis)
+{
+	if ( basis == 0 ) {
+		putArray();
+		return;
+	}
+	RtToken tbasis = CTypeInfo::basisName(basis);
+	if ( tbasis != RI_NULL )
+		putStringToken(tbasis);
+	else
+		putArray(basis);
 }
 
 

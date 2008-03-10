@@ -204,6 +204,8 @@ namespace RiCPP {
 		 *  @param theNVerts Number of vertices/loop, size of @a nverts vector is @a nloops.
 		 */
 		void enterValues(RtInt theNLoops, const RtInt theNVerts[]);
+	protected:
+		typedef CPolygonRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -221,7 +223,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -231,7 +233,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiGeneralPolygon(long aLineNo=-1)
-			: CPolygonRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 		}
 
@@ -355,6 +357,14 @@ namespace RiCPP {
 				parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putArray(nVerts());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -367,11 +377,12 @@ namespace RiCPP {
 
 			nVerts(c.nVerts());
 
-			CPolygonRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiGeneralPolygon
 
+	
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Simple polygon net.
 	 */
@@ -379,7 +390,8 @@ namespace RiCPP {
 	private:
 		std::vector<RtInt> m_nVerts; ///< Number of vertices per polygon (size is the number of polygons).
 		std::vector<RtInt> m_verts;  ///< Indices of the vertices.
-
+	protected:
+		typedef CPolygonRManInterfaceCall TypeParent;
 		/** @brief enters the values.
 		 *
 		 *  @param theNPolys Number of polygons.
@@ -404,7 +416,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -414,7 +426,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiPointsPolygons(long aLineNo=-1)
-			: CPolygonRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 		}
 
@@ -559,6 +571,16 @@ namespace RiCPP {
 				parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putArray(nVerts());
+			ribWriter.putBlank();
+			ribWriter.putArray(verts());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -571,11 +593,12 @@ namespace RiCPP {
 
 			set(c.nVerts(), c.verts());
 
-			CPolygonRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiPointsPolygons
 
+	
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief General polygon net.
 	 */
@@ -584,6 +607,8 @@ namespace RiCPP {
 		std::vector<RtInt> m_nLoops; ///< Loops per polygon (Number of polygons is the size of the vector).
 		std::vector<RtInt> m_nVerts; ///< Vertices per loop.
 		std::vector<RtInt> m_verts;  ///< Vertex indices.
+	protected:
+		typedef CPolygonRManInterfaceCall TypeParent;
 
 		/** @brief Enters the values.
 		 *
@@ -610,7 +635,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CPolygonRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -620,7 +645,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiPointsGeneralPolygons(long aLineNo=-1)
-			: CPolygonRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 		}
 
@@ -676,7 +701,7 @@ namespace RiCPP {
 			return new CRiPointsGeneralPolygons(*this);
 		}
 
-		inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_POLYGONS; }
+		inline virtual EnumRequests interfaceIdx() const { return REQ_POINTS_GENERAL_POLYGONS; }
 
 		/** @brief Gets the number of the positions.
 		 *
@@ -786,6 +811,18 @@ namespace RiCPP {
 				parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putArray(nLoops());
+			ribWriter.putBlank();
+			ribWriter.putArray(nVerts());
+			ribWriter.putBlank();
+			ribWriter.putArray(verts());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -798,7 +835,7 @@ namespace RiCPP {
 
 			set(c.nLoops(), c.nVerts(), c.verts());
 
-			CPolygonRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiPointsGeneralPolygons
@@ -810,7 +847,8 @@ namespace RiCPP {
 	class CRiPatch : public CUVRManInterfaceCall {
 	private:
 		RtToken m_type; ///< Type of the patch, either RI_BILINEAR or RI_BICUBIC (or RI_NULL if not set).
-
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -828,7 +866,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -838,7 +876,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiPatch(long aLineNo=-1)
-			: CUVRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_type = RI_NULL;
 		}
@@ -857,7 +895,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtToken aType,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CPatchClasses(aType), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CPatchClasses(aType), curColorDescr, n, tokens, params),
 			  m_type(aType)
 		{
 		}
@@ -872,7 +910,7 @@ namespace RiCPP {
 			long aLineNo,
 			RtToken aType,
 			const CParameterList &theParameters)
-			: CUVRManInterfaceCall(aLineNo, theParameters), m_type(aType)
+			: TypeParent(aLineNo, theParameters), m_type(aType)
 		{
 		}
 
@@ -931,6 +969,14 @@ namespace RiCPP {
 			ri.postPatch(*this, m_type, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(type());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -943,7 +989,7 @@ namespace RiCPP {
 
 			type(c.type());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiPatch
@@ -961,7 +1007,9 @@ namespace RiCPP {
 				m_nv;    ///< Number of control points in parametric v direction.
 		RtInt   m_ustep, ///< Step m_ustep control points to the next patch in u direction (from the basis).
 				m_vstep; ///< Step m_vstep control points to the next patch in v direction (from the basis).
-
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
+		
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -979,7 +1027,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -989,7 +1037,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		CRiPatchMesh(long aLineNo = -1) :
-			CUVRManInterfaceCall(aLineNo)
+			TypeParent(aLineNo)
 		{
 			m_type = RI_NULL;
 			m_uwrap = RI_NULL;
@@ -1160,6 +1208,22 @@ namespace RiCPP {
 			ri.postPatchMesh(*this, m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(type());
+			ribWriter.putBlank();
+			ribWriter.putValue(nu());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(uWrap());
+			ribWriter.putBlank();
+			ribWriter.putValue(nv());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(vWrap());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1172,7 +1236,7 @@ namespace RiCPP {
 
 			set(c.uStep(), c.vStep(), c.type(), c.nu(), c.uWrap(), c.nv(), c.vWrap());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiPatchMesh
@@ -1194,6 +1258,8 @@ namespace RiCPP {
 				m_umax, ///< Maximal value for parameter u.
 				m_vmin, ///< Minimal value for parameter v.
 				m_vmax; ///< Maximal value for parameter v.
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1211,7 +1277,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -1220,7 +1286,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		CRiNuPatch(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo)
+		CRiNuPatch(long aLineNo=-1) : TypeParent(aLineNo)
 		{
 			m_nu = m_uorder = 0;
 			m_nv = m_vorder = 0;
@@ -1459,6 +1525,32 @@ namespace RiCPP {
 				parameters());
 		}
 
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putValue(nu());
+			ribWriter.putBlank();
+			ribWriter.putValue(uOrder());
+			ribWriter.putBlank();
+			ribWriter.putArray(uKnot());
+			ribWriter.putBlank();
+			ribWriter.putValue(uMin());
+			ribWriter.putBlank();
+			ribWriter.putValue(uMax());
+			ribWriter.putBlank();
+			ribWriter.putValue(nv());
+			ribWriter.putBlank();
+			ribWriter.putValue(vOrder());
+			ribWriter.putBlank();
+			ribWriter.putArray(vKnot());
+			ribWriter.putBlank();
+			ribWriter.putValue(vMin());
+			ribWriter.putBlank();
+			ribWriter.putValue(vMax());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
 		/** @brief Assignment.
 		 *
 		 *  @param c CRManInterfaceCall to assign
@@ -1471,7 +1563,7 @@ namespace RiCPP {
 
 			set(c.nu(), c.uOrder(), c.uKnot(), c.uMin(), c.uMax(), c.nv(), c.vOrder(), c.vKnot(), c.vMin(), c.vMax());
 
-			CGeometryRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiNuPatch
@@ -1491,7 +1583,8 @@ namespace RiCPP {
 								m_intargs; ///< Integer arguments for tags.
 		std::vector<RtFloat>    m_floargs; ///< Float arguments for tags.
 		std::vector<RtToken>    m_tags;    ///< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
-
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1509,7 +1602,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -1518,7 +1611,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		CRiSubdivisionMesh(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo)
+		CRiSubdivisionMesh(long aLineNo=-1) : TypeParent(aLineNo)
 		{
 			m_scheme = RI_NULL;
 			m_nvertices = 0;
@@ -1765,7 +1858,7 @@ namespace RiCPP {
 
 			set(0, c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs()); 
 
-			CGeometryRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiSubdivisionMesh
@@ -1787,7 +1880,8 @@ namespace RiCPP {
 		std::vector<std::string> m_strargs; ///< String arguments for tags.
 		std::vector<RtToken>     m_strptrargs; ///< String arguments for tags.
 		std::vector<RtToken>     m_tags;    ///< Tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
-
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -1805,7 +1899,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -1814,7 +1908,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		CRiHierarchicalSubdivisionMesh(long aLineNo=-1) : CGeometryRManInterfaceCall(aLineNo)
+		CRiHierarchicalSubdivisionMesh(long aLineNo=-1) : TypeParent(aLineNo)
 		{
 			m_scheme = RI_NULL;
 			m_nvertices = 0;
@@ -2077,7 +2171,7 @@ namespace RiCPP {
 
 			set(0, c.scheme(), c.nVerts(), c.verts(), c.tags(), c.nArgs(), c.intArgs(), c.floatArgs(), c.stringPtrArgs()); 
 
-			CGeometryRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiHierarchicalSubdivisionMesh
@@ -2092,6 +2186,8 @@ namespace RiCPP {
 				m_zmin,     ///< Minimal z coordinate (cut pole).
 				m_zmax,     ///< Maximal z coordinate (cut pole).
 				m_thetamax; ///< Sweep angle.
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2110,7 +2206,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -2125,7 +2221,7 @@ namespace RiCPP {
 		 */
 		CRiSphere(long aLineNo=-1,
 			RtFloat aRadius = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 0)
-			: CUVRManInterfaceCall(aLineNo),
+			: TypeParent(aLineNo),
 			  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -2147,7 +2243,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 			  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -2166,7 +2262,7 @@ namespace RiCPP {
 			RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 			const CParameterList &theParameters
 			)
-			: CUVRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -2321,7 +2417,7 @@ namespace RiCPP {
 
 			set(c.radius(), c.zMin(), c.zMax(), c.thetaMax());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiSphere
@@ -2335,6 +2431,8 @@ namespace RiCPP {
 		RtFloat m_height,   ///< Height.
 				m_radius,   ///< Radius.
 				m_thetamax; ///< Sweep angle.
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2352,7 +2450,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -2366,7 +2464,7 @@ namespace RiCPP {
 		 */
 		inline CRiCone(
 			long aLineNo = -1, RtFloat aHeight = 0, RtFloat aRadius = 0, RtFloat aThetaMax = 0)
-			: CUVRManInterfaceCall(aLineNo),
+			: TypeParent(aLineNo),
 			  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 		{
 		}
@@ -2387,7 +2485,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 			  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 		{
 		}
@@ -2405,7 +2503,7 @@ namespace RiCPP {
 			RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
 			const CParameterList &theParameters
 			)
-			: CUVRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 		{
 		}
@@ -2537,7 +2635,7 @@ namespace RiCPP {
 
 			set(c.height(), c.radius(), c.thetaMax());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiCone
@@ -2552,6 +2650,8 @@ namespace RiCPP {
 				m_zmin,     ///< Minimal z coordiante.
 				m_zmax,     ///< Maximal z coordiante.
 				m_thetamax; ///< Sweep angle.
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2569,7 +2669,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -2584,7 +2684,7 @@ namespace RiCPP {
 		 */
 		inline CRiCylinder(
 			long aLineNo = -1, RtFloat aRadius = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 0)
-			: CUVRManInterfaceCall(aLineNo),
+			: TypeParent(aLineNo),
 			  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -2606,7 +2706,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 			  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -2625,7 +2725,7 @@ namespace RiCPP {
 			RtFloat aRadius, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 			const CParameterList &theParameters
 			)
-			: CUVRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_radius(aRadius), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -2781,7 +2881,7 @@ namespace RiCPP {
 
 			set(c.radius(), c.zMin(), c.zMax(), c.thetaMax());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiCylinder
@@ -2795,6 +2895,8 @@ namespace RiCPP {
 		RtPoint m_point1,   ///< First point of the line to sweep to get a hyperbolid.
 				m_point2;   ///< Second point of the line to sweep to get a hyperbolid.
 		RtFloat m_thetamax; ///< Sweep angle.
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -2812,7 +2914,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -2822,7 +2924,7 @@ namespace RiCPP {
 		 *  @param aLineNo   The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiHyperboloid(long aLineNo = -1)
-			: CUVRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_point1[0] = m_point1[1] = m_point1[2] = 0;
 			m_point2[0] = m_point2[1] = m_point2[2] = 0;
@@ -2845,7 +2947,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			const RtPoint aPoint1, const RtPoint aPoint2, RtFloat aThetaMax,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 			  m_thetamax(aThetaMax)
 		{
 			for ( int i = 0; i < 3; ++i ) {
@@ -2867,7 +2969,7 @@ namespace RiCPP {
 			const RtPoint aPoint1, const RtPoint aPoint2, RtFloat aThetaMax,
 			const CParameterList &theParameters
 			)
-			: CUVRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_thetamax(aThetaMax)
 		{
 			for ( int i = 0; i < 3; ++i ) {
@@ -3035,7 +3137,7 @@ namespace RiCPP {
 
 			set(c.point1(), c.point2(), c.thetaMax());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiHyperboloid
@@ -3050,6 +3152,8 @@ namespace RiCPP {
 				m_zmin,     ///< Minimal z coordinate.
 				m_zmax,     ///< Maximal z coordinate.
 				m_thetamax; ///< Sweep angle.
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3071,7 +3175,7 @@ namespace RiCPP {
 		inline CRiParaboloid(
 			long aLineNo = -1,
 			RtFloat aRMax = 0, RtFloat aZMin = 0, RtFloat aZMax = 0, RtFloat aThetaMax = 0)
-			: CUVRManInterfaceCall(aLineNo),
+			: TypeParent(aLineNo),
 			  m_rmax(aRMax), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -3093,7 +3197,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtFloat aRMax, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 			  m_rmax(aRMax), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -3112,7 +3216,7 @@ namespace RiCPP {
 			RtFloat aRMax, RtFloat aZMin, RtFloat aZMax, RtFloat aThetaMax,
 			const CParameterList &theParameters
 			)
-			: CUVRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_rmax(aRMax), m_zmin(aZMin), m_zmax(aZMax), m_thetamax(aThetaMax)
 		{
 		}
@@ -3267,7 +3371,7 @@ namespace RiCPP {
 
 			set(c.rMax(), c.zMin(), c.zMax(), c.thetaMax());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiParaboloid
@@ -3281,6 +3385,8 @@ namespace RiCPP {
 		RtFloat m_height,   ///< Distance from disk to origin on positive z axis.
 				m_radius,   ///< Radius.
 				m_thetamax; ///< Sweep angle.
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3298,7 +3404,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -3312,7 +3418,7 @@ namespace RiCPP {
 		 */
 		inline CRiDisk(
 			long aLineNo = -1, RtFloat aHeight = 0, RtFloat aRadius = 0, RtFloat aThetaMax = 0)
-			: CUVRManInterfaceCall(aLineNo),
+			: TypeParent(aLineNo),
 			  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 		{
 		}
@@ -3333,7 +3439,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 			  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 		{
 		}
@@ -3351,7 +3457,7 @@ namespace RiCPP {
 			RtFloat aHeight, RtFloat aRadius, RtFloat aThetaMax,
 			const CParameterList &theParameters
 			)
-			: CUVRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_height(aHeight), m_radius(aRadius), m_thetamax(aThetaMax)
 		{
 		}
@@ -3485,7 +3591,7 @@ namespace RiCPP {
 
 			set(c.height(), c.radius(), c.thetaMax());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiDisk
@@ -3501,6 +3607,8 @@ namespace RiCPP {
 				m_phimin,   ///< Start angle to sweep the torus body.
 				m_phimax,   ///< End angle to sweep the torus body.
 				m_thetamax; ///< Sweep angle.
+	protected:
+		typedef CUVRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3518,7 +3626,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CUVRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -3535,7 +3643,7 @@ namespace RiCPP {
 		inline CRiTorus(
 			long aLineNo = -1,
 			RtFloat aMajorRad = 0, RtFloat aMinorRad = 0, RtFloat aPhiMin = 0, RtFloat aPhiMax = 0, RtFloat aThetaMax = 0)
-			: CUVRManInterfaceCall(aLineNo),
+			: TypeParent(aLineNo),
 			  m_majorrad(aMajorRad), m_minorrad(aMinorRad),
 			  m_phimin(aPhiMin), m_phimax(aPhiMax), m_thetamax(aThetaMax)
 		{
@@ -3559,7 +3667,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtFloat aMajorRad, RtFloat aMinorRad, RtFloat aPhiMin, RtFloat aPhiMax, RtFloat aThetaMax,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CUVRManInterfaceCall(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CQuadricClasses(), curColorDescr, n, tokens, params),
 			  m_majorrad(aMajorRad), m_minorrad(aMinorRad),
 			  m_phimin(aPhiMin), m_phimax(aPhiMax), m_thetamax(aThetaMax)
 		{
@@ -3580,7 +3688,7 @@ namespace RiCPP {
 			RtFloat aMajorRad, RtFloat aMinorRad, RtFloat aPhiMin, RtFloat aPhiMax, RtFloat aThetaMax,
 			const CParameterList &theParameters
 			)
-			: CUVRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_majorrad(aMajorRad), m_minorrad(aMinorRad),
 			  m_phimin(aPhiMin), m_phimax(aPhiMax), m_thetamax(aThetaMax)
 		{
@@ -3758,7 +3866,7 @@ namespace RiCPP {
 
 			set(c.majorRad(), c.minorRad(), c.phiMin(), c.phiMax(), c.thetaMax());
 
-			CUVRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiTorus
@@ -3770,7 +3878,8 @@ namespace RiCPP {
 	class CRiPoints : public CGeometryRManInterfaceCall {
 	private:
 		RtInt m_npts; ///< Number of points.
-
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3788,7 +3897,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -3798,7 +3907,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiPoints(long aLineNo = -1)
-			: CGeometryRManInterfaceCall(aLineNo)
+			: TypeParent(aLineNo)
 		{
 			m_npts = 0;
 		}
@@ -3817,7 +3926,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtInt aNPts,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CGeometryRManInterfaceCall(aLineNo, decl, CPointsClasses(aNPts), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CPointsClasses(aNPts), curColorDescr, n, tokens, params),
 			  m_npts(aNPts)
 		{
 		}
@@ -3833,7 +3942,7 @@ namespace RiCPP {
 			RtInt aNPts,
 			const CParameterList &theParameters
 			)
-			: CGeometryRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_npts(aNPts)
 		{
 		}
@@ -3904,7 +4013,7 @@ namespace RiCPP {
 
 			nPts(c.nPts());
 
-			CGeometryRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiPoints
@@ -3919,6 +4028,8 @@ namespace RiCPP {
 				m_wrap; ///< Wrap at the ends either RI_PERIODIC or RI_NONPERIODIC.
 		RtInt   m_step; ///< Step to the next curve segment (by basis, v parameter)
 		std::vector<RtInt> m_nverts; ///< Number of vertices for each curve (size == number of curves)
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -3936,7 +4047,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -3945,7 +4056,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		CRiCurves(long aLineNo = -1) : CGeometryRManInterfaceCall(aLineNo)
+		CRiCurves(long aLineNo = -1) : TypeParent(aLineNo)
 		{
 			m_type = RI_NULL,
 			m_wrap = RI_NULL;
@@ -4122,7 +4233,7 @@ namespace RiCPP {
 
 			set(c.step(), c.type(), c.nVerts(), c.wrap());
 
-			CGeometryRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiCurves
@@ -4138,6 +4249,8 @@ namespace RiCPP {
 		std::vector<RtFloat>    m_flt;          ///< The float operands for the code.
 		std::deque<std::string> m_strcontainer; ///< The string operants for the code.
 		std::vector<RtString>   m_str;          ///< C-String pointers of m_strcontainer.
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -4155,7 +4268,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -4164,7 +4277,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		inline CRiBlobby(long aLineNo = -1) : CGeometryRManInterfaceCall(aLineNo)
+		inline CRiBlobby(long aLineNo = -1) : TypeParent(aLineNo)
 		{
 			m_nleaf = 0;
 		}
@@ -4344,7 +4457,7 @@ namespace RiCPP {
 
 			set(c.nLeaf(), c.code(), c.flt(), c.str());
 
-			CGeometryRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiBlobby
@@ -4356,7 +4469,8 @@ namespace RiCPP {
 	class CRiGeometry : public CGeometryRManInterfaceCall {
 	private:
 		RtToken m_name; ///< Name of the geometry as atomized string.
-
+	protected:
+		typedef CGeometryRManInterfaceCall TypeParent;
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -4374,7 +4488,7 @@ namespace RiCPP {
 		{
 			if ( atomizedClassName == myClassName() )
 				return true;
-			return CGeometryRManInterfaceCall::isKindOf(atomizedClassName);
+			return TypeParent::isKindOf(atomizedClassName);
 		}
 
 		/** @brief Default constructor.
@@ -4383,7 +4497,7 @@ namespace RiCPP {
 		 *  @param aName Name of the geometry as atomized string.
 		 */
 		inline CRiGeometry(long aLineNo = -1, RtToken aName = RI_NULL)
-			: CGeometryRManInterfaceCall(aLineNo), m_name(aName)
+			: TypeParent(aLineNo), m_name(aName)
 		{
 		}
 
@@ -4401,7 +4515,7 @@ namespace RiCPP {
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			RtToken aName,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CGeometryRManInterfaceCall(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params),
+			: TypeParent(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params),
 			  m_name(aName)
 		{
 		}
@@ -4416,7 +4530,7 @@ namespace RiCPP {
 			long aLineNo,
 			RtToken aName,
 			const CParameterList &theParameters)
-			: CGeometryRManInterfaceCall(aLineNo, theParameters),
+			: TypeParent(aLineNo, theParameters),
 			  m_name(aName)
 		{
 		}
@@ -4489,7 +4603,7 @@ namespace RiCPP {
 
 			name(c.name());
 
-			CGeometryRManInterfaceCall::operator=(c);
+			TypeParent::operator=(c);
 			return *this;
 		}
 	}; // CRiGeometry

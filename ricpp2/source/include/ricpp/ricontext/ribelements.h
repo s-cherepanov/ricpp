@@ -215,7 +215,23 @@ public:
 	 *  @param strings Array of strings to put out.
 	 */
 	void putArray(unsigned long length, const RtString *strings);
-
+	
+	/** @brief Puts out a matrix or basis.
+	 */
+	void putArray(const RtMatrix m);
+	
+	/** @brief Puts out a boundary.
+	 */
+	void putArray(const RtBound b);
+	
+	/** @brief Puts out an array of size 0: [ ].
+	 */
+	void putArray();
+	
+	/** @brief Puts out a basis matirx, if possible as token.
+	 */
+	void putBasis(const RtBasis basis);
+	
 	/** @brief Puts out a vector of token strings.
 	 *  @param strings Vector of token strings to put out.
 	 */

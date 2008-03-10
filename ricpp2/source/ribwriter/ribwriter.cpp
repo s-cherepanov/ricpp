@@ -1042,291 +1042,75 @@ RtVoid CRibWriter::postIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoo
 
 
 RtVoid CRibWriter::postIdentity(CRiIdentity &obj)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_IDENTITY);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postTransform(CRiTransform &obj, RtMatrix aTransform)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_TRANSFORM);
-	m_writer->putBlank();
-	m_writer->putArray(sizeof(RtMatrix)/sizeof(aTransform[0][0]), &(aTransform[0][0]));
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_CONCAT_TRANSFORM);
-	m_writer->putBlank();
-	m_writer->putArray(sizeof(RtMatrix)/sizeof(aTransform[0][0]), &(aTransform[0][0]));
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPerspective(CRiPerspective &obj, RtFloat fov)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_PERSPECTIVE);
-	m_writer->putBlank();
-	m_writer->putValue(fov);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, RtFloat dz)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_TRANSLATE);
-	m_writer->putBlank();
-	m_writer->putValue(dx);
-	m_writer->putBlank();
-	m_writer->putValue(dy);
-	m_writer->putBlank();
-	m_writer->putValue(dz);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_ROTATE);
-	m_writer->putBlank();
-	m_writer->putValue(angle);
-	m_writer->putBlank();
-	m_writer->putValue(dx);
-	m_writer->putBlank();
-	m_writer->putValue(dy);
-	m_writer->putBlank();
-	m_writer->putValue(dz);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SCALE);
-	m_writer->putBlank();
-	m_writer->putValue(dx);
-	m_writer->putBlank();
-	m_writer->putValue(dy);
-	m_writer->putBlank();
-	m_writer->putValue(dz);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SKEW);
-	m_writer->putBlank();
-	m_writer->putValue(angle);
-	m_writer->putBlank();
-	m_writer->putValue(dx1);
-	m_writer->putBlank();
-	m_writer->putValue(dy1);
-	m_writer->putBlank();
-	m_writer->putValue(dz1);
-	m_writer->putBlank();
-	m_writer->putValue(dx2);
-	m_writer->putBlank();
-	m_writer->putValue(dy2);
-	m_writer->putBlank();
-	m_writer->putValue(dz2);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_SCOPED_COORDINATE_SYSTEM);
-	m_writer->putBlank();
-	m_writer->putStringToken(space);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postCoordinateSystem(CRiCoordinateSystem &obj, RtToken space)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_COORDINATE_SYSTEM);
-	m_writer->putBlank();
-	m_writer->putStringToken(space);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postCoordSysTransform(CRiCoordSysTransform &obj, RtToken space)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_COORD_SYS_TRANSFORM);
-	m_writer->putBlank();
-	m_writer->putStringToken(space);
-	m_writer->putNewLine();
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPolygon(CRiPolygon &obj, RtInt nvertices, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	obj.writeRIB(*m_writer);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postGeneralPolygon(CRiGeneralPolygon &obj, RtInt nloops, RtInt nverts[], const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_GENERAL_POLYGON);
-	m_writer->putBlank();
-	m_writer->putArray(nloops, nverts);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPointsPolygons(CRiPointsPolygons &obj, RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_POINTS_POLYGONS);
-	m_writer->putBlank();
-	m_writer->putArray(npolys, nverts);
-	m_writer->putBlank();
-	m_writer->putArray(sum(npolys, nverts), verts);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPointsGeneralPolygons(CRiPointsGeneralPolygons &obj, RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_POINTS_GENERAL_POLYGONS);
-	m_writer->putBlank();
-	m_writer->putArray(npolys, nloops);
-	RtInt n = sum(npolys, nloops);
-	m_writer->putBlank();
-	m_writer->putArray(n, nverts);
-	m_writer->putBlank();
-	m_writer->putArray(sum(n, nverts), verts);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPatch(CRiPatch &obj, RtToken type, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_PATCH);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postPatchMesh(CRiPatchMesh &obj, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_PATCH_MESH);
-	m_writer->putBlank();
-	m_writer->putStringToken(type);
-	m_writer->putBlank();
-	m_writer->putValue(nu);
-	m_writer->putBlank();
-	m_writer->putStringToken(uwrap);
-	m_writer->putBlank();
-	m_writer->putValue(nv);
-	m_writer->putBlank();
-	m_writer->putStringToken(vwrap);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postNuPatch(CRiNuPatch &obj, RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params)
-{
-	if ( !postTestValid() )
-		return;
-
-	writePrefix();
-	m_writer->putRequest(REQ_NU_PATCH);
-	m_writer->putBlank();
-	m_writer->putValue(nu);
-	m_writer->putBlank();
-	m_writer->putValue(uorder);
-	m_writer->putBlank();
-	m_writer->putArray(nu+uorder, uknot);
-	m_writer->putBlank();
-	m_writer->putValue(umin);
-	m_writer->putBlank();
-	m_writer->putValue(umax);
-	m_writer->putBlank();
-	m_writer->putValue(nv);
-	m_writer->putBlank();
-	m_writer->putValue(vorder);
-	m_writer->putBlank();
-	m_writer->putArray(nv+vorder, vknot);
-	m_writer->putBlank();
-	m_writer->putValue(vmin);
-	m_writer->putBlank();
-	m_writer->putValue(vmax);
-	writeParameterList(params);
-}
+TEST_WRITE_RIB
 
 
 RtVoid CRibWriter::postSubdivisionMesh(CRiSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params)

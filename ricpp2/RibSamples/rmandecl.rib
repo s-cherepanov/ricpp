@@ -1,0 +1,117 @@
+# Declarations for RenderMan Imager
+# Imager "clamptoalpha" has not parameters
+Declare "Imager:background:background" "color"        # [s] - none -
+
+# Declarations for RenderMan Hider
+Declare "Hider:hidden:jitter" "int"                   # [b] 1
+Declare "Hider:hidden:occlusionbound" "float"         # [f] 0.0
+Declare "Hider:hidden:mpcache" "int"                  # [b] 1
+Declare "Hider:hidden:mpmemory" "int"                 # [i] 6144
+Declare "Hider:hidden:mpcachedir" "string"            # [s] "."
+Declare "Hider:hidden:samplemotion" "int"             # [b] 1
+Declare "Hider:hidden:subpixel" "int"                 # [i] 1
+Declare "Hider:hidden:extrememotiondof" "int"         # [b] 1
+Declare "Hider:hidden:maxvpdepth" "int"               # [i] -1
+Declare "Hider:photon:emit" "int"                     # [i] - none -
+Declare "Hider:depthmask:zfile"                       # [s] -none-
+Declare "Hider:depthmask:reversesign"                 # [i] 0
+Declare "Hider:depthmask:depthbias"                   # [f] 0.01
+
+# Declarations for RenderMan Display
+Declare "Display:merge" "int"                          # [b] 0
+Declare "Display:origin" "int[2]"                      # [i i] 0 0
+Declare "Display:resolution" "string"                  # [s] - none -
+Declare "Display:resolutionunit" "int[2]"              # [i i] 0 0
+
+# Declarations for RenderMan Option
+Declare "Option:limits:bucketsize"                     # [i i] 16 16
+Declare "Option:limits:gridsize"                       # [i] 256
+Declare "Option:limits:texturememory"                  # [i] 2048
+Declare "Option:limits:brickmemory"                    # [i] 10240 ? 1024
+Declare "Option:limits:deepshadowtiles"                # [i] 100
+Declare "Option:limits:geocachememory"                 # [i] 30720
+Declare "Option:limits:zthreshold"                     # [f f f] 0.996 0.996 0.996
+Declare "Option:limits:othreshold"                     # [f f f] 0.996 0.996 0.996
+Declare "Option:limits:extremedisplacement"            # [b] 0
+
+Declare "Option:rib:format" "string"                   # [s] "ascii" "binary"
+Declare "Option:rib:compression" "string"              # [s] "gz"
+
+Declare "Option:searchpath:shader" "string"            # [s] ".:${RMANTREE}/lib/shaders"
+Declare "Option:searchpath:texture" "string"           # [s] ".:${RMANTREE}/lib/textures"
+Declare "Option:searchpath:vfxmaster" "string"         # [s] ".:${RMANTREE}/look/masters"
+Declare "Option:searchpath:vfxinstance" "string"       # [s] ".:${RMANTREE}/look/instances"
+Declare "Option:searchpath:display" "string"           # [s] ".:${RMANTREE}/etc"
+Declare "Option:searchpath:archive" "string"           # [s] "."
+Declare "Option:searchpath:procedural" "string"        # [s] "."
+Declare "Option:searchpath:resource" "string"          # [s] - none -
+Declare "Option:searchpath:servershader" "string"      # [s] ".:${RMANTREE}/lib/shaders"
+Declare "Option:searchpath:servertexture" "string"     # [s] ".:${RMANTREE}/lib/textures"
+Declare "Option:searchpath:servervfxmaster" "string"   # [s] ".:${RMANTREE}/look/masters"
+Declare "Option:searchpath:servervfxinstance" "string" # [s] ".:${RMANTREE}/look/instances"
+Declare "Option:searchpath:serverdisplay" "string"     # [s] ".:${RMANTREE}/etc"
+Declare "Option:searchpath:serverarchive" "string"     # [s] "."
+Declare "Option:searchpath:serverresource" "string"    # [s] - none -
+Declare "Option:searchpath:dirmap" "string"            # [s] - none -
+
+Declare "Option:shadow:bias" "float"                   # [f] 0.225
+Declare "Option:shutter:offset" "float"                # [f] 0.0
+Declare "Option:shutter:clampmotion" "int"             # [b] 0
+Declare "Option:statistics:endofframe" "int"           # [i] 1
+Declare "Option:statistics:filelog" "string"           # [s] - none -
+Declare "Option:texture:enable gaussian" "float"       # [f] 1.0
+Declare "Option:texture:enable lerp" "float"           # [f] 1.0
+Declare "Option:trace:maxdepth" "int"                  # [i] 10
+Declare "Option:trace:specularthreshold" "float"       # [f] 10.0
+# Declare "Option:user:myoption" "string"              # [s] - none.
+
+# Additional pixel filters :
+# "mitchell" RiMitchellFilter, "separable-catmull-rom" RiSeparableCatmullRom, "blackman-harris" RiBlackmanHarrisFilter
+# Standard "catmull-rom" 2.0 2.0
+
+# Declarations for RenderMan Attribute
+Declare "Attribute:cull:backfacing" "int"              # [b] 1
+Declare "Attribute:cull:hidden" "int"                  # [b] 1
+Declare "Attribute:derivatives:centered" "int"         # [b] 1
+Declare "Attribute:cull:extrapolate" "int"             # [b] 1
+Declare "Attribute:dice:binary" "int"                  # [b] 0
+Declare "Attribute:dice:binary" "int"                  # [b] 0
+Declare "Attribute:dice:hair" "int"                    # [b] 0
+Declare "Attribute:dice:rasterorient" "int"            # [b] 1
+Declare "Attribute:dice:strategy" "string"             # [s] "planarprojection"
+Declare "Attribute:dice:referencecamera" "string"      # [s] "worldcamera"
+Declare "Attribute:displacementbound:sphere" "float"   # [f] 0.0
+Declare "Attribute:displacementbound:coordinatesystem" "string" # [s] "object"
+Declare "Attribute:grouping:membership" "string"       # [s] ""
+Declare "Attribute:identifier:name" "string"           # [s] - none -
+Declare "Attribute:irradiance:maxerror" "float"        # [f] 0.5
+Declare "Attribute:irradiance:maxpixeldist" "float"    # [f] 30.0
+Declare "Attribute:photon:estimator" "int"             # [f] 50
+Declare "Attribute:photon:causticmap" "string"         # [s] ""
+Declare "Attribute:photon:globalmap" "string"          # [s] ""
+Declare "Attribute:photon:shadingmodel" "string"       # [s] "matte"
+Declare "Attribute:sides:backfacetolerance" "float"    # [f] 0.0
+Declare "Attribute:sides:doubleshaded" "int"           # [b] 0
+Declare "Attribute:shade:strategy" "string"            # [s] "grids"
+Declare "Attribute:shade:volumeintersectionstrategy" "string" # [s] "exclusive"
+Declare "Attribute:shade:volumeintersectionpriority" "float"  # [f] 0.0
+Declare "Attribute:shade:diffusehitmode" "string"      # [s] "primitive"
+Declare "Attribute:shade:specularhitmode" "string"     # [s] "shader"
+Declare "Attribute:shade:transmissionhitmode" "string" # [s] "shader"
+Declare "Attribute:shade:camerahitmode" "string"       # [s] "shader"
+Declare "Attribute:stitch:enable" "int"                # [b] 1
+Declare "Attribute:stitch:newgroup" "int"              # [b] 0
+Declare "Attribute:trace:maxdiffusedepth" "int"        # [i] 1
+Declare "Attribute:trace:maxspeculardepth" "int"       # [i] 2
+Declare "Attribute:trace:displacements" "int"          # [b] 0
+Declare "Attribute:trace:bias" "float"                 # [f] 0.01
+Declare "Attribute:trace:samplemotion" "int"           # [b] 0
+Declare "Attribute:trimcurve:sense" "string"           # [s] "inside"
+# Declare "Attribute:user:myattribute" "string"        # [s] - none -
+Declare "Attribute:visibility:camera" "int"            # [b] 1
+Declare "Attribute:visibility:cdiffuse" "int"          # [b] 0
+Declare "Attribute:visibility:cspecular" "int"         # [b] 0
+Declare "Attribute:visibility:ctransmission" "int"     # [b] 0
+Declare "Attribute:visibility:cphoton" "int"           # [b] 0
+Declare "Attribute:visibility:cmidpoint" "int"         # [b] 0
+Declare "Attribute:GeometricApproximation:motionfactor" "float" # [f] 0.0

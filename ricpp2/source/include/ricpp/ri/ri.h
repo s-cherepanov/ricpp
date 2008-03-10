@@ -126,7 +126,7 @@ RICPP_EXTERN(RtVoid)
 	RiErrorHandler(RtErrorHandler handler);
 
 RICPP_EXTERN(RtToken)
-    RiDeclare (const char *name,const char *declaration);
+    RiDeclare (RtString name, RtString declaration);
 
 RICPP_EXTERN(RtContextHandle)
 	RiGetContext(void);
@@ -147,8 +147,8 @@ RICPP_EXTERN(RtVoid)
     RiFrameAspectRatio (RtFloat aspect),
     RiScreenWindow (RtFloat left, RtFloat right, RtFloat bot, RtFloat top),
     RiCropWindow (RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax),
-    RiProjection (char *name, ...),
-    RiProjectionV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiProjection (RtString name, ...),
+    RiProjectionV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
     RiClipping (RtFloat hither, RtFloat yon),
 	RiClippingPlane(RtFloat x,RtFloat y,RtFloat z,RtFloat nx,RtFloat ny,RtFloat nz),
     RiDepthOfField (RtFloat fstop, RtFloat focallength, RtFloat focaldistance),
@@ -159,11 +159,11 @@ RICPP_EXTERN(RtVoid)
     RiPixelSamples (RtFloat xsamples, RtFloat ysamples),
     RiPixelFilter (RtFilterFunc function, RtFloat xwidth, RtFloat ywidth),
     RiExposure (RtFloat gain, RtFloat gamma),
-    RiImager (char *name, ...),
-    RiImagerV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiImager (RtString name, ...),
+    RiImagerV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
     RiQuantize (RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl),
-    RiDisplay (char *name, RtToken type, RtToken mode, ...),
-    RiDisplayV (char *name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiDisplay (RtString name, RtToken type, RtToken mode, ...),
+    RiDisplayV (RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]),
 	RiDisplayChannel (RtToken channel, ...),
     RiDisplayChannelV (RtToken channel,RtInt n, RtToken tokens[], RtPointer params[]);
 
@@ -172,8 +172,8 @@ RICPP_EXTERN(RtVoid)
     RiHiderV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[]),
     RiColorSamples (RtInt N, RtFloat *nRGB, RtFloat *RGBn),
     RiRelativeDetail (RtFloat relativedetail),
-    RiOption (char *name, ...),
-    RiOptionV (char *name, RtInt n, RtToken tokens[], RtPointer params[]);
+    RiOption (RtString name, ...),
+    RiOptionV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 RICPP_EXTERN(RtVoid)
     RiAttributeBegin (void), RiAttributeEnd (void),
@@ -181,21 +181,21 @@ RICPP_EXTERN(RtVoid)
     RiTextureCoordinates (RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
 
 RICPP_EXTERN(RtLightHandle)
-    RiLightSource (char *name, ...),
-    RiLightSourceV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiAreaLightSource (char *name, ...),
-    RiAreaLightSourceV (char *name, RtInt n, RtToken tokens[], RtPointer params[]);
+    RiLightSource (RtString name, ...),
+    RiLightSourceV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiAreaLightSource (RtString name, ...),
+    RiAreaLightSourceV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 RICPP_EXTERN(RtVoid)
     RiIlluminate (RtLightHandle light, RtBoolean onoff),
-    RiSurface (char *name, ...),
-    RiSurfaceV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiAtmosphere (char *name, ...),
-    RiAtmosphereV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiInterior (char *name, ...),
-    RiInteriorV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiExterior (char *name, ...),
-    RiExteriorV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiSurface (RtString name, ...),
+    RiSurfaceV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiAtmosphere (RtString name, ...),
+    RiAtmosphereV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiInterior (RtString name, ...),
+    RiInteriorV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiExterior (RtString name, ...),
+    RiExteriorV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
     RiShadingRate (RtFloat size),
     RiShadingInterpolation (RtToken type),
     RiMatte (RtBoolean onoff);
@@ -216,10 +216,10 @@ RICPP_EXTERN(RtVoid)
     RiRotate (RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz),
     RiScale (RtFloat dx, RtFloat dy, RtFloat dz),
     RiSkew (RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2),
-    RiDeformation (char *name, ...),
-    RiDeformationV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiDisplacement (char *name, ...),
-    RiDisplacementV (char *name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiDeformation (RtString name, ...),
+    RiDeformationV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiDisplacement (RtString name, ...),
+    RiDisplacementV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
     RiCoordinateSystem (RtToken space),
     RiCoordSysTransform (RtToken space);
 
@@ -231,8 +231,8 @@ RICPP_EXTERN(RtVoid)
 	RiTransformEnd (void);
 
 RICPP_EXTERN(RtVoid)
-    RiAttribute (char *name, ...),
-    RiAttributeV (char *name, RtInt n, RtToken tokens[], RtPointer params[]);
+    RiAttribute (RtString name, ...),
+    RiAttributeV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 RICPP_EXTERN(RtVoid)
     RiPolygon (RtInt nvertices, ...),
@@ -298,18 +298,18 @@ RICPP_EXTERN(RtVoid)
     RiMotionEnd (void);
 
 RICPP_EXTERN(RtVoid)
-    RiMakeTexture (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
-    RiMakeTextureV (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiMakeBump (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
-    RiMakeBumpV (char *pic, char *tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiMakeLatLongEnvironment (char *pic, char *tex, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
-    RiMakeLatLongEnvironmentV (char *pic, char *tex, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiMakeCubeFaceEnvironment (char *px, char *nx, char *py, char *ny, char *pz, char *nz, char *tex, RtFloat fov, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
-    RiMakeCubeFaceEnvironmentV (char *px, char *nx, char *py, char *ny, char *pz, char *nz, char *tex, RtFloat fov, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
-    RiMakeShadow (char *pic, char *tex, ...),
-    RiMakeShadowV (char *pic, char *tex, RtInt n, RtToken tokens[], RtPointer params[]),
-	RiMakeBrickMap (int num, char **src, char *dest, ...),
-	RiMakeBrickMapV(int num, char **src, char *dest, RtInt n, RtToken tokens[], RtPointer params[]);
+    RiMakeTexture (RtString pic, RtString tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
+    RiMakeTextureV (RtString pic, RtString tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiMakeBump (RtString pic, RtString tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
+    RiMakeBumpV (RtString pic, RtString tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiMakeLatLongEnvironment (RtString pic, RtString tex, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
+    RiMakeLatLongEnvironmentV (RtString pic, RtString tex, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiMakeCubeFaceEnvironment (RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
+    RiMakeCubeFaceEnvironmentV (RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
+    RiMakeShadow (RtString pic, RtString tex, ...),
+    RiMakeShadowV (RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]),
+	RiMakeBrickMap (RtInt num, RtString *src, RtString dest, ...),
+	RiMakeBrickMapV(RtInt num, RtString *src, RtString dest, RtInt n, RtToken tokens[], RtPointer params[]);
 
 RICPP_EXTERN(RtVoid)
 	RiResource(RtToken handle, RtToken type, ...),
@@ -325,13 +325,13 @@ RICPP_EXTERN(RtVoid)
 	RiArchiveEnd(void);
 
 RICPP_EXTERN(RtVoid)
-	RiIfBegin(char *expr),
-	RiElseIf(char *expr),
+	RiIfBegin(RtString expr),
+	RiElseIf(RtString expr),
 	RiElse(void),
 	RiIfEnd(void);
 
 RICPP_EXTERN(RtVoid)
-    RiArchiveRecord (RtToken type, char *format, ...),
+    RiArchiveRecord (RtToken type, RtString format, ...),
     RiReadArchive (RtString filename, RtArchiveCallback callback, ...),
     RiReadArchiveV (RtString filename, RtArchiveCallback callback, int n, RtToken tokens[], RtPointer params[]);
 

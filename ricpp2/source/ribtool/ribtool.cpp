@@ -396,14 +396,16 @@ void printUsage()
 	std::cout << "+o Sets outputfile, standard is stdout, the file will be overwritten" << std::endl;
 	std::cout << "   0-9 gzip compression level, 0 is default compression" << std::endl;
 	std::cout << "       omit for no compression" << std::endl;
-	std::cout << "+p Enables postpone of" << std::endl;
+	std::cout << "+p Enables postpone of (default: +paop -pf)" << std::endl;
 	std::cout << "-p Disables postpone of" << std::endl;
 	std::cout << "   a Inline archives" << std::endl;
 	std::cout << "   f File (RIB) archives" << std::endl;
 	std::cout << "   o RI objects" << std::endl;
 	std::cout << "   p Procedurals (experimental)" << std::endl;
 	std::cout << "+b binary output" << std::endl;
-	std::cout << "-b ascii output" << std::endl;
+	std::cout << "-b ascii output (default)" << std::endl;
+	std::cout << "+i inhibits (supresses) output" << std::endl;
+	std::cout << "-i enables output (default)" << std::endl;
 }
 
 
@@ -414,6 +416,16 @@ void printError(const char *msg)
 {
 	if ( msg )
 		std::cerr << "# *** Error: " << msg << std::endl;
+}
+
+/** @brief Option 'i' inhibit writing.
+ *  @param aSwitch '+' or '-'
+ */
+void inhibit(int aSwitch)
+{
+	assert ( aSwitch == '-' || aSwitch == '+' );
+	RtInt *param = (aSwitch == '-') ? &no : &yes; // '-' means no, '+' means yes
+	ri.control("ribwriter", "suppress-output", param, RI_NULL);
 }
 
 
@@ -536,6 +548,10 @@ void command(int &i, int argc, char * const argv[])
 
 			case 'b': // binary
 				binary(aSwitch);
+			break;
+
+			case 'i': // inhibit output
+				inhibit(aSwitch);
 			break;
 
 			default: // unknown

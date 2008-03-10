@@ -1070,7 +1070,7 @@ namespace RiCPP {
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putComment(type(), line());
-			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+			// No Line End (Already done by putComment): TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 
 		/** @brief Assignment.

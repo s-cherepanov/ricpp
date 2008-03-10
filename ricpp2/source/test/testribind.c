@@ -21,6 +21,7 @@ void main(int argc, const char *argv[])
 		default:
 			RiBegin(RI_NULL);
 	}
+		/* RiMakeTexture("mytexture.tiff", "mytexture.tx", RI_PERIODIC, RI_PERIODIC, RiSincFilter, (RtFloat)3.0, (RtFloat)3.0, RI_NULL); */
 		RiPixelFilter(RiGaussianFilter, 3, 3),
 		RiShutter(0, 1);
 		RiProjection(RI_ORTHOGRAPHIC, RI_NULL);

@@ -43,11 +43,11 @@ void CErrorHandlerRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 		if ( p0.getString(handlerName) ) {
 
 			if ( !strcmp(handlerName, CAbortErrorHandler::myName()) ) {
-				parser.ribFilter().errorHandler(CAbortErrorHandler::func);
+				parser.ribFilter().errorHandler(CAbortErrorHandler::func());
 			} else if ( !strcmp(handlerName, CPrintErrorHandler::myName()) ) {
-				parser.ribFilter().errorHandler(CPrintErrorHandler::func);
+				parser.ribFilter().errorHandler(CPrintErrorHandler::func());
 			} else if ( !strcmp(handlerName, CIgnoreErrorHandler::myName()) ) {
-				parser.ribFilter().errorHandler(CIgnoreErrorHandler::func);
+				parser.ribFilter().errorHandler(CIgnoreErrorHandler::func());
 			} else {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,

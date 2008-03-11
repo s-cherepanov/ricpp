@@ -38,9 +38,9 @@ namespace RiCPP {
 
 /** @brief The abort-error handler, prints an error at standard output and exit() if the error is severe
  */
-class CAbortErrorHandler : public IErrorHandler {
+class CAbortErrorHandler  : public IErrorHandler  {
 public:
-	static class CAbortErrorHandler func;
+	static const CAbortErrorHandler &func();
 	static RtToken myName();
 
 	/** @brief Clone the instance.
@@ -61,14 +61,14 @@ public:
 	 */
 	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const;
 
-	inline virtual const IErrorHandler &singleton()  const { return func; }
+	inline virtual const IErrorHandler &singleton()  const { return func(); }
 };
 
 /** @brief The print-error handler, prints an error at standard output
  */
 class CPrintErrorHandler : public IErrorHandler  {
 public:
-	static class CPrintErrorHandler func;
+	static const CPrintErrorHandler &func();
 	static RtToken myName();
 
 	/** @brief Clone the instance.
@@ -89,14 +89,14 @@ public:
 	 */
 	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const;
 
-	inline virtual const IErrorHandler &singleton()  const { return func; }
+	inline virtual const IErrorHandler &singleton()  const { return func(); }
 };
 
 /** @brief The ignore-error handler, does nothing, ignores the error
  */
 class CIgnoreErrorHandler : public IErrorHandler  {
 public:
-	static class CIgnoreErrorHandler func;
+	static const CIgnoreErrorHandler &func();
 	static RtToken myName();
 
 	/** @brief Clone the instance.
@@ -117,7 +117,7 @@ public:
 	 */
 	virtual RtVoid operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const;
 
-	inline virtual const IErrorHandler &singleton()  const { return func; }
+	inline virtual const IErrorHandler &singleton()  const { return func(); }
 };
 
 /** @brief Factory for error handler functions.

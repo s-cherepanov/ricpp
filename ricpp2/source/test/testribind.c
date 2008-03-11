@@ -11,6 +11,11 @@ void main(int argc, const char *argv[])
 	RtFloat Cs3[] = {1, 0, 0};
 	RtBound bound = { -.5, 0, 0, .5, .5, 0 };
 	RtInt renderer = 0;
+	
+	/*
+	RiOption("MyOption", "string MyVar", "MyVal", RI_NULL);
+	RiCPPControl("MyControl", "string MyVar2", "MyVal2", RI_NULL);
+	*/
 	switch(renderer) {
 		case 1:
 			RiBegin("|aqsis -progress");

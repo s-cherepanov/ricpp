@@ -181,14 +181,20 @@ CRiCPPBridge::CRiCPPBridge() :
 	m_ricppErrorHandler.setOuter(const_cast<CRiCPPBridge &>(*this));
 	m_ctxMgmt.setOuter(*this);
 	m_ribFilter.m_next = this;
-	// Default options
-	RtToken tsearchpath[] = {"renderer", "ribfilter"};
+	m_curErrorHandler = &CPrintErrorHandler::func();
+	
+	try {
+		defaultDeclarations();
+	} catch (ExceptRiCPPError &e) {
+		ricppErrHandler().handleError(e);
+	}
+	
+	// Default pathes
+	RtToken tsearchpath[] = {RI_RENDERER, RI_RIBFILTER};
 	RtPointer psearchpath[] = {(RtPointer)"$PROGDIR", (RtPointer)".:$PROGDIR"};
-	doControl("searchpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
-	doControl("standardpath", sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
-
-	m_curErrorHandler = &CPrintErrorHandler::func;
-
+	setControl(RI_STANDARDPATH, sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+	setControl(RI_SEARCHPATH, sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
+	
 	/* Loaded from DLL
 	TemplPluginFactory<CRibWriterCreator> *f = new TemplPluginFactory<CRibWriterCreator>;
 	if ( f )
@@ -206,32 +212,87 @@ CRiCPPBridge::~CRiCPPBridge()
 	*/
 }
 
+void CRiCPPBridge::defaultDeclarations()
+{
+	// Default declarations (standard tokens are already defined!)
+	doDeclare(RI_FLATNESS, "float", true);
+	doDeclare(RI_FOV, "float", true);
+	
+	doDeclare(RI_INTENSITY, "float", true);
+	doDeclare(RI_LIGHTCOLOR, "color", true);
+	doDeclare(RI_FROM, "point", true);
+	doDeclare(RI_TO, "point", true);
+	doDeclare(RI_CONEANGLE, "float", true);
+	doDeclare(RI_CONEDELTAANGLE, "float", true);
+	doDeclare(RI_BEAMDISTRIBUTION, "float", true);
+	
+	doDeclare(RI_KA, "float", true);
+	doDeclare(RI_KD, "float", true);
+	doDeclare(RI_KS, "float", true);
+	doDeclare(RI_ROUGHNESS, "float", true);
+	doDeclare(RI_KR, "float", true);
+	doDeclare(RI_TEXTURENAME, "string", true);
+	doDeclare(RI_SPECULARCOLOR, "color", true);
+	doDeclare(RI_MINDISTANCE, "float", true);
+	doDeclare(RI_MAXDISTANCE, "float", true);
+	doDeclare(RI_BACKGROUND, "color", true);
+	doDeclare(RI_DISTANCE, "float", true);
+	doDeclare(RI_AMPLITUDE, "float", true);
+	
+	doDeclare(RI_P, "vertex point", true);
+	doDeclare(RI_PZ, "vertex float", true);
+	doDeclare(RI_PW, "vertex hpoint", true);
+	doDeclare(RI_N,  "varying point", true);  // Normal
+	doDeclare(RI_NP, "uniform point", true);
+	doDeclare(RI_CS, "varying color", true);  // Color
+	doDeclare(RI_OS, "varying color", true);  // Opacity
+	doDeclare(RI_S,  "varying float", true);  // Texture coordinates
+	doDeclare(RI_T,  "varying float", true);
+	doDeclare(RI_ST, "varying float[2]", true);
+	
+	doDeclare(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
+	
+	doDeclare(RI_NAME, "string", true);
+	doDeclare(RI_WIDTH, "varying float", true);
+	doDeclare(RI_CONSTANTWIDTH, "float", true);
+	
+	doDeclare(RI_FILE, "string", true);
+	
+	doDeclare(RI_HANDLEID, "string", true);
+	
+	// Additional Tokens
+	RI_SEARCHPATH = m_declDict.tokenMap().findCreate("searchpath");
+	RI_STANDARDPATH =m_declDict.tokenMap().findCreate("standardpath");	
+	
+	// Additional render specific declarations
+	RI_RENDERER = doDeclare("renderer", "string", true);
+	RI_RIBFILTER = doDeclare("ribfilter", "string", true);	
+}
+
 RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
 {
 	RtInt n;
 	RtPointer param;
-
+	
 	m_tokens.clear();
 	m_params.clear();
-
+	
 	for ( n = 0; token != RI_NULL; ++n, token = va_arg(marker, RtToken) ) {
 		param = va_arg(marker, RtPointer);
 		m_tokens.push_back(token);
 		m_params.push_back(param);
 	}
 	va_end(marker);
-
+	
 	if ( n == 0 ) {
 		m_tokens.resize(1);
 		m_params.resize(1);
 		m_tokens[0] = 0;
 		m_params[0] = 0;
 	}
-
+	
 	return n;
 }
-
-
 
 // ----------------------------------------------------------------------------
 
@@ -328,9 +389,9 @@ ISubdivFunc &CRiCPPBridge::procRunProgram() const { return CProcRunProgram::func
 ISubdivFunc &CRiCPPBridge::procDynamicLoad() const { return CProcDynamicLoad::func; }
 IFreeFunc   &CRiCPPBridge::procFree() const { return CProcFree::func; }
 
-const IErrorHandler &CRiCPPBridge::errorAbort() const { return CAbortErrorHandler::func; }
-const IErrorHandler &CRiCPPBridge::errorIgnore() const { return CIgnoreErrorHandler::func; }
-const IErrorHandler &CRiCPPBridge::errorPrint() const { return CPrintErrorHandler::func; };
+const IErrorHandler &CRiCPPBridge::errorAbort() const { return CAbortErrorHandler::func(); }
+const IErrorHandler &CRiCPPBridge::errorIgnore() const { return CIgnoreErrorHandler::func(); }
+const IErrorHandler &CRiCPPBridge::errorPrint() const { return CPrintErrorHandler::func(); };
 
 RtInt CRiCPPBridge::lastError() { return m_lastError; }
 
@@ -385,8 +446,9 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 }
 
 
-RtVoid CRiCPPBridge::doDeclare(RtToken name, RtString declaration)
+RtToken CRiCPPBridge::doDeclare(RtToken name, RtString declaration, bool isDefault)
 {
+	return m_declDict.declare(name, declaration, isDefault, m_options.colorDescr());
 }
 
 
@@ -397,10 +459,14 @@ RtToken CRiCPPBridge::declare(RtToken name, RtString declaration)
 			return m_ctxMgmt.curBackend().renderingContext()->declare(name, declaration);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
-			return RI_NULL;
 		}
 	} else {
-		ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::declare(name:\"%s\", declaration:\"%s\")", name ? name : "", declaration ? declaration : "");
+		// Default Declarations for the Renderer creator and its children.
+		try {
+			return doDeclare(name, declaration, false);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
 	}
 	return RI_NULL;
 }
@@ -1229,6 +1295,58 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
 	}
 }
 
+RtVoid CRiCPPBridge::setControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	// The searchpath for the dynamic renderer libraries
+	if ( !strcmp(name, "searchpath") ) {
+		if ( n < 1 )
+			return;
+		
+		std::string s;
+		int i;
+		for ( i = 0; i<n; ++i) {
+			if ( !strcmp(tokens[i], "renderer") ) {
+				s = noNullStr((const char *)params[i]);
+				RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
+				m_ctxMgmt.searchpath(s.c_str());
+			} else if ( !strcmp(tokens[i], "ribfilter") ) {
+				s = noNullStr((const char *)params[i]);
+				RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
+				m_ribFilterList.searchpath(s.c_str());
+			}
+		}
+	}
+	
+	// The standardpath for the dynamic renderer libraries
+	if ( !strcmp(name, "standardpath") ) {
+		if ( n < 1 )
+			return;
+		
+		std::string s;
+		int i;
+		for ( i = 0; i<n; ++i) {
+			if ( !strcmp(tokens[i], "renderer") ) {
+				s = noNullStr((const char *)params[i]);
+				m_standardPathRenderer =
+				RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
+			} else if ( !strcmp(tokens[i], "ribfilter") ) {
+				s = noNullStr((const char *)params[i]);
+				m_standardPathRibFilter =
+				RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
+			}
+		}
+	}
+}
+
+RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( !name )
+		return;
+
+	/* m_controls.set(m_declDict, name, n, tokens, params);	*/
+	setControl(name, n, tokens, params);
+}
+
 RtVoid CRiCPPBridge::control(RtToken name, RtToken token, ...)
 {
 	va_list marker;
@@ -1249,6 +1367,7 @@ RtVoid CRiCPPBridge::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer
 	} else {
 		// Controls for the Renderer creator and its children.
 		try {
+			name = m_declDict.tokenMap().findCreate(name);
 			doControl(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1270,6 +1389,14 @@ RtVoid CRiCPPBridge::version()
 	}
 }
 
+RtVoid CRiCPPBridge::doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( !name )
+		return;
+	
+	/* m_options.set(m_declDict, name, n, tokens, params);	*/
+}
+
 RtVoid CRiCPPBridge::option(RtToken name, RtToken token, ...)
 {
 	va_list marker;
@@ -1288,56 +1415,16 @@ RtVoid CRiCPPBridge::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer 
 			ricppErrHandler().handleError(e);
 		}
 	} else {
-		if ( !m_ctxMgmt.curBackend().aborted() )
-			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::version()");
-	}
-}
-
-RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	if ( !name )
-		return;
-
-	// The searchpath for the dynamic renderer libraries
-	if ( !strcmp(name, "searchpath") ) {
-		if ( n < 1 )
-			return;
-
-		std::string s;
-		int i;
-		for ( i = 0; i<n; ++i) {
-			if ( !strcmp(tokens[i], "renderer") ) {
-				s = noNullStr((const char *)params[i]);
-				RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
-				m_ctxMgmt.searchpath(s.c_str());
-			} else if ( !strcmp(tokens[i], "ribfilter") ) {
-				s = noNullStr((const char *)params[i]);
-				RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
-				m_ribFilterList.searchpath(s.c_str());
-			}
-		}
-	}
-
-	// The standardpath for the dynamic renderer libraries
-	if ( !strcmp(name, "standardpath") ) {
-		if ( n < 1 )
-			return;
-
-		std::string s;
-		int i;
-		for ( i = 0; i<n; ++i) {
-			if ( !strcmp(tokens[i], "renderer") ) {
-				s = noNullStr((const char *)params[i]);
-				m_standardPathRenderer =
-					RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
-			} else if ( !strcmp(tokens[i], "ribfilter") ) {
-				s = noNullStr((const char *)params[i]);
-				m_standardPathRibFilter =
-					RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
-			}
+		// Default options for the Renderer creator and its children.
+		try {
+			name = m_declDict.tokenMap().findCreate(name);
+			doOption(name, n, tokens, params);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
 		}
 	}
 }
+
 
 RtLightHandle CRiCPPBridge::lightSource(RtString name, RtToken token, ...)
 {

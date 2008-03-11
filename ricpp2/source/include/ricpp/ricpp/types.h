@@ -146,15 +146,6 @@ const int N_QUALIFIERS = (int)QUALIFIER_RESOURCE+1;
 /** @brief Class to query info about Ri-types that can occur in declarations.
  */
 class CTypeInfo {
-	static const unsigned int ms_basicTypeSizes[N_BASICTYPES]; ///< Number of bytes for the basic types
-	static RtToken ms_basicTypeNames[N_BASICTYPES]; ///< Names of basic types
-	static const unsigned int ms_typeSizes[N_TYPES+1]; ///< Sizes of the types (+1 to have the same size as m_typeNames, but not needed)
-	static RtToken ms_typeNames[N_TYPES+1]; ///< Type names (+1 to recognize 'int', that is internally converted to 'integer' in typePrefix())
-	static RtToken ms_classNames[N_CLASSES]; ///< Storage class names
-	static const unsigned int ms_typeByteSizes[N_TYPES+1]; ///< Number of bytes for the types
-	static const EnumBasicTypes ms_basicTypesForTypes[N_TYPES+1]; ///< Basic types the types consists of.
-	static RtToken ms_qualifiers[N_QUALIFIERS]; ///< Table qualifiers
-
 	/** @brief Compares prefixes.
 	 * Compares if @a token is a prefix of @a search. Behind the
 	 * prefix a blank, [ or : must be there as a seperator.
@@ -168,6 +159,14 @@ class CTypeInfo {
 	static int tokcmp(const char *token, const char *search);
 
 public:
+	/** @brief Initializes static data
+	 */ 
+	static RtVoid init();
+
+	/** @brief Used once to initialize data
+	 */
+	CTypeInfo();
+
 	/** @brief Gets the name of a basic type.
 	 * @param e Ri basic type
 	 * @return The name (like in RIB or declarations) of a basic type

@@ -51,11 +51,21 @@
 
 #else
 
+#if defined(RI_EXPORTS)
 #if !defined(RICPP_EXTERN)
 #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
 #endif
 #if !defined(RICPP_INTERN)
 #define RICPP_INTERN(type) __attribute__((visibility("default"))) type
+#endif
+#else
+/* Use local binding internally */
+#if !defined(RICPP_EXTERN)
+#define	RICPP_EXTERN(type) extern type
+#endif
+#if !defined(RICPP_INTERN)
+#define	RICPP_INTERN(type) type
+#endif
 #endif
 
 #endif

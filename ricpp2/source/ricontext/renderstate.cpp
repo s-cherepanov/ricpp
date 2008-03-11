@@ -2224,28 +2224,7 @@ void CRenderState::defaultDeclarations()
 
 RtToken CRenderState::declare(RtToken name, RtString declaration, bool isDefault)
 {
-	if ( !emptyStr(name) && !emptyStr(declaration) ) {
-		std::string aName = name;
-		trimBoth(aName);
-		name = aName.c_str();
-		name = tokFindCreate(name);
-
-		CDeclaration *d = new CDeclaration(name, declaration, options().colorDescr(), tokenMap(), isDefault);		
-		if ( !d )
-			throw ExceptRiCPPError(
-				RIE_NOMEM,
-				RIE_SEVERE,
-				printLineNo(__LINE__),
-				printName(__FILE__),
-				"Declaration of \"%s\": \"%s\"",
-				noNullStr(name),
-				noNullStr(declaration));
-
-		declAdd(d);
-		return d->token();
-	}
-	
-	return RI_NULL;
+	return dict().declare(name, declaration, isDefault, options().colorDescr());
 }
 
 RtVoid CRenderState::control(RtToken name, const CParameterList &params)

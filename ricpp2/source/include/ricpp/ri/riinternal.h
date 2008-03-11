@@ -167,11 +167,11 @@ public:
 	inline static const IErrorHandler &getSingleton(IRi *ri, RtErrorHandler function)
 	{
 		if ( function == RiErrorAbort )
-			return ri ? ri->errorAbort() : CAbortErrorHandler::func;
+			return ri ? ri->errorAbort() : CAbortErrorHandler::func();
 		else if ( function == RiErrorPrint )
-			return ri ? ri->errorPrint() : CPrintErrorHandler::func;
+			return ri ? ri->errorPrint() : CPrintErrorHandler::func();
 		else if ( function == RiErrorIgnore )
-			return ri ? ri->errorIgnore() : CIgnoreErrorHandler::func;
+			return ri ? ri->errorIgnore() : CIgnoreErrorHandler::func();
 
 		// Use the C function if not a standard handler
 		ms_errorHandlers[function] = CErrorHandlerSlot(function);

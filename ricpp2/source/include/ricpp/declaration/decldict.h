@@ -84,11 +84,7 @@ public:
 	 *
 	 * @see m_active, m_all
 	 */
-	inline CDeclarationDictionary()
-		: m_active(false)
-	{
-		m_tokenMap.defaultTokens();
-	}
+	CDeclarationDictionary();
 	
 	/** @brief Destructor.
 	 *
@@ -186,6 +182,15 @@ public:
 	 * @param decl New declaration, must not be 0
 	 */
 	void add(CDeclaration *decl);
+
+	/** @brief Declares a variable, overwrites an old one.
+	 *
+	 *  @param name name of the variable (gets tokenized).
+	 *  @param declaration Declaration string.
+	 *  @param curColorDescr The current number of color components and RGB transformation.
+	 *  @exception ExceptRiCPPError
+	 */
+	RtToken declare(RtToken name, RtString declaration, bool isDefault, const CColorDescr &curColorDescr);
 
 	/** @brief Constant iterator, begin of the active dictionary.
 	 * @return Constant iterator, points to the first element of the active dictionary.

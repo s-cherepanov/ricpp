@@ -38,6 +38,10 @@
 #include "ricpp/rendererloader/rendererloader.h"
 #endif // _RICPP_RENDERERLOADER_RENDERERLOADER_H
 
+#ifndef _RICPP_RICONTEXT_OPTIONS_H
+#include "ricpp/ricontext/options.h"
+#endif // _RICPP_RICONTEXT_OPTIONS_H
+
 #include <cstdarg>
 
 namespace RiCPP {
@@ -62,6 +66,11 @@ namespace RiCPP {
 class CRiCPPBridge : public IRi, protected IRibParserCallback
 {
 private:
+
+	/** @brief For initialization
+	 */
+	CTypeInfo c;
+	
 	/** @brief Current user defined error handler.
 	 *
 	 * CPrintErrorHandler is the default handler. It can be changed by errorHandler().
@@ -73,6 +82,29 @@ private:
 	 *  The last error number (RIE_...)  occured, stored by CRiCPPBridgeErrorHandler::handleErrorV()
 	 */
 	RtInt m_lastError;
+	
+	/** @brief Options written ouside any rendering context and standard declarations.
+	 */
+	CDeclarationDictionary m_declDict;
+	
+	/** @brief Options written ouside any rendering context and standard options.
+	 */
+	COptions m_options;
+	
+	/** @brief Controls written ouside any rendering context and standard controls.
+	 */
+	COptionsBase m_controls;
+	
+	
+	// Additional tokens
+	RtToken RI_SEARCHPATH;
+	RtToken RI_STANDARDPATH;	
+	
+	// Additional tokens for declarations
+	RtToken RI_RENDERER;
+	RtToken RI_RIBFILTER;
+
+	RtVoid setControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Error handler used by the bridge
 	 *
@@ -169,6 +201,7 @@ private:
 		return *this;
 	}
 
+	void defaultDeclarations();
 protected:
 
 	/** @brief Gets the error handler to use.
@@ -676,6 +709,26 @@ protected:
 	CContextManagement m_ctxMgmt; ///< The instance for the context management
 	//@}
 
+	/** @brief Set global declarations (for all contexts)
+	 *  @todo Implement
+	 *  @param name Name of the declaration
+	 *  @param declaration Seclaration string
+	 *  @param isDefault @a name is a default variable
+	 *  @return Token (frontend) of the declaration
+	 */
+	virtual RtToken doDeclare(RtToken name, RtString declaration, bool isDefault);
+	
+	/** @brief Like optionV() but only concerns the bridge itself.
+	 *
+	 * Forwarded by optionV() if there is no active rendering context.
+	 *
+	 * @param name Option name
+	 * @param n Number token-value pairs
+	 * @param tokens Tokens
+	 * @param params Parameter values
+	 */
+	virtual RtVoid doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
+	
 	/** @brief Like controlV() but only concerns the bridge itself.
 	 *
 	 * Forwarded by controlV() if there is no active rendering context.
@@ -686,13 +739,6 @@ protected:
 	 * @param params Parameter values
 	 */
 	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-
-	/** @brief Set global declarations (for all contexts)
-	 *  @todo Implement
-	 *  @param name Name of the declaration
-	 *  @param declaration Seclaration string
-	 */
-	virtual RtVoid doDeclare(RtToken name, RtString declaration);
 
 	/** @brief Standard path for Rib filters
 	 *  

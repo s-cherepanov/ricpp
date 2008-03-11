@@ -45,6 +45,10 @@ namespace RiCPP {
  *  its rendering jobs. The CBaseRenderer is the foundation of the backend renderer context.
  */
 class CBaseRenderer : public IDoRender {
+	/** @brief For initialization
+	 */
+	CTypeInfo c;
+
 	/** @brief Initializes the m_renderState, called by begin()
 	 */
 	void initRenderState();

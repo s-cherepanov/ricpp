@@ -363,7 +363,7 @@ void CBaseRenderer::defaultDeclarations()
 
 	renderState()->declare(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
 
-	renderState()->declare(RI_NAME, "constant string", true);
+	renderState()->declare(RI_NAME, "string", true);
 	renderState()->declare(RI_WIDTH, "varying float", true);
 	renderState()->declare(RI_CONSTANTWIDTH, "float", true);
 

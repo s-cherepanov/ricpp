@@ -41,6 +41,8 @@
 
 using namespace RiCPP;
 
+static CAbortErrorHandler abortErrorHandlerFunc;
+const CAbortErrorHandler &CAbortErrorHandler::func() { return abortErrorHandlerFunc; }
 RtToken CAbortErrorHandler::myName() {return RI_ABORT; }
 RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
@@ -56,8 +58,8 @@ RtVoid CAbortErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 	}
 }
 
-CAbortErrorHandler CAbortErrorHandler::func;
-
+static CPrintErrorHandler printErrorHandlerFunc;
+const CPrintErrorHandler &CPrintErrorHandler::func() { return printErrorHandlerFunc; }
 RtToken CPrintErrorHandler::myName() {return RI_PRINT; }
 RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
@@ -70,8 +72,8 @@ RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtStr
 		noNullStr(message) << "'" << std::endl;
 }
 
-CPrintErrorHandler CPrintErrorHandler::func;
-
+static CIgnoreErrorHandler ignoreErrorHandlerFunc;
+const CIgnoreErrorHandler &CIgnoreErrorHandler::func() { return ignoreErrorHandlerFunc; }
 RtToken CIgnoreErrorHandler::myName() {return RI_IGNORE; }
 RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
@@ -82,8 +84,6 @@ RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtSt
 	message = message;
 	RiLastError = code;
 }
-
-CIgnoreErrorHandler CIgnoreErrorHandler::func;
 
 //
 // CErrorHandlerFactory
@@ -119,13 +119,13 @@ const IErrorHandler *CErrorHandlerFactory::singleton(RtToken name) const
 		return 0;
 
 	if ( CAbortErrorHandler::myName() == name )
-		return &CAbortErrorHandler::func;
+		return &CAbortErrorHandler::func();
 
 	if ( CPrintErrorHandler::myName() == name )
-		return &CPrintErrorHandler::func;
+		return &CPrintErrorHandler::func();
 
 	if ( CIgnoreErrorHandler::myName() == name )
-		return &CIgnoreErrorHandler::func;
+		return &CIgnoreErrorHandler::func();
 
 	return 0;
 }

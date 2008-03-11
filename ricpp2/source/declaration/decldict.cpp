@@ -37,6 +37,12 @@
 
 using namespace RiCPP;
 
+CDeclarationDictionary::CDeclarationDictionary()
+: m_active(false)
+{
+	m_tokenMap.defaultTokens();
+}
+
 CDeclarationDictionary::~CDeclarationDictionary()
 {
 	std::list<const CDeclaration *>::const_iterator i;
@@ -190,4 +196,28 @@ void CDeclarationDictionary::add(CDeclaration *decl)
 	bool flag = m_active.registerObj(decl->token(), decl);
 	flag = flag;
 	assert(flag);
+}
+
+
+RtToken CDeclarationDictionary::declare(RtToken name, RtString declaration, bool isDefault, const CColorDescr &curColorDescr)
+{
+	if ( !emptyStr(name) && !emptyStr(declaration) ) {
+		name = m_tokenMap.findCreate(name);
+		
+		CDeclaration *d = new CDeclaration(name, declaration, curColorDescr, m_tokenMap, isDefault);		
+		if ( !d )
+			throw ExceptRiCPPError(
+								   RIE_NOMEM,
+								   RIE_SEVERE,
+								   __LINE__,
+								   __FILE__,
+								   "Declaration of \"%s\": \"%s\"",
+								   noNullStr(name),
+								   noNullStr(declaration));
+		
+		add(d);
+		return d->token();
+	}
+	
+	return RI_NULL;
 }

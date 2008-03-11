@@ -13,18 +13,23 @@
 
 namespace RiCPP {
 
-	static CRiCPPBridge ri; ///< The bridge to the rendering context
+	static CRiCPPBridge *ri=0; ///< The bridge to the rendering context
 
 	void SetRoot()
 	{
 		if ( RiCPPRoot() == 0 ) {
-			RiCPPRoot(&ri);
+			if ( ri == 0 )
+				ri = new CRiCPPBridge;
+			RiCPPRoot(ri);
 		}
 	}
 
 	void UnsetRoot()
 	{
 		RiCPPRoot(0);
+		if ( ri )
+			delete ri;
+		ri = 0;
 	}
 }
 

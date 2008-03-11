@@ -88,7 +88,7 @@ namespace RiCPP {
 			long aLineNo = -1)
 			: TypeParent(aLineNo)
 		{
-			m_handler = &CPrintErrorHandler::func;
+			m_handler = &CPrintErrorHandler::func();
 		}
 
 		/** @brief Constructor.

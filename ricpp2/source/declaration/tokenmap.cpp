@@ -33,6 +33,7 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
+#include <iostream>
 
 using namespace RiCPP;
 
@@ -283,28 +284,36 @@ RtToken CTokenMap::findCreate(const char *name)
 	char *newtok = 0;
 
 	if ( (iter = m_tokenMapper.find(name)) == m_tokenMapper.end() ) {
-		try {
-			size_t size = strlen(name)+1;
-			newtok = new char[size];
-			if ( newtok ) {
+		
+		// Trim leading and trailing blanks
+		std::string aName = name;
+		trimBoth(aName);
+		name = aName.c_str();
+
+		if ( (iter = m_tokenMapper.find(name)) == m_tokenMapper.end() ) {
+			try {
+				size_t size = strlen(name)+1;
+				newtok = new char[size];
+				if ( newtok ) {
 #ifdef _WIN32
-				strcpy_s(newtok, size, name);
+					strcpy_s(newtok, size, name);
 #else
-				strcpy(newtok, name);
+					strcpy(newtok, name);
 #endif
-				m_strList.push_back(newtok);
-				m_tokenMapper[CToken(newtok)] = newtok;
+					m_strList.push_back(newtok);
+					m_tokenMapper[CToken(newtok)] = newtok;
+				}
+
+			} catch(...) {
+				// If there was an error, the token was not created. Handled by the next few lines.
 			}
 
-		} catch(...) {
-			// If there was an error, the token was not created. Handled by the next few lines.
-		}
-
-		iter = m_tokenMapper.find(CToken(name));
-		if ( iter == m_tokenMapper.end() ) {
-			if ( newtok )
-				delete[] newtok;
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not create token \"%s\"", name);
+			iter = m_tokenMapper.find(CToken(name));
+			if ( iter == m_tokenMapper.end() ) {
+				if ( newtok )
+					delete[] newtok;
+				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not create token \"%s\"", name);
+			}
 		}
 	}
 

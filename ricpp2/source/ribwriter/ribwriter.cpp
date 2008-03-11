@@ -853,6 +853,7 @@ RtVoid CRibWriter::postLightSource(CRiLightSource &obj, RtString name, const CPa
 	
 	RtToken ignoreTokens[] = {RI_HANDLEID};
 
+	writePrefix();
 	if ( handle->fromHandleId() ) {
 		obj.writeRIB(*m_writer, handle->handle(), 1, ignoreTokens);
 	} else {
@@ -874,6 +875,7 @@ RtVoid CRibWriter::postAreaLightSource(CRiAreaLightSource &obj, RtString name, c
 	
 	RtToken ignoreTokens[] = {RI_HANDLEID};
 	
+	writePrefix();
 	if ( handle->fromHandleId() ) {
 		obj.writeRIB(*m_writer, handle->handle(), 1, ignoreTokens);
 	} else {

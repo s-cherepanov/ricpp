@@ -125,7 +125,7 @@ RtVoid RiCPPInternalEnd(void)
 }
 
 // ----------------------------------------------------------------------------
-RtVoid RiErrorHandler(RtErrorHandler handler)
+RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 {
 	RI_PREAMBLE
 		RiCPPRoot()->errorHandler(CErrorHandlerSlot::getSingleton(RiCPPRoot(), handler));
@@ -134,7 +134,7 @@ RtVoid RiErrorHandler(RtErrorHandler handler)
 
 // ----------------------------------------------------------------------------
 
-RICPP_INTERN(RtVoid) RiControl (RtToken name, ...)
+RICPP_INTERN(RtVoid) RiCPPControl(RtToken name, ...)
 {
 	RI_PREAMBLE
 		RI_GETARGS(name)
@@ -142,7 +142,7 @@ RICPP_INTERN(RtVoid) RiControl (RtToken name, ...)
 	RI_POSTAMBLE
 }
 
-RtVoid RiControlV(RtToken name, int n, RtToken tokens[], RtPointer params[])
+RICPP_INTERN(RtVoid) RiCPPControlV (RtToken name, int n, RtToken tokens[], RtPointer params[])
 {
 	RI_PREAMBLE
 		RiCPPRoot()->controlV(name, n, tokens, params);

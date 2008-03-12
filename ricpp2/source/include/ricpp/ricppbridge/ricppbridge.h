@@ -326,7 +326,7 @@ protected:
 		 *  The rendering context is not destroyed here, this was happen in end().
 		 *  The context creator destroys the renderer. This can be assured
 		 *  because the CContext instance is destroyed by the CRendererBridge
-		 *  right after calling it's end() through the CContextManagement.
+		 *  right after calling its end() through the CContextManagement.
 		 *  @see end()
 		 */
 		inline ~CContext()
@@ -496,7 +496,7 @@ protected:
 		RtContextHandle m_nextCtxHandle; ///< Next value for context handle (counts 1 upwarts), deleted handles are not reused.
 		RtContextHandle m_ctxHandle;     ///< Current context handle of the frontend.
 		CContext m_curCtx;               ///< Current creator, context pair of the backend, it is a copy of m_ctxMap[m_ctxHandle] for faster access
-		std::map<RtContextHandle, CContext> m_ctxMap; ///< Maps used frontend context handles to it's backend CContext context creator/rendering context pair.
+		std::map<RtContextHandle, CContext> m_ctxMap; ///< Maps used frontend context handles to its backend CContext context creator/rendering context pair.
 
 		CRiCPPBridge *m_outer; ///< Bridge that contains the context manager.
 

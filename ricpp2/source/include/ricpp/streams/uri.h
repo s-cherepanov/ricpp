@@ -42,7 +42,7 @@ namespace RiCPP {
 	*
 	* URIs that do not match the generic format as
 	* described in rfc3986 are not suported. A string
-	* representing a URI can be splitted to it's
+	* representing a URI can be splitted to its
 	* components by CUri::parse(). Please read
 	* "rfc3986 Unified Identifiers (URI): Generic Syntax"
 	* for more information (also for full BNF). The grammar

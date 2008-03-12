@@ -108,7 +108,7 @@ namespace RiCPP {
 		 */
 		TemplBuffer<T_char> &operator=(const TemplBuffer<T_char> &bb);
 
-		/** @brief Clears the buffer by setting it's size to 0.
+		/** @brief Clears the buffer by setting its size to 0.
 		 */
 		inline void clear()
 		{

@@ -178,7 +178,7 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 					requestName(), RI_NULL);
 			}
 			// version is used for parser only, to test compability.
-			// But call Ri anyway, so that a ribwriter can put it's own version.
+			// But call Ri anyway, so that a ribwriter can put its own version.
 			parser.ribFilter().version();
 		} else {
 			parser.errHandler().handleError(

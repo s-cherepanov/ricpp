@@ -332,7 +332,7 @@ protected:
 
 	/** @brief The backend's error handler
 	 *
-	 *  A child class can overload ricppErrHandler() to use it's own handler
+	 *  A child class can overload ricppErrHandler() to use its own handler
 	 *  However it also should return an error handler that throws an ExceptRiCPPError.
 	 *
 	 *  @return The error handler used by the backend
@@ -429,14 +429,14 @@ public:
 
 	/** @brief Is called, if the renderer is activated by context()
 	 *
-	 * If the context will be the new active rendering context, it is activated by it's
+	 * If the context will be the new active rendering context, it is activated by its
 	 * context creator.
 	 */
 	inline virtual RtVoid activate(void) {}
 
 	/** @brief Is called, if the renderer is deactivated by context()
 	 *
-	 * If the context will be the suspended rendering context, it is deactivated by it's
+	 * If the context will be the suspended rendering context, it is deactivated by its
 	 * context creator.
 	 */
 	inline virtual RtVoid deactivate(void) {}

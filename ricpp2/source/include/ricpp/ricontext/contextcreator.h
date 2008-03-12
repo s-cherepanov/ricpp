@@ -158,7 +158,7 @@ public:
 	 *
 	 * Called by the CRiCPPBridge::beginV() of the framework front end.
 	 * deactivates the current context createsa new one by calling getContext().
-	 * The new context is activated by calling it's beginV() (no explicite activate()),
+	 * The new context is activated by calling its beginV() (no explicite activate()),
 	 * @a name is used as parameter for this method again. Can call the error handler
 	 * if no new context can be created. The current context is cleared in this case.
 	 *

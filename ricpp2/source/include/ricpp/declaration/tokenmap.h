@@ -43,7 +43,7 @@ namespace RiCPP {
  *  @see CToken
  */
 class CTokenMap {
-	std::map<CToken, RtToken> m_tokenMapper; ///< @brief Maps a token name to it's id
+	std::map<CToken, RtToken> m_tokenMapper; ///< @brief Maps a token name to its id
 	std::list<const char *> m_strList;       ///< @brief List of strings to delete at destructor
 
 public:

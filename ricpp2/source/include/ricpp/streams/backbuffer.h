@@ -451,7 +451,7 @@ namespace RiCPP {
 
 	/** @brief Registration for back buffer factories.
 	 *
-	 * It's not a singleton, because every RiCPP frontend has it's own. Can
+	 * It's not a singleton, because every RiCPP frontend has its own. Can
 	 * load all ".buffer" files (dynamic libraries) containing buffer factories
 	 * from a directory.
 	 *

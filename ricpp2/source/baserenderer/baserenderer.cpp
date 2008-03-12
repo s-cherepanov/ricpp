@@ -440,7 +440,7 @@ void CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiv
 			}
 			renderState()->moveArchiveEnd();
 		} else {
-			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance %s used before it's ArchiveEnd() (self inclusion, recursion doesn't work).", handle);
+			throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance %s used before its ArchiveEnd() (self inclusion, recursion doesn't work).", handle);
 		}
 	} else {
 		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Archive instance %s not found.", handle);
@@ -593,44 +593,13 @@ RtVoid CBaseRenderer::preBegin(CRiBegin &obj, RtString name, const CParameterLis
 RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ExceptRiCPPError
 {
-	EnumRequests req = REQ_BEGIN;
-
-	if ( !renderState() ) {
-		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, __LINE__, __FILE__, "'%s': State not initialized, break.", CRequestInfo::requestName(req));
-		return illContextHandle;
-	}
-
-	ExceptRiCPPError err;
-	if ( renderState()->curMode() != MODE_OUTSIDE ) {
-		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, __LINE__, __FILE__, "'%s': Context not outside any state", CRequestInfo::requestName(req));
-		return illContextHandle;
-	}
-
-	try {
+	RICPP_PREAMBLE_RET(REQ_BEGIN, illContextHandle)
 		// Indicates that begin has been called
 		renderState()->contextBegin();
-
-		// Handle the parameters
 		renderState()->parseParameters(RI_BEGIN, name, CParameterClasses(), n, tokens, params);
-
+		name = renderState()->tokFindCreate(name);
 		RICPP_PROCESS_IMMEDIATE(newRiBegin(renderState()->lineNo(), name, renderState()->curParamList()));
-
-	} catch ( ExceptRiCPPError &e2 ) {
-		ricppErrHandler().handleError(e2);
-		return illContextHandle;
-	} catch ( std::exception &e1 ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			__LINE__, __FILE__,
-			"Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
-		return illContextHandle;
-	} catch ( ... ) {
-		ricppErrHandler().handleError(
-			RIE_SYSTEM, RIE_SEVERE,
-			__LINE__, __FILE__,
-			"Unknown error at '%s'",  CRequestInfo::requestName(req));
-		return illContextHandle;
-	}
+	RICPP_POSTAMBLE_RET(illContextHandle)
 
 	RICPP_UNREC_TOKENS
 
@@ -648,6 +617,7 @@ RtVoid CBaseRenderer::preEnd(CRiEnd &obj)
 RtVoid CBaseRenderer::end(void)
 // throw ExceptRiCPPError
 {
+	// Special handling, deletes the context even if it's an error condition
 	EnumRequests req = REQ_END;
 
 	if ( !renderState() ) {
@@ -679,7 +649,6 @@ RtVoid CBaseRenderer::end(void)
 
 	if ( err.isError() ) {
 		ricppErrHandler().handleError(err);
-		return;
 	}
 }
 
@@ -950,7 +919,7 @@ RtVoid CBaseRenderer::doObjectInstance(CRiObjectInstance &obj, RtObjectHandle ha
 				RIE_BADHANDLE, RIE_SEVERE,
 				renderState()->printLineNo(__LINE__),
 				renderState()->printName(__FILE__),
-				"Object instance used before it's doObjectInstance().");
+				"Object instance used before its doObjectInstance().");
 		}
 	} else {
 		throw ExceptRiCPPError(

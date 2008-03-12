@@ -1499,7 +1499,7 @@ public:
 	 */
 	virtual RtVoid archiveRecordV(RtToken type, RtString line) = 0; /* Added, e.g. line is the formatted line from archive record */
 
-	/** @brief Reads a RIB archive from a file and 'renders' it's content by calling a delegate 
+	/** @brief Reads a RIB archive from a file and 'renders' its content by calling a delegate 
 	 *  @param name Name of the RIB file
 	 *  @param callback Called for each archive record
 	 *  @param n Number of tokens
@@ -1949,7 +1949,7 @@ public:
 	 */
     virtual RtVoid archiveRecord(RtToken type, RtString format, ...) = 0; /* New 3.2 */
 
-	/** @brief Reads a RIB archive from a file and renders it's content
+	/** @brief Reads a RIB archive from a file and renders its content
 	 *  @see IRiRoot::archiveRecordV()
 	 */
     virtual RtVoid readArchive(RtString name, const IArchiveCallback *callback, RtToken token = RI_NULL, ...) = 0; /* New 3.2 */

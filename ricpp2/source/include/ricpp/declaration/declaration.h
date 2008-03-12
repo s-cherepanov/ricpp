@@ -120,7 +120,7 @@ public:
 	 *  @param parameterDeclstr Inline declaration of a parameter. Only a declaration name
 	 *         is considered as an error because the existence of a declaration for
 	 *         @a parameterDeclstr has been tested before. Can throw a RIE_SYNTAX parsing error.
-	 *  @param curColorDescr The current size of color (number of floats) and it's RGB transformation
+	 *  @param curColorDescr The current size of color (number of floats) and its RGB transformation
 	 *  @param tokenmap Maps Strings to their tokens.
 	 *  @exception ExceptRiCPPError
 	 */
@@ -131,7 +131,7 @@ public:
 	 *
 	 *  @param token The token (unique string, see CTokenMap) for the declaration name, must not represent an empty string.
 	 *  @param declstr The declaration.
-	 *  @param curColorDescr The current size of color (number of floats) and it's RGB transformation
+	 *  @param curColorDescr The current size of color (number of floats) and its RGB transformation
 	 *  @param tokenmap Maps Strings to their tokens.
 	 *  @param isDefault A default declaration of the interface?
 	 *  @exception ExceptRiCPPError

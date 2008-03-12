@@ -286,14 +286,14 @@ public:
  *
  * An instance of this calss is used to store the declaration of the
  * color type (i.e. option CRi::colorSamples()). You can use this instance
- * to convert a color to it's RGB triple (nRGB) and vice versa (RGBn) if
+ * to convert a color to its RGB triple (nRGB) and vice versa (RGBn) if
  * your renderer cannot handle colors with arbitrary samples.
  * 
  */
 class CColorDescr {
 private:
 	RtInt m_nColorSamples;       ///< @brief The number of color samples (\>0).
-	std::vector<RtFloat> m_nRGB; ///< @brief n times 3 matrix to transform a color into it's RGB values.
+	std::vector<RtFloat> m_nRGB; ///< @brief n times 3 matrix to transform a color into its RGB values.
 	std::vector<RtFloat> m_RGBn; ///< @brief 3 times n matrix to transform a RGB value to a color.
 	bool m_isIdentity;           ///< @brief true, if no color transformation needed (3 samples, transformation matrix is identity).
 
@@ -362,7 +362,7 @@ public:
 		return !(operator==(cd));
 	}
 
-	/** @brief Transforms a single color value to it's RGB value.
+	/** @brief Transforms a single color value to its RGB value.
 	 *
 	 * @param  c   m_nColorSamples color samples of a single color value.
 	 * @retval rgb RGB triple calculated by color transformation.

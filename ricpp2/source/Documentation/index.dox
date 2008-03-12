@@ -189,8 +189,8 @@ previously made or an inline declaration
 "[[class] type ['[' n ']']] name"
 
 The declaration and the
-request with it's requestspecific parameters gives the size of the
-valuelist and the type of it's elements s.a. [AppNote22]. Parameters
+request with its request specific parameters gives the size of the
+valuelist and the type of its elements s.a. [AppNote22]. Parameters
 correspondent to shader variables or predefined variables.
 
 To issue a declaration, you need to make a 'Declare' request

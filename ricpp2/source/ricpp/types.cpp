@@ -153,50 +153,58 @@ static RtToken ms_qualifiers[N_QUALIFIERS] =
 
 RtVoid CTypeInfo::init()
 {
-	ms_basicTypeNames[0] = RI_EMPTY;
-	ms_basicTypeNames[1] = RI_FLOAT;
-	ms_basicTypeNames[2] = RI_INTEGER;
-	ms_basicTypeNames[3] = RI_STRING;
+	if ( !ms_basicTypeNames[0] ) {
+		ms_basicTypeNames[0] = RI_EMPTY;
+		ms_basicTypeNames[1] = RI_FLOAT;
+		ms_basicTypeNames[2] = RI_INTEGER;
+		ms_basicTypeNames[3] = RI_STRING;
+	}
 
-	ms_typeNames[ 0] = RI_EMPTY;
-	ms_typeNames[ 1] = RI_FLOAT;
-	ms_typeNames[ 2] = RI_INTEGER;
-	ms_typeNames[ 3] = RI_STRING;
-	ms_typeNames[ 4] = RI_POINT;
-	ms_typeNames[ 5] = RI_VECTOR;
-	ms_typeNames[ 6] = RI_NORMAL;
-	ms_typeNames[ 7] = RI_HPOINT;
-	ms_typeNames[ 8] = RI_MATRIX;
-	ms_typeNames[ 9] = RI_COLOR;
-	ms_typeNames[10] = RI_INT;
+	if ( !ms_typeNames[0] ) {
+		ms_typeNames[ 0] = RI_EMPTY;
+		ms_typeNames[ 1] = RI_FLOAT;
+		ms_typeNames[ 2] = RI_INTEGER;
+		ms_typeNames[ 3] = RI_STRING;
+		ms_typeNames[ 4] = RI_POINT;
+		ms_typeNames[ 5] = RI_VECTOR;
+		ms_typeNames[ 6] = RI_NORMAL;
+		ms_typeNames[ 7] = RI_HPOINT;
+		ms_typeNames[ 8] = RI_MATRIX;
+		ms_typeNames[ 9] = RI_COLOR;
+		ms_typeNames[10] = RI_INT;
+	}
 
-	ms_classNames[0] = RI_EMPTY;
-	ms_classNames[1] = RI_CONSTANT;
-	ms_classNames[2] = RI_UNIFORM;
-	ms_classNames[3] = RI_VARYING;
-	ms_classNames[4] = RI_VERTEX;
-	ms_classNames[5] = RI_FACEVARYING;
-	ms_classNames[6] = RI_FACEVERTEX;
+	if ( !ms_classNames[0] ) {
+		ms_classNames[0] = RI_EMPTY;
+		ms_classNames[1] = RI_CONSTANT;
+		ms_classNames[2] = RI_UNIFORM;
+		ms_classNames[3] = RI_VARYING;
+		ms_classNames[4] = RI_VERTEX;
+		ms_classNames[5] = RI_FACEVARYING;
+		ms_classNames[6] = RI_FACEVERTEX;
+	}
 
-	ms_qualifiers[ 0] = RI_EMPTY;
-	ms_qualifiers[ 1] = RI_PROJECTION;
-	ms_qualifiers[ 2] = RI_IMAGER;
-	ms_qualifiers[ 3] = RI_DISPLAY;
-	ms_qualifiers[ 4] = RI_HIDER;
-	ms_qualifiers[ 5] = RI_OPTION;
-	ms_qualifiers[ 6] = RI_LIGHT_SOURCE;
-	ms_qualifiers[ 7] = RI_AREA_LIGHT_SOURCE;
-	ms_qualifiers[ 8] = RI_SURFACE;
-	ms_qualifiers[ 9] = RI_ATMOSPHERE;
-	ms_qualifiers[10] = RI_INTERIOR;
-	ms_qualifiers[11] = RI_EXTERIOR;
-	ms_qualifiers[12] = RI_DISPLACEMENT;
-	ms_qualifiers[13] = RI_DEFORMATION;
-	ms_qualifiers[14] = RI_ATTRIBUTE;
-	ms_qualifiers[15] = RI_TEXTURE;
-	ms_qualifiers[16] = RI_CONTROL;
-	ms_qualifiers[17] = RI_BEGIN;
-	ms_qualifiers[18] = RI_RESOURCE;
+	if ( !ms_qualifiers[0] ) {
+		ms_qualifiers[ 0] = RI_EMPTY;
+		ms_qualifiers[ 1] = RI_PROJECTION;
+		ms_qualifiers[ 2] = RI_IMAGER;
+		ms_qualifiers[ 3] = RI_DISPLAY;
+		ms_qualifiers[ 4] = RI_HIDER;
+		ms_qualifiers[ 5] = RI_OPTION;
+		ms_qualifiers[ 6] = RI_LIGHT_SOURCE;
+		ms_qualifiers[ 7] = RI_AREA_LIGHT_SOURCE;
+		ms_qualifiers[ 8] = RI_SURFACE;
+		ms_qualifiers[ 9] = RI_ATMOSPHERE;
+		ms_qualifiers[10] = RI_INTERIOR;
+		ms_qualifiers[11] = RI_EXTERIOR;
+		ms_qualifiers[12] = RI_DISPLACEMENT;
+		ms_qualifiers[13] = RI_DEFORMATION;
+		ms_qualifiers[14] = RI_ATTRIBUTE;
+		ms_qualifiers[15] = RI_TEXTURE;
+		ms_qualifiers[16] = RI_CONTROL;
+		ms_qualifiers[17] = RI_BEGIN;
+		ms_qualifiers[18] = RI_RESOURCE;
+	}
 }
 
 

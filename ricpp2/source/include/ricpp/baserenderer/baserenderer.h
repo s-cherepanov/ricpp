@@ -383,7 +383,7 @@ protected:
 
 	/** @brief Processes the replay of an archive.
 	 */
-	virtual RtVoid processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	virtual void processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
 
 	/** @brief Reads an archive from a stream.
 	 *
@@ -392,7 +392,7 @@ protected:
 	 *  @param callback Ri archive callback
 	 *  @param params Copy of the parameters of the readArchiveV() call
 	 */
-	virtual RtVoid readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params);
+	virtual void readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params);
 
 	/** @brief Reads an archive from memory or stream.
 	 *
@@ -400,9 +400,11 @@ protected:
 	 *  @param callback Ri archive callback
 	 *  @param params Copy of the parameters of the readArchiveV() call
 	 */
-	virtual RtVoid processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
+	virtual void processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
 
 public:
+
+	virtual bool init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls);
 
 	virtual bool preCheck(EnumRequests req);
 
@@ -417,7 +419,7 @@ public:
 	 */
 	virtual ~CBaseRenderer();
 
-	virtual RtVoid registerRibParserCallback(IRibParserCallback &cb);
+	virtual void registerRibParserCallback(IRibParserCallback &cb);
 	inline virtual IRi *frontend() { return m_parserCallback ? &m_parserCallback->frontend() : 0; }
 	inline virtual CBackBufferProtocolHandlers *protocolHandlers() { return m_parserCallback ? &m_parserCallback->protocolHandlers() : 0; }
 

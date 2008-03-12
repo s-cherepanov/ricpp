@@ -162,6 +162,9 @@ public:
 	 * @a name is used as parameter for this method again. Can call the error handler
 	 * if no new context can be created. The current context is cleared in this case.
 	 *
+	 * @param theDeclDict Standard declarations and declarations done outside any context
+	 * @pararm theOptions Standard options and options set outside any context
+	 * @pararm theControl Standard controls and controls set outside any context
 	 * @param name Name of a renderer
 	 * @param n number of parameters
 	 * @param tokens Token array
@@ -169,7 +172,7 @@ public:
 	 * @return The new backend context handle
 	 * @see CRiCPPBridge::beginV()
 	 */
-	virtual IRiContext *beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual IRiContext *beginV(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls, RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	/** @brief Regulary ends the current context.
 	 *

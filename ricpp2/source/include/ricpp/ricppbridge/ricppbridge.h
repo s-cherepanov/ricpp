@@ -104,8 +104,6 @@ private:
 	RtToken RI_RENDERER;
 	RtToken RI_RIBFILTER;
 
-	RtVoid setControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
-
 	/** @brief Error handler used by the bridge
 	 *
 	 *  Forwards the error to the user defined error handler
@@ -727,7 +725,7 @@ protected:
 	 * @param tokens Tokens
 	 * @param params Parameter values
 	 */
-	virtual RtVoid doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid doOption(RtToken name, const CParameterList &params);
 	
 	/** @brief Like controlV() but only concerns the bridge itself.
 	 *
@@ -738,7 +736,7 @@ protected:
 	 * @param tokens Tokens
 	 * @param params Parameter values
 	 */
-	virtual RtVoid doControl(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
+	virtual RtVoid doControl(RtString name, const CParameterList &params);
 
 	/** @brief Standard path for Rib filters
 	 *  

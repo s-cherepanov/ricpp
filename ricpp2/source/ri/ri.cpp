@@ -124,6 +124,13 @@ RtVoid RiCPPInternalEnd(void)
 	RI_POSTAMBLE
 }
 
+
+// ----------------------------------------------------------------------------
+} // namespace RiCPP
+// ----------------------------------------------------------------------------
+
+extern "C" {
+
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 {
@@ -133,7 +140,6 @@ RICPP_INTERN(RtVoid) RiErrorHandler(RtErrorHandler handler)
 }
 
 // ----------------------------------------------------------------------------
-
 RICPP_INTERN(RtVoid) RiCPPControl(RtToken name, ...)
 {
 	RI_PREAMBLE
@@ -148,14 +154,6 @@ RICPP_INTERN(RtVoid) RiCPPControlV (RtToken name, int n, RtToken tokens[], RtPoi
 		RiCPPRoot()->controlV(name, n, tokens, params);
 	RI_POSTAMBLE
 }
-
-
-
-// ----------------------------------------------------------------------------
-} // namespace RiCPP
-// ----------------------------------------------------------------------------
-
-extern "C" {
 
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtObjectHandle) RiCPPObjectBegin(RtToken name)

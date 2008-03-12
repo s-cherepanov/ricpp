@@ -150,21 +150,24 @@ void CParameter::set(
 	if ( theData ) {
 		switch ( m_declaration->basicType() ) {
 			case BASICTYPE_INTEGER:
+				m_ints.clear();
 				m_ints.reserve(elems);
 				for (unsigned long cnt = 0; cnt < elems; ++cnt ) {
 					m_ints.push_back(((RtInt *)theData)[cnt]);
 				}
 				break;
 			case BASICTYPE_FLOAT:
+				m_floats.clear();
 				m_floats.reserve(elems);
 				for (unsigned long cnt = 0; cnt < elems; ++cnt ) {
 					m_floats.push_back(((RtFloat *)theData)[cnt]);
 				}
 				break;
 			case BASICTYPE_STRING:
-				m_strings.resize(elems);
+				m_strings.clear();
+				m_strings.reserve(elems);
 				for (unsigned long cnt = 0; cnt < elems; ++cnt ) {
-					m_strings[cnt] = ((const char **)theData)[cnt] ? ((const char **)theData)[cnt] : "";
+					m_strings.push_back(((const char **)theData)[cnt] ? ((const char **)theData)[cnt] : "");
 				}
 				copyStringPtr();
 				break;

@@ -105,7 +105,7 @@ RtVoid CContextCreator::context(IRiContext *context)
 	ricppErrHandler().handleErrorV(RIE_BADHANDLE, RIE_ERROR, "CContextCreator::context(), context handle not generated from context creator");
 }
 
-IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+IRiContext *CContextCreator::beginV(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls, RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ExceptRiCPPError
 {
 	// Deactivate the current context
@@ -126,7 +126,14 @@ IRiContext *CContextCreator::beginV(RtString name, RtInt n, RtToken tokens[], Rt
 	try {
 		if ( m_ribParserCallback )
 			m_curContext->registerRibParserCallback(*m_ribParserCallback);
-		m_curContext->beginV(name, n, tokens, params);
+
+		if ( !m_curContext->init(theDeclDict, theOptions, theControls)
+			||
+			m_curContext->beginV(name, n, tokens, params) == illContextHandle
+		) {
+			deleteContext();
+			return 0;
+		}
 	} catch ( ExceptRiCPPError &e ) {
 		deleteContext();
 		ricppErrHandler().handleError(e);

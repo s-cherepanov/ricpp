@@ -1127,6 +1127,11 @@ CRenderState::CRenderState(
 	std::string s(fp.filepath());
 	s += CFilepathConverter::internalPathSeparator();
 	m_baseUri.encodeFilepath(s.c_str(), "file");
+
+	// Create options, attributes and transforms
+	pushOptions();
+	pushAttributes();
+	pushTransform();
 }
 
 CRenderState::~CRenderState()

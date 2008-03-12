@@ -201,7 +201,7 @@ CRManInterfaceFactory &CBaseRenderer::macroFactory()
 }
 
 
-RtVoid CBaseRenderer::registerRibParserCallback(IRibParserCallback &cb)
+void CBaseRenderer::registerRibParserCallback(IRibParserCallback &cb)
 {
 	m_parserCallback = &cb;
 }
@@ -422,7 +422,7 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 	}
 }
 
-RtVoid CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
+void CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
 {
 	CRiArchiveMacro *m = renderState()->findArchiveInstance(handle);
 	if ( m ) {
@@ -447,7 +447,7 @@ RtVoid CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArch
 	}
 }
 
-RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params)
+void CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params)
 {
 	CParameterList p = params;
 	CUri sav(renderState()->baseUri());
@@ -519,7 +519,7 @@ RtVoid CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &p
 	renderState()->moveArchiveEnd();
 }
 
-RtVoid CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
+void CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
 	if ( !emptyStr(name) ) {
 		// 1. Look for archive in stored archives
@@ -543,6 +543,49 @@ RtVoid CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *
 
 // ----------------------------------------------------------------------------
 
+bool CBaseRenderer::init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls)
+{
+	// Render state is initialized here, there is no mode so it must be not valid.
+	// This init() is only called through the framework by the frontend after creation of this backend.
+	if ( renderState() ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, "State already initialized in begin, begin called twice. That can an implementation error.");
+		return false;
+	}
+
+	try {
+		// Init
+
+		// Create a new state object
+		initRenderState();
+
+		// Copy standard declarations
+
+		// Copy options
+
+		// Copy controls
+
+		// Set renderers standard declarations
+		defaultDeclarations();
+
+		return true;
+	} catch ( ExceptRiCPPError &e2 ) {
+		ricppErrHandler().handleError(e2);
+	} catch ( std::exception &e1 ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			__LINE__, __FILE__,
+			"Unknown error at '%s': %s",  "init()", e1.what());
+	} catch ( ... ) {
+		ricppErrHandler().handleError(
+			RIE_SYSTEM, RIE_SEVERE,
+			__LINE__, __FILE__,
+			"Unknown error at '%s'",  "init()");
+	}
+	return false;
+}
+
+// ----------------------------------------------------------------------------
+
 RtVoid CBaseRenderer::preBegin(CRiBegin &obj, RtString name, const CParameterList &params)
 {
 }
@@ -552,24 +595,20 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 {
 	EnumRequests req = REQ_BEGIN;
 
-	// Render state is initialized here, there is no mode so it must be not valid.
-	// This beginV() is only called through the framework by the frontend after creation of this backend.
-	if ( renderState() ) {
-		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, "State already initialized in begin, begin called twice. That can an implementation error.");
+	if ( !renderState() ) {
+		ricppErrHandler().handleError(RIE_ILLSTATE, RIE_SEVERE, __LINE__, __FILE__, "'%s': State not initialized, break.", CRequestInfo::requestName(req));
+		return illContextHandle;
+	}
+
+	ExceptRiCPPError err;
+	if ( renderState()->curMode() != MODE_OUTSIDE ) {
+		ricppErrHandler().handleError(RIE_NESTING, RIE_SEVERE, __LINE__, __FILE__, "'%s': Context not outside any state", CRequestInfo::requestName(req));
 		return illContextHandle;
 	}
 
 	try {
-		// Init
-
-		// Create a new state object
-		initRenderState();
-
 		// Indicates that begin has been called
 		renderState()->contextBegin();
-
-		// Set the default declarations
-		defaultDeclarations();
 
 		// Handle the parameters
 		renderState()->parseParameters(RI_BEGIN, name, CParameterClasses(), n, tokens, params);

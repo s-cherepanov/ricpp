@@ -4,6 +4,10 @@
 #include "ricpp/tools/env.h"
 #endif // _RICPP_TOOLS_ENV_H
 
+#ifndef _RICPP_TOOLS_INLINETOOLS_H
+#include "ricpp/tools/inlinetools.h"
+#endif // _RICPP_TOOLS_INLINETOOLS_H
+
 namespace RiCPP {
 
 	// Try environment variable
@@ -123,4 +127,14 @@ namespace RiCPP {
 		return aStr;
 	}
 
+	std::string &varSubst(std::string &aStr, const char *fromVarm, char varId, const IVarSubstCallback *cb, const char *stdPath, const char *curPath)
+	{
+		std::string temp = noNullStr(fromVarm);
+		varSubst(temp, varId, cb, stdPath, curPath);
+
+		aStr = temp;
+		return aStr;
+	}
+
 }
+

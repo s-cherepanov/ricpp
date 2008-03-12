@@ -130,6 +130,14 @@ public:
 	 */
 	virtual RtToken rendererType() const = 0;
 	
+	/** @brief Overload to init a context
+	 *
+	 * Init is called by the context creator prior to beginV(). Initialize a render context
+	 * and copy default declarations, options and controls. The CBaseRenderer already implements this
+	 * element function.
+	 */
+	virtual bool init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls) = 0;
+
 	/** @brief Overload to abort a context
 	 *
 	 * After a severe error occurs the context will be aborted and destroyed, clean up goes here, deactivate()

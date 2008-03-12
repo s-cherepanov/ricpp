@@ -122,7 +122,7 @@ RtContextHandle CRiCPPBridge::CContextManagement::beginV(RtString name, RtInt n,
 
 	IRiContext *backendContext;
 	try {
-		backendContext = contextCreator->beginV(name, n, tokens, params);
+		backendContext = contextCreator->beginV(m_outer->m_declDict, m_outer->m_options, m_outer->m_controls, name, n, tokens, params);
 	} catch (ExceptRiCPPError &e) {
 		// Context may be invalid, nevertheless it is stored, so interface
 		// requests can be called until end()
@@ -190,11 +190,16 @@ CRiCPPBridge::CRiCPPBridge() :
 	}
 	
 	// Default pathes
-	RtToken tsearchpath[] = {RI_RENDERER, RI_RIBFILTER};
-	RtPointer psearchpath[] = {(RtPointer)"$PROGDIR", (RtPointer)".:$PROGDIR"};
-	setControl(RI_STANDARDPATH, sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
-	setControl(RI_SEARCHPATH, sizeof(tsearchpath)/sizeof(char *), tsearchpath, psearchpath);
-	
+	std::string strval;
+
+	varSubst(strval, "$PROGDIR", '$', 0, 0, 0);
+	m_standardPathRibFilter = strval.c_str();
+	m_ctxMgmt.searchpath(strval.c_str());
+
+	varSubst(strval, ".:$PROGDIR", '$', 0, 0, 0);
+	m_standardPathRenderer = strval.c_str();
+	m_ribFilterList.searchpath(strval.c_str());
+
 	/* Loaded from DLL
 	TemplPluginFactory<CRibWriterCreator> *f = new TemplPluginFactory<CRibWriterCreator>;
 	if ( f )
@@ -262,7 +267,7 @@ void CRiCPPBridge::defaultDeclarations()
 	
 	// Additional Tokens
 	RI_SEARCHPATH = m_declDict.tokenMap().findCreate("searchpath");
-	RI_STANDARDPATH =m_declDict.tokenMap().findCreate("standardpath");	
+	RI_STANDARDPATH = m_declDict.tokenMap().findCreate("standardpath");	
 	
 	// Additional render specific declarations
 	RI_RENDERER = doDeclare("renderer", "string", true);
@@ -1295,56 +1300,44 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
 	}
 }
 
-RtVoid CRiCPPBridge::setControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
-{
-	// The searchpath for the dynamic renderer libraries
-	if ( !strcmp(name, "searchpath") ) {
-		if ( n < 1 )
-			return;
-		
-		std::string s;
-		int i;
-		for ( i = 0; i<n; ++i) {
-			if ( !strcmp(tokens[i], "renderer") ) {
-				s = noNullStr((const char *)params[i]);
-				RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
-				m_ctxMgmt.searchpath(s.c_str());
-			} else if ( !strcmp(tokens[i], "ribfilter") ) {
-				s = noNullStr((const char *)params[i]);
-				RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
-				m_ribFilterList.searchpath(s.c_str());
-			}
-		}
-	}
-	
-	// The standardpath for the dynamic renderer libraries
-	if ( !strcmp(name, "standardpath") ) {
-		if ( n < 1 )
-			return;
-		
-		std::string s;
-		int i;
-		for ( i = 0; i<n; ++i) {
-			if ( !strcmp(tokens[i], "renderer") ) {
-				s = noNullStr((const char *)params[i]);
-				m_standardPathRenderer =
-				RiCPP::varSubst(s, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
-			} else if ( !strcmp(tokens[i], "ribfilter") ) {
-				s = noNullStr((const char *)params[i]);
-				m_standardPathRibFilter =
-				RiCPP::varSubst(s, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
-			}
-		}
-	}
-}
 
-RtVoid CRiCPPBridge::doControl(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::doControl(RtToken name, const CParameterList &params)
 {
 	if ( !name )
 		return;
 
-	/* m_controls.set(m_declDict, name, n, tokens, params);	*/
-	setControl(name, n, tokens, params);
+	m_controls.set(name, params);
+
+	if ( name == RI_SEARCHPATH ) {
+		CParameterList::const_iterator i;
+		for ( i = params.begin(); i != params.end(); i++ ) {
+			if ( (*i).matches(QUALIFIER_CONTROL, RI_SEARCHPATH, RI_RENDERER) ) {
+				std::string strval;
+				if ( (*i).get(0, strval) ) {
+					varSubst(strval, '$', 0, m_standardPathRibFilter.c_str(), m_ctxMgmt.searchpath());
+					m_ctxMgmt.searchpath(strval.c_str());
+				}
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_SEARCHPATH, RI_RIBFILTER) ) {
+				std::string strval;
+				if ( (*i).get(0, strval) ) {
+					varSubst(strval, '$', 0, m_standardPathRenderer.c_str(), m_ribFilterList.searchpath());
+					m_ribFilterList.searchpath(strval.c_str());
+				}
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_STANDARDPATH, RI_RENDERER) ) {
+				std::string strval;
+				if ( (*i).get(0, strval) ) {
+					varSubst(strval, '$', 0, m_standardPathRibFilter.c_str(), m_ctxMgmt.searchpath());
+					m_standardPathRibFilter = strval.c_str();
+				}
+			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_STANDARDPATH, RI_RIBFILTER) ) {
+				std::string strval;
+				if ( (*i).get(0, strval) ) {
+					varSubst(strval, '$', 0, m_standardPathRenderer.c_str(), m_ribFilterList.searchpath());
+					m_standardPathRenderer = strval.c_str();
+				}
+			}
+		}
+	}
 }
 
 RtVoid CRiCPPBridge::control(RtToken name, RtToken token, ...)
@@ -1368,7 +1361,9 @@ RtVoid CRiCPPBridge::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer
 		// Controls for the Renderer creator and its children.
 		try {
 			name = m_declDict.tokenMap().findCreate(name);
-			doControl(name, n, tokens, params);
+			CParameterList p;
+			p.set(RI_CONTROL, name, CParameterClasses(), m_declDict, m_options.colorDescr(), n, tokens, params);
+			doControl(name, p);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
@@ -1389,12 +1384,12 @@ RtVoid CRiCPPBridge::version()
 	}
 }
 
-RtVoid CRiCPPBridge::doOption(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+RtVoid CRiCPPBridge::doOption(RtToken name, const CParameterList &params)
 {
 	if ( !name )
 		return;
 	
-	/* m_options.set(m_declDict, name, n, tokens, params);	*/
+	m_options.set(name, params);
 }
 
 RtVoid CRiCPPBridge::option(RtToken name, RtToken token, ...)
@@ -1418,7 +1413,9 @@ RtVoid CRiCPPBridge::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer 
 		// Default options for the Renderer creator and its children.
 		try {
 			name = m_declDict.tokenMap().findCreate(name);
-			doOption(name, n, tokens, params);
+			CParameterList p;
+			p.set(RI_CONTROL, name, CParameterClasses(), m_declDict, m_options.colorDescr(), n, tokens, params);
+			doOption(name, p);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}

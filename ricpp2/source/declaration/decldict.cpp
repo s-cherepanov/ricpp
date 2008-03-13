@@ -241,7 +241,7 @@ CDeclarationDictionary &CDeclarationDictionary::assignRemap(const CDeclarationDi
 	for ( i = declDict.m_all.begin(); i != declDict.m_all.end(); i++ ) {
 		if ( *i == 0 )
 			continue;
-		const CDeclaration *d = new CDeclaration(**i, m_tokenMap);
+		CDeclaration *d = new CDeclaration(**i, m_tokenMap);
 		m_declOldNewRemap[*i] = d;
 		m_all.push_back(*i);
 	}

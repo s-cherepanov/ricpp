@@ -324,52 +324,6 @@ bool CBaseRenderer::preCheck(EnumRequests req)
 void CBaseRenderer::defaultDeclarations()
 {
 	renderState()->defaultDeclarations();
-	
-	// Default declarations (Tokens are already defined!)
-	renderState()->declare(RI_FLATNESS, "float", true);
-	renderState()->declare(RI_FOV, "float", true);
-
-	renderState()->declare(RI_INTENSITY, "float", true);
-	renderState()->declare(RI_LIGHTCOLOR, "color", true);
-	renderState()->declare(RI_FROM, "point", true);
-	renderState()->declare(RI_TO, "point", true);
-	renderState()->declare(RI_CONEANGLE, "float", true);
-	renderState()->declare(RI_CONEDELTAANGLE, "float", true);
-	renderState()->declare(RI_BEAMDISTRIBUTION, "float", true);
-
-	renderState()->declare(RI_KA, "float", true);
-	renderState()->declare(RI_KD, "float", true);
-	renderState()->declare(RI_KS, "float", true);
-	renderState()->declare(RI_ROUGHNESS, "float", true);
-	renderState()->declare(RI_KR, "float", true);
-	renderState()->declare(RI_TEXTURENAME, "string", true);
-	renderState()->declare(RI_SPECULARCOLOR, "color", true);
-	renderState()->declare(RI_MINDISTANCE, "float", true);
-	renderState()->declare(RI_MAXDISTANCE, "float", true);
-	renderState()->declare(RI_BACKGROUND, "color", true);
-	renderState()->declare(RI_DISTANCE, "float", true);
-	renderState()->declare(RI_AMPLITUDE, "float", true);
-
-	renderState()->declare(RI_P, "vertex point", true);
-	renderState()->declare(RI_PZ, "vertex float", true);
-	renderState()->declare(RI_PW, "vertex hpoint", true);
-	renderState()->declare(RI_N,  "varying point", true);  // Normal
-	renderState()->declare(RI_NP, "uniform point", true);
-	renderState()->declare(RI_CS, "varying color", true);  // Color
-	renderState()->declare(RI_OS, "varying color", true);  // Opacity
-	renderState()->declare(RI_S,  "varying float", true);  // Texture coordinates
-	renderState()->declare(RI_T,  "varying float", true);
-	renderState()->declare(RI_ST, "varying float[2]", true);
-
-	renderState()->declare(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
-
-	renderState()->declare(RI_NAME, "string", true);
-	renderState()->declare(RI_WIDTH, "varying float", true);
-	renderState()->declare(RI_CONSTANTWIDTH, "float", true);
-
-	renderState()->declare(RI_FILE, "string", true);
-
-	renderState()->declare(RI_HANDLEID, "string", true);
 }
 
 void CBaseRenderer::recordRequest(CRManInterfaceCall *aRequest)
@@ -553,19 +507,22 @@ bool CBaseRenderer::init(const CDeclarationDictionary &theDeclDict, const COptio
 	}
 
 	try {
-		// Init
-
 		// Create a new state object
 		initRenderState();
 
 		// Copy standard declarations
+		renderState()->dict().assignRemap(theDeclDict);
 
 		// Copy options
+		renderState()->options().assignRemap(theOptions, renderState()->dict());
 
 		// Copy controls
+		renderState()->controls().assignRemap(theControls, renderState()->dict());
 
 		// Set renderers standard declarations
 		defaultDeclarations();
+
+		renderState()->dict().clearRemap();
 
 		return true;
 	} catch ( ExceptRiCPPError &e2 ) {

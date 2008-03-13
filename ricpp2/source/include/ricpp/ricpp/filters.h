@@ -101,6 +101,8 @@ public:
  */
 class CFilterFuncFactory {
 public:
+	static const IFilterFunc *mySingelton(RtToken name);
+
 	inline virtual ~CFilterFuncFactory() {}
 
 	virtual IFilterFunc *newFunc(RtToken name);

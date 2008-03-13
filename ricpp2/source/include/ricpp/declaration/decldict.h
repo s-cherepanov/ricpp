@@ -219,6 +219,7 @@ public:
 
 	CDeclarationDictionary &assignRemap(const CDeclarationDictionary &declDict);
 	CDeclaration *remapDecl(const CDeclaration *oldDecl);
+	void clearRemap();
 }; // CDeclarationDictionary
 
 } // namespace RiCPP

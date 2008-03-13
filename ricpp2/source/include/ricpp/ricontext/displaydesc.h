@@ -48,7 +48,9 @@ namespace RiCPP {
 		CDisplayChannelDescr();
 		virtual ~CDisplayChannelDescr();
 		CDisplayChannelDescr(const CDisplayChannelDescr &dcd);
+		CDisplayChannelDescr(const CDisplayChannelDescr &dd, CDeclarationDictionary &newDict);
 		CDisplayChannelDescr &operator=(const CDisplayChannelDescr &dcd);
+		CDisplayChannelDescr &assignRemap(const CDisplayChannelDescr &dcd, CDeclarationDictionary &newDict);
 		bool operator==(const CDisplayChannelDescr &dcd) const;
 		bool operator==(const char *name) const;
 		bool operator==(const std::string name) const;
@@ -89,11 +91,13 @@ namespace RiCPP {
 		/*! @param dd Display description to copy
 		 */
 		CDisplayDescr(const CDisplayDescr &dd);
+		CDisplayDescr(const CDisplayDescr &dd, CDeclarationDictionary &newDict);
 
 		//! Assignment, deep copy.
 		/*! @param dd Display description to copy
 		 */
 		CDisplayDescr &operator=(const CDisplayDescr &dd);
+		CDisplayDescr &assignRemap(const CDisplayDescr &dd, CDeclarationDictionary &newDict);
 
 		//! Take parameters of TRi::displayV() to fill the member variables.
 		/*! @param dict Current declarations

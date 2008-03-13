@@ -156,8 +156,6 @@ void COptions::assignNumerics(const COptions &ro)
 	
 	m_exposureCalled = ro.m_exposureCalled;
 	
-	m_quantizers = ro.m_quantizers;
-
 	m_xWidth = ro.m_xWidth;
 	m_yWidth = ro.m_yWidth;
 
@@ -188,6 +186,8 @@ COptions &COptions::operator=(const COptions &ro)
 	m_displays = ro.m_displays;
 	m_displayChannels = ro.m_displayChannels;
 
+	m_quantizers = ro.m_quantizers;
+
 	COptionsBase::operator=(ro);
 
 	return *this;
@@ -210,16 +210,39 @@ COptions &COptions::assignRemap(const COptions &ro, CDeclarationDictionary &newD
 	m_hiderType = newDict.tokenMap().findCreate(ro.m_hiderType);
 	m_hiderParams.assignRemap(ro.m_hiderParams, newDict);
 
-	/* todo
+	m_displays.clear();
+	TypeDisplays::const_iterator di = m_displays.begin();
+	for ( ; di != m_displays.end(); ++di )
+		m_displays.push_back(CDisplayDescr(*di, newDict));
+
+	m_displayChannels.clear();
+	CDisplayDescr::TypeDisplayChannels::const_iterator dci = m_displayChannels.begin();
+	for ( ; dci != m_displayChannels.end(); ++di )
+		m_displayChannels.push_back(CDisplayChannelDescr(*dci, newDict));
+
 	m_filterFunc = 0;
-	if ( ro.m_filterFunc )
-		m_filterFunc = &(ro.m_filterFunc->singleton());
-	 // ... find the singelton of this address space.
+	if ( ro.m_filterFunc ) {
+		RtToken filterName = newDict.tokenMap().findCreate(ro.m_filterFunc->name());
+		if ( filterName ) {
+			m_filterFunc = CFilterFuncFactory::mySingelton(filterName);
+		}
+		if ( !m_filterFunc ) {
+			// Self defined filter
+			m_filterFunc = ro.m_filterFunc;
+		}
+	}
 	
-	m_displays.assignRemap(ro.m_displays);
-	m_displayChannels.assignRemap(ro.m_displayChannels);
-	*/
-	
+
+	std::map<RtToken, CQuantizer>::const_iterator i = ro.m_quantizers.begin();
+	for ( ; i != ro.m_quantizers.end(); ++i ) {
+		RtToken qtok = newDict.tokenMap().findCreate((*i).first);
+		CQuantizer q((*i).second);
+		q.type(qtok);
+		m_quantizers[qtok] = q;
+	}
+
+
+
 	COptionsBase::assignRemap(ro, newDict);
 
 	return *this;

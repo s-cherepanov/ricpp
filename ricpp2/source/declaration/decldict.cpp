@@ -43,15 +43,22 @@ CDeclarationDictionary::CDeclarationDictionary()
 	m_tokenMap.defaultTokens();
 }
 
+void CDeclarationDictionary::clearRemap()
+{
+	m_declOldNewRemap.clear();
+}
 
 void CDeclarationDictionary::clear()
 {
+	clearRemap();
 	m_declOldNewRemap.clear();
 	m_active.clear();
 	std::list<const CDeclaration *>::const_iterator i;
 	for ( i = m_all.begin(); i != m_all.end(); i++ ) {
-		delete (*i);
+		if ( (*i) != 0 )
+			delete (*i);
 	}
+	m_all.clear();
 }
 
 CDeclarationDictionary::~CDeclarationDictionary()
@@ -243,7 +250,7 @@ CDeclarationDictionary &CDeclarationDictionary::assignRemap(const CDeclarationDi
 			continue;
 		CDeclaration *d = new CDeclaration(**i, m_tokenMap);
 		m_declOldNewRemap[*i] = d;
-		m_all.push_back(*i);
+		m_all.push_back(d);
 	}
 	
 	const_iterator activei = declDict.m_active.begin();
@@ -251,6 +258,8 @@ CDeclarationDictionary &CDeclarationDictionary::assignRemap(const CDeclarationDi
 		CDeclaration *decl = remapDecl((*activei).second);
 		if ( decl ) {
 			m_active.registerObj(decl->token(), decl);
+		} else {
+			m_active.registerObj(RI_NULL, 0);
 		}
 	}
 	

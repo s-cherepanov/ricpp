@@ -43,6 +43,12 @@ CDisplayChannelDescr::CDisplayChannelDescr(const CDisplayChannelDescr &dcd)
 	*this = dcd;
 }
 
+CDisplayChannelDescr::CDisplayChannelDescr(const CDisplayChannelDescr &dd, CDeclarationDictionary &newDict)
+{
+	m_channel = 0;
+	assignRemap(dd, newDict);
+}
+
 CDisplayChannelDescr::~CDisplayChannelDescr()
 {
 	if ( m_channel )
@@ -64,6 +70,24 @@ CDisplayChannelDescr &CDisplayChannelDescr::operator=(const CDisplayChannelDescr
 	CParameterList::operator=(dcd);
 	return *this;
 }
+
+
+CDisplayChannelDescr &CDisplayChannelDescr::assignRemap(const CDisplayChannelDescr &dcd, CDeclarationDictionary &newDict)
+{
+	if ( this == &dcd )
+		return *this;
+
+	if ( m_channel )
+		delete m_channel;
+
+	m_channel = 0;
+	if ( dcd.m_channel )
+		m_channel = new CDeclaration(*dcd.m_channel, newDict.tokenMap());
+
+	CParameterList::assignRemap(dcd, newDict);
+	return *this;
+}
+
 
 bool CDisplayChannelDescr::operator==(const CDisplayChannelDescr &dcd) const
 {
@@ -128,6 +152,13 @@ CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd) {
 	*this = dd;
 }
 
+CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd, CDeclarationDictionary &newDict)
+{
+	m_type = RI_NULL;
+	m_mode = RI_NULL;
+	m_origin[0] = m_origin[1] = 0;
+	assignRemap(dd, newDict);
+}
 
 CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd) {
 	if ( &dd == this )
@@ -142,6 +173,29 @@ CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd) {
 	m_channelNames = dd.m_channelNames;
 
 	CNamedParameterList::operator=(dd);
+	return *this;
+}
+
+CDisplayDescr &CDisplayDescr::assignRemap(const CDisplayDescr &dd, CDeclarationDictionary &newDict)
+{
+	if ( &dd == this )
+		return *this;
+
+	m_type = newDict.tokenMap().findCreate(dd.m_type);
+	m_mode = newDict.tokenMap().findCreate(dd.m_mode);
+	m_origin[0] = dd.m_origin[0];
+	m_origin[1] = dd.m_origin[1];
+
+	m_channels.clear();
+	
+	std::list<CDisplayChannelDescr>::const_iterator i = dd.m_channels.begin();
+
+	for ( ; i != dd.m_channels.end(); ++i ) {
+		m_channels.push_back(CDisplayChannelDescr((*i), newDict)); 
+	}
+	m_channelNames = dd.m_channelNames;
+
+	CParameterList::assignRemap(dd, newDict);
 	return *this;
 }
 

@@ -131,7 +131,8 @@ void CFilterFuncFactory::deleteFunc(IFilterFunc *f)
 	delete f;
 }
 
-const IFilterFunc *CFilterFuncFactory::singleton(RtToken name) const
+
+const IFilterFunc *CFilterFuncFactory::mySingelton(RtToken name)
 {
 	if ( emptyStr(name) )
 		return 0;
@@ -152,4 +153,9 @@ const IFilterFunc *CFilterFuncFactory::singleton(RtToken name) const
 		return &CSincFilter::func;
 
 	return 0;
+}
+
+const IFilterFunc *CFilterFuncFactory::singleton(RtToken name) const
+{
+	return mySingelton(name);
 }

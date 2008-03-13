@@ -90,7 +90,8 @@ namespace RiCPP {
 			clearMembers();
 		}
 
-		virtual COptionsBase &operator=(const COptionsBase &ga);
+		COptionsBase &operator=(const COptionsBase &ga);
+		COptionsBase &assignRemap(const COptionsBase &params, CDeclarationDictionary &newDict);
 
 		void set(
 			CDeclarationDictionary &dict,

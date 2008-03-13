@@ -37,14 +37,19 @@
 
 using namespace RiCPP;
 
-
-CTokenMap::~CTokenMap()
+void CTokenMap::clear()
 {
+	m_tokenMapper.clear();
 	std::list<const char *>::iterator i;
 	for ( i = m_strList.begin(); i != m_strList.end(); i++ ) {
 		if ( (*i) != 0 )
 			delete [](*i);
 	}
+}
+
+CTokenMap::~CTokenMap()
+{
+	clear();
 }
 
 

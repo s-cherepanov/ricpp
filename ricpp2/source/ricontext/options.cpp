@@ -105,83 +105,122 @@ COptionsBase *COptions::duplicate() const
 	return new COptions(*this);
 }
 
-COptions &COptions::operator=(const COptions &ro)
+
+void COptions::assignNumerics(const COptions &ro)
 {
-	if ( this == &ro )
-		return *this;
-	
 	m_formatCalled = ro.m_formatCalled;
 	m_xResolution = ro.m_xResolution;
 	m_yResolution = ro.m_yResolution;
 	m_pixelAspectRatio = ro.m_pixelAspectRatio;
-
+	
 	m_frameAspectRatioCalled = ro.m_frameAspectRatioCalled;
 	m_frameAspectRatio = ro.m_frameAspectRatio;
-
+	
 	m_screenWindowCalled = ro.m_screenWindowCalled;
 	m_screenWindowLeft = ro.m_screenWindowLeft;
 	m_screenWindowRight = ro.m_screenWindowRight;
 	m_screenWindowBottom = ro.m_screenWindowBottom;
 	m_screenWindowTop = ro.m_screenWindowTop;
-
+	
 	m_cropWindowCalled = ro.m_cropWindowCalled;
 	m_cropWindowLeft = ro.m_cropWindowLeft;
 	m_cropWindowRight = ro.m_cropWindowRight;
 	m_cropWindowBottom = ro.m_cropWindowBottom;
 	m_cropWindowTop = ro.m_cropWindowTop;
 
-	m_projectionCalled = ro.m_projectionCalled;
-	m_projectionName = ro.m_projectionName;
-	m_projectionParams = ro.m_projectionParams;
 	m_FOVSet = ro.m_FOVSet;
 	m_FOV = ro.m_FOV;
 
 	m_nearFarSet = ro.m_nearFarSet;
 	m_nearClip = ro.m_nearClip;
 	m_farClip = ro.m_farClip;
-
+	
 	m_clippingPlanes = ro.m_clippingPlanes;
-
+	
 	m_depthOfFieldCalled = ro.m_depthOfFieldCalled;
 	m_fstop = ro.m_fstop;
 	m_focalLength = ro.m_focalLength;
 	m_focalDistance = ro.m_focalDistance;
+	
+	m_gain = ro.m_gain;
+	m_gamma = ro.m_gamma;
 
 	m_shutterOpen = ro.m_shutterOpen;
 	m_shutterClose = ro.m_shutterClose;
-
+	
 	m_pixelVarianceCalled = ro.m_pixelVarianceCalled;
 	m_pixelVariance = ro.m_pixelVariance;
-
+	
 	m_xSamples = ro.m_xSamples;
 	m_ySamples = ro.m_ySamples;
-
+	
 	m_exposureCalled = ro.m_exposureCalled;
+	
+	m_quantizers = ro.m_quantizers;
+
+	m_xWidth = ro.m_xWidth;
+	m_yWidth = ro.m_yWidth;
+
+	m_relativeDetail = ro.m_relativeDetail;
+}
+
+COptions &COptions::operator=(const COptions &ro)
+{
+	if ( this == &ro )
+		return *this;
+	
+	assignNumerics(ro);
+	
+	m_projectionCalled = ro.m_projectionCalled;
+	m_projectionName = ro.m_projectionName;
+	m_projectionParams = ro.m_projectionParams;
 
 	m_imagerName = ro.m_imagerName;
 	m_imagerParams = ro.m_imagerParams;
 
-	m_gain = ro.m_gain;
-	m_gamma = ro.m_gamma;
-
-
-	m_quantizers = ro.m_quantizers;
+	m_hiderType = ro.m_hiderType;
+	m_hiderParams = ro.m_hiderParams;
 
 	m_filterFunc = 0;
 	if ( ro.m_filterFunc )
 		m_filterFunc = &(ro.m_filterFunc->singleton());
 
-	m_xWidth = ro.m_xWidth;
-	m_yWidth = ro.m_yWidth;
-
+	m_displays = ro.m_displays;
 	m_displayChannels = ro.m_displayChannels;
 
-	m_hiderType = ro.m_hiderType;
-	m_hiderParams = ro.m_hiderParams;
-
-	m_relativeDetail = ro.m_relativeDetail;
-
 	COptionsBase::operator=(ro);
+
+	return *this;
+}
+
+COptions &COptions::assignRemap(const COptions &ro, CDeclarationDictionary &newDict)
+{
+	if ( this == &ro )
+		return *this;
+
+	assignNumerics(ro);
+
+	m_projectionCalled = ro.m_projectionCalled;
+	m_projectionName = newDict.tokenMap().findCreate(ro.m_projectionName);
+	m_projectionParams.assignRemap(ro.m_projectionParams, newDict);
+	
+	m_imagerName = newDict.tokenMap().findCreate(ro.m_imagerName);
+	m_imagerParams.assignRemap(ro.m_imagerParams, newDict);
+
+	m_hiderType = newDict.tokenMap().findCreate(ro.m_hiderType);
+	m_hiderParams.assignRemap(ro.m_hiderParams, newDict);
+
+	/* todo
+	m_filterFunc = 0;
+	if ( ro.m_filterFunc )
+		m_filterFunc = &(ro.m_filterFunc->singleton());
+	 // ... find the singelton of this address space.
+	
+	m_displays.assignRemap(ro.m_displays);
+	m_displayChannels.assignRemap(ro.m_displayChannels);
+	*/
+	
+	COptionsBase::assignRemap(ro, newDict);
 
 	return *this;
 }

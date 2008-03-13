@@ -89,6 +89,35 @@ CParameter &CParameter::operator=(const CParameter &param)
 }
 
 
+CParameter &CParameter::assignRemap(const CParameter &param, CDeclarationDictionary &newDict)
+{
+	if ( this == &param )
+		return *this;
+
+	clear();
+	
+	if ( param.m_declaration && param.m_declaration->isInline() ) {
+		m_declaration = new CDeclaration(*param.m_declaration, newDict.tokenMap());
+		if ( !m_declaration )
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.parameterName());
+	} else {
+		m_declaration = newDict.remapDecl(param.m_declaration);
+		if ( !m_declaration )
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While remapping parameter %s", param.parameterName());
+	}
+
+	m_position = param.m_position;
+	m_parameterName = param.m_parameterName;
+	
+	m_ints = param.m_ints;
+	m_floats = param.m_floats;
+	m_strings = param.m_strings;
+	
+	copyStringPtr();
+	return *this;
+}
+
+
 bool CParameter::setDeclaration(
 	RtToken aQualifier, RtToken aTable, 
 	RtString theName,
@@ -331,8 +360,6 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 
 	add(params);
 
-	rebuild();
-
 	return *this;
 }
 
@@ -474,6 +501,35 @@ bool CParameterList::hasColor() const
 	return false;
 }
 
+CParameterList &CParameterList::assignRemap(const CParameterList &params, CDeclarationDictionary &newDict)
+{
+	if ( this == &params )
+		return *this;
+	
+	clear();
+	
+	for (
+		 const_iterator i = params.begin();
+		 i != params.end();
+		 ++i )
+	{
+		if ( i->token() != RI_NULL ) {
+			m_params.push_back(CParameter(*i, newDict));
+			RtToken var = m_params.back().var(); // The unqualified variable name as key
+			assert(var);
+			if ( var )
+				m_paramMap[var] = &m_params.back();
+			RtToken token = m_params.back().token(); // The qualified variable name as key
+			if ( token != var )
+				m_paramMap[token] = &m_params.back();
+		}
+	}
+	
+	rebuild();
+	
+	return *this;	
+}
+
 // ----------------------------------------------------------------------------
 
 CNamedParameterList &CNamedParameterList::operator=(const CNamedParameterList &params)
@@ -485,4 +541,16 @@ CNamedParameterList &CNamedParameterList::operator=(const CNamedParameterList &p
 
 	CParameterList::operator=(params);
 	return *this;
+}
+
+
+CNamedParameterList &CNamedParameterList::assignRemap(const CNamedParameterList &params, CDeclarationDictionary &newDict)
+{
+	if ( this == &params )
+		return *this;
+	
+	name(newDict.tokenMap().findCreate(params.name()));
+	
+	CParameterList::assignRemap(params, newDict);
+	return *this;	
 }

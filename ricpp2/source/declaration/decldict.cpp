@@ -43,12 +43,20 @@ CDeclarationDictionary::CDeclarationDictionary()
 	m_tokenMap.defaultTokens();
 }
 
-CDeclarationDictionary::~CDeclarationDictionary()
+
+void CDeclarationDictionary::clear()
 {
+	m_declOldNewRemap.clear();
+	m_active.clear();
 	std::list<const CDeclaration *>::const_iterator i;
 	for ( i = m_all.begin(); i != m_all.end(); i++ ) {
 		delete (*i);
 	}
+}
+
+CDeclarationDictionary::~CDeclarationDictionary()
+{
+	clear();
 }
 
 const CDeclaration *CDeclarationDictionary::find(
@@ -220,4 +228,46 @@ RtToken CDeclarationDictionary::declare(RtToken name, RtString declaration, bool
 	}
 	
 	return RI_NULL;
+}
+
+CDeclarationDictionary &CDeclarationDictionary::assignRemap(const CDeclarationDictionary &declDict)
+{
+	if ( this == &declDict )
+		return *this;
+
+	clear();
+	std::list<const CDeclaration *>::const_iterator i;
+	
+	for ( i = declDict.m_all.begin(); i != declDict.m_all.end(); i++ ) {
+		if ( *i == 0 )
+			continue;
+		const CDeclaration *d = new CDeclaration(**i, m_tokenMap);
+		m_declOldNewRemap[*i] = d;
+		m_all.push_back(*i);
+	}
+	
+	const_iterator activei = declDict.m_active.begin();
+	for ( ; activei != declDict.m_active.end(); ++activei ) {
+		CDeclaration *decl = remapDecl((*activei).second);
+		if ( decl ) {
+			m_active.registerObj(decl->token(), decl);
+		}
+	}
+	
+	return *this;
+}
+
+
+CDeclaration *CDeclarationDictionary::remapDecl(const CDeclaration *oldDecl)
+{
+	if ( !oldDecl )
+		return 0;
+	
+	std::map<const CDeclaration *, CDeclaration *>::iterator i;
+
+	if ( (i = m_declOldNewRemap.find(oldDecl)) != m_declOldNewRemap.end() ) {
+		return (*i).second;
+	}
+	
+	return 0;
 }

@@ -227,6 +227,12 @@ CDeclaration::CDeclaration(const CDeclaration &decl)
 	*this = decl;
 }
 
+CDeclaration::CDeclaration(const CDeclaration &decl, CTokenMap &aMap)
+{
+	assignRemap(decl, aMap);
+}
+
+
 CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 {
 	if ( this == &decl )
@@ -245,6 +251,34 @@ CDeclaration &CDeclaration::operator=(const CDeclaration &decl)
 	m_isInline = decl.m_isInline;
 	m_isDefault = decl.m_isDefault;
 	m_colorDescr = decl.m_colorDescr;
+	return *this;
+}
+
+CDeclaration &CDeclaration::assignRemap(const CDeclaration &decl, CTokenMap &aMap)
+{
+	if ( this == &decl )
+		return *this;
+	
+	m_qualifiedName = decl.m_qualifiedName;
+	m_qualifier = decl.m_qualifier;
+	
+	m_table = aMap.findCreate(decl.m_table);
+	m_var = aMap.findCreate(decl.m_var);
+	m_token = aMap.findCreate(decl.m_token);
+	
+	m_class = decl.m_class;
+	m_type = decl.m_type;
+	m_basicType = decl.m_basicType;
+	
+	m_isArray = decl.m_isArray;
+	m_arraySize = decl.m_arraySize;
+
+	m_typeSize = decl.m_typeSize;
+	m_isInline = decl.m_isInline;
+	m_isDefault = decl.m_isDefault;
+
+	m_colorDescr = decl.m_colorDescr;
+
 	return *this;
 }
 
@@ -318,15 +352,3 @@ bool CDeclaration::matches(RtToken aQualifierName, RtToken aTable, RtToken aVar)
 	EnumQualifiers aQualifier = CTypeInfo::qualifier(aQualifierName);
 	return matches(aQualifier, aTable, aVar);
 }
-
-/*
-bool CDeclaration::check(RtToken qualified, RtToken unqualified) const
-{
-	if ( isInline() ) {
-		return unqualified == var();
-	}
-	
-	return qualified == token();
-}
-*/
-

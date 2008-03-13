@@ -55,7 +55,7 @@ class CDeclarationDictionary
 	 * Only the copied pointers to objects of m_all.
 	 *
 	 */
-	class TemplObjPtrRegistry<RtToken, const CDeclaration *> m_active;
+	TemplObjPtrRegistry<RtToken, const CDeclaration *> m_active;
 	
 	/** @brief All declarations.
 	 *
@@ -63,8 +63,10 @@ class CDeclarationDictionary
 	 * can be referenced by stored parameters. They are
 	 * freed at the end of their rendering context.
 	 */
-	class std::list<const CDeclaration *> m_all;
-
+	std::list<const CDeclaration *> m_all;
+	
+	std::map<const CDeclaration *, CDeclaration *> m_declOldNewRemap;
+	
 	CTokenMap m_tokenMap;              ///< Registered tokens
 
 public:
@@ -93,6 +95,8 @@ public:
 	 */
 	~CDeclarationDictionary();
 	
+	void clear();
+
 	/** @brief Finds a declaration for a token.
 	 *
 	 * This member function is used to get a declaration without modifying
@@ -213,6 +217,8 @@ public:
 	inline CTokenMap &tokenMap() { return m_tokenMap; }
 	inline const CTokenMap &tokenMap() const { return m_tokenMap; }
 
+	CDeclarationDictionary &assignRemap(const CDeclarationDictionary &declDict);
+	CDeclaration *remapDecl(const CDeclaration *oldDecl);
 }; // CDeclarationDictionary
 
 } // namespace RiCPP

@@ -71,6 +71,8 @@ public:
 	 */
 	~CTokenMap();
 
+	void clear();
+
 	/** @brief Searches for a token and creates one, if the token name was not found.
 	 *
 	 *  To create a new token you can call: myToken = myMap.findCreate("tokenString");

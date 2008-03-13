@@ -84,6 +84,18 @@ namespace RiCPP {
 			*this = param;
 		}
 
+		/** @brief Copy constructor for remapping
+		 *
+		 *  @param param Parameter to copy
+		 *  @param newDict New dictionary for declarations and tokens
+		 */
+		inline CParameter(const CParameter &param, CDeclarationDictionary &newDict)
+		{
+			m_declaration = 0;
+			m_position = 0;
+			assignRemap(param, newDict);
+		}
+
 		/** @brief Constructs a parameter.
 		 *
 		 *  @param theName Name (not yet a token) or inline declaration of the parameter.
@@ -164,6 +176,8 @@ namespace RiCPP {
 		 *  @return *this
 		 */
 		CParameter &operator=(const CParameter &param);
+
+		CParameter &assignRemap(const CParameter &param, CDeclarationDictionary &newDict);
 
 		/** @brief finds the declaration of a parameter.
 		 *
@@ -404,9 +418,20 @@ namespace RiCPP {
 		inline CParameterList() {}
 
 		/** Copy constructor.
+		 *  @param params Named parameterlist to copy (declarations of old dictionary)
 		 */
 		inline CParameterList(const CParameterList &params) { *this = params; }
 		
+		/** @brief Copy constructor, remaps
+		 *  
+		 *  @param params Named parameterlist to copy (declarations of old dictionary)
+		 *  @param newDict New dictionary for declarations and tokens
+		 */
+		inline CParameterList(const CParameterList &params, CDeclarationDictionary &newDict)
+		{
+			assignRemap(params, newDict);
+		}
+
 		/** Costructor, sets the contents of the list.
 		 *
 		 *  @param aQualifier Optional qualifier
@@ -444,6 +469,8 @@ namespace RiCPP {
 		 *  @return *this
 		 */
 		CParameterList &operator=(const CParameterList &params);
+
+		CParameterList &assignRemap(const CParameterList &params, CDeclarationDictionary &newDict);
 
 		/** @brief Gets a constant iterator.
 		 *
@@ -677,11 +704,21 @@ namespace RiCPP {
 
 		/** @brief Copy constructor.
 		 *  
-		 *  @param params Named parametrlist to copy
+		 *  @param params Named parameterlist to copy
 		 */
 		inline CNamedParameterList(const CNamedParameterList &params)
 		{
 			*this = params;
+		}
+
+		/** @brief Copy constructor, remaps
+		 *  
+		 *  @param params Named parameterlist to copy (declarations of old dictionary)
+		 *  @param newDict New dictionary for declarations and tokens
+		 */
+		inline CNamedParameterList(const CNamedParameterList &params, CDeclarationDictionary &newDict)
+		{
+			assignRemap(params, newDict);
 		}
 
 		/** @brief Constructs a parameter list.
@@ -723,6 +760,7 @@ namespace RiCPP {
 		 * @return *this
 		 */
 		CNamedParameterList &operator=(const CNamedParameterList &params);
+		CNamedParameterList &assignRemap(const CNamedParameterList &params, CDeclarationDictionary &newDict);
 
 		/** @brief Sets a parameter list to specific values.
 		 *

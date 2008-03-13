@@ -125,6 +125,7 @@ public:
 	 *  @exception ExceptRiCPPError
 	 */
 	CDeclaration(const char *parameterDeclstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap);
+
 	/** @brief Standard constructor for declarations CBaseRenderer::Declare().
 	 *
 	 *  Can throw a RIE_SYNTAX parsing error.
@@ -137,6 +138,7 @@ public:
 	 *  @exception ExceptRiCPPError
 	 */
 	CDeclaration(RtToken token, const char *declstr, const CColorDescr &curColorDescr, CTokenMap &tokenmap, bool isDefault);
+
 	/** @brief Copy constructor for declaration with different color size
 	 *  @param decl The CDeclaration instance to copy
 	 *  @param newColorDescr The new current size of color (number of floats) and RGB transformation.
@@ -147,6 +149,12 @@ public:
 	 *  @param decl The CDeclaration instance to copy.
 	 */
 	CDeclaration(const CDeclaration &decl);
+
+	/** @brief Copy constructor, remaps tokens
+	 *  @param decl The CDeclaration instance to copy.
+	 *  @param aMap Current tokenmap
+	 */
+	CDeclaration(const CDeclaration &decl, CTokenMap &aMap);
 
 	/** @brief Gets the name of the declaration
 	 *  @return Name of the declaration
@@ -333,11 +341,7 @@ public:
 	bool matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar) const; 
 	bool matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const; 
 
-	/*  @brief Checks the qualified token or the unqualified var, if inline declaration.
-	 *  -> matches
-	 *  @return true, if the parameter name passes the test.
-	 */
-	// bool check(RtToken qualified, RtToken unqualified) const;
+	CDeclaration &assignRemap(const CDeclaration &decl, CTokenMap &aMap);
 }; // CDeclarartion
 
 } // namespace RiCPP

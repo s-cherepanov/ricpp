@@ -60,6 +60,10 @@ public:
 	 */
 	~TemplObjPtrRegistry();
 
+	/** @brief Clears registry, deletes also the members (values) if m_destructMembers is true.
+	 */
+	void clear();
+
 	/** @brief Registers an object (pointer).
 	 * @param key Key for the registered object pointer
 	 * @param value The object pointer
@@ -145,8 +149,9 @@ m_destructMembers(destructMembers)
 }
 
 template<typename KeyType, typename ValueType>
+void
 TemplObjPtrRegistry<KeyType, ValueType>::
-~TemplObjPtrRegistry()
+clear()
 {
 	if ( m_destructMembers ) {
 		typename std::map<KeyType, ValueType>::iterator i;
@@ -158,6 +163,13 @@ TemplObjPtrRegistry<KeyType, ValueType>::
 		}
 		m_map.clear();
 	}
+}
+
+template<typename KeyType, typename ValueType>
+TemplObjPtrRegistry<KeyType, ValueType>::
+~TemplObjPtrRegistry()
+{
+	clear();
 }
 
 template<typename KeyType, typename ValueType>

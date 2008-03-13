@@ -208,6 +208,8 @@ namespace RiCPP {
 		void initHider();
 		void initRelativeDetail();
 
+		void assignNumerics(const COptions &ro);
+		
 	public:
 		inline COptions()
 		{
@@ -223,11 +225,19 @@ namespace RiCPP {
 			*this = ro;
 		}
 
+		inline COptions(const COptions &ro, CDeclarationDictionary &newDict)
+		{
+			m_factory = 0;
+			m_filterFunc = 0;
+			assignRemap(ro, newDict);
+		}
+
 		virtual ~COptions();
 
 		virtual COptionsBase *duplicate() const;
 
 		COptions &operator=(const COptions &ra);
+		COptions &assignRemap(const COptions &ro, CDeclarationDictionary &newDict);
 
 		RtVoid format(RtInt xres, RtInt yres, RtFloat aspect);
 

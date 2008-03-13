@@ -53,6 +53,29 @@ COptionsBase &COptionsBase::operator=(const COptionsBase &ga)
 }
 
 
+COptionsBase &COptionsBase::assignRemap(const COptionsBase &ga, CDeclarationDictionary &newDict)
+{
+	if ( this == &ga )
+		return *this;
+	
+	clearMembers();
+	
+	m_curColorDesc = ga.m_curColorDesc;
+	
+	for (
+		 const_iterator i = ga.begin();
+		 i != ga.end();
+		 ++i )
+	{
+		const CNamedParameterList *c = i->second;
+		m_paramList.push_back(CNamedParameterList(*c, newDict));
+		m_paramMap[i->first] = &m_paramList.back();
+	}
+	
+	return *this;
+}
+
+
 void COptionsBase::set(
 	CDeclarationDictionary &dict,
 	RtToken name, RtInt n, RtToken tokens[], RtPointer params[])

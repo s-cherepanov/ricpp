@@ -222,6 +222,9 @@ const char *CRequestInfo::ms_requestNames[N_REQUESTS] =
 	"Else",
 	"IfEnd",
 
+	// Comment
+	"#",
+
 	// Additional
 	"Control",
 

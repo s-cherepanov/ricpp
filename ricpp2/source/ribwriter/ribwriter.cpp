@@ -113,10 +113,10 @@ writePrefix(); \
 obj.writeRIB(*m_writer); \
 }
 
-#define TEST_WRITE_RIB_ARCHIVE_REC { \
+#define TEST_WRITE_RIB_ARCHIVE_REC(AFLAG) { \
 if ( !postTestValid() ) \
 	return; \
-writePrefix(true); \
+writePrefix(AFLAG); \
 obj.writeRIB(*m_writer); \
 }
 
@@ -1174,7 +1174,7 @@ RtVoid CRibWriter::postArchiveRecord(CRiArchiveRecord &obj, RtToken type, RtStri
 		return;
 	}
 
-	TEST_WRITE_RIB_ARCHIVE_REC
+	TEST_WRITE_RIB_ARCHIVE_REC(type == RI_STRUCTURE)
 
 	if ( type == RI_STRUCTURE )
 		m_header = false;

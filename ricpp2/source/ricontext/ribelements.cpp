@@ -95,6 +95,10 @@ void CRibElementsWriter::putComment(RtToken type, const char *cs)
 	bool sav_ascii = m_ascii;
 	m_ascii = true;
 
+	if ( type != RI_STRUCTURE ) {
+		m_firstRequestWritten = true;
+	}
+
 	if ( type != RI_VERBATIM ) {
 		putChar('#');
 	}
@@ -110,6 +114,8 @@ void CRibElementsWriter::putComment(RtToken type, const char *cs)
 	}
 
 	m_ascii = sav_ascii;
+
+	m_notify.requestWritten(REQ_COMMENT);
 }
 
 

@@ -1128,6 +1128,11 @@ CRenderState::CRenderState(
 	s += CFilepathConverter::internalPathSeparator();
 	m_baseUri.encodeFilepath(s.c_str(), "file");
 
+	m_NDCToRaster = 0;
+	m_screenToNDC = 0;
+	m_cameraToScreen = 0;
+	m_worldToCamera = 0;
+
 	// Create options, attributes and transforms
 	pushOptions();
 	pushAttributes();
@@ -1150,7 +1155,40 @@ CRenderState::~CRenderState()
 		m_transformationFactory->deleteTransformation(trans);
 		m_motionTransformationStack.pop_back();
 	}
+
+	m_transformationFactory->deleteTransformation(m_NDCToRaster);
+	m_transformationFactory->deleteTransformation(m_screenToNDC);
+	m_transformationFactory->deleteTransformation(m_cameraToScreen);
+	m_transformationFactory->deleteTransformation(m_worldToCamera);
 }
+
+CTransformation *CRenderState::calcNDCToRaster()
+{
+}
+
+CTransformation *CRenderState::calcScreenToNDC()
+{
+	calcNDCToRaster();
+}
+
+CTransformation *CRenderState::setCameraToScreen()
+{
+	m_transformationFactory->deleteTransformation(m_cameraToScreen);
+	m_cameraToScreen = curTransform().duplicate();
+	if ( m_cameraToScreen )
+		m_cameraToScreen->spaceType(RI_SCREEN);
+	
+	calcScreenToNDC();
+}
+
+CTransformation *CRenderState::setWorldToCamera()
+{
+	m_transformationFactory->deleteTransformation(m_worldToCamera);
+	m_worldToCamera = curTransform().duplicate();
+	if ( m_worldToCamera )
+		m_worldToCamera->spaceType(RI_CAMERA);
+}
+
 
 void CRenderState::deleteTransMapCont(TypeTransformationMap &m)
 {
@@ -1264,9 +1302,19 @@ void CRenderState::frameEnd()
 
 void CRenderState::worldBegin()
 {
+	curTransform().spaceType(RI_CAMERA);
+	setWorldToCamera();
+
 	pushTransform();
 	curTransform().identity();
+
+	if ( cameraToScreen() == 0 ) {
+		// Set camera to screen matrix
+		setCameraToScreen();
+	}
+	
 	curTransform().spaceType(RI_WORLD);
+
 	pushAttributes();
 
 	m_objectMacros.mark();
@@ -2055,6 +2103,8 @@ void CRenderState::pushTransform(bool useCounter)
 	try {
 		if ( m_transformationStack.empty() ) {
 			m_transformationStack.push_back(m_transformationFactory->newTransformation());
+			if ( !m_transformationStack.empty() )
+				curTransform().spaceType(RI_CAMERA);
 		} else {
 			assert(m_transformationStack.back() != 0);
 			if ( useCounter )

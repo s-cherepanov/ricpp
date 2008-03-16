@@ -1057,7 +1057,25 @@ RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CPar
 {
 	// Sets the state (can throw)
 	renderState()->options().projection(name, params);
+
+	if ( name == RI_NULL ) {
+		// Set camera to screen matrix
+		renderState()->setCameraToScreen();
+	} else if ( name == RI_ORTHOGRAPHIC ) {
+		// Set camera to screen matrix
+		renderState()->setCameraToScreen();
+	} else if ( name == RI_PERSPECTIVE ) {
+		// Concat perspective
+		renderState()->curTransform().perspective(renderState()->options().fov());
+		// Set camera to screen matrix
+		renderState()->setCameraToScreen();
+	}
+
+	// Reset CTM
+	renderState()->curTransform().spaceType(RI_CAMERA);
+	renderState()->curTransform().identity();
 }
+
 
 RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {

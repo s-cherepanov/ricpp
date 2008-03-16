@@ -405,7 +405,7 @@ namespace RiCPP {
 		bool      m_detailRangeCalled;         ///< Detail ranges are set by an interface call
 		bool      m_detailRangeCalledInBlock;  ///< Detail ranges are set by an interface call within the current attribute block.
 
-		CAttributeToken m_geometricApproximationType;  ///< The geometric approximation type (e.g. RI_FLATNESS)
+		CAttributeToken m_geometricApproximationType;  ///< The geometric approximation type (e.g. RI_FLATNESS, "motionfactor") @todo There are many independend flags, not only one - have to store token-value pairs
 		CAttributeFloat m_geometricApproximationValue; ///< The value for the approximation type
 
 		CAttributeToken m_geometricRepresentation;     ///< The geometric representation

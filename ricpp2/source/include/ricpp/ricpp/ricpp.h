@@ -888,9 +888,8 @@ public:
 	virtual RtVoid detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
 
 	//! @brief Adds the criterion for approximating the surface primitives.
-	/*! The primitives are approximated with other, more easily rendered,
-	 * primitives (usually polygons), the [QRM] Spec is used here.
-	 *  @param type Type of criterion for approximation, RI_TESSELATION, RI_DEVIATION, RI_FLATNESS
+	/*! [QRM] Spec is used here.
+	 *  @param type Type of criterion for approximation, RI_TESSELATION, RI_DEVIATION, RI_FLATNESS, RI_MOTIONFACTOR
 	 *  @param value metric for the criterion
 	 */
     virtual RtVoid geometricApproximation(RtToken type, RtFloat value) = 0;

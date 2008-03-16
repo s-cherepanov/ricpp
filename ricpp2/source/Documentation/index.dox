@@ -78,7 +78,7 @@ contains an older version of RiCPP. See also:
 You can learn a lot of RenderMan by these books and documents:
 
  <ul>
- <li> [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman</li>
+ <li> [ARM2000] Apodaca, Gritz et all; Advanced RenderMan; 2000, Morgan Kaufman, <a href="http://www.larrygritz.com/arman/">Companion Web Site for Advanced RenderMan</a></li>
  <li> [COR2008] Rudy Cortes, Saty Raghavachary; <a href="http://rslprogramming.com/">The RenderMan Shading Language Guide</a>; 2008, Thomson Course Technology PTR</li>
  <li> [EBE1994] David S. Ebert (Ed.), Texturing and Modeling: A Procedural Approach; 1994 Academic Press, Inc. (There is a 2nd edition available)</li>
  <li> [KAUSHIK] Sudhir R Kaushik; <a href="http://web.cs.wpi.edu/~matt/courses/cs563/talks/renderman/rendmain.html">The RenderMan page</a></li>

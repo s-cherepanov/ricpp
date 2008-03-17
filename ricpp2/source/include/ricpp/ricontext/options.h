@@ -246,20 +246,11 @@ namespace RiCPP {
 			return m_formatCalled;
 		}
 
-		inline RtInt xResolution() const
-		{
-			return m_xResolution;
-		}
+		RtInt xResolution() const;
 
-		inline RtInt yResolution() const
-		{
-			return m_yResolution;
-		}
+		RtInt yResolution() const;
 
-		inline RtFloat pixelAspectRatio() const
-		{
-			return m_pixelAspectRatio;
-		}
+		RtFloat pixelAspectRatio() const;
 
 		RtVoid getFormat(RtInt &xres, RtInt &yres, RtFloat &aspect) const
 		{

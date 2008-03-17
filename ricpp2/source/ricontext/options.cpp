@@ -288,6 +288,41 @@ RtVoid COptions::format(RtInt xres, RtInt yres, RtFloat aspect)
 	m_pixelAspectRatio = aspect;
 }
 
+RtInt COptions::xResolution() const
+{
+	if ( m_formatCalled )
+		return m_xResolution;
+	if ( !m_displays.empty() ) {
+		const CDisplayDescr &d = *m_displays.begin();
+		if ( d.width() > 0 )
+			return d.width();
+	}
+	return m_xResolution;
+}
+
+RtInt COptions::yResolution() const
+{
+	if ( m_formatCalled )
+		return m_yResolution;
+	if ( !m_displays.empty() ) {
+		const CDisplayDescr &d = *m_displays.begin();
+		if ( d.height() > 0 )
+			return d.height();
+	}
+	return m_yResolution;
+}
+
+RtFloat COptions::pixelAspectRatio() const
+{
+	if ( m_formatCalled )
+		return m_pixelAspectRatio;
+	if ( !m_displays.empty() ) {
+		const CDisplayDescr &d = *m_displays.begin();
+		if ( d.pixelAspectRatio() > 0 )
+			return d.pixelAspectRatio();
+	}
+	return m_pixelAspectRatio;
+}
 // ----
 
 void COptions::initFrameAspectRatio()
@@ -307,8 +342,8 @@ RtFloat COptions::frameAspectRatio() const
 	if ( m_frameAspectRatioCalled )
 		return m_frameAspectRatio;
 
-	if ( m_yResolution != 0 )
-		return (m_xResolution * m_pixelAspectRatio) / static_cast<RtFloat>(m_yResolution);
+	if ( yResolution() != 0 )
+		return (xResolution() * pixelAspectRatio()) / static_cast<RtFloat>(yResolution());
 
 	return RI_INFINITY;
 }
@@ -384,7 +419,10 @@ RtVoid COptions::getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFl
 		ymin = m_cropWindowBottom;
 		ymax = m_cropWindowTop;
 	} else {
-		getScreenWindow(xmin, xmax, ymin, ymax);
+		xmin = 0;
+		ymin = 0;
+		xmax = 1.0;
+		ymax = 1.0;
 	}
 }
 
@@ -444,8 +482,40 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 		if ( p && p->floats().size() > 0 ) {
 			m_FOVSet = true;
 			m_FOV = p->floats()[0];
+			if ( m_FOV == 0.0 ) {
+				m_projectionName = RI_ORTHOGRAPHIC;
+				m_FOVSet = false;
+			} else {
+				if ( m_FOV < (RtFloat)180.0 && m_FOV > 0.0 ) {
+					RtFloat fa = frameAspectRatio();
+					RtFloat h_2, w_2;
+					if ( fa > 1 ) {
+						w_2 = h_2 * fa;
+						h_2 = tan(fa/(RtFloat)2.0);
+					} else {
+						RtFloat w_2 = tan(fa/(RtFloat)2.0);
+						RtFloat h_2 = w_2 * ((RtFloat)1.0/fa);
+					}
+					m_screenWindowLeft = -w_2;
+					m_screenWindowRight = w_2;
+					m_screenWindowBottom = -h_2;
+					m_screenWindowTop = h_2;						
+					m_screenWindowCalled = false;
+				}
+			}
 		} else {
+			RtFloat left, right, bot, top, w, h;
+			getScreenWindow(left, right, bot, top);
+			w = right - left;
+			h = top - bot;
 			m_FOV = defCameraFOV;
+			if ( w > h ) {
+				if ( h > 0 )
+					m_FOV = 2.0 * atan(h/(RtFloat)2.0);
+			} else {
+				if ( w > 0 )
+					m_FOV = 2.0 * atan(w/(RtFloat)2.0);
+			}
 		}
 	}
 }

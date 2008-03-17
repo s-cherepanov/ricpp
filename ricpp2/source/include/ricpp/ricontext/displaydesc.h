@@ -81,6 +81,10 @@ namespace RiCPP {
 
 		RtInt m_origin[2];   ///< Origin (offset from upper left), default is (0, 0)
 
+		RtInt   m_width,       ///< Width, initialized with -1: Size of device
+		m_height;      ///< Height, initialized with -1: Size of device
+		RtFloat m_pixelAspectRatio; ///< The pixel aspect ration, initialized with -1: Ratio of device pixel
+
 		std::list<CDisplayChannelDescr> m_channels;
 		CStringList m_channelNames;
 
@@ -132,6 +136,32 @@ namespace RiCPP {
 		inline const CStringList &channelNames() const
 		{
 			return m_channelNames;
+		}
+
+		inline void size(RtInt wid, RtInt ht)
+		{
+			m_width = wid;
+			m_height = ht;
+		}
+		
+		inline RtInt width() const
+		{
+			return m_width;
+		}
+		
+		inline RtInt height() const
+		{
+			return m_height;
+		}
+		
+		inline void pixelAspectRatio(RtFloat ratio)
+		{
+			m_pixelAspectRatio = ratio;
+		}
+		
+		inline RtFloat pixelAspectRatio() const
+		{
+			return m_pixelAspectRatio;
 		}
 	}; // CDisplayDescr
 

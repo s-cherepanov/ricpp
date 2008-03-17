@@ -142,6 +142,9 @@ CDisplayDescr::CDisplayDescr()
 	m_type = RI_NULL;
 	m_mode = RI_NULL;
 	m_origin[0] = m_origin[1] = 0;
+	m_width = -1;
+	m_height = -1;
+	m_pixelAspectRatio = -1;
 }
 
 
@@ -169,6 +172,10 @@ CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd) {
 	m_origin[0] = dd.m_origin[0];
 	m_origin[1] = dd.m_origin[1];
 
+	m_width = dd.m_width;
+	m_height = dd.m_height;
+	m_pixelAspectRatio = dd.m_pixelAspectRatio;
+
 	m_channels = dd.m_channels;
 	m_channelNames = dd.m_channelNames;
 
@@ -185,6 +192,10 @@ CDisplayDescr &CDisplayDescr::assignRemap(const CDisplayDescr &dd, CDeclarationD
 	m_mode = newDict.tokenMap().findCreate(dd.m_mode);
 	m_origin[0] = dd.m_origin[0];
 	m_origin[1] = dd.m_origin[1];
+
+	m_width = dd.m_width;
+	m_height = dd.m_height;
+	m_pixelAspectRatio = dd.m_pixelAspectRatio;
 
 	m_channels.clear();
 	

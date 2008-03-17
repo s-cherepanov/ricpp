@@ -390,7 +390,7 @@ void printUsage()
 	std::cout << "Parses, processes and outputs RenderMan(R) Interface Byte streams (RIB files)." << std::endl;
 	std::cout << "RenderMan(R) is a registered trademark of Pixar." << std::endl;
 	std::cout << std::endl;
-	std::cout << "usage: ribtool [-o[0-9] outfile -p[afo] +p[afo] - filename]..." << std::endl;
+	std::cout << "usage: ribtool [+o[0-9] outfile -p[afo] +p[afo] - filename]..." << std::endl;
 	std::cout << "- Reads from stdin" << std::endl;
 	std::cout << "filename Reads from filename" << std::endl;
 	std::cout << "+o Sets outputfile, standard is stdout, the file will be overwritten" << std::endl;

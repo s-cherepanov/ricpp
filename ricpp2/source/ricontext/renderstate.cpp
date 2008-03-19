@@ -1162,26 +1162,68 @@ CRenderState::~CRenderState()
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
 }
 
-CTransformation *CRenderState::calcNDCToRaster()
+void CRenderState::calcNDCToRaster()
 {
+	if ( !m_NDCToRaster )
+		m_NDCToRaster = m_transformationFactory->newTransformation();
+
+	if ( !m_NDCToRaster ) {
+		// error
+	} else {
+		// Raster
+		RtInt xres, yres;
+		RtFloat pa;
+		options().getFormat(xres, yres, pa);
+		// pa is already used for the screen window sizes
+		m_NDCToRaster->identity();
+		m_NDCToRaster->scale((RtFloat)xres, (RtFloat)yres, 1);
+		// NDC
+
+		m_NDCToRaster->spaceType(RI_RASTER);
+	}
 }
 
-CTransformation *CRenderState::calcScreenToNDC()
+void CRenderState::calcScreenToNDC()
 {
+	if ( !m_screenToNDC )
+		m_screenToNDC = m_transformationFactory->newTransformation();
+
+	if ( !m_screenToNDC ) {
+		// error
+	} else {
+		// Ndc
+
+		m_screenToNDC->identity();
+		// scale screenwindow and mirror on x
+		RtFloat swid = options().screenWindowRight()-options().screenWindowLeft();
+		RtFloat sht  = options().screenWindowTop()-options().screenWindowBottom();
+		if ( swid > 0 && sht > 0 ) {
+			m_screenToNDC->scale((RtFloat)1.0/swid, (RtFloat)-1.0/sht, 1);
+		}
+		// Translate to screen origin
+		m_screenToNDC->translate(-options().screenWindowLeft(), -options().screenWindowTop(), 0);
+
+		m_screenToNDC->spaceType(RI_NDC);
+		// Screen
+	}
+
 	calcNDCToRaster();
 }
 
-CTransformation *CRenderState::setCameraToScreen()
+void CRenderState::setCameraToScreen()
 {
 	m_transformationFactory->deleteTransformation(m_cameraToScreen);
 	m_cameraToScreen = curTransform().duplicate();
-	if ( m_cameraToScreen )
+	if ( !m_cameraToScreen ) {
+		// error
+	} else {
 		m_cameraToScreen->spaceType(RI_SCREEN);
+	}
 	
 	calcScreenToNDC();
 }
 
-CTransformation *CRenderState::setWorldToCamera()
+void CRenderState::setWorldToCamera()
 {
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
 	m_worldToCamera = curTransform().duplicate();
@@ -1302,11 +1344,10 @@ void CRenderState::frameEnd()
 
 void CRenderState::worldBegin()
 {
-	curTransform().spaceType(RI_CAMERA);
 	setWorldToCamera();
 
 	pushTransform();
-	curTransform().identity();
+	curTransform().reset();
 
 	if ( cameraToScreen() == 0 ) {
 		// Set camera to screen matrix
@@ -1929,7 +1970,7 @@ void CRenderState::motionBegin(RtInt N, RtFloat times[])
 void CRenderState::motionEnd()
 {
 	bool err = false;
-	if ( m_motionState.curSampleCnt() < ((RtInt)m_motionState.curTimes().size()) - 1 ) {
+	if ( m_motionState.curSampleIdx() < ((RtInt)m_motionState.curTimes().size()) - 1 ) {
 		err = true;
 	}
 	if ( m_motionState.attributesStored() ) {
@@ -1965,8 +2006,9 @@ void CRenderState::moveArchiveBegin()
 	if ( m_motionState.curState() == CMotionState::MOT_OUTSIDE )
 		return;
 
-	if ( m_motionState.curSampleCnt() >= 0 ) {
+	if ( m_motionState.curSampleIdx() >= 0 ) {
 		// Start and continue
+		/// @todo sample the current move values
 		attributeBegin();
 	} else {
 		// Error
@@ -1978,7 +2020,7 @@ void CRenderState::moveArchiveEnd()
 	if ( m_motionState.curState() == CMotionState::MOT_OUTSIDE )
 		return;
 
-	if ( m_motionState.curSampleCnt() == 0 ) {
+	if ( m_motionState.curSampleIdx() == 0 ) {
 		// Start
 
 		// Store Attibutes
@@ -1987,9 +2029,11 @@ void CRenderState::moveArchiveEnd()
 		m_motionTransformationStack.push_back(m_transformationFactory->newTransformation(*m_transformationStack.back()));
 		m_motionState.attributesStored(true);
 		attributeEnd();
-	} else if ( m_motionState.curSampleCnt() > 0 ) {
+		/// @todo restore the move samples
+	} else if ( m_motionState.curSampleIdx() > 0 ) {
 		// Continue
 		attributeEnd();
+		/// @todo restore the move samples
 	} else {
 		// Error
 	}
@@ -2143,6 +2187,22 @@ bool CRenderState::popTransform(bool useCounter)
 const CTransformation *CRenderState::findTransform(RtToken space) const
 {
 	TypeTransformationMap::const_iterator pos;
+
+
+	if ( space == RI_WORLD || space == RI_OBJECT )
+		return &curTransform();
+
+	if ( space == RI_CAMERA )
+		return m_worldToCamera;
+
+	if ( space == RI_SCREEN )
+		return m_cameraToScreen;
+
+	if ( space == RI_NDC )
+		return m_screenToNDC;
+
+	if ( space == RI_RASTER )
+		return m_NDCToRaster;
 
 	if ( !m_scopedTransforms.empty() ) {
 		for( std::list<TypeTransformationMap>::const_reverse_iterator i = m_scopedTransforms.rbegin();

@@ -1093,7 +1093,7 @@ void CMatrix3D::scale(RtFloat sx, RtFloat sy, RtFloat sz)
 }
 
 
-void CMatrix3D::transformPoints(RtFloat &x, RtFloat &y, RtFloat &z)
+void CMatrix3D::transformPoint(RtFloat &x, RtFloat &y, RtFloat &z)
 {
         int i, k;
         RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
@@ -1110,6 +1110,38 @@ void CMatrix3D::transformPoints(RtFloat &x, RtFloat &y, RtFloat &z)
         z = d[2];
 }
 
+void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
+{
+        int i, j, k;
+
+		n*=3;
+		RtFloat *s = &p[0][0];
+
+		if ( m_preMultiply ) {
+			for ( j = 0; j < n; j+=3 ) {
+				RtFloat t[4] = {s[j], s[j+1], s[j+2], 1.0};
+				RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
+				for ( i=0; i<4; ++i)
+					for ( k=0; k<4; ++k)
+						d[i] += t[k] * m_Matrix[k][i];
+				s[j]   = d[0];
+				s[j+1] = d[1];
+				s[j+2] = d[2];
+			}
+		} else {
+			for ( j = 0; j < n; j+=3 ) {
+				RtFloat t[4] = {s[j], s[j+1], s[j+2], 1.0};
+				RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
+				for ( i=0; i<4; ++i)
+					for ( k=0; k<4; ++k)
+						d[i] += m_Matrix[i][k] * t[k];
+				s[j]   = d[0];
+				s[j+1] = d[1];
+				s[j+2] = d[2];
+			}
+		}
+
+}
 
 void CMatrix3D::rotateX(RtFloat w)
 {

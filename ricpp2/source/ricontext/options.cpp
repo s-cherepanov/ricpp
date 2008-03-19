@@ -35,8 +35,8 @@
 
 using namespace RiCPP;
 
-const RtInt   COptions::defXResolution = 640;
-const RtInt   COptions::defYResolution = 480;
+const RtInt   COptions::defXResolution = 512; // 640;
+const RtInt   COptions::defYResolution = 384; // 480;
 const RtFloat COptions::defPixelAspectRatio = 1.0;
 
 const RtFloat COptions::defFrameAspectRatio =
@@ -490,8 +490,8 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 					RtFloat fa = frameAspectRatio();
 					RtFloat h_2, w_2;
 					if ( fa > 1 ) {
-						w_2 = h_2 * fa;
 						h_2 = tan(fa/(RtFloat)2.0);
+						w_2 = h_2 * fa;
 					} else {
 						RtFloat w_2 = tan(fa/(RtFloat)2.0);
 						RtFloat h_2 = w_2 * ((RtFloat)1.0/fa);
@@ -511,10 +511,10 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 			m_FOV = defCameraFOV;
 			if ( w > h ) {
 				if ( h > 0 )
-					m_FOV = 2.0 * atan(h/(RtFloat)2.0);
+					m_FOV = rad2deg((RtFloat)2.0 * atan(h/(RtFloat)2.0));
 			} else {
 				if ( w > 0 )
-					m_FOV = 2.0 * atan(w/(RtFloat)2.0);
+					m_FOV = rad2deg((RtFloat)2.0 * atan(w/(RtFloat)2.0));
 			}
 		}
 	}

@@ -603,10 +603,10 @@ namespace RiCPP {
 		inline CTransformation *cameraToScreen() { return m_cameraToScreen; }
 		inline CTransformation *worldToCamera() { return m_worldToCamera; }
 
-		CTransformation *calcNDCToRaster();
-		CTransformation *calcScreenToNDC();
-		CTransformation *setCameraToScreen();
-		CTransformation *setWorldToCamera();
+		void calcNDCToRaster();
+		void calcScreenToNDC();
+		void setCameraToScreen();
+		void setWorldToCamera();
 
 		/** @brief Call the default declarations.
 		 *

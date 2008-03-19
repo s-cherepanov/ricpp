@@ -503,7 +503,7 @@ void CAttributes::initColor()
 RtVoid CAttributes::color(RtColor Cs)
 {
 	if ( m_motionState != 0 ) {
-		m_color.set(Cs, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_color.set(Cs, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_COLOR;
 	} else {
 		m_color.set(Cs);
@@ -538,7 +538,7 @@ void CAttributes::initOpacity()
 RtVoid CAttributes::opacity(RtColor Os)
 {
 	if ( m_motionState != 0 ) {
-		m_opacity.set(Os, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_opacity.set(Os, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_OPACITY;
 	} else {
 		m_opacity.set(Os);
@@ -593,7 +593,7 @@ void CAttributes::initSurface()
 RtVoid CAttributes::surface(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
 	if ( m_motionState != 0 ) {
-		m_surface.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_surface.set(name, params, transform, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_SURFACE;
 	} else {
 		m_surface.set(name, params, transform);
@@ -608,7 +608,7 @@ void CAttributes::initAtmosphere()
 RtVoid CAttributes::atmosphere(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
 	if ( m_motionState != 0 ) {
-		m_atmosphere.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_atmosphere.set(name, params, transform, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_ATMOSPHERE;
 	} else {
 		m_atmosphere.set(name, params, transform);
@@ -623,7 +623,7 @@ void CAttributes::initInterior()
 RtVoid CAttributes::interior(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
 	if ( m_motionState != 0 ) {
-		m_interior.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_interior.set(name, params, transform, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_INTERIOR;
 	} else {
 		m_interior.set(name, params, transform);
@@ -638,7 +638,7 @@ void CAttributes::initExterior()
 RtVoid CAttributes::exterior(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
 	if ( m_motionState != 0 ) {
-		m_exterior.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_exterior.set(name, params, transform, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_EXTERIOR;
 	} else {
 		m_exterior.set(name, params, transform);
@@ -653,7 +653,7 @@ void CAttributes::initDisplacement()
 RtVoid CAttributes::displacement(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
 	if ( m_motionState != 0 ) {
-		m_displacement.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_displacement.set(name, params, transform, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_DISPLACEMENT;
 	} else {
 		m_displacement.set(name, params, transform);
@@ -668,7 +668,7 @@ void CAttributes::initDeformation()
 RtVoid CAttributes::deformation(RtToken name, const CParameterList &params, const CTransformation &transform)
 {
 	if ( m_motionState != 0 ) {
-		m_deformation.set(name, params, transform, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_deformation.set(name, params, transform, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_DEFORMATION;
 	} else {
 		m_deformation.set(name, params, transform);
@@ -702,7 +702,7 @@ RtVoid CAttributes::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFlo
 	tc[7] = t4;
 
 	if ( m_motionState != 0 ) {
-		m_textureCoordinates.set(tc, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_textureCoordinates.set(tc, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_TEXTURE_COORDINATES;
 	} else {
 		m_textureCoordinates.set(tc);
@@ -735,7 +735,7 @@ void CAttributes::initShadingRate()
 RtVoid CAttributes::shadingRate(RtFloat size)
 {
 	if ( m_motionState != 0 ) {
-		m_shadingRate.set(size, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_shadingRate.set(size, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_SHADING_RATE;
 	} else {
 		m_shadingRate.set(size);
@@ -756,7 +756,7 @@ void CAttributes::initShadingInterpolation()
 RtVoid CAttributes::shadingInterpolation(RtToken type)
 {
 	if ( m_motionState != 0 ) {
-		m_shadingInterpolation.set(type, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_shadingInterpolation.set(type, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_SHADING_INTERPOLATION;
 	} else {
 		m_shadingInterpolation.set(type);
@@ -772,7 +772,7 @@ void CAttributes::initMatte()
 RtVoid CAttributes::matte(RtBoolean onoff)
 {
 	if ( m_motionState != 0 ) {
-		m_matte.set(onoff, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_matte.set(onoff, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_MATTE;
 	} else {
 		m_matte.set(onoff);
@@ -793,7 +793,7 @@ RtVoid CAttributes::bound(RtBound aBound)
 	m_boundCalled = true;
 
 	if ( m_motionState != 0 ) {
-		m_bound.set(&aBound[0], m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_bound.set(&aBound[0], m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_BOUND;
 	} else {
 		m_bound.set(&aBound[0]);
@@ -818,7 +818,7 @@ RtVoid CAttributes::detail(RtBound aBound)
 {
 	m_detailCalled = true;
 	if ( m_motionState != 0 ) {
-		m_detail.set(&aBound[0], m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_detail.set(&aBound[0], m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_DETAIL;
 	} else {
 		m_detail.set(&aBound[0]);
@@ -854,7 +854,7 @@ RtVoid CAttributes::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran,
 	d[3] = maxvis; 
 
 	if ( m_motionState != 0 ) {
-		m_detailRange.set(d, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_detailRange.set(d, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_DETAIL_RANGE;
 	} else {
 		m_detailRange.set(d);
@@ -882,8 +882,8 @@ void CAttributes::initGeometricApproximation()
 RtVoid CAttributes::geometricApproximation(RtToken type, RtFloat value)
 {
 	if ( m_motionState != 0 ) {
-		m_geometricApproximationType.set(type, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_geometricApproximationValue.set(value, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_geometricApproximationType.set(type, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_geometricApproximationValue.set(value, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_GEOMETRIC_APPROXIMATION_VALUE;
 	} else {
 		m_geometricApproximationType.set(type);
@@ -899,7 +899,7 @@ void CAttributes::initGeometricRepresentation()
 RtVoid CAttributes::geometricRepresentation(RtToken type)
 {
 	if ( m_motionState != 0 ) {
-		m_geometricRepresentation.set(type, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_geometricRepresentation.set(type, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_GEOMETRIC_REPRESENTATION;
 	} else {
 		m_geometricRepresentation.set(type);
@@ -914,7 +914,7 @@ void CAttributes::initOrientation()
 RtVoid CAttributes::orientation(RtToken anOrientation)
 {
 	if ( m_motionState != 0 ) {
-		m_orientation.set(anOrientation, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_orientation.set(anOrientation, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_ORIENTATION;
 	} else {
 		m_orientation.set(anOrientation);
@@ -923,7 +923,7 @@ RtVoid CAttributes::orientation(RtToken anOrientation)
 
 RtVoid CAttributes::reverseOrientation(void)
 {
-	if ( m_motionState == 0 || m_motionState->curSampleCnt() == 0 ) {
+	if ( m_motionState == 0 || m_motionState->curSampleIdx() == 0 ) {
 		if ( m_orientation.m_value == RI_INSIDE ) m_orientation.m_value = RI_OUTSIDE;
 		else if ( m_orientation.m_value == RI_OUTSIDE ) m_orientation.m_value = RI_INSIDE;
 		else if ( m_orientation.m_value == RI_LH ) m_orientation.m_value = RI_RH;
@@ -948,7 +948,7 @@ void CAttributes::initSides()
 RtVoid CAttributes::sides(RtInt nsides)
 {
 	if ( m_motionState != 0 ) {
-		m_nSides.set(nsides, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_nSides.set(nsides, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_SIDES;
 	} else {
 		m_nSides.set(nsides);
@@ -964,8 +964,8 @@ void CAttributes::initBasis()
 RtVoid CAttributes::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
 {
 	if ( m_motionState != 0 ) {
-		m_uBasis.set(ubasis, ustep, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_vBasis.set(vbasis, vstep, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_uBasis.set(ubasis, ustep, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_vBasis.set(vbasis, vstep, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_BASIS;
 	} else {
 		m_uBasis.set(ubasis, ustep);
@@ -992,7 +992,7 @@ RtVoid CAttributes::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFl
 {
 	if ( m_motionState != 0 ) {
 		CTrimCurveData td(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
-		m_trimCurve.set(td, m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
+		m_trimCurve.set(td, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_TRIM_CURVE;
 	} else {
 		m_trimCurve.clear();
@@ -1020,11 +1020,11 @@ RtVoid CAttributes::motionEnd()
 	if ( m_motionState != 0 && m_lastValue != AIDX_ENDMARKER ) {
 		assert(m_allAttributes[(int)m_lastValue] != 0);
 		if (m_allAttributes[(int)m_lastValue] != 0)
-			m_allAttributes[(int)m_lastValue]->fill(m_motionState->curSampleCnt());
+			m_allAttributes[(int)m_lastValue]->fill(m_motionState->curSampleIdx());
 		if ( m_lastValue == AIDX_GEOMETRIC_APPROXIMATION_VALUE ) {
-			m_geometricApproximationType.fill(m_motionState->curSampleCnt());
+			m_geometricApproximationType.fill(m_motionState->curSampleIdx());
 		} else if ( m_lastValue == AIDX_BASIS ) {
-			m_vBasis.fill(m_motionState->curSampleCnt());
+			m_vBasis.fill(m_motionState->curSampleIdx());
 		}
 	}
 	m_motionState = 0;

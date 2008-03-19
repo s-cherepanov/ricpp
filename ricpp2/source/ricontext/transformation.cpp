@@ -557,7 +557,11 @@ CTransformation::CTransformation()
 
 CTransformation::~CTransformation()
 {
-	// delete_contents(m_deferedTrans);
+	clear();
+}
+
+void CTransformation::clear()
+{
 	for ( std::vector<IMovedTransform *>::iterator i = m_deferedTrans.begin(); i != m_deferedTrans.end(); i++ ) {
 		if ( (*i) != 0 )
 			delete *i;
@@ -594,12 +598,7 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 	
 	m_motionState = o.m_motionState;
 
-	// delete_contents(m_deferedTrans);
-	for ( std::vector<IMovedTransform *>::iterator i = m_deferedTrans.begin(); i != m_deferedTrans.end(); i++ ) {
-		if ( (*i) != 0 )
-			delete *i;
-	}
-	m_deferedTrans.clear();
+	clear();
 
 	// push_back_duplicate(m_deferedTrans, o.m_deferedTrans);
 	for ( std::vector<IMovedTransform *>::const_iterator j = o.m_deferedTrans.begin(); j != o.m_deferedTrans.end(); j++ ) {
@@ -612,21 +611,32 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 	return *this;
 }
 
-RtVoid CTransformation::identity(void)
+void CTransformation::reset()
+{
+	m_motionState = false;
+	m_isValid = true;
+
+	m_CTM.identity();
+	m_inverseCTM.identity();
+
+	clear();
+}
+
+void CTransformation::identity()
 {
 	if ( !m_motionState ) {
 		m_CTM.identity();
 		m_inverseCTM.identity();
 		m_isValid = true;
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedMatrix);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM ) {
 			dynamic_cast<CMovedMatrix *>(m_deferedTrans.back())->set(
 				RiIdentityMatrix, false,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -634,7 +644,7 @@ RtVoid CTransformation::identity(void)
 	}
 }
 
-RtVoid CTransformation::transform(RtMatrix aTransform)
+void CTransformation::transform(RtMatrix aTransform)
 {
 	if ( !m_motionState ) {
 		m_CTM.transform(aTransform);
@@ -648,14 +658,14 @@ RtVoid CTransformation::transform(RtMatrix aTransform)
 		m_inverseCTM.transform(inv);
 		m_isValid = true;
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedMatrix);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM ) {
 			dynamic_cast<CMovedMatrix *>(m_deferedTrans.back())->set(
 				aTransform, false,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -663,7 +673,7 @@ RtVoid CTransformation::transform(RtMatrix aTransform)
 	}
 }
 
-RtVoid CTransformation::concatTransform(RtMatrix aTransform)
+void CTransformation::concatTransform(RtMatrix aTransform)
 {
 	if ( !m_motionState ) {
 		m_CTM.concatTransform(aTransform);
@@ -675,14 +685,14 @@ RtVoid CTransformation::concatTransform(RtMatrix aTransform)
 		}
 		m_inverseCTM.concatTransform(inv);
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedMatrix);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM ) {
 			dynamic_cast<CMovedMatrix *>(m_deferedTrans.back())->set(
 				aTransform, true,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -690,7 +700,7 @@ RtVoid CTransformation::concatTransform(RtMatrix aTransform)
 	}
 }
 
-RtVoid CTransformation::perspective(RtFloat fov)
+void CTransformation::perspective(RtFloat fov)
 {
 	if ( !m_motionState ) {
 		if ( fov >= (RtFloat)180.0 || fov <= -(RtFloat)180.0 ) {
@@ -699,14 +709,14 @@ RtVoid CTransformation::perspective(RtFloat fov)
 		m_CTM.perspective(fov);
 		m_inverseCTM.inversePerspective(fov);
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedPerspective);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE ) {
 			dynamic_cast<CMovedPerspective *>(m_deferedTrans.back())->set(
 				fov,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -714,20 +724,20 @@ RtVoid CTransformation::perspective(RtFloat fov)
 	}
 }
 
-RtVoid CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
+void CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( !m_motionState ) {
 		m_CTM.translate(dx, dy, dz);
 		m_inverseCTM.translate(-dx, -dy, -dz);
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedTranslate);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSLATE ) {
 			dynamic_cast<CMovedTranslate *>(m_deferedTrans.back())->set(
 				dx, dy, dz,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -735,20 +745,20 @@ RtVoid CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 	}
 }
 
-RtVoid CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+void CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( !m_motionState ) {
 		m_CTM.rotate(angle, dx, dy, dz);
 		m_inverseCTM.rotate(-angle, dx, dy, dz);
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedRotate);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_ROTATE );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_ROTATE ) {
 			dynamic_cast<CMovedRotate *>(m_deferedTrans.back())->set(
 				angle, dx, dy, dz,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -756,7 +766,7 @@ RtVoid CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz
 	}
 }
 
-RtVoid CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
+void CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( !m_motionState ) {
 		m_CTM.scale(dx, dy, dz);
@@ -782,14 +792,14 @@ RtVoid CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "Could not calculate inverse matrix in %s", "CTransformation::scale()");
 		}
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedScale);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SCALE );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SCALE ) {
 			dynamic_cast<CMovedScale *>(m_deferedTrans.back())->set(
 				dx, dy, dz,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -797,7 +807,7 @@ RtVoid CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 	}
 }
 
-RtVoid CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+void CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
 	if ( !m_motionState ) {
 		if ( angle >= (RtFloat)90.0  || angle <= (RtFloat)-90.0 ) {
@@ -806,14 +816,14 @@ RtVoid CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz
 		m_CTM.skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
 		m_inverseCTM.skew(-angle, dx1, dy1, dz1, dx2, dy2, dz2);
 	} else {
-		if ( m_motionState->curSampleCnt() == 0 ) {
+		if ( m_motionState->curSampleIdx() == 0 ) {
 			m_deferedTrans.push_back(new CMovedSkew);
 		}
 		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SKEW );
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_SKEW ) {
 			dynamic_cast<CMovedSkew *>(m_deferedTrans.back())->set(
 				angle, dx1, dy1, dz1, dx2, dy2, dz2,
-				m_motionState->curSampleCnt(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {
 			// ERROR
@@ -821,7 +831,7 @@ RtVoid CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz
 	}
 }
 
-RtVoid CTransformation::motionBegin(const CMotionState &state)
+void CTransformation::motionBegin(const CMotionState &state)
 {
 	assert(m_motionState==0);
 	m_motionState = &state;
@@ -832,23 +842,23 @@ RtVoid CTransformation::motionBegin(const CMotionState &state)
 	}
 }
 
-RtVoid CTransformation::motionEnd()
+void CTransformation::motionEnd()
 {
 	assert(m_motionState != 0);
 	if ( m_motionState != 0 ) {
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 ) {
-			m_deferedTrans.back()->fill(m_motionState->curSampleCnt());
+			m_deferedTrans.back()->fill(m_motionState->curSampleIdx());
 		}	
 	}
 	m_motionState = 0;
 }
 
-RtVoid CTransformation::motionSuspend()
+void CTransformation::motionSuspend()
 {
 	m_motionState = 0;
 }
 
-RtVoid CTransformation::sample(RtFloat shutterTime, const TypeMotionTimes &times)
+void CTransformation::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 	std::vector<IMovedTransform *>::iterator i = m_deferedTrans.begin();
 	for ( ; i != m_deferedTrans.end(); ++i ) {
@@ -856,7 +866,7 @@ RtVoid CTransformation::sample(RtFloat shutterTime, const TypeMotionTimes &times
 	}
 }
 
-RtVoid CTransformation::sampleReset()
+void CTransformation::sampleReset()
 {
 	if ( !m_deferedTrans.empty() ) {
 		m_isValid = m_isValid_onMotionStart;

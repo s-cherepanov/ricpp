@@ -254,9 +254,9 @@ namespace RiCPP {
 
 		RtVoid getFormat(RtInt &xres, RtInt &yres, RtFloat &aspect) const
 		{
-			xres = m_xResolution;
-			yres = m_yResolution;
-			aspect = m_pixelAspectRatio;
+			xres = xResolution();
+			yres = yResolution();
+			aspect = pixelAspectRatio();
 		}
 
 		RtVoid frameAspectRatio(RtFloat aspect);

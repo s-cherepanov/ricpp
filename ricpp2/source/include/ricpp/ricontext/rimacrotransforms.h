@@ -1937,13 +1937,11 @@ namespace RiCPP {
 
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			reset();
 			ri.doTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
 		}
 
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			reset();
 			ri.postTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
 		}
 

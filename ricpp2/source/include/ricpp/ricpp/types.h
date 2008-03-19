@@ -1256,7 +1256,17 @@ public:
 	 *  @retval y coordinate y and result
 	 *  @retval z coordinate z and result
 	 */
-	void transformPoints(RtFloat &x, RtFloat &y, RtFloat &z);
+	void transformPoint(RtFloat &x, RtFloat &y, RtFloat &z);
+
+	/** @brief Transforms an array of points by the matrix.
+	 *
+	 *  If m_preMultiply it uses a row vector and left multiplication,
+	 *  if not m_preMultiply a column vector and left multiplication
+	 *
+	 *  @retval n Number of points
+	 *  @retval p points
+	 */
+	void transformPoints(RtInt n, RtPoint p[]);
 
 	/** @brief Concatenates a rotation around the x-axis.
 	 * The rotation matrix is:

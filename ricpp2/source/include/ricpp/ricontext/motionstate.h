@@ -141,7 +141,7 @@ namespace RiCPP {
 			return m_motionTimes;
 		}
 
-		inline RtInt curSampleCnt() const
+		inline RtInt curSampleIdx() const
 		{
 			assert( !m_elems.empty() );
 			return m_elems.back().m_curSample;

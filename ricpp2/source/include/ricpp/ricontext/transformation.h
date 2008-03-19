@@ -306,6 +306,7 @@ namespace RiCPP {
 		
 		const CMotionState *m_motionState;
 
+		void clear();
 	public:
 		/** @brief Constructor, matrices are set to identity.
 		 */
@@ -376,21 +377,23 @@ namespace RiCPP {
 
 		inline bool isValid() const { return m_isValid; }
 
-		virtual RtVoid identity(void);
-		virtual RtVoid transform(RtMatrix aTransform);
-		virtual RtVoid concatTransform(RtMatrix aTransform);
-		virtual RtVoid perspective(RtFloat fov);
-		virtual RtVoid translate(RtFloat dx, RtFloat dy, RtFloat dz);
-		virtual RtVoid rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
-		virtual RtVoid scale(RtFloat dx, RtFloat dy, RtFloat dz);
-		virtual RtVoid skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
+		virtual void reset();
 
-		virtual RtVoid motionBegin(const CMotionState &state);
-		virtual RtVoid motionEnd();
-		virtual RtVoid motionSuspend();
+		virtual void identity();
+		virtual void transform(RtMatrix aTransform);
+		virtual void concatTransform(RtMatrix aTransform);
+		virtual void perspective(RtFloat fov);
+		virtual void translate(RtFloat dx, RtFloat dy, RtFloat dz);
+		virtual void rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);
+		virtual void scale(RtFloat dx, RtFloat dy, RtFloat dz);
+		virtual void skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2);
+
+		virtual void motionBegin(const CMotionState &state);
+		virtual void motionEnd();
+		virtual void motionSuspend();
 		
-		virtual RtVoid sample(RtFloat shutterTime, const TypeMotionTimes &times);
-		virtual RtVoid sampleReset();
+		virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
+		virtual void sampleReset();
 	}; // CTransformation
 
 	/** @brief Create new attributes containers.

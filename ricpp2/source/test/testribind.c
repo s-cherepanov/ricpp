@@ -5,6 +5,7 @@ extern void exit(int rval);
 void main(int argc, const char *argv[])
 {
 	RtPoint points[] = { { 0, 0, 0}, {-.5, .5, 0}, {.5, .5, 0} };
+	RtPoint points2[] = { { 0, 0, 0}, { 0, (RtFloat)1.0, 0}, {(RtFloat)1.33333, -1.0, 0}, {(RtFloat)-1.33333, -1, 0} };
 	RtFloat color[]  = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
 	RtFloat Cs1[] = {1, 1, 1};
 	RtFloat Cs2[] = {1, 1, 0};
@@ -29,7 +30,8 @@ void main(int argc, const char *argv[])
 		/* RiMakeTexture("mytexture.tiff", "mytexture.tx", RI_PERIODIC, RI_PERIODIC, RiSincFilter, (RtFloat)3.0, (RtFloat)3.0, RI_NULL); */
 		RiPixelFilter(RiGaussianFilter, 3, 3),
 		RiShutter(0, 1);
-		RiProjection(RI_ORTHOGRAPHIC, RI_NULL);
+		RiClipping(0.5, 20.0);
+		RiProjection(RI_PERSPECTIVE, RI_NULL);
 		RiFrameBegin(1);
 			RiDisplay("Polygon", RI_FRAMEBUFFER, RI_RGB, RI_NULL);
 			RiTranslate(0, 0, (RtFloat)4.5);
@@ -54,6 +56,7 @@ void main(int argc, const char *argv[])
 				RiPolygon(3, RI_P, points, RI_NULL);
 				RiDetailRange(100, 150, RI_INFINITY, RI_INFINITY);
 				RiPolygon(3, RI_P, points, RI_CS, color, RI_NULL);
+				RiTransformPoints(RI_SCREEN, RI_RASTER, sizeof(points2)/sizeof(RtPoint), points2);
 			RiWorldEnd();
 		RiFrameEnd();
 	RiEnd();

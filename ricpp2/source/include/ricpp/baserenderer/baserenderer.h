@@ -821,7 +821,7 @@ public:
 
 	inline virtual RtVoid doScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {}
     inline virtual RtVoid doCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {}
-	inline virtual RtVoid doProjection(CRiProjection &obj, RtToken name, const CParameterList &params) {}
+	virtual RtVoid doProjection(CRiProjection &obj, RtToken name, const CParameterList &params);
 	inline virtual RtVoid doClipping(CRiClipping &obj, RtFloat hither, RtFloat yon) {}
     inline virtual RtVoid doClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {}
     inline virtual RtVoid doDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {}

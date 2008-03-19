@@ -1058,24 +1058,32 @@ RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CPar
 	// Sets the state (can throw)
 	renderState()->options().projection(name, params);
 
-	if ( name == RI_NULL ) {
-		// Set camera to screen matrix
-		renderState()->setCameraToScreen();
-	} else if ( name == RI_ORTHOGRAPHIC ) {
-		// Set camera to screen matrix
-		renderState()->setCameraToScreen();
-	} else if ( name == RI_PERSPECTIVE ) {
-		// Concat perspective
-		renderState()->curTransform().perspective(renderState()->options().fov());
-		// Set camera to screen matrix
-		renderState()->setCameraToScreen();
+	renderState()->curTransform().spaceType(RI_SCREEN);
+
+	if ( name == RI_PERSPECTIVE || name == RI_ORTHOGRAPHIC ) {
+		// Viewing volume depth of 1
+		renderState()->curTransform().translate(0, 0, -renderState()->options().hither());
+		RtFloat clippingWidth = renderState()->options().yon() - renderState()->options().hither();
+		if ( clippingWidth > 0 )
+			renderState()->curTransform().scale(1.0, 1.0, (RtFloat)1.0/clippingWidth);
 	}
 
-	// Reset CTM
-	renderState()->curTransform().spaceType(RI_CAMERA);
-	renderState()->curTransform().identity();
+	if ( name == RI_PERSPECTIVE ) {
+		// Concat perspective
+		renderState()->curTransform().perspective(renderState()->options().fov());
+	}
 }
 
+
+RtVoid CBaseRenderer::doProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
+{
+	if ( renderState()->motionState().curState() == CMotionState::MOT_OUTSIDE || renderState()->motionState().curSampleIdx() == renderState()->motionState().lastSampleIdx() ) {
+		// Set camera to screen transformation
+		renderState()->setCameraToScreen();
+		// Reset current transformation
+		renderState()->curTransform().reset();
+	}
+}
 
 RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
@@ -2017,14 +2025,59 @@ RtVoid CBaseRenderer::doTransformPoints(CRiTransformPoints &obj, RtToken fromspa
 	if ( npoints <= 0 || points == 0 ) {
 		return;
 	}
+
 	const CTransformation *from = renderState()->findTransform(fromspace);
 	const CTransformation *to   = renderState()->findTransform(tospace);
-	if ( from == 0 || to == 0 ) {
-		throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "transformPoints(%s (%s found), %s (%s found)), spaces not found", noNullStr(fromspace), from ? "was" : "not", noNullStr(tospace), to ? "was" : "not");
+
+	RtToken fs = fromspace, ts = tospace;
+
+	if ( from )
+		fs = from->spaceType();
+	if ( to )
+		ts = to->spaceType();
+
+	RtToken spaces[] = {RI_OBJECT, RI_WORLD, RI_CAMERA, RI_SCREEN, RI_NDC, RI_RASTER, RI_NULL};
+
+	int fi, ti;
+
+	fi = 0;
+	while ( spaces[fi] && spaces[fi] != fs ) ++fi;
+	ti = 0;
+	while ( spaces[ti] && spaces[ti] != ts ) ++ti;
+
+	if ( !spaces[fi] || !spaces[ti] ) {
+		throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "transformPoints(%s (%s found), %s (%s found)), spaces not found", noNullStr(fromspace), spaces[fi] ? "was" : "not", noNullStr(tospace), spaces[ti] ? "was" : "not");
+	}
+
+	if ( fi == ti ) {
+		// Same space
 		return;
 	}
 
-	/// @todo Implementation of doTransformPoints()
+	CMatrix3D m;
+	while ( fi < ti ) {
+		from = renderState()->findTransform(spaces[ti]);
+		assert(from!=0);
+		if ( from ) {
+			m.concatTransform(from->getCTM());
+		} else {
+			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "transformPoints: space (%s) not defined", noNullStr(spaces[ti]));
+		}
+		ti--;
+	}
+
+	while ( ti < fi ) {
+		ti++;
+		from = renderState()->findTransform(spaces[ti]);
+		assert(from!=0);
+		if ( from ) {
+			m.concatTransform(from->getInverseCTM());
+		} else {
+			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "transformPoints: space (%s) not defined", noNullStr(spaces[ti]));
+		}
+	}
+
+	m.transformPoints(npoints, points);
 }
 
 RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) {

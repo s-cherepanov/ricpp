@@ -486,6 +486,7 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 				m_projectionName = RI_ORTHOGRAPHIC;
 				m_FOVSet = false;
 			} else {
+				/// @todo The dependency of perspective projection fov and screen window is not clear, does fov influences the screen width?
 				if ( m_FOV < (RtFloat)180.0 && m_FOV > 0.0 ) {
 					RtFloat fa = frameAspectRatio();
 					RtFloat h_2, w_2;

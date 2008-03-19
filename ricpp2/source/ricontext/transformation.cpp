@@ -844,7 +844,7 @@ void CTransformation::motionBegin(const CMotionState &state)
 
 void CTransformation::motionEnd()
 {
-	assert(m_motionState != 0);
+	// Can be closed before (-> projection)
 	if ( m_motionState != 0 ) {
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 ) {
 			m_deferedTrans.back()->fill(m_motionState->curSampleIdx());

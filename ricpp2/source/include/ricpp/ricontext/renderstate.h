@@ -914,6 +914,7 @@ namespace RiCPP {
 		}
 
 		virtual const CTransformation *findTransform(RtToken space) const;
+		virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]);
 
 		// inline virtual bool hasMacroFactory() const {return m_macroFactory != 0;}
 

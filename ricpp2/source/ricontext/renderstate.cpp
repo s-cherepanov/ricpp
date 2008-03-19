@@ -2223,6 +2223,67 @@ const CTransformation *CRenderState::findTransform(RtToken space) const
 	return 0;
 }
 
+RtPoint *CRenderState::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
+{
+	if ( npoints <= 0 || points == 0 ) {
+		return;
+	}
+	
+	const CTransformation *from = findTransform(fromspace);
+	const CTransformation *to   = findTransform(tospace);
+	
+	RtToken fs = fromspace, ts = tospace;
+	
+	if ( from )
+		fs = from->spaceType();
+	if ( to )
+		ts = to->spaceType();
+	
+	RtToken spaces[] = {RI_OBJECT, RI_WORLD, RI_CAMERA, RI_SCREEN, RI_NDC, RI_RASTER, RI_NULL};
+	
+	int fi, ti;
+	
+	fi = 0;
+	while ( spaces[fi] && spaces[fi] != fs ) ++fi;
+	ti = 0;
+	while ( spaces[ti] && spaces[ti] != ts ) ++ti;
+	
+	if ( !spaces[fi] || !spaces[ti] ) {
+		throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints(%s (%s found), %s (%s found)), spaces not found", noNullStr(fromspace), spaces[fi] ? "was" : "not", noNullStr(tospace), spaces[ti] ? "was" : "not");
+	}
+	
+	if ( fi == ti ) {
+		// Same space
+		return;
+	}
+	
+	CMatrix3D m;
+	while ( fi < ti ) {
+		from = findTransform(spaces[ti]);
+		assert(from!=0);
+		if ( from ) {
+			m.concatTransform(from->getCTM());
+		} else {
+			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints: space (%s) not defined", noNullStr(spaces[ti]));
+		}
+		ti--;
+	}
+	
+	while ( ti < fi ) {
+		ti++;
+		from = findTransform(spaces[ti]);
+		assert(from!=0);
+		if ( from ) {
+			m.concatTransform(from->getInverseCTM());
+		} else {
+			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints: space (%s) not defined", noNullStr(spaces[ti]));
+		}
+	}
+	
+	m.transformPoints(npoints, points);
+	return &points[0];
+}
+
 void CRenderState::startAreaLightSource(RtLightHandle h)
 {
 	try {

@@ -2872,7 +2872,8 @@ Example of a Trimcurve
 \end_layout
 
 \begin_layout Standard
-I've found an small caps 'a' as a trim curve consiting of two loops.
+I found a RIB file of a small caps 'a' as a trim curve consiting of two
+ loops.
  It gives an idea how a trim curve looks like.
  The range of the coordinates is indicated by a gray square.
  It is shown mirrored on the horizontal axis: The lower left has the coordinates

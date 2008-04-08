@@ -2226,7 +2226,7 @@ const CTransformation *CRenderState::findTransform(RtToken space) const
 RtPoint *CRenderState::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
 {
 	if ( npoints <= 0 || points == 0 ) {
-		return;
+		return 0;
 	}
 	
 	const CTransformation *from = findTransform(fromspace);
@@ -2254,7 +2254,7 @@ RtPoint *CRenderState::transformPoints(RtToken fromspace, RtToken tospace, RtInt
 	
 	if ( fi == ti ) {
 		// Same space
-		return;
+		return 0;
 	}
 	
 	CMatrix3D m;

@@ -30,6 +30,9 @@
  *  @brief Small utility templates.
  */
 
+#include <cmath>
+#include <cstdlib>
+
 namespace RiCPP {
 
 	/** @brief Gets the maximum of two elements.
@@ -38,7 +41,7 @@ namespace RiCPP {
 	 *  @return Maximum of a and b
 	 */
 	template<typename _T>
-	_T tmax(
+	inline _T tmax(
 		_T a,
 		_T b)
 	{
@@ -74,7 +77,7 @@ namespace RiCPP {
 	 *  @return Minimum of a and b
 	 */
 	template<class _T>
-	_T tmin(
+	inline _T tmin(
 		_T a,
 		_T b)
 	{
@@ -120,16 +123,239 @@ namespace RiCPP {
 		return result;
 	}
 
+	
+	/** @brief Clambs a value the values boundmin, boundmax.
+	 *
+	 *  The bounds are exchanged if @a boundmin > @a boundmax.
+	 *
+	 *  @param val value to clamb.
+	 *  @param boundmin Size of the string buffer.
+	 *  @param boundmax Number to convert
+	 *  @return The clambed value (>= @a boundmin and <= @a boundmax)
+	 */
+	template<typename type> inline type clamptempl(type val, type boundmin, type boundmax)
+	{
+		if ( boundmin > boundmax ) {
+			type t = boundmin;
+			boundmin = boundmax;
+			boundmax = t;
+		}
+		
+		if ( val < boundmin )
+			return boundmin;
+		if ( val > boundmax )
+			return boundmax;
+		
+		return val;
+	}
+	
+	/** @brief Get the inverse of a number
+	 *  @param val Number to invert
+	 *  @return 1 / @a val
+	 */
+	template<typename type> inline type inversetempl(type val)
+	{
+		return static_cast<type>(1.0)/val;
+	}
+	
+	/** @brief Rounds a number
+	 *  @param val Number to round
+	 *  @return Rounded number
+	 */
+	template<typename type> inline type roundtempl(type val)
+	{
+		if ( val < 0 ) {
+			type t = ceil(val);
+			return (val-t > -0.5) ? t : floor(val);
+		}
+		
+		type t = floor(val);
+		return (val-t < 0.5) ? t : ceil(val);
+	}
+	
+	
+	/** @brief Gets a random number between 0 and 1
+	 *  @return Random number
+	 */
+	template<typename type> inline type randftempl()
+	{
+		return static_cast<type>(rand()) / static_cast<type>(RAND_MAX);
+	}
+	
+	/** @brief Gets a random number between -1 and +1
+	 *  @return Random number
+	 */
+	template<typename type> inline type randf2templ()
+	{
+		// -1.0 ... 1.0
+		return static_cast<type>(
+								 (
+								  (
+								   static_cast<type>(rand()) /
+								   static_cast<type>(RAND_MAX)
+								   ) -
+								  static_cast<type>(0.5)
+								  ) *
+								 static_cast<type>(2.0)
+								 );
+	}
+	
+	/** @brief Gets pi times 2
+	 *  @return pi*2
+	 */ 
+	template <typename type> inline type piTimes2() { return static_cast<type>(6.283185307179586476925286766559); }
+	
+	/** @brief Gets pi
+	 *  @return pi
+	 */ 
+	template <typename type> inline type pi()       { return static_cast<type>(3.1415926535897932384626433832795); }
+	
+	/** @brief Gets pi divided by 2
+	 *  @return pi/2
+	 */ 
+	template <typename type> inline type pi_2()     { return static_cast<type>(1.5707963267948966192313216916398); }
+	
+	/** @brief Gets pi divided by 4
+	 *  @return pi/4
+	 */ 
+	template <typename type> inline type pi_4()     { return static_cast<type>(0.78539816339744830961566084581988); }
+	
+	/** @brief Convert degrees to radians
+	 *  @param degree The degree value to convert
+	 *  @return The radian value ((degree * pi) / 180.0)
+	 */
+	template <typename type> inline type deg2rad(type degree) {return static_cast<type>((degree * pi<type>()) / 180.0);}
+	
+	/** @brief Convert radians to degrees
+	 *  @param radian The radian value to convert
+	 *  @return The degree value (radian * 180.0) / pi)
+	 */
+	template <typename type> inline type rad2deg(type radian) {return static_cast<type>((radian * 180.0) / pi<type>());}
+	
+	/** @brief Get the sign of a value
+	 *  @param f The value to test
+	 *  @return -1 if f is negative, 1 otherwise
+	 */
+	template <typename type> int inline sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
+	
+	/** @brief Vector (cross) product of two 3d vectors
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2
+	 *  @retval vp Vector product
+	 */
+	template <typename _T> inline void vprod(const _T *v1, const _T *v2, _T *vp)
+	{
+		vp[0] = v1[1]*v2[2] - v1[2]*v2[1];
+		vp[1] = v1[2]*v2[0] - v1[0]*v2[2];
+		vp[2] = v1[0]*v2[1] - v1[1]*v2[0];
+	}
+
+	/** @brief Scalar product of two 3d vectors
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2
+	 *  @retval sp Scalar product
+	 */
+	template <typename _T> inline void s3prod(const _T *v1, const _T *v2, _T &sp)
+	{
+		sp = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+	}
+
+	/** @brief Scalar product of two 2d vectors
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2
+	 *  @retval sp Scalar product
+	 */
+	template <typename _T> inline void s2prod(const _T *v1, const _T *v2, _T &sp)
+	{
+		sp = v1[0]*v2[0] + v1[1]*v2[1];
+	}
+
+	/** @brief Normal vector (normalized) for a plane given by two vectors
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2
+	 *  @retval norm Normal
+	 *  @return true if normal is calculated, false otherwise
+	 */
+	template <typename _T> inline bool planeNorm(const _T *v1, const _T *v2, _T *norm)
+	{
+		norm[0] = v1[1]*v2[2] - v1[2]*v2[1];
+		norm[1] = v1[2]*v2[0] - v1[0]*v2[2];
+		norm[2] = v1[0]*v2[1] - v1[1]*v2[0];
+		
+		_T length = (_T)sqrt(norm[0]*norm[0]+norm[1]*norm[1]+norm[2]*norm[2]);
+		if ( length == 0.0 ) {
+			norm[0] = 0.0; norm[1] = 0.0; norm[2] = 1.0;
+			return false;
+		}
+		
+		norm[0] /= length;
+		norm[1] /= length;
+		norm[2] /= length;
+		
+		return true;
+	}
+
+	/** @brief A normal vector (normalized) for a plane given by three points
+	 *  @param p1 Point 1
+	 *  @param p2 Point 2
+	 *  @param p3 Point 3
+	 *  @retval norm The normal vector as normalized cross product vect(P2, P1) x vect(P2, P3)
+	 *  @return true if normal is calculated, false otherwise
+	 */
+	template <typename _T> inline bool planeNorm(const _T *p1, const _T *p2, const _T *p3, _T *norm)
+	{
+		_T v1[3] = {p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]};
+		_T v2[3] = {p3[0]-p2[0], p3[1]-p2[1], p3[2]-p2[2]};
+		
+		return planeNorm(v1, v2, norm);
+	}
+
+	/** @brief Normalize a 3D vector to size 1
+	 *  @param x x component of a vector (can be a part of @a norm)
+	 *  @param y y component of a vector (can be a part of @a norm)
+	 *  @param z z component of a vector (can be a part of @a norm)
+	 *  @retval norm The normalized vector (size = 3)
+	 */
+	template <typename _T> inline void normalize(_T x, _T y, _T z, _T *norm)
+	{
+		_T length = (_T)sqrt(x*x+y*y+z*z);
+		if ( length == 0.0 ) {
+			norm[0] = 0.0; norm[1] = 0.0; norm[2] = 0.0;
+			return false;
+		}
+		
+		norm[0] = x/length;
+		norm[1] = y/length;
+		norm[2] = z/length;
+	}
+
+	/** @brief Normalize a 2D vector to size 1
+	 *  @param x x component of a vector (can be a part of @a norm)
+	 *  @param y y component of a vector (can be a part of @a norm)
+	 *  @retval norm The normalized vector (size = 2)
+	 */
+	template <typename _T> inline void normalize(_T x, _T y, _T *norm)
+	{
+		_T length = (_T)sqrt(x*x+y*y);
+		if ( length == 0.0 ) {
+			norm[0] = 0.0; norm[1] = 0.0;
+			return false;
+		}
+		
+		norm[0] = x/length;
+		norm[1] = y/length;
+	}
+
 	/** @brief Linear interpolation between two values.
 	 *  @param u Position (if 0 <= @a u <= 1 between @a minu and @a maxu)
 	 *  @param minu Minimal value for interpolation (if u == 0)
 	 *  @param maxu Maximal value for interpolation (if u == 1)
 	 *  @return Interpolated value.
 	 */
-	template<typename _C> _C lerp(
-		_C u,
-		_C minu,
-		_C maxu)
+	template<typename _T> inline _T lerp(
+		_T u,
+		_T minu,
+		_T maxu)
 	{
 		return minu + u * (maxu - minu);
 	}
@@ -143,14 +369,14 @@ namespace RiCPP {
 	 *  @param x4 second value for linear interpolation in direction v.
 	 *  @return The interpolated value.
 	 */
-	template<typename _C>
-	_C bilerp(
-		_C u,
-		_C v,
-		_C x1,
-		_C x2,
-		_C x3,
-		_C x4)
+	template<typename _T>
+	inline _T bilerp(
+		_T u,
+		_T v,
+		_T x1,
+		_T x2,
+		_T x3,
+		_T x4)
 	{
 		return lerp(v, lerp(u, x1, x2), lerp(u, x3, x4));
 	}

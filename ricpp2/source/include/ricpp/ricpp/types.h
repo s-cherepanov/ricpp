@@ -42,6 +42,7 @@
 #include "ricpp/tools/stringpattern.h"
 #endif // _RICPP_TOOLS_STRINGPATTERN_H
 
+#include <cmath>
 #include <cstddef>
 #include <vector>
 #include <sstream>

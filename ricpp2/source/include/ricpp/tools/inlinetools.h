@@ -30,7 +30,6 @@
  *  @brief Frequent used inline tools
  */
 #include <cstring>
-#include <cmath>
 #include <cstdlib>
 
 #include <string>
@@ -312,122 +311,6 @@ inline std::string &trimBoth(std::string &aStr)
 {
 	return trimLeft(trimRight(aStr));
 }
-
-/** @brief Clambs a value the values boundmin, boundmax.
- *
- *  The bounds are exchanged if @a boundmin > @a boundmax.
- *
- *  @param val value to clamb.
- *  @param boundmin Size of the string buffer.
- *  @param boundmax Number to convert
- *  @return The clambed value (>= @a boundmin and <= @a boundmax)
- */
-template<typename type> type clamptempl(type val, type boundmin, type boundmax)
-{
-	if ( boundmin > boundmax ) {
-		type t = boundmin;
-		boundmin = boundmax;
-		boundmax = t;
-	}
-
-	if ( val < boundmin )
-		return boundmin;
-	if ( val > boundmax )
-		return boundmax;
-
-	return val;
-}
-
-/** @brief Get the inverse of a number
- *  @param val Number to invert
- *  @return 1 / @a val
- */
-template<typename type> type inversetempl(type val)
-{
-	return static_cast<type>(1.0)/val;
-}
-
-
-/** @brief Rounds a number
- *  @param val Number to round
- *  @return Rounded number
- */
-template<typename type> type roundtempl(type val)
-{
-	if ( val < 0 ) {
-		type t = ceil(val);
-		return (val-t > -0.5) ? t : floor(val);
-	}
-
-	type t = floor(val);
-	return (val-t < 0.5) ? t : ceil(val);
-}
-
-
-/** @brief Gets a random number between 0 and 1
- *  @return Random number
- */
-template<typename type> type randftempl()
-{
-   return static_cast<type>(rand()) / static_cast<type>(RAND_MAX);
-}
-
-/** @brief Gets a random number between -1 and +1
- *  @return Random number
- */
-template<typename type> type randf2templ()
-{
-   // -1.0 ... 1.0
-   return static_cast<type>(
-	   (
-			(
-				static_cast<type>(rand()) /
-				static_cast<type>(RAND_MAX)
-			) -
-			static_cast<type>(0.5)
-		) *
-		static_cast<type>(2.0)
-   );
-}
-
-/** @brief Gets pi times 2
- *  @return pi*2
- */ 
-template <typename type> type piTimes2() { return static_cast<type>(6.283185307179586476925286766559); }
-
-/** @brief Gets pi
- *  @return pi
- */ 
-template <typename type> type pi()       { return static_cast<type>(3.1415926535897932384626433832795); }
-
-/** @brief Gets pi divided by 2
- *  @return pi/2
- */ 
-template <typename type> type pi_2()     { return static_cast<type>(1.5707963267948966192313216916398); }
-
-/** @brief Gets pi divided by 4
- *  @return pi/4
- */ 
-template <typename type> type pi_4()     { return static_cast<type>(0.78539816339744830961566084581988); }
-
-/** @brief Convert degrees to radians
- *  @param degree The degree value to convert
- *  @return The radian value ((degree * pi) / 180.0)
- */
-template <typename type> type deg2rad(type degree) {return static_cast<type>((degree * pi<type>()) / 180.0);}
-
-/** @brief Convert radians to degrees
- *  @param radian The radian value to convert
- *  @return The degree value (radian * 180.0) / pi)
- */
-template <typename type> type rad2deg(type radian) {return static_cast<type>((radian * 180.0) / pi<type>());}
-
-/** @brief Get the sign of a value
- *  @param f The value to test
- *  @return -1 if f is negative, 1 otherwise
- */
-template <typename type> int sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
-
 /** @brief Base calss of a simple (backtracking) recursive descend parser
  *
  *  Used for URI parsing and RIB if-expression

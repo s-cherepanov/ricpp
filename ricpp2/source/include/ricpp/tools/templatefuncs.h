@@ -250,24 +250,34 @@ namespace RiCPP {
 		vp[2] = v1[0]*v2[1] - v1[1]*v2[0];
 	}
 
-	/** @brief Scalar product of two 3d vectors
+	/** @brief Scalar (dot) product of two 3d vectors
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
-	 *  @retval sp Scalar product
+	 *  @return Scalar product
 	 */
-	template <typename _T> inline void s3prod(const _T *v1, const _T *v2, _T &sp)
+	template <typename _T> inline _T dot3(const _T *v1, const _T *v2)
 	{
-		sp = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+		return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
 	}
 
-	/** @brief Scalar product of two 2d vectors
+	/** @brief Scalar (dot) product of two 2d vectors
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
-	 *  @retval sp Scalar product
+	 *  @return Scalar product
 	 */
-	template <typename _T> inline void s2prod(const _T *v1, const _T *v2, _T &sp)
+	template <typename _T> inline _T dot2(const _T *v1, const _T *v2)
 	{
-		sp = v1[0]*v2[0] + v1[1]*v2[1];
+		return v1[0]*v2[0] + v1[1]*v2[1];
+	}
+
+	/** @brief Scalar product of two 2d vectors (1 rotated 90deg cw for left right test)
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2 (will be rotated 90 deg cw)
+	 *  @return Scalar product
+	 */
+	template <typename _T> inline _T dot2_90(const _T *v1, const _T *v2)
+	{
+		return v1[1]*v2[0] - v1[0]*v2[1];
 	}
 
 	/** @brief Normal vector (normalized) for a plane given by two vectors

@@ -270,9 +270,9 @@ namespace RiCPP {
 		return v1[0]*v2[0] + v1[1]*v2[1];
 	}
 
-	/** @brief Scalar product of two 2d vectors (1 rotated 90deg cw for left right test)
+	/** @brief Scalar product of two 2d vectors (1 rotated 90deg ccw for left right test)
 	 *  @param v1 Vector 1
-	 *  @param v2 Vector 2 (will be rotated 90 deg cw)
+	 *  @param v2 Vector 2 (will be rotated 90 deg ccw)
 	 *  @return Scalar product
 	 */
 	template <typename _T> inline _T dot2_90(const _T *v1, const _T *v2)
@@ -292,9 +292,9 @@ namespace RiCPP {
 		norm[1] = v1[2]*v2[0] - v1[0]*v2[2];
 		norm[2] = v1[0]*v2[1] - v1[1]*v2[0];
 		
-		_T length = (_T)sqrt(norm[0]*norm[0]+norm[1]*norm[1]+norm[2]*norm[2]);
-		if ( length == 0.0 ) {
-			norm[0] = 0.0; norm[1] = 0.0; norm[2] = 1.0;
+		_T length = static_cast<_T>(sqrt(norm[0]*norm[0]+norm[1]*norm[1]+norm[2]*norm[2]));
+		if ( length == 0 ) {
+			norm[0] = 0; norm[1] = 0; norm[2] = static_cast<_T>(1);
 			return false;
 		}
 		
@@ -328,9 +328,9 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline void normalize(_T x, _T y, _T z, _T *norm)
 	{
-		_T length = (_T)sqrt(x*x+y*y+z*z);
-		if ( length == 0.0 ) {
-			norm[0] = 0.0; norm[1] = 0.0; norm[2] = 0.0;
+		_T length = static_cast<_T>(sqrt(x*x+y*y+z*z));
+		if ( length == 0 ) {
+			norm[0] = 0; norm[1] = 0; norm[2] = 0;
 			return false;
 		}
 		
@@ -346,9 +346,9 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline void normalize(_T x, _T y, _T *norm)
 	{
-		_T length = (_T)sqrt(x*x+y*y);
-		if ( length == 0.0 ) {
-			norm[0] = 0.0; norm[1] = 0.0;
+		_T length = static_cast<_T>(sqrt(x*x+y*y));
+		if ( length == 0 ) {
+			norm[0] = 0; norm[1] = 0;
 			return false;
 		}
 		

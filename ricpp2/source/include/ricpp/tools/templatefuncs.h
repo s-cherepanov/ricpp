@@ -32,6 +32,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <limits>
 
 namespace RiCPP {
 
@@ -302,7 +303,8 @@ namespace RiCPP {
 		norm[1] /= length;
 		norm[2] /= length;
 		
-		return true;
+		const _T eps = std::numeric_limits<_T>::epsilon();
+		return fabs(norm[0]) > eps || fabs(norm[1]) > eps || fabs(norm[2]) > eps ;
 	}
 
 	/** @brief A normal vector (normalized) for a plane given by three points

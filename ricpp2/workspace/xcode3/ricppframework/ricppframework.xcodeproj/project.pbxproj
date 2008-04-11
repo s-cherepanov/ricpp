@@ -35,6 +35,7 @@
 		C35100220D70DD2B008AC346 /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C35100210D70DD2B008AC346 /* baserenderer.h */; };
 		C352E6980D7465E900CDED20 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
 		C352E6990D7465FA00CDED20 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
+		C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3674D8C0DAF376F00AAE6EB /* polygon.cpp */; };
 		C3685ECC0D3C1F9100B2E025 /* stringpattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */; };
 		C3685ECD0D3C1F9100B2E025 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
 		C3685ECE0D3C1F9100B2E025 /* macfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38EA2A20BE86D370057831B /* macfilepath.cpp */; };
@@ -463,6 +464,7 @@
 		C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = passthrough.cpp; path = ../../../source/ribfilter/passthrough.cpp; sourceTree = SOURCE_ROOT; };
 		C364F6000C1432E300C5E4E1 /* ribwriterdll.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribwriterdll.cpp; path = ../../../source/ribwriterdll/ribwriterdll.cpp; sourceTree = SOURCE_ROOT; };
 		C366B42C0C26642600F41773 /* uri.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = uri.cpp; path = ../../../source/streams/uri.cpp; sourceTree = SOURCE_ROOT; };
+		C3674D8C0DAF376F00AAE6EB /* polygon.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = polygon.cpp; path = /Users/pidde/Developer/Projects/ricpp/ricpp2/source/ricontext/polygon.cpp; sourceTree = "<absolute>"; };
 		C3685E6C0D3C143500B2E025 /* ribexternals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribexternals.h; path = ../../../source/include/ricpp/ribparser/ribexternals.h; sourceTree = SOURCE_ROOT; };
 		C3685E6D0D3C143500B2E025 /* riblights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = riblights.h; path = ../../../source/include/ricpp/ribparser/riblights.h; sourceTree = SOURCE_ROOT; };
 		C3685E6E0D3C143500B2E025 /* ribmisc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribmisc.h; path = ../../../source/include/ricpp/ribparser/ribmisc.h; sourceTree = SOURCE_ROOT; };
@@ -1268,6 +1270,7 @@
 				C37245B40CD5DE5500945563 /* options.cpp */,
 				C37245B50CD5DE5500945563 /* optionsbase.cpp */,
 				C37245B60CD5DE5500945563 /* parameter.cpp */,
+				C3674D8C0DAF376F00AAE6EB /* polygon.cpp */,
 				C37245B70CD5DE5500945563 /* renderstate.cpp */,
 				C37245B80CD5DE5500945563 /* resource.cpp */,
 				C3C9AE380D70BC9F00A04717 /* ribelements.cpp */,
@@ -2518,6 +2521,7 @@
 				C38089730D3CAB8B00B6C3BA /* rimacro.cpp in Sources */,
 				C38089740D3CAB8B00B6C3BA /* transformation.cpp in Sources */,
 				C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */,
+				C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,74 +1,1 @@
-class CPolygonNode {
-public:
-	unsigned long m_next, m_prev;
-	unsigned long m_index;
-	inline bool removed() const { return m_next + m_prev == 0; }
-	inline CPolygonNode() { m_next = m_prev = 0; m_index = 0; }
-};
-
-void circularLinkNodes(CPolygonNode *first, unsigned long nVertices, unsigned long offset, unsigned long vertoffs)
-{
-	assert (nVertices >= 3);
-
-	unsigned long prev = offset + nVertices - 1;
-	unsigned long next = offset + 1;
-
-	unsigned long curr;
-	
-	for ( curr = 0; curr < nVertices-1; ++curr ) {
-		first[curr + offset].m_prev  = prev + offset;
-		first[curr + offset].m_next  = next + offset;
-		first[curr + offset].m_index = curr + vertoffs;
-		prev = curr;
-		++next;
-	}
-
-	first[curr].prev = prev + offset;
-	first[curr].next = offset;
-}
-
-void triangulatePolygon(RtInt nloops, const RtInt loops[], const RtInt verts[], const RtFloat *p, std::vector<RtInt> &triangles)
-{
-	/*
-		Parameters
-		nloops   : number of loops (size of loops)
-		loops    : number of vertices per polygon, first loop is the border, others are holes
-		verts    : indices of the vertices
-		p        : (varying) positions of the vertices indexed by verts
-		Returns
-		triangle : indirect indexes for triangles of the varying variables. Can be used for face varying as direct indexes.
-	*/
-	triangles.clear();
-	if ( nloops < 0 )
-		return;
-	unsigned long nVertices = loops[0];
-	assert(nVertices >= 3);
-	unsigned long nTriangles = (nVertices - 2) + (nloops-1)*2;
-	triangles.resize(nTriangles * 3);
-	
-	unsigned long sumLoops = sum(nloops, loops);
-	CPolygonNode *pn = new CPolygonNode[sumLoops + 2*(nloops-1) + 1]; // element 0 is not used
-	
-	// Insert border and hole indirect indexes, link nodes 0 : 1 : 2  .... : n-1 : 0
-	
-	unsigned long border = 1;
-	unsigned long holes = nloops > 1 ? new (unsigned long)[nloops-1] : 0;
-	
-	circularLinkNodes(pn, nVertices, border, 0);
-	
-	unsigned long indexcount = 1 + nVertices;
-	unsigned long vertexcount = nVertices;
-	unsigned long i;
-	
-	for ( i = 1; i < nloops; ++i ) {
-		indexcount += 2; // bridge edges from border to hole and back to border
-		holes[i-1] = indexcount;
-		circularLinkNodes(pn, loops[i], holes[i-1], vertexcount);
-		indexcount  += loops[i];
-		vertexcount += loops[i];
-	}
-	
-	delete[] pn;
-	if ( holes )
-		delete[] holes;
-}
+#include "ricpp/tools/templatefuncs.h"#include "ricpp/ribase/ricpptypes.h"#include <cassert>#include <vector>using namespace RiCPP;class CPolygonNode {public:	unsigned long m_next, m_prev;	unsigned long m_index;	RtFloat p[2];	inline bool removed() const { return m_next + m_prev == 0; }	inline CPolygonNode() { m_next = m_prev = 0; m_index = 0; }};void circularLinkNodes(CPolygonNode *first, unsigned long nVertices, unsigned long offset, unsigned long vertoffs){	assert (nVertices >= 3);		unsigned long prev = offset + nVertices - 1;	unsigned long next = offset + 1;	unsigned long curr;		for ( curr = 0; curr < nVertices-1; ++curr ) {		first[curr + offset].m_prev  = prev + offset;		first[curr + offset].m_next  = next + offset;		first[curr + offset].m_index = curr + vertoffs;		prev = curr;		++next;	}	first[curr].m_prev = prev + offset;	first[curr].m_next = offset;}unsigned long rightmostVertex(CPolygonNode *first, unsigned long offset){	unsigned long idx = offst;	unsigned long rightmost = idx;		for ( idx = first[idx].m_next; idx != offset; idx = first[idx].m_next ) {		if ( first[idx].p[0] > first[rightmost].p[0] )			rightmost = idx;	}		return rightmost;}void triangulatePolygon(RtInt nloops, const RtInt loops[], const RtInt verts[], const RtFloat *p, std::vector<RtInt> &triangles){	/*	    Triangulate polygon		Parameters		nloops    : number of loops (size of loops)		loops     : number of vertices per polygon, first loop is the border, others are holes		verts     : indices of the vertices		p         : (varying) 3D positions of the vertices indexed by verts		Returns		triangles : indirect indexes for triangles of the varying variables. Can be used for face varying as direct indexes.	*/	triangles.clear();	if ( nloops < 1 || p == 0 )		return;		unsigned long nVertices = loops[0];	if ( nVertices < 3 )		return;	unsigned long nTriangles = (nVertices - 2) + (nloops-1)*2;	triangles.resize(nTriangles * 3);		RtInt sumLoops = sum(nloops, loops);	CPolygonNode *pn = new CPolygonNode[sumLoops + 2*(nloops-1) + 1]; // element 0 is not used	assert(pn!=0);	if ( !pn )		return;		// Insert border and hole indirect indexes for pn, link nodes 0 : 1 : 2  .... : n-1 : 0	unsigned long *borders = new unsigned long[nloops];	borders[0] = 1; // first index of pn is not used to indicate a NULL value	circularLinkNodes(pn, nVertices, borders[0], 0);		// Link the holes	unsigned long indexcount = 1 + nVertices;	unsigned long vertexcount = nVertices;	unsigned long i;		for ( i = 1; i < nloops; ++i ) {		indexcount += 2; // bridge edges from border to hole and back to border		borders[i] = indexcount;		circularLinkNodes(pn, loops[i], borders[i], vertexcount);		indexcount  += loops[i];		vertexcount += loops[i];	}		// Find normal of the polygon	unsigned long idx;	RtInt pidx;	RtPoint p0, p1, p2, pnorm;	const RtFloat eps = std::numeric_limits<RtFloat>::epsilon();	bool p1set=false, p2set=false;	idx = borders[0];	pidx = 3*verts[pn[idx].m_index];	p0[0] = p[pidx++];	p0[1] = p[pidx++];	p0[2] = p[pidx  ];		for ( idx = pn[idx].m_next; idx != borders[0]; idx = pn[idx].m_next ) {		pidx = 3 * verts[pn[idx].m_index];		p1[0] = p[pidx++] - p0[0];		p1[1] = p[pidx++] - p0[1];		p1[2] = p[pidx  ] - p0[2];		if ( fabs(p1[0]) > eps || fabs(p1[1]) > eps || fabs(p1[2]) > eps ) {			p1set = true;			break;		}	};	if ( !p1set ) {		// All positions have more or less the same values		return;	}		for ( idx = pn[borders[0]].m_prev; idx != borders[0]; idx = pn[idx].m_prev ) {		pidx = 3 * verts[pn[idx].m_index];		p2[0] = p[pidx++] - p0[0];		p2[1] = p[pidx++] - p0[1];		p2[2] = p[pidx  ] - p0[2];		if ( planeNorm(p1, p2, pnorm) ) {			p2set = true;			break;		}	};	if ( !p2set ) {		// All positions are more or less colinear		return;	}		// Find the axes, used pixie code here	int majorAxis, minorAxis;		if ( fabs(pnorm[0]) >= tmax(fabs(pnorm[1]), fabs(pnorm[2])) ) {		majorAxis = 1;		minorAxis = 2;	} else if ( fabs(pnorm[1]) >= tmax(fabs(pnorm[0]), fabs(pnorm[2])) ) {		majorAxis = 0;		minorAxis = 2;	} else {		majorAxis = 0;		minorAxis = 1;	}		// Extract the 2D coordinates for axes	for ( i = 0; i < nloops; ++i ) {		for ( idx = pn[borders[i]].m_next; idx != borders[i]; idx = pn[idx].m_next ) {			pidx = 3 * verts[pn[idx].m_index];			pn[idx].p[0] = p[pidx + majorAxis];			pn[idx].p[1] = p[pidx + minorAxis];		};	}		// Join holes with the border and	// make outer polygon's and hole's orientation being opposit (by swapping m_next and m_prev)	// ...	for ( i = 1; i < nloops; ++i ) {		// the rightmost vertex of the hole i		unsigned long rm = rightmostVertex(pn, borders[i]);	}		delete[] pn;	if ( borders )		delete[] borders;}

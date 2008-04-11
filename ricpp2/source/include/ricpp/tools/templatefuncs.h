@@ -358,6 +358,53 @@ namespace RiCPP {
 		norm[1] = y/length;
 	}
 
+	template <typename _T> inline _T *vectFromPos2(_T *v2, const _T *from2, const _T *to2)
+	{
+		v2[0] = to2[0]-from2[0];
+		v2[1] = to2[1]-from2[1];
+		return v2;
+	}
+
+	template <typename _T> inline _T *vectFromPos3(_T *v3, const _T *from3, const _T *to3)
+	{
+		v3[0] = to3[0] - from3[0];
+		v3[1] = to3[1] - from3[1];
+		v3[2] = to3[2] - from3[2];
+		return v3;
+	}
+
+	template <typename _T> inline _T vlen(_T x, _T y, _T z)
+	{
+		return static_cast<_T>(sqrt(x*x+y*y+z*z));
+	}
+	
+	template <typename _T> inline _T vlen(_T x, _T y)
+	{
+		return static_cast<_T>(sqrt(x*x+y*y));
+	}
+
+	template <typename _T> inline _T vlen2(const _T *p2)
+	{
+		return static_cast<_T>(sqrt(p2[0]*p2[0]+p2[1]*p2[1]));
+	}
+
+	template <typename _T> inline _T vlen2(const _T *from2, const _T *to2)
+	{
+		_T v2[2];
+		return vlen2(vectFromPos2(v2, from2, to2));
+	}
+
+	template <typename _T> inline _T vlen3(const _T *p3)
+	{
+		return static_cast<_T>(sqrt(p3[0]*p3[0]+p3[1]*p3[1]+p3[2]*p3[2]));
+	}
+
+	template <typename _T> inline _T vlen3(const _T *from3, const _T *to3)
+	{
+		_T v3[3];
+		return vlen2(vectFromPos3(v3, from3, to3));
+	}
+
 	/** @brief Linear interpolation between two values.
 	 *  @param u Position (if 0 <= @a u <= 1 between @a minu and @a maxu)
 	 *  @param minu Minimal value for interpolation (if u == 0)

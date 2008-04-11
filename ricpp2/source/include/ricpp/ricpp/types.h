@@ -1682,7 +1682,7 @@ inline CValue operator!(const CValue &op1)
 	return CValue(i1?0:1);
 }
 
-inline CValue operator==(const CValue &op1, const CValue &op2)
+inline bool operator==(const CValue &op1, const CValue &op2)
 {
 	switch(op1.type()) {
 		case BASICTYPE_INTEGER:
@@ -1750,12 +1750,12 @@ inline CValue operator==(const CValue &op1, const CValue &op2)
 	return false;
 }
 
-inline CValue operator!=(const CValue &op1, const CValue &op2)
+inline bool operator!=(const CValue &op1, const CValue &op2)
 {
 	return !(op1 == op2);
 }
 
-inline CValue operator>(const CValue &op1, const CValue &op2)
+inline bool operator>(const CValue &op1, const CValue &op2)
 {
 	switch(op1.type()) {
 		case BASICTYPE_INTEGER:
@@ -1823,17 +1823,17 @@ inline CValue operator>(const CValue &op1, const CValue &op2)
 	return false;
 }
 
-inline CValue operator>=(const CValue &op1, const CValue &op2)
+inline bool operator>=(const CValue &op1, const CValue &op2)
 {
 	return (op1 > op2) || (op1 == op2);
 }
 
-inline CValue operator<=(const CValue &op1, const CValue &op2)
+inline bool operator<=(const CValue &op1, const CValue &op2)
 {
 	return !(op1 > op2);
 }
 
-inline CValue operator<(const CValue &op1, const CValue &op2)
+inline bool operator<(const CValue &op1, const CValue &op2)
 {
 	return !(op1 >= op2);
 }

@@ -201,6 +201,14 @@ namespace RiCPP {
 								 );
 	}
 	
+	/** @brief Gets the epsilon limit value
+	 *
+	 * eps is the smallest positive value eps+a != a
+	 *
+	 *  @return eps
+	 */ 
+	template <typename type> inline type eps() { return std::numeric_limits<type>::epsilon(); }
+
 	/** @brief Gets pi times 2
 	 *  @return pi*2
 	 */ 
@@ -239,6 +247,100 @@ namespace RiCPP {
 	 */
 	template <typename type> int inline sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
 	
+	template <typename _T> inline _T *vectFromPos2(_T *v2, const _T *from2, const _T *to2)
+	{
+		v2[0] = to2[0]-from2[0];
+		v2[1] = to2[1]-from2[1];
+		return v2;
+	}
+	
+	template <typename _T> inline _T *vectFromPos3(_T *v3, const _T *from3, const _T *to3)
+	{
+		v3[0] = to3[0] - from3[0];
+		v3[1] = to3[1] - from3[1];
+		v3[2] = to3[2] - from3[2];
+		return v3;
+	}
+	
+	template <typename _T> inline _T vlen(_T x, _T y, _T z)
+	{
+		return static_cast<_T>(sqrt(x*x+y*y+z*z));
+	}
+	
+	template <typename _T> inline _T vlen(_T x, _T y)
+	{
+		return static_cast<_T>(sqrt(x*x+y*y));
+	}
+	
+	template <typename _T> inline _T vlen2(const _T *p2)
+	{
+		return static_cast<_T>(sqrt(p2[0]*p2[0]+p2[1]*p2[1]));
+	}
+	
+	template <typename _T> inline _T vlen2(const _T *from2, const _T *to2)
+	{
+		_T v2[2];
+		return vlen2(vectFromPos2(v2, from2, to2));
+	}
+	
+	template <typename _T> inline _T vlen3(const _T *p3)
+	{
+		return static_cast<_T>(sqrt(p3[0]*p3[0]+p3[1]*p3[1]+p3[2]*p3[2]));
+	}
+	
+	template <typename _T> inline _T vlen3(const _T *from3, const _T *to3)
+	{
+		_T v3[3];
+		return vlen2(vectFromPos3(v3, from3, to3));
+	}
+	
+	
+	/** @brief Normalize a 3D vector to size 1
+	 *  @param x x component of a vector (can be a part of @a norm)
+	 *  @param y y component of a vector (can be a part of @a norm)
+	 *  @param z z component of a vector (can be a part of @a norm)
+	 *  @retval norm The normalized vector (size = 3)
+	 */
+	template <typename _T> inline void normalize(_T x, _T y, _T z, _T *norm)
+	{
+		_T length = vlen(x, y, z);
+		if ( length == 0 ) {
+			norm[0] = 0; norm[1] = 0; norm[2] = 0;
+			return false;
+		}
+		
+		norm[0] = x/length;
+		norm[1] = y/length;
+		norm[2] = z/length;
+	}
+	
+	/** @brief Normalize a 2D vector to size 1
+	 *  @param x x component of a vector (can be a part of @a norm)
+	 *  @param y y component of a vector (can be a part of @a norm)
+	 *  @retval norm The normalized vector (size = 2)
+	 */
+	template <typename _T> inline void normalize(_T x, _T y, _T *norm)
+	{
+		_T length = vlen(x, y);
+		if ( length == 0 ) {
+			norm[0] = 0; norm[1] = 0;
+			return false;
+		}
+		
+		norm[0] = x/length;
+		norm[1] = y/length;
+	}
+	
+	template <typename _T> inline void normalize2(_T *v)
+	{
+		normalize(v[0], v[1], v);
+	}
+	
+	template <typename _T> inline void normalize3(_T *v)
+	{
+		normalize(v[0], v[1], v[2], v);
+	}
+
 	/** @brief Vector (cross) product of two 3d vectors
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
@@ -271,6 +373,24 @@ namespace RiCPP {
 		return v1[0]*v2[0] + v1[1]*v2[1];
 	}
 
+	template <typename _T> inline _T dot2_pos(const _T *p1, const _T *p2, const _T *p3)
+	{
+		_T v1[2], v2[2];
+		vectFromPos2(v1, p2, p1);
+		vectFromPos2(v2, p2, p3);
+		return dot2(v1, v2);
+	}
+
+	template <typename _T> inline _T dot2_pos_norm(const _T *p1, const _T *p2, const _T *p3)
+	{
+		_T v1[2], v2[2];
+		vectFromPos2(v1, p2, p1);
+		normalize2(v1);
+		vectFromPos2(v2, p2, p3);
+		normalize2(v2);
+		return dot2(v1, v2);
+	}
+
 	/** @brief Scalar product of two 2d vectors (1 rotated 90deg ccw for left right test)
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2 (will be rotated 90 deg ccw)
@@ -279,6 +399,40 @@ namespace RiCPP {
 	template <typename _T> inline _T dot2_90(const _T *v1, const _T *v2)
 	{
 		return v1[1]*v2[0] - v1[0]*v2[1];
+	}
+
+	template <typename _T> inline _T dot2_90_pos(const _T *p1, const _T *p2, const _T *p3)
+	{
+		_T v1[2], v2[2];
+		vectFromPos2(v1, p2, p1);
+		vectFromPos2(v2, p2, p3);
+		return dot2_90(v1, v2);
+	}
+
+	template <typename _T> inline _T dot2_90_pos_norm(const _T *p1, const _T *p2, const _T *p3)
+	{
+		_T v1[2], v2[2];
+		vectFromPos2(v1, p2, p1);
+		normalize2(v1);
+		vectFromPos2(v2, p2, p3);
+		normalize2(v2);
+		return dot2_90(v1, v2);
+	}
+
+	template <typename _T> inline bool point2InTriangle(const _T *p, const _T *t1, const _T *t2, const _T *t3)
+	{
+		_T s1, s2, s3;
+		_T v[2], vp[2];
+		vectFromPos2(v, t1, t2);
+		vectFromPos2(vp, t1, p);
+		s1 = dot2_90(v, vp);
+		vectFromPos2(v, t2, t3);
+		vectFromPos2(vp, t2, p);
+		s2 = dot2_90(v, vp);
+		vectFromPos2(v, t3, t1);
+		vectFromPos2(vp, t3, p);
+		s3 = dot2_90(v, vp);
+		return sign(s1) == sign(s2) && sign(s2) == sign(s3);
 	}
 
 	/** @brief Normal vector (normalized) for a plane given by two vectors
@@ -303,8 +457,7 @@ namespace RiCPP {
 		norm[1] /= length;
 		norm[2] /= length;
 		
-		const _T eps = std::numeric_limits<_T>::epsilon();
-		return fabs(norm[0]) > eps || fabs(norm[1]) > eps || fabs(norm[2]) > eps ;
+		return fabs(norm[0]) > eps<_T>() || fabs(norm[1]) > eps<_T>() || fabs(norm[2]) > eps<_T>() ;
 	}
 
 	/** @brief A normal vector (normalized) for a plane given by three points
@@ -320,89 +473,6 @@ namespace RiCPP {
 		_T v2[3] = {p3[0]-p2[0], p3[1]-p2[1], p3[2]-p2[2]};
 		
 		return planeNorm(v1, v2, norm);
-	}
-
-	/** @brief Normalize a 3D vector to size 1
-	 *  @param x x component of a vector (can be a part of @a norm)
-	 *  @param y y component of a vector (can be a part of @a norm)
-	 *  @param z z component of a vector (can be a part of @a norm)
-	 *  @retval norm The normalized vector (size = 3)
-	 */
-	template <typename _T> inline void normalize(_T x, _T y, _T z, _T *norm)
-	{
-		_T length = static_cast<_T>(sqrt(x*x+y*y+z*z));
-		if ( length == 0 ) {
-			norm[0] = 0; norm[1] = 0; norm[2] = 0;
-			return false;
-		}
-		
-		norm[0] = x/length;
-		norm[1] = y/length;
-		norm[2] = z/length;
-	}
-
-	/** @brief Normalize a 2D vector to size 1
-	 *  @param x x component of a vector (can be a part of @a norm)
-	 *  @param y y component of a vector (can be a part of @a norm)
-	 *  @retval norm The normalized vector (size = 2)
-	 */
-	template <typename _T> inline void normalize(_T x, _T y, _T *norm)
-	{
-		_T length = static_cast<_T>(sqrt(x*x+y*y));
-		if ( length == 0 ) {
-			norm[0] = 0; norm[1] = 0;
-			return false;
-		}
-		
-		norm[0] = x/length;
-		norm[1] = y/length;
-	}
-
-	template <typename _T> inline _T *vectFromPos2(_T *v2, const _T *from2, const _T *to2)
-	{
-		v2[0] = to2[0]-from2[0];
-		v2[1] = to2[1]-from2[1];
-		return v2;
-	}
-
-	template <typename _T> inline _T *vectFromPos3(_T *v3, const _T *from3, const _T *to3)
-	{
-		v3[0] = to3[0] - from3[0];
-		v3[1] = to3[1] - from3[1];
-		v3[2] = to3[2] - from3[2];
-		return v3;
-	}
-
-	template <typename _T> inline _T vlen(_T x, _T y, _T z)
-	{
-		return static_cast<_T>(sqrt(x*x+y*y+z*z));
-	}
-	
-	template <typename _T> inline _T vlen(_T x, _T y)
-	{
-		return static_cast<_T>(sqrt(x*x+y*y));
-	}
-
-	template <typename _T> inline _T vlen2(const _T *p2)
-	{
-		return static_cast<_T>(sqrt(p2[0]*p2[0]+p2[1]*p2[1]));
-	}
-
-	template <typename _T> inline _T vlen2(const _T *from2, const _T *to2)
-	{
-		_T v2[2];
-		return vlen2(vectFromPos2(v2, from2, to2));
-	}
-
-	template <typename _T> inline _T vlen3(const _T *p3)
-	{
-		return static_cast<_T>(sqrt(p3[0]*p3[0]+p3[1]*p3[1]+p3[2]*p3[2]));
-	}
-
-	template <typename _T> inline _T vlen3(const _T *from3, const _T *to3)
-	{
-		_T v3[3];
-		return vlen2(vectFromPos3(v3, from3, to3));
 	}
 
 	/** @brief Linear interpolation between two values.

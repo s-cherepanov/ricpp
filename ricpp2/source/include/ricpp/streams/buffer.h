@@ -158,6 +158,13 @@ namespace RiCPP {
 		 *  @exception ExceptRiCPPError Throws severe RIE_RANGE if @a pos >= size()
 		 */
 		T_char &operator[](size_type pos);
+
+		/** @brief Gets the constant reference to the element at positon @a pos.
+		 *  @param pos position (< size()).
+		 *  @return Constant reference of element at the position @a pos.
+		 *  @exception ExceptRiCPPError Throws severe RIE_RANGE if @a pos >= size()
+		 */
+		const T_char &operator[](size_type pos) const;
 	}; // TemplBuffer
 
 
@@ -225,6 +232,20 @@ namespace RiCPP {
 	inline
 	T_char &
 	TemplBuffer<T_char>::operator[](size_type pos)
+	{
+		if ( pos < m_size )
+			return m_buffer[pos];
+
+		throw ExceptRiCPPError(
+			RIE_RANGE, RIE_SEVERE,
+			__LINE__, __FILE__,
+			"Index out of range for a byte buffer.");
+	}
+
+	template <typename T_char>
+	inline
+	const T_char &
+	TemplBuffer<T_char>::operator[](size_type pos) const
 	{
 		if ( pos < m_size )
 			return m_buffer[pos];

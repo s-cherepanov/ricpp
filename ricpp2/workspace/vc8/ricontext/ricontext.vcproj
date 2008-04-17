@@ -314,6 +314,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\polygon.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\renderstate.cpp"
 				>
 			</File>

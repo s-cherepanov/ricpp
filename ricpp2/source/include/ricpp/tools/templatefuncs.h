@@ -245,7 +245,7 @@ namespace RiCPP {
 	 *  @param f The value to test
 	 *  @return -1 if f is negative, 1 otherwise
 	 */
-	template <typename type> int inline sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
+	template <typename type> type inline sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
 	
 	template <typename _T> inline _T *vectFromPos2(_T *v2, const _T *from2, const _T *to2)
 	{
@@ -324,7 +324,6 @@ namespace RiCPP {
 		_T length = vlen(x, y);
 		if ( length == 0 ) {
 			norm[0] = 0; norm[1] = 0;
-			return false;
 		}
 		
 		norm[0] = x/length;

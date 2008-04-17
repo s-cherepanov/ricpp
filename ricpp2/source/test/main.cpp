@@ -29,10 +29,34 @@
 
 #include "ricpp/ricppbridge/ricppbridge.h"
 #include "ricpp/tools/env.h"
+#include "ricpp/tools/bintree.h"
 
 // #include <iostream>
 
 using namespace RiCPP;
+
+static void testTree()
+{
+	std::vector<TemplTreeNode<RtFloat, unsigned long> > m_nodeVector;
+	TemplBinTree<RtFloat, unsigned long, std::vector<TemplTreeNode<RtFloat, unsigned long> > > myTree;
+
+	m_nodeVector.resize(10);
+	for ( unsigned long i=1; i < m_nodeVector.size(); ++i ) {
+		m_nodeVector[i].ref() = i;
+		m_nodeVector[i].content() = (RtFloat)rand();
+		myTree.insert(i, m_nodeVector);
+	}
+
+	myTree.remove(8, m_nodeVector);
+	myTree.remove(2, m_nodeVector);
+	myTree.remove(1, m_nodeVector);
+	myTree.remove(4, m_nodeVector);
+	myTree.remove(6, m_nodeVector);
+	myTree.remove(7, m_nodeVector);
+	myTree.remove(3, m_nodeVector);
+	myTree.remove(5, m_nodeVector);
+	myTree.remove(9, m_nodeVector);
+}
 
 /** @brief Create and read a .gz file 
  */
@@ -516,6 +540,8 @@ void sometests(CRiCPPBridge ri)
 int main(int argc, char * const argv[])
 {
 	CRiCPPBridge ri;
+
+	testTree();
 
 /*	
 	// This is only for testing within IDE while programming...

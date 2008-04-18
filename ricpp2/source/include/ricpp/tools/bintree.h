@@ -30,50 +30,152 @@
  *  @brief Simple template for a binary tree and a node template.
  */
 
+// =============================================================================
+/** @brief Node for TemplBinTree binary tree.
+ *
+ *  PayloadType is the data tye of the content, LinkType the type of
+ *  the references (e.g. unsigned long if nodes are srtored within a
+ *  vector). LinkType(0) indicates the NULL pointer equivalent.
+ */
 template<typename PayloadType, typename LinkType>
 class TemplTreeNode {
+
 private:
-	LinkType m_ref, m_left, m_right, m_parent;
-	PayloadType m_content;
+	LinkType    m_ref;     ///< Own reference.
+	LinkType    m_left;    ///< Left child (<).
+	LinkType    m_right;   ///< Right chlid (>=).
+	LinkType    m_parent;  ///< Parent.
+	PayloadType m_content; ///< Data.
 
 public:
-	inline TemplTreeNode() { m_ref = m_left = m_right = m_parent = LinkType(0); }
+	/** @brief Constructor, just clears the links.
+	 */
+	inline TemplTreeNode()
+	{
+		m_ref = m_left = m_right = m_parent = LinkType(0);
+	}
+	
+	/** @brief Destructor, to be virtual.
+	 */
 	inline virtual ~TemplTreeNode() {}
 
+	/** @brief The included data.
+	 *  @return Reference to the data of the node, writeable.
+	 */
 	inline PayloadType &content() { return m_content; }
+	
+	/** @brief The included data.
+	 *  @return Reference to the data of the node, read only.
+	 */
 	inline const PayloadType &content() const { return m_content; }
 
+	/** @brief The left child (less than current).
+	 *  @return Reference to the left child, writeable.
+	 */
 	inline LinkType &left() { return m_left; }
+
+	/** @brief The left child (less than current).
+	 *  @return Reference to the left child, read only.
+	 */
 	inline const LinkType &left() const { return m_left; }
 
+	/** @brief The right child (greater than or equal current).
+	 *  @return Reference to the right child, writeable.
+	 */
 	inline LinkType &right() { return m_right; }
+
+	/** @brief The right child (greater than or equal current).
+	 *  @return Reference to the right child, read only.
+	 */
 	inline const LinkType &right() const { return m_right; }
 
+	/** @brief Predecessor node.
+	 *  @return Reference to the predecessor node, writeable.
+	 */
 	inline LinkType &parent() { return m_parent; }
+
+	/** @brief Predecessor node.
+	 *  @return Reference to the predecessor node, read only.
+	 */
 	inline const LinkType &parent() const { return m_parent; }
 
+	/** @brief Own reference
+	 *  @return Reference of this node, writeable.
+	 */
 	inline LinkType &ref() { return m_ref; }
+
+	/** @brief Own reference
+	 *  @return Reference of this node, read only.
+	 */
 	inline const LinkType &ref() const { return m_ref; }
 }; // TemplTreeNode
 
 
+// =============================================================================
+/** @brief Template for a binary tree structure.
+ *
+ *  Uses TemplTreeNode to build a binary sorting tree.
+ *  PayloadType is the data tye of the content, LinkType the type of
+ *  the references (e.g. unsigned long if nodes are srtored within a
+ *  vector). LinkType(0) indicates the NULL pointer equivalent. NodeContainer
+ *  is the container type of all nodes, e.g. a vector of TemplTreeNode
+ */
 template<typename PayloadType, typename LinkType, typename NodeContainer>
 class TemplBinTree {
-private:
-	LinkType m_root;
 
-	inline virtual void insert(LinkType atNodeRef, LinkType aNodeRef, NodeContainer &nodeContainer)
+private:
+	LinkType m_root; ///< References the root of the tree structure, LinkeType(0) if empty.
+
+public:
+	/** Constructor for an empty tree.
+	 */
+	inline TemplBinTree() { m_root = LinkType(0); }
+	
+	/** Gets the root of the tree.
+	 *
+	 *  @return The root reference of the tree, writeable
+	 */
+	inline LinkType &root() { return m_root; }
+	
+	/** Gets the root of the tree
+	 *
+	 *  @return The root reference of the tree, read only.
+	 */
+	inline const LinkType &root() const { return m_root; }
+	
+	/** Clears the contenst of the tree by clearing the root reference.
+	 */
+	inline void clear() { root() = LinkType(0); }
+	
+	/** Queries whether the tree is empty.
+	 *
+	 *  @return True, if the tree is empty (root is the 0 reference).
+	 */
+	inline bool empty() const { return root() == LinkType(0); }
+
+	/** @brief Sorted insert of a node.
+	 *
+	 *  @param atNodeRef References node to start from.
+	 *  @param aNodeRef References node that is linked in.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline void insert(LinkType atNodeRef, LinkType aNodeRef,
+							   NodeContainer &nodeContainer)
 	{
-		if ( nodeContainer[aNodeRef].content() < nodeContainer[atNodeRef].content() ) {
+		if ( nodeContainer[aNodeRef].content() <
+			 nodeContainer[atNodeRef].content() )
+		{
 			if ( nodeContainer[atNodeRef].left() != LinkType(0) ) {
-				insert(nodeContainer[atNodeRef].left(), aNodeRef, nodeContainer);
+				insert(nodeContainer[atNodeRef].left(), aNodeRef,
+					   nodeContainer);
 			} else {
 				nodeContainer[atNodeRef].left() = aNodeRef;
 				nodeContainer[aNodeRef].parent() = atNodeRef;
 			}
 		} else {
 			if ( nodeContainer[atNodeRef].right() != LinkType(0) ) {
-				insert(nodeContainer[atNodeRef].right(), aNodeRef, nodeContainer);
+				insert(nodeContainer[atNodeRef].right(), aNodeRef,
+					   nodeContainer);
 			} else {
 				nodeContainer[atNodeRef].right() = aNodeRef;
 				nodeContainer[aNodeRef].parent() = atNodeRef;
@@ -81,31 +183,12 @@ private:
 		}
 	}
 
-	inline virtual LinkType find(LinkType aNodeRef, PayloadType aValue, NodeContainer &nodeContainer)
-	{
-		if ( !aNodeRef )
-			return false;
-		if ( aValue < nodeContainer[aNodeRef].content() )
-			return find(nodeContainer[aNodeRef].left(), aValue, nodeContainer);
-		if ( aValue > nodeContainer[aNodeRef].content() )
-			return find(nodeContainer[aNodeRef].right(), aValue, nodeContainer);
-		return aNodeRef;
-	}
-
-public:
-	inline TemplBinTree() { m_root = LinkType(0); }
-
-	inline virtual ~TemplBinTree() {}
-
-	inline virtual LinkType &root() { return m_root; }
-
-	inline virtual const LinkType &root() const { return m_root; }
-
-	inline virtual void clear() { root() = LinkType(0); }
-
-	inline virtual bool empty() const { return root() == LinkType(0); }
-
-	inline virtual void insert(LinkType aNodeRef, NodeContainer &nodeContainer)
+	/** @brief Sorted insert of a node, starts searching at root.
+	 *
+	 *  @param atNodeRef References node to start from.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline void insert(LinkType aNodeRef, NodeContainer &nodeContainer)
 	{
 		if ( root() == LinkType(0) ) {
 			root() = aNodeRef;
@@ -115,7 +198,76 @@ public:
 		}
 	}
 
-	inline virtual void remove(LinkType aNodeRef, NodeContainer &nodeContainer)
+	/** @brief Finds a node for given data.
+	 *
+	 *  @param atNodeRef References node to start from.
+	 *  @param aValue Value of a node to find.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline LinkType find(LinkType aNodeRef, PayloadType aValue,
+								 NodeContainer &nodeContainer)
+	{
+		if ( !aNodeRef )
+			return LinkType(0);
+
+		if ( aValue < nodeContainer[aNodeRef].content() )
+			return find(nodeContainer[aNodeRef].left(), aValue, nodeContainer);
+
+		if ( aValue == nodeContainer[aNodeRef].content() )
+			return aNodeRef;
+
+		return find(nodeContainer[aNodeRef].right(), aValue, nodeContainer);
+	}
+
+	/** @brief Finds a node for given data, starts searching at root.
+	 *
+	 *  @param atNodeRef References node to start from.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline LinkType find(PayloadType aValue,
+						 NodeContainer &nodeContainer)
+	{
+		return find(root(), aValue, nodeContainer);
+	}
+	
+	/** @brief Finds the node with the smallest value within a subtree.
+	 *
+	 *  @param atNodeRef References node to start from.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline LinkType minNode(LinkType aNodeRef,
+							NodeContainer &nodeContainer)
+	{
+		if ( aNodeRef == LinkType(0) )
+			return LinkType(0);
+		LinkType ref = aNodeRef;
+		while ( nodeContainer[ref].left() != LinkType(0) )
+			ref = nodeContainer[ref].left();
+		return ref;
+	}
+	
+	/** @brief Finds the node with the biggest value within a subtree.
+	 *
+	 *  @param atNodeRef References node to start from.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline LinkType maxNode(LinkType aNodeRef,
+							NodeContainer &nodeContainer)
+	{
+		if ( aNodeRef == LinkType(0) )
+			return LinkType(0);
+		LinkType ref = aNodeRef;
+		while ( nodeContainer[ref].right() != LinkType(0) )
+			ref = nodeContainer[ref].right();
+		return ref;
+	}
+
+	/** @brief Removes a linked node from the tree.
+	 *
+	 *  @param aNodeRef References a node to delete.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline void remove(LinkType aNodeRef, NodeContainer &nodeContainer)
 	{
 		if ( aNodeRef == LinkType(0) )
 			return;
@@ -129,11 +281,16 @@ public:
 				}
 			} else {
 				if ( nodeContainer[aNodeRef].right() != LinkType(0) )
-					nodeContainer[nodeContainer[aNodeRef].right()].parent() = nodeContainer[aNodeRef].parent();
-				if ( nodeContainer[nodeContainer[aNodeRef].parent()].left() == aNodeRef ) {
-					nodeContainer[nodeContainer[aNodeRef].parent()].left() = nodeContainer[aNodeRef].right();
+					nodeContainer[nodeContainer[aNodeRef].right()].parent() =
+						nodeContainer[aNodeRef].parent();
+				if ( nodeContainer[nodeContainer[aNodeRef].parent()].left() ==
+					 aNodeRef )
+				{
+					nodeContainer[nodeContainer[aNodeRef].parent()].left() =
+						nodeContainer[aNodeRef].right();
 				} else {
-					nodeContainer[nodeContainer[aNodeRef].parent()].right() = nodeContainer[aNodeRef].right();
+					nodeContainer[nodeContainer[aNodeRef].parent()].right() =
+						nodeContainer[aNodeRef].right();
 				}
 			}
 
@@ -146,35 +303,48 @@ public:
 				}
 			} else {
 				if ( nodeContainer[aNodeRef].left() != LinkType(0) )
-					nodeContainer[nodeContainer[aNodeRef].left()].parent() = nodeContainer[aNodeRef].parent();
-				if ( nodeContainer[nodeContainer[aNodeRef].parent()].left() == aNodeRef ) {
-					nodeContainer[nodeContainer[aNodeRef].parent()].left() = nodeContainer[aNodeRef].left();
+					nodeContainer[nodeContainer[aNodeRef].left()].parent() =
+						nodeContainer[aNodeRef].parent();
+				if ( nodeContainer[nodeContainer[aNodeRef].parent()].left() ==
+					 aNodeRef )
+				{
+					nodeContainer[nodeContainer[aNodeRef].parent()].left() =
+						nodeContainer[aNodeRef].left();
 				} else {
-					nodeContainer[nodeContainer[aNodeRef].parent()].right() = nodeContainer[aNodeRef].left();
+					nodeContainer[nodeContainer[aNodeRef].parent()].right() =
+						nodeContainer[aNodeRef].left();
 				}
 			}
 
 		} else {
 
-			LinkType maxofmin = maxNode(nodeContainer[aNodeRef].left(), nodeContainer);
+			LinkType maxofmin = maxNode(nodeContainer[aNodeRef].left(),
+										nodeContainer);
 			remove(maxofmin, nodeContainer);
 			nodeContainer[maxofmin].left() = nodeContainer[aNodeRef].left();
 			if ( nodeContainer[aNodeRef].left() != LinkType(0) ) {
-				nodeContainer[nodeContainer[aNodeRef].left()].parent() = maxofmin;
+				nodeContainer[nodeContainer[aNodeRef].left()].parent() =
+					maxofmin;
 			}
 			nodeContainer[maxofmin].right() = nodeContainer[aNodeRef].right();
 			if ( nodeContainer[aNodeRef].right() != LinkType(0) ) {
-				nodeContainer[nodeContainer[aNodeRef].right()].parent() = maxofmin;
+				nodeContainer[nodeContainer[aNodeRef].right()].parent() =
+					maxofmin;
 			}
 			if ( aNodeRef == root() ) {
 				root() = maxofmin;
 				nodeContainer[root()].parent() = LinkType(0);
 			} else {
-				nodeContainer[maxofmin].parent() = nodeContainer[aNodeRef].parent();
-				if ( nodeContainer[nodeContainer[aNodeRef].parent()].left() == aNodeRef ) {
-					nodeContainer[nodeContainer[aNodeRef].parent()].left() = maxofmin;
+				nodeContainer[maxofmin].parent() =
+					nodeContainer[aNodeRef].parent();
+				if ( nodeContainer[nodeContainer[aNodeRef].parent()].left() ==
+					aNodeRef )
+				{
+					nodeContainer[nodeContainer[aNodeRef].parent()].left() =
+						maxofmin;
 				} else {
-					nodeContainer[nodeContainer[aNodeRef].parent()].right() = maxofmin;
+					nodeContainer[nodeContainer[aNodeRef].parent()].right() =
+						maxofmin;
 				}
 			}
 		}
@@ -182,31 +352,6 @@ public:
 		nodeContainer[aNodeRef].parent() = LinkType(0);
 		nodeContainer[aNodeRef].left()   = LinkType(0);
 		nodeContainer[aNodeRef].right()  = LinkType(0);
-	}
-
-	inline virtual LinkType find(PayloadType aValue, NodeContainer &nodeContainer)
-	{
-		return find(root(), aValue, nodeContainer);
-	}
-
-	inline virtual LinkType minNode(LinkType aNodeRef, NodeContainer &nodeContainer)
-	{
-		if ( aNodeRef == LinkType(0) )
-			return LinkType(0);
-		LinkType ref = aNodeRef;
-		while ( nodeContainer[ref].left() != LinkType(0) )
-			ref = nodeContainer[ref].left();
-		return ref;
-	}
-
-	inline virtual LinkType maxNode(LinkType aNodeRef, NodeContainer &nodeContainer)
-	{
-		if ( aNodeRef == LinkType(0) )
-			return LinkType(0);
-		LinkType ref = aNodeRef;
-		while ( nodeContainer[ref].right() != LinkType(0) )
-			ref = nodeContainer[ref].right();
-		return ref;
 	}
 }; // TemplBinTree
 

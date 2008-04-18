@@ -328,7 +328,7 @@ public:
 /** @brief Container for a triangulated polygon.
  */
 class CTriangulatedPolygon {
-	std::vector<unsigned long> m_triangles; ///< Vector of vertex indices, allways 3 in a group.
+	std::vector<unsigned long> m_triangles; ///< Vector of vertex indices, always 3 in a group.
 	const CPolygonTriangulationStrategy *m_strategy;
 public:
 	inline CTriangulatedPolygon(const CPolygonTriangulationStrategy &triangulation)

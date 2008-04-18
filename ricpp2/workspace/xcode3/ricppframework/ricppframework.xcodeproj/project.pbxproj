@@ -26,6 +26,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		C302FE4A0DB8883B007E509B /* bintree.h in Headers */ = {isa = PBXBuildFile; fileRef = C302FE490DB8883B007E509B /* bintree.h */; };
 		C3185B710D7D3312001784AB /* varsubst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3185B700D7D3312001784AB /* varsubst.h */; };
 		C3185B730D7D3451001784AB /* varsubst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3185B720D7D3451001784AB /* varsubst.cpp */; };
 		C31C22A20D74094C009D99C2 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
@@ -439,6 +440,7 @@
 		C3003D450C1D6458004C4EF0 /* uri.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = uri.h; path = ../../../source/include/ricpp/streams/uri.h; sourceTree = SOURCE_ROOT; };
 		C3003D7B0C1D6CF9004C4EF0 /* tokenmap.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = tokenmap.cpp; path = ../../../source/declaration/tokenmap.cpp; sourceTree = SOURCE_ROOT; };
 		C3003D7E0C1D6D21004C4EF0 /* tokenmap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = tokenmap.h; path = ../../../source/include/ricpp/declaration/tokenmap.h; sourceTree = SOURCE_ROOT; };
+		C302FE490DB8883B007E509B /* bintree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = bintree.h; path = ../../../source/include/ricpp/tools/bintree.h; sourceTree = SOURCE_ROOT; };
 		C3185B700D7D3312001784AB /* varsubst.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = varsubst.h; path = ../../../source/include/ricpp/ricpp/varsubst.h; sourceTree = SOURCE_ROOT; };
 		C3185B720D7D3451001784AB /* varsubst.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = varsubst.cpp; path = ../../../source/ricpp/varsubst.cpp; sourceTree = SOURCE_ROOT; };
 		C31C22460D740489009D99C2 /* libriprog.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libriprog.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1586,6 +1588,7 @@
 		C399BA360BE5DDD4002FEEF1 /* Header */ = {
 			isa = PBXGroup;
 			children = (
+				C302FE490DB8883B007E509B /* bintree.h */,
 				C33939BA0CDE14AF001BBED7 /* stringpattern.h */,
 				C337F2850C460AA100E174B0 /* templatefuncs.h */,
 				C370C1890BF469BD00AA03BC /* env.h */,
@@ -1775,6 +1778,7 @@
 				C3685ED60D3C1FB100B2E025 /* objptrregistry.h in Headers */,
 				C3685ED70D3C1FB100B2E025 /* platform.h in Headers */,
 				C3685ED80D3C1FB100B2E025 /* stringlist.h in Headers */,
+				C302FE4A0DB8883B007E509B /* bintree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

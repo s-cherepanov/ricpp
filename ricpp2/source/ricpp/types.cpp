@@ -884,7 +884,13 @@ CMatrix3D::CMatrix3D(const CMatrix3D &mat)
 	*this = mat;
 }
 
-CMatrix3D::CMatrix3D(RtMatrix mat)
+CMatrix3D::CMatrix3D(const RtMatrix mat)
+{
+	m_preMultiply = true;
+	set(mat);
+}
+
+CMatrix3D::CMatrix3D(const RtFloat *mat)
 {
 	m_preMultiply = true;
 	set(mat);
@@ -911,7 +917,7 @@ CMatrix3D &CMatrix3D::operator=(const CMatrix3D &mat)
 }
 
 
-CMatrix3D &CMatrix3D::operator=(RtMatrix mat)
+CMatrix3D &CMatrix3D::operator=(const RtMatrix mat)
 {
 	// m_preMultiply not changed (not part of RtMatrix)
 
@@ -919,22 +925,7 @@ CMatrix3D &CMatrix3D::operator=(RtMatrix mat)
 	return *this;
 }
 
-
-#if 0
-void CMatrix3D::set(const RtMatrix mat)
-{
-	// m_preMultiply is not changed
-	/*
-	int i, j;
-	for ( i = 0; i < 4; ++i )
-		for ( j = 0; j < 4; ++j )
-			m_Matrix[i][j] = mat[i][j];
-	*/
-}
-#endif
-
-
-void CMatrix3D::get(RtMatrix &mat) const
+void CMatrix3D::get(RtMatrix mat) const
 {
 	int i, j;
 	for ( i = 0; i < 4; ++i )
@@ -942,6 +933,13 @@ void CMatrix3D::get(RtMatrix &mat) const
 			mat[i][j] = m_Matrix[i][j];
 }
 
+void CMatrix3D::get(RtFloat *mat) const
+{
+	int i, j;
+	for ( i = 0; i < 16; i+=4 )
+		for ( j = 0; j < 4; ++j )
+			mat[i+j] = m_Matrix[i][j];
+}
 
 bool CMatrix3D::operator==(const CMatrix3D &mat) const
 {
@@ -956,7 +954,7 @@ bool CMatrix3D::operator==(const CMatrix3D &mat) const
 }
 
 
-bool CMatrix3D::operator==(RtMatrix mat) const
+bool CMatrix3D::operator==(const RtMatrix mat) const
 {
         int i, j;
         for ( i=0; i<4; ++i )
@@ -971,7 +969,7 @@ bool CMatrix3D::operator!=(const CMatrix3D &mat) const
         return !(*this == mat);
 }
 
-bool CMatrix3D::operator!=(RtMatrix mat) const
+bool CMatrix3D::operator!=(const RtMatrix mat) const
 {
         return !(*this == mat);
 }
@@ -1003,18 +1001,18 @@ void CMatrix3D::transpose()
 }
 
 
-void CMatrix3D::transform(RtMatrix mat)
+void CMatrix3D::transform(const RtMatrix mat)
 {
         set(mat);
 }
 
-void CMatrix3D::transform(CMatrix3D &mat)
+void CMatrix3D::transform(const CMatrix3D &mat)
 {
         *this = mat;
 }
 
 
-void CMatrix3D::postMultiply(RtMatrix mat)
+void CMatrix3D::postMultiply(const RtMatrix mat)
 {
         int i, j, k;
         RtMatrix s;
@@ -1033,7 +1031,7 @@ void CMatrix3D::postMultiply(CMatrix3D mat)
 }
 
 
-void CMatrix3D::preMultiply(RtMatrix mat)
+void CMatrix3D::preMultiply(const RtMatrix mat)
 {
         int i, j, k;
         RtMatrix s;
@@ -1054,7 +1052,7 @@ void CMatrix3D::preMultiply(CMatrix3D mat)
 
 // Standard multiplication
 
-void CMatrix3D::concatTransform(RtMatrix mat)
+void CMatrix3D::concatTransform(const RtMatrix mat)
 {
 		if ( m_preMultiply )
 			preMultiply(mat);
@@ -1114,6 +1112,16 @@ void CMatrix3D::transformPoint(RtFloat &x, RtFloat &y, RtFloat &z)
         z = d[2];
 }
 
+bool CMatrix3D::transformNormal(RtFloat &x, RtFloat &y, RtFloat &z)
+{
+	CMatrix3D tinv = *this;
+	if ( !tinv.invert() )
+		return false;
+	tinv.transpose();
+	tinv.transformPoint(x, y, z);
+	normalize(x, y, z);
+}
+	
 void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 {
         int i, j, k;
@@ -1145,6 +1153,20 @@ void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 			}
 		}
 
+}
+
+
+bool CMatrix3D::transformNormal(RtInt n, RtPoint p[])
+{
+	CMatrix3D tinv = *this;
+	if ( !tinv.invert() )
+		return false;
+	tinv.transpose();
+	tinv.transformPoints(n, p);
+	for (RtInt i=0; i < n; ++i) {
+		normalize(p[i][0],p[i][1],p[i][2]);
+	}
+	return true;
 }
 
 void CMatrix3D::rotateX(RtFloat w)

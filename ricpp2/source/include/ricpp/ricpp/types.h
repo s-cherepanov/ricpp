@@ -1025,7 +1025,12 @@ public:
 	/** @brief The constructor to copy from a RenderMan RtMatrix.
 	 *  @param mat Matrix to copy from.
 	 */
-	CMatrix3D(RtMatrix mat);
+	CMatrix3D(const RtMatrix mat);
+	
+	/** @brief The constructor to copy from a RtFloat array.
+	 *  @param mat Matrix to copy from.
+	 */
+	CMatrix3D(const RtFloat *mat);
 	
 	/** @brief Dupliactes a matrix.
 	 *  @return a clone of *this.
@@ -1051,8 +1056,17 @@ public:
 	 *
 	 *  @param mat Matrix to copy from.
 	 */
-	CMatrix3D &operator=(RtMatrix mat);
+	CMatrix3D &operator=(const RtMatrix mat);
 
+	/** @brief The assignment for a RtFloat Array.
+	 *
+	 *  @c m_preMultiply is not changed because there
+	 *  no flag in mat.
+	 *
+	 *  @param mat Matrix to copy from.
+	 */
+	CMatrix3D &operator=(const RtFloat *mat);
+	
 	/** @brief Gets a pointer to the first component of a matrix.
 	 *  @return Pointer to the first float value of the matrix.
 	 */
@@ -1084,14 +1098,19 @@ public:
 	 *  @param mat RtFloat array with at least 16 values.
 	 */
 	inline void set(const RtFloat *mat) {
-		memcpy(m_Matrix, mat, sizeof(RtMatrix));
+		memcpy(m_Matrix, mat, 16*sizeof(RtFloat));
 	}
 
 	/** @brief Gets the content of a matrix for a RenderMan RtMatrix.
 	 *  @retval mat Matrix to fill.
 	 */
-	void get(RtMatrix &mat) const;
-
+	void get(RtMatrix mat) const;
+	
+	/** @brief Gets the content of a matrix for a RtFloat array.
+	 *  @retval mat Matrix to fill.
+	 */
+	void get(RtFloat *mat) const;
+	
 	/** @brief Compares two matrices.
 	 *  @param mat Matrix to compare with.
 	 *  @return true, if all components of mat are equal to the components of the instance.
@@ -1102,7 +1121,7 @@ public:
 	 *  @param mat RenderMan RtMatrix matrix to compare with.
 	 *  @return true, if all components of mat are equal to the components of the instance.
 	 */
-	bool operator==(RtMatrix mat) const;
+	bool operator==(const RtMatrix mat) const;
 
 	/** @brief Compares two matrices.
 	 *  @param mat Matrix to compare with.
@@ -1114,7 +1133,7 @@ public:
 	 *  @param mat RenderMan RtMatrix matrix to compare with.
 	 *  @return false if all components of mat are equal to the components of the instance.
 	 */
-	bool operator!=(RtMatrix mat) const;
+	bool operator!=(const RtMatrix mat) const;
 
 	/** @brief Clears a matrix.
 	 * Sets all components to zero.
@@ -1153,7 +1172,7 @@ public:
 	 @endverbatim
 	 * @param mat Matrix (RenderMan RtMatrix) used for transformation.
 	 */
-	void transform(RtMatrix mat);
+	void transform(const RtMatrix mat);
 
 	/** @brief Transform.
 	 * Transform is to copy a matrix:
@@ -1162,7 +1181,7 @@ public:
 	 @endverbatim
 	 * @param mat Matrix used for transformation.
 	 */
-	void transform(CMatrix3D &mat);
+	void transform(const CMatrix3D &mat);
 
 	/** @brief Postmultiplicaton, right multiplication.
 	 * Postmultiplication is used by inverse transformations.
@@ -1171,7 +1190,7 @@ public:
 	 @endverbatim
 	 * @param mat Matrix (RenderMan RtMatrix) to concatenate on the right.
 	 */
-	void postMultiply(RtMatrix mat);
+	void postMultiply(const RtMatrix mat);
 
 	/** @brief Postmultiplicaton, right multiplication.
 	 * Postmultiplication is used by inverse transformations.
@@ -1189,7 +1208,7 @@ public:
 	 @endverbatim
 	 * @param mat Matrix (RenderMan RtMatrix) to concatenate on the left.
 	 */
-	void preMultiply(RtMatrix mat);
+	void preMultiply(const RtMatrix mat);
 
 	/** @brief Premultiplication (left multiplication).
 	/* Premultiplication is used by the implementation of the RenderMan interface to concatenate transformations.
@@ -1207,7 +1226,7 @@ public:
 	 @endverbatim
 	 * @param mat Matrix (RenderMan RtMatrix) to concatenate.
 	 */
-	void concatTransform(RtMatrix mat);
+	void concatTransform(const RtMatrix mat);
 
 	/** @brief Matrix multiplication.
 	/* m_preMultiply is used o multiply on the left or on the right
@@ -1258,7 +1277,8 @@ public:
 	 *  @retval z coordinate z and result
 	 */
 	void transformPoint(RtFloat &x, RtFloat &y, RtFloat &z);
-
+	bool transformNormal(RtFloat &x, RtFloat &y, RtFloat &z);
+	
 	/** @brief Transforms an array of points by the matrix.
 	 *
 	 *  If m_preMultiply it uses a row vector and left multiplication,
@@ -1268,6 +1288,7 @@ public:
 	 *  @retval p points
 	 */
 	void transformPoints(RtInt n, RtPoint p[]);
+	bool transformNormal(RtInt n, RtPoint v[]);
 
 	/** @brief Concatenates a rotation around the x-axis.
 	 * The rotation matrix is:
@@ -1381,6 +1402,12 @@ public:
 	 * @return true: Inverse could be calculated, false: otherwise.
 	 */
 	bool getInverse(RtMatrix &mat) const;
+	inline bool invert() {
+		RtMatrix m;
+		if ( !getInverse(m) )
+			return false;
+		*this = m;
+	}
 }; // CMatrix3D
 
 

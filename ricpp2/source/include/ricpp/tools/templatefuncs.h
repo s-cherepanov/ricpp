@@ -77,7 +77,7 @@ namespace RiCPP {
 	 *  @param b Second element
 	 *  @return Minimum of a and b
 	 */
-	template<class _T>
+	template<typename _T>
 	inline _T tmin(
 		_T a,
 		_T b)
@@ -125,7 +125,7 @@ namespace RiCPP {
 	}
 
 	
-	/** @brief Clambs a value the values boundmin, boundmax.
+	/** @brief Clamps a value the values boundmin, boundmax.
 	 *
 	 *  The bounds are exchanged if @a boundmin > @a boundmax.
 	 *
@@ -245,7 +245,9 @@ namespace RiCPP {
 	 *  @param f The value to test
 	 *  @return -1 if f is negative, 1 otherwise
 	 */
-	template <typename type> type inline sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
+	template <typename type> type inline sign(type f) { return f < 0 ? static_cast<type>(-1) : (f > 0 ? static_cast<type>(1) : static_cast<type>(0)); }
+	template <typename type> bool inline isPositive(type f) { return f >= 0; }
+	template <typename type> bool inline isNegative(type f) { return f < 0; }
 	
 	template <typename _T> inline _T *vectFromPos2(_T *v2, const _T *from2, const _T *to2)
 	{
@@ -260,6 +262,84 @@ namespace RiCPP {
 		v3[1] = to3[1] - from3[1];
 		v3[2] = to3[2] - from3[2];
 		return v3;
+	}
+	
+	template <typename _T> inline void vvAdd2(_T *res, const _T *v1, const _T *v2)
+	{
+		res[0] = v1[0] + v2[0];
+		res[1] = v1[1] + v2[1];
+	}
+
+	template <typename _T> inline void vvAdd3(_T *res, const _T *v1, const _T *v2)
+	{
+		res[0] = v1[0] + v2[0];
+		res[1] = v1[1] + v2[1];
+		res[2] = v1[2] + v2[2];
+	}
+
+	template <typename _T> inline void vsAdd2(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] + s;
+		res[1] = v[1] + s;
+	}
+	
+	template <typename _T> inline void vsAdd3(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] + s;
+		res[1] = v[1] + s;
+		res[2] = v[2] + s;
+	}
+	
+	template <typename _T> inline void vvSub2(_T *res, const _T *v1, const _T *v2)
+	{
+		res[0] = v1[0] - v2[0];
+		res[1] = v1[1] - v2[1];
+	}
+	
+	template <typename _T> inline void vvSub3(_T *res, const _T *v1, const _T *v2)
+	{
+		res[0] = v1[0] - v2[0];
+		res[1] = v1[1] - v2[1];
+		res[2] = v1[2] - v2[2];
+	}
+	
+	template <typename _T> inline void vsSub2(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] - s;
+		res[1] = v[1] - s;
+	}
+	
+	template <typename _T> inline void vsSub3(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] - s;
+		res[1] = v[1] - s;
+		res[2] = v[2] - s;
+	}
+	
+	template <typename _T> inline void vsMul2(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] * s;
+		res[1] = v[1] * s;
+	}
+	
+	template <typename _T> inline void vsMul3(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] * s;
+		res[1] = v[1] * s;
+		res[2] = v[2] * s;
+	}
+
+	template <typename _T> inline void vsDiv2(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] / s;
+		res[1] = v[1] / s;
+	}
+	
+	template <typename _T> inline void vsDiv3(_T *res, const _T *v, _T s)
+	{
+		res[0] = v[0] / s;
+		res[1] = v[1] / s;
+		res[2] = v[2] / s;
 	}
 	
 	template <typename _T> inline _T vlen(_T x, _T y, _T z)
@@ -295,18 +375,51 @@ namespace RiCPP {
 	}
 	
 	
+	/** @brief Normalize a 2D vector to size 1
+	 *  @retval norm The normalized vector (size = 2)
+	 *  @param x x component of a vector (can be a part of @a norm)
+	 *  @param y y component of a vector (can be a part of @a norm)
+	 */
+	template <typename _T> inline void normalize(_T *norm, _T x, _T y)
+	{
+		_T length = vlen(x, y);
+		if ( length == 0 ) {
+			norm[0] = 0; norm[1] = 0;
+			return;
+		}
+		
+		norm[0] = x/length;
+		norm[1] = y/length;
+	}
+	
+	template <typename _T> inline void normalize(_T &x, _T &y)
+	{
+		_T length = vlen(x, y);
+		if ( length == 0 ) {
+			return;
+		}
+		
+		x /= length;
+		y /= length;
+	}
+	
+	template <typename _T> inline void normalize2(_T *v)
+	{
+		normalize(v, v[0], v[1]);
+	}
+
 	/** @brief Normalize a 3D vector to size 1
+	 *  @retval norm The normalized vector (size = 3)
 	 *  @param x x component of a vector (can be a part of @a norm)
 	 *  @param y y component of a vector (can be a part of @a norm)
 	 *  @param z z component of a vector (can be a part of @a norm)
-	 *  @retval norm The normalized vector (size = 3)
 	 */
-	template <typename _T> inline void normalize(_T x, _T y, _T z, _T *norm)
+	template <typename _T> inline void normalize(_T *norm, _T x, _T y, _T z)
 	{
 		_T length = vlen(x, y, z);
 		if ( length == 0 ) {
 			norm[0] = 0; norm[1] = 0; norm[2] = 0;
-			return false;
+			return;
 		}
 		
 		norm[0] = x/length;
@@ -314,55 +427,24 @@ namespace RiCPP {
 		norm[2] = z/length;
 	}
 	
-	/** @brief Normalize a 2D vector to size 1
-	 *  @param x x component of a vector (can be a part of @a norm)
-	 *  @param y y component of a vector (can be a part of @a norm)
-	 *  @retval norm The normalized vector (size = 2)
-	 */
-	template <typename _T> inline void normalize(_T x, _T y, _T *norm)
+	template <typename _T> inline void normalize(_T &x, _T &y, _T &z)
 	{
-		_T length = vlen(x, y);
+		_T length = vlen(x, y, z);
 		if ( length == 0 ) {
-			norm[0] = 0; norm[1] = 0;
+			return;
 		}
 		
-		norm[0] = x/length;
-		norm[1] = y/length;
-	}
-	
-	template <typename _T> inline void normalize2(_T *v)
-	{
-		normalize(v[0], v[1], v);
+		x /= length;
+		y /= length;
+		z /= length;
 	}
 	
 	template <typename _T> inline void normalize3(_T *v)
 	{
-		normalize(v[0], v[1], v[2], v);
+		normalize(v, v[0], v[1], v[2]);
 	}
 
-	/** @brief Vector (cross) product of two 3d vectors
-	 *  @param v1 Vector 1
-	 *  @param v2 Vector 2
-	 *  @retval vp Vector product
-	 */
-	template <typename _T> inline void vprod(const _T *v1, const _T *v2, _T *vp)
-	{
-		vp[0] = v1[1]*v2[2] - v1[2]*v2[1];
-		vp[1] = v1[2]*v2[0] - v1[0]*v2[2];
-		vp[2] = v1[0]*v2[1] - v1[1]*v2[0];
-	}
-
-	/** @brief Scalar (dot) product of two 3d vectors
-	 *  @param v1 Vector 1
-	 *  @param v2 Vector 2
-	 *  @return Scalar product
-	 */
-	template <typename _T> inline _T dot3(const _T *v1, const _T *v2)
-	{
-		return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
-	}
-
-	/** @brief Scalar (dot) product of two 2d vectors
+	/** @brief Scalar (inner, dot) product of two 2d vectors
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
 	 *  @return Scalar product
@@ -372,6 +454,16 @@ namespace RiCPP {
 		return v1[0]*v2[0] + v1[1]*v2[1];
 	}
 
+	template <typename _T> inline _T dot2_norm(const _T *v1, const _T *v2)
+	{
+		_T nv1[2], nv2[2];
+		
+		normalize(nv1, v1[0], v1[1]);
+		normalize(nv2, v2[0], v2[1]);
+		
+		return dot2(nv1, nv2);
+	}
+	
 	template <typename _T> inline _T dot2_pos(const _T *p1, const _T *p2, const _T *p3)
 	{
 		_T v1[2], v2[2];
@@ -400,6 +492,16 @@ namespace RiCPP {
 		return v1[1]*v2[0] - v1[0]*v2[1];
 	}
 
+	template <typename _T> inline _T dot2_90_norm(const _T *v1, const _T *v2)
+	{
+		_T nv1[2], nv2[2];
+		
+		normalize(nv1, v1[0], v1[1]);
+		normalize(nv2, v2[0], v2[1]);
+		
+		return dot2_90(nv1, nv2);
+	}
+	
 	template <typename _T> inline _T dot2_90_pos(const _T *p1, const _T *p2, const _T *p3)
 	{
 		_T v1[2], v2[2];
@@ -418,6 +520,51 @@ namespace RiCPP {
 		return dot2_90(v1, v2);
 	}
 
+	/** @brief Scalar (inner, dot) product of two 3d vectors
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2
+	 *  @return Scalar product
+	 */
+	template <typename _T> inline _T dot3(const _T *v1, const _T *v2)
+	{
+		return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+	}
+	
+	template <typename _T> inline _T dot3_norm(const _T *v1, const _T *v2)
+	{
+		_T nv1[3], nv2[3];
+		
+		normalize(nv1, v1[0], v1[1], v1[2]);
+		normalize(nv2, v2[0], v2[1], v2[2]);
+		
+		return dot3(nv1, nv2);
+	}
+	
+	/** @brief Vector (outer, cross) product of two 3d vectors
+	 *  @retval vp Vector product
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2
+	 */
+	template <typename _T> inline void vprod(_T *vp, const _T *v1, const _T *v2)
+	{
+		vp[0] = v1[1]*v2[2] - v1[2]*v2[1];
+		vp[1] = v1[2]*v2[0] - v1[0]*v2[2];
+		vp[2] = v1[0]*v2[1] - v1[1]*v2[0];
+	}
+	
+	/** @brief Scalar triple product of three 3d vectors
+	 *  @retval vp Triple product
+	 *  @param v1 Vector 1
+	 *  @param v2 Vector 2
+	 *  @param v2 Vector 3
+	 */
+	template <typename _T> inline _T triprod(const _T *v1, const _T *v2, const _T *v3)
+	{
+		_T vp[3];
+		vprod(vp, v2, v3);
+		return dot3(v1, vp);
+	}
+	
 	template <typename _T> inline bool point2InTriangle(const _T *p, const _T *t1, const _T *t2, const _T *t3)
 	{
 		_T s1, s2, s3;
@@ -435,12 +582,12 @@ namespace RiCPP {
 	}
 
 	/** @brief Normal vector (normalized) for a plane given by two vectors
+	 *  @retval norm Normal
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
-	 *  @retval norm Normal
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool planeNorm(const _T *v1, const _T *v2, _T *norm)
+	template <typename _T> inline bool planeNorm(_T *norm, const _T *v1, const _T *v2)
 	{
 		norm[0] = v1[1]*v2[2] - v1[2]*v2[1];
 		norm[1] = v1[2]*v2[0] - v1[0]*v2[2];
@@ -466,12 +613,12 @@ namespace RiCPP {
 	 *  @retval norm The normal vector as normalized cross product vect(P2, P1) x vect(P2, P3)
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool planeNorm(const _T *p1, const _T *p2, const _T *p3, _T *norm)
+	template <typename _T> inline bool planeNorm(_T *norm, const _T *p1, const _T *p2, const _T *p3)
 	{
 		_T v1[3] = {p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]};
 		_T v2[3] = {p3[0]-p2[0], p3[1]-p2[1], p3[2]-p2[2]};
 		
-		return planeNorm(v1, v2, norm);
+		return planeNorm(norm, v1, v2);
 	}
 
 	/** @brief Linear interpolation between two values.

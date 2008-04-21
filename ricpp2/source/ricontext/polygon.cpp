@@ -478,7 +478,7 @@ void CPolygonContainer::insertPolygon(
 		m_nodes[idx].recalc(m_nodes, m_outlineIsCCW);
 		idx = m_nodes[idx].m_next;
 	} while(idx != m_outlines[0]);
-	
+
 	if ( nloops > 1 ) {
 		std::vector<CPolygonNodeId> temp_outlines;
 		
@@ -487,12 +487,18 @@ void CPolygonContainer::insertPolygon(
 				// the rightmost vertex of the hole i
 				unsigned long rm = rightmostVertex(m_outlines[i]);
 				bool holeCCW = isCCW(m_outlines[i], rm);
-				if ( holeCCW == m_outlineIsCCW )
+				if ( holeCCW == m_outlineIsCCW ) {
 					swapOrientation(m_outlines[i], loops[i]);
+				}
 				temp_outlines.push_back(CPolygonNodeId());
 				temp_outlines.back().m_offset = m_outlines[i];
 				temp_outlines.back().m_idx    = rm;
 				temp_outlines.back().m_nodes  = &m_nodes;
+				idx = m_outlines[i];
+				do {
+					m_nodes[idx].recalc(m_nodes, m_outlineIsCCW);
+					idx = m_nodes[idx].m_next;
+				} while(idx != m_outlines[i]);
 			}
 		}
 		std::sort(temp_outlines.begin(), temp_outlines.end(), greaterXPos);

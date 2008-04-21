@@ -69,7 +69,7 @@ public:
 
 /** @brief The renderer error is used internally by the back end to throw exceptions
  *
- *  Since Apple discourage to use STL for the exported interface of shared libraries
+ *  Since Apple discourages the use STL for the exported interface of shared libraries
  *  ExceptRiCPPError will not inherit from std::exception.
  */
 class ExceptRiCPPError // : public std::exception

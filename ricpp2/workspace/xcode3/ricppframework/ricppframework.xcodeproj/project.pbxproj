@@ -17,8 +17,9 @@
 				C3808AFC0D3CDE1E00B6C3BA /* PBXTargetDependency */,
 				C3808AE10D3CDB5300B6C3BA /* PBXTargetDependency */,
 				C3808ABA0D3CC00D00B6C3BA /* PBXTargetDependency */,
-				C37A0D3D0D6AC5940027CE77 /* PBXTargetDependency */,
+				C383C1100DBC89A30059B71D /* PBXTargetDependency */,
 				C32B8B540D74582D0059B201 /* PBXTargetDependency */,
+				C37A0D3D0D6AC5940027CE77 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -175,6 +176,9 @@
 		C3808AC80D3CC1CA00B6C3BA /* libribwriter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089DB0D3CBA6300B6C3BA /* libribwriter.a */; };
 		C3808ADC0D3CDB1A00B6C3BA /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38088C80D3CA7A600B6C3BA /* libribfilter.a */; };
 		C3808ADD0D3CDB2900B6C3BA /* passthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */; };
+		C383C10C0DBC89510059B71D /* testpoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C383C10B0DBC89510059B71D /* testpoly.cpp */; };
+		C383C1130DBC8A0C0059B71D /* polygon.h in Headers */ = {isa = PBXBuildFile; fileRef = C383C1120DBC8A0C0059B71D /* polygon.h */; };
+		C383C12C0DBC900A0059B71D /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
 		C3A8FA760D74CBF700C1013B /* ricppconst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA720D74CBF700C1013B /* ricppconst.h */; };
 		C3A8FA770D74CBF700C1013B /* ricppdecls.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA730D74CBF700C1013B /* ricppdecls.h */; };
 		C3A8FA780D74CBF700C1013B /* ricpptokens.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA740D74CBF700C1013B /* ricpptokens.h */; };
@@ -431,6 +435,20 @@
 			remoteGlobalIDString = C3808ABF0D3CC05700B6C3BA;
 			remoteInfo = ribwriterdll;
 		};
+		C383C1090DBC89170059B71D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C38089430D3CAB4B00B6C3BA;
+			remoteInfo = ricontext;
+		};
+		C383C10F0DBC89A30059B71D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C383C1010DBC88E00059B71D;
+			remoteInfo = testpoly;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -569,6 +587,9 @@
 		C3808A920D3CBC6E00B6C3BA /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AC00D3CC05700B6C3BA /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpassthrough.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C383C1020DBC88E00059B71D /* testpoly */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testpoly; sourceTree = BUILT_PRODUCTS_DIR; };
+		C383C10B0DBC89510059B71D /* testpoly.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = testpoly.cpp; path = ../../../source/test/testpoly.cpp; sourceTree = SOURCE_ROOT; };
+		C383C1120DBC8A0C0059B71D /* polygon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = polygon.h; path = ../../../source/include/ricpp/ricontext/polygon.h; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C39753FE0C14005E0089A579 /* pluginhandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = pluginhandler.h; path = ../../../source/include/ricpp/pluginhandler/pluginhandler.h; sourceTree = SOURCE_ROOT; };
 		C39754110C1402250089A579 /* ribfilter.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribfilter.cpp; path = ../../../source/ribfilter/ribfilter.cpp; sourceTree = SOURCE_ROOT; };
@@ -785,6 +806,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C383C1000DBC88E00059B71D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C383C12C0DBC900A0059B71D /* libricontext.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -823,6 +852,7 @@
 				C3003D370C1D641C004C4EF0 /* streams */,
 				C3B849190BD762F900DD22B5 /* test */,
 				C31C221B0D73F9E6009D99C2 /* testribind */,
+				C383C0FC0DBC88AD0059B71D /* testpoly */,
 				C33773C30BE5DD6B0011B646 /* tools */,
 			);
 			fileEncoding = 5;
@@ -856,6 +886,7 @@
 				C32B8B0E0D7451C70059B201 /* libric.a */,
 				C32B8B390D74546A0059B201 /* libribase.a */,
 				C352E6930D7465B500CDED20 /* libridynload.a */,
+				C383C1020DBC88E00059B71D /* testpoly */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1301,6 +1332,7 @@
 				C372457F0CD5DE3100945563 /* options.h */,
 				C37245800CD5DE3100945563 /* optionsbase.h */,
 				C37245810CD5DE3100945563 /* parameter.h */,
+				C383C1120DBC8A0C0059B71D /* polygon.h */,
 				C37245820CD5DE3100945563 /* renderstate.h */,
 				C37245830CD5DE3100945563 /* resource.h */,
 				C3C9AE3A0D70BCCE00A04717 /* ribelements.h */,
@@ -1481,6 +1513,30 @@
 			lineEnding = 1;
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
+		};
+		C383C0FC0DBC88AD0059B71D /* testpoly */ = {
+			isa = PBXGroup;
+			children = (
+				C383C0FE0DBC88C40059B71D /* Header */,
+				C383C0FD0DBC88BB0059B71D /* Implementation */,
+			);
+			name = testpoly;
+			sourceTree = "<group>";
+		};
+		C383C0FD0DBC88BB0059B71D /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C383C10B0DBC89510059B71D /* testpoly.cpp */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C383C0FE0DBC88C40059B71D /* Header */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Header;
+			sourceTree = "<group>";
 		};
 		C39753D70C13FE830089A579 /* passthrough */ = {
 			isa = PBXGroup;
@@ -1879,6 +1935,7 @@
 				C38089660D3CAB7400B6C3BA /* transformation.h in Headers */,
 				C3C9AE3C0D70BCCE00A04717 /* ribelements.h in Headers */,
 				C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */,
+				C383C1130DBC8A0C0059B71D /* polygon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2346,6 +2403,23 @@
 			productReference = C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		C383C1010DBC88E00059B71D /* testpoly */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C383C1060DBC89040059B71D /* Build configuration list for PBXNativeTarget "testpoly" */;
+			buildPhases = (
+				C383C0FF0DBC88E00059B71D /* Sources */,
+				C383C1000DBC88E00059B71D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C383C10A0DBC89170059B71D /* PBXTargetDependency */,
+			);
+			name = testpoly;
+			productName = testpoly;
+			productReference = C383C1020DBC88E00059B71D /* testpoly */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2381,6 +2455,7 @@
 				C37A0D370D6AC5880027CE77 /* ribtool */,
 				C3808A910D3CBC6E00B6C3BA /* test */,
 				C31C22B60D740F03009D99C2 /* testribind */,
+				C383C1010DBC88E00059B71D /* testpoly */,
 			);
 		};
 /* End PBXProject section */
@@ -2601,6 +2676,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C383C0FF0DBC88E00059B71D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C383C10C0DBC89510059B71D /* testpoly.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2758,6 +2841,16 @@
 			isa = PBXTargetDependency;
 			target = C3808ABF0D3CC05700B6C3BA /* ribwriterdll */;
 			targetProxy = C3808AFB0D3CDE1E00B6C3BA /* PBXContainerItemProxy */;
+		};
+		C383C10A0DBC89170059B71D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C38089430D3CAB4B00B6C3BA /* ricontext */;
+			targetProxy = C383C1090DBC89170059B71D /* PBXContainerItemProxy */;
+		};
+		C383C1100DBC89A30059B71D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C383C1010DBC88E00059B71D /* testpoly */;
+			targetProxy = C383C10F0DBC89A30059B71D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3635,6 +3728,35 @@
 			};
 			name = Release;
 		};
+		C383C1040DBC88E10059B71D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = testpoly;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C383C1050DBC88E10059B71D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = testpoly;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3850,6 +3972,15 @@
 			buildConfigurations = (
 				C3808AD20D3CDAA700B6C3BA /* Debug */,
 				C3808AD30D3CDAA700B6C3BA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C383C1060DBC89040059B71D /* Build configuration list for PBXNativeTarget "testpoly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C383C1040DBC88E10059B71D /* Debug */,
+				C383C1050DBC88E10059B71D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

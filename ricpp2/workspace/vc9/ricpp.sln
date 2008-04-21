@@ -114,6 +114,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testribind", "testribind\te
 		{AC50912D-0632-43F6-B609-15FE8D0707F5} = {AC50912D-0632-43F6-B609-15FE8D0707F5}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testpoly", "testpoly\testpoly.vcproj", "{A30914AF-1DD5-4C93-9377-B6D23198D3F9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4} = {3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -208,6 +213,10 @@ Global
 		{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}.Debug|Win32.Build.0 = Debug|Win32
 		{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}.Release|Win32.ActiveCfg = Release|Win32
 		{B30AF1F2-DB0B-4A83-BCB4-375578B2E4B9}.Release|Win32.Build.0 = Release|Win32
+		{A30914AF-1DD5-4C93-9377-B6D23198D3F9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A30914AF-1DD5-4C93-9377-B6D23198D3F9}.Debug|Win32.Build.0 = Debug|Win32
+		{A30914AF-1DD5-4C93-9377-B6D23198D3F9}.Release|Win32.ActiveCfg = Release|Win32
+		{A30914AF-1DD5-4C93-9377-B6D23198D3F9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

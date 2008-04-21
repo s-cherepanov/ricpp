@@ -81,14 +81,19 @@ unsigned long CPolygonContainer::rightmostVertex(unsigned long offset) const
 	unsigned long idx = offset;
 	unsigned long rightmost = idx;
 	RtFloat x = m_nodes[rightmost][0];
+	RtFloat y = m_nodes[rightmost][1];
 	
 	for ( idx = m_nodes[idx].m_next;
 		  idx != offset;
 		  idx = m_nodes[idx].m_next )
 	{
-		if ( m_nodes[idx][0] > x ) {
+		if ( m_nodes[idx][0] > x ||
+			 (m_nodes[idx][0] == x &&
+			  m_nodes[idx][1] > y) )
+		{
 			rightmost = idx;
 			x = m_nodes[rightmost][0];
+			y = m_nodes[rightmost][1];
 		}
 	}
 	
@@ -303,8 +308,22 @@ void CPolygonContainer::integrateHole(
 		{
 			borderVertex = nextBorderVertex;
 		} else {
-			if ( m_nodes[nextBorderVertex][0] > m_nodes[borderVertex][0] ) {
-				borderVertex = nextBorderVertex;
+			// Set borderVertext to the nearer vertex of the outer polygon which should also be to the right of the hole.
+			if ( m_nodes[nextBorderVertex][0] > m_nodes[holeVertex][0] &&
+				 m_nodes[borderVertex][0] > m_nodes[holeVertex][0] )
+			{
+				// If both lie to right of the hole, take the nearer vertex
+				RtFloat range1 = vlen2(m_nodes[holeVertex].m_p, m_nodes[borderVertex].m_p);
+				RtFloat range2 = vlen2(m_nodes[holeVertex].m_p, m_nodes[nextBorderVertex].m_p);
+				if ( range2 < range1 ) {
+					borderVertex = nextBorderVertex;
+				}
+			} else {
+				// If one is to the left of the most right hole vertex, take the other one.
+				// At least one vertex is to the right (borderVertex or nextBorderVertex)
+				if ( m_nodes[nextBorderVertex][0] > m_nodes[holeVertex][0] ) {
+					borderVertex = nextBorderVertex;
+				}
 			}
 			// Triangle (holevertex, point in border, bordervertex)
 			// If points in triangle get reflex vertex with smalest angle

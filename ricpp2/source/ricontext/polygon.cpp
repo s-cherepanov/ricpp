@@ -162,28 +162,31 @@ void CPolygonContainer::joinOutline(
 	unsigned long savBorderNext = m_nodes[borderVertex].m_next;
 	m_nodes[borderVertex].m_next = holeVertex;
 
-	m_nodes[borderVertex].recalc(m_nodes, outlineCCW());
 
 	unsigned long savHolePrev = m_nodes[holeVertex].m_prev;
 	m_nodes[holeVertex].m_prev = borderVertex;
 
-	m_nodes[holeVertex].recalc(m_nodes, outlineCCW());
 	
 	m_nodes[bridgeIdx].m_index = m_nodes[holeVertex].m_index;
+	m_nodes[bridgeIdx][0] = m_nodes[holeVertex][0];
+	m_nodes[bridgeIdx][1] = m_nodes[holeVertex][1];
 	m_nodes[bridgeIdx].m_prev = savHolePrev;
 	m_nodes[bridgeIdx].m_next = bridgeIdx+1;
 	
-	m_nodes[bridgeIdx].recalc(m_nodes, outlineCCW());
-
 	m_nodes[savHolePrev].m_next = bridgeIdx; // Geometry is not changed
 	
 	m_nodes[bridgeIdx+1].m_index = m_nodes[borderVertex].m_index;
+	m_nodes[bridgeIdx+1][0] = m_nodes[borderVertex][0];
+	m_nodes[bridgeIdx+1][1] = m_nodes[borderVertex][1];
 	m_nodes[bridgeIdx+1].m_prev = bridgeIdx;
 	m_nodes[bridgeIdx+1].m_next = savBorderNext;
 	
-	m_nodes[bridgeIdx+1].recalc(m_nodes, outlineCCW());
-
 	m_nodes[savBorderNext].m_prev = bridgeIdx+1; // Geometry is not changed
+
+	m_nodes[borderVertex].recalc(m_nodes, outlineCCW());
+	m_nodes[holeVertex].recalc(m_nodes, outlineCCW());
+	m_nodes[bridgeIdx].recalc(m_nodes, outlineCCW());
+	m_nodes[bridgeIdx+1].recalc(m_nodes, outlineCCW());
 }
 
 // -----------------------------------------------------------------------------
@@ -225,7 +228,7 @@ RtFloat CPolygonContainer::visiblePointX(
 					// y of hole is between the y coordinates of the edge
 					tempx = m_nodes[sv][0] +
 							v * (m_nodes[ev][0] - m_nodes[sv][0]);
-					if ( tempx >= x && tempx <= retx) {
+					if ( tempx >= x && (retidx == 0 || tempx <= retx) ) {
 						// x coordinate of the intersection of the horizontal with the edge is on the right
 						// of the hole and is nearer to this hole vertex than (or as near as) the one previously found.
 						retx = tempx;
@@ -390,7 +393,7 @@ void CPolygonContainer::insertPolygon(
 	m_nodes.clear();
 	m_outlines.clear();
 	
-	if ( nloops < 1 || p == 0 || loops[0] < 4 )
+	if ( nloops < 1 || p == 0 || loops[0] < 3 )
 		return;
 	
 	// One node for each vertex + 2 additional for each hole,
@@ -417,10 +420,13 @@ void CPolygonContainer::insertPolygon(
 	
 	for ( i = 1; i < (unsigned long)nloops; ++i ) {
 		indexcount += 2; // bridge edges from border to hole and back to border
-		m_outlines[i] = indexcount;
-		circularLink(m_outlines[i], vertexcount, loops[i]);
-		indexcount  += loops[i];
+		m_outlines[i] = 0;
+		if ( loops[i] >= 3 ) {
+			m_outlines[i] = indexcount;
+			circularLink(m_outlines[i], vertexcount, loops[i]);
+		}
 		vertexcount += loops[i];
+		indexcount  += loops[i];
 	}
 	
 	// Find the normal of the polygon
@@ -449,12 +455,14 @@ void CPolygonContainer::insertPolygon(
 	// Extract the coordinates for both axes
 	for ( i = 0; i < (unsigned long)nloops; ++i ) {
 		idx = m_outlines[i];
-		do {
-			pidx = 3 * verts[m_nodes[idx].m_index];
-			m_nodes[idx][0] = p[pidx + majorAxis];
-			m_nodes[idx][1] = p[pidx + minorAxis];
-			idx = m_nodes[idx].m_next;
-		} while (idx != m_outlines[i]);
+		if ( idx != 0 ) {
+			do {
+				pidx = 3 * verts[m_nodes[idx].m_index];
+				m_nodes[idx][0] = p[pidx + majorAxis];
+				m_nodes[idx][1] = p[pidx + minorAxis];
+				idx = m_nodes[idx].m_next;
+			} while (idx != m_outlines[i]);
+		}
 	}
 	
 	// Join holes (inner polygons) with the border (outer polygon) and
@@ -474,32 +482,28 @@ void CPolygonContainer::insertPolygon(
 	if ( nloops > 1 ) {
 		std::vector<CPolygonNodeId> temp_outlines;
 		
-		temp_outlines.resize(nloops);
-		
-		// Inserted just to get the indices of loops and m_outlines equal
-		temp_outlines[0].m_offset = m_outlines[0];
-		temp_outlines[0].m_idx    = 0;
-		temp_outlines[0].m_nodes  = &m_nodes;
-		
 		for ( i = 1; i < (unsigned long)nloops; ++i ) {
-			// the rightmost vertex of the hole i
-			unsigned long rm = rightmostVertex(m_outlines[i]);
-			bool holeCCW = isCCW(m_outlines[i], rm);
-			if ( holeCCW == m_outlineIsCCW )
-				swapOrientation(m_outlines[i], loops[i]);
-			temp_outlines[i].m_offset = i;
-			temp_outlines[i].m_idx    = rm;
-			temp_outlines[i].m_nodes  = &m_nodes;
+			if ( m_outlines[i] != 0 ) {
+				// the rightmost vertex of the hole i
+				unsigned long rm = rightmostVertex(m_outlines[i]);
+				bool holeCCW = isCCW(m_outlines[i], rm);
+				if ( holeCCW == m_outlineIsCCW )
+					swapOrientation(m_outlines[i], loops[i]);
+				temp_outlines.push_back(CPolygonNodeId());
+				temp_outlines.back().m_offset = m_outlines[i];
+				temp_outlines.back().m_idx    = rm;
+				temp_outlines.back().m_nodes  = &m_nodes;
+			}
 		}
-		std::sort(temp_outlines.begin()++, temp_outlines.end(), greaterXPos);
+		std::sort(temp_outlines.begin(), temp_outlines.end(), greaterXPos);
 		
 		// Integrate holes into border by using a bridge edge
 		// (2 additional vertices)
 		// from the rightmost hole vertex to an appropriate border vertex
-		std::vector<CPolygonNodeId>::const_iterator holesIter = temp_outlines.begin();
-		for ( holesIter++;
-			 holesIter != temp_outlines.end();
-			 holesIter++ )
+		
+		for ( std::vector<CPolygonNodeId>::const_iterator holesIter = temp_outlines.begin();
+			  holesIter != temp_outlines.end();
+			  holesIter++ )
 		{
 			integrateHole(m_outlines[0],
 						  (*holesIter).m_idx, (*holesIter).m_offset-2);

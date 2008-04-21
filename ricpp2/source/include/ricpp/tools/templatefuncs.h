@@ -482,14 +482,23 @@ namespace RiCPP {
 		return dot2(v1, v2);
 	}
 
-	/** @brief Scalar product of two 2d vectors (1 rotated 90deg ccw for left right test)
+	/** @brief Scalar product of two 2d vectors (v2 is rotated 90deg ccw for left right test)
+	 *
+	 *  Can be interpreted as the dot product of v1 and v2 rotated 90 degrees ccw.
+	 *  It is also the determinant of the 2x2 matrix:
+	 *
+     @verbatim
+     |x1 x2|
+     |y1 y2|
+     @endverbatim
+	 *
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2 (will be rotated 90 deg ccw)
 	 *  @return Scalar product
 	 */
 	template <typename _T> inline _T dot2_90(const _T *v1, const _T *v2)
 	{
-		return v1[1]*v2[0] - v1[0]*v2[1];
+		return v1[0]*v2[1] - v2[0]*v1[1];
 	}
 
 	template <typename _T> inline _T dot2_90_norm(const _T *v1, const _T *v2)
@@ -502,20 +511,20 @@ namespace RiCPP {
 		return dot2_90(nv1, nv2);
 	}
 	
-	template <typename _T> inline _T dot2_90_pos(const _T *p1, const _T *p2, const _T *p3)
+	template <typename _T> inline _T dot2_90_pos(const _T *p_prev, const _T *p_mid, const _T *p_next)
 	{
 		_T v1[2], v2[2];
-		vectFromPos2(v1, p2, p1);
-		vectFromPos2(v2, p2, p3);
+		vectFromPos2(v1, p_mid, p_prev);
+		vectFromPos2(v2, p_mid, p_next);
 		return dot2_90(v1, v2);
 	}
 
-	template <typename _T> inline _T dot2_90_pos_norm(const _T *p1, const _T *p2, const _T *p3)
+	template <typename _T> inline _T dot2_90_pos_norm(const _T *p_prev, const _T *p_mid, const _T *p_next)
 	{
 		_T v1[2], v2[2];
-		vectFromPos2(v1, p2, p1);
+		vectFromPos2(v1, p_mid, p_prev);
 		normalize2(v1);
-		vectFromPos2(v2, p2, p3);
+		vectFromPos2(v2, p_mid, p_next);
 		normalize2(v2);
 		return dot2_90(v1, v2);
 	}
@@ -607,9 +616,9 @@ namespace RiCPP {
 	}
 
 	/** @brief A normal vector (normalized) for a plane given by three points
-	 *  @param p1 Point 1
-	 *  @param p2 Point 2
-	 *  @param p3 Point 3
+	 *  @param p1 Point 1 (previous in winding)
+	 *  @param p2 Point 2 (current)
+	 *  @param p3 Point 3 (next)
 	 *  @retval norm The normal vector as normalized cross product vect(P2, P1) x vect(P2, P3)
 	 *  @return true if normal is calculated, false otherwise
 	 */

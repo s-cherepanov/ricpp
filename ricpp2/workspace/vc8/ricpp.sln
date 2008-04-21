@@ -130,6 +130,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testribind", "testribind\te
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ribase", "ribase\ribase.vcproj", "{89896A38-BB5A-47D3-95CE-9949AF6BF898}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testpoly", "testpoly\testpoly.vcproj", "{FDDCF304-EFDF-4372-9E23-54AC19C20780}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -314,6 +316,12 @@ Global
 		{89896A38-BB5A-47D3-95CE-9949AF6BF898}.Release|Win32.Build.0 = Release|Win32
 		{89896A38-BB5A-47D3-95CE-9949AF6BF898}.Release|x64.ActiveCfg = Release|x64
 		{89896A38-BB5A-47D3-95CE-9949AF6BF898}.Release|x64.Build.0 = Release|x64
+		{FDDCF304-EFDF-4372-9E23-54AC19C20780}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FDDCF304-EFDF-4372-9E23-54AC19C20780}.Debug|Win32.Build.0 = Debug|Win32
+		{FDDCF304-EFDF-4372-9E23-54AC19C20780}.Debug|x64.ActiveCfg = Debug|Win32
+		{FDDCF304-EFDF-4372-9E23-54AC19C20780}.Release|Win32.ActiveCfg = Release|Win32
+		{FDDCF304-EFDF-4372-9E23-54AC19C20780}.Release|Win32.Build.0 = Release|Win32
+		{FDDCF304-EFDF-4372-9E23-54AC19C20780}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

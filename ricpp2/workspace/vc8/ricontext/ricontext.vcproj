@@ -396,6 +396,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\polygon.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\renderstate.h"
 				>
 			</File>

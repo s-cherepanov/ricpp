@@ -1407,6 +1407,7 @@ public:
 		if ( !getInverse(m) )
 			return false;
 		*this = m;
+		return true;
 	}
 }; // CMatrix3D
 

@@ -1120,6 +1120,7 @@ bool CMatrix3D::transformNormal(RtFloat &x, RtFloat &y, RtFloat &z)
 	tinv.transpose();
 	tinv.transformPoint(x, y, z);
 	normalize(x, y, z);
+	return true;
 }
 	
 void CMatrix3D::transformPoints(RtInt n, RtPoint p[])

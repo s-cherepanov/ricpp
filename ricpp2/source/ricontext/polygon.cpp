@@ -591,11 +591,13 @@ void CEarClipper::triangulate(
 
 	while ( !tr.empty() ) {
 		assert (tri <= triangles.size()-3);
+		if ( tri <= triangles.size()-3 )
+			break;
 
 		n = tr.maxNode(tr.root(), tn);
-		triangles[tri++] = nodes[n].prev();
-		triangles[tri++] = n;
-		triangles[tri++] = nodes[n].next();
+		triangles[tri++] = nodes[nodes[n].prev()].m_index;
+		triangles[tri++] = nodes[n].m_index;
+		triangles[tri++] = nodes[nodes[n].next()].m_index;
 		tr.remove(n, tn);
 
 		prev = nodes[n].prev();
@@ -638,6 +640,6 @@ void CEarClipper::triangulate(
 			prev = nodes[n].prev();
 		}
 	}
-	assert (tri == triangles.size());
+	// assert (tri == triangles.size());
 	triangles.resize(tri);
 }

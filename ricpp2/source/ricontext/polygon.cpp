@@ -570,7 +570,7 @@ void CEarClipper::triangulate(
 			unsigned j = offs;
 			do {
 				if ( j != prev && j != i && j != next  ) {
-					if ( point2InTriangle(nodes[j].m_p,
+					if ( nodes[j].reflex() && point2InTriangle(nodes[j].m_p,
 						                  nodes[prev].m_p,
 										  nodes[i].m_p,
 										  nodes[next].m_p) )
@@ -616,7 +616,7 @@ void CEarClipper::triangulate(
 				unsigned j = offs;
 				do {
 					if ( j != prev && j != n && j != next  ) {
-						if ( point2InTriangle(
+						if ( nodes[j].reflex() && point2InTriangle(
 								nodes[j].m_p,
 								nodes[prev].m_p,
 								nodes[n].m_p,

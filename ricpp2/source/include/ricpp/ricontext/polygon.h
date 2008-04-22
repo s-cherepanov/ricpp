@@ -222,63 +222,185 @@ public:
 
 
 // =============================================================================
-/** @brief Container for a general (but simple) polygon.
+/** @brief Container for a general (but simple, planar) polygon. As used by RMan.
  *
  *  Holes (inner polygons) will be joined with the outer polygon.
  */
 class CPolygonContainer {
+private:
+	/** @brief Node for each vertex (index) of the polygons (1 outer and 0-n inner)
+	 *
+	 *  Two nodes are added for each inner loop (bridge vertices from holes to the outer polygon),
+	 *  just in front of each hole. The indices of each node aare in consecutive order and
+	 *  will be linked circularily. The holes will be integrated (using the two additional
+	 *  nodes) with the outer polygon by calls to integrateHole().
+	 */
 	std::vector<CPolygonNode> m_nodes;
-	std::vector<unsigned long> m_outlines;
-	bool m_outlineIsCCW;
-	
+	std::vector<unsigned long> m_outlines; ///< Outlines of the outer and inner polygons, will be joined to one polygon
+	bool m_outlineIsCCW;                   ///< Indicates the sense of the polygon, true for counter clockwise
+
+	/** @brief Links the nodes of of a polygon circularily
+	 *
+	 *  Links the nodes of the vertices of a polygon in the @c m_nodes vertex.
+	 *  The nodes of one loop are from m_nodes[nodeoffs] and m_nodes[nodeoffs+nVertices].
+	 *  The original inderect vertex index is stored in each node for later reference.
+	 *
+	 *  @param nodeoffs Start of the nodes in @c m_nodes
+	 *  @param vertoffs Start of the vertices in the original vertex array of the polygon
+	 *                  used to rember the original indirect vertex indices.
+	 *  @param nVertices Number of vertices, has to be >= 3
+	 *
+	 */
 	void circularLink(unsigned long nodeoffs,
 					  unsigned long vertoffs,
 					  unsigned long nVertices);
+
+	/** Gets the node index for the rightmost (lower) vertex of a loop.
+	 *
+	 *  @param offset Start node (index for @c m_nodes).
+	 *  @return Node index (@c m_nodes) of the rightmost vertex.
+	 */
 	unsigned long rightmostVertex(unsigned long offset) const;
+
+	/** @brief Finds the winding sense of a loop for a given rightmost vertex.
+	 *
+	 *  @param offset Start node.
+	 *  @param rightmost The rightmost vertex of a node.
+	 *
+	 */
 	bool isCCW(unsigned long offset, unsigned long rightmost) const;
+
+	/** @brief Finds the winding sense of a loop.
+	 *
+	 *  @param offset Start Node (index for @c m_nodes).
+	 */
 	bool isCCW(unsigned long offset) const;
+
+	/** @brief Swaps the orientation (sense) of a loop.
+	 *
+	 *  This is called to swap the sense of an inner loop, if
+	 *  the sense is the same as the one of the outer polygon.
+	 *  The member function must be called before the hole
+	 *  are inserted.
+	 *
+	 *  @param offset Start Node (index for @c m_nodes).
+	 *  @param Number of vertices/nodes.
+	 */
 	void swapOrientation(unsigned long offset, unsigned long nvertices);
+
+	/** @brief Joins a hole with the outer polygon
+	 *
+	 *  @brief borderVertex Vertex of the outer polygon used to make the join.
+	 *  @brief holeVertex Vertex of the inner polygon (hole) used to make the join.
+	 */
 	void joinOutline(unsigned long borderVertex,
 					 unsigned long holeVertex,
 					 unsigned long bridgeIdx);
+
+	/** @brief Finds the nearest visible point to the right of a hole, lying at the outer polygon.
+	 *
+	 *  @param offset Start of the outer polygon (index for @c m_nodes).
+	 *  @param holeVertex Index of the  node of the rightmost vertex of a hole.
+	 *  @retval idxFound The index of the found node (start vertex of a segment)
+	 *                   of the outer polygon. The visible point lies either on the vertex
+	 *                   of the node or on the segment between the vertex and the next.
+	 *  @return X coordinate of the nearest visible point at the outer polygon to the right of @a holeVertex
+	 */
 	RtFloat visiblePointX(unsigned long offset,
 						  unsigned long holeVertex,
 						  unsigned long &idxFound) const;
+
+	/** @brief Finds the node of a vertex inside a triangle having the smallest absolute angle between p1-vertex and p1-p2.
+	 *  
+	 *  @return Index of a node of the found vertex or 0 (if no vertex found inside the triangle).
+	 */
 	unsigned long getVertexInTriangle(unsigned long offset,
 									  RtFloat *p1,
 									  RtFloat *p2,
 									  RtFloat *p3) const;
+
 	void integrateHole(unsigned long offset,
 					   unsigned long holeVertex,
 					   unsigned long bridgeIdx);
+
+	/** @brief Finds the normal of a planar polygon.
+	 *
+	 *  @param offs   Start node of the polygon (index for @c m_nodes).
+	 *  @param verts  Indices of the vertices for the positions in @a p.
+	 *  @param p      Positions of the vertices.
+	 *  @return false, if the polygon has no normal (is dffegenerated), true otherwise
+	 */
 	bool polygonNormal(unsigned long offs,
 					   const RtInt verts[], const RtFloat *p,
 					   RtPoint pnorm) const;
 	
 	
 public:
-	inline CPolygonContainer() {}
-	
+	/** @brief Inserts a polygon and integrates the holes to the outline.
+	 *
+	 *  Parameters are alike the ones in the RMan RiGeneralPointsPolygons
+	 *  for npoly=1, thats one general polygon (1 outline loop, none or many hole loops).
+	 *  If CPolygonContainer is used for RiGeneralPolygon, a @a verts array can
+	 *  be gerated by successive numbers.
+	 *
+	 *  @param nloops Number of loops, at least 1
+	 *  @param loops Number of vertices for each loop (at least 3 per loop)
+	 *  @param verts Indices (for @a p) of the vertices of the loop, size = sum(loops[...])
+	 *  @param p Positions of the vertices.
+	 */
 	void insertPolygon(RtInt nloops, const RtInt loops[],
 					   const RtInt verts[], const RtFloat *p);
 	
+	/** @brief Assigns a polygon container to this one.
+	 *
+	 *  @param pc The polygon container to assign.
+	 *  @return *this
+	 */
 	inline CPolygonContainer &operator=(const CPolygonContainer &pc)
 	{
+		if ( this == &pc )
+			return *this;
+
 		m_nodes = pc.m_nodes;
 		m_outlines = pc.m_outlines;
 		m_outlineIsCCW = pc.m_outlineIsCCW;
+		return *this;
 	}
 	
+	/** @brief Gets the writeable vector of the connected nodes.
+	 *
+	 *  Use outline() to get a valid index into the vector.
+	 *
+	 *  @return Writeable vector of the connected nodes.
+	 */
 	inline std::vector<CPolygonNode> &nodes()
 	{
 		return m_nodes;
 	}
 	
+	/** @brief Gets the read only vector of the connected nodes.
+	 *
+	 *  Use outline() to get a valid index into the vector.
+	 *
+	 *  @return Read only vector of the connected nodes.
+	 */
+	inline const std::vector<CPolygonNode> &nodes() const
+	{
+		return m_nodes;
+	}
+
+	/** @brief Gets the index of a node of the outline (outer polygon with integrated holes).
+	 *
+	 *  @return Index of a node of the outline returned by node().
+	 */
 	inline unsigned long outline() const
 	{
-		return m_outlines[0]; // Index of the outline (border, outer polygon)
+		return m_outlines[0];
 	}
 	
+	/** @brief Requests whether the sense of the outline of the polygon is counter clockwise.
+	 *  @brief true, sense of outline is counterclockwise, false if otherwise
+	 */
 	inline bool outlineCCW() const
 	{
 		return m_outlineIsCCW;
@@ -291,9 +413,8 @@ public:
  *
  *  Ear clipping is a triangulation strategy.
  */
-class CPolygonTriangulationStrategy {
+class IPolygonTriangulationStrategy {
 public:
-	inline CPolygonTriangulationStrategy() {}
 	/** @brief Triangulate a polygon.
 	 *
 	 *  @param pn Node container, contents can be changed
@@ -304,29 +425,43 @@ public:
 	 *                     (CPolygonNode::m_index)
 	 */
 	virtual void triangulate(std::vector<CPolygonNode> &nodes, unsigned long offs, bool isCCW, std::vector<unsigned long> &triangles) const = 0;
-}; // CPolygonTriangulationStrategy
+}; // IPolygonTriangulationStrategy
 
 
 // =============================================================================
 /** @brief Implements the ear clipping triangulation for simple polygons.
  */
-class CEarClipper : public CPolygonTriangulationStrategy {
+class CEarClipper : public IPolygonTriangulationStrategy {
 public:
 	inline virtual void triangulate(std::vector<CPolygonNode> &nodes, unsigned long offs, bool isCCW, std::vector<unsigned long> &triangles) const {}
 };
 
 
 // =============================================================================
-/** @brief Container for a triangulated polygon.
+/** @brief Container for the indirect indices of a triangulated polygon.
  */
 class CTriangulatedPolygon {
-	std::vector<unsigned long> m_triangles; ///< Vector of vertex indices, always 3 in a group.
-	const CPolygonTriangulationStrategy *m_strategy;
+	std::vector<unsigned long> m_triangles;          ///< Vector of vertex indices, always 3 in a group.
+	const IPolygonTriangulationStrategy *m_strategy; ///< Triangulation strategy to use.
 public:
-	inline CTriangulatedPolygon(const CPolygonTriangulationStrategy &triangulation)
+	/** @brief Constructor
+	 *
+	 *  @param triangulation Triangulation strategy.
+	 */
+	inline CTriangulatedPolygon(const IPolygonTriangulationStrategy &triangulation)
 	{
 		m_strategy = &triangulation;
 	}
+
+	/** @brief Triangulates a polygon.
+	 *
+	 *  @param nloops Number of loops, at least 1
+	 *  @param loops Number of vertices for each loop (at least 3 per loop)
+	 *  @param verts Indices (for @a p) of the vertices of the loop, size = sum(loops[...])
+	 *  @param p Positions of the vertices.
+	 *
+	 *  @see CPolygonContainer::insertPolygon()
+	 */
 	inline void triangulate(RtInt nloops, const RtInt loops[],
 							const RtInt verts[], const RtFloat *p)
 	{
@@ -334,6 +469,14 @@ public:
 		c.insertPolygon(nloops, loops, verts, p);
 		m_strategy->triangulate(c.nodes(), c.outline(), c.outlineCCW(), m_triangles);
 	}
+
+	/** @brief Gets the read only vector with the indirect indices.
+	 *
+	 *  The indices are indirect indices (i.e. indeces of the verts array) to handle face
+	 *  as well as normal parameters of a RMan polygon call.
+	 *
+	 *  @return Vector with the indirect indices (indices of verts, not of positions) of the triangles.
+	 */
 	inline const std::vector<unsigned long> &triangles() const
 	{
 		return m_triangles;

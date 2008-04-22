@@ -214,11 +214,11 @@ RtFloat CPolygonContainer::visiblePointX(
 			if ( fabs(m_nodes[ev][1] - m_nodes[sv][1]) < eps<RtFloat>() ) {
 				// Both points have almost the same y coordinate
 				RtFloat v = y - m_nodes[sv][1];
-				if ( fabs(v) < eps<RtFloat>() ) {
+				if ( fabs(v) < eps<RtFloat>() && x < m_nodes[ev][1] ) {
 					// Has almost on the same y coordinate as the rightmost hole vertex.
 					tempx = tmin(m_nodes[sv][0], m_nodes[ev][0]);
 					if ( tempx < x ) {
-						// One of the endpoints is ont the left of the hole.
+						// One of the endpoints is on the left of the hole.
 						tempx = x;
 					}
 					if ( tempx <= retx ) {
@@ -229,7 +229,7 @@ RtFloat CPolygonContainer::visiblePointX(
 			} else {
 				RtFloat v = (y - m_nodes[sv][1]) /
 							(m_nodes[ev][1] - m_nodes[sv][1]);
-				if ( v >= 0 && v <= 1.0 ) {
+				if ( v >= 0 && v < 1.0 ) {
 					// y of hole is between the y coordinates of the edge
 					tempx = m_nodes[sv][0] +
 							v * (m_nodes[ev][0] - m_nodes[sv][0]);

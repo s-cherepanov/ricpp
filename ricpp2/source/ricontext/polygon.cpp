@@ -30,11 +30,17 @@
  */
 
 #include "ricpp/ricontext/polygon.h"
+
+#ifndef _RICPP_TOOLS_BINTREE_H
+#include "ricpp/tools/bintree.h"
+#endif // _RICPP_TOOLS_BINTREE_H
+
 #include <algorithm>
 
 using namespace RiCPP;
 
 // =============================================================================
+// -----------------------------------------------------------------------------
 /** @brief Used to compare polygon nodes while sorting an array of nodes.
  *
  *  @param pid1 Indicates first node to compare
@@ -534,4 +540,104 @@ void CPolygonContainer::insertPolygon(
 						  (*holesIter).m_idx, (*holesIter).m_offset-2);
 		}		
 	}
+}
+
+
+// =============================================================================
+// -----------------------------------------------------------------------------
+void CEarClipper::triangulate(
+	std::vector<CPolygonNode> &nodes,
+	unsigned long offs,
+	bool isCCW,
+	std::vector<unsigned long> &triangles) const
+{
+	triangles.clear();
+	triangles.resize((nodes.size()-3) * 3); // n of triangles == n of vertices-2 (-3 because elem 0 was not used in nodes)
+
+	std::vector<TemplTreeNode<RtFloat> > tn(nodes.size());
+	TemplBinTree<RtFloat> tr;
+
+	unsigned long prev;
+	unsigned long next;
+	unsigned long i = offs;
+	RtFloat v;
+	do {
+		prev = nodes[i].prev();
+		next = nodes[i].next();
+		v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
+		tn[i].content() = v;
+		if ( !nodes[i].reflex() ) {
+			unsigned j = offs;
+			do {
+				if ( j != prev && j != i && j != next  ) {
+					if ( point2InTriangle(nodes[j].m_p,
+						                  nodes[prev].m_p,
+										  nodes[i].m_p,
+										  nodes[next].m_p) )
+					{
+						break;
+					}
+				}
+				j = nodes[j].next();
+			} while ( j != offs );
+			if ( j == offs ) {
+				tr.insert(i, tn);
+			}
+		}
+		i = next;
+	} while ( i != offs );
+
+	unsigned long tri = 0, n, m;
+
+	while ( !tr.empty() ) {
+		assert (tri <= triangles.size()-3);
+
+		n = tr.maxNode(tr.root(), tn);
+		triangles[tri++] = nodes[n].prev();
+		triangles[tri++] = n;
+		triangles[tri++] = nodes[n].next();
+		tr.remove(n, tn);
+
+		prev = nodes[n].prev();
+		next = nodes[n].next();
+		nodes[n].remove(nodes, isCCW);
+		if ( n == offs )
+			offs = next;
+		n = next;
+		next = nodes[n].next();
+
+		if ( next == prev || next == n || prev == n )
+			break;
+
+		for ( m = 0; m < 2; ++m ) {
+			v = dot2_pos_norm(nodes[prev].m_p, nodes[n].m_p, nodes[next].m_p);
+			tn[n].content() = v;
+			if ( !nodes[n].reflex() ) {
+				unsigned j = offs;
+				do {
+					if ( j != prev && j != n && j != next  ) {
+						if ( point2InTriangle(
+								nodes[j].m_p,
+								nodes[prev].m_p,
+								nodes[n].m_p,
+								nodes[next].m_p) )
+						{
+							break;
+						}
+					}
+					j = nodes[j].next();
+				} while ( j != offs );
+				if ( j == offs ) {
+					tr.insert(n, tn);
+				} else {
+					tr.remove(n, tn);
+				}
+			}
+			next = n;
+			n = prev;
+			prev = nodes[n].prev();
+		}
+	}
+	assert (tri == triangles.size());
+	triangles.resize(tri);
 }

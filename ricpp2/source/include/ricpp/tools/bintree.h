@@ -37,7 +37,7 @@
  *  the references (e.g. unsigned long if nodes are srtored within a
  *  vector). LinkType(0) indicates the NULL pointer equivalent.
  */
-template<typename PayloadType, typename LinkType>
+template<typename PayloadType, typename LinkType = unsigned long>
 class TemplTreeNode {
 
 private:
@@ -120,7 +120,11 @@ public:
  *  vector). LinkType(0) indicates the NULL pointer equivalent. NodeContainer
  *  is the container type of all nodes, e.g. a vector of TemplTreeNode
  */
-template<typename PayloadType, typename LinkType, typename NodeContainer>
+template <
+	typename PayloadType,
+	typename LinkType = unsigned long,
+	typename NodeContainer=std::vector<TemplTreeNode<PayloadType, LinkType> >
+>
 class TemplBinTree {
 
 private:
@@ -153,15 +157,28 @@ public:
 	 */
 	inline bool empty() const { return root() == LinkType(0); }
 
+	/** @brief Looks whether a node is part of the tree.
+	 *
+	 *  @param aNodeRef Reference of a node.
+	 *  @param nodeContainer Container of all nodes.
+	 */
+	inline bool isLinked(LinkType aNodeRef, NodeContainer &nodeContainer) const
+	{
+		return !empty() && (root() == aNodeRef || nodeContainer[aNodeRef].parent() != LinkType(0));
+	}
+
 	/** @brief Sorted insert of a node.
 	 *
 	 *  @param atNodeRef References node to start from.
-	 *  @param aNodeRef References node that is linked in.
+	 *  @param aNodeRef References node to linked in.
 	 *  @param nodeContainer Container of all nodes.
 	 */
 	inline void insert(LinkType atNodeRef, LinkType aNodeRef,
 							   NodeContainer &nodeContainer)
 	{
+		if ( aNodeRef == LinkType(0) || aNodeRef == LinkType(0) || isLinked(aNodeRef, nodeContainer) )
+			return;
+
 		if ( nodeContainer[aNodeRef].content() <
 			 nodeContainer[atNodeRef].content() )
 		{
@@ -190,6 +207,8 @@ public:
 	 */
 	inline void insert(LinkType aNodeRef, NodeContainer &nodeContainer)
 	{
+		if ( aNodeRef == LinkType(0) )
+			return;
 		if ( root() == LinkType(0) ) {
 			root() = aNodeRef;
 			nodeContainer[aNodeRef].parent() = LinkType(0);
@@ -269,7 +288,7 @@ public:
 	 */
 	inline void remove(LinkType aNodeRef, NodeContainer &nodeContainer)
 	{
-		if ( aNodeRef == LinkType(0) )
+		if ( aNodeRef == LinkType(0) || !isLinked(aNodeRef, nodeContainer)  )
 			return;
 
 		if ( nodeContainer[aNodeRef].left() == LinkType(0) ) {

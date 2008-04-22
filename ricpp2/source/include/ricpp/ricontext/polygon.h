@@ -234,6 +234,8 @@ private:
 	 *  just in front of each hole. The indices of each node aare in consecutive order and
 	 *  will be linked circularily. The holes will be integrated (using the two additional
 	 *  nodes) with the outer polygon by calls to integrateHole().
+	 *
+	 *  The first element (index == 0) is empty, index 0 act as NULL.
 	 */
 	std::vector<CPolygonNode> m_nodes;
 	std::vector<unsigned long> m_outlines; ///< Outlines of the outer and inner polygons, will be joined to one polygon
@@ -417,6 +419,8 @@ class IPolygonTriangulationStrategy {
 public:
 	/** @brief Triangulate a polygon.
 	 *
+	 *  The triangles have to have the same sense as the polygnal outline.
+	 *
 	 *  @param pn Node container, contents can be changed
 	 *  @param offs Offset of a circular linked list with a polygon ouline
 	 *              in @a pn
@@ -433,7 +437,11 @@ public:
  */
 class CEarClipper : public IPolygonTriangulationStrategy {
 public:
-	inline virtual void triangulate(std::vector<CPolygonNode> &nodes, unsigned long offs, bool isCCW, std::vector<unsigned long> &triangles) const {}
+	virtual void triangulate(
+		std::vector<CPolygonNode> &nodes,
+		unsigned long offs,
+		bool isCCW,
+		std::vector<unsigned long> &triangles) const;
 };
 
 

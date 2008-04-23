@@ -198,13 +198,19 @@ void test0(CTriangulatedPolygon &poly)
 
 int main(int argc, char * const argv[])
 {
+	// Initializing the triangulation
 	CEarClipper earClipper;
 	CTriangulatedPolygon poly(earClipper);
+	
+	// PostScript Header
 	std::cout << "%!PS" << std::endl;
+	
+	// Put out some polygons
 	test0(poly);
-	// test1(poly);
+	test1(poly);
 	test2(poly);
 	test3(poly);
 	test4(poly);
+	
 	return 0;
 }

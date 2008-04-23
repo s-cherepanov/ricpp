@@ -591,7 +591,7 @@ void CEarClipper::triangulate(
 
 	while ( !tr.empty() ) {
 		assert (tri <= triangles.size()-3);
-		if ( tri <= triangles.size()-3 )
+		if ( tri > triangles.size()-3 )
 			break;
 
 		n = tr.maxNode(tr.root(), tn);

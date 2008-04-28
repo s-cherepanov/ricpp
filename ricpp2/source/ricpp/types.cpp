@@ -733,8 +733,8 @@ RtFloat CQuantizer::quantize(RtFloat value) const
 	if ( !m_one )
 		return value;
 
-	value = roundtempl(m_one*value + m_ditherAmplitude*randf2templ<RtFloat>());
-	return clamptempl(value, static_cast<RtFloat>(m_min), static_cast<RtFloat>(m_max));
+	value = tround(m_one*value + m_ditherAmplitude*trand2<RtFloat>());
+	return clamp(value, static_cast<RtFloat>(m_min), static_cast<RtFloat>(m_max));
 }
 
 void CQuantizer::quantize(std::vector<RtFloat> &values) const

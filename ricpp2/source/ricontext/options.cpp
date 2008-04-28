@@ -385,8 +385,8 @@ RtVoid COptions::getScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, Rt
 		} else {
 			left = -1.0;
 			right = 1.0;
-			bot = -inversetempl(ratio);
-			top = inversetempl(ratio);
+			bot = -invert(ratio);
+			top = invert(ratio);
 		}
 	}
 }
@@ -434,25 +434,25 @@ RtVoid COptions::getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &yma
 
 	getCropWindow(xminf, xmaxf, yminf, ymaxf);
 
-	xmin = static_cast<RtInt>(clamptempl(
+	xmin = static_cast<RtInt>(clamp(
 		static_cast<RtFloat>(ceil(xres*xminf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(xres - 1)
 	));
 	
-	xmax = static_cast<RtInt>(clamptempl(
+	xmax = static_cast<RtInt>(clamp(
 		static_cast<RtFloat>(ceil(xres*xmaxf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(xres - 1)
 	));
 
-	ymin = static_cast<RtInt>(clamptempl(
+	ymin = static_cast<RtInt>(clamp(
 		static_cast<RtFloat>(ceil(yres*yminf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(yres - 1)
 	));
 	
-	ymax = static_cast<RtInt>(clamptempl(
+	ymax = static_cast<RtInt>(clamp(
 		static_cast<RtFloat>(ceil(yres*ymaxf)),
 		static_cast<RtFloat>(0),
 		static_cast<RtFloat>(yres - 1)

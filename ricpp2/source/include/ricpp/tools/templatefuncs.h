@@ -82,7 +82,7 @@ namespace RiCPP {
 		_T a,
 		_T b)
 	{
-		return a < b ? a : b;
+		return a > b ? b : a;
 	}
 
 
@@ -129,12 +129,12 @@ namespace RiCPP {
 	 *
 	 *  The bounds are exchanged if @a boundmin > @a boundmax.
 	 *
-	 *  @param val value to clamb.
+	 *  @param val value to clamp.
 	 *  @param boundmin Size of the string buffer.
 	 *  @param boundmax Number to convert
 	 *  @return The clambed value (>= @a boundmin and <= @a boundmax)
 	 */
-	template<typename type> inline type clamptempl(type val, type boundmin, type boundmax)
+	template<typename type> inline type clamp(type val, type boundmin, type boundmax)
 	{
 		if ( boundmin > boundmax ) {
 			type t = boundmin;
@@ -154,16 +154,16 @@ namespace RiCPP {
 	 *  @param val Number to invert
 	 *  @return 1 / @a val
 	 */
-	template<typename type> inline type inversetempl(type val)
+	template<typename type> inline type invert(type val)
 	{
 		return static_cast<type>(1.0)/val;
 	}
 	
-	/** @brief Rounds a number
+	/** @brief Rounds a number (in special is tround(4.5) = 5.0, tround(-4.5) = -5.0)
 	 *  @param val Number to round
 	 *  @return Rounded number
 	 */
-	template<typename type> inline type roundtempl(type val)
+	template<typename type> inline type tround(type val)
 	{
 		if ( val < 0 ) {
 			type t = ceil(val);
@@ -178,7 +178,7 @@ namespace RiCPP {
 	/** @brief Gets a random number between 0 and 1
 	 *  @return Random number
 	 */
-	template<typename type> inline type randftempl()
+	template<typename type> inline type trand()
 	{
 		return static_cast<type>(rand()) / static_cast<type>(RAND_MAX);
 	}
@@ -186,19 +186,10 @@ namespace RiCPP {
 	/** @brief Gets a random number between -1 and +1
 	 *  @return Random number
 	 */
-	template<typename type> inline type randf2templ()
+	template<typename type> inline type trand2()
 	{
 		// -1.0 ... 1.0
-		return static_cast<type>(
-								 (
-								  (
-								   static_cast<type>(rand()) /
-								   static_cast<type>(RAND_MAX)
-								   ) -
-								  static_cast<type>(0.5)
-								  ) *
-								 static_cast<type>(2.0)
-								 );
+		return (trand<type>() - static_cast<type>(0.5)) * static_cast<type>(2.0);
 	}
 	
 	/** @brief Gets the epsilon limit value
@@ -229,30 +220,67 @@ namespace RiCPP {
 	 */ 
 	template <typename type> inline type pi_4()     { return static_cast<type>(0.78539816339744830961566084581988); }
 	
+	/** @brief Gets pi divided by 180.0
+	 *  @return pi/180.0
+	 */ 
+	template <typename type> inline type pi_180()   { return static_cast<type>(3.1415926535897932384626433832795/180.0); }
+
+	/** @brief Gets 180.0 divided by pi
+	 *  @return 180.0 / pi
+	 */ 
+	template <typename type> inline type _180_pi()  { return static_cast<type>(180.0/3.1415926535897932384626433832795); }
+
 	/** @brief Convert degrees to radians
 	 *  @param degree The degree value to convert
-	 *  @return The radian value ((degree * pi) / 180.0)
+	 *  @return The radian value (degree * pi / 180.0)
 	 */
-	template <typename type> inline type deg2rad(type degree) {return static_cast<type>((degree * pi<type>()) / 180.0);}
+	template <typename type> inline type deg2rad(type degree) {return degree * pi_180<type>();}
 	
 	/** @brief Convert radians to degrees
 	 *  @param radian The radian value to convert
-	 *  @return The degree value (radian * 180.0) / pi)
+	 *  @return The degree value (radian * 180.0 / pi)
 	 */
-	template <typename type> inline type rad2deg(type radian) {return static_cast<type>((radian * 180.0) / pi<type>());}
+	template <typename type> inline type rad2deg(type radian) {return radian * _180_pi<type>();}
 	
+	template <typename type> inline bool inOpenInterval(type f, type min, type max) { return f > min && f < max; }
+	template <typename type> inline bool inClosedInterval(type f, type min, type max) { return f >= min && f <= max; }
+	template <typename type> inline bool inLeftClosedInterval(type f, type min, type max) { return f >= min && f < max; }
+	template <typename type> inline bool inRightClosedInterval(type f, type min, type max) { return f > min && f <= max; }
+
 	/** @brief Get the sign of a value
 	 *  @param f The value to test
 	 *  @return -1 if f is negative, 1 otherwise
 	 */
-	template <typename type> type inline sign(type f) { return f < 0 ? static_cast<type>(-1) : (f > 0 ? static_cast<type>(1) : static_cast<type>(0)); }
-	template <typename type> bool inline isPositive(type f) { return f >= 0; }
-	template <typename type> bool inline isNegative(type f) { return f < 0; }
+	template <typename type> inline type sign(type f) { return f < 0 ? static_cast<type>(-1) : (f > 0 ? static_cast<type>(1) : static_cast<type>(0)); }
+	template <typename type> inline bool positive(type f) { return f >= 0; }
+	template <typename type> inline bool negative(type f) { return f < 0; }
+	template <typename type> inline bool nearZero(type f) { return inOpenInterval(f, -eps<type>(), eps<type>()); }
 	
+	template <typename _T> inline bool zeroVect(_T x, _T y)
+	{
+		return nearZero(x) && nearZero(y);
+	}
+	
+	template <typename _T> inline bool zeroVect(_T x, _T y, _T z)
+	{
+		return nearZero(x) && nearZero(y) && nearZero(z);
+	}
+	
+	template <typename _T> inline bool zeroVect2(const _T *v2)
+	{
+		return zeroVect(v2[0], v2[1]);
+	}
+	
+	template <typename _T> inline bool zeroVect3(const _T *v3)
+	{
+		return zeroVect(v3[0], v3[1], v3[2]);
+	}
+	
+
 	template <typename _T> inline _T *vectFromPos2(_T *v2, const _T *from2, const _T *to2)
 	{
-		v2[0] = to2[0]-from2[0];
-		v2[1] = to2[1]-from2[1];
+		v2[0] = to2[0] - from2[0];
+		v2[1] = to2[1] - from2[1];
 		return v2;
 	}
 	
@@ -342,19 +370,19 @@ namespace RiCPP {
 		res[2] = v[2] / s;
 	}
 	
-	template <typename _T> inline _T vlen(_T x, _T y, _T z)
-	{
-		return static_cast<_T>(sqrt(x*x+y*y+z*z));
-	}
-	
 	template <typename _T> inline _T vlen(_T x, _T y)
 	{
 		return static_cast<_T>(sqrt(x*x+y*y));
 	}
 	
+	template <typename _T> inline _T vlen(_T x, _T y, _T z)
+	{
+		return static_cast<_T>(sqrt(x*x+y*y+z*z));
+	}
+	
 	template <typename _T> inline _T vlen2(const _T *p2)
 	{
-		return static_cast<_T>(sqrt(p2[0]*p2[0]+p2[1]*p2[1]));
+		return static_cast<_T>(sqrt(p2[0]*p2[0] + p2[1]*p2[1]));
 	}
 	
 	template <typename _T> inline _T vlen2(const _T *from2, const _T *to2)
@@ -374,7 +402,6 @@ namespace RiCPP {
 		return vlen2(vectFromPos3(v3, from3, to3));
 	}
 	
-	
 	/** @brief Normalize a 2D vector to size 1
 	 *  @retval norm The normalized vector (size = 2)
 	 *  @param x x component of a vector (can be a part of @a norm)
@@ -382,11 +409,14 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline void normalize(_T *norm, _T x, _T y)
 	{
-		_T length = vlen(x, y);
+		const _T length = vlen(x, y);
+		
+		/*
 		if ( length == 0 ) {
 			norm[0] = 0; norm[1] = 0;
 			return;
 		}
+		*/
 		
 		norm[0] = x/length;
 		norm[1] = y/length;
@@ -394,10 +424,14 @@ namespace RiCPP {
 	
 	template <typename _T> inline void normalize(_T &x, _T &y)
 	{
-		_T length = vlen(x, y);
+		const _T length = vlen(x, y);
+		
+		/*
 		if ( length == 0 ) {
+			x = y = 0;
 			return;
 		}
+		 */
 		
 		x /= length;
 		y /= length;
@@ -416,11 +450,14 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline void normalize(_T *norm, _T x, _T y, _T z)
 	{
-		_T length = vlen(x, y, z);
+		const _T length = vlen(x, y, z);
+		
+		/*
 		if ( length == 0 ) {
 			norm[0] = 0; norm[1] = 0; norm[2] = 0;
 			return;
 		}
+		 */
 		
 		norm[0] = x/length;
 		norm[1] = y/length;
@@ -429,10 +466,14 @@ namespace RiCPP {
 	
 	template <typename _T> inline void normalize(_T &x, _T &y, _T &z)
 	{
-		_T length = vlen(x, y, z);
+		const _T length = vlen(x, y, z);
+		
+		/*
 		if ( length == 0 ) {
+			x = y = z = 0;
 			return;
 		}
+		*/
 		
 		x /= length;
 		y /= length;
@@ -603,31 +644,28 @@ namespace RiCPP {
 		return sign(s1) == sign(s2) && sign(s2) == sign(s3);
 	}
 
-	/** @brief Normal vector (normalized) for a plane given by two vectors
+	/** @brief Normal vector (normalized) for a plane given by two 3D vectors.
 	 *  @retval norm Normal
-	 *  @param v1 Vector 1
-	 *  @param v2 Vector 2
+	 *  @param v1 3 dim vector 1
+	 *  @param v2 3 dim vector 2
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool planeNorm(_T *norm, const _T *v1, const _T *v2)
+	template <typename _T> inline bool plane(_T *norm, const _T *v1, const _T *v2)
 	{
-		norm[0] = v1[1]*v2[2] - v1[2]*v2[1];
-		norm[1] = v1[2]*v2[0] - v1[0]*v2[2];
-		norm[2] = v1[0]*v2[1] - v1[1]*v2[0];
-		
-		_T length = static_cast<_T>(sqrt(norm[0]*norm[0]+norm[1]*norm[1]+norm[2]*norm[2]));
-		if ( length == 0 ) {
-			norm[0] = 0; norm[1] = 0; norm[2] = static_cast<_T>(1);
+		vprod(norm, v1, v2);
+		if ( zeroVect3(norm) )
 			return false;
-		}
 		
-		norm[0] /= length;
-		norm[1] /= length;
-		norm[2] /= length;
-		
-		return fabs(norm[0]) > eps<_T>() || fabs(norm[1]) > eps<_T>() || fabs(norm[2]) > eps<_T>() ;
+		normalize3(norm);
+		return true;
 	}
 
+	template <typename _T> inline bool planeLH(_T *norm, const _T *v1, const _T *v2)
+	{
+		// Left handed
+		return plane(norm, v2, v1);
+	}
+	
 	/** @brief A normal vector (normalized) for a plane given by three points
 	 *  @param p1 Point 1 (previous in winding)
 	 *  @param p2 Point 2 (current)
@@ -635,12 +673,18 @@ namespace RiCPP {
 	 *  @retval norm The normal vector as normalized cross product vect(P2, P1) x vect(P2, P3)
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool planeNorm(_T *norm, const _T *p1, const _T *p2, const _T *p3)
+	template <typename _T> inline bool plane(_T *norm, const _T *p1, const _T *p2, const _T *p3)
 	{
-		_T v1[3] = {p1[0]-p2[0], p1[1]-p2[1], p1[2]-p2[2]};
-		_T v2[3] = {p3[0]-p2[0], p3[1]-p2[1], p3[2]-p2[2]};
-		
-		return planeNorm(norm, v1, v2);
+		_T v1[3], v2[2];
+		vectFromPos3(v1, p2, p1);
+		vectFromPos3(v2, p2, p3);
+		return plane(norm, v1, v2);
+	}
+
+	template <typename _T> inline bool planeLH(_T *norm, const _T *p1, const _T *p2, const _T *p3)
+	{
+		// Left handed
+		return plane(norm, p3, p2, p1);
 	}
 
 	/** @brief Linear interpolation between two values.

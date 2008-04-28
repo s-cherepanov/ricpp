@@ -492,11 +492,18 @@ namespace RiCPP {
      |y1 y2|
      @endverbatim
 	 *
+	 * being the signed area of the parallelogram spanned by v1 and v2.
+	 *
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2 (will be rotated 90 deg ccw)
 	 *  @return Scalar product
 	 */
 	template <typename _T> inline _T dot2_90(const _T *v1, const _T *v2)
+	{
+		return v1[0]*v2[1] - v2[0]*v1[1];
+	}
+
+	template <typename _T> inline _T det2(const _T *v1, const _T *v2)
 	{
 		return v1[0]*v2[1] - v2[0]*v1[1];
 	}
@@ -549,6 +556,12 @@ namespace RiCPP {
 		return dot3(nv1, nv2);
 	}
 	
+	template <typename _T> inline _T det3(const _T *v1, const _T *v2, const _T *v3)
+	{
+		return v1[0]*v2[1]*v3[2] - v1[0]*v3[1]*v2[2] - v2[0]*v1[1]*v3[2] +
+		       v2[0]*v3[1]*v1[2] + v3[0]*v1[1]*v2[2] + v3[0]*v2[1]*v1[2];
+	}
+
 	/** @brief Vector (outer, cross) product of two 3d vectors
 	 *  @retval vp Vector product
 	 *  @param v1 Vector 1

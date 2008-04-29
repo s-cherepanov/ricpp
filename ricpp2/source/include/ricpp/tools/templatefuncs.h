@@ -33,6 +33,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <limits>
+#include <algorithm>
 
 namespace RiCPP {
 
@@ -124,6 +125,12 @@ namespace RiCPP {
 		return result;
 	}
 
+	template<typename type> inline void testMinMax(type &min, type &max)
+	{
+		if ( min > max ) {
+			std::swap(min,max);
+		}
+	}
 	
 	/** @brief Clamps a value the values boundmin, boundmax.
 	 *
@@ -136,12 +143,7 @@ namespace RiCPP {
 	 */
 	template<typename type> inline type clamp(type val, type boundmin, type boundmax)
 	{
-		if ( boundmin > boundmax ) {
-			type t = boundmin;
-			boundmin = boundmax;
-			boundmax = t;
-		}
-		
+		testMinMax(boundmin, boundmax);
 		if ( val < boundmin )
 			return boundmin;
 		if ( val > boundmax )
@@ -242,10 +244,10 @@ namespace RiCPP {
 	 */
 	template <typename type> inline type rad2deg(type radian) {return radian * _180_pi<type>();}
 	
-	template <typename type> inline bool inOpenInterval(type f, type min, type max) { return f > min && f < max; }
-	template <typename type> inline bool inClosedInterval(type f, type min, type max) { return f >= min && f <= max; }
-	template <typename type> inline bool inLeftClosedInterval(type f, type min, type max) { return f >= min && f < max; }
-	template <typename type> inline bool inRightClosedInterval(type f, type min, type max) { return f > min && f <= max; }
+	template <typename type> inline bool inOpenInterval(type f, type min, type max) { testMinMax(min, max); return f > min && f < max; }
+	template <typename type> inline bool inClosedInterval(type f, type min, type max) { testMinMax(min, max); return f >= min && f <= max; }
+	template <typename type> inline bool inLeftClosedInterval(type f, type min, type max) { testMinMax(min, max); return f >= min && f < max; }
+	template <typename type> inline bool inRightClosedInterval(type f, type min, type max) { testMinMax(min, max); return f > min && f <= max; }
 
 	/** @brief Get the sign of a value
 	 *  @param f The value to test
@@ -485,6 +487,42 @@ namespace RiCPP {
 		normalize(v, v[0], v[1], v[2]);
 	}
 
+	/** @brief Determinant of a 2x2 matrix:
+	 *
+     @verbatim
+     |v1[0] v2[0]|
+     |v1[1] v2[1]|
+     @endverbatim
+	 *
+	 *  @param v1 (Column) vector 1
+	 *  @param v2 (Column) vector 2
+	 *  @return Determinant
+	 */
+	template <typename _T> inline _T det2(const _T *v1, const _T *v2)
+	{
+		return v1[0]*v2[1] - v2[0]*v1[1];
+	}
+	
+	/** @brief Determinant of a 3x3 matrix:
+	 *
+     @verbatim
+     |v1[0] v2[0] v3[0]|
+     |v1[1] v2[1] v3[1]|
+     |v1[2] v2[2] v3[2]|
+     @endverbatim
+	 *
+	 *  @param v1 (Column) vector 1
+	 *  @param v2 (Column) vector 2
+	 *  @param v3 (Column) vector 3
+	 *  @return Determinant
+	 */
+	template <typename _T> inline _T det3(const _T *v1, const _T *v2, const _T *v3)
+	{
+		return v1[0] * (v2[1]*v3[2] - v3[1]*v2[2]) +
+		       v2[0] * (v3[1]*v1[2] - v1[1]*v3[2]) +
+		       v3[0] * (v1[1]*v2[2] - v2[1]*v1[2]);
+	}
+	
 	/** @brief Scalar (inner, dot) product of two 2d vectors
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
@@ -529,8 +567,8 @@ namespace RiCPP {
 	 *  It is also the determinant of the 2x2 matrix:
 	 *
      @verbatim
-     |x1 x2|
-     |y1 y2|
+     |v1[0] v2[0]|
+     |v1[1] v2[1]|
      @endverbatim
 	 *
 	 * being the signed area of the parallelogram spanned by v1 and v2.
@@ -541,12 +579,7 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline _T dot2_90(const _T *v1, const _T *v2)
 	{
-		return v1[0]*v2[1] - v2[0]*v1[1];
-	}
-
-	template <typename _T> inline _T det2(const _T *v1, const _T *v2)
-	{
-		return v1[0]*v2[1] - v2[0]*v1[1];
+		det2(v1, v2);
 	}
 
 	template <typename _T> inline _T dot2_90_norm(const _T *v1, const _T *v2)
@@ -597,12 +630,6 @@ namespace RiCPP {
 		return dot3(nv1, nv2);
 	}
 	
-	template <typename _T> inline _T det3(const _T *v1, const _T *v2, const _T *v3)
-	{
-		return v1[0]*v2[1]*v3[2] - v1[0]*v3[1]*v2[2] - v2[0]*v1[1]*v3[2] +
-		       v2[0]*v3[1]*v1[2] + v3[0]*v1[1]*v2[2] + v3[0]*v2[1]*v1[2];
-	}
-
 	/** @brief Vector (outer, cross) product of two 3d vectors
 	 *  @retval vp Vector product
 	 *  @param v1 Vector 1

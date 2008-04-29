@@ -579,7 +579,7 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline _T dot2_90(const _T *v1, const _T *v2)
 	{
-		det2(v1, v2);
+		return det2(v1, v2);
 	}
 
 	template <typename _T> inline _T dot2_90_norm(const _T *v1, const _T *v2)

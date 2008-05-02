@@ -44,35 +44,6 @@ extern "C" {
 /* namespace RiCPP { /* */
 #endif
 
-RICPP_EXTERN(RtInt)		RiLastError;
-
-RICPP_EXTERN(RtFloat)
-    RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiTriangleFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),
-    RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth);
-
-/*
-RICPP_EXTERN(RtVoid) 
-	RiProcDelayedReadArchive (RtPointer data, RtFloat detail),
-    RiProcRunProgram (RtPointer data, RtFloat detail),
-    RiProcDynamicLoad (RtPointer data, RtFloat detail),
-	RiProcFree(RtPointer);
-
-RICPP_EXTERN(RtVoid)
-    RiErrorHandler (RtErrorHandler handler),
-    RiErrorIgnore (RtInt code, RtInt severity, char *message),
-    RiErrorPrint (RtInt code, RtInt severity, char *message),
-    RiErrorAbort (RtInt code, RtInt severity, char *message);
-*/
-
-/** @defgroup ricpp_tokens Ri tokens
- *  @brief Definition of the tokens of the RenderMan interface
- *  @warning Must be inserted into CTokenMap::CTokenMap()
- *  @see CTokenMap::CTokenMap()
- *  @{
- */
 RICPP_EXTERN(RtToken) RI_NULL; /**< Used to mark undefined tokens and end marker of parameter list. */
 
 RICPP_EXTERN(RtToken) RI_FRAMEBUFFER, /**< Framebuffer output device as @a type in @c  CRiRoot::display() */

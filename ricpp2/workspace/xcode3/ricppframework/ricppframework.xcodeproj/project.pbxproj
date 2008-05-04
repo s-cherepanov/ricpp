@@ -13,6 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				C37F252E0DCE459B00A64BDB /* PBXTargetDependency */,
 				C352E6AC0D7467BA00CDED20 /* PBXTargetDependency */,
 				C3808AFC0D3CDE1E00B6C3BA /* PBXTargetDependency */,
 				C3808AE10D3CDB5300B6C3BA /* PBXTargetDependency */,
@@ -81,6 +82,11 @@
 		C3685F490D3C23E800B2E025 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F3E0D3C237000B2E025 /* libgendynlib.a */; };
 		C3685F4D0D3C240800B2E025 /* libpluginhandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F340D3C231500B2E025 /* libpluginhandler.a */; };
 		C37A0D410D6AC5C80027CE77 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
+		C37F25170DCE42D200A64BDB /* glrendererdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37F25160DCE42D200A64BDB /* glrendererdll.cpp */; };
+		C37F25190DCE431700A64BDB /* glrenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C37F25180DCE431700A64BDB /* glrenderer.cpp */; };
+		C37F251E0DCE439500A64BDB /* glrenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C37F251A0DCE433B00A64BDB /* glrenderer.h */; };
+		C37F252A0DCE454900A64BDB /* libglrenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C37F24DE0DCE288800A64BDB /* libglrenderer.a */; };
+		C37F252B0DCE457700A64BDB /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089C80D3CB88F00B6C3BA /* libbaserenderer.a */; };
 		C38088CB0D3CA7BE00B6C3BA /* ribfilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754110C1402250089A579 /* ribfilter.cpp */; };
 		C38088CC0D3CA7BE00B6C3BA /* ribfilterlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C39754120C1402250089A579 /* ribfilterlist.cpp */; };
 		C38088CD0D3CA7CB00B6C3BA /* ribfilter.h in Headers */ = {isa = PBXBuildFile; fileRef = C39754150C14025D0089A579 /* ribfilter.h */; };
@@ -315,6 +321,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = C3808A7F0D3CBB4100B6C3BA;
 			remoteInfo = ricppbridge;
+		};
+		C37F24E10DCE28AA00A64BDB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C38089C70D3CB88F00B6C3BA;
+			remoteInfo = baserenderer;
+		};
+		C37F25280DCE452100A64BDB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C37F24DD0DCE288800A64BDB /* glrenderer */;
+			remoteInfo = glrenderer;
+		};
+		C37F252D0DCE459B00A64BDB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C37F24E60DCE28C300A64BDB /* glrendererdll */;
+			remoteInfo = glrendererdll;
 		};
 		C38088CF0D3CA7D700B6C3BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -576,6 +603,11 @@
 		C37DBBB20C01CC7F003AE4E7 /* declaration.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = declaration.cpp; path = ../../../source/declaration/declaration.cpp; sourceTree = SOURCE_ROOT; };
 		C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = decldict.cpp; path = ../../../source/declaration/decldict.cpp; sourceTree = SOURCE_ROOT; };
 		C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = inlinetools.h; path = ../../../source/include/ricpp/tools/inlinetools.h; sourceTree = SOURCE_ROOT; };
+		C37F24DE0DCE288800A64BDB /* libglrenderer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglrenderer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C37F24E70DCE28C300A64BDB /* libglrendererdll.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libglrendererdll.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C37F25160DCE42D200A64BDB /* glrendererdll.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = glrendererdll.cpp; path = ../../../source/glrendererdll/glrendererdll.cpp; sourceTree = SOURCE_ROOT; };
+		C37F25180DCE431700A64BDB /* glrenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = glrenderer.cpp; path = ../../../source/glrenderer/glrenderer.cpp; sourceTree = SOURCE_ROOT; };
+		C37F251A0DCE433B00A64BDB /* glrenderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = glrenderer.h; path = ../../../source/include/ricpp/glrenderer/glrenderer.h; sourceTree = SOURCE_ROOT; };
 		C38088C80D3CA7A600B6C3BA /* libribfilter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libribfilter.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C38089010D3CA8EA00B6C3BA /* libdeclaration.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdeclaration.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C38089440D3CAB4B00B6C3BA /* libricontext.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricontext.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -715,6 +747,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C37F24DC0DCE288800A64BDB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37F252B0DCE457700A64BDB /* libbaserenderer.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37F24E50DCE28C300A64BDB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37F252A0DCE454900A64BDB /* libglrenderer.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C38088C60D3CA7A600B6C3BA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -834,6 +882,8 @@
 				C372B8F60BD7617D009B2459 /* baserenderer */,
 				C37DBB9C0C01C2C6003AE4E7 /* declaration */,
 				C32093CF0BDCCF1900A0BB35 /* gendynlib */,
+				C37F24D00DCE27BE00A64BDB /* glrenderer */,
+				C37F24D30DCE27F300A64BDB /* glrendererdll */,
 				C39753D70C13FE830089A579 /* passthrough */,
 				C39753DA0C13FEB90089A579 /* pluginhandler */,
 				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
@@ -887,6 +937,8 @@
 				C32B8B390D74546A0059B201 /* libribase.a */,
 				C352E6930D7465B500CDED20 /* libridynload.a */,
 				C383C1020DBC88E00059B71D /* testpoly */,
+				C37F24DE0DCE288800A64BDB /* libglrenderer.a */,
+				C37F24E70DCE28C300A64BDB /* libglrendererdll.1.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1514,6 +1566,55 @@
 			name = Implementation;
 			sourceTree = SOURCE_ROOT;
 		};
+		C37F24D00DCE27BE00A64BDB /* glrenderer */ = {
+			isa = PBXGroup;
+			children = (
+				C37F24D20DCE27E400A64BDB /* Header */,
+				C37F24D10DCE27D700A64BDB /* Implementation */,
+			);
+			name = glrenderer;
+			sourceTree = "<group>";
+		};
+		C37F24D10DCE27D700A64BDB /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C37F25180DCE431700A64BDB /* glrenderer.cpp */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C37F24D20DCE27E400A64BDB /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				C37F251A0DCE433B00A64BDB /* glrenderer.h */,
+			);
+			name = Header;
+			sourceTree = "<group>";
+		};
+		C37F24D30DCE27F300A64BDB /* glrendererdll */ = {
+			isa = PBXGroup;
+			children = (
+				C37F24D50DCE280F00A64BDB /* Header */,
+				C37F24D40DCE280300A64BDB /* Implementation */,
+			);
+			name = glrendererdll;
+			sourceTree = "<group>";
+		};
+		C37F24D40DCE280300A64BDB /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C37F25160DCE42D200A64BDB /* glrendererdll.cpp */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C37F24D50DCE280F00A64BDB /* Header */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Header;
+			sourceTree = "<group>";
+		};
 		C383C0FC0DBC88AD0059B71D /* testpoly */ = {
 			isa = PBXGroup;
 			children = (
@@ -1881,6 +1982,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C37F24DA0DCE288800A64BDB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37F251E0DCE439500A64BDB /* glrenderer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37F24E30DCE28C300A64BDB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C38088C40D3CA7A600B6C3BA /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2201,6 +2317,42 @@
 			productReference = C37A0D380D6AC5880027CE77 /* ribtool */;
 			productType = "com.apple.product-type.tool";
 		};
+		C37F24DD0DCE288800A64BDB /* glrenderer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C37F24F30DCE28E400A64BDB /* Build configuration list for PBXNativeTarget "glrenderer" */;
+			buildPhases = (
+				C37F24DA0DCE288800A64BDB /* Headers */,
+				C37F24DB0DCE288800A64BDB /* Sources */,
+				C37F24DC0DCE288800A64BDB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C37F24E20DCE28AA00A64BDB /* PBXTargetDependency */,
+			);
+			name = glrenderer;
+			productName = glrenderer;
+			productReference = C37F24DE0DCE288800A64BDB /* libglrenderer.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		C37F24E60DCE28C300A64BDB /* glrendererdll */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C37F24F40DCE28E400A64BDB /* Build configuration list for PBXNativeTarget "glrendererdll" */;
+			buildPhases = (
+				C37F24E30DCE28C300A64BDB /* Headers */,
+				C37F24E40DCE28C300A64BDB /* Sources */,
+				C37F24E50DCE28C300A64BDB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C37F25290DCE452100A64BDB /* PBXTargetDependency */,
+			);
+			name = glrendererdll;
+			productName = glrendererdll;
+			productReference = C37F24E70DCE28C300A64BDB /* libglrendererdll.1.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		C38088C70D3CA7A600B6C3BA /* ribfilter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C38088F10D3CA7EC00B6C3BA /* Build configuration list for PBXNativeTarget "ribfilter" */;
@@ -2436,6 +2588,8 @@
 				C38089C70D3CB88F00B6C3BA /* baserenderer */,
 				C38089000D3CA8EA00B6C3BA /* declaration */,
 				C3685F3D0D3C237000B2E025 /* gendynlib */,
+				C37F24DD0DCE288800A64BDB /* glrenderer */,
+				C37F24E60DCE28C300A64BDB /* glrendererdll */,
 				C3808AD00D3CDAA700B6C3BA /* passthrough */,
 				C3685F330D3C231500B2E025 /* pluginhandler */,
 				C38089A10D3CB5A300B6C3BA /* rendererloader */,
@@ -2559,6 +2713,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3C9AE480D70BDE000A04717 /* ribtool.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37F24DB0DCE288800A64BDB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37F25190DCE431700A64BDB /* glrenderer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C37F24E40DCE28C300A64BDB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37F25170DCE42D200A64BDB /* glrendererdll.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2756,6 +2926,21 @@
 			isa = PBXTargetDependency;
 			target = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
 			targetProxy = C37A0D3E0D6AC5A80027CE77 /* PBXContainerItemProxy */;
+		};
+		C37F24E20DCE28AA00A64BDB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C38089C70D3CB88F00B6C3BA /* baserenderer */;
+			targetProxy = C37F24E10DCE28AA00A64BDB /* PBXContainerItemProxy */;
+		};
+		C37F25290DCE452100A64BDB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C37F24DD0DCE288800A64BDB /* glrenderer */;
+			targetProxy = C37F25280DCE452100A64BDB /* PBXContainerItemProxy */;
+		};
+		C37F252E0DCE459B00A64BDB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C37F24E60DCE28C300A64BDB /* glrendererdll */;
+			targetProxy = C37F252D0DCE459B00A64BDB /* PBXContainerItemProxy */;
 		};
 		C38088D00D3CA7D700B6C3BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3340,6 +3525,72 @@
 			};
 			name = Release;
 		};
+		C37F24DF0DCE288800A64BDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = glrenderer;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C37F24E00DCE288800A64BDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				PREBINDING = NO;
+				PRODUCT_NAME = glrenderer;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C37F24E80DCE28C300A64BDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_EXTENSION = 1.dylib;
+				EXECUTABLE_PREFIX = lib;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib;
+				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = "-lzs";
+				PREBINDING = NO;
+				PRODUCT_NAME = glrendererdll;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C37F24E90DCE28C300A64BDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_EXTENSION = 1.dylib;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/lib;
+				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = "-lzs";
+				PREBINDING = NO;
+				PRODUCT_NAME = glrendererdll;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C38088C90D3CA7A600B6C3BA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3864,6 +4115,24 @@
 			buildConfigurations = (
 				C37A0D3A0D6AC5880027CE77 /* Debug */,
 				C37A0D3B0D6AC5880027CE77 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C37F24F30DCE28E400A64BDB /* Build configuration list for PBXNativeTarget "glrenderer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C37F24DF0DCE288800A64BDB /* Debug */,
+				C37F24E00DCE288800A64BDB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C37F24F40DCE28E400A64BDB /* Build configuration list for PBXNativeTarget "glrendererdll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C37F24E80DCE28C300A64BDB /* Debug */,
+				C37F24E90DCE28C300A64BDB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

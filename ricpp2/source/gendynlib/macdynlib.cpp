@@ -34,6 +34,7 @@
 #endif // _RICPP_TOOLS_FILEPATH_H
 
 #include <dlfcn.h>
+#include <iostream>
 
 using namespace RiCPP;
 

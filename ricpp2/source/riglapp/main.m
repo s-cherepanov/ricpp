@@ -1,14 +1,1 @@
-//
-//  main.m
-//  Golden Triangle
-//
-//  Created by Andreas Pidde on 16.10.06.
-//  Copyright __MyCompanyName__ 2006. All rights reserved.
-//
-
-#import <Cocoa/Cocoa.h>
-
-int main(int argc, char *argv[])
-{
-    return NSApplicationMain(argc,  (const char **) argv);
-}
+////  main.m//#import <Cocoa/Cocoa.h>#import "ricpp/ri/ri.h"int main(int argc, char *argv[]){	const char *searchPath = ".:&";    int ret = 0;	RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);	RiBegin("glrenderer");	RiWorldBegin();	// No GL Context here	RiWorldEnd();	ret = NSApplicationMain(argc,  (const char **) argv);	RiEnd();	return ret;}

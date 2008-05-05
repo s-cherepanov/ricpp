@@ -22,7 +22,7 @@ void printPoly(const CTriangulatedPolygon &poly,
 	const std::vector<unsigned long> &triangles = poly.triangles();
 	std::vector<unsigned long>::const_iterator iter = triangles.begin();
 
-	float x, y, z;
+	RtFloat x, y, z;
 	while ( iter != triangles.end() ) {
 		x = p[verts[*iter]*3];
 		y = p[verts[*iter]*3+1];
@@ -71,7 +71,7 @@ void test4(CTriangulatedPolygon &poly)
 		 5,  5, 0  // 17
 	};
 	
-	RtInt loops[] = {
+	RtInt nverts[] = {
 		18
 	};
 
@@ -82,7 +82,7 @@ void test4(CTriangulatedPolygon &poly)
 		15, 16, 17
 	};
 	
-	poly.triangulate(sizeof(loops)/sizeof(loops[0]), loops, verts, p);
+	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p, 20);
 }
 
@@ -108,7 +108,7 @@ void test3(CTriangulatedPolygon &poly)
 		3, 3.5, 0   // 11
 	};
 	
-	RtInt loops[] = {
+	RtInt nverts[] = {
 		6,
 		3,
 		3
@@ -120,7 +120,7 @@ void test3(CTriangulatedPolygon &poly)
 		9, 10, 11,
 	};
 	
-	poly.triangulate(sizeof(loops)/sizeof(loops[0]), loops, verts, p);
+	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 
@@ -140,7 +140,7 @@ void test2(CTriangulatedPolygon &poly)
 		7, 2, 0, // 7
 	};
 	
-	RtInt loops[] = {
+	RtInt nverts[] = {
 		4, 4
 	};
 	
@@ -149,7 +149,7 @@ void test2(CTriangulatedPolygon &poly)
 		4, 5, 6, 7
 	};
 	
-	poly.triangulate(sizeof(loops)/sizeof(loops[0]), loops, verts, p);
+	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 
@@ -163,7 +163,7 @@ void test1(CTriangulatedPolygon &poly)
 		8, 1, 0  // 3
 	};
 	
-	RtInt loops[] = {
+	RtInt nverts[] = {
 		4
 	};
 	
@@ -171,7 +171,7 @@ void test1(CTriangulatedPolygon &poly)
 		3, 2, 1, 0
 	};
 	
-	poly.triangulate(sizeof(loops)/sizeof(loops[0]), loops, verts, p);
+	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 
@@ -184,7 +184,7 @@ void test0(CTriangulatedPolygon &poly)
 		8, 8, 0, // 2
 	};
 
-	RtInt loops[] = {
+	RtInt nverts[] = {
 		3
 	};
 
@@ -192,7 +192,7 @@ void test0(CTriangulatedPolygon &poly)
 		0, 1, 2
 	};
 	
-	poly.triangulate(sizeof(loops)/sizeof(loops[0]), loops, verts, p);
+	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 

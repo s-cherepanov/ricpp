@@ -36,6 +36,7 @@
 
 #include <cstdlib>
 #include <cerrno>
+#include <iostream>
 
 #include <sys/param.h>
 #include <unistd.h>

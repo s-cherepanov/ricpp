@@ -1314,26 +1314,26 @@ RtVoid CRiCPPBridge::doControl(RtToken name, const CParameterList &params)
 			if ( (*i).matches(QUALIFIER_CONTROL, RI_SEARCHPATH, RI_RENDERER) ) {
 				std::string strval;
 				if ( (*i).get(0, strval) ) {
-					varSubst(strval, '$', 0, m_standardPathRibFilter.c_str(), m_ctxMgmt.searchpath());
+					varSubst(strval, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
 					m_ctxMgmt.searchpath(strval.c_str());
 				}
 			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_SEARCHPATH, RI_RIBFILTER) ) {
 				std::string strval;
 				if ( (*i).get(0, strval) ) {
-					varSubst(strval, '$', 0, m_standardPathRenderer.c_str(), m_ribFilterList.searchpath());
+					varSubst(strval, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
 					m_ribFilterList.searchpath(strval.c_str());
 				}
 			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_STANDARDPATH, RI_RENDERER) ) {
 				std::string strval;
 				if ( (*i).get(0, strval) ) {
-					varSubst(strval, '$', 0, m_standardPathRibFilter.c_str(), m_ctxMgmt.searchpath());
-					m_standardPathRibFilter = strval.c_str();
+					varSubst(strval, '$', 0, m_standardPathRenderer.c_str(), m_ctxMgmt.searchpath());
+					m_standardPathRenderer = strval.c_str();
 				}
 			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_STANDARDPATH, RI_RIBFILTER) ) {
 				std::string strval;
 				if ( (*i).get(0, strval) ) {
-					varSubst(strval, '$', 0, m_standardPathRenderer.c_str(), m_ribFilterList.searchpath());
-					m_standardPathRenderer = strval.c_str();
+					varSubst(strval, '$', 0, m_standardPathRibFilter.c_str(), m_ribFilterList.searchpath());
+					m_standardPathRibFilter = strval.c_str();
 				}
 			}
 		}

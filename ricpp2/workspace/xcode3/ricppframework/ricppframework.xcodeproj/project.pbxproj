@@ -489,14 +489,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C37F24E60DCE28C300A64BDB /* glrendererdll */;
+			remoteGlobalIDString = C37F24E60DCE28C300A64BDB;
 			remoteInfo = glrendererdll;
 		};
 		C3CE0F390DCF56B40014BC8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C3CE0EED0DCF50520014BC8E /* riglapp */;
+			remoteGlobalIDString = C3CE0EED0DCF50520014BC8E;
 			remoteInfo = riglapp;
 		};
 /* End PBXContainerItemProxy section */
@@ -628,7 +628,7 @@
 		C37DBBB30C01CC7F003AE4E7 /* decldict.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = decldict.cpp; path = ../../../source/declaration/decldict.cpp; sourceTree = SOURCE_ROOT; };
 		C37DBBBA0C01CCC1003AE4E7 /* inlinetools.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = inlinetools.h; path = ../../../source/include/ricpp/tools/inlinetools.h; sourceTree = SOURCE_ROOT; };
 		C37F24DE0DCE288800A64BDB /* libglrenderer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglrenderer.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C37F24E70DCE28C300A64BDB /* libglrendererdll.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libglrendererdll.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libglrenderer.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C37F25160DCE42D200A64BDB /* glrendererdll.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = glrendererdll.cpp; path = ../../../source/glrendererdll/glrendererdll.cpp; sourceTree = SOURCE_ROOT; };
 		C37F25180DCE431700A64BDB /* glrenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = glrenderer.cpp; path = ../../../source/glrenderer/glrenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C37F251A0DCE433B00A64BDB /* glrenderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = glrenderer.h; path = ../../../source/include/ricpp/glrenderer/glrenderer.h; sourceTree = SOURCE_ROOT; };
@@ -985,7 +985,7 @@
 				C352E6930D7465B500CDED20 /* libridynload.a */,
 				C383C1020DBC88E00059B71D /* testpoly */,
 				C37F24DE0DCE288800A64BDB /* libglrenderer.a */,
-				C37F24E70DCE28C300A64BDB /* libglrendererdll.1.dylib */,
+				C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */,
 				C3CE0EEE0DCF50520014BC8E /* riglapp.app */,
 			);
 			name = Products;
@@ -2462,7 +2462,7 @@
 			);
 			name = glrendererdll;
 			productName = glrendererdll;
-			productReference = C37F24E70DCE28C300A64BDB /* libglrendererdll.1.dylib */;
+			productReference = C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		C38088C70D3CA7A600B6C3BA /* ribfilter */ = {
@@ -3730,7 +3730,7 @@
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
-				PRODUCT_NAME = glrendererdll;
+				PRODUCT_NAME = glrenderer;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -3748,7 +3748,7 @@
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
-				PRODUCT_NAME = glrendererdll;
+				PRODUCT_NAME = glrenderer;
 				ZERO_LINK = NO;
 			};
 			name = Release;

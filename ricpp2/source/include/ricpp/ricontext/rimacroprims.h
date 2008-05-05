@@ -34,6 +34,10 @@
 #include "ricpp/ricontext/rimacrobase.h"
 #endif // _RICPP_RICONTEXT_RIMACROBASE_H
 
+#ifndef _RICPP_RICONTEXT_POLYGON_H
+#include "ricpp/ricontext/polygon.h"
+#endif // _RICPP_RICONTEXT_POLYGON_H
+
 namespace RiCPP {
 
 	// ----------------------------------------------------------------------------
@@ -198,6 +202,7 @@ namespace RiCPP {
 	class CRiGeneralPolygon : public CVarParamRManInterfaceCall {
 	private:
 		std::vector<RtInt> m_nVerts; ///< Number of verts per outline (Number of loops is the size of m_nVerts).
+		CTriangulatedPolygon *m_triangulated; ///< Triangulated polygon
 		/** @brief enters the values.
 		 *
 		 *  @param theNLoops Number of loops
@@ -233,7 +238,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
 		inline CRiGeneralPolygon(long aLineNo=-1)
-			: TypeParent(aLineNo)
+			: m_triangulated(0), TypeParent(aLineNo)
 		{
 		}
 
@@ -271,6 +276,7 @@ namespace RiCPP {
 		 */
 		inline CRiGeneralPolygon(const CRiGeneralPolygon &c)
 		{
+			m_triangulated = 0;
 			*this = c;
 		}
 
@@ -278,6 +284,8 @@ namespace RiCPP {
 		 */
 		inline virtual ~CRiGeneralPolygon()
 		{
+			if ( m_triangulated )
+				delete m_triangulated;
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -333,6 +341,17 @@ namespace RiCPP {
 			enterValues(theNLoops, theNVerts);
 		}
 
+		/** @brief Triangulates the polygon if not already done.
+		 *  @param strategy Strategy to use
+		 *  @return Indices for triangulated polygon, 0 on error
+		 */
+		const CTriangulatedPolygon *triangulate(const IPolygonTriangulationStrategy &strategy);
+
+		/** @brief Gets triangulated polygon.
+		 *  @return Indices for triangulated polygon if triangulated, 0 otherwise
+		 */
+		inline const CTriangulatedPolygon *triangulate() const { return m_triangulated; }
+
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
 			ri.preGeneralPolygon(*this, 
@@ -376,6 +395,9 @@ namespace RiCPP {
 				return *this;
 
 			nVerts(c.nVerts());
+			if ( m_triangulated )
+				delete m_triangulated;
+			m_triangulated = 0;
 
 			TypeParent::operator=(c);
 			return *this;

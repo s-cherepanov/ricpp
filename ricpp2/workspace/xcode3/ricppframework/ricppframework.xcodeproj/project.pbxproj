@@ -13,6 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				C3CE0F3A0DCF56B40014BC8E /* PBXTargetDependency */,
 				C37F252E0DCE459B00A64BDB /* PBXTargetDependency */,
 				C352E6AC0D7467BA00CDED20 /* PBXTargetDependency */,
 				C3808AFC0D3CDE1E00B6C3BA /* PBXTargetDependency */,
@@ -202,6 +203,14 @@
 		C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */; };
 		C3C9AE440D70BD5D00A04717 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */; };
 		C3C9AE480D70BDE000A04717 /* ribtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE470D70BDE000A04717 /* ribtool.cpp */; };
+		C3CE0ED70DCF4F4E0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
+		C3CE0EF50DCF50920014BC8E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */; };
+		C3CE0EF80DCF50CF0014BC8E /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
+		C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
+		C3CE0F0C0DCF54470014BC8E /* MyOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */; };
+		C3CE0F0F0DCF54A70014BC8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0E0DCF54A70014BC8E /* main.m */; };
+		C3CE0F4C0DCF57640014BC8E /* English.lproj in Resources */ = {isa = PBXBuildFile; fileRef = C3CE0F470DCF57140014BC8E /* English.lproj */; };
+		C3CE0F4D0DCF57720014BC8E /* riglapp-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -476,6 +485,20 @@
 			remoteGlobalIDString = C383C1010DBC88E00059B71D;
 			remoteInfo = testpoly;
 		};
+		C3CE0EF60DCF50B20014BC8E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C37F24E60DCE28C300A64BDB /* glrendererdll */;
+			remoteInfo = glrendererdll;
+		};
+		C3CE0F390DCF56B40014BC8E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3CE0EED0DCF50520014BC8E /* riglapp */;
+			remoteInfo = riglapp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -504,6 +527,7 @@
 		C34D15120D695953002CF63B /* Square.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = Square.rib; path = ../../../RibSamples/Square.rib; sourceTree = SOURCE_ROOT; };
 		C34D15130D695953002CF63B /* UnitCube.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = UnitCube.rib; path = ../../../RibSamples/UnitCube.rib; sourceTree = SOURCE_ROOT; };
 		C35100210D70DD2B008AC346 /* baserenderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
+		C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		C352E6930D7465B500CDED20 /* libridynload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libridynload.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
@@ -656,6 +680,16 @@
 		C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacroclasses.h; path = ../../../source/include/ricpp/ricontext/rimacroclasses.h; sourceTree = SOURCE_ROOT; };
 		C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3C9AE470D70BDE000A04717 /* ribtool.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribtool.cpp; path = ../../../source/ribtool/ribtool.cpp; sourceTree = SOURCE_ROOT; };
+		C3CE0EEE0DCF50520014BC8E /* riglapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = riglapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "riglapp-Info.plist"; sourceTree = SOURCE_ROOT; };
+		C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyOpenGLView.m; path = ../../../source/riglapp/MyOpenGLView.m; sourceTree = SOURCE_ROOT; };
+		C3CE0F0D0DCF54890014BC8E /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyOpenGLView.h; path = ../../../source/include/ricpp/riglapp/MyOpenGLView.h; sourceTree = SOURCE_ROOT; };
+		C3CE0F0E0DCF54A70014BC8E /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../../source/riglapp/main.m; sourceTree = SOURCE_ROOT; };
+		C3CE0F240DCF55FD0014BC8E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		C3CE0F260DCF561F0014BC8E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		C3CE0F270DCF56330014BC8E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		C3CE0F470DCF57140014BC8E /* English.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = English.lproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -759,6 +793,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3CE0ED70DCF4F4E0014BC8E /* OpenGL.framework in Frameworks */,
 				C37F252A0DCE454900A64BDB /* libglrenderer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -862,6 +897,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C3CE0EEC0DCF50520014BC8E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3CE0EF80DCF50CF0014BC8E /* libriprog.1.dylib in Frameworks */,
+				C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */,
+				C3CE0EF50DCF50920014BC8E /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -869,6 +914,7 @@
 			isa = PBXGroup;
 			children = (
 				08FB7795FE84155DC02AAC07 /* Source */,
+				C3CE0EE70DCF4FF30014BC8E /* Frameworks */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				C36F02D60D57C69300554D4B /* RibFiles */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
@@ -898,6 +944,7 @@
 				C372B8D00BD760C9009B2459 /* ricpp */,
 				C3610AB60BF2F08500007CEF /* ricppbridge */,
 				C31C21E50D73F77F009D99C2 /* ridynload */,
+				C3CE0EFA0DCF50F30014BC8E /* riglapp */,
 				C31C21E60D73F788009D99C2 /* riprog */,
 				C3003D370C1D641C004C4EF0 /* streams */,
 				C3B849190BD762F900DD22B5 /* test */,
@@ -939,6 +986,7 @@
 				C383C1020DBC88E00059B71D /* testpoly */,
 				C37F24DE0DCE288800A64BDB /* libglrenderer.a */,
 				C37F24E70DCE28C300A64BDB /* libglrendererdll.1.dylib */,
+				C3CE0EEE0DCF50520014BC8E /* riglapp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1876,6 +1924,70 @@
 			name = Header;
 			sourceTree = SOURCE_ROOT;
 		};
+		C3CE0EE70DCF4FF30014BC8E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE0EE90DCF50200014BC8E /* Linked Frameworks */,
+				C3CE0EE80DCF50150014BC8E /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C3CE0EE80DCF50150014BC8E /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE0F240DCF55FD0014BC8E /* AppKit.framework */,
+				C3CE0F260DCF561F0014BC8E /* CoreData.framework */,
+				C3CE0F270DCF56330014BC8E /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		C3CE0EE90DCF50200014BC8E /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */,
+				C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		C3CE0EFA0DCF50F30014BC8E /* riglapp */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE0F3B0DCF56D40014BC8E /* Resources */,
+				C3CE0F0A0DCF54260014BC8E /* Header */,
+				C3CE0F090DCF541A0014BC8E /* Implementation */,
+			);
+			name = riglapp;
+			sourceTree = SOURCE_ROOT;
+		};
+		C3CE0F090DCF541A0014BC8E /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE0F0E0DCF54A70014BC8E /* main.m */,
+				C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */,
+			);
+			name = Implementation;
+			sourceTree = SOURCE_ROOT;
+		};
+		C3CE0F0A0DCF54260014BC8E /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE0F0D0DCF54890014BC8E /* MyOpenGLView.h */,
+			);
+			name = Header;
+			sourceTree = SOURCE_ROOT;
+		};
+		C3CE0F3B0DCF56D40014BC8E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE0F470DCF57140014BC8E /* English.lproj */,
+				C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		C6859E8C029090F304C91782 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
@@ -2572,6 +2684,24 @@
 			productReference = C383C1020DBC88E00059B71D /* testpoly */;
 			productType = "com.apple.product-type.tool";
 		};
+		C3CE0EED0DCF50520014BC8E /* riglapp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C3CE0EF30DCF50520014BC8E /* Build configuration list for PBXNativeTarget "riglapp" */;
+			buildPhases = (
+				C3CE0EEA0DCF50520014BC8E /* Resources */,
+				C3CE0EEB0DCF50520014BC8E /* Sources */,
+				C3CE0EEC0DCF50520014BC8E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C3CE0EF70DCF50B20014BC8E /* PBXTargetDependency */,
+			);
+			name = riglapp;
+			productName = riglapp;
+			productReference = C3CE0EEE0DCF50520014BC8E /* riglapp.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2610,9 +2740,22 @@
 				C3808A910D3CBC6E00B6C3BA /* test */,
 				C31C22B60D740F03009D99C2 /* testribind */,
 				C383C1010DBC88E00059B71D /* testpoly */,
+				C3CE0EED0DCF50520014BC8E /* riglapp */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C3CE0EEA0DCF50520014BC8E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3CE0F4C0DCF57640014BC8E /* English.lproj in Resources */,
+				C3CE0F4D0DCF57720014BC8E /* riglapp-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C31C22430D740489009D99C2 /* Sources */ = {
@@ -2854,6 +2997,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C3CE0EEB0DCF50520014BC8E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3CE0F0C0DCF54470014BC8E /* MyOpenGLView.m in Sources */,
+				C3CE0F0F0DCF54A70014BC8E /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -3036,6 +3188,16 @@
 			isa = PBXTargetDependency;
 			target = C383C1010DBC88E00059B71D /* testpoly */;
 			targetProxy = C383C10F0DBC89A30059B71D /* PBXContainerItemProxy */;
+		};
+		C3CE0EF70DCF50B20014BC8E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C37F24E60DCE28C300A64BDB /* glrendererdll */;
+			targetProxy = C3CE0EF60DCF50B20014BC8E /* PBXContainerItemProxy */;
+		};
+		C3CE0F3A0DCF56B40014BC8E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3CE0EED0DCF50520014BC8E /* riglapp */;
+			targetProxy = C3CE0F390DCF56B40014BC8E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4008,6 +4170,105 @@
 			};
 			name = Release;
 		};
+		C3CE0EF10DCF50520014BC8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
+				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
+				GCC_WARN_MISSING_PARENTHESES = NO;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				INFOPLIST_FILE = "riglapp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = riglapp;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C3CE0EF20DCF50520014BC8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
+				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = NO;
+				GCC_WARN_MISSING_PARENTHESES = NO;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = NO;
+				GCC_WARN_PEDANTIC = NO;
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = NO;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				INFOPLIST_FILE = "riglapp-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = riglapp;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4250,6 +4511,15 @@
 			buildConfigurations = (
 				C383C1040DBC88E10059B71D /* Debug */,
 				C383C1050DBC88E10059B71D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C3CE0EF30DCF50520014BC8E /* Build configuration list for PBXNativeTarget "riglapp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C3CE0EF10DCF50520014BC8E /* Debug */,
+				C3CE0EF20DCF50520014BC8E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

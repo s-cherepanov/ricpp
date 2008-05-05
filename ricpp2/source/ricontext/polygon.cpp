@@ -542,6 +542,17 @@ void CPolygonContainer::insertPolygon(
 	}
 }
 
+// -----------------------------------------------------------------------------
+CPolygonContainer &CPolygonContainer::operator=(const CPolygonContainer &pc)
+{
+	if ( this == &pc )
+		return *this;
+	
+	m_nodes = pc.m_nodes;
+	m_outlines = pc.m_outlines;
+	m_outlineIsCCW = pc.m_outlineIsCCW;
+	return *this;
+}
 
 // =============================================================================
 // -----------------------------------------------------------------------------
@@ -643,3 +654,24 @@ void CEarClipper::triangulate(
 	// assert (tri == triangles.size());
 	triangles.resize(tri);
 }
+
+
+// =============================================================================
+// -----------------------------------------------------------------------------
+void CTriangulatedPolygon::triangulate(RtInt nloops, const RtInt nverts[], const RtFloat *p)
+{
+	CPolygonContainer c;
+	
+	RtInt sumPoints = sum(nloops, nverts);
+	RtInt *verts = new RtInt[sumPoints];
+	if ( !nverts ) {
+		return;
+	}
+	for ( RtInt i = 0; i< sumPoints; ++i ) {
+		verts[i] = i;
+	}
+	c.insertPolygon(nloops, nverts, verts, p);
+	m_strategy->triangulate(c.nodes(), c.outline(), c.outlineCCW(), m_triangles);
+	delete[] verts;
+}
+

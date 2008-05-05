@@ -358,16 +358,7 @@ public:
 	 *  @param pc The polygon container to assign.
 	 *  @return *this
 	 */
-	inline CPolygonContainer &operator=(const CPolygonContainer &pc)
-	{
-		if ( this == &pc )
-			return *this;
-
-		m_nodes = pc.m_nodes;
-		m_outlines = pc.m_outlines;
-		m_outlineIsCCW = pc.m_outlineIsCCW;
-		return *this;
-	}
+	CPolygonContainer &operator=(const CPolygonContainer &pc);
 	
 	/** @brief Gets the writeable vector of the connected nodes.
 	 *
@@ -477,6 +468,8 @@ public:
 		c.insertPolygon(nloops, loops, verts, p);
 		m_strategy->triangulate(c.nodes(), c.outline(), c.outlineCCW(), m_triangles);
 	}
+
+	void triangulate(RtInt nloops, const RtInt nverts[], const RtFloat *p);
 
 	/** @brief Gets the read only vector with the indirect indices.
 	 *

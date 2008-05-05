@@ -188,7 +188,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNLoops, const RtInt theNVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: TypeParent(aLineNo,
+	: m_triangulated(0), TypeParent(aLineNo,
 		decl, CGeneralPolygonClasses(theNLoops, theNVerts), curColorDescr,
 		n, tokens, params)
 {
@@ -199,9 +199,32 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo,
 	RtInt theNLoops, const RtInt theNVerts[],
 	const CParameterList &theParameters)
-	: TypeParent(aLineNo, theParameters)
+	: m_triangulated(0), TypeParent(aLineNo, theParameters)
 {
 	enterValues(theNLoops, theNVerts);
+}
+
+
+const CTriangulatedPolygon *CRiGeneralPolygon::triangulate(const IPolygonTriangulationStrategy &strategy)
+{
+	if ( m_triangulated )
+		return m_triangulated;
+
+	if ( m_nVerts.size() == 0 )
+		return 0;
+
+	const CParameter *par = parameters().get(RI_P);
+	if ( !par )
+		return 0;
+
+	const std::vector<RtFloat> &f = par->floats();
+
+	// Triangulate polygon
+	m_triangulated = new CTriangulatedPolygon(strategy);
+	if ( m_triangulated )
+		m_triangulated->triangulate(m_nVerts.size(), &m_nVerts[0], &f[0]);
+	
+	return m_triangulated;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

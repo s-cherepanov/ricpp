@@ -171,7 +171,7 @@ void CPolygonContainer::joinOutline(
 	unsigned long holeVertex,
 	unsigned long bridgeIdx)
 {
-	// std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
+	std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 
 	unsigned long savBorderNext = m_nodes[borderVertex].m_next;
 	m_nodes[borderVertex].m_next = holeVertex;
@@ -182,6 +182,7 @@ void CPolygonContainer::joinOutline(
 
 	
 	m_nodes[bridgeIdx].m_index = m_nodes[holeVertex].m_index;
+	m_nodes[bridgeIdx].m_dup = holeVertex;
 	m_nodes[bridgeIdx][0] = m_nodes[holeVertex][0];
 	m_nodes[bridgeIdx][1] = m_nodes[holeVertex][1];
 	m_nodes[bridgeIdx].m_prev = savHolePrev;
@@ -190,6 +191,7 @@ void CPolygonContainer::joinOutline(
 	m_nodes[savHolePrev].m_next = bridgeIdx; // Geometry is not changed
 	
 	m_nodes[bridgeIdx+1].m_index = m_nodes[borderVertex].m_index;
+	m_nodes[bridgeIdx+1].m_dup = borderVertex;
 	m_nodes[bridgeIdx+1][0] = m_nodes[borderVertex][0];
 	m_nodes[bridgeIdx+1][1] = m_nodes[borderVertex][1];
 	m_nodes[bridgeIdx+1].m_prev = bridgeIdx;
@@ -246,7 +248,7 @@ RtFloat CPolygonContainer::visiblePointX(
 			} else {
 				RtFloat v = (y - m_nodes[sv][1]) /
 							(m_nodes[ev][1] - m_nodes[sv][1]);
-				if ( v >= 0 && v < 1.0 ) {
+				if ( v >= 0 && v <= 1.0 ) {
 					// y of hole is between the y coordinates of the edge
 					tempx = m_nodes[sv][0] +
 							v * (m_nodes[ev][0] - m_nodes[sv][0]);
@@ -310,22 +312,22 @@ void CPolygonContainer::integrateHole(
 	// Find matching vertex in border to integrate hole
 	unsigned long borderVertex = 0;
 	
-	// std::cout << "% Integrate Hole: " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
+	std::cout << "% Integrate Hole: " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 	
 	RtFloat x = visiblePointX(offset, holeVertex, borderVertex);
 	if ( borderVertex == 0 )
 		return;
 	unsigned long nextBorderVertex = m_nodes[borderVertex].m_next;
-	// std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
+	std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
 
 	
-	if ( !( fabs(m_nodes[borderVertex][0] - x) <= eps<RtFloat>() &&
+	if ( !( fabs(m_nodes[borderVertex][0] - x) < eps<RtFloat>() &&
 		    fabs(m_nodes[borderVertex][1] - m_nodes[holeVertex][1])
-			    <= eps<RtFloat>() ) )
+			    < eps<RtFloat>() ) )
 	{
-		if ( fabs(m_nodes[nextBorderVertex][0] - x) <= eps<RtFloat>() &&
+		if ( fabs(m_nodes[nextBorderVertex][0] - x) < eps<RtFloat>() &&
 			 fabs(m_nodes[nextBorderVertex][1] - m_nodes[holeVertex][1])
-			     <= eps<RtFloat>() )
+			     < eps<RtFloat>() )
 		{
 			borderVertex = nextBorderVertex;
 		} else {
@@ -582,7 +584,7 @@ void CEarClipper::triangulate(
 	bool isCCW,
 	std::vector<unsigned long> &triangles) const
 {
-	// std::cout << "% Triangulate offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
+	std::cout << "% Triangulate offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
 
 	triangles.clear();
 	triangles.resize((nodes.size()-3) * 3); // n of triangles == n of vertices-2 (-3 because elem 0 was not used in nodes)
@@ -608,12 +610,17 @@ void CEarClipper::triangulate(
 										  nodes[i].m_p,
 										  nodes[next].m_p) )
 					{
-						// std::cout << "% Point " << j << " in triangle " << prev << " " << i << " " << next << std::endl;
-						break;
+						if ( prev != nodes[j].m_dup && i != nodes[j].m_dup && next != nodes[j].m_dup ) {
+							if ( nodes[prev].m_dup != j && nodes[i].m_dup != j && nodes[next].m_dup != j ) {
+								// std::cout << "% Point " << j << " in triangle " << prev << " " << i << " " << next << std::endl;
+								break;
+							}
+						}
 					}
 				}
 				j = nodes[j].next();
 				if ( j == offs ) {
+					std::cout << "% Try i " << i << " prev " << prev << " next " << next << std::endl;
 					tr.insert(i, tn);
 				}
 			} while ( j != offs );
@@ -638,7 +645,7 @@ void CEarClipper::triangulate(
 		next = nodes[n].next();
 		nodes[n].remove(nodes, isCCW);
 		
-		// std::cout << "% Remove n " << n << " prev " << prev << " next " << next << std::endl;
+		std::cout << "% Cut n " << n << " prev " << prev << " next " << next << std::endl;
 		
 		if ( n == offs )
 			offs = next;
@@ -662,17 +669,23 @@ void CEarClipper::triangulate(
 								nodes[n].m_p,
 								nodes[next].m_p) )
 						{
-							// std::cout << "% Point " << j << " in triangle " << prev << " " << n << " " << next << std::endl;
-							break;
+							if ( prev != nodes[j].m_dup && n != nodes[j].m_dup && next != nodes[j].m_dup ) {
+								if ( nodes[prev].m_dup != j && nodes[n].m_dup != j && nodes[next].m_dup != j ) {
+									// std::cout << "% Point " << j << " in triangle " << prev << " " << n << " " << next << std::endl;
+									break;
+								}
+							}
 						}
 					}
 					j = nodes[j].next();
 					if ( j == offs ) {
+						std::cout << "% Try n " << n << " prev " << prev << " next " << next << std::endl;
 						tr.insert(n, tn);
 						removeNode = false;
 					}
 				} while ( j != offs );
 				if ( removeNode ) {
+					std::cout << "% Drop n " << n << " prev " << prev << " next " << next << std::endl;
 					tr.remove(n, tn);
 				}
 			}

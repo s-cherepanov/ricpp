@@ -60,6 +60,7 @@ public:
 	
 	// Payload
 	unsigned long m_index;   ///< Index of an array with vertex indices (double indirection for varying) and single indirection for face varying.
+	unsigned long m_dup;     ///< Duplicated index
 	RtFloat m_p[2];          ///< 2D coordinates of the vertex for some major and minor axes.
 	RtFloat m_dotp90;        ///< Dot product of the join (prev-this (join) this-next 90 degrees ccw) for being left of or being right of, and reflex calculation.
 	bool m_reflex;           ///< Join is a reflex vertex, depends on m_dotp90 and orientation of the polygon outline, @see CPolygonNode::recalc().
@@ -71,6 +72,7 @@ public:
 	inline CPolygonNode()
 	{
 		m_next = m_prev = 0;
+		m_dup = 0;
 	}
 	
 	// -------------------------------------------------------------------------
@@ -81,10 +83,16 @@ public:
 	
 	// -------------------------------------------------------------------------
 	/** @brief Gets Index of the previous node.
-	 *  @return Index of the privious node.
+	 *  @return Index of the previous node.
 	 */
 	inline unsigned long prev() const { return m_prev; }
 	
+	// -------------------------------------------------------------------------
+	/** @brief Gets Index of a duplicated node (inserted by joining holes).
+	 *  @return Index of the duplicated node.
+	 */
+	inline unsigned long dup() const { return m_dup; }
+
 	// -------------------------------------------------------------------------
 	/** @brief Recalculate dot product and reflex state of the vertex.
 	 *

@@ -249,15 +249,21 @@ namespace RiCPP {
 	template <typename type> inline bool inLeftClosedInterval(type f, type min, type max) { testMinMax(min, max); return f >= min && f < max; }
 	template <typename type> inline bool inRightClosedInterval(type f, type min, type max) { testMinMax(min, max); return f > min && f <= max; }
 
-	/** @brief Get the sign of a value
-	 *  @param f The value to test
-	 *  @return -1 if f is negative, 1 otherwise
-	 */
-	template <typename type> inline type sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
 	template <typename type> inline bool positive(type f) { return f >= 0; }
 	template <typename type> inline bool negative(type f) { return f < 0; }
 	template <typename type> inline bool nearZero(type f) { return inOpenInterval(f, -eps<type>(), eps<type>()); }
 	
+	/** @brief Get the sign of a value
+	 *  @param f The value to test
+	 *  @return -1 if f is negative, 1 if positive, 0 if zero
+	 */
+	template <typename type> inline type sign(type f)
+	{
+		return f < 0 ?
+			static_cast<type>(-1) :
+			(nearZero(f) ? static_cast<type>(0) : static_cast<type>(1));
+	}
+
 	template <typename _T> inline bool zeroVect(_T x, _T y)
 	{
 		return nearZero(x) && nearZero(y);
@@ -659,16 +665,16 @@ namespace RiCPP {
 	{
 		_T s1, s2, s3;
 		_T v[2], vp[2];
-		vectFromPos2(v, t1, t2);
-		vectFromPos2(vp, t1, p);
-		s1 = dot2_90(v, vp);
-		vectFromPos2(v, t2, t3);
-		vectFromPos2(vp, t2, p);
-		s2 = dot2_90(v, vp);
-		vectFromPos2(v, t3, t1);
-		vectFromPos2(vp, t3, p);
-		s3 = dot2_90(v, vp);
-		return sign(s1) == sign(s2) && sign(s2) == sign(s3);
+		vectFromPos2<_T>(v, t1, t2);
+		vectFromPos2<_T>(vp, t1, p);
+		s1 = dot2_90<_T>(v, vp);
+		vectFromPos2<_T>(v, t2, t3);
+		vectFromPos2<_T>(vp, t2, p);
+		s2 = dot2_90<_T>(v, vp);
+		vectFromPos2<_T>(v, t3, t1);
+		vectFromPos2<_T>(vp, t3, p);
+		s3 = dot2_90<_T>(v, vp);
+		return (sign(s1) >= 0 && sign(s2) >= 0 && sign(s3) >= 0) || (sign(s1) <= 0 && sign(s2) <= 0 && sign(s3) <= 0);
 	}
 
 	/** @brief Normal vector (normalized) for a plane given by two 3D vectors.

@@ -1137,7 +1137,7 @@ void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 				for ( i=0; i<4; ++i)
 					for ( k=0; k<4; ++k)
 						d[i] += t[k] * m_Matrix[k][i];
-				if ( nearZero(d[3]) ) {
+				if ( nearlyZero(d[3]) ) {
 					s[j]   = d[0];
 					s[j+1] = d[1];
 					s[j+2] = d[2];
@@ -1154,7 +1154,7 @@ void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 				for ( i=0; i<4; ++i)
 					for ( k=0; k<4; ++k)
 						d[i] += m_Matrix[i][k] * t[k];
-				if ( nearZero(d[3]) ) {
+				if ( nearlyZero(d[3]) ) {
 					s[j]   = d[0];
 					s[j+1] = d[1];
 					s[j+2] = d[2];

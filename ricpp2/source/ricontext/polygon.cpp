@@ -171,8 +171,12 @@ void CPolygonContainer::joinOutline(
 	unsigned long holeVertex,
 	unsigned long bridgeIdx)
 {
-	std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 
+#ifdef _DEBUG
+	std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
+#endif
+
+	
 	unsigned long savBorderNext = m_nodes[borderVertex].m_next;
 	m_nodes[borderVertex].m_next = holeVertex;
 
@@ -312,14 +316,18 @@ void CPolygonContainer::integrateHole(
 	// Find matching vertex in border to integrate hole
 	unsigned long borderVertex = 0;
 	
+#ifdef _DEBUG
 	std::cout << "% Integrate Hole: " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
+#endif
 	
 	RtFloat x = visiblePointX(offset, holeVertex, borderVertex);
 	if ( borderVertex == 0 )
 		return;
 	unsigned long nextBorderVertex = m_nodes[borderVertex].m_next;
-	std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
 
+#ifdef _DEBUG
+	std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
+#endif
 	
 	if ( !( fabs(m_nodes[borderVertex][0] - x) < eps<RtFloat>() &&
 		    fabs(m_nodes[borderVertex][1] - m_nodes[holeVertex][1])
@@ -584,7 +592,9 @@ void CEarClipper::triangulate(
 	bool isCCW,
 	std::vector<unsigned long> &triangles) const
 {
+#ifdef _DEBUG
 	std::cout << "% Triangulate offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
+#endif
 
 	triangles.clear();
 	triangles.resize((nodes.size()-3) * 3); // n of triangles == n of vertices-2 (-3 because elem 0 was not used in nodes)
@@ -601,12 +611,17 @@ void CEarClipper::triangulate(
 		next = nodes[i].next();
 		v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
 		tn[i].content() = v;
-		if ( !nodes[i].reflex() ) {
+		if ( degenSideTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
+#ifdef _DEBUG
+			std::cout << "% Try (degenerated side) i " << i << " prev " << prev << " next " << next << std::endl;
+#endif
+			tr.insert(i, tn);
+		} else if ( !nodes[i].reflex() ) {
 			unsigned j = offs;
 			do {
 				if ( j != prev && j != i && j != next  ) {
 					if ( nodes[j].reflex() && point2InTriangle(nodes[j].m_p,
-						                  nodes[prev].m_p,
+										  nodes[prev].m_p,
 										  nodes[i].m_p,
 										  nodes[next].m_p) )
 					{
@@ -620,7 +635,9 @@ void CEarClipper::triangulate(
 				}
 				j = nodes[j].next();
 				if ( j == offs ) {
+#ifdef _DEBUG
 					std::cout << "% Try i " << i << " prev " << prev << " next " << next << std::endl;
+#endif
 					tr.insert(i, tn);
 				}
 			} while ( j != offs );
@@ -628,50 +645,64 @@ void CEarClipper::triangulate(
 		i = next;
 	} while ( i != offs );
 
-	unsigned long tri = 0, n, m;
+	unsigned long tri = 0, m;
 
 	while ( !tr.empty() ) {
 		assert (tri <= triangles.size()-3);
 		if ( tri > triangles.size()-3 )
 			break;
 
-		n = tr.maxNode(tr.root(), tn);
-		triangles[tri++] = nodes[nodes[n].prev()].m_index;
-		triangles[tri++] = nodes[n].m_index;
-		triangles[tri++] = nodes[nodes[n].next()].m_index;
-		tr.remove(n, tn);
+		i = tr.maxNode(tr.root(), tn);
+		prev = nodes[i].prev();
+		next = nodes[i].next();
 
-		prev = nodes[n].prev();
-		next = nodes[n].next();
-		nodes[n].remove(nodes, isCCW);
+		if ( !degenTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
+#ifdef _DEBUG
+			std::cout << "% Cut i " << i << " prev " << prev << " next " << next << std::endl;
+#endif
+			triangles[tri++] = nodes[prev].m_index;
+			triangles[tri++] = nodes[i].m_index;
+			triangles[tri++] = nodes[next].m_index;
+		}
+#ifdef _DEBUG
+		else {
+			std::cout << "% Cull (det==0) i " << i << " prev " << prev << " next " << next << std::endl;
+		}
+#endif
 		
-		std::cout << "% Cut n " << n << " prev " << prev << " next " << next << std::endl;
+		tr.remove(i, tn);
+		nodes[i].remove(nodes, isCCW);
 		
-		if ( n == offs )
+		if ( i == offs )
 			offs = next;
-		n = next;
-		next = nodes[n].next();
+		i = next;
+		next = nodes[i].next();
 
-		if ( next == prev || next == n || prev == n )
+		if ( next == prev || next == i || prev == i )
 			break;
 
 		for ( m = 0; m < 2; ++m ) {
-			v = dot2_pos_norm(nodes[prev].m_p, nodes[n].m_p, nodes[next].m_p);
-			tn[n].content() = v;
-			if ( !nodes[n].reflex() ) {
+			v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
+			tn[i].content() = v;
+			if ( degenSideTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
+#ifdef _DEBUG
+				std::cout << "% Try (degenerated side) i " << i << " prev " << prev << " next " << next << std::endl;
+#endif
+				tr.insert(i, tn);
+			} else if ( !nodes[i].reflex() ) {
 				unsigned j = offs;
 				bool removeNode = true;
 				do {
-					if ( j != prev && j != n && j != next  ) {
+					if ( j != prev && j != i && j != next  ) {
 						if ( nodes[j].reflex() && point2InTriangle(
 								nodes[j].m_p,
 								nodes[prev].m_p,
-								nodes[n].m_p,
+								nodes[i].m_p,
 								nodes[next].m_p) )
 						{
-							if ( prev != nodes[j].m_dup && n != nodes[j].m_dup && next != nodes[j].m_dup ) {
-								if ( nodes[prev].m_dup != j && nodes[n].m_dup != j && nodes[next].m_dup != j ) {
-									// std::cout << "% Point " << j << " in triangle " << prev << " " << n << " " << next << std::endl;
+							if ( prev != nodes[j].m_dup && i != nodes[j].m_dup && next != nodes[j].m_dup ) {
+								if ( nodes[prev].m_dup != j && nodes[i].m_dup != j && nodes[next].m_dup != j ) {
+									// std::cout << "% Point " << j << " in triangle " << prev << " " << i << " " << next << std::endl;
 									break;
 								}
 							}
@@ -679,19 +710,23 @@ void CEarClipper::triangulate(
 					}
 					j = nodes[j].next();
 					if ( j == offs ) {
-						std::cout << "% Try n " << n << " prev " << prev << " next " << next << std::endl;
-						tr.insert(n, tn);
+#ifdef _DEBUG
+						std::cout << "% Try i " << i << " prev " << prev << " next " << next << std::endl;
+#endif
+						tr.insert(i, tn);
 						removeNode = false;
 					}
 				} while ( j != offs );
 				if ( removeNode ) {
-					std::cout << "% Drop n " << n << " prev " << prev << " next " << next << std::endl;
-					tr.remove(n, tn);
+#ifdef _DEBUG
+					std::cout << "% Drop i " << i << " prev " << prev << " next " << next << std::endl;
+#endif
+					tr.remove(i, tn);
 				}
 			}
-			next = n;
-			n = prev;
-			prev = nodes[n].prev();
+			next = i;
+			i = prev;
+			prev = nodes[i].prev();
 		}
 	}
 	// assert (tri == triangles.size());

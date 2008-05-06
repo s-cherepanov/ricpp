@@ -251,7 +251,7 @@ namespace RiCPP {
 
 	template <typename type> inline bool positive(type f) { return f >= 0; }
 	template <typename type> inline bool negative(type f) { return f < 0; }
-	template <typename type> inline bool nearZero(type f) { return inOpenInterval(f, -eps<type>(), eps<type>()); }
+	template <typename type> inline bool nearlyZero(type f) { return inOpenInterval(f, -eps<type>(), eps<type>()); }
 	
 	/** @brief Get the sign of a value
 	 *  @param f The value to test
@@ -261,17 +261,17 @@ namespace RiCPP {
 	{
 		return f < 0 ?
 			static_cast<type>(-1) :
-			(nearZero(f) ? static_cast<type>(0) : static_cast<type>(1));
+			(nearlyZero(f) ? static_cast<type>(0) : static_cast<type>(1));
 	}
 
 	template <typename _T> inline bool zeroVect(_T x, _T y)
 	{
-		return nearZero(x) && nearZero(y);
+		return nearlyZero(x) && nearlyZero(y);
 	}
 	
 	template <typename _T> inline bool zeroVect(_T x, _T y, _T z)
 	{
-		return nearZero(x) && nearZero(y) && nearZero(z);
+		return nearlyZero(x) && nearlyZero(y) && nearlyZero(z);
 	}
 	
 	template <typename _T> inline bool zeroVect2(const _T *v2)
@@ -284,6 +284,16 @@ namespace RiCPP {
 		return zeroVect(v3[0], v3[1], v3[2]);
 	}
 	
+
+	template <typename _T> inline bool eqVect2(const _T *v1, const _T *v2)
+	{
+		return nearlyZero(v2[0]-v1[0]) && nearlyZero(v2[1]-v1[1]);
+	}
+
+	template <typename _T> inline bool eqVect3(const _T *v1, const _T *v2)
+	{
+		return nearlyZero(v2[0]-v1[0]) && nearlyZero(v2[1]-v1[1]) && nearlyZero(v2[2]-v1[2]);
+	}
 
 	template <typename _T> inline _T *vectFromPos2(_T *v2, const _T *from2, const _T *to2)
 	{
@@ -675,6 +685,24 @@ namespace RiCPP {
 		vectFromPos2<_T>(vp, t3, p);
 		s3 = dot2_90<_T>(v, vp);
 		return (sign(s1) >= 0 && sign(s2) >= 0 && sign(s3) >= 0) || (sign(s1) <= 0 && sign(s2) <= 0 && sign(s3) <= 0);
+	}
+
+	template <typename _T> inline bool singularTriangle2(const _T *t1, const _T *t2, const _T *t3)
+	{
+		return eqVect2(t1,t2) && eqVect2(t2,t3);
+		
+	}
+	
+	template <typename _T> inline bool degenSideTriangle2(const _T *t1, const _T *t2, const _T *t3)
+	{
+		return eqVect2(t1,t2) || eqVect2(t2,t3) || eqVect2(t1,t3);
+		
+	}
+
+	template <typename _T> inline bool degenTriangle2(const _T *t1, const _T *t2, const _T *t3)
+	{
+		return nearlyZero(dot2_90_pos(t1, t2, t3));
+		
 	}
 
 	/** @brief Normal vector (normalized) for a plane given by two 3D vectors.

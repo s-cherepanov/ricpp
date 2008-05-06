@@ -36,6 +36,7 @@
 #endif // _RICPP_TOOLS_BINTREE_H
 
 #include <algorithm>
+#include <iostream>
 
 using namespace RiCPP;
 
@@ -137,7 +138,7 @@ bool CPolygonContainer::isCCW(
 		vectFromPos2(vend, m_nodes[rightmost].m_p, m_nodes[endpoint].m_p);
 		dotprod = dot2_90(vstart, vend);
 		if ( fabs(dotprod) > eps<RtFloat>() ) {
-			return sign(dotprod) < 0; // < 0 ccw, > 0 cw
+			return sign(dotprod) > 0; // > 0 ccw, < 0 cw
 		}
 	}
 	
@@ -170,6 +171,8 @@ void CPolygonContainer::joinOutline(
 	unsigned long holeVertex,
 	unsigned long bridgeIdx)
 {
+	// std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
+
 	unsigned long savBorderNext = m_nodes[borderVertex].m_next;
 	m_nodes[borderVertex].m_next = holeVertex;
 
@@ -194,10 +197,18 @@ void CPolygonContainer::joinOutline(
 	
 	m_nodes[savBorderNext].m_prev = bridgeIdx+1; // Geometry is not changed
 
+	// std::cout << "% savHolePrev reflex : " << (m_nodes[savHolePrev].reflex() ? "true" : "false") << std::endl;
+	// std::cout << "% savBorderNext reflex : " << (m_nodes[savBorderNext].reflex() ? "true" : "false") << std::endl;
+
+	
 	m_nodes[borderVertex].recalc(m_nodes, outlineCCW());
+	// std::cout << "% borderVertex reflex : " << (m_nodes[borderVertex].reflex() ? "true" : "false") << std::endl;
 	m_nodes[holeVertex].recalc(m_nodes, outlineCCW());
+	// std::cout << "% holeVertex reflex : " << (m_nodes[holeVertex].reflex() ? "true" : "false") << std::endl;
 	m_nodes[bridgeIdx].recalc(m_nodes, outlineCCW());
+	// std::cout << "% bridgeIdx reflex : " << (m_nodes[bridgeIdx].reflex() ? "true" : "false") << std::endl;
 	m_nodes[bridgeIdx+1].recalc(m_nodes, outlineCCW());
+	// std::cout << "% bridgeIdx+1 reflex : " << (m_nodes[bridgeIdx+1].reflex() ? "true" : "false") << std::endl;
 }
 
 // -----------------------------------------------------------------------------
@@ -299,11 +310,15 @@ void CPolygonContainer::integrateHole(
 	// Find matching vertex in border to integrate hole
 	unsigned long borderVertex = 0;
 	
+	// std::cout << "% Integrate Hole: " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
+	
 	RtFloat x = visiblePointX(offset, holeVertex, borderVertex);
 	if ( borderVertex == 0 )
 		return;
 	unsigned long nextBorderVertex = m_nodes[borderVertex].m_next;
+	// std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
 
+	
 	if ( !( fabs(m_nodes[borderVertex][0] - x) <= eps<RtFloat>() &&
 		    fabs(m_nodes[borderVertex][1] - m_nodes[holeVertex][1])
 			    <= eps<RtFloat>() ) )
@@ -498,6 +513,8 @@ void CPolygonContainer::insertPolygon(
 	// Orientation of the outer polygon
 	m_outlineIsCCW = isCCW(m_outlines[0]);
 	
+	// std::cout << "% Outer is " << (m_outlineIsCCW ? "CCW" : "CW") << std::endl;
+	
 	idx = m_outlines[0];
 	do {
 		m_nodes[idx].recalc(m_nodes, m_outlineIsCCW);
@@ -512,8 +529,11 @@ void CPolygonContainer::insertPolygon(
 				// the rightmost vertex of the hole i
 				unsigned long rm = rightmostVertex(m_outlines[i]);
 				bool holeCCW = isCCW(m_outlines[i], rm);
+				// std::cout << "% Hole " << i << " is " << (holeCCW ? "CCW" : "CW") << std::endl;
 				if ( holeCCW == m_outlineIsCCW ) {
+					// std::cout << "% Swap orientation for Hole " << i << std::endl;
 					swapOrientation(m_outlines[i], loops[i]);
+					holeCCW = !holeCCW;
 				}
 				temp_outlines.push_back(CPolygonNodeId());
 				temp_outlines.back().m_offset = m_outlines[i];
@@ -562,6 +582,8 @@ void CEarClipper::triangulate(
 	bool isCCW,
 	std::vector<unsigned long> &triangles) const
 {
+	// std::cout << "% Triangulate offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
+
 	triangles.clear();
 	triangles.resize((nodes.size()-3) * 3); // n of triangles == n of vertices-2 (-3 because elem 0 was not used in nodes)
 
@@ -586,14 +608,15 @@ void CEarClipper::triangulate(
 										  nodes[i].m_p,
 										  nodes[next].m_p) )
 					{
+						// std::cout << "% Point " << j << " in triangle " << prev << " " << i << " " << next << std::endl;
 						break;
 					}
 				}
 				j = nodes[j].next();
+				if ( j == offs ) {
+					tr.insert(i, tn);
+				}
 			} while ( j != offs );
-			if ( j == offs ) {
-				tr.insert(i, tn);
-			}
 		}
 		i = next;
 	} while ( i != offs );
@@ -614,6 +637,9 @@ void CEarClipper::triangulate(
 		prev = nodes[n].prev();
 		next = nodes[n].next();
 		nodes[n].remove(nodes, isCCW);
+		
+		// std::cout << "% Remove n " << n << " prev " << prev << " next " << next << std::endl;
+		
 		if ( n == offs )
 			offs = next;
 		n = next;
@@ -627,6 +653,7 @@ void CEarClipper::triangulate(
 			tn[n].content() = v;
 			if ( !nodes[n].reflex() ) {
 				unsigned j = offs;
+				bool removeNode = true;
 				do {
 					if ( j != prev && j != n && j != next  ) {
 						if ( nodes[j].reflex() && point2InTriangle(
@@ -635,14 +662,17 @@ void CEarClipper::triangulate(
 								nodes[n].m_p,
 								nodes[next].m_p) )
 						{
+							// std::cout << "% Point " << j << " in triangle " << prev << " " << n << " " << next << std::endl;
 							break;
 						}
 					}
 					j = nodes[j].next();
+					if ( j == offs ) {
+						tr.insert(n, tn);
+						removeNode = false;
+					}
 				} while ( j != offs );
-				if ( j == offs ) {
-					tr.insert(n, tn);
-				} else {
+				if ( removeNode ) {
 					tr.remove(n, tn);
 				}
 			}

@@ -97,9 +97,9 @@ public:
 		RtFloat dotp = dot2_90_pos(nodes[m_prev].m_p, m_p, nodes[m_next].m_p);
 		m_dotp90 = dotp;
 		if ( isCCW ) {
-			m_reflex = sign(dotp) <= 0.0;
-		} else {
 			m_reflex = sign(dotp) >= 0.0;
+		} else {
+			m_reflex = sign(dotp) <= 0.0;
 		}
 	}
 	

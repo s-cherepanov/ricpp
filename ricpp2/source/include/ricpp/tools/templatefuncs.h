@@ -253,7 +253,7 @@ namespace RiCPP {
 	 *  @param f The value to test
 	 *  @return -1 if f is negative, 1 otherwise
 	 */
-	template <typename type> inline type sign(type f) { return f < 0 ? static_cast<type>(-1) : (f > 0 ? static_cast<type>(1) : static_cast<type>(0)); }
+	template <typename type> inline type sign(type f) { return f < 0 ? static_cast<type>(-1) : static_cast<type>(1); }
 	template <typename type> inline bool positive(type f) { return f >= 0; }
 	template <typename type> inline bool negative(type f) { return f < 0; }
 	template <typename type> inline bool nearZero(type f) { return inOpenInterval(f, -eps<type>(), eps<type>()); }

@@ -113,15 +113,14 @@ bool CPolygonContainer::isCCW(
 	unsigned long rightmost) const
 {
 	unsigned long startpoint, endpoint;
-	RtFloat vstart[2], vend[2], dotprod;
+	RtFloat vstart[2], vend[2], det;
 
+	// Look a previous segment with a length
 	for ( startpoint = m_nodes[rightmost].m_prev;
 		  startpoint != rightmost;
 		  startpoint = m_nodes[startpoint].m_prev )
 	{
-		if ( fabs(vlen2(m_nodes[startpoint].m_p, m_nodes[rightmost].m_p))
-			 > eps<RtFloat>() )
-		{
+		if ( !nearlyZero(vlen2(m_nodes[startpoint].m_p, m_nodes[rightmost].m_p)) ) {
 			break;
 		}
 	}
@@ -129,6 +128,8 @@ bool CPolygonContainer::isCCW(
 	// There are no degenerate polygons here (already tested)
 	assert ( startpoint != rightmost );
 
+	// If the next vertex is to the left of the segment, the polygons orientation is ccw
+	
 	vectFromPos2(vstart, m_nodes[startpoint].m_p, m_nodes[rightmost].m_p);
 	
 	for ( endpoint = m_nodes[rightmost].m_next;
@@ -136,9 +137,10 @@ bool CPolygonContainer::isCCW(
 		  endpoint = m_nodes[endpoint].m_next )
 	{
 		vectFromPos2(vend, m_nodes[rightmost].m_p, m_nodes[endpoint].m_p);
-		dotprod = dot2_90(vstart, vend);
-		if ( fabs(dotprod) > eps<RtFloat>() ) {
-			return sign(dotprod) > 0; // > 0 ccw, < 0 cw
+		det = det2(vstart, vend);
+		RtFloat s = sign(det);
+		if ( s != 0 ) {
+			return s > 0; // > 0 ccw, < 0 cw
 		}
 	}
 	
@@ -158,6 +160,7 @@ bool CPolygonContainer::isCCW(unsigned long offset) const
 void CPolygonContainer::swapOrientation(
 	unsigned long offset, unsigned long nvertices)
 {
+	// Swap the links only, determinant and reflex state are not set by now - they will be calculated later
 	unsigned long end = offset + nvertices;
 	while ( offset != end ) {
 		std::swap(m_nodes[offset].m_next, m_nodes[offset].m_prev);
@@ -171,20 +174,18 @@ void CPolygonContainer::joinOutline(
 	unsigned long holeVertex,
 	unsigned long bridgeIdx)
 {
-
 #ifdef _DEBUG
 	std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 #endif
 
-	
+	// Link the boundary vertex with the hole vertex
 	unsigned long savBorderNext = m_nodes[borderVertex].m_next;
 	m_nodes[borderVertex].m_next = holeVertex;
 
-
 	unsigned long savHolePrev = m_nodes[holeVertex].m_prev;
 	m_nodes[holeVertex].m_prev = borderVertex;
-
 	
+	// Link the first bridge vertex on the hole with the second bridge vertex on the boundary
 	m_nodes[bridgeIdx].m_index = m_nodes[holeVertex].m_index;
 	m_nodes[bridgeIdx].m_dup = holeVertex;
 	m_nodes[bridgeIdx][0] = m_nodes[holeVertex][0];
@@ -194,6 +195,7 @@ void CPolygonContainer::joinOutline(
 	
 	m_nodes[savHolePrev].m_next = bridgeIdx; // Geometry is not changed
 	
+	// Link the second bridge vertex on the boundary with the first bridge edge on the hole
 	m_nodes[bridgeIdx+1].m_index = m_nodes[borderVertex].m_index;
 	m_nodes[bridgeIdx+1].m_dup = borderVertex;
 	m_nodes[bridgeIdx+1][0] = m_nodes[borderVertex][0];
@@ -203,18 +205,11 @@ void CPolygonContainer::joinOutline(
 	
 	m_nodes[savBorderNext].m_prev = bridgeIdx+1; // Geometry is not changed
 
-	// std::cout << "% savHolePrev reflex : " << (m_nodes[savHolePrev].reflex() ? "true" : "false") << std::endl;
-	// std::cout << "% savBorderNext reflex : " << (m_nodes[savBorderNext].reflex() ? "true" : "false") << std::endl;
-
-	
+	// Recalcuate the values (determinant, reflex state) of the adjacent vertices of the bridge edges
 	m_nodes[borderVertex].recalc(m_nodes, outlineCCW());
-	// std::cout << "% borderVertex reflex : " << (m_nodes[borderVertex].reflex() ? "true" : "false") << std::endl;
 	m_nodes[holeVertex].recalc(m_nodes, outlineCCW());
-	// std::cout << "% holeVertex reflex : " << (m_nodes[holeVertex].reflex() ? "true" : "false") << std::endl;
 	m_nodes[bridgeIdx].recalc(m_nodes, outlineCCW());
-	// std::cout << "% bridgeIdx reflex : " << (m_nodes[bridgeIdx].reflex() ? "true" : "false") << std::endl;
 	m_nodes[bridgeIdx+1].recalc(m_nodes, outlineCCW());
-	// std::cout << "% bridgeIdx+1 reflex : " << (m_nodes[bridgeIdx+1].reflex() ? "true" : "false") << std::endl;
 }
 
 // -----------------------------------------------------------------------------
@@ -223,48 +218,56 @@ RtFloat CPolygonContainer::visiblePointX(
 	unsigned long holeVertex,
 	unsigned long &idxFound) const
 {
-	RtFloat x = m_nodes[holeVertex][0];
-	RtFloat y = m_nodes[holeVertex][1];
-	unsigned long retidx = 0;
-	RtFloat retx = m_nodes[offset][0];
+	RtFloat x = m_nodes[holeVertex][0];    // x coordinate of the rightmost (and uppermost) vertex of the hole
+	RtFloat y = m_nodes[holeVertex][1];    // y coordinate
 
-	unsigned long sv = offset;
-	unsigned long ev = m_nodes[sv].m_next;
+	unsigned long retidx = 0;              // Start vertex of the segment having the nearest visible point to the right of the hole (0: undefined)
+	RtFloat retx = m_nodes[offset][0];     // x coordinate of the visible point
+
+	unsigned long sv = offset;             // Start vertex of the current segment to iterate
+	unsigned long ev = m_nodes[sv].m_next; // End Vertex
+
+	// Iterate the segments of the boundary
 	do {
+		
 		if ( (m_nodes[sv][0] >= x || m_nodes[ev][0] >= x) ) {
-			// End point or start point out right from rightmost hole vertex.
-			RtFloat tempx;
-			if ( fabs(m_nodes[ev][1] - m_nodes[sv][1]) < eps<RtFloat>() ) {
-				// Both points have almost the same y coordinate
-				RtFloat v = y - m_nodes[sv][1];
-				if ( fabs(v) < eps<RtFloat>() && x < m_nodes[ev][1] ) {
-					// Has almost on the same y coordinate as the rightmost hole vertex.
-					tempx = tmin(m_nodes[sv][0], m_nodes[ev][0]);
+			// At least one of the end point or start point of the segment is on the right of the rightmost hole vertex.
+			if ( nearlyZero(m_nodes[ev][1] - m_nodes[sv][1]) ) {
+				// Both points have almost the same y coordinate (horizontal segment)
+				RtFloat v = y - m_nodes[sv][1]; // y distance of hole vertex
+				if ( nearlyZero(v) ) {
+					// Segment has almost on the same y coordinate as the rightmost hole vertex.
+					RtFloat tempx = tmin(m_nodes[sv][0], m_nodes[ev][0]);
+					
 					if ( tempx < x ) {
-						// One of the endpoints is on the left of the hole.
+						// One of the endpoints is on the left of the hole, use the x coordinate of the hole vertex as nearest visible point
 						tempx = x;
-					}
-					if ( tempx <= retx ) {
+					} // else both segment vertices on the right side of the hole
+					
+					if ( retidx == 0 || tempx <= retx ) {
+						// Take x coordinate and start vertex index as result, if it is nearer as the one found before
 						retx = tempx;
 						retidx = sv;
 					}
 				}
 			} else {
+				// Not a horizontal segment
 				RtFloat v = (y - m_nodes[sv][1]) /
-							(m_nodes[ev][1] - m_nodes[sv][1]);
-				if ( v >= 0 && v <= 1.0 ) {
+							(m_nodes[ev][1] - m_nodes[sv][1]); // Parameter of the y-intersection of the horizontal beam to the right and the boundary segment
+				if ( inClosedInterval<RtFloat>(v, 0.0, 1.0) ) {
 					// y of hole is between the y coordinates of the edge
-					tempx = m_nodes[sv][0] +
-							v * (m_nodes[ev][0] - m_nodes[sv][0]);
+					RtFloat tempx = m_nodes[sv][0] +
+							v * (m_nodes[ev][0] - m_nodes[sv][0]); // The x coordinate on the segment for the y
 					if ( tempx >= x && (retidx == 0 || tempx <= retx) ) {
-						// x coordinate of the intersection of the horizontal with the edge is on the right
-						// of the hole and is nearer to this hole vertex than (or as near as) the one previously found.
+						// Take x coordinate and start vertex index as result, if it is nearer as the one found before
 						retx = tempx;
 						retidx = sv;
 					}
 				}
 			}
 		}
+		
+		// Take the next segment
 		sv = ev;
 		ev = m_nodes[sv].m_next;
 	} while ( sv != offset );
@@ -280,13 +283,15 @@ unsigned long CPolygonContainer::getVertexInTriangle(
 	unsigned long idx = offset;
 	unsigned long idxFound = 0;
 	RtFloat acosangle;
+	
 	do {
 		if ( m_nodes[idx].reflex() &&
 			 point2InTriangle(m_nodes[idx].m_p, p1, p2, p3) )
 		{
 			if ( idxFound != 0 ) {
 				RtFloat acosangleTemp = dot2_pos_norm(m_nodes[idx].m_p, p1, p2);
-				if ( fabs(acosangle - acosangleTemp) < eps<RtFloat>() ) {
+				if ( nearlyZero(acosangle - acosangleTemp) ) {
+					// on the line p1-p2
 					if ( m_nodes[idx][0] < m_nodes[idxFound][0] ) {
 						idxFound = idx;
 						acosangle = acosangleTemp;
@@ -320,23 +325,27 @@ void CPolygonContainer::integrateHole(
 	std::cout << "% Integrate Hole: " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 #endif
 	
+	// x coordinate and border vertex of the segment containing the visible point
 	RtFloat x = visiblePointX(offset, holeVertex, borderVertex);
-	if ( borderVertex == 0 )
+
+	if ( borderVertex == 0 ) // not inside the boundary
 		return;
+
+	// Next vertex of the border vertex of the segment containing the visible point
 	unsigned long nextBorderVertex = m_nodes[borderVertex].m_next;
 
 #ifdef _DEBUG
 	std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
 #endif
 	
-	if ( !( fabs(m_nodes[borderVertex][0] - x) < eps<RtFloat>() &&
-		    fabs(m_nodes[borderVertex][1] - m_nodes[holeVertex][1])
-			    < eps<RtFloat>() ) )
+	if ( !( nearlyZero(m_nodes[borderVertex][0] - x) &&
+		    nearlyZero(m_nodes[borderVertex][1] - m_nodes[holeVertex][1]) ) )
 	{
-		if ( fabs(m_nodes[nextBorderVertex][0] - x) < eps<RtFloat>() &&
-			 fabs(m_nodes[nextBorderVertex][1] - m_nodes[holeVertex][1])
-			     < eps<RtFloat>() )
+		// Visible point is *not* the start vertex
+		if ( nearlyZero(m_nodes[nextBorderVertex][0] - x)  &&
+			 nearlyZero(m_nodes[nextBorderVertex][1] - m_nodes[holeVertex][1]) )
 		{
+			// Visible point is the end vertex
 			borderVertex = nextBorderVertex;
 		} else {
 			// Set borderVertext to the nearer vertex of the outer polygon which should also be to the right of the hole.
@@ -356,10 +365,8 @@ void CPolygonContainer::integrateHole(
 					borderVertex = nextBorderVertex;
 				}
 			}
-			// Triangle (holevertex, point in border, bordervertex)
-			// If points in triangle get reflex vertex with smalest angle
-			// holevertex to reflex vertex and horizontal line.
-			// bordervertex otherwise
+			// If points in triangle  (holevertex, visble point in border, bordervertex)
+			// get the reflex vertex with smallest angle as bridge vertex.
 			RtFloat triPoint[2] = {x, m_nodes[holeVertex][1]};
 			// Triangle point can be on (if degenerated triangle), above, or below the horizontal line.
 			unsigned int vertex =
@@ -372,7 +379,7 @@ void CPolygonContainer::integrateHole(
 		}
 	}
 	
-	// Integrate hole at holeVertex
+	// Integrate hole at holeVertex with the boundary at bordervertex using bridgeIdx and bridgeIdx+1
 	joinOutline(borderVertex, holeVertex, bridgeIdx);
 }
 
@@ -403,15 +410,14 @@ bool CPolygonContainer::polygonNormal(
 		p1[0] = p[pidx++] - p0[0];
 		p1[1] = p[pidx++] - p0[1];
 		p1[2] = p[pidx  ] - p0[2];
-		if ( fabs(p1[0]) > eps<RtFloat>() || fabs(p1[1]) > eps<RtFloat>() ||
-			 fabs(p1[2]) > eps<RtFloat>() )
-		{
+		if ( !(nearlyZero(p1[0]) && nearlyZero(p1[1]) && nearlyZero(p1[2])) ) {
 			p1set = true;
 			break;
 		}
 	};
+			
 	if ( !p1set ) {
-		// All positions have more or less the same values
+		// All positions have the same values
 		return false;
 	}
 	
@@ -429,7 +435,7 @@ bool CPolygonContainer::polygonNormal(
 		}
 	};
 
-	// !p2set: All positions are more or less colinear
+	// !p2set: All positions are linear dependend
 	return p2set;
 }
 

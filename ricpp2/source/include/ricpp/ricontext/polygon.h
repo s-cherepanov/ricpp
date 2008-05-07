@@ -62,7 +62,7 @@ public:
 	unsigned long m_index;   ///< Index of an array with vertex indices (double indirection for varying) and single indirection for face varying.
 	unsigned long m_dup;     ///< Duplicated index
 	RtFloat m_p[2];          ///< 2D coordinates of the vertex for some major and minor axes.
-	RtFloat m_dotp90;        ///< Dot product of the join (prev-this (join) this-next 90 degrees ccw) for being left of or being right of, and reflex calculation.
+	RtFloat m_dotp90;        ///< Determinant, Dot product of the join (prev-this (join) this-next 90 degrees ccw) for being left of or being right of, and reflex calculation.
 	bool m_reflex;           ///< Join is a reflex vertex, depends on m_dotp90 and orientation of the polygon outline, @see CPolygonNode::recalc().
 	
 	// -------------------------------------------------------------------------
@@ -291,7 +291,9 @@ private:
 	 *  This is called to swap the sense of an inner loop, if
 	 *  the sense is the same as the one of the outer polygon.
 	 *  The member function must be called before the hole
-	 *  are inserted.
+	 *  are inserted. Because the determinant and reflex state
+	 *  will be calculated later (values are not set if called), these
+	 *  values are let alone.
 	 *
 	 *  @param offset Start Node (index for @c m_nodes).
 	 *  @param Number of vertices/nodes.

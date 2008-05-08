@@ -687,24 +687,80 @@ namespace RiCPP {
 		return (sign(s1) >= 0 && sign(s2) >= 0 && sign(s3) >= 0) || (sign(s1) <= 0 && sign(s2) <= 0 && sign(s3) <= 0);
 	}
 
+	template <typename _T> inline bool point2InTriangle(const _T *p, const _T *t1, const _T *t2, const _T *t3, int &onEdge)
+	{
+		_T s1, s2, s3;
+		_T v[2], vp[2];
+		onEdge = 0;
+		vectFromPos2<_T>(v, t1, t2);
+		vectFromPos2<_T>(vp, t1, p);
+		s1 = dot2_90<_T>(v, vp);
+		if ( nearlyZero(s1) )
+			onEdge |= 1;
+		vectFromPos2<_T>(v, t2, t3);
+		vectFromPos2<_T>(vp, t2, p);
+		s2 = dot2_90<_T>(v, vp);
+		if ( nearlyZero(s2) )
+			onEdge |= 2;
+		vectFromPos2<_T>(v, t3, t1);
+		vectFromPos2<_T>(vp, t3, p);
+		s3 = dot2_90<_T>(v, vp);
+		if ( nearlyZero(s3) )
+			onEdge |= 4;
+		return (sign(s1) >= 0 && sign(s2) >= 0 && sign(s3) >= 0) || (sign(s1) <= 0 && sign(s2) <= 0 && sign(s3) <= 0);
+	}
+	/*
 	template <typename _T> inline bool singularTriangle2(const _T *t1, const _T *t2, const _T *t3)
 	{
 		return eqVect2(t1,t2) && eqVect2(t2,t3);
 		
 	}
-	
+
 	template <typename _T> inline bool degenSideTriangle2(const _T *t1, const _T *t2, const _T *t3)
 	{
 		return eqVect2(t1,t2) || eqVect2(t2,t3) || eqVect2(t1,t3);
 		
 	}
-
+	*/
 	template <typename _T> inline bool degenTriangle2(const _T *t1, const _T *t2, const _T *t3)
 	{
 		return nearlyZero(dot2_90_pos(t1, t2, t3));
 		
 	}
 
+	template <typename _T> inline int intersects2(const _T *a1, const _T *a2, const _T *b1, const _T *b2) {
+		_T v[2], vi[2];
+		_T s1, s2;
+		vectFromPos2(v, a1, a2);
+		vectFromPos2(vi, a1, b1);
+		s1 = sign(det2(v, vi));
+		vectFromPos2(vi, a1, b2);
+		s2 = sign(det2(v, vi));
+		
+		if ( s1 == s2 && s1 != 0 )
+			return 0;
+
+		_T s3, s4;
+		vectFromPos2(v, b1, b2);
+		vectFromPos2(vi, b1, a1);
+		s3 = sign(det2(v, vi));
+		vectFromPos2(vi, b1, a2);
+		s4 = sign(det2(v, vi));
+		
+		if ( s3 == s4 && s3 != 0 )
+			return 0;
+
+		if ( s1 == s2 && s3 == s4 ) {
+			// colinear (all 0)
+			if ( fabs(a1[0]-b1[0]) > fabs(a1[1]-b1[1]) ) {
+				return (inClosedInterval(a1[1], b1[1], b2[1]) || inClosedInterval(a2[1], b1[1], b2[1])) ? 1 : 0;
+			}
+			return (inClosedInterval(a1[0], b1[0], b2[0]) || inClosedInterval(a2[0], b1[0], b2[0])) ? 1 : 0;
+		}
+			
+		return (s1*s2*s3*s4) == 0 ? 1 : 2;
+	}
+	
 	/** @brief Normal vector (normalized) for a plane given by two 3D vectors.
 	 *  @retval norm Normal
 	 *  @param v1 3 dim vector 1

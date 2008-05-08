@@ -1,9 +1,9 @@
-/* MyOpenGLView */
-
 #import <Cocoa/Cocoa.h>
 
-@interface MyOpenGLView : NSOpenGLView
-{
+@interface MyOpenGLView : NSOpenGLView {
+	int testprog;
+    IBOutlet id statusLine;
 }
-- (void) drawRect: (NSRect) bounds ;
+- (void) drawRect: (NSRect) bounds;
+- (IBAction)nextPoly:(id)sender;
 @end

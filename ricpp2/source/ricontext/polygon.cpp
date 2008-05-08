@@ -40,6 +40,13 @@
 
 using namespace RiCPP;
 
+#ifdef _DEBUG
+// #define _TRACE_POLY_JOIN
+// #define _TRACE_POLY_INTEGRATE
+// #define _TRACE_POLY_TRIANGULATE
+// #define _TRACE_POLY_EAR
+#endif
+
 // =============================================================================
 // -----------------------------------------------------------------------------
 /** @brief Used to compare polygon nodes while sorting an array of nodes.
@@ -174,7 +181,7 @@ void CPolygonContainer::joinOutline(
 	unsigned long holeVertex,
 	unsigned long bridgeIdx)
 {
-#ifdef _DEBUG
+#ifdef _TRACE_POLY_JOIN
 	std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 #endif
 
@@ -321,7 +328,7 @@ void CPolygonContainer::integrateHole(
 	// Find matching vertex in border to integrate hole
 	unsigned long borderVertex = 0;
 	
-#ifdef _DEBUG
+#ifdef _TRACE_POLY_INTEGRATE
 	std::cout << "% Integrate Hole: " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 #endif
 	
@@ -334,7 +341,7 @@ void CPolygonContainer::integrateHole(
 	// Next vertex of the border vertex of the segment containing the visible point
 	unsigned long nextBorderVertex = m_nodes[borderVertex].m_next;
 
-#ifdef _DEBUG
+#ifdef _TRACE_POLY_INTEGRATE
 	std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
 #endif
 	
@@ -590,6 +597,139 @@ CPolygonContainer &CPolygonContainer::operator=(const CPolygonContainer &pc)
 	return *this;
 }
 
+
+// =============================================================================
+// -----------------------------------------------------------------------------
+static bool isEar(
+	std::vector<CPolygonNode> &nodes,
+	unsigned long tip)
+{
+	unsigned long prev = nodes[tip].prev();
+	unsigned long next = nodes[tip].next();
+	
+#   ifdef _TRACE_POLY_EAR
+	    std::cout << "% -isEar() tip " << tip << " prev " << prev << " next " << next << std::endl;
+#   endif
+
+	assert(prev!= next);
+	if ( next == prev ) {
+#       ifdef _TRACE_POLY_EAR
+		std::cout << "% >isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear, prev == next" << std::endl;
+#       endif
+		return true;
+	}
+
+	RtFloat vprev[2], vnext[2], vinner[2];
+	
+	vectFromPos2(vprev, nodes[prev].m_p, nodes[tip].m_p);
+	vectFromPos2(vnext, nodes[tip].m_p, nodes[next].m_p);
+	vectFromPos2(vinner, nodes[next].m_p, nodes[prev].m_p);
+	
+	if ( nearlyZero(det2(vprev, vnext)) ) {
+		// Degenerated triangle, either a needle tip (cutted away) or a line (not cutted) 
+		RtFloat lenPrev = vlen2(vprev);
+		RtFloat lenNext = vlen2(vnext);
+		RtFloat lenInner = vlen2(vnext);
+		bool rval = lenPrev <= lenInner || lenNext <= lenInner;
+#       ifdef _TRACE_POLY_EAR
+		    std::cout << "% <isEar() degenerated triangle tip " << tip << " prev " << prev << " next " << next << (rval ? " is an ear" : " not an ear") << std::endl;
+#       endif
+		return rval;
+	}
+
+	if ( nodes[tip].reflex() ) {
+#       ifdef _TRACE_POLY_EAR
+		std::cout << "% <isEar() tip " << tip << " not an ear (reflex)" << std::endl;
+#       endif
+		return false;
+	}
+
+	int onEdge, startEdge;
+	for ( unsigned long j = nodes[next].next(); j != prev; j = nodes[j].next() ) {
+		if ( nodes[j].reflex() ) {
+			// Is vertex j in the triangle
+			if ( point2InTriangle(nodes[j].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) )
+			{
+				if ( !onEdge ) {
+#                   ifdef _TRACE_POLY_EAR
+					    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - contains vertex" << std::endl;
+#                   endif
+					return false;
+				}
+				startEdge = onEdge;
+				
+#               ifdef _TRACE_POLY_EAR
+				    std::cout << "% -isEar() tip " << tip << " prev " << prev << " next " << next << " vertex on edge" << std::endl;
+#               endif
+
+				unsigned long tempPrev = j;
+				unsigned long temp = nodes[j].next();
+				
+				while ( point2InTriangle(nodes[temp].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) ) {
+					if ( !(onEdge & startEdge) ) {
+#                       ifdef _TRACE_POLY_EAR
+						    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - contains previous vertex" << std::endl;
+#                       endif
+						return false;
+					}
+					tempPrev = temp;
+					temp = nodes[temp].next();
+					if ( temp == prev ) {
+						// All on the triangle
+#                       ifdef _TRACE_POLY_EAR
+						    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - all previous vertices on an edge" << std::endl;
+#                       endif
+						return false;
+					}
+				}
+				
+				if ( intersects2(nodes[tempPrev].m_p, nodes[temp].m_p, nodes[next].m_p, nodes[prev].m_p) == 2 ) {
+					// Line intersects the base line -> no ear
+#                   ifdef _TRACE_POLY_EAR
+					    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - a next edge " << tempPrev << ", " << temp << " intersects base" << std::endl;
+#                   endif
+					return false;
+				}
+
+				tempPrev = j;
+				temp = nodes[j].prev();
+
+				while ( point2InTriangle(nodes[temp].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) ) {
+					if ( !(onEdge & startEdge) ) {
+#                       ifdef _TRACE_POLY_EAR
+						    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - contains next vertex" << std::endl;
+#                       endif
+						return false;
+					}
+					tempPrev = temp;
+					temp = nodes[temp].prev();
+					if ( temp == next ) {
+						// All on the triangle (already tested)
+#                       ifdef _TRACE_POLY_EAR
+						    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - all previous next on an edge" << std::endl;
+#                       endif
+						return false;
+					}
+				}
+				
+				if ( intersects2(nodes[tempPrev].m_p, nodes[temp].m_p, nodes[next].m_p, nodes[prev].m_p) == 2 ) {
+					// Line intersects the base line -> no ear
+#                   ifdef _TRACE_POLY_EAR
+					    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - a previous edge " << tempPrev << ", " << temp << " intersects base" << std::endl;
+#                   endif
+					return false;
+				}
+			}
+		}
+	}
+
+#       ifdef _TRACE_POLY_EAR
+	std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " is an ear" << std::endl;
+#       endif
+	return true;
+}
+
+
 // =============================================================================
 // -----------------------------------------------------------------------------
 void CEarClipper::triangulate(
@@ -598,8 +738,8 @@ void CEarClipper::triangulate(
 	bool isCCW,
 	std::vector<unsigned long> &triangles) const
 {
-#ifdef _DEBUG
-	std::cout << "% Triangulate offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
+#ifdef _TRACE_POLY_TRIANGULATE
+	std::cout << "% >triangulate() offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
 #endif
 
 	triangles.clear();
@@ -612,47 +752,28 @@ void CEarClipper::triangulate(
 	unsigned long next;
 	unsigned long i = offs;
 	RtFloat v;
+	
+	// Fill tree
 	do {
 		prev = nodes[i].prev();
 		next = nodes[i].next();
+#       ifdef _TRACE_POLY_TRIANGULATE
+		    std::cout << "% -triangulate() examine i " << i << " prev " << prev << " next " << next << std::endl;
+#       endif
 		v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
 		tn[i].content() = v;
-		if ( degenSideTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
-#ifdef _DEBUG
-			std::cout << "% Try (degenerated side) i " << i << " prev " << prev << " next " << next << std::endl;
-#endif
+		if ( isEar(nodes, i) ) {
+#           ifdef _TRACE_POLY_TRIANGULATE
+			    std::cout << "% -triangulate() Try i " << i << " prev " << prev << " next " << next << std::endl;
+#           endif
 			tr.insert(i, tn);
-		} else if ( !nodes[i].reflex() ) {
-			unsigned j = offs;
-			do {
-				if ( j != prev && j != i && j != next  ) {
-					if ( nodes[j].reflex() && point2InTriangle(nodes[j].m_p,
-										  nodes[prev].m_p,
-										  nodes[i].m_p,
-										  nodes[next].m_p) )
-					{
-						if ( prev != nodes[j].m_dup && i != nodes[j].m_dup && next != nodes[j].m_dup ) {
-							if ( nodes[prev].m_dup != j && nodes[i].m_dup != j && nodes[next].m_dup != j ) {
-								// std::cout << "% Point " << j << " in triangle " << prev << " " << i << " " << next << std::endl;
-								break;
-							}
-						}
-					}
-				}
-				j = nodes[j].next();
-				if ( j == offs ) {
-#ifdef _DEBUG
-					std::cout << "% Try i " << i << " prev " << prev << " next " << next << std::endl;
-#endif
-					tr.insert(i, tn);
-				}
-			} while ( j != offs );
 		}
 		i = next;
 	} while ( i != offs );
 
 	unsigned long tri = 0, m;
 
+	// Iterate tree
 	while ( !tr.empty() ) {
 		assert (tri <= triangles.size()-3);
 		if ( tri > triangles.size()-3 )
@@ -662,19 +783,31 @@ void CEarClipper::triangulate(
 		prev = nodes[i].prev();
 		next = nodes[i].next();
 
+#       ifdef _TRACE_POLY_TRIANGULATE
+		std::cout << "% -triangulate() examine i " << i << " prev " << prev << " next " << next << std::endl;
+#       endif
+		
+		if ( !isEar(nodes, i) ) {
+#           ifdef _TRACE_POLY_TRIANGULATE
+			    std::cout << "% -triangulate() Drop i " << i << " prev " << prev << " next " << next << std::endl;
+#           endif
+			tr.remove(i, tn);
+			continue;
+		}
+		
 		if ( !degenTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
-#ifdef _DEBUG
-			std::cout << "% Cut i " << i << " prev " << prev << " next " << next << std::endl;
-#endif
+#           ifdef _TRACE_POLY_TRIANGULATE
+			    std::cout << "% -triangulate() *** Cut i " << i << " prev " << prev << " next " << next << std::endl;
+#           endif
 			triangles[tri++] = nodes[prev].m_index;
 			triangles[tri++] = nodes[i].m_index;
 			triangles[tri++] = nodes[next].m_index;
 		}
-#ifdef _DEBUG
-		else {
-			std::cout << "% Cull (det==0) i " << i << " prev " << prev << " next " << next << std::endl;
-		}
-#endif
+#       ifdef _TRACE_POLY_TRIANGULATE
+		    else {
+			    std::cout << "% -triangulate() *** Cull (det==0) i " << i << " prev " << prev << " next " << next << std::endl;
+		    }
+#       endif
 		
 		tr.remove(i, tn);
 		nodes[i].remove(nodes, isCCW);
@@ -683,6 +816,7 @@ void CEarClipper::triangulate(
 			offs = next;
 		i = next;
 		next = nodes[i].next();
+		// prev not changed
 
 		if ( next == prev || next == i || prev == i )
 			break;
@@ -690,52 +824,26 @@ void CEarClipper::triangulate(
 		for ( m = 0; m < 2; ++m ) {
 			v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
 			tn[i].content() = v;
-			if ( degenSideTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
-#ifdef _DEBUG
-				std::cout << "% Try (degenerated side) i " << i << " prev " << prev << " next " << next << std::endl;
-#endif
+			if ( isEar(nodes, i) ) {
+#               ifdef _TRACE_POLY_TRIANGULATE
+				    std::cout << "% Try i " << i << " prev " << prev << " next " << next << std::endl;
+#               endif
 				tr.insert(i, tn);
-			} else if ( !nodes[i].reflex() ) {
-				unsigned j = offs;
-				bool removeNode = true;
-				do {
-					if ( j != prev && j != i && j != next  ) {
-						if ( nodes[j].reflex() && point2InTriangle(
-								nodes[j].m_p,
-								nodes[prev].m_p,
-								nodes[i].m_p,
-								nodes[next].m_p) )
-						{
-							if ( prev != nodes[j].m_dup && i != nodes[j].m_dup && next != nodes[j].m_dup ) {
-								if ( nodes[prev].m_dup != j && nodes[i].m_dup != j && nodes[next].m_dup != j ) {
-									// std::cout << "% Point " << j << " in triangle " << prev << " " << i << " " << next << std::endl;
-									break;
-								}
-							}
-						}
-					}
-					j = nodes[j].next();
-					if ( j == offs ) {
-#ifdef _DEBUG
-						std::cout << "% Try i " << i << " prev " << prev << " next " << next << std::endl;
-#endif
-						tr.insert(i, tn);
-						removeNode = false;
-					}
-				} while ( j != offs );
-				if ( removeNode ) {
-#ifdef _DEBUG
-					std::cout << "% Drop i " << i << " prev " << prev << " next " << next << std::endl;
-#endif
-					tr.remove(i, tn);
-				}
+			} else {
+#               ifdef _TRACE_POLY_TRIANGULATE
+				    std::cout << "% Drop i " << i << " prev " << prev << " next " << next << std::endl;
+#               endif
+				tr.remove(i, tn);
 			}
 			next = i;
 			i = prev;
 			prev = nodes[i].prev();
 		}
 	}
-	// assert (tri == triangles.size());
+
+#   ifdef _TRACE_POLY_TRIANGULATE
+	    std::cout << "% <triangulate() #triangles: " << tri << std::endl;
+#   endif
 	triangles.resize(tri);
 }
 

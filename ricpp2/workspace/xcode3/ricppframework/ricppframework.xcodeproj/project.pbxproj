@@ -233,6 +233,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		C3111C730DD2EDDB0069B937 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C31C22450D740489009D99C2 /* riprog */;
+			remoteInfo = riprog;
+		};
 		C31C22A00D74093C009D99C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -484,13 +491,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = C383C1010DBC88E00059B71D;
 			remoteInfo = testpoly;
-		};
-		C3CE0EF60DCF50B20014BC8E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C37F24E60DCE28C300A64BDB;
-			remoteInfo = glrendererdll;
 		};
 		C3CE0F390DCF56B40014BC8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2695,7 +2695,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C3CE0EF70DCF50B20014BC8E /* PBXTargetDependency */,
+				C3111C740DD2EDDB0069B937 /* PBXTargetDependency */,
 			);
 			name = riglapp;
 			productName = riglapp;
@@ -3009,6 +3009,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C3111C740DD2EDDB0069B937 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C31C22450D740489009D99C2 /* riprog */;
+			targetProxy = C3111C730DD2EDDB0069B937 /* PBXContainerItemProxy */;
+		};
 		C31C22A10D74093C009D99C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
@@ -3188,11 +3193,6 @@
 			isa = PBXTargetDependency;
 			target = C383C1010DBC88E00059B71D /* testpoly */;
 			targetProxy = C383C10F0DBC89A30059B71D /* PBXContainerItemProxy */;
-		};
-		C3CE0EF70DCF50B20014BC8E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C37F24E60DCE28C300A64BDB /* glrendererdll */;
-			targetProxy = C3CE0EF60DCF50B20014BC8E /* PBXContainerItemProxy */;
 		};
 		C3CE0F3A0DCF56B40014BC8E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

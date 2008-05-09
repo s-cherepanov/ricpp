@@ -1,9 +1,10 @@
 #import <Cocoa/Cocoa.h>
 
 @interface MyOpenGLView : NSOpenGLView {
-	int testprog;
+	int counter;
     IBOutlet id statusLine;
 }
+- (void) awakeFromNib;
 - (void) drawRect: (NSRect) bounds;
 - (IBAction)prevPoly:(id)sender;
 - (IBAction)nextPoly:(id)sender;

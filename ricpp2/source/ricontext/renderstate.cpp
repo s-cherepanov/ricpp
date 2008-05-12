@@ -1180,16 +1180,26 @@ void CRenderState::calcNDCToRaster()
 		RtInt xres, yres, xresTemp, yresTemp;
 		RtFloat pa;
 		options().getFormat(xres, yres, pa);
-		// pa is already used for the screen window sizes
 
 		// Frameaspect (horizontal/vertical) is used to calc the used size 
 		RtFloat fAspect = options().frameAspectRatio();
-		xresTemp = fAspect * yres;
-		yresTemp = yres;
-
+		
+		if ( pa > 1 ) {
+			xresTemp = fAspect * yres;
+			yresTemp = yres / pa;
+		} else {
+			xresTemp = fAspect * yres * pa;
+			yresTemp = yres;
+		}
+		
 		if ( xresTemp > xres ) {
-			yresTemp = invert(fAspect / xres);
-			xresTemp = xres;
+			if ( pa > 1 ) {
+				xresTemp = xres;
+				yresTemp = invert(fAspect / xres) / pa;
+			} else {
+				xresTemp = xres * pa;
+				yresTemp = invert(fAspect / xres);
+			}
 		}
 		
 		assert(xresTemp <= xres && yresTemp <= yres);

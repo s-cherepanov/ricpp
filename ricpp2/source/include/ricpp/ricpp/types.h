@@ -1067,11 +1067,17 @@ public:
 	 */
 	CMatrix3D &operator=(const RtFloat *mat);
 	
+	operator const RtMatrix &() const { return m_Matrix; }
+	operator RtMatrix &() { return m_Matrix; }
+
 	/** @brief Gets a pointer to the first component of a matrix.
 	 *  @return Pointer to the first float value of the matrix.
 	 */
-	operator const RtFloat *() const { return (const RtFloat *)&m_Matrix[0]; }
-	// RtFloat *getPointer() const { return (RtFloat *)&m_Matrix[0]; }
+	const RtFloat *getFloats() const { return (RtFloat *)&m_Matrix[0][0]; }
+	RtFloat *getFloats() { return (RtFloat *)&m_Matrix[0][0]; }
+
+	const RtMatrix &getMatrix() const { return m_Matrix; }
+	RtMatrix &getMatrix() { return m_Matrix; }
 
 	/** @brief Sets the pre multification flag.
 	 *  @param preMultiply true, for standard pre multiplication (left multiplication).

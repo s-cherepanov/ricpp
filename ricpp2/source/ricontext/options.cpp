@@ -33,7 +33,13 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
+#include <iostream>
+
 using namespace RiCPP;
+
+#ifdef _DEBUG
+#define _TRACE
+#endif
 
 const RtInt   COptions::defXResolution = 512; // 640;
 const RtInt   COptions::defYResolution = 384; // 480;
@@ -96,6 +102,8 @@ const RtFloat COptions::defRelativeDetail = 1;
 
 COptions::~COptions()
 {
+	if ( m_preProjection )
+		delete m_preProjection;
 }
 
 COptionsBase *COptions::duplicate() const
@@ -187,6 +195,10 @@ COptions &COptions::operator=(const COptions &ro)
 	m_displayChannels = ro.m_displayChannels;
 
 	m_quantizers = ro.m_quantizers;
+
+	if ( m_preProjection )
+		delete m_preProjection;
+	m_preProjection = ro.m_preProjection ? ro.m_preProjection->duplicate() : 0;
 
 	COptionsBase::operator=(ro);
 
@@ -286,6 +298,9 @@ RtVoid COptions::format(RtInt xres, RtInt yres, RtFloat aspect)
 	m_xResolution = xres;
 	m_yResolution = yres;
 	m_pixelAspectRatio = aspect;
+#   ifdef _TRACE
+	    std::cout << "# format xres " << xres << " yres " << yres << " aspect " << aspect << std::endl;
+#   endif
 }
 
 RtInt COptions::xResolution() const
@@ -391,6 +406,63 @@ RtVoid COptions::getScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, Rt
 	}
 }
 
+RtFloat COptions::screenWindowLeft() const
+{
+	if ( m_screenWindowCalled ) {
+	return m_screenWindowLeft;
+	} else {
+		RtFloat ratio = frameAspectRatio();
+		if ( ratio >= 1.0 ) {
+			return -ratio;
+		} else {
+			return -1.0;
+		}
+	}
+}
+
+RtFloat COptions::screenWindowRight() const
+{
+	if ( m_screenWindowCalled ) {
+		return m_screenWindowRight;
+	} else {
+		RtFloat ratio = frameAspectRatio();
+		if ( ratio >= 1.0 ) {
+			return ratio;
+		} else {
+			return 1.0;
+		}
+	}
+}
+
+RtFloat COptions::screenWindowBottom() const
+{
+	if ( m_screenWindowCalled ) {
+		return m_screenWindowBottom;
+	} else {
+		RtFloat ratio = frameAspectRatio();
+		if ( ratio >= 1.0 ) {
+			return -1.0;
+		} else {
+			return -invert(ratio);
+		}
+	}
+}
+
+RtFloat COptions::screenWindowTop() const
+{
+	if ( m_screenWindowCalled ) {
+		return m_screenWindowTop;
+	} else {
+		RtFloat ratio = frameAspectRatio();
+		if ( ratio >= 1.0 ) {
+			return 1.0;
+		} else {
+			return invert(ratio);
+		}
+	}
+}
+
+
 // ----
 
 RtVoid COptions::initCropWindow()
@@ -468,54 +540,30 @@ void COptions::initProjection()
 	m_projectionName = defProjection;
 	m_FOVSet = false;
 	m_FOV = defCameraFOV;
+	if ( m_preProjection )
+		delete m_preProjection;
+	m_preProjection = 0;
 }
 
-RtVoid COptions::projection(RtToken name, const CParameterList &params)
+RtVoid COptions::projection(const CTransformation &ctm, RtToken name, const CParameterList &params)
 {
 	m_projectionCalled = true;
 	m_projectionName = name;
 	m_projectionParams = params;
 
+	if ( m_preProjection )
+		delete m_preProjection;
+	m_preProjection = ctm.duplicate();
+	
 	m_FOVSet = false;
 	if ( m_projectionName == RI_PERSPECTIVE ) {
 		const CParameter *p = m_projectionParams.get(RI_FOV);
 		if ( p && p->floats().size() > 0 ) {
 			m_FOVSet = true;
 			m_FOV = p->floats()[0];
-			if ( m_FOV == 0.0 ) {
+			if ( nearlyZero(m_FOV) ) {
 				m_projectionName = RI_ORTHOGRAPHIC;
 				m_FOVSet = false;
-			} else {
-				/// @todo The dependency of perspective projection fov and screen window is not clear, does fov influences the screen width?
-				if ( m_FOV < (RtFloat)180.0 && m_FOV > 0.0 ) {
-					RtFloat fa = frameAspectRatio();
-					RtFloat h_2, w_2;
-					if ( fa > 1 ) {
-						h_2 = tan(fa/(RtFloat)2.0);
-						w_2 = h_2 * fa;
-					} else {
-						RtFloat w_2 = tan(fa/(RtFloat)2.0);
-						RtFloat h_2 = w_2 * ((RtFloat)1.0/fa);
-					}
-					m_screenWindowLeft = -w_2;
-					m_screenWindowRight = w_2;
-					m_screenWindowBottom = -h_2;
-					m_screenWindowTop = h_2;						
-					m_screenWindowCalled = false;
-				}
-			}
-		} else {
-			RtFloat left, right, bot, top, w, h;
-			getScreenWindow(left, right, bot, top);
-			w = right - left;
-			h = top - bot;
-			m_FOV = defCameraFOV;
-			if ( w > h ) {
-				if ( h > 0 )
-					m_FOV = rad2deg((RtFloat)2.0 * atan(h/(RtFloat)2.0));
-			} else {
-				if ( w > 0 )
-					m_FOV = rad2deg((RtFloat)2.0 * atan(w/(RtFloat)2.0));
 			}
 		}
 	}

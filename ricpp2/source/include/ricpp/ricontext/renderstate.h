@@ -605,6 +605,7 @@ namespace RiCPP {
 
 		void calcNDCToRaster();
 		void calcScreenToNDC();
+		void clearCameraToScreen();
 		void setCameraToScreen();
 		void setWorldToCamera();
 

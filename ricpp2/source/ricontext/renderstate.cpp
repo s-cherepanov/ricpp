@@ -43,6 +43,10 @@
 
 using namespace RiCPP;
 
+#ifdef _DEBUG
+#define _TRACE
+#endif
+
 /*
 unsigned char CRenderState::character(
 	const unsigned char **str,
@@ -1171,15 +1175,27 @@ void CRenderState::calcNDCToRaster()
 		// error
 	} else {
 		// Raster
-		RtInt xres, yres;
+		m_NDCToRaster->spaceType(RI_RASTER);
+
+		RtInt xres, yres, xresTemp, yresTemp;
 		RtFloat pa;
 		options().getFormat(xres, yres, pa);
 		// pa is already used for the screen window sizes
-		m_NDCToRaster->identity();
-		m_NDCToRaster->scale((RtFloat)xres, (RtFloat)yres, 1);
-		// NDC
 
-		m_NDCToRaster->spaceType(RI_RASTER);
+		// Frameaspect (horizontal/vertical) is used to calc the used size 
+		RtFloat fAspect = options().frameAspectRatio();
+		xresTemp = fAspect * yres;
+		yresTemp = yres;
+
+		if ( xresTemp > xres ) {
+			yresTemp = invert(fAspect / xres);
+			xresTemp = xres;
+		}
+		
+		assert(xresTemp <= xres && yresTemp <= yres);
+		
+		m_NDCToRaster->identity();
+		m_NDCToRaster->scale((RtFloat)xresTemp, (RtFloat)yresTemp, 1);
 	}
 }
 
@@ -1192,8 +1208,9 @@ void CRenderState::calcScreenToNDC()
 		// error
 	} else {
 		// Ndc
-
+		m_screenToNDC->spaceType(RI_NDC);
 		m_screenToNDC->identity();
+		
 		// scale screenwindow and mirror on x
 		RtFloat swid = options().screenWindowRight()-options().screenWindowLeft();
 		RtFloat sht  = options().screenWindowTop()-options().screenWindowBottom();
@@ -1203,21 +1220,35 @@ void CRenderState::calcScreenToNDC()
 		// Translate to screen origin
 		m_screenToNDC->translate(-options().screenWindowLeft(), -options().screenWindowTop(), 0);
 
-		m_screenToNDC->spaceType(RI_NDC);
 		// Screen
+
+#       ifdef _TRACE
+		std::cout << "ScreenToNDC " << std::endl;
+		printMatrix(m_screenToNDC->getCTM().getMatrix());
+#       endif
 	}
 
 	calcNDCToRaster();
 }
 
-void CRenderState::setCameraToScreen()
+void CRenderState::clearCameraToScreen()
 {
 	m_transformationFactory->deleteTransformation(m_cameraToScreen);
-	m_cameraToScreen = curTransform().duplicate();
+	m_cameraToScreen = 0;
+}
+
+void CRenderState::setCameraToScreen()
+{
+	m_cameraToScreen = m_transformationFactory->newTransformation();
 	if ( !m_cameraToScreen ) {
 		// error
 	} else {
 		m_cameraToScreen->spaceType(RI_SCREEN);
+		if ( options().preProjectionMatrix() ) {
+			*m_cameraToScreen = *(options().preProjectionMatrix());
+		} else {
+			m_cameraToScreen->identity();
+		}
 	}
 	
 	calcScreenToNDC();
@@ -1349,10 +1380,10 @@ void CRenderState::worldBegin()
 	pushTransform();
 	curTransform().reset();
 
-	if ( cameraToScreen() == 0 ) {
-		// Set camera to screen matrix
+	// Set camera to screen matrix if not already done
+	// if ( cameraToScreen() == 0 ) {
 		setCameraToScreen();
-	}
+	// }
 	
 	curTransform().spaceType(RI_WORLD);
 

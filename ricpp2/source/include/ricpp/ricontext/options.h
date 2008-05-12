@@ -38,6 +38,10 @@
 #include "ricpp/ricontext/displaydesc.h"
 #endif //  _RICPP_RICONTEXT_DISPLAYDESC_H
 
+#ifndef _RICPP_RICONTEXT_TRANSFORMATION_H
+#include "ricpp/ricontext/transformation.h"
+#endif //  _RICPP_RICONTEXT_TRANSFORMATION_H
+
 #ifndef _RICPP_RICPP_FILTERS_H
 #include "ricpp/ricpp/filters.h"
 #endif // _RICPP_RICPP_FILTERS_H
@@ -118,6 +122,7 @@ namespace RiCPP {
 		typedef std::list<CDisplayDescr> TypeDisplays;
 	private:
 		// CViewPort m_curViewPort;      ///< Viewport data
+		CTransformation *m_preProjection; ///< Duplicate of current matrix when projection was called
 
 		CDisplayDescr::TypeDisplayChannels m_displayChannels; ///< Display channels can be as mode by display
 		TypeDisplays m_displays; ///< Current displays (CDisplayDescr), set by CRi::display()
@@ -215,6 +220,7 @@ namespace RiCPP {
 		{
 			m_factory = 0;
 			m_filterFunc = 0;
+			m_preProjection = 0;
 			init();
 		}
 
@@ -222,6 +228,7 @@ namespace RiCPP {
 		{
 			m_factory = 0;
 			m_filterFunc = 0;
+			m_preProjection = 0;
 			*this = ro;
 		}
 
@@ -229,6 +236,7 @@ namespace RiCPP {
 		{
 			m_factory = 0;
 			m_filterFunc = 0;
+			m_preProjection = 0;
 			assignRemap(ro, newDict);
 		}
 
@@ -273,31 +281,16 @@ namespace RiCPP {
 			return m_screenWindowCalled;
 		}
 		RtVoid getScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const;
-		inline RtFloat screenWindowLeft() const
-		{
-			return m_screenWindowLeft;
-		}
-
-		inline RtFloat screenWindowRight() const
-		{
-			return m_screenWindowRight;
-		}
-
-		inline RtFloat screenWindowBottom() const
-		{
-			return m_screenWindowBottom;
-		}
-
-		inline RtFloat screenWindowTop() const
-		{
-			return m_screenWindowTop;
-		}
+		RtFloat screenWindowLeft() const;
+		RtFloat screenWindowRight() const;
+		RtFloat screenWindowBottom() const;
+		RtFloat screenWindowTop() const;
 
 		RtVoid cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
 		RtVoid getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFloat &ymax) const;
 		RtVoid getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &ymax) const;
 
-		RtVoid projection(RtToken name, const CParameterList &params);
+		RtVoid projection(const CTransformation &ctm, RtToken name, const CParameterList &params);
 		inline bool projectionCalled() const
 		{
 			return m_projectionCalled;
@@ -306,10 +299,15 @@ namespace RiCPP {
 		{
 			return m_projectionName;
 		}
+		inline const CTransformation *preProjectionMatrix() const
+		{
+			return m_preProjection;
+		}
 		const CParameterList &projectionParams() const
 		{
 			return m_projectionParams;
 		}
+
 		inline RtFloat fov() const
 		{
 			return m_FOV;

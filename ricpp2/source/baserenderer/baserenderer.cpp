@@ -40,6 +40,10 @@
 
 using namespace RiCPP;
 
+#ifdef _DEBUG
+#define _TRACE
+#endif
+
 #define RICPP_PREAMBLE(AREQ) \
 	EnumRequests req = AREQ; \
 	try { \
@@ -1055,12 +1059,15 @@ RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFlo
 
 RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
 {
-	// Sets the state (can throw)
-	renderState()->options().projection(name, params);
+#   ifdef _TRACE
+	std::cout << ">preProjection " << name  << std::endl;
+#   endif
 
 	// Screen coord space
-
 	renderState()->curTransform().spaceType(RI_SCREEN);
+
+	// Sets the state (can throw)
+	renderState()->options().projection(renderState()->curTransform(), name, params);
 
 	if ( name != RI_NULL ) {
 		// Viewing volume depth of 1, far clipping plate at distance 1
@@ -1072,18 +1079,11 @@ RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CPar
 		renderState()->curTransform().translate(0, 0, -renderState()->options().hither());
 	}
 
-
 	if ( name == RI_PERSPECTIVE ) {
 		// Concat perspective
 		renderState()->curTransform().perspective(renderState()->options().fov());
 	}
 
-	// Camera coord space
-}
-
-
-RtVoid CBaseRenderer::doProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
-{
 	if ( renderState()->motionState().curState() == CMotionState::MOT_OUTSIDE || renderState()->motionState().curSampleIdx() == renderState()->motionState().lastSampleIdx() ) {
 		if ( renderState()->motionState().curState() == CMotionState::MOT_OUTSIDE ) {
 			// Closes the matrix in advance
@@ -1091,9 +1091,23 @@ RtVoid CBaseRenderer::doProjection(CRiProjection &obj, RtToken name, const CPara
 		}
 		// uses CTM as camera to screen transformation matrix
 		renderState()->setCameraToScreen();
-		// Resets current transformation
-		renderState()->curTransform().reset();
 	}
+
+	// Screen coord space
+	renderState()->curTransform().spaceType(RI_CAMERA);
+
+	// Resets current transformation
+	renderState()->curTransform().reset();
+
+	// Camera coord space
+#   ifdef _TRACE
+	std::cout << "<preProjection " << std::endl;
+#   endif
+}
+
+
+RtVoid CBaseRenderer::doProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
+{
 }
 
 RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])

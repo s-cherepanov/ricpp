@@ -34,6 +34,7 @@
 #include <cstdlib>
 #include <limits>
 #include <algorithm>
+#include <iostream>
 
 namespace RiCPP {
 
@@ -838,6 +839,37 @@ namespace RiCPP {
 	{
 		return lerp(v, lerp(u, x1, x2), lerp(u, x3, x4));
 	}
+
+	template<typename _T> inline void printVector4(_T *v) {
+		std::cout << v[0] << ", " << v[1] << ", " << v[2] << ", " << v[3] << std::endl;
+	}
+
+	template<typename _T> inline void printVector3(_T *v) {
+		std::cout << v[0] << ", " << v[1] << ", " << v[2] << std::endl;
+	}
+
+	template<typename _T> inline void printVector2(_T *v) {
+		std::cout << v[0] << ", " << v[1] << std::endl;
+	}
+	
+	template<typename _T> inline void printMatrix(_T m[4][4]) {
+		printVector4(&m[0][0]);
+		printVector4(&m[1][0]);
+		printVector4(&m[2][0]);
+		printVector4(&m[3][0]);
+	}
+	
+	template<typename _T> inline void printMatrix(_T m[3][3]) {
+		printVector3(&m[0][0]);
+		printVector3(&m[1][0]);
+		printVector3(&m[2][0]);
+	}
+
+	template<typename _T> inline void printMatrix(_T m[2][2]) {
+		printVector2(&m[0][0]);
+		printVector2(&m[1][0]);
+	}
+	
 
 	/*  @brief Deletes the contents of a container with pointers.
 	 *

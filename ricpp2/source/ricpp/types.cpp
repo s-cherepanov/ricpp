@@ -1123,48 +1123,52 @@ bool CMatrix3D::transformNormal(RtFloat &x, RtFloat &y, RtFloat &z)
 	return true;
 }
 	
+
 void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 {
-        int i, j, k;
+	int i, j, k;
 
-		n*=3;
-		RtFloat *s = &p[0][0];
+	n*=3;
+	RtFloat *s = &p[0][0];
+	
+	std::cout << "transformPoints " << std::endl;
+	printMatrix(m_Matrix);
 
-		if ( m_preMultiply ) {
-			for ( j = 0; j < n; j+=3 ) {
-				RtFloat t[4] = {s[j], s[j+1], s[j+2], 1.0};
-				RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
-				for ( i=0; i<4; ++i)
-					for ( k=0; k<4; ++k)
-						d[i] += t[k] * m_Matrix[k][i];
-				if ( nearlyZero(d[3]) ) {
-					s[j]   = d[0];
-					s[j+1] = d[1];
-					s[j+2] = d[2];
-				} else {
-					s[j]   = d[0]/d[3];
-					s[j+1] = d[1]/d[3];
-					s[j+2] = d[2]/d[3];
-				}
-			}
-		} else {
-			for ( j = 0; j < n; j+=3 ) {
-				RtFloat t[4] = {s[j], s[j+1], s[j+2], 1.0};
-				RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
-				for ( i=0; i<4; ++i)
-					for ( k=0; k<4; ++k)
-						d[i] += m_Matrix[i][k] * t[k];
-				if ( nearlyZero(d[3]) ) {
-					s[j]   = d[0];
-					s[j+1] = d[1];
-					s[j+2] = d[2];
-				} else {
-					s[j]   = d[0]/d[3];
-					s[j+1] = d[1]/d[3];
-					s[j+2] = d[2]/d[3];
-				}
+	if ( m_preMultiply ) {
+		for ( j = 0; j < n; j+=3 ) {
+			RtFloat t[4] = {s[j], s[j+1], s[j+2], 1.0};
+			RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
+			for ( i=0; i<4; ++i)
+				for ( k=0; k<4; ++k)
+					d[i] += t[k] * m_Matrix[k][i];
+			if ( nearlyZero(d[3]) ) {
+				s[j]   = d[0];
+				s[j+1] = d[1];
+				s[j+2] = d[2];
+			} else {
+				s[j]   = d[0]/d[3];
+				s[j+1] = d[1]/d[3];
+				s[j+2] = d[2]/d[3];
 			}
 		}
+	} else {
+		for ( j = 0; j < n; j+=3 ) {
+			RtFloat t[4] = {s[j], s[j+1], s[j+2], 1.0};
+			RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
+			for ( i=0; i<4; ++i)
+				for ( k=0; k<4; ++k)
+					d[i] += m_Matrix[i][k] * t[k];
+			if ( nearlyZero(d[3]) ) {
+				s[j]   = d[0];
+				s[j+1] = d[1];
+				s[j+2] = d[2];
+			} else {
+				s[j]   = d[0]/d[3];
+				s[j+1] = d[1]/d[3];
+				s[j+2] = d[2]/d[3];
+			}
+		}
+	}
 
 }
 

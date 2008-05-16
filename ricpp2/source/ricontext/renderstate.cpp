@@ -1177,7 +1177,8 @@ void CRenderState::calcNDCToRaster()
 		// Raster
 		m_NDCToRaster->spaceType(RI_RASTER);
 
-		RtInt xres, yres, xresTemp, yresTemp;
+		RtInt xres, yres;
+		RtFloat xresTemp, yresTemp;
 		RtFloat pa;
 		options().getFormat(xres, yres, pa);
 
@@ -1185,27 +1186,27 @@ void CRenderState::calcNDCToRaster()
 		RtFloat fAspect = options().frameAspectRatio();
 		
 		if ( pa > 1 ) {
-			xresTemp = fAspect * yres;
-			yresTemp = yres / pa;
+			xresTemp = fAspect * (RtFloat)yres;
+			yresTemp = (RtFloat)yres / pa;
 		} else {
-			xresTemp = fAspect * yres * pa;
-			yresTemp = yres;
+			xresTemp = fAspect * (RtFloat)yres * pa;
+			yresTemp = (RtFloat)yres;
 		}
 		
-		if ( xresTemp > xres ) {
+		if ( xresTemp > (RtFloat)xres ) {
 			if ( pa > 1 ) {
-				xresTemp = xres;
-				yresTemp = invert(fAspect / xres) / pa;
+				xresTemp = (RtFloat)xres;
+				yresTemp = invert(fAspect / (RtFloat)xres) / pa;
 			} else {
-				xresTemp = xres * pa;
-				yresTemp = invert(fAspect / xres);
+				xresTemp = (RtFloat)xres * pa;
+				yresTemp = invert(fAspect / (RtFloat)xres);
 			}
 		}
 		
-		assert(xresTemp <= xres && yresTemp <= yres);
+		assert(xresTemp <= (RtFloat)xres && yresTemp <= (RtFloat)yres);
 		
 		m_NDCToRaster->identity();
-		m_NDCToRaster->scale((RtFloat)xresTemp, (RtFloat)yresTemp, 1);
+		m_NDCToRaster->scale(xresTemp, yresTemp, 1);
 	}
 }
 

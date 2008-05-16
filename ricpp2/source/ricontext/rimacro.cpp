@@ -222,7 +222,7 @@ const CTriangulatedPolygon *CRiGeneralPolygon::triangulate(const IPolygonTriangu
 	// Triangulate polygon
 	m_triangulated = new CTriangulatedPolygon(strategy);
 	if ( m_triangulated )
-		m_triangulated->triangulate(m_nVerts.size(), &m_nVerts[0], &f[0]);
+		m_triangulated->triangulate((RtInt)m_nVerts.size(), &m_nVerts[0], &f[0]);
 	
 	return m_triangulated;
 }

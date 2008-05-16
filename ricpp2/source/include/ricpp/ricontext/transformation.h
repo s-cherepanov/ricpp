@@ -117,12 +117,14 @@ namespace RiCPP {
 		class CMovedMatrix : public IMovedTransform {
 		public:
 			std::vector<RtFloat> m_transform;
-			bool m_concat;
+			std::vector<RtFloat> m_inverseTransform;
+			bool m_concat, m_validInverse;
 			unsigned long m_motionBegin, m_motionEnd;
 			
 			inline CMovedMatrix()
 			{
 				m_concat = false;
+				m_validInverse = true;
 				m_motionBegin = m_motionEnd = 0;
 			}
 			
@@ -142,6 +144,7 @@ namespace RiCPP {
 			virtual void fill(RtInt n);
 			
 			void set(const RtMatrix transform, bool concat, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
+			void set(const RtMatrix transform, const RtMatrix inverseTransform, bool concat, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse);
 			virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse);
 			virtual void sampleReset(CMatrix3D &ctm, CMatrix3D &inverse);
 		}; // CMovedMatrix
@@ -381,7 +384,9 @@ namespace RiCPP {
 
 		virtual void identity();
 		virtual void transform(RtMatrix aTransform);
+		virtual void transform(RtMatrix aTransform, RtMatrix anInverseTransform);
 		virtual void concatTransform(RtMatrix aTransform);
+		virtual void concatTransform(RtMatrix aTransform, RtMatrix anInverseTransform);
 		virtual void perspective(RtFloat fov);
 		virtual void translate(RtFloat dx, RtFloat dy, RtFloat dz);
 		virtual void rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);

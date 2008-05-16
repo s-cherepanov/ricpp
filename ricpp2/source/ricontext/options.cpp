@@ -129,7 +129,7 @@ void COptions::assignNumerics(const COptions &ro)
 	m_screenWindowRight = ro.m_screenWindowRight;
 	m_screenWindowBottom = ro.m_screenWindowBottom;
 	m_screenWindowTop = ro.m_screenWindowTop;
-	
+
 	m_cropWindowCalled = ro.m_cropWindowCalled;
 	m_cropWindowLeft = ro.m_cropWindowLeft;
 	m_cropWindowRight = ro.m_cropWindowRight;
@@ -556,15 +556,12 @@ RtVoid COptions::projection(const CTransformation &ctm, RtToken name, const CPar
 	m_preProjection = ctm.duplicate();
 	
 	m_FOVSet = false;
+	m_FOV = defCameraFOV;
 	if ( m_projectionName == RI_PERSPECTIVE ) {
 		const CParameter *p = m_projectionParams.get(RI_FOV);
 		if ( p && p->floats().size() > 0 ) {
 			m_FOVSet = true;
 			m_FOV = p->floats()[0];
-			if ( nearlyZero(m_FOV) ) {
-				m_projectionName = RI_ORTHOGRAPHIC;
-				m_FOVSet = false;
-			}
 		}
 	}
 }

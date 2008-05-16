@@ -161,6 +161,8 @@ namespace RiCPP {
 		bool m_accumulateConditional;   ///< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
 		bool m_ifCondition;             ///< true, if an if or elseif condition was true;
 
+		virtual bool adjustProjectionMatrix(CMatrix3D &projectionMatrix, CMatrix3D &inverseProjectionMatrix);
+
 		void pushOptions();    ///< Pushes the current options set.
 		bool popOptions();     ///< Pops an options set, restores the set to the last condition.
 
@@ -603,6 +605,7 @@ namespace RiCPP {
 		inline CTransformation *cameraToScreen() { return m_cameraToScreen; }
 		inline CTransformation *worldToCamera() { return m_worldToCamera; }
 
+		void getProjectedScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const;
 		void calcNDCToRaster();
 		void calcScreenToNDC();
 		void clearCameraToScreen();

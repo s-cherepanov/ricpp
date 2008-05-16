@@ -124,6 +124,8 @@ CTransformation::CMovedMatrix &CTransformation::CMovedMatrix::operator=(const CT
 		return *this;
 
 	m_transform = o.m_transform;
+	m_inverseTransform = o.m_inverseTransform;
+	m_validInverse = o.m_validInverse;
 	m_concat = o.m_concat;
 	m_motionBegin = o.m_motionBegin;
 	m_motionEnd = o.m_motionEnd;
@@ -134,6 +136,8 @@ CTransformation::CMovedMatrix &CTransformation::CMovedMatrix::operator=(const CT
 void CTransformation::CMovedMatrix::clear()
 {
 	m_transform.clear();
+	m_inverseTransform.clear();
+	m_validInverse = true;
 }
 
 void CTransformation::CMovedMatrix::fill(RtInt n)
@@ -145,10 +149,33 @@ void CTransformation::CMovedMatrix::fill(RtInt n)
 		for ( unsigned long j = 0; j < 16; ++j ) {
 			m_transform[i*16+j] = m_transform[(i-1)*16+j];
 		}
+		for ( unsigned long j = 0; j < 16; ++j ) {
+			m_inverseTransform[i*16+j] = m_inverseTransform[(i-1)*16+j];
+		}
+	}
+}
+
+
+void CTransformation::CMovedMatrix::set(const RtMatrix transform,
+										bool concat,
+										RtInt n,
+										unsigned long moBegin,
+										unsigned long moEnd,
+										CMatrix3D &ctm,
+										CMatrix3D &inverse)
+{
+	CMatrix3D mat(transform);
+	RtMatrix inv;
+	if ( mat.getInverse(inv) ) {
+		set(transform, inv, concat, n, moBegin, moEnd, ctm, inverse);
+	} else {
+		m_validInverse = false;
+		set(transform, RiIdentityMatrix, concat, n, moBegin, moEnd, ctm, inverse);
 	}
 }
 
 void CTransformation::CMovedMatrix::set(const RtMatrix transform,
+										const RtMatrix inverseTransform,
 										bool concat,
 										RtInt n,
 										unsigned long moBegin,
@@ -170,6 +197,7 @@ void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 	if ( moBegin < moEnd ) {
 		if ( m_transform.size() < (moEnd - moBegin) * 16 ) {
 			m_transform.resize((moEnd - moBegin) * 16);
+			m_inverseTransform.resize((moEnd - moBegin) * 16);
 		}
 		if ( (unsigned long)n >= moEnd - moBegin ) {
 			// ERROR
@@ -180,6 +208,11 @@ void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 			m_transform[n*16+j*4+1] = transform[j][1];
 			m_transform[n*16+j*4+2] = transform[j][2];
 			m_transform[n*16+j*4+3] = transform[j][3];
+
+			m_inverseTransform[n*16+j*4+0] = inverseTransform[j][0];
+			m_inverseTransform[n*16+j*4+1] = inverseTransform[j][1];
+			m_inverseTransform[n*16+j*4+2] = inverseTransform[j][2];
+			m_inverseTransform[n*16+j*4+3] = inverseTransform[j][3];
 		}
 	}
 	if ( n == 0 )
@@ -193,12 +226,17 @@ void CTransformation::CMovedMatrix::sample(RtFloat shutterTime, const TypeMotion
 
 void CTransformation::CMovedMatrix::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
 {
-	RtMatrix transform;
+	RtMatrix transform, inverseTransform;
 	for ( RtInt j = 0; j < 4; ++j ) {
 		transform[j][0] = m_transform[j*4+0];
 		transform[j][1] = m_transform[j*4+1];
 		transform[j][2] = m_transform[j*4+2];
 		transform[j][3] = m_transform[j*4+3];
+
+		inverseTransform[j][0] = m_inverseTransform[j*4+0];
+		inverseTransform[j][1] = m_inverseTransform[j*4+1];
+		inverseTransform[j][2] = m_inverseTransform[j*4+2];
+		inverseTransform[j][3] = m_inverseTransform[j*4+3];
 	}
 	
 	if ( m_transform.size() >= 1 ) {
@@ -207,16 +245,13 @@ void CTransformation::CMovedMatrix::sampleReset(CMatrix3D &ctm, CMatrix3D &inver
 		else
 			ctm.transform(transform);
 
-		CMatrix3D mat(transform);
-		RtMatrix inv;
-		if ( !mat.getInverse(inv) ) {
-			inverse.identity();
+		if ( !m_validInverse ) {
 			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "Could not calculate inverse matrix in %s", "CMovedMatrix::sampleReset()");
 		}
 		if ( m_concat )
-			inverse.concatTransform(inv);
+			inverse.concatTransform(inverseTransform);
 		else
-			inverse.transform(inv);
+			inverse.transform(inverseTransform);
 	}
 }
 
@@ -673,6 +708,28 @@ void CTransformation::transform(RtMatrix aTransform)
 	}
 }
 
+void CTransformation::transform(RtMatrix aTransform, RtMatrix anInverseTransform)
+{
+	if ( !m_motionState ) {
+		m_CTM.transform(aTransform);
+		m_inverseCTM.transform(anInverseTransform);
+		m_isValid = true;
+	} else {
+		if ( m_motionState->curSampleIdx() == 0 ) {
+			m_deferedTrans.push_back(new CMovedMatrix);
+		}
+		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM );
+		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM ) {
+			dynamic_cast<CMovedMatrix *>(m_deferedTrans.back())->set(
+				aTransform, anInverseTransform, false,
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_CTM, m_inverseCTM);
+		} else {
+			// ERROR
+		}
+	}
+}
+
 void CTransformation::concatTransform(RtMatrix aTransform)
 {
 	if ( !m_motionState ) {
@@ -692,6 +749,27 @@ void CTransformation::concatTransform(RtMatrix aTransform)
 		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM ) {
 			dynamic_cast<CMovedMatrix *>(m_deferedTrans.back())->set(
 				aTransform, true,
+				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
+				m_CTM, m_inverseCTM);
+		} else {
+			// ERROR
+		}
+	}
+}
+
+void CTransformation::concatTransform(RtMatrix aTransform, RtMatrix anInverseTransform)
+{
+	if ( !m_motionState ) {
+		m_CTM.concatTransform(aTransform);
+		m_inverseCTM.concatTransform(anInverseTransform);
+	} else {
+		if ( m_motionState->curSampleIdx() == 0 ) {
+			m_deferedTrans.push_back(new CMovedMatrix);
+		}
+		assert( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM );
+		if ( !m_deferedTrans.empty() && m_deferedTrans.back() != 0 && m_deferedTrans.back()->reqType() == REQ_TRANSFORM ) {
+			dynamic_cast<CMovedMatrix *>(m_deferedTrans.back())->set(
+				aTransform, anInverseTransform, true,
 				m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx(),
 				m_CTM, m_inverseCTM);
 		} else {

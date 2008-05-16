@@ -1209,6 +1209,31 @@ void CRenderState::calcNDCToRaster()
 	}
 }
 
+
+void CRenderState::getProjectedScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const
+{
+	options().getScreenWindow(left, right, bot, top);
+	
+	RtToken projection = options().projectionName();
+	if ( projection == RI_PERSPECTIVE ) {
+		RtFloat fov = options().fov();
+		
+		if ( fov != (RtFloat)180.0 ) {
+			RtFloat fovRad_2 = deg2rad(fov)/(RtFloat)2.0;
+			RtFloat viewPlane = tan(fovRad_2);
+#ifdef _TRACE
+			std::cout << "viewplane distance " <<  viewPlane << std::endl;
+#endif
+			if ( !nearlyZero(viewPlane) ) {
+				left *= viewPlane;
+				right *= viewPlane;
+				bot *= viewPlane;
+				top *= viewPlane;
+			}
+		}
+	}
+}
+
 void CRenderState::calcScreenToNDC()
 {
 	if ( !m_screenToNDC )
@@ -1221,14 +1246,17 @@ void CRenderState::calcScreenToNDC()
 		m_screenToNDC->spaceType(RI_NDC);
 		m_screenToNDC->identity();
 		
+		RtFloat left, right, bottom, top;
+		getProjectedScreenWindow(left, right, bottom, top);
+		
 		// scale screenwindow and mirror on x
-		RtFloat swid = options().screenWindowRight()-options().screenWindowLeft();
-		RtFloat sht  = options().screenWindowTop()-options().screenWindowBottom();
-		if ( swid > 0 && sht > 0 ) {
+		RtFloat swid = right-left;
+		RtFloat sht  = top-bottom;
+		if ( !nearlyZero(swid) && !nearlyZero(sht) ) {
 			m_screenToNDC->scale((RtFloat)1.0/swid, (RtFloat)-1.0/sht, 1);
 		}
 		// Translate to screen origin
-		m_screenToNDC->translate(-options().screenWindowLeft(), -options().screenWindowTop(), 0);
+		m_screenToNDC->translate(-left, -top, 0);
 
 		// Screen
 
@@ -1247,6 +1275,73 @@ void CRenderState::clearCameraToScreen()
 	m_cameraToScreen = 0;
 }
 
+bool CRenderState::adjustProjectionMatrix(CMatrix3D &projectionMatrix, CMatrix3D &inverseProjectionMatrix)
+{
+	RtToken projection = options().projectionName();
+
+	if ( projection == RI_ORTHOGRAPHIC ||
+	     (projection == RI_PERSPECTIVE && nearlyZero(options().fov())) )
+	{
+
+		projectionMatrix.identity();
+		inverseProjectionMatrix.identity();
+		inverseProjectionMatrix.setPreMultiply(false);
+
+		RtFloat hither = options().hither();
+		RtFloat yon = options().yon();
+		RtFloat depth = yon - hither;
+		
+		if ( !nearlyZero(depth) ) {
+			projectionMatrix.scale(1, 1, (RtFloat)1.0/depth);
+			inverseProjectionMatrix.scale(1, 1, depth);
+		}
+		projectionMatrix.translate(0, 0, -hither);
+		inverseProjectionMatrix.translate(0, 0, hither);
+
+		return true;
+
+	} else if ( projection == RI_PERSPECTIVE ) {
+
+		projectionMatrix.identity();
+		inverseProjectionMatrix.identity();
+		inverseProjectionMatrix.setPreMultiply(false);
+
+		RtFloat fov = options().fov();
+		CMatrix3D pm;
+		pm.perspective(fov);
+		
+		RtFloat hither = options().hither();
+		RtFloat yon = options().yon();
+		RtPoint toClip[2] = { {0,0,hither}, {0,0,yon}};
+		pm.transformPoints(2, &toClip[0]);
+		hither = toClip[0][2];
+		yon = toClip[1][2];
+		RtFloat depth = yon - hither;
+		if ( !nearlyZero(depth) ) {
+			projectionMatrix.scale(1, 1, (RtFloat)1.0/depth);
+			inverseProjectionMatrix.scale(1, 1, depth);
+		}
+		projectionMatrix.translate(0, 0, -hither);
+		inverseProjectionMatrix.translate(0, 0, hither);
+		
+		projectionMatrix.perspective(fov);
+		inverseProjectionMatrix.inversePerspective(fov);
+
+		return true;
+
+	} else if ( projection == RI_NULL ) {
+
+		projectionMatrix.identity();
+		inverseProjectionMatrix.identity();
+		inverseProjectionMatrix.setPreMultiply(false);
+
+		return true;
+
+	}
+	
+	return false;
+}
+
 void CRenderState::setCameraToScreen()
 {
 	m_cameraToScreen = m_transformationFactory->newTransformation();
@@ -1259,6 +1354,9 @@ void CRenderState::setCameraToScreen()
 		} else {
 			m_cameraToScreen->identity();
 		}
+		CMatrix3D projectionMatrix, inverseProjectionMatrix;
+		adjustProjectionMatrix(projectionMatrix, inverseProjectionMatrix);
+		m_cameraToScreen->concatTransform(projectionMatrix.getMatrix(), inverseProjectionMatrix.getMatrix());
 	}
 	
 	calcScreenToNDC();

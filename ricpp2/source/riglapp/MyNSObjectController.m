@@ -1,0 +1,1 @@
+#import "MyNSObjectController.h"@implementation MyNSObjectController@end

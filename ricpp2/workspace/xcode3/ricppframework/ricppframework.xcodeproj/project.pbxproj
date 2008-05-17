@@ -186,6 +186,7 @@
 		C383C10C0DBC89510059B71D /* testpoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C383C10B0DBC89510059B71D /* testpoly.cpp */; };
 		C383C1130DBC8A0C0059B71D /* polygon.h in Headers */ = {isa = PBXBuildFile; fileRef = C383C1120DBC8A0C0059B71D /* polygon.h */; };
 		C383C12C0DBC900A0059B71D /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
+		C3969E5C0DDF098C00562F24 /* MyNSObjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */; };
 		C3A8FA760D74CBF700C1013B /* ricppconst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA720D74CBF700C1013B /* ricppconst.h */; };
 		C3A8FA770D74CBF700C1013B /* ricppdecls.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA730D74CBF700C1013B /* ricppdecls.h */; };
 		C3A8FA780D74CBF700C1013B /* ricpptokens.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA740D74CBF700C1013B /* ricpptokens.h */; };
@@ -654,6 +655,9 @@
 		C383C10B0DBC89510059B71D /* testpoly.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = testpoly.cpp; path = ../../../source/test/testpoly.cpp; sourceTree = SOURCE_ROOT; };
 		C383C1120DBC8A0C0059B71D /* polygon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = polygon.h; path = ../../../source/include/ricpp/ricontext/polygon.h; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
+		C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyNSObjectController.m; path = ../../../source/riglapp/MyNSObjectController.m; sourceTree = SOURCE_ROOT; };
+		C3969E5D0DDF09AE00562F24 /* MyNSObjectController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyNSObjectController.h; path = ../../../source/riglapp/MyNSObjectController.h; sourceTree = SOURCE_ROOT; };
+		C3969E5E0DDF0BCB00562F24 /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyOpenGLView.h; path = ../../../source/riglapp/MyOpenGLView.h; sourceTree = SOURCE_ROOT; };
 		C39753FE0C14005E0089A579 /* pluginhandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = pluginhandler.h; path = ../../../source/include/ricpp/pluginhandler/pluginhandler.h; sourceTree = SOURCE_ROOT; };
 		C39754110C1402250089A579 /* ribfilter.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribfilter.cpp; path = ../../../source/ribfilter/ribfilter.cpp; sourceTree = SOURCE_ROOT; };
 		C39754120C1402250089A579 /* ribfilterlist.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribfilterlist.cpp; path = ../../../source/ribfilter/ribfilterlist.cpp; sourceTree = SOURCE_ROOT; };
@@ -691,7 +695,6 @@
 		C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "riglapp-Info.plist"; sourceTree = SOURCE_ROOT; };
 		C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyOpenGLView.m; path = ../../../source/riglapp/MyOpenGLView.m; sourceTree = SOURCE_ROOT; };
-		C3CE0F0D0DCF54890014BC8E /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyOpenGLView.h; path = ../../../source/include/ricpp/riglapp/MyOpenGLView.h; sourceTree = SOURCE_ROOT; };
 		C3CE0F0E0DCF54A70014BC8E /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../../source/riglapp/main.m; sourceTree = SOURCE_ROOT; };
 		C3CE0F240DCF55FD0014BC8E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		C3CE0F260DCF561F0014BC8E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -1972,6 +1975,7 @@
 		C3CE0F090DCF541A0014BC8E /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */,
 				C3CE0F0E0DCF54A70014BC8E /* main.m */,
 				C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */,
 			);
@@ -1981,7 +1985,8 @@
 		C3CE0F0A0DCF54260014BC8E /* Header */ = {
 			isa = PBXGroup;
 			children = (
-				C3CE0F0D0DCF54890014BC8E /* MyOpenGLView.h */,
+				C3969E5E0DDF0BCB00562F24 /* MyOpenGLView.h */,
+				C3969E5D0DDF09AE00562F24 /* MyNSObjectController.h */,
 			);
 			name = Header;
 			sourceTree = SOURCE_ROOT;
@@ -3011,6 +3016,7 @@
 			files = (
 				C3CE0F0C0DCF54470014BC8E /* MyOpenGLView.m in Sources */,
 				C3CE0F0F0DCF54A70014BC8E /* main.m in Sources */,
+				C3969E5C0DDF098C00562F24 /* MyNSObjectController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

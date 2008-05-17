@@ -602,19 +602,20 @@ CPolygonContainer &CPolygonContainer::operator=(const CPolygonContainer &pc)
 // -----------------------------------------------------------------------------
 static bool isEar(
 	std::vector<CPolygonNode> &nodes,
-	unsigned long tip)
+	unsigned long tip,
+	RtFloat &weight)
 {
 	unsigned long prev = nodes[tip].prev();
 	unsigned long next = nodes[tip].next();
 	
 #   ifdef _TRACE_POLY_EAR
-	    std::cout << "% -isEar() tip " << tip << " prev " << prev << " next " << next << std::endl;
+	    std::cout << "% >isEar() tip " << tip << " prev " << prev << " next " << next << std::endl;
 #   endif
 
 	assert(prev!= next);
 	if ( next == prev ) {
 #       ifdef _TRACE_POLY_EAR
-		std::cout << "% >isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear, prev == next" << std::endl;
+		std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear, prev == next" << std::endl;
 #       endif
 		return true;
 	}
@@ -624,6 +625,9 @@ static bool isEar(
 	vectFromPos2(vprev, nodes[prev].m_p, nodes[tip].m_p);
 	vectFromPos2(vnext, nodes[tip].m_p, nodes[next].m_p);
 	vectFromPos2(vinner, nodes[next].m_p, nodes[prev].m_p);
+
+	// weight = tmax(dot2_norm(vprev, vinner), dot2_norm(vinner, vnext));
+	weight = dot2_pos_norm(nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p);
 	
 	if ( nearlyZero(det2(vprev, vnext)) ) {
 		// Degenerated triangle, either a needle tip (cutted away) or a line (not cutted) 
@@ -632,8 +636,9 @@ static bool isEar(
 		RtFloat lenInner = vlen2(vnext);
 		bool rval = lenPrev <= lenInner || lenNext <= lenInner;
 #       ifdef _TRACE_POLY_EAR
-		    std::cout << "% <isEar() degenerated triangle tip " << tip << " prev " << prev << " next " << next << (rval ? " is an ear" : " not an ear") << std::endl;
+		    std::cout << "% <isEar() degenerated triangle tip " << tip << " prev " << prev << " next " << next << " weight " << weight << (rval ? " is an ear" : " not an ear") << std::endl;
 #       endif
+		// weight = -2.0;
 		return rval;
 	}
 
@@ -643,7 +648,7 @@ static bool isEar(
 #       endif
 		return false;
 	}
-
+	
 	int onEdge, startEdge;
 	for ( unsigned long j = nodes[next].next(); j != prev; j = nodes[j].next() ) {
 		if ( nodes[j].reflex() ) {
@@ -722,10 +727,10 @@ static bool isEar(
 			}
 		}
 	}
-
-#       ifdef _TRACE_POLY_EAR
-	std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " is an ear" << std::endl;
-#       endif
+	
+#   ifdef _TRACE_POLY_EAR
+		std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " weight " << weight << " is an ear" << std::endl;
+#   endif
 	return true;
 }
 
@@ -751,7 +756,7 @@ void CEarClipper::triangulate(
 	unsigned long prev;
 	unsigned long next;
 	unsigned long i = offs;
-	RtFloat v;
+	RtFloat v = 0;
 	
 	// Fill tree
 	do {
@@ -761,11 +766,11 @@ void CEarClipper::triangulate(
 		    std::cout << "% -triangulate() examine i " << i << " prev " << prev << " next " << next << std::endl;
 #       endif
 		v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
-		tn[i].content() = v;
-		if ( isEar(nodes, i) ) {
+		if ( isEar(nodes, i, v) ) {
 #           ifdef _TRACE_POLY_TRIANGULATE
-			    std::cout << "% -triangulate() Try i " << i << " prev " << prev << " next " << next << std::endl;
+			    std::cout << "% -triangulate() Try i " << i << " prev " << prev << " next " << next << " dot " << v << std::endl;
 #           endif
+			tn[i].content() = v;
 			tr.insert(i, tn);
 		}
 		i = next;
@@ -787,9 +792,9 @@ void CEarClipper::triangulate(
 		std::cout << "% -triangulate() examine i " << i << " prev " << prev << " next " << next << std::endl;
 #       endif
 		
-		if ( !isEar(nodes, i) ) {
+		if ( !isEar(nodes, i, v) ) {
 #           ifdef _TRACE_POLY_TRIANGULATE
-			    std::cout << "% -triangulate() Drop i " << i << " prev " << prev << " next " << next << std::endl;
+			    std::cout << "% -triangulate() *** Drop i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
 #           endif
 			tr.remove(i, tn);
 			continue;
@@ -797,20 +802,23 @@ void CEarClipper::triangulate(
 		
 		if ( !degenTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
 #           ifdef _TRACE_POLY_TRIANGULATE
-			    std::cout << "% -triangulate() *** Cut i " << i << " prev " << prev << " next " << next << std::endl;
+			    std::cout << "% -triangulate() *** Cut i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
 #           endif
 			triangles[tri++] = nodes[prev].m_index;
 			triangles[tri++] = nodes[i].m_index;
 			triangles[tri++] = nodes[next].m_index;
-		}
+			nodes[i].remove(nodes, isCCW);
+		} else {
+			if ( !nearlyZero(v+(RtFloat)1.0) ) {
+				// inner node is not part of another ear
+				nodes[i].remove(nodes, isCCW);
+			}
 #       ifdef _TRACE_POLY_TRIANGULATE
-		    else {
-			    std::cout << "% -triangulate() *** Cull (det==0) i " << i << " prev " << prev << " next " << next << std::endl;
-		    }
+			    std::cout << "% -triangulate() *** Cull (det==0) i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
 #       endif
+		}
 		
 		tr.remove(i, tn);
-		nodes[i].remove(nodes, isCCW);
 		
 		if ( i == offs )
 			offs = next;
@@ -823,15 +831,15 @@ void CEarClipper::triangulate(
 
 		for ( m = 0; m < 2; ++m ) {
 			v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
-			tn[i].content() = v;
-			if ( isEar(nodes, i) ) {
+			if ( isEar(nodes, i, v) ) {
 #               ifdef _TRACE_POLY_TRIANGULATE
-				    std::cout << "% Try i " << i << " prev " << prev << " next " << next << std::endl;
+				    std::cout << "% -triangulate() Try i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
 #               endif
+				tn[i].content() = v;
 				tr.insert(i, tn);
 			} else {
 #               ifdef _TRACE_POLY_TRIANGULATE
-				    std::cout << "% Drop i " << i << " prev " << prev << " next " << next << std::endl;
+				    std::cout << "% -triangulate() Drop i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
 #               endif
 				tr.remove(i, tn);
 			}
@@ -841,8 +849,9 @@ void CEarClipper::triangulate(
 		}
 	}
 
+	assert( (tri/3)*3 == tri);
 #   ifdef _TRACE_POLY_TRIANGULATE
-	    std::cout << "% <triangulate() #triangles: " << tri << std::endl;
+	    std::cout << "% <triangulate() #triangles: " << tri/3 << " #Points " << tri << std::endl;
 #   endif
 	triangles.resize(tri);
 }

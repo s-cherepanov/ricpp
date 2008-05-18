@@ -307,11 +307,11 @@ RtInt COptions::xResolution() const
 {
 	if ( m_formatCalled )
 		return m_xResolution;
-	if ( !m_displays.empty() ) {
-		const CDisplayDescr &d = *m_displays.begin();
-		if ( d.width() > 0 )
-			return d.width();
-	}
+
+	const CDisplayDescr *d = primaryDisplay();
+	if ( d && d->width() > 0 )
+			return d->width();
+
 	return m_xResolution;
 }
 
@@ -319,11 +319,11 @@ RtInt COptions::yResolution() const
 {
 	if ( m_formatCalled )
 		return m_yResolution;
-	if ( !m_displays.empty() ) {
-		const CDisplayDescr &d = *m_displays.begin();
-		if ( d.height() > 0 )
-			return d.height();
-	}
+	
+	const CDisplayDescr *d = primaryDisplay();
+	if ( d && d->height() > 0 )
+		return d->height();
+
 	return m_yResolution;
 }
 
@@ -332,14 +332,13 @@ RtFloat COptions::pixelAspectRatio() const
 	if ( m_formatCalled )
 		return m_pixelAspectRatio;
 	
-	if ( !m_displays.empty() ) {
-		const CDisplayDescr *d = primaryDisplay();
-		if ( d && d->pixelAspectRatio() > 0 )
-			return d->pixelAspectRatio();
-	}
+	const CDisplayDescr *d = primaryDisplay();
+	if ( d && d->pixelAspectRatio() > 0 )
+		return d->pixelAspectRatio();
 	
 	return m_pixelAspectRatio;
 }
+
 // ----
 
 void COptions::initFrameAspectRatio()
@@ -360,13 +359,8 @@ RtFloat COptions::frameAspectRatio() const
 		return m_frameAspectRatio;
 
 	if ( yResolution() != 0 )
-		return static_cast<RtFloat>(xResolution()) / static_cast<RtFloat>(yResolution());
+		return static_cast<RtFloat>(xResolution()) * pixelAspectRatio() / static_cast<RtFloat>(yResolution());
 
-	/*
-	if ( yResolution() != 0 )
-		return (xResolution() * pixelAspectRatio()) / static_cast<RtFloat>(yResolution());
-	*/
-	
 	return RI_INFINITY;
 }
 
@@ -416,7 +410,7 @@ RtVoid COptions::getScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, Rt
 RtFloat COptions::screenWindowLeft() const
 {
 	if ( m_screenWindowCalled ) {
-	return m_screenWindowLeft;
+		return m_screenWindowLeft;
 	} else {
 		RtFloat ratio = frameAspectRatio();
 		if ( ratio >= 1.0 ) {

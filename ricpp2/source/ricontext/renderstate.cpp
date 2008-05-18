@@ -1178,31 +1178,22 @@ void CRenderState::calcNDCToRaster()
 		m_NDCToRaster->spaceType(RI_RASTER);
 
 		RtInt xres, yres;
+		RtFloat xresTemp1, yresTemp1;
 		RtFloat xresTemp, yresTemp;
 		RtFloat pa;
 		options().getFormat(xres, yres, pa);
 
 		// Frameaspect (horizontal/vertical) is used to calc the used size 
-		RtFloat fAspect = options().frameAspectRatio();
+		RtFloat fAspect = options().frameAspectRatio() / pa;
 		
-		if ( pa > 1 ) {
-			xresTemp = fAspect * (RtFloat)yres;
-			yresTemp = (RtFloat)yres / pa;
-		} else {
-			xresTemp = fAspect * (RtFloat)yres * pa;
-			yresTemp = (RtFloat)yres;
+		xresTemp = xres;
+		yresTemp = xres/fAspect;
+	
+		if ( yresTemp > yres ) {
+			xresTemp = yres * fAspect;
+			yresTemp = yres;
 		}
-		
-		if ( xresTemp > (RtFloat)xres ) {
-			if ( pa > 1 ) {
-				xresTemp = (RtFloat)xres;
-				yresTemp = invert(fAspect / (RtFloat)xres) / pa;
-			} else {
-				xresTemp = (RtFloat)xres * pa;
-				yresTemp = invert(fAspect / (RtFloat)xres);
-			}
-		}
-		
+
 		assert(xresTemp <= (RtFloat)xres && yresTemp <= (RtFloat)yres);
 		
 		m_NDCToRaster->identity();

@@ -331,11 +331,13 @@ RtFloat COptions::pixelAspectRatio() const
 {
 	if ( m_formatCalled )
 		return m_pixelAspectRatio;
+	
 	if ( !m_displays.empty() ) {
-		const CDisplayDescr &d = *m_displays.begin();
-		if ( d.pixelAspectRatio() > 0 )
-			return d.pixelAspectRatio();
+		const CDisplayDescr *d = primaryDisplay();
+		if ( d && d->pixelAspectRatio() > 0 )
+			return d->pixelAspectRatio();
 	}
+	
 	return m_pixelAspectRatio;
 }
 // ----
@@ -358,8 +360,13 @@ RtFloat COptions::frameAspectRatio() const
 		return m_frameAspectRatio;
 
 	if ( yResolution() != 0 )
-		return (xResolution() * pixelAspectRatio()) / static_cast<RtFloat>(yResolution());
+		return static_cast<RtFloat>(xResolution()) / static_cast<RtFloat>(yResolution());
 
+	/*
+	if ( yResolution() != 0 )
+		return (xResolution() * pixelAspectRatio()) / static_cast<RtFloat>(yResolution());
+	*/
+	
 	return RI_INFINITY;
 }
 
@@ -903,6 +910,21 @@ COptions::TypeDisplays::const_iterator COptions::findDisplay(RtString name) cons
 		}
 	}
 	return iter;
+}
+
+const CDisplayDescr *COptions::primaryDisplay() const
+{
+	TypeDisplays::const_iterator iter;
+	for ( iter = displayBegin();
+		 iter != displayEnd();
+		 ++iter )
+	{
+		if ( (*iter).isPrimary() )
+		{
+			return &(*iter);
+		}
+	}
+	return 0;
 }
 
 // ----

@@ -173,6 +173,10 @@ RICPP_EXTERN(RtToken)  RI_LINEAR, /**< Linear curves @see CRiCPP::curvesV() */
 RICPP_EXTERN(RtToken)  RI_WIDTH,
 			   RI_CONSTANTWIDTH;
 
+RICPP_EXTERN(RtToken) RI_DISPWIDTH,
+	           RI_DISPHEIGHT,
+	           RI_PIXELASPECT;
+
 RICPP_EXTERN(RtToken)  RI_CURRENT, /**< Current coordinate system */
 			   RI_EYE, /**<  Eye coordinate system */
 			   RI_SHADER, /**<  Shader coordinate system */

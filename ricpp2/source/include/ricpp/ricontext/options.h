@@ -476,6 +476,7 @@ namespace RiCPP {
 			return m_displays.end();
 		}
 		TypeDisplays::const_iterator findDisplay(RtString name) const;
+		const CDisplayDescr *primaryDisplay() const;
 
 		RtVoid hider(RtToken type, const CParameterList &params);
 		inline RtToken hiderType() const

@@ -210,14 +210,22 @@ CDisplayDescr &CDisplayDescr::assignRemap(const CDisplayDescr &dd, CDeclarationD
 	return *this;
 }
 
-void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode) {
+bool CDisplayDescr::isPrimary() const
+{
+	const char *myName = name();
+	return myName && myName[0] != '+';
+}
+
+void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode)
+{
+	name(aName);
+	
 	m_type = aType;
 	m_mode = aMode;
 
 	m_origin[0] = 0;
 	m_origin[1] = 0;
 	
-
 	const CParameter *p = get(RI_ORIGIN);
 	if ( p ) {
 		const std::vector<RtInt> &ints = p->ints();
@@ -225,6 +233,37 @@ void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, 
 		{
 			m_origin[0] = ints[0];
 			m_origin[1] = ints[1];
+		}
+	}
+
+	m_width = -1;
+	m_height = -1;
+	m_pixelAspectRatio = -1;
+
+	p = get(RI_DISPWIDTH);
+	if ( p ) {
+		const std::vector<RtInt> &ints = p->ints();
+		if ( ints.size() >= 1 )
+		{
+			m_width = ints[0];
+		}
+	}
+
+	p = get(RI_DISPHEIGHT);
+	if ( p ) {
+		const std::vector<RtInt> &ints = p->ints();
+		if ( ints.size() >= 1 )
+		{
+			m_height = ints[0];
+		}
+	}
+	
+	p = get(RI_PIXELASPECT);
+	if ( p ) {
+		const std::vector<RtInt> &ints = p->ints();
+		if ( ints.size() >= 1 )
+		{
+			m_pixelAspectRatio = ints[0];
 		}
 	}
 

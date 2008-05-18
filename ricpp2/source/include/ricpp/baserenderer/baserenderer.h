@@ -346,7 +346,7 @@ protected:
 
 	/** @brief Call the default declarations.
 	 *
-	 *  Overload this to add more default declarations, by calling processDeclare() with
+	 *  Overload this to add more default declarations, by calling renderState().declare() with
 	 *  the @a isDefault attribute set to true.
 	 */
 	virtual void defaultDeclarations();

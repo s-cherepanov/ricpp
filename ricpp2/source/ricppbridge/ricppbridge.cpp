@@ -256,6 +256,9 @@ void CRiCPPBridge::defaultDeclarations()
 	doDeclare(RI_ST, "varying float[2]", true);
 	
 	doDeclare(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
+	doDeclare(RI_DISPWIDTH, "constant integer", true);
+	doDeclare(RI_DISPHEIGHT, "constant integer", true);
+	doDeclare(RI_PIXELASPECT, "constant float", true);
 	
 	doDeclare(RI_NAME, "string", true);
 	doDeclare(RI_WIDTH, "varying float", true);
@@ -446,7 +449,7 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 	ExceptRiCPPError err(code, severity, message, line, file);
 	err.formatErrorMessage(errorstring);
 
-	if ( m_outer->m_curErrorHandler )
+	if ( m_outer && m_outer->m_curErrorHandler )
 		(*m_outer->m_curErrorHandler)(*m_outer, code, severity, errorstring.c_str());
 }
 

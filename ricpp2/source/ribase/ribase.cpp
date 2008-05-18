@@ -414,6 +414,10 @@ RICPP_INTERN(RtToken)  RI_LINEAR = "linear",
 RICPP_INTERN(RtToken)  RI_WIDTH = "width",
 			   RI_CONSTANTWIDTH = "constantwidth";
 
+RICPP_INTERN(RtToken)  RI_DISPWIDTH = "dispwidth",
+	RI_DISPHEIGHT = "dispheight",
+	RI_PIXELASPECT = "pixelaspect";
+
 RICPP_INTERN(RtToken)  RI_CURRENT = "current",
 			   RI_EYE = "eye",
 			   RI_SHADER = "shader",

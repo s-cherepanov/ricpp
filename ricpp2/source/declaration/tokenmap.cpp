@@ -183,6 +183,10 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_WIDTH)] = RI_WIDTH;
 		m_tokenMapper[CToken(RI_CONSTANTWIDTH)] = RI_CONSTANTWIDTH;
 
+		m_tokenMapper[CToken(RI_DISPWIDTH)] = RI_DISPWIDTH;
+		m_tokenMapper[CToken(RI_DISPHEIGHT)] = RI_DISPHEIGHT;
+		m_tokenMapper[CToken(RI_PIXELASPECT)] = RI_PIXELASPECT;
+
 		m_tokenMapper[CToken(RI_CURRENT)] = RI_CURRENT;
 		m_tokenMapper[CToken(RI_EYE)] = RI_EYE;
 		m_tokenMapper[CToken(RI_SHADER)] = RI_SHADER;

@@ -118,6 +118,7 @@ namespace RiCPP {
 		void display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode);
 		void display(const TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params);
 
+		bool isPrimary() const;
 		inline RtToken type() const
 		{
 			return m_type;
@@ -128,7 +129,7 @@ namespace RiCPP {
 			return m_mode;
 		}
 
-		inline void origin(RtInt &x0, RtInt &y0) const
+		inline void getOrigin(RtInt &x0, RtInt &y0) const
 		{
 			x0 = m_origin[0];
 			y0 = m_origin[1];

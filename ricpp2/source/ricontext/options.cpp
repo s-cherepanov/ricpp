@@ -54,10 +54,10 @@ const RtFloat COptions::defScreenWindowRight = defFrameAspectRatio;
 const RtFloat COptions::defScreenWindowBottom = -1.0;
 const RtFloat COptions::defScreenWindowTop = 1.0;
 
-const RtFloat COptions::defCropWindowLeft = defScreenWindowLeft;
-const RtFloat COptions::defCropWindowRight = defScreenWindowRight;
-const RtFloat COptions::defCropWindowBottom = defScreenWindowBottom;
-const RtFloat COptions::defCropWindowTop = defScreenWindowTop;
+const RtFloat COptions::defCropWindowLeft = 0.0;
+const RtFloat COptions::defCropWindowRight = 1.0;
+const RtFloat COptions::defCropWindowBottom = 1.0;
+const RtFloat COptions::defCropWindowTop = 0.0;
 
 const RtToken COptions::defProjection = RI_ORTHOGRAPHIC;
 const RtFloat COptions::defCameraFOV = 90.0;
@@ -310,7 +310,7 @@ RtInt COptions::xResolution() const
 
 	const CDisplayDescr *d = primaryDisplay();
 	if ( d && d->width() > 0 )
-			return d->width();
+			return d->width() - d->originX();
 
 	return m_xResolution;
 }
@@ -322,7 +322,7 @@ RtInt COptions::yResolution() const
 	
 	const CDisplayDescr *d = primaryDisplay();
 	if ( d && d->height() > 0 )
-		return d->height();
+		return d->height() - d->originY();
 
 	return m_yResolution;
 }
@@ -362,6 +362,29 @@ RtFloat COptions::frameAspectRatio() const
 		return static_cast<RtFloat>(xResolution()) * pixelAspectRatio() / static_cast<RtFloat>(yResolution());
 
 	return RI_INFINITY;
+}
+
+RtVoid COptions::getFrameFormat(RtFloat &frameXRes, RtFloat &frameYRes) const
+{
+	RtInt xres, yres;
+	RtFloat pa;
+	getFormat(xres, yres, pa);
+
+	// Frameaspect (horizontal/vertical) is used to calc the used size 
+	RtFloat fAspect = frameAspectRatio() / pa;
+
+	RtFloat xresTemp = xres;
+	RtFloat yresTemp = xres / fAspect;
+
+	if ( yresTemp > yres ) {
+		xresTemp = yres * fAspect;
+		yresTemp = yres;
+	}
+
+	assert(xresTemp <= (RtFloat)xres && yresTemp <= (RtFloat)yres);
+	
+	frameXRes = xresTemp;
+	frameYRes = yresTemp;
 }
 
 // ----
@@ -480,55 +503,49 @@ RtVoid COptions::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ym
 	m_cropWindowCalled = true;
 	m_cropWindowLeft = xmin;
 	m_cropWindowRight = xmax;
-	m_cropWindowBottom = ymin;
-	m_cropWindowTop = ymax;
+	m_cropWindowTop = ymin;
+	m_cropWindowBottom = ymax;
 }
 
 RtVoid COptions::getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFloat &ymax) const
 {
-	if ( m_cropWindowCalled ) {
-		xmin = m_cropWindowLeft;
-		xmax = m_cropWindowRight;
-		ymin = m_cropWindowBottom;
-		ymax = m_cropWindowTop;
-	} else {
-		xmin = 0;
-		ymin = 0;
-		xmax = 1.0;
-		ymax = 1.0;
-	}
+	xmin = m_cropWindowLeft;
+	xmax = m_cropWindowRight;
+	ymin = m_cropWindowTop;
+	ymax = m_cropWindowBottom;
+
 }
 
 RtVoid COptions::getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &ymax) const
 {
-	RtFloat xminf, xmaxf, yminf, ymaxf;
-	RtFloat xres = static_cast<RtFloat>(xResolution());
-	RtFloat yres = static_cast<RtFloat>(yResolution());
+	RtFloat frameXRes, frameYRes;
+	getFrameFormat(frameXRes, frameYRes);
 
+	RtFloat xminf, xmaxf, yminf, ymaxf;
 	getCropWindow(xminf, xmaxf, yminf, ymaxf);
 
 	xmin = static_cast<RtInt>(clamp(
-		static_cast<RtFloat>(ceil(xres*xminf)),
+		static_cast<RtFloat>(ceil(frameXRes*xminf)),
 		static_cast<RtFloat>(0),
-		static_cast<RtFloat>(xres - 1)
+		static_cast<RtFloat>(frameXRes)
 	));
 	
 	xmax = static_cast<RtInt>(clamp(
-		static_cast<RtFloat>(ceil(xres*xmaxf)),
+		static_cast<RtFloat>(ceil(frameXRes*xmaxf)),
 		static_cast<RtFloat>(0),
-		static_cast<RtFloat>(xres - 1)
+		static_cast<RtFloat>(frameXRes)
 	));
 
 	ymin = static_cast<RtInt>(clamp(
-		static_cast<RtFloat>(ceil(yres*yminf)),
+		static_cast<RtFloat>(ceil(frameYRes*yminf)),
 		static_cast<RtFloat>(0),
-		static_cast<RtFloat>(yres - 1)
+		static_cast<RtFloat>(frameYRes)
 	));
 	
 	ymax = static_cast<RtInt>(clamp(
-		static_cast<RtFloat>(ceil(yres*ymaxf)),
+		static_cast<RtFloat>(ceil(frameYRes*ymaxf)),
 		static_cast<RtFloat>(0),
-		static_cast<RtFloat>(yres - 1)
+		static_cast<RtFloat>(frameYRes)
 	));
 }
 

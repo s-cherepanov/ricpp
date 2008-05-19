@@ -274,6 +274,7 @@ namespace RiCPP {
 			return m_frameAspectRatioCalled;
 		}
 		RtFloat frameAspectRatio() const;
+		RtVoid getFrameFormat(RtFloat &frameXRes, RtFloat &frameYRes) const;
 
 		RtVoid screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top);
 		inline bool screenWindowCalled() const
@@ -289,6 +290,10 @@ namespace RiCPP {
 		RtVoid cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax);
 		RtVoid getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFloat &ymax) const;
 		RtVoid getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &ymax) const;
+		bool cropWindowCalled() const
+		{
+			return m_cropWindowCalled;
+		}
 
 		RtVoid projection(const CTransformation &ctm, RtToken name, const CParameterList &params);
 		inline bool projectionCalled() const

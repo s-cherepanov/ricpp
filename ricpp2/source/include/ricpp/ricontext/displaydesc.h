@@ -129,11 +129,28 @@ namespace RiCPP {
 			return m_mode;
 		}
 
+		inline void origin(RtInt x0, RtInt y0) const
+		{
+			m_origin[0];
+			m_origin[1];
+		}
+
 		inline void getOrigin(RtInt &x0, RtInt &y0) const
 		{
 			x0 = m_origin[0];
 			y0 = m_origin[1];
 		}
+		
+		inline RtInt originX() const
+		{
+			return m_origin[0];
+		}
+
+		inline RtInt originY() const
+		{
+			return m_origin[1];
+		}
+
 		inline const CStringList &channelNames() const
 		{
 			return m_channelNames;

@@ -1245,11 +1245,6 @@ void CRenderState::calcScreenToNDC()
 	calcNDCToRaster();
 }
 
-void CRenderState::clearCameraToScreen()
-{
-	m_transformationFactory->deleteTransformation(m_cameraToScreen);
-	m_cameraToScreen = 0;
-}
 
 bool CRenderState::adjustProjectionMatrix(CMatrix3D &projectionMatrix, CMatrix3D &inverseProjectionMatrix)
 {
@@ -1320,6 +1315,7 @@ bool CRenderState::adjustProjectionMatrix(CMatrix3D &projectionMatrix, CMatrix3D
 
 void CRenderState::setCameraToScreen()
 {
+	m_transformationFactory->deleteTransformation(m_cameraToScreen);
 	m_cameraToScreen = m_transformationFactory->newTransformation();
 	if ( !m_cameraToScreen ) {
 		// error

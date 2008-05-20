@@ -1026,6 +1026,13 @@ RtVoid CBaseRenderer::preFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspe
 RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 {
 	RICPP_PREAMBLE(REQ_FRAME_ASPECT_RATIO)
+		if ( nearlyZero(aspect) ) {
+			throw ExceptRiCPPError( \
+								   RIE_MATH, RIE_ERROR, \
+								   renderState()->printLineNo(__LINE__), \
+								   renderState()->printName(__FILE__), \
+								   "'%s': aspect should not be 0.", CRequestInfo::requestName(req)); \
+		}
 		RICPP_PROCESS(newRiFrameAspectRatio(renderState()->lineNo(), aspect));
 	RICPP_POSTAMBLE
 }
@@ -1052,6 +1059,8 @@ RtVoid CBaseRenderer::preCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xm
 RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
 {
 	RICPP_PREAMBLE(REQ_CROP_WINDOW)
+		if ( xmin > xmax ) std::swap(xmin, xmax);
+		if ( ymin > ymax ) std::swap(ymin, ymax);
 		RICPP_PROCESS(newRiCropWindow(renderState()->lineNo(), xmin, xmax, ymin, ymax));
 	RICPP_POSTAMBLE
 }
@@ -1063,41 +1072,23 @@ RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CPar
 	std::cout << ">preProjection " << name  << std::endl;
 #   endif
 
-	// Screen coord space
-	renderState()->curTransform().spaceType(RI_SCREEN);
-
 	// Sets the state (can throw)
 	renderState()->options().projection(renderState()->curTransform(), name, params);
-
-	if ( name != RI_NULL ) {
-		// Viewing volume depth of 1, far clipping plate at distance 1
-		RtFloat clippingWidth = renderState()->options().yon() - renderState()->options().hither();
-		if ( clippingWidth > 0 )
-			renderState()->curTransform().scale(1.0, 1.0, (RtFloat)1.0/clippingWidth);
-
-		// Front clipping plane at distance 0
-		renderState()->curTransform().translate(0, 0, -renderState()->options().hither());
-	}
-
-	if ( name == RI_PERSPECTIVE ) {
-		// Concat perspective
-		renderState()->curTransform().perspective(renderState()->options().fov());
-	}
-
+	
 	if ( renderState()->motionState().curState() == CMotionState::MOT_OUTSIDE || renderState()->motionState().curSampleIdx() == renderState()->motionState().lastSampleIdx() ) {
 		if ( renderState()->motionState().curState() == CMotionState::MOT_OUTSIDE ) {
 			// Closes the matrix in advance
 			renderState()->curTransform().motionEnd();
 		}
+
 		// uses CTM as camera to screen transformation matrix
 		renderState()->setCameraToScreen();
+		// Screen coord space
+		renderState()->curTransform().spaceType(RI_CAMERA);
+		// Resets current transformation
+		renderState()->curTransform().reset();
 	}
 
-	// Screen coord space
-	renderState()->curTransform().spaceType(RI_CAMERA);
-
-	// Resets current transformation
-	renderState()->curTransform().reset();
 
 	// Camera coord space
 #   ifdef _TRACE

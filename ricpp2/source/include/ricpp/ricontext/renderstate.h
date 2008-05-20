@@ -608,7 +608,7 @@ namespace RiCPP {
 		void getProjectedScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const;
 		void calcNDCToRaster();
 		void calcScreenToNDC();
-		void clearCameraToScreen();
+		// void clearCameraToScreen();
 		void setCameraToScreen();
 		void setWorldToCamera();
 

@@ -584,6 +584,11 @@ namespace RiCPP {
 		 *  @return Pointer to a parameter identified by @a token.
 		 */
 		CParameter *get(RtToken var);
+		inline CParameter *get(RtToken var, enum EnumBasicTypes bt)
+		{
+			CParameter *p = get(var);
+			return (p && p->basicType() == bt) ? p : 0;
+		}
 		
 		/** @brief Gets pointer to a constant parameter (token/value pair).
 		 *
@@ -591,6 +596,11 @@ namespace RiCPP {
 		 *  @return Pointer to a constant parameter identified by @a token.
 		 */
 		const CParameter *get(RtToken var) const;
+		inline const CParameter *get(RtToken var, enum EnumBasicTypes bt) const
+		{
+			const CParameter *p = get(var);
+			return (p && p->basicType() == bt) ? p : 0;
+		}
 
 		/** @brief Erases a specific parameter (token/value pair).
 		 *

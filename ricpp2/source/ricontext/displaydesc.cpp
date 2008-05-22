@@ -37,13 +37,13 @@ CDisplayChannelDescr::CDisplayChannelDescr()
 	m_channel = 0;
 }
 
-CDisplayChannelDescr::CDisplayChannelDescr(const CDisplayChannelDescr &dcd)
+CDisplayChannelDescr::CDisplayChannelDescr(const CDisplayChannelDescr &dcd) : CNamedParameterList()
 {
 	m_channel = 0;
 	*this = dcd;
 }
 
-CDisplayChannelDescr::CDisplayChannelDescr(const CDisplayChannelDescr &dd, CDeclarationDictionary &newDict)
+CDisplayChannelDescr::CDisplayChannelDescr(const CDisplayChannelDescr &dd, CDeclarationDictionary &newDict) : CNamedParameterList()
 {
 	m_channel = 0;
 	assignRemap(dd, newDict);
@@ -148,14 +148,15 @@ CDisplayDescr::CDisplayDescr()
 }
 
 
-CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd) {
+CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd) : CNamedParameterList()
+{
 	m_type = RI_NULL;
 	m_mode = RI_NULL;
 	m_origin[0] = m_origin[1] = 0;
 	*this = dd;
 }
 
-CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd, CDeclarationDictionary &newDict)
+CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd, CDeclarationDictionary &newDict) : CNamedParameterList()
 {
 	m_type = RI_NULL;
 	m_mode = RI_NULL;
@@ -163,7 +164,8 @@ CDisplayDescr::CDisplayDescr(const CDisplayDescr &dd, CDeclarationDictionary &ne
 	assignRemap(dd, newDict);
 }
 
-CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd) {
+CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd)
+{
 	if ( &dd == this )
 		return *this;
 

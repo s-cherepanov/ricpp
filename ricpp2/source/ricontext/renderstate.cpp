@@ -1194,17 +1194,20 @@ void CRenderState::getProjectedScreenWindow(RtFloat &left, RtFloat &right, RtFlo
 	if ( projection == RI_PERSPECTIVE ) {
 		RtFloat fov = options().fov();
 		
-		if ( fov != (RtFloat)180.0 ) {
+		if ( !nearlyZero(fov-(RtFloat)180.0) ) {
 			RtFloat fovRad_2 = deg2rad(fov)/(RtFloat)2.0;
 			RtFloat viewPlane = tan(fovRad_2);
 #ifdef _TRACE
-			std::cout << "viewplane distance " <<  viewPlane << std::endl;
+			std::cout << "# *** viewplane distance " <<  1.0/viewPlane << std::endl;
 #endif
 			if ( !nearlyZero(viewPlane) ) {
 				left *= viewPlane;
 				right *= viewPlane;
 				bot *= viewPlane;
 				top *= viewPlane;
+#ifdef _TRACE
+				std::cout << "# *** screenwindow left " <<  left << " right " << right << " bottom " << bot << " top " << top << std::endl;
+#endif
 			}
 		}
 	}
@@ -1223,7 +1226,7 @@ void CRenderState::calcScreenToNDC()
 		m_screenToNDC->identity();
 		
 		RtFloat left, right, bottom, top;
-		getProjectedScreenWindow(left, right, bottom, top);
+		options().getScreenWindow(left, right, bottom, top);
 		
 		// scale screenwindow and mirror on x
 		RtFloat swid = right-left;

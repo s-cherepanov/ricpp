@@ -373,12 +373,12 @@ RtVoid COptions::getFrameFormat(RtFloat &frameXRes, RtFloat &frameYRes) const
 	// Frameaspect (horizontal/vertical) is used to calc the used size 
 	RtFloat fAspect = frameAspectRatio() / pa;
 
-	RtFloat xresTemp = xres;
-	RtFloat yresTemp = xres / fAspect;
+	RtFloat xresTemp = (RtFloat)xres;
+	RtFloat yresTemp = (RtFloat)xres / fAspect;
 
 	if ( yresTemp > yres ) {
-		xresTemp = yres * fAspect;
-		yresTemp = yres;
+		xresTemp = (RtFloat)yres * fAspect;
+		yresTemp = (RtFloat)yres;
 	}
 
 	assert(xresTemp <= (RtFloat)xres && yresTemp <= (RtFloat)yres);

@@ -129,7 +129,8 @@ namespace RiCPP {
 	template<typename type> inline void testMinMax(type &min, type &max)
 	{
 		if ( min > max ) {
-			std::swap(min,max);
+			using std::swap;
+			swap(min,max);
 		}
 	}
 	

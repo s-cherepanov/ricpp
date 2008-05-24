@@ -262,10 +262,10 @@ void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, 
 	
 	p = get(RI_PIXELASPECT);
 	if ( p ) {
-		const std::vector<RtInt> &ints = p->ints();
-		if ( ints.size() >= 1 )
+		const std::vector<RtFloat> &floats = p->floats();
+		if ( floats.size() >= 1 )
 		{
-			m_pixelAspectRatio = ints[0];
+			m_pixelAspectRatio = floats[0];
 		}
 	}
 

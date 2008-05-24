@@ -254,6 +254,7 @@ void CRibWriter::defaultDeclarations()
 
 void CRibWriter::writePrefix(bool isArchiveRecord)
 {
+	/** @todo move formatting to CRibElementsWriter */
 	if ( !isArchiveRecord && !m_writer->firstRequestWritten() ) {
 		version();
 	}

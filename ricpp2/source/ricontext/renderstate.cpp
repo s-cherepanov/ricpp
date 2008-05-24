@@ -1345,6 +1345,21 @@ void CRenderState::setWorldToCamera()
 		m_worldToCamera->spaceType(RI_CAMERA);
 }
 
+void CRenderState::projection(RtToken name, const CParameterList &params)
+{
+	// Store the ctm as preprojection matrix
+	if ( motionState().curState() == CMotionState::MOT_OUTSIDE || motionState().curSampleIdx() == 0 ) {
+		// Closes the matrix in advance
+		curTransform().motionEnd();
+		options().preProjectionMatrix(curTransform());
+	}
+
+	// Sets the state (can throw)
+	options().projection(name, params);
+	
+	// Resets current transformation
+	curTransform().reset();
+}
 
 void CRenderState::deleteTransMapCont(TypeTransformationMap &m)
 {
@@ -1458,16 +1473,15 @@ void CRenderState::frameEnd()
 
 void CRenderState::worldBegin()
 {
+	// Sets the viewing transformations
+	setCameraToScreen();
+
+	// Sets the camera transformations
 	setWorldToCamera();
 
 	pushTransform();
-	curTransform().reset();
-
-	// Set camera to screen matrix if not already done
-	// if ( cameraToScreen() == 0 ) {
-		setCameraToScreen();
-	// }
 	
+	curTransform().reset();
 	curTransform().spaceType(RI_WORLD);
 
 	pushAttributes();

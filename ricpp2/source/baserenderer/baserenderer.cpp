@@ -1073,33 +1073,14 @@ RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CPar
 #   endif
 
 	// Sets the state (can throw)
-	renderState()->options().projection(renderState()->curTransform(), name, params);
+	renderState()->projection(name, params);
 	
-	if ( renderState()->motionState().curState() == CMotionState::MOT_OUTSIDE || renderState()->motionState().curSampleIdx() == renderState()->motionState().lastSampleIdx() ) {
-		if ( renderState()->motionState().curState() == CMotionState::MOT_OUTSIDE ) {
-			// Closes the matrix in advance
-			renderState()->curTransform().motionEnd();
-		}
-
-		// uses CTM as camera to screen transformation matrix
-		renderState()->setCameraToScreen();
-		// Screen coord space
-		renderState()->curTransform().spaceType(RI_CAMERA);
-		// Resets current transformation
-		renderState()->curTransform().reset();
-	}
-
-
 	// Camera coord space
 #   ifdef _TRACE
 	std::cout << "<preProjection " << std::endl;
 #   endif
 }
 
-
-RtVoid CBaseRenderer::doProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
-{
-}
 
 RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
@@ -1468,11 +1449,6 @@ RtVoid CBaseRenderer::preIlluminate(CRiIlluminate &obj, RtLightHandle light, RtB
 			"Illuminate a light source (Handle: %s)",
 			noNullStr(light));
 	}
-}
-
-
-RtVoid CBaseRenderer::doIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff)
-{
 	CLightSource *l = renderState()->lightSourceInstance(light);
 	renderState()->attributes().illuminate(l, onoff);
 }

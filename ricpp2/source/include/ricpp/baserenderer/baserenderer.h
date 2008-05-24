@@ -821,7 +821,7 @@ public:
 
 	inline virtual RtVoid doScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top) {}
     inline virtual RtVoid doCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) {}
-	virtual RtVoid doProjection(CRiProjection &obj, RtToken name, const CParameterList &params);
+	inline virtual RtVoid doProjection(CRiProjection &obj, RtToken name, const CParameterList &params) {}
 	inline virtual RtVoid doClipping(CRiClipping &obj, RtFloat hither, RtFloat yon) {}
     inline virtual RtVoid doClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) {}
     inline virtual RtVoid doDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) {}
@@ -849,7 +849,7 @@ public:
     inline virtual RtVoid doAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params) {}
     inline virtual RtVoid doInterior(CRiInterior &obj, RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doExterior(CRiExterior &obj, RtString name, const CParameterList &params) {}
-	virtual RtVoid doIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff);
+	inline virtual RtVoid doIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff) {}
     inline virtual RtVoid doDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params) {}
 	inline virtual RtVoid doTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) {}
     inline virtual RtVoid doShadingRate(CRiShadingRate &obj, RtFloat size) {}

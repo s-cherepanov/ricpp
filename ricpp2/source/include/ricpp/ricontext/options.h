@@ -50,6 +50,7 @@ namespace RiCPP {
 	class COptionsFactory;
 
 	/** @brief Option set
+	 *  @todo Because projection maybe can be moved (e.g. change the fov), put attributes motion COptionsBase (maybe better make a CMoveable class and multi-inheritance also to CTransformation) and make the projection moveable.
 	 */
 	class COptions : public COptionsBase {
 		friend class COptionsFactory;
@@ -120,9 +121,10 @@ namespace RiCPP {
 
 		typedef std::vector<CClippingPlane> TypeClippingPlanes;
 		typedef std::list<CDisplayDescr> TypeDisplays;
+
 	private:
 		// CViewPort m_curViewPort;      ///< Viewport data
-		CTransformation *m_preProjection; ///< Duplicate of current matrix when projection was called
+		CTransformation *m_preProjection; ///< Copy of the current matrix if projection was called, 0 otherwise
 
 		CDisplayDescr::TypeDisplayChannels m_displayChannels; ///< Display channels can be as mode by display
 		TypeDisplays m_displays; ///< Current displays (CDisplayDescr), set by CRi::display()
@@ -295,7 +297,7 @@ namespace RiCPP {
 			return m_cropWindowCalled;
 		}
 
-		RtVoid projection(const CTransformation &ctm, RtToken name, const CParameterList &params);
+		RtVoid projection(RtToken name, const CParameterList &params);
 		inline bool projectionCalled() const
 		{
 			return m_projectionCalled;
@@ -304,13 +306,21 @@ namespace RiCPP {
 		{
 			return m_projectionName;
 		}
+		inline const CParameterList &projectionParams() const
+		{
+			return m_projectionParams;
+		}
+
+		inline void preProjectionMatrix(const CTransformation &ctm)
+		{
+			if ( m_preProjection )
+				delete m_preProjection;
+			
+			m_preProjection = ctm.duplicate();
+		}
 		inline const CTransformation *preProjectionMatrix() const
 		{
 			return m_preProjection;
-		}
-		const CParameterList &projectionParams() const
-		{
-			return m_projectionParams;
 		}
 
 		inline RtFloat fov() const

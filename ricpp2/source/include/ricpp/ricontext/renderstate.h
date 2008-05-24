@@ -608,9 +608,10 @@ namespace RiCPP {
 		void getProjectedScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const;
 		void calcNDCToRaster();
 		void calcScreenToNDC();
-		// void clearCameraToScreen();
 		void setCameraToScreen();
 		void setWorldToCamera();
+
+		virtual void projection(RtToken name, const CParameterList &params);
 
 		/** @brief Call the default declarations.
 		 *

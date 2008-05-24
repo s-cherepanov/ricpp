@@ -563,16 +563,12 @@ void COptions::initProjection()
 	m_preProjection = 0;
 }
 
-RtVoid COptions::projection(const CTransformation &ctm, RtToken name, const CParameterList &params)
+RtVoid COptions::projection(RtToken name, const CParameterList &params)
 {
 	m_projectionCalled = true;
 	m_projectionName = name;
 	m_projectionParams = params;
 
-	if ( m_preProjection )
-		delete m_preProjection;
-	m_preProjection = ctm.duplicate();
-	
 	m_FOVSet = false;
 	m_FOV = defCameraFOV;
 	if ( m_projectionName == RI_PERSPECTIVE ) {

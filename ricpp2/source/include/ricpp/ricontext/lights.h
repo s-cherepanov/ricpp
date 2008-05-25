@@ -47,7 +47,9 @@ namespace RiCPP {
 
 /** @brief Stores a description of a light source either IRi::LightSource() or IRi::AreaLightSource().
  *
- *  A rendering context stores all lights in a CLights instance.
+ *  A rendering context stores all lights in a CLightSource instance.
+ *
+ *  @todo Must be placed in camera space, store transformation matrix
  */
 class CLightSource {
 	bool m_isIlluminated;            ///< true, if the light source is on

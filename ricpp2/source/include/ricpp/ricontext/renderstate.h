@@ -66,7 +66,6 @@
 #include "ricpp/ricpp/varsubst.h"
 #endif // _RICPP_RICPP_VARSUBST_H
 
-
 namespace RiCPP {
 
 	/** @brief The facade for the render state objects.
@@ -113,6 +112,7 @@ namespace RiCPP {
 		CTransformation *m_screenToNDC;     ///< Maps screen space to normalized display coordinates
 		CTransformation *m_cameraToScreen;  ///< Transforms camera space to screen space
 		CTransformation *m_worldToCamera;   ///< Transforms world space to camera space
+		CTransformation *m_idTransform;     ///< Identity (world to world)
 		
 		TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
 		std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.
@@ -248,60 +248,31 @@ namespace RiCPP {
 			const CRenderState *m_outer;
 
 		protected:
-			inline bool match_word(
+			/** @brief Identifier
+			 */
+			bool match_word(
 				const char *matchStr,
 				const unsigned char **str,
-				std::string &result) const
-			{
-				const unsigned char *sav = *str;
-				std::string res;
-				if ( match(matchStr, str, res) &&
-					 (la(str) == 0 || !(isalnum(la(str)) || la(str) == '_')) )
-				{
-					result += res;
-					return true;
-				}
-				*str = sav;
-				return false;
-			}
+				std::string &result) const;
 
-			inline bool match_op(
+			/** @brief Operator.
+			 */
+			bool match_op(
 				const char *matchStr,
 				const unsigned char **str,
-				std::string &result) const
-			{
-				const unsigned char *sav = *str;
-				std::string res;
-				if ( match(matchStr, str, res) &&
-					 (la(str) != matchStr[0]) )
-				{
-					result += res;
-					return true;
-				}
-				*str = sav;
-				return false;
-			}
+				std::string &result) const;
 
 			/** @brief White space.
 			 */
-			inline unsigned char ws(
+			unsigned char ws(
 				const unsigned char **str,
-				std::string &result) const
-			{
-				return matchOneOf(" \t\n\r\f", str, result);
-			}
+				std::string &result) const;
 
 			/** @brief Sequence of white spaces.
 			 */
-			inline bool wss(
+			bool wss(
 				const unsigned char **str,
-				std::string &result) const
-			{
-				if ( !ws(str, result) )
-					return false;
-				while ( ws(str, result) );
-				return true;
-			}
+				std::string &result) const;
 
 			/** @brief Characters possible for identifiers.
 			*
@@ -318,16 +289,9 @@ namespace RiCPP {
 			* @return 0 or the character that matches.
 			* @see alphanum()
 			*/
-			inline unsigned char idchar(
+			unsigned char idchar(
 				const unsigned char **str,
-				std::string &result) const
-			{
-				if ( match("_", str, result) ) {
-					return '_';
-				}
-
-				return alphanum(str, result);
-			}
+				std::string &result) const;
 
 			/** @brief Character is a plus or minus sign.
 			*
@@ -341,25 +305,10 @@ namespace RiCPP {
 			* @retval d Returns 1 if character was positive, -1 if negative, 0 if no sign character was found.
 			* @return 0 or the character that matches.
 			*/
-			inline unsigned char sign_char(
+			unsigned char sign_char(
 				const unsigned char **str,
 				std::string &result,
-				signed char &d) const
-			{
-				if ( match("+", str, result) ) {
-					d = 1;
-					return '+';
-				}
-
-				if ( match("-", str, result) ) {
-					d = -1;
-					return '-';
-				}
-
-				d = 0;
-				return 0;
-			}
-
+				signed char &d) const;
 
 			/** @brief Character of a string.
 			 */
@@ -600,17 +549,33 @@ namespace RiCPP {
 		 */
 		virtual ~CRenderState();
 
+		/*
 		inline CTransformation *NDCToRaster() { return m_NDCToRaster; }
 		inline CTransformation *screenToNDC() { return m_screenToNDC; }
 		inline CTransformation *cameraToScreen() { return m_cameraToScreen; }
 		inline CTransformation *worldToCamera() { return m_worldToCamera; }
-
+		*/
+		
+		inline const CTransformation *NDCToRaster() const { return m_NDCToRaster; }
+		inline const CTransformation *screenToNDC() const { return m_screenToNDC; }
+		inline const CTransformation *cameraToScreen() const { return m_cameraToScreen; }
+		inline const CTransformation *worldToCamera() const { return m_worldToCamera; }
+		
+		bool getRasterToCamera(CMatrix3D &m) const;
+		bool getCameraToRaster(CMatrix3D &m) const;
+		bool getCameraToCurrent(CMatrix3D &m) const;
+		bool getCurrentToCamera(CMatrix3D &m) const;
+		
 		void getProjectedScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const;
 		void calcNDCToRaster();
 		void calcScreenToNDC();
 		void setCameraToScreen();
 		void setWorldToCamera();
 
+		/** @brief Sets the projection option and resets the CTM.
+		 *  @param name Name of the projection
+		 *  @param params Parmeters for the projection
+		 */
 		virtual void projection(RtToken name, const CParameterList &params);
 
 		/** @brief Call the default declarations.
@@ -919,8 +884,9 @@ namespace RiCPP {
 		}
 
 		virtual const CTransformation *findTransform(RtToken space) const;
-		virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]);
-
+		virtual RtPoint *transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) const;
+		virtual void coordSysTransform(RtToken space);
+		
 		// inline virtual bool hasMacroFactory() const {return m_macroFactory != 0;}
 
 		inline virtual bool hasOptions() const {return !m_optionsStack.empty() && m_optionsStack.back() != 0;}

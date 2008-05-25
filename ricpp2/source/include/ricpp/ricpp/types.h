@@ -1003,7 +1003,10 @@ class CMatrix3D {
 	 */
 	RtMatrix m_Matrix;
 
-	/** @brief true (default), if premultiply when concatenate matrices (e.g. by transform()).
+	/** @brief true, if premultiply when concatenate matrices (e.g. by transform()).
+	 *  
+	 *  Ri uses pre multiplicateion for transformation matrices and post multiplication for their inverses.
+	 *
 	 */
 	bool m_preMultiply;
 
@@ -1079,17 +1082,19 @@ public:
 	const RtMatrix &getMatrix() const { return m_Matrix; }
 	RtMatrix &getMatrix() { return m_Matrix; }
 
-	/** @brief Sets the pre multification flag.
-	 *  @param preMultiply true, for standard pre multiplication (left multiplication).
+	/** @brief Sets the pre multification flag
+	 *  @param preMultiply true, for standard pre multiplication (left multiplication), use false for the inverses
 	 */
-	inline void setPreMultiply(bool preMultiply=true) {
+	inline void setPreMultiply(bool preMultiply=true)
+	{
 		m_preMultiply = preMultiply;
 	}
 
-	/** @brief Gets the pre multification flag.
-	 *  @return true, if standard pre multiplication (left multiplication).
+	/** @brief Gets the pre multification flag
+	 *  @return true, if standard pre multiplication (left multiplication), false for inverses
 	 */
-	inline bool getPreMultiply() const {
+	inline bool getPreMultiply() const
+	{
 		return m_preMultiply;
 	}
 

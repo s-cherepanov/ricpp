@@ -679,7 +679,7 @@ void CTransformation::identity()
 	}
 }
 
-void CTransformation::transform(RtMatrix aTransform)
+void CTransformation::transform(const RtMatrix aTransform)
 {
 	if ( !m_motionState ) {
 		m_CTM.transform(aTransform);
@@ -708,7 +708,7 @@ void CTransformation::transform(RtMatrix aTransform)
 	}
 }
 
-void CTransformation::transform(RtMatrix aTransform, RtMatrix anInverseTransform)
+void CTransformation::transform(const RtMatrix aTransform, const RtMatrix anInverseTransform)
 {
 	if ( !m_motionState ) {
 		m_CTM.transform(aTransform);
@@ -730,7 +730,7 @@ void CTransformation::transform(RtMatrix aTransform, RtMatrix anInverseTransform
 	}
 }
 
-void CTransformation::concatTransform(RtMatrix aTransform)
+void CTransformation::concatTransform(const RtMatrix aTransform)
 {
 	if ( !m_motionState ) {
 		m_CTM.concatTransform(aTransform);
@@ -757,7 +757,7 @@ void CTransformation::concatTransform(RtMatrix aTransform)
 	}
 }
 
-void CTransformation::concatTransform(RtMatrix aTransform, RtMatrix anInverseTransform)
+void CTransformation::concatTransform(const RtMatrix aTransform, const RtMatrix anInverseTransform)
 {
 	if ( !m_motionState ) {
 		m_CTM.concatTransform(aTransform);

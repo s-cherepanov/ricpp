@@ -1985,18 +1985,7 @@ RtVoid CBaseRenderer::coordinateSystem(RtToken space)
 
 RtVoid CBaseRenderer::preCoordSysTransform(CRiCoordSysTransform &obj, RtToken space)
 {
-	const CTransformation *t = renderState()->findTransform(space);
-	if ( t ) {
-		RtToken curSpaceType = renderState()->curTransform().spaceType();
-
-		if ( curSpaceType != t->spaceType() ) {
-			// To do handle different space types.
-		} else {
-			renderState()->curTransform() = *t;
-			renderState()->curTransform().spaceType(curSpaceType);
-		}
-
-	}
+	renderState()->coordSysTransform(space);
 }
 
 RtVoid CBaseRenderer::coordSysTransform(RtToken space)

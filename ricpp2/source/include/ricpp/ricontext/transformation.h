@@ -383,10 +383,10 @@ namespace RiCPP {
 		virtual void reset();
 
 		virtual void identity();
-		virtual void transform(RtMatrix aTransform);
-		virtual void transform(RtMatrix aTransform, RtMatrix anInverseTransform);
-		virtual void concatTransform(RtMatrix aTransform);
-		virtual void concatTransform(RtMatrix aTransform, RtMatrix anInverseTransform);
+		virtual void transform(const RtMatrix aTransform);
+		virtual void transform(const RtMatrix aTransform, const RtMatrix anInverseTransform);
+		virtual void concatTransform(const RtMatrix aTransform);
+		virtual void concatTransform(const RtMatrix aTransform, const RtMatrix anInverseTransform);
 		virtual void perspective(RtFloat fov);
 		virtual void translate(RtFloat dx, RtFloat dy, RtFloat dz);
 		virtual void rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz);

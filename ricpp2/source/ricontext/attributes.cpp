@@ -122,7 +122,7 @@ void CAttributes::CAttributeShader::set(RtToken name, const CParameterList &para
 		CTransformationFactory::deleteTransformation(m_shaderTransform);
 		m_shaderTransform = transform.duplicate();
 		if ( m_shaderTransform ) {
-			m_shaderTransform->spaceType(RI_SHADER);
+			m_shaderTransform->spaceType(RI_WORLD); // Shaders are attributes and therefore in world space
 		}
 	}
 
@@ -147,7 +147,7 @@ void CAttributes::CAttributeShader::set(RtToken name, const CParameterList &para
 	CTransformationFactory::deleteTransformation(m_shaderTransform);
 	m_shaderTransform = transform.duplicate();
 	if ( m_shaderTransform ) {
-		m_shaderTransform->spaceType(RI_SHADER);
+		m_shaderTransform->spaceType(RI_WORLD);
 	}
 }
 

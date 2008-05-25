@@ -37,85 +37,93 @@
 #include "ricpp/ribparser/ribparser.h"
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
-#ifndef _RICPP_TOOLS_FILEPATH_H
-// #include "ricpp/tools/filepath.h"
-#endif // _RICPP_TOOLS_FILEPATH_H
-
 using namespace RiCPP;
 
 #ifdef _DEBUG
 #define _TRACE
+#define _TRACE_TRANS_PTS
 #endif
 
-/*
-unsigned char CRenderState::character(
-	const unsigned char **str,
-	std::string &result) const
+bool CRenderState::CIfExprParser::match_word(
+					   const char *matchStr,
+					   const unsigned char **str,
+					   std::string &result) const
 {
-	std::string dummy;
-
-	if ( match("\\", str, dummy) ) {
-		unsigned char d;
-		unsigned char uchar;
-		if ( octdig(str, dummy, d) ) {
-			uchar = d;
-			if ( octdig(str, dummy, d) ) {
-				uchar *= 8;
-				uchar += d;
-			}
-			if ( octdig(str, dummy, d) ) {
-				uchar *= 8;
-				uchar += d;
-			}
-			result += uchar;
-			return true;
-		}
-
-		unsigned char c = matchOneOf("\\'\"nrtbf\n", str, dummy);
-		if ( c != 0 ) {
-			switch ( c ) {
-				case '\\' :
-					result += "\\";
-					break;
-				case '\'' :
-					result += "'";
-					break;
-				case '\"' :
-					result += "\"";
-					break;
-				case 'n' :
-					result += "\n";
-					break;
-				case 'r' :
-					result += "\r";
-					break;
-				case 't' :
-					result += "\t";
-					break;
-				case 'b' :
-					result += "\b";
-					break;
-				case 'f' :
-					result += "\f";
-					break;
-				case '\n' : // ignore
-					break;
-			}
-			return true;
-		}
-		result += '\\';
+	const unsigned char *sav = *str;
+	std::string res;
+	if ( match(matchStr, str, res) &&
+		(la(str) == 0 || !(isalnum(la(str)) || la(str) == '_')) )
+	{
+		result += res;
 		return true;
 	}
-
-	unsigned char c = la(str);
-	if ( c != '\0' && c != '\'' ) {
-		advance(str, result);
-		return true;
-	}
-
+	*str = sav;
 	return false;
 }
-*/
+
+bool CRenderState::CIfExprParser::match_op(
+					 const char *matchStr,
+					 const unsigned char **str,
+					 std::string &result) const
+{
+	const unsigned char *sav = *str;
+	std::string res;
+	if ( match(matchStr, str, res) &&
+		(la(str) != matchStr[0]) )
+	{
+		result += res;
+		return true;
+	}
+	*str = sav;
+	return false;
+}
+
+unsigned char CRenderState::CIfExprParser::ws(
+						const unsigned char **str,
+						std::string &result) const
+{
+	return matchOneOf(" \t\n\r\f", str, result);
+}
+
+bool CRenderState::CIfExprParser::wss(
+				const unsigned char **str,
+				std::string &result) const
+{
+	if ( !ws(str, result) )
+		return false;
+	while ( ws(str, result) );
+	return true;
+}
+
+unsigned char CRenderState::CIfExprParser::idchar(
+							const unsigned char **str,
+							std::string &result) const
+{
+	if ( match("_", str, result) ) {
+		return '_';
+	}
+	
+	return alphanum(str, result);
+}
+
+unsigned char CRenderState::CIfExprParser::sign_char(
+							   const unsigned char **str,
+							   std::string &result,
+							   signed char &d) const
+{
+	if ( match("+", str, result) ) {
+		d = 1;
+		return '+';
+	}
+	
+	if ( match("-", str, result) ) {
+		d = -1;
+		return '-';
+	}
+	
+	d = 0;
+	return 0;
+}
 
 unsigned char CRenderState::CIfExprParser::character(
 	const unsigned char **str,
@@ -1087,6 +1095,8 @@ bool CRenderState::CIfExprParser::parse(RtString expr) const
 }
 
 
+/* ************************************************************************** */
+
 CRenderState::CRenderState(
 	CModeStack &aModeStack,
 	COptionsFactory &optionsFactory,
@@ -1136,7 +1146,8 @@ CRenderState::CRenderState(
 	m_screenToNDC = 0;
 	m_cameraToScreen = 0;
 	m_worldToCamera = 0;
-
+	m_idTransform = 0;
+	
 	// Create options, attributes and transforms
 	pushOptions();
 	pushAttributes();
@@ -1164,6 +1175,57 @@ CRenderState::~CRenderState()
 	m_transformationFactory->deleteTransformation(m_screenToNDC);
 	m_transformationFactory->deleteTransformation(m_cameraToScreen);
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
+	m_transformationFactory->deleteTransformation(m_idTransform);
+}
+
+bool CRenderState::getRasterToCamera(CMatrix3D &m) const
+{
+	m.setPreMultiply(false);
+	if ( cameraToScreen() && screenToNDC() && NDCToRaster() ) {
+		m = NDCToRaster()->getInverseCTM();
+		m.concatTransform(screenToNDC()->getInverseCTM());
+		m.concatTransform(cameraToScreen()->getInverseCTM());
+		return true;
+	}
+	m.identity();
+	return false;
+}
+
+bool CRenderState::getCameraToRaster(CMatrix3D &m) const
+{
+	m.setPreMultiply(true);
+	if ( cameraToScreen() && screenToNDC() && NDCToRaster() ) {
+		m = NDCToRaster()->getCTM();
+		m.concatTransform(screenToNDC()->getCTM());
+		m.concatTransform(cameraToScreen()->getCTM());
+		return true;
+	}
+	m.identity();
+	return false;
+}
+
+bool CRenderState::getCameraToCurrent(CMatrix3D &m) const
+{
+	m.setPreMultiply(false);
+	if ( worldToCamera() ) {
+		m = worldToCamera()->getInverseCTM();
+		m.concatTransform(curTransform().getInverseCTM());
+		return true;
+	}
+	m.identity();
+	return false;
+}
+
+bool CRenderState::getCurrentToCamera(CMatrix3D &m) const
+{
+	m.setPreMultiply(true);
+	if ( worldToCamera() ) {
+		m = worldToCamera()->getCTM();
+		m.concatTransform(curTransform().getCTM());
+		return true;
+	}
+	m.identity();
+	return false;
 }
 
 void CRenderState::calcNDCToRaster()
@@ -1339,6 +1401,11 @@ void CRenderState::setCameraToScreen()
 
 void CRenderState::setWorldToCamera()
 {
+	if ( !m_idTransform ) {
+		m_idTransform = m_transformationFactory->newTransformation();
+		m_idTransform->spaceType(RI_CURRENT);
+	}
+	
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
 	m_worldToCamera = curTransform().duplicate();
 	if ( m_worldToCamera )
@@ -1349,14 +1416,13 @@ void CRenderState::projection(RtToken name, const CParameterList &params)
 {
 	// Store the ctm as preprojection matrix
 	if ( motionState().curState() == CMotionState::MOT_OUTSIDE || motionState().curSampleIdx() == 0 ) {
-		// Closes the matrix in advance
-		curTransform().motionEnd();
+		// cur transform as pre projection matrix, can be motion blured
 		options().preProjectionMatrix(curTransform());
 	}
 
-	// Sets the state (can throw)
+	// Sets the option
 	options().projection(name, params);
-	
+
 	// Resets current transformation
 	curTransform().reset();
 }
@@ -2316,20 +2382,22 @@ const CTransformation *CRenderState::findTransform(RtToken space) const
 {
 	TypeTransformationMap::const_iterator pos;
 
-
-	if ( space == RI_WORLD || space == RI_OBJECT )
+	if ( space == RI_CURRENT ) // Current to containing space
 		return &curTransform();
 
-	if ( space == RI_CAMERA )
+	if ( space == RI_WORLD ) // Current to world (defined in world blocks)
+		return &curTransform();
+
+	if ( space == RI_CAMERA )  // World to camera
 		return m_worldToCamera;
 
-	if ( space == RI_SCREEN )
+	if ( space == RI_SCREEN )  // Camera to screen
 		return m_cameraToScreen;
 
-	if ( space == RI_NDC )
+	if ( space == RI_NDC )   // Screen to NDC
 		return m_screenToNDC;
 
-	if ( space == RI_RASTER )
+	if ( space == RI_RASTER ) // NDC to raster
 		return m_NDCToRaster;
 
 	if ( !m_scopedTransforms.empty() ) {
@@ -2351,65 +2419,199 @@ const CTransformation *CRenderState::findTransform(RtToken space) const
 	return 0;
 }
 
-RtPoint *CRenderState::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
+RtPoint *CRenderState::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) const
 {
+#ifdef _TRACE_TRANS_PTS
+	std::cout << ">transformPoints from:" << fromspace << " to: " << tospace << " n: " << npoints << std::endl;
+#endif // _TRACE_TRANS_PTS
+
+	// No points to transform
 	if ( npoints <= 0 || points == 0 ) {
-		return 0;
+#ifdef _TRACE_TRANS_PTS
+		std::cout << "<transformPoints no points" << std::endl;
+#endif // _TRACE_TRANS_PTS
+		return points ? &points[0] : 0;
 	}
 	
-	const CTransformation *from = findTransform(fromspace);
-	const CTransformation *to   = findTransform(tospace);
+	const CTransformation *from = findTransform(fromspace); // From this space
+	const CTransformation *to   = findTransform(tospace);   // to that space
 	
-	RtToken fs = fromspace, ts = tospace;
+	if ( !from ) {
+#ifdef _TRACE_TRANS_PTS
+		std::cout << "<transformPoints no from" << std::endl;
+#endif // _TRACE_TRANS_PTS
+		throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints - from=='%s' space not found", noNullStr(fromspace));
+	}
+
+	if ( !to ) {
+#ifdef _TRACE_TRANS_PTS
+		std::cout << "<transformPoints no to" << std::endl;
+#endif // _TRACE_TRANS_PTS
+		throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints - to=='%s' space not found", noNullStr(tospace));
+	}
+
+	if ( from == to ) {
+		// Same space, no transformation needed
+#ifdef _TRACE_TRANS_PTS
+		std::cout << "<transformPoints no transformation needed" << std::endl;
+#endif // _TRACE_TRANS_PTS
+		return &points[0];
+	}
+
+	// Main containing spaces of the RI (object space lies in world space)
+	static RtToken spaces[] = {RI_WORLD, RI_CAMERA, RI_SCREEN, RI_NDC, RI_RASTER, RI_NULL};
+
+	// Containing main space type (must be found in spaces)
+	RtToken fs = from->spaceType(), ts = to->spaceType();
+	/*
+	if ( fs == RI_CURRENT ) {
+		fs = curTransform().spaceType();
+	}
+	if ( ts == RI_CURRENT ) {
+		ts = curTransform().spaceType();
+	}
+	*/
 	
-	if ( from )
-		fs = from->spaceType();
-	if ( to )
-		ts = to->spaceType();
-	
-	RtToken spaces[] = {RI_OBJECT, RI_WORLD, RI_CAMERA, RI_SCREEN, RI_NDC, RI_RASTER, RI_NULL};
-	
-	int fi, ti;
-	
-	fi = 0;
+#ifdef _TRACE_TRANS_PTS
+	std::cout << "-transformPoints fromSpaceType: " << fs << " toSpaceType: " << ts << std::endl;
+#endif // _TRACE_TRANS_PTS
+
+	int fi = 0;
 	while ( spaces[fi] && spaces[fi] != fs ) ++fi;
-	ti = 0;
+	int ti = 0;
 	while ( spaces[ti] && spaces[ti] != ts ) ++ti;
 	
 	if ( !spaces[fi] || !spaces[ti] ) {
+#ifdef _TRACE_TRANS_PTS
+		std::cout << "<transformPoints no containing main spaces found" << std::endl;
+#endif // _TRACE_TRANS_PTS
 		throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints(%s (%s found), %s (%s found)), spaces not found", noNullStr(fromspace), spaces[fi] ? "was" : "not", noNullStr(tospace), spaces[ti] ? "was" : "not");
 	}
 	
-	if ( fi == ti ) {
-		// Same space
-		return 0;
-	}
-	
 	CMatrix3D m;
-	while ( fi < ti ) {
-		from = findTransform(spaces[ti]);
-		assert(from!=0);
-		if ( from ) {
-			m.concatTransform(from->getCTM());
-		} else {
-			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints: space (%s) not defined", noNullStr(spaces[ti]));
-		}
-		ti--;
+	m.setPreMultiply(false);
+	
+	if ( fromspace != fs ) {
+#ifdef _TRACE_TRANS_PTS
+		std::cout << "-transformPoints concat matrix from: " << fromspace << " to: "<< fs << std::endl;
+#endif // _TRACE_TRANS_PTS
+		m.concatTransform(from->getCTM());
 	}
 	
-	while ( ti < fi ) {
-		ti++;
-		from = findTransform(spaces[ti]);
-		assert(from!=0);
-		if ( from ) {
-			m.concatTransform(from->getInverseCTM());
-		} else {
-			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints: space (%s) not defined", noNullStr(spaces[ti]));
+	// Transform to the main space of the destination
+	if ( fi < ti ) {
+		// Direction to raster
+		const CTransformation *trans;
+		while ( fi < ti ) {
+			++fi;
+			trans = findTransform(spaces[fi]);
+			assert(trans!=0);
+			if ( trans ) {
+#ifdef _TRACE_TRANS_PTS
+				std::cout << "-transformPoints concat matrix " << spaces[fi] << std::endl;
+#endif // _TRACE_TRANS_PTS
+				m.concatTransform(trans->getCTM());
+			} else {
+#ifdef _TRACE_TRANS_PTS
+				std::cout << "<transformPoints transformation order wrong" << std::endl;
+#endif // _TRACE_TRANS_PTS
+				throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints: space (%s) not defined, to raster direction", noNullStr(spaces[ti]));
+			}
+		}
+	} else if ( fi > ti ) {
+		// Direction to object
+		const CTransformation *trans;
+		while ( fi > ti ) {
+			trans = findTransform(spaces[fi]);
+			assert(trans!=0);
+			if ( trans ) {
+#ifdef _TRACE_TRANS_PTS
+				std::cout << "-transformPoints concat inverse matrix " << spaces[fi] << std::endl;
+#endif // _TRACE_TRANS_PTS
+				m.concatTransform(trans->getInverseCTM());
+			} else {
+#ifdef _TRACE_TRANS_PTS
+				std::cout << "<transformPoints transformation order wrong" << std::endl;
+#endif // _TRACE_TRANS_PTS
+				throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "transformPoints: space (%s) not defined, to object direction", noNullStr(spaces[ti]));
+			}
+			--fi;
 		}
 	}
 	
+	if ( tospace != ts ) {
+#ifdef _TRACE_TRANS_PTS
+		std::cout << "-transformPoints concat inverse matrix " << tospace << std::endl;
+#endif // _TRACE_TRANS_PTS
+		m.concatTransform(to->getInverseCTM());
+	}
+	
+	m.setPreMultiply(true);
 	m.transformPoints(npoints, points);
+
+#ifdef _TRACE_TRANS_PTS
+	std::cout << "<transformPoints transformation done" << std::endl;
+#endif // _TRACE_TRANS_PTS
 	return &points[0];
+}
+
+void CRenderState::coordSysTransform(RtToken space)
+{
+	if ( space == RI_CURRENT )
+		return;
+	const CTransformation *newTransform = findTransform(space);
+	
+	if ( newTransform ) {
+		RtToken curSpaceType = curTransform().spaceType();
+		RtToken newSpaceType = newTransform->spaceType();
+		
+		if ( curSpaceType != newSpaceType ) {
+			// Main containing spaces of the RI (object space lies in world space)
+			static RtToken spaces[] = {RI_WORLD, RI_CAMERA, RI_SCREEN, RI_NDC, RI_RASTER, RI_NULL};
+			int fi = 0;
+			while ( spaces[fi] && spaces[fi] != newSpaceType ) ++fi;
+			int ti = 0;
+			while ( spaces[ti] && spaces[ti] != curSpaceType ) ++ti;
+			
+			// set ctm = t x t->spaceType_To_currentSpacetype x CTM
+
+			// pre concat tspace to cur
+			// Transform to the main space of the destination
+			if ( fi < ti ) {
+				// Direction to raster
+				const CTransformation *trans;
+				while ( fi < ti ) {
+					trans = findTransform(spaces[ti]);
+					assert(trans!=0);
+					if ( trans ) {
+						curTransform().concatTransform(trans->getCTM(), trans->getInverseCTM());
+					} else {
+						throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "coordSysTransform: space (%s) not defined, to raster direction", noNullStr(spaces[ti]));
+					}
+					--ti;
+				}
+			} else {
+				// Direction to object
+				const CTransformation *trans;
+				while ( fi > ti ) {
+					trans = findTransform(spaces[ti]);
+					assert(trans!=0);
+					if ( trans ) {
+						curTransform().concatTransform(trans->getInverseCTM(), trans->getCTM());
+					} else {
+						throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "coordSysTransform: space (%s) not defined, to object direction", noNullStr(spaces[ti]));
+					}
+					ti++;
+				}
+			}
+			// pre concat t to tspace
+			if ( space != newSpaceType )
+				curTransform().concatTransform(newTransform->getCTM(), newTransform->getInverseCTM());
+		} else {
+			curTransform() = *newTransform;
+			curTransform().spaceType(curSpaceType);
+		}
+	}
 }
 
 void CRenderState::startAreaLightSource(RtLightHandle h)

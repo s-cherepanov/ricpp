@@ -1845,7 +1845,10 @@ RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], Rt
 
 RtVoid CBaseRenderer::preIdentity(CRiIdentity &obj)
 {
+	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().identity();
+	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+		renderState()->attributes().toggleOrientation();
 }
 
 
@@ -1859,7 +1862,10 @@ RtVoid CBaseRenderer::identity(void)
 
 RtVoid CBaseRenderer::preTransform(CRiTransform &obj, RtMatrix aTransform)
 {
+	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().transform(aTransform);
+	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+		renderState()->attributes().toggleOrientation();
 }
 
 
@@ -1873,7 +1879,10 @@ RtVoid CBaseRenderer::transform(RtMatrix aTransform)
 
 RtVoid CBaseRenderer::preConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform)
 {
+	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().concatTransform(aTransform);
+	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+		renderState()->attributes().toggleOrientation();
 }
 
 
@@ -1929,7 +1938,10 @@ RtVoid CBaseRenderer::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 
 RtVoid CBaseRenderer::preScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz)
 {
+	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().scale(dx, dy, dz);
+	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+		renderState()->attributes().toggleOrientation();
 }
 
 
@@ -1943,7 +1955,10 @@ RtVoid CBaseRenderer::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 
 RtVoid CBaseRenderer::preSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
+	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
+	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+		renderState()->attributes().toggleOrientation();
 }
 
 
@@ -1985,7 +2000,10 @@ RtVoid CBaseRenderer::coordinateSystem(RtToken space)
 
 RtVoid CBaseRenderer::preCoordSysTransform(CRiCoordSysTransform &obj, RtToken space)
 {
+	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->coordSysTransform(space);
+	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+		renderState()->attributes().toggleOrientation();
 }
 
 RtVoid CBaseRenderer::coordSysTransform(RtToken space)

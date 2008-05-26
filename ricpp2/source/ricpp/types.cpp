@@ -32,10 +32,6 @@
 #include "ricpp/ribase/ricppconst.h"
 #endif // _RICPP_RIBASE_RICPPCONST_H
 
-#ifndef _RICPP_RIBASE_RICPPTOKENS_H
-#include "ricpp/ribase/ricpptokens.h"
-#endif // _RICPP_RIBASE_RICPPTOKENS_H
-
 #ifndef _RICPP_TOOLS_TEMPLATEFUNCS_H
 #include "ricpp/tools/templatefuncs.h"
 #endif // _RICPP_TOOLS_TEMPLATEFUNCS_H

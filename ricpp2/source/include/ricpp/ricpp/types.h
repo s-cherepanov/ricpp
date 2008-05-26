@@ -34,6 +34,10 @@
 #include "ricpp/ribase/ricpptypes.h"
 #endif // _RICPP_RIBASE_RICPPTYPES_H
 
+#ifndef _RICPP_RIBASE_RICPPTOKENS_H
+#include "ricpp/ribase/ricpptokens.h"
+#endif // _RICPP_RIBASE_RICPPTOKENS_H
+
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
@@ -1422,6 +1426,16 @@ public:
 	}
 }; // CMatrix3D
 
+inline RtToken handedness(const CMatrix3D &m)
+{
+	return m.determinant() < 0 ? RI_RH : RI_LH;
+} 
+	
+inline RtToken toggledOrientation(RtToken o)
+{
+	assert(o==RI_LH || o==RI_RH);
+	return ( o==RI_LH ) ? RI_RH : RI_LH;
+}
 
 class CValue
 {

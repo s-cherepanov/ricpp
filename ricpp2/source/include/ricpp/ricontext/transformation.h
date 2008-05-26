@@ -399,6 +399,8 @@ namespace RiCPP {
 		
 		virtual void sample(RtFloat shutterTime, const TypeMotionTimes &times);
 		virtual void sampleReset();
+		
+		virtual RtToken coordSysOrientation() const;
 	}; // CTransformation
 
 	/** @brief Create new attributes containers.

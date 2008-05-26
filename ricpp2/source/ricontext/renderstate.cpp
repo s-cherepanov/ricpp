@@ -1148,6 +1148,9 @@ CRenderState::CRenderState(
 	m_worldToCamera = 0;
 	m_idTransform = 0;
 	
+	m_viewingOrientation = RI_LH;
+	m_cameraOrientation = RI_LH;
+	
 	// Create options, attributes and transforms
 	pushOptions();
 	pushAttributes();
@@ -1397,6 +1400,10 @@ void CRenderState::setCameraToScreen()
 	}
 	
 	calcScreenToNDC();
+
+	CMatrix3D m;
+	getCameraToRaster(m);
+	m_viewingOrientation = handedness(m);
 }
 
 void CRenderState::setWorldToCamera()
@@ -1408,8 +1415,12 @@ void CRenderState::setWorldToCamera()
 	
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
 	m_worldToCamera = curTransform().duplicate();
-	if ( m_worldToCamera )
-		m_worldToCamera->spaceType(RI_CAMERA);
+	if ( !m_worldToCamera ) {
+		// error
+		return;
+	}
+	m_worldToCamera->spaceType(RI_CAMERA);
+	m_cameraOrientation = m_worldToCamera->coordSysOrientation();
 }
 
 void CRenderState::projection(RtToken name, const CParameterList &params)
@@ -1551,6 +1562,7 @@ void CRenderState::worldBegin()
 	curTransform().spaceType(RI_WORLD);
 
 	pushAttributes();
+	attributes().resetCoordSysOrientation(m_cameraOrientation);
 
 	m_objectMacros.mark();
 	m_archiveMacros.mark();
@@ -1631,6 +1643,8 @@ void CRenderState::transformEnd()
 {
 	m_modeStack->transformEnd();
 	popTransform();
+	if ( !m_transformationStack.empty() && !m_attributesStack.empty() )
+		attributes().coordSysOrientation(curTransform().coordSysOrientation());
 }
 
 void CRenderState::solidBegin(RtToken type)

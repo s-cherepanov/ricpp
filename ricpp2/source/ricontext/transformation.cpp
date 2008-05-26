@@ -957,6 +957,10 @@ void CTransformation::sampleReset()
 	}
 }
 
+RtToken CTransformation::coordSysOrientation() const
+{
+	return handedness(m_CTM);
+}
 
 // ----------------------------------------------------------------------------
 

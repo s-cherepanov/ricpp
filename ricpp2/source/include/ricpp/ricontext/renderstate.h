@@ -114,6 +114,9 @@ namespace RiCPP {
 		CTransformation *m_worldToCamera;   ///< Transforms world space to camera space
 		CTransformation *m_idTransform;     ///< Identity (world to world)
 		
+		RtToken m_viewingOrientation;  ///< Orientation of the viewing (camera to raster) in world block (RI_LH or RI_RH)
+		RtToken m_cameraOrientation; ///< Orientation of the camera in world block (RI_LH or RI_RH)
+		
 		TypeTransformationMap m_globalTransforms;      ///< Global transformation map.
 		std::list<TypeTransformationMap> m_scopedTransforms; ///< Scoped transformation maps.
 
@@ -556,6 +559,9 @@ namespace RiCPP {
 		inline CTransformation *worldToCamera() { return m_worldToCamera; }
 		*/
 		
+		inline RtToken viewingOrientation() const { return m_viewingOrientation; }
+		inline RtToken cameraSysOrientation() const { return m_cameraOrientation; }
+		inline RtToken currentCoordSysOrientation() const { return attributes().coordSysOrientation(); }
 		inline const CTransformation *NDCToRaster() const { return m_NDCToRaster; }
 		inline const CTransformation *screenToNDC() const { return m_screenToNDC; }
 		inline const CTransformation *cameraToScreen() const { return m_cameraToScreen; }

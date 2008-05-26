@@ -398,7 +398,6 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_illuminated = ra.m_illuminated;
 	m_inAreaLight = ra.m_inAreaLight;
 
-
 	m_surface = ra.m_surface;
 	m_atmosphere = ra.m_atmosphere;
 	m_interior = ra.m_interior;
@@ -431,12 +430,13 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_geometricRepresentation = ra.m_geometricRepresentation;
 
 	m_orientation = ra.m_orientation;
-	m_orientation = ra.m_orientation;
+	m_coordSysOrientation = ra.m_coordSysOrientation;
+	m_primitiveOrientation = ra.m_primitiveOrientation;
+
 	m_nSides = ra.m_nSides;
 
 	m_uBasis = ra.m_uBasis;
 	m_vBasis = ra.m_vBasis;
-
 	
 	m_trimCurve = ra.m_trimCurve;
 
@@ -906,19 +906,45 @@ RtVoid CAttributes::geometricRepresentation(RtToken type)
 	}
 }
 
+RtVoid CAttributes::resetCoordSysOrientation(RtToken anOrientation)
+{
+	assert(anOrientation == RI_RH || anOrientation == RI_LH);
+	m_coordSysOrientation = anOrientation;
+	
+	anOrientation = m_orientation.m_value;
+	assert(anOrientation == RI_LH || anOrientation == RI_RH || anOrientation == RI_INSIDE || anOrientation == RI_OUTSIDE);
+	if ( anOrientation == RI_OUTSIDE ) {
+		// Primitive orientation is the same as the current coord sys orientation
+		m_primitiveOrientation = m_coordSysOrientation;
+	} else if ( anOrientation == RI_INSIDE ) {
+		// Primitive orientation is the opposite of the current coord sys orientation
+		m_primitiveOrientation = RI_LH;
+		if ( m_coordSysOrientation == m_primitiveOrientation )
+			m_primitiveOrientation = RI_RH;
+	} else {
+		// Explicit orientation (RI_LH, RI_RH)
+		m_primitiveOrientation = anOrientation;
+	}
+}
+
 void CAttributes::initOrientation()
 {
 	m_orientation.set(defOrientation);
+	m_coordSysOrientation = RI_LH;
+	m_primitiveOrientation = RI_LH;
 }
 
 RtVoid CAttributes::orientation(RtToken anOrientation)
 {
+	assert(anOrientation == RI_LH || anOrientation == RI_RH || anOrientation == RI_INSIDE || anOrientation == RI_OUTSIDE);
+
 	if ( m_motionState != 0 ) {
 		m_orientation.set(anOrientation, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_lastValue = AIDX_ORIENTATION;
 	} else {
 		m_orientation.set(anOrientation);
 	}
+	resetCoordSysOrientation(m_coordSysOrientation);
 }
 
 RtVoid CAttributes::reverseOrientation(void)
@@ -937,6 +963,22 @@ RtVoid CAttributes::reverseOrientation(void)
 			else if ( m_orientation.m_movedValue[i] == RI_RH ) m_orientation.m_movedValue[i] = RI_LH;
 		}
 		m_lastValue = AIDX_ENDMARKER;
+	}
+
+	m_primitiveOrientation = toggledOrientation(m_primitiveOrientation);
+}
+
+RtVoid CAttributes::toggleOrientation()
+{
+	m_coordSysOrientation = toggledOrientation(m_coordSysOrientation);
+	m_primitiveOrientation = toggledOrientation(m_primitiveOrientation);
+}
+
+RtVoid CAttributes::coordSysOrientation(RtToken anOrientation)
+{
+	assert(anOrientation == RI_RH || anOrientation == RI_LH);
+	if ( m_coordSysOrientation != anOrientation ) {
+		toggleOrientation();
 	}
 }
 

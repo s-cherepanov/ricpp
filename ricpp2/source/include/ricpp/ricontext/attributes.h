@@ -409,9 +409,12 @@ namespace RiCPP {
 		CAttributeFloat m_geometricApproximationValue; ///< The value for the approximation type
 
 		CAttributeToken m_geometricRepresentation;     ///< The geometric representation
-
-		CAttributeToken m_orientation;                 ///< started RI_OUTSIDE, set by orientation and changed by transformations
-
+		
+		CAttributeToken m_orientation;                 ///< started RI_OUTSIDE, set by orientation
+		
+		RtToken m_coordSysOrientation;                 ///< started RI_LH, changed by transformations
+		RtToken m_primitiveOrientation;                ///< started RI_LH, set by orientation and changed by transformations
+		
 		CAttributeInt   m_nSides;                      ///< 1 or 2, def. is 2 (inside and outside)
 
 		CAttributeBasis m_uBasis,                      ///< Basis matrix for bicubic splines in u direction
@@ -952,6 +955,8 @@ namespace RiCPP {
 			return m_geometricRepresentation.m_value;
 		}
 
+		RtVoid resetCoordSysOrientation(RtToken anOrientation);
+
 		virtual RtVoid orientation(RtToken anOrientation);
 		inline virtual RtToken orientation(RtToken anOrientation) const
 		{
@@ -960,6 +965,17 @@ namespace RiCPP {
 
 		virtual RtVoid reverseOrientation(void);
 
+		virtual RtVoid toggleOrientation();
+		virtual RtVoid coordSysOrientation(RtToken anOrientation);
+		inline virtual RtToken CAttributes::primitiveOrientation() const
+		{
+			return m_primitiveOrientation;
+		}
+		inline virtual RtToken CAttributes::coordSysOrientation() const
+		{
+			return m_coordSysOrientation;
+		}
+		
 		virtual RtVoid sides(RtInt nsides);
 		inline virtual RtInt sides() const
 		{

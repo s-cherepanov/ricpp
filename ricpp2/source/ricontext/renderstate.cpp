@@ -2559,57 +2559,71 @@ void CRenderState::coordSysTransform(RtToken space)
 {
 	if ( space == RI_CURRENT )
 		return;
+	
+	RtToken curSpaceType = curTransform().spaceType();
+	if ( curSpaceType == space ) {
+		curTransform().transform(RiIdentityMatrix, RiIdentityMatrix);
+		return;
+	}
+
 	const CTransformation *newTransform = findTransform(space);
 	
 	if ( newTransform ) {
-		RtToken curSpaceType = curTransform().spaceType();
 		RtToken newSpaceType = newTransform->spaceType();
 		
 		if ( curSpaceType != newSpaceType ) {
-			// Main containing spaces of the RI (object space lies in world space)
+			// Main containing spaces of the RI
 			static RtToken spaces[] = {RI_WORLD, RI_CAMERA, RI_SCREEN, RI_NDC, RI_RASTER, RI_NULL};
 			int fi = 0;
 			while ( spaces[fi] && spaces[fi] != newSpaceType ) ++fi;
 			int ti = 0;
 			while ( spaces[ti] && spaces[ti] != curSpaceType ) ++ti;
 			
-			// set ctm = t x t->spaceType_To_currentSpacetype x CTM
+			// set ctm = t x t->spaceType_To_currentSpacetype
+			CMatrix3D m, mi;
+			m.setPreMultiply(true);
+			mi.setPreMultiply(false);
 
 			// pre concat tspace to cur
 			// Transform to the main space of the destination
 			if ( fi < ti ) {
-				// Direction to raster
+				// Direction to raster (not happen)
+				assert(false);
 				const CTransformation *trans;
 				while ( fi < ti ) {
 					trans = findTransform(spaces[ti]);
 					assert(trans!=0);
 					if ( trans ) {
-						curTransform().concatTransform(trans->getCTM(), trans->getInverseCTM());
+						m.concatTransform(trans->getCTM());
+						mi.concatTransform(trans->getInverseCTM());
 					} else {
 						throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "coordSysTransform: space (%s) not defined, to raster direction", noNullStr(spaces[ti]));
 					}
 					--ti;
 				}
 			} else {
-				// Direction to object
+				// Direction back to world
 				const CTransformation *trans;
 				while ( fi > ti ) {
 					trans = findTransform(spaces[ti]);
 					assert(trans!=0);
 					if ( trans ) {
-						curTransform().concatTransform(trans->getInverseCTM(), trans->getCTM());
+						m.concatTransform(trans->getInverseCTM());
+						mi.concatTransform(trans->getCTM());
 					} else {
 						throw ExceptRiCPPError(RIE_BADTOKEN, RIE_WARNING, printLineNo(__LINE__), printName(__FILE__), "coordSysTransform: space (%s) not defined, to object direction", noNullStr(spaces[ti]));
 					}
 					ti++;
 				}
 			}
-			// pre concat t to tspace
-			if ( space != newSpaceType )
-				curTransform().concatTransform(newTransform->getCTM(), newTransform->getInverseCTM());
+			if ( newSpaceType != space ) {
+				m.concatTransform(newTransform->getCTM());
+				mi.concatTransform(newTransform->getInverseCTM());
+			}
+			// Set new Transformation
+			curTransform().transform(newTransform->getCTM(), newTransform->getInverseCTM());
 		} else {
-			curTransform() = *newTransform;
-			curTransform().spaceType(curSpaceType);
+			curTransform().transform(newTransform->getCTM(), newTransform->getInverseCTM());
 		}
 	}
 }

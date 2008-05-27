@@ -79,7 +79,7 @@ namespace RiCPP {
 		static const RtFloat defCropWindowBottom;
 		static const RtFloat defCropWindowTop;
 
-		static const RtToken defProjection;
+		static RtToken const defProjection;
 		static const RtFloat defCameraFOV;
 
 		static const RtFloat defNearClip;
@@ -113,9 +113,9 @@ namespace RiCPP {
 		static const RtInt   defMaxZ;
 		static const RtFloat defDitherAmplitudeZ;
 
-		static const RtToken defImagerName;
+		static RtToken const defImagerName;
 
-		static const RtToken defHiderType;
+		static RtToken const defHiderType;
 
 		static const RtFloat defRelativeDetail;
 

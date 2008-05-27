@@ -324,7 +324,7 @@ const RtFloat CAttributes::defTextureS4 = 1;
 const RtFloat CAttributes::defTextureT4 = 1;
 
 const RtFloat CAttributes::defShadingRate = 1;
-const RtToken CAttributes::defShadingInterpolation = RI_CONSTANT;
+RtToken const CAttributes::defShadingInterpolation = RI_CONSTANT;
 const RtBoolean CAttributes::defMatte = RI_FALSE;
 
 const RtFloat CAttributes::defMinVis  = 0;
@@ -332,12 +332,12 @@ const RtFloat CAttributes::defLowTran = 0;
 const RtFloat CAttributes::defUpTran  = RI_INFINITY;
 const RtFloat CAttributes::defMaxVis  = RI_INFINITY;
 
-const RtToken CAttributes::defGeometricApproximationType = RI_NULL;
+RtToken const CAttributes::defGeometricApproximationType = RI_NULL;
 const RtFloat CAttributes::defGeometricApproximationValue = 0.5;
 
-const RtToken CAttributes::defGeometricRepresentation = RI_PRIMITIVE;
+RtToken const CAttributes::defGeometricRepresentation = RI_PRIMITIVE;
 
-const RtToken CAttributes::defOrientation = RI_OUTSIDE;
+RtToken const CAttributes::defOrientation = RI_OUTSIDE;
 
 const RtInt CAttributes::defNSides = 2;
 

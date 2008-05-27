@@ -59,7 +59,7 @@ const RtFloat COptions::defCropWindowRight = 1.0;
 const RtFloat COptions::defCropWindowBottom = 1.0;
 const RtFloat COptions::defCropWindowTop = 0.0;
 
-const RtToken COptions::defProjection = RI_ORTHOGRAPHIC;
+RtToken const COptions::defProjection = RI_ORTHOGRAPHIC;
 const RtFloat COptions::defCameraFOV = 90.0;
 
 const RtFloat COptions::defNearClip = RI_EPSILON;
@@ -93,9 +93,9 @@ const RtInt   COptions::defMinZ = 0;
 const RtInt   COptions::defMaxZ = 0;
 const RtFloat COptions::defDitherAmplitudeZ = 0;
 
-const RtToken COptions::defImagerName = RI_NULL;
+RtToken const COptions::defImagerName = RI_NULL;
 
-const RtToken COptions::defHiderType = RI_HIDDEN;
+RtToken const COptions::defHiderType = RI_HIDDEN;
 
 const RtFloat COptions::defRelativeDetail = 1;
 

@@ -72,7 +72,7 @@ namespace RiCPP {
 	 *
 	 * The CRenderState object is a part of CBaseRenderer.
 	 *
-	 * @todo Remove STL from public interfaces of shared libraries (@see Creating Compatible Libraries in Apples C++ Runtime Environment Programming Guide)
+	 * @todo Remove STL from public interfaces of shared libraries (@see Creating Compatible Libraries in Apples C++ Runtime Environment Programming Guide), clean up CRenderState interface
 	 */
 	class CRenderState : public IVarSubstCallback {
 		typedef std::map<RtToken, CTransformation *> TypeTransformationMap;
@@ -753,7 +753,7 @@ namespace RiCPP {
 		 *  @see CTokenMap
 		 */
 		//@{
-		inline virtual const CTokenMap &tokenMap() const {return m_declDict.tokenMap();}
+		inline const CTokenMap &tokenMap() const {return m_declDict.tokenMap();}
 		inline CTokenMap &tokenMap() {return m_declDict.tokenMap();}
 
 		/** @brief Searches for a token and creates one if token name is not found
@@ -771,7 +771,7 @@ namespace RiCPP {
 		 *  @param name A pointer to a token name
 		 *  @return RI_NULL if token not found, token otherwise
 		 */
-		inline virtual RtToken tokFind(const char *name) const { return tokenMap().find(name); }
+		inline RtToken tokFind(const char *name) const { return tokenMap().find(name); }
 
 		virtual void parseParameters(CParameterList &p, const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);
 		virtual void parseParameters(const CValueCounts &counts, RtInt n, RtToken theTokens[], RtPointer theParams[]);

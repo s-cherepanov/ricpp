@@ -32,7 +32,7 @@
 
 #ifdef _WIN32
 
-#if defined(RI_EXPORTS)
+#if defined(RICPP_EXPORTS)
 #if !defined(RICPP_EXTERN)
 #define	RICPP_EXTERN(type) extern __declspec(dllexport) type
 #endif
@@ -51,7 +51,7 @@
 
 #else
 
-#if defined(RI_EXPORTS)
+#if defined(RICPP_EXPORTS)
 #if !defined(RICPP_EXTERN)
 #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
 #endif

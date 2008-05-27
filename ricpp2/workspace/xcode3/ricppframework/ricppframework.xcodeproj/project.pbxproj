@@ -28,6 +28,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		C30089B90DEC49F400E30769 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
 		C302FE4A0DB8883B007E509B /* bintree.h in Headers */ = {isa = PBXBuildFile; fileRef = C302FE490DB8883B007E509B /* bintree.h */; };
 		C3185B710D7D3312001784AB /* varsubst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3185B700D7D3312001784AB /* varsubst.h */; };
 		C3185B730D7D3451001784AB /* varsubst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3185B720D7D3451001784AB /* varsubst.cpp */; };
@@ -205,7 +206,6 @@
 		C3C9AE480D70BDE000A04717 /* ribtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE470D70BDE000A04717 /* ribtool.cpp */; };
 		C3CE0ED70DCF4F4E0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C3CE0EF50DCF50920014BC8E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */; };
-		C3CE0EF80DCF50CF0014BC8E /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
 		C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C3CE0F0C0DCF54470014BC8E /* MyOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */; };
 		C3CE0F0F0DCF54A70014BC8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0E0DCF54A70014BC8E /* main.m */; };
@@ -233,11 +233,11 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		C3111C730DD2EDDB0069B937 /* PBXContainerItemProxy */ = {
+		C30089B70DEC49E000E30769 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C31C22450D740489009D99C2;
+			remoteGlobalIDString = C31C22450D740489009D99C2 /* riprog */;
 			remoteInfo = riprog;
 		};
 		C31C22A00D74093C009D99C2 /* PBXContainerItemProxy */ = {
@@ -288,13 +288,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = C3CE0EED0DCF50520014BC8E;
 			remoteInfo = riglapp;
-		};
-		C32DC80A0DD46A3800EE4989 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C37F24E60DCE28C300A64BDB;
-			remoteInfo = glrendererdll;
 		};
 		C352E6960D7465CA00CDED20 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -903,7 +896,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3CE0EF80DCF50CF0014BC8E /* libriprog.1.dylib in Frameworks */,
+				C30089B90DEC49F400E30769 /* libriprog.1.dylib in Frameworks */,
 				C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */,
 				C3CE0EF50DCF50920014BC8E /* Cocoa.framework in Frameworks */,
 			);
@@ -2699,8 +2692,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C32DC80B0DD46A3800EE4989 /* PBXTargetDependency */,
-				C3111C740DD2EDDB0069B937 /* PBXTargetDependency */,
+				C30089B80DEC49E000E30769 /* PBXTargetDependency */,
 			);
 			name = riglapp;
 			productName = riglapp;
@@ -3015,10 +3007,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C3111C740DD2EDDB0069B937 /* PBXTargetDependency */ = {
+		C30089B80DEC49E000E30769 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C31C22450D740489009D99C2 /* riprog */;
-			targetProxy = C3111C730DD2EDDB0069B937 /* PBXContainerItemProxy */;
+			targetProxy = C30089B70DEC49E000E30769 /* PBXContainerItemProxy */;
 		};
 		C31C22A10D74093C009D99C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3054,11 +3046,6 @@
 			isa = PBXTargetDependency;
 			target = C3CE0EED0DCF50520014BC8E /* riglapp */;
 			targetProxy = C32DC7BA0DD4506800EE4989 /* PBXContainerItemProxy */;
-		};
-		C32DC80B0DD46A3800EE4989 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C37F24E60DCE28C300A64BDB /* glrendererdll */;
-			targetProxy = C32DC80A0DD46A3800EE4989 /* PBXContainerItemProxy */;
 		};
 		C352E6970D7465CA00CDED20 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -31,7 +31,7 @@
  * The Ri Routins maps these pointers to the corresponding RiCPP objects.
  * @see riinternal.h CErrorHandlerSlot CSubdivFuncSlot CFreeFuncSlot
  */
-#define RI_EXPORTS
+#define RICPP_EXPORTS
 #include "ricpp/ribase/ricppconst.h"
 #include "ricpp/ribase/ricpptokens.h"
 #include "ricpp/ribase/ricppdecls.h"

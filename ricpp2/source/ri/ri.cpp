@@ -36,7 +36,7 @@
  @endverbatim
  */
 
-#define RI_EXPORTS
+#define RICPP_EXPORTS
 #include "ricpp/ri/ri.h"
 
 #ifndef _RICPP_RI_RIINTERNAL_H

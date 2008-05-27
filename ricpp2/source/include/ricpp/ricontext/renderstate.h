@@ -511,18 +511,18 @@ namespace RiCPP {
 				m_outer = &outer;
 			}
 			bool parse(RtString expr) const;
-		};
+		}; // CIfExprParser
 
-	public:
-
-		// Tokens
+		// Additional Tokens
 		RtToken RI_RIB;                 ///< Token "rib" for options
-
+		
 		RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control
 		RtToken RI_VARSUBST;            ///< Token "varsubst" for option
-
+		
 		RtToken RI_QUAL_CACHE_FILE_ARCHIVES; ///< Qualified Token "Control:rib:cache-file-archives" for control
 		RtToken RI_QUAL_VARSUBST;            ///< Token "Option:rib:varsubst" for option
+		
+	public:
 
 		/** @brief Initializes the object
 		 *

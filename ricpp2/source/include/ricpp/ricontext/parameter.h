@@ -63,36 +63,42 @@ namespace RiCPP {
 		/** @brief Fills the m_stringPtrs with pointers to the c-strings of m_strings.
 		 */
 		void copyStringPtr();
+			
+		/** @brief Assigns a parameter to this object.
+		 *
+		 *  @param p Parameter to assign.
+		 *  @throw ExceptRiCPPError if a inline declaration cannot be allocated
+		 */
+		void assign(const CParameter &p);
 
 	public:
 		/** @brief Standard constructor, empty parameter.
 		 */
 		inline CParameter()
+			: m_declaration(0), m_position(0)
 		{
-			m_declaration = 0;
-			m_position = 0;
 		}
 
 		/** @brief Copy constructor.
 		 *
-		 * @param param Parameter to copy
+		 *  @param param Parameter to copy
+		 *  @throw ExceptRiCPPError if a inline declaration cannot be allocated
 		 */
 		inline CParameter(const CParameter &param)
+			: m_declaration(0), m_position(0)
 		{
-			m_declaration = 0;
-			m_position = 0;
-			*this = param;
+			assign(param);
 		}
 
 		/** @brief Copy constructor for remapping
 		 *
 		 *  @param param Parameter to copy
 		 *  @param newDict New dictionary for declarations and tokens
+		 *  @throw ExceptRiCPPError if a declaration cannot be allocated
 		 */
 		inline CParameter(const CParameter &param, CDeclarationDictionary &newDict)
+			: m_declaration(0), m_position(0)
 		{
-			m_declaration = 0;
-			m_position = 0;
 			assignRemap(param, newDict);
 		}
 
@@ -112,9 +118,8 @@ namespace RiCPP {
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr)
+			: m_declaration(0), m_position(0)
 		{
-			m_declaration = 0;
-			m_position = 0;
 			set(0, 0, theName, theData, thePosition, counts, dict, curColorDescr);
 		}
 
@@ -139,9 +144,8 @@ namespace RiCPP {
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr)
+			: m_declaration(0), m_position(0)
 		{
-			m_declaration = 0;
-			m_position = 0;
 			set(aQualifier, aTable, theName, theData, thePosition, counts, dict, curColorDescr);
 		}
 
@@ -172,22 +176,34 @@ namespace RiCPP {
 		 *
 		 *  Makes a deep copy of inline declarations.
 		 *
-		 *  @param param The parameter to assign.
+		 *  @param p The parameter to assign.
 		 *  @return *this
 		 */
-		CParameter &operator=(const CParameter &param);
+		CParameter &operator=(const CParameter &p);
 
+		/** @brief Assigns a parameter to this object and remaps the declarations to a new dictonary
+		 *
+		 *  Used to copy a parameter (of controls, options) from the frontend to the backend.
+		 *  because the backend has it's own dictionary, the declarations must be remapped.
+		 *  CBaseRenderer::init() used to start this assigning and remapping.
+		 *
+		 *  @param p Parameter of the front end to assign
+		 *  @param newDict Dictionary of the backend, can be filled with declarations found in p
+		 *  @return *this
+		 *  @throw ExceptRiCPPError if a declaration cannot be allocated
+		 */
 		CParameter &assignRemap(const CParameter &param, CDeclarationDictionary &newDict);
 
-		/** @brief finds the declaration of a parameter.
+		/** @brief Finds the declaration of a parameter.
 		 *
-		 *  @param aQualifier Optional qualifier
-		 *  @param aTable Optional tble name
+		 *  @param aQualifier Optional qualifier (token)
+		 *  @param aTable Optional tble name (token)
 		 *  @param theName Name (not yet a token) of a declaration or inline declaration.
 		 *  @param thePosition Position within the original parameter list of the ri request.
 		 *  @param counts Number of the parameter values.
 		 *  @param dict Declaration dictionary, can be updated if color descriptor has changed.
 		 *  @param curColorDescr Descriptor for "color" values.
+		 *  @throw ExceptRiCPPError if a inline declaration cannot be allocated or syntax error
 		 */
 		bool setDeclaration(
 			RtToken aQualifier, RtToken aTable, 
@@ -219,17 +235,45 @@ namespace RiCPP {
 
 		/** @brief Gets a copy of single value out of the parameter.
 		 *
-		 *  @retval p Copy of the value.
 		 *  @param pos Position of the value.
+		 *  @retval p Copy of the value.
 		 *  @return True, value has been copied.
 		 */
 		bool get(unsigned long pos, CValue &p) const;
+
+		/** @brief Gets a copy of single integer out of the parameter.
+		 *
+		 *  @param pos Position of the value.
+		 *  @retval result Copy of the value.
+		 *  @return True, value has been copied.
+		 */
 		bool get(unsigned long pos, RtInt &result) const;
+
+		/** @brief Gets a copy of single float out of the parameter.
+		 *
+		 *  @param pos Position of the value.
+		 *  @retval result Copy of the value.
+		 *  @return True, value has been copied.
+		 */
 		bool get(unsigned long pos, RtFloat &result) const;
+
+		/** @brief Gets a copy of single string out of the parameter.
+		 *
+		 *  @param pos Position of the value.
+		 *  @retval result Copy of the value.
+		 *  @return True, value has been copied.
+		 */
 		bool get(unsigned long pos, std::string &result) const;
+
+		/** @brief Gets a copy of single c string pointer out of the parameter.
+		 *
+		 *  @param pos Position of the value.
+		 *  @retval result Copy of the value.
+		 *  @return True, value has been copied.
+		 */
 		bool get(unsigned long pos, RtString &result) const;
 
-		/** @brief Name of the declaration (as found with qualifiers, maybe inline)
+		/** @brief Name of the declaration (as found with qualifiers and possibly inline declaration)
 		 *
 		 *  @return Name of the declaration, not necessarily a token.
 		 *  @see token()
@@ -260,9 +304,9 @@ namespace RiCPP {
 			return m_declaration ? m_declaration->token() : RI_NULL;
 		}
 
-		/** @brief Gets the variable name token of the declaration.
+		/** @brief Gets the unqualified variable name token of the declaration.
 		 *
-		 *  @brief Token of the variable name of the declaration.
+		 *  @brief Token of the unqualified variable name of the declaration.
 		 */
 		inline RtToken var() const
 		{
@@ -278,15 +322,6 @@ namespace RiCPP {
 			return m_declaration ? m_declaration->isInline() : false;
 		}
 
-		/*  @brief Checks the qualified token or the unqualified var, if inline declaration.
-		 *  -> matches
-		 *  @return true, if the parameter name passes the test.
-		 *//*
-		inline bool check(RtToken qualified, RtToken unqualified) const
-		{
-			return m_declaration ? m_declaration->check(qualified, unqualified) : false;
-		} */
-
 		/** @brief Query if variable matches declaration
 		 *
 		 *  @param aQualifier Qualifier id of the variable.
@@ -298,6 +333,12 @@ namespace RiCPP {
 			return m_declaration ? m_declaration->matches(aQualifier, aTable, aVar) : false;
 		}
 
+		/** @brief Query if variable matches declaration
+		 *
+		 *  @param aQualifier Qualifier token of the variable.
+		 *  @param aTable Table token of the variable.
+		 *  @param aVar Variable identifier.
+		 */
 		inline bool matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const
 		{
 			return m_declaration ? m_declaration->matches(aQualifierName, aTable, aVar) : false;
@@ -309,15 +350,15 @@ namespace RiCPP {
 		 */
 		RtPointer valptr();
 
-		/** @brief Gets the number of values.
+		/** @brief Gets the number of values (basic type).
 		 *
-		 *  @return Number of values.
+		 *  @return Number of values (e.g. size of the vector containing the basic type)
 		 */
 		unsigned long size();
 
 		/** @brief Gets the basic type of the parameter.
 		 *
-		 *  E.g. float is the basic type of point.
+		 *  E.g. float BASICTYPE_FLOAT is the basic type of point.
 		 *
 		 *  @return Basic type of the values.
 		 */
@@ -341,7 +382,7 @@ namespace RiCPP {
 		 *
 		 *  @return Integer values.
 		 */
-		const std::vector<RtInt> &ints() const { return m_ints; }
+		inline const std::vector<RtInt> &ints() const { return m_ints; }
 
 		/** @brief Gets the float values.
 		 *
@@ -367,7 +408,7 @@ namespace RiCPP {
 		 */
 		inline const std::vector<RtString> &stringPtrs() const { return m_stringPtrs; }
 
-		/** @brief Gets a pointer to the declaration of the praameter.
+		/** @brief Gets a pointer to the declaration of the parameter.
 		 *
 		 *  @return Pointer to the declaration of the parameter.
 		 */
@@ -404,13 +445,18 @@ namespace RiCPP {
 		typedef std::map<RtToken, CParameter *> Map_type;
 		
 		std::list<CParameter> m_params;    ///< List of parameters
-		Map_type m_paramMap;               ///< Maps tokens to their parameters.
+		Map_type m_paramMap;               ///< Maps tokens to their parameters in m_params.
 		std::vector<RtToken> m_tokenPtr;   ///< Vector of the tokens for ri token/value parameters.
 		std::vector<RtPointer> m_paramPtr; ///< Pointer to the values for ri token/value parameters.
 
 		/** @brief Rebuilds the parameter pointer vectors m_tokenPtr and m_paramPtr from m_params.
 		 */
 		void rebuild();
+		
+		/** @brief Assigns the parameter lists instance variables
+		 *  @param params Parameter list to assign
+		 */
+		void assign(const CParameterList &params);
 
 	public:
 		/** @brief Standard constructor.
@@ -418,9 +464,12 @@ namespace RiCPP {
 		inline CParameterList() {}
 
 		/** Copy constructor.
-		 *  @param params Named parameterlist to copy (declarations of old dictionary)
+		 *  @param params Parameterlist to copy (declarations of old dictionary)
 		 */
-		inline CParameterList(const CParameterList &params) { *this = params; }
+		inline CParameterList(const CParameterList &params)
+		{
+			assign(params);
+		}
 		
 		/** @brief Copy constructor, remaps
 		 *  
@@ -470,6 +519,16 @@ namespace RiCPP {
 		 */
 		CParameterList &operator=(const CParameterList &params);
 
+		/** @brief Assigns a parameterlist to this object and remaps the declarations to a new dictonary
+		 *
+		 *  Used to copy a parameterlist (of controls, options) from the frontend to the backend.
+		 *  because the backend has it's own dictionary, the declarations must be remapped.
+		 *  CBaseRenderer::init() used to start this assigning and remapping.
+		 *
+		 *  @param p Parameterlist of the front end to assign
+		 *  @param newDict Dictionary of the backend, can be filled with declarations found in p
+		 *  @return *this
+		 */
 		CParameterList &assignRemap(const CParameterList &params, CDeclarationDictionary &newDict);
 
 		/** @brief Gets a constant iterator.
@@ -519,13 +578,7 @@ namespace RiCPP {
 
 		/** @brief Clears the contents of the parameter list.
 		 */
-		inline virtual void clear()
-		{
-			m_params.resize(0);
-			m_paramMap.clear();
-			m_tokenPtr.resize(0);
-			m_paramPtr.resize(0);
-		}
+		void clear();
 
 		/** @brief Copies the parameters.
 		 *
@@ -545,15 +598,6 @@ namespace RiCPP {
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
 
-		/** @brief Copies the parameter list.
-		 *
-		 *  @param params Parameter list to copy.
-		 */
-		inline virtual void set(const CParameterList &params)
-		{
-			*this = params;
-		}
-
 		/** @brief Adds parameters list to the existing list.
 		 *
 		 *  @param aQualifier Optional qualifier
@@ -565,7 +609,7 @@ namespace RiCPP {
 		 *  @param tokens Tokens as parameter identifiers.
 		 *  @param params Pointers to the parameters.
 		 */
-		virtual void add(
+		void add(
 			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
@@ -576,14 +620,21 @@ namespace RiCPP {
 		 *
 		 *  @param params Parameter list to add.
 		 */
-		virtual void add(const CParameterList &params);
+		void add(const CParameterList &params);
 
 		/** @brief Gets pointer to a parameter (token/value pair).
 		 *
 		 *  @param var Token to identify a parameter.
-		 *  @return Pointer to a parameter identified by @a token.
+		 *  @return Pointer to a parameter identified by @a token, 0 otherwise
 		 */
 		CParameter *get(RtToken var);
+		
+		/** @brief Gets pointer to a parameter (token/value pair), if of a specific basic type.
+		 *
+		 *  @param var Token to identify a parameter.
+		 *  @param bt Basic type that should match the parameter
+		 *  @return Pointer to a parameter identified by @a token and has type @a bt, 0 otherwise
+		 */
 		inline CParameter *get(RtToken var, enum EnumBasicTypes bt)
 		{
 			CParameter *p = get(var);
@@ -596,6 +647,13 @@ namespace RiCPP {
 		 *  @return Pointer to a constant parameter identified by @a token.
 		 */
 		const CParameter *get(RtToken var) const;
+
+		/** @brief Gets pointer to a constant parameter (token/value pair), if of a specific basic type.
+		 *
+		 *  @param var Token to identify a parameter.
+		 *  @param bt Basic type that should match the parameter
+		 *  @return Pointer to a constant parameter identified by @a token and has type @a bt, 0 otherwise
+		 */
 		inline const CParameter *get(RtToken var, enum EnumBasicTypes bt) const
 		{
 			const CParameter *p = get(var);
@@ -671,54 +729,35 @@ namespace RiCPP {
 	private:
 		RtToken m_name; ///< Token as identifier
 
-		/** @brief Copies the parameters.
-		 *
-		 *  @param aQualifier Optional qualifier
-		 *  @param aTable Optional tble name
-		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
-		 *  @param dict Dictionary with the declarations of the parameter types.
-		 *  @param curColorDescr Current color descriptor for "color" values.
-		 *  @param n Number of parameters.
-		 *  @param tokens Tokens as parameter identifiers.
-		 *  @param params Pointers to the parameters.
+		/** @brief Assigns the name of a parameter list
+		 *  @param params Parameter list with the name to assign
 		 */
-		inline virtual void set(
-			const char *aQualifier, const char *aTable, 
-			const CParameterClasses &counts,
-			CDeclarationDictionary &dict,
-			const CColorDescr &curColorDescr,
-			RtInt n, RtToken tokens[], RtPointer params[])
-		{
-			CParameterList::set(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
-		}
-
+		void assign(const CNamedParameterList &params);
 	public:
 		/** @brief Default constructor.
 		 *  
 		 *  @param aName Name of the parameterlist, RI_NULL as default
 		 */
-		inline CNamedParameterList(RtToken aName=RI_NULL)
+		inline CNamedParameterList(RtToken aName=RI_NULL) : m_name(aName)
 		{
-			m_name = aName;
 		}
 
-		/** @brief Default constructor.
+		/** @brief Constructs a named parameterlist using a name and a parameterlist
 		 *  
-		 *  @param aName Name of the parameter list.
+		 *  @param aName Name (token) of the parameter list.
 		 *  @param params unnamed parameter list.
 		 */
-		inline CNamedParameterList(RtToken aName, const CParameterList &params) : CParameterList(params)
+		inline CNamedParameterList(RtToken aName, const CParameterList &params) : CParameterList(params), m_name(aName)
 		{
-			m_name = aName;
 		}
 
 		/** @brief Copy constructor.
 		 *  
 		 *  @param params Named parameterlist to copy
 		 */
-		inline CNamedParameterList(const CNamedParameterList &params)
+		inline CNamedParameterList(const CNamedParameterList &params) : CParameterList(params)
 		{
-			*this = params;
+			assign(params);
 		}
 
 		/** @brief Copy constructor, remaps
@@ -726,10 +765,7 @@ namespace RiCPP {
 		 *  @param params Named parameterlist to copy (declarations of old dictionary)
 		 *  @param newDict New dictionary for declarations and tokens
 		 */
-		inline CNamedParameterList(const CNamedParameterList &params, CDeclarationDictionary &newDict)
-		{
-			assignRemap(params, newDict);
-		}
+		CNamedParameterList(const CNamedParameterList &params, CDeclarationDictionary &newDict);
 
 		/** @brief Constructs a parameter list.
 		 *
@@ -738,7 +774,7 @@ namespace RiCPP {
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
 		 *  @param curColorDescr Current color descriptor for "color" values.
-		 *  @param aName Name of the parameter list.
+		 *  @param aName Name (token) of the parameter list.
 		 *  @param n Number of parameters.
 		 *  @param tokens Tokens as parameter identifiers.
 		 *  @param params Pointers to the parameters.
@@ -750,9 +786,8 @@ namespace RiCPP {
 			const CColorDescr &curColorDescr,
 			RtToken aName,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: CParameterList(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params)
+			: CParameterList(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params), m_name(aName)
 		{
-			m_name = aName;
 		}
 
 		/** @brief Duplicates a named parameter list.
@@ -770,6 +805,17 @@ namespace RiCPP {
 		 * @return *this
 		 */
 		CNamedParameterList &operator=(const CNamedParameterList &params);
+
+		/** @brief Assigns a named parameterlist to this object and remaps the declarations to a new dictonary
+		 *
+		 *  Used to copy a named parameterlist (of controls, options) from the frontend to the backend.
+		 *  because the backend has it's own dictionary, the declarations must be remapped.
+		 *  CBaseRenderer::init() used to start this assigning and remapping.
+		 *
+		 *  @param p Parameterlist of the front end to assign
+		 *  @param newDict Dictionary of the backend, can be filled with declarations found in p
+		 *  @return *this
+		 */
 		CNamedParameterList &assignRemap(const CNamedParameterList &params, CDeclarationDictionary &newDict);
 
 		/** @brief Sets a parameter list to specific values.
@@ -779,78 +825,39 @@ namespace RiCPP {
 		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
 		 *  @param curColorDescr Current color descriptor for "color" values.
-		 *  @param aName Name of the parameter list.
+		 *  @param aName Name (token) of the parameter list.
 		 *  @param n Number of parameters.
 		 *  @param tokens Tokens as parameter identifiers.
 		 *  @param params Pointers to the parameters.
 		 */
-		inline virtual void set(
+		inline void set(
 			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
-			const char *aName,
+			RtToken aName,
 			RtInt n, RtToken tokens[], RtPointer params[])
 		{
 			name(aName);
 			CParameterList::set(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
 		}
 
-		/** @brief Sets a name and copies an unnamed parameter list.
+		/** @brief Sets a name (token) and copies an unnamed parameter list.
 		 *  
-		 *  @param aName Name of the parameter list to set.
+		 *  @param aName Name (token) of the parameter list to set.
 		 *  @param params Unnamed parameter list to copy.
 		 */
-		inline virtual void set(const char *aName, const CParameterList &params)
+		inline void set(RtToken aName, const CParameterList &params)
 		{
 			name(aName);
-			CParameterList::set(params);
+			CParameterList::operator=(params);
 		}
 
-		/** @brief Copies a parameter list.
-		 *  
-		 *  @param params Named parameter list to copy.
-		 */
-		inline virtual void set(const CNamedParameterList &params)
-		{
-			*this = params;
-		}
-
-		/** @brief Adds parameters to the existing list.
+		/** @brief Sets the name (token) of the list.
 		 *
-		 *  @param aQualifier Optional qualifier
-		 *  @param aTable Optional tble name
-		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
-		 *  @param dict Dictionary with the declarations of the parameter types.
-		 *  @param curColorDescr Current color descriptor for "color" values.
-		 *  @param n Number of parameters.
-		 *  @param tokens Tokens as parameter identifiers.
-		 *  @param params Pointers to the parameters.
+		 *  @param aName Name (token) to set.
 		 */
-		inline virtual void add(
-			const char *aQualifier, const char *aTable, 
-			const CParameterClasses &counts,
-			CDeclarationDictionary &dict,
-			const CColorDescr &curColorDescr,
-			RtInt n, RtToken tokens[], RtPointer params[])
-		{
-			CParameterList::add(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
-		}
-
-		/** @brief Adds the contents of an parameter list to the existing list.
-		 *
-		 *  @param params Unnamed parameter list to add.
-		 */
-		inline virtual void add(const CParameterList &params)
-		{
-			CParameterList::add(params);
-		}
-
-		/** @brief Sets the name of the list.
-		 *
-		 *  @param aName Name to set.
-		 */
-		inline void name(const char *aName)
+		inline void name(RtToken aName)
 		{
 			m_name = aName;
 		}

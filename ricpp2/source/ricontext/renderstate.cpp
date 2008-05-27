@@ -40,8 +40,8 @@
 using namespace RiCPP;
 
 #ifdef _DEBUG
-#define _TRACE
-#define _TRACE_TRANS_PTS
+// #define _TRACE
+// #define _TRACE_TRANS_PTS
 #endif
 
 bool CRenderState::CIfExprParser::match_word(
@@ -2135,12 +2135,7 @@ void CRenderState::resourceEnd()
 
 RtToken CRenderState::resource(IRiContext &ri, RtToken handle, RtToken type, const CParameterList &params)
 {
-	RtToken t = tokFind(type);
-	if ( !t ) {
-		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "not a token for a resource factory in resource(%s, Token: %s)", noNullStr(handle), noNullStr(type));
-	}
-
-	IResourceFactory *f = m_resourceFactories.findObj(t);
+	IResourceFactory *f = m_resourceFactories.findObj(type);
 	if ( !f ) {
 		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, __LINE__, __FILE__, "no resource factory in resource(Handle: %s, Token: %s)", noNullStr(handle), noNullStr(type));
 	}

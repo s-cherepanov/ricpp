@@ -35,11 +35,15 @@
 
 using namespace RiCPP;
 
+// -----------------------------------------------------------------------------
 
 void CParameter::copyStringPtr()
 {
 	m_stringPtrs.reserve(m_strings.size());
-	for ( std::vector<std::string>::iterator i = m_strings.begin(); i != m_strings.end(); i++ ) {
+	for ( std::vector<std::string>::iterator i = m_strings.begin();
+		  i != m_strings.end();
+		  i++ )
+	{
 		m_stringPtrs.push_back( (*i).c_str() );
 	}
 }
@@ -62,17 +66,18 @@ void CParameter::clear()
 }
 
 
-CParameter &CParameter::operator=(const CParameter &param)
+void CParameter::assign(const CParameter &param)
 {
-	if ( this == &param )
-		return *this;
-
-	clear();
-
+	assert(m_declaration == 0);
+	CDeclaration *decl = 0;
 	if ( param.m_declaration && param.m_declaration->isInline() ) {
-		m_declaration = new CDeclaration(*param.m_declaration);
-		if ( !m_declaration )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.parameterName());
+		decl = new CDeclaration(*param.m_declaration);
+		if ( !decl )
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,
+								   __LINE__, __FILE__,
+								   "While assigning parameter %s",
+								   param.parameterName());
+		m_declaration = decl;
 	} else {
 		m_declaration = param.m_declaration;
 	}
@@ -85,6 +90,16 @@ CParameter &CParameter::operator=(const CParameter &param)
 	m_strings = param.m_strings;
 	
 	copyStringPtr();
+}
+
+
+CParameter &CParameter::operator=(const CParameter &p)
+{
+	if ( this == &p )
+		return *this;
+	
+	clear();
+	assign(p);
 	return *this;
 }
 
@@ -96,14 +111,23 @@ CParameter &CParameter::assignRemap(const CParameter &param, CDeclarationDiction
 
 	clear();
 	
+	CDeclaration *decl = 0;
 	if ( param.m_declaration && param.m_declaration->isInline() ) {
-		m_declaration = new CDeclaration(*param.m_declaration, newDict.tokenMap());
-		if ( !m_declaration )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While assigning parameter %s", param.parameterName());
+		decl = new CDeclaration(*param.m_declaration, newDict.tokenMap());
+		if ( !decl )
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,
+								   __LINE__, __FILE__,
+								   "While assigning parameter %s",
+								   param.parameterName());
+		m_declaration = decl;
 	} else {
-		m_declaration = newDict.remapDecl(param.m_declaration);
-		if ( !m_declaration )
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "While remapping parameter %s", param.parameterName());
+		decl = newDict.remapDecl(param.m_declaration);
+		if ( !decl )
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,
+								   __LINE__, __FILE__,
+								   "While remapping parameter %s",
+								   param.parameterName());
+		m_declaration = decl;
 	}
 
 	m_position = param.m_position;
@@ -134,7 +158,8 @@ bool CParameter::setDeclaration(
 	m_position = thePosition;
 	m_parameterName = theName;
 	
-	const CDeclaration *existingDecl = dict.findAndUpdate(aQualifier, aTable, theName, curColorDescr);
+	const CDeclaration *existingDecl =
+		dict.findAndUpdate(aQualifier, aTable, theName, curColorDescr);
 	const CDeclaration *decl = 0;
 	
 	if ( existingDecl ) {
@@ -143,11 +168,16 @@ bool CParameter::setDeclaration(
 		// inline
 		decl = new CDeclaration(theName, curColorDescr, dict.tokenMap());
 		if ( !decl ) {
-			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Parameter of %s", theName);
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE,
+								   __LINE__, __FILE__,
+								   "Parameter of %s", theName);
 		} else if ( !decl->isInline() ) {
 			delete decl;
 			decl = 0;
-			throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR, __LINE__, __FILE__, "Parameter of %s, no declaration or illegal inline declaration", theName);
+			throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR,
+								   __LINE__, __FILE__,
+								   "Parameter of %s, no declaration or illegal inline declaration",
+								   theName);
 		}
 	}
 
@@ -173,7 +203,9 @@ void CParameter::set(
 
 	if ( elems > 0 && !theData ) {
 		clear();
-		throw ExceptRiCPPError(RIE_MISSINGDATA, RIE_ERROR, __LINE__, __FILE__, "Parameter of %s", theName);
+		throw ExceptRiCPPError(RIE_MISSINGDATA, RIE_ERROR,
+							   __LINE__, __FILE__,
+							   "Parameter of %s", theName);
 	}
 
 	if ( theData ) {
@@ -201,7 +233,10 @@ void CParameter::set(
 				copyStringPtr();
 				break;
 			default:
-				throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR, __LINE__, __FILE__, "Parameter of %s, no type info found", theName);
+				throw ExceptRiCPPError(RIE_SYNTAX, RIE_ERROR,
+									   __LINE__, __FILE__,
+									   "Parameter of %s, no type info found",
+									   theName);
 				break;
 		}
 	}
@@ -211,7 +246,10 @@ void CParameter::set(
 const CDeclaration &CParameter::declaration() const
 {
 	if ( !m_declaration ) {
-		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE, __LINE__, __FILE__, "Declaration of parameter %s not defined.", parameterName());
+		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE,
+							   __LINE__, __FILE__,
+							   "Declaration of parameter %s not defined.",
+							   parameterName());
 	}
 	return *m_declaration;
 }
@@ -315,7 +353,8 @@ bool CParameter::get(unsigned long pos, RtString &result) const
 }
 
 
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 
 CParameterList::CParameterList(
 	const char *aQualifier, const char *aTable, 
@@ -352,14 +391,27 @@ void CParameterList::rebuild()
 }
 
 
+void CParameterList::clear()
+{
+	m_params.resize(0);
+	m_paramMap.clear();
+	m_tokenPtr.resize(0);
+	m_paramPtr.resize(0);
+}
+
+
+void CParameterList::assign(const CParameterList &params)
+{
+	add(params);
+}
+
+
 CParameterList &CParameterList::operator=(const CParameterList &params)
 {
 	if ( this == &params )
 		return *this;
 	clear();
-
-	add(params);
-
+	assign(params);
 	return *this;
 }
 
@@ -530,14 +582,27 @@ CParameterList &CParameterList::assignRemap(const CParameterList &params, CDecla
 	return *this;	
 }
 
+
 // ----------------------------------------------------------------------------
+
+
+CNamedParameterList::CNamedParameterList(const CNamedParameterList &params, CDeclarationDictionary &newDict)
+: CParameterList(params, newDict)
+{
+	name(newDict.tokenMap().findCreate(params.name()));
+}
+
+void CNamedParameterList::assign(const CNamedParameterList &params)
+{
+	name(params.name());
+}
 
 CNamedParameterList &CNamedParameterList::operator=(const CNamedParameterList &params)
 {
 	if ( this == &params )
 		return *this;
 
-	name(params.name());
+	assign(params);
 
 	CParameterList::operator=(params);
 	return *this;

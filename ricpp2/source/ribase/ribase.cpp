@@ -290,10 +290,10 @@ RICPP_INTERN(RtInt) RIE_LASTSEVERITY   =  3;
 
 /* --------------------------------------------------------------------------------------------------- */
 
-RICPP_INTERN(RtToken) RI_NULL = 0;
+RICPP_INTERN(RtToken const) RI_NULL = 0;
 
-RICPP_INTERN(RtToken) RI_FRAMEBUFFER = "framebuffer",
-              RI_FILE = "file";
+RICPP_INTERN(RtToken const) RI_FRAMEBUFFER = "framebuffer";
+RICPP_INTERN(RtToken const) RI_FILE = "file";
 
 RICPP_INTERN(RtToken)  RI_RGB = "rgb",
                RI_RGBA = "rgba",

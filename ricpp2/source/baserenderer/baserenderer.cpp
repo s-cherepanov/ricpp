@@ -40,10 +40,6 @@
 
 using namespace RiCPP;
 
-#ifdef _DEBUG
-#define _TRACE
-#endif
-
 #define RICPP_PREAMBLE(AREQ) \
 	EnumRequests req = AREQ; \
 	try { \
@@ -1068,17 +1064,9 @@ RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFlo
 
 RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
 {
-#   ifdef _TRACE
-	std::cout << ">preProjection " << name  << std::endl;
-#   endif
-
 	// Sets the state (can throw)
-	renderState()->projection(name, params);
-	
-	// Camera coord space
-#   ifdef _TRACE
-	std::cout << "<preProjection " << std::endl;
-#   endif
+	renderState()->projection(name, params);	
+	// Here Camera coord space
 }
 
 

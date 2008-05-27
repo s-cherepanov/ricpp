@@ -38,7 +38,7 @@
 using namespace RiCPP;
 
 #ifdef _DEBUG
-#define _TRACE
+// #define _TRACE
 #endif
 
 const RtInt   COptions::defXResolution = 512; // 640;

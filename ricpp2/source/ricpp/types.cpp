@@ -38,6 +38,10 @@
 
 #include <cctype>
 
+#ifdef _DEBUG
+// #define _TRACE
+#endif
+
 using namespace RiCPP;
 
 static const unsigned int ms_basicTypeSizes[N_BASICTYPES] =
@@ -1127,8 +1131,10 @@ void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 	n*=3;
 	RtFloat *s = &p[0][0];
 	
+#ifdef _TRACE
 	std::cout << "transformPoints " << std::endl;
 	printMatrix(m_Matrix);
+#endif // _TRACE
 
 	if ( m_preMultiply ) {
 		for ( j = 0; j < n; j+=3 ) {

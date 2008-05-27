@@ -44,10 +44,10 @@ extern "C" {
 /* namespace RiCPP { /* */
 #endif
 
-RICPP_EXTERN(RtToken) RI_NULL; /**< Used to mark undefined tokens and end marker of parameter list. */
+RICPP_EXTERN(RtToken const) RI_NULL; /**< Used to mark undefined tokens and end marker of parameter list. */
 
-RICPP_EXTERN(RtToken) RI_FRAMEBUFFER, /**< Framebuffer output device as @a type in @c  CRiRoot::display() */
-              RI_FILE; /**< File output as @a type in @c CRiRoot::display() */
+RICPP_EXTERN(RtToken const) RI_FRAMEBUFFER; /**< Framebuffer output device as @a type in @c  CRiRoot::display() */
+RICPP_EXTERN(RtToken const) RI_FILE; /**< File output as @a type in @c CRiRoot::display() */
 
 RICPP_EXTERN(RtToken)  RI_RGB, /**< Output RGB (red green blue) channels for @a mode in @c CRiRoot::display() */
                RI_RGBA, /**< Output RGBA (RGB + alpha opacitiy) channels for @a mode in @c CRiRoot::display() */

@@ -767,8 +767,8 @@ namespace RiCPP {
 	 */
 	class CRiResource : public CVarParamRManInterfaceCall {
 	private:
-		std::string m_handle; ///< Handle id of a resource
-		std::string m_type;   ///< Type of a resource
+		RtToken m_handle; ///< Handle id of a resource
+		RtToken m_type;   ///< Type of a resource
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
@@ -804,10 +804,8 @@ namespace RiCPP {
 			RtToken aHandle = 0,
 			RtToken aType = 0
 			)
-			: TypeParent(aLineNo)
+			: TypeParent(aLineNo), m_handle(aHandle), m_type(aType)
 		{
-			m_handle = noNullStr(aHandle);
-			m_type = noNullStr(aType);
 		}
 
 		/** @brief Default constructor.
@@ -826,10 +824,9 @@ namespace RiCPP {
 			RtToken aHandle,
 			RtToken aType,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: TypeParent(aLineNo, RI_RESOURCE, aType, decl, CParameterClasses(), curColorDescr, n, tokens, params)
+			: TypeParent(aLineNo, RI_RESOURCE, aType, decl, CParameterClasses(), curColorDescr, n, tokens, params),
+			  m_handle(aHandle), m_type(aType)
 		{
-			m_handle = aHandle;
-			m_type = aType;
 		}
 
 		/** @brief Constructor.
@@ -845,10 +842,8 @@ namespace RiCPP {
 			RtToken aType,
 			const CParameterList &theParameters
 			)
-			: TypeParent(aLineNo, theParameters)
+			: TypeParent(aLineNo, theParameters), m_handle(aHandle), m_type(aType)
 		{
-			m_handle = aHandle;
-			m_type = aType;
 		}
 
 
@@ -880,16 +875,16 @@ namespace RiCPP {
 		 */
 		inline RtString handle() const
 		{
-			return m_handle.c_str();
+			return m_handle;
 		}
 
 		/** @brief Sets the handle of the resource.
 		 *
 		 *  @param aHandle An atomized handle of a resource.
 		 */
-		inline void handle(RtString aHandle)
+		inline void handle(RtToken aHandle)
 		{
-			m_handle = noNullStr(aHandle);
+			m_handle = aHandle;
 		}
 
 		/** @brief Gets the type of the resource.
@@ -898,16 +893,16 @@ namespace RiCPP {
 		 */
 		inline RtString type() const
 		{
-			return m_type.c_str();
+			return m_type;
 		}
 
 		/** @brief Sets the type of the resource.
 		 *
 		 *  @param aType An atomized type of a resource.
 		 */
-		inline void type(RtString aType)
+		inline void type(RtToken aType)
 		{
-			m_type = noNullStr(aType);
+			m_type = aType;
 		}
 
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)

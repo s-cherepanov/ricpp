@@ -248,7 +248,7 @@ void CRiCPPBridge::defaultDeclarations()
 	doDeclare(RI_PZ, "vertex float", true);
 	doDeclare(RI_PW, "vertex hpoint", true);
 	doDeclare(RI_N,  "varying point", true);  // Normal
-	doDeclare(RI_NP, "uniform point", true);
+	doDeclare(RI_NP, "varying point[2]", true);  // ?? uniform point ?
 	doDeclare(RI_CS, "varying color", true);  // Color
 	doDeclare(RI_OS, "varying color", true);  // Opacity
 	doDeclare(RI_S,  "varying float", true);  // Texture coordinates
@@ -256,8 +256,8 @@ void CRiCPPBridge::defaultDeclarations()
 	doDeclare(RI_ST, "varying float[2]", true);
 	
 	doDeclare(RI_ORIGIN, "constant integer[2]", true);   // Origin of the display
-	doDeclare(RI_DISPWIDTH, "constant integer", true);
-	doDeclare(RI_DISPHEIGHT, "constant integer", true);
+	doDeclare(RI_DISPXRES, "constant integer", true);
+	doDeclare(RI_DISPYRES, "constant integer", true);
 	doDeclare(RI_PIXELASPECT, "constant float", true);
 	
 	doDeclare(RI_NAME, "string", true);

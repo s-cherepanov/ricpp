@@ -142,8 +142,8 @@ CDisplayDescr::CDisplayDescr()
 	m_type = RI_NULL;
 	m_mode = RI_NULL;
 	m_origin[0] = m_origin[1] = 0;
-	m_width = -1;
-	m_height = -1;
+	m_xres = -1;
+	m_yres = -1;
 	m_pixelAspectRatio = -1;
 }
 
@@ -174,8 +174,8 @@ CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd)
 	m_origin[0] = dd.m_origin[0];
 	m_origin[1] = dd.m_origin[1];
 
-	m_width = dd.m_width;
-	m_height = dd.m_height;
+	m_xres = dd.m_xres;
+	m_yres = dd.m_yres;
 	m_pixelAspectRatio = dd.m_pixelAspectRatio;
 
 	m_channels = dd.m_channels;
@@ -195,8 +195,8 @@ CDisplayDescr &CDisplayDescr::assignRemap(const CDisplayDescr &dd, CDeclarationD
 	m_origin[0] = dd.m_origin[0];
 	m_origin[1] = dd.m_origin[1];
 
-	m_width = dd.m_width;
-	m_height = dd.m_height;
+	m_xres = dd.m_xres;
+	m_yres = dd.m_yres;
 	m_pixelAspectRatio = dd.m_pixelAspectRatio;
 
 	m_channels.clear();
@@ -238,25 +238,25 @@ void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, 
 		}
 	}
 
-	m_width = -1;
-	m_height = -1;
+	m_xres = -1;
+	m_yres = -1;
 	m_pixelAspectRatio = -1;
 
-	p = get(RI_DISPWIDTH);
+	p = get(RI_DISPXRES);
 	if ( p ) {
 		const std::vector<RtInt> &ints = p->ints();
 		if ( ints.size() >= 1 )
 		{
-			m_width = ints[0];
+			m_xres = ints[0];
 		}
 	}
 
-	p = get(RI_DISPHEIGHT);
+	p = get(RI_DISPYRES);
 	if ( p ) {
 		const std::vector<RtInt> &ints = p->ints();
 		if ( ints.size() >= 1 )
 		{
-			m_height = ints[0];
+			m_yres = ints[0];
 		}
 	}
 	

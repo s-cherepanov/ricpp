@@ -310,7 +310,7 @@ RtInt COptions::xResolution() const
 
 	const CDisplayDescr *d = primaryDisplay();
 	if ( d )
-			return d->width() - d->originX();
+			return d->xres() - d->originX();
 
 	return m_xResolution;
 }
@@ -322,7 +322,7 @@ RtInt COptions::yResolution() const
 	
 	const CDisplayDescr *d = primaryDisplay();
 	if ( d )
-		return d->height() - d->originY();
+		return d->yres() - d->originY();
 
 	return m_yResolution;
 }

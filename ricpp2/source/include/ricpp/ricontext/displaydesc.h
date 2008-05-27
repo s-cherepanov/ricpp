@@ -81,8 +81,8 @@ namespace RiCPP {
 
 		RtInt m_origin[2];   ///< Origin (offset from upper left), default is (0, 0)
 
-		RtInt   m_width,       ///< Width, initialized with -1: Size of device
-		m_height;      ///< Height, initialized with -1: Size of device
+		RtInt   m_xres,             ///< x-resolution, initialized with -1: Size of device
+		        m_yres;             ///< y-resolution, initialized with -1: Size of device
 		RtFloat m_pixelAspectRatio; ///< The pixel aspect ration, initialized with -1: Ratio of device pixel
 
 		std::list<CDisplayChannelDescr> m_channels;
@@ -156,20 +156,21 @@ namespace RiCPP {
 			return m_channelNames;
 		}
 
-		inline void size(RtInt wid, RtInt ht)
+		inline void format(RtInt xres, RtInt yres, RtFloat ratio=-1.0)
 		{
-			m_width = wid;
-			m_height = ht;
+			m_xres = xres;
+			m_yres = yres;
+			m_pixelAspectRatio = ratio;
 		}
 		
-		inline RtInt width() const
+		inline RtInt xres() const
 		{
-			return m_width;
+			return m_xres;
 		}
 		
-		inline RtInt height() const
+		inline RtInt yres() const
 		{
-			return m_height;
+			return m_yres;
 		}
 		
 		inline void pixelAspectRatio(RtFloat ratio)
@@ -182,104 +183,6 @@ namespace RiCPP {
 			return m_pixelAspectRatio;
 		}
 	}; // CDisplayDescr
-
-	/*! @brief Class for Viewport Data
-	 */
-	class CViewPort {
-		RtInt   m_originX,     ///< X-origin, initialized with 0.
-				m_originY;     ///< Y-origin, initialized with 0.
-		RtInt   m_width,       ///< Width, initialized with -1: Size of device
-				m_height;      ///< Height, initialized with -1: Size of device
-		RtFloat m_pixelAspectRatio; ///< The pixel aspect ration, initialized with -1: Ratio of device pixel
-
-	public:
-		//! Constructor to set the initial values of the members
-		inline CViewPort()
-		{
-			initialize();
-		}
-
-		inline CViewPort(const CViewPort &vp)
-		{
-			*this = vp;
-		}
-
-		inline CViewPort &operator=(const CViewPort &vp)
-		{
-			if ( this == &vp )
-				return *this;
-			m_originX = vp.m_originX;
-			m_originY = vp.m_originY;
-			m_width = vp.m_width;
-			m_height = vp.m_height;
-			m_pixelAspectRatio = vp.m_pixelAspectRatio;
-			return *this;
-		}
-
-		//! Sets the initial values of the members
-		inline void initialize()
-		{
-			m_originX = 0;
-			m_originY = 0;
-			m_width = -1;
-			m_height = -1;
-			m_pixelAspectRatio = (RtFloat)-1.0;
-		}
-
-		//! The aspect ratio of the viewport
-		/*! Calculates the physical aspect ratio of the viewport, works only if
-		 *  m_iHeight and m_iWidth are set with values > 0.0.
-		 *  @return Aspect ratio of the viewport: (m_iWidth*m_fPixelAspect)/(RtFloat)m_iHeight
-		 */
-		inline RtFloat viewPortAspectRatio() const
-		{
-			return (RtFloat)( m_height == 0 ? 0.0 : (m_width*m_pixelAspectRatio)/(RtFloat)m_height );
-		}
-
-		inline void origin(RtInt x, RtInt y)
-		{
-			m_originX = x;
-			m_originY = y;
-		}
-
-		inline RtInt originX() const
-		{
-			return m_originX;
-		}
-
-		inline RtInt originY() const
-		{
-			return m_originY;
-		}
-
-
-		inline void size(RtInt wid, RtInt ht)
-		{
-			m_width = wid;
-			m_height = ht;
-		}
-
-		inline RtInt width() const
-		{
-			return m_width;
-		}
-
-		inline RtInt height() const
-		{
-			return m_height;
-		}
-
-		inline void pixelAspectRatio(RtFloat ratio)
-		{
-			m_pixelAspectRatio = ratio;
-		}
-
-		inline RtFloat pixelAspectRatio() const
-		{
-			return m_pixelAspectRatio;
-		}
-	}; // CViewPort
-
 }
 
 #endif // _RICPP_RICONTEXT_DISPLAYDESC_H

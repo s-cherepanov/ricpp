@@ -44,7 +44,7 @@ extern "C" {
 /* namespace RiCPP { /* */
 #endif
 
-RICPP_EXTERN(RtInt)		RiLastError;
+RICPP_EXTERN(RtInt) RiLastError;
 
 RICPP_EXTERN(RtFloat)
     RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth),

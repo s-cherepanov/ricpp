@@ -50,6 +50,7 @@
 #include <cstddef>
 #include <vector>
 #include <sstream>
+#include <cassert>
 
 namespace RiCPP {
 

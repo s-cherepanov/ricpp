@@ -172,10 +172,10 @@ RICPP_INTERN(const RtMatrix) RiIdentityMatrix = {
 
 /* --------------------------------------------------------------------------------------------------- */
 
-RICPP_INTERN(RtContextHandle const) illContextHandle = (RtContextHandle)0;
-RICPP_INTERN(const RtObjectHandle) illObjectHandle = (RtObjectHandle)0;
-RICPP_INTERN(RtLightHandle const) illLightHandle = (RtLightHandle)0;
-RICPP_INTERN(RtArchiveHandle const) illArchiveHandle = (RtArchiveHandle)0;
+RICPP_INTERN(RtContextHandle const) illContextHandle = static_cast<RtContextHandle>(0);
+RICPP_INTERN(const RtObjectHandle) illObjectHandle = static_cast<RtObjectHandle>(0);
+RICPP_INTERN(RtLightHandle const) illLightHandle = static_cast<RtLightHandle>(0);
+RICPP_INTERN(RtArchiveHandle const) illArchiveHandle = static_cast<RtArchiveHandle>(0);
 
 /* --------------------------------------------------------------------------------------------------- */
 
@@ -184,8 +184,8 @@ RICPP_INTERN(const RtBoolean) RI_TRUE        = 1;   /**<  true  */
 
 /* --------------------------------------------------------------------------------------------------- */
 
-RICPP_INTERN(const RtFloat) RI_INFINITY      = (RtFloat)(1.0e38);
-RICPP_INTERN(const RtFloat) RI_EPSILON       = (RtFloat)(1.0e-10);
+RICPP_INTERN(const RtFloat) RI_INFINITY      = static_cast<RtFloat>(1.0e38);
+RICPP_INTERN(const RtFloat) RI_EPSILON       = static_cast<RtFloat>(1.0e-10);
 
 /* --------------------------------------------------------------------------------------------------- */
 

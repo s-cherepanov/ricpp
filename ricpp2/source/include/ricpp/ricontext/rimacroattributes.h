@@ -1858,7 +1858,7 @@ namespace RiCPP {
 		 */
 		inline CRiShadingInterpolation(
 			long aLineNo=-1,
-			RtToken aType = CAttributes::defShadingInterpolation)
+			RtToken aType = RI_CONSTANT)
 			: TypeParent(aLineNo), m_type(aType)
 		{
 		}
@@ -2594,7 +2594,7 @@ namespace RiCPP {
 		 */
 		inline CRiGeometricApproximation(
 			long aLineNo = -1,
-			RtToken aType = CAttributes::defGeometricApproximationType,
+			RtToken aType = RI_NULL,
 			RtFloat aValue = CAttributes::defGeometricApproximationValue)
 		: TypeParent(aLineNo), m_type(aType), m_value(aValue)
 		{
@@ -2727,7 +2727,7 @@ namespace RiCPP {
 		 */
 		inline CRiGeometricRepresentation(
 			long aLineNo = -1,
-			RtToken aType = CAttributes::defGeometricRepresentation)
+			RtToken aType = RI_PRIMITIVE)
 		: TypeParent(aLineNo), m_type(aType)
 		{
 		}
@@ -2840,7 +2840,7 @@ namespace RiCPP {
 		 */
 		inline CRiOrientation(
 			long aLineNo=-1,
-			RtToken anOrientation = CAttributes::defOrientation)
+			RtToken anOrientation = RI_OUTSIDE)
 		: TypeParent(aLineNo), m_orientation(anOrientation)
 		{
 		}

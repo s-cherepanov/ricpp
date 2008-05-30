@@ -380,7 +380,7 @@ void CProjectionRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 {
 	// Projection name <paramlist>
 
-	const char *name = COptions::defProjection;
+	const char *name =RI_ORTHOGRAPHIC;
 
 	if ( request.size() >= 1 ) {
 
@@ -1118,7 +1118,7 @@ void CExposureRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 void CImagerRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
 	// Imager name <paramlist>
-	const char *name = COptions::defImagerName;
+	const char *name = RI_NULL;
 
 	if ( request.size() >= 1 ) {
 
@@ -1336,7 +1336,7 @@ void CDisplayRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 void CHiderRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
 	// Hider type <paramlist>
-	const char *type = COptions::defHiderType;
+	const char *type = RI_HIDDEN;
 
 	if ( request.size() >= 1 ) {
 

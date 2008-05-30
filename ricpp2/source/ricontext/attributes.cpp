@@ -324,20 +324,20 @@ const RtFloat CAttributes::defTextureS4 = 1;
 const RtFloat CAttributes::defTextureT4 = 1;
 
 const RtFloat CAttributes::defShadingRate = 1;
-RtToken const CAttributes::defShadingInterpolation = RI_CONSTANT;
+// RtToken const CAttributes::defShadingInterpolation = RI_CONSTANT;
 const RtBoolean CAttributes::defMatte = RI_FALSE;
 
 const RtFloat CAttributes::defMinVis  = 0;
 const RtFloat CAttributes::defLowTran = 0;
-const RtFloat CAttributes::defUpTran  = RI_INFINITY;
-const RtFloat CAttributes::defMaxVis  = RI_INFINITY;
+const RtFloat CAttributes::defUpTran  = (RtFloat)(1.0e38);
+const RtFloat CAttributes::defMaxVis  = (RtFloat)(1.0e38);
 
-RtToken const CAttributes::defGeometricApproximationType = RI_NULL;
+// RtToken const CAttributes::defGeometricApproximationType = RI_NULL;
 const RtFloat CAttributes::defGeometricApproximationValue = 0.5;
 
-RtToken const CAttributes::defGeometricRepresentation = RI_PRIMITIVE;
+// RtToken const CAttributes::defGeometricRepresentation = RI_PRIMITIVE;
 
-RtToken const CAttributes::defOrientation = RI_OUTSIDE;
+// RtToken const CAttributes::defOrientation = RI_OUTSIDE;
 
 const RtInt CAttributes::defNSides = 2;
 
@@ -750,7 +750,7 @@ RtFloat CAttributes::shadingRate() const
 		
 void CAttributes::initShadingInterpolation()
 {
-	m_shadingInterpolation.set(defShadingInterpolation);
+	m_shadingInterpolation.set(RI_CONSTANT);
 }
 
 RtVoid CAttributes::shadingInterpolation(RtToken type)
@@ -875,7 +875,7 @@ bool CAttributes::getDetailRange(RtFloat &minvis, RtFloat &lowtran, RtFloat &upt
 
 void CAttributes::initGeometricApproximation()
 {
-	m_geometricApproximationType.set(defGeometricApproximationType);
+	m_geometricApproximationType.set(RI_NULL);
 	m_geometricApproximationValue.set(defGeometricApproximationValue);
 }
 
@@ -893,7 +893,7 @@ RtVoid CAttributes::geometricApproximation(RtToken type, RtFloat value)
 
 void CAttributes::initGeometricRepresentation()
 {
-	m_geometricRepresentation.set(defGeometricRepresentation);
+	m_geometricRepresentation.set(RI_PRIMITIVE);
 }
 
 RtVoid CAttributes::geometricRepresentation(RtToken type)
@@ -929,7 +929,7 @@ RtVoid CAttributes::resetCoordSysOrientation(RtToken anOrientation)
 
 void CAttributes::initOrientation()
 {
-	m_orientation.set(defOrientation);
+	m_orientation.set(RI_OUTSIDE);
 	m_coordSysOrientation = RI_LH;
 	m_primitiveOrientation = RI_LH;
 }

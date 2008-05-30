@@ -79,7 +79,7 @@ namespace RiCPP {
 		static const RtFloat defCropWindowBottom;
 		static const RtFloat defCropWindowTop;
 
-		static RtToken const defProjection;
+		// static RtToken const defProjection;
 		static const RtFloat defCameraFOV;
 
 		static const RtFloat defNearClip;
@@ -113,9 +113,9 @@ namespace RiCPP {
 		static const RtInt   defMaxZ;
 		static const RtFloat defDitherAmplitudeZ;
 
-		static RtToken const defImagerName;
+		// static RtToken const defImagerName;
 
-		static RtToken const defHiderType;
+		// static RtToken const defHiderType;
 
 		static const RtFloat defRelativeDetail;
 
@@ -123,7 +123,6 @@ namespace RiCPP {
 		typedef std::list<CDisplayDescr> TypeDisplays;
 
 	private:
-		// CViewPort m_curViewPort;      ///< Viewport data
 		CTransformation *m_preProjection; ///< Copy of the current matrix if projection was called, 0 otherwise
 
 		CDisplayDescr::TypeDisplayChannels m_displayChannels; ///< Display channels can be as mode by display

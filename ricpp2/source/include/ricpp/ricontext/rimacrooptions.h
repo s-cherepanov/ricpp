@@ -1026,7 +1026,7 @@ namespace RiCPP {
 		 */
 		inline CRiProjection(
 			long aLineNo = -1,
-			RtToken aName = COptions::defProjection)
+			RtToken aName = RI_ORTHOGRAPHIC)
 			: TypeParent(aLineNo)
 		{
 			m_name = aName;
@@ -2751,7 +2751,7 @@ namespace RiCPP {
 		 */
 		inline CRiImager(
 			long aLineNo = -1,
-			RtToken aName = COptions::defImagerName)
+			RtToken aName = RI_NULL)
 			: TypeParent(aLineNo)
 		{
 			m_name = aName;
@@ -3552,7 +3552,7 @@ namespace RiCPP {
 		 */
 		inline CRiHider(
 			long aLineNo = -1,
-			RtToken aType = COptions::defHiderType)
+			RtToken aType = RI_HIDDEN)
 			: TypeParent(aLineNo), m_type(aType)
 		{
 		}

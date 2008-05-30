@@ -42,6 +42,7 @@ using namespace RiCPP;
 #ifdef _DEBUG
 // #define _TRACE
 // #define _TRACE_TRANS_PTS
+// #define _TRACE_PROJECTION
 #endif
 
 bool CRenderState::CIfExprParser::match_word(
@@ -1317,6 +1318,10 @@ void CRenderState::calcScreenToNDC()
 bool CRenderState::adjustProjectionMatrix(CMatrix3D &projectionMatrix, CMatrix3D &inverseProjectionMatrix)
 {
 	RtToken projection = options().projectionName();
+
+#ifdef _TRACE_PROJECTION
+	std::cout << "ProjectionName:" << (projection ? projection : "RI_NULL") << std::endl;
+#endif
 
 	if ( projection == RI_ORTHOGRAPHIC ||
 	     (projection == RI_PERSPECTIVE && nearlyZero(options().fov())) )

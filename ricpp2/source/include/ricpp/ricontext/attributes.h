@@ -91,7 +91,7 @@ namespace RiCPP {
 
 		// Default shading attributes.
 		static const RtFloat defShadingRate;          ///< Default minimum shading rate, (1: once per pixel)
-		static RtToken const defShadingInterpolation; ///< Default shading interpolation (RI_CONSTANT)
+		// static RtToken const defShadingInterpolation; // Default shading interpolation (RI_CONSTANT)
 		static const RtBoolean defMatte;              ///< Default matte mode (false: off)
 
 		// Default level of detail range, per default the model is visible.
@@ -101,12 +101,12 @@ namespace RiCPP {
 		static const RtFloat defMaxVis;  ///< Maximal area covered by a model to be visible (RI_INFINITY)
 
 		// Type of geometric approximation
-		static RtToken const defGeometricApproximationType;  ///< Default approximation type (RI_FLATNESS, chordal deviation)
+		// static RtToken const defGeometricApproximationType;  // Default approximation type (RI_FLATNESS, chordal deviation)
 		static const RtFloat defGeometricApproximationValue; ///< Largest deviation of a point of an approximated surface to the rendered pixel in raster coordinates (0.5 ad hoc)
 
-		static RtToken const defGeometricRepresentation; ///< Default representation is RI_PRIMITIVE, a shaded primitive
+		// static RtToken const defGeometricRepresentation; // Default representation is RI_PRIMITIVE, a shaded primitive
 
-		static RtToken const defOrientation; ///< Default surface orientation is RI_OUTSIDE
+		// static RtToken const defOrientation; // Default surface orientation is RI_OUTSIDE
 
 		static const RtInt defNSides;        ///< Default number of rendered surface sides (2)
 

@@ -41,16 +41,20 @@ using namespace RiCPP;
 // #define _TRACE
 #endif
 
+
+// static RtToken const constDefProjection() {return RI_ORTHOGRAPHIC;}
+// static RtToken const constImagerName() {return RI_NULL;}
+// static RtToken const constHiderType() {return RI_HIDDEN;}
+
 const RtInt   COptions::defXResolution = 512; // 640;
 const RtInt   COptions::defYResolution = 384; // 480;
 const RtFloat COptions::defPixelAspectRatio = 1.0;
 
 const RtFloat COptions::defFrameAspectRatio =
-	(defXResolution * defPixelAspectRatio) /
-    static_cast<RtFloat>(defYResolution);
+	static_cast<RtFloat>((512.0 * 1.0) / 384.0);
 
-const RtFloat COptions::defScreenWindowLeft = -defFrameAspectRatio;
-const RtFloat COptions::defScreenWindowRight = defFrameAspectRatio;
+const RtFloat COptions::defScreenWindowLeft = -static_cast<RtFloat>((512.0 * 1.0) / 384.0);
+const RtFloat COptions::defScreenWindowRight = static_cast<RtFloat>((512.0 * 1.0) / 384.0);
 const RtFloat COptions::defScreenWindowBottom = -1.0;
 const RtFloat COptions::defScreenWindowTop = 1.0;
 
@@ -59,13 +63,13 @@ const RtFloat COptions::defCropWindowRight = 1.0;
 const RtFloat COptions::defCropWindowBottom = 1.0;
 const RtFloat COptions::defCropWindowTop = 0.0;
 
-RtToken const COptions::defProjection = RI_ORTHOGRAPHIC;
+// RtToken const COptions::defProjection = constDefProjection();
 const RtFloat COptions::defCameraFOV = 90.0;
 
-const RtFloat COptions::defNearClip = RI_EPSILON;
-const RtFloat COptions::defFarClip = RI_INFINITY;
+const RtFloat COptions::defNearClip = (RtFloat)(1.0e-10);
+const RtFloat COptions::defFarClip = (RtFloat)(1.0e38);
 
-const RtFloat COptions::defFstop = RI_INFINITY;
+const RtFloat COptions::defFstop = (RtFloat)(1.0e38);
 const RtFloat COptions::defFocalLength = 0;
 const RtFloat COptions::defFocalDistance = 0;
 
@@ -93,9 +97,9 @@ const RtInt   COptions::defMinZ = 0;
 const RtInt   COptions::defMaxZ = 0;
 const RtFloat COptions::defDitherAmplitudeZ = 0;
 
-RtToken const COptions::defImagerName = RI_NULL;
+// RtToken const COptions::defImagerName = constImagerName();
 
-RtToken const COptions::defHiderType = RI_HIDDEN;
+// RtToken const COptions::defHiderType = constHiderType();
 
 const RtFloat COptions::defRelativeDetail = 1;
 
@@ -555,7 +559,7 @@ void COptions::initProjection()
 {
 	m_projectionParams.clear();
 	m_projectionCalled = false;
-	m_projectionName = defProjection;
+	m_projectionName = RI_ORTHOGRAPHIC;
 	m_FOVSet = false;
 	m_FOV = defCameraFOV;
 	if ( m_preProjection )
@@ -576,6 +580,9 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 		if ( p && p->floats().size() > 0 ) {
 			m_FOVSet = true;
 			m_FOV = p->floats()[0];
+		} else {
+			m_FOVSet = false;
+			m_FOV = defCameraFOV;
 		}
 	}
 }
@@ -938,7 +945,7 @@ const CDisplayDescr *COptions::primaryDisplay() const
 
 void COptions::initHider()
 {
-	m_hiderType = defHiderType;
+	m_hiderType = RI_HIDDEN;
 	m_hiderParams.clear();
 }
 

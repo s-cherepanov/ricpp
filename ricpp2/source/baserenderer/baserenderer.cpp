@@ -1088,6 +1088,9 @@ RtVoid CBaseRenderer::preClipping(CRiClipping &obj, RtFloat hither, RtFloat yon)
 
 RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
 {
+	if ( hither > yon ) {
+		std::swap(hither, yon);
+	}
 	RICPP_PREAMBLE(REQ_CLIPPING)
 		RICPP_PROCESS(newRiClipping(renderState()->lineNo(), hither, yon));
 	RICPP_POSTAMBLE

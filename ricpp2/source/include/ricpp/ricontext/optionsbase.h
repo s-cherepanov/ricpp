@@ -63,18 +63,21 @@ namespace RiCPP {
 		}
 
 		CColorDescr m_curColorDesc;
+		bool m_dirty;
 
 	public:
 		typedef Map_type::const_iterator const_iterator;
 		typedef Map_type::size_type size_type;
 
-		inline COptionsBase() {}
-		inline COptionsBase(const CColorDescr cd)
+		inline COptionsBase() : m_dirty(true) {}
+		inline COptionsBase(const CColorDescr &cd)
+		 : m_dirty(true)
 		{
 			m_curColorDesc = cd;
 		}
 
 		inline COptionsBase(const COptionsBase &ga)
+		 : m_dirty(true) 
 		{
 			*this = ga;
 		}
@@ -85,11 +88,15 @@ namespace RiCPP {
 			return new COptionsBase(*this);
 		}
 
+		inline void dirty(bool isDirty) { m_dirty=isDirty; }
+		inline bool dirty() const { return m_dirty; }
+
 		inline virtual void clear()
 		{
 			clearMembers();
+			dirty();
 		}
-
+		
 		COptionsBase &operator=(const COptionsBase &ga);
 		COptionsBase &assignRemap(const COptionsBase &params, CDeclarationDictionary &newDict);
 
@@ -126,6 +133,7 @@ namespace RiCPP {
 
 		inline RtVoid colorSamples(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
 		{
+			m_dirty = true;
 			m_curColorDesc.colorSamples(nColorSamples, nRGB, RGBn);
 		}
 

@@ -302,6 +302,7 @@ RtVoid COptions::format(RtInt xres, RtInt yres, RtFloat aspect)
 	m_xResolution = xres;
 	m_yResolution = yres;
 	m_pixelAspectRatio = aspect;
+	dirty(true);
 #   ifdef _TRACE
 	    std::cout << "# format xres " << xres << " yres " << yres << " aspect " << aspect << std::endl;
 #   endif
@@ -355,6 +356,7 @@ RtVoid COptions::frameAspectRatio(RtFloat aspect)
 {
 	m_frameAspectRatioCalled = true;
 	m_frameAspectRatio = aspect;
+	dirty(true);
 }
 
 RtFloat COptions::frameAspectRatio() const
@@ -409,6 +411,7 @@ RtVoid COptions::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat 
 	m_screenWindowRight = right;
 	m_screenWindowBottom = bot;
 	m_screenWindowTop = top;
+	dirty(true);
 }
 
 RtVoid COptions::getScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const
@@ -509,6 +512,7 @@ RtVoid COptions::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ym
 	m_cropWindowRight = xmax;
 	m_cropWindowTop = ymin;
 	m_cropWindowBottom = ymax;
+	dirty(true);
 }
 
 RtVoid COptions::getCropWindow(RtFloat &xmin, RtFloat &xmax, RtFloat &ymin, RtFloat &ymax) const
@@ -585,6 +589,7 @@ RtVoid COptions::projection(RtToken name, const CParameterList &params)
 			m_FOV = defCameraFOV;
 		}
 	}
+	dirty(true);
 }
 
 // ----
@@ -601,6 +606,7 @@ RtVoid COptions::clipping(RtFloat hither, RtFloat yon)
 		m_nearFarSet = true;
 		m_nearClip = hither;
 		m_farClip = yon;
+		dirty(true);
 }
 
 // ----
@@ -613,6 +619,7 @@ void COptions::initClippingPlane()
 RtVoid COptions::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
 {
 	m_clippingPlanes.push_back(CClippingPlane(x, y, z,nx,ny,nz));
+	dirty(true);
 }
 
 RtVoid COptions::clippingPlane(const CClippingPlane &s)
@@ -636,6 +643,7 @@ RtVoid COptions::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focald
 	m_fstop = fstop;
 	m_focalLength = focallength;
 	m_focalDistance = focaldistance;
+	dirty(true);
 }
 
 RtFloat COptions::fstop() const
@@ -691,6 +699,7 @@ RtVoid COptions::shutter(RtFloat smin, RtFloat smax)
 {
 	m_shutterOpen = smin;
 	m_shutterClose = smax;
+	dirty(true);
 }
 
 // ----
@@ -705,6 +714,7 @@ RtVoid COptions::pixelVariance(RtFloat variation)
 {
 	m_pixelVarianceCalled = true;
 	m_pixelVariance = variation;
+	dirty(true);
 }
 
 // ----
@@ -719,6 +729,7 @@ RtVoid COptions::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 {
 	m_xSamples = xsamples;
 	m_ySamples = ysamples;
+	dirty(true);
 }
 
 // ----
@@ -737,6 +748,7 @@ RtVoid COptions::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloa
 
 	m_xWidth = xwidth;
 	m_yWidth = ywidth;
+	dirty(true);
 }
 
 // ----
@@ -753,6 +765,7 @@ RtVoid COptions::exposure(RtFloat gain, RtFloat gamma)
 	m_exposureCalled = true;
 	m_gain = gain;
 	m_gamma = gamma;
+	dirty(true);
 }
 
 RtVoid COptions::colorExposure(RtColor color) const
@@ -792,6 +805,7 @@ RtVoid COptions::imager(RtToken name, const CParameterList &params)
 {
 	m_imagerName = name;
 	m_imagerParams = params;
+	dirty(true);
 }
 
 // ----
@@ -805,6 +819,7 @@ void COptions::initQuantize()
 RtVoid COptions::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
 {
 	m_quantizers[type] = CQuantizer(type, one, qmin, qmax, ampl);
+	dirty(true);
 }
 
 const CQuantizer *COptions::quantizer(RtToken type) const
@@ -868,6 +883,7 @@ RtVoid COptions::displayChannel(CDeclarationDictionary &dict, const CColorDescr 
 		m_displayChannels.erase(iter);
 	}
 
+	dirty(true);
 	m_displayChannels.push_back(dcd);
 }
 
@@ -907,6 +923,7 @@ RtVoid COptions::display(RtString name, RtToken type, RtString mode, const CPara
 	m_displays.push_back(CDisplayDescr());
 	CDisplayDescr &dd = m_displays.back();
 	dd.display(m_displayChannels, name, type, mode, params);
+	dirty(true);
 }
 
 COptions::TypeDisplays::const_iterator COptions::findDisplay(RtString name) const
@@ -956,6 +973,7 @@ RtVoid COptions::hider(RtToken type, const CParameterList &params)
 
 	m_hiderType = type;
 	m_hiderParams = params;
+	dirty(true);
 }
 
 // ----
@@ -968,6 +986,7 @@ void COptions::initRelativeDetail()
 RtVoid COptions::relativeDetail(RtFloat relativedetail)
 {
 	m_relativeDetail = relativedetail;
+	dirty(true);
 }
 
 

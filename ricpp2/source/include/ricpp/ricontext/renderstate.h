@@ -67,7 +67,7 @@
 #endif // _RICPP_RICPP_VARSUBST_H
 
 namespace RiCPP {
-
+	
 	/** @brief The facade for the render state objects.
 	 *
 	 * The CRenderState object is a part of CBaseRenderer.
@@ -108,6 +108,12 @@ namespace RiCPP {
 		std::deque<CTransformation *> m_transformationStack;  ///< Current stack of transformations and their inverses.
 		std::deque<CTransformation *> m_motionTransformationStack;  ///< Current stack of transformations and their inverses for motion blocks (moved instances)
 
+		std::list<CAttributes *> m_lockedAttributes;   ///< locked attributes.
+		std::list<CTransformation *> m_lockedTransformations;   ///< locked attributes.
+		
+		CRManInterfaceFactory *m_macroFactory; ///< Used for deleteion of defered requests.
+		std::deque<CRManInterfaceCall *> m_deferedRequests;  ///< Requests with defered deletion
+		
 		CTransformation *m_NDCToRaster;     ///< Maps normalized display coordinates to raster space
 		CTransformation *m_screenToNDC;     ///< Maps screen space to normalized display coordinates
 		CTransformation *m_cameraToScreen;  ///< Transforms camera space to screen space
@@ -544,13 +550,21 @@ namespace RiCPP {
 			COptionsFactory &optionsFactory,
 			CAttributesFactory &attributesFactory,
 			CTransformationFactory &transformationFactory,
-			CFilterFuncFactory &filterFuncFactory);
+			CFilterFuncFactory &filterFuncFactory,
+			CRManInterfaceFactory &macroFactory);
 
 		/** @brief Destroys the object
 		 *
 		 *  State objects are deleted
 		 */
 		virtual ~CRenderState();
+		
+		void lockState();
+		const CAttributes *lockedAttribute() const;
+		const CTransformation *lockedTransformation() const;
+
+		void deferRequest(CRManInterfaceCall *aRequest);
+		void deleteDeferedRequests();
 
 		/*
 		inline CTransformation *NDCToRaster() { return m_NDCToRaster; }

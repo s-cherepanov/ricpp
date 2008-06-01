@@ -575,6 +575,7 @@ void CTransformation::CMovedSkew::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse
 
 CTransformation::CTransformation()
 {
+	m_dirty = false;
 	m_factory = 0;
 	m_motionState = 0;
 	m_storeCounter = 0;
@@ -602,6 +603,7 @@ void CTransformation::clear()
 			delete *i;
 	}
 	m_deferedTrans.clear();
+	dirty(true);
 }
 
 CTransformation *CTransformation::duplicate() const
@@ -615,6 +617,8 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 {
 	if ( &o == this )
 		return *this;
+
+	dirty(true);
 
 	m_factory = o.m_factory;
 	m_isValid = o.m_isValid;
@@ -648,6 +652,8 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 
 void CTransformation::reset()
 {
+	dirty(true);
+
 	m_motionState = false;
 	m_isValid = true;
 
@@ -659,6 +665,8 @@ void CTransformation::reset()
 
 void CTransformation::identity()
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.identity();
 		m_inverseCTM.identity();
@@ -681,6 +689,8 @@ void CTransformation::identity()
 
 void CTransformation::transform(const RtMatrix aTransform)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.transform(aTransform);
 		CMatrix3D mat(aTransform);
@@ -710,6 +720,8 @@ void CTransformation::transform(const RtMatrix aTransform)
 
 void CTransformation::transform(const RtMatrix aTransform, const RtMatrix anInverseTransform)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.transform(aTransform);
 		m_inverseCTM.transform(anInverseTransform);
@@ -732,6 +744,8 @@ void CTransformation::transform(const RtMatrix aTransform, const RtMatrix anInve
 
 void CTransformation::concatTransform(const RtMatrix aTransform)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.concatTransform(aTransform);
 		CMatrix3D mat(aTransform);
@@ -759,6 +773,8 @@ void CTransformation::concatTransform(const RtMatrix aTransform)
 
 void CTransformation::concatTransform(const RtMatrix aTransform, const RtMatrix anInverseTransform)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.concatTransform(aTransform);
 		m_inverseCTM.concatTransform(anInverseTransform);
@@ -780,6 +796,8 @@ void CTransformation::concatTransform(const RtMatrix aTransform, const RtMatrix 
 
 void CTransformation::perspective(RtFloat fov)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		if ( fov >= (RtFloat)180.0 || fov <= -(RtFloat)180.0 ) {
 			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::perspective(%f), fov out of range", fov);
@@ -804,6 +822,8 @@ void CTransformation::perspective(RtFloat fov)
 
 void CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.translate(dx, dy, dz);
 		m_inverseCTM.translate(-dx, -dy, -dz);
@@ -825,6 +845,8 @@ void CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 
 void CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.rotate(angle, dx, dy, dz);
 		m_inverseCTM.rotate(-angle, dx, dy, dz);
@@ -846,6 +868,8 @@ void CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 
 void CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		m_CTM.scale(dx, dy, dz);
 		
@@ -887,6 +911,8 @@ void CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 
 void CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
+	dirty(true);
+
 	if ( !m_motionState ) {
 		if ( angle >= (RtFloat)90.0  || angle <= (RtFloat)-90.0 ) {
 			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::skew(%f), skew out of range", angle);

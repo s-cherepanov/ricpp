@@ -1103,7 +1103,8 @@ CRenderState::CRenderState(
 	COptionsFactory &optionsFactory,
 	CAttributesFactory &attributesFactory,
 	CTransformationFactory &transformationFactory,
-	CFilterFuncFactory &filterFuncFactory
+	CFilterFuncFactory &filterFuncFactory,
+	CRManInterfaceFactory &macroFactory
 	) :
 	m_resourceFactories(false),
 	m_resourceStack("RES_"),
@@ -1118,6 +1119,7 @@ CRenderState::CRenderState(
 	m_attributesFactory = &attributesFactory;
 	m_transformationFactory = &transformationFactory;
 	m_filterFuncFactory = &filterFuncFactory;
+	m_macroFactory = &macroFactory;
 	m_frameNumber = 0;
 	m_lineNo = -1;
 
@@ -1162,24 +1164,80 @@ CRenderState::~CRenderState()
 {
 	deleteTransMapCont(m_globalTransforms);
 	while ( !m_optionsStack.empty() ) popOptions();
+	
 	while ( !m_attributesStack.empty() ) popAttributes();
 	while ( !m_motionAttributesStack.empty() ) {
 		CAttributes *a = m_motionAttributesStack.back();
 		m_attributesFactory->deleteAttributes(a);
 		m_motionAttributesStack.pop_back();
 	}
+	while ( !m_lockedAttributes.empty() ) {
+		CAttributes *a = m_lockedAttributes.back();
+		m_attributesFactory->deleteAttributes(a);
+		m_lockedAttributes.pop_back();
+	}
+	
 	while ( !m_transformationStack.empty() ) popTransform();
 	while ( !m_motionTransformationStack.empty() ) {
 		CTransformation *trans = m_motionTransformationStack.back();
 		m_transformationFactory->deleteTransformation(trans);
 		m_motionTransformationStack.pop_back();
 	}
-
+	while ( !m_lockedTransformations.empty() ) {
+		CTransformation *trans = m_lockedTransformations.back();
+		m_transformationFactory->deleteTransformation(trans);
+		m_lockedTransformations.pop_back();
+	}
+	
+	deleteDeferedRequests();
+	
 	m_transformationFactory->deleteTransformation(m_NDCToRaster);
 	m_transformationFactory->deleteTransformation(m_screenToNDC);
 	m_transformationFactory->deleteTransformation(m_cameraToScreen);
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
 	m_transformationFactory->deleteTransformation(m_idTransform);
+}
+
+
+void CRenderState::lockState()
+{
+	if ( attributes().dirty() ) {
+		m_lockedAttributes.push_back(dynamic_cast<CAttributes *>(attributes().duplicate()));
+		attributes().dirty(false);
+	}
+	if ( curTransform().dirty() ) {
+		m_lockedTransformations.push_back(curTransform().duplicate());
+		curTransform().dirty(false);
+	}
+}
+
+const CAttributes *CRenderState::lockedAttribute() const
+{
+	if ( m_lockedAttributes.empty() )
+		return false;
+	return m_lockedAttributes.front();
+}
+
+const CTransformation *CRenderState::lockedTransformation() const
+{
+	if ( m_lockedTransformations.empty() )
+		return false;
+	return m_lockedTransformations.front();
+}
+
+void CRenderState::deferRequest(CRManInterfaceCall *aRequest)
+{
+	if ( aRequest )
+		m_deferedRequests.push_back(aRequest);
+}
+
+void CRenderState::deleteDeferedRequests()
+{
+	while ( !m_deferedRequests.empty() ) {
+		CRManInterfaceCall *req = m_deferedRequests.back();
+		m_macroFactory->deleteRequest(req);
+		m_deferedRequests.pop_back();
+	}
 }
 
 bool CRenderState::getRasterToCamera(CMatrix3D &m) const

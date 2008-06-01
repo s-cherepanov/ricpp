@@ -281,8 +281,7 @@ void CBaseRenderer::initRenderState()
 		}
 	}
 
-	m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_transformationFactory, *m_filterFuncFactory); // , *m_macroFactory seems not to be needed as part of the state
-
+	m_renderState = new CRenderState(*m_modeStack, *m_optionsFactory, *m_attributesFactory, *m_transformationFactory, *m_filterFuncFactory, *m_macroFactory);
 	if ( !m_renderState ) {
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Cannot create a render state");
 	}
@@ -328,6 +327,9 @@ void CBaseRenderer::defaultDeclarations()
 
 void CBaseRenderer::recordRequest(CRManInterfaceCall *aRequest)
 {
+	if ( !aRequest )
+		return;
+	aRequest->inMacro(true);
 	renderState()->curMacro()->add(aRequest);
 }
 
@@ -343,14 +345,17 @@ void CBaseRenderer::processRequest(CRManInterfaceCall *aRequest, bool immediatel
 		recordRequest(aRequest);
 		recorded = true;
 	}
-	
+		
 	if ( immediately || (!renderState()->recordMode() && renderState()->executeConditionial()) ) {
 		aRequest->doProcess(*this);
 	}
 
 	aRequest->postProcess(*this);
 	
-	if ( !recorded )
+	if ( !recorded && aRequest->deferedDeletion() )
+		renderState()->deferRequest(aRequest);
+
+	if ( !recorded && !aRequest->deferedDeletion() )
 		macroFactory().deleteRequest(aRequest);
 }
 
@@ -720,6 +725,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 {
 	RICPP_PREAMBLE(REQ_WORLD_END)
 		RICPP_PROCESS(newRiWorldEnd(renderState()->lineNo()));
+	    renderState()->deleteDeferedRequests();
 	RICPP_POSTAMBLE
 }
 

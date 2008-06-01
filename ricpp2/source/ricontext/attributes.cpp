@@ -508,6 +508,7 @@ RtVoid CAttributes::color(RtColor Cs)
 	} else {
 		m_color.set(Cs);
 	}
+	dirty(true);
 }
 
 RtFloat CAttributes::color(RtInt i) const
@@ -543,6 +544,7 @@ RtVoid CAttributes::opacity(RtColor Os)
 	} else {
 		m_opacity.set(Os);
 	}
+	dirty(true);
 }
 
 RtFloat CAttributes::opacity(RtInt i) const
@@ -577,6 +579,7 @@ RtVoid CAttributes::illuminate(CLightSource *light, RtBoolean onoff)
 			m_illuminated.erase(i);
 		}
 	}
+	dirty(true);
 }
 
 RtBoolean CAttributes::illuminated(CLightSource *light) const
@@ -598,6 +601,7 @@ RtVoid CAttributes::surface(RtToken name, const CParameterList &params, const CT
 	} else {
 		m_surface.set(name, params, transform);
 	}
+	dirty(true);
 }
 
 void CAttributes::initAtmosphere()
@@ -613,6 +617,7 @@ RtVoid CAttributes::atmosphere(RtToken name, const CParameterList &params, const
 	} else {
 		m_atmosphere.set(name, params, transform);
 	}
+	dirty(true);
 }
 
 void CAttributes::initInterior()
@@ -628,6 +633,7 @@ RtVoid CAttributes::interior(RtToken name, const CParameterList &params, const C
 	} else {
 		m_interior.set(name, params, transform);
 	}
+	dirty(true);
 }
 
 void CAttributes::initExterior()
@@ -643,6 +649,7 @@ RtVoid CAttributes::exterior(RtToken name, const CParameterList &params, const C
 	} else {
 		m_exterior.set(name, params, transform);
 	}
+	dirty(true);
 }
 
 void CAttributes::initDisplacement()
@@ -658,6 +665,7 @@ RtVoid CAttributes::displacement(RtToken name, const CParameterList &params, con
 	} else {
 		m_displacement.set(name, params, transform);
 	}
+	dirty(true);
 }
 
 void CAttributes::initDeformation()
@@ -673,6 +681,7 @@ RtVoid CAttributes::deformation(RtToken name, const CParameterList &params, cons
 	} else {
 		m_deformation.set(name, params, transform);
 	}
+	dirty(true);
 }
 
 RtVoid CAttributes::initTextureCoordinates()
@@ -707,6 +716,7 @@ RtVoid CAttributes::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFlo
 	} else {
 		m_textureCoordinates.set(tc);
 	}
+	dirty(true);
 }
 
 bool CAttributes::getTextureCoordinates(RtFloat &s1, RtFloat &t1, RtFloat &s2, RtFloat &t2, RtFloat &s3, RtFloat &t3, RtFloat &s4, RtFloat &t4) const
@@ -740,6 +750,7 @@ RtVoid CAttributes::shadingRate(RtFloat size)
 	} else {
 		m_shadingRate.set(size);
 	}
+	dirty(true);
 }
 
 RtFloat CAttributes::shadingRate() const
@@ -761,6 +772,7 @@ RtVoid CAttributes::shadingInterpolation(RtToken type)
 	} else {
 		m_shadingInterpolation.set(type);
 	}
+	dirty(true);
 }
 
 
@@ -777,6 +789,7 @@ RtVoid CAttributes::matte(RtBoolean onoff)
 	} else {
 		m_matte.set(onoff);
 	}
+	dirty(true);
 }
 
 void CAttributes::initBound()
@@ -798,6 +811,7 @@ RtVoid CAttributes::bound(RtBound aBound)
 	} else {
 		m_bound.set(&aBound[0]);
 	}
+	dirty(true);
 }
 
 bool CAttributes::getBound(RtBound aBound) const
@@ -823,6 +837,7 @@ RtVoid CAttributes::detail(RtBound aBound)
 	} else {
 		m_detail.set(&aBound[0]);
 	}
+	dirty(true);
 }
 
 bool CAttributes::getDetail(RtBound aBound) const
@@ -841,6 +856,7 @@ void CAttributes::initDetailRange()
 
 	m_detailRangeCalled = false;
 	m_detailRangeCalledInBlock = false;
+	dirty(true);
 }
 
 RtVoid CAttributes::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
@@ -889,6 +905,7 @@ RtVoid CAttributes::geometricApproximation(RtToken type, RtFloat value)
 		m_geometricApproximationType.set(type);
 		m_geometricApproximationValue.set(value);
 	}
+	dirty(true);
 }
 
 void CAttributes::initGeometricRepresentation()
@@ -904,6 +921,7 @@ RtVoid CAttributes::geometricRepresentation(RtToken type)
 	} else {
 		m_geometricRepresentation.set(type);
 	}
+	dirty(true);
 }
 
 RtVoid CAttributes::resetCoordSysOrientation(RtToken anOrientation)
@@ -945,6 +963,7 @@ RtVoid CAttributes::orientation(RtToken anOrientation)
 		m_orientation.set(anOrientation);
 	}
 	resetCoordSysOrientation(m_coordSysOrientation);
+	dirty(true);
 }
 
 RtVoid CAttributes::reverseOrientation(void)
@@ -966,12 +985,14 @@ RtVoid CAttributes::reverseOrientation(void)
 	}
 
 	m_primitiveOrientation = toggledOrientation(m_primitiveOrientation);
+	dirty(true);
 }
 
 RtVoid CAttributes::toggleOrientation()
 {
 	m_coordSysOrientation = toggledOrientation(m_coordSysOrientation);
 	m_primitiveOrientation = toggledOrientation(m_primitiveOrientation);
+	dirty(true);
 }
 
 RtVoid CAttributes::coordSysOrientation(RtToken anOrientation)
@@ -995,6 +1016,7 @@ RtVoid CAttributes::sides(RtInt nsides)
 	} else {
 		m_nSides.set(nsides);
 	}
+	dirty(true);
 }
 
 void CAttributes::initBasis()
@@ -1013,6 +1035,7 @@ RtVoid CAttributes::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vst
 		m_uBasis.set(ubasis, ustep);
 		m_vBasis.set(vbasis, vstep);
 	}
+	dirty(true);
 }
 
 bool CAttributes::getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const
@@ -1040,12 +1063,14 @@ RtVoid CAttributes::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFl
 		m_trimCurve.clear();
 		m_trimCurve.m_value.trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 	}	
+	dirty(true);
 }
 
 RtVoid CAttributes::trimCurve(const CTrimCurveData &trimCurveData)
 {
 	m_trimCurve.clear();
 	m_trimCurve.m_value = trimCurveData;
+	dirty(true);
 }
 
 

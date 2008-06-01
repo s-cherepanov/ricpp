@@ -37,8 +37,8 @@ COptionsBase &COptionsBase::operator=(const COptionsBase &ga)
 	
 	clearMembers();
 	
+	dirty(true);
 	m_curColorDesc = ga.m_curColorDesc;
-	
 	for (
 		const_iterator i = ga.begin();
 		i != ga.end();
@@ -61,6 +61,7 @@ COptionsBase &COptionsBase::assignRemap(const COptionsBase &ga, CDeclarationDict
 	clearMembers();
 	
 	m_curColorDesc = ga.m_curColorDesc;
+	m_dirty = ga.m_dirty;
 	
 	for (
 		 const_iterator i = ga.begin();
@@ -86,7 +87,7 @@ void COptionsBase::set(
 		pl = &m_paramList.back();
 		m_paramMap[name] = pl;
 	}
-
+	dirty(true);
 	CValueCounts counts;
 	pl->add(RI_OPTION, name, counts, dict, m_curColorDesc, n, tokens, params);
 }
@@ -101,7 +102,7 @@ void COptionsBase::set(
 		pl = &m_paramList.back();
 		m_paramMap[name] = pl;
 	}
-
+	dirty(true);
 	pl->add(params);
 }
 
@@ -162,6 +163,7 @@ bool COptionsBase::erase(RtToken name)
 		if ( paramList == &(*i) ) {
 			m_paramMap.erase(name);
 			m_paramList.erase(i);
+			dirty(true);
 			return true;
 		}
 	}

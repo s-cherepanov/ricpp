@@ -52,6 +52,8 @@ namespace RiCPP {
 		//! A simple counter for additional transform blocks stored for this at a stack (used for detailrange)
 		unsigned long m_storeCounter;
 
+		bool m_dirty;
+
 		CTransformationFactory *m_factory;
 
 	public:
@@ -317,9 +319,10 @@ namespace RiCPP {
 
 		/** @brief Copy constructor.
 		 */
-		inline CTransformation(const CTransformation &rt)
+		inline CTransformation(const CTransformation &rt) :
+			m_storeCounter(0),
+			m_dirty(true)
 		{
-			m_storeCounter = 0;
 			*this = rt;
 		}
 
@@ -339,6 +342,9 @@ namespace RiCPP {
 		 */
 		CTransformation &operator=(const CTransformation &o);
 
+		inline void dirty(bool isDirty) { m_dirty=isDirty; }
+		inline bool dirty() const { return m_dirty; }
+
 		/** @brief Store counter is incremented by one to indicate that another transform block is stored
 		 */
 		inline void incStoreCounter() { m_storeCounter++; }
@@ -356,7 +362,7 @@ namespace RiCPP {
 		inline void storeCounter(unsigned long cnt) { m_storeCounter = cnt; }
 
 		RtToken spaceType() const { return m_spaceType; }
-		void spaceType(RtToken aSpaceType) { m_spaceType = aSpaceType; }
+		void spaceType(RtToken aSpaceType) { m_spaceType = aSpaceType; dirty(true); }
 
 		inline CMatrix3D &getCTM()
 		{

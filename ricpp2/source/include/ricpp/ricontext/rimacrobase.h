@@ -49,7 +49,8 @@ namespace RiCPP {
 	class CRManInterfaceCall {
 	private:
 		long m_lineNo; ///< Place to store the line number of a call in a RIB file, -1 if there is no line number.
-
+		bool m_deferedDeletion; ///< Marker to defer deletion of an interface call until the very end of CBaseRenderer::worldEnd(), CBaseRenderer::processRequest() stores the request
+		bool m_inMacro; ///< Marker request is stored in a macro or object, setted by CBaseRanderer::recordRequest()
 	public:
 		/** @brief Gets name for the class.
 		 *
@@ -87,7 +88,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known).
 		 */
-		inline CRManInterfaceCall(long aLineNo = -1): m_lineNo(aLineNo) {}
+		inline CRManInterfaceCall(long aLineNo = -1): m_lineNo(aLineNo), m_deferedDeletion(false), m_inMacro(false) {}
 
 		/** @brief Copy constructor
 		 *
@@ -158,6 +159,9 @@ namespace RiCPP {
 				return *this;
 
 			lineNo(c.lineNo());
+			deferedDeletion(c.deferedDeletion());
+			inMacro(c.inMacro());
+			
 			return *this;
 		}
 
@@ -255,6 +259,13 @@ namespace RiCPP {
 		 *  @see boundable()
 		 */
 		inline virtual void getBounds(RtBound bounds) const {}
+		inline virtual void setBounds(const RtBound bounds) {}
+		
+		inline virtual bool deferedDeletion() const { return m_deferedDeletion; }
+		inline virtual void deferedDeletion(bool flag) { m_deferedDeletion = flag; }
+
+		inline virtual bool inMacro() const { return m_inMacro; }
+		inline virtual void inMacro(bool flag) { m_inMacro = flag; }
 	}; // CRManInterfaceCall
 
 

@@ -903,6 +903,8 @@ namespace RiCPP {
 					 _T &destination,
 					 const _T &source)
 	{
+	    if ( &source == &destination )
+	        return;
 		typename _T::const_iterator i;
 		for ( i = source.begin(); i != source.end(); i++ ) {
 			if ( (*i) != 0 )

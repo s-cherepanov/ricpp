@@ -143,6 +143,8 @@ namespace RiCPP {
 
 		inline RtInt curSampleIdx() const
 		{
+			if ( curState() == MOT_OUTSIDE )
+				return 0;
 			assert( !m_elems.empty() );
 			return m_elems.back().m_curSample;
 		}

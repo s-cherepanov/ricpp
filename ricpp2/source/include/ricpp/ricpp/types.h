@@ -374,7 +374,7 @@ public:
 	 * @retval rgb RGB triple calculated by color transformation.
 	 */
 	RtVoid nToRGB(RtColor c, RtFloat rgb[3]) const;
-
+	
 	/** @brief Transforms @a n color values to their RGB values.
 	 *
 	 * @param n number of color values.
@@ -382,7 +382,7 @@ public:
 	 * @retval rgb @a n RGB triples calculated by color transformation.
 	 */
 	RtVoid nToRGB(RtInt n, RtFloat *c, RtFloat rgb[][3]) const;
-
+	
 	/** @brief Transforms a single RGB triple to a color value.
 	 *
 	 * @param  rgb RGB triple calculated by color transformation.
@@ -1304,7 +1304,7 @@ public:
 	 *  @retval p points
 	 */
 	void transformPoints(RtInt n, RtPoint p[]);
-	bool transformNormal(RtInt n, RtPoint v[]);
+	bool transformNormals(RtInt n, RtPoint v[]);
 
 	/** @brief Concatenates a rotation around the x-axis.
 	 * The rotation matrix is:

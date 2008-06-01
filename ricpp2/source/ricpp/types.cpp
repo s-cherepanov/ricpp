@@ -1175,7 +1175,7 @@ void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 }
 
 
-bool CMatrix3D::transformNormal(RtInt n, RtPoint p[])
+bool CMatrix3D::transformNormals(RtInt n, RtPoint p[])
 {
 	CMatrix3D tinv = *this;
 	if ( !tinv.invert() )

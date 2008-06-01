@@ -602,7 +602,7 @@ namespace RiCPP {
 		{
 			return m_color.m_value;
 		}
-
+		
 		virtual bool getColor(RtColor Cs) const;
 
 		/** @brief Sets the current surface opacity.

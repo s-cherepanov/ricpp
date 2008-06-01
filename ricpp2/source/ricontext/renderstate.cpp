@@ -1211,18 +1211,32 @@ void CRenderState::lockState()
 	}
 }
 
-const CAttributes *CRenderState::lockedAttribute() const
+const CAttributes *CRenderState::lockedAttributes() const
 {
 	if ( m_lockedAttributes.empty() )
-		return false;
-	return m_lockedAttributes.front();
+		return 0;
+	return m_lockedAttributes.back();
+}
+
+CAttributes *CRenderState::lockedAttributes()
+{
+	if ( m_lockedAttributes.empty() )
+		return 0;
+	return m_lockedAttributes.back();
 }
 
 const CTransformation *CRenderState::lockedTransformation() const
 {
 	if ( m_lockedTransformations.empty() )
-		return false;
-	return m_lockedTransformations.front();
+		return 0;
+	return m_lockedTransformations.back();
+}
+
+CTransformation *CRenderState::lockedTransformation()
+{
+	if ( m_lockedTransformations.empty() )
+		return 0;
+	return m_lockedTransformations.back();
 }
 
 void CRenderState::deferRequest(CRManInterfaceCall *aRequest)

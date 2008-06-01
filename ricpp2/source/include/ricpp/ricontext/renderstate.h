@@ -560,7 +560,9 @@ namespace RiCPP {
 		virtual ~CRenderState();
 		
 		void lockState();
-		const CAttributes *lockedAttribute() const;
+		CAttributes *lockedAttributes();
+		const CAttributes *lockedAttributes() const;
+		CTransformation *lockedTransformation();
 		const CTransformation *lockedTransformation() const;
 
 		void deferRequest(CRManInterfaceCall *aRequest);

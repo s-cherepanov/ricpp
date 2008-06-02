@@ -52,15 +52,18 @@ namespace RiCPP {
  *        if needed somewhere.
  */
 class CPolygonNode {
+public:
+	typedef unsigned int IndexType;
+private:
 	friend class CPolygonContainer;
 	// Links
-	unsigned long m_next,    ///< Next node in circular list of polygon outline.
+	IndexType m_next,    ///< Next node in circular list of polygon outline.
 	m_prev;                  ///< Previous node in circular list of polygon outline.
 public:
 	
 	// Payload
-	unsigned long m_index;   ///< Index of an array with vertex indices (double indirection for varying) and single indirection for face varying.
-	unsigned long m_dup;     ///< Duplicated index
+	IndexType m_index;   ///< Index of an array with vertex indices (double indirection for varying) and single indirection for face varying.
+	IndexType m_dup;     ///< Duplicated index
 	RtFloat m_p[2];          ///< 2D coordinates of the vertex for some major and minor axes.
 	RtFloat m_dotp90;        ///< Determinant, Dot product of the join (prev-this (join) this-next 90 degrees ccw) for being left of or being right of, and reflex calculation.
 	bool m_reflex;           ///< Join is a reflex vertex, depends on m_dotp90 and orientation of the polygon outline, @see CPolygonNode::recalc().
@@ -79,19 +82,19 @@ public:
 	/** @brief Gets Index of the next node.
 	 *  @return Index of the next node.
 	 */
-	inline unsigned long next() const { return m_next; }
+	inline IndexType next() const { return m_next; }
 	
 	// -------------------------------------------------------------------------
 	/** @brief Gets Index of the previous node.
 	 *  @return Index of the previous node.
 	 */
-	inline unsigned long prev() const { return m_prev; }
+	inline IndexType prev() const { return m_prev; }
 	
 	// -------------------------------------------------------------------------
 	/** @brief Gets Index of a duplicated node (inserted by joining holes).
 	 *  @return Index of the duplicated node.
 	 */
-	inline unsigned long dup() const { return m_dup; }
+	inline IndexType dup() const { return m_dup; }
 
 	// -------------------------------------------------------------------------
 	/** @brief Recalculate dot product and reflex state of the vertex.
@@ -122,8 +125,8 @@ public:
 	 */
 	inline void insertAfter(
 							std::vector<CPolygonNode> &nodes,
-							unsigned long myIdx,
-							unsigned long idx,
+							IndexType myIdx,
+							IndexType idx,
 							bool isCCW)
 	{
 		m_next = nodes[idx].m_next;
@@ -223,8 +226,8 @@ public:
  */
 class CPolygonNodeId {
 public:
-	unsigned long m_offset; ///< Start index of a circular linked hole outline
-	unsigned long m_idx;  ///< Index of a special node within the outline
+	CPolygonNode::IndexType m_offset; ///< Start index of a circular linked hole outline
+	CPolygonNode::IndexType m_idx;  ///< Index of a special node within the outline
 	std::vector<CPolygonNode> *m_nodes;   ///< Container of all nodes
 }; // CPolygonNodeId
 
@@ -246,7 +249,7 @@ private:
 	 *  The first element (index == 0) is empty, index 0 act as NULL.
 	 */
 	std::vector<CPolygonNode> m_nodes;
-	std::vector<unsigned long> m_outlines; ///< Outlines of the outer and inner polygons, will be joined to one polygon
+	std::vector<CPolygonNode::IndexType> m_outlines; ///< Outlines of the outer and inner polygons, will be joined to one polygon
 	bool m_outlineIsCCW;                   ///< Indicates the sense of the polygon, true for counter clockwise
 
 	/** @brief Links the nodes of of a polygon circularily
@@ -261,16 +264,16 @@ private:
 	 *  @param nVertices Number of vertices, has to be >= 3
 	 *
 	 */
-	void circularLink(unsigned long nodeoffs,
-					  unsigned long vertoffs,
-					  unsigned long nVertices);
+	void circularLink(CPolygonNode::IndexType nodeoffs,
+					  CPolygonNode::IndexType vertoffs,
+					  CPolygonNode::IndexType nVertices);
 
 	/** Gets the node index for the rightmost (lower) vertex of a loop.
 	 *
 	 *  @param offset Start node (index for @c m_nodes).
 	 *  @return Node index (@c m_nodes) of the rightmost vertex.
 	 */
-	unsigned long rightmostVertex(unsigned long offset) const;
+	CPolygonNode::IndexType rightmostVertex(CPolygonNode::IndexType offset) const;
 
 	/** @brief Finds the winding sense of a loop for a given rightmost vertex.
 	 *
@@ -278,13 +281,13 @@ private:
 	 *  @param rightmost The rightmost vertex of a node.
 	 *
 	 */
-	bool isCCW(unsigned long offset, unsigned long rightmost) const;
+	bool isCCW(CPolygonNode::IndexType offset, CPolygonNode::IndexType rightmost) const;
 
 	/** @brief Finds the winding sense of a loop.
 	 *
 	 *  @param offset Start Node (index for @c m_nodes).
 	 */
-	bool isCCW(unsigned long offset) const;
+	bool isCCW(CPolygonNode::IndexType offset) const;
 
 	/** @brief Swaps the orientation (sense) of a loop.
 	 *
@@ -298,16 +301,16 @@ private:
 	 *  @param offset Start Node (index for @c m_nodes).
 	 *  @param Number of vertices/nodes.
 	 */
-	void swapOrientation(unsigned long offset, unsigned long nvertices);
+	void swapOrientation(CPolygonNode::IndexType offset, CPolygonNode::IndexType nvertices);
 
 	/** @brief Joins a hole with the outer polygon
 	 *
 	 *  @brief borderVertex Vertex of the outer polygon used to make the join.
 	 *  @brief holeVertex Vertex of the inner polygon (hole) used to make the join.
 	 */
-	void joinOutline(unsigned long borderVertex,
-					 unsigned long holeVertex,
-					 unsigned long bridgeIdx);
+	void joinOutline(CPolygonNode::IndexType borderVertex,
+					 CPolygonNode::IndexType holeVertex,
+					 CPolygonNode::IndexType bridgeIdx);
 
 	/** @brief Finds the nearest visible point to the right of a hole, lying at the outer polygon.
 	 *
@@ -318,22 +321,22 @@ private:
 	 *                   of the node or on the segment between the vertex and the next.
 	 *  @return X coordinate of the nearest visible point at the outer polygon to the right of @a holeVertex
 	 */
-	RtFloat visiblePointX(unsigned long offset,
-						  unsigned long holeVertex,
-						  unsigned long &idxFound) const;
+	RtFloat visiblePointX(CPolygonNode::IndexType offset,
+						  CPolygonNode::IndexType holeVertex,
+						  CPolygonNode::IndexType &idxFound) const;
 
 	/** @brief Finds the node of a vertex inside a triangle having the smallest absolute angle between p1-vertex and p1-p2.
 	 *  
 	 *  @return Index of a node of the found vertex or 0 (if no vertex found inside the triangle).
 	 */
-	unsigned long getVertexInTriangle(unsigned long offset,
+	CPolygonNode::IndexType getVertexInTriangle(CPolygonNode::IndexType offset,
 									  RtFloat *p1,
 									  RtFloat *p2,
 									  RtFloat *p3) const;
 
-	void integrateHole(unsigned long offset,
-					   unsigned long holeVertex,
-					   unsigned long bridgeIdx);
+	void integrateHole(CPolygonNode::IndexType offset,
+					   CPolygonNode::IndexType holeVertex,
+					   CPolygonNode::IndexType bridgeIdx);
 
 	/** @brief Finds the normal of a planar polygon.
 	 *
@@ -342,7 +345,7 @@ private:
 	 *  @param p      Positions of the vertices.
 	 *  @return false, if the polygon has no normal (is dffegenerated), true otherwise
 	 */
-	bool polygonNormal(unsigned long offs,
+	bool polygonNormal(CPolygonNode::IndexType offs,
 					   const RtInt verts[], const RtFloat *p,
 					   RtPoint pnorm) const;
 	
@@ -396,7 +399,7 @@ public:
 	 *
 	 *  @return Index of a node of the outline returned by node().
 	 */
-	inline unsigned long outline() const
+	inline CPolygonNode::IndexType outline() const
 	{
 		return m_outlines[0];
 	}
@@ -429,7 +432,7 @@ public:
 	 *  @retval triangles, container will be filled with vertex indices
 	 *                     (CPolygonNode::m_index)
 	 */
-	virtual void triangulate(std::vector<CPolygonNode> &nodes, unsigned long offs, bool isCCW, std::vector<unsigned long> &triangles) const = 0;
+	virtual void triangulate(std::vector<CPolygonNode> &nodes, CPolygonNode::IndexType offs, bool isCCW, std::vector<CPolygonNode::IndexType> &triangles) const = 0;
 }; // IPolygonTriangulationStrategy
 
 
@@ -440,9 +443,9 @@ class CEarClipper : public IPolygonTriangulationStrategy {
 public:
 	virtual void triangulate(
 		std::vector<CPolygonNode> &nodes,
-		unsigned long offs,
+		CPolygonNode::IndexType offs,
 		bool isCCW,
-		std::vector<unsigned long> &triangles) const;
+		std::vector<CPolygonNode::IndexType> &triangles) const;
 };
 
 
@@ -450,7 +453,8 @@ public:
 /** @brief Container for the indirect indices of a triangulated polygon.
  */
 class CTriangulatedPolygon {
-	std::vector<unsigned long> m_triangles;          ///< Vector of vertex indices, always 3 in a group.
+private:
+	std::vector<CPolygonNode::IndexType> m_triangles;          ///< Vector of vertex indices, always 3 in a group.
 	const IPolygonTriangulationStrategy *m_strategy; ///< Triangulation strategy to use.
 public:
 	/** @brief Constructor
@@ -488,7 +492,7 @@ public:
 	 *
 	 *  @return Vector with the indirect indices (indices of verts, not of positions) of the triangles.
 	 */
-	inline const std::vector<unsigned long> &triangles() const
+	inline const std::vector<CPolygonNode::IndexType> &triangles() const
 	{
 		return m_triangles;
 	}

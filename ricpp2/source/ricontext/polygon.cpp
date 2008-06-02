@@ -65,16 +65,16 @@ inline static bool greaterXPos(const CPolygonNodeId &pid1, const CPolygonNodeId 
 // =============================================================================
 // -----------------------------------------------------------------------------
 void CPolygonContainer::circularLink(
-	unsigned long nodeoffs,
-	unsigned long vertoffs,
-	unsigned long nVertices)
+	CPolygonNode::IndexType nodeoffs,
+	CPolygonNode::IndexType vertoffs,
+	CPolygonNode::IndexType nVertices)
 {
 	assert (nVertices >= 3);
 	
-	unsigned long prev = nVertices - 1;
-	unsigned long next = 1;
+	CPolygonNode::IndexType prev = nVertices - 1;
+	CPolygonNode::IndexType next = 1;
 
-	unsigned long curr;
+	CPolygonNode::IndexType curr;
 	
 	for ( curr = 0; curr < nVertices-1; ++curr ) {
 		m_nodes[curr + nodeoffs].m_prev  = prev + nodeoffs;
@@ -90,10 +90,10 @@ void CPolygonContainer::circularLink(
 }
 
 // -----------------------------------------------------------------------------
-unsigned long CPolygonContainer::rightmostVertex(unsigned long offset) const
+CPolygonNode::IndexType CPolygonContainer::rightmostVertex(CPolygonNode::IndexType offset) const
 {
-	unsigned long idx = offset;
-	unsigned long rightmost = idx;
+	CPolygonNode::IndexType idx = offset;
+	CPolygonNode::IndexType rightmost = idx;
 	RtFloat x = m_nodes[rightmost][0];
 	RtFloat y = m_nodes[rightmost][1];
 	
@@ -116,10 +116,10 @@ unsigned long CPolygonContainer::rightmostVertex(unsigned long offset) const
 
 // -----------------------------------------------------------------------------
 bool CPolygonContainer::isCCW(
-	unsigned long offset,
-	unsigned long rightmost) const
+	CPolygonNode::IndexType offset,
+	CPolygonNode::IndexType rightmost) const
 {
-	unsigned long startpoint, endpoint;
+	CPolygonNode::IndexType startpoint, endpoint;
 	RtFloat vstart[2], vend[2], det;
 
 	// Look a previous segment with a length
@@ -157,18 +157,18 @@ bool CPolygonContainer::isCCW(
 }
 
 // -----------------------------------------------------------------------------
-bool CPolygonContainer::isCCW(unsigned long offset) const
+bool CPolygonContainer::isCCW(CPolygonNode::IndexType offset) const
 {
-	unsigned long rightmost = rightmostVertex(offset);
+	CPolygonNode::IndexType rightmost = rightmostVertex(offset);
 	return isCCW(offset, rightmost);
 }
 
 // -----------------------------------------------------------------------------
 void CPolygonContainer::swapOrientation(
-	unsigned long offset, unsigned long nvertices)
+	CPolygonNode::IndexType offset, CPolygonNode::IndexType nvertices)
 {
 	// Swap the links only, determinant and reflex state are not set by now - they will be calculated later
-	unsigned long end = offset + nvertices;
+	CPolygonNode::IndexType end = offset + nvertices;
 	while ( offset != end ) {
 		std::swap(m_nodes[offset].m_next, m_nodes[offset].m_prev);
 		++offset;
@@ -177,19 +177,19 @@ void CPolygonContainer::swapOrientation(
 
 // -----------------------------------------------------------------------------
 void CPolygonContainer::joinOutline(
-	unsigned long borderVertex,
-	unsigned long holeVertex,
-	unsigned long bridgeIdx)
+	CPolygonNode::IndexType borderVertex,
+	CPolygonNode::IndexType holeVertex,
+	CPolygonNode::IndexType bridgeIdx)
 {
 #ifdef _TRACE_POLY_JOIN
 	std::cout << "% Join Border " << borderVertex << " Hole " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
 #endif
 
 	// Link the boundary vertex with the hole vertex
-	unsigned long savBorderNext = m_nodes[borderVertex].m_next;
+	CPolygonNode::IndexType savBorderNext = m_nodes[borderVertex].m_next;
 	m_nodes[borderVertex].m_next = holeVertex;
 
-	unsigned long savHolePrev = m_nodes[holeVertex].m_prev;
+	CPolygonNode::IndexType savHolePrev = m_nodes[holeVertex].m_prev;
 	m_nodes[holeVertex].m_prev = borderVertex;
 	
 	// Link the first bridge vertex on the hole with the second bridge vertex on the boundary
@@ -221,18 +221,18 @@ void CPolygonContainer::joinOutline(
 
 // -----------------------------------------------------------------------------
 RtFloat CPolygonContainer::visiblePointX(
-	unsigned long offset,
-	unsigned long holeVertex,
-	unsigned long &idxFound) const
+	CPolygonNode::IndexType offset,
+	CPolygonNode::IndexType holeVertex,
+	CPolygonNode::IndexType &idxFound) const
 {
 	RtFloat x = m_nodes[holeVertex][0];    // x coordinate of the rightmost (and uppermost) vertex of the hole
 	RtFloat y = m_nodes[holeVertex][1];    // y coordinate
 
-	unsigned long retidx = 0;              // Start vertex of the segment having the nearest visible point to the right of the hole (0: undefined)
+	CPolygonNode::IndexType retidx = 0;              // Start vertex of the segment having the nearest visible point to the right of the hole (0: undefined)
 	RtFloat retx = m_nodes[offset][0];     // x coordinate of the visible point
 
-	unsigned long sv = offset;             // Start vertex of the current segment to iterate
-	unsigned long ev = m_nodes[sv].m_next; // End Vertex
+	CPolygonNode::IndexType sv = offset;             // Start vertex of the current segment to iterate
+	CPolygonNode::IndexType ev = m_nodes[sv].m_next; // End Vertex
 
 	// Iterate the segments of the boundary
 	do {
@@ -284,11 +284,11 @@ RtFloat CPolygonContainer::visiblePointX(
 }
 
 // -----------------------------------------------------------------------------
-unsigned long CPolygonContainer::getVertexInTriangle(
-	unsigned long offset, RtFloat *p1, RtFloat *p2, RtFloat *p3) const
+CPolygonNode::IndexType CPolygonContainer::getVertexInTriangle(
+	CPolygonNode::IndexType offset, RtFloat *p1, RtFloat *p2, RtFloat *p3) const
 {
-	unsigned long idx = offset;
-	unsigned long idxFound = 0;
+	CPolygonNode::IndexType idx = offset;
+	CPolygonNode::IndexType idxFound = 0;
 	RtFloat acosangle;
 	
 	do {
@@ -322,11 +322,11 @@ unsigned long CPolygonContainer::getVertexInTriangle(
 
 // -----------------------------------------------------------------------------
 void CPolygonContainer::integrateHole(
-	unsigned long offset,
-	unsigned long holeVertex, unsigned long bridgeIdx)
+	CPolygonNode::IndexType offset,
+	CPolygonNode::IndexType holeVertex, CPolygonNode::IndexType bridgeIdx)
 {
 	// Find matching vertex in border to integrate hole
-	unsigned long borderVertex = 0;
+	CPolygonNode::IndexType borderVertex = 0;
 	
 #ifdef _TRACE_POLY_INTEGRATE
 	std::cout << "% Integrate Hole: " << holeVertex << " Bridge " << bridgeIdx << " " << bridgeIdx+1 << std::endl;
@@ -339,7 +339,7 @@ void CPolygonContainer::integrateHole(
 		return;
 
 	// Next vertex of the border vertex of the segment containing the visible point
-	unsigned long nextBorderVertex = m_nodes[borderVertex].m_next;
+	CPolygonNode::IndexType nextBorderVertex = m_nodes[borderVertex].m_next;
 
 #ifdef _TRACE_POLY_INTEGRATE
 	std::cout << "%           Border " << borderVertex << " " << nextBorderVertex << std::endl;
@@ -392,13 +392,13 @@ void CPolygonContainer::integrateHole(
 
 // -----------------------------------------------------------------------------
 bool CPolygonContainer::polygonNormal(
-	unsigned long offs,
+	CPolygonNode::IndexType offs,
 	const RtInt verts[],
 	const RtFloat *p,
 	RtPoint pnorm) const
 {
 	// Find normal of the polygon
-	unsigned long idx;
+	CPolygonNode::IndexType idx;
 	RtInt pidx;
 	RtPoint p0, p1, p2;
 	bool p1set = false, p2set = false;
@@ -477,11 +477,11 @@ void CPolygonContainer::insertPolygon(
 	circularLink(m_outlines[0], 0, loops[0]);
 	
 	// Link the holes
-	unsigned long indexcount = 1 + loops[0];
-	unsigned long vertexcount = loops[0];
-	unsigned long i, idx, pidx;
+	CPolygonNode::IndexType indexcount = 1 + loops[0];
+	CPolygonNode::IndexType vertexcount = loops[0];
+	CPolygonNode::IndexType i, idx, pidx;
 	
-	for ( i = 1; i < (unsigned long)nloops; ++i ) {
+	for ( i = 1; i < (CPolygonNode::IndexType)nloops; ++i ) {
 		indexcount += 2; // bridge edges from border to hole and back to border
 		m_outlines[i] = 0;
 		if ( loops[i] >= 3 ) {
@@ -516,7 +516,7 @@ void CPolygonContainer::insertPolygon(
 	}
 	
 	// Extract the coordinates for both axes
-	for ( i = 0; i < (unsigned long)nloops; ++i ) {
+	for ( i = 0; i < (CPolygonNode::IndexType)nloops; ++i ) {
 		idx = m_outlines[i];
 		if ( idx != 0 ) {
 			do {
@@ -547,10 +547,10 @@ void CPolygonContainer::insertPolygon(
 	if ( nloops > 1 ) {
 		std::vector<CPolygonNodeId> temp_outlines;
 		
-		for ( i = 1; i < (unsigned long)nloops; ++i ) {
+		for ( i = 1; i < (CPolygonNode::IndexType)nloops; ++i ) {
 			if ( m_outlines[i] != 0 ) {
 				// the rightmost vertex of the hole i
-				unsigned long rm = rightmostVertex(m_outlines[i]);
+				CPolygonNode::IndexType rm = rightmostVertex(m_outlines[i]);
 				bool holeCCW = isCCW(m_outlines[i], rm);
 				// std::cout << "% Hole " << i << " is " << (holeCCW ? "CCW" : "CW") << std::endl;
 				if ( holeCCW == m_outlineIsCCW ) {
@@ -602,11 +602,11 @@ CPolygonContainer &CPolygonContainer::operator=(const CPolygonContainer &pc)
 // -----------------------------------------------------------------------------
 static bool isEar(
 	std::vector<CPolygonNode> &nodes,
-	unsigned long tip,
+	CPolygonNode::IndexType tip,
 	RtFloat &weight)
 {
-	unsigned long prev = nodes[tip].prev();
-	unsigned long next = nodes[tip].next();
+	CPolygonNode::IndexType prev = nodes[tip].prev();
+	CPolygonNode::IndexType next = nodes[tip].next();
 	
 #   ifdef _TRACE_POLY_EAR
 	    std::cout << "% >isEar() tip " << tip << " prev " << prev << " next " << next << std::endl;
@@ -650,7 +650,7 @@ static bool isEar(
 	}
 	
 	int onEdge, startEdge;
-	for ( unsigned long j = nodes[next].next(); j != prev; j = nodes[j].next() ) {
+	for ( CPolygonNode::IndexType j = nodes[next].next(); j != prev; j = nodes[j].next() ) {
 		if ( nodes[j].reflex() ) {
 			// Is vertex j in the triangle
 			if ( point2InTriangle(nodes[j].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) )
@@ -667,8 +667,8 @@ static bool isEar(
 				    std::cout << "% -isEar() tip " << tip << " prev " << prev << " next " << next << " vertex on edge" << std::endl;
 #               endif
 
-				unsigned long tempPrev = j;
-				unsigned long temp = nodes[j].next();
+				CPolygonNode::IndexType tempPrev = j;
+				CPolygonNode::IndexType temp = nodes[j].next();
 				
 				while ( point2InTriangle(nodes[temp].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) ) {
 					if ( !(onEdge & startEdge) ) {
@@ -739,9 +739,9 @@ static bool isEar(
 // -----------------------------------------------------------------------------
 void CEarClipper::triangulate(
 	std::vector<CPolygonNode> &nodes,
-	unsigned long offs,
+	CPolygonNode::IndexType offs,
 	bool isCCW,
-	std::vector<unsigned long> &triangles) const
+	std::vector<CPolygonNode::IndexType> &triangles) const
 {
 #ifdef _TRACE_POLY_TRIANGULATE
 	std::cout << "% >triangulate() offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
@@ -753,9 +753,9 @@ void CEarClipper::triangulate(
 	std::vector<TemplTreeNode<RtFloat> > tn(nodes.size());
 	TemplBinTree<RtFloat> tr;
 
-	unsigned long prev;
-	unsigned long next;
-	unsigned long i = offs;
+	CPolygonNode::IndexType prev;
+	CPolygonNode::IndexType next;
+	CPolygonNode::IndexType i = offs;
 	RtFloat v = 0;
 	
 	// Fill tree
@@ -776,7 +776,7 @@ void CEarClipper::triangulate(
 		i = next;
 	} while ( i != offs );
 
-	unsigned long tri = 0, m;
+	CPolygonNode::IndexType tri = 0, m;
 
 	// Iterate tree
 	while ( !tr.empty() ) {

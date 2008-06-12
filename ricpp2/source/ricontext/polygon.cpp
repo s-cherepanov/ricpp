@@ -622,12 +622,12 @@ static bool isEar(
 
 	RtFloat vprev[2], vnext[2], vinner[2];
 	
-	vectFromPos2(vprev, nodes[prev].m_p, nodes[tip].m_p);
-	vectFromPos2(vnext, nodes[tip].m_p, nodes[next].m_p);
-	vectFromPos2(vinner, nodes[next].m_p, nodes[prev].m_p);
+	vectFromPos2(vprev, nodes[prev].pos(), nodes[tip].pos());
+	vectFromPos2(vnext, nodes[tip].pos(), nodes[next].pos());
+	vectFromPos2(vinner, nodes[next].pos(), nodes[prev].pos());
 
 	// weight = tmax(dot2_norm(vprev, vinner), dot2_norm(vinner, vnext));
-	weight = dot2_pos_norm(nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p);
+	weight = dot2_pos_norm(nodes[prev].pos(), nodes[tip].pos(), nodes[next].pos());
 	
 	if ( nearlyZero(det2(vprev, vnext)) ) {
 		// Degenerated triangle, either a needle tip (cutted away) or a line (not cutted) 
@@ -653,7 +653,7 @@ static bool isEar(
 	for ( CPolygonNode::IndexType j = nodes[next].next(); j != prev; j = nodes[j].next() ) {
 		if ( nodes[j].reflex() ) {
 			// Is vertex j in the triangle
-			if ( point2InTriangle(nodes[j].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) )
+			if ( point2InTriangle(nodes[j].pos(), nodes[prev].pos(), nodes[tip].pos(), nodes[next].pos(), onEdge) )
 			{
 				if ( !onEdge ) {
 #                   ifdef _TRACE_POLY_EAR
@@ -670,7 +670,7 @@ static bool isEar(
 				CPolygonNode::IndexType tempPrev = j;
 				CPolygonNode::IndexType temp = nodes[j].next();
 				
-				while ( point2InTriangle(nodes[temp].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) ) {
+				while ( point2InTriangle(nodes[temp].pos(), nodes[prev].pos(), nodes[tip].pos(), nodes[next].pos(), onEdge) ) {
 					if ( !(onEdge & startEdge) ) {
 #                       ifdef _TRACE_POLY_EAR
 						    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - contains previous vertex" << std::endl;
@@ -688,7 +688,7 @@ static bool isEar(
 					}
 				}
 				
-				if ( intersects2(nodes[tempPrev].m_p, nodes[temp].m_p, nodes[next].m_p, nodes[prev].m_p) == 2 ) {
+				if ( intersects2(nodes[tempPrev].pos(), nodes[temp].pos(), nodes[next].pos(), nodes[prev].pos()) == 2 ) {
 					// Line intersects the base line -> no ear
 #                   ifdef _TRACE_POLY_EAR
 					    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - a next edge " << tempPrev << ", " << temp << " intersects base" << std::endl;
@@ -699,7 +699,7 @@ static bool isEar(
 				tempPrev = j;
 				temp = nodes[j].prev();
 
-				while ( point2InTriangle(nodes[temp].m_p, nodes[prev].m_p, nodes[tip].m_p, nodes[next].m_p, onEdge) ) {
+				while ( point2InTriangle(nodes[temp].pos(), nodes[prev].pos(), nodes[tip].pos(), nodes[next].pos(), onEdge) ) {
 					if ( !(onEdge & startEdge) ) {
 #                       ifdef _TRACE_POLY_EAR
 						    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - contains next vertex" << std::endl;
@@ -717,7 +717,7 @@ static bool isEar(
 					}
 				}
 				
-				if ( intersects2(nodes[tempPrev].m_p, nodes[temp].m_p, nodes[next].m_p, nodes[prev].m_p) == 2 ) {
+				if ( intersects2(nodes[tempPrev].pos(), nodes[temp].pos(), nodes[next].pos(), nodes[prev].pos()) == 2 ) {
 					// Line intersects the base line -> no ear
 #                   ifdef _TRACE_POLY_EAR
 					    std::cout << "% <isEar() tip " << tip << " prev " << prev << " next " << next << " not an ear - a previous edge " << tempPrev << ", " << temp << " intersects base" << std::endl;
@@ -765,7 +765,7 @@ void CEarClipper::triangulate(
 #       ifdef _TRACE_POLY_TRIANGULATE
 		    std::cout << "% -triangulate() examine i " << i << " prev " << prev << " next " << next << std::endl;
 #       endif
-		v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
+		v = dot2_pos_norm(nodes[prev].pos(), nodes[i].pos(), nodes[next].pos());
 		if ( isEar(nodes, i, v) ) {
 #           ifdef _TRACE_POLY_TRIANGULATE
 			    std::cout << "% -triangulate() Try i " << i << " prev " << prev << " next " << next << " dot " << v << std::endl;
@@ -800,13 +800,13 @@ void CEarClipper::triangulate(
 			continue;
 		}
 		
-		if ( !degenTriangle2(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p) ) {
+		if ( !degenTriangle2(nodes[prev].pos(), nodes[i].pos(), nodes[next].pos()) ) {
 #           ifdef _TRACE_POLY_TRIANGULATE
 			    std::cout << "% -triangulate() *** Cut i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
 #           endif
-			triangles[tri++] = nodes[prev].m_index;
-			triangles[tri++] = nodes[i].m_index;
-			triangles[tri++] = nodes[next].m_index;
+			triangles[tri++] = nodes[prev].index();
+			triangles[tri++] = nodes[i].index();
+			triangles[tri++] = nodes[next].index();
 			nodes[i].remove(nodes, isCCW);
 		} else {
 			if ( !nearlyZero(v+(RtFloat)1.0) ) {
@@ -830,7 +830,7 @@ void CEarClipper::triangulate(
 			break;
 
 		for ( m = 0; m < 2; ++m ) {
-			v = dot2_pos_norm(nodes[prev].m_p, nodes[i].m_p, nodes[next].m_p);
+			v = dot2_pos_norm(nodes[prev].pos(), nodes[i].pos(), nodes[next].pos());
 			if ( isEar(nodes, i, v) ) {
 #               ifdef _TRACE_POLY_TRIANGULATE
 				    std::cout << "% -triangulate() Try i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
@@ -859,20 +859,23 @@ void CEarClipper::triangulate(
 
 // =============================================================================
 // -----------------------------------------------------------------------------
-void CTriangulatedPolygon::triangulate(RtInt nloops, const RtInt nverts[], const RtFloat *p)
+void CTriangulatedPolygon::triangulate(const IPolygonTriangulationStrategy &strategy, RtInt nloops, const RtInt nverts[], const RtFloat *p)
 {
-	CPolygonContainer c;
-	
 	RtInt sumPoints = sum(nloops, nverts);
-	RtInt *verts = new RtInt[sumPoints];
-	if ( !nverts ) {
-		return;
-	}
+	std::vector<RtInt> verts;
+	verts.resize(sumPoints);
 	for ( RtInt i = 0; i< sumPoints; ++i ) {
 		verts[i] = i;
 	}
-	c.insertPolygon(nloops, nverts, verts, p);
-	m_strategy->triangulate(c.nodes(), c.outline(), c.outlineCCW(), m_triangles);
-	delete[] verts;
+	triangulate(strategy, nloops, nverts, &verts[0], p);
+}
+
+void CTriangulatedPolygon::drefTriangles(const RtInt verts[], std::vector<CPolygonNode::IndexType> &tri) const
+{
+	tri.clear();
+	tri.resize(m_triangles.size());
+	for ( CPolygonNode::IndexType i=0; i < m_triangles.size(); ++i ) {
+		tri[i] = verts[m_triangles[i]];
+	}
 }
 

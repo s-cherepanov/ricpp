@@ -218,11 +218,14 @@ const CTriangulatedPolygon *CRiGeneralPolygon::triangulate(const IPolygonTriangu
 		return 0;
 
 	const std::vector<RtFloat> &f = par->floats();
+	assert(f.size() > 0);
+	if ( f.size() == 0 )
+		return m_triangulated;
 
 	// Triangulate polygon
-	m_triangulated = new CTriangulatedPolygon(strategy);
+	m_triangulated = new CTriangulatedPolygon();
 	if ( m_triangulated )
-		m_triangulated->triangulate((RtInt)m_nVerts.size(), &m_nVerts[0], &f[0]);
+		m_triangulated->triangulate(strategy, (RtInt)m_nVerts.size(), &m_nVerts[0], &f[0]);
 	
 	return m_triangulated;
 }
@@ -300,6 +303,44 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 {
 	enterValues(theNPolys, theNLoops, theNVerts, theVerts);
 }
+
+const std::vector<CTriangulatedPolygon> &CRiPointsGeneralPolygons::triangulate(const IPolygonTriangulationStrategy &strategy)
+{
+	if ( m_triangulated.size() > 0 )
+		return m_triangulated;
+
+	if ( m_nLoops.size() == 0 )
+		return m_triangulated;
+	
+	if ( m_nVerts.size() == 0 )
+		return m_triangulated;
+
+	if ( m_verts.size() == 0 )
+		return m_triangulated;
+	
+	const CParameter *par = parameters().get(RI_P);
+	if ( !par )
+		return m_triangulated;
+	
+	const std::vector<RtFloat> &f = par->floats();
+	assert(f.size() > 0);
+	if ( f.size() == 0 )
+		return m_triangulated;
+	
+	// Triangulate polygons
+	m_triangulated.resize(m_nLoops.size());
+	RtInt nvertscnt = 0, vertscnt = 0;
+	int j;
+	for ( int i = 0; i < m_nLoops.size(); ++i ) {
+		m_triangulated[i].triangulate(strategy, m_nLoops[i], &m_nVerts[nvertscnt], &m_verts[vertscnt], &f[0]);
+		for ( j = 0; j < m_nLoops[i]; ++j ) {
+			vertscnt += m_nVerts[nvertscnt++];
+		}
+	}
+	
+	return m_triangulated;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 void CRiPatchMesh::set(

@@ -19,8 +19,8 @@ void printPoly(const CTriangulatedPolygon &poly,
 	std::cout << "1 setlinejoin" << std::endl;
 	std::cout << "0 setgray" << std::endl;
 
-	const std::vector<unsigned long> &triangles = poly.triangles();
-	std::vector<unsigned long>::const_iterator iter = triangles.begin();
+	const std::vector<CPolygonNode::IndexType> &triangles = poly.triangles();
+	std::vector<CPolygonNode::IndexType>::const_iterator iter = triangles.begin();
 
 	RtFloat x, y, z;
 	while ( iter != triangles.end() ) {
@@ -46,7 +46,7 @@ void printPoly(const CTriangulatedPolygon &poly,
 }
 
 
-void test4(CTriangulatedPolygon &poly)
+void test4(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &strategy)
 {
 	// O'Rourke's poly 1.1
 	RtFloat p[] = {
@@ -82,11 +82,11 @@ void test4(CTriangulatedPolygon &poly)
 		15, 16, 17
 	};
 	
-	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p, 20);
 }
 
-void test3(CTriangulatedPolygon &poly)
+void test3(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &strategy)
 {
 	RtFloat p[] = {
 		// outer
@@ -120,11 +120,11 @@ void test3(CTriangulatedPolygon &poly)
 		9, 10, 11,
 	};
 	
-	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 
-void test2(CTriangulatedPolygon &poly)
+void test2(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &strategy)
 {
 	RtFloat p[] = {
 		// outer
@@ -149,11 +149,11 @@ void test2(CTriangulatedPolygon &poly)
 		4, 5, 6, 7
 	};
 	
-	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 
-void test1(CTriangulatedPolygon &poly)
+void test1(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &strategy)
 {
 	RtFloat p[] = {
 		// outer
@@ -171,11 +171,11 @@ void test1(CTriangulatedPolygon &poly)
 		3, 2, 1, 0
 	};
 	
-	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 
-void test0(CTriangulatedPolygon &poly)
+void test0(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &strategy)
 {
 	RtFloat p[] = {
 		// outer
@@ -192,7 +192,7 @@ void test0(CTriangulatedPolygon &poly)
 		0, 1, 2
 	};
 	
-	poly.triangulate(sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
 	printPoly(poly, verts, p);
 }
 
@@ -200,17 +200,17 @@ int main(int argc, char * const argv[])
 {
 	// Initializing the triangulation
 	CEarClipper earClipper;
-	CTriangulatedPolygon poly(earClipper);
+	CTriangulatedPolygon poly;
 	
 	// PostScript Header
 	std::cout << "%!PS" << std::endl;
 	
 	// Put out some polygons
-	test0(poly);
-	test1(poly);
-	test2(poly);
-	test3(poly);
-	test4(poly);
+	test0(poly, earClipper);
+	test1(poly, earClipper);
+	test2(poly, earClipper);
+	test3(poly, earClipper);
+	test4(poly, earClipper);
 	
 	return 0;
 }

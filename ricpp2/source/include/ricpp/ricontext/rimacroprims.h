@@ -347,10 +347,10 @@ namespace RiCPP {
 		 */
 		const CTriangulatedPolygon *triangulate(const IPolygonTriangulationStrategy &strategy);
 
-		/** @brief Gets triangulated polygon.
-		 *  @return Indices for triangulated polygon if triangulated, 0 otherwise
+		/** @brief Requests whether polygon is triangulated.
+		 *  @return true, if polygon is triangulated; false, otherwise.
 		 */
-		inline const CTriangulatedPolygon *triangulate() const { return m_triangulated; }
+		inline bool triangulated() const { return m_triangulated!=0; }
 
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
@@ -629,6 +629,7 @@ namespace RiCPP {
 		std::vector<RtInt> m_nLoops; ///< Loops per polygon (Number of polygons is the size of the vector).
 		std::vector<RtInt> m_nVerts; ///< Vertices per loop.
 		std::vector<RtInt> m_verts;  ///< Vertex indices.
+		std::vector<CTriangulatedPolygon> m_triangulated; ///< Triangulated polygons
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;
 
@@ -803,6 +804,17 @@ namespace RiCPP {
 			enterValues(theNPolys, theNLoops, theNVerts, theVerts);
 		}
 
+		/** @brief Triangulates the polygons if not already done.
+		 *  @param strategy Strategy to use
+		 *  @return Indirect indices for the triangulated polygons, (size==0) on error
+		 */
+		const std::vector<CTriangulatedPolygon> &triangulate(const IPolygonTriangulationStrategy &strategy);
+		
+		/** @brief Requests whether polygons are triangulated.
+		 *  @return true, if polygons are triangulated; false, otherwise.
+		 */
+		inline bool triangulated() const { return m_triangulated.size() > 0; }
+
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
 			ri.prePointsGeneralPolygons(*this, 
@@ -855,6 +867,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
+			m_triangulated.clear();
 			set(c.nLoops(), c.nVerts(), c.verts());
 
 			TypeParent::operator=(c);

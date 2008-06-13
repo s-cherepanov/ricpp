@@ -1292,8 +1292,8 @@ public:
 	 *  @retval y coordinate y and result
 	 *  @retval z coordinate z and result
 	 */
-	void transformPoint(RtFloat &x, RtFloat &y, RtFloat &z);
-	bool transformNormal(RtFloat &x, RtFloat &y, RtFloat &z);
+	void transformPoint(RtFloat &x, RtFloat &y, RtFloat &z) const;
+	bool transformNormal(RtFloat &x, RtFloat &y, RtFloat &z) const;
 	
 	/** @brief Transforms an array of points by the matrix.
 	 *
@@ -1303,8 +1303,8 @@ public:
 	 *  @retval n Number of points
 	 *  @retval p points
 	 */
-	void transformPoints(RtInt n, RtPoint p[]);
-	bool transformNormals(RtInt n, RtPoint v[]);
+	void transformPoints(RtInt n, RtPoint p[]) const;
+	bool transformNormals(RtInt n, RtPoint v[]) const;
 
 	/** @brief Concatenates a rotation around the x-axis.
 	 * The rotation matrix is:

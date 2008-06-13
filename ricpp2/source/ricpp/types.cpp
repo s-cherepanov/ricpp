@@ -1095,7 +1095,7 @@ void CMatrix3D::scale(RtFloat sx, RtFloat sy, RtFloat sz)
 }
 
 
-void CMatrix3D::transformPoint(RtFloat &x, RtFloat &y, RtFloat &z)
+void CMatrix3D::transformPoint(RtFloat &x, RtFloat &y, RtFloat &z) const
 {
         int i, k;
         RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
@@ -1112,7 +1112,7 @@ void CMatrix3D::transformPoint(RtFloat &x, RtFloat &y, RtFloat &z)
         z = d[2];
 }
 
-bool CMatrix3D::transformNormal(RtFloat &x, RtFloat &y, RtFloat &z)
+bool CMatrix3D::transformNormal(RtFloat &x, RtFloat &y, RtFloat &z) const
 {
 	CMatrix3D tinv = *this;
 	if ( !tinv.invert() )
@@ -1124,7 +1124,7 @@ bool CMatrix3D::transformNormal(RtFloat &x, RtFloat &y, RtFloat &z)
 }
 	
 
-void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
+void CMatrix3D::transformPoints(RtInt n, RtPoint p[]) const
 {
 	int i, j, k;
 
@@ -1175,7 +1175,7 @@ void CMatrix3D::transformPoints(RtInt n, RtPoint p[])
 }
 
 
-bool CMatrix3D::transformNormals(RtInt n, RtPoint p[])
+bool CMatrix3D::transformNormals(RtInt n, RtPoint p[]) const
 {
 	CMatrix3D tinv = *this;
 	if ( !tinv.invert() )

@@ -105,6 +105,13 @@ public:
 		return (*iter).second;
 	}
 
+	inline std::vector<TypeIndex> &indices() {
+		return m_indices;
+	}
+	inline const std::vector<TypeIndex> &indices() const {
+		return m_indices;
+	}
+	
 	inline TemplPrimVar<RtFloat> &floats(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->floats(token)); }
 	inline TemplPrimVar<RtInt> &ints(const RtToken token) { return const_cast<TemplPrimVar<RtInt> &>(((const CFace *)this)->ints(token)); }
 	inline TemplPrimVar<RtToken> &tokens(const RtToken token) { return const_cast<TemplPrimVar<RtToken> &>(((const CFace *)this)->tokens(token)); }

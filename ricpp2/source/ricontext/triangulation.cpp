@@ -22,7 +22,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file tirangulation.cpp
+/** @file triangulation.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implements triangulation of the surface primitives.
  */
@@ -30,3 +30,46 @@
 #ifndef _RICPP_RICONTEXT_SURFACE_H
 #include "ricpp/ricontext/surface.h"
 #endif _RICPP_RICONTEXT_SURFACE_H
+
+#ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
+#include "ricpp/ricontext/rimacroprims.h"
+#endif _RICPP_RICONTEXT_RIMACROPRIMS_H
+
+using namespace RiCPP;
+
+
+class CTriangulator {
+	friend class CSurfaceContainer;
+protected:
+	virtual void releaseSurface(CSurface *surf);
+public:
+	inline virtual CTriangulator() {}
+};
+
+class CPolygonTriangulator : CTriangulator {
+public:
+	CSurface *triangulate(CRiPolygon &poly, RtInt nvertices, const CParameterList &params);
+};
+
+
+// =============================================================================
+
+void CTriangulator::releaseSurface(CSurface *surf)
+{
+	if ( surf )
+		delete surf;
+}
+
+
+CSurface *CPolygonTriangulator::triangulate(CRiPolygon &poly, RtInt nvertices, const CParameterList &params)
+{
+	CSurface *surf = new CSurface;
+	if ( !surf ) 
+		return 0;
+	
+	CFace &f = surf->newFace();
+
+	std::vector<CFace::TypeIndex> &strip = f.indices();
+	
+	return surf;
+}

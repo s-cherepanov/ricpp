@@ -86,28 +86,28 @@ public:
 		TypeConstFloatIterator iter = m_floats.find(token);
 		if ( iter == m_floats.end() )
 			throw;
-		return (*iter).second();
+		return (*iter).second;
 	}
 	
 	inline const TemplPrimVar<RtInt> &ints(const RtToken token) const
 	{
 		TypeConstIntIterator iter = m_ints.find(token);
-		if ( iter == m_floats.end() )
+		if ( iter == m_ints.end() )
 			throw;
-		return (*iter).second();
+		return (*iter).second;
 	}
 	
 	inline const TemplPrimVar<RtToken> &tokens(const RtToken token) const
 	{
 		TypeConstTokenIterator iter = m_tokens.find(token);
-		if ( iter == m_floats.end() )
+		if ( iter == m_tokens.end() )
 			throw;
-		return (*iter).second();
+		return (*iter).second;
 	}
 
 	inline TemplPrimVar<RtFloat> &floats(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->floats(token)); }
-	inline TemplPrimVar<RtInt> &ints(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->ints(token)); }
-	inline TemplPrimVar<RtToken> &tokens(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->tokens(token)); }
+	inline TemplPrimVar<RtInt> &ints(const RtToken token) { return const_cast<TemplPrimVar<RtInt> &>(((const CFace *)this)->ints(token)); }
+	inline TemplPrimVar<RtToken> &tokens(const RtToken token) { return const_cast<TemplPrimVar<RtToken> &>(((const CFace *)this)->tokens(token)); }
 	
 	inline TypeConstFloatIterator floatBegin() const { return m_floats.begin(); }
 	inline TypeConstFloatIterator floatEnd() const { return m_floats.end(); }

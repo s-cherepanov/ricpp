@@ -185,6 +185,8 @@
 		C3808AC80D3CC1CA00B6C3BA /* libribwriter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089DB0D3CBA6300B6C3BA /* libribwriter.a */; };
 		C3808ADC0D3CDB1A00B6C3BA /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38088C80D3CA7A600B6C3BA /* libribfilter.a */; };
 		C3808ADD0D3CDB2900B6C3BA /* passthrough.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C364F5F20C1431EF00C5E4E1 /* passthrough.cpp */; };
+		C38221370E3789C60032A70E /* surface.h in Headers */ = {isa = PBXBuildFile; fileRef = C38221360E3789C60032A70E /* surface.h */; };
+		C38221390E378A830032A70E /* triangulation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38221380E378A830032A70E /* triangulation.cpp */; };
 		C383C10C0DBC89510059B71D /* testpoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C383C10B0DBC89510059B71D /* testpoly.cpp */; };
 		C383C1130DBC8A0C0059B71D /* polygon.h in Headers */ = {isa = PBXBuildFile; fileRef = C383C1120DBC8A0C0059B71D /* polygon.h */; };
 		C383C12C0DBC900A0059B71D /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
@@ -652,6 +654,8 @@
 		C3808A920D3CBC6E00B6C3BA /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AC00D3CC05700B6C3BA /* libribwriter.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libribwriter.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3808AD10D3CDAA700B6C3BA /* libpassthrough.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpassthrough.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C38221360E3789C60032A70E /* surface.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = surface.h; path = ../../../source/include/ricpp/ricontext/surface.h; sourceTree = SOURCE_ROOT; };
+		C38221380E378A830032A70E /* triangulation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = triangulation.cpp; path = ../../../source/ricontext/triangulation.cpp; sourceTree = SOURCE_ROOT; };
 		C383C1020DBC88E00059B71D /* testpoly */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testpoly; sourceTree = BUILT_PRODUCTS_DIR; };
 		C383C10B0DBC89510059B71D /* testpoly.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = testpoly.cpp; path = ../../../source/test/testpoly.cpp; sourceTree = SOURCE_ROOT; };
 		C383C1120DBC8A0C0059B71D /* polygon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = polygon.h; path = ../../../source/include/ricpp/ricontext/polygon.h; sourceTree = SOURCE_ROOT; };
@@ -1421,6 +1425,7 @@
 				C37245B90CD5DE5500945563 /* ricontext.cpp */,
 				C37245BA0CD5DE5500945563 /* rimacro.cpp */,
 				C37245BB0CD5DE5500945563 /* transformation.cpp */,
+				C38221380E378A830032A70E /* triangulation.cpp */,
 			);
 			fileEncoding = 5;
 			includeInIndex = 1;
@@ -1461,6 +1466,7 @@
 				C372458E0CD5DE3100945563 /* rimacrooptions.h */,
 				C372458F0CD5DE3100945563 /* rimacroprims.h */,
 				C37245900CD5DE3100945563 /* rimacrotransforms.h */,
+				C38221360E3789C60032A70E /* surface.h */,
 				C37245910CD5DE3100945563 /* transformation.h */,
 			);
 			fileEncoding = 5;
@@ -2177,6 +2183,7 @@
 				C3C9AE3C0D70BCCE00A04717 /* ribelements.h in Headers */,
 				C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */,
 				C383C1130DBC8A0C0059B71D /* polygon.h in Headers */,
+				C38221370E3789C60032A70E /* surface.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2928,6 +2935,7 @@
 				C38089740D3CAB8B00B6C3BA /* transformation.cpp in Sources */,
 				C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */,
 				C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */,
+				C38221390E378A830032A70E /* triangulation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

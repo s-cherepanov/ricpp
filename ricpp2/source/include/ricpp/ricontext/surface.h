@@ -1,4 +1,34 @@
 #ifndef _RICPP_RICONTEXT_SURFACE_H
+#define _RICPP_RICONTEXT_SURFACE_H
+
+// RICPP - RenderMan(R) Interface CPP Language Binding
+//
+//     RenderMan(R) is a registered trademark of Pixar
+// The RenderMan(R) Interface Procedures and Protocol are:
+//         Copyright 1988, 1989, 2000, 2005 Pixar
+//                 All rights Reservered
+//
+// Copyright (c) of RiCPP 2007, Andreas Pidde
+// Contact: andreas@pidde.de
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//  
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+/** @file surface.h
+ *  @author Andreas Pidde (andreas@pidde.de)
+ *  @brief Container class for surfaces
+ */
 
 #ifndef _RICPP_DECLARATION_DECLARATION_H
 #include "ricpp/declaration/declaration.h"
@@ -35,16 +65,16 @@ class CFace {
 public:
 	typedef unsigned long TypeIndex;
 	
-	typedef std::map<RtToken type, TemplPrimVar<RtFloat> >::const_iterator TypeConstFloatIterator;
-	typedef std::map<RtToken type, TemplPrimVar<RtInt> >::const_iterator TypeConstIntIterator;
-	typedef std::map<RtToken type, TemplPrimVar<RtToken> >::const_iterator TypeConstTokenIterator;
+	typedef std::map<RtToken, TemplPrimVar<RtFloat> >::const_iterator TypeConstFloatIterator;
+	typedef std::map<RtToken, TemplPrimVar<RtInt> >::const_iterator TypeConstIntIterator;
+	typedef std::map<RtToken, TemplPrimVar<RtToken> >::const_iterator TypeConstTokenIterator;
 	
 private:
 	std::vector<TypeIndex> m_indices;
 
-	std::map<RtToken type, TemplPrimVar<RtFloat> > m_floats;
-	std::map<RtToken type, TemplPrimVar<RtInt> > m_ints;
-	std::map<RtToken type, TemplPrimVar<RtToken> > m_tokens;
+	std::map<RtToken, TemplPrimVar<RtFloat> > m_floats;
+	std::map<RtToken, TemplPrimVar<RtInt> > m_ints;
+	std::map<RtToken, TemplPrimVar<RtToken> > m_tokens;
 	
 public:	
 	inline TemplPrimVar<RtFloat> &reserveFloats(const CDeclaration &decl) { return m_floats[decl.token()]; }
@@ -58,14 +88,16 @@ public:
 			throw;
 		return (*iter).second();
 	}
-	inline const TemplPrimVar<RtInt> &ints(const RtToken token) const;
+	
+	inline const TemplPrimVar<RtInt> &ints(const RtToken token) const
 	{
 		TypeConstIntIterator iter = m_ints.find(token);
 		if ( iter == m_floats.end() )
 			throw;
 		return (*iter).second();
 	}
-	inline const TemplPrimVar<RtToken> &tokens(const RtToken token) const;
+	
+	inline const TemplPrimVar<RtToken> &tokens(const RtToken token) const
 	{
 		TypeConstTokenIterator iter = m_tokens.find(token);
 		if ( iter == m_floats.end() )
@@ -73,9 +105,9 @@ public:
 		return (*iter).second();
 	}
 
-	inline TemplPrimVar<RtFloat> &floats(const RtToken token) { return const_cast<RtFloat>(((const CFace *)this)->floats(token)); }
-	inline TemplPrimVar<RtInt> &ints(const RtToken token) { return const_cast<RtInt>(((const CFace *)this)->ints(token)); }
-	inline TemplPrimVar<RtToken> &tokens(const RtToken token) { return const_cast<RtToken>(((const CFace *)this)->tokens(token)); }
+	inline TemplPrimVar<RtFloat> &floats(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->floats(token)); }
+	inline TemplPrimVar<RtInt> &ints(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->ints(token)); }
+	inline TemplPrimVar<RtToken> &tokens(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->tokens(token)); }
 	
 	inline TypeConstFloatIterator floatBegin() const { return m_floats.begin(); }
 	inline TypeConstFloatIterator floatEnd() const { return m_floats.end(); }

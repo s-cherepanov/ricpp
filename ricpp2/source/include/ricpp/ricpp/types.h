@@ -54,6 +54,8 @@
 
 namespace RiCPP {
 
+typedef unsigned int IndexType; ///< Index type for indices
+
 /** @brief Possible basic types. All types consists of these basic types.
  */
 enum EnumBasicTypes {

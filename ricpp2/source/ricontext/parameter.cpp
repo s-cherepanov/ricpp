@@ -32,6 +32,11 @@
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
 
+#ifdef _DEBUG
+#include <iostream>
+// #define _TRACE_EXTRACT
+#endif
+
 
 using namespace RiCPP;
 
@@ -145,7 +150,7 @@ CParameter &CParameter::assignRemap(const CParameter &param, CDeclarationDiction
 bool CParameter::setDeclaration(
 	RtToken aQualifier, RtToken aTable, 
 	RtString theName,
-	unsigned int thePosition,
+	IndexType thePosition,
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr)
@@ -191,7 +196,7 @@ void CParameter::set(
 	RtToken aQualifier, RtToken aTable, 
 	RtString theName,
 	RtPointer theData,
-	unsigned int thePosition,
+	IndexType thePosition,
 	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr)
@@ -350,6 +355,101 @@ bool CParameter::get(unsigned long pos, RtString &result) const
 		return false;
 	result = m_stringPtrs[pos];
 	return true;
+}
+
+void CParameter::extract(IndexType pos, std::vector<RtInt>::iterator &result) const
+{
+	unsigned long es  = declaration().elemSize();
+	pos = es * pos;
+	unsigned long endPos  = pos+es;
+	for ( ;  pos < endPos; ++pos ) {
+		*result = m_ints[pos];
+		result++;
+	}
+}
+
+void CParameter::extract(IndexType from, IndexType to, std::vector<RtInt>::iterator &result) const
+{
+	unsigned long inc = 1;
+	if ( to < from )
+		inc = -1;
+	for ( unsigned long pos = from; pos < to; pos += inc ) {
+		extract(pos, result);
+	}
+}
+
+void CParameter::extract(IndexType pos, std::vector<RtFloat>::iterator &result) const
+{
+#ifdef _TRACE_EXTRACT
+	std::cout << "-> extract" << std::endl;
+#endif _TRACE_EXTRACT
+
+	unsigned long es  = declaration().elemSize();
+	pos = es * pos;
+	unsigned long endPos  = pos+es;
+	for ( ;  pos < endPos; ++pos ) {
+#ifdef _TRACE_EXTRACT
+		std::cout << "-- extract pos = " << pos << std::endl;
+#endif _TRACE_EXTRACT
+		*result = m_floats[pos];
+		result++;
+	}
+
+#ifdef _TRACE_EXTRACT
+	std::cout << "<- extract" << std::endl;
+#endif _TRACE_EXTRACT
+}
+
+void CParameter::extract(IndexType from, IndexType to, std::vector<RtFloat>::iterator &result) const
+{
+	unsigned long inc = 1;
+	if ( to < from )
+		inc = -1;
+	for ( unsigned long pos = from; pos < to; pos += inc ) {
+		extract(pos, result);
+	}
+}
+
+void CParameter::extract(IndexType pos, std::vector<std::string>::iterator &result) const
+{
+	unsigned long es  = declaration().elemSize();
+	pos = es * pos;
+	unsigned long endPos  = pos+es;
+	for ( ;  pos < endPos; ++pos ) {
+		*result = m_strings[pos];
+		result++;
+	}
+}
+
+void CParameter::extract(IndexType from, IndexType to, std::vector<std::string>::iterator &result) const
+{
+	unsigned long inc = 1;
+	if ( to < from )
+		inc = -1;
+	for ( unsigned long pos = from; pos < to; pos += inc ) {
+		extract(pos, result);
+	}
+}
+
+void CParameter::extract(IndexType pos, std::vector<RtString>::iterator &result) const
+{
+	unsigned long es  = declaration().elemSize();
+	pos = es * pos;
+	unsigned long endPos  = pos+es;
+	for ( ;  pos < endPos; ++pos ) {
+		*result = m_stringPtrs[pos];
+		result++;
+	}
+}
+
+void CParameter::extract(IndexType from, IndexType to, std::vector<RtString>::iterator &result) const
+{
+	unsigned long inc = 1;
+	if ( to < from )
+		inc = -1;
+	for ( unsigned long pos = from; pos < to; pos += inc ) {
+		extract(pos, result);
+	}
 }
 
 

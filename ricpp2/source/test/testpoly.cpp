@@ -19,8 +19,8 @@ void printPoly(const CTriangulatedPolygon &poly,
 	std::cout << "1 setlinejoin" << std::endl;
 	std::cout << "0 setgray" << std::endl;
 
-	const std::vector<CPolygonNode::IndexType> &triangles = poly.triangles();
-	std::vector<CPolygonNode::IndexType>::const_iterator iter = triangles.begin();
+	const std::vector<IndexType> &triangles = poly.triangles();
+	std::vector<IndexType>::const_iterator iter = triangles.begin();
 
 	RtFloat x, y, z;
 	while ( iter != triangles.end() ) {

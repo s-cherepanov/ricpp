@@ -52,7 +52,7 @@ namespace RiCPP {
 	class CParameter {
 	private:
 		const CDeclaration *m_declaration; ///< Declaration (and name) of the parameter, possibly inline.
-		unsigned int m_position;           ///< Original position within a parameter list.
+		IndexType m_position;           ///< Original position within a parameter list.
 		std::string m_parameterName;       ///< Parametername as found in list
 		
 		std::vector<RtInt> m_ints;          ///< Container for integer values.
@@ -114,7 +114,7 @@ namespace RiCPP {
 		inline CParameter(
 			RtString theName,
 			RtPointer theData,
-			unsigned int thePosition,
+			IndexType thePosition,
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr)
@@ -140,7 +140,7 @@ namespace RiCPP {
 			RtToken aQualifier, RtToken aTable, 
 			RtString theName,
 			RtPointer theData,
-			unsigned int thePosition,
+			IndexType thePosition,
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr)
@@ -208,7 +208,7 @@ namespace RiCPP {
 		bool setDeclaration(
 			RtToken aQualifier, RtToken aTable, 
 			RtString theName,
-			unsigned int thePosition,
+			IndexType thePosition,
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr);
@@ -228,7 +228,7 @@ namespace RiCPP {
 			RtToken aQualifier, RtToken aTable, 
 			RtString theName,
 			RtPointer theData,
-			unsigned int thePosition,
+			IndexType thePosition,
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr);
@@ -407,6 +407,18 @@ namespace RiCPP {
 		 *  @return C-string pointers.
 		 */
 		inline const std::vector<RtString> &stringPtrs() const { return m_stringPtrs; }
+		
+		void extract(IndexType pos, std::vector<RtInt>::iterator &result) const;
+		void extract(IndexType from, IndexType to, std::vector<RtInt>::iterator &result) const;
+
+		void extract(IndexType pos, std::vector<RtFloat>::iterator &result) const;
+		void extract(IndexType from, IndexType to, std::vector<RtFloat>::iterator &result) const;
+
+		void extract(IndexType pos, std::vector<std::string>::iterator &result) const;
+		void extract(IndexType from, IndexType to, std::vector<std::string>::iterator &result) const;
+		
+		void extract(IndexType pos, std::vector<RtString>::iterator &result) const;
+		void extract(IndexType from, IndexType to, std::vector<RtString>::iterator &result) const;
 
 		/** @brief Gets a pointer to the declaration of the parameter.
 		 *

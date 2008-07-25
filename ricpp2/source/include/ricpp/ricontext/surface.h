@@ -45,7 +45,6 @@ template<typename ValueType> class TemplPrimVar {
 private:
 	const CDeclaration *m_decl;
 	std::vector<ValueType> m_value;
-
 public:
 	inline TemplPrimVar() { m_decl = 0; }
 	inline explicit TemplPrimVar(const CDeclaration &theDecl) { m_decl = &theDecl; }
@@ -59,69 +58,121 @@ public:
 
 
 //
+// EnumFaceTypes
+//
+	
+/** @brief Possible face types for @c CFace
+ */
+enum EnumFaceTypes {
+	FACETYPE_UNKNOWN = 0,    ///< Unknown face type
+	FACETYPE_TRIANGLES,      ///< Triangles
+	FACETYPE_TRIANGLESTRIPS ///< Triangle strips
+};
+
+/** @brief Number of face types.
+ */
+const int N_FACETYPES = (int)FACETYPE_TRIANGLESTRIPS+1;
+	
+//
 // CFace
 //
 class CFace {
 public:
-	typedef unsigned long TypeIndex;
-	
 	typedef std::map<RtToken, TemplPrimVar<RtFloat> >::const_iterator TypeConstFloatIterator;
 	typedef std::map<RtToken, TemplPrimVar<RtInt> >::const_iterator TypeConstIntIterator;
-	typedef std::map<RtToken, TemplPrimVar<RtToken> >::const_iterator TypeConstTokenIterator;
+	typedef std::map<RtToken, TemplPrimVar<std::string> >::const_iterator TypeConstStringIterator;
 	
+	typedef std::map<RtToken, TemplPrimVar<RtFloat> >::iterator TypeFloatIterator;
+	typedef std::map<RtToken, TemplPrimVar<RtInt> >::iterator TypeIntIterator;
+	typedef std::map<RtToken, TemplPrimVar<std::string> >::iterator TypeStringIterator;
+
 private:
-	std::vector<TypeIndex> m_indices;
+	EnumFaceTypes m_faceType;
+	std::vector<IndexType> m_sizes;
+	std::vector<IndexType> m_indices;
 
 	std::map<RtToken, TemplPrimVar<RtFloat> > m_floats;
 	std::map<RtToken, TemplPrimVar<RtInt> > m_ints;
-	std::map<RtToken, TemplPrimVar<RtToken> > m_tokens;
-	
+	std::map<RtToken, TemplPrimVar<std::string> > m_strings;
+		
 public:	
+	inline CFace() : m_faceType(FACETYPE_UNKNOWN) {}
 	inline TemplPrimVar<RtFloat> &reserveFloats(const CDeclaration &decl) { return m_floats[decl.token()]; }
 	inline TemplPrimVar<RtInt> &reserveInts(const CDeclaration &decl) { return m_ints[decl.token()]; }
-	inline TemplPrimVar<RtToken> &reserveTokens(const CDeclaration &decl)  { return m_tokens[decl.token()]; }
+	inline TemplPrimVar<std::string> &reserveStrings(const CDeclaration &decl)  { return m_strings[decl.token()]; }
 
-	inline const TemplPrimVar<RtFloat> &floats(const RtToken token) const
+	inline EnumFaceTypes faceType(EnumFaceTypes ft)
+	{
+		m_faceType = ft;
+	}
+	
+	inline EnumFaceTypes faceType() const
+	{
+		return m_faceType;
+	}
+
+	inline std::vector<IndexType> &sizes()
+	{
+		return m_sizes;
+	}
+	
+	inline const std::vector<IndexType> &sizes() const
+	{
+		return m_sizes;
+	}
+	
+	inline std::vector<IndexType> &indices()
+	{
+		return m_indices;
+	}
+	
+	inline const std::vector<IndexType> &indices() const
+	{
+		return m_indices;
+	}
+	
+	inline const TemplPrimVar<RtFloat> *floats(const RtToken token) const
 	{
 		TypeConstFloatIterator iter = m_floats.find(token);
 		if ( iter == m_floats.end() )
-			throw;
-		return (*iter).second;
+			return 0;
+		return &(*iter).second;
 	}
 	
-	inline const TemplPrimVar<RtInt> &ints(const RtToken token) const
+	inline const TemplPrimVar<RtInt> *ints(const RtToken token) const
 	{
 		TypeConstIntIterator iter = m_ints.find(token);
 		if ( iter == m_ints.end() )
-			throw;
-		return (*iter).second;
+			return 0;
+		return &(*iter).second;
 	}
 	
-	inline const TemplPrimVar<RtToken> &tokens(const RtToken token) const
+	inline const TemplPrimVar<std::string> *strings(const RtToken token) const
 	{
-		TypeConstTokenIterator iter = m_tokens.find(token);
-		if ( iter == m_tokens.end() )
-			throw;
-		return (*iter).second;
+		TypeConstStringIterator iter = m_strings.find(token);
+		if ( iter == m_strings.end() )
+			return 0;
+		return &(*iter).second;
 	}
 
-	inline std::vector<TypeIndex> &indices() {
-		return m_indices;
-	}
-	inline const std::vector<TypeIndex> &indices() const {
-		return m_indices;
-	}
+	inline TemplPrimVar<RtFloat> *floats(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> *>(((const CFace *)this)->floats(token)); }
+	inline TemplPrimVar<RtInt> *ints(const RtToken token) { return const_cast<TemplPrimVar<RtInt> *>(((const CFace *)this)->ints(token)); }
+	inline TemplPrimVar<std::string> *strings(const RtToken token) { return const_cast<TemplPrimVar<std::string> *>(((const CFace *)this)->strings(token)); }
 	
-	inline TemplPrimVar<RtFloat> &floats(const RtToken token) { return const_cast<TemplPrimVar<RtFloat> &>(((const CFace *)this)->floats(token)); }
-	inline TemplPrimVar<RtInt> &ints(const RtToken token) { return const_cast<TemplPrimVar<RtInt> &>(((const CFace *)this)->ints(token)); }
-	inline TemplPrimVar<RtToken> &tokens(const RtToken token) { return const_cast<TemplPrimVar<RtToken> &>(((const CFace *)this)->tokens(token)); }
-	
-	inline TypeConstFloatIterator floatBegin() const { return m_floats.begin(); }
-	inline TypeConstFloatIterator floatEnd() const { return m_floats.end(); }
-	inline TypeConstIntIterator intBegin() const { return m_ints.begin(); }
-	inline TypeConstIntIterator intEnd() const { return m_ints.end(); }
-	inline TypeConstTokenIterator tokenBegin() const { return m_tokens.begin(); }
-	inline TypeConstTokenIterator TokenEnd() const { return m_tokens.end(); }
+	inline TypeConstFloatIterator floatsBegin() const { return m_floats.begin(); }
+	inline TypeConstFloatIterator floatsEnd() const { return m_floats.end(); }
+	inline TypeFloatIterator floatsBegin() { return m_floats.begin(); }
+	inline TypeFloatIterator floatsEnd() { return m_floats.end(); }
+
+	inline TypeConstIntIterator intsBegin() const { return m_ints.begin(); }
+	inline TypeConstIntIterator intsEnd() const { return m_ints.end(); }
+	inline TypeIntIterator intsBegin() { return m_ints.begin(); }
+	inline TypeIntIterator intsEnd() { return m_ints.end(); }
+
+	inline TypeConstStringIterator stringsBegin() const { return m_strings.begin(); }
+	inline TypeConstStringIterator stringsEnd() const { return m_strings.end(); }
+	inline TypeStringIterator stringsBegin() { return m_strings.begin(); }
+	inline TypeStringIterator stringsEnd() { return m_strings.end(); }
 }; // CFace
 
 

@@ -34,6 +34,10 @@
 #include "ricpp/ricontext/dorender.h"
 #endif // _RICPP_RICONTEXT_DORENDER_H
 
+#ifndef _RICPP_RICONTEXT_SURFACE_H
+#include "ricpp/ricontext/surface.h"
+#endif // _RICPP_RICONTEXT_SURFACE_H
+
 namespace RiCPP {
 
 /** @brief This class is used to implement the basis of a renderer context.
@@ -45,6 +49,11 @@ namespace RiCPP {
  *  its rendering jobs. The CBaseRenderer is the foundation of the backend renderer context.
  */
 class CBaseRenderer : public IDoRender {
+	
+protected:
+	typedef IDoRender TypeParent;
+
+private:
 	/** @brief For initialization
 	 */
 	CTypeInfo c;
@@ -129,6 +138,20 @@ class CBaseRenderer : public IDoRender {
 	 *  @see registerResources(), getNewAttributesResourceFactory(), delteAttributesResourceFactory()
 	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
+
+	///! Delayed requests
+	class CDelayedRequest {
+	public:
+		CRManInterfaceCall *m_req; //!< Request (graphics primitive for delayed call)
+		CAttributes *m_attributes; //!< Attribute set that was valid while request was called
+		CTransformation *m_transformation; //!< To world transformation (cuurent valid while request was called)
+		inline CDelayedRequest(CRManInterfaceCall *req, const CAttributes *attrib, const CTransformation *trans)
+		: m_req(req), m_attributes(attrib), m_transformation(trans) {}
+	};
+	std::list<CDelayedRequest> m_delayedRequests; //!< used to store delayed requests
+	bool m_replayDelayedMode; //!< true, while replaying of delayed requests (controlled via doWorldEnd())
+	CAttributes *m_attributes; //!< Attributes of delayed request
+	CTransformation *m_transformation; //!< Transformation of delayed request
 
 protected:
 	/** @brief Callbacks for the rib parser to the front end.
@@ -402,6 +425,30 @@ protected:
 	 */
 	virtual void processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params);
 
+	/** @brief Hides (renders) a single face of a surface
+	 *  @param f Single face of a surface
+	 */
+	inline virtual void hide(const CFace &f) {}
+	
+	/** @brief Hides (renders) a surface, calls hide for each face
+	 *  @param s Surface
+	 */
+	virtual void hide(const CSurface *s);
+
+	CAttributes &attributes();
+	CTransformation &transformation();
+	bool delayRequest(CRManInterfaceCall &obj);
+	void initDelayed();
+	void replayDelayed();
+
+	/** @brief Gets the current to camera matrix
+	 *
+	 *  Matrix is only valid inside a world block.
+	 *
+	 *  @return Matrix transforms from current to camera coordinate system.
+	 */
+	CMatrix3D toCamera();
+
 public:
 
 	virtual bool init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls);
@@ -418,6 +465,10 @@ public:
 	/** @brief Virtual destruction
 	 */
 	virtual ~CBaseRenderer();
+
+	bool isOpaque(const std::vector<RtFloat> &opacity);
+	RtFloat opacityToAlpha(const std::vector<RtFloat> &opacity);	
+	void getColor3f(const std::vector<RtFloat> &fromC, RtFloat toC[3], const CColorDescr &c, RtFloat gain, RtFloat gamma);
 
 	virtual void registerRibParserCallback(IRibParserCallback &cb);
 	inline virtual IRi *frontend() { return m_parserCallback ? &m_parserCallback->frontend() : 0; }

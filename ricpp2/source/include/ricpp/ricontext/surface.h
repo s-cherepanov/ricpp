@@ -30,9 +30,9 @@
  *  @brief Container class for surfaces
  */
 
-#ifndef _RICPP_DECLARATION_DECLARATION_H
-#include "ricpp/declaration/declaration.h"
-#endif // _RICPP_DECLARATION_DECLARATION_H
+#ifndef _RICPP_RICONTEXT_PARAMETER_H
+#include "ricpp/ricontext/parameter.h"
+#endif // _RICPP_RICONTEXT_PARAMETER_H
 
 #include <list>
 
@@ -173,6 +173,11 @@ public:
 	inline TypeConstStringIterator stringsEnd() const { return m_strings.end(); }
 	inline TypeStringIterator stringsBegin() { return m_strings.begin(); }
 	inline TypeStringIterator stringsEnd() { return m_strings.end(); }
+	
+	void insertConst(const CParameter &p);
+	void insertUniform(const CParameter &p, RtInt face);
+	void insertVarying(const CParameter &p, RtInt nverts, const RtInt *verts);
+	void insertFaceVarying(const CParameter &p, RtInt nverts, RtInt offs);
 }; // CFace
 
 

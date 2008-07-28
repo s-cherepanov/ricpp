@@ -41,9 +41,13 @@
 namespace RiCPP {
 
 	class CTesselator {
+		std::list<CSurface *> m_surfaces;
 	public:
-		inline virtual ~CTesselator() {}
-		virtual void releaseSurface(CSurface *surf);
+		CTesselator();
+		virtual ~CTesselator();
+
+		bool releaseSurface(CSurface *surf);
+		CSurface *createSurface();
 	};
 	
 	class CTriangulator : public CTesselator {
@@ -53,8 +57,24 @@ namespace RiCPP {
 	
 	class CPolygonTriangulator : public CTriangulator {
 	public:
+		void triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const;
 	};
 	
+	class CConvexPolygonTriangulator : public CPolygonTriangulator {
+	public:
+		CSurface *triangulate(CRiPolygon &obj);
+	};
+
+	class CConvexPointsPolygonsTriangulator : public CPolygonTriangulator {
+	public:
+		CSurface *triangulate(CRiPointsPolygons &obj);
+	};
+
+	class CGeneralPolygonTriangulator : public CPolygonTriangulator {
+	public:
+		CSurface *triangulate(CRiGeneralPolygon &obj, const IPolygonTriangulationStrategy &strategy);
+	};
+
 	class CPointsGeneralPolygonsTriangulator : public CPolygonTriangulator {
 	public:
 		CSurface *triangulate(CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy);

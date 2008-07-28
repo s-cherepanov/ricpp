@@ -190,6 +190,9 @@
 		C383C10C0DBC89510059B71D /* testpoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C383C10B0DBC89510059B71D /* testpoly.cpp */; };
 		C383C1130DBC8A0C0059B71D /* polygon.h in Headers */ = {isa = PBXBuildFile; fileRef = C383C1120DBC8A0C0059B71D /* polygon.h */; };
 		C383C12C0DBC900A0059B71D /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
+		C3851FC00E3DF65000F74D69 /* trianglerenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C3851FBF0E3DF65000F74D69 /* trianglerenderer.h */; };
+		C3851FC80E3DF94200F74D69 /* trianglerenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3851FC70E3DF94200F74D69 /* trianglerenderer.cpp */; };
+		C38520E00E3E184700F74D69 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38520DF0E3E184700F74D69 /* surface.cpp */; };
 		C3969E5C0DDF098C00562F24 /* MyNSObjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */; };
 		C3A8FA760D74CBF700C1013B /* ricppconst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA720D74CBF700C1013B /* ricppconst.h */; };
 		C3A8FA770D74CBF700C1013B /* ricppdecls.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA730D74CBF700C1013B /* ricppdecls.h */; };
@@ -660,6 +663,9 @@
 		C383C1020DBC88E00059B71D /* testpoly */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testpoly; sourceTree = BUILT_PRODUCTS_DIR; };
 		C383C10B0DBC89510059B71D /* testpoly.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = testpoly.cpp; path = ../../../source/test/testpoly.cpp; sourceTree = SOURCE_ROOT; };
 		C383C1120DBC8A0C0059B71D /* polygon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = polygon.h; path = ../../../source/include/ricpp/ricontext/polygon.h; sourceTree = SOURCE_ROOT; };
+		C3851FBF0E3DF65000F74D69 /* trianglerenderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = trianglerenderer.h; path = ../../../source/include/ricpp/baserenderer/trianglerenderer.h; sourceTree = SOURCE_ROOT; };
+		C3851FC70E3DF94200F74D69 /* trianglerenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = trianglerenderer.cpp; path = ../../../source/baserenderer/trianglerenderer.cpp; sourceTree = SOURCE_ROOT; };
+		C38520DF0E3E184700F74D69 /* surface.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = surface.cpp; path = ../../../source/ricontext/surface.cpp; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyNSObjectController.m; path = ../../../source/riglapp/MyNSObjectController.m; sourceTree = SOURCE_ROOT; };
 		C3969E5D0DDF09AE00562F24 /* MyNSObjectController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyNSObjectController.h; path = ../../../source/riglapp/MyNSObjectController.h; sourceTree = SOURCE_ROOT; };
@@ -1426,6 +1432,7 @@
 				C3C9AE380D70BC9F00A04717 /* ribelements.cpp */,
 				C37245B90CD5DE5500945563 /* ricontext.cpp */,
 				C37245BA0CD5DE5500945563 /* rimacro.cpp */,
+				C38520DF0E3E184700F74D69 /* surface.cpp */,
 				C37245BB0CD5DE5500945563 /* transformation.cpp */,
 				C38221380E378A830032A70E /* triangulation.cpp */,
 			);
@@ -1544,6 +1551,7 @@
 			isa = PBXGroup;
 			children = (
 				C35100210D70DD2B008AC346 /* baserenderer.h */,
+				C3851FBF0E3DF65000F74D69 /* trianglerenderer.h */,
 			);
 			fileEncoding = 5;
 			includeInIndex = 1;
@@ -1555,6 +1563,7 @@
 			isa = PBXGroup;
 			children = (
 				C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */,
+				C3851FC70E3DF94200F74D69 /* trianglerenderer.cpp */,
 			);
 			fileEncoding = 5;
 			includeInIndex = 1;
@@ -2221,6 +2230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C35100220D70DD2B008AC346 /* baserenderer.h in Headers */,
+				C3851FC00E3DF65000F74D69 /* trianglerenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2940,6 +2950,7 @@
 				C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */,
 				C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */,
 				C38221390E378A830032A70E /* triangulation.cpp in Sources */,
+				C38520E00E3E184700F74D69 /* surface.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2972,6 +2983,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3C9AE440D70BD5D00A04717 /* baserenderer.cpp in Sources */,
+				C3851FC80E3DF94200F74D69 /* trianglerenderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

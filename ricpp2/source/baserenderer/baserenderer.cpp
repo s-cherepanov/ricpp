@@ -128,6 +128,41 @@ using namespace RiCPP;
 	} \
 }
 
+
+bool CBaseRenderer::isOpaque(const std::vector<RtFloat> &opacity) {
+	for ( std::vector<RtFloat>::const_iterator i = opacity.begin(); i != opacity.end(); i++ ) {
+		if ( (*i) < 1.0 )
+			return false;
+	}
+	return false;
+}
+
+RtFloat CBaseRenderer::opacityToAlpha(const std::vector<RtFloat> &opacity) {
+	RtFloat alpha = 0;
+	for ( std::vector<RtFloat>::const_iterator i = opacity.begin(); i != opacity.end(); i++ ) {
+		alpha += (*i)/opacity.size();
+	}
+	if ( nearlyZero(alpha-1.0) ) {
+		return 1.0;
+	}
+	return alpha;
+}
+
+void CBaseRenderer::getColor3f(const std::vector<RtFloat> &fromC, RtFloat toC[3], const CColorDescr &c, RtFloat gain, RtFloat gamma)
+{
+	if ( fromC.size() != c.colorSamples() ) {
+		toC[0] = 0;
+		toC[1] = 0;
+		toC[2] = 0;
+		return;
+	}
+	c.nToRGB((RtFloat *)&fromC[0], toC);
+	toC[0] = pow(toC[0]*gain, 1.0/gamma);
+	toC[1] = pow(toC[1]*gain, 1.0/gamma);
+	toC[2] = pow(toC[2]*gain, 1.0/gamma);
+}
+
+
 CBaseRenderer::CBaseRenderer() :
 	m_renderState(0),
 	m_parserCallback(0)
@@ -140,6 +175,7 @@ CBaseRenderer::CBaseRenderer() :
 	m_filterFuncFactory = 0;
 	m_macroFactory = 0;
 	m_attributesResourceFactory = 0;
+	initDelayed();
 }
 
 CBaseRenderer::~CBaseRenderer()
@@ -185,6 +221,99 @@ CBaseRenderer::~CBaseRenderer()
 	}
 	m_attributesResourceFactory = 0;
 }
+
+
+void CBaseRenderer::hide(const CSurface *s)
+{
+	if ( !s )
+		return;
+	CSurface::const_iterator iter;
+	for ( iter = s->begin(); iter != s->end(); iter++ ) {
+		hide(*iter);
+	}
+}
+
+
+CAttributes &CBaseRenderer::attributes()
+{
+	if ( m_replayDelayedMode ) {
+		assert (m_attributes != 0);
+		if ( m_attributes != 0)
+			return *m_attributes;
+	}
+	
+	return renderState()->attributes();
+}
+
+CTransformation &CBaseRenderer::transformation()
+{
+	if ( m_replayDelayedMode ) {
+		assert (m_transformation != 0);
+		if ( m_transformation != 0)
+			return *m_transformation;
+	}
+	
+	return renderState()->curTransform();
+}
+
+bool CBaseRenderer::delayRequest(CRManInterfaceCall &obj)
+{
+	// No motion blur (only first primitive)
+	if ( renderState()->motionState().curSampleIdx() > 0 )
+		return false;
+	
+	// Delay transparent polygons
+	if ( !m_replayDelayedMode ) {
+		RtFloat alpha = opacityToAlpha(attributes().opacity());
+		if ( alpha < 1.0 ) {
+			obj.deferedDeletion(true);
+			renderState()->lockState();
+			m_delayedRequests.push_back(CDelayedRequest(&obj, renderState()->lockedAttributes(), renderState()->lockedTransformation()));
+			return true;
+		}
+	}
+	return false;
+}
+
+void CBaseRenderer::initDelayed()
+{
+	m_attributes = 0;
+	m_transformation = 0;
+	m_replayDelayedMode = false;
+	m_delayedRequests.clear();
+}
+
+void CBaseRenderer::replayDelayed()
+{
+	m_replayDelayedMode = true;
+	
+	std::list<CDelayedRequest>::iterator i = m_delayedRequests.begin();
+	for ( ; i != m_delayedRequests.end(); ++i ) {
+		if ( (*i).m_req ) {
+			m_attributes = (*i).m_attributes;
+			m_transformation = (*i).m_transformation;
+			(*i).m_req->doProcess(*this);
+		}
+	}
+	
+	m_attributes = 0;
+	m_transformation = 0;
+	m_replayDelayedMode = false;
+	m_delayedRequests.clear();
+}
+
+CMatrix3D CBaseRenderer::toCamera()
+{
+	CMatrix3D m(transformation().getCTM());
+	CTransformation *woc = renderState()->worldToCamera();
+	if ( woc )
+		m.concatTransform(woc->getCTM());
+	
+	return m;
+}
+
+
+
 
 CRManInterfaceFactory *CBaseRenderer::getNewMacroFactory()
 {

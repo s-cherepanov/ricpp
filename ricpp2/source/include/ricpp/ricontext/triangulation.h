@@ -48,16 +48,21 @@ namespace RiCPP {
 
 		bool releaseSurface(CSurface *surf);
 		CSurface *createSurface();
+		
+		void getDelta(unsigned long &tess, RtFloat &delta) const;
+		void getDeltas(unsigned long &tessU, unsigned long &tessV, RtFloat &deltaU, RtFloat &deltaV) const;
 	};
 	
 	class CTriangulator : public CTesselator {
 	public:
 	};
 	
+	// =========================================================================
 	
 	class CPolygonTriangulator : public CTriangulator {
-	public:
+	protected:
 		void triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const;
+		void insertParameters(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs) const;
 	};
 	
 	class CConvexPolygonTriangulator : public CPolygonTriangulator {
@@ -80,6 +85,21 @@ namespace RiCPP {
 		CSurface *triangulate(CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy);
 	};
 
+
+	// =========================================================================
+
+	class CParametricTriangulator : public CTriangulator {
+	protected:
+	};
+
+	class CQuadricTriangulator : public CParametricTriangulator {
+	protected:
+	};
+	
+	class CParaboloidTriangulator : public CQuadricTriangulator {
+	public:
+		CSurface *triangulate(CRiParaboloid &obj, unsigned long tessU, unsigned long tessV);
+	};
 }
 
 #endif // _RICPP_RICONTEXT_TRIANGULATION_H

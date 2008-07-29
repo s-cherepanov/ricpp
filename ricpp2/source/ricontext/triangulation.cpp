@@ -78,6 +78,16 @@ CSurface *CTesselator::createSurface()
 	return s;
 }
 
+void CTesselator::getDelta(unsigned long &tess, RtFloat &delta) const
+{
+}
+
+void CTesselator::getDeltas(unsigned long &tessU, unsigned long &tessV, RtFloat &deltaU, RtFloat &deltaV) const
+{
+	getDelta(tessU, deltaU);
+	getDelta(tessV, deltaV);
+}
+
 // =============================================================================
 
 void CPolygonTriangulator::triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const
@@ -109,6 +119,43 @@ void CPolygonTriangulator::triangleStrip(std::vector<IndexType> &strip, IndexTyp
 	}
 }
 
+void CPolygonTriangulator::insertParameters(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs) const
+{
+	for ( CParameterList::const_iterator piter = plist.begin(); piter != plist.end(); piter++ ) {
+		const CParameter &p = (*piter);
+		
+		const CDeclaration *decl = p.declarationPtr();
+		if ( !decl )
+			continue;
+		
+		switch ( decl->storageClass() ) {
+				
+			case CLASS_CONSTANT:
+				f.insertConst(p);
+				break;
+				
+			case CLASS_UNIFORM:
+				f.insertUniform(p, faceIdx);
+				break;
+				
+			case CLASS_VARYING:
+				// NO break;
+			case CLASS_VERTEX:
+				f.insertVarying(p, nverts, &verts[vertsOffs]);
+				break;
+				
+			case CLASS_FACEVARYING:
+				// NO break;
+			case CLASS_FACEVERTEX:
+				f.insertFaceVarying(p, nverts, vertsOffs);
+				break;
+				
+			default:
+				break;
+		}
+	}
+}
+
 // =============================================================================
 
 CSurface *CConvexPolygonTriangulator::triangulate(CRiPolygon &obj)
@@ -127,11 +174,9 @@ CSurface *CConvexPolygonTriangulator::triangulate(CRiPolygon &obj)
 	triangleStrip(strip, nvertices, 0);
 	
 	for ( CParameterList::const_iterator piter = obj.parameters().begin(); piter != obj.parameters().end(); piter++ ) {
-		const CParameter &p = (*piter);
-		f.insertConst(p);
+		f.insertConst(*piter);
 	}
 	
-
 	f.sizes().resize(1);
 	f.sizes()[0] = strip.size();
 	
@@ -155,60 +200,26 @@ CSurface *CConvexPointsPolygonsTriangulator::triangulate(CRiPointsPolygons &obj)
 	
 	RtInt vertsOffs = 0;
 
-	for ( RtInt face = 0; face < npolys; ++face ) {
-		if ( obj.nVerts()[face] == 0 )
+	for ( RtInt faceIdx = 0; faceIdx < npolys; ++faceIdx ) {
+		if ( obj.nVerts()[faceIdx] == 0 )
 			continue;
 
 		CFace &f = surf->newFace();
 		f.faceType(FACETYPE_TRIANGLESTRIPS);
 		
-		RtInt nverts = obj.nVerts()[face];
+		RtInt nverts = obj.nVerts()[faceIdx];
 
 		std::vector<IndexType> &strip = f.indices();
 		triangleStrip(strip, nverts, vertsOffs);
-
-		for ( CParameterList::const_iterator piter = obj.parameters().begin(); piter != obj.parameters().end(); piter++ ) {
-			const CParameter &p = (*piter);
-
-			const CDeclaration *decl = p.declarationPtr();
-			if ( !decl )
-				continue;
-
-			switch ( decl->storageClass() ) {
-					
-				case CLASS_CONSTANT:
-					f.insertConst(p);
-					break;
-					
-				case CLASS_UNIFORM:
-					f.insertUniform(p, face);
-					break;
-					
-				case CLASS_VARYING:
-					// NO break;
-				case CLASS_VERTEX:
-					f.insertVarying(p, nverts, &obj.verts()[vertsOffs]);
-					break;
-					
-				case CLASS_FACEVARYING:
-					// NO break;
-				case CLASS_FACEVERTEX:
-					f.insertFaceVarying(p, nverts, vertsOffs);
-					break;
-					
-				default:
-					break;
-			}
-		}
-		
+		insertParameters(f, faceIdx, obj.parameters(), obj.verts(), nverts, vertsOffs);
 		f.sizes().resize(1);
-		f.sizes()[0] = strip.size();
-
+		f.sizes()[0] = strip.size();	
+		
 		if ( !f.floats(RI_N) ) {
 			// Add normals
 		}
 
-		vertsOffs += obj.nVerts()[face];
+		vertsOffs += obj.nVerts()[faceIdx];
 	}
 	
 	return surf;
@@ -233,16 +244,15 @@ CSurface *CGeneralPolygonTriangulator::triangulate(CRiGeneralPolygon &obj, const
 	CFace &f = surf->newFace();
 	f.faceType(FACETYPE_TRIANGLES);
 	
-	std::vector<IndexType> &idx = f.indices();
-	idx = tp->triangles();
+	std::vector<IndexType> &strip = f.indices();
+	strip = tp->triangles();
 	
 	for ( CParameterList::const_iterator piter = obj.parameters().begin(); piter != obj.parameters().end(); piter++ ) {
-		const CParameter &p = (*piter);
-		f.insertConst(p);
+		f.insertConst(*piter);
 	}
 	
 	f.sizes().resize(1);
-	f.sizes()[0] = idx.size();
+	f.sizes()[0] = strip.size();
 	
 	if ( !f.floats(RI_N) ) {
 		// Add normals
@@ -267,7 +277,7 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 	}
 
 	IndexType offs = 0;
-	RtInt face = 0;
+	RtInt faceIdx = 0;
 	RtInt nloops = 0;
 	RtInt nverts = 0;
 	RtInt nvertsOffs = 0;
@@ -275,9 +285,9 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 	for (
 		 std::vector<CTriangulatedPolygon>::const_iterator iter = tp.begin();
 		 iter != tp.end();
-		 iter++, face++, vertsOffs+=nverts )
+		 iter++, faceIdx++, vertsOffs+=nverts )
 	{
-		nloops = obj.nLoops()[face];
+		nloops = obj.nLoops()[faceIdx];
 		nverts = 0;
 		for ( RtInt loopi = 0; loopi < nloops; ++loopi ) {
 			nverts += obj.nVerts()[nvertsOffs++];
@@ -289,58 +299,32 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 		CFace &f = surf->newFace();
 		f.faceType(FACETYPE_TRIANGLES);
 		
-		std::vector<IndexType> &idx = f.indices();
-		idx = (*iter).triangles();
+		std::vector<IndexType> &strip = f.indices();
+		strip = (*iter).triangles();
 
-		for ( std::vector<IndexType>::iterator idxIter = idx.begin(); idxIter != idx.end(); idxIter++ ) {
-			(*idxIter) -= offs;
+		for ( std::vector<IndexType>::iterator stripIter = strip.begin(); stripIter != strip.end(); stripIter++ ) {
+			(*stripIter) -= offs;
 		}
 		
-		for ( CParameterList::const_iterator piter = obj.parameters().begin(); piter != obj.parameters().end(); piter++ ) {
-			const CParameter &p = (*piter);
-			const CDeclaration *decl = p.declarationPtr();
-			if ( !decl )
-				continue;
-			switch ( decl->storageClass() ) {
+		insertParameters(f, faceIdx, obj.parameters(), obj.verts(), nverts, vertsOffs);
 
-				case CLASS_CONSTANT: {
-					f.insertConst(p);
-					break;
-				}
-
-				case CLASS_UNIFORM: {
-					f.insertUniform(p, face);
-					break;
-				}
-					
-				case CLASS_VARYING:
-					// NO break;
-				case CLASS_VERTEX:
-					f.insertVarying(p, nverts, &obj.verts()[vertsOffs]);
-					break;
-					
-				case CLASS_FACEVARYING:
-					// NO break;
-				case CLASS_FACEVERTEX:
-					f.insertFaceVarying(p, nverts, vertsOffs);
-					break;
-					
-				default:
-					break;
-			}
-		}
-		
-		
 		f.sizes().resize(1);
-		f.sizes()[0] = idx.size();
+		f.sizes()[0] = strip.size();
 		
 		if ( !f.floats(RI_N) ) {
 			// Add normals
 		}
 
-		// Next polygon (face)
-		offs += idx.size();
+		// Next polygon (faceIdx)
+		offs += strip.size();
 	}
 	
 	return surf;
+}
+
+// =============================================================================
+
+CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, unsigned long tessU, unsigned long tessV)
+{
+	return 0;
 }

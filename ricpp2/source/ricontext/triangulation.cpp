@@ -30,11 +30,10 @@
 #include "ricpp/ricontext/triangulation.h"
 #include "ricpp/tools/templatefuncs.h"
 
-/*
 #ifdef _DEBUG
 #include <iostream>
+// #define _TRACE_PARABOLOID
 #endif
-*/
 
 using namespace RiCPP;
 
@@ -324,7 +323,180 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 
 // =============================================================================
 
-CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, unsigned long tessU, unsigned long tessV)
+CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin)
 {
-	return 0;
+	const RtFloat thetamaxrad = deg2rad(thetamax);
+	RtFloat thetaminrad = deg2rad(thetamin);
+	
+	if ( tess < 1 ) tess = 1;
+
+	RtFloat delta = (thetamaxrad-thetaminrad)/(RtFloat)tess;
+	if ( nearlyZero(delta) )
+		delta = eps<RtFloat>();
+	
+	IndexType nverts = tess+1;
+		
+	circledata.clear();
+	circledata.resize(nverts*2);
+
+	IndexType i;
+	IndexType endIdx = (nverts-1)*2;
+	for ( i=0; i<endIdx; thetaminrad+=delta) {
+		if ( thetaminrad > thetamaxrad )
+			thetaminrad = thetamaxrad;
+		circledata[i++] = (RtFloat)cos(thetaminrad);
+		assert(i<endIdx);
+		circledata[i++] = (RtFloat)sin(thetaminrad);
+	}
+	circledata[i++] = (RtFloat)cos(thetamaxrad);
+	circledata[i++] = (RtFloat)sin(thetamaxrad);
+}
+
+// =============================================================================
+void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, CFace &f)
+{
+#ifdef _TRACE_PARABOLOID
+	std::cout << "-> buildPN()" << std::endl;
+#endif
+	
+	const RtFloat zmin = obj.zMin();
+	const RtFloat zmax = obj.zMax();
+	const RtFloat rmax = obj.rMax();
+	const RtFloat thetamax = obj.thetaMax();
+	
+	const RtFloat flip = thetamax > 0 ? (RtFloat)1.0 : (RtFloat)-1.0;
+	
+	
+	IndexType realTessU = (IndexType)tessU;
+	IndexType realTessV = (IndexType)tessV;
+
+	RtFloat deltau = 0;
+	RtFloat deltav = 0;
+
+	for ( int i = 0; i < 2; ++i ) {
+		if ( realTessU + 1 < realTessU )
+			realTessU -= 1;
+		
+		if ( realTessV + 1 < realTessV )
+			realTessV -= 1;
+		
+		RtFloat deltau = (RtFloat)(1.0 / (RtFloat)realTessU);
+		RtFloat deltav = (RtFloat)(1.0 / (RtFloat)realTessV);
+		
+		if ( (1.0 + deltau) == 1.0 ) {
+			deltau = eps<RtFloat>();
+			realTessU = (IndexType)(1.0/deltau);
+		}
+		if ( (1.0 + deltav) == 1.0 ) {
+			deltav = eps<RtFloat>();
+			realTessV = (IndexType)(1.0/deltau);
+		}
+	}
+	
+	const IndexType nVar = ((IndexType)realTessU+1)*((IndexType)realTessV+1);
+
+	
+	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, nVar).value();
+	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, nVar).value();
+
+	
+	std::vector<RtFloat> unitcircle;
+	getUnitCircle(unitcircle, realTessU, thetamax);
+	
+	
+	RtFloat u, v, r, nn, z;
+	RtFloat ntemp[3];
+	
+	IndexType nidx  = 0;
+	IndexType pidx  = 0;
+	IndexType puidx  = 0;
+	
+	RtFloat len;
+	RtFloat m = rmax/zmax; // 2D: f(x) = mx**2; F(x)=2x+m
+	
+	RtFloat dz = (zmax - zmin) / (RtFloat)realTessV;
+	if ( nearlyZero(dz) )
+		dz = eps<RtFloat>();
+	
+	IndexType uverts;
+	IndexType vverts = realTessV+1;
+	
+	for ( z = zmin, v = 0.0; vverts > 0; z += dz, --vverts, v+=deltav ) {
+		if ( z > zmax )
+			z = zmax;
+		
+		r = rmax * (RtFloat)sqrt(z / zmax);
+		if ( vverts == 1 ) {
+			r = rmax;
+			v = 1.0;
+			z = zmax;
+		}
+		
+		nn = (RtFloat)(2.0*r+m); // -2.0*r-m ?
+		len = 0.0;
+		uverts = realTessU + 1;
+		
+		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=deltau ) {
+			if ( uverts == 1 )
+				u = 1.0;
+			
+			ntemp[0] = unitcircle[puidx++];
+			ntemp[1] = unitcircle[puidx++];
+			ntemp[2] = nn;
+			
+			p[pidx++] = r * ntemp[0];
+			p[pidx++] = r * ntemp[1];
+			p[pidx++] = z;
+			
+			if ( uverts == realTessU + 1 )
+				len = vlen3(ntemp);
+			
+			if ( nearlyZero(len) ) {
+				ntemp[0] = 0.0;
+				ntemp[1] = 0.0;
+				ntemp[2] = (RtFloat)-1.0;
+			} else {
+				ntemp[0] /= len;
+				ntemp[1] /= len;
+				ntemp[2] /= len;
+			}
+			
+			n[nidx++] = ntemp[0] * flip;
+			n[nidx++] = ntemp[1] * flip;
+			n[nidx++] = ntemp[2] * flip;
+		}
+	}
+
+#ifdef _TRACE_PARABOLOID
+	std::cout << "<- buildPN()" << std::endl;
+#endif
+}
+
+
+static bool isFloat3Decl(const CDeclaration &decl)
+{
+	if ( decl.basicType() != BASICTYPE_FLOAT )
+		return false;
+	if ( decl.elemSize() != 3 )
+		return false;
+	return true;
+}
+
+
+CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV)
+{
+	if ( tessU < 0 || tessV < 0 || !isFloat3Decl(posDecl) || !isFloat3Decl(normDecl) )
+		return 0;
+
+	CSurface *surf = createSurface();
+	if ( !surf ) {
+		return 0;
+	}
+
+	CFace &f = surf->newFace();
+
+	buildPN(obj, posDecl, normDecl, tessU, tessV, f);
+
+	f.buildStripIndices(tessU, tessV);
+	return surf;
 }

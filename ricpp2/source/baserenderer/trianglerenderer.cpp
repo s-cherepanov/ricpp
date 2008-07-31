@@ -58,3 +58,16 @@ RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
 	CPointsGeneralPolygonsTriangulator t;
 	hide(t.triangulate(obj, polygonTriangulationStrategy()));
 }
+
+RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
+{
+	CParaboloidTriangulator t;
+	CDeclaration *pdecl = renderState()->declFind(RI_P);
+	if ( !pdecl )
+		return;
+	CDeclaration *ndecl = renderState()->declFind(RI_N);
+	if ( !ndecl )
+		return;
+	hide(t.triangulate(obj, *pdecl, *ndecl, 63, 63));
+}
+

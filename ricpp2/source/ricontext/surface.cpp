@@ -173,3 +173,45 @@ void CFace::insertFaceVarying(const CParameter &p, RtInt nverts, RtInt offs)
 			break;
 	}
 }
+
+TemplPrimVar<RtFloat> &CFace::insertFloatVar(const CDeclaration &decl, IndexType nVar)
+{
+	TemplPrimVar<RtFloat> &f = m_floats[decl.token()];
+	f.decl(&decl);
+	f.value().resize(nVar * decl.elemSize());
+	return f;
+}
+
+
+void CFace::buildStripIndices(IndexType tessU, IndexType tessV)
+{
+	const IndexType uIndices = (tessU+1)*2;
+	const IndexType nStrips = tessV;
+	const IndexType lastRowIdx = (tessU+1)*tessV;
+	
+	m_faceType = FACETYPE_TRIANGLESTRIPS;
+
+	m_indices.clear();
+	m_sizes.clear();
+	
+	m_indices.resize(nStrips*uIndices);
+	std::vector<IndexType>::iterator idxIter = m_indices.begin();
+	for ( IndexType startIdx = 0; startIdx < lastRowIdx; ) {
+		const IndexType nextRowIdx = startIdx + tessU+1;
+		for ( IndexType idx = startIdx; idx < nextRowIdx; ++idx) {
+			assert(idxIter != m_indices.end());
+			*idxIter = idx;
+			idxIter++;
+			assert(idxIter != m_indices.end());
+			*idxIter = (idx+tessU+1);
+			idxIter++;
+		}
+		startIdx = nextRowIdx;
+	}
+	
+	m_sizes.resize(nStrips);
+	std::vector<IndexType>::iterator sizeIter = m_sizes.begin();
+	for ( ; sizeIter != m_sizes.end(); sizeIter++ ) {
+		*sizeIter = uIndices;
+	}
+}

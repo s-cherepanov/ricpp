@@ -52,7 +52,7 @@ public:
 	inline std::vector<ValueType> &value() { return m_value; }
 	inline const std::vector<ValueType> &value() const { return m_value; }
 
-	inline void decl(CDeclaration *theDecl) { m_decl = theDecl; }
+	inline void decl(const CDeclaration *theDecl) { m_decl = theDecl; }
 	inline const CDeclaration *decl() const { return m_decl; }
 }; // TemplPrimVar
 
@@ -178,6 +178,10 @@ public:
 	void insertUniform(const CParameter &p, RtInt face);
 	void insertVarying(const CParameter &p, RtInt nverts, const RtInt *verts);
 	void insertFaceVarying(const CParameter &p, RtInt nverts, RtInt offs);
+
+	TemplPrimVar<RtFloat> &insertFloatVar(const CDeclaration &decl, IndexType nVar);
+
+	void buildStripIndices(IndexType tessU, IndexType tessV);
 }; // CFace
 
 

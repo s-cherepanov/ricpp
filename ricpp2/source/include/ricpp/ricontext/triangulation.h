@@ -94,11 +94,13 @@ namespace RiCPP {
 
 	class CQuadricTriangulator : public CParametricTriangulator {
 	protected:
+		getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0);
 	};
 	
 	class CParaboloidTriangulator : public CQuadricTriangulator {
+		void buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, CFace &f);
 	public:
-		CSurface *triangulate(CRiParaboloid &obj, unsigned long tessU, unsigned long tessV);
+		CSurface *triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV);
 	};
 }
 

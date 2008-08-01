@@ -842,7 +842,7 @@ void TParaboloidMesh::createPN(IndexType tessU, IndexType tessV, RtFloat rmax, R
 	IndexType puidx  = 0;
 
 	RtFloat len;
-	RtFloat m = rmax/zmax; // 2D: f(x) = mx**2; F(x)=2x+m
+	RtFloat m = zmax/(rmax*rmax); // 2D: f(x) = mx**2; F(x)=2mx
 
 	RtFloat dz = (zmax - zmin) / (RtFloat)m_tessV;
 	IndexType uverts;
@@ -856,36 +856,30 @@ void TParaboloidMesh::createPN(IndexType tessU, IndexType tessV, RtFloat rmax, R
 			z = zmax;
 		}
 
-		nn = (RtFloat)(-2.0*r-m);
-		len = 0.0;
+		nn = (RtFloat)(2.0*m*r);
+		len = 1.0;
 		uverts = m_tessU + 1;
 
 		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=deltau ) {
 			if ( uverts == 1 )
 				u = 1.0;
 
-			n[0] = unitcircle[puidx];
-			n[1] = unitcircle[++puidx];
-			n[2] = nn;
-			++puidx;
+			n[0] = nn*unitcircle[puidx];
+			n[1] = nn*unitcircle[puidx+1];
+			n[2] = -1;
 
-			(*m_vertexStrip)[pidx]   = r * n[0];
-			(*m_vertexStrip)[++pidx] = r * n[1];
+			(*m_vertexStrip)[pidx]   = r * unitcircle[puidx];
+			(*m_vertexStrip)[++pidx] = r * unitcircle[++puidx];
 			(*m_vertexStrip)[++pidx] = z;
 			++pidx;
+			++puidx;
 
 			if ( uverts == m_tessU + 1 )
 				len = (RtFloat)sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2]);
 
-			if ( len == 0.0 ) {
-				n[0] = 0.0;
-				n[1] = 0.0;
-				n[2] = (RtFloat)-1.0;
-			} else {
-				n[0] /= len;
-				n[1] /= len;
-				n[2] /= len;
-			}
+			n[0] /= len;
+			n[1] /= len;
+			n[2] /= len;
 
 			(*m_normalStrip)[nidx] = n[0] * changeOrientation;
 			++nidx;

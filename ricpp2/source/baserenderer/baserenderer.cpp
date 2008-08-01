@@ -157,9 +157,9 @@ void CBaseRenderer::getColor3f(const std::vector<RtFloat> &fromC, RtFloat toC[3]
 		return;
 	}
 	c.nToRGB((RtFloat *)&fromC[0], toC);
-	toC[0] = pow(toC[0]*gain, 1.0/gamma);
-	toC[1] = pow(toC[1]*gain, 1.0/gamma);
-	toC[2] = pow(toC[2]*gain, 1.0/gamma);
+	toC[0] = pow(toC[0]*gain, (RtFloat)1.0/gamma);
+	toC[1] = pow(toC[1]*gain, (RtFloat)1.0/gamma);
+	toC[2] = pow(toC[2]*gain, (RtFloat)1.0/gamma);
 }
 
 
@@ -305,7 +305,7 @@ void CBaseRenderer::replayDelayed()
 CMatrix3D CBaseRenderer::toCamera()
 {
 	CMatrix3D m(transformation().getCTM());
-	CTransformation *woc = renderState()->worldToCamera();
+	const CTransformation *woc = renderState()->worldToCamera();
 	if ( woc )
 		m.concatTransform(woc->getCTM());
 	

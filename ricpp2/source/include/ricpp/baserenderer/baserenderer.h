@@ -145,7 +145,7 @@ private:
 		CRManInterfaceCall *m_req; //!< Request (graphics primitive for delayed call)
 		CAttributes *m_attributes; //!< Attribute set that was valid while request was called
 		CTransformation *m_transformation; //!< To world transformation (cuurent valid while request was called)
-		inline CDelayedRequest(CRManInterfaceCall *req, const CAttributes *attrib, const CTransformation *trans)
+		inline CDelayedRequest(CRManInterfaceCall *req, CAttributes *attrib, CTransformation *trans)
 		: m_req(req), m_attributes(attrib), m_transformation(trans) {}
 	};
 	std::list<CDelayedRequest> m_delayedRequests; //!< used to store delayed requests

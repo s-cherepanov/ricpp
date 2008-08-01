@@ -330,8 +330,8 @@ const std::vector<CTriangulatedPolygon> &CRiPointsGeneralPolygons::triangulate(c
 	// Triangulate polygons
 	m_triangulated.resize(m_nLoops.size());
 	RtInt nvertscnt = 0, vertscnt = 0;
-	int j;
-	for ( int i = 0; i < m_nLoops.size(); ++i ) {
+	RtInt j;
+	for ( unsigned int i = 0; i < m_nLoops.size(); ++i ) {
 		m_triangulated[i].triangulate(strategy, m_nLoops[i], &m_nVerts[nvertscnt], &m_verts[vertscnt], &f[0]);
 		for ( j = 0; j < m_nLoops[i]; ++j ) {
 			vertscnt += m_nVerts[nvertscnt++];

@@ -374,6 +374,7 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 	RtFloat deltav = 0;
 	
 	RtFloat flipNormal = primitiveOrientation == RI_RH ? -1.0 : 1.0;
+	// flipNormal = 1.0;
 
 	for ( int i = 0; i < 2; ++i ) {
 		if ( realTessU + 1 < realTessU )

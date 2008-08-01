@@ -35,6 +35,13 @@
 
 using namespace RiCPP;
 
+
+CTriangleRenderer::CTriangleRenderer()
+{
+	m_tessX = 15;
+	m_tessY = 15;
+}
+
 RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
 {
 	CConvexPolygonTriangulator t;
@@ -68,6 +75,6 @@ RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
 	CDeclaration *ndecl = renderState()->declFind(RI_N);
 	if ( !ndecl )
 		return;
-	hide(t.triangulate(obj, *pdecl, *ndecl, 63, 63));
+	hide(t.triangulate(obj, *pdecl, *ndecl, m_tessX, m_tessY));
 }
 

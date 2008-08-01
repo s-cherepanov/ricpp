@@ -48,11 +48,15 @@ namespace RiCPP {
 
 	private:
 		CEarClipper m_earClipper; ///< Triangulation strategy
+		RtInt m_tessX;
+		RtInt m_tessY;
 		
 	protected:
 		inline virtual const IPolygonTriangulationStrategy &polygonTriangulationStrategy() const { return m_earClipper; }
 		
 	public:
+		CTriangleRenderer();
+
 		virtual RtVoid triangulate(CRiPolygon &obj);
 		virtual RtVoid triangulate(CRiPointsPolygons &obj);
 		virtual RtVoid triangulate(CRiGeneralPolygon &obj);

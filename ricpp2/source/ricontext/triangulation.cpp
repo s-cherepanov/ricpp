@@ -364,9 +364,6 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 	const RtFloat rmax = obj.rMax();
 	const RtFloat thetamax = obj.thetaMax();
 	
-	const RtFloat flip = thetamax > 0 ? (RtFloat)1.0 : (RtFloat)-1.0;
-	
-	
 	IndexType realTessU = (IndexType)tessU;
 	IndexType realTessV = (IndexType)tessV;
 
@@ -405,16 +402,17 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 	
 	
 	RtFloat u, v, r, nn, z;
-	RtFloat ntemp[3];
 	
 	IndexType nidx  = 0;
 	IndexType pidx  = 0;
 	IndexType puidx  = 0;
 	
 	RtFloat len;
-	RtFloat m = rmax/zmax; // 2D: f(x) = mx**2; F(x)=2x+m
+	RtFloat ntemp[3];
+	RtFloat m = zmax/(rmax*rmax); // 2D: f(x) = mx**2; F(x)=2mx
 	
-	RtFloat dz = (zmax - zmin) / (RtFloat)realTessV;
+	RtFloat rangez = zmax - zmin;
+	RtFloat dz = rangez / (RtFloat)realTessV;
 	if ( nearlyZero(dz) )
 		dz = eps<RtFloat>();
 	
@@ -432,38 +430,31 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 			z = zmax;
 		}
 		
-		nn = (RtFloat)(2.0*r+m); // -2.0*r-m ?
-		len = 0.0;
+		nn = (RtFloat)(2.0*m*r);
+		len = 1.0;
 		uverts = realTessU + 1;
 		
 		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=deltau ) {
 			if ( uverts == 1 )
 				u = 1.0;
 			
-			ntemp[0] = unitcircle[puidx++];
-			ntemp[1] = unitcircle[puidx++];
-			ntemp[2] = nn;
-			
-			p[pidx++] = r * ntemp[0];
-			p[pidx++] = r * ntemp[1];
+			ntemp[0] = nn * unitcircle[puidx];
+			ntemp[1] = nn * unitcircle[puidx+1];
+			ntemp[2] = -1;
+
+			p[pidx++] = r * unitcircle[puidx++];
+			p[pidx++] = r * unitcircle[puidx++];
 			p[pidx++] = z;
 			
-			if ( uverts == realTessU + 1 )
-				len = vlen3(ntemp);
+			len = vlen3(ntemp);
+
+			ntemp[0] /= len;
+			ntemp[1] /= len;
+			ntemp[2] /= len;
 			
-			if ( nearlyZero(len) ) {
-				ntemp[0] = 0.0;
-				ntemp[1] = 0.0;
-				ntemp[2] = (RtFloat)-1.0;
-			} else {
-				ntemp[0] /= len;
-				ntemp[1] /= len;
-				ntemp[2] /= len;
-			}
-			
-			n[nidx++] = ntemp[0] * flip;
-			n[nidx++] = ntemp[1] * flip;
-			n[nidx++] = ntemp[2] * flip;
+			n[nidx++] = ntemp[0];
+			n[nidx++] = ntemp[1];
+			n[nidx++] = ntemp[2];
 		}
 	}
 

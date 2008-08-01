@@ -194,16 +194,17 @@ void CFace::buildStripIndices(IndexType tessU, IndexType tessV)
 	m_indices.clear();
 	m_sizes.clear();
 	
+	// RMan is left handed
 	m_indices.resize(nStrips*uIndices);
 	std::vector<IndexType>::iterator idxIter = m_indices.begin();
 	for ( IndexType startIdx = 0; startIdx < lastRowIdx; ) {
 		const IndexType nextRowIdx = startIdx + tessU+1;
 		for ( IndexType idx = startIdx; idx < nextRowIdx; ++idx) {
 			assert(idxIter != m_indices.end());
-			*idxIter = idx;
+			*idxIter = (idx+tessU+1);
 			idxIter++;
 			assert(idxIter != m_indices.end());
-			*idxIter = (idx+tessU+1);
+			*idxIter = idx;
 			idxIter++;
 		}
 		startIdx = nextRowIdx;

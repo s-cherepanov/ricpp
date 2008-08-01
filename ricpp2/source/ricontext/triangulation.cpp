@@ -325,6 +325,9 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 
 CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin)
 {
+	if ( thetamax < thetamin )
+		std::swap(thetamax, thetamin);
+	
 	const RtFloat thetamaxrad = deg2rad(thetamax);
 	RtFloat thetaminrad = deg2rad(thetamin);
 	
@@ -353,7 +356,7 @@ CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType 
 }
 
 // =============================================================================
-void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, CFace &f)
+void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, RtToken primitiveOrientation, CFace &f)
 {
 #ifdef _TRACE_PARABOLOID
 	std::cout << "-> buildPN()" << std::endl;
@@ -369,6 +372,8 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 
 	RtFloat deltau = 0;
 	RtFloat deltav = 0;
+	
+	RtFloat flipNormal = primitiveOrientation == RI_RH ? -1.0 : 1.0;
 
 	for ( int i = 0; i < 2; ++i ) {
 		if ( realTessU + 1 < realTessU )
@@ -452,9 +457,9 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 			ntemp[1] /= len;
 			ntemp[2] /= len;
 			
-			n[nidx++] = ntemp[0];
-			n[nidx++] = ntemp[1];
-			n[nidx++] = ntemp[2];
+			n[nidx++] = flipNormal*ntemp[0];
+			n[nidx++] = flipNormal*ntemp[1];
+			n[nidx++] = flipNormal*ntemp[2];
 		}
 	}
 
@@ -464,19 +469,9 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 }
 
 
-static bool isFloat3Decl(const CDeclaration &decl)
+CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, RtToken primitiveOrientation)
 {
-	if ( decl.basicType() != BASICTYPE_FLOAT )
-		return false;
-	if ( decl.elemSize() != 3 )
-		return false;
-	return true;
-}
-
-
-CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV)
-{
-	if ( tessU < 0 || tessV < 0 || !isFloat3Decl(posDecl) || !isFloat3Decl(normDecl) )
+	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
 		return 0;
 
 	CSurface *surf = createSurface();
@@ -486,7 +481,7 @@ CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclar
 
 	CFace &f = surf->newFace();
 
-	buildPN(obj, posDecl, normDecl, tessU, tessV, f);
+	buildPN(obj, posDecl, normDecl, tessU, tessV, primitiveOrientation, f);
 
 	f.buildStripIndices(tessU, tessV);
 	return surf;

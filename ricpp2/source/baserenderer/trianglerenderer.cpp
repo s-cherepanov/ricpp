@@ -35,11 +35,12 @@
 
 using namespace RiCPP;
 
+#define TESSELATION 32
 
 CTriangleRenderer::CTriangleRenderer()
 {
-	m_tessX = 15;
-	m_tessY = 15;
+	m_tessX = TESSELATION;
+	m_tessY = TESSELATION;
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
@@ -75,6 +76,6 @@ RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
 	CDeclaration *ndecl = renderState()->declFind(RI_N);
 	if ( !ndecl )
 		return;
-	hide(t.triangulate(obj, *pdecl, *ndecl, m_tessX, m_tessY));
+	hide(t.triangulate(obj, *pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()));
 }
 

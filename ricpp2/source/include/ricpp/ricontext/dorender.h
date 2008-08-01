@@ -28,6 +28,9 @@
 /** @file dorender.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Declaration of an interface for handling the rendering jobs of render contexts.
+ *  @todo Overload preProcess(), doProcess(), postProcess() using parameter object only (drop
+ *        special parameters). E.g.: virtual RtVoid preProcess(CRiSphere &obj) instead of the
+ *        preSphere() member function.
  */
 
 #ifndef _RICPP_RICONTEXT_RICONTEXT_H

@@ -183,7 +183,7 @@ TemplPrimVar<RtFloat> &CFace::insertFloatVar(const CDeclaration &decl, IndexType
 }
 
 
-void CFace::buildStripIndices(IndexType tessU, IndexType tessV)
+void CFace::buildStripIndices(IndexType tessU, IndexType tessV, bool isLH)
 {
 	const IndexType uIndices = (tessU+1)*2;
 	const IndexType nStrips = tessV;
@@ -194,17 +194,16 @@ void CFace::buildStripIndices(IndexType tessU, IndexType tessV)
 	m_indices.clear();
 	m_sizes.clear();
 	
-	// RMan is left handed
 	m_indices.resize(nStrips*uIndices);
 	std::vector<IndexType>::iterator idxIter = m_indices.begin();
 	for ( IndexType startIdx = 0; startIdx < lastRowIdx; ) {
 		const IndexType nextRowIdx = startIdx + tessU+1;
 		for ( IndexType idx = startIdx; idx < nextRowIdx; ++idx) {
 			assert(idxIter != m_indices.end());
-			*idxIter = (idx+tessU+1);
+			*idxIter = isLH ? idx+tessU+1 : idx;
 			idxIter++;
 			assert(idxIter != m_indices.end());
-			*idxIter = idx;
+			*idxIter = isLH ? idx : idx+tessU+1;
 			idxIter++;
 		}
 		startIdx = nextRowIdx;

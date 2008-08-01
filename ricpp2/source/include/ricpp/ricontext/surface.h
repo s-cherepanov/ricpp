@@ -181,7 +181,7 @@ public:
 
 	TemplPrimVar<RtFloat> &insertFloatVar(const CDeclaration &decl, IndexType nVar);
 
-	void buildStripIndices(IndexType tessU, IndexType tessV);
+	void buildStripIndices(IndexType tessU, IndexType tessV, bool isLH=true);
 }; // CFace
 
 

@@ -350,5 +350,7 @@ bool CDeclaration::matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aV
 bool CDeclaration::matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const
 {
 	EnumQualifiers aQualifier = CTypeInfo::qualifier(aQualifierName);
+	if ( aQualifierName != RI_NULL && aQualifier == QUALIFIER_UNKNOWN )
+		return false;
 	return matches(aQualifier, aTable, aVar);
 }

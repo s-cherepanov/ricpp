@@ -339,9 +339,31 @@ public:
 	 *  @param aVar Variable identifier.
 	 */
 	bool matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar) const; 
+
+	/** @brief Query if variable matches declaration
+	 *
+	 *  @param aQualifier Qualifier token of the variable.
+	 *  @param aTable Table token of the variable.
+	 *  @param aVar Variable identifier.
+	 */
 	bool matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const; 
 
+	/** @brief Remaps tokens (const char * pointers) to a (new) token map.
+	 *
+	 *  @param decl Declaration to remap.
+	 *  @param aMap A new token map with different const char * pointers.
+	 *  @return Remaped declaration (@a decl).
+	 */
 	CDeclaration &assignRemap(const CDeclaration &decl, CTokenMap &aMap);
+
+	/** @brief Helper, looks if elements constist of 3 floats (e.g. positions, normals).
+	 *
+	 *  @return True, elements constist of 3 floats. False, otherwise.
+	 */
+	inline bool isFloat3Decl() const
+	{
+		return basicType() == BASICTYPE_FLOAT && elemSize() == 3;
+	}
 }; // CDeclarartion
 
 } // namespace RiCPP

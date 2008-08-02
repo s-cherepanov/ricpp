@@ -1032,23 +1032,25 @@ void TGLRenderer::plasticShader(int shaderType, RtFloat Ka, RtFloat Kd, RtFloat 
 		shine = (GLfloat)(1.0/roughness);
 	*/
 
+	/*
 	RtFloat Kg = Ka + Kd + Ks;
 	if ( Kg > 1 ) {
 		Ka /= Kg;
 		Kd /= Kg;
 		Ks /= Kg;
 	}
+	*/
 
 	GLfloat noMat[4] = {0.0, 0.0, 0.0, 1.0};
 	GLfloat colorA[4] = {ricolor[0]*Ka, ricolor[1]*Ka, ricolor[2]*Ka, 1.0 };
 	GLfloat colorD[4] = {ricolor[0]*Kd, ricolor[1]*Kd, ricolor[2]*Kd, 1.0 };
 	GLfloat colorS[4] = {rispeccolor[0]*Ks, rispeccolor[1]*Ks, rispeccolor[2]*Ks, 1.0 };
-
 	TGL::material(GL_FRONT_AND_BACK, GL_AMBIENT, colorA);
 	TGL::material(GL_FRONT_AND_BACK, GL_DIFFUSE, colorD);
 	TGL::material(GL_FRONT_AND_BACK, GL_SPECULAR, colorS);
 	TGL::material(GL_FRONT_AND_BACK, GL_SHININESS, shine);
 	TGL::material(GL_FRONT_AND_BACK, GL_EMISSION, noMat);
+
 	TGL::enable(GL_LIGHTING);
 	TGL::enable(GL_COLOR_MATERIAL);
 

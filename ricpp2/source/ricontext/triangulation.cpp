@@ -33,7 +33,7 @@
 #ifdef _DEBUG
 #include <iostream>
 // #define _TRACE_PARABOLOID
-#define _TRACE_SPHERE
+// #define _TRACE_SPHERE
 #endif
 
 using namespace RiCPP;
@@ -346,6 +346,49 @@ void CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, Index
 	circledata[i++] = (RtFloat)sin(thetamaxrad);
 }
 
+void CQuadricTriangulator::initVars(
+	const CDeclaration &pointDecl, const CDeclaration &normDecl,
+	RtInt tessU, RtInt tessV,
+	bool equalOrientations, CFace &f, SQuadricVars &retVals)
+{
+	retVals.realTessU = (IndexType)tessU;
+	retVals.realTessV = (IndexType)tessV;
+	
+	retVals.deltaU = 0;
+	retVals.deltaV = 0;
+	
+	retVals.flipNormal = equalOrientations ? 1.0 : -1.0;
+	// flipNormal = 1.0;
+	
+	for ( int i = 0; i < 2; ++i ) {
+		if ( retVals.realTessU + 1 < retVals.realTessU )
+			retVals.realTessU -= 1;
+		
+		if ( retVals.realTessV + 1 < retVals.realTessV )
+			retVals.realTessV -= 1;
+		
+		retVals.deltaU = (RtFloat)(1.0 / (RtFloat)retVals.realTessU);
+		retVals.deltaV = (RtFloat)(1.0 / (RtFloat)retVals.realTessV);
+		
+		if ( (1.0 + retVals.deltaU) == 1.0 ) {
+			retVals.deltaU = eps<RtFloat>();
+			retVals.realTessU = (IndexType)(1.0/retVals.deltaU);
+		}
+		if ( (1.0 + retVals.deltaV) == 1.0 ) {
+			retVals.deltaV = eps<RtFloat>();
+			retVals.realTessV = (IndexType)(1.0/retVals.deltaV);
+		}
+	}
+	
+	retVals.nVars = ((IndexType)retVals.realTessU+1)*((IndexType)retVals.realTessV+1);
+	
+	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, retVals.nVars).value();
+	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, retVals.nVars).value();
+	
+	retVals.positions = &p;
+	retVals.normals = &n;
+}
+
 CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
 {
 	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
@@ -376,45 +419,11 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 	const RtFloat rmax = m_obj->rMax();
 	const RtFloat thetamax = m_obj->thetaMax();
 	
-	IndexType realTessU = (IndexType)tessU;
-	IndexType realTessV = (IndexType)tessV;
-
-	RtFloat deltau = 0;
-	RtFloat deltav = 0;
-	
-	RtFloat flipNormal = equalOrientations ? 1.0 : -1.0;
-	// flipNormal = 1.0;
-
-	for ( int i = 0; i < 2; ++i ) {
-		if ( realTessU + 1 < realTessU )
-			realTessU -= 1;
-		
-		if ( realTessV + 1 < realTessV )
-			realTessV -= 1;
-		
-		deltau = (RtFloat)(1.0 / (RtFloat)realTessU);
-		deltav = (RtFloat)(1.0 / (RtFloat)realTessV);
-		
-		if ( (1.0 + deltau) == 1.0 ) {
-			deltau = eps<RtFloat>();
-			realTessU = (IndexType)(1.0/deltau);
-		}
-		if ( (1.0 + deltav) == 1.0 ) {
-			deltav = eps<RtFloat>();
-			realTessV = (IndexType)(1.0/deltau);
-		}
-	}
-	
-	const IndexType nVar = ((IndexType)realTessU+1)*((IndexType)realTessV+1);
-
-	
-	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, nVar).value();
-	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, nVar).value();
-
+	SQuadricVars var;
+	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 	
 	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, realTessU, deg2rad(thetamax));
-	
+	getUnitCircle(unitcircle, var.realTessU, deg2rad(thetamax));
 	
 	RtFloat u, v, r, nn, z;
 	
@@ -422,19 +431,18 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 	IndexType pidx  = 0;
 	IndexType puidx  = 0;
 	
-	RtFloat len;
 	RtFloat ntemp[3];
 	RtFloat m = zmax/(rmax*rmax); // 2D: f(x) = mx**2; F(x)=2mx
 	
 	RtFloat rangez = zmax - zmin;
-	RtFloat dz = rangez / (RtFloat)realTessV;
+	RtFloat dz = rangez / var.realTessV;
 	if ( nearlyZero(dz) )
 		dz = eps<RtFloat>();
 	
 	IndexType uverts;
-	IndexType vverts = realTessV+1;
+	IndexType vverts = var.realTessV+1;
 	
-	for ( z = zmin, v = 0.0; vverts > 0; z += dz, --vverts, v+=deltav ) {
+	for ( z = zmin, v = 0.0; vverts > 0; z += dz, --vverts, v += var.deltaV ) {
 		if ( z > zmax )
 			z = zmax;
 		
@@ -446,10 +454,9 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 		}
 		
 		nn = (RtFloat)(2.0*m*r);
-		len = 1.0;
-		uverts = realTessU + 1;
+		uverts = var.realTessU + 1;
 		
-		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=deltau ) {
+		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=var.deltaU ) {
 			if ( uverts == 1 )
 				u = 1.0;
 			
@@ -457,19 +464,15 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 			ntemp[1] = nn * unitcircle[puidx+1];
 			ntemp[2] = -1;
 
-			p[pidx++] = r * unitcircle[puidx++];
-			p[pidx++] = r * unitcircle[puidx++];
-			p[pidx++] = z;
+			(*var.positions)[pidx++] = r * unitcircle[puidx++];
+			(*var.positions)[pidx++] = r * unitcircle[puidx++];
+			(*var.positions)[pidx++] = z;
 			
-			len = vlen3(ntemp);
-
-			ntemp[0] /= len;
-			ntemp[1] /= len;
-			ntemp[2] /= len;
+			normalize3(ntemp);
 			
-			n[nidx++] = flipNormal*ntemp[0];
-			n[nidx++] = flipNormal*ntemp[1];
-			n[nidx++] = flipNormal*ntemp[2];
+			(*var.normals)[nidx++] = var.flipNormal*ntemp[0];
+			(*var.normals)[nidx++] = var.flipNormal*ntemp[1];
+			(*var.normals)[nidx++] = var.flipNormal*ntemp[2];
 		}
 	}
 
@@ -502,51 +505,18 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 	else
 		phimax = pi_2<RtFloat>();
 
-	IndexType realTessU = (IndexType)tessU;
-	IndexType realTessV = (IndexType)tessV;
-	
-	RtFloat deltau = 0;
-	RtFloat deltav = 0;
-	
-	RtFloat flipNormal = equalOrientations ? 1.0 : -1.0;
-	// flipNormal = 1.0;
-	
-	for ( int i = 0; i < 2; ++i ) {
-		if ( realTessU + 1 < realTessU )
-			realTessU -= 1;
-		
-		if ( realTessV + 1 < realTessV )
-			realTessV -= 1;
-		
-		deltau = (RtFloat)(1.0 / (RtFloat)realTessU);
-		deltav = (RtFloat)(1.0 / (RtFloat)realTessV);
-		
-		if ( (1.0 + deltau) == 1.0 ) {
-			deltau = eps<RtFloat>();
-			realTessU = (IndexType)(1.0/deltau);
-		}
-		if ( (1.0 + deltav) == 1.0 ) {
-			deltav = eps<RtFloat>();
-			realTessV = (IndexType)(1.0/deltau);
-		}
-	}
-	
-	const IndexType nVar = ((IndexType)realTessU+1)*((IndexType)realTessV+1);
-	
-	
-	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, nVar).value();
-	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, nVar).value();
-	
+	SQuadricVars var;
+	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 	
 	std::vector<RtFloat> unitcircleU;
-	getUnitCircle(unitcircleU, realTessU, deg2rad(thetamax));
+	getUnitCircle(unitcircleU, var.realTessU, deg2rad(thetamax));
 
 	std::vector<RtFloat> unitcircleV;
-	getUnitCircle(unitcircleV, realTessV, phimax, phimin);
+	getUnitCircle(unitcircleV, var.realTessV, phimax, phimin);
 	
 	
 	RtFloat u, v, cosphi;
-	RtFloat ptemp[3], ntemp[3];
+	RtFloat ptempZ, ntempZ, ntemp[3];
 	
 	IndexType vverts;
 	IndexType uverts;
@@ -555,53 +525,45 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 	IndexType puidx=0;
 	IndexType pidx=0;
 	
-	for (vverts = realTessV+1, v = 0.0;
+	for (vverts = var.realTessV+1, v = 0.0;
 		 vverts > 0;
-		 v += deltav, --vverts )
+		 v += var.deltaV, --vverts )
 	{
 		if ( vverts == 1 ) {
 			v = 1.0;
 		}
-		cosphi = unitcircleV[pvidx];
-		ntemp[2]   = unitcircleV[++pvidx];
-		ptemp[2]   = radius * ntemp[2];
-		++pvidx;
+		
+		cosphi = unitcircleV[pvidx++];
+		ntemp[2] = unitcircleV[pvidx++];
+		ptempZ   = radius * ntemp[2];
 		
 #ifdef _TRACE_SPHERE
 		std::cout << "  v=" << v << std::endl;
 #endif _TRACE_SPHERE
 
 		puidx = 0;
-		for (uverts = realTessU+1, u = 0.0;
+		for (uverts = var.realTessU+1, u = 0.0;
 			 uverts > 0;
-			 u += deltau, --uverts)
+			 u += var.deltaU, --uverts)
 		{
 			if ( uverts == 1 ) {
 				u = 1.0;
 			}
-			ntemp[0] = cosphi * unitcircleU[puidx];
-			ptemp[0] = radius * ntemp[0];
-			n[pidx] = flipNormal * ntemp[0];
-			p[pidx] = ptemp[0];
 			
-			++puidx;
-			++pidx;
+			ntemp[0] = cosphi * unitcircleU[puidx++];
+			ntemp[1] = cosphi * unitcircleU[puidx++];
+
+			(*var.positions)[pidx]   = radius * ntemp[0];;
+			(*var.positions)[pidx+1] = radius * ntemp[1];
+			(*var.positions)[pidx+2] = ptempZ;
 			
-			ntemp[1] = cosphi * unitcircleU[puidx];
-			ptemp[1] = radius * ntemp[1];
-			n[pidx] = flipNormal * ntemp[1];
-			p[pidx] = ptemp[1];
+			(*var.normals)[pidx]   = var.flipNormal * ntemp[0];
+			(*var.normals)[pidx+1] = var.flipNormal * ntemp[1];
+			(*var.normals)[pidx+2] = var.flipNormal * ntemp[2];
 			
-			++puidx;
-			++pidx;
-			
-			n[pidx] = flipNormal * ntemp[2];
-			p[pidx] = ptemp[2];
-			
-			++pidx;
-#ifdef _TRACE_SPHERE
-			std::cout << "  u=" << u << ":  " << ptemp[0] << ", " << ptemp[1] << ", " << ptemp[2] << std::endl;
-#endif _TRACE_SPHERE
+			normalize3(&(*var.normals)[pidx]);
+
+			pidx+=3;
 		}
 	}
 	

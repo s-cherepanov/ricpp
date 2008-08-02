@@ -91,8 +91,15 @@ namespace RiCPP {
 
 	class CQuadricTriangulator : public CParametricTriangulator {
 	protected:
+		struct SQuadricVars {
+			IndexType nVars, realTessU, realTessV;
+			RtFloat deltaU, deltaV;
+			RtFloat flipNormal;
+			std::vector<RtFloat> *positions, *normals;
+		};
 		void getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0);
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
+		void initVars(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, SQuadricVars &retVals);
 	public:
 		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
 	};

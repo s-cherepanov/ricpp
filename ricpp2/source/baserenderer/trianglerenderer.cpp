@@ -76,6 +76,6 @@ RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
 	CDeclaration *ndecl = renderState()->declFind(RI_N);
 	if ( !ndecl )
 		return;
-	hide(t.triangulate(obj, *pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()));
+	hide(t.triangulate(obj, *pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation()));
 }
 

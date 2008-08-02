@@ -98,9 +98,9 @@ namespace RiCPP {
 	};
 	
 	class CParaboloidTriangulator : public CQuadricTriangulator {
-		void buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, RtToken primitiveOrientation, CFace &f);
+		void buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		CSurface *triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, RtToken primitiveOrientation);
+		CSurface *triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
 	};
 }
 

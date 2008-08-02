@@ -356,7 +356,7 @@ CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType 
 }
 
 // =============================================================================
-void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, RtToken primitiveOrientation, CFace &f)
+void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_PARABOLOID
 	std::cout << "-> buildPN()" << std::endl;
@@ -373,7 +373,7 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 	RtFloat deltau = 0;
 	RtFloat deltav = 0;
 	
-	RtFloat flipNormal = primitiveOrientation == RI_RH ? -1.0 : 1.0;
+	RtFloat flipNormal = equalOrientations ? 1.0 : -1.0;
 	// flipNormal = 1.0;
 
 	for ( int i = 0; i < 2; ++i ) {
@@ -470,7 +470,7 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 }
 
 
-CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, RtToken primitiveOrientation)
+CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
 {
 	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
 		return 0;
@@ -482,7 +482,7 @@ CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclar
 
 	CFace &f = surf->newFace();
 
-	buildPN(obj, posDecl, normDecl, tessU, tessV, primitiveOrientation, f);
+	buildPN(obj, posDecl, normDecl, tessU, tessV, equalOrientations, f);
 
 	f.buildStripIndices(tessU, tessV);
 	return surf;

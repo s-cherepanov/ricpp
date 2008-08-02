@@ -48,9 +48,6 @@ namespace RiCPP {
 
 		bool releaseSurface(CSurface *surf);
 		CSurface *createSurface();
-		
-		void getDelta(unsigned long &tess, RtFloat &delta) const;
-		void getDeltas(unsigned long &tessU, unsigned long &tessV, RtFloat &deltaU, RtFloat &deltaV) const;
 	};
 	
 	class CTriangulator : public CTesselator {
@@ -94,13 +91,26 @@ namespace RiCPP {
 
 	class CQuadricTriangulator : public CParametricTriangulator {
 	protected:
-		getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0);
+		void getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
+	public:
+		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
 	};
 	
 	class CParaboloidTriangulator : public CQuadricTriangulator {
-		void buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		const CRiParaboloid *m_obj;
+	protected:
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		CSurface *triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
+		inline CParaboloidTriangulator(const CRiParaboloid &obj) : m_obj(&obj) {}
+	};
+
+	class CSphereTriangulator : public CQuadricTriangulator {
+		const CRiSphere *m_obj;
+	protected:
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+	public:
+		inline CSphereTriangulator(const CRiSphere &obj) : m_obj(&obj) {}
 	};
 }
 

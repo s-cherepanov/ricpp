@@ -33,6 +33,7 @@
 #ifdef _DEBUG
 #include <iostream>
 // #define _TRACE_PARABOLOID
+#define _TRACE_SPHERE
 #endif
 
 using namespace RiCPP;
@@ -75,16 +76,6 @@ CSurface *CTesselator::createSurface()
 		return 0;
 	m_surfaces.push_back(s);
 	return s;
-}
-
-void CTesselator::getDelta(unsigned long &tess, RtFloat &delta) const
-{
-}
-
-void CTesselator::getDeltas(unsigned long &tessU, unsigned long &tessV, RtFloat &deltaU, RtFloat &deltaV) const
-{
-	getDelta(tessU, deltaU);
-	getDelta(tessV, deltaV);
 }
 
 // =============================================================================
@@ -323,13 +314,13 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 
 // =============================================================================
 
-CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin)
+void CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin)
 {
 	if ( thetamax < thetamin )
 		std::swap(thetamax, thetamin);
 	
-	const RtFloat thetamaxrad = deg2rad(thetamax);
-	RtFloat thetaminrad = deg2rad(thetamin);
+	const RtFloat thetamaxrad = thetamax;
+	RtFloat thetaminrad = thetamin;
 	
 	if ( tess < 1 ) tess = 1;
 
@@ -355,17 +346,35 @@ CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType 
 	circledata[i++] = (RtFloat)sin(thetamaxrad);
 }
 
+CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
+{
+	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
+		return 0;
+	
+	CSurface *surf = createSurface();
+	if ( !surf ) {
+		return 0;
+	}
+	
+	CFace &f = surf->newFace();
+	
+	buildPN(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	
+	f.buildStripIndices(tessU, tessV, true);
+	return surf;
+}
+
 // =============================================================================
-void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_PARABOLOID
-	std::cout << "-> buildPN()" << std::endl;
+	std::cout << "-> CParaboloidTriangulator::buildPN()" << std::endl;
 #endif
-	
-	const RtFloat zmin = obj.zMin();
-	const RtFloat zmax = obj.zMax();
-	const RtFloat rmax = obj.rMax();
-	const RtFloat thetamax = obj.thetaMax();
+	assert(m_obj != 0);
+	const RtFloat zmin = m_obj->zMin();
+	const RtFloat zmax = m_obj->zMax();
+	const RtFloat rmax = m_obj->rMax();
+	const RtFloat thetamax = m_obj->thetaMax();
 	
 	IndexType realTessU = (IndexType)tessU;
 	IndexType realTessV = (IndexType)tessV;
@@ -383,8 +392,8 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 		if ( realTessV + 1 < realTessV )
 			realTessV -= 1;
 		
-		RtFloat deltau = (RtFloat)(1.0 / (RtFloat)realTessU);
-		RtFloat deltav = (RtFloat)(1.0 / (RtFloat)realTessV);
+		deltau = (RtFloat)(1.0 / (RtFloat)realTessU);
+		deltav = (RtFloat)(1.0 / (RtFloat)realTessV);
 		
 		if ( (1.0 + deltau) == 1.0 ) {
 			deltau = eps<RtFloat>();
@@ -404,7 +413,7 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 
 	
 	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, realTessU, thetamax);
+	getUnitCircle(unitcircle, realTessU, deg2rad(thetamax));
 	
 	
 	RtFloat u, v, r, nn, z;
@@ -465,25 +474,138 @@ void CParaboloidTriangulator::buildPN(const CRiParaboloid &obj, const CDeclarati
 	}
 
 #ifdef _TRACE_PARABOLOID
-	std::cout << "<- buildPN()" << std::endl;
+	std::cout << "<- CParaboloidTriangulator::buildPN()" << std::endl;
 #endif
 }
 
 
-CSurface *CParaboloidTriangulator::triangulate(CRiParaboloid &obj, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
+void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
-	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
-		return 0;
+#ifdef _TRACE_SPHERE
+	std::cout << "-> CSphereTriangulator::buildPN()" << std::endl;
+#endif
+	assert(m_obj != 0);
+	const RtFloat zmin = m_obj->zMin();
+	const RtFloat zmax = m_obj->zMax();
+	const RtFloat radius = m_obj->radius();
+	const RtFloat thetamax = m_obj->thetaMax();
+	
+	RtFloat phimin;
+	if ( zmin > -radius )
+		phimin = (RtFloat)asin(zmin/radius);
+	else
+		phimin = -pi_2<RtFloat>();
+	
+	RtFloat phimax;
+	if ( zmax < radius )
+		phimax = (RtFloat)asin(zmax/radius);
+	else
+		phimax = pi_2<RtFloat>();
 
-	CSurface *surf = createSurface();
-	if ( !surf ) {
-		return 0;
+	IndexType realTessU = (IndexType)tessU;
+	IndexType realTessV = (IndexType)tessV;
+	
+	RtFloat deltau = 0;
+	RtFloat deltav = 0;
+	
+	RtFloat flipNormal = equalOrientations ? 1.0 : -1.0;
+	// flipNormal = 1.0;
+	
+	for ( int i = 0; i < 2; ++i ) {
+		if ( realTessU + 1 < realTessU )
+			realTessU -= 1;
+		
+		if ( realTessV + 1 < realTessV )
+			realTessV -= 1;
+		
+		deltau = (RtFloat)(1.0 / (RtFloat)realTessU);
+		deltav = (RtFloat)(1.0 / (RtFloat)realTessV);
+		
+		if ( (1.0 + deltau) == 1.0 ) {
+			deltau = eps<RtFloat>();
+			realTessU = (IndexType)(1.0/deltau);
+		}
+		if ( (1.0 + deltav) == 1.0 ) {
+			deltav = eps<RtFloat>();
+			realTessV = (IndexType)(1.0/deltau);
+		}
 	}
+	
+	const IndexType nVar = ((IndexType)realTessU+1)*((IndexType)realTessV+1);
+	
+	
+	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, nVar).value();
+	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, nVar).value();
+	
+	
+	std::vector<RtFloat> unitcircleU;
+	getUnitCircle(unitcircleU, realTessU, deg2rad(thetamax));
 
-	CFace &f = surf->newFace();
+	std::vector<RtFloat> unitcircleV;
+	getUnitCircle(unitcircleV, realTessV, phimax, phimin);
+	
+	
+	RtFloat u, v, cosphi;
+	RtFloat ptemp[3], ntemp[3];
+	
+	IndexType vverts;
+	IndexType uverts;
+	
+	IndexType pvidx=0;
+	IndexType puidx=0;
+	IndexType pidx=0;
+	
+	for (vverts = realTessV+1, v = 0.0;
+		 vverts > 0;
+		 v += deltav, --vverts )
+	{
+		if ( vverts == 1 ) {
+			v = 1.0;
+		}
+		cosphi = unitcircleV[pvidx];
+		ntemp[2]   = unitcircleV[++pvidx];
+		ptemp[2]   = radius * ntemp[2];
+		++pvidx;
+		
+#ifdef _TRACE_SPHERE
+		std::cout << "  v=" << v << std::endl;
+#endif _TRACE_SPHERE
 
-	buildPN(obj, posDecl, normDecl, tessU, tessV, equalOrientations, f);
-
-	f.buildStripIndices(tessU, tessV);
-	return surf;
+		puidx = 0;
+		for (uverts = realTessU+1, u = 0.0;
+			 uverts > 0;
+			 u += deltau, --uverts)
+		{
+			if ( uverts == 1 ) {
+				u = 1.0;
+			}
+			ntemp[0] = cosphi * unitcircleU[puidx];
+			ptemp[0] = radius * ntemp[0];
+			n[pidx] = flipNormal * ntemp[0];
+			p[pidx] = ptemp[0];
+			
+			++puidx;
+			++pidx;
+			
+			ntemp[1] = cosphi * unitcircleU[puidx];
+			ptemp[1] = radius * ntemp[1];
+			n[pidx] = flipNormal * ntemp[1];
+			p[pidx] = ptemp[1];
+			
+			++puidx;
+			++pidx;
+			
+			n[pidx] = flipNormal * ntemp[2];
+			p[pidx] = ptemp[2];
+			
+			++pidx;
+#ifdef _TRACE_SPHERE
+			std::cout << "  u=" << u << ":  " << ptemp[0] << ", " << ptemp[1] << ", " << ptemp[2] << std::endl;
+#endif _TRACE_SPHERE
+		}
+	}
+	
+#ifdef _TRACE_SPHERE
+	std::cout << "<- CSphereTriangulator::buildPN()" << std::endl;
+#endif
 }

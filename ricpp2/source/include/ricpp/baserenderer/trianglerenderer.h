@@ -38,6 +38,10 @@
 #include "ricpp/ricontext/polygon.h"
 #endif // _RICPP_RICONTEXT_POLYGON_H
 
+#ifndef _RICPP_RICONTEXT_TRIANGULATION_H
+#include "ricpp/ricontext/triangulation.h"
+#endif // _RICPP_RICONTEXT_TRIANGULATION_H
+
 namespace RiCPP {
 	
 	/** @brief Base class to triangulate primitives.
@@ -61,7 +65,10 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiPointsPolygons &obj);
 		virtual RtVoid triangulate(CRiGeneralPolygon &obj);
 		virtual RtVoid triangulate(CRiPointsGeneralPolygons &obj);
+
+		virtual RtVoid triangulate(CQuadricTriangulator &triObj);
 		virtual RtVoid triangulate(CRiParaboloid &obj);
+		virtual RtVoid triangulate(CRiSphere &obj);
 	}; // CTriangleRenderer
 
 }

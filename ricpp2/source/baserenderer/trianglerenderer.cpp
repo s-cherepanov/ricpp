@@ -29,10 +29,6 @@
 
 #include "ricpp/baserenderer/trianglerenderer.h"
 
-#ifndef _RICPP_RICONTEXT_TRIANGULATION_H
-#include "ricpp/ricontext/triangulation.h"
-#endif // _RICPP_RICONTEXT_TRIANGULATION_H
-
 using namespace RiCPP;
 
 #define TESSELATION 32
@@ -67,15 +63,25 @@ RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
 	hide(t.triangulate(obj, polygonTriangulationStrategy()));
 }
 
-RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
+RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)
 {
-	CParaboloidTriangulator t;
 	CDeclaration *pdecl = renderState()->declFind(RI_P);
 	if ( !pdecl )
 		return;
 	CDeclaration *ndecl = renderState()->declFind(RI_N);
 	if ( !ndecl )
 		return;
-	hide(t.triangulate(obj, *pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation()));
+	hide(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation()));
 }
 
+RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
+{
+	CParaboloidTriangulator t(obj);
+	triangulate(t);
+}
+
+RtVoid CTriangleRenderer::triangulate(CRiSphere &obj)
+{
+	CSphereTriangulator t(obj);
+	triangulate(t);
+}

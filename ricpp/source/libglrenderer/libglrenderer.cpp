@@ -938,7 +938,7 @@ void TGLRenderer::metalShader(int shaderType, RtFloat Ka, RtFloat Ks, RtFloat ro
 	RtFloat ricolor[4];
 	transformRGB(ricolor, 1, &attributes().m_color[0]);
 
-	GLfloat shine = 0.0;
+	GLfloat shine = 50.0;
 	/*
 	roughness += 1;
 	if ( roughness > 1.0 )
@@ -980,7 +980,7 @@ void TGLRenderer::shinyMetalShader(int shaderType, RtFloat Ka, RtFloat Ks, RtFlo
 	RtFloat ricolor[4];
 	transformRGB(ricolor, 1, &attributes().m_color[0]);
 
-	GLfloat shine = 0.0;
+	GLfloat shine = 50.0;
 	/*
 	roughness += 1;
 	if ( roughness > 1.0 )
@@ -1025,7 +1025,7 @@ void TGLRenderer::plasticShader(int shaderType, RtFloat Ka, RtFloat Kd, RtFloat 
 	RtFloat rispeccolor[4];
 	transformRGB(rispeccolor, 1, &specularColor[0]);
 
-	GLfloat shine = 0.0;
+	GLfloat shine = 50.0;
 	/*
 	roughness += 1;
 	if ( roughness > 1.0 )
@@ -1073,7 +1073,7 @@ void TGLRenderer::paintedPlasticShader(int shaderType, RtFloat Ka, RtFloat Kd, R
 	RtFloat rispeccolor[4];
 	transformRGB(rispeccolor, 1, &specularColor[0]);
 
-	GLfloat shine = 0.0;
+	GLfloat shine = 50.0;
 	/*
 	roughness += 1;
 	if ( roughness > 1.0 )

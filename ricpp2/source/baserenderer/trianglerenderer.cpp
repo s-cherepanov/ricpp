@@ -74,6 +74,12 @@ RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)
 	hide(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation()));
 }
 
+RtVoid CTriangleRenderer::triangulate(CRiCone &obj)
+{
+	CConeTriangulator t(obj);
+	triangulate(t);
+}
+
 RtVoid CTriangleRenderer::triangulate(CRiCylinder &obj)
 {
 	CCylinderTriangulator t(obj);

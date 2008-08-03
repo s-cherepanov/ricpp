@@ -32,6 +32,7 @@
 
 #ifdef _DEBUG
 #include <iostream>
+// #define _TRACE_CONE
 // #define _TRACE_CYLINDER
 // #define _TRACE_PARABOLOID
 // #define _TRACE_SPHERE
@@ -408,7 +409,93 @@ CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const C
 	return surf;
 }
 
+
 // =============================================================================
+
+void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+{
+#ifdef _TRACE_CONE
+	std::cout << "-> CConeTriangulator::buildPN()" << std::endl;
+#endif
+	assert(m_obj != 0);
+	const RtFloat height = m_obj->height();
+	const RtFloat radius = m_obj->radius();
+	const RtFloat thetamax = m_obj->thetaMax();
+	
+	SQuadricVars var;
+	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	
+	std::vector<RtFloat> unitcircle;
+	getUnitCircle(unitcircle, var.realTessU, deg2rad(thetamax));
+	
+	RtFloat dz = getDelta(0, height, var.realTessV);
+	
+	RtFloat u, v, r, z;
+	RtFloat n[3];
+	
+	IndexType nidx  = 0;
+	IndexType pidx  = 0;
+	IndexType puidx  = 0;
+	
+	RtFloat len = (RtFloat)sqrt(radius*radius+height*height);
+	assert(len != 0);
+	// assert len != 0 (because radius > 0)
+	
+	RtFloat mx = 0;
+	RtFloat mz = 0;
+	
+	if ( len > 0 ) {
+		mx = height/len;
+		mz = radius/len; // (mx 0 mz) is the surface normal at theta = 0, mz is constant
+	}
+	
+	IndexType uverts;
+	IndexType vverts = var.realTessV+1;
+	
+	for ( z = m_displacement, v = 0.0; vverts > 0; z += dz, --vverts, v += var.deltaV ) {
+		if ( v > 1.0 )
+			v = 1.0;
+		r = radius * ((RtFloat)1.0-v);
+		if ( vverts == var.realTessV+1 ) {
+			r = radius;
+		}
+		if ( vverts == 1 ) {
+			r = 0.0;
+			v = 1.0;
+			z = height+m_displacement;
+		}
+		
+		uverts = var.realTessU + 1;
+		
+		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=var.deltaU ) {
+			if ( u > 1.0 || uverts == 1 )
+				u = 1.0;
+			
+			n[0] = unitcircle[puidx++];
+			n[1] = unitcircle[puidx++];
+			n[2] = mz;
+			
+			(*var.positions)[pidx++] = r * n[0];
+			(*var.positions)[pidx++] = r * n[1];
+			(*var.positions)[pidx++] = z;
+			
+			n[0] *= mx;
+			n[1] *= mx;
+			
+			normalize2(n);
+			
+			(*var.normals)[nidx++] = n[0] * var.flipNormal;
+			(*var.normals)[nidx++] = n[1] * var.flipNormal;
+			(*var.normals)[nidx++] = n[2] * var.flipNormal;
+		}
+	}
+	
+#ifdef _TRACE_CONE
+	std::cout << "<- CConeTriangulator::buildPN()" << std::endl;
+#endif
+}
+
+
 void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_CYLINDER
@@ -435,16 +522,20 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	IndexType puidx=0;
 	IndexType pidx=0;
 	
-	RtFloat dz = getDelta(zmin, zmax, var.realTessV);
+	RtFloat dz = getDeltaNotZero(zmin, zmax, var.realTessV);
 	
 	for ( vverts = var.realTessV+1, v = 0.0, z = zmin;
 		  vverts > 0;
 		  v += var.deltaV, --vverts, z += dz )
 	{
+		if ( v > 1.0 )
+			v = 1.0;
 		if ( vverts == 1 ) {
 			v = 1.0;
 			z = zmax;
 		}
+		if ( z > zmax )
+			z = zmax;
 		pTempZ   = z;
 		
 		puidx = 0;
@@ -452,7 +543,7 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 			 uverts > 0;
 			 u += var.deltaU, --uverts)
 		{
-			if ( uverts == 1 ) {
+			if ( u > 1.0 || uverts == 1 ) {
 				u = 1.0;
 			}
 
@@ -476,7 +567,7 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	}
 	
 #ifdef _TRACE_CYLINDER
-	std::cout << "<- CSphereTriangulator::buildPN()" << std::endl;
+	std::cout << "<- CCylinderTriangulator::buildPN()" << std::endl;
 #endif
 }
 
@@ -506,12 +597,14 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 	RtFloat ntemp[3];
 	RtFloat m = zmax/(rmax*rmax); // 2D: f(x) = mx**2; F(x)=2mx
 	
-	RtFloat dz = getDelta(zmin, zmax, var.realTessV);
+	RtFloat dz = getDeltaNotZero(zmin, zmax, var.realTessV);
 	
 	IndexType uverts;
 	IndexType vverts = var.realTessV+1;
 	
 	for ( z = zmin, v = 0.0; vverts > 0; z += dz, --vverts, v += var.deltaV ) {
+		if ( v > 1.0 )
+			v = 1.0;
 		if ( z > zmax )
 			z = zmax;
 		
@@ -526,7 +619,7 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 		uverts = var.realTessU + 1;
 		
 		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=var.deltaU ) {
-			if ( uverts == 1 )
+			if ( u > 1.0 || uverts == 1 )
 				u = 1.0;
 			
 			ntemp[0] = nn * unitcircle[puidx];
@@ -598,7 +691,7 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 		 vverts > 0;
 		 v += var.deltaV, --vverts )
 	{
-		if ( vverts == 1 ) {
+		if ( v > 1.0 || vverts == 1 ) {
 			v = 1.0;
 		}
 		
@@ -611,7 +704,7 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 			 uverts > 0;
 			 u += var.deltaU, --uverts)
 		{
-			if ( uverts == 1 ) {
+			if ( u > 0 || uverts == 1 ) {
 				u = 1.0;
 			}
 			

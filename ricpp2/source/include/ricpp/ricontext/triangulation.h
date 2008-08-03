@@ -40,6 +40,12 @@
 
 namespace RiCPP {
 
+	inline RtFloat getDelta(RtFloat minVal, RtFloat maxVal, RtFloat tess)
+	{
+		RtFloat dz = (maxVal-minVal) / tess;
+		return nearlyZero(dz) ? eps<RtFloat>() : dz;
+	}	
+		
 	class CTesselator {
 		std::list<CSurface *> m_surfaces;
 	public:
@@ -102,6 +108,14 @@ namespace RiCPP {
 		void initVars(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, SQuadricVars &retVals);
 	public:
 		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
+	};
+	
+	class CCylinderTriangulator : public CQuadricTriangulator {
+		const CRiCylinder *m_obj;
+	protected:
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+	public:
+		inline CCylinderTriangulator(const CRiCylinder &obj) : m_obj(&obj) {}
 	};
 	
 	class CParaboloidTriangulator : public CQuadricTriangulator {

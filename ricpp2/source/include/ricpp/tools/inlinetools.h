@@ -311,6 +311,7 @@ inline std::string &trimBoth(std::string &aStr)
 {
 	return trimLeft(trimRight(aStr));
 }
+	
 /** @brief Base calss of a simple (backtracking) recursive descend parser
  *
  *  Used for URI parsing and RIB if-expression

@@ -36,6 +36,7 @@
 // #define _TRACE_CYLINDER
 // #define _TRACE_PARABOLOID
 // #define _TRACE_SPHERE
+// #define _TRACE_DISK
 #endif
 
 using namespace RiCPP;
@@ -316,7 +317,14 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 
 // =============================================================================
 
-void CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin)
+struct SQuadricVars {
+	IndexType nVars, realTessU, realTessV;
+	RtFloat deltaU, deltaV;
+	RtFloat flipNormal;
+	std::vector<RtFloat> *positions, *normals;
+};
+
+static void getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0)
 {
 	if ( thetamax < thetamin )
 		std::swap(thetamax, thetamin);
@@ -348,7 +356,7 @@ void CQuadricTriangulator::getUnitCircle(std::vector<RtFloat> &circledata, Index
 	circledata[i++] = (RtFloat)sin(thetamaxrad);
 }
 
-void CQuadricTriangulator::initVars(
+static void initVars(
 	const CDeclaration &pointDecl, const CDeclaration &normDecl,
 	RtInt tessU, RtInt tessV,
 	bool equalOrientations, CFace &f, SQuadricVars &retVals)
@@ -391,40 +399,8 @@ void CQuadricTriangulator::initVars(
 	retVals.normals = &n;
 }
 
-CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
+static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloat displacement, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, const SQuadricVars &var)
 {
-	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
-		return 0;
-	
-	CSurface *surf = createSurface();
-	if ( !surf ) {
-		return 0;
-	}
-	
-	CFace &f = surf->newFace();
-	
-	buildPN(posDecl, normDecl, tessU, tessV, equalOrientations, f);
-	
-	f.buildStripIndices(tessU, tessV, true);
-	return surf;
-}
-
-
-// =============================================================================
-
-void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
-{
-#ifdef _TRACE_CONE
-	std::cout << "-> CConeTriangulator::buildPN()" << std::endl;
-#endif
-	assert(m_obj != 0);
-	const RtFloat height = m_obj->height();
-	const RtFloat radius = m_obj->radius();
-	const RtFloat thetamax = m_obj->thetaMax();
-	
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
-	
 	std::vector<RtFloat> unitcircle;
 	getUnitCircle(unitcircle, var.realTessU, deg2rad(thetamax));
 	
@@ -452,7 +428,7 @@ void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	IndexType uverts;
 	IndexType vverts = var.realTessV+1;
 	
-	for ( z = m_displacement, v = 0.0; vverts > 0; z += dz, --vverts, v += var.deltaV ) {
+	for ( z = displacement, v = 0.0; vverts > 0; z += dz, --vverts, v += var.deltaV ) {
 		if ( v > 1.0 )
 			v = 1.0;
 		r = radius * ((RtFloat)1.0-v);
@@ -462,7 +438,7 @@ void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 		if ( vverts == 1 ) {
 			r = 0.0;
 			v = 1.0;
-			z = height+m_displacement;
+			z = height+displacement;
 		}
 		
 		uverts = var.realTessU + 1;
@@ -482,19 +458,55 @@ void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 			n[0] *= mx;
 			n[1] *= mx;
 			
-			normalize2(n);
+			normalize3(n);
 			
 			(*var.normals)[nidx++] = n[0] * var.flipNormal;
 			(*var.normals)[nidx++] = n[1] * var.flipNormal;
 			(*var.normals)[nidx++] = n[2] * var.flipNormal;
 		}
 	}
+}
+
+// =============================================================================
+
+CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
+{
+	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
+		return 0;
 	
+	CSurface *surf = createSurface();
+	if ( !surf ) {
+		return 0;
+	}
+	
+	CFace &f = surf->newFace();
+	
+	buildPN(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	
+	f.buildStripIndices(tessU, tessV, true);
+	return surf;
+}
+
+// =============================================================================
+
+void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+{
+#ifdef _TRACE_CONE
+	std::cout << "-> CConeTriangulator::buildPN()" << std::endl;
+#endif
+	assert(m_obj != 0);
+	const RtFloat height = m_obj->height();
+	const RtFloat radius = m_obj->radius();
+	const RtFloat thetamax = m_obj->thetaMax();
+	
+	SQuadricVars var;
+	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	buildConePN(height, radius, thetamax, 0, pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+		
 #ifdef _TRACE_CONE
 	std::cout << "<- CConeTriangulator::buildPN()" << std::endl;
 #endif
 }
-
 
 void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
@@ -568,6 +580,25 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	
 #ifdef _TRACE_CYLINDER
 	std::cout << "<- CCylinderTriangulator::buildPN()" << std::endl;
+#endif
+}
+
+void CDiskTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+{
+#ifdef _TRACE_DISK
+	std::cout << "-> CDiskTriangulator::buildPN()" << std::endl;
+#endif
+	assert(m_obj != 0);
+	const RtFloat displacement = m_obj->height();
+	const RtFloat radius = m_obj->radius();
+	const RtFloat thetamax = m_obj->thetaMax();
+	
+	SQuadricVars var;
+	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	buildConePN(0, radius, thetamax, displacement, pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	
+#ifdef _TRACE_DISK
+	std::cout << "<- CDiskTriangulator::buildPN()" << std::endl;
 #endif
 }
 

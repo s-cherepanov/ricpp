@@ -107,26 +107,17 @@ namespace RiCPP {
 
 	class CQuadricTriangulator : public CParametricTriangulator {
 	protected:
-		struct SQuadricVars {
-			IndexType nVars, realTessU, realTessV;
-			RtFloat deltaU, deltaV;
-			RtFloat flipNormal;
-			std::vector<RtFloat> *positions, *normals;
-		};
-		void getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0);
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
-		void initVars(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, SQuadricVars &retVals);
 	public:
 		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
 	};
 	
 	class CConeTriangulator : public CQuadricTriangulator {
 		const CRiCone *m_obj;
-		RtFloat m_displacement;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CConeTriangulator(const CRiCone &obj) : m_obj(&obj), m_displacement(0) {}
+		inline CConeTriangulator(const CRiCone &obj) : m_obj(&obj) {}
 	};
 	
 	class CCylinderTriangulator : public CQuadricTriangulator {
@@ -137,6 +128,14 @@ namespace RiCPP {
 		inline CCylinderTriangulator(const CRiCylinder &obj) : m_obj(&obj) {}
 	};
 	
+	class CDiskTriangulator : public CQuadricTriangulator {
+		const CRiDisk *m_obj;
+	protected:
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+	public:
+		inline CDiskTriangulator(const CRiDisk &obj) : m_obj(&obj) {}
+	};
+
 	class CParaboloidTriangulator : public CQuadricTriangulator {
 		const CRiParaboloid *m_obj;
 	protected:

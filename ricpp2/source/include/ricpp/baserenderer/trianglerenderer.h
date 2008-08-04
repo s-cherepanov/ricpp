@@ -73,6 +73,7 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiDisk &obj);
 		virtual RtVoid triangulate(CRiParaboloid &obj);
 		virtual RtVoid triangulate(CRiSphere &obj);
+		virtual RtVoid triangulate(CRiTorus &obj);
 	}; // CTriangleRenderer
 
 }

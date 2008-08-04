@@ -126,12 +126,14 @@ namespace RiCPP {
 		return result;
 	}
 
-	template<typename type> inline void testMinMax(type &min, type &max)
+	template<typename type> inline bool testMinMax(type &min, type &max)
 	{
 		if ( min > max ) {
 			using std::swap;
 			swap(min,max);
+			return false;
 		}
+		return true;
 	}
 	
 	/** @brief Clamps a value the values boundmin, boundmax.
@@ -163,6 +165,11 @@ namespace RiCPP {
 		return static_cast<type>(1.0)/val;
 	}
 	
+	template<typename type> inline type negate(type val)
+	{
+		return static_cast<type>(-1.0)*val;
+	}
+
 	/** @brief Rounds a number (in special is tround(4.5) = 5.0, tround(-4.5) = -5.0)
 	 *  @param val Number to round
 	 *  @return Rounded number
@@ -254,6 +261,7 @@ namespace RiCPP {
 	template <typename type> inline bool positive(type f) { return f >= 0; }
 	template <typename type> inline bool negative(type f) { return f < 0; }
 	template <typename type> inline bool nearlyZero(type f) { return inOpenInterval(f, -eps<type>(), eps<type>()); }
+	template <typename type> inline bool nearlyEqual(type f1, type f2) { return nearlyZero(f1-f2); }
 	
 	/** @brief Get the sign of a value
 	 *  @param f The value to test
@@ -422,68 +430,45 @@ namespace RiCPP {
 		return vlen2(vectFromPos3(v3, from3, to3));
 	}
 	
-	/** @brief Normalize a 2D vector to size 1
+	/** @brief Normalizes a 2D vector to size 1
 	 *  @retval norm The normalized vector (size = 2)
 	 *  @param x x component of a vector (can be a part of @a norm)
 	 *  @param y y component of a vector (can be a part of @a norm)
 	 */
-	template <typename _T> inline void normalize(_T *norm, _T x, _T y)
-	{
-		const _T length = vlen(x, y);
-		
-		/*
-		if ( length == 0 ) {
-			norm[0] = 0; norm[1] = 0;
-			return;
-		}
-		*/
-		
-		norm[0] = x/length;
-		norm[1] = y/length;
-	}
-	
 	template <typename _T> inline void normalize(_T &x, _T &y)
 	{
 		const _T length = vlen(x, y);
 		
 		/*
-		if ( length == 0 ) {
-			x = y = 0;
-			return;
-		}
+		 if ( length == 0 ) {
+		 x = y = 0;
+		 return;
+		 }
 		 */
 		
 		x /= length;
 		y /= length;
 	}
+
+	template <typename _T> inline void normalize(_T *norm, _T x, _T y)
+	{
+		norm[0] = x;
+		norm[1] = y;
+		normalize(norm[0], norm[1]);
+	}
+	
 	
 	template <typename _T> inline void normalize2(_T *v)
 	{
-		normalize(v, v[0], v[1]);
+		normalize(v[0], v[1]);
 	}
 
-	/** @brief Normalize a 3D vector to size 1
+	/** @brief Normalizes a 3D vector to size 1
 	 *  @retval norm The normalized vector (size = 3)
 	 *  @param x x component of a vector (can be a part of @a norm)
 	 *  @param y y component of a vector (can be a part of @a norm)
 	 *  @param z z component of a vector (can be a part of @a norm)
 	 */
-	template <typename _T> inline void normalize(_T *norm, _T x, _T y, _T z)
-	{
-		const _T length = vlen(x, y, z);
-		
-		/*
-		if ( length == 0 ) {
-			norm[0] = 0; norm[1] = 0; norm[2] = 0;
-			return;
-		}
-		 */
-		
-		norm[0] = x/length;
-		norm[1] = y/length;
-		norm[2] = z/length;
-	}
-	
 	template <typename _T> inline void normalize(_T &x, _T &y, _T &z)
 	{
 		const _T length = vlen(x, y, z);
@@ -500,9 +485,59 @@ namespace RiCPP {
 		z /= length;
 	}
 	
+	template <typename _T> inline void normalize(_T *norm, _T x, _T y, _T z)
+	{
+		norm[0] = x;
+		norm[1] = y;
+		norm[2] = z;
+		normalize(norm[0], norm[1], norm[2]);
+	}
+
 	template <typename _T> inline void normalize3(_T *v)
 	{
-		normalize(v, v[0], v[1], v[2]);
+		normalize(v[0], v[1], v[2]);
+	}
+
+	/** @brief Flips a 2D vector
+	 */
+	template <typename _T> inline void flip(_T &x, _T &y)
+	{
+		x *= (_T)-1;
+		y *= (_T)-1;
+	}
+
+	template <typename _T> inline void flip(_T *v, _T x, _T y)
+	{
+		v[0] = x;
+		v[1] = y;
+		flip(v[0], v[1]);
+	}
+		
+	template <typename _T> inline void flip2(_T *v)
+	{
+		flip(v[0], v[1]);
+	}
+
+	/** @brief Flips a 3D vector
+	 */
+	template <typename _T> inline void flip(_T &x, _T &y, _T &z)
+	{
+		x *= (_T)-1;
+		y *= (_T)-1;
+		z *= (_T)-1;
+	}
+
+	template <typename _T> inline void flip(_T *v, _T x, _T y, _T z)
+	{
+		v[0] = x;
+		v[1] = y;
+		v[2] = z;
+		flip(v[0], v[1], v[2]);
+	}
+
+	template <typename _T> inline void flip3(_T *v)
+	{
+		flip(v[0], v[1], v[2]);
 	}
 
 	/** @brief Determinant of a 2x2 matrix:
@@ -671,6 +706,56 @@ namespace RiCPP {
 		_T vp[3];
 		vprod(vp, v2, v3);
 		return dot3(v1, vp);
+	}
+	
+	/** @brief Flips a (normal) vector pointing in direction of the positive z axis
+	 */
+	template <typename _T> inline bool faceforward(_T &x, _T &y, _T &z)
+	{
+		_T vz[3] = { 0, 0, 1 }, v[3] = {x, y, z};
+		if ( dot3(v, vz) > 0 ) {
+			flip3(v);
+			return true;
+		}
+		return false;
+	}
+
+	template <typename _T> inline bool faceforward(_T *v, _T x, _T y, _T z)
+	{
+		v[0] = x;
+		v[1] = y;
+		v[2] = z;
+		return faceforward(v[0], v[1], v[2]);
+	}
+
+	template <typename _T> inline _T faceforward(_T *v)
+	{
+		return faceforward(v[0], v[1], v[2]);
+	}
+
+	/** @brief Flips a (normal) vector pointing in direction of the negative z axis
+	 */
+	template <typename _T> inline bool facebackward(_T &x, _T &y, _T &z)
+	{
+		_T vz[3] = { 0, 0, 1 }, v[3] = {x, y, z};
+		if ( dot3(v, vz) < 0 ) {
+			flip3(v);
+			return true;
+		}
+		return false;
+	}
+	
+	template <typename _T> inline bool facebackward(_T *v, _T x, _T y, _T z)
+	{
+		v[0] = x;
+		v[1] = y;
+		v[2] = z;
+		return faceforward(v[0], v[1], v[2]);
+	}
+	
+	template <typename _T> inline _T facebackward(_T *v)
+	{
+		return faceforward(v[0], v[1], v[2]);
 	}
 	
 	template <typename _T> inline bool point2InTriangle(const _T *p, const _T *t1, const _T *t2, const _T *t3)

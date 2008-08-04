@@ -34,9 +34,10 @@
 #include <iostream>
 // #define _TRACE_CONE
 // #define _TRACE_CYLINDER
+// #define _TRACE_DISK
 // #define _TRACE_PARABOLOID
 // #define _TRACE_SPHERE
-// #define _TRACE_DISK
+// #define _TRACE_TORUS
 #endif
 
 using namespace RiCPP;
@@ -318,7 +319,7 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 // =============================================================================
 
 struct SQuadricVars {
-	IndexType nVars, realTessU, realTessV;
+	IndexType nVars, tessU, tessV;
 	RtFloat deltaU, deltaV;
 	RtFloat flipNormal;
 	std::vector<RtFloat> *positions, *normals;
@@ -361,8 +362,8 @@ static void initVars(
 	RtInt tessU, RtInt tessV,
 	bool equalOrientations, CFace &f, SQuadricVars &retVals)
 {
-	retVals.realTessU = (IndexType)tessU;
-	retVals.realTessV = (IndexType)tessV;
+	retVals.tessU = (IndexType)tessU;
+	retVals.tessV = (IndexType)tessV;
 	
 	retVals.deltaU = 0;
 	retVals.deltaV = 0;
@@ -371,26 +372,26 @@ static void initVars(
 	// flipNormal = 1.0;
 	
 	for ( int i = 0; i < 2; ++i ) {
-		if ( retVals.realTessU + 1 < retVals.realTessU )
-			retVals.realTessU -= 1;
+		if ( retVals.tessU + 1 < retVals.tessU )
+			retVals.tessU -= 1;
 		
-		if ( retVals.realTessV + 1 < retVals.realTessV )
-			retVals.realTessV -= 1;
+		if ( retVals.tessV + 1 < retVals.tessV )
+			retVals.tessV -= 1;
 		
-		retVals.deltaU = (RtFloat)(1.0 / (RtFloat)retVals.realTessU);
-		retVals.deltaV = (RtFloat)(1.0 / (RtFloat)retVals.realTessV);
+		retVals.deltaU = (RtFloat)(1.0 / (RtFloat)retVals.tessU);
+		retVals.deltaV = (RtFloat)(1.0 / (RtFloat)retVals.tessV);
 		
 		if ( (1.0 + retVals.deltaU) == 1.0 ) {
 			retVals.deltaU = eps<RtFloat>();
-			retVals.realTessU = (IndexType)(1.0/retVals.deltaU);
+			retVals.tessU = (IndexType)(1.0/retVals.deltaU);
 		}
 		if ( (1.0 + retVals.deltaV) == 1.0 ) {
 			retVals.deltaV = eps<RtFloat>();
-			retVals.realTessV = (IndexType)(1.0/retVals.deltaV);
+			retVals.tessV = (IndexType)(1.0/retVals.deltaV);
 		}
 	}
 	
-	retVals.nVars = ((IndexType)retVals.realTessU+1)*((IndexType)retVals.realTessV+1);
+	retVals.nVars = ((IndexType)retVals.tessU+1)*((IndexType)retVals.tessV+1);
 	
 	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, retVals.nVars).value();
 	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, retVals.nVars).value();
@@ -402,9 +403,9 @@ static void initVars(
 static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloat displacement, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, const SQuadricVars &var)
 {
 	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, var.realTessU, deg2rad(thetamax));
+	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
 	
-	RtFloat dz = getDelta(0, height, var.realTessV);
+	RtFloat dz = getDelta(0, height, var.tessV);
 	
 	RtFloat u, v, r, z;
 	RtFloat n[3];
@@ -426,13 +427,13 @@ static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloa
 	}
 	
 	IndexType uverts;
-	IndexType vverts = var.realTessV+1;
+	IndexType vverts = var.tessV+1;
 	
 	for ( z = displacement, v = 0.0; vverts > 0; z += dz, --vverts, v += var.deltaV ) {
 		if ( v > 1.0 )
 			v = 1.0;
 		r = radius * ((RtFloat)1.0-v);
-		if ( vverts == var.realTessV+1 ) {
+		if ( vverts == var.tessV+1 ) {
 			r = radius;
 		}
 		if ( vverts == 1 ) {
@@ -441,7 +442,7 @@ static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloa
 			z = height+displacement;
 		}
 		
-		uverts = var.realTessU + 1;
+		uverts = var.tessU + 1;
 		
 		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=var.deltaU ) {
 			if ( u > 1.0 || uverts == 1 )
@@ -495,9 +496,15 @@ void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	std::cout << "-> CConeTriangulator::buildPN()" << std::endl;
 #endif
 	assert(m_obj != 0);
-	const RtFloat height = m_obj->height();
-	const RtFloat radius = m_obj->radius();
-	const RtFloat thetamax = m_obj->thetaMax();
+	RtFloat height = m_obj->height();
+	assert(!nearlyZero(height));
+	
+	RtFloat radius = m_obj->radius();
+	assert(radius > 0);
+	
+	RtFloat thetamax = m_obj->thetaMax();
+	thetamax = clamp<RtFloat>(thetamax, -360, 360);
+	assert(!nearlyZero(thetamax));
 	
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
@@ -514,16 +521,23 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	std::cout << "-> CCylinderTriangulator::buildPN()" << std::endl;
 #endif
 	assert(m_obj != 0);
-	const RtFloat zmin = m_obj->zMin();
-	const RtFloat zmax = m_obj->zMax();
-	const RtFloat radius = m_obj->radius();
-	const RtFloat thetamax = m_obj->thetaMax();
-		
+	RtFloat zmin = m_obj->zMin();
+	RtFloat zmax = m_obj->zMax();
+	testMinMax(zmin, zmax);
+	assert(!nearlyZero(zmax-zmin));
+	
+	RtFloat radius = m_obj->radius();
+	assert(!nearlyZero(radius));
+	
+	RtFloat thetamax = m_obj->thetaMax();
+	thetamax = clamp<RtFloat>(thetamax, -360, 360);
+	assert(!nearlyZero(thetamax));
+	
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 	
 	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, var.realTessU, deg2rad(thetamax));
+	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
 
 	RtFloat u, v, z;
 	RtFloat pTempZ;
@@ -534,9 +548,9 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	IndexType puidx=0;
 	IndexType pidx=0;
 	
-	RtFloat dz = getDeltaNotZero(zmin, zmax, var.realTessV);
+	RtFloat dz = getDeltaNotZero(zmin, zmax, var.tessV);
 	
-	for ( vverts = var.realTessV+1, v = 0.0, z = zmin;
+	for ( vverts = var.tessV+1, v = 0.0, z = zmin;
 		  vverts > 0;
 		  v += var.deltaV, --vverts, z += dz )
 	{
@@ -551,7 +565,7 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 		pTempZ   = z;
 		
 		puidx = 0;
-		for (	uverts = var.realTessU+1, u = 0.0;
+		for (	uverts = var.tessU+1, u = 0.0;
 			 uverts > 0;
 			 u += var.deltaU, --uverts)
 		{
@@ -589,10 +603,15 @@ void CDiskTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	std::cout << "-> CDiskTriangulator::buildPN()" << std::endl;
 #endif
 	assert(m_obj != 0);
-	const RtFloat displacement = m_obj->height();
-	const RtFloat radius = m_obj->radius();
-	const RtFloat thetamax = m_obj->thetaMax();
+	RtFloat displacement = m_obj->height();
+
+	RtFloat radius = m_obj->radius();
+	assert(!nearlyZero(radius));
 	
+	RtFloat thetamax = m_obj->thetaMax();
+	thetamax = clamp<RtFloat>(thetamax, -360, 360);
+	assert( !nearlyZero(thetamax) );
+		   
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 	buildConePN(0, radius, thetamax, displacement, pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
@@ -608,16 +627,23 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 	std::cout << "-> CParaboloidTriangulator::buildPN()" << std::endl;
 #endif
 	assert(m_obj != 0);
-	const RtFloat zmin = m_obj->zMin();
-	const RtFloat zmax = m_obj->zMax();
-	const RtFloat rmax = m_obj->rMax();
-	const RtFloat thetamax = m_obj->thetaMax();
+	RtFloat zmin = m_obj->zMin();
+	RtFloat zmax = m_obj->zMax();
+	testMinMax(zmin, zmax);
+	assert(!nearlyZero(zmax-zmin));
 	
+	RtFloat rmax = m_obj->rMax();
+	assert(!nearlyZero(rmax));
+	
+	RtFloat thetamax = m_obj->thetaMax();
+	thetamax = clamp<RtFloat>(thetamax, -360, 360);
+	assert(!nearlyZero(thetamax));
+
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 	
 	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, var.realTessU, deg2rad(thetamax));
+	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
 	
 	RtFloat u, v, r, nn, z;
 	
@@ -628,10 +654,10 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 	RtFloat ntemp[3];
 	RtFloat m = zmax/(rmax*rmax); // 2D: f(x) = mx**2; F(x)=2mx
 	
-	RtFloat dz = getDeltaNotZero(zmin, zmax, var.realTessV);
+	RtFloat dz = getDeltaNotZero(zmin, zmax, var.tessV);
 	
 	IndexType uverts;
-	IndexType vverts = var.realTessV+1;
+	IndexType vverts = var.tessV+1;
 	
 	for ( z = zmin, v = 0.0; vverts > 0; z += dz, --vverts, v += var.deltaV ) {
 		if ( v > 1.0 )
@@ -647,7 +673,7 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 		}
 		
 		nn = (RtFloat)(2.0*m*r);
-		uverts = var.realTessU + 1;
+		uverts = var.tessU + 1;
 		
 		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u+=var.deltaU ) {
 			if ( u > 1.0 || uverts == 1 )
@@ -674,42 +700,47 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 #endif
 }
 
-
 void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_SPHERE
 	std::cout << "-> CSphereTriangulator::buildPN()" << std::endl;
 #endif
 	assert(m_obj != 0);
-	const RtFloat zmin = m_obj->zMin();
-	const RtFloat zmax = m_obj->zMax();
-	const RtFloat radius = m_obj->radius();
-	const RtFloat thetamax = m_obj->thetaMax();
+
+	RtFloat radius = m_obj->radius();
+	assert(!nearlyZero(radius));
+
+	RtFloat zmin = m_obj->zMin();
+	clamp<RtFloat>(zmin, -radius, radius);
+	RtFloat zmax = m_obj->zMax();
+	assert(!nearlyZero(zmax-zmin));
+	clamp<RtFloat>(zmax, -radius, radius);
+
+	RtFloat thetamax = m_obj->thetaMax();
+	thetamax = clamp<RtFloat>(thetamax, -360, 360);
+	assert(!nearlyZero(thetamax));
 	
 	RtFloat phimin;
-	if ( zmin > -radius )
-		phimin = (RtFloat)asin(zmin/radius);
-	else
-		phimin = -pi_2<RtFloat>();
+	phimin = (RtFloat)asin(zmin/radius);
 	
 	RtFloat phimax;
-	if ( zmax < radius )
-		phimax = (RtFloat)asin(zmax/radius);
-	else
-		phimax = pi_2<RtFloat>();
+	phimax = (RtFloat)asin(zmax/radius);
 
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 	
 	std::vector<RtFloat> unitcircleU;
-	getUnitCircle(unitcircleU, var.realTessU, deg2rad(thetamax));
+	getUnitCircle(unitcircleU, var.tessU, deg2rad(thetamax));
 
 	std::vector<RtFloat> unitcircleV;
-	getUnitCircle(unitcircleV, var.realTessV, phimax, phimin);
+	if ( var.tessU == var.tessV && nearlyZero(phimin) && nearlyEqual(thetamax, phimax) )
+		unitcircleV = unitcircleU;
+	else
+		getUnitCircle(unitcircleV, var.tessV, phimax, phimin);
 	
 	
 	RtFloat u, v, cosphi;
-	RtFloat ptempZ, ntempZ, ntemp[3];
+	RtFloat ptempZ, ntemp[3];
 	
 	IndexType vverts;
 	IndexType uverts;
@@ -718,7 +749,7 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 	IndexType puidx=0;
 	IndexType pidx=0;
 	
-	for (vverts = var.realTessV+1, v = 0.0;
+	for (vverts = var.tessV+1, v = 0.0;
 		 vverts > 0;
 		 v += var.deltaV, --vverts )
 	{
@@ -731,7 +762,7 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 		ptempZ   = radius * ntemp[2];
 		
 		puidx = 0;
-		for (uverts = var.realTessU+1, u = 0.0;
+		for (uverts = var.tessU+1, u = 0.0;
 			 uverts > 0;
 			 u += var.deltaU, --uverts)
 		{
@@ -758,5 +789,87 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 	
 #ifdef _TRACE_SPHERE
 	std::cout << "<- CSphereTriangulator::buildPN()" << std::endl;
+#endif
+}
+
+void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+{
+#ifdef _TRACE_TORUS
+	std::cout << "-> CTorusTriangulator::buildPN()" << std::endl;
+#endif
+	assert(m_obj != 0);
+	
+	RtFloat majorrad = m_obj->majorRad();
+	RtFloat minorrad = m_obj->minorRad();
+	assert(!nearlyZero(minorrad));
+	
+	RtFloat phimin = m_obj->phiMin();
+	phimin = clamp<RtFloat>(phimin, -360, 360);
+	RtFloat phimax = m_obj->phiMax();
+	phimax = clamp<RtFloat>(phimax, -360, 360);
+	assert(!nearlyZero(phimax-phimin));
+
+	RtFloat thetamax = m_obj->thetaMax();
+	thetamax = clamp<RtFloat>(thetamax, -360, 360);
+	assert(!nearlyZero(thetamax));
+
+	SQuadricVars var;
+	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	
+	std::vector<RtFloat> unitcircleU;
+	getUnitCircle(unitcircleU, var.tessU, deg2rad(thetamax));
+
+	std::vector<RtFloat> unitcircleV;
+	getUnitCircle(unitcircleV, var.tessV, deg2rad(phimax), deg2rad(phimin));
+
+	RtFloat u, v, r, cosphi, sinphi, sintheta, costheta;
+	RtFloat pTempZ;
+	
+	IndexType vverts;
+	IndexType uverts;
+	
+	IndexType puidx=0;
+	IndexType pvidx=0;
+	IndexType pidx=0;
+	
+	vverts = var.tessV+1;
+	
+	for ( v = 0.0; vverts > 0; --vverts, v += var.deltaV )
+	{
+		if ( v > 1 || vverts == 1 ) {
+			v = 1.0;
+		}
+		cosphi = unitcircleV[pvidx++];
+		sinphi = unitcircleV[pvidx++]; // Z of the normals stays constant (Sin phi) for the same v
+		
+		r      = minorrad * cosphi;
+		pTempZ = minorrad * sinphi;
+		
+		uverts = var.tessU + 1;
+
+		for ( puidx = 0, u = 0.0; uverts > 0; --uverts, u += var.deltaU ) {
+			if ( u > 1 || uverts == 1 ) {
+				u = 1.0;
+			}
+			
+			costheta = unitcircleU[puidx++];
+			sintheta = unitcircleU[puidx++];
+			
+			(*var.positions)[pidx]   = (majorrad+r) * costheta;
+			(*var.positions)[pidx+1] = (majorrad+r) * sintheta;
+			(*var.positions)[pidx+2] = pTempZ;
+
+			(*var.normals)[pidx]     = var.flipNormal * (cosphi * costheta);
+			(*var.normals)[pidx+1]   = var.flipNormal * (cosphi * sintheta);
+			(*var.normals)[pidx+2]   = var.flipNormal * sinphi;
+			
+			normalize3(&(*var.normals)[pidx]);
+			
+			pidx += 3;
+		}
+	}
+
+#ifdef _TRACE_TORUS
+	std::cout << "<- CTorusTriangulator::buildPN()" << std::endl;
 #endif
 }

@@ -151,6 +151,14 @@ namespace RiCPP {
 	public:
 		inline CSphereTriangulator(const CRiSphere &obj) : m_obj(&obj) {}
 	};
+
+	class CTorusTriangulator : public CQuadricTriangulator {
+		const CRiTorus *m_obj;
+	protected:
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+	public:
+		inline CTorusTriangulator(const CRiTorus &obj) : m_obj(&obj) {}
+	};
 }
 
 #endif // _RICPP_RICONTEXT_TRIANGULATION_H

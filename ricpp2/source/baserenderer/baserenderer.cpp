@@ -2320,18 +2320,6 @@ RtVoid CBaseRenderer::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat theta
 RtVoid CBaseRenderer::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
 	RICPP_PREAMBLE(REQ_PARABOLOID)
-		if ( zmax < zmin )
-			std::swap(zmin, zmax);
-		if ( zmin < 0 )
-			zmin = 0;
-		if ( zmax < 0 )
-			zmax = 0;
-		if ( rmax < 0 )
-			rmax = 0;
-		if ( thetamax > 360.0 )
-			thetamax = 360.0;
-		if ( thetamax < -360.0 )
-			thetamax = -360.0;
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
 		RICPP_PROCESS(newRiParaboloid(renderState()->lineNo(), rmax, zmin, zmax, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE

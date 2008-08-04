@@ -103,3 +103,9 @@ RtVoid CTriangleRenderer::triangulate(CRiSphere &obj)
 	CSphereTriangulator t(obj);
 	triangulate(t);
 }
+
+RtVoid CTriangleRenderer::triangulate(CRiTorus &obj)
+{
+	CTorusTriangulator t(obj);
+	triangulate(t);
+}

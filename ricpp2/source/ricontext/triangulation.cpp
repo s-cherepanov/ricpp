@@ -534,8 +534,6 @@ static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax,
 			(*var.normals)[pidx+1] = n[1] * var.flipNormal;
 			(*var.normals)[pidx+2] = n[2] * var.flipNormal;
 			
-			normalize3(&(*var.normals)[pidx]);
-
 			pidx += 3;
 		}
 	}

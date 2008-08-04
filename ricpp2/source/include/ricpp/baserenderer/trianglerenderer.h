@@ -71,6 +71,7 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiCone &obj);
 		virtual RtVoid triangulate(CRiCylinder &obj);
 		virtual RtVoid triangulate(CRiDisk &obj);
+		virtual RtVoid triangulate(CRiHyperboloid &obj);
 		virtual RtVoid triangulate(CRiParaboloid &obj);
 		virtual RtVoid triangulate(CRiSphere &obj);
 		virtual RtVoid triangulate(CRiTorus &obj);

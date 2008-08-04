@@ -136,6 +136,14 @@ namespace RiCPP {
 		inline CDiskTriangulator(const CRiDisk &obj) : m_obj(&obj) {}
 	};
 
+	class CHyperboloidTriangulator : public CQuadricTriangulator {
+		const CRiHyperboloid *m_obj;
+	protected:
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+	public:
+		inline CHyperboloidTriangulator(const CRiHyperboloid &obj) : m_obj(&obj) {}
+	};
+
 	class CParaboloidTriangulator : public CQuadricTriangulator {
 		const CRiParaboloid *m_obj;
 	protected:

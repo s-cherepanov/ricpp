@@ -92,6 +92,12 @@ RtVoid CTriangleRenderer::triangulate(CRiDisk &obj)
 	triangulate(t);
 }
 
+RtVoid CTriangleRenderer::triangulate(CRiHyperboloid &obj)
+{
+	CHyperboloidTriangulator t(obj);
+	triangulate(t);
+}
+
 RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
 {
 	CParaboloidTriangulator t(obj);

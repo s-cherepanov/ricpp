@@ -468,6 +468,79 @@ static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloa
 	}
 }
 
+
+static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, const SQuadricVars &var)
+{
+	std::vector<RtFloat> unitcircle;
+	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
+
+	RtFloat u, v, len, costheta, sintheta;
+	RtFloat p[3], p0[3], n[3];
+	
+	IndexType vverts;
+	IndexType uverts;
+	
+	IndexType puidx=0;
+	IndexType pidx=0;
+	
+	RtFloat xl = point2[0] - point1[0];
+	RtFloat yl = point2[1] - point1[1];
+	RtFloat zl = point2[2] - point1[2];
+	
+	RtFloat deltax = xl * var.deltaV;
+	RtFloat deltay = yl * var.deltaV;
+	RtFloat deltaz = zl * var.deltaV;
+	
+	p0[0] = point1[0];
+	p0[1] = point1[1];
+	p0[2] = point1[2];
+	
+	vverts = var.tessV+1;
+	for ( v=0.0; vverts > 0; p0[0] += deltax, p0[1] += deltay, p0[2] += deltaz, --vverts, v += var.deltaV ) {
+		if ( v > 1 || vverts == 1 ) {
+			v = 1.0;
+			p0[0] = point2[0];
+			p0[1] = point2[1];
+			p0[2] = point2[2];
+		}
+		uverts = var.tessU+1;
+		
+		for ( u = 0.0, puidx=0; uverts > 0; --uverts, u += var.tessU ) {
+			if ( u > 1 || uverts == 1 ) {
+				u = 1.0;
+			}
+			
+			costheta = unitcircle[puidx];
+			sintheta = unitcircle[++puidx];
+			++puidx;
+			
+			p[0] = p0[0]*costheta - p0[1]*sintheta;
+			p[1] = p0[0]*sintheta + p0[1]*costheta;
+			p[2] = p0[2];
+			
+			n[0] = p[0];
+			n[1] = p[1];
+			n[2] = ((xl*costheta + yl*sintheta) * (p0[0]*costheta - p0[1]*sintheta) +
+					(xl*sintheta - yl*costheta) * (p0[0]*sintheta + p0[1]*costheta));
+			n[2] /= zl;
+			
+			normalize3(n);
+			
+			(*var.positions)[pidx]   = p[0];
+			(*var.positions)[pidx+1] = p[1];
+			(*var.positions)[pidx+2] = p[2];
+			
+			(*var.normals)[pidx]   = n[0] * var.flipNormal;
+			(*var.normals)[pidx+1] = n[1] * var.flipNormal;
+			(*var.normals)[pidx+2] = n[2] * var.flipNormal;
+			
+			normalize3(&(*var.normals)[pidx]);
+
+			pidx += 3;
+		}
+	}
+}
+
 // =============================================================================
 
 CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
@@ -618,6 +691,33 @@ void CDiskTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	
 #ifdef _TRACE_DISK
 	std::cout << "<- CDiskTriangulator::buildPN()" << std::endl;
+#endif
+}
+
+void CHyperboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+{
+#ifdef _TRACE_HYPERBOLOID
+	std::cout << "-> CHyperboloidTriangulator::buildPN()" << std::endl;
+#endif
+	assert(m_obj != 0);
+
+	RtPoint point1, point2;
+	
+	point1 = m_obj->point1();
+	point2 = m_obj->point2();
+
+	assert(!eqVect3(point1, point2));
+	
+	RtFloat thetamax = m_obj->thetaMax();
+	thetamax = clamp<RtFloat>(thetamax, -360, 360);
+	assert( !nearlyZero(thetamax) );
+	
+	SQuadricVars var;
+	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	buildHyperboloidPN(point1, point2, thetamax, pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	
+#ifdef _TRACE_HYPERBOLOID
+	std::cout << "<- CHyperboloidTriangulator::buildPN()" << std::endl;
 #endif
 }
 
@@ -804,10 +904,8 @@ void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarati
 	assert(!nearlyZero(minorrad));
 	
 	RtFloat phimin = m_obj->phiMin();
-	phimin = clamp<RtFloat>(phimin, -360, 360);
 	RtFloat phimax = m_obj->phiMax();
-	phimax = clamp<RtFloat>(phimax, -360, 360);
-	assert(!nearlyZero(phimax-phimin));
+	assert(!nearlyEqual(phimin, phimax));
 
 	RtFloat thetamax = m_obj->thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);

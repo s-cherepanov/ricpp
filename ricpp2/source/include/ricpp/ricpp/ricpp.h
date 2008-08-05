@@ -64,6 +64,8 @@ class IRi;
  */
 class IErrorHandler {
 public:
+	inline virtual ~IErrorHandler() {}
+
 	/** @brief Clone the instance.
 	 *  @return A new cloned instance of the filter function.
 	 */
@@ -262,7 +264,7 @@ public:
 	/** @brief Returns a singleton object
 	 *  @return Singleton archive callback
 	 */
-	inline virtual const IArchiveCallback &singleton() const = 0;
+	virtual const IArchiveCallback &singleton() const = 0;
 };
 
 // ---------------------------------------------------------------------------------------------------

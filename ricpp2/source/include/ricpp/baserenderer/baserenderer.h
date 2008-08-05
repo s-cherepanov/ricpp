@@ -445,10 +445,11 @@ protected:
 	CTransformation &transformation();
 	
 	inline bool replayMode() const { return m_replayDelayedMode; }
-	bool delayRequest(CRManInterfaceCall &obj);
 	void initDelayed();
 	void replayDelayed();
 
+	virtual bool delayRequest(CRManInterfaceCall &obj);
+	
 	/** @brief Gets the current to camera matrix
 	 *
 	 *  Matrix is only valid inside a world block.

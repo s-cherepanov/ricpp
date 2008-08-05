@@ -493,6 +493,7 @@ namespace RiCPP {
 	 */
 	class CRibRequest {
 	public:
+		inline virtual ~CRibRequest() {}
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const = 0;
 		virtual EnumRequests interfaceIdx() const {return REQ_UNKNOWN;}
 		inline virtual RtToken requestName() const { return CRequestInfo::requestName(interfaceIdx()); }

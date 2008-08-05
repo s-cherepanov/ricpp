@@ -559,9 +559,9 @@ int main(int argc, char * const argv[])
 	// ri.begin("$TMP/testout.rib");
 	ri.begin(RI_NULL);
 
-	RtInt yes = 1;
-	RtInt no = 0;
-	RtInt special = -1;
+	RtInt yes = 1; yes = yes;
+	RtInt no = 0; no = no;
+	RtInt special = -1; special = special;
 
 	/// @todo Skip header (special i.e. only one header, suppress the rest) with uncached archives doesn't work correctly
 	ri.control("ribwriter", "skip-headers", &special, RI_NULL);

@@ -150,7 +150,7 @@ RtFloat CBaseRenderer::opacityToAlpha(const std::vector<RtFloat> &opacity) {
 
 void CBaseRenderer::getColor3f(const std::vector<RtFloat> &fromC, RtFloat toC[3], const CColorDescr &c, RtFloat gain, RtFloat gamma)
 {
-	if ( fromC.size() != c.colorSamples() ) {
+	if ( (RtInt)fromC.size() != c.colorSamples() ) {
 		toC[0] = 0;
 		toC[1] = 0;
 		toC[2] = 0;
@@ -272,19 +272,11 @@ CTransformation &CBaseRenderer::transformation()
 
 bool CBaseRenderer::delayRequest(CRManInterfaceCall &obj)
 {
-	// No motion blur (only first primitive)
-	if ( renderState()->motionState().curSampleIdx() > 0 )
-		return false;
-	
-	// Delay transparent polygons
-	if ( !m_replayDelayedMode ) {
-		RtFloat alpha = opacityToAlpha(attributes().opacity());
-		if ( alpha < 1.0 ) {
-			obj.deferedDeletion(true);
-			renderState()->lockState();
-			m_delayedRequests.push_back(CDelayedRequest(&obj, renderState()->lockedAttributes(), renderState()->lockedTransformation()));
-			return true;
-		}
+	if ( !replayMode() ) {
+		obj.delayedDeletion(true);
+		renderState()->rememberState();
+		m_delayedRequests.push_back(CDelayedRequest(&obj, renderState()->rememberedAttributes(), renderState()->rememberedTransformation()));
+		return true;
 	}
 	return false;
 }
@@ -306,7 +298,7 @@ void CBaseRenderer::replayDelayed()
 		if ( (*i).m_req ) {
 			m_attributes = (*i).m_attributes;
 			m_transformation = (*i).m_transformation;
-			(*i).m_req->doProcess(*this);
+			(*i).m_req->doProcess(*this, 0);
 		}
 	}
 	
@@ -505,7 +497,7 @@ void CBaseRenderer::processRequest(CRManInterfaceCall *aRequest, bool immediatel
 		return;
 	
 	bool recorded = false;
-	aRequest->preProcess(*this);
+	aRequest->preProcess(*this, 0);
 
 	if ( !immediately && renderState()->curMacro() ) {
 		recordRequest(aRequest);
@@ -513,15 +505,15 @@ void CBaseRenderer::processRequest(CRManInterfaceCall *aRequest, bool immediatel
 	}
 		
 	if ( immediately || (!renderState()->recordMode() && renderState()->executeConditionial()) ) {
-		aRequest->doProcess(*this);
+		aRequest->doProcess(*this, 0);
 	}
 
-	aRequest->postProcess(*this);
+	aRequest->postProcess(*this, 0);
 	
-	if ( !recorded && aRequest->deferedDeletion() )
+	if ( !recorded && aRequest->delayedDeletion() )
 		renderState()->deferRequest(aRequest);
 
-	if ( !recorded && !aRequest->deferedDeletion() )
+	if ( !recorded && !aRequest->delayedDeletion() )
 		macroFactory().deleteRequest(aRequest);
 }
 

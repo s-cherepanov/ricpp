@@ -56,7 +56,7 @@ class CRibFilter : public IRiRoot, public IPlugin {
 
 	/** @brief beginV() is not a RIB request.
 	 */
-	inline RtContextHandle beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]) { return illContextHandle; }
+	inline RtContextHandle beginV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[]) { return illContextHandle; }
 
 	/** @brief end() is not a RIB request.
 	 */
@@ -175,11 +175,11 @@ public:
 	 *
 	 *  Overload this functions to set own parameters (like command line parameters).
 	 *
-	 *  @param name Name of the argument.
-	 *  @param value Pointer to the parameter.
+	 *  @param aName Name of the argument.
+	 *  @param aValue Pointer to the parameter.
 	 *  @return Pointer to the RenderMan interrface that is called by this filter.
 	 */
-    inline virtual RtVoid setArg(RtString name, RtPointer value)
+    inline virtual RtVoid setArg(RtString aName, RtPointer aValue)
 	{
 		// Can be overwritten
 	}
@@ -189,16 +189,16 @@ public:
 	 *  Overload this functions to set own parameters (like command line parameters).
 	 *
 	 *  @param n Number of name value pairs
-	 *  @param name Name of the argument.
-	 *  @param value Pointer to the parameter.
+	 *  @param aName Name of the argument.
+	 *  @param aValue Pointer to the parameter.
 	 *  @return Pointer to the RenderMan interrface that is called by this filter.
 	 */
-    inline virtual RtVoid setArgs(RtInt n, RtString name[], RtPointer value[])
+    inline virtual RtVoid setArgs(RtInt n, RtString aName[], RtPointer aValue[])
 	{
 		if ( n <= 0 )
 			return;
 		for ( RtInt i = 0; i < n; ++i ) {
-			setArg(name[i], value[i]);
+			setArg(aName[i], aValue[i]);
 		}
 	}
 

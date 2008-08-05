@@ -79,7 +79,7 @@ namespace RiCPP {
 		
 		/** @brief Closes the resource.
 		 */
-		inline virtual void close() = 0;
+		virtual void close() = 0;
 		
 		/** @brief Opens a resource.
 		 *
@@ -103,7 +103,7 @@ namespace RiCPP {
 		 *
 		 *  @return true, if the resource is open.
 		 */
-		inline virtual bool isOpen() const = 0;
+		virtual bool isOpen() const = 0;
 
 		/** @brief Reads a chunk of data.
 		 *
@@ -111,7 +111,7 @@ namespace RiCPP {
 		 *  @param  size Maximal number of bytes that can be stored at *b.
 		 *  @return Number of bytes read.
 		 */
-		inline virtual std::streamsize sgetn(char *b, std::streamsize size) = 0;
+		virtual std::streamsize sgetn(char *b, std::streamsize size) = 0;
 
 		/** @brief Writes a chunk of data.
 		 *
@@ -119,7 +119,7 @@ namespace RiCPP {
 		 *  @param size Number of bytes that should be written.
 		 *  @return Number of bytes written.
 		 */
-		inline virtual std::streamsize sputn(const char *b, std::streamsize size) = 0;
+		virtual std::streamsize sputn(const char *b, std::streamsize size) = 0;
 		
 		/** @brief Gets the URI (read-only) of the associated resource.
 		 *

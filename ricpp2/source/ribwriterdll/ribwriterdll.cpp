@@ -27,7 +27,9 @@
  *  @brief Stub for the dynamic library of a CRibWriter
  */
 
+#pragma GCC visibility push(hidden)
 #include "ricpp/ribwriter/ribwriter.h"
+#pragma GCC visibility pop
 
 using namespace RiCPP;
 

@@ -552,7 +552,7 @@ namespace RiCPP {
 			m_nVerts = theNVerts;
 			m_verts = theVerts;
 
-			assert(m_verts.size() == sum(m_nVerts.size(), &(m_nVerts[0])));
+			assert((RtInt)m_verts.size() == sum(m_nVerts.size(), &(m_nVerts[0])));
 		}
 
 		/** @brief Sets the vertex indices.
@@ -788,8 +788,8 @@ namespace RiCPP {
 			m_nVerts = theNVerts;
 			m_verts  = theVerts;
 
-			assert(m_nVerts.size() == sum(m_nLoops.size(), &(m_nLoops[0])));
-			assert(m_verts.size() == sum(m_nVerts.size(), &(m_nVerts[0])));
+			assert((RtInt)m_nVerts.size() == sum(m_nLoops.size(), &(m_nLoops[0])));
+			assert((RtInt)m_verts.size() == sum(m_nVerts.size(), &(m_nVerts[0])));
 		}
 
 		/** @brief Sets the vertex indices.

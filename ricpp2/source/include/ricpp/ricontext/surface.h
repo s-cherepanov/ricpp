@@ -101,7 +101,7 @@ public:
 	inline TemplPrimVar<RtInt> &reserveInts(const CDeclaration &decl) { return m_ints[decl.token()]; }
 	inline TemplPrimVar<std::string> &reserveStrings(const CDeclaration &decl)  { return m_strings[decl.token()]; }
 
-	inline EnumFaceTypes faceType(EnumFaceTypes ft)
+	inline void faceType(EnumFaceTypes ft)
 	{
 		m_faceType = ft;
 	}

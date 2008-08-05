@@ -603,7 +603,7 @@ namespace RiCPP {
 		 *  @param tokens Tokens as parameter identifiers.
 		 *  @param params Pointers to the parameters.
 		 */
-		virtual void set(
+		void set(
 			const char *aQualifier, const char *aTable, 
 			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,

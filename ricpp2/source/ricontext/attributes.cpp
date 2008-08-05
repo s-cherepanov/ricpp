@@ -159,7 +159,7 @@ void CAttributes::CAttributeFloatArray::sample(RtFloat shutterTime, const TypeMo
 
 void CAttributes::CAttributeFloatArray::sampleReset()
 {
-	if ( (RtInt)m_movedValue.size() >= m_value.size() ) {
+	if ( m_movedValue.size() >= m_value.size() ) {
 		m_value.assign(m_movedValue.begin(), m_movedValue.begin() + m_value.size());
 	}
 }

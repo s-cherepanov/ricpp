@@ -137,6 +137,11 @@ private:
 			m_outer = &outer;
 		}
 
+		inline virtual RtVoid handleErrorV(RtInt code, RtInt severity, RtString message, va_list argList=0)
+		{
+			IRiCPPErrorHandler::handleErrorV(code, severity, message, argList);
+		}
+
 		/** @brief Handles an error, sets CRiCPPBridge::m_lastError and calls the current error handler
 		 *
 		 * Implementation of IRiCPPErrorHandler, used through virtual ricppErrHandler(),
@@ -540,7 +545,7 @@ protected:
 
 		/** @brief Destructor.
 		 */
-		~CContextManagement();
+		virtual ~CContextManagement();
 
 		/** @brief Sets the owner of the objects.
 		 *

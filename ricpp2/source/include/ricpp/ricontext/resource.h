@@ -94,6 +94,7 @@ public:
 class IResourceFactory
 {
 public:
+	virtual ~IResourceFactory() {}
 	virtual void registerOperations(CTokenMap &m) = 0;
 	virtual CResource *getResource(RtToken anId, unsigned long aHandleNo, bool isFromHandleId) = 0;
 	virtual RtToken type() const = 0;

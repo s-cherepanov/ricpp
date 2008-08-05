@@ -134,11 +134,11 @@ namespace RiCPP {
 		 * (done by CDynLibFactory) initialises the members
 		 *  with the parameters.
 		 *
-		 * @param libname Basename of the library
-		 * @param searchpath Colon seperated (no variable substitution)
-		 * @param version Version of the library
+		 * @param aLibname Basename of the library
+		 * @param aSearchpath Colon seperated (no variable substitution)
+		 * @param aVersion Version of the library
 		 */
-		CDynLib(const char *libname, const char *searchpath, long int version=-1);
+		CDynLib(const char *aLibname, const char *aSearchpath, long int aVersion=-1);
 
 		/** @brief Destructor.
 		 *

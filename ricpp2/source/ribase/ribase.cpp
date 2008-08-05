@@ -43,10 +43,6 @@ extern "C" {
 
 
 // ----------------------------------------------------------------------------
-RICPP_INTERN(RtInt) RiLastError = RIE_NOERROR;
-
-
-// ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiErrorAbort (RtInt code, RtInt severity, RtString message)
 {
@@ -148,12 +144,12 @@ RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	ywidth = ywidth;
 
 	if ( x > -0.001 && x < 0.001)
-		s = 1.0;
+		s = (RtFloat)1.0;
 	else
 		s = (RtFloat)(sin(x)/x);
 
 	if ( y > -0.001 && y < 0.001 )
-		t = 1.0;
+		t = (RtFloat)1.0;
 	else
 		t = (RtFloat)(sin(y)/y);
 
@@ -162,6 +158,13 @@ RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 
 
 /*   */
+#undef RICPP_INTERN
+#define RICPP_INTERN(type) type
+
+// ----------------------------------------------------------------------------
+RICPP_INTERN(RtInt) RiLastError = RIE_NOERROR;
+	
+// ----------------------------------------------------------------------------
 
 RICPP_INTERN(const RtMatrix) RiIdentityMatrix = {
 	{(RtFloat) 1.0, (RtFloat) 0.0, (RtFloat) 0.0, (RtFloat) 0.0},

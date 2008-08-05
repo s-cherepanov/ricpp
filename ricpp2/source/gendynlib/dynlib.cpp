@@ -40,8 +40,8 @@
 
 using namespace RiCPP;
 
-CDynLib::CDynLib(const char *libname, const char *searchpath, long int version)
-	: m_useCount(0), m_version(version), m_libname(libname), m_searchpath(':', searchpath, true), m_libpath("")
+CDynLib::CDynLib(const char *aLibname, const char *aSearchpath, long int aVersion)
+	: m_useCount(0), m_version(aVersion), m_libname(aLibname), m_searchpath(':', aSearchpath, true), m_libpath("")
 {
 }
 

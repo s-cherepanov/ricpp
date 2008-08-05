@@ -86,6 +86,8 @@ namespace RiCPP {
 		 *  @return Frontend for RI-calls
 		 */
 		virtual IRi &frontend() = 0;
+		
+		inline virtual ~IRibParserCallback() {}
 	}; // IRibParserCallback
 
 }

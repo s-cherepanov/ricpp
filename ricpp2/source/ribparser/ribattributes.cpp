@@ -94,7 +94,7 @@ void CColorRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 			return;
 		}
 
-		if ( p0.getCard() != parser.renderState().options().colorDescr().colorSamples() ) {
+		if ( (RtInt)p0.getCard() != parser.renderState().options().colorDescr().colorSamples() ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' arguments %s have not the correct color size",
@@ -110,7 +110,7 @@ void CColorRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 	
 	if ( request.size() > 0 ) {
 
-		if ( request.size() != parser.renderState().options().colorDescr().colorSamples() ) {
+		if ( (RtInt)request.size() != parser.renderState().options().colorDescr().colorSamples() ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' arguments %s have not the correct color size",
@@ -175,7 +175,7 @@ void COpacityRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 			return;
 		}
 
-		if ( p0.getCard() != parser.renderState().options().colorDescr().colorSamples() ) {
+		if ( (RtInt)p0.getCard() != parser.renderState().options().colorDescr().colorSamples() ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' arguments %s have not the correct color size",
@@ -191,7 +191,7 @@ void COpacityRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 	
 	if ( request.size() > 0 ) {
 
-		if ( request.size() != parser.renderState().options().colorDescr().colorSamples() ) {
+		if ( (RtInt)request.size() != parser.renderState().options().colorDescr().colorSamples() ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' arguments %s have not the correct color size",

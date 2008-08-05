@@ -108,8 +108,8 @@ namespace RiCPP {
 		std::deque<CTransformation *> m_transformationStack;  ///< Current stack of transformations and their inverses.
 		std::deque<CTransformation *> m_motionTransformationStack;  ///< Current stack of transformations and their inverses for motion blocks (moved instances)
 
-		std::list<CAttributes *> m_lockedAttributes;   ///< locked attributes.
-		std::list<CTransformation *> m_lockedTransformations;   ///< locked attributes.
+		std::list<CAttributes *> m_rememberedAttributes;   ///< remembered attributes.
+		std::list<CTransformation *> m_rememberedTransformations;   ///< remembered attributes.
 		
 		CRManInterfaceFactory *m_macroFactory; ///< Used for deleteion of defered requests.
 		std::deque<CRManInterfaceCall *> m_deferedRequests;  ///< Requests with defered deletion
@@ -559,11 +559,11 @@ namespace RiCPP {
 		 */
 		virtual ~CRenderState();
 		
-		void lockState();
-		CAttributes *lockedAttributes();
-		const CAttributes *lockedAttributes() const;
-		CTransformation *lockedTransformation();
-		const CTransformation *lockedTransformation() const;
+		void rememberState();
+		CAttributes *rememberedAttributes();
+		const CAttributes *rememberedAttributes() const;
+		CTransformation *rememberedTransformation();
+		const CTransformation *rememberedTransformation() const;
 
 		void deferRequest(CRManInterfaceCall *aRequest);
 		void deleteDeferedRequests();

@@ -1171,10 +1171,10 @@ CRenderState::~CRenderState()
 		m_attributesFactory->deleteAttributes(a);
 		m_motionAttributesStack.pop_back();
 	}
-	while ( !m_lockedAttributes.empty() ) {
-		CAttributes *a = m_lockedAttributes.back();
+	while ( !m_rememberedAttributes.empty() ) {
+		CAttributes *a = m_rememberedAttributes.back();
 		m_attributesFactory->deleteAttributes(a);
-		m_lockedAttributes.pop_back();
+		m_rememberedAttributes.pop_back();
 	}
 	
 	while ( !m_transformationStack.empty() ) popTransform();
@@ -1183,10 +1183,10 @@ CRenderState::~CRenderState()
 		m_transformationFactory->deleteTransformation(trans);
 		m_motionTransformationStack.pop_back();
 	}
-	while ( !m_lockedTransformations.empty() ) {
-		CTransformation *trans = m_lockedTransformations.back();
+	while ( !m_rememberedTransformations.empty() ) {
+		CTransformation *trans = m_rememberedTransformations.back();
 		m_transformationFactory->deleteTransformation(trans);
-		m_lockedTransformations.pop_back();
+		m_rememberedTransformations.pop_back();
 	}
 	
 	deleteDeferedRequests();
@@ -1199,44 +1199,44 @@ CRenderState::~CRenderState()
 }
 
 
-void CRenderState::lockState()
+void CRenderState::rememberState()
 {
 	if ( attributes().dirty() ) {
-		m_lockedAttributes.push_back(dynamic_cast<CAttributes *>(attributes().duplicate()));
+		m_rememberedAttributes.push_back(dynamic_cast<CAttributes *>(attributes().duplicate()));
 		attributes().dirty(false);
 	}
 	if ( curTransform().dirty() ) {
-		m_lockedTransformations.push_back(curTransform().duplicate());
+		m_rememberedTransformations.push_back(curTransform().duplicate());
 		curTransform().dirty(false);
 	}
 }
 
-const CAttributes *CRenderState::lockedAttributes() const
+const CAttributes *CRenderState::rememberedAttributes() const
 {
-	if ( m_lockedAttributes.empty() )
+	if ( m_rememberedAttributes.empty() )
 		return 0;
-	return m_lockedAttributes.back();
+	return m_rememberedAttributes.back();
 }
 
-CAttributes *CRenderState::lockedAttributes()
+CAttributes *CRenderState::rememberedAttributes()
 {
-	if ( m_lockedAttributes.empty() )
+	if ( m_rememberedAttributes.empty() )
 		return 0;
-	return m_lockedAttributes.back();
+	return m_rememberedAttributes.back();
 }
 
-const CTransformation *CRenderState::lockedTransformation() const
+const CTransformation *CRenderState::rememberedTransformation() const
 {
-	if ( m_lockedTransformations.empty() )
+	if ( m_rememberedTransformations.empty() )
 		return 0;
-	return m_lockedTransformations.back();
+	return m_rememberedTransformations.back();
 }
 
-CTransformation *CRenderState::lockedTransformation()
+CTransformation *CRenderState::rememberedTransformation()
 {
-	if ( m_lockedTransformations.empty() )
+	if ( m_rememberedTransformations.empty() )
 		return 0;
-	return m_lockedTransformations.back();
+	return m_rememberedTransformations.back();
 }
 
 void CRenderState::deferRequest(CRManInterfaceCall *aRequest)

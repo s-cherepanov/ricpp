@@ -100,6 +100,8 @@ namespace RiCPP {
  */
 class CParameterClasses {
 public:
+	inline virtual ~CParameterClasses() {}
+
 	//! constant() always returns 1
 	inline virtual RtInt constant() const {return 1;}
 

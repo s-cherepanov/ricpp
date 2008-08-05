@@ -424,6 +424,7 @@ public:
 	 *  @retval triangles, container will be filled with vertex indices
 	 *                     (CPolygonNode::m_index)
 	 */
+	virtual ~IPolygonTriangulationStrategy() {}
 	virtual void triangulate(
 		std::vector<CPolygonNode> &nodes,
 		IndexType offs,

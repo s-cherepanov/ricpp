@@ -474,7 +474,7 @@ static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax,
 	std::vector<RtFloat> unitcircle;
 	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
 
-	RtFloat u, v, len, costheta, sintheta;
+	RtFloat u, v, costheta, sintheta;
 	RtFloat p[3], p0[3], n[3];
 	
 	IndexType vverts;
@@ -701,8 +701,8 @@ void CHyperboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDec
 
 	RtPoint point1, point2;
 	
-	point1 = m_obj->point1();
-	point2 = m_obj->point2();
+	memcpy(point1, m_obj->point1(), sizeof(RtPoint));
+	memcpy(point2, m_obj->point2(), sizeof(RtPoint));
 
 	assert(!eqVect3(point1, point2));
 	

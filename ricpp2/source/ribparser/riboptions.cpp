@@ -1455,7 +1455,7 @@ void CColorSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 
 		n = (RtInt)(p0.getCard()/3);
 
-		if ( n*3 != p0.getCard() || n*3 != p1.getCard() ) {
+		if ( n*3 != (RtInt)p0.getCard() || n*3 != (RtInt)p1.getCard() ) {
 			parser.errHandler().handleError(
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' size of the matrices have to be a multiple of 3.",

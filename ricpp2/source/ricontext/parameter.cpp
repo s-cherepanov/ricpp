@@ -370,7 +370,7 @@ void CParameter::extract(IndexType pos, std::vector<RtInt>::iterator &result) co
 
 void CParameter::extract(IndexType from, IndexType to, std::vector<RtInt>::iterator &result) const
 {
-	unsigned long inc = 1;
+	long inc = 1;
 	if ( to < from )
 		inc = -1;
 	for ( unsigned long pos = from; pos < to; pos += inc ) {
@@ -402,7 +402,7 @@ void CParameter::extract(IndexType pos, std::vector<RtFloat>::iterator &result) 
 
 void CParameter::extract(IndexType from, IndexType to, std::vector<RtFloat>::iterator &result) const
 {
-	unsigned long inc = 1;
+	long inc = 1;
 	if ( to < from )
 		inc = -1;
 	for ( unsigned long pos = from; pos < to; pos += inc ) {
@@ -423,7 +423,7 @@ void CParameter::extract(IndexType pos, std::vector<std::string>::iterator &resu
 
 void CParameter::extract(IndexType from, IndexType to, std::vector<std::string>::iterator &result) const
 {
-	unsigned long inc = 1;
+	long inc = 1;
 	if ( to < from )
 		inc = -1;
 	for ( unsigned long pos = from; pos < to; pos += inc ) {
@@ -444,7 +444,7 @@ void CParameter::extract(IndexType pos, std::vector<RtString>::iterator &result)
 
 void CParameter::extract(IndexType from, IndexType to, std::vector<RtString>::iterator &result) const
 {
-	unsigned long inc = 1;
+	long inc = 1;
 	if ( to < from )
 		inc = -1;
 	for ( unsigned long pos = from; pos < to; pos += inc ) {

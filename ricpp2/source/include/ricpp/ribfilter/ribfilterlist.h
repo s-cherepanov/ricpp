@@ -68,6 +68,8 @@ class CRibFilterList {
 	bool deleteFilterPlugin(CRibFilter *aFilter);
 
 public:
+	inline virtual ~CRibFilterList() {}
+	
 	/** @brief First interface that is called.
 	 *
 	 *  Is called from parser.

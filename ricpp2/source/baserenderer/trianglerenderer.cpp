@@ -65,10 +65,10 @@ RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
 
 RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)
 {
-	CDeclaration *pdecl = renderState()->declFind(RI_P);
+	const CDeclaration *pdecl = renderState()->declFind(RI_P);
 	if ( !pdecl )
 		return;
-	CDeclaration *ndecl = renderState()->declFind(RI_N);
+	const CDeclaration *ndecl = renderState()->declFind(RI_N);
 	if ( !ndecl )
 		return;
 	hide(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation()));

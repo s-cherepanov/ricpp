@@ -60,7 +60,6 @@
 		C3685EFC0D3C219A00B2E025 /* requests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36C39BE0CBA20DB00D2B7B2 /* requests.cpp */; };
 		C3685EFD0D3C219A00B2E025 /* ricpperror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3003D300C1D63C4004C4EF0 /* ricpperror.cpp */; };
 		C3685EFE0D3C219A00B2E025 /* subdivfunc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C372B8E30BD7610D009B2459 /* subdivfunc.cpp */; };
-		C3685EFF0D3C219A00B2E025 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C36C39C00CBA20E500D2B7B2 /* types.cpp */; };
 		C3685F000D3C21CB00B2E025 /* errorhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C17F0BF4698F00AA03BC /* errorhandlers.h */; };
 		C3685F010D3C21CB00B2E025 /* filters.h in Headers */ = {isa = PBXBuildFile; fileRef = C370C1800BF4698F00AA03BC /* filters.h */; };
 		C3685F020D3C21CB00B2E025 /* paramclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C36C39C20CBA210400D2B7B2 /* paramclasses.h */; };
@@ -193,6 +192,8 @@
 		C3851FC00E3DF65000F74D69 /* trianglerenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C3851FBF0E3DF65000F74D69 /* trianglerenderer.h */; };
 		C3851FC80E3DF94200F74D69 /* trianglerenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3851FC70E3DF94200F74D69 /* trianglerenderer.cpp */; };
 		C38520E00E3E184700F74D69 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38520DF0E3E184700F74D69 /* surface.cpp */; };
+		C392D7C00E48A32A003E5C41 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
+		C392D8D10E48BBB2003E5C41 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C392D8D00E48BBB2003E5C41 /* types.cpp */; };
 		C3969E5C0DDF098C00562F24 /* MyNSObjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */; };
 		C3A8FA760D74CBF700C1013B /* ricppconst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA720D74CBF700C1013B /* ricppconst.h */; };
 		C3A8FA770D74CBF700C1013B /* ricppdecls.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA730D74CBF700C1013B /* ricppdecls.h */; };
@@ -212,7 +213,6 @@
 		C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */; };
 		C3C9AE440D70BD5D00A04717 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */; };
 		C3C9AE480D70BDE000A04717 /* ribtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE470D70BDE000A04717 /* ribtool.cpp */; };
-		C3CE0ED70DCF4F4E0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C3CE0EF50DCF50920014BC8E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */; };
 		C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C3CE0F0C0DCF54470014BC8E /* MyOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */; };
@@ -570,7 +570,6 @@
 		C36C39B60CBA1FCA00D2B7B2 /* ribparser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribparser.h; path = ../../../source/include/ricpp/ribparser/ribparser.h; sourceTree = SOURCE_ROOT; };
 		C36C39BC0CBA20D400D2B7B2 /* paramclasses.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = paramclasses.cpp; path = ../../../source/ricpp/paramclasses.cpp; sourceTree = SOURCE_ROOT; };
 		C36C39BE0CBA20DB00D2B7B2 /* requests.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = requests.cpp; path = ../../../source/ricpp/requests.cpp; sourceTree = SOURCE_ROOT; };
-		C36C39C00CBA20E500D2B7B2 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = types.cpp; path = ../../../source/ricpp/types.cpp; sourceTree = SOURCE_ROOT; };
 		C36C39C20CBA210400D2B7B2 /* paramclasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = paramclasses.h; path = ../../../source/include/ricpp/ricpp/paramclasses.h; sourceTree = SOURCE_ROOT; };
 		C36C39C40CBA211300D2B7B2 /* requests.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = requests.h; path = ../../../source/include/ricpp/ricpp/requests.h; sourceTree = SOURCE_ROOT; };
 		C36C39C60CBA212800D2B7B2 /* types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = types.h; path = ../../../source/include/ricpp/ricpp/types.h; sourceTree = SOURCE_ROOT; };
@@ -667,6 +666,7 @@
 		C3851FC70E3DF94200F74D69 /* trianglerenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = trianglerenderer.cpp; path = ../../../source/baserenderer/trianglerenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C38520DF0E3E184700F74D69 /* surface.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = surface.cpp; path = ../../../source/ricontext/surface.cpp; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
+		C392D8D00E48BBB2003E5C41 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = ../../../source/ricpp/types.cpp; sourceTree = SOURCE_ROOT; };
 		C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyNSObjectController.m; path = ../../../source/riglapp/MyNSObjectController.m; sourceTree = SOURCE_ROOT; };
 		C3969E5D0DDF09AE00562F24 /* MyNSObjectController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyNSObjectController.h; path = ../../../source/riglapp/MyNSObjectController.h; sourceTree = SOURCE_ROOT; };
 		C3969E5E0DDF0BCB00562F24 /* MyOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyOpenGLView.h; path = ../../../source/riglapp/MyOpenGLView.h; sourceTree = SOURCE_ROOT; };
@@ -816,8 +816,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3CE0ED70DCF4F4E0014BC8E /* OpenGL.framework in Frameworks */,
 				C37F252A0DCE454900A64BDB /* libglrenderer.a in Frameworks */,
+				C392D7C00E48A32A003E5C41 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1519,14 +1519,14 @@
 		C372B8D50BD760D7009B2459 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C3A8FA7D0D74CCA400C1013B /* ricpp.cpp */,
 				C372B8D90BD7610D009B2459 /* errorhandlers.cpp */,
 				C372B8DB0BD7610D009B2459 /* filters.cpp */,
 				C36C39BC0CBA20D400D2B7B2 /* paramclasses.cpp */,
 				C36C39BE0CBA20DB00D2B7B2 /* requests.cpp */,
+				C3A8FA7D0D74CCA400C1013B /* ricpp.cpp */,
 				C3003D300C1D63C4004C4EF0 /* ricpperror.cpp */,
 				C372B8E30BD7610D009B2459 /* subdivfunc.cpp */,
-				C36C39C00CBA20E500D2B7B2 /* types.cpp */,
+				C392D8D00E48BBB2003E5C41 /* types.cpp */,
 				C3185B720D7D3451001784AB /* varsubst.cpp */,
 			);
 			fileEncoding = 5;
@@ -2854,9 +2854,9 @@
 				C3685EFC0D3C219A00B2E025 /* requests.cpp in Sources */,
 				C3685EFD0D3C219A00B2E025 /* ricpperror.cpp in Sources */,
 				C3685EFE0D3C219A00B2E025 /* subdivfunc.cpp in Sources */,
-				C3685EFF0D3C219A00B2E025 /* types.cpp in Sources */,
 				C3A8FA7E0D74CCA400C1013B /* ricpp.cpp in Sources */,
 				C3185B730D7D3451001784AB /* varsubst.cpp in Sources */,
+				C392D8D10E48BBB2003E5C41 /* types.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3243,29 +3243,29 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
-				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_PROTOTYPE_CONVERSION = YES;
-				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = ../../../3rdparty/macos/zlib123/lib;
@@ -3283,29 +3283,29 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
-				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_PROTOTYPE_CONVERSION = YES;
-				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = ../../../3rdparty/macos/zlib123/lib;

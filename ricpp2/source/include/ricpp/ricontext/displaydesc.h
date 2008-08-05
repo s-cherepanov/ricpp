@@ -129,10 +129,10 @@ namespace RiCPP {
 			return m_mode;
 		}
 
-		inline void origin(RtInt x0, RtInt y0) const
+		inline void origin(RtInt x0, RtInt y0)
 		{
-			m_origin[0];
-			m_origin[1];
+			m_origin[0] = x0;
+			m_origin[1] = y0;
 		}
 
 		inline void getOrigin(RtInt &x0, RtInt &y0) const

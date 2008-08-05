@@ -234,7 +234,7 @@ void CBaseRenderer::hide(const CSurface *s)
 }
 
 
-CAttributes &CBaseRenderer::attributes()
+const CAttributes &CBaseRenderer::attributes() const
 {
 	if ( m_replayDelayedMode ) {
 		assert (m_attributes != 0);
@@ -245,7 +245,14 @@ CAttributes &CBaseRenderer::attributes()
 	return renderState()->attributes();
 }
 
-CTransformation &CBaseRenderer::transformation()
+
+CAttributes &CBaseRenderer::attributes()
+{
+	return const_cast<CAttributes &>(((const CBaseRenderer *)this)->attributes());
+}
+
+
+const CTransformation &CBaseRenderer::transformation() const
 {
 	if ( m_replayDelayedMode ) {
 		assert (m_transformation != 0);
@@ -255,6 +262,13 @@ CTransformation &CBaseRenderer::transformation()
 	
 	return renderState()->curTransform();
 }
+
+
+CTransformation &CBaseRenderer::transformation()
+{
+	return const_cast<CTransformation &>(((const CBaseRenderer *)this)->transformation());
+}
+
 
 bool CBaseRenderer::delayRequest(CRManInterfaceCall &obj)
 {
@@ -302,18 +316,41 @@ void CBaseRenderer::replayDelayed()
 	m_delayedRequests.clear();
 }
 
-CMatrix3D CBaseRenderer::toCamera()
+CMatrix3D CBaseRenderer::toCamera() const
 {
 	CMatrix3D m(transformation().getCTM());
-	const CTransformation *woc = renderState()->worldToCamera();
-	if ( woc )
-		m.concatTransform(woc->getCTM());
+
+	assert(renderState()->worldToCamera() != 0);
+	if ( renderState()->worldToCamera() )
+		m.concatTransform(renderState()->worldToCamera()->getCTM());
 	
 	return m;
 }
 
+CMatrix3D CBaseRenderer::toRaster() const
+{
+	CMatrix3D m(transformation().getCTM()); // Current to world
 
+	/** @todo Need to cache world to raster CTM in renderState() (fixed in world block)!
+	 */
+	assert(renderState()->worldToCamera() != 0);
+	if ( renderState()->worldToCamera() )
+		m.concatTransform(renderState()->worldToCamera()->getCTM());
 
+	assert(renderState()->cameraToScreen() != 0);
+	if ( renderState()->cameraToScreen() )
+		m.concatTransform(renderState()->cameraToScreen()->getCTM());
+
+	assert(renderState()->screenToNDC() != 0);
+	if ( renderState()->screenToNDC() )
+		m.concatTransform(renderState()->screenToNDC()->getCTM());
+	
+	assert(renderState()->NDCToRaster() != 0);
+	if ( renderState()->NDCToRaster() )
+		m.concatTransform(renderState()->NDCToRaster()->getCTM());
+
+	return m;
+}
 
 CRManInterfaceFactory *CBaseRenderer::getNewMacroFactory()
 {

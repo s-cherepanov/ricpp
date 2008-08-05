@@ -40,6 +40,10 @@
 
 namespace RiCPP {
 
+/** @todo Need to rethink the CRenderState - CBaseRenderer 1:1 relationship, the seperation of affairs is ugly by design.
+ *        E.g. replay mode maybe better a part of the state.
+ */
+	
 /** @brief This class is used to implement the basis of a renderer context.
  *  
  *  Finds the unique strings (tokens) for RtTokens and
@@ -435,8 +439,12 @@ protected:
 	 */
 	virtual void hide(const CSurface *s);
 
+	const CAttributes &attributes() const;
 	CAttributes &attributes();
+	const CTransformation &transformation() const;
 	CTransformation &transformation();
+	
+	inline bool replayMode() const { return m_replayDelayedMode; }
 	bool delayRequest(CRManInterfaceCall &obj);
 	void initDelayed();
 	void replayDelayed();
@@ -447,7 +455,8 @@ protected:
 	 *
 	 *  @return Matrix transforms from current to camera coordinate system.
 	 */
-	CMatrix3D toCamera();
+	CMatrix3D toCamera() const;
+	CMatrix3D toRaster() const;
 
 public:
 

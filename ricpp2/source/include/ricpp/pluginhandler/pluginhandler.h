@@ -463,9 +463,10 @@ public:
 		}
 		if ( !valid() ) {
 			m_lib->unload();
+			std::string errorstr = errorString();
 			throw ExceptRiCPPError(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__,
-				"Cannot create the library functions or version mismatch for plugin factory '%s'",
-				markEmptyStr(libname));
+				"Cannot create the library functions or version mismatch for plugin factory '%s': %s.",
+				markEmptyStr(libname), markEmptyStr(errorstr.c_str()));
 		}
 	}
 
@@ -595,6 +596,58 @@ public:
 
 		return true;
 	}
+
+	inline virtual std::string errorString() const
+	{
+		if ( !m_lib )
+			return "Library is NULL";
+		if ( m_lib->valid() )
+			return "Library is not valid";
+		
+		if ( !m_funcNewPlugin )
+			return "newPlugin() not found";
+		if ( !m_funcNewPlugin->valid() )
+			return "newPlugin() not valid";
+
+		if ( !m_funcDeletePlugin )
+			return "deletePlugin() not found";
+		if ( !m_funcDeletePlugin->valid() )
+			return "deletePlugin() not valid";
+
+		if ( !m_funcMajorVersion )
+			return "majorVersion() not found";
+		if ( !m_funcMajorVersion->valid() )
+			return "majorVersion() not valid";
+		
+		if ( !m_funcMinorVersion )
+			return "minorVersion() not found";
+		if ( !m_funcMinorVersion->valid() )
+			return "minorVersion() not valid";
+
+		if ( !m_funcRevision )
+			return "revision() not found";
+		if ( !m_funcRevision->valid() )
+			return "revision() not valid";
+		
+		if ( !m_funcType )
+			return "type() not found";
+		if ( !m_funcRevision->valid() )
+			return "type() not valid";
+
+		if ( !m_funcName )
+			return "name() not found";
+		if ( !m_funcRevision->valid() )
+			return "name() not valid";
+
+		if ( Plugin::myMajorVersion() != majorVersion() )
+			return "Major version doesn't match";
+		
+		if ( strcmp(noNullStr(Plugin::myType()), noNullStr(type())) != 0 )
+			return std::string("Type doesn't match, should be ") + std::string(noNullStr(Plugin::myType()));
+		
+		return "No error";		
+	}
+	
 }; // template class TemplPluginLoaderFactory
 
 /** @brief Handles the plugins for a specific type.

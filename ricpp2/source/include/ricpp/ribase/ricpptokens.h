@@ -276,11 +276,11 @@ extern "C" {
 	/** @} */
 
 	#ifdef __cplusplus
-	} /* namespace RiCPP */
+	} /* extern "C" */
 	#endif
 
 #ifdef __cplusplus
-/* } /* extern "C" */
+/* } /* namespace RiCPP */
 #endif
 
 #endif /* _RICPP_RIBASE_RICPPTOKENS_H */

@@ -65,11 +65,11 @@ RICPP_EXTERN(RtVoid)
     RiErrorAbort (RtInt code, RtInt severity, RtString message);
 
 #ifdef __cplusplus
-/* } namespace RiCPP */
+} /* extern "C" */
 #endif
 
 #ifdef __cplusplus
-} /* extern "C" */
+/* } namespace RiCPP */
 #endif
 
 #endif /* _RICPP_RIBASE_RICPPDECLS_H */

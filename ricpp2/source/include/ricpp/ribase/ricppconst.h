@@ -201,11 +201,11 @@ RICPP_EXTERN(const RtInt) RIE_LASTSEVERITY;       /**< Endmarker, not a severity
 /** @} */
 
 #ifdef __cplusplus
-} /* namespace RiCPP */
+} /* extern "C" */
 #endif
 
 #ifdef __cplusplus
-/* } /* extern "C" */
+/* } /* namespace RiCPP */
 #endif
 
 #endif /* _RICPP_RIBASE_RICPPCONST_H */

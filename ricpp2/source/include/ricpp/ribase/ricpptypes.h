@@ -136,11 +136,11 @@ typedef RtToken RtArchiveHandle;       /**< Handle for a rib archive (was RtPoin
 /** @} */
 
 #ifdef __cplusplus
-} /* namespace RiCPP */
+} /* extern "C" */
 #endif
 
 #ifdef __cplusplus
-/* } /* extern "C" */
+/* } /* namespace RiCPP */
 #endif
 
 #endif /* _RICPP_RIBASE_RICPPTYPES_H */

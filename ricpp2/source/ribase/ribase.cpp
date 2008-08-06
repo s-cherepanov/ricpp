@@ -404,14 +404,14 @@ RICPP_INTERN(RtToken const) RI_CREASE = "crease";
 RICPP_INTERN(RtToken const) RI_CORNER = "corner";
 RICPP_INTERN(RtToken const) RI_INTERPOLATEBOUNDARY = "interpolateboundary";
 
-RICPP_INTERN(RtToken const)  RI_ORIGIN = "origin";
+RICPP_INTERN(RtToken const) RI_ORIGIN = "origin";
 RICPP_INTERN(RtToken const) RI_NAME = "name";
 
-RICPP_INTERN(RtToken const)  RI_COMMENT = "comment";
+RICPP_INTERN(RtToken const) RI_COMMENT = "comment";
 RICPP_INTERN(RtToken const) RI_STRUCTURE = "structure";
 RICPP_INTERN(RtToken const) RI_VERBATIM = "verbatim";
 
-RICPP_INTERN(RtToken const)  RI_LINEAR = "linear";
+RICPP_INTERN(RtToken const) RI_LINEAR = "linear";
 RICPP_INTERN(RtToken const) RI_CUBIC = "cubic";
 
 RICPP_INTERN(RtToken const)  RI_WIDTH = "width";

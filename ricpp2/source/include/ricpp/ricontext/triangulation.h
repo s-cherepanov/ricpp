@@ -64,109 +64,125 @@ namespace RiCPP {
 
 		bool releaseSurface(CSurface *surf);
 		CSurface *createSurface();
-	};
+	}; // CTesselator
 	
 	class CTriangulator : public CTesselator {
 	public:
-	};
+	}; // CTriangulator
 	
 	// =========================================================================
 	
-	class CPolygonTriangulator : public CTriangulator {
+	class CBasePolygonTriangulator : public CTriangulator {
 	protected:
 		void triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const;
 		void insertParameters(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs) const;
-	};
+	}; // CBasePolygonTriangulator
 	
-	class CConvexPolygonTriangulator : public CPolygonTriangulator {
+	class CPolygonTriangulator : public CBasePolygonTriangulator {
+		CRiPolygon m_obj;
 	public:
-		CSurface *triangulate(CRiPolygon &obj);
-	};
+		inline CPolygonTriangulator(const CRiPolygon &obj) : m_obj(obj)  {}
+		CSurface *triangulate();
+	}; // CPolygonTriangulator
 
-	class CConvexPointsPolygonsTriangulator : public CPolygonTriangulator {
+	class CPointsPolygonsTriangulator : public CBasePolygonTriangulator {
+		CRiPointsPolygons m_obj;
 	public:
-		CSurface *triangulate(CRiPointsPolygons &obj);
-	};
+		inline CPointsPolygonsTriangulator(const CRiPointsPolygons &obj) : m_obj(obj)  {}
+		CSurface *triangulate();
+	}; // CPointsPolygonsTriangulator
 
-	class CGeneralPolygonTriangulator : public CPolygonTriangulator {
+	class CGeneralPolygonTriangulator : public CBasePolygonTriangulator {
+		CRiGeneralPolygon m_obj;
+		const CTriangulatedPolygon *m_tpPtr;
 	public:
-		CSurface *triangulate(CRiGeneralPolygon &obj, const IPolygonTriangulationStrategy &strategy);
-	};
+		inline CGeneralPolygonTriangulator(const CRiGeneralPolygon &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
+		{
+			m_tpPtr = m_obj.triangulate(strategy);
+		}
+		CSurface *triangulate();
+	}; // CGeneralPolygonTriangulator
 
-	class CPointsGeneralPolygonsTriangulator : public CPolygonTriangulator {
+	class CPointsGeneralPolygonsTriangulator : public CBasePolygonTriangulator {
+		CRiPointsGeneralPolygons m_obj;
+		const std::vector<CTriangulatedPolygon> *m_tpPtr;
 	public:
-		CSurface *triangulate(CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy);
-	};
+		inline CPointsGeneralPolygonsTriangulator(const CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
+		{
+			m_tpPtr = &m_obj.triangulate(strategy);
+		}
+		CSurface *triangulate();
+	}; // CPointsGeneralPolygonsTriangulator
 
 
 	// =========================================================================
 
 	class CParametricTriangulator : public CTriangulator {
 	protected:
-	};
+	}; // CParametricTriangulator
 
 	class CQuadricTriangulator : public CParametricTriangulator {
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
 	public:
 		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
-	};
+	}; // CQuadricTriangulator
 	
 	class CConeTriangulator : public CQuadricTriangulator {
-		const CRiCone *m_obj;
+		CRiCone m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CConeTriangulator(const CRiCone &obj) : m_obj(&obj) {}
-	};
+		inline CConeTriangulator(const CRiCone &obj) : m_obj(obj) {}
+	}; // CConeTriangulator
 	
 	class CCylinderTriangulator : public CQuadricTriangulator {
-		const CRiCylinder *m_obj;
+		CRiCylinder m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CCylinderTriangulator(const CRiCylinder &obj) : m_obj(&obj) {}
-	};
+		inline CCylinderTriangulator(const CRiCylinder &obj) : m_obj(obj) {}
+	}; // CCylinderTriangulator
 	
 	class CDiskTriangulator : public CQuadricTriangulator {
-		const CRiDisk *m_obj;
+		CRiDisk m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CDiskTriangulator(const CRiDisk &obj) : m_obj(&obj) {}
-	};
+		inline CDiskTriangulator(const CRiDisk &obj) : m_obj(obj) {}
+	}; // CDiskTriangulator
 
 	class CHyperboloidTriangulator : public CQuadricTriangulator {
-		const CRiHyperboloid *m_obj;
+		CRiHyperboloid m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CHyperboloidTriangulator(const CRiHyperboloid &obj) : m_obj(&obj) {}
-	};
+		inline CHyperboloidTriangulator(const CRiHyperboloid &obj) : m_obj(obj) {}
+	}; // CHyperboloidTriangulator
 
 	class CParaboloidTriangulator : public CQuadricTriangulator {
-		const CRiParaboloid *m_obj;
+		CRiParaboloid m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CParaboloidTriangulator(const CRiParaboloid &obj) : m_obj(&obj) {}
-	};
+		inline CParaboloidTriangulator(const CRiParaboloid &obj) : m_obj(obj) {}
+	}; // CParaboloidTriangulator
 
 	class CSphereTriangulator : public CQuadricTriangulator {
-		const CRiSphere *m_obj;
+		CRiSphere m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CSphereTriangulator(const CRiSphere &obj) : m_obj(&obj) {}
-	};
+		inline CSphereTriangulator(const CRiSphere &obj) : m_obj(obj) {}
+	}; // CSphereTriangulator
 
 	class CTorusTriangulator : public CQuadricTriangulator {
-		const CRiTorus *m_obj;
+		CRiTorus m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
 	public:
-		inline CTorusTriangulator(const CRiTorus &obj) : m_obj(&obj) {}
-	};
+		inline CTorusTriangulator(const CRiTorus &obj) : m_obj(obj) {}
+	}; // CTorusTriangulator
 }
 
 #endif // _RICPP_RICONTEXT_TRIANGULATION_H

@@ -84,7 +84,7 @@ CSurface *CTesselator::createSurface()
 
 // =============================================================================
 
-void CPolygonTriangulator::triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const
+void CBasePolygonTriangulator::triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const
 {
 	strip.clear();
 
@@ -113,7 +113,7 @@ void CPolygonTriangulator::triangleStrip(std::vector<IndexType> &strip, IndexTyp
 	}
 }
 
-void CPolygonTriangulator::insertParameters(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs) const
+void CBasePolygonTriangulator::insertParameters(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs) const
 {
 	for ( CParameterList::const_iterator piter = plist.begin(); piter != plist.end(); piter++ ) {
 		const CParameter &p = (*piter);
@@ -152,9 +152,9 @@ void CPolygonTriangulator::insertParameters(CFace &f, IndexType faceIdx, const C
 
 // =============================================================================
 
-CSurface *CConvexPolygonTriangulator::triangulate(CRiPolygon &obj)
+CSurface *CPolygonTriangulator::triangulate()
 {
-	RtInt nvertices = obj.nVertices();
+	RtInt nvertices = m_obj.nVertices();
 	
 	CSurface *surf = createSurface();
 	if ( !surf ) {
@@ -167,7 +167,7 @@ CSurface *CConvexPolygonTriangulator::triangulate(CRiPolygon &obj)
 	std::vector<IndexType> &strip = f.indices();
 	triangleStrip(strip, nvertices, 0);
 	
-	for ( CParameterList::const_iterator piter = obj.parameters().begin(); piter != obj.parameters().end(); piter++ ) {
+	for ( CParameterList::const_iterator piter = m_obj.parameters().begin(); piter != m_obj.parameters().end(); piter++ ) {
 		f.insertConst(*piter);
 	}
 	
@@ -183,9 +183,9 @@ CSurface *CConvexPolygonTriangulator::triangulate(CRiPolygon &obj)
 
 // =============================================================================
 
-CSurface *CConvexPointsPolygonsTriangulator::triangulate(CRiPointsPolygons &obj)
+CSurface *CPointsPolygonsTriangulator::triangulate()
 {
-	RtInt npolys = obj.nPolys();
+	RtInt npolys = m_obj.nPolys();
 	
 	CSurface *surf = createSurface();
 	if ( !surf ) {
@@ -195,17 +195,17 @@ CSurface *CConvexPointsPolygonsTriangulator::triangulate(CRiPointsPolygons &obj)
 	RtInt vertsOffs = 0;
 
 	for ( RtInt faceIdx = 0; faceIdx < npolys; ++faceIdx ) {
-		if ( obj.nVerts()[faceIdx] == 0 )
+		if ( m_obj.nVerts()[faceIdx] == 0 )
 			continue;
 
 		CFace &f = surf->newFace();
 		f.faceType(FACETYPE_TRIANGLESTRIPS);
 		
-		RtInt nverts = obj.nVerts()[faceIdx];
+		RtInt nverts = m_obj.nVerts()[faceIdx];
 
 		std::vector<IndexType> &strip = f.indices();
 		triangleStrip(strip, nverts, vertsOffs);
-		insertParameters(f, faceIdx, obj.parameters(), obj.verts(), nverts, vertsOffs);
+		insertParameters(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
 		f.sizes().resize(1);
 		f.sizes()[0] = strip.size();	
 		
@@ -213,7 +213,7 @@ CSurface *CConvexPointsPolygonsTriangulator::triangulate(CRiPointsPolygons &obj)
 			// Add normals
 		}
 
-		vertsOffs += obj.nVerts()[faceIdx];
+		vertsOffs += m_obj.nVerts()[faceIdx];
 	}
 	
 	return surf;
@@ -221,12 +221,11 @@ CSurface *CConvexPointsPolygonsTriangulator::triangulate(CRiPointsPolygons &obj)
 
 // =============================================================================
 
-CSurface *CGeneralPolygonTriangulator::triangulate(CRiGeneralPolygon &obj, const IPolygonTriangulationStrategy &strategy)
+CSurface *CGeneralPolygonTriangulator::triangulate()
 {
 	//  RtInt nloops, RtInt nverts[], const CParameterList &params
-	
-	const CTriangulatedPolygon *tp = obj.triangulate(strategy);
-	if ( !tp || tp->triangles().size() <= 0 ) {
+
+	if ( !m_tpPtr || m_tpPtr->triangles().size() <= 0 ) {
 		return 0;
 	}
 	
@@ -239,9 +238,9 @@ CSurface *CGeneralPolygonTriangulator::triangulate(CRiGeneralPolygon &obj, const
 	f.faceType(FACETYPE_TRIANGLES);
 	
 	std::vector<IndexType> &strip = f.indices();
-	strip = tp->triangles();
+	strip = m_tpPtr->triangles();
 	
-	for ( CParameterList::const_iterator piter = obj.parameters().begin(); piter != obj.parameters().end(); piter++ ) {
+	for ( CParameterList::const_iterator piter = m_obj.parameters().begin(); piter != m_obj.parameters().end(); piter++ ) {
 		f.insertConst(*piter);
 	}
 	
@@ -257,11 +256,9 @@ CSurface *CGeneralPolygonTriangulator::triangulate(CRiGeneralPolygon &obj, const
 
 // =============================================================================
 
-CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy)
+CSurface *CPointsGeneralPolygonsTriangulator::triangulate()
 {
-	const std::vector<CTriangulatedPolygon> &tp = obj.triangulate(strategy);
-
-	if ( tp.size() == 0 ) {
+	if ( !m_tpPtr || m_tpPtr->size() == 0 ) {
 		return 0;
 	}
 	
@@ -277,14 +274,14 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 	RtInt nvertsOffs = 0;
 	RtInt vertsOffs = 0;
 	for (
-		 std::vector<CTriangulatedPolygon>::const_iterator iter = tp.begin();
-		 iter != tp.end();
+		 std::vector<CTriangulatedPolygon>::const_iterator iter = m_tpPtr->begin();
+		 iter != m_tpPtr->end();
 		 iter++, faceIdx++, vertsOffs+=nverts )
 	{
-		nloops = obj.nLoops()[faceIdx];
+		nloops = m_obj.nLoops()[faceIdx];
 		nverts = 0;
 		for ( RtInt loopi = 0; loopi < nloops; ++loopi ) {
-			nverts += obj.nVerts()[nvertsOffs++];
+			nverts += m_obj.nVerts()[nvertsOffs++];
 		}
 		
 		if ( nverts <= 0 || (*iter).triangles().size() <= 0 )
@@ -300,7 +297,7 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate(CRiPointsGeneralPolygo
 			(*stripIter) -= offs;
 		}
 		
-		insertParameters(f, faceIdx, obj.parameters(), obj.verts(), nverts, vertsOffs);
+		insertParameters(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
 
 		f.sizes().resize(1);
 		f.sizes()[0] = strip.size();
@@ -566,14 +563,13 @@ void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 #ifdef _TRACE_CONE
 	std::cout << "-> CConeTriangulator::buildPN()" << std::endl;
 #endif
-	assert(m_obj != 0);
-	RtFloat height = m_obj->height();
+	RtFloat height = m_obj.height();
 	assert(!nearlyZero(height));
 	
-	RtFloat radius = m_obj->radius();
+	RtFloat radius = m_obj.radius();
 	assert(radius > 0);
 	
-	RtFloat thetamax = m_obj->thetaMax();
+	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
 	assert(!nearlyZero(thetamax));
 	
@@ -591,16 +587,15 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 #ifdef _TRACE_CYLINDER
 	std::cout << "-> CCylinderTriangulator::buildPN()" << std::endl;
 #endif
-	assert(m_obj != 0);
-	RtFloat zmin = m_obj->zMin();
-	RtFloat zmax = m_obj->zMax();
+	RtFloat zmin = m_obj.zMin();
+	RtFloat zmax = m_obj.zMax();
 	testMinMax(zmin, zmax);
 	assert(!nearlyZero(zmax-zmin));
 	
-	RtFloat radius = m_obj->radius();
+	RtFloat radius = m_obj.radius();
 	assert(!nearlyZero(radius));
 	
-	RtFloat thetamax = m_obj->thetaMax();
+	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
 	assert(!nearlyZero(thetamax));
 	
@@ -673,13 +668,12 @@ void CDiskTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 #ifdef _TRACE_DISK
 	std::cout << "-> CDiskTriangulator::buildPN()" << std::endl;
 #endif
-	assert(m_obj != 0);
-	RtFloat displacement = m_obj->height();
+	RtFloat displacement = m_obj.height();
 
-	RtFloat radius = m_obj->radius();
+	RtFloat radius = m_obj.radius();
 	assert(!nearlyZero(radius));
 	
-	RtFloat thetamax = m_obj->thetaMax();
+	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
 	assert( !nearlyZero(thetamax) );
 		   
@@ -697,16 +691,15 @@ void CHyperboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDec
 #ifdef _TRACE_HYPERBOLOID
 	std::cout << "-> CHyperboloidTriangulator::buildPN()" << std::endl;
 #endif
-	assert(m_obj != 0);
 
 	RtPoint point1, point2;
 	
-	memcpy(point1, m_obj->point1(), sizeof(RtPoint));
-	memcpy(point2, m_obj->point2(), sizeof(RtPoint));
+	memcpy(point1, m_obj.point1(), sizeof(RtPoint));
+	memcpy(point2, m_obj.point2(), sizeof(RtPoint));
 
 	assert(!eqVect3(point1, point2));
 	
-	RtFloat thetamax = m_obj->thetaMax();
+	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
 	assert( !nearlyZero(thetamax) );
 	
@@ -724,16 +717,15 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 #ifdef _TRACE_PARABOLOID
 	std::cout << "-> CParaboloidTriangulator::buildPN()" << std::endl;
 #endif
-	assert(m_obj != 0);
-	RtFloat zmin = m_obj->zMin();
-	RtFloat zmax = m_obj->zMax();
+	RtFloat zmin = m_obj.zMin();
+	RtFloat zmax = m_obj.zMax();
 	testMinMax(zmin, zmax);
 	assert(!nearlyZero(zmax-zmin));
 	
-	RtFloat rmax = m_obj->rMax();
+	RtFloat rmax = m_obj.rMax();
 	assert(!nearlyZero(rmax));
 	
-	RtFloat thetamax = m_obj->thetaMax();
+	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
 	assert(!nearlyZero(thetamax));
 
@@ -803,18 +795,17 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 #ifdef _TRACE_SPHERE
 	std::cout << "-> CSphereTriangulator::buildPN()" << std::endl;
 #endif
-	assert(m_obj != 0);
 
-	RtFloat radius = m_obj->radius();
+	RtFloat radius = m_obj.radius();
 	assert(!nearlyZero(radius));
 
-	RtFloat zmin = m_obj->zMin();
+	RtFloat zmin = m_obj.zMin();
 	clamp<RtFloat>(zmin, -radius, radius);
-	RtFloat zmax = m_obj->zMax();
+	RtFloat zmax = m_obj.zMax();
 	assert(!nearlyZero(zmax-zmin));
 	clamp<RtFloat>(zmax, -radius, radius);
 
-	RtFloat thetamax = m_obj->thetaMax();
+	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
 	assert(!nearlyZero(thetamax));
 	
@@ -895,17 +886,16 @@ void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarati
 #ifdef _TRACE_TORUS
 	std::cout << "-> CTorusTriangulator::buildPN()" << std::endl;
 #endif
-	assert(m_obj != 0);
 	
-	RtFloat majorrad = m_obj->majorRad();
-	RtFloat minorrad = m_obj->minorRad();
+	RtFloat majorrad = m_obj.majorRad();
+	RtFloat minorrad = m_obj.minorRad();
 	assert(!nearlyZero(minorrad));
 	
-	RtFloat phimin = m_obj->phiMin();
-	RtFloat phimax = m_obj->phiMax();
+	RtFloat phimin = m_obj.phiMin();
+	RtFloat phimax = m_obj.phiMax();
 	assert(!nearlyEqual(phimin, phimax));
 
-	RtFloat thetamax = m_obj->thetaMax();
+	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
 	assert(!nearlyZero(thetamax));
 

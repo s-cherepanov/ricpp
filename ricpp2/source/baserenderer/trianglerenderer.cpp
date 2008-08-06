@@ -41,26 +41,26 @@ CTriangleRenderer::CTriangleRenderer()
 
 RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
 {
-	CConvexPolygonTriangulator t;
-	hide(t.triangulate(obj));
+	CPolygonTriangulator t(obj);
+	hide(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPointsPolygons &obj)
 {
-	CConvexPointsPolygonsTriangulator t;
-	hide(t.triangulate(obj));
+	CPointsPolygonsTriangulator t(obj);
+	hide(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiGeneralPolygon &obj)
 {
-	CGeneralPolygonTriangulator t;
-	hide(t.triangulate(obj, polygonTriangulationStrategy()));
+	CGeneralPolygonTriangulator t(obj, polygonTriangulationStrategy());
+	hide(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
 {
-	CPointsGeneralPolygonsTriangulator t;
-	hide(t.triangulate(obj, polygonTriangulationStrategy()));
+	CPointsGeneralPolygonsTriangulator t(obj, polygonTriangulationStrategy());
+	hide(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)

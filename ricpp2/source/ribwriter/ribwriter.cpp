@@ -37,6 +37,14 @@
 #include "ricpp/tools/env.h"
 #endif // _RICPP_TOOLS_ENV_H
 
+#ifdef _DEBUG
+// #define _TRACE_ARCHIVE
+#define _TRACE
+#ifndef _RICPP_TOOLS_TRACE_H
+#include "ricpp/tools/trace.h"
+#endif // _RICPP_TOOLS_TRACE_H
+#endif
+
 /* To translate (cache rib archive is part of baserenderer)
 
 postpone: ObjectInstance, ReadArchive, Procedural - Befehl ausgeben statt ausführen, wenn
@@ -266,13 +274,13 @@ void CRibWriter::writePrefix(bool isArchiveRecord)
 }
 
 
-RtVoid CRibWriter::doControl(CRiControl &obj, RtToken name, const CParameterList &params)
+RtVoid CRibWriter::doProcess(CRiControl &obj)
 {
-	CBaseRenderer::doControl(obj, name, params);
+	CBaseRenderer::doProcess(obj);
 
-	if ( name == RI_RIBWRITER ) {
+	if ( obj.name() == RI_RIBWRITER ) {
 		CParameterList::const_iterator i;
-		for ( i = params.begin(); i != params.end(); i++ ) {
+		for ( i = obj.parameters().begin(); i != obj.parameters().end(); i++ ) {
 			if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_POSTPONE_PROCEDURALS) ) {
 				(*i).get(0, m_postponeProcedural);
 			} else if ( (*i).matches(QUALIFIER_CONTROL, RI_RIBWRITER, RI_POSTPONE_OBJECTS) ) {
@@ -335,7 +343,7 @@ RtVoid CRibWriter::version()
 }
 
 
-RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiBegin &obj)
 {
 	if ( m_buffer ) delete m_buffer;
 	m_buffer = 0;
@@ -349,8 +357,8 @@ RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList 
 
 	RtInt compress = 0;
 	std::string filename;
-	CParameterList::const_iterator  i = params.begin();
-	for ( ; i != params.end(); ++i ) {
+	CParameterList::const_iterator  i = obj.parameters().begin();
+	for ( ; i != obj.parameters().end(); ++i ) {
 		const CParameter &p = (*i);
 		if ( p.token() == RI_FILE && p.strings().size() > 0 && !p.strings()[0].empty() ) {
 			filename = p.strings()[0].c_str();
@@ -424,7 +432,7 @@ RtVoid CRibWriter::postBegin(CRiBegin &obj, RtString name, const CParameterList 
 	}
 }
 
-RtVoid CRibWriter::postEnd(CRiEnd &obj)
+RtVoid CRibWriter::postProcess(CRiEnd &obj)
 {
 	if ( m_writer ) delete m_writer;
 	m_writer = 0;
@@ -449,29 +457,29 @@ RtVoid CRibWriter::postEnd(CRiEnd &obj)
 }
 
 
-RtVoid CRibWriter::postErrorHandler(CRiErrorHandler &obj, const IErrorHandler &handler)
+RtVoid CRibWriter::postProcess(CRiErrorHandler &obj)
 TEST_WRITE_RIB
 
-RtVoid CRibWriter::postDeclare(CRiDeclare &obj, RtToken name, RtString declaration)
+RtVoid CRibWriter::postProcess(CRiDeclare &obj)
 TEST_WRITE_RIB
 
-RtVoid CRibWriter::postSynchronize(CRiSynchronize &obj, RtToken name)
+RtVoid CRibWriter::postProcess(CRiSynchronize &obj)
 TEST_WRITE_RIB
 
-RtVoid CRibWriter::postSystem(CRiSystem &obj, RtString cmd)
+RtVoid CRibWriter::postProcess(CRiSystem &obj)
 TEST_WRITE_RIB
 
-RtVoid CRibWriter::postResource(CRiResource &obj, RtToken handle, RtString type, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiResource &obj)
 TEST_WRITE_RIB
 
-RtVoid CRibWriter::postFrameBegin(CRiFrameBegin &obj, RtInt number)
+RtVoid CRibWriter::postProcess(CRiFrameBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postFrameEnd(CRiFrameEnd &obj)
+RtVoid CRibWriter::postProcess(CRiFrameEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -481,14 +489,14 @@ RtVoid CRibWriter::postFrameEnd(CRiFrameEnd &obj)
 }
 
 
-RtVoid CRibWriter::postWorldBegin(CRiWorldBegin &obj)
+RtVoid CRibWriter::postProcess(CRiWorldBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postWorldEnd(CRiWorldEnd &obj)
+RtVoid CRibWriter::postProcess(CRiWorldEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -498,14 +506,14 @@ RtVoid CRibWriter::postWorldEnd(CRiWorldEnd &obj)
 }
 
 
-RtVoid CRibWriter::postAttributeBegin(CRiAttributeBegin &obj)
+RtVoid CRibWriter::postProcess(CRiAttributeBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postAttributeEnd(CRiAttributeEnd &obj)
+RtVoid CRibWriter::postProcess(CRiAttributeEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -515,14 +523,14 @@ RtVoid CRibWriter::postAttributeEnd(CRiAttributeEnd &obj)
 }
 
 
-RtVoid CRibWriter::postTransformBegin(CRiTransformBegin &obj)
+RtVoid CRibWriter::postProcess(CRiTransformBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postTransformEnd(CRiTransformEnd &obj)
+RtVoid CRibWriter::postProcess(CRiTransformEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -532,14 +540,14 @@ RtVoid CRibWriter::postTransformEnd(CRiTransformEnd &obj)
 }
 
 
-RtVoid CRibWriter::postSolidBegin(CRiSolidBegin &obj, RtToken type)
+RtVoid CRibWriter::postProcess(CRiSolidBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postSolidEnd(CRiSolidEnd &obj)
+RtVoid CRibWriter::postProcess(CRiSolidEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -549,7 +557,7 @@ RtVoid CRibWriter::postSolidEnd(CRiSolidEnd &obj)
 }
 
 
-RtVoid CRibWriter::postObjectBegin(CRiObjectBegin &obj, RtString name)
+RtVoid CRibWriter::postProcess(CRiObjectBegin &obj)
 {
 	CRiMacro *m = renderState()->curMacro();
 	assert (m != 0);
@@ -584,9 +592,9 @@ RtVoid CRibWriter::postObjectBegin(CRiObjectBegin &obj, RtString name)
 }
 
 
-RtVoid CRibWriter::preObjectEnd(CRiObjectEnd &obj)
+RtVoid CRibWriter::preProcess(CRiObjectEnd &obj)
 {
-	CBaseRenderer::preObjectEnd(obj);
+	CBaseRenderer::preProcess(obj);
 
 	if ( !testValid() ) 
 		return;
@@ -601,7 +609,7 @@ RtVoid CRibWriter::preObjectEnd(CRiObjectEnd &obj)
 	}
 }
 
-RtVoid CRibWriter::postObjectEnd(CRiObjectEnd &obj)
+RtVoid CRibWriter::postProcess(CRiObjectEnd &obj)
 {
 	if ( !m_suppressOutputVector.empty() ) {
 		m_suppressOutput = m_suppressOutputVector.back();
@@ -609,13 +617,13 @@ RtVoid CRibWriter::postObjectEnd(CRiObjectEnd &obj)
 	}
 }
 
-RtVoid CRibWriter::doObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle)
+RtVoid CRibWriter::doProcess(CRiObjectInstance &obj)
 {
 	// Only write the ObjectInstance Request
 	// Do this only if a definition was written to output (macro is postponed).
 	// This is the "normal" case.
 	if ( m_postponeObject ) {
-		CRiObjectMacro *m = renderState()->objectInstance(handle);
+		CRiObjectMacro *m = renderState()->objectInstance(obj.handle());
 		if ( !m || m->postpone() ) {
 			return;
 		}
@@ -625,19 +633,19 @@ RtVoid CRibWriter::doObjectInstance(CRiObjectInstance &obj, RtObjectHandle handl
 	// Put out the requests that form the object.
 	// It doesn't matter if the Object definition was
 	// written to output or not.
-	CBaseRenderer::doObjectInstance(obj, handle);
+	CBaseRenderer::doProcess(obj);
 }
 
 
-RtVoid CRibWriter::postObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle)
+RtVoid CRibWriter::postProcess(CRiObjectInstance &obj)
 {
 	if ( m_postponeObject ) {
 		if ( !postTestValid() )
 			return;
 
-		CRiObjectMacro *m = renderState()->objectInstance(handle);
+		CRiObjectMacro *m = renderState()->objectInstance(obj.handle());
 		if ( !m ) {
-			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to objectInstance \"%s\"", noNullStr(handle));
+			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to objectInstance \"%s\"", noNullStr(obj.handle()));
 			return;
 		}
 		
@@ -651,22 +659,22 @@ RtVoid CRibWriter::postObjectInstance(CRiObjectInstance &obj, RtObjectHandle han
 			}
 
 		} else if ( renderState()->recordMode() ) {
-			CBaseRenderer::doObjectInstance(obj, handle);
+			CBaseRenderer::doProcess(obj);
 		}
 	} else if ( renderState()->recordMode() ) {
-		CBaseRenderer::doObjectInstance(obj, handle);
+		CBaseRenderer::doProcess(obj);
 	}
 }
 
 
-RtVoid CRibWriter::postMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times[])
+RtVoid CRibWriter::postProcess(CRiMotionBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postMotionEnd(CRiMotionEnd &obj)
+RtVoid CRibWriter::postProcess(CRiMotionEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -676,14 +684,14 @@ RtVoid CRibWriter::postMotionEnd(CRiMotionEnd &obj)
 }
 
 
-RtVoid CRibWriter::postResourceBegin(CRiResourceBegin &obj)
+RtVoid CRibWriter::postProcess(CRiResourceBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postResourceEnd(CRiResourceEnd &obj)
+RtVoid CRibWriter::postProcess(CRiResourceEnd &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -693,7 +701,7 @@ RtVoid CRibWriter::postResourceEnd(CRiResourceEnd &obj)
 }
 
 
-RtVoid CRibWriter::postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiArchiveBegin &obj)
 {
 	if ( !testValid() ) 
 		return;
@@ -719,9 +727,9 @@ RtVoid CRibWriter::postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CP
 }
 
 
-RtVoid CRibWriter::preArchiveEnd(CRiArchiveEnd &obj)
+RtVoid CRibWriter::preProcess(CRiArchiveEnd &obj)
 {
-	CBaseRenderer::preArchiveEnd(obj);
+	CBaseRenderer::preProcess(obj);
 
 	if ( !testValid() ) 
 		return;
@@ -737,7 +745,7 @@ RtVoid CRibWriter::preArchiveEnd(CRiArchiveEnd &obj)
 }
 
 
-RtVoid CRibWriter::postArchiveEnd(CRiArchiveEnd &obj)
+RtVoid CRibWriter::postProcess(CRiArchiveEnd &obj)
 {
 	if ( !m_suppressOutputVector.empty() ) {
 		m_suppressOutput = m_suppressOutputVector.back();
@@ -746,55 +754,55 @@ RtVoid CRibWriter::postArchiveEnd(CRiArchiveEnd &obj)
 }
 
 
-RtVoid CRibWriter::postFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat aspect)
+RtVoid CRibWriter::postProcess(CRiFormat &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspect)
+RtVoid CRibWriter::postProcess(CRiFrameAspectRatio &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
+RtVoid CRibWriter::postProcess(CRiScreenWindow &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
+RtVoid CRibWriter::postProcess(CRiCropWindow &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiProjection &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postClipping(CRiClipping &obj, RtFloat hither, RtFloat yon)
+RtVoid CRibWriter::postProcess(CRiClipping &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
+RtVoid CRibWriter::postProcess(CRiClippingPlane &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
+RtVoid CRibWriter::postProcess(CRiDepthOfField &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postShutter(CRiShutter &obj, RtFloat smin, RtFloat smax)
+RtVoid CRibWriter::postProcess(CRiShutter &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPixelVariance(CRiPixelVariance &obj, RtFloat variation)
+RtVoid CRibWriter::postProcess(CRiPixelVariance &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPixelSamples(CRiPixelSamples &obj, RtFloat xsamples, RtFloat ysamples)
+RtVoid CRibWriter::postProcess(CRiPixelSamples &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPixelFilter(CRiPixelFilter &obj, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
+RtVoid CRibWriter::postProcess(CRiPixelFilter &obj)
 {
 	if ( !postTestValid() )
 		return;
-	if ( emptyStr(function.name()) ) {
+	if ( emptyStr(obj.filterFunc().name()) ) {
 		// throw error
 		throw ExceptRiCPPError(
 			RIE_MISSINGDATA, RIE_ERROR,
@@ -805,50 +813,50 @@ RtVoid CRibWriter::postPixelFilter(CRiPixelFilter &obj, const IFilterFunc &funct
 }
 
 
-RtVoid CRibWriter::postExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma)
+RtVoid CRibWriter::postProcess(CRiExposure &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postImager(CRiImager &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiImager &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
+RtVoid CRibWriter::postProcess(CRiQuantize &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDisplayChannel(CRiDisplayChannel &obj, RtString channel, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiDisplayChannel &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiDisplay &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postHider(CRiHider &obj, RtToken type, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiHider &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRGB[], RtFloat RGBn[])
+RtVoid CRibWriter::postProcess(CRiColorSamples &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postRelativeDetail(CRiRelativeDetail &obj, RtFloat relativedetail)
+RtVoid CRibWriter::postProcess(CRiRelativeDetail &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postOption(CRiOption &obj, RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiOption &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postLightSource(CRiLightSource &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiLightSource &obj)
 {
 	if ( !postTestValid() )
 		return;
 
 	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
-		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for LightSource \"%s\"", noNullStr(name));
+		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for LightSource \"%s\"", noNullStr(obj.name()));
 		return;
 	}
 	
@@ -863,14 +871,14 @@ RtVoid CRibWriter::postLightSource(CRiLightSource &obj, RtString name, const CPa
 }
 
 
-RtVoid CRibWriter::postAreaLightSource(CRiAreaLightSource &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiAreaLightSource &obj)
 {
 	if ( !postTestValid() )
 		return;
 	
 	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
-		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for AreaLightSource \"%s\"", noNullStr(name));
+		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not created for AreaLightSource \"%s\"", noNullStr(obj.name()));
 		return;
 	}
 	
@@ -888,106 +896,106 @@ RtVoid CRibWriter::postAreaLightSource(CRiAreaLightSource &obj, RtString name, c
 }
 
 
-RtVoid CRibWriter::postAttribute(CRiAttribute &obj, RtToken name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiAttribute &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postColor(CRiColor &obj, RtColor Cs)
+RtVoid CRibWriter::postProcess(CRiColor &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postOpacity(CRiOpacity &obj, RtColor Os)
+RtVoid CRibWriter::postProcess(CRiOpacity &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postSurface(CRiSurface &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiSurface &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiAtmosphere &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postInterior(CRiInterior &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiInterior &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postExterior(CRiExterior &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiExterior &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiDisplacement &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiDeformation &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+RtVoid CRibWriter::postProcess(CRiTextureCoordinates &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postShadingRate(CRiShadingRate &obj, RtFloat size)
+RtVoid CRibWriter::postProcess(CRiShadingRate &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postShadingInterpolation(CRiShadingInterpolation &obj, RtToken type)
+RtVoid CRibWriter::postProcess(CRiShadingInterpolation &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postMatte(CRiMatte &obj, RtBoolean onoff)
+RtVoid CRibWriter::postProcess(CRiMatte &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postBound(CRiBound &obj, RtBound bound)
+RtVoid CRibWriter::postProcess(CRiBound &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDetail(CRiDetail &obj, RtBound bound)
+RtVoid CRibWriter::postProcess(CRiDetail &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+RtVoid CRibWriter::postProcess(CRiDetailRange &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value)
+RtVoid CRibWriter::postProcess(CRiGeometricApproximation &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type)
+RtVoid CRibWriter::postProcess(CRiGeometricRepresentation &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postOrientation(CRiOrientation &obj, RtToken anOrientation)
+RtVoid CRibWriter::postProcess(CRiOrientation &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postReverseOrientation(CRiReverseOrientation &obj)
+RtVoid CRibWriter::postProcess(CRiReverseOrientation &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postSides(CRiSides &obj, RtInt nsides)
+RtVoid CRibWriter::postProcess(CRiSides &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+RtVoid CRibWriter::postProcess(CRiBasis &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
+RtVoid CRibWriter::postProcess(CRiTrimCurve &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff)
+RtVoid CRibWriter::postProcess(CRiIlluminate &obj)
 {
 	if ( !postTestValid() )
 		return;
 	
-	CHandle *handle = renderState()->lightSourceHandle(light);
+	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
-		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to illuminate \"%s\"", noNullStr(light));
+		ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to illuminate \"%s\"", noNullStr(obj.handle()));
 		return;
 	}
 	
@@ -1000,184 +1008,184 @@ RtVoid CRibWriter::postIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoo
 }
 
 
-RtVoid CRibWriter::postIdentity(CRiIdentity &obj)
+RtVoid CRibWriter::postProcess(CRiIdentity &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postTransform(CRiTransform &obj, RtMatrix aTransform)
+RtVoid CRibWriter::postProcess(CRiTransform &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform)
+RtVoid CRibWriter::postProcess(CRiConcatTransform &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPerspective(CRiPerspective &obj, RtFloat fov)
+RtVoid CRibWriter::postProcess(CRiPerspective &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CRibWriter::postProcess(CRiTranslate &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CRibWriter::postProcess(CRiRotate &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CRibWriter::postProcess(CRiScale &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+RtVoid CRibWriter::postProcess(CRiSkew &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space)
+RtVoid CRibWriter::postProcess(CRiScopedCoordinateSystem &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postCoordinateSystem(CRiCoordinateSystem &obj, RtToken space)
+RtVoid CRibWriter::postProcess(CRiCoordinateSystem &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postCoordSysTransform(CRiCoordSysTransform &obj, RtToken space)
+RtVoid CRibWriter::postProcess(CRiCoordSysTransform &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPolygon(CRiPolygon &obj, RtInt nvertices, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiPolygon &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postGeneralPolygon(CRiGeneralPolygon &obj, RtInt nloops, RtInt nverts[], const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiGeneralPolygon &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPointsPolygons(CRiPointsPolygons &obj, RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiPointsPolygons &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPointsGeneralPolygons(CRiPointsGeneralPolygons &obj, RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiPointsGeneralPolygons &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPatch(CRiPatch &obj, RtToken type, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiPatch &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPatchMesh(CRiPatchMesh &obj, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiPatchMesh &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postNuPatch(CRiNuPatch &obj, RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiNuPatch &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postSubdivisionMesh(CRiSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiSubdivisionMesh &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postHierarchicalSubdivisionMesh(CRiHierarchicalSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiHierarchicalSubdivisionMesh &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postSphere(CRiSphere &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiSphere &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postCone(CRiCone &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiCone &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postCylinder(CRiCylinder &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiCylinder &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postHyperboloid(CRiHyperboloid &obj, RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiHyperboloid &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postParaboloid(CRiParaboloid &obj, RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiParaboloid &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postDisk(CRiDisk &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiDisk &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postTorus(CRiTorus &obj, RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiTorus &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postPoints(CRiPoints &obj, RtInt npts, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiPoints &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postCurves(CRiCurves &obj, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiCurves &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postBlobby(CRiBlobby &obj, RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiBlobby &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postGeometry(CRiGeometry &obj, RtToken type, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiGeometry &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
+RtVoid CRibWriter::doProcess(CRiProcedural &obj)
 {
 	if ( !m_postponeProcedural ) {
 		m_doReadArchive = true;
 		// Can call doReadArchive()
-		CBaseRenderer::doProcedural(obj, data, bound, subdivfunc, freefunc);
+		CBaseRenderer::doProcess(obj);
 		m_doReadArchive = false;
 	}
 }
 
-RtVoid CRibWriter::postProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
+RtVoid CRibWriter::postProcess(CRiProcedural &obj)
 {
 	if ( m_postponeProcedural ) {
 		TEST_WRITE_RIB
 	} else if ( renderState()->recordMode() ) {
-		doProcedural(obj, data, bound, subdivfunc, freefunc);
+		doProcess(obj);
 	}
 }
 
 
-RtVoid CRibWriter::postMakeTexture(CRiMakeTexture &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiMakeTexture &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postMakeBump(CRiMakeBump &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiMakeBump &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postMakeLatLongEnvironment(CRiMakeLatLongEnvironment &obj, RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiMakeLatLongEnvironment &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postMakeCubeFaceEnvironment(CRiMakeCubeFaceEnvironment &obj, RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiMakeCubeFaceEnvironment &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postMakeShadow(CRiMakeShadow &obj, RtString pic, RtString tex, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiMakeShadow &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postMakeBrickMap(CRiMakeBrickMap &obj, RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiMakeBrickMap &obj)
 TEST_WRITE_RIB
 
 
-RtVoid CRibWriter::postArchiveRecord(CRiArchiveRecord &obj, RtToken type, RtString line)
+RtVoid CRibWriter::postProcess(CRiArchiveRecord &obj)
 {
 	// Skip the Header
-	if ( m_header && type == RI_STRUCTURE && m_skipHeader > 0 ) {
+	if ( m_header && obj.type() == RI_STRUCTURE && m_skipHeader > 0 ) {
 		return;
 	}
 
-	TEST_WRITE_RIB_ARCHIVE_REC(type == RI_STRUCTURE)
+	TEST_WRITE_RIB_ARCHIVE_REC(obj.type() == RI_STRUCTURE)
 
-	if ( type == RI_STRUCTURE )
+	if ( obj.type() == RI_STRUCTURE )
 		m_header = false;
 }
 
@@ -1217,45 +1225,57 @@ bool CRibWriter::willExecuteMacro(RtString name) {
 	return doExecute;
 }
 
-RtVoid CRibWriter::preReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params)
+RtVoid CRibWriter::preProcess(CRiReadArchive &obj)
 {
-	CBaseRenderer::preReadArchive(obj, name, callback, params);
-	m_execute = willExecuteMacro(name);
+#ifdef _TRACE_ARCHIVE
+	trace("<- CRibWriter::preProcess(CRiReadArchive)");
+#endif
+	CBaseRenderer::preProcess(obj);
+	m_execute = willExecuteMacro(obj.name());
+#ifdef _TRACE_ARCHIVE
+	trace("-> CRibWriter::preProcess(CRiReadArchive)");
+#endif
 }
 
 
-RtVoid CRibWriter::doReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params)
+RtVoid CRibWriter::doProcess(CRiReadArchive &obj)
 {
+#ifdef _TRACE_ARCHIVE
+	trace("<- CRibWriter::doProcess(CRiReadArchive)");
+#endif
 	m_doReadArchive = false; // Clear the procedural flag
 	if ( m_execute ) {
 		bool exec = m_execute;
 		m_header = true;
-		CBaseRenderer::doReadArchive(obj, name, callback, params);
+		CBaseRenderer::doProcess(obj);
 		m_execute = exec;
 	}
+#ifdef _TRACE_ARCHIVE
+	trace("-> CRibWriter::doProcess(CRiReadArchive)");
+#endif
 }
 
 
-RtVoid CRibWriter::postReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params)
+RtVoid CRibWriter::postProcess(CRiReadArchive &obj)
 {
 	if ( !m_execute ) {
 		TEST_WRITE_RIB
 	} else if ( renderState()->recordMode() ) {
 	    // Also print the recorded macros (do-methodes are not called)
 		// m_execute is true here, doReadArchive is not called because in record state
-		doReadArchive(obj, name, callback, params);
+		doProcess(obj);
 	}
 }
 
 
-RtVoid CRibWriter::postIfBegin(CRiIfBegin &obj, RtString expr)
+RtVoid CRibWriter::postProcess(CRiIfBegin &obj)
 {
 	TEST_WRITE_RIB
 	incNestingDepth();
 }
 
 
-RtVoid CRibWriter::postElseIfBegin(CRiElseIfBegin &obj, RtString expr)
+RtVoid CRibWriter::postProcess(CRiElseIfBegin &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -1266,7 +1286,7 @@ RtVoid CRibWriter::postElseIfBegin(CRiElseIfBegin &obj, RtString expr)
 }
 
 
-RtVoid CRibWriter::postElseBegin(CRiElseBegin &obj)
+RtVoid CRibWriter::postProcess(CRiElseBegin &obj)
 {
 	if ( !postTestValid() )
 		return;
@@ -1277,7 +1297,7 @@ RtVoid CRibWriter::postElseBegin(CRiElseBegin &obj)
 }
 
 
-RtVoid CRibWriter::postIfEnd(CRiIfEnd &obj)
+RtVoid CRibWriter::postProcess(CRiIfEnd &obj)
 {
 	if ( !postTestValid() )
 		return;

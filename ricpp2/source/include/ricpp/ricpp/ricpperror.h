@@ -240,6 +240,13 @@ public:
 		return m_severity;
 	}
 
+	inline bool isSevere() const
+	{
+		if ( code() == RIE_NOERROR )
+			return false;
+		return m_severity > RIE_WARNING;
+	}
+
 	/** @brief Copy an Error.
 	 *  @param err The error object to copy
 	 *  @return *this

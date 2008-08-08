@@ -206,10 +206,10 @@ public:
 	/** @defgroup ricpp_ricalls Filtered ri calls
 	 *  @{
 	 */
-	inline RtToken declare(RtToken name, RtString declaration)
+	inline RtToken declare(RtToken aName, RtString declaration)
 	{
 		return canCall(REQ_DECLARE) ?
-			callee()->declare(name, declaration) :
+			callee()->declare(aName, declaration) :
 			RI_NULL;
 	}
 
@@ -224,10 +224,10 @@ public:
 		return callee()->lastError();
 	}
 
-	inline virtual RtVoid synchronize(RtToken name)
+	inline virtual RtVoid synchronize(RtToken aName)
 	{
 		if ( canCall(REQ_SYNCHRONIZE) )
-			callee()->synchronize(name);
+			callee()->synchronize(aName);
 	}
 
 	inline virtual RtVoid system(RtString cmd)
@@ -236,7 +236,7 @@ public:
 			callee()->system(cmd);
 	}
 
-    inline virtual RtVoid controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid controlV(RtToken aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		// Control is not a part of the RIB binding.
 	}
@@ -313,10 +313,10 @@ public:
 			callee()->solidEnd();
 	}
 
-	inline virtual RtObjectHandle objectBegin(RtString name)
+	inline virtual RtObjectHandle objectBegin(RtString aName)
 	{
 		return canCall(REQ_OBJECT_BEGIN) ?
-			callee()->objectBegin(name) :
+			callee()->objectBegin(aName) :
 			illObjectHandle;
 	}
 
@@ -356,10 +356,10 @@ public:
 			callee()->resourceEnd();
 	}
 
-	inline virtual RtArchiveHandle archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtArchiveHandle archiveBeginV(RtToken aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return canCall(REQ_ARCHIVE_BEGIN) ?
-			callee()->archiveBeginV(name, n, tokens, params) :
+			callee()->archiveBeginV(aName, n, tokens, params) :
 			illArchiveHandle;
 	}
 
@@ -393,10 +393,10 @@ public:
 			callee()->cropWindow(xmin, xmax, ymin, ymax);
 	}
 
-    inline virtual RtVoid projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid projectionV(RtToken aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_PROJECTION) )
-			callee()->projectionV(name, n, tokens, params);
+			callee()->projectionV(aName, n, tokens, params);
 	}
 
 	inline virtual RtVoid clipping(RtFloat hither, RtFloat yon)
@@ -447,10 +447,10 @@ public:
 			callee()->exposure(gain, gamma);
 	}
 
-    inline virtual RtVoid imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid imagerV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_IMAGER) )
-			callee()->imagerV(name, n, tokens, params);
+			callee()->imagerV(aName, n, tokens, params);
 	}
 
 	inline virtual RtVoid quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
@@ -465,10 +465,10 @@ public:
 			callee()->displayChannelV(channel, n, tokens, params);
 	}
 
-	inline virtual RtVoid displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid displayV(RtString aName, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_DISPLAY) )
-			callee()->displayV(name, type, mode, n, tokens, params);
+			callee()->displayV(aName, type, mode, n, tokens, params);
 	}
 
     inline virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
@@ -489,30 +489,30 @@ public:
 			callee()->relativeDetail(relativedetail);
 	}
 
-    inline virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid optionV(RtToken aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_OPTION) )
-			callee()->optionV(name, n, tokens, params);
+			callee()->optionV(aName, n, tokens, params);
 	}
 	
-    inline virtual RtLightHandle lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtLightHandle lightSourceV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return canCall(REQ_LIGHT_SOURCE) ?
-			callee()->lightSourceV(name, n, tokens, params) :
+			callee()->lightSourceV(aName, n, tokens, params) :
 			illLightHandle;
 	}
 
-	inline virtual RtLightHandle areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtLightHandle areaLightSourceV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		return canCall(REQ_AREA_LIGHT_SOURCE) ?
-			callee()->areaLightSourceV(name, n, tokens, params) :
+			callee()->areaLightSourceV(aName, n, tokens, params) :
 			illLightHandle;
 	}
 	
-    inline virtual RtVoid attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid attributeV(RtToken aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_ATTRIBUTE) )
-			callee()->attributeV(name, n, tokens, params);
+			callee()->attributeV(aName, n, tokens, params);
 	}
 
 	inline virtual RtVoid color(RtColor Cs)
@@ -527,28 +527,28 @@ public:
 			callee()->opacity(Os);
 	}
 
-	inline virtual RtVoid surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid surfaceV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_SURFACE) )
-			callee()->surfaceV(name, n, tokens, params);
+			callee()->surfaceV(aName, n, tokens, params);
 	}
 
-	inline virtual RtVoid atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid atmosphereV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_ATMOSPHERE) )
-			callee()->atmosphereV(name, n, tokens, params);
+			callee()->atmosphereV(aName, n, tokens, params);
 	}
 
-    inline virtual RtVoid interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid interiorV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_INTERIOR) )
-			callee()->interiorV(name, n, tokens, params);
+			callee()->interiorV(aName, n, tokens, params);
 	}
 
-	inline virtual RtVoid exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid exteriorV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_EXTERIOR) )
-			callee()->exteriorV(name, n, tokens, params);
+			callee()->exteriorV(aName, n, tokens, params);
 	}
 
 	inline virtual RtVoid illuminate(RtLightHandle light, RtBoolean onoff)
@@ -557,10 +557,10 @@ public:
 			callee()->illuminate(light, onoff);
 	}
 
-    inline virtual RtVoid displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+    inline virtual RtVoid displacementV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_DISPLACEMENT) )
-			callee()->displacementV(name, n, tokens, params);
+			callee()->displacementV(aName, n, tokens, params);
 	}
 
 	inline virtual RtVoid textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
@@ -695,10 +695,10 @@ public:
 			callee()->skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
 	}
 
-	inline virtual RtVoid deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid deformationV(RtString aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_DEFORMATION) )
-			callee()->deformationV(name, n, tokens, params);
+			callee()->deformationV(aName, n, tokens, params);
 	}
 
 	inline virtual RtVoid scopedCoordinateSystem(RtToken space)
@@ -915,10 +915,10 @@ public:
 			callee()->archiveRecordV(type, line);
 	}
 
-	inline virtual RtVoid readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
+	inline virtual RtVoid readArchiveV(RtString aName, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_READ_ARCHIVE) )
-			callee()->readArchiveV(name, callback, n, tokens, params);
+			callee()->readArchiveV(aName, callback, n, tokens, params);
 	}
 
 	inline virtual RtVoid ifBegin(RtString expr)

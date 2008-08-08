@@ -28,9 +28,12 @@
 /** @file dorender.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Declaration of an interface for handling the rendering jobs of render contexts.
- *  @todo Overload preProcess(), doProcess(), postProcess() using parameter object only (drop
- *        special parameters). E.g.: virtual RtVoid preProcess(CRiSphere &obj) instead of the
- *        preSphere() member function.
+ *
+ *         Overloaded preProcess(), doProcess(), postProcess() using parameter object only.
+ *         E.g.: virtual RtVoid preProcess(CRiSphere &obj) instead of a
+ *         virtual RtVoid preSphere(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax,
+ *                                  RtInt n, RtToken tokens[], RtPointer params[])
+ *         member function.
  */
 
 #ifndef _RICPP_RICONTEXT_RICONTEXT_H
@@ -74,453 +77,453 @@ public:
 	/** The interface functions similar to IRiCPP, RtToken are tokenized strings here (CBaseRenderer used CTokenMap)
 	 */
 	//@{
-	virtual RtVoid preSynchronize(CRiSynchronize &obj, RtToken name) = 0;
+	virtual RtVoid preProcess(CRiSynchronize &obj) = 0;
 
-	virtual RtVoid preErrorHandler(CRiErrorHandler &obj, const IErrorHandler &handler) = 0;
-	virtual RtVoid preDeclare(CRiDeclare &obj, RtToken name, RtString declaration) = 0;
-    virtual RtVoid preControl(CRiControl &obj, RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiErrorHandler &obj) = 0;
+	virtual RtVoid preProcess(CRiDeclare &obj) = 0;
+    virtual RtVoid preProcess(CRiControl &obj) = 0;
 
-	virtual RtVoid preSystem(CRiSystem &obj, RtString cmd) = 0;
+	virtual RtVoid preProcess(CRiSystem &obj) = 0;
 
-	virtual RtVoid preBegin(CRiBegin &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preEnd(CRiEnd &obj) = 0;
+	virtual RtVoid preProcess(CRiBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiEnd &obj) = 0;
 
-	virtual RtVoid preFrameBegin(CRiFrameBegin &obj, RtInt number) = 0;
-	virtual RtVoid preFrameEnd(CRiFrameEnd &obj) = 0;
+	virtual RtVoid preProcess(CRiFrameBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiFrameEnd &obj) = 0;
 
-	virtual RtVoid preWorldBegin(CRiWorldBegin &obj) = 0;
-	virtual RtVoid preWorldEnd(CRiWorldEnd &obj) = 0;
+	virtual RtVoid preProcess(CRiWorldBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiWorldEnd &obj) = 0;
 
-	virtual RtVoid preAttributeBegin(CRiAttributeBegin &obj) = 0;
-	virtual RtVoid preAttributeEnd(CRiAttributeEnd &obj) = 0;
+	virtual RtVoid preProcess(CRiAttributeBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiAttributeEnd &obj) = 0;
 
-	virtual RtVoid preTransformBegin(CRiTransformBegin &obj) = 0;
-	virtual RtVoid preTransformEnd(CRiTransformEnd &obj) = 0;
+	virtual RtVoid preProcess(CRiTransformBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiTransformEnd &obj) = 0;
 
-    virtual RtVoid preSolidBegin(CRiSolidBegin &obj, RtToken type) = 0;
-    virtual RtVoid preSolidEnd(CRiSolidEnd &obj) = 0;
+    virtual RtVoid preProcess(CRiSolidBegin &obj) = 0;
+    virtual RtVoid preProcess(CRiSolidEnd &obj) = 0;
 
-	virtual RtVoid preObjectBegin(CRiObjectBegin &obj, RtString name) = 0;
-	virtual RtVoid preObjectEnd(CRiObjectEnd &obj) = 0;
-    virtual RtVoid preObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle) = 0;
+	virtual RtVoid preProcess(CRiObjectBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiObjectEnd &obj) = 0;
+    virtual RtVoid preProcess(CRiObjectInstance &obj) = 0;
 
-    virtual RtVoid preMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times[]) = 0;
-    virtual RtVoid preMotionEnd(CRiMotionEnd &obj) = 0;
+    virtual RtVoid preProcess(CRiMotionBegin &obj) = 0;
+    virtual RtVoid preProcess(CRiMotionEnd &obj) = 0;
 
-	virtual RtVoid preResourceBegin(CRiResourceBegin &obj) = 0;
-	virtual RtVoid preResourceEnd(CRiResourceEnd &obj) = 0;
-	virtual RtVoid preResource(CRiResource &obj, RtToken handle, RtToken type, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiResourceBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiResourceEnd &obj) = 0;
+	virtual RtVoid preProcess(CRiResource &obj) = 0;
 
-	virtual RtVoid preArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid preArchiveEnd(CRiArchiveEnd &objArchiveEnd) = 0;
+	virtual RtVoid preProcess(CRiArchiveBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiArchiveEnd &objArchiveEnd) = 0;
 
-    virtual RtVoid preFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat aspect) = 0;
-    virtual RtVoid preFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspect) = 0;
+    virtual RtVoid preProcess(CRiFormat &obj) = 0;
+    virtual RtVoid preProcess(CRiFrameAspectRatio &obj) = 0;
 
-	virtual RtVoid preScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top) = 0;
-    virtual RtVoid preCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) = 0;
-	virtual RtVoid preProjection(CRiProjection &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid preClipping(CRiClipping &obj, RtFloat hither, RtFloat yon) = 0;
-    virtual RtVoid preClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) = 0;
-    virtual RtVoid preDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) = 0;
-    virtual RtVoid preShutter(CRiShutter &obj, RtFloat smin, RtFloat smax) = 0;
-	virtual RtVoid prePixelVariance(CRiPixelVariance &obj, RtFloat variation) = 0;
-    virtual RtVoid prePixelSamples(CRiPixelSamples &obj, RtFloat xsamples, RtFloat ysamples) = 0;
-    virtual RtVoid prePixelFilter(CRiPixelFilter &obj, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) = 0;
-    virtual RtVoid preExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma) = 0;
-    virtual RtVoid preImager(CRiImager &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
-    virtual RtVoid preDisplayChannel(CRiDisplayChannel &obj, RtString channel, const CParameterList &params) = 0;
-    virtual RtVoid preDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params) = 0;
-    virtual RtVoid preHider(CRiHider &obj, RtToken type, const CParameterList &params) = 0;
-    virtual RtVoid preColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRGB[], RtFloat RGBn[]) = 0;
-    virtual RtVoid preRelativeDetail(CRiRelativeDetail &obj, RtFloat relativedetail) = 0;
-    virtual RtVoid preOption(CRiOption &obj, RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiScreenWindow &obj) = 0;
+    virtual RtVoid preProcess(CRiCropWindow &obj) = 0;
+	virtual RtVoid preProcess(CRiProjection &obj) = 0;
+	virtual RtVoid preProcess(CRiClipping &obj) = 0;
+    virtual RtVoid preProcess(CRiClippingPlane &obj) = 0;
+    virtual RtVoid preProcess(CRiDepthOfField &obj) = 0;
+    virtual RtVoid preProcess(CRiShutter &obj) = 0;
+	virtual RtVoid preProcess(CRiPixelVariance &obj) = 0;
+    virtual RtVoid preProcess(CRiPixelSamples &obj) = 0;
+    virtual RtVoid preProcess(CRiPixelFilter &obj) = 0;
+    virtual RtVoid preProcess(CRiExposure &obj) = 0;
+    virtual RtVoid preProcess(CRiImager &obj) = 0;
+	virtual RtVoid preProcess(CRiQuantize &obj) = 0;
+    virtual RtVoid preProcess(CRiDisplayChannel &obj) = 0;
+    virtual RtVoid preProcess(CRiDisplay &obj) = 0;
+    virtual RtVoid preProcess(CRiHider &obj) = 0;
+    virtual RtVoid preProcess(CRiColorSamples &obj) = 0;
+    virtual RtVoid preProcess(CRiRelativeDetail &obj) = 0;
+    virtual RtVoid preProcess(CRiOption &obj) = 0;
 	
-    virtual RtVoid preLightSource(CRiLightSource &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preAreaLightSource(CRiAreaLightSource &obj, RtString name, const CParameterList &params) = 0;
+    virtual RtVoid preProcess(CRiLightSource &obj) = 0;
+	virtual RtVoid preProcess(CRiAreaLightSource &obj) = 0;
 	
-    virtual RtVoid preAttribute(CRiAttribute &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid preColor(CRiColor &obj, RtColor Cs) = 0;
-	virtual RtVoid preOpacity(CRiOpacity &obj, RtColor Os) = 0;
-    virtual RtVoid preSurface(CRiSurface &obj, RtString name, const CParameterList &params) = 0;
-    virtual RtVoid preAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params) = 0;
-    virtual RtVoid preInterior(CRiInterior &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preExterior(CRiExterior &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff) = 0;
-    virtual RtVoid preDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) = 0;
-    virtual RtVoid preShadingRate(CRiShadingRate &obj, RtFloat size) = 0;
-	virtual RtVoid preShadingInterpolation(CRiShadingInterpolation &obj, RtToken type) = 0;
-    virtual RtVoid preMatte(CRiMatte &obj, RtBoolean onoff) = 0;
-	virtual RtVoid preBound(CRiBound &obj, RtBound bound) = 0;
-	virtual RtVoid preDetail(CRiDetail &obj, RtBound bound) = 0;
-	virtual RtVoid preDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
-    virtual RtVoid preGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value) = 0;
-	virtual RtVoid preGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type) = 0;
-	virtual RtVoid preOrientation(CRiOrientation &obj, RtToken anOrientation) = 0;
-	virtual RtVoid preReverseOrientation(CRiReverseOrientation &obj) = 0;
-	virtual RtVoid preSides(CRiSides &obj, RtInt nsides) = 0;
-    virtual RtVoid preBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) = 0;
-    virtual RtVoid preTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]) = 0;
+    virtual RtVoid preProcess(CRiAttribute &obj) = 0;
+	virtual RtVoid preProcess(CRiColor &obj) = 0;
+	virtual RtVoid preProcess(CRiOpacity &obj) = 0;
+    virtual RtVoid preProcess(CRiSurface &obj) = 0;
+    virtual RtVoid preProcess(CRiAtmosphere &obj) = 0;
+    virtual RtVoid preProcess(CRiInterior &obj) = 0;
+	virtual RtVoid preProcess(CRiExterior &obj) = 0;
+	virtual RtVoid preProcess(CRiIlluminate &obj) = 0;
+    virtual RtVoid preProcess(CRiDisplacement &obj) = 0;
+	virtual RtVoid preProcess(CRiTextureCoordinates &obj) = 0;
+    virtual RtVoid preProcess(CRiShadingRate &obj) = 0;
+	virtual RtVoid preProcess(CRiShadingInterpolation &obj) = 0;
+    virtual RtVoid preProcess(CRiMatte &obj) = 0;
+	virtual RtVoid preProcess(CRiBound &obj) = 0;
+	virtual RtVoid preProcess(CRiDetail &obj) = 0;
+	virtual RtVoid preProcess(CRiDetailRange &obj) = 0;
+    virtual RtVoid preProcess(CRiGeometricApproximation &obj) = 0;
+	virtual RtVoid preProcess(CRiGeometricRepresentation &obj) = 0;
+	virtual RtVoid preProcess(CRiOrientation &obj) = 0;
+	virtual RtVoid preProcess(CRiReverseOrientation &obj) = 0;
+	virtual RtVoid preProcess(CRiSides &obj) = 0;
+    virtual RtVoid preProcess(CRiBasis &obj) = 0;
+    virtual RtVoid preProcess(CRiTrimCurve &obj) = 0;
 
-	virtual RtVoid preIdentity(CRiIdentity &obj) = 0;
-	virtual RtVoid preTransform(CRiTransform &obj, RtMatrix aTransform) = 0;
-	virtual RtVoid preConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform) = 0;
-	virtual RtVoid prePerspective(CRiPerspective &obj, RtFloat fov) = 0;
-	virtual RtVoid preTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-	virtual RtVoid preRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-	virtual RtVoid preScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-    virtual RtVoid preSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) = 0;
-	virtual RtVoid preDeformation(CRiDeformation &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid preScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space) = 0;
-	virtual RtVoid preCoordinateSystem(CRiCoordinateSystem &obj, RtToken space) = 0;
-	virtual RtVoid preCoordSysTransform(CRiCoordSysTransform &obj, RtToken space) = 0;
-	virtual RtVoid preTransformPoints(CRiTransformPoints &obj, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
+	virtual RtVoid preProcess(CRiIdentity &obj) = 0;
+	virtual RtVoid preProcess(CRiTransform &obj) = 0;
+	virtual RtVoid preProcess(CRiConcatTransform &obj) = 0;
+	virtual RtVoid preProcess(CRiPerspective &obj) = 0;
+	virtual RtVoid preProcess(CRiTranslate &obj) = 0;
+	virtual RtVoid preProcess(CRiRotate &obj) = 0;
+	virtual RtVoid preProcess(CRiScale &obj) = 0;
+    virtual RtVoid preProcess(CRiSkew &obj) = 0;
+	virtual RtVoid preProcess(CRiDeformation &obj) = 0;
+	virtual RtVoid preProcess(CRiScopedCoordinateSystem &obj) = 0;
+	virtual RtVoid preProcess(CRiCoordinateSystem &obj) = 0;
+	virtual RtVoid preProcess(CRiCoordSysTransform &obj) = 0;
+	virtual RtVoid preProcess(CRiTransformPoints &obj) = 0;
 
-    virtual RtVoid prePolygon(CRiPolygon &obj, RtInt nvertices, const CParameterList &params) = 0;
-	virtual RtVoid preGeneralPolygon(CRiGeneralPolygon &obj, RtInt nloops, RtInt nverts[], const CParameterList &params) = 0;
-	virtual RtVoid prePointsPolygons(CRiPointsPolygons &obj, RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params) = 0;
-    virtual RtVoid prePointsGeneralPolygons(CRiPointsGeneralPolygons &obj, RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params) = 0;
+    virtual RtVoid preProcess(CRiPolygon &obj) = 0;
+	virtual RtVoid preProcess(CRiGeneralPolygon &obj) = 0;
+	virtual RtVoid preProcess(CRiPointsPolygons &obj) = 0;
+    virtual RtVoid preProcess(CRiPointsGeneralPolygons &obj) = 0;
 
-	virtual RtVoid prePatch(CRiPatch &obj, RtToken type, const CParameterList &params) = 0;
-	virtual RtVoid prePatchMesh(CRiPatchMesh &obj, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params) = 0;
-    virtual RtVoid preNuPatch(CRiNuPatch &obj, RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiPatch &obj) = 0;
+	virtual RtVoid preProcess(CRiPatchMesh &obj) = 0;
+    virtual RtVoid preProcess(CRiNuPatch &obj) = 0;
 
-	virtual RtVoid preSubdivisionMesh(CRiSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params) = 0;
-	virtual RtVoid preHierarchicalSubdivisionMesh(CRiHierarchicalSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiSubdivisionMesh &obj) = 0;
+	virtual RtVoid preProcess(CRiHierarchicalSubdivisionMesh &obj) = 0;
 
-	virtual RtVoid preSphere(CRiSphere &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid preCone(CRiCone &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid preCylinder(CRiCylinder &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid preHyperboloid(CRiHyperboloid &obj, RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid preParaboloid(CRiParaboloid &obj, RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid preDisk(CRiDisk &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid preTorus(CRiTorus &obj, RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiSphere &obj) = 0;
+    virtual RtVoid preProcess(CRiCone &obj) = 0;
+    virtual RtVoid preProcess(CRiCylinder &obj) = 0;
+    virtual RtVoid preProcess(CRiHyperboloid &obj) = 0;
+    virtual RtVoid preProcess(CRiParaboloid &obj) = 0;
+    virtual RtVoid preProcess(CRiDisk &obj) = 0;
+    virtual RtVoid preProcess(CRiTorus &obj) = 0;
 
-    virtual RtVoid prePoints(CRiPoints &obj, RtInt npts, const CParameterList &params) = 0;
-    virtual RtVoid preCurves(CRiCurves &obj, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params) = 0;
+    virtual RtVoid preProcess(CRiPoints &obj) = 0;
+    virtual RtVoid preProcess(CRiCurves &obj) = 0;
 
-	virtual RtVoid preBlobby(CRiBlobby &obj, RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiBlobby &obj) = 0;
 
-	virtual RtVoid preProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc) = 0;
+	virtual RtVoid preProcess(CRiProcedural &obj) = 0;
 
-	virtual RtVoid preGeometry(CRiGeometry &obj, RtToken type, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiGeometry &obj) = 0;
 
-	virtual RtVoid preMakeTexture(CRiMakeTexture &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid preMakeBump(CRiMakeBump &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid preMakeLatLongEnvironment(CRiMakeLatLongEnvironment &obj, RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid preMakeCubeFaceEnvironment(CRiMakeCubeFaceEnvironment &obj, RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid preMakeShadow(CRiMakeShadow &obj, RtString pic, RtString tex, const CParameterList &params) = 0;
-    virtual RtVoid preMakeBrickMap(CRiMakeBrickMap &obj, RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiMakeTexture &obj) = 0;
+    virtual RtVoid preProcess(CRiMakeBump &obj) = 0;
+    virtual RtVoid preProcess(CRiMakeLatLongEnvironment &obj) = 0;
+    virtual RtVoid preProcess(CRiMakeCubeFaceEnvironment &obj) = 0;
+    virtual RtVoid preProcess(CRiMakeShadow &obj) = 0;
+    virtual RtVoid preProcess(CRiMakeBrickMap &obj) = 0;
 
-	virtual RtVoid preArchiveRecord(CRiArchiveRecord &obj, RtToken type, RtString line) = 0;
-	virtual RtVoid preReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params) = 0;
+	virtual RtVoid preProcess(CRiArchiveRecord &obj) = 0;
+	virtual RtVoid preProcess(CRiReadArchive &obj) = 0;
 
-	virtual RtVoid preIfBegin(CRiIfBegin &obj, RtString expr) = 0;
-	virtual RtVoid preElseIfBegin(CRiElseIfBegin &obj, RtString expr) = 0;
-	virtual RtVoid preElseBegin(CRiElseBegin &obj) = 0;
-	virtual RtVoid preIfEnd(CRiIfEnd &obj) = 0;
+	virtual RtVoid preProcess(CRiIfBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiElseIfBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiElseBegin &obj) = 0;
+	virtual RtVoid preProcess(CRiIfEnd &obj) = 0;
 
 	////////////////////////////////
 
-	virtual RtVoid doSynchronize(CRiSynchronize &obj, RtToken name) = 0;
-
-	virtual RtVoid doErrorHandler(CRiErrorHandler &obj,const IErrorHandler &handler) = 0;
-	virtual RtVoid doDeclare(CRiDeclare &obj,RtToken name, RtString declaration) = 0;
-    virtual RtVoid doControl(CRiControl &obj,RtToken name, const CParameterList &params) = 0;
-
-	virtual RtVoid doSystem(CRiSystem &obj, RtString cmd) = 0;
-
-	virtual RtVoid doBegin(CRiBegin &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid doEnd(CRiEnd &obj) = 0;
-
-	virtual RtVoid doFrameBegin(CRiFrameBegin &obj, RtInt number) = 0;
-	virtual RtVoid doFrameEnd(CRiFrameEnd &obj) = 0;
-
-	virtual RtVoid doWorldBegin(CRiWorldBegin &obj) = 0;
-	virtual RtVoid doWorldEnd(CRiWorldEnd &obj) = 0;
-
-	virtual RtVoid doAttributeBegin(CRiAttributeBegin &obj) = 0;
-	virtual RtVoid doAttributeEnd(CRiAttributeEnd &obj) = 0;
-
-	virtual RtVoid doTransformBegin(CRiTransformBegin &obj) = 0;
-	virtual RtVoid doTransformEnd(CRiTransformEnd &obj) = 0;
-
-    virtual RtVoid doSolidBegin(CRiSolidBegin &obj, RtToken type) = 0;
-    virtual RtVoid doSolidEnd(CRiSolidEnd &obj) = 0;
-
-	virtual RtVoid doObjectBegin(CRiObjectBegin &obj, RtString name) = 0;
-	virtual RtVoid doObjectEnd(CRiObjectEnd &obj) = 0;
-    virtual RtVoid doObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle) = 0;
-
-    virtual RtVoid doMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times[]) = 0;
-    virtual RtVoid doMotionEnd(CRiMotionEnd &obj) = 0;
-
-	virtual RtVoid doResourceBegin(CRiResourceBegin &obj) = 0;
-	virtual RtVoid doResourceEnd(CRiResourceEnd &obj) = 0;
-	virtual RtVoid doResource(CRiResource &obj, RtToken handle, RtToken type, const CParameterList &params) = 0;
-
-	virtual RtVoid doArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid doArchiveEnd(CRiArchiveEnd &objArchiveEnd) = 0;
-
-    virtual RtVoid doFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat aspect) = 0;
-    virtual RtVoid doFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspect) = 0;
-
-	virtual RtVoid doScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top) = 0;
-    virtual RtVoid doCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) = 0;
-	virtual RtVoid doProjection(CRiProjection &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid doClipping(CRiClipping &obj, RtFloat hither, RtFloat yon) = 0;
-    virtual RtVoid doClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) = 0;
-    virtual RtVoid doDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) = 0;
-    virtual RtVoid doShutter(CRiShutter &obj, RtFloat smin, RtFloat smax) = 0;
-	virtual RtVoid doPixelVariance(CRiPixelVariance &obj, RtFloat variation) = 0;
-    virtual RtVoid doPixelSamples(CRiPixelSamples &obj, RtFloat xsamples, RtFloat ysamples) = 0;
-    virtual RtVoid doPixelFilter(CRiPixelFilter &obj, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) = 0;
-    virtual RtVoid doExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma) = 0;
-    virtual RtVoid doImager(CRiImager &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid doQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
-    virtual RtVoid doDisplayChannel(CRiDisplayChannel &obj, RtString channel, const CParameterList &params) = 0;
-    virtual RtVoid doDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params) = 0;
-    virtual RtVoid doHider(CRiHider &obj, RtToken type, const CParameterList &params) = 0;
-    virtual RtVoid doColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRGB[], RtFloat RGBn[]) = 0;
-    virtual RtVoid doRelativeDetail(CRiRelativeDetail &obj, RtFloat relativedetail) = 0;
-    virtual RtVoid doOption(CRiOption &obj, RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid doProcess(CRiSynchronize &obj) = 0;
 	
-    virtual RtVoid doLightSource(CRiLightSource &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid doAreaLightSource(CRiAreaLightSource &obj, RtString name, const CParameterList &params) = 0;
+	virtual RtVoid doProcess(CRiErrorHandler &obj) = 0;
+	virtual RtVoid doProcess(CRiDeclare &obj) = 0;
+    virtual RtVoid doProcess(CRiControl &obj) = 0;
 	
-    virtual RtVoid doAttribute(CRiAttribute &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid doColor(CRiColor &obj, RtColor Cs) = 0;
-	virtual RtVoid doOpacity(CRiOpacity &obj, RtColor Os) = 0;
-    virtual RtVoid doSurface(CRiSurface &obj, RtString name, const CParameterList &params) = 0;
-    virtual RtVoid doAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params) = 0;
-    virtual RtVoid doInterior(CRiInterior &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid doExterior(CRiExterior &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid doIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff) = 0;
-    virtual RtVoid doDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid doTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) = 0;
-    virtual RtVoid doShadingRate(CRiShadingRate &obj, RtFloat size) = 0;
-	virtual RtVoid doShadingInterpolation(CRiShadingInterpolation &obj, RtToken type) = 0;
-    virtual RtVoid doMatte(CRiMatte &obj, RtBoolean onoff) = 0;
-	virtual RtVoid doBound(CRiBound &obj, RtBound bound) = 0;
-	virtual RtVoid doDetail(CRiDetail &obj, RtBound bound) = 0;
-	virtual RtVoid doDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
-    virtual RtVoid doGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value) = 0;
-	virtual RtVoid doGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type) = 0;
-	virtual RtVoid doOrientation(CRiOrientation &obj, RtToken anOrientation) = 0;
-	virtual RtVoid doReverseOrientation(CRiReverseOrientation &obj) = 0;
-	virtual RtVoid doSides(CRiSides &obj, RtInt nsides) = 0;
-    virtual RtVoid doBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) = 0;
-    virtual RtVoid doTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]) = 0;
-
-	virtual RtVoid doIdentity(CRiIdentity &obj) = 0;
-	virtual RtVoid doTransform(CRiTransform &obj, RtMatrix aTransform) = 0;
-	virtual RtVoid doConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform) = 0;
-	virtual RtVoid doPerspective(CRiPerspective &obj, RtFloat fov) = 0;
-	virtual RtVoid doTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-	virtual RtVoid doRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-	virtual RtVoid doScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-    virtual RtVoid doSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) = 0;
-	virtual RtVoid doDeformation(CRiDeformation &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid doScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space) = 0;
-	virtual RtVoid doCoordinateSystem(CRiCoordinateSystem &obj, RtToken space) = 0;
-	virtual RtVoid doCoordSysTransform(CRiCoordSysTransform &obj, RtToken space) = 0;
-	virtual RtVoid doTransformPoints(CRiTransformPoints &obj, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
-
-    virtual RtVoid doPolygon(CRiPolygon &obj, RtInt nvertices, const CParameterList &params) = 0;
-	virtual RtVoid doGeneralPolygon(CRiGeneralPolygon &obj, RtInt nloops, RtInt nverts[], const CParameterList &params) = 0;
-	virtual RtVoid doPointsPolygons(CRiPointsPolygons &obj, RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params) = 0;
-    virtual RtVoid doPointsGeneralPolygons(CRiPointsGeneralPolygons &obj, RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params) = 0;
-
-	virtual RtVoid doPatch(CRiPatch &obj, RtToken type, const CParameterList &params) = 0;
-	virtual RtVoid doPatchMesh(CRiPatchMesh &obj, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params) = 0;
-    virtual RtVoid doNuPatch(CRiNuPatch &obj, RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params) = 0;
-
-	virtual RtVoid doSubdivisionMesh(CRiSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params) = 0;
-	virtual RtVoid doHierarchicalSubdivisionMesh(CRiHierarchicalSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params) = 0;
-
-	virtual RtVoid doSphere(CRiSphere &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid doCone(CRiCone &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid doCylinder(CRiCylinder &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid doHyperboloid(CRiHyperboloid &obj, RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid doParaboloid(CRiParaboloid &obj, RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid doDisk(CRiDisk &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid doTorus(CRiTorus &obj, RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params) = 0;
-
-    virtual RtVoid doPoints(CRiPoints &obj, RtInt npts, const CParameterList &params) = 0;
-    virtual RtVoid doCurves(CRiCurves &obj, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params) = 0;
-
-	virtual RtVoid doBlobby(CRiBlobby &obj, RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) = 0;
-
-	virtual RtVoid doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc) = 0;
-
-	virtual RtVoid doGeometry(CRiGeometry &obj, RtToken type, const CParameterList &params) = 0;
-
-	virtual RtVoid doMakeTexture(CRiMakeTexture &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid doMakeBump(CRiMakeBump &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid doMakeLatLongEnvironment(CRiMakeLatLongEnvironment &obj, RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid doMakeCubeFaceEnvironment(CRiMakeCubeFaceEnvironment &obj, RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid doMakeShadow(CRiMakeShadow &obj, RtString pic, RtString tex, const CParameterList &params) = 0;
-    virtual RtVoid doMakeBrickMap(CRiMakeBrickMap &obj, RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params) = 0;
-
-	virtual RtVoid doArchiveRecord(CRiArchiveRecord &obj, RtToken type, RtString line) = 0;
-	virtual RtVoid doReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params) = 0;
-
-	virtual RtVoid doIfBegin(CRiIfBegin &obj, RtString expr) = 0;
-	virtual RtVoid doElseIfBegin(CRiElseIfBegin &obj, RtString expr) = 0;
-	virtual RtVoid doElseBegin(CRiElseBegin &obj) = 0;
-	virtual RtVoid doIfEnd(CRiIfEnd &obj) = 0;
-
+	virtual RtVoid doProcess(CRiSystem &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiEnd &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiFrameBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiFrameEnd &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiWorldBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiWorldEnd &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiAttributeBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiAttributeEnd &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiTransformBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiTransformEnd &obj) = 0;
+	
+    virtual RtVoid doProcess(CRiSolidBegin &obj) = 0;
+    virtual RtVoid doProcess(CRiSolidEnd &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiObjectBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiObjectEnd &obj) = 0;
+    virtual RtVoid doProcess(CRiObjectInstance &obj) = 0;
+	
+    virtual RtVoid doProcess(CRiMotionBegin &obj) = 0;
+    virtual RtVoid doProcess(CRiMotionEnd &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiResourceBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiResourceEnd &obj) = 0;
+	virtual RtVoid doProcess(CRiResource &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiArchiveBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiArchiveEnd &objArchiveEnd) = 0;
+	
+    virtual RtVoid doProcess(CRiFormat &obj) = 0;
+    virtual RtVoid doProcess(CRiFrameAspectRatio &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiScreenWindow &obj) = 0;
+    virtual RtVoid doProcess(CRiCropWindow &obj) = 0;
+	virtual RtVoid doProcess(CRiProjection &obj) = 0;
+	virtual RtVoid doProcess(CRiClipping &obj) = 0;
+    virtual RtVoid doProcess(CRiClippingPlane &obj) = 0;
+    virtual RtVoid doProcess(CRiDepthOfField &obj) = 0;
+    virtual RtVoid doProcess(CRiShutter &obj) = 0;
+	virtual RtVoid doProcess(CRiPixelVariance &obj) = 0;
+    virtual RtVoid doProcess(CRiPixelSamples &obj) = 0;
+    virtual RtVoid doProcess(CRiPixelFilter &obj) = 0;
+    virtual RtVoid doProcess(CRiExposure &obj) = 0;
+    virtual RtVoid doProcess(CRiImager &obj) = 0;
+	virtual RtVoid doProcess(CRiQuantize &obj) = 0;
+    virtual RtVoid doProcess(CRiDisplayChannel &obj) = 0;
+    virtual RtVoid doProcess(CRiDisplay &obj) = 0;
+    virtual RtVoid doProcess(CRiHider &obj) = 0;
+    virtual RtVoid doProcess(CRiColorSamples &obj) = 0;
+    virtual RtVoid doProcess(CRiRelativeDetail &obj) = 0;
+    virtual RtVoid doProcess(CRiOption &obj) = 0;
+	
+    virtual RtVoid doProcess(CRiLightSource &obj) = 0;
+	virtual RtVoid doProcess(CRiAreaLightSource &obj) = 0;
+	
+    virtual RtVoid doProcess(CRiAttribute &obj) = 0;
+	virtual RtVoid doProcess(CRiColor &obj) = 0;
+	virtual RtVoid doProcess(CRiOpacity &obj) = 0;
+    virtual RtVoid doProcess(CRiSurface &obj) = 0;
+    virtual RtVoid doProcess(CRiAtmosphere &obj) = 0;
+    virtual RtVoid doProcess(CRiInterior &obj) = 0;
+	virtual RtVoid doProcess(CRiExterior &obj) = 0;
+	virtual RtVoid doProcess(CRiIlluminate &obj) = 0;
+    virtual RtVoid doProcess(CRiDisplacement &obj) = 0;
+	virtual RtVoid doProcess(CRiTextureCoordinates &obj) = 0;
+    virtual RtVoid doProcess(CRiShadingRate &obj) = 0;
+	virtual RtVoid doProcess(CRiShadingInterpolation &obj) = 0;
+    virtual RtVoid doProcess(CRiMatte &obj) = 0;
+	virtual RtVoid doProcess(CRiBound &obj) = 0;
+	virtual RtVoid doProcess(CRiDetail &obj) = 0;
+	virtual RtVoid doProcess(CRiDetailRange &obj) = 0;
+    virtual RtVoid doProcess(CRiGeometricApproximation &obj) = 0;
+	virtual RtVoid doProcess(CRiGeometricRepresentation &obj) = 0;
+	virtual RtVoid doProcess(CRiOrientation &obj) = 0;
+	virtual RtVoid doProcess(CRiReverseOrientation &obj) = 0;
+	virtual RtVoid doProcess(CRiSides &obj) = 0;
+    virtual RtVoid doProcess(CRiBasis &obj) = 0;
+    virtual RtVoid doProcess(CRiTrimCurve &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiIdentity &obj) = 0;
+	virtual RtVoid doProcess(CRiTransform &obj) = 0;
+	virtual RtVoid doProcess(CRiConcatTransform &obj) = 0;
+	virtual RtVoid doProcess(CRiPerspective &obj) = 0;
+	virtual RtVoid doProcess(CRiTranslate &obj) = 0;
+	virtual RtVoid doProcess(CRiRotate &obj) = 0;
+	virtual RtVoid doProcess(CRiScale &obj) = 0;
+    virtual RtVoid doProcess(CRiSkew &obj) = 0;
+	virtual RtVoid doProcess(CRiDeformation &obj) = 0;
+	virtual RtVoid doProcess(CRiScopedCoordinateSystem &obj) = 0;
+	virtual RtVoid doProcess(CRiCoordinateSystem &obj) = 0;
+	virtual RtVoid doProcess(CRiCoordSysTransform &obj) = 0;
+	virtual RtVoid doProcess(CRiTransformPoints &obj) = 0;
+	
+    virtual RtVoid doProcess(CRiPolygon &obj) = 0;
+	virtual RtVoid doProcess(CRiGeneralPolygon &obj) = 0;
+	virtual RtVoid doProcess(CRiPointsPolygons &obj) = 0;
+    virtual RtVoid doProcess(CRiPointsGeneralPolygons &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiPatch &obj) = 0;
+	virtual RtVoid doProcess(CRiPatchMesh &obj) = 0;
+    virtual RtVoid doProcess(CRiNuPatch &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiSubdivisionMesh &obj) = 0;
+	virtual RtVoid doProcess(CRiHierarchicalSubdivisionMesh &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiSphere &obj) = 0;
+    virtual RtVoid doProcess(CRiCone &obj) = 0;
+    virtual RtVoid doProcess(CRiCylinder &obj) = 0;
+    virtual RtVoid doProcess(CRiHyperboloid &obj) = 0;
+    virtual RtVoid doProcess(CRiParaboloid &obj) = 0;
+    virtual RtVoid doProcess(CRiDisk &obj) = 0;
+    virtual RtVoid doProcess(CRiTorus &obj) = 0;
+	
+    virtual RtVoid doProcess(CRiPoints &obj) = 0;
+    virtual RtVoid doProcess(CRiCurves &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiBlobby &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiProcedural &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiGeometry &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiMakeTexture &obj) = 0;
+    virtual RtVoid doProcess(CRiMakeBump &obj) = 0;
+    virtual RtVoid doProcess(CRiMakeLatLongEnvironment &obj) = 0;
+    virtual RtVoid doProcess(CRiMakeCubeFaceEnvironment &obj) = 0;
+    virtual RtVoid doProcess(CRiMakeShadow &obj) = 0;
+    virtual RtVoid doProcess(CRiMakeBrickMap &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiArchiveRecord &obj) = 0;
+	virtual RtVoid doProcess(CRiReadArchive &obj) = 0;
+	
+	virtual RtVoid doProcess(CRiIfBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiElseIfBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiElseBegin &obj) = 0;
+	virtual RtVoid doProcess(CRiIfEnd &obj) = 0;
+	
 	////////////////////////////////
 
-	virtual RtVoid postSynchronize(CRiSynchronize &obj, RtToken name) = 0;
-
-	virtual RtVoid postErrorHandler(CRiErrorHandler &obj,const IErrorHandler &handler) = 0;
-	virtual RtVoid postDeclare(CRiDeclare &obj,RtToken name, RtString declaration) = 0;
-    virtual RtVoid postControl(CRiControl &obj,RtToken name, const CParameterList &params) = 0;
-
-	virtual RtVoid postSystem(CRiSystem &obj, RtString cmd) = 0;
-
-	virtual RtVoid postBegin(CRiBegin &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid postEnd(CRiEnd &obj) = 0;
-
-	virtual RtVoid postFrameBegin(CRiFrameBegin &obj, RtInt number) = 0;
-	virtual RtVoid postFrameEnd(CRiFrameEnd &obj) = 0;
-
-	virtual RtVoid postWorldBegin(CRiWorldBegin &obj) = 0;
-	virtual RtVoid postWorldEnd(CRiWorldEnd &obj) = 0;
-
-	virtual RtVoid postAttributeBegin(CRiAttributeBegin &obj) = 0;
-	virtual RtVoid postAttributeEnd(CRiAttributeEnd &obj) = 0;
-
-	virtual RtVoid postTransformBegin(CRiTransformBegin &obj) = 0;
-	virtual RtVoid postTransformEnd(CRiTransformEnd &obj) = 0;
-
-    virtual RtVoid postSolidBegin(CRiSolidBegin &obj, RtToken type) = 0;
-    virtual RtVoid postSolidEnd(CRiSolidEnd &obj) = 0;
-
-	virtual RtVoid postObjectBegin(CRiObjectBegin &obj, RtString name) = 0;
-	virtual RtVoid postObjectEnd(CRiObjectEnd &obj) = 0;
-    virtual RtVoid postObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle) = 0;
-
-    virtual RtVoid postMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times[]) = 0;
-    virtual RtVoid postMotionEnd(CRiMotionEnd &obj) = 0;
-
-	virtual RtVoid postResourceBegin(CRiResourceBegin &obj) = 0;
-	virtual RtVoid postResourceEnd(CRiResourceEnd &obj) = 0;
-	virtual RtVoid postResource(CRiResource &obj, RtToken handle, RtToken type, const CParameterList &params) = 0;
-
-	virtual RtVoid postArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid postArchiveEnd(CRiArchiveEnd &objArchiveEnd) = 0;
-
-    virtual RtVoid postFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat aspect) = 0;
-    virtual RtVoid postFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspect) = 0;
-
-	virtual RtVoid postScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top) = 0;
-    virtual RtVoid postCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax) = 0;
-	virtual RtVoid postProjection(CRiProjection &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid postClipping(CRiClipping &obj, RtFloat hither, RtFloat yon) = 0;
-    virtual RtVoid postClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz) = 0;
-    virtual RtVoid postDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance) = 0;
-    virtual RtVoid postShutter(CRiShutter &obj, RtFloat smin, RtFloat smax) = 0;
-	virtual RtVoid postPixelVariance(CRiPixelVariance &obj, RtFloat variation) = 0;
-    virtual RtVoid postPixelSamples(CRiPixelSamples &obj, RtFloat xsamples, RtFloat ysamples) = 0;
-    virtual RtVoid postPixelFilter(CRiPixelFilter &obj, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth) = 0;
-    virtual RtVoid postExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma) = 0;
-    virtual RtVoid postImager(CRiImager &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid postQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl) = 0;
-    virtual RtVoid postDisplayChannel(CRiDisplayChannel &obj, RtString channel, const CParameterList &params) = 0;
-    virtual RtVoid postDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params) = 0;
-    virtual RtVoid postHider(CRiHider &obj, RtToken type, const CParameterList &params) = 0;
-    virtual RtVoid postColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRGB[], RtFloat RGBn[]) = 0;
-    virtual RtVoid postRelativeDetail(CRiRelativeDetail &obj, RtFloat relativedetail) = 0;
-    virtual RtVoid postOption(CRiOption &obj, RtToken name, const CParameterList &params) = 0;
+	virtual RtVoid postProcess(CRiSynchronize &obj) = 0;
 	
-    virtual RtVoid postLightSource(CRiLightSource &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid postAreaLightSource(CRiAreaLightSource &obj, RtString name, const CParameterList &params) = 0;
+	virtual RtVoid postProcess(CRiErrorHandler &obj) = 0;
+	virtual RtVoid postProcess(CRiDeclare &obj) = 0;
+    virtual RtVoid postProcess(CRiControl &obj) = 0;
 	
-    virtual RtVoid postAttribute(CRiAttribute &obj, RtToken name, const CParameterList &params) = 0;
-	virtual RtVoid postColor(CRiColor &obj, RtColor Cs) = 0;
-	virtual RtVoid postOpacity(CRiOpacity &obj, RtColor Os) = 0;
-    virtual RtVoid postSurface(CRiSurface &obj, RtString name, const CParameterList &params) = 0;
-    virtual RtVoid postAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params) = 0;
-    virtual RtVoid postInterior(CRiInterior &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid postExterior(CRiExterior &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid postIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff) = 0;
-    virtual RtVoid postDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid postTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4) = 0;
-    virtual RtVoid postShadingRate(CRiShadingRate &obj, RtFloat size) = 0;
-	virtual RtVoid postShadingInterpolation(CRiShadingInterpolation &obj, RtToken type) = 0;
-    virtual RtVoid postMatte(CRiMatte &obj, RtBoolean onoff) = 0;
-	virtual RtVoid postBound(CRiBound &obj, RtBound bound) = 0;
-	virtual RtVoid postDetail(CRiDetail &obj, RtBound bound) = 0;
-	virtual RtVoid postDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis) = 0;
-    virtual RtVoid postGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value) = 0;
-	virtual RtVoid postGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type) = 0;
-	virtual RtVoid postOrientation(CRiOrientation &obj, RtToken anOrientation) = 0;
-	virtual RtVoid postReverseOrientation(CRiReverseOrientation &obj) = 0;
-	virtual RtVoid postSides(CRiSides &obj, RtInt nsides) = 0;
-    virtual RtVoid postBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep) = 0;
-    virtual RtVoid postTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]) = 0;
-
-	virtual RtVoid postIdentity(CRiIdentity &obj) = 0;
-	virtual RtVoid postTransform(CRiTransform &obj, RtMatrix aTransform) = 0;
-	virtual RtVoid postConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform) = 0;
-	virtual RtVoid postPerspective(CRiPerspective &obj, RtFloat fov) = 0;
-	virtual RtVoid postTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-	virtual RtVoid postRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-	virtual RtVoid postScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz) = 0;
-    virtual RtVoid postSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2) = 0;
-	virtual RtVoid postDeformation(CRiDeformation &obj, RtString name, const CParameterList &params) = 0;
-	virtual RtVoid postScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space) = 0;
-	virtual RtVoid postCoordinateSystem(CRiCoordinateSystem &obj, RtToken space) = 0;
-	virtual RtVoid postCoordSysTransform(CRiCoordSysTransform &obj, RtToken space) = 0;
-	virtual RtVoid postTransformPoints(CRiTransformPoints &obj, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) = 0;
-
-    virtual RtVoid postPolygon(CRiPolygon &obj, RtInt nvertices, const CParameterList &params) = 0;
-	virtual RtVoid postGeneralPolygon(CRiGeneralPolygon &obj, RtInt nloops, RtInt nverts[], const CParameterList &params) = 0;
-	virtual RtVoid postPointsPolygons(CRiPointsPolygons &obj, RtInt npolys, RtInt nverts[], RtInt verts[], const CParameterList &params) = 0;
-    virtual RtVoid postPointsGeneralPolygons(CRiPointsGeneralPolygons &obj, RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[], const CParameterList &params) = 0;
-
-	virtual RtVoid postPatch(CRiPatch &obj, RtToken type, const CParameterList &params) = 0;
-	virtual RtVoid postPatchMesh(CRiPatchMesh &obj, RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, const CParameterList &params) = 0;
-    virtual RtVoid postNuPatch(CRiNuPatch &obj, RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax, const CParameterList &params) = 0;
-
-	virtual RtVoid postSubdivisionMesh(CRiSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], const CParameterList &params) = 0;
-	virtual RtVoid postHierarchicalSubdivisionMesh(CRiHierarchicalSubdivisionMesh &obj, RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[], const CParameterList &params) = 0;
-
-	virtual RtVoid postSphere(CRiSphere &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid postCone(CRiCone &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid postCylinder(CRiCylinder &obj, RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid postHyperboloid(CRiHyperboloid &obj, RtPoint point1, RtPoint point2, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid postParaboloid(CRiParaboloid &obj, RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid postDisk(CRiDisk &obj, RtFloat height, RtFloat radius, RtFloat thetamax, const CParameterList &params) = 0;
-    virtual RtVoid postTorus(CRiTorus &obj, RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, const CParameterList &params) = 0;
-
-    virtual RtVoid postPoints(CRiPoints &obj, RtInt npts, const CParameterList &params) = 0;
-    virtual RtVoid postCurves(CRiCurves &obj, RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, const CParameterList &params) = 0;
-
-	virtual RtVoid postBlobby(CRiBlobby &obj, RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], const CParameterList &params) = 0;
-
-	virtual RtVoid postProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc) = 0;
-
-	virtual RtVoid postGeometry(CRiGeometry &obj, RtToken type, const CParameterList &params) = 0;
-
-	virtual RtVoid postMakeTexture(CRiMakeTexture &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid postMakeBump(CRiMakeBump &obj, RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid postMakeLatLongEnvironment(CRiMakeLatLongEnvironment &obj, RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid postMakeCubeFaceEnvironment(CRiMakeCubeFaceEnvironment &obj, RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, const CParameterList &params) = 0;
-    virtual RtVoid postMakeShadow(CRiMakeShadow &obj, RtString pic, RtString tex, const CParameterList &params) = 0;
-    virtual RtVoid postMakeBrickMap(CRiMakeBrickMap &obj, RtInt nNames, RtString ptcnames[], RtString bkmname, const CParameterList &params) = 0;
-
-	virtual RtVoid postArchiveRecord(CRiArchiveRecord &obj, RtToken type, RtString line) = 0;
-	virtual RtVoid postReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params) = 0;
-
-	virtual RtVoid postIfBegin(CRiIfBegin &obj, RtString expr) = 0;
-	virtual RtVoid postElseIfBegin(CRiElseIfBegin &obj, RtString expr) = 0;
-	virtual RtVoid postElseBegin(CRiElseBegin &obj) = 0;
-	virtual RtVoid postIfEnd(CRiIfEnd &obj) = 0;
+	virtual RtVoid postProcess(CRiSystem &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiEnd &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiFrameBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiFrameEnd &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiWorldBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiWorldEnd &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiAttributeBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiAttributeEnd &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiTransformBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiTransformEnd &obj) = 0;
+	
+    virtual RtVoid postProcess(CRiSolidBegin &obj) = 0;
+    virtual RtVoid postProcess(CRiSolidEnd &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiObjectBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiObjectEnd &obj) = 0;
+    virtual RtVoid postProcess(CRiObjectInstance &obj) = 0;
+	
+    virtual RtVoid postProcess(CRiMotionBegin &obj) = 0;
+    virtual RtVoid postProcess(CRiMotionEnd &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiResourceBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiResourceEnd &obj) = 0;
+	virtual RtVoid postProcess(CRiResource &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiArchiveBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiArchiveEnd &objArchiveEnd) = 0;
+	
+    virtual RtVoid postProcess(CRiFormat &obj) = 0;
+    virtual RtVoid postProcess(CRiFrameAspectRatio &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiScreenWindow &obj) = 0;
+    virtual RtVoid postProcess(CRiCropWindow &obj) = 0;
+	virtual RtVoid postProcess(CRiProjection &obj) = 0;
+	virtual RtVoid postProcess(CRiClipping &obj) = 0;
+    virtual RtVoid postProcess(CRiClippingPlane &obj) = 0;
+    virtual RtVoid postProcess(CRiDepthOfField &obj) = 0;
+    virtual RtVoid postProcess(CRiShutter &obj) = 0;
+	virtual RtVoid postProcess(CRiPixelVariance &obj) = 0;
+    virtual RtVoid postProcess(CRiPixelSamples &obj) = 0;
+    virtual RtVoid postProcess(CRiPixelFilter &obj) = 0;
+    virtual RtVoid postProcess(CRiExposure &obj) = 0;
+    virtual RtVoid postProcess(CRiImager &obj) = 0;
+	virtual RtVoid postProcess(CRiQuantize &obj) = 0;
+    virtual RtVoid postProcess(CRiDisplayChannel &obj) = 0;
+    virtual RtVoid postProcess(CRiDisplay &obj) = 0;
+    virtual RtVoid postProcess(CRiHider &obj) = 0;
+    virtual RtVoid postProcess(CRiColorSamples &obj) = 0;
+    virtual RtVoid postProcess(CRiRelativeDetail &obj) = 0;
+    virtual RtVoid postProcess(CRiOption &obj) = 0;
+	
+    virtual RtVoid postProcess(CRiLightSource &obj) = 0;
+	virtual RtVoid postProcess(CRiAreaLightSource &obj) = 0;
+	
+    virtual RtVoid postProcess(CRiAttribute &obj) = 0;
+	virtual RtVoid postProcess(CRiColor &obj) = 0;
+	virtual RtVoid postProcess(CRiOpacity &obj) = 0;
+    virtual RtVoid postProcess(CRiSurface &obj) = 0;
+    virtual RtVoid postProcess(CRiAtmosphere &obj) = 0;
+    virtual RtVoid postProcess(CRiInterior &obj) = 0;
+	virtual RtVoid postProcess(CRiExterior &obj) = 0;
+	virtual RtVoid postProcess(CRiIlluminate &obj) = 0;
+    virtual RtVoid postProcess(CRiDisplacement &obj) = 0;
+	virtual RtVoid postProcess(CRiTextureCoordinates &obj) = 0;
+    virtual RtVoid postProcess(CRiShadingRate &obj) = 0;
+	virtual RtVoid postProcess(CRiShadingInterpolation &obj) = 0;
+    virtual RtVoid postProcess(CRiMatte &obj) = 0;
+	virtual RtVoid postProcess(CRiBound &obj) = 0;
+	virtual RtVoid postProcess(CRiDetail &obj) = 0;
+	virtual RtVoid postProcess(CRiDetailRange &obj) = 0;
+    virtual RtVoid postProcess(CRiGeometricApproximation &obj) = 0;
+	virtual RtVoid postProcess(CRiGeometricRepresentation &obj) = 0;
+	virtual RtVoid postProcess(CRiOrientation &obj) = 0;
+	virtual RtVoid postProcess(CRiReverseOrientation &obj) = 0;
+	virtual RtVoid postProcess(CRiSides &obj) = 0;
+    virtual RtVoid postProcess(CRiBasis &obj) = 0;
+    virtual RtVoid postProcess(CRiTrimCurve &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiIdentity &obj) = 0;
+	virtual RtVoid postProcess(CRiTransform &obj) = 0;
+	virtual RtVoid postProcess(CRiConcatTransform &obj) = 0;
+	virtual RtVoid postProcess(CRiPerspective &obj) = 0;
+	virtual RtVoid postProcess(CRiTranslate &obj) = 0;
+	virtual RtVoid postProcess(CRiRotate &obj) = 0;
+	virtual RtVoid postProcess(CRiScale &obj) = 0;
+    virtual RtVoid postProcess(CRiSkew &obj) = 0;
+	virtual RtVoid postProcess(CRiDeformation &obj) = 0;
+	virtual RtVoid postProcess(CRiScopedCoordinateSystem &obj) = 0;
+	virtual RtVoid postProcess(CRiCoordinateSystem &obj) = 0;
+	virtual RtVoid postProcess(CRiCoordSysTransform &obj) = 0;
+	virtual RtVoid postProcess(CRiTransformPoints &obj) = 0;
+	
+    virtual RtVoid postProcess(CRiPolygon &obj) = 0;
+	virtual RtVoid postProcess(CRiGeneralPolygon &obj) = 0;
+	virtual RtVoid postProcess(CRiPointsPolygons &obj) = 0;
+    virtual RtVoid postProcess(CRiPointsGeneralPolygons &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiPatch &obj) = 0;
+	virtual RtVoid postProcess(CRiPatchMesh &obj) = 0;
+    virtual RtVoid postProcess(CRiNuPatch &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiSubdivisionMesh &obj) = 0;
+	virtual RtVoid postProcess(CRiHierarchicalSubdivisionMesh &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiSphere &obj) = 0;
+    virtual RtVoid postProcess(CRiCone &obj) = 0;
+    virtual RtVoid postProcess(CRiCylinder &obj) = 0;
+    virtual RtVoid postProcess(CRiHyperboloid &obj) = 0;
+    virtual RtVoid postProcess(CRiParaboloid &obj) = 0;
+    virtual RtVoid postProcess(CRiDisk &obj) = 0;
+    virtual RtVoid postProcess(CRiTorus &obj) = 0;
+	
+    virtual RtVoid postProcess(CRiPoints &obj) = 0;
+    virtual RtVoid postProcess(CRiCurves &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiBlobby &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiProcedural &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiGeometry &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiMakeTexture &obj) = 0;
+    virtual RtVoid postProcess(CRiMakeBump &obj) = 0;
+    virtual RtVoid postProcess(CRiMakeLatLongEnvironment &obj) = 0;
+    virtual RtVoid postProcess(CRiMakeCubeFaceEnvironment &obj) = 0;
+    virtual RtVoid postProcess(CRiMakeShadow &obj) = 0;
+    virtual RtVoid postProcess(CRiMakeBrickMap &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiArchiveRecord &obj) = 0;
+	virtual RtVoid postProcess(CRiReadArchive &obj) = 0;
+	
+	virtual RtVoid postProcess(CRiIfBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiElseIfBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiElseBegin &obj) = 0;
+	virtual RtVoid postProcess(CRiIfEnd &obj) = 0;
 	//@}
 }; // IDoRender
 } // namespace RiCPP

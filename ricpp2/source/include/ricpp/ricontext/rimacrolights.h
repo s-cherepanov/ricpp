@@ -99,10 +99,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		inline virtual ~CRiLightSource()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiLightSource(*this);
@@ -124,19 +120,24 @@ namespace RiCPP {
 
 		inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			handle(ri.lightSourceV(name(), paramSize(), tokenPtr(), valuePtr()));
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preLightSource(*this, m_name, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doLightSource(*this, m_name, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postLightSource(*this, m_name, parameters());
+			ri.postProcess(*this);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
@@ -243,10 +244,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		inline virtual ~CRiAreaLightSource()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiAreaLightSource(*this);
@@ -267,19 +264,24 @@ namespace RiCPP {
 		inline virtual RtLightHandle handle() const { return m_handle; }
 		inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			handle(ri.areaLightSourceV(name(), paramSize(), tokenPtr(), valuePtr()));
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preAreaLightSource(*this, m_handle, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doAreaLightSource(*this, m_handle, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postAreaLightSource(*this, m_handle, parameters());
+			ri.postProcess(*this);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const

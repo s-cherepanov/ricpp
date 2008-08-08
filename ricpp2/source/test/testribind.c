@@ -28,7 +28,12 @@ int main(int argc, const char *argv[])
 			RiBegin(RI_NULL);
 	}
 		/* RiMakeTexture("mytexture.tiff", "mytexture.tx", RI_PERIODIC, RI_PERIODIC, RiSincFilter, (RtFloat)3.0, (RtFloat)3.0, RI_NULL); */
-		RiPixelFilter(RiGaussianFilter, 3.0F, 3.0F),
+
+		/* Using gcc-4.0.1 I got a warning for Ri-functions that float is used instead of double due to prototype,
+		 * even if I pass explictely float. Due to a message in fr.comp.lang.c "Complexe avex fonction réelle" Jan 23, 2008
+		 * this warning (gcc-4.2.3) is not issued in gcc-4.3.0 anymore, so I disabled the "Prototype conversion" option temporarily.
+		 */
+		RiPixelFilter(RiGaussianFilter, 3.0f, 3.0f),
 		RiShutter(0.0F, 1.0F);
 		RiClipping(0.5F, 20.0F);
 		RiProjection(RI_PERSPECTIVE, RI_NULL);

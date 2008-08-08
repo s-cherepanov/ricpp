@@ -38,6 +38,14 @@
 #include "ricpp/ribparser/ribparser.h"
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
+#ifdef _DEBUG
+// #define _TRACE_ARCHIVE
+#define _TRACE
+#ifndef _RICPP_TOOLS_TRACE_H
+#include "ricpp/tools/trace.h"
+#endif // _RICPP_TOOLS_TRACE_H
+#endif
+
 using namespace RiCPP;
 
 #define RICPP_PREAMBLE(AREQ) \
@@ -298,7 +306,17 @@ void CBaseRenderer::replayDelayed()
 		if ( (*i).m_req ) {
 			m_attributes = (*i).m_attributes;
 			m_transformation = (*i).m_transformation;
-			(*i).m_req->doProcess(*this, 0);
+			try {
+				
+				(*i).m_req->doProcess(*this, 0);
+
+			} catch ( ExceptRiCPPError &e2 ) {
+				ricppErrHandler().handleError(e2);
+			} catch ( std::exception &e1 ) {
+				ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at 'replayDelayed(%s)': %s", noNullStr((*i).m_req->requestName()), e1.what());
+			} catch ( ... ) {
+				ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'replayDelayed(%s)'", noNullStr((*i).m_req->requestName()));
+			}
 		}
 	}
 	
@@ -495,41 +513,82 @@ void CBaseRenderer::processRequest(CRManInterfaceCall *aRequest, bool immediatel
 {
 	if ( !aRequest )
 		return;
+
+	ExceptRiCPPError ePre, eDo, ePost;
 	
 	bool recorded = false;
-	aRequest->preProcess(*this, 0);
-
-	if ( !immediately && renderState()->curMacro() ) {
-		recordRequest(aRequest);
-		recorded = true;
-	}
+	
+	try {
 		
-	if ( immediately || (!renderState()->recordMode() && renderState()->executeConditionial()) ) {
-		aRequest->doProcess(*this, 0);
+		aRequest->preProcess(*this, 0);
+		
+	} catch ( ExceptRiCPPError &e2 ) {
+		ePre = e2;
+	} catch ( std::exception &e1 ) {
+		ePre.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at preprocessing, 'processRequest(%s)': %s", noNullStr(aRequest->requestName()), e1.what());
+	} catch ( ... ) {
+		ePre.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at preprocessing, 'processRequest(%s)'", noNullStr(aRequest->requestName()));
 	}
+	
+	if ( !ePre.isSevere() ) {
+		
+		if ( !immediately && renderState()->curMacro() ) {
+			recordRequest(aRequest);
+			recorded = true;
+		}
+			
+		if ( immediately || (!renderState()->recordMode() && renderState()->executeConditionial()) ) {
+			try {
+				
+				aRequest->doProcess(*this, 0);
+				
+			} catch ( ExceptRiCPPError &e2 ) {
+				eDo = e2;
+			} catch ( std::exception &e1 ) {
+				eDo.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at do processing, 'processRequest(%s)': %s", noNullStr(aRequest->requestName()), e1.what());
+			} catch ( ... ) {
+				eDo.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at do processing, 'processRequest(%s)'", noNullStr(aRequest->requestName()));
+			}
+		}
 
-	aRequest->postProcess(*this, 0);
+		if ( !eDo.isSevere() ) {
+			try {
+				
+				aRequest->postProcess(*this, 0);
+				
+			} catch ( ExceptRiCPPError &e2 ) {
+				ePost = e2;
+			} catch ( std::exception &e1 ) {
+				ePost.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at postprocessing, 'processRequest(%s)': %s", noNullStr(aRequest->requestName()), e1.what());
+			} catch ( ... ) {
+				ePost.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at postprocessing, 'processRequest(%s)'", noNullStr(aRequest->requestName()));
+			}
+		}
+	}
 	
 	if ( !recorded && aRequest->delayedDeletion() )
 		renderState()->deferRequest(aRequest);
 
 	if ( !recorded && !aRequest->delayedDeletion() )
 		macroFactory().deleteRequest(aRequest);
+
+	if ( ePre.code() != RIE_NOERROR )
+		ricppErrHandler().handleError(ePre);
+	if ( eDo.code() != RIE_NOERROR )
+		ricppErrHandler().handleError(eDo);
+	if ( ePost.code() != RIE_NOERROR )
+		ricppErrHandler().handleError(ePost);
 }
 
 
 void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCallback *cb)
 {
+	ExceptRiCPPError ePre, eDo, ePost;
+
 	try {
 		if ( !preCheck(aRequest.interfaceIdx()) ) {
 			return;
 		}
-		aRequest.preProcess(*this, cb);
-		if ( !renderState()->recordMode() && renderState()->executeConditionial() ) {
-			aRequest.doProcess(*this, cb);
-		}
-		aRequest.postProcess(*this, cb);
-
 	} catch ( ExceptRiCPPError &e2 ) {
 		ricppErrHandler().handleError(e2);
 	} catch ( std::exception &e1 ) {
@@ -537,6 +596,48 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 	} catch ( ... ) {
 		ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'replayRequest(%s)'", noNullStr(aRequest.requestName()));
 	}
+
+	try {
+		aRequest.preProcess(*this, cb);
+	} catch ( ExceptRiCPPError &e2 ) {
+		ePre = e2;
+	} catch ( std::exception &e1 ) {
+		ePre.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at preprocessing, 'replayRequest(%s)': %s", noNullStr(aRequest.requestName()), e1.what());
+	} catch ( ... ) {
+		ePre.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at preprocessing, 'replayRequest(%s)'", noNullStr(aRequest.requestName()));
+	}
+	
+	if ( !ePre.isSevere() ) {
+		
+		if ( !renderState()->recordMode() && renderState()->executeConditionial() ) {
+			try {
+				aRequest.doProcess(*this, cb);
+			} catch ( ExceptRiCPPError &e2 ) {
+				eDo = e2;
+			} catch ( std::exception &e1 ) {
+				eDo.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at do processing, 'replayRequest(%s)': %s", noNullStr(aRequest.requestName()), e1.what());
+			} catch ( ... ) {
+				eDo.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at do processing, 'replayRequest(%s)'", noNullStr(aRequest.requestName()));
+			}
+		}
+	
+		try {
+			aRequest.postProcess(*this, cb);
+		} catch ( ExceptRiCPPError &e2 ) {
+			ePost = e2;
+		} catch ( std::exception &e1 ) {
+			ePost.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at postprocessing, 'replayRequest(%s)': %s", noNullStr(aRequest.requestName()), e1.what());
+		} catch ( ... ) {
+			ePost.set(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at postprocessing, 'replayRequest(%s)'", noNullStr(aRequest.requestName()));
+		}
+	}
+	
+	if ( ePre.code() != RIE_NOERROR )
+		ricppErrHandler().handleError(ePre);
+	if ( eDo.code() != RIE_NOERROR )
+		ricppErrHandler().handleError(eDo);
+	if ( ePost.code() != RIE_NOERROR )
+		ricppErrHandler().handleError(ePost);
 }
 
 void CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
@@ -638,16 +739,35 @@ void CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &par
 
 void CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *callback, const CParameterList &params)
 {
+#ifdef _TRACE_ARCHIVE
+	trace("-> CBaseRenderer::processReadArchive()");
+#endif
+	
 	if ( !emptyStr(name) ) {
 		// 1. Look for archive in stored archives
+#ifdef _TRACE_ARCHIVE
+		trace("** call get handle");
+#endif
 		RtArchiveHandle handle = renderState()->storedArchiveName(name);
+#ifdef _TRACE_ARCHIVE
+		trace("** got handle");
+#endif
 		if ( handle ) {
+#ifdef _TRACE_ARCHIVE
+			trace("** call processArchiveInstance");
+#endif
 			processArchiveInstance(handle, callback, params);
+#ifdef _TRACE_ARCHIVE
+			trace("<- CBaseRenderer::processReadArchive(), regular read from file");
+#endif
 			return;
 		}
 	}
 
 	if ( !m_parserCallback ) {
+#ifdef _TRACE_ARCHIVE
+		trace("<- CBaseRenderer::processReadArchive(), throw !m_parserCallback");
+#endif
 		throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
@@ -656,6 +776,9 @@ void CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *ca
 
  	// 2. Read archive from stream (name == RI_NULL for stdin)
 	readArchiveFromStream(name, *m_parserCallback, callback, params);
+#ifdef _TRACE_ARCHIVE
+	trace("<- CBaseRenderer::processReadArchive(), regular read from stdin");
+#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -706,16 +829,20 @@ bool CBaseRenderer::init(const CDeclarationDictionary &theDeclDict, const COptio
 
 // ----------------------------------------------------------------------------
 
-RtVoid CBaseRenderer::preBegin(CRiBegin &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiBegin &obj)
 {
+	// renderState()->contextBegin(); already called in beginV
 }
+
 
 RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ExceptRiCPPError
 {
 	RICPP_PREAMBLE_RET(REQ_BEGIN, illContextHandle)
+
 		// Indicates that begin has been called
 		renderState()->contextBegin();
+	
 		renderState()->parseParameters(RI_BEGIN, name, CParameterClasses(), n, tokens, params);
 		name = renderState()->tokFindCreate(name);
 		RICPP_PROCESS_IMMEDIATE(newRiBegin(renderState()->lineNo(), name, renderState()->curParamList()));
@@ -728,7 +855,7 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 }
 
 
-RtVoid CBaseRenderer::preEnd(CRiEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiEnd &obj)
 {
 	renderState()->contextEnd();
 }
@@ -772,19 +899,11 @@ RtVoid CBaseRenderer::end(void)
 	}
 }
 
-RtVoid CBaseRenderer::preErrorHandler(CRiErrorHandler &obj, const IErrorHandler &handler)
-{
-}
-
 RtVoid CBaseRenderer::errorHandler(const IErrorHandler &handler)
 {
 	RICPP_PREAMBLE(REQ_ERROR_HANDLER)
 		RICPP_PROCESS(newRiErrorHandler(renderState()->lineNo(), handler));
 	RICPP_POSTAMBLE
-}
-
-RtVoid CBaseRenderer::preSynchronize(CRiSynchronize &obj, RtToken name)
-{
 }
 
 RtVoid CBaseRenderer::synchronize(RtString name)
@@ -795,20 +914,11 @@ RtVoid CBaseRenderer::synchronize(RtString name)
 	RICPP_POSTAMBLE
 }
 
-RtVoid CBaseRenderer::preSystem(CRiSystem &obj, RtString cmd)
-{
-}
-
 RtVoid CBaseRenderer::system(RtString cmd)
 {
 	RICPP_PREAMBLE(REQ_SYSTEM)
 		RICPP_PROCESS(newRiSystem(renderState()->lineNo(), cmd));
 	RICPP_POSTAMBLE
-}
-
-
-void CBaseRenderer::preDeclare(CRiDeclare &obj, RtToken name, RtString declaration)
-{
 }
 
 RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
@@ -833,9 +943,9 @@ RtToken CBaseRenderer::declare(RtToken name, RtString declaration)
 }
 
 
-RtVoid CBaseRenderer::preFrameBegin(CRiFrameBegin &obj, RtInt number)
+RtVoid CBaseRenderer::preProcess(CRiFrameBegin &obj)
 {
-	renderState()->frameBegin(number);
+	renderState()->frameBegin(obj.frameNumber());
 }
 
 RtVoid CBaseRenderer::frameBegin(RtInt number)
@@ -847,7 +957,7 @@ RtVoid CBaseRenderer::frameBegin(RtInt number)
 }
 
 
-RtVoid CBaseRenderer::preFrameEnd(CRiFrameEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiFrameEnd &obj)
 {
 	renderState()->frameEnd();
 }
@@ -860,7 +970,7 @@ RtVoid CBaseRenderer::frameEnd(void)
 	RICPP_POSTAMBLE
 }
 
-RtVoid CBaseRenderer::preWorldBegin(CRiWorldBegin &obj)
+RtVoid CBaseRenderer::preProcess(CRiWorldBegin &obj)
 {
 	renderState()->worldBegin();
 }
@@ -873,7 +983,7 @@ RtVoid CBaseRenderer::worldBegin(void)
 	RICPP_POSTAMBLE
 }
 
-RtVoid CBaseRenderer::preWorldEnd(CRiWorldEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiWorldEnd &obj)
 {
 	renderState()->worldEnd();
 }
@@ -888,7 +998,7 @@ RtVoid CBaseRenderer::worldEnd(void)
 }
 
 
-RtVoid CBaseRenderer::preAttributeBegin(CRiAttributeBegin &obj)
+RtVoid CBaseRenderer::preProcess(CRiAttributeBegin &obj)
 {
 	renderState()->attributeBegin();
 }
@@ -903,7 +1013,7 @@ RtVoid CBaseRenderer::attributeBegin(void)
 }
 
 
-RtVoid CBaseRenderer::preAttributeEnd(CRiAttributeEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiAttributeEnd &obj)
 {
 	renderState()->attributeEnd();
 }
@@ -917,7 +1027,7 @@ RtVoid CBaseRenderer::attributeEnd(void)
 }
 
 
-RtVoid CBaseRenderer::preTransformBegin(CRiTransformBegin &obj)
+RtVoid CBaseRenderer::preProcess(CRiTransformBegin &obj)
 {
 	renderState()->transformBegin();
 }
@@ -931,7 +1041,7 @@ RtVoid CBaseRenderer::transformBegin(void)
 }
 
 
-RtVoid CBaseRenderer::preTransformEnd(CRiTransformEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiTransformEnd &obj)
 {
 	renderState()->transformEnd();
 }
@@ -945,9 +1055,9 @@ RtVoid CBaseRenderer::transformEnd(void)
 }
 
 
-RtVoid CBaseRenderer::preSolidBegin(CRiSolidBegin &obj, RtToken type)
+RtVoid CBaseRenderer::preProcess(CRiSolidBegin &obj)
 {
-	renderState()->solidBegin(type);
+	renderState()->solidBegin(obj.type());
 }
 
 RtVoid CBaseRenderer::solidBegin(RtToken type)
@@ -974,7 +1084,7 @@ RtVoid CBaseRenderer::solidBegin(RtToken type)
 }
 
 
-RtVoid CBaseRenderer::preSolidEnd(CRiSolidEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiSolidEnd &obj)
 {
 	renderState()->solidEnd();
 }
@@ -987,10 +1097,6 @@ RtVoid CBaseRenderer::solidEnd(void)
 }
 
 
-RtVoid CBaseRenderer::preObjectBegin(CRiObjectBegin &obj, RtString name)
-{
-}
-
 RtObjectHandle CBaseRenderer::objectBegin(RtString name)
 {
 	RtObjectHandle handle = illObjectHandle;
@@ -1002,10 +1108,6 @@ RtObjectHandle CBaseRenderer::objectBegin(RtString name)
 	return handle;
 }
 
-RtVoid CBaseRenderer::preObjectEnd(CRiObjectEnd &obj)
-{
-}
-
 RtVoid CBaseRenderer::objectEnd(void)
 {
 	RICPP_PREAMBLE(REQ_OBJECT_END)
@@ -1014,13 +1116,9 @@ RtVoid CBaseRenderer::objectEnd(void)
 	RICPP_POSTAMBLE
 }
 
-RtVoid CBaseRenderer::preObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle)
+RtVoid CBaseRenderer::doProcess(CRiObjectInstance &obj)
 {
-}
-
-RtVoid CBaseRenderer::doObjectInstance(CRiObjectInstance &obj, RtObjectHandle handle)
-{
-	CRiObjectMacro *m = renderState()->objectInstance(handle);
+	CRiObjectMacro *m = renderState()->objectInstance(obj.handle());
 	if ( m ) {
 		if ( m->isClosed() ) {
 			CRiMacro *msav = renderState()->curReplay();
@@ -1058,9 +1156,11 @@ RtVoid CBaseRenderer::objectInstance(RtObjectHandle handle)
 	RICPP_POSTAMBLE
 }
 
-RtVoid CBaseRenderer::preMotionBegin(CRiMotionBegin &obj, RtInt N, RtFloat times[])
+RtVoid CBaseRenderer::preProcess(CRiMotionBegin &obj)
 {
-	renderState()->motionBegin(N, times);
+	/** @todo Make the motionBegin using a vector
+	 */
+	renderState()->motionBegin(obj.num(), &obj.times()[0]);
 }
 
 RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[])
@@ -1080,7 +1180,7 @@ RtVoid CBaseRenderer::motionBeginV(RtInt N, RtFloat times[])
 	}
 }
 
-RtVoid CBaseRenderer::preMotionEnd(CRiMotionEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiMotionEnd &obj)
 {
 	renderState()->motionEnd();
 }
@@ -1093,7 +1193,7 @@ RtVoid CBaseRenderer::motionEnd(void)
 }
 
 
-RtVoid CBaseRenderer::preResourceBegin(CRiResourceBegin &obj)
+RtVoid CBaseRenderer::preProcess(CRiResourceBegin &obj)
 {
 	renderState()->resourceBegin();
 }
@@ -1107,7 +1207,7 @@ RtVoid CBaseRenderer::resourceBegin(void)
 }
 
 
-RtVoid CBaseRenderer::preResourceEnd(CRiResourceEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiResourceEnd &obj)
 {
 	renderState()->resourceEnd();
 }
@@ -1120,9 +1220,9 @@ RtVoid CBaseRenderer::resourceEnd(void)
 	RICPP_POSTAMBLE
 }
 
-RtVoid CBaseRenderer::preResource(CRiResource &obj, RtToken handle, RtToken type, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiResource &obj)
 {
-	renderState()->resource(*this, handle, type, params);
+	renderState()->resource(*this, obj.handle(), obj.type(), obj.parameters());
 }
 
 RtVoid CBaseRenderer::resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1133,10 +1233,6 @@ RtVoid CBaseRenderer::resourceV(RtToken handle, RtToken type, RtInt n, RtToken t
 		renderState()->parseParameters(RI_RESOURCE, type, CParameterClasses(), n, tokens, params);
 		RICPP_PROCESS(newRiResource(renderState()->lineNo(), handle, type, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-}
-
-RtVoid CBaseRenderer::preArchiveBegin(CRiArchiveBegin &obj, RtToken name, const CParameterList &params)
-{
 }
 
 RtArchiveHandle CBaseRenderer::archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) 
@@ -1151,10 +1247,6 @@ RtArchiveHandle CBaseRenderer::archiveBeginV(RtToken name, RtInt n, RtToken toke
 	return handle;
 }
 
-RtVoid CBaseRenderer::preArchiveEnd(CRiArchiveEnd &obj)
-{
-}
-
 RtVoid CBaseRenderer::archiveEnd(void)
 {
 	RICPP_PREAMBLE(REQ_ARCHIVE_END)
@@ -1165,9 +1257,9 @@ RtVoid CBaseRenderer::archiveEnd(void)
 
 
 
-RtVoid CBaseRenderer::preFormat(CRiFormat &obj, RtInt xres, RtInt yres, RtFloat aspect)
+RtVoid CBaseRenderer::preProcess(CRiFormat &obj)
 {
-	renderState()->options().format(xres, yres, aspect);
+	renderState()->options().format(obj.xRes(), obj.yRes(), obj.aspect());
 }
 
 RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
@@ -1178,9 +1270,9 @@ RtVoid CBaseRenderer::format(RtInt xres, RtInt yres, RtFloat aspect)
 }
 
 
-RtVoid CBaseRenderer::preFrameAspectRatio(CRiFrameAspectRatio &obj, RtFloat aspect)
+RtVoid CBaseRenderer::preProcess(CRiFrameAspectRatio &obj)
 {
-	renderState()->options().frameAspectRatio(aspect);
+	renderState()->options().frameAspectRatio(obj.aspect());
 }
 
 RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
@@ -1198,9 +1290,9 @@ RtVoid CBaseRenderer::frameAspectRatio(RtFloat aspect)
 }
 
 
-RtVoid CBaseRenderer::preScreenWindow(CRiScreenWindow &obj, RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
+RtVoid CBaseRenderer::preProcess(CRiScreenWindow &obj)
 {
-	renderState()->options().screenWindow(left, right, bot, top);
+	renderState()->options().screenWindow(obj.left(), obj.right(), obj.bottom(), obj.top());
 }
 
 RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFloat top)
@@ -1211,9 +1303,9 @@ RtVoid CBaseRenderer::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtF
 }
 
 
-RtVoid CBaseRenderer::preCropWindow(CRiCropWindow &obj, RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
+RtVoid CBaseRenderer::preProcess(CRiCropWindow &obj)
 {
-	renderState()->options().cropWindow(xmin, xmax, ymin, ymax);
+	renderState()->options().cropWindow(obj.xMin(), obj.xMax(), obj.yMin(), obj.yMax());
 }
 
 RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloat ymax)
@@ -1226,10 +1318,10 @@ RtVoid CBaseRenderer::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFlo
 }
 
 
-RtVoid CBaseRenderer::preProjection(CRiProjection &obj, RtToken name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiProjection &obj)
 {
 	// Sets the state (can throw)
-	renderState()->projection(name, params);	
+	renderState()->projection(obj.name(), obj.parameters());	
 	// Here Camera coord space
 }
 
@@ -1245,9 +1337,9 @@ RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPoi
 }
 
 
-RtVoid CBaseRenderer::preClipping(CRiClipping &obj, RtFloat hither, RtFloat yon)
+RtVoid CBaseRenderer::preProcess(CRiClipping &obj)
 {
-	renderState()->options().clipping(hither, yon);
+	renderState()->options().clipping(obj.hither(), obj.yon());
 }
 
 RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
@@ -1261,9 +1353,9 @@ RtVoid CBaseRenderer::clipping(RtFloat hither, RtFloat yon)
 }
 
 
-RtVoid CBaseRenderer::preClippingPlane(CRiClippingPlane &obj, RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
+RtVoid CBaseRenderer::preProcess(CRiClippingPlane &obj)
 {
-	renderState()->options().clippingPlane(x, y, z, nx, ny, nz);
+	renderState()->options().clippingPlane(obj.x(), obj.y(), obj.z(), obj.nx(), obj.ny(), obj.nz());
 }
 
 RtVoid CBaseRenderer::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, RtFloat ny, RtFloat nz)
@@ -1274,9 +1366,9 @@ RtVoid CBaseRenderer::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx,
 }
 
 
-RtVoid CBaseRenderer::preDepthOfField(CRiDepthOfField &obj, RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
+RtVoid CBaseRenderer::preProcess(CRiDepthOfField &obj)
 {
-	renderState()->options().depthOfField(fstop, focallength, focaldistance);
+	renderState()->options().depthOfField(obj.fStop(), obj.focalLength(), obj.focalDistance());
 }
 
 RtVoid CBaseRenderer::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat focaldistance)
@@ -1287,9 +1379,9 @@ RtVoid CBaseRenderer::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat f
 }
 
 
-RtVoid CBaseRenderer::preShutter(CRiShutter &obj, RtFloat smin, RtFloat smax)
+RtVoid CBaseRenderer::preProcess(CRiShutter &obj)
 {
-	renderState()->options().shutter(smin, smax);
+	renderState()->options().shutter(obj.sMin(), obj.sMax());
 }
 
 RtVoid CBaseRenderer::shutter(RtFloat smin, RtFloat smax)
@@ -1300,9 +1392,9 @@ RtVoid CBaseRenderer::shutter(RtFloat smin, RtFloat smax)
 }
 
 
-RtVoid CBaseRenderer::prePixelVariance(CRiPixelVariance &obj, RtFloat variation)
+RtVoid CBaseRenderer::preProcess(CRiPixelVariance &obj)
 {
-	renderState()->options().pixelVariance(variation);
+	renderState()->options().pixelVariance(obj.variation());
 }
 
 RtVoid CBaseRenderer::pixelVariance(RtFloat variation)
@@ -1313,9 +1405,9 @@ RtVoid CBaseRenderer::pixelVariance(RtFloat variation)
 }
 
 
-RtVoid CBaseRenderer::prePixelSamples(CRiPixelSamples &obj, RtFloat xsamples, RtFloat ysamples)
+RtVoid CBaseRenderer::preProcess(CRiPixelSamples &obj)
 {
-	renderState()->options().pixelSamples(xsamples, ysamples);
+	renderState()->options().pixelSamples(obj.xSamples(), obj.ySamples());
 }
 
 RtVoid CBaseRenderer::pixelSamples(RtFloat xsamples, RtFloat ysamples)
@@ -1326,9 +1418,9 @@ RtVoid CBaseRenderer::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 }
 
 
-RtVoid CBaseRenderer::prePixelFilter(CRiPixelFilter &obj, const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
+RtVoid CBaseRenderer::preProcess(CRiPixelFilter &obj)
 {
-	renderState()->options().pixelFilter(function, xwidth, ywidth);
+	renderState()->options().pixelFilter(obj.filterFunc(), obj.xWidth(), obj.yWidth());
 }
 
 RtVoid CBaseRenderer::pixelFilter(const IFilterFunc &function, RtFloat xwidth, RtFloat ywidth)
@@ -1339,9 +1431,9 @@ RtVoid CBaseRenderer::pixelFilter(const IFilterFunc &function, RtFloat xwidth, R
 }
 
 
-RtVoid CBaseRenderer::preExposure(CRiExposure &obj, RtFloat gain, RtFloat gamma)
+RtVoid CBaseRenderer::preProcess(CRiExposure &obj)
 {
-	renderState()->options().exposure(gain, gamma);
+	renderState()->options().exposure(obj.gain(), obj.gamma());
 }
 
 RtVoid CBaseRenderer::exposure(RtFloat gain, RtFloat gamma)
@@ -1352,9 +1444,9 @@ RtVoid CBaseRenderer::exposure(RtFloat gain, RtFloat gamma)
 }
 
 
-RtVoid CBaseRenderer::preImager(CRiImager &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiImager &obj)
 {
-	renderState()->options().imager(name, params);
+	renderState()->options().imager(obj.name(), obj.parameters());
 }
 
 RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1368,9 +1460,9 @@ RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointe
 }
 
 
-RtVoid CBaseRenderer::preQuantize(CRiQuantize &obj, RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
+RtVoid CBaseRenderer::preProcess(CRiQuantize &obj)
 {
-	renderState()->options().quantize(type, one, qmin, qmax, ampl);
+	renderState()->options().quantize(obj.type(), obj.one(), obj.qMin(), obj.qMax(), obj.ditherAmplitude());
 }
 
 RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, RtFloat ampl)
@@ -1382,9 +1474,9 @@ RtVoid CBaseRenderer::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, 
 }
 
 
-RtVoid CBaseRenderer::preDisplayChannel(CRiDisplayChannel &obj, RtString channel, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiDisplayChannel &obj)
 {
-	renderState()->options().displayChannel(renderState()->dict(), renderState()->options().colorDescr(), channel, params);
+	renderState()->options().displayChannel(renderState()->dict(), renderState()->options().colorDescr(), obj.channel(), obj.parameters());
 }
 
 RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1397,9 +1489,9 @@ RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[]
 	RICPP_UNREC_TOKENS
 }
 
-RtVoid CBaseRenderer::preDisplay(CRiDisplay &obj, RtString name, RtToken type, RtString mode, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiDisplay &obj)
 {
-	renderState()->options().display(name, type, mode, params);
+	renderState()->options().display(obj.name(), obj.type(), obj.mode(), obj.parameters());
 }
 
 RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1414,9 +1506,9 @@ RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt
 }
 
 
-RtVoid CBaseRenderer::preHider(CRiHider &obj, RtToken type, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiHider &obj)
 {
-	renderState()->options().hider(type, params);
+	renderState()->options().hider(obj.type(), obj.parameters());
 }
 
 RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1430,9 +1522,9 @@ RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 }
 
 
-RtVoid CBaseRenderer::preColorSamples(CRiColorSamples &obj, RtInt N, RtFloat nRGB[], RtFloat RGBn[])
+RtVoid CBaseRenderer::preProcess(CRiColorSamples &obj)
 {
-	renderState()->options().colorSamples(N, nRGB, RGBn);
+	renderState()->options().colorSamples(obj.nSamples(), obj.nRGBPtr(), obj.RGBnPtr());
 }
 
 RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
@@ -1450,9 +1542,9 @@ RtVoid CBaseRenderer::colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 }
 
 
-RtVoid CBaseRenderer::preRelativeDetail(CRiRelativeDetail &obj, RtFloat relativedetail)
+RtVoid CBaseRenderer::preProcess(CRiRelativeDetail &obj)
 {
-	renderState()->options().relativeDetail(relativedetail);
+	renderState()->options().relativeDetail(obj.relativeDetail());
 }
 
 RtVoid CBaseRenderer::relativeDetail(RtFloat relativedetail)
@@ -1463,9 +1555,9 @@ RtVoid CBaseRenderer::relativeDetail(RtFloat relativedetail)
 }
 
 
-RtVoid CBaseRenderer::preOption(CRiOption &obj, RtToken name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiOption &obj)
 {
-	renderState()->option(name, params);
+	renderState()->option(obj.name(), obj.parameters());
 }
 
 RtVoid CBaseRenderer::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1479,9 +1571,9 @@ RtVoid CBaseRenderer::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer
 }
 
 
-RtVoid CBaseRenderer::preControl(CRiControl &obj, RtToken name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiControl &obj)
 {
-	renderState()->control(name, params);
+	renderState()->control(obj.name(), obj.parameters());
 }
 
 RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1495,7 +1587,7 @@ RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointe
 }
 
 
-RtVoid CBaseRenderer::preLightSource(CRiLightSource &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiLightSource &obj)
 {
 	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
@@ -1505,21 +1597,21 @@ RtVoid CBaseRenderer::preLightSource(CRiLightSource &obj, RtString name, const C
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
 			"Handle not created for LightSource \"%s\"",
-			noNullStr(name));
+			noNullStr(obj.name()));
 	}
 }
 
 	
-RtVoid CBaseRenderer::doLightSource(CRiLightSource &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::doProcess(CRiLightSource &obj)
 {
-	if ( !renderState()->newLightSource(obj.handle(), false, name, params) ) {
+	if ( !renderState()->newLightSource(obj.handle(), false, obj.name(), obj.parameters()) ) {
 		throw ExceptRiCPPError(
 			RIE_NOMEM,
 			RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
 			"LightSource of \"%s\"",
-			noNullStr(name));
+			noNullStr(obj.name()));
 	}
 }
 
@@ -1539,9 +1631,9 @@ RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens
 }
 
 
-RtVoid CBaseRenderer::preAreaLightSource(CRiAreaLightSource &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiAreaLightSource &obj)
 {
-	if ( name != RI_NULL ) {
+	if ( obj.name() != RI_NULL ) {
 		// Test the handle
 		CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 		if ( !handle ) {
@@ -1551,7 +1643,7 @@ RtVoid CBaseRenderer::preAreaLightSource(CRiAreaLightSource &obj, RtString name,
 				renderState()->printLineNo(__LINE__),
 				renderState()->printName(__FILE__),
 				"Handle not created for AreaLightSource \"%s\"",
-				noNullStr(name));
+				noNullStr(obj.name()));
 		}
 	} else {
 		// AreaLightSource ended
@@ -1559,19 +1651,19 @@ RtVoid CBaseRenderer::preAreaLightSource(CRiAreaLightSource &obj, RtString name,
 	}
 }
 
-RtVoid CBaseRenderer::doAreaLightSource(CRiAreaLightSource &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::doProcess(CRiAreaLightSource &obj)
 {
 	// name == RI_NULL : Area light source was closed
-	if ( name != RI_NULL ) {
+	if ( obj.name() != RI_NULL ) {
 		// Create an area light source
-		if ( !renderState()->newLightSource(obj.handle(), true, name, params) ) {
+		if ( !renderState()->newLightSource(obj.handle(), true, obj.name(), obj.parameters()) ) {
 			throw ExceptRiCPPError(
 				RIE_NOMEM,
 				RIE_SEVERE,
 				renderState()->printLineNo(__LINE__),
 				renderState()->printName(__FILE__),
 				"AreaLightSource of \"%s\"",
-				noNullStr(name));
+				noNullStr(obj.name()));
 		}
 		renderState()->startAreaLightSource(obj.handle());
 	}
@@ -1591,10 +1683,10 @@ RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken to
 	return h;
 }
 
-RtVoid CBaseRenderer::preIlluminate(CRiIlluminate &obj, RtLightHandle light, RtBoolean onoff)
+RtVoid CBaseRenderer::preProcess(CRiIlluminate &obj)
 {
 	// Only a test if LightSource was declared
-	CHandle *handle = renderState()->lightSourceHandle(light);
+	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
 		throw ExceptRiCPPError(
 			RIE_BADHANDLE,
@@ -1602,10 +1694,10 @@ RtVoid CBaseRenderer::preIlluminate(CRiIlluminate &obj, RtLightHandle light, RtB
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
 			"Illuminate a light source (Handle: %s)",
-			noNullStr(light));
+			noNullStr(obj.handle()));
 	}
-	CLightSource *l = renderState()->lightSourceInstance(light);
-	renderState()->attributes().illuminate(l, onoff);
+	CLightSource *l = renderState()->lightSourceInstance(obj.handle());
+	renderState()->attributes().illuminate(l, obj.onOff());
 }
 
 
@@ -1617,9 +1709,9 @@ RtVoid CBaseRenderer::illuminate(RtLightHandle light, RtBoolean onoff)
 }
 
 
-RtVoid CBaseRenderer::preAttribute(CRiAttribute &obj, RtToken name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiAttribute &obj)
 {
-	renderState()->attribute(name, params);
+	renderState()->attribute(obj.name(), obj.parameters());
 }
 
 
@@ -1634,9 +1726,9 @@ RtVoid CBaseRenderer::attributeV(RtToken name, RtInt n, RtToken tokens[], RtPoin
 }
 
 
-RtVoid CBaseRenderer::preColor(CRiColor &obj, RtColor Cs)
+RtVoid CBaseRenderer::preProcess(CRiColor &obj)
 {
-	renderState()->attributes().color(Cs);
+	renderState()->attributes().color(obj.color());
 }
 
 RtVoid CBaseRenderer::color(RtColor Cs)
@@ -1647,9 +1739,9 @@ RtVoid CBaseRenderer::color(RtColor Cs)
 }
 
 
-RtVoid CBaseRenderer::preOpacity(CRiOpacity &obj, RtColor Os)
+RtVoid CBaseRenderer::preProcess(CRiOpacity &obj)
 {
-	renderState()->attributes().opacity(Os);
+	renderState()->attributes().opacity(obj.opacity());
 }
 
 RtVoid CBaseRenderer::opacity(RtColor Os)
@@ -1660,9 +1752,9 @@ RtVoid CBaseRenderer::opacity(RtColor Os)
 }
 
 
-RtVoid CBaseRenderer::preSurface(CRiSurface &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiSurface &obj)
 {
-	renderState()->attributes().surface(name, params, renderState()->curTransform());
+	renderState()->attributes().surface(obj.name(), obj.parameters(), renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1676,9 +1768,9 @@ RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPoint
 }
 
 
-RtVoid CBaseRenderer::preAtmosphere(CRiAtmosphere &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiAtmosphere &obj)
 {
-	renderState()->attributes().atmosphere(name, params, renderState()->curTransform());
+	renderState()->attributes().atmosphere(obj.name(), obj.parameters(), renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1692,9 +1784,9 @@ RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPo
 }
 
 
-RtVoid CBaseRenderer::preInterior(CRiInterior &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiInterior &obj)
 {
-	renderState()->attributes().interior(name, params, renderState()->curTransform());
+	renderState()->attributes().interior(obj.name(), obj.parameters(), renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1708,9 +1800,9 @@ RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 }
 
 
-RtVoid CBaseRenderer::preExterior(CRiExterior &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiExterior &obj)
 {
-	renderState()->attributes().exterior(name, params, renderState()->curTransform());
+	renderState()->attributes().exterior(obj.name(), obj.parameters(), renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1724,9 +1816,9 @@ RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoin
 }
 
 
-RtVoid CBaseRenderer::preDisplacement(CRiDisplacement &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiDisplacement &obj)
 {
-	renderState()->attributes().displacement(name, params, renderState()->curTransform());
+	renderState()->attributes().displacement(obj.name(), obj.parameters(), renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1739,9 +1831,9 @@ RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], Rt
 	RICPP_UNREC_TOKENS
 }
 
-RtVoid CBaseRenderer::preDeformation(CRiDeformation &obj, RtString name, const CParameterList &params)
+RtVoid CBaseRenderer::preProcess(CRiDeformation &obj)
 {
-	renderState()->attributes().deformation(name, params, renderState()->curTransform());
+	renderState()->attributes().deformation(obj.name(), obj.parameters(), renderState()->curTransform());
 }
 
 RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
@@ -1754,9 +1846,9 @@ RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtP
 	RICPP_UNREC_TOKENS
 }
 
-RtVoid CBaseRenderer::preTextureCoordinates(CRiTextureCoordinates &obj, RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
+RtVoid CBaseRenderer::preProcess(CRiTextureCoordinates &obj)
 {
-	renderState()->attributes().textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
+	renderState()->attributes().textureCoordinates(obj.s1(), obj.t1(), obj.s2(), obj.t2(), obj.s3(), obj.t3(), obj.s4(), obj.t4());
 }
 
 RtVoid CBaseRenderer::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4)
@@ -1767,9 +1859,9 @@ RtVoid CBaseRenderer::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtF
 }
 
 
-RtVoid CBaseRenderer::preShadingRate(CRiShadingRate &obj, RtFloat size)
+RtVoid CBaseRenderer::preProcess(CRiShadingRate &obj)
 {
-	renderState()->attributes().shadingRate(size);
+	renderState()->attributes().shadingRate(obj.size());
 }
 
 RtVoid CBaseRenderer::shadingRate(RtFloat size)
@@ -1780,9 +1872,9 @@ RtVoid CBaseRenderer::shadingRate(RtFloat size)
 }
 
 
-RtVoid CBaseRenderer::preShadingInterpolation(CRiShadingInterpolation &obj, RtToken type)
+RtVoid CBaseRenderer::preProcess(CRiShadingInterpolation &obj)
 {
-	renderState()->attributes().shadingInterpolation(type);
+	renderState()->attributes().shadingInterpolation(obj.type());
 }
 
 RtVoid CBaseRenderer::shadingInterpolation(RtToken type)
@@ -1794,9 +1886,9 @@ RtVoid CBaseRenderer::shadingInterpolation(RtToken type)
 }
 
 
-RtVoid CBaseRenderer::preMatte(CRiMatte &obj, RtBoolean onoff)
+RtVoid CBaseRenderer::preProcess(CRiMatte &obj)
 {
-	renderState()->attributes().matte(onoff);
+	renderState()->attributes().matte(obj.onOff());
 }
 
 RtVoid CBaseRenderer::matte(RtBoolean onoff)
@@ -1807,9 +1899,9 @@ RtVoid CBaseRenderer::matte(RtBoolean onoff)
 }
 
 
-RtVoid CBaseRenderer::preBound(CRiBound &obj, RtBound aBound)
+RtVoid CBaseRenderer::preProcess(CRiBound &obj)
 {
-	renderState()->attributes().bound(aBound);
+	renderState()->attributes().bound(obj.bound());
 }
 
 RtVoid CBaseRenderer::bound(RtBound aBound)
@@ -1820,9 +1912,9 @@ RtVoid CBaseRenderer::bound(RtBound aBound)
 }
 
 
-RtVoid CBaseRenderer::preDetail(CRiDetail &obj, RtBound aBound)
+RtVoid CBaseRenderer::preProcess(CRiDetail &obj)
 {
-	renderState()->attributes().detail(aBound);
+	renderState()->attributes().detail(obj.bound());
 }
 
 RtVoid CBaseRenderer::detail(RtBound aBound)
@@ -1833,18 +1925,18 @@ RtVoid CBaseRenderer::detail(RtBound aBound)
 }
 
 
-RtVoid CBaseRenderer::preDetailRange(CRiDetailRange &obj, RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis)
+RtVoid CBaseRenderer::preProcess(CRiDetailRange &obj)
 {
 	/** The first call of detailRange() within an attribute (world) block stores the attributes.
 	 *  Subsequent calls restore these attribute state. An attributeEnd will pop the additional
 	 *  attribute state.
 	 */
 	if ( !renderState()->attributes().detailRangeCalledInBlock() ) {
-		renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
+		renderState()->attributes().detailRange(obj.minVis(), obj.lowTran(), obj.upTran(), obj.maxVis());
 		renderState()->storeAttributes();
 	} else {
 		renderState()->restoreAttributes();
-		renderState()->attributes().detailRange(minvis, lowtran, uptran, maxvis);
+		renderState()->attributes().detailRange(obj.minVis(), obj.lowTran(), obj.upTran(), obj.maxVis());
 	}
 }
 
@@ -1888,9 +1980,9 @@ RtVoid CBaseRenderer::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptra
 }
 
 
-RtVoid CBaseRenderer::preGeometricApproximation(CRiGeometricApproximation &obj, RtToken type, RtFloat value)
+RtVoid CBaseRenderer::preProcess(CRiGeometricApproximation &obj)
 {
-	renderState()->attributes().geometricApproximation(type, value);
+	renderState()->attributes().geometricApproximation(obj.type(), obj.value());
 }
 
 RtVoid CBaseRenderer::geometricApproximation(RtToken type, RtFloat value)
@@ -1902,9 +1994,9 @@ RtVoid CBaseRenderer::geometricApproximation(RtToken type, RtFloat value)
 }
 
 
-RtVoid CBaseRenderer::preGeometricRepresentation(CRiGeometricRepresentation &obj, RtToken type)
+RtVoid CBaseRenderer::preProcess(CRiGeometricRepresentation &obj)
 {
-	renderState()->attributes().geometricRepresentation(type);
+	renderState()->attributes().geometricRepresentation(obj.type());
 }
 
 RtVoid CBaseRenderer::geometricRepresentation(RtToken type)
@@ -1916,9 +2008,9 @@ RtVoid CBaseRenderer::geometricRepresentation(RtToken type)
 }
 
 
-RtVoid CBaseRenderer::preOrientation(CRiOrientation &obj, RtToken anOrientation)
+RtVoid CBaseRenderer::preProcess(CRiOrientation &obj)
 {
-	renderState()->attributes().orientation(anOrientation);
+	renderState()->attributes().orientation(obj.orientation());
 }
 
 RtVoid CBaseRenderer::orientation(RtToken anOrientation)
@@ -1946,7 +2038,7 @@ RtVoid CBaseRenderer::orientation(RtToken anOrientation)
 }
 
 
-RtVoid CBaseRenderer::preReverseOrientation(CRiReverseOrientation &obj)
+RtVoid CBaseRenderer::preProcess(CRiReverseOrientation &obj)
 {
 	renderState()->attributes().reverseOrientation();
 }
@@ -1959,9 +2051,9 @@ RtVoid CBaseRenderer::reverseOrientation(void)
 }
 
 
-RtVoid CBaseRenderer::preSides(CRiSides &obj, RtInt nsides)
+RtVoid CBaseRenderer::preProcess(CRiSides &obj)
 {
-	renderState()->attributes().sides(nsides);
+	renderState()->attributes().sides(obj.nSides());
 }
 
 RtVoid CBaseRenderer::sides(RtInt nsides)
@@ -1972,9 +2064,9 @@ RtVoid CBaseRenderer::sides(RtInt nsides)
 }
 
 
-RtVoid CBaseRenderer::preBasis(CRiBasis &obj, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+RtVoid CBaseRenderer::preProcess(CRiBasis &obj)
 {
-	renderState()->attributes().basis(ubasis, ustep, vbasis, vstep);
+	renderState()->attributes().basis(obj.uBasis(), obj.uStep(), obj.vBasis(), obj.vStep());
 }
 
 RtVoid CBaseRenderer::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
@@ -1985,9 +2077,9 @@ RtVoid CBaseRenderer::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt v
 }
 
 
-RtVoid CBaseRenderer::preTrimCurve(CRiTrimCurve &obj, RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
+RtVoid CBaseRenderer::preProcess(CRiTrimCurve &obj)
 {
-	renderState()->attributes().trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
+	renderState()->attributes().trimCurve(obj.trimCurve());
 }
 
 RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[])
@@ -1998,7 +2090,7 @@ RtVoid CBaseRenderer::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], Rt
 }
 
 
-RtVoid CBaseRenderer::preIdentity(CRiIdentity &obj)
+RtVoid CBaseRenderer::preProcess(CRiIdentity &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().identity();
@@ -2015,10 +2107,10 @@ RtVoid CBaseRenderer::identity(void)
 }
 
 
-RtVoid CBaseRenderer::preTransform(CRiTransform &obj, RtMatrix aTransform)
+RtVoid CBaseRenderer::preProcess(CRiTransform &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
-	renderState()->curTransform().transform(aTransform);
+	renderState()->curTransform().transform(obj.transform());
 	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
 		renderState()->attributes().toggleOrientation();
 }
@@ -2032,10 +2124,10 @@ RtVoid CBaseRenderer::transform(RtMatrix aTransform)
 }
 
 
-RtVoid CBaseRenderer::preConcatTransform(CRiConcatTransform &obj, RtMatrix aTransform)
+RtVoid CBaseRenderer::preProcess(CRiConcatTransform &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
-	renderState()->curTransform().concatTransform(aTransform);
+	renderState()->curTransform().concatTransform(obj.transform());
 	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
 		renderState()->attributes().toggleOrientation();
 }
@@ -2049,9 +2141,9 @@ RtVoid CBaseRenderer::concatTransform(RtMatrix aTransform)
 }
 
 
-RtVoid CBaseRenderer::prePerspective(CRiPerspective &obj, RtFloat fov)
+RtVoid CBaseRenderer::preProcess(CRiPerspective &obj)
 {
-	renderState()->curTransform().perspective(fov);
+	renderState()->curTransform().perspective(obj.fov());
 }
 
 
@@ -2063,9 +2155,9 @@ RtVoid CBaseRenderer::perspective(RtFloat fov)
 }
 
 
-RtVoid CBaseRenderer::preTranslate(CRiTranslate &obj, RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CBaseRenderer::preProcess(CRiTranslate &obj)
 {
-	renderState()->curTransform().translate(dx, dy, dz);
+	renderState()->curTransform().translate(obj.dx(), obj.dy(), obj.dz());
 }
 
 
@@ -2077,9 +2169,9 @@ RtVoid CBaseRenderer::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 }
 
 
-RtVoid CBaseRenderer::preRotate(CRiRotate &obj, RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CBaseRenderer::preProcess(CRiRotate &obj)
 {
-	renderState()->curTransform().rotate(angle, dx, dy, dz);
+	renderState()->curTransform().rotate(obj.angle(), obj.dx(), obj.dy(), obj.dz());
 }
 
 
@@ -2091,10 +2183,10 @@ RtVoid CBaseRenderer::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 }
 
 
-RtVoid CBaseRenderer::preScale(CRiScale &obj, RtFloat dx, RtFloat dy, RtFloat dz)
+RtVoid CBaseRenderer::preProcess(CRiScale &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
-	renderState()->curTransform().scale(dx, dy, dz);
+	renderState()->curTransform().scale(obj.dx(), obj.dy(), obj.dz());
 	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
 		renderState()->attributes().toggleOrientation();
 }
@@ -2108,12 +2200,12 @@ RtVoid CBaseRenderer::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 }
 
 
-RtVoid CBaseRenderer::preSkew(CRiSkew &obj, RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
+RtVoid CBaseRenderer::preProcess(CRiSkew &obj)
 {
-	RtFloat det = renderState()->curTransform().getCTM().determinant();
-	renderState()->curTransform().skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
-	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
-		renderState()->attributes().toggleOrientation();
+	// RtFloat det = renderState()->curTransform().getCTM().determinant();
+	renderState()->curTransform().skew(obj.angle(), obj.dx1(), obj.dy1(), obj.dz1(), obj.dx2(), obj.dy2(), obj.dz2());
+	// if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+	//	renderState()->attributes().toggleOrientation();
 }
 
 
@@ -2125,9 +2217,9 @@ RtVoid CBaseRenderer::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1,
 }
 
 
-RtVoid CBaseRenderer::preScopedCoordinateSystem(CRiScopedCoordinateSystem &obj, RtToken space)
+RtVoid CBaseRenderer::preProcess(CRiScopedCoordinateSystem &obj)
 {
-	renderState()->scopedCoordinateSystem(space);
+	renderState()->scopedCoordinateSystem(obj.space());
 }
 
 RtVoid CBaseRenderer::scopedCoordinateSystem(RtToken space)
@@ -2139,9 +2231,9 @@ RtVoid CBaseRenderer::scopedCoordinateSystem(RtToken space)
 }
 
 
-RtVoid CBaseRenderer::preCoordinateSystem(CRiCoordinateSystem &obj, RtToken space)
+RtVoid CBaseRenderer::preProcess(CRiCoordinateSystem &obj)
 {
-	renderState()->coordinateSystem(space);
+	renderState()->coordinateSystem(obj.space());
 }
 
 RtVoid CBaseRenderer::coordinateSystem(RtToken space)
@@ -2153,10 +2245,10 @@ RtVoid CBaseRenderer::coordinateSystem(RtToken space)
 }
 
 
-RtVoid CBaseRenderer::preCoordSysTransform(CRiCoordSysTransform &obj, RtToken space)
+RtVoid CBaseRenderer::preProcess(CRiCoordSysTransform &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
-	renderState()->coordSysTransform(space);
+	renderState()->coordSysTransform(obj.space());
 	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
 		renderState()->attributes().toggleOrientation();
 }
@@ -2170,13 +2262,9 @@ RtVoid CBaseRenderer::coordSysTransform(RtToken space)
 }
 
 
-RtVoid CBaseRenderer::preTransformPoints(CRiTransformPoints &obj, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
+RtVoid CBaseRenderer::doProcess(CRiTransformPoints &obj)
 {
-}
-
-RtVoid CBaseRenderer::doTransformPoints(CRiTransformPoints &obj, RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[])
-{
-	renderState()->transformPoints(fromspace, tospace, npoints, points);
+	renderState()->transformPoints(obj.fromSpace(), obj.toSpace(), obj.nPoints(), obj.points());
 }
 
 RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint points[]) {
@@ -2402,7 +2490,7 @@ RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt
 }
 
 
-RtVoid CBaseRenderer::preProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
+RtVoid CBaseRenderer::preProcess(CRiProcedural &obj)
 {
 	if ( !m_parserCallback ) {
 		throw ExceptRiCPPError(
@@ -2410,16 +2498,22 @@ RtVoid CBaseRenderer::preProcedural(CRiProcedural &obj, RtPointer data, RtBound 
 			RIE_SEVERE,
 			renderState()->printLineNo(__LINE__),
 			renderState()->printName(__FILE__),
-			"The frontend is unknown, while executing a procedural %s.", subdivfunc.name());
-
+			"The frontend is unknown, while executing a procedural %s.", obj.subdivFunc()->name());
 	}
 }
 
-RtVoid CBaseRenderer::doProcedural(CRiProcedural &obj, RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
+RtVoid CBaseRenderer::doProcess(CRiProcedural &obj)
 {
-	subdivfunc(m_parserCallback->frontend(), data, RI_INFINITY);
-	if ( freefunc )
-		(*freefunc)(data);
+	assert(obj.subdivFunc() != 0);
+	if ( obj.subdivFunc() ) {
+		(*(obj.subdivFunc()))(m_parserCallback->frontend(), obj.data(), RI_INFINITY);
+	} else {
+		/** @todo Error, CBaseRenderer::doProcedural has no subdivfunc.
+		 */
+	}
+	if ( obj.freeFunc() ) {
+		(*(obj.freeFunc()))(obj.data());
+	}
 }
 
 RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
@@ -2517,24 +2611,41 @@ RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line)
 	}
 }
 
-RtVoid CBaseRenderer::doReadArchive(CRiReadArchive &obj, RtString name, const IArchiveCallback *callback, const CParameterList &params)
+RtVoid CBaseRenderer::doProcess(CRiReadArchive &obj)
 {
-	processReadArchive(name, callback, params);
+#ifdef _TRACE_ARCHIVE
+	trace("-> CBaseRenderer::doProcess(CRiReadArchive)");
+#endif
+	processReadArchive(obj.name(), obj.callback(), obj.parameters());
+#ifdef _TRACE_ARCHIVE
+	trace("<- CBaseRenderer::doProcess(CRiReadArchive)");
+#endif
 }
 
 RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callback, RtInt n, RtToken tokens[], RtPointer params[])
 {
+#ifdef _TRACE_ARCHIVE
+	trace("-> CBaseRenderer::readArchiveV()");
+#endif
+
 	RICPP_PREAMBLE(REQ_READ_ARCHIVE)
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+#ifdef _TRACE_ARCHIVE
+		trace("** CBaseRenderer::readArchiveV() RICPP_PROCESS");
+#endif
 		RICPP_PROCESS(newRiReadArchive(renderState()->lineNo(), name, callback, renderState()->curParamList()));
 	RICPP_POSTAMBLE
 	RICPP_UNREC_TOKENS
+
+#ifdef _TRACE_ARCHIVE
+	trace("<- CBaseRenderer::readArchiveV()");
+#endif
 }
 
 
-RtVoid CBaseRenderer::preIfBegin(CRiIfBegin &obj, RtString expr)
+RtVoid CBaseRenderer::preProcess(CRiIfBegin &obj)
 {
-	renderState()->ifBegin(expr);
+	renderState()->ifBegin(obj.exprStr());
 }
 
 
@@ -2546,9 +2657,9 @@ RtVoid CBaseRenderer::ifBegin(RtString expr)
 }
 
 
-RtVoid CBaseRenderer::preElseIfBegin(CRiElseIfBegin &obj, RtString expr)
+RtVoid CBaseRenderer::preProcess(CRiElseIfBegin &obj)
 {
-	renderState()->elseIfBegin(expr);
+	renderState()->elseIfBegin(obj.exprStr());
 }
 
 
@@ -2560,7 +2671,7 @@ RtVoid CBaseRenderer::elseIfBegin(RtString expr)
 }
 
 
-RtVoid CBaseRenderer::preElseBegin(CRiElseBegin &obj)
+RtVoid CBaseRenderer::preProcess(CRiElseBegin &obj)
 {
 	renderState()->elseBegin();
 }
@@ -2574,7 +2685,7 @@ RtVoid CBaseRenderer::elseBegin(void)
 }
 
 
-RtVoid CBaseRenderer::preIfEnd(CRiIfEnd &obj)
+RtVoid CBaseRenderer::preProcess(CRiIfEnd &obj)
 {
 	renderState()->ifEnd();
 }

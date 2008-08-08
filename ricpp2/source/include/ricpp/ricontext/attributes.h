@@ -967,11 +967,11 @@ namespace RiCPP {
 
 		virtual RtVoid toggleOrientation();
 		virtual RtVoid coordSysOrientation(RtToken anOrientation);
-		inline virtual RtToken CAttributes::primitiveOrientation() const
+		inline virtual RtToken primitiveOrientation() const
 		{
 			return m_primitiveOrientation;
 		}
-		inline virtual RtToken CAttributes::coordSysOrientation() const
+		inline virtual RtToken coordSysOrientation() const
 		{
 			return m_coordSysOrientation;
 		}

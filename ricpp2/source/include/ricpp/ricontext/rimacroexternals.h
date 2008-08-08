@@ -262,30 +262,30 @@ namespace RiCPP {
 			return m_twidth;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			assert(filterFunc());
+			if ( !filterFunc() ) {
+				return;
+			}
+			ri.makeTextureV(pic(), tex(), sWrap(), tWrap(), *filterFunc(), sWidth(), tWidth(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.preMakeTexture(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.doMakeTexture(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.postMakeTexture(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -551,30 +551,31 @@ namespace RiCPP {
 			return m_twidth;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			assert(filterFunc());
+			if ( !filterFunc() ) {
+				return;
+			}
+			ri.makeBumpV(pic(), tex(), sWrap(), tWrap(), *filterFunc(), sWidth(), tWidth(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
+
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.preMakeBump(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.doMakeBump(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.postMakeBump(*this, m_pic.c_str(), m_tex.c_str(), m_swrap, m_twrap, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -810,30 +811,30 @@ namespace RiCPP {
 			return m_twidth;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			assert(filterFunc());
+			if ( !filterFunc() ) {
+				return;
+			}
+			ri.makeLatLongEnvironmentV(pic(), tex(), *filterFunc(), sWidth(), tWidth(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.preMakeLatLongEnvironment(*this, m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.doMakeLatLongEnvironment(*this, m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.postMakeLatLongEnvironment(*this, m_pic.c_str(), m_tex.c_str(), *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1153,30 +1154,29 @@ namespace RiCPP {
 			return m_twidth;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			assert(filterFunc());
+			if ( !filterFunc() )
+				return;
+			ri.makeCubeFaceEnvironmentV(px(), nx(), py(), ny(), pz(), nz(), tex(), fov(), *filterFunc(), sWidth(), tWidth(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.preMakeCubeFaceEnvironment(*this, m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.doMakeCubeFaceEnvironment(*this, m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_filterfunc != 0);
-			if ( m_filterfunc ) {
-				ri.postMakeCubeFaceEnvironment(*this, m_px.c_str(), m_nx.c_str(), m_py.c_str(), m_ny.c_str(), m_pz.c_str(), m_nz.c_str(), m_tex.c_str(), m_fov, *m_filterfunc, m_swidth, m_twidth, parameters());
-			}
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1311,12 +1311,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiMakeShadow()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiMakeShadow(*this);
@@ -1355,21 +1349,26 @@ namespace RiCPP {
 			return m_tex.c_str();
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.makeShadowV(pic(), tex(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preMakeShadow(*this, m_pic.c_str(), m_tex.c_str(), parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doMakeShadow(*this, m_pic.c_str(), m_tex.c_str(), parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postMakeShadow(*this, m_pic.c_str(), m_tex.c_str(), parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1488,12 +1487,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiMakeBrickMap()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiMakeBrickMap(*this);
@@ -1562,21 +1555,26 @@ namespace RiCPP {
 			return m_BkMName.c_str();
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.makeBrickMapV(nNames(), ptcNames(), bkMName(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preMakeBrickMap(*this, nNames(), ptcNames(), bkMName(), parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doMakeBrickMap(*this, nNames(), ptcNames(), bkMName(), parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postMakeBrickMap(*this, nNames(), ptcNames(), bkMName(), parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());

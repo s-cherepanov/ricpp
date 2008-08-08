@@ -28,7 +28,7 @@
  */
 
 #include "ricpp/ricontext/motionstate.h"
-
+#include <iostream>
 using namespace RiCPP;
 
 

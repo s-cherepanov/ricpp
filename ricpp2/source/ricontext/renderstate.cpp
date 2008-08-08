@@ -2277,7 +2277,7 @@ void CRenderState::motionEnd()
 	m_modeStack->motionEnd();
 
 	if ( err ) {
-		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_WARNING, "in motionEnd(), too few requests in motion block, last request has been duplicated.", __LINE__, __FILE__);
+		throw ExceptRiCPPError(RIE_ILLSTATE, RIE_WARNING, "in motionEnd(), too few requests in motion block.", __LINE__, __FILE__);
 	}
 }
 

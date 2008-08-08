@@ -87,6 +87,8 @@ CSurface *CTesselator::createSurface()
 void CBasePolygonTriangulator::triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const
 {
 	strip.clear();
+	if ( nVerts == 0 )
+		return;
 
 	strip.resize(tmax((IndexType)3, nVerts));
 
@@ -135,14 +137,19 @@ void CBasePolygonTriangulator::insertParameters(CFace &f, IndexType faceIdx, con
 			case CLASS_VARYING:
 				// NO break;
 			case CLASS_VERTEX:
+			{
+				assert(verts.size() >= nverts+vertsOffs);
 				f.insertVarying(p, nverts, &verts[vertsOffs]);
-				break;
+			}
+			break;
 				
 			case CLASS_FACEVARYING:
 				// NO break;
 			case CLASS_FACEVERTEX:
+			{
 				f.insertFaceVarying(p, nverts, vertsOffs);
-				break;
+			}
+			break;
 				
 			default:
 				break;
@@ -155,6 +162,8 @@ void CBasePolygonTriangulator::insertParameters(CFace &f, IndexType faceIdx, con
 CSurface *CPolygonTriangulator::triangulate()
 {
 	RtInt nvertices = m_obj.nVertices();
+	if ( nvertices == 0 )
+		return 0;
 	
 	CSurface *surf = createSurface();
 	if ( !surf ) {
@@ -186,6 +195,9 @@ CSurface *CPolygonTriangulator::triangulate()
 CSurface *CPointsPolygonsTriangulator::triangulate()
 {
 	RtInt npolys = m_obj.nPolys();
+	if ( npolys == 0 ) {
+		return  0;
+	}
 	
 	CSurface *surf = createSurface();
 	if ( !surf ) {
@@ -202,9 +214,10 @@ CSurface *CPointsPolygonsTriangulator::triangulate()
 		f.faceType(FACETYPE_TRIANGLESTRIPS);
 		
 		RtInt nverts = m_obj.nVerts()[faceIdx];
-
 		std::vector<IndexType> &strip = f.indices();
+
 		triangleStrip(strip, nverts, vertsOffs);
+		
 		insertParameters(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
 		f.sizes().resize(1);
 		f.sizes()[0] = strip.size();	
@@ -564,14 +577,17 @@ void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	std::cout << "-> CConeTriangulator::buildPN()" << std::endl;
 #endif
 	RtFloat height = m_obj.height();
-	assert(!nearlyZero(height));
+	if ( nearlyZero(height) )
+		return;
 	
 	RtFloat radius = m_obj.radius();
-	assert(radius > 0);
+	if ( nearlyZero(radius) )
+		return;
 	
 	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
-	assert(!nearlyZero(thetamax));
+	if ( nearlyZero(thetamax) )
+		return;
 	
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
@@ -590,14 +606,17 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	RtFloat zmin = m_obj.zMin();
 	RtFloat zmax = m_obj.zMax();
 	testMinMax(zmin, zmax);
-	assert(!nearlyZero(zmax-zmin));
+	if ( nearlyZero(zmax-zmin) )
+		return;
 	
 	RtFloat radius = m_obj.radius();
-	assert(!nearlyZero(radius));
+	if ( nearlyZero(radius) )
+		return;
 	
 	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
-	assert(!nearlyZero(thetamax));
+	if ( nearlyZero(thetamax) )
+		return;
 	
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
@@ -671,11 +690,13 @@ void CDiskTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	RtFloat displacement = m_obj.height();
 
 	RtFloat radius = m_obj.radius();
-	assert(!nearlyZero(radius));
+	if ( nearlyZero(radius) )
+		return;
 	
 	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
-	assert( !nearlyZero(thetamax) );
+	if ( nearlyZero(thetamax) )
+		return;
 		   
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
@@ -697,11 +718,14 @@ void CHyperboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDec
 	memcpy(point1, m_obj.point1(), sizeof(RtPoint));
 	memcpy(point2, m_obj.point2(), sizeof(RtPoint));
 
-	assert(!eqVect3(point1, point2));
+	if ( eqVect3(point1, point2) )
+		return;
 	
 	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
-	assert( !nearlyZero(thetamax) );
+	if( nearlyZero(thetamax) )
+
+		return;
 	
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
@@ -719,15 +743,17 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 #endif
 	RtFloat zmin = m_obj.zMin();
 	RtFloat zmax = m_obj.zMax();
-	testMinMax(zmin, zmax);
-	assert(!nearlyZero(zmax-zmin));
+	if ( nearlyZero(zmax-zmin) )
+		return;
 	
 	RtFloat rmax = m_obj.rMax();
-	assert(!nearlyZero(rmax));
+	if ( nearlyZero(rmax) )
+		return;
 	
 	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
-	assert(!nearlyZero(thetamax));
+	if ( nearlyZero(thetamax) )
+		return;
 
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
@@ -797,17 +823,23 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 #endif
 
 	RtFloat radius = m_obj.radius();
-	assert(!nearlyZero(radius));
+	if ( nearlyZero(radius) )
+		return;
 
 	RtFloat zmin = m_obj.zMin();
 	clamp<RtFloat>(zmin, -radius, radius);
 	RtFloat zmax = m_obj.zMax();
-	assert(!nearlyZero(zmax-zmin));
 	clamp<RtFloat>(zmax, -radius, radius);
 
+	if ( nearlyZero(zmax-zmin) )
+		return;
+
+	
 	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
-	assert(!nearlyZero(thetamax));
+
+	if ( nearlyZero(thetamax) )
+		return;
 	
 	RtFloat phimin;
 	phimin = (RtFloat)asin(zmin/radius);
@@ -889,15 +921,18 @@ void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarati
 	
 	RtFloat majorrad = m_obj.majorRad();
 	RtFloat minorrad = m_obj.minorRad();
-	assert(!nearlyZero(minorrad));
+	if ( nearlyZero(minorrad) )
+		return;
 	
 	RtFloat phimin = m_obj.phiMin();
 	RtFloat phimax = m_obj.phiMax();
-	assert(!nearlyEqual(phimin, phimax));
+	if ( nearlyEqual(phimin, phimax) )
+		return;
 
 	RtFloat thetamax = m_obj.thetaMax();
 	thetamax = clamp<RtFloat>(thetamax, -360, 360);
-	assert(!nearlyZero(thetamax));
+	if ( nearlyZero(thetamax) )
+		return;
 
 	SQuadricVars var;
 	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);

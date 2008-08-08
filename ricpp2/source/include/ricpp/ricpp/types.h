@@ -324,7 +324,7 @@ public:
 	 * @param nRGB Transformation matrix from a color to a RGB value
 	 * @param RGBn Transformation matrix from a RGB value to a color
 	 */
-	inline CColorDescr(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
+	inline CColorDescr(RtInt nColorSamples, const RtFloat nRGB[], const RtFloat RGBn[])
 	{
 		colorSamples(nColorSamples, nRGB, RGBn);
 	}
@@ -390,7 +390,7 @@ public:
 	 * @param  rgb RGB triple calculated by color transformation.
 	 * @retval c   m_nColorSamples color samples of a single color value.
 	 */
-	RtVoid RGBToN(RtFloat rgb[3], RtColor c) const;
+	RtVoid RGBToN(const RtFloat rgb[3], RtColor c) const;
 
 	/** @brief Transforms @a n RGB triples to the color values.
 	 *
@@ -398,7 +398,7 @@ public:
 	 * @param  rgb @a n RGB triples.
 	 * @retval c   m_nColorSamples time @a n color samples for the @a n color values.
 	 */
-	RtVoid RGBToN(RtInt n, RtFloat rgb[][3], RtFloat c[]) const;
+	RtVoid RGBToN(RtInt n, const RtFloat rgb[][3], RtFloat c[]) const;
 
 	/** @brief Sets the number color samples and transformation matrices.
 	 *
@@ -410,7 +410,7 @@ public:
 	 * @param nRGB Matrix color to RGB (should not be 0).
 	 * @param RGBn Matrix RGB to color (should not be 0).
 	 */
-	RtVoid colorSamples(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[]);
+	RtVoid colorSamples(RtInt nColorSamples, const RtFloat nRGB[], const RtFloat RGBn[]);
 
 	/** @brief Gets the number color samples.
 	 *

@@ -124,12 +124,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiOption()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiOption(*this);
@@ -155,21 +149,26 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.optionV(name(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preOption(*this, m_name, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doOption(*this, m_name, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postOption(*this, m_name, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -252,12 +251,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiFormat()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiFormat(*this);
@@ -269,7 +262,7 @@ namespace RiCPP {
 		 *
 		 *  @return The x (horizontal) resolution of the image to be rendered.
 		 */
-		inline RtInt xres() const
+		inline RtInt xRes() const
 		{
 			return m_xres;
 		}
@@ -278,7 +271,7 @@ namespace RiCPP {
 		 *
 		 *  @param aXRes The x (horizontal) resolution of the image to be rendered.
 		 */
-		inline void xres(RtInt aXRes)
+		inline void xRes(RtInt aXRes)
 		{
 			m_xres = aXRes;
 		}
@@ -287,7 +280,7 @@ namespace RiCPP {
 		 *
 		 *  @return The y (vertical) resolution of the image to be rendered.
 		 */
-		inline RtInt yres() const
+		inline RtInt yRes() const
 		{
 			return m_yres;
 		}
@@ -296,7 +289,7 @@ namespace RiCPP {
 		 *
 		 *  @param aYRes The y (vertical) resolution of the image to be rendered.
 		 */
-		inline void yres(RtInt aYRes)
+		inline void yRes(RtInt aYRes)
 		{
 			m_yres = aYRes;
 		}
@@ -354,28 +347,33 @@ namespace RiCPP {
 			m_aspect = anAspect;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.format(xRes(), yRes(), aspect());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preFormat(*this, m_xres, m_yres, m_aspect);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doFormat(*this, m_xres, m_yres, m_aspect);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postFormat(*this, m_xres, m_yres, m_aspect);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putValue(xres());
+			ribWriter.putValue(xRes());
 			ribWriter.putBlank();
-			ribWriter.putValue(yres());
+			ribWriter.putValue(yRes());
 			ribWriter.putBlank();
 			ribWriter.putValue(aspect());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
@@ -391,7 +389,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			set(c.xres(), c.yres(), c.aspect());
+			set(c.xRes(), c.yRes(), c.aspect());
 
 			TypeParent::operator=(c);
 			return *this;
@@ -456,12 +454,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiFrameAspectRatio()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiFrameAspectRatio(*this);
@@ -487,21 +479,26 @@ namespace RiCPP {
 			m_aspect = anAspect;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.frameAspectRatio(aspect());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preFrameAspectRatio(*this, m_aspect);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doFrameAspectRatio(*this, m_aspect);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postFrameAspectRatio(*this, m_aspect);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -593,12 +590,6 @@ namespace RiCPP {
 		inline CRiScreenWindow(const CRiScreenWindow &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiScreenWindow()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -718,21 +709,26 @@ namespace RiCPP {
 			m_top = aTop;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.screenWindow(left(), right(), bottom(), top());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preScreenWindow(*this, m_left, m_right, m_bottom, m_top);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doScreenWindow(*this, m_left, m_right, m_bottom, m_top);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postScreenWindow(*this, m_left, m_right, m_bottom, m_top);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -822,12 +818,6 @@ namespace RiCPP {
 		inline CRiCropWindow(const CRiCropWindow &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiCropWindow()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -948,21 +938,26 @@ namespace RiCPP {
 			m_ymax = aYmax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.cropWindow(xMin(), xMax(), yMin(), yMax());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCropWindow(*this, m_xmin, m_xmax, m_ymin, m_ymax);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCropWindow(*this, m_xmin, m_xmax, m_ymin, m_ymax);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCropWindow(*this, m_xmin, m_xmax, m_ymin, m_ymax);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1077,12 +1072,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiProjection()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiProjection(*this);
@@ -1108,19 +1097,24 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.projectionV(name(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preProjection(*this, name(), parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doProjection(*this, name(), parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postProjection(*this, name(), parameters());
+			ri.postProcess(*this);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
@@ -1202,12 +1196,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiClipping()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiClipping(*this);
@@ -1237,7 +1225,7 @@ namespace RiCPP {
 		 *
 		 *  @return The far clipping plane for the camera.
 		 */
-		inline RtFloat yonder() const
+		inline RtFloat yon() const
 		{
 			return m_yon;
 		}
@@ -1246,7 +1234,7 @@ namespace RiCPP {
 		 *
 		 *  @param aYon Far clipping plane for the camera.
 		 */
-		inline void yonder(RtFloat aYon)
+		inline void yon(RtFloat aYon)
 		{
 			m_yon = aYon;
 		}
@@ -1273,28 +1261,33 @@ namespace RiCPP {
 			m_yon = aYon;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.clipping(hither(), yon());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preClipping(*this, m_hither, m_yon);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doClipping(*this, m_hither, m_yon);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postClipping(*this, m_hither, m_yon);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
 			ribWriter.putValue(hither());
 			ribWriter.putBlank();
-			ribWriter.putValue(yonder());
+			ribWriter.putValue(yon());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
@@ -1308,7 +1301,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			set(c.hither(), c.yonder());
+			set(c.hither(), c.yon());
 
 			TypeParent::operator=(c);
 			return *this;
@@ -1378,12 +1371,6 @@ namespace RiCPP {
 		inline CRiClippingPlane(const CRiClippingPlane &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiClippingPlane()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -1595,21 +1582,26 @@ namespace RiCPP {
 			m_nz = aNz;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.clippingPlane(x(), y(), z(),nx(), ny(), nz());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preClippingPlane(*this, m_x, m_y, m_z, m_nx, m_ny, m_nz);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doClippingPlane(*this, m_x, m_y, m_z, m_nx, m_ny, m_nz);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postClippingPlane(*this, m_x, m_y, m_z, m_nx, m_ny, m_nz);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1702,12 +1694,6 @@ namespace RiCPP {
 		inline CRiDepthOfField(const CRiDepthOfField &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiDepthOfField()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -1803,21 +1789,26 @@ namespace RiCPP {
 			m_focaldistance = aFocaldistance;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.depthOfField(fStop(), focalLength(), focalDistance());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preDepthOfField(*this, m_fstop, m_focallength, m_focaldistance);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doDepthOfField(*this, m_fstop, m_focallength, m_focaldistance);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postDepthOfField(*this, m_fstop, m_focallength, m_focaldistance);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1882,15 +1873,15 @@ namespace RiCPP {
 		/** @brief Default constructor
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
-		 *  @param smin Time when shutter opens.
-		 *  @param smax Time when shutter closes.
+		 *  @param aSMin Time when shutter opens.
+		 *  @param aSMax Time when shutter closes.
 		 */
 		inline CRiShutter(
 			long aLineNo = -1,
-			RtFloat smin = COptions::defShutterOpen,
-			RtFloat smax = COptions::defShutterClose)
+			RtFloat aSMin = COptions::defShutterOpen,
+			RtFloat aSMax = COptions::defShutterClose)
 			: TypeParent(aLineNo),
-			  m_smin(smin), m_smax(smax)
+			  m_smin(aSMin), m_smax(aSMax)
 		{
 		}
 
@@ -1901,12 +1892,6 @@ namespace RiCPP {
 		inline CRiShutter(const CRiShutter &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiShutter()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -1920,49 +1905,49 @@ namespace RiCPP {
 		 *
 		 *  @return The time at which the shutter opens.
 		 */
-		inline RtFloat shutterOpen() const
+		inline RtFloat sMin() const
 		{
 			return m_smin;
 		}
 
 		/** @brief Sets the time at which the shutter opens.
 		 *
-		 *  @param smin The time at which the shutter opens.
+		 *  @param aSMin The time at which the shutter opens.
 		 */
-		inline void shutterOpen(RtFloat smin)
+		inline void sMin(RtFloat aSMin)
 		{
-			m_smin = smin;
+			m_smin = aSMin;
 		}
 
 		/** @brief Gets the time at which the shutter closes.
 		 *
 		 *  @return The time at which the shutter closes.
 		 */
-		inline RtFloat shutterClose() const
+		inline RtFloat sMax() const
 		{
 			return m_smax;
 		}
 
 		/** @brief Sets the time at which the shutter closes.
 		 *
-		 *  @param smax The time at which the shutter closes.
+		 *  @param aSMax The time at which the shutter closes.
 		 */
-		inline void shutterClose(RtFloat smax)
+		inline void sMax(RtFloat aSMax)
 		{
-			m_smax = smax;
+			m_smax = aSMax;
 		}
 
 		/** @brief Gets the shutter times.
 		 *
-		 *  @retval smin Time when shutter opens.
-		 *  @retval smax Time when shutter closes.
+		 *  @retval aSMin Time when shutter opens.
+		 *  @retval aSMax Time when shutter closes.
 		 */
 		inline void get(
-			RtFloat &smin,
-			RtFloat &smax) const
+			RtFloat &aSMin,
+			RtFloat &aSMax) const
 		{
-			smin = m_smin;
-			smax = m_smax;
+			aSMin = m_smin;
+			aSMax = m_smax;
 		}
 
 		/** @brief Sets the shutter times.
@@ -1971,35 +1956,40 @@ namespace RiCPP {
 		 *  @param smax Time when shutter closes.
 		 */
 		inline void set(
-			RtFloat smin,
-			RtFloat smax)
+			RtFloat aSMin,
+			RtFloat aSMax)
 		{
-			m_smin = smin;
-			m_smax = smax;
+			m_smin = aSMin;
+			m_smax = aSMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.shutter(sMin(), sMax());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preShutter(*this, m_smin, m_smax);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doShutter(*this, m_smin, m_smax);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postShutter(*this, m_smin, m_smax);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putValue(shutterOpen());
+			ribWriter.putValue(sMin());
 			ribWriter.putBlank();
-			ribWriter.putValue(shutterClose());
+			ribWriter.putValue(sMax());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
@@ -2013,7 +2003,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			set(c.shutterOpen(), c.shutterClose());
+			set(c.sMin(), c.sMax());
 
 			TypeParent::operator=(c);
 			return *this;
@@ -2072,12 +2062,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPixelVariance()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPixelVariance(*this);
@@ -2103,21 +2087,26 @@ namespace RiCPP {
 			m_variation = aVariation;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.pixelVariance(variation());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePixelVariance(*this, m_variation);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPixelVariance(*this, m_variation);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPixelVariance(*this, m_variation);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2200,12 +2189,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPixelSamples()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPixelSamples(*this);
@@ -2275,21 +2258,26 @@ namespace RiCPP {
 			m_ysamples = aYsamples;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.pixelSamples(xSamples(), ySamples());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePixelSamples(*this, m_xsamples, m_ysamples);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPixelSamples(*this, m_xsamples, m_ysamples);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPixelSamples(*this, m_xsamples, m_ysamples);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2389,12 +2377,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor, frees resources.
-		 */
-		inline virtual ~CRiPixelFilter()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPixelFilter(*this);
@@ -2406,7 +2388,7 @@ namespace RiCPP {
 		 *
 		 *  @return Reference of the filter function.
 		 */
-		inline const IFilterFunc &function() const
+		inline const IFilterFunc &filterFunc() const
 		{
 			if ( !m_function ) {
 				throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, (RtString)"filterfunction is undefined", __LINE__, __FILE__);
@@ -2414,11 +2396,20 @@ namespace RiCPP {
 			return *m_function;
 		}
 
+		/** @brief Gets a pointer of the filter function.
+		 *
+		 *  @return Pointer of the filter function.
+		 */
+		inline const IFilterFunc *filterFuncPtr() const
+		{
+			return m_function;
+		}
+
 		/** @brief Sets a new filter function (@a aFunction is duplicated).
 		 *
 		 *  @param aFunction Reference of a filter function.
 		 */
-		inline void function(const IFilterFunc &aFunction)
+		inline void filterFunc(const IFilterFunc &aFunction)
 		{
 			m_function = &aFunction.singleton();
 		}
@@ -2491,35 +2482,31 @@ namespace RiCPP {
 			m_ywidth = aYwidth;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.pixelFilter(filterFunc(), xWidth(), yWidth());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_function != 0);
-			if ( m_function ) {
-				ri.prePixelFilter(*this, *m_function, m_xwidth, m_ywidth);
-			}
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_function != 0);
-			if ( m_function ) {
-				ri.doPixelFilter(*this, *m_function, m_xwidth, m_ywidth);
-			}
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_function != 0);
-			if ( m_function ) {
-				ri.postPixelFilter(*this, *m_function, m_xwidth, m_ywidth);
-			}
+			ri.postProcess(*this);
 		}
 
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putStringToken(function().name());
+			ribWriter.putStringToken(filterFunc().name());
 			ribWriter.putBlank();
 			ribWriter.putValue(xWidth());
 			ribWriter.putBlank();
@@ -2537,7 +2524,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			set(c.function(), c.xWidth(), c.yWidth());
+			set(c.filterFunc(), c.xWidth(), c.yWidth());
 
 			TypeParent::operator=(c);
 			return *this;
@@ -2596,12 +2583,6 @@ namespace RiCPP {
 		inline CRiExposure(const CRiExposure &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiExposure()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -2673,21 +2654,26 @@ namespace RiCPP {
 			m_gamma = aGamma;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.exposure(gain(), gamma());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preExposure(*this, m_gain, m_gamma);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doExposure(*this, m_gain, m_gamma);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postExposure(*this, m_gain, m_gamma);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2799,12 +2785,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiImager()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiImager(*this);
@@ -2830,21 +2810,26 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.imagerV(name(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preImager(*this, m_name, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doImager(*this, m_name, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postImager(*this, m_name, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2931,12 +2916,6 @@ namespace RiCPP {
 		inline CRiQuantize(const CRiQuantize &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiQuantize()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -3080,21 +3059,26 @@ namespace RiCPP {
 			m_ditheramplitude = aDitherAmplitude;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.quantize(type(), one(), qMin(), qMax(), ditherAmplitude());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preQuantize(*this, m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doQuantize(*this, m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postQuantize(*this, m_type, m_one, m_qmin, m_qmax, m_ditheramplitude);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3213,12 +3197,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiDisplayChannel()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiDisplayChannel(*this);
@@ -3244,21 +3222,26 @@ namespace RiCPP {
 			m_channel = noNullStr(aChannel);
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.displayChannelV(channel(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preDisplayChannel(*this, m_channel.c_str(), parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doDisplayChannel(*this, m_channel.c_str(), parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postDisplayChannel(*this, m_channel.c_str(), parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3378,12 +3361,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiDisplay()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiDisplay(*this);
@@ -3472,21 +3449,26 @@ namespace RiCPP {
 			m_mode = aMode;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.displayV(name(), type(), mode(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preDisplay(*this, m_name.c_str(), m_type, m_mode, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doDisplay(*this, m_name.c_str(), m_type, m_mode, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postDisplay(*this, m_name.c_str(), m_type, m_mode, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3599,12 +3581,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiHider()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiHider(*this);
@@ -3630,21 +3606,26 @@ namespace RiCPP {
 			m_type = aType;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.hiderV(type(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preHider(*this, m_type, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doHider(*this, m_type, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postHider(*this, m_type, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3714,11 +3695,11 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 *  @param N Number of color samples (>0)
-		 *  @param nRGB Transformation matrix from a color to a RGB value
-		 *  @param RGBn Transformation matrix from a RGB value to a color
+		 *  @param anRGB Transformation matrix from a color to a RGB value
+		 *  @param aRGBn Transformation matrix from a RGB value to a color
 		 */
-		inline CRiColorSamples(long aLineNo, RtInt N, RtFloat nRGB[], RtFloat RGBn[])
-			: TypeParent(aLineNo), m_colorDecr(N, nRGB, RGBn)
+		inline CRiColorSamples(long aLineNo, RtInt N, RtFloat anRGB[], RtFloat aRGBn[])
+			: TypeParent(aLineNo), m_colorDecr(N, anRGB, aRGBn)
 		{
 		}
 
@@ -3729,12 +3710,6 @@ namespace RiCPP {
 		inline CRiColorSamples(const CRiColorSamples &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiColorSamples()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -3748,9 +3723,49 @@ namespace RiCPP {
 		 *
 		 * @return The number of color samples.
 		 */
-		inline RtInt colorSamples() const
+		inline RtInt nSamples() const
 		{
 			return m_colorDecr.colorSamples();
+		}
+
+		inline const std::vector<RtFloat> &nRGB() const
+		{
+			return m_colorDecr.nRGBMatrix();
+		}
+		
+		inline std::vector<RtFloat> &nRGB() 
+		{
+			return m_colorDecr.nRGBMatrix();
+		}
+
+		inline RtFloat *nRGBPtr() 
+		{
+			return (m_colorDecr.nRGBMatrix().empty() ? 0 : &m_colorDecr.nRGBMatrix()[0]);
+		}
+		
+		inline const RtFloat *nRGBPtr() const
+		{
+			return (m_colorDecr.nRGBMatrix().empty() ? 0 : &m_colorDecr.nRGBMatrix()[0]);
+		}
+
+		inline const std::vector<RtFloat> &RGBn() const
+		{
+			return m_colorDecr.RGBnMatrix();
+		}
+
+		inline std::vector<RtFloat> &RGBn()
+		{
+			return m_colorDecr.RGBnMatrix();
+		}
+		
+		inline RtFloat *RGBnPtr()
+		{
+			return (m_colorDecr.RGBnMatrix().empty() ? 0 : &m_colorDecr.RGBnMatrix()[0]);
+		}
+
+		inline const RtFloat *RGBnPtr() const
+		{
+			return (m_colorDecr.RGBnMatrix().empty() ? 0 : &m_colorDecr.RGBnMatrix()[0]);
 		}
 
 		/** @brief Gets the number color samples and transformation matrices.
@@ -3758,12 +3773,12 @@ namespace RiCPP {
 		 * @see CColorDescr::getColorSamples()
 		 *
 		 * @retval nColorSamples The number of color samples.
-		 * @retval nRGB Matrix color to RGB.
-		 * @retval RGBn Matrix RGB to color.
+		 * @retval anRGB Matrix color to RGB.
+		 * @retval aRGBn Matrix RGB to color.
 		 */
-		inline void get(RtInt nColorSamples, std::vector<RtFloat> &nRGB, std::vector<RtFloat> &RGBn) const
+		inline void get(RtInt nColorSamples, std::vector<RtFloat> &anRGB, std::vector<RtFloat> &aRGBn) const
 		{
-			m_colorDecr.getColorSamples(nColorSamples, nRGB, RGBn);
+			m_colorDecr.getColorSamples(nColorSamples, anRGB, aRGBn);
 		}
 
 		/** @brief Sets the number color samples and transformation matrices.
@@ -3771,12 +3786,14 @@ namespace RiCPP {
 		 * @see CColorDescr::colorSamples()
 		 *
 		 * @param nColorSamples The number of color samples (>0).
-		 * @param nRGB Matrix color to RGB (should not be 0).
-		 * @param RGBn Matrix RGB to color (should not be 0).
+		 * @param anRGB Matrix color to RGB (should not be 0).
+		 * @param aRGBn Matrix RGB to color (should not be 0).
 		 */
-		inline RtVoid set(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
+		inline RtVoid set(RtInt nColorSamples, RtFloat anRGB[], RtFloat aRGBn[])
 		{
-			m_colorDecr.colorSamples(nColorSamples, nRGB, RGBn);
+			assert(anRGB != 0);
+			assert(aRGBn != 0);
+			m_colorDecr.colorSamples(nColorSamples, anRGB, aRGBn);
 		}
 
 		/** @brief Gets the color descriptor, read-only.
@@ -3806,49 +3823,33 @@ namespace RiCPP {
 			m_colorDecr = aColorDescr;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.colorSamples(nSamples(), nRGBPtr(), RGBnPtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			std::vector<RtFloat> &nRGB = m_colorDecr.nRGBMatrix();
-			std::vector<RtFloat> &RGBn = m_colorDecr.RGBnMatrix();
-
-			ri.preColorSamples(*this, 
-				colorSamples(),
-				nRGB.empty() ? 0 : &nRGB[0],
-				RGBn.empty() ? 0 : &RGBn[0]);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			std::vector<RtFloat> &nRGB = m_colorDecr.nRGBMatrix();
-			std::vector<RtFloat> &RGBn = m_colorDecr.RGBnMatrix();
-
-			ri.doColorSamples(*this, 
-				colorSamples(),
-				nRGB.empty() ? 0 : &nRGB[0],
-				RGBn.empty() ? 0 : &RGBn[0]);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			std::vector<RtFloat> &nRGB = m_colorDecr.nRGBMatrix();
-			std::vector<RtFloat> &RGBn = m_colorDecr.RGBnMatrix();
-
-			ri.postColorSamples(*this, 
-				colorSamples(),
-				nRGB.empty() ? 0 : &nRGB[0],
-				RGBn.empty() ? 0 : &RGBn[0]);
+			ri.postProcess(*this);
 		}
 
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
-			const std::vector<RtFloat> &nRGB = m_colorDecr.nRGBMatrix();
-			const std::vector<RtFloat> &RGBn = m_colorDecr.RGBnMatrix();
-			
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putArray(colorSamples()*3, nRGB.empty() ? 0 : &nRGB[0]);
+			ribWriter.putArray(nSamples()*3, nRGBPtr());
 			ribWriter.putBlank();
-			ribWriter.putArray(colorSamples()*3, RGBn.empty() ? 0 : &RGBn[0]);
+			ribWriter.putArray(nSamples()*3, RGBnPtr());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
@@ -3919,12 +3920,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiRelativeDetail()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiRelativeDetail(*this);
@@ -3950,21 +3945,26 @@ namespace RiCPP {
 			m_relativedetail = aRelativedetail;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.relativeDetail(relativeDetail());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preRelativeDetail(*this, m_relativedetail);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doRelativeDetail(*this, m_relativedetail);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postRelativeDetail(*this, m_relativedetail);
+			ri.postProcess(*this);
 		}
-
+		
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{

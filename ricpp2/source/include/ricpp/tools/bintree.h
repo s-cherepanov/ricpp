@@ -30,6 +30,8 @@
  *  @brief Simple template for a binary tree and a node template.
  */
 
+namespace RiCPP {
+
 // =============================================================================
 /** @brief Node for TemplBinTree binary tree.
  *
@@ -373,5 +375,7 @@ public:
 		nodeContainer[aNodeRef].right()  = LinkType(0);
 	}
 }; // TemplBinTree
+
+} // namespace RiCPP
 
 #endif // _RICPP_TOOLS_BINTREE_H

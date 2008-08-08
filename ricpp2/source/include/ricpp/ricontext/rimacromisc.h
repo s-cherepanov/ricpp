@@ -116,12 +116,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor, frees the resources.
-		 */
-		inline virtual ~CRiErrorHandler()
-		{
-		}
-
 		/** @brief Cloning.
 		 *
 		 *  @return a clone of this object.
@@ -156,24 +150,26 @@ namespace RiCPP {
 			m_handler = &handler.singleton();
 		}
 
-		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+		inline virtual void process(IRiRoot &ri)
 		{
-			assert(m_handler != 0);
-			ri.preErrorHandler(*this, *m_handler);
+			ri.errorHandler(handler());
 		}
 
+		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+			ri.preProcess(*this);
+		}
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_handler != 0);
-			ri.doErrorHandler(*this, *m_handler);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_handler != 0);
-			ri.postErrorHandler(*this, *m_handler);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -258,10 +254,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiDeclare() {}
-
 		/** @brief Cloning.
 		 *
 		 *  @return a clone of this object
@@ -309,21 +301,26 @@ namespace RiCPP {
 			m_declaration = noNullStr(aDeclaration);
 		}
 
-		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+		inline virtual void process(IRiRoot &ri)
 		{
-			ri.preDeclare(*this, name(), declaration());
+			ri.declare(name(), declaration());
 		}
-
+		
+		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+			ri.preProcess(*this);
+		}
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doDeclare(*this, name(), declaration());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postDeclare(*this, name(), declaration());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -403,10 +400,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiSynchronize() {}
-
 		/** @brief Cloning.
 		 *
 		 *  @return a clone of this object
@@ -436,21 +429,26 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
-		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+		inline virtual void process(IRiRoot &ri)
 		{
-			ri.preSynchronize(*this, name());
+			ri.synchronize(name());
 		}
-
+		
+		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+			ri.preProcess(*this);
+		}
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doSynchronize(*this, name());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postSynchronize(*this, name());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -529,10 +527,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiSystem() {}
-
 		/** @brief Cloning.
 		 *
 		 *  @return a clone of this object
@@ -562,21 +556,26 @@ namespace RiCPP {
 			m_cmd = noNullStr(aCommand);
 		}
 
-		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cbi)
+		inline virtual void process(IRiRoot &ri)
 		{
-			ri.preSystem(*this, command());
+			ri.system(command());
 		}
-
+		
+		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+			ri.preProcess(*this);
+		}
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doSystem(*this, command());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postSystem(*this, command());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -689,12 +688,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiControl()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiControl(*this);
@@ -720,21 +713,26 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.controlV(name(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preControl(*this, m_name, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doControl(*this, m_name, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postControl(*this, m_name, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			// Normally not called because Control is not a RIB control
@@ -856,12 +854,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiResource()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiResource(*this);
@@ -905,19 +897,24 @@ namespace RiCPP {
 			m_type = aType;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.resourceV(handle(), type(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preResource(*this, handle(), type(), parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doResource(*this, handle(), type(), parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postResource(*this, handle(), type(), parameters());
+			ri.postProcess(*this);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
@@ -1003,12 +1000,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiArchiveRecord()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiArchiveRecord(*this);
@@ -1045,27 +1036,37 @@ namespace RiCPP {
 			return m_line.c_str(); 
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.archiveRecordV(type(), line());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preArchiveRecord(*this, m_type, m_line.c_str());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doArchiveRecord(*this, m_type, m_line.c_str());
+			/** @todo IArchiveCallback cb is used only for CRiArchiveRecord and
+			 *        has to do with CRIReadArchive, try to get rid of this
+			 *        parameter in pre... do... post... functions.
+			 */
+			ri.doProcess(*this);
 			if ( cb && ri.frontend() ) 
 				(*cb)(*ri.frontend(), m_type, m_line.c_str());
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postArchiveRecord(*this, m_type, m_line.c_str());
+			ri.postProcess(*this);
 		}
 
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putComment(type(), line());
-			// No Line End (Already done by putComment): TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+			// No Line End (already done by putComment).
+			// Therefore, no of call of TypeParent::writeRIB()
 		}
 
 		/** @brief Assignment.
@@ -1147,12 +1148,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiReadArchive()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiReadArchive(*this);
@@ -1182,22 +1177,27 @@ namespace RiCPP {
 			m_filename = noNullStr(aFilename);
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.readArchiveV(name(), callback(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			/** @todo Pass the callback of the first read @a cb or take the one of the instance @c m_callback ? */
-			ri.preReadArchive(*this, m_filename.c_str(), cb, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doReadArchive(*this, m_filename.c_str(), cb, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postReadArchive(*this, m_filename.c_str(), cb, parameters());
+			ri.postProcess(*this);
 		}
-
+		
+		/*
 		inline virtual void preProcess(IDoRender &ri)
 		{
 			preProcess(ri, m_callback);
@@ -1212,6 +1212,7 @@ namespace RiCPP {
 		{
 			postProcess(ri, m_callback);
 		}
+		*/
 
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
@@ -1286,10 +1287,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiObjectInstance() {}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiObjectInstance(*this);
@@ -1307,21 +1304,26 @@ namespace RiCPP {
 		 */
 		inline virtual void handle(RtObjectHandle h) { m_handle = h; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.objectInstance(handle());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preObjectInstance(*this, handle());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doObjectInstance(*this, handle());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postObjectInstance(*this, handle());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			// Special handling by rib writer
@@ -1417,10 +1419,24 @@ namespace RiCPP {
 		}
 
 		CRiProcedural(long aLineNo,
-			RtPointer data, RtBound bound,
-			ISubdivFunc &subdivfunc, IFreeFunc *freefunc);
+			RtPointer aData, RtBound aBound,
+			ISubdivFunc &sSubdivFunc, IFreeFunc *aFreeFunc);
 
+		const RtBound &bound() const { return m_bound; };
+		RtBound &bound() { return m_bound; };
+		
+		const ISubdivFunc *subdivFunc() const { return m_subdivfunc; }
+		ISubdivFunc *subdivFunc() { return m_subdivfunc; }
 
+		const IFreeFunc *freeFunc() const { return m_freefunc; };
+		IFreeFunc *freeFunc() { return m_freefunc; };
+
+		const ISubdivData *subdivData() const { return m_data; }
+		ISubdivData *subdivData() { return m_data; }
+
+		const RtPointer data() const { return m_data ? m_data->data() : 0; }
+		RtPointer data() { return m_data ? m_data->data() : 0; }
+		
 		/** @brief Copy constructor.
 		 *
 		 *  @param c Object to copy.
@@ -1448,33 +1464,30 @@ namespace RiCPP {
 
 		inline virtual EnumRequests interfaceIdx() const { return REQ_PROCEDURAL; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			assert(subdivFunc());
+			if ( !subdivFunc() ) {
+				return;
+			}
+			ri.procedural(data(), bound(), *subdivFunc(), freeFunc());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_subdivfunc != 0);
-			if ( m_subdivfunc != 0 )
-				ri.preProcedural(*this, 
-					m_data ? m_data->data() : 0,
-					m_bound, *m_subdivfunc, m_freefunc);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_subdivfunc != 0);
-			if ( m_subdivfunc != 0 )
-				ri.doProcedural(*this, 
-					m_data ? m_data->data() : 0,
-					m_bound, *m_subdivfunc, m_freefunc);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			assert(m_subdivfunc != 0);
-			if ( m_subdivfunc != 0 )
-				ri.postProcedural(*this, 
-					m_data ? m_data->data() : 0,
-					m_bound, *m_subdivfunc, m_freefunc);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			if ( !m_subdivfunc )

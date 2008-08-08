@@ -126,12 +126,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPolygon()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPolygon(*this);
@@ -157,21 +151,26 @@ namespace RiCPP {
 			m_nVertices = theNVertices;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.polygonV(nVertices(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePolygon(*this, m_nVertices, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPolygon(*this, m_nVertices, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPolygon(*this, m_nVertices, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -193,6 +192,7 @@ namespace RiCPP {
 			TypeParent::operator=(c);
 			return *this;
 		}
+		
 	}; // CRiPolygon
 
 
@@ -313,6 +313,21 @@ namespace RiCPP {
 			return m_nVerts;
 		}
 
+		inline std::vector<RtInt> &nVerts()
+		{
+			return m_nVerts;
+		}
+		
+		inline const RtInt *nVertsPtr() const
+		{
+			return m_nVerts.empty() ? 0 : &m_nVerts[0];
+		}
+
+		inline RtInt *nVertsPtr()
+		{
+			return m_nVerts.empty() ? 0 : &m_nVerts[0];
+		}
+
 		/** @brief Gets the number of positions.
 		 *
 		 *  @return The number of positions.
@@ -352,30 +367,26 @@ namespace RiCPP {
 		 */
 		inline bool triangulated() const { return m_triangulated!=0; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.generalPolygonV(nLoops(), nVertsPtr(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preGeneralPolygon(*this, 
-				(RtInt)m_nVerts.size(),
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doGeneralPolygon(*this, 
-				(RtInt)m_nVerts.size(),
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postGeneralPolygon(*this, 
-				(RtInt)m_nVerts.size(),
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -402,6 +413,7 @@ namespace RiCPP {
 			TypeParent::operator=(c);
 			return *this;
 		}
+
 	}; // CRiGeneralPolygon
 
 	
@@ -491,12 +503,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPointsPolygons()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPointsPolygons(*this);
@@ -521,6 +527,21 @@ namespace RiCPP {
 		{
 			return m_nVerts;
 		}
+		
+		inline std::vector<RtInt> &nVerts()
+		{
+			return m_nVerts;
+		}
+		
+		inline const RtInt *nVertsPtr() const
+		{
+			return m_nVerts.empty() ? 0 : &m_nVerts[0];
+		}
+		
+		inline RtInt *nVertsPtr()
+		{
+			return m_nVerts.empty() ? 0 : &m_nVerts[0];
+		}
 
 		/** @brief Gets the indices of the vertices.
 		 *
@@ -529,6 +550,21 @@ namespace RiCPP {
 		inline const std::vector<RtInt> &verts() const
 		{
 			return m_verts;
+		}
+
+		inline std::vector<RtInt> &verts()
+		{
+			return m_verts;
+		}
+		
+		inline const RtInt *vertsPtr() const
+		{
+			return m_verts.empty() ? 0 : &m_verts[0];
+		}
+		
+		inline RtInt *vertsPtr()
+		{
+			return m_verts.empty() ? 0 : &m_verts[0];
 		}
 
 		/** @brief Gets the number of the positions.
@@ -566,33 +602,26 @@ namespace RiCPP {
 			enterValues(theNPolys, theNVerts, theVerts);
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.pointsPolygonsV(nPolys(), nVertsPtr(), vertsPtr(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePointsPolygons(*this, 
-				(RtInt)m_nVerts.size(),
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				m_verts.empty() ? 0 : &m_verts[0],
-				parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPointsPolygons(*this, 
-				(RtInt)m_nVerts.size(),
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				m_verts.empty() ? 0 : &m_verts[0],
-				parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPointsPolygons(*this, 
-				(RtInt)m_nVerts.size(),
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				m_verts.empty() ? 0 : &m_verts[0],
-				parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -713,12 +742,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPointsGeneralPolygons()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPointsGeneralPolygons(*this);
@@ -755,6 +778,21 @@ namespace RiCPP {
 			return m_nLoops;
 		}
 
+		inline std::vector<RtInt> &nLoops()
+		{
+			return m_nLoops;
+		}
+		
+		inline const RtInt *nLoopsPtr() const
+		{
+			return m_nLoops.empty() ? 0 : &m_nLoops[0];
+		}
+		
+		inline RtInt *nLoopsPtr()
+		{
+			return m_nLoops.empty() ? 0 : &m_nLoops[0];
+		}
+
 		/** @brief Gets the number of vertices per loops.
 		 *
 		 *  @return The number of vertices per loops.
@@ -764,6 +802,21 @@ namespace RiCPP {
 			return m_nVerts;
 		}
 
+		inline std::vector<RtInt> &nVerts()
+		{
+			return m_nVerts;
+		}
+		
+		inline const RtInt *nVertsPtr() const
+		{
+			return m_nVerts.empty() ? 0 : &m_nVerts[0];
+		}
+		
+		inline RtInt *nVertsPtr()
+		{
+			return m_nVerts.empty() ? 0 : &m_nVerts[0];
+		}
+
 		/** @brief Gets the indices of the vertices.
 		 *
 		 *  @return The indices of the vertices.
@@ -771,6 +824,22 @@ namespace RiCPP {
 		const std::vector<RtInt> &verts() const
 		{
 			return m_verts;
+		}
+
+		
+		inline std::vector<RtInt> &verts()
+		{
+			return m_verts;
+		}
+		
+		inline const RtInt *vertsPtr() const
+		{
+			return m_verts.empty() ? 0 : &m_verts[0];
+		}
+		
+		inline RtInt *vertsPtr()
+		{
+			return m_verts.empty() ? 0 : &m_verts[0];
 		}
 
 		/** @brief Sets the vertex indices.
@@ -815,36 +884,26 @@ namespace RiCPP {
 		 */
 		inline bool triangulated() const { return m_triangulated.size() > 0; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.pointsGeneralPolygonsV(nPolys(), nLoopsPtr(), nVertsPtr(), vertsPtr(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePointsGeneralPolygons(*this, 
-				(RtInt)m_nLoops.size(),
-				m_nLoops.empty() ? 0 : &m_nLoops[0],
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				m_verts.empty() ? 0 : &m_verts[0],
-				parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPointsGeneralPolygons(*this, 
-				(RtInt)m_nLoops.size(),
-				m_nLoops.empty() ? 0 : &m_nLoops[0],
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				m_verts.empty() ? 0 : &m_verts[0],
-				parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPointsGeneralPolygons(*this, 
-				(RtInt)m_nLoops.size(),
-				m_nLoops.empty() ? 0 : &m_nLoops[0],
-				m_nVerts.empty() ? 0 : &m_nVerts[0],
-				m_verts.empty() ? 0 : &m_verts[0],
-				parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -958,12 +1017,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPatch()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPatch(*this);
@@ -989,21 +1042,26 @@ namespace RiCPP {
 			m_type = aType;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.patchV(type(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePatch(*this, m_type, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPatch(*this, m_type, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPatch(*this, m_type, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1136,12 +1194,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPatchMesh()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPatchMesh(*this);
@@ -1228,21 +1280,26 @@ namespace RiCPP {
 			RtInt aNu, RtToken aUWrap,
 			RtInt aNv, RtToken aVWrap);
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.patchMeshV(type(), nu(), uWrap(), nv(), vWrap(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePatchMesh(*this, m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPatchMesh(*this, m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPatchMesh(*this, m_type, m_nu, m_uwrap, m_nv, m_vwrap, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1321,7 +1378,7 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		CRiNuPatch(long aLineNo=-1) : TypeParent(aLineNo)
+		inline CRiNuPatch(long aLineNo=-1) : TypeParent(aLineNo)
 		{
 			m_nu = m_uorder = 0;
 			m_nv = m_vorder = 0;
@@ -1384,12 +1441,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiNuPatch()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiNuPatch(*this);
@@ -1441,7 +1492,7 @@ namespace RiCPP {
 		 *
 		 *  @return The number of control points in parametric u direction.
 		 */
-		RtInt nu() const
+		inline RtInt nu() const
 		{
 			return m_nu;
 		}
@@ -1450,7 +1501,7 @@ namespace RiCPP {
 		 *
 		 *  @return The number of control points in parametric v direction.
 		 */
-		RtInt nv() const
+		inline RtInt nv() const
 		{
 			return m_nv;
 		}
@@ -1459,7 +1510,7 @@ namespace RiCPP {
 		 *
 		 *  @return the order of the polynomial basis for parameters u.
 		 */
-		RtInt uOrder() const
+		inline RtInt uOrder() const
 		{
 			return m_uorder;
 		}
@@ -1468,7 +1519,7 @@ namespace RiCPP {
 		 *
 		 *  @return The order of the polynomial basis for parameters v.
 		 */
-		RtInt vOrder() const
+		inline RtInt vOrder() const
 		{
 			return m_vorder;
 		}
@@ -1477,7 +1528,7 @@ namespace RiCPP {
 		 *
 		 *  @return The minimal value for parameter u.
 		 */
-		RtFloat uMin() const
+		inline RtFloat uMin() const
 		{
 			return m_umin;
 		}
@@ -1486,7 +1537,7 @@ namespace RiCPP {
 		 *
 		 *  @return The maximal value for parameter u.
 		 */
-		RtFloat uMax() const
+		inline RtFloat uMax() const
 		{
 			return m_umax;
 		}
@@ -1495,7 +1546,7 @@ namespace RiCPP {
 		 *
 		 *  @return The minimal value for parameter v.
 		 */
-		RtFloat vMin() const
+		inline RtFloat vMin() const
 		{
 			return m_vmin;
 		}
@@ -1504,7 +1555,7 @@ namespace RiCPP {
 		 *
 		 *  @return The maximal value for parameter v.
 		 */
-		RtFloat vMax() const
+		inline RtFloat vMax() const
 		{
 			return m_vmax;
 		}
@@ -1513,53 +1564,72 @@ namespace RiCPP {
 		 *
 		 *  @return The knot vector for the u parameters.
 		 */
-		const std::vector<RtFloat> &uKnot() const
+		inline const std::vector<RtFloat> &uKnot() const
 		{
 			return m_uknot;
+		}
+
+		inline std::vector<RtFloat> &uKnot()
+		{
+			return m_uknot;
+		}
+
+		inline const RtFloat *uKnotPtr() const
+		{
+			return m_uknot.empty() ? 0 : &m_uknot[0];
+		}
+		
+		inline RtFloat *uKnotPtr()
+		{
+			return m_uknot.empty() ? 0 : &m_uknot[0];
 		}
 
 		/** @brief Gets the knot vector for the v parameters.
 		 *
 		 *  @return The knot vector for the v parameters.
 		 */
-		const std::vector<RtFloat> &vKnot() const
+		inline const std::vector<RtFloat> &vKnot() const
 		{
 			return m_vknot;
 		}
 
+		inline std::vector<RtFloat> &vKnot()
+		{
+			return m_uknot;
+		}
+
+		inline const RtFloat *vKnotPtr() const
+		{
+			return m_vknot.empty() ? 0 : &m_vknot[0];
+		}
+		
+		inline RtFloat *vKnotPtr()
+		{
+			return m_vknot.empty() ? 0 : &m_vknot[0];
+		}
+		
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.nuPatchV(nu(), uOrder(), uKnotPtr(), uMin(), uMax(),
+						nv(), vOrder(), vKnotPtr(), vMin(), vMax(),
+						paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preNuPatch(*this, 
-				m_nu, m_uorder,
-				m_uknot.empty() ? 0 : &m_uknot[0],
-				m_umin, m_umax, m_nv, m_vorder,
-				m_vknot.empty() ? 0 : &m_vknot[0],
-				m_vmin, m_vmax,
-				parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doNuPatch(*this, 
-				m_nu, m_uorder,
-				m_uknot.empty() ? 0 : &m_uknot[0],
-				m_umin, m_umax, m_nv, m_vorder,
-				m_vknot.empty() ? 0 : &m_vknot[0],
-				m_vmin, m_vmax,
-				parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postNuPatch(*this, 
-				m_nu, m_uorder,
-				m_uknot.empty() ? 0 : &m_uknot[0],
-				m_umin, m_umax, m_nv, m_vorder,
-				m_vknot.empty() ? 0 : &m_vknot[0],
-				m_vmin, m_vmax,
-				parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1707,12 +1777,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiSubdivisionMesh()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiSubdivisionMesh(*this);
@@ -1836,51 +1900,35 @@ namespace RiCPP {
 			return m_tags;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.subdivisionMeshV(
+								m_scheme, (RtInt)m_nverts.size(),
+								m_nverts.empty() ? 0 : &(m_nverts[0]),
+								m_verts.empty() ? 0 : &(m_verts[0]),
+								(RtInt)m_tags.size(),
+								m_tags.empty() ? 0 : &(m_tags[0]),
+								m_nargs.empty() ? 0 : &(m_nargs[0]),
+								m_intargs.empty() ? 0 : &(m_intargs[0]),
+								m_floargs.empty() ? 0 : &(m_floargs[0]),
+								paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preSubdivisionMesh(*this, 
-				m_scheme, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &(m_nverts[0]),
-				m_verts.empty() ? 0 : &(m_verts[0]),
-				(RtInt)m_tags.size(),
-				m_tags.empty() ? 0 : &(m_tags[0]),
-				m_nargs.empty() ? 0 : &(m_nargs[0]),
-				m_intargs.empty() ? 0 : &(m_intargs[0]),
-				m_floargs.empty() ? 0 : &(m_floargs[0]),
-				parameters()
-				);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doSubdivisionMesh(*this, 
-				m_scheme, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &(m_nverts[0]),
-				m_verts.empty() ? 0 : &(m_verts[0]),
-				(RtInt)m_tags.size(),
-				m_tags.empty() ? 0 : &(m_tags[0]),
-				m_nargs.empty() ? 0 : &(m_nargs[0]),
-				m_intargs.empty() ? 0 : &(m_intargs[0]),
-				m_floargs.empty() ? 0 : &(m_floargs[0]),
-				parameters()
-				);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postSubdivisionMesh(*this, 
-				m_scheme, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &(m_nverts[0]),
-				m_verts.empty() ? 0 : &(m_verts[0]),
-				(RtInt)m_tags.size(),
-				m_tags.empty() ? 0 : &(m_tags[0]),
-				m_nargs.empty() ? 0 : &(m_nargs[0]),
-				m_intargs.empty() ? 0 : &(m_intargs[0]),
-				m_floargs.empty() ? 0 : &(m_floargs[0]),
-				parameters()
-				);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2026,12 +2074,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiHierarchicalSubdivisionMesh()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiHierarchicalSubdivisionMesh(*this);
@@ -2166,54 +2208,36 @@ namespace RiCPP {
 			return m_tags;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.hierarchicalSubdivisionMeshV(
+											m_scheme, (RtInt)m_nverts.size(),
+											m_nverts.empty() ? 0 : &(m_nverts[0]),
+											m_verts.empty() ? 0 : &(m_verts[0]),
+											(RtInt)m_tags.size(),
+											m_tags.empty() ? 0 : &(m_tags[0]),
+											m_nargs.empty() ? 0 : &(m_nargs[0]),
+											m_intargs.empty() ? 0 : &(m_intargs[0]),
+											m_floargs.empty() ? 0 : &(m_floargs[0]),
+											m_strptrargs.empty() ? 0 : &(m_strptrargs[0]),
+											paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preHierarchicalSubdivisionMesh(*this, 
-				m_scheme, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &(m_nverts[0]),
-				m_verts.empty() ? 0 : &(m_verts[0]),
-				(RtInt)m_tags.size(),
-				m_tags.empty() ? 0 : &(m_tags[0]),
-				m_nargs.empty() ? 0 : &(m_nargs[0]),
-				m_intargs.empty() ? 0 : &(m_intargs[0]),
-				m_floargs.empty() ? 0 : &(m_floargs[0]),
-				m_strptrargs.empty() ? 0 : &(m_strptrargs[0]),
-				parameters()
-				);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doHierarchicalSubdivisionMesh(*this, 
-				m_scheme, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &(m_nverts[0]),
-				m_verts.empty() ? 0 : &(m_verts[0]),
-				(RtInt)m_tags.size(),
-				m_tags.empty() ? 0 : &(m_tags[0]),
-				m_nargs.empty() ? 0 : &(m_nargs[0]),
-				m_intargs.empty() ? 0 : &(m_intargs[0]),
-				m_floargs.empty() ? 0 : &(m_floargs[0]),
-				m_strptrargs.empty() ? 0 : &(m_strptrargs[0]),
-				parameters()
-				);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postHierarchicalSubdivisionMesh(*this, 
-				m_scheme, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &(m_nverts[0]),
-				m_verts.empty() ? 0 : &(m_verts[0]),
-				(RtInt)m_tags.size(),
-				m_tags.empty() ? 0 : &(m_tags[0]),
-				m_nargs.empty() ? 0 : &(m_nargs[0]),
-				m_intargs.empty() ? 0 : &(m_intargs[0]),
-				m_floargs.empty() ? 0 : &(m_floargs[0]),
-				m_strptrargs.empty() ? 0 : &(m_strptrargs[0]),
-				parameters()
-				);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2353,12 +2377,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiSphere()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiSphere(*this);
@@ -2468,20 +2486,26 @@ namespace RiCPP {
 			m_thetamax = aThetaMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.sphereV(radius(), zMin(), zMax(), thetaMax(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preSphere(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doSphere(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.doProcess(*this);
 		}
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postSphere(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2608,12 +2632,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiCone()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiCone(*this);
@@ -2701,20 +2719,26 @@ namespace RiCPP {
 			m_thetamax = aThetaMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.coneV(height(), radius(), thetaMax(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCone(*this, m_height, m_radius, m_thetamax, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCone(*this, m_height, m_radius, m_thetamax, parameters());
+			ri.doProcess(*this);
 		}
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCone(*this, m_height, m_radius, m_thetamax, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -2842,12 +2866,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiCylinder()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiCylinder(*this);
@@ -2957,21 +2975,26 @@ namespace RiCPP {
 			m_thetamax = aThetaMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.cylinderV(radius(), zMin(), zMax(), thetaMax(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCylinder(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCylinder(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCylinder(*this, m_radius, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3104,12 +3127,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiHyperboloid()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiHyperboloid(*this);
@@ -3136,7 +3153,11 @@ namespace RiCPP {
 		{
 			return m_point1;
 		}
-
+		RtPoint &point1()
+		{
+			return m_point1;
+		}
+		
 		/** @brief Sets the first point of the line to sweep.
 		 *
 		 *  @param aPoint1 First point of the line to sweep to get a hyperbolid.
@@ -3167,7 +3188,11 @@ namespace RiCPP {
 		{
 			return m_point2;
 		}
-
+		RtPoint &point2()
+		{
+			return m_point2;
+		}
+		
 		/** @brief Sets the second point of the line to sweep.
 		 *
 		 *  @param aPoint2 Second point of the line to sweep to get a hyperbolid.
@@ -3227,21 +3252,26 @@ namespace RiCPP {
 			m_thetamax = aThetaMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.hyperboloidV(point1(), point2(), thetaMax(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preHyperboloid(*this, m_point1, m_point2, m_thetamax, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doHyperboloid(*this, m_point1, m_point2, m_thetamax, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postHyperboloid(*this, m_point1, m_point2, m_thetamax, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3367,12 +3397,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiParaboloid()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiParaboloid(*this);
@@ -3482,20 +3506,26 @@ namespace RiCPP {
 			m_thetamax = aThetaMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.paraboloidV(rMax(), zMin(), zMax(), thetaMax(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preParaboloid(*this, m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doParaboloid(*this, m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.doProcess(*this);
 		}
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postParaboloid(*this, m_rmax, m_zmin, m_zmax, m_thetamax, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3622,12 +3652,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiDisk()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiDisk(*this);
@@ -3715,21 +3739,26 @@ namespace RiCPP {
 			m_thetamax = aThetaMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.diskV(height(), radius(), thetaMax(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preDisk(*this, m_height, m_radius, m_thetamax, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doDisk(*this, m_height, m_radius, m_thetamax, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postDisk(*this, m_height, m_radius, m_thetamax, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -3866,12 +3895,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiTorus()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiTorus(*this);
@@ -4003,20 +4026,26 @@ namespace RiCPP {
 			m_thetamax = aThetaMax;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.torusV(majorRad(), minorRad(), phiMin(), phiMax(), thetaMax(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preTorus(*this, m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doTorus(*this, m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+			ri.doProcess(*this);
 		}
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postTorus(*this, m_majorrad, m_minorrad, m_phimin, m_phimax, m_thetamax, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -4135,12 +4164,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPoints()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPoints(*this);
@@ -4152,7 +4175,7 @@ namespace RiCPP {
 		 *
 		 *  @return Number of points.
 		 */
-		inline virtual RtInt nPts() const
+		inline virtual RtInt nPoints() const
 		{
 			return m_npts;
 		}
@@ -4161,25 +4184,31 @@ namespace RiCPP {
 		 *
 		 *  @param aNPts Number of points.
 		 */
-		inline virtual void nPts(RtInt aNPts)
+		inline virtual void nPoints(RtInt aNPts)
 		{
 			m_npts = aNPts;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.pointsV(nPoints(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePoints(*this, m_npts, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPoints(*this, m_npts, parameters());
+			ri.doProcess(*this);
 		}
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPoints(*this, m_npts, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -4196,7 +4225,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			nPts(c.nPts());
+			nPoints(c.nPoints());
 
 			TypeParent::operator=(c);
 			return *this;
@@ -4292,12 +4321,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiCurves()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiCurves(*this);
@@ -4379,33 +4402,30 @@ namespace RiCPP {
 		 */
 		void get(RtInt &aStep, RtToken &aType, std::vector<RtInt> &aNVerts, RtToken &aWrap);
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.curvesV(
+					   m_type, (RtInt)m_nverts.size(),
+					   m_nverts.empty() ? 0 : &m_nverts[0],
+					   m_wrap,
+					   paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCurves(*this, 
-				m_type, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &m_nverts[0],
-				m_wrap,
-				parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCurves(*this, 
-				m_type, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &m_nverts[0],
-				m_wrap,
-				parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCurves(*this, 
-				m_type, (RtInt)m_nverts.size(),
-				m_nverts.empty() ? 0 : &m_nverts[0],
-				m_wrap,
-				parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -4527,12 +4547,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiBlobby()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiBlobby(*this);
@@ -4612,36 +4626,31 @@ namespace RiCPP {
 			RtInt &aNLeaf, std::vector<RtInt> &aCode,
 			std::vector<RtFloat> &aFlt, std::vector<RtString> &aStr) const;
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.blobbyV(
+					   m_nleaf,
+					   (RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
+					   (RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
+					   (RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
+					   paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preBlobby(*this, 
-				m_nleaf,
-				(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
-				(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
-				(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
-				parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doBlobby(*this, 
-				m_nleaf,
-				(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
-				(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
-				(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
-				parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postBlobby(*this, 
-				m_nleaf,
-				(RtInt)m_code.size(), m_code.empty() ? 0 : &m_code[0],
-				(RtInt)m_flt.size(), m_flt.empty() ? 0 : &m_flt[0],
-				(RtInt)m_str.size(), m_str.empty() ? 0 : &m_str[0],
-				parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -4756,12 +4765,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiGeometry()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiGeometry(*this);
@@ -4787,21 +4790,26 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.geometryV(name(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preGeometry(*this, m_name, parameters());
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doGeometry(*this, m_name, parameters());
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postGeometry(*this, m_name, parameters());
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());

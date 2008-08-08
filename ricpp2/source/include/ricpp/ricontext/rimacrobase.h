@@ -165,6 +165,18 @@ namespace RiCPP {
 			return *this;
 		}
 
+		/** @brief Processes an interface call
+		 *
+		 *  Can be used to process an interface call of a renderer, like
+		 *  calling the interface function directly. Currently not
+		 *  used.
+		 *
+		 *  @param ri The renderer backend or frontend used for processing.
+		 */
+		inline virtual void process(IRiRoot &ri)
+		{
+		}
+
 		/** @brief Pre-Processes an interface call
 		 *
 		 *  Pre-Processing normally involves state update of the renderer.
@@ -201,44 +213,6 @@ namespace RiCPP {
 		{
 		}
 
-#if 0
-		/** @brief Pre-Processes an interface call
-		 *
-		 *  Pre-Processing normally involves state update of the renderer.
-		 *  Is also performed before macro insertion.
-		 *
-		 *  @param ri The renderer backend used for pre-processing.
-		 */
-		inline virtual void preProcess(IDoRender &ri)
-		{
-			preProcess(ri, 0);
-		}
-
-		/** @brief Processes an interface call
-		 *
-		 *  Processing the interface call, e.g. do the rendering. This is
-		 *  not called at a macro (object) definition.
-		 *
-		 *  @param ri The renderer backend used for processing.
-		 */
-		inline virtual void doProcess(IDoRender &ri)
-		{
-			doProcess(ri, 0);
-		}
-
-		/** @brief Post-Processes an interface call
-		 *
-		 *  Post-Processing the interface call, is called after
-		 *  Macro insertion or processing.
-		 *
-		 *  @param ri The renderer backend used for pre-processing.
-		 */
-		inline virtual void postProcess(IDoRender &ri)
-		{
-			postProcess(ri, 0);
-		}
-#endif
-
 		/** @brief Write the RIB Code of the request.
 		 *
 		 *  @param ribWriter Elementary stream object for RIB writing.
@@ -257,6 +231,7 @@ namespace RiCPP {
 		inline virtual bool boundable() const { return false; }
 
 		/** @brief Gets the bounds, if available.
+		 *  @todo Implement bounds.
 		 *  @retval bounds The bounderies of the object representated.
 		 *  @see boundable()
 		 */
@@ -392,10 +367,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CVarParamRManInterfaceCall() {}
-		
 		/*  @brief Duplication.
 		 * 
 		 *  @return New instance as clone of this instance.
@@ -409,9 +380,9 @@ namespace RiCPP {
 		 *
 		 * @return The size of tokens and parameters of the request.
 		 */
-		inline virtual CParameterList::size_type size() const
+		inline RtInt paramSize() const
 		{
-			return m_parameters.size();
+			return (RtInt)m_parameters.size();
 		}
 
 		/** @brief Gets the tokens of the request.
@@ -420,7 +391,7 @@ namespace RiCPP {
 		 *
 		 * @return The tokens of the request.
 		 */
-		inline RtToken *getTokens()
+		inline RtToken *tokenPtr()
 		{
 			return m_parameters.tokenPtr();
 		}
@@ -431,7 +402,7 @@ namespace RiCPP {
 		 *
 		 * @return The parameters of the request.
 		 */
-		inline RtPointer *getParams()
+		inline RtPointer *valuePtr()
 		{
 			return m_parameters.valuePtr();
 		}

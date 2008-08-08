@@ -81,12 +81,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiIdentity()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiIdentity(*this);
@@ -94,19 +88,24 @@ namespace RiCPP {
 
 		inline virtual EnumRequests interfaceIdx() const { return REQ_IDENTITY; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.identity();
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preIdentity(*this);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doIdentity(*this);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postIdentity(*this);
+			ri.postProcess(*this);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
@@ -189,12 +188,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiTransform()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiTransform(*this);
@@ -219,7 +212,11 @@ namespace RiCPP {
 		{
 			return m_transform;
 		}
-
+		RtMatrix &transform()
+		{
+			return m_transform;
+		}
+		
 		/** @brief Sets the transformation matrix.
 		 *
 		 *  @param aTransform The transformation matrix.
@@ -229,21 +226,26 @@ namespace RiCPP {
 			memcpy(m_transform, aTransform, sizeof(RtMatrix));
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.transform(transform());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preTransform(*this, m_transform);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doTransform(*this, m_transform);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postTransform(*this, m_transform);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -328,12 +330,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiConcatTransform()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiConcatTransform(*this);
@@ -358,7 +354,11 @@ namespace RiCPP {
 		{
 			return m_transform;
 		}
-
+		RtMatrix &transform()
+		{
+			return m_transform;
+		}
+		
 		/** @brief Sets the transformation matrix.
 		 *
 		 *  @param aTransform The transformation matrix.
@@ -368,21 +368,26 @@ namespace RiCPP {
 			memcpy(m_transform, aTransform, sizeof(RtMatrix));
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.concatTransform(transform());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preConcatTransform(*this, m_transform);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doConcatTransform(*this, m_transform);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postConcatTransform(*this, m_transform);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -453,12 +458,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiPerspective()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiPerspective(*this);
@@ -484,21 +483,26 @@ namespace RiCPP {
 			m_fov = m_fov;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.perspective(fov());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.prePerspective(*this, m_fov);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doPerspective(*this, m_fov);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postPerspective(*this, m_fov);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -572,12 +576,6 @@ namespace RiCPP {
 		inline CRiTranslate(const CRiTranslate &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiTranslate()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -667,21 +665,26 @@ namespace RiCPP {
 			m_dz = aDz;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.translate(dx(), dy(), dz());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preTranslate(*this, m_dx, m_dy, m_dz);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doTranslate(*this, m_dx, m_dy, m_dz);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postTranslate(*this, m_dx, m_dy, m_dz);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -759,12 +762,6 @@ namespace RiCPP {
 		inline CRiRotate(const CRiRotate &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiRotate()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -876,21 +873,26 @@ namespace RiCPP {
 			m_dz = aDz;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.rotate(angle(), dx(), dy(), dz());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preRotate(*this, m_angle, m_dx, m_dy, m_dz);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doRotate(*this, m_angle, m_dx, m_dy, m_dz);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postRotate(*this, m_angle, m_dx, m_dy, m_dz);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -970,12 +972,6 @@ namespace RiCPP {
 		inline CRiScale(const CRiTranslate &c)
 		{
 			*this = c;
-		}
-
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiScale()
-		{
 		}
 
 		inline virtual CRManInterfaceCall *duplicate() const
@@ -1065,21 +1061,26 @@ namespace RiCPP {
 			m_dz = aDz;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.scale(dx(), dy(), dz());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preScale(*this, m_dx, m_dy, m_dz);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doScale(*this, m_dx, m_dy, m_dz);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postScale(*this, m_dx, m_dy, m_dz);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1165,12 +1166,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiSkew()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiSkew(*this);
@@ -1178,21 +1173,26 @@ namespace RiCPP {
 
 		inline virtual EnumRequests interfaceIdx() const { return REQ_SKEW; }
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.skew(angle(), dx1(), dy1(), dz1(), dx2(), dy2(), dz2());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preSkew(*this, m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doSkew(*this, m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postSkew(*this, m_angle, m_dx1, m_dy1, m_dz1, m_dx2, m_dy2, m_dz2);
+			ri.postProcess(*this);
 		}
-
+		
 		/** @brief Gets the skew angle.
 		 *
 		 *  @return The skew angle.
@@ -1445,12 +1445,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiScopedCoordinateSystem()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiScopedCoordinateSystem(*this);
@@ -1476,21 +1470,26 @@ namespace RiCPP {
 			m_space = aSpace;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.scopedCoordinateSystem(space());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preScopedCoordinateSystem(*this, m_space);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doScopedCoordinateSystem(*this, m_space);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postScopedCoordinateSystem(*this, m_space);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1563,12 +1562,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiCoordinateSystem()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiCoordinateSystem(*this);
@@ -1594,21 +1587,26 @@ namespace RiCPP {
 			m_space = aSpace;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.coordinateSystem(space());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCoordinateSystem(*this, m_space);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCoordinateSystem(*this, m_space);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCoordinateSystem(*this, m_space);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			ribWriter.putRequest(interfaceIdx());
@@ -1681,12 +1679,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiCoordSysTransform()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiCoordSysTransform(*this);
@@ -1712,19 +1704,24 @@ namespace RiCPP {
 			m_space = aSpace;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.coordSysTransform(space());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.preCoordSysTransform(*this, m_space);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doCoordSysTransform(*this, m_space);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postCoordSysTransform(*this, m_space);
+			ri.postProcess(*this);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
@@ -1857,12 +1854,6 @@ namespace RiCPP {
 			*this = c;
 		}
 
-		/** @brief Destructor.
-		 */
-		inline virtual ~CRiTransformPoints()
-		{
-		}
-
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiTransformPoints(*this);
@@ -1929,22 +1920,26 @@ namespace RiCPP {
 			return m_points;
 		}
 
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.transformPoints(fromSpace(), toSpace(), nPoints(), points());
+		}
+		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			reset();
-			ri.preTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
+			ri.preProcess(*this);
 		}
-
+		
 		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.doTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
+			ri.doProcess(*this);
 		}
-
+		
 		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
 		{
-			ri.postTransformPoints(*this, m_fromspace, m_tospace, m_npoints, m_points);
+			ri.postProcess(*this);
 		}
-
+		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
 			// Has no Rib binding

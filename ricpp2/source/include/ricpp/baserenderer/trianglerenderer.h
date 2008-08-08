@@ -61,6 +61,10 @@ namespace RiCPP {
 	public:
 		CTriangleRenderer();
 
+		using TypeParent::doProcess;
+		using TypeParent::preProcess;
+		using TypeParent::postProcess;
+		
 		virtual RtVoid triangulate(CRiPolygon &obj);
 		virtual RtVoid triangulate(CRiPointsPolygons &obj);
 		virtual RtVoid triangulate(CRiGeneralPolygon &obj);

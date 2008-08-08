@@ -452,7 +452,7 @@ CColorDescr::CColorDescr()
 }
 
 
-RtVoid CColorDescr::colorSamples(RtInt nColorSamples, RtFloat nRGB[], RtFloat RGBn[])
+RtVoid CColorDescr::colorSamples(RtInt nColorSamples, const RtFloat nRGB[], const RtFloat RGBn[])
 {
 	std::vector<RtFloat>::size_type s;
 
@@ -534,7 +534,7 @@ RtVoid CColorDescr::nToRGB(RtInt n, RtFloat *c, RtFloat rgb[][3]) const
 }
 
 
-RtVoid CColorDescr::RGBToN(RtFloat rgb[3], RtColor c) const
+RtVoid CColorDescr::RGBToN(const RtFloat rgb[3], RtColor c) const
 {
 	if ( m_isIdentity ) {
 		c[0] = rgb[0];
@@ -562,7 +562,7 @@ RtVoid CColorDescr::RGBToN(RtFloat rgb[3], RtColor c) const
 }
 
 
-RtVoid CColorDescr::RGBToN(RtInt n, RtFloat rgb[][3], RtFloat c[]) const
+RtVoid CColorDescr::RGBToN(RtInt n, const RtFloat rgb[][3], RtFloat c[]) const
 {
 	for ( int i = 0; i < n; ++i )
 	{

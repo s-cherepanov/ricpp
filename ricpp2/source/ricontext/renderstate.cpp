@@ -1762,6 +1762,11 @@ RtString CRenderState::findHandleId(CParameterList &params) const
 	return RI_NULL;
 }
 
+bool CRenderState::noLights() const
+{
+	return m_lightSourceHandles.empty();
+}
+
 RtLightHandle CRenderState::newLightHandle(RtToken lightSourceName, CParameterList &params)
 {
 	RtString handlename = findHandleId(params);

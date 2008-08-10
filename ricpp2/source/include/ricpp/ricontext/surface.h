@@ -181,7 +181,23 @@ public:
 
 	TemplPrimVar<RtFloat> &insertFloatVar(const CDeclaration &decl, IndexType nVar);
 
-	void buildStripIndices(IndexType tessU, IndexType tessV, bool isLH=true);
+	void buildStripIndices(IndexType tessU, IndexType tessV, bool isLH);
+	void buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH);
+	
+	inline void clearIndices()
+	{
+		m_faceType = FACETYPE_UNKNOWN;
+		m_indices.clear();
+		m_sizes.clear();
+	}
+	
+	inline void clear()
+	{
+		clearIndices();
+		m_floats.clear();
+		m_ints.clear();
+		m_strings.clear();
+	}
 }; // CFace
 
 

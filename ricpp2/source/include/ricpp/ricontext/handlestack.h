@@ -104,21 +104,7 @@ private:
 	CTokenMap m_tokens;           ///< RtToken as handles
 	std::string m_prefix;         ///< Prefix for the tokens
 
-	inline typename TypeHandleStack::reverse_iterator rfind(RtToken tok, bool toMark)
-	{
-		typename TypeHandleStack::reverse_iterator i;
-
-		for( i = m_stack.rbegin(); i != m_stack.rend(); i++ ) {
-			if ( (*i) && (*i)->handle() == tok )
-				break;
-			if ( !(*i) && toMark )
-				return m_stack.rend();
-		}
-
-		return i;
-	}
-
-	typename TypeHandleStack::const_reverse_iterator rfind(RtToken tok, bool toMark) const
+	inline typename TypeHandleStack::const_reverse_iterator rfind(RtToken tok, bool toMark) const
 	{
 		typename TypeHandleStack::const_reverse_iterator i;
 
@@ -132,12 +118,27 @@ private:
 		return i;
 	}
 
-public:
-	TemplHandleStack(RtString prefix="")
+	inline typename TypeHandleStack::reverse_iterator rfind(RtToken tok, bool toMark)
 	{
-		m_maxHandleIdx = 0;
+		/** @todo use the typename TypeHandleStack::const_reverse_iterator rfind() with const away cast
+		 */
+		typename TypeHandleStack::reverse_iterator i;
+		
+		for( i = m_stack.rbegin(); i != m_stack.rend(); i++ ) {
+			if ( (*i) && (*i)->handle() == tok )
+				break;
+			if ( !(*i) && toMark )
+				return m_stack.rend();
+		}
+		
+		return i;
+	}
+public:
+	inline TemplHandleStack(RtString prefix="") :
+		m_maxHandleIdx(0),
+		m_prefix(noNullStr(prefix))
+	{
 		m_stack.push_back(0);
-		m_prefix = noNullStr(prefix);
 	}
 	
 	~TemplHandleStack()
@@ -175,7 +176,7 @@ public:
 		return tok;
 	}
 
-	RtToken newHandle(RtString name, unsigned long &num)
+	inline RtToken newHandle(RtString name, unsigned long &num)
 	{
 		/** @todo Implement a function that returns real unique (worldwide) string handles.
 		 */
@@ -184,7 +185,7 @@ public:
 		return t;
 	}
 
-	RtToken identify(RtString name) const
+	inline RtToken identify(RtString name) const
 	{
 		if ( emptyStr(name) )
 			return RI_NULL;
@@ -192,7 +193,7 @@ public:
 		return m_tokens.find(name);
 	}
 
-	ValueType *find(RtToken tok, bool toMark=false)
+	inline ValueType *find(RtToken tok, bool toMark=false)
 	{
 		typename TypeHandleStack::reverse_iterator i = rfind(tok, toMark);
 		if ( i != m_stack.rend() )
@@ -200,12 +201,12 @@ public:
 		return 0;
 	}
 
-	ValueType *back()
+	inline ValueType *back()
 	{
 		return m_stack.back();
 	}
 
-	const ValueType *find(RtToken tok, bool toMark=false) const
+	inline const ValueType *find(RtToken tok, bool toMark=false) const
 	{
 		typename TypeHandleStack::const_reverse_iterator i = rfind(tok, toMark);
 		if ( i != m_stack.rend() )
@@ -213,12 +214,12 @@ public:
 		return 0;
 	}
 
-	const ValueType *back() const
+	inline const ValueType *back() const
 	{
 		return m_stack.back();
 	}
 
-	bool deleteObject(RtToken tok, bool toMark=false)
+	inline bool deleteObject(RtToken tok, bool toMark=false)
 	{
 		typename TypeHandleStack::const_reverse_iterator i = rfind(tok, toMark);
 		if ( i != m_stack.rend() ) {
@@ -229,14 +230,14 @@ public:
 		return false;
 	}
 	
-	bool deleteObject(ValueType *obj, bool toMark=false)
+	inline bool deleteObject(ValueType *obj, bool toMark=false)
 	{
 		if ( !obj )
 			return false;
 		return deleteObj(obj->handle(), toMark);
 	}
 
-	RtToken insertObject(ValueType *o)
+	inline RtToken insertObject(ValueType *o)
 	{
 		if ( !o )
 			return RI_NULL;
@@ -247,7 +248,7 @@ public:
 		return tok; 
 	}
 
-	RtToken insertObject(RtToken handle, ValueType *o)
+	inline RtToken insertObject(RtToken handle, ValueType *o)
 	{
 		if ( !o )
 			return RI_NULL;
@@ -261,12 +262,12 @@ public:
 		return handle; 
 	}
 
-	void mark()
+	inline void mark()
 	{
 		m_stack.push_back(0);
 	}
 	
-	void clearToMark()
+	inline void clearToMark()
 	{
 		while ( !m_stack.empty() ) {
 			ValueType *v = back();
@@ -278,9 +279,20 @@ public:
 		}
 	}
 
-	unsigned long maxIdx() const
+	inline unsigned long maxIdx() const
 	{
 		return m_maxHandleIdx;
+	}
+	
+	inline bool empty() const {
+		typename TypeHandleStack::const_iterator i = m_stack.begin();
+		for ( ; i != m_stack.end(); i++ ) {
+			if ( (*i) != 0 ) {
+				// no mark
+				return false;
+			}
+		}
+		return true;
 	}
 };
 

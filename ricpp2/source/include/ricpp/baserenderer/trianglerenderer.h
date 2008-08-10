@@ -54,13 +54,18 @@ namespace RiCPP {
 		CEarClipper m_earClipper; ///< Triangulation strategy
 		RtInt m_tessX;
 		RtInt m_tessY;
+		bool m_useStrips;
 		
 	protected:
 		inline virtual const IPolygonTriangulationStrategy &polygonTriangulationStrategy() const { return m_earClipper; }
+		void getPosAndNormalsInCamera(const CFace &f, std::vector<RtFloat> &p, std::vector<RtFloat> &n);
 		
 	public:
 		CTriangleRenderer();
-
+		
+		inline bool useStrips() const { return m_useStrips; }
+		inline void useStrips(bool aUseStrips) { m_useStrips = aUseStrips; }
+		
 		using TypeParent::doProcess;
 		using TypeParent::preProcess;
 		using TypeParent::postProcess;

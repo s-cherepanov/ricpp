@@ -551,7 +551,7 @@ static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax,
 
 // =============================================================================
 
-CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations)
+CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips)
 {
 	if ( tessU < 0 || tessV < 0 || !posDecl.isFloat3Decl() || !normDecl.isFloat3Decl() )
 		return 0;
@@ -565,7 +565,11 @@ CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const C
 	
 	buildPN(posDecl, normDecl, tessU, tessV, equalOrientations, f);
 	
-	f.buildStripIndices(tessU, tessV, true);
+	if ( useStrips )
+		f.buildStripIndices(tessU, tessV, true);
+	else
+		f.buildTriangleIndices(tessU, tessV, true);
+
 	return surf;
 }
 

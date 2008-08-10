@@ -182,17 +182,81 @@ TemplPrimVar<RtFloat> &CFace::insertFloatVar(const CDeclaration &decl, IndexType
 	return f;
 }
 
+void CFace::buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH)
+{
+	clearIndices();
+	assert(tessU != 0 && tessV != 0);
+	if ( tessU == 0 || tessV == 0 )
+		return;
+	
+	m_faceType = FACETYPE_TRIANGLES;
+	
+	m_indices.resize(tessV*tessU*2*3);
+	std::vector<IndexType>::iterator idxIter = m_indices.begin();
+	
+	for ( IndexType vIdx = 0; vIdx < tessV; ++vIdx ) {
+		IndexType offs = vIdx * (tessU+1);
+		
+		for ( IndexType uIdx = 0; uIdx < tessU; ++uIdx ) {
+			assert(idxIter != m_indices.end());
+			*idxIter = offs + uIdx;
+			idxIter++;
+			if ( isLH ) {
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx+1;
+				idxIter++;
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx+1 + tessU;
+				idxIter++;
+			} else {
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx+1 + tessU;
+				idxIter++;
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx+1;
+				idxIter++;
+			}
+		}
+		
+		offs += tessU+1;
+		
+		for ( IndexType uIdx = 0; uIdx < tessU; ++uIdx ) {
+			assert(idxIter != m_indices.end());
+			*idxIter = offs + uIdx;
+			idxIter++;
+			if ( isLH ) {
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx - tessU;
+				idxIter++;
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx+1;
+				idxIter++;
+			} else {
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx+1;
+				idxIter++;
+				assert(idxIter != m_indices.end());
+				*idxIter = offs + uIdx - tessU;
+				idxIter++;
+			}
+		}
+	}
+	m_sizes.resize(1);
+	m_sizes[0] = m_indices.size();
+}
 
 void CFace::buildStripIndices(IndexType tessU, IndexType tessV, bool isLH)
 {
+	clearIndices();
+	assert(tessU != 0 && tessV != 0);
+	if ( tessU == 0 || tessV == 0 )
+		return;
+	
 	const IndexType uIndices = (tessU+1)*2;
 	const IndexType nStrips = tessV;
 	const IndexType lastRowIdx = (tessU+1)*tessV;
 	
 	m_faceType = FACETYPE_TRIANGLESTRIPS;
-
-	m_indices.clear();
-	m_sizes.clear();
 	
 	m_indices.resize(nStrips*uIndices);
 	std::vector<IndexType>::iterator idxIter = m_indices.begin();

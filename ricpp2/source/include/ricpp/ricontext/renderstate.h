@@ -658,6 +658,16 @@ namespace RiCPP {
 		
 		virtual RtString findHandleId(CParameterList &params) const;
 
+		/** @brief Use a default light because there are no lights?
+		 *
+		 *  Use default lightsource (distant light to (0,0,1) in camera space),
+		 *  true if no area/lightsource called, i.e. global lightlists are empty.
+		 *  Doesn't matter if these lights are illuminated or not.
+		 *
+		 *  @return True, no lights use a default light. False, there are lights. 
+		 */
+		bool noLights() const;
+
 		virtual RtLightHandle newLightHandle(RtToken lightSourceName, CParameterList &params);
 		virtual CHandle *lightSourceHandle(RtLightHandle handle);
 		virtual const CHandle *lightSourceHandle(RtLightHandle handle) const;

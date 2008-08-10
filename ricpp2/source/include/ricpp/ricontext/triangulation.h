@@ -125,7 +125,7 @@ namespace RiCPP {
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
 	public:
-		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations);
+		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
 	}; // CQuadricTriangulator
 	
 	class CConeTriangulator : public CQuadricTriangulator {

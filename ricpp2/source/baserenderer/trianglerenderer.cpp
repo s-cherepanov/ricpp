@@ -31,12 +31,61 @@
 
 using namespace RiCPP;
 
-#define TESSELATION 32
+static const RtInt _TESSELATION = 32;
+static const bool _USESTRIPS = false;
 
 CTriangleRenderer::CTriangleRenderer()
 {
-	m_tessX = TESSELATION;
-	m_tessY = TESSELATION;
+	m_tessX = _TESSELATION;
+	m_tessY = _TESSELATION;
+	m_useStrips = _USESTRIPS;
+}
+
+void CTriangleRenderer::getPosAndNormalsInCamera(const CFace &f, std::vector<RtFloat> &p, std::vector<RtFloat> &n)
+{
+	n.clear();
+	p.clear();
+	
+	// Positions
+	const TemplPrimVar<RtFloat> *pp = f.floats(RI_P);
+	if ( !pp )
+		return;
+	
+	p = pp->value();
+	
+	if ( p.empty() )
+		return;
+	
+	assert(p.size() == pp->value().size());
+	
+	toCamera().transformPoints(p.size()/3, (RtPoint *)&p[0]);
+	
+	// Normals
+	const TemplPrimVar<RtFloat> *np = f.floats(RI_N);
+	if ( np && np->decl() ) {
+		if ( np->value().size() == p.size() ) {
+			// n = np->value();
+			// toCamera().transformNormals(n.size()/3, (RtPoint *)&n[0]);
+			
+			n = pp->value();
+			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
+				n[i]   += np->value()[i];
+				n[i+1] += np->value()[i+1];
+				n[i+2] += np->value()[i+2];
+			}
+			toCamera().transformPoints(n.size()/3, (RtPoint *)&n[0]);
+			
+			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
+				n[i]   -= p[i];
+				n[i+1] -= p[i+1];
+				n[i+2] -= p[i+2];
+				normalize(n[i], n[i+1], n[i+2]);
+			}
+		} else {
+			/** @todo constant normal (uniform normal, face normal done by building the face)
+			 */
+		}
+	}
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
@@ -71,7 +120,7 @@ RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)
 	const CDeclaration *ndecl = renderState()->declFind(RI_N);
 	if ( !ndecl )
 		return;
-	hide(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation()));
+	hide(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation(), m_useStrips));
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiCone &obj)

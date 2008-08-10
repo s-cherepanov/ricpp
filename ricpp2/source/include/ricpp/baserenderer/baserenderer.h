@@ -444,6 +444,8 @@ protected:
 	const CTransformation &transformation() const;
 	CTransformation &transformation();
 	
+	/** @todo Replay mode to state
+	 */
 	inline bool replayMode() const { return m_replayDelayedMode; }
 	void initDelayed();
 	void replayDelayed();
@@ -454,11 +456,15 @@ protected:
 	 *
 	 *  Matrix is only valid inside a world block.
 	 *
+	 *  @todo To state, after replaymode is part of state
+	 *
 	 *  @return Matrix transforms from current to camera coordinate system.
 	 */
 	CMatrix3D toCamera() const;
+	CMatrix3D toScreen() const;
+	CMatrix3D toNDC() const;
 	CMatrix3D toRaster() const;
-
+	
 public:
 
 	virtual bool init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls);

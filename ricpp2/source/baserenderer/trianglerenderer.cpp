@@ -41,7 +41,7 @@ CTriangleRenderer::CTriangleRenderer()
 	m_useStrips = _USESTRIPS;
 }
 
-void CTriangleRenderer::getPosAndNormalsInCamera(const CFace &f, std::vector<RtFloat> &p, std::vector<RtFloat> &n)
+void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans, std::vector<RtFloat> &p, std::vector<RtFloat> &n)
 {
 	n.clear();
 	p.clear();
@@ -58,14 +58,14 @@ void CTriangleRenderer::getPosAndNormalsInCamera(const CFace &f, std::vector<RtF
 	
 	assert(p.size() == pp->value().size());
 	
-	toCamera().transformPoints(p.size()/3, (RtPoint *)&p[0]);
+	trans.transformPoints(p.size()/3, (RtPoint *)&p[0]);
 	
 	// Normals
 	const TemplPrimVar<RtFloat> *np = f.floats(RI_N);
 	if ( np && np->decl() ) {
 		if ( np->value().size() == p.size() ) {
 			// n = np->value();
-			// toCamera().transformNormals(n.size()/3, (RtPoint *)&n[0]);
+			// trans.transformNormals(n.size()/3, (RtPoint *)&n[0]);
 			
 			n = pp->value();
 			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
@@ -73,7 +73,7 @@ void CTriangleRenderer::getPosAndNormalsInCamera(const CFace &f, std::vector<RtF
 				n[i+1] += np->value()[i+1];
 				n[i+2] += np->value()[i+2];
 			}
-			toCamera().transformPoints(n.size()/3, (RtPoint *)&n[0]);
+			trans.transformPoints(n.size()/3, (RtPoint *)&n[0]);
 			
 			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
 				n[i]   -= p[i];

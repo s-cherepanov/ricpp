@@ -58,7 +58,7 @@ namespace RiCPP {
 		
 	protected:
 		inline virtual const IPolygonTriangulationStrategy &polygonTriangulationStrategy() const { return m_earClipper; }
-		void getPosAndNormalsInCamera(const CFace &f, std::vector<RtFloat> &p, std::vector<RtFloat> &n);
+		void getPosAndNormals(const CFace &f, const CMatrix3D &trans, std::vector<RtFloat> &p, std::vector<RtFloat> &n);
 		
 	public:
 		CTriangleRenderer();

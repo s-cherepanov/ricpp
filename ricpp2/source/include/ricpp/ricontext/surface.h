@@ -184,6 +184,18 @@ public:
 	void buildStripIndices(IndexType tessU, IndexType tessV, bool isLH);
 	void buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH);
 	
+	/** @brief Bilinear blending of a 2x2 patch
+     *  cornerIdx
+	 *  0    1    u->
+	 * 
+	 *  2    3    
+	 */
+	bool bilinearBlend(
+		const CParameter &source,
+		const IndexType (& cornerIdx)[4],
+		IndexType tessU,
+		IndexType tessV);
+	
 	inline void clearIndices()
 	{
 		m_faceType = FACETYPE_UNKNOWN;

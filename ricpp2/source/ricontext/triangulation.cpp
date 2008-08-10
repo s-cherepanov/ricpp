@@ -31,7 +31,7 @@
 #include "ricpp/tools/templatefuncs.h"
 
 #ifdef _DEBUG
-#include <iostream>
+#define _TRACE
 // #define _TRACE_CONE
 // #define _TRACE_CYLINDER
 // #define _TRACE_DISK
@@ -39,6 +39,7 @@
 // #define _TRACE_SPHERE
 // #define _TRACE_TORUS
 #endif
+#include "ricpp/tools/trace.h"
 
 using namespace RiCPP;
 
@@ -564,13 +565,39 @@ CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const C
 	CFace &f = surf->newFace();
 	
 	buildPN(posDecl, normDecl, tessU, tessV, equalOrientations, f);
-	
+	insertParams(tessU, tessV, f);
+		
 	if ( useStrips )
 		f.buildStripIndices(tessU, tessV, true);
 	else
 		f.buildTriangleIndices(tessU, tessV, true);
 
 	return surf;
+}
+
+void CQuadricTriangulator::insertParams(RtInt tessU, RtInt tessV, CFace &f)
+{
+	static const IndexType idx[4] = {0, 1, 2, 3};
+	CParameterList::const_iterator iter = obj().parameters().begin();
+	for ( ; iter != obj().parameters().end(); iter++ ) {
+		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
+			continue;
+		}
+		if ( (*iter).declaration().basicType() != BASICTYPE_FLOAT ) {
+			continue;
+		}
+		switch ( (*iter).declaration().storageClass() ) {
+			case CLASS_VARYING:
+			case CLASS_VERTEX:
+			case CLASS_FACEVERTEX:
+			case CLASS_FACEVARYING:
+				f.bilinearBlend(*iter, idx, tessU, tessV);
+				break;
+			default:
+				break;
+		}
+		
+	}
 }
 
 // =============================================================================

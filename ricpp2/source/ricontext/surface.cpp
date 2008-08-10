@@ -279,3 +279,60 @@ void CFace::buildStripIndices(IndexType tessU, IndexType tessV, bool isLH)
 		*sizeIter = uIndices;
 	}
 }
+
+
+bool CFace::bilinearBlend(
+	const CParameter &source,
+	const IndexType (& cornerIdx)[4],
+	IndexType tessU,
+	IndexType tessV)
+{
+	assert ( source.basicType() == BASICTYPE_FLOAT );
+	
+	if ( tessU < 1 || tessV < 1 ) {
+		return false;
+	}
+
+	IndexType elemSize = source.declaration().elemSize();
+	const std::vector<RtFloat> &vals = source.floats();
+	
+	// For bilinear blending one needs 4 elems.
+	IndexType sz = vals.size()/elemSize;
+	if ( sz <= cornerIdx[0] || sz <= cornerIdx[1] || sz <= cornerIdx[2] || sz <= cornerIdx[3] )
+		return false;
+	
+	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).value();
+	retvals.resize((tessU+1)*(tessV+1)*elemSize);
+	
+	RtFloat deltau = (RtFloat)1.0/(RtFloat)(tessU);
+	RtFloat deltav = (RtFloat)1.0/(RtFloat)(tessV);
+	
+	RtFloat u, v;
+	IndexType ui, vi, ei, idx;
+	IndexType startPos, endPos;
+
+	for ( v = (RtFloat)0.0, vi = 0; vi < tessV+1; ++vi, v += deltav ) {
+		if ( v > 1.0 || vi == tessV ) {
+			v = 1.0;
+		}
+		startPos = vi * (tessU + 1) * elemSize;
+		endPos   = startPos + tessU * elemSize;
+		for ( ei = 0; ei < elemSize; ++ei ) {
+			retvals[startPos+ei] = lerp(v, vals[cornerIdx[0]*elemSize+ei], vals[cornerIdx[2]*elemSize+ei]);
+		}
+		for ( ei = 0; ei < elemSize; ++ei ) {
+			retvals[endPos+ei]   = lerp(v, vals[cornerIdx[1]*elemSize+ei], vals[cornerIdx[3]*elemSize+ei]);
+		}
+		idx = startPos+elemSize;
+		for ( u = deltau, ui = 1; ui < tessU; ++ui, u += deltau ) {
+			if ( u > 1.0 ) {
+				u = 1.0;
+			}
+			for ( ei = 0; ei < elemSize; ++ei, ++idx ) {
+				retvals[idx] = lerp(u, retvals[startPos+ei], retvals[endPos+ei]);
+			}
+		}
+	}
+
+	return true;
+}

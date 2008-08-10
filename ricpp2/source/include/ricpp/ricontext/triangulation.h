@@ -58,6 +58,8 @@ namespace RiCPP {
 
 	class CTesselator {
 		std::list<CSurface *> m_surfaces;
+	protected:
+		virtual const CVarParamRManInterfaceCall &obj() const = 0;
 	public:
 		CTesselator();
 		virtual ~CTesselator();
@@ -80,6 +82,8 @@ namespace RiCPP {
 	
 	class CPolygonTriangulator : public CBasePolygonTriangulator {
 		CRiPolygon m_obj;
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CPolygonTriangulator(const CRiPolygon &obj) : m_obj(obj)  {}
 		CSurface *triangulate();
@@ -87,6 +91,8 @@ namespace RiCPP {
 
 	class CPointsPolygonsTriangulator : public CBasePolygonTriangulator {
 		CRiPointsPolygons m_obj;
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CPointsPolygonsTriangulator(const CRiPointsPolygons &obj) : m_obj(obj)  {}
 		CSurface *triangulate();
@@ -95,6 +101,8 @@ namespace RiCPP {
 	class CGeneralPolygonTriangulator : public CBasePolygonTriangulator {
 		CRiGeneralPolygon m_obj;
 		const CTriangulatedPolygon *m_tpPtr;
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CGeneralPolygonTriangulator(const CRiGeneralPolygon &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
 		{
@@ -106,6 +114,8 @@ namespace RiCPP {
 	class CPointsGeneralPolygonsTriangulator : public CBasePolygonTriangulator {
 		CRiPointsGeneralPolygons m_obj;
 		const std::vector<CTriangulatedPolygon> *m_tpPtr;
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CPointsGeneralPolygonsTriangulator(const CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
 		{
@@ -122,6 +132,8 @@ namespace RiCPP {
 	}; // CParametricTriangulator
 
 	class CQuadricTriangulator : public CParametricTriangulator {
+	private:
+		void insertParams(RtInt tessU, RtInt tessV, CFace &f);
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
 	public:
@@ -132,6 +144,7 @@ namespace RiCPP {
 		CRiCone m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CConeTriangulator(const CRiCone &obj) : m_obj(obj) {}
 	}; // CConeTriangulator
@@ -140,6 +153,7 @@ namespace RiCPP {
 		CRiCylinder m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CCylinderTriangulator(const CRiCylinder &obj) : m_obj(obj) {}
 	}; // CCylinderTriangulator
@@ -148,6 +162,7 @@ namespace RiCPP {
 		CRiDisk m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CDiskTriangulator(const CRiDisk &obj) : m_obj(obj) {}
 	}; // CDiskTriangulator
@@ -156,6 +171,7 @@ namespace RiCPP {
 		CRiHyperboloid m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CHyperboloidTriangulator(const CRiHyperboloid &obj) : m_obj(obj) {}
 	}; // CHyperboloidTriangulator
@@ -164,6 +180,7 @@ namespace RiCPP {
 		CRiParaboloid m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CParaboloidTriangulator(const CRiParaboloid &obj) : m_obj(obj) {}
 	}; // CParaboloidTriangulator
@@ -172,6 +189,7 @@ namespace RiCPP {
 		CRiSphere m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CSphereTriangulator(const CRiSphere &obj) : m_obj(obj) {}
 	}; // CSphereTriangulator
@@ -180,6 +198,7 @@ namespace RiCPP {
 		CRiTorus m_obj;
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CTorusTriangulator(const CRiTorus &obj) : m_obj(obj) {}
 	}; // CTorusTriangulator

@@ -313,10 +313,20 @@ RtInt COptions::xResolution() const
 	if ( m_formatCalled )
 		return m_xResolution;
 
+	// Commented out to not let origin influence the resolution,
+	// see also yResolution
+	/*
 	const CDisplayDescr *d = primaryDisplay();
-	if ( d )
-			return d->xres() - d->originX();
-
+	if ( d ) {
+			RtInt xres = d->xres() - d->originX();
+		    return xres > 0 ? xres : 0;
+	}
+	*/
+	
+	const CDisplayDescr *d = primaryDisplay();
+	if ( d ) {
+		return d->xres();
+	}
 	return m_xResolution;
 }
 
@@ -325,10 +335,20 @@ RtInt COptions::yResolution() const
 	if ( m_formatCalled )
 		return m_yResolution;
 	
+	// Commented out to not let origin influence the resulution,
+	// see also xResolution
+	/*
+	 const CDisplayDescr *d = primaryDisplay();
+	if ( d ) {
+		RtInt yres = d->yres() - d->originY();
+		return yres > 0 ? yres : 0;
+	}
+	*/
+	
 	const CDisplayDescr *d = primaryDisplay();
-	if ( d )
-		return d->yres() - d->originY();
-
+	if ( d ) {
+		return d->yres();
+	}
 	return m_yResolution;
 }
 

@@ -473,7 +473,7 @@ void CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
 		return;
 	
 	const std::vector<RtFloat> &vals = floats();
-	IndexType sz = vals.size();
+	IndexType sz = static_cast<IndexType>(vals.size());
 	assert ( sz > cornerIdx[0]*elemSize && sz > cornerIdx[1]*elemSize && sz > cornerIdx[2]*elemSize && sz > cornerIdx[3]*elemSize );
 	if ( !(sz > cornerIdx[0]*elemSize && sz > cornerIdx[1]*elemSize && sz > cornerIdx[2]*elemSize && sz > cornerIdx[3]*elemSize) )
 		return;

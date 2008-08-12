@@ -242,7 +242,7 @@ void CFace::buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH)
 		}
 	}
 	m_sizes.resize(1);
-	m_sizes[0] = m_indices.size();
+	m_sizes[0] = static_cast<IndexType>(m_indices.size());
 }
 
 void CFace::buildStripIndices(IndexType tessU, IndexType tessV, bool isLH)
@@ -298,7 +298,7 @@ bool CFace::bilinearBlend(
 	IndexType elemSize = source.declaration().elemSize();
 	const std::vector<RtFloat> &vals = source.floats();
 	
-	IndexType sz = vals.size()/elemSize;
+	IndexType sz = static_cast<IndexType>(vals.size()/elemSize);
 	if ( sz <= cornerIdx[0] || sz <= cornerIdx[1] || sz <= cornerIdx[2] || sz <= cornerIdx[3] ) {
 		return false;
 	}

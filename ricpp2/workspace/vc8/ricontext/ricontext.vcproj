@@ -338,7 +338,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\surface.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\transformation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\ricontext\triangulation.cpp"
 				>
 			</File>
 		</Filter>
@@ -468,7 +476,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\surface.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\transformation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\triangulation.h"
 				>
 			</File>
 		</Filter>

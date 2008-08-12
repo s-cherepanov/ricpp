@@ -182,7 +182,7 @@ CSurface *CPolygonTriangulator::triangulate()
 	}
 	
 	f.sizes().resize(1);
-	f.sizes()[0] = strip.size();
+	f.sizes()[0] = static_cast<IndexType>(strip.size());
 	
 	if ( !f.floats(RI_N) ) {
 		// Add normals
@@ -221,7 +221,7 @@ CSurface *CPointsPolygonsTriangulator::triangulate()
 		
 		insertParameters(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
 		f.sizes().resize(1);
-		f.sizes()[0] = strip.size();	
+		f.sizes()[0] = static_cast<IndexType>(strip.size());
 		
 		if ( !f.floats(RI_N) ) {
 			// Add normals
@@ -259,7 +259,7 @@ CSurface *CGeneralPolygonTriangulator::triangulate()
 	}
 	
 	f.sizes().resize(1);
-	f.sizes()[0] = strip.size();
+	f.sizes()[0] = static_cast<IndexType>(strip.size());
 	
 	if ( !f.floats(RI_N) ) {
 		// Add normals
@@ -314,14 +314,14 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate()
 		insertParameters(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
 
 		f.sizes().resize(1);
-		f.sizes()[0] = strip.size();
+		f.sizes()[0] = static_cast<IndexType>(strip.size());
 		
 		if ( !f.floats(RI_N) ) {
 			// Add normals
 		}
 
 		// Next polygon (faceIdx)
-		offs += strip.size();
+		offs += static_cast<IndexType>(strip.size());
 	}
 	
 	return surf;
@@ -379,7 +379,7 @@ static void initVars(
 	retVals.deltaU = 0;
 	retVals.deltaV = 0;
 	
-	retVals.flipNormal = equalOrientations ? 1.0 : -1.0;
+	retVals.flipNormal = equalOrientations ? (RtFloat)1.0 : (RtFloat)-1.0;
 	// flipNormal = 1.0;
 	
 	for ( int i = 0; i < 2; ++i ) {
@@ -416,7 +416,7 @@ static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloa
 	std::vector<RtFloat> unitcircle;
 	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
 	
-	RtFloat dz = getDelta(0, height, var.tessV);
+	RtFloat dz = getDelta(0, height, static_cast<RtFloat>(var.tessV));
 	
 	RtFloat u, v, r, z;
 	RtFloat n[3];
@@ -667,7 +667,7 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	IndexType puidx=0;
 	IndexType pidx=0;
 	
-	RtFloat dz = getDeltaNotZero(zmin, zmax, var.tessV);
+	RtFloat dz = getDeltaNotZero(zmin, zmax, static_cast<RtFloat>(var.tessV));
 	
 	for ( vverts = var.tessV+1, v = 0.0, z = zmin;
 		  vverts > 0;
@@ -804,7 +804,7 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 	RtFloat ntemp[3];
 	RtFloat m = zmax/(rmax*rmax); // 2D: f(x) = mx**2; F(x)=2mx
 	
-	RtFloat dz = getDeltaNotZero(zmin, zmax, var.tessV);
+	RtFloat dz = getDeltaNotZero(zmin, zmax, static_cast<RtFloat>(var.tessV));
 	
 	IndexType uverts;
 	IndexType vverts = var.tessV+1;

@@ -167,7 +167,7 @@ RtFloat CBaseRenderer::opacityToAlpha(const std::vector<RtFloat> &opacity) const
 	if ( opacity.size() <= 0 ) {
 		return 1.0;
 	}
-	return opacityToAlpha(opacity.size(),  &opacity[0]);
+	return opacityToAlpha(static_cast<IndexType>(opacity.size()),  &opacity[0]);
 }
 
 void CBaseRenderer::getColor3f(const CColorDescr &c, RtFloat gain, RtFloat gamma, const RtFloat *fromC, RtFloat toC[3]) const
@@ -193,7 +193,7 @@ void CBaseRenderer::getColor3f(const CColorDescr &c, RtFloat gain, RtFloat gamma
 void CBaseRenderer::getCs(const CColorDescr &c, RtFloat gain, RtFloat gamma, const std::vector<RtFloat> &cs, std::vector<RtFloat> &retVal) const
 {
 	retVal.clear();
-	IndexType size = cs.size() / c.colorSamples();
+	IndexType size = static_cast<IndexType>(cs.size() / c.colorSamples());
 	if ( size <= 0 )
 		return;
 	
@@ -207,7 +207,7 @@ void CBaseRenderer::getCs(const CColorDescr &c, RtFloat gain, RtFloat gamma, con
 void CBaseRenderer::getAlpha(const CColorDescr &c, const std::vector<RtFloat> &os, std::vector<RtFloat> &retVal) const
 {
 	retVal.clear();
-	IndexType size = os.size() / c.colorSamples();
+	IndexType size = static_cast<IndexType>(os.size() / c.colorSamples());
 	if ( size <= 0 )
 		return;
 	

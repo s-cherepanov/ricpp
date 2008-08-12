@@ -375,7 +375,7 @@ public:
 	 * @param  c   m_nColorSamples color samples of a single color value.
 	 * @retval rgb RGB triple calculated by color transformation.
 	 */
-	RtVoid nToRGB(RtColor c, RtFloat rgb[3]) const;
+	RtVoid nToRGB(const RtFloat *c, RtFloat rgb[3]) const;
 	
 	/** @brief Transforms @a n color values to their RGB values.
 	 *
@@ -383,14 +383,14 @@ public:
 	 * @param  c   @a n times m_nColorSamples color samples of a @a n color values.
 	 * @retval rgb @a n RGB triples calculated by color transformation.
 	 */
-	RtVoid nToRGB(RtInt n, RtFloat *c, RtFloat rgb[][3]) const;
+	RtVoid nToRGB(RtInt n, const RtFloat *c, RtFloat rgb[][3]) const;
 	
 	/** @brief Transforms a single RGB triple to a color value.
 	 *
 	 * @param  rgb RGB triple calculated by color transformation.
 	 * @retval c   m_nColorSamples color samples of a single color value.
 	 */
-	RtVoid RGBToN(const RtFloat rgb[3], RtColor c) const;
+	RtVoid RGBToN(const RtFloat rgb[3], RtFloat *c) const;
 
 	/** @brief Transforms @a n RGB triples to the color values.
 	 *

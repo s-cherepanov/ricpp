@@ -45,17 +45,17 @@ void CFace::insertConst(const CParameter &p)
 	switch ( decl->basicType() ) {
 		case BASICTYPE_INTEGER: {
 			TemplPrimVar<RtInt> &var = reserveInts(*decl);
-			var.value() = p.ints();
+			var.values() = p.ints();
 			break;
 		}
 		case BASICTYPE_FLOAT: {
 			TemplPrimVar<RtFloat> &var = reserveFloats(*decl);
-			var.value() = p.floats();
+			var.values() = p.floats();
 			break;
 		}
 		case BASICTYPE_STRING: {
 			TemplPrimVar<std::string> &var = reserveStrings(*decl);
-			var.value() = p.strings();
+			var.values() = p.strings();
 			break;
 		}
 		default:
@@ -72,22 +72,22 @@ void CFace::insertUniform(const CParameter &p, RtInt face)
 	switch ( decl->basicType() ) {
 		case BASICTYPE_INTEGER: {
 			TemplPrimVar<RtInt> &var = reserveInts(*decl);
-			var.value().resize(decl->elemSize());
-			std::vector<RtInt>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize());
+			std::vector<RtInt>::iterator iter = var.values().begin();
 			p.extract(face, iter);
 			break;
 		}
 		case BASICTYPE_FLOAT: {
 			TemplPrimVar<RtFloat> &var = reserveFloats(*decl);
-			var.value().resize(decl->elemSize());
-			std::vector<RtFloat>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize());
+			std::vector<RtFloat>::iterator iter = var.values().begin();
 			p.extract(face, iter);
 			break;
 		}
 		case BASICTYPE_STRING: {
 			TemplPrimVar<std::string> &var = reserveStrings(*decl);
-			var.value().resize(decl->elemSize());
-			std::vector<std::string>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize());
+			std::vector<std::string>::iterator iter = var.values().begin();
 			p.extract(face, iter);
 			break;
 		}
@@ -105,8 +105,8 @@ void CFace::insertVarying(const CParameter &p, RtInt nverts, const RtInt *verts)
 	switch ( decl->basicType() ) {
 		case BASICTYPE_INTEGER: {
 			TemplPrimVar<RtInt> &var = reserveInts(*decl);
-			var.value().resize(decl->elemSize()*nverts);
-			std::vector<RtInt>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize()*nverts);
+			std::vector<RtInt>::iterator iter = var.values().begin();
 			for ( RtInt i = 0; i < nverts; ++i ) {
 				p.extract(verts[i], iter);
 			}
@@ -114,8 +114,8 @@ void CFace::insertVarying(const CParameter &p, RtInt nverts, const RtInt *verts)
 		}
 		case BASICTYPE_FLOAT: {
 			TemplPrimVar<RtFloat> &var = reserveFloats(*decl);
-			var.value().resize(decl->elemSize()*nverts);
-			std::vector<RtFloat>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize()*nverts);
+			std::vector<RtFloat>::iterator iter = var.values().begin();
 			for ( RtInt i = 0; i < nverts; ++i ) {
 				p.extract(verts[i], iter);
 			}
@@ -123,8 +123,8 @@ void CFace::insertVarying(const CParameter &p, RtInt nverts, const RtInt *verts)
 		}
 		case BASICTYPE_STRING: {
 			TemplPrimVar<std::string> &var = reserveStrings(*decl);
-			var.value().resize(decl->elemSize()*nverts);
-			std::vector<std::string>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize()*nverts);
+			std::vector<std::string>::iterator iter = var.values().begin();
 			for ( RtInt i = 0; i < nverts; ++i ) {
 				p.extract(verts[i], iter);
 			}
@@ -144,8 +144,8 @@ void CFace::insertFaceVarying(const CParameter &p, RtInt nverts, RtInt offs)
 	switch ( decl->basicType() ) {
 		case BASICTYPE_INTEGER: {
 			TemplPrimVar<RtInt> &var = reserveInts(*decl);
-			var.value().resize(decl->elemSize()*nverts);
-			std::vector<RtInt>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize()*nverts);
+			std::vector<RtInt>::iterator iter = var.values().begin();
 			for ( RtInt i = 0; i < nverts; ++i ) {
 				p.extract(offs+i, iter);
 			}
@@ -153,8 +153,8 @@ void CFace::insertFaceVarying(const CParameter &p, RtInt nverts, RtInt offs)
 		}
 		case BASICTYPE_FLOAT: {
 			TemplPrimVar<RtFloat> &var = reserveFloats(*decl);
-			var.value().resize(decl->elemSize()*nverts);
-			std::vector<RtFloat>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize()*nverts);
+			std::vector<RtFloat>::iterator iter = var.values().begin();
 			for ( RtInt i = 0; i < nverts; ++i ) {
 				p.extract(offs+i, iter);
 			}
@@ -162,8 +162,8 @@ void CFace::insertFaceVarying(const CParameter &p, RtInt nverts, RtInt offs)
 		}
 		case BASICTYPE_STRING: {
 			TemplPrimVar<std::string> &var = reserveStrings(*decl);
-			var.value().resize(decl->elemSize()*nverts);
-			std::vector<std::string>::iterator iter = var.value().begin();
+			var.values().resize(decl->elemSize()*nverts);
+			std::vector<std::string>::iterator iter = var.values().begin();
 			for ( RtInt i = 0; i < nverts; ++i ) {
 				p.extract(offs+i, iter);
 			}
@@ -177,8 +177,8 @@ void CFace::insertFaceVarying(const CParameter &p, RtInt nverts, RtInt offs)
 TemplPrimVar<RtFloat> &CFace::insertFloatVar(const CDeclaration &decl, IndexType nVar)
 {
 	TemplPrimVar<RtFloat> &f = m_floats[decl.token()];
-	f.decl(&decl);
-	f.value().resize(nVar * decl.elemSize());
+	f.declarationPtr(&decl);
+	f.values().resize(nVar * decl.elemSize());
 	return f;
 }
 
@@ -287,7 +287,9 @@ bool CFace::bilinearBlend(
 	IndexType tessU,
 	IndexType tessV)
 {
-	assert ( source.basicType() == BASICTYPE_FLOAT );
+	if ( source.basicType() != BASICTYPE_FLOAT ) {
+		return false;
+	}
 	
 	if ( tessU < 1 || tessV < 1 ) {
 		return false;
@@ -296,43 +298,13 @@ bool CFace::bilinearBlend(
 	IndexType elemSize = source.declaration().elemSize();
 	const std::vector<RtFloat> &vals = source.floats();
 	
-	// For bilinear blending one needs 4 elems.
 	IndexType sz = vals.size()/elemSize;
-	if ( sz <= cornerIdx[0] || sz <= cornerIdx[1] || sz <= cornerIdx[2] || sz <= cornerIdx[3] )
+	if ( sz <= cornerIdx[0] || sz <= cornerIdx[1] || sz <= cornerIdx[2] || sz <= cornerIdx[3] ) {
 		return false;
-	
-	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).value();
-	retvals.resize((tessU+1)*(tessV+1)*elemSize);
-	
-	RtFloat deltau = (RtFloat)1.0/(RtFloat)(tessU);
-	RtFloat deltav = (RtFloat)1.0/(RtFloat)(tessV);
-	
-	RtFloat u, v;
-	IndexType ui, vi, ei, idx;
-	IndexType startPos, endPos;
-
-	for ( v = (RtFloat)0.0, vi = 0; vi < tessV+1; ++vi, v += deltav ) {
-		if ( v > 1.0 || vi == tessV ) {
-			v = 1.0;
-		}
-		startPos = vi * (tessU + 1) * elemSize;
-		endPos   = startPos + tessU * elemSize;
-		for ( ei = 0; ei < elemSize; ++ei ) {
-			retvals[startPos+ei] = lerp(v, vals[cornerIdx[0]*elemSize+ei], vals[cornerIdx[2]*elemSize+ei]);
-		}
-		for ( ei = 0; ei < elemSize; ++ei ) {
-			retvals[endPos+ei]   = lerp(v, vals[cornerIdx[1]*elemSize+ei], vals[cornerIdx[3]*elemSize+ei]);
-		}
-		idx = startPos+elemSize;
-		for ( u = deltau, ui = 1; ui < tessU; ++ui, u += deltau ) {
-			if ( u > 1.0 ) {
-				u = 1.0;
-			}
-			for ( ei = 0; ei < elemSize; ++ei, ++idx ) {
-				retvals[idx] = lerp(u, retvals[startPos+ei], retvals[endPos+ei]);
-			}
-		}
 	}
-
+	
+	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
+	source.bilinearBlend(cornerIdx, tessU, tessV, retvals);
+	
 	return true;
 }

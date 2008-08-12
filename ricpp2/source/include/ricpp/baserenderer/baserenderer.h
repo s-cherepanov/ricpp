@@ -437,7 +437,7 @@ protected:
 	/** @brief Hides (renders) a surface, calls hide for each face
 	 *  @param s Surface
 	 */
-	virtual void hide(const CSurface *s);
+	virtual void hideSurface(const CSurface *s);
 
 	const CAttributes &attributes() const;
 	CAttributes &attributes();
@@ -482,10 +482,20 @@ public:
 	 */
 	virtual ~CBaseRenderer();
 
-	bool isOpaque(const std::vector<RtFloat> &opacity);
-	RtFloat opacityToAlpha(const std::vector<RtFloat> &opacity);	
-	void getColor3f(const std::vector<RtFloat> &fromC, RtFloat toC[3], const CColorDescr &c, RtFloat gain, RtFloat gamma);
-
+	/** @name Color and opacity
+	 *  @{
+	 * 
+	 */
+	bool isOpaque(const std::vector<RtFloat> &opacity) const;
+	RtFloat opacityToAlpha(IndexType nSamples, const RtFloat *opacity) const;
+	RtFloat opacityToAlpha(const std::vector<RtFloat> &opacity) const;	
+	void getColor3f(const CColorDescr &c, RtFloat gain, RtFloat gamma, const RtFloat *fromC, RtFloat toC[3]) const;
+	void getColor3f(const CColorDescr &c, RtFloat gain, RtFloat gamma, const std::vector<RtFloat> &fromC, RtFloat toC[3]) const;
+	void getCs(const CColorDescr &c, RtFloat gain, RtFloat gamma, const std::vector<RtFloat> &cs, std::vector<RtFloat> &retVal) const;
+	void getAlpha(const CColorDescr &c, const std::vector<RtFloat> &os, std::vector<RtFloat> &retVal) const;
+	/** @}
+	 */
+	
 	virtual void registerRibParserCallback(IRibParserCallback &cb);
 	inline virtual IRi *frontend() { return m_parserCallback ? &m_parserCallback->frontend() : 0; }
 	inline virtual CBackBufferProtocolHandlers *protocolHandlers() { return m_parserCallback ? &m_parserCallback->protocolHandlers() : 0; }

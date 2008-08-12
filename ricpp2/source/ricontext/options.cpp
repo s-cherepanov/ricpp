@@ -561,7 +561,7 @@ RtVoid COptions::getCropWindow(RtInt &xmin, RtInt &xmax, RtInt &ymin, RtInt &yma
 
 void COptions::initProjection()
 {
-	m_projectionParams.clear();
+	m_projectionParams.reset(CParameterClasses());
 	m_projectionCalled = false;
 	m_projectionName = RI_ORTHOGRAPHIC;
 	m_FOVSet = false;
@@ -798,7 +798,7 @@ RtVoid COptions::colorExposure(std::vector<RtFloat> &colors) const
 void COptions::initImager()
 {
 	m_imagerName = RI_NULL;
-	m_imagerParams.clear();
+	m_imagerParams.reset(CParameterClasses());
 }
 
 RtVoid COptions::imager(RtToken name, const CParameterList &params)
@@ -963,7 +963,7 @@ const CDisplayDescr *COptions::primaryDisplay() const
 void COptions::initHider()
 {
 	m_hiderType = RI_HIDDEN;
-	m_hiderParams.clear();
+	m_hiderParams.reset(CParameterClasses());
 }
 
 RtVoid COptions::hider(RtToken type, const CParameterList &params)

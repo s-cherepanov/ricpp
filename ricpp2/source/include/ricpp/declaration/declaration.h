@@ -48,7 +48,8 @@ namespace RiCPP {
  * owned by the state of the current rendering context.
  * If the declaration has a color type, the number of elements @c m_typesize is equal to the
  * size, valid at the time the declaration is used. If the color size changes, a new declaration is
- * created, if a parameter of this declaration is used to track the number of color components.
+ * created, if a new parameter of this declaration is created. A pointer to the old declaration
+ * will still be valid, this is used to track the number of color components.
  * Declarations that are not inline, are not destroyed until the rendering context ends.
  * @see CDeclarationDictionary, @subpage page_decl
  */
@@ -322,15 +323,16 @@ public:
 	 */
 	const char *getInlineString(std::string &declaration) const;
 
-	/** @brief Gets the string of the declaration.
+	/*  @brief Gets the string of the declaration.
 	 *
 	 *  The string is rebuild by the using information used stored
 	 *  in this object.
 	 *
 	 *  @retval declaration String buffer for the declaration.
 	 *  @return Declaration string (c-string of declaration).
+	 *
+		const char *getDeclString(std::string &declaration) const;
 	 */
-	const char *getDeclString(std::string &declaration) const;
 	
 	/** @brief Query if variable matches declaration
 	 *

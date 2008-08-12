@@ -328,7 +328,7 @@ const char *CDeclaration::getInlineString(std::string &declaration) const
 	return declaration.c_str();
 }
 
-
+/*
 const char *CDeclaration::getDeclString(std::string &declaration) const
 {
 	if ( isInline() ) {
@@ -337,6 +337,7 @@ const char *CDeclaration::getDeclString(std::string &declaration) const
 	declaration = m_qualifiedName;
 	return declaration.c_str();
 }
+*/
 
 bool CDeclaration::matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar) const
 {

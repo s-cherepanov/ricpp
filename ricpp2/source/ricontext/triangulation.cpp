@@ -404,8 +404,8 @@ static void initVars(
 	
 	retVals.nVars = ((IndexType)retVals.tessU+1)*((IndexType)retVals.tessV+1);
 	
-	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, retVals.nVars).value();
-	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, retVals.nVars).value();
+	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, retVals.nVars).values();
+	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, retVals.nVars).values();
 	
 	retVals.positions = &p;
 	retVals.normals = &n;
@@ -578,20 +578,23 @@ CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const C
 void CQuadricTriangulator::insertParams(RtInt tessU, RtInt tessV, CFace &f)
 {
 	static const IndexType idx[4] = {0, 1, 2, 3};
+
 	CParameterList::const_iterator iter = obj().parameters().begin();
 	for ( ; iter != obj().parameters().end(); iter++ ) {
 		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
 			continue;
 		}
-		if ( (*iter).declaration().basicType() != BASICTYPE_FLOAT ) {
-			continue;
-		}
 		switch ( (*iter).declaration().storageClass() ) {
+			case CLASS_CONSTANT:
+			case CLASS_UNIFORM:
+				break;
 			case CLASS_VARYING:
 			case CLASS_VERTEX:
 			case CLASS_FACEVERTEX:
 			case CLASS_FACEVARYING:
-				f.bilinearBlend(*iter, idx, tessU, tessV);
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, idx, tessU, tessV);
+				}
 				break;
 			default:
 				break;

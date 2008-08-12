@@ -493,7 +493,7 @@ RtVoid CColorDescr::colorSamples(RtInt nColorSamples, const RtFloat nRGB[], cons
 }
 
 
-RtVoid CColorDescr::nToRGB(RtColor c, RtFloat rgb[3]) const
+RtVoid CColorDescr::nToRGB(const RtFloat *c, RtFloat rgb[3]) const
 {
 	if ( m_isIdentity ) {
 		rgb[0] = c[0];
@@ -521,7 +521,7 @@ RtVoid CColorDescr::nToRGB(RtColor c, RtFloat rgb[3]) const
 }
 
 
-RtVoid CColorDescr::nToRGB(RtInt n, RtFloat *c, RtFloat rgb[][3]) const
+RtVoid CColorDescr::nToRGB(RtInt n, const RtFloat *c, RtFloat rgb[][3]) const
 {
 	if ( !c )
 		return;
@@ -534,7 +534,7 @@ RtVoid CColorDescr::nToRGB(RtInt n, RtFloat *c, RtFloat rgb[][3]) const
 }
 
 
-RtVoid CColorDescr::RGBToN(const RtFloat rgb[3], RtColor c) const
+RtVoid CColorDescr::RGBToN(const RtFloat rgb[3], RtFloat *c) const
 {
 	if ( m_isIdentity ) {
 		c[0] = rgb[0];

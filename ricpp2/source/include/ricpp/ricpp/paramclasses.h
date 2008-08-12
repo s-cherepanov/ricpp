@@ -567,9 +567,9 @@ private:
 	RtInt m_faceCorners;   ///< Number of corners per face in primitive (facevarying class).
 
 public:
-	/** @brief Standard constructor sets all to zero.
+	/** @brief Sets all to one.
 	 */
-	inline CValueCounts()
+	inline void clear()
 	{
 		m_vertices = 1;
 		m_corners = 1;
@@ -578,6 +578,10 @@ public:
 		m_faceCorners = 1;
 	}
 
+	/** @brief Standard constructor sets all to one.
+	 */
+	inline CValueCounts() { clear(); }
+	
 	/** @brief Constructor, sets the member variables to the values of the corresponding parameters.
 	 * @param theVertices       Number of vertices (used by vertex class).
 	 * @param theCorners        Number of corners (used by varying class).
@@ -611,31 +615,21 @@ public:
 	{
 		*this = pc;
 	}
-
+	
 	/** @brief Assignment.
 	 * @param aCount Instance to assign.
 	 */
-	inline CValueCounts &operator=(const CValueCounts &aCount)
-	{
-		if ( this == &aCount )
-			return *this;
-
-		m_vertices = aCount.m_vertices;
-		m_corners = aCount.m_corners;
-		m_facets = aCount.m_facets;
-		m_faceVertices = aCount.m_faceVertices;
-		m_faceCorners = aCount.m_faceCorners;
-
-		return *this;
-	}
-
 	inline CValueCounts &operator=(const CParameterClasses &pc)
 	{
+		if ( this == &pc )
+			return *this;
+
 		m_vertices = pc.vertices();
 		m_corners = pc.corners();
 		m_facets = pc.facets();
 		m_faceVertices = pc.faceVertices();
 		m_faceCorners = pc.faceCorners();
+		
 		return *this;
 	}
 
@@ -690,6 +684,16 @@ public:
 	inline virtual void faceVertices(RtInt theFaceVertices) { m_faceVertices = theFaceVertices; }
 }; // CValueCounts
 
+	
+	inline bool operator==(const CParameterClasses &lhv, const CParameterClasses &rhv)
+	{
+		return
+		lhv.vertices()     == rhv.vertices()     &&
+		lhv.corners()      == rhv.corners()      &&
+		lhv.facets()       == rhv.facets()       &&
+		lhv.faceVertices() == rhv.faceVertices() &&
+		lhv.faceCorners()  == rhv.faceCorners()  ;
+	}
 } // namespace RiCPP
 
 #endif // _RICPP_RICPP_PARAMCLASSES_H

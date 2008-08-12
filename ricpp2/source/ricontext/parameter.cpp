@@ -280,7 +280,7 @@ RtPointer CParameter::valptr()
 	}
 }
 
-unsigned long CParameter::size()
+IndexType CParameter::vectorSize() const
 {
 	switch ( basicType() ) {
 		case BASICTYPE_INTEGER:
@@ -452,6 +452,65 @@ void CParameter::extract(IndexType from, IndexType to, std::vector<RtString>::it
 	}
 }
 
+void CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
+							   IndexType tessU,
+							   IndexType tessV,
+							   std::vector<RtFloat> &retvals) const
+{
+	retvals.clear();
+
+	assert ( basicType() == BASICTYPE_FLOAT );
+	if ( basicType() != BASICTYPE_FLOAT )
+		return;
+	
+	assert ( tessU > 0 && tessV > 0 );
+	if ( tessU <= 0 || tessV <= 0 )
+		return;
+	
+	IndexType elemSize = declaration().elemSize();
+	assert( elemSize > 0 );
+	if ( elemSize <= 0 )
+		return;
+	
+	const std::vector<RtFloat> &vals = floats();
+	IndexType sz = vals.size();
+	assert ( sz > cornerIdx[0]*elemSize && sz > cornerIdx[1]*elemSize && sz > cornerIdx[2]*elemSize && sz > cornerIdx[3]*elemSize );
+	if ( !(sz > cornerIdx[0]*elemSize && sz > cornerIdx[1]*elemSize && sz > cornerIdx[2]*elemSize && sz > cornerIdx[3]*elemSize) )
+		return;
+	
+	retvals.resize((tessU+1)*(tessV+1)*elemSize);
+	
+	RtFloat deltau = (RtFloat)(1.0/(RtFloat)(tessU));
+	RtFloat deltav = (RtFloat)(1.0/(RtFloat)(tessV));
+	
+	RtFloat u, v;
+	IndexType ui, vi, ei, idx;
+	IndexType startPos, endPos;
+	
+	for ( v = (RtFloat)0.0, vi = 0; vi < tessV+1; ++vi, v += deltav ) {
+		if ( v > 1.0 || vi == tessV ) {
+			v = 1.0;
+		}
+		startPos = vi * (tessU + 1) * elemSize;
+		endPos   = startPos + tessU * elemSize;
+		assert(startPos != endPos);
+		for ( ei = 0; ei < elemSize; ++ei ) {
+			retvals[startPos+ei] = lerp(v, vals[cornerIdx[0]*elemSize+ei], vals[cornerIdx[2]*elemSize+ei]);
+		}
+		for ( ei = 0; ei < elemSize; ++ei ) {
+			retvals[endPos+ei]   = lerp(v, vals[cornerIdx[1]*elemSize+ei], vals[cornerIdx[3]*elemSize+ei]);
+		}
+		idx = startPos+elemSize;
+		for ( u = deltau, ui = 1; ui < tessU; ++ui, u += deltau ) {
+			if ( u > 1.0 ) {
+				u = 1.0;
+			}
+			for ( ei = 0; ei < elemSize; ++ei, ++idx ) {
+				retvals[idx] = lerp(u, retvals[startPos+ei], retvals[endPos+ei]);
+			}
+		}
+	}
+}
 
 // -----------------------------------------------------------------------------
 
@@ -491,8 +550,9 @@ void CParameterList::rebuild()
 }
 
 
-void CParameterList::clear()
+void CParameterList::reset(const CParameterClasses &counts)
 {
+	m_valueCounts = counts;
 	m_params.resize(0);
 	m_paramMap.clear();
 	m_tokenPtr.resize(0);
@@ -502,6 +562,7 @@ void CParameterList::clear()
 
 void CParameterList::assign(const CParameterList &params)
 {
+	reset(params.m_valueCounts);
 	add(params);
 }
 
@@ -510,7 +571,6 @@ CParameterList &CParameterList::operator=(const CParameterList &params)
 {
 	if ( this == &params )
 		return *this;
-	clear();
 	assign(params);
 	return *this;
 }
@@ -523,14 +583,13 @@ void CParameterList::set(
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
 {
-	clear();
-	add(aQualifier, aTable, counts, dict, curColorDescr, n, tokens, params);
+	reset(counts);
+	add(aQualifier, aTable, dict, curColorDescr, n, tokens, params);
 }
 
 
 void CParameterList::add(
 	const char *aQualifier, const char *aTable, 
-	const CParameterClasses &counts,
 	CDeclarationDictionary &dict,
 	const CColorDescr &curColorDescr,
 	RtInt n, RtToken tokens[], RtPointer params[])
@@ -541,7 +600,7 @@ void CParameterList::add(
 			erase(param);
 		}
 		try {
-			m_params.push_back(CParameter(aQualifier, aTable, tokens[i], params[i], i, counts, dict, curColorDescr));
+			m_params.push_back(CParameter(aQualifier, aTable, tokens[i], params[i], i, m_valueCounts, dict, curColorDescr));
 			RtToken var = m_params.back().var(); // The unqualified variable name as key
 			assert(var);
 			if ( var )
@@ -561,6 +620,8 @@ void CParameterList::add(const CParameterList &params)
 {
 	if ( this == &params )
 		return;
+	
+	assert(m_valueCounts == params.m_valueCounts);
 
 	for (
 		const_iterator i = params.begin();
@@ -658,7 +719,7 @@ CParameterList &CParameterList::assignRemap(const CParameterList &params, CDecla
 	if ( this == &params )
 		return *this;
 	
-	clear();
+	reset(params.valueCounts());
 	
 	for (
 		 const_iterator i = params.begin();
@@ -681,6 +742,8 @@ CParameterList &CParameterList::assignRemap(const CParameterList &params, CDecla
 	
 	return *this;	
 }
+
+
 
 
 // ----------------------------------------------------------------------------

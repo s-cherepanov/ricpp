@@ -88,8 +88,7 @@ void COptionsBase::set(
 		m_paramMap[name] = pl;
 	}
 	dirty(true);
-	CValueCounts counts;
-	pl->add(RI_OPTION, name, counts, dict, m_curColorDesc, n, tokens, params);
+	pl->add(RI_OPTION, name, dict, m_curColorDesc, n, tokens, params);
 }
 
 

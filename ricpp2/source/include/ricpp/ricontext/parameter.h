@@ -51,9 +51,9 @@ namespace RiCPP {
 	 */
 	class CParameter {
 	private:
-		const CDeclaration *m_declaration; ///< Declaration (and name) of the parameter, possibly inline.
-		IndexType m_position;           ///< Original position within a parameter list.
-		std::string m_parameterName;       ///< Parametername as found in list
+		const CDeclaration *m_declaration;  ///< Declaration (and name) of the parameter, possibly inline.
+		IndexType m_position;               ///< Original position within a parameter list.
+		std::string m_parameterName;        ///< Parametername as found in list
 		
 		std::vector<RtInt> m_ints;          ///< Container for integer values.
 		std::vector<RtFloat> m_floats;      ///< Container for float values.
@@ -194,7 +194,25 @@ namespace RiCPP {
 		 */
 		CParameter &assignRemap(const CParameter &param, CDeclarationDictionary &newDict);
 
-		/** @brief Finds the declaration of a parameter.
+		/** @brief Gets a pointer to the declaration of the parameter.
+		 *
+		 *  @return Pointer to the declaration of the parameter.
+		 */
+		inline const CDeclaration *declarationPtr() const
+		{
+			return m_declaration;
+		}
+		
+		/** @brief Gets a reference of the declaration of the parameter.
+		 *
+		 *  Throws an ExceptRiCPPError if declaration is not set.
+		 *
+		 *  @return Reference of the declaration of the parameter.
+		 *  @throw ExceptRiCPPError
+		 */
+		const CDeclaration &declaration() const;
+		
+		/** @brief Finds the declaration of a parameter and sets the contents.
 		 *
 		 *  @param aQualifier Optional qualifier (token)
 		 *  @param aTable Optional tble name (token)
@@ -283,17 +301,19 @@ namespace RiCPP {
 			return m_parameterName.c_str();
 		}
 
-		/** @brief Gets the declaration as c-string.
+		/*  @brief Gets the declaration as c-string.
 		 *
 		 *  Inline declaration are given as complete declaration, normal
 		 *  declarations as name only.
 		 *
+		 *  @retVal decl Container for the string
 		 *  @return Declaration as C-string.
-		 */
-		inline const char *declString(std::string &decl) const
+		 *
+		inline const char *getDeclString(std::string &decl) const
 		{
-			return m_declaration ? m_declaration->getDeclString(decl) : RI_NULL;
+			return declarationPtr() ? declaration().getDeclString(decl) : RI_NULL;
 		}
+		 */
 
 		/** @brief Gets the token of the declaration.
 		 *
@@ -301,7 +321,7 @@ namespace RiCPP {
 		 */
 		inline RtToken token() const
 		{
-			return m_declaration ? m_declaration->token() : RI_NULL;
+			return declarationPtr() ? declaration().token() : RI_NULL;
 		}
 
 		/** @brief Gets the unqualified variable name token of the declaration.
@@ -310,7 +330,7 @@ namespace RiCPP {
 		 */
 		inline RtToken var() const
 		{
-			return m_declaration ? m_declaration->var() : RI_NULL;
+			return declarationPtr() ? declaration().var() : RI_NULL;
 		}
 
 		/** @brief Gets true if parameter was declared inline.
@@ -319,7 +339,7 @@ namespace RiCPP {
 		 */
 		inline bool isInline() const
 		{
-			return m_declaration ? m_declaration->isInline() : false;
+			return declarationPtr() ? declaration().isInline() : false;
 		}
 
 		/** @brief Query if variable matches declaration
@@ -330,7 +350,7 @@ namespace RiCPP {
 		 */
 		inline bool matches(EnumQualifiers aQualifier, RtToken aTable, RtToken aVar) const
 		{
-			return m_declaration ? m_declaration->matches(aQualifier, aTable, aVar) : false;
+			return declarationPtr() ? declaration().matches(aQualifier, aTable, aVar) : false;
 		}
 
 		/** @brief Query if variable matches declaration
@@ -341,7 +361,7 @@ namespace RiCPP {
 		 */
 		inline bool matches(RtToken aQualifierName, RtToken aTable, RtToken aVar) const
 		{
-			return m_declaration ? m_declaration->matches(aQualifierName, aTable, aVar) : false;
+			return declarationPtr() ? declaration().matches(aQualifierName, aTable, aVar) : false;
 		}
 
 		/** @brief Gets a pointer to the values.
@@ -354,8 +374,17 @@ namespace RiCPP {
 		 *
 		 *  @return Number of values (e.g. size of the vector containing the basic type)
 		 */
-		unsigned long size();
+		IndexType vectorSize() const;
 
+		/** @brief Gets the number of values (full type).
+		 *
+		 *  @return Number of values per position
+		 */
+		inline IndexType size() const
+		{
+			return declarationPtr() ? vectorSize() / declaration().elemSize() : 0;
+		}
+		
 		/** @brief Gets the basic type of the parameter.
 		 *
 		 *  E.g. float BASICTYPE_FLOAT is the basic type of point.
@@ -420,23 +449,10 @@ namespace RiCPP {
 		void extract(IndexType pos, std::vector<RtString>::iterator &result) const;
 		void extract(IndexType from, IndexType to, std::vector<RtString>::iterator &result) const;
 
-		/** @brief Gets a pointer to the declaration of the parameter.
-		 *
-		 *  @return Pointer to the declaration of the parameter.
-		 */
-		inline const CDeclaration *declarationPtr() const
-		{
-			return m_declaration;
-		}
-
-		/** @brief Gets a reference of the declaration of the parameter.
-		 *
-		 *  Throws an ExceptRiCPPError if declaration is not set.
-		 *
-		 *  @return Reference of the declaration of the parameter.
-		 *  @throw ExceptRiCPPError
-		 */
-		const CDeclaration &declaration() const;
+		void bilinearBlend(const IndexType (& cornerIdx)[4],
+						   IndexType tessU,
+						   IndexType tessV,
+						   std::vector<RtFloat> &retvals) const;
 	}; // CParameter
 
 
@@ -460,6 +476,8 @@ namespace RiCPP {
 		Map_type m_paramMap;               ///< Maps tokens to their parameters in m_params.
 		std::vector<RtToken> m_tokenPtr;   ///< Vector of the tokens for ri token/value parameters.
 		std::vector<RtPointer> m_paramPtr; ///< Pointer to the values for ri token/value parameters.
+		
+		CValueCounts m_valueCounts;        ///< Used to calculate the sizes of parameters
 
 		/** @brief Rebuilds the parameter pointer vectors m_tokenPtr and m_paramPtr from m_params.
 		 */
@@ -493,7 +511,7 @@ namespace RiCPP {
 			assignRemap(params, newDict);
 		}
 
-		/** Costructor, sets the contents of the list.
+		/** Constructor, sets the contents of the list.
 		 *
 		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
@@ -588,9 +606,9 @@ namespace RiCPP {
 			return m_params.size();
 		}
 
-		/** @brief Clears the contents of the parameter list.
+		/** @brief Resets the contents for a new parameter list.
 		 */
-		void clear();
+		void reset(const CParameterClasses &counts);
 
 		/** @brief Copies the parameters.
 		 *
@@ -614,7 +632,6 @@ namespace RiCPP {
 		 *
 		 *  @param aQualifier Optional qualifier
 		 *  @param aTable Optional tble name
-		 *  @param counts Counts for the parameters, driven by the class of a primary (e.g. varying).
 		 *  @param dict Dictionary with the declarations of the parameter types.
 		 *  @param curColorDescr Current color descriptor for "color" values.
 		 *  @param n Number of parameters.
@@ -623,7 +640,6 @@ namespace RiCPP {
 		 */
 		void add(
 			const char *aQualifier, const char *aTable, 
-			const CParameterClasses &counts,
 			CDeclarationDictionary &dict,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]);
@@ -672,6 +688,10 @@ namespace RiCPP {
 			return (p && p->basicType() == bt) ? p : 0;
 		}
 
+		/** @brief Can be used to calculate the sizes of the parameters
+		 */
+		inline const CParameterClasses &valueCounts() const { return m_valueCounts; }
+		
 		/** @brief Erases a specific parameter (token/value pair).
 		 *
 		 *  @param var Token to identify the parameter.

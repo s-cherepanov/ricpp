@@ -137,7 +137,8 @@ using namespace RiCPP;
 }
 
 
-bool CBaseRenderer::isOpaque(const std::vector<RtFloat> &opacity) {
+bool CBaseRenderer::isOpaque(const std::vector<RtFloat> &opacity) const
+{
 	for ( std::vector<RtFloat>::const_iterator i = opacity.begin(); i != opacity.end(); i++ ) {
 		if ( (*i) < 1.0 )
 			return false;
@@ -145,31 +146,77 @@ bool CBaseRenderer::isOpaque(const std::vector<RtFloat> &opacity) {
 	return false;
 }
 
-RtFloat CBaseRenderer::opacityToAlpha(const std::vector<RtFloat> &opacity) {
+
+RtFloat CBaseRenderer::opacityToAlpha(IndexType nSamples, const RtFloat *opacity) const
+{
+	if ( nSamples <= 0 )
+		return (RtFloat)1.0;
+	
+	assert(opacity != 0);
+	
 	RtFloat alpha = 0;
-	for ( std::vector<RtFloat>::const_iterator i = opacity.begin(); i != opacity.end(); i++ ) {
-		alpha += (*i)/opacity.size();
+	for ( IndexType i=0; i<nSamples; ++i) {
+		alpha += (opacity[i])/nSamples;
 	}
-	if ( nearlyZero(alpha-1.0) ) {
-		return 1.0;
-	}
-	return alpha;
+
+	return clamp<RtFloat>(alpha, (RtFloat)0.0, (RtFloat)1.0);
 }
 
-void CBaseRenderer::getColor3f(const std::vector<RtFloat> &fromC, RtFloat toC[3], const CColorDescr &c, RtFloat gain, RtFloat gamma)
+RtFloat CBaseRenderer::opacityToAlpha(const std::vector<RtFloat> &opacity) const 
 {
-	if ( (RtInt)fromC.size() != c.colorSamples() ) {
-		toC[0] = 0;
-		toC[1] = 0;
-		toC[2] = 0;
-		return;
+	if ( opacity.size() <= 0 ) {
+		return 1.0;
 	}
-	c.nToRGB((RtFloat *)&fromC[0], toC);
+	return opacityToAlpha(opacity.size(),  &opacity[0]);
+}
+
+void CBaseRenderer::getColor3f(const CColorDescr &c, RtFloat gain, RtFloat gamma, const RtFloat *fromC, RtFloat toC[3]) const
+{
+	assert(fromC != 0);
+	c.nToRGB(fromC, toC);
 	toC[0] = pow(toC[0]*gain, (RtFloat)1.0/gamma);
 	toC[1] = pow(toC[1]*gain, (RtFloat)1.0/gamma);
 	toC[2] = pow(toC[2]*gain, (RtFloat)1.0/gamma);
 }
 
+void CBaseRenderer::getColor3f(const CColorDescr &c, RtFloat gain, RtFloat gamma, const std::vector<RtFloat> &fromC, RtFloat toC[3]) const
+{
+	if ( fromC.size() <= 0 || (RtInt)fromC.size() != c.colorSamples() ) {
+		toC[0] = 0;
+		toC[1] = 0;
+		toC[2] = 0;
+		return;
+	}
+	getColor3f(c, gain, gamma, &fromC[0], toC);
+}
+
+void CBaseRenderer::getCs(const CColorDescr &c, RtFloat gain, RtFloat gamma, const std::vector<RtFloat> &cs, std::vector<RtFloat> &retVal) const
+{
+	retVal.clear();
+	IndexType size = cs.size() / c.colorSamples();
+	if ( size <= 0 )
+		return;
+	
+	retVal.resize(size*3);
+	
+	for ( IndexType i = 0; i < size; ++i ) {
+		getColor3f(c, gain, gamma, &cs[i*c.colorSamples()], &retVal[i*3]);
+	}
+}
+
+void CBaseRenderer::getAlpha(const CColorDescr &c, const std::vector<RtFloat> &os, std::vector<RtFloat> &retVal) const
+{
+	retVal.clear();
+	IndexType size = os.size() / c.colorSamples();
+	if ( size <= 0 )
+		return;
+	
+	retVal.resize(size);
+	
+	for ( IndexType i = 0; i < size; ++i ) {
+		retVal[i] = opacityToAlpha(c.colorSamples(), &os[i*c.colorSamples()]); 
+	}
+}
 
 CBaseRenderer::CBaseRenderer() :
 	m_renderState(0),
@@ -231,7 +278,7 @@ CBaseRenderer::~CBaseRenderer()
 }
 
 
-void CBaseRenderer::hide(const CSurface *s)
+void CBaseRenderer::hideSurface(const CSurface *s)
 {
 	if ( !s )
 		return;

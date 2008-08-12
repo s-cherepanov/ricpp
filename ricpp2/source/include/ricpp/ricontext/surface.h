@@ -34,6 +34,9 @@
 #include "ricpp/ricontext/parameter.h"
 #endif // _RICPP_RICONTEXT_PARAMETER_H
 
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#include "ricpp/ricpp/ricpperror.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
 #include <list>
 
 namespace RiCPP {
@@ -44,16 +47,45 @@ namespace RiCPP {
 template<typename ValueType> class TemplPrimVar {
 private:
 	const CDeclaration *m_decl;
-	std::vector<ValueType> m_value;
+	std::vector<ValueType> m_values;
 public:
 	inline TemplPrimVar() { m_decl = 0; }
 	inline explicit TemplPrimVar(const CDeclaration &theDecl) { m_decl = &theDecl; }
 
-	inline std::vector<ValueType> &value() { return m_value; }
-	inline const std::vector<ValueType> &value() const { return m_value; }
+	inline std::vector<ValueType> &values() { return m_values; }
+	inline const std::vector<ValueType> &values() const { return m_values; }
 
-	inline void decl(const CDeclaration *theDecl) { m_decl = theDecl; }
-	inline const CDeclaration *decl() const { return m_decl; }
+	inline void declarationPtr(const CDeclaration *theDecl) { m_decl = theDecl; }
+	inline const CDeclaration *declarationPtr() const { return m_decl; }
+	inline const CDeclaration &declaration() const
+	{
+		if ( !declarationPtr() ) {
+			throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE,
+								   "Declaration of a parameter in TemplPrimVar::declaration() not defined.",
+								   __LINE__, __FILE__);
+		}
+		return *declarationPtr();
+	}
+	
+	inline bool isConstant() const
+	{
+		if ( declaration.storageClass() == CLASS_UNKNOWN ) {
+			throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE,
+								   "Storageclass type of a parameter in TemplPrimVar::isConstant() not defined.",
+								   __LINE__, __FILE__);
+		}
+		return declaration().storageClass() == CLASS_CONSTANT || declaration().storageClass() == CLASS_UNIFORM;
+	}
+	
+	inline IndexType vectorSize() const
+	{
+		return m_values().size();
+	}
+
+	inline IndexType size() const
+	{
+		return m_values().size() / declaration().elemSize();
+	}
 }; // TemplPrimVar
 
 
@@ -97,10 +129,25 @@ private:
 		
 public:	
 	inline CFace() : m_faceType(FACETYPE_UNKNOWN) {}
-	inline TemplPrimVar<RtFloat> &reserveFloats(const CDeclaration &decl) { return m_floats[decl.token()]; }
-	inline TemplPrimVar<RtInt> &reserveInts(const CDeclaration &decl) { return m_ints[decl.token()]; }
-	inline TemplPrimVar<std::string> &reserveStrings(const CDeclaration &decl)  { return m_strings[decl.token()]; }
-
+	inline TemplPrimVar<RtFloat> &reserveFloats(const CDeclaration &decl)
+	{
+		TemplPrimVar<RtFloat> &r = m_floats[decl.token()];
+		r.declarationPtr(&decl);
+		return r;
+	}
+	
+	inline TemplPrimVar<RtInt> &reserveInts(const CDeclaration &decl) {
+		TemplPrimVar<RtInt> &r = m_ints[decl.token()];
+		r.declarationPtr(&decl);
+		return r;
+	}
+	
+	inline TemplPrimVar<std::string> &reserveStrings(const CDeclaration &decl)  {
+		TemplPrimVar<std::string> &r = m_strings[decl.token()];
+		r.declarationPtr(&decl);
+		return r;
+	}
+	
 	inline void faceType(EnumFaceTypes ft)
 	{
 		m_faceType = ft;

@@ -51,27 +51,27 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 	if ( !pp )
 		return;
 	
-	p = pp->value();
+	p = pp->values();
 	
 	if ( p.empty() )
 		return;
 	
-	assert(p.size() == pp->value().size());
+	assert(p.size() == pp->values().size());
 	
 	trans.transformPoints(p.size()/3, (RtPoint *)&p[0]);
 	
 	// Normals
 	const TemplPrimVar<RtFloat> *np = f.floats(RI_N);
-	if ( np && np->decl() ) {
-		if ( np->value().size() == p.size() ) {
+	if ( np && np->declarationPtr() ) {
+		if ( np->values().size() == p.size() ) {
 			// n = np->value();
 			// trans.transformNormals(n.size()/3, (RtPoint *)&n[0]);
 			
-			n = pp->value();
+			n = pp->values();
 			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
-				n[i]   += np->value()[i];
-				n[i+1] += np->value()[i+1];
-				n[i+2] += np->value()[i+2];
+				n[i]   += np->values()[i];
+				n[i+1] += np->values()[i+1];
+				n[i+2] += np->values()[i+2];
 			}
 			trans.transformPoints(n.size()/3, (RtPoint *)&n[0]);
 			
@@ -91,25 +91,25 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
 {
 	CPolygonTriangulator t(obj);
-	hide(t.triangulate());
+	hideSurface(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPointsPolygons &obj)
 {
 	CPointsPolygonsTriangulator t(obj);
-	hide(t.triangulate());
+	hideSurface(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiGeneralPolygon &obj)
 {
 	CGeneralPolygonTriangulator t(obj, polygonTriangulationStrategy());
-	hide(t.triangulate());
+	hideSurface(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
 {
 	CPointsGeneralPolygonsTriangulator t(obj, polygonTriangulationStrategy());
-	hide(t.triangulate());
+	hideSurface(t.triangulate());
 }
 
 RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)
@@ -120,7 +120,7 @@ RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)
 	const CDeclaration *ndecl = renderState()->declFind(RI_N);
 	if ( !ndecl )
 		return;
-	hide(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation(), m_useStrips));
+	hideSurface(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation(), m_useStrips));
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiCone &obj)

@@ -33,9 +33,7 @@
 		C302FE4A0DB8883B007E509B /* bintree.h in Headers */ = {isa = PBXBuildFile; fileRef = C302FE490DB8883B007E509B /* bintree.h */; };
 		C3185B710D7D3312001784AB /* varsubst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3185B700D7D3312001784AB /* varsubst.h */; };
 		C3185B730D7D3451001784AB /* varsubst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3185B720D7D3451001784AB /* varsubst.cpp */; };
-		C31C22A20D74094C009D99C2 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
 		C31C22C00D740F6F009D99C2 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
-		C32B8B1C0D74521B0059B201 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
 		C32B8B420D7454980059B201 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
 		C345DCB70DF02D6400B2BC40 /* libglrenderer.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */; };
 		C345DCB80DF02D9600B2BC40 /* libriprog.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
@@ -206,8 +204,10 @@
 		C3A8FA860D74CD1700C1013B /* ri.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA840D74CD1700C1013B /* ri.h */; };
 		C3A8FA870D74CD1700C1013B /* riinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA850D74CD1700C1013B /* riinternal.h */; };
 		C3A8FA890D74CD4F00C1013B /* testribind.c in Sources */ = {isa = PBXBuildFile; fileRef = C3A8FA880D74CD4F00C1013B /* testribind.c */; };
-		C3A8FA8B0D74CD8600C1013B /* riprog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A8FA8A0D74CD8600C1013B /* riprog.cpp */; };
 		C3A8FA8D0D74CD9F00C1013B /* ridynload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A8FA8C0D74CD9F00C1013B /* ridynload.cpp */; };
+		C3B259460E531D08001137C0 /* riprog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A8FA8A0D74CD8600C1013B /* riprog.cpp */; };
+		C3B259470E531D0B001137C0 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
+		C3B259480E531D0D001137C0 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
 		C3BB4CBB0E3A02DE00D185BB /* triangulation.h in Headers */ = {isa = PBXBuildFile; fileRef = C3BB4CBA0E3A02DE00D185BB /* triangulation.h */; };
 		C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE380D70BC9F00A04717 /* ribelements.cpp */; };
 		C3C9AE3C0D70BCCE00A04717 /* ribelements.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9AE3A0D70BCCE00A04717 /* ribelements.h */; };
@@ -249,13 +249,6 @@
 			remoteGlobalIDString = C31C22450D740489009D99C2;
 			remoteInfo = riprog;
 		};
-		C31C22A00D74093C009D99C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C3808A7F0D3CBB4100B6C3BA;
-			remoteInfo = ricppbridge;
-		};
 		C31C22BE0D740F5A009D99C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -269,13 +262,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = C3685EF40D3C216000B2E025;
 			remoteInfo = ricpp;
-		};
-		C32B8B1A0D7452150059B201 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C32B8B0D0D7451C70059B201;
-			remoteInfo = ri;
 		};
 		C32B8B400D7454920059B201 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -501,6 +487,20 @@
 			remoteGlobalIDString = C38089430D3CAB4B00B6C3BA;
 			remoteInfo = ricontext;
 		};
+		C3B259490E531D18001137C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C32B8B0D0D7451C70059B201 /* ri */;
+			remoteInfo = ri;
+		};
+		C3B2594B0E531D1F001137C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
+			remoteInfo = ricppbridge;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -723,8 +723,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C32B8B1C0D74521B0059B201 /* libric.a in Frameworks */,
-				C31C22A20D74094C009D99C2 /* libricppbridge.a in Frameworks */,
+				C3B259480E531D0D001137C0 /* libric.a in Frameworks */,
+				C3B259470E531D0B001137C0 /* libricppbridge.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2284,8 +2284,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				C32B8B1B0D7452150059B201 /* PBXTargetDependency */,
-				C31C22A10D74093C009D99C2 /* PBXTargetDependency */,
+				C3B2594A0E531D18001137C0 /* PBXTargetDependency */,
+				C3B2594C0E531D1F001137C0 /* PBXTargetDependency */,
 			);
 			name = riprog;
 			productName = riprog;
@@ -2803,7 +2803,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3A8FA8B0D74CD8600C1013B /* riprog.cpp in Sources */,
+				C3B259460E531D08001137C0 /* riprog.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3059,11 +3059,6 @@
 			target = C31C22450D740489009D99C2 /* riprog */;
 			targetProxy = C30089B70DEC49E000E30769 /* PBXContainerItemProxy */;
 		};
-		C31C22A10D74093C009D99C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
-			targetProxy = C31C22A00D74093C009D99C2 /* PBXContainerItemProxy */;
-		};
 		C31C22BF0D740F5A009D99C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C31C22450D740489009D99C2 /* riprog */;
@@ -3073,11 +3068,6 @@
 			isa = PBXTargetDependency;
 			target = C3685EF40D3C216000B2E025 /* ricpp */;
 			targetProxy = C32B8B130D7451DF0059B201 /* PBXContainerItemProxy */;
-		};
-		C32B8B1B0D7452150059B201 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C32B8B0D0D7451C70059B201 /* ri */;
-			targetProxy = C32B8B1A0D7452150059B201 /* PBXContainerItemProxy */;
 		};
 		C32B8B410D7454920059B201 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3238,6 +3228,16 @@
 			isa = PBXTargetDependency;
 			target = C38089430D3CAB4B00B6C3BA /* ricontext */;
 			targetProxy = C383C1090DBC89170059B71D /* PBXContainerItemProxy */;
+		};
+		C3B2594A0E531D18001137C0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C32B8B0D0D7451C70059B201 /* ri */;
+			targetProxy = C3B259490E531D18001137C0 /* PBXContainerItemProxy */;
+		};
+		C3B2594C0E531D1F001137C0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3808A7F0D3CBB4100B6C3BA /* ricppbridge */;
+			targetProxy = C3B2594B0E531D1F001137C0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

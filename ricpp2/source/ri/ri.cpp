@@ -71,7 +71,7 @@ IRi *RiCPPRoot() {
 void RiCPPRoot(IRi *aRoot) {
 	_riRoot = aRoot;
 }
-
+	
 // ----------------------------------------------------------------------------
 
 RtInt RiCPPGetArgs(va_list marker, RtToken **tokens, RtPointer **params) {

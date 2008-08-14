@@ -1419,7 +1419,7 @@ namespace RiCPP {
 		}
 
 		CRiProcedural(long aLineNo,
-			RtPointer aData, RtBound aBound,
+			RtPointer aData, const RtBound aBound,
 			ISubdivFunc &sSubdivFunc, IFreeFunc *aFreeFunc);
 
 		const RtBound &bound() const { return m_bound; };

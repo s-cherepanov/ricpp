@@ -75,7 +75,7 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiGeneralPolygon &obj);
 		virtual RtVoid triangulate(CRiPointsGeneralPolygons &obj);
 
-		virtual RtVoid triangulate(CQuadricTriangulator &triObj);
+		virtual RtVoid triangulate(CParametricTriangulator &triObj);
 
 		virtual RtVoid triangulate(CRiCone &obj);
 		virtual RtVoid triangulate(CRiCylinder &obj);
@@ -84,6 +84,9 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiParaboloid &obj);
 		virtual RtVoid triangulate(CRiSphere &obj);
 		virtual RtVoid triangulate(CRiTorus &obj);
+
+		virtual RtVoid triangulate(CRiPatch &obj);
+		virtual RtVoid triangulate(CRiPatchMesh &obj);
 	}; // CTriangleRenderer
 
 }

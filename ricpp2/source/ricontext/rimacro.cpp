@@ -172,10 +172,12 @@ void CVarParamRManInterfaceCall::writeRIB(CRibElementsWriter &ribWriter, RtInt n
 	TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 }
 
+/*
 void CVarParamRManInterfaceCall::getBounds(RtBound bounds) const
 {
 	// @todo Bounds, first consider RI_P then (if not found) RI_PW
 }
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 void CRiGeneralPolygon::enterValues(RtInt theNLoops, const RtInt theNVerts[])
@@ -792,7 +794,7 @@ void CRiProcedural::insertData(const ISubdivData *data)
 }
 
 CRiProcedural::CRiProcedural(
-	long aLineNo, RtPointer data, RtBound bound,
+	long aLineNo, RtPointer data, const RtBound bound,
 	ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 	: CRManInterfaceCall(aLineNo)
 {

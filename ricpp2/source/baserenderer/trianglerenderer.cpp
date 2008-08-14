@@ -31,7 +31,7 @@
 
 using namespace RiCPP;
 
-static const RtInt _TESSELATION = 32;
+static const RtInt _TESSELATION = 16;
 static const bool _USESTRIPS = false;
 
 CTriangleRenderer::CTriangleRenderer()
@@ -112,14 +112,18 @@ RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
 	hideSurface(t.triangulate());
 }
 
-RtVoid CTriangleRenderer::triangulate(CQuadricTriangulator &triObj)
+RtVoid CTriangleRenderer::triangulate(CParametricTriangulator &triObj)
 {
 	const CDeclaration *pdecl = renderState()->declFind(RI_P);
-	if ( !pdecl )
+	if ( !pdecl || !pdecl->isFloat3Decl() ) {
+		/// @todo Errorhandling, bad position declaration
 		return;
+	}
 	const CDeclaration *ndecl = renderState()->declFind(RI_N);
-	if ( !ndecl )
+	if ( !ndecl || !ndecl->isFloat3Decl() ) {
+		/// @todo Errorhandling, bad normal declaration
 		return;
+	}
 	hideSurface(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation(), m_useStrips));
 }
 
@@ -162,5 +166,20 @@ RtVoid CTriangleRenderer::triangulate(CRiSphere &obj)
 RtVoid CTriangleRenderer::triangulate(CRiTorus &obj)
 {
 	CTorusTriangulator t(obj);
+	triangulate(t);
+}
+
+RtVoid CTriangleRenderer::triangulate(CRiPatch &obj)
+{
+	
+	CRiBasis basis(renderState()->lineNo(), attributes().uBasis(), attributes().uStep(), attributes().vBasis(), attributes().vStep());
+	CPatchTriangulator t(obj, basis);
+	triangulate(t);
+}
+
+RtVoid CTriangleRenderer::triangulate(CRiPatchMesh &obj)
+{
+	CRiBasis basis(renderState()->lineNo(), attributes().uBasis(), attributes().uStep(), attributes().vBasis(), attributes().vStep());
+	CPatchMeshTriangulator t(obj, basis);
 	triangulate(t);
 }

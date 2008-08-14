@@ -366,6 +366,46 @@ public:
 	{
 		return basicType() == BASICTYPE_FLOAT && elemSize() == 3;
 	}
+
+	inline bool isFloat1Decl() const
+	{
+		return basicType() == BASICTYPE_FLOAT && elemSize() == 1;
+	}
+
+	inline bool isFloat2Decl() const
+	{
+		return basicType() == BASICTYPE_FLOAT && elemSize() == 2;
+	}
+	
+	inline bool isFloat4Decl() const
+	{
+		return basicType() == BASICTYPE_FLOAT && elemSize() == 4;
+	}
+
+	inline bool isVarying() const
+	{
+		return storageClass() == CLASS_VARYING || storageClass() == CLASS_FACEVARYING;
+	}
+	
+	inline bool isVertex() const
+	{
+		return storageClass() == CLASS_VERTEX || storageClass() == CLASS_FACEVERTEX;
+	}
+	
+	inline bool isFace() const
+	{
+		return storageClass() == CLASS_FACEVARYING || storageClass() == CLASS_FACEVERTEX;
+	}
+	
+	inline bool isConstant() const
+	{
+		return storageClass() == CLASS_CONSTANT;
+	}
+	
+	inline bool isUniform() const
+	{
+		return storageClass() == CLASS_UNIFORM;
+	}
 }; // CDeclarartion
 
 } // namespace RiCPP

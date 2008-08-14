@@ -984,6 +984,7 @@ namespace RiCPP {
 
 		virtual RtVoid basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep);
 		virtual bool getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &vstep) const;
+		
 		inline virtual RtInt uStep() const
 		{
 			return m_uBasis.m_value.m_step;
@@ -992,7 +993,15 @@ namespace RiCPP {
 		{
 			return m_vBasis.m_value.m_step;
 		}
-
+		inline virtual const RtBasis &uBasis() const
+		{
+			return m_uBasis.m_value.m_basis;
+		}
+		inline virtual const RtBasis &vBasis() const
+		{
+			return m_vBasis.m_value.m_basis;
+		}
+		
 		virtual RtVoid trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 		virtual RtVoid trimCurve(const CTrimCurveData &trimCurveData);
 		inline virtual const CTrimCurveData &trimCurve() const

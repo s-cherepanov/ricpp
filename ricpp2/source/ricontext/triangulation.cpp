@@ -116,7 +116,7 @@ void CBasePolygonTriangulator::triangleStrip(std::vector<IndexType> &strip, Inde
 	}
 }
 
-void CBasePolygonTriangulator::insertParameters(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs) const
+void CBasePolygonTriangulator::insertParams(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs)
 {
 	for ( CParameterList::const_iterator piter = plist.begin(); piter != plist.end(); piter++ ) {
 		const CParameter &p = (*piter);
@@ -219,7 +219,7 @@ CSurface *CPointsPolygonsTriangulator::triangulate()
 
 		triangleStrip(strip, nverts, vertsOffs);
 		
-		insertParameters(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
+		insertParams(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
 		f.sizes().resize(1);
 		f.sizes()[0] = static_cast<IndexType>(strip.size());
 		
@@ -311,7 +311,7 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate()
 			(*stripIter) -= offs;
 		}
 		
-		insertParameters(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
+		insertParams(f, faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs);
 
 		f.sizes().resize(1);
 		f.sizes()[0] = static_cast<IndexType>(strip.size());
@@ -329,12 +329,74 @@ CSurface *CPointsGeneralPolygonsTriangulator::triangulate()
 
 // =============================================================================
 
-struct SQuadricVars {
+struct SParametricVars {
 	IndexType nVars, tessU, tessV;
 	RtFloat deltaU, deltaV;
 	RtFloat flipNormal;
 	std::vector<RtFloat> *positions, *normals;
+
+	SParametricVars(RtInt aTessU, RtInt aTessV, bool theEqualOrientations, CFace &aFace)
+	{
+		initVars(aTessU, aTessV, theEqualOrientations, aFace);
+	}
+
+	SParametricVars(
+				  const CDeclaration &posDecl, const CDeclaration &normDecl,
+				  RtInt aTessU, RtInt aTessV,
+				  bool theEqualOrientations, CFace &aFace)
+	{
+		initVars(posDecl, normDecl, aTessU, aTessV, theEqualOrientations, aFace);
+	}
+	
+	void initVars(RtInt aTessU, RtInt aTessV, bool theEqualOrientations, CFace &aFace)
+	{
+		tessU = (IndexType)aTessU;
+		tessV = (IndexType)aTessV;
+		
+		deltaU = 0;
+		deltaV = 0;
+		
+		flipNormal = theEqualOrientations ? (RtFloat)1.0 : (RtFloat)-1.0;
+		
+		for ( int i = 0; i < 2; ++i ) {
+			if ( tessU + 1 < tessU )
+				tessU -= 1;
+			
+			if ( tessV + 1 < tessV )
+				tessV -= 1;
+			
+			deltaU = (RtFloat)(1.0 / (RtFloat)tessU);
+			deltaV = (RtFloat)(1.0 / (RtFloat)tessV);
+			
+			if ( (1.0 + deltaU) == 1.0 ) {
+				deltaU = eps<RtFloat>();
+				tessU = (IndexType)(1.0/deltaU);
+			}
+			if ( (1.0 + deltaV) == 1.0 ) {
+				deltaV = eps<RtFloat>();
+				tessV = (IndexType)(1.0/deltaV);
+			}
+		}
+		
+		nVars = ((IndexType)tessU+1)*((IndexType)tessV+1);
+	}
+
+	void initVars(
+						 const CDeclaration &posDecl, const CDeclaration &normDecl,
+						 RtInt aTessU, RtInt aTessV,
+						 bool theEqualOrientations, CFace &aFace)
+	{
+		initVars(aTessU, aTessV, theEqualOrientations, aFace);
+		
+		std::vector<RtFloat> &p = aFace.insertFloatVar(posDecl, nVars).values();
+		std::vector<RtFloat> &n = aFace.insertFloatVar(normDecl, nVars).values();
+		
+		positions = &p;
+		normals = &n;
+	}
 };
+
+// =============================================================================
 
 static void getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0)
 {
@@ -368,50 +430,10 @@ static void getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFl
 	circledata[i++] = (RtFloat)sin(thetamaxrad);
 }
 
-static void initVars(
-	const CDeclaration &pointDecl, const CDeclaration &normDecl,
-	RtInt tessU, RtInt tessV,
-	bool equalOrientations, CFace &f, SQuadricVars &retVals)
-{
-	retVals.tessU = (IndexType)tessU;
-	retVals.tessV = (IndexType)tessV;
-	
-	retVals.deltaU = 0;
-	retVals.deltaV = 0;
-	
-	retVals.flipNormal = equalOrientations ? (RtFloat)1.0 : (RtFloat)-1.0;
-	// flipNormal = 1.0;
-	
-	for ( int i = 0; i < 2; ++i ) {
-		if ( retVals.tessU + 1 < retVals.tessU )
-			retVals.tessU -= 1;
-		
-		if ( retVals.tessV + 1 < retVals.tessV )
-			retVals.tessV -= 1;
-		
-		retVals.deltaU = (RtFloat)(1.0 / (RtFloat)retVals.tessU);
-		retVals.deltaV = (RtFloat)(1.0 / (RtFloat)retVals.tessV);
-		
-		if ( (1.0 + retVals.deltaU) == 1.0 ) {
-			retVals.deltaU = eps<RtFloat>();
-			retVals.tessU = (IndexType)(1.0/retVals.deltaU);
-		}
-		if ( (1.0 + retVals.deltaV) == 1.0 ) {
-			retVals.deltaV = eps<RtFloat>();
-			retVals.tessV = (IndexType)(1.0/retVals.deltaV);
-		}
-	}
-	
-	retVals.nVars = ((IndexType)retVals.tessU+1)*((IndexType)retVals.tessV+1);
-	
-	std::vector<RtFloat> &p = f.insertFloatVar(pointDecl, retVals.nVars).values();
-	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, retVals.nVars).values();
-	
-	retVals.positions = &p;
-	retVals.normals = &n;
-}
 
-static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloat displacement, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, const SQuadricVars &var)
+// =============================================================================
+
+static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloat displacement, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, const SParametricVars &var)
 {
 	std::vector<RtFloat> unitcircle;
 	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
@@ -470,7 +492,7 @@ static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloa
 			n[0] *= mx;
 			n[1] *= mx;
 			
-			normalize3(n);
+			// normalize3(n);
 			
 			(*var.normals)[nidx++] = n[0] * var.flipNormal;
 			(*var.normals)[nidx++] = n[1] * var.flipNormal;
@@ -480,7 +502,7 @@ static void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloa
 }
 
 
-static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax, const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, const SQuadricVars &var)
+static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax, const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f, const SParametricVars &var)
 {
 	std::vector<RtFloat> unitcircle;
 	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
@@ -535,7 +557,7 @@ static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax,
 					(xl*sintheta - yl*costheta) * (p0[0]*sintheta + p0[1]*costheta));
 			n[2] /= zl;
 			
-			normalize3(n);
+			// normalize3(n);
 			
 			(*var.positions)[pidx]   = p[0];
 			(*var.positions)[pidx+1] = p[1];
@@ -551,6 +573,105 @@ static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax,
 }
 
 // =============================================================================
+
+void CParametricTriangulator::insertParamsBilinear(IndexType faceIndex,
+												   const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+												   RtInt tessU, RtInt tessV,
+												   CFace &f)
+{
+	CParameterList::const_iterator iter = obj().parameters().begin();
+	for ( ; iter != obj().parameters().end(); iter++ ) {
+		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
+			// Points and normals are not used because the are build in buildPN
+			continue;
+		}
+		switch ( (*iter).declaration().storageClass() ) {
+			case CLASS_CONSTANT:
+				f.insertConst(*iter);
+				break;
+				
+			case CLASS_UNIFORM:
+				f.insertUniform(*iter, faceIndex);
+				break;
+				
+			case CLASS_VARYING:
+			case CLASS_VERTEX: {
+					if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+						f.bilinearBlend(*iter, cornerIdx, tessU, tessV);
+					}
+			}
+			break;
+				
+			case CLASS_FACEVERTEX:
+			case CLASS_FACEVARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, faceCornerIdx, tessU, tessV);
+				}
+			}
+			break;
+				
+			default:
+			break;
+		}
+		
+	}
+}
+
+void CParametricTriangulator::insertParamsBicubic(IndexType faceIndex,
+												  const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+												  const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
+												  RtInt tessU, RtInt tessV,
+												  CFace &f)
+{
+	CParameterList::const_iterator iter = obj().parameters().begin();
+	for ( ; iter != obj().parameters().end(); iter++ ) {
+		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
+			// Points and normals are not used because the are build in buildPN
+			continue;
+		}
+		switch ( (*iter).declaration().storageClass() ) {
+			case CLASS_CONSTANT:
+				f.insertConst(*iter);
+				break;
+			case CLASS_UNIFORM:
+				f.insertUniform(*iter, faceIndex);
+				break;
+			case CLASS_VARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, cornerIdx, tessU, tessV);
+				}
+			}
+			break;
+				
+			case CLASS_VERTEX: {
+			}
+			break;
+				
+			case CLASS_FACEVERTEX: {
+			}
+			break;
+				
+			case CLASS_FACEVARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, cornerIdx, tessU, tessV);
+				}
+			}
+			break;
+				
+			default:
+			break;
+		}
+		
+	}
+}
+
+// =============================================================================
+
+void CQuadricTriangulator::insertParams(RtInt tessU, RtInt tessV, CFace &f)
+{
+	static const IndexType cornerIdx[4] = {0, 1, 2, 3};
+	insertParamsBilinear(0, cornerIdx, cornerIdx, tessU, tessV, f);
+}
 
 CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips)
 {
@@ -575,37 +696,9 @@ CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const C
 	return surf;
 }
 
-void CQuadricTriangulator::insertParams(RtInt tessU, RtInt tessV, CFace &f)
-{
-	static const IndexType idx[4] = {0, 1, 2, 3};
-
-	CParameterList::const_iterator iter = obj().parameters().begin();
-	for ( ; iter != obj().parameters().end(); iter++ ) {
-		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
-			continue;
-		}
-		switch ( (*iter).declaration().storageClass() ) {
-			case CLASS_CONSTANT:
-			case CLASS_UNIFORM:
-				break;
-			case CLASS_VARYING:
-			case CLASS_VERTEX:
-			case CLASS_FACEVERTEX:
-			case CLASS_FACEVARYING:
-				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, idx, tessU, tessV);
-				}
-				break;
-			default:
-				break;
-		}
-		
-	}
-}
-
 // =============================================================================
 
-void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CConeTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_CONE
 	std::cout << "-> CConeTriangulator::buildPN()" << std::endl;
@@ -623,16 +716,15 @@ void CConeTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	if ( nearlyZero(thetamax) )
 		return;
 	
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
-	buildConePN(height, radius, thetamax, 0, pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	SParametricVars var(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	buildConePN(height, radius, thetamax, 0, posDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 		
 #ifdef _TRACE_CONE
 	std::cout << "<- CConeTriangulator::buildPN()" << std::endl;
 #endif
 }
 
-void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CCylinderTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_CYLINDER
 	std::cout << "-> CCylinderTriangulator::buildPN()" << std::endl;
@@ -652,8 +744,7 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 	if ( nearlyZero(thetamax) )
 		return;
 	
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	SParametricVars var(posDecl, normDecl, tessU, tessV, equalOrientations, f);
 	
 	std::vector<RtFloat> unitcircle;
 	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
@@ -716,7 +807,7 @@ void CCylinderTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclar
 #endif
 }
 
-void CDiskTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CDiskTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_DISK
 	std::cout << "-> CDiskTriangulator::buildPN()" << std::endl;
@@ -732,16 +823,15 @@ void CDiskTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaratio
 	if ( nearlyZero(thetamax) )
 		return;
 		   
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
-	buildConePN(0, radius, thetamax, displacement, pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	SParametricVars vars(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	buildConePN(0, radius, thetamax, displacement, posDecl, normDecl, tessU, tessV, equalOrientations, f, vars);
 	
 #ifdef _TRACE_DISK
 	std::cout << "<- CDiskTriangulator::buildPN()" << std::endl;
 #endif
 }
 
-void CHyperboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CHyperboloidTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_HYPERBOLOID
 	std::cout << "-> CHyperboloidTriangulator::buildPN()" << std::endl;
@@ -761,16 +851,15 @@ void CHyperboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDec
 
 		return;
 	
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
-	buildHyperboloidPN(point1, point2, thetamax, pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	SParametricVars var(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	buildHyperboloidPN(point1, point2, thetamax, posDecl, normDecl, tessU, tessV, equalOrientations, f, var);
 	
 #ifdef _TRACE_HYPERBOLOID
 	std::cout << "<- CHyperboloidTriangulator::buildPN()" << std::endl;
 #endif
 }
 
-void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CParaboloidTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_PARABOLOID
 	std::cout << "-> CParaboloidTriangulator::buildPN()" << std::endl;
@@ -789,8 +878,7 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 	if ( nearlyZero(thetamax) )
 		return;
 
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	SParametricVars var(posDecl, normDecl, tessU, tessV, equalOrientations, f);
 	
 	std::vector<RtFloat> unitcircle;
 	getUnitCircle(unitcircle, var.tessU, deg2rad(thetamax));
@@ -837,7 +925,7 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 			(*var.positions)[pidx++] = r * unitcircle[puidx++];
 			(*var.positions)[pidx++] = z;
 			
-			normalize3(ntemp);
+			// normalize3(ntemp);
 			
 			(*var.normals)[nidx++] = var.flipNormal*ntemp[0];
 			(*var.normals)[nidx++] = var.flipNormal*ntemp[1];
@@ -850,7 +938,7 @@ void CParaboloidTriangulator::buildPN(const CDeclaration &pointDecl, const CDecl
 #endif
 }
 
-void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CSphereTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_SPHERE
 	std::cout << "-> CSphereTriangulator::buildPN()" << std::endl;
@@ -881,8 +969,7 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 	RtFloat phimax;
 	phimax = (RtFloat)asin(zmax/radius);
 
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	SParametricVars var(posDecl, normDecl, tessU, tessV, equalOrientations, f);
 	
 	std::vector<RtFloat> unitcircleU;
 	getUnitCircle(unitcircleU, var.tessU, deg2rad(thetamax));
@@ -936,7 +1023,7 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 			(*var.normals)[pidx+1] = var.flipNormal * ntemp[1];
 			(*var.normals)[pidx+2] = var.flipNormal * ntemp[2];
 			
-			normalize3(&(*var.normals)[pidx]);
+			// normalize3(&(*var.normals)[pidx]);
 
 			pidx+=3;
 		}
@@ -947,7 +1034,7 @@ void CSphereTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarat
 #endif
 }
 
-void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
+void CTorusTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f)
 {
 #ifdef _TRACE_TORUS
 	std::cout << "-> CTorusTriangulator::buildPN()" << std::endl;
@@ -968,8 +1055,7 @@ void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarati
 	if ( nearlyZero(thetamax) )
 		return;
 
-	SQuadricVars var;
-	initVars(pointDecl, normDecl, tessU, tessV, equalOrientations, f, var);
+	SParametricVars var(posDecl, normDecl, tessU, tessV, equalOrientations, f);
 	
 	std::vector<RtFloat> unitcircleU;
 	getUnitCircle(unitcircleU, var.tessU, deg2rad(thetamax));
@@ -1018,7 +1104,7 @@ void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarati
 			(*var.normals)[pidx+1]   = var.flipNormal * (cosphi * sintheta);
 			(*var.normals)[pidx+2]   = var.flipNormal * sinphi;
 			
-			normalize3(&(*var.normals)[pidx]);
+			// normalize3(&(*var.normals)[pidx]);
 			
 			pidx += 3;
 		}
@@ -1028,3 +1114,368 @@ void CTorusTriangulator::buildPN(const CDeclaration &pointDecl, const CDeclarati
 	std::cout << "<- CTorusTriangulator::buildPN()" << std::endl;
 #endif
 }
+
+
+static bool extractRiPz(const CParameter &p, IndexType sizeU, IndexType sizeV, IndexType faceIndex, const IndexType cornerIdx[], std::vector<RtFloat> &retval)
+{
+	assert((sizeU == 2 && sizeV == 2)||(sizeU == 4 && sizeV == 4));
+
+	if ( !p.declaration().isFloat1Decl()) {
+		return false;
+	}
+	
+	const std::vector<RtFloat> &val = p.floats();
+	const RtFloat *t = 0;
+
+	if ( sizeU == 2 && sizeV == 2 ) {
+		static const RtFloat txy2[2] = {
+			static_cast<RtFloat>(0.0),
+			static_cast<RtFloat>(1.0)			
+		};
+		t = &txy2[0];
+		
+	} else if ( sizeU == 4 && sizeV == 4 ) {
+		static const RtFloat txy4[4] = {
+			static_cast<RtFloat>(0.0),
+			static_cast<RtFloat>(1.0/3.0),
+			static_cast<RtFloat>(2.0/3.0),
+			static_cast<RtFloat>(1.0)			
+		};
+		t = &txy4[0];
+
+	} else {
+		return false;
+	}
+
+	if ( p.declaration().isConstant() ) {
+		if ( val.size() < 1 )
+			return false;
+		for ( IndexType v = 0, i = 0; v < sizeV; ++v ) {
+			for ( IndexType u = 0; u < sizeU; ++u ) {
+				retval[i++] = t[u];
+				retval[i++] = t[v];
+				retval[i++] = val[0];
+			}
+		}
+		return true;
+	}
+	if ( p.declaration().isUniform() ) {
+		if ( (faceIndex+1) > val.size() )
+			return false;
+		for ( IndexType v = 0, i = 0; v < sizeV; ++v ) {
+			for ( IndexType u = 0; u < sizeU; ++u ) {
+				retval[i++] = t[u];
+				retval[i++] = t[v];
+				retval[i++] = val[faceIndex];
+			}
+		}
+		return true;
+	}
+	
+	for ( IndexType v = 0, i = 0; v < sizeV; ++v ) {
+		for ( IndexType u = 0; u < sizeU; ++u ) {
+			if ( cornerIdx[v*sizeU+u]+1 > val.size() )
+				return false;
+			retval[i++] = t[u];
+			retval[i++] = t[v];
+			retval[i++] = val[cornerIdx[v*sizeU+u]];
+		}
+	}
+	return true;
+}
+
+static bool extractRiPw(const CParameter &p, IndexType sizeU, IndexType sizeV, IndexType faceIndex, const IndexType cornerIdx[], std::vector<RtFloat> &retval)
+{
+	IndexType size = sizeU * sizeV;
+	
+	if ( !p.declaration().isFloat4Decl()) {
+		return false;
+	}
+
+	const std::vector<RtFloat> &val = p.floats();
+	
+	if ( p.declaration().isConstant() ) {
+		if ( val.size() < 4 )
+			return false;
+		for ( IndexType i = 0; i < size; ++i ) {
+			retval[i*4  ] = val[0];
+			retval[i*4+1] = val[1];
+			retval[i*4+2] = val[2];
+			retval[i*4+3] = val[3];
+		}
+		return true;
+	}
+	if ( p.declaration().isUniform() ) {
+		if ( (faceIndex+1)*3 > val.size() )
+			return false;
+		for ( IndexType i = 0; i < size; ++i ) {
+			retval[i*4  ] = val[faceIndex*4];
+			retval[i*4+1] = val[faceIndex*4+1];
+			retval[i*4+2] = val[faceIndex*4+2];
+			retval[i*4+2] = val[faceIndex*4+2];
+		}
+		return true;
+	}
+
+	for ( IndexType i = 0; i < size; ++i ) {
+		if ( (cornerIdx[i]+1)*4 > val.size() )
+			return false;
+		retval[i*4  ] = val[cornerIdx[i]*4];
+		retval[i*4+1] = val[cornerIdx[i]*4+1];
+		retval[i*4+2] = val[cornerIdx[i]*4+2];
+		retval[i*4+3] = val[cornerIdx[i]*4+2];
+	}
+	return true;
+}
+
+static bool extractRiP(const CParameter &p, IndexType sizeU, IndexType sizeV, IndexType faceIndex, const IndexType cornerIdx[], std::vector<RtFloat> &retval)
+{
+	IndexType size = sizeU * sizeV;
+	assert(retval.size() >= size);
+
+	if ( !p.declaration().isFloat3Decl()) {
+		return false;
+	}
+
+	const std::vector<RtFloat> &val = p.floats();
+	if ( p.declaration().isConstant() ) {
+		if ( val.size() < 3 )
+			return false;
+		for ( IndexType i = 0; i < size; ++i ) {
+			retval[i*3  ] = val[0];
+			retval[i*3+1] = val[1];
+			retval[i*3+2] = val[2];
+		}
+		return true;
+	}
+	if ( p.declaration().isUniform() ) {
+		if ( (faceIndex+1)*3 > val.size() )
+			return false;
+		for ( IndexType i = 0; i < size; ++i ) {
+			retval[i*3  ] = val[faceIndex*3];
+			retval[i*3+1] = val[faceIndex*3+1];
+			retval[i*3+2] = val[faceIndex*3+2];
+		}
+		return true;
+	}
+	for ( IndexType i = 0; i < size; ++i ) {
+		if ( (cornerIdx[i]+1)*3 > val.size() )
+			return false;
+		retval[i*3  ] = val[cornerIdx[i]*3];
+		retval[i*3+1] = val[cornerIdx[i]*3+1];
+		retval[i*3+2] = val[cornerIdx[i]*3+2];
+	}	
+	return true;
+}
+
+static void pw2p(const std::vector<RtFloat> &pw, std::vector<RtFloat> &p)
+{
+	IndexType size = pw.size()/4;
+	if ( p.size() < size )
+		p.clear();
+	p.resize(3*size);
+	for ( IndexType i = 0; i < size; ++i ) {
+		p[i*3  ] = pw[i*4  ]/pw[i*4+3];
+		p[i*3+1] = pw[i*4+1]/pw[i*4+3];
+		p[i*3+2] = pw[i*4+2]/pw[i*4+3];
+	}
+}
+
+static void bilinearBlend(RtInt tessU, RtInt tessV, IndexType elemSize, const IndexType (&cornerIdx)[4], const std::vector<RtFloat> &vals, std::vector<RtFloat> &retvals)
+{
+	assert(tessU > 0);
+	assert(tessV > 0);
+	assert(elemSize > 0);
+	
+	retvals.clear();
+	retvals.resize((tessU+1) * (tessV+1) * elemSize);
+	
+	RtFloat deltau = (RtFloat)(1.0/(RtFloat)(tessU));
+	RtFloat deltav = (RtFloat)(1.0/(RtFloat)(tessV));
+	
+	RtFloat u, v;
+	IndexType ui, vi, ei, idx;
+	IndexType startPos, endPos;
+	
+	for ( v = (RtFloat)0.0, vi = 0; vi < (IndexType)tessV+1; ++vi, v += deltav ) {
+		if ( v > 1.0 || vi == (IndexType)tessV ) {
+			v = 1.0;
+		}
+		startPos = vi * ((IndexType)tessU + 1) * elemSize;
+		endPos   = startPos + (IndexType)tessU * elemSize;
+		assert(startPos != endPos);
+		for ( ei = 0; ei < elemSize; ++ei ) {
+			retvals[startPos+ei] = lerp(v, vals[cornerIdx[0]*elemSize+ei], vals[cornerIdx[2]*elemSize+ei]);
+		}
+		for ( ei = 0; ei < elemSize; ++ei ) {
+			retvals[endPos+ei]   = lerp(v, vals[cornerIdx[1]*elemSize+ei], vals[cornerIdx[3]*elemSize+ei]);
+		}
+		idx = startPos+elemSize;
+		for ( u = deltau, ui = 1; ui < (IndexType)tessU; ++ui, u += deltau ) {
+			if ( u > 1.0 ) {
+				u = 1.0;
+			}
+			for ( ei = 0; ei < elemSize; ++ei, ++idx ) {
+				retvals[idx] = lerp(u, retvals[startPos+ei], retvals[endPos+ei]);
+			}
+		}
+	}
+}
+
+// =============================================================================
+
+void CRootPatchTriangulator::buildBilinearPN(const CDeclaration &posDecl,
+											 const CDeclaration &normDecl,
+											 RtInt tessU,
+											 RtInt tessV,
+											 bool equalOrientations,
+											 IndexType faceIndex,
+											 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+											 CFace &f)
+{
+	static IndexType posCornerIdx[4] = {0, 1, 2, 3};
+
+	const CParameter *p = obj().parameters().get(RI_P);
+	const CParameter *pz = 0;
+	const CParameter *pw = 0;
+	
+	std::vector<RtFloat> pos(16);
+	
+	if ( !p ) {
+		pz = obj().parameters().get(RI_PZ);
+		if ( !pz ) {
+			pw = obj().parameters().get(RI_PW);
+			if ( !pw ) {
+				// No position information
+				return;
+			}
+			if ( !extractRiPw(*pw, 2, 2, faceIndex, pw->declaration().isFace() ? faceCornerIdx : cornerIdx, pos) ) {
+				return;
+			}			
+		} else {
+			if ( !extractRiPz(*pz, 2, 2, faceIndex, pz->declaration().isFace() ? faceCornerIdx : cornerIdx, pos) ) {
+				return;
+			}
+		}
+	} else {
+		if ( !extractRiP(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, pos) ) {
+			return;
+		}
+	}
+		
+	SParametricVars vars(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	if ( !pw ) {
+		bilinearBlend(tessU, tessV, 3, posCornerIdx, pos, *vars.positions);
+	} else {
+		std::vector<RtFloat> blendPw;
+		bilinearBlend(tessU, tessV, 4, posCornerIdx, pos, blendPw);
+		pw2p(blendPw, *vars.positions);
+	}
+	
+	const CParameter *n = obj().parameters().get(RI_N);
+	std::vector<RtFloat> nrm(12);
+	if ( n ) {
+		if ( !extractRiP(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, nrm) ) {
+			return;
+		}
+	} else {
+		IndexType nc[4] = {0, (IndexType)tessU*3, (IndexType)(tessV*(tessU+1))*3, vars.positions->size()-3};
+		if ( vars.flipNormal < 0.0 ) {
+			plane<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
+			plane<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
+			plane<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]);
+			plane<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]);
+		} else {
+			planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
+			planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
+			planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]);
+			planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]);
+		}
+	}
+	bilinearBlend(tessU, tessV, 3, posCornerIdx, nrm, *vars.normals);
+}
+
+
+void CRootPatchTriangulator::buildBicubicPN(const CDeclaration &posDecl,
+											const CDeclaration &normDecl,
+											RtInt tessU,
+											RtInt tessV,
+											bool equalOrientations,
+											IndexType faceIndex,
+											const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+											const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
+											CFace &f)
+{
+	SParametricVars vars(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+}
+
+// =============================================================================
+
+CSurface *CPatchTriangulator::triangulate(const CDeclaration &posDecl,
+										  const CDeclaration &normDecl,
+										  RtInt tessU,
+										  RtInt tessV,
+										  bool equalOrientations,
+										  bool useStrips)
+{
+	static IndexType cornerIdx[4] = {0, 1, 2, 3};
+	static IndexType controlIdx[16] = {
+		 0,  1,  2,  3,
+		 4,  5,  6,  7,
+		 8,  9, 10, 11,
+		12, 13, 14, 15
+	};
+	
+	RtToken type = m_obj.type();
+
+	if ( type != RI_BILINEAR && type != RI_BICUBIC ) {
+		/// @todo Errorhandling unknown Patch type
+		return 0;
+	}
+
+	CSurface *surf = createSurface();
+	if ( !surf ) {
+		return 0;
+	}
+	
+	CFace &f = surf->newFace();
+
+	if ( type == RI_BICUBIC ) {
+		buildBicubicPN(posDecl, normDecl, tessU, tessV, equalOrientations, 0, cornerIdx, cornerIdx, controlIdx, controlIdx, f);
+		insertParamsBicubic(0, cornerIdx, cornerIdx, controlIdx, controlIdx, tessU, tessV, f);
+	} else {
+		// type == RI_BILINEAR
+		buildBilinearPN(posDecl, normDecl, tessU, tessV, equalOrientations, 0, cornerIdx, cornerIdx, f);
+		insertParamsBilinear(0, cornerIdx, cornerIdx, tessU, tessV, f);
+	}
+	
+	if ( useStrips )
+		f.buildStripIndices(tessU, tessV, true);
+	else
+		f.buildTriangleIndices(tessU, tessV, true);
+
+	return surf;
+}
+
+CSurface *CPatchMeshTriangulator::triangulate(const CDeclaration &posDecl,
+											  const CDeclaration &normDecl,
+											  RtInt tessU,
+											  RtInt tessV,
+											  bool equalOrientations,
+											  bool useStrips)
+{
+	RtToken type = m_obj.type();
+
+	if ( type != RI_BILINEAR && type != RI_BICUBIC ) {
+		/// @todo Errorhandling unknown Patch type
+		return 0;
+	}
+	
+	if ( type == RI_BICUBIC ) {
+	} else {
+		// type == RI_BILINEAR
+	}
+
+	return 0;
+}
+

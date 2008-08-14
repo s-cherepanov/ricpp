@@ -3179,12 +3179,12 @@ namespace RiCPP {
 			return m_ubasis;
 		}
 		
-		void uBasis(const RtBasis &anUBasis)
+		void uBasis(const RtBasis anUBasis)
 		{
 			memcpy(m_ubasis, anUBasis, sizeof(RtBasis));
 		}
 
-		void uBasis(const RtBasis &anUBasis, RtInt anUStep)
+		void uBasis(const RtBasis anUBasis, RtInt anUStep)
 		{
 			memcpy(m_ubasis, anUBasis, sizeof(RtBasis));
 			m_ustep = anUStep;
@@ -3199,12 +3199,12 @@ namespace RiCPP {
 			return m_vbasis;
 		}
 		
-		void vBasis(const RtBasis &aVBasis)
+		void vBasis(const RtBasis aVBasis)
 		{
 			memcpy(m_vbasis, aVBasis, sizeof(RtBasis));
 		}
 		
-		void vBasis(const RtBasis &aVBasis, RtInt aVStep)
+		void vBasis(const RtBasis aVBasis, RtInt aVStep)
 		{
 			memcpy(m_vbasis, aVBasis, sizeof(RtBasis));
 			m_vstep = aVStep;

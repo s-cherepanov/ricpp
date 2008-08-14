@@ -635,12 +635,12 @@ namespace RiCPP {
 			return new CRiMatte(aLineNo, onoff);
 		}
 
-		inline virtual CRiBound *newRiBound(long aLineNo, RtBound bound)
+		inline virtual CRiBound *newRiBound(long aLineNo, const RtBound bound)
 		{
 			return new CRiBound(aLineNo, bound);
 		}
 
-		inline virtual CRiDetail *newRiDetail(long aLineNo, RtBound bound)
+		inline virtual CRiDetail *newRiDetail(long aLineNo, const RtBound bound)
 		{
 			return new CRiDetail(aLineNo, bound);
 		}
@@ -675,7 +675,7 @@ namespace RiCPP {
 			return new CRiSides(aLineNo, nsides);
 		}
 
-		inline virtual CRiBasis *newRiBasis(long aLineNo, RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vstep)
+		inline virtual CRiBasis *newRiBasis(long aLineNo, const RtBasis ubasis, RtInt ustep, const RtBasis vbasis, RtInt vstep)
 		{
 			return new CRiBasis(aLineNo, ubasis, ustep, vbasis, vstep);
 		}
@@ -1060,7 +1060,7 @@ namespace RiCPP {
 
 		inline virtual CRiProcedural *newRiProcedural(
 			long aLineNo,
-			RtPointer data, RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
+			RtPointer data, const RtBound bound, ISubdivFunc &subdivfunc, IFreeFunc *freefunc)
 		{
 			return new CRiProcedural(aLineNo, data, bound, subdivfunc, freefunc);
 		}

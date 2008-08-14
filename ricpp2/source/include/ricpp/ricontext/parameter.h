@@ -393,7 +393,7 @@ namespace RiCPP {
 		 */
 		inline EnumBasicTypes basicType() const
 		{
-			return m_declaration ? m_declaration->basicType() : BASICTYPE_UNKNOWN;
+			return declarationPtr() ? declaration().basicType() : BASICTYPE_UNKNOWN;
 		}
 
 		/** @brief Gets the type of the parameter.
@@ -402,9 +402,9 @@ namespace RiCPP {
 		 */
 		inline EnumTypes type() const
 		{
-			return m_declaration ? m_declaration->type() : TYPE_UNKNOWN;
+			return declarationPtr() ? declaration().type() : TYPE_UNKNOWN;
 		}
-
+		
 		/** @brief Gets the integer values.
 		 *
 		 *  if basicType() is BASICTYPE_INTEGER, m_ints contains the integer values.

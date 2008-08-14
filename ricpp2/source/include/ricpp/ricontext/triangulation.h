@@ -34,6 +34,10 @@
 #include "ricpp/ricontext/surface.h"
 #endif _RICPP_RICONTEXT_SURFACE_H
 
+#ifndef _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
+#include "ricpp/ricontext/rimacroattributes.h"
+#endif _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
+
 #ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
 #include "ricpp/ricontext/rimacroprims.h"
 #endif _RICPP_RICONTEXT_RIMACROPRIMS_H
@@ -77,7 +81,7 @@ namespace RiCPP {
 	class CBasePolygonTriangulator : public CTriangulator {
 	protected:
 		void triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const;
-		void insertParameters(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs) const;
+		void insertParams(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs);
 	}; // CBasePolygonTriangulator
 	
 	class CPolygonTriangulator : public CBasePolygonTriangulator {
@@ -129,7 +133,20 @@ namespace RiCPP {
 
 	class CParametricTriangulator : public CTriangulator {
 	protected:
+		void insertParamsBilinear(IndexType faceIndex,
+								  const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+								  RtInt tessU, RtInt tessV,
+								  CFace &f);
+		void insertParamsBicubic(IndexType faceIndex,
+								 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+								 const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
+								 RtInt tessU, RtInt tessV,
+								 CFace &f);
+	public:
+		virtual CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips) = 0;
 	}; // CParametricTriangulator
+
+	// -------------------------------------------------------------------------
 
 	class CQuadricTriangulator : public CParametricTriangulator {
 	private:
@@ -137,7 +154,7 @@ namespace RiCPP {
 	protected:
 		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
 	public:
-		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
+		virtual CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
 	}; // CQuadricTriangulator
 	
 	class CConeTriangulator : public CQuadricTriangulator {
@@ -202,6 +219,49 @@ namespace RiCPP {
 	public:
 		inline CTorusTriangulator(const CRiTorus &obj) : m_obj(obj) {}
 	}; // CTorusTriangulator
+	
+	// -------------------------------------------------------------------------
+	
+	class CRootPatchTriangulator : public CParametricTriangulator {
+	private:
+		CRiBasis m_basis;
+		inline CRootPatchTriangulator() {}
+	protected:
+		inline CRootPatchTriangulator(const CRiBasis &aBasis) : m_basis(aBasis) {}
+		virtual void buildBilinearPN(const CDeclaration &pointDecl, const CDeclaration &normDecl,
+									 RtInt tessU, RtInt tessV,
+									 bool equalOrientations,
+									 IndexType faceIndex,
+									 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+									 CFace &f);
+		virtual void buildBicubicPN(const CDeclaration &pointDecl, const CDeclaration &normDecl,
+									RtInt tessU, RtInt tessV,
+									bool equalOrientations,
+									IndexType faceIndex,
+									const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+									const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
+									CFace &f);
+		inline const CRiBasis &basis() { return m_basis; }
+	}; // CParametricTriangulator
+	
+	class CPatchTriangulator : public CRootPatchTriangulator {
+		CRiPatch m_obj;
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
+	public:
+		inline CPatchTriangulator(const CRiPatch &obj, const CRiBasis &aBasis) : CRootPatchTriangulator(aBasis), m_obj(obj) {}
+		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
+	}; // CPatchTriangulator
+
+	class CPatchMeshTriangulator : public CRootPatchTriangulator {
+		CRiPatchMesh m_obj;
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
+	public:
+		inline CPatchMeshTriangulator(const CRiPatchMesh &obj, const CRiBasis &aBasis) : CRootPatchTriangulator(aBasis), m_obj(obj) {}
+		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
+	}; // CPatchMeshTriangulator
+	
 }
 
 #endif // _RICPP_RICONTEXT_TRIANGULATION_H

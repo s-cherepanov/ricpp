@@ -879,7 +879,7 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline bool plane(_T *norm, const _T *p1, const _T *p2, const _T *p3)
 	{
-		_T v1[3], v2[2];
+		_T v1[3], v2[3];
 		vectFromPos3(v1, p2, p1);
 		vectFromPos3(v2, p2, p3);
 		return plane(norm, v1, v2);

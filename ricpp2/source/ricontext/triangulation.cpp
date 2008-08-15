@@ -644,10 +644,14 @@ void CParametricTriangulator::insertBicubicParams(IndexType faceIndex,
 			break;
 				
 			case CLASS_VERTEX: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+				}
 			}
 			break;
 				
 			case CLASS_FACEVERTEX: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+				}
 			}
 			break;
 				
@@ -1115,6 +1119,255 @@ void CTorusTriangulator::buildPN(const CDeclaration &posDecl, const CDeclaration
 #endif
 }
 
+// =============================================================================
+
+CUVVector::CUVVector() : m_tessU(0), m_tessV(0)
+{
+	memset(&m_uBasis[0], 0, sizeof(m_uBasis));
+	memset(&m_vBasis[0], 0, sizeof(m_vBasis));
+}
+
+bool CUVVector::hasBasis(const RtBasis aUBasis, const RtBasis aVBasis) const
+{
+	if ( memcmp(m_uBasis, aUBasis, sizeof(RtBasis)) != 0 )
+		return false;
+	if ( memcmp(m_vBasis, aVBasis, sizeof(RtBasis)) != 0 )
+		return false;
+	return true;
+}
+
+void CUVVector::reset(IndexType aTessU, IndexType aTessV, const RtBasis aUBasis, const RtBasis aVBasis)
+{
+	m_tessU = aTessU;
+	m_tessV = aTessV;
+	memcpy(m_uBasis, aUBasis, sizeof(RtBasis));
+	memcpy(m_vBasis, aVBasis, sizeof(RtBasis));
+	
+	m_uVector.clear();
+	m_vVector.clear();
+	m_duVector.clear();
+	m_dvVector.clear();
+	
+	m_uVector.resize((m_tessU+1)*4);
+	m_vVector.resize((m_tessV+1)*4);
+	m_duVector.resize((m_tessU+1)*4);
+	m_dvVector.resize((m_tessV+1)*4);
+	
+	RtFloat t, t2, t3, s2, s3;
+	IndexType i, k, u, v;
+	
+	RtFloat deltau = (RtFloat)(1.0 / (RtFloat)m_tessU);
+	RtFloat deltav = (RtFloat)(1.0 / (RtFloat)m_tessV);
+	
+	for ( t = 0.0, k = 0, u = 0; u < m_tessU+1; ++u, t += deltau ) {
+		if ( u == m_tessU || t > 1.0 ) {
+			t = 1.0;
+		}
+		t2 = t*t;
+		t3 = t*t2;
+		s2 = (RtFloat)(t+t);
+		s3 = (RtFloat)(t2+t2+t2);
+		for ( i = 0; i < 4; ++i, ++k ) {
+			m_uVector[k] =  t3 * m_uBasis[0][i]+
+			t2 * m_uBasis[1][i]+
+			t  * m_uBasis[2][i]+
+			m_uBasis[3][i];
+			m_duVector[k] = s3 * m_uBasis[0][i]+
+			s2 * m_uBasis[1][i]+
+			m_uBasis[2][i];
+		}
+	}
+	
+	for ( t = 0.0, k = 0, v = 0; v < m_tessV+1; ++v, t += deltav ) {
+		if ( v == m_tessV || t > 1.0 ) {
+			t = 1.0;
+		}
+		t2 = t*t;
+		t3 = t*t2;
+		s2 = (RtFloat)(t+t);
+		s3 = (RtFloat)(t2+t2+t2);
+		for ( i = 0; i < 4; ++i, ++k ) {
+			m_vVector[k] =  t3 * m_vBasis[0][i]+
+			t2 * m_vBasis[1][i]+
+			t  * m_vBasis[2][i]+
+			m_vBasis[3][i];
+			m_dvVector[k] = s3 * m_vBasis[0][i]+
+			s2 * m_vBasis[1][i]+
+			m_vBasis[2][i];
+		}
+	}
+}
+
+
+void CUVVector::bicubicBlend(IndexType elemSize,
+							 const IndexType (&controlIdx)[16],
+							 const std::vector<RtFloat> &vals,
+							 std::vector<RtFloat> &retvals)
+{
+	assert(tessU() > 0);
+	assert(tessV() > 0);
+	assert(elemSize > 0);
+	assert(uVector().size() == duVector().size());
+	assert(vVector().size() == dvVector().size());
+	assert(uVector().size() == (size_t)(tessU()+1)*4);
+	assert(vVector().size() == (size_t)(tessV()+1)*4);
+	
+	IndexType tessSize = (tessU()+1)*(tessV()+1)*elemSize;
+	
+	if ( retvals.size() != tessSize ) {
+		retvals.clear();
+		retvals.resize(tessSize);
+	}
+	
+	std::vector<RtFloat> temp(4*elemSize);
+	IndexType id, v, u, i, j, k;
+	
+	id = 0;
+	for ( v = 0; v < (IndexType)tessV()+1; ++v ) {
+		k = 0;
+		for ( i = 0; i < 4; ++i ) {
+			for ( j = 0; j < elemSize; ++j ) {
+				temp[k++] =
+				vVector()[v*4]   * vals[controlIdx[ i    ] * elemSize + j] +
+				vVector()[v*4+1] * vals[controlIdx[(i+ 4)] * elemSize + j] +
+				vVector()[v*4+2] * vals[controlIdx[(i+ 8)] * elemSize + j] +
+				vVector()[v*4+3] * vals[controlIdx[(i+12)] * elemSize + j];
+			}
+		}
+		for ( u = 0; u < (IndexType)tessU()+1; ++u ) {
+			for ( j = 0; j < elemSize; ++j ) {
+				retvals[id++] =
+				uVector()[u*4]   * temp[           j] +
+				uVector()[u*4+1] * temp[  elemSize+j] +
+				uVector()[u*4+2] * temp[2*elemSize+j] +
+				uVector()[u*4+3] * temp[3*elemSize+j];
+			}
+		}
+	}
+}
+
+void CUVVector::bicubicBlendWithNormals(IndexType elemSize,
+									const IndexType (&controlIdx)[16],
+									const std::vector<RtFloat> &vals,
+									bool flipNormal,
+									std::vector<RtFloat> &retvals,
+									std::vector<RtFloat> &normals)
+{
+	assert(elemSize == 3 || elemSize == 4);
+	assert(tessU() > 0);
+	assert(tessV() > 0);
+	assert(uVector().size() == duVector().size());
+	assert(vVector().size() == dvVector().size());
+	assert(uVector().size() == (size_t)(tessU()+1)*4);
+	assert(vVector().size() == (size_t)(tessV()+1)*4);
+	
+	const IndexType normElemSize = 3;
+	IndexType sumPos = (tessU()+1)*(tessV()+1);
+	IndexType normTessSize = sumPos*normElemSize;
+	IndexType tessSize = sumPos*elemSize;
+	
+	if ( normals.size() != normTessSize ) {
+		normals.clear();
+		normals.resize(normTessSize);
+	}
+	
+	if ( retvals.size() != tessSize ) {
+		retvals.clear();
+		retvals.resize(tessSize);
+	}
+	
+	std::vector<RtFloat> temp(4*elemSize);
+	
+	std::vector<RtFloat> pdu(tessSize);
+	std::vector<RtFloat> pdv(tessSize);
+	
+	IndexType id, i, j, k, u, v;
+	
+	id = 0;
+	for ( v = 0; v < (IndexType)tessV()+1; ++v ) {
+		k = 0;
+		for ( i = 0; i < 4; ++i ) {
+			for ( j = 0; j < elemSize; ++j ) {
+				temp[k++] =
+				vVector()[v*4]   * vals[controlIdx[ i    ]*elemSize + j] +
+				vVector()[v*4+1] * vals[controlIdx[(i+ 4)]*elemSize + j] +
+				vVector()[v*4+2] * vals[controlIdx[(i+ 8)]*elemSize + j] +
+				vVector()[v*4+3] * vals[controlIdx[(i+12)]*elemSize + j];
+			}
+		}
+		for ( u = 0; u < (IndexType)tessU()+1; ++u ) {
+			for ( j = 0; j < elemSize; ++j ) {
+				pdu[id] =
+				duVector()[u*4]   * temp[           j] +
+				duVector()[u*4+1] * temp[  elemSize+j] +
+				duVector()[u*4+2] * temp[2*elemSize+j] +
+				duVector()[u*4+3] * temp[3*elemSize+j];
+				
+				retvals[id] =
+				uVector()[u*4]   * temp[           j] +
+				uVector()[u*4+1] * temp[  elemSize+j] +
+				uVector()[u*4+2] * temp[2*elemSize+j] +
+				uVector()[u*4+3] * temp[3*elemSize+j];
+				++id;
+			}
+		}
+	}
+	
+	IndexType idSav;
+	id = 0;
+	for ( u = 0; u < (IndexType)tessU()+1; ++u ) {
+		k = 0;
+		for ( i = 0; i < 4; ++i ) {
+			for ( j = 0; j < elemSize; ++j ) {
+				temp[k++] =
+				uVector()[u*4]   * vals[controlIdx[(i*4)  ]*elemSize+j] +
+				uVector()[u*4+1] * vals[controlIdx[(i*4+1)]*elemSize+j] +
+				uVector()[u*4+2] * vals[controlIdx[(i*4+2)]*elemSize+j] +
+				uVector()[u*4+3] * vals[controlIdx[(i*4+3)]*elemSize+j];
+			}
+		}
+		
+		idSav = id;
+		for ( v = 0; v < (IndexType)tessV()+1; ++v ) {
+			for ( j = 0; j < elemSize; ++j ) {
+				pdv[id+j] =
+				dvVector()[v*4]   * temp[           j] +
+				dvVector()[v*4+1] * temp[  elemSize+j] +
+				dvVector()[v*4+2] * temp[2*elemSize+j] +
+				dvVector()[v*4+3] * temp[3*elemSize+j];
+			}
+			id += (tessU()+1) * elemSize;
+		}
+		id = idSav + elemSize;
+	}
+	
+	id = 0;
+	if ( elemSize == 4 ) {
+		RtFloat w2;
+		for ( i = 0; i < sumPos; ++i ) {
+			w2 = retvals[id+3] * retvals[id+3];
+			for ( j = 0; j < 3; ++j ) {
+				pdu[id+j] = (retvals[id+3]*pdu[id+j] - retvals[id+j]*pdu[id+3])/w2;
+				pdv[id+j] = (retvals[id+3]*pdv[id+j] - retvals[id+j]*pdv[id+3])/w2;
+			}
+			id += elemSize;
+		}
+	}
+	
+	id = 0;
+	IndexType idnrm = 0;
+	for ( i = 0; i < sumPos; ++i ) {
+		if ( flipNormal )
+			plane(&normals[idnrm], &pdv[id], &pdu[id]);
+		else
+			planeLH(&normals[idnrm], &pdv[id], &pdu[id]);
+		idnrm += normElemSize;
+		id += elemSize;
+	}
+}
+
+
+// =============================================================================
 
 static bool extractRiPz(const CParameter &p, IndexType sizeU, IndexType sizeV, IndexType faceIndex, const IndexType cornerIdx[], std::vector<RtFloat> &retval)
 {
@@ -1228,8 +1481,9 @@ static bool extractRiPw(const CParameter &p, IndexType sizeU, IndexType sizeV, I
 	return true;
 }
 
-static bool extractRiP(const CParameter &p, IndexType sizeU, IndexType sizeV, IndexType faceIndex, const IndexType cornerIdx[], std::vector<RtFloat> &retval)
+static bool extractRi3F(const CParameter &p, IndexType sizeU, IndexType sizeV, IndexType faceIndex, const IndexType cornerIdx[], std::vector<RtFloat> &retval)
 {
+	// Can be used for RI_P and RI_N
 	IndexType size = sizeU * sizeV;
 	assert(retval.size() >= size);
 
@@ -1375,7 +1629,7 @@ void CRootPatchTriangulator::buildBilinearPN(const CDeclaration &posDecl,
 	const CParameter *pz = 0;
 	const CParameter *pw = 0;
 	
-	std::vector<RtFloat> pos(16);
+	std::vector<RtFloat> pos(4*4);
 	
 	if ( !p ) {
 		pz = obj().parameters().get(RI_PZ);
@@ -1394,12 +1648,13 @@ void CRootPatchTriangulator::buildBilinearPN(const CDeclaration &posDecl,
 			}
 		}
 	} else {
-		if ( !extractRiP(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, pos) ) {
+		if ( !extractRi3F(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, pos) ) {
 			return;
 		}
 	}
 		
 	SParametricVars vars(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	
 	if ( !pw ) {
 		bilinearBlend(tessU, tessV, 3, posCornerIdx, pos, *vars.positions);
 	} else {
@@ -1409,12 +1664,9 @@ void CRootPatchTriangulator::buildBilinearPN(const CDeclaration &posDecl,
 	}
 	
 	const CParameter *n = obj().parameters().get(RI_N);
-	std::vector<RtFloat> nrm(12);
-	if ( n ) {
-		if ( !extractRiP(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, nrm) ) {
-			return;
-		}
-	} else {
+	std::vector<RtFloat> nrm(4*3);
+	
+	if ( !n || !extractRi3F(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, nrm) ) {
 		IndexType nc[4] = {0, (IndexType)tessU*3, (IndexType)(tessV*(tessU+1))*3, vars.positions->size()-3};
 		if ( vars.flipNormal < 0.0 ) {
 			plane<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
@@ -1428,6 +1680,7 @@ void CRootPatchTriangulator::buildBilinearPN(const CDeclaration &posDecl,
 			planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]);
 		}
 	}
+
 	bilinearBlend(tessU, tessV, 3, posCornerIdx, nrm, *vars.normals);
 }
 
@@ -1442,7 +1695,61 @@ void CRootPatchTriangulator::buildBicubicPN(const CDeclaration &posDecl,
 											const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
 											CFace &f)
 {
+	// static IndexType posCornerIdx[4] = {0, 1, 2, 3};
+	static IndexType posControlIdx[16] = {
+		0,  1,  2,  3,
+		4,  5,  6,  7,
+		8,  9, 10, 11,
+		12, 13, 14, 15
+	};
+
+	// const CParameter *n = obj().parameters().get(RI_N);
+	const CParameter *p = obj().parameters().get(RI_P);
+	const CParameter *pz = 0;
+	const CParameter *pw = 0;
+	
+	std::vector<RtFloat> pos(16*4);
+	
+	if ( !p ) {
+		pz = obj().parameters().get(RI_PZ);
+		if ( !pz ) {
+			pw = obj().parameters().get(RI_PW);
+			if ( !pw ) {
+				// No position information
+				return;
+			}
+			if ( !extractRiPw(*pw, 4, 4, faceIndex, pw->declaration().isFace() ? faceControlIdx : controlIdx, pos) ) {
+				return;
+			}			
+		} else {
+			if ( !extractRiPz(*pz, 4, 4, faceIndex, pz->declaration().isFace() ? faceControlIdx : controlIdx, pos) ) {
+				return;
+			}
+		}
+	} else {
+		if ( !extractRi3F(*p, 4, 4, faceIndex, p->declaration().isFace() ? faceControlIdx : controlIdx, pos) ) {
+			return;
+		}
+	}
+
+	/*
+	if ( n ) {
+		std::vector<RtFloat> nrm(16*3);
+	}
+	 */
+
 	SParametricVars vars(posDecl, normDecl, tessU, tessV, equalOrientations, f);
+	m_uvVector.reset(tessU, tessV, basis().uBasis(), basis().vBasis());
+
+	if ( !pw ) {
+		// m_uvVector.bicubicBlend(3, posControlIdx, pos, *vars.positions); vars.normals->clear();
+		m_uvVector.bicubicBlendWithNormals(3, posControlIdx, pos, vars.flipNormal < 0.0, *vars.positions, *vars.normals);
+	} else {
+		std::vector<RtFloat> blendPw;
+		// m_uvVector.bicubicBlend(4, posControlIdx, pos, blendPw); vars.normals->clear();
+		m_uvVector.bicubicBlendWithNormals(4, posControlIdx, pos, vars.flipNormal < 0.0, blendPw, *vars.normals);
+		pw2p(blendPw, *vars.positions);
+	}
 }
 
 // =============================================================================

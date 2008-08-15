@@ -222,9 +222,101 @@ namespace RiCPP {
 	
 	// -------------------------------------------------------------------------
 	
+	////////////////////////////////////////////////////////////////////////////////
+	//! Basis values for bicubic spline patches of given parametric intervals
+	class CUVVector {
+	private:
+		RtBasis m_uBasis;                 //!< Basis matrix used for the parametric direction u
+		RtBasis m_vBasis;                 //!< Basis matrix used for the parametric direction v
+		IndexType m_tessU;                //!< Number of segments for tesselation in parametric direction u
+		IndexType m_tessV;                //!< Number of segments for tesselation in parametric direction v
+		std::vector<RtFloat> m_uVector;   //!< Base values for direction u, one value per parameter value (m_tessU+1 values)
+		std::vector<RtFloat> m_vVector;   //!< Base values for direction v, one value per parameter value (m_tessV+1 values)
+		std::vector<RtFloat> m_duVector;  //!< First derivates of base values for direction u, one value per parameter value (m_tessU+1 values)
+		std::vector<RtFloat> m_dvVector;  //!< First derivates of base values for direction v, one value per parameter value (m_tessV+1 values)
+	public:
+		//! Standard constructor, just clears the members
+		CUVVector();
+		
+		//! Constructor, assings the parameters to the members 
+		inline CUVVector(IndexType aTessU, IndexType aTessV, const RtBasis aUBasis, const RtBasis aVBasis)
+		{
+			reset(aTessU, aTessV, aUBasis, aVBasis);
+		}
+		
+		//! Copy constructor, assings the members of another instance to the members of *this
+		inline CUVVector(const CUVVector &v) { *this = v; }
+		
+		//! Duplication
+		/*! @return A clone of *this
+		 */
+		inline CUVVector *duplicate() const
+		{
+			return new CUVVector(*this);
+		}
+		
+		//! Assigns the members of an instance uvVector to the members of *this
+		inline CUVVector &operator=(const CUVVector &uvVector)
+		{
+			if ( &uvVector == this )
+				return *this;
+			reset(uvVector.m_tessU, uvVector.m_tessV, uvVector.m_uBasis, uvVector.m_vBasis);
+			return *this;
+		}
+		
+		//! Resets the members of *this by the values of the parameters
+		void reset(IndexType aTessU, IndexType aTessV, const RtBasis aUBasis, const RtBasis aVBasis);
+		
+		//! Returns true if the basis matrices equals to the appropriate parameters
+		bool hasBasis(const RtBasis aUBasis, const RtBasis aVBasis) const;
+		
+		//! Basis matrix for parametric u
+		inline const RtBasis &uBasis() const { return m_uBasis; }
+		//! Basis matrix for parametric v
+		inline const RtBasis &vBasis() const { return m_vBasis;	}
+		
+		//! Number of intervals in parametric direction u
+		inline IndexType nu() const {return m_tessU+1;}
+		
+		//! Number of intervals in parametric direction v
+		inline IndexType nv() const {return m_tessV+1;}
+		
+		//! Tesselation of the patch in parametric direction u
+		inline IndexType tessU() const { return m_tessU; }
+		
+		//! Tesselation of the patch in parametric direction v
+		inline IndexType tessV() const { return m_tessV; }
+		
+		//! Basis values in direction u
+		inline const std::vector<RtFloat> &uVector() const { return m_uVector; }
+		
+		//! Basis values in direction v
+		inline const std::vector<RtFloat> &vVector() const { return m_vVector; }
+		
+		//! Derivates of basis values in direction u
+		inline const std::vector<RtFloat> &duVector() const { return m_duVector; }
+		
+		//! Derivates of basis values in direction v
+		inline const std::vector<RtFloat> &dvVector() const { return m_dvVector; }
+
+		void bicubicBlend(IndexType elemSize,
+						  const IndexType (&controlIdx)[16],
+						  const std::vector<RtFloat> &vals,
+						  std::vector<RtFloat> &retvals);
+		
+		void bicubicBlendWithNormals(IndexType elemSize,
+									 const IndexType (&controlIdx)[16],
+									 const std::vector<RtFloat> &vals,
+									 bool flipNormal,
+									 std::vector<RtFloat> &retvals,
+									 std::vector<RtFloat> &normals);
+	}; // class CUVVector
+
+	
 	class CRootPatchTriangulator : public CParametricTriangulator {
 	private:
 		CRiBasis m_basis;
+		CUVVector m_uvVector;
 		inline CRootPatchTriangulator() {}
 		void getFaceIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType patchsize, IndexType *idx) const;
 	protected:
@@ -242,13 +334,16 @@ namespace RiCPP {
 									const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 									const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
 									CFace &f);
-		inline const CRiBasis &basis() { return m_basis; }
+		
+		inline const CRiBasis &basis() const { return m_basis; }
+		inline CRiBasis &basis() { return m_basis; }
 
+		
 		void getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
 		void getFaceCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
 		void getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const;
 		void getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const;
-	}; // CParametricTriangulator
+	}; // CRootPatchTriangulator
 	
 	class CPatchTriangulator : public CRootPatchTriangulator {
 		CRiPatch m_obj;

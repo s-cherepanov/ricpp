@@ -100,13 +100,14 @@ RICPP_EXTERN(const RtInt) RI_POWERSTEP;      /**< Stepsize for control points of
 /** @defgroup ricpp_basis Ri basis matrices for bicubic patches
  *  @brief Basis matrices for bicubic patches
  *  @see CRiCPP::basis(), ricpp_steps
+ *  @todo Interface and variables as const
  *  @{
  */
-RICPP_EXTERN(const RtBasis) RiBezierBasis; /**< Basis matrix for bezier patch meshes */
-RICPP_EXTERN(const RtBasis) RiBSplineBasis; /**<  Basis matrix B-spline patch meshes */
-RICPP_EXTERN(const RtBasis) RiCatmullRomBasis; /**<  Basis matrix Catmull-Rom patch meshes */
-RICPP_EXTERN(const RtBasis) RiHermiteBasis; /**<  Basis matrix Hermite patch meshes */
-RICPP_EXTERN(const RtBasis) RiPowerBasis; /**<  Basis matrix Power-basis patch meshes */
+RICPP_EXTERN(RtBasis) RiBezierBasis; /**< Basis matrix for bezier patch meshes */
+RICPP_EXTERN(RtBasis) RiBSplineBasis; /**<  Basis matrix B-spline patch meshes */
+RICPP_EXTERN(RtBasis) RiCatmullRomBasis; /**<  Basis matrix Catmull-Rom patch meshes */
+RICPP_EXTERN(RtBasis) RiHermiteBasis; /**<  Basis matrix Hermite patch meshes */
+RICPP_EXTERN(RtBasis) RiPowerBasis; /**<  Basis matrix Power-basis patch meshes */
 /** @} */
 
 /** @defgroup ricpp_blobbyconst Ri constants for CRiRoot::blobbyV() (added)

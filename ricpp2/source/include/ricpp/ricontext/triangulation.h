@@ -133,11 +133,11 @@ namespace RiCPP {
 
 	class CParametricTriangulator : public CTriangulator {
 	protected:
-		void insertParamsBilinear(IndexType faceIndex,
+		void insertBilinearParams(IndexType faceIndex,
 								  const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 								  RtInt tessU, RtInt tessV,
 								  CFace &f);
-		void insertParamsBicubic(IndexType faceIndex,
+		void insertBicubicParams(IndexType faceIndex,
 								 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 								 const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
 								 RtInt tessU, RtInt tessV,
@@ -226,6 +226,7 @@ namespace RiCPP {
 	private:
 		CRiBasis m_basis;
 		inline CRootPatchTriangulator() {}
+		void getFaceIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType patchsize, IndexType *idx) const;
 	protected:
 		inline CRootPatchTriangulator(const CRiBasis &aBasis) : m_basis(aBasis) {}
 		virtual void buildBilinearPN(const CDeclaration &pointDecl, const CDeclaration &normDecl,
@@ -242,6 +243,11 @@ namespace RiCPP {
 									const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
 									CFace &f);
 		inline const CRiBasis &basis() { return m_basis; }
+
+		void getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
+		void getFaceCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
+		void getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const;
+		void getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const;
 	}; // CParametricTriangulator
 	
 	class CPatchTriangulator : public CRootPatchTriangulator {

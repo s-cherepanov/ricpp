@@ -477,7 +477,7 @@ namespace RiCPP {
 		std::vector<RtToken> m_tokenPtr;   ///< Vector of the tokens for ri token/value parameters.
 		std::vector<RtPointer> m_paramPtr; ///< Pointer to the values for ri token/value parameters.
 		
-		CValueCounts m_valueCounts;        ///< Used to calculate the sizes of parameters
+		CValueCounts m_valueCounts;        ///< Used to calculate the number of the parameters.
 
 		/** @brief Rebuilds the parameter pointer vectors m_tokenPtr and m_paramPtr from m_params.
 		 */
@@ -608,7 +608,7 @@ namespace RiCPP {
 
 		/** @brief Resets the contents for a new parameter list.
 		 */
-		void reset(const CParameterClasses &counts);
+		void reset(const IParameterClasses &counts);
 
 		/** @brief Copies the parameters.
 		 *
@@ -688,9 +688,10 @@ namespace RiCPP {
 			return (p && p->basicType() == bt) ? p : 0;
 		}
 
-		/** @brief Can be used to calculate the sizes of the parameters
+		/** @brief Can be used to calculate the number of the parameters, e.g. number of vertices.
+		 *  @return Number of the parameters (like number of vertice parameters).
 		 */
-		inline const CParameterClasses &valueCounts() const { return m_valueCounts; }
+		const IParameterClasses &parameterClasses() const { return m_valueCounts; }
 		
 		/** @brief Erases a specific parameter (token/value pair).
 		 *

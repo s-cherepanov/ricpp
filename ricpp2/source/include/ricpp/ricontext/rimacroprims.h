@@ -1100,6 +1100,23 @@ namespace RiCPP {
 				m_nv;    ///< Number of control points in parametric v direction.
 		RtInt   m_ustep, ///< Step m_ustep control points to the next patch in u direction (from the basis).
 				m_vstep; ///< Step m_vstep control points to the next patch in v direction (from the basis).
+
+		/** @brief Enter the element variable using the interface parameters.
+		 *
+		 *  @param aUStep Number of control points to the next patch in u direction.
+		 *  @param aVStep Number of control points to the next patch in v direction.
+		 *  @param aType  Type of the mesh either RI_BILINEAR or RI_BICUBIC.
+		 *  @param aNu    Number of control points in u direction.
+		 *  @param aUWrap Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC
+		 *  @param aNv    Number of control points in v direction.
+		 *  @param aVWrap Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
+		 */
+		void set(
+				 RtInt aUStep, RtInt aVStep,
+				 RtToken aType,
+				 RtInt aNu, RtToken aUWrap,
+				 RtInt aNv, RtToken aVWrap);
+		
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;
 		
@@ -1264,22 +1281,32 @@ namespace RiCPP {
 			return m_vstep;
 		}
 
-		/** @brief Enter the element variable using the interface parameters.
+		/** @brief Number of patches in parametric u direction.
 		 *
-		 *  @param aUStep Number of control points to the next patch in u direction.
-		 *  @param aVStep Number of control points to the next patch in v direction.
-		 *  @param aType  Type of the mesh either RI_BILINEAR or RI_BICUBIC.
-		 *  @param aNu    Number of control points in u direction.
-		 *  @param aUWrap Wrap in parametric u direction RI_PERIODIC or RI_NONPERIODIC
-		 *  @param aNv    Number of control points in v direction.
-		 *  @param aVWrap Wrap in parametric v direction RI_PERIODIC or RI_NONPERIODIC.
+		 * @return The number of patches in parametric u direction.
+		 * @todo Duplicate code in CPatchMeshClasses::reset()
 		 */
-		void set(
-			RtInt aUStep, RtInt aVStep,
-			RtToken aType,
-			RtInt aNu, RtToken aUWrap,
-			RtInt aNv, RtToken aVWrap);
-
+		RtInt nuPatches() const
+		{
+			if ( type() == RI_BICUBIC )
+				return uWrap() == RI_PERIODIC ? nu()/uStep() : (nu()-4)/uStep() + 1;
+			// type == RI_BILINEAR
+			return uWrap() == RI_PERIODIC ? nu() : nu()-1;
+		}
+		
+		/** @brief Number of patches in parametric v direction.
+		 *
+		 * @return The number of patches in parametric v direction.
+		 * @todo Duplicate code in CPatchMeshClasses::reset()
+		 */
+		RtInt nvPatches() const
+		{
+			if ( type() == RI_BICUBIC )
+				return vWrap() == RI_PERIODIC ? nv()/vStep() : (nv()-4)/vStep() + 1;
+			// type == RI_BILINEAR
+			return vWrap() == RI_PERIODIC ? nv() : nv()-1;
+		}
+		
 		inline virtual void process(IRiRoot &ri)
 		{
 			ri.patchMeshV(type(), nu(), uWrap(), nv(), vWrap(), paramSize(), tokenPtr(), valuePtr());

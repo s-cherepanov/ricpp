@@ -64,7 +64,34 @@
 
 namespace RiCPP {
 
-
+	class IParameterClasses {
+	public:
+		//! Let the destructor be virtual.
+		inline virtual ~IParameterClasses() {}
+		
+		//! constant() returns the size for constant parameters.
+		virtual RtInt constants() const=0;
+		
+		//! facets() returns the number of faces.
+		virtual RtInt facets() const=0;
+		
+		//! corners() returns the number of corners.
+		virtual RtInt corners() const=0;
+		
+		//! vertices() returns the number of vertices.
+		virtual RtInt vertices() const=0;
+		
+		/** @brief faceCorners() returns the number of corners, counted independently
+		 *         for each face.
+		 */
+		virtual RtInt faceCorners() const=0;
+		
+		/** @brief faceVertices() returns the number of vertices, counted independently
+		 *         for each face.
+		 */
+		virtual RtInt faceVertices() const=0;
+	}; // IParameterClasses
+	
 //! CParameterClasses, base class for the parameter classes
 
 /*! CParameterClasses contains the signature for all C...Classes.
@@ -98,12 +125,10 @@ namespace RiCPP {
   The derived classes returns the number of values for the different
   classes.
  */
-class CParameterClasses {
+class CParameterClasses : public IParameterClasses {
 public:
-	inline virtual ~CParameterClasses() {}
-
 	//! constant() always returns 1
-	inline virtual RtInt constant() const {return 1;}
+	inline virtual RtInt constants() const {return 1;}
 
 	//! facets() returns the number of faces
 	inline virtual RtInt facets() const {return 1;}
@@ -560,6 +585,7 @@ public:
  */
 class CValueCounts : public CParameterClasses {
 private:
+	RtInt m_constants;     ///< Size of constants in primitive (normally 1).
 	RtInt m_vertices;      ///< Number of vertices in primitive (vertex class).
 	RtInt m_corners;       ///< Number of corners in primitive (varying class).
 	RtInt m_facets;        ///< Number of facets in primitive (uniform class).
@@ -571,6 +597,7 @@ public:
 	 */
 	inline void clear()
 	{
+		m_constants = 1;
 		m_vertices = 1;
 		m_corners = 1;
 		m_facets = 1;
@@ -590,12 +617,14 @@ public:
 	 * @param theFaceCorners    Number of corners per face (used by facevarying class).
 	 */
 	inline CValueCounts(
+		RtInt theConstants,
 		RtInt theVertices,
 		RtInt theCorners,
 		RtInt theFacets,
 		RtInt theFaceVertices,
 		RtInt theFaceCorners)
 	{
+		m_constants = theConstants;
 		m_vertices = theVertices;
 		m_corners = theCorners;
 		m_facets = theFacets;
@@ -619,11 +648,12 @@ public:
 	/** @brief Assignment.
 	 * @param aCount Instance to assign.
 	 */
-	inline CValueCounts &operator=(const CParameterClasses &pc)
+	inline CValueCounts &operator=(const IParameterClasses &pc)
 	{
 		if ( this == &pc )
 			return *this;
 
+		m_constants = pc.constants();
 		m_vertices = pc.vertices();
 		m_corners = pc.corners();
 		m_facets = pc.facets();
@@ -632,6 +662,11 @@ public:
 		
 		return *this;
 	}
+
+	/** @brief Gets the size for constants (normally 1).
+	 * @return The size for constants.
+	 */
+	inline virtual RtInt constants() const { return m_constants; }
 
 	/** @brief Gets the number of facets.
 	 * @return The number of facets.
@@ -685,9 +720,10 @@ public:
 }; // CValueCounts
 
 	
-	inline bool operator==(const CParameterClasses &lhv, const CParameterClasses &rhv)
+	inline bool operator==(const IParameterClasses &lhv, const IParameterClasses &rhv)
 	{
 		return
+		lhv.constants()    == rhv.constants()    &&
 		lhv.vertices()     == rhv.vertices()     &&
 		lhv.corners()      == rhv.corners()      &&
 		lhv.facets()       == rhv.facets()       &&

@@ -574,7 +574,7 @@ static void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax,
 
 // =============================================================================
 
-void CParametricTriangulator::insertParamsBilinear(IndexType faceIndex,
+void CParametricTriangulator::insertBilinearParams(IndexType faceIndex,
 												   const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 												   RtInt tessU, RtInt tessV,
 												   CFace &f)
@@ -617,7 +617,7 @@ void CParametricTriangulator::insertParamsBilinear(IndexType faceIndex,
 	}
 }
 
-void CParametricTriangulator::insertParamsBicubic(IndexType faceIndex,
+void CParametricTriangulator::insertBicubicParams(IndexType faceIndex,
 												  const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 												  const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
 												  RtInt tessU, RtInt tessV,
@@ -670,7 +670,7 @@ void CParametricTriangulator::insertParamsBicubic(IndexType faceIndex,
 void CQuadricTriangulator::insertParams(RtInt tessU, RtInt tessV, CFace &f)
 {
 	static const IndexType cornerIdx[4] = {0, 1, 2, 3};
-	insertParamsBilinear(0, cornerIdx, cornerIdx, tessU, tessV, f);
+	insertBilinearParams(0, cornerIdx, cornerIdx, tessU, tessV, f);
 }
 
 CSurface *CQuadricTriangulator::triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips)
@@ -1323,6 +1323,42 @@ static void bilinearBlend(RtInt tessU, RtInt tessV, IndexType elemSize, const In
 }
 
 // =============================================================================
+void CRootPatchTriangulator::getFaceIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType patchsize, IndexType *idx) const
+{
+	assert(idx != 0);
+	assert(patchsize == 4 || patchsize == 16);
+	IndexType offset = (vpatch * nu + upatch) * patchsize;
+	for ( IndexType i = 0; i < patchsize; ++i ) {
+		idx[i] = offset+i;
+	}
+}
+
+void CRootPatchTriangulator::getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const
+{
+	idx[0] = (vpatch % nv)       * nu + (upatch % nu);
+	idx[1] = (vpatch % nv)       * nu + ((upatch + 1) % nu);
+	idx[2] = ((vpatch + 1) % nv) * nu + (upatch % nu);
+	idx[3] = ((vpatch + 1) % nv) * nu + ((upatch + 1) % nu);
+}
+
+void CRootPatchTriangulator::getFaceCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const
+{
+	getFaceIdx(upatch, vpatch, nu, nv, 4, idx);
+}
+
+void CRootPatchTriangulator::getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const
+{
+	for ( int v = 0; v < 4; ++v ) {
+		for ( int u = 0; u < 4; ++u ) {
+			idx[v*4+u] = ((vpatch*vstep+v)%nv)*nu + (upatch*ustep+u)%nu;
+		}
+	}
+}
+
+void CRootPatchTriangulator::getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const
+{
+	getFaceIdx(upatch, vpatch, nu, nv, 16, idx);
+}
 
 void CRootPatchTriangulator::buildBilinearPN(const CDeclaration &posDecl,
 											 const CDeclaration &normDecl,
@@ -1442,11 +1478,11 @@ CSurface *CPatchTriangulator::triangulate(const CDeclaration &posDecl,
 
 	if ( type == RI_BICUBIC ) {
 		buildBicubicPN(posDecl, normDecl, tessU, tessV, equalOrientations, 0, cornerIdx, cornerIdx, controlIdx, controlIdx, f);
-		insertParamsBicubic(0, cornerIdx, cornerIdx, controlIdx, controlIdx, tessU, tessV, f);
+		insertBicubicParams(0, cornerIdx, cornerIdx, controlIdx, controlIdx, tessU, tessV, f);
 	} else {
 		// type == RI_BILINEAR
 		buildBilinearPN(posDecl, normDecl, tessU, tessV, equalOrientations, 0, cornerIdx, cornerIdx, f);
-		insertParamsBilinear(0, cornerIdx, cornerIdx, tessU, tessV, f);
+		insertBilinearParams(0, cornerIdx, cornerIdx, tessU, tessV, f);
 	}
 	
 	if ( useStrips )
@@ -1471,11 +1507,39 @@ CSurface *CPatchMeshTriangulator::triangulate(const CDeclaration &posDecl,
 		return 0;
 	}
 	
-	if ( type == RI_BICUBIC ) {
-	} else {
-		// type == RI_BILINEAR
+	IndexType cornerIdx[4], faceCornerIdx[4];
+	IndexType controlIdx[16], faceControlIdx[16];
+
+	CSurface *surf = createSurface();
+	if ( !surf ) {
+		return 0;
 	}
 
-	return 0;
+	for ( RtInt v = 0, i=0; v < m_obj.nvPatches(); ++v ) {
+		for ( RtInt u = 0; u < m_obj.nuPatches(); ++u, ++i ) {
+			CFace &f = surf->newFace();
+			getCornerIdx(u, v, m_obj.nu(), m_obj.nv(), cornerIdx);
+			getFaceCornerIdx(u, v, m_obj.nu(), m_obj.nv(), faceCornerIdx);
+
+			if ( type == RI_BICUBIC ) {
+				getControlIdx(u, v, m_obj.nu(), m_obj.nv(), basis().uStep(), basis().vStep(), controlIdx);
+				getFaceControlIdx(u, v, m_obj.nu(), m_obj.nv(), faceControlIdx);
+				buildBicubicPN(posDecl, normDecl, tessU, tessV, equalOrientations, i, cornerIdx, faceCornerIdx, controlIdx, faceControlIdx, f);
+				insertBicubicParams(i, cornerIdx, faceCornerIdx, controlIdx, faceControlIdx, tessU, tessV, f);
+			} else {
+				// type == RI_BILINEAR
+				buildBilinearPN(posDecl, normDecl, tessU, tessV, equalOrientations, i, cornerIdx, faceCornerIdx, f);
+				insertBilinearParams(i, cornerIdx, faceCornerIdx, tessU, tessV, f);
+			}
+			
+			if ( useStrips )
+				f.buildStripIndices(tessU, tessV, true);
+			else
+				f.buildTriangleIndices(tessU, tessV, true);
+		}
+	}
+
+	
+	return surf;
 }
 

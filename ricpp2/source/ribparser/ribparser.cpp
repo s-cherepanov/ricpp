@@ -325,7 +325,7 @@ int CRibRequestData::getTokenList(
 	RtInt faceVertices,
 	RtInt faceCorners)
 {
-	CValueCounts valueCounts(vertices, corners, facets, faceVertices, faceCorners);
+	CValueCounts valueCounts(1, vertices, corners, facets, faceVertices, faceCorners);
 	size_t size = m_parameters.size();
 	m_tokenList.clear();
 	m_valueList.clear();

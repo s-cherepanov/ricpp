@@ -550,7 +550,7 @@ void CParameterList::rebuild()
 }
 
 
-void CParameterList::reset(const CParameterClasses &counts)
+void CParameterList::reset(const IParameterClasses &counts)
 {
 	m_valueCounts = counts;
 	m_params.resize(0);
@@ -719,7 +719,7 @@ CParameterList &CParameterList::assignRemap(const CParameterList &params, CDecla
 	if ( this == &params )
 		return *this;
 	
-	reset(params.valueCounts());
+	reset(params.parameterClasses());
 	
 	for (
 		 const_iterator i = params.begin();

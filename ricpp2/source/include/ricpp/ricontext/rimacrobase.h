@@ -249,7 +249,7 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	/** @brief Base class of all interface calls with parameter lists.
 	 */
-	class CVarParamRManInterfaceCall : public CRManInterfaceCall {
+	class CVarParamRManInterfaceCall : public CRManInterfaceCall, IParameterClasses {
 	private:
 		CParameterList m_parameters;             ///< Parameters of an interface call.
 	protected:
@@ -478,6 +478,36 @@ namespace RiCPP {
 		 */
 		virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const;
 
+		/** @brief Gets the size for constants (normally 1).
+		 * @return The size for constants.
+		 */
+		inline virtual RtInt constants() const { return parameters().parameterClasses().constants(); }
+		
+		/** @brief Gets the number of facets.
+		 * @return The number of facets.
+		 */
+		inline virtual RtInt facets() const { return parameters().parameterClasses().facets(); }
+		
+		/** @brief Gets the number of corners.
+		 * @return The number of corners.
+		 */
+		inline virtual RtInt corners() const { return parameters().parameterClasses().corners(); }
+		
+		/** @brief Gets the number of vertices.
+		 * @return The number of vertices.
+		 */
+		inline virtual RtInt vertices() const { return parameters().parameterClasses().vertices(); }
+		
+		/** @brief Gets the number of face corners.
+		 * @return The number of face corners.
+		 */
+		inline virtual RtInt faceCorners() const { return parameters().parameterClasses().faceCorners(); }
+		
+		/** @brief Gets the number of face vertices.
+		 * @return The number of face vertices.
+		 */
+		inline virtual RtInt faceVertices() const  { return parameters().parameterClasses().faceVertices(); }
+		
 		/*  @brief Gets the bounds, by bounding parameter RI_P, RI_PW
 		 *
 		 *  The boundable() must be implemented by the appropriate class.

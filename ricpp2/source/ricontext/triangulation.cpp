@@ -1358,9 +1358,9 @@ void CUVVector::bicubicBlendWithNormals(IndexType elemSize,
 	IndexType idnrm = 0;
 	for ( i = 0; i < sumPos; ++i ) {
 		if ( flipNormal )
-			plane(&normals[idnrm], &pdu[id], &pdv[id]);
+			plane(&normals[idnrm], &pdv[id], &pdu[id]);
 		else
-			planeLH(&normals[idnrm], &pdu[id], &pdv[id]);
+			planeLH(&normals[idnrm], &pdv[id], &pdu[id]);
 		idnrm += normElemSize;
 		id += elemSize;
 	}
@@ -1524,7 +1524,7 @@ static bool extractRi3F(const CParameter &p, IndexType sizeU, IndexType sizeV, I
 
 static void pw2p(const std::vector<RtFloat> &pw, std::vector<RtFloat> &p)
 {
-	IndexType size = pw.size()/4;
+	IndexType size = (IndexType)pw.size()/4;
 	if ( p.size() < size )
 		p.clear();
 	p.resize(3*size);
@@ -1667,7 +1667,7 @@ void CRootPatchTriangulator::buildBilinearPN(const CDeclaration &posDecl,
 	std::vector<RtFloat> nrm(4*3);
 	
 	if ( !n || !extractRi3F(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, nrm) ) {
-		IndexType nc[4] = {0, (IndexType)tessU*3, (IndexType)(tessV*(tessU+1))*3, vars.positions->size()-3};
+		IndexType nc[4] = {0, (IndexType)tessU*3, (IndexType)(tessV*(tessU+1))*3, (IndexType)vars.positions->size()-3};
 		if ( vars.flipNormal < 0.0 ) {
 			plane<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
 			plane<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
@@ -1849,4 +1849,3 @@ CSurface *CPatchMeshTriangulator::triangulate(const CDeclaration &posDecl,
 	
 	return surf;
 }
-

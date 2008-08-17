@@ -58,7 +58,7 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 	
 	assert(p.size() == pp->values().size());
 	
-	trans.transformPoints(p.size()/3, (RtPoint *)&p[0]);
+	trans.transformPoints((RtInt)p.size()/3, (RtPoint *)&p[0]);
 	
 	// Normals
 	const TemplPrimVar<RtFloat> *np = f.floats(RI_N);
@@ -73,7 +73,7 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 				n[i+1] += np->values()[i+1];
 				n[i+2] += np->values()[i+2];
 			}
-			trans.transformPoints(n.size()/3, (RtPoint *)&n[0]);
+			trans.transformPoints((RtInt)n.size()/3, (RtPoint *)&n[0]);
 			
 			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
 				n[i]   -= p[i];

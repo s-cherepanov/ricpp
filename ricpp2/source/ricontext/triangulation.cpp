@@ -1358,9 +1358,9 @@ void CUVVector::bicubicBlendWithNormals(IndexType elemSize,
 	IndexType idnrm = 0;
 	for ( i = 0; i < sumPos; ++i ) {
 		if ( flipNormal )
-			plane(&normals[idnrm], &pdv[id], &pdu[id]);
+			plane(&normals[idnrm], &pdu[id], &pdv[id]);
 		else
-			planeLH(&normals[idnrm], &pdv[id], &pdu[id]);
+			planeLH(&normals[idnrm], &pdu[id], &pdv[id]);
 		idnrm += normElemSize;
 		id += elemSize;
 	}

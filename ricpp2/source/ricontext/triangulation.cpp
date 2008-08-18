@@ -164,7 +164,6 @@ void CBasePolygonTesselator::strip(IndexType nVerts, IndexType offs, std::vector
 
 void CBasePolygonTesselator::triangleStrip(IndexType nVerts, IndexType offs, CFace &f)
 {	
-	useStrips(false);
 	f.indices().clear();
 	if ( nVerts == 0 )
 		return;
@@ -727,7 +726,7 @@ void CParametricTesselator::getFaceControlIdx(IndexType upatch, IndexType vpatch
 
 void CParametricTesselator::buildIndices(CFace &f)
 {
-	if ( useTriangles() ) {
+//	if ( useTriangles() ) {
 		if ( useStrips() ) {
 			f.faceType(FACETYPE_TRIANGLESTRIPS);
 			f.buildStripIndices(tessU(), tessV(), frontFaceCW());
@@ -735,10 +734,10 @@ void CParametricTesselator::buildIndices(CFace &f)
 			f.faceType(FACETYPE_TRIANGLES);
 			f.buildTriangleIndices(tessU(), tessV(), frontFaceCW());
 		}
-	} else {
+//	} else {
 		/** @todo quads and quad strips
 		 */
-	}
+//	}
 }
 
 

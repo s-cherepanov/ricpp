@@ -207,7 +207,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 }
 
 
-const CTriangulatedPolygon *CRiGeneralPolygon::triangulate(const IPolygonTriangulationStrategy &strategy)
+const CTriangulatedPolygon *CRiGeneralPolygon::triangulate(const IPolygonTriangulationStrategy &strategy, bool frontCW)
 {
 	if ( m_triangulated )
 		return m_triangulated;
@@ -227,7 +227,7 @@ const CTriangulatedPolygon *CRiGeneralPolygon::triangulate(const IPolygonTriangu
 	// Triangulate polygon
 	m_triangulated = new CTriangulatedPolygon();
 	if ( m_triangulated )
-		m_triangulated->triangulate(strategy, (RtInt)m_nVerts.size(), &m_nVerts[0], &f[0]);
+		m_triangulated->triangulate(strategy, (RtInt)m_nVerts.size(), &m_nVerts[0], &f[0], frontCW);
 	
 	return m_triangulated;
 }
@@ -306,7 +306,7 @@ CRiPointsGeneralPolygons::CRiPointsGeneralPolygons(
 	enterValues(theNPolys, theNLoops, theNVerts, theVerts);
 }
 
-const std::vector<CTriangulatedPolygon> &CRiPointsGeneralPolygons::triangulate(const IPolygonTriangulationStrategy &strategy)
+const std::vector<CTriangulatedPolygon> &CRiPointsGeneralPolygons::triangulate(const IPolygonTriangulationStrategy &strategy, bool frontCW)
 {
 	if ( m_triangulated.size() > 0 )
 		return m_triangulated;
@@ -334,7 +334,7 @@ const std::vector<CTriangulatedPolygon> &CRiPointsGeneralPolygons::triangulate(c
 	RtInt nvertscnt = 0, vertscnt = 0;
 	RtInt j;
 	for ( unsigned int i = 0; i < m_nLoops.size(); ++i ) {
-		m_triangulated[i].triangulate(strategy, m_nLoops[i], &m_nVerts[nvertscnt], &m_verts[vertscnt], &f[0]);
+		m_triangulated[i].triangulate(strategy, m_nLoops[i], &m_nVerts[nvertscnt], &m_verts[vertscnt], &f[0], frontCW);
 		for ( j = 0; j < m_nLoops[i]; ++j ) {
 			vertscnt += m_nVerts[nvertscnt++];
 		}

@@ -82,7 +82,7 @@ void test4(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &stra
 		15, 16, 17
 	};
 	
-	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p, true);
 	printPoly(poly, verts, p, 20);
 }
 
@@ -120,7 +120,7 @@ void test3(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &stra
 		9, 10, 11,
 	};
 	
-	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p, true);
 	printPoly(poly, verts, p);
 }
 
@@ -149,7 +149,7 @@ void test2(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &stra
 		4, 5, 6, 7
 	};
 	
-	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p, true);
 	printPoly(poly, verts, p);
 }
 
@@ -171,7 +171,7 @@ void test1(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &stra
 		3, 2, 1, 0
 	};
 	
-	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p, true);
 	printPoly(poly, verts, p);
 }
 
@@ -192,7 +192,7 @@ void test0(CTriangulatedPolygon &poly, const IPolygonTriangulationStrategy &stra
 		0, 1, 2
 	};
 	
-	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p);
+	poly.triangulate(strategy, sizeof(nverts)/sizeof(nverts[0]), nverts, verts, p, true);
 	printPoly(poly, verts, p);
 }
 

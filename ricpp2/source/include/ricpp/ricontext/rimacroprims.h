@@ -360,7 +360,7 @@ namespace RiCPP {
 		 *  @param strategy Strategy to use
 		 *  @return Indices for triangulated polygon, 0 on error
 		 */
-		const CTriangulatedPolygon *triangulate(const IPolygonTriangulationStrategy &strategy);
+		const CTriangulatedPolygon *triangulate(const IPolygonTriangulationStrategy &strategy, bool frontCW=true);
 
 		/** @brief Requests whether polygon is triangulated.
 		 *  @return true, if polygon is triangulated; false, otherwise.
@@ -877,7 +877,7 @@ namespace RiCPP {
 		 *  @param strategy Strategy to use
 		 *  @return Indirect indices for the triangulated polygons, (size==0) on error
 		 */
-		const std::vector<CTriangulatedPolygon> &triangulate(const IPolygonTriangulationStrategy &strategy);
+		const std::vector<CTriangulatedPolygon> &triangulate(const IPolygonTriangulationStrategy &strategy, bool frontCW=true);
 		
 		/** @brief Requests whether polygons are triangulated.
 		 *  @return true, if polygons are triangulated; false, otherwise.

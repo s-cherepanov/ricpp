@@ -107,7 +107,8 @@ namespace RiCPP {
 		void strip(IndexType nVerts, IndexType offs, std::vector<IndexType> &stripIdx) const;
 	protected:
 		void triangleStrip(IndexType nVerts, IndexType offs, CFace &f);
-		void insertParams(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs);
+		void insertParams(IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs, CFace &f);
+		bool addNormals(const CDeclaration &normDecl, CFace &f);
 	}; // CBasePolygonTesselator
 	
 	class CPolygonTesselator : public CBasePolygonTesselator {

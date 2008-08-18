@@ -341,7 +341,10 @@ private:
 					   const RtInt verts[], const RtFloat *p,
 					   RtPoint pnorm) const;
 	
-	
+
+	/** @ The normal of the polygon, calculated by polygonNormal(), in insertPolygon().
+	 */
+	RtPoint m_pnorm;
 public:
 	/** @brief Inserts a polygon and integrates the holes to the outline.
 	 *
@@ -397,12 +400,20 @@ public:
 	}
 	
 	/** @brief Requests whether the sense of the outline of the polygon is counter clockwise.
-	 *  @brief true, sense of outline is counterclockwise, false if otherwise
+	 *
+	 *  @return  true, sense of outline is counterclockwise, false if otherwise
 	 */
 	inline bool outlineCCW() const
 	{
 		return m_outlineIsCCW;
 	}
+
+	/** @brief Gets the normal of the polygon.
+	 *
+	 *  @return The normal of the polygon (valid after insertPolygon() is called)
+	 */
+	inline const RtPoint &normal() const { return m_pnorm; }
+
 }; // CPolygonContainer
 
 
@@ -421,6 +432,8 @@ public:
 	 *  @param offs Offset of a circular linked list with a polygon ouline
 	 *              in @a pn
 	 *  @param isCCW Outline has ccw orientation.
+	 *  @param frontCW Render as left handed primitive, normally true in RiCPP (insert previous this next node as triangle),
+	 *         if it is false the orientation is swapped (insert next this previous node as triangle),
 	 *  @retval triangles, container will be filled with vertex indices
 	 *                     (CPolygonNode::m_index)
 	 */
@@ -429,6 +442,7 @@ public:
 		std::vector<CPolygonNode> &nodes,
 		IndexType offs,
 		bool isCCW,
+		bool frontCW,
 		std::vector<IndexType> &triangles) const = 0;
 }; // IPolygonTriangulationStrategy
 
@@ -442,6 +456,7 @@ public:
 		std::vector<CPolygonNode> &nodes,
 		IndexType offs,
 		bool isCCW,
+		bool frontCW,
 		std::vector<IndexType> &triangles) const;
 };
 
@@ -452,6 +467,10 @@ public:
 class CTriangulatedPolygon {
 private:
 	std::vector<IndexType> m_triangles; ///< Vector of vertex indices, always 3 in a group.
+
+	/** @ The normal of the polygon, set by triangulate.
+	 */
+	RtPoint m_pnorm;
 public:
 	/** @brief Triangulates a polygon (part of a polyhedra)
 	 *
@@ -460,16 +479,21 @@ public:
 	 *  @param loops Number of vertices for each loop (at least 3 per loop)
 	 *  @param nverts Indices (for @a p) of the vertices of the loop, size = sum(loops[...])
 	 *  @param p Positions of the vertices.
+	 *  @param frontCW Render as left handed primitive, normally true in RiCPP, if it is false the
+	 *         orientation is swapped @see IPolygonTriangulationStrategy::triangulate()
 	 *
 	 *  @see CPolygonContainer::insertPolygon()
 	 */
 	inline void triangulate(const IPolygonTriangulationStrategy &strategy,
 							RtInt nloops, const RtInt nverts[],
-							const RtInt verts[], const RtFloat *p)
+							const RtInt verts[], const RtFloat *p, bool frontCW)
 	{
 		CPolygonContainer c;
 		c.insertPolygon(nloops, nverts, verts, p);
-		strategy.triangulate(c.nodes(), c.outline(), c.outlineCCW(), m_triangles);
+		m_pnorm[0] = c.normal()[0];
+		m_pnorm[1] = c.normal()[1];
+		m_pnorm[2] = c.normal()[2];
+		strategy.triangulate(c.nodes(), c.outline(), c.outlineCCW(), frontCW, m_triangles);
 	}
 
 	/** @brief Triangulates a polygon.
@@ -478,10 +502,12 @@ public:
 	 *  @param nloops Number of loops, at least 1
 	 *  @param nverts Number of vertices for each loop (at least 3 per loop)
 	 *  @param p Positions of the vertices.
+	 *  @param frontCW Render as left handed primitive, normally true in RiCPP, if it is false the
+	 *         orientation is swapped @see IPolygonTriangulationStrategy::triangulate()
 	 *
 	 *  @see CPolygonContainer::insertPolygon()
 	 */
-	void triangulate(const IPolygonTriangulationStrategy &strategy, RtInt nloops, const RtInt nverts[], const RtFloat *p);
+	void triangulate(const IPolygonTriangulationStrategy &strategy, RtInt nloops, const RtInt nverts[], const RtFloat *p, bool frontCW);
 
 	/** @brief Gets the read only vector with the indirect indices.
 	 *
@@ -501,6 +527,12 @@ public:
 	 *  @retval tri Vertex indices of the triangulated polygon.
 	 */
 	void drefTriangles(const RtInt verts[], std::vector<IndexType> &tri) const;
+
+	/** @brief Gets the normal of the polygon.
+	 *
+	 *  @return The normal of the polygon (valid after insertPolygon() is called)
+	 */
+	inline const RtPoint &normal() const { return m_pnorm; }
 }; // CTriangulatedPolygon
 
 }

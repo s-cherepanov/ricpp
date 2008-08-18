@@ -493,8 +493,7 @@ void CPolygonContainer::insertPolygon(
 	}
 	
 	// Find the normal of the polygon
-	RtPoint pnorm;
-	if ( !polygonNormal(m_outlines[0], verts, p, pnorm) ) {
+	if ( !polygonNormal(m_outlines[0], verts, p, m_pnorm) ) {
 		m_nodes.clear();
 		m_outlines.clear();
 		return;
@@ -504,10 +503,10 @@ void CPolygonContainer::insertPolygon(
 	// used pixie code here
 	int majorAxis, minorAxis;
 	
-	if ( fabs(pnorm[0]) >= tmax(fabs(pnorm[1]), fabs(pnorm[2])) ) {
+	if ( fabs(m_pnorm[0]) >= tmax(fabs(m_pnorm[1]), fabs(m_pnorm[2])) ) {
 		majorAxis = 1;
 		minorAxis = 2;
-	} else if ( fabs(pnorm[1]) >= tmax(fabs(pnorm[0]), fabs(pnorm[2])) ) {
+	} else if ( fabs(m_pnorm[1]) >= tmax(fabs(m_pnorm[0]), fabs(m_pnorm[2])) ) {
 		majorAxis = 0;
 		minorAxis = 2;
 	} else {
@@ -594,6 +593,9 @@ CPolygonContainer &CPolygonContainer::operator=(const CPolygonContainer &pc)
 	m_nodes = pc.m_nodes;
 	m_outlines = pc.m_outlines;
 	m_outlineIsCCW = pc.m_outlineIsCCW;
+	m_pnorm[0] = pc.m_pnorm[0];
+	m_pnorm[1] = pc.m_pnorm[1];
+	m_pnorm[2] = pc.m_pnorm[2];
 	return *this;
 }
 
@@ -741,6 +743,7 @@ void CEarClipper::triangulate(
 	std::vector<CPolygonNode> &nodes,
 	IndexType offs,
 	bool isCCW,
+	bool frontCW,
 	std::vector<IndexType> &triangles) const
 {
 #ifdef _TRACE_POLY_TRIANGULATE
@@ -804,9 +807,15 @@ void CEarClipper::triangulate(
 #           ifdef _TRACE_POLY_TRIANGULATE
 			    std::cout << "% -triangulate() *** Cut i " << i << " prev " << prev << " next " << next << " weight " << v << std::endl;
 #           endif
-			triangles[tri++] = nodes[prev].index();
-			triangles[tri++] = nodes[i].index();
-			triangles[tri++] = nodes[next].index();
+			if ( frontCW ) {
+				triangles[tri++] = nodes[prev].index();
+				triangles[tri++] = nodes[i].index();
+				triangles[tri++] = nodes[next].index();
+			} else {
+				triangles[tri++] = nodes[next].index();
+				triangles[tri++] = nodes[i].index();
+				triangles[tri++] = nodes[prev].index();
+			}
 			nodes[i].remove(nodes, isCCW);
 		} else {
 			if ( !nearlyZero(v+(RtFloat)1.0) ) {
@@ -859,7 +868,7 @@ void CEarClipper::triangulate(
 
 // =============================================================================
 // -----------------------------------------------------------------------------
-void CTriangulatedPolygon::triangulate(const IPolygonTriangulationStrategy &strategy, RtInt nloops, const RtInt nverts[], const RtFloat *p)
+void CTriangulatedPolygon::triangulate(const IPolygonTriangulationStrategy &strategy, RtInt nloops, const RtInt nverts[], const RtFloat *p, bool frontCW)
 {
 	RtInt sumPoints = sum(nloops, nverts);
 	std::vector<RtInt> verts;
@@ -867,7 +876,7 @@ void CTriangulatedPolygon::triangulate(const IPolygonTriangulationStrategy &stra
 	for ( RtInt i = 0; i< sumPoints; ++i ) {
 		verts[i] = i;
 	}
-	triangulate(strategy, nloops, nverts, &verts[0], p);
+	triangulate(strategy, nloops, nverts, &verts[0], p, frontCW);
 }
 
 void CTriangulatedPolygon::drefTriangles(const RtInt verts[], std::vector<IndexType> &tri) const

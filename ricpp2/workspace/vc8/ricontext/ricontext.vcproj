@@ -282,6 +282,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\blend.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\contextcreator.cpp"
 				>
 			</File>
@@ -357,6 +361,10 @@
 			>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\attributes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\blend.h"
 				>
 			</File>
 			<File

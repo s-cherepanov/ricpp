@@ -267,7 +267,7 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 
 	IndexType prev = (IndexType)pos.size()-3, cur = 0, next = 3;
 
-	while ( cur < n.size()-2 ) {
+	do {
 		if ( !flipNormals() ) {
 			planeLH(&n[cur], &pos[prev], &pos[cur], &pos[next]);
 		} else {
@@ -276,9 +276,47 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 		prev = cur;
 		cur = next;
 		next += 3;
+		if ( next >= n.size() )
+			next = 0;
+	} while ( cur != 0 );
+
+
+	return true;
+}
+
+bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, const RtNormal &aNormal, CFace &f)
+{
+	const CParameter *p = obj().parameters().get(RI_P);
+	if ( !p )
+		return false;
+	if ( !p->declaration().isFloat3Decl() ) {
+		return false;
 	}
-
-
+	if ( !normDecl.isFloat3Decl() ) {
+		return false;
+	}
+		
+	const std::vector<RtFloat> &pos = p->floats();
+	
+	if ( pos.size() <= 9 )
+		return false;
+	
+	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, (IndexType)pos.size()/3).values();
+	
+	IndexType cur = 0;
+	
+	while ( cur < n.size()-2 ) {
+		if ( !flipNormals() ) {
+			n[cur++] = aNormal[0];
+			n[cur++] = aNormal[1];
+			n[cur++] = aNormal[2];
+		} else {
+			n[cur++] = -aNormal[0];
+			n[cur++] = -aNormal[1];
+			n[cur++] = -aNormal[2];
+		}
+	}
+	
 	return true;
 }
 
@@ -381,7 +419,7 @@ CSurface *CGeneralPolygonTesselator::tesselate(const CDeclaration &posDecl, cons
 	f.sizes()[0] = static_cast<IndexType>(strip.size());
 	
 	if ( !f.floats(RI_N) ) {
-		addNormals(normDecl, f);
+		addNormals(normDecl, m_tpPtr->normal(), f);
 	}
 
 	return surf;
@@ -436,7 +474,7 @@ CSurface *CPointsGeneralPolygonsTesselator::tesselate(const CDeclaration &posDec
 		f.sizes()[0] = static_cast<IndexType>(strip.size());
 		
 		if ( !f.floats(RI_N) ) {
-			addNormals(normDecl, f);
+			addNormals(normDecl, (*iter).normal(), f);
 		}
 
 		// Next polygon (faceIdx)

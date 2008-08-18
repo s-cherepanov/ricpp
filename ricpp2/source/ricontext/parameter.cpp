@@ -452,7 +452,7 @@ void CParameter::extract(IndexType from, IndexType to, std::vector<RtString>::it
 	}
 }
 
-void CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
+bool CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
 							   IndexType tessU,
 							   IndexType tessV,
 							   std::vector<RtFloat> &retvals) const
@@ -461,55 +461,64 @@ void CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
 
 	assert ( basicType() == BASICTYPE_FLOAT );
 	if ( basicType() != BASICTYPE_FLOAT )
-		return;
+		return false;
 	
 	assert ( tessU > 0 && tessV > 0 );
 	if ( tessU <= 0 || tessV <= 0 )
-		return;
+		return false;
 	
 	IndexType elemSize = declaration().elemSize();
 	assert( elemSize > 0 );
 	if ( elemSize <= 0 )
-		return;
+		return false;
 	
 	const std::vector<RtFloat> &vals = floats();
 	IndexType sz = static_cast<IndexType>(vals.size());
-	assert ( sz > cornerIdx[0]*elemSize && sz > cornerIdx[1]*elemSize && sz > cornerIdx[2]*elemSize && sz > cornerIdx[3]*elemSize );
-	if ( !(sz > cornerIdx[0]*elemSize && sz > cornerIdx[1]*elemSize && sz > cornerIdx[2]*elemSize && sz > cornerIdx[3]*elemSize) )
-		return;
-	
-	retvals.resize((tessU+1)*(tessV+1)*elemSize);
-	
-	RtFloat deltau = (RtFloat)(1.0/(RtFloat)(tessU));
-	RtFloat deltav = (RtFloat)(1.0/(RtFloat)(tessV));
-	
-	RtFloat u, v;
-	IndexType ui, vi, ei, idx;
-	IndexType startPos, endPos;
-	
-	for ( v = (RtFloat)0.0, vi = 0; vi < tessV+1; ++vi, v += deltav ) {
-		if ( v > 1.0 || vi == tessV ) {
-			v = 1.0;
-		}
-		startPos = vi * (tessU + 1) * elemSize;
-		endPos   = startPos + tessU * elemSize;
-		assert(startPos != endPos);
-		for ( ei = 0; ei < elemSize; ++ei ) {
-			retvals[startPos+ei] = lerp(v, vals[cornerIdx[0]*elemSize+ei], vals[cornerIdx[2]*elemSize+ei]);
-		}
-		for ( ei = 0; ei < elemSize; ++ei ) {
-			retvals[endPos+ei]   = lerp(v, vals[cornerIdx[1]*elemSize+ei], vals[cornerIdx[3]*elemSize+ei]);
-		}
-		idx = startPos+elemSize;
-		for ( u = deltau, ui = 1; ui < tessU; ++ui, u += deltau ) {
-			if ( u > 1.0 ) {
-				u = 1.0;
-			}
-			for ( ei = 0; ei < elemSize; ++ei, ++idx ) {
-				retvals[idx] = lerp(u, retvals[startPos+ei], retvals[endPos+ei]);
-			}
-		}
+
+	for ( IndexType i = 0; i < 4; ++i ) {
+		assert ( sz > cornerIdx[i]*elemSize );
+		if ( sz <= cornerIdx[i]*elemSize )
+			return false;
 	}
+	
+	CBilinearBlend blend(tessU, tessV);
+	blend.bilinearBlend(elemSize, cornerIdx, vals, retvals);
+	return true;
+}
+
+
+bool CParameter::bicubicBlend(const IndexType (& controlIdx)[16],
+				  IndexType tessU,
+				  IndexType tessV,
+				  const CBicubicVectors &basisVectors,
+				  std::vector<RtFloat> &retvals) const
+{
+	retvals.clear();
+	
+	assert ( basicType() == BASICTYPE_FLOAT );
+	if ( basicType() != BASICTYPE_FLOAT )
+		return false;
+	
+	assert ( tessU > 0 && tessV > 0 );
+	if ( tessU <= 0 || tessV <= 0 )
+		return false;
+	
+	IndexType elemSize = declaration().elemSize();
+	assert( elemSize > 0 );
+	if ( elemSize <= 0 )
+		return false;
+	
+	const std::vector<RtFloat> &vals = floats();
+	IndexType sz = static_cast<IndexType>(vals.size());
+	
+	for ( IndexType i = 0; i < 16; ++i ) {
+		assert ( sz > controlIdx[i]*elemSize );
+		if ( sz <= controlIdx[i]*elemSize )
+			return false;
+	}
+	
+	basisVectors.bicubicBlend(elemSize, controlIdx, vals, retvals);
+	return true;
 }
 
 // -----------------------------------------------------------------------------

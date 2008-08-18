@@ -201,6 +201,7 @@ void CGLRenderer::hide(const CFace &f)
 	}
 
 	// Draw vertices
+	// std::cout << "# *** Size of indices: " << f.indices().size() << std::endl;
 	IndexType sizeCnt = 0;
 	switch ( f.faceType() ) {
 		case FACETYPE_TRIANGLES: {
@@ -212,7 +213,6 @@ void CGLRenderer::hide(const CFace &f)
 		break;
 			
 		case FACETYPE_TRIANGLESTRIPS: {
-			std::cout << "***Got FACETYPE_TRIANGLESTRIPS positions: " << p.size() << std::endl;
 			for ( std::vector<IndexType>::const_iterator siter = f.sizes().begin(); siter != f.sizes().end(); siter++ ) {
 				glDrawElements(GL_TRIANGLE_STRIP, (*siter), GL_UNSIGNED_INT, &f.indices()[sizeCnt]);
 				sizeCnt += (*siter);
@@ -221,6 +221,7 @@ void CGLRenderer::hide(const CFace &f)
 		break;
 			
 		default:
+			// std::cout << "# *** Unhandled face type" << std::endl;
 		break;
 	}
 	
@@ -291,10 +292,11 @@ void CGLRenderer::setColor()
 
 void CGLRenderer::setCullFace()
 {
-	if ( attributes().primitiveOrientation() != renderState()->viewingOrientation() ) {
-		glFrontFace(GL_CW);
-	} else {
+	// Mirror
+	if ( frontFaceCW() ) {
 		glFrontFace(GL_CCW);
+	} else {
+		glFrontFace(GL_CW);
 	}
 
 	if ( attributes().sides() == 2 ) {

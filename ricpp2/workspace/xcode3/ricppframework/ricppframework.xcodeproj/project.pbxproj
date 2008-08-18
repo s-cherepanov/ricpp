@@ -40,6 +40,8 @@
 		C35100220D70DD2B008AC346 /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C35100210D70DD2B008AC346 /* baserenderer.h */; };
 		C352E6980D7465E900CDED20 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
 		C352E6990D7465FA00CDED20 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
+		C3589A170E59A88300CB67E5 /* blend.h in Headers */ = {isa = PBXBuildFile; fileRef = C3589A160E59A88300CB67E5 /* blend.h */; };
+		C3589A190E59A9AE00CB67E5 /* blend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3589A180E59A9AE00CB67E5 /* blend.cpp */; };
 		C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3674D8C0DAF376F00AAE6EB /* polygon.cpp */; };
 		C3685ECC0D3C1F9100B2E025 /* stringpattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */; };
 		C3685ECD0D3C1F9100B2E025 /* macenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C399BA990BE5E229002FEEF1 /* macenv.cpp */; };
@@ -546,6 +548,8 @@
 		C35100210D70DD2B008AC346 /* baserenderer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = baserenderer.h; path = ../../../source/include/ricpp/baserenderer/baserenderer.h; sourceTree = SOURCE_ROOT; };
 		C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		C352E6930D7465B500CDED20 /* libridynload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libridynload.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3589A160E59A88300CB67E5 /* blend.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = blend.h; path = ../../../source/include/ricpp/ricontext/blend.h; sourceTree = SOURCE_ROOT; };
+		C3589A180E59A9AE00CB67E5 /* blend.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = blend.cpp; path = ../../../source/ricontext/blend.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
 		C36326D90C3A3C9B00364168 /* backbuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = backbuffer.h; path = ../../../source/include/ricpp/streams/backbuffer.h; sourceTree = SOURCE_ROOT; };
 		C36326DB0C3A3CAB00364168 /* backbuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = backbuffer.cpp; path = ../../../source/streams/backbuffer.cpp; sourceTree = SOURCE_ROOT; };
@@ -1422,6 +1426,7 @@
 			isa = PBXGroup;
 			children = (
 				C37245AE0CD5DE5500945563 /* attributes.cpp */,
+				C3589A180E59A9AE00CB67E5 /* blend.cpp */,
 				C37245AF0CD5DE5500945563 /* contextcreator.cpp */,
 				C37245B00CD5DE5500945563 /* displaydesc.cpp */,
 				C37245B10CD5DE5500945563 /* lights.cpp */,
@@ -1450,6 +1455,7 @@
 			isa = PBXGroup;
 			children = (
 				C37245760CD5DE3100945563 /* attributes.h */,
+				C3589A160E59A88300CB67E5 /* blend.h */,
 				C37245770CD5DE3100945563 /* contextcreator.h */,
 				C37245780CD5DE3100945563 /* displaydesc.h */,
 				C37245790CD5DE3100945563 /* dorender.h */,
@@ -2171,6 +2177,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C380894B0D3CAB7400B6C3BA /* attributes.h in Headers */,
+				C3589A170E59A88300CB67E5 /* blend.h in Headers */,
 				C380894C0D3CAB7400B6C3BA /* contextcreator.h in Headers */,
 				C380894D0D3CAB7400B6C3BA /* displaydesc.h in Headers */,
 				C380894E0D3CAB7400B6C3BA /* dorender.h in Headers */,
@@ -2182,6 +2189,7 @@
 				C38089540D3CAB7400B6C3BA /* options.h in Headers */,
 				C38089550D3CAB7400B6C3BA /* optionsbase.h in Headers */,
 				C38089560D3CAB7400B6C3BA /* parameter.h in Headers */,
+				C383C1130DBC8A0C0059B71D /* polygon.h in Headers */,
 				C38089570D3CAB7400B6C3BA /* renderstate.h in Headers */,
 				C38089580D3CAB7400B6C3BA /* resource.h in Headers */,
 				C38089590D3CAB7400B6C3BA /* ricontext.h in Headers */,
@@ -2200,7 +2208,6 @@
 				C38089660D3CAB7400B6C3BA /* transformation.h in Headers */,
 				C3C9AE3C0D70BCCE00A04717 /* ribelements.h in Headers */,
 				C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */,
-				C383C1130DBC8A0C0059B71D /* polygon.h in Headers */,
 				C38221370E3789C60032A70E /* surface.h in Headers */,
 				C3BB4CBB0E3A02DE00D185BB /* triangulation.h in Headers */,
 			);
@@ -2940,6 +2947,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C38089670D3CAB8B00B6C3BA /* attributes.cpp in Sources */,
+				C3589A190E59A9AE00CB67E5 /* blend.cpp in Sources */,
 				C38089680D3CAB8B00B6C3BA /* contextcreator.cpp in Sources */,
 				C38089690D3CAB8B00B6C3BA /* displaydesc.cpp in Sources */,
 				C380896A0D3CAB8B00B6C3BA /* lights.cpp in Sources */,
@@ -2948,15 +2956,15 @@
 				C380896D0D3CAB8B00B6C3BA /* options.cpp in Sources */,
 				C380896E0D3CAB8B00B6C3BA /* optionsbase.cpp in Sources */,
 				C380896F0D3CAB8B00B6C3BA /* parameter.cpp in Sources */,
+				C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */,
 				C38089700D3CAB8B00B6C3BA /* renderstate.cpp in Sources */,
 				C38089710D3CAB8B00B6C3BA /* resource.cpp in Sources */,
 				C38089720D3CAB8B00B6C3BA /* ricontext.cpp in Sources */,
 				C38089730D3CAB8B00B6C3BA /* rimacro.cpp in Sources */,
 				C38089740D3CAB8B00B6C3BA /* transformation.cpp in Sources */,
 				C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */,
-				C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */,
-				C38221390E378A830032A70E /* triangulation.cpp in Sources */,
 				C38520E00E3E184700F74D69 /* surface.cpp in Sources */,
+				C38221390E378A830032A70E /* triangulation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

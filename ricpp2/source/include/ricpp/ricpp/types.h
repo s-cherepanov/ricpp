@@ -1295,6 +1295,9 @@ public:
 	 *  @retval z coordinate z and result
 	 */
 	void transformPoint(RtFloat &x, RtFloat &y, RtFloat &z) const;
+	
+	/** @todo Mathematics of the normal transformation with C3DMatrix needs to be checked, seems to be faulty.
+	 */
 	bool transformNormal(RtFloat &x, RtFloat &y, RtFloat &z) const;
 	
 	/** @brief Transforms an array of points by the matrix.
@@ -1306,6 +1309,9 @@ public:
 	 *  @retval p points
 	 */
 	void transformPoints(RtInt n, RtPoint p[]) const;
+
+	/** @todo Mathematics of the normal transformation with C3DMatrix needs to be checked, seems to be faulty.
+	 */
 	bool transformNormals(RtInt n, RtPoint v[]) const;
 
 	/** @brief Concatenates a rotation around the x-axis.

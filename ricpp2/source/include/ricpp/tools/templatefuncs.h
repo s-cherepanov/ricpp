@@ -956,6 +956,23 @@ namespace RiCPP {
 		printVector2(&m[1][0]);
 	}
 	
+	template<typename _T> inline _T delta(_T minVal, _T maxVal, _T tess)
+	{
+		assert(minVal <= maxVal);
+		assert(tess > 0);
+		return (maxVal-minVal) / tess;
+		// Can be less eps, even zero... (e.g. cone height 0)
+	}	
+	
+	template<typename _T> inline _T deltaNotZero(_T minVal, _T maxVal, _T tess)
+	{
+		assert(minVal <= maxVal);
+		assert(tess > 0);
+		RtFloat result = (maxVal-minVal) / tess;
+		if ( (static_cast<_T>(1) + result) == static_cast<_T>(1) )
+			result = eps<_T>();
+		return result;
+	}	
 
 	/*  @brief Deletes the contents of a container with pointers.
 	 *

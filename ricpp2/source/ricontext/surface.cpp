@@ -287,24 +287,17 @@ bool CFace::bilinearBlend(
 	IndexType tessU,
 	IndexType tessV)
 {
-	if ( source.basicType() != BASICTYPE_FLOAT ) {
-		return false;
-	}
-	
-	if ( tessU < 1 || tessV < 1 ) {
-		return false;
-	}
-
-	IndexType elemSize = source.declaration().elemSize();
-	const std::vector<RtFloat> &vals = source.floats();
-	
-	IndexType sz = static_cast<IndexType>(vals.size()/elemSize);
-	if ( sz <= cornerIdx[0] || sz <= cornerIdx[1] || sz <= cornerIdx[2] || sz <= cornerIdx[3] ) {
-		return false;
-	}
-	
 	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
-	source.bilinearBlend(cornerIdx, tessU, tessV, retvals);
-	
-	return true;
+	return source.bilinearBlend(cornerIdx, tessU, tessV, retvals);
+}
+
+bool CFace::bicubicBlend(
+    const CParameter &source,
+	const IndexType (& controlIdx)[16],
+	IndexType tessU,
+	IndexType tessV,
+	const CBicubicVectors &basisVectors)
+{
+	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
+	return source.bicubicBlend(controlIdx, tessU, tessV, basisVectors, retvals);
 }

@@ -36,8 +36,8 @@ static const bool _USESTRIPS = false;
 
 CTriangleRenderer::CTriangleRenderer()
 {
-	m_tessX = _TESSELATION;
-	m_tessY = _TESSELATION;
+	m_tessU = _TESSELATION;
+	m_tessV = _TESSELATION;
 	m_useStrips = _USESTRIPS;
 }
 
@@ -63,16 +63,42 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 	// Normals
 	const TemplPrimVar<RtFloat> *np = f.floats(RI_N);
 	if ( np && np->declarationPtr() ) {
-		if ( np->values().size() == p.size() ) {
+		if ( np->values().size() == p.size() || np->values().size() == 3 ) {
+			
+			/** @todo Mathematics of the normal transformation with C3DMatrix needs to be checked, seems to be faulty
+			 */
+			
 			// n = np->value();
 			// trans.transformNormals(n.size()/3, (RtPoint *)&n[0]);
 			
 			n = pp->values();
-			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
-				n[i]   += np->values()[i];
-				n[i+1] += np->values()[i+1];
-				n[i+2] += np->values()[i+2];
+
+			if ( np->values().size() == p.size() ) {
+				for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
+					// if ( flipNormals() ) {
+					//	n[i]   -= np->values()[i];
+					//	n[i+1] -= np->values()[i+1];
+					//	n[i+2] -= np->values()[i+2];
+					// } else {
+						n[i]   += np->values()[i];
+						n[i+1] += np->values()[i+1];
+						n[i+2] += np->values()[i+2];
+					// }
+				}
+			} else {
+				for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
+					// if ( flipNormals() ) {
+					//	n[i]   -= np->values()[0];
+					//	n[i+1] -= np->values()[1];
+					//	n[i+2] -= np->values()[2];
+					// } else {
+						n[i]   += np->values()[0];
+						n[i+1] += np->values()[1];
+						n[i+2] += np->values()[2];
+					// }
+				}
 			}
+			
 			trans.transformPoints((RtInt)n.size()/3, (RtPoint *)&n[0]);
 			
 			for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
@@ -82,37 +108,16 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 				normalize(n[i], n[i+1], n[i+2]);
 			}
 		} else {
-			/** @todo constant normal (uniform normal, face normal done by building the face)
+			/** @todo Normal size not recognized
 			 */
 		}
+	} else {
+		/** @todo Normals not found
+		 */
 	}
 }
 
-RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
-{
-	CPolygonTriangulator t(obj);
-	hideSurface(t.triangulate());
-}
-
-RtVoid CTriangleRenderer::triangulate(CRiPointsPolygons &obj)
-{
-	CPointsPolygonsTriangulator t(obj);
-	hideSurface(t.triangulate());
-}
-
-RtVoid CTriangleRenderer::triangulate(CRiGeneralPolygon &obj)
-{
-	CGeneralPolygonTriangulator t(obj, polygonTriangulationStrategy());
-	hideSurface(t.triangulate());
-}
-
-RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
-{
-	CPointsGeneralPolygonsTriangulator t(obj, polygonTriangulationStrategy());
-	hideSurface(t.triangulate());
-}
-
-RtVoid CTriangleRenderer::triangulate(CParametricTriangulator &triObj)
+RtVoid CTriangleRenderer::triangulate(CTesselator &triObj)
 {
 	const CDeclaration *pdecl = renderState()->declFind(RI_P);
 	if ( !pdecl || !pdecl->isFloat3Decl() ) {
@@ -124,48 +129,77 @@ RtVoid CTriangleRenderer::triangulate(CParametricTriangulator &triObj)
 		/// @todo Errorhandling, bad normal declaration
 		return;
 	}
-	hideSurface(triObj.triangulate(*pdecl, *ndecl, m_tessX, m_tessY, attributes().primitiveOrientation()==attributes().coordSysOrientation(), m_useStrips));
+	
+	triObj.useStrips(m_useStrips);
+	triObj.tesselation(m_tessU, m_tessV);
+	triObj.flipNormals(flipNormals());
+
+	hideSurface(triObj.tesselate(*pdecl, *ndecl));
+}
+
+RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
+{
+	CPolygonTesselator t(obj);
+	triangulate(t);
+}
+
+RtVoid CTriangleRenderer::triangulate(CRiPointsPolygons &obj)
+{
+	CPointsPolygonsTesselator t(obj);
+	triangulate(t);
+}
+
+RtVoid CTriangleRenderer::triangulate(CRiGeneralPolygon &obj)
+{
+	CGeneralPolygonTesselator t(obj, polygonTriangulationStrategy());
+	triangulate(t);
+}
+
+RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
+{
+	CPointsGeneralPolygonsTesselator t(obj, polygonTriangulationStrategy());
+	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiCone &obj)
 {
-	CConeTriangulator t(obj);
+	CConeTesselator t(obj);
 	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiCylinder &obj)
 {
-	CCylinderTriangulator t(obj);
+	CCylinderTesselator t(obj);
 	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiDisk &obj)
 {
-	CDiskTriangulator t(obj);
+	CDiskTesselator t(obj);
 	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiHyperboloid &obj)
 {
-	CHyperboloidTriangulator t(obj);
+	CHyperboloidTesselator t(obj);
 	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
 {
-	CParaboloidTriangulator t(obj);
+	CParaboloidTesselator t(obj);
 	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiSphere &obj)
 {
-	CSphereTriangulator t(obj);
+	CSphereTesselator t(obj);
 	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiTorus &obj)
 {
-	CTorusTriangulator t(obj);
+	CTorusTesselator t(obj);
 	triangulate(t);
 }
 
@@ -173,13 +207,13 @@ RtVoid CTriangleRenderer::triangulate(CRiPatch &obj)
 {
 	
 	CRiBasis basis(renderState()->lineNo(), attributes().uBasis(), attributes().uStep(), attributes().vBasis(), attributes().vStep());
-	CPatchTriangulator t(obj, basis);
+	CPatchTesselator t(obj, basis);
 	triangulate(t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPatchMesh &obj)
 {
 	CRiBasis basis(renderState()->lineNo(), attributes().uBasis(), attributes().uStep(), attributes().vBasis(), attributes().vStep());
-	CPatchMeshTriangulator t(obj, basis);
+	CPatchMeshTesselator t(obj, basis);
 	triangulate(t);
 }

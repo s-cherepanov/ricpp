@@ -52,8 +52,8 @@ namespace RiCPP {
 
 	private:
 		CEarClipper m_earClipper; ///< Triangulation strategy
-		RtInt m_tessX;
-		RtInt m_tessY;
+		RtInt m_tessU;
+		RtInt m_tessV;
 		bool m_useStrips;
 		
 	protected:
@@ -70,12 +70,12 @@ namespace RiCPP {
 		using TypeParent::preProcess;
 		using TypeParent::postProcess;
 		
+		virtual RtVoid triangulate(CTesselator &triObj);
+		
 		virtual RtVoid triangulate(CRiPolygon &obj);
 		virtual RtVoid triangulate(CRiPointsPolygons &obj);
 		virtual RtVoid triangulate(CRiGeneralPolygon &obj);
 		virtual RtVoid triangulate(CRiPointsGeneralPolygons &obj);
-
-		virtual RtVoid triangulate(CParametricTriangulator &triObj);
 
 		virtual RtVoid triangulate(CRiCone &obj);
 		virtual RtVoid triangulate(CRiCylinder &obj);

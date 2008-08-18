@@ -243,6 +243,12 @@ public:
 		IndexType tessU,
 		IndexType tessV);
 	
+	bool bicubicBlend(const CParameter &source,
+					  const IndexType (& controlIdx)[16],
+					  IndexType tessU,
+					  IndexType tessV,
+					  const CBicubicVectors &basisVectors);
+
 	inline void clearIndices()
 	{
 		m_faceType = FACETYPE_UNKNOWN;

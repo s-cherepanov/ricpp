@@ -44,292 +44,247 @@
 
 namespace RiCPP {
 
-	inline RtFloat getDelta(RtFloat minVal, RtFloat maxVal, RtFloat tess)
-	{
-		assert(minVal <= maxVal);
-		return (maxVal-minVal) / tess;
-		// Can be less eps, even zero... (e.g. cone height 0)
-	}	
-		
-	inline RtFloat getDeltaNotZero(RtFloat minVal, RtFloat maxVal, RtFloat tess)
-	{
-		assert(minVal <= maxVal);
-		RtFloat delta = (maxVal-minVal) / tess;
-		if ( delta < eps<RtFloat>() )
-			return eps<RtFloat>();
-		return delta;
-	}	
-
+	// =========================================================================
+	
 	class CTesselator {
 		std::list<CSurface *> m_surfaces;
+		RtInt m_tessU, m_tessV;
+		bool m_frontFaceCW;
+		bool m_flipNormals;
+		bool m_useStrips;
+		bool m_useTriangles;
+
 	protected:
 		virtual const CVarParamRManInterfaceCall &obj() const = 0;
+
 	public:
-		CTesselator();
+		inline CTesselator()
+		: m_tessU(1), m_tessV(1), m_frontFaceCW(true), m_flipNormals(false), m_useStrips(false), m_useTriangles(true)
+		{
+		}
 		virtual ~CTesselator();
 
 		bool releaseSurface(CSurface *surf);
 		CSurface *createSurface();
+		
+		inline RtInt tessU() const { return m_tessU; }
+		inline void tessU(RtInt aTessU) { m_tessU = aTessU; }
+		inline RtInt tessV() const { return m_tessV; }
+		inline void tessV(RtInt aTessV) { m_tessV = aTessV; }
+		
+		inline void tesselation(RtInt aTessU, RtInt aTessV)
+		{
+			tessU(aTessU);
+			tessV(aTessV);
+		}
+
+		inline void tesselation(RtInt &aTessU, RtInt &aTessV) const
+		{
+			aTessU = tessU();
+			aTessV = tessV();
+		}
+		
+		inline bool frontFaceCW() const { return m_frontFaceCW; }
+		inline void frontFaceCW(bool anIsLeftHanded) { m_frontFaceCW = anIsLeftHanded; }
+		
+		inline bool flipNormals() const { return m_flipNormals; }
+		inline void flipNormals(bool aFlipNormals) { m_flipNormals = aFlipNormals; }
+
+		inline bool useStrips() const { return m_useStrips; }
+		inline void useStrips(bool aUseStrips) { m_useStrips = aUseStrips; }
+
+		inline bool useTriangles() const { return m_useTriangles; }
+		inline void useTriangles(bool aUseTriangles) { m_useTriangles = aUseTriangles; }
+
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl) = 0;
 	}; // CTesselator
-	
-	class CTriangulator : public CTesselator {
-	public:
-	}; // CTriangulator
 	
 	// =========================================================================
 	
-	class CBasePolygonTriangulator : public CTriangulator {
+	class CBasePolygonTesselator : public CTesselator {
+	private:
+		void triangles(IndexType nVerts, IndexType offs, std::vector<IndexType> &stripIdx) const;
+		void strip(IndexType nVerts, IndexType offs, std::vector<IndexType> &stripIdx) const;
 	protected:
-		void triangleStrip(std::vector<IndexType> &strip, IndexType nVerts, IndexType offs) const;
+		void triangleStrip(IndexType nVerts, IndexType offs, CFace &f);
 		void insertParams(CFace &f, IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs);
-	}; // CBasePolygonTriangulator
+	}; // CBasePolygonTesselator
 	
-	class CPolygonTriangulator : public CBasePolygonTriangulator {
+	class CPolygonTesselator : public CBasePolygonTesselator {
 		CRiPolygon m_obj;
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CPolygonTriangulator(const CRiPolygon &obj) : m_obj(obj)  {}
-		CSurface *triangulate();
-	}; // CPolygonTriangulator
+		inline CPolygonTesselator(const CRiPolygon &obj) : m_obj(obj)  {}
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CPolygonTesselator
 
-	class CPointsPolygonsTriangulator : public CBasePolygonTriangulator {
+	class CPointsPolygonsTesselator : public CBasePolygonTesselator {
 		CRiPointsPolygons m_obj;
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CPointsPolygonsTriangulator(const CRiPointsPolygons &obj) : m_obj(obj)  {}
-		CSurface *triangulate();
-	}; // CPointsPolygonsTriangulator
+		inline CPointsPolygonsTesselator(const CRiPointsPolygons &obj) : m_obj(obj)  {}
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CPointsPolygonsTesselator
 
-	class CGeneralPolygonTriangulator : public CBasePolygonTriangulator {
+	class CGeneralPolygonTesselator : public CBasePolygonTesselator {
 		CRiGeneralPolygon m_obj;
 		const CTriangulatedPolygon *m_tpPtr;
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CGeneralPolygonTriangulator(const CRiGeneralPolygon &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
+		inline CGeneralPolygonTesselator(const CRiGeneralPolygon &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
 		{
 			m_tpPtr = m_obj.triangulate(strategy);
 		}
-		CSurface *triangulate();
-	}; // CGeneralPolygonTriangulator
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CGeneralPolygonTesselator
 
-	class CPointsGeneralPolygonsTriangulator : public CBasePolygonTriangulator {
+	class CPointsGeneralPolygonsTesselator : public CBasePolygonTesselator {
 		CRiPointsGeneralPolygons m_obj;
 		const std::vector<CTriangulatedPolygon> *m_tpPtr;
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CPointsGeneralPolygonsTriangulator(const CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
+		inline CPointsGeneralPolygonsTesselator(const CRiPointsGeneralPolygons &obj, const IPolygonTriangulationStrategy &strategy) : m_obj(obj)
 		{
 			m_tpPtr = &m_obj.triangulate(strategy);
 		}
-		CSurface *triangulate();
-	}; // CPointsGeneralPolygonsTriangulator
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CPointsGeneralPolygonsTesselator
 
 
 	// =========================================================================
 
-	class CParametricTriangulator : public CTriangulator {
+	class CParametricTesselator : public CTesselator {
 	protected:
+		struct SParametricVars {
+			IndexType nVars;
+			RtFloat deltaU, deltaV;
+			RtFloat flipNormal;
+			std::vector<RtFloat> *positions, *normals;
+			
+			inline SParametricVars(const CDeclaration &posDecl, const CDeclaration &normDecl,
+								   RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace)
+			{
+				initVars(posDecl, normDecl, aTessU, aTessV, aFlipNormal, aFace);
+			}
+			
+			void initVars(RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace);
+			void initVars(const CDeclaration &posDecl, const CDeclaration &normDecl,
+						  RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace);
+		}; // SParametricVars
+
 		void insertBilinearParams(IndexType faceIndex,
 								  const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
-								  RtInt tessU, RtInt tessV,
 								  CFace &f);
 		void insertBicubicParams(IndexType faceIndex,
 								 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 								 const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
-								 RtInt tessU, RtInt tessV,
+								 const CBicubicVectors &basisVectors,
 								 CFace &f);
-	public:
-		virtual CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips) = 0;
-	}; // CParametricTriangulator
+		
+		void getStdCornerIdx(IndexType offset, IndexType (&idx)[4]) const;
+		void getStdControlIdx(IndexType offset, IndexType (&idx)[16]) const;
+		void getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
+		void getFaceCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
+		void getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const;
+		void getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const;
+
+		void buildIndices(CFace &f);
+	}; // CParametricTesselator
 
 	// -------------------------------------------------------------------------
 
-	class CQuadricTriangulator : public CParametricTriangulator {
+	class CQuadricTesselator : public CParametricTesselator {
 	private:
-		void insertParams(RtInt tessU, RtInt tessV, CFace &f);
+		void insertParams(CFace &f);
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f) = 0;
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f) = 0;
+		void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloat displacement, const CDeclaration &posDecl, const CDeclaration &normDecl, const SParametricVars &var, CFace &f);
+		void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax, const CDeclaration &posDecl, const CDeclaration &normDecl, const SParametricVars &var, CFace &f);
 	public:
-		virtual CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
-	}; // CQuadricTriangulator
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CQuadricTesselator
 	
-	class CConeTriangulator : public CQuadricTriangulator {
+	class CConeTesselator : public CQuadricTesselator {
 		CRiCone m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CConeTriangulator(const CRiCone &obj) : m_obj(obj) {}
-	}; // CConeTriangulator
+		inline CConeTesselator(const CRiCone &obj) : m_obj(obj) {}
+	}; // CConeTesselator
 	
-	class CCylinderTriangulator : public CQuadricTriangulator {
+	class CCylinderTesselator : public CQuadricTesselator {
 		CRiCylinder m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CCylinderTriangulator(const CRiCylinder &obj) : m_obj(obj) {}
-	}; // CCylinderTriangulator
+		inline CCylinderTesselator(const CRiCylinder &obj) : m_obj(obj) {}
+	}; // CCylinderTesselator
 	
-	class CDiskTriangulator : public CQuadricTriangulator {
+	class CDiskTesselator : public CQuadricTesselator {
 		CRiDisk m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CDiskTriangulator(const CRiDisk &obj) : m_obj(obj) {}
-	}; // CDiskTriangulator
+		inline CDiskTesselator(const CRiDisk &obj) : m_obj(obj) {}
+	}; // CDiskTesselator
 
-	class CHyperboloidTriangulator : public CQuadricTriangulator {
+	class CHyperboloidTesselator : public CQuadricTesselator {
 		CRiHyperboloid m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CHyperboloidTriangulator(const CRiHyperboloid &obj) : m_obj(obj) {}
-	}; // CHyperboloidTriangulator
+		inline CHyperboloidTesselator(const CRiHyperboloid &obj) : m_obj(obj) {}
+	}; // CHyperboloidTesselator
 
-	class CParaboloidTriangulator : public CQuadricTriangulator {
+	class CParaboloidTesselator : public CQuadricTesselator {
 		CRiParaboloid m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CParaboloidTriangulator(const CRiParaboloid &obj) : m_obj(obj) {}
-	}; // CParaboloidTriangulator
+		inline CParaboloidTesselator(const CRiParaboloid &obj) : m_obj(obj) {}
+	}; // CParaboloidTesselator
 
-	class CSphereTriangulator : public CQuadricTriangulator {
+	class CSphereTesselator : public CQuadricTesselator {
 		CRiSphere m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CSphereTriangulator(const CRiSphere &obj) : m_obj(obj) {}
-	}; // CSphereTriangulator
+		inline CSphereTesselator(const CRiSphere &obj) : m_obj(obj) {}
+	}; // CSphereTesselator
 
-	class CTorusTriangulator : public CQuadricTriangulator {
+	class CTorusTesselator : public CQuadricTesselator {
 		CRiTorus m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, CFace &f);
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CTorusTriangulator(const CRiTorus &obj) : m_obj(obj) {}
-	}; // CTorusTriangulator
+		inline CTorusTesselator(const CRiTorus &obj) : m_obj(obj) {}
+	}; // CTorusTesselator
 	
 	// -------------------------------------------------------------------------
-	
-	////////////////////////////////////////////////////////////////////////////////
-	//! Basis values for bicubic spline patches of given parametric intervals
-	class CUVVector {
-	private:
-		RtBasis m_uBasis;                 //!< Basis matrix used for the parametric direction u
-		RtBasis m_vBasis;                 //!< Basis matrix used for the parametric direction v
-		IndexType m_tessU;                //!< Number of segments for tesselation in parametric direction u
-		IndexType m_tessV;                //!< Number of segments for tesselation in parametric direction v
-		std::vector<RtFloat> m_uVector;   //!< Base values for direction u, one value per parameter value (m_tessU+1 values)
-		std::vector<RtFloat> m_vVector;   //!< Base values for direction v, one value per parameter value (m_tessV+1 values)
-		std::vector<RtFloat> m_duVector;  //!< First derivates of base values for direction u, one value per parameter value (m_tessU+1 values)
-		std::vector<RtFloat> m_dvVector;  //!< First derivates of base values for direction v, one value per parameter value (m_tessV+1 values)
-	public:
-		//! Standard constructor, just clears the members
-		CUVVector();
 		
-		//! Constructor, assings the parameters to the members 
-		inline CUVVector(IndexType aTessU, IndexType aTessV, const RtBasis aUBasis, const RtBasis aVBasis)
-		{
-			reset(aTessU, aTessV, aUBasis, aVBasis);
-		}
-		
-		//! Copy constructor, assings the members of another instance to the members of *this
-		inline CUVVector(const CUVVector &v) { *this = v; }
-		
-		//! Duplication
-		/*! @return A clone of *this
-		 */
-		inline CUVVector *duplicate() const
-		{
-			return new CUVVector(*this);
-		}
-		
-		//! Assigns the members of an instance uvVector to the members of *this
-		inline CUVVector &operator=(const CUVVector &uvVector)
-		{
-			if ( &uvVector == this )
-				return *this;
-			reset(uvVector.m_tessU, uvVector.m_tessV, uvVector.m_uBasis, uvVector.m_vBasis);
-			return *this;
-		}
-		
-		//! Resets the members of *this by the values of the parameters
-		void reset(IndexType aTessU, IndexType aTessV, const RtBasis aUBasis, const RtBasis aVBasis);
-		
-		//! Returns true if the basis matrices equals to the appropriate parameters
-		bool hasBasis(const RtBasis aUBasis, const RtBasis aVBasis) const;
-		
-		//! Basis matrix for parametric u
-		inline const RtBasis &uBasis() const { return m_uBasis; }
-		//! Basis matrix for parametric v
-		inline const RtBasis &vBasis() const { return m_vBasis;	}
-		
-		//! Number of intervals in parametric direction u
-		inline IndexType nu() const {return m_tessU+1;}
-		
-		//! Number of intervals in parametric direction v
-		inline IndexType nv() const {return m_tessV+1;}
-		
-		//! Tesselation of the patch in parametric direction u
-		inline IndexType tessU() const { return m_tessU; }
-		
-		//! Tesselation of the patch in parametric direction v
-		inline IndexType tessV() const { return m_tessV; }
-		
-		//! Basis values in direction u
-		inline const std::vector<RtFloat> &uVector() const { return m_uVector; }
-		
-		//! Basis values in direction v
-		inline const std::vector<RtFloat> &vVector() const { return m_vVector; }
-		
-		//! Derivates of basis values in direction u
-		inline const std::vector<RtFloat> &duVector() const { return m_duVector; }
-		
-		//! Derivates of basis values in direction v
-		inline const std::vector<RtFloat> &dvVector() const { return m_dvVector; }
-
-		void bicubicBlend(IndexType elemSize,
-						  const IndexType (&controlIdx)[16],
-						  const std::vector<RtFloat> &vals,
-						  std::vector<RtFloat> &retvals);
-		
-		void bicubicBlendWithNormals(IndexType elemSize,
-									 const IndexType (&controlIdx)[16],
-									 const std::vector<RtFloat> &vals,
-									 bool flipNormal,
-									 std::vector<RtFloat> &retvals,
-									 std::vector<RtFloat> &normals);
-	}; // class CUVVector
-
-	
-	class CRootPatchTriangulator : public CParametricTriangulator {
+	class CRootPatchTesselator : public CParametricTesselator {
 	private:
 		CRiBasis m_basis;
-		CUVVector m_uvVector;
-		inline CRootPatchTriangulator() {}
-		void getFaceIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType patchsize, IndexType *idx) const;
+		CBicubicVectors m_basisVectors;
+		inline CRootPatchTesselator() {}
 	protected:
-		inline CRootPatchTriangulator(const CRiBasis &aBasis) : m_basis(aBasis) {}
+		inline CRootPatchTesselator(const CRiBasis &aBasis) : m_basis(aBasis) {}
 		virtual void buildBilinearPN(const CDeclaration &pointDecl, const CDeclaration &normDecl,
-									 RtInt tessU, RtInt tessV,
-									 bool equalOrientations,
 									 IndexType faceIndex,
 									 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 									 CFace &f);
 		virtual void buildBicubicPN(const CDeclaration &pointDecl, const CDeclaration &normDecl,
-									RtInt tessU, RtInt tessV,
-									bool equalOrientations,
 									IndexType faceIndex,
 									const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 									const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
@@ -337,31 +292,27 @@ namespace RiCPP {
 		
 		inline const CRiBasis &basis() const { return m_basis; }
 		inline CRiBasis &basis() { return m_basis; }
-
 		
-		void getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
-		void getFaceCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
-		void getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const;
-		void getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const;
-	}; // CRootPatchTriangulator
+		inline const CBicubicVectors &basisVectors() const { return m_basisVectors; }
+	}; // CRootPatchTesselator
 	
-	class CPatchTriangulator : public CRootPatchTriangulator {
+	class CPatchTesselator : public CRootPatchTesselator {
 		CRiPatch m_obj;
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CPatchTriangulator(const CRiPatch &obj, const CRiBasis &aBasis) : CRootPatchTriangulator(aBasis), m_obj(obj) {}
-		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
-	}; // CPatchTriangulator
+		inline CPatchTesselator(const CRiPatch &obj, const CRiBasis &aBasis) : CRootPatchTesselator(aBasis), m_obj(obj) {}
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CPatchTesselator
 
-	class CPatchMeshTriangulator : public CRootPatchTriangulator {
+	class CPatchMeshTesselator : public CRootPatchTesselator {
 		CRiPatchMesh m_obj;
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
-		inline CPatchMeshTriangulator(const CRiPatchMesh &obj, const CRiBasis &aBasis) : CRootPatchTriangulator(aBasis), m_obj(obj) {}
-		CSurface *triangulate(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt tessU, RtInt tessV, bool equalOrientations, bool useStrips);
-	}; // CPatchMeshTriangulator
+		inline CPatchMeshTesselator(const CRiPatchMesh &obj, const CRiBasis &aBasis) : CRootPatchTesselator(aBasis), m_obj(obj) {}
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CPatchMeshTesselator
 	
 }
 

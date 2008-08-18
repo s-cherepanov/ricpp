@@ -30,6 +30,10 @@
  *  @brief RI parameters and parameter lists.
  */
 
+#ifndef _RICPP_RICONTEXT_BLEND_H
+#include "ricpp/ricontext/blend.h"
+#endif // _RICPP_RICONTEXT_BLEND_H
+
 #ifndef _RICPP_DECLARATION_DECLDICT_H
 #include "ricpp/declaration/decldict.h"
 #endif // _RICPP_DECLARATION_DECLDICT_H
@@ -449,10 +453,16 @@ namespace RiCPP {
 		void extract(IndexType pos, std::vector<RtString>::iterator &result) const;
 		void extract(IndexType from, IndexType to, std::vector<RtString>::iterator &result) const;
 
-		void bilinearBlend(const IndexType (& cornerIdx)[4],
+		bool bilinearBlend(const IndexType (& cornerIdx)[4],
 						   IndexType tessU,
 						   IndexType tessV,
 						   std::vector<RtFloat> &retvals) const;
+
+		bool bicubicBlend(const IndexType (& controlIdx)[16],
+						  IndexType tessU,
+						  IndexType tessV,
+						  const CBicubicVectors &basisVectors,
+						  std::vector<RtFloat> &retvals) const;
 	}; // CParameter
 
 

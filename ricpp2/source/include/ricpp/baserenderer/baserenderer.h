@@ -465,6 +465,15 @@ protected:
 	CMatrix3D toNDC() const;
 	CMatrix3D toRaster() const;
 	
+	inline bool flipNormals() const
+	{
+		return attributes().primitiveOrientation() != attributes().coordSysOrientation();
+	}
+	
+	inline bool frontFaceCW() const
+	{
+		return attributes().primitiveOrientation() == renderState()->viewingOrientation();
+	}
 public:
 
 	virtual bool init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls);

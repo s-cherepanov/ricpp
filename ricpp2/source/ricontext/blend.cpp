@@ -336,4 +336,329 @@ void CBicubicVectors::bicubicBlendWithNormals(IndexType elemSize,
 	}
 }
 
+// =============================================================================
 
+CBSplineBasis::CBSplineBasis(RtInt ncpts, RtInt order, 
+							 const std::vector<RtFloat> &knots,
+							 RtFloat tmin, RtFloat tmax, RtInt tess)
+{
+	m_ncpts = ncpts;
+	m_order = order;
+	m_knots = knots;
+	m_tmin  = tmin;
+	m_tmax  = tmax;
+	m_tess = tess;
+	m_segments = 0;
+	calc();
+}
+
+
+void CBSplineBasis::bsplineBasisDerivate(RtFloat t, RtInt span,
+										 std::vector<RtFloat> &N,
+										 std::vector<RtFloat> &Nd)
+{
+	const RtInt size  = m_ncpts + m_order - 1;
+	
+	// Init N
+	N.assign(size, 0.0);
+	N[span] = 1.0;
+	
+	// Calculate
+	RtInt i, j;
+	RtFloat temp;
+	
+	for ( j=1; j < m_order; ++j ) {
+		for ( i=0; i < size-j; ++i ) {
+			
+			// Calc the first Derivate
+			if ( j == 1 ) {
+				temp = m_knots[i+j] - m_knots[i];
+				if ( temp >= eps<RtFloat>() ) {
+					temp = N[i] / temp;
+				}
+				Nd[i] = temp;
+				temp = m_knots[i+j+1] - m_knots[i+1];
+				if ( temp >= eps<RtFloat>() ) {
+					temp = N[i+1] / temp;
+					Nd[i] -= temp;
+				}
+			} else {
+				temp = m_knots[i+j] - m_knots[i];
+				if ( temp >= eps<RtFloat>() ) {
+					temp = (N[i] + (t-m_knots[i])*Nd[i]) / temp;
+				}
+				Nd[i] = temp;
+				temp = m_knots[i+j+1] - m_knots[i+1];
+				if ( temp >= eps<RtFloat>() ) {
+					temp = (N[i+1] - (m_knots[i+j+1]-t)*Nd[i+1]) / temp;
+					Nd[i] -= temp;
+				}
+			}
+			
+			// Calc the basis
+			if ( N[i] >= eps<RtFloat>() ) {
+				temp = m_knots[i+j]-m_knots[i];
+				if ( temp >= eps<RtFloat>() ) {
+					temp = N[i] * ((t - m_knots[i]) / temp);
+				}
+				N[i] = temp;
+			}
+			
+			if ( N[i+1] >= eps<RtFloat>() ) {
+				temp = m_knots[i+j+1]-m_knots[i+1];
+				if ( temp >= eps<RtFloat>() ) {
+					temp = N[i+1] * ((m_knots[i+j+1] - t) / temp);
+					N[i] += temp;
+				}
+			}
+		}
+	}
+}
+
+
+bool CBSplineBasis::unvalidParams()
+{
+	if ( m_tess <= 0 )
+		m_tess = 1;
+	
+	if ( m_order > m_ncpts )
+		m_order = m_ncpts;
+	if ( m_ncpts == 0 || m_order == 0 )
+		return true;
+	
+	if ( (RtInt)m_knots.size() < m_ncpts+m_order )
+		return true;
+	
+	if ( (RtInt)m_knots.size() > m_ncpts+m_order )
+		m_knots.resize(m_ncpts+m_order);
+	
+	RtInt i;
+	for ( i = 1; i < m_ncpts+m_order; ++i ) {
+		if ( m_knots[i] < m_knots[i-1] )
+			m_knots[i-1] = m_knots[i];
+	}
+	
+	if ( m_tmin > m_tmax ) {
+		RtFloat t = m_tmax;
+		m_tmax = m_tmin;
+		m_tmin = t;
+	}
+	
+	if ( m_tmin < m_knots[m_order-1] )
+		m_tmin = m_knots[m_order-1];
+	
+	if ( m_tmax > m_knots[m_ncpts] )
+		m_tmax = m_knots[m_ncpts];
+	
+	return false;
+}
+
+
+void CBSplineBasis::calc()
+{
+	// Test parameter conditions
+	m_segments = 0;
+	if ( unvalidParams() )
+		return;
+	
+	RtFloat ts, te;
+	RtFloat t, dt;
+	RtInt cnt, lastCnt;
+	
+	m_segments = 1 + m_ncpts - m_order;
+	
+	m_tVals.clear();
+	m_tVals.reserve(m_segments*(m_tess+1));
+	m_valCnts.clear();
+	m_valCnts.resize(m_ncpts);
+	m_valCnts.assign(m_ncpts, 0);
+	m_valOffs.clear();
+	m_valOffs.resize(m_ncpts);
+	m_valOffs.assign(m_ncpts, 0);
+	
+	lastCnt = 0;
+	for ( RtInt knotIdx = m_order-1; knotIdx < m_ncpts; ++knotIdx ) {
+		if ( knotIdx > 0 ) {
+			m_valOffs[knotIdx] = m_valOffs[knotIdx-1]+lastCnt;
+			lastCnt = 0;
+		}
+		ts = m_knots[knotIdx];
+		te = m_knots[knotIdx+1];
+		if ( (te-ts) < eps<RtFloat>() ) continue;
+		
+		dt = (te-ts)/m_tess;
+		
+		if ( dt < eps<RtFloat>() )
+			dt = eps<RtFloat>();
+		
+		if ( m_tmax < ts )
+			break;
+		if ( m_tmin >= te )
+			continue;
+		
+		// m_tmax >= ts && m_tmin < te
+		
+		if ( m_tmin > ts )
+			ts = m_tmin;
+		if ( m_tmax < te )
+			te = m_tmax;
+		
+		m_valCnts[knotIdx] = (RtInt)m_tVals.size();
+		m_tVals.push_back(ts);
+		for ( t = m_knots[knotIdx], cnt = 0;
+			  t < te && cnt < m_tess;
+			  t += dt, ++cnt )
+		{
+			if ( t <= ts )
+				continue;
+			m_tVals.push_back(t);
+		}
+		m_tess=cnt;
+		m_tVals.push_back(te);
+		lastCnt = m_valCnts[knotIdx] = (RtInt)m_tVals.size()-m_valCnts[knotIdx];
+	}
+	
+	std::vector<RtFloat> Ntemp(m_ncpts+m_order-1);     // BASIS, result can be found in N[0..n-1]
+	std::vector<RtFloat> Ndtemp(m_ncpts+m_order-1);    // BASIS derivative, result can be found in  Nd[0..n-1]
+	
+	m_basis.clear();
+	m_basis.resize(m_tVals.size()*m_order);
+	m_basisDeriv.clear();
+	m_basisDeriv.resize(m_tVals.size()*m_order);
+	
+	RtInt GIdx = 0;
+	RtInt i, j;
+	std::vector<RtFloat>::iterator iter = m_tVals.begin();
+	for ( RtInt span = m_order-1; span < m_ncpts; ++span ) {
+		for ( j = m_valCnts[span];
+			  j > 0 && iter != m_tVals.end();
+			  iter++, --j )
+		{
+			bsplineBasisDerivate(*iter, span, Ntemp, Ndtemp);
+			for ( i = span-m_order+1; i <= span; ++i, ++GIdx ) {
+				// Cache the results (basis and derivative) for parameter t
+				m_basis[GIdx] = Ntemp[i];
+				m_basisDeriv[GIdx] = Ndtemp[i];
+			}
+		}
+	}
+}
+
+
+CBSplineBasis &CBSplineBasis::operator=(const CBSplineBasis &sp)
+{
+	if ( &sp == this )
+		return *this;
+	m_ncpts = sp.m_ncpts;
+	m_order = sp.m_order;
+	m_tmin  = sp.m_tmin;
+	m_tmax  = sp.m_tmax;
+	m_knots = sp.m_knots;
+	m_tess = sp.m_tess;
+	m_segments = sp.m_segments;
+	m_tVals = sp.m_tVals;
+	m_valCnts = sp.m_valCnts;
+	m_valOffs = sp.m_valOffs;
+	
+	m_basis = sp.m_basis;
+	m_basisDeriv = sp.m_basisDeriv;
+	return *this;
+}
+
+
+void CBSplineBasis::reset(RtInt ncpts, RtInt order,
+						  const std::vector<RtFloat> &knots,
+						  RtFloat tmin, RtFloat tmax, RtInt tess)
+{
+	m_ncpts = ncpts;
+	m_order = order;
+	m_knots = knots;
+	m_tmin  = tmin;
+	m_tmax  = tmax;
+	m_tess = tess;
+	m_segments = 0;
+	m_tVals.clear();
+	m_valCnts.clear();
+	m_valOffs.clear();
+	m_basis.clear();
+	m_basisDeriv.clear();
+	calc();
+}
+
+
+void CBSplineBasis::reset(RtInt ncpts, RtInt order,
+						  const std::vector<RtFloat> &knots,
+						  RtInt knotOffs, RtFloat tmin, RtFloat tmax, RtInt tess)
+{
+	m_ncpts = ncpts;
+	m_order = order;
+	m_knots.resize(m_ncpts+m_order);
+	
+	RtInt i, end=m_ncpts+m_order;
+	RtFloat lastKnot = 0;
+	if ( knotOffs + end > (RtInt)knots.size() ) {
+		end = (RtInt)(knots.size() - knotOffs);
+		if ( end < 0 )
+			end = 0;
+	}
+	for (i = 0; i < end; ++i) {
+		lastKnot = knots[knotOffs+i];
+		m_knots[i] = lastKnot;
+	}
+	for (i = end; i < m_ncpts+m_order; ++i) {
+		m_knots[i] = lastKnot;
+	}
+	
+	m_tmin  = tmin;
+	m_tmax  = tmax;
+	m_tess = tess;
+	m_segments = 0;
+	m_tVals.clear();
+	m_valCnts.clear();
+	m_valOffs.clear();
+	m_basis.clear();
+	m_basisDeriv.clear();
+	calc();
+}
+
+
+IndexType CBSplineBasis::nuBlend(const std::vector<RtFloat> &source,
+								 RtInt offs,
+								 RtInt seg,
+								 std::vector<RtFloat> &pos) const
+{
+	RtInt span = seg + m_order - 1;
+	IndexType pn = m_valCnts[span];
+	IndexType koffset = m_valOffs[span];
+	IndexType size = (IndexType) pn*2;
+	
+	if ( pos.size() != size ) {
+		pos.resize(size);
+	}
+	
+	if ( pn <= 0 )
+		return pn;
+	
+	IndexType i, cnt;
+	RtFloat u, v, w, U, V, W, baseElem;
+	for ( cnt = 0; cnt < pn; ++cnt ) {
+		U = V = W = 0;
+		for ( i = 0; i < (IndexType)m_order; ++i ) {
+			baseElem = m_basis[(IndexType)((koffset+cnt)*m_order+i)];
+			u = source[offs+(seg+i)*3  ];
+			v = source[offs+(seg+i)*3+1];
+			w = source[offs+(seg+i)*3+2];
+			U += u * baseElem;
+			V += v * baseElem;
+			W += w * baseElem;
+		}
+		if ( W > 0 ) {
+			U /= W;
+			V /= W;
+		}
+		pos[2*cnt  ] = U;
+		pos[2*cnt+1] = V;
+	}
+	
+	return pn;
+}

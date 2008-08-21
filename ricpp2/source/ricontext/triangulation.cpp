@@ -80,6 +80,7 @@ CSurface *CTesselator::createSurface()
 	return s;
 }
 
+
 // =============================================================================
 
 void CBasePolygonTesselator::triangles(IndexType nVerts, IndexType offs, std::vector<IndexType> &stripIdx) const
@@ -262,25 +263,21 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 	if ( pos.size() <= 9 )
 		return false;
 
-	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, (IndexType)pos.size()/3).values();
+//	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, (IndexType)pos.size()/3).values();
+	RtFloat n[3];
 
 	IndexType prev = (IndexType)pos.size()-3, cur = 0, next = 3;
 
 	do {
-		if ( !flipNormals() ) {
-			planeLH(&n[cur], &pos[prev], &pos[cur], &pos[next]);
-		} else {
-			plane(&n[cur], &pos[prev], &pos[cur], &pos[next]);
+		if ( planeLH(&n[0], &pos[prev], &pos[cur], &pos[next]) ) {
+			return addNormals(normDecl, n, f);
 		}
-		prev = cur;
-		cur = next;
+		prev -= 3;
 		next += 3;
-		if ( next >= n.size() )
-			next = 0;
-	} while ( cur != 0 );
+	} while ( next < prev );
 
 
-	return true;
+	return false;
 }
 
 bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, const RtNormal &aNormal, CFace &f)
@@ -485,37 +482,35 @@ CSurface *CPointsGeneralPolygonsTesselator::tesselate(const CDeclaration &posDec
 
 // =============================================================================
 
-static void getUnitCircle(std::vector<RtFloat> &circledata, IndexType tess, RtFloat thetamax, RtFloat thetamin=0)
+void CUnitCircle::calc()
 {
-	if ( thetamax < thetamin )
-		std::swap(thetamax, thetamin);
+	if ( m_tess < 1 ) m_tess = 1;
+	validateMinMax(m_thetaMin, m_thetaMax);
 	
-	const RtFloat thetamaxrad = thetamax;
-	RtFloat thetaminrad = thetamin;
+	RtFloat theta = m_thetaMin;
 	
-	if ( tess < 1 ) tess = 1;
 
-	RtFloat delta = deltaNotZero<RtFloat>(thetaminrad, thetamaxrad, (RtFloat)tess);
+	RtFloat delta = deltaNotZero<RtFloat>(theta, m_thetaMax, (RtFloat)m_tess);
 	
-	IndexType nverts = tess+1;
+	IndexType nverts = m_tess+1;
 		
-	circledata.clear();
-	circledata.resize(nverts*2);
+	m_circleData.clear();
+	m_circleData.resize(nverts*2);
 
 	IndexType i;
 	IndexType endIdx = (nverts-1)*2;
-	for ( i = 0; i < endIdx; thetaminrad += delta ) {
-		if ( thetaminrad > thetamaxrad )
-			thetaminrad = thetamaxrad;
-		circledata[i++] = (RtFloat)cos(thetaminrad);
+	for ( i = 0; i < endIdx; theta += delta ) {
+		if ( theta > m_thetaMax )
+			theta = m_thetaMax;
+		m_circleData[i++] = (RtFloat)cos(theta);
 		assert(i<endIdx);
-		circledata[i++] = (RtFloat)sin(thetaminrad);
+		m_circleData[i++] = (RtFloat)sin(theta);
 	}
 
 	assert(i < nverts*2);
-	circledata[i++] = (RtFloat)cos(thetamaxrad);
+	m_circleData[i++] = (RtFloat)cos(m_thetaMax);
 	assert(i < nverts*2);
-	circledata[i++] = (RtFloat)sin(thetamaxrad);
+	m_circleData[i++] = (RtFloat)sin(m_thetaMax);
 }
 
 
@@ -659,17 +654,24 @@ void CParametricTesselator::getStdCornerIdx(IndexType offset, IndexType (&idx)[4
 	// 0, 1, (LH)
 	// 2, 3
 	
-	if ( frontFaceCW() ) {
+	// Winding will be done by indices
+//	if ( frontFaceCW() ) {
+	
 		idx[0] = offset;
 		idx[1] = offset+1;
 		idx[2] = offset+2;
 		idx[3] = offset+3;
-	} else {
+	
+//	} else {
+	
+	/*
 		idx[0] = offset+2;
 		idx[1] = offset+3;
 		idx[2] = offset;
 		idx[3] = offset+1;
-	}
+	 */
+	
+//	}
 }
 
 void CParametricTesselator::getStdControlIdx(IndexType offset, IndexType (&idx)[16]) const
@@ -679,11 +681,15 @@ void CParametricTesselator::getStdControlIdx(IndexType offset, IndexType (&idx)[
 	//  8,  9, 10, 11,
 	// 12, 13, 14, 15
 	
-	if ( frontFaceCW() ) {
+	// Winding will be done by indices
+//	if ( frontFaceCW() ) {
+	
 		for ( IndexType i = 0; i < 16; ++i ) {
 			idx[i] = offset+i;
 		}
-	} else {
+
+// } else {
+	/*
 		IndexType i = 0;
 		for ( IndexType v = 4; v > 0; ) {
 			for ( IndexType u = 0; u < 4; ++u, ++i ) {
@@ -691,7 +697,8 @@ void CParametricTesselator::getStdControlIdx(IndexType offset, IndexType (&idx)[
 				idx[i] = offset+v*4+u;
 			}
 		}
-	}
+	 */
+//	}
 }
 
 void CParametricTesselator::getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const
@@ -752,8 +759,7 @@ void CQuadricTesselator::insertParams(CFace &f)
 
 void CQuadricTesselator::buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloat displacement, const CDeclaration &posDecl, const CDeclaration &normDecl, const SParametricVars &var, CFace &f)
 {
-	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, tessU(), deg2rad(thetamax));
+	CUnitCircle unitcircle(tessU(), deg2rad(thetamax), 0);
 	
 	RtFloat dz = delta<RtFloat>(0, height, static_cast<RtFloat>(tessV()));
 	
@@ -821,8 +827,7 @@ void CQuadricTesselator::buildConePN(RtFloat height, RtFloat radius, RtFloat the
 
 void CQuadricTesselator::buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax, const CDeclaration &posDecl, const CDeclaration &normDecl, const SParametricVars &var, CFace &f)
 {
-	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, tessU(), deg2rad(thetamax));
+	CUnitCircle unitcircle(tessU(), deg2rad(thetamax), 0);
 	
 	RtFloat u, v, costheta, sintheta;
 	RtFloat p[3], p0[3], n[3];
@@ -946,7 +951,7 @@ void CCylinderTesselator::buildPN(const CDeclaration &posDecl, const CDeclaratio
 #endif
 	RtFloat zmin = m_obj.zMin();
 	RtFloat zmax = m_obj.zMax();
-	testMinMax(zmin, zmax);
+	validateMinMax(zmin, zmax);
 	if ( nearlyZero(zmax-zmin) )
 		return;
 	
@@ -961,9 +966,7 @@ void CCylinderTesselator::buildPN(const CDeclaration &posDecl, const CDeclaratio
 	
 	SParametricVars var(posDecl, normDecl, tessU(), tessV(), flipNormals(), f);
 	
-	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, tessU(), deg2rad(thetamax));
-
+	CUnitCircle unitcircle(tessU(), deg2rad(thetamax), 0);
 	RtFloat u, v, z;
 	RtFloat pTempZ;
 	
@@ -1095,8 +1098,7 @@ void CParaboloidTesselator::buildPN(const CDeclaration &posDecl, const CDeclarat
 
 	SParametricVars var(posDecl, normDecl, tessU(), tessV(), flipNormals(), f);
 	
-	std::vector<RtFloat> unitcircle;
-	getUnitCircle(unitcircle, tessU(), deg2rad(thetamax));
+	CUnitCircle unitcircle(tessU(), deg2rad(thetamax), 0);
 	
 	RtFloat u, v, r, nn, z;
 	
@@ -1186,16 +1188,9 @@ void CSphereTesselator::buildPN(const CDeclaration &posDecl, const CDeclaration 
 
 	SParametricVars var(posDecl, normDecl, tessU(), tessV(), flipNormals(), f);
 	
-	std::vector<RtFloat> unitcircleU;
-	getUnitCircle(unitcircleU, tessU(), deg2rad(thetamax));
-
-	std::vector<RtFloat> unitcircleV;
-	if ( tessU() == tessV() && nearlyZero(phimin) && nearlyEqual(thetamax, phimax) )
-		unitcircleV = unitcircleU;
-	else
-		getUnitCircle(unitcircleV, tessV(), phimax, phimin);
-	
-	
+	CUnitCircle unitcircleU(tessU(), deg2rad(thetamax), 0);
+	CUnitCircle unitcircleV(tessU(), phimax, phimin);
+		
 	RtFloat u, v, cosphi;
 	RtFloat ptempZ, ntemp[3];
 	
@@ -1272,11 +1267,8 @@ void CTorusTesselator::buildPN(const CDeclaration &posDecl, const CDeclaration &
 
 	SParametricVars var(posDecl, normDecl, tessU(), tessV(), flipNormals(), f);
 	
-	std::vector<RtFloat> unitcircleU;
-	getUnitCircle(unitcircleU, tessU(), deg2rad(thetamax));
-
-	std::vector<RtFloat> unitcircleV;
-	getUnitCircle(unitcircleV, tessV(), deg2rad(phimax), deg2rad(phimin));
+	CUnitCircle unitcircleU(tessU(), deg2rad(thetamax), 0);
+	CUnitCircle unitcircleV(tessU(), deg2rad(phimax), deg2rad(phimin));
 
 	RtFloat u, v, r, cosphi, sinphi, sintheta, costheta;
 	RtFloat pTempZ;
@@ -1331,6 +1323,20 @@ void CTorusTesselator::buildPN(const CDeclaration &posDecl, const CDeclaration &
 }
 
 // =============================================================================
+
+static void pw2p(const std::vector<RtFloat> &pw, std::vector<RtFloat> &p)
+{
+	IndexType size = (IndexType)pw.size()/4;
+	if ( p.size() != size ) {
+		p.clear();
+		p.resize(3*size);
+	}
+	for ( IndexType i = 0; i < size; ++i ) {
+		p[i*3  ] = pw[i*4  ]/pw[i*4+3];
+		p[i*3+1] = pw[i*4+1]/pw[i*4+3];
+		p[i*3+2] = pw[i*4+2]/pw[i*4+3];
+	}
+}
 
 static bool extractRiPz(const CParameter &p, IndexType sizeU, IndexType sizeV, IndexType faceIndex, const IndexType cornerIdx[], std::vector<RtFloat> &retval)
 {
@@ -1485,19 +1491,6 @@ static bool extractRi3F(const CParameter &p, IndexType sizeU, IndexType sizeV, I
 	return true;
 }
 
-static void pw2p(const std::vector<RtFloat> &pw, std::vector<RtFloat> &p)
-{
-	IndexType size = (IndexType)pw.size()/4;
-	if ( p.size() < size )
-		p.clear();
-	p.resize(3*size);
-	for ( IndexType i = 0; i < size; ++i ) {
-		p[i*3  ] = pw[i*4  ]/pw[i*4+3];
-		p[i*3+1] = pw[i*4+1]/pw[i*4+3];
-		p[i*3+2] = pw[i*4+2]/pw[i*4+3];
-	}
-}
-
 // =============================================================================
 
 void CRootPatchTesselator::buildBilinearPN(const CDeclaration &posDecl,
@@ -1555,10 +1548,10 @@ void CRootPatchTesselator::buildBilinearPN(const CDeclaration &posDecl,
 	if ( !n || !extractRi3F(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, nrm) ) {
 		IndexType nc[4] = {0, (IndexType)tessU()*3, (IndexType)(tessV()*(tessU()+1))*3, (IndexType)vars.positions->size()-3};
 		if ( flipNormals() ) {
-			plane<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
-			plane<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
-			plane<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]);
-			plane<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]);
+			planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
+			planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
+			planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]);
+			planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]);
 		} else {
 			planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
 			planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
@@ -1717,6 +1710,22 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 		}
 	}
 
-	
+	return surf;
+}
+
+
+// =============================================================================
+
+void CNuPatchTesselator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f)
+{
+}
+
+CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
+{
+	CSurface *surf = createSurface();
+	if ( !surf ) {
+		return 0;
+	}
+
 	return surf;
 }

@@ -667,3 +667,11 @@ RtVoid CGLRenderer::doProcess(CRiPatchMesh &obj)
 	
 	triangulate(obj);
 }
+
+RtVoid CGLRenderer::doProcess(CRiNuPatch &obj)
+{
+	if ( !valid() || delayRequest(obj) )
+		return;
+	
+	triangulate(obj);
+}

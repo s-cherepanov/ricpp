@@ -87,6 +87,7 @@ namespace RiCPP {
 
 		virtual RtVoid triangulate(CRiPatch &obj);
 		virtual RtVoid triangulate(CRiPatchMesh &obj);
+		virtual RtVoid triangulate(CRiNuPatch &obj);
 	}; // CTriangleRenderer
 
 }

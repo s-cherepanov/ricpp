@@ -126,7 +126,7 @@ namespace RiCPP {
 		return result;
 	}
 
-	template<typename type> inline bool testMinMax(type &min, type &max)
+	template<typename type> inline bool validateMinMax(type &min, type &max)
 	{
 		if ( min > max ) {
 			using std::swap;
@@ -147,7 +147,7 @@ namespace RiCPP {
 	 */
 	template<typename type> inline type clamp(type val, type boundmin, type boundmax)
 	{
-		testMinMax(boundmin, boundmax);
+		validateMinMax(boundmin, boundmax);
 		if ( val < boundmin )
 			return boundmin;
 		if ( val > boundmax )
@@ -253,10 +253,10 @@ namespace RiCPP {
 	 */
 	template <typename type> inline type rad2deg(type radian) {return radian * _180_pi<type>();}
 	
-	template <typename type> inline bool inOpenInterval(type f, type min, type max) { testMinMax(min, max); return f > min && f < max; }
-	template <typename type> inline bool inClosedInterval(type f, type min, type max) { testMinMax(min, max); return f >= min && f <= max; }
-	template <typename type> inline bool inLeftClosedInterval(type f, type min, type max) { testMinMax(min, max); return f >= min && f < max; }
-	template <typename type> inline bool inRightClosedInterval(type f, type min, type max) { testMinMax(min, max); return f > min && f <= max; }
+	template <typename type> inline bool inOpenInterval(type f, type min, type max) { validateMinMax(min, max); return f > min && f < max; }
+	template <typename type> inline bool inClosedInterval(type f, type min, type max) { validateMinMax(min, max); return f >= min && f <= max; }
+	template <typename type> inline bool inLeftClosedInterval(type f, type min, type max) { validateMinMax(min, max); return f >= min && f < max; }
+	template <typename type> inline bool inRightClosedInterval(type f, type min, type max) { validateMinMax(min, max); return f > min && f <= max; }
 
 	template <typename type> inline bool positive(type f) { return f >= 0; }
 	template <typename type> inline bool negative(type f) { return f < 0; }
@@ -854,20 +854,19 @@ namespace RiCPP {
 	 *  @param v2 3 dim vector 2
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool plane(_T *norm, const _T *v1, const _T *v2)
+	template <typename _T> inline bool planeRH(_T *norm, const _T *v1, const _T *v2)
 	{
 		vprod(norm, v1, v2);
 		if ( zeroVect3(norm) )
 			return false;
 		
-		normalize3(norm);
+		// normalize3(norm);
 		return true;
 	}
 
 	template <typename _T> inline bool planeLH(_T *norm, const _T *v1, const _T *v2)
 	{
-		// Left handed
-		return plane(norm, v2, v1);
+		return planeRH(norm, v2, v1);
 	}
 	
 	/** @brief A normal vector (normalized) for a plane given by three points
@@ -877,18 +876,17 @@ namespace RiCPP {
 	 *  @retval norm The normal vector as normalized cross product vect(P2, P1) x vect(P2, P3)
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool plane(_T *norm, const _T *p1, const _T *p2, const _T *p3)
+	template <typename _T> inline bool planeRH(_T *norm, const _T *p1, const _T *p2, const _T *p3)
 	{
 		_T v1[3], v2[3];
 		vectFromPos3(v1, p2, p1);
 		vectFromPos3(v2, p2, p3);
-		return plane(norm, v1, v2);
+		return planeRH(norm, v1, v2);
 	}
 
 	template <typename _T> inline bool planeLH(_T *norm, const _T *p1, const _T *p2, const _T *p3)
 	{
-		// Left handed
-		return plane(norm, p3, p2, p1);
+		return planeRH(norm, p3, p2, p1);
 	}
 
 	/** @brief Linear interpolation between two values.

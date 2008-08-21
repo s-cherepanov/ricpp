@@ -217,3 +217,9 @@ RtVoid CTriangleRenderer::triangulate(CRiPatchMesh &obj)
 	CPatchMeshTesselator t(obj, basis);
 	triangulate(t);
 }
+
+RtVoid CTriangleRenderer::triangulate(CRiNuPatch &obj)
+{
+	CNuPatchTesselator t(obj);
+	triangulate(t);
+}

@@ -133,6 +133,7 @@ public:
 
 	virtual RtVoid doProcess(CRiPatch &obj);
     virtual RtVoid doProcess(CRiPatchMesh &obj);
+    virtual RtVoid doProcess(CRiNuPatch &obj);
 }; // CGLRenderer
 
 /** @brief Creator for the CGLRenderer rendering context.

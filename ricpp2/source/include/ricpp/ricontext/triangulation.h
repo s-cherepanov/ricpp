@@ -44,6 +44,30 @@
 
 namespace RiCPP {
 
+	class CUnitCircle {
+		IndexType m_tess;
+		RtFloat m_thetaMax;
+		RtFloat m_thetaMin;
+		std::vector<RtFloat> m_circleData;
+		
+		void calc();
+	public:
+		inline CUnitCircle(IndexType theTess, RtFloat theThetaMax, RtFloat theThetaMin)
+			: m_tess(theTess), m_thetaMax(theThetaMax), m_thetaMin(theThetaMin)
+		{
+			calc();
+		}
+
+		inline const RtFloat &operator[](size_t index) const
+		{
+			return m_circleData[index];
+		}
+
+		inline IndexType tess()     const { return m_tess; }
+		inline RtFloat   thetaMax() const { return m_thetaMax; }
+		inline RtFloat   thetaMin() const { return m_thetaMin; }
+	}; // CUnitCircle
+
 	// =========================================================================
 	
 	class CTesselator {
@@ -316,6 +340,17 @@ namespace RiCPP {
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
 	}; // CPatchMeshTesselator
 	
+	// -------------------------------------------------------------------------
+	
+	class CNuPatchTesselator : public CParametricTesselator {
+		CRiNuPatch m_obj;
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
+		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+	public:
+		inline CNuPatchTesselator(const CRiNuPatch &obj) : m_obj(obj) {}
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	}; // CNuPatchTesselator
 }
 
 #endif // _RICPP_RICONTEXT_TRIANGULATION_H

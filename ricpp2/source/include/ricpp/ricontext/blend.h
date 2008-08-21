@@ -36,12 +36,13 @@
 
 namespace RiCPP {
 
+	////////////////////////////////////////////////////////////////////////////
 	/** @brief Bilinear blending
 	 */
 	class CBilinearBlend {
 	private:
-		IndexType m_tessU;                //!< Number of segments for tesselation in parametric direction u
-		IndexType m_tessV;                //!< Number of segments for tesselation in parametric direction v
+		IndexType m_tessU; //!< Number of segments for tesselation in parametric direction u
+		IndexType m_tessV; //!< Number of segments for tesselation in parametric direction v
 		
 	public:
 		//! Standard constructor, just clears the members
@@ -49,7 +50,7 @@ namespace RiCPP {
 		//! Standard constructor, assigns tesselation
 		CBilinearBlend(IndexType aTessU, IndexType aTessV);
 		//! do the blending
-		void bilinearBlend(IndexType elemSize, const IndexType (&cornerIdx)[4], const std::vector<RtFloat> &vals, std::vector<RtFloat> &retvals);
+		void bilinearBlend(IndexType elemSize, const IndexType (&cornerIdx)[4], const std::vector<RtFloat> &vals, std::vector<RtFloat> &results);
 		
 		//! Tesselation of the patch in parametric direction u
 		inline IndexType tessU() const { return m_tessU; }
@@ -58,9 +59,9 @@ namespace RiCPP {
 		//! Tesselation of the patch in parametric direction v
 		inline IndexType tessV() const { return m_tessV; }
 		inline void tessV(IndexType aTessV) { m_tessV = aTessV; }
-	}; // CBicubicBlend
+	}; // CBilinearBlend
 			
-	////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
 	//! Basis vectors for bicubic spline patches of given parametric intervals
 	class CBicubicVectors {
 	private:
@@ -140,39 +141,50 @@ namespace RiCPP {
 		void bicubicBlend(IndexType elemSize,
 						  const IndexType (&controlIdx)[16],
 						  const std::vector<RtFloat> &vals,
-						  std::vector<RtFloat> &retvals) const;
+						  std::vector<RtFloat> &results) const;
 		
 		void bicubicBlendWithNormals(IndexType elemSize,
 									 const IndexType (&controlIdx)[16],
 									 const std::vector<RtFloat> &vals,
 									 bool flipNormal,
-									 std::vector<RtFloat> &retvals,
+									 std::vector<RtFloat> &results,
 									 std::vector<RtFloat> &normals) const;
 	}; // class CBicubicVectors
 
 	
 	////////////////////////////////////////////////////////////////////////////////
-	/*! @brief CBSplineBasis is a class to calculate a bspline basis and its first derivate
+	/** @brief CBSplineBasis is a class to calculate a bspline basis and its first derivate
 	 *  using the Cox-de Boor recurrence formular.
 	 */
 	class CBSplineBasis {
 	private:
+		/** @{
+		 * @name Input values
+		 * @brief Copied by reset() or constructor.
+		 */
 		RtInt m_ncpts;                //!< Number of control points (control points are not stored in instances of this class)
 		RtInt m_order;                //!< Order of the polynom (degree = k-1), 0 < k <= m_ncpts
 		std::vector<RtFloat> m_knots; //!< Knot vector, size = m_ncpts+m_order, knots[i] <= knots[i+1]
 		RtFloat m_tmin;               //!< Minimum value for parameter t, tmin >= x[order-1] && tmin < tmax
 		RtFloat m_tmax;               //!< Maximum value for parameter t, tmax <= x[ncpts] && tmax > tmin
 		RtInt m_tess;                 //!< Tesselation of the parameter, i.e. the number of intervals for the parameter range
+		/** @}
+		 */
 		
-		// Results
+		/** @{
+		 * @name Results
+		 * @brief Calculated by reset() or constructor.
+		 */
 		RtInt m_segments;                  //!< Number of segments of the bspline: 1 + m_ncpts - m_order
 		std::vector<RtInt> m_valOffs;      //!< Offset (in m_tVals) per segment, size of vector = m_segments
 		std::vector<RtInt> m_valCnts;      //!< Number of parameters (in m_tVals) per segment, size of vector = m_segments, max(m_valCnts[i]) = m_tess+1
 		std::vector<RtFloat> m_tVals;      //!< Parameters used to tesselate the spline, parameter range for a segment s is m_tVals[m_valOffs[s]] to m_tVals[m_valOffs[s]+m_valCnts[s]] (excluding), interval can be empty
 		std::vector<RtFloat> m_basis;      //!< bspline basis for parameters m_tVals (number of values per parameter = order, only the influencing basis values are stored)
 		std::vector<RtFloat> m_basisDeriv; //!< bspline basis first derivate for parameters m_tVals (number of values per parameter = order, only the influencing basis values are stored)
+		/** @}
+		 */
 		
-		/*! Calculates the bspline basis a parameter value t in a span
+		/** Calculates the bspline basis a parameter value t in a span
 		 *  and returns the basis in N[span-order...span] and the first derivate in Nd[span-order...span].
 		 *  Algorithm based on the Cox-de Boor recurrence formular.
 		 *
@@ -185,15 +197,29 @@ namespace RiCPP {
 		void bsplineBasisDerivate(RtFloat t, RtInt span,
 								  std::vector<RtFloat> &N, std::vector<RtFloat> &Nd);
 		
-		//! Test if the member variables are valid for bspline-calculation
-		bool unvalidParams();
+		bool empty() const;
+		inline IndexType knotSize() const { return static_cast<IndexType>(m_ncpts+m_order); }
+		
+		void sortKnots();
+		void clearResults();
+		void insertKnots(const std::vector<RtFloat> &theKnots);
+		void insertKnots(const std::vector<RtFloat> &theKnots, IndexType theKnotOffs);
+		void insertVals(RtInt theNCPts, RtInt theOrder,
+						RtFloat theTMin, RtFloat theTMax, RtInt theTess);
+		
+		//! Checks whether the member variables are valid for bspline-calculation, does basic validation.
+		void validate();
 		
 		//! Calc all basis values, using Cox-de Boor recurrence function
 		void calc();
-		
+
 	public:
-		//! Standard constructor, simpliy clears the members
-		inline CBSplineBasis() {
+		/** @brief Standard constructor
+		 *
+		 * Simply clears the members, reset() can be used to load the values.
+		 */
+		inline CBSplineBasis()
+		{
 			m_ncpts = 0;
 			m_order = 0;
 			m_tmin = (RtFloat)0;
@@ -202,9 +228,21 @@ namespace RiCPP {
 			m_segments = 0;
 		}
 		
-		//! Constructor to initialize the members
-		CBSplineBasis(RtInt ncpts, RtInt order, const std::vector<RtFloat> &knots,
-					  RtFloat tmin, RtFloat tmax, RtInt tess);
+		//! Constructor to initialize the members, @see reset()
+		inline CBSplineBasis(RtInt theNCPts, RtInt theOrder,
+							 const std::vector<RtFloat> &theKnots,
+							 RtFloat theTMin, RtFloat theTMax, RtInt theTess)
+		{
+			reset(theNCPts, theOrder, theKnots, theTMin, theTMax, theTess);
+		}
+
+		//! Constructor to initialize the members, @see reset()
+		inline CBSplineBasis(RtInt theNCPts, RtInt theOrder,
+				   const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
+				   RtFloat theTMin, RtFloat theTMax, RtInt theTess)
+		{
+			reset(theNCPts, theOrder, theKnots, theKnotOffs, theTMin, theTMax, theTess);
+		}
 		
 		//! copy constructor
 		inline CBSplineBasis(const CBSplineBasis &sp)
@@ -213,7 +251,7 @@ namespace RiCPP {
 		}
 		
 		//! Clone *this
-		/*! \return A clone of *this 
+		/** @return A clone of *this 
 		 */
 		inline CBSplineBasis *duplicate() const
 		{
@@ -223,20 +261,78 @@ namespace RiCPP {
 		//! Assignment
 		CBSplineBasis &operator=(const CBSplineBasis &sp);
 		
-		//! Recalculate the basis
-		void reset(RtInt ncpts, RtInt order, const std::vector<RtFloat> &knots,
-				   RtFloat tmin, RtFloat tmax, RtInt tess);
+		//! Sets a new basis, calls calc()
+		void reset(RtInt theNcpts, RtInt theOrder,
+				   const std::vector<RtFloat> &theKnots,
+				   RtFloat theTMin, RtFloat theTMax, RtInt theTess);
 		
-		//! Recalculate the basis
-		void reset(RtInt ncpts, RtInt order, const std::vector<RtFloat> &knots, RtInt knotOffs,
-				   RtFloat tmin, RtFloat tmax, RtInt tess);
+		//! Sets a new basis, calls calc()
+		/** Used for one segement uses an offset for the knotvector and
+		 *  ncpts and order for the size of the knot vector.
+		 */
+		void reset(RtInt theNcpts, RtInt theOrder,
+				   const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
+				   RtFloat theTMin, RtFloat theTMax, RtInt theTess);
 
-		IndexType nuBlend(const std::vector<RtFloat> &source,
-						  RtInt offs,
-						  RtInt seg,
-						  std::vector<RtFloat> &pos) const;
+		
+		//! Blend using control points, members have to be valid
+		void nuBlend(const std::vector<RtFloat> &source,
+					 RtInt offs,
+					 RtInt seg,
+					 std::vector<RtFloat> &pos) const;
+
+		/** @{
+		 */
+		inline RtInt ncpts() const { return m_ncpts; }
+		inline RtInt order() const { return m_order; }
+		inline RtFloat tmin() const { return m_tmin; }
+		inline RtFloat tmax() const { return m_tmax; }
+		inline RtInt tess() const { return m_tess; }
+		inline const std::vector<RtFloat> &knots() const { return m_knots; }
+		/** @}
+		 */
+		
+		/** @{
+		 */
+		inline RtInt segments() const { return m_segments; }
+		inline const std::vector<RtInt>   &valOffs() const { return m_valOffs; }
+		inline const std::vector<RtInt>   &valCnts() const { return m_valCnts; }
+		inline const std::vector<RtFloat> &Vals() const { return m_tVals; }
+		inline const std::vector<RtFloat> &basis() const { return m_basis; }
+		inline const std::vector<RtFloat> &basisDeriv() const { return m_basisDeriv; }
+		/** @}
+		 */
 	}; // CBSplineBasis
 	
+	
+	class CUVBSplineBasis
+	{
+		CBSplineBasis m_uBasis;
+		CBSplineBasis m_vBasis;
+		
+	public:
+		
+		const CBSplineBasis &uBasis() const { return m_uBasis; }
+		CBSplineBasis &uBasis() { return m_uBasis; }
+		
+		const CBSplineBasis &vBasis() const { return m_vBasis; }
+		CBSplineBasis &vBasis() { return m_vBasis; }
+
+		void nuBlend(IndexType elemSize,
+					 const std::vector<RtFloat> &source,
+					 RtInt useg,
+					 RtInt vseg,
+					 const std::vector<IndexType> &idx,
+					 std::vector<RtFloat> &results) const;
+		
+		void nuBlendWithNormals(IndexType elemSize,
+								const std::vector<RtFloat> &source,
+								RtInt useg,
+								RtInt vseg,
+								const std::vector<IndexType> &idx,
+								std::vector<RtFloat> &results,
+								std::vector<RtFloat> &normals) const;
+	}; // CUVBSplineBasis
 }
 
 #endif // _RICPP_RICONTEXT_BLEND_H

@@ -403,7 +403,8 @@ void CBSplineBasis::bsplineBasisDerivate(RtFloat t, RtInt span,
 
 void CBSplineBasis::sortKnots()
 {
-	// std::sort(m_knots.begin(), m_knots.end());
+	//! @todo
+	// std::sort(m_knots.begin(), m_knots.end(), ?);
 }
 
 bool CBSplineBasis::empty() const
@@ -418,7 +419,7 @@ void CBSplineBasis::validate()
 	if ( empty() )
 		return;
 
-	m_tess = clamp(m_tess,1, m_tess);
+	m_tess = clamp<IndexType>(m_tess, 1, m_tess);
 	m_order = clamp<RtInt>(m_ncpts, 0, m_ncpts);
 	
 	sortKnots();
@@ -450,7 +451,7 @@ void CBSplineBasis::calc()
 	
 	RtFloat ts, te;
 	RtFloat t, dt;
-	RtInt cnt, lastCnt;
+	IndexType cnt, lastCnt;
 	
 	m_segments = 1 + m_ncpts - m_order;
 	
@@ -473,7 +474,7 @@ void CBSplineBasis::calc()
 		te = m_knots[knotIdx+1];
 		if ( (te-ts) < eps<RtFloat>() ) continue;
 		
-		dt = (te-ts)/m_tess;
+		dt = (te-ts)/(RtFloat)m_tess;
 		
 		if ( dt < eps<RtFloat>() )
 			dt = eps<RtFloat>();
@@ -581,6 +582,7 @@ void CBSplineBasis::insertKnots(const std::vector<RtFloat> &theKnots)
 	m_knots = theKnots;
 }
 
+/*
 void CBSplineBasis::insertKnots(const std::vector<RtFloat> &theKnots, IndexType theKnotOffs)
 {
 	assert(theKnotOffs < theKnots.size());
@@ -604,6 +606,7 @@ void CBSplineBasis::insertKnots(const std::vector<RtFloat> &theKnots, IndexType 
 		m_knots[i] = lastKnot;
 	}
 }
+*/
 
 void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 						  const std::vector<RtFloat> &theKnots,
@@ -616,6 +619,7 @@ void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 }
 
 
+/*
 void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 						  const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
 						  RtFloat theTMin, RtFloat theTMax, RtInt theTess)
@@ -625,7 +629,7 @@ void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 	validate();
 	calc();
 }
-
+*/
 
 void CBSplineBasis::nuBlend(const std::vector<RtFloat> &source,
 							RtInt offs,
@@ -664,6 +668,14 @@ void CBSplineBasis::nuBlend(const std::vector<RtFloat> &source,
 		pos[cnt+cnt  ] = U;
 		pos[cnt+cnt+1] = V;
 	}
+}
+
+// -----------------------------------------------------------------------------
+
+void CUVBSplineBasis::reset(const CRiNuPatch &obj, IndexType uTess, IndexType vTess)
+{
+	m_uBasis.reset(obj.nu(), obj.uOrder(), obj.uKnot(), obj.uMin(), obj.uMax(), uTess);
+	m_vBasis.reset(obj.nv(), obj.vOrder(), obj.vKnot(), obj.vMin(), obj.vMax(), vTess);
 }
 
 void CUVBSplineBasis::nuBlend(IndexType elemSize,

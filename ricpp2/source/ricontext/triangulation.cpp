@@ -490,7 +490,7 @@ void CUnitCircle::calc()
 	RtFloat theta = m_thetaMin;
 	
 
-	RtFloat delta = deltaNotZero<RtFloat>(theta, m_thetaMax, (RtFloat)m_tess);
+	RtFloat delta = deltaNotZero<RtFloat>(theta, m_thetaMax, static_cast<RtFloat>(m_tess));
 	
 	IndexType nverts = m_tess+1;
 		
@@ -516,10 +516,10 @@ void CUnitCircle::calc()
 
 // =============================================================================
 
-void CParametricTesselator::SParametricVars::initVars(RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace)
+void CParametricTesselator::SParametricVars::initVars(IndexType aTessU, IndexType aTessV, bool aFlipNormal, CFace &aFace)
 {
-	IndexType tessU = (IndexType)aTessU;
-	IndexType tessV = (IndexType)aTessV;
+	IndexType tessU = aTessU;
+	IndexType tessV = aTessV;
 	
 	deltaU = 0;
 	deltaV = 0;
@@ -533,15 +533,15 @@ void CParametricTesselator::SParametricVars::initVars(RtInt aTessU, RtInt aTessV
 		if ( tessV + 1 < tessV )
 			tessV -= 1;
 		
-		deltaU = deltaNotZero<RtFloat>(0, 1, (RtFloat)tessU);
-		deltaV = deltaNotZero<RtFloat>(0, 1, (RtFloat)tessV);
+		deltaU = deltaNotZero<RtFloat>(0, 1, static_cast<RtFloat>(tessU));
+		deltaV = deltaNotZero<RtFloat>(0, 1, static_cast<RtFloat>(tessV));
 	}
 	
-	nVars = ((IndexType)tessU+1)*((IndexType)tessV+1);
+	nVars = (tessU+1)*(tessV+1);
 }
 
 void CParametricTesselator::SParametricVars::initVars(const CDeclaration &posDecl, const CDeclaration &normDecl,
-													  RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace)
+													  IndexType aTessU, IndexType aTessV, bool aFlipNormal, CFace &aFace)
 {
 	initVars(aTessU, aTessV, aFlipNormal, aFace);
 	
@@ -595,60 +595,6 @@ void CParametricTesselator::insertBilinearParams(IndexType faceIndex,
 	}
 }
 
-void CParametricTesselator::insertBicubicParams(IndexType faceIndex,
-												const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
-												const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
-												const CBicubicVectors &basisVectors,
-												CFace &f)
-{
-	CParameterList::const_iterator iter = obj().parameters().begin();
-	for ( ; iter != obj().parameters().end(); iter++ ) {
-		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
-			// Points and normals are not used because the are build in buildPN
-			continue;
-		}
-		switch ( (*iter).declaration().storageClass() ) {
-			case CLASS_CONSTANT:
-				f.insertConst(*iter);
-				break;
-			case CLASS_UNIFORM:
-				f.insertUniform(*iter, faceIndex);
-				break;
-			case CLASS_VARYING: {
-				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, cornerIdx, tessU(), tessV());
-				}
-			}
-			break;
-				
-			case CLASS_VERTEX: {
-				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bicubicBlend(*iter, controlIdx, tessU(), tessV(), basisVectors);
-				}
-			}
-			break;
-				
-			case CLASS_FACEVERTEX: {
-				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bicubicBlend(*iter, faceControlIdx, tessU(), tessV(), basisVectors);
-				}
-			}
-			break;
-				
-			case CLASS_FACEVARYING: {
-				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, cornerIdx, tessU(), tessV());
-				}
-			}
-			break;
-				
-			default:
-			break;
-		}
-		
-	}
-}
-
 void CParametricTesselator::getStdCornerIdx(IndexType offset, IndexType (&idx)[4]) const
 {
 	// 0, 1, (LH)
@@ -674,33 +620,6 @@ void CParametricTesselator::getStdCornerIdx(IndexType offset, IndexType (&idx)[4
 //	}
 }
 
-void CParametricTesselator::getStdControlIdx(IndexType offset, IndexType (&idx)[16]) const
-{
-	//  0,  1,  2,  3, (LH)
-	//  4,  5,  6,  7,
-	//  8,  9, 10, 11,
-	// 12, 13, 14, 15
-	
-	// Winding will be done by indices
-//	if ( frontFaceCW() ) {
-	
-		for ( IndexType i = 0; i < 16; ++i ) {
-			idx[i] = offset+i;
-		}
-
-// } else {
-	/*
-		IndexType i = 0;
-		for ( IndexType v = 4; v > 0; ) {
-			for ( IndexType u = 0; u < 4; ++u, ++i ) {
-				--v;
-				idx[i] = offset+v*4+u;
-			}
-		}
-	 */
-//	}
-}
-
 void CParametricTesselator::getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const
 {
 	idx[0] = (vpatch % nv)       * nu + (upatch % nu);
@@ -709,27 +628,16 @@ void CParametricTesselator::getCornerIdx(IndexType upatch, IndexType vpatch, Ind
 	idx[3] = ((vpatch + 1) % nv) * nu + ((upatch + 1) % nu);
 }
 
+void CParametricTesselator::getFaceCornerIdx(IndexType faceIndex, IndexType (&idx)[4]) const
+{
+	getStdCornerIdx(faceIndex * 4, idx); // 4 is the pathchsize (2x2)
+}
+
 void CParametricTesselator::getFaceCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const
 {
-	IndexType offset = (vpatch * nu + upatch) * 4; // 4 is the pathchsize (2x2)
-	getStdCornerIdx(offset, idx);
+	IndexType faceIndex = (vpatch * nu + upatch);
+	getFaceCornerIdx(faceIndex, idx);
 }
-
-void CParametricTesselator::getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const
-{
-	for ( int v = 0; v < 4; ++v ) {
-		for ( int u = 0; u < 4; ++u ) {
-			idx[v*4+u] = ((vpatch*vstep+v)%nv)*nu + (upatch*ustep+u)%nu;
-		}
-	}
-}
-
-void CParametricTesselator::getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const
-{
-	IndexType offset = (vpatch * nu + upatch) * 16; // 16 is the pathchsize (4x4)
-	getStdControlIdx(offset, idx);
-}
-
 
 void CParametricTesselator::buildIndices(CFace &f)
 {
@@ -1493,6 +1401,102 @@ static bool extractRi3F(const CParameter &p, IndexType sizeU, IndexType sizeV, I
 
 // =============================================================================
 
+void CRootPatchTesselator::getStdControlIdx(IndexType offset, IndexType (&idx)[16]) const
+{
+	//  0,  1,  2,  3, (LH)
+	//  4,  5,  6,  7,
+	//  8,  9, 10, 11,
+	// 12, 13, 14, 15
+	
+	// Winding will be done by indices
+	//	if ( frontFaceCW() ) {
+	
+	for ( IndexType i = 0; i < 16; ++i ) {
+		idx[i] = offset+i;
+	}
+	
+	// } else {
+	/*
+	 IndexType i = 0;
+	 for ( IndexType v = 4; v > 0; ) {
+	 for ( IndexType u = 0; u < 4; ++u, ++i ) {
+	 --v;
+	 idx[i] = offset+v*4+u;
+	 }
+	 }
+	 */
+	//	}
+}
+
+void CRootPatchTesselator::getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const
+{
+	for ( int v = 0; v < 4; ++v ) {
+		for ( int u = 0; u < 4; ++u ) {
+			idx[v*4+u] = ((vpatch*vstep+v)%nv)*nu + (upatch*ustep+u)%nu;
+		}
+	}
+}
+
+void CRootPatchTesselator::getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const
+{
+	IndexType offset = (vpatch * nu + upatch) * 16; // 16 is the pathchsize (4x4)
+	getStdControlIdx(offset, idx);
+}
+
+
+void CRootPatchTesselator::insertBicubicParams(IndexType faceIndex,
+											   const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+											   const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
+											   CFace &f)
+{
+	CParameterList::const_iterator iter = obj().parameters().begin();
+	for ( ; iter != obj().parameters().end(); iter++ ) {
+		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
+			// Points and normals are not used because the are build in buildPN
+			continue;
+		}
+		switch ( (*iter).declaration().storageClass() ) {
+			case CLASS_CONSTANT:
+				f.insertConst(*iter);
+				break;
+			case CLASS_UNIFORM:
+				f.insertUniform(*iter, faceIndex);
+				break;
+			case CLASS_VARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, cornerIdx, tessU(), tessV());
+				}
+			}
+				break;
+				
+			case CLASS_VERTEX: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bicubicBlend(*iter, controlIdx, tessU(), tessV(), m_basisVectors);
+				}
+			}
+				break;
+				
+			case CLASS_FACEVERTEX: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bicubicBlend(*iter, faceControlIdx, tessU(), tessV(), m_basisVectors);
+				}
+			}
+				break;
+				
+			case CLASS_FACEVARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, cornerIdx, tessU(), tessV());
+				}
+			}
+				break;
+				
+			default:
+				break;
+		}
+		
+	}
+}
+
 void CRootPatchTesselator::buildBilinearPN(const CDeclaration &posDecl,
 											 const CDeclaration &normDecl,
 											 IndexType faceIndex,
@@ -1659,7 +1663,7 @@ CSurface *CPatchTesselator::tesselate(const CDeclaration &posDecl,
 
 	if ( type == RI_BICUBIC ) {
 		buildBicubicPN(posDecl, normDecl, 0, cornerIdx, cornerIdx, controlIdx, controlIdx, f);
-		insertBicubicParams(0, cornerIdx, cornerIdx, controlIdx, controlIdx, basisVectors(), f);
+		insertBicubicParams(0, cornerIdx, cornerIdx, controlIdx, controlIdx, f);
 	} else {
 		// type == RI_BILINEAR
 		buildBilinearPN(posDecl, normDecl, 0, cornerIdx, cornerIdx, f);
@@ -1699,7 +1703,7 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 				getControlIdx(u, v, m_obj.nu(), m_obj.nv(), basis().uStep(), basis().vStep(), controlIdx);
 				getFaceControlIdx(u, v, m_obj.nu(), m_obj.nv(), faceControlIdx);
 				buildBicubicPN(posDecl, normDecl, i, cornerIdx, faceCornerIdx, controlIdx, faceControlIdx, f);
-				insertBicubicParams(i, cornerIdx, faceCornerIdx, controlIdx, faceControlIdx, basisVectors(), f);
+				insertBicubicParams(i, cornerIdx, faceCornerIdx, controlIdx, faceControlIdx, f);
 			} else {
 				// type == RI_BILINEAR
 				buildBilinearPN(posDecl, normDecl, i, cornerIdx, faceCornerIdx, f);
@@ -1716,8 +1720,34 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 
 // =============================================================================
 
-void CNuPatchTesselator::buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f)
+void CNuPatchTesselator::insertNuParams(IndexType faceIndex, CFace &f)
 {
+}
+
+void CNuPatchTesselator::buildNuPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt faceIdx, RtInt useg, RtInt vseg, CFace &f)
+{
+	RtInt uspan = useg + uBasis().order() - 1;
+	RtInt vspan = vseg + vBasis().order() - 1;
+	
+	RtInt uVals = uBasis().valCnts()[uspan];
+	RtInt vVals = vBasis().valCnts()[vspan];
+	
+	if ( uVals == 0 || vVals == 0 ) {
+		return;
+	}
+
+	const CParameter *pw = obj().parameters().get(RI_PW);
+	const CParameter *p = 0;
+	const CParameter *pz = 0;
+	
+	if ( !pw ) {
+		p = obj().parameters().get(RI_P);
+		if ( !p ) {
+			pz = obj().parameters().get(RI_Z);
+		}
+	}
+
+	SParametricVars vars(posDecl, normDecl, uVals, vVals, flipNormals(), f);
 }
 
 CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
@@ -1726,6 +1756,22 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 	if ( !surf ) {
 		return 0;
 	}
+	
+	basis().reset(m_obj, tessU(), tessV());
 
+	IndexType cornerIdx[4], faceCornerIdx[4];
+	
+	RtInt faceIndex = 0;
+	for ( RtInt vseg = 0; vseg < vBasis().segments(); ++vseg ) {
+		for ( RtInt  useg = 0; useg < uBasis().segments(); ++useg, ++faceIndex ) {
+			CFace &f = surf->newFace();
+			getCornerIdx(useg, vseg, uBasis().ncpts(), vBasis().ncpts(), cornerIdx);
+			getFaceCornerIdx(faceIndex, faceCornerIdx);
+			buildNuPN(posDecl, normDecl, faceIndex, useg, vseg, f);
+			insertNuParams(faceIndex, f);
+			buildIndices(f);
+		}
+	}
+	
 	return surf;
 }

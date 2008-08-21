@@ -28,6 +28,10 @@
  */
 #include "ricpp/ricontext/parameter.h"
 
+#ifndef _RICPP_RICONTEXT_BLEND_H
+#include "ricpp/ricontext/blend.h"
+#endif // _RICPP_RICONTEXT_BLEND_H
+
 #ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H

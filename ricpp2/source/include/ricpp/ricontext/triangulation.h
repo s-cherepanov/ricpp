@@ -38,9 +38,9 @@
 #include "ricpp/ricontext/rimacroattributes.h"
 #endif _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
 
-#ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
-#include "ricpp/ricontext/rimacroprims.h"
-#endif _RICPP_RICONTEXT_RIMACROPRIMS_H
+#ifndef _RICPP_RICONTEXT_BLEND_H
+#include "ricpp/ricontext/blend.h"
+#endif // _RICPP_RICONTEXT_BLEND_H
 
 namespace RiCPP {
 
@@ -72,7 +72,7 @@ namespace RiCPP {
 	
 	class CTesselator {
 		std::list<CSurface *> m_surfaces;
-		RtInt m_tessU, m_tessV;
+		IndexType m_tessU, m_tessV;
 		bool m_frontFaceCW;
 		bool m_flipNormals;
 		bool m_useStrips;
@@ -91,18 +91,18 @@ namespace RiCPP {
 		bool releaseSurface(CSurface *surf);
 		CSurface *createSurface();
 		
-		inline RtInt tessU() const { return m_tessU; }
-		inline void tessU(RtInt aTessU) { m_tessU = aTessU; }
-		inline RtInt tessV() const { return m_tessV; }
-		inline void tessV(RtInt aTessV) { m_tessV = aTessV; }
+		inline IndexType tessU() const { return m_tessU; }
+		inline void tessU(IndexType aTessU) { m_tessU = aTessU; }
+		inline IndexType tessV() const { return m_tessV; }
+		inline void tessV(IndexType aTessV) { m_tessV = aTessV; }
 		
-		inline void tesselation(RtInt aTessU, RtInt aTessV)
+		inline void tesselation(IndexType aTessU, IndexType aTessV)
 		{
 			tessU(aTessU);
 			tessV(aTessV);
 		}
 
-		inline void tesselation(RtInt &aTessU, RtInt &aTessV) const
+		inline void tesselation(IndexType &aTessU, IndexType &aTessV) const
 		{
 			aTessU = tessU();
 			aTessV = tessV();
@@ -192,31 +192,24 @@ namespace RiCPP {
 			std::vector<RtFloat> *positions, *normals;
 			
 			inline SParametricVars(const CDeclaration &posDecl, const CDeclaration &normDecl,
-								   RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace)
+								   IndexType aTessU, IndexType aTessV, bool aFlipNormal, CFace &aFace)
 			{
 				initVars(posDecl, normDecl, aTessU, aTessV, aFlipNormal, aFace);
 			}
 			
-			void initVars(RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace);
+			void initVars(IndexType aTessU, IndexType aTessV, bool aFlipNormal, CFace &aFace);
 			void initVars(const CDeclaration &posDecl, const CDeclaration &normDecl,
-						  RtInt aTessU, RtInt aTessV, bool aFlipNormal, CFace &aFace);
+						  IndexType aTessU, IndexType aTessV, bool aFlipNormal, CFace &aFace);
 		}; // SParametricVars
 
 		void insertBilinearParams(IndexType faceIndex,
 								  const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 								  CFace &f);
-		void insertBicubicParams(IndexType faceIndex,
-								 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
-								 const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
-								 const CBicubicVectors &basisVectors,
-								 CFace &f);
 		
 		void getStdCornerIdx(IndexType offset, IndexType (&idx)[4]) const;
-		void getStdControlIdx(IndexType offset, IndexType (&idx)[16]) const;
 		void getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
+		void getFaceCornerIdx(IndexType faceIndex, IndexType (&idx)[4]) const;
 		void getFaceCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const;
-		void getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const;
-		void getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const;
 
 		void buildIndices(CFace &f);
 	}; // CParametricTesselator
@@ -227,7 +220,7 @@ namespace RiCPP {
 	private:
 		void insertParams(CFace &f);
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f) = 0;
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f) = 0;
 		void buildConePN(RtFloat height, RtFloat radius, RtFloat thetamax, RtFloat displacement, const CDeclaration &posDecl, const CDeclaration &normDecl, const SParametricVars &var, CFace &f);
 		void buildHyperboloidPN(RtPoint point1, RtPoint point2, RtFloat thetamax, const CDeclaration &posDecl, const CDeclaration &normDecl, const SParametricVars &var, CFace &f);
 	public:
@@ -237,7 +230,7 @@ namespace RiCPP {
 	class CConeTesselator : public CQuadricTesselator {
 		CRiCone m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CConeTesselator(const CRiCone &obj) : m_obj(obj) {}
@@ -246,7 +239,7 @@ namespace RiCPP {
 	class CCylinderTesselator : public CQuadricTesselator {
 		CRiCylinder m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CCylinderTesselator(const CRiCylinder &obj) : m_obj(obj) {}
@@ -255,7 +248,7 @@ namespace RiCPP {
 	class CDiskTesselator : public CQuadricTesselator {
 		CRiDisk m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CDiskTesselator(const CRiDisk &obj) : m_obj(obj) {}
@@ -264,7 +257,7 @@ namespace RiCPP {
 	class CHyperboloidTesselator : public CQuadricTesselator {
 		CRiHyperboloid m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CHyperboloidTesselator(const CRiHyperboloid &obj) : m_obj(obj) {}
@@ -273,7 +266,7 @@ namespace RiCPP {
 	class CParaboloidTesselator : public CQuadricTesselator {
 		CRiParaboloid m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CParaboloidTesselator(const CRiParaboloid &obj) : m_obj(obj) {}
@@ -282,7 +275,7 @@ namespace RiCPP {
 	class CSphereTesselator : public CQuadricTesselator {
 		CRiSphere m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CSphereTesselator(const CRiSphere &obj) : m_obj(obj) {}
@@ -291,7 +284,7 @@ namespace RiCPP {
 	class CTorusTesselator : public CQuadricTesselator {
 		CRiTorus m_obj;
 	protected:
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		virtual void buildPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CTorusTesselator(const CRiTorus &obj) : m_obj(obj) {}
@@ -306,16 +299,24 @@ namespace RiCPP {
 		inline CRootPatchTesselator() {}
 	protected:
 		inline CRootPatchTesselator(const CRiBasis &aBasis) : m_basis(aBasis) {}
-		virtual void buildBilinearPN(const CDeclaration &pointDecl, const CDeclaration &normDecl,
+		void insertBicubicParams(IndexType faceIndex,
+								 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
+								 const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
+								 CFace &f);
+		void buildBilinearPN(const CDeclaration &posDecl, const CDeclaration &normDecl,
 									 IndexType faceIndex,
 									 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 									 CFace &f);
-		virtual void buildBicubicPN(const CDeclaration &pointDecl, const CDeclaration &normDecl,
+		void buildBicubicPN(const CDeclaration &posDecl, const CDeclaration &normDecl,
 									IndexType faceIndex,
 									const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 									const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
 									CFace &f);
 		
+		void getStdControlIdx(IndexType offset, IndexType (&idx)[16]) const;
+		void getControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType ustep, IndexType vstep, IndexType (&idx)[16]) const;
+		void getFaceControlIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[16]) const;
+
 		inline const CRiBasis &basis() const { return m_basis; }
 		inline CRiBasis &basis() { return m_basis; }
 		
@@ -344,11 +345,23 @@ namespace RiCPP {
 	
 	class CNuPatchTesselator : public CParametricTesselator {
 		CRiNuPatch m_obj;
+		CUVBSplineBasis m_basis;
+	
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
-		virtual void buildPN(const CDeclaration &pointDecl, const CDeclaration &normDecl, CFace &f);
+		inline const CUVBSplineBasis &basis() const { return m_basis; }
+		inline CUVBSplineBasis &basis() { return m_basis; }
+		inline const CBSplineBasis &uBasis() const { return basis().uBasis(); }
+		inline CBSplineBasis &uBasis() { return basis().uBasis(); }		
+		inline const CBSplineBasis &vBasis() const { return basis().vBasis(); }
+		inline CBSplineBasis &vBasis() { return basis().vBasis(); }
+
+		void insertNuParams(IndexType faceIndex,
+							CFace &f);
+		void buildNuPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt faceIdx, RtInt useg, RtInt vseg, CFace &f);
+
 	public:
-		inline CNuPatchTesselator(const CRiNuPatch &obj) : m_obj(obj) {}
+		inline CNuPatchTesselator(const CRiNuPatch &obj) : m_obj(obj) { }
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
 	}; // CNuPatchTesselator
 }

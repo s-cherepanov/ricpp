@@ -30,10 +30,6 @@
  *  @brief RI parameters and parameter lists.
  */
 
-#ifndef _RICPP_RICONTEXT_BLEND_H
-#include "ricpp/ricontext/blend.h"
-#endif // _RICPP_RICONTEXT_BLEND_H
-
 #ifndef _RICPP_DECLARATION_DECLDICT_H
 #include "ricpp/declaration/decldict.h"
 #endif // _RICPP_DECLARATION_DECLDICT_H
@@ -41,7 +37,8 @@
 #include <cassert>
 
 namespace RiCPP {
-
+	
+	class CBicubicVectors;
 	// ------------------------------------------------------------------------
 	/** @brief Class to store a parameter value with its declaration.
 	 *

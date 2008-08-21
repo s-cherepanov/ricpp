@@ -30,9 +30,9 @@
  *  @brief Bilinear and bicubic blending (later via basis vectors for bicubic spline patches of given parametric intervals).
  */
 
-#ifndef _RICPP_RICPP_TYPES_H
-#include "ricpp/ricpp/types.h"
-#endif // _RICPP_RICPP_TYPES_H
+#ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
+#include "ricpp/ricontext/rimacroprims.h"
+#endif // _RICPP_RICONTEXT_RIMACROPRIMS_H
 
 namespace RiCPP {
 
@@ -167,7 +167,7 @@ namespace RiCPP {
 		std::vector<RtFloat> m_knots; //!< Knot vector, size = m_ncpts+m_order, knots[i] <= knots[i+1]
 		RtFloat m_tmin;               //!< Minimum value for parameter t, tmin >= x[order-1] && tmin < tmax
 		RtFloat m_tmax;               //!< Maximum value for parameter t, tmax <= x[ncpts] && tmax > tmin
-		RtInt m_tess;                 //!< Tesselation of the parameter, i.e. the number of intervals for the parameter range
+		IndexType m_tess;             //!< Tesselation of the parameter, i.e. the number of intervals for the parameter range
 		/** @}
 		 */
 		
@@ -203,7 +203,7 @@ namespace RiCPP {
 		void sortKnots();
 		void clearResults();
 		void insertKnots(const std::vector<RtFloat> &theKnots);
-		void insertKnots(const std::vector<RtFloat> &theKnots, IndexType theKnotOffs);
+		// void insertKnots(const std::vector<RtFloat> &theKnots, IndexType theKnotOffs);
 		void insertVals(RtInt theNCPts, RtInt theOrder,
 						RtFloat theTMin, RtFloat theTMax, RtInt theTess);
 		
@@ -236,13 +236,15 @@ namespace RiCPP {
 			reset(theNCPts, theOrder, theKnots, theTMin, theTMax, theTess);
 		}
 
-		//! Constructor to initialize the members, @see reset()
+		//  Constructor to initialize the members, @see reset()
+		/*
 		inline CBSplineBasis(RtInt theNCPts, RtInt theOrder,
 				   const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
 				   RtFloat theTMin, RtFloat theTMax, RtInt theTess)
 		{
 			reset(theNCPts, theOrder, theKnots, theKnotOffs, theTMin, theTMax, theTess);
 		}
+		*/
 		
 		//! copy constructor
 		inline CBSplineBasis(const CBSplineBasis &sp)
@@ -266,13 +268,15 @@ namespace RiCPP {
 				   const std::vector<RtFloat> &theKnots,
 				   RtFloat theTMin, RtFloat theTMax, RtInt theTess);
 		
-		//! Sets a new basis, calls calc()
-		/** Used for one segement uses an offset for the knotvector and
+		//  Sets a new basis, calls calc()
+		/*  Used for one segement uses an offset for the knotvector and
 		 *  ncpts and order for the size of the knot vector.
 		 */
+		/*
 		void reset(RtInt theNcpts, RtInt theOrder,
 				   const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
 				   RtFloat theTMin, RtFloat theTMax, RtInt theTess);
+		*/
 
 		
 		//! Blend using control points, members have to be valid
@@ -287,7 +291,7 @@ namespace RiCPP {
 		inline RtInt order() const { return m_order; }
 		inline RtFloat tmin() const { return m_tmin; }
 		inline RtFloat tmax() const { return m_tmax; }
-		inline RtInt tess() const { return m_tess; }
+		inline IndexType tess() const { return m_tess; }
 		inline const std::vector<RtFloat> &knots() const { return m_knots; }
 		/** @}
 		 */
@@ -311,12 +315,18 @@ namespace RiCPP {
 		CBSplineBasis m_vBasis;
 		
 	public:
+		inline CUVBSplineBasis() {}
+		inline CUVBSplineBasis(const CRiNuPatch &obj, IndexType uTess, IndexType vTess) { reset(obj, uTess, vTess); }
 		
-		const CBSplineBasis &uBasis() const { return m_uBasis; }
-		CBSplineBasis &uBasis() { return m_uBasis; }
+		inline const CBSplineBasis &uBasis() const { return m_uBasis; }
+		inline CBSplineBasis &uBasis() { return m_uBasis; }
 		
-		const CBSplineBasis &vBasis() const { return m_vBasis; }
-		CBSplineBasis &vBasis() { return m_vBasis; }
+		inline const CBSplineBasis &vBasis() const { return m_vBasis; }
+		inline CBSplineBasis &vBasis() { return m_vBasis; }
+		
+		inline IndexType faces() { return uBasis().segments()*vBasis().segments(); }
+		
+		void reset(const CRiNuPatch &obj, IndexType uTess, IndexType vTess);
 
 		void nuBlend(IndexType elemSize,
 					 const std::vector<RtFloat> &source,

@@ -45,7 +45,7 @@ CBilinearBlend::CBilinearBlend(IndexType aTessU, IndexType aTessV) : m_tessU(aTe
 {
 }
 
-void CBilinearBlend::bilinearBlend(IndexType elemSize, const IndexType (&cornerIdx)[4], const std::vector<RtFloat> &vals, std::vector<RtFloat> &results)
+void CBilinearBlend::bilinearBlendPtr(IndexType elemSize, const IndexType *cornerIdx, const std::vector<RtFloat> &vals, std::vector<RtFloat> &results)
 {
 	assert(tessU() > 0);
 	assert(tessV() > 0);
@@ -87,6 +87,19 @@ void CBilinearBlend::bilinearBlend(IndexType elemSize, const IndexType (&cornerI
 			}
 		}
 	}
+}
+
+void CBilinearBlend::bilinearBlend(IndexType elemSize, const IndexType (&cornerIdx)[4], const std::vector<RtFloat> &vals, std::vector<RtFloat> &results)
+{
+	bilinearBlendPtr(elemSize, &cornerIdx[0], vals, results);
+}
+
+void CBilinearBlend::bilinearBlend(IndexType elemSize, const std::vector<IndexType> &cornerIdx, const std::vector<RtFloat> &vals, std::vector<RtFloat> &results)
+{
+	if ( cornerIdx.size() < 4 ) {
+		return;
+	}
+	bilinearBlendPtr(elemSize, &cornerIdx[0], vals, results);
 }
 
 // =============================================================================
@@ -420,8 +433,7 @@ void CBSplineBasis::validate()
 		return;
 
 	m_tess = clamp<IndexType>(m_tess, 1, m_tess);
-	m_order = clamp<RtInt>(m_ncpts, 0, m_ncpts);
-	
+
 	sortKnots();
 	
 	if ( m_knots.size() < knotSize() ) {
@@ -631,42 +643,39 @@ void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 }
 */
 
-void CBSplineBasis::nuBlend(const std::vector<RtFloat> &source,
-							RtInt offs,
-							RtInt seg,
-							std::vector<RtFloat> &pos) const
-{
-	RtInt span = seg + m_order - 1;
-	IndexType pn = m_valCnts[span];
-	IndexType koffset = m_valOffs[span];
-	IndexType size = (IndexType) pn+pn;
-	
-	if ( pos.size() != size ) {
-		pos.resize(size);
+void CBSplineBasis::nuBlendP2W(const std::vector<RtFloat> &source,
+			                RtInt offs,
+			                RtInt seg,
+			                std::vector<RtFloat> &results) const
+{		
+	if ( numParameters(seg) <= 0 ) {
+		results.clear();
+		return;
+	}
+
+	if ( results.size() != static_cast<size_t>(numParameters(seg)*2) ) {
+		results.resize(numParameters(seg)*2);
 	}
 	
-	if ( pn <= 0 )
-		return;
-	
-	IndexType i, cnt;
+	RtInt oi, pcnt;
 	RtFloat u, v, w, U, V, W, baseElem;
-	for ( cnt = 0; cnt < pn; ++cnt ) {
+	for ( pcnt = 0; pcnt < numParameters(seg); ++pcnt ) {
 		U = V = W = 0;
-		for ( i = 0; i < (IndexType)m_order; ++i ) {
-			baseElem = m_basis[(IndexType)((koffset+cnt)*m_order+i)];
-			u = source[offs+(seg+i)*3  ];
-			v = source[offs+(seg+i)*3+1];
-			w = source[offs+(seg+i)*3+2];
-			U += u * baseElem;
-			V += v * baseElem;
-			W += w * baseElem;
+		for ( oi = 0; oi < order(); ++oi ) {
+			baseElem = basisElem(seg, pcnt, oi);
+			u = source[offs+(seg+oi)*3  ];
+			v = source[offs+(seg+oi)*3+1];
+			w = source[offs+(seg+oi)*3+2];
+			U += baseElem * u;
+			V += baseElem * v;
+			W += baseElem * w;
 		}
 		if ( W > 0 ) {
 			U /= W;
 			V /= W;
 		}
-		pos[cnt+cnt  ] = U;
-		pos[cnt+cnt+1] = V;
+		results[pcnt+pcnt  ] = U;
+		results[pcnt+pcnt+1] = V;
 	}
 }
 
@@ -690,67 +699,50 @@ void CUVBSplineBasis::nuBlend(IndexType elemSize,
 		return;
 	}
 
-	RtInt uspan = useg + uBasis().order() - 1;
-	RtInt vspan = vseg + vBasis().order() - 1;
-	
-	IndexType pnu     = uBasis().valCnts()[uspan];
-	IndexType pnv     = vBasis().valCnts()[vspan];
-	IndexType uoffset = uBasis().valOffs()[uspan];
-	IndexType voffset = vBasis().valOffs()[vspan];
-	
-	IndexType numResults = pnu*pnv;
-	
-	if ( numResults == 0 )
+	if ( numParameters(useg, vseg) == 0 )
 		return;
 
-	if ( results.size() != numResults ) {
+	if ( results.size() != numParameters(useg, vseg)*elemSize ) {
 		results.clear();
-		results.resize(numResults*elemSize);
+		results.resize(numParameters(useg, vseg)*elemSize);
 	}
+		
+	std::vector<RtFloat> temp(uBasis().order()*elemSize);
 	
-	
-	const RtFloat *s = &source[0];
-	if ( !s )
-		return;
-	
-	RtFloat *ptr = &results[0];
-	if ( !ptr )
-		return;
-	
-	std::vector<RtFloat> temp;
-	temp.resize(elemSize * uBasis().order());
-	
-	IndexType i, j, k, u, v;
+	IndexType ei;
+	RtInt un, vn, uo, vo;
 	
 	RtFloat vBaseElem, uBaseElem, comp;
 	
-	for ( v = 0; v < pnv; ++v ) {
+	IndexType ridx = 0;
+	for ( vn = 0; vn < vBasis().numParameters(vseg); ++vn ) {
 		
-		for ( i = 0; i < (IndexType)uBasis().order(); ++i ) {
-			for ( j = 0; j < elemSize; ++j ) {
-				temp[i*elemSize + j] = 0;
+		for ( uo = 0; uo < uBasis().order(); ++uo ) {
+			for ( ei = 0; ei < elemSize; ++ei ) {
+				temp[uo*elemSize + ei] = 0;
 			}
-			for ( k = 0; k < (IndexType)vBasis().order(); ++k ) {
-				vBaseElem = vBasis().basis()[(IndexType)((voffset+v)*vBasis().order()+k)];
-				for ( j = 0; j < elemSize; ++j ) {
-					comp = s[idx[k*uBasis().order()+i]*elemSize+j];
-					temp[i*elemSize + j] += comp * vBaseElem;
+			for ( vo = 0; vo < vBasis().order(); ++vo ) {
+				vBaseElem = vBasis().basisElem(vseg, vn, vo);
+				for ( ei = 0; ei < elemSize; ++ei ) {
+					comp = source[ idx[vo * uBasis().order() + uo] * elemSize + ei];
+					temp[uo*elemSize + ei] += vBaseElem * comp;
 				}
 			}
 		}
 		
-		for ( u = 0; u < pnu; ++u, ptr += elemSize ) {
-			for ( j = 0; j < elemSize; ++j ) {
-				*(ptr+j) = 0;
+		for ( un = 0; un < uBasis().numParameters(useg); ++un, ridx += elemSize ) {
+			for ( ei = 0; ei < elemSize; ++ei ) {
+				results[ridx+ei] = 0;
 			}
-			for ( k = 0; k < (IndexType)uBasis().order(); ++k ) {
-				uBaseElem = uBasis().basis()[(IndexType)((uoffset+u)*uBasis().order()+k)];
-				for ( j = 0; j < elemSize; ++j ) {
-					comp = temp[k*elemSize + j];
-					*(ptr+j) += comp * uBaseElem;
+			for ( uo = 0; uo < uBasis().order(); ++uo ) {
+				uBaseElem = uBasis().basisElem(useg, un, uo);
+				for ( ei = 0; ei < elemSize; ++ei ) {
+					comp = temp[uo*elemSize + ei];
+					results[ridx+ei] += uBaseElem * comp;
 				}
 			}
 		}
+		
 	}
 }
 
@@ -759,6 +751,7 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 										 RtInt useg,
 										 RtInt vseg,
 										 const std::vector<IndexType> &idx,
+										 bool flipNormal,
 										 std::vector<RtFloat> &results,
 										 std::vector<RtFloat> &normals) const
 {
@@ -767,25 +760,19 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 		return;
 	}
 
-	RtInt uspan = useg + uBasis().order() - 1;
-	RtInt vspan = vseg + vBasis().order() - 1;
-	
-	IndexType pnu     = uBasis().valCnts()[uspan];
-	IndexType pnv     = vBasis().valCnts()[vspan];
-	IndexType uoffset = uBasis().valOffs()[uspan];
-	IndexType voffset = vBasis().valOffs()[vspan];
-	
-	IndexType numResults = pnu*pnv;
+	RtInt pnu     = uBasis().numParameters(useg);
+	RtInt pnv     = vBasis().numParameters(vseg);
+	RtInt numResults = numParameters(useg, vseg);
 	
 	if ( numResults == 0 )
 		return;
 
-	if ( results.size() != numResults ) {
+	if ( results.size() != static_cast<size_t>(numResults*elemSize) ) {
 		results.clear();
 		results.resize(numResults*elemSize);
 	}
 
-	if ( normals.size() != numResults ) {
+	if ( normals.size() != static_cast<size_t>(numResults*3) ) {
 		normals.clear();
 		normals.resize(numResults*3);
 	}
@@ -801,7 +788,6 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 	std::vector<RtFloat> pdu(numResults*elemSize);
 	std::vector<RtFloat> pdv(numResults*elemSize);
 
-	const RtFloat *s = &source[0];
 	RtFloat *ptru = &pdu[0];
 	RtFloat *ptrv = &pdv[0];
 	RtFloat *nrm = &normals[0];
@@ -810,38 +796,39 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 	std::vector<RtFloat> temp;
 	temp.resize(elemSize * uBasis().order());
 	
-	IndexType i, j, k, u, v;
+	IndexType ei;
+	RtInt un, vn, uo, vo;
 	RtFloat w2;
 	
 	RtFloat uBaseElem, vBaseElem, duBaseElem, dvBaseElem, comp;
 	
-	for ( v = 0; v < pnv; ++v ) {
+	for ( vn = 0; vn < pnv; ++vn ) {
 		
-		for ( i = 0; i < (IndexType)uBasis().order(); ++i ) {
-			for ( j = 0; j < elemSize; ++j ) {
-				temp[i*elemSize + j] = 0;
+		for ( uo = 0; uo < uBasis().order(); ++uo ) {
+			for ( ei = 0; ei < elemSize; ++ei ) {
+				temp[uo*elemSize + ei] = 0;
 			}
-			for ( k = 0; k < (IndexType)vBasis().order(); ++k ) {
-				vBaseElem = vBasis().basis()[(IndexType)((voffset+v)*vBasis().order()+k)];
-				for ( j = 0; j < elemSize; ++j ) {
-					comp = s[ idx[k * uBasis().order() + i] * elemSize + j] ;
-					temp[i * elemSize + j] += comp * vBaseElem;
+			for ( vo = 0; vo < vBasis().order(); ++vo ) {
+				vBaseElem = vBasis().basisElem(vseg, vn, vo);
+				for ( ei = 0; ei < elemSize; ++ei ) {
+					comp = source[ idx[vo * uBasis().order() + uo] * elemSize + ei ];
+					temp[uo*elemSize + ei] += vBaseElem * comp;
 				}
 			}
 		}
 		
-		for ( u = 0; u < pnu; ++u, ptr += elemSize, ptru += elemSize ) {
-			for ( j = 0; j < elemSize; ++j ) {
-				*(ptr+j) = 0;
-				*(ptru+j) = 0;
+		for ( un = 0; un < pnu; ++un, ptr += elemSize, ptru += elemSize ) {
+			for ( ei = 0; ei < elemSize; ++ei ) {
+				*(ptr+ei) = 0;
+				*(ptru+ei) = 0;
 			}
-			for ( k = 0; k < (IndexType)uBasis().order(); ++k ) {
-				uBaseElem  = uBasis().basis()[(uoffset+u)*uBasis().order()+k];
-				duBaseElem = uBasis().basisDeriv()[(uoffset+u)*uBasis().order()+k];
-				for ( j = 0; j < elemSize; ++j ) {
-					comp = temp[k*elemSize + j];
-					*(ptr+j)  += comp * uBaseElem;
-					*(ptru+j) += comp * duBaseElem;
+			for ( uo = 0; uo < uBasis().order(); ++uo ) {
+				uBaseElem = uBasis().basisElem(useg, un, uo);
+				duBaseElem = uBasis().basisDerivElem(useg, un, uo);
+				for ( ei = 0; ei < elemSize; ++ei ) {
+					comp = temp[uo*elemSize + ei];
+					*(ptr+ei)  += uBaseElem * comp;
+					*(ptru+ei) += duBaseElem * comp;
 				}
 			}
 		}
@@ -851,47 +838,48 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 	temp.resize(elemSize * vBasis().order());
 	RtFloat *ptrvsav;
 	
-	for ( u = 0; u < pnu; ++u ) {
+	for ( un = 0; un < pnu; ++un ) {
 		
-		for ( i = 0; i < (IndexType)vBasis().order(); ++i ) {
-			for ( j = 0; j < elemSize; ++j ) {
-				temp[i * elemSize + j] = 0;
+		for ( vo = 0; vo < vBasis().order(); ++vo ) {
+			for ( ei = 0; ei < elemSize; ++ei ) {
+				temp[vo*elemSize + ei] = 0;
 			}
-			for ( k = 0; k < (IndexType)uBasis().order(); ++k ) {
-				uBaseElem = uBasis().basis()[(IndexType)((uoffset+u)*uBasis().order()+k)];
-				for ( j = 0; j < elemSize; ++j ) {
-					comp = s[idx[i*uBasis().order()+k]*elemSize + j];
-					temp[i*elemSize + j] += comp * uBaseElem;
+			for ( uo = 0; uo < uBasis().order(); ++uo ) {
+				uBaseElem = uBasis().basisElem(useg, un, uo);
+				for ( ei = 0; ei < elemSize; ++ei ) {
+					comp = source[ idx[vo * uBasis().order() + uo] * elemSize + ei ];
+					temp[vo*elemSize + ei] += uBaseElem * comp;
 				}
 			}
 		}
 		
-		ptrvsav = ptrv + elemSize;
-		for ( v = 0; v < pnv; ++v, ptrv += (elemSize * pnu)  ) {
-			for ( j = 0; j < elemSize; ++j ) {
-				*(ptrv+j) = 0;
+		ptrvsav = ptrv;
+		for ( vn = 0; vn < pnv; ++vn, ptrv += (elemSize * pnu)  ) {
+			for ( ei = 0; ei < elemSize; ++ei ) {
+				*(ptrv+ei) = 0;
 			}
-			for ( k = 0; k < (IndexType)vBasis().order(); ++k ) {
-				dvBaseElem = vBasis().basisDeriv()[(IndexType)((voffset+v)*vBasis().order()+k)];
-				for ( j = 0; j < elemSize; ++j ) {
-					comp = temp[k*elemSize + j];
-					*(ptrv+j) += comp * dvBaseElem;
+			for ( vo = 0; vo < vBasis().order(); ++vo ) {
+				dvBaseElem = vBasis().basisDerivElem(vseg, vn, vo);
+				for ( ei = 0; ei < elemSize; ++ei ) {
+					comp = temp[vo*elemSize + ei];
+					*(ptrv+ei) += dvBaseElem * comp;
 				}
 			}
 		}
-		ptrv = ptrvsav;
+		ptrv = ptrvsav + elemSize;
 	}
 	
 	ptr  = &results[0];
 	ptru = &pdu[0];
 	ptrv = &pdv[0];
 	
+	RtInt pos;
 	if ( elemSize == 4 ) {
-		for ( i = 0; i < numResults; ++i ) {
+		for ( pos = 0; pos < numResults; ++pos ) {
 			w2 = ptr[3] * ptr[3];
-			for ( j = 0; j < 3; ++j ) {
-				ptru[j] = (ptr[3]*ptru[j] - ptr[j]*ptru[3])/w2;
-				ptrv[j] = (ptr[3]*ptrv[j] - ptr[j]*ptrv[3])/w2;
+			for ( ei = 0; ei < 3; ++ei ) {
+				ptru[ei] = (ptr[3]*ptru[ei] - ptr[ei]*ptru[3])/w2;
+				ptrv[ei] = (ptr[3]*ptrv[ei] - ptr[ei]*ptrv[3])/w2;
 			}
 			ptr  += elemSize;
 			ptru += elemSize;
@@ -902,8 +890,12 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 		ptrv = &pdv[0];
 	}
 	
-	for ( i = 0; i < numResults; ++i ) {
-		planeLH(nrm, ptrv, ptru);
+	for ( pos = 0; pos < numResults; ++pos ) {
+		if ( flipNormal ) {
+			planeRH(nrm, ptrv, ptru);
+		} else {
+			planeLH(nrm, ptrv, ptru);
+		}
 		nrm  += 3;
 		ptru += elemSize;
 		ptrv += elemSize;

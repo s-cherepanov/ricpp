@@ -39,6 +39,7 @@
 // #define _TRACE_PARABOLOID
 // #define _TRACE_SPHERE
 // #define _TRACE_TORUS
+#define _TRACE_NUPATCH
 #endif
 #include "ricpp/tools/trace.h"
 
@@ -620,8 +621,20 @@ void CParametricTesselator::getStdCornerIdx(IndexType offset, IndexType (&idx)[4
 //	}
 }
 
+/*
 void CParametricTesselator::getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nu, IndexType nv, IndexType (&idx)[4]) const
 {
+	idx[0] = (vpatch % nv)       * nu + (upatch % nu);
+	idx[1] = (vpatch % nv)       * nu + ((upatch + 1) % nu);
+	idx[2] = ((vpatch + 1) % nv) * nu + (upatch % nu);
+	idx[3] = ((vpatch + 1) % nv) * nu + ((upatch + 1) % nu);
+}
+*/
+
+void CParametricTesselator::getCornerIdx(IndexType upatch, IndexType vpatch, IndexType nuPatches, IndexType nvPatches, IndexType (&idx)[4]) const
+{
+	IndexType nu = nuPatches+1;
+	IndexType nv = nvPatches+1;
 	idx[0] = (vpatch % nv)       * nu + (upatch % nu);
 	idx[1] = (vpatch % nv)       * nu + ((upatch + 1) % nu);
 	idx[2] = ((vpatch + 1) % nv) * nu + (upatch % nu);
@@ -1485,7 +1498,7 @@ void CRootPatchTesselator::insertBicubicParams(IndexType faceIndex,
 				
 			case CLASS_FACEVARYING: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, cornerIdx, tessU(), tessV());
+					f.bilinearBlend(*iter, faceCornerIdx, tessU(), tessV());
 				}
 			}
 				break;
@@ -1696,8 +1709,13 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 	for ( RtInt v = 0, i = 0; v < m_obj.nvPatches(); ++v ) {
 		for ( RtInt u = 0; u < m_obj.nuPatches(); ++u, ++i ) {
 			CFace &f = surf->newFace();
-			getCornerIdx(u, v, m_obj.nu(), m_obj.nv(), cornerIdx);
-			getFaceCornerIdx(u, v, m_obj.nu(), m_obj.nv(), faceCornerIdx);
+			/*
+			getCornerIdx(u, v, m_obj.nu(), m_obj.nv(), cornerIdx); // nuPatches, nvPatches ???
+			getFaceCornerIdx(u, v, m_obj.nu(), m_obj.nv(), faceCornerIdx); // nuPatches, nvPatches ???
+			*/
+
+			getCornerIdx(u, v, m_obj.nuPatches(), m_obj.nvPatches(), cornerIdx);
+			getFaceCornerIdx(u, v, m_obj.nuPatches(), m_obj.nvPatches(), faceCornerIdx);
 
 			if ( type == RI_BICUBIC ) {
 				getControlIdx(u, v, m_obj.nu(), m_obj.nv(), basis().uStep(), basis().vStep(), controlIdx);
@@ -1720,14 +1738,116 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 
 // =============================================================================
 
-void CNuPatchTesselator::insertNuParams(IndexType faceIndex, CFace &f)
+void CNuPatchTesselator::insertNuParams(CFace &f)
 {
+	CParameterList::const_iterator iter = obj().parameters().begin();
+	for ( ; iter != obj().parameters().end(); iter++ ) {
+		if ( (*iter).var() == RI_P || (*iter).var() == RI_N ) {
+			// Points and normals are not used because the are build in buildPN
+			continue;
+		}
+		switch ( (*iter).declaration().storageClass() ) {
+			case CLASS_CONSTANT:
+				f.insertConst(*iter);
+				break;
+			case CLASS_UNIFORM:
+				f.insertUniform(*iter, faceIndex());
+				break;
+				
+			case CLASS_VARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, m_cornerIdx, tessU(), tessV());
+				}
+			}
+				break;
+				
+			case CLASS_VERTEX: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.nuBlend(*iter, m_vertexIdx, m_useg, m_vseg, basis());
+				}
+			}
+				break;
+				
+			case CLASS_FACEVERTEX: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.nuBlend(*iter, m_faceVertexIdx, m_useg, m_vseg, basis());
+				}
+			}
+				break;
+				
+			case CLASS_FACEVARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					f.bilinearBlend(*iter, m_faceCornerIdx, tessU(), tessV());
+				}
+			}
+				break;
+				
+			default:
+				break;
+		}
+		
+	}
 }
 
-void CNuPatchTesselator::buildNuPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt faceIdx, RtInt useg, RtInt vseg, CFace &f)
+bool CNuPatchTesselator::extractPFromPz(const CParameter *pz, std::vector<RtFloat> &results) const
 {
-	RtInt uspan = useg + uBasis().order() - 1;
-	RtInt vspan = vseg + vBasis().order() - 1;
+	RtFloat knotVal;
+	if ( !pz || !pz->declaration().isFloat1Decl() || pz->floats().size() <= 0 ) {
+		results.clear();
+		return false;
+	}
+	
+	std::vector<RtFloat> bilinZ;
+	if ( pz->declaration().isVarying() ) {
+		CBilinearBlend bilinBlend(uBasis().order(), vBasis().order());
+		if ( pz->declaration().isFace() ) {
+			bilinBlend.bilinearBlend(1, m_faceCornerIdx, pz->floats(), bilinZ);
+		} else {
+			bilinBlend.bilinearBlend(1, m_cornerIdx, pz->floats(), bilinZ);
+		}
+	}
+	
+	if ( results.size() != basis().numFaceVertices()*3 ) {
+		results.clear();
+		results.resize(basis().numFaceVertices()*3);
+	}
+
+	RtInt ridx = 0, pzidx = 0;
+	for ( RtInt vo = 0; vo < vBasis().order(); ++vo ) {
+		knotVal = vBasis().knots()[m_vseg+vBasis().order()+vo-1];
+		for ( RtInt uo = 0; uo < uBasis().order(); ++uo ) {
+			results[ridx++] = uBasis().knots()[m_useg+uBasis().order()+uo-1];
+			results[ridx++] = knotVal;
+			switch ( pz->declaration().storageClass() ) {
+				case CLASS_CONSTANT:
+					results[ridx++] = pz->floats()[0];
+					break;
+				case CLASS_UNIFORM:
+					results[ridx++] = pz->floats()[faceIndex()];
+					break;
+				case CLASS_VARYING: /* no break */
+				case CLASS_FACEVARYING:
+					results[ridx++] = bilinZ[pzidx++];
+					break;
+				case CLASS_VERTEX:
+					results[ridx++] = pz->floats()[m_vertexIdx[pzidx++]];
+					break;
+				case CLASS_FACEVERTEX:
+					results[ridx++] = pz->floats()[m_faceVertexIdx[pzidx++]];
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	
+	return true;
+}
+
+void CNuPatchTesselator::buildNuPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f)
+{
+	RtInt uspan = uBasis().span(m_useg);
+	RtInt vspan = vBasis().span(m_vseg);
 	
 	RtInt uVals = uBasis().valCnts()[uspan];
 	RtInt vVals = vBasis().valCnts()[vspan];
@@ -1740,14 +1860,93 @@ void CNuPatchTesselator::buildNuPN(const CDeclaration &posDecl, const CDeclarati
 	const CParameter *p = 0;
 	const CParameter *pz = 0;
 	
+
+	std::vector<RtFloat> pos;
+	const std::vector<RtFloat> *posPtr = 0;
+	const std::vector<IndexType> *idxPtr = 0;
+
+	IndexType elemSize = 0;
+	
 	if ( !pw ) {
 		p = obj().parameters().get(RI_P);
 		if ( !p ) {
-			pz = obj().parameters().get(RI_Z);
+			pz = obj().parameters().get(RI_PZ);
+			if ( !pz ) {
+				return;
+			} else {
+				if ( !extractPFromPz(pz, pos) )
+					return;
+				posPtr = &pos;
+				elemSize = 3;
+				idxPtr = &m_idIdx;
+			}
+		} else {
+			if ( !p->declaration().isFloat3Decl() )
+				return;
+			posPtr = &p->floats();
+			elemSize = 3;
+			idxPtr = &m_vertexIdx;
+			if ( p->declaration().isFace() )
+				idxPtr = &m_faceVertexIdx;
+		}
+	} else {
+		if ( !pw->declaration().isFloat4Decl() )
+			return;
+		posPtr = &pw->floats();
+		elemSize = 4;
+		idxPtr = &m_vertexIdx;
+		if ( pw->declaration().isFace() )
+			idxPtr = &m_faceVertexIdx;
+	}
+	
+	if ( !posPtr )
+		return;
+	
+
+	SParametricVars vars(posDecl, normDecl, uVals*elemSize, vVals*elemSize, flipNormals(), f);
+
+	if ( !pw ) {
+		basis().nuBlendWithNormals(elemSize, *posPtr, m_useg, m_vseg, *idxPtr, flipNormals(), *vars.positions, *vars.normals);
+	} else {
+		std::vector<RtFloat> blendPw;
+		basis().nuBlendWithNormals(elemSize, *posPtr, m_useg, m_vseg, *idxPtr, flipNormals(), blendPw, *vars.normals);
+		pw2p(blendPw, *vars.positions);
+	}
+	
+}
+
+void CNuPatchTesselator::fillIdx(RtInt usegment, RtInt vsegment)
+{
+	m_useg = usegment;
+	m_vseg = vsegment;
+	
+	IndexType cornerIdxArray[4], faceCornerIdxArray[4];
+	m_cornerIdx.resize(4);
+	m_faceCornerIdx.resize(4);
+	
+	getCornerIdx(m_useg, m_vseg, uBasis().numSegments(), vBasis().numSegments(), cornerIdxArray); // numSegments() vs. nCPts ???
+	m_cornerIdx.assign(&cornerIdxArray[0], &cornerIdxArray[0] + 4);
+	getFaceCornerIdx(faceIndex(), faceCornerIdxArray);
+	m_faceCornerIdx.assign(&faceCornerIdxArray[0], &faceCornerIdxArray[0] + 4);
+
+	
+	m_vertexIdx.clear();
+	m_vertexIdx.resize(uBasis().order()*vBasis().order());
+	m_faceVertexIdx.clear();
+	m_faceVertexIdx.resize(uBasis().order()*vBasis().order());
+	m_idIdx.clear();
+	m_idIdx.resize(uBasis().order()*vBasis().order());
+
+	RtInt idx, uo, vo;
+	
+	idx = 0;
+	for ( vo = 0; vo < vBasis().order(); ++vo ) {
+		for ( uo = 0; uo < uBasis().order(); ++uo, ++idx ) {
+			m_vertexIdx[idx]     = (m_vseg + vo) * uBasis().nCPts() + m_useg + uo;
+			m_faceVertexIdx[idx] = faceIndex() * basis().numFaces() + idx;
+			m_idIdx[idx]         = idx;
 		}
 	}
-
-	SParametricVars vars(posDecl, normDecl, uVals, vVals, flipNormals(), f);
 }
 
 CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
@@ -1759,16 +1958,12 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 	
 	basis().reset(m_obj, tessU(), tessV());
 
-	IndexType cornerIdx[4], faceCornerIdx[4];
-	
-	RtInt faceIndex = 0;
-	for ( RtInt vseg = 0; vseg < vBasis().segments(); ++vseg ) {
-		for ( RtInt  useg = 0; useg < uBasis().segments(); ++useg, ++faceIndex ) {
+	for ( RtInt vs = 0; vs < vBasis().numSegments(); ++vs ) {
+		for ( RtInt  us = 0; us < uBasis().numSegments(); ++us ) {
 			CFace &f = surf->newFace();
-			getCornerIdx(useg, vseg, uBasis().ncpts(), vBasis().ncpts(), cornerIdx);
-			getFaceCornerIdx(faceIndex, faceCornerIdx);
-			buildNuPN(posDecl, normDecl, faceIndex, useg, vseg, f);
-			insertNuParams(faceIndex, f);
+			fillIdx(us, vs);			
+			buildNuPN(posDecl, normDecl, f);
+			insertNuParams(f);
 			buildIndices(f);
 		}
 	}

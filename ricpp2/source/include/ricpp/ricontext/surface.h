@@ -237,17 +237,26 @@ public:
 	 * 
 	 *  2    3    
 	 */
-	bool bilinearBlend(
-		const CParameter &source,
-		const IndexType (& cornerIdx)[4],
-		IndexType tessU,
-		IndexType tessV);
+	bool bilinearBlend(const CParameter &source,
+					   const IndexType (& cornerIdx)[4],
+					   IndexType tessU,
+					   IndexType tessV);
+	
+	bool bilinearBlend(const CParameter &source,
+					   const std::vector<IndexType> &cornerIdx,
+					   IndexType tessU,
+					   IndexType tessV);
 	
 	bool bicubicBlend(const CParameter &source,
 					  const IndexType (& controlIdx)[16],
 					  IndexType tessU,
 					  IndexType tessV,
 					  const CBicubicVectors &basisVectors);
+
+	bool nuBlend(const CParameter &source,
+							const std::vector<IndexType> &vertexIdx,
+							RtInt useg, RtInt vseg,
+							const CUVBSplineBasis &basis);
 
 	inline void clearIndices()
 	{

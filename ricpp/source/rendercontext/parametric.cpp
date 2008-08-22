@@ -2018,7 +2018,7 @@ void TNuMesh::insertVertexDataNU(
 
 	IndexType cornerIdx[4];
 	IndexType cornerIdIdx[4] = {0, 1, 2, 3};
-	fillCornerIdx(cornerIdx, uBasis.m_ncpts, vBasis.m_ncpts, useg, vseg);
+	fillCornerIdx(cornerIdx, uBasis.m_segments+1, vBasis.m_segments+1, useg, vseg); // m_cpts
 	IndexType corners = (useg+1) * (vseg+1);
 	IndexType faceCornerIdx[4] = {
 		m_faceIdx*4+0, m_faceIdx*4+1,

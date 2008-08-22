@@ -456,10 +456,10 @@ void CParameter::extract(IndexType from, IndexType to, std::vector<RtString>::it
 	}
 }
 
-bool CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
-							   IndexType tessU,
-							   IndexType tessV,
-							   std::vector<RtFloat> &retvals) const
+bool CParameter::bilinearBlendPtr(const IndexType *cornerIdx,
+								  IndexType tessU,
+								  IndexType tessV,
+								  std::vector<RtFloat> &retvals) const
 {
 	retvals.clear();
 
@@ -486,10 +486,27 @@ bool CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
 	}
 	
 	CBilinearBlend blend(tessU, tessV);
-	blend.bilinearBlend(elemSize, cornerIdx, vals, retvals);
+	blend.bilinearBlendPtr(elemSize, cornerIdx, vals, retvals);
 	return true;
 }
 
+bool CParameter::bilinearBlend(const IndexType (& cornerIdx)[4],
+								  IndexType tessU,
+								  IndexType tessV,
+								  std::vector<RtFloat> &retvals) const
+{
+	return bilinearBlendPtr(&cornerIdx[0], tessU, tessV, retvals);
+}
+
+bool CParameter::bilinearBlend(const std::vector<IndexType> &cornerIdx,
+								  IndexType tessU,
+								  IndexType tessV,
+								  std::vector<RtFloat> &retvals) const
+{
+	if ( cornerIdx.size() < 4 )
+		return false;
+	return bilinearBlendPtr(&cornerIdx[0], tessU, tessV, retvals);
+}
 
 bool CParameter::bicubicBlend(const IndexType (& controlIdx)[16],
 				  IndexType tessU,
@@ -522,6 +539,28 @@ bool CParameter::bicubicBlend(const IndexType (& controlIdx)[16],
 	}
 	
 	basisVectors.bicubicBlend(elemSize, controlIdx, vals, retvals);
+	return true;
+}
+
+bool CParameter::nuBlend(const std::vector<IndexType> &vertexIdx,
+					     RtInt useg, RtInt vseg,
+						 const CUVBSplineBasis &basis,
+						 std::vector<RtFloat> &retvals) const
+{
+	retvals.clear();
+	
+	assert ( basicType() == BASICTYPE_FLOAT );
+	if ( basicType() != BASICTYPE_FLOAT )
+		return false;
+	
+	IndexType elemSize = declaration().elemSize();
+	assert( elemSize > 0 );
+	if ( elemSize <= 0 )
+		return false;
+	
+	const std::vector<RtFloat> &vals = floats();
+
+	basis.nuBlend(elemSize, vals, useg, vseg, vertexIdx, retvals);
 	return true;
 }
 

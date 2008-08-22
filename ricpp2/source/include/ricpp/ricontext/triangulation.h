@@ -347,8 +347,14 @@ namespace RiCPP {
 		CRiNuPatch m_obj;
 		CUVBSplineBasis m_basis;
 	
-	protected:
-		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
+		// State variables, filled by fillIdx
+		RtInt m_useg, m_vseg;
+		std::vector<IndexType> m_cornerIdx, m_faceCornerIdx, m_vertexIdx, m_faceVertexIdx;
+		std::vector<IndexType> m_idIdx;
+
+		void fillIdx(RtInt usegment, RtInt vsegment);
+		inline RtInt faceIndex() const { return m_vseg * uBasis().numSegments() + m_useg; }
+
 		inline const CUVBSplineBasis &basis() const { return m_basis; }
 		inline CUVBSplineBasis &basis() { return m_basis; }
 		inline const CBSplineBasis &uBasis() const { return basis().uBasis(); }
@@ -356,12 +362,16 @@ namespace RiCPP {
 		inline const CBSplineBasis &vBasis() const { return basis().vBasis(); }
 		inline CBSplineBasis &vBasis() { return basis().vBasis(); }
 
-		void insertNuParams(IndexType faceIndex,
-							CFace &f);
-		void buildNuPN(const CDeclaration &posDecl, const CDeclaration &normDecl, RtInt faceIdx, RtInt useg, RtInt vseg, CFace &f);
+		void insertNuParams(CFace &f);
+		void buildNuPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
+		bool extractPFromPz(const CParameter *pz, std::vector<RtFloat> &results) const;
+
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 
 	public:
-		inline CNuPatchTesselator(const CRiNuPatch &obj) : m_obj(obj) { }
+		inline CNuPatchTesselator() : m_useg(0), m_vseg(0) { }
+		inline CNuPatchTesselator(const CRiNuPatch &obj) : m_obj(obj), m_useg(0), m_vseg(0) { }
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
 	}; // CNuPatchTesselator
 }

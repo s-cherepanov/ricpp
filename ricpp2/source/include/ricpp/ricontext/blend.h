@@ -43,14 +43,15 @@ namespace RiCPP {
 	private:
 		IndexType m_tessU; //!< Number of segments for tesselation in parametric direction u
 		IndexType m_tessV; //!< Number of segments for tesselation in parametric direction v
-		
 	public:
 		//! Standard constructor, just clears the members
 		CBilinearBlend();
 		//! Standard constructor, assigns tesselation
 		CBilinearBlend(IndexType aTessU, IndexType aTessV);
 		//! do the blending
+		void bilinearBlendPtr(IndexType elemSize, const IndexType *cornerIdx, const std::vector<RtFloat> &vals, std::vector<RtFloat> &results);
 		void bilinearBlend(IndexType elemSize, const IndexType (&cornerIdx)[4], const std::vector<RtFloat> &vals, std::vector<RtFloat> &results);
+		void bilinearBlend(IndexType elemSize, const std::vector<IndexType> &cornerIdx, const std::vector<RtFloat> &vals, std::vector<RtFloat> &results);
 		
 		//! Tesselation of the patch in parametric direction u
 		inline IndexType tessU() const { return m_tessU; }
@@ -279,18 +280,18 @@ namespace RiCPP {
 		*/
 
 		
-		//! Blend using control points, members have to be valid
-		void nuBlend(const std::vector<RtFloat> &source,
+		//! Blend using control points (homogene 2D), members have to be valid
+		void nuBlendP2W(const std::vector<RtFloat> &source,
 					 RtInt offs,
 					 RtInt seg,
-					 std::vector<RtFloat> &pos) const;
+					 std::vector<RtFloat> &results) const;
 
 		/** @{
 		 */
-		inline RtInt ncpts() const { return m_ncpts; }
+		inline RtInt nCPts() const { return m_ncpts; }
 		inline RtInt order() const { return m_order; }
-		inline RtFloat tmin() const { return m_tmin; }
-		inline RtFloat tmax() const { return m_tmax; }
+		inline RtFloat tMin() const { return m_tmin; }
+		inline RtFloat tMax() const { return m_tmax; }
 		inline IndexType tess() const { return m_tess; }
 		inline const std::vector<RtFloat> &knots() const { return m_knots; }
 		/** @}
@@ -298,10 +299,42 @@ namespace RiCPP {
 		
 		/** @{
 		 */
-		inline RtInt segments() const { return m_segments; }
+		inline RtInt numSegments() const { return m_segments; }
+		inline RtInt span(RtInt seg) const { return seg + order() - 1; }
+		inline RtInt offsParameters(RtInt seg) const { return valOffs()[span(seg)]; }
+		inline RtInt numParameters(RtInt seg) const { return valCnts()[span(seg)]; }
+
+		inline RtInt basisIdx(RtInt seg, RtInt paramIdx, RtInt orderIdx) const
+		{
+			assert(seg >= 0 && seg < numSegments());
+			assert(paramIdx >= 0 && paramIdx < numParameters(seg));
+			assert(orderIdx >= 0 && orderIdx < order());
+			return (offsParameters(seg)+paramIdx) * order() + orderIdx;
+		}
+
+		inline RtFloat basisElem(RtInt seg, RtInt paramIdx, RtInt orderIdx) const
+		{
+			assert((size_t)basisIdx(seg, paramIdx, orderIdx) < basis().size());
+			return basis()[basisIdx(seg, paramIdx, orderIdx)];
+		}
+
+		inline RtFloat basisDerivElem(RtInt seg, RtInt paramIdx, RtInt orderIdx) const
+		{
+			assert((size_t)basisIdx(seg, paramIdx, orderIdx) < basisDeriv().size());
+			return basisDeriv()[basisIdx(seg, paramIdx, orderIdx)];
+		}
+		
+		inline RtFloat parameter(RtInt seg, RtInt paramIdx) const
+		{
+			assert(seg >= 0 && seg < numSegments());
+			assert(paramIdx >= 0 && paramIdx < numParameters(seg));
+			assert((size_t)(offsParameters(seg)+paramIdx) < tVals().size());
+			return tVals()[offsParameters(seg)+paramIdx];
+		}
+		
 		inline const std::vector<RtInt>   &valOffs() const { return m_valOffs; }
 		inline const std::vector<RtInt>   &valCnts() const { return m_valCnts; }
-		inline const std::vector<RtFloat> &Vals() const { return m_tVals; }
+		inline const std::vector<RtFloat> &tVals() const { return m_tVals; }
 		inline const std::vector<RtFloat> &basis() const { return m_basis; }
 		inline const std::vector<RtFloat> &basisDeriv() const { return m_basisDeriv; }
 		/** @}
@@ -324,7 +357,9 @@ namespace RiCPP {
 		inline const CBSplineBasis &vBasis() const { return m_vBasis; }
 		inline CBSplineBasis &vBasis() { return m_vBasis; }
 		
-		inline IndexType faces() { return uBasis().segments()*vBasis().segments(); }
+		inline IndexType numFaces() const { return uBasis().numSegments()*vBasis().numSegments(); }
+		inline IndexType numParameters(RtInt useg, RtInt vseg) const { return uBasis().numParameters(useg) * vBasis().numParameters(vseg); }
+		inline IndexType numFaceVertices() const { return uBasis().order() * vBasis().order(); }
 		
 		void reset(const CRiNuPatch &obj, IndexType uTess, IndexType vTess);
 
@@ -340,6 +375,7 @@ namespace RiCPP {
 								RtInt useg,
 								RtInt vseg,
 								const std::vector<IndexType> &idx,
+								bool flipNormal,
 								std::vector<RtFloat> &results,
 								std::vector<RtFloat> &normals) const;
 	}; // CUVBSplineBasis

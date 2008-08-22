@@ -39,6 +39,8 @@
 namespace RiCPP {
 	
 	class CBicubicVectors;
+	class CUVBSplineBasis;
+	
 	// ------------------------------------------------------------------------
 	/** @brief Class to store a parameter value with its declaration.
 	 *
@@ -72,6 +74,10 @@ namespace RiCPP {
 		 */
 		void assign(const CParameter &p);
 
+		bool bilinearBlendPtr(const IndexType *cornerIdx,
+							  IndexType tessU,
+							  IndexType tessV,
+							  std::vector<RtFloat> &retvals) const;
 	public:
 		/** @brief Standard constructor, empty parameter.
 		 */
@@ -455,11 +461,21 @@ namespace RiCPP {
 						   IndexType tessV,
 						   std::vector<RtFloat> &retvals) const;
 
+		bool bilinearBlend(const std::vector<IndexType> &cornerIdx,
+						   IndexType tessU,
+						   IndexType tessV,
+						   std::vector<RtFloat> &retvals) const;
+		
 		bool bicubicBlend(const IndexType (& controlIdx)[16],
 						  IndexType tessU,
 						  IndexType tessV,
 						  const CBicubicVectors &basisVectors,
 						  std::vector<RtFloat> &retvals) const;
+
+		bool nuBlend(const std::vector<IndexType> &vertexIdx,
+					 RtInt useg, RtInt vseg,
+					 const CUVBSplineBasis &basis,
+					 std::vector<RtFloat> &retvals) const;
 	}; // CParameter
 
 

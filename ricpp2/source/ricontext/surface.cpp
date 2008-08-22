@@ -280,24 +280,39 @@ void CFace::buildStripIndices(IndexType tessU, IndexType tessV, bool isLH)
 	}
 }
 
-
-bool CFace::bilinearBlend(
-	const CParameter &source,
-	const IndexType (& cornerIdx)[4],
-	IndexType tessU,
-	IndexType tessV)
+bool CFace::bilinearBlend(const CParameter &source,
+						  const IndexType (& cornerIdx)[4],
+						  IndexType tessU,
+						  IndexType tessV)
 {
 	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
 	return source.bilinearBlend(cornerIdx, tessU, tessV, retvals);
 }
 
-bool CFace::bicubicBlend(
-    const CParameter &source,
-	const IndexType (& controlIdx)[16],
-	IndexType tessU,
-	IndexType tessV,
-	const CBicubicVectors &basisVectors)
+bool CFace::bilinearBlend(const CParameter &source,
+						  const std::vector<IndexType> &cornerIdx,
+						  IndexType tessU,
+						  IndexType tessV)
+{
+	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
+	return source.bilinearBlend(cornerIdx, tessU, tessV, retvals);
+}
+
+bool CFace::bicubicBlend(const CParameter &source,
+						 const IndexType (& controlIdx)[16],
+						 IndexType tessU,
+						 IndexType tessV,
+						 const CBicubicVectors &basisVectors)
 {
 	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
 	return source.bicubicBlend(controlIdx, tessU, tessV, basisVectors, retvals);
+}
+
+bool CFace::nuBlend(const CParameter &source,
+					const std::vector<IndexType> &vertexIdx,
+					RtInt useg, RtInt vseg,
+					const CUVBSplineBasis &basis)
+{
+	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
+	return source.nuBlend(vertexIdx, useg, vseg, basis, retvals);
 }

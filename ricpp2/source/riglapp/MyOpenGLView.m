@@ -14,7 +14,7 @@
 // #define _TRACE
 #endif
 
-static const int startScreen = 20; // 0-maxScreens
+static const int startScreen = 22; // 0-maxScreens
 static const int maxScreens = 22;
 
 static RtFloat opacity_25[] = {0.25,  0.25, 0.25};
@@ -23,6 +23,30 @@ static RtFloat opacity_75[] = {0.75,  0.75, 0.75};
 static RtFloat greenish[] = {0.5,  1, 0.5};
 static RtFloat redish[] = {1,  0.5, 0.5};
 static RtFloat blueish[] = {0.5,  0.5, 1};
+
+void testSimpleNuPatch()
+{
+
+    RtFloat uknot[] = {0.0F, 0.0F, 1.0F, 1.0F};
+    RtFloat vknot[] = {0.0F, 0.0F, 1.0F, 1.0F};
+	static RtFloat bilinearPatchLHW[] = {
+		-.9F, .9F,0,1,   .9F,.9F,0,1,
+		-.9F,-.9F,0,1,   .9F,-.9F,0,1
+	};
+	/*
+	static RtFloat bilinearPatchLH[] = {
+		-.9F, .9F,0,   .9F,.9F,0,
+		-.9F,-.9F,0,   .9F,-.9F,0
+	};
+	*/
+	
+    RiAttributeBegin();
+	RiColor(redish);
+	RiSides(2);
+	RiTranslate(0, 0, 2);
+	RiNuPatch(2, 2, uknot, 0.0F, 1.0F, 2, 2, vknot, 0.0F, 1.0F, RI_PW, bilinearPatchLHW, RI_NULL);
+    RiAttributeEnd();
+}
 
 void testNuPatch()
 {
@@ -80,8 +104,11 @@ void testNuPatch()
     RtFloat vknot[] = {0.0F, 0.0F, 0.0F, 0.0555556F, 0.111111F, 0.166667F, 0.222222F, 0.277778F, 0.333333F, 0.388889F, 0.444444F, 0.5F, 0.555556F, 0.611111F, 0.666667F, 0.722222F, 0.777778F, 0.833333F, 0.888889F, 0.944444F, 1.0F, 1.0F, 1.0F};
 	
     RiAttributeBegin();
-	RiTranslate(0, 0, 2);
+	RiColor(redish);
+	RiSides(1);
+	RiTranslate(0, -.3, 2);
 	RiScale(.1F, .1F, .1F);
+	RiRotate(-135, 1, 0, 0);
 	RiNuPatch(11, 3, uknot, 0.0F, 1.0F, 20, 3, vknot, 0.0F, 1.0F, RI_PW, vaseMesh, RI_NULL);
     RiAttributeEnd();
 }

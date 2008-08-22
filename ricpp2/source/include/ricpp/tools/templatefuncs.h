@@ -35,6 +35,7 @@
 #include <limits>
 #include <algorithm>
 #include <iostream>
+#include <cassert>
 
 namespace RiCPP {
 

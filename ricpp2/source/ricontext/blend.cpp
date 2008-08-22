@@ -416,8 +416,7 @@ void CBSplineBasis::bsplineBasisDerivate(RtFloat t, RtInt span,
 
 void CBSplineBasis::sortKnots()
 {
-	//! @todo
-	// std::sort(m_knots.begin(), m_knots.end(), ?);
+	std::sort(m_knots.begin(), m_knots.end());
 }
 
 bool CBSplineBasis::empty() const
@@ -438,9 +437,9 @@ void CBSplineBasis::validate()
 	
 	if ( m_knots.size() < knotSize() ) {
 		RtFloat lastVal = m_knots.size() > 0 ? m_knots[m_knots.size()-1] : (RtFloat)0;
-		IndexType sz = m_knots.size();
+		size_t sz = m_knots.size();
 		m_knots.resize(knotSize());
-		for ( IndexType i = sz; i < knotSize(); ++i )
+		for ( size_t i = sz; i < knotSize(); ++i )
 			m_knots[i] = lastVal;
 	}
 	

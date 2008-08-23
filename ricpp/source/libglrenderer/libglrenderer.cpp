@@ -1759,18 +1759,20 @@ RtVoid TGLRenderer::doGeneralPolygonV(RtInt nloops, RtInt *nverts, RtInt n, RtTo
 		if ( !nm ) {
 			RtPoint norm;
 			TGL::disableClientState(GL_NORMAL_ARRAY);
-			if ( planeNorm(&ps[3], &ps[0], &ps[6], norm) ) {
+			if ( planeNorm(&ps[6], &ps[0], &ps[3], norm) ) {
 				TGL::normal(norm[0], norm[1], norm[2]);
 			}
 		}
 
 		::gluTessBeginPolygon(m_tesselator, this);
+		    int sumVerts = 0;
 			for ( i=0, k=0; i<nloops; ++i ) {
 				::gluTessBeginContour(m_tesselator);
+				    sumVerts += nverts[i];
 					for ( j=0; j<nverts[i]; ++j, k+=3 ) {
-						d[k+0]=ps[k+0];
-						d[k+1]=ps[k+1];
-						d[k+2]=ps[k+2];
+						d[k+0]=ps[(sumVerts-j)*3-3];
+						d[k+1]=ps[(sumVerts-j)*3-2];
+						d[k+2]=ps[(sumVerts-j)*3-1];
 						::gluTessVertex(m_tesselator, &d[k], &d[k]);
 						if ( nm ) {
 							::gluTessNormal(m_tesselator, nm[k], nm[k+1], nm[k+2]);
@@ -1850,14 +1852,15 @@ RtVoid TGLRenderer::doPointsGeneralPolygonsV(RtInt npolys, RtInt *nloops, RtInt 
 		for ( ipol = 0; ipol < npolys; ++ipol) {
 			if ( !nm ) {
 				RtPoint norm;
-				if ( planeNorm(&ps[pverts[1]*3], &ps[pverts[0]*3], &ps[pverts[2]*3], norm) ) {
+				if ( planeNorm(&ps[pverts[2]*3], &ps[pverts[0]*3], &ps[pverts[1]*3], norm) ) {
 					TGL::normal(norm[0], norm[1], norm[2]);
 				}
 			}
 			::gluTessBeginPolygon(m_tesselator, this);
 				for ( i=0, k=0; i<nloops[ipol]; ++i ) {
 					::gluTessBeginContour(m_tesselator);
-						for ( j=0; j<pnverts[i]; ++j, k+=3 ) {
+						for ( j=pnverts[i]; j>0; k+=3 ) {
+							--j;
 							d[k+0]=ps[pverts[j]*3+0];
 							d[k+1]=ps[pverts[j]*3+1];
 							d[k+2]=ps[pverts[j]*3+2];

@@ -119,6 +119,7 @@ const RtFloat *TPolygonMesh::getTextureST(IndexType &size, RtFloat s1, RtFloat t
 		RtFloat *from = m_vertexStrip->begin();
 		for ( ; from < m_vertexStrip->end();  ) {
 			// x
+			assert(to < m_stStrip->end());
 			if ( !m_useUniformS ) {
 				*to = *from;
 			} else {
@@ -128,6 +129,7 @@ const RtFloat *TPolygonMesh::getTextureST(IndexType &size, RtFloat s1, RtFloat t
 			++from;
 
 			// y
+			assert(to < m_stStrip->end());
 			if ( !m_useUniformT ) {
 				*to = *from;
 			} else {
@@ -218,7 +220,7 @@ void TPolygonMesh::insertVertexData(const TParameterMap &pm, RtInt nvertices) {
 			m_uniformNormal[0] = m_uniformNormal[1] = m_uniformNormal[2] = 0.0;
 			RtFloat *ptr = m_vertexStrip->begin();
 			if ( nvertices >= 3 ) {
-				planeNorm(ptr+3, ptr, ptr+6, &(m_uniformNormal[0]));
+				planeNorm(ptr+6, ptr, ptr+3, &(m_uniformNormal[0]));
 			}
 			m_useUniformNormal = true;
 		}
@@ -266,10 +268,10 @@ void TPolygonMesh::insertVertexData(const TParameterMap &pm, RtInt nvertices) {
 		RtInt endIdx = nvertices;
 		RtInt j;
 		for ( i=1, j=1; i<nvertices; ++j ) {
-			v[i] = startIdx+j;
+			v[i] = endIdx-j;
 			++i;
 			if ( i < nvertices ) {
-				v[i] = endIdx-j;
+				v[i] = startIdx+j;
 				++i;
 			}
 		}
@@ -332,9 +334,9 @@ void TPolygonMesh::insertVertexData(const TParameterMap &pm, RtInt nvertices, Rt
 			m_uniformNormal[0] = m_uniformNormal[1] = m_uniformNormal[2] = 0.0;
 			if ( nvertices >= 3 ) {
 				if ( hasFaceParameters ) {
-					planeNorm(ptr+3, ptr, ptr+6, &(m_uniformNormal[0]));
+					planeNorm(ptr+6, ptr, ptr+3, &(m_uniformNormal[0]));
 				} else {
-					planeNorm(ptr+(verts[offs+1]*3), ptr+(verts[offs+0]*3), ptr+(verts[offs+2]*3), &(m_uniformNormal[0]));
+					planeNorm(ptr+(verts[offs+2]*3), ptr+(verts[offs+0]*3), ptr+(verts[offs+1]*3), &(m_uniformNormal[0]));
 				}
 			}
 			m_useUniformNormal = true;
@@ -402,19 +404,19 @@ void TPolygonMesh::insertVertexData(const TParameterMap &pm, RtInt nvertices, Rt
 		RtInt i, j;
 		if ( hasFaceParameters ) {
 			for ( i=1, j=1; i<nvertices; ++j ) {
-				v[i] = startIdx+j;
+				v[i] = endIdx-j;
 				++i;
 				if ( i < nvertices ) {
-					v[i] = endIdx-j;
+					v[i] = startIdx+j;
 					++i;
 				}
 			}
 		} else {
 			for ( i=1, j=1; i<nvertices; ++j ) {
-				v[i] = verts[offs+startIdx+j];
+				v[i] = verts[offs+endIdx-j];
 				++i;
 				if ( i < nvertices ) {
-					v[i] = verts[offs+endIdx-j];
+					v[i] = verts[offs+startIdx+j];
 					++i;
 				}
 			}

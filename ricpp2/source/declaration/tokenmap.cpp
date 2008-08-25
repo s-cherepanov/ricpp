@@ -169,7 +169,17 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_CREASE)] = RI_CREASE;
 		m_tokenMapper[CToken(RI_CORNER)] = RI_CORNER;
 		m_tokenMapper[CToken(RI_INTERPOLATEBOUNDARY)] = RI_INTERPOLATEBOUNDARY;
-
+		m_tokenMapper[CToken(RI_FACEINTERPOLATEBOUNDARY)] = RI_FACEINTERPOLATEBOUNDARY;
+		
+		m_tokenMapper[CToken(RI_VERTEXEDIT)] = RI_VERTEXEDIT;
+		m_tokenMapper[CToken(RI_EDGEEDIT)] = RI_EDGEEDIT;
+		m_tokenMapper[CToken(RI_FACEEDIT)] = RI_FACEEDIT;
+		m_tokenMapper[CToken(RI_ADD)] = RI_ADD;
+		m_tokenMapper[CToken(RI_SET)] = RI_SET;
+		m_tokenMapper[CToken(RI_VALUE)] = RI_VALUE;
+		m_tokenMapper[CToken(RI_SHARPNESS)] = RI_SHARPNESS;
+		m_tokenMapper[CToken(RI_ATTRIBUTES)] = RI_ATTRIBUTES;
+		
 		m_tokenMapper[CToken(RI_ORIGIN)] = RI_ORIGIN;
 		m_tokenMapper[CToken(RI_NAME)] = RI_NAME;
 
@@ -272,8 +282,8 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_INT)] = RI_INT;
 		m_tokenMapper[CToken(RI_NULL_LIT)] = RI_NULL_LIT;
 		m_tokenMapper[CToken(RI_UNKNOWN)] = RI_UNKNOWN;
-		// RI_EMPTY same token as RI_NULL
-
+		
+		m_tokenMapper[CToken(RI_EMPTY)] = RI_NULL;	
 	} catch (...) {
 		// If there was an error, a token was not created.
 		throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, __LINE__, __FILE__, "Could not initialize tokenmap");
@@ -286,9 +296,7 @@ RtToken CTokenMap::findCreate(const char *name)
 {
 	if ( !name )
 		return RI_NULL;
-	if ( !*name )
-		return RI_NULL; // don't use RI_EMPTY as token to simplify compare
-		
+
 	const_iterator iter;
 	char *newtok = 0;
 
@@ -334,9 +342,7 @@ RtToken CTokenMap::find(const char *name) const
 {
 	if ( !name )
 		return RI_NULL;
-	if ( !*name )
-		return RI_NULL; // don't use RI_EMPTY as token to simplify compare
-		
+
 	const_iterator iter;
 	if ( (iter = m_tokenMapper.find(CToken(name))) == m_tokenMapper.end() ) {
 		return RI_NULL;

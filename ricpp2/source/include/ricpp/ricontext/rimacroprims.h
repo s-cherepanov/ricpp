@@ -2101,6 +2101,12 @@ namespace RiCPP {
 			*this = c;
 		}
 
+		/** @brief Converts a simple subdivision mesh to a hierarchical one
+		 *
+		 *  @param c Object to copy.
+		 */
+		explicit CRiHierarchicalSubdivisionMesh(const CRiSubdivisionMesh &c);
+
 		inline virtual CRManInterfaceCall *duplicate() const
 		{
 			return new CRiHierarchicalSubdivisionMesh(*this);

@@ -496,8 +496,7 @@ void CUnitCircle::calc()
 	
 	RtFloat theta = m_thetaMin;
 	
-
-	RtFloat delta = deltaNotZero<RtFloat>(theta, m_thetaMax, static_cast<RtFloat>(m_tess));
+	RtFloat deltaVal = delta<RtFloat>(theta, m_thetaMax, static_cast<RtFloat>(m_tess));
 	
 	IndexType nverts = m_tess+1;
 		
@@ -506,7 +505,7 @@ void CUnitCircle::calc()
 
 	IndexType i;
 	IndexType endIdx = (nverts-1)*2;
-	for ( i = 0; i < endIdx; theta += delta ) {
+	for ( i = 0; i < endIdx; theta += deltaVal ) {
 		if ( theta > m_thetaMax )
 			theta = m_thetaMax;
 		m_circleData[i++] = (RtFloat)cos(theta);

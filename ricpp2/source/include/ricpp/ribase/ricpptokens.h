@@ -159,7 +159,18 @@ extern "C" {
 	RICPP_EXTERN(RtToken const) RI_CREASE; /**< Sharp edge in subdivision surface @see CRiCPP::subdivisionMeshV() */
 	RICPP_EXTERN(RtToken const) RI_CORNER; /**< Corner in subdivision surface @see CRiCPP::subdivisionMeshV() */
 	RICPP_EXTERN(RtToken const) RI_INTERPOLATEBOUNDARY; /**< Interpolate the boundery (instead of approximate) subdivision surface @see CRiCPP::subdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_FACEINTERPOLATEBOUNDARY; /**< Interpolate the boundery for varying parameters (instead of approximate) subdivision surface @see CRiCPP::subdivisionMeshV() */
+	
+	RICPP_EXTERN(RtToken const) RI_VERTEXEDIT; /**< Vertex edit @see CRiCPP::hierarchicalSubdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_EDGEEDIT; /**< edge edit @see CRiCPP::hierarchicalSubdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_FACEEDIT; /**< face edit @see CRiCPP::hierarchicalSubdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_ADD; /**< Add a value @see CRiCPP::hierarchicalSubdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_SET; /**< Set a value @see CRiCPP::hierarchicalSubdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_VALUE; /**< Some value @see CRiCPP::hierarchicalSubdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_SHARPNESS; /**< Sharpness value @see CRiCPP::hierarchicalSubdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_ATTRIBUTES; /**< Attributes value @see CRiCPP::hierarchicalSubdivisionMeshV() */
 
+	
 	RICPP_EXTERN(RtToken const) RI_ORIGIN; /**< Token for an origin parameter @see CRiCPP::displayV() */
 	RICPP_EXTERN(RtToken const) RI_NAME; /**< Token for a name parameter */
 
@@ -258,7 +269,7 @@ extern "C" {
 	RICPP_EXTERN(RtToken const) RI_HERMITE; /**< Hermite basis */
 	RICPP_EXTERN(RtToken const) RI_POWER; /**< Power basis */
 
-	/* Texture tabes
+	/* Texture maps
 	// RI_TEXTURE already declared
 	*/
 	RICPP_EXTERN(RtToken const) RI_BUMP; /**< Bumpmap texture */
@@ -267,6 +278,7 @@ extern "C" {
 	RICPP_EXTERN(RtToken const) RI_CUBE_FACE_ENVIRONMENT; /**< Cubeface environment texture */
 	RICPP_EXTERN(RtToken const) RI_BRICK_MAP; /**< Brickmap texture */
 
+	// Internally used tokens
 	RICPP_EXTERN(RtToken const) RI_INT; /**< RI_INTEGER is used instead, RI_INT is only used for parsing, should not be used as token */
 
 	RICPP_EXTERN(RtToken const) RI_NULL_LIT; /**< The literal "null". Used as standard hider type,  "not" use this instead of RI_NULL!!! */

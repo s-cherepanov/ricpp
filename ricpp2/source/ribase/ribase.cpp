@@ -403,7 +403,17 @@ RICPP_INTERN(RtToken const) RI_HOLE = "hole";
 RICPP_INTERN(RtToken const) RI_CREASE = "crease";
 RICPP_INTERN(RtToken const) RI_CORNER = "corner";
 RICPP_INTERN(RtToken const) RI_INTERPOLATEBOUNDARY = "interpolateboundary";
-
+RICPP_INTERN(RtToken const) RI_FACEINTERPOLATEBOUNDARY = "faceinterpolateboundary";
+	
+RICPP_INTERN(RtToken const) RI_VERTEXEDIT = "vertexedit";
+RICPP_INTERN(RtToken const) RI_EDGEEDIT = "edgeedit";
+RICPP_INTERN(RtToken const) RI_FACEEDIT = "faceedit";
+RICPP_INTERN(RtToken const) RI_ADD = "add";
+RICPP_INTERN(RtToken const) RI_SET = "set";
+RICPP_INTERN(RtToken const) RI_VALUE = "value";
+RICPP_INTERN(RtToken const) RI_SHARPNESS = "sharpness";
+RICPP_INTERN(RtToken const) RI_ATTRIBUTES = "attributes";
+	
 RICPP_INTERN(RtToken const) RI_ORIGIN = "origin";
 RICPP_INTERN(RtToken const) RI_NAME = "name";
 

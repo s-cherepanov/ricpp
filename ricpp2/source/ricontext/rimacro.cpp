@@ -631,6 +631,23 @@ CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 	set(tokenMap, aScheme, aNFaces, aNVerts, aVerts, aNTags, aTags, aNArgs, aIntArgs, aFloArgs, aStrArgs);
 }
 
+
+CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(const CRiSubdivisionMesh &c)
+{
+	
+	std::vector<RtInt> nArgs3((c.nArgs().size()/2)*3);
+	std::vector<RtToken> strArgsEmpty;
+	
+	if ( !c.nArgs().empty() ) {
+		for ( size_t i = 0, j = 0; i<c.nArgs().size()-1; ) {
+			nArgs3[j++] = c.nArgs()[i++];
+			nArgs3[j++] = c.nArgs()[i++];
+			nArgs3[j++] = 0;
+		}
+	}
+	set(0, c.scheme(), c.nVerts(), c.verts(), c.tags(), nArgs3, c.intArgs(), c.floatArgs(), strArgsEmpty); 
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 CRiCurves::CRiCurves(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,

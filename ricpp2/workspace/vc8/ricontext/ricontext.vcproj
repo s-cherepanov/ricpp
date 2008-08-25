@@ -342,6 +342,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\subdivision.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\surface.cpp"
 				>
 			</File>
@@ -481,6 +485,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\rimacrotransforms.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\subdivision.h"
 				>
 			</File>
 			<File

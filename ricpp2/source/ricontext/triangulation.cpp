@@ -28,7 +28,10 @@
  */
 
 #include "ricpp/ricontext/triangulation.h"
+
+#ifndef _RICPP_TOOLS_TEMPLATEFUNCS_H
 #include "ricpp/tools/templatefuncs.h"
+#endif // _RICPP_TOOLS_TEMPLATEFUNCS_H
 
 #ifdef _DEBUG
 #define _TRACE
@@ -39,9 +42,12 @@
 // #define _TRACE_PARABOLOID
 // #define _TRACE_SPHERE
 // #define _TRACE_TORUS
-#define _TRACE_NUPATCH
+// #define _TRACE_NUPATCH
 #endif
+
+#ifndef _RICPP_TOOLS_TRACE_H
 #include "ricpp/tools/trace.h"
+#endif
 
 using namespace RiCPP;
 

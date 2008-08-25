@@ -196,6 +196,8 @@
 		C392D7C00E48A32A003E5C41 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C392D8D10E48BBB2003E5C41 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C392D8D00E48BBB2003E5C41 /* types.cpp */; };
 		C3969E5C0DDF098C00562F24 /* MyNSObjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */; };
+		C3A692AE0E629EEF00B709BD /* subdivision.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A692AD0E629EEF00B709BD /* subdivision.h */; };
+		C3A692BA0E62A8CF00B709BD /* subdivision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A692B90E62A8CF00B709BD /* subdivision.cpp */; };
 		C3A8FA760D74CBF700C1013B /* ricppconst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA720D74CBF700C1013B /* ricppconst.h */; };
 		C3A8FA770D74CBF700C1013B /* ricppdecls.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA730D74CBF700C1013B /* ricppdecls.h */; };
 		C3A8FA780D74CBF700C1013B /* ricpptokens.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A8FA740D74CBF700C1013B /* ricpptokens.h */; };
@@ -683,6 +685,8 @@
 		C39754160C14025D0089A579 /* ribfilterlist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ribfilterlist.h; path = ../../../source/include/ricpp/ribfilter/ribfilterlist.h; sourceTree = SOURCE_ROOT; };
 		C39754B60C1409570089A579 /* pluginhandler.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = pluginhandler.cpp; path = ../../../source/pluginhandler/pluginhandler.cpp; sourceTree = SOURCE_ROOT; };
 		C399BA990BE5E229002FEEF1 /* macenv.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macenv.cpp; path = ../../../source/tools/macenv.cpp; sourceTree = SOURCE_ROOT; };
+		C3A692AD0E629EEF00B709BD /* subdivision.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = subdivision.h; path = ../../../source/include/ricpp/ricontext/subdivision.h; sourceTree = SOURCE_ROOT; };
+		C3A692B90E62A8CF00B709BD /* subdivision.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = subdivision.cpp; path = ../../../source/ricontext/subdivision.cpp; sourceTree = SOURCE_ROOT; };
 		C3A8FA720D74CBF700C1013B /* ricppconst.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricppconst.h; path = ../../../source/include/ricpp/ribase/ricppconst.h; sourceTree = SOURCE_ROOT; };
 		C3A8FA730D74CBF700C1013B /* ricppdecls.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricppdecls.h; path = ../../../source/include/ricpp/ribase/ricppdecls.h; sourceTree = SOURCE_ROOT; };
 		C3A8FA740D74CBF700C1013B /* ricpptokens.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = ricpptokens.h; path = ../../../source/include/ricpp/ribase/ricpptokens.h; sourceTree = SOURCE_ROOT; };
@@ -1441,6 +1445,7 @@
 				C3C9AE380D70BC9F00A04717 /* ribelements.cpp */,
 				C37245B90CD5DE5500945563 /* ricontext.cpp */,
 				C37245BA0CD5DE5500945563 /* rimacro.cpp */,
+				C3A692B90E62A8CF00B709BD /* subdivision.cpp */,
 				C38520DF0E3E184700F74D69 /* surface.cpp */,
 				C37245BB0CD5DE5500945563 /* transformation.cpp */,
 				C38221380E378A830032A70E /* triangulation.cpp */,
@@ -1485,6 +1490,7 @@
 				C372458E0CD5DE3100945563 /* rimacrooptions.h */,
 				C372458F0CD5DE3100945563 /* rimacroprims.h */,
 				C37245900CD5DE3100945563 /* rimacrotransforms.h */,
+				C3A692AD0E629EEF00B709BD /* subdivision.h */,
 				C38221360E3789C60032A70E /* surface.h */,
 				C37245910CD5DE3100945563 /* transformation.h */,
 				C3BB4CBA0E3A02DE00D185BB /* triangulation.h */,
@@ -2210,6 +2216,7 @@
 				C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */,
 				C38221370E3789C60032A70E /* surface.h in Headers */,
 				C3BB4CBB0E3A02DE00D185BB /* triangulation.h in Headers */,
+				C3A692AE0E629EEF00B709BD /* subdivision.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2965,6 +2972,7 @@
 				C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */,
 				C38520E00E3E184700F74D69 /* surface.cpp in Sources */,
 				C38221390E378A830032A70E /* triangulation.cpp in Sources */,
+				C3A692BA0E62A8CF00B709BD /* subdivision.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

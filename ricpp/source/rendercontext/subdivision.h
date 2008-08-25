@@ -40,7 +40,7 @@
 //! Face for subdivision.
 /*! The face can be filled or be a hole (i.e. it is calculated as normal, but
  *  the area is not filled at output time). A face is given by a sequence of vertices
- *  grouped around the face, connected as edges by a counter clockwise ordering.
+ *  grouped around the face. The vertices are connected by edges by a counter clockwise ordering.
  */
 class TSubdivFacet {
 public:
@@ -59,7 +59,7 @@ private:
 	long m_endVertexEdgeIndex;   //!< End of adjacent vertices and incident edges, m_endVertexEdgeIndex - m_startVertexEdgeIndex = number of vertices and edges of the face. It's a double index, -1 if not initialised.
 
 	long m_faceIndex;            //!< Index of the face in the original polygon mesh, -1 if not initialised.
-	bool m_boundary;             //!< Boundary faces will not be drawn, they are marked at initially
+	bool m_boundary;             //!< Boundary faces will not be drawn, they are marked initially.
 
 	RtPoint m_normal;            //!< The normal vector of the face.
 

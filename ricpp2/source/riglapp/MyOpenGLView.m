@@ -1076,7 +1076,9 @@ static void drawAnObject ()
 -(void) drawRect: (NSRect) bounds
 {
 	/* NSLog(@"drawRect"); */
-
+	
+	char *screenAction[2] = {"clear", "finish"};
+	
 	if ( counter < 0 ) 
 		counter = maxScreens;
 	else if ( counter > maxScreens )
@@ -1088,6 +1090,7 @@ static void drawAnObject ()
 	
 	RtInt origin[2] = {0, 0};
 	
+	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 	RiFrameBegin(counter);
 
 	// Set the display spec
@@ -1100,11 +1103,13 @@ static void drawAnObject ()
 		RiDisplay("OpenGL Demo", RI_FRAMEBUFFER, RI_RGBA,
 				  RI_DISPXRES, &width, RI_DISPYRES, &height, RI_PIXELASPECT, &pixelAspect,
 				  RI_ORIGIN, origin, RI_NULL);
+		RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_PIXELASPECT, &pixelAspect, RI_ORIGIN, origin, RI_NULL);
 	} else {
 		[(MyNSObjectController *)panelController displayOriginX:origin[0] originY:origin[1]];
 		RiDisplay("OpenGL Demo", RI_FRAMEBUFFER, RI_RGBA,
 				  RI_DISPXRES, &width, RI_DISPYRES, &height, RI_PIXELASPECT, &pixelAspect,
 				  RI_ORIGIN, origin, RI_NULL);
+		RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_PIXELASPECT, &pixelAspect, RI_ORIGIN, origin, RI_NULL);
 	}
 	
 	// Commented out, origin do not influences display size
@@ -1168,7 +1173,7 @@ static void drawAnObject ()
 	
 	// Clipping
 	// RtFloat hither = RI_EPSILON, yonder = RI_INFINITY;
-	RtFloat hither = (RtFloat)0.4, yonder = 5;
+	RtFloat hither = (RtFloat)0.4, yonder = 500;
 	if ( [(MyNSObjectController *)panelController clippingEnabled] ) {
 		hither = (RtFloat)[(MyNSObjectController *)panelController clippingHither];
 		yonder = (RtFloat)[(MyNSObjectController *)panelController clippingYonder];
@@ -1215,12 +1220,10 @@ static void drawAnObject ()
 	}
 	
 	// World Block
-	
 	RiWorldBegin();
-	
 	RiSides(1);
 	RiColor(greenish);
-	
+
 	switch ( counter ) {
 		case 0:
 			testPoly(); // Simple concave no holes
@@ -1298,6 +1301,7 @@ static void drawAnObject ()
 	
 	RiWorldEnd();
 	RiFrameEnd();
+	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
 }
 
 - (IBAction)nextPoly:(id)sender

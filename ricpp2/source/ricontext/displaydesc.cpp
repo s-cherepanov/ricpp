@@ -139,6 +139,7 @@ RtVoid CDisplayChannelDescr::displayChannel(CDeclarationDictionary &dict, const 
 
 CDisplayDescr::CDisplayDescr()
 {
+	m_isPrimary = true;
 	m_type = RI_NULL;
 	m_mode = RI_NULL;
 	m_origin[0] = m_origin[1] = 0;
@@ -169,6 +170,8 @@ CDisplayDescr &CDisplayDescr::operator=(const CDisplayDescr &dd)
 	if ( &dd == this )
 		return *this;
 
+	m_isPrimary = dd.m_isPrimary;
+
 	m_type = dd.m_type;
 	m_mode = dd.m_mode;
 	m_origin[0] = dd.m_origin[0];
@@ -190,6 +193,8 @@ CDisplayDescr &CDisplayDescr::assignRemap(const CDisplayDescr &dd, CDeclarationD
 	if ( &dd == this )
 		return *this;
 
+	m_isPrimary = dd.m_isPrimary;
+
 	m_type = newDict.tokenMap().findCreate(dd.m_type);
 	m_mode = newDict.tokenMap().findCreate(dd.m_mode);
 	m_origin[0] = dd.m_origin[0];
@@ -210,12 +215,6 @@ CDisplayDescr &CDisplayDescr::assignRemap(const CDisplayDescr &dd, CDeclarationD
 
 	CParameterList::assignRemap(dd, newDict);
 	return *this;
-}
-
-bool CDisplayDescr::isPrimary() const
-{
-	const char *myName = name();
-	return myName && myName[0] != '+';
 }
 
 void CDisplayDescr::display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode)

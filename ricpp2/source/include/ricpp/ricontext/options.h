@@ -215,6 +215,7 @@ namespace RiCPP {
 		void initRelativeDetail();
 
 		void assignNumerics(const COptions &ro);
+		void removePrimaryDisplay();
 		
 	public:
 		inline COptions()

@@ -11,9 +11,12 @@ int main(int argc, char *argv[])
     int ret = 0;
 	RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
 	RiBegin("glrenderer");
+	// RiBegin("ribwriter");
+
 	RiWorldBegin();
-	// No GL Context here
+	// Test, no GL Context here
 	RiWorldEnd();
+
 	ret = NSApplicationMain(argc,  (const char **) argv);
 	RiEnd();
 	return ret;

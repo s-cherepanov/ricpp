@@ -61,6 +61,10 @@ protected:
 	typedef CTriangleRenderer TypeParent;
 	
 private:
+	RtToken RI_GLRENDERER;
+	RtToken RI_SCREEN;
+	RtToken RI_QUAL_SCREEN;
+	
 	bool m_validGL; ///< Valid GL Context found or created in initGLContext()
 	bool m_drawNormals; ///< Drawing normals for tests
 	
@@ -111,6 +115,8 @@ public:
 	using TypeParent::doProcess;
 	using TypeParent::preProcess;
 	using TypeParent::postProcess;
+
+	virtual RtVoid doProcess(CRiControl &obj);
 
 	virtual RtVoid doProcess(CRiWorldBegin &obj);
 	virtual RtVoid doProcess(CRiWorldEnd &obj);

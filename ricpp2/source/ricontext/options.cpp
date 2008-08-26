@@ -325,7 +325,8 @@ RtInt COptions::xResolution() const
 	
 	const CDisplayDescr *d = primaryDisplay();
 	if ( d ) {
-		return d->xres();
+		if ( d->xres() > 0 )
+			return d->xres();
 	}
 	return m_xResolution;
 }
@@ -347,7 +348,8 @@ RtInt COptions::yResolution() const
 	
 	const CDisplayDescr *d = primaryDisplay();
 	if ( d ) {
-		return d->yres();
+		if ( d->yres() > 0 )
+			return d->yres();
 	}
 	return m_yResolution;
 }
@@ -933,16 +935,21 @@ void COptions::initDisplays()
 
 RtVoid COptions::display(RtString name, RtToken type, RtString mode, const CParameterList &params)
 {
+	RtString realName = name;
+	bool isPrimary = true;
 	if ( name && name[0] != '+' ) {
 		m_displays.clear();
+		// removePrimaryDisplay(); // alternative
 	}
 	if ( name && name[0] == '+' ) {
-		++name;
+		++realName;
+		isPrimary = false;
 	}
 
 	m_displays.push_back(CDisplayDescr());
 	CDisplayDescr &dd = m_displays.back();
-	dd.display(m_displayChannels, name, type, mode, params);
+	dd.display(m_displayChannels, realName, type, mode, params);
+	dd.isPrimary(isPrimary);
 	dirty(true);
 }
 
@@ -976,6 +983,20 @@ const CDisplayDescr *COptions::primaryDisplay() const
 		}
 	}
 	return 0;
+}
+
+void COptions::removePrimaryDisplay()
+{
+	TypeDisplays::iterator iter;
+	for ( iter = m_displays.begin();
+		 iter != displayEnd();
+		 ++iter )
+	{
+		if ( (*iter).isPrimary() )
+		{
+			m_displays.erase(iter);
+		}
+	}
 }
 
 // ----

@@ -84,6 +84,8 @@ namespace RiCPP {
 		RtInt   m_xres,             ///< x-resolution, initialized with -1: Size of device
 		        m_yres;             ///< y-resolution, initialized with -1: Size of device
 		RtFloat m_pixelAspectRatio; ///< The pixel aspect ration, initialized with -1: Ratio of device pixel
+		
+		bool    m_isPrimary;
 
 		std::list<CDisplayChannelDescr> m_channels;
 		CStringList m_channelNames;
@@ -107,7 +109,7 @@ namespace RiCPP {
 		/*! @param dict Current declarations
 		 *  @param colorDescr Current color descriptor.
 		 *  @param channels Descriptors (declarations) of the display channels.
-		 *  @param aName Name of the display, @see m_name
+		 *  @param aName Name of the display (without prefic '+'), @see m_name
 		 *  @param aType The display type, @see m_type
 		 *  @param aMode The display mode, @see m_mode
 		 *  @param n Number of token/parameter pairs in @a tokens and @a params.
@@ -118,7 +120,9 @@ namespace RiCPP {
 		void display(const CDisplayDescr::TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode);
 		void display(const TypeDisplayChannels &channels, RtToken aName, RtToken aType, RtString aMode, const CParameterList &params);
 
-		bool isPrimary() const;
+		inline bool isPrimary() const { return m_isPrimary; }
+		inline void isPrimary(bool primaryFlag) { m_isPrimary = primaryFlag; }
+
 		inline RtToken type() const
 		{
 			return m_type;

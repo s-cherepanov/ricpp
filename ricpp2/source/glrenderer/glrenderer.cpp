@@ -69,6 +69,9 @@ RtToken CGLRenderer::myRendererType() { return RI_DRAFT; }
 CGLRenderer::CGLRenderer() : m_validGL(false), m_drawNormals(_DRAWNORMALS)
 {
 	useStrips(_USESTRIPS);
+	RI_GLRENDERER = RI_NULL;	
+	RI_SCREEN = RI_NULL;
+	RI_QUAL_SCREEN = RI_NULL;
 }
 
 CGLRenderer::~CGLRenderer()
@@ -78,6 +81,13 @@ CGLRenderer::~CGLRenderer()
 void CGLRenderer::defaultDeclarations()
 {
 	TypeParent::defaultDeclarations();
+	
+	// Additional tokens
+	RI_GLRENDERER = renderState()->tokFindCreate("glrenderer");
+	RI_SCREEN = renderState()->tokFindCreate("screen");
+
+	// Additional declarations
+	RI_QUAL_SCREEN = renderState()->declare("Control:glrenderer:screen",  "constant string",  true);	
 }
 
 void CGLRenderer::clearScreen()
@@ -323,9 +333,21 @@ void CGLRenderer::initViewing()
 	RtFloat pa;
 	renderState()->options().getFormat(xres, yres, pa);
 
-	RtInt offsetY = 0;
+	RtInt offsetY = yres;
 	RtInt originX = 0, originY = 0;
 
+	const CParameter *optYRes = renderState()->options().get(RI_GLRENDERER, RI_DISPYRES);
+	if ( optYRes ) {
+		optYRes->get(0, offsetY);
+	}
+	
+	const CParameter *optOrigin = renderState()->options().get(RI_GLRENDERER, RI_ORIGIN);
+	if ( optOrigin ) {
+		optOrigin->get(0, originX);
+		optOrigin->get(1, originY);
+	}
+
+	/*
 	const CDisplayDescr *o = renderState()->options().primaryDisplay();
 	if ( o ) {
 #		ifdef _TRACE
@@ -339,6 +361,7 @@ void CGLRenderer::initViewing()
 		}
 		o->getOrigin(originX, originY);
 	}
+	*/
 
 	glDisable(GL_CULL_FACE);
 	
@@ -510,21 +533,36 @@ bool CGLRenderer::delayRequest(CRManInterfaceCall &obj)
 	return false;
 }
 
+RtVoid CGLRenderer::doProcess(CRiControl &obj)
+{
+	if ( !valid() )
+		return;
+
+	if ( obj.name() == RI_GLRENDERER ) {
+		const CParameter *ctrlScreen = obj.parameters().get(RI_SCREEN);
+		if ( ctrlScreen ) {
+			std::string action;
+			if ( ctrlScreen->get(0, action) ) {
+				if ( action == "clear" )
+					clearScreen();
+				else if ( action == "finish" )
+					finishScreen();
+			}
+		}
+	}
+}
+
 RtVoid CGLRenderer::doProcess(CRiFrameBegin &obj)
 {
 	initGLContext();
 	if ( !valid() )
 		return;
-
-	clearScreen();
 }
 
 RtVoid CGLRenderer::doProcess(CRiFrameEnd &obj)
 {
 	if ( !valid() )
 		return;
-
-	finishScreen();
 }
 
 RtVoid CGLRenderer::doProcess(CRiWorldBegin &obj)

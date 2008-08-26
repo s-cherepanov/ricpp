@@ -375,76 +375,82 @@ void CBaseRenderer::replayDelayed()
 
 CMatrix3D CBaseRenderer::toCamera() const
 {
-	CMatrix3D m(transformation().getCTM());
-
+	CMatrix3D m;
+	
 	assert(renderState()->worldToCamera() != 0);
 	if ( renderState()->worldToCamera() )
 		m.concatTransform(renderState()->worldToCamera()->getCTM());
-	
+
+	m.concatTransform(transformation().getCTM());
+
 	return m;
 }
 
 CMatrix3D CBaseRenderer::toScreen() const
 {
-	CMatrix3D m(transformation().getCTM()); // Current to world
+	CMatrix3D m;
 	
+	assert(renderState()->cameraToScreen() != 0);
+	if ( renderState()->cameraToScreen() )
+		m.concatTransform(renderState()->cameraToScreen()->getCTM());
+
 	/** @todo Need to cache world to raster CTM in renderState() (fixed in world block)!
 	 */
 	assert(renderState()->worldToCamera() != 0);
 	if ( renderState()->worldToCamera() )
 		m.concatTransform(renderState()->worldToCamera()->getCTM());
 	
-	assert(renderState()->cameraToScreen() != 0);
-	if ( renderState()->cameraToScreen() )
-		m.concatTransform(renderState()->cameraToScreen()->getCTM());
-
+	m.concatTransform(transformation().getCTM());
 	return m;
 }
 
 CMatrix3D CBaseRenderer::toNDC() const
 {
-	CMatrix3D m(transformation().getCTM()); // Current to world
+	CMatrix3D m;
 	
 	/** @todo Need to cache world to raster CTM in renderState() (fixed in world block)!
-	 */
-	assert(renderState()->worldToCamera() != 0);
-	if ( renderState()->worldToCamera() )
-		m.concatTransform(renderState()->worldToCamera()->getCTM());
-	
-	assert(renderState()->cameraToScreen() != 0);
-	if ( renderState()->cameraToScreen() )
-		m.concatTransform(renderState()->cameraToScreen()->getCTM());
-	
-	
+	 */	
 	assert(renderState()->screenToNDC() != 0);
 	if ( renderState()->screenToNDC() )
 		m.concatTransform(renderState()->screenToNDC()->getCTM());
 
+	assert(renderState()->cameraToScreen() != 0);
+	if ( renderState()->cameraToScreen() )
+		m.concatTransform(renderState()->cameraToScreen()->getCTM());
+	
+	assert(renderState()->worldToCamera() != 0);
+	if ( renderState()->worldToCamera() )
+		m.concatTransform(renderState()->worldToCamera()->getCTM());	
+
+	m.concatTransform(transformation().getCTM());
 	return m;
 }
 
 CMatrix3D CBaseRenderer::toRaster() const
 {
-	CMatrix3D m(transformation().getCTM()); // Current to world
+	CMatrix3D m;
 	
 	/** @todo Need to cache world to raster CTM in renderState() (fixed in world block)!
 	 */
-	assert(renderState()->worldToCamera() != 0);
-	if ( renderState()->worldToCamera() )
-		m.concatTransform(renderState()->worldToCamera()->getCTM());
-	
-	assert(renderState()->cameraToScreen() != 0);
-	if ( renderState()->cameraToScreen() )
-		m.concatTransform(renderState()->cameraToScreen()->getCTM());
-	
-	assert(renderState()->screenToNDC() != 0);
-	if ( renderState()->screenToNDC() )
-		m.concatTransform(renderState()->screenToNDC()->getCTM());
-	
+
 	assert(renderState()->NDCToRaster() != 0);
 	if ( renderState()->NDCToRaster() )
 		m.concatTransform(renderState()->NDCToRaster()->getCTM());
 	
+	assert(renderState()->screenToNDC() != 0);
+	if ( renderState()->screenToNDC() )
+		m.concatTransform(renderState()->screenToNDC()->getCTM());
+
+	assert(renderState()->cameraToScreen() != 0);
+	if ( renderState()->cameraToScreen() )
+		m.concatTransform(renderState()->cameraToScreen()->getCTM());
+
+	assert(renderState()->worldToCamera() != 0);
+	if ( renderState()->worldToCamera() )
+		m.concatTransform(renderState()->worldToCamera()->getCTM());
+
+	m.concatTransform(transformation().getCTM());
+
 	return m;
 }
 

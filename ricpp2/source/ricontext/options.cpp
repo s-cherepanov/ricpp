@@ -356,12 +356,15 @@ RtInt COptions::yResolution() const
 
 RtFloat COptions::pixelAspectRatio() const
 {
-	if ( m_formatCalled )
+	if ( m_formatCalled && m_pixelAspectRatio > 0 )
 		return m_pixelAspectRatio;
 	
 	const CDisplayDescr *d = primaryDisplay();
 	if ( d && d->pixelAspectRatio() > 0 )
 		return d->pixelAspectRatio();
+	
+	if ( m_pixelAspectRatio <= 0 )
+		return defPixelAspectRatio;
 	
 	return m_pixelAspectRatio;
 }

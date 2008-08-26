@@ -92,6 +92,10 @@ void CGLRenderer::defaultDeclarations()
 
 void CGLRenderer::clearScreen()
 {
+	initGLContext(); // Can also be called twice (first time at frameBegin)
+	if ( !valid() )
+		return;
+
 	// Clear screen (called from frameBegin for multiple view ports as world blocks)
 	glDisable(GL_SCISSOR_TEST);
 	/** @todo Option for frame color (world block should also have a controlable background, white at the moment)
@@ -103,6 +107,9 @@ void CGLRenderer::clearScreen()
 
 void CGLRenderer::finishScreen()
 {
+	if ( !valid() )
+		return;
+
 	// Flush screen (called from frameEnd for multiple view ports as world blocks)
 	glFinish();
 #if defined(__APPLE__)
@@ -535,9 +542,6 @@ bool CGLRenderer::delayRequest(CRManInterfaceCall &obj)
 
 RtVoid CGLRenderer::doProcess(CRiControl &obj)
 {
-	if ( !valid() )
-		return;
-
 	if ( obj.name() == RI_GLRENDERER ) {
 		const CParameter *ctrlScreen = obj.parameters().get(RI_SCREEN);
 		if ( ctrlScreen ) {
@@ -554,7 +558,6 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 
 RtVoid CGLRenderer::doProcess(CRiFrameBegin &obj)
 {
-	initGLContext();
 	if ( !valid() )
 		return;
 }
@@ -567,7 +570,7 @@ RtVoid CGLRenderer::doProcess(CRiFrameEnd &obj)
 
 RtVoid CGLRenderer::doProcess(CRiWorldBegin &obj)
 {
-	initGLContext(); // Can also be called twice (first time at frameBegin)
+	initGLContext(); // Can also be called twice (first time at clearScreen)
 	if ( !valid() )
 		return;
 	initHider();

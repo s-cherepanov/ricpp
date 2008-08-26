@@ -21,6 +21,7 @@
 				C32B8B540D74582D0059B201 /* PBXTargetDependency */,
 				C37A0D3D0D6AC5940027CE77 /* PBXTargetDependency */,
 				C32DC7BB0DD4506800EE4989 /* PBXTargetDependency */,
+				C3911AB70E6451200051CB61 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -193,6 +194,16 @@
 		C3851FC00E3DF65000F74D69 /* trianglerenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C3851FBF0E3DF65000F74D69 /* trianglerenderer.h */; };
 		C3851FC80E3DF94200F74D69 /* trianglerenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3851FC70E3DF94200F74D69 /* trianglerenderer.cpp */; };
 		C38520E00E3E184700F74D69 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C38520DF0E3E184700F74D69 /* surface.cpp */; };
+		C3911A960E6450520051CB61 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C3911A910E6450520051CB61 /* InfoPlist.strings */; };
+		C3911A970E6450520051CB61 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = C3911A930E6450520051CB61 /* MainMenu.nib */; };
+		C3911A9B0E6450600051CB61 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C3911A990E6450600051CB61 /* main.m */; };
+		C3911A9C0E6450600051CB61 /* MyOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = C3911A9A0E6450600051CB61 /* MyOpenGLView.m */; };
+		C3911AA00E6450CF0051CB61 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */; };
+		C3911AA10E6450D20051CB61 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
+		C3911AB20E6450D50051CB61 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
+		C3911AB40E6451000051CB61 /* libglrenderer.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */; };
+		C3911AB50E6451040051CB61 /* libriprog.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
+		C3911AEB0E6454C50051CB61 /* ribviewer-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C3911AEA0E6454C50051CB61 /* ribviewer-Info.plist */; };
 		C392D7C00E48A32A003E5C41 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C392D8D10E48BBB2003E5C41 /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C392D8D00E48BBB2003E5C41 /* types.cpp */; };
 		C3969E5C0DDF098C00562F24 /* MyNSObjectController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */; };
@@ -491,6 +502,20 @@
 			remoteGlobalIDString = C38089430D3CAB4B00B6C3BA;
 			remoteInfo = ricontext;
 		};
+		C3911A9E0E6450C30051CB61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C31C22450D740489009D99C2 /* riprog */;
+			remoteInfo = riprog;
+		};
+		C3911AB60E6451200051CB61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3911A850E644F060051CB61 /* ribviewer */;
+			remoteInfo = ribviewer;
+		};
 		C3B259490E531D18001137C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -516,6 +541,17 @@
 			files = (
 				C345DCB80DF02D9600B2BC40 /* libriprog.1.dylib in CopyFiles */,
 				C345DCB70DF02D6400B2BC40 /* libglrenderer.1.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		C3911AB90E64513E0051CB61 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = .;
+			dstSubfolderSpec = 6;
+			files = (
+				C3911AB50E6451040051CB61 /* libriprog.1.dylib in CopyFiles */,
+				C3911AB40E6451000051CB61 /* libglrenderer.1.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -674,6 +710,13 @@
 		C3851FC70E3DF94200F74D69 /* trianglerenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = trianglerenderer.cpp; path = ../../../source/baserenderer/trianglerenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C38520DF0E3E184700F74D69 /* surface.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = surface.cpp; path = ../../../source/ricontext/surface.cpp; sourceTree = SOURCE_ROOT; };
 		C38EA2A20BE86D370057831B /* macfilepath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = macfilepath.cpp; path = ../../../source/tools/macfilepath.cpp; sourceTree = SOURCE_ROOT; };
+		C3911A860E644F060051CB61 /* ribviewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ribviewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3911A920E6450520051CB61 /* English */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
+		C3911A940E6450520051CB61 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = MainMenu.nib; sourceTree = "<group>"; };
+		C3911A990E6450600051CB61 /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../../source/ribviewer/main.m; sourceTree = SOURCE_ROOT; };
+		C3911A9A0E6450600051CB61 /* MyOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyOpenGLView.m; path = ../../../source/ribviewer/MyOpenGLView.m; sourceTree = SOURCE_ROOT; };
+		C3911A9D0E6450670051CB61 /* MyOpenGLView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 5; name = MyOpenGLView.h; path = ../../../source/ribviewer/MyOpenGLView.h; sourceTree = SOURCE_ROOT; };
+		C3911AEA0E6454C50051CB61 /* ribviewer-Info.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.xml; path = "ribviewer-Info.plist"; sourceTree = "<group>"; };
 		C392D8D00E48BBB2003E5C41 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = ../../../source/ricpp/types.cpp; sourceTree = SOURCE_ROOT; };
 		C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyNSObjectController.m; path = ../../../source/riglapp/MyNSObjectController.m; sourceTree = SOURCE_ROOT; };
 		C3969E5D0DDF09AE00562F24 /* MyNSObjectController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyNSObjectController.h; path = ../../../source/riglapp/MyNSObjectController.h; sourceTree = SOURCE_ROOT; };
@@ -931,6 +974,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C3911A840E644F060051CB61 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3911AB20E6450D50051CB61 /* libriprog.1.dylib in Frameworks */,
+				C3911AA10E6450D20051CB61 /* OpenGL.framework in Frameworks */,
+				C3911AA00E6450CF0051CB61 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C3CE0EEC0DCF50520014BC8E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -972,6 +1025,7 @@
 				C39753DD0C13FEE00089A579 /* ribfilter */,
 				C36C39AC0CBA1F3B00D2B7B2 /* ribparser */,
 				C37A0D320D6AC54B0027CE77 /* ribtool */,
+				C3911A770E644EB50051CB61 /* ribviewer */,
 				C3B848F90BD7621600DD22B5 /* ribwriter */,
 				C32093DA0BDCCF8100A0BB35 /* ribwriterdll */,
 				C372456D0CD5DD6C00945563 /* ricontext */,
@@ -1021,6 +1075,7 @@
 				C37F24DE0DCE288800A64BDB /* libglrenderer.a */,
 				C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */,
 				C3CE0EEE0DCF50520014BC8E /* riglapp.app */,
+				C3911A860E644F060051CB61 /* ribviewer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1731,6 +1786,52 @@
 			);
 			name = Header;
 			sourceTree = "<group>";
+		};
+		C3911A770E644EB50051CB61 /* ribviewer */ = {
+			isa = PBXGroup;
+			children = (
+				C3911A790E644EE30051CB61 /* Resources */,
+				C3911AEA0E6454C50051CB61 /* ribviewer-Info.plist */,
+				C3911A7A0E644EEB0051CB61 /* Header */,
+				C3911A780E644ED70051CB61 /* Implementation */,
+			);
+			name = ribviewer;
+			sourceTree = "<group>";
+		};
+		C3911A780E644ED70051CB61 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C3911A990E6450600051CB61 /* main.m */,
+				C3911A9A0E6450600051CB61 /* MyOpenGLView.m */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		C3911A790E644EE30051CB61 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C3911A900E6450520051CB61 /* English.lproj */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		C3911A7A0E644EEB0051CB61 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				C3911A9D0E6450670051CB61 /* MyOpenGLView.h */,
+			);
+			name = Header;
+			sourceTree = "<group>";
+		};
+		C3911A900E6450520051CB61 /* English.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				C3911A910E6450520051CB61 /* InfoPlist.strings */,
+				C3911A930E6450520051CB61 /* MainMenu.nib */,
+			);
+			name = English.lproj;
+			path = ../../../source/ribviewer/English.lproj;
+			sourceTree = SOURCE_ROOT;
 		};
 		C39753D70C13FE830089A579 /* passthrough */ = {
 			isa = PBXGroup;
@@ -2738,6 +2839,25 @@
 			productReference = C383C1020DBC88E00059B71D /* testpoly */;
 			productType = "com.apple.product-type.tool";
 		};
+		C3911A850E644F060051CB61 /* ribviewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C3911A8B0E644F070051CB61 /* Build configuration list for PBXNativeTarget "ribviewer" */;
+			buildPhases = (
+				C3911A820E644F060051CB61 /* Resources */,
+				C3911A830E644F060051CB61 /* Sources */,
+				C3911A840E644F060051CB61 /* Frameworks */,
+				C3911AB90E64513E0051CB61 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C3911A9F0E6450C30051CB61 /* PBXTargetDependency */,
+			);
+			name = ribviewer;
+			productName = ribviewer;
+			productReference = C3911A860E644F060051CB61 /* ribviewer.app */;
+			productType = "com.apple.product-type.application";
+		};
 		C3CE0EED0DCF50520014BC8E /* riglapp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C3CE0EF30DCF50520014BC8E /* Build configuration list for PBXNativeTarget "riglapp" */;
@@ -2796,11 +2916,22 @@
 				C31C22B60D740F03009D99C2 /* testribind */,
 				C383C1010DBC88E00059B71D /* testpoly */,
 				C3CE0EED0DCF50520014BC8E /* riglapp */,
+				C3911A850E644F060051CB61 /* ribviewer */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C3911A820E644F060051CB61 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3911A960E6450520051CB61 /* InfoPlist.strings in Resources */,
+				C3911A970E6450520051CB61 /* MainMenu.nib in Resources */,
+				C3911AEB0E6454C50051CB61 /* ribviewer-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C3CE0EEA0DCF50520014BC8E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3057,6 +3188,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C3911A830E644F060051CB61 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C3911A9B0E6450600051CB61 /* main.m in Sources */,
+				C3911A9C0E6450600051CB61 /* MyOpenGLView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C3CE0EEB0DCF50520014BC8E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3245,6 +3385,16 @@
 			target = C38089430D3CAB4B00B6C3BA /* ricontext */;
 			targetProxy = C383C1090DBC89170059B71D /* PBXContainerItemProxy */;
 		};
+		C3911A9F0E6450C30051CB61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C31C22450D740489009D99C2 /* riprog */;
+			targetProxy = C3911A9E0E6450C30051CB61 /* PBXContainerItemProxy */;
+		};
+		C3911AB70E6451200051CB61 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3911A850E644F060051CB61 /* ribviewer */;
+			targetProxy = C3911AB60E6451200051CB61 /* PBXContainerItemProxy */;
+		};
 		C3B2594A0E531D18001137C0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C32B8B0D0D7451C70059B201 /* ri */;
@@ -3256,6 +3406,25 @@
 			targetProxy = C3B2594B0E531D1F001137C0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		C3911A910E6450520051CB61 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C3911A920E6450520051CB61 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		C3911A930E6450520051CB61 /* MainMenu.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C3911A940E6450520051CB61 /* English */,
+			);
+			name = MainMenu.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB923608733DC60010E9CD /* Debug */ = {
@@ -4231,6 +4400,57 @@
 			};
 			name = Release;
 		};
+		C3911A890E644F070051CB61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				INFOPLIST_FILE = "ribviewer-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = ribviewer;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C3911A8A0E644F070051CB61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_PROTOTYPE_CONVERSION = NO;
+				INFOPLIST_FILE = "ribviewer-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = ribviewer;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C3CE0EF10DCF50520014BC8E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4574,6 +4794,15 @@
 			buildConfigurations = (
 				C383C1040DBC88E10059B71D /* Debug */,
 				C383C1050DBC88E10059B71D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C3911A8B0E644F070051CB61 /* Build configuration list for PBXNativeTarget "ribviewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C3911A890E644F070051CB61 /* Debug */,
+				C3911A8A0E644F070051CB61 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

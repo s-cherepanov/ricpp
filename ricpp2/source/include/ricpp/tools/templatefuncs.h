@@ -957,7 +957,6 @@ namespace RiCPP {
 	
 	template<typename _T> inline _T delta(_T minVal, _T maxVal, _T tess)
 	{
-		assert(minVal <= maxVal);
 		assert(tess > 0);
 		return (maxVal-minVal) / tess;
 		// Can be less eps, even zero... (e.g. cone height 0)
@@ -965,7 +964,6 @@ namespace RiCPP {
 	
 	template<typename _T> inline _T deltaNotZero(_T minVal, _T maxVal, _T tess)
 	{
-		assert(minVal <= maxVal);
 		assert(tess > 0);
 		RtFloat result = (maxVal-minVal) / tess;
 		if ( (static_cast<_T>(1) + result) == static_cast<_T>(1) )

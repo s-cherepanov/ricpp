@@ -716,3 +716,4 @@ RtVoid CGLRenderer::doProcess(CRiNuPatch &obj)
 	
 	triangulate(obj);
 }
+

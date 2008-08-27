@@ -15,7 +15,7 @@
 #endif
 
 static const int startScreen = 22; // 0-maxScreens
-static const int maxScreens = 22;
+static const int maxScreens = 23;
 
 static RtFloat opacity_25[] = {0.25,  0.25, 0.25};
 static RtFloat opacity_50[] = {0.5,  0.5, 0.5};
@@ -23,6 +23,18 @@ static RtFloat opacity_75[] = {0.75,  0.75, 0.75};
 static RtFloat greenish[] = {0.5,  1, 0.5};
 static RtFloat redish[] = {1,  0.5, 0.5};
 static RtFloat blueish[] = {0.5,  0.5, 1};
+
+void testTeapot()
+{
+    RiAttributeBegin();
+	RiColor(blueish);
+	RiTranslate(0, -.2, 2);
+	RiScale(0.3F, 0.3F, 0.3F);
+	RiRotate(-135, 1, 0, 0);
+	RiSides(2);
+	RiGeometry(RI_TEAPOT, RI_NULL);
+    RiAttributeEnd();
+}
 
 void testSimpleNuPatch()
 {
@@ -1293,6 +1305,9 @@ static void drawAnObject ()
 			break;
 		case 22: // NuPatch (vase)
 			testNuPatch();
+			break;
+		case 23: // Teapot
+			testTeapot();
 			break;
 		default:
 			// drawAnObject(); // GL test

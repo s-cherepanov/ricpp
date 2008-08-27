@@ -474,6 +474,11 @@ protected:
 	{
 		return attributes().primitiveOrientation() == renderState()->viewingOrientation();
 	}
+
+	/** @brief Calls the interface routines for a teapot
+	 */
+	void teapot();
+
 public:
 
 	virtual bool init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls);
@@ -993,8 +998,8 @@ public:
 	inline virtual RtVoid doProcess(CRiBlobby &obj) {}
 	
 	virtual RtVoid doProcess(CRiProcedural &obj);
-
-	inline virtual RtVoid doProcess(CRiGeometry &obj) {}
+	
+	virtual RtVoid doProcess(CRiGeometry &obj);
 
 	inline virtual RtVoid doProcess(CRiMakeTexture &obj) {}
     inline virtual RtVoid doProcess(CRiMakeBump &obj) {}

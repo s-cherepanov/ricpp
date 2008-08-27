@@ -4721,7 +4721,7 @@ namespace RiCPP {
 	 */
 	class CRiGeometry : public CVarParamRManInterfaceCall {
 	private:
-		RtToken m_name; ///< Name of the geometry as atomized string.
+		RtToken m_type; ///< Type of the geometry as atomized string.
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
@@ -4749,8 +4749,8 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 *  @param aName Name of the geometry as atomized string.
 		 */
-		inline CRiGeometry(long aLineNo = -1, RtToken aName = RI_NULL)
-			: TypeParent(aLineNo), m_name(aName)
+		inline CRiGeometry(long aLineNo = -1, RtToken aType = RI_NULL)
+			: TypeParent(aLineNo), m_type(aType)
 		{
 		}
 
@@ -4766,10 +4766,10 @@ namespace RiCPP {
 		 */
 		inline CRiGeometry(
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
-			RtToken aName,
+			RtToken aType,
 			RtInt n, RtToken tokens[], RtPointer params[])
 			: TypeParent(aLineNo, decl, CParameterClasses(), curColorDescr, n, tokens, params),
-			  m_name(aName)
+			  m_type(aType)
 		{
 		}
 
@@ -4781,10 +4781,10 @@ namespace RiCPP {
 		 */
 		inline CRiGeometry(
 			long aLineNo,
-			RtToken aName,
+			RtToken aType,
 			const CParameterList &theParameters)
 			: TypeParent(aLineNo, theParameters),
-			  m_name(aName)
+			  m_type(aType)
 		{
 		}
 
@@ -4809,23 +4809,23 @@ namespace RiCPP {
 		 *
 		 *  @return The name of the attribute as atomized string.
 		 */
-		inline RtToken name() const
+		inline RtToken type() const
 		{
-			return m_name;
+			return m_type;
 		}
 
 		/** @brief Sets the name of the attribute as atomized string.
 		 *
 		 *  @param aName The name of the attribute as atomized string.
 		 */
-		inline void name(RtToken aName)
+		inline void type(RtToken aType)
 		{
-			m_name = aName;
+			m_type = aType;
 		}
 
 		inline virtual void process(IRiRoot &ri)
 		{
-			ri.geometryV(name(), paramSize(), tokenPtr(), valuePtr());
+			ri.geometryV(type(), paramSize(), tokenPtr(), valuePtr());
 		}
 		
 		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
@@ -4847,7 +4847,7 @@ namespace RiCPP {
 		{
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
-			ribWriter.putStringToken(name());
+			ribWriter.putStringToken(type());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
@@ -4861,7 +4861,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
-			name(c.name());
+			type(c.type());
 
 			TypeParent::operator=(c);
 			return *this;

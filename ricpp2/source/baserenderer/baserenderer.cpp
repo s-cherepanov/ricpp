@@ -125,9 +125,9 @@ using namespace RiCPP;
 			return ERR_RETVAL; \
 	}
 
-#define RICPP_UNREC_TOKENS { \
+#define RICPP_UNREC_TOKENS(nParamsSav) { \
 \
-	if ( n != renderState()->numTokens() ) { \
+	if ( n != (nParamsSav) ) { \
 		ricppErrHandler().handleError( \
 			RIE_BADTOKEN, RIE_WARNING, \
 			renderState()->printLineNo(__LINE__), \
@@ -136,6 +136,138 @@ using namespace RiCPP;
 	} \
 }
 
+void CBaseRenderer::teapot()
+{
+	RtToken ri_p[1] = { RI_P };
+	RtPointer patch[1];
+	
+	attributeBegin();
+	
+    basis(RiBezierBasis, RI_BEZIERSTEP, RiBezierBasis, RI_BEZIERSTEP);
+	
+	RtFloat patch_1[] = {
+		1.5F,       0.0F,      0.0F,      1.5F,       0.828427F, 0.0F,      0.828427F,  1.5F,      0.0F,      0.0F,       1.5F,      0.0F,
+		-0.828427F,  1.5F,      0.0F,     -1.5F,       0.828427F, 0.0F,     -1.5F,       0.0F,      0.0F,     -1.5F,      -0.828427F, 0.0F,
+		-0.828427F, -1.5F,      0.0F,      0.0F,      -1.5F,      0.0F,      0.828427F, -1.5F,      0.0F,      1.5F,      -0.828427F, 0.0F,
+		1.5F,       0.0F,      0.0F,      1.5F,       0.0F,      0.075F,    1.5F,       0.828427F, 0.075F,    0.828427F,  1.5F,      0.075F,
+		
+		0.0F,       1.5F,      0.075F,   -0.828427F,  1.5F,      0.075F,   -1.5F,       0.828427F, 0.075F,   -1.5F,       0.0F,      0.075F,
+		-1.5F,      -0.828427F, 0.075F,   -0.828427F, -1.5F,      0.075F,    0.0F,      -1.5F,      0.075F,    0.828427F, -1.5F,      0.075F,
+		1.5F,      -0.828427F, 0.075F,    1.5F,       0.0F,      0.075F,    2.0F,       0.0F,      0.3F,      2.0F,       1.10457F,  0.3F,
+		1.10457F,   2.0F,      0.3F,      0.0F,       2.0F,      0.3F,     -1.10457F,   2.0F,      0.3F,     -2.0F,       1.10457F,  0.3F,
+		
+		-2.0F,       0.0F,      0.3F,     -2.0F,      -1.10457F,  0.3F,     -1.10457F,  -2.0F,      0.3F,      0.0F,      -2.0F,      0.3F,
+		1.10457F,  -2.0F,      0.3F,      2.0F,      -1.10457F,  0.3F,      2.0F,       0.0F,      0.3F,      2.0F,       0.0F,      0.75F,
+		2.0F,       1.10457F,  0.75F,     1.10457F,   2.0F,      0.75F,     0.0F,       2.0F,      0.75F,    -1.10457F,   2.0F,      0.75F,
+		-2.0F,       1.10457F,  0.75F,    -2.0F,       0.0F,      0.75F,    -2.0F,      -1.10457F,  0.75F,    -1.10457F,  -2.0F,      0.75F,
+		
+		0.0F,      -2.0F,      0.75F,     1.10457F,  -2.0F,      0.75F,     2.0F,      -1.10457F,  0.75F,     2.0F,       0.0F,      0.75F,
+		2.0F,       0.0F,      1.2F,      2.0F,       1.10457F,  1.2F,      1.10457F,   2.0F,      1.2F,      0.0F,       2.0F,      1.2F,
+		-1.10457F,   2.0F,      1.2F,     -2.0F,       1.10457F,  1.2F,     -2.0F,       0.0F,      1.2F,     -2.0F,      -1.10457F,  1.2F,
+		-1.10457F,  -2.0F,      1.2F,      0.0F,      -2.0F,      1.2F,      1.10457F,  -2.0F,      1.2F,      2.0F,      -1.10457F,  1.2F,
+		
+		2.0F,       0.0F,      1.2F,      1.75F,      0.0F,      1.725F,    1.75F,      0.966498F, 1.725F,    0.966498F,  1.75F,     1.725F,
+		0.0F,       1.75F,     1.725F,   -0.966498F,  1.75F,     1.725F,   -1.75F,      0.966498F, 1.725F,   -1.75F,      0.0F,      1.725F,
+		-1.75F,     -0.966498F, 1.725F,   -0.966498F, -1.75F,     1.725F,    0.0F,      -1.75F,     1.725F,    0.966498F, -1.75F,     1.725F,
+		1.75F,     -0.966498F, 1.725F,    1.75F,      0.0F,      1.725F,    1.5F,       0.0F,      2.25F,     1.5F,       0.828427F, 2.25F,
+		
+		0.828427F,  1.5F,      2.25F,     0.0F,       1.5F,      2.25F,    -0.828427F,  1.5F,      2.25F,    -1.5F,       0.828427F, 2.25F,
+		-1.5F,       0.0F,      2.25F,    -1.5F,      -0.828427F, 2.25F,    -0.828427F, -1.5F,      2.25F,     0.0F,      -1.5F,      2.25F,
+		0.828427F, -1.5F,      2.25F,     1.5F,      -0.828427F, 2.25F,     1.5F,       0.0F,      2.25F,     1.4375F,    0.0F,      2.38125F,
+		1.4375F,    0.793909F, 2.38125F,  0.793909F,  1.4375F,   2.38125F,  0.0F,       1.4375F,   2.38125F, -0.793909F,  1.4375F,   2.38125F,
+		
+		-1.4375F,    0.793909F, 2.38125F, -1.4375F,    0.0F,      2.38125F, -1.4375F,   -0.793909F, 2.38125F, -0.793909F, -1.4375F,   2.38125F,
+		0.0F,      -1.4375F,   2.38125F,  0.793909F, -1.4375F,   2.38125F,  1.4375F,   -0.793909F, 2.38125F,  1.4375F,    0.0F,      2.38125F,
+		1.3375F,    0.0F,      2.38125F,  1.3375F,    0.738681F, 2.38125F,  0.738681F,  1.3375F,   2.38125F,  0.0F,       1.3375F,   2.38125F,
+		-0.738681F,  1.3375F,   2.38125F, -1.3375F,    0.738681F, 2.38125F, -1.3375F,    0.0F,      2.38125F, -1.3375F,   -0.738681F, 2.38125F,
+		
+		-0.738681F, -1.3375F,   2.38125F,  0.0F,      -1.3375F,   2.38125F,  0.738681F, -1.3375F,   2.38125F,  1.3375F,   -0.738681F, 2.38125F,
+		1.3375F,    0.0F,      2.38125F,  1.4F,       0.0F,      2.25F,     1.4F,       0.773198F, 2.25F,     0.773198F,  1.4F,      2.25F,
+		0.0F,       1.4F,      2.25F,    -0.773198F,  1.4F,      2.25F,    -1.4F,       0.773198F, 2.25F,    -1.4F,       0.0F,      2.25F,
+		-1.4F,      -0.773198F, 2.25F,    -0.773198F, -1.4F,      2.25F,     0.0F,      -1.4F,      2.25F,     0.773198F, -1.4F,      2.25F,
+		
+		1.4F,      -0.773198F, 2.25F,     1.4F,       0.0F,      2.25F};
+	patch[0] = (RtPointer)&patch_1[0];
+	patchMeshV(RI_BICUBIC, 13, RI_NONPERIODIC, 10, RI_NONPERIODIC, 1, ri_p, patch); 
+	
+	RtFloat patch_2[] = {
+		1.3F, 0.0F, 2.25F, 1.3F, 0.71797F, 2.25F, 0.71797F, 1.3F, 2.25F, 0.0F, 1.3F, 2.25F,
+		-0.71797F, 1.3F, 2.25F, -1.3F, 0.71797F, 2.25F, -1.3F, 0.0F, 2.25F, -1.3F, -0.71797F, 2.25F,
+		-0.71797F, -1.3F, 2.25F, 0.0F, -1.3F, 2.25F, 0.71797F, -1.3F, 2.25F, 1.3F, -0.71797F, 2.25F,
+		1.3F, 0.0F, 2.25F, 1.3F, 0.0F, 2.4F, 1.3F, 0.71797F, 2.4F, 0.71797F, 1.3F, 2.4F,
+		0.0F, 1.3F, 2.4F, -0.71797F, 1.3F, 2.4F, -1.3F, 0.71797F, 2.4F, -1.3F, 0.0F, 2.4F,
+		-1.3F, -0.71797F, 2.4F, -0.71797F, -1.3F, 2.4F, 0.0F, -1.3F, 2.4F, 0.71797F, -1.3F, 2.4F,
+		1.3F, -0.71797F, 2.4F, 1.3F, 0.0F, 2.4F, 0.4F, 0.0F, 2.4F, 0.4F, 0.220914F, 2.4F,
+		0.220914F, 0.4F, 2.4F, 0.0F, 0.4F, 2.4F, -0.220914F, 0.4F, 2.4F, -0.4F, 0.220914F, 2.4F,
+		-0.4F, 0.0F, 2.4F, -0.4F, -0.220914F, 2.4F, -0.220914F, -0.4F, 2.4F, 0.0F, -0.4F, 2.4F,
+		0.220914F, -0.4F, 2.4F, 0.4F, -0.220914F, 2.4F, 0.4F, 0.0F, 2.4F, 0.2F, 0.0F, 2.55F,
+		0.2F, 0.110457F, 2.55F, 0.110457F, 0.2F, 2.55F, 0.0F, 0.2F, 2.55F, -0.110457F, 0.2F, 2.55F,
+		-0.2F, 0.110457F, 2.55F, -0.2F, 0.0F, 2.55F, -0.2F, -0.110457F, 2.55F, -0.110457F, -0.2F, 2.55F,
+		0.0F, -0.2F, 2.55F, 0.110457F, -0.2F, 2.55F, 0.2F, -0.110457F, 2.55F, 0.2F, 0.0F, 2.55F,
+		0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F,
+		0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F,
+		0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F, 0.0F, 0.0F, 2.7F,
+		0.0F, 0.0F, 2.7F, 0.8F, 0.0F, 3.0F, 0.8F, 0.441828F, 3.0F, 0.441828F, 0.8F, 3.0F,
+		0.0F, 0.8F, 3.0F, -0.441828F, 0.8F, 3.0F, -0.8F, 0.441828F, 3.0F, -0.8F, 0.0F, 3.0F,
+		-0.8F, -0.441828F, 3.0F, -0.441828F, -0.8F, 3.0F, 0.0F, -0.8F, 3.0F, 0.441828F, -0.8F, 3.0F,
+		0.8F, -0.441828F, 3.0F, 0.8F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F,
+		0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F,
+		0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F,
+		0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F, 0.0F, 0.0F, 3.0F
+	};
+	patch[0] = (RtPointer)&patch_2[0];
+	patchMeshV(RI_BICUBIC, 13, RI_NONPERIODIC,  7, RI_NONPERIODIC, 1, ri_p, patch); 
+	
+	RtFloat patch_3[] = {
+		-2.0F, 0.0F, 0.75F, -2.0F, 0.3F, 0.75F, -1.9F, 0.3F, 0.45F, -1.9F, 0.0F, 0.45F,
+		-2.5F, 0.0F, 0.975F, -2.5F, 0.3F, 0.975F, -2.65F, 0.3F, 0.7875F, -2.65F, 0.0F, 0.7875F,
+		-2.7F, 0.0F, 1.425F, -2.7F, 0.3F, 1.425F, -3.0F, 0.3F, 1.2F, -3.0F, 0.0F, 1.2F,
+		-2.7F, 0.0F, 1.65F, -2.7F, 0.3F, 1.65F, -3.0F, 0.3F, 1.65F, -3.0F, 0.0F, 1.65F,
+		-2.7F, 0.0F, 1.875F, -2.7F, 0.3F, 1.875F, -3.0F, 0.3F, 2.1F, -3.0F, 0.0F, 2.1F,
+		-2.3F, 0.0F, 1.875F, -2.3F, 0.3F, 1.875F, -2.5F, 0.3F, 2.1F, -2.5F, 0.0F, 2.1F,
+		-1.6F, 0.0F, 1.875F, -1.6F, 0.3F, 1.875F, -1.5F, 0.3F, 2.1F, -1.5F, 0.0F, 2.1F
+	};
+	patch[0] = (RtPointer)&patch_3[0];
+	patchMeshV(RI_BICUBIC,  4, RI_NONPERIODIC,  7, RI_NONPERIODIC, 1, ri_p, patch); 
+	
+	RtFloat patch_4[] = {
+		2.8F, 0.0F, 2.25F, 2.8F, 0.15F, 2.25F, 3.2F, 0.15F, 2.25F, 3.2F, 0.0F, 2.25F,
+		2.9F, 0.0F, 2.325F, 2.9F, 0.25F, 2.325F, 3.45F, 0.15F, 2.3625F, 3.45F, 0.0F, 2.3625F,
+		2.8F, 0.0F, 2.325F, 2.8F, 0.25F, 2.325F, 3.525F, 0.25F, 2.34375F, 3.525F, 0.0F, 2.34375F,
+		2.7F, 0.0F, 2.25F, 2.7F, 0.25F, 2.25F, 3.3F, 0.25F, 2.25F, 3.3F, 0.0F, 2.25F,
+		2.3F, 0.0F, 1.95F, 2.3F, 0.25F, 1.95F, 2.4F, 0.25F, 1.875F, 2.4F, 0.0F, 1.875F,
+		2.6F, 0.0F, 1.275F, 2.6F, 0.66F, 1.275F, 3.1F, 0.66F, 0.675F, 3.1F, 0.0F, 0.675F,
+		1.7F, 0.0F, 1.275F, 1.7F, 0.66F, 1.275F, 1.7F, 0.66F, 0.45F, 1.7F, 0.0F, 0.45F
+	};
+	patch[0] = (RtPointer)&patch_4[0];
+	patchMeshV(RI_BICUBIC,  4, RI_NONPERIODIC,  7, RI_NONPERIODIC, 1, ri_p, patch); 
+	
+	RtFloat patch_5[] = {
+		-1.9F, 0.0F, 0.45F, -1.9F, -0.3F, 0.45F, -2.0F, -0.3F, 0.75F, -2.0F, 0.0F, 0.75F,
+		-2.65F, 0.0F, 0.7875F, -2.65F, -0.3F, 0.7875F, -2.5F, -0.3F, 0.975F, -2.5F, 0.0F, 0.975F,
+		-3.0F, 0.0F, 1.2F, -3.0F, -0.3F, 1.2F, -2.7F, -0.3F, 1.425F, -2.7F, 0.0F, 1.425F,
+		-3.0F, 0.0F, 1.65F, -3.0F, -0.3F, 1.65F, -2.7F, -0.3F, 1.65F, -2.7F, 0.0F, 1.65F,
+		-3.0F, 0.0F, 2.1F, -3.0F, -0.3F, 2.1F, -2.7F, -0.3F, 1.875F, -2.7F, 0.0F, 1.875F,
+		-2.5F, 0.0F, 2.1F, -2.5F, -0.3F, 2.1F, -2.3F, -0.3F, 1.875F, -2.3F, 0.0F, 1.875F,
+		-1.5F, 0.0F, 2.1F, -1.5F, -0.3F, 2.1F, -1.6F, -0.3F, 1.875F, -1.6F, 0.0F, 1.875F
+	};
+	patch[0] = (RtPointer)&patch_5[0];
+	patchMeshV(RI_BICUBIC,  4, RI_NONPERIODIC,  7, RI_NONPERIODIC, 1, ri_p, patch); 
+	
+	RtFloat patch_6[] = {
+		3.2F, 0.0F, 2.25F, 3.2F, -0.15F, 2.25F, 2.8F, -0.15F, 2.25F, 2.8F, 0.0F, 2.25F,
+		3.45F, 0.0F, 2.3625F, 3.45F, -0.15F, 2.3625F, 2.9F, -0.25F, 2.325F, 2.9F, 0.0F, 2.325F,
+		3.525F, 0.0F, 2.34375F, 3.525F, -0.25F, 2.34375F, 2.8F, -0.25F, 2.325F, 2.8F, 0.0F, 2.325F,
+		3.3F, 0.0F, 2.25F, 3.3F, -0.25F, 2.25F, 2.7F, -0.25F, 2.25F, 2.7F, 0.0F, 2.25F,
+		2.4F, 0.0F, 1.875F, 2.4F, -0.25F, 1.875F, 2.3F, -0.25F, 1.95F, 2.3F, 0.0F, 1.95F,
+		3.1F, 0.0F, 0.675F, 3.1F, -0.66F, 0.675F, 2.6F, -0.66F, 1.275F, 2.6F, 0.0F, 1.275F,
+		1.7F, 0.0F, 0.45F, 1.7F, -0.66F, 0.45F, 1.7F, -0.66F, 1.275F, 1.7F, 0.0F, 1.275F
+	};
+	patch[0] = (RtPointer)&patch_6[0];
+	patchMeshV(RI_BICUBIC,  4, RI_NONPERIODIC,  7, RI_NONPERIODIC, 1, ri_p, patch);
+	
+	attributeEnd();
+}
 
 bool CBaseRenderer::isOpaque(const std::vector<RtFloat> &opacity) const
 {
@@ -145,7 +277,6 @@ bool CBaseRenderer::isOpaque(const std::vector<RtFloat> &opacity) const
 	}
 	return false;
 }
-
 
 RtFloat CBaseRenderer::opacityToAlpha(IndexType nSamples, const RtFloat *opacity) const
 {
@@ -930,17 +1061,19 @@ RtVoid CBaseRenderer::preProcess(CRiBegin &obj)
 RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ExceptRiCPPError
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE_RET(REQ_BEGIN, illContextHandle)
 
 		// Indicates that begin has been called
 		renderState()->contextBegin();
 	
 		renderState()->parseParameters(RI_BEGIN, name, CParameterClasses(), n, tokens, params);
+	    nParamsSav = renderState()->curParamList().size();
 		name = renderState()->tokFindCreate(name);
 		RICPP_PROCESS_IMMEDIATE(newRiBegin(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE_RET(illContextHandle)
 
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 
 	// There is no handle here, the frontend creates the backend
 	return 1; // indicates success
@@ -1319,23 +1452,29 @@ RtVoid CBaseRenderer::preProcess(CRiResource &obj)
 
 RtVoid CBaseRenderer::resourceV(RtToken handle, RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_RESOURCE)
 		handle = renderState()->tokFindCreate(handle);
 		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(RI_RESOURCE, type, CParameterClasses(), n, tokens, params);
+	    nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiResource(renderState()->lineNo(), handle, type, renderState()->curParamList()));
 	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtArchiveHandle CBaseRenderer::archiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) 
 {
+	RtInt nParamsSav = n;
 	RtArchiveHandle handle = illArchiveHandle;
 	RICPP_PREAMBLE_RET(REQ_ARCHIVE_BEGIN, illArchiveHandle)
 		name = renderState()->tokFindCreate(name);
 		handle = renderState()->archiveBegin(name, macroFactory());
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS_IMMEDIATE(newRiArchiveBegin(renderState()->lineNo(), handle, name, renderState()->curParamList()));
 	RICPP_POSTAMBLE_RET(illArchiveHandle)
+	RICPP_UNREC_TOKENS(nParamsSav)
 	return handle;
 }
 
@@ -1420,12 +1559,14 @@ RtVoid CBaseRenderer::preProcess(CRiProjection &obj)
 
 RtVoid CBaseRenderer::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_PROJECTION)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_PROJECTION, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiProjection(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1543,12 +1684,14 @@ RtVoid CBaseRenderer::preProcess(CRiImager &obj)
 
 RtVoid CBaseRenderer::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_IMAGER)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_IMAGER, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiImager(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1573,12 +1716,14 @@ RtVoid CBaseRenderer::preProcess(CRiDisplayChannel &obj)
 
 RtVoid CBaseRenderer::displayChannelV(RtToken channel, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_DISPLAY_CHANNEL)
 		channel = renderState()->tokFindCreate(channel);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiDisplayChannel(renderState()->lineNo(), channel, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::preProcess(CRiDisplay &obj)
@@ -1588,13 +1733,15 @@ RtVoid CBaseRenderer::preProcess(CRiDisplay &obj)
 
 RtVoid CBaseRenderer::displayV(RtString name, RtToken type, RtString mode, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_DISPLAY)
 		type = renderState()->tokFindCreate(type);
 		mode = renderState()->tokFindCreate(mode);
 		renderState()->parseParameters(RI_DISPLAY, type, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiDisplay(renderState()->lineNo(), name, type, mode, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1605,12 +1752,14 @@ RtVoid CBaseRenderer::preProcess(CRiHider &obj)
 
 RtVoid CBaseRenderer::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_HIDER)
 		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(RI_HIDER, type, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiHider(renderState()->lineNo(), type, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1654,12 +1803,14 @@ RtVoid CBaseRenderer::preProcess(CRiOption &obj)
 
 RtVoid CBaseRenderer::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_OPTION)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_OPTION, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiOption(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1670,12 +1821,14 @@ RtVoid CBaseRenderer::preProcess(CRiControl &obj)
 
 RtVoid CBaseRenderer::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_CONTROL)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_CONTROL, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS_IMMEDIATE(newRiControl(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1709,15 +1862,17 @@ RtVoid CBaseRenderer::doProcess(CRiLightSource &obj)
 
 RtLightHandle CBaseRenderer::lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RtLightHandle h = illLightHandle;
 
 	RICPP_PREAMBLE_RET(REQ_LIGHT_SOURCE, illLightHandle)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		h = renderState()->newLightHandle(name, renderState()->curParamList());
 		RICPP_PROCESS(newRiLightSource(renderState()->lineNo(), h, name, renderState()->curParamList()));
 	RICPP_POSTAMBLE_RET(illLightHandle)
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 
 	return h;
 }
@@ -1763,15 +1918,17 @@ RtVoid CBaseRenderer::doProcess(CRiAreaLightSource &obj)
 	
 RtLightHandle CBaseRenderer::areaLightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RtLightHandle h = illLightHandle;
 
 	RICPP_PREAMBLE_RET(REQ_AREA_LIGHT_SOURCE, illLightHandle)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_AREA_LIGHT_SOURCE, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		h = renderState()->newLightHandle(name, renderState()->curParamList());
 		RICPP_PROCESS(newRiAreaLightSource(renderState()->lineNo(), h, name, renderState()->curParamList()));
 	RICPP_POSTAMBLE_RET(illLightHandle)
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 	return h;
 }
 
@@ -1809,12 +1966,14 @@ RtVoid CBaseRenderer::preProcess(CRiAttribute &obj)
 
 RtVoid CBaseRenderer::attributeV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_ATTRIBUTE)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_ATTRIBUTE, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiAttribute(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1851,12 +2010,14 @@ RtVoid CBaseRenderer::preProcess(CRiSurface &obj)
 
 RtVoid CBaseRenderer::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_SURFACE)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_SURFACE, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiSurface(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1867,12 +2028,14 @@ RtVoid CBaseRenderer::preProcess(CRiAtmosphere &obj)
 
 RtVoid CBaseRenderer::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_ATMOSPHERE)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_ATMOSPHERE, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiAtmosphere(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1883,12 +2046,14 @@ RtVoid CBaseRenderer::preProcess(CRiInterior &obj)
 
 RtVoid CBaseRenderer::interiorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_INTERIOR)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_INTERIOR, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiInterior(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1899,12 +2064,14 @@ RtVoid CBaseRenderer::preProcess(CRiExterior &obj)
 
 RtVoid CBaseRenderer::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_EXTERIOR)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_EXTERIOR, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiExterior(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -1915,12 +2082,14 @@ RtVoid CBaseRenderer::preProcess(CRiDisplacement &obj)
 
 RtVoid CBaseRenderer::displacementV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_DISPLACEMENT)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_DISPLACEMENT, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiDisplacement(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::preProcess(CRiDeformation &obj)
@@ -1930,12 +2099,14 @@ RtVoid CBaseRenderer::preProcess(CRiDeformation &obj)
 
 RtVoid CBaseRenderer::deformationV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_DEFORMATION)
 		name = renderState()->tokFindCreate(name);
 		renderState()->parseParameters(RI_DEFORMATION, name, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiDeformation(renderState()->lineNo(), name, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::preProcess(CRiTextureCoordinates &obj)
@@ -2371,46 +2542,55 @@ RtPoint *CBaseRenderer::transformPoints(RtToken fromspace, RtToken tospace, RtIn
 
 RtVoid CBaseRenderer::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_POLYGON)
 		renderState()->parseParameters(CPolygonClasses(nvertices), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiPolygon(renderState()->lineNo(), nvertices, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
 RtVoid CBaseRenderer::generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_GENERAL_POLYGON)
 		renderState()->parseParameters(CGeneralPolygonClasses(nloops, nverts), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiGeneralPolygon(renderState()->lineNo(), nloops, nverts, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
 RtVoid CBaseRenderer::pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[], RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_POINTS_POLYGONS)
 		renderState()->parseParameters(CPointsPolygonsClasses(npolys, nverts, verts), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiPointsPolygons(renderState()->lineNo(), npolys, nverts, verts, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
 RtVoid CBaseRenderer::pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt nverts[], RtInt verts[],  RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_POINTS_GENERAL_POLYGONS)
 		renderState()->parseParameters(CPointsGeneralPolygonsClasses(npolys, nloops, nverts, verts), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiPointsGeneralPolygons(renderState()->lineNo(), npolys, nloops, nverts, verts, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
 RtVoid CBaseRenderer::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_PATCH)
 		type = renderState()->tokFindCreate(type);
 		if ( type != RI_BILINEAR && type != RI_BICUBIC )
@@ -2418,14 +2598,16 @@ RtVoid CBaseRenderer::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer 
 			throw ExceptRiCPPError(RIE_BADTOKEN, RIE_ERROR, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "type neither RI_BILINEAR nor RI_BICUBIC at %s(), type == '%s'", CRequestInfo::requestName(req), type);
 		}
 		renderState()->parseParameters(CPatchClasses(type), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiPatch(renderState()->lineNo(), type, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
 RtVoid CBaseRenderer::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv, RtToken vwrap, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_PATCH_MESH)
 		type = renderState()->tokFindCreate(type);
 		if ( type != RI_BILINEAR && type != RI_BICUBIC )
@@ -2454,131 +2636,158 @@ RtVoid CBaseRenderer::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv
 		}
 
 		renderState()->parseParameters(CPatchMeshClasses(type, nu, ustep, uwrap, nv, vstep, vwrap), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiPatchMesh(renderState()->lineNo(), ustep, vstep, type, nu, uwrap, nv, vwrap, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
 RtVoid CBaseRenderer::nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat vknot[], RtFloat vmin, RtFloat vmax,  RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_NU_PATCH)
 		renderState()->parseParameters(CNuPatchClasses(nu, uorder, nv, vorder), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiNuPatch(renderState()->lineNo(), nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
 RtVoid CBaseRenderer::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_SUBDIVISION_MESH)
 		scheme = renderState()->tokFindCreate(scheme);
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiSubdivisionMesh(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[],  RtToken stringargs[],  RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_HIERARCHICAL_SUBDIVISION_MESH)
 		scheme = renderState()->tokFindCreate(scheme);
 		renderState()->parseParameters(CSubdivisionMeshClasses(nfaces, nvertices, vertices), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiHierarchicalSubdivisionMesh(renderState()->lineNo(), &renderState()->tokenMap(), scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_SPHERE)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiSphere(renderState()->lineNo(), radius, zmin, zmax, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_CONE)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiCone(renderState()->lineNo(), height, radius, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_CYLINDER)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiCylinder(renderState()->lineNo(), radius, zmin, zmax, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_HYPERBOLOID)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiHyperboloid(renderState()->lineNo(), point1, point2, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_PARABOLOID)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiParaboloid(renderState()->lineNo(), rmax, zmin, zmax, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_DISK)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiDisk(renderState()->lineNo(), height, radius, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, RtFloat phimax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_TORUS)
 		renderState()->parseParameters(CQuadricClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiTorus(renderState()->lineNo(), majorrad, minorrad, phimin, phimax, thetamax, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_POINTS)
 		renderState()->parseParameters(CPointsClasses(npts), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiPoints(renderState()->lineNo(), npts, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_CURVES)
 		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(CCurvesClasses(type, ncurves, nverts, wrap, renderState()->attributes().vStep()), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiCurves(renderState()->lineNo(), renderState()->attributes().vStep(), type, ncurves, nverts, wrap, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_BLOBBY)
 		renderState()->parseParameters(CBlobbyClasses(nleaf), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiBlobby(renderState()->lineNo(), nleaf, ncode, code, nflt, flt, nstr, str, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 
@@ -2615,72 +2824,93 @@ RtVoid CBaseRenderer::procedural(RtPointer data, RtBound bound, ISubdivFunc &sub
 	RICPP_POSTAMBLE
 }
 
+RtVoid CBaseRenderer::doProcess(CRiGeometry &obj)
+{
+	if ( obj.type() == RI_TEAPOT ) {
+		teapot();
+	}
+}
+
 RtVoid CBaseRenderer::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_GEOMETRY)
 		type = renderState()->tokFindCreate(type);
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiGeometry(renderState()->lineNo(), type, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_MAKE_TEXTURE)
 		swrap = renderState()->tokFindCreate(swrap);
 		twrap = renderState()->tokFindCreate(twrap);
 		renderState()->parseParameters(RI_TEXTURE, RI_TEXTURE, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiMakeTexture(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToken twrap, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_MAKE_BUMP)
 		swrap = renderState()->tokFindCreate(swrap);
 		twrap = renderState()->tokFindCreate(twrap);
 		renderState()->parseParameters(RI_TEXTURE, RI_BUMP, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiMakeBump(renderState()->lineNo(), pic, tex, swrap, twrap, filterfunc, swidth, twidth, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::makeLatLongEnvironmentV(RtString pic, RtString tex, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_MAKE_LAT_LONG_ENVIRONMENT)
 		renderState()->parseParameters(RI_TEXTURE, RI_LAT_LONG_ENVIRONMENT, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiMakeLatLongEnvironment(renderState()->lineNo(), pic, tex, filterfunc, swidth, twidth, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString py, RtString ny, RtString pz, RtString nz, RtString tex, RtFloat fov, const IFilterFunc &filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_MAKE_CUBE_FACE_ENVIRONMENT)
 		renderState()->parseParameters(RI_TEXTURE, RI_CUBE_FACE_ENVIRONMENT, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiMakeCubeFaceEnvironment(renderState()->lineNo(), px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_MAKE_SHADOW)
 		renderState()->parseParameters(RI_TEXTURE, RI_SHADOW, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiMakeShadow(renderState()->lineNo(), pic, tex, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString bkmname, RtInt n, RtToken tokens[], RtPointer params[])
 {
+	RtInt nParamsSav = n;
 	RICPP_PREAMBLE(REQ_MAKE_BRICK_MAP)
 		renderState()->parseParameters(RI_TEXTURE, RI_BRICK_MAP, CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 		RICPP_PROCESS(newRiMakeBrickMap(renderState()->lineNo(), nNames, ptcnames, bkmname, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 }
 
 RtVoid CBaseRenderer::archiveRecordV(RtToken type, RtString line)
@@ -2720,14 +2950,17 @@ RtVoid CBaseRenderer::readArchiveV(RtString name, const IArchiveCallback *callba
 	trace("-> CBaseRenderer::readArchiveV()");
 #endif
 
+	RtInt nParamsSav = n;
+
 	RICPP_PREAMBLE(REQ_READ_ARCHIVE)
 		renderState()->parseParameters(CParameterClasses(), n, tokens, params);
+		nParamsSav = renderState()->curParamList().size();
 #ifdef _TRACE_ARCHIVE
 		trace("** CBaseRenderer::readArchiveV() RICPP_PROCESS");
 #endif
 		RICPP_PROCESS(newRiReadArchive(renderState()->lineNo(), name, callback, renderState()->curParamList()));
 	RICPP_POSTAMBLE
-	RICPP_UNREC_TOKENS
+	RICPP_UNREC_TOKENS(nParamsSav)
 
 #ifdef _TRACE_ARCHIVE
 	trace("<- CBaseRenderer::readArchiveV()");

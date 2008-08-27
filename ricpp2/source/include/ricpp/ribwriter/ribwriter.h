@@ -174,13 +174,15 @@ public:
 	virtual RtVoid preProcess(CRiObjectEnd &obj);
 	virtual RtVoid preProcess(CRiReadArchive &obj);
 
+	///////////////////////////////////
+
 	virtual RtVoid doProcess(CRiControl &obj);
 	virtual RtVoid doProcess(CRiReadArchive &obj);
 	virtual RtVoid doProcess(CRiObjectInstance &obj);
 	virtual RtVoid doProcess(CRiProcedural &obj);
+	inline virtual RtVoid doProcess(CRiGeometry &obj) {}
 
 	///////////////////////////////////
-
 	
 	virtual RtVoid postProcess(CRiSynchronize &obj);
 	

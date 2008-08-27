@@ -229,7 +229,7 @@ bool CRibWriter::postTestValid() const
 
 void CRibWriter::defaultDeclarations()
 {
-	CBaseRenderer::defaultDeclarations();
+	TypeParent::defaultDeclarations();
 
 	// Additional tokens
 	RI_RIBWRITER =                renderState()->tokFindCreate("ribwriter");
@@ -276,7 +276,7 @@ void CRibWriter::writePrefix(bool isArchiveRecord)
 
 RtVoid CRibWriter::doProcess(CRiControl &obj)
 {
-	CBaseRenderer::doProcess(obj);
+	TypeParent::doProcess(obj);
 
 	if ( obj.name() == RI_RIBWRITER ) {
 		CParameterList::const_iterator i;
@@ -594,7 +594,7 @@ RtVoid CRibWriter::postProcess(CRiObjectBegin &obj)
 
 RtVoid CRibWriter::preProcess(CRiObjectEnd &obj)
 {
-	CBaseRenderer::preProcess(obj);
+	TypeParent::preProcess(obj);
 
 	if ( !testValid() ) 
 		return;
@@ -633,7 +633,7 @@ RtVoid CRibWriter::doProcess(CRiObjectInstance &obj)
 	// Put out the requests that form the object.
 	// It doesn't matter if the Object definition was
 	// written to output or not.
-	CBaseRenderer::doProcess(obj);
+	TypeParent::doProcess(obj);
 }
 
 
@@ -659,10 +659,10 @@ RtVoid CRibWriter::postProcess(CRiObjectInstance &obj)
 			}
 
 		} else if ( renderState()->recordMode() ) {
-			CBaseRenderer::doProcess(obj);
+			TypeParent::doProcess(obj);
 		}
 	} else if ( renderState()->recordMode() ) {
-		CBaseRenderer::doProcess(obj);
+		TypeParent::doProcess(obj);
 	}
 }
 
@@ -729,7 +729,7 @@ RtVoid CRibWriter::postProcess(CRiArchiveBegin &obj)
 
 RtVoid CRibWriter::preProcess(CRiArchiveEnd &obj)
 {
-	CBaseRenderer::preProcess(obj);
+	TypeParent::preProcess(obj);
 
 	if ( !testValid() ) 
 		return;
@@ -1137,7 +1137,7 @@ RtVoid CRibWriter::doProcess(CRiProcedural &obj)
 	if ( !m_postponeProcedural ) {
 		m_doReadArchive = true;
 		// Can call doReadArchive()
-		CBaseRenderer::doProcess(obj);
+		TypeParent::doProcess(obj);
 		m_doReadArchive = false;
 	}
 }
@@ -1230,7 +1230,7 @@ RtVoid CRibWriter::preProcess(CRiReadArchive &obj)
 #ifdef _TRACE_ARCHIVE
 	trace("<- CRibWriter::preProcess(CRiReadArchive)");
 #endif
-	CBaseRenderer::preProcess(obj);
+	TypeParent::preProcess(obj);
 	m_execute = willExecuteMacro(obj.name());
 #ifdef _TRACE_ARCHIVE
 	trace("-> CRibWriter::preProcess(CRiReadArchive)");
@@ -1247,7 +1247,7 @@ RtVoid CRibWriter::doProcess(CRiReadArchive &obj)
 	if ( m_execute ) {
 		bool exec = m_execute;
 		m_header = true;
-		CBaseRenderer::doProcess(obj);
+		TypeParent::doProcess(obj);
 		m_execute = exec;
 	}
 #ifdef _TRACE_ARCHIVE

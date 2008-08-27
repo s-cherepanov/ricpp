@@ -295,6 +295,8 @@ void CGLRenderer::initGLContext()
 			m_validGL = false;
 		}
 	}
+#else
+	m_validGL = true;
 #endif
 }
 

@@ -138,6 +138,7 @@ using namespace RiCPP;
 
 void CBaseRenderer::teapot()
 {
+	// Newell (Utah) Teapot
 	RtToken ri_p[1] = { RI_P };
 	RtPointer patch[1];
 	

@@ -79,6 +79,7 @@ void display(void)
 	RiFormat(width, height, 1.0F);
 	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
 	RiReadArchive("RIBARCHIVE", 0, RI_NULL);
+	RiIdentity();
 	glutSwapBuffers();
 }
 
@@ -90,8 +91,8 @@ void reshape(int aWidth, int aHeight)
 
 int main(int argc, char **argv)
 {
-	const char *searchPath = ".:&";
-  	RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
+	// const char *searchPath = ".:&";
+  	// RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);

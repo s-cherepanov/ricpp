@@ -267,17 +267,18 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 
 	const std::vector<RtFloat> &pos = p->floats();
 
-	if ( pos.size() <= 9 )
+	if ( pos.size() < 9 )
 		return false;
 
 //	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, (IndexType)pos.size()/3).values();
-	RtFloat n[3];
+	RtFloat aNormal[3];
 
 	IndexType prev = (IndexType)pos.size()-3, cur = 0, next = 3;
 
 	do {
-		if ( planeLH(&n[0], &pos[prev], &pos[cur], &pos[next]) ) {
-			return addNormals(normDecl, n, f);
+		if ( planeLH(&aNormal[0], &pos[prev], &pos[cur], &pos[next]) ) {
+			addNormalsToPos(normDecl, aNormal, pos, f);
+			return true;
 		}
 		prev -= 3;
 		next += 3;
@@ -287,23 +288,9 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 	return false;
 }
 
-bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, const RtNormal &aNormal, CFace &f)
+
+void CBasePolygonTesselator::addNormalsToPos(const CDeclaration &normDecl, const RtNormal &aNormal, const std::vector<RtFloat> &pos, CFace &f)
 {
-	const CParameter *p = obj().parameters().get(RI_P);
-	if ( !p )
-		return false;
-	if ( !p->declaration().isFloat3Decl() ) {
-		return false;
-	}
-	if ( !normDecl.isFloat3Decl() ) {
-		return false;
-	}
-		
-	const std::vector<RtFloat> &pos = p->floats();
-	
-	if ( pos.size() <= 9 )
-		return false;
-	
 	std::vector<RtFloat> &n = f.insertFloatVar(normDecl, (IndexType)pos.size()/3).values();
 	
 	IndexType cur = 0;
@@ -319,7 +306,23 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, const RtNo
 			n[cur++] = -aNormal[2];
 		}
 	}
-	
+}
+
+bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, const RtNormal &aNormal, CFace &f)
+{
+	const CParameter *p = obj().parameters().get(RI_P);
+	if ( !p )
+		return false;
+	if ( !p->declaration().isFloat3Decl() ) {
+		return false;
+	}
+	if ( !normDecl.isFloat3Decl() ) {
+		return false;
+	}
+		
+	const std::vector<RtFloat> &pos = p->floats();
+
+	addNormalsToPos(normDecl, aNormal, pos, f);
 	return true;
 }
 

@@ -118,7 +118,7 @@ void display(void)
 	RiIdentity();
 	
 	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
-	// glutSwapBuffers();
+	glutSwapBuffers();
 }
 
 void reshape(int aWidth, int aHeight)
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
   	// RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
 
 	glutInit(&argc, argv);
-	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH );
+	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
 	glutInitWindowSize (width, height); 
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow(argc <= 1 ? "GLUT RIB" : argv[1]);

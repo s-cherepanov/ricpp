@@ -123,12 +123,14 @@ void CGLRenderer::finishScreen()
 
 void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<RtFloat> &n)
 {
-	if ( n.empty() || p.empty() || n.size() != p.size() ) {
+	if ( p.empty() || n.size() < 3 ) {
 		return;
 	}
 	
 	if ( replayMode()  ) 
 		glDepthMask(GL_TRUE);
+	
+	bool perFace = n.size() == 3;
 	
 	// line
 	const RtFloat sn = (RtFloat).075; // scale normals
@@ -136,7 +138,11 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 	glBegin(GL_LINES);
 	for ( unsigned int i = 0; i < p.size()-2; i+=3 ) {
 		glVertex3f(p[i], p[i+1], p[i+2]);
-		glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+		if ( perFace ) {
+			glVertex3f(p[i]+sn*n[0], p[i+1]+sn*n[1], p[i+2]+sn*n[2]);
+		} else {
+			glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+		}
 	}
 	glEnd();
 	
@@ -145,7 +151,11 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 	glPointSize(3.0); // Point size of the tip
 	glBegin(GL_POINTS);
 	for ( unsigned int i = 0; i < p.size()-2; i+=3 ) {
-		glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+		if ( perFace ) {
+			glVertex3f(p[i]+sn*n[0], p[i+1]+sn*n[1], p[i+2]+sn*n[2]);
+		} else {
+			glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+		}
 	}
 	glEnd();
 
@@ -153,7 +163,11 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 	glPointSize(1.0); // Point size of the tip highlight
 	glBegin(GL_POINTS);
 	for ( unsigned int i = 0; i < p.size()-2; i+=3 ) {
-		glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+		if ( perFace ) {
+			glVertex3f(p[i]+sn*n[0], p[i+1]+sn*n[1], p[i+2]+sn*n[2]);
+		} else {
+			glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+		}
 	}
 	glEnd();
 	
@@ -191,6 +205,8 @@ void CGLRenderer::hide(const CFace &f)
 		glEnable(GL_LIGHT0);
 	} else if ( n.size() == 3 ) {
 		glNormal3f(n[0], n[1], n[2]);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
 	}
 	
 	// surface opacity

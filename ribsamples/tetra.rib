@@ -19,6 +19,7 @@ LightSource "ambientlight" 1 "intensity" .3
 LightSource "pointlight" 2 "intensity" 700 "from" [15 17 -20]
 
 Scale 20 20 20
+Color .3 .3 1
 Surface "matte"
 TransformBegin
 Translate 0 .375 0

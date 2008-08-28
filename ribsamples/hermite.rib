@@ -21,7 +21,7 @@ WorldBegin
  Basis "hermite" 2 "hermite" 2
 
  # Data From: Daniel McCoy <mccoy@pixar.com>
-
+ Orientation "rh"
  # Hermite patch that makes an egg carton shape using
  # the edge vectors
  Patch "bicubic" "P" [

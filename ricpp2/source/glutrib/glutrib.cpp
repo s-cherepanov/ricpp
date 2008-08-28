@@ -48,7 +48,7 @@ void testTeapot()
 		RiTranslate(0, -.25, 3);
 		RiScale(0.25F, 0.25F, 0.25F);
 		RiRotate(-135, 1, 0, 0);
-		RiSides(1);
+		RiSides(2);
 		RiGeometry(RI_TEAPOT, RI_NULL);
 	} RiAttributeEnd();
 }

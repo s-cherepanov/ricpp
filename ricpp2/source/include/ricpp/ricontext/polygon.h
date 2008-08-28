@@ -399,6 +399,11 @@ public:
 		return m_outlines[0];
 	}
 	
+	inline bool empty() const
+	{
+		return m_outlines.empty();
+	}
+
 	/** @brief Requests whether the sense of the outline of the polygon is counter clockwise.
 	 *
 	 *  @return  true, sense of outline is counterclockwise, false if otherwise
@@ -493,7 +498,8 @@ public:
 		m_pnorm[0] = c.normal()[0];
 		m_pnorm[1] = c.normal()[1];
 		m_pnorm[2] = c.normal()[2];
-		strategy.triangulate(c.nodes(), c.outline(), c.outlineCCW(), frontCW, m_triangles);
+		if ( !c.empty() )
+			strategy.triangulate(c.nodes(), c.outline(), c.outlineCCW(), frontCW, m_triangles);
 	}
 
 	/** @brief Triangulates a polygon.

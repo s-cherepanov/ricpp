@@ -535,8 +535,8 @@ void CGLRenderer::initLights()
 	GLfloat mat_emission[]   = { 0, 0, 0, 1 };
 
 	GLfloat light_ambient[]  = { 0.1F, 0.1F, 0.1F, 1 };
-	GLfloat light_diffuse[]  = { 1, 1, 1, 1 };
-	GLfloat light_specular[] = { 1, 1, 1, 1 };
+	GLfloat light_diffuse[]  = { .7F, .7F, .7F, 1 };
+	GLfloat light_specular[] = { .2F, .2F, .2F, 1 };
 	GLfloat light_position[] = { -3, 3, -3, 1 };
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);

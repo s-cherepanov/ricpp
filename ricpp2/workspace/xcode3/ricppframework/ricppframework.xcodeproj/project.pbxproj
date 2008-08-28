@@ -17,6 +17,7 @@
 				C352E6AC0D7467BA00CDED20 /* PBXTargetDependency */,
 				C3808AFC0D3CDE1E00B6C3BA /* PBXTargetDependency */,
 				C3808AE10D3CDB5300B6C3BA /* PBXTargetDependency */,
+				C339CB790E667A91004F2179 /* PBXTargetDependency */,
 				C3808ABA0D3CC00D00B6C3BA /* PBXTargetDependency */,
 				C32B8B540D74582D0059B201 /* PBXTargetDependency */,
 				C37A0D3D0D6AC5940027CE77 /* PBXTargetDependency */,
@@ -36,6 +37,10 @@
 		C3185B730D7D3451001784AB /* varsubst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3185B720D7D3451001784AB /* varsubst.cpp */; };
 		C31C22C00D740F6F009D99C2 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
 		C32B8B420D7454980059B201 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
+		C339CB4F0E667A44004F2179 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C339CB4E0E667A44004F2179 /* GLUT.framework */; };
+		C339CB530E667A4F004F2179 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
+		C339CB760E667A69004F2179 /* glutrib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C339CB750E667A69004F2179 /* glutrib.cpp */; };
+		C339CB800E667B34004F2179 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
 		C345DCB70DF02D6400B2BC40 /* libglrenderer.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */; };
 		C345DCB80DF02D9600B2BC40 /* libriprog.1.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
 		C35100220D70DD2B008AC346 /* baserenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = C35100210D70DD2B008AC346 /* baserenderer.h */; };
@@ -298,6 +303,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = C3CE0EED0DCF50520014BC8E;
 			remoteInfo = riglapp;
+		};
+		C339CB780E667A91004F2179 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C339CB480E667A20004F2179 /* glutrib */;
+			remoteInfo = glutrib;
+		};
+		C339CB7D0E667AF7004F2179 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C31C22450D740489009D99C2 /* riprog */;
+			remoteInfo = riprog;
 		};
 		C352E6960D7465CA00CDED20 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -578,6 +597,9 @@
 		C337F2850C460AA100E174B0 /* templatefuncs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = templatefuncs.h; path = ../../../source/include/ricpp/tools/templatefuncs.h; sourceTree = SOURCE_ROOT; };
 		C33939BA0CDE14AF001BBED7 /* stringpattern.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = stringpattern.h; path = ../../../source/include/ricpp/tools/stringpattern.h; sourceTree = SOURCE_ROOT; };
 		C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = stringpattern.cpp; path = ../../../source/tools/stringpattern.cpp; sourceTree = SOURCE_ROOT; };
+		C339CB490E667A20004F2179 /* glutrib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = glutrib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C339CB4E0E667A44004F2179 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = /System/Library/Frameworks/GLUT.framework; sourceTree = "<absolute>"; };
+		C339CB750E667A69004F2179 /* glutrib.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = glutrib.cpp; path = ../../../source/glutrib/glutrib.cpp; sourceTree = SOURCE_ROOT; };
 		C33E976A0CF42010007E087D /* riboptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = riboptions.h; path = ../../../source/include/ricpp/ribparser/riboptions.h; sourceTree = SOURCE_ROOT; };
 		C33E976C0CF42033007E087D /* riboptions.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = riboptions.cpp; path = ../../../source/ribparser/riboptions.cpp; sourceTree = SOURCE_ROOT; };
 		C34D15110D695953002CF63B /* Polygon.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; lineEnding = 1; name = Polygon.rib; path = ../../../RibSamples/Polygon.rib; sourceTree = SOURCE_ROOT; };
@@ -801,6 +823,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C339CB470E667A20004F2179 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C339CB800E667B34004F2179 /* libriprog.1.dylib in Frameworks */,
+				C339CB4F0E667A44004F2179 /* GLUT.framework in Frameworks */,
+				C339CB530E667A4F004F2179 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C352E6910D7465B500CDED20 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1017,6 +1049,7 @@
 				C32093CF0BDCCF1900A0BB35 /* gendynlib */,
 				C37F24D00DCE27BE00A64BDB /* glrenderer */,
 				C37F24D30DCE27F300A64BDB /* glrendererdll */,
+				C339CB400E6679EA004F2179 /* glutrib */,
 				C39753D70C13FE830089A579 /* passthrough */,
 				C39753DA0C13FEB90089A579 /* pluginhandler */,
 				C3B8490A0BD762BB00DD22B5 /* rendererloader */,
@@ -1076,6 +1109,7 @@
 				C37F24E70DCE28C300A64BDB /* libglrenderer.1.dylib */,
 				C3CE0EEE0DCF50520014BC8E /* riglapp.app */,
 				C3911A860E644F060051CB61 /* ribviewer.app */,
+				C339CB490E667A20004F2179 /* glutrib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1368,6 +1402,30 @@
 			lineEnding = 1;
 			name = tools;
 			sourceTree = SOURCE_ROOT;
+		};
+		C339CB400E6679EA004F2179 /* glutrib */ = {
+			isa = PBXGroup;
+			children = (
+				C339CB410E6679FA004F2179 /* Header */,
+				C339CB420E667A01004F2179 /* Implementation */,
+			);
+			name = glutrib;
+			sourceTree = "<group>";
+		};
+		C339CB410E6679FA004F2179 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Header;
+			sourceTree = "<group>";
+		};
+		C339CB420E667A01004F2179 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				C339CB750E667A69004F2179 /* glutrib.cpp */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
 		};
 		C3610AB60BF2F08500007CEF /* ricppbridge */ = {
 			isa = PBXGroup;
@@ -2093,6 +2151,7 @@
 		C3CE0EE90DCF50200014BC8E /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C339CB4E0E667A44004F2179 /* GLUT.framework */,
 				C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */,
 				C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */,
 			);
@@ -2458,6 +2517,23 @@
 			productName = ribase;
 			productReference = C32B8B390D74546A0059B201 /* libribase.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		C339CB480E667A20004F2179 /* glutrib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C339CB4D0E667A3E004F2179 /* Build configuration list for PBXNativeTarget "glutrib" */;
+			buildPhases = (
+				C339CB460E667A20004F2179 /* Sources */,
+				C339CB470E667A20004F2179 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C339CB7E0E667AF7004F2179 /* PBXTargetDependency */,
+			);
+			name = glutrib;
+			productName = glutrib;
+			productReference = C339CB490E667A20004F2179 /* glutrib */;
+			productType = "com.apple.product-type.tool";
 		};
 		C352E6920D7465B500CDED20 /* ridynload */ = {
 			isa = PBXNativeTarget;
@@ -2917,6 +2993,7 @@
 				C383C1010DBC88E00059B71D /* testpoly */,
 				C3CE0EED0DCF50520014BC8E /* riglapp */,
 				C3911A850E644F060051CB61 /* ribviewer */,
+				C339CB480E667A20004F2179 /* glutrib */,
 			);
 		};
 /* End PBXProject section */
@@ -2973,6 +3050,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3A8FA7B0D74CC1D00C1013B /* ribase.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C339CB460E667A20004F2179 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C339CB760E667A69004F2179 /* glutrib.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3239,6 +3324,16 @@
 			isa = PBXTargetDependency;
 			target = C3CE0EED0DCF50520014BC8E /* riglapp */;
 			targetProxy = C32DC7BA0DD4506800EE4989 /* PBXContainerItemProxy */;
+		};
+		C339CB790E667A91004F2179 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C339CB480E667A20004F2179 /* glutrib */;
+			targetProxy = C339CB780E667A91004F2179 /* PBXContainerItemProxy */;
+		};
+		C339CB7E0E667AF7004F2179 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C31C22450D740489009D99C2 /* riprog */;
+			targetProxy = C339CB7D0E667AF7004F2179 /* PBXContainerItemProxy */;
 		};
 		C352E6970D7465CA00CDED20 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3636,6 +3731,35 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = ribase;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C339CB4B0E667A20004F2179 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = glutrib;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C339CB4C0E667A20004F2179 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = glutrib;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -4596,6 +4720,15 @@
 			buildConfigurations = (
 				C32B8B3A0D74546A0059B201 /* Debug */,
 				C32B8B3B0D74546A0059B201 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C339CB4D0E667A3E004F2179 /* Build configuration list for PBXNativeTarget "glutrib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C339CB4B0E667A20004F2179 /* Debug */,
+				C339CB4C0E667A20004F2179 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

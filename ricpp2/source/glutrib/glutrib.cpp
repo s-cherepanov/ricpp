@@ -54,7 +54,7 @@ void testScene(void)
 	RiWorldBegin();
 		RiAttributeBegin();
 		RtFloat Cs[] = {0.33F, 0.33F, 1.00F};
-			RiSides(2);
+			RiSides(1);
 			RiColor(Cs);
 			RiTranslate(0, -.25, 3);
 			RiScale(0.25F, 0.25F, 0.25F);

@@ -375,9 +375,11 @@ void CGLRenderer::initViewing()
 	glDisable(GL_CULL_FACE);
 	
 	glDepthFunc(GL_LEQUAL);
-	glEnable(GL_DEPTH_TEST);
+
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_BLEND);
+
+	glEnable(GL_DEPTH_TEST);
 		
 	glLineWidth(1.0);
 	glPointSize(1.0);
@@ -393,6 +395,8 @@ void CGLRenderer::initViewing()
 	glClearDepth(1.0);
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+
+	glDepthMask(GL_TRUE);
 
     glMatrixMode(GL_PROJECTION);
 	

@@ -14,7 +14,7 @@
 // #define _TRACE
 #endif
 
-static const int startScreen = 22; // 0-maxScreens
+static const int startScreen = 10; // 0-maxScreens
 static const int maxScreens = 23;
 
 static RtFloat opacity_25[] = {0.25,  0.25, 0.25};

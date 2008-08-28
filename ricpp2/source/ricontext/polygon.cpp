@@ -881,8 +881,10 @@ void CTriangulatedPolygon::triangulate(const IPolygonTriangulationStrategy &stra
 
 void CTriangulatedPolygon::drefTriangles(const RtInt verts[], std::vector<IndexType> &tri) const
 {
-	tri.clear();
-	tri.resize(m_triangles.size());
+	if ( tri.size() != m_triangles.size() ) {
+		tri.clear();
+		tri.resize(m_triangles.size());
+	}
 	for ( IndexType i=0; i < m_triangles.size(); ++i ) {
 		tri[i] = verts[m_triangles[i]];
 	}

@@ -254,10 +254,11 @@ void CBasePolygonTesselator::insertParams(IndexType faceIdx, const CParameterLis
 
 bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 {
-	const CParameter *p = obj().parameters().get(RI_P);
-	if ( !p )
+	const TemplPrimVar<RtFloat> *pp = f.floats(RI_P);
+	if ( !pp )
 		return false;
-	if ( !p->declaration().isFloat3Decl() ) {
+
+	if ( !pp->declaration().isFloat3Decl() ) {
 		return false;
 	}
 	if ( !normDecl.isFloat3Decl() ) {
@@ -265,7 +266,7 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 	}
 
 
-	const std::vector<RtFloat> &pos = p->floats();
+	const std::vector<RtFloat> &pos = pp->values();
 
 	if ( pos.size() < 9 )
 		return false;
@@ -310,17 +311,18 @@ void CBasePolygonTesselator::addNormalsToPos(const CDeclaration &normDecl, const
 
 bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, const RtNormal &aNormal, CFace &f)
 {
-	const CParameter *p = obj().parameters().get(RI_P);
-	if ( !p )
+	const TemplPrimVar<RtFloat> *pp = f.floats(RI_P);
+	if ( !pp )
 		return false;
-	if ( !p->declaration().isFloat3Decl() ) {
+	
+	if ( !pp->declaration().isFloat3Decl() ) {
 		return false;
 	}
 	if ( !normDecl.isFloat3Decl() ) {
 		return false;
 	}
 		
-	const std::vector<RtFloat> &pos = p->floats();
+	const std::vector<RtFloat> &pos = pp->values();
 
 	addNormalsToPos(normDecl, aNormal, pos, f);
 	return true;
@@ -380,7 +382,7 @@ CSurface *CPointsPolygonsTesselator::tesselate(const CDeclaration &posDecl, cons
 		
 		RtInt nverts = m_obj.nVerts()[faceIdx];
 
-		triangleStrip(nverts, vertsOffs, f);
+		triangleStrip(nverts, 0, f);
 		
 		insertParams(faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs, f);
 		f.sizes().resize(1);
@@ -414,15 +416,15 @@ CSurface *CGeneralPolygonTesselator::tesselate(const CDeclaration &posDecl, cons
 	CFace &f = surf->newFace();
 	f.faceType(FACETYPE_TRIANGLES);
 	
-	std::vector<IndexType> &strip = f.indices();
-	strip = m_tpPtr->triangles();
+	std::vector<IndexType> &triangles = f.indices();
+	triangles = m_tpPtr->triangles();
 	
 	for ( CParameterList::const_iterator piter = m_obj.parameters().begin(); piter != m_obj.parameters().end(); piter++ ) {
 		f.insertConst(*piter);
 	}
 	
 	f.sizes().resize(1);
-	f.sizes()[0] = static_cast<IndexType>(strip.size());
+	f.sizes()[0] = static_cast<IndexType>(triangles.size());
 	
 	if ( !f.floats(RI_N) ) {
 		addNormals(normDecl, m_tpPtr->normal(), f);
@@ -444,12 +446,12 @@ CSurface *CPointsGeneralPolygonsTesselator::tesselate(const CDeclaration &posDec
 		return 0;
 	}
 
-	IndexType offs = 0;
 	RtInt faceIdx = 0;
 	RtInt nloops = 0;
 	RtInt nverts = 0;
 	RtInt nvertsOffs = 0;
 	RtInt vertsOffs = 0;
+	
 	for (
 		 std::vector<CTriangulatedPolygon>::const_iterator iter = m_tpPtr->begin();
 		 iter != m_tpPtr->end();
@@ -467,24 +469,18 @@ CSurface *CPointsGeneralPolygonsTesselator::tesselate(const CDeclaration &posDec
 		CFace &f = surf->newFace();
 		f.faceType(FACETYPE_TRIANGLES);
 		
-		std::vector<IndexType> &strip = f.indices();
-		strip = (*iter).triangles();
-
-		for ( std::vector<IndexType>::iterator stripIter = strip.begin(); stripIter != strip.end(); stripIter++ ) {
-			(*stripIter) -= offs;
-		}
+		std::vector<IndexType> &triangles = f.indices();
+		triangles = (*iter).triangles();
+		// (*iter).drefTriangles(m_obj.vertsPtr(), triangles);
 		
 		insertParams(faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs, f);
 
 		f.sizes().resize(1);
-		f.sizes()[0] = static_cast<IndexType>(strip.size());
+		f.sizes()[0] = static_cast<IndexType>(triangles.size());
 		
 		if ( !f.floats(RI_N) ) {
 			addNormals(normDecl, (*iter).normal(), f);
 		}
-
-		// Next polygon (faceIdx)
-		offs += static_cast<IndexType>(strip.size());
 	}
 	
 	return surf;

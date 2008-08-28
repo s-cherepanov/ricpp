@@ -90,6 +90,7 @@ void testPolygon()
 void testScene(void)
 {
 	RiArchiveBegin("RIBARCHIVE", RI_NULL); {
+		RiClipping(0.1F, 30.0F);
 		RiWorldBegin(); {
 			// testPolygon();
 			// testCone();
@@ -107,11 +108,17 @@ void loadScene(const char *filename)
 
 void display(void)
 {
+	char *screenAction[2] = {"clear", "finish"};
+
+	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
+	
 	RiFormat(width, height, 1.0F);
 	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
 	RiReadArchive("RIBARCHIVE", 0, RI_NULL);
 	RiIdentity();
-	glutSwapBuffers();
+	
+	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
+	// glutSwapBuffers();
 }
 
 void reshape(int aWidth, int aHeight)
@@ -126,7 +133,7 @@ int main(int argc, char **argv)
   	// RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
 
 	glutInit(&argc, argv);
-	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
+	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH );
 	glutInitWindowSize (width, height); 
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow(argc <= 1 ? "GLUT RIB" : argv[1]);

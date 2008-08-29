@@ -1586,15 +1586,56 @@ void CRootPatchTesselator::buildBilinearPN(const CDeclaration &posDecl,
 	if ( !n || !extractRi3F(*p, 2, 2, faceIndex, p->declaration().isFace() ? faceCornerIdx : cornerIdx, nrm) ) {
 		IndexType nc[4] = {0, (IndexType)tessU()*3, (IndexType)(tessV()*(tessU()+1))*3, (IndexType)vars.positions->size()-3};
 		if ( flipNormals() ) {
-			planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
-			planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
-			planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]);
-			planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]);
+			if ( !planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
+				if ( !planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
+					planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]]);
+				}
+			}
+				
+			if ( !planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
+				if ( !planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
+					planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]]);
+				}
+			}
+
+			if ( !planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
+				if ( !planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
+					planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]]);
+				}
+			}
+
+			
+			if ( !planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
+				if ( planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
+					planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]]);
+				}
+			}
 		} else {
-			planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]);
-			planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]);
-			planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]);
-			planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]);
+			// Same for planeLH
+			if ( !planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
+				if ( !planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
+					planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]]);
+				}
+			}
+			
+			if ( !planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
+				if ( !planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
+					planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]]);
+				}
+			}
+			
+			if ( !planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
+				if ( !planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
+					planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]]);
+				}
+			}
+			
+			
+			if ( !planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
+				if ( planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
+					planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]]);
+				}
+			}
 		}
 	}
 

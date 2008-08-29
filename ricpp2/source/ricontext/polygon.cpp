@@ -35,6 +35,10 @@
 #include "ricpp/tools/bintree.h"
 #endif // _RICPP_TOOLS_BINTREE_H
 
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#include "ricpp/ricpp/ricpperror.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
+
 #include <algorithm>
 #include <iostream>
 
@@ -456,7 +460,7 @@ void CPolygonContainer::insertPolygon(
 	m_nodes.clear();
 	m_outlines.clear();
 	
-	if ( nloops < 1 || p == 0 || loops[0] < 3 )
+	if ( nloops < 1 || p == 0 )
 		return;
 	
 	// One node for each vertex + 2 additional for each hole,
@@ -465,6 +469,9 @@ void CPolygonContainer::insertPolygon(
 	// element 0 is not used (used like NULL for pointers)
 
 	RtInt sumLoops = sum(nloops, loops);
+	if ( sumLoops == 0 )
+		return;
+
 	const RtInt nNodes = sumLoops + 2*(nloops-1) + 1;
 	m_nodes.resize(nNodes);
 		
@@ -541,7 +548,7 @@ void CPolygonContainer::insertPolygon(
 	do {
 		m_nodes[idx].recalc(m_nodes, m_outlineIsCCW);
 		idx = m_nodes[idx].m_next;
-	} while(idx != m_outlines[0]);
+	} while( idx != m_outlines[0] );
 
 	if ( nloops > 1 ) {
 		std::vector<CPolygonNodeId> temp_outlines;
@@ -868,11 +875,38 @@ void CEarClipper::triangulate(
 
 // =============================================================================
 // -----------------------------------------------------------------------------
+void CTriangulatedPolygon::triangulate(const IPolygonTriangulationStrategy &strategy,
+						RtInt nloops, const RtInt nverts[],
+						const RtInt verts[], const RtFloat *p, bool frontCW)
+{
+	CPolygonContainer c;
+	try {
+		c.insertPolygon(nloops, nverts, verts, p);
+	} catch ( std::exception &e1 ) {
+		throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'triangulate()' at 'insertPolygon()': %s", e1.what());
+	} catch ( ... ) {
+		throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'triangulate()' at 'insertPolygon()': %s", RI_UNKNOWN);
+	}
+
+	if ( !c.empty() ) {
+		m_pnorm[0] = c.normal()[0];
+		m_pnorm[1] = c.normal()[1];
+		m_pnorm[2] = c.normal()[2];
+		
+		try {
+			strategy.triangulate(c.nodes(), c.outline(), c.outlineCCW(), frontCW, m_triangles);
+		} catch ( std::exception &e1 ) {
+			throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'triangulate()' at triangulation: %s", e1.what());
+		} catch ( ... ) {
+			throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'triangulate()' at triangulation: %s", RI_UNKNOWN);
+		}
+	}
+}
+
 void CTriangulatedPolygon::triangulate(const IPolygonTriangulationStrategy &strategy, RtInt nloops, const RtInt nverts[], const RtFloat *p, bool frontCW)
 {
 	RtInt sumPoints = sum(nloops, nverts);
-	std::vector<RtInt> verts;
-	verts.resize(sumPoints);
+	std::vector<RtInt> verts(sumPoints);
 	for ( RtInt i = 0; i< sumPoints; ++i ) {
 		verts[i] = i;
 	}

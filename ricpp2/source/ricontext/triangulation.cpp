@@ -33,6 +33,10 @@
 #include "ricpp/tools/templatefuncs.h"
 #endif // _RICPP_TOOLS_TEMPLATEFUNCS_H
 
+#ifndef _RICPP_RICPP_RICPPERROR_H
+#include "ricpp/ricpp/ricpperror.h"
+#endif // _RICPP_RICPP_RICPPERROR_H
+
 #ifdef _DEBUG
 #define _TRACE
 // #define _TRACE_POLY
@@ -57,6 +61,7 @@ using namespace RiCPP;
 
 CTesselator::~CTesselator()
 {
+	detach();
 	std::list<CSurface *>::iterator iter = m_surfaces.begin();
 	for ( ; iter != m_surfaces.end(); iter++ ) {
 		delete (*iter);
@@ -472,14 +477,26 @@ CSurface *CPointsGeneralPolygonsTesselator::tesselate(const CDeclaration &posDec
 		std::vector<IndexType> &triangles = f.indices();
 		triangles = (*iter).triangles();
 		// (*iter).drefTriangles(m_obj.vertsPtr(), triangles);
-		
-		insertParams(faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs, f);
 
+		try {
+			insertParams(faceIdx, m_obj.parameters(), m_obj.verts(), nverts, vertsOffs, f);
+		} catch ( std::exception &e1 ) {
+			throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'CPointsGeneralPolygonsTesselator::tesselate()' at 'insertParams()': %s", e1.what());
+		} catch ( ... ) {
+			throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'CPointsGeneralPolygonsTesselator::tesselate()' at 'insertParams()': %s", RI_UNKNOWN);
+		}
+		
 		f.sizes().resize(1);
 		f.sizes()[0] = static_cast<IndexType>(triangles.size());
 		
 		if ( !f.floats(RI_N) ) {
-			addNormals(normDecl, (*iter).normal(), f);
+			try {
+				addNormals(normDecl, (*iter).normal(), f);
+			} catch ( std::exception &e1 ) {
+				throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'CPointsGeneralPolygonsTesselator::tesselate()' at 'addNormals()': %s", e1.what());
+			} catch ( ... ) {
+				throw ExceptRiCPPError(RIE_BUG, RIE_ERROR, __LINE__, __FILE__, "Error in 'CPointsGeneralPolygonsTesselator::tesselate()' at 'addNormals()': %s", RI_UNKNOWN);
+			}
 		}
 	}
 	

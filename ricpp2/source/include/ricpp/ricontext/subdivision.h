@@ -727,25 +727,26 @@ namespace RiCPP {
 		std::list<CSubdivisionIndices> m_indices;
 		CRiHierarchicalSubdivisionMesh m_obj;
 		const CSubdivisionStrategy &m_strategy;		
+
+		void subdivide(long minDepth, const CSubdivisionStrategy &strategy);
+		CSubdivFace *face(long size, long *faceIndices);
+		CSubdivEdge *edge(long size, long *faceIndices, long edgeIndex);
+		CSubdivVertex *vertex(long size, long *faceIndices, long vertexIndex);
 	public:
 		inline CSubdivisionHierarchie(const CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategy &aStrategy)
 			: m_obj(anObj), m_strategy(aStrategy)
 		{
 		}
 		inline CSubdivisionHierarchie(const CRiSubdivisionMesh &anObj, const CSubdivisionStrategy &aStrategy)
-		: m_obj(anObj), m_strategy(aStrategy)
+			: m_obj(anObj), m_strategy(aStrategy)
 		{
 		}
-		void subdivide(long minDepth, const CSubdivisionStrategy &strategy);
-		CSubdivFace *face(long size, long *faceIndices);
-		CSubdivEdge *edge(long size, long *faceIndices, long edgeIndex);
-		CSubdivVertex *vertex(long size, long *faceIndices, long vertexIndex);
 
-		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 		inline virtual const CSubdivisionStrategy &strategy() const { return m_strategy; }
 		inline virtual const std::list<CSubdivisionIndices> &indices() const { return m_indices; }
 
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 };
 } // namespace RiCPP
 

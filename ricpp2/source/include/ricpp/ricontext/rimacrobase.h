@@ -38,7 +38,9 @@
 #endif // _RICPP_RICONTEXT_DORENDER_H
 
 namespace RiCPP {
-		
+	
+	class CTesselator;
+	
 	// ----------------------------------------------------------------------------
 	// Macro base classes
 	// ----------------------------------------------------------------------------
@@ -251,7 +253,8 @@ namespace RiCPP {
 	 */
 	class CVarParamRManInterfaceCall : public CRManInterfaceCall, IParameterClasses {
 	private:
-		CParameterList m_parameters;             ///< Parameters of an interface call.
+		CParameterList m_parameters;  ///< Parameters of an interface call.
+		CTesselator *m_tesselator;    ///< Attached geometry tesselator.
 	protected:
 		typedef CRManInterfaceCall TypeParent;
 	public:
@@ -296,7 +299,7 @@ namespace RiCPP {
 		 *  @param aLineNo The line number to store.
 		 */
 		inline CVarParamRManInterfaceCall(long aLineNo=-1) :
-			TypeParent(aLineNo)
+			TypeParent(aLineNo), m_tesselator(0)
 		{
 		}
 
@@ -316,7 +319,7 @@ namespace RiCPP {
 			const CParameterClasses &p,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]) :
-			TypeParent(aLineNo)
+			TypeParent(aLineNo), m_tesselator(0)
 		{
 			setParams(0, 0, decl, p, curColorDescr, n, tokens, params);
 		}
@@ -340,7 +343,7 @@ namespace RiCPP {
 			const CParameterClasses &p,
 			const CColorDescr &curColorDescr,
 			RtInt n, RtToken tokens[], RtPointer params[]) :
-			TypeParent(aLineNo)
+			TypeParent(aLineNo), m_tesselator(0)
 		{
 			setParams(aQualifier, table, decl, p, curColorDescr, n, tokens, params);
 		}
@@ -353,7 +356,7 @@ namespace RiCPP {
 		inline CVarParamRManInterfaceCall(
 			long aLineNo,
 			const CParameterList &theParameters) :
-			TypeParent(aLineNo)
+			TypeParent(aLineNo), m_tesselator(0)
 		{
 			parameters(theParameters);
 		}
@@ -362,11 +365,37 @@ namespace RiCPP {
 		 *
 		 *  @param c Object to copy.
 		 */
-		inline CVarParamRManInterfaceCall(const CVarParamRManInterfaceCall &c)
+		inline CVarParamRManInterfaceCall(const CVarParamRManInterfaceCall &c) : m_tesselator(0)
 		{
 			*this = c;
 		}
 
+		/** @brief Destructor, detaches geometry.
+		 */
+		inline virtual ~CVarParamRManInterfaceCall() { detach(); }
+		
+		/** @brief Detaches a geometry tesselator
+		 */
+		virtual void detach();
+
+		/** @brief Attaches a geometry tesselator
+		 */
+		virtual void attach(CTesselator *aTesselator);
+		
+		/** @brief Gets a read only geometry tesselator.
+		 */
+		inline const CTesselator *tesselator() const
+		{
+			return m_tesselator;
+		}
+
+		/** @brief Gets a writeable geometry tesselator.
+		 */
+		inline CTesselator *tesselator()
+		{
+			return m_tesselator;
+		}
+		
 		/*  @brief Duplication.
 		 * 
 		 *  @return New instance as clone of this instance.
@@ -465,6 +494,7 @@ namespace RiCPP {
 			if ( this == &c )
 				return *this;
 
+			detach();
 			parameters(c.parameters());
 			TypeParent::operator=(c);
 			return *this;

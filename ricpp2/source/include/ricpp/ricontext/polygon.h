@@ -346,6 +346,10 @@ private:
 	 */
 	RtPoint m_pnorm;
 public:
+	/** @brief Constructor
+	 */
+	inline CPolygonContainer() : m_outlineIsCCW(false) { m_pnorm[0] = 0; m_pnorm[1] = 0; m_pnorm[2] = 0; }
+	
 	/** @brief Inserts a polygon and integrates the holes to the outline.
 	 *
 	 *  Parameters are alike the ones in the RMan RiGeneralPointsPolygons
@@ -477,6 +481,10 @@ private:
 	 */
 	RtPoint m_pnorm;
 public:
+	/** @brief Constructor
+	 */
+	inline CTriangulatedPolygon() { m_pnorm[0] = 0; m_pnorm[1] = 0; m_pnorm[2] = 0; }
+	
 	/** @brief Triangulates a polygon (part of a polyhedra)
 	 *
 	 *  @param strategy Triangulierungs-Strategie
@@ -489,18 +497,9 @@ public:
 	 *
 	 *  @see CPolygonContainer::insertPolygon()
 	 */
-	inline void triangulate(const IPolygonTriangulationStrategy &strategy,
-							RtInt nloops, const RtInt nverts[],
-							const RtInt verts[], const RtFloat *p, bool frontCW)
-	{
-		CPolygonContainer c;
-		c.insertPolygon(nloops, nverts, verts, p);
-		m_pnorm[0] = c.normal()[0];
-		m_pnorm[1] = c.normal()[1];
-		m_pnorm[2] = c.normal()[2];
-		if ( !c.empty() )
-			strategy.triangulate(c.nodes(), c.outline(), c.outlineCCW(), frontCW, m_triangles);
-	}
+	void triangulate(const IPolygonTriangulationStrategy &strategy,
+					 RtInt nloops, const RtInt nverts[],
+					 const RtInt verts[], const RtFloat *p, bool frontCW);
 
 	/** @brief Triangulates a polygon.
 	 *

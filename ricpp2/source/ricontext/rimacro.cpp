@@ -29,6 +29,10 @@
 
 #include "ricpp/ricontext/rimacro.h"
 
+#ifndef _RICPP_RICONTEXT_TRIANGULATION_H
+#include "ricpp/ricontext/triangulation.h"
+#endif // _RICPP_RICONTEXT_TRIANGULATION_H
+
 using namespace RiCPP;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -119,8 +123,27 @@ void CRManInterfaceCall::replay(IDoRender &ri, const IArchiveCallback *cb)
 	ri.replayRequest(*this, cb);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
+void CVarParamRManInterfaceCall::detach()
+{
+	CTesselator *aTesselator = m_tesselator;
+	m_tesselator = 0;
+	if ( aTesselator ) {
+		aTesselator->detach();
+	}
+}
+
+void CVarParamRManInterfaceCall::attach(CTesselator *aTesselator)
+{
+	if ( m_tesselator == aTesselator )
+		return;
+
+	detach();
+	m_tesselator = aTesselator;
+	if ( aTesselator )
+		aTesselator->attach(this);
+}
+
 void CVarParamRManInterfaceCall::writeRIB(CRibElementsWriter &ribWriter, RtInt n, const RtToken ignoreTokens[]) const
 {
 	bool paramError = false;

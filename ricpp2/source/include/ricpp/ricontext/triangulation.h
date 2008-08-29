@@ -79,6 +79,7 @@ namespace RiCPP {
 		bool m_useTriangles;
 
 	protected:
+		CVarParamRManInterfaceCall *m_objPtr;
 		virtual const CVarParamRManInterfaceCall &obj() const = 0;
 
 	public:
@@ -121,6 +122,24 @@ namespace RiCPP {
 		inline void useTriangles(bool aUseTriangles) { m_useTriangles = aUseTriangles; }
 
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl) = 0;
+		
+		void detach()
+		{
+			CVarParamRManInterfaceCall *aPtr = m_objPtr;
+			m_objPtr = 0;
+			if ( aPtr )
+				aPtr->detach();
+		}
+		
+		void attach(CVarParamRManInterfaceCall *anObjPtr)
+		{
+			if ( anObjPtr == m_objPtr )
+				return;
+			detach();
+			m_objPtr = anObjPtr;
+			if ( anObjPtr )
+				anObjPtr->attach(this);
+		}
 	}; // CTesselator
 	
 	// =========================================================================
@@ -326,20 +345,19 @@ namespace RiCPP {
 	
 	class CPatchTesselator : public CRootPatchTesselator {
 		CRiPatch m_obj;
-	protected:
-		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	public:
 		inline CPatchTesselator(const CRiPatch &obj, const CRiBasis &aBasis) : CRootPatchTesselator(aBasis), m_obj(obj) {}
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	}; // CPatchTesselator
 
 	class CPatchMeshTesselator : public CRootPatchTesselator {
 		CRiPatchMesh m_obj;
-	protected:
-		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
+		
 	public:
 		inline CPatchMeshTesselator(const CRiPatchMesh &obj, const CRiBasis &aBasis) : CRootPatchTesselator(aBasis), m_obj(obj) {}
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	}; // CPatchMeshTesselator
 	
 	// -------------------------------------------------------------------------
@@ -367,13 +385,11 @@ namespace RiCPP {
 		void buildNuPN(const CDeclaration &posDecl, const CDeclaration &normDecl, CFace &f);
 		bool extractPFromPz(const CParameter *pz, std::vector<RtFloat> &results) const;
 
-	protected:
-		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
-
 	public:
 		inline CNuPatchTesselator() : m_useg(0), m_vseg(0) { }
 		inline CNuPatchTesselator(const CRiNuPatch &obj) : m_obj(obj), m_useg(0), m_vseg(0) { }
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+		inline virtual const CVarParamRManInterfaceCall &obj() const { return m_obj; }
 	}; // CNuPatchTesselator
 }
 

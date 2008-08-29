@@ -39,6 +39,7 @@ CTriangleRenderer::CTriangleRenderer()
 	m_tessU = _TESSELATION;
 	m_tessV = _TESSELATION;
 	m_useStrips = _USESTRIPS;
+	m_cacheGrids = true;
 }
 
 void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans, std::vector<RtFloat> &p, std::vector<RtFloat> &n)
@@ -117,6 +118,32 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 	}
 }
 
+
+bool CTriangleRenderer::startHandling(CVarParamRManInterfaceCall &obj)
+{
+	if ( obj.tesselator() ) {
+		triangulate(*obj.tesselator());
+		return true;
+	}
+	return false;
+}
+
+RtVoid CTriangleRenderer::endHandling(CVarParamRManInterfaceCall &obj, CTesselator *triObj)
+{
+	if ( !triObj )
+		return;
+	
+	triangulate(*triObj);
+
+	if ( m_cacheGrids ) {
+		obj.attach(triObj);
+	} else {
+		delete triObj;
+	}
+}
+
+
+
 RtVoid CTriangleRenderer::triangulate(CTesselator &triObj)
 {
 	const CDeclaration *pdecl = renderState()->declFind(RI_P);
@@ -139,87 +166,117 @@ RtVoid CTriangleRenderer::triangulate(CTesselator &triObj)
 
 RtVoid CTriangleRenderer::triangulate(CRiPolygon &obj)
 {
-	CPolygonTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CPolygonTesselator *t = new CPolygonTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPointsPolygons &obj)
 {
-	CPointsPolygonsTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CPointsPolygonsTesselator *t = new CPointsPolygonsTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiGeneralPolygon &obj)
 {
-	CGeneralPolygonTesselator t(obj, polygonTriangulationStrategy());
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CGeneralPolygonTesselator *t = new CGeneralPolygonTesselator(obj, polygonTriangulationStrategy());
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPointsGeneralPolygons &obj)
 {
-	CPointsGeneralPolygonsTesselator t(obj, polygonTriangulationStrategy());
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CPointsGeneralPolygonsTesselator *t = new CPointsGeneralPolygonsTesselator(obj, polygonTriangulationStrategy());
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiCone &obj)
 {
-	CConeTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CConeTesselator *t = new CConeTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiCylinder &obj)
 {
-	CCylinderTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CCylinderTesselator *t = new CCylinderTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiDisk &obj)
 {
-	CDiskTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CDiskTesselator *t = new CDiskTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiHyperboloid &obj)
 {
-	CHyperboloidTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CHyperboloidTesselator *t = new CHyperboloidTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiParaboloid &obj)
 {
-	CParaboloidTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CParaboloidTesselator *t = new CParaboloidTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiSphere &obj)
 {
-	CSphereTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CSphereTesselator *t = new CSphereTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiTorus &obj)
 {
-	CTorusTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	CTorusTesselator *t = new CTorusTesselator(obj);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPatch &obj)
 {
+	if ( startHandling(obj) )
+		return;
 	
 	CRiBasis basis(renderState()->lineNo(), attributes().uBasis(), attributes().uStep(), attributes().vBasis(), attributes().vStep());
-	CPatchTesselator t(obj, basis);
-	triangulate(t);
+	CPatchTesselator *t = new CPatchTesselator(obj, basis);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiPatchMesh &obj)
 {
+	if ( startHandling(obj) )
+		return;
+	
 	CRiBasis basis(renderState()->lineNo(), attributes().uBasis(), attributes().uStep(), attributes().vBasis(), attributes().vStep());
-	CPatchMeshTesselator t(obj, basis);
-	triangulate(t);
+	CPatchMeshTesselator *t = new CPatchMeshTesselator(obj, basis);
+	endHandling(obj, t);
 }
 
 RtVoid CTriangleRenderer::triangulate(CRiNuPatch &obj)
 {
-	CNuPatchTesselator t(obj);
-	triangulate(t);
+	if ( startHandling(obj) )
+		return;
+	
+	CNuPatchTesselator *t = new CNuPatchTesselator(obj);
+	endHandling(obj, t);
 }

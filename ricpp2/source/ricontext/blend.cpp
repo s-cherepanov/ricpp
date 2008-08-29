@@ -229,6 +229,7 @@ void CBicubicVectors::bicubicBlend(IndexType elemSize,
 	}
 }
 
+
 void CBicubicVectors::bicubicBlendWithNormals(IndexType elemSize,
 											  const IndexType (&controlIdx)[16],
 											  const std::vector<RtFloat> &vals,
@@ -339,13 +340,19 @@ void CBicubicVectors::bicubicBlendWithNormals(IndexType elemSize,
 	
 	id = 0;
 	IndexType idnrm = 0;
-	for ( i = 0; i < sumPos; ++i ) {
-		if ( flipNormal )
-			planeRH(&normals[idnrm], &pdv[id], &pdu[id]);
-		else
-			planeLH(&normals[idnrm], &pdv[id], &pdu[id]);
-		idnrm += normElemSize;
-		id += elemSize;
+
+	for ( v = 0; v < (IndexType)tessV()+1; ++v ) {
+		for ( u = 0; u < (IndexType)tessU()+1; ++u ) {
+			if ( flipNormal ) {
+				if ( !planeRH(&normals[idnrm], &pdv[id], &pdu[id]) ) {
+				}
+			} else {
+				if ( !planeLH(&normals[idnrm], &pdv[id], &pdu[id]) ) {
+				}
+			}
+			idnrm += normElemSize;
+			id += elemSize;
+		}
 	}
 }
 

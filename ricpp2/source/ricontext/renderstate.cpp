@@ -39,6 +39,8 @@
 
 using namespace RiCPP;
 
+static const bool _DEF_CACHE_FILE_ARCHIVES=false;
+
 #ifdef _DEBUG
 // #define _TRACE
 // #define _TRACE_TRANS_PTS
@@ -1131,7 +1133,7 @@ CRenderState::CRenderState(
 
 	m_curMacro = 0;
 	m_curReplay = 0;
-	m_cacheFileArchives = false;
+	m_cacheFileArchives = _DEF_CACHE_FILE_ARCHIVES;
 
 	m_reject = false;
 	m_recordMode = false;

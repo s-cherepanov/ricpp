@@ -286,8 +286,28 @@ public:
 
 private:
 	std::list<CFace> m_faces;
+	IndexType m_tessU, m_tessV;
 
 public:
+	inline CSurface(IndexType aTessU, IndexType aTessV) : m_tessU(aTessU), m_tessV(aTessV) {}
+
+	inline IndexType tessU() const { return m_tessU; }
+	inline void tessU(IndexType aTessU) { m_tessU = aTessU; }
+	inline IndexType tessV() const { return m_tessV; }
+	inline void tessV(IndexType aTessV) { m_tessV = aTessV; }
+	
+	inline void tesselation(IndexType aTessU, IndexType aTessV)
+	{
+		tessU(aTessU);
+		tessV(aTessV);
+	}
+	
+	inline void tesselation(IndexType &aTessU, IndexType &aTessV) const
+	{
+		aTessU = tessU();
+		aTessV = tessV();
+	}
+
 	inline CFace &newFace() { CFace aFace; m_faces.push_back(aFace); return m_faces.back(); }
 	
 	inline const_iterator begin() const { return m_faces.begin(); }

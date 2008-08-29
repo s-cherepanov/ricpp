@@ -55,6 +55,10 @@ namespace RiCPP {
 		RtInt m_tessU;
 		RtInt m_tessV;
 		bool m_useStrips;
+		bool m_cacheGrids;
+		
+		bool startHandling(CVarParamRManInterfaceCall &obj);
+		RtVoid endHandling(CVarParamRManInterfaceCall &obj, CTesselator *triObj);
 		
 	protected:
 		inline virtual const IPolygonTriangulationStrategy &polygonTriangulationStrategy() const { return m_earClipper; }
@@ -66,6 +70,9 @@ namespace RiCPP {
 		inline bool useStrips() const { return m_useStrips; }
 		inline void useStrips(bool aUseStrips) { m_useStrips = aUseStrips; }
 		
+		inline bool cacheGrids() const { return m_cacheGrids; }
+		inline void cacheGrids(bool doCache) { m_cacheGrids = doCache; }
+
 		using TypeParent::doProcess;
 		using TypeParent::preProcess;
 		using TypeParent::postProcess;

@@ -84,7 +84,7 @@ namespace RiCPP {
 
 	public:
 		inline CTesselator()
-		: m_tessU(1), m_tessV(1), m_frontFaceCW(true), m_flipNormals(false), m_useStrips(false), m_useTriangles(true)
+		: m_tessU(1), m_tessV(1), m_frontFaceCW(true), m_flipNormals(false), m_useStrips(false), m_useTriangles(true), m_objPtr(0)
 		{
 		}
 		virtual ~CTesselator();

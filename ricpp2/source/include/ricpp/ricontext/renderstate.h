@@ -696,6 +696,7 @@ namespace RiCPP {
 		 */
 		bool noLights() const;
 
+		virtual RtLightHandle renewLightHandle(RtToken lightSourceName, RtString handlename, CParameterList &params);
 		virtual RtLightHandle newLightHandle(RtToken lightSourceName, CParameterList &params);
 		virtual CHandle *lightSourceHandle(RtLightHandle handle);
 		virtual const CHandle *lightSourceHandle(RtLightHandle handle) const;

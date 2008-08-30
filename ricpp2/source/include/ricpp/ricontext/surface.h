@@ -315,6 +315,8 @@ public:
 
 	inline iterator begin() { return m_faces.begin(); }
 	inline iterator end() { return m_faces.end(); }
+
+	inline bool empty() const { return m_faces.empty(); }
 }; // CSurface
 
 }

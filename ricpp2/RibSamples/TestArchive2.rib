@@ -1,0 +1,17 @@
+##RenderMan RIB-Structure 1.0
+version 3.03
+
+ArchiveBegin "TestArchive"
+	FrameBegin 1
+	ArchiveBegin "TestArchive2"
+		WorldBegin
+			Translate 0 0 3
+			Sphere 0.5 -0.5 0.5 360
+		WorldEnd
+	ArchiveEnd
+	ReadArchive "TestArchive2"
+	FrameEnd
+ArchiveEnd
+
+ReadArchive "TestArchive"
+# ReadArchive "TestArchive"

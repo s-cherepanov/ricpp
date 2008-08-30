@@ -46,6 +46,7 @@ namespace RiCPP {
 	private:
 		RtToken m_name;
 		RtLightHandle m_handle;
+		std::string m_handleName;
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
@@ -68,7 +69,7 @@ namespace RiCPP {
 			long aLineNo = -1,
 			RtLightHandle aHandle = illLightHandle,
 			RtToken aName = RI_NULL)
-			: TypeParent(aLineNo), m_handle(aHandle), m_name(aName)
+			: TypeParent(aLineNo), m_handle(aHandle), m_name(aName), m_handleName(noNullStr(aHandle))
 		{
 		}
 
@@ -77,7 +78,7 @@ namespace RiCPP {
 			RtLightHandle aHandle,
 			RtToken aName,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: TypeParent(aLineNo, RI_OPTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_handle(aHandle), m_name(aName)
+			: TypeParent(aLineNo, RI_OPTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_handle(aHandle), m_name(aName), m_handleName(noNullStr(aHandle))
 		{
 		}
 
@@ -86,7 +87,7 @@ namespace RiCPP {
 			RtLightHandle aHandle,
 			RtToken aName, 
 			const CParameterList &theParameters)
-			: TypeParent(aLineNo, theParameters), m_handle(aHandle), m_name(aName)
+			: TypeParent(aLineNo, theParameters), m_handle(aHandle), m_name(aName), m_handleName(noNullStr(aHandle))
 		{
 		}
 
@@ -116,6 +117,16 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
+		inline const char *handleName() const
+		{
+			return m_handleName.c_str();
+		}
+
+		inline void handleName(const char *aHandle)
+		{
+			m_handleName = noNullStr(aHandle);
+		}
+
 		inline virtual RtLightHandle handle() const { return m_handle; }
 
 		inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }
@@ -142,18 +153,18 @@ namespace RiCPP {
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
-			// Special handling by rib writer
+			// Special handling by rib writer, string handle
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
 			ribWriter.putStringToken(name());
 			ribWriter.putBlank();
-			ribWriter.putStringToken(handle());
+			ribWriter.putStringToken(handleName());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, const char *aName, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
-			// Special handling by rib writer
+			// Special handling by rib writer, numerical handle
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
 			ribWriter.putStringToken(name());
@@ -179,6 +190,7 @@ namespace RiCPP {
 				return *this;
 
 			name(c.name());
+			handleName(c.handleName());
 			handle(c.handle());
 
 			TypeParent::operator=(c);
@@ -191,6 +203,7 @@ namespace RiCPP {
 	private:
 		RtToken m_name;
 		RtLightHandle m_handle;
+		std::string m_handleName;
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;
 	public:
@@ -213,7 +226,7 @@ namespace RiCPP {
 			long aLineNo = -1,
 			RtLightHandle aHandle = illLightHandle,
 			RtToken aName = RI_NULL)
-			: TypeParent(aLineNo), m_handle(aHandle), m_name(aName)
+			: TypeParent(aLineNo), m_handle(aHandle), m_name(aName), m_handleName(noNullStr(aHandle))
 		{
 		}
 
@@ -222,7 +235,7 @@ namespace RiCPP {
 			RtLightHandle aHandle,
 			RtToken aName,
 			RtInt n, RtToken tokens[], RtPointer params[])
-			: TypeParent(aLineNo, RI_OPTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_handle(aHandle), m_name(aName)
+			: TypeParent(aLineNo, RI_OPTION, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_handle(aHandle), m_name(aName), m_handleName(noNullStr(aHandle))
 		{
 		}
 
@@ -231,7 +244,7 @@ namespace RiCPP {
 			RtLightHandle aHandle,
 			RtToken aName, 
 			const CParameterList &theParameters)
-			: TypeParent(aLineNo, theParameters), m_handle(aHandle), m_name(aName)
+			: TypeParent(aLineNo, theParameters), m_handle(aHandle), m_name(aName), m_handleName(noNullStr(aHandle))
 		{
 		}
 
@@ -261,6 +274,16 @@ namespace RiCPP {
 			m_name = aName;
 		}
 
+		inline const char *handleName() const
+		{
+			return m_handleName.c_str();
+		}
+
+		inline void handleName(const char *aHandle)
+		{
+			m_handleName = noNullStr(aHandle);
+		}
+
 		inline virtual RtLightHandle handle() const { return m_handle; }
 		inline virtual void handle(RtLightHandle aHandle) { m_handle = aHandle; }
 
@@ -286,18 +309,18 @@ namespace RiCPP {
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
-			// Special handling by rib writer
+			// Special handling by rib writer, string handle
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
 			ribWriter.putStringToken(name());
 			ribWriter.putBlank();
-			ribWriter.putStringToken(handle());
+			ribWriter.putStringToken(handleName());
 			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
 		}
 		
 		inline virtual void writeRIB(CRibElementsWriter &ribWriter, const char *aName, RtInt n=0, const RtToken ignoreTokens[]=0) const
 		{
-			// Special handling by rib writer
+			// Special handling by rib writer, numerical handle
 			ribWriter.putRequest(interfaceIdx());
 			ribWriter.putBlank();
 			ribWriter.putStringToken(name());
@@ -323,6 +346,7 @@ namespace RiCPP {
 				return *this;
 
 			name(c.name());
+			handleName(c.handleName());
 			handle(c.handle());
 
 			TypeParent::operator=(c);

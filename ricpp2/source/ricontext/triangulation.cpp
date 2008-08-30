@@ -380,6 +380,9 @@ CSurface *CPolygonTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 	if ( !surf ) {
 		return 0;
 	}
+	if ( !surf->empty() ) {
+		return surf;
+	}
 	
 	CFace &f = surf->newFace();
 	triangleStrip(nvertices, 0, f);
@@ -410,6 +413,9 @@ CSurface *CPointsPolygonsTesselator::tesselate(const CDeclaration &posDecl, cons
 	CSurface *surf = createSurface();
 	if ( !surf ) {
 		return 0;
+	}
+	if ( !surf->empty() ) {
+		return surf;
 	}
 	
 	RtInt vertsOffs = 0;
@@ -452,6 +458,9 @@ CSurface *CGeneralPolygonTesselator::tesselate(const CDeclaration &posDecl, cons
 	if ( !surf ) {
 		return 0;
 	}
+	if ( !surf->empty() ) {
+		return surf;
+	}
 	
 	CFace &f = surf->newFace();
 	f.faceType(FACETYPE_TRIANGLES);
@@ -484,6 +493,9 @@ CSurface *CPointsGeneralPolygonsTesselator::tesselate(const CDeclaration &posDec
 	CSurface *surf = createSurface();
 	if ( !surf ) {
 		return 0;
+	}
+	if ( !surf->empty() ) {
+		return surf;
 	}
 
 	RtInt faceIdx = 0;
@@ -882,6 +894,9 @@ CSurface *CQuadricTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 	CSurface *surf = createSurface();
 	if ( !surf ) {
 		return 0;
+	}
+	if ( !surf->empty() ) {
+		return surf;
 	}
 	
 	CFace &f = surf->newFace();
@@ -1770,6 +1785,9 @@ CSurface *CPatchTesselator::tesselate(const CDeclaration &posDecl,
 	if ( !surf ) {
 		return 0;
 	}
+	if ( !surf->empty() ) {
+		return surf;
+	}
 	
 	CFace &f = surf->newFace();
 
@@ -1803,6 +1821,9 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 	CSurface *surf = createSurface();
 	if ( !surf ) {
 		return 0;
+	}
+	if ( !surf->empty() ) {
+		return surf;
 	}
 
 	for ( RtInt v = 0, i = 0; v < m_obj->nvPatches(); ++v ) {
@@ -2053,6 +2074,9 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 	CSurface *surf = createSurface();
 	if ( !surf ) {
 		return 0;
+	}
+	if ( !surf->empty() ) {
+		return surf;
 	}
 	
 	basis().reset(*m_obj, tessU(), tessV());

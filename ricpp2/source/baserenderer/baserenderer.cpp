@@ -39,7 +39,7 @@
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
 #ifdef _DEBUG
-// #define _TRACE_ARCHIVE
+#define _TRACE_ARCHIVE
 #define _TRACE
 #ifndef _RICPP_TOOLS_TRACE_H
 #include "ricpp/tools/trace.h"
@@ -883,6 +883,9 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 
 void CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
 {
+#ifdef _TRACE_ARCHIVE
+	trace("*** CBaseRenderer::processArchiveInstance()");
+#endif
 	CRiArchiveMacro *m = renderState()->findArchiveInstance(handle);
 	if ( m ) {
 		if ( m->isClosed() ) {
@@ -908,6 +911,10 @@ void CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiv
 
 void CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params)
 {
+#ifdef _TRACE_ARCHIVE
+	trace("*** CBaseRenderer::readArchiveFromStream()");
+#endif
+
 	CParameterList p = params;
 	CUri sav(renderState()->baseUri());
 	std::string oldArchiveName = renderState()->archiveName();
@@ -1859,13 +1866,16 @@ RtVoid CBaseRenderer::preProcess(CRiLightSource &obj)
 {
 	CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 	if ( !handle ) {
-		throw ExceptRiCPPError(
-			RIE_BADHANDLE,
-			RIE_SEVERE,
-			renderState()->printLineNo(__LINE__),
-			renderState()->printName(__FILE__),
-			"Handle not created for LightSource \"%s\"",
-			noNullStr(obj.name()));
+		RtLightHandle l = renderState()->renewLightHandle(obj.name(), obj.handleName(),renderState()->curParamList());
+		if ( l == illLightHandle ) {
+			throw ExceptRiCPPError(
+				RIE_BADHANDLE,
+				RIE_SEVERE,
+				renderState()->printLineNo(__LINE__),
+				renderState()->printName(__FILE__),
+				"Handle not created for LightSource \"%s\"",
+				noNullStr(obj.name()));
+		}
 	}
 }
 
@@ -1907,13 +1917,16 @@ RtVoid CBaseRenderer::preProcess(CRiAreaLightSource &obj)
 		// Test the handle
 		CHandle *handle = renderState()->lightSourceHandle(obj.handle());
 		if ( !handle ) {
-			throw ExceptRiCPPError(
-				RIE_BADHANDLE,
-				RIE_SEVERE,
-				renderState()->printLineNo(__LINE__),
-				renderState()->printName(__FILE__),
-				"Handle not created for AreaLightSource \"%s\"",
-				noNullStr(obj.name()));
+			RtLightHandle l = renderState()->renewLightHandle(obj.name(), obj.handleName(), renderState()->curParamList());
+			if ( l == illLightHandle ) {
+				throw ExceptRiCPPError(
+					RIE_BADHANDLE,
+					RIE_SEVERE,
+					renderState()->printLineNo(__LINE__),
+					renderState()->printName(__FILE__),
+					"Handle not created for AreaLightSource \"%s\"",
+					noNullStr(obj.name()));
+			}
 		}
 	} else {
 		// AreaLightSource ended

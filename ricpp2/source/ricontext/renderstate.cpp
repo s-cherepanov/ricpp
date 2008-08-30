@@ -1804,6 +1804,23 @@ bool CRenderState::noLights() const
 	return m_lightSourceHandles.empty();
 }
 
+RtLightHandle CRenderState::renewLightHandle(RtToken lightSourceName, RtString handlename, CParameterList &params)
+{
+	unsigned long num = 0;
+	
+	RtLightHandle l = m_lightSourceHandles.newHandle(handlename, num);
+	if ( l != illLightHandle ) {
+		CHandle *h = new CHandle(l, num, findHandleId(params) != RI_NULL);
+		if ( !h ) {
+			throw ExceptRiCPPError(RIE_NOMEM, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in newLightHandle(): %s", noNullStr(lightSourceName));
+		}
+		l = m_lightSourceHandles.insertObject(h->handle(), h);
+	} else {
+		throw ExceptRiCPPError(RIE_BADHANDLE, RIE_SEVERE, printLineNo(__LINE__), printName(__FILE__), "in newLightHandle(): %s", noNullStr(lightSourceName));
+	}
+	return l;
+}
+
 RtLightHandle CRenderState::newLightHandle(RtToken lightSourceName, CParameterList &params)
 {
 	RtString handlename = findHandleId(params);
@@ -1866,7 +1883,6 @@ CLightSource *CRenderState::newLightSource(
 	}
 	return l;
 }
-
 
 RtObjectHandle CRenderState::objectBegin(RtString name, CRManInterfaceFactory &aFactory)
 {

@@ -72,7 +72,7 @@ void CInputState::popState()
 void CInputState::objectBegin(const char *name, InputHandleType handle)
 {
 	m_stateStack.push_back(SInputStackElem(INPUT_DEF_OBJECT, name, handle, 0));
-	m_path.push_back(name);
+	m_path.push_back(noNullStr(name));
 }
 
 void CInputState::objectEnd()
@@ -90,7 +90,7 @@ void CInputState::objectEnd()
 void CInputState::archiveBegin(const char *name, InputHandleType handle)
 {
 	m_stateStack.push_back(SInputStackElem(INPUT_DEF_ARCHIVE, name, handle, 0));
-	m_path.push_back(name);
+	m_path.push_back(noNullStr(name));
 }
 
 void CInputState::archiveEnd()
@@ -108,7 +108,7 @@ void CInputState::archiveEnd()
 void CInputState::cacheFileBegin(const char *name, InputHandleType handle)
 {
 	m_stateStack.push_back(SInputStackElem(INPUT_DEF_CACHEFILE, name, handle, 0));
-	m_path.push_back(name);
+	m_path.push_back(noNullStr(name));
 }
 
 void CInputState::cacheFileEnd()
@@ -126,7 +126,7 @@ void CInputState::cacheFileEnd()
 void CInputState::interpretFileBegin(const char *name, InputHandleType handle)
 {
 	m_stateStack.push_back(SInputStackElem(INPUT_DEF_READFILE, name, handle, 0));
-	m_path.push_back(name);
+	m_path.push_back(noNullStr(name));
 }
 
 void CInputState::interpretFileEnd()
@@ -144,7 +144,7 @@ void CInputState::interpretFileEnd()
 void CInputState::replayObjectBegin(const char *name, InputHandleType handle)
 {
 	m_stateStack.push_back(SInputStackElem(INPUT_REPLAY_OBJECT, name, handle, 0));
-	m_path.push_back(name);
+	m_path.push_back(noNullStr(name));
 }
 
 void CInputState::replayObjectEnd()
@@ -162,7 +162,7 @@ void CInputState::replayObjectEnd()
 void CInputState::replayArchiveBegin(const char *name, InputHandleType handle)
 {
 	m_stateStack.push_back(SInputStackElem(INPUT_REPLAY_ARCHIVE, name, handle, 0));
-	m_path.push_back(name);
+	m_path.push_back(noNullStr(name));
 }
 
 void CInputState::replayArchiveEnd()
@@ -180,7 +180,7 @@ void CInputState::replayArchiveEnd()
 void CInputState::replayFileBegin(const char *name, InputHandleType handle)
 {
 	m_stateStack.push_back(SInputStackElem(INPUT_REPLAY_FILE, name, handle, 0));
-	m_path.push_back(name);
+	m_path.push_back(noNullStr(name));
 }
 
 void CInputState::replayFileEnd()

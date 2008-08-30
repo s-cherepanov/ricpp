@@ -1596,20 +1596,65 @@ void CRenderState::contextBegin()
 }
 
 
-void CRenderState::compactArchive(TemplHandleStack<CRiMacro> &aMacroStack)
+void CRenderState::compactArchive(std::list<CRiMacro *> &aList, TemplHandleStack<CRiMacro> &aMacroStack)
 {
-	// aMacroStack.clearToMark();
-	std::list<CRiMacro *> result;
-	aMacroStack.extractToMark(result);
+	CRiMacro *aMacro;
+	while ( !aList.empty() ) {
+		aMacro = aList.back();
+		aList.pop_back();
+		if ( aMacro != 0 ) {
+			if ( aMacro->macroType() != CRiMacro::MACROTYPE_UNKNOWN ) {
+				aMacroStack.insertObject(aMacro->handle(), aMacro); // In reverse order
+			} else {
+				delete aMacro;
+			}
+		}
+	}
+}
 
-	aMacroStack.insert(result);
+static void markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2, std::list<CRiMacro *> &l3)
+{
+	std::list<CRiMacro *> *lptr[3] = {&l1, &l2, &l3};
+
+	for ( std::list<CRiMacro *>::iterator iter = l1.begin(); iter != l1.end(); iter++ ) {
+		if ( !(*iter) )
+			continue;
+		if ( (*iter)->path().size() == 1 ) {
+			for ( int listNo = 0; listNo < 3; ++listNo ) {
+				for ( std::list<CRiMacro *>::iterator markIter = lptr[listNo]->begin(); markIter != lptr[listNo]->end(); markIter++ ) {
+					if ( !(*markIter) )
+						continue;
+					if ( (*markIter)->path().size() > 0 && (*markIter)->path()[0] == (*iter)->path()[0] ) {
+						(*markIter)->macroType(CRiMacro::MACROTYPE_UNKNOWN); // Mark for deletion (also the root element (*iter))
+					}
+				}
+			}
+		} else if ( (*iter)->path().size() == 0 ) {
+			(*iter)->macroType(CRiMacro::MACROTYPE_UNKNOWN); // Mark for deletion
+		}
+	}
 }
 
 void CRenderState::compactArchives()
 {
-	compactArchive(m_archiveMacros);
-	compactArchive(m_objectMacros);
-	compactArchive(m_cachedArchive);	
+	std::list<CRiMacro *> archiveResults;
+	std::list<CRiMacro *> objectResults;
+	std::list<CRiMacro *> cachedResults;
+
+	// Extract in reverse order
+	m_archiveMacros.extractToMark(archiveResults);
+	m_objectMacros.extractToMark(objectResults);
+	m_cachedArchive.extractToMark(cachedResults);
+
+	// Mark root elements for deletion (Elements with one Path element and all successors)
+	markRoot(archiveResults, objectResults, cachedResults);
+	markRoot(objectResults, cachedResults, archiveResults);
+	markRoot(cachedResults, archiveResults, objectResults);
+
+	// Inserted in reversed order again, so it's the same order as before
+	compactArchive(archiveResults, m_archiveMacros);
+	compactArchive(objectResults, m_objectMacros);
+	compactArchive(cachedResults, m_cachedArchive);	
 }
 
 void CRenderState::contextReset()
@@ -1626,7 +1671,6 @@ void CRenderState::contextReset()
 	
 	m_lightSourceHandles.clear();
 	m_lightSources.clear();
-	compactArchives();
 	
 	deleteTransMapCont(m_globalTransforms);
 	deleteDeferedRequests();
@@ -1639,6 +1683,7 @@ void CRenderState::contextEnd()
 	contextReset();
 	m_objectMacros.clear();
 	m_archiveMacros.clear();
+	m_cachedArchive.clear();
 }
 
 void CRenderState::frameBegin(RtInt number)
@@ -1891,7 +1936,7 @@ CLightSource *CRenderState::newLightSource(
 
 void CRenderState::startArchiveInstance(RtString aName, RtArchiveHandle aHandle)
 {
-	inputState().replayArchiveBegin(aName, aHandle);
+	inputState().replayArchiveBegin(notEmptyStr(aName) ? aName : aHandle, aHandle);
 }
 
 void CRenderState::endArchiveInstance()
@@ -1901,7 +1946,7 @@ void CRenderState::endArchiveInstance()
 
 void CRenderState::startFileInstance(RtString aName, RtArchiveHandle aHandle)
 {
-	inputState().replayFileBegin(aName, aHandle);
+	inputState().replayFileBegin(notEmptyStr(aName) ? aName : aHandle, aHandle);
 }
 
 void CRenderState::endFileInstance()
@@ -1945,7 +1990,7 @@ RtObjectHandle CRenderState::objectBegin(RtString aName, CRManInterfaceFactory &
 	CRiMacro *m = new CRiMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_OBJECT);
 	m_curMacro = m;
 
-	inputState().objectBegin(aName, t);
+	inputState().objectBegin(notEmptyStr(aName) ? aName : t, t);
 
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		if ( m != 0 ) {
@@ -2024,7 +2069,7 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName, CRManInterfaceFact
 		CRiMacro *m = new CRiMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_ARCHIVE);
 		m_curMacro = m;
 
-		inputState().archiveBegin(aName, t);
+		inputState().archiveBegin(notEmptyStr(aName) ? aName : t, t);
 
 		if ( m != 0 ) {
 			m->path() = inputState().path();
@@ -2080,7 +2125,7 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName, CRManInterface
 		CRiMacro *m = new CRiMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_FILE);
 		m_curMacro = m;
 		
-		inputState().cacheFileBegin(aName, t);
+		inputState().cacheFileBegin(notEmptyStr(aName) ? aName : t, t);
 		// Does not influence nesting, because called within a IRi::readArchiveV()
 
 		if ( m != 0 ) {

@@ -300,18 +300,7 @@ public:
 			if ( v == 0 ) {
 				return;
 			}
-			result.push_back(v); // reverse order!!! see insert()
-		}
-	}
-
-	inline void insert(std::list<ValueType *> &result)
-	{
-		while ( !result.empty() ) {
-			ValueType *v = result.back(); // reverse order, so it's right again, see extractToMark()
-			result.pop_back();
-			if ( v != 0 ) {
-				m_stack.push_back(v);
-			}
+			result.push_back(v); // reversed order!!!
 		}
 	}
 

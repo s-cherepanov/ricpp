@@ -68,6 +68,27 @@
 
 namespace RiCPP {
 	
+	/** @brief Delayed requests.
+	 *  Remeber a request with state information @todo also remeber mode (used for blur).
+	 *  In contrast the "defered" requests are only used for defered deletion, delayed
+	 *  requests are also defered.
+	 */
+	class CDelayedRequest {
+		CRManInterfaceCall *m_request; //!< Request (graphics primitive for delayed call)
+		CAttributes *m_attributes; //!< Attribute set that was valid while request was called
+		CTransformation *m_transformation; //!< To world transformation (cuurent valid while request was called)
+	public:
+		inline CDelayedRequest(CRManInterfaceCall *aRequest, CAttributes *anAttrib, CTransformation *aTrans)
+		: m_request(aRequest), m_attributes(anAttrib), m_transformation(aTrans) {}
+		
+		CRManInterfaceCall *request() { return m_request; }
+		const CRManInterfaceCall *request()  const { return m_request; }
+		CAttributes *attributes() { return m_attributes; }
+		const CAttributes *attributes() const { return m_attributes; }
+		CTransformation *transformation() { return m_transformation; }
+		const CTransformation *transformation() const { return m_transformation; }
+	}; // CDelayedRequest
+
 	/** @brief The facade for the render state objects.
 	 *
 	 * The CRenderState object is a part of CBaseRenderer.
@@ -111,7 +132,7 @@ namespace RiCPP {
 		std::list<CAttributes *> m_rememberedAttributes;   ///< remembered attributes.
 		std::list<CTransformation *> m_rememberedTransformations;   ///< remembered attributes.
 		
-		CRManInterfaceFactory *m_macroFactory; ///< Used for deleteion of defered requests.
+		CRManInterfaceFactory *m_macroFactory; ///< Used for deletion of defered requests.
 		std::deque<CRManInterfaceCall *> m_deferedRequests;  ///< Requests with defered deletion
 		
 		CTransformation *m_NDCToRaster;     ///< Maps normalized display coordinates to raster space
@@ -190,6 +211,9 @@ namespace RiCPP {
 		bool getControl(CValue &p, RtToken tablename, RtToken varname) const;
 
 		void deleteTransMapCont(TypeTransformationMap &m);
+		void clearStacks();
+		void freeAll();
+		void contextReset();
 
 		/** @brief Parser for RIB if-expression.
 		 *
@@ -558,7 +582,9 @@ namespace RiCPP {
 		 *  State objects are deleted
 		 */
 		virtual ~CRenderState();
-		
+
+		/** @todo Also remember mode for delayed calls, need mode dirty flag
+		 */
 		void rememberState();
 		CAttributes *rememberedAttributes();
 		const CAttributes *rememberedAttributes() const;
@@ -567,6 +593,8 @@ namespace RiCPP {
 
 		void deferRequest(CRManInterfaceCall *aRequest);
 		void deleteDeferedRequests();
+		
+		void restart();
 
 		/*
 		inline CTransformation *NDCToRaster() { return m_NDCToRaster; }

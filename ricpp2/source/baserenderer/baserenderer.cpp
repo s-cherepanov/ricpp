@@ -410,6 +410,17 @@ CBaseRenderer::~CBaseRenderer()
 }
 
 
+RtVoid CBaseRenderer::restart(void)
+{
+	initDelayed();
+	if ( !renderState() )
+		return;
+	
+	defaultDeclarations();
+	renderState()->restart();
+}
+
+
 void CBaseRenderer::hideSurface(const CSurface *s)
 {
 	if ( !s )
@@ -460,7 +471,7 @@ CTransformation &CBaseRenderer::transformation()
 bool CBaseRenderer::delayRequest(CRManInterfaceCall &obj)
 {
 	if ( !replayMode() ) {
-		obj.delayedDeletion(true);
+		obj.deferedDeletion(true);
 		renderState()->rememberState();
 		m_delayedRequests.push_back(CDelayedRequest(&obj, renderState()->rememberedAttributes(), renderState()->rememberedTransformation()));
 		return true;
@@ -482,19 +493,19 @@ void CBaseRenderer::replayDelayed()
 	
 	std::list<CDelayedRequest>::iterator i = m_delayedRequests.begin();
 	for ( ; i != m_delayedRequests.end(); ++i ) {
-		if ( (*i).m_req ) {
-			m_attributes = (*i).m_attributes;
-			m_transformation = (*i).m_transformation;
+		if ( (*i).request() ) {
+			m_attributes = (*i).attributes();
+			m_transformation = (*i).transformation();
 			try {
 				
-				(*i).m_req->doProcess(*this, 0);
+				(*i).request()->doProcess(*this, 0);
 
 			} catch ( ExceptRiCPPError &e2 ) {
 				ricppErrHandler().handleError(e2);
 			} catch ( std::exception &e1 ) {
-				ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at 'replayDelayed(%s)': %s", noNullStr((*i).m_req->requestName()), e1.what());
+				ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Error at 'replayDelayed(%s)': %s", noNullStr((*i).request()->requestName()), e1.what());
 			} catch ( ... ) {
-				ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'replayDelayed(%s)'", noNullStr((*i).m_req->requestName()));
+				ricppErrHandler().handleError(RIE_SYSTEM, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Unknown error at 'replayDelayed(%s)'", noNullStr((*i).request()->requestName()));
 			}
 		}
 	}
@@ -503,6 +514,12 @@ void CBaseRenderer::replayDelayed()
 	m_transformation = 0;
 	m_replayDelayedMode = false;
 	m_delayedRequests.clear();
+}
+
+
+void CBaseRenderer::clearDelayed()
+{	
+	initDelayed();
 }
 
 CMatrix3D CBaseRenderer::toCamera() const
@@ -729,7 +746,7 @@ void CBaseRenderer::recordRequest(CRManInterfaceCall *aRequest)
 {
 	if ( !aRequest )
 		return;
-	aRequest->inMacro(true);
+	aRequest->recorded(true);
 	renderState()->curMacro()->add(aRequest);
 }
 
@@ -790,10 +807,10 @@ void CBaseRenderer::processRequest(CRManInterfaceCall *aRequest, bool immediatel
 		}
 	}
 	
-	if ( !recorded && aRequest->delayedDeletion() )
+	if ( !recorded && aRequest->deferedDeletion() )
 		renderState()->deferRequest(aRequest);
 
-	if ( !recorded && !aRequest->delayedDeletion() )
+	if ( !recorded && !aRequest->deferedDeletion() )
 		macroFactory().deleteRequest(aRequest);
 
 	if ( ePre.code() != RIE_NOERROR )
@@ -1053,12 +1070,6 @@ bool CBaseRenderer::init(const CDeclarationDictionary &theDeclDict, const COptio
 
 // ----------------------------------------------------------------------------
 
-RtVoid CBaseRenderer::preProcess(CRiBegin &obj)
-{
-	// renderState()->contextBegin(); already called in beginV
-}
-
-
 RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
 // throw ExceptRiCPPError
 {
@@ -1078,12 +1089,6 @@ RtContextHandle CBaseRenderer::beginV(RtString name, RtInt n, RtToken tokens[], 
 
 	// There is no handle here, the frontend creates the backend
 	return 1; // indicates success
-}
-
-
-RtVoid CBaseRenderer::preProcess(CRiEnd &obj)
-{
-	renderState()->contextEnd();
 }
 
 
@@ -1114,6 +1119,16 @@ RtVoid CBaseRenderer::end(void)
 		err.set(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__, "Unknown error at '%s'", CRequestInfo::requestName(req));
 	}
 
+	try {
+		renderState()->contextEnd();
+	} catch ( ExceptRiCPPError &e2 ) {
+		err = e2;
+	} catch ( std::exception &e1 ) {
+		err.set(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__, "Unknown error at '%s': %s", CRequestInfo::requestName(req), e1.what());
+	} catch ( ... ) {
+		err.set(RIE_SYSTEM, RIE_SEVERE, __LINE__, __FILE__, "Unknown error at '%s'", CRequestInfo::requestName(req));
+	}
+	
 	// Delete the state, even if there are errors
 	if ( m_renderState ) {
 		delete m_renderState;
@@ -1130,6 +1145,13 @@ RtVoid CBaseRenderer::errorHandler(const IErrorHandler &handler)
 	RICPP_PREAMBLE(REQ_ERROR_HANDLER)
 		RICPP_PROCESS(newRiErrorHandler(renderState()->lineNo(), handler));
 	RICPP_POSTAMBLE
+}
+
+RtVoid CBaseRenderer::doProcess(CRiSynchronize &obj)
+{
+	if ( obj.name() == RI_RESTART ) {
+		restart();
+	}
 }
 
 RtVoid CBaseRenderer::synchronize(RtString name)

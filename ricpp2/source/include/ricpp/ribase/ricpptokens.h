@@ -269,6 +269,7 @@ extern "C" {
 	RICPP_EXTERN(RtToken const) RI_HERMITE; /**< Hermite basis */
 	RICPP_EXTERN(RtToken const) RI_POWER; /**< Power basis */
 
+	RICPP_EXTERN(RtToken const) RI_RESTART; /**< Synchronize renderer for restart */
 	RICPP_EXTERN(RtToken const) RI_TEAPOT; /**< Teapot geometry */
 
 	/* Texture maps

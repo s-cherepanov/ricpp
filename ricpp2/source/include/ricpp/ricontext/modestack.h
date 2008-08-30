@@ -111,11 +111,6 @@ protected:
 	/** @brief Removes nesting from the modes, do not test if valid (is done by the interface before).
 	 */
 	virtual void pop();
-
-	/** @brief Clears the mode stack.
-	 */
-	virtual void clear();
-
 public:
 	/** @brief Initializing of the mode, normally starts outside any blocks. 
 	 */
@@ -128,6 +123,10 @@ public:
 	 */
 	inline virtual ~CModeStack() {}
 
+
+	/** @brief Clears the mode stack.
+	 */
+	virtual void clear();
 
 	/** @defgroup mode_group CModeStack, the modes.
 	 * @brief Stacks the modes of the RenderMan interface

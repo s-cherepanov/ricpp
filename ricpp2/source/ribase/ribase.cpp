@@ -507,8 +507,9 @@ RICPP_INTERN(RtToken const) RI_CATMULLROM = "catmullrom";
 RICPP_INTERN(RtToken const) RI_HERMITE = "hermite";
 RICPP_INTERN(RtToken const) RI_POWER = "power";
 
+RICPP_INTERN(RtToken const) RI_RESTART = "restart";
 RICPP_INTERN(RtToken const) RI_TEAPOT = "teapot";
-	
+
 RICPP_INTERN(RtToken const) RI_BUMP = "Bump";
 RICPP_INTERN(RtToken const) RI_SHADOW = "Shadow";
 RICPP_INTERN(RtToken const) RI_LAT_LONG_ENVIRONMENT  = "LatLongEnvironment";

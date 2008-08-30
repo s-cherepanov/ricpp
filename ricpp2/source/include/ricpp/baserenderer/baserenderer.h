@@ -40,7 +40,7 @@
 
 namespace RiCPP {
 
-/** @todo Need to rethink the CRenderState - CBaseRenderer 1:1 relationship, the seperation of affairs is ugly by design.
+/** @todo Need to rethink the CRenderState - CBaseRenderer 1:1 relationship, the seperation of affairs is ugly.
  *        E.g. replay mode maybe better a part of the state.
  */
 	
@@ -143,19 +143,10 @@ private:
 	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
 
-	///! Delayed requests
-	class CDelayedRequest {
-	public:
-		CRManInterfaceCall *m_req; //!< Request (graphics primitive for delayed call)
-		CAttributes *m_attributes; //!< Attribute set that was valid while request was called
-		CTransformation *m_transformation; //!< To world transformation (cuurent valid while request was called)
-		inline CDelayedRequest(CRManInterfaceCall *req, CAttributes *attrib, CTransformation *trans)
-		: m_req(req), m_attributes(attrib), m_transformation(trans) {}
-	};
 	std::list<CDelayedRequest> m_delayedRequests; //!< used to store delayed requests
 	bool m_replayDelayedMode; //!< true, while replaying of delayed requests (controlled via doWorldEnd())
-	CAttributes *m_attributes; //!< Attributes of delayed request
-	CTransformation *m_transformation; //!< Transformation of delayed request
+	CAttributes *m_attributes; //!< Attributes while replaying delayed request
+	CTransformation *m_transformation; //!< Transformation replaying delayed request
 
 protected:
 	/** @brief Callbacks for the rib parser to the front end.
@@ -449,7 +440,8 @@ protected:
 	inline bool replayMode() const { return m_replayDelayedMode; }
 	void initDelayed();
 	void replayDelayed();
-
+	void clearDelayed();
+	
 	virtual bool delayRequest(CRManInterfaceCall &obj);
 	
 	/** @brief Gets the current to camera matrix
@@ -531,6 +523,14 @@ public:
 	 * context creator.
 	 */
 	inline virtual RtVoid deactivate(void) {}
+
+	/** @brief Is called by the synchronize ("restart"), to reset the renderer.
+	 *
+	 *  Sets the renderer into a state to restart rendering: Clearing options
+	 *  attributes, transforms, light and object handles - but leaves laoded
+	 *  archives in memory.
+	 */
+	virtual RtVoid restart(void);
 
 	inline virtual RtVoid version() {}
 
@@ -727,8 +727,8 @@ public:
 	
 	inline virtual RtVoid preProcess(CRiSystem &obj) {}
 	
-	virtual RtVoid preProcess(CRiBegin &obj);
-	virtual RtVoid preProcess(CRiEnd &obj);
+	inline virtual RtVoid preProcess(CRiBegin &obj) {}
+	inline virtual RtVoid preProcess(CRiEnd &obj) {}
 	
 	virtual RtVoid preProcess(CRiFrameBegin &obj);
 	virtual RtVoid preProcess(CRiFrameEnd &obj);
@@ -868,7 +868,7 @@ public:
 	virtual RtVoid preProcess(CRiIfEnd &obj);
 
 public:
-	inline virtual RtVoid doProcess(CRiSynchronize &obj) {}
+	virtual RtVoid doProcess(CRiSynchronize &obj);
 	
 	inline virtual RtVoid doProcess(CRiErrorHandler &obj) {}
 	inline virtual RtVoid doProcess(CRiDeclare &obj) {}

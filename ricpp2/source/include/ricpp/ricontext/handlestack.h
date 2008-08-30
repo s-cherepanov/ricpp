@@ -279,6 +279,17 @@ public:
 		}
 	}
 
+	inline void clear()
+	{
+		while ( !m_stack.empty() ) {
+			ValueType *v = back();
+			m_stack.pop_back();
+			if ( v != 0 ) {
+				delete v;
+			}
+		}
+	}
+
 	inline unsigned long maxIdx() const
 	{
 		return m_maxHandleIdx;

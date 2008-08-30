@@ -118,6 +118,7 @@ void display(void)
 	RiIdentity();
 	
 	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
+	RiSynchronize("restart");
 	glutSwapBuffers();
 }
 

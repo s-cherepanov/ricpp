@@ -273,6 +273,8 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_HERMITE)] = RI_HERMITE;
 		m_tokenMapper[CToken(RI_POWER)] = RI_POWER;
 
+		m_tokenMapper[CToken(RI_RESTART)] = RI_RESTART;
+		
 		m_tokenMapper[CToken(RI_TEAPOT)] = RI_TEAPOT;
 
 		m_tokenMapper[CToken(RI_BUMP)] = RI_BUMP;

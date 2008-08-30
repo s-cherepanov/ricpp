@@ -43,6 +43,7 @@
 //	RiFrameEnd();
 	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
 	RiIdentity();
+	RiSynchronize(RI_RESTART);
 }
 
 @end

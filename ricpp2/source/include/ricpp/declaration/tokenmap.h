@@ -72,6 +72,7 @@ public:
 	~CTokenMap();
 
 	void clear();
+	CTokenMap &operator=(const CTokenMap &aMap);
 
 	/** @brief Searches for a token and creates one, if the token name was not found.
 	 *

@@ -1162,11 +1162,8 @@ CRenderState::CRenderState(
 	pushTransform();
 }
 
-CRenderState::~CRenderState()
+void CRenderState::clearStacks()
 {
-	deleteTransMapCont(m_globalTransforms);
-	while ( !m_optionsStack.empty() ) popOptions();
-	
 	while ( !m_attributesStack.empty() ) popAttributes();
 	while ( !m_motionAttributesStack.empty() ) {
 		CAttributes *a = m_motionAttributesStack.back();
@@ -1191,13 +1188,36 @@ CRenderState::~CRenderState()
 		m_rememberedTransformations.pop_back();
 	}
 	
+	// Don't remove the global options
+	while ( m_optionsStack.size() > 1 ) popOptions();
+
+	if ( m_modeStack )
+		m_modeStack->clear();
+}
+
+void CRenderState::freeAll()
+{
+	deleteTransMapCont(m_globalTransforms);
 	deleteDeferedRequests();
+	clearStacks();
+	// Remove globals also
+	while ( !m_optionsStack.empty() ) popOptions();
 	
 	m_transformationFactory->deleteTransformation(m_NDCToRaster);
+	m_NDCToRaster = 0;
 	m_transformationFactory->deleteTransformation(m_screenToNDC);
+	m_screenToNDC = 0;
 	m_transformationFactory->deleteTransformation(m_cameraToScreen);
+	m_cameraToScreen = 0;
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
+	m_worldToCamera = 0;
 	m_transformationFactory->deleteTransformation(m_idTransform);
+	m_idTransform = 0;
+}
+
+CRenderState::~CRenderState()
+{
+	freeAll();
 }
 
 
@@ -1254,6 +1274,14 @@ void CRenderState::deleteDeferedRequests()
 		m_macroFactory->deleteRequest(req);
 		m_deferedRequests.pop_back();
 	}
+}
+
+void CRenderState::restart()
+{
+	deleteTransMapCont(m_globalTransforms);
+	deleteDeferedRequests();
+	contextReset();
+	contextBegin();
 }
 
 bool CRenderState::getRasterToCamera(CMatrix3D &m) const
@@ -1567,26 +1595,33 @@ void CRenderState::contextBegin()
 	m_modeStack->contextBegin();
 }
 
-void CRenderState::contextEnd()
+
+void CRenderState::contextReset()
 {
 	// AreaLightSource declared within this block
 	if ( areaLightSourceHandle() != illLightHandle &&
-	     areaLightSourceDepth() == modesSize() )
+		areaLightSourceDepth() == modesSize() )
 	{
 		// close the light source
 		endAreaLightSource();
 	}
-
+	
 	m_modeStack->contextEnd();
+	
+	m_lightSourceHandles.clear();
+	m_lightSources.clear();
+	m_objectMacros.clear();
+	
+	deleteTransMapCont(m_globalTransforms);
+	deleteDeferedRequests();
 
-	m_lightSourceHandles.clearToMark();
-	m_lightSources.clearToMark();
-	m_archiveMacros.clearToMark();
-	m_objectMacros.clearToMark();
+	clearStacks();
+}
 
-	popTransform();
-	popAttributes();
-	popOptions();
+void CRenderState::contextEnd()
+{
+	contextReset();
+	m_archiveMacros.clear();
 }
 
 void CRenderState::frameBegin(RtInt number)

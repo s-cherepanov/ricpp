@@ -63,6 +63,7 @@ CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
 		return *this;
 
 	clear();
+	m_path = aMacro.m_path;
 	m_factory = aMacro.m_factory;
 	m_macroType = aMacro.m_macroType;
 	m_isClosed = aMacro.m_isClosed;

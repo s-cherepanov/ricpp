@@ -623,7 +623,7 @@ RtVoid CRibWriter::doProcess(CRiObjectInstance &obj)
 	// Do this only if a definition was written to output (macro is postponed).
 	// This is the "normal" case.
 	if ( m_postponeObject ) {
-		CRiObjectMacro *m = renderState()->objectInstance(obj.handle());
+		CRiMacro *m = renderState()->objectInstance(obj.handle());
 		if ( !m || m->postpone() ) {
 			return;
 		}
@@ -643,7 +643,7 @@ RtVoid CRibWriter::postProcess(CRiObjectInstance &obj)
 		if ( !postTestValid() )
 			return;
 
-		CRiObjectMacro *m = renderState()->objectInstance(obj.handle());
+		CRiMacro *m = renderState()->objectInstance(obj.handle());
 		if ( !m ) {
 			ricppErrHandler().handleError(RIE_BADHANDLE, RIE_SEVERE, renderState()->printLineNo(__LINE__), renderState()->printName(__FILE__), "Handle not found to objectInstance \"%s\"", noNullStr(obj.handle()));
 			return;
@@ -1199,10 +1199,10 @@ bool CRibWriter::willExecuteMacro(RtString name) {
 
 	RtToken tname = renderState()->storedArchiveName(name);
 	if ( tname ) {
-		CRiArchiveMacro *m = renderState()->findArchiveInstance(tname);
+		CRiMacro *m = renderState()->findArchiveInstance(tname);
 		assert (m != 0);
 		if ( m ) {
-			isFile = m->macroType() == CRiArchiveMacro::MACROTYPE_FILE;
+			isFile = m->macroType() == CRiMacro::MACROTYPE_FILE;
 			macroPostponed = m->postpone();
 		}
 	}

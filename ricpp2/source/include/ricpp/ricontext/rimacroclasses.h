@@ -38,8 +38,6 @@ namespace RiCPP {
 
 	// Container
 	class CRiMacro;
-	class CRiObjectMacro;
-	class CRiArchiveMacro;
 
 	// Base classes
 	class CRManInterfaceCall;

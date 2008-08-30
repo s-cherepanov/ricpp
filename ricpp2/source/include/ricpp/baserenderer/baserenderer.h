@@ -401,7 +401,7 @@ protected:
 
 	/** @brief Processes the replay of an archive.
 	 */
-	virtual void processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
+	virtual void processArchiveInstance(RtString name, RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params);
 
 	/** @brief Reads an archive from a stream.
 	 *

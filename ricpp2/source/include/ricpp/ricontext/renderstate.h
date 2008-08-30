@@ -62,6 +62,10 @@
 #include "ricpp/ricontext/rimacroclasses.h"
 #endif // _RICPP_RICONTEXT_RIMACROCLASSES_H
 
+#ifndef _RICPP_RICONTEXT_INPUTSTATE_H
+#include "ricpp/ricontext/inputstate.h"
+#endif // _RICPP_RICONTEXT_INPUTSTATE_H
+
 #ifndef _RICPP_RICPP_VARSUBST_H
 #include "ricpp/ricpp/varsubst.h"
 #endif // _RICPP_RICPP_VARSUBST_H
@@ -99,6 +103,8 @@ namespace RiCPP {
 		typedef std::map<RtToken, CTransformation *> TypeTransformationMap;
 
 		CModeStack *m_modeStack;                       ///< Pointer to the mode stack, has to be set
+
+		CInputState m_inputState;					   ///< Current input, outside any archive, file, archive, ..
 
 		RtInt m_frameNumber;                           ///< Current frame number.
 
@@ -177,9 +183,9 @@ namespace RiCPP {
 		 */
 		CRiMacro *m_curReplay;
 
-		TemplHandleStack<CRiObjectMacro> m_objectMacros;   ///< Stack of all object macros (objectBegin/End)
-		TemplHandleStack<CRiArchiveMacro> m_archiveMacros; ///< Stack of all archive macros (archiveBegin/End)
-		TemplHandleStack<CRiArchiveMacro> m_cachedArchive; ///< Stack of all archive macros (cached rib)
+		TemplHandleStack<CRiMacro> m_objectMacros;   ///< Stack of all object macros (objectBegin/End)
+		TemplHandleStack<CRiMacro> m_archiveMacros; ///< Stack of all archive macros (archiveBegin/End)
+		TemplHandleStack<CRiMacro> m_cachedArchive; ///< Stack of all archive macros (cached rib)
 		
 		TemplHandleStack<CHandle> m_lightSourceHandles;  ///< Stack of indirect light source handles
 		TemplHandleStack<CLightSource> m_lightSources;   ///< Stack of all created light sources
@@ -192,6 +198,11 @@ namespace RiCPP {
 		bool m_ifCondition;             ///< true, if an if or elseif condition was true;
 
 		virtual bool adjustProjectionMatrix(CMatrix3D &projectionMatrix, CMatrix3D &inverseProjectionMatrix);
+
+		inline CInputState &inputState()
+		{
+			return m_inputState;
+		}
 
 		void pushOptions();    ///< Pushes the current options set.
 		bool popOptions();     ///< Pops an options set, restores the set to the last condition.
@@ -596,6 +607,8 @@ namespace RiCPP {
 		
 		void restart();
 
+		inline const CInputState &inputState() const { return m_inputState; }
+
 		/*
 		inline CTransformation *NDCToRaster() { return m_NDCToRaster; }
 		inline CTransformation *screenToNDC() { return m_screenToNDC; }
@@ -678,12 +691,20 @@ namespace RiCPP {
 		virtual void solidEnd();
 		virtual RtToken solid() const;
 
-		virtual RtObjectHandle objectBegin(RtString name, CRManInterfaceFactory &aFactory);
+		virtual RtObjectHandle objectBegin(RtString aName, CRManInterfaceFactory &aFactory);
 		virtual void objectEnd();
 
-		virtual CRiObjectMacro *objectInstance(RtObjectHandle handle);
-		virtual const CRiObjectMacro *objectInstance(RtObjectHandle handle) const;
+		virtual CRiMacro *objectInstance(RtObjectHandle handle);
+		virtual const CRiMacro *objectInstance(RtObjectHandle handle) const;
+		virtual void startObjectInstance(RtObjectHandle handle);
+		virtual void endObjectInstance();
+
+		virtual void startArchiveInstance(RtString aName, RtArchiveHandle aHandle);
+		virtual void endArchiveInstance();
 		
+		virtual void startFileInstance(RtString aName, RtArchiveHandle aHandle);
+		virtual void endFileInstance();
+
 		virtual RtString findHandleId(CParameterList &params) const;
 
 		/** @brief Use a default light because there are no lights?
@@ -715,8 +736,8 @@ namespace RiCPP {
 		virtual RtArchiveHandle archiveFileBegin(const char *aName, CRManInterfaceFactory &aFactory);
 		virtual void archiveFileEnd();
 
-		virtual CRiArchiveMacro *findArchiveInstance(RtArchiveHandle handle);
-		virtual const CRiArchiveMacro *findArchiveInstance(RtArchiveHandle handle) const;
+		virtual CRiMacro *findArchiveInstance(RtArchiveHandle handle);
+		virtual const CRiMacro *findArchiveInstance(RtArchiveHandle handle) const;
 
 		virtual void resourceBegin();
 		virtual void resourceEnd();
@@ -725,6 +746,7 @@ namespace RiCPP {
 
 		virtual void motionBegin(RtInt N, RtFloat times[]);
 		virtual void motionEnd();
+
 		virtual void moveArchiveBegin();
 		virtual void moveArchiveEnd();
 

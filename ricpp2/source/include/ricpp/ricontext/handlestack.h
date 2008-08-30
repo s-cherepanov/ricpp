@@ -89,7 +89,7 @@ public:
 		fromHandleId(h.fromHandleId());
 		return *this;
 	}
-}; // TemplHandle
+}; // CHandle
 
 
 /** @brief Template to handle RI objects and archives

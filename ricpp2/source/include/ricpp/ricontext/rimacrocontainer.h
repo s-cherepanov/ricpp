@@ -62,6 +62,8 @@ namespace RiCPP {
 		bool m_isClosed;                  ///< true, if macro definition is completed.
 		bool m_postpone;                  ///< true, if macro should be postponed (e.g. in RIB oputput), default is false
 
+		std::vector<std::string> m_path;  ///< Macro path, Macros can be nested, name is the last entry (back())
+
 	public:
 
 		/** @brief Constructor initializes the macro.
@@ -102,6 +104,9 @@ namespace RiCPP {
 		
 		virtual void clear();
 		CRiMacro &operator=(const CRiMacro &aMacro);
+
+		inline const std::vector<std::string> &path() const { return m_path; }
+		inline std::vector<std::string> &path() { return m_path; }
 
 		/** @brief Replays archive with callback for RIB archives at a back end renderer.
 		 *
@@ -195,51 +200,6 @@ namespace RiCPP {
 			m_macroType = aMacroType;
 		}
 	}; // CRiMacro
-
-
-	///////////////////////////////////////////////////////////////////////////////
-	/** @brief Macro container for objects.
-	 */
-	class CRiObjectMacro : public CRiMacro {
-	public:
-		/** @brief Creates a macro container for an object (retained geometry).
-		 *
-		 *  The type for the object macro is always MACROTYPE_OBJECT
-		 *
-		 *  @param anId Name of the macro, file name or handle name. (@see CHandle)
-		 *  @param aHandleNo Corresponding running number of the handle (@see CHandle)
-		 *  @param isFromHandleId Flag should be true if anId was created from __handleid parameter or RIB string handle (@see CHandle)
-		 */
-		inline CRiObjectMacro(
-			RtToken anId=RI_NULL,
-			unsigned long aHandleNo = 0, bool isFromHandleId = false,
-			CRManInterfaceFactory *aFactory = 0)
-			: CRiMacro(anId, aHandleNo, isFromHandleId, aFactory, MACROTYPE_OBJECT)
-		{
-		}
-	};
-
-
-	///////////////////////////////////////////////////////////////////////////////
-	/** @brief Macro container for archives (file or inline).
-	 */
-	class CRiArchiveMacro : public CRiMacro {
-	public:
-		/** @brief Creates a macro container for a RIB archive.
-		 *
-		 *  @param anId Name of the macro, file name or handle name. (@see CHandle)
-		 *  @param aHandleNo Corresponding running number of the handle (@see CHandle)
-		 *  @param isFromHandleId Flag should be true if anId was created from __handleid parameter or RIB string handle (@see CHandle)
-		 *  @param aMacroType Type of the macro, will be either MACROTYPE_ARCHIVE or MACROTYPE_FILE, but that is not tested
-		 */
-		inline CRiArchiveMacro(
-			RtToken anId = RI_NULL, unsigned long aHandleNo = 0, bool isFromHandleId = false,
-			CRManInterfaceFactory *aFactory = 0,
-			EnumMacroTypes aMacroType = MACROTYPE_ARCHIVE)
-			: CRiMacro(anId, aHandleNo, isFromHandleId, aFactory, aMacroType)
-		{
-		}
-	};
 
 } // namespace RiCPP
 

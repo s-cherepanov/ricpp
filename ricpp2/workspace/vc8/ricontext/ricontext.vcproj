@@ -294,6 +294,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\inputstate.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\lights.cpp"
 				>
 			</File>
@@ -385,6 +389,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\handlestack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\inputstate.h"
 				>
 			</File>
 			<File

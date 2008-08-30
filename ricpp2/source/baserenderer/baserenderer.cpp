@@ -881,19 +881,28 @@ void CBaseRenderer::replayRequest(CRManInterfaceCall &aRequest, const IArchiveCa
 		ricppErrHandler().handleError(ePost);
 }
 
-void CBaseRenderer::processArchiveInstance(RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
+void CBaseRenderer::processArchiveInstance(RtString name, RtArchiveHandle handle, const IArchiveCallback *callback, const CParameterList &params)
 {
 #ifdef _TRACE_ARCHIVE
 	trace("*** CBaseRenderer::processArchiveInstance()");
 #endif
-	CRiArchiveMacro *m = renderState()->findArchiveInstance(handle);
+	CRiMacro *m = renderState()->findArchiveInstance(handle);
 	if ( m ) {
 		if ( m->isClosed() ) {
 			CRiMacro *msav = renderState()->curReplay();
 			renderState()->curReplay(m);
 			renderState()->moveArchiveBegin();
 			try {
+				assert(m->macroType() == CRiMacro::MACROTYPE_ARCHIVE || m->macroType() == CRiMacro::MACROTYPE_FILE);
+				if ( m->macroType() == CRiMacro::MACROTYPE_ARCHIVE )
+					renderState()->startArchiveInstance(name, handle);
+				else
+					renderState()->startFileInstance(name, handle);
 				m->replay(*this, callback);
+				if ( m->macroType() == CRiMacro::MACROTYPE_ARCHIVE )
+					renderState()->endArchiveInstance();
+				else
+					renderState()->endFileInstance();
 				renderState()->curReplay(msav);
 			} catch(...) {
 				renderState()->curReplay(msav);
@@ -1004,7 +1013,7 @@ void CBaseRenderer::processReadArchive(RtString name, const IArchiveCallback *ca
 #ifdef _TRACE_ARCHIVE
 			trace("** call processArchiveInstance");
 #endif
-			processArchiveInstance(handle, callback, params);
+			processArchiveInstance(name, handle, callback, params);
 #ifdef _TRACE_ARCHIVE
 			trace("<- CBaseRenderer::processReadArchive(), regular read from file");
 #endif
@@ -1373,14 +1382,16 @@ RtVoid CBaseRenderer::objectEnd(void)
 
 RtVoid CBaseRenderer::doProcess(CRiObjectInstance &obj)
 {
-	CRiObjectMacro *m = renderState()->objectInstance(obj.handle());
+	CRiMacro *m = renderState()->objectInstance(obj.handle());
 	if ( m ) {
 		if ( m->isClosed() ) {
 			CRiMacro *msav = renderState()->curReplay();
 			renderState()->curReplay(m);
 			renderState()->moveArchiveBegin();
 			try {
+				renderState()->startObjectInstance(obj.handle());
 				m->replay(*this, 0);
+				renderState()->endObjectInstance();
 				renderState()->curReplay(msav);
 			} catch (...) {
 				renderState()->curReplay(msav);

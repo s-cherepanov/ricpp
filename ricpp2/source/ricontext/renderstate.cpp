@@ -1781,15 +1781,6 @@ RtToken CRenderState::solid() const
 	return m_solidTypes.back();
 }
 
-CRiObjectMacro *CRenderState::objectInstance(RtObjectHandle handle)
-{
-	return m_objectMacros.find(handle);
-}
-
-const CRiObjectMacro *CRenderState::objectInstance(RtObjectHandle handle) const
-{
-	return m_objectMacros.find(handle);
-}
 
 RtString CRenderState::findHandleId(CParameterList &params) const
 {
@@ -1871,7 +1862,6 @@ const CLightSource *CRenderState::lightSourceInstance(RtLightHandle handle) cons
 	return 0;
 }
 
-
 CLightSource *CRenderState::newLightSource(
 	RtLightHandle handle,
     bool isArea,
@@ -1884,7 +1874,47 @@ CLightSource *CRenderState::newLightSource(
 	return l;
 }
 
-RtObjectHandle CRenderState::objectBegin(RtString name, CRManInterfaceFactory &aFactory)
+void CRenderState::startArchiveInstance(RtString aName, RtArchiveHandle aHandle)
+{
+	inputState().replayArchiveBegin(aName, aHandle);
+}
+
+void CRenderState::endArchiveInstance()
+{
+	inputState().replayArchiveEnd();
+}
+
+void CRenderState::startFileInstance(RtString aName, RtArchiveHandle aHandle)
+{
+	inputState().replayFileBegin(aName, aHandle);
+}
+
+void CRenderState::endFileInstance()
+{
+	inputState().replayFileEnd();
+}
+
+CRiMacro *CRenderState::objectInstance(RtObjectHandle handle)
+{
+	return m_objectMacros.find(handle);
+}
+
+const CRiMacro *CRenderState::objectInstance(RtObjectHandle handle) const
+{
+	return m_objectMacros.find(handle);
+}
+
+void CRenderState::startObjectInstance(RtObjectHandle handle)
+{
+	inputState().replayObjectBegin(handle, handle);
+}
+
+void CRenderState::endObjectInstance()
+{
+	inputState().replayObjectEnd();
+}
+
+RtObjectHandle CRenderState::objectBegin(RtString aName, CRManInterfaceFactory &aFactory)
 {
 	pushOptions();
 	pushAttributes();
@@ -1896,15 +1926,21 @@ RtObjectHandle CRenderState::objectBegin(RtString name, CRManInterfaceFactory &a
 	m_recordModes.push_back(m_recordMode);
 	m_recordMode = true;
 	unsigned long num;
-	RtToken t = m_objectMacros.newHandle(name, num);
-	CRiObjectMacro *m = new CRiObjectMacro(t, num, notEmptyStr(name), &aFactory);
+	RtToken t = m_objectMacros.newHandle(aName, num);
+	CRiMacro *m = new CRiMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_OBJECT);
 	m_curMacro = m;
+
+	inputState().objectBegin(aName, t);
 
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		if ( m != 0 ) {
 			m_objectMacros.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
+			throw ExceptRiCPPError(
+				RIE_NOMEM, RIE_SEVERE,
+				printLineNo(__LINE__), printName(__FILE__),
+				"in objectBegin(%s): %s", aName, "CRiMacro");
 			return illObjectHandle;
 		}
 	}
@@ -1938,18 +1974,19 @@ void CRenderState::objectEnd()
 			m_curMacro = 0;
 		}
 	}
+	inputState().objectEnd();
 }
 
-CRiArchiveMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle)
+CRiMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle)
 {
-	CRiArchiveMacro *m = m_archiveMacros.find(handle);
+	CRiMacro *m = m_archiveMacros.find(handle);
 	if ( m ) return m;
 	return m_cachedArchive.find(handle);
 }
 
-const CRiArchiveMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle) const
+const CRiMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle) const
 {
-	const CRiArchiveMacro *m = m_archiveMacros.find(handle);
+	const CRiMacro *m = m_archiveMacros.find(handle);
 	if ( m ) return m;
 	return m_cachedArchive.find(handle);
 }
@@ -1968,13 +2005,19 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName, CRManInterfaceFact
 		m_recordMode = true;
 		unsigned long num;
 		RtToken t = m_archiveMacros.newHandle(aName, num);
-		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName), &aFactory);
+		CRiMacro *m = new CRiMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_ARCHIVE);
 		m_curMacro = m;
+
+		inputState().archiveBegin(aName, t);
 
 		if ( m != 0 ) {
 			m_archiveMacros.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
+			throw ExceptRiCPPError(
+				RIE_NOMEM, RIE_SEVERE,
+				printLineNo(__LINE__), printName(__FILE__),
+				"in archiveBegin(%s): %s", aName, "CRiMacro");
 			return illArchiveHandle;
 		}
 	}
@@ -2008,6 +2051,7 @@ void CRenderState::archiveEnd()
 			m_curMacro = 0;
 		}
 	}
+	inputState().archiveEnd();
 }
 
 RtArchiveHandle CRenderState::archiveFileBegin(const char *aName, CRManInterfaceFactory &aFactory)
@@ -2016,15 +2060,20 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName, CRManInterface
 		m_macros.push_back(m_curMacro);
 		unsigned long num;
 		RtToken t = m_cachedArchive.newHandle(aName, num);
-		CRiArchiveMacro *m = new CRiArchiveMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_FILE);
+		CRiMacro *m = new CRiMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_FILE);
 		m_curMacro = m;
 		
+		inputState().cacheFileBegin(aName, t);
 		// Does not influence nesting, because called within a IRi::readArchiveV()
 
 		if ( m != 0 ) {
 			m_cachedArchive.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
+			throw ExceptRiCPPError(
+				RIE_NOMEM, RIE_SEVERE,
+				printLineNo(__LINE__), printName(__FILE__),
+				"in archiveFileBegin(%s): %s", aName, "CRiMacro");
 			return illArchiveHandle;
 		}
 	}
@@ -2045,6 +2094,7 @@ void CRenderState::archiveFileEnd()
 			m_curMacro = 0;
 		}
 	}
+	inputState().cacheFileEnd();
 }
 
 void CRenderState::pushConditional()
@@ -2346,7 +2396,7 @@ void CRenderState::moveArchiveBegin()
 
 	if ( m_motionState.curSampleIdx() >= 0 ) {
 		// Start and continue
-		/// @todo sample the current move values
+		/// @todo sample the current move values - can be done on the fly in attributes()
 		attributeBegin();
 	} else {
 		// Error

@@ -224,6 +224,8 @@ namespace RiCPP {
 		void deleteTransMapCont(TypeTransformationMap &m);
 		void clearStacks();
 		void freeAll();
+		void compactArchive(TemplHandleStack<CRiMacro> &aMacroStack);
+		void compactArchives();
 		void contextReset();
 
 		/** @brief Parser for RIB if-expression.

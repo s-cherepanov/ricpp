@@ -60,13 +60,13 @@ CInputState::CInputState()
 void CInputState::popState()
 {
 	assert(m_stateStack.size()>1);
-	assert(m_stateStack.size()==m_path.size());
+	assert(m_stateStack.size()-1==m_path.size());
 
 	m_stateStack.pop_back();
 	m_path.pop_back();
 
 	assert(m_stateStack.size()>=1);
-	assert(m_stateStack.size()==m_path.size());
+	assert(m_stateStack.size()-1==m_path.size());
 }
 
 void CInputState::objectBegin(const char *name, InputHandleType handle)

@@ -109,7 +109,9 @@ void loadScene(const char *filename)
 void display(void)
 {
 	char *screenAction[2] = {"clear", "finish"};
+	RtInt noYes[2] = {0, 1};
 
+	// RiCPPControl("rib", "cache-file-archives", &noYes[1], RI_NULL);
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 	
 	RiFormat(width, height, 1.0F);

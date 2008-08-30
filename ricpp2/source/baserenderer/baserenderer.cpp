@@ -39,7 +39,7 @@
 #endif // _RICPP_RIBPARSER_RIBPARSER_H
 
 #ifdef _DEBUG
-#define _TRACE_ARCHIVE
+// #define _TRACE_ARCHIVE
 #define _TRACE
 #ifndef _RICPP_TOOLS_TRACE_H
 #include "ricpp/tools/trace.h"

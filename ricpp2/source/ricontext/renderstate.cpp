@@ -1596,6 +1596,22 @@ void CRenderState::contextBegin()
 }
 
 
+void CRenderState::compactArchive(TemplHandleStack<CRiMacro> &aMacroStack)
+{
+	// aMacroStack.clearToMark();
+	std::list<CRiMacro *> result;
+	aMacroStack.extractToMark(result);
+
+	aMacroStack.insert(result);
+}
+
+void CRenderState::compactArchives()
+{
+	compactArchive(m_archiveMacros);
+	compactArchive(m_objectMacros);
+	compactArchive(m_cachedArchive);	
+}
+
 void CRenderState::contextReset()
 {
 	// AreaLightSource declared within this block
@@ -1610,7 +1626,7 @@ void CRenderState::contextReset()
 	
 	m_lightSourceHandles.clear();
 	m_lightSources.clear();
-	m_objectMacros.clear();
+	compactArchives();
 	
 	deleteTransMapCont(m_globalTransforms);
 	deleteDeferedRequests();
@@ -1621,6 +1637,7 @@ void CRenderState::contextReset()
 void CRenderState::contextEnd()
 {
 	contextReset();
+	m_objectMacros.clear();
 	m_archiveMacros.clear();
 }
 
@@ -1654,8 +1671,7 @@ void CRenderState::frameEnd()
 
 	m_lightSourceHandles.clearToMark();
 	m_lightSources.clearToMark();
-	m_archiveMacros.clearToMark();
-	m_objectMacros.clearToMark();
+	compactArchives();
 
 	popTransform();
 	popAttributes();
@@ -1700,8 +1716,7 @@ void CRenderState::worldEnd()
 
 	m_lightSourceHandles.clearToMark();
 	m_lightSources.clearToMark();
-	m_archiveMacros.clearToMark();
-	m_objectMacros.clearToMark();
+	compactArchives();
 
 	popAttributes();
 	popTransform();
@@ -1934,6 +1949,7 @@ RtObjectHandle CRenderState::objectBegin(RtString aName, CRManInterfaceFactory &
 
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		if ( m != 0 ) {
+			m->path() = inputState().path();
 			m_objectMacros.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
@@ -2011,6 +2027,7 @@ RtArchiveHandle CRenderState::archiveBegin(const char *aName, CRManInterfaceFact
 		inputState().archiveBegin(aName, t);
 
 		if ( m != 0 ) {
+			m->path() = inputState().path();
 			m_archiveMacros.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
@@ -2067,6 +2084,7 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName, CRManInterface
 		// Does not influence nesting, because called within a IRi::readArchiveV()
 
 		if ( m != 0 ) {
+			m->path() = inputState().path();
 			m_cachedArchive.insertObject(m->handle(), m);
 			return m->handle();
 		} else {

@@ -240,6 +240,8 @@
 		C3CE0F0F0DCF54A70014BC8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0E0DCF54A70014BC8E /* main.m */; };
 		C3CE0F4C0DCF57640014BC8E /* English.lproj in Resources */ = {isa = PBXBuildFile; fileRef = C3CE0F470DCF57140014BC8E /* English.lproj */; };
 		C3CE0F4D0DCF57720014BC8E /* riglapp-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */; };
+		C3E4FE930E6B1D5F0000B37F /* inputstate.h in Headers */ = {isa = PBXBuildFile; fileRef = C3E4FE920E6B1D5F0000B37F /* inputstate.h */; };
+		C3E4FE950E6B1D9A0000B37F /* inputstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -788,6 +790,8 @@
 		C3CE0F260DCF561F0014BC8E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		C3CE0F270DCF56330014BC8E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		C3CE0F470DCF57140014BC8E /* English.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = English.lproj; sourceTree = SOURCE_ROOT; };
+		C3E4FE920E6B1D5F0000B37F /* inputstate.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = inputstate.h; path = ../../../source/include/ricpp/ricontext/inputstate.h; sourceTree = SOURCE_ROOT; };
+		C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = inputstate.cpp; path = ../../../source/ricontext/inputstate.cpp; sourceTree = SOURCE_ROOT; };
 		C3EFAC640E4C31F800352D9C /* ArchiveLoader.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = ArchiveLoader.rib; path = ../../../RibSamples/ArchiveLoader.rib; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -1546,6 +1550,7 @@
 				C3589A180E59A9AE00CB67E5 /* blend.cpp */,
 				C37245AF0CD5DE5500945563 /* contextcreator.cpp */,
 				C37245B00CD5DE5500945563 /* displaydesc.cpp */,
+				C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */,
 				C37245B10CD5DE5500945563 /* lights.cpp */,
 				C37245B20CD5DE5500945563 /* modestack.cpp */,
 				C37245B30CD5DE5500945563 /* motionstate.cpp */,
@@ -1578,6 +1583,7 @@
 				C37245780CD5DE3100945563 /* displaydesc.h */,
 				C37245790CD5DE3100945563 /* dorender.h */,
 				C372457A0CD5DE3100945563 /* handlestack.h */,
+				C3E4FE920E6B1D5F0000B37F /* inputstate.h */,
 				C372457B0CD5DE3100945563 /* lights.h */,
 				C372457C0CD5DE3100945563 /* modes.h */,
 				C372457D0CD5DE3100945563 /* modestack.h */,
@@ -2377,6 +2383,7 @@
 				C38221370E3789C60032A70E /* surface.h in Headers */,
 				C3BB4CBB0E3A02DE00D185BB /* triangulation.h in Headers */,
 				C3A692AE0E629EEF00B709BD /* subdivision.h in Headers */,
+				C3E4FE930E6B1D5F0000B37F /* inputstate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3189,6 +3196,7 @@
 				C38520E00E3E184700F74D69 /* surface.cpp in Sources */,
 				C38221390E378A830032A70E /* triangulation.cpp in Sources */,
 				C3A692BA0E62A8CF00B709BD /* subdivision.cpp in Sources */,
+				C3E4FE950E6B1D9A0000B37F /* inputstate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

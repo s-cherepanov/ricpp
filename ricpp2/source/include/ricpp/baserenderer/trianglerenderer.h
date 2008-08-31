@@ -95,6 +95,25 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiPatch &obj);
 		virtual RtVoid triangulate(CRiPatchMesh &obj);
 		virtual RtVoid triangulate(CRiNuPatch &obj);
+		
+		//
+
+		virtual RtVoid doProcess(CRiPolygon &obj);
+		virtual RtVoid doProcess(CRiGeneralPolygon &obj);
+		virtual RtVoid doProcess(CRiPointsPolygons &obj);
+		virtual RtVoid doProcess(CRiPointsGeneralPolygons &obj);
+		
+		virtual RtVoid doProcess(CRiCone &obj);
+		virtual RtVoid doProcess(CRiCylinder &obj);
+		virtual RtVoid doProcess(CRiDisk &obj);
+		virtual RtVoid doProcess(CRiHyperboloid &obj);
+		virtual RtVoid doProcess(CRiParaboloid &obj);
+		virtual RtVoid doProcess(CRiSphere &obj);
+		virtual RtVoid doProcess(CRiTorus &obj);
+		
+		virtual RtVoid doProcess(CRiPatch &obj);
+		virtual RtVoid doProcess(CRiPatchMesh &obj);
+		virtual RtVoid doProcess(CRiNuPatch &obj);
 	}; // CTriangleRenderer
 
 }

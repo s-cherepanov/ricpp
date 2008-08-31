@@ -274,6 +274,9 @@ void CGLRenderer::hide(const CFace &f)
 
 void CGLRenderer::hideSurface(const CSurface *s)
 {
+	if ( !valid() )
+		return;
+
 	glDisableClientState(GL_EDGE_FLAG_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -564,6 +567,8 @@ bool CGLRenderer::delayRequest(CRManInterfaceCall &obj)
 
 RtVoid CGLRenderer::doProcess(CRiControl &obj)
 {
+	TypeParent::doProcess(obj);
+
 	if ( obj.name() == RI_GLRENDERER ) {
 		const CParameter *ctrlScreen = obj.parameters().get(RI_SCREEN);
 		if ( ctrlScreen ) {
@@ -578,20 +583,10 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 	}
 }
 
-RtVoid CGLRenderer::doProcess(CRiFrameBegin &obj)
-{
-	if ( !valid() )
-		return;
-}
-
-RtVoid CGLRenderer::doProcess(CRiFrameEnd &obj)
-{
-	if ( !valid() )
-		return;
-}
-
 RtVoid CGLRenderer::doProcess(CRiWorldBegin &obj)
 {
+	TypeParent::doProcess(obj);
+
 	initGLContext(); // Can also be called twice (first time at clearScreen)
 	if ( !valid() )
 		return;
@@ -602,6 +597,8 @@ RtVoid CGLRenderer::doProcess(CRiWorldBegin &obj)
 
 RtVoid CGLRenderer::doProcess(CRiWorldEnd &obj)
 {
+	TypeParent::doProcess(obj);
+
 	if ( !valid() )
 		return;
 	
@@ -627,115 +624,114 @@ RtVoid CGLRenderer::doProcess(CRiWorldEnd &obj)
 
 RtVoid CGLRenderer::doProcess(CRiPolygon &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 
 RtVoid CGLRenderer::doProcess(CRiGeneralPolygon &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 
 RtVoid CGLRenderer::doProcess(CRiPointsPolygons &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiPointsGeneralPolygons &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiCone &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiCylinder &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiDisk &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiHyperboloid &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiParaboloid &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiSphere &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiTorus &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiPatch &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiPatchMesh &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
 
 RtVoid CGLRenderer::doProcess(CRiNuPatch &obj)
 {
-	if ( !valid() || delayRequest(obj) )
+	if ( delayRequest(obj) )
 		return;
 	
-	triangulate(obj);
+	TypeParent::doProcess(obj);
 }
-

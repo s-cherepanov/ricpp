@@ -280,3 +280,75 @@ RtVoid CTriangleRenderer::triangulate(CRiNuPatch &obj)
 	CNuPatchTesselator *t = new CNuPatchTesselator(obj);
 	endHandling(obj, t);
 }
+
+RtVoid CTriangleRenderer::doProcess(CRiPolygon &obj)
+{
+	triangulate(obj);
+}
+
+
+RtVoid CTriangleRenderer::doProcess(CRiGeneralPolygon &obj)
+{
+	triangulate(obj);
+}
+
+
+RtVoid CTriangleRenderer::doProcess(CRiPointsPolygons &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiPointsGeneralPolygons &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiCone &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiCylinder &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiDisk &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiHyperboloid &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiParaboloid &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiSphere &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiTorus &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiPatch &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiPatchMesh &obj)
+{
+	triangulate(obj);
+}
+
+RtVoid CTriangleRenderer::doProcess(CRiNuPatch &obj)
+{
+	triangulate(obj);
+}

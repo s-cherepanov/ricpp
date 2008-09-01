@@ -33,13 +33,14 @@ using namespace RiCPP;
 
 static const RtInt _TESSELATION = 16;
 static const bool _USESTRIPS = false;
+static const bool _DEF_CACHE_GRIDS=true;
 
 CTriangleRenderer::CTriangleRenderer()
 {
 	m_tessU = _TESSELATION;
 	m_tessV = _TESSELATION;
 	m_useStrips = _USESTRIPS;
-	m_cacheGrids = true;
+	m_cacheGrids = _DEF_CACHE_GRIDS;
 }
 
 void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans, std::vector<RtFloat> &p, std::vector<RtFloat> &n)

@@ -1555,14 +1555,14 @@ void CRootPatchTesselator::insertBicubicParams(IndexType faceIndex,
 				
 			case CLASS_VERTEX: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bicubicBlend(*iter, controlIdx, tessU(), tessV(), m_basisVectors);
+					f.bicubicBlend(*iter, controlIdx, tessU(), tessV(), basisVectors());
 				}
 			}
 				break;
 				
 			case CLASS_FACEVERTEX: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bicubicBlend(*iter, faceControlIdx, tessU(), tessV(), m_basisVectors);
+					f.bicubicBlend(*iter, faceControlIdx, tessU(), tessV(), basisVectors());
 				}
 			}
 				break;
@@ -1749,15 +1749,15 @@ void CRootPatchTesselator::buildBicubicPN(const CDeclaration &posDecl,
 	 */
 
 	SParametricVars vars(posDecl, normDecl, tessU(), tessV(), flipNormals(), f);
-	m_basisVectors.reset(tessU(), tessV(), basis().uBasis(), basis().vBasis());
+	basisVectors().reset(tessU(), tessV(), basis().uBasis(), basis().vBasis());
 
 	if ( !pw ) {
-		// m_basisVectors.bicubicBlend(3, posControlIdx, pos, *vars.positions); vars.normals->clear();
-		m_basisVectors.bicubicBlendWithNormals(3, posControlIdx, pos, flipNormals(), *vars.positions, *vars.normals);
+		// basisVectors().bicubicBlend(3, posControlIdx, pos, *vars.positions); vars.normals->clear();
+		basisVectors().bicubicBlendWithNormals(3, posControlIdx, pos, flipNormals(), *vars.positions, *vars.normals);
 	} else {
 		std::vector<RtFloat> blendPw;
-		// m_basisVectors.bicubicBlend(4, posControlIdx, pos, blendPw); vars.normals->clear();
-		m_basisVectors.bicubicBlendWithNormals(4, posControlIdx, pos, flipNormals(), blendPw, *vars.normals);
+		// basisVectors().bicubicBlend(4, posControlIdx, pos, blendPw); vars.normals->clear();
+		basisVectors().bicubicBlendWithNormals(4, posControlIdx, pos, flipNormals(), blendPw, *vars.normals);
 		pw2p(blendPw, *vars.positions);
 	}
 }
@@ -1766,13 +1766,7 @@ void CRootPatchTesselator::buildBicubicPN(const CDeclaration &posDecl,
 
 CSurface *CPatchTesselator::tesselate(const CDeclaration &posDecl,
 										  const CDeclaration &normDecl)
-{
-	IndexType cornerIdx[4];
-	getStdCornerIdx(0, cornerIdx);
-	
-	IndexType controlIdx[16];
-	getStdControlIdx(0, controlIdx);
-		
+{	
 	RtToken type = m_obj->type();
 
 	assert(type == RI_BILINEAR || type == RI_BICUBIC);
@@ -1789,6 +1783,15 @@ CSurface *CPatchTesselator::tesselate(const CDeclaration &posDecl,
 		return surf;
 	}
 	
+	IndexType cornerIdx[4];
+	getStdCornerIdx(0, cornerIdx);
+	
+	IndexType controlIdx[16];
+	getStdControlIdx(0, controlIdx);
+
+	if ( !newBasisVectors() )
+		return 0;
+
 	CFace &f = surf->newFace();
 
 	if ( type == RI_BICUBIC ) {
@@ -1801,6 +1804,7 @@ CSurface *CPatchTesselator::tesselate(const CDeclaration &posDecl,
 	}
 	
 	buildIndices(f);
+	deleteBasisVectors();
 
 	return surf;
 }
@@ -1815,9 +1819,6 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 		return 0;
 	}
 	
-	IndexType cornerIdx[4], faceCornerIdx[4];
-	IndexType controlIdx[16], faceControlIdx[16];
-
 	CSurface *surf = createSurface();
 	if ( !surf ) {
 		return 0;
@@ -1825,6 +1826,12 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 	if ( !surf->empty() ) {
 		return surf;
 	}
+
+	IndexType cornerIdx[4], faceCornerIdx[4];
+	IndexType controlIdx[16], faceControlIdx[16];
+
+	if ( !newBasisVectors() )
+		return 0;
 
 	for ( RtInt v = 0, i = 0; v < m_obj->nvPatches(); ++v ) {
 		for ( RtInt u = 0; u < m_obj->nuPatches(); ++u, ++i ) {
@@ -1852,6 +1859,7 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 		}
 	}
 
+	deleteBasisVectors();
 	return surf;
 }
 
@@ -2023,7 +2031,7 @@ void CNuPatchTesselator::buildNuPN(const CDeclaration &posDecl, const CDeclarati
 		return;
 	
 
-	SParametricVars vars(posDecl, normDecl, uVals*elemSize, vVals*elemSize, flipNormals(), f);
+	SParametricVars vars(posDecl, normDecl, uVals, vVals, flipNormals(), f);
 
 	if ( !pw ) {
 		basis().nuBlendWithNormals(elemSize, *posPtr, m_useg, m_vseg, *idxPtr, flipNormals(), *vars.positions, *vars.normals);
@@ -2078,9 +2086,13 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 	if ( !surf->empty() ) {
 		return surf;
 	}
-	
-	basis().reset(*m_obj, tessU(), tessV());
 
+	if ( !m_basis )
+		m_basis = new CUVBSplineBasis(*m_obj, tessU(), tessV());
+
+	if ( !m_basis )
+		return 0;
+	
 	for ( RtInt vs = 0; vs < vBasis().numSegments(); ++vs ) {
 		for ( RtInt  us = 0; us < uBasis().numSegments(); ++us ) {
 			CFace &f = surf->newFace();
@@ -2090,6 +2102,9 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 			buildIndices(f);
 		}
 	}
-	
+
+	delete m_basis;
+	m_basis = 0;
+
 	return surf;
 }

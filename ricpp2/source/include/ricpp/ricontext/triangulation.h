@@ -345,10 +345,10 @@ namespace RiCPP {
 	class CRootPatchTesselator : public CParametricTesselator {
 	private:
 		CRiBasis m_basis;
-		CBicubicVectors m_basisVectors;
+		CBicubicVectors *m_basisVectors;
 		inline CRootPatchTesselator() {}
 	protected:
-		inline CRootPatchTesselator(const CRiBasis &aBasis) : m_basis(aBasis) {}
+		inline CRootPatchTesselator(const CRiBasis &aBasis) : m_basis(aBasis), m_basisVectors(0) {}
 		void insertBicubicParams(IndexType faceIndex,
 								 const IndexType (&cornerIdx)[4], const IndexType (&faceCornerIdx)[4],
 								 const IndexType (&controlIdx)[16], const IndexType (&faceControlIdx)[16],
@@ -370,7 +370,20 @@ namespace RiCPP {
 		inline const CRiBasis &basis() const { return m_basis; }
 		inline CRiBasis &basis() { return m_basis; }
 		
-		inline const CBicubicVectors &basisVectors() const { return m_basisVectors; }
+		inline const CBicubicVectors &basisVectors() const { assert(m_basisVectors); return *m_basisVectors; }
+		inline CBicubicVectors &basisVectors() { assert(m_basisVectors); return *m_basisVectors; }
+		inline bool newBasisVectors()
+		{
+			if ( !m_basisVectors )
+				m_basisVectors = new CBicubicVectors;
+			return m_basisVectors != 0;
+		}
+
+		inline void deleteBasisVectors()
+		{
+			delete m_basisVectors;
+			m_basisVectors = 0;
+		}
 	}; // CRootPatchTesselator
 	
 	class CPatchTesselator : public CRootPatchTesselator {
@@ -407,7 +420,7 @@ namespace RiCPP {
 	
 	class CNuPatchTesselator : public CParametricTesselator {
 		CRiNuPatch *m_obj;
-		CUVBSplineBasis m_basis;
+		CUVBSplineBasis *m_basis;
 	
 		// State variables, filled by fillIdx
 		RtInt m_useg, m_vseg;
@@ -417,8 +430,8 @@ namespace RiCPP {
 		void fillIdx(RtInt usegment, RtInt vsegment);
 		inline RtInt faceIndex() const { return m_vseg * uBasis().numSegments() + m_useg; }
 
-		inline const CUVBSplineBasis &basis() const { return m_basis; }
-		inline CUVBSplineBasis &basis() { return m_basis; }
+		inline const CUVBSplineBasis &basis() const { assert(m_basis); return *m_basis; }
+		inline CUVBSplineBasis &basis() { assert(m_basis); return *m_basis; }
 		inline const CBSplineBasis &uBasis() const { return basis().uBasis(); }
 		inline CBSplineBasis &uBasis() { return basis().uBasis(); }		
 		inline const CBSplineBasis &vBasis() const { return basis().vBasis(); }
@@ -436,8 +449,8 @@ namespace RiCPP {
 		}
 
 	public:
-		inline CNuPatchTesselator() : m_useg(0), m_vseg(0), m_obj(0) { }
-		inline CNuPatchTesselator(CRiNuPatch &obj) : m_obj(&obj), m_useg(0), m_vseg(0) { }
+		inline CNuPatchTesselator() : m_useg(0), m_vseg(0), m_obj(0), m_basis(0) { }
+		inline CNuPatchTesselator(CRiNuPatch &obj) : m_obj(&obj), m_useg(0), m_vseg(0), m_basis(0) { }
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
 	}; // CNuPatchTesselator
 }

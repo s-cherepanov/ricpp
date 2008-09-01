@@ -39,7 +39,7 @@
 
 using namespace RiCPP;
 
-static const bool _DEF_CACHE_FILE_ARCHIVES=false;
+static const bool _DEF_CACHE_FILE_ARCHIVES=true;
 
 #ifdef _DEBUG
 // #define _TRACE

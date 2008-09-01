@@ -147,6 +147,8 @@ namespace RiCPP {
 		CTransformation *m_worldToCamera;   ///< Transforms world space to camera space
 		CTransformation *m_idTransform;     ///< Identity (world to world)
 		
+		CMatrix3D m_preCamera; ///< Camera Pretransformation
+		
 		RtToken m_viewingOrientation;  ///< Orientation of the viewing (camera to raster) in world block (RI_LH or RI_RH)
 		RtToken m_cameraOrientation; ///< Orientation of the camera in world block (RI_LH or RI_RH)
 		
@@ -558,6 +560,11 @@ namespace RiCPP {
 
 		// Additional Tokens
 		RtToken RI_RIB;                 ///< Token "rib" for options
+		RtToken RI_STATE;                ///< Token "state" for options
+		
+		RtToken RI_STORE_TRANSFORM;      ///< Token "store-transform" for state control
+		RtToken RI_QUAL_STORE_TRANSFORM; ///< Qualified Token "Control:state:store-transform" for control
+		RtToken RI_PRE_CAMERA;           ///< Token "pre-camera" for state control
 		
 		RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control
 		RtToken RI_VARSUBST;            ///< Token "varsubst" for option

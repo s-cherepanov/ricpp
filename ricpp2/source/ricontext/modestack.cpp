@@ -73,10 +73,10 @@ CValidModes::CValidModes()
 	m_requests[REQ_WORLD_BEGIN] = MODE_BIT_BEGIN | MODE_BIT_FRAME | MODE_BIT_ARCHIVE;
 	m_requests[REQ_WORLD_END] = MODE_BIT_WORLD;
 
-	m_requests[REQ_ATTRIBUTE_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_ATTRIBUTE_BEGIN] = insideBits & ~MODE_BIT_MOTION; // geometryBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_ATTRIBUTE_END] = MODE_BIT_ATTRIBUTE;
 
-	m_requests[REQ_TRANSFORM_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_TRANSFORM_BEGIN] = insideBits & ~MODE_BIT_MOTION; //geometryBits & ~MODE_BIT_MOTION;
 	m_requests[REQ_TRANSFORM_END] = MODE_BIT_TRANSFORM;
 
 	m_requests[REQ_SOLID_BEGIN] = geometryBits & ~MODE_BIT_MOTION;

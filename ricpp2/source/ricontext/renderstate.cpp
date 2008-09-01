@@ -1493,7 +1493,7 @@ void CRenderState::setCameraToScreen()
 	m_transformationFactory->deleteTransformation(m_cameraToScreen);
 	m_cameraToScreen = m_transformationFactory->newTransformation();
 	if ( !m_cameraToScreen ) {
-		// error
+		/// @todo: error nomem for m_cameraToScreen
 	} else {
 		m_cameraToScreen->spaceType(RI_SCREEN);
 		if ( options().preProjectionMatrix() ) {
@@ -1504,7 +1504,10 @@ void CRenderState::setCameraToScreen()
 		CMatrix3D projectionMatrix, inverseProjectionMatrix;
 		adjustProjectionMatrix(projectionMatrix, inverseProjectionMatrix);
 		m_cameraToScreen->concatTransform(projectionMatrix.getMatrix(), inverseProjectionMatrix.getMatrix());
+
+		m_cameraToScreen->concatTransform(m_preCamera);
 	}
+	
 	
 	calcScreenToNDC();
 
@@ -1523,7 +1526,7 @@ void CRenderState::setWorldToCamera()
 	m_transformationFactory->deleteTransformation(m_worldToCamera);
 	m_worldToCamera = curTransform().duplicate();
 	if ( !m_worldToCamera ) {
-		// error
+		/// @todo: error nomem for m_worldToCamera
 		return;
 	}
 	m_worldToCamera->spaceType(RI_CAMERA);
@@ -2989,14 +2992,18 @@ const IFilterFunc *CRenderState::filterFunc(RtToken name) const
 
 void CRenderState::defaultDeclarations()
 {
-	// Additional Tokens
+	// rib control and options
 	RI_RIB = tokFindCreate("rib");
 	RI_CACHE_FILE_ARCHIVES = tokFindCreate("cache-file-archives");
-	RI_VARSUBST = tokFindCreate("varsubst");
-
-	// Additional render specific declarations
 	RI_QUAL_CACHE_FILE_ARCHIVES = declare("Control:rib:cache-file-archives", "constant integer", true);
+	RI_VARSUBST = tokFindCreate("varsubst");
 	RI_QUAL_VARSUBST = declare("Option:rib:varsubst", "string", true);
+
+	// state control
+	RI_STATE = tokFindCreate("state");
+	RI_STORE_TRANSFORM = tokFindCreate("store-transform");
+	RI_QUAL_STORE_TRANSFORM = declare("Control:state:store-transform", "constant string", true);
+	RI_PRE_CAMERA = tokFindCreate("pre-camera");
 }
 
 RtToken CRenderState::declare(RtToken name, RtString declaration, bool isDefault)
@@ -3014,6 +3021,16 @@ RtVoid CRenderState::control(RtToken name, const CParameterList &params)
 				RtInt intVal;
 				(*i).get(0, intVal);
 				m_cacheFileArchives = intVal != 0;
+			}
+		}
+	} else if ( name == RI_STATE ) {
+		CParameterList::const_iterator i;
+		for ( i = params.begin(); i != params.end(); i++ ) {
+			if ( (*i).matches(QUALIFIER_CONTROL, RI_STATE, RI_STORE_TRANSFORM) ) {
+				std::string strVal;
+				(*i).get(0, strVal);
+				if ( strVal == std::string(RI_PRE_CAMERA) )
+					m_preCamera = curTransform().getCTM();
 			}
 		}
 	}

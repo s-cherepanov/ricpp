@@ -37,8 +37,17 @@
 #endif
 
 static RtFloat blueish[] = {0.5,  0.5, 1};
+
 static RtInt width = 512;
 static RtInt height = 512;
+
+static float sphi=0.0, stheta=0.0;
+static float sdepth = 0.0;
+static int downX=0, downY=0;
+static bool leftButton = false, middleButton = false;
+
+static int storedArgc = 0;
+static char **storedArgv = 0;
 
 void testTeapot()
 {
@@ -47,11 +56,11 @@ void testTeapot()
 	} RiObjectEnd();
 
 	RiAttributeBegin(); {
-		RtFloat Cs[] = {0.33F, 0.33F, 1.00F};
+		RtFloat Cs[] = {0.33F, 0.33F, 1.0F};
 		RiColor(Cs);
-		RiTranslate(0, -.25, 3);
+		RiTranslate(0, -.25, 2.75);
 		RiScale(0.25F, 0.25F, 0.25F);
-		RiRotate(-135, 1, 0, 0);
+		RiRotate(-90, 1, 0, 0);
 		RiSides(2);
 		RiObjectInstance(handle);
 	} RiAttributeEnd();
@@ -94,7 +103,7 @@ void testPolygon()
 void testScene(void)
 {
 	RiArchiveBegin("RIBARCHIVE", RI_NULL); {
-		RiClipping(0.1F, 30.0F);
+		RiClipping(0.1F, 50.0F);
 		RiWorldBegin(); {
 			// testPolygon();
 			// testCone();
@@ -120,10 +129,28 @@ void display(void)
 	
 	RiFormat(width, height, 1.0F);
 	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
+    
+	if ( storedArgc == 1 ) {
+		RtFloat fov = 45.0;
+		RiProjection(RI_PERSPECTIVE, RI_FOV, &fov, RI_NULL);
+	}
+	
+	RiTransformBegin(); {
+		char *action[] = {"pre-camera"};
+		RiIdentity();
+		RiTranslate(0.0F,0.0F,-sdepth); // Move back and forth
+		RiTranslate(0, 0, 2.75); // Move back to previous pos
+		RiRotate(stheta, 1.0, 0.0, 0.0); // Rotate x
+		RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
+		RiTranslate(0, 0, -2.75); // Move to a pivot
+		RiCPPControl("state", "string store-transform", action, RI_NULL); // Candidate for RiResource
+	} RiTransformEnd();
+
 	RiReadArchive("RIBARCHIVE", 0, RI_NULL);
-	RiIdentity();
 	
 	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
+	
+	// RiIdentity(); // done by restart
 	RiSynchronize("restart");
 	glutSwapBuffers();
 }
@@ -134,19 +161,55 @@ void reshape(int aWidth, int aHeight)
 	height = aHeight;
 }
 
+// Copied from GLUT newave.c
+void motion(int x, int y)
+{
+    if (leftButton)
+    {
+        sphi += (float)(x - downX) / 4.0;
+        stheta += (float)(downY - y) / 4.0;
+    }
+    if (middleButton)
+    {
+        sdepth += (float)(downY - y) / 10.0;
+    }
+    downX = x;
+    downY = y;
+    glutPostRedisplay();
+}
+
+
+// Copied from GLUT newave.c
+void mouse(int button, int state, int x, int y)
+{
+    downX = x;
+    downY = y;
+    leftButton = ((button == GLUT_LEFT_BUTTON) && 
+                  (state == GLUT_DOWN));
+    middleButton = ((button == GLUT_MIDDLE_BUTTON) && 
+                    (state == GLUT_DOWN));
+}
+
 int main(int argc, char **argv)
 {
 	// const char *searchPath = ".:&";
   	// RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
 
+	storedArgc = argc;
+	storedArgv = argv;
+	
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
 	glutInitWindowSize (width, height); 
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow(argc <= 1 ? "GLUT RIB" : argv[1]);
+	
    	glutDisplayFunc(display); 
 	glutReshapeFunc(reshape);
+    glutMouseFunc(mouse);
+    glutMotionFunc(motion);
 
+	
 	RiBegin("glrenderer"); {
 		if ( argc <= 1 ) {
 			testScene();

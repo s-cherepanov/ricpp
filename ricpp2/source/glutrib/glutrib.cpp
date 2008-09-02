@@ -138,7 +138,7 @@ void display(void)
 	RiTransformBegin(); {
 		char *matrixName[] = {"pre-camera"};
 		RiIdentity();
-		RiTranslate(0.0F,0.0F,-sdepth); // Move back and forth
+		RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
 		RiTranslate(0, 0, 2.75); // Move back to previous pos
 		RiRotate(stheta, 1.0, 0.0, 0.0); // Rotate x
 		RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y

@@ -562,8 +562,10 @@ namespace RiCPP {
 		RtToken RI_RIB;                 ///< Token "rib" for options
 		RtToken RI_STATE;                ///< Token "state" for options
 		
-		RtToken RI_STORE_TRANSFORM;      ///< Token "store-transform" for state control
+		RtToken RI_STORE_TRANSFORM;      ///< Token "store-transform" for state control (candidade for Resource)
 		RtToken RI_QUAL_STORE_TRANSFORM; ///< Qualified Token "Control:state:store-transform" for control
+		RtToken RI_LOAD_TRANSFORM;       ///< Token "load-transform" for state control (candidade for Resource)
+		RtToken RI_QUAL_LOAD_TRANSFORM;  ///< Qualified Token "Control:state:load-transform" for control
 		RtToken RI_PRE_CAMERA;           ///< Token "pre-camera" for state control
 		
 		RtToken RI_CACHE_FILE_ARCHIVES; ///< Token "cache-file-archives" for control

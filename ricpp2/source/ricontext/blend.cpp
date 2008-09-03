@@ -64,7 +64,7 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		IndexType step = 3;
 	
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx+step], centerPos, &pos[tempIdx]) ) {
+			if ( planeLH(tempNormal, &pos[tempIdx], centerPos, &pos[tempIdx+step]) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -92,7 +92,7 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		IndexType step = 3;
 
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx], centerPos, &pos[tempIdx+step]) ) {
+			if ( planeLH(tempNormal, &pos[tempIdx+step], centerPos, &pos[tempIdx]) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -120,7 +120,7 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		IndexType step = (uMax+1)*3;
 
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx], centerPos, &pos[tempIdx+step]) ) {
+			if ( planeLH(tempNormal, &pos[tempIdx+step], centerPos, &pos[tempIdx]) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -148,7 +148,7 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		IndexType step = (uMax+1)*3;
 
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx+step], centerPos, &pos[tempIdx]) ) {
+			if ( planeLH(tempNormal, &pos[tempIdx], centerPos, &pos[tempIdx+step]) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -479,12 +479,12 @@ void CBicubicVectors::bicubicBlendWithNormals(IndexType elemSize,
 	for ( v = 0; v < (IndexType)tessV()+1; ++v ) {
 		for ( u = 0; u < (IndexType)tessU()+1; ++u ) {
 			if ( flipNormal ) {
-				if ( !planeRH(&normals[idnrm], &pdv[id], &pdu[id]) ) {
+				if ( !planeRH(&normals[idnrm], &pdu[id], &pdv[id]) ) {
 					interpolateNormal(u, v, tessU(), tessV(), &results[0], &normals[idnrm]);
 					flip3(&normals[idnrm]);
 				}
 			} else {
-				if ( !planeLH(&normals[idnrm], &pdv[id], &pdu[id]) ) {
+				if ( !planeLH(&normals[idnrm], &pdu[id], &pdv[id]) ) {
 					interpolateNormal(u, v, tessU(), tessV(), &results[0], &normals[idnrm]);
 				}
 			}
@@ -1041,13 +1041,13 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 	for ( vn = 0; vn < pnv; ++vn ) {
 		for ( un = 0; un < pnu; ++un ) {
 			if ( flipNormal ) {
-				if ( !planeRH(nrm, ptrv, ptru) ) {
+				if ( !planeRH(nrm, ptru, ptrv) ) {
 					// ???
 					// interpolateNormal(un, vn, pnu-1, pnv-1, &results[0], nrm);
 					// flip3(nrm);
 				}
 			} else {
-				if ( !planeLH(nrm, ptrv, ptru) ) {
+				if ( !planeLH(nrm, ptru, ptrv) ) {
 					// ???
 					// interpolateNormal(un, vn, pnu-1, pnv-1, &results[0], nrm);
 				}

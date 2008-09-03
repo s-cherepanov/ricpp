@@ -317,7 +317,7 @@ bool CBasePolygonTesselator::addNormals(const CDeclaration &normDecl, CFace &f)
 	IndexType prev = (IndexType)pos.size()-3, cur = 0, next = 3;
 
 	do {
-		if ( planeLH(&aNormal[0], &pos[prev], &pos[cur], &pos[next]) ) {
+		if ( planeRH(&aNormal[0], &pos[prev], &pos[cur], &pos[next]) ) {
 			addNormalsToPos(normDecl, aNormal, pos, f);
 			return true;
 		}
@@ -337,14 +337,14 @@ void CBasePolygonTesselator::addNormalsToPos(const CDeclaration &normDecl, const
 	IndexType cur = 0;
 	
 	while ( cur < n.size()-2 ) {
-		if ( !flipNormals() ) {
-			n[cur++] = aNormal[0];
-			n[cur++] = aNormal[1];
-			n[cur++] = aNormal[2];
-		} else {
+		if ( flipNormals() ) {
 			n[cur++] = -aNormal[0];
 			n[cur++] = -aNormal[1];
 			n[cur++] = -aNormal[2];
+		} else {
+			n[cur++] = aNormal[0];
+			n[cur++] = aNormal[1];
+			n[cur++] = aNormal[2];
 		}
 	}
 }
@@ -1636,55 +1636,55 @@ void CRootPatchTesselator::buildBilinearPN(const CDeclaration &posDecl,
 		IndexType nc[4] = {0, (IndexType)tessU()*3, (IndexType)(tessV()*(tessU()+1))*3, (IndexType)vars.positions->size()-3};
 		if ( flipNormals() ) {
 			// Get the normals, edges can be degenerated
-			if ( !planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
-				if ( !planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
-					planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]]);
+			if ( !planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]]) ) {
+				if ( !planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]]) ) {
+					planeRH<RtFloat>(&nrm[0], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]]);
 				}
 			}
 				
-			if ( !planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
-				if ( !planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
-					planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]]);
+			if ( !planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]]) ) {
+				if ( !planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]]) ) {
+					planeRH<RtFloat>(&nrm[3], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]]);
 				}
 			}
 
-			if ( !planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
-				if ( !planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
-					planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]]);
+			if ( !planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]]) ) {
+				if ( !planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]]) ) {
+					planeRH<RtFloat>(&nrm[6], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]]);
 				}
 			}
 
 			
-			if ( !planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
-				if ( planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
-					planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]]);
+			if ( !planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]]) ) {
+				if ( planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]]) ) {
+					planeRH<RtFloat>(&nrm[9], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]]);
 				}
 			}
 		} else {
 			// Same for planeLH
 			// Get the normals, edges can be degenerated
-			if ( !planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
-				if ( !planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]]) ) {
-					planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]]);
+			if ( !planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]]) ) {
+				if ( !planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]]) ) {
+					planeLH<RtFloat>(&nrm[0], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]]);
 				}
 			}
 			
-			if ( !planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
-				if ( !planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]]) ) {
-					planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]]);
+			if ( !planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]]) ) {
+				if ( !planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]]) ) {
+					planeLH<RtFloat>(&nrm[3], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[0]]);
 				}
 			}
 			
-			if ( !planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
-				if ( !planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[0]]) ) {
-					planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]]);
+			if ( !planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]]) ) {
+				if ( !planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[1]]) ) {
+					planeLH<RtFloat>(&nrm[6], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]]);
 				}
 			}
 			
 			
-			if ( !planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
-				if ( planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[2]]) ) {
-					planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[1]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]]);
+			if ( !planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]]) ) {
+				if ( planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[2]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[0]]) ) {
+					planeLH<RtFloat>(&nrm[9], &(*vars.positions)[nc[0]], &(*vars.positions)[nc[3]], &(*vars.positions)[nc[1]]);
 				}
 			}
 		}

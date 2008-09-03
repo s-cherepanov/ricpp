@@ -440,7 +440,7 @@ bool CPolygonContainer::polygonNormal(
 		p2[0] = p[pidx++] - p0[0];
 		p2[1] = p[pidx++] - p0[1];
 		p2[2] = p[pidx  ] - p0[2];
-		if ( planeRH(pnorm, p1, p2) ) {
+		if ( planeLH(pnorm, p1, p2) ) {
 			p2set = true;
 			break;
 		}

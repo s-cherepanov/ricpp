@@ -3003,6 +3003,8 @@ void CRenderState::defaultDeclarations()
 	RI_STATE = tokFindCreate("state");
 	RI_STORE_TRANSFORM = tokFindCreate("store-transform");
 	RI_QUAL_STORE_TRANSFORM = declare("Control:state:store-transform", "constant string", true);
+	RI_LOAD_TRANSFORM = tokFindCreate("load-transform");
+	RI_QUAL_LOAD_TRANSFORM = declare("Control:state:load-transform", "constant string", true);
 	RI_PRE_CAMERA = tokFindCreate("pre-camera");
 }
 
@@ -3031,6 +3033,12 @@ RtVoid CRenderState::control(RtToken name, const CParameterList &params)
 				(*i).get(0, strVal);
 				if ( strVal == std::string(RI_PRE_CAMERA) )
 					m_preCamera = curTransform().getCTM();
+			}
+			if ( (*i).matches(QUALIFIER_CONTROL, RI_STATE, RI_LOAD_TRANSFORM) ) {
+				std::string strVal;
+				(*i).get(0, strVal);
+				if ( strVal == std::string(RI_PRE_CAMERA) )
+					curTransform().concatTransform(m_preCamera);
 			}
 		}
 	}

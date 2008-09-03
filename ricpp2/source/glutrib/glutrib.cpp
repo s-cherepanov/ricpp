@@ -36,8 +36,12 @@
 #include <GL/glut.h>
 #endif
 
-static RtFloat blueish[] = {0.5,  0.5, 1};
+static RtFloat opacity_25[] = {0.25,  0.25, 0.25};
+static RtFloat opacity_50[] = {0.5,  0.5, 0.5};
+static RtFloat opacity_75[] = {0.75,  0.75, 0.75};
+static RtFloat greenish[] = {0.5,  1, 0.5};
 static RtFloat redish[] = {1,  0.5, 0.5};
+static RtFloat blueish[] = {0.5,  0.5, 1};
 
 static RtInt width = 512;
 static RtInt height = 512;
@@ -45,7 +49,7 @@ static RtInt height = 512;
 static float sphi=0.0, stheta=0.0;
 static float sdepth = 0.0;
 static int downX=0, downY=0;
-static bool leftButton = false, middleButton = false;
+static bool leftButton = false, middleButton = false, rightButton = false;
 
 static int storedArgc = 0;
 static char **storedArgv = 0;
@@ -152,21 +156,111 @@ void testCone()
 
 void testPolygon()
 {
-	RtFloat p[12] = {
-		-.5F,  .5F, 0,
-		 .5F,  .5F, 0,
-		 .5F, -.5F, 0,
-		-.5F, -.5F, 0
-	};
-	RtFloat st[8] = {
-		0, 0,
-		1, 0,
-		1, 1,
-		0, 1
-	};
-	RiPolygon(4, RI_P, p, RI_ST, st, RI_NULL);
+	RiAttributeBegin(); {
+		RtFloat p[12] = {
+			-.5F,  .5F, 0,
+			 .5F,  .5F, 0,
+			 .5F, -.5F, 0,
+			-.5F, -.5F, 0
+		};
+		RtFloat st[8] = {
+			0, 0,
+			1, 0,
+			1, 1,
+			0, 1
+		};
+		RtFloat color[12] = {
+			0, 0, 0,
+			1, 0, 0,
+			0, 1, 0,
+			0, 0, 1
+		};
+		RiTranslate(0, 0, 3);
+		RiPolygon(4, RI_P, p, RI_ST, st, RI_CS, color, RI_NULL);
+	} RiAttributeEnd();
 }
 	
+void testPoly10()
+{
+	RtFloat p[] = {
+		// outer
+		-.5, -.5, 1, //  1
+		-.5,  .5, 1, //  2
+		.5,  .5, 1, //  3
+		.5, -.5, 1, //  4
+		0
+	};
+	RtInt nloops[] = {
+		1
+	};
+	RtInt nverts[] = {
+		4
+	};
+	RtInt verts[] = {
+		0, 1, 2, 3
+	};
+
+	// Disable warnings (variable not used)
+	opacity_25[0] = opacity_25[0];
+	opacity_50[0] = opacity_50[0];
+	opacity_75[0] = opacity_75[0];
+
+	RiAttributeBegin();
+	RiTranslate(0, 0, 1.5);
+	RiAttributeBegin();
+	RiRotate(15.0, 0, 0, 1);
+	RiOpacity(opacity_50);
+	RiColor(greenish);
+
+	// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
+	RiPolygon(4, RI_P, &p, RI_NULL);
+	// RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
+	// RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
+	
+#   ifdef _TRACE
+	{
+		RtInt i;
+		RiTransformPoints(RI_CURRENT, RI_RASTER, sizeof(p)/sizeof(RtPoint), (RtPoint *)p);
+		for ( i = 0; i < 4; ++i ) {
+			printf("x %f, y %f, z %f\n", p[i*3+0], p[i*3+1], p[i*3+2]);
+		}
+		printf("Inverse\n");
+		RiTransformPoints(RI_RASTER, RI_CURRENT, sizeof(p)/sizeof(RtPoint), (RtPoint *)p);
+		for ( i = 0; i < 4; ++i ) {
+			printf("x %f, y %f, z %f\n", p[i*3+0], p[i*3+1], p[i*3+2]);
+		}
+	}
+#   endif
+	RiAttributeEnd();
+	
+	RiAttributeBegin();
+	RiTranslate(0, 0, 0.2);
+	// RiOpacity(opacity_50);
+	RiColor(redish);
+
+	// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
+	// RiPolygon(4, RI_P, &p, RI_NULL);
+	RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
+	// RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
+	
+	RiAttributeEnd();
+
+	RiAttributeBegin();
+	RiRotate(-15.0, 0, 0, 1);
+	RiTranslate(0, 0, 0.3);
+	RiOpacity(opacity_75);
+	RiColor(blueish);
+
+	// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
+	// RiPolygon(4, RI_P, &p, RI_NULL);
+	// RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
+	RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
+	
+	RiAttributeEnd();
+
+	RiAttributeEnd();
+}
+
 void testScene(void)
 {
 	RiArchiveBegin("RIBARCHIVE", RI_NULL); {
@@ -176,6 +270,7 @@ void testScene(void)
 			// testCone();
 			testTeapot();
 			// testVase();
+			// testPoly10();
 		} RiWorldEnd();
 	} RiArchiveEnd();
 }
@@ -243,6 +338,12 @@ void motion(int x, int y)
     }
     downX = x;
     downY = y;
+
+	if ( rightButton ) {
+        sphi = 0;
+        stheta = 0;
+        sdepth = 0;
+	}
     glutPostRedisplay();
 }
 
@@ -255,6 +356,8 @@ void mouse(int button, int state, int x, int y)
     leftButton = ((button == GLUT_LEFT_BUTTON) && 
                   (state == GLUT_DOWN));
     middleButton = ((button == GLUT_MIDDLE_BUTTON) && 
+                    (state == GLUT_DOWN));
+    rightButton = ((button == GLUT_RIGHT_BUTTON) && 
                     (state == GLUT_DOWN));
 }
 

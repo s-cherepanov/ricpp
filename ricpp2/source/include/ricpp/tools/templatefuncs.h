@@ -684,12 +684,12 @@ namespace RiCPP {
 		return dot3(nv1, nv2);
 	}
 	
-	/** @brief Vector (outer, cross) product of two 3d vectors for a right handed system
+	/** @brief Vector (outer, cross) product of two 3d vectors for a left handed system
 	 *  @retval vp Vector product
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
 	 */
-	template <typename _T> inline void vprodRH(_T *vp, const _T *v1, const _T *v2)
+	template <typename _T> inline void vprodLH(_T *vp, const _T *v1, const _T *v2)
 	{
 		_T result[3] = {0,0,0};
 		if ( !(zeroVect3(v1) || zeroVect3(v1)) ) {
@@ -701,22 +701,28 @@ namespace RiCPP {
 		vp[1] = result[1];
 		vp[2] = result[2];
 	}
-	
-	template <typename _T> inline void vprodLH(_T *vp, const _T *v1, const _T *v2)
-	{
-		vprodRH(vp, v2, v1);
-	}
 
+	template <typename _T> inline void vprodRH(_T *vp, const _T *v1, const _T *v2)
+	{
+		vprodLH(vp, v2, v1);
+	}
+	
 	/*  @brief Scalar triple product of three 3d vectors
 	 *  @retval vp Triple product
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
 	 *  @param v2 Vector 3
 	 *//*
+	template <typename _T> inline _T triprodLH(const _T *v1, const _T *v2, const _T *v3)
+	{
+		_T vp[3];
+		vprodLH(vp, v2, v3);
+		return dot3(v1, vp);
+	}
 	template <typename _T> inline _T triprodRH(const _T *v1, const _T *v2, const _T *v3)
 	{
 		_T vp[3];
-		vprodRH(vp, v2, v3);
+		vprodLH(vp, v3, v2);
 		return dot3(v1, vp);
 	}
 	*/
@@ -868,19 +874,20 @@ namespace RiCPP {
 	 *  @param v2 3 dim vector 2
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool planeRH(_T *norm, const _T *v1, const _T *v2)
+	template <typename _T> inline bool planeLH(_T *norm, const _T *v1, const _T *v2)
 	{
-		vprodRH(norm, v1, v2);
+		vprodLH(norm, v1, v2);
 		if ( zeroVect3(norm) )
 			return false;
 		
 		return true;
 	}
 
-	template <typename _T> inline bool planeLH(_T *norm, const _T *v1, const _T *v2)
+	template <typename _T> inline bool planeRH(_T *norm, const _T *v1, const _T *v2)
 	{
-		return planeRH(norm, v2, v1);
+		return planeLH(norm, v2, v1);
 	}
+
 	
 	/** @brief A normal vector (normalized) for a plane given by three points
 	 *  @param p1 Point 1 (previous in winding)
@@ -889,17 +896,17 @@ namespace RiCPP {
 	 *  @retval norm The normal vector as normalized cross product vect(P2, P1) x vect(P2, P3)
 	 *  @return true if normal is calculated, false otherwise
 	 */
-	template <typename _T> inline bool planeRH(_T *norm, const _T *p1, const _T *p2, const _T *p3)
+	template <typename _T> inline bool planeLH(_T *norm, const _T *p1, const _T *p2, const _T *p3)
 	{
 		_T v1[3], v2[3];
 		vectFromPos3(v1, p2, p1);
 		vectFromPos3(v2, p2, p3);
-		return planeRH(norm, v1, v2);
+		return planeLH(norm, v1, v2);
 	}
 
-	template <typename _T> inline bool planeLH(_T *norm, const _T *p1, const _T *p2, const _T *p3)
+	template <typename _T> inline bool planeRH(_T *norm, const _T *p1, const _T *p2, const _T *p3)
 	{
-		return planeRH(norm, p3, p2, p1);
+		return planeLH(norm, p3, p2, p1);
 	}
 
 	/** @brief Linear interpolation between two values.

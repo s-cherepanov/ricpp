@@ -684,31 +684,44 @@ namespace RiCPP {
 		return dot3(nv1, nv2);
 	}
 	
-	/** @brief Vector (outer, cross) product of two 3d vectors
+	/** @brief Vector (outer, cross) product of two 3d vectors for a right handed system
 	 *  @retval vp Vector product
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
 	 */
-	template <typename _T> inline void vprod(_T *vp, const _T *v1, const _T *v2)
+	template <typename _T> inline void vprodRH(_T *vp, const _T *v1, const _T *v2)
 	{
-		vp[0] = v1[1]*v2[2] - v1[2]*v2[1];
-		vp[1] = v1[2]*v2[0] - v1[0]*v2[2];
-		vp[2] = v1[0]*v2[1] - v1[1]*v2[0];
+		_T result[3] = {0,0,0};
+		if ( !(zeroVect3(v1) || zeroVect3(v1)) ) {
+			result[0] = v1[1]*v2[2] - v1[2]*v2[1];
+			result[1] = v1[2]*v2[0] - v1[0]*v2[2];
+			result[2] = v1[0]*v2[1] - v1[1]*v2[0];
+		}
+		vp[0] = result[0];
+		vp[1] = result[1];
+		vp[2] = result[2];
 	}
 	
-	/** @brief Scalar triple product of three 3d vectors
+	template <typename _T> inline void vprodLH(_T *vp, const _T *v1, const _T *v2)
+	{
+		vprodRH(vp, v2, v1);
+	}
+
+	/*  @brief Scalar triple product of three 3d vectors
 	 *  @retval vp Triple product
 	 *  @param v1 Vector 1
 	 *  @param v2 Vector 2
 	 *  @param v2 Vector 3
-	 */
-	template <typename _T> inline _T triprod(const _T *v1, const _T *v2, const _T *v3)
+	 *//*
+	template <typename _T> inline _T triprodRH(const _T *v1, const _T *v2, const _T *v3)
 	{
 		_T vp[3];
-		vprod(vp, v2, v3);
+		vprodRH(vp, v2, v3);
 		return dot3(v1, vp);
 	}
+	*/
 	
+
 	/** @brief Flips a (normal) vector pointing in direction of the positive z axis
 	 */
 	template <typename _T> inline bool faceforward(_T &x, _T &y, _T &z)
@@ -849,7 +862,7 @@ namespace RiCPP {
 		return (s1*s2*s3*s4) == 0 ? 1 : 2;
 	}
 	
-	/** @brief Normal vector (normalized) for a plane given by two 3D vectors.
+	/** @brief Normal vector (not normalized) for a plane given by two 3D vectors.
 	 *  @retval norm Normal
 	 *  @param v1 3 dim vector 1
 	 *  @param v2 3 dim vector 2
@@ -857,11 +870,10 @@ namespace RiCPP {
 	 */
 	template <typename _T> inline bool planeRH(_T *norm, const _T *v1, const _T *v2)
 	{
-		vprod(norm, v1, v2);
+		vprodRH(norm, v1, v2);
 		if ( zeroVect3(norm) )
 			return false;
 		
-		// normalize3(norm);
 		return true;
 	}
 

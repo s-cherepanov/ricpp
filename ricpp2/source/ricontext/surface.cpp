@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/ricontext/surface.h"
+#include "ricpp/ricontext/blend.h"
 
 #ifdef _DEBUG
 #include <iostream>
@@ -182,22 +183,22 @@ TemplPrimVar<RtFloat> &CFace::insertFloatVar(const CDeclaration &decl, IndexType
 	return f;
 }
 
-void CFace::buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH)
+void CFace::buildTriangleIndices(bool isLH)
 {
 	clearIndices();
-	assert(tessU != 0 && tessV != 0);
-	if ( tessU == 0 || tessV == 0 )
+	assert(m_tessU != 0 && m_tessV != 0);
+	if ( m_tessU == 0 || m_tessV == 0 )
 		return;
 	
 	m_faceType = FACETYPE_TRIANGLES;
 	
-	m_indices.resize(tessV*tessU*2*3);
+	m_indices.resize(m_tessV*m_tessU*2*3);
 	std::vector<IndexType>::iterator idxIter = m_indices.begin();
 	
-	for ( IndexType vIdx = 0; vIdx < tessV; ++vIdx ) {
-		IndexType offs = vIdx * (tessU+1);
+	for ( IndexType vIdx = 0; vIdx < m_tessV; ++vIdx ) {
+		IndexType offs = vIdx * (m_tessU+1);
 		
-		for ( IndexType uIdx = 0; uIdx < tessU; ++uIdx ) {
+		for ( IndexType uIdx = 0; uIdx < m_tessU; ++uIdx ) {
 			assert(idxIter != m_indices.end());
 			*idxIter = offs + uIdx;
 			idxIter++;
@@ -206,11 +207,11 @@ void CFace::buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH)
 				*idxIter = offs + uIdx+1;
 				idxIter++;
 				assert(idxIter != m_indices.end());
-				*idxIter = offs + uIdx+1 + tessU;
+				*idxIter = offs + uIdx+1 + m_tessU;
 				idxIter++;
 			} else {
 				assert(idxIter != m_indices.end());
-				*idxIter = offs + uIdx+1 + tessU;
+				*idxIter = offs + uIdx+1 + m_tessU;
 				idxIter++;
 				assert(idxIter != m_indices.end());
 				*idxIter = offs + uIdx+1;
@@ -218,15 +219,15 @@ void CFace::buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH)
 			}
 		}
 		
-		offs += tessU+1;
+		offs += m_tessU+1;
 		
-		for ( IndexType uIdx = 0; uIdx < tessU; ++uIdx ) {
+		for ( IndexType uIdx = 0; uIdx < m_tessU; ++uIdx ) {
 			assert(idxIter != m_indices.end());
 			*idxIter = offs + uIdx;
 			idxIter++;
 			if ( isLH ) {
 				assert(idxIter != m_indices.end());
-				*idxIter = offs + uIdx - tessU;
+				*idxIter = offs + uIdx - m_tessU;
 				idxIter++;
 				assert(idxIter != m_indices.end());
 				*idxIter = offs + uIdx+1;
@@ -236,7 +237,7 @@ void CFace::buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH)
 				*idxIter = offs + uIdx+1;
 				idxIter++;
 				assert(idxIter != m_indices.end());
-				*idxIter = offs + uIdx - tessU;
+				*idxIter = offs + uIdx - m_tessU;
 				idxIter++;
 			}
 		}
@@ -245,29 +246,29 @@ void CFace::buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH)
 	m_sizes[0] = static_cast<IndexType>(m_indices.size());
 }
 
-void CFace::buildStripIndices(IndexType tessU, IndexType tessV, bool isLH)
+void CFace::buildStripIndices(bool isLH)
 {
 	clearIndices();
-	assert(tessU != 0 && tessV != 0);
-	if ( tessU == 0 || tessV == 0 )
+	assert(m_tessU != 0 && m_tessV != 0);
+	if ( m_tessU == 0 || m_tessV == 0 )
 		return;
 	
-	const IndexType uIndices = (tessU+1)*2;
-	const IndexType nStrips = tessV;
-	const IndexType lastRowIdx = (tessU+1)*tessV;
+	const IndexType uIndices = (m_tessU+1)*2;
+	const IndexType nStrips = m_tessV;
+	const IndexType lastRowIdx = (m_tessU+1)*m_tessV;
 	
 	m_faceType = FACETYPE_TRIANGLESTRIPS;
 	
 	m_indices.resize(nStrips*uIndices);
 	std::vector<IndexType>::iterator idxIter = m_indices.begin();
 	for ( IndexType startIdx = 0; startIdx < lastRowIdx; ) {
-		const IndexType nextRowIdx = startIdx + tessU+1;
+		const IndexType nextRowIdx = startIdx + m_tessU+1;
 		for ( IndexType idx = startIdx; idx < nextRowIdx; ++idx) {
 			assert(idxIter != m_indices.end());
-			*idxIter = isLH ? idx+tessU+1 : idx;
+			*idxIter = isLH ? idx+m_tessU+1 : idx;
 			idxIter++;
 			assert(idxIter != m_indices.end());
-			*idxIter = isLH ? idx : idx+tessU+1;
+			*idxIter = isLH ? idx : idx+m_tessU+1;
 			idxIter++;
 		}
 		startIdx = nextRowIdx;
@@ -281,31 +282,25 @@ void CFace::buildStripIndices(IndexType tessU, IndexType tessV, bool isLH)
 }
 
 bool CFace::bilinearBlend(const CParameter &source,
-						  const IndexType (& cornerIdx)[4],
-						  IndexType tessU,
-						  IndexType tessV)
+						  const IndexType (& cornerIdx)[4])
 {
 	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
-	return source.bilinearBlend(cornerIdx, tessU, tessV, retvals);
+	return source.bilinearBlend(cornerIdx, m_tessU, m_tessV, retvals);
 }
 
 bool CFace::bilinearBlend(const CParameter &source,
-						  const std::vector<IndexType> &cornerIdx,
-						  IndexType tessU,
-						  IndexType tessV)
+						  const std::vector<IndexType> &cornerIdx)
 {
 	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
-	return source.bilinearBlend(cornerIdx, tessU, tessV, retvals);
+	return source.bilinearBlend(cornerIdx, m_tessU, m_tessV, retvals);
 }
 
 bool CFace::bicubicBlend(const CParameter &source,
 						 const IndexType (& controlIdx)[16],
-						 IndexType tessU,
-						 IndexType tessV,
 						 const CBicubicVectors &basisVectors)
 {
 	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
-	return source.bicubicBlend(controlIdx, tessU, tessV, basisVectors, retvals);
+	return source.bicubicBlend(controlIdx, m_tessU, m_tessV, basisVectors, retvals);
 }
 
 bool CFace::nuBlend(const CParameter &source,
@@ -313,6 +308,8 @@ bool CFace::nuBlend(const CParameter &source,
 					RtInt useg, RtInt vseg,
 					const CUVBSplineBasis &basis)
 {
+	// assert((IndexType)basis.uBasis().numParameters(useg) == m_tessU+1);
+	// assert((IndexType)basis.vBasis().numParameters(vseg) == m_tessV+1);
 	std::vector<RtFloat> &retvals = reserveFloats(source.declaration()).values();
 	return source.nuBlend(vertexIdx, useg, vseg, basis, retvals);
 }

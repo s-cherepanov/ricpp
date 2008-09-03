@@ -119,6 +119,7 @@ public:
 	typedef std::map<RtToken, TemplPrimVar<std::string> >::iterator TypeStringIterator;
 
 private:
+	IndexType m_tessU, m_tessV;
 	EnumFaceTypes m_faceType;
 	std::vector<IndexType> m_sizes;
 	std::vector<IndexType> m_indices;
@@ -126,9 +127,9 @@ private:
 	std::map<RtToken, TemplPrimVar<RtFloat> > m_floats;
 	std::map<RtToken, TemplPrimVar<RtInt> > m_ints;
 	std::map<RtToken, TemplPrimVar<std::string> > m_strings;
-		
+
 public:	
-	inline CFace() : m_faceType(FACETYPE_UNKNOWN) {}
+	inline CFace(IndexType aTessU=0, IndexType aTessV=0, EnumFaceTypes aFaceType=FACETYPE_UNKNOWN) : m_tessU(aTessU), m_tessV(aTessV), m_faceType(aFaceType) {}
 	inline TemplPrimVar<RtFloat> &reserveFloats(const CDeclaration &decl)
 	{
 		TemplPrimVar<RtFloat> &r = m_floats[decl.token()];
@@ -228,8 +229,25 @@ public:
 
 	TemplPrimVar<RtFloat> &insertFloatVar(const CDeclaration &decl, IndexType nVar);
 
-	void buildStripIndices(IndexType tessU, IndexType tessV, bool isLH);
-	void buildTriangleIndices(IndexType tessU, IndexType tessV, bool isLH);
+	inline IndexType tessU() const { return m_tessU; }
+	inline void tessU(IndexType aTessU) { m_tessU = aTessU; }
+	inline IndexType tessV() const { return m_tessV; }
+	inline void tessV(IndexType aTessV) { m_tessV = aTessV; }
+
+	inline void tesselation(IndexType aTessU, IndexType aTessV)
+	{
+		tessU(aTessU);
+		tessV(aTessV);
+	}
+	
+	inline void tesselation(IndexType &aTessU, IndexType &aTessV) const
+	{
+		aTessU = tessU();
+		aTessV = tessV();
+	}
+
+	void buildStripIndices(bool isLH);
+	void buildTriangleIndices(bool isLH);
 	
 	/** @brief Bilinear blending of a 2x2 patch
      *  cornerIdx
@@ -238,19 +256,13 @@ public:
 	 *  2    3    
 	 */
 	bool bilinearBlend(const CParameter &source,
-					   const IndexType (& cornerIdx)[4],
-					   IndexType tessU,
-					   IndexType tessV);
+					   const IndexType (& cornerIdx)[4]);
 	
 	bool bilinearBlend(const CParameter &source,
-					   const std::vector<IndexType> &cornerIdx,
-					   IndexType tessU,
-					   IndexType tessV);
+					   const std::vector<IndexType> &cornerIdx);
 	
 	bool bicubicBlend(const CParameter &source,
 					  const IndexType (& controlIdx)[16],
-					  IndexType tessU,
-					  IndexType tessV,
 					  const CBicubicVectors &basisVectors);
 
 	bool nuBlend(const CParameter &source,
@@ -308,7 +320,11 @@ public:
 		aTessV = tessV();
 	}
 
-	inline CFace &newFace() { CFace aFace; m_faces.push_back(aFace); return m_faces.back(); }
+	inline CFace &newFace(IndexType aTessU=0, IndexType aTessV=0, EnumFaceTypes aFaceType=FACETYPE_UNKNOWN)
+	{
+		m_faces.push_back(CFace(aTessU, aTessV, aFaceType));
+		return m_faces.back();
+	}
 	
 	inline const_iterator begin() const { return m_faces.begin(); }
 	inline const_iterator end() const { return m_faces.end(); }

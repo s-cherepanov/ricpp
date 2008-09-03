@@ -644,7 +644,7 @@ void CParametricTesselator::insertBilinearParams(IndexType faceIndex,
 			case CLASS_VARYING:
 			case CLASS_VERTEX: {
 					if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-						f.bilinearBlend(*iter, cornerIdx, tessU(), tessV());
+						f.bilinearBlend(*iter, cornerIdx);
 					}
 			}
 			break;
@@ -652,7 +652,7 @@ void CParametricTesselator::insertBilinearParams(IndexType faceIndex,
 			case CLASS_FACEVERTEX:
 			case CLASS_FACEVARYING: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, faceCornerIdx, tessU(), tessV());
+					f.bilinearBlend(*iter, faceCornerIdx);
 				}
 			}
 			break;
@@ -722,20 +722,19 @@ void CParametricTesselator::getFaceCornerIdx(IndexType upatch, IndexType vpatch,
 
 void CParametricTesselator::buildIndices(CFace &f)
 {
-//	if ( useTriangles() ) {
-		if ( useStrips() ) {
-			f.faceType(FACETYPE_TRIANGLESTRIPS);
-			f.buildStripIndices(tessU(), tessV(), frontFaceCW());
-		} else {
-			f.faceType(FACETYPE_TRIANGLES);
-			f.buildTriangleIndices(tessU(), tessV(), frontFaceCW());
-		}
-//	} else {
-		/** @todo quads and quad strips
-		 */
-//	}
+	//	if ( useTriangles() ) {
+	if ( useStrips() ) {
+		f.faceType(FACETYPE_TRIANGLESTRIPS);
+		f.buildStripIndices(frontFaceCW());
+	} else {
+		f.faceType(FACETYPE_TRIANGLES);
+		f.buildTriangleIndices(frontFaceCW());
+	}
+	//	} else {
+	/** @todo quads and quad strips
+	 */
+	//	}
 }
-
 
 // =============================================================================
 
@@ -899,7 +898,7 @@ CSurface *CQuadricTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 		return surf;
 	}
 	
-	CFace &f = surf->newFace();
+	CFace &f = surf->newFace(tessU(), tessV());
 	
 	buildPN(posDecl, normDecl, f);
 	insertParams(f);
@@ -1548,28 +1547,28 @@ void CRootPatchTesselator::insertBicubicParams(IndexType faceIndex,
 				break;
 			case CLASS_VARYING: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, cornerIdx, tessU(), tessV());
+					f.bilinearBlend(*iter, cornerIdx);
 				}
 			}
 				break;
 				
 			case CLASS_VERTEX: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bicubicBlend(*iter, controlIdx, tessU(), tessV(), basisVectors());
+					f.bicubicBlend(*iter, controlIdx, basisVectors());
 				}
 			}
 				break;
 				
 			case CLASS_FACEVERTEX: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bicubicBlend(*iter, faceControlIdx, tessU(), tessV(), basisVectors());
+					f.bicubicBlend(*iter, faceControlIdx, basisVectors());
 				}
 			}
 				break;
 				
 			case CLASS_FACEVARYING: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, faceCornerIdx, tessU(), tessV());
+					f.bilinearBlend(*iter, faceCornerIdx);
 				}
 			}
 				break;
@@ -1792,7 +1791,7 @@ CSurface *CPatchTesselator::tesselate(const CDeclaration &posDecl,
 	if ( !newBasisVectors() )
 		return 0;
 
-	CFace &f = surf->newFace();
+	CFace &f = surf->newFace(tessU(), tessV());
 
 	if ( type == RI_BICUBIC ) {
 		buildBicubicPN(posDecl, normDecl, 0, cornerIdx, cornerIdx, controlIdx, controlIdx, f);
@@ -1835,7 +1834,7 @@ CSurface *CPatchMeshTesselator::tesselate(const CDeclaration &posDecl, const CDe
 
 	for ( RtInt v = 0, i = 0; v < m_obj->nvPatches(); ++v ) {
 		for ( RtInt u = 0; u < m_obj->nuPatches(); ++u, ++i ) {
-			CFace &f = surf->newFace();
+			CFace &f = surf->newFace(tessU(), tessV());
 			/*
 			getCornerIdx(u, v, m_obj->nu(), m_obj->nv(), cornerIdx); // nuPatches, nvPatches ???
 			getFaceCornerIdx(u, v, m_obj->nu(), m_obj->nv(), faceCornerIdx); // nuPatches, nvPatches ???
@@ -1883,8 +1882,9 @@ void CNuPatchTesselator::insertNuParams(CFace &f)
 				break;
 				
 			case CLASS_VARYING: {
+				/// @todo clipping if tmin, tmax are used to clip parametric space
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, m_cornerIdx, tessU(), tessV());
+					f.bilinearBlend(*iter, m_cornerIdx);
 				}
 			}
 				break;
@@ -1904,8 +1904,9 @@ void CNuPatchTesselator::insertNuParams(CFace &f)
 				break;
 				
 			case CLASS_FACEVARYING: {
+				/// @todo clipping if tmin, tmax are used to clip parametric space
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					f.bilinearBlend(*iter, m_faceCornerIdx, tessU(), tessV());
+					f.bilinearBlend(*iter, m_faceCornerIdx);
 				}
 			}
 				break;
@@ -2095,7 +2096,9 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 	
 	for ( RtInt vs = 0; vs < vBasis().numSegments(); ++vs ) {
 		for ( RtInt  us = 0; us < uBasis().numSegments(); ++us ) {
-			CFace &f = surf->newFace();
+			if ( uBasis().numParameters(us) <= 0 || vBasis().numParameters(vs) <= 0)
+				continue;
+			CFace &f = surf->newFace(uBasis().numParameters(us)-1, vBasis().numParameters(vs)-1);
 			fillIdx(us, vs);			
 			buildNuPN(posDecl, normDecl, f);
 			insertNuParams(f);

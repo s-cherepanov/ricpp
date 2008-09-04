@@ -480,7 +480,7 @@ bool CParameter::bilinearBlendPtr(const IndexType *cornerIdx,
 	IndexType sz = static_cast<IndexType>(vals.size());
 
 	for ( IndexType i = 0; i < 4; ++i ) {
-		assert ( sz > cornerIdx[i]*elemSize );
+		assert ( sz >= cornerIdx[i]*elemSize );
 		if ( sz <= cornerIdx[i]*elemSize )
 			return false;
 	}

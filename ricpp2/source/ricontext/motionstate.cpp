@@ -136,7 +136,6 @@ void CMotionState::mark()
 
 void CMotionState::clearToMark()
 {
-	assert(!m_marks.empty());
 	if (!m_marks.empty()) {
 		unsigned int sz = m_marks.back();
 		assert (sz <= m_motionTimes.size());

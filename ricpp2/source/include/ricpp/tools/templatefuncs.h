@@ -686,8 +686,8 @@ namespace RiCPP {
 	
 	/** @brief Vector (outer, cross) product of two 3d vectors for a left handed system
 	 *  @retval vp Vector product
-	 *  @param v1 Vector 1
-	 *  @param v2 Vector 2
+	 *  @param vx Vector 1 (x-axis)
+	 *  @param vy Vector 2 (y-axis)
 	 */
 	template <typename _T> inline void vprodLH(_T *vp, const _T *v1, const _T *v2)
 	{
@@ -868,10 +868,10 @@ namespace RiCPP {
 		return (s1*s2*s3*s4) == 0 ? 1 : 2;
 	}
 	
-	/** @brief Normal vector (not normalized) for a plane given by two 3D vectors.
+	/** @brief Normal vector (not normalized) for a plane given by two 3D vectors, left handed
 	 *  @retval norm Normal
-	 *  @param v1 3 dim vector 1
-	 *  @param v2 3 dim vector 2
+	 *  @param v1 3 dim vector 1 (x axis)
+	 *  @param v2 3 dim vector 2 (y axis)
 	 *  @return true if normal is calculated, false otherwise
 	 */
 	template <typename _T> inline bool planeLH(_T *norm, const _T *v1, const _T *v2)
@@ -890,9 +890,9 @@ namespace RiCPP {
 
 	
 	/** @brief A normal vector (normalized) for a plane given by three points
-	 *  @param p1 Point 1 (previous in winding)
-	 *  @param p2 Point 2 (current)
-	 *  @param p3 Point 3 (next)
+	 *  @param p1 Point 1 (p2-p1 x axis)
+	 *  @param p2 Point 2 (center)
+	 *  @param p3 Point 3 (ps-p1 y axis)
 	 *  @retval norm The normal vector as normalized cross product vect(P2, P1) x vect(P2, P3)
 	 *  @return true if normal is calculated, false otherwise
 	 */

@@ -136,7 +136,7 @@ namespace RiCPP {
 		void strip(IndexType nVerts, IndexType offs, std::vector<IndexType> &stripIdx) const;
 		void addNormalsToPos(const CDeclaration &normDecl, const RtNormal &aNormal, const std::vector<RtFloat> &pos, CFace &f);
 	protected:
-		void triangleStrip(IndexType nVerts, IndexType offs, CFace &f);
+		void buildIndices(IndexType nVerts, IndexType offs, CFace &f);
 		void insertParams(IndexType faceIdx, const CParameterList &plist, const std::vector<RtInt> &verts, IndexType nverts, IndexType vertsOffs, CFace &f);
 		bool addNormals(const CDeclaration &normDecl, CFace &f);
 		bool addNormals(const CDeclaration &normDecl, const RtNormal &aNormal, CFace &f);

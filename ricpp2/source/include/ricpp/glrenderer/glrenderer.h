@@ -64,6 +64,8 @@ private:
 	RtToken RI_GLRENDERER;
 	RtToken RI_SCREEN;
 	RtToken RI_QUAL_SCREEN;
+	RtToken RI_DRAW_NORMALS;
+	RtToken RI_QUAL_DRAW_NORMALS;
 	
 	bool m_validGL; ///< Valid GL Context found or created in initGLContext()
 	bool m_drawNormals; ///< Drawing normals for tests

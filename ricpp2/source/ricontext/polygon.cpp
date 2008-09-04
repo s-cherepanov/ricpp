@@ -757,6 +757,7 @@ void CEarClipper::triangulate(
 	std::cout << "% >triangulate() offs " << offs << " isCCW " << (isCCW ? "true" : "false") << std::endl;
 #endif
 
+	assert(nodes.size() >= 3);
 	triangles.clear();
 	triangles.resize((nodes.size()-3) * 3); // n of triangles == n of vertices-2 (-3 because elem 0 was not used in nodes)
 
@@ -790,7 +791,7 @@ void CEarClipper::triangulate(
 
 	// Iterate tree
 	while ( !tr.empty() ) {
-		assert (tri <= triangles.size()-3);
+		assert (triangles.size() >= 3 && tri <= triangles.size()-3);
 		if ( tri > triangles.size()-3 )
 			break;
 

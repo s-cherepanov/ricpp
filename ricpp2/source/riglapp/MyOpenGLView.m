@@ -17,6 +17,8 @@
 static const int startScreen = 10; // 0-maxScreens
 static const int maxScreens = 23;
 
+static const float defPivotDepth = 2;
+
 static RtFloat opacity_25[] = {0.25,  0.25, 0.25};
 static RtFloat opacity_50[] = {0.5,  0.5, 0.5};
 static RtFloat opacity_75[] = {0.75,  0.75, 0.75};
@@ -28,7 +30,7 @@ void testTeapot()
 {
     RiAttributeBegin();
 	RiColor(blueish);
-	RiTranslate(0, -.2, 2);
+	RiTranslate(0, -.2, 2.5);
 	RiScale(0.3F, 0.3F, 0.3F);
 	RiRotate(-135, 1, 0, 0);
 	RiSides(2);
@@ -55,7 +57,7 @@ void testSimpleNuPatch()
     RiAttributeBegin();
 	RiColor(redish);
 	RiSides(2);
-	RiTranslate(0, 0, 2);
+	RiTranslate(0, 0, 2.5);
 	RiNuPatch(2, 2, uknot, 0.0F, 1.0F, 2, 2, vknot, 0.0F, 1.0F, RI_PW, bilinearPatchLHW, RI_NULL);
     RiAttributeEnd();
 }
@@ -394,7 +396,7 @@ void testParaboloid()
 	// RiOpacity(opacity_25);
 	RiColor(blueish);
 	RiTransformBegin();
-	RiTranslate(0, 0, 1.5);
+	RiTranslate(0, 0, 1.1);
 	// RiOrientation(RI_OUTSIDE);
 	// RiTranslate(0, rad, 1.0+rad);
 	// RiTranslate(0, -rad, 1.0+rad);
@@ -418,7 +420,7 @@ void testSphere()
 	// RiOpacity(opacity_25);
 	RiColor(blueish);
 	RiTransformBegin();
-	RiTranslate(0, 0, 3);
+	RiTranslate(0, 0, 2.1);
 	RiRotate(45, 0, 1, 0);
 	RiScale(1.0, -1.0, 1.0);
 	RiSphere(rad, -rad, rad, 360, RI_NULL);
@@ -439,7 +441,7 @@ void testTorus()
 	// RiOpacity(opacity_25);
 	RiColor(blueish);
 	RiTransformBegin();
-	RiTranslate(0, 0, 3);
+	RiTranslate(0, 0, 1.1);
 	RiScale(1.0, 1.0, 1.0);
 	RiRotate(45, 1, 0, 0);
 	// RiRotate(-65, 0, 0, 1);
@@ -474,7 +476,8 @@ void testPoly10()
 	opacity_75[0] = opacity_75[0];
 
 	RiAttributeBegin();
-
+	RiSides(2);
+	
 	RiAttributeBegin();
 	RiRotate(15.0, 0, 0, 1);
 	RiOpacity(opacity_50);
@@ -1079,10 +1082,28 @@ static void drawAnObject ()
 */
 
 @implementation MyOpenGLView
+-(id) init
+{
+	/* NSLog(@"init"); */
+	counter = startScreen;
+	[self resetCamera];
+	return self;
+}
+
+-(id) resetCamera
+{
+	/* NSLog(@"resetCamera"); */
+	sphi = stheta = 0;
+	sdepth = 0;
+	pivotDepth = defPivotDepth;
+	return self;
+}
+
 -(void) awakeFromNib
 {
 	/* NSLog(@"awakeFromNib"); */
 	counter = startScreen;
+	[self resetCamera];
 }
 
 -(void) drawRect: (NSRect) bounds
@@ -1090,6 +1111,9 @@ static void drawAnObject ()
 	/* NSLog(@"drawRect"); */
 	
 	char *screenAction[2] = {"clear", "finish"};
+#ifdef _DEBUG
+	RtInt noYes[2] = {0, 1};
+#endif
 	
 	if ( counter < 0 ) 
 		counter = maxScreens;
@@ -1102,8 +1126,27 @@ static void drawAnObject ()
 	
 	RtInt origin[2] = {0, 0};
 	
+#ifdef _DEBUG
+	RiCPPControl("glrenderer", "draw-normals", &noYes[1], RI_NULL);
+#endif
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 	RiFrameBegin(counter);
+
+	RiWorldBegin(); {
+		RiTransformBegin(); {
+			char *matrixName[] = {"pre-camera"};
+			RiIdentity();
+			RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
+			RiTranslate(0, 0, pivotDepth); // Move back to previous pos
+			
+			// Rotation
+			RiRotate(-stheta, 1.0, 0.0, 0.0); // Rotate x
+			RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
+			
+			RiTranslate(0, 0, -pivotDepth); // Move to a pivot
+			RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
+		} RiTransformEnd();
+	} RiWorldEnd();
 
 	// Set the display spec
 	if ( [(MyNSObjectController *)panelController displayEnabled] ) {
@@ -1323,6 +1366,7 @@ static void drawAnObject ()
 {
 	/* NSLog(@"nextPoly"); */
 	++counter;
+	[self resetCamera];
 	[self display];
 }
 
@@ -1330,6 +1374,33 @@ static void drawAnObject ()
 {
 	/* NSLog(@"nextPoly"); */
 	--counter;
+	[self resetCamera];
+	[self display];
+}
+
+- (void)rightMouseUp:(NSEvent *)theEvent
+{
+	// NSLog(@"rightMouseUp");
+	[self resetCamera];
+	[self display];
+}
+
+- (void)mouseDragged:(NSEvent *)theEvent
+{
+	// NSLog(@"mouseDragged");
+	if ( !theEvent )
+		return;
+	sphi += [theEvent deltaX] / 4.0;
+	stheta += [theEvent deltaY] / 4.0;
+	[self display];
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+	// NSLog(@"scrollWheel");
+	if ( !theEvent )
+		return;
+	sdepth += [theEvent deltaY] / 10.0;
 	[self display];
 }
 

@@ -526,7 +526,6 @@ CMatrix3D CBaseRenderer::toCamera() const
 {
 	CMatrix3D m;
 	
-	assert(renderState()->worldToCamera() != 0);
 	if ( renderState()->worldToCamera() )
 		m.concatTransform(renderState()->worldToCamera()->getCTM());
 
@@ -539,13 +538,11 @@ CMatrix3D CBaseRenderer::toScreen() const
 {
 	CMatrix3D m;
 	
-	assert(renderState()->cameraToScreen() != 0);
 	if ( renderState()->cameraToScreen() )
 		m.concatTransform(renderState()->cameraToScreen()->getCTM());
 
 	/** @todo Need to cache world to raster CTM in renderState() (fixed in world block)!
 	 */
-	assert(renderState()->worldToCamera() != 0);
 	if ( renderState()->worldToCamera() )
 		m.concatTransform(renderState()->worldToCamera()->getCTM());
 	
@@ -559,15 +556,12 @@ CMatrix3D CBaseRenderer::toNDC() const
 	
 	/** @todo Need to cache world to raster CTM in renderState() (fixed in world block)!
 	 */	
-	assert(renderState()->screenToNDC() != 0);
 	if ( renderState()->screenToNDC() )
 		m.concatTransform(renderState()->screenToNDC()->getCTM());
 
-	assert(renderState()->cameraToScreen() != 0);
 	if ( renderState()->cameraToScreen() )
 		m.concatTransform(renderState()->cameraToScreen()->getCTM());
 	
-	assert(renderState()->worldToCamera() != 0);
 	if ( renderState()->worldToCamera() )
 		m.concatTransform(renderState()->worldToCamera()->getCTM());	
 
@@ -582,19 +576,15 @@ CMatrix3D CBaseRenderer::toRaster() const
 	/** @todo Need to cache world to raster CTM in renderState() (fixed in world block)!
 	 */
 
-	assert(renderState()->NDCToRaster() != 0);
 	if ( renderState()->NDCToRaster() )
 		m.concatTransform(renderState()->NDCToRaster()->getCTM());
 	
-	assert(renderState()->screenToNDC() != 0);
 	if ( renderState()->screenToNDC() )
 		m.concatTransform(renderState()->screenToNDC()->getCTM());
 
-	assert(renderState()->cameraToScreen() != 0);
 	if ( renderState()->cameraToScreen() )
 		m.concatTransform(renderState()->cameraToScreen()->getCTM());
 
-	assert(renderState()->worldToCamera() != 0);
 	if ( renderState()->worldToCamera() )
 		m.concatTransform(renderState()->worldToCamera()->getCTM());
 
@@ -918,7 +908,7 @@ void CBaseRenderer::processArchiveInstance(RtString name, RtArchiveHandle handle
 	}
 }
 
-void CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params)
+void CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &aParserCallback, const IArchiveCallback *callback, const CParameterList &params)
 {
 #ifdef _TRACE_ARCHIVE
 	trace("*** CBaseRenderer::readArchiveFromStream()");
@@ -929,7 +919,7 @@ void CBaseRenderer::readArchiveFromStream(RtString name, IRibParserCallback &par
 	std::string oldArchiveName = renderState()->archiveName();
 	long oldLineNo = renderState()->lineNo();
 
-	CRibParser parser(parserCallback, *renderState(), renderState()->baseUri());
+	CRibParser parser(aParserCallback, *renderState(), renderState()->baseUri());
 	renderState()->moveArchiveBegin();
 	try {
 		std::string filename;

@@ -369,7 +369,7 @@ RtVoid CRibWriter::postProcess(CRiBegin &obj)
 		}
 	}
 
-	if ( m_parserCallback == 0 ) {
+	if ( parserCallback() == 0 ) {
 		return;
 	}
 
@@ -403,7 +403,7 @@ RtVoid CRibWriter::postProcess(CRiBegin &obj)
 		}
 
 		if ( filename.size() > 0 ) {
-			m_buffer = new TemplFrontStreambuf<char>(m_parserCallback->protocolHandlers());
+			m_buffer = new TemplFrontStreambuf<char>(parserCallback()->protocolHandlers());
 			if ( !m_buffer ) {
 				return;
 			}

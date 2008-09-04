@@ -43,11 +43,9 @@ using namespace RiCPP;
 // #define _SHOWFRAMES
 // #define _SHOWBACKGROUND
 // #define _SHOWPOLYLINES
-static const bool _DRAWNORMALS = true;
-#else
-static const bool _DRAWNORMALS = false;
 #endif
 
+static const bool _DRAWNORMALS = false;
 static const bool _USESTRIPS = false;
 
 // -----------------------------------------------------------------------------
@@ -72,6 +70,8 @@ CGLRenderer::CGLRenderer() : m_validGL(false), m_drawNormals(_DRAWNORMALS)
 	RI_GLRENDERER = RI_NULL;	
 	RI_SCREEN = RI_NULL;
 	RI_QUAL_SCREEN = RI_NULL;
+	RI_DRAW_NORMALS = RI_NULL;
+	RI_QUAL_DRAW_NORMALS = RI_NULL;
 }
 
 CGLRenderer::~CGLRenderer()
@@ -82,12 +82,13 @@ void CGLRenderer::defaultDeclarations()
 {
 	TypeParent::defaultDeclarations();
 	
-	// Additional tokens
 	RI_GLRENDERER = renderState()->tokFindCreate("glrenderer");
-	RI_SCREEN = renderState()->tokFindCreate("screen");
 
-	// Additional declarations
+	RI_SCREEN = renderState()->tokFindCreate("screen");
 	RI_QUAL_SCREEN = renderState()->declare("Control:glrenderer:screen",  "constant string",  true);	
+
+	RI_DRAW_NORMALS = renderState()->tokFindCreate("draw-normals");
+	RI_QUAL_DRAW_NORMALS = renderState()->declare("Control:glrenderer:draw-normals",  "integer",  true);	
 }
 
 void CGLRenderer::clearScreen()
@@ -578,6 +579,13 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 					clearScreen();
 				else if ( action == "finish" )
 					finishScreen();
+			}
+		}
+		const CParameter *ctrlDrawNormals = obj.parameters().get(RI_DRAW_NORMALS);
+		if ( ctrlDrawNormals ) {
+			RtInt action;
+			if ( ctrlDrawNormals->get(0, action) ) {
+				m_drawNormals = action != 0;
 			}
 		}
 	}

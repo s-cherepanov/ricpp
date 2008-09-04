@@ -28,6 +28,7 @@
 /** @file resource.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Resource handling and specifically the attribute resource.
+ *  @todo Implementation
  */
 
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
@@ -63,6 +64,7 @@ class CAttributesResource : public CResource
 	static RtToken s_operation;
 	static RtToken s_save;
 	static RtToken s_restore;
+	static RtToken s_concat;
 	static RtToken s_subset;
 	static RtToken s_shading;
 	static RtToken s_transform;
@@ -79,6 +81,7 @@ protected:
 
 	virtual void save(IRiContext &ri);
 	virtual void restore(IRiContext &ri, RtToken subset);
+	virtual void concat(IRiContext &ri, RtToken subset);
 
 public:
 	static void registerOperations(CTokenMap &m);

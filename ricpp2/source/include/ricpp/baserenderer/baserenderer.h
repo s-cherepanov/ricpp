@@ -143,16 +143,51 @@ private:
 	 */
 	CAttributesResourceFactory *m_attributesResourceFactory;
 
+	/**
+	 * @{
+	 * @name delayed requests
+	 * @brief Store requests with attributes and transformation (hack).
+	 * 
+	 * Geometry can be stored for later rendering (call of do...() functions),
+	 * e.g. transparent geometry in OpenGL needs to be rendered after all other
+	 * geometry has been rendered. 
+	 *
+	 * @todo Belongs to the state and need to rethink it (motion blur, only part of grids can be transparent)
+	 * maybe better to store grids for later rendering and discard delay.
+	 */
 	std::list<CDelayedRequest> m_delayedRequests; //!< used to store delayed requests
 	bool m_replayDelayedMode; //!< true, while replaying of delayed requests (controlled via doWorldEnd())
 	CAttributes *m_attributes; //!< Attributes while replaying delayed request
 	CTransformation *m_transformation; //!< Transformation replaying delayed request
-
-protected:
+	/**
+	 * @}
+	 */
+	
 	/** @brief Callbacks for the rib parser to the front end.
+	 *
+	 *  The RIB parsers calls for each interface routine the appropriate function
+	 *  of the @i m_parserCallback. This is normally a rib filter of the frontend.
+	 *  The m_parserCallback can deliver the frontend and the protocol handlers
+	 *  (to read a stream, e.g. for file:)
+	 *
+	 *  @see IRibParserCallback, parserCallback(), parserCallback(), registerRibParserCallback(), frontend(), protocolHandlers(), readArchiveFromStream()
 	 */
 	IRibParserCallback *m_parserCallback;
 
+protected:
+
+	/** @brief Gets read only parser callback
+	 *  @retrun Read only parser callback (frontend, protocol handler)
+	 *  @see m_parserCallback
+	 */
+	inline const IRibParserCallback *parserCallback() const { return m_parserCallback; }
+
+	/** @brief Gets writeanble parser callback
+	 *  @retrun Writeable parser callback (frontend, protocol handler)
+	 *  @see m_parserCallback
+	 */
+	inline IRibParserCallback *parserCallback() { return m_parserCallback; }
+	
 	/** @brief Creates a new modestack, called by initRenderState().
 	 *
 	 *  Overwrite this method if you want to return an own modestack.
@@ -406,11 +441,11 @@ protected:
 	/** @brief Reads an archive from a stream.
 	 *
 	 *  @param name Name of the stream (@a name == RI_NULL for stdin)
-	 *  @param parserCallback Info for parser
+	 *  @param aParserCallback Info for parser
 	 *  @param callback Ri archive callback
 	 *  @param params Copy of the parameters of the readArchiveV() call
 	 */
-	virtual void readArchiveFromStream(RtString name, IRibParserCallback &parserCallback, const IArchiveCallback *callback, const CParameterList &params);
+	virtual void readArchiveFromStream(RtString name, IRibParserCallback &aParserCallback, const IArchiveCallback *callback, const CParameterList &params);
 
 	/** @brief Reads an archive from memory or stream.
 	 *
@@ -489,8 +524,8 @@ public:
 	virtual ~CBaseRenderer();
 
 	/** @name Color and opacity
+	 *  @todo can be stand alone functions
 	 *  @{
-	 * 
 	 */
 	bool isOpaque(const std::vector<RtFloat> &opacity) const;
 	RtFloat opacityToAlpha(IndexType nSamples, const RtFloat *opacity) const;

@@ -285,9 +285,13 @@ void loadScene(const char *filename)
 void display(void)
 {
 	char *screenAction[2] = {"clear", "finish"};
-	// RtInt noYes[2] = {0, 1};
-
+#ifdef _DEBUG
+	RtInt noYes[2] = {0, 1};
+#endif
 	// RiCPPControl("rib", "cache-file-archives", &noYes[1], RI_NULL);
+#ifdef _DEBUG
+	RiCPPControl("glrenderer", "draw-normals", &noYes[1], RI_NULL);
+#endif
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 	
 	RiFormat(width, height, 1.0F);
@@ -298,17 +302,21 @@ void display(void)
 		RiProjection(RI_PERSPECTIVE, RI_FOV, &fov, RI_NULL);
 	}
 	
-	RiTransformBegin(); {
-		char *matrixName[] = {"pre-camera"};
-		RiIdentity();
-		RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
-		RiTranslate(0, 0, 2.75); // Move back to previous pos
-		RiRotate(stheta, 1.0, 0.0, 0.0); // Rotate x
-		RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
-		RiTranslate(0, 0, -2.75); // Move to a pivot
-		RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
-	} RiTransformEnd();
-
+	RiWorldBegin(); {
+		RiTransformBegin(); {
+			char *matrixName[] = {"pre-camera"};
+			RiIdentity();
+			RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
+			RiTranslate(0, 0, 2.75); // Move back to previous pos
+			
+			// Rotation
+			RiRotate(stheta, 1.0, 0.0, 0.0); // Rotate x
+			RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
+			
+			RiTranslate(0, 0, -2.75); // Move to a pivot
+			RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
+		} RiTransformEnd();
+	} RiWorldEnd();
 	RiReadArchive("RIBARCHIVE", 0, RI_NULL);
 	
 	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
@@ -322,6 +330,7 @@ void reshape(int aWidth, int aHeight)
 {
 	width = aWidth;
 	height = aHeight;
+    glutPostRedisplay();
 }
 
 // Copied from GLUT newave.c
@@ -339,11 +348,6 @@ void motion(int x, int y)
     downX = x;
     downY = y;
 
-	if ( rightButton ) {
-        sphi = 0;
-        stheta = 0;
-        sdepth = 0;
-	}
     glutPostRedisplay();
 }
 
@@ -359,6 +363,13 @@ void mouse(int button, int state, int x, int y)
                     (state == GLUT_DOWN));
     rightButton = ((button == GLUT_RIGHT_BUTTON) && 
                     (state == GLUT_DOWN));
+	
+	if ( rightButton ) {
+        sphi = 0;
+        stheta = 0;
+        sdepth = 0;
+		glutPostRedisplay();
+	}
 }
 
 int main(int argc, char **argv)

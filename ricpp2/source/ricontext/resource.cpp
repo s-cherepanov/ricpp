@@ -39,6 +39,7 @@ using namespace RiCPP;
 RtToken CAttributesResource::s_operation = RI_NULL;
 RtToken CAttributesResource::s_save = RI_NULL;
 RtToken CAttributesResource::s_restore = RI_NULL;
+RtToken CAttributesResource::s_concat = RI_NULL;
 RtToken CAttributesResource::s_subset = RI_NULL;
 RtToken CAttributesResource::s_shading = RI_NULL;
 RtToken CAttributesResource::s_transform = RI_NULL;
@@ -57,7 +58,8 @@ void CAttributesResource::registerOperations(CTokenMap &m)
 
 	s_save = m.findCreate("save");
 	s_restore = m.findCreate("restore");
-
+	s_concat = m.findCreate("concat");
+	
 	s_subset = m.findCreate("subset");
 
 	s_shading = m.findCreate("shading");
@@ -89,7 +91,10 @@ RtToken CAttributesResource::getOperation(const std::string &anOperation)
 		return s_save;
 	if ( anOperation == std::string(s_restore) )
 		return s_restore;
+	if ( anOperation == std::string(s_concat) )
+		return s_concat;
 
+	
 	return RI_NULL;
 }
 
@@ -135,6 +140,22 @@ void CAttributesResource::restore(IRiContext &ri, RtToken subset)
 	}
 }
 
+
+void CAttributesResource::concat(IRiContext &ri, RtToken subset)
+{
+	if ( !m_attributes )
+		return;
+	
+	if (subset == s_all ) {
+		ri.renderState()->attributes() = *m_attributes;
+	} else if (subset == s_shading ) {
+	} else if (subset == s_transform ) {
+		// Concat transformation
+	} else if (subset == s_geometrymodification ) {
+	} else if (subset == s_geometrydefinition ) {
+	} else {
+	}
+}
 
 void CAttributesResource::operate(IRiContext &ri, RtToken operation, RtToken subset)
 {

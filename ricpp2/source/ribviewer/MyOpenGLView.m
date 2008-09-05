@@ -1,7 +1,7 @@
 #import "MyOpenGLView.h"
 #import <ricpp/ri/ri.h>
 
-static const float defPivotDepth = 2;
+static const float defPivotDepth = 0;
 static char *screenAction[2] = {"clear", "finish"};
 static RtInt noYes[2] = {0, 1};
 
@@ -111,10 +111,11 @@ static RtInt noYes[2] = {0, 1};
 		RiTransformBegin(); {
 			char *matrixName[] = {"pre-camera"};
 			RiIdentity();
+			
 			RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
 			RiTranslate(0, 0, pivotDepth); // Move back to previous pos
 			
-			// Rotation
+			// Rotation at Pivot (here)
 			RiRotate(-stheta, 1.0, 0.0, 0.0); // Rotate x
 			RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
 			

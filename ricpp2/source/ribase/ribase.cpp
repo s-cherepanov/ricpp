@@ -35,6 +35,8 @@
 #include "ricpp/ribase/ricppconst.h"
 #include "ricpp/ribase/ricpptokens.h"
 #include "ricpp/ribase/ricppdecls.h"
+#include "ricpp/tools/templatefuncs.h"
+
 
 #include <cmath>
 #include <iostream>
@@ -156,7 +158,290 @@ RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	return s*t;
 }
 
+	
+/// @todo Remove code duplication with the CMatrix3D
+	
+RICPP_INTERN(RtVoid)
+RiCPPMult3DPoint (const RtPoint point, const RtMatrix matrix, RtPoint result)
+{
+	int i, k;
+	RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
+	RtFloat p[4] = {point[1], point[2], point[3], 1.0};
 
+	// premultiply result = p x m
+	for ( i=0; i<4; ++i) for ( k=0; k<4; ++k) d[i] += p[k] * matrix[k][i];
+	
+	if ( fabs(d[3]) < std::numeric_limits<RtFloat>::epsilon() ) {
+		result[0] = d[0];
+		result[0] = d[1];
+		result[1] = d[2];
+	} else {
+		result[0] = d[0]/d[3];
+		result[0] = d[1]/d[3];
+		result[1] = d[2]/d[3];
+	}
+}
+	
+RICPP_INTERN(RtVoid)
+RiCPPMult3DPoints (const RtPoint *points, RtInt count, const RtMatrix matrix, RtPoint *result)
+{
+	int i, j, k;
+	
+	RtInt size = count * 3;
+	const RtFloat *p = &points[0][0];
+	RtFloat *r = &result[0][0];
+	
+	for ( j = 0; j < size; j+=3 ) {
+		RtFloat t[4] = {p[j], p[j+1], p[j+2], 1.0};
+		RtFloat d[4] = {0.0, 0.0, 0.0, 0.0};
+		for ( i=0; i<4; ++i)
+			for ( k=0; k<4; ++k)
+				d[i] += matrix[i][k] * t[k];
+		
+		if ( fabs(d[3]) < std::numeric_limits<RtFloat>::epsilon() ) {
+			r[j]   = d[0];
+			r[j+1] = d[1];
+			r[j+2] = d[2];
+		} else {
+			r[j]   = d[0]/d[3];
+			r[j+1] = d[1]/d[3];
+			r[j+2] = d[2]/d[3];
+		}
+	}
+}
+
+
+RICPP_INTERN(RtVoid)
+RiCPPIntersectLinePlane (const RtPoint *line, const RtPoint pnorm, const RtPoint ppoint,
+						 RtPoint *psect)
+{
+	if ( !psect ) {
+		return;
+	}
+	
+	if ( !line ) {
+		return;
+	}
+	
+	/// @note pnorm is not the normal, pnorm - ppoint is (???). And psect is really a pointer, maybe to fill arrays (see 3DKit Dokumentation).
+	/// @see For line plane intersection: Paul Bourke, Solution 1 http://local.wasp.uwa.edu.au/~pbourke/geometry/planeline/
+
+	RtFloat pNormVect[3];
+	RiCPP::vvSub3(pNormVect, (RtFloat *)&pnorm[0], (RtFloat *)&ppoint[0]);
+	
+	RtFloat normLDir[3];
+	RiCPP::vvSub3(normLDir, (RtFloat *)&line[1][0], (RtFloat *)&line[0][0]);
+	
+	RtFloat vectLineToPlane[3];
+	RiCPP::vvSub3(vectLineToPlane, (RtFloat *)&ppoint[0], (RtFloat *)&line[0][0]);
+	
+	RtFloat ratio = RiCPP::dot3(pNormVect, vectLineToPlane)/RiCPP::dot3(pNormVect, normLDir); // can be NaN -> Result is also NaN
+	
+	(*psect)[0] = line[0][0] + ratio*normLDir[0];
+	(*psect)[1] = line[0][1] + ratio*normLDir[1];
+	(*psect)[2] = line[0][2] + ratio*normLDir[2];
+}
+
+RICPP_INTERN(RtVoid)
+RiCPPMultiplyMatrix (const RtMatrix pre, const RtMatrix post, RtMatrix result)
+{
+	RtMatrix s;
+	int i, j, k;
+	for ( i=0; i<4; ++i ) {
+		for ( j=0; j<4; ++j ) {
+			s[i][j] = 0.0;
+			for ( k=0; k<4; ++k ) {
+				s[i][j] += pre[i][k] * post[k][j];
+			}
+		}
+	}
+	memcpy(result, s, sizeof(s));
+}
+
+	
+	static RtFloat det2x2(RtFloat a, RtFloat b, RtFloat c, RtFloat d)
+	{
+		return (a * d - b * c);
+	}
+	
+	static RtFloat det3x3(RtFloat a1, RtFloat a2, RtFloat a3,
+						  RtFloat b1, RtFloat b2, RtFloat b3,
+						  RtFloat c1, RtFloat c2, RtFloat c3)
+	{
+		return
+		a1 * det2x2(b2, b3, c2, c3) -
+		b1 * det2x2(a2, a3, c2, c3) +
+		c1 * det2x2(a2, a3, b2, b3);
+	}
+	
+	static bool isIdentity(const RtMatrix matrix)
+	{
+        int i, j;
+        bool eq = true;
+		
+        for ( i = 0; i < 4 ; ++i ) {
+			for ( j = 0; j < 4 ; ++j ) {
+				eq = eq && ((matrix[i][j] == 0.0) || ((i==j) && (matrix[i][j] == 1.0)));
+			}
+        }
+		
+        return eq;
+	}
+	
+	static void setIdentity(RtMatrix matrix)
+	{
+        int i, j;
+		
+        for ( i = 0; i < 4 ; ++i ) {
+			for ( j = 0; j < 4 ; ++j ) {
+				matrix[i][j] =  0;
+			}
+        }
+        for ( i = 0; i < 4 ; ++i ) {
+			matrix[i][i] = 1;
+        }
+	}
+	
+RICPP_INTERN(RtFloat) RiCPPDeterminant(RtMatrix matrix)
+{
+	// Assign to individual variable names to aid selecting correct elements
+	RtFloat a1 = matrix[0][0];
+	RtFloat b1 = matrix[0][1];
+	RtFloat c1 = matrix[0][2];
+	RtFloat d1 = matrix[0][3];
+		
+	RtFloat a2 = matrix[1][0];
+	RtFloat b2 = matrix[1][1];
+	RtFloat c2 = matrix[1][2];
+	RtFloat d2 = matrix[1][3];
+		
+	RtFloat a3 = matrix[2][0];
+	RtFloat b3 = matrix[2][1];
+	RtFloat c3 = matrix[2][2];
+	RtFloat d3 = matrix[2][3];
+		
+	RtFloat a4 = matrix[3][0];
+	RtFloat b4 = matrix[3][1];
+	RtFloat c4 = matrix[3][2];
+	RtFloat d4 = matrix[3][3];
+		
+	return
+	a1 * det3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4) -
+	b1 * det3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4) +
+	c1 * det3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4) -
+	d1 * det3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4);
+}
+	
+	
+RICPP_INTERN(RtBoolean)
+RiCPPInvertMatrix (const RtMatrix matrix, RtMatrix inverse)
+{
+	if ( isIdentity(matrix) )
+	{
+		memcpy(inverse, matrix, sizeof(matrix));
+		return RI_TRUE;
+	}
+	
+	RtMatrix b; // b evolves from identity into inverse(a)
+	RtMatrix a; // a evolves from original matrix into identity
+	memcpy(a, matrix, sizeof(matrix));
+	
+	setIdentity(b);
+	
+	int i;
+	int j;
+	int i1;
+	
+	// Loop over cols of a from left to right, eliminating above and below diag
+	for (j = 0; j < 4; j++)        // Find largest pivot in column j among rows j..3
+	{
+		i1 = j;
+		for(i = j + 1; i < 4; i++)
+		{
+			if(fabs(a[i][j]) > fabs(a[i1][j]))
+			{
+				i1 = i;
+			}
+		}
+		
+		if (i1 != j)
+		{
+			// Swap rows i1 and j in a and b to put pivot on diagonal
+			RtFloat temp;
+			
+			temp = a[i1][0];
+			a[i1][0] = a[j][0];
+			a[j][0] = temp;
+			temp = a[i1][1];
+			a[i1][1] = a[j][1];
+			a[j][1] = temp;
+			temp = a[i1][2];
+			a[i1][2] = a[j][2];
+			a[j][2] = temp;
+			temp = a[i1][3];
+			a[i1][3] = a[j][3];
+			a[j][3] = temp;
+			
+			temp = b[i1][0];
+			b[i1][0] = b[j][0];
+			b[j][0] = temp;
+			temp = b[i1][1];
+			b[i1][1] = b[j][1];
+			b[j][1] = temp;
+			temp = b[i1][2];
+			b[i1][2] = b[j][2];
+			b[j][2] = temp;
+			temp = b[i1][3];
+			b[i1][3] = b[j][3];
+			b[j][3] = temp;
+		}
+		
+		// Scale row j to have a unit diagonal
+		if( a[j][j] == 0.0 )
+		{
+			// Can't invert a singular matrix!
+			return RI_FALSE;
+		}
+		RtFloat scale = (RtFloat)(1.0 / a[j][j]);
+		b[j][0] *= scale;
+		b[j][1] *= scale;
+		b[j][2] *= scale;
+		b[j][3] *= scale;
+		// all elements to left of a[j][j] are already zero
+		for (i1=j+1; i1<4; i1++)
+		{
+			a[j][i1] *= scale;
+		}
+		a[j][j] = 1.0;
+		
+		// Eliminate off-diagonal elements in column j of a, doing identical ops to b
+		for(i = 0; i < 4; i++)
+		{
+			if(i != j)
+			{
+				scale = a[i][j];
+				b[i][0] -= scale * b[j][0];
+				b[i][1] -= scale * b[j][1];
+				b[i][2] -= scale * b[j][2];
+				b[i][3] -= scale * b[j][3];
+				
+				// all elements to left of a[j][j] are zero
+				// a[j][j] is 1.0
+				for (i1=j+1; i1<4; i1++)
+				{
+					a[i][i1] -= scale * a[j][i1];
+				}
+				a[i][j] = 0.0;
+			}
+		}
+	}
+
+	memcpy(inverse, b, sizeof(b));
+	return RI_TRUE;
+}
+
+	
+	
 /*   */
 #undef RICPP_INTERN
 #define RICPP_INTERN(type) type

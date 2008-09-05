@@ -64,6 +64,21 @@ RICPP_EXTERN(RtVoid)
     RiErrorPrint (RtInt code, RtInt severity, RtString message),
     RiErrorAbort (RtInt code, RtInt severity, RtString message);
 
+// Added functions for convenience with gnu3DKit
+	
+RICPP_EXTERN(RtVoid)
+	RiCPPMult3DPoint (const RtPoint point, const RtMatrix matrix, RtPoint result),
+	RiCPPMult3DPoints (const RtPoint *points, RtInt count, const RtMatrix matrix, RtPoint *result),
+	RiCPPIntersectLinePlane (const RtPoint *line, const RtPoint pnorm, const RtPoint ppoint,
+							 RtPoint *psect),
+	RiCPPMultiplyMatrix (const RtMatrix pre, const RtMatrix post, RtMatrix result);
+
+RICPP_EXTERN(RtFloat)
+	RiCPPDeterminant(RtMatrix matrix);
+RICPP_EXTERN(RtBoolean)
+	RiCPPInvertMatrix(const RtMatrix matrix, RtMatrix inverse);
+	
+	
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

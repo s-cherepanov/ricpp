@@ -1107,9 +1107,15 @@ void CMatrix3D::transformPoint(RtFloat &x, RtFloat &y, RtFloat &z) const
                 for ( i=0; i<4; ++i) for ( k=0; k<4; ++k) d[i] += m_Matrix[i][k] * p[k];
 		}
 
+	if ( nearlyZero(d[3]) ) {
 		x = d[0];
         y = d[1];
         z = d[2];
+	} else {
+		x = d[0]/d[3];
+        y = d[1]/d[3];
+        z = d[2]/d[3];
+	}
 }
 
 bool CMatrix3D::transformNormal(RtFloat &x, RtFloat &y, RtFloat &z) const

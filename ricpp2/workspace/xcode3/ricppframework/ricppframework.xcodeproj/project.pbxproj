@@ -537,6 +537,13 @@
 			remoteGlobalIDString = C3911A850E644F060051CB61;
 			remoteInfo = ribviewer;
 		};
+		C3938B7E0E7173FF009582F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3685EC30D3C1F4D00B2E025 /* tools */;
+			remoteInfo = tools;
+		};
 		C3B259490E531D18001137C0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -2519,6 +2526,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C3938B7F0E7173FF009582F7 /* PBXTargetDependency */,
 			);
 			name = ribase;
 			productName = ribase;
@@ -3497,6 +3505,11 @@
 			isa = PBXTargetDependency;
 			target = C3911A850E644F060051CB61 /* ribviewer */;
 			targetProxy = C3911AB60E6451200051CB61 /* PBXContainerItemProxy */;
+		};
+		C3938B7F0E7173FF009582F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3685EC30D3C1F4D00B2E025 /* tools */;
+			targetProxy = C3938B7E0E7173FF009582F7 /* PBXContainerItemProxy */;
 		};
 		C3B2594A0E531D18001137C0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -97,13 +97,13 @@ void CGLRenderer::clearScreen()
 	if ( !valid() )
 		return;
 
-	// Clear screen (called from frameBegin for multiple view ports as world blocks)
-	glDisable(GL_SCISSOR_TEST);
 	/** @todo Option for frame color (world block should also have a controlable background, white at the moment)
 	 */
-	glClearColor(0.5, 0.5, 1.0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glFlush();
+	glDisable(GL_SCISSOR_TEST);
+	glClearDepth(1.0);
+	glClearColor(0.5, 0.5, 1.0, 1);
+	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+	// glFinish();
 }
 
 void CGLRenderer::finishScreen()
@@ -111,7 +111,6 @@ void CGLRenderer::finishScreen()
 	if ( !valid() )
 		return;
 
-	// Flush screen (called from frameEnd for multiple view ports as world blocks)
 	glFinish();
 #if defined(__APPLE__)
 	CGLContextObj ctx = CGLGetCurrentContext();
@@ -438,9 +437,8 @@ void CGLRenderer::initViewing()
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 
-	glDepthMask(GL_TRUE);
-
     glMatrixMode(GL_PROJECTION);
+	glDepthMask(GL_FALSE);
 	
     glLoadIdentity();
 
@@ -495,12 +493,12 @@ void CGLRenderer::initViewing()
 	}
 
 #ifdef _SHOWBACKGROUND	
-	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
-	glVertex3f(xmin, ymin, 0);
-	glVertex3f(xmax, ymin, 0);
-	glVertex3f(xmax, ymax, 0);
-	glVertex3f(xmin, ymax, 0);
+	glVertex3f((GLfloat)xmin, (GLfloat)ymin, 0.0f);
+	glVertex3f((GLfloat)xmax, (GLfloat)ymin, 0.0f);
+	glVertex3f((GLfloat)xmax, (GLfloat)ymax, 0.0f);
+	glVertex3f((GLfloat)xmin, (GLfloat)ymax, 0.0f);
 	glEnd();
 
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -551,6 +549,7 @@ void CGLRenderer::initViewing()
 	glMultMatrixf(cameraToScreen->getCTM().getFloats());	
 
 	glMatrixMode(GL_MODELVIEW);
+	glDepthMask(GL_TRUE);
 }
 
 void CGLRenderer::initLights()
@@ -597,9 +596,9 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 		if ( ctrlScreen ) {
 			std::string action;
 			if ( ctrlScreen->get(0, action) ) {
-				if ( action == "clear" )
+				if ( action == std::string("clear") )
 					clearScreen();
-				else if ( action == "finish" )
+				else if ( action == std::string("finish") )
 					finishScreen();
 			}
 		}

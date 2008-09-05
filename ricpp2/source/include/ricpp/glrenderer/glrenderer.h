@@ -123,7 +123,7 @@ public:
 	virtual RtVoid doProcess(CRiWorldBegin &obj);
 	virtual RtVoid doProcess(CRiWorldEnd &obj);
 	
-    virtual RtVoid doProcess(CRiPolygon &obj);
+	virtual RtVoid doProcess(CRiPolygon &obj);
 	virtual RtVoid doProcess(CRiGeneralPolygon &obj);
 	virtual RtVoid doProcess(CRiPointsPolygons &obj);
     virtual RtVoid doProcess(CRiPointsGeneralPolygons &obj);

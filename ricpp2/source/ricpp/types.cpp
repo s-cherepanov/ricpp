@@ -1246,12 +1246,17 @@ void CMatrix3D::rotate(RtFloat w, RtFloat x, RtFloat y, RtFloat z)
 {
         CMatrix3D r;
 
-        if ( x > 0.0 && y == 0.0 && z == 0.0 ) { rotateX(w); return; }
-        if ( x < 0.0 && y == 0.0 && z == 0.0 ) { rotateX(-w); return; }
-        if ( x == 0.0 && y > 0.0 && z == 0.0 ) { rotateY(w); return; }
-        if ( x == 0.0 && y < 0.0 && z == 0.0 ) { rotateY(-w); return; }
-        if ( x == 0.0 && y == 0.0 && z > 0.0 ) { rotateZ(w); return; }
-        if ( x == 0.0 && y == 0.0 && z < 0.0 ) { rotateZ(-w); return; }
+		if ( nearlyZero(w) ) { return; }
+
+		
+        if ( x > 0.0 && nearlyZero(y) && nearlyZero(z) ) { rotateX(w); return; }
+        if ( x < 0.0 && nearlyZero(y) && nearlyZero(z) ) { rotateX(-w); return; }
+        if ( nearlyZero(x) && y > 0.0 && nearlyZero(z) ) { rotateY(w); return; }
+        if ( nearlyZero(x) && y < 0.0 && nearlyZero(z) ) { rotateY(-w); return; }
+        if ( nearlyZero(x) && nearlyZero(y) && z > 0.0 ) { rotateZ(w); return; }
+        if ( nearlyZero(x) && nearlyZero(y) && z < 0.0 ) { rotateZ(-w); return; }
+		
+        if ( nearlyZero(x) && nearlyZero(y) && nearlyZero(z) ) { return; }
 
         w = deg2rad(w);
 
@@ -1284,10 +1289,12 @@ void CMatrix3D::skew(
         RtMatrix mat;
         RtFloat t;
 
-        RtFloat length1 = sqrt(x1*x1 + y1*y1 + z1*z1);
+        if ( nearlyZero(w) ) return; // undefined
+
+		RtFloat length1 = sqrt(x1*x1 + y1*y1 + z1*z1);
         RtFloat length2 = sqrt(x2*x2 + y2*y2 + z2*z2);
 
-        if ( length1 == 0.0 || length2 == 0.0 ) return; // undefined
+        if ( nearlyZero(length1) || nearlyZero(length2) ) return; // undefined
 
         w = deg2rad(w);
 

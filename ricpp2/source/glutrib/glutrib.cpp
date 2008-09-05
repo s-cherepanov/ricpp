@@ -288,39 +288,40 @@ void display(void)
 #ifdef _DEBUG
 	RtInt noYes[2] = {0, 1};
 #endif
+
+	char *matrixName[] = {"pre-camera"};
+	RiIdentity();
+	RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
+	RiTranslate(0, 0, 2.75); // Move back to previous pos
+			
+	// Rotation
+	RiRotate(stheta, 1.0, 0.0, 0.0); // Rotate x
+	RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
+			
+	RiTranslate(0, 0, -2.75); // Move to a pivot
+	RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
+	RiIdentity();
+
 	// RiCPPControl("rib", "cache-file-archives", &noYes[1], RI_NULL);
+	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
+	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 #ifdef _DEBUG
 	RiCPPControl("glrenderer", "draw-normals", &noYes[1], RI_NULL);
 #endif
-	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
-	
+	    
 	RiFormat(width, height, 1.0F);
-	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
-    
+
 	if ( storedArgc == 1 ) {
 		RtFloat fov = 45.0;
 		RiProjection(RI_PERSPECTIVE, RI_FOV, &fov, RI_NULL);
 	}
 	
-	RiWorldBegin(); {
-		RiTransformBegin(); {
-			char *matrixName[] = {"pre-camera"};
-			RiIdentity();
-			RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
-			RiTranslate(0, 0, 2.75); // Move back to previous pos
-			
-			// Rotation
-			RiRotate(stheta, 1.0, 0.0, 0.0); // Rotate x
-			RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
-			
-			RiTranslate(0, 0, -2.75); // Move to a pivot
-			RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
-		} RiTransformEnd();
-	} RiWorldEnd();
 	RiReadArchive("RIBARCHIVE", 0, RI_NULL);
 	
 	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
 	// RiIdentity(); // done by restart
+
+	// If double buffer
 	glutSwapBuffers();
 
 	RiSynchronize("restart");
@@ -330,7 +331,7 @@ void reshape(int aWidth, int aHeight)
 {
 	width = aWidth;
 	height = aHeight;
-    glutPostRedisplay();
+    // glutPostRedisplay();
 }
 
 // Copied from GLUT newave.c
@@ -381,7 +382,7 @@ int main(int argc, char **argv)
 	storedArgv = argv;
 	
 	glutInit(&argc, argv);
-	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH );
+	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
 	glutInitWindowSize (width, height); 
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow(argc <= 1 ? "GLUT RIB" : argv[1]);

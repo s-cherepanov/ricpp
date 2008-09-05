@@ -379,10 +379,21 @@ void TGLRenderer::finishGL() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void TGLRenderer::transformRGB(RtFloat *endcolor, IndexType ncolors, RtFloat *colorarray) {
+void TGLRenderer::transformRGB(RtFloat *endcolor, IndexType ncolors, RtFloat *colorarray, bool applyCorrection) {
 	assert (m_currentContext != NULL && m_currentContext->m_currentOptions != NULL);
 	if ( m_currentContext == NULL || m_currentContext->m_currentOptions == NULL ) {
 		handleError(RIE_BUG, RIE_ERROR, "TGLRenderer::transformRGB(), m_currentContext == NULL || m_currentContext->m_currentOptions == NULL");
+		return;
+	}
+	if ( !applyCorrection ) {
+		IndexType i;
+		for ( i = 0; i < ncolors; ++i ) {
+			options().colorRGB(&endcolor[i*4], &colorarray[i*options().m_iNColor]);
+			endcolor[i*4+0] = endcolor[i*4+0];
+			endcolor[i*4+1] = endcolor[i*4+1];
+			endcolor[i*4+2] = endcolor[i*4+2];
+			endcolor[i*4+3] = (RtFloat)1.0;
+		}
 		return;
 	}
 
@@ -1575,13 +1586,10 @@ RtVoid TGLRenderer::doGeometricApproximation(RtToken type, RtFloat value) {
 RtVoid TGLRenderer::doGeometricRepresentation(RtToken type) {
 	if ( !m_openglIsActive ) return;
 
-	if ( !strcmp(type, ri_ConstantPoints) ) {
-		TGL::shadeModel(GL_FLAT);
-		TGL::polygonMode(GL_FRONT_AND_BACK, GL_POINT);
-	} else if ( !strcmp(type, ri_ConstantLines) ) {
-		TGL::shadeModel(GL_FLAT);
-		TGL::polygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	} if ( !strcmp(type, ri_Points) ) {
+	if ( !strcmp(type, RI_SMOOTH) || !strcmp(type, RI_PRIMITIVE) ) {
+		TGL::shadeModel(GL_SMOOTH);
+		TGL::polygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	} else if ( !strcmp(type, ri_Points) ) {
 		TGL::shadeModel(GL_SMOOTH);
 		TGL::polygonMode(GL_FRONT_AND_BACK, GL_POINT);
 	} else if ( !strcmp(type, ri_Lines) ) {
@@ -1590,10 +1598,13 @@ RtVoid TGLRenderer::doGeometricRepresentation(RtToken type) {
 	} else if ( !strcmp(type, RI_CONSTANT) ) {
 		TGL::shadeModel(GL_FLAT);
 		TGL::polygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	} else if ( !strcmp(type, RI_SMOOTH) ) {
-		TGL::shadeModel(GL_SMOOTH);
-		TGL::polygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
+	} else if ( !strcmp(type, ri_ConstantPoints) ) {
+		TGL::shadeModel(GL_FLAT);
+		TGL::polygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	} else if ( !strcmp(type, ri_ConstantLines) ) {
+		TGL::shadeModel(GL_FLAT);
+		TGL::polygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	} 
 }
 
 RtVoid TGLRenderer::doSides(RtInt nsides) {

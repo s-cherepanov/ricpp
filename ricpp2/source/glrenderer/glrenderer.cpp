@@ -288,6 +288,28 @@ void CGLRenderer::hideSurface(const CSurface *s)
 	glDisable(GL_LIGHTING);
 	glDisable(GL_LIGHT0);
 	
+	RtToken type = attributes().geometricRepresentation();
+
+	if ( type == RI_PRIMITIVE || type == RI_SMOOTH ) {
+		glShadeModel(GL_SMOOTH);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}  else if ( type == RI_POINTS ) {
+		glShadeModel(GL_SMOOTH);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	} else if ( type == RI_LINES ) {
+		glShadeModel(GL_SMOOTH);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	} else if ( type == RI_CONSTANT ) {
+		glShadeModel(GL_FLAT);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	} else if ( !strcmp(type, "constant points") ) {
+		glShadeModel(GL_FLAT);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+	} else if ( !strcmp(type, "constant lines") ) {
+		glShadeModel(GL_FLAT);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
 	TypeParent::hideSurface(s);
 }
 

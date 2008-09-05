@@ -119,6 +119,15 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 	}
 }
 
+void CTriangleRenderer::hideSurface(const CSurface *s)
+{
+	if ( attributes().geometricApproximationType() == RI_TESSELATION ) {
+		tess((RtInt)attributes().geometricApproximationValue(), (RtInt)attributes().geometricApproximationValue());
+	} else {
+		tess(_TESSELATION, _TESSELATION);
+	}
+	TypeParent::hideSurface(s);
+}
 
 bool CTriangleRenderer::startHandling(CVarParamRManInterfaceCall &obj)
 {

@@ -39,7 +39,7 @@
 
 class TGLTransformRGB {
 public:
-	virtual void transformRGB(GLfloat *surfacecolor, IndexType ncolors, RtFloat *colorarray) = 0;
+	virtual void transformRGB(GLfloat *surfacecolor, IndexType ncolors, RtFloat *colorarray, bool applyCorrection=true) = 0;
 };
 
 class TGLTextureMap {

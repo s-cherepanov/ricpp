@@ -409,7 +409,7 @@ CSurface *CPolygonTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 
 CSurface *CPointsPolygonsTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
-	RtInt npolys =  m_obj->nVerts().size();
+	size_t npolys =  m_obj->nVerts().size();
 	if ( npolys == 0 ) {
 		return  0;
 	}
@@ -424,7 +424,7 @@ CSurface *CPointsPolygonsTesselator::tesselate(const CDeclaration &posDecl, cons
 	
 	RtInt vertsOffs = 0;
 
-	for ( RtInt faceIdx = 0; faceIdx < npolys; ++faceIdx ) {
+	for ( IndexType faceIdx = 0; faceIdx < npolys; ++faceIdx ) {
 		RtInt nverts = m_obj->nVerts()[faceIdx];
 		if ( nverts == 0 )
 			continue;

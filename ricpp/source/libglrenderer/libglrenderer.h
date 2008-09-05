@@ -364,7 +364,7 @@ public:
 	virtual ~TGLRenderer();
 
 	// Aux
-	virtual void transformRGB(GLfloat *surfacecolor, IndexType ncolors, RtFloat *colorarray);
+	virtual void transformRGB(GLfloat *surfacecolor, IndexType ncolors, RtFloat *colorarray, bool applyCorrection=true);
 
 protected:
 	// Interface functions

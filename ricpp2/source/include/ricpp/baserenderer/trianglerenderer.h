@@ -64,19 +64,7 @@ namespace RiCPP {
 		inline virtual const IPolygonTriangulationStrategy &polygonTriangulationStrategy() const { return m_earClipper; }
 		void getPosAndNormals(const CFace &f, const CMatrix3D &trans, std::vector<RtFloat> &p, std::vector<RtFloat> &n);
 		
-	public:
-		CTriangleRenderer();
-		
-		inline bool useStrips() const { return m_useStrips; }
-		inline void useStrips(bool aUseStrips) { m_useStrips = aUseStrips; }
-		
-		inline bool cacheGrids() const { return m_cacheGrids; }
-		inline void cacheGrids(bool doCache) { m_cacheGrids = doCache; }
-
-		using TypeParent::doProcess;
-		using TypeParent::preProcess;
-		using TypeParent::postProcess;
-		
+	protected:		
 		virtual RtVoid triangulate(CTesselator &triObj);
 		
 		virtual RtVoid triangulate(CRiPolygon &obj);
@@ -97,6 +85,27 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiNuPatch &obj);
 		
 		//
+
+		virtual void hideSurface(const CSurface *s);
+
+	public:
+		CTriangleRenderer();
+		
+		inline bool useStrips() const { return m_useStrips; }
+		inline void useStrips(bool aUseStrips) { m_useStrips = aUseStrips; }
+		
+		inline bool cacheGrids() const { return m_cacheGrids; }
+		inline void cacheGrids(bool doCache) { m_cacheGrids = doCache; }
+
+		inline RtInt tessU() const { return m_tessU; }
+		inline void tessU(RtInt aTessU) { m_tessU = aTessU; }
+		inline RtInt tessV() const { return m_tessV; }
+		inline void tessV(RtInt aTessV) { m_tessV = aTessV; }
+		inline void tess(RtInt aTessU, RtInt aTessV) { m_tessU = aTessU; m_tessV = aTessV; }
+
+		using TypeParent::doProcess;
+		using TypeParent::preProcess;
+		using TypeParent::postProcess;
 
 		virtual RtVoid doProcess(CRiPolygon &obj);
 		virtual RtVoid doProcess(CRiGeneralPolygon &obj);

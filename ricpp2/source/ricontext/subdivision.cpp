@@ -44,12 +44,10 @@ using namespace RiCPP;
 void CSubdivFace::dump(std::ostream &o, const std::string &pre) const {
 	o << pre << "CSubdivFace:" << std::endl;
 	o << pre;
-	o << "   m_faceIndex: " << m_faceIndex << ", ";
-	o << "   m_parentFaceIndex: " << m_parentFaceIndex << ", ";
-	o << "   m_origFaceIndex: " << m_origFaceIndex << ", ";
     o << "m_type: " << (m_type == FACE_FILLED ? "FACE_FILLED" : "FACE_HOLE") << std::endl;
 	o << pre << "   m_startVertexIndex: " << m_startVertexIndex << ", " << "m_endVertexIndex: " << m_endVertexIndex << std::endl;
-	o << pre << "   m_startEdgeIndex: " << m_startEdgeIndex << ", " << "m_endEdgeIndex: " << m_endEdgeIndex << std::endl;
+	o << "   m_parentFaceIndex: " << m_parentFaceIndex << ", ";
+	o << pre << "   m_startChildIndex: " << m_startChildIndex << ", " << "m_endChildIndex: " << m_endChildIndex << std::endl;
 }
 
 
@@ -61,11 +59,9 @@ CSubdivFace &CSubdivFace::operator=(const CSubdivFace &f) {
 	m_type             = f.m_type;
 	m_startVertexIndex = f.m_startVertexIndex;
 	m_endVertexIndex   = f.m_endVertexIndex;
-	m_startEdgeIndex   = f.m_startEdgeIndex;
-	m_endEdgeIndex     = f.m_endEdgeIndex;
-	m_faceIndex        = f.m_faceIndex;
 	m_parentFaceIndex  = f.m_parentFaceIndex;
-	m_origFaceIndex    = f.m_origFaceIndex;
+	m_startChildIndex   = f.m_startChildIndex;
+	m_endChildIndex     = f.m_endChildIndex;
 	
 	return *this;
 }
@@ -102,8 +98,6 @@ void CSubdivVertex::dump(std::ostream &o, const std::string &pre) const
 {
 	o << pre << "CSubdivVertex:" << std::endl;
 	o << pre << "   m_value: " << m_value << ", " << "m_type: " << (m_type == VERTEX_ROUNDED ? "VERTEX_ROUNDED" : "VERTEX_CORNER") << std::endl;
-	o << pre << "   m_idxStartEdge: " << m_idxStartEdge << ", " << "m_idxEndEdge: " << m_idxEndEdge << std::endl;
-	o << pre << "   m_idxStartFace: " << m_idxStartFace << ", " << "m_idxEndFace: " << m_idxEndFace << std::endl;
 }
 
 
@@ -114,12 +108,6 @@ CSubdivVertex &CSubdivVertex::operator=(const CSubdivVertex &v)
 	
 	m_value = v.m_value;
 	m_type  = v.m_type;
-	
-	m_idxStartEdge = v.m_idxStartEdge;
-	m_idxEndEdge   = v.m_idxEndEdge;
-	
-	m_idxStartFace = v.m_idxStartFace;
-	m_idxEndFace   = v.m_idxEndFace;
 	
 	return *this;
 }
@@ -164,6 +152,20 @@ void CSubdivisionIndices::initialize(const std::vector<RtInt> &nverts, const std
 									 const std::vector<RtFloat> &floargs,
 									 const std::vector<RtToken> &stringargs)
 {
+	m_vertexIndices.resize(verts.size());
+	std::copy(verts.begin(), verts.end(), m_vertexIndices.begin());
+	m_edges.resize(tmax(verts.size(), &verts[0]));
+	m_vertices.resize(m_edges.size());
+	m_faces.resize(nverts.size());
+	long idx = 0, fidx = 0;
+	for ( std::vector<RtInt>::const_iterator iter = nverts.begin();
+		  iter != nverts.end();
+		  iter++,  fidx++)
+	{
+		m_faces[fidx].startVertexIndex(idx);
+		idx += (*iter);
+		m_faces[fidx].endVertexIndex(idx);
+	}
 }
 
 CSubdivFace *CSubdivisionIndices::face(long faceIndex)
@@ -181,7 +183,12 @@ CSubdivVertex *CSubdivisionIndices::vertex(long faceIndex, long vertexIndex)
 	return 0;
 }
 
-void CSubdivisionIndices::subdivide(CSubdivisionIndices &parent, const CSubdivisionStrategy &strategy)
+void CSubdivisionIndices::subdivide(CSubdivisionIndices &parent, const CSubdivisionStrategy &strategy,
+						RtInt ntags, const std::vector<RtToken> &tags,
+						const std::vector<RtInt> &nargs,
+						const std::vector<RtInt> &intargs,
+						const std::vector<RtFloat> &floargs,
+						const std::vector<RtToken> &stringargs)
 {
 }
 

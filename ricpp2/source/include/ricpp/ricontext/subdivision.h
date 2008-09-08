@@ -62,16 +62,19 @@ namespace RiCPP {
 		 * @name Conectivity
 		 * @brief Incident vertices and edges (for each vertex one edge).
 		 */
-		long m_startVertexIndex; //!< Start index of incident vertices in the mesh, ccw, -1 if not initialised
-		long m_endVertexIndex;   //!< End of incident vertices in the mesh (-1 if not initialised), m_endVertexIndex - m_startVertexIndex = number of vertices incident to the face.
-		long m_startEdgeIndex;   //!< Start index of incident edges, (start edge is the edge that joins start vertex and the ccw next index) -1 if not initialised.
-		long m_endEdgeIndex;     //!< End of incident vertices and edges, m_endVertexEdgeIndex - m_startVertexEdgeIndex = number of vertices and edges of the face. -1 if not initialised.
+		long m_startVertexIndex; //!< Start index of incident vertices (and edges) in the mesh, normally cw, -1 if not initialised
+		long m_endVertexIndex;   //!< Endindex+1 of incident vertices (and edges) in the mesh (-1 if not initialised), m_endVertexIndex - m_startVertexIndex = number of vertices incident to the face.
 		/** @}
 		 */
 		
-		long m_faceIndex;            //!< Index of this face used in the hierarchical path.
-		long m_parentFaceIndex;      //!< Index of the parent in the hierarchical path.
-		long m_origFaceIndex;        //!< Index of the face in the original polygon mesh (prior to subdivision), -1 if not initialised.
+		/** @{
+		 * @name Hierarchy
+		 */
+		long m_parentFaceIndex; //!< Index of the parent, -1 if not initialized (root)
+		long m_startChildIndex; //!< Start index of child faces, -1 if not initialized (leaf)
+		long m_endChildIndex;   //!< Endindex+1 of of child faces, -1 if not initialized (leaf)
+		/** @}
+		 */
 		
 	public:		
 		//! Standard constructor, initializes all elements.
@@ -79,9 +82,9 @@ namespace RiCPP {
 		m_type(FACE_FILLED),
 		m_startVertexIndex(-1L),
 		m_endVertexIndex(-1L),
-		m_startEdgeIndex(-1L),
-		m_endEdgeIndex(-1L),
-		m_parentFaceIndex(-1L), m_faceIndex(-1L), m_origFaceIndex(-1L)
+		m_parentFaceIndex(-1L),
+		m_startChildIndex(-1L),
+		m_endChildIndex(-1L)
 		{
 		}
 		
@@ -132,7 +135,7 @@ namespace RiCPP {
 			return m_type;
 		}
 		
-		//! Sets the start index of the incident vertices of the face.
+		//! Sets the start index of the incident vertices (and edges) of the face.
 		/*! \param sVertexIndex The new start index for a ccw vertex (index) loop,
 		 *         \sa vertexIndex(), -1 if it was not set.
 		 */
@@ -141,7 +144,7 @@ namespace RiCPP {
 			m_startVertexIndex = aVertexIndex;
 		}
 		
-		//! Gets the start index of the incident vertices of the face.
+		//! Gets the start index of the incident vertices (and edges) of the face.
 		/*! \return The start index of the vertices (ccw vertex indices) of
 		 *          the face, -1 if it was not set.
 		 */
@@ -150,25 +153,8 @@ namespace RiCPP {
 			return m_startVertexIndex;
 		}
 		
-		//! Sets the start index of the incident edges of the face.
-		/*! \param anEdgeIndex The new start index for a ccw edge (index) loop,
-		 *         \sa vertexIndex(), -1 if it was not set.
-		 */
-		inline void startEdgeIndex(long anEdgeIndex)
-		{
-			m_startEdgeIndex = anEdgeIndex;
-		}
 		
-		//! Gets the start index of the incident edges of the face.
-		/*! \return The start index of the edge (ccw edge indices) of
-		 *          the face, -1 if it was not set.
-		 */
-		inline long startEdgeIndex() const
-		{
-			return m_startEdgeIndex;
-		}
-		
-		//! Sets the end index (+1) of the vertices of the face.
+		//! Sets the end index (+1) of the vertices (and edges) of the face.
 		/*! \param aVertexAndEdgeIndex The new end index (+1) for a ccw vertex (index) loop,
 		 *         \sa startVertexIndex()
 		 */
@@ -177,7 +163,7 @@ namespace RiCPP {
 			m_endVertexIndex = aVertexIndex;
 		}
 		
-		//! Gets the end index (+1) of the vertices of the face
+		//! Gets the end index (+1) of the vertices (and edges) of the face
 		/*! \return The end index (+1) of the vertices (ccw vertex indices) of
 		 *          the face, -1 if it was not set.,
 		 *          \sa startVertexIndex()
@@ -187,26 +173,7 @@ namespace RiCPP {
 			return m_endVertexIndex;
 		}
 		
-		//! Sets the end index (+1) of the incident edge of the face.
-		/*! \param aVertexAndEdgeIndex The new end index (+1) for a ccw edge (index) loop,
-		 *         \sa startEdgeIndex()
-		 */
-		inline void endEdgeIndex(long anEdgeIndex)
-		{
-			m_endEdgeIndex = anEdgeIndex;
-		}
-		
-		//! Gets the end index (+1) of the incident of the face
-		/*! \return The end index (+1) of the incident edges (ccw vertex indices) of
-		 *          the face, -1 if it was not set.,
-		 *          \sa startEdgeIndex()
-		 */
-		inline long endEdgeIndex() const
-		{
-			return m_endEdgeIndex;
-		}
-		
-		/*! \return The number of vertices grouped around the face. After the initial
+		/*! \return The number of vertices and edges grouped around the face. After the initial
 		 *          subdivision, this should be always 4 for catmull-clark subdivision
 		 *          meshes.
 		 */
@@ -215,15 +182,26 @@ namespace RiCPP {
 			return m_endVertexIndex - m_startVertexIndex;
 		}
 		
-		/*! \return The number of edges grouped around the face. After the initial
-		 *          subdivision, this should be always 4 for catmull-clark subdivision
-		 *          meshes.
-		 */
-		inline long edges() const
+		inline void startChildIndex(long aStartChildIndex)
 		{
-			return m_endEdgeIndex - m_startEdgeIndex;
+			m_startChildIndex = aStartChildIndex;
+		}
+
+		inline long startChildIndex() const
+		{
+			return m_startChildIndex;
 		}
 		
+		inline void endChildIndex(long anEndChildIndex)
+		{
+			m_endChildIndex = anEndChildIndex;
+		}
+
+		inline long endChildIndex() const
+		{
+			return m_endChildIndex;
+		}
+
 		//! Sets the parent face index for the hierarchical path.
 		/*! \param aParentFaceIndex parent face index for the hierarchical path.
 		 */
@@ -238,46 +216,6 @@ namespace RiCPP {
 		inline long parentFaceIndex() const
 		{
 			return m_parentFaceIndex;
-		}
-		
-		//! Sets the face index for the hierarchical path.
-		/*! \param aFaceIndex face index for the hierarchical path.
-		 */
-		inline void faceIndex(long anIndex)
-		{
-			m_faceIndex = anIndex;
-		}
-		
-		//! Gets the face index for the hierarchical path.
-		/*! \return Face index for the hierarchical path.
-		 */
-		inline long faceIndex() const
-		{
-			return m_faceIndex;
-		}
-		
-		//! Sets the original face index.
-		/*! \param anOrigFaceIndex The index of the face at the original subdivision mesh (before subdivision).
-		 */
-		inline void origFaceIndex(long anOrigFaceIndex)
-		{
-			m_origFaceIndex = anOrigFaceIndex;
-		}
-		
-		//! Gets the original face index.
-		/*! \return The index of the face at the original subdivision mesh (before subdivision). -1 if not set.
-		 */
-		inline long origFaceIndex() const
-		{
-			return m_origFaceIndex;
-		}
-		
-		inline long edgeIndex(long pos) {
-			return pos < 0 || pos > edges() ? -1 : m_startEdgeIndex + pos;
-		}
-
-		inline long vertexIndex(long pos) {
-			return pos < 0 || pos > vertices() ? -1 : m_startVertexIndex + pos;
 		}
 	}; // CSubdivFace
 	
@@ -312,10 +250,10 @@ namespace RiCPP {
 		RtFloat	m_value;           //!< Tag value copied from appropriate TRi::subdivisionMesh parameter, gives the sharpness of a crease. The value blends from 0: smooth to 1: sharp.
 		EnumSubdivEdgeType m_type; //!< Edge type: EDGE_ROUNDED or EDGE_CREASE.
 		
-		long m_oneVertex,   //! One vertex of the edge, index of an incident vertex, m_oneVertex < m_otherVertex.
-		m_otherVertex;      //! The other vertex of the edge, index of an incident vertex, m_oneVertex < m_otherVertex.
-		long m_oneFace,     //! One incident face of the edge, index of an incident face. The value is <0 if not initalized.
-		m_otherFace;        //! The other incident face of the edge, index of an incident face, m_otherFace == -1 and m_oneFace >= 0 if there is only one face incident to the edge.
+		long m_oneVertex,   //! One incident vertex of the edge, m_oneVertex < m_otherVertex.
+		m_otherVertex;      //! The other incident vertex of the edge, m_oneVertex < m_otherVertex.
+		long m_oneFace,     //! Index of an incident face (having the edge: m_oneVertex->m_otherVertex). The value is <0 if not initalized.
+		m_otherFace;        //! The other incident face of the edge (having the edge: m_otherVertex->m_oneVertex), m_otherFace == -1 and m_oneFace >= 0 if there is only one face incident to the edge.
 	public:
 		//! Standard constructor, initializes all elements.
 		inline CSubdivEdge() :
@@ -430,16 +368,25 @@ namespace RiCPP {
 		 *  \param f An index number of a face
 		 *  \return true face was inserted, false if there where already two incident faces.
 		 */
-		inline bool insertFace(long f)
+		inline bool insertFace(long f, long v1, long v2)
 		{
-			if ( m_oneFace == -1 ) {
+			if ( m_oneFace == v1 ) {
+				if ( m_otherFace != v2 || m_oneFace != -1 ) {
+					// illegal topology
+					return false;
+				}
 				m_oneFace = f;
 				return true;
 			}
-			if ( m_otherFace == -1 ) {
+			if ( m_otherFace == v1 ) {
+				if ( m_oneFace != v2 || m_otherFace != -1 ) {
+					// illegal topology
+					return false;
+				}
 				m_otherFace = f;
 				return true;
 			}
+			// illegal topology
 			return false;
 		}
 		
@@ -475,35 +422,36 @@ namespace RiCPP {
 			return m_value;
 		}
 		
-		//! Gets the neighbour vertex of an edge and aVertex.
+		//! Gets the adjacent vertex of a vertex and an edge.
 		/*! \param aVertex A vertex of the edge.
-		 *  \retval neighbour The Index of the neighbour of aVertex of the edge.
-		 *  \return true A neighbour vertex is returned in neighbour, false otherwise neighbour left untouched.
+		 *  \retval adjacent The Index of the adjacent (neighbour) of aVertex and the edge.
+		 *  \return True, A neighbour vertex is returned in adjacent (-1 if not existant).
+		 *          False, if aVertex is not incident to the edge, adjacent left untouched.
 		 */
-		inline bool getNeighbourVertex(long &neighbour, long aVertex) const
+		inline bool getAdjacentVertex(long &adjacent, long aVertex) const
 		{
 			if ( aVertex == m_oneVertex )
-				neighbour = m_otherVertex;
+				adjacent = m_otherVertex;
 			else if ( aVertex == m_otherVertex )
-				neighbour = m_oneVertex;
+				adjacent = m_oneVertex;
 			else
 				return false;
 			
 			return true;
 		}
 		
-		//! Gets the neighbour face of an edge and aFace.
+		//! Gets the adjacent face of another face and the edge.
 		/*! \param aFace A face of the edge.
-		 *  \retval neighbour The Index of the neighbour of aFace of the edge.
-		 *  \return true: A neighbour face index is returned in neighbour.
-		 *          false: there is no neighbour, the parameter neighbour is left untouched.
+		 *  \retval adjacent The Index of the neighbour (adjacent) of aFace of the edge.
+		 *  \return true: A neighbour face index is returned in adjacent (-1 if not existant).
+		 *          false: aFace is not incident to the edge, the parameter adjacent is left untouched.
 		 */
-		inline bool getNeighbourFace(long &neighbour, long aFace) const
+		inline bool getAdjacentFace(long &adjacent, long aFace) const
 		{
 			if ( aFace == m_oneFace )
-				neighbour = m_otherFace;
+				adjacent = m_otherFace;
 			else if ( aFace == m_otherFace )
-				neighbour = m_oneFace;
+				adjacent = m_oneFace;
 			else
 				return false;
 			
@@ -519,7 +467,7 @@ namespace RiCPP {
 		 */
 		inline bool isBoundary() const
 		{
-			return m_otherFace < 0;
+			return m_oneFace < 0 || m_otherFace < 0;
 		}
 		
 		//! Is the edge a sharp crease?
@@ -567,25 +515,12 @@ namespace RiCPP {
 		RtFloat	m_value;          //!< Tag value copied from appropriate TRi::subdivisionMesh parameter, belends between round vertex (m_value==0) and corner (m_value==1).
 		CSubdivVertexType m_type; //!< Vertex type: VERTEX_ROUNDED or VERTEX_CORNER.
 		
-		// Incident edges
-		long m_idxStartEdge;    //!< Index incident edge start, there must be two or more edges, points to TSubdivMesh::m_idxIncidentEdges.
-		long m_idxEndEdge;      //!< End of incident edges, number of incident eges is m_idxEndEdge-m_idxStartEdge.
-		
-		// Incident surfaces
-		long m_idxStartFace;    //!< Index list of incident faces (one or more) of the mesh.
-		long m_idxEndFace;      //!< End of incident faces, number of incident faces is m_idxEndFace-m_idxStartFace.
-		
-		// Values, same ordering as the surfaces, or only one if the same for all faces (duplicate values, e.g. corners need one normal per face)
-		IndexType m_idxStartValue; //< Index of the value for m_idxStartFace
-		IndexType m_idxEndValue;   //< End of values, number of values is m_idxEndValue-m_idxStartValue (either ==1 or number of faces)
+		// Parameters have the same index as the vertex, face vertices, corners and vertices incident to sharp creases have additional parameters (of the same value)
 
 	public:
 		//! Standard constructor, clears all members.
 		inline CSubdivVertex() :
-		m_value(0.0), m_type(VERTEX_ROUNDED),
-		m_idxStartEdge(0L), m_idxEndEdge(0L),
-		m_idxStartFace(0L), m_idxEndFace(0L),
-		m_idxStartValue(0L), m_idxEndValue(0L)
+		m_value(0.0), m_type(VERTEX_ROUNDED)
 		{
 		}
 		
@@ -689,6 +624,7 @@ namespace RiCPP {
 	class CSubdivisionIndices {
 	private:
 		std::vector<CSubdivFace>   m_faces;
+		std::vector<long> m_vertexIndices;
 		std::vector<CSubdivEdge>   m_edges;
 		std::vector<CSubdivVertex> m_vertices;
 	public:
@@ -719,7 +655,12 @@ namespace RiCPP {
 		CSubdivFace *face(long faceIndex);
 		CSubdivEdge *edge(long faceIndex, long edgeIndex);
 		CSubdivVertex *vertex(long faceIndex, long vertexIndex);
-		void subdivide (CSubdivisionIndices &parent, const CSubdivisionStrategy &strategy);
+		void subdivide(CSubdivisionIndices &parent, const CSubdivisionStrategy &strategy,
+						RtInt ntags, const std::vector<RtToken> &tags,
+						const std::vector<RtInt> &nargs,
+						const std::vector<RtInt> &intargs,
+						const std::vector<RtFloat> &floargs,
+						const std::vector<RtToken> &stringargs);
 	};
 	
 	class CSubdivisionHierarchie  : public CTesselator {

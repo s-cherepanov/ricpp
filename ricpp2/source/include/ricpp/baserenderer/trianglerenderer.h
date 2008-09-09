@@ -38,9 +38,9 @@
 #include "ricpp/ricontext/polygon.h"
 #endif // _RICPP_RICONTEXT_POLYGON_H
 
-#ifndef _RICPP_RICONTEXT_TRIANGULATION_H
-#include "ricpp/ricontext/triangulation.h"
-#endif // _RICPP_RICONTEXT_TRIANGULATION_H
+#ifndef _RICPP_RICONTEXT_SUBDIVISION_H
+#include "ricpp/ricontext/subdivision.h"
+#endif // _RICPP_RICONTEXT_SUBDIVISION_H
 
 namespace RiCPP {
 	
@@ -56,6 +56,7 @@ namespace RiCPP {
 		RtInt m_tessV;
 		bool m_useStrips;
 		bool m_cacheGrids;
+		CSubdivisionStrategies m_subdivStrategies;
 		
 		bool startHandling(CVarParamRManInterfaceCall &obj);
 		RtVoid endHandling(CVarParamRManInterfaceCall &obj, CTesselator *triObj);
@@ -63,6 +64,8 @@ namespace RiCPP {
 	protected:
 		inline virtual const IPolygonTriangulationStrategy &polygonTriangulationStrategy() const { return m_earClipper; }
 		void getPosAndNormals(const CFace &f, const CMatrix3D &trans, std::vector<RtFloat> &p, std::vector<RtFloat> &n);
+		CSubdivisionStrategies &subdivStrategies() { return m_subdivStrategies; }
+		const CSubdivisionStrategies &subdivStrategies() const { return m_subdivStrategies; }
 		
 	protected:		
 		virtual RtVoid triangulate(CTesselator &triObj);
@@ -83,6 +86,9 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiPatch &obj);
 		virtual RtVoid triangulate(CRiPatchMesh &obj);
 		virtual RtVoid triangulate(CRiNuPatch &obj);
+		
+		virtual RtVoid triangulate(CRiSubdivisionMesh &obj);
+		virtual RtVoid triangulate(CRiHierarchicalSubdivisionMesh &obj);
 		
 		//
 
@@ -123,6 +129,9 @@ namespace RiCPP {
 		virtual RtVoid doProcess(CRiPatch &obj);
 		virtual RtVoid doProcess(CRiPatchMesh &obj);
 		virtual RtVoid doProcess(CRiNuPatch &obj);
+
+		virtual RtVoid doProcess(CRiSubdivisionMesh &obj);
+		virtual RtVoid doProcess(CRiHierarchicalSubdivisionMesh &obj);
 	}; // CTriangleRenderer
 
 }

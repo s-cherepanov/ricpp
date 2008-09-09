@@ -1178,7 +1178,7 @@ public:
 	 */
 
 	/** @brief Request a subdivison surface mesh
-	 *  @param scheme Scheme of the subdivion mesh, currently RI_CATMULLCLARK only
+	 *  @param scheme Scheme of the subdivion mesh, currently RI_CATMULL_CLARK only
 	 *  @param nfaces Number of initial faces
 	 *  @param nvertices Number of the vertices per face
 	 *  @param vertices Indices of the vertices
@@ -1196,7 +1196,7 @@ public:
 	/** @brief Request a hierarchical subdivison surface mesh.
 	 *
 	 *  see Application note #41, November 2004
-	 *  @param scheme Scheme of the subdivion mesh, currently RI_CATMULLCLARK only
+	 *  @param scheme Scheme of the subdivion mesh, currently RI_CATMULL_CLARK only
 	 *  @param nfaces Number of initial faces
 	 *  @param nvertices Number of the vertices per face
 	 *  @param vertices Indices of the vertices

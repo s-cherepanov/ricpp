@@ -966,9 +966,9 @@ void CPixelFilterRibRequest::operator()(IRibParserState &parser, CRibRequestData
 
 		if ( b0 && b1 && b2 ) {
 			const IFilterFunc *func = 0;
+			if ( std::string(noNullStr(functionName)) == std::string("catmullrom") )
+				functionName = RI_CATMULL_ROM;
 			RtToken name = parser.renderState().tokFind(functionName);
-			if ( name == RI_CATMULLROM )
-				name = RI_CATMULL_ROM;
 			if ( name ) {
 				func = parser.renderState().filterFunc(name);
 			}

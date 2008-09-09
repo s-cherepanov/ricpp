@@ -204,6 +204,17 @@ namespace RiCPP {
 		return (trand<type>() - static_cast<type>(0.5)) * static_cast<type>(2.0);
 	}
 	
+	template<typename type> inline type logx(type b, type r)
+	{
+		return log10(r)/log10(b);
+	}
+
+	template<typename type> inline type log2(type r)
+	{
+		return logx(static_cast<type>(2), r);
+	}
+	
+
 	/** @brief Gets the epsilon limit value
 	 *
 	 * eps is the smallest positive value eps+a != a

@@ -51,9 +51,11 @@ void CMakeTextureRibRequest::operator()(IRibParserState &parser, CRibRequestData
 
 		if ( b0 && b1 && b2 && b3 && b4 && b5 && b6 ) {
 			const IFilterFunc *func = 0;
+
+			if ( std::string(noNullStr(filtername)) == std::string("catmullrom") )
+				filtername = RI_CATMULL_ROM;
+			
 			RtToken name = parser.renderState().tokFind(filtername);
-			if ( name == RI_CATMULLROM )
-				name = RI_CATMULL_ROM;
 			if ( name )
 				func = parser.renderState().filterFunc(name);
 
@@ -153,9 +155,9 @@ void CMakeBumpRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 
 		if ( b0 && b1 && b2 && b3 && b4 && b5 && b6 ) {
 			const IFilterFunc *func = 0;
+			if ( std::string(noNullStr(filtername)) == std::string("catmullrom") )
+				filtername = RI_CATMULL_ROM;
 			RtToken name = parser.renderState().tokFind(filtername);
-			if ( name == RI_CATMULLROM )
-				name = RI_CATMULL_ROM;
 			if ( name )
 				func = parser.renderState().filterFunc(name);
 
@@ -252,9 +254,9 @@ void CMakeLatLongEnvironmentRibRequest::operator()(IRibParserState &parser, CRib
 
 		if ( b0 && b1 && b2 && b3 && b4 ) {
 			const IFilterFunc *func = 0;
+			if ( std::string(noNullStr(filtername)) == std::string("catmullrom") )
+				filtername = RI_CATMULL_ROM;
 			RtToken name = parser.renderState().tokFind(filtername);
-			if ( name == RI_CATMULLROM )
-				name = RI_CATMULL_ROM;
 			if ( name )
 				func = parser.renderState().filterFunc(name);
 
@@ -349,9 +351,9 @@ void CMakeCubeFaceEnvironmentRibRequest::operator()(IRibParserState &parser, CRi
 
 		if ( b0 && b1 && b2 && b3 && b4 && b5 && b6 && b7 && b8 && b9 && b10 ) {
 			const IFilterFunc *func = 0;
+			if ( std::string(noNullStr(filtername)) == std::string("catmullrom") )
+				filtername = RI_CATMULL_ROM;
 			RtToken name = parser.renderState().tokFind(filtername);
-			if ( name == RI_CATMULLROM )
-				name = RI_CATMULL_ROM;
 			if ( name )
 				func = parser.renderState().filterFunc(name);
 

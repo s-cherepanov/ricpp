@@ -173,11 +173,17 @@ namespace RiCPP {
 			return m_endVertexIndex;
 		}
 		
+		inline long nextVertexIndex(long anIndex) const
+		{
+			assert(startVertexIndex() <= anIndex && endVertexIndex() > anIndex);
+			return startVertexIndex() + (anIndex - startVertexIndex() + 1) % nVertices();
+		}
+
 		/*! \return The number of vertices and edges grouped around the face. After the initial
 		 *          subdivision, this should be always 4 for catmull-clark subdivision
 		 *          meshes.
 		 */
-		inline long vertices() const
+		inline long nVertices() const
 		{
 			return m_endVertexIndex - m_startVertexIndex;
 		}
@@ -217,6 +223,8 @@ namespace RiCPP {
 		{
 			return m_parentFaceIndex;
 		}
+
+		void insertHoleVal(long idx, const CRiHierarchicalSubdivisionMesh &obj);
 	}; // CSubdivFace
 	
 	
@@ -250,8 +258,8 @@ namespace RiCPP {
 		RtFloat	m_value;           //!< Tag value copied from appropriate TRi::subdivisionMesh parameter, gives the sharpness of a crease. The value blends from 0: smooth to 1: sharp.
 		EnumSubdivEdgeType m_type; //!< Edge type: EDGE_ROUNDED or EDGE_CREASE.
 		
-		long m_oneVertex,   //! One incident vertex of the edge, m_oneVertex < m_otherVertex.
-		m_otherVertex;      //! The other incident vertex of the edge, m_oneVertex < m_otherVertex.
+		long m_oneVertex,   //! One incident vertex of the edge, only on initialization: m_oneVertex < m_otherVertex.
+		m_otherVertex;      //! The other incident vertex of the edge, only on initialization: m_oneVertex < m_otherVertex.
 		long m_oneFace,     //! Index of an incident face (having the edge: m_oneVertex->m_otherVertex). The value is <0 if not initalized.
 		m_otherFace;        //! The other incident face of the edge (having the edge: m_otherVertex->m_oneVertex), m_otherFace == -1 and m_oneFace >= 0 if there is only one face incident to the edge.
 	public:
@@ -262,6 +270,22 @@ namespace RiCPP {
 		m_oneFace(-1L), m_otherFace(-1L)
 		{}
 		
+		inline CSubdivEdge(long aStartIdx, long anEndIdx, long incidentFace) :
+		m_value(0.0), m_type(EDGE_ROUNDED)
+		{
+			if ( aStartIdx < anEndIdx ) {
+				m_oneFace = incidentFace;
+				m_otherFace = -1;
+				m_oneVertex = aStartIdx;
+				m_otherVertex = anEndIdx;
+			} else {
+				m_oneFace = -1;
+				m_otherFace = incidentFace;
+				m_oneVertex = anEndIdx;
+				m_otherVertex = aStartIdx;
+			}
+		}
+
 		//! Copy constructor, initializes with the values of edge.
 		/*! \param edge Edge used for initialization.
 		 */
@@ -293,11 +317,8 @@ namespace RiCPP {
 		 */
 		CSubdivEdge &operator=(const CSubdivEdge &e);
 		
-		/** @{
-		 *  @name comparsion
-		 */
 		//! Two edges are considered as equal, if they have the same vertex index numbers.
-		/*! Because the vertex index numbers are ordered the comparation is done only for the
+		/*! Because the vertex index numbers are ordered, the comparation is done only for the
 		 *  vertices with the same name.
 		 *  \param e Edge to compare with.
 		 *  \return true if the vertices of the edges are the same, false if not equal.
@@ -306,44 +327,6 @@ namespace RiCPP {
 		{
 			return (m_oneVertex == e.m_oneVertex) && (m_otherVertex == e.m_otherVertex);
 		}
-		
-		//! Comparation (*this grater as e) using the vertex index numbers (\sa operator==).
-		/*!  \param e Edge to compare with.
-		 *   \return true if the vertex index numbers of e are greater than the ones of *this, false if they are less or equal.
-		 */
-		inline bool operator>(const CSubdivEdge &e) const
-		{
-			return (m_oneVertex > e.m_oneVertex) || ((m_oneVertex == e.m_oneVertex) && (m_otherVertex > e.m_otherVertex));
-		}
-		
-		//! Comparation (*this grater or equal as e) using the vertex index numbers (\sa operator==).
-		/*!  \param e Edge to compare with.
-		 *   \return true if the vertex index numbers of e are greater or equal than the ones of *this, false if they are less.
-		 */
-		inline bool operator>=(const CSubdivEdge &e) const
-		{
-			return (m_oneVertex >= e.m_oneVertex) || ((m_oneVertex == e.m_oneVertex) && (m_otherVertex >= e.m_otherVertex));
-		}
-		
-		//! Comparation (*this less as e) using the vertex index numbers (\sa operator==).
-		/*!  \param e Edge to compare with.
-		 *   \return true if the vertex index numbers of e are less than the ones of *this, false if they are greater or equal.
-		 */
-		inline bool operator<(const CSubdivEdge &e) const
-		{
-			return (m_oneVertex < e.m_oneVertex) || ((m_oneVertex == e.m_oneVertex) && (m_otherVertex < e.m_otherVertex));
-		}
-		
-		//! Comparation (*this less or equal as e) using the vertex index numbers (\sa operator==).
-		/*!  \param e Edge to compare with
-		 *   \return true if the vertex index numbers of e are less or equal than the ones of *this, false if they are greater.
-		 */
-		inline bool operator<=(const CSubdivEdge &e) const
-		{
-			return (m_oneVertex <= e.m_oneVertex) || ((m_oneVertex == e.m_oneVertex) && (m_otherVertex <= e.m_otherVertex));
-		}
-		/** @}
-		 */
 		
 		//! Inserts the two vertices of an edge.
 		/*! The vertex index numbers are sorted,
@@ -364,22 +347,24 @@ namespace RiCPP {
 		}
 		
 		//! Inserts the index number of an incident face.
-		/*! There are maximal two incident faces. m_oneFace is filled first.
+		/*! There are maximal two incident faces.
+		 *  \param startVertex
+		 *  \param endVertex
 		 *  \param f An index number of a face
 		 *  \return true face was inserted, false if there where already two incident faces.
 		 */
-		inline bool insertFace(long f, long v1, long v2)
+		inline bool insertFace(long startVertex, long endVertex, long f)
 		{
-			if ( m_oneFace == v1 ) {
-				if ( m_otherFace != v2 || m_oneFace != -1 ) {
+			if ( m_oneVertex == startVertex ) {
+				if ( m_otherVertex != endVertex || m_oneFace != -1 ) {
 					// illegal topology
 					return false;
 				}
 				m_oneFace = f;
 				return true;
 			}
-			if ( m_otherFace == v1 ) {
-				if ( m_oneFace != v2 || m_otherFace != -1 ) {
+			if ( m_oneVertex == endVertex ) {
+				if ( m_otherVertex != startVertex || m_otherFace != -1 ) {
 					// illegal topology
 					return false;
 				}
@@ -414,6 +399,12 @@ namespace RiCPP {
 			m_value = aValue;
 		}
 		
+		inline void crease(RtFloat aValue)
+		{
+			m_value = aValue;
+			m_type = EDGE_CREASE;
+		}
+
 		//! Gets the edge value, the sharpness of a crease.
 		/*! \return The edge value.
 		 */
@@ -470,22 +461,38 @@ namespace RiCPP {
 			return m_oneFace < 0 || m_otherFace < 0;
 		}
 		
-		//! Is the edge a sharp crease?
+		//! Is the edge a crease?
 		/*! An edge is a sharp crease if it is tagged as EDGE_CREASE.
-		 *  \return true: If the edge is sharp, false: edge is not sharp.
+		 *  \return true: If the edge is a crease, false: edge is not a crease.
 		 */
-		inline bool isSharp() const
+		inline bool isCrease() const
 		{
 			return m_type == EDGE_CREASE;
 		}
 		
-		//! Is the edge a boundary and not a sharp crease?
-		/*! \return true unsharp boundary edge, false no boundary or sharp crease
+		//! Is the edge a sharp crease?
+		/*! An edge is a sharp crease if it is tagged as EDGE_CREASE having a m_value of RI_INFINITY
+		 *  \return true: If the edge is sharp, false: edge is not sharp.
 		 */
-		inline bool isUnsharpBoundary() const
+		inline bool isSharp() const
 		{
-			return (isBoundary() && !isSharp());
+			return m_type == EDGE_CREASE && m_value == RI_INFINITY;
 		}
+
+		//! Is the edge a boundary and a crease?
+		/*! \return true Creased boundary edge, false no boundary or not a crease
+		 */
+		inline bool isCreasedBoundary() const
+		{
+			return isCrease() && isBoundary();
+		}
+		
+		inline bool isEdge(long v1, long v2) const
+		{
+			return (v1 == m_oneVertex && v2 == m_otherVertex) || (v2 == m_oneVertex && v1 == m_otherVertex);
+		}
+
+		void insertCreaseVal(const CRiHierarchicalSubdivisionMesh &obj);
 	}; // CSubdivEdge
 	
 	
@@ -579,6 +586,12 @@ namespace RiCPP {
 		{
 			m_value = aValue;
 		}
+
+		inline void corner(RtFloat aValue)
+		{
+			m_value = aValue;
+			m_type = VERTEX_CORNER;
+		}
 		
 		//! Gets the vertex value.
 		/*! \return The vertex value, the sharpness of the corner.
@@ -587,6 +600,8 @@ namespace RiCPP {
 		{
 			return m_value;
 		}
+
+		void insertCornerVal(long idx, const CRiHierarchicalSubdivisionMesh &obj);
 	}; // CSubdivVertex
 	
 	
@@ -605,29 +620,31 @@ namespace RiCPP {
 	class CSubdivisionStrategy {
 	public:
 		inline virtual ~CSubdivisionStrategy() {}
-		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) = 0;
+		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const = 0;
 	};
 	
 	class CCatmullClarkSubdivision : public CSubdivisionStrategy {
-		virtual void subdivide (CSubdivisionIndices &parent, CSubdivisionIndices &child);
+		virtual void subdivide (CSubdivisionIndices &parent, CSubdivisionIndices &child) const;
 	};
 
-	class CSubdivisionStrategyFactory {
-	private:
-		std::map<RtToken, CSubdivisionStrategy *> m_strategies;
+	class CSubdivisionStrategies : public TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *> {
 	public:
-		CSubdivisionStrategy *registerStrategy(RtToken strategyName, CSubdivisionStrategy *aStrategy);
-		CSubdivisionStrategy *unregisterStrategy(RtToken strategyName);
-		CSubdivisionStrategy *getStrategy(RtToken strategyName);
+		inline CSubdivisionStrategies() : TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *>(true) {};
 	};
 	
 	class CSubdivisionIndices {
 	private:
 		std::vector<CSubdivFace>   m_faces;
-		std::vector<long> m_vertexIndices;
+		std::vector<long>          m_edgeIndices;
 		std::vector<CSubdivEdge>   m_edges;
+		std::vector<long>          m_vertexIndices;
 		std::vector<CSubdivVertex> m_vertices;
+		RtInt m_interpolateBoundary;
+		bool m_illTopology;
+		CSubdivisionIndices *m_parent;
+		void insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj);
 	public:
+		inline CSubdivisionIndices() : m_illTopology(false), m_interpolateBoundary(0), m_parent(0) {}
 		//! Initialization of the connectivity of the subdivision mesh.
 		/*! The mesh must be valid for Catmull-Clark subdivision: An edge has
 		 *  one or two adjacent faces (2-manifold), each vertex has at least two incidend edges.
@@ -636,43 +653,47 @@ namespace RiCPP {
 		 *  the structure. TSubdivMesh::subdivideCatmullClark() is used to get
 		 *  the indices for further subdivisions.
 		 *
-		 *  \param nverts  Number of vertices per face, size is the number of faces
-		 *  \param verts   Vertex indices.
-		 *  \param ntags   Number of tags.
-		 *  \param tags    Names of the tags.
-		 *  \param nargs   Number of arguments (three per tag: intargs, floargs, stringargs).
-		 *  \param intargs Integer arguments of the tags.
-		 *  \param floargs Float arguments of the tags.
-		 *  \param stringargs String parameters of the tags.
+		 *  nverts  Number of vertices per face, size is the number of faces
+		 *  verts   Vertex indices.
+		 *  ntags   Number of tags.
+		 *  tags    Names of the tags.
+		 *  nargs   Number of arguments (three per tag: intargs, floargs, stringargs).
+		 *  intargs Integer arguments of the tags.
+		 *  floargs Float arguments of the tags.
+		 *  stringargs String parameters of the tags.
 		 */
-		void initialize(const std::vector<RtInt> &nverts, const std::vector<RtInt> &verts,
-						RtInt ntags, const std::vector<RtToken> &tags,
-						const std::vector<RtInt> &nargs,
-						const std::vector<RtInt> &intargs,
-						const std::vector<RtFloat> &floargs,
-						const std::vector<RtToken> &stringargs
-						);
+		void initialize(const CRiHierarchicalSubdivisionMesh &obj);
+		
 		CSubdivFace *face(long faceIndex);
+		inline std::vector<CSubdivFace> &faces() {return m_faces;}
+		inline const std::vector<CSubdivFace> &faces() const {return m_faces;}
+
 		CSubdivEdge *edge(long faceIndex, long edgeIndex);
+		inline std::vector<CSubdivEdge> &edges() {return m_edges;}
+		inline const std::vector<CSubdivEdge> &edges() const {return m_edges;}
+		inline std::vector<long> &edgeIndices() {return m_edgeIndices;}
+		inline const std::vector<long> &edgeIndices() const {return m_edgeIndices;}
+
 		CSubdivVertex *vertex(long faceIndex, long vertexIndex);
-		void subdivide(CSubdivisionIndices &parent, const CSubdivisionStrategy &strategy,
-						RtInt ntags, const std::vector<RtToken> &tags,
-						const std::vector<RtInt> &nargs,
-						const std::vector<RtInt> &intargs,
-						const std::vector<RtFloat> &floargs,
-						const std::vector<RtToken> &stringargs);
+		inline std::vector<CSubdivVertex> &vertices() {return m_vertices;}
+		inline const std::vector<CSubdivVertex> &vertices() const {return m_vertices;}
+		inline std::vector<long> &vertexIndices() {return m_vertexIndices;}
+		inline const std::vector<long> &vertexIndices() const {return m_vertexIndices;}
+		
+		void subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
+						const CRiHierarchicalSubdivisionMesh &anObj);
+		inline bool illTopology() const { return m_illTopology; }
+		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
+		inline const CSubdivisionIndices *parent() const { return m_parent; }
 	};
 	
-	class CSubdivisionHierarchie  : public CTesselator {
+	class CSubdivisionHierarchieTesselator  : public CTesselator {
 	private:
 		std::list<CSubdivisionIndices> m_indices;
 		CRiHierarchicalSubdivisionMesh m_obj;
-		const CSubdivisionStrategy &m_strategy;		
+		const CSubdivisionStrategies &m_strategies;		
 
-		void subdivide(long minDepth, const CSubdivisionStrategy &strategy);
-		CSubdivFace *face(long size, long *faceIndices);
-		CSubdivEdge *edge(long size, long *faceIndices, long edgeIndex);
-		CSubdivVertex *vertex(long size, long *faceIndices, long vertexIndex);
+		void subdivide(IndexType minDepth);
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const
 		{
@@ -680,16 +701,16 @@ namespace RiCPP {
 		}
 		
 	public:
-		inline CSubdivisionHierarchie(CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategy &aStrategy)
-			: m_obj(anObj), m_strategy(aStrategy)
+		inline CSubdivisionHierarchieTesselator(CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
+			: m_obj(anObj), m_strategies(theStrategies)
 		{
 		}
-		inline CSubdivisionHierarchie(CRiSubdivisionMesh &anObj, const CSubdivisionStrategy &aStrategy)
-			: m_obj(anObj), m_strategy(aStrategy)
+		inline CSubdivisionHierarchieTesselator(CRiSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
+			: m_obj(anObj), m_strategies(theStrategies)
 		{
 		}
 
-		inline virtual const CSubdivisionStrategy &strategy() const { return m_strategy; }
+		inline virtual const CSubdivisionStrategies &strategies() { return m_strategies; }
 		inline virtual const std::list<CSubdivisionIndices> &indices() const { return m_indices; }
 
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);

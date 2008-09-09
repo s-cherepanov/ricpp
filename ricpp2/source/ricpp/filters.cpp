@@ -115,7 +115,7 @@ IFilterFunc *CFilterFuncFactory::newFunc(RtToken name)
 	if ( CTriangleFilter::myName() == name )
 		return new CTriangleFilter;
 
-	if ( CCatmullRomFilter::myName() == name || name == RI_CATMULLROM )
+	if ( CCatmullRomFilter::myName() == name )
 		return new CCatmullRomFilter;
 
 	if ( CSincFilter::myName() == name )
@@ -146,7 +146,7 @@ const IFilterFunc *CFilterFuncFactory::mySingelton(RtToken name)
 	if ( CTriangleFilter::myName() == name )
 		return &CTriangleFilter::func;
 
-	if ( CCatmullRomFilter::myName() == name || name == RI_CATMULLROM )
+	if ( CCatmullRomFilter::myName() == name )
 		return &CCatmullRomFilter::func;
 
 	if ( CSincFilter::myName() == name )

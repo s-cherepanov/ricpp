@@ -154,7 +154,7 @@ extern "C" {
 	 *  @brief Additional tokens, used by RiCPP
 	 *  @{
 	 */
-	RICPP_EXTERN(RtToken const) RI_CATMULLCLARK; /**< Name of Catmull-Clark subdivision surface @see CRiCPP::subdivisionMeshV() */
+	RICPP_EXTERN(RtToken const) RI_CATMULL_CLARK; /**< Name of Catmull-Clark subdivision surface @see CRiCPP::subdivisionMeshV() */
 	RICPP_EXTERN(RtToken const) RI_HOLE; /**< Hole in subdivision surface @see CRiCPP::subdivisionMeshV() */
 	RICPP_EXTERN(RtToken const) RI_CREASE; /**< Sharp edge in subdivision surface @see CRiCPP::subdivisionMeshV() */
 	RICPP_EXTERN(RtToken const) RI_CORNER; /**< Corner in subdivision surface @see CRiCPP::subdivisionMeshV() */
@@ -265,7 +265,6 @@ extern "C" {
 	RICPP_EXTERN(RtToken const) RI_BEZIER; /**< Bezier basis */
 	RICPP_EXTERN(RtToken const) RI_B_SPLINE; /**< B-Spline basis */
 	RICPP_EXTERN(RtToken const) RI_CATMULL_ROM; /**< Catmull-rom basis and filter */
-	RICPP_EXTERN(RtToken const) RI_CATMULLROM; /**< Catmull-rom basis, filter (alternate writing, not used for output) */
 	RICPP_EXTERN(RtToken const) RI_HERMITE; /**< Hermite basis */
 	RICPP_EXTERN(RtToken const) RI_POWER; /**< Power basis */
 

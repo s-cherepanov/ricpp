@@ -164,7 +164,7 @@ void CTokenMap::defaultTokens()
 
 		// Additional tokens
 
-		m_tokenMapper[CToken(RI_CATMULLCLARK)] = RI_CATMULLCLARK;
+		m_tokenMapper[CToken(RI_CATMULL_CLARK)] = RI_CATMULL_CLARK;
 		m_tokenMapper[CToken(RI_HOLE)] = RI_HOLE;
 		m_tokenMapper[CToken(RI_CREASE)] = RI_CREASE;
 		m_tokenMapper[CToken(RI_CORNER)] = RI_CORNER;
@@ -269,7 +269,6 @@ void CTokenMap::defaultTokens()
 		m_tokenMapper[CToken(RI_BEZIER)] = RI_BEZIER;
 		m_tokenMapper[CToken(RI_B_SPLINE)] = RI_B_SPLINE;
 		m_tokenMapper[CToken(RI_CATMULL_ROM)] = RI_CATMULL_ROM;
-		m_tokenMapper[CToken(RI_CATMULLROM)] = RI_CATMULLROM;
 		m_tokenMapper[CToken(RI_HERMITE)] = RI_HERMITE;
 		m_tokenMapper[CToken(RI_POWER)] = RI_POWER;
 

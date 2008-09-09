@@ -683,7 +683,7 @@ RICPP_INTERN(RtToken const) RI_ABORT = "abort";
 RICPP_INTERN(RtToken const) RI_HANDLER = "handler";
 
 
-RICPP_INTERN(RtToken const) RI_CATMULLCLARK = "catmull-clark";
+	RICPP_INTERN(RtToken const) RI_CATMULL_CLARK = "catmull-clark";
 RICPP_INTERN(RtToken const) RI_HOLE = "hole";
 RICPP_INTERN(RtToken const) RI_CREASE = "crease";
 RICPP_INTERN(RtToken const) RI_CORNER = "corner";
@@ -788,7 +788,6 @@ RICPP_INTERN(RtToken const) RI_SINC = "sinc";
 RICPP_INTERN(RtToken const) RI_BEZIER = "bezier";
 RICPP_INTERN(RtToken const) RI_B_SPLINE = "b-spline";
 RICPP_INTERN(RtToken const) RI_CATMULL_ROM = "catmull-rom";
-RICPP_INTERN(RtToken const) RI_CATMULLROM = "catmullrom";
 RICPP_INTERN(RtToken const) RI_HERMITE = "hermite";
 RICPP_INTERN(RtToken const) RI_POWER = "power";
 

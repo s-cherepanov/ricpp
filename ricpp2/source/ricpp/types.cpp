@@ -415,7 +415,7 @@ bool CTypeInfo::getBasis(RtToken basisToken, RtBasis aBasis)
 		memcpy(&(aBasis[0][0]), &(RiBSplineBasis[0][0]), sizeof(RtBasis));
 		return true;
 	}
-	if ( basisToken == RI_CATMULL_ROM || basisToken == RI_CATMULLROM ) {
+	if ( basisToken == RI_CATMULL_ROM ) {
 		memcpy(&(aBasis[0][0]), &(RiCatmullRomBasis[0][0]), sizeof(RtBasis));
 		return true;
 	}

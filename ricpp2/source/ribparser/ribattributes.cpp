@@ -1232,9 +1232,9 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 			if ( p0.typeID() == BASICTYPE_FLOAT && p0.isArray() && p0.getCard() == 16 ) {
 				memcpy(ubasis[0], p0.getValue(), sizeof(RtBasis));
 			} else if ( p0.getString(uname) ) {
+				if ( std::string(noNullStr(uname)) == std::string("catmullrom") )
+					uname = RI_CATMULL_ROM;
 				RtToken name = parser.renderState().tokFind(uname);
-				if ( name == RI_CATMULLROM )
-					name = RI_CATMULL_ROM;
 				if ( !name || !CTypeInfo::getBasis(name, ubasis) ) {
 					parser.errHandler().handleError(
 						RIE_CONSISTENCY, RIE_WARNING,
@@ -1255,9 +1255,9 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 			if ( p2.typeID() == BASICTYPE_FLOAT && p2.isArray() && p2.getCard() == 16 ) {
 				memcpy(vbasis, p2.getValue(), sizeof(RtBasis));
 			} else if ( p2.getString(vname) ) {
+				if ( std::string(noNullStr(vname)) == std::string("catmullrom") )
+					vname = RI_CATMULL_ROM;
 				RtToken name = parser.renderState().tokFind(vname);
-				if ( name == RI_CATMULLROM )
-					name = RI_CATMULL_ROM;
 				if ( !name || !CTypeInfo::getBasis(name, vbasis) ) {
 					parser.errHandler().handleError(
 						RIE_CONSISTENCY, RIE_WARNING,

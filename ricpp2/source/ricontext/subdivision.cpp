@@ -132,7 +132,7 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 		}
 	} else {
 		// After the first subdivision step each face has 4 vertices, therefore 4 childs
-		nChilds = parent.faces().size() * 4;
+		nChilds = (long)parent.faces().size() * 4;
 	}
 	
 	child.faces().resize(nChilds); // childFace(0)(0), childFace(0)(1), ... childFace(0)(n), ... childFace(faces-1)(m)
@@ -208,7 +208,7 @@ inline static bool operator<(const SEdge &s1, const SEdge &s2)
 void CSubdivFace::insertHoleVal(long idx, const CRiHierarchicalSubdivisionMesh &obj)
 {
 	assert(obj.nArgs().size() == obj.tags().size()*3);
-	RtInt intOffs=0,;
+	RtInt intOffs=0;
 	for ( size_t i = 0; i < obj.tags().size(); ++i ) {
 		if ( obj.tags()[i] == RI_HOLE ) {
 			RtInt intVals = obj.nArgs()[i*3];
@@ -272,7 +272,7 @@ void CSubdivVertex::insertCornerVal(long idx, const CRiHierarchicalSubdivisionMe
 void CSubdivisionIndices::insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj)
 {
 	assert(obj.nArgs().size() == obj.tags().size()*3);
-	RtInt intOffs=0,;
+	RtInt intOffs=0;
 	for ( size_t i = 0; i < obj.tags().size(); ++i ) {
 		if ( obj.tags()[i] == RI_INTERPOLATEBOUNDARY ) {
 			RtInt intVals = obj.nArgs()[i*3];
@@ -395,8 +395,8 @@ void CSubdivisionHierarchieTesselator::subdivide(IndexType minDepth)
 	
 	if ( strategy ) {
 		CSubdivisionIndices &cur = root;
-		IndexType depth = std::max(tessU(), tessV());
-		depth = std::max(depth, minDepth);
+		IndexType depth = tmax(tessU(), tessV());
+		depth = tmax(depth, minDepth);
 		if ( depth > 0 )
 			depth = static_cast<long>(log2(static_cast<double>(depth)));
 		while ( depth ) {

@@ -133,6 +133,7 @@ void testTeapot()
 		RiScale(0.25F, 0.25F, 0.25F);
 		RiRotate(-90, 1, 0, 0);
 		RiSides(2);
+		RiGeometricApproximation(RI_TESSELATION, 32);
 		RiObjectInstance(handle);
 	} RiAttributeEnd();
 }

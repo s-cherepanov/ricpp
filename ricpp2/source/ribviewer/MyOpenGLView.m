@@ -36,8 +36,8 @@ static RtInt noYes[2] = {0, 1};
 	[self resetCamera];
 
 	RiBegin("glrenderer");
+	
 	RiArchiveBegin("__theArchive", RI_NULL);
-
 	if ( filename && *filename ) {
 		RiReadArchive(filename, 0, RI_NULL);
 	} else {
@@ -99,6 +99,7 @@ static RtInt noYes[2] = {0, 1};
 	RiIdentity();
 	
 	RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
+
 	RiTranslate(0, 0, pivotDepth); // Move back to previous pos
 	
 	// Rotation at Pivot (here)
@@ -106,6 +107,8 @@ static RtInt noYes[2] = {0, 1};
 	RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
 	
 	RiTranslate(0, 0, -pivotDepth); // Move to a pivot
+
+	
 	RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
 	RiIdentity();
 

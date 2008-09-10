@@ -52,8 +52,6 @@ namespace RiCPP {
 
 	private:
 		CEarClipper m_earClipper; ///< Triangulation strategy
-		RtInt m_tessU;
-		RtInt m_tessV;
 		bool m_useStrips;
 		bool m_cacheGrids;
 		CSubdivisionStrategies m_subdivStrategies;
@@ -90,10 +88,6 @@ namespace RiCPP {
 		virtual RtVoid triangulate(CRiSubdivisionMesh &obj);
 		virtual RtVoid triangulate(CRiHierarchicalSubdivisionMesh &obj);
 		
-		//
-
-		virtual void hideSurface(const CSurface *s);
-
 	public:
 		CTriangleRenderer();
 		
@@ -102,12 +96,6 @@ namespace RiCPP {
 		
 		inline bool cacheGrids() const { return m_cacheGrids; }
 		inline void cacheGrids(bool doCache) { m_cacheGrids = doCache; }
-
-		inline RtInt tessU() const { return m_tessU; }
-		inline void tessU(RtInt aTessU) { m_tessU = aTessU; }
-		inline RtInt tessV() const { return m_tessV; }
-		inline void tessV(RtInt aTessV) { m_tessV = aTessV; }
-		inline void tess(RtInt aTessU, RtInt aTessV) { m_tessU = aTessU; m_tessV = aTessV; }
 
 		using TypeParent::doProcess;
 		using TypeParent::preProcess;

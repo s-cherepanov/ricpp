@@ -37,8 +37,6 @@ static const bool _DEF_CACHE_GRIDS=true;
 
 CTriangleRenderer::CTriangleRenderer()
 {
-	m_tessU = _TESSELATION;
-	m_tessV = _TESSELATION;
 	m_useStrips = _USESTRIPS;
 	m_cacheGrids = _DEF_CACHE_GRIDS;
 	m_subdivStrategies.registerObj(RI_CATMULL_CLARK, new CCatmullClarkSubdivision);
@@ -120,16 +118,6 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 	}
 }
 
-void CTriangleRenderer::hideSurface(const CSurface *s)
-{
-	if ( attributes().geometricApproximationType() == RI_TESSELATION ) {
-		tess((RtInt)attributes().geometricApproximationValue(), (RtInt)attributes().geometricApproximationValue());
-	} else {
-		tess(_TESSELATION, _TESSELATION);
-	}
-	TypeParent::hideSurface(s);
-}
-
 bool CTriangleRenderer::startHandling(CVarParamRManInterfaceCall &obj)
 {
 	if ( obj.tesselator() ) {
@@ -169,7 +157,13 @@ RtVoid CTriangleRenderer::triangulate(CTesselator &triObj)
 	}
 	
 	triObj.useStrips(m_useStrips);
-	triObj.tesselation(m_tessU, m_tessV);
+
+	if ( attributes().geometricApproximationType() == RI_TESSELATION ) {
+		triObj.tesselation((RtInt)attributes().geometricApproximationValue(), (RtInt)attributes().geometricApproximationValue());
+	} else {
+		triObj.tesselation(_TESSELATION, _TESSELATION);
+	}
+
 	triObj.flipNormals(flipNormals());
 
 	hideSurface(triObj.tesselate(*pdecl, *ndecl));

@@ -1417,7 +1417,7 @@ RtVoid CRiCPPBridge::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer 
 		try {
 			name = m_declDict.tokenMap().findCreate(name);
 			CParameterList p;
-			p.set(RI_CONTROL, name, CParameterClasses(), m_declDict, m_options.colorDescr(), n, tokens, params);
+			p.set(RI_OPTION, name, CParameterClasses(), m_declDict, m_options.colorDescr(), n, tokens, params);
 			doOption(name, p);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);

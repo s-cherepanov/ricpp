@@ -522,7 +522,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${CP} ${PROJECT_DIR}/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib ${TARGET_BUILD_DIR}\n${CP} ${PROJECT_DIR}/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libribwriter.1.dylib ${TARGET_BUILD_DIR}\n";
+			shellScript = "${CP} ${PROJECT_DIR}/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib ${TARGET_BUILD_DIR}\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

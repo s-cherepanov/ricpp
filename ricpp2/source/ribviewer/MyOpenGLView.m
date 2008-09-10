@@ -95,6 +95,20 @@ static RtInt noYes[2] = {0, 1};
 
 - (void) drawRect: (NSRect) bounds
 {
+	char *matrixName[] = {"pre-camera"};
+	RiIdentity();
+	
+	RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
+	RiTranslate(0, 0, pivotDepth); // Move back to previous pos
+	
+	// Rotation at Pivot (here)
+	RiRotate(-stheta, 1.0, 0.0, 0.0); // Rotate x
+	RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
+	
+	RiTranslate(0, 0, -pivotDepth); // Move to a pivot
+	RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
+	RiIdentity();
+
 	RtInt width = (RtInt)bounds.size.width;
 	RtInt height = (RtInt)bounds.size.height;
 
@@ -107,22 +121,6 @@ static RtInt noYes[2] = {0, 1};
 	RiFormat(width, height, pixelAspect);
 	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
 
-	RiWorldBegin(); {
-		RiTransformBegin(); {
-			char *matrixName[] = {"pre-camera"};
-			RiIdentity();
-			
-			RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
-			RiTranslate(0, 0, pivotDepth); // Move back to previous pos
-			
-			// Rotation at Pivot (here)
-			RiRotate(-stheta, 1.0, 0.0, 0.0); // Rotate x
-			RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
-			
-			RiTranslate(0, 0, -pivotDepth); // Move to a pivot
-			RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
-		} RiTransformEnd();
-	} RiWorldEnd();
 	
 	RiProjection(RI_PERSPECTIVE, RI_NULL);
 	

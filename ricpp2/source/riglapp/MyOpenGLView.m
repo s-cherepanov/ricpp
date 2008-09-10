@@ -1109,6 +1109,19 @@ static void drawAnObject ()
 -(void) drawRect: (NSRect) bounds
 {
 	/* NSLog(@"drawRect"); */
+	char *matrixName[] = {"pre-camera"};
+	RiIdentity();
+	
+	RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
+	RiTranslate(0, 0, pivotDepth); // Move back to previous pos
+	
+	// Rotation at Pivot (here)
+	RiRotate(-stheta, 1.0, 0.0, 0.0); // Rotate x
+	RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
+	
+	RiTranslate(0, 0, -pivotDepth); // Move to a pivot
+	RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
+	RiIdentity();
 	
 	char *screenAction[2] = {"clear", "finish"};
 #ifdef _DEBUG
@@ -1131,22 +1144,6 @@ static void drawAnObject ()
 #endif
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 	RiFrameBegin(counter);
-
-	RiWorldBegin(); {
-		RiTransformBegin(); {
-			char *matrixName[] = {"pre-camera"};
-			RiIdentity();
-			RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
-			RiTranslate(0, 0, pivotDepth); // Move back to previous pos
-			
-			// Rotation
-			RiRotate(-stheta, 1.0, 0.0, 0.0); // Rotate x
-			RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
-			
-			RiTranslate(0, 0, -pivotDepth); // Move to a pivot
-			RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
-		} RiTransformEnd();
-	} RiWorldEnd();
 
 	// Set the display spec
 	if ( [(MyNSObjectController *)panelController displayEnabled] ) {

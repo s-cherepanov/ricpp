@@ -109,14 +109,14 @@ void testVase()
     RtFloat uknot[] = {0.0F, 0.0F, 0.0F, 0.0833333F, 0.0833333F, 0.333333F, 0.333333F, 0.583333F, 0.583333F, 0.833333F, 0.833333F, 1.0F, 1.0F, 1.0F};
     RtFloat vknot[] = {0.0F, 0.0F, 0.0F, 0.0555556F, 0.111111F, 0.166667F, 0.222222F, 0.277778F, 0.333333F, 0.388889F, 0.444444F, 0.5F, 0.555556F, 0.611111F, 0.666667F, 0.722222F, 0.777778F, 0.833333F, 0.888889F, 0.944444F, 1.0F, 1.0F, 1.0F};
 	
-    RiAttributeBegin();
-	RiColor(redish);
-	RiSides(1);
-	RiTranslate(0, -.3, 2.75);
-	RiRotate(-90, 1, 0, 0);
-	RiScale(.1F, .1F, .1F);
-	RiNuPatch(11, 3, uknot, 0.0F, 1.0F, 20, 3, vknot, 0.0F, 1.0F, RI_PW, vaseMesh, RI_NULL);
-    RiAttributeEnd();
+	RiAttributeBegin(); {
+		RiColor(redish);
+		RiSides(1);
+		RiTranslate(0, -.3, 2.75);
+		RiRotate(-90, 1, 0, 0);
+		RiScale(.1F, .1F, .1F);
+		RiNuPatch(11, 3, uknot, 0.0F, 1.0F, 20, 3, vknot, 0.0F, 1.0F, RI_PW, vaseMesh, RI_NULL);
+	} RiAttributeEnd();
 }
 
 
@@ -206,60 +206,60 @@ void testPoly10()
 	opacity_50[0] = opacity_50[0];
 	opacity_75[0] = opacity_75[0];
 
-	RiAttributeBegin();
-	RiTranslate(0, 0, 1.5);
-	RiAttributeBegin();
-	RiRotate(15.0, 0, 0, 1);
-	RiOpacity(opacity_50);
-	RiColor(greenish);
+	RiAttributeBegin(); {
+		RiTranslate(0, 0, 1.5);
+		RiAttributeBegin(); {
+			RiRotate(15.0, 0, 0, 1);
+			RiOpacity(opacity_50);
+			RiColor(greenish);
 
-	// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
-	RiPolygon(4, RI_P, &p, RI_NULL);
-	// RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
-	// RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
+			// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
+			RiPolygon(4, RI_P, &p, RI_NULL);
+			// RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
+			// RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
 	
 #   ifdef _TRACE
-	{
-		RtInt i;
-		RiTransformPoints(RI_CURRENT, RI_RASTER, sizeof(p)/sizeof(RtPoint), (RtPoint *)p);
-		for ( i = 0; i < 4; ++i ) {
-			printf("x %f, y %f, z %f\n", p[i*3+0], p[i*3+1], p[i*3+2]);
-		}
-		printf("Inverse\n");
-		RiTransformPoints(RI_RASTER, RI_CURRENT, sizeof(p)/sizeof(RtPoint), (RtPoint *)p);
-		for ( i = 0; i < 4; ++i ) {
-			printf("x %f, y %f, z %f\n", p[i*3+0], p[i*3+1], p[i*3+2]);
-		}
-	}
+			{
+				RtInt i;
+				RiTransformPoints(RI_CURRENT, RI_RASTER, sizeof(p)/sizeof(RtPoint), (RtPoint *)p);
+				for ( i = 0; i < 4; ++i ) {
+					printf("x %f, y %f, z %f\n", p[i*3+0], p[i*3+1], p[i*3+2]);
+				}
+				printf("Inverse\n");
+				RiTransformPoints(RI_RASTER, RI_CURRENT, sizeof(p)/sizeof(RtPoint), (RtPoint *)p);
+				for ( i = 0; i < 4; ++i ) {
+					printf("x %f, y %f, z %f\n", p[i*3+0], p[i*3+1], p[i*3+2]);
+				}
+			}
 #   endif
-	RiAttributeEnd();
+		} RiAttributeEnd();
 	
-	RiAttributeBegin();
-	RiTranslate(0, 0, 0.2);
-	// RiOpacity(opacity_50);
-	RiColor(redish);
+		RiAttributeBegin(); {
+			RiTranslate(0, 0, 0.2);
+			// RiOpacity(opacity_50);
+			RiColor(redish);
 
-	// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
-	// RiPolygon(4, RI_P, &p, RI_NULL);
-	RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
-	// RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
-	
-	RiAttributeEnd();
+			// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
+			// RiPolygon(4, RI_P, &p, RI_NULL);
+			RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
+			// RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
+			
+		} RiAttributeEnd();
 
-	RiAttributeBegin();
-	RiRotate(-15.0, 0, 0, 1);
-	RiTranslate(0, 0, 0.3);
-	RiOpacity(opacity_75);
-	RiColor(blueish);
+		RiAttributeBegin(); {
+			RiRotate(-15.0, 0, 0, 1);
+			RiTranslate(0, 0, 0.3);
+			RiOpacity(opacity_75);
+			RiColor(blueish);
 
-	// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
-	// RiPolygon(4, RI_P, &p, RI_NULL);
-	// RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
-	RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
-	
-	RiAttributeEnd();
+			// RiGeneralPolygon(nloops[0], nverts, RI_P, &p, RI_NULL);
+			// RiPolygon(4, RI_P, &p, RI_NULL);
+			// RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
+			RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
+			
+		} RiAttributeEnd();
 
-	RiAttributeEnd();
+	} RiAttributeEnd();
 }
 
 void testScene(void)

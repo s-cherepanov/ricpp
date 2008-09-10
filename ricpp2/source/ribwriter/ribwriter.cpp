@@ -337,7 +337,7 @@ RtVoid CRibWriter::version()
 	if ( m_skipVersion != 0 )
 		return;
 
-	m_writer->putChars("version 3.03");
+	m_writer->putChars("version 3.04");
 	m_writer->putNewLine();
 	m_skipVersion = 1; // only output once
 }

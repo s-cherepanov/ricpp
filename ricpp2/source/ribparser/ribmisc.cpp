@@ -170,10 +170,10 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 		RtFloat version;
 		if ( p0.getFloat(version) ) {
 			RtInt ver = (RtInt)(version*100.0+.5);
-			if ( ver != 303 ) {
+			if ( ver > 304 ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_WARNING,
-					"Line %ld, File \"%s\", illversion: '%s' has an unknown version number, using 3.03",
+					"Line %ld, File \"%s\", illversion: '%s' has an unknown version number, using 3.04",
 					parser.lineNo(), parser.resourceName(),
 					requestName(), RI_NULL);
 			}
@@ -185,7 +185,7 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 				RIE_CONSISTENCY, RIE_ERROR,
 				"Line %ld, File \"%s\", badargument: '%s' argument %s is not numeric",
 				parser.lineNo(), parser.resourceName(),
-				requestName(), "1 (versionNo) - should be 3.03 -", RI_NULL);
+				requestName(), "1 (versionNo) - should be 3.04 -", RI_NULL);
 		}
 		if ( request.size() > 1 ) {
 			parser.errHandler().handleError(
@@ -199,7 +199,7 @@ void CVersionRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 			RIE_MISSINGDATA, RIE_ERROR,
 			"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
 			parser.lineNo(), parser.resourceName(),
-			requestName(), "1 (versionNo) - should be 3.03 -", RI_NULL);
+			requestName(), "1 (versionNo) - should be 3.04 -", RI_NULL);
 	}
 }
 

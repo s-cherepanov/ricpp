@@ -41,6 +41,7 @@
 using namespace RiCPP;
 
 // ----------------------------------------------------------------------------
+
 void CSubdivFace::dump(std::ostream &o, const std::string &pre) const {
 	o << pre << "CSubdivFace:" << std::endl;
 	o << pre;
@@ -49,7 +50,6 @@ void CSubdivFace::dump(std::ostream &o, const std::string &pre) const {
 	o << "   m_parentFaceIndex: " << m_parentFaceIndex << ", ";
 	o << pre << "   m_startChildIndex: " << m_startChildIndex << ", " << "m_endChildIndex: " << m_endChildIndex << std::endl;
 }
-
 
 CSubdivFace &CSubdivFace::operator=(const CSubdivFace &f) {
 	if ( &f == this ) {
@@ -67,13 +67,14 @@ CSubdivFace &CSubdivFace::operator=(const CSubdivFace &f) {
 }
 
 // ----------------------------------------------------------------------------
+
 void CSubdivEdge::dump(std::ostream &o, const std::string &pre) const {
 	o << pre << "CSubdivEdge:" << std::endl;
 	o << pre << "   m_value: " << m_value << ", " << "m_type: " << (m_type == EDGE_ROUNDED ? "EDGE_ROUNDED" : "EDGE_CREASE") << std::endl;
-	o << pre << "   m_oneVertex: " << m_oneVertex << ", " << "m_otherVertex: " << m_otherVertex << std::endl;
-	o << pre << "   m_oneFace: " << m_oneFace << ", " << "m_otherFace: " << m_otherFace;
+	o << pre << "   m_startChildIndex: " << m_startChildIndex << std::endl;
+	o << pre << "   m_vertex[0]: " << m_vertex[0] << ", " << "m_vertex[1]: " << m_vertex[1] << std::endl;
+	o << pre << "   m_face[0]: " <<  m_face[0] << ", " << " m_face[1]: " <<  m_face[1];
 }
-
 
 CSubdivEdge &CSubdivEdge::operator=(const CSubdivEdge &e)
 {
@@ -83,17 +84,18 @@ CSubdivEdge &CSubdivEdge::operator=(const CSubdivEdge &e)
 	
 	m_value = e.m_value;
 	m_type = e.m_type;
+	m_startChildIndex = e.m_startChildIndex;
 	
-	m_oneVertex = e.m_oneVertex;
-	m_otherVertex = e.m_otherVertex;
-	m_oneFace = e.m_oneFace;
-	m_otherFace = e.m_otherFace;
+	m_vertex[0] = e.m_vertex[0];
+	m_vertex[1] = e.m_vertex[1];
+	m_face[0] = e.m_face[0];
+	m_face[1] = e.m_face[1];
 	
 	return *this;
 }
 
-
 // ----------------------------------------------------------------------------
+
 void CSubdivVertex::dump(std::ostream &o, const std::string &pre) const
 {
 	o << pre << "CSubdivVertex:" << std::endl;
@@ -108,81 +110,266 @@ CSubdivVertex &CSubdivVertex::operator=(const CSubdivVertex &v)
 	
 	m_value = v.m_value;
 	m_type  = v.m_type;
-	
+	m_incidentEdges = v.m_incidentEdges;
+	m_incidentFaces = v.m_incidentFaces;
 	return *this;
 }
 
-
 // ----------------------------------------------------------------------------
 
-//	std::map<RtToken, CSubdivisionStrategy *> m_strategies;
-
-
-// ----------------------------------------------------------------------------
 void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const
 {
-	// The number of child faces == number of parents vertices
+	// Insert the number of child faces == number of parents vertices
+	// After the first subdivision step each face has 4 vertices, therefore 4 childs
 	long nChilds = 0;
-	if ( parent.parent() == 0 ) {
-		for ( std::vector<CSubdivFace>::const_iterator faceIter = parent.faces().begin();
-			  faceIter != parent.faces().end();
-			 faceIter++ )
-		{
-			nChilds += (*faceIter).nVertices();
-		}
-	} else {
-		// After the first subdivision step each face has 4 vertices, therefore 4 childs
-		nChilds = (long)parent.faces().size() * 4;
+	for ( std::vector<CSubdivFace>::iterator faceIter = parent.faces().begin();
+		  faceIter != parent.faces().end();
+		  faceIter++ )
+	{
+		(*faceIter).startChildIndex(nChilds);
+		nChilds += (*faceIter).nVertices(); // Number of childs (nChilds not set) = number of vertices
+		(*faceIter).endChildIndex(nChilds);
 	}
 	
-	child.faces().resize(nChilds); // childFace(0)(0), childFace(0)(1), ... childFace(0)(n), ... childFace(faces-1)(m)
-	
-	child.vertexIndices().resize(nChilds*4); // vertexIdxFace(0)(0), vertexIdxFace(0)(1), ... vertexIdxFace(0)(3), ... vertexIdxFace(nChilds-1)(4)
-	child.edgeIndices().resize(nChilds*4); // edgeIdxFace(0)(0), edgeIdxFace(0)(1), ... edgeIdxFace(0)(3), ... edgeIdxFace(nChilds-1)(4)
+	// childFace(0)(0), childFace(0)(1), ... childFace(0)(n), ... childFace(faces-1)(m)
+	child.faces().resize(nChilds);
 
-	child.edges().resize(parent.edges().size() * 3); // inh. start - new edge vertex, new edge vertex - inh. end, new edge vertex - new center: childEdge(0)(0), childEdge(0)(1), childEdge(0)(3), ..., childEdge(nOldEdges-1)(3)
-	child.vertices().resize(parent.vertices().size()+parent.edges().size()+parent.faces().size()); // inherited vertices, new edge vertices, new center vertices
-
-	std::copy(parent.vertices().begin(), parent.vertices().end(), child.vertices().begin());
-	
 	long faceIdx = 0;
 	for ( std::vector<CSubdivFace>::iterator faceIter = parent.faces().begin();
 		 faceIter != parent.faces().end();
 		 faceIter++ )
 	{
-		(*faceIter).startChildIndex(faceIdx);
-		(*faceIter).endChildIndex(faceIdx+(*faceIter).nVertices());
 		for ( long i = 0; i < (*faceIter).nVertices(); ++i )  {
 			child.faces()[faceIdx+i].startVertexIndex((faceIdx+i)*4);
 			child.faces()[faceIdx+i].endVertexIndex((faceIdx+i)*4 + 4);
 		}
-		if ( (*faceIter).nVertices() != 4 ) {
-			// extraordinary, vertex numbers:
-			/*  0 e0 c en
-			 *  1 e1 c e0
-			 *  2 e2 c e1
-			 * ...
-			 */
-		} else {
-			// ordinary, vertex numbers:
-			/*  0   e0  c   e3
-			 *  e0  1   e1  c
-			 *  c   e1  2   e2
-			 *  e3  c   e2  3
-			 */
-		}
-											
-		faceIdx = (*faceIter).endChildIndex();
+		faceIdx = (*faceIter).endChildIndex();		
 	}
 	
+	// Each child face has 4 vertices (and 4 edges)
+	
+	// vertexIdxFace(0)(0), vertexIdxFace(0)(1), ... vertexIdxFace(0)(3), ... vertexIdxFace(nChilds-1)(4)
+	child.vertexIndices().resize(nChilds*4);
+	child.edgeIndices().resize(nChilds*4);
+	
+	// inherited edge start - new mid edge vertex, new mid edge vertex - inherited edge end,
+	// new mid edge vertex - new face center vertex (min face index), opt. new mid edge vertex - new face center vertex (max face index)
+	// childEdge(0)(0), ... childEdge(0)(3 or 4), ..., childEdge(nOldEdges-1)(3 or 4)
+	long edgesNChilds = 0;
+	for ( std::vector<CSubdivEdge>::iterator edgeIter = parent.edges().begin();
+		  edgeIter != parent.edges().end();
+		  edgeIter++ ) 
+	{
+		(*edgeIter).startChildIndex(edgesNChilds);
+		edgesNChilds += (*edgeIter).nChilds(); // 3 for boundary, 4 otherwise
+	}
+	child.edges().resize(edgesNChilds);
+	
+	// inherited vertices (1 per parent vertex), new edge vertices (1 per parents edge), new center vertices (1 per parents faces)
+	child.vertices().resize(parent.vertices().size()+parent.edges().size()+parent.faces().size());
+	
+	// Copy the inherited vertices
+	std::copy(parent.vertices().begin(), parent.vertices().end(), child.vertices().begin());
+
+	// Fill in connectivity for the child edges
+	long localEdgeIndex = 0, // Local edge Index of a face
+	     edgeIndex = 0, // Index of the current parent edge in container
+	     childEdgeIndex = 0, // first child of the current parent edge
+	     localVertexIndex = 0; // 0 or 1, start and end vertec of the current parent edge
+	for ( std::vector<CSubdivEdge>::iterator edgeIter = parent.edges().begin();
+		 edgeIter != parent.edges().end();
+		 edgeIter++, edgeIndex++ ) 
+	{
+		// The index of the first child edge, valid edges childEdgeIndex, childEdgeIndex+1, ..., childEdgeIndex+nChilds-1
+		childEdgeIndex = (*edgeIter).startChildIndex();
+		assert((long)child.edges().size() >= childEdgeIndex + (*edgeIter).nChilds());
+
+		// edge start -> edge mid
+		child.edges()[childEdgeIndex].setVertices((*edgeIter).vertex(0), parent.vertices().size()+edgeIndex);
+		child.edges()[childEdgeIndex].type((*edgeIter).type());
+		child.edges()[childEdgeIndex].value((*edgeIter).value());
+		
+		// edge mid -> edge start
+		child.edges()[childEdgeIndex+1].setVertices(parent.vertices().size()+edgeIndex, (*edgeIter).vertex(1));
+		child.edges()[childEdgeIndex+1].type((*edgeIter).type());
+		child.edges()[childEdgeIndex+1].value((*edgeIter).value());
+
+		// face having the edge: edge start -> edge end
+		if ( (*edgeIter).face(0) >= 0 ) {
+			localEdgeIndex = parent.faces()[(*edgeIter).face(0)].localIndex(parent.edgeIndices(), edgeIndex);
+			assert(localEdgeIndex >= 0 && localEdgeIndex < parent.faces()[(*edgeIter).face(0)].nVertices());
+			// edge start -> edge mid
+			child.edges()[childEdgeIndex].insertFace((*edgeIter).vertex(0),
+													 parent.vertices().size() + edgeIndex,
+													 parent.faces()[(*edgeIter).face(1)].startChildIndex() + localEdgeIndex);
+			// edge mid -> edge end
+			child.edges()[childEdgeIndex+1].insertFace(parent.vertices().size() + edgeIndex,
+													   (*edgeIter).vertex(1),
+													   parent.faces()[(*edgeIter).face(0)].startChildIndex() + (localEdgeIndex+1) % parent.faces()[(*edgeIter).face(0)].nVertices());
+		}
+		
+		// face having the edge: edge start <- edge end
+		if ( (*edgeIter).face(1) >= 0 ) {
+			localEdgeIndex = parent.faces()[(*edgeIter).face(1)].localIndex(parent.edgeIndices(), edgeIndex);
+			assert(localEdgeIndex >= 0 && localEdgeIndex < parent.faces()[(*edgeIter).face(1)].nVertices());
+			// edge start <- edge mid
+			child.edges()[childEdgeIndex].insertFace(parent.vertices().size() + edgeIndex,
+													 (*edgeIter).vertex(0),
+													 parent.faces()[(*edgeIter).face(1)].startChildIndex()+localEdgeIndex);
+			// edge mid <- edge end
+			child.edges()[childEdgeIndex+1].insertFace((*edgeIter).vertex(1),
+													   parent.vertices().size()+edgeIndex,
+													   parent.faces()[(*edgeIter).face(1)].startChildIndex() + (localEdgeIndex+1) % parent.faces()[(*edgeIter).face(1)].nVertices());
+		}
+
+		// one or two edges: edge mid -> face center
+		localVertexIndex = 0; // will be 0 and 1
+		for ( int localFaceIdx = 0; localFaceIdx < 2; ++localFaceIdx ) {
+			if ( (*edgeIter).face(localFaceIdx) >= 0 ) {
+				localEdgeIndex = parent.faces()[(*edgeIter).face(localFaceIdx)].localIndex(parent.edgeIndices(), edgeIndex);
+				assert(localEdgeIndex >= 0 && localEdgeIndex < parent.faces()[(*edgeIter).face(localFaceIdx)].nVertices());
+				
+				// mid -> center of face i
+				child.edges()[childEdgeIndex + 2 + localVertexIndex].setVertices(
+				    parent.vertices().size() + edgeIndex,
+					parent.vertices().size() + parent.edges().size() + (*edgeIter).face(localFaceIdx));
+				// edge mid -> face center of face i's localEdgeIndex child
+				child.edges()[childEdgeIndex + 2 + localVertexIndex].insertFace(
+				    parent.vertices().size()+edgeIndex,
+					parent.vertices().size()+parent.edges().size()+(*edgeIter).face(localFaceIdx),
+					parent.faces()[(*edgeIter).face(localFaceIdx)].startChildIndex()+localEdgeIndex
+				);
+				// face center -> edge mid of face i's (localEdgeIndex+1)%nVertices child
+				child.edges()[childEdgeIndex+2+localVertexIndex].insertFace(
+				    parent.vertices().size()+parent.edges().size()+(*edgeIter).face(localFaceIdx),
+				    parent.vertices().size()+edgeIndex,
+					parent.faces()[(*edgeIter).face(localFaceIdx)].startChildIndex()+((localEdgeIndex+1) % parent.faces()[(*edgeIter).face(localFaceIdx)].nVertices())
+				);
+				localVertexIndex++;
+			}
+		}
+	}
+
+	// Insert child face data
+	faceIdx = 0;
+	for ( std::vector<CSubdivFace>::iterator faceIter = parent.faces().begin();
+		 faceIter != parent.faces().end();
+		 faceIter++, faceIdx++ )
+	{
+		assert((*faceIter).nVertices() > 1);
+		if ( (*faceIter).nVertices() < 2 ) {
+			continue;
+		}
+		
+		long centerIdx = parent.vertices().size()+parent.edges().size()+faceIdx;
+		if ( (*faceIter).nVertices() != 4) {
+			// extraordinary, vertex numbers:
+			/*  c0 e0 Cr e(n-1)
+			 *  c1 e1 Cr e0
+			 *  c2 e2 Cr e1   - Cr for centerIdx
+			 *  cn en Cr e(n-2)
+			 */
+			long prev = (*faceIter).nVertices()-1;
+			for ( long i = 0; i < (*faceIter).nVertices(); ++i ) {
+				CSubdivEdge &ed0 = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+i]];
+				CSubdivEdge &edp = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+prev]];
+				long c0 = parent.vertexIndices()[(*faceIter).startVertexIndex()+i];
+				long e0 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+i];
+				long ep = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+prev];
+				long idx0 = child.faces()[(*faceIter).startChildIndex()+i].startVertexIndex();
+				
+				child.vertexIndices()[idx0+0] = c0;
+				child.vertexIndices()[idx0+1] = e0;
+				child.vertexIndices()[idx0+2] = centerIdx;
+				child.vertexIndices()[idx0+3] = ep;
+
+				child.edgeIndices()[idx0+0] = childMainEdge(ed0, c0);        // c0 - e0
+				child.edgeIndices()[idx0+1] = childCenterEdge(ed0, faceIdx); // e0 - Cr
+				child.edgeIndices()[idx0+2] = childCenterEdge(edp, faceIdx); // Cr - ep
+				child.edgeIndices()[idx0+3] = childMainEdge(edp, c0);        // ep - c0
+
+				prev = (prev+1)%(*faceIter).nVertices();
+			}
+		} else {
+			// ordinary, vertex numbers:
+			/*  c0  e0  Cr  e3
+			 *  e0  c1  e1  Cr
+			 *  Cr  e1  c2  e2
+			 *  e3  Cr  e2  c3
+			 */
+			CSubdivEdge &ed0 = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+0]];
+			CSubdivEdge &ed1 = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+1]];
+			CSubdivEdge &ed2 = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+2]];
+			CSubdivEdge &ed3 = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+3]];
+			
+			long c0 = parent.vertexIndices()[(*faceIter).startVertexIndex()+0];
+			long c1 = parent.vertexIndices()[(*faceIter).startVertexIndex()+1];
+			long c2 = parent.vertexIndices()[(*faceIter).startVertexIndex()+2];
+			long c3 = parent.vertexIndices()[(*faceIter).startVertexIndex()+3];
+			
+			long e0 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+0];
+			long e1 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+1];
+			long e2 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+2];
+			long e3 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+3];
+
+			long idx0 = child.faces()[(*faceIter).startChildIndex()+0].startVertexIndex();
+			long idx1 = child.faces()[(*faceIter).startChildIndex()+1].startVertexIndex();
+			long idx2 = child.faces()[(*faceIter).startChildIndex()+2].startVertexIndex();
+			long idx3 = child.faces()[(*faceIter).startChildIndex()+3].startVertexIndex();
+			
+			
+			// c0  e0  Cr  e3
+			child.vertexIndices()[idx0+0] = c0;
+			child.vertexIndices()[idx0+1] = e0;
+			child.vertexIndices()[idx0+2] = centerIdx;
+			child.vertexIndices()[idx0+3] = e3;
+
+			child.edgeIndices()[idx0+0] = childMainEdge(ed0, c0);        // c0 - e0
+			child.edgeIndices()[idx0+1] = childCenterEdge(ed0, faceIdx); // e0 - Cr
+			child.edgeIndices()[idx0+2] = childCenterEdge(ed3, faceIdx); // Cr - e3
+			child.edgeIndices()[idx0+3] = childMainEdge(ed3, c0);        // e3 - c0
+						
+
+			// e0  c1  e1  Cr
+			child.vertexIndices()[idx1+0] = e0;
+			child.vertexIndices()[idx1+1] = c1;
+			child.vertexIndices()[idx1+2] = e1;
+			child.vertexIndices()[idx1+3] = centerIdx;
+			
+			child.edgeIndices()[idx1+0] = childMainEdge(ed0, c1);        // e0 - c1
+			child.edgeIndices()[idx1+1] = childMainEdge(ed1, c1);        // c1 - e1
+			child.edgeIndices()[idx1+2] = childCenterEdge(ed1, faceIdx); // e1 - Cr
+			child.edgeIndices()[idx1+3] = childCenterEdge(ed0, faceIdx); // Cr - e0
+
+
+			// Cr  e1  c2  e2
+			child.vertexIndices()[idx2+0] = centerIdx;
+			child.vertexIndices()[idx2+1] = e1;
+			child.vertexIndices()[idx2+2] = c2;
+			child.vertexIndices()[idx2+3] = e2;
+			
+			child.edgeIndices()[idx2+0] = childCenterEdge(ed1, faceIdx); // Cr - e1
+			child.edgeIndices()[idx2+1] = childMainEdge(ed1, c2);        // e1 - c2
+			child.edgeIndices()[idx2+2] = childMainEdge(ed2, c2);        // c2 - e2
+			child.edgeIndices()[idx2+3] = childCenterEdge(ed2, faceIdx); // e2 - Cr
+			
+			
+			// e3  Cr  e2  c3
+			child.vertexIndices()[idx3+0] = e3;
+			child.vertexIndices()[idx3+1] = centerIdx;
+			child.vertexIndices()[idx3+2] = e2;
+			child.vertexIndices()[idx3+3] = c3;
+			
+			child.edgeIndices()[idx3+0] = childCenterEdge(ed3, faceIdx); // e3 - Cr
+			child.edgeIndices()[idx3+1] = childCenterEdge(ed2, faceIdx); // Cr - e2
+			child.edgeIndices()[idx3+2] = childMainEdge(ed2, c3);        // e2 - c3
+			child.edgeIndices()[idx3+3] = childMainEdge(ed3, c3);        // c3 - e3
+		}
+	}
+
 }
 
 // ----------------------------------------------------------------------------
-/*
- std::vector<CSubdivFace>   m_faces;
- std::vector<CSubdivEdge>   m_edges;
- std::vector<CSubdivVertex> m_vertices;
-*/
 
 struct SEdge {
 	long m_start,
@@ -204,6 +391,8 @@ inline static bool operator<(const SEdge &s1, const SEdge &s2)
 {
 	return s1.m_start < s2.m_start || (s1.m_start == s2.m_start && s1.m_end < s2.m_end);
 }
+
+// ----------------------------------------------------------------------------
 
 void CSubdivFace::insertHoleVal(long idx, const CRiHierarchicalSubdivisionMesh &obj)
 {
@@ -287,6 +476,52 @@ void CSubdivisionIndices::insertBoundaryVal(const CRiHierarchicalSubdivisionMesh
 	}
 }
 
+void CSubdivisionIndices::updateVertexData()
+{
+	// Insert vertices
+	long edgeCnt = 0, faceCnt = 0;
+	for ( std::vector<CSubdivVertex>::iterator vertIter = m_vertices.begin();
+		 vertIter != m_vertices.end();
+		 vertIter++)
+	{
+		(*vertIter).startFace(faceCnt);
+		faceCnt += (*vertIter).incidentFaces();
+		
+		(*vertIter).startEdge(edgeCnt);
+		edgeCnt += (*vertIter).incidentEdges();
+	}
+	m_incidentFaces.resize(faceCnt);
+	m_incidentEdges.resize(edgeCnt);
+	
+	std::vector<long> cnt(m_vertices.size());
+	cnt.assign(cnt.size(), 0);
+	
+	long faceIdx = 0;
+	for ( std::vector<CSubdivFace>::const_iterator faceIter = m_faces.begin();
+		 faceIter != m_faces.end();
+		 faceIter++, faceIdx++)
+	{
+		for ( long vertIdx = (*faceIter).startVertexIndex(); vertIdx != (*faceIter).endVertexIndex(); vertIdx++ ) {
+			CSubdivVertex &v = m_vertices[m_vertexIndices[vertIdx]];
+			m_incidentFaces[v.startFace()+cnt[m_vertexIndices[vertIdx]]] = faceIdx;
+			cnt[m_vertexIndices[vertIdx]]++;
+		}
+	}
+	
+	cnt.assign(cnt.size(), 0);
+
+	long edgeIdx = 0;
+	for ( std::vector<CSubdivEdge>::const_iterator edgeIter = m_edges.begin();
+		 edgeIter != m_edges.end();
+		 edgeIter++, edgeIdx++)
+	{
+		m_incidentEdges[(*edgeIter).vertex(0)+cnt[(*edgeIter).vertex(0)]] = edgeIdx;
+		cnt[(*edgeIter).vertex(0)]++;
+		m_incidentEdges[(*edgeIter).vertex(1)+cnt[(*edgeIter).vertex(1)]] = edgeIdx;
+		cnt[(*edgeIter).vertex(1)]++;
+	}
+}
+
 void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 {
 	m_illTopology = false;
@@ -334,6 +569,7 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 			 vertIdx != m_faces[faceIdx].endVertexIndex();
 			 ++vertIdx )
 		{
+			m_vertices[m_vertexIndices[vertIdx]].incIncidentFaces();
 			// Insert edge
 			SEdge edge(m_vertexIndices[vertIdx],
 					   m_vertexIndices[m_faces[faceIdx].nextVertexIndex(vertIdx)]);
@@ -352,6 +588,8 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 				m_edges[edgeIdx] = CSubdivEdge(m_vertexIndices[vertIdx],
 						           m_vertexIndices[m_faces[faceIdx].nextVertexIndex(vertIdx)],
 				                   faceIdx);
+				m_vertices[m_vertexIndices[vertIdx]].incIncidentEdges();
+				m_vertices[m_vertexIndices[m_faces[faceIdx].nextVertexIndex(vertIdx)]].incIncidentEdges();
 				// Is edge a crease?
 				m_edges[edgeIdx].insertCreaseVal(obj);
 				edgeIdx++;
@@ -360,21 +598,8 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 	}
 	m_edgeIndices.resize(edgeIdx);
 	assert(nVertsIdx == (long)obj.verts().size());
-}
-
-CSubdivFace *CSubdivisionIndices::face(long faceIndex)
-{
-	return 0;
-}
-
-CSubdivEdge *CSubdivisionIndices::edge(long faceIndex, long edgeIndex)
-{
-	return 0;
-}
-
-CSubdivVertex *CSubdivisionIndices::vertex(long faceIndex, long vertexIndex)
-{
-	return 0;
+	
+	updateVertexData();
 }
 
 void CSubdivisionIndices::subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
@@ -382,8 +607,10 @@ void CSubdivisionIndices::subdivide(CSubdivisionIndices &aParent, const CSubdivi
 {
 	m_parent = &aParent;	
 	aStrategy.subdivide(aParent, *this);
+	updateVertexData();
 }
 
+// ----------------------------------------------------------------------------
 
 void CSubdivisionHierarchieTesselator::subdivide(IndexType minDepth)
 {
@@ -391,28 +618,35 @@ void CSubdivisionHierarchieTesselator::subdivide(IndexType minDepth)
 	CSubdivisionIndices &root = m_indices.back();
 	root.initialize(m_obj);
 	
-	const CSubdivisionStrategy *strategy = strategies().findObj(m_obj.scheme());
-	
-	if ( strategy ) {
-		CSubdivisionIndices &cur = root;
-		IndexType depth = tmax(tessU(), tessV());
-		depth = tmax(depth, minDepth);
-		if ( depth > 0 )
-			depth = static_cast<long>(log2(static_cast<double>(depth)));
-		while ( depth ) {
-			m_indices.push_back(CSubdivisionIndices());
-			CSubdivisionIndices &child = m_indices.back();
-			child.subdivide(cur, *strategy, m_obj);
-			cur = child;
-			depth--;
+	if ( m_obj.scheme() != RI_NULL ) {
+		const CSubdivisionStrategy *strategy = strategies().findObj(m_obj.scheme());
+		if ( strategy ) {
+			CSubdivisionIndices &cur = root;
+			IndexType depth = tmax(tessU(), tessV());
+			if ( depth > 0 )
+				depth = static_cast<long>(log2(static_cast<double>(depth)));
+			depth = tmax(depth, minDepth);
+			while ( depth ) {
+				m_indices.push_back(CSubdivisionIndices());
+				CSubdivisionIndices &child = m_indices.back();
+				child.subdivide(cur, *strategy, m_obj);
+				cur = child;
+				depth--;
+			}
+			// Calculate parameters
+			// ...
+		} else {
+			// unknown strategy
 		}
 	}
 	
 	// Extract faces
+	// Calculate normals
 }
 
 CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
-	subdivide(0);
+	// Not tested
+	// subdivide(0);
 	return 0;
 }

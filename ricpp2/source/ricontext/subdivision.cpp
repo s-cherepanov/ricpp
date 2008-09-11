@@ -185,12 +185,12 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 		assert((long)child.edges().size() >= childEdgeIndex + (*edgeIter).nChilds());
 
 		// edge start -> edge mid
-		child.edges()[childEdgeIndex].setVertices((*edgeIter).vertex(0), parent.vertices().size()+edgeIndex);
+		child.edges()[childEdgeIndex].setVertices((*edgeIter).vertex(0), static_cast<long>(parent.vertices().size()+edgeIndex));
 		child.edges()[childEdgeIndex].type((*edgeIter).type());
 		child.edges()[childEdgeIndex].value((*edgeIter).value());
 		
 		// edge mid -> edge start
-		child.edges()[childEdgeIndex+1].setVertices(parent.vertices().size()+edgeIndex, (*edgeIter).vertex(1));
+		child.edges()[childEdgeIndex+1].setVertices(static_cast<long>(parent.vertices().size())+edgeIndex, (*edgeIter).vertex(1));
 		child.edges()[childEdgeIndex+1].type((*edgeIter).type());
 		child.edges()[childEdgeIndex+1].value((*edgeIter).value());
 
@@ -200,10 +200,10 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 			assert(localEdgeIndex >= 0 && localEdgeIndex < parent.faces()[(*edgeIter).face(0)].nVertices());
 			// edge start -> edge mid
 			child.edges()[childEdgeIndex].insertFace((*edgeIter).vertex(0),
-													 parent.vertices().size() + edgeIndex,
+													 static_cast<long>(parent.vertices().size() + edgeIndex),
 													 parent.faces()[(*edgeIter).face(1)].startChildIndex() + localEdgeIndex);
 			// edge mid -> edge end
-			child.edges()[childEdgeIndex+1].insertFace(parent.vertices().size() + edgeIndex,
+			child.edges()[childEdgeIndex+1].insertFace(static_cast<long>(parent.vertices().size() + edgeIndex),
 													   (*edgeIter).vertex(1),
 													   parent.faces()[(*edgeIter).face(0)].startChildIndex() + (localEdgeIndex+1) % parent.faces()[(*edgeIter).face(0)].nVertices());
 		}
@@ -213,12 +213,12 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 			localEdgeIndex = parent.faces()[(*edgeIter).face(1)].localIndex(parent.edgeIndices(), edgeIndex);
 			assert(localEdgeIndex >= 0 && localEdgeIndex < parent.faces()[(*edgeIter).face(1)].nVertices());
 			// edge start <- edge mid
-			child.edges()[childEdgeIndex].insertFace(parent.vertices().size() + edgeIndex,
+			child.edges()[childEdgeIndex].insertFace(static_cast<long>(parent.vertices().size() + edgeIndex),
 													 (*edgeIter).vertex(0),
 													 parent.faces()[(*edgeIter).face(1)].startChildIndex()+localEdgeIndex);
 			// edge mid <- edge end
 			child.edges()[childEdgeIndex+1].insertFace((*edgeIter).vertex(1),
-													   parent.vertices().size()+edgeIndex,
+													   static_cast<long>(parent.vertices().size()+edgeIndex),
 													   parent.faces()[(*edgeIter).face(1)].startChildIndex() + (localEdgeIndex+1) % parent.faces()[(*edgeIter).face(1)].nVertices());
 		}
 
@@ -231,18 +231,18 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 				
 				// mid -> center of face i
 				child.edges()[childEdgeIndex + 2 + localVertexIndex].setVertices(
-				    parent.vertices().size() + edgeIndex,
-					parent.vertices().size() + parent.edges().size() + (*edgeIter).face(localFaceIdx));
+				    static_cast<long>(parent.vertices().size() + edgeIndex),
+					static_cast<long>(parent.vertices().size() + parent.edges().size()) + (*edgeIter).face(localFaceIdx));
 				// edge mid -> face center of face i's localEdgeIndex child
 				child.edges()[childEdgeIndex + 2 + localVertexIndex].insertFace(
-				    parent.vertices().size()+edgeIndex,
-					parent.vertices().size()+parent.edges().size()+(*edgeIter).face(localFaceIdx),
+				    static_cast<long>(parent.vertices().size()+edgeIndex),
+					static_cast<long>(parent.vertices().size()+parent.edges().size())+(*edgeIter).face(localFaceIdx),
 					parent.faces()[(*edgeIter).face(localFaceIdx)].startChildIndex()+localEdgeIndex
 				);
 				// face center -> edge mid of face i's (localEdgeIndex+1)%nVertices child
 				child.edges()[childEdgeIndex+2+localVertexIndex].insertFace(
-				    parent.vertices().size()+parent.edges().size()+(*edgeIter).face(localFaceIdx),
-				    parent.vertices().size()+edgeIndex,
+				    static_cast<long>(parent.vertices().size()+parent.edges().size())+(*edgeIter).face(localFaceIdx),
+				    static_cast<long>(parent.vertices().size()+edgeIndex),
 					parent.faces()[(*edgeIter).face(localFaceIdx)].startChildIndex()+((localEdgeIndex+1) % parent.faces()[(*edgeIter).face(localFaceIdx)].nVertices())
 				);
 				localVertexIndex++;
@@ -261,7 +261,7 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 			continue;
 		}
 		
-		long centerIdx = parent.vertices().size()+parent.edges().size()+faceIdx;
+		long centerIdx = static_cast<long>(parent.vertices().size()+parent.edges().size())+faceIdx;
 		if ( (*faceIter).nVertices() != 4) {
 			// extraordinary, vertex numbers:
 			/*  c0 e0 Cr e(n-1)
@@ -274,8 +274,8 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 				CSubdivEdge &ed0 = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+i]];
 				CSubdivEdge &edp = parent.edges()[parent.edgeIndices()[(*faceIter).startVertexIndex()+prev]];
 				long c0 = parent.vertexIndices()[(*faceIter).startVertexIndex()+i];
-				long e0 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+i];
-				long ep = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+prev];
+				long e0 = static_cast<long>(parent.vertices().size())+parent.edgeIndices()[(*faceIter).startVertexIndex()+i];
+				long ep = static_cast<long>(parent.vertices().size())+parent.edgeIndices()[(*faceIter).startVertexIndex()+prev];
 				long idx0 = child.faces()[(*faceIter).startChildIndex()+i].startVertexIndex();
 				
 				child.vertexIndices()[idx0+0] = c0;
@@ -307,10 +307,10 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 			long c2 = parent.vertexIndices()[(*faceIter).startVertexIndex()+2];
 			long c3 = parent.vertexIndices()[(*faceIter).startVertexIndex()+3];
 			
-			long e0 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+0];
-			long e1 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+1];
-			long e2 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+2];
-			long e3 = parent.vertices().size()+parent.edgeIndices()[(*faceIter).startVertexIndex()+3];
+			long e0 = static_cast<long>(parent.vertices().size())+parent.edgeIndices()[(*faceIter).startVertexIndex()+0];
+			long e1 = static_cast<long>(parent.vertices().size())+parent.edgeIndices()[(*faceIter).startVertexIndex()+1];
+			long e2 = static_cast<long>(parent.vertices().size())+parent.edgeIndices()[(*faceIter).startVertexIndex()+2];
+			long e3 = static_cast<long>(parent.vertices().size())+parent.edgeIndices()[(*faceIter).startVertexIndex()+3];
 
 			long idx0 = child.faces()[(*faceIter).startChildIndex()+0].startVertexIndex();
 			long idx1 = child.faces()[(*faceIter).startChildIndex()+1].startVertexIndex();

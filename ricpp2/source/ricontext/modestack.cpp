@@ -227,15 +227,19 @@ bool CModeStack::validRequest(EnumRequests req) const
 	 */
 	TypeModeBits modeBit = curModeBits();
 	
-	if ( req != REQ_ATTRIBUTE_END && req != REQ_TRANSFORM_END ) {
-		size_t theSize = m_modeBits.size();
-		while ( theSize > 1 && modeBit & (MODE_BIT_ATTRIBUTE | MODE_BIT_TRANSFORM) != 0 ) {
-			--theSize;
-			modeBit = m_modeBits[theSize-1];
+	if ( m_modeBits.size() > 0 && req != REQ_ATTRIBUTE_END && req != REQ_TRANSFORM_END ) {
+		long lastIdx = static_cast<long>(m_modeBits.size()) - 1;
+		while ( (modeBit & (MODE_BIT_ATTRIBUTE | MODE_BIT_TRANSFORM)) != 0 ) {
+			if ( lastIdx > 0 ) {
+				modeBit = m_modeBits[--lastIdx];
+			} else {
+				modeBit = MODE_BIT_OUTSIDE;
+				break;
+			}
 		}
 	}
 	
-	return m_validModes.isValid(req, curModeBits());
+	return m_validModes.isValid(req, modeBit);
 }
 
 void CModeStack::push(EnumModes newMode, TypeModeBits newModeBits)

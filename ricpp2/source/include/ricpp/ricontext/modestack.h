@@ -267,7 +267,7 @@ public:
 	 *  @return true, if the request req is valid in the current mode.
 	 *  @see EnumRequests  
 	 */
-	inline virtual bool validRequest(EnumRequests req) const { return m_validModes.isValid(req, curModeBits()); }
+	virtual bool validRequest(EnumRequests req) const;
 
 	/** @brief The current mode
 	 *  Transparent modes are not considered

@@ -39,7 +39,6 @@ using namespace RiCPP;
 
 CValidModes::CValidModes()
 {
-	
     // Resource blocks are transparent to other requests.
     // Conditional blocks are transparent to other requests.
 	const TypeModeBits nowhereBits = 0;
@@ -73,10 +72,10 @@ CValidModes::CValidModes()
 	m_requests[REQ_WORLD_BEGIN] = MODE_BIT_BEGIN | MODE_BIT_FRAME | MODE_BIT_ARCHIVE;
 	m_requests[REQ_WORLD_END] = MODE_BIT_WORLD;
 
-	m_requests[REQ_ATTRIBUTE_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_ATTRIBUTE_BEGIN] = insideBits & ~MODE_BIT_MOTION; // geometryBits & ~MODE_BIT_MOTION
 	m_requests[REQ_ATTRIBUTE_END] = MODE_BIT_ATTRIBUTE;
 
-	m_requests[REQ_TRANSFORM_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
+	m_requests[REQ_TRANSFORM_BEGIN] = insideBits & ~MODE_BIT_MOTION; // geometryBits & ~MODE_BIT_MOTION
 	m_requests[REQ_TRANSFORM_END] = MODE_BIT_TRANSFORM;
 
 	m_requests[REQ_SOLID_BEGIN] = geometryBits & ~MODE_BIT_MOTION;
@@ -214,13 +213,6 @@ CValidModes::CValidModes()
 	m_requests[REQ_VERSION] = MODE_BIT_BEGIN;
 }
 
-/*
-bool CValidModes::isValid(EnumRequests idxRequest, EnumModes idxMode) const
-{
-	return (m_requests[(int)idxRequest] & (unsigned short)1<<(int)idxMode) != 0;
-}
-*/
-
 bool CValidModes::isValid(EnumRequests idxRequest, TypeModeBits idxModeBit) const
 {
 	return (m_requests[(int)idxRequest] & idxModeBit) != 0;
@@ -228,7 +220,23 @@ bool CValidModes::isValid(EnumRequests idxRequest, TypeModeBits idxModeBit) cons
 
 
 // --------------------
-
+bool CModeStack::validRequest(EnumRequests req) const
+{
+	/*  Attribute and transform blocks are valid outside the world block, too. But
+	 *  the contents of those blocks not necessarily - make attribute and transform blocks "transparent".
+	 */
+	TypeModeBits modeBit = curModeBits();
+	
+	if ( req != REQ_ATTRIBUTE_END && req != REQ_TRANSFORM_END ) {
+		size_t theSize = m_modeBits.size();
+		while ( theSize > 1 && modeBit & (MODE_BIT_ATTRIBUTE | MODE_BIT_TRANSFORM) != 0 ) {
+			--theSize;
+			modeBit = m_modeBits[theSize-1];
+		}
+	}
+	
+	return m_validModes.isValid(req, curModeBits());
+}
 
 void CModeStack::push(EnumModes newMode, TypeModeBits newModeBits)
 {

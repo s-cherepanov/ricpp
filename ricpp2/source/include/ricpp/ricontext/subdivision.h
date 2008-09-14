@@ -71,7 +71,6 @@ namespace RiCPP {
 		/** @{
 		 * @name Hierarchy
 		 */
-		long m_parentFaceIndex; //!< Index of the parent, -1 if not initialized (root)
 		long m_startChildIndex; //!< Start index of child faces, -1 if not initialized (leaf)
 		long m_endChildIndex;   //!< Endindex+1 of of child faces, -1 if not initialized (leaf)
 		/** @}
@@ -83,7 +82,6 @@ namespace RiCPP {
 		m_type(FACE_FILLED),
 		m_startVertexIndex(-1L),
 		m_endVertexIndex(-1L),
-		m_parentFaceIndex(-1L),
 		m_startChildIndex(-1L),
 		m_endChildIndex(-1L)
 		{
@@ -213,23 +211,6 @@ namespace RiCPP {
 		{
 			return m_endChildIndex - m_startChildIndex;
 		}
-
-		//! Sets the parent face index for the hierarchical path.
-		/*! \param aParentFaceIndex parent face index for the hierarchical path.
-		 */
-		inline void parentFaceIndex(long aParentFaceIndex)
-		{
-			m_parentFaceIndex = aParentFaceIndex;
-		}
-		
-		//! Gets the parent face index for the hierarchical path.
-		/*! \return Parent face index for the hierarchical path.
-		 */
-		inline long parentFaceIndex() const
-		{
-			return m_parentFaceIndex;
-		}
-		
 
 		inline long localIndex(const std::vector<long> &edgeOrVertexIndices, long anIncidentEdgeOrVertex) const
 		{
@@ -800,14 +781,13 @@ namespace RiCPP {
 		std::vector<long>          m_incidentFaces;  //!< Indices (to m_faces) for faces incident to vertices.
 		RtInt m_interpolateBoundary;                 //!< Value of the boundary tag.
 		bool m_illTopology;                          //!< Error while subdividing.
-		CSubdivisionIndices *m_parent;               //!< One level up (one step less subdivision).
 		
 		void insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj); //!< Sets m_interpolateBoundary using tags of @a obj.
 		void updateVertexData(); //!< Update the incident data m_incidentEdges, m_incidentFaces after a subdivision step
 	public:
 		/** @brief Constructor
 		 */
-		inline CSubdivisionIndices() : m_illTopology(false), m_interpolateBoundary(0), m_parent(0) {}
+		inline CSubdivisionIndices() : m_illTopology(false), m_interpolateBoundary(0) {}
 		
 		/** @brief Initialization of the connectivity of the subdivision mesh.
 		 *
@@ -836,7 +816,6 @@ namespace RiCPP {
 		
 		inline bool illTopology() const { return m_illTopology; }
 		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
-		inline const CSubdivisionIndices *parent() const { return m_parent; }
 
 		void subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
 					   const CRiHierarchicalSubdivisionMesh &anObj);

@@ -1,0 +1,32 @@
+##RenderMan RIB-Structure 1.0
+version 3.04
+
+Display "catmull_clark.tif" "framebuffer" "rgba"
+
+Projection "orthographic"
+Clipping 1 3
+
+# GeometricRepresentation "primitive"
+# GeometricApproximation "tesselation" 64
+
+Translate 0 0 2
+
+WorldBegin
+	LightSource "ambientlight" 1
+
+	Color  0 0 1
+	Surface "matte"
+	Sides 1
+
+	SubdivisionMesh
+		"catmull-clark"
+		[ 4 ]
+		[ 0 1 2 3 ]
+		[ "interpolateboundary" ] [ 1 0 ] [ 2 ] [ ]
+		"P" [
+			-0.9  0.9  0      #  0
+			 0.9  0.9  0      #  1
+			 0.9 -0.9  0      #  2
+			-0.9 -0.9  0      #  3
+		] 
+WorldEnd

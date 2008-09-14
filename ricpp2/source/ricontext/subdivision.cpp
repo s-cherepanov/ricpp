@@ -47,7 +47,6 @@ void CSubdivFace::dump(std::ostream &o, const std::string &pre) const {
 	o << pre;
     o << "m_type: " << (m_type == FACE_FILLED ? "FACE_FILLED" : "FACE_HOLE") << std::endl;
 	o << pre << "   m_startVertexIndex: " << m_startVertexIndex << ", " << "m_endVertexIndex: " << m_endVertexIndex << std::endl;
-	o << "   m_parentFaceIndex: " << m_parentFaceIndex << ", ";
 	o << pre << "   m_startChildIndex: " << m_startChildIndex << ", " << "m_endChildIndex: " << m_endChildIndex << std::endl;
 }
 
@@ -59,7 +58,6 @@ CSubdivFace &CSubdivFace::operator=(const CSubdivFace &f) {
 	m_type             = f.m_type;
 	m_startVertexIndex = f.m_startVertexIndex;
 	m_endVertexIndex   = f.m_endVertexIndex;
-	m_parentFaceIndex  = f.m_parentFaceIndex;
 	m_startChildIndex   = f.m_startChildIndex;
 	m_endChildIndex     = f.m_endChildIndex;
 	
@@ -214,14 +212,14 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 		if ( (*edgeIter).face(1) >= 0 ) {
 			localEdgeIndex = parent.faces()[(*edgeIter).face(1)].localIndex(parent.edgeIndices(), edgeIndex);
 			assert(localEdgeIndex >= 0 && localEdgeIndex < parent.faces()[(*edgeIter).face(1)].nVertices());
-			// edge start <- edge mid
+			// edge mid -> edge start
 			child.edges()[childEdgeIndex].insertFace(static_cast<long>(parent.vertices().size() + edgeIndex),
 													 (*edgeIter).vertex(0),
-													 parent.faces()[(*edgeIter).face(1)].startChildIndex()+localEdgeIndex);
-			// edge mid <- edge end
+													 parent.faces()[(*edgeIter).face(1)].startChildIndex() + (localEdgeIndex+1) % parent.faces()[(*edgeIter).face(1)].nVertices());
+			// edge end -> edge mid
 			child.edges()[childEdgeIndex+1].insertFace((*edgeIter).vertex(1),
-													   static_cast<long>(parent.vertices().size()+edgeIndex),
-													   parent.faces()[(*edgeIter).face(1)].startChildIndex() + (localEdgeIndex+1) % parent.faces()[(*edgeIter).face(1)].nVertices());
+													   static_cast<long>(parent.vertices().size() + edgeIndex),
+													   parent.faces()[(*edgeIter).face(1)].startChildIndex()+localEdgeIndex);
 		}
 
 		// one or two edges: edge mid -> face center
@@ -393,24 +391,25 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 // ----------------------------------------------------------------------------
 
 struct SEdge {
-	long m_start,
-		 m_end;
+	long m_sortStart,
+		 m_sortEnd;
+
 	inline SEdge(long start=-1, long end=-1)
 	{
-		validateMinMax(start, end);
-		m_start = start;
-		m_end = end;
+		m_sortStart = start;
+		m_sortEnd = end;
+		validateMinMax(m_sortStart, m_sortEnd);
 	}
 };
 
 inline static bool operator==(const SEdge &s1, const SEdge &s2)
 {
-	return s1.m_start == s2.m_start && s1.m_end == s2.m_end;
+	return s1.m_sortStart == s2.m_sortStart && s1.m_sortEnd == s2.m_sortEnd;
 }
 
 inline static bool operator<(const SEdge &s1, const SEdge &s2)
 {
-	return s1.m_start < s2.m_start || (s1.m_start == s2.m_start && s1.m_end < s2.m_end);
+	return s1.m_sortStart < s2.m_sortStart || (s1.m_sortStart == s2.m_sortStart && s1.m_sortEnd < s2.m_sortEnd);
 }
 
 // ----------------------------------------------------------------------------
@@ -555,10 +554,10 @@ void CSubdivisionIndices::updateVertexData()
 		 edgeIter++, edgeIdx++)
 	{
 		assert((*edgeIter).vertex(0)>=0);
-		m_incidentEdges[(*edgeIter).vertex(0)+cnt[(*edgeIter).vertex(0)]] = edgeIdx;
+		m_incidentEdges[m_vertices[(*edgeIter).vertex(0)].startEdge()+cnt[(*edgeIter).vertex(0)]] = edgeIdx;
 		cnt[(*edgeIter).vertex(0)]++;
 		assert((*edgeIter).vertex(1)>=0);
-		m_incidentEdges[(*edgeIter).vertex(1)+cnt[(*edgeIter).vertex(1)]] = edgeIdx;
+		m_incidentEdges[m_vertices[(*edgeIter).vertex(1)].startEdge()+cnt[(*edgeIter).vertex(1)]] = edgeIdx;
 		cnt[(*edgeIter).vertex(1)]++;
 	}
 }
@@ -661,7 +660,6 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 void CSubdivisionIndices::subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
 						const CRiHierarchicalSubdivisionMesh &anObj)
 {
-	m_parent = &aParent;	
 	aStrategy.subdivide(aParent, *this);
 	updateVertexData();
 }
@@ -670,34 +668,43 @@ void CSubdivisionIndices::subdivide(CSubdivisionIndices &aParent, const CSubdivi
 
 void CSubdivisionHierarchieTesselator::subdivide(IndexType minDepth)
 {
-	m_indices.push_back(CSubdivisionIndices());
-	CSubdivisionIndices &root = m_indices.back();
-	root.initialize(m_obj);
+	IndexType depth = tmax(tessU(), tessV());
+	if ( depth > 0 )
+		depth = static_cast<long>(log2(static_cast<double>(depth)));
+	depth = tmax(depth, minDepth);
+
+	if ( m_indices.size() == 0 ) {
+		m_indices.push_back(CSubdivisionIndices());
+		CSubdivisionIndices &root = m_indices.back();
+		root.initialize(m_obj);
+	}
+	assert(m_indices.size() > 0);
 	
 	if ( m_obj.scheme() != RI_NULL ) {
 		const CSubdivisionStrategy *strategy = strategies().findObj(m_obj.scheme());
-		if ( strategy ) {
-			CSubdivisionIndices &cur = root;
-			IndexType depth = tmax(tessU(), tessV());
-			if ( depth > 0 )
-				depth = static_cast<long>(log2(static_cast<double>(depth)));
-			depth = tmax(depth, minDepth);
-			while ( depth ) {
+		if ( strategy && depth >= m_indices.size() ) {
+			CSubdivisionIndices *cur = &m_indices.back();
+			IndexType depthCnt = 1 + depth - static_cast<long>(m_indices.size());
+			while ( depthCnt && !cur->illTopology() ) {
 				m_indices.push_back(CSubdivisionIndices());
 				CSubdivisionIndices &child = m_indices.back();
-				child.subdivide(cur, *strategy, m_obj);
-				cur = child;
-				depth--;
+				child.subdivide(*cur, *strategy, m_obj);
+				cur = &child;
+				depthCnt--;
 			}
-			// Calculate parameters
-			// ...
+			if ( !cur->illTopology() ) {
+				// Calculate parameters
+				// ...
+			}
 		} else {
 			// unknown strategy
 		}
 	}
-	
-	// Extract faces
-	// Calculate normals
+
+	if( m_indices.size() > depth ) {
+		// Extract faces
+		// Calculate normals
+	}
 }
 
 CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)

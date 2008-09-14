@@ -110,6 +110,8 @@ CSubdivVertex &CSubdivVertex::operator=(const CSubdivVertex &v)
 	
 	m_value = v.m_value;
 	m_type  = v.m_type;
+	m_startFace = v.m_startFace;
+	m_startEdge = v.m_startEdge;
 	m_incidentEdges = v.m_incidentEdges;
 	m_incidentFaces = v.m_incidentFaces;
 	return *this;
@@ -201,7 +203,7 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 			// edge start -> edge mid
 			child.edges()[childEdgeIndex].insertFace((*edgeIter).vertex(0),
 													 static_cast<long>(parent.vertices().size() + edgeIndex),
-													 parent.faces()[(*edgeIter).face(1)].startChildIndex() + localEdgeIndex);
+													 parent.faces()[(*edgeIter).face(0)].startChildIndex() + localEdgeIndex);
 			// edge mid -> edge end
 			child.edges()[childEdgeIndex+1].insertFace(static_cast<long>(parent.vertices().size() + edgeIndex),
 													   (*edgeIter).vertex(1),
@@ -367,6 +369,25 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 		}
 	}
 
+	for ( std::vector<CSubdivFace>::iterator faceIter = child.faces().begin();
+		 faceIter != child.faces().end();
+		 faceIter++ )
+	{
+		for( long vertIdx = (*faceIter).startVertexIndex();
+			 vertIdx != (*faceIter).endVertexIndex();
+			 ++vertIdx )
+		{
+			child.vertices()[child.vertexIndices()[vertIdx]].incIncidentFaces();
+		}
+	}
+
+	for ( std::vector<CSubdivEdge>::iterator edgeIter = child.edges().begin();
+		 edgeIter != child.edges().end();
+		 edgeIter++ )
+	{
+		child.vertices()[(*edgeIter).vertex(0)].incIncidentEdges();
+		child.vertices()[(*edgeIter).vertex(1)].incIncidentEdges();
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -374,7 +395,7 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 struct SEdge {
 	long m_start,
 		 m_end;
-	inline SEdge(long start=0, long end=0)
+	inline SEdge(long start=-1, long end=-1)
 	{
 		validateMinMax(start, end);
 		m_start = start;
@@ -393,6 +414,24 @@ inline static bool operator<(const SEdge &s1, const SEdge &s2)
 }
 
 // ----------------------------------------------------------------------------
+
+bool CSubdivFace::insertEdgeIndex(const CSubdivEdge &anEdge, long anEdgeIndex, const std::vector<long> &vertexIndices, std::vector<long> &edgeIndices)
+{
+	long nextV = -1;
+	for ( long startV = startVertexIndex(); startV != endVertexIndex(); startV++ ) {
+		nextV = nextVertexIndex(startV);
+		if ( anEdge.hasVertices(vertexIndices[startV], vertexIndices[nextV]) ) {
+			if ( edgeIndices[startV] >= 0 ) {
+				// Already an edge inserted
+				return false;
+			}
+			edgeIndices[startV] = anEdgeIndex;
+			return true;
+		}
+	}
+	// Edge not found
+	return false;
+}
 
 void CSubdivFace::insertHoleVal(long idx, const CRiHierarchicalSubdivisionMesh &obj)
 {
@@ -515,8 +554,10 @@ void CSubdivisionIndices::updateVertexData()
 		 edgeIter != m_edges.end();
 		 edgeIter++, edgeIdx++)
 	{
+		assert((*edgeIter).vertex(0)>=0);
 		m_incidentEdges[(*edgeIter).vertex(0)+cnt[(*edgeIter).vertex(0)]] = edgeIdx;
 		cnt[(*edgeIter).vertex(0)]++;
+		assert((*edgeIter).vertex(1)>=0);
 		m_incidentEdges[(*edgeIter).vertex(1)+cnt[(*edgeIter).vertex(1)]] = edgeIdx;
 		cnt[(*edgeIter).vertex(1)]++;
 	}
@@ -533,6 +574,7 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 	m_vertexIndices.resize(obj.verts().size());
 	std::copy(obj.verts().begin(), obj.verts().end(), m_vertexIndices.begin());
 	m_edgeIndices.resize(obj.verts().size());
+	m_edgeIndices.assign(m_edgeIndices.size(), -1);
 	m_edges.resize(obj.verts().size()); // upper bound
 	m_vertices.resize(tmax(obj.verts().size(), &obj.verts()[0])+1);
 	m_faces.resize(obj.nVerts().size());
@@ -583,6 +625,10 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 					// Illegal topology
 					m_illTopology = true;
 				}
+				if ( !m_faces[faceIdx].insertEdgeIndex(m_edges[existingEdgeIdx], existingEdgeIdx, m_vertexIndices, m_edgeIndices) ) {
+					// Illegal topology
+					m_illTopology = true;
+				}
 			} else {
 				edgeMap[edge] = edgeIdx;
 				m_edges[edgeIdx] = CSubdivEdge(m_vertexIndices[vertIdx],
@@ -590,14 +636,24 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 				                   faceIdx);
 				m_vertices[m_vertexIndices[vertIdx]].incIncidentEdges();
 				m_vertices[m_vertexIndices[m_faces[faceIdx].nextVertexIndex(vertIdx)]].incIncidentEdges();
+				if ( !m_faces[faceIdx].insertEdgeIndex(m_edges[edgeIdx], edgeIdx, m_vertexIndices, m_edgeIndices) ) {
+					// Illegal topology
+					m_illTopology = true;
+				}
 				// Is edge a crease?
 				m_edges[edgeIdx].insertCreaseVal(obj);
 				edgeIdx++;
 			}
 		}
 	}
-	m_edgeIndices.resize(edgeIdx);
+	m_edges.resize(edgeIdx);
 	assert(nVertsIdx == (long)obj.verts().size());
+
+	for ( edgeIdx = 0; edgeIdx < (long)m_edgeIndices.size(); ++edgeIdx ) {
+		if ( m_edgeIndices[edgeIdx] < 0 ) {
+			m_illTopology = true;
+		}
+	}
 	
 	updateVertexData();
 }

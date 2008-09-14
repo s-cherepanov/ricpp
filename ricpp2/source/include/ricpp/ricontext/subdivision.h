@@ -41,7 +41,8 @@
 #include <iostream>
 
 namespace RiCPP {
-	
+	class CSubdivEdge;
+
 	//! @brief Face for subdivision.
 	/*! The face can be filled or be a hole (i.e. it is calculated as normal, but
 	 *  the area is not filled at output time). A face is given by a sequence of vertices
@@ -234,10 +235,11 @@ namespace RiCPP {
 		{
 			for ( long i = startVertexIndex(); i != endVertexIndex(); i++ ) {
 				if ( edgeOrVertexIndices[i] == anIncidentEdgeOrVertex )
-					return i;
+					return i-startVertexIndex();
 			}
 			return -1;
 		}
+		bool insertEdgeIndex(const CSubdivEdge &anEdge, long anEdgeIndex, const std::vector<long> &vertexIndices, std::vector<long> &edgeIndices);
 		
 		void insertHoleVal(long idx, const CRiHierarchicalSubdivisionMesh &obj);
 	}; // CSubdivFace
@@ -335,6 +337,12 @@ namespace RiCPP {
 		 *  \return A reference of the instance (*this).
 		 */
 		CSubdivEdge &operator=(const CSubdivEdge &e);
+
+		inline bool hasVertices(long v1, long v2) const
+		{
+			return ((m_vertex[0] == v1) && (m_vertex[1] == v2)) ||
+			       ((m_vertex[0] == v2) && (m_vertex[1] == v1));
+		}
 		
 		//! Two edges are considered as equal, if they have the same vertex index numbers.
 		/*! \param e Edge to compare with.
@@ -342,8 +350,7 @@ namespace RiCPP {
 		 */
 		inline bool operator==(const CSubdivEdge &e) const
 		{
-			return ((m_vertex[0] == e.m_vertex[0]) && (m_vertex[1] == e.m_vertex[1])) ||
-			       ((m_vertex[0] == e.m_vertex[1]) && (m_vertex[1] == e.m_vertex[0]));
+			return hasVertices(e.m_vertex[0], e.m_vertex[1]);
 		}
 		
 		//! Inserts the two vertices of an edge.

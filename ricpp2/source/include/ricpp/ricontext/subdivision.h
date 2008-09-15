@@ -34,14 +34,26 @@
  *  and the RenderMan specification.
  */
 
-#ifndef _RICPP_RICONTEXT_TRIANGULATION_H
-#include "ricpp/ricontext/triangulation.h"
-#endif // _RICPP_RICONTEXT_TRIANGULATION_H
+
+#ifndef _RICPP_RIBASE_RICPPCONST_H
+#include "ricpp/ribase/ricppconst.h"
+#endif /* _RICPP_RIBASE_RICPPCONST_H */
+
+#ifndef _RICPP_DECLARATION_DECLARATION_H
+#include "ricpp/declaration/declaration.h"
+#endif /* _RICPP_DECLARATION_DECLARATION_H */
+
+#ifndef _RICPP_TOOLS_OBJPTRREGISTRY_H
+#include "ricpp/tools/objptrregistry.h"
+#endif /* _RICPP_TOOLS_OBJPTRREGISTRY_H */
 
 #include <iostream>
+#include <vector>
+#include <list>
 
 namespace RiCPP {
 	class CSubdivEdge;
+	class CRiHierarchicalSubdivisionMesh;
 
 	//! @brief Face for subdivision.
 	/*! The face can be filled or be a hole (i.e. it is calculated as normal, but
@@ -275,17 +287,10 @@ namespace RiCPP {
 		inline CSubdivEdge(long aStartIdx, long anEndIdx, long incidentFace) :
 		m_value(0.0), m_type(EDGE_ROUNDED)
 		{
-			if ( aStartIdx < anEndIdx ) {
-				m_face[0] = incidentFace;
-				m_face[1] = -1;
-				m_vertex[0] = aStartIdx;
-				m_vertex[1] = anEndIdx;
-			} else {
-				m_face[0] = -1;
-				m_face[1] = incidentFace;
-				m_vertex[0] = anEndIdx;
-				m_vertex[1] = aStartIdx;
-			}
+			m_face[0] = incidentFace;
+			m_face[1] = -1;
+			m_vertex[0] = aStartIdx;
+			m_vertex[1] = anEndIdx;
 		}
 
 		//! Copy constructor, initializes with the values of edge.
@@ -733,42 +738,8 @@ namespace RiCPP {
 	{
 		v.dump(o, pre);
 	}
-	
-	class CSubdivisionIndices;
-	
-	class CSubdivisionStrategy {
-	public:
-		inline virtual ~CSubdivisionStrategy() {}
-		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const = 0;
-	};
-	
-	class CCatmullClarkSubdivision : public CSubdivisionStrategy {
-		inline long childCenterEdge(const CSubdivEdge &anEdge, int faceIdx) const
-		{
-			if ( anEdge.face(0) == faceIdx )
-				return anEdge.startChildIndex()+2;
-			if ( anEdge.face(1) == faceIdx &&  anEdge.face(0) < 0 )
-				return anEdge.startChildIndex()+2;
-			if ( anEdge.face(1) == faceIdx &&  anEdge.face(0) >= 0 )
-				return anEdge.startChildIndex()+3;
-			return -1;
-		}
-		inline long childMainEdge(const CSubdivEdge &anEdge, int vertexIdx) const
-		{
-			if ( anEdge.vertex(0) == vertexIdx )
-				return anEdge.startChildIndex();
-			if ( anEdge.vertex(1) == vertexIdx )
-				return anEdge.startChildIndex()+1;
-			return -1;
-		}
-	public:
-		virtual void subdivide (CSubdivisionIndices &parent, CSubdivisionIndices &child) const;
-	};
-
-	class CSubdivisionStrategies : public TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *> {
-	public:
-		inline CSubdivisionStrategies() : TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *>(true) {};
-	};
+		
+	class CSubdivisionStrategy;
 	
 	class CSubdivisionIndices {
 	private:
@@ -789,6 +760,7 @@ namespace RiCPP {
 		 */
 		inline CSubdivisionIndices() : m_illTopology(false), m_interpolateBoundary(0) {}
 		
+
 		/** @brief Initialization of the connectivity of the subdivision mesh.
 		 *
 		 *  The mesh must be valid for Catmull-Clark subdivision: An edge has
@@ -821,34 +793,43 @@ namespace RiCPP {
 					   const CRiHierarchicalSubdivisionMesh &anObj);
 	};
 	
-	class CSubdivisionHierarchieTesselator  : public CTesselator {
-	private:
-		std::list<CSubdivisionIndices> m_indices;
-		CRiHierarchicalSubdivisionMesh m_obj;
-		const CSubdivisionStrategies &m_strategies;		
-
-		void subdivide(IndexType minDepth);
-	protected:
-		inline virtual const CVarParamRManInterfaceCall &obj() const
-		{
-			return m_obj;
-		}
-		
+	class CSubdivisionStrategy {
 	public:
-		inline CSubdivisionHierarchieTesselator(CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
-			: m_obj(anObj), m_strategies(theStrategies)
+		inline virtual ~CSubdivisionStrategy() {}
+		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const = 0;
+		virtual void insertVaryingValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual void insertVertexValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+	};
+	
+	class CCatmullClarkSubdivision : public CSubdivisionStrategy {
+		inline long childCenterEdge(const CSubdivEdge &anEdge, int faceIdx) const
 		{
+			if ( anEdge.face(0) == faceIdx )
+				return anEdge.startChildIndex()+2;
+			if ( anEdge.face(1) == faceIdx &&  anEdge.face(0) < 0 )
+				return anEdge.startChildIndex()+2;
+			if ( anEdge.face(1) == faceIdx &&  anEdge.face(0) >= 0 )
+				return anEdge.startChildIndex()+3;
+			return -1;
 		}
-		inline CSubdivisionHierarchieTesselator(CRiSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
-			: m_obj(anObj), m_strategies(theStrategies)
+		inline long childMainEdge(const CSubdivEdge &anEdge, int vertexIdx) const
 		{
+			if ( anEdge.vertex(0) == vertexIdx )
+				return anEdge.startChildIndex();
+			if ( anEdge.vertex(1) == vertexIdx )
+				return anEdge.startChildIndex()+1;
+			return -1;
 		}
-
-		inline virtual const CSubdivisionStrategies &strategies() { return m_strategies; }
-		inline virtual const std::list<CSubdivisionIndices> &indices() const { return m_indices; }
-
-		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
-};
+	public:
+		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const;
+		virtual void insertVaryingValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual void insertVertexValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+	};
+	
+	class CSubdivisionStrategies : public TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *> {
+	public:
+		inline CSubdivisionStrategies() : TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *>(true) {};
+	};
 } // namespace RiCPP
 
 #endif // _RICPP_RICONTEXT_SUBDIVISION_H

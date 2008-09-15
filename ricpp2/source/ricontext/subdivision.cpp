@@ -33,6 +33,10 @@
 
 #include "ricpp/ricontext/subdivision.h"
 
+#ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
+#include "ricpp/ricontext/rimacroprims.h"
+#endif _RICPP_RICONTEXT_RIMACROPRIMS_H
+
 #ifdef _DEBUG
 #include <iostream>
 #define _TRACE
@@ -388,6 +392,90 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 	}
 }
 
+void CCatmullClarkSubdivision::insertVaryingValues(std::list<CSubdivisionIndices>::const_iterator theIndices,
+												   const std::list<CSubdivisionIndices>::const_iterator &curIndices,
+												   const CDeclaration &decl,
+												   std::vector<RtFloat> &floats) const
+{
+	std::list<CSubdivisionIndices>::const_iterator &prev = theIndices;
+	while ( theIndices != curIndices ) {
+		theIndices++;
+		
+		prev = theIndices;
+	}
+}
+
+void CCatmullClarkSubdivision::insertVertexValues(std::list<CSubdivisionIndices>::const_iterator theIndices,
+												  const std::list<CSubdivisionIndices>::const_iterator &curIndices,
+												  const CDeclaration &decl,
+												  std::vector<RtFloat> &floats) const
+{
+	std::list<CSubdivisionIndices>::const_iterator prev = theIndices;
+	while ( theIndices != curIndices ) {
+		theIndices++;
+		
+		// inherited vertices (1 per parent vertex), new edge vertices (1 per parents edge), new center vertices (1 per parents faces)
+		long idx;
+		long i;
+
+		// New face vertices
+		long offs = (*prev).vertices().size() + (*prev).edges().size();
+
+		long faceIdx = 0;
+		for ( std::vector<CSubdivFace>::const_iterator faceIter = (*prev).faces().begin();
+			 faceIter != (*prev).faces().end();
+			 faceIter++, faceIdx++ )
+		{
+			long faceOffs = (offs + faceIdx) * decl.elemSize();
+			for ( i = 0; i < (long)decl.elemSize(); ++i )
+				floats[faceOffs+i] = 0;
+			
+			for( long vertIdx = (*faceIter).startVertexIndex();
+				vertIdx != (*faceIter).endVertexIndex();
+				++vertIdx )
+			{
+				idx = (*prev).vertexIndices()[vertIdx] * decl.elemSize();
+				for ( i = 0; i < idx; ++i ) {
+					floats[faceOffs+i] += floats[idx+i];
+				}
+			}
+
+			for ( i = 0; i < (long)decl.elemSize(); ++i )
+				floats[faceOffs+i] /= (*faceIter).nVertices();
+		}
+		
+		// New edge vertices
+		offs = (*prev).vertices().size();
+		
+		long edgeIdx=0;
+		for ( std::vector<CSubdivEdge>::const_iterator edgeIter = (*prev).edges().begin();
+			 edgeIter != (*prev).edges().end();
+			 edgeIter++, edgeIdx++ )
+		{
+			long edgeOffs = (offs + edgeIdx) * decl.elemSize();
+			for ( i = 0; i < (long)decl.elemSize(); ++i ) {
+				floats[edgeOffs+i] = ( floats[(*prev).vertexIndices()[(*edgeIter).vertex(0)*decl.elemSize()+i]] + floats[(*prev).vertexIndices()[(*edgeIter).vertex(1)*decl.elemSize()+i]] ) / (RtFloat)2.0;
+			}
+		}
+		
+		// New inherited vertices
+		offs = 0;
+		
+		long vertexIdx=0;
+		for ( std::vector<CSubdivVertex>::const_iterator vertexIter = (*prev).vertices().begin();
+			 vertexIter != (*prev).vertices().end();
+			 vertexIter++, vertexIdx++ )
+		{
+			long vertexOffs = vertexIdx * decl.elemSize();
+			for ( i = 0; i < (long)decl.elemSize(); ++i ) {
+				floats[vertexOffs+i] = floats[vertexOffs+i];
+			}
+		}
+		
+		prev = theIndices;
+	}
+}
+
 // ----------------------------------------------------------------------------
 
 struct SEdge {
@@ -624,7 +712,11 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 					// Illegal topology
 					m_illTopology = true;
 				}
-				if ( !m_faces[faceIdx].insertEdgeIndex(m_edges[existingEdgeIdx], existingEdgeIdx, m_vertexIndices, m_edgeIndices) ) {
+				if ( !m_faces[faceIdx].insertEdgeIndex(m_edges[existingEdgeIdx],
+													   existingEdgeIdx,
+													   m_vertexIndices,
+													   m_edgeIndices) )
+				{
 					// Illegal topology
 					m_illTopology = true;
 				}
@@ -635,7 +727,11 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 				                   faceIdx);
 				m_vertices[m_vertexIndices[vertIdx]].incIncidentEdges();
 				m_vertices[m_vertexIndices[m_faces[faceIdx].nextVertexIndex(vertIdx)]].incIncidentEdges();
-				if ( !m_faces[faceIdx].insertEdgeIndex(m_edges[edgeIdx], edgeIdx, m_vertexIndices, m_edgeIndices) ) {
+				if ( !m_faces[faceIdx].insertEdgeIndex(m_edges[edgeIdx],
+													   edgeIdx,
+													   m_vertexIndices,
+													   m_edgeIndices) )
+				{
 					// Illegal topology
 					m_illTopology = true;
 				}
@@ -662,54 +758,4 @@ void CSubdivisionIndices::subdivide(CSubdivisionIndices &aParent, const CSubdivi
 {
 	aStrategy.subdivide(aParent, *this);
 	updateVertexData();
-}
-
-// ----------------------------------------------------------------------------
-
-void CSubdivisionHierarchieTesselator::subdivide(IndexType minDepth)
-{
-	IndexType depth = tmax(tessU(), tessV());
-	if ( depth > 0 )
-		depth = static_cast<long>(log2(static_cast<double>(depth)));
-	depth = tmax(depth, minDepth);
-
-	if ( m_indices.size() == 0 ) {
-		m_indices.push_back(CSubdivisionIndices());
-		CSubdivisionIndices &root = m_indices.back();
-		root.initialize(m_obj);
-	}
-	assert(m_indices.size() > 0);
-	
-	if ( m_obj.scheme() != RI_NULL ) {
-		const CSubdivisionStrategy *strategy = strategies().findObj(m_obj.scheme());
-		if ( strategy && depth >= m_indices.size() ) {
-			CSubdivisionIndices *cur = &m_indices.back();
-			IndexType depthCnt = 1 + depth - static_cast<long>(m_indices.size());
-			while ( depthCnt && !cur->illTopology() ) {
-				m_indices.push_back(CSubdivisionIndices());
-				CSubdivisionIndices &child = m_indices.back();
-				child.subdivide(*cur, *strategy, m_obj);
-				cur = &child;
-				depthCnt--;
-			}
-			if ( !cur->illTopology() ) {
-				// Calculate parameters
-				// ...
-			}
-		} else {
-			// unknown strategy
-		}
-	}
-
-	if( m_indices.size() > depth ) {
-		// Extract faces
-		// Calculate normals
-	}
-}
-
-CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
-{
-	// Not tested
-	// subdivide(0);
-	return 0;
 }

@@ -132,7 +132,12 @@ RtVoid CTriangleRenderer::endHandling(CVarParamRManInterfaceCall &obj, CTesselat
 	if ( !triObj )
 		return;
 	
-	triangulate(*triObj);
+	try {
+		triangulate(*triObj);
+	} catch (...) {
+		delete triObj;
+		throw;
+	}
 
 	if ( m_cacheGrids ) {
 		obj.attach(triObj);

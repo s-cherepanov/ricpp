@@ -266,10 +266,10 @@ public:
 					  const CBicubicVectors &basisVectors);
 
 	bool nuBlend(const CParameter &source,
-							const std::vector<IndexType> &vertexIdx,
-							RtInt useg, RtInt vseg,
-							const CUVBSplineBasis &basis);
-
+				 const std::vector<IndexType> &vertexIdx,
+				 RtInt useg, RtInt vseg,
+				 const CUVBSplineBasis &basis);
+	
 	inline void clearIndices()
 	{
 		m_faceType = FACETYPE_UNKNOWN;

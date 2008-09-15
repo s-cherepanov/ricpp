@@ -42,6 +42,10 @@
 #include "ricpp/ricontext/blend.h"
 #endif // _RICPP_RICONTEXT_BLEND_H
 
+#ifndef _RICPP_RICONTEXT_SUBDIVISION_H
+#include "ricpp/ricontext/subdivision.h"
+#endif // _RICPP_RICONTEXT_SUBDIVISION_H
+
 namespace RiCPP {
 
 	class CUnitCircle {
@@ -453,6 +457,39 @@ namespace RiCPP {
 		inline CNuPatchTesselator(CRiNuPatch &obj) : m_obj(&obj), m_useg(0), m_vseg(0), m_basis(0) { }
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
 	}; // CNuPatchTesselator
+
+	// -------------------------------------------------------------------------
+	
+	class CSubdivisionHierarchieTesselator  : public CTesselator {
+	private:
+		std::list<CSubdivisionIndices> m_indices;    //!< Contains topology
+		CRiHierarchicalSubdivisionMesh m_obj;        //!< CRiHierarchicalSubdivisionMesh handles normal subdivisions as well
+		const CSubdivisionStrategies &m_strategies;	 //!< Strategies for subdivision ("catmull-clark")
+		
+		void subdivide(IndexType depth);
+		void insertParams(const CSubdivisionStrategy *strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
+		void calcNormals(const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
+		void extractFaces(const CFace &aFace, CSurface &aSurf);
+		
+	protected:
+		inline virtual const CVarParamRManInterfaceCall &obj() const
+		{
+			return m_obj;
+		}
+		
+	public:
+		inline CSubdivisionHierarchieTesselator(CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
+		: m_obj(anObj), m_strategies(theStrategies)
+		{
+		}
+		inline CSubdivisionHierarchieTesselator(CRiSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
+		: m_obj(anObj), m_strategies(theStrategies)
+		{
+		}
+		
+		
+		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
+	};
 }
 
 #endif // _RICPP_RICONTEXT_TRIANGULATION_H

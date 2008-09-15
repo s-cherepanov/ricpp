@@ -38,9 +38,9 @@
 #include "ricpp/ricontext/polygon.h"
 #endif // _RICPP_RICONTEXT_POLYGON_H
 
-#ifndef _RICPP_RICONTEXT_SUBDIVISION_H
-#include "ricpp/ricontext/subdivision.h"
-#endif // _RICPP_RICONTEXT_SUBDIVISION_H
+#ifndef _RICPP_RICONTEXT_TRIANGULATION_H
+#include "ricpp/ricontext/triangulation.h"
+#endif // _RICPP_RICONTEXT_TRIANGULATION_H
 
 namespace RiCPP {
 	

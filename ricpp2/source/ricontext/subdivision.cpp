@@ -409,7 +409,7 @@ void CCatmullClarkSubdivision::insertVaryingValues(const std::list<CSubdivisionI
 		long i;
 		
 		// New face vertices
-		long offs = (*prev).vertices().size() + (*prev).edges().size();
+		long offs = static_cast<long>((*prev).vertices().size() + (*prev).edges().size());
 		
 		long faceIdx = 0;
 		for ( std::vector<CSubdivFace>::const_iterator faceIter = (*prev).faces().begin();
@@ -435,7 +435,7 @@ void CCatmullClarkSubdivision::insertVaryingValues(const std::list<CSubdivisionI
 		}
 		
 		// New edge vertices
-		offs = (*prev).vertices().size();
+		offs = static_cast<long>((*prev).vertices().size());
 		
 		long edgeIdx=0;
 		for ( std::vector<CSubdivEdge>::const_iterator edgeIter = (*prev).edges().begin();
@@ -485,7 +485,7 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 		long i;
 		
 		// New face points
-		long faceOffs = (*prev).vertices().size() + (*prev).edges().size();
+		long faceOffs = static_cast<long>((*prev).vertices().size() + (*prev).edges().size());
 		long faceIdx = 0;
 		for ( std::vector<CSubdivFace>::const_iterator faceIter = (*prev).faces().begin();
 			 faceIter != (*prev).faces().end();
@@ -508,7 +508,7 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 		}
 		
 		// New edge points
-		long edgeOffs = (*prev).vertices().size();
+		long edgeOffs = static_cast<long>((*prev).vertices().size());
 		long edgeIdx = 0;
 		for ( std::vector<CSubdivEdge>::const_iterator edgeIter = (*prev).edges().begin();
 			 edgeIter != (*prev).edges().end();

@@ -834,8 +834,8 @@ namespace RiCPP {
 		}
 	public:
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const;
-		virtual void insertVaryingValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
-		virtual void insertVertexValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 	};
 	
 	class CSubdivisionStrategies : public TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *> {

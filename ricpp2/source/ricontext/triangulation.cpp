@@ -2147,7 +2147,7 @@ void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy *
 {
 	assert(m_indices.size() >= 1);
 	
-	IndexType nVertices = (*curIndices).vertices().size();
+	IndexType nVertices = static_cast<IndexType>((*curIndices).vertices().size());
 	
 	CParameterList::const_iterator iter = obj().parameters().begin();
 	for ( ; iter != obj().parameters().end(); iter++ ) {
@@ -2215,7 +2215,7 @@ CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDec
 	IndexType maxTess = tmax(tessU(), tessV());
 	
 	IndexType depth = tmax<IndexType>(maxTess, 1);
-	depth = static_cast<IndexType>(round(log2(static_cast<double>(depth))));
+	depth = static_cast<IndexType>(ceil(log2(static_cast<double>(depth))));
 	
 	const CSubdivisionStrategy *strategy = m_strategies.findObj(m_obj.scheme());
 	if ( !strategy ) {

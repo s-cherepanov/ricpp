@@ -2199,15 +2199,19 @@ void CSubdivisionHierarchieTesselator::extractFaces(const CFace &aFace, CSurface
 				
 			default:
 				break;
-		}
-		
+		}		
 	}
 }
 
 CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
+	
+	// Not tested
+	
 	return 0;
-	/*
+	
+	
+	
 	IndexType maxTess = tmax(tessU(), tessV());
 	
 	IndexType depth = tmax<IndexType>(maxTess, 1);
@@ -2229,14 +2233,14 @@ CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDec
 	subdivide(depth);
 	
 	std::list<CSubdivisionIndices>::const_iterator curIndices = m_indices.begin();
-	for ( IndexType i = 0; i < depth; ++i ) {
+	for ( IndexType i = 0; i < depth && curIndices != m_indices.end(); ++i ) {
 		curIndices++;
 	}
 	if ( curIndices == m_indices.end() || (*curIndices).illTopology() ) {
 		return 0;
 	}
 	
-	CFace *aFace = new CFace;
+	CFace *aFace = new CFace(maxTess, maxTess, FACETYPE_TRIANGLES);
 	try {
 		if ( aFace ) {
 			insertParams(strategy, curIndices, *aFace);
@@ -2252,5 +2256,4 @@ CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDec
 	if ( aFace )
 		delete aFace;
 	return surf;
-	 */
 }

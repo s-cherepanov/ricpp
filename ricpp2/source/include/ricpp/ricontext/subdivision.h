@@ -259,12 +259,14 @@ namespace RiCPP {
 	 *  The index numbers are those of the appropriate containers used in the mesh.
 	 */
 	class CSubdivEdge {
+	public:
 		//! The type of an edge (rounded or crease).
 		enum EnumSubdivEdgeType {
 			EDGE_ROUNDED, //!< Edge is rounded.
 			EDGE_CREASE   //!< Edge is a crease.
 		};
 		
+	private:
 		RtFloat	m_value;           //!< Tag value copied from appropriate TRi::subdivisionMesh parameter, gives the sharpness of a crease. The value blends from 0: smooth to 1: sharp.
 		EnumSubdivEdgeType m_type; //!< Edge type: EDGE_ROUNDED or EDGE_CREASE.
 		
@@ -570,14 +572,16 @@ namespace RiCPP {
 	 *  in this container is used as identification.
 	 */
 	class CSubdivVertex {
+	public:
 		//! The type of a vertex (rounded or corner).
-		enum CSubdivVertexType {
+		enum EnumSubdivVertexType {
 			VERTEX_ROUNDED, //!< Rounded vertex.
 			VERTEX_CORNER   //!< Vertex is a corner.
 		};
 		
+	private:
 		RtFloat	m_value;          //!< Tag value copied from appropriate TRi::subdivisionMesh parameter, belends between round vertex (m_value==0) and corner (m_value==1).
-		CSubdivVertexType m_type; //!< Vertex type: VERTEX_ROUNDED or VERTEX_CORNER.
+		EnumSubdivVertexType m_type; //!< Vertex type: VERTEX_ROUNDED or VERTEX_CORNER.
 		
 		long m_startFace; //!< Index for CSubdivisionIndices::m_incidentFaces
 		long m_startEdge; //!< Index for CSubdivisionIndices::m_incidentEdges
@@ -629,7 +633,7 @@ namespace RiCPP {
 		//! Sets the vertex type.
 		/*! \param aType New vertex type.
 		 */
-		inline void type(CSubdivVertexType aType)
+		inline void type(EnumSubdivVertexType aType)
 		{
 			m_type = aType;
 		}
@@ -637,7 +641,7 @@ namespace RiCPP {
 		//! Gets the vertex type.
 		/*! \return The vertex type, a normal vertex or a corner.
 		 */
-		inline CSubdivVertexType type() const
+		inline EnumSubdivVertexType type() const
 		{
 			return m_type;
 		}
@@ -750,9 +754,12 @@ namespace RiCPP {
 		std::vector<CSubdivVertex> m_vertices;       //!< All vertices of a a subdivision mesh.
 		std::vector<long>          m_incidentEdges;  //!< Indices (to m_edges) for edges incident to vertices.
 		std::vector<long>          m_incidentFaces;  //!< Indices (to m_faces) for faces incident to vertices.
-		RtInt m_interpolateBoundary;                 //!< Value of the boundary tag.
+		RtInt m_interpolateBoundary;                 //!< Value of the boundary tag, 0: no interpolation, 1: creased edge chains and sharp corners, 2: creased edge chains, but corners not effected
 		bool m_illTopology;                          //!< Error while subdividing.
 		
+		std::vector<long>          m_creasedEdges;   //!< Indices (to m_edges) for creased edge chains, sizes in m_creaseSizes.
+		std::vector<long>          m_creaseSizes;    //!< Sizes of creased edge chains m_creasedEdges
+
 		void insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj); //!< Sets m_interpolateBoundary using tags of @a obj.
 		void updateVertexData(); //!< Update the incident data m_incidentEdges, m_incidentFaces after a subdivision step
 	public:
@@ -786,6 +793,11 @@ namespace RiCPP {
 		inline std::vector<long> &vertexIndices() {return m_vertexIndices;}
 		inline const std::vector<long> &vertexIndices() const {return m_vertexIndices;}
 		
+		inline const std::vector<long> &incidentEdges() const { return m_incidentEdges; }
+		inline const std::vector<long> &incidentFaces() const { return m_incidentFaces; }
+				
+		long vertexBoundary(const CSubdivVertex &aVertex, long &crease0, long &crease1) const;
+
 		inline bool illTopology() const { return m_illTopology; }
 		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
 
@@ -797,8 +809,8 @@ namespace RiCPP {
 	public:
 		inline virtual ~CSubdivisionStrategy() {}
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const = 0;
-		virtual void insertVaryingValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
-		virtual void insertVertexValues(std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 	};
 	
 	class CCatmullClarkSubdivision : public CSubdivisionStrategy {

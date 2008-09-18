@@ -1,3 +1,6 @@
+#ifndef _RICPP_3DKIT_GNU3D_H
+#define _RICPP_3DKIT_GNU3D_H
+
 /*
  *  RiCPP 3dkit based havily on 3dkit and gnu3dkit. It is very experimental. The author tries to get
  *  the (Gnu)3dkit object structure working together with RiCPP. It will be first compiled for Apple's Cocoa and if that works
@@ -13,8 +16,6 @@
  *         Copyright 1988, 1989, 2000, 2005 Pixar
  *                 All rights Reservered
  */
-#ifndef _RICPP_3DKIT_GNU3D_H
-#define _RICPP_3DKIT_GNU3D_H
 
 #ifndef _RICPP_RI_RI_H
 #include <ricpp/ri/ri.h>

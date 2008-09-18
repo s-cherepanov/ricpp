@@ -1,5 +1,5 @@
-#ifndef _RICPP_3DKIT_G3DKIT_H
-#define _RICPP_3DKIT_G3DKIT_H
+#ifndef _RICPP_RI_SLO_H
+#define _RICPP_RI_SLO_H
 
 /*
  *  RiCPP 3dkit based havily on 3dkit and gnu3dkit. It is very experimental. The author tries to get
@@ -17,15 +17,36 @@
  *                 All rights Reservered
  */
 
-#import <ricpp/3Dkit/G3DCamera.h>
-#import <ricpp/3Dkit/G3DContextManager.h>
-#import <ricpp/3Dkit/G3DLight.h>
-#import <ricpp/3Dkit/G3DMovieCamera.h>
-#import <ricpp/3Dkit/G3DRenderPanel.h>
-#import <ricpp/3Dkit/G3DRotator.h>
-#import <ricpp/3Dkit/G3DShader.h>
-#import <ricpp/3Dkit/G3DShape.h>
-#import <ricpp/3Dkit/G3DRIBImageRep.h>
-#import <ricpp/3Dkit/gnu3d.h>
+typedef enum {
+	SLO_TYPE_UNKNOWN,
+	SLO_TYPE_POINT,
+	SLO_TYPE_COLOR,
+	SLO_TYPE_SCALAR,
+	SLO_TYPE_STRING,
+/* The following types are primarily used for shaders */
+	SLO_TYPE_SURFACE,
+	SLO_TYPE_LIGHT,
+	SLO_TYPE_DISPLACEMENT,
+	SLO_TYPE_INTERIOR,
+	SLO_TYPE_EXTERIOR,
+	SLO_TYPE_ATMOSPHERE,
+	SLO_TYPE_DEFORMATION,
+	SLO_TYPE_IMAGER
+} SLO_TYPE;
+
+typedef enum {
+	SLO_STOR_UNKNOWN,
+	SLO_STORE_CONSTANT,
+	SLO_STOR_VARIABLE,
+	SLO_STOR_TEMPORARY,
+	SLO_STOR_PARAMETER,
+	SLO_STOR_GSTATE
+} SLO_STORAGE;
+
+typedef enum {
+	SLO_DETAIL_UNKNOWN,
+	SLO_DETAIL_VARYING,
+	SLO_DETAIL_UNIFORM
+} SLO_DETAIL;
 
 #endif

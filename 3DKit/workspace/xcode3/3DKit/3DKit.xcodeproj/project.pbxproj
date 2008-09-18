@@ -21,6 +21,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		208DB0E40E82E29E00019042 /* G3DContextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB0E20E82E29E00019042 /* G3DContextManager.h */; };
+		208DB0E50E82E29E00019042 /* G3Dkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB0E30E82E29E00019042 /* G3Dkit.h */; };
+		208DB13A0E82EE0800019042 /* G3DShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB1390E82EE0800019042 /* G3DShader.h */; };
+		208DB1440E82F1F900019042 /* G3DLight.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB1400E82F1F900019042 /* G3DLight.h */; };
+		208DB1450E82F1F900019042 /* G3DMovieCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB1410E82F1F900019042 /* G3DMovieCamera.h */; };
+		208DB1460E82F1F900019042 /* G3DRenderPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB1420E82F1F900019042 /* G3DRenderPanel.h */; };
+		208DB1470E82F1F900019042 /* G3DRIBImageRep.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB1430E82F1F900019042 /* G3DRIBImageRep.h */; };
+		208DB14B0E82F28900019042 /* slo.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB14A0E82F28900019042 /* slo.h */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -31,7 +39,6 @@
 		C3938C310E7192EB009582F7 /* gnu3d.h in Headers */ = {isa = PBXBuildFile; fileRef = C3938BCB0E718CE7009582F7 /* gnu3d.h */; };
 		C3938C320E7192EB009582F7 /* G3DShape.h in Headers */ = {isa = PBXBuildFile; fileRef = C3938BCC0E718CE7009582F7 /* G3DShape.h */; };
 		C3938C330E7192EB009582F7 /* G3DRotator.h in Headers */ = {isa = PBXBuildFile; fileRef = C3938BCD0E718CE7009582F7 /* G3DRotator.h */; };
-		C3938C340E7192EB009582F7 /* G3DKit.h in Headers */ = {isa = PBXBuildFile; fileRef = C3938BCE0E718CE7009582F7 /* G3DKit.h */; };
 		C3938C350E7192EB009582F7 /* G3DCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = C3938BCF0E718CE7009582F7 /* G3DCamera.h */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +56,14 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		208DB0E20E82E29E00019042 /* G3DContextManager.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DContextManager.h; path = ../../../source/include/ricpp/3DKit/G3DContextManager.h; sourceTree = SOURCE_ROOT; };
+		208DB0E30E82E29E00019042 /* G3Dkit.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3Dkit.h; path = ../../../source/include/ricpp/3DKit/G3Dkit.h; sourceTree = SOURCE_ROOT; };
+		208DB1390E82EE0800019042 /* G3DShader.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DShader.h; path = ../../../source/include/ricpp/3DKit/G3DShader.h; sourceTree = SOURCE_ROOT; };
+		208DB1400E82F1F900019042 /* G3DLight.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DLight.h; path = ../../../source/include/ricpp/3DKit/G3DLight.h; sourceTree = SOURCE_ROOT; };
+		208DB1410E82F1F900019042 /* G3DMovieCamera.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DMovieCamera.h; path = ../../../source/include/ricpp/3DKit/G3DMovieCamera.h; sourceTree = SOURCE_ROOT; };
+		208DB1420E82F1F900019042 /* G3DRenderPanel.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DRenderPanel.h; path = ../../../source/include/ricpp/3DKit/G3DRenderPanel.h; sourceTree = SOURCE_ROOT; };
+		208DB1430E82F1F900019042 /* G3DRIBImageRep.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DRIBImageRep.h; path = ../../../source/include/ricpp/3DKit/G3DRIBImageRep.h; sourceTree = SOURCE_ROOT; };
+		208DB14A0E82F28900019042 /* slo.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = slo.h; path = ../../../source/include/ricpp/ri/slo.h; sourceTree = SOURCE_ROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -59,7 +74,6 @@
 		C3938BCB0E718CE7009582F7 /* gnu3d.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = gnu3d.h; path = ../../../source/include/ricpp/3DKit/gnu3d.h; sourceTree = SOURCE_ROOT; };
 		C3938BCC0E718CE7009582F7 /* G3DShape.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = G3DShape.h; path = ../../../source/include/ricpp/3DKit/G3DShape.h; sourceTree = SOURCE_ROOT; };
 		C3938BCD0E718CE7009582F7 /* G3DRotator.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = G3DRotator.h; path = ../../../source/include/ricpp/3DKit/G3DRotator.h; sourceTree = SOURCE_ROOT; };
-		C3938BCE0E718CE7009582F7 /* G3DKit.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = G3DKit.h; path = ../../../source/include/ricpp/3DKit/G3DKit.h; sourceTree = SOURCE_ROOT; };
 		C3938BCF0E718CE7009582F7 /* G3DCamera.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; lineEnding = 1; name = G3DCamera.h; path = ../../../source/include/ricpp/3DKit/G3DCamera.h; sourceTree = SOURCE_ROOT; };
 		C3938C0D0E719178009582F7 /* libriprog.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libriprog.1.dylib; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib; sourceTree = SOURCE_ROOT; };
 		C3938C2E0E7192D9009582F7 /* G3DKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = G3DKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,11 +104,18 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				208DB14A0E82F28900019042 /* slo.h */,
+				208DB0E30E82E29E00019042 /* G3Dkit.h */,
 				C3938BCB0E718CE7009582F7 /* gnu3d.h */,
-				C3938BCC0E718CE7009582F7 /* G3DShape.h */,
-				C3938BCD0E718CE7009582F7 /* G3DRotator.h */,
-				C3938BCE0E718CE7009582F7 /* G3DKit.h */,
 				C3938BCF0E718CE7009582F7 /* G3DCamera.h */,
+				208DB0E20E82E29E00019042 /* G3DContextManager.h */,
+				208DB1400E82F1F900019042 /* G3DLight.h */,
+				208DB1410E82F1F900019042 /* G3DMovieCamera.h */,
+				208DB1420E82F1F900019042 /* G3DRenderPanel.h */,
+				208DB1430E82F1F900019042 /* G3DRIBImageRep.h */,
+				C3938BCD0E718CE7009582F7 /* G3DRotator.h */,
+				208DB1390E82EE0800019042 /* G3DShader.h */,
+				C3938BCC0E718CE7009582F7 /* G3DShape.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -177,8 +198,15 @@
 				C3938C310E7192EB009582F7 /* gnu3d.h in Headers */,
 				C3938C320E7192EB009582F7 /* G3DShape.h in Headers */,
 				C3938C330E7192EB009582F7 /* G3DRotator.h in Headers */,
-				C3938C340E7192EB009582F7 /* G3DKit.h in Headers */,
 				C3938C350E7192EB009582F7 /* G3DCamera.h in Headers */,
+				208DB0E40E82E29E00019042 /* G3DContextManager.h in Headers */,
+				208DB0E50E82E29E00019042 /* G3Dkit.h in Headers */,
+				208DB13A0E82EE0800019042 /* G3DShader.h in Headers */,
+				208DB1440E82F1F900019042 /* G3DLight.h in Headers */,
+				208DB1450E82F1F900019042 /* G3DMovieCamera.h in Headers */,
+				208DB1460E82F1F900019042 /* G3DRenderPanel.h in Headers */,
+				208DB1470E82F1F900019042 /* G3DRIBImageRep.h in Headers */,
+				208DB14B0E82F28900019042 /* slo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

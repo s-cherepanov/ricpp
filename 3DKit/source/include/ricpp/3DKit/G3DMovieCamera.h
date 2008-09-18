@@ -1,6 +1,3 @@
-#ifndef _RICPP_3DKIT_G3DKIT_H
-#define _RICPP_3DKIT_G3DKIT_H
-
 /*
  *  RiCPP 3dkit based havily on 3dkit and gnu3dkit. It is very experimental. The author tries to get
  *  the (Gnu)3dkit object structure working together with RiCPP. It will be first compiled for Apple's Cocoa and if that works
@@ -18,14 +15,31 @@
  */
 
 #import <ricpp/3Dkit/G3DCamera.h>
-#import <ricpp/3Dkit/G3DContextManager.h>
-#import <ricpp/3Dkit/G3DLight.h>
-#import <ricpp/3Dkit/G3DMovieCamera.h>
-#import <ricpp/3Dkit/G3DRenderPanel.h>
-#import <ricpp/3Dkit/G3DRotator.h>
-#import <ricpp/3Dkit/G3DShader.h>
-#import <ricpp/3Dkit/G3DShape.h>
-#import <ricpp/3Dkit/G3DRIBImageRep.h>
-#import <ricpp/3Dkit/gnu3d.h>
 
-#endif
+@interface G3DMovieCamera : G3DCamera
+{
+	int frameNumber; /* Count given by FrameBegin */
+	int startFrame;  /* Start frame number of movie */
+	int endFrame;    /* End frame number of movie */
+	/* char **_spoolFiles; */
+	/* void *_G3Dmcprivate; */
+}
+
+- initFrame:(const NSRect *)fRect;
+- render;
+- displayMovie;
+- setFrameNumber:(int)aFrameNumber;
+- (int)frameNumber;
+- setStartFrame:(int)start endFrame:(int)end incrementFrameBy:(int)skip;
+- (int)startFrame;
+- (int)endFrame;
+- (int)frameIncrement;
+- (BOOL)knowsPagesFirst:(int *)first last:(int *)last;
+- (BOOL)getRect:(NSRect *)r forPage:(int)page;
+- (int)numCropWindows;
+- cropInRects:(NSRect *)rects nRects:(int)n;
+- awake;
+- read:(NSCoder *)stream;
+- write:(NSCoder *)stream;
+
+@end

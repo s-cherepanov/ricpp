@@ -13,8 +13,86 @@
  *         Copyright 1988, 1989, 2000, 2005 Pixar
  *                 All rights Reservered
  */
-#import <objc/Object.h>
+ 
+#import <ricpp/ri/ri.h>
 
-@interface G3DShape : Object
+typedef struct {
+	char id[6]; /* self, encoded to 6 non-0 bytes */
+	char name;  /* optional visible name */
+} G3DShapeName;
+
+/* flags for CTM and inverse dirty bits */
+#define N3D_BOTH_CLEAN        0
+#define N3D_CTM_DIRTY         1
+#define N3D_CTM_INVERSE_DIRTY 2
+#define N3D_CTM_BOTH_DIRTY    3
+
+@interface G3DShape : NSObject
 {
+
+	RtMatrix transform;
+	RtMatrix compositeTransform;
+	RtMatrix inverseCompositeTransform;
+	RtBound  boundingBox;
+	G3DShapeName *shapeName;
+	G3DSurfaceType surfaceType;
+	
+	/* Pointers to each kind of shader available */
+	id surfaceShader;
+	id displacementShader;
+	id lightShader;
+	id imagerShader;
+	id interiorShader;
+	id exteriorShader;
+	id atmosphereShader;
+	id deformationShader;
+	
+	struct {
+		unsigned int selectable:1;      /* Can you select this N3DShape */
+		unsigned int visible:1;         /* Self and descendants are invisible */
+		unsigned int ancestorChanged:1; /* need to update bounds etc. */
+		unsigned int compositeDirty:2;  /* flags for CTM & inverse */
+		unsigned int drawAsBox:1;       /* draw the box */
+		unsigned int isInstance:1;      /* Is this an instance of another? */
+		unsigned int hasShader:1;       /* Are there any shaders? */
+		unsigned int filler:26;
+	} shapeFlags;
+	
+	/* Shape hierarchy */
+	id nextPeer;
+	id previousPeer; /* back link */
+	id descendant;
+	id ancestor;     /* back link */
+	
+	id renderDelegate; /* Set if this object is an instance */
+	
+	// void *_CTMRel;
+	// char *_RNM;
+	// void *_G3Dprivate
 }
+
+- init;
+
+- linkPeer:aPeer;
+- nextPeer;
+- previousPeer;
+- firstPeer;
+- lastPeer;
+
+- linkDescendant:aDescendant;
+- descendant;
+- lastDescendant;
+
+- linkAncestor:anAncestor;
+- ancestor;
+- firstAncestor;
+
+- unlink;
+- group:toShape;
+- ungroup;
+
+- (BOOL)isWorld;
+
+- setSurfaceType:(G3DSurfaceType)surfaceType andDescendants:(BOOL)flag;
+- (G3DSurfaceType)surfaceType;
+@end

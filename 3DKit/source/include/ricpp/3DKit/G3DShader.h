@@ -1,6 +1,3 @@
-#ifndef _RICPP_3DKIT_G3DKIT_H
-#define _RICPP_3DKIT_G3DKIT_H
-
 /*
  *  RiCPP 3dkit based havily on 3dkit and gnu3dkit. It is very experimental. The author tries to get
  *  the (Gnu)3dkit object structure working together with RiCPP. It will be first compiled for Apple's Cocoa and if that works
@@ -16,16 +13,16 @@
  *         Copyright 1988, 1989, 2000, 2005 Pixar
  *                 All rights Reservered
  */
+ 
+#import <ricpp/ri/ri.h>
+#import <ricpp/ri/slo.h>
 
-#import <ricpp/3Dkit/G3DCamera.h>
-#import <ricpp/3Dkit/G3DContextManager.h>
-#import <ricpp/3Dkit/G3DLight.h>
-#import <ricpp/3Dkit/G3DMovieCamera.h>
-#import <ricpp/3Dkit/G3DRenderPanel.h>
-#import <ricpp/3Dkit/G3DRotator.h>
-#import <ricpp/3Dkit/G3DShader.h>
-#import <ricpp/3Dkit/G3DShape.h>
-#import <ricpp/3Dkit/G3DRIBImageRep.h>
-#import <ricpp/3Dkit/gnu3d.h>
 
-#endif
+typedef struct {
+} SLOArgs;
+
+@interface N3DShader : NSObject
+{
+}
+
+@end

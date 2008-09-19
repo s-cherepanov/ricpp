@@ -232,9 +232,9 @@ namespace RiCPP {
 			}
 			return -1;
 		}
-		bool insertEdgeIndex(const CSubdivEdge &anEdge, long anEdgeIndex, const std::vector<long> &vertexIndices, std::vector<long> &edgeIndices);
 		
 		void insertHoleVal(long idx, const CRiHierarchicalSubdivisionMesh &obj);
+		long triangulate(long *triangleIndices, long size, long offs) const;
 	}; // CSubdivFace
 	
 	
@@ -589,12 +589,16 @@ namespace RiCPP {
 		long m_incidentFaces; //!< Number of incident faces
 		long m_incidentEdges; //!< Number of incident edges
 		
+		long m_faceIndex;     //!< temporary index of the (first) vertex in a single face - vertex can have multiple values it vertex is a corner, because of the normals.
+
+		bool m_faceVertex;     //!< Is a vertex of a face boundary
+		
 		// Parameters have the same index as the vertex, face vertices, corners and vertices incident to sharp creases have additional parameters (of the same value)
 
 	public:
 		//! Standard constructor, clears all members.
 		inline CSubdivVertex() :
-		m_value(0.0), m_type(VERTEX_ROUNDED), m_startFace(0), m_startEdge(0), m_incidentFaces(0), m_incidentEdges(0)
+		m_value(0.0), m_type(VERTEX_ROUNDED), m_startFace(0), m_startEdge(0), m_incidentFaces(0), m_incidentEdges(0), m_faceIndex(-1), m_faceVertex(false)
 		{
 		}
 		
@@ -728,7 +732,27 @@ namespace RiCPP {
 		{
 			++m_incidentFaces;
 		}
+		
+		inline bool faceVertex() const
+		{
+			return m_faceVertex;
+		}
 
+		inline void faceVertex(bool isFaceVertex)
+		{
+			m_faceVertex = isFaceVertex;
+		}
+
+		inline void faceIndex(long aFaceIndex)
+		{
+			m_faceIndex = aFaceIndex;
+		}
+
+		inline long faceIndex() const
+		{
+			return m_faceIndex;
+		}
+		
 		void insertCornerVal(long idx, const CRiHierarchicalSubdivisionMesh &obj);
 	}; // CSubdivVertex
 	
@@ -761,7 +785,13 @@ namespace RiCPP {
 		std::vector<long>          m_creaseSizes;    //!< Sizes of creased edge chains m_creasedEdges
 
 		void insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj); //!< Sets m_interpolateBoundary using tags of @a obj.
+		bool insertEdgeIndex(const CSubdivFace &aFace, const CSubdivEdge &anEdge, long anEdgeIndex); //!< Inserts the edges of aFace into m_edgeIndices
 		void updateVertexData(); //!< Update the incident data m_incidentEdges, m_incidentFaces after a subdivision step
+		
+		long clearFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx);
+		void fillFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt);
+		void fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &origIndices, long &sharedStart, long &unsharedStart);
+		long countTriangleIndices(const std::list<CSubdivisionIndices>::const_iterator &aParent, const std::list<CSubdivisionIndices>::const_iterator &cur, long faceIdx) const;
 	public:
 		/** @brief Constructor
 		 */
@@ -797,20 +827,33 @@ namespace RiCPP {
 		inline const std::vector<long> &incidentFaces() const { return m_incidentFaces; }
 				
 		long vertexBoundary(const CSubdivVertex &aVertex, long &crease0, long &crease1) const;
-
+		inline bool isCorner(const CSubdivVertex &aVertex) const
+		{
+			long c0, c1;
+			long vb = vertexBoundary(aVertex, c0, c1);
+			return vb > 2 || vb == aVertex.incidentEdges();
+		}
+		inline bool faceEdge(const CSubdivEdge &anEdge) const
+		{
+			return m_vertices[anEdge.vertex(0)].faceVertex() &&  m_vertices[anEdge.vertex(1)].faceVertex();
+		}
+		
 		inline bool illTopology() const { return m_illTopology; }
 		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
 
 		void subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
 					   const CRiHierarchicalSubdivisionMesh &anObj);
+		
+		void prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, std::vector<IndexType> &origIndices);
 	};
 	
 	class CSubdivisionStrategy {
 	public:
 		inline virtual ~CSubdivisionStrategy() {}
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const = 0;
-		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
-		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const std::vector<IndexType> &origIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 	};
 	
 	class CCatmullClarkSubdivision : public CSubdivisionStrategy {
@@ -834,8 +877,9 @@ namespace RiCPP {
 		}
 	public:
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const;
-		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
-		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const std::vector<IndexType> &origIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 	};
 	
 	class CSubdivisionStrategies : public TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *> {

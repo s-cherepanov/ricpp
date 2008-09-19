@@ -307,7 +307,7 @@ void display(void)
 	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 #ifdef _DEBUG
-	RiCPPControl("glrenderer", "draw-normals", &noYes[1], RI_NULL);
+	RiAttribute("glrenderer", "draw-normals", &noYes[1], RI_NULL);
 #endif
 	    
 	RiFormat(width, height, 1.0F);

@@ -1882,6 +1882,11 @@ namespace RiCPP {
 			return m_nverts;
 		}
 
+		const RtInt nFaces() const
+		{
+			return static_cast<RtInt>(m_nverts.size());
+		}
+
 		/** @brief Gets the index for each vertex.
 		 *
 		 * @return The index for each vertex.
@@ -2167,6 +2172,11 @@ namespace RiCPP {
 		RtInt nVertices() const
 		{
 			return m_nvertices;
+		}
+
+		const RtInt nFaces() const
+		{
+			return static_cast<RtInt>(m_nverts.size());
 		}
 
 		/** @brief Gets the number of edges (eq. number of vertices) of the surface.

@@ -7,7 +7,7 @@ Projection "orthographic"
 Clipping 1 3
 
 GeometricRepresentation "lines"
-# GeometricApproximation "tesselation" 64
+GeometricApproximation "tesselation" 4
 
 Translate 0 0 2
 
@@ -16,7 +16,7 @@ WorldBegin
 
 	Color  0 0 1
 	Surface "matte"
-	Sides 1
+	Sides 2
 
 	SubdivisionMesh
 		"catmull-clark"

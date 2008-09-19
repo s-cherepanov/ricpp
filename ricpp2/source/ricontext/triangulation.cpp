@@ -2117,36 +2117,30 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 
 // ----------------------------------------------------------------------------
 
-void CSubdivisionHierarchieTesselator::subdivide(IndexType depth)
+void CSubdivisionHierarchieTesselator::subdivide(const CSubdivisionStrategy &strategy, IndexType depth)
 {
 	if ( m_indices.size() == 0 ) {
 		m_indices.push_back(CSubdivisionIndices());
 		CSubdivisionIndices &root = m_indices.back();
 		root.initialize(m_obj);
 	}
-	assert(m_indices.size() > 0);
 	
-	const CSubdivisionStrategy *strategy = m_strategies.findObj(m_obj.scheme());
-	if ( strategy ) {
-		if ( depth >= m_indices.size() ) {
-			// Not already subdivided, do further subdivision
-			CSubdivisionIndices *cur = &m_indices.back();
-			IndexType depthCnt = 1 + depth - static_cast<long>(m_indices.size());
-			while ( depthCnt && !cur->illTopology() ) {
-				m_indices.push_back(CSubdivisionIndices());
-				CSubdivisionIndices &child = m_indices.back();
-				child.subdivide(*cur, *strategy, m_obj);
-				cur = &child;
-				depthCnt--;
-			}
+	if ( depth >= m_indices.size() ) {
+		// Not already subdivided, do further subdivision
+		CSubdivisionIndices *cur = &m_indices.back();
+		IndexType depthCnt = 1 + depth - static_cast<long>(m_indices.size());
+		while ( depthCnt && !cur->illTopology() ) {
+			m_indices.push_back(CSubdivisionIndices());
+			CSubdivisionIndices &child = m_indices.back();
+			child.subdivide(*cur, strategy, m_obj);
+			cur = &child;
+			depthCnt--;
 		}
 	}
 }
 
-void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy *strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace)
+void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace)
 {
-	assert(m_indices.size() >= 1);
-	
 	IndexType nVertices = static_cast<IndexType>((*curIndices).vertices().size());
 	
 	CParameterList::const_iterator iter = obj().parameters().begin();
@@ -2158,9 +2152,7 @@ void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy *
 					floats.values().resize(nVertices * (*iter).declaration().elemSize());
 					assert(floats.values().size() >= (*iter).floats().size());
 					std::copy((*iter).floats().begin(), (*iter).floats().end(), floats.values().begin());
-					if ( strategy ) {
-						strategy->insertVaryingValues(m_indices.begin(), curIndices, floats.declaration(), floats.values());
-					}
+					strategy.insertVaryingValues(m_indices.begin(), curIndices, floats.declaration(), floats.values());
 				}
 			} break;
 				
@@ -2170,9 +2162,7 @@ void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy *
 					floats.values().resize(nVertices * (*iter).declaration().elemSize());
 					assert(floats.values().size() >= (*iter).floats().size());
 					std::copy((*iter).floats().begin(), (*iter).floats().end(), floats.values().begin());
-					if ( strategy ) {
-						strategy->insertVertexValues(m_indices.begin(), curIndices, floats.declaration(), floats.values());
-					}
+					strategy.insertVertexValues(m_indices.begin(), curIndices, floats.declaration(), floats.values());
 				}
 			} break;
 				
@@ -2182,34 +2172,75 @@ void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy *
 	}
 }
 
-void CSubdivisionHierarchieTesselator::calcNormals(const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace)
-{
-}
 
-void CSubdivisionHierarchieTesselator::extractFaces(const CFace &aFace, CSurface &aSurf)
+void CSubdivisionHierarchieTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, std::vector<IndexType> &origIndices, CFace &f)
 {
-	CParameterList::const_iterator iter = obj().parameters().begin();
-	for ( ; iter != obj().parameters().end(); iter++ ) {
+	(*curIndices).prepareFace(m_indices.begin(), curIndices, faceIdx, f.indices(), origIndices);
+
+	for ( CParameterList::const_iterator iter = obj().parameters().begin();
+		  iter != obj().parameters().end();
+		 iter++ )
+	{
 		switch ( (*iter).declaration().storageClass() ) {
+
+			case CLASS_CONSTANT:
+				f.insertConst(*iter);
+				break;
+				
+			case CLASS_UNIFORM:
+				f.insertUniform(*iter, faceIdx);
+				break;
+				
 			case CLASS_VARYING: {
+				// in varyingData
 			} break;
 				
 			case CLASS_VERTEX: {
+				// in varyingData
+			} break;
+				
+			case CLASS_FACEVARYING: {
+				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
+					TemplPrimVar<RtFloat> &floats = f.reserveFloats((*iter).declaration());
+					strategy.insertFaceVaryingValues(m_indices.begin(), curIndices, origIndices, floats.declaration(), floats.values());
+				}
+			} break;
+				
+			case CLASS_FACEVERTEX: {
+				// Not implemented
+				/// @todo There is no class "face vertex". Just makes implementation more complex, remove it completely?
 			} break;
 				
 			default:
 				break;
 		}		
 	}
+	
+	// Copy varying (and vertex) data
+	for ( CFace::TypeConstFloatIterator fiter = varyingData.floatsBegin(); fiter != varyingData.floatsEnd();  fiter++ ) {
+		assert((*fiter).second.declaration().basicType() == BASICTYPE_FLOAT);
+		if ( (*fiter).second.declaration().basicType() == BASICTYPE_FLOAT ) {
+			TemplPrimVar<RtFloat> &floats = f.reserveFloats((*fiter).second.declaration());
+			IndexType elemSize = floats.declaration().elemSize();
+			floats.values().resize(origIndices.size()*elemSize);
+			for ( IndexType i = 0; i < origIndices.size(); ++i ) {
+				assert(origIndices[i] * elemSize + elemSize <= (*fiter).second.values().size());
+				for ( IndexType elem = 0; elem < elemSize; ++elem ) {
+					floats.values()[i * elemSize + elem] = (*fiter).second.values()[origIndices[i]*elemSize+elem];
+				}
+			}
+		}
+	}
+	
+	// InsertNormals
 }
 
 CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
+	/// @todo testing
+	return;
 	
-	// Not tested
-	
-	return 0;
-	
+
 	
 	
 	IndexType maxTess = tmax(tessU(), tessV());
@@ -2219,8 +2250,13 @@ CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDec
 	
 	const CSubdivisionStrategy *strategy = m_strategies.findObj(m_obj.scheme());
 	if ( !strategy ) {
-		depth = 0;
+		strategy = m_strategies.findObj(RI_NULL);
+		if ( !strategy )
+			return 0;
 	}
+	
+	tessU(maxTess);
+	tessV(maxTess);
 	
 	CSurface *surf = createSurface();
 	if ( !surf ) {
@@ -2230,9 +2266,9 @@ CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDec
 		return surf;
 	}
 	
-	subdivide(depth);
+	subdivide(*strategy, depth);
 	
-	std::list<CSubdivisionIndices>::const_iterator curIndices = m_indices.begin();
+	std::list<CSubdivisionIndices>::iterator curIndices = m_indices.begin();
 	for ( IndexType i = 0; i < depth && curIndices != m_indices.end(); ++i ) {
 		curIndices++;
 	}
@@ -2240,20 +2276,23 @@ CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDec
 		return 0;
 	}
 	
-	CFace *aFace = new CFace(maxTess, maxTess, FACETYPE_TRIANGLES);
+	CFace *varyingData = new CFace();
 	try {
-		if ( aFace ) {
-			insertParams(strategy, curIndices, *aFace);
-			calcNormals(curIndices, *aFace);
-			extractFaces(*aFace, *surf);
+		if ( varyingData ) {
+			insertParams(*strategy, curIndices, *varyingData);
+			std::vector<IndexType> origIndices;
+			for ( RtInt faceIdx = 0; faceIdx < m_obj.nFaces(); ++faceIdx ) {
+				extractFaces(*strategy, curIndices, faceIdx, *varyingData, origIndices, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));
+			}
 		}
 	} catch ( ... ) {
-		if ( aFace )
-			delete aFace;
+		if ( varyingData )
+			delete varyingData;
 		throw;
 	}	
 	
-	if ( aFace )
-		delete aFace;
+	if ( varyingData )
+		delete varyingData;
+
 	return surf;
 }

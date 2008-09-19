@@ -466,10 +466,9 @@ namespace RiCPP {
 		CRiHierarchicalSubdivisionMesh m_obj;        //!< CRiHierarchicalSubdivisionMesh handles normal subdivisions as well
 		const CSubdivisionStrategies &m_strategies;	 //!< Strategies for subdivision ("catmull-clark")
 		
-		void subdivide(IndexType depth);
-		void insertParams(const CSubdivisionStrategy *strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
-		void calcNormals(const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
-		void extractFaces(const CFace &aFace, CSurface &aSurf);
+		void subdivide(const CSubdivisionStrategy &strategy, IndexType depth);
+		void insertParams(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
+		void extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceNum, const CFace &varyingData, std::vector<IndexType> &origIndices, CFace &f);
 		
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const

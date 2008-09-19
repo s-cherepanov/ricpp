@@ -1140,7 +1140,7 @@ static void drawAnObject ()
 	RtInt origin[2] = {0, 0};
 	
 #ifdef _DEBUG
-	RiCPPControl("glrenderer", "draw-normals", &noYes[1], RI_NULL);
+	RiAttribute("glrenderer", "draw-normals", &noYes[1], RI_NULL);
 #endif
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 	RiFrameBegin(counter);

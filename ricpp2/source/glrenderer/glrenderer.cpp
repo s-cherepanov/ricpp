@@ -88,7 +88,7 @@ void CGLRenderer::defaultDeclarations()
 	RI_QUAL_SCREEN = renderState()->declare("Control:glrenderer:screen",  "constant string",  true);	
 
 	RI_DRAW_NORMALS = renderState()->tokFindCreate("draw-normals");
-	RI_QUAL_DRAW_NORMALS = renderState()->declare("Control:glrenderer:draw-normals",  "integer",  true);	
+	RI_QUAL_DRAW_NORMALS = renderState()->declare("Attribute:glrenderer:draw-normals",  "integer",  true);	
 }
 
 void CGLRenderer::clearScreen()
@@ -184,7 +184,7 @@ void CGLRenderer::hide(const CFace &f)
 	if ( p.empty() )
 		return;
 
-	// Draw normals
+	// Draw normals?
 	if ( m_drawNormals ) {
 		drawNormals(p, n);
 	}
@@ -307,6 +307,14 @@ void CGLRenderer::hideSurface(const CSurface *s)
 	} else if ( !strcmp(type, "constant lines") ) {
 		glShadeModel(GL_FLAT);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+
+	const CParameter *ctrlDrawNormals = attributes().get(RI_GLRENDERER, RI_DRAW_NORMALS);
+	if ( ctrlDrawNormals ) {
+		RtInt action;
+		if ( ctrlDrawNormals->get(0, action) ) {
+			m_drawNormals = action != 0;
+		}
 	}
 
 	TypeParent::hideSurface(s);
@@ -600,13 +608,6 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 					clearScreen();
 				else if ( action == std::string("finish") )
 					finishScreen();
-			}
-		}
-		const CParameter *ctrlDrawNormals = obj.parameters().get(RI_DRAW_NORMALS);
-		if ( ctrlDrawNormals ) {
-			RtInt action;
-			if ( ctrlDrawNormals->get(0, action) ) {
-				m_drawNormals = action != 0;
 			}
 		}
 	}

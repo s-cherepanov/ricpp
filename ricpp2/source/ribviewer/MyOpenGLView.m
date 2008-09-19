@@ -115,7 +115,7 @@ static RtInt noYes[2] = {0, 1};
 	RtInt width = (RtInt)bounds.size.width;
 	RtInt height = (RtInt)bounds.size.height;
 
-	RiCPPControl("glrenderer", "draw-normals", &noYes[flagDrawNormals ? 1 : 0], RI_NULL);
+	RiAttribute("glrenderer", "draw-normals", &noYes[flagDrawNormals ? 1 : 0], RI_NULL);
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 //	RiFrameBegin(1);
 	RtFloat clippingFront = 0.1F, clippingBack = 1024.F;

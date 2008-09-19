@@ -2238,7 +2238,7 @@ void CSubdivisionHierarchieTesselator::extractFaces(const CSubdivisionStrategy &
 CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
 	/// @todo testing
-	return;
+	return 0;
 	
 
 	

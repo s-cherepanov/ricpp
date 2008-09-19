@@ -483,8 +483,8 @@ void CSubdivisionIndices::fillFaceVertexIndices(const std::list<CSubdivisionIndi
 			return;
 
 		const long triangleIndicesSize = (aFace.nVertices()-2)*3;
-		long triangleIndices[triangleIndicesSize];
-		long cnt = aFace.triangulate(triangleIndices, triangleIndicesSize, 0);
+		std::vector<long> triangleIndices(triangleIndicesSize);
+		long cnt = aFace.triangulate(&triangleIndices[0], triangleIndicesSize, 0);
 
 		// Insert and map indices
 		for ( long i = aFace.startVertexIndex(); i != aFace.endVertexIndex(); i++ ) {

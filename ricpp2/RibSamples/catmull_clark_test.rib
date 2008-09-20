@@ -4,36 +4,52 @@ version 3.04
 Display "catmull_clark.tif" "framebuffer" "rgba"
 
 Projection "orthographic"
-Clipping 1 3
+#Projection "perspective"
+Clipping 0.1 20
 
 GeometricRepresentation "lines"
-GeometricApproximation "tesselation" 4
+GeometricApproximation "tesselation" 32
 
-Translate 0 0 2
+ObjectBegin "BilinearPatch"
+	Patch "bilinear"
+		"vertex point P" [
+			-0.9  0.9  0      #  0
+			 0.9  0.9  0      #  1
+			-0.9 -0.9  0      #  3
+			 0.9 -0.9  0      #  2
+		] 
+ObjectEnd
 
-WorldBegin
-	LightSource "ambientlight" 1
-
-	Color  0 0 1
-	Surface "matte"
-	Sides 2
-
+ObjectBegin "SubdivMesh"
 	SubdivisionMesh
 		"catmull-clark"
 		[ 4 ]
 		[ 0 1 2 3 ]
-		[ "interpolateboundary" ] [ 1 0 ] [ 2 ] [ ]
-		"P" [
+		[ "interpolateboundary" ] [ 1 0 ] [ 0 ] [ ]
+		"vertex point P" [
 			-0.9  0.9  0      #  0
 			 0.9  0.9  0      #  1
 			 0.9 -0.9  0      #  2
 			-0.9 -0.9  0      #  3
 		] 
-
 		"Cs" [
 			 1.0  0.0  0      #  0
 			 0.0  1.0  0      #  1
 			 0.0  1.0  1.0    #  2
 			 1.0  0.0  0      #  3
 		] 
+ObjectEnd
+
+WorldBegin
+	LightSource "ambientlight" 1
+
+	Translate 0 0 2
+	
+	Color  1 0 1
+	Surface "matte"
+	Sides 2
+	
+	# ObjectInstance "BilinearPatch"
+	ObjectInstance "SubdivMesh"
+	
 WorldEnd

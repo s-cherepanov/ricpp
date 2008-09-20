@@ -87,7 +87,6 @@ namespace RiCPP {
 		long m_endChildIndex;   //!< Endindex+1 of of child faces, -1 if not initialized (leaf)
 		/** @}
 		 */
-		
 	public:		
 		//! Standard constructor, initializes all elements.
 		inline CSubdivFace() :
@@ -478,7 +477,7 @@ namespace RiCPP {
 		 *  \return True, A neighbour vertex is returned in adjacent (-1 if not existant).
 		 *          False, if aVertex is not incident to the edge, adjacent left untouched.
 		 */
-		inline bool getAdjacentVertex(long &adjacent, long aVertex) const
+		inline bool getAdjacentVertex(long aVertex, long &adjacent) const
 		{
 			if ( aVertex == m_vertex[0] )
 				adjacent = m_vertex[1];
@@ -496,7 +495,7 @@ namespace RiCPP {
 		 *  \return true: A neighbour face index is returned in adjacent (-1 if not existant).
 		 *          false: aFace is not incident to the edge, the parameter adjacent is left untouched.
 		 */
-		inline bool getAdjacentFace(long &adjacent, long aFace) const
+		inline bool getAdjacentFace(long aFace, long &adjacent) const
 		{
 			if ( aFace == m_face[0] )
 				adjacent = m_face[1];
@@ -792,6 +791,7 @@ namespace RiCPP {
 		void fillFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt);
 		void fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &origIndices, long &sharedStart, long &unsharedStart);
 		long countTriangleIndices(const std::list<CSubdivisionIndices>::const_iterator &aParent, const std::list<CSubdivisionIndices>::const_iterator &cur, long faceIdx) const;
+		void correctTriangleIndices(std::vector<IndexType> &indices, long unsharedStart, long prevSharedStart) const;
 	public:
 		/** @brief Constructor
 		 */
@@ -826,20 +826,52 @@ namespace RiCPP {
 		inline const std::vector<long> &incidentEdges() const { return m_incidentEdges; }
 		inline const std::vector<long> &incidentFaces() const { return m_incidentFaces; }
 				
-		long vertexBoundary(const CSubdivVertex &aVertex, long &crease0, long &crease1) const;
+		long creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1) const;
+
+		long vertexBoundary(const CSubdivVertex &aVertex, long &bound0, long &bound1) const;
+
+		inline bool isBoundary(const CSubdivVertex &aVertex) const
+		{
+			long b0, b1;
+			long vb = vertexBoundary(aVertex, b0, b1);
+			return vb >= 1;
+		}
+
+		inline bool isBoundary(const CSubdivFace &aFace) const
+		{
+			for ( long i = aFace.startVertexIndex(); i < aFace.endVertexIndex(); ++i ) {
+				if ( isBoundary(m_vertices[m_vertexIndices[i]]) )
+					return true;
+			}
+			return false;
+		}
+
 		inline bool isCorner(const CSubdivVertex &aVertex) const
 		{
 			long c0, c1;
-			long vb = vertexBoundary(aVertex, c0, c1);
+			long vb = creasedVertex(aVertex, interpolateBoundary(), c0, c1);
 			return vb > 2 || vb == aVertex.incidentEdges();
 		}
+
 		inline bool faceEdge(const CSubdivEdge &anEdge) const
 		{
 			return m_vertices[anEdge.vertex(0)].faceVertex() &&  m_vertices[anEdge.vertex(1)].faceVertex();
 		}
+
+		inline bool discardableBoundaryFace(const CSubdivFace &aFace) const
+		{
+			if ( m_interpolateBoundary != 0 )
+				return false;
+			return isBoundary(aFace);
+		}
 		
 		inline bool illTopology() const { return m_illTopology; }
+
 		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
+		inline RtInt interpolateBoundary(RtInt anInterpolateBoundary)
+		{
+			m_interpolateBoundary = anInterpolateBoundary;
+		}
 
 		void subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
 					   const CRiHierarchicalSubdivisionMesh &anObj);

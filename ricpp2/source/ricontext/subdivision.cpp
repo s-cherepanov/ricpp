@@ -89,7 +89,7 @@ CSubdivFace &CSubdivFace::operator=(const CSubdivFace &f) {
 	m_endVertexIndex    = f.m_endVertexIndex;
 	m_startChildIndex   = f.m_startChildIndex;
 	m_endChildIndex     = f.m_endChildIndex;
-	
+
 	return *this;
 }
 
@@ -120,7 +120,7 @@ long CSubdivFace::triangulate(long *triangleIndices, long size, long offs) const
 	if ( nVertices() < 3 )
 		return offs;
 	
-	long cnt = offs, tip = 0, back = endVertexIndex()-1, front = 1, vertexOffs = startVertexIndex();
+	long cnt = offs, tip = 0, back = nVertices()-1, front = 1, vertexOffs = startVertexIndex();
 	while ( front < back ) {
 		assert(cnt+3 <= size);
 		triangleIndices[cnt++] = vertexOffs + back;
@@ -139,7 +139,7 @@ long CSubdivFace::triangulate(long *triangleIndices, long size, long offs) const
 		
 		tip = front++;
 	}
-	return offs;
+	return cnt;
 }
 
 // ----------------------------------------------------------------------------
@@ -262,19 +262,34 @@ bool CSubdivisionIndices::insertEdgeIndex(const CSubdivFace &aFace, const CSubdi
 }
 
 
-long CSubdivisionIndices::vertexBoundary(const CSubdivVertex &aVertex, long &crease0, long &crease1) const
+long CSubdivisionIndices::vertexBoundary(const CSubdivVertex &aVertex, long &bound0, long &bound1) const
 {
 	long boundaryEdgeCnt = 0;
 	for ( long edgeCnt = aVertex.startEdge(); edgeCnt != aVertex.endEdge(); ++edgeCnt ) {
 		if ( m_edges[m_incidentEdges[edgeCnt]].isBoundary() ) {
-			boundaryEdgeCnt++;
 			if ( boundaryEdgeCnt == 0 )
-				crease0 = m_incidentEdges[edgeCnt];
+				bound0 = m_incidentEdges[edgeCnt];
 			else
-				crease1 = m_incidentEdges[edgeCnt];
+				bound1 = m_incidentEdges[edgeCnt];
+			boundaryEdgeCnt++;
 		}
 	}
 	return boundaryEdgeCnt;
+}
+
+long CSubdivisionIndices::creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1) const
+{
+	long creaseEdgeCnt = 0;
+	for ( long edgeCnt = aVertex.startEdge(); edgeCnt != aVertex.endEdge(); ++edgeCnt ) {
+		if ( m_edges[m_incidentEdges[edgeCnt]].isBoundary() && interpolateBoundary == 2 || m_edges[m_incidentEdges[edgeCnt]].isSharp() ) {
+			if ( creaseEdgeCnt == 0 )
+				crease0 = m_incidentEdges[edgeCnt];
+			else
+				crease1 = m_incidentEdges[edgeCnt];
+			creaseEdgeCnt++;
+		}
+	}
+	return creaseEdgeCnt;
 }
 
 void CSubdivisionIndices::insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj)
@@ -448,24 +463,24 @@ void CSubdivisionIndices::initialize(const CRiHierarchicalSubdivisionMesh &obj)
 void CSubdivisionIndices::subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
 						const CRiHierarchicalSubdivisionMesh &anObj)
 {
+	m_interpolateBoundary = aParent.interpolateBoundary();
 	aStrategy.subdivide(aParent, *this);
 	updateVertexData();
 }
 
 long CSubdivisionIndices::clearFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx)
 {
-	std::list<CSubdivisionIndices>::iterator child = aParent;
-	const CSubdivFace &aFace = m_faces[faceIdx];
+	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
 	
-	long result = 0;
-	if ( aParent == cur || aFace.startChildIndex() < 0 ) {
+	if ( aParent == cur ) {
 		for ( long i = aFace.startVertexIndex(); i != aFace.endVertexIndex(); i++ ) {
 			(*aParent).vertices()[(*aParent).vertexIndices()[i]].faceIndex(-1); // Maybe cleared more than once
 		}
-		result = aFace.nVertices();
-		return result;
+		return aFace.nVertices();
 	}
 	
+	long result = 0;
+	std::list<CSubdivisionIndices>::iterator child = aParent;
 	child++;
 	for ( long i = aFace.startChildIndex(); i != aFace.endChildIndex(); i++ ) {
 		result += (*child).clearFaceVertexIndices(child, cur, i);
@@ -476,9 +491,9 @@ long CSubdivisionIndices::clearFaceVertexIndices(const std::list<CSubdivisionInd
 
 void CSubdivisionIndices::fillFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt)
 {
-	const CSubdivFace &aFace = m_faces[faceIdx];
+	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
 	
-	if ( aParent == cur || aFace.startChildIndex() < 0 ) {
+	if ( aParent == cur ) {
 		if ( aFace.nVertices() < 3 )
 			return;
 
@@ -528,7 +543,7 @@ void CSubdivisionIndices::fillFaceVertexIndices(const std::list<CSubdivisionIndi
 
 void CSubdivisionIndices::fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &origIndices, long &sharedStart, long &unsharedStart)
 {
-	const CSubdivFace &aFace = m_faces[faceIdx];
+	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
 	
 	if ( aParent == cur || aFace.startChildIndex() < 0 ) {
 		
@@ -557,7 +572,7 @@ void CSubdivisionIndices::fillOrigIndices(const std::list<CSubdivisionIndices>::
 
 long CSubdivisionIndices::countTriangleIndices(const std::list<CSubdivisionIndices>::const_iterator &aParent, const std::list<CSubdivisionIndices>::const_iterator &cur, long faceIdx) const
 {
-	const CSubdivFace &aFace = m_faces[faceIdx];
+	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
 
 	long result = 0;
 	if ( aParent == cur || aFace.startChildIndex() < 0 ) {
@@ -574,20 +589,30 @@ long CSubdivisionIndices::countTriangleIndices(const std::list<CSubdivisionIndic
 	return result;
 }
 
+void CSubdivisionIndices::correctTriangleIndices(std::vector<IndexType> &indices, long unsharedStart, long prevSharedStart) const
+{
+	for ( size_t i = 0; i < indices.size(); ++i ) {
+		if ( indices[i] >= (IndexType)prevSharedStart )
+			indices[i] = indices[i]-prevSharedStart + unsharedStart;
+	}
+}
+
 void CSubdivisionIndices::prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, std::vector<IndexType> &origIndices)
 {
-	long triangleCnt = 0, sharedCnt = 0, unsharedCnt = 0;
+	long triangleCnt = 0, sharedCnt = 0;
+	long unsharedCnt = (long)((*cur).vertices().size()); // There are maximal all vertices shared
 
 	long triangleIndices = (*root).countTriangleIndices(root, cur, faceIdx);
 
 	indices.resize(triangleIndices);
 	clearFaceVertexIndices(root, cur, faceIdx);
 	fillFaceVertexIndices(root, cur, faceIdx, indices, triangleCnt, sharedCnt, unsharedCnt);
+	origIndices.resize(sharedCnt + unsharedCnt - (long)((*cur).vertices().size()));
 
-	origIndices.resize(sharedCnt+unsharedCnt);
 	clearFaceVertexIndices(root, cur, faceIdx);
 	long sharedStart = 0;
 	long unsharedStart = sharedCnt;
+	correctTriangleIndices(indices, unsharedStart, (long)((*cur).vertices().size()));
 	fillOrigIndices(root, cur, faceIdx, origIndices, sharedStart, unsharedStart);
 }
 
@@ -646,6 +671,15 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 	
 	// Copy the inherited vertices
 	std::copy(parent.vertices().begin(), parent.vertices().end(), child.vertices().begin());
+	for ( std::vector<CSubdivVertex>::iterator vertexIter = child.vertices().begin();
+		  vertexIter != child.vertices().end();
+		  vertexIter++ )
+	{
+		(*vertexIter).startEdge(0);
+		(*vertexIter).incidentEdges(0);
+		(*vertexIter).startFace(0);
+		(*vertexIter).incidentFaces(0);
+	}
 	
 	// Fill in connectivity for the child edges
 	long localEdgeIndex = 0, // Local edge Index of a face
@@ -908,7 +942,7 @@ void CCatmullClarkSubdivision::insertVaryingValues(const std::list<CSubdivisionI
 				++vertIdx )
 			{
 				idx = (*prev).vertexIndices()[vertIdx] * decl.elemSize();
-				for ( i = 0; i < idx; ++i ) {
+				for ( i = 0; i < (long)decl.elemSize(); ++i ) {
 					floats[curFaceOffs+i] += floats[idx+i];
 				}
 			}
@@ -956,7 +990,7 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 												  const CDeclaration &decl,
 												  std::vector<RtFloat> &floats) const
 {
-	RtInt interpolateBoundary = (*curIndices).interpolateBoundary();
+	RtInt interpolateBoundary = (*theIndices).interpolateBoundary();
 	
 	std::list<CSubdivisionIndices>::const_iterator runningIndices = theIndices;
 	std::list<CSubdivisionIndices>::const_iterator prev = runningIndices;
@@ -966,6 +1000,13 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 		// m_vertices [inherited vertices (1 per parent vertex), new edge vertices (1 per parents edge), new center vertices (1 per parents faces)]
 		//             ---------------------------------------- (recursive)
 		long i;
+
+		std::vector<RtFloat> oldVertexValues((*prev).vertices().size() * decl.elemSize());
+		if ( oldVertexValues.size() < floats.size() ) {
+			std::copy(&floats[0], &floats[oldVertexValues.size()], oldVertexValues.begin());
+		} else {
+			std::copy(floats.begin(), floats.end(), oldVertexValues.begin());
+		}
 		
 		// New face points
 		long faceOffs = static_cast<long>((*prev).vertices().size() + (*prev).edges().size());
@@ -1001,14 +1042,29 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 			for ( i = 0; i < (long)decl.elemSize(); ++i ) {
 				RtFloat v0 = floats[(*edgeIter).vertex(0) * decl.elemSize() + i];
 				RtFloat v1 = floats[(*edgeIter).vertex(1) * decl.elemSize() + i];
-				RtFloat f0 = floats[(faceOffs + (*edgeIter).face(0)) * decl.elemSize() + i];
-				RtFloat f1 = floats[(faceOffs + (*edgeIter).face(1)) * decl.elemSize() + i];
 				RtFloat ecrease = ( v0 + v1 ) / (RtFloat)2.0;
-				
+			
 				if ( (*edgeIter).isBoundary() && interpolateBoundary != 0 ) {
 					floats[curEdgeOffs+i] = ecrease;
 				} else {
-					RtFloat einter = ( v0 + v1 + f0 + f1 ) / (RtFloat)4.0;
+					RtFloat f0 = 0;
+					if ( (*edgeIter).face(0) >= 0 )
+						f0 = floats[(faceOffs + (*edgeIter).face(0)) * decl.elemSize() + i];
+
+					RtFloat f1 = 0;
+					if ( (*edgeIter).face(1) >= 0 )
+						f1 = floats[(faceOffs + (*edgeIter).face(1)) * decl.elemSize() + i];
+
+					RtFloat einter = ecrease;
+					if ( (*edgeIter).face(0) >= 0 && (*edgeIter).face(1) >= 0 )
+						einter = ( v0 + v1 + f0 + f1 ) / (RtFloat)4.0;
+					else {
+						if ( (*edgeIter).face(0) >= 0 )
+							einter = ( v0 + v1 + f0 ) / (RtFloat)3.0;
+						else if ( (*edgeIter).face(1) >= 0 )
+							einter = ( v0 + v1 + f1 ) / (RtFloat)3.0;
+					}
+
 					if ( (*edgeIter).type() == CSubdivEdge::EDGE_ROUNDED ) {
 						floats[curEdgeOffs+i] = einter;
 					} else {
@@ -1025,43 +1081,87 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 			 vertexIter != (*prev).vertices().end();
 			 vertexIter++, vertexIdx++ )
 		{
-			long curVertexOffs = vertexIdx * decl.elemSize();
 			RtFloat n = static_cast<RtFloat>((*vertexIter).incidentEdges());
+			long curVertexOffs = vertexIdx * decl.elemSize();
 			RtFloat vfac = 0;
-			if ( n > (RtFloat)2 )
+			if ( n > 0 )
 				vfac = (n - (RtFloat)2)/n;
+
 			RtFloat efac = 0;
 			if ( n > 0 )
 				efac = (RtFloat)1 / (n*n);
+
 			RtFloat ffac = efac;
+
+			/*
+			ffac = 0;
+			RtFloat m = static_cast<RtFloat>((*vertexIter).incidentFaces());
+			if ( m > 0 )
+				ffac = (RtFloat)1 / (m*m);
+			*/
+
 			long crease0 = -1, crease1 = -1;
-			long vertexBoundary = (*prev).vertexBoundary(*vertexIter, crease0, crease1);
+			long creasedVertex = (*prev).creasedVertex(*vertexIter, interpolateBoundary, crease0, crease1);
 			RtFloat esum;
 			RtFloat fsum;
+
 			for ( i = 0; i < (long)decl.elemSize(); ++i ) {
 				RtFloat vcorner = floats[curVertexOffs+i];
 				
-				if ( (interpolateBoundary == 1 && vertexBoundary == (*vertexIter).incidentEdges()) || vertexBoundary > 2 ) {
+				if ( (interpolateBoundary == 1 && (*prev).isBoundary(*vertexIter)) || creasedVertex > 2 ) {
 					floats[curVertexOffs+i] = vcorner;
 					continue;
 				}
 				
-				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED && vertexBoundary == 2 ) {
+				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED && creasedVertex == 2 ) {
+					/*
 					RtFloat e0 = floats[(edgeOffs + crease0) * decl.elemSize() + i];
 					RtFloat e1 = floats[(edgeOffs + crease1) * decl.elemSize() + i];
-					floats[curVertexOffs+i] = (e0 + (RtFloat)6 * vcorner + e1) / (RtFloat)8;
+					*/
+					RtFloat e0 = 0, e1 = 0, cnt = 0;
+					long adjacent = 0;
+					assert(crease0 >= 0);
+					bool hasAdjacentVertex;
+					hasAdjacentVertex = (*prev).edges()[crease0].getAdjacentVertex(vertexIdx, adjacent);
+					assert(hasAdjacentVertex);
+					if ( crease0 >= 0 && hasAdjacentVertex ) {
+						e0 = oldVertexValues[adjacent * decl.elemSize() + i];
+						cnt += (RtFloat)1.0;
+					} else {
+						assert(false);
+					}
+					assert(crease1 >= 0);
+					hasAdjacentVertex = (*prev).edges()[crease1].getAdjacentVertex(vertexIdx, adjacent);
+					assert(hasAdjacentVertex);
+					if ( crease1 >= 0 && hasAdjacentVertex ) {
+						e1 = oldVertexValues[adjacent * decl.elemSize() + i];
+						cnt += (RtFloat)1.0;
+					} else {
+						assert(false);
+					}
+
+					floats[curVertexOffs+i] = (e0 + (RtFloat)6 * vcorner + e1) / ((RtFloat)6+cnt);
+					continue;
 				}
 				
 				RtFloat vinter = vfac * vcorner;
 				
 				esum = 0;
 				for ( long edgeCnt = (*vertexIter).startEdge(); edgeCnt != (*vertexIter).endEdge(); ++edgeCnt ) {
-					esum += floats[(edgeOffs + (*prev).incidentEdges()[edgeCnt]) * decl.elemSize() + i];
+					// esum += floats[(edgeOffs + (*prev).incidentEdges()[edgeCnt]) * decl.elemSize() + i];
+					long adjacent = 0;
+					assert((*prev).incidentEdges()[edgeCnt] >= 0 && (*prev).incidentEdges()[edgeCnt] < (long)((*prev).edges().size()));
+					if ( (*prev).edges()[(*prev).incidentEdges()[edgeCnt]].getAdjacentVertex(vertexIdx, adjacent) ) {
+						esum += oldVertexValues[adjacent * decl.elemSize() + i];
+					} else {
+						assert(false);
+					}
 				}
 				vinter += efac * esum;
 				
 				fsum = 0;
 				for ( long faceCnt = (*vertexIter).startFace(); faceCnt != (*vertexIter).endFace(); ++faceCnt ) {
+					assert((*prev).incidentFaces()[faceCnt] >= 0);
 					fsum += floats[(faceOffs + (*prev).incidentFaces()[faceCnt]) * decl.elemSize() + i];
 				}
 				vinter += ffac * fsum;

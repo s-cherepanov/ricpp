@@ -656,7 +656,7 @@ CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(
 }
 
 
-CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(const CRiSubdivisionMesh &c)
+CRiHierarchicalSubdivisionMesh::CRiHierarchicalSubdivisionMesh(const CRiSubdivisionMesh &c) : TypeParent(c)
 {
 	
 	std::vector<RtInt> nArgs3((c.nArgs().size()/2)*3);

@@ -264,7 +264,7 @@ const CDeclaration &CParameter::declaration() const
 }
 
 
-RtPointer CParameter::valptr()
+RtPointer CParameter::valPtr()
 {
 	switch ( basicType() ) {
 		case BASICTYPE_INTEGER:
@@ -596,7 +596,7 @@ void CParameterList::rebuild()
 			} else {
 				m_tokenPtr.push_back(d->token());
 			}
-			m_paramPtr.push_back(p.valptr());
+			m_paramPtr.push_back(p.valPtr());
 		}
 	}
 }

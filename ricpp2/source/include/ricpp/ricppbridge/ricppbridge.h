@@ -95,14 +95,23 @@ private:
 	 */
 	COptionsBase m_controls;
 	
+	/** @brief Disabled commands, false by default (true for System() and procedurals runProgram, dynamicLoad)
+	 */
+	bool m_disabledCommand[N_REQUESTS];
 	
 	// Additional tokens
 	RtToken RI_SEARCHPATH;
 	RtToken RI_STANDARDPATH;	
+	RtToken RI_FRONTEND;
 	
 	// Additional tokens for declarations
 	RtToken RI_RENDERER;
 	RtToken RI_RIBFILTER;
+
+	RtToken RI_ENABLE;
+	RtToken RI_QUAL_ENABLE;
+	RtToken RI_DISABLE;
+	RtToken RI_QUAL_DISABLE;
 
 	/** @brief Error handler used by the bridge
 	 *
@@ -769,6 +778,19 @@ public:
 	 */
 	virtual ~CRiCPPBridge();
 
+	/** @defgroup ri_addfrontend Additional front end functions
+	 *  @{
+	 *
+	 *  @name Disable/enable commands in frontend
+	 */
+	bool disabledCommand(EnumRequests aCommand) const;
+	void enableCommand(EnumRequests aCommand);
+	void disableCommand(EnumRequests aCommand);
+	void enableCommands(const std::vector<RtString> &theCommands);
+	void disableCommands(const std::vector<RtString> &theCommands);
+	/** @}
+	 */
+
 	/******************************************************************************/
 
 	/** @defgroup ri_addfrontend Additional front end functions
@@ -850,7 +872,8 @@ public:
 	 * @param name Name of the standard renderer, 0 is substituted by "ribwriter"
 	 */
 	virtual void standardRendererName(const char *name);
-	//@}
+	/** @}
+	 */
 
 	/******************************************************************************
 	 The RenderMan interface functions

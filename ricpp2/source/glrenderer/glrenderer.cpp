@@ -600,14 +600,16 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 	TypeParent::doProcess(obj);
 
 	if ( obj.name() == RI_GLRENDERER ) {
-		const CParameter *ctrlScreen = obj.parameters().get(RI_SCREEN);
-		if ( ctrlScreen ) {
-			std::string action;
-			if ( ctrlScreen->get(0, action) ) {
-				if ( action == std::string("clear") )
-					clearScreen();
-				else if ( action == std::string("finish") )
-					finishScreen();
+		CParameterList::const_iterator i;
+		for ( i = obj.parameters().begin(); i != obj.parameters().end(); i++ ) {
+			if ( (*i).var() == RI_SCREEN ) {
+				std::string action;
+				if ( (*i).get(0, action) ) {
+					if ( action == std::string("clear") )
+						clearScreen();
+					else if ( action == std::string("finish") )
+						finishScreen();
+				}
 			}
 		}
 	}

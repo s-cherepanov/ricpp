@@ -182,6 +182,13 @@ CRiCPPBridge::CRiCPPBridge() :
 	m_ctxMgmt.setOuter(*this);
 	m_ribFilter.m_next = this;
 	m_curErrorHandler = &CPrintErrorHandler::func();
+
+	for ( int reqNum = 0; reqNum < N_REQUESTS; ++reqNum )
+		m_disabledCommand[reqNum] = false;
+
+	m_disabledCommand[REQ_SYSTEM] = true;
+	m_disabledCommand[REQ_PROC_RUN_PROGRAM] = true;
+	m_disabledCommand[REQ_PROC_DYNAMIC_LOAD] = true;
 	
 	try {
 		defaultDeclarations();
@@ -268,13 +275,18 @@ void CRiCPPBridge::defaultDeclarations()
 	
 	doDeclare(RI_HANDLEID, "string", true);
 	
-	// Additional Tokens
+	// Additional Declarations
 	RI_SEARCHPATH = m_declDict.tokenMap().findCreate("searchpath");
 	RI_STANDARDPATH = m_declDict.tokenMap().findCreate("standardpath");	
+	RI_FRONTEND = m_declDict.tokenMap().findCreate("frontend");
+
+	RI_ENABLE = m_declDict.tokenMap().findCreate("enable");
+	RI_QUAL_ENABLE = doDeclare("Control:frontend:enable", "string", true);
+	RI_DISABLE = m_declDict.tokenMap().findCreate("disable");
+	RI_QUAL_DISABLE = doDeclare("Control:frontend:disable", "string", true);
 	
-	// Additional render specific declarations
-	RI_RENDERER = doDeclare("renderer", "string", true);
-	RI_RIBFILTER = doDeclare("ribfilter", "string", true);	
+	RI_RENDERER = doDeclare(RI_RENDERER, "string", true); // General string
+	RI_RIBFILTER = doDeclare(RI_RIBFILTER, "string", true);	 // General string
 }
 
 RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
@@ -454,6 +466,54 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 }
 
 
+bool CRiCPPBridge::disabledCommand(EnumRequests aCommand) const
+{
+	
+	if ( m_disabledCommand[aCommand] ) {
+		throw ExceptRiCPPError(
+			RIE_SYSTEM,
+			RIE_ERROR,
+			0, 0,
+			"Command \"%s\" is disabled", markEmptyStr(CRequestInfo::requestName(aCommand))
+		);
+		// return true;
+	}
+	return false;
+}
+
+void CRiCPPBridge::enableCommand(EnumRequests aCommand)
+{
+	m_disabledCommand[aCommand] = false;
+}
+
+void CRiCPPBridge::disableCommand(EnumRequests aCommand)
+{
+	m_disabledCommand[aCommand] = true;
+}
+
+void CRiCPPBridge::enableCommands(const std::vector<RtString> &theCommands)
+{
+	for ( std::vector<RtString>::const_iterator iter = theCommands.begin();
+		  iter != theCommands.end();
+		  iter++ )
+	{
+		EnumRequests reqNum = CRequestInfo::requestNumber((*iter));
+		enableCommand(reqNum);
+	}
+}
+
+void CRiCPPBridge::disableCommands(const std::vector<RtString> &theCommands)
+{
+	for ( std::vector<RtString>::const_iterator iter = theCommands.begin();
+		  iter != theCommands.end();
+		  iter++ )
+	{
+		EnumRequests reqNum = CRequestInfo::requestNumber((*iter));
+		disableCommand(reqNum);
+	}
+}
+
+
 RtToken CRiCPPBridge::doDeclare(RtToken name, RtString declaration, bool isDefault)
 {
 	return m_declDict.declare(name, declaration, isDefault, m_options.colorDescr());
@@ -464,6 +524,8 @@ RtToken CRiCPPBridge::declare(RtToken name, RtString declaration)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DECLARE) )
+				return RI_NULL;
 			return m_ctxMgmt.curBackend().renderingContext()->declare(name, declaration);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -471,6 +533,8 @@ RtToken CRiCPPBridge::declare(RtToken name, RtString declaration)
 	} else {
 		// Default Declarations for the Renderer creator and its children.
 		try {
+			if ( disabledCommand(REQ_DECLARE) )
+				return RI_NULL;
 			return doDeclare(name, declaration, false);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -529,6 +593,9 @@ RtContextHandle CRiCPPBridge::beginV(RtString name, RtInt n, RtToken tokens[], R
 	}
 
 	try {
+		if ( disabledCommand(REQ_BEGIN) )
+			return illContextHandle;
+
 		RtContextHandle h = m_ctxMgmt.beginV(myName, n, tokens, params);
 		return h;
 	} catch (ExceptRiCPPError &e) {
@@ -546,6 +613,8 @@ RtVoid CRiCPPBridge::end(void)
 	if ( m_ctxMgmt.getContext() != illContextHandle ) {
 		ExceptRiCPPError e2;
 		try {
+			if ( disabledCommand(REQ_END) )
+				return;
 			m_ctxMgmt.end();
 		} catch (ExceptRiCPPError &e) {
 			e2 = e;
@@ -571,6 +640,8 @@ RtVoid CRiCPPBridge::context(RtContextHandle handle)
 {
 	// Since handle can activate a different context creator, deactivate the old context
 	try {
+		if ( disabledCommand(REQ_CONTEXT) )
+			return;
 		m_ctxMgmt.context(illContextHandle);
 	} catch (ExceptRiCPPError &e) {
 		ricppErrHandler().handleError(e);
@@ -600,6 +671,8 @@ RtVoid CRiCPPBridge::frameBegin(RtInt number)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_FRAME_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->frameBegin(number);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -615,6 +688,8 @@ RtVoid CRiCPPBridge::frameEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_FRAME_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->frameEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -630,6 +705,8 @@ RtVoid CRiCPPBridge::worldBegin(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_WORLD_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->worldBegin();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -645,6 +722,8 @@ RtVoid CRiCPPBridge::worldEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_WORLD_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->worldEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -660,6 +739,8 @@ RtVoid CRiCPPBridge::attributeBegin(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ATTRIBUTE_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->attributeBegin();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -675,6 +756,8 @@ RtVoid CRiCPPBridge::attributeEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ATTRIBUTE_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->attributeEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -690,6 +773,8 @@ RtVoid CRiCPPBridge::transformBegin(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TRANSFORM_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->transformBegin();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -705,6 +790,8 @@ RtVoid CRiCPPBridge::transformEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TRANSFORM_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->transformEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -720,6 +807,8 @@ RtVoid CRiCPPBridge::solidBegin(RtToken type)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SOLID_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->solidBegin(type);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -735,6 +824,8 @@ RtVoid CRiCPPBridge::solidEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SOLID_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->solidEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -750,6 +841,8 @@ RtObjectHandle CRiCPPBridge::objectBegin(RtString name)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_OBJECT_BEGIN) )
+				return illObjectHandle;
 			return m_ctxMgmt.curBackend().renderingContext()->objectBegin(name);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -766,6 +859,8 @@ RtVoid CRiCPPBridge::objectEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_OBJECT_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->objectEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -780,6 +875,8 @@ RtVoid CRiCPPBridge::objectInstance(RtObjectHandle handle)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_OBJECT_INSTANCE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->objectInstance(handle);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -823,6 +920,8 @@ RtVoid CRiCPPBridge::motionBeginV(RtInt N, RtFloat times[])
 
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MOTION_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->motionBeginV(N, times);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -837,6 +936,8 @@ RtVoid CRiCPPBridge::motionEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MOTION_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->motionEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -852,6 +953,8 @@ RtVoid CRiCPPBridge::resourceBegin(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_RESOURCE_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->resourceBegin();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -866,6 +969,8 @@ RtVoid CRiCPPBridge::resourceEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_RESOURCE_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->resourceEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -889,6 +994,8 @@ RtArchiveHandle CRiCPPBridge::archiveBeginV(RtToken name, RtInt n, RtToken token
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ARCHIVE_BEGIN) )
+				return illArchiveHandle;
 			return m_ctxMgmt.curBackend().renderingContext()->archiveBeginV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -904,6 +1011,8 @@ RtVoid CRiCPPBridge::archiveEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ARCHIVE_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->archiveEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -917,14 +1026,10 @@ RtVoid CRiCPPBridge::archiveEnd(void)
 
 RtVoid CRiCPPBridge::synchronize(RtToken name)
 {
-	if ( !strcmp(name, RI_ABORT) ) {
-		if ( !m_ctxMgmt.curBackend().aborted() )
-			m_ctxMgmt.abort();
-		return;
-	}
-
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SYNCHRONIZE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->synchronize(name);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -943,12 +1048,20 @@ RtVoid CRiCPPBridge::system(RtString cmd)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SYSTEM) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->system(cmd);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
 		}
 	} else {
-		doSystem(cmd);
+		try {
+			if ( disabledCommand(REQ_SYSTEM) )
+				return;
+			doSystem(cmd);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
 	}
 }
 
@@ -965,6 +1078,8 @@ RtVoid CRiCPPBridge::resourceV(RtToken handle, RtString type, RtInt n, RtToken t
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_RESOURCE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->resourceV(handle, type, n, tokens, params);
 			return;
 		} catch (ExceptRiCPPError &e) {
@@ -982,6 +1097,8 @@ RtVoid CRiCPPBridge::format(RtInt xres, RtInt yres, RtFloat aspect)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_FORMAT) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->format(xres, yres, aspect);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -996,6 +1113,8 @@ RtVoid CRiCPPBridge::frameAspectRatio(RtFloat aspect)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_FRAME_ASPECT_RATIO) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->frameAspectRatio(aspect);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1010,6 +1129,8 @@ RtVoid CRiCPPBridge::screenWindow(RtFloat left, RtFloat right, RtFloat bot, RtFl
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SCREEN_WINDOW) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->screenWindow(left, right, bot, top);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1024,6 +1145,8 @@ RtVoid CRiCPPBridge::cropWindow(RtFloat xmin, RtFloat xmax, RtFloat ymin, RtFloa
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_CROP_WINDOW) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->cropWindow(xmin, xmax, ymin, ymax);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1047,6 +1170,8 @@ RtVoid CRiCPPBridge::projectionV(RtToken name, RtInt n, RtToken tokens[], RtPoin
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PROJECTION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->projectionV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1061,6 +1186,8 @@ RtVoid CRiCPPBridge::clipping(RtFloat hither, RtFloat yon)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_CLIPPING) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->clipping(hither, yon);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1075,6 +1202,8 @@ RtVoid CRiCPPBridge::clippingPlane(RtFloat x, RtFloat y, RtFloat z, RtFloat nx, 
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_CLIPPING_PLANE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->clippingPlane(x, y, z, nx, ny, nz);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1089,6 +1218,8 @@ RtVoid CRiCPPBridge::depthOfField(RtFloat fstop, RtFloat focallength, RtFloat fo
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DEPTH_OF_FIELD) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->depthOfField(fstop, focallength, focaldistance);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1103,6 +1234,8 @@ RtVoid CRiCPPBridge::shutter(RtFloat smin, RtFloat smax)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SHUTTER) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->shutter(smin, smax);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1117,6 +1250,8 @@ RtVoid CRiCPPBridge::pixelVariance(RtFloat variation)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PIXEL_VARIANCE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->pixelVariance(variation);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1131,6 +1266,8 @@ RtVoid CRiCPPBridge::pixelSamples(RtFloat xsamples, RtFloat ysamples)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PIXEL_SAMPLES) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->pixelSamples(xsamples, ysamples);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1145,6 +1282,8 @@ RtVoid CRiCPPBridge::pixelFilter(const IFilterFunc &function, RtFloat xwidth, Rt
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PIXEL_FILTER) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->pixelFilter(function, xwidth, ywidth);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1159,6 +1298,8 @@ RtVoid CRiCPPBridge::exposure(RtFloat gain, RtFloat gamma)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_EXPOSURE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->exposure(gain, gamma);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1182,6 +1323,8 @@ RtVoid CRiCPPBridge::imagerV(RtString name, RtInt n, RtToken tokens[], RtPointer
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_IMAGER) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->imagerV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1196,6 +1339,8 @@ RtVoid CRiCPPBridge::quantize(RtToken type, RtInt one, RtInt qmin, RtInt qmax, R
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_QUANTIZE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->quantize(type, one, qmin, qmax, ampl);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1219,6 +1364,8 @@ RtVoid CRiCPPBridge::displayChannelV(RtString name, RtInt n, RtToken tokens[], R
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DISPLAY_CHANNEL) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->displayChannelV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1242,6 +1389,8 @@ RtVoid CRiCPPBridge::displayV(RtString name, RtToken type, RtString mode, RtInt 
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DISPLAY) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->displayV(name, type, mode, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1265,6 +1414,8 @@ RtVoid CRiCPPBridge::hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_HIDER) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->hiderV(type, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1279,6 +1430,8 @@ RtVoid CRiCPPBridge::colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[])
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_COLOR_SAMPLES) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->colorSamples(N, nRGB, RGBn);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1293,6 +1446,8 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_RELATIVE_DETAIL) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->relativeDetail(relativedetail);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1309,6 +1464,7 @@ RtVoid CRiCPPBridge::doControl(RtToken name, const CParameterList &params)
 	if ( !name )
 		return;
 
+	/// @todo Control needs immediate execution - need not to be stored (different than Options and Attribute, more like Synchronize)
 	m_controls.set(name, params);
 
 	if ( name == RI_SEARCHPATH ) {
@@ -1340,6 +1496,18 @@ RtVoid CRiCPPBridge::doControl(RtToken name, const CParameterList &params)
 				}
 			}
 		}
+	} else if ( name == RI_FRONTEND ) {
+		CParameterList::const_iterator i;
+		for ( i = params.begin(); i != params.end(); i++ ) {
+			const std::vector<RtString> &commandList = (*i).stringPtrs();
+			if ( (*i).var() == RI_ENABLE ) {
+				enableCommands(commandList);
+			} else if ( (*i).var() == RI_DISABLE ) {
+				disableCommands(commandList);
+			}
+		}
+		/** @todo Controls to load and unload RIB Filters (useful for pure C binding)
+		 */
 	}
 }
 
@@ -1354,22 +1522,26 @@ RtVoid CRiCPPBridge::control(RtToken name, RtToken token, ...)
 
 RtVoid CRiCPPBridge::controlV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
 {
-	if ( m_ctxMgmt.curBackend().valid() ) {
-		try {
-			m_ctxMgmt.curBackend().renderingContext()->controlV(name, n, tokens, params);
-		} catch (ExceptRiCPPError &e) {
-			ricppErrHandler().handleError(e);
+	// Controls for the Renderer creator and its children.
+	try {
+		// First try own Control, this cannot be disabled
+		name = m_declDict.tokenMap().findCreate(name);
+		CParameterList p;
+		p.set(RI_CONTROL, name, CParameterClasses(), m_declDict, m_options.colorDescr(), n, tokens, params);
+		doControl(name, p);
+
+		// Then try Backend Control
+		if ( m_ctxMgmt.curBackend().valid() ) {
+			try {
+				if ( disabledCommand(REQ_CONTROL) )
+					return;
+				m_ctxMgmt.curBackend().renderingContext()->controlV(name, n, tokens, params);
+			} catch (ExceptRiCPPError &e) {
+				ricppErrHandler().handleError(e);
+			}
 		}
-	} else {
-		// Controls for the Renderer creator and its children.
-		try {
-			name = m_declDict.tokenMap().findCreate(name);
-			CParameterList p;
-			p.set(RI_CONTROL, name, CParameterClasses(), m_declDict, m_options.colorDescr(), n, tokens, params);
-			doControl(name, p);
-		} catch (ExceptRiCPPError &e) {
-			ricppErrHandler().handleError(e);
-		}
+	} catch (ExceptRiCPPError &e) {
+		ricppErrHandler().handleError(e);
 	}
 }
 
@@ -1377,6 +1549,8 @@ RtVoid CRiCPPBridge::version()
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_VERSION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->version();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1408,6 +1582,8 @@ RtVoid CRiCPPBridge::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer 
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_OPTION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->optionV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1439,6 +1615,8 @@ RtLightHandle CRiCPPBridge::lightSourceV(RtString name, RtInt n, RtToken tokens[
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_LIGHT_SOURCE) )
+				return illLightHandle;
 			return m_ctxMgmt.curBackend().renderingContext()->lightSourceV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1463,6 +1641,8 @@ RtLightHandle CRiCPPBridge::areaLightSourceV(RtString name, RtInt n, RtToken tok
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_AREA_LIGHT_SOURCE) )
+				return illLightHandle;
 			return m_ctxMgmt.curBackend().renderingContext()->areaLightSourceV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1487,6 +1667,8 @@ RtVoid CRiCPPBridge::attributeV(RtToken name, RtInt n, RtToken tokens[], RtPoint
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ATTRIBUTE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->attributeV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1501,6 +1683,8 @@ RtVoid CRiCPPBridge::color(RtColor Cs)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_COLOR) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->color(Cs);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1515,6 +1699,8 @@ RtVoid CRiCPPBridge::opacity(RtColor Os)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_OPACITY) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->opacity(Os);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1538,6 +1724,8 @@ RtVoid CRiCPPBridge::surfaceV(RtString name, RtInt n, RtToken tokens[], RtPointe
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SURFACE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->surfaceV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1561,6 +1749,8 @@ RtVoid CRiCPPBridge::atmosphereV(RtString name, RtInt n, RtToken tokens[], RtPoi
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ATMOSPHERE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->atmosphereV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1584,6 +1774,8 @@ RtVoid CRiCPPBridge::interiorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_INTERIOR) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->interiorV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1607,6 +1799,8 @@ RtVoid CRiCPPBridge::exteriorV(RtString name, RtInt n, RtToken tokens[], RtPoint
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_EXTERIOR) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->exteriorV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1622,6 +1816,8 @@ RtVoid CRiCPPBridge::illuminate(RtLightHandle light, RtBoolean onoff)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ILLUMINATE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->illuminate(light, onoff);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1646,6 +1842,8 @@ RtVoid CRiCPPBridge::displacementV(RtString name, RtInt n, RtToken tokens[], RtP
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DISPLACEMENT) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->displacementV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1660,6 +1858,8 @@ RtVoid CRiCPPBridge::textureCoordinates(RtFloat s1, RtFloat t1, RtFloat s2, RtFl
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TEXTURE_COORDINATES) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->textureCoordinates(s1, t1, s2, t2, s3, t3, s4, t4);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1673,6 +1873,8 @@ RtVoid CRiCPPBridge::shadingRate(RtFloat size)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SHADING_RATE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->shadingRate(size);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1687,6 +1889,8 @@ RtVoid CRiCPPBridge::shadingInterpolation(RtToken type)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SHADING_INTERPOLATION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->shadingInterpolation(type);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1701,6 +1905,8 @@ RtVoid CRiCPPBridge::matte(RtBoolean onoff)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MATTE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->matte(onoff);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1715,6 +1921,8 @@ RtVoid CRiCPPBridge::bound(RtBound aBound)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_BOUND) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->bound(aBound);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1729,6 +1937,8 @@ RtVoid CRiCPPBridge::detail(RtBound aBound)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DETAIL) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->detail(aBound);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1743,6 +1953,8 @@ RtVoid CRiCPPBridge::detailRange(RtFloat minvis, RtFloat lowtran, RtFloat uptran
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DETAIL_RANGE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->detailRange(minvis, lowtran, uptran, maxvis);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1758,6 +1970,8 @@ RtVoid CRiCPPBridge::geometricApproximation(RtToken type, RtFloat value)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_GEOMETRIC_APPROXIMATION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->geometricApproximation(type, value);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1772,6 +1986,8 @@ RtVoid CRiCPPBridge::geometricRepresentation(RtToken type)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_GEOMETRIC_REPRESENTATION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->geometricRepresentation(type);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1786,6 +2002,8 @@ RtVoid CRiCPPBridge::orientation(RtToken anOrientation)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ORIENTATION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->orientation(anOrientation);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1800,6 +2018,8 @@ RtVoid CRiCPPBridge::reverseOrientation(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_REVERSE_ORIENTATION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->reverseOrientation();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1814,6 +2034,8 @@ RtVoid CRiCPPBridge::sides(RtInt nsides)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SIDES) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->sides(nsides);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1828,6 +2050,8 @@ RtVoid CRiCPPBridge::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vs
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_BASIS) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->basis(ubasis, ustep, vbasis, vstep);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1842,6 +2066,8 @@ RtVoid CRiCPPBridge::trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtF
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TRIM_CURVE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->trimCurve(nloops, ncurves, order, knot, amin, amax, n, u, v, w);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1858,6 +2084,8 @@ RtVoid CRiCPPBridge::identity(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_IDENTITY) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->identity();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1872,6 +2100,8 @@ RtVoid CRiCPPBridge::transform(RtMatrix aTransform)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TRANSFORM) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->transform(aTransform);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1886,6 +2116,8 @@ RtVoid CRiCPPBridge::concatTransform(RtMatrix aTransform)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_CONCAT_TRANSFORM) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->concatTransform(aTransform);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1900,6 +2132,8 @@ RtVoid CRiCPPBridge::perspective(RtFloat fov)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PERSPECTIVE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->perspective(fov);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1914,6 +2148,8 @@ RtVoid CRiCPPBridge::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TRANSLATE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->translate(dx, dy, dz);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1928,6 +2164,8 @@ RtVoid CRiCPPBridge::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ROTATE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->rotate(angle, dx, dy, dz);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1942,6 +2180,8 @@ RtVoid CRiCPPBridge::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SCALE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->scale(dx, dy, dz);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1956,6 +2196,8 @@ RtVoid CRiCPPBridge::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, 
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SKEW) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->skew(angle, dx1, dy1, dz1, dx2, dy2, dz2);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1979,6 +2221,8 @@ RtVoid CRiCPPBridge::deformationV(RtString name, RtInt n, RtToken tokens[], RtPo
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DEFORMATION) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->deformationV(name, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -1993,6 +2237,8 @@ RtVoid CRiCPPBridge::scopedCoordinateSystem(RtToken space)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SCOPED_COORDINATE_SYSTEM) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->scopedCoordinateSystem(space);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2007,6 +2253,8 @@ RtVoid CRiCPPBridge::coordinateSystem(RtToken space)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_COORDINATE_SYSTEM) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->coordinateSystem(space);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2021,6 +2269,8 @@ RtVoid CRiCPPBridge::coordSysTransform(RtToken space)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_COORD_SYS_TRANSFORM) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->coordSysTransform(space);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2035,6 +2285,8 @@ RtPoint *CRiCPPBridge::transformPoints(RtToken fromspace, RtToken tospace, RtInt
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TRANSFORM_POINTS) )
+				return 0;
 			return m_ctxMgmt.curBackend().renderingContext()->transformPoints(fromspace, tospace, npoints, points);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2061,6 +2313,8 @@ RtVoid CRiCPPBridge::polygonV(RtInt nvertices, RtInt n, RtToken tokens[], RtPoin
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_POLYGON) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->polygonV(nvertices, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2084,6 +2338,8 @@ RtVoid CRiCPPBridge::generalPolygonV(RtInt nloops, RtInt nverts[], RtInt n, RtTo
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_GENERAL_POLYGON) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->generalPolygonV(nloops, nverts, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2107,6 +2363,8 @@ RtVoid CRiCPPBridge::pointsPolygonsV(RtInt npolys, RtInt nverts[], RtInt verts[]
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_POINTS_POLYGONS) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->pointsPolygonsV(npolys, nverts, verts, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2130,6 +2388,8 @@ RtVoid CRiCPPBridge::pointsGeneralPolygonsV(RtInt npolys, RtInt nloops[], RtInt 
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_POINTS_GENERAL_POLYGONS) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->pointsGeneralPolygonsV(npolys, nloops, nverts, verts, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2153,6 +2413,8 @@ RtVoid CRiCPPBridge::patchV(RtToken type, RtInt n, RtToken tokens[], RtPointer p
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PATCH) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->patchV(type, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2176,6 +2438,8 @@ RtVoid CRiCPPBridge::patchMeshV(RtToken type, RtInt nu, RtToken uwrap, RtInt nv,
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PATCH_MESH) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->patchMeshV(type, nu, uwrap, nv, vwrap, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2199,6 +2463,8 @@ RtVoid CRiCPPBridge::nuPatchV(RtInt nu, RtInt uorder, RtFloat uknot[], RtFloat u
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_NU_PATCH) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->nuPatchV(nu, uorder, uknot, umin, umax, nv, vorder, vknot, vmin, vmax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2223,6 +2489,8 @@ RtVoid CRiCPPBridge::subdivisionMeshV(RtToken scheme, RtInt nfaces, RtInt nverti
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SUBDIVISION_MESH) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->subdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2247,6 +2515,8 @@ RtVoid CRiCPPBridge::hierarchicalSubdivisionMeshV(RtToken scheme, RtInt nfaces, 
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_HIERARCHICAL_SUBDIVISION_MESH) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->hierarchicalSubdivisionMeshV(scheme, nfaces, nvertices, vertices, ntags, tags, nargs, intargs, floatargs, stringargs, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2270,6 +2540,8 @@ RtVoid CRiCPPBridge::sphereV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_SPHERE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->sphereV(radius, zmin, zmax, thetamax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2293,6 +2565,8 @@ RtVoid CRiCPPBridge::coneV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_CONE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->coneV(height, radius, thetamax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2316,6 +2590,8 @@ RtVoid CRiCPPBridge::cylinderV(RtFloat radius, RtFloat zmin, RtFloat zmax, RtFlo
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_CYLINDER) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->cylinderV(radius, zmin, zmax, thetamax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2339,6 +2615,8 @@ RtVoid CRiCPPBridge::hyperboloidV(RtPoint point1, RtPoint point2, RtFloat thetam
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_HYPERBOLOID) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->hyperboloidV(point1, point2, thetamax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2362,6 +2640,8 @@ RtVoid CRiCPPBridge::paraboloidV(RtFloat rmax, RtFloat zmin, RtFloat zmax, RtFlo
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_PARABOLOID) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->paraboloidV(rmax, zmin, zmax, thetamax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2385,6 +2665,8 @@ RtVoid CRiCPPBridge::diskV(RtFloat height, RtFloat radius, RtFloat thetamax, RtI
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_DISK) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->diskV(height, radius, thetamax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2408,6 +2690,8 @@ RtVoid CRiCPPBridge::torusV(RtFloat majorrad, RtFloat minorrad, RtFloat phimin, 
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_TORUS) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->torusV(majorrad, minorrad, phimin, phimax, thetamax, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2431,6 +2715,8 @@ RtVoid CRiCPPBridge::pointsV(RtInt npts, RtInt n, RtToken tokens[], RtPointer pa
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_POINTS) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->pointsV(npts, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2454,6 +2740,8 @@ RtVoid CRiCPPBridge::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtToke
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_CURVES) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->curvesV(type, ncurves, nverts, wrap, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2477,6 +2765,8 @@ RtVoid CRiCPPBridge::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt,
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_BLOBBY) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->blobbyV(nleaf, ncode, code, nflt, flt, nstr, str, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2491,7 +2781,14 @@ RtVoid CRiCPPBridge::procedural(RtPointer data, RtBound bound, ISubdivFunc &subd
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
-			// @todo Also by frontend (as in readArchive(), if not postponed.
+			if ( disabledCommand(REQ_PROCEDURAL) )
+				return;
+			if ( subdivfunc.name() == RI_DELAYED_READ_ARCHIVE && disabledCommand(REQ_PROC_DELAYED_READ_ARCHIVE) )
+				return;
+			if ( subdivfunc.name() == RI_RUN_PROGRAM && disabledCommand(REQ_PROC_RUN_PROGRAM) )
+				return;
+			if ( subdivfunc.name() == RI_DYNAMIC_LOAD && disabledCommand(REQ_PROC_DYNAMIC_LOAD) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->procedural(data, bound, subdivfunc, freefunc);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2515,6 +2812,8 @@ RtVoid CRiCPPBridge::geometryV(RtToken type, RtInt n, RtToken tokens[], RtPointe
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_GEOMETRY) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->geometryV(type, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2540,6 +2839,8 @@ RtVoid CRiCPPBridge::makeTextureV(RtString pic, RtString tex, RtToken swrap, RtT
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MAKE_TEXTURE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->makeTextureV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2563,6 +2864,8 @@ RtVoid CRiCPPBridge::makeBumpV(RtString pic, RtString tex, RtToken swrap, RtToke
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MAKE_BUMP) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->makeBumpV(pic, tex, swrap, twrap, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2586,6 +2889,8 @@ RtVoid CRiCPPBridge::makeLatLongEnvironmentV(RtString pic, RtString tex, const I
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MAKE_LAT_LONG_ENVIRONMENT) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->makeLatLongEnvironmentV(pic, tex, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2609,6 +2914,8 @@ RtVoid CRiCPPBridge::makeCubeFaceEnvironmentV(RtString px, RtString nx, RtString
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MAKE_CUBE_FACE_ENVIRONMENT) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->makeCubeFaceEnvironmentV(px, nx, py, ny, pz, nz, tex, fov, filterfunc, swidth, twidth, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2632,6 +2939,8 @@ RtVoid CRiCPPBridge::makeShadowV(RtString pic, RtString tex, RtInt n, RtToken to
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MAKE_SHADOW) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->makeShadowV(pic, tex, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2655,6 +2964,8 @@ RtVoid CRiCPPBridge::makeBrickMapV(RtInt nNames, RtString ptcnames[], RtString b
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_MAKE_BRICK_MAP) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->makeBrickMapV(nNames, ptcnames, bkmname, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2688,6 +2999,8 @@ RtVoid CRiCPPBridge::archiveRecordV(RtToken type, RtString line)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ARCHIVE_RECORD) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->archiveRecordV(type, line);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2711,6 +3024,8 @@ RtVoid CRiCPPBridge::readArchiveV(RtString name, const IArchiveCallback *callbac
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_READ_ARCHIVE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->readArchiveV(name, callback, n, tokens, params);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2726,6 +3041,8 @@ RtVoid CRiCPPBridge::ifBegin(RtString expr)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_IF_BEGIN) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->ifBegin(expr);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2740,6 +3057,8 @@ RtVoid CRiCPPBridge::elseIfBegin(RtString expr)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ELSE_IF) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->elseIfBegin(expr);
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2754,6 +3073,8 @@ RtVoid CRiCPPBridge::elseBegin(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_ELSE) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->elseBegin();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);
@@ -2768,6 +3089,8 @@ RtVoid CRiCPPBridge::ifEnd(void)
 {
 	if ( m_ctxMgmt.curBackend().valid() ) {
 		try {
+			if ( disabledCommand(REQ_IF_END) )
+				return;
 			m_ctxMgmt.curBackend().renderingContext()->ifEnd();
 		} catch (ExceptRiCPPError &e) {
 			ricppErrHandler().handleError(e);

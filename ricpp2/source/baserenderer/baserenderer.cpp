@@ -136,6 +136,183 @@ using namespace RiCPP;
 	} \
 }
 
+void CBaseRenderer::blobby(CRiBlobby &obj)
+{
+/*
+	RtInt i, fidx, leaf;
+
+	// Using only color to display, only the leafs: ellipse and segment are shown
+	RtInt     nLeafTokens   = 0;
+	RtToken   leafTokens[2] = { "uniform color Cs", RI_NULL };
+	RtPointer leafParams[2] = { 0, 0 };
+
+	CParameter *Cs = obj.parameters().get(RI_CS);
+	if ( Cs && Cs->declaration().elemSize() > 0 ) {
+		leafTokens[0] = Cs->parameterName();
+		leafParams[0] = Cs->valPtr();
+		nLeafTokens = 1;
+	}
+
+	for ( i = 0, leaf = 0; i < obj.nCode()-1; ++i ) {
+
+		switch( obj.code()[i] ) {
+			case RI_BLOBBY_OP_ADD: // Addition:      count, ...
+				++i;
+				i += obj.code()[i];
+				break;
+			case RI_BLOBBY_OP_MUL: // Multiply:      count, ...
+				++i;
+				i += obj.code()[i];
+				break;
+			case RI_BLOBBY_OP_MAX: // Maximum:       count, ...
+				++i;
+				i += obj.code()[i];
+				break;
+			case RI_BLOBBY_OP_MIN: // Minimum:       count, ...
+				++i;
+				i += obj.code()[i];
+				break;
+			case RI_BLOBBY_OP_SUB: // Substract:     subtrahend, minuend
+				i += 2;
+				break;
+			case RI_BLOBBY_OP_DIV: // Divide:        dividend, divisor
+				i += 2;
+				break;
+			case RI_BLOBBY_OP_NEG: // Negate:        negand
+				i += 1;
+				break;
+			case RI_BLOBBY_OP_IDP: // Identity:      idempotentate
+				i += 1;
+				break;
+
+			// Leafs
+
+			case RI_BLOBBY_CONSTANT: //  1 floats
+				++leaf;
+				i += 1;
+				break;
+
+			case RI_BLOBBY_ELLIPSOID: // 16 floats
+				if ( Cs && Cs->getNumberOfElements() > (unsigned long)leaf ) {
+					leafParams[0] = Cs->getValue(leaf);
+				}
+				++leaf;
+				i += 1;
+				fidx = obj.code()[i];
+				if ( fidx+16 <= obj.nFlt() ) {
+					RtMatrix t;
+					t[0][0]=obj.flt()[fidx++];
+					t[0][1]=obj.flt()[fidx++];
+					t[0][2]=obj.flt()[fidx++];
+					t[0][3]=obj.flt()[fidx++];
+					t[1][0]=obj.flt()[fidx++];
+					t[1][1]=obj.flt()[fidx++];
+					t[1][2]=obj.flt()[fidx++];
+					t[1][3]=obj.flt()[fidx++];
+					t[2][0]=obj.flt()[fidx++];
+					t[2][1]=obj.flt()[fidx++];
+					t[2][2]=obj.flt()[fidx++];
+					t[2][3]=obj.flt()[fidx++];
+					t[3][0]=obj.flt()[fidx++];
+					t[3][1]=obj.flt()[fidx++];
+					t[3][2]=obj.flt()[fidx++];
+					t[3][3]=obj.flt()[fidx++];
+
+					transformBegin();
+					concatTransform(t);
+					sphereV((RtFloat).5, (RtFloat)-.5, (RtFloat).5, (RtFloat)360.0, nLeafTokens, leafTokens, leafParams);
+					transformEnd();
+				}
+				break;
+
+			case RI_BLOBBY_SEGMENT_BLOB: // 23 floats (start, end, radius, matrix)
+				if ( Cs && Cs->getNumberOfElements() > (unsigned long)leaf ) {
+					leafParams[0] = Cs->getValue(leaf);
+				}
+				++leaf;
+				i += 1;
+				fidx = obj.code()[i];
+				if ( fidx+23 <= obj.nFlt() ) {
+					RtPoint start, end;
+					RtPoint direction, normal;
+					RtFloat radius, length, r;
+					RtMatrix t;
+
+					start[0]=obj.flt()[fidx++];
+					start[1]=obj.flt()[fidx++];
+					start[2]=obj.flt()[fidx++];
+
+					end[0]=obj.flt()[fidx++];
+					end[1]=obj.flt()[fidx++];
+					end[2]=obj.flt()[fidx++];
+
+					radius=obj.flt()[fidx++]/(RtFloat)2.0; // ??? Seems to be the diameter in the params, not the radius
+
+					t[0][0]=obj.flt()[fidx++];
+					t[0][1]=obj.flt()[fidx++];
+					t[0][2]=obj.flt()[fidx++];
+					t[0][3]=obj.flt()[fidx++];
+					t[1][0]=obj.flt()[fidx++];
+					t[1][1]=obj.flt()[fidx++];
+					t[1][2]=obj.flt()[fidx++];
+					t[1][3]=obj.flt()[fidx++];
+					t[2][0]=obj.flt()[fidx++];
+					t[2][1]=obj.flt()[fidx++];
+					t[2][2]=obj.flt()[fidx++];
+					t[2][3]=obj.flt()[fidx++];
+					t[3][0]=obj.flt()[fidx++];
+					t[3][1]=obj.flt()[fidx++];
+					t[3][2]=obj.flt()[fidx++];
+					t[3][3]=obj.flt()[fidx++];
+
+					direction[0]=end[0]-start[0];
+					direction[1]=end[1]-start[1];
+					direction[2]=end[2]-start[2];
+
+					length=sqrt(direction[0]*direction[0]+direction[1]*direction[1]+direction[2]*direction[2]);
+					r = 0.0;
+					normal[0] = normal[1] = normal[2] = 0.0;
+					if ( length > 0.0 ) {
+						direction[0]/=length;
+						direction[1]/=length;
+						direction[2]/=length;
+
+						normal[0] = -direction[1];
+						normal[1] = direction[0];
+
+						r = rad2deg(acos(direction[2]));
+						if ( normal[0]==0 && normal[1]==0 && normal[2]==0 && r != 0.0 )
+							normal[2] = 1.0;
+					}
+
+					transformBegin();
+						concatTransform(t);
+						translate(start[0], start[1], start[2]);
+						if ( r != 0.0 ) {
+							rotate(r, normal[0], normal[1], normal[2]);
+						}
+						sphereV((RtFloat)radius, (RtFloat)-radius, (RtFloat)0.0, (RtFloat)360.0, nLeafTokens, leafTokens, leafParams);
+						if ( length > 0.0 ) {
+							cylinderV((RtFloat)radius,(RtFloat)0.0, length, (RtFloat)360.0, nLeafTokens, leafTokens, leafParams);
+							translate(0.0, 0.0, length);
+						}
+						sphereV((RtFloat)radius, (RtFloat)0.0, (RtFloat)radius, (RtFloat)360.0, nLeafTokens, leafTokens, leafParams);
+					transformEnd();
+				}
+				break;
+
+			case RI_BLOBBY_REPELLING_PLANE: //  2 Indices, first for 1 string param, 2nd for 4 floats
+				++leaf;
+				i += 2;
+				break;
+
+			default:
+				break;
+		}
+	}
+	*/
+}
+
 void CBaseRenderer::teapot()
 {
 	// Newell (Utah) Teapot
@@ -171,7 +348,7 @@ void CBaseRenderer::teapot()
 		0.0F,       1.75F,     1.725F,   -0.966498F,  1.75F,     1.725F,   -1.75F,      0.966498F, 1.725F,   -1.75F,      0.0F,      1.725F,
 		-1.75F,     -0.966498F, 1.725F,   -0.966498F, -1.75F,     1.725F,    0.0F,      -1.75F,     1.725F,    0.966498F, -1.75F,     1.725F,
 		1.75F,     -0.966498F, 1.725F,    1.75F,      0.0F,      1.725F,    1.5F,       0.0F,      2.25F,     1.5F,       0.828427F, 2.25F,
-		
+
 		0.828427F,  1.5F,      2.25F,     0.0F,       1.5F,      2.25F,    -0.828427F,  1.5F,      2.25F,    -1.5F,       0.828427F, 2.25F,
 		-1.5F,       0.0F,      2.25F,    -1.5F,      -0.828427F, 2.25F,    -0.828427F, -1.5F,      2.25F,     0.0F,      -1.5F,      2.25F,
 		0.828427F, -1.5F,      2.25F,     1.5F,      -0.828427F, 2.25F,     1.5F,       0.0F,      2.25F,     1.4375F,    0.0F,      2.38125F,
@@ -1155,14 +1332,17 @@ RtVoid CBaseRenderer::errorHandler(const IErrorHandler &handler)
 
 RtVoid CBaseRenderer::doProcess(CRiSynchronize &obj)
 {
+	/// @todo Synchronize "abort" - jumps directly behind closing world block
 	if ( obj.name() == RI_RESTART ) {
 		restart();
+	} else if ( obj.name() == RI_ABORT ) {
+		abort();
 	}
 }
 
 RtVoid CBaseRenderer::synchronize(RtString name)
 {
-	RICPP_PREAMBLE(REQ_SYSTEM)
+	RICPP_PREAMBLE(REQ_SYNCHRONIZE)
 		name = renderState()->tokFindCreate(name);
 		RICPP_PROCESS(newRiSynchronize(renderState()->lineNo(), name));
 	RICPP_POSTAMBLE
@@ -2814,6 +2994,11 @@ RtVoid CBaseRenderer::curvesV(RtToken type, RtInt ncurves, RtInt nverts[], RtTok
 		RICPP_PROCESS(newRiCurves(renderState()->lineNo(), renderState()->attributes().vStep(), type, ncurves, nverts, wrap, renderState()->curParamList()));
 	RICPP_POSTAMBLE
 	RICPP_UNREC_TOKENS(nParamsSav)
+}
+
+RtVoid CBaseRenderer::doProcess(CRiBlobby &obj)
+{
+	blobby(obj);
 }
 
 RtVoid CBaseRenderer::blobbyV(RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[])

@@ -4615,6 +4615,11 @@ namespace RiCPP {
 			return m_code;
 		}
 
+		inline RtInt nCode() const
+		{
+			return (RtInt)m_code.size();
+		}
+
 		/** @brief Get the float operands for the code.
 		 *
 		 * @return The float operands for the code.
@@ -4624,6 +4629,11 @@ namespace RiCPP {
 			return m_flt;
 		}
 
+		inline RtInt nFlt() const
+		{
+			return (RtInt)m_flt.size();
+		}
+
 		/** @brief Get the string operands for the code.
 		 *
 		 * @return The string operands for the code.
@@ -4631,6 +4641,11 @@ namespace RiCPP {
 		inline const std::vector<RtToken> &str() const
 		{
 			return m_str;
+		}
+
+		inline RtInt nStr() const
+		{
+			return (RtInt)m_str.size();
 		}
 
 		/** @brief Sets the member variables.

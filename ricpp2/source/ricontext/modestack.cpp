@@ -209,6 +209,7 @@ CValidModes::CValidModes()
 	
 	m_requests[REQ_CONTROL] = everywhereBits & ~MODE_BIT_MOTION;
 
+	m_requests[REQ_SYNCHRONIZE] = insideBits;
 	m_requests[REQ_SYSTEM] = MODE_BIT_OUTSIDE | MODE_BIT_BEGIN | MODE_BIT_FRAME;
 	m_requests[REQ_VERSION] = MODE_BIT_BEGIN;
 }
@@ -220,6 +221,45 @@ bool CValidModes::isValid(EnumRequests idxRequest, TypeModeBits idxModeBit) cons
 
 
 // --------------------
+bool CModeStack::opaqueRequest(EnumRequests req) const
+{
+	return
+		req == REQ_BEGIN ||
+		req == REQ_END ||
+
+		req == REQ_OBJECT_BEGIN ||
+		req == REQ_OBJECT_END ||
+
+		req == REQ_FRAME_BEGIN ||
+		req == REQ_FRAME_END ||
+
+		req == REQ_WORLD_BEGIN ||
+		req == REQ_WORLD_END ||
+
+		req == REQ_ATTRIBUTE_BEGIN ||
+		req == REQ_ATTRIBUTE_END ||
+
+		req == REQ_TRANSFORM_BEGIN ||
+		req == REQ_TRANSFORM_END ||
+
+		// req == REQ_SOLID_BEGIN || // has to be inside world block -> test for next non attribute/transform block
+		req == REQ_SOLID_END ||
+
+		req == REQ_RESOURCE_BEGIN ||
+		req == REQ_RESOURCE_END ||
+
+		req == REQ_ARCHIVE_BEGIN ||
+		req == REQ_ARCHIVE_END ||
+
+		// req == REQ_MOTION_BEGIN || // has to be inside world block -> test for next non attribute/transform block
+		req == REQ_MOTION_END ||
+		
+		req == REQ_IF_BEGIN ||
+		req == REQ_ELSE_IF ||
+		req == REQ_ELSE ||
+		req == REQ_IF_END;
+}
+
 bool CModeStack::validRequest(EnumRequests req) const
 {
 	/*  Attribute and transform blocks are valid outside the world block, too. But
@@ -227,7 +267,7 @@ bool CModeStack::validRequest(EnumRequests req) const
 	 */
 	TypeModeBits modeBit = curModeBits();
 	
-	if ( m_modeBits.size() > 0 && req != REQ_ATTRIBUTE_END && req != REQ_TRANSFORM_END ) {
+	if ( m_modeBits.size() > 0 && !opaqueRequest(req) ) {
 		long lastIdx = static_cast<long>(m_modeBits.size()) - 1;
 		while ( (modeBit & (MODE_BIT_ATTRIBUTE | MODE_BIT_TRANSFORM)) != 0 ) {
 			if ( lastIdx > 0 ) {

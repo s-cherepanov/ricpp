@@ -99,6 +99,8 @@ private:
 	size_type m_areaLightSourceDepth; ///< Nesting depth of the enclosing mode block of an area light source, 0 if not in area light source definition.
 	RtLightHandle m_areaLightSourceHandle; ///< Handle of area light source to be defined, illLightHandle if not defining an area light source.
 
+	bool opaqueRequest(EnumRequests req) const; ///< Used in validRequest, requests that should be tested inside attribute/transform.
+
 protected:
 	/** @brief Enters a new nesting to the modes, do not test if valid (is done by the interface before).
 	 *

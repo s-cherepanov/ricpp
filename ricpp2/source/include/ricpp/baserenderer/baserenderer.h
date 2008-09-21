@@ -506,6 +506,10 @@ protected:
 	 */
 	void teapot();
 
+	/** @brief Calls the interface routines for the control hull of blobbies
+	 */
+	void blobby(CRiBlobby &obj);
+
 public:
 
 	virtual bool init(const CDeclarationDictionary &theDeclDict, const COptions &theOptions, const COptionsBase &theControls);
@@ -1030,7 +1034,7 @@ public:
     inline virtual RtVoid doProcess(CRiPoints &obj) {}
     inline virtual RtVoid doProcess(CRiCurves &obj) {}
 	
-	inline virtual RtVoid doProcess(CRiBlobby &obj) {}
+	virtual RtVoid doProcess(CRiBlobby &obj);
 	
 	virtual RtVoid doProcess(CRiProcedural &obj);
 	

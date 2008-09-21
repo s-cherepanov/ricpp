@@ -375,7 +375,7 @@ namespace RiCPP {
 		 *
 		 *  @return Pointer to the values.
 		 */
-		RtPointer valptr();
+		RtPointer valPtr();
 
 		/** @brief Gets the number of values (basic type).
 		 *

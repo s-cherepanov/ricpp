@@ -30,6 +30,9 @@
  *  @brief Constants (enumerations) for the various requests (interface routines)
  */
 
+#include <map>
+#include <string>
+
 namespace RiCPP {
 
 /** Index for each interface function (request)
@@ -238,12 +241,14 @@ const int N_REQUESTS = (int)REQ_VERSION + 1;
  */
 class CRequestInfo {
 	static const char *ms_requestNames[N_REQUESTS]; ///< Table request names.
+	static std::map<std::string, EnumRequests> ms_requestMap;
 public:
 	/** @brief Gets the request name for index @a req.
 	 * @param req Index for request.
 	 * @return name for the request, RI_UNKNOWN if @a req is not defined
 	 */
 	static const char *requestName(EnumRequests req);
+	static EnumRequests requestNumber(const char *req);
 };
 
 } // namespace RiCPP

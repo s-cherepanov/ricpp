@@ -232,10 +232,30 @@ const char *CRequestInfo::ms_requestNames[N_REQUESTS] =
 	"version"
 };
 
+std::map<std::string, EnumRequests> CRequestInfo::ms_requestMap;
+
 const char *CRequestInfo::requestName(EnumRequests req)
 {
 	if ( req < REQ_UNKNOWN || req >= N_REQUESTS ) {
 		return ms_requestNames[REQ_UNKNOWN];
 	}
 	return ms_requestNames[req];
+}
+
+EnumRequests CRequestInfo::requestNumber(const char *req)
+{
+	if ( req == 0 || !*req )
+		return REQ_UNKNOWN;
+
+	if ( ms_requestMap.empty() ) {
+		for ( int req = REQ_UNKNOWN+1; req != N_REQUESTS; ++req ) {
+			ms_requestMap[requestName(static_cast<EnumRequests>(req))] = static_cast<EnumRequests>(req);
+		}
+	}
+
+	std::map<std::string, EnumRequests>::const_iterator iter = ms_requestMap.find(std::string(req));
+	if ( iter != ms_requestMap.end() ) {
+		return (*iter).second;
+	}
+	return REQ_UNKNOWN;
 }

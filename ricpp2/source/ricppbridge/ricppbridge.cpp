@@ -285,8 +285,8 @@ void CRiCPPBridge::defaultDeclarations()
 	RI_DISABLE = m_declDict.tokenMap().findCreate("disable");
 	RI_QUAL_DISABLE = doDeclare("Control:frontend:disable", "string", true);
 	
-	RI_RENDERER = doDeclare(RI_RENDERER, "string", true); // General string
-	RI_RIBFILTER = doDeclare(RI_RIBFILTER, "string", true);	 // General string
+	RI_RENDERER = doDeclare("renderer", "string", true); // General string
+	RI_RIBFILTER = doDeclare("ribfilter", "string", true);	 // General string
 }
 
 RtInt CRiCPPBridge::getTokens(RtToken token, va_list marker)
@@ -1466,10 +1466,14 @@ RtVoid CRiCPPBridge::doControl(RtToken name, const CParameterList &params)
 
 	/// @todo Control needs immediate execution - need not to be stored (different than Options and Attribute, more like Synchronize)
 	m_controls.set(name, params);
+	
+	// std::cout << "> " << params.size() << std::endl;
 
 	if ( name == RI_SEARCHPATH ) {
-		CParameterList::const_iterator i;
-		for ( i = params.begin(); i != params.end(); i++ ) {
+		for ( CParameterList::const_iterator i = params.begin();
+		      i != params.end();
+			  i++ )
+		{
 			if ( (*i).matches(QUALIFIER_CONTROL, RI_SEARCHPATH, RI_RENDERER) ) {
 				std::string strval;
 				if ( (*i).get(0, strval) ) {

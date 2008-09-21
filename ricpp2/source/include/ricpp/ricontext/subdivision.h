@@ -861,7 +861,7 @@ namespace RiCPP {
 		inline bool illTopology() const { return m_illTopology; }
 
 		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
-		inline RtInt interpolateBoundary(RtInt anInterpolateBoundary)
+		inline void interpolateBoundary(RtInt anInterpolateBoundary)
 		{
 			m_interpolateBoundary = anInterpolateBoundary;
 		}

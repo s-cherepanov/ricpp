@@ -85,7 +85,7 @@ void CGLRenderer::defaultDeclarations()
 	RI_GLRENDERER = renderState()->tokFindCreate("glrenderer");
 
 	RI_SCREEN = renderState()->tokFindCreate("screen");
-	RI_QUAL_SCREEN = renderState()->declare("Control:glrenderer:screen",  "constant string",  true);	
+	RI_QUAL_SCREEN = renderState()->declare("Control:glrenderer:screen",  "string",  true);	
 
 	RI_DRAW_NORMALS = renderState()->tokFindCreate("draw-normals");
 	RI_QUAL_DRAW_NORMALS = renderState()->declare("Attribute:glrenderer:draw-normals",  "integer",  true);	

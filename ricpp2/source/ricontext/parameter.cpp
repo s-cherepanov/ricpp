@@ -660,8 +660,9 @@ void CParameterList::add(
 			RtToken token = m_params.back().token(); // The qualified variable name as key
 			if ( token != var )
 				m_paramMap[token] = &m_params.back();
-		} catch(ExceptRiCPPError &) {
+		} catch(...) {
 			// Consume Error, ignore illegal parameters
+			// throw;
 		}
 	}
 	rebuild();

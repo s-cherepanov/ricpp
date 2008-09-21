@@ -588,7 +588,7 @@ namespace RiCPP {
 		long m_incidentFaces; //!< Number of incident faces
 		long m_incidentEdges; //!< Number of incident edges
 		
-		long m_faceIndex;     //!< temporary index of the (first) vertex in a single face - vertex can have multiple values it vertex is a corner, because of the normals.
+		long m_faceIndex;     //!< Temporary index of the (first) vertex in a single face - vertex can have multiple values if vertex is a corner, because of the normals and hierarchical edits.
 
 		bool m_faceVertex;     //!< Is a vertex of a face boundary
 		

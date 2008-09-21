@@ -25,7 +25,7 @@ ObjectBegin "SubdivMesh"
 		"catmull-clark"
 		[ 4 ]
 		[ 0 1 2 3 ]
-		[ "interpolateboundary" ] [ 1 0 ] [ 0 ] [ ]
+		[ "interpolateboundary" ] [ 1 0 ] [ 2 ] [ ]
 		"vertex point P" [
 			-0.9  0.9  0      #  0
 			 0.9  0.9  0      #  1

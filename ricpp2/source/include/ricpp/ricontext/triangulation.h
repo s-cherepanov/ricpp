@@ -460,7 +460,7 @@ namespace RiCPP {
 
 	// -------------------------------------------------------------------------
 	
-	class CSubdivisionHierarchieTesselator  : public CTesselator {
+	class CSubdivisionHierarchyTesselator  : public CTesselator {
 	private:
 		std::list<CSubdivisionIndices> m_indices;    //!< Contains topology
 		CRiHierarchicalSubdivisionMesh m_obj;        //!< CRiHierarchicalSubdivisionMesh handles normal subdivisions as well
@@ -477,11 +477,11 @@ namespace RiCPP {
 		}
 		
 	public:
-		inline CSubdivisionHierarchieTesselator(CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
+		inline CSubdivisionHierarchyTesselator(CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
 		: m_obj(anObj), m_strategies(theStrategies)
 		{
 		}
-		inline CSubdivisionHierarchieTesselator(CRiSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
+		inline CSubdivisionHierarchyTesselator(CRiSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
 		: m_obj(anObj), m_strategies(theStrategies)
 		{
 		}

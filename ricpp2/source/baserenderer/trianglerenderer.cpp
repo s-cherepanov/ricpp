@@ -40,6 +40,7 @@ CTriangleRenderer::CTriangleRenderer()
 	m_useStrips = _USESTRIPS;
 	m_cacheGrids = _DEF_CACHE_GRIDS;
 	m_subdivStrategies.registerObj(RI_CATMULL_CLARK, new CCatmullClarkSubdivision);
+	m_subdivStrategies.registerObj(RI_NULL, new CNoneSubdivision);
 }
 
 void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans, std::vector<RtFloat> &p, std::vector<RtFloat> &n)
@@ -297,7 +298,7 @@ RtVoid CTriangleRenderer::triangulate(CRiSubdivisionMesh &obj)
 	if ( startHandling(obj) )
 		return;
 	
-	CSubdivisionHierarchieTesselator *t = new CSubdivisionHierarchieTesselator(obj, subdivStrategies());
+	CSubdivisionHierarchyTesselator *t = new CSubdivisionHierarchyTesselator(obj, subdivStrategies());
 	endHandling(obj, t);
 }
 
@@ -306,7 +307,7 @@ RtVoid CTriangleRenderer::triangulate(CRiHierarchicalSubdivisionMesh &obj)
 	if ( startHandling(obj) )
 		return;
 	
-	CSubdivisionHierarchieTesselator *t = new CSubdivisionHierarchieTesselator(obj, subdivStrategies());
+	CSubdivisionHierarchyTesselator *t = new CSubdivisionHierarchyTesselator(obj, subdivStrategies());
 	endHandling(obj, t);
 }
 

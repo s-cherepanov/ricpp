@@ -1091,14 +1091,12 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 			if ( n > 0 )
 				efac = (RtFloat)1 / (n*n);
 
-			RtFloat ffac = efac;
+			// RtFloat ffac = efac;
 
-			/*
-			ffac = 0;
+			RtFloat ffac = 0;
 			RtFloat m = static_cast<RtFloat>((*vertexIter).incidentFaces());
 			if ( m > 0 )
 				ffac = (RtFloat)1 / (m*m);
-			*/
 
 			long crease0 = -1, crease1 = -1;
 			long creasedVertex = (*prev).creasedVertex(*vertexIter, interpolateBoundary, crease0, crease1);
@@ -1114,10 +1112,6 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 				}
 				
 				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED && creasedVertex == 2 ) {
-					/*
-					RtFloat e0 = floats[(edgeOffs + crease0) * decl.elemSize() + i];
-					RtFloat e1 = floats[(edgeOffs + crease1) * decl.elemSize() + i];
-					*/
 					RtFloat e0 = 0, e1 = 0, cnt = 0;
 					long adjacent = 0;
 					assert(crease0 >= 0);
@@ -1148,7 +1142,6 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 				
 				esum = 0;
 				for ( long edgeCnt = (*vertexIter).startEdge(); edgeCnt != (*vertexIter).endEdge(); ++edgeCnt ) {
-					// esum += floats[(edgeOffs + (*prev).incidentEdges()[edgeCnt]) * decl.elemSize() + i];
 					long adjacent = 0;
 					assert((*prev).incidentEdges()[edgeCnt] >= 0 && (*prev).incidentEdges()[edgeCnt] < (long)((*prev).edges().size()));
 					if ( (*prev).edges()[(*prev).incidentEdges()[edgeCnt]].getAdjacentVertex(vertexIdx, adjacent) ) {
@@ -1177,4 +1170,11 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 		
 		prev = runningIndices;
 	}
+}
+
+bool CCatmullClarkSubdivision::discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const
+{
+	if ( root.interpolateBoundary() != 0 )
+		return false;
+	return root.isBoundary(root.faces()[faceIdx]);
 }

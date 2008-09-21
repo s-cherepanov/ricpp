@@ -857,14 +857,7 @@ namespace RiCPP {
 		{
 			return m_vertices[anEdge.vertex(0)].faceVertex() &&  m_vertices[anEdge.vertex(1)].faceVertex();
 		}
-
-		inline bool discardableBoundaryFace(const CSubdivFace &aFace) const
-		{
-			if ( m_interpolateBoundary != 0 )
-				return false;
-			return isBoundary(aFace);
-		}
-		
+	
 		inline bool illTopology() const { return m_illTopology; }
 
 		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
@@ -886,6 +879,7 @@ namespace RiCPP {
 		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const std::vector<IndexType> &origIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual bool discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const = 0;
 	};
 	
 	class CCatmullClarkSubdivision : public CSubdivisionStrategy {
@@ -912,8 +906,21 @@ namespace RiCPP {
 		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const std::vector<IndexType> &origIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual bool discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const;
 	};
 	
+	class CNoneSubdivision : public CCatmullClarkSubdivision {
+	public:
+		inline virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const
+		{
+			return insertVaryingValues(theIndices, curIndices, decl, floats);
+		}
+		inline virtual bool discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const
+		{
+			return false;
+		}
+	};
+
 	class CSubdivisionStrategies : public TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *> {
 	public:
 		inline CSubdivisionStrategies() : TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *>(true) {};

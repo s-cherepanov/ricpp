@@ -2117,7 +2117,7 @@ CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 
 // ----------------------------------------------------------------------------
 
-void CSubdivisionHierarchieTesselator::subdivide(const CSubdivisionStrategy &strategy, IndexType depth)
+void CSubdivisionHierarchyTesselator::subdivide(const CSubdivisionStrategy &strategy, IndexType depth)
 {
 	if ( m_indices.size() == 0 ) {
 		m_indices.push_back(CSubdivisionIndices());
@@ -2139,7 +2139,7 @@ void CSubdivisionHierarchieTesselator::subdivide(const CSubdivisionStrategy &str
 	}
 }
 
-void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace)
+void CSubdivisionHierarchyTesselator::insertParams(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace)
 {
 	IndexType nVertices = static_cast<IndexType>((*curIndices).vertices().size());
 	
@@ -2173,7 +2173,7 @@ void CSubdivisionHierarchieTesselator::insertParams(const CSubdivisionStrategy &
 }
 
 
-void CSubdivisionHierarchieTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, std::vector<IndexType> &origIndices, CFace &f)
+void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, std::vector<IndexType> &origIndices, CFace &f)
 {
 	(*curIndices).prepareFace(m_indices.begin(), curIndices, faceIdx, f.indices(), origIndices);
 	f.sizes().resize(1);
@@ -2237,7 +2237,7 @@ void CSubdivisionHierarchieTesselator::extractFaces(const CSubdivisionStrategy &
 	// InsertNormals
 }
 
-CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
+CSurface *CSubdivisionHierarchyTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
 	IndexType maxTess = tmax(tessU(), tessV());
 	
@@ -2278,7 +2278,7 @@ CSurface *CSubdivisionHierarchieTesselator::tesselate(const CDeclaration &posDec
 			insertParams(*strategy, curIndices, *varyingData);
 			std::vector<IndexType> origIndices;
 			for ( RtInt faceIdx = 0; faceIdx < m_obj.nFaces(); ++faceIdx ) {
-				if ( (maxTess == 1 || !(*m_indices.begin()).discardableBoundaryFace((*m_indices.begin()).faces()[faceIdx])) &&
+				if ( (maxTess == 1 || !strategy->discardableBoundaryFace(*m_indices.begin(), faceIdx)) &&
 					 (*m_indices.begin()).faces()[faceIdx].type() != CSubdivFace::FACE_HOLE )
 				{
 					extractFaces(*strategy, curIndices, faceIdx, *varyingData, origIndices, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));

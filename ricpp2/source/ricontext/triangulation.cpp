@@ -2173,7 +2173,7 @@ void CSubdivisionHierarchyTesselator::insertParams(const CSubdivisionStrategy &s
 }
 
 
-void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, std::vector<IndexType> &origIndices, CFace &f)
+void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, const CDeclaration &normDecl, std::vector<IndexType> &origIndices, CFace &f)
 {
 	(*curIndices).prepareFace(m_indices.begin(), curIndices, faceIdx, f.indices(), origIndices);
 	f.sizes().resize(1);
@@ -2235,6 +2235,10 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 	}
 	
 	// InsertNormals
+	if ( varyingData.floats(RI_P) != 0 && varyingData.floats(RI_P)->declaration().isFloat3Decl() && normDecl.isFloat3Decl() && varyingData.floats(RI_N) == 0 ) {
+		TemplPrimVar<RtFloat> &floats = f.reserveFloats(normDecl);		
+		(*curIndices).calcNormals(origIndices, varyingData.floats(RI_P)->values(), floats.values());
+	}
 }
 
 CSurface *CSubdivisionHierarchyTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
@@ -2281,18 +2285,20 @@ CSurface *CSubdivisionHierarchyTesselator::tesselate(const CDeclaration &posDecl
 				if ( (maxTess == 1 || !strategy->discardableBoundaryFace(*m_indices.begin(), faceIdx)) &&
 					 (*m_indices.begin()).faces()[faceIdx].type() != CSubdivFace::FACE_HOLE )
 				{
-					extractFaces(*strategy, curIndices, faceIdx, *varyingData, origIndices, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));
+					extractFaces(*strategy, curIndices, faceIdx, *varyingData, normDecl, origIndices, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));
 				}
 			}
 		}
 	} catch ( ... ) {
 		if ( varyingData )
 			delete varyingData;
+		m_indices.clear();
 		throw;
 	}	
 	
 	if ( varyingData )
 		delete varyingData;
+	m_indices.clear();
 
 	return surf;
 }

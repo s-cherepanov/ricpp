@@ -463,12 +463,12 @@ namespace RiCPP {
 	class CSubdivisionHierarchyTesselator  : public CTesselator {
 	private:
 		std::list<CSubdivisionIndices> m_indices;    //!< Contains topology
-		CRiHierarchicalSubdivisionMesh m_obj;        //!< CRiHierarchicalSubdivisionMesh handles normal subdivisions as well
+		CRiHierarchicalSubdivisionMesh m_obj;        //!< CRiHierarchicalSubdivisionMesh handles non-hierarchical subdivisions as well
 		const CSubdivisionStrategies &m_strategies;	 //!< Strategies for subdivision ("catmull-clark")
 		
 		void subdivide(const CSubdivisionStrategy &strategy, IndexType depth);
 		void insertParams(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
-		void extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceNum, const CFace &varyingData, std::vector<IndexType> &origIndices, CFace &f);
+		void extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceNum, const CFace &varyingData, const CDeclaration &normDecl, std::vector<IndexType> &origIndices, CFace &f);
 		
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const

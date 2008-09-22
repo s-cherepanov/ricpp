@@ -616,6 +616,52 @@ void CSubdivisionIndices::prepareFace(const std::list<CSubdivisionIndices>::iter
 	fillOrigIndices(root, cur, faceIdx, origIndices, sharedStart, unsharedStart);
 }
 
+bool CSubdivisionIndices::calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, RtFloat *normal) const
+{
+	const CSubdivFace &f = m_faces[faceIdx];
+	long localVertex = f.startVertexIndex() + f.localIndex(m_vertexIndices, vertexIdx);
+	long v0 = m_vertexIndices[f.nextVertexIndex(localVertex)];
+	long v1 = m_vertexIndices[f.prevVertexIndex(localVertex)];
+	if ( planeLH(normal, &pos[v0*3], &pos[vertexIdx*3], &pos[v1*3]) ) {
+		return true;
+	}
+	long v3 = m_vertexIndices[f.nextVertexIndex(v0)];
+	if ( planeLH(normal, &pos[v3*3], &pos[vertexIdx*3], &pos[v1*3]) ) {
+		return true;
+	}
+	v3 = m_vertexIndices[f.prevVertexIndex(v1)];
+	if ( planeLH(normal, &pos[v0*3], &pos[vertexIdx*3], &pos[v3*3]) ) {
+		return true;
+	}
+	return false;
+}	
+
+void CSubdivisionIndices::calcNormal(IndexType index, const std::vector<RtFloat> &pos, RtFloat *resultsF3) const
+{
+	resultsF3[0] = 0;
+	resultsF3[1] = 0;
+	resultsF3[2] = 0;
+	
+	const CSubdivVertex &v = m_vertices[index];
+	RtFloat tempNorm[3];
+	for ( long faceIdx = v.startFace(); faceIdx != v.endFace(); faceIdx++ ) {
+		if ( calcNormalForVertexInFace(m_incidentFaces[faceIdx], index, pos, tempNorm) ) {
+			normalize3(tempNorm);
+			resultsF3[0] += tempNorm[0];
+			resultsF3[1] += tempNorm[1];
+			resultsF3[2] += tempNorm[2];
+		}
+	}
+}
+
+void CSubdivisionIndices::calcNormals(const std::vector<IndexType> &origIndices, const std::vector<RtFloat> &pos, std::vector<RtFloat> &floats) const
+{
+	floats.resize(origIndices.size() * 3);
+	for (size_t i = 0; i != origIndices.size(); i++ ) {
+		calcNormal(origIndices[i], pos, &floats[i*3]);
+	}
+}
+
 // ----------------------------------------------------------------------------
 
 void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const

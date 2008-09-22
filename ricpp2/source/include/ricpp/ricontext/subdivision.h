@@ -186,7 +186,14 @@ namespace RiCPP {
 		inline long nextVertexIndex(long anIndex) const
 		{
 			assert(startVertexIndex() <= anIndex && endVertexIndex() > anIndex);
-			return startVertexIndex() + (anIndex - startVertexIndex() + 1) % nVertices();
+			anIndex++;
+			return anIndex >= endVertexIndex() ? startVertexIndex() : anIndex;
+		}
+
+		inline long prevVertexIndex(long anIndex) const
+		{
+			assert(startVertexIndex() <= anIndex && endVertexIndex() > anIndex);
+			return anIndex <= startVertexIndex() ? endVertexIndex() - 1 : anIndex - 1;
 		}
 
 		/*! \return The number of vertices and edges grouped around the face. After the initial
@@ -489,6 +496,16 @@ namespace RiCPP {
 			return true;
 		}
 		
+		inline long adjacentVertex(long aVertex) const
+		{
+			if ( aVertex == m_vertex[0] )
+				return m_vertex[1];
+			else if ( aVertex == m_vertex[1] )
+				return m_vertex[0];
+			
+			return -1;
+		}
+
 		//! Gets the adjacent face of another face and the edge.
 		/*! \param aFace A face of the edge.
 		 *  \retval adjacent The Index of the neighbour (adjacent) of aFace of the edge.
@@ -505,6 +522,16 @@ namespace RiCPP {
 				return false;
 			
 			return true;
+		}
+
+		inline long adjacentFace(long aFace) const
+		{
+			if ( aFace == m_face[0] )
+				return m_face[1];
+			else if ( aFace == m_face[1] )
+				return m_face[0];
+			
+			return -1;
 		}
 		
 		//! Is the edge a boundary edge?
@@ -676,6 +703,12 @@ namespace RiCPP {
 			return m_startEdge;
 		}
 
+		inline long nextEdge(long anEdge) const
+		{
+			long e = anEdge +1;
+			return e >= endEdge() ? startEdge() : e;
+		}
+
 		inline void startEdge(long anEdgeIndex)
 		{
 			m_startEdge = anEdgeIndex;
@@ -716,7 +749,12 @@ namespace RiCPP {
 			return m_startFace+m_incidentFaces;
 		}
 		
-
+		inline long nextFace(long aFace) const
+		{
+			long f = aFace + 1;
+			return f >= endFace() ? startFace() : f;
+		}
+		
 		inline long incidentFaces() const
 		{
 			return m_incidentFaces;
@@ -870,6 +908,9 @@ namespace RiCPP {
 					   const CRiHierarchicalSubdivisionMesh &anObj);
 		
 		void prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, std::vector<IndexType> &origIndices);
+		bool calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, RtFloat *normal) const;
+		void calcNormal(IndexType index, const std::vector<RtFloat> &pos, RtFloat *resultsF3) const;
+		void calcNormals(const std::vector<IndexType> &origIndices, const std::vector<RtFloat> &pos, std::vector<RtFloat> &floats) const;
 	};
 	
 	class CSubdivisionStrategy {

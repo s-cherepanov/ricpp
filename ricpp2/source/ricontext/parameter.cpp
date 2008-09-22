@@ -660,7 +660,8 @@ void CParameterList::add(
 			RtToken token = m_params.back().token(); // The qualified variable name as key
 			if ( token != var )
 				m_paramMap[token] = &m_params.back();
-		} catch(...) {
+		} catch(ExceptRiCPPError &) {
+			/// @todo Better throw, redesign the handling of parameters without types (previously defined parameters) to work without an exception.
 			// Consume Error, ignore illegal parameters
 			// throw;
 		}

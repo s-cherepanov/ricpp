@@ -119,6 +119,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testpoly", "testpoly\testpo
 		{3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4} = {3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glrenderer", "glrenderer\glrenderer.vcproj", "{44E5910B-BE7A-462C-9B86-5D445A160800}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8B07A80D-1C1E-4B0A-85D0-6741FA1791CD} = {8B07A80D-1C1E-4B0A-85D0-6741FA1791CD}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glrendererdll", "glrendererdll\glrendererdll.vcproj", "{8F916DD0-E4F6-4514-B2B1-AE62E72F1798}"
+	ProjectSection(ProjectDependencies) = postProject
+		{44E5910B-BE7A-462C-9B86-5D445A160800} = {44E5910B-BE7A-462C-9B86-5D445A160800}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glutrib", "glutrib\glutrib.vcproj", "{94F2B207-EF88-4A2C-8DFE-03C6866DEC58}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC50912D-0632-43F6-B609-15FE8D0707F5} = {AC50912D-0632-43F6-B609-15FE8D0707F5}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -217,6 +232,18 @@ Global
 		{A30914AF-1DD5-4C93-9377-B6D23198D3F9}.Debug|Win32.Build.0 = Debug|Win32
 		{A30914AF-1DD5-4C93-9377-B6D23198D3F9}.Release|Win32.ActiveCfg = Release|Win32
 		{A30914AF-1DD5-4C93-9377-B6D23198D3F9}.Release|Win32.Build.0 = Release|Win32
+		{44E5910B-BE7A-462C-9B86-5D445A160800}.Debug|Win32.ActiveCfg = Debug|Win32
+		{44E5910B-BE7A-462C-9B86-5D445A160800}.Debug|Win32.Build.0 = Debug|Win32
+		{44E5910B-BE7A-462C-9B86-5D445A160800}.Release|Win32.ActiveCfg = Release|Win32
+		{44E5910B-BE7A-462C-9B86-5D445A160800}.Release|Win32.Build.0 = Release|Win32
+		{8F916DD0-E4F6-4514-B2B1-AE62E72F1798}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8F916DD0-E4F6-4514-B2B1-AE62E72F1798}.Debug|Win32.Build.0 = Debug|Win32
+		{8F916DD0-E4F6-4514-B2B1-AE62E72F1798}.Release|Win32.ActiveCfg = Release|Win32
+		{8F916DD0-E4F6-4514-B2B1-AE62E72F1798}.Release|Win32.Build.0 = Release|Win32
+		{94F2B207-EF88-4A2C-8DFE-03C6866DEC58}.Debug|Win32.ActiveCfg = Debug|Win32
+		{94F2B207-EF88-4A2C-8DFE-03C6866DEC58}.Debug|Win32.Build.0 = Debug|Win32
+		{94F2B207-EF88-4A2C-8DFE-03C6866DEC58}.Release|Win32.ActiveCfg = Release|Win32
+		{94F2B207-EF88-4A2C-8DFE-03C6866DEC58}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

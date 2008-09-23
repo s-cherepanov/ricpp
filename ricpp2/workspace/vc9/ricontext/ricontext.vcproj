@@ -282,11 +282,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\blend.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\contextcreator.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\source\ricontext\displaydesc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\ricontext\inputstate.cpp"
 				>
 			</File>
 			<File
@@ -338,7 +346,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\ricontext\subdivision.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\ricontext\surface.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\ricontext\transformation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\ricontext\triangulation.cpp"
 				>
 			</File>
 		</Filter>
@@ -349,6 +369,10 @@
 			>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\attributes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\blend.h"
 				>
 			</File>
 			<File
@@ -365,6 +389,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\handlestack.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\inputstate.h"
 				>
 			</File>
 			<File
@@ -468,7 +496,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\subdivision.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\surface.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\source\include\ricpp\ricontext\transformation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\ricontext\triangulation.h"
 				>
 			</File>
 		</Filter>

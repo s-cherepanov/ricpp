@@ -285,6 +285,10 @@
 				RelativePath="..\..\..\source\baserenderer\baserenderer.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\source\baserenderer\trianglerenderer.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -293,6 +297,10 @@
 			>
 			<File
 				RelativePath="..\..\..\source\include\ricpp\baserenderer\baserenderer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\source\include\ricpp\baserenderer\trianglerenderer.h"
 				>
 			</File>
 		</Filter>

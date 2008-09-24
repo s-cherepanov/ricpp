@@ -186,8 +186,7 @@ namespace RiCPP {
 		inline long nextVertexIndex(long anIndex) const
 		{
 			assert(startVertexIndex() <= anIndex && endVertexIndex() > anIndex);
-			anIndex++;
-			return anIndex >= endVertexIndex() ? startVertexIndex() : anIndex;
+			return anIndex >= (endVertexIndex() - 1) ? startVertexIndex() : anIndex + 1;
 		}
 
 		inline long prevVertexIndex(long anIndex) const
@@ -908,9 +907,9 @@ namespace RiCPP {
 					   const CRiHierarchicalSubdivisionMesh &anObj);
 		
 		void prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, std::vector<IndexType> &origIndices);
-		bool calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, RtFloat *normal) const;
-		void calcNormal(IndexType index, const std::vector<RtFloat> &pos, RtFloat *resultsF3) const;
-		void calcNormals(const std::vector<IndexType> &origIndices, const std::vector<RtFloat> &pos, std::vector<RtFloat> &floats) const;
+		bool calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *normal) const;
+		void calcNormal(IndexType index, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const;
+		void calcNormals(const std::vector<IndexType> &origIndices, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const;
 	};
 	
 	class CSubdivisionStrategy {

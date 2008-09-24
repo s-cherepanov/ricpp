@@ -2237,7 +2237,7 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 	// InsertNormals
 	if ( varyingData.floats(RI_P) != 0 && varyingData.floats(RI_P)->declaration().isFloat3Decl() && normDecl.isFloat3Decl() && varyingData.floats(RI_N) == 0 ) {
 		TemplPrimVar<RtFloat> &floats = f.reserveFloats(normDecl);		
-		(*curIndices).calcNormals(origIndices, varyingData.floats(RI_P)->values(), floats.values());
+		(*curIndices).calcNormals(origIndices, varyingData.floats(RI_P)->values(), flipNormals(), floats.values());
 	}
 }
 

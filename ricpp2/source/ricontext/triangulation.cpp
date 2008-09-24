@@ -1160,9 +1160,9 @@ void CSphereTesselator::buildPN(const CDeclaration &posDecl, const CDeclaration 
 		return;
 
 	RtFloat zmin = m_obj->zMin();
-	clamp<RtFloat>(zmin, -radius, radius);
+	zmin = clamp<RtFloat>(zmin, -radius, radius);
 	RtFloat zmax = m_obj->zMax();
-	clamp<RtFloat>(zmax, -radius, radius);
+	zmax = clamp<RtFloat>(zmax, -radius, radius);
 
 	if ( nearlyZero(zmax-zmin) )
 		return;

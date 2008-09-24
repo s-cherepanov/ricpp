@@ -45,6 +45,8 @@ using namespace RiCPP;
 // #define _SHOWPOLYLINES
 #endif
 
+#define _OPENGL_TRANSFORM
+
 static const bool _DRAWNORMALS = false;
 static const bool _USESTRIPS = false;
 
@@ -134,14 +136,21 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 	
 	// line
 	const RtFloat sn = (RtFloat).075; // scale normals
+	RtFloat fact = 0;
+	if ( perFace ) {
+		fact = sn / vlen(n[0], n[1], n[2]);
+	}
+	
+	
 	glColor4f(0, 0, 0, 1.0);
 	glBegin(GL_LINES);
 	for ( unsigned int i = 0; i < p.size()-2; i+=3 ) {
 		glVertex3f(p[i], p[i+1], p[i+2]);
 		if ( perFace ) {
-			glVertex3f(p[i]+sn*n[0], p[i+1]+sn*n[1], p[i+2]+sn*n[2]);
+			glVertex3f(p[i]+fact*n[0], p[i+1]+fact*n[1], p[i+2]+fact*n[2]);
 		} else {
-			glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+			fact = sn / vlen(n[i], n[i+1], n[i+2]);
+			glVertex3f(p[i]+fact*n[i], p[i+1]+fact*n[i+1], p[i+2]+fact*n[i+2]);
 		}
 	}
 	glEnd();
@@ -152,9 +161,10 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 	glBegin(GL_POINTS);
 	for ( unsigned int i = 0; i < p.size()-2; i+=3 ) {
 		if ( perFace ) {
-			glVertex3f(p[i]+sn*n[0], p[i+1]+sn*n[1], p[i+2]+sn*n[2]);
+			glVertex3f(p[i]+fact*n[0], p[i+1]+fact*n[1], p[i+2]+fact*n[2]);
 		} else {
-			glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+			fact = sn / vlen(n[i], n[i+1], n[i+2]);
+			glVertex3f(p[i]+fact*n[i], p[i+1]+fact*n[i+1], p[i+2]+fact*n[i+2]);
 		}
 	}
 	glEnd();
@@ -164,9 +174,10 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 	glBegin(GL_POINTS);
 	for ( unsigned int i = 0; i < p.size()-2; i+=3 ) {
 		if ( perFace ) {
-			glVertex3f(p[i]+sn*n[0], p[i+1]+sn*n[1], p[i+2]+sn*n[2]);
+			glVertex3f(p[i]+fact*n[0], p[i+1]+fact*n[1], p[i+2]+fact*n[2]);
 		} else {
-			glVertex3f(p[i]+sn*n[i], p[i+1]+sn*n[i+1], p[i+2]+sn*n[i+2]);
+			fact = sn / vlen(n[i], n[i+1], n[i+2]);
+			glVertex3f(p[i]+fact*n[i], p[i+1]+fact*n[i+1], p[i+2]+fact*n[i+2]);
 		}
 	}
 	glEnd();
@@ -177,16 +188,30 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 
 void CGLRenderer::hide(const CFace &f)
 {
+#ifdef _OPENGL_TRANSFORM
+	const TemplPrimVar<RtFloat> *pptr = f.floats(RI_P);
+	const TemplPrimVar<RtFloat> *nptr = f.floats(RI_N);
+	
+	if ( !pptr )
+		return;
+	
+	const std::vector<RtFloat> *pp = &(pptr->values());
+	const std::vector<RtFloat> *np = nptr ? &(nptr->values()) : 0;
+#else
 	std::vector<RtFloat> p;
 	std::vector<RtFloat> n;
+	const std::vector<RtFloat> *pp = &p;
+	const std::vector<RtFloat> *np = &n;
 	
 	getPosAndNormals(f, toCamera(), p, n);
 	if ( p.empty() )
 		return;
+#endif
+	
 
 	// Draw normals?
-	if ( m_drawNormals ) {
-		drawNormals(p, n);
+	if ( m_drawNormals && np ) {
+		drawNormals(*pp, *np);
 	}
 
 	// State variables
@@ -195,18 +220,20 @@ void CGLRenderer::hide(const CFace &f)
 
 	// vertexArray
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, 0, &p[0]);
+	glVertexPointer(3, GL_FLOAT, 0, &(*pp)[0]);
 	
 	// normalArray
-	if ( n.size() == p.size() ) {
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, 0, &n[0]);
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
-	} else if ( n.size() == 3 ) {
-		glNormal3f(n[0], n[1], n[2]);
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
+	if ( np ) {
+		if ( np->size() == np->size() ) {
+			glEnableClientState(GL_NORMAL_ARRAY);
+			glNormalPointer(GL_FLOAT, 0, &(*np)[0]);
+			glEnable(GL_LIGHTING);
+			glEnable(GL_LIGHT0);
+		} else if ( np->size() == 3 ) {
+			glNormal3f((*np)[0], (*np)[1], (*np)[2]);
+			glEnable(GL_LIGHTING);
+			glEnable(GL_LIGHT0);
+		}
 	}
 	
 	// surface opacity
@@ -223,7 +250,7 @@ void CGLRenderer::hide(const CFace &f)
 		getCs(pcSurf->declaration().colorDescr(), renderState()->options().gain(), renderState()->options().gamma(), pcSurf->values(), cs);
 	}
 
-	if ( cs.size() == p.size() ) {
+	if ( cs.size() == pp->size() ) {
 		glEnableClientState(GL_COLOR_ARRAY);
 		glColorPointer(3, GL_FLOAT, 0, &cs[0]);
 		if ( replayMode()  ) 
@@ -264,12 +291,11 @@ void CGLRenderer::hide(const CFace &f)
 	
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
-	if ( n.size() == p.size() ) {
+	if ( np && (np->size() == pp->size()) ) {
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_LIGHT0);
 	}
-	
 }
 
 void CGLRenderer::hideSurface(const CSurface *s)
@@ -317,7 +343,17 @@ void CGLRenderer::hideSurface(const CSurface *s)
 		}
 	}
 
+#ifdef _OPENGL_TRANSFORM
+	glEnable(GL_NORMALIZE);
+	glLoadMatrixf(toCamera().getFloats());	
+#endif
+	
 	TypeParent::hideSurface(s);
+	
+#ifdef _OPENGL_TRANSFORM
+	glLoadIdentity(); // ??? seems to have effects on lighting
+	glDisable(GL_NORMALIZE);
+#endif
 }
 
 

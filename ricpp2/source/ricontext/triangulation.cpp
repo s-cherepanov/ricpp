@@ -2173,7 +2173,7 @@ void CSubdivisionHierarchyTesselator::insertParams(const CSubdivisionStrategy &s
 }
 
 
-void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, const CDeclaration &normDecl, std::vector<IndexType> &origIndices, CFace &f)
+void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, const CDeclaration &posDecl, const CDeclaration &normDecl, std::vector<IndexType> &origIndices, CFace &f)
 {
 	(*curIndices).prepareFace(m_indices.begin(), curIndices, faceIdx, f.indices(), origIndices);
 	f.sizes().resize(1);
@@ -2234,6 +2234,20 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 		}
 	}
 	
+	if ( varyingData.floats(RI_P) == 0 && posDecl.isFloat3Decl() ) {
+		const TemplPrimVar<RtFloat> *pw = varyingData.floats(RI_PW);
+		
+		if (  pw != 0 && pw->declaration().isFloat4Decl() ) {
+			TemplPrimVar<RtFloat> &p = f.reserveFloats(posDecl);
+			p.values().resize(origIndices.size()*3);
+			for ( IndexType i=0; i<origIndices.size(); ++i ) {
+				p.values()[i*3+0] = pw->values()[i*4+0] / pw->values()[i*4+3];
+				p.values()[i*3+1] = pw->values()[i*4+1] / pw->values()[i*4+3];
+				p.values()[i*3+2] = pw->values()[i*4+2] / pw->values()[i*4+3];
+			}
+		}
+	}
+	
 	// InsertNormals
 	if ( varyingData.floats(RI_P) != 0 && varyingData.floats(RI_P)->declaration().isFloat3Decl() && normDecl.isFloat3Decl() && varyingData.floats(RI_N) == 0 ) {
 		TemplPrimVar<RtFloat> &floats = f.reserveFloats(normDecl);		
@@ -2285,7 +2299,7 @@ CSurface *CSubdivisionHierarchyTesselator::tesselate(const CDeclaration &posDecl
 				if ( (maxTess == 1 || !strategy->discardableBoundaryFace(*m_indices.begin(), faceIdx)) &&
 					 (*m_indices.begin()).faces()[faceIdx].type() != CSubdivFace::FACE_HOLE )
 				{
-					extractFaces(*strategy, curIndices, faceIdx, *varyingData, normDecl, origIndices, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));
+					extractFaces(*strategy, curIndices, faceIdx, *varyingData, posDecl, normDecl, origIndices, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));
 				}
 			}
 		}

@@ -37,13 +37,31 @@ using namespace RiCPP;
 
 // =============================================================================
 
-static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType vi, IndexType uMax, IndexType vMax, const RtFloat *pos, RtFloat *resultNormal)
+static void extractPos(IndexType elemSize, const RtFloat *pos, IndexType resultElemSize, RtFloat *result)
 {
+	assert(elemSize==resultElemSize || elemSize==resultElemSize+1);
+	for ( IndexType i=0; i< resultElemSize; ++i ) {
+		result[i] = pos[i];
+	}
+	if ( elemSize==resultElemSize+1 ) {
+		for ( IndexType i=0; i< resultElemSize; ++i ) {
+			result[i] /= pos[resultElemSize];
+		}
+	}
+}
+
+static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType vi, IndexType uMax, IndexType vMax, IndexType elemSize, const RtFloat *pos, RtFloat *resultNormal)
+{
+	assert(elemSize == 3 || elemSize == 4);
+	
 	IndexType centerIdx = vi * (uMax+1) + ui;
-	const RtFloat *centerPos = &pos[centerIdx*3];
+	const RtFloat *centerPos = &pos[centerIdx*elemSize];
 	RtFloat tempNormal[3] = {0, 0, 0};
 	RtFloat normal[3] = {0, 0, 0};
-
+	
+	RtFloat tempPos0[3] = {0, 0, 0};
+	RtFloat tempPos1[3] = {0, 0, 0};
+	
 	// upper
 	if ( vi >= delta ) {
 		IndexType tempIdx = centerIdx - (delta*(uMax+1));
@@ -59,12 +77,14 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		else
 			endIdx += (uMax-ui);
 		
-		tempIdx *= 3;
-		endIdx *= 3;
-		IndexType step = 3;
+		tempIdx *= elemSize;
+		endIdx *= elemSize;
+		IndexType step = elemSize;
 	
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx], centerPos, &pos[tempIdx+step]) ) {
+			extractPos(elemSize, &pos[tempIdx], 3, tempPos0);
+			extractPos(elemSize, &pos[tempIdx+step], 3, tempPos1);
+			if ( planeLH(tempNormal, tempPos0, centerPos, tempPos1) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -87,12 +107,14 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		else
 			endIdx += (uMax-ui);
 		
-		tempIdx *= 3;
-		endIdx *= 3;
-		IndexType step = 3;
+		tempIdx *= elemSize;
+		endIdx *= elemSize;
+		IndexType step = elemSize;
 
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx+step], centerPos, &pos[tempIdx]) ) {
+			extractPos(elemSize, &pos[tempIdx+step], 3, tempPos0);
+			extractPos(elemSize, &pos[tempIdx], 3, tempPos1);
+			if ( planeLH(tempNormal, tempPos0, centerPos, tempPos1) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -115,12 +137,14 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		else
 			endIdx += (vMax-vi)*(uMax+1);
 		
-		tempIdx *= 3;
-		endIdx *= 3;
-		IndexType step = (uMax+1)*3;
+		tempIdx *= elemSize;
+		endIdx *= elemSize;
+		IndexType step = (uMax+1)*elemSize;
 
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx+step], centerPos, &pos[tempIdx]) ) {
+			extractPos(elemSize, &pos[tempIdx+step], 3, tempPos0);
+			extractPos(elemSize, &pos[tempIdx], 3, tempPos1);
+			if ( planeLH(tempNormal, tempPos0, centerPos, tempPos1) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -143,12 +167,14 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 		else
 			endIdx += (vMax-vi)*(uMax+1);
 		
-		tempIdx *= 3;
-		endIdx *= 3;
-		IndexType step = (uMax+1)*3;
+		tempIdx *= elemSize;
+		endIdx *= elemSize;
+		IndexType step = (uMax+1)*elemSize;
 
 		for ( ; tempIdx < endIdx; tempIdx += step ) {
-			if ( planeLH(tempNormal, &pos[tempIdx], centerPos, &pos[tempIdx+step]) ) {
+			extractPos(elemSize, &pos[tempIdx], 3, tempPos0);
+			extractPos(elemSize, &pos[tempIdx+step], 3, tempPos1);
+			if ( planeLH(tempNormal, tempPos0, centerPos, tempPos1) ) {
 				normalize3(tempNormal);
 				vvAdd3(normal, normal, tempNormal);
 				normalize3(normal);
@@ -161,10 +187,12 @@ static void interpolateNormalForDelta(IndexType delta, IndexType ui, IndexType v
 	resultNormal[2] = normal[2];
 }
 
-static void interpolateNormal(IndexType ui, IndexType vi, IndexType uMax, IndexType vMax, const RtFloat *pos, RtFloat *resultNormal)
+static void interpolateNormal(IndexType ui, IndexType vi, IndexType uMax, IndexType vMax, IndexType elemSize, const RtFloat *pos, RtFloat *resultNormal)
 {	
+	assert(elemSize == 3 || elemSize == 4);
+	
 	for ( IndexType delta = 1; ui >= delta || vi >= delta || ui+delta<=uMax || vi+delta<=vMax; ++delta) {
-		interpolateNormalForDelta(delta, ui, vi, uMax, vMax, pos, resultNormal);
+		interpolateNormalForDelta(delta, ui, vi, uMax, vMax, elemSize, pos, resultNormal);
 		if ( !zeroVect3(resultNormal) )
 			return;
 	}
@@ -480,12 +508,12 @@ void CBicubicVectors::bicubicBlendWithNormals(IndexType elemSize,
 		for ( u = 0; u < (IndexType)tessU()+1; ++u ) {
 			if ( flipNormal ) {
 				if ( !planeRH(&normals[idnrm], &pdu[id], &pdv[id]) ) {
-					interpolateNormal(u, v, tessU(), tessV(), &results[0], &normals[idnrm]);
+					interpolateNormal(u, v, tessU(), tessV(), elemSize, &results[0], &normals[idnrm]);
 					flip3(&normals[idnrm]);
 				}
 			} else {
 				if ( !planeLH(&normals[idnrm], &pdu[id], &pdv[id]) ) {
-					interpolateNormal(u, v, tessU(), tessV(), &results[0], &normals[idnrm]);
+					interpolateNormal(u, v, tessU(), tessV(), elemSize, &results[0], &normals[idnrm]);
 				}
 			}
 			idnrm += normElemSize;
@@ -1042,14 +1070,12 @@ void CUVBSplineBasis::nuBlendWithNormals(IndexType elemSize,
 		for ( un = 0; un < pnu; ++un ) {
 			if ( flipNormal ) {
 				if ( !planeRH(nrm, ptru, ptrv) ) {
-					// ???
-					// interpolateNormal(un, vn, pnu-1, pnv-1, &results[0], nrm);
-					// flip3(nrm);
+					interpolateNormal(un, vn, pnu-1, pnv-1, elemSize, &results[0], nrm);
+					flip3(nrm);
 				}
 			} else {
 				if ( !planeLH(nrm, ptru, ptrv) ) {
-					// ???
-					// interpolateNormal(un, vn, pnu-1, pnv-1, &results[0], nrm);
+					interpolateNormal(un, vn, pnu-1, pnv-1, elemSize, &results[0], nrm);
 				}
 			}
 			nrm  += 3;

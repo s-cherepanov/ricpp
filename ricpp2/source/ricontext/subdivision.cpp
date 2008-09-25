@@ -294,7 +294,7 @@ long CSubdivisionIndices::creasedVertex(const CSubdivVertex &aVertex, RtInt inte
 {
 	long creaseEdgeCnt = 0;
 	for ( long edgeCnt = aVertex.startEdge(); edgeCnt != aVertex.endEdge(); ++edgeCnt ) {
-		if ( m_edges[m_incidentEdges[edgeCnt]].isBoundary() && interpolateBoundary == 2 || m_edges[m_incidentEdges[edgeCnt]].isSharp() ) {
+		if ( (m_edges[m_incidentEdges[edgeCnt]].isBoundary() && interpolateBoundary == 2) || m_edges[m_incidentEdges[edgeCnt]].isSharp() ) {
 			if ( creaseEdgeCnt == 0 )
 				crease0 = m_incidentEdges[edgeCnt];
 			else
@@ -1223,7 +1223,7 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 					floats[curVertexOffs+i] = vcorner;
 					continue;
 				}
-				
+								
 				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED && creasedVertex == 2 ) {
 					RtFloat e0 = 0, e1 = 0, cnt = 0;
 					long adjacent = 0;
@@ -1246,11 +1246,11 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 					} else {
 						assert(false);
 					}
-
+					
 					floats[curVertexOffs+i] = (e0 + (RtFloat)6 * vcorner + e1) / ((RtFloat)6+cnt);
 					continue;
 				}
-				
+
 				RtFloat vinter = vfac * vcorner;
 				
 				esum = 0;

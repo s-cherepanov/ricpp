@@ -272,6 +272,7 @@ namespace RiCPP {
 		};
 		
 	private:
+		static const RtFloat ms_sharpVal;
 		RtFloat	m_value;           //!< Tag value copied from appropriate TRi::subdivisionMesh parameter, gives the sharpness of a crease. The value blends from 0: smooth to 1: sharp.
 		EnumSubdivEdgeType m_type; //!< Edge type: EDGE_ROUNDED or EDGE_CREASE.
 		
@@ -307,6 +308,8 @@ namespace RiCPP {
 		{
 			*this = edge;
 		}
+		
+		inline static RtFloat sharpVal() { return ms_sharpVal; }
 		
 		// Destructor, nothing to do - standard is used.
 		// inline ~CSubdivEdge() {}
@@ -560,7 +563,7 @@ namespace RiCPP {
 		 */
 		inline bool isSharp() const
 		{
-			return m_type == EDGE_CREASE && m_value == RI_INFINITY;
+			return m_type == EDGE_CREASE && m_value >= ms_sharpVal;
 		}
 
 		//! Is the edge a boundary and a crease?
@@ -605,6 +608,7 @@ namespace RiCPP {
 		};
 		
 	private:
+		static const RtFloat ms_sharpVal;
 		RtFloat	m_value;          //!< Tag value copied from appropriate TRi::subdivisionMesh parameter, belends between round vertex (m_value==0) and corner (m_value==1).
 		EnumSubdivVertexType m_type; //!< Vertex type: VERTEX_ROUNDED or VERTEX_CORNER.
 		
@@ -638,6 +642,8 @@ namespace RiCPP {
 		// Destructor, nothing to do - standard is used.
 		// inline ~CSubdivVertex() {}
 		
+		inline static RtFloat sharpVal() { return ms_sharpVal; }
+
 		//! Prints the contents of the instance to a stream.
 		/*! \param o Stream to print on.
 		 *  \param pre String used as first output for each line.
@@ -689,6 +695,11 @@ namespace RiCPP {
 			m_type = VERTEX_CORNER;
 		}
 		
+		inline bool isSharp() const
+		{
+			return m_type == VERTEX_CORNER && m_value >= ms_sharpVal;
+		}
+
 		//! Gets the vertex value.
 		/*! \return The vertex value, the sharpness of the corner.
 		 */
@@ -826,7 +837,7 @@ namespace RiCPP {
 		
 		long clearFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx);
 		void fillFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt);
-		void fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &origIndices, long &sharedStart, long &unsharedStart);
+		void fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, long &sharedStart, long &unsharedStart);
 		long countTriangleIndices(const std::list<CSubdivisionIndices>::const_iterator &aParent, const std::list<CSubdivisionIndices>::const_iterator &cur, long faceIdx) const;
 		void correctTriangleIndices(std::vector<IndexType> &indices, long unsharedStart, long prevSharedStart) const;
 	public:
@@ -887,7 +898,7 @@ namespace RiCPP {
 		{
 			long c0, c1;
 			long vb = creasedVertex(aVertex, interpolateBoundary(), c0, c1);
-			return vb > 2 || vb == aVertex.incidentEdges();
+			return vb > 2 || vb == aVertex.incidentEdges() || (aVertex.type() == CSubdivVertex::VERTEX_CORNER && aVertex.isSharp());
 		}
 
 		inline bool faceEdge(const CSubdivEdge &anEdge) const
@@ -906,10 +917,10 @@ namespace RiCPP {
 		void subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
 					   const CRiHierarchicalSubdivisionMesh &anObj);
 		
-		void prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, std::vector<IndexType> &origIndices);
+		void prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices);
 		bool calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *normal) const;
-		void calcNormal(IndexType index, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const;
-		void calcNormals(const std::vector<IndexType> &origIndices, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const;
+		void calcNormal(long faceIdx, long vertexIdx, bool isFaceVertex, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const;
+		void calcNormals(long faceIdx, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const;
 	};
 	
 	class CSubdivisionStrategy {
@@ -918,7 +929,7 @@ namespace RiCPP {
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const = 0;
 		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
-		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const std::vector<IndexType> &origIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 		virtual bool discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const = 0;
 	};
 	
@@ -945,7 +956,7 @@ namespace RiCPP {
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const;
 		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
-		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const std::vector<IndexType> &origIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 		virtual bool discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const;
 	};
 	

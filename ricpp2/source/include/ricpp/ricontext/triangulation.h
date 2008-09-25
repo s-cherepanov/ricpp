@@ -462,31 +462,36 @@ namespace RiCPP {
 	
 	class CSubdivisionHierarchyTesselator  : public CTesselator {
 	private:
-		std::list<CSubdivisionIndices> m_indices;    //!< Contains topology
-		CRiHierarchicalSubdivisionMesh m_obj;        //!< CRiHierarchicalSubdivisionMesh handles non-hierarchical subdivisions as well
+		std::list<CSubdivisionIndices> *m_indices;   //!< Contains topology
+		CRiHierarchicalSubdivisionMesh m_subdivObj;  //!< CRiHierarchicalSubdivisionMesh handles non-hierarchical subdivisions as well
 		const CSubdivisionStrategies &m_strategies;	 //!< Strategies for subdivision ("catmull-clark")
 		
 		void subdivide(const CSubdivisionStrategy &strategy, IndexType depth);
 		void insertParams(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
-		void extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceNum, const CFace &varyingData, const CDeclaration &posDecl, const CDeclaration &normDecl, std::vector<IndexType> &origIndices, CFace &f);
+		void extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceNum, const CFace &varyingData, const CDeclaration &posDecl, const CDeclaration &normDecl, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, CFace &f);
 		
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const
 		{
-			return m_obj;
+			return m_subdivObj;
 		}
 		
 	public:
 		inline CSubdivisionHierarchyTesselator(CRiHierarchicalSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
-		: m_obj(anObj), m_strategies(theStrategies)
+		: m_indices(0), m_subdivObj(anObj), m_strategies(theStrategies)
 		{
 		}
 		inline CSubdivisionHierarchyTesselator(CRiSubdivisionMesh &anObj, const CSubdivisionStrategies &theStrategies)
-		: m_obj(anObj), m_strategies(theStrategies)
+		: m_indices(0), m_subdivObj(anObj), m_strategies(theStrategies)
 		{
 		}
 		
-		
+		inline virtual ~CSubdivisionHierarchyTesselator()
+		{
+			if ( m_indices )
+				delete m_indices;
+			m_indices = 0;
+		}
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
 	};
 }

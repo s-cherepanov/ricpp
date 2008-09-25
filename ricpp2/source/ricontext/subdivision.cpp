@@ -68,7 +68,6 @@ inline static bool operator<(const SEdge &s1, const SEdge &s2)
 	return s1.m_sortStart < s2.m_sortStart || (s1.m_sortStart == s2.m_sortStart && s1.m_sortEnd < s2.m_sortEnd);
 }
 
-
 // ----------------------------------------------------------------------------
 
 void CSubdivFace::dump(std::ostream &o, const std::string &pre) const {
@@ -102,7 +101,7 @@ void CSubdivFace::insertHoleVal(long idx, const CRiHierarchicalSubdivisionMesh &
 			RtInt intVals = obj.nArgs()[i*3];
 			if ( intVals > 0 ) {
 				for ( RtInt intIdx = 0; intIdx < intVals; ++intIdx ) {
-					if ( obj.intArgs()[intIdx] == idx ) {
+					if ( obj.intArgs()[intOffs+intIdx] == idx ) {
 						m_type = FACE_HOLE;
 						return;
 					}
@@ -144,6 +143,8 @@ long CSubdivFace::triangulate(long *triangleIndices, long size, long offs) const
 
 // ----------------------------------------------------------------------------
 
+const RtFloat CSubdivEdge::ms_sharpVal = 10.0;
+
 void CSubdivEdge::dump(std::ostream &o, const std::string &pre) const {
 	o << pre << "CSubdivEdge:" << std::endl;
 	o << pre << "   m_value: " << m_value << ", " << "m_type: " << (m_type == EDGE_ROUNDED ? "EDGE_ROUNDED" : "EDGE_CREASE") << std::endl;
@@ -180,8 +181,12 @@ void CSubdivEdge::insertCreaseVal(const CRiHierarchicalSubdivisionMesh &obj)
 			RtInt floatVals = obj.nArgs()[i*3+1];
 			if ( intVals > 0 ) {
 				for ( RtInt intIdx = 0; intIdx < intVals-1; ++intIdx ) {
-					if ( isEdge(obj.intArgs()[intIdx], obj.intArgs()[intIdx+1]) ) {
-						m_value = obj.floatArgs()[floatVals];
+					if ( isEdge(obj.intArgs()[intOffs+intIdx], obj.intArgs()[intOffs+intIdx+1]) ) {
+						if ( floatVals == 0 )
+							m_value = RI_INFINITY;
+						else
+							m_value = obj.floatArgs()[floatOffs];
+						m_type = EDGE_CREASE;
 						return;
 					}
 				}
@@ -193,6 +198,8 @@ void CSubdivEdge::insertCreaseVal(const CRiHierarchicalSubdivisionMesh &obj)
 }
 
 // ----------------------------------------------------------------------------
+
+const RtFloat CSubdivVertex::ms_sharpVal = 10.0;
 
 void CSubdivVertex::dump(std::ostream &o, const std::string &pre) const
 {
@@ -229,8 +236,14 @@ void CSubdivVertex::insertCornerVal(long idx, const CRiHierarchicalSubdivisionMe
 			RtInt floatVals = obj.nArgs()[i*3+1];
 			if ( intVals > 0 ) {
 				for ( RtInt intIdx = 0; intIdx < intVals; ++intIdx ) {
-					if ( obj.intArgs()[intIdx] == idx ) {
-						m_value = obj.floatArgs()[floatVals];
+					if ( obj.intArgs()[intOffs+intIdx] == idx ) {
+						if ( floatVals == 0 )
+							m_value = RI_INFINITY;
+						else if ( floatVals < intIdx )
+							m_value = obj.floatArgs()[floatOffs+floatVals-1];
+						else
+							m_value = obj.floatArgs()[floatOffs+intIdx];
+						m_type = VERTEX_CORNER;
 						return;
 					}
 				}
@@ -541,7 +554,11 @@ void CSubdivisionIndices::fillFaceVertexIndices(const std::list<CSubdivisionIndi
 }
 
 
-void CSubdivisionIndices::fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &origIndices, long &sharedStart, long &unsharedStart)
+void CSubdivisionIndices::fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent,
+										  const std::list<CSubdivisionIndices>::iterator &cur,
+										  long faceIdx,
+										  std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices,
+										  long &sharedStart, long &unsharedStart)
 {
 	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
 	
@@ -551,10 +568,13 @@ void CSubdivisionIndices::fillOrigIndices(const std::list<CSubdivisionIndices>::
 			long vertIdx = (*aParent).vertexIndices()[i];
 			if ( (*aParent).vertices()[vertIdx].faceIndex() == -1 ) {
 				origIndices[sharedStart] = vertIdx;
+				faceIndices[sharedStart] = (*aParent).isCorner((*aParent).vertices()[vertIdx]);
 				(*aParent).vertices()[vertIdx].faceIndex(sharedStart++);
 			} else {
 				if ( (*aParent).isCorner((*aParent).vertices()[vertIdx]) ) {
 					origIndices[unsharedStart] = vertIdx;
+					faceIndices[vertIdx] = true;
+					faceIndices[unsharedStart] = faceIndices[vertIdx];
 					unsharedStart++;
 				}
 			}
@@ -566,7 +586,7 @@ void CSubdivisionIndices::fillOrigIndices(const std::list<CSubdivisionIndices>::
 	std::list<CSubdivisionIndices>::iterator child = aParent;
 	child++;
 	for ( long i = aFace.startChildIndex(); i != aFace.endChildIndex(); i++ ) {
-		(*child).fillOrigIndices(child, cur, i, origIndices, sharedStart, unsharedStart);
+		(*child).fillOrigIndices(child, cur, i, origIndices, faceIndices, sharedStart, unsharedStart);
 	}
 }
 
@@ -597,7 +617,7 @@ void CSubdivisionIndices::correctTriangleIndices(std::vector<IndexType> &indices
 	}
 }
 
-void CSubdivisionIndices::prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, std::vector<IndexType> &origIndices)
+void CSubdivisionIndices::prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices)
 {
 	long triangleCnt = 0, sharedCnt = 0;
 	long unsharedCnt = (long)((*cur).vertices().size()); // There are maximal all vertices shared
@@ -607,16 +627,19 @@ void CSubdivisionIndices::prepareFace(const std::list<CSubdivisionIndices>::iter
 	indices.resize(triangleIndices);
 	clearFaceVertexIndices(root, cur, faceIdx);
 	fillFaceVertexIndices(root, cur, faceIdx, indices, triangleCnt, sharedCnt, unsharedCnt);
+
 	origIndices.resize(sharedCnt + unsharedCnt - (long)((*cur).vertices().size()));
+	faceIndices.resize(origIndices.size());
+	sharedIndices = sharedCnt;
 
 	clearFaceVertexIndices(root, cur, faceIdx);
 	long sharedStart = 0;
 	long unsharedStart = sharedCnt;
 	correctTriangleIndices(indices, unsharedStart, (long)((*cur).vertices().size()));
-	fillOrigIndices(root, cur, faceIdx, origIndices, sharedStart, unsharedStart);
+	fillOrigIndices(root, cur, faceIdx, origIndices, faceIndices, sharedStart, unsharedStart);
 }
 
-bool CSubdivisionIndices::calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *normal) const
+bool CSubdivisionIndices::calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const
 {
 	const CSubdivFace &f = m_faces[faceIdx];
 	long localVertex = f.localIndex(m_vertexIndices, vertexIdx);
@@ -644,28 +667,46 @@ bool CSubdivisionIndices::calcNormalForVertexInFace(long faceIdx, long vertexIdx
 	v0 = m_vertexIndices[v0];
 	v1 = m_vertexIndices[v1];
 
-	if ( planeLH(normal, &pos[v0*3], &pos[vertexIdx*3], &pos[v1*3]) ) {
-		return true;
+	bool wasSet = false;
+	RtFloat tempNorm[3];
+	resultsF3[0] = resultsF3[1] = resultsF3[2] = 0;
+	
+	if ( planeLH(tempNorm, &pos[v0*3], &pos[vertexIdx*3], &pos[v1*3]) ) {
+		normalize3(tempNorm);
+		resultsF3[0] += tempNorm[0];
+		resultsF3[1] += tempNorm[1];
+		resultsF3[2] += tempNorm[2];
+		wasSet = true;
 	}
-	if ( planeLH(normal, &pos[v2*3], &pos[vertexIdx*3], &pos[v1*3]) ) {
-		return true;
+	if ( planeLH(tempNorm, &pos[v2*3], &pos[vertexIdx*3], &pos[v1*3]) ) {
+		normalize3(tempNorm);
+		resultsF3[0] += tempNorm[0];
+		resultsF3[1] += tempNorm[1];
+		resultsF3[2] += tempNorm[2];
+		wasSet = true;
 	}
-	if ( planeLH(normal, &pos[v0*3], &pos[vertexIdx*3], &pos[v3*3]) ) {
-		return true;
+	if ( planeLH(tempNorm, &pos[v0*3], &pos[vertexIdx*3], &pos[v3*3]) ) {
+		normalize3(tempNorm);
+		resultsF3[0] += tempNorm[0];
+		resultsF3[1] += tempNorm[1];
+		resultsF3[2] += tempNorm[2];
+		wasSet = true;
 	}
-	return false;
+
+	return wasSet;
 }	
 
-void CSubdivisionIndices::calcNormal(IndexType index, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const
+void CSubdivisionIndices::calcNormal(long faceIdx, long vertexIdx, bool isFaceIndex, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const
 {
 	resultsF3[0] = 0;
 	resultsF3[1] = 0;
 	resultsF3[2] = 0;
 	
-	const CSubdivVertex &v = m_vertices[index];
+	const CSubdivVertex &v = m_vertices[vertexIdx];
+	
 	RtFloat tempNorm[3];
-	for ( long faceIdx = v.startFace(); faceIdx != v.endFace(); faceIdx++ ) {
-		if ( calcNormalForVertexInFace(m_incidentFaces[faceIdx], index, pos, flipNormals, tempNorm) ) {
+	for ( long sharedFaceIdx = v.startFace(); sharedFaceIdx != v.endFace(); sharedFaceIdx++ ) {
+		if ( calcNormalForVertexInFace(m_incidentFaces[sharedFaceIdx], vertexIdx, pos, flipNormals, tempNorm) ) {
 			normalize3(tempNorm);
 			resultsF3[0] += tempNorm[0];
 			resultsF3[1] += tempNorm[1];
@@ -674,11 +715,11 @@ void CSubdivisionIndices::calcNormal(IndexType index, const std::vector<RtFloat>
 	}
 }
 
-void CSubdivisionIndices::calcNormals(const std::vector<IndexType> &origIndices, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const
+void CSubdivisionIndices::calcNormals(long faceIdx, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const
 {
 	floats.resize(origIndices.size() * 3);
-	for (size_t i = 0; i != origIndices.size(); i++ ) {
-		calcNormal(origIndices[i], pos, flipNormals, &floats[i*3]);
+	for ( size_t i = 0; i != origIndices.size(); i++ ) {
+		calcNormal(faceIdx, origIndices[i], faceIndices[i], pos, flipNormals, &floats[i*3]);
 	}
 }
 
@@ -970,7 +1011,7 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 
 void CCatmullClarkSubdivision::insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices,
 													   const std::list<CSubdivisionIndices>::const_iterator &curIndices,
-													   const std::vector<IndexType> &origIndices,
+													   IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices,
 													   const CDeclaration &decl, std::vector<RtFloat> &floats) const
 {
 }
@@ -1134,7 +1175,13 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 					if ( (*edgeIter).type() == CSubdivEdge::EDGE_ROUNDED ) {
 						floats[curEdgeOffs+i] = einter;
 					} else {
-						RtFloat creaseVal = (*edgeIter).value() / RI_INFINITY;
+						RtFloat creaseVal = (*edgeIter).value();
+						
+						if ( creaseVal >= CSubdivEdge::sharpVal() )
+							creaseVal = CSubdivEdge::sharpVal();
+						if ( !nearlyZero(creaseVal) )
+							creaseVal /= CSubdivEdge::sharpVal();
+						
 						floats[curEdgeOffs+i] = lerp(creaseVal, einter, ecrease);						
 					}
 				}
@@ -1228,7 +1275,13 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED ) {
 					floats[curVertexOffs+i] = vinter;
 				} else {
-					RtFloat cornerVal = (*vertexIter).value() / RI_INFINITY;
+					RtFloat cornerVal = (*vertexIter).value();
+					
+					if ( cornerVal > CSubdivVertex::sharpVal() )
+						cornerVal = CSubdivVertex::sharpVal();
+					if ( !nearlyZero(cornerVal) )
+						cornerVal /= CSubdivVertex::sharpVal();
+
 					floats[curVertexOffs+i] = lerp(cornerVal, vinter, vcorner);
 				}
 			}

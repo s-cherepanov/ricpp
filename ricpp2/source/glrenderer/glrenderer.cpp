@@ -286,9 +286,10 @@ void CGLRenderer::hide(const CFace &f)
 	}
 	
 	// reset state
+	/*
 	if ( replayMode()  ) 
 		glDepthMask(GL_FALSE);
-	
+
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	if ( np && (np->size() == pp->size()) ) {
@@ -296,13 +297,14 @@ void CGLRenderer::hide(const CFace &f)
 		glDisable(GL_LIGHTING);
 		glDisable(GL_LIGHT0);
 	}
+	*/
 }
 
 void CGLRenderer::hideSurface(const CSurface *s)
 {
 	if ( !valid() )
 		return;
-
+	
 	glDisableClientState(GL_EDGE_FLAG_ARRAY);
 	glDisableClientState(GL_INDEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -345,15 +347,10 @@ void CGLRenderer::hideSurface(const CSurface *s)
 
 #ifdef _OPENGL_TRANSFORM
 	glEnable(GL_NORMALIZE);
-	glLoadMatrixf(toCamera().getFloats());	
 #endif
 	
+	setTransformToCamera();
 	TypeParent::hideSurface(s);
-	
-#ifdef _OPENGL_TRANSFORM
-	glLoadIdentity(); // ??? seems to have effects on lighting
-	glDisable(GL_NORMALIZE);
-#endif
 }
 
 
@@ -393,6 +390,13 @@ void CGLRenderer::setColor()
 	glColor4f(colorRGB[0], colorRGB[1], colorRGB[2], alpha);
 }
 
+void CGLRenderer::setTransformToCamera()
+{
+	glLoadIdentity();	
+#ifdef _OPENGL_TRANSFORM
+	glMultMatrixf(toCamera().getFloats());
+#endif
+}
 
 void CGLRenderer::setCullFace()
 {
@@ -485,7 +489,7 @@ void CGLRenderer::initViewing()
 	glDepthMask(GL_FALSE);
 	
     glLoadIdentity();
-
+	
 #   ifdef _TRACE
 	{
 		std::cout
@@ -523,7 +527,7 @@ void CGLRenderer::initViewing()
 				xmax,
 				ymax,
 				ymin,
-				0, -1.0);
+				0, 1.0);
 	} else {
 		// RiCPP Raster to screen raster, clipping
 		RtPoint clip[2] = {{0, 0, renderState()->options().hither()}, {0, 0, renderState()->options().yon()}};
@@ -532,8 +536,8 @@ void CGLRenderer::initViewing()
 				xmax,
 				ymax,
 				ymin,
-				-1.0 * clip[0][2],
-				-1.0 * clip[1][2]);
+				1.0 * clip[0][2],
+				1.0 * clip[1][2]);
 	}
 
 #ifdef _SHOWBACKGROUND	
@@ -568,10 +572,12 @@ void CGLRenderer::initViewing()
 	glEnd();
 #endif
 
+	glScalef(1.0F, 1.0F, -1.0F);	
+
 	// camera to raster transformation pipeline
 	const CTransformation *NDCToRaster = renderState()->NDCToRaster();
 	glMultMatrixf(NDCToRaster->getCTM().getFloats());	
-
+	
 #ifdef _SHOWFRAMES
 	glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_LINE_STIPPLE);
@@ -593,20 +599,22 @@ void CGLRenderer::initViewing()
 	glMultMatrixf(cameraToScreen->getCTM().getFloats());	
 
 	glMatrixMode(GL_MODELVIEW);
+	setTransformToCamera();
 	glDepthMask(GL_TRUE);
 }
 
 void CGLRenderer::initLights()
 {
+	setTransformToCamera();
+
 	// Inits the global light sources or the default light source - the default lightsource will be removed, if a light source is defined
 	GLfloat mat_specular[]   = { 1, 1, 1, 1 };
 	GLfloat mat_shininess[]  = { 50 };
 	GLfloat mat_emission[]   = { 0, 0, 0, 1 };
 
-	GLfloat light_ambient[]  = { 0.1F, 0.1F, 0.1F, 1 };
-	GLfloat light_diffuse[]  = { .7F, .7F, .7F, 1 };
+	GLfloat light_ambient[]  = { 0.2F, 0.2F, 0.2F, 1 };
+	GLfloat light_diffuse[]  = { .6F, .6F, .6F, 1 };
 	GLfloat light_specular[] = { .2F, .2F, .2F, 1 };
-	GLfloat light_position[] = { -3, 3, -6, 1 };
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
@@ -615,10 +623,13 @@ void CGLRenderer::initLights()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+	
+	GLfloat light_position[] = { -3.0F, 3.0F, -3.0F, 0.0F };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
+	
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	
 }
 
 bool CGLRenderer::delayRequest(CRManInterfaceCall &obj)

@@ -1508,7 +1508,6 @@ void CRenderState::setCameraToScreen()
 		m_cameraToScreen->concatTransform(m_preCamera);
 	}
 	
-	
 	calcScreenToNDC();
 
 	CMatrix3D m;
@@ -1529,6 +1528,7 @@ void CRenderState::setWorldToCamera()
 		/// @todo: error nomem for m_worldToCamera
 		return;
 	}
+
 	m_worldToCamera->spaceType(RI_CAMERA);
 	m_cameraOrientation = m_worldToCamera->coordSysOrientation();
 }

@@ -85,6 +85,7 @@ private:
 	void finishScreen();
 
 	void drawNormals(const std::vector<RtFloat> &p, const std::vector<RtFloat> &n);
+	void setTransformToCamera();
 
 protected:
 	virtual void defaultDeclarations();

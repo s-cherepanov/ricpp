@@ -426,6 +426,12 @@ namespace RiCPP {
 			return m_value;
 		}
 		
+		inline RtFloat valueFactor() const
+		{
+			RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
+			return val / ms_sharpVal;
+		}
+
 		inline void startChildIndex(long aStartChildIndex)
 		{
 			m_startChildIndex = aStartChildIndex;
@@ -554,7 +560,7 @@ namespace RiCPP {
 		 */
 		inline bool isCrease() const
 		{
-			return m_type == EDGE_CREASE;
+			return (m_type == EDGE_CREASE) && (m_value > 0);
 		}
 		
 		//! Is the edge a sharp crease?
@@ -700,12 +706,23 @@ namespace RiCPP {
 			return m_type == VERTEX_CORNER && m_value >= ms_sharpVal;
 		}
 
+		inline bool isCorner() const
+		{
+			return m_type == VERTEX_CORNER && m_value > 0;
+		}
+
 		//! Gets the vertex value.
 		/*! \return The vertex value, the sharpness of the corner.
 		 */
 		inline RtFloat value() const
 		{
 			return m_value;
+		}
+
+		inline RtFloat valueFactor() const
+		{
+			RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
+			return val / ms_sharpVal;
 		}
 
 		inline long startEdge() const
@@ -874,7 +891,8 @@ namespace RiCPP {
 		inline const std::vector<long> &incidentEdges() const { return m_incidentEdges; }
 		inline const std::vector<long> &incidentFaces() const { return m_incidentFaces; }
 				
-		long creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1) const;
+		long sharpCreasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1) const;
+		long creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1, RtFloat &factor0, RtFloat &factor1) const;
 
 		long vertexBoundary(const CSubdivVertex &aVertex, long &bound0, long &bound1) const;
 
@@ -894,11 +912,19 @@ namespace RiCPP {
 			return false;
 		}
 
+		inline bool isSharpCorner(const CSubdivVertex &aVertex) const
+		{
+			long c0, c1;
+			long vb = sharpCreasedVertex(aVertex, interpolateBoundary(), c0, c1);
+			return vb > 2 || vb == aVertex.incidentEdges() || aVertex.isSharp();
+		}
+
 		inline bool isCorner(const CSubdivVertex &aVertex) const
 		{
 			long c0, c1;
-			long vb = creasedVertex(aVertex, interpolateBoundary(), c0, c1);
-			return vb > 2 || vb == aVertex.incidentEdges() || (aVertex.type() == CSubdivVertex::VERTEX_CORNER && aVertex.isSharp());
+			RtFloat val0, val1;
+			long vb = creasedVertex(aVertex, interpolateBoundary(), c0, c1, val0, val1);
+			return vb > 2 || vb == aVertex.incidentEdges() || aVertex.isCorner();
 		}
 
 		inline bool faceEdge(const CSubdivEdge &anEdge) const

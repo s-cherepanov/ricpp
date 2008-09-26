@@ -64,9 +64,10 @@ ObjectEnd
 LightSource "distantlight" 1 "from" [0 0 -1]
 Translate 0 0 1
 WorldBegin
-      Sides 2
+      Sides 1
+      Orientation "outside"
       GeometricRepresentation "primitive"
-      GeometricApproximation "tesselation" 16
+      GeometricApproximation "tesselation" 32
       Surface "paintedplastic" "texturename" "grid.tiff"
       Color 1 0 0
       ObjectInstance 1

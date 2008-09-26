@@ -392,7 +392,9 @@ void CGLRenderer::setColor()
 
 void CGLRenderer::setTransformToCamera()
 {
-	glLoadIdentity();	
+	glLoadIdentity();
+	// I use 3 flips (2 in viewing one in model) because otherwise the camera position is not considered for lighting correctly (opposite direction)
+	glScalef(1.0F, 1.0F, -1.0F);	
 #ifdef _OPENGL_TRANSFORM
 	glMultMatrixf(toCamera().getFloats());
 #endif
@@ -572,6 +574,7 @@ void CGLRenderer::initViewing()
 	glEnd();
 #endif
 
+	// see setTransformToCamera()
 	glScalef(1.0F, 1.0F, -1.0F);	
 
 	// camera to raster transformation pipeline
@@ -598,6 +601,8 @@ void CGLRenderer::initViewing()
 	const CTransformation *cameraToScreen = renderState()->cameraToScreen();
 	glMultMatrixf(cameraToScreen->getCTM().getFloats());	
 
+	// see setTransformToCamera()
+	glScalef(1.0F, 1.0F, -1.0F);	
 	glMatrixMode(GL_MODELVIEW);
 	setTransformToCamera();
 	glDepthMask(GL_TRUE);

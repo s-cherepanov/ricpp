@@ -610,7 +610,8 @@ void CGLRenderer::initViewing()
 
 void CGLRenderer::initLights()
 {
-	setTransformToCamera();
+	glLoadIdentity();
+	glScalef(1.0F, 1.0F, -1.0F);	
 
 	// Inits the global light sources or the default light source - the default lightsource will be removed, if a light source is defined
 	GLfloat mat_specular[]   = { 1, 1, 1, 1 };

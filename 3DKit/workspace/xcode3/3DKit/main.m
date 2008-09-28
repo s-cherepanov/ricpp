@@ -7,9 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include <ricpp/3DKit/G3Dkit.h>
+#include <3DKit/G3Dkit.h>
 
 int main(int argc, char *argv[])
 {
+    G3DContextManager *ctx = [G3DContextManager new];
     return NSApplicationMain(argc,  (const char **) argv);
+	[ctx free];
 }

@@ -17,15 +17,15 @@
  *                 All rights Reservered
  */
 
-#import <ricpp/3Dkit/G3DCamera.h>
-#import <ricpp/3Dkit/G3DContextManager.h>
-#import <ricpp/3Dkit/G3DLight.h>
-#import <ricpp/3Dkit/G3DMovieCamera.h>
-#import <ricpp/3Dkit/G3DRenderPanel.h>
-#import <ricpp/3Dkit/G3DRotator.h>
-#import <ricpp/3Dkit/G3DShader.h>
-#import <ricpp/3Dkit/G3DShape.h>
-#import <ricpp/3Dkit/G3DRIBImageRep.h>
-#import <ricpp/3Dkit/gnu3d.h>
+#import <3Dkit/G3DCamera.h>
+#import <3Dkit/G3DContextManager.h>
+#import <3Dkit/G3DLight.h>
+#import <3Dkit/G3DMovieCamera.h>
+#import <3Dkit/G3DRenderPanel.h>
+#import <3Dkit/G3DRotator.h>
+#import <3Dkit/G3DShader.h>
+#import <3Dkit/G3DShape.h>
+#import <3Dkit/G3DRIBImageRep.h>
+#import <3Dkit/gnu3d.h>
 
 #endif

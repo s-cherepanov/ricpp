@@ -29,18 +29,18 @@
 + new;
 - free;
 
-- (RtContextHandle)mainContext;
-- (RtContextHandle)createContext:(const char *)name;
-- (RtContextHandle)createContext:(const char *)name withRenderer:(RtToken)renderer;
-- (RtContextHandle)createContext:(const char *)name withRenderer:(RtToken)ribFileName;
-- (RtContextHandle)createContext:(const char *)name toStream:(NSStream *)stm;
+- (RtContextHandle) mainContext;
+- (RtContextHandle) createContext: (const char *) name;
+- (RtContextHandle) createContext: (const char *) name withRenderer: (RtToken) renderer;
+- (RtContextHandle) createContext: (const char *) name toFile: (RtToken) ribFileName;
+- (RtContextHandle) createContext: (const char *) name toStream: (NSStream *) stm;
 
--(void)destroyContext:(RtContextHandle)aContext;
--(void)destroyContextByName:(const char *)name;
+- (void) destroyContext: (RtContextHandle) aContext;
+- (void) destroyContextByName: (const char *) name;
 
-- (RtContextHandle)setCurrentContext:(RtContextHandle) aContext;
-- (RtContextHandle)setCurrentContextByName:(RtToken) name;
-- (RtContextHandle)currentContext;
+- (RtContextHandle) setCurrentContext: (RtContextHandle) aContext;
+- (RtContextHandle) setCurrentContextByName: (RtToken) name;
+- (RtContextHandle) currentContext;
 
 - awake;
 

@@ -15,7 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <ricpp/3Dkit/gnu3d.h>
+#import <3Dkit/gnu3d.h>
 
 @interface G3DRotator : NSObject
 {

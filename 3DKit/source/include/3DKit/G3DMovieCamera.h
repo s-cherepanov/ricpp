@@ -14,7 +14,7 @@
  *                 All rights Reservered
  */
 
-#import <ricpp/3Dkit/G3DCamera.h>
+#import <3Dkit/G3DCamera.h>
 
 @interface G3DMovieCamera : G3DCamera
 {

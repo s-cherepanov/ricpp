@@ -14,7 +14,7 @@
  *                 All rights Reservered
  */
 #import <Cocoa/Cocoa.h>
-#import <ricpp/3Dkit/gnu3d.h>
+#import <3Dkit/gnu3d.h>
 
 @interface G3DCamera : NSOpenGLView
 {

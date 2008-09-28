@@ -898,6 +898,7 @@ namespace RiCPP {
 		long sharpCreasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1) const;
 		long creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1, RtFloat &factor0, RtFloat &factor1) const;
 
+		RtFloat sumCrease(const CSubdivVertex &aVertex, long forEdgeIdx, long &edgeCnt) const;
 		long vertexBoundary(const CSubdivVertex &aVertex, long &bound0, long &bound1) const;
 
 		inline bool isBoundary(const CSubdivVertex &aVertex) const

@@ -74,8 +74,13 @@ bool CDeclaration::devideName(CTokenMap &tokenmap)
 	}
 	// No Table found: m_table == RI_NULL
 
-	if ( notEmptyStr(str) )
+	if ( notEmptyStr(str) ) {
 		m_var = tokenmap.findCreate(str);
+	} else if ( m_qualifier != QUALIFIER_UNKNOWN ) {
+		// Only Qualifier - considered as name
+		m_var = tokenmap.findCreate(m_qualifiedName.c_str());
+		m_qualifier = QUALIFIER_UNKNOWN;
+	}
 
 	// At least a variable should be found.
 	return m_var != RI_NULL;

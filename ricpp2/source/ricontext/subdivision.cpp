@@ -313,10 +313,10 @@ long CSubdivisionIndices::creasedVertex(const CSubdivVertex &aVertex, RtInt inte
 		bool onBoundary = (m_edges[m_incidentEdges[edgeCnt]].isBoundary() && interpolateBoundary == 2);
 		if ( onBoundary || m_edges[m_incidentEdges[edgeCnt]].isCrease() ) {
 			if ( creaseEdgeCnt == 0 ) {
-				factor0 = onBoundary ? (RtFloat)1.0 : m_edges[m_incidentEdges[edgeCnt]].valueFactor();
+				factor0 = onBoundary ? (RtFloat)1.0 : m_edges[m_incidentEdges[edgeCnt]].value();
 				crease0 = m_incidentEdges[edgeCnt];
 			} else {
-				factor1 = onBoundary ? (RtFloat)1.0 : m_edges[m_incidentEdges[edgeCnt]].valueFactor();
+				factor1 = onBoundary ? (RtFloat)1.0 : m_edges[m_incidentEdges[edgeCnt]].value();
 				crease1 = m_incidentEdges[edgeCnt];
 			}
 			creaseEdgeCnt++;
@@ -798,6 +798,15 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 	
 	// Copy the inherited vertices
 	std::copy(parent.vertices().begin(), parent.vertices().end(), child.vertices().begin());
+	long vertexIndex = 0;
+	for ( std::vector<CSubdivVertex>::iterator vertexIter = parent.vertices().begin();
+		  vertexIter != parent.vertices().end();
+		  vertexIter++, vertexIndex++ )
+	{
+		if ( (*vertexIter).value() >= (RtFloat)1.0 ) {
+			child.vertices()[vertexIndex].value((*vertexIter).value()-1);
+		}
+	}
 	for ( std::vector<CSubdivVertex>::iterator vertexIter = child.vertices().begin();
 		  vertexIter != child.vertices().end();
 		  vertexIter++ )
@@ -824,13 +833,21 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 		// edge start -> edge mid
 		child.edges()[childEdgeIndex].setVertices((*edgeIter).vertex(0), static_cast<long>(parent.vertices().size()+edgeIndex));
 		child.edges()[childEdgeIndex].type((*edgeIter).type());
-		child.edges()[childEdgeIndex].value((*edgeIter).value());
+		if ( (*edgeIter).value() < (RtFloat)1.0 || (*edgeIter).value() >= (RtFloat) 10.0 ) {
+			child.edges()[childEdgeIndex].value((*edgeIter).value());
+		} else {
+			child.edges()[childEdgeIndex].value((*edgeIter).value()-1);
+		}
 		child.vertices()[child.edges()[childEdgeIndex].vertex(0)].faceVertex(parent.faceEdge(*edgeIter));
 		
 		// edge mid -> edge start
 		child.edges()[childEdgeIndex+1].setVertices(static_cast<long>(parent.vertices().size())+edgeIndex, (*edgeIter).vertex(1));
 		child.edges()[childEdgeIndex+1].type((*edgeIter).type());
-		child.edges()[childEdgeIndex+1].value((*edgeIter).value());
+		if ( (*edgeIter).value() < (RtFloat)1.0 || (*edgeIter).value() >= (RtFloat) 10.0 ) {
+			child.edges()[childEdgeIndex+1].value((*edgeIter).value());
+		} else {
+			child.edges()[childEdgeIndex+1].value((*edgeIter).value()-1);
+		}
 		child.vertices()[child.edges()[childEdgeIndex].vertex(1)].faceVertex(parent.faceEdge(*edgeIter));
 		
 		// face having the edge: edge start -> edge end
@@ -1192,10 +1209,12 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 							einter = ( v0 + v1 + f1 ) / (RtFloat)3.0;
 					}
 
-					if ( (*edgeIter).type() == CSubdivEdge::EDGE_ROUNDED ) {
+					if ( (*edgeIter).type() == CSubdivEdge::EDGE_ROUNDED || (*edgeIter).value() <= 0 ) {
 						floats[curEdgeOffs+i] = einter;
+					} if ( (*edgeIter).value() >= 1.0 ) {
+						floats[curEdgeOffs+i] = ecrease;
 					} else {
-						floats[curEdgeOffs+i] = lerp((*edgeIter).valueFactor(), einter, ecrease);						
+						floats[curEdgeOffs+i] = lerp((*edgeIter).value(), einter, ecrease);						
 					}
 				}
 			}
@@ -1285,15 +1304,24 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 					if ( cnt > 0 )
 						creaseFactor /= cnt;
 					
-					floats[curVertexOffs+i] = lerp(creaseFactor, vinter, (e0 + (RtFloat)6 * vcorner + e1) / ((RtFloat)6+cnt));
+					vcorner = (e0 + (RtFloat)6 * vcorner + e1) / ((RtFloat)6+cnt);
+					
+					if ( creaseFactor <= 0 )
+						floats[curVertexOffs+i] = vinter;
+					else if ( creaseFactor <= (RtFloat)1.0 )
+						floats[curVertexOffs+i] = lerp(creaseFactor, vinter, vcorner);
+					else
+						floats[curVertexOffs+i] = vcorner;
 
 					continue;
 				}
 
-				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED ) {
+				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED || (*vertexIter).value() <= 0 ) {
 					floats[curVertexOffs+i] = vinter;
+				} else if ( (*vertexIter).value() >= 1.0 ) {
+					floats[curVertexOffs+i] = vcorner;
 				} else {
-					floats[curVertexOffs+i] = lerp((*vertexIter).valueFactor(), vinter, vcorner);
+					floats[curVertexOffs+i] = lerp((*vertexIter).value(), vinter, vcorner);
 				}
 			}
 		}

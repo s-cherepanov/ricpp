@@ -426,11 +426,13 @@ namespace RiCPP {
 			return m_value;
 		}
 		
+		/*
 		inline RtFloat valueFactor() const
 		{
 			RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
 			return val / ms_sharpVal;
 		}
+		*/
 
 		inline void startChildIndex(long aStartChildIndex)
 		{
@@ -719,11 +721,13 @@ namespace RiCPP {
 			return m_value;
 		}
 
+		/*
 		inline RtFloat valueFactor() const
 		{
 			RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
 			return val / ms_sharpVal;
 		}
+		*/
 
 		inline long startEdge() const
 		{

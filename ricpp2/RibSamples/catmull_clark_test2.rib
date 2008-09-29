@@ -1,8 +1,8 @@
 ##RenderMan RIB-Structure 1.1
-version 3.03
+version 3.04
 
-Clipping 1 255
-Exposure 1 1.2
+Clipping 0.1 255
+# Exposure 1 1.2
 Projection "perspective" "fov" [ 39.6 ] 
 Display "ribout.tiff" "file" "rgba" 
 Display "+ribout.tiff" "framebuffer" "rgba" 
@@ -36,8 +36,9 @@ ArchiveBegin "Subd_2"
 		Scale .1 .1 .1
 		SubdivisionMesh "catmull-clark"
 			[4 4 4 4 4 4] [0 2 3 1 4 6 7 5 5 1 3 4 2 0 7 6 6 4 3 2 1 5 7 0]
-			["crease" "crease"] [5 1 5 1] [1 5 7 0 1 3 4 6 2 3] [ 2 2 ]
+			["crease" "crease"] [5 1 5 1] [1 5 7 0 1 3 4 6 2 3] [ 10 10 ]
 			"P" [ 25 -25 -25 25 25 -25 25 -25 25 25 25 25 -25 25 25 -25 25 -25 -25 -25 25 -25 -25 -25]
+			"uniform color Cs" [ 1 0 0  0 1 0  0 0 1  1 0 1  1 1 0  0 1 1 ]
 	AttributeEnd
 ArchiveEnd
 

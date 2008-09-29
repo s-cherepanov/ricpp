@@ -2181,13 +2181,13 @@ void CSubdivisionHierarchyTesselator::insertParams(const CSubdivisionStrategy &s
 }
 
 
-void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, const CDeclaration &posDecl, const CDeclaration &normDecl, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, CFace &f)
+void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceIdx, const CFace &varyingData, const CDeclaration &posDecl, const CDeclaration &normDecl, CSubdIndexMapper &indexMapping, CFace &f)
 {
 	assert(m_indices != 0);
 	if ( !m_indices )
 		return;
 
-	(*curIndices).prepareFace(m_indices->begin(), curIndices, faceIdx, f.indices(), sharedIndices, origIndices, faceIndices);
+	(*curIndices).prepareFace(m_indices->begin(), curIndices, faceIdx, f.indices(), indexMapping);
 	f.sizes().resize(1);
 	f.sizes()[0] = static_cast<IndexType>(f.indices().size());
 
@@ -2215,8 +2215,8 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 				
 			case CLASS_FACEVARYING: {
 				if ( (*iter).declaration().basicType() == BASICTYPE_FLOAT ) {
-					TemplPrimVar<RtFloat> &floats = f.reserveFloats((*iter).declaration());
-					strategy.insertFaceVaryingValues(m_indices->begin(), curIndices, sharedIndices, origIndices, faceIndices, floats.declaration(), floats.values());
+					// TemplPrimVar<RtFloat> &floats = f.reserveFloats((*iter).declaration());
+					// strategy.insertFaceVaryingValues(faceIdx, m_indices->begin(), curIndices, indexMapping, floats.declaration(), floats.values());
 				}
 			} break;
 				
@@ -2236,11 +2236,11 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 		if ( (*fiter).second.declaration().basicType() == BASICTYPE_FLOAT ) {
 			TemplPrimVar<RtFloat> &floats = f.reserveFloats((*fiter).second.declaration());
 			IndexType elemSize = floats.declaration().elemSize();
-			floats.values().resize(origIndices.size()*elemSize);
-			for ( IndexType i = 0; i < origIndices.size(); ++i ) {
-				assert(origIndices[i] * elemSize + elemSize <= (*fiter).second.values().size());
+			floats.values().resize(indexMapping.size()*elemSize);
+			for ( IndexType i = 0; i < indexMapping.size(); ++i ) {
+				assert(indexMapping.vertexIndices()[i] * elemSize + elemSize <= (*fiter).second.values().size());
 				for ( IndexType elem = 0; elem < elemSize; ++elem ) {
-					floats.values()[i * elemSize + elem] = (*fiter).second.values()[origIndices[i]*elemSize+elem];
+					floats.values()[i * elemSize + elem] = (*fiter).second.values()[indexMapping.vertexIndices()[i]*elemSize+elem];
 				}
 			}
 		}
@@ -2251,8 +2251,8 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 		
 		if (  pw != 0 && pw->declaration().isFloat4Decl() ) {
 			TemplPrimVar<RtFloat> &p = f.reserveFloats(posDecl);
-			p.values().resize(origIndices.size()*3);
-			for ( IndexType i=0; i<origIndices.size(); ++i ) {
+			p.values().resize(indexMapping.size()*3);
+			for ( IndexType i=0; i<indexMapping.size(); ++i ) {
 				p.values()[i*3+0] = pw->values()[i*4+0] / pw->values()[i*4+3];
 				p.values()[i*3+1] = pw->values()[i*4+1] / pw->values()[i*4+3];
 				p.values()[i*3+2] = pw->values()[i*4+2] / pw->values()[i*4+3];
@@ -2263,7 +2263,7 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 	// InsertNormals
 	if ( varyingData.floats(RI_P) != 0 && varyingData.floats(RI_P)->declaration().isFloat3Decl() && normDecl.isFloat3Decl() && varyingData.floats(RI_N) == 0 ) {
 		TemplPrimVar<RtFloat> &floats = f.reserveFloats(normDecl);		
-		(*curIndices).calcNormals(faceIdx, sharedIndices, origIndices, faceIndices, varyingData.floats(RI_P)->values(), flipNormals(), floats.values());
+		(*curIndices).calcNormals(faceIdx, indexMapping, varyingData.floats(RI_P)->values(), flipNormals(), floats.values());
 	}
 }
 
@@ -2313,14 +2313,12 @@ CSurface *CSubdivisionHierarchyTesselator::tesselate(const CDeclaration &posDecl
 	try {
 		if ( varyingData ) {
 			insertParams(*strategy, curIndices, *varyingData);
-			std::vector<IndexType> origIndices;
-			std::vector<bool> faceIndices;
-			IndexType sharedIndices;
+			CSubdIndexMapper indexMapping;
 			for ( RtInt faceIdx = 0; faceIdx < m_subdivObj.nFaces(); ++faceIdx ) {
 				if ( (maxTess == 1 || !strategy->discardableBoundaryFace(*m_indices->begin(), faceIdx)) &&
 					 (*m_indices->begin()).faces()[faceIdx].type() != CSubdivFace::FACE_HOLE )
 				{
-					extractFaces(*strategy, curIndices, faceIdx, *varyingData, posDecl, normDecl, sharedIndices, origIndices, faceIndices, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));
+					extractFaces(*strategy, curIndices, faceIdx, *varyingData, posDecl, normDecl, indexMapping, surf->newFace(tessU(), tessV(), FACETYPE_TRIANGLES));
 				}
 			}
 		}

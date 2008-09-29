@@ -54,7 +54,7 @@
 namespace RiCPP {
 	class CSubdivEdge;
 	class CRiHierarchicalSubdivisionMesh;
-
+	
 	//! @brief Face for subdivision.
 	/*! The face can be filled or be a hole (i.e. it is calculated as normal, but
 	 *  the area is not filled at output time). A face is given by a sequence of vertices
@@ -188,13 +188,13 @@ namespace RiCPP {
 			assert(startVertexIndex() <= anIndex && endVertexIndex() > anIndex);
 			return anIndex >= (endVertexIndex() - 1) ? startVertexIndex() : anIndex + 1;
 		}
-
+		
 		inline long prevVertexIndex(long anIndex) const
 		{
 			assert(startVertexIndex() <= anIndex && endVertexIndex() > anIndex);
 			return anIndex <= startVertexIndex() ? endVertexIndex() - 1 : anIndex - 1;
 		}
-
+		
 		/*! \return The number of vertices and edges grouped around the face. After the initial
 		 *          subdivision, this should be always 4 for catmull-clark subdivision
 		 *          meshes.
@@ -208,7 +208,7 @@ namespace RiCPP {
 		{
 			m_startChildIndex = aStartChildIndex;
 		}
-
+		
 		inline long startChildIndex() const
 		{
 			return m_startChildIndex;
@@ -218,17 +218,17 @@ namespace RiCPP {
 		{
 			m_endChildIndex = anEndChildIndex;
 		}
-
+		
 		inline long endChildIndex() const
 		{
 			return m_endChildIndex;
 		}
-
+		
 		inline long nChilds() const
 		{
 			return m_endChildIndex - m_startChildIndex;
 		}
-
+		
 		inline long localIndex(const std::vector<long> &edgeOrVertexIndices, long anIncidentEdgeOrVertex) const
 		{
 			for ( long i = startVertexIndex(); i != endVertexIndex(); i++ ) {
@@ -278,10 +278,10 @@ namespace RiCPP {
 		
 		long m_startChildIndex;  //!< Index of the child edge (boundary edge has 3 childs, all other 4)
 		long m_vertex[2];   /**< Incident vertices of the edge, only on initialization: m_vertex[0] < m_vertex[1],
-							 */
+		 */
 		long m_face[2];     /**< Index of an incident faces (m_face[0] has the edge: m_vertex[0]->m_vertex[1], the other has m_vertex[1]->m_vertex[0]).
-		                     * Boundaries have one index -1
-		                     */
+		 * Boundaries have one index -1
+		 */
 	public:
 		//! Standard constructor, initializes all elements.
 		inline CSubdivEdge() :
@@ -300,7 +300,7 @@ namespace RiCPP {
 			m_vertex[0] = aStartIdx;
 			m_vertex[1] = anEndIdx;
 		}
-
+		
 		//! Copy constructor, initializes with the values of edge.
 		/*! \param edge Edge used for initialization.
 		 */
@@ -333,11 +333,11 @@ namespace RiCPP {
 		 *  \return A reference of the instance (*this).
 		 */
 		CSubdivEdge &operator=(const CSubdivEdge &e);
-
+		
 		inline bool hasVertices(long v1, long v2) const
 		{
 			return ((m_vertex[0] == v1) && (m_vertex[1] == v2)) ||
-			       ((m_vertex[0] == v2) && (m_vertex[1] == v1));
+			((m_vertex[0] == v2) && (m_vertex[1] == v1));
 		}
 		
 		//! Two edges are considered as equal, if they have the same vertex index numbers.
@@ -417,7 +417,7 @@ namespace RiCPP {
 			m_value = aValue;
 			m_type = EDGE_CREASE;
 		}
-
+		
 		//! Gets the edge value, the sharpness of a crease.
 		/*! \return The edge value.
 		 */
@@ -427,13 +427,13 @@ namespace RiCPP {
 		}
 		
 		/*
-		inline RtFloat valueFactor() const
-		{
-			RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
-			return val / ms_sharpVal;
-		}
-		*/
-
+		 inline RtFloat valueFactor() const
+		 {
+		 RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
+		 return val / ms_sharpVal;
+		 }
+		 */
+		
 		inline void startChildIndex(long aStartChildIndex)
 		{
 			m_startChildIndex = aStartChildIndex;
@@ -461,7 +461,7 @@ namespace RiCPP {
 				return -1;
 			return m_face[idx];
 		}
-
+		
 		inline long vertex(int idx) const
 		{
 			assert(idx == 0 || idx == 1);
@@ -469,7 +469,7 @@ namespace RiCPP {
 				return -1;
 			return m_vertex[idx];
 		}
-
+		
 		inline long localFaceIdx(int idx) const
 		{
 			if ( m_face[0] == idx )
@@ -487,7 +487,7 @@ namespace RiCPP {
 				return 1;
 			return -1;
 		}
-
+		
 		//! Gets the adjacent vertex of a vertex and an edge.
 		/*! \param aVertex A vertex of the edge.
 		 *  \retval adjacent The Index of the adjacent (neighbour) of aVertex and the edge.
@@ -515,7 +515,7 @@ namespace RiCPP {
 			
 			return -1;
 		}
-
+		
 		//! Gets the adjacent face of another face and the edge.
 		/*! \param aFace A face of the edge.
 		 *  \retval adjacent The Index of the neighbour (adjacent) of aFace of the edge.
@@ -533,7 +533,7 @@ namespace RiCPP {
 			
 			return true;
 		}
-
+		
 		inline long adjacentFace(long aFace) const
 		{
 			if ( aFace == m_face[0] )
@@ -573,7 +573,7 @@ namespace RiCPP {
 		{
 			return m_type == EDGE_CREASE && m_value >= ms_sharpVal;
 		}
-
+		
 		//! Is the edge a boundary and a crease?
 		/*! \return true Creased boundary edge, false no boundary or not a crease
 		 */
@@ -586,7 +586,7 @@ namespace RiCPP {
 		{
 			return (v1 == m_vertex[0] && v2 == m_vertex[1]) || (v2 == m_vertex[0] && v1 == m_vertex[1]);
 		}
-
+		
 		void insertCreaseVal(const CRiHierarchicalSubdivisionMesh &obj);
 	}; // CSubdivEdge
 	
@@ -600,8 +600,8 @@ namespace RiCPP {
 	{
 		e.dump(o, pre);
 	}
-
-
+	
+	
 	//! Vertex for subdivision.
 	/*! Used for conectivity information only, point values etc. are not stored here.
 	 *  The vertices are stored in TSubdivMesh::m_vertices. The index of a vertex
@@ -622,16 +622,16 @@ namespace RiCPP {
 		
 		long m_startFace; //!< Index for CSubdivisionIndices::m_incidentFaces
 		long m_startEdge; //!< Index for CSubdivisionIndices::m_incidentEdges
-
+		
 		long m_incidentFaces; //!< Number of incident faces
 		long m_incidentEdges; //!< Number of incident edges
 		
 		long m_faceIndex;     //!< Temporary index of the (first) vertex in a single face - vertex can have multiple values if vertex is a corner, because of the normals and hierarchical edits.
-
+		
 		bool m_faceVertex;     //!< Is a vertex of a face boundary
 		
 		// Parameters have the same index as the vertex, face vertices, corners and vertices incident to sharp creases have additional parameters (of the same value)
-
+		
 	public:
 		//! Standard constructor, clears all members.
 		inline CSubdivVertex() :
@@ -651,7 +651,7 @@ namespace RiCPP {
 		// inline ~CSubdivVertex() {}
 		
 		inline static RtFloat sharpVal() { return ms_sharpVal; }
-
+		
 		//! Prints the contents of the instance to a stream.
 		/*! \param o Stream to print on.
 		 *  \param pre String used as first output for each line.
@@ -696,7 +696,7 @@ namespace RiCPP {
 		{
 			m_value = aValue;
 		}
-
+		
 		inline void corner(RtFloat aValue)
 		{
 			m_value = aValue;
@@ -707,12 +707,12 @@ namespace RiCPP {
 		{
 			return m_type == VERTEX_CORNER && m_value >= ms_sharpVal;
 		}
-
+		
 		inline bool isCorner() const
 		{
 			return m_type == VERTEX_CORNER && m_value > 0;
 		}
-
+		
 		//! Gets the vertex value.
 		/*! \return The vertex value, the sharpness of the corner.
 		 */
@@ -720,36 +720,36 @@ namespace RiCPP {
 		{
 			return m_value;
 		}
-
+		
 		/*
-		inline RtFloat valueFactor() const
-		{
-			RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
-			return val / ms_sharpVal;
-		}
-		*/
-
+		 inline RtFloat valueFactor() const
+		 {
+		 RtFloat val = clamp(m_value, (RtFloat)0, ms_sharpVal);
+		 return val / ms_sharpVal;
+		 }
+		 */
+		
 		inline long startEdge() const
 		{
 			return m_startEdge;
 		}
-
+		
 		inline long nextEdge(long anEdge) const
 		{
 			long e = anEdge +1;
 			return e >= endEdge() ? startEdge() : e;
 		}
-
+		
 		inline void startEdge(long anEdgeIndex)
 		{
 			m_startEdge = anEdgeIndex;
 		}
-
+		
 		inline long endEdge() const
 		{
 			return m_startEdge+m_incidentEdges;
 		}
-
+		
 		inline long incidentEdges() const
 		{
 			return m_incidentEdges;
@@ -759,12 +759,12 @@ namespace RiCPP {
 		{
 			m_incidentEdges = val;
 		}
-
+		
 		inline void incIncidentEdges()
 		{
 			++m_incidentEdges;
 		}
-
+		
 		inline long startFace() const
 		{
 			return m_startFace;
@@ -790,12 +790,12 @@ namespace RiCPP {
 		{
 			return m_incidentFaces;
 		}
-
+		
 		inline void incidentFaces(long val)
 		{
 			m_incidentFaces = val;
 		}
-
+		
 		inline void incIncidentFaces()
 		{
 			++m_incidentFaces;
@@ -805,17 +805,17 @@ namespace RiCPP {
 		{
 			return m_faceVertex;
 		}
-
+		
 		inline void faceVertex(bool isFaceVertex)
 		{
 			m_faceVertex = isFaceVertex;
 		}
-
+		
 		inline void faceIndex(long aFaceIndex)
 		{
 			m_faceIndex = aFaceIndex;
 		}
-
+		
 		inline long faceIndex() const
 		{
 			return m_faceIndex;
@@ -834,9 +834,30 @@ namespace RiCPP {
 	{
 		v.dump(o, pre);
 	}
-		
-	class CSubdivisionStrategy;
 	
+	class CSubdIndexMapper {
+		std::vector<long> m_vertexIndices; //!< Index of a vertex (0..number of vertices-1), [shared vertices][face vertices], maps from vertex index of an extracted face to the vertex index of the mesh
+		std::vector<long> m_faceIndices;   //!< Index of a face that is incident to the vertex having the same index, used if m_isFaceVertex is true for that index
+		std::vector<bool> m_isFaceVertex;  //!< True, if a value for the vertex value index i should be calculated on a per face basis (face index is in m_faceIndices)
+		long m_faceVertexStart;            //!< Index of the first vertex index in m_vertexIndices used for face veritces only (== m_vertexIndices.size(), if no face vertex exists)
+	public:
+		inline CSubdIndexMapper() : m_faceVertexStart(0) {}
+		inline const std::vector<long> &vertexIndices() const { return m_vertexIndices; }
+		inline std::vector<long> &vertexIndices() { return m_vertexIndices; }
+		inline const std::vector<long> &faceIndices() const { return m_faceIndices; }
+		inline std::vector<long> &faceIndices() { return m_faceIndices; }
+		inline const std::vector<bool> &isFaceVertex() const { return m_isFaceVertex; }
+		inline std::vector<bool> &isFaceVertex() { return m_isFaceVertex; }
+		inline bool isFaceIndex(long aVertexIndex) const { return m_isFaceVertex[aVertexIndex];}
+		inline long faceVertexStart() const { return m_faceVertexStart; }
+		inline void faceVertexStart(long aFaceVertexStart) { m_faceVertexStart = aFaceVertexStart; }
+		inline void clear() {m_vertexIndices.clear(); m_faceIndices.clear(); m_isFaceVertex.clear(); m_faceVertexStart=0; }
+		inline size_t size() const { return m_vertexIndices.size(); }
+		inline void resize(size_t newSize) { m_vertexIndices.resize(newSize); m_faceIndices.resize(newSize); m_isFaceVertex.resize(newSize); }
+	}; // CSubdIndexMapper
+	
+	class CSubdivisionStrategy;
+
 	class CSubdivisionIndices {
 	private:
 		std::vector<CSubdivFace>   m_faces;          //!< All faces of a subdivision mesh.
@@ -849,16 +870,13 @@ namespace RiCPP {
 		RtInt m_interpolateBoundary;                 //!< Value of the boundary tag, 0: no interpolation, 1: creased edge chains and sharp corners, 2: creased edge chains, but corners not effected
 		bool m_illTopology;                          //!< Error while subdividing.
 		
-		std::vector<long>          m_creasedEdges;   //!< Indices (to m_edges) for creased edge chains, sizes in m_creaseSizes.
-		std::vector<long>          m_creaseSizes;    //!< Sizes of creased edge chains m_creasedEdges
-
 		void insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj); //!< Sets m_interpolateBoundary using tags of @a obj.
 		bool insertEdgeIndex(const CSubdivFace &aFace, const CSubdivEdge &anEdge, long anEdgeIndex); //!< Inserts the edges of aFace into m_edgeIndices
 		void updateVertexData(); //!< Update the incident data m_incidentEdges, m_incidentFaces after a subdivision step
 		
 		long clearFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx);
-		void fillFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt);
-		void fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, long &sharedStart, long &unsharedStart);
+		void fillTriangleIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt);
+		void fillIndexMapping(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, long &sharedCnt, long &unsharedCnt, CSubdIndexMapper &indexMapping);
 		long countTriangleIndices(const std::list<CSubdivisionIndices>::const_iterator &aParent, const std::list<CSubdivisionIndices>::const_iterator &cur, long faceIdx) const;
 		void correctTriangleIndices(std::vector<IndexType> &indices, long unsharedStart, long prevSharedStart) const;
 	public:
@@ -866,7 +884,7 @@ namespace RiCPP {
 		 */
 		inline CSubdivisionIndices() : m_illTopology(false), m_interpolateBoundary(0) {}
 		
-
+		
 		/** @brief Initialization of the connectivity of the subdivision mesh.
 		 *
 		 *  The mesh must be valid for Catmull-Clark subdivision: An edge has
@@ -881,12 +899,12 @@ namespace RiCPP {
 		
 		inline std::vector<CSubdivFace> &faces() {return m_faces;}
 		inline const std::vector<CSubdivFace> &faces() const {return m_faces;}
-
+		
 		inline std::vector<CSubdivEdge> &edges() {return m_edges;}
 		inline const std::vector<CSubdivEdge> &edges() const {return m_edges;}
 		inline std::vector<long> &edgeIndices() {return m_edgeIndices;}
 		inline const std::vector<long> &edgeIndices() const {return m_edgeIndices;}
-
+		
 		inline std::vector<CSubdivVertex> &vertices() {return m_vertices;}
 		inline const std::vector<CSubdivVertex> &vertices() const {return m_vertices;}
 		inline std::vector<long> &vertexIndices() {return m_vertexIndices;}
@@ -894,20 +912,20 @@ namespace RiCPP {
 		
 		inline const std::vector<long> &incidentEdges() const { return m_incidentEdges; }
 		inline const std::vector<long> &incidentFaces() const { return m_incidentFaces; }
-				
+		
 		long sharpCreasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1) const;
 		long creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1, RtFloat &factor0, RtFloat &factor1) const;
-
+		
 		RtFloat sumCrease(const CSubdivVertex &aVertex, long forEdgeIdx, long &edgeCnt) const;
 		long vertexBoundary(const CSubdivVertex &aVertex, long &bound0, long &bound1) const;
-
+		
 		inline bool isBoundary(const CSubdivVertex &aVertex) const
 		{
 			long b0, b1;
 			long vb = vertexBoundary(aVertex, b0, b1);
 			return vb >= 1;
 		}
-
+		
 		inline bool isBoundary(const CSubdivFace &aFace) const
 		{
 			for ( long i = aFace.startVertexIndex(); i < aFace.endVertexIndex(); ++i ) {
@@ -916,42 +934,34 @@ namespace RiCPP {
 			}
 			return false;
 		}
-
-		inline bool isSharpCorner(const CSubdivVertex &aVertex) const
-		{
-			long c0, c1;
-			long vb = sharpCreasedVertex(aVertex, interpolateBoundary(), c0, c1);
-			return vb > 2 || vb == aVertex.incidentEdges() || aVertex.isSharp();
-		}
-
+		
 		inline bool isCorner(const CSubdivVertex &aVertex) const
 		{
 			long c0, c1;
-			RtFloat val0, val1;
-			long vb = creasedVertex(aVertex, interpolateBoundary(), c0, c1, val0, val1);
-			return vb > 2 || vb == aVertex.incidentEdges() || aVertex.isCorner();
+			long vb = sharpCreasedVertex(aVertex, interpolateBoundary(), c0, c1);
+			return vb >= 2 || vb == aVertex.incidentEdges() || aVertex.isCorner();
 		}
-
+		
 		inline bool faceEdge(const CSubdivEdge &anEdge) const
 		{
 			return m_vertices[anEdge.vertex(0)].faceVertex() &&  m_vertices[anEdge.vertex(1)].faceVertex();
 		}
-	
+		
 		inline bool illTopology() const { return m_illTopology; }
-
+		
 		inline RtInt interpolateBoundary() const { return m_interpolateBoundary; }
 		inline void interpolateBoundary(RtInt anInterpolateBoundary)
 		{
 			m_interpolateBoundary = anInterpolateBoundary;
 		}
-
+		
 		void subdivide(CSubdivisionIndices &aParent, const CSubdivisionStrategy &aStrategy,
 					   const CRiHierarchicalSubdivisionMesh &anObj);
 		
-		void prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices);
+		void prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, CSubdIndexMapper &indexMapping);
 		bool calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *normal) const;
-		void calcNormal(long faceIdx, long vertexIdx, bool isFaceVertex, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const;
-		void calcNormals(long faceIdx, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const;
+		void calcNormal(long faceIdx, long vertexMapIdx, const CSubdIndexMapper &indexMapping, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const;
+		void calcNormals(long faceIdx, const CSubdIndexMapper &indexMapping, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const;
 	};
 	
 	class CSubdivisionStrategy {
@@ -1002,7 +1012,7 @@ namespace RiCPP {
 			return false;
 		}
 	};
-
+	
 	class CSubdivisionStrategies : public TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *> {
 	public:
 		inline CSubdivisionStrategies() : TemplObjPtrRegistry<RtToken, CSubdivisionStrategy *>(true) {};

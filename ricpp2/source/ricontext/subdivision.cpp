@@ -237,7 +237,7 @@ void CSubdivVertex::insertCornerVal(long idx, const CRiHierarchicalSubdivisionMe
 			if ( intVals > 0 ) {
 				for ( RtInt intIdx = 0; intIdx < intVals; ++intIdx ) {
 					if ( obj.intArgs()[intOffs+intIdx] == idx ) {
-						if ( floatVals == 0 )
+						if ( floatVals <= 0 )
 							m_value = RI_INFINITY;
 						else if ( floatVals < intIdx )
 							m_value = obj.floatArgs()[floatOffs+floatVals-1];
@@ -535,19 +535,61 @@ long CSubdivisionIndices::clearFaceVertexIndices(const std::list<CSubdivisionInd
 	return result;
 }
 
-void CSubdivisionIndices::fillFaceVertexIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt)
+void CSubdivisionIndices::fillIndexMapping(const std::list<CSubdivisionIndices>::iterator &aParent,
+										  const std::list<CSubdivisionIndices>::iterator &cur,
+										  long faceIdx,
+										  long &sharedCnt, long &unsharedCnt,
+										  CSubdIndexMapper &indexMapping)
 {
+	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
+	
+	if ( aParent == cur || aFace.startChildIndex() < 0 ) {
+		
+		for ( long i = aFace.startVertexIndex(); i != aFace.endVertexIndex(); i++ ) {
+			long vertIdx = (*aParent).vertexIndices()[i];
+			if ( (*aParent).vertices()[vertIdx].faceIndex() == -1 ) {
+				// Vertex visited the first time
+				indexMapping.vertexIndices()[sharedCnt] = vertIdx;
+				indexMapping.faceIndices()[sharedCnt] = faceIdx;
+				indexMapping.isFaceVertex()[sharedCnt] = (*aParent).isCorner((*aParent).vertices()[vertIdx]);
+				(*aParent).vertices()[vertIdx].faceIndex(sharedCnt);
+				sharedCnt++;
+			} else {
+				// Vertex already visited
+				if ( (*aParent).isCorner((*aParent).vertices()[vertIdx]) ) {
+					indexMapping.vertexIndices()[unsharedCnt] = vertIdx;
+				    indexMapping.faceIndices()[unsharedCnt] = faceIdx;
+					indexMapping.isFaceVertex()[unsharedCnt] = true;
+					assert(indexMapping.isFaceVertex()[(*aParent).vertices()[vertIdx].faceIndex()]);
+					unsharedCnt++;
+				}
+			}
+		}
+
+		return;
+	}
+	
+	std::list<CSubdivisionIndices>::iterator child = aParent;
+	child++;
+	for ( long i = aFace.startChildIndex(); i != aFace.endChildIndex(); i++ ) {
+		(*child).fillIndexMapping(child, cur, i, sharedCnt, unsharedCnt, indexMapping);
+	}
+}
+
+void CSubdivisionIndices::fillTriangleIndices(const std::list<CSubdivisionIndices>::iterator &aParent, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, long &triangleCnt, long &sharedCnt, long &unsharedCnt)
+{
+	// see also countTriangleIndices() and fillIndexMapping()
 	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
 	
 	if ( aParent == cur ) {
 		if ( aFace.nVertices() < 3 )
 			return;
-
-		const long triangleIndicesSize = (aFace.nVertices()-2)*3;
+		
+		const long triangleIndicesSize = (aFace.nVertices() - 2) * 3;
 		std::vector<long> triangleIndices(triangleIndicesSize);
 		long cnt = aFace.triangulate(&triangleIndices[0], triangleIndicesSize, 0);
-
-		// Insert and map indices
+		
+		// Insert and map indices ( see also fillIndexMapping())
 		for ( long i = aFace.startVertexIndex(); i != aFace.endVertexIndex(); i++ ) {
 			long vertIdx = (*aParent).vertexIndices()[i];
 			if ( (*aParent).vertices()[vertIdx].faceIndex() == -1 ) {
@@ -558,7 +600,7 @@ void CSubdivisionIndices::fillFaceVertexIndices(const std::list<CSubdivisionIndi
 				}
 				(*aParent).vertices()[vertIdx].faceIndex(sharedCnt++);
 			} else {
-				if ( (*aParent).isSharpCorner((*aParent).vertices()[vertIdx]) ) {
+				if ( (*aParent).isCorner((*aParent).vertices()[vertIdx]) ) {
 					for ( long ti = 0; ti < cnt; ++ti ) {
 						if ( (*aParent).vertexIndices()[triangleIndices[ti]] == vertIdx ) {
 							indices[triangleCnt+ti] = unsharedCnt;
@@ -582,49 +624,13 @@ void CSubdivisionIndices::fillFaceVertexIndices(const std::list<CSubdivisionIndi
 	std::list<CSubdivisionIndices>::iterator child = aParent;
 	child++;
 	for ( long i = aFace.startChildIndex(); i != aFace.endChildIndex(); i++ ) {
-		(*child).fillFaceVertexIndices(child, cur, i, indices, triangleCnt, sharedCnt, unsharedCnt);
-	}
-}
-
-
-void CSubdivisionIndices::fillOrigIndices(const std::list<CSubdivisionIndices>::iterator &aParent,
-										  const std::list<CSubdivisionIndices>::iterator &cur,
-										  long faceIdx,
-										  std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices,
-										  long &sharedStart, long &unsharedStart)
-{
-	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
-	
-	if ( aParent == cur || aFace.startChildIndex() < 0 ) {
-		
-		for ( long i = aFace.startVertexIndex(); i != aFace.endVertexIndex(); i++ ) {
-			long vertIdx = (*aParent).vertexIndices()[i];
-			if ( (*aParent).vertices()[vertIdx].faceIndex() == -1 ) {
-				origIndices[sharedStart] = vertIdx;
-				faceIndices[sharedStart] = (*aParent).isSharpCorner((*aParent).vertices()[vertIdx]);
-				(*aParent).vertices()[vertIdx].faceIndex(sharedStart++);
-			} else {
-				if ( (*aParent).isSharpCorner((*aParent).vertices()[vertIdx]) ) {
-					origIndices[unsharedStart] = vertIdx;
-					faceIndices[vertIdx] = true;
-					faceIndices[unsharedStart] = faceIndices[vertIdx];
-					unsharedStart++;
-				}
-			}
-		}
-
-		return;
-	}
-	
-	std::list<CSubdivisionIndices>::iterator child = aParent;
-	child++;
-	for ( long i = aFace.startChildIndex(); i != aFace.endChildIndex(); i++ ) {
-		(*child).fillOrigIndices(child, cur, i, origIndices, faceIndices, sharedStart, unsharedStart);
+		(*child).fillTriangleIndices(child, cur, i, indices, triangleCnt, sharedCnt, unsharedCnt);
 	}
 }
 
 long CSubdivisionIndices::countTriangleIndices(const std::list<CSubdivisionIndices>::const_iterator &aParent, const std::list<CSubdivisionIndices>::const_iterator &cur, long faceIdx) const
 {
+	// see also fillTriangleIndices()
 	const CSubdivFace &aFace = (*aParent).faces()[faceIdx];
 
 	long result = 0;
@@ -650,26 +656,41 @@ void CSubdivisionIndices::correctTriangleIndices(std::vector<IndexType> &indices
 	}
 }
 
-void CSubdivisionIndices::prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices)
+void CSubdivisionIndices::prepareFace(const std::list<CSubdivisionIndices>::iterator &root, const std::list<CSubdivisionIndices>::iterator &cur, long faceIdx, std::vector<IndexType> &indices, CSubdIndexMapper &indexMapping)
 {
-	long triangleCnt = 0, sharedCnt = 0;
-	long unsharedCnt = (long)((*cur).vertices().size()); // There are maximal all vertices shared
+	long triangleIdxCnt = 0, // Number of indices of triangles of the face faceIdx, used as counter for fillFaceVertexIndices()
+	     sharedCnt   = 0; // Number of shared vertices (i.e. vertices that are shared by one or more faces and edges), used as counter for fillFaceVertexIndices()
+	const long unsharedOffs = (long)((*cur).vertices().size()); // There are maximal all vertices shared..
+	long unsharedCnt = unsharedOffs; // ...so let unshared variable count start here (offset will be subtracted later)
+	                                 // used as counter for fillFaceVertexIndices()
+									 // (unshared: vertices that have different values for different faces,
+	                                 // e.g. vertices of sharp creases need different normals for different faces)
 
-	long triangleIndices = (*root).countTriangleIndices(root, cur, faceIdx);
-
+	long triangleIndices = (*root).countTriangleIndices(root, cur, faceIdx); // Number of triangle indices used for the face faceIdx
 	indices.resize(triangleIndices);
-	clearFaceVertexIndices(root, cur, faceIdx);
-	fillFaceVertexIndices(root, cur, faceIdx, indices, triangleCnt, sharedCnt, unsharedCnt);
-
-	origIndices.resize(sharedCnt + unsharedCnt - (long)((*cur).vertices().size()));
-	faceIndices.resize(origIndices.size());
-	sharedIndices = sharedCnt;
 
 	clearFaceVertexIndices(root, cur, faceIdx);
-	long sharedStart = 0;
-	long unsharedStart = sharedCnt;
-	correctTriangleIndices(indices, unsharedStart, (long)((*cur).vertices().size()));
-	fillOrigIndices(root, cur, faceIdx, origIndices, faceIndices, sharedStart, unsharedStart);
+	
+	fillTriangleIndices(root, cur, faceIdx,
+						indices,
+						triangleIdxCnt, sharedCnt, unsharedCnt
+	);
+	
+	// triangleIdxCnt, sharedCnt and unsharedCnt are set
+	assert(triangleIdxCnt == triangleIndices);
+	assert(sharedCnt <= unsharedOffs);
+	assert(unsharedCnt >= unsharedOffs);
+
+	unsharedCnt -= unsharedOffs; // Remove the offset
+	correctTriangleIndices(indices, sharedCnt, unsharedOffs); // correct the indices of the triangles, sharedCnt is the new offset
+
+	indexMapping.resize(sharedCnt + unsharedCnt);
+	indexMapping.faceVertexStart(sharedCnt);
+
+	clearFaceVertexIndices(root, cur, faceIdx);
+	unsharedCnt = sharedCnt;
+	sharedCnt = 0;
+	fillIndexMapping(root, cur, faceIdx, sharedCnt, unsharedCnt, indexMapping);
 }
 
 bool CSubdivisionIndices::calcNormalForVertexInFace(long faceIdx, long vertexIdx, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const
@@ -729,17 +750,20 @@ bool CSubdivisionIndices::calcNormalForVertexInFace(long faceIdx, long vertexIdx
 	return wasSet;
 }	
 
-void CSubdivisionIndices::calcNormal(long faceIdx, long vertexIdx, bool isFaceIndex, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const
+void CSubdivisionIndices::calcNormal(long faceIdx, long vertexMapIdx, const CSubdIndexMapper &indexMapping, const std::vector<RtFloat> &pos, bool flipNormals, RtFloat *resultsF3) const
 {
 	resultsF3[0] = 0;
 	resultsF3[1] = 0;
 	resultsF3[2] = 0;
 	
-	const CSubdivVertex &v = m_vertices[vertexIdx];
+	const long vertexIndex = indexMapping.vertexIndices()[vertexMapIdx];
+	const CSubdivVertex &v = m_vertices[vertexIndex];
 	
 	RtFloat tempNorm[3];
-	for ( long sharedFaceIdx = v.startFace(); sharedFaceIdx != v.endFace(); sharedFaceIdx++ ) {
-		if ( calcNormalForVertexInFace(m_incidentFaces[sharedFaceIdx], vertexIdx, pos, flipNormals, tempNorm) ) {
+	for ( long incidentFaceIdx = v.startFace(); incidentFaceIdx != v.endFace(); incidentFaceIdx++ ) {
+		if ( indexMapping.isFaceIndex(vertexMapIdx) && indexMapping.faceIndices()[vertexMapIdx] != m_incidentFaces[incidentFaceIdx] )
+			continue;
+		if ( calcNormalForVertexInFace(m_incidentFaces[incidentFaceIdx], vertexIndex, pos, flipNormals, tempNorm) ) {
 			normalize3(tempNorm);
 			resultsF3[0] += tempNorm[0];
 			resultsF3[1] += tempNorm[1];
@@ -748,11 +772,11 @@ void CSubdivisionIndices::calcNormal(long faceIdx, long vertexIdx, bool isFaceIn
 	}
 }
 
-void CSubdivisionIndices::calcNormals(long faceIdx, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const
+void CSubdivisionIndices::calcNormals(long faceIdx, const CSubdIndexMapper &indexMapping, const std::vector<RtFloat> &pos, bool flipNormals, std::vector<RtFloat> &floats) const
 {
-	floats.resize(origIndices.size() * 3);
-	for ( size_t i = 0; i != origIndices.size(); i++ ) {
-		calcNormal(faceIdx, origIndices[i], faceIndices[i], pos, flipNormals, &floats[i*3]);
+	floats.resize(indexMapping.size() * 3);
+	for ( size_t i = 0; i != indexMapping.size(); i++ ) {
+		calcNormal(faceIdx, i, indexMapping, pos, flipNormals, &floats[i*3]);
 	}
 }
 

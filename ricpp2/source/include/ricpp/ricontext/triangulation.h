@@ -468,7 +468,7 @@ namespace RiCPP {
 		
 		void subdivide(const CSubdivisionStrategy &strategy, IndexType depth);
 		void insertParams(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::const_iterator &curIndices, CFace &aFace);
-		void extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceNum, const CFace &varyingData, const CDeclaration &posDecl, const CDeclaration &normDecl, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, CFace &f);
+		void extractFaces(const CSubdivisionStrategy &strategy, const std::list<CSubdivisionIndices>::iterator &curIndices, long faceNum, const CFace &varyingData, const CDeclaration &posDecl, const CDeclaration &normDecl, CSubdIndexMapper &indexMapping, CFace &f);
 		
 	protected:
 		inline virtual const CVarParamRManInterfaceCall &obj() const

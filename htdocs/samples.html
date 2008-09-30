@@ -7,7 +7,7 @@
   <meta name="description" content="Dragonhead (jpatch) Views">
   <meta name="keywords" content="RenderMan, RiCPP, C++ binding, JPatch, Spline">
   <meta name="created" content="06/13/2003">
-  <meta name="changed" content="06/30/2005">
+  <meta name="changed" content="09/30/2008">
 </head>
 <body>
 <a name="top"></a>
@@ -16,6 +16,7 @@
   <tbody>
     <tr>
       <td>
+		<a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=69228&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo"></a>
         <img src="images/ricpplogo.gif" border="0" height="63" width="66" alt="RiCPP Logo">
       </td>
       <td>
@@ -124,8 +125,8 @@ is included in [<a href="http://jpatch.sourceforge.net/">Sascha Ledinsky's JPatc
       and add some declarations at the top of the file
       <pre>Declare "coordinatesystem" "string"<br>Declare "sphere" "float"</pre>
       Then load the <kbd>"subd-1024.tif"</kbd> texture in a graphics program
-      and save it uncompressed to <kbd>"subd.tif"</kbd> (my usage of libtiff
-      seems to have a problem with the original tiff texture). Transforming the
+      and save it uncompressed to <kbd>"subd.tif"</kbd> (the original image is loaded
+      mirrored horizontally). Transforming the
       texture with 3delight using<br>
       <pre>MakeTexture "subd-1024_3.tif" "subd.tif" "clamp" "clamp" "box" 1 1</pre>
       or the utility <kbd>tdlmake</kbd> of 3delight to get the texture also
@@ -181,7 +182,7 @@ Homepage of the 3delight renderer</li>
 </table>
 <p>
 <font size="-2">
-Last change: June, 30th 2005<br>
+Last change: Sept., 30th 2008<br>
 Contact: <a href="mailto:pidde@uni-koblenz.de?subject=RiCPP">Andreas Pidde<br>
 <a href="disclaimer.html">Disclaimer</a>
 </font>

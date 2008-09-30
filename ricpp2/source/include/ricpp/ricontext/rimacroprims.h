@@ -1850,7 +1850,7 @@ namespace RiCPP {
 		 *
 		 *  @return The scheme (currently RI_CATMULL_CLARK only).
 		 */
-		RtToken scheme() const
+		inline RtToken scheme() const
 		{
 			return m_scheme;
 		}
@@ -1859,7 +1859,7 @@ namespace RiCPP {
 		 *
 		 * @return The number of vertices (maximum+1 of m_verts).
 		 */
-		RtInt nVertices() const
+		inline RtInt nVertices() const
 		{
 			return m_nvertices;
 		}
@@ -1868,7 +1868,7 @@ namespace RiCPP {
 		 *
 		 * @return The Number of edges (eq. number of vertices) of the surface.
 		 */
-		RtInt nEdges() const
+		inline RtInt nEdges() const
 		{
 			return m_nedges;
 		}
@@ -1877,21 +1877,30 @@ namespace RiCPP {
 		 *
 		 * @return Number of vertices for each face (size is the number of faces).
 		 */
-		const std::vector<RtInt> &nVerts() const
+		inline const std::vector<RtInt> &nVerts() const
 		{
 			return m_nverts;
 		}
 
-		const RtInt nFaces() const
+		inline RtInt nFaces() const
 		{
 			return static_cast<RtInt>(m_nverts.size());
+		}
+
+		inline RtInt nVertsOffs(RtInt faceIdx) const
+		{
+			assert(faceIdx <= (RtInt)m_nverts.size());
+			RtInt result = 0;
+			for ( int i = 0; i < faceIdx; ++i )
+				result += m_nverts[i];
+			return result;
 		}
 
 		/** @brief Gets the index for each vertex.
 		 *
 		 * @return The index for each vertex.
 		 */
-		const std::vector<RtInt> &verts() const
+		inline const std::vector<RtInt> &verts() const
 		{
 			return m_verts;
 		}
@@ -1900,7 +1909,7 @@ namespace RiCPP {
 		 *
 		 * @return The Number of integer and float args (integer, float) for each tag (size = 2*m_tags.size()).
 		 */
-		const std::vector<RtInt> &nArgs() const
+		inline const std::vector<RtInt> &nArgs() const
 		{
 			return m_nargs;
 		}
@@ -1909,7 +1918,7 @@ namespace RiCPP {
 		 *
 		 * @return The integer arguments for tags.
 		 */
-		const std::vector<RtInt> &intArgs() const
+		inline const std::vector<RtInt> &intArgs() const
 		{
 			return m_intargs;
 		}
@@ -1918,7 +1927,7 @@ namespace RiCPP {
 		 *
 		 * @return The float arguments for tags.
 		 */
-		const std::vector<RtFloat> &floatArgs() const
+		inline const std::vector<RtFloat> &floatArgs() const
 		{
 			return m_floargs;
 		}
@@ -1927,7 +1936,7 @@ namespace RiCPP {
 		 *
 		 * @return The tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
 		 */
-		const std::vector<RtToken> &tags() const
+		inline const std::vector<RtToken> &tags() const
 		{
 			return m_tags;
 		}
@@ -2160,7 +2169,7 @@ namespace RiCPP {
 		 *
 		 *  @return The scheme (currently RI_CATMULL_CLARK only).
 		 */
-		RtToken scheme() const
+		inline RtToken scheme() const
 		{
 			return m_scheme;
 		}
@@ -2169,21 +2178,30 @@ namespace RiCPP {
 		 *
 		 * @return The number of vertices (maximum+1 of m_verts).
 		 */
-		RtInt nVertices() const
+		inline RtInt nVertices() const
 		{
 			return m_nvertices;
 		}
 
-		const RtInt nFaces() const
+		inline RtInt nFaces() const
 		{
 			return static_cast<RtInt>(m_nverts.size());
+		}
+
+		inline RtInt nVertsOffs(RtInt faceIdx) const
+		{
+			assert(faceIdx <= (RtInt)m_nverts.size());
+			RtInt result = 0;
+			for ( int i = 0; i < faceIdx; ++i )
+				result += m_nverts[i];
+			return result;
 		}
 
 		/** @brief Gets the number of edges (eq. number of vertices) of the surface.
 		 *
 		 * @return The Number of edges (eq. number of vertices) of the surface.
 		 */
-		RtInt nEdges() const
+		inline RtInt nEdges() const
 		{
 			return m_nedges;
 		}
@@ -2192,7 +2210,7 @@ namespace RiCPP {
 		 *
 		 * @return Number of vertices for each face (size is the number of faces).
 		 */
-		const std::vector<RtInt> &nVerts() const
+		inline const std::vector<RtInt> &nVerts() const
 		{
 			return m_nverts;
 		}
@@ -2201,7 +2219,7 @@ namespace RiCPP {
 		 *
 		 * @return The index for each vertex.
 		 */
-		const std::vector<RtInt> &verts() const
+		inline const std::vector<RtInt> &verts() const
 		{
 			return m_verts;
 		}
@@ -2210,7 +2228,7 @@ namespace RiCPP {
 		 *
 		 * @return The Number of integer, float and string args (integer, float, string) for each tag (size = 3*m_tags.size()).
 		 */
-		const std::vector<RtInt> &nArgs() const
+		inline const std::vector<RtInt> &nArgs() const
 		{
 			return m_nargs;
 		}
@@ -2219,7 +2237,7 @@ namespace RiCPP {
 		 *
 		 * @return The integer arguments for tags.
 		 */
-		const std::vector<RtInt> &intArgs() const
+		inline const std::vector<RtInt> &intArgs() const
 		{
 			return m_intargs;
 		}
@@ -2228,7 +2246,7 @@ namespace RiCPP {
 		 *
 		 * @return The float arguments for tags.
 		 */
-		const std::vector<RtFloat> &floatArgs() const
+		inline const std::vector<RtFloat> &floatArgs() const
 		{
 			return m_floargs;
 		}
@@ -2237,7 +2255,7 @@ namespace RiCPP {
 		 *
 		 * @return The string arguments for tags.
 		 */
-		const std::vector<RtToken> &stringPtrArgs() const
+		inline const std::vector<RtToken> &stringPtrArgs() const
 		{
 			return m_strptrargs;
 		}
@@ -2246,7 +2264,7 @@ namespace RiCPP {
 		 *
 		 * @return The tags (RI_HOLE, RI_CREASE, RI_CORNER, ...), size is the number of tags.
 		 */
-		const std::vector<RtToken> &tags() const
+		inline const std::vector<RtToken> &tags() const
 		{
 			return m_tags;
 		}

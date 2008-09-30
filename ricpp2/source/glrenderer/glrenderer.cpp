@@ -188,13 +188,13 @@ void CGLRenderer::drawNormals(const std::vector<RtFloat> &p, const std::vector<R
 
 void CGLRenderer::hide(const CFace &f)
 {
-#ifdef _OPENGL_TRANSFORM
 	const TemplPrimVar<RtFloat> *pptr = f.floats(RI_P);
-	const TemplPrimVar<RtFloat> *nptr = f.floats(RI_N);
-	
 	if ( !pptr )
 		return;
-	
+
+#ifdef _OPENGL_TRANSFORM
+	const TemplPrimVar<RtFloat> *nptr = f.floats(RI_N);
+		
 	const std::vector<RtFloat> *pp = &(pptr->values());
 	const std::vector<RtFloat> *np = nptr ? &(nptr->values()) : 0;
 #else
@@ -250,14 +250,14 @@ void CGLRenderer::hide(const CFace &f)
 		getCs(pcSurf->declaration().colorDescr(), renderState()->options().gain(), renderState()->options().gamma(), pcSurf->values(), cs);
 	}
 
-	if ( cs.size() == pp->size() ) {
+	if ( cs.size() == 3 ) {
+		RtFloat alpha = opacityToAlpha(attributes().opacity());
+		glColor4f(cs[0], cs[1], cs[2], alpha);		
+	} else if ( cs.size() == pp->size() ) {
 		glEnableClientState(GL_COLOR_ARRAY);
 		glColorPointer(3, GL_FLOAT, 0, &cs[0]);
 		if ( replayMode()  ) 
 			glDepthMask(GL_TRUE);
-	} else if ( cs.size() == 3 ) {
-		RtFloat alpha = opacityToAlpha(attributes().opacity());
-		glColor4f(cs[0], cs[1], cs[2], alpha);		
 	}
 
 	// Draw vertices

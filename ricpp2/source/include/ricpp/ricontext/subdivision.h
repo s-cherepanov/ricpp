@@ -702,15 +702,10 @@ namespace RiCPP {
 			m_value = aValue;
 			m_type = VERTEX_CORNER;
 		}
-		
-		inline bool isSharp() const
-		{
-			return m_type == VERTEX_CORNER && m_value >= ms_sharpVal;
-		}
-		
+				
 		inline bool isCorner() const
 		{
-			return m_type == VERTEX_CORNER && m_value > 0;
+			return m_type == VERTEX_CORNER && m_value >= ms_sharpVal;
 		}
 		
 		//! Gets the vertex value.
@@ -914,7 +909,7 @@ namespace RiCPP {
 		inline const std::vector<long> &incidentFaces() const { return m_incidentFaces; }
 		
 		long sharpCreasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1) const;
-		long creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1, RtFloat &factor0, RtFloat &factor1) const;
+		long creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary,long &crease0, long &crease1, RtFloat &avgFactor) const;
 		
 		RtFloat sumCrease(const CSubdivVertex &aVertex, long forEdgeIdx, long &edgeCnt) const;
 		long vertexBoundary(const CSubdivVertex &aVertex, long &bound0, long &bound1) const;

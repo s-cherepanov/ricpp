@@ -306,22 +306,25 @@ long CSubdivisionIndices::sharpCreasedVertex(const CSubdivVertex &aVertex, RtInt
 	return creaseEdgeCnt;
 }
 
-long CSubdivisionIndices::creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1, RtFloat &factor0, RtFloat &factor1) const
+long CSubdivisionIndices::creasedVertex(const CSubdivVertex &aVertex, RtInt interpolateBoundary, long &crease0, long &crease1, RtFloat &avgFactor) const
 {
 	long creaseEdgeCnt = 0;
+	avgFactor = 0;
 	for ( long edgeIdx = aVertex.startEdge(); edgeIdx != aVertex.endEdge(); ++edgeIdx ) {
 		bool onBoundary = (m_edges[m_incidentEdges[edgeIdx]].isBoundary() && interpolateBoundary == 2);
 		if ( onBoundary || m_edges[m_incidentEdges[edgeIdx]].isCrease() ) {
+			avgFactor += onBoundary ? (RtFloat)1.0 : tmin(m_edges[m_incidentEdges[edgeIdx]].value(), (RtFloat)1.0);
 			if ( creaseEdgeCnt == 0 ) {
-				factor0 = onBoundary ? (RtFloat)1.0 : m_edges[m_incidentEdges[edgeIdx]].value();
 				crease0 = m_incidentEdges[edgeIdx];
 			} else {
-				factor1 = onBoundary ? (RtFloat)1.0 : m_edges[m_incidentEdges[edgeIdx]].value();
 				crease1 = m_incidentEdges[edgeIdx];
 			}
 			creaseEdgeCnt++;
 		}
 	}
+	if ( creaseEdgeCnt > 0 )
+		avgFactor /= (RtFloat)creaseEdgeCnt;
+
 	return creaseEdgeCnt;
 }
 
@@ -776,7 +779,7 @@ void CSubdivisionIndices::calcNormals(long faceIdx, const CSubdIndexMapper &inde
 {
 	floats.resize(indexMapping.size() * 3);
 	for ( size_t i = 0; i != indexMapping.size(); i++ ) {
-		calcNormal(faceIdx, i, indexMapping, pos, flipNormals, &floats[i*3]);
+		calcNormal(faceIdx, (long)i, indexMapping, pos, flipNormals, &floats[i*3]);
 	}
 }
 
@@ -839,7 +842,7 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 		  vertexIter != child.vertices().end();
 		  vertexIter++ )
 	{
-		if ( (*vertexIter).value() >= (RtFloat)1.0 ) {
+		if ( (*vertexIter).value() >= (RtFloat)1.0 && (*vertexIter).value() < (*vertexIter).sharpVal() ) {
 			(*vertexIter).value((*vertexIter).value()-(RtFloat)1.0);
 		}
 	}
@@ -869,7 +872,7 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 		// edge start -> edge mid
 		child.edges()[childEdgeIndex].setVertices((*edgeIter).vertex(0), static_cast<long>(parent.vertices().size()+edgeIndex));
 		child.edges()[childEdgeIndex].type((*edgeIter).type());
-		if ( (*edgeIter).value() < (RtFloat)1.0 || (*edgeIter).value() >= (RtFloat) 10.0 ) {
+		if ( (*edgeIter).value() < (RtFloat)1.0 || (*edgeIter).value() >= (*edgeIter).sharpVal() ) {
 			child.edges()[childEdgeIndex].value((*edgeIter).value());
 		} else {
 			long edgeCnt = 0;
@@ -1290,15 +1293,15 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 				ffac = (RtFloat)1 / (m*m);
 
 			long crease0 = -1, crease1 = -1;
-			RtFloat creaseFactor0 = 0, creaseFactor1 = 0;
-			long creasedVertex = (*prev).creasedVertex(*vertexIter, interpolateBoundary, crease0, crease1, creaseFactor0, creaseFactor1);
+			RtFloat avgFactor;
+			long creasedVertex = (*prev).creasedVertex(*vertexIter, interpolateBoundary, crease0, crease1, avgFactor);
 			RtFloat esum;
 			RtFloat fsum;
 
 			for ( i = 0; i < (long)decl.elemSize(); ++i ) {
 				RtFloat vcorner = floats[curVertexOffs+i];
 				
-				if ( (interpolateBoundary == 1 && (*prev).isBoundary(*vertexIter)) || creasedVertex > 2 ) {
+				if ( (interpolateBoundary == 1 && (*prev).isBoundary(*vertexIter)) || (*vertexIter).isCorner() ) {
 					floats[curVertexOffs+i] = vcorner;
 					continue;
 				}
@@ -1324,8 +1327,18 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 				}
 				vinter += ffac * fsum;
 				
+				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED && creasedVertex > 2 ) {
+					if ( avgFactor <= 0 )
+						floats[curVertexOffs+i] = vinter;
+					else if ( avgFactor <= (RtFloat)1.0 )
+						floats[curVertexOffs+i] = lerp(avgFactor, vinter, vcorner);
+					else
+						floats[curVertexOffs+i] = vcorner;
+					continue;
+				}
+				
 				if ( (*vertexIter).type() == CSubdivVertex::VERTEX_ROUNDED && creasedVertex == 2 ) {
-					RtFloat e0 = 0, e1 = 0, cnt = 0, creaseFactor = 0;
+					RtFloat e0 = 0, e1 = 0, cnt = 0;
 					long adjacent = 0;
 					
 					assert(crease0 >= 0);
@@ -1335,7 +1348,6 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 					if ( crease0 >= 0 && hasAdjacentVertex ) {
 						e0 = oldVertexValues[adjacent * decl.elemSize() + i];
 						cnt += (RtFloat)1;
-						creaseFactor += creaseFactor0;
 					}
 					
 					assert(crease1 >= 0);
@@ -1344,18 +1356,14 @@ void CCatmullClarkSubdivision::insertVertexValues(const std::list<CSubdivisionIn
 					if ( crease1 >= 0 && hasAdjacentVertex ) {
 						e1 = oldVertexValues[adjacent * decl.elemSize() + i];
 						cnt += (RtFloat)1;
-						creaseFactor += creaseFactor1;
 					}
 
-					if ( cnt > 0 )
-						creaseFactor /= cnt;
-					
 					vcorner = (e0 + (RtFloat)6 * vcorner + e1) / ((RtFloat)6+cnt);
 					
-					if ( creaseFactor <= 0 )
+					if ( avgFactor <= 0 )
 						floats[curVertexOffs+i] = vinter;
-					else if ( creaseFactor <= (RtFloat)1.0 )
-						floats[curVertexOffs+i] = lerp(creaseFactor, vinter, vcorner);
+					else if ( avgFactor <= (RtFloat)1.0 )
+						floats[curVertexOffs+i] = lerp(avgFactor, vinter, vcorner);
 					else
 						floats[curVertexOffs+i] = vcorner;
 

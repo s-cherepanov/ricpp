@@ -183,11 +183,12 @@ void CSubdivEdge::insertCreaseVal(const CRiHierarchicalSubdivisionMesh &obj)
 				for ( RtInt intIdx = 0; intIdx < intVals-1; ++intIdx ) {
 					if ( isEdge(obj.intArgs()[intOffs+intIdx], obj.intArgs()[intOffs+intIdx+1]) ) {
 						if ( floatVals == 0 )
-							m_value = RI_INFINITY;
+							m_value = ms_sharpVal; // RI_INFINITY;
 						else
 							m_value = obj.floatArgs()[floatOffs];
+						m_value = clamp(m_value, (RtFloat)0, ms_sharpVal);
 						m_type = EDGE_CREASE;
-						return;
+						// return;
 					}
 				}
 			}
@@ -238,13 +239,14 @@ void CSubdivVertex::insertCornerVal(long idx, const CRiHierarchicalSubdivisionMe
 				for ( RtInt intIdx = 0; intIdx < intVals; ++intIdx ) {
 					if ( obj.intArgs()[intOffs+intIdx] == idx ) {
 						if ( floatVals <= 0 )
-							m_value = RI_INFINITY;
+							m_value = ms_sharpVal;
 						else if ( floatVals < intIdx )
 							m_value = obj.floatArgs()[floatOffs+floatVals-1];
 						else
 							m_value = obj.floatArgs()[floatOffs+intIdx];
+						m_value = clamp(m_value, (RtFloat)0, ms_sharpVal);
 						m_type = VERTEX_CORNER;
-						return;
+						// return;
 					}
 				}
 			}
@@ -343,6 +345,9 @@ float CSubdivisionIndices::sumCrease(const CSubdivVertex &aVertex, long forEdgeI
 
 void CSubdivisionIndices::insertBoundaryVal(const CRiHierarchicalSubdivisionMesh &obj)
 {
+	/** @todo Subdivision, check meaning of interpolateboundary 0 (found an example hydra.rib,
+	 *  where this is handled like interpolateboundary 1)
+	 */
 	assert(obj.nArgs().size() == obj.tags().size()*3);
 	RtInt intOffs=0;
 	for ( size_t i = 0; i < obj.tags().size(); ++i ) {
@@ -350,10 +355,12 @@ void CSubdivisionIndices::insertBoundaryVal(const CRiHierarchicalSubdivisionMesh
 			RtInt intVals = obj.nArgs()[i*3];
 			RtInt interpolate = 1;
 			if ( intVals > 0 ) {
-				interpolate = obj.intArgs()[0];
+				interpolate = obj.intArgs()[intOffs+0];
+				if ( interpolate < 0 ) interpolate = 0;
+				if ( interpolate > 2 ) interpolate = 2;
 			}
 			m_interpolateBoundary = interpolate;
-			return;
+			// return;
 		}
 		intOffs += obj.nArgs()[i*3];
 	}

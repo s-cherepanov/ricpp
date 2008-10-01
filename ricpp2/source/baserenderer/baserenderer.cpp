@@ -26,6 +26,9 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of the backend base class of a renderer context.
  *  @todo Orientation, basis for motion blur and DOF
+ *        (negative scaling, primitive orientation != coordinate orientation) -
+ *        Flip the winding, just flipping the normal isn't sufficient (OpenGL
+ *        lighting seems to depend on winding)
  */
 
 #include "ricpp/baserenderer/baserenderer.h"

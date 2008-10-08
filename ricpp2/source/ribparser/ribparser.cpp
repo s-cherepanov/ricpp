@@ -518,11 +518,13 @@ int CRibRequestData::getTokenList(
 
 RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
 {
-	if ( (int)m_tokenList.size() > n )
-		n = (int)m_tokenList.size();
+	if ( (RtInt)m_tokenList.size() > n )
+		n = (RtInt)m_tokenList.size();
 
-	int i;
-	for ( i = 0; i < n; ++i ) {
+	for ( int i = 0; i < n; ++i ) {
+		if ( m_tokenList[i] == RI_NULL )
+			continue;
+		
 		if ( !strcmp(m_tokenList[i], RI_P ) ) {
 			CRibParameter &p = m_parameters[start + 2*i + 1];
 			return (RtInt)(p.getCard()/3);

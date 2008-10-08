@@ -19,8 +19,10 @@
 {
 	RtContextHandle mainContext;
 	id contextTable;
-	RtContextHandle currentContext;
+	// RtContextHandle currentContext;
 
+@private
+	long _nameCnt;
 	// id _focussedCamera;
 	// RtPointer _reserved;
 	// void *_G3Dprivate;
@@ -28,6 +30,7 @@
 
 + new;
 - free;
+- init;
 
 - (RtContextHandle) mainContext;
 - (RtContextHandle) createContext: (const char *) name;
@@ -43,5 +46,4 @@
 - (RtContextHandle) currentContext;
 
 - awake;
-
 @end

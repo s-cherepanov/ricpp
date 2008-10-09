@@ -7,15 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include <3DKit/G3Dkit.h>
 
 int main(int argc, char *argv[])
 {
-	int result;
-    G3DContextManager *ctx = [G3DContextManager new];
-	RtContextHandle mainHandle = [ctx mainContext];
-	mainHandle = mainHandle;
-	result = NSApplicationMain(argc,  (const char **) argv);
-	[ctx free];
-	return result;
+	return NSApplicationMain(argc,  (const char **) argv);
 }

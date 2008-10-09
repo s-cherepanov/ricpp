@@ -2,7 +2,7 @@
 #import <ricpp/ri/ri.h>
 
 static const float defPivotDepth = 0;
-static char *screenAction[2] = {"clear", "finish"};
+// static char *screenAction[2] = {"clear", "finish", "auto"};
 static RtInt noYes[2] = {0, 1};
 
 // static NSString *fileType = @"rib";
@@ -116,7 +116,7 @@ static RtInt noYes[2] = {0, 1};
 	RtInt height = (RtInt)bounds.size.height;
 
 	RiAttribute("glrenderer", "draw-normals", &noYes[flagDrawNormals ? 1 : 0], RI_NULL);
-	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
+//	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
 //	RiFrameBegin(1);
 	RtFloat clippingFront = 0.1F, clippingBack = 1024.F;
 	RiClipping(clippingFront, clippingBack);
@@ -129,7 +129,7 @@ static RtInt noYes[2] = {0, 1};
 	
 	RiReadArchive("__theArchive", 0, RI_NULL);
 //	RiFrameEnd();
-	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
+//	RiCPPControl("glrenderer", "screen", &screenAction[1], RI_NULL);
 	RiIdentity();
 	RiSynchronize(RI_RESTART);
 }

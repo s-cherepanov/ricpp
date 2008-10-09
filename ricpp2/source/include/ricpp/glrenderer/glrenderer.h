@@ -69,6 +69,7 @@ private:
 	
 	bool m_validGL; ///< Valid GL Context found or created in initGLContext()
 	bool m_drawNormals; ///< Drawing normals for tests
+	bool m_autoScreen; // clear screen and flush at Worldbegin/End
 	
 	inline bool valid() const { return m_validGL; }
 	inline void valid(bool setValid) { m_validGL = setValid; }

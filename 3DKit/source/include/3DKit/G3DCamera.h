@@ -18,10 +18,10 @@
 
 @interface G3DCamera : NSOpenGLView
 {
-    unsigned int	globalWindowNum; /* the server global window number */
-    RtToken		    windowResource;  /* the resource ID of our window */
+    // unsigned int	globalWindowNum; /* the server global window number */
+    // RtToken		    windowResource;  /* the resource ID of our window */
     G3DProjectionType projectionType;	 /* perpective or orthographic */
-    RtToken		contextToken;	 /* the RMan name for the context */
+    RtContextHandle	contextHandle;	 /* the RMan name for the context */
     id			worldShape;	 /* top of shape hierarchy */
     NSArray		*lightList;	 /* list of global G3DLights */
     id			delegate;	 /* get called when frames are done */
@@ -41,7 +41,7 @@
 		
 		/* private flags */
 		unsigned int _computeAspect : 1; /* user-supplied aspect? */
-		unsigned int _computeSWindow : 1; /* user-supplied aspect? */
+		unsigned int _computeSWindow : 1; /* user-supplied screen window? */
 		unsigned int _reserved : 21;
     } cameraFlags;
 	
@@ -69,14 +69,12 @@
 	 -rollAngle. */
 	
     char 		*_printribfile;  /* rib file generated during printing*/
-    id			_contextManager; /* context manager for the app*/
+    id			_contextManager; /* context manager for the app */
     NSArray		*_selList;
-    void		*_G3Dprivate;
+    // void		*_G3Dprivate;
 }
-
-- init;
+#if 0
 - initFrame:(const NSRect *)fRect;
-- free;
 
 /* frame and view management methods */
 - (BOOL)lockFocus;
@@ -87,10 +85,8 @@
 
 - drawPS:(NSRect *)rects :(int)nRects;
 - drawSelf:(const NSRect *)rects :(int)nRects;
-- render;
-- renderSelf:(RtToken)context;
-- worldBegin:(RtToken)context;
-- worldEnd:(RtToken)context;
+- worldBegin:(RtContextHandle)context;
+- worldEnd:(RtContextHandle)context;
 - copyRIBCode:(NSStream *)stream;
 - setBackgroundColor:(NSColor *) c;
 - (NSColor *)backgroundColor;
@@ -154,6 +150,15 @@
 - (int)renderAsEPS;
 - setDelegate:sender;
 - delegate;
+#endif
+
+- init;
+- free;
+
+- (void) awakeFromNib;
+- render;
+- renderSelf:(RtContextHandle)context;
+- (void) drawRect: (NSRect) bounds;
 @end
 
 /*

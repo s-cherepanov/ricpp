@@ -74,6 +74,7 @@ CGLRenderer::CGLRenderer() : m_validGL(false), m_drawNormals(_DRAWNORMALS)
 	RI_QUAL_SCREEN = RI_NULL;
 	RI_DRAW_NORMALS = RI_NULL;
 	RI_QUAL_DRAW_NORMALS = RI_NULL;
+	m_autoScreen = true;
 }
 
 CGLRenderer::~CGLRenderer()
@@ -658,10 +659,15 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 			if ( (*i).var() == RI_SCREEN ) {
 				std::string action;
 				if ( (*i).get(0, action) ) {
-					if ( action == std::string("clear") )
+					if ( action == std::string("clear") ) {
 						clearScreen();
-					else if ( action == std::string("finish") )
+						m_autoScreen = false;
+					} else if ( action == std::string("finish") ) {
 						finishScreen();
+						m_autoScreen = false;
+					} else if ( action == std::string("auto") ) {
+						m_autoScreen = true;
+					}
 				}
 			}
 		}
@@ -671,6 +677,9 @@ RtVoid CGLRenderer::doProcess(CRiControl &obj)
 RtVoid CGLRenderer::doProcess(CRiWorldBegin &obj)
 {
 	TypeParent::doProcess(obj);
+
+	if ( m_autoScreen )
+		clearScreen();
 
 	initGLContext(); // Can also be called twice (first time at clearScreen)
 	if ( !valid() )
@@ -704,7 +713,12 @@ RtVoid CGLRenderer::doProcess(CRiWorldEnd &obj)
 
 	// Flush GL
 	glDisable(GL_SCISSOR_TEST);
-	glFinish();
+
+	if ( m_autoScreen ) {
+		finishScreen();
+	} else {
+		glFinish();
+	}
 }
 
 RtVoid CGLRenderer::doProcess(CRiPolygon &obj)

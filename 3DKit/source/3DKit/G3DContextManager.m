@@ -70,7 +70,7 @@ static G3DContextManager *contextManagerSingleton = 0;
 	}
 	[contextTable removeAllObjects];
 	mainContext = illContextHandle;
-	return 0;
+	return nil;
 }
 
 - init
@@ -99,6 +99,7 @@ static G3DContextManager *contextManagerSingleton = 0;
 		name = buffer;
 	}
 	G3DContextHandle *aHandle = [[G3DContextHandle alloc] initWithHandle:[self currentContext]];
+	// Memory for NSString???
 	[contextTable setObject:aHandle forKey:[[NSString alloc] initWithCString:name encoding:NSASCIIStringEncoding]];
 	return aContext;
 }

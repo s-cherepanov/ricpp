@@ -42,6 +42,7 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C30DB0720E6C3A5300EB8FB7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		C30DB0940E6C3C1C00EB8FB7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
+		C381153C0E9E34B300AED4FB /* G3DCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = C381153B0E9E34B300AED4FB /* G3DCamera.m */; };
 		C3938C0E0E719178009582F7 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3938C0D0E719178009582F7 /* libriprog.1.dylib */; };
 /* End PBXBuildFile section */
 
@@ -86,6 +87,7 @@
 		32CA4F630368D1EE00C91783 /* 3DKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 3DKit_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* 3DKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C381153B0E9E34B300AED4FB /* G3DCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = G3DCamera.m; path = ../../../source/3DKit/G3DCamera.m; sourceTree = SOURCE_ROOT; };
 		C3938C0D0E719178009582F7 /* libriprog.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libriprog.1.dylib; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib; sourceTree = SOURCE_ROOT; };
 		C3938C2E0E7192D9009582F7 /* G3DKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = G3DKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -190,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				207BDEB50E90300E0050F403 /* G3DContextManager.m */,
+				C381153B0E9E34B300AED4FB /* G3DCamera.m */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -347,7 +350,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "${CP} ${PROJECT_DIR}/../../../../../ricpp/ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib ${TARGET_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}\n";
+			shellScript = "${CP} ${PROJECT_DIR}/../../../../../ricpp/ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib ${TARGET_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}\n${CP} ${PROJECT_DIR}/../../../../../ricpp/ricpp2/workspace/xcode3/ricppframework/build/Release/libglrenderer.1.dylib ${TARGET_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -365,6 +368,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				207BDEB60E90300E0050F403 /* G3DContextManager.m in Sources */,
+				C381153C0E9E34B300AED4FB /* G3DCamera.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

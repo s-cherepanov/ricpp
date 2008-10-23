@@ -4,8 +4,12 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array/>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>RibViewer</string>
 	<key>CFBundleIdentifier</key>
 	<string>net.sourceforge.ricpp.ribviewer</string>
 	<key>CFBundleInfoDictionaryVersion</key>

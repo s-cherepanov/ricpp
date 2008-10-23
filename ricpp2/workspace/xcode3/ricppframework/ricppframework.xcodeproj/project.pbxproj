@@ -228,6 +228,7 @@
 		C3B259460E531D08001137C0 /* riprog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3A8FA8A0D74CD8600C1013B /* riprog.cpp */; };
 		C3B259470E531D0B001137C0 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
 		C3B259480E531D0D001137C0 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
+		C3B46E620EB092C1008BA1B5 /* RibViewer.icns in Resources */ = {isa = PBXBuildFile; fileRef = C3B46E610EB092C1008BA1B5 /* RibViewer.icns */; };
 		C3BB4CBB0E3A02DE00D185BB /* triangulation.h in Headers */ = {isa = PBXBuildFile; fileRef = C3BB4CBA0E3A02DE00D185BB /* triangulation.h */; };
 		C3C9AE390D70BC9F00A04717 /* ribelements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE380D70BC9F00A04717 /* ribelements.cpp */; };
 		C3C9AE3C0D70BCCE00A04717 /* ribelements.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9AE3A0D70BCCE00A04717 /* ribelements.h */; };
@@ -777,6 +778,7 @@
 		C3AD10F70D03DDE80057047B /* ribattributes.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribattributes.cpp; path = ../../../source/ribparser/ribattributes.cpp; sourceTree = SOURCE_ROOT; };
 		C3B26A2A0C145F700080C1F9 /* rendererloader.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = rendererloader.cpp; path = ../../../source/rendererloader/rendererloader.cpp; sourceTree = SOURCE_ROOT; };
 		C3B26A310C14600E0080C1F9 /* rendererloader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rendererloader.h; path = ../../../source/include/ricpp/rendererloader/rendererloader.h; sourceTree = SOURCE_ROOT; };
+		C3B46E610EB092C1008BA1B5 /* RibViewer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = RibViewer.icns; sourceTree = "<group>"; };
 		C3B849030BD7625A00DD22B5 /* ribwriter.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribwriter.cpp; path = ../../../source/ribwriter/ribwriter.cpp; sourceTree = SOURCE_ROOT; };
 		C3B8491F0BD7632B00DD22B5 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = main.cpp; path = ../../../source/test/main.cpp; sourceTree = SOURCE_ROOT; };
 		C3B8D1C20CF1845A0004B226 /* ribmodes.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribmodes.cpp; path = ../../../source/ribparser/ribmodes.cpp; sourceTree = SOURCE_ROOT; };
@@ -1881,6 +1883,7 @@
 		C3911A790E644EE30051CB61 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C3B46E610EB092C1008BA1B5 /* RibViewer.icns */,
 				C3911A900E6450520051CB61 /* English.lproj */,
 			);
 			name = Resources;
@@ -3021,6 +3024,7 @@
 				C3911A960E6450520051CB61 /* InfoPlist.strings in Resources */,
 				C3911A970E6450520051CB61 /* MainMenu.nib in Resources */,
 				C3911AEB0E6454C50051CB61 /* ribviewer-Info.plist in Resources */,
+				C3B46E620EB092C1008BA1B5 /* RibViewer.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

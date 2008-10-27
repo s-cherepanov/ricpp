@@ -1,0 +1,5 @@
+rm -rf Doxydir
+mkdir Doxydir
+/Applications/Doxygen.app/Contents/Resources/doxygen Doxyfile.mac.conf 2>doxygen.err | tee >doxygen.txt
+open Doxydir/html/index.html
+open -e doxygen.err

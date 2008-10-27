@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title>RiCPP - A RenderMan(TM) C++ Binding</title>
+		<meta content="Microsoft Developer Studio" name="GENERATOR">
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	</head>
+	<body>
+		<h1>Attention: This document is not up to date because of the introduction of 
+			contexts!</h1>
+		<h1>RiCPP - A RenderMan<sup>TM</sup> C++ Binding</h1>
+		<h2>What is RenderMan<sup>TM</sup>?</h2>
+		<p>RenderMan<sup>TM</sup> is a high level interface to connect 3D modelers and 
+			photorealistic rendering software with each other. Pixar invented the interface 
+			description in the late 80's in a programming language and system independent 
+			fashion. They also produced the rendering software 'Photorealistic RenderMan' 
+			that used this interface. There are several 'language bindings' available that 
+			implements the interface in various programming languages. The language 
+			bindings are used to create RIB output or to control a RenderMan compliant 
+			renderer directly. Most common is the binding to the C programming language. 
+			Another special binding is the RenderMan Interface Bytestream (RIB) binding, an 
+			ASCII file format for a sequence of interface calls. Bindings for Java, Python, 
+			Perl and other languages are also available. Many of these resources can be 
+			found in the <a href="http://www.renderman-repository.com">RenderMan Repository</a>.</p>
+		<p>The interface defines a number of attributes, geometric operations and 
+			primitives. The most outstanding feature of the interface is the use of the 
+			shading language (SL) to create a variety of surface types, lights and other 
+			effects. The syntax of the SL resembles the language C.</p>
+		<p>There are at last two text books concerning the use of the RenderMan<sup> </sup>interface. 
+			The basics can be found in the 'RenderMan companion' written by Steve Upstill. 
+			There is another primer: 'Essential RenderMan fast' providing a good basis for 
+			the understanding of the interface. The book 'Advanced procedural modeling and 
+			texturing' is dealing with the programming of procedural shaders in depth. 
+			There are also many resources, texts and tutorials available in the web. The 
+			RenderMan Repository is again a good place to start your search.</p>
+		<p>
+			There are a number of RenderMan compliant renderers available for free or 
+			commercial. The Aqsis Renderer is OpenSource, also a Angel, Pixie, a demo of 3Delight
+			are for free. The Blue Moon Rendering Tools (BMRT), albeit officially vanished, can 
+			be found in some places. The renderers Air and RenderDotC can be purchased for 
+			relatively small money. Pixar's Photorealistic RenderMan is one of the most 
+			advanced renderers but maybe not affordable for the most people. Others can be 
+			found in the Web.</p>
+		<h2>What is RiCPP?</h2>
+		<p>RiCPP is a binding of the RenderMan Interface to the C++ programming language. 
+			It can be used by programmers who want to use the RenderMan interface. It is 
+			implemented as an abstract interface, the class <kbd>TRi</kbd>. Concrete 
+			implementations are <kbd>TRIBOut</kbd> for RIB output and <kbd>TGLRenderer</kbd>
+			to produce some OpenGL output for preview. The implementation is running on 
+			Microsoft Windows systems and is created with Microsoft Visual Studio (6.0 or 
+			.net). The concrete implementations can be loaded as DLL's at runtime. To do 
+			so, a special loader must be linked at the program. If you want to make some 
+			RIB output and have a preview window in your own applications, you maybe want 
+			to have a look at RiCPP.</p>
+		<div align="center"><img id="Img1" alt="Class diagram of RiCPP's overall architecure" src="images/OverallArchitecture.gif"
+				height="391" width="382"><br>
+			<br>
+			Fig. 1: The overall architecture of RiCPP</div>
+		<p>The OpenGL preview&nbsp;is&nbsp;very simple and&nbsp;does not support many of 
+			the interface options. The RIB files from the images show in the screen snapot 
+			share are taken from Scott Iverson, they are included in the Air renderer as 
+			sample files. The RIBPreview is a sample application that uses <kbd>TRi</kbd> in 
+			a multidocument environment.</p>
+		<div align="center"><img id="Img2" height="273" alt="Snapshot of the OpenGL output of TRiCPPBinding" src="images/OpenGLSnap.jpg"
+				width="350"><br>
+			<br>
+			Fig. 2: Snapshot of the OpenGL output of <kbd>TRiCPPBinding</kbd></div>
+		<h2>How to use RiCPP?</h2>
+		<p>RiCPP consists mainly of four files, the static libraries <kbd>librendererloader.lib</kbd>,
+			the debug version <kbd>librendererloaderd.lib</kbd>
+			and the two DLLs <kbd>glrenderer.dll</kbd> for OpenGL output and <kbd>ribout.dll</kbd>
+			for RIB output. The Renderer-DLLs are plugins for the applications using RiCPP. 
+			Using DLLs as plugins (without a corresponding <kbd>.lib</kbd> )&nbsp;allows to 
+			have more than these two DLLs for different output types and load them at 
+			runtime. This gives you the possibility to put arbitrary DLLs implementing <kbd>TRi</kbd>
+			in a directory and use them, without knowing them at compile time.&nbsp;Maybe a 
+			user of an&nbsp;application can&nbsp;'save as...' 3D scenes to other than RIB 
+			files, depending on the DLLs which can be found&nbsp;in this 
+			special&nbsp;directory. However, at the moment there are no such DLLs 
+			implemented.</p>
+		<h2>Sample Project</h2>
+		<h3>Generating the application template</h3>
+		<p>In the following example project the use of RiCPP with Microsoft Visual 
+			Studio.net and MFC is illustrated. The application&nbsp;will be a RIB previewer 
+			with a multidocument interface. The screen shots are taken from 
+			VisualStudio.net 2002, the dialogs of VisualStudio 2003 are different in some 
+			details.<br>
+		</p>
+		<p>After the Studio is started you can create a new Project using the menu item 
+			File/New/Project... The 'New Project' dialog will pop up. There you can select 
+			the template 'MFC Project' under the 'Microsoft Visual C++' &nbsp;project types 
+			and enter an appropriate project name, 'RIBPreview' in this example and the 
+			destination path (location) and press the OK button.</p>
+		<div align="center"><img id="Img3" height="371" alt="Fig. 3: 'New Project' Dialog of MS Visual Studio" src="images%5CVSNewProject.gif"
+				width="531"><br>
+			<br>
+			Fig. 3: 'New Project' Dialog of MS Visual Studio</div>
+		<p>Next the MFC Application Wizard will be started. In this example select 
+			'Multiple documents' as application type and to use MFC in a shared DLL.
+			<br>
+		</p>
+		<div align="center"><img src="images%5CVSAppWizAppType.gif" alt="Fig. 4: The 'MFC Application Wizard' Application types"
+				id="Img4" height="437" width="615"><br>
+			<br>
+			Fig. 4: The 'MFC Application Wizard' Application types</div>
+		<p>There is nothing to be done in the 'Compound Document' settings (none compound 
+			document support). In the 'Document Template Strings' settings <kbd>rib</kbd> as 
+			file extension is used.</p>
+		<div align="center"><img src="images%5CVSAppWizDocStrings.gif" alt="Fig. 5: The 'MFC Application Wizard' Document Template Strings"
+				id="Img5" height="437" width="615"><br>
+			<br>
+			Fig. 5: The 'MFC Application Wizard' Document Template Strings</div>
+		<p>The 'Database settings' can be left alone (no database support). In the 'User 
+			Interface features' the initial status bar and the toolbar is disabled for 
+			simplicity.</p>
+		<div align="center"><img src="images%5CVSAppWizUI.gif" alt="Fig. 6: The 'MFC Application Wizard' User Interface settings"
+				id="Img6" height="437" width="615"><br>
+			<br>
+			Fig. 6: The 'MFC Application Wizard' User Interface settings</div>
+		<p>In the 'Advanced Features' disable all but the 'Common Control Manifest'. The 
+			settings in 'Generated Classes' need no changes.</p>
+		<div align="center"><img src="images%5CVSAppWizAdvFeat.gif" alt="Fig. 7: The 'MFC Application Wizard' Advanced Features"
+				id="Img7" height="437" width="615"><br>
+			<br>
+			Fig. 7: The 'MFC Application Wizard' Advanced Features</div>
+		<p>A click to 'Finish' will generate the application template.</p>
+		<h3>Put RiCPP into the project</h3>
+		<p>
+			First you need to unpack the Zip-archives with the&nbsp;library files. You will 
+			find the needed files there.&nbsp;Copy them to a directory 'ricpp' in your 
+			project tree. If 'RIBPreview' is the base folder of your project, the new files 
+			should be:</p>
+		<pre>RIBPreview\ricpp\dll\Debug\glrenderer.dll<br>RIBPreview\ricpp\dll\Debug\ribout.dll<br>RIBPreview\ricpp\dll\Release\glrenderer.dll<br>RIBPreview\ricpp\dll\Release\ribout.dll<br>RIBPreview\ricpp\include\rendererloader.h<br>RIBPreview\ricpp\include\ricppbinding.h<br>RIBPreview\ricpp\include\sysexcept.h<br>RIBPreview\ricpp\lib\librendererloader.lib<br>RIBPreview\ricpp\lib\librendererloaderd.lib</pre>
+		<p>Now you can include these directories in your project settings (project 
+			properties). All configurations get <kbd>ricpp\include</kbd> as additional 
+			include path in the C/C++ general settings. Also be shure that the runtime 
+			library Multi-threaded DLL (/MD) in the release configuration and the 
+			Multi-threaded debug DLL (/MDd) in the debug configuration is already set - 
+			caused by the 'use MFC in a shared DLL' setting in the application wizard. You 
+			need this, because RiCPP is compiled with these settings. Set <kbd>ricpp\lib</kbd>
+			as additional library path for the linker in all configurations and <kbd>librendererloaderd.lib</kbd>
+			as additional dependency in the linker input settings of the debug 
+			configuration and <kbd>librendererloader.lib</kbd> in the release configuration. 
+			As post build event enter <kbd>copy ricpp\dll\Debug\glrenderer.dll $(IntDir)</kbd>
+			in the debug configuration and <kbd>copy ricpp\dll\Release\glrenderer.dll $(IntDir)</kbd>
+			in the release configuration to copy the needed DLLs into the build path. The <kbd>ribout.dll</kbd>
+			is not needed in this samle project because we won't do any RIB output. After 
+			this, a test build should succed in either configuration. Make shure that the 
+			DLLs are copied to the right location, in the same directory as the executable.<br>
+		</p>
+		<p>If you got the project files via CVS you can copy the needed files after 
+			building the ricpp solution (release and debug) with <kbd>copylib.bat</kbd> into 
+			the <kbd>ricpp\ricpplib</kbd> directory of the workspace directory. The 
+			prepared RIBPreview in the <kbd>progsamples\RIBPreview</kbd> directory uses 
+			this path. I used different workspace directories for the different compilers.<br>
+		</p>
+		<h3>Loading the Renderer</h3>
+		<p>It's now time to load the renderer DLL into your application. You will need 
+			exactly one instance of the OpenGL renderer. You won't use different renderers 
+			for different windows! A good place to load the renderer is the application <kbd>CRIBPreviewApp</kbd>
+			itself.</p>
+		<p>You need to include "rendererloader.h" to have all declarations needed. Add the 
+			include directive into the header <kbd>RIBPreview.h</kbd> and two members <kbd>TRendererLoader 
+				*m_rendererLoader</kbd> and <kbd>TRi *m_ri</kbd> to the declaration of <kbd>CRIBPreviewApp</kbd>. 
+			Also a member function that returns the renderer <kbd>GetRenderer()</kbd>will 
+			be needed. Your <kbd>RIBPreview.h</kbd> will look like the following listing.<br>
+		</p>
+		<div align="left">Listing 1: RIBPreview.h</div>
+		<!-- Generated by SynEdit HTML exporter -->
+		<pre><code><font face="Courier New" size="3"><font color="#b2b4bf"><i>// RIBPreview.h : main header file for the RIBPreview application<br>//<br></i></font><font
+ color="#008000">#pragma once<br><br>#ifndef __AFXWIN_H__<br></font>	<font
+ color="#008000">#error include 'stdafx.h' before including this file for PCH<br>#endif<br><br>#include "resource.h"       </font><font
+ color="#b2b4bf"><i>// main symbols<br></i></font><font color="#008000">#include "rendererloader.h"<br><br><br></font><font
+ color="#b2b4bf"><i>// CRIBPreviewApp:<br>// See RIBPreview.cpp for the implementation of this class<br>//<br><br></i></font><b>class </b>CRIBPreviewApp : <b>public </b>CWinApp<br>{<br>	TRendererLoader *m_rendererLoader;<br>	TRi             *m_ri;<br><br><b>public</b>:<br>	CRIBPreviewApp();<br>	~CRIBPreviewApp();<br><br><font
+ color="#b2b4bf"><i>// Overrides<br></i></font><b>public</b>:<br>	<b>virtual </b>BOOL InitInstance();<br>	<b>virtual int </b>ExitInstance();<br>	<b>inline </b>TRi *GetRenderer() { <b>return </b>m_ri; }<br><br><font
+ color="#b2b4bf"><i>// Implementation<br></i></font>	afx_msg <b>void </b>OnAppAbout();<br>	DECLARE_MESSAGE_MAP()<br>};<br><br><b>extern </b>CRIBPreviewApp theApp;<br></font><br></code></pre>
+		<p>The renderer is loaded in the <kbd>InitApplication()</kbd> member function. The <kbd>
+				ExitApplication()</kbd> is needed to expunge the renderers by deleting the <kbd>
+				TRendererLoader</kbd> instance. The changed member functions are shown in 
+			the next part of <kbd>RIBPreviewApp.cpp</kbd>. Most of the code is already 
+			generated by VisualStudio. The calls to the interface are embedded in <kbd>try-catch</kbd>
+			Blocks. The Event <kbd>TSystemException</kbd> can be thrown, if system error 
+			occur, e.g. if the renderer cannot be found. The exception <kbd>TRendererError</kbd>
+			occurs if the interface finds an error, e.g. a function is not called in it's 
+			appropriate block. Both exceptions have a member function <kbd>displayError()</kbd>
+			to display the error in text (in a message box).<br>
+		</p>
+		<div align="left">Listing 2: RIBPreview.cpp changed member functions</div>
+		<!-- Generated by SynEdit HTML exporter -->
+		<pre><code><font size="3" face="Courier New"><font color="#b2b4bf"><i>// RIBPreview.cpp : implementation of the RIBPreview application<br>//<br><br></i></font></font></code><code><font
+ size="3" face="Courier New"><font color="#b2b4bf"><i>// CRIBPreviewApp construction<br><br></i></font>CRIBPreviewApp::CRIBPreviewApp() : m_rendererLoader(NULL), m_ri(NULL)<br>{<br>	<font
+ color="#b2b4bf"><i>// TODO: add construction code here,<br></i></font>	<font
+ color="#b2b4bf"><i>// Place all significant initialization in InitInstance<br></i></font>}<br><br><font
+ color="#b2b4bf"><i>// CRIBPreviewApp destruction<br><br></i></font>CRIBPreviewApp::~CRIBPreviewApp()<br>{<br>}<br><br><br><b>int </b>CRIBPreviewApp::ExitInstance()<br>{<br>	<font
+ color="#b2b4bf"><i>// Destroy the renderer loader, also frees all renderer libs loaded.<br></i></font>	<b>if </b>( m_rendererLoader ) {<br>		m_rendererLoader-&gt;freeAll();<br>		<b>delete </b>m_rendererLoader;<br>	}<br>	m_rendererLoader = NULL;<br>	<b>return </b>CWinApp::ExitInstance();<br>}<br><br><font
+ color="#b2b4bf"><i>// The one and only CRIBPreviewApp object<br><br></i></font>CRIBPreviewApp theApp;<br><br><font
+ color="#b2b4bf"><i>// CRIBPreviewApp initialization<br><br></i></font>BOOL CRIBPreviewApp::InitInstance()<br>{<br>	<font
+ color="#b2b4bf"><i>// InitCommonControls() is required on Windows XP if an application<br></i></font>	<font
+ color="#b2b4bf"><i>// manifest specifies use of ComCtl32.dll version 6 or later to enable<br></i></font>	<font
+ color="#b2b4bf"><i>// visual styles.  Otherwise, any window creation will fail.<br></i></font>	InitCommonControls();<br><br>	CWinApp::InitInstance();<br><br>	<font
+ color="#b2b4bf"><i>// Initializes rendererloader from the Module directory<br></i></font>	<b>try </b>{<br>		m_rendererLoader = <b>new </b>TRendererLoader();<br>		<b>if </b>( !m_rendererLoader )<br>			<b>return </b>FALSE;<br>	} <b>catch </b>(TSystemException &amp;t) {<br>		t.displayMessage();<br>		<b>if </b>( m_rendererLoader )<br>			<b>delete </b>m_rendererLoader;<br>		<b>return </b>FALSE;<br>	} <b>catch </b>(...) {<br>		<b>return </b>FALSE;<br>	}<br><br>	<font
+ color="#b2b4bf"><i>// Loads the OpenGL Renderer, stop if an error occurs<br></i></font>	<b>try </b>{<br>		m_ri = m_rendererLoader-&gt;loadRenderer(<font
+ color="#ff0000">"glrenderer"</font>);<br>		<b>if </b>( m_ri )<br>			m_ri-&gt;errorHandler(m_rc-&gt;errorAbort);<br>	} <b>catch </b>(TSystemException &amp;t) {<br>		t.displayMessage();<br>	} <b>catch </b>(TRendererError &amp;t) {<br>		t.displayMessage();<br>	} <b>catch </b>(...) {<br>	}<br><br>	<font
+ color="#b2b4bf"><i>// Standard initialization<br></i></font>	<font
+ color="#b2b4bf"><i>// If you are not using these features and wish to reduce the size<br></i></font>	<font
+ color="#b2b4bf"><i>// of your final executable, you should remove from the following<br></i></font>	<font
+ color="#b2b4bf"><i>// the specific initialization routines you do not need<br></i></font>	<font
+ color="#b2b4bf"><i>// Change the registry key under which our settings are stored<br></i></font>	<font
+ color="#b2b4bf"><i>// TODO: You should modify this string to be something appropriate<br></i></font>	<font
+ color="#b2b4bf"><i>// such as the name of your company or organization<br></i></font>	SetRegistryKey(_T(<font
+ color="#ff0000">"Local AppWizard-Generated Applications"</font>));<br>	<font
+ color="#b2b4bf"><i>// SetRegistryKey(_T("RibPreview"));<br></i></font>	LoadStdProfileSettings(<font
+ color="#800080">4</font>);  <font color="#b2b4bf"><i>// Load standard INI file options (including MRU)<br></i></font>	<font
+ color="#b2b4bf"><i>// Register the application's document templates.  Document templates<br></i></font>	<font
+ color="#b2b4bf"><i>//  serve as the connection between documents, frame windows and views<br></i></font>	CMultiDocTemplate* pDocTemplate;<br>	pDocTemplate = <b>new </b>CMultiDocTemplate(IDR_RIBPreviewTYPE,<br>		RUNTIME_CLASS(CRIBPreviewDoc),<br>		RUNTIME_CLASS(CChildFrame), <font
+ color="#b2b4bf"><i>// custom MDI child frame<br></i></font>		RUNTIME_CLASS(CRIBPreviewView));<br>	AddDocTemplate(pDocTemplate);<br>	<font
+ color="#b2b4bf"><i>// create main MDI Frame window<br></i></font>	CMainFrame* pMainFrame = <b>new </b>CMainFrame;<br>	<b>if </b>(!pMainFrame-&gt;LoadFrame(IDR_MAINFRAME))<br>		<b>return </b>FALSE;<br>	m_pMainWnd = pMainFrame;<br>	<font
+ color="#b2b4bf"><i>// call DragAcceptFiles only if there's a suffix<br></i></font>	<font
+ color="#b2b4bf"><i>//  In an MDI app, this should occur immediately after setting m_pMainWnd<br></i></font>	<font
+ color="#b2b4bf"><i>// Enable drag/drop open<br></i></font>	m_pMainWnd-&gt;DragAcceptFiles();<br>	<font
+ color="#b2b4bf"><i>// Enable DDE Execute open<br></i></font>	EnableShellOpen();<br>	<font
+ color="#b2b4bf"><i>// RegisterShellFileTypes(TRUE);<br></i></font>	<font
+ color="#b2b4bf"><i>// Parse command line for standard shell commands, DDE, file open<br></i></font>	CCommandLineInfo cmdInfo;<br>	ParseCommandLine(cmdInfo);<br><br>	<font
+ color="#b2b4bf"><i>// Don't open an empty document window<br></i></font>	<b>if </b>( cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew )<br>		cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;<br><br>	<font
+ color="#b2b4bf"><i>// Dispatch commands specified on the command line.  Will return FALSE if<br></i></font>	<font
+ color="#b2b4bf"><i>// app was launched with /RegServer, /Register, /Unregserver or /Unregister.<br></i></font>	<b>if </b>(!ProcessShellCommand(cmdInfo))<br>		<b>return </b>FALSE;<br><br>	<font
+ color="#b2b4bf"><i>// The main window has been initialized, so show and update it<br></i></font>	pMainFrame-&gt;ShowWindow(m_nCmdShow);<br>	pMainFrame-&gt;UpdateWindow();<br>	<b>return </b>TRUE;<br>}<br>[...]<br></font><br></code></pre>
+		<p>To load and preview RIB files you will change the document and the view of your 
+			programm. In this example the document only stores the name of the loaded RIB 
+			file and some state information.</p>
+		<div align="left">Listing 3: RIBPreviewDoc.h<br>
+		</div>
+		<!-- Generated by SynEdit HTML exporter -->
+		<pre><code><font size="3" face="Courier New"><font color="#b2b4bf"><i>// RIBPreviewDoc.h : interface of the CRIBPreviewDoc class<br>//<br><br></i></font><font
+ color="#008000">#pragma once<br><br></font><b>class </b>CRIBPreviewDoc : <b>public </b>CDocument<br>{<br><b>protected</b>: <font
+ color="#b2b4bf"><i>// create from serialization only<br></i></font>	CRIBPreviewDoc();<br>	DECLARE_DYNCREATE(CRIBPreviewDoc)<br><br><font
+ color="#b2b4bf"><i>// Attributes<br></i></font><b>public</b>:<br>	std::string m_strPathName;			<font
+ color="#b2b4bf"><i>// Filename of the document<br></i></font>	<b>bool </b>m_invalid;						<font
+ color="#b2b4bf"><i>// found errors in RIB file<br></i></font>	RtContextHandle m_contextHandle;	<font
+ color="#b2b4bf"><i>// Handle of the documents renderer context<br><br>// Operations<br></i></font><b>public</b>:<br><br><font
+ color="#b2b4bf"><i>// Overrides<br></i></font>	<b>public</b>:<br>	<b>virtual </b>BOOL OnNewDocument();<br>	<b>virtual void </b>Serialize(CArchive&amp; ar);<br><br><font
+ color="#b2b4bf"><i>// Implementation<br></i></font><b>public</b>:<br>	<b>virtual </b>~CRIBPreviewDoc();<br><font
+ color="#008000">#ifdef _DEBUG<br></font>	<b>virtual void </b>AssertValid() <b>const</b>;<br>	<b>virtual void </b>Dump(CDumpContext&amp; dc) <b>const</b>;<br><font
+ color="#008000">#endif<br><br></font><b>protected</b>:<br><br><font
+ color="#b2b4bf"><i>// Generated message map functions<br></i></font><b>protected</b>:<br>	DECLARE_MESSAGE_MAP()<br><b>public</b>:<br>	<b>virtual </b>BOOL OnOpenDocument(LPCTSTR lpszPathName);<br>	<b>virtual </b>BOOL OnSaveDocument(LPCTSTR lpszPathName);<br>	<b>virtual void </b>OnCloseDocument();<br>	<b>virtual void </b>DeleteContents();<br>};<br></font><br></code></pre>
+		<p><kbd>OnOpenDocument()</kbd> opens a new RIB-File and initializes a rendering 
+			context. The member function <kbd>OnCloseDocument()</kbd> finalizes a renderer 
+			context. The member <kbd>OnSaveDocument()</kbd> is overwritten to disable file 
+			writing at all.</p>
+		<div align="left">Listing 4: RIBPreviewDoc.cpp changed member functions</div>
+		<!-- Generated by SynEdit HTML exporter -->
+		<pre><code><font face="Courier New" size="3"><font color="#b2b4bf"><i>// CRIBPreviewDoc construction/destruction<br><br></i></font>CRIBPreviewDoc::CRIBPreviewDoc() : m_invalid(<b>false</b>), m_contextHandle(TRi::RI_NULL)<br><br>{<br>	<font
+ color="#b2b4bf"><i>// TODO: add one-time construction code here<br><br></i></font>}<br><br>[...]<br><br>BOOL CRIBPreviewDoc::OnNewDocument()<br>{<br>	<b>if </b>(!CDocument::OnNewDocument())<br>		<b>return </b>FALSE;<br><br>	<font
+ color="#b2b4bf"><i>// TODO: add reinitialization code here<br></i></font>	<font
+ color="#b2b4bf"><i>// (SDI documents will reuse this document)<br><br></i></font>	m_invalid = <b>false</b>;<br>	m_contextHandle = TRi::RI_NULL;<br><br>	<b>return </b>TRUE;<br>}<br><br>[...]<br><br><font
+ color="#b2b4bf"><i>// CRIBPreviewDoc commands<br><br></i></font>BOOL CRIBPreviewDoc::OnOpenDocument(LPCTSTR lpszPathName)<br>{<br>	<font
+ color="#b2b4bf"><i>// Don't call the CDocument functions<br></i></font>	<font
+ color="#b2b4bf"><i>// if (!CDocument::OnOpenDocument(lpszPathName))<br></i></font>	<font
+ color="#b2b4bf"><i>//     return FALSE;<br><br></i></font>	<font
+ color="#b2b4bf"><i>// TODO:  Add your specialized creation code here<br></i></font>	DeleteContents();<br>	SetModifiedFlag();  <font
+ color="#b2b4bf"><i>// dirty during de-serialize<br><br></i></font>	<font
+ color="#b2b4bf"><i>// Change the path seperators from \ to /<br></i></font>	m_strPathName = lpszPathName;<br>	<b>unsigned int </b>i;<br>	<b>for </b>( i = <font
+ color="#800080">0</font>; i &lt; m_strPathName.length(); ++i ) {<br>		<b>if </b>( m_strPathName[i] == '\\' )<br>			m_strPathName[i] = '/';<br>	}<br><br>	m_invalid = <b>false</b>;         <font
+ color="#b2b4bf"><i>// reload the file when displayed<br></i></font>	SetModifiedFlag(FALSE);    <font
+ color="#b2b4bf"><i>// file is unmodified<br></i></font>	<br>	<b>if </b>( !m_strPathName.empty() ) {<br>		TRi *ri = ((CRIBPreviewApp *)AfxGetApp())-&gt;GetRenderer();<br>		<b>if </b>( ri ) {<br>			<b>try </b>{<br>				ri-&gt;begin();<br>				m_contextHandle = ri-&gt;getContext();<br>			} <b>catch </b>(TRendererError &amp;t) {<br>				m_invalid = TRUE;<br>				t.displayMessage();<br>				ri-&gt;synchronize(ri-&gt;RI_ABORT);<br>			} <b>catch </b>( ... ) {<br>				m_invalid = TRUE;<br>				::MessageBox(NULL,<br>					<font
+ color="#ff0000">"Error while open document, RiBegin()"</font>,<br><font
+ color="#ff0000">					"ERROR"</font>,<br>					MB_ICONEXCLAMATION|MB_OK) ;<br>			}<br>		}<br>	}<br><br>	<b>return </b>TRUE;<br>}<br><br>BOOL CRIBPreviewDoc::OnSaveDocument(LPCTSTR lpszPathName)<br>{<br>	<font
+ color="#b2b4bf"><i>// TODO: Add your specialized code here and/or call the base class<br></i></font>	<b>return </b>TRUE; <font
+ color="#b2b4bf"><i>// don't save at all<br><br></i></font>	<font
+ color="#b2b4bf"><i>// return CDocument::OnSaveDocument(lpszPathName);<br></i></font>}<br><br>[...]<br><br><b>void </b>CRIBPreviewDoc::OnCloseDocument()<br>{<br>	<font
+ color="#b2b4bf"><i>// TODO: Add your specialized code here and/or call the base class<br></i></font>	CDocument::OnCloseDocument();<br>}<br><br><b>void </b>CRIBPreviewDoc::DeleteContents()<br>{<br>	<font
+ color="#b2b4bf"><i>// TODO: Add your specialized code here and/or call the base class<br></i></font>	<b>if </b>( !m_strPathName.empty() ) {<br>		TRi *ri = ((CRIBPreviewApp *)AfxGetApp())-&gt;GetRenderer();<br>		<b>if </b>( ri ) {<br>			<b>try </b>{<br>				ri-&gt;context(m_contextHandle);<br>				ri-&gt;end();<br>				m_contextHandle = TRi::RI_NULL;<br>			} <b>catch </b>(TRendererError &amp;t) {<br>				m_invalid = TRUE;<br>				t.displayMessage();<br>				ri-&gt;synchronize(ri-&gt;RI_ABORT); <br>			} <b>catch </b>( ... ) {<br>				m_invalid = TRUE;<br>				::MessageBox(NULL, <font
+ color="#ff0000">"Error while delete contents, RiEnd()"</font>, <font
+ color="#ff0000">"ERROR"</font>, MB_ICONEXCLAMATION|MB_OK) ;<br>			}<br>		}<br>	}<br><br>	m_strPathName.clear();<br><br>	CDocument::DeleteContents();<br>}</font><br></code></pre>
+		<p>The view displays this RIB file. Only the OnDraw() member needs to be 
+			overwritten.</p>
+		<div align="left">Listing 5: RIBPreviewView.cpp changed OnDraw() member function</div>
+		<!-- Generated by SynEdit HTML exporter -->
+		<pre><code><font face="Courier New" size="3"><font color="#b2b4bf"><i>// RibPreviewView.cpp<br><br>// Declared in header:<br>// Overrides<br>//    public:<br>//    virtual void OnDraw(CDC* pDC);  // overridden to draw this view<br><br>// CRIBPreviewView drawing<br><br></i></font><b>void </b>CRIBPreviewView::OnDraw(CDC* pDC)<br>{<br>	CRIBPreviewDoc* pDoc = GetDocument();<br>	ASSERT_VALID(pDoc);<br><br>	<font
+ color="#b2b4bf"><i>// TODO: add draw code for native data here<br></i></font>	TRi *ri = ((CRIBPreviewApp *)AfxGetApp())-&gt;GetRenderer();<br><br>	<b>if </b>( !pDoc-&gt;m_invalid &amp;&amp; !pDoc-&gt;m_strPathName.empty() &amp;&amp; ri ) {<br>	        <b>try </b>{<br>			HDC hdc = pDC-&gt;GetSafeHdc();<br>			<b>if </b>( !hdc )<br>				<b>return</b>;<br>			HWND hwnd = <b>this</b>-&gt;GetSafeHwnd();<br>			<b>if </b>( !hwnd )<br>				<b>return</b>;<br><br>			ri-&gt;context(pDoc-&gt;m_contextHandle);<br>			ri-&gt;synchronize(<font
+ color="#ff0000">"reset"</font>);<br>			ri-&gt;display(pDoc-&gt;m_strPathName.c_str(),<br>				ri-&gt;RI_FRAMEBUFFER, ri-&gt;RI_RGB,<br>				<font
+ color="#ff0000">"devicecontext"</font>, &amp;hdc,<br>				<font
+ color="#ff0000">"windowhandle"</font>, &amp;hwnd,<br>				ri-&gt;RI_NULL);<br>			ri-&gt;clipping((RtFloat)<font
+ color="#800080">.1</font>, (RtFloat)<font color="#800080">1000.0</font>);<br>			ri-&gt;readArchive(<br>				pDoc-&gt;m_strPathName.c_str(), NULL,<br>				ri-&gt;RI_NULL);<br>		} <b>catch </b>(TRendererError &amp;t) {<br>			t.displayMessage();<br>			pDoc-&gt;m_invalid = <b>true</b>; <font
+ color="#b2b4bf"><i>// Stop drawing<br>		</i></font>} <b>catch </b>(TSystemException &amp;t) {<br>			t.displayMessage();<br>			pDoc-&gt;m_invalid = <b>true</b>; <font
+ color="#b2b4bf"><i>// Stop drawing<br></i></font>		} <b>catch </b>( ... ) {<br>			MessageBox(<font
+ color="#ff0000">"Error while drawing"</font>, <font color="#ff0000">"Error"</font>);<br>			pDoc-&gt;m_invalid = <b>true</b>; <font
+ color="#b2b4bf"><i>// Stop drawing<br></i></font>		}<br>		<br>		<b>if </b>( pDoc-&gt;m_invalid ) {<br>			<b>try </b>{<br>				ri-&gt;synchronize(ri-&gt;RI_ABORT);<br>			} <b>catch </b>( TSystemException &amp;t ) {<br>				t.displayMessage();<br>			} <b>catch </b>( ... ) {<br>				MessageBox(<font
+ color="#ff0000">"Error while drawing (synchronize)"</font>, <font
+ color="#ff0000">"Error"</font>);<br>			}<br>		}<br>	}<br>}<br></font>
+</code></pre>
+		<p>After this the demo application is ready to run. I have put the sources of this 
+			project in the download area with a 'File/Reload' menu item and cleaned up 
+			menu.</p>
+	</body>
+</html>

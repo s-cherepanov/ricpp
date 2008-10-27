@@ -1,0 +1,19 @@
+version 3.03
+ErrorHandler "print"
+Display "test.25.pic" "file" "rgba"
+Format 512 307 1
+Clipping 0.1 10000
+WorldBegin
+Declare "direction" "point"
+LightSource "windowlight" 0 "direction" [1 0 -0.1]
+Color [1 1 1]
+Orientation "lh"
+Sides 1
+AttributeBegin
+MotionBegin [0 1]
+Translate 1.91851 0.213234 1.55
+Translate 2.12322 0.413234 1.78
+MotionEnd
+Sphere 2 -0.3 1.95 175
+AttributeEnd
+WorldEnd

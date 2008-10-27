@@ -1,0 +1,55 @@
+##RenderMan RIB-Structure 1.0
+version 3.04
+
+Display "catmull_clark.tif" "framebuffer" "rgba"
+
+Projection "orthographic"
+#Projection "perspective"
+Clipping 0.1 20
+
+GeometricRepresentation "lines"
+GeometricApproximation "tesselation" 32
+
+ObjectBegin "BilinearPatch"
+	Patch "bilinear"
+		"vertex point P" [
+			-0.9  0.9  0      #  0
+			 0.9  0.9  0      #  1
+			-0.9 -0.9  0      #  3
+			 0.9 -0.9  0      #  2
+		] 
+ObjectEnd
+
+ObjectBegin "SubdivMesh"
+	SubdivisionMesh
+		"catmull-clark"
+		[ 4 ]
+		[ 0 1 2 3 ]
+		[ "interpolateboundary" ] [ 1 0 ] [ 2 ] [ ]
+		"vertex point P" [
+			-0.9  0.9  0      #  0
+			 0.9  0.9  0      #  1
+			 0.9 -0.9  0      #  2
+			-0.9 -0.9  0      #  3
+		] 
+		"Cs" [
+			 1.0  0.0  0      #  0
+			 0.0  1.0  0      #  1
+			 0.0  1.0  1.0    #  2
+			 1.0  0.0  0      #  3
+		] 
+ObjectEnd
+
+WorldBegin
+	LightSource "ambientlight" 1
+
+	Translate 0 0 2
+	
+	Color  1 0 1
+	Surface "matte"
+	Sides 2
+	
+	# ObjectInstance "BilinearPatch"
+	ObjectInstance "SubdivMesh"
+	
+WorldEnd

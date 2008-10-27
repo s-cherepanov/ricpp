@@ -1,0 +1,8 @@
+##RenderMan RIB-Structure 1.1 Entity
+version 3.03
+AttributeBegin
+	Attribute "identifier" "string name" "paraboloid"
+	Bound -1 -1 0 1 1 1
+	Color [1 0 0]
+	Paraboloid 1 0 1 360
+AttributeEnd

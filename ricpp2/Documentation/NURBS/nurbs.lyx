@@ -1,0 +1,3297 @@
+#LyX 1.5.4 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass scrartcl
+\begin_preamble
+\usepackage{a4wide}
+\end_preamble
+\options a4
+\language english
+\inputencoding latin1
+\font_roman times
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 0
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 2
+\paperpagestyle headings
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+NURBS Implementation within RiCPP
+\end_layout
+
+\begin_layout Author
+Andreas Pidde
+\end_layout
+
+\begin_layout Date
+March, 05th 2008
+\end_layout
+
+\begin_layout Section*
+Preface
+\end_layout
+
+\begin_layout Standard
+In this article I'll describe briefly the implementation of polynomial and
+ rational B-Spline tensor product surfaces as used within the RiCPP framework.
+ You maybe want to refer the 
+\begin_inset Quotes eld
+\end_inset
+
+RenderMan Interface Specification, Version 3.2.1
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset LatexCommand cite
+key "Pixa05"
+
+\end_inset
+
+ for reference.
+ If you want to know more about NURBS, 
+\begin_inset Quotes eld
+\end_inset
+
+The NURBS Book
+\begin_inset Quotes erd
+\end_inset
+
+ by Piegl and Tiller 
+\begin_inset LatexCommand cite
+key "Pieg97"
+
+\end_inset
+
+, esp.
+ chapters 1-4 serves for deeper information.
+ Another comprehensive textbook about NURBS, e.g.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+An Introduction to NURBS: With Historical Perspective
+\begin_inset Quotes erd
+\end_inset
+
+ by David F.
+ Rogers 
+\begin_inset LatexCommand cite
+key "Roge01"
+
+\end_inset
+
+, will do equally well.
+ Also the chapter 11 
+\begin_inset Quotes eld
+\end_inset
+
+Representing Curves and Surfaces
+\begin_inset Quotes erd
+\end_inset
+
+ in 
+\begin_inset Quotes eld
+\end_inset
+
+Computer Graphics: Principles and Practice
+\begin_inset Quotes erd
+\end_inset
+
+ by Foley, van Dam, Feiner, and Hughes 
+\begin_inset LatexCommand cite
+key "Fole90"
+
+\end_inset
+
+ gives a good starting point to read.
+ Of course, there are many more.
+\end_layout
+
+\begin_layout Section
+NURBS Within the RenderMan Interface
+\end_layout
+
+\begin_layout Standard
+The RenderMan standard supports NURBS (
+\series bold
+N
+\series default
+on-
+\series bold
+U
+\series default
+niform 
+\series bold
+R
+\series default
+ational 
+\series bold
+B
+\series default
+-
+\series bold
+S
+\series default
+pline) surfaces by the interface function 
+\series bold
+RiNuPatch
+\series default
+()
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+I'm using the naming scheme of the standard C-binding or RIB-binding in
+ this text.
+ RiCPP simply uses 
+\series bold
+NuPatch
+\series default
+(), because of the C++-classes.
+\end_layout
+
+\end_inset
+
+.
+ The RIB-Binding for this call is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+
+\lyxline
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Standard
+
+
+\backslash
+vspace{-1
+\backslash
+parskip}
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+NuPatch
+\series default
+ 
+\emph on
+nu uorder uknot[] umin umax nv vorder vknot[] vmin vmax ...parameterlist...
+\end_layout
+
+\begin_layout Standard
+
+\lyxline
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="11" columns="3">
+<features islongtable="true">
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" width="5cm">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="6cm">
+<row topline="true" bottomline="true" endhead="true">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Parameter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Meaning
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Constraints
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+nu
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Number of control points in u-direction
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The number of control points 
+\series bold
+P
+\series default
+ or 
+\series bold
+Pw
+\series default
+ in the parameter list is 
+\begin_inset Formula $nu\times nv$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+uorder
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Order of the polynomial basis for u parameter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $1\leq uorder\leq nu$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+uknot
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Knot vector of the spline
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $uknot[i]\leq uknot[i+1]$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+the number of knots is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $nu+uorder$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+umin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Minimal value for the parameter u (clip the parametric range of u)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $umin<umax$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $umin\geq uknot[uorder-1]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+umax
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Maximal value for the parameter u (clip the parametric range of u)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $umin<umax$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $umax\leq uknot[nu]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+nv
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Number of control points in v-direction
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The number of control points 
+\series bold
+P
+\series default
+ or 
+\series bold
+Pw
+\series default
+ in the parameter list is 
+\begin_inset Formula $nu\times nv$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+vorder
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Order of the polynomial basis for the v parameter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $1\leq vorder\leq nv$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+vknot
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Knot vector of the spline for the parameter v
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $vknot[i]\leq vknot[i+1]$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+the number of knots is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $nv+vorder$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+vmin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Minimal value for the parameter v (clip the parametric range of v)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $vmin<vmax$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $vmin\geq vknot[vorder-1]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+vmax
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Maximal value for the parameter v (clip the parametric range of v)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+\begin_inset Formula $vmax>vmin$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $vmax\leq vknot[nv]$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You must include at least 
+\begin_inset Formula $nu\times nv$
+\end_inset
+
+ control points within the parameter list, either 
+\series bold
+P
+\series default
+ for polynomial or homogeneous 
+\series bold
+Pw
+\series default
+ for rational B-spline surfaces.
+ The number of segments in u-direction is 
+\begin_inset Formula $usegments=1+nu-uorder$
+\end_inset
+
+ and in v-direction 
+\begin_inset Formula $vsegments=1+nv-vorder$
+\end_inset
+
+, a segment is handled like a patch (face) in a patch mesh.
+ Therefore within the parameter list you can include one 
+\emph on
+uniform
+\emph default
+ primitive value per segment (that are 
+\begin_inset Formula $usegments\times vsegments$
+\end_inset
+
+ uniform values), one 
+\emph on
+varying
+\emph default
+ value per segment corner (
+\begin_inset Formula $(usegments+1)\times(vsegments+1)$
+\end_inset
+
+ varying values), 
+\begin_inset Formula $4\times usegments\times vsegments$
+\end_inset
+
+ 
+\emph on
+facevarying
+\emph default
+ values, a single 
+\emph on
+constant
+\emph default
+ value per mesh and 
+\begin_inset Formula $nu\times nv$
+\end_inset
+
+ vertex values, 
+\emph on
+facevertex
+\emph default
+ values are handled like 
+\emph on
+vertex
+\emph default
+ values.
+ A RenderMan renderer will calculate vertex values in the same way as the
+ position values.
+ If you do not define texture parameters within the list, these values are
+ initialized using the inherent 
+\begin_inset Formula $u$
+\end_inset
+
+, 
+\begin_inset Formula $v$
+\end_inset
+
+ values.
+\end_layout
+
+\begin_layout Standard
+Further, you can use 
+\series bold
+RiTrimCurve()
+\series default
+ interface calls to cut holes into the surface.
+\end_layout
+
+\begin_layout Section
+The NURBS Surface Definition
+\end_layout
+
+\begin_layout Subsection
+The NURBS Surface
+\end_layout
+
+\begin_layout Standard
+To represent a NURBS tensor product surface 
+\begin_inset Formula $S$
+\end_inset
+
+, we use the rational form: 
+\begin_inset Formula \[
+S^{w}(u,v)=\sum_{i=0}^{nu-1}\sum_{j=0}^{nv-1}N_{i,uorder}(u)M_{j,vorder}(v)P_{i,j}^{w},umin\leq u\leq umax,vmin\leq v\leq vmax\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where the 
+\begin_inset Formula $P^{w}$
+\end_inset
+
+ are the 
+\begin_inset Formula $nu\times nv$
+\end_inset
+
+ control points and 
+\begin_inset Formula $N$
+\end_inset
+
+ and 
+\begin_inset Formula $M$
+\end_inset
+
+ are the piecewise polynomial basis functions in the parametric directions
+ 
+\begin_inset Formula $u$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+.
+ 
+\begin_inset Formula $uorder$
+\end_inset
+
+ and 
+\begin_inset Formula $vorder$
+\end_inset
+
+ are the polynomial orders, they don't need to be equal.
+ The degree of the polynomial basis is the correspondent 
+\begin_inset Formula $order-1$
+\end_inset
+
+ as usual.
+ You can generate both, rational and non-rational surfaces using a 
+\series bold
+RiNuPatch()
+\series default
+ call.
+\end_layout
+
+\begin_layout Subsection
+The Basis Functions
+\end_layout
+
+\begin_layout Standard
+I used an implementation of the Cox-de\InsetSpace ~
+Boor recurrence formula to calculate
+ the basis functions.
+ The formula for 
+\begin_inset Formula $N_{i,uorder}(u)$
+\end_inset
+
+ is given by:
+\lang german
+
+\begin_inset Formula \begin{eqnarray*}
+N_{i,0}(u) & = & \begin{cases}
+1 & u_{i}\leq u<u_{i+1}\\
+0 & \mathrm{otherwise}\end{cases}\end{eqnarray*}
+
+\end_inset
+
+
+\lang english
+
+\begin_inset Formula \[
+N_{i,p(u)}=\frac{u-u_{i}}{u_{i+p}-u_{i}}N_{i,p-1}(u)+\frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since 0/0 can occur while evaluating the form, we define this case to has
+ the result 0.
+ The definition of the formula for 
+\begin_inset Formula $M_{j,vorder}(v)$
+\end_inset
+
+ is alike the 
+\begin_inset Formula $N_{i,uorder}(u)$
+\end_inset
+
+ definition.
+ For the implementation within RiCPP the NURBS segments for the parameters
+ u: 
+\begin_inset Formula $u_{i}\leq u\leq u_{i+1}\,\&\&\, u_{i}<u_{i+1}$
+\end_inset
+
+ and v: 
+\begin_inset Formula $v_{i}\leq v\leq v_{i+1}\,\&\&\, v_{i}<v_{i+1}$
+\end_inset
+
+ are tessellated one by one using this formula.
+ I also put the values 
+\begin_inset Formula $u_{i+1}$
+\end_inset
+
+ and 
+\begin_inset Formula $v_{i+1}$
+\end_inset
+
+in the interval to get the borders of the segments.
+ Technically these border points are calculated twice, but doing so, you
+ can include the 
+\emph on
+facevarying
+\emph default
+ variables very easily and also discontinuities (resulting of knots with
+ a multiplicity greater than the degree of the polygon) are no problem.
+ The class 
+\series bold
+TBSplineBasis
+\series default
+ contains the whole implementation of this algorithm.
+ 
+\series bold
+BSplineBasis()
+\series default
+ is an excerpt from this class.
+\end_layout
+
+\begin_layout Standard
+Since the tessellations of the segment are calculated one by one, the function
+ 
+\series bold
+BSplineBasis()
+\series default
+ returns the result using the parameter 
+\emph on
+BASIS
+\emph default
+, being a vector of size 
+\emph on
+n
+\emph default
+.
+ You can call 
+\series bold
+BSplineBase(
+\series default
+\emph on
+u, umax, nu, uorder, uknot, N
+\series bold
+\emph default
+)
+\series default
+ and 
+\series bold
+BSplineBase(
+\series default
+\emph on
+v, vmax, nv, vorder, vknot, M
+\series bold
+\emph default
+)
+\series default
+ to get the two wanted results -- the base for the 
+\emph on
+u
+\emph default
+ and the one for the 
+\emph on
+v
+\emph default
+ values.
+ Stored within the implementation of RiCPP are the first 
+\emph on
+nu
+\emph default
+ values of the basis 
+\emph on
+N
+\emph default
+ associated with the values of the parameter 
+\emph on
+u
+\emph default
+ and the first 
+\emph on
+nv
+\emph default
+ values of the basis 
+\emph on
+M
+\emph default
+ associated with the values of parameter 
+\emph on
+v
+\emph default
+ respectively.
+ However, you can implement the return mechanism for 
+\emph on
+BASIS
+\emph default
+ differently to save the copy operation.
+\end_layout
+
+\begin_layout Standard
+
+\lyxline
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Standard
+
+
+\backslash
+vspace{-1
+\backslash
+parskip}
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+
+Algorithm 1: BSplineBasis(), Cox-de Boor
+\lyxline
+
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+void
+\series default
+ BSplineBasis(
+\end_layout
+
+\begin_layout LyX-Code
+    RtFloat t,                      // 
+\emph on
+Parameter value
+\end_layout
+
+\begin_layout LyX-Code
+    RtFloat tmax,                   // 
+\emph on
+Maximal value for t
+\end_layout
+
+\begin_layout LyX-Code
+    RtInt n,                        // 
+\emph on
+Number of control
+\end_layout
+
+\begin_layout LyX-Code
+                                    // 
+\emph on
+points, n >= k
+\end_layout
+
+\begin_layout LyX-Code
+    RtInt k,                        // 
+\emph on
+Order, degree == k - 1
+\end_layout
+
+\begin_layout LyX-Code
+ 
+\series bold
+   const
+\series default
+ std::vector<RtFloat> &x,  // 
+\emph on
+Knot vector,
+\end_layout
+
+\begin_layout LyX-Code
+                                    // 
+\emph on
+size == n+k
+\end_layout
+
+\begin_layout LyX-Code
+    std::vector<RtFloat> &BASIS     // 
+\emph on
+Basis function
+\end_layout
+
+\begin_layout LyX-Code
+                                    // 
+\emph on
+as result, size == n
+\end_layout
+
+\begin_layout LyX-Code
+    )
+\end_layout
+
+\begin_layout LyX-Code
+{
+\end_layout
+
+\begin_layout LyX-Code
+    RtInt i, j;
+\end_layout
+
+\begin_layout LyX-Code
+    RtFloat temp;
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    
+\series bold
+const
+\series default
+ RtInt size = n+k-1;
+\end_layout
+
+\begin_layout LyX-Code
+      // 
+\emph on
+One less the size of knot vector x
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    std::vector BASIStemp(size);
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+   
+\series bold
+ for
+\series default
+ ( i=0; i < size; ++i ) {
+\end_layout
+
+\begin_layout LyX-Code
+        BASIStemp[i] = ( t >= x[i] &&
+\end_layout
+
+\begin_layout LyX-Code
+                        (t < x[i+1] || t == x[i+1] && t == x[n])
+\end_layout
+
+\begin_layout LyX-Code
+                       ) 
+\series bold
+?
+\series default
+ (RtFloat)1 
+\series bold
+:
+\series default
+ (RtFloat)0;
+\end_layout
+
+\begin_layout LyX-Code
+    }
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    
+\series bold
+for
+\series default
+ ( j=1; j < k; ++j ) {
+\end_layout
+
+\begin_layout LyX-Code
+        
+\series bold
+for
+\series default
+ ( i=0; i < size-j; ++i ) {
+\end_layout
+
+\begin_layout LyX-Code
+            
+\series bold
+if
+\series default
+ ( BASIStemp[i] != 0 ) {
+\end_layout
+
+\begin_layout LyX-Code
+                temp = x[i+j]-x[i];
+\end_layout
+
+\begin_layout LyX-Code
+                
+\series bold
+if
+\series default
+ ( temp != 0 )
+\end_layout
+
+\begin_layout LyX-Code
+                     temp = BASIStemp[i] *
+\end_layout
+
+\begin_layout LyX-Code
+                            ((t - x[i]) / temp);
+\end_layout
+
+\begin_layout LyX-Code
+                BASIStemp[i] = temp;
+\end_layout
+
+\begin_layout LyX-Code
+            }
+\end_layout
+
+\begin_layout LyX-Code
+            
+\series bold
+if
+\series default
+ ( BASIStemp[i+1] != 0 ) {
+\end_layout
+
+\begin_layout LyX-Code
+                 temp = x[i+j+1]-x[i+1];
+\end_layout
+
+\begin_layout LyX-Code
+                 
+\series bold
+if
+\series default
+ ( temp != 0 )
+\end_layout
+
+\begin_layout LyX-Code
+                     temp = BASIStemp[i+1] *
+\end_layout
+
+\begin_layout LyX-Code
+                            ((x[i+j+1] - t) / temp);
+\end_layout
+
+\begin_layout LyX-Code
+                 BASIStemp[i] += temp;
+\end_layout
+
+\begin_layout LyX-Code
+            }
+\end_layout
+
+\begin_layout LyX-Code
+        }
+\end_layout
+
+\begin_layout LyX-Code
+    }
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    BASIS[0..n-1] = BASIStemp[0..n-1]; // 
+\emph on
+copy result
+\end_layout
+
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout Subsection
+The Derivatives of the Basis Functions
+\end_layout
+
+\begin_layout Standard
+For RiCPP I used the first derivative of the Cox-de\InsetSpace ~
+Boor formula:
+\begin_inset Formula \[
+N'_{i,1}(u)=\frac{N_{i,0}(u)}{u_{i+1}-u_{i}}-\frac{N_{i+1,0}(u)}{u_{i+2}-u_{i+1}}\]
+
+\end_inset
+
+
+\begin_inset Formula \[
+N'_{i,p}(u)=\frac{N_{i,p-1}(u)+(u-u_{i})N'_{i,p-1}(u)}{u_{i+p}-u}-\frac{N_{i+1,p-1}(u)-(u_{i+p+1}-u)N'_{i+1,p-1}(u)}{u_{i+p+1}-u_{i+1}}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Since the first derivative has so much in common with the recurrence formula
+ and we need both results for further rendering, I implemented them using
+ a single function.
+\end_layout
+
+\begin_layout Standard
+
+\lyxline
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Standard
+
+
+\backslash
+vspace{-1
+\backslash
+parskip}
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+
+Algorithm 2: BSplineBasisDeriv(), B-Spline basis with its first derivative
+\lyxline
+
+\end_layout
+
+\begin_layout LyX-Code
+void BSplineBasisDeriv(
+\end_layout
+
+\begin_layout LyX-Code
+    RtFloat t,                      // 
+\emph on
+Parameter value
+\end_layout
+
+\begin_layout LyX-Code
+    RtFloat tmax,                   // 
+\emph on
+Maximal value for t
+\end_layout
+
+\begin_layout LyX-Code
+    RtInt n,                        // 
+\emph on
+Number of control
+\end_layout
+
+\begin_layout LyX-Code
+                                    // 
+\emph on
+points, n >= k
+\end_layout
+
+\begin_layout LyX-Code
+    RtInt k,                        // 
+\emph on
+Order, degree == k - 1
+\end_layout
+
+\begin_layout LyX-Code
+ 
+\series bold
+   const
+\series default
+ std::vector<RtFloat> &x,  // 
+\emph on
+Knot vector,
+\end_layout
+
+\begin_layout LyX-Code
+                                    // 
+\emph on
+size == n+k
+\end_layout
+
+\begin_layout LyX-Code
+    std::vector<RtFloat> &BASIS     // 
+\emph on
+Basis function as
+\end_layout
+
+\begin_layout LyX-Code
+                                    // 
+\emph on
+result, size == n
+\end_layout
+
+\begin_layout LyX-Code
+    std::vector<RtFloat> &BASISd    // 
+\emph on
+Basis function
+\end_layout
+
+\begin_layout LyX-Code
+                                    // 
+\emph on
+derivative as result,
+\end_layout
+
+\begin_layout LyX-Code
+ 
+\emph on
+                                   // size == n
+\end_layout
+
+\begin_layout LyX-Code
+    )
+\end_layout
+
+\begin_layout LyX-Code
+{
+\end_layout
+
+\begin_layout LyX-Code
+    RtInt i, j;
+\end_layout
+
+\begin_layout LyX-Code
+    RtFloat temp;
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    
+\series bold
+const
+\series default
+ RtInt size = n+k-1;
+\end_layout
+
+\begin_layout LyX-Code
+      // 
+\emph on
+One less the size of knot vector x
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    std::vector BASIStemp(size);
+\end_layout
+
+\begin_layout LyX-Code
+    std::vector BASISd_temp(size);
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    // 
+\emph on
+Init Basis
+\end_layout
+
+\begin_layout LyX-Code
+    
+\series bold
+for
+\series default
+ ( i=0; i < size; ++i ) {
+\end_layout
+
+\begin_layout LyX-Code
+        BASIStemp[i] = ( t >= x[i] &&
+\end_layout
+
+\begin_layout LyX-Code
+                        (t < x[i+1] ||
+\end_layout
+
+\begin_layout LyX-Code
+                         t == x[i+1] && t == x[n])
+\end_layout
+
+\begin_layout LyX-Code
+                       ) 
+\series bold
+?
+\series default
+ (RtFloat)1 
+\series bold
+:
+\series default
+ (RtFloat)0;
+\end_layout
+
+\begin_layout LyX-Code
+    }
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    // C
+\emph on
+alc basis and derivative
+\end_layout
+
+\begin_layout LyX-Code
+    
+\series bold
+for
+\series default
+ ( j=1; j < k; ++j ) {
+\end_layout
+
+\begin_layout LyX-Code
+        
+\series bold
+for
+\series default
+ ( i=0; i < size-j; ++i ) {
+\end_layout
+
+\begin_layout LyX-Code
+            // Basis derivative
+\end_layout
+
+\begin_layout LyX-Code
+            
+\series bold
+if
+\series default
+ ( j == 1 ) {
+\end_layout
+
+\begin_layout LyX-Code
+                temp = x[i+1] - x[i];
+\end_layout
+
+\begin_layout LyX-Code
+                
+\series bold
+if
+\series default
+ ( temp != 0 )
+\end_layout
+
+\begin_layout LyX-Code
+                    temp = BASIStemp[i] / temp;
+\end_layout
+
+\begin_layout LyX-Code
+                BASISd_temp[i] = temp;
+\end_layout
+
+\begin_layout LyX-Code
+                temp = x[i+2] - x[i+1];
+\end_layout
+
+\begin_layout LyX-Code
+                
+\series bold
+if
+\series default
+ ( temp != 0 )
+\end_layout
+
+\begin_layout LyX-Code
+                    temp = BASIStemp[i+1] / temp;
+\end_layout
+
+\begin_layout LyX-Code
+                BASISd_temp[i] -= temp;
+\end_layout
+
+\begin_layout LyX-Code
+            } 
+\series bold
+else
+\series default
+ {
+\end_layout
+
+\begin_layout LyX-Code
+                temp = x[i+j] - x[i];
+\end_layout
+
+\begin_layout LyX-Code
+                
+\series bold
+if
+\series default
+ ( temp != 0.0 )
+\end_layout
+
+\begin_layout LyX-Code
+                    temp = (BASIStemp[i] + (t-x[i]) *
+\end_layout
+
+\begin_layout LyX-Code
+                               BASISd_temp[i]
+\end_layout
+
+\begin_layout LyX-Code
+                           ) / temp;
+\end_layout
+
+\begin_layout LyX-Code
+                BASISd_temp[i] = temp;
+\end_layout
+
+\begin_layout LyX-Code
+                temp = x[i+j+1] - x[i+1];
+\end_layout
+
+\begin_layout LyX-Code
+                
+\series bold
+if
+\series default
+ ( temp != 0.0 )
+\end_layout
+
+\begin_layout LyX-Code
+                    temp = (BASIStemp[i+1] -
+\end_layout
+
+\begin_layout LyX-Code
+                               (x[i+j+1]-t) *
+\end_layout
+
+\begin_layout LyX-Code
+                               BASISd_temp[i+1]
+\end_layout
+
+\begin_layout LyX-Code
+                           ) / temp;
+\end_layout
+
+\begin_layout LyX-Code
+                BASISd_temp[i] -= temp;
+\end_layout
+
+\begin_layout LyX-Code
+            }
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+            // 
+\emph on
+Basis
+\end_layout
+
+\begin_layout LyX-Code
+            
+\series bold
+if
+\series default
+ ( BASIStemp[i] != 0 ) {
+\end_layout
+
+\begin_layout LyX-Code
+                temp = x[i+j]-x[i];
+\end_layout
+
+\begin_layout LyX-Code
+                
+\series bold
+if
+\series default
+ ( temp != 0 )
+\end_layout
+
+\begin_layout LyX-Code
+                     temp = BASIStemp[i] *
+\end_layout
+
+\begin_layout LyX-Code
+                            ((t - x[i]) / temp);
+\end_layout
+
+\begin_layout LyX-Code
+                BASIStemp[i] = temp;
+\end_layout
+
+\begin_layout LyX-Code
+            }
+\end_layout
+
+\begin_layout LyX-Code
+            
+\series bold
+if
+\series default
+ ( BASIStemp[i+1] != 0 ) {
+\end_layout
+
+\begin_layout LyX-Code
+                 temp = x[i+j+1]-x[i+1];
+\end_layout
+
+\begin_layout LyX-Code
+                 
+\series bold
+if
+\series default
+ ( temp != 0 )
+\end_layout
+
+\begin_layout LyX-Code
+                     temp = BASIStemp[i+1] *
+\end_layout
+
+\begin_layout LyX-Code
+                            ((x[i+j+1] - t) / temp);
+\end_layout
+
+\begin_layout LyX-Code
+                 BASIStemp[i] += temp;
+\end_layout
+
+\begin_layout LyX-Code
+            }
+\end_layout
+
+\begin_layout LyX-Code
+        }
+\end_layout
+
+\begin_layout LyX-Code
+    }
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+    BASIS[0..n-1]  = BASIStemp[0..n-1];   // copy result
+\end_layout
+
+\begin_layout LyX-Code
+    BASISd[0..n-1] = BASISd_temp[0..n-1];
+\end_layout
+
+\begin_layout LyX-Code
+}
+\end_layout
+
+\begin_layout Subsection
+Plots
+\end_layout
+
+\begin_layout Subsubsection
+Bézier (Bernstein) Basis
+\end_layout
+
+\begin_layout Standard
+I included the next plot, scaled 4/1, of a Bézier (Bernstein) basis of a
+ NURBS curve (surfaces have 2 knot vectors) to illustrate the results.
+ The knot vector here is [ 0 0 0 0 1 1 1 1 ] of order 
+\emph on
+k
+\emph default
+=4 for 
+\emph on
+n
+\emph default
+=4 control points.
+ I plotted the basis functions in black and the derivatives in grey.
+ The parameter is plotted on the abscissa and the values of the basis on
+ the axis of ordinates.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+A Bézier (Bernstein) basis
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename BezierBase.pdf
+	BoundingBox 0bp 0bp 142bp 192bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+The Segments
+\end_layout
+
+\begin_layout Standard
+To illustrate the segments of a NURBS curve have a look at the figure 
+\begin_inset Quotes eld
+\end_inset
+
+Segments
+\begin_inset Quotes erd
+\end_inset
+
+, having the order 
+\begin_inset Formula $k=4$
+\end_inset
+
+, 
+\begin_inset Formula $n=10$
+\end_inset
+
+ control points, and the knot vector [0 0 0 0 2 4 4 6 6 6 8 8 8 8].
+ The NURBS curve will have four segments for the parameter spans [0-2],
+ [2-4], [4-6], and [6-8].
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Segments
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename NURBSBaseDeriv.pdf
+	BoundingBox 0bp 0bp 402bp 152bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Trimming NURBS (To Do)
+\end_layout
+
+\begin_layout Standard
+The RenderMan Interface provides an attribute to trim NURBS surfaces in
+ their parametric space using NURBS curves.
+ You can provide these trim curves by using one interface call: 
+\series bold
+RiTrimCurve
+\series default
+().
+ The C-binding of the interface function contains the number of loops in
+ 
+\series bold
+RtInt
+\series default
+ 
+\emph on
+nloops
+\emph default
+ as the additional first parameter.
+ According to 
+\begin_inset LatexCommand cite
+key "Pixa05"
+
+\end_inset
+
+ the RIB binding misses the number of loops, since it is given as the size
+ of the array 
+\emph on
+ncurves
+\emph default
+.
+ According to 
+\begin_inset LatexCommand cite
+after "p. 108"
+key "Apod00"
+
+\end_inset
+
+ 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ loops disables the trim curve.
+ There is no example how to express this in RIB.
+ There is also shown the 
+\emph on
+nloops
+\emph default
+ parameter in the RIB binding, but as far as I know this is not implemented
+ in any renderer.
+\end_layout
+
+\begin_layout Standard
+The RiCPP parser recognizes the following alternatives to disable the trim
+ curve:
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+TrimCurve
+\series default
+ [] [] [] [] [] [] [] [] []
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+TrimCurve
+\series default
+ [ 0 ] [] [] [] [] [] [] [] []
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+TrimCurve
+\series default
+ [ 0 ]
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+TrimCurve
+\series default
+ 0
+\end_layout
+
+\begin_layout Standard
+The first one is generated by the RIB output module.
+ However, some renderes might not use this to disable trim curves, you should
+ better use appropriate attribute blocks.
+ The RIB binding is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+
+\lyxline
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Standard
+
+
+\backslash
+vspace{-1
+\backslash
+parskip}
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+
+
+\series bold
+TrimCurve
+\series default
+ 
+\emph on
+ncurves[] order[] knot[] min[] max[] n[] u[] v[]
+\emph default
+
+\lyxline
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="3">
+<features islongtable="true">
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" width="5cm">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="6cm">
+<row topline="true" bottomline="true" endhead="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Parameter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Meaning
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\series bold
+Constraints
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+ncurves
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Number of curves per loop.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is the number of loops.
+ An empty array disables the trim curve.
+ The curves of a loop must be connected head-to-tail and be closed explicitly.
+ This parameter is not given in the RIB-binding.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+order
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The orders of the polynomial basis of each curve.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is 
+\begin_inset Formula $\sigma=\sum_{i=0}^{nloops-1}ncurves[i]$
+\end_inset
+
+.
+ 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ is the number of curves of all loops.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+knot
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Knot vectors of the curves, concatenated into one array.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The number of knots for a curve 
+\emph on
+i
+\emph default
+ 
+\begin_inset Formula $i<\sigma$
+\end_inset
+
+ is 
+\begin_inset Formula $order[i]+n[i]$
+\end_inset
+
+.
+ Therefore the size of the array is: 
+\begin_inset Formula $\sum_{i=0}^{\sigma-1}order[i]+n[i]$
+\end_inset
+
+.
+ The knots for each curve should be non decreasing: 
+\begin_inset Formula $knot[offs+j]\leq knot[offs+j+1]$
+\end_inset
+
+ for a valid offset 
+\emph on
+offs
+\emph default
+ and range of 
+\begin_inset Formula $j$
+\end_inset
+
+ for each curve 
+\emph on
+i
+\emph default
+: 
+\begin_inset Formula $0\leq j<order[i]+n[i]-1$
+\end_inset
+
+.
+ The offset is the sum of the number of knots of the previous curves.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+min
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Clip a curve 
+\begin_inset Formula $i$
+\end_inset
+
+ to the parametric range 
+\begin_inset Formula $\left[min[i],max[i]\right]$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ (curve
+\begin_inset Formula $i<\sigma$
+\end_inset
+
+).
+ 
+\begin_inset Formula $min[i]<max[i]$
+\end_inset
+
+and 
+\begin_inset Formula $min[i]\geq knot[offs+order[i]-1]$
+\end_inset
+
+, where 
+\emph on
+offs
+\emph default
+ is the offset is the sum of the number of knots of the previous curves.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+max
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Clip a curve 
+\begin_inset Formula $i$
+\end_inset
+
+ to the parametric range 
+\begin_inset Formula $\left[min[i],max[i]\right]$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ (curve
+\begin_inset Formula $i<\sigma)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $min[i]<max[i]$
+\end_inset
+
+and 
+\begin_inset Formula $max[i]\leq knot[offs+n[i]]$
+\end_inset
+
+, where 
+\emph on
+j
+\emph default
+ is the index of the last knot of the curve 
+\emph on
+i
+\emph default
+.where 
+\emph on
+offs
+\emph default
+ is the offset is the sum of the number of knots of the previous curves.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The number of control points of each curve.
+ A control point is the value of the homogeneous (u, v, w) coordinates in
+ parametric (u,v) space of a NURBS surface.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is 
+\begin_inset Formula $\sigma$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Homogeneous 
+\emph on
+u
+\emph default
+ coordinates for the curves, concatenated into one array.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is 
+\begin_inset Formula $\sum_{i=0}^{\sigma-1}n_{i}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+v
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Homogeneous 
+\emph on
+v
+\emph default
+ coordinates for the curves, concatenated into one array.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is 
+\begin_inset Formula $\sum_{i=0}^{\sigma-1}n_{i}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row bottomline="true">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\emph on
+w
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Homogeneous 
+\emph on
+w
+\emph default
+ coordinates for the curves, concatenated into one array.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+The size of the array is 
+\begin_inset Formula $\sum_{i=0}^{\sigma-1}n_{i}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset LatexCommand cite
+key "Pixa05"
+
+\end_inset
+
+ the authors state the inside of a curve by its orientation.
+ They also give rules for the consistency of the trim curves:
+\end_layout
+
+\begin_layout Quotation
+
+\lang german
+\begin_inset Quotes eld
+\end_inset
+
+
+\lang english
+Trim curves exclude certain areas from the non-uniform B-spline surface
+ definition.
+ The inside must be specified consistently using two rules: an odd winding
+ rule that states that the inside consists of all regions for which an infinite
+ ray from any point in the region will intersect the trim curve an odd number
+ of times, and a curve orientation rule that states that the inside consists
+ of the regions to the 
+\begin_inset Quotes eld
+\end_inset
+
+left
+\begin_inset Quotes erd
+\end_inset
+
+ as the curve is traced.
+\lang german
+
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\lang english
+
+\begin_inset LatexCommand cite
+after "p. 75"
+key "Pixa05"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because both rules hold, some restrictions follow.
+ Trim curves do not intersect each other but may form isles (loops may contain
+ other loops).
+ The outer trim curve should always has a 
+\begin_inset Quotes eld
+\end_inset
+
+left
+\begin_inset Quotes erd
+\end_inset
+
+ orientation, otherwise the odd winding rule is violated.
+ From outside to inside 
+\begin_inset Quotes eld
+\end_inset
+
+right
+\begin_inset Quotes erd
+\end_inset
+
+ follows 
+\begin_inset Quotes eld
+\end_inset
+
+left
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+left
+\begin_inset Quotes erd
+\end_inset
+
+ follows 
+\begin_inset Quotes eld
+\end_inset
+
+right
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If you want to cut a 
+\begin_inset Quotes eld
+\end_inset
+
+hole
+\begin_inset Quotes erd
+\end_inset
+
+ into a NURBS surface, you need two trim curves: One orientated 
+\begin_inset Quotes eld
+\end_inset
+
+left
+\begin_inset Quotes erd
+\end_inset
+
+ that encloses the whole surface and one 
+\begin_inset Quotes eld
+\end_inset
+
+right
+\begin_inset Quotes erd
+\end_inset
+
+ that cuts away the hole.
+ If you want to keep the enclosed region of the trim curve, you need only
+ one 
+\begin_inset Quotes eld
+\end_inset
+
+left
+\begin_inset Quotes erd
+\end_inset
+
+ orientated trim curve (works like a cookie cutter).
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset LatexCommand cite
+key "Apod00"
+
+\end_inset
+
+ you'll find that the renderers PRMan and BMRT use an additional attribute
+ (
+\family typewriter
+
+\begin_inset Quotes erd
+\end_inset
+
+sense
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ has to be added):
+\end_layout
+
+\begin_layout Quotation
+
+\lang german
+\begin_inset Quotes eld
+\end_inset
+
+
+\lang english
+The inside or outside of the trim region to be kept or thrown away can be
+ selected with 
+\family typewriter
+Attribute 
+\begin_inset Quotes erd
+\end_inset
+
+trimcurve
+\begin_inset Quotes erd
+\end_inset
+
+ [
+\begin_inset Quotes erd
+\end_inset
+
+inside
+\begin_inset Quotes erd
+\end_inset
+
+]
+\family default
+ or 
+\family typewriter
+Attribute 
+\begin_inset Quotes erd
+\end_inset
+
+trimcurve
+\begin_inset Quotes erd
+\end_inset
+
+ [
+\begin_inset Quotes erd
+\end_inset
+
+outside
+\begin_inset Quotes erd
+\end_inset
+
+]
+\family default
+.
+ The default is 
+\family typewriter
+
+\begin_inset Quotes erd
+\end_inset
+
+inside
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+, indicating that the renderer should keep the part of the patch on the
+ 
+\emph on
+inside
+\emph default
+ of the trim curve and throw away the part of the patch on the 
+\emph on
+outside
+\emph default
+ of the trim curve (obviously, 
+\family typewriter
+
+\begin_inset Quotes erd
+\end_inset
+
+outside
+\begin_inset Quotes erd
+\end_inset
+
+
+\family default
+ keeps the outside and throws away the inside of the trim region).
+\lang german
+
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\lang english
+
+\begin_inset LatexCommand cite
+after "p. 108"
+key "Apod00"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In RiCPP these definitions are used.
+ 
+\family typewriter
+Attribute 
+\begin_inset Quotes erd
+\end_inset
+
+trimcurve
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes erd
+\end_inset
+
+sense
+\begin_inset Quotes erd
+\end_inset
+
+ [
+\begin_inset Quotes erd
+\end_inset
+
+inside
+\begin_inset Quotes erd
+\end_inset
+
+]
+\family default
+ is the default as described in 
+\begin_inset LatexCommand cite
+key "Pixa05"
+
+\end_inset
+
+ and 
+\family typewriter
+Attribute 
+\begin_inset Quotes erd
+\end_inset
+
+trimcurve
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Quotes erd
+\end_inset
+
+sense
+\begin_inset Quotes erd
+\end_inset
+
+ [
+\begin_inset Quotes erd
+\end_inset
+
+outside
+\begin_inset Quotes erd
+\end_inset
+
+]
+\family default
+ flips what's cut away.
+\end_layout
+
+\begin_layout Standard
+For the OpenGL output of RiCPP the trim curves are calculated using the
+ tessellation values of the current attribute stack.
+ The tessellation is not adaptive to the curvature of the trim curves.
+ If the curves are not connected head-to-tail or are not closed, an additional
+ line segment is inserted.
+ The resulting polygons are then used to trim the rectangular parametric
+ (u, v) grid of the NURBS surfaces.
+ The next step is to triangulate the trimmed grids using a general ear-clipping
+ algorithm, for ear-clipping see 
+\begin_inset LatexCommand cite
+key "Eber08"
+
+\end_inset
+
+.
+ Finally the parameters are evaluated for each triangle vertex.
+\end_layout
+
+\begin_layout Subsection*
+Example of a Trimcurve
+\end_layout
+
+\begin_layout Standard
+I found a RIB file of a small caps 'a' as a trim curve consiting of two
+ loops.
+ It gives an idea how a trim curve looks like.
+ The range of the coordinates is indicated by a gray square.
+ It is shown mirrored on the horizontal axis: The lower left has the coordinates
+ (0, 0), the upper right (1,1), because (0,0) will be mapped to the top
+ left corner of the rectangular NURBS patch and (1, 1) to the bottom right.
+ The top picture shows the two loops concatenated and filled appropriately.
+ The bottom picture shows the curves having a cross at their joints.
+ The start of the curves is indicated by grey segments.
+ The outer loop runs counter clockwise, the inner clockwise.
+ Thus the left side of the trim curve will be included, the right side will
+ be excluded.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Trim Curve 'a'
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename nurbs_a.pdf
+	BoundingBox 0bp 0bp 160bp 325bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The RIB Code of the curve is:
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+TrimCurve
+\end_layout
+
+\begin_layout LyX-Code
+  [ 1 1 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 4 4 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 0 0 0 0
+\end_layout
+
+\begin_layout LyX-Code
+    1 1 1 2 2 2 3 3 3
+\end_layout
+
+\begin_layout LyX-Code
+    4 4 4 5 5 5 6 6 6
+\end_layout
+
+\begin_layout LyX-Code
+    7 7 7 8 8 8 9 9 9
+\end_layout
+
+\begin_layout LyX-Code
+    10 10 10 11 11 11 12 12 12
+\end_layout
+
+\begin_layout LyX-Code
+    13 13 13 14 14 14 15 15 15
+\end_layout
+
+\begin_layout LyX-Code
+    16 16 16 16
+\end_layout
+
+\begin_layout LyX-Code
+    0 0 0 0
+\end_layout
+
+\begin_layout LyX-Code
+    1 1 1 2 2 2 3 3 3 4 4 4
+\end_layout
+
+\begin_layout LyX-Code
+    5 5 5 5 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 0 0 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 16 5 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 49 16 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 0.216594 0.228702 0.257058 0.459505 0.627541
+\end_layout
+
+\begin_layout LyX-Code
+    0.70847  0.70847  0.70847  0.657874 0.61537
+\end_layout
+
+\begin_layout LyX-Code
+    0.517633 0.419601 0.321863 0.026317 0
+\end_layout
+
+\begin_layout LyX-Code
+    0        0        0.137641 0.331995 0.538457
+\end_layout
+
+\begin_layout LyX-Code
+    0.645765 0.714586 0.72064  0.744919 0.902823
+\end_layout
+
+\begin_layout LyX-Code
+    0.94335  0.969667 1        1        1
+\end_layout
+
+\begin_layout LyX-Code
+    1        0.979737 0.957497 0.941311 0.904862
+\end_layout
+
+\begin_layout LyX-Code
+    0.88256  0.88256  0.882561 0.88256  0.88256
+\end_layout
+
+\begin_layout LyX-Code
+    0.88256  0.574906 0.489899 0.228702 0.060728
+\end_layout
+
+\begin_layout LyX-Code
+    0.052635 0.107234 0.161995 0.216594 0.704454
+\end_layout
+
+\begin_layout LyX-Code
+    0.704454 0.542472 0.376475 0.242911 0.184222
+\end_layout
+
+\begin_layout LyX-Code
+    0.184222 0.184222 0.323902 0.410947 0.631556
+\end_layout
+
+\begin_layout LyX-Code
+    0.676098 0.704454 0.704455 0.704454 0.704454 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 0.314607 0.242316 0.132002 0.132002 0.132002
+\end_layout
+
+\begin_layout LyX-Code
+    0.186248 0.285691 0.379725 0.394184 0.397826 
+\end_layout
+
+\begin_layout LyX-Code
+    0.408669 0.408668 0.430385 0.462888 0.64737
+\end_layout
+
+\begin_layout LyX-Code
+    0.726947 0.889686 1        1        1
+\end_layout
+
+\begin_layout LyX-Code
+    0.913195 0.846256 0.918603 0.99095  0.99095
+\end_layout
+
+\begin_layout LyX-Code
+    0.99095  0.980078 0.972849 0.934315 0.934314
+\end_layout
+
+\begin_layout LyX-Code
+    0.857127 0.860714 0.864356 0.864356 0.864356
+\end_layout
+
+\begin_layout LyX-Code
+    0.848077 0.808289 0.627043 0.627042 0.264003
+\end_layout
+
+\begin_layout LyX-Code
+    0.021688 0        0        0        0.088571
+\end_layout
+
+\begin_layout LyX-Code
+    0.314607 0.314608 0.314607 0.314607 0.645549
+\end_layout
+
+\begin_layout LyX-Code
+    0.772143 0.867943 0.867943 0.867943 0.806468
+\end_layout
+
+\begin_layout LyX-Code
+    0.703438 0.584074 0.560565 0.549694 0.524419
+\end_layout
+
+\begin_layout LyX-Code
+    0.509906 0.490039 0.541825 0.541824 0.645549 ]
+\end_layout
+
+\begin_layout LyX-Code
+  [ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+\end_layout
+
+\begin_layout LyX-Code
+    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+\end_layout
+
+\begin_layout LyX-Code
+    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ]
+\end_layout
+
+\begin_layout Standard
+The B-Spline patch is a planar bilinear blended single segment.
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+Attribute
+\series default
+ 
+\family typewriter
+
+\begin_inset Quotes erd
+\end_inset
+
+trimcurve
+\begin_inset Quotes erd
+\end_inset
+
+ [
+\begin_inset Quotes erd
+\end_inset
+
+inside
+\begin_inset Quotes erd
+\end_inset
+
+]
+\end_layout
+
+\begin_layout LyX-Code
+
+\series bold
+NuPatch
+\end_layout
+
+\begin_layout LyX-Code
+    2 2 [ 0 0 1 1 ] 0 1
+\end_layout
+
+\begin_layout LyX-Code
+    2 2 [ 0 0 1 1 ] 0 1
+\end_layout
+
+\begin_layout LyX-Code
+    "P" [ -0.123497  0.138252 0
+\end_layout
+
+\begin_layout LyX-Code
+           0.123497  0.138252 0
+\end_layout
+
+\begin_layout LyX-Code
+          -0.123497 -0.138252 0
+\end_layout
+
+\begin_layout LyX-Code
+           0.123497 -0.138252 0 ] 
+\end_layout
+
+\begin_layout Standard
+The rendered patch is shown in the next picture.
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Rendered Patch
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename nurbs_a_render.pdf
+	BoundingBox 0bp 0bp 95bp 110bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+label "Apod00"
+key "Apod00"
+
+\end_inset
+
+Apodaca, A.
+ A., and Gritz, L., 
+\emph on
+Advanced RenderMan: Creating CGI for Motion Pictures,
+\emph default
+ Academic Press, Morgan Kaufmann Publishers, Inc., San Fransisco, 2000
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+label "Fole90"
+key "Fole90"
+
+\end_inset
+
+Foley, J.
+ D., van Dam, A., Feiner, S.
+ K., and Hughes J.
+ F., 
+\emph on
+Computer Graphics: Principles and Practice,
+\emph default
+ 2nd ed., Addison-Wesley, Reading, MA., 1990
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+label "Pieg97"
+key "Pieg97"
+
+\end_inset
+
+Piegl, L., and Tiller, W., 
+\emph on
+The NURBS Book,
+\emph default
+ 2nd ed., Springer Verlag, Berlin, 1997
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+label "Pixa05"
+key "Pixa05"
+
+\end_inset
+
+Pixar, 
+\emph on
+The RenderMan Interface, Version 3.2.1,
+\emph default
+ Pixar, 2005
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+label "Roge01"
+key "Roge01"
+
+\end_inset
+
+Rogers, D.
+ F., 
+\emph on
+An Introduction to NURBS: With Historical Perspective
+\emph default
+, Academic Press, Morgan Kaufmann Publishers, Inc., San Fransisco, 2001
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+label "Eber08"
+key "Eber08"
+
+\end_inset
+
+Eberly, David, Triangulation by EarClipping, Geometric Tools, LLC 2008,
+ http://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
+\end_layout
+
+\end_body
+\end_document

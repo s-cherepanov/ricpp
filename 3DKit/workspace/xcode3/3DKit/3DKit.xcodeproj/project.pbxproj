@@ -1,0 +1,606 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		C3938C380E71931A009582F7 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C3938C530E719363009582F7 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				C3938C3E0E719325009582F7 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		207BDEA40E902E4D0050F403 /* G3DCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDE990E902E4D0050F403 /* G3DCamera.h */; };
+		207BDEA50E902E4D0050F403 /* G3DContextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDE9A0E902E4D0050F403 /* G3DContextManager.h */; };
+		207BDEA60E902E4D0050F403 /* G3DLight.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDE9B0E902E4D0050F403 /* G3DLight.h */; };
+		207BDEA70E902E4D0050F403 /* G3DMovieCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDE9C0E902E4D0050F403 /* G3DMovieCamera.h */; };
+		207BDEA80E902E4D0050F403 /* G3DRIBImageRep.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDE9D0E902E4D0050F403 /* G3DRIBImageRep.h */; };
+		207BDEA90E902E4D0050F403 /* G3DRenderPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDE9E0E902E4D0050F403 /* G3DRenderPanel.h */; };
+		207BDEAA0E902E4D0050F403 /* G3DRotator.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDE9F0E902E4D0050F403 /* G3DRotator.h */; };
+		207BDEAB0E902E4D0050F403 /* G3DShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDEA00E902E4D0050F403 /* G3DShader.h */; };
+		207BDEAC0E902E4D0050F403 /* G3DShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDEA10E902E4D0050F403 /* G3DShape.h */; };
+		207BDEAD0E902E4D0050F403 /* G3Dkit.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDEA20E902E4D0050F403 /* G3Dkit.h */; };
+		207BDEAE0E902E4D0050F403 /* gnu3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 207BDEA30E902E4D0050F403 /* gnu3d.h */; };
+		207BDEB60E90300E0050F403 /* G3DContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 207BDEB50E90300E0050F403 /* G3DContextManager.m */; };
+		207BDF390E903B350050F403 /* G3DKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3938C2E0E7192D9009582F7 /* G3DKit.dylib */; };
+		207BDF3A0E903B420050F403 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3938C0D0E719178009582F7 /* libriprog.1.dylib */; };
+		208DB14B0E82F28900019042 /* slo.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB14A0E82F28900019042 /* slo.h */; };
+		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
+		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
+		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		C30DB0720E6C3A5300EB8FB7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
+		C30DB0940E6C3C1C00EB8FB7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
+		C381153C0E9E34B300AED4FB /* G3DCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = C381153B0E9E34B300AED4FB /* G3DCamera.m */; };
+		C3938C0E0E719178009582F7 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3938C0D0E719178009582F7 /* libriprog.1.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		207BDF3D0E903B6A0050F403 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3938C2D0E7192D9009582F7;
+			remoteInfo = G3DKit;
+		};
+		C3938C3D0E719325009582F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = 3DKit;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		207BDE990E902E4D0050F403 /* G3DCamera.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DCamera.h; path = ../../../source/include/3DKit/G3DCamera.h; sourceTree = SOURCE_ROOT; };
+		207BDE9A0E902E4D0050F403 /* G3DContextManager.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DContextManager.h; path = ../../../source/include/3DKit/G3DContextManager.h; sourceTree = SOURCE_ROOT; };
+		207BDE9B0E902E4D0050F403 /* G3DLight.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DLight.h; path = ../../../source/include/3DKit/G3DLight.h; sourceTree = SOURCE_ROOT; };
+		207BDE9C0E902E4D0050F403 /* G3DMovieCamera.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DMovieCamera.h; path = ../../../source/include/3DKit/G3DMovieCamera.h; sourceTree = SOURCE_ROOT; };
+		207BDE9D0E902E4D0050F403 /* G3DRIBImageRep.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DRIBImageRep.h; path = ../../../source/include/3DKit/G3DRIBImageRep.h; sourceTree = SOURCE_ROOT; };
+		207BDE9E0E902E4D0050F403 /* G3DRenderPanel.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DRenderPanel.h; path = ../../../source/include/3DKit/G3DRenderPanel.h; sourceTree = SOURCE_ROOT; };
+		207BDE9F0E902E4D0050F403 /* G3DRotator.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DRotator.h; path = ../../../source/include/3DKit/G3DRotator.h; sourceTree = SOURCE_ROOT; };
+		207BDEA00E902E4D0050F403 /* G3DShader.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DShader.h; path = ../../../source/include/3DKit/G3DShader.h; sourceTree = SOURCE_ROOT; };
+		207BDEA10E902E4D0050F403 /* G3DShape.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3DShape.h; path = ../../../source/include/3DKit/G3DShape.h; sourceTree = SOURCE_ROOT; };
+		207BDEA20E902E4D0050F403 /* G3Dkit.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3Dkit.h; path = ../../../source/include/3DKit/G3Dkit.h; sourceTree = SOURCE_ROOT; };
+		207BDEA30E902E4D0050F403 /* gnu3d.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = gnu3d.h; path = ../../../source/include/3DKit/gnu3d.h; sourceTree = SOURCE_ROOT; };
+		207BDEB50E90300E0050F403 /* G3DContextManager.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = G3DContextManager.m; path = ../../../source/3DKit/G3DContextManager.m; sourceTree = SOURCE_ROOT; };
+		208DB14A0E82F28900019042 /* slo.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = slo.h; path = ../../../source/include/ricpp/ri/slo.h; sourceTree = SOURCE_ROOT; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; path = main.m; sourceTree = "<group>"; };
+		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32CA4F630368D1EE00C91783 /* 3DKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 3DKit_Prefix.pch; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* 3DKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C381153B0E9E34B300AED4FB /* G3DCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = G3DCamera.m; path = ../../../source/3DKit/G3DCamera.m; sourceTree = SOURCE_ROOT; };
+		C3938C0D0E719178009582F7 /* libriprog.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libriprog.1.dylib; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib; sourceTree = SOURCE_ROOT; };
+		C3938C2E0E7192D9009582F7 /* G3DKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = G3DKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C30DB0940E6C3C1C00EB8FB7 /* AppKit.framework in Frameworks */,
+				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+				C30DB0720E6C3A5300EB8FB7 /* Foundation.framework in Frameworks */,
+				C3938C0E0E719178009582F7 /* libriprog.1.dylib in Frameworks */,
+				207BDF390E903B350050F403 /* G3DKit.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C3938C2C0E7192D9009582F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207BDF3A0E903B420050F403 /* libriprog.1.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				207BDE980E902E370050F403 /* 3DKit */,
+				207BDE970E902E1A0050F403 /* RiCPP */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C3938C0D0E719178009582F7 /* libriprog.1.dylib */,
+				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
+				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				13E42FB307B3F0F600E4EEF1 /* CoreData.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107320486CEB800E47090 /* 3DKit.app */,
+				C3938C2E0E7192D9009582F7 /* G3DKit.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		207BDE970E902E1A0050F403 /* RiCPP */ = {
+			isa = PBXGroup;
+			children = (
+				207BDEB40E902FF10050F403 /* Headers */,
+			);
+			name = RiCPP;
+			sourceTree = "<group>";
+		};
+		207BDE980E902E370050F403 /* 3DKit */ = {
+			isa = PBXGroup;
+			children = (
+				207BDEB20E902FCF0050F403 /* Headers */,
+				207BDEB30E902FE50050F403 /* Implementation */,
+			);
+			name = 3DKit;
+			sourceTree = "<group>";
+		};
+		207BDEB20E902FCF0050F403 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				207BDE990E902E4D0050F403 /* G3DCamera.h */,
+				207BDE9A0E902E4D0050F403 /* G3DContextManager.h */,
+				207BDE9B0E902E4D0050F403 /* G3DLight.h */,
+				207BDE9C0E902E4D0050F403 /* G3DMovieCamera.h */,
+				207BDE9D0E902E4D0050F403 /* G3DRIBImageRep.h */,
+				207BDE9E0E902E4D0050F403 /* G3DRenderPanel.h */,
+				207BDE9F0E902E4D0050F403 /* G3DRotator.h */,
+				207BDEA00E902E4D0050F403 /* G3DShader.h */,
+				207BDEA10E902E4D0050F403 /* G3DShape.h */,
+				207BDEA20E902E4D0050F403 /* G3Dkit.h */,
+				207BDEA30E902E4D0050F403 /* gnu3d.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		207BDEB30E902FE50050F403 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				207BDEB50E90300E0050F403 /* G3DContextManager.m */,
+				C381153B0E9E34B300AED4FB /* G3DCamera.m */,
+			);
+			name = Implementation;
+			sourceTree = "<group>";
+		};
+		207BDEB40E902FF10050F403 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				208DB14A0E82F28900019042 /* slo.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* 3DKit */ = {
+			isa = PBXGroup;
+			children = (
+				080E96DDFE201D6D7F000001 /* Classes */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = 3DKit;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32CA4F630368D1EE00C91783 /* 3DKit_Prefix.pch */,
+				29B97316FDCFA39411CA2CEA /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107310486CEB800E47090 /* Info.plist */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		C3938C2A0E7192D9009582F7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				208DB14B0E82F28900019042 /* slo.h in Headers */,
+				207BDEA40E902E4D0050F403 /* G3DCamera.h in Headers */,
+				207BDEA50E902E4D0050F403 /* G3DContextManager.h in Headers */,
+				207BDEA60E902E4D0050F403 /* G3DLight.h in Headers */,
+				207BDEA70E902E4D0050F403 /* G3DMovieCamera.h in Headers */,
+				207BDEA80E902E4D0050F403 /* G3DRIBImageRep.h in Headers */,
+				207BDEA90E902E4D0050F403 /* G3DRenderPanel.h in Headers */,
+				207BDEAA0E902E4D0050F403 /* G3DRotator.h in Headers */,
+				207BDEAB0E902E4D0050F403 /* G3DShader.h in Headers */,
+				207BDEAC0E902E4D0050F403 /* G3DShape.h in Headers */,
+				207BDEAD0E902E4D0050F403 /* G3Dkit.h in Headers */,
+				207BDEAE0E902E4D0050F403 /* gnu3d.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8D1107260486CEB800E47090 /* 3DKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "3DKit" */;
+			buildPhases = (
+				8D1107290486CEB800E47090 /* Resources */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+				C340966A0E6C42920007E076 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				207BDF3E0E903B6A0050F403 /* PBXTargetDependency */,
+			);
+			name = 3DKit;
+			productInstallPath = "$(HOME)/Applications";
+			productName = 3DKit;
+			productReference = 8D1107320486CEB800E47090 /* 3DKit.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C3938C2D0E7192D9009582F7 /* G3DKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C3938C370E719318009582F7 /* Build configuration list for PBXNativeTarget "G3DKit" */;
+			buildPhases = (
+				C3938C2A0E7192D9009582F7 /* Headers */,
+				C3938C2B0E7192D9009582F7 /* Sources */,
+				C3938C2C0E7192D9009582F7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = G3DKit;
+			productName = G3DKit;
+			productReference = C3938C2E0E7192D9009582F7 /* G3DKit.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "3DKit" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* 3DKit */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C3938C380E71931A009582F7 /* All */,
+				C3938C2D0E7192D9009582F7 /* G3DKit */,
+				8D1107260486CEB800E47090 /* 3DKit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D1107290486CEB800E47090 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
+				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C340966A0E6C42920007E076 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${CP} ${PROJECT_DIR}/../../../../../ricpp/ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib ${TARGET_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}\n${CP} ${PROJECT_DIR}/../../../../../ricpp/ricpp2/workspace/xcode3/ricppframework/build/Release/libglrenderer.1.dylib ${TARGET_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072D0486CEB800E47090 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C3938C2B0E7192D9009582F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207BDEB60E90300E0050F403 /* G3DContextManager.m in Sources */,
+				C381153C0E9E34B300AED4FB /* G3DCamera.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		207BDF3E0E903B6A0050F403 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3938C2D0E7192D9009582F7 /* G3DKit */;
+			targetProxy = 207BDF3D0E903B6A0050F403 /* PBXContainerItemProxy */;
+		};
+		C3938C3E0E719325009582F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* 3DKit */;
+			targetProxy = C3938C3D0E719325009582F7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C165DFE840E0CC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				29B97319FDCFA39411CA2CEA /* English */,
+			);
+			name = MainMenu.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C01FCF4B08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = 3DKit_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+					"\"$(SRCROOT)/build/Release\"",
+				);
+				PRODUCT_NAME = 3DKit;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C01FCF4C08A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = 3DKit_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+					"\"$(SRCROOT)/build/Release\"",
+				);
+				PRODUCT_NAME = 3DKit;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../source/include\"",
+					"\"$(SRCROOT)/../../../../ricpp2/source/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"";
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../source/include\"",
+					"\"$(SRCROOT)/../../../../ricpp2/source/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"";
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
+			};
+			name = Release;
+		};
+		C3938C2F0E7192D9009582F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = G3DKit;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C3938C300E7192D9009582F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = G3DKit;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C3938C390E71931B009582F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = All;
+			};
+			name = Debug;
+		};
+		C3938C3A0E71931B009582F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = All;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "3DKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4B08A954540054247B /* Debug */,
+				C01FCF4C08A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "3DKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C3938C370E719318009582F7 /* Build configuration list for PBXNativeTarget "G3DKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C3938C2F0E7192D9009582F7 /* Debug */,
+				C3938C300E7192D9009582F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C3938C530E719363009582F7 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C3938C390E71931B009582F7 /* Debug */,
+				C3938C3A0E71931B009582F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

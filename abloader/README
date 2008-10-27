@@ -1,0 +1,13 @@
+abloader is a plugin that allows the ray tracer Augenblick
+to load RIB scenes. abloader can also be used by the RiCPP
+frontend. abrib is a program that loads RIB and displays
+its contents using Augenblick and GLUT.
+
+For compilation:
+
+Headers expected in /usr/local/include/Augenblick
+libAugenblick.dylib in /usr/local/lib
+Augenblick needs an additional directory /user/local/lib/Augenblick.
+
+Augenblick is (c) by Oliver Abert, University of Koblenz
+http://web.me.com/abert

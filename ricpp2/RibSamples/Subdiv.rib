@@ -1,0 +1,38 @@
+##RenderMan RIB-Structure 1.0
+version 3.04
+
+Projection "perspective" "fov" [50]
+# Format 512 512 1
+Display "Subdivision" "framebuffer" "rgba"
+Translate 0 0 2
+
+ObjectBegin 1
+SubdivisionMesh "none" # "catmull-clark"
+[ 4 4 4 4 4 4 4 4 4 ]
+[ 0 4 5 1 1 5 6 2 2 6 7 3 4 8 9 5 5 9 10 6 6 10 11 7 8 12 13 9 9 13 14 10 10 14 15 11 ]
+[ "interpolateboundary" ] [ 1 0 ] [ 1 ] [ ]
+"vertex point P" [ -0.6 0.6 0 -0.6 0.2 0 -0.6 -0.2 0 -0.6 -0.6 0 -0.2 0.6 0 -0.2 0.2 0.45 -0.2 -0.2 0.45 -0.2 -0.6 0 0.2 0.6 0 0.2 0.2 0.45 0.2 -0.2 0.45 0.2 -0.6 0 0.6 0.6 0 0.6 0.2 0 0.6 -0.2 0 0.6 -0.6 0 ] 
+ObjectEnd
+
+Sides 2
+Clipping 0.1 128
+
+WorldBegin
+      LightSource "distantlight" 1 "from" [-1 1 -1]
+      LightSource "distantlight" 2 "from" [1 -1 1] "intensity" [.4]
+
+      Rotate -90 1 0 0
+      GeometricApproximation "tesselation" 16
+      GeometricRepresentation "lines"
+	  Color 0 1 0
+      Surface "matte"
+      ObjectInstance 1
+
+      LightSource "ambientlight" 3
+      Surface "matte"
+      GeometricApproximation "tesselation" 1
+      GeometricRepresentation "lines"
+	  Color 1 0 0
+      ObjectInstance 1
+WorldEnd
+

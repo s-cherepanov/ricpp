@@ -1,0 +1,9 @@
+//
+// Prefix header for all source files of the '3DKit' target in the '3DKit' project
+//
+
+#ifdef __OBJC__
+	#import <Appkit/Appkit.h>
+    #import <Cocoa/Cocoa.h>
+	#import <Foundation/Foundation.h>
+#endif

@@ -1,0 +1,109 @@
+##RenderMan RIB-Structure 1.0
+
+ObjectBegin 1
+# Sphere .9 -.75 .85 360 
+# Sphere .9 -.75 .85 270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Disk .5 .8 270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Cone 1 .5 270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Cylinder .7 -.4 .4 270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Torus .7 .3 40 240 270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Paraboloid .7 .25 1.2 270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Hyperboloid .5 .5 -.5  .5 -.5 .5  270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Hyperboloid .5 -.5 .5  .5 .5 -.5  -270 "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ]
+# Patch "bilinear" "P" [ -.7 -.7 -0.5  .7 .6 -0.5  -1.1 .7 0.5  .4 -.7 0.5 ] "Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ] 
+
+Patch "bicubic" "P" [
+-0.9  0.9 -0.4  -0.3  0.9  0.5  0.3  0.9  0.5  0.9  0.9 -0.4
+-0.9  0.3  0    -0.3  0.3 -0.5  0.3  0.3 -0.5  0.9  0.3  0
+-0.9 -0.3  0    -0.3 -0.3 -0.5  0.3 -0.3 -0.5  0.9 -0.3  0
+-0.9 -0.9 -0.4  -0.3 -0.9  0.5  0.3 -0.9  0.5  0.9 -0.9 -0.4
+] "varying color Cs" [ 1 0 0  0 1 0  0 0 1  0 0 0 ] 
+ObjectEnd
+
+Display "quadsmp.tif" "framebuffer" "rgba"
+# GeometricApproximation "tesselation" 4 
+GeometricApproximation "tesselation" 4
+Projection "perspective" "fov" [ 36 ]
+
+Translate 0 0 2
+
+WorldBegin
+
+Color 1 1 1 
+Surface "matte"
+
+
+TransformBegin
+Rotate -20 0 1 0
+
+LightSource "ambientlight" 0 "intensity" [ 0.1 ]
+LightSource "distantlight" 1 "from" [ 0 0 0 ] "to" [ 0 0 2 ] "intensity" [ 1.5 ]
+# LightSource "pointlight" 2 "from" [ 0 0 -2 ] "intensity" [ 10 ]
+# LightSource "spotlight" 3 "from" [ 0 0 0 ] "to" [ 0 0 2 ] "intensity" [ 1.5 ]
+
+AttributeBegin
+  Translate 0 0 -2
+  Color 1 1 1
+  Surface "matte"
+  Cylinder .01 -.4 0 360
+  Cone .1 .03 360
+AttributeEnd
+TransformEnd
+
+# Illuminate 0 1
+# Illuminate 1 1
+# Illuminate 2 1
+# Illuminate 3 1
+
+AttributeBegin
+
+Rotate 20 0 0 1 
+Rotate 20 0 1 0
+Rotate 20 1 0 0
+
+AttributeBegin
+  Color 0 0 1 
+  Surface "matte"
+  Cylinder .01 -1.2 1.2 360
+  TransformBegin
+    Translate 0 0 1.2
+    Cone .1 .03 360
+  TransformEnd
+AttributeEnd
+
+AttributeBegin
+  Color 1 0 0 
+  Surface "matte"
+  Rotate 90 0 1 0
+  Cylinder .01 -1.2 1.2 360
+  TransformBegin
+    Translate 0 0 1.2
+    Cone .1 .03 360
+  TransformEnd
+AttributeEnd
+
+AttributeBegin
+  Color 0 1 0 
+  Surface "matte"
+  Rotate -90 1 0 0
+  Cylinder .01 -1.2 1.2 360
+  TransformBegin
+    Translate 0 0 1.2
+    Cone .1 .03 360
+  TransformEnd
+AttributeEnd
+
+AttributeBegin
+
+# Sides 1
+# ReverseOrientation
+GeometricApproximation "tesselation" 64 
+# GeometricRepresentation "lines"
+Surface "paintedplastic" "texturename" [ "texture.tif" ]
+# Surface "paintedplastic" "texturename" [ "grid.tex" ]
+
+ObjectInstance 1
+
+AttributeEnd
+AttributeEnd
+WorldEnd

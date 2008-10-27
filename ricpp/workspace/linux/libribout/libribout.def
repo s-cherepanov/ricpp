@@ -1,0 +1,6 @@
+include ../../../depend/ricpp.dep
+include ../../ricpp.def
+
+OBJ  = $(OBJPATH)/libribout.o $(OBJPATH)/stdafx.o
+DEBUGBIN  = $(OUTPATH)/libriboutd.a
+RELEASEBIN  = $(OUTPATH)/libribout.a

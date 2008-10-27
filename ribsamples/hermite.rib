@@ -1,0 +1,44 @@
+Display "hermite.tiff" "file" "rgb"
+
+Projection "perspective" "fov" 38
+# Format 380 380 -1
+# Rotate 1 30 0 0
+Translate 0 0 4
+
+GeometricApproximation "tesselation" 64
+# GeometricRepresentation "points"
+# GeometricRepresentation "lines"
+
+WorldBegin
+#  LightSource "ambientlight" 1 "intensity" 1
+  LightSource "distantlight" 2 "intensity" [ .7 ] "from" [0 3 -4] "to" [0 0 0]
+# LightSource "distantlight" 2 "from" [0 3 -4] "to" [0 0 0]
+
+  Color 1 1 1
+#  Surface "matte"
+  Surface "paintedplastic" "texturename" [ "grid.tex" ]
+
+ Basis "hermite" 2 "hermite" 2
+
+ # Data From: Daniel McCoy <mccoy@pixar.com>
+ Orientation "rh"
+ # Hermite patch that makes an egg carton shape using
+ # the edge vectors
+ Patch "bicubic" "P" [
+  -1.0 -1.0  0.0   2.0  0.0  5.0     1.0 -1.0  0.0   2.0  0.0  5.0
+   0.0  2.0  5.0   0.0  0.0  0.0     0.0  2.0 -5.0   0.0  0.0  0.0
+  -1.0  1.0  0.0   2.0  0.0 -5.0     1.0  1.0  0.0   2.0  0.0 -5.0
+   0.0  2.0  5.0   0.0  0.0  0.0     0.0  2.0 -5.0   0.0  0.0  0.0 ]
+
+
+Basis "hermite" 2 "hermite" 2
+#  Mesh that creates a larger egg carton by inflecting the edges
+#  PatchMesh "bicubic" 6 "nonperiodic" 6 "nonperiodic" "P" [
+# -1 -1  0   1  0  3     0 -1  0   1  0  3      1 -1  0   1  0  3
+#  0  1 -3   0  0  0     0  1 -3   0  0  0      0  1 -3   0  0  0
+# -1  0  0   1  0  3     0  0  0   1  0  3      1  0  0   1  0  3
+#  0  1 -3   0  0  0     0  1 -3   0  0  0      0  1 -3   0  0  0
+# -1  1  0   1  0  3     0  1  0   1  0  3      1  1  0   1  0  3
+#  0  1 -3   0  0  0     0  1 -3   0  0  0      0  1 -3   0  0  0]
+
+WorldEnd

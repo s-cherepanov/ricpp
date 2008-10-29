@@ -13,8 +13,7 @@
  *         Copyright 1988, 1989, 2000, 2005 Pixar
  *                 All rights Reservered
  */
- 
-#import <ricpp/ri/ri.h>
+#import <3Dkit/gnu3d.h>
 
 typedef struct {
 	char id[6]; /* self, encoded to 6 non-0 bytes */
@@ -22,10 +21,10 @@ typedef struct {
 } G3DShapeName;
 
 /* flags for CTM and inverse dirty bits */
-#define N3D_BOTH_CLEAN        0
-#define N3D_CTM_DIRTY         1
-#define N3D_CTM_INVERSE_DIRTY 2
-#define N3D_CTM_BOTH_DIRTY    3
+#define G3D_BOTH_CLEAN        0
+#define G3D_CTM_DIRTY         1
+#define G3D_CTM_INVERSE_DIRTY 2
+#define G3D_CTM_BOTH_DIRTY    3
 
 @interface G3DShape : NSObject
 {
@@ -93,6 +92,11 @@ typedef struct {
 
 - (BOOL)isWorld;
 
-- setSurfaceType:(G3DSurfaceType)surfaceType andDescendants:(BOOL)flag;
+/*
+- setRecursiveSurfaceType:(G3DSurfaceType)aSurfaceType;
+- setSurfaceType:(G3DSurfaceType)aSurfaceType;
+*/
+
+- setSurfaceType:(G3DSurfaceType)aSurfaceType andDescendants:(BOOL)flag;
 - (G3DSurfaceType)surfaceType;
 @end

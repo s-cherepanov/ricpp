@@ -147,12 +147,19 @@ public:
 	 */
 	void putBlank();
 
+	/** @brief Puts out an encoded single character of a string.
+	 *
+	 *  @param ce Character of a string to put out
+	 */
+	void putEncodedChar(char ce);
+
 	/** @brief Puts out a single character.
 	 *
-	 *  Since a 7-bit ASCII stream is used, c has to be positive.
-	 *  Negative characters (highest bit set) are used to encode binary data.
+	 *  Since a 7-bit ASCII stream is used for RIB, c has to be positive normally.
+	 *  However in practice, within comments characters < 0 can be found.
+	 *  m_linecnt will be incremented if c is a line feed.
 	 *
-	 *  @param c Character to put out (c >= 0).
+	 *  @param c Character to put out.
 	 */
 	void putChar(char c);
 	
@@ -162,7 +169,7 @@ public:
 	void putChars(const char *cs);
 
 	/** @brief Puts out a comment line, started with '#' and terminated by endl.
-	 *  @param type Type of the comment (RICOMMENT, RI_STRUCTURE, RI_VERBATIM)
+	 *  @param type Type of the comment (RI_COMMENT, RI_STRUCTURE, RI_VERBATIM)
 	 *  @param cs Character string to put out (without the first '#').
 	 */
 	void putComment(RtToken type, const char *cs);

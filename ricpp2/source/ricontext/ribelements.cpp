@@ -69,9 +69,54 @@ void CRibElementsWriter::putBlank()
 }
 
 
+void CRibElementsWriter::putEncodedChar(char ce)
+{
+	switch ( ce ) {
+		case '\n' :
+			m_ostream << "\\n";
+			break;
+		case '\r' :
+			m_ostream << "\\r";
+			break;
+		case '\t' :
+			m_ostream << "\\t";
+			break;
+		case '\b' :
+			m_ostream << "\\b";
+			break;
+		case '\f' :
+			m_ostream << "\\f";
+			break;
+		case '\\' :
+			m_ostream << "\\\\";
+			break;
+		case '"' :
+			m_ostream << "\\\"";
+			break;
+		default:
+			if ( ce >= ' ' && ce <= '~' ) {
+				m_ostream << ce;
+			} else {
+				unsigned char c = (unsigned char)ce;
+				int d3 = c / 64;
+				c %= 64;
+				int d2 = c / 8;
+				c %= 8;
+				int d1 = c;
+				m_ostream << '\\';
+				m_ostream << (char)('0'+d3);
+				m_ostream << (char)('0'+d2);
+				m_ostream << (char)('0'+d1);
+			}
+	}
+}
+
 void CRibElementsWriter::putChar(char c)
 {
-	assert (c >= 0);
+	// if (c < 0) {
+	// 	putEncodedChar(c);
+	// 	return;
+	// }
 	m_ostream << c;
 	if ( c == '\n' )
 		++m_linecnt;
@@ -85,8 +130,6 @@ void CRibElementsWriter::putChars(const char *cs)
 	
 	for ( ; *cs; ++cs )
 		putChar(*cs);
-		
-	// m_ostream << cs;
 }
 
 
@@ -395,44 +438,7 @@ void CRibElementsWriter::putString(RtString aString)
 	
 		m_ostream << "\"";
 		for ( ; *aString; ++aString ) {
-			switch ( *aString ) {
-				case '\n' :
-					m_ostream << "\\n";
-					break;
-				case '\r' :
-					m_ostream << "\\r";
-					break;
-				case '\t' :
-					m_ostream << "\\t";
-					break;
-				case '\b' :
-					m_ostream << "\\b";
-					break;
-				case '\f' :
-					m_ostream << "\\f";
-					break;
-				case '\\' :
-					m_ostream << "\\\\";
-					break;
-				case '"' :
-					m_ostream << "\\\"";
-					break;
-				default:
-					if ( *aString >= ' ' && *aString <= '~' ) {
-						m_ostream << *aString;
-					} else {
-						unsigned char c = (unsigned char)*aString;
-						int d3 = c / 64;
-						c %= 64;
-						int d2 = c / 8;
-						c %= 8;
-						int d1 = c;
-						m_ostream << '\\';
-						m_ostream << (char)('0'+d3);
-						m_ostream << (char)('0'+d2);
-						m_ostream << (char)('0'+d1);
-					}
-			}
+			putEncodedChar( *aString );
 		}
 		m_ostream << "\"";
 		

@@ -1,57 +1,30 @@
-# The RenderMan® Interface Procedures and Protocol are:
+##RenderMan RIB-Structure 1.0
+version 3.04
+# The RenderMan(r) Interface Procedures and Protocol are:
 # Copyright 1988, 1989, 2000, 2005 Pixar
 # All Rights Reserved
-version 3.04
-Sides 2
-Declare "lighttype" "uniform string"
-Declare "cuton" "uniform float"
-Declare "cutoff" "uniform float"
-Declare "nearedge" "uniform float"
-Declare "faredge" "uniform float"
-Declare "falloffstart" "uniform float"
-Declare "falloffend" "uniform float"
-Declare "parallelrays" "uniform float"
-Declare "penumbrablur" "uniform float"
-Declare "gelmap" "uniform string"
-Declare "shadowmap" "uniform string"
-Declare "shadowblur" "uniform float"
-Declare "shadowbias" "uniform float"
-Declare "shadowstrength" "uniform float"
-Declare "shadowsamples" "uniform float"
-Declare "skyimage" "uniform string"
-Declare "exposure" "uniform float"
-Declare "numlights" "uniform float"
-Declare "maxdist" "uniform float"
-Declare "shadows" "uniform float"
-Declare "area" "uniform float"
-Declare "shader" "uniform string"
-Declare "visibleinshadows" "uniform float"
-Declare "displacement" "uniform float"
-Declare "bucketsize" "uniform integer[2]"
-Declare "maxraydepth" "uniform integer"
+Sides 1
+Declare "name" "string"
 FrameBegin 0
-# Option "rayaccelerator" "hbvo"
-# EyeSplit 10
 PixelSamples 3 3
 ShadingRate 1
 PixelFilter "gaussian" 2.000000 2.000000
-Option "limits" "bucketsize" [32 32]
 Exposure 1.000000 1.000000
 Quantize "rgba" 255 0 255 0.500000
-Option "limits" "maxraydepth" [6]
 Projection "perspective" "fov" [45.000000]
 Format 512 512 1.000000
-Display "Icon.00000" "TIFF" "rgba"
-Transform [-0.661313 0.157017 0.733492 0.000000 0.000010 0.977848 -0.209317 0.000000 -0.750110 -0.138417 -0.646665 0.000000 0.000000 0.000000 27.823463 1.000000]
+Display "RibViewer.tiff" "file" "rgba"
+LightSource "distantlight" 1 "from" [-1 1 -1] "intensity" [1.5]
+LightSource "distantlight" 2 "from" [1 0 2] "intensity" [0.2]
+LightSource "ambientlight" 3 "intensity" [0.1]
+Transform [-0.662234 0.156684 0.732732 0.000000 0.000010 0.977894 -0.209099 0.000000 -0.749297 -0.138465 -0.647596 0.000000 0.000000 0.000000 25.407351 1.000000]
 Scale -1 1 1
-Translate 4.129284 -4.946924 -0.546372
+Translate 4.129241 -4.946924 -0.546322
 WorldBegin
-LightSource "uberlight" 1 "lighttype" ["spot"] "intensity" [1.000000] "lightcolor" [1.000000 1.000000 1.000000] "from" [0.000000 40.000000 40.000000] "to" [0.000000 0.000000 0.000000] "cuton" [0.010000] "cutoff" [1000000.000000] "nearedge" [0.000000] "faredge" [0.000000] "falloffstart" [100000.000000] "falloffend" [100000.000000] "parallelrays" [0] "coneangle" [0.392699] "penumbrablur" [0.100000] "gelmap" [""] "shadowmap" [""] "shadowblur" [3.000000] "shadowbias" [0.200000] "shadowstrength" [1.000000] "shadowsamples" [19]
+Surface "plastic" "Ks" [0.3] "Kd" [0.6] "Ka" [0.1] "roughness" [0.3]
 AttributeBegin
 Transform [1.000000 0.000000 0.000000 0.000000 0.000000 0.000000 -1.000000 0.000000 0.000000 1.000000 0.000000 0.000000 -2.723867 7.500000 -4.133373 1.000000]
 ShadingRate 1.000000
-Attribute "bound" "displacement" [0.000000]
-Attribute "raytracer" "visibleinshadows" [0.000000]
 Attribute "identifier" "name" ["Cone"]
 Color [0.058824 1.000000 0.058824]
 Opacity [1.000000 1.000000 1.000000]
@@ -70,8 +43,6 @@ AttributeEnd
 AttributeBegin
 Transform [1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 2.810033 4.000000 5.704098 1.000000]
 ShadingRate 1.000000
-Attribute "bound" "displacement" [0.000000]
-Attribute "raytracer" "visibleinshadows" [0.000000]
 Attribute "identifier" "name" ["Sphere"]
 Color [1.000000 0.058824 0.058824]
 Opacity [1.000000 1.000000 1.000000]
@@ -81,11 +52,10 @@ AttributeEnd
 AttributeBegin
 Transform [0.972614 0.232427 0.000000 0.000000 -0.232427 0.972614 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 -9.305114 5.841224 -2.391309 1.000000]
 ShadingRate 1.000000
-Attribute "bound" "displacement" [0.000000]
-Attribute "raytracer" "visibleinshadows" [0.000000]
 Attribute "identifier" "name" ["Cube"]
 Color [0.058824 0.058824 1.000000]
 Opacity [1.000000 1.000000 1.000000]
+Surface "matte"
 Basis "b-spline" 1 "b-spline" 1
 PatchMesh "bilinear" 9 "nonperiodic" 4 "nonperiodic" "P" [0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 -0.050000 6.000000 -8.000000 -0.050000 0.000000 -8.000000 -0.050000 -6.000000 -8.000000 0.000000 -6.000000 -8.000000 0.050000 -6.000000 -8.000000 0.050000 0.000000 -8.000000 0.050000 6.000000 -8.000000
 0.000000 6.000000 -8.000000 -0.050000 6.000000 -8.000000 -0.050000 6.000000 8.000000 -0.050000 0.000000 8.000000 -0.050000 -6.000000 8.000000 0.000000 -6.000000 8.000000 0.050000 -6.000000 8.000000 0.050000 0.000000 8.000000 0.050000 6.000000 8.000000 0.000000 6.000000 8.000000 -0.050000 6.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000
@@ -94,11 +64,10 @@ AttributeEnd
 AttributeBegin
 Transform [0.881633 0.471935 0.000000 0.000000 -0.471935 0.881633 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 -10.938626 5.328981 -2.391309 1.000000]
 ShadingRate 1.000000
-Attribute "bound" "displacement" [0.000000]
-Attribute "raytracer" "visibleinshadows" [0.000000]
 Attribute "identifier" "name" ["Cube_1"]
 Color [1.000000 1.000000 0.000000]
 Opacity [1.000000 1.000000 1.000000]
+Surface "matte"
 Basis "b-spline" 1 "b-spline" 1
 PatchMesh "bilinear" 9 "nonperiodic" 4 "nonperiodic" "P" [0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 0.000000 0.000000 -8.000000 -0.050000 6.000000 -8.000000 -0.050000 0.000000 -8.000000 -0.050000 -6.000000 -8.000000 0.000000 -6.000000 -8.000000 0.050000 -6.000000 -8.000000 0.050000 0.000000 -8.000000 0.050000 6.000000 -8.000000
 0.000000 6.000000 -8.000000 -0.050000 6.000000 -8.000000 -0.050000 6.000000 8.000000 -0.050000 0.000000 8.000000 -0.050000 -6.000000 8.000000 0.000000 -6.000000 8.000000 0.050000 -6.000000 8.000000 0.050000 0.000000 8.000000 0.050000 6.000000 8.000000 0.000000 6.000000 8.000000 -0.050000 6.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000 0.000000 0.000000 8.000000

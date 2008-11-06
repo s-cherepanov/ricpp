@@ -19,10 +19,64 @@
 
 
 typedef struct {
+	SLO_VISSYMDEF symb;
+	union {
+		float fval;
+		RtPoint pval;
+		RtFloat *cval;
+		NSColor *sval;
+	} value;
+	RtPoint _rgbv;
 } SLOArgs;
 
-@interface N3DShader : NSObject
+@interface G3DShader : NSObject
 {
+	NSColor *color;
+	float transparency;
+	char *shader;
+	SLO_TYPE shaderType;
+	int shaderArgCount; // size of shaderArgs
+	SLOArgs *shaderArgs;
+	// NXZone *zone;
+	
+@private
+	RtToken *_sTokens;
+	RtPointer *_sValues;
+	BOOL _doColor;
+	RtColor _rgbColor;
+	RtColor _rgbOpacity;
+	char * _rsName;
+	// void *_G3Dprivate;
 }
 
+- init;
+- initWithShader:(const char *)aShader;
+- free;
+
+- setShader:(const char *)shader;
+- (const char *)shader;
+- setColor:(NSColor *)aColor;
+- (NSColor *)color;
+- setUseColor:(BOOL)flag;
+- (BOOL)doesUseColor;
+- setTransparency:(float)value;
+- (float)transparency;
+- (int)shaderArgCount;
+- (const char *)shaderArgNameAt:(int)i;
+- (SLO_TYPE)shaderArgType:(const char *)aName;
+- (BOOL)isShaderArg:(const char *)aName;
+- (SLO_TYPE)shaderType;
+- setShaderArg:(const char *)aName floatValue:(float)fv;
+- setShaderArg:(const char *)aName stringValue:(const char *)sv;
+- setShaderArg:(const char *)aName pointValue:(RtPoint)pv;
+- setShaderArg:(const char *)aName colorValue:(NSColor *)cv;
+- setShaderArg:(const char *)aName floatValues:(float *)fvp;
+- setShaderArg:(const char *)aName stringValues:(const char **)svp;
+- setShaderArg:(const char *)aName pointValues:(RtPoint *)pvp;
+- setShaderArg:(const char *)aName colorValues:(NSColor **)cvp;
+- resetShaderArg:(const char *)aName;
+- set;
+
+- read:(NSCoder *)stream;
+- write:(NSCoder *)stream;
 @end

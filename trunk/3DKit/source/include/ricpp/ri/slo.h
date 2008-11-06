@@ -49,4 +49,33 @@ typedef enum {
 	SLO_DETAIL_UNIFORM
 } SLO_DETAIL;
 
+
+#define _SHADECON_
+typedef struct {
+	float xval;
+	float yval;
+	float zval;
+} POINT;
+typedef float SCALAR;
+
+typedef struct slovissymdef {
+	char *svd_name;
+	SLO_TYPE svd_type;
+	SLO_STORAGE svd_storage;
+	SLO_DETAIL vd_detail;
+	char *svd_spacename;
+	union {
+		POINT *pointval;
+		SCALAR *scalarval;
+		char *stringval;
+	} svd_default;
+	union svd_defaultvalu {
+		POINT svd_pointval;
+		SCALAR svd_scalarval;
+	} svd_defaultval;
+	unsigned svd_valisvalid : 1;
+} SLO_VISSYMDEF;
+
+#define NULL_SLOVISSYMDEF ((SLO_VISSYMDEF *)0)
+
 #endif

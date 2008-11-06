@@ -42,6 +42,14 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		C30DB0720E6C3A5300EB8FB7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		C30DB0940E6C3C1C00EB8FB7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
+		C35BCCE10EC2D6370017E366 /* G3DShape.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCCE00EC2D6370017E366 /* G3DShape.m */; };
+		C35BCCF60EC2E04C0017E366 /* G3DShader.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCCF50EC2E04C0017E366 /* G3DShader.m */; };
+		C35BCD820EC33CBF0017E366 /* gnu3d.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCD810EC33CBF0017E366 /* gnu3d.m */; };
+		C35BCD890EC345CE0017E366 /* G3DLight.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCD880EC345CE0017E366 /* G3DLight.m */; };
+		C35BCD8B0EC346060017E366 /* G3DMovieCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCD8A0EC346060017E366 /* G3DMovieCamera.m */; };
+		C35BCDEE0EC346660017E366 /* G3DRIBImageRep.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCDED0EC346660017E366 /* G3DRIBImageRep.m */; };
+		C35BCDF00EC346780017E366 /* G3DRenderPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCDEF0EC346780017E366 /* G3DRenderPanel.m */; };
+		C35BCDF80EC346B00017E366 /* G3DRotator.m in Sources */ = {isa = PBXBuildFile; fileRef = C35BCDF70EC346B00017E366 /* G3DRotator.m */; };
 		C381153C0E9E34B300AED4FB /* G3DCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = C381153B0E9E34B300AED4FB /* G3DCamera.m */; };
 		C3938C0E0E719178009582F7 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3938C0D0E719178009582F7 /* libriprog.1.dylib */; };
 /* End PBXBuildFile section */
@@ -87,6 +95,14 @@
 		32CA4F630368D1EE00C91783 /* 3DKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 3DKit_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* 3DKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C35BCCE00EC2D6370017E366 /* G3DShape.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = G3DShape.m; path = ../../../source/3DKit/G3DShape.m; sourceTree = SOURCE_ROOT; };
+		C35BCCF50EC2E04C0017E366 /* G3DShader.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = G3DShader.m; path = ../../../source/3DKit/G3DShader.m; sourceTree = SOURCE_ROOT; };
+		C35BCD810EC33CBF0017E366 /* gnu3d.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = gnu3d.m; path = ../../../source/3DKit/gnu3d.m; sourceTree = SOURCE_ROOT; };
+		C35BCD880EC345CE0017E366 /* G3DLight.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = G3DLight.m; path = ../../../source/3DKit/G3DLight.m; sourceTree = SOURCE_ROOT; };
+		C35BCD8A0EC346060017E366 /* G3DMovieCamera.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = G3DMovieCamera.m; path = ../../../source/3DKit/G3DMovieCamera.m; sourceTree = SOURCE_ROOT; };
+		C35BCDED0EC346660017E366 /* G3DRIBImageRep.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = G3DRIBImageRep.m; path = ../../../source/3DKit/G3DRIBImageRep.m; sourceTree = SOURCE_ROOT; };
+		C35BCDEF0EC346780017E366 /* G3DRenderPanel.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = G3DRenderPanel.m; path = ../../../source/3DKit/G3DRenderPanel.m; sourceTree = SOURCE_ROOT; };
+		C35BCDF70EC346B00017E366 /* G3DRotator.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; name = G3DRotator.m; path = ../../../source/3DKit/G3DRotator.m; sourceTree = SOURCE_ROOT; };
 		C381153B0E9E34B300AED4FB /* G3DCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = G3DCamera.m; path = ../../../source/3DKit/G3DCamera.m; sourceTree = SOURCE_ROOT; };
 		C3938C0D0E719178009582F7 /* libriprog.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libriprog.1.dylib; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib; sourceTree = SOURCE_ROOT; };
 		C3938C2E0E7192D9009582F7 /* G3DKit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = G3DKit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,8 +193,8 @@
 				207BDE9A0E902E4D0050F403 /* G3DContextManager.h */,
 				207BDE9B0E902E4D0050F403 /* G3DLight.h */,
 				207BDE9C0E902E4D0050F403 /* G3DMovieCamera.h */,
-				207BDE9D0E902E4D0050F403 /* G3DRIBImageRep.h */,
 				207BDE9E0E902E4D0050F403 /* G3DRenderPanel.h */,
+				207BDE9D0E902E4D0050F403 /* G3DRIBImageRep.h */,
 				207BDE9F0E902E4D0050F403 /* G3DRotator.h */,
 				207BDEA00E902E4D0050F403 /* G3DShader.h */,
 				207BDEA10E902E4D0050F403 /* G3DShape.h */,
@@ -191,8 +207,16 @@
 		207BDEB30E902FE50050F403 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				207BDEB50E90300E0050F403 /* G3DContextManager.m */,
 				C381153B0E9E34B300AED4FB /* G3DCamera.m */,
+				207BDEB50E90300E0050F403 /* G3DContextManager.m */,
+				C35BCD880EC345CE0017E366 /* G3DLight.m */,
+				C35BCD8A0EC346060017E366 /* G3DMovieCamera.m */,
+				C35BCDEF0EC346780017E366 /* G3DRenderPanel.m */,
+				C35BCDED0EC346660017E366 /* G3DRIBImageRep.m */,
+				C35BCDF70EC346B00017E366 /* G3DRotator.m */,
+				C35BCCF50EC2E04C0017E366 /* G3DShader.m */,
+				C35BCCE00EC2D6370017E366 /* G3DShape.m */,
+				C35BCD810EC33CBF0017E366 /* gnu3d.m */,
 			);
 			name = Implementation;
 			sourceTree = "<group>";
@@ -369,6 +393,14 @@
 			files = (
 				207BDEB60E90300E0050F403 /* G3DContextManager.m in Sources */,
 				C381153C0E9E34B300AED4FB /* G3DCamera.m in Sources */,
+				C35BCCE10EC2D6370017E366 /* G3DShape.m in Sources */,
+				C35BCCF60EC2E04C0017E366 /* G3DShader.m in Sources */,
+				C35BCD820EC33CBF0017E366 /* gnu3d.m in Sources */,
+				C35BCD890EC345CE0017E366 /* G3DLight.m in Sources */,
+				C35BCD8B0EC346060017E366 /* G3DMovieCamera.m in Sources */,
+				C35BCDEE0EC346660017E366 /* G3DRIBImageRep.m in Sources */,
+				C35BCDF00EC346780017E366 /* G3DRenderPanel.m in Sources */,
+				C35BCDF80EC346B00017E366 /* G3DRotator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

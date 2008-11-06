@@ -251,16 +251,6 @@
 }
 
 
-- convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords
-{
-	return self;
-}
-
-- convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape
-{
-	return self;
-}
-
 - moveEyeBy:(float)ds :(float)dt :(float)du
 {
 	return self;
@@ -461,6 +451,16 @@
 	RiFormat(width, height, -1.0);
 	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
 	[self render];
+}
+
+- convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords
+{
+	return self;
+}
+
+- convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape
+{
+	return self;
 }
 
 @end

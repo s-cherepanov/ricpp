@@ -14,6 +14,8 @@
  *                 All rights Reservered
  */
 #import <3Dkit/gnu3d.h>
+#import <3Dkit/G3DCamera.h>
+#import <ricpp/ri/slo.h>
 
 typedef struct {
 	char id[6]; /* self, encoded to 6 non-0 bytes */
@@ -65,6 +67,7 @@ typedef struct {
 	
 	id renderDelegate; /* Set if this object is an instance */
 	
+	// @private
 	// void *_CTMRel;
 	// char *_RNM;
 	// void *_G3Dprivate
@@ -81,10 +84,12 @@ typedef struct {
 - linkDescendant:aDescendant;
 - descendant;
 - lastDescendant;
+- (BOOL)hasDescendant:(G3DShape *)aShape;
 
 - linkAncestor:anAncestor;
 - ancestor;
 - firstAncestor;
+- (BOOL)hasAncestor:(G3DShape *)aShape;
 
 - unlink;
 - group:toShape;
@@ -92,11 +97,60 @@ typedef struct {
 
 - (BOOL)isWorld;
 
-/*
-- setRecursiveSurfaceType:(G3DSurfaceType)aSurfaceType;
-- setSurfaceType:(G3DSurfaceType)aSurfaceType;
-*/
-
 - setSurfaceType:(G3DSurfaceType)aSurfaceType andDescendants:(BOOL)flag;
 - (G3DSurfaceType)surfaceType;
+
+- setShader:aShader;
+- shaderType:(SLO_TYPE)type;
+
+- getBoundingBox:(RtBound *)bbox;
+- setDrawAsBox:(BOOL)flag;
+- (BOOL)doesDrawAsBox;
+- getBoundingBox:(RtBound *)bbox inCamera:aCamera;
+- convertObjectPoints:(RtPoint *)points count:(int)n toCamera:camera;
+- convertPoints:(RtPoint *)points count:(int)n fromAncestor:(G3DShape *)aShape;
+- convertPoints:(RtPoint *)points count:(int)n toAncestor:(G3DShape *)aShape;
+
+- setSelectable:(BOOL)flag;
+- (BOOL)isSelectable;
+- setVisible:(BOOL)flag;
+- (BOOL)isVisible;
+
+- setShapeName:(const char *)name;
+- (const char *)shapeName;
+
+- setRenderDelegate:anObject;
+- removeRenderDelegate;
+- renderDelegate;
+
+- setTransformMatrix:(RtMatrix)tm;
+- getTransformMatrix:(RtMatrix)tm;
+- concatTransformMatrix:(RtMatrix)ctm premultiply:(BOOL)flag;
+- getCompositeTransformMatrix:(RtMatrix)ctm relativeToAncestor:(G3DShape *)aShape;
+- getInverseCompositeTransformMatrix:(RtMatrix)ictm relativeToAncestor:(G3DShape *)aShape;
+
+- rotateAngle:(float)ang axis:(RtPoint)anAxis;
+- preRotateAngle:(float)ang axis:(RtPoint)anAxis;
+- scale:(float)sc :(float)sy :(float)sz;
+- preScale:(float)sc :(float)sy :(float)sz;
+- scaleUniformly:(float)s;
+- preScaleUniformly:(float)s;
+- translate:(float)tx :(float)ty :(float)tz;
+- preTranslate:(float)tx :(float)ty :(float)tz;
+
+- render:(G3DCamera *)camera;
+- renderSelf:(G3DCamera *)camera;
+- renderSelfAsBox:(G3DCamera *)camera;
+- free;
+- freeAll;
+
+- awake;
+- read:(NSCoder *)stream;
+- write:(NSCoder *)stream;
+
+// private
+- setSurfaceType:(G3DSurfaceType)aSurfaceType;
+- setRecursiveSurfaceType:(G3DSurfaceType)aSurfaceType;
+- linkAllAncestors:anAncestor;
+- setCompositeDirty;
 @end

@@ -131,9 +131,6 @@
 - setPixelAspectRatio:(float)pixAspect;
 - (float)pixelAspectRatio;
 
-- convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords;
-- convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape;
-
 - moveEyeBy:(float)ds :(float)dt :(float)du;
 - rotateEyeBy:(float)dElev :(float)dAzim about:(RtPoint)pivotPtr;
 
@@ -159,6 +156,9 @@
 - render;
 - renderSelf:(RtContextHandle)context;
 - (void) drawRect: (NSRect) bounds;
+
+- convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords;
+- convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape;
 @end
 
 /*

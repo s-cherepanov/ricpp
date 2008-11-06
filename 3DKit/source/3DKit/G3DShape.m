@@ -14,10 +14,11 @@
  *                 All rights Reservered
  */
 #import <3Dkit/G3DShape.h>
+#import <3Dkit/G3DShader.h>
 
 @implementation G3DShape
 
--init
+- init
 {
 	[super init];
 	
@@ -70,6 +71,7 @@
 		[rp setCompositeDirty];
 		rp = [rp nextPeer];
 	}
+	return self;
 }
 
 
@@ -82,11 +84,11 @@
 	[aPeer setCompositeDirty];
 	
 	if ( nextPeer != nil )
-		nextPeer->previousPeer = [aPeer lastPeer];
-	[aPeer lastPeer]->nextPeer = nextPeer;
+		((G3DShape *)nextPeer)->previousPeer = [aPeer lastPeer];
+	((G3DShape *)[aPeer lastPeer])->nextPeer = nextPeer;
 
 	nextPeer = aPeer;
-	aPeer->previousPeer = self; 
+	((G3DShape *)aPeer)->previousPeer = self; 
 
 	return self;
 }
@@ -140,6 +142,13 @@
 	return rp;
 }
 
+- (BOOL)hasDescendant:(G3DShape *)aShape
+{
+	if ( aShape == nil )
+		return NO;
+	return [aShape hasAncestor:self];
+}
+
 - linkAllAncestors:anAncestor
 {
 	G3DShape *rp = self;
@@ -172,6 +181,22 @@
 	return rp;
 }
 
+- (BOOL)hasAncestor:(G3DShape *)aShape
+{
+	G3DShape *rp = self;
+
+	if ( aShape == nil )
+		return NO;
+	
+	while ( rp != nil ) {
+		if ( rp == aShape )
+			return YES;
+		rp = [rp ancestor];
+	}
+
+	return NO;
+}
+
 - unlink
 {
 	if ( [self isWorld] )
@@ -180,13 +205,13 @@
 	assert(ancestor != nil);
 
 	if ( previousPeer == nil ) {
-		ancestor->decendant = nextPeer;
+		((G3DShape *)ancestor)->descendant = nextPeer;
 	} else {
-		previousPeer->nextPeer = nextPeer;
+		((G3DShape *)previousPeer)->nextPeer = nextPeer;
 	}
 	
 	if ( nextPeer != nil ) {
-		nextPeer->previousPeer = previousPeer;
+		((G3DShape *)nextPeer)->previousPeer = previousPeer;
 	}
 	
 	ancestor = nil;
@@ -221,7 +246,7 @@
 	G3DShape *rp = self;
 
 	while ( [rp nextPeer] != nil ) {
-		[rp surfaceType:aSurfaceType];
+		[rp setSurfaceType:aSurfaceType];
 		if ( [rp descendant] != nil )
 			[[rp descendant] setRecursiveSurfaceType:aSurfaceType];
 		rp = [rp nextPeer];
@@ -238,9 +263,9 @@
 
 - setSurfaceType:(G3DSurfaceType)aSurfaceType andDescendants:(BOOL)flag
 {
-	[self surfaceType:aSurfaceType];
-	if ( flag && [rp descendant] != nil ) {
-		[[rp descendant] setSurfaceRecursiveType:surfaceType];
+	[self setSurfaceType:aSurfaceType];
+	if ( flag && [self descendant] != nil ) {
+		[[self descendant] setRecursiveSurfaceType:surfaceType];
 	}
 
 	return self;
@@ -251,5 +276,278 @@
 	return surfaceType;
 }
 
+- setShader:aShader
+{
+	switch ( [aShader shaderType] ) {
+		case SLO_TYPE_SURFACE:
+			surfaceShader = aShader;
+			break;
+		case SLO_TYPE_LIGHT:
+			lightShader = aShader;
+			break;
+		case SLO_TYPE_DISPLACEMENT:
+			displacementShader = aShader;
+			break;
+		case SLO_TYPE_INTERIOR:
+			interiorShader = aShader;
+			break;
+		case SLO_TYPE_EXTERIOR:
+			exteriorShader = aShader;
+			break;
+		case SLO_TYPE_ATMOSPHERE:
+			atmosphereShader = aShader;
+			break;
+		case SLO_TYPE_DEFORMATION:
+			deformationShader = aShader;
+			break;
+		case SLO_TYPE_IMAGER:
+			imagerShader = aShader;
+			break;
+		default:
+			break;
+	}
+	return self;
+}
+
+- shaderType:(SLO_TYPE)type
+{
+	switch ( type ) {
+		case SLO_TYPE_SURFACE:
+			return surfaceShader;
+		case SLO_TYPE_LIGHT:
+			return lightShader;
+		case SLO_TYPE_DISPLACEMENT:
+			return displacementShader;
+		case SLO_TYPE_INTERIOR:
+			return interiorShader;
+		case SLO_TYPE_EXTERIOR:
+			return exteriorShader;
+		case SLO_TYPE_ATMOSPHERE:
+			return atmosphereShader;
+		case SLO_TYPE_DEFORMATION:
+			return deformationShader;
+		case SLO_TYPE_IMAGER:
+			return imagerShader;
+		default:
+			return nil;
+	};
+}
+
+- getBoundingBox:(RtBound *)bbox
+{
+	assert(bbox != 0);
+	if ( bbox == 0 )
+		return self;
+	
+	memcpy(&((*bbox)[0]), &(boundingBox[0]), sizeof(RtBound));
+	
+	return self;
+}
+
+- setDrawAsBox:(BOOL)flag
+{
+	shapeFlags.drawAsBox = flag ? 1 : 0;
+	return self;
+}
+
+- (BOOL)doesDrawAsBox
+{
+	return shapeFlags.drawAsBox ? YES : NO;
+}
+
+- getBoundingBox:(RtBound *)bbox inCamera:aCamera
+{
+	assert(bbox != 0);
+	if ( bbox == 0 )
+		return self;
+	
+	RtPoint p[2] = {
+		boundingBox[0],
+		boundingBox[2],
+		boundingBox[4],
+		boundingBox[1],
+		boundingBox[3],
+		boundingBox[5]
+	};
+	[aCamera convertPoints:&(p[0]) count:2 fromSpace:self];
+	(*bbox)[0] = p[0][0];
+	(*bbox)[2] = p[0][1];
+	(*bbox)[4] = p[0][2];
+	(*bbox)[1] = p[1][0];
+	(*bbox)[3] = p[1][1];
+	(*bbox)[5] = p[1][2];
+	
+	return self;
+}
+
+
+- convertObjectPoints:(RtPoint *)points count:(int)n toCamera:aCamera
+{
+	[aCamera convertPoints:points count:n fromSpace:self];
+	return self;
+}
+
+- convertPoints:(RtPoint *)points count:(int)n fromAncestor:(G3DShape *)aShape
+{
+	return self;
+}
+
+- convertPoints:(RtPoint *)points count:(int)n toAncestor:(G3DShape *)aShape
+{
+	return self;
+}
+
+
+- setSelectable:(BOOL)flag
+{
+	shapeFlags.selectable = flag ? 1 : 0;
+	return self;
+}
+
+- (BOOL)isSelectable
+{
+	return shapeFlags.selectable;
+}
+
+- setVisible:(BOOL)flag
+{
+	shapeFlags.visible = flag ? 1 : 0;
+	return self;
+}
+
+- (BOOL)isVisible
+{
+	return shapeFlags.visible;
+}
+
+- setShapeName:(const char *)name
+{
+	return self;
+}
+
+- (const char *)shapeName
+{
+	return 0;
+}
+
+- setRenderDelegate:anObject
+{
+	return self;
+}
+
+- removeRenderDelegate
+{
+	return self;
+}
+
+- renderDelegate
+{
+	return renderDelegate;
+}
+
+- setTransformMatrix:(RtMatrix)tm
+{
+	return self;
+}
+
+- getTransformMatrix:(RtMatrix)tm
+{
+	return self;
+}
+
+- concatTransformMatrix:(RtMatrix)ctm premultiply:(BOOL)flag
+{
+	return self;
+}
+
+- getCompositeTransformMatrix:(RtMatrix)ctm relativeToAncestor:(G3DShape *)aShape
+{
+	return self;
+}
+
+- getInverseCompositeTransformMatrix:(RtMatrix)ictm relativeToAncestor:(G3DShape *)aShape
+{
+	return self;
+}
+
+- rotateAngle:(float)ang axis:(RtPoint)anAxis
+{
+	return self;
+}
+
+- preRotateAngle:(float)ang axis:(RtPoint)anAxis
+{
+	return self;
+}
+
+- scale:(float)sc :(float)sy :(float)sz
+{
+	return self;
+}
+
+- preScale:(float)sc :(float)sy :(float)sz
+{
+	return self;
+}
+
+- scaleUniformly:(float)s
+{
+	return self;
+}
+
+- preScaleUniformly:(float)s
+{
+	return self;
+}
+
+- translate:(float)tx :(float)ty :(float)tz
+{
+	return self;
+}
+
+- preTranslate:(float)tx :(float)ty :(float)tz
+{
+	return self;
+}
+
+- render:(G3DCamera *)camera
+{
+	return self;
+}
+
+- renderSelf:(G3DCamera *)camera
+{
+	return self;
+}
+
+- renderSelfAsBox:(G3DCamera *)camera
+{
+	return self;
+}
+
+- free
+{
+	return nil;
+}
+
+- freeAll
+{
+	return nil;
+}
+
+- awake
+{
+	return self;
+}
+
+- read:(NSCoder *)stream
+{
+	return self;
+}
+
+- write:(NSCoder *)stream
+{
+	return self;
+}
 
 @end

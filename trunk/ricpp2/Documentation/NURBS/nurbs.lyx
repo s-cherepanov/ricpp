@@ -1,5 +1,5 @@
-#LyX 1.5.4 created this file. For more info see http://www.lyx.org/
-\lyxformat 276
+#LyX 1.6.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
 \begin_document
 \begin_header
 \textclass scrartcl
@@ -7,6 +7,7 @@
 \usepackage{a4wide}
 \end_preamble
 \options a4
+\use_default_options false
 \language english
 \inputencoding latin1
 \font_roman times
@@ -17,9 +18,11 @@
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
+
 \graphics default
 \paperfontsize default
 \spacing single
+\use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
@@ -71,7 +74,8 @@ RenderMan Interface Specification, Version 3.2.1
 \end_inset
 
  
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Pixa05"
 
 \end_inset
@@ -86,7 +90,8 @@ The NURBS Book
 \end_inset
 
  by Piegl and Tiller 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Pieg97"
 
 \end_inset
@@ -104,7 +109,8 @@ An Introduction to NURBS: With Historical Perspective
 
  by David F.
  Rogers 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Roge01"
 
 \end_inset
@@ -127,7 +133,8 @@ Computer Graphics: Principles and Practice
 \end_inset
 
  by Foley, van Dam, Feiner, and Hughes 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Fole90"
 
 \end_inset
@@ -169,7 +176,7 @@ RiNuPatch
 \begin_inset Foot
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 I'm using the naming scheme of the standard C-binding or RIB-binding in
  this text.
  RiCPP simply uses 
@@ -195,7 +202,7 @@ NuPatch
 \begin_inset ERT
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -204,7 +211,7 @@ vspace{-1
 parskip}
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \end_layout
 
@@ -236,14 +243,14 @@ nu uorder uknot[] umin umax nv vorder vknot[] vmin vmax ...parameterlist...
 \begin_inset Tabular
 <lyxtabular version="3" rows="11" columns="3">
 <features islongtable="true">
-<column alignment="left" valignment="top" leftline="true" width="0">
-<column alignment="left" valignment="top" leftline="true" width="5cm">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="6cm">
-<row topline="true" bottomline="true" endhead="true">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="5cm">
+<column alignment="left" valignment="top" width="6cm">
+<row endhead="true">
 <cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \series bold
 Parameter
@@ -251,10 +258,10 @@ Parameter
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \series bold
 Meaning
@@ -262,10 +269,10 @@ Meaning
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \series bold
 Constraints
@@ -274,11 +281,11 @@ Constraints
 \end_inset
 </cell>
 </row>
-<row topline="true" bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 nu
@@ -286,19 +293,19 @@ nu
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Number of control points in u-direction
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The number of control points 
 \series bold
 P
@@ -317,11 +324,11 @@ Pw
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 uorder
@@ -329,19 +336,19 @@ uorder
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Order of the polynomial basis for u parameter
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $1\leq uorder\leq nu$
 \end_inset
 
@@ -351,11 +358,11 @@ Order of the polynomial basis for u parameter
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 uknot
@@ -363,30 +370,30 @@ uknot
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Knot vector of the spline
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $uknot[i]\leq uknot[i+1]$
 \end_inset
 
 ,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 the number of knots is
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $nu+uorder$
 \end_inset
 
@@ -396,11 +403,11 @@ the number of knots is
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 umin
@@ -408,26 +415,26 @@ umin
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Minimal value for the parameter u (clip the parametric range of u)
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $umin<umax$
 \end_inset
 
 ,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $umin\geq uknot[uorder-1]$
 \end_inset
 
@@ -437,11 +444,11 @@ Minimal value for the parameter u (clip the parametric range of u)
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 umax
@@ -449,26 +456,26 @@ umax
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Maximal value for the parameter u (clip the parametric range of u)
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $umin<umax$
 \end_inset
 
 ,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $umax\leq uknot[nu]$
 \end_inset
 
@@ -478,11 +485,11 @@ Maximal value for the parameter u (clip the parametric range of u)
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 nv
@@ -490,19 +497,19 @@ nv
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Number of control points in v-direction
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The number of control points 
 \series bold
 P
@@ -521,11 +528,11 @@ Pw
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 vorder
@@ -533,19 +540,19 @@ vorder
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Order of the polynomial basis for the v parameter
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $1\leq vorder\leq nv$
 \end_inset
 
@@ -555,11 +562,11 @@ Order of the polynomial basis for the v parameter
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 vknot
@@ -567,30 +574,30 @@ vknot
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Knot vector of the spline for the parameter v
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $vknot[i]\leq vknot[i+1]$
 \end_inset
 
 ,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 the number of knots is
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $nv+vorder$
 \end_inset
 
@@ -600,11 +607,11 @@ the number of knots is
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 vmin
@@ -612,26 +619,26 @@ vmin
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Minimal value for the parameter v (clip the parametric range of v)
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $vmin<vmax$
 \end_inset
 
 ,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $vmin\geq vknot[vorder-1]$
 \end_inset
 
@@ -641,11 +648,11 @@ Minimal value for the parameter v (clip the parametric range of v)
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 vmax
@@ -653,26 +660,26 @@ vmax
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Maximal value for the parameter v (clip the parametric range of v)
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $vmax>vmin$
 \end_inset
 
 ,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $vmax\leq vknot[nv]$
 \end_inset
 
@@ -857,9 +864,11 @@ The Basis Functions
 \end_layout
 
 \begin_layout Standard
-I used an implementation of the Cox-de\InsetSpace ~
-Boor recurrence formula to calculate
- the basis functions.
+I used an implementation of the Cox-de
+\begin_inset space ~
+\end_inset
+
+Boor recurrence formula to calculate the basis functions.
  The formula for 
 \begin_inset Formula $N_{i,uorder}(u)$
 \end_inset
@@ -1018,7 +1027,7 @@ BASIS
 \begin_inset ERT
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1027,7 +1036,7 @@ vspace{-1
 parskip}
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \end_layout
 
@@ -1301,7 +1310,10 @@ The Derivatives of the Basis Functions
 \end_layout
 
 \begin_layout Standard
-For RiCPP I used the first derivative of the Cox-de\InsetSpace ~
+For RiCPP I used the first derivative of the Cox-de
+\begin_inset space ~
+\end_inset
+
 Boor formula:
 \begin_inset Formula \[
 N'_{i,1}(u)=\frac{N_{i,0}(u)}{u_{i+1}-u_{i}}-\frac{N_{i+1,0}(u)}{u_{i+2}-u_{i+1}}\]
@@ -1330,7 +1342,7 @@ Since the first derivative has so much in common with the recurrence formula
 \begin_inset ERT
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1339,7 +1351,7 @@ vspace{-1
 parskip}
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \end_layout
 
@@ -1809,10 +1821,10 @@ wide false
 sideways false
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Caption
 
-\begin_layout Standard
+\begin_layout Plain Layout
 A Bézier (Bernstein) basis
 \end_layout
 
@@ -1821,7 +1833,7 @@ A Bézier (Bernstein) basis
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename BezierBase.pdf
@@ -1870,10 +1882,10 @@ wide false
 sideways false
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Caption
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Segments
 \end_layout
 
@@ -1882,7 +1894,7 @@ Segments
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename NURBSBaseDeriv.pdf
@@ -1922,7 +1934,8 @@ nloops
 \emph default
  as the additional first parameter.
  According to 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Pixa05"
 
 \end_inset
@@ -1934,7 +1947,8 @@ ncurves
 \emph default
 .
  According to 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 after "p. 108"
 key "Apod00"
 
@@ -2012,7 +2026,7 @@ The first one is generated by the RIB output module.
 \begin_inset ERT
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -2021,7 +2035,7 @@ vspace{-1
 parskip}
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \end_layout
 
@@ -2045,14 +2059,14 @@ ncurves[] order[] knot[] min[] max[] n[] u[] v[]
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="3">
 <features islongtable="true">
-<column alignment="left" valignment="top" leftline="true" width="0">
-<column alignment="left" valignment="top" leftline="true" width="5cm">
-<column alignment="left" valignment="top" leftline="true" rightline="true" width="6cm">
-<row topline="true" bottomline="true" endhead="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<column alignment="left" valignment="top" width="0">
+<column alignment="left" valignment="top" width="5cm">
+<column alignment="left" valignment="top" width="6cm">
+<row endhead="true">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \series bold
 Parameter
@@ -2060,10 +2074,10 @@ Parameter
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \series bold
 Meaning
@@ -2071,10 +2085,10 @@ Meaning
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \series bold
 Constraints
@@ -2083,11 +2097,11 @@ Constraints
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 ncurves
@@ -2098,7 +2112,7 @@ ncurves
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Number of curves per loop.
 \end_layout
 
@@ -2107,7 +2121,7 @@ Number of curves per loop.
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is the number of loops.
  An empty array disables the trim curve.
  The curves of a loop must be connected head-to-tail and be closed explicitly.
@@ -2117,11 +2131,11 @@ The size of the array is the number of loops.
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 order
@@ -2132,7 +2146,7 @@ order
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The orders of the polynomial basis of each curve.
 \end_layout
 
@@ -2141,7 +2155,7 @@ The orders of the polynomial basis of each curve.
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is 
 \begin_inset Formula $\sigma=\sum_{i=0}^{nloops-1}ncurves[i]$
 \end_inset
@@ -2157,11 +2171,11 @@ The size of the array is
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 knot
@@ -2172,7 +2186,7 @@ knot
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Knot vectors of the curves, concatenated into one array.
 \end_layout
 
@@ -2181,7 +2195,7 @@ Knot vectors of the curves, concatenated into one array.
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The number of knots for a curve 
 \emph on
 i
@@ -2227,11 +2241,11 @@ i
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 min
@@ -2242,7 +2256,7 @@ min
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Clip a curve 
 \begin_inset Formula $i$
 \end_inset
@@ -2259,7 +2273,7 @@ Clip a curve
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is 
 \begin_inset Formula $\sigma$
 \end_inset
@@ -2287,11 +2301,11 @@ offs
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 max
@@ -2302,7 +2316,7 @@ max
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Clip a curve 
 \begin_inset Formula $i$
 \end_inset
@@ -2319,7 +2333,7 @@ Clip a curve
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is 
 \begin_inset Formula $\sigma$
 \end_inset
@@ -2355,11 +2369,11 @@ offs
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 n
@@ -2370,7 +2384,7 @@ n
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The number of control points of each curve.
  A control point is the value of the homogeneous (u, v, w) coordinates in
  parametric (u,v) space of a NURBS surface.
@@ -2381,7 +2395,7 @@ The number of control points of each curve.
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is 
 \begin_inset Formula $\sigma$
 \end_inset
@@ -2392,11 +2406,11 @@ The size of the array is
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 u
@@ -2407,7 +2421,7 @@ u
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Homogeneous 
 \emph on
 u
@@ -2420,7 +2434,7 @@ u
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is 
 \begin_inset Formula $\sum_{i=0}^{\sigma-1}n_{i}$
 \end_inset
@@ -2431,11 +2445,11 @@ The size of the array is
 \end_inset
 </cell>
 </row>
-<row topline="true" bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 v
@@ -2443,10 +2457,10 @@ v
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Homogeneous 
 \emph on
 v
@@ -2456,10 +2470,10 @@ v
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is 
 \begin_inset Formula $\sum_{i=0}^{\sigma-1}n_{i}$
 \end_inset
@@ -2470,11 +2484,11 @@ The size of the array is
 \end_inset
 </cell>
 </row>
-<row bottomline="true">
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 \emph on
 w
@@ -2482,10 +2496,10 @@ w
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Homogeneous 
 \emph on
 w
@@ -2495,10 +2509,10 @@ w
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The size of the array is 
 \begin_inset Formula $\sum_{i=0}^{\sigma-1}n_{i}$
 \end_inset
@@ -2525,7 +2539,8 @@ The size of the array is
 
 \begin_layout Standard
 In 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Pixa05"
 
 \end_inset
@@ -2565,7 +2580,8 @@ left
  
 \lang english
 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 after "p. 75"
 key "Pixa05"
 
@@ -2659,7 +2675,8 @@ left
 
 \begin_layout Standard
 In 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Apod00"
 
 \end_inset
@@ -2772,7 +2789,8 @@ outside
  
 \lang english
 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 after "p. 108"
 key "Apod00"
 
@@ -2812,7 +2830,8 @@ inside
 ]
 \family default
  is the default as described in 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Pixa05"
 
 \end_inset
@@ -2858,7 +2877,8 @@ For the OpenGL output of RiCPP the trim curves are calculated using the
  (u, v) grid of the NURBS surfaces.
  The next step is to triangulate the trimmed grids using a general ear-clipping
  algorithm, for ear-clipping see 
-\begin_inset LatexCommand cite
+\begin_inset CommandInset citation
+LatexCommand cite
 key "Eber08"
 
 \end_inset
@@ -2893,10 +2913,10 @@ wide false
 sideways false
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Caption
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Trim Curve 'a'
 \end_layout
 
@@ -2905,7 +2925,7 @@ Trim Curve 'a'
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename nurbs_a.pdf
@@ -3178,10 +3198,10 @@ wide false
 sideways false
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Caption
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Rendered Patch
 \end_layout
 
@@ -3190,7 +3210,7 @@ Rendered Patch
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename nurbs_a_render.pdf
@@ -3208,7 +3228,8 @@ Rendered Patch
 \end_layout
 
 \begin_layout Bibliography
-\begin_inset LatexCommand bibitem
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
 label "Apod00"
 key "Apod00"
 
@@ -3223,7 +3244,8 @@ Advanced RenderMan: Creating CGI for Motion Pictures,
 \end_layout
 
 \begin_layout Bibliography
-\begin_inset LatexCommand bibitem
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
 label "Fole90"
 key "Fole90"
 
@@ -3240,7 +3262,8 @@ Computer Graphics: Principles and Practice,
 \end_layout
 
 \begin_layout Bibliography
-\begin_inset LatexCommand bibitem
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
 label "Pieg97"
 key "Pieg97"
 
@@ -3254,7 +3277,8 @@ The NURBS Book,
 \end_layout
 
 \begin_layout Bibliography
-\begin_inset LatexCommand bibitem
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
 label "Pixa05"
 key "Pixa05"
 
@@ -3268,7 +3292,8 @@ The RenderMan Interface, Version 3.2.1,
 \end_layout
 
 \begin_layout Bibliography
-\begin_inset LatexCommand bibitem
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
 label "Roge01"
 key "Roge01"
 
@@ -3283,7 +3308,8 @@ An Introduction to NURBS: With Historical Perspective
 \end_layout
 
 \begin_layout Bibliography
-\begin_inset LatexCommand bibitem
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
 label "Eber08"
 key "Eber08"
 

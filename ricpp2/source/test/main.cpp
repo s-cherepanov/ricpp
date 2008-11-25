@@ -62,7 +62,7 @@ static void testTree()
  */
 void testStream(CBackBufferProtocolHandlers &factory)
 {
-	TemplFrontStreambuf<char> ob(factory);
+	CFrontStreambuf ob(factory);
 	std::string str;
 	CEnv::find(str, CEnv::tmpName(), true);
 	str += CFilepathConverter::nativePathSeparator();
@@ -83,7 +83,7 @@ void testStream(CBackBufferProtocolHandlers &factory)
 	}
 	ob.close();
 
-	TemplFrontStreambuf<char> ib(factory);
+	CFrontStreambuf ib(factory);
 	ib.base(base);
 	ib.open("ReadMe3.txt.gz", std::ios_base::in|std::ios_base::binary);
 	// ib.open("ReadMe3.txt", std::ios_base::in|std::ios_base::binary);

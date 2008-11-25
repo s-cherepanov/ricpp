@@ -675,7 +675,7 @@ namespace RiCPP {
 
 		/** @brief RIB input stream back buffer for m_istream.
 		 */
-		TemplFrontStreambuf<char> m_ob;
+		CFrontStreambuf m_ob;
 
 		/** @brief Put back one character to the stream.
 		 *

@@ -3953,6 +3953,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = streams;
 				ZERO_LINK = YES;
@@ -3967,6 +3968,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = streams;
 				ZERO_LINK = NO;
@@ -4109,7 +4111,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
-				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = glrenderer;
 				ZERO_LINK = YES;
@@ -4127,7 +4128,6 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
-				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = glrenderer;
 				ZERO_LINK = NO;
@@ -4408,7 +4408,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = YES;
@@ -4424,7 +4423,6 @@
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = NO;
@@ -4464,7 +4462,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
-				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = ribwriter;
 				ZERO_LINK = YES;
@@ -4482,7 +4479,6 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
-				OTHER_LDFLAGS = "-lzs";
 				PREBINDING = NO;
 				PRODUCT_NAME = ribwriter;
 				ZERO_LINK = NO;

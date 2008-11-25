@@ -403,7 +403,7 @@ RtVoid CRibWriter::postProcess(CRiBegin &obj)
 		}
 
 		if ( filename.size() > 0 ) {
-			m_buffer = new TemplFrontStreambuf<char>(parserCallback()->protocolHandlers());
+			m_buffer = new CFrontStreambuf(parserCallback()->protocolHandlers());
 			if ( !m_buffer ) {
 				return;
 			}

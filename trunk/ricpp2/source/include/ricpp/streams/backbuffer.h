@@ -27,10 +27,10 @@
 
 /** @file backbuffer.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Headerfile with templates for zlib-enabled dtreams and base classes for plugable streambuffer facets.
+ *  @brief Headerfile with templates for zlib-enabled streams and base classes for plugable streambuffer facets.
  * @todo Much to do here: Random access, stream buffering,
  * more channels (HTTP:, FTP:, SMB:, ...), test routines, better interface, i/o stream objects for the TemplFrontStreambuf,
- * CR/LF LF/CR LF if file is zipped and not binary, exceptions, more documentation.
+ * CR/LF LF/CR LF if file is zipped and not binary, exceptions, more documentation... or use BOOST/iostreams.
  */
 
 #ifndef _RICPP_STREAMS_URI_H
@@ -508,7 +508,7 @@ namespace RiCPP {
 	}; // CBackBufferProtocolHandlers
 
 
-	/** @brief Template for zlib stream buffers.
+	/** @brief Class for zlib stream buffers.
 	 *
 	 * Can be used by istream, ostream as streambuf. A coupled back end buffer CBackBufferRoot or a
 	 * basic_streambuf can be used as data source/drain. TemplFrontStreambuf adds zlib in between the
@@ -522,15 +522,14 @@ namespace RiCPP {
 	 *
 	 * @see CBackBufferRoot
 	 */
-	template<class charT, class traits=std::char_traits<charT> >
-	class TemplFrontStreambuf : public std::basic_streambuf<charT, traits> {
+	class CFrontStreambuf : public std::basic_streambuf<char, std::char_traits<char> > {
 
 	public:
-		typedef typename std::basic_streambuf<charT, traits>::int_type int_type;
-		typedef typename std::basic_streambuf<charT, traits>::pos_type pos_type;
-		typedef typename std::basic_streambuf<charT, traits>::off_type off_type;
+		typedef std::basic_streambuf<char, std::char_traits<char> > TypeParent;
+		typedef TypeParent::int_type int_type;
+		typedef TypeParent::pos_type pos_type;
+		typedef TypeParent::off_type off_type;
 
-		typedef typename std::basic_streambuf<charT, traits> TypeParent;
 		  
 	private:
 		static const int gz_magic_0 = 0x1f; ///< @brief gzip magic header first byte
@@ -566,25 +565,24 @@ namespace RiCPP {
 		CBackBufferFactory *m_factory;
 		CBackBufferProtocolHandlers *m_bufferReg;
 
-		TypeOpenMode m_mode;
-		CUri m_baseUri;
-		CUri m_resolutionUri;
+		TypeOpenMode m_mode; ///< @brief Open mode of the ressource.
+		CUri m_baseUri; ///< @brief URI used as basis for relative URIs used for open().
+		CUri m_resolutionUri; ///< @brief Resolved URI of the current resource usin @i m_baseUri.
 
-		int_type m_buffersize;
-		int_type m_putbackSize;
-		int_type m_additionalChars;
+		int_type m_buffersize; ///< @brief Buffer size incl. m_putbackSize
+		int_type m_putbackSize; ///< @brief Additional chars for put back.
 
-		TemplBuffer<charT> m_frontInBuffer;
+		TemplBuffer<char> m_frontInBuffer;
 		z_stream m_strmIn;
 		TemplBuffer<unsigned char> m_transferInBuffer;
 		bool m_inIsEOF;
 		long m_in;
 		long m_crcIn;
-		int m_transparentIn;
+		int m_transparentIn; ///< @brief Read input without unpacking zipped content.
 		int m_strategyIn;
 		char m_methodIn;
 
-		TemplBuffer<charT> m_frontOutBuffer;
+		TemplBuffer<char> m_frontOutBuffer;
 		z_stream m_strmOut;
 		TemplBuffer<char> m_transferOutBuffer;
 		long m_out;
@@ -593,44 +591,9 @@ namespace RiCPP {
 		int m_strategyOut;
 		char m_methodOut;
 
-		inline void init()
-		{
-			m_backBuffer = 0;
-			m_coupledBuffer = 0;
-			m_factory = 0;
-
-			m_mode = static_cast<TypeOpenMode>(0);
-
-			m_buffersize = 8192; // std 8192
-			m_putbackSize = 128; // std 128
-			m_additionalChars = 8; // std 8;
-			if ( m_buffersize < m_putbackSize+m_additionalChars ) {
-				m_buffersize = m_putbackSize+m_additionalChars+16;
-			}
-
-			m_frontInBuffer.clear();
-			m_frontInBuffer.resize(m_buffersize);
-			m_in = 0;
-			m_crcIn = 0;
-			m_transparentIn = true;
-			m_strategyIn = Z_DEFAULT_STRATEGY;
-			m_methodIn = Z_DEFLATED;
-			setg(
-				m_frontInBuffer.begin()+m_putbackSize,
-				m_frontInBuffer.begin()+m_putbackSize,
-				m_frontInBuffer.begin()+m_putbackSize);
-
-
-			m_frontOutBuffer.clear();
-			m_frontOutBuffer.resize(m_buffersize);
-			m_out = 0;
-			m_crcOut = 0;
-			m_compressLevelOut = Z_DEFAULT_COMPRESSION;
-			m_strategyOut = Z_DEFAULT_STRATEGY;
-			m_methodOut = Z_DEFLATED;
-			setp(m_frontOutBuffer.begin(), m_frontOutBuffer.end()-1);
-
-		}
+		/** @brief Initialize the front buffers
+		 */
+		void init();
 
 		inline void putLong(unsigned char c[4], unsigned long x) const
 		{
@@ -648,7 +611,6 @@ namespace RiCPP {
 			x += ((unsigned long)c[3])<<24;
 			return x;
 		}
-
 			
 		inline int get_byte()
 		{
@@ -664,301 +626,20 @@ namespace RiCPP {
 			return (int)*(m_strmIn.next_in++);
 		}
 
-		inline bool check_header()
-		{
-			int method; // method byte
-			int flags;  // flags byte
-			uInt len;
-			char c;
-
-			// Stream buffer is greater than 2, if it is less tahn 2,
-			// the file is smaller as 2 Bytes
-			if ( m_strmIn.avail_in < 2 ) {
-				fill_in_buffer();
-				if ( m_strmIn.avail_in < 2 ) {
-					m_transparentIn = true;
-					return true;
-				}
-			}
-
-			// Peek ahead to check the gzip magic header
-			if (m_strmIn.next_in[0] != gz_magic_0 ||
-				m_strmIn.next_in[1] != gz_magic_1)
-			{
-				m_transparentIn = true;
-				return true;
-			}
-
-			// Skip the header
-			get_byte();
-			get_byte();
-
-			m_transparentIn = false;
-
-			// Check the rest of the gzip header
-			method = get_byte();
-			flags = get_byte();
-
-			if ( method != Z_DEFLATED || flags == EOF || (flags & RESERVED) != 0 ) {
-				return false;
-			}
-
-			// Discard time, xflags and OS code:
-			for ( len = 0; len < 6; len++ ) {
-				get_byte();
-			}
-
-			if ( (flags & EXTRA_FIELD) != 0 ) { // skip the extra field
-				len  =  (uInt)get_byte();
-				len += ((uInt)get_byte())<<8;
-				// len is garbage if EOF but the loop below will quit anyway
-				while ( len-- != 0 && get_byte() != EOF ) ;
-			}
-			if ((flags & ORIG_NAME) != 0) { // skip the extra field
-				while ( (c = get_byte()) != 0 && c != EOF ) ;
-			}
-			if ((flags & COMMENT) != 0) {   // skip the .gz file comment
-				while ( (c = get_byte()) != 0 && c != EOF ) ;
-			}
-			if ((flags & HEAD_CRC) != 0) {  // skip the header crc 16Bit
-				for (len = 0; len < 2; len++) {
-					get_byte();
-				}
-			}
-
-			return !m_inIsEOF;
-		}
-
-		inline unsigned int fill_in_buffer()
-		{
-			if ( m_strmIn.avail_in != 0 ) {
-				return m_strmIn.avail_in;
-			}
-
-			if ( m_inIsEOF )
-				return 0;
-
-			// ToDo if not binary and Win32: \r\n -> \n (?)
-
-			bool startstream = false;
-			if ( m_transferInBuffer.size() == 0 ) {
-				m_transferInBuffer.resize(m_buffersize*sizeof(charT)+m_additionalChars);
-				m_strmIn.next_in = m_transferInBuffer.begin()+m_additionalChars;
-				startstream = true;
-			} else if ( m_strmIn.next_in < m_transferInBuffer.begin()+(m_transferInBuffer.size()-m_additionalChars) ) {
-				m_inIsEOF = true;
-				return 0;
-			} else {
-				TemplBuffer<unsigned char>::iterator e = m_transferInBuffer.begin()+(m_transferInBuffer.size()-m_additionalChars);
-				TemplBuffer<unsigned char>::iterator b = m_transferInBuffer.begin();
-
-				for ( int i=0; i<m_additionalChars; ++i ) {
-					*(b++) = *(e++);
-				}
-				m_strmIn.next_in = m_transferInBuffer.begin()+m_additionalChars;
-			}
-
-			if ( m_backBuffer ) {
-				m_strmIn.avail_in =
-					(uInt)m_backBuffer->sgetn(
-						(char *)m_transferInBuffer.begin()+m_additionalChars,
-						(std::streamsize)m_transferInBuffer.size()-m_additionalChars);
-			} else if ( m_coupledBuffer ) {
-				#ifdef _MSC_VER
-					m_strmIn.avail_in =
-						(uInt)m_coupledBuffer->_Sgetn_s(
-							(char *)m_transferInBuffer.begin()+m_additionalChars,
-							m_transferInBuffer.size()-m_additionalChars,
-							(std::streamsize)m_transferInBuffer.size()-m_additionalChars);
-				#else
-					m_strmIn.avail_in =
-						m_coupledBuffer->sgetn(
-							(char *)m_transferInBuffer.begin()+m_additionalChars,
-							m_transferInBuffer.size()-m_additionalChars);
-				#endif
-			}
-
-			if ( startstream && m_strmIn.avail_in > 2 ) {
-				if (m_strmIn.next_in[0] == gz_magic_0 &&
-					m_strmIn.next_in[1] == gz_magic_1)
-				{
-					if ( m_strmIn.avail_in >= 10 ) {
-						// At least the 8 Byte at the and of the zipfile (4 Byte CRC, 4 Byte length)
-						m_strmIn.avail_in -= 8;
-					}
-					// If the filesize is smaller than 10 the header check will fail.
-				}
-			}
-
-			return m_strmIn.avail_in;
-		}
-
-		inline TemplFrontStreambuf(TemplFrontStreambuf &) {}
-
+		bool check_header();
+		unsigned int fill_in_buffer();
+		
+		inline CFrontStreambuf(CFrontStreambuf &) {}
+		inline CFrontStreambuf() {}
+		
 	protected:
-		inline virtual int flushBuffer(bool finish)
-		{
-			if ( !(m_mode & std::ios_base::out) ) {
-				return 0;
-			}
-			int num = static_cast<int>(TypeParent::pptr() - TypeParent::pbase());
-			if ( num <= 0 ) {
-				TypeParent::pbump(0);
-				return 0;
-			}
+		
+		inline virtual int flushBuffer(bool finish);
+		inline virtual int_type overflow(int_type c);
+		inline virtual int_type underflow();
 
-			if ( !m_backBuffer && !m_coupledBuffer ) {
-				TypeParent::pbump(-num);
-				return 0;
-			}
-
-			if ( m_compressLevelOut == Z_NO_COMPRESSION ) {
-				if ( m_backBuffer ) {
-					m_backBuffer->sputn(m_frontOutBuffer.begin(), num*sizeof(charT));
-				} else if ( m_coupledBuffer ) {
-					m_coupledBuffer->sputn(m_frontOutBuffer.begin(), num*sizeof(charT));
-				}
-			} else {
-				// Copy to/from transferbuff with zlib, transfer the back buffer or
-				// coupled buffer
-				int ret;
-
-				m_strmOut.avail_in = num*sizeof(charT);
-				m_strmOut.next_in = (Bytef *)(m_frontOutBuffer.begin());
-
-				if ( m_transferOutBuffer.size() == 0 ) {
-					m_transferOutBuffer.resize(m_buffersize*sizeof(charT));
-
-					// Write compress header
-					char header[10] = {
-						(char)gz_magic_0, (char)gz_magic_1,
-						m_methodOut,
-						(m_mode  & std::ios_base::binary) ? 0 : ASCII_FLAG, // flags
-						0,0,0,0, // time
-						0, //xflags 
-						OS_CODE
-					};
-					if ( m_backBuffer ) {
-						if ( !m_backBuffer->sputn(header, sizeof(header)) ) {
-							TypeParent::pbump(-num);
-							return 0;
-						}
-					} else if ( m_coupledBuffer ) {
-						if ( !m_coupledBuffer->sputn(header, sizeof(header)) ) {
-							TypeParent::pbump(-num);
-							return 0;
-						}
-					}
-				}
-
-				do {
-					int flush = finish ? Z_FINISH : Z_NO_FLUSH;
-
-					// ToDo if not binary and Win32: \n ->  \r\n
-
-					m_strmOut.avail_out = static_cast<uInt>(m_transferOutBuffer.size());
-					m_strmOut.next_out = (Bytef *)(m_transferOutBuffer.begin());
-
-					ret = deflate(&m_strmOut, flush);
-
-					if ( ret == Z_STREAM_ERROR ) {
-						TypeParent::pbump(-num);
-						return 0;
-					}
-
-					int have = (int)(m_transferOutBuffer.size() - m_strmOut.avail_out);
-
-					if ( m_backBuffer ) {
-						if ( !m_backBuffer->sputn(m_transferOutBuffer.begin(), have) && have != 0 ) {
-							TypeParent::pbump(-num);
-							return 0;
-						}
-					} else if ( m_coupledBuffer ) {
-						if ( !m_coupledBuffer->sputn(m_transferOutBuffer.begin(), have) && have != 0 ) {
-							TypeParent::pbump(-num);
-							return 0;
-						}
-					} 
-				} while ( m_strmOut.avail_out == 0 );
-
-				m_out = num;
-				m_crcOut = crc32(m_crcOut, (const Bytef *)m_frontOutBuffer.begin(), (unsigned int)num);
-			}
-
-			TypeParent::pbump(-num);
-			return num;
-		}
-
-		inline virtual int_type overflow(int_type c)
-		{
-			if ( c != traits::eof() ) {
-				*TypeParent::pptr() = c;
-				TypeParent::pbump(1);
-			}
-			if ( flushBuffer(false) == traits::eof() ) {
-				return traits::eof();
-			}
-			return c;
-		}
-
-		inline virtual int_type underflow()
-		{
-			if ( TypeParent::gptr() < TypeParent::egptr() ) {
-				return *TypeParent::gptr();
-			}
-			
-			if ( m_inIsEOF ) {
-				return traits::eof();
-			}
-
-			int_type numPutback;
-			numPutback = (int_type)(TypeParent::gptr() - TypeParent::eback());
-			if ( numPutback > m_putbackSize )
-				numPutback = m_putbackSize;
-
-			if ( numPutback ) {
-				memcpy(m_frontInBuffer.begin()+(m_putbackSize-numPutback), TypeParent::gptr()-numPutback, numPutback*sizeof(charT));
-			}
-
-			// Read new Characters
-			std::streamsize num = 0;
-
-			m_strmIn.avail_out = (uInt)(sizeof(charT)*(m_frontInBuffer.size()-m_putbackSize));
-			m_strmIn.next_out = (Bytef *)(m_frontInBuffer.begin()+m_putbackSize);
-			while ( m_strmIn.avail_out != 0 ) {
-				fill_in_buffer();
-				if ( m_strmIn.avail_in != 0 ) {
-					if ( !m_transparentIn ) {
-						inflate(&m_strmIn, Z_NO_FLUSH);
-					} else {
-						uInt avail = tmin(m_strmIn.avail_in, m_strmIn.avail_out);
-						memcpy(m_strmIn.next_out, m_strmIn.next_in, avail);
-						m_strmIn.avail_out -= avail;
-						m_strmIn.avail_in -= avail;
-						m_strmIn.next_out += avail;
-						m_strmIn.next_in += avail;
-					}
-					continue;
-				}
-				break;
-			}
-
-			num = (std::streamsize)(
-				sizeof(charT) *
-				(m_frontInBuffer.size()-m_putbackSize) -
-				m_strmIn.avail_out);
-
-			setg(
-				m_frontInBuffer.begin()+(m_putbackSize-numPutback), 
-				m_frontInBuffer.begin()+m_putbackSize,
-				m_frontInBuffer.begin()+m_putbackSize+num);
-
-			if ( num == 0 )
-				return traits::eof();
-
-			return *TypeParent::gptr();
-		}
-
+		/** @brief Set m_baseUri to the file path current directory
+		 */
 		inline virtual void setBaseCwd()
 		{
 			CFilepath p;
@@ -967,174 +648,92 @@ namespace RiCPP {
 			m_baseUri.encodeFilepath(path.c_str(), "file");
 		}
 
+		/** @brief Initializes buffer for input and output
+		 *
+		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
+		 *  @param compressLevel minly for for output. But if the compressLevel is Z_NO_COMPRESSION, input will be read as is, zlib header will not interpreted.
+		 */
+		bool postOpen(TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
+					  int compressLevel = Z_DEFAULT_COMPRESSION);
+		
 	public:
-		inline TemplFrontStreambuf(CBackBufferProtocolHandlers &bufferReg) :
+		/** @brief Initializes the buffer.
+		 *  @param bufferReg Object is used to get a buffer for a specfic URI-scheme
+		 */
+		inline CFrontStreambuf(CBackBufferProtocolHandlers &bufferReg) :
 			m_bufferReg(&bufferReg)
 		{
 			init();
 		}
 
-		inline virtual ~TemplFrontStreambuf() throw() { close(); }
+		/** @brief Destructor, colses the stream.
+		 */
+		inline virtual ~CFrontStreambuf() throw() { close(); }
 
+		/** @brief Sets the base URI.
+		 *  @param base New base URI
+		 *  @returns false, base URI is invalid.
+		 */
 		inline virtual bool base(const CUri &base)
 		{
-			if ( base.isValid() ) {
-				m_baseUri = base;
-			} else {
-				return true;
+			m_baseUri = base;
+			if ( m_baseUri.isValid() && m_baseUri.toString().empty() ) {
+				// No base URI, so use the current directory in file system
+				setBaseCwd();
 			}
 			return m_baseUri.isValid();
 		}
 
+		/** @brief Gets the base URI.
+		 */
 		inline virtual const CUri &base() const
 		{
 			return m_baseUri;
 		}
 
-		inline virtual bool open(
-			const CUri &refUri,
-			TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
-			int compressLevel = Z_DEFAULT_COMPRESSION)
+		/** @brief Opens a buffer for input or output from a reference URI
+		 *
+		 *  Initializes buffer pointers and back buffer
+		 *
+		 *  @param refURI Uniform ressource identifier
+		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
+		 *  @param compressLevel minly for for output. But if the compressLevel is Z_NO_COMPRESSION, input will be read as is, zlib header will not interpreted.
+		 */
+		virtual bool open(
+						  const CUri &refUri,
+						  TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
+						  int compressLevel = Z_DEFAULT_COMPRESSION);
+		
+		/** @brief Opens a buffer for input or output from a streambuf
+		 *
+		 *  Initializes buffer pointers and back buffer
+		 *
+		 *  @param refURI Uniform ressource identifier
+		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
+		 *  @param compressLevel minly for for output. But if the compressLevel is Z_NO_COMPRESSION, input will be read as is, zlib header will not interpreted.
+		 */
+		virtual void open(TypeParent *aBuffer,
+						  TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
+						  int compressLevel = Z_DEFAULT_COMPRESSION);
+		
+		/** @brief Closes the buffer.
+		 */
+		virtual bool close();
+
+		/** @brief Gets a coupled buffer.
+		 */
+		inline TypeParent *coupledBuffer()
 		{
-			m_mode = mode;
-			m_compressLevelOut = compressLevel;
-			if ( m_factory && m_backBuffer ) {
-				m_factory->close(m_backBuffer);
-				m_backBuffer = 0;
-				m_factory = 0;
-			}
-			m_coupledBuffer = 0;
-
-			if ( m_baseUri.toString().empty() ) {
-				setBaseCwd();
-			}
-
-			if ( !CUri::makeAbsolute(m_resolutionUri, m_baseUri, refUri, false) )
-			{
-				return false;
-			}
-
-			m_factory = m_bufferReg->getBufferFactory(m_resolutionUri.getScheme().c_str());
-			if ( m_factory ) {
-				m_backBuffer = m_factory->open(m_resolutionUri, compressLevel != 0 ? mode|std::ios_base::binary : mode);
-				if ( !m_backBuffer )
-					m_factory = 0;
-			}
-
-			if ( m_compressLevelOut != Z_NO_COMPRESSION  && (m_mode & std::ios_base::out) ) {
-				m_strmOut.zalloc = Z_NULL;
-				m_strmOut.zfree = Z_NULL;
-				m_strmOut.opaque = Z_NULL;
-				m_strmOut.avail_in = 0;
-				m_strmOut.avail_out = 0;
-				
-				m_out = 0;
-				// m_crcOut = 0;
-				m_crcOut = crc32(0L, Z_NULL, 0);
-				m_strategyOut = Z_DEFAULT_STRATEGY;
-
-				setp(m_frontOutBuffer.begin(), m_frontOutBuffer.end()-1);
-				int ret = deflateInit2(
-					&m_strmOut,
-					m_compressLevelOut,
-					m_methodOut,
-					-MAX_WBITS,
-					DEF_MEM_LEVEL,
-					m_strategyOut);
-				if ( ret != Z_OK ) {
-					return false;
-				}
-			}
-
-			if ( m_mode & std::ios_base::in ) {
-				m_strmIn.zalloc = Z_NULL;
-				m_strmIn.zfree = Z_NULL;
-				m_strmIn.opaque = Z_NULL;
-				m_strmIn.avail_in = 0;
-				m_strmIn.avail_out = 0;
-				
-				m_strategyIn = Z_DEFAULT_STRATEGY;
-				m_transparentIn = compressLevel == Z_NO_COMPRESSION;
-				m_in = 0;
-				m_inIsEOF = false;
-				// m_crcIn = 0;
-				m_crcIn = crc32(0L, Z_NULL, 0);
-				setg(
-					m_frontInBuffer.begin()+m_putbackSize,
-					m_frontInBuffer.begin()+m_putbackSize,
-					m_frontInBuffer.begin()+m_putbackSize);
-
-				if ( !m_transparentIn && !check_header() )
-					return false;
-
-				if ( !m_transparentIn ) {
-					int ret = inflateInit2(
-						&m_strmIn,
-						-MAX_WBITS);
-					if ( ret != Z_OK ) {
-						return false;
-					}
-				}
-			}
-
-			return m_backBuffer != 0;
+			return m_coupledBuffer;
 		}
 
-		inline virtual bool close()
-		{
-			flushBuffer(true);
-			if ( m_factory && m_backBuffer ) {
-				if ( m_compressLevelOut != Z_NO_COMPRESSION && (m_mode & std::ios_base::out) ) {
-					unsigned char c[2][4];
-					putLong (c[0], m_crcOut);
-					putLong (c[1], (unsigned long)(m_out & 0xffffffff));
-					if ( m_backBuffer ) {
-						if ( !m_backBuffer->sputn((const char *)(&c[0][0]), 8) ) {
-						}
-					} else if ( m_coupledBuffer ) {
-						if ( !m_coupledBuffer->sputn((const char *)(&c[0][0]), 8) ) {
-						}
-					} else {
-						// Do nothing
-					}
-					deflateEnd(&m_strmOut);
-				}
-				if ( !m_transparentIn && (m_mode & std::ios_base::in) ) {
-					inflateEnd(&m_strmIn);
-				}
-				bool rval = m_factory->close(m_backBuffer);
-				m_backBuffer = 0;
-				m_factory = 0;
-				m_transferOutBuffer.resize(0);
-				return rval;
-			}
-			if ( m_coupledBuffer ) {
-				disconnect();
-			}
-			return false;
-		}
-
+		/** @brief Cannot rewind the stream.
+		 */
 		inline virtual bool rewind() const
 		{
 			return false;
 		}
-
-		inline virtual void connect(TypeParent *aBuffer)
-		{
-			close();
-			m_coupledBuffer = aBuffer;
-		}
-
-		inline virtual void disconnect()
-		{
-			m_coupledBuffer = 0;
-		}
-
-		inline TypeParent *rdbuf()
-		{
-			return m_coupledBuffer;
-		}
-	}; // TemplFrontStreambuf
+	}; // CFrontStreambuf
 
 } // namespace RiCPP
 

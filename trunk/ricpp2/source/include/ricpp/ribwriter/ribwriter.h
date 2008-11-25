@@ -60,7 +60,7 @@ protected:
 	
 private:
 	CRibElementsWriter *m_writer;
-	TemplFrontStreambuf<char> *m_buffer;
+	CFrontStreambuf *m_buffer;
 	std::string m_cmd;
 	std::string m_nativepath;
 

@@ -28,6 +28,7 @@
  */
 
 #include "ricpp/streams/backbuffer.h"
+#include <cassert>
 
 using namespace RiCPP;
 
@@ -172,4 +173,517 @@ CBackBufferFactory *CBackBufferProtocolHandlers::getBufferFactory(const char *sc
 			return f;
 	}
 	return 0;
+}
+
+
+// ----------------------------------------------------------------------------
+
+
+void  CFrontStreambuf::init()
+{
+	m_backBuffer = 0;
+	m_coupledBuffer = 0;
+	m_factory = 0;
+	
+	m_mode = static_cast<TypeOpenMode>(0);
+	
+	m_buffersize = 8192; // std 8192, has to be a minimum size for zip header
+	m_putbackSize = 128; // std 128
+	
+	assert ( m_buffersize >= m_putbackSize );
+	
+	m_frontInBuffer.clear();
+	m_frontInBuffer.resize(m_buffersize);
+	m_in = 0;
+	m_crcIn = 0;
+	m_transparentIn = true;
+	m_strategyIn = Z_DEFAULT_STRATEGY;
+	m_methodIn = Z_DEFLATED;
+	setg(
+		 m_frontInBuffer.begin()+m_putbackSize,
+		 m_frontInBuffer.begin()+m_putbackSize,
+		 m_frontInBuffer.begin()+m_putbackSize);
+	
+	
+	m_frontOutBuffer.clear();
+	m_frontOutBuffer.resize(m_buffersize);
+	m_out = 0;
+	m_crcOut = 0;
+	m_compressLevelOut = Z_DEFAULT_COMPRESSION;
+	m_strategyOut = Z_DEFAULT_STRATEGY;
+	m_methodOut = Z_DEFLATED;
+	setp(m_frontOutBuffer.begin(), m_frontOutBuffer.begin()-1);
+}
+
+
+bool CFrontStreambuf::check_header()
+{
+	int method; // method byte
+	int flags;  // flags byte
+	uInt len;
+	char c;
+	
+	// Stream buffer is greater than 2 - maybe zipped
+	// if it is less than 2, the file is smaller as 2 Bytes, not zipped
+	if ( m_strmIn.avail_in < 2 ) {
+		fill_in_buffer();
+		if ( m_strmIn.avail_in < 2 ) {
+			m_transparentIn = true;
+			return true;
+		}
+	}
+	
+	// Peek ahead to check the gzip magic header
+	if (m_strmIn.next_in[0] != gz_magic_0 ||
+		m_strmIn.next_in[1] != gz_magic_1)
+	{
+		m_transparentIn = true;
+		return true;
+	}
+	
+	// Skip the header
+	get_byte();
+	get_byte();
+	
+	m_transparentIn = false;
+	
+	// Check the rest of the gzip header
+	method = get_byte();
+	flags = get_byte();
+	
+	if ( method != Z_DEFLATED || flags == EOF || (flags & RESERVED) != 0 ) {
+		return false;
+	}
+	
+	// Discard time, xflags and OS code:
+	for ( len = 0; len < 6; len++ ) {
+		get_byte();
+	}
+	
+	if ( (flags & EXTRA_FIELD) != 0 ) { // skip the extra field
+		len  =  (uInt)get_byte();
+		len += ((uInt)get_byte())<<8;
+		// len is garbage if EOF but the loop below will quit anyway
+		while ( len-- != 0 && get_byte() != EOF ) ;
+	}
+	if ((flags & ORIG_NAME) != 0) { // skip the extra field
+		while ( (c = get_byte()) != 0 && c != EOF ) ;
+	}
+	if ((flags & COMMENT) != 0) {   // skip the .gz file comment
+		while ( (c = get_byte()) != 0 && c != EOF ) ;
+	}
+	if ((flags & HEAD_CRC) != 0) {  // skip the header crc 16Bit
+		for (len = 0; len < 2; len++) {
+			get_byte();
+		}
+	}
+	
+	return !m_inIsEOF;
+}
+
+
+unsigned int CFrontStreambuf::fill_in_buffer()
+{
+	const size_t footerSize = 8;
+	
+	if ( m_strmIn.avail_in != 0 ) {
+		return m_strmIn.avail_in;
+	}
+	
+	if ( m_inIsEOF )
+		return 0;
+	
+	// ToDo if not binary and Win32: \r\n -> \n (?)
+	
+	bool startstream = false;
+	if ( m_transferInBuffer.size() == 0 ) {
+		m_transferInBuffer.resize(m_buffersize+footerSize);
+		m_strmIn.next_in = m_transferInBuffer.begin();
+		startstream = true;
+	} else if ( m_strmIn.next_in < m_transferInBuffer.begin()+(m_transferInBuffer.size()-footerSize) ) {
+		m_inIsEOF = true;
+		return 0;
+	} else {
+		m_strmIn.next_in = m_transferInBuffer.begin();
+	}
+	
+	if ( !startstream ) {
+		memcpy(m_transferInBuffer.begin(), m_transferInBuffer.begin()+m_transferInBuffer.size()-footerSize, footerSize);
+	}
+
+	if ( m_backBuffer ) {
+
+		if ( startstream ) {
+			m_strmIn.avail_in =
+			(uInt)m_backBuffer->sgetn((char *)m_transferInBuffer.begin(),
+									  (std::streamsize)m_transferInBuffer.size());
+		} else {
+			m_strmIn.avail_in =
+			(uInt)m_backBuffer->sgetn((char *)m_transferInBuffer.begin()+footerSize,
+									  (std::streamsize)m_transferInBuffer.size()-footerSize);
+		}
+
+	} else if ( m_coupledBuffer ) {
+
+		if ( startstream ) {
+#ifdef _MSC_VER
+			m_strmIn.avail_in =
+			(uInt)m_coupledBuffer->_Sgetn_s((char *)m_transferInBuffer.begin(),
+											m_transferInBuffer.size(),
+											(std::streamsize)m_transferInBuffer.size());
+#else
+			m_strmIn.avail_in =
+			m_coupledBuffer->sgetn((char *)m_transferInBuffer.begin(),
+								   m_transferInBuffer.size());
+#endif
+		} else {
+#ifdef _MSC_VER
+			m_strmIn.avail_in =
+			(uInt)m_coupledBuffer->_Sgetn_s((char *)m_transferInBuffer.begin()+footerSize,
+											m_transferInBuffer.size()-footerSize,
+											(std::streamsize)m_transferInBuffer.size()-footerSize);
+#else
+			m_strmIn.avail_in =
+			m_coupledBuffer->sgetn((char *)m_transferInBuffer.begin()+footerSize,
+								   m_transferInBuffer.size()-footerSize);
+#endif
+		}
+
+	}
+	
+	if ( startstream ) {
+		if ( m_strmIn.avail_in < m_transferInBuffer.size() ) {
+			if (!m_transparentIn &&
+				m_strmIn.next_in[0] == gz_magic_0 &&
+				m_strmIn.next_in[1] == gz_magic_1)
+			{
+				if ( m_strmIn.avail_in >= 2+footerSize ) {
+					// At least the 8 Byte at the and of the zipfile (4 Byte CRC, 4 Byte length)
+					m_strmIn.avail_in -= footerSize;
+				}
+				// If the filesize is smaller than header, the check will fail.
+			}
+		} else {
+			m_strmIn.avail_in -= footerSize;
+		}
+	} else {
+		if ( m_transparentIn ) {
+			if ( m_strmIn.avail_in < m_transferInBuffer.size()-footerSize ) {
+				m_strmIn.avail_in += footerSize; // no zip -> no footer has to be truncated
+			}
+		}
+	}
+	
+	return m_strmIn.avail_in;
+}
+
+
+int CFrontStreambuf::flushBuffer(bool finish)
+{
+	if ( !(m_mode & std::ios_base::out) ) {
+		return 0;
+	}
+	int num = static_cast<int>(TypeParent::pptr() - TypeParent::pbase());
+	if ( num <= 0 ) {
+		TypeParent::pbump(0);
+		return 0;
+	}
+	
+	if ( !m_backBuffer && !m_coupledBuffer ) {
+		TypeParent::pbump(-num);
+		return 0;
+	}
+	
+	if ( m_compressLevelOut == Z_NO_COMPRESSION ) {
+		if ( m_backBuffer ) {
+			m_backBuffer->sputn(m_frontOutBuffer.begin(), num);
+		} else if ( m_coupledBuffer ) {
+			m_coupledBuffer->sputn(m_frontOutBuffer.begin(), num);
+		}
+	} else {
+		// Copy to/from transferbuff with zlib, transfer the back buffer or
+		// coupled buffer
+		int ret;
+		
+		m_strmOut.avail_in = num;
+		m_strmOut.next_in = (Bytef *)(m_frontOutBuffer.begin());
+		
+		if ( m_transferOutBuffer.size() == 0 ) {
+			m_transferOutBuffer.resize(m_buffersize);
+			
+			// Write compress header
+			char header[10] = {
+				(char)gz_magic_0, (char)gz_magic_1,
+				m_methodOut,
+				(m_mode  & std::ios_base::binary) ? 0 : ASCII_FLAG, // flags
+				0,0,0,0, // time
+				0, //xflags 
+				OS_CODE
+			};
+			if ( m_backBuffer ) {
+				if ( !m_backBuffer->sputn(header, sizeof(header)) ) {
+					TypeParent::pbump(-num);
+					return 0;
+				}
+			} else if ( m_coupledBuffer ) {
+				if ( !m_coupledBuffer->sputn(header, sizeof(header)) ) {
+					TypeParent::pbump(-num);
+					return 0;
+				}
+			}
+		}
+		
+		do {
+			int flush = finish ? Z_FINISH : Z_NO_FLUSH;
+			
+			// ToDo if not binary and Win32: \n ->  \r\n
+			
+			m_strmOut.avail_out = static_cast<uInt>(m_transferOutBuffer.size());
+			m_strmOut.next_out = (Bytef *)(m_transferOutBuffer.begin());
+			
+			ret = deflate(&m_strmOut, flush);
+			
+			if ( ret == Z_STREAM_ERROR ) {
+				TypeParent::pbump(-num);
+				return 0;
+			}
+			
+			int have = (int)(m_transferOutBuffer.size() - m_strmOut.avail_out);
+			
+			if ( m_backBuffer ) {
+				if ( !m_backBuffer->sputn(m_transferOutBuffer.begin(), have) && have != 0 ) {
+					TypeParent::pbump(-num);
+					return 0;
+				}
+			} else if ( m_coupledBuffer ) {
+				if ( !m_coupledBuffer->sputn(m_transferOutBuffer.begin(), have) && have != 0 ) {
+					TypeParent::pbump(-num);
+					return 0;
+				}
+			} 
+		} while ( m_strmOut.avail_out == 0 );
+		
+		m_out = num;
+		m_crcOut = crc32(m_crcOut, (const Bytef *)m_frontOutBuffer.begin(), (unsigned int)num);
+	}
+	
+	TypeParent::pbump(-num);
+	return num;
+}
+
+
+CFrontStreambuf::int_type CFrontStreambuf::overflow(int_type c)
+{
+	if ( c != std::char_traits<char>::eof() ) {
+		*TypeParent::pptr() = c;
+		TypeParent::pbump(1);
+	}
+	if ( flushBuffer(false) == std::char_traits<char>::eof() ) {
+		return std::char_traits<char>::eof();
+	}
+	return c;
+}
+
+
+CFrontStreambuf::int_type CFrontStreambuf::underflow()
+{
+	if ( TypeParent::gptr() < TypeParent::egptr() ) {
+		return *TypeParent::gptr();
+	}
+	
+	if ( m_inIsEOF ) {
+		return std::char_traits<char>::eof();
+	}
+	
+	int_type numPutback;
+	numPutback = (int_type)(TypeParent::gptr() - TypeParent::eback());
+	if ( numPutback > m_putbackSize )
+		numPutback = m_putbackSize;
+	
+	if ( numPutback ) {
+		memcpy(m_frontInBuffer.begin()+(m_putbackSize-numPutback), TypeParent::gptr()-numPutback, numPutback);
+	}
+	
+	// Read new Characters
+	std::streamsize num = 0;
+	
+	m_strmIn.avail_out = static_cast<uInt>(m_frontInBuffer.size()-m_putbackSize);
+	m_strmIn.next_out = reinterpret_cast<Bytef *>(m_frontInBuffer.begin()+m_putbackSize);
+	while ( m_strmIn.avail_out != 0 ) {
+		fill_in_buffer();
+		if ( m_strmIn.avail_in != 0 ) {
+			if ( !m_transparentIn ) {
+				inflate(&m_strmIn, Z_NO_FLUSH);
+			} else {
+				uInt avail = tmin(m_strmIn.avail_in, m_strmIn.avail_out);
+				memcpy(m_strmIn.next_out, m_strmIn.next_in, avail);
+				m_strmIn.avail_out -= avail;
+				m_strmIn.avail_in -= avail;
+				m_strmIn.next_out += avail;
+				m_strmIn.next_in += avail;
+			}
+			continue;
+		}
+		break;
+	}
+	
+	num = static_cast<std::streamsize>((m_frontInBuffer.size()-m_putbackSize) -
+									   m_strmIn.avail_out);
+	
+	setg(m_frontInBuffer.begin()+(m_putbackSize-numPutback), 
+		 m_frontInBuffer.begin()+m_putbackSize,
+		 m_frontInBuffer.begin()+m_putbackSize+num);
+	
+	if ( num == 0 )
+		return std::char_traits<char>::eof();
+	
+	return *TypeParent::gptr();
+}
+
+
+bool CFrontStreambuf::postOpen(TypeOpenMode mode,
+							   int compressLevel)
+{			
+	m_mode = mode;
+	m_compressLevelOut = compressLevel;
+	
+	if ( m_compressLevelOut != Z_NO_COMPRESSION  && (m_mode & std::ios_base::out) ) {
+		// Set the compression level for the output
+		m_strmOut.zalloc = Z_NULL;
+		m_strmOut.zfree = Z_NULL;
+		m_strmOut.opaque = Z_NULL;
+		m_strmOut.avail_in = 0;
+		m_strmOut.avail_out = 0;
+		
+		m_out = 0;
+		m_crcOut = crc32(0L, Z_NULL, 0);
+		m_strategyOut = Z_DEFAULT_STRATEGY;
+		
+		setp(m_frontOutBuffer.begin(), m_frontOutBuffer.end()-1);
+		int ret = deflateInit2(
+							   &m_strmOut,
+							   m_compressLevelOut,
+							   m_methodOut,
+							   -MAX_WBITS,
+							   DEF_MEM_LEVEL,
+							   m_strategyOut);
+		
+		if ( ret != Z_OK ) {
+			// Could not initialize the zip stream structure
+			return false;
+		}
+	}
+	
+	if ( m_mode & std::ios_base::in ) {
+		// Set the compression level for the output
+		m_strmIn.zalloc = Z_NULL;
+		m_strmIn.zfree = Z_NULL;
+		m_strmIn.opaque = Z_NULL;
+		m_strmIn.avail_in = 0;
+		m_strmIn.avail_out = 0;
+		
+		m_strategyIn = Z_DEFAULT_STRATEGY;
+		
+		m_transparentIn = compressLevel == Z_NO_COMPRESSION;
+		m_in = 0;
+		m_inIsEOF = false;
+		m_crcIn = crc32(0L, Z_NULL, 0);
+		setg(
+			 m_frontInBuffer.begin()+m_putbackSize,
+			 m_frontInBuffer.begin()+m_putbackSize,
+			 m_frontInBuffer.begin()+m_putbackSize);
+		
+		if ( !m_transparentIn && !check_header() )
+			return false;
+		
+		if ( !m_transparentIn ) {
+			int ret = inflateInit2(&m_strmIn,
+								   -MAX_WBITS);
+			if ( ret != Z_OK ) {
+				return false;
+			}
+		}
+	}
+	
+	return true;
+}
+
+
+bool CFrontStreambuf::open(const CUri &refUri,
+						   TypeOpenMode mode,
+						   int compressLevel)
+{
+	close();
+	
+	// Get the absolute URI using base and reference URI
+	if ( !CUri::makeAbsolute(m_resolutionUri, m_baseUri, refUri, false) ) {
+		return false;
+	}
+	
+	// Get the back buffer and its factory for the URI scheme (e.g. file)
+	m_factory = m_bufferReg->getBufferFactory(m_resolutionUri.getScheme().c_str());
+	if ( m_factory ) {
+		TypeOpenMode backMode = mode;
+		if ( mode & std::ios_base::in || compressLevel != Z_NO_COMPRESSION  )
+			backMode |= std::ios_base::binary;
+		m_backBuffer = m_factory->open(m_resolutionUri, backMode);
+		if ( !m_backBuffer )
+			m_factory = 0;
+	}
+	
+	if ( m_factory != 0 )
+		return postOpen(mode, compressLevel);
+	
+	return false;
+}
+
+
+void CFrontStreambuf::open(TypeParent *aBuffer,
+						   TypeOpenMode mode,
+						   int compressLevel)
+{
+	close();
+	m_coupledBuffer = aBuffer;
+	postOpen(mode, compressLevel);
+}
+
+
+bool CFrontStreambuf::close()
+{
+	flushBuffer(true);
+	if ( !(m_coupledBuffer || m_backBuffer) ) {
+		return false;
+	}
+	
+	bool result = true;
+	if ( m_compressLevelOut != Z_NO_COMPRESSION && (m_mode & std::ios_base::out) ) {
+		// Put compression trailer
+		unsigned char c[2][4];
+		putLong (c[0], m_crcOut);
+		putLong (c[1], (unsigned long)(m_out & 0xffffffff));
+		if ( m_backBuffer ) {
+			if ( !m_backBuffer->sputn((const char *)(&c[0][0]), 8) ) {
+				result = false;
+			}
+		} else if ( m_coupledBuffer ) {
+			if ( !m_coupledBuffer->sputn((const char *)(&c[0][0]), 8) ) {
+				result = false;
+			}
+		}
+		deflateEnd(&m_strmOut);
+	}
+	
+	if ( !m_transparentIn && (m_mode & std::ios_base::in) ) {
+		inflateEnd(&m_strmIn);
+	}
+	
+	if ( m_factory && m_backBuffer )
+		result = m_factory->close(m_backBuffer) || result;
+	
+	m_coupledBuffer = 0;
+	m_backBuffer = 0;
+	m_factory = 0;
+	m_transferOutBuffer.resize(0);
+	
+	return result;
 }

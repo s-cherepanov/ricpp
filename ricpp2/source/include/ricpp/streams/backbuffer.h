@@ -640,14 +640,8 @@ namespace RiCPP {
 
 		/** @brief Set m_baseUri to the file path current directory
 		 */
-		inline virtual void setBaseCwd()
-		{
-			CFilepath p;
-			std::string path(p.filepath());
-			path += CFilepathConverter::internalPathSeparator();
-			m_baseUri.encodeFilepath(path.c_str(), "file");
-		}
-
+		void setBaseCwd();
+		
 		/** @brief Initializes buffer for input and output
 		 *
 		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
@@ -668,21 +662,16 @@ namespace RiCPP {
 
 		/** @brief Destructor, colses the stream.
 		 */
-		inline virtual ~CFrontStreambuf() throw() { close(); }
+		inline virtual ~CFrontStreambuf() throw()
+		{
+			close();
+		}
 
 		/** @brief Sets the base URI.
 		 *  @param base New base URI
 		 *  @returns false, base URI is invalid.
 		 */
-		inline virtual bool base(const CUri &base)
-		{
-			m_baseUri = base;
-			if ( m_baseUri.isValid() && m_baseUri.toString().empty() ) {
-				// No base URI, so use the current directory in file system
-				setBaseCwd();
-			}
-			return m_baseUri.isValid();
-		}
+		virtual bool base(const CUri &base);
 
 		/** @brief Gets the base URI.
 		 */
@@ -699,8 +688,7 @@ namespace RiCPP {
 		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
 		 *  @param compressLevel minly for for output. But if the compressLevel is Z_NO_COMPRESSION, input will be read as is, zlib header will not interpreted.
 		 */
-		virtual bool open(
-						  const CUri &refUri,
+		virtual bool open(const CUri &refUri,
 						  TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
 						  int compressLevel = Z_DEFAULT_COMPRESSION);
 		

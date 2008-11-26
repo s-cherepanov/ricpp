@@ -213,8 +213,31 @@ void  CFrontStreambuf::init()
 	m_strategyOut = Z_DEFAULT_STRATEGY;
 	m_methodOut = Z_DEFLATED;
 	setp(m_frontOutBuffer.begin(), m_frontOutBuffer.begin()-1);
+	
+	setBaseCwd();
 }
 
+void CFrontStreambuf::setBaseCwd()
+{
+	CFilepath p;
+	std::string path(p.filepath());
+	path += CFilepathConverter::internalPathSeparator();
+	m_baseUri.encodeFilepath(path.c_str(), "file");
+}
+
+bool CFrontStreambuf::base(const CUri &base)
+{
+	if ( !base.isValid() ) {
+		return false;
+	}
+	m_baseUri = base;
+	if ( m_baseUri.toString().empty() ) {
+		// No base URI, so use the current directory in file system
+		setBaseCwd();
+	}
+	assert(m_baseUri.isValid());
+	return true;
+}
 
 bool CFrontStreambuf::check_header()
 {
@@ -463,7 +486,7 @@ int CFrontStreambuf::flushBuffer(bool finish)
 			} 
 		} while ( m_strmOut.avail_out == 0 );
 		
-		m_out = num;
+		m_out += num;
 		m_crcOut = crc32(m_crcOut, (const Bytef *)m_frontOutBuffer.begin(), (unsigned int)num);
 	}
 	

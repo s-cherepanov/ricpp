@@ -55,7 +55,8 @@ namespace RiCPP {
 		};
 
 	private:
-		std::list<CRManInterfaceCall *> m_callList;  ///< List of all interface calls for this macro.
+		typedef std::list<CRManInterfaceCall *> MacroContainerType; ///< Type for the container
+		MacroContainerType m_calls;       ///< Container of all interface calls for this macro.
 		
 		CRManInterfaceFactory *m_factory; ///< Container used to create the contents of the macro
 		EnumMacroTypes m_macroType;       ///< Type of macro, either object or (inline, file) archive.

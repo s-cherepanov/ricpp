@@ -549,8 +549,8 @@ RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
 void CRibParser::putback(unsigned char c)
 {
 	m_hasPutBack = true;
-	if ( c == '\n' && m_lineNo > 0 )
-		--m_lineNo;
+	if ( c == '\n' && lineNo() > 0 )
+		lineNo(lineNo()-1);
 	m_putBack = c;
 }
 
@@ -563,7 +563,7 @@ unsigned char CRibParser::getchar()
 		val = m_putBack;
 		m_hasPutBack = false;
 		if ( val == '\n' ) {
-			++m_lineNo;
+			lineNo(lineNo()+1);
 			val = '\n';
 		}
 		return val;
@@ -579,10 +579,10 @@ unsigned char CRibParser::getchar()
 	
 	if ( val == '\n' ) {
 		if ( c != '\r' )
-			++m_lineNo;
+			lineNo(lineNo()+1);
 	} else if ( val == '\r' ) {
 		if ( c != '\n' )
-			++m_lineNo;
+			lineNo(lineNo()+1);
 		val = '\n';
 	}
 	
@@ -1985,7 +1985,7 @@ void CRibParser::parseFile()
 	m_defineString = -1;	// No defind string (binary)
 	m_lookahead = RIBPARSER_NOT_A_TOKEN;  // Initialize, no Token found
 
-	m_lineNo = 1;
+	lineNo(1);
 	m_lastChar = 0;
 	m_hasPutBack = false;
 

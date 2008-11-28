@@ -44,17 +44,17 @@ CRiMacro::~CRiMacro()
 
 void CRiMacro::clear()
 {
-	std::list<CRManInterfaceCall *>::iterator i;
+	MacroContainerType::iterator i;
 	if ( m_factory ) {
-		for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
+		for ( i = m_calls.begin(); i != m_calls.end(); ++i ) {
 			m_factory->deleteRequest(*i);
 		}
 	} else {
-		for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
+		for ( i = m_calls.begin(); i != m_calls.end(); ++i ) {
 			delete *i;
 		}
 	}
-	m_callList.clear();
+	m_calls.clear();
 }
 
 CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
@@ -69,15 +69,15 @@ CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
 	m_isClosed = aMacro.m_isClosed;
 	m_postpone = aMacro.m_postpone;
 	
-	std::list<CRManInterfaceCall *>::const_iterator i;
+	MacroContainerType::const_iterator i;
 
 	if ( m_factory ) {
-		for ( i = aMacro.m_callList.begin(); i != aMacro.m_callList.end(); ++i ) {
+		for ( i = aMacro.m_calls.begin(); i != aMacro.m_calls.end(); ++i ) {
 			if ( *i )
 				add(m_factory->duplicateRequest(*i));
 		}
 	} else {
-		for ( i = aMacro.m_callList.begin(); i != aMacro.m_callList.end(); ++i ) {
+		for ( i = aMacro.m_calls.begin(); i != aMacro.m_calls.end(); ++i ) {
 			if ( *i )
 				add((*i)->duplicate());
 		}
@@ -89,7 +89,7 @@ bool CRiMacro::add(CRManInterfaceCall *c)
 {
 	if ( !c )
 		return false;
-	m_callList.push_back(c);
+	m_calls.push_back(c);
 	return true;
 }
 
@@ -103,8 +103,8 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 	long linNoStored = state->lineNo();
 	
 	state->archiveName(handle());
-	std::list<CRManInterfaceCall *>::iterator i;
-	for ( i = m_callList.begin(); i != m_callList.end(); ++i ) {
+
+	for ( MacroContainerType::iterator i = m_calls.begin(); i != m_calls.end(); ++i ) {
 		try {
 			state->lineNo((*i)->lineNo());
 			(*i)->replay(ri, callback);

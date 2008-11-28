@@ -720,6 +720,17 @@ namespace RiCPP {
 		// virtual bool getArchiveHandle(RtArchiveHandle &handle, RtInt number) const;
 		virtual bool getArchiveHandle(RtArchiveHandle &handle, const char *handleName) const;
 
+		/** @brief Sets the current line number.
+		 *
+		 *  @param aLineNo The current line number.
+		 */
+		inline void lineNo(long aLineNo)
+		{
+			m_lineNo = aLineNo;
+			if ( m_renderState )
+				m_renderState->lineNo(m_lineNo);
+		}
+
 	public:
 		/** @brief Constructor
 		 *
@@ -778,7 +789,7 @@ namespace RiCPP {
 		 *
 		 *  @return The current line number.
 		 */
-		inline virtual long lineNo() const
+		inline long lineNo() const
 		{
 			return m_lineNo;
 		}

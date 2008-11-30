@@ -226,8 +226,13 @@ namespace RiCPP {
 		void deleteTransMapCont(TypeTransformationMap &m);
 		void clearStacks();
 		void freeAll();
+
+		/*
+		void markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2, std::list<CRiMacro *> &l3);
 		void compactArchive(std::list<CRiMacro *> &aList, TemplHandleStack<CRiMacro> &aMacroStack);
 		void compactArchives();
+		*/
+		
 		void contextReset();
 
 		/** @brief Parser for RIB if-expression.
@@ -604,6 +609,8 @@ namespace RiCPP {
 		 *  State objects are deleted
 		 */
 		virtual ~CRenderState();
+
+		virtual void debug(const char *prefix=0) const;
 
 		/** @todo Also remember mode for delayed calls, need mode dirty flag
 		 */

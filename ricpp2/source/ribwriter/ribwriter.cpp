@@ -423,6 +423,7 @@ RtVoid CRibWriter::postProcess(CRiBegin &obj)
 	
 	if ( filename.size() == 0 ) {
 		// stdio
+		std::cout.flush();
 		m_writer = new CRibElementsWriter(std::cout.rdbuf(), *this);
 		if ( !m_writer ) {
 			// Error
@@ -430,6 +431,7 @@ RtVoid CRibWriter::postProcess(CRiBegin &obj)
 		}
 		m_writer->ascii(!m_binary);
 	}
+
 }
 
 RtVoid CRibWriter::postProcess(CRiEnd &obj)
@@ -439,6 +441,8 @@ RtVoid CRibWriter::postProcess(CRiEnd &obj)
 	if ( m_buffer ) {
 		m_buffer->close();
 		delete m_buffer;
+	} else {
+		std::cout.flush();
 	}
 	m_buffer = 0;
 

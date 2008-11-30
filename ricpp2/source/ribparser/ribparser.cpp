@@ -69,6 +69,10 @@
 #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
 
+#ifndef _RICPP_TOOLS_FILEPATH_H
+#include "ricpp/tools/filepath.h"
+#endif // _RICPP_TOOLS_FILEPATH_H
+
 using namespace RiCPP;
 
 // -----------------------------------------------------------------------------
@@ -1601,8 +1605,7 @@ int CRibParser::nextToken()
 			}
 		}
 
-		if (
-			c == '#' &&
+		if (c == '#' &&
 			state != 0 &&
 			state != 6 &&
 			state != 7 &&
@@ -1934,7 +1937,7 @@ int CRibParser::parseNextCall()
 			}
 		} while ( m_lookahead != RIBPARSER_EOF && !isRequestToken(m_lookahead) ); // while parameters are found
 		// m_lookahead is the number of the next request or RIBPARSER_EOF if EOF is found
-
+	
 		if ( m_braketDepth > 0 ) {
 			m_braketDepth = 0;
 			errHandler().handleError(

@@ -27,10 +27,13 @@
 
 /** @file backbuffer.h
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Headerfile with templates for zlib-enabled streams and base classes for plugable streambuffer facets.
- * @todo Much to do here: Random access, stream buffering,
- * more channels (HTTP:, FTP:, SMB:, ...), test routines, better interface, i/o stream objects for the TemplFrontStreambuf,
- * CR/LF LF/CR LF if file is zipped and not binary, exceptions, more documentation... or use BOOST/iostreams.
+ *  @brief Headerfile with templates for zlib-enabled streams and base classes
+ *         for plugable streambuffer facets.
+ *  @todo Much to do here: Random access, stream buffering,
+ *        more channels (HTTP:, FTP:, SMB:, ...), test routines,
+ *        better interface, i/o stream objects for the TemplFrontStreambuf,
+ *        CR/LF LF/CR LF if file is zipped and not binary, exceptions,
+ *        more documentation... or use BOOST/iostreams.
  */
 
 #ifndef _RICPP_STREAMS_URI_H
@@ -57,10 +60,12 @@ namespace RiCPP {
 
 	/** @brief Root for the backbuffer facet
 	 *
-	 *  Used by TemplFrontStreamBuf as simple backend streambuf (block read/write) plug-in. Can be overwritten
-	 *  for various channels, e.g. CFileBackBuffer is the backend for files. A specialiced factory inheriting
-	 *  from CBackBufferFactory is needed to create those backends,. e.g. CFileBackBufferFactory is
-	 *  the factory for CFileBackBuffer objects. CBackBufferRoot will not be instanciated.
+	 *  Used by TemplFrontStreamBuf as simple backend streambuf (block
+	 *  read/write) plug-in. Can be overwritten for various channels, e.g.
+	 *  CFileBackBuffer is the backend for files. A specialiced factory
+	 *  inheriting from CBackBufferFactory is needed to create those backends,
+	 *  e.g. CFileBackBufferFactory is the factory for CFileBackBuffer objects
+	 *  CBackBufferRoot will not be instanciated.
 	 */
 	class CBackBufferRoot {
 	protected:
@@ -83,9 +88,10 @@ namespace RiCPP {
 		
 		/** @brief Opens a resource.
 		 *
-		 *  Reused the TypeOpenMode of standard streams to indicate the open mode of the resource.
-		 *  This base function only stores the @a absURI in m_lastFileName. And should be called
-		 *  from the derived element functions.
+		 *  Reused the TypeOpenMode of standard streams to indicate the open
+		 *  mode of the resource. This base function only stores the @a absURI
+		 *  in m_lastFileName. And should be called from the derived element
+		 *  functions.
 		 *
 		 *  @param absUri The absolute URI of the resource to open.
 		 *  @param mode   The mode used to open the resource.
@@ -125,7 +131,10 @@ namespace RiCPP {
 		 *
 		 *  @return The URI (read-only) of the associated resource.
 		 */
-		inline virtual const CUri &lastFileName() const { return m_lastFileName; }
+		inline virtual const CUri &lastFileName() const
+		{
+			return m_lastFileName;
+		}
 	}; // CBackBufferRoot
 
 
@@ -185,8 +194,8 @@ namespace RiCPP {
 
 		/** @brief Reads bytes from the opened stream.
 		 *
-		 *  Reads at most @a size bytes from the associated stream and stores them
-		 *  in @a b using sgetn() of std::filebuf.
+		 *  Reads at most @a size bytes from the associated stream and stores
+		 *  them in @a b using sgetn() of std::filebuf.
 		 *
 		 *  @param  b Points to the location where the data will be stored.
 		 *  @param  size Maximal number of bytes that can be stored at *b.
@@ -201,21 +210,25 @@ namespace RiCPP {
 		 *
 		 *  @return Number of bytes read.
 		 */
-		inline virtual std::streamsize sputn(const char *b, std::streamsize size);
+		inline virtual std::streamsize sputn(const char *b,
+											 std::streamsize size);
 	}; // CFileBackBuffer
 
 
-	/** @brief Base class for the factory classes of specialiced CBackBufferRoot objects.
+	/** @brief Base class for the factory classes of specialiced
+	 *         CBackBufferRoot objects.
 	 *
-	 *  If the factory is deleted, also all back buffers created by the factory will be deleted.
-	 *  Factories can be implemented as plugin, to be loaded at runtime. 
+	 *  If the factory is deleted, also all back buffers created by the factory
+	 *  will be deleted. Factories can be implemented as plugin, to be loaded at
+	 *  runtime. 
 	 *
 	 * @see CBackBufferRoot
 	 */
 	class CBackBufferFactory : public IPlugin {
 
 		CStringList m_schemes; ///< List of Schemes (like "FILE" in CFileBackBufferFactory).
-		TemplObjPtrRegistry<CBackBufferRoot *, CBackBufferRoot *> m_myBuffers; ///< Buffers created by a factory, indexed by its own pointer.
+		TemplObjPtrRegistry<CBackBufferRoot *, CBackBufferRoot *>
+		m_myBuffers; ///< Buffers created by a factory, indexed by its own pointer.
 
 	protected:
 		/** @brief Adds a new scheme handled by the factory.
@@ -317,13 +330,19 @@ namespace RiCPP {
 		 *
 		 *  @return The object's major version number.
 		 */
-		inline virtual unsigned long majorVersion() const {return myMajorVersion(); }
+		inline virtual unsigned long majorVersion() const
+		{
+			return myMajorVersion();
+		}
 		
 		/** @brief Gets the object's minor version number.
 		 *
 		 *  @return The object's minor version number.
 		 */
-		inline virtual unsigned long minorVersion() const {return myMinorVersion(); }
+		inline virtual unsigned long minorVersion() const
+		{
+			return myMinorVersion();
+		}
 
 		/** @brief Gets the object's revision number.
 		 *
@@ -369,11 +388,18 @@ namespace RiCPP {
 		 *  @param mode Mode used to open the resource.
 		 *  @return A new, opened back buffer object.
 		 */
-		inline virtual CBackBufferRoot *open(const CUri &absUri, TypeOpenMode mode = std::ios_base::in|std::ios_base::binary) { return 0; }
+		inline virtual CBackBufferRoot *open(const CUri &absUri,
+											 TypeOpenMode mode =
+											 std::ios_base::in | 
+											 std::ios_base::binary)
+		{
+			return 0;
+		}
 
 		/** @brief Closes and deletes the back buffer object.
 		 *
-		 *  Need not to be overwritten. The back buffer @p bbr has to be created by the same factory.
+		 *  Need not to be overwritten. The back buffer @p bbr has to be created
+		 *  by the same factory.
 		 *
 		 *  @param bbr A back buffer to close and delete
 		 *  @return true, back buffer is deleted.
@@ -471,8 +497,10 @@ namespace RiCPP {
 		 */
 		TemplPluginFactory<CFileBackBufferFactory> m_fileBuffer;
 		
-		/** @brief Sets a directory, registers the file buffer factory and loads factories from the directory.
-		 *  @param direct Name of the directory containing the ".buffer" buffer factory files.
+		/** @brief Sets a directory, registers the file buffer factory and loads
+		 *         factories from the directory.
+		 *  @param direct Name of the directory containing the ".buffer" buffer
+		 *                factory files.
 		 */
 		void init(const char *direct);
 
@@ -510,15 +538,17 @@ namespace RiCPP {
 
 	/** @brief Class for zlib stream buffers.
 	 *
-	 * Can be used by istream, ostream as streambuf. A coupled back end buffer CBackBufferRoot or a
-	 * basic_streambuf can be used as data source/drain. TemplFrontStreambuf adds zlib in between the
-	 * stream and the buffer. By using open(), backend buffers for various channels can be used.
-	 * However, at the moment only FILE: is supported. open() uses a generic URI as 
-	 * resource name/locator.
+	 * Can be used by istream, ostream as streambuf. A coupled back end buffer
+	 * CBackBufferRoot or a basic_streambuf can be used as data source/drain.
+	 * TemplFrontStreambuf adds zlib in between the stream and the buffer. By
+	 * using open(), backend buffers for various channels can be used.
+	 * However, at the moment only FILE: is supported. open() uses a generic URI
+	 * as resource name/locator.
 	 *
 	 * I used copied code from the zlib (gzio.c) here to support zipped streams.
 	 *
-	 * @todo Debug, using of basic_streambuf as m_coupledBuffer doesn't work at the moment.
+	 * @todo Debug, using of basic_streambuf as m_coupledBuffer doesn't work at
+	 *       the moment.
 	 *
 	 * @see CBackBufferRoot
 	 */
@@ -634,7 +664,7 @@ namespace RiCPP {
 		
 	protected:
 		
-		inline virtual int flushBuffer(bool finish);
+		inline virtual int_type flushBuffer(bool finish);
 		inline virtual int_type overflow(int_type c);
 		inline virtual int_type underflow();
 
@@ -644,8 +674,11 @@ namespace RiCPP {
 		
 		/** @brief Initializes buffer for input and output
 		 *
-		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
-		 *  @param compressLevel minly for for output. But if the compressLevel is Z_NO_COMPRESSION, input will be read as is, zlib header will not interpreted.
+		 *  @param mode Open mode (problem. zipped will be binary, but unzipped
+		 *              content isn't necessarily binary)
+		 *  @param compressLevel Mainly for for output. But if the compressLevel
+		 *                       is Z_NO_COMPRESSION, input will be read as is,
+		 *                       zlib header will not interpreted.
 		 */
 		bool postOpen(TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
 					  int compressLevel = Z_DEFAULT_COMPRESSION);
@@ -685,11 +718,14 @@ namespace RiCPP {
 		 *  Initializes buffer pointers and back buffer
 		 *
 		 *  @param refURI Uniform ressource identifier
-		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
-		 *  @param compressLevel minly for for output. But if the compressLevel is Z_NO_COMPRESSION, input will be read as is, zlib header will not interpreted.
+		 *  @param mode Open mode (problem: zipped will be binary, but unzipped
+		 *              content isn't necessarily binary)
+		 *  @param compressLevel Mainly for for output. But if the compressLevel
+		 *                       is Z_NO_COMPRESSION, input will be read as is,
+		 *                       zlib header will not interpreted.
 		 */
 		virtual bool open(const CUri &refUri,
-						  TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
+						  TypeOpenMode mode = std::ios_base::in | std::ios_base::binary,
 						  int compressLevel = Z_DEFAULT_COMPRESSION);
 		
 		/** @brief Opens a buffer for input or output from a streambuf
@@ -697,11 +733,14 @@ namespace RiCPP {
 		 *  Initializes buffer pointers and back buffer
 		 *
 		 *  @param refURI Uniform ressource identifier
-		 *  @param mode Open mode (problem. zipped will be binary, but unzipped content isn't necessarily binary)
-		 *  @param compressLevel minly for for output. But if the compressLevel is Z_NO_COMPRESSION, input will be read as is, zlib header will not interpreted.
+		 *  @param mode Open mode (problem: zipped will be binary, but unzipped
+		 *              content isn't necessarily binary)
+		 *  @param compressLevel Mainly for for output. But if the compressLevel
+		 *                       is Z_NO_COMPRESSION, input will be read as is,
+		 *                       zlib header will not interpreted.
 		 */
 		virtual void open(TypeParent *aBuffer,
-						  TypeOpenMode mode = std::ios_base::in|std::ios_base::binary,
+						  TypeOpenMode mode = std::ios_base::in | std::ios_base::binary,
 						  int compressLevel = Z_DEFAULT_COMPRESSION);
 		
 		/** @brief Closes the buffer.

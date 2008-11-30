@@ -34,6 +34,7 @@
 #endif // _RICPP_RIBASE_RICPPTOKENS_H
 
 #include <cassert>
+#include <iostream>
 
 using namespace RiCPP;
 
@@ -151,7 +152,7 @@ void CRibElementsWriter::putComment(RtToken type, const char *cs)
 	}
 
 	putChars(cs);
-
+	
 	if ( type != RI_VERBATIM || !cs || !*cs || cs[strlen(cs)-1] == '\n' ) {
 		putNewLine();
 	}

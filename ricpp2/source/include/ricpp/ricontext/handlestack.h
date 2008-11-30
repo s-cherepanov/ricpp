@@ -142,7 +142,7 @@ public:
 		m_stack.push_back(0);
 	}
 	
-	~TemplHandleStack()
+	inline ~TemplHandleStack()
 	{
 		typename TypeHandleStack::iterator i;
 		for ( i = m_stack.begin(); i != m_stack.end(); i++ ) {
@@ -153,7 +153,7 @@ public:
 		m_stack.clear();
 	}
 	
-	RtToken newHandle(RtString name = 0)
+	inline RtToken newHandle(RtString name = 0)
 	{
 		std::string str(m_prefix);
 		if ( emptyStr(name) ) {

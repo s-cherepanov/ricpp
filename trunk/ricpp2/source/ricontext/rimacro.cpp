@@ -36,9 +36,28 @@
 using namespace RiCPP;
 
 ///////////////////////////////////////////////////////////////////////////////
+
+
+CRiMacro::CRiMacro(RtString anId,
+				   unsigned long aHandleNo, bool isFromHandleId,
+				   CRManInterfaceFactory *aFactory,
+				   EnumMacroTypes macroType)
+: CHandle(anId, aHandleNo, isFromHandleId), m_factory(aFactory),
+m_macroType(macroType), m_isClosed(false), m_postpone(true)
+{
+	m_calls = new MacroContainerType;
+}
+
+CRiMacro::CRiMacro(const CRiMacro &aMacro)
+{
+	m_calls = new MacroContainerType;
+	*this = aMacro;
+}
+
 CRiMacro::~CRiMacro()
 {
 	clear();
+	delete m_calls;
 }
 
 
@@ -46,15 +65,23 @@ void CRiMacro::clear()
 {
 	MacroContainerType::iterator i;
 	if ( m_factory ) {
-		for ( i = m_calls.begin(); i != m_calls.end(); ++i ) {
+		for ( i = m_calls->begin(); i != m_calls->end(); ++i ) {
 			m_factory->deleteRequest(*i);
 		}
 	} else {
-		for ( i = m_calls.begin(); i != m_calls.end(); ++i ) {
+		for ( i = m_calls->begin(); i != m_calls->end(); ++i ) {
 			delete *i;
 		}
 	}
-	m_calls.clear();
+	m_calls->clear();
+}
+
+
+void CRiMacro::debug(const char *prefix) const
+{
+    if ( prefix )
+		std::cerr << prefix;
+    std::cerr << "# Addr: " << m_calls << " size: " << m_calls->size() << std::endl;
 }
 
 CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
@@ -72,12 +99,12 @@ CRiMacro &CRiMacro::operator=(const CRiMacro &aMacro)
 	MacroContainerType::const_iterator i;
 
 	if ( m_factory ) {
-		for ( i = aMacro.m_calls.begin(); i != aMacro.m_calls.end(); ++i ) {
+		for ( i = aMacro.m_calls->begin(); i != aMacro.m_calls->end(); ++i ) {
 			if ( *i )
 				add(m_factory->duplicateRequest(*i));
 		}
 	} else {
-		for ( i = aMacro.m_calls.begin(); i != aMacro.m_calls.end(); ++i ) {
+		for ( i = aMacro.m_calls->begin(); i != aMacro.m_calls->end(); ++i ) {
 			if ( *i )
 				add((*i)->duplicate());
 		}
@@ -89,7 +116,7 @@ bool CRiMacro::add(CRManInterfaceCall *c)
 {
 	if ( !c )
 		return false;
-	m_calls.push_back(c);
+	m_calls->push_back(c);
 	return true;
 }
 
@@ -104,7 +131,7 @@ void CRiMacro::replay(IDoRender &ri, const IArchiveCallback *callback)
 	
 	state->archiveName(handle());
 
-	for ( MacroContainerType::iterator i = m_calls.begin(); i != m_calls.end(); ++i ) {
+	for ( MacroContainerType::iterator i = m_calls->begin(); i != m_calls->end(); ++i ) {
 		try {
 			state->lineNo((*i)->lineNo());
 			(*i)->replay(ri, callback);

@@ -24,7 +24,8 @@
 
 /** @file backbuffer.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Implementation for zlib-enabled dtreams and base classes for plugable streambuffer facets.
+ *  @brief Implementation for zlib-enabled streams and base classes for
+ *         plugable streambuffer facets.
  */
 
 #include "ricpp/streams/backbuffer.h"
@@ -34,20 +35,18 @@ using namespace RiCPP;
 
 // ----------------------------------------------------------------------------
 
-bool CFileBackBuffer::open(
-	const CUri &absUri,
-	TypeOpenMode mode)
+bool CFileBackBuffer::open(const CUri &absUri, TypeOpenMode mode)
 {
 	close();
-
+	
 	CBackBufferRoot::open(absUri, mode);
 	
 	m_mode = mode;
 	std::string filename;
 	absUri.decodeFilepath(filename);
-
+	
 	// std::cerr << "# FILENAME: '" << filename << "'" << std::endl;
-
+	
 	m_filebuf.open(filename.c_str(), mode);
 	return m_filebuf.is_open();
 }
@@ -62,7 +61,7 @@ std::streamsize CFileBackBuffer::sgetn(char *b, std::streamsize size)
 		// File not opened for reading
 		return 0;
 	}
-
+	
 	// Read from buffer
 #ifdef _MSC_VER
 	return m_filebuf._Sgetn_s(b, size, size);
@@ -97,14 +96,18 @@ void CBackBufferFactory::addScheme(const char *scheme)
 	std::string str_scheme(noNullStr(scheme));
 	if ( str_scheme.empty() )
 		return;
-	std::for_each(str_scheme.begin(), str_scheme.end(), std::ptr_fun(toupper));
+	std::for_each(str_scheme.begin(),
+				  str_scheme.end(),
+				  std::ptr_fun(toupper));
 	m_schemes.push(str_scheme.c_str());
 }
 
 bool CBackBufferFactory::acceptsScheme(const char *scheme) const
 {
 	std::string str_scheme(noNullStr(scheme));
-	std::for_each(str_scheme.begin(), str_scheme.end(), std::ptr_fun(asciiToUpper));
+	std::for_each(str_scheme.begin(),
+				  str_scheme.end(),
+				  std::ptr_fun(asciiToUpper));
 	return m_schemes.isMember(str_scheme.c_str());
 }
 
@@ -120,15 +123,26 @@ bool CBackBufferFactory::close(CBackBufferRoot *bbr)
 
 // ----------------------------------------------------------------------------
 
-const char *CFileBackBufferFactory::myType() { return CBackBufferFactory::myType(); }
-const char *CFileBackBufferFactory::myName() { return "file_backbuffer"; }
-unsigned long CFileBackBufferFactory::myMajorVersion() { return CBackBufferFactory::myMajorVersion(); }
+const char *CFileBackBufferFactory::myType()
+{
+	return CBackBufferFactory::myType();
+}
+
+const char *CFileBackBufferFactory::myName()
+{
+	return "file_backbuffer";
+}
+
+unsigned long CFileBackBufferFactory::myMajorVersion()
+{
+	return CBackBufferFactory::myMajorVersion();
+}
+
 unsigned long CFileBackBufferFactory::myMinorVersion() { return 1; }
 unsigned long CFileBackBufferFactory::myRevision() { return 1; }
 
-CBackBufferRoot *CFileBackBufferFactory::open(
-	const CUri &absUri,
-	TypeOpenMode mode)
+CBackBufferRoot *
+CFileBackBufferFactory::open(const CUri &absUri, TypeOpenMode mode)
 {
 	CFileBackBuffer *buf = new CFileBackBuffer;
 	if ( buf ) {
@@ -147,27 +161,29 @@ void CBackBufferProtocolHandlers::init(const char *direct)
 {
 	m_direct = direct ? direct : "";
 	m_hasDirect = direct != 0;
-
+	
 	if ( !m_backBufferPluginHandler.isRegistered("filebuffer") ) {
-
 		// The FILE handler is registered directly and is not loaded
-		m_backBufferPluginHandler.registerFactory(
-			"file.buffer",
-			(TemplPluginFactory<CBackBufferFactory> *)&m_fileBuffer );
-
+		m_backBufferPluginHandler.registerFactory("file.buffer",
+												  reinterpret_cast<
+												  TemplPluginFactory
+												  <CBackBufferFactory> *
+												  >
+												  (&m_fileBuffer));
+		
 		// Load more handlers (there are none at the moment)
-		try {
-			m_backBufferPluginHandler.registerFromDirectory(direct, ".buffer");
-		} catch ( ... ) {
-			throw;
-		}
+		m_backBufferPluginHandler.registerFromDirectory(direct, ".buffer");
 	}
 }
 
-CBackBufferFactory *CBackBufferProtocolHandlers::getBufferFactory(const char *scheme)
+CBackBufferFactory *
+CBackBufferProtocolHandlers::getBufferFactory(const char *scheme)
 {
 	TemplPluginHandler<CBackBufferFactory>::const_iterator i;
-	for ( i = m_backBufferPluginHandler.begin(); i != m_backBufferPluginHandler.end(); i++ ) {
+	for ( i = m_backBufferPluginHandler.begin();
+		 i != m_backBufferPluginHandler.end();
+		 i++ )
+	{
 		CBackBufferFactory *f = (*i).second->lastPlugin();
 		if ( f && f->acceptsScheme(scheme) )
 			return f;
@@ -175,9 +191,7 @@ CBackBufferFactory *CBackBufferProtocolHandlers::getBufferFactory(const char *sc
 	return 0;
 }
 
-
 // ----------------------------------------------------------------------------
-
 
 void  CFrontStreambuf::init()
 {
@@ -199,8 +213,7 @@ void  CFrontStreambuf::init()
 	m_transparentIn = true;
 	m_strategyIn = Z_DEFAULT_STRATEGY;
 	m_methodIn = Z_DEFLATED;
-	setg(
-		 m_frontInBuffer.begin()+m_putbackSize,
+	setg(m_frontInBuffer.begin()+m_putbackSize,
 		 m_frontInBuffer.begin()+m_putbackSize,
 		 m_frontInBuffer.begin()+m_putbackSize);
 	
@@ -212,7 +225,7 @@ void  CFrontStreambuf::init()
 	m_compressLevelOut = Z_DEFAULT_COMPRESSION;
 	m_strategyOut = Z_DEFAULT_STRATEGY;
 	m_methodOut = Z_DEFLATED;
-	setp(m_frontOutBuffer.begin(), m_frontOutBuffer.begin()-1);
+	setp(m_frontOutBuffer.begin(), m_frontOutBuffer.begin()+(m_frontOutBuffer.size()-1));
 	
 	setBaseCwd();
 }
@@ -304,7 +317,6 @@ bool CFrontStreambuf::check_header()
 	return !m_inIsEOF;
 }
 
-
 unsigned int CFrontStreambuf::fill_in_buffer()
 {
 	const size_t footerSize = 8;
@@ -320,10 +332,13 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 	
 	bool startstream = false;
 	if ( m_transferInBuffer.size() == 0 ) {
-		m_transferInBuffer.resize(m_buffersize+footerSize);
+		m_transferInBuffer.resize(m_buffersize + footerSize);
 		m_strmIn.next_in = m_transferInBuffer.begin();
 		startstream = true;
-	} else if ( m_strmIn.next_in < m_transferInBuffer.begin()+(m_transferInBuffer.size()-footerSize) ) {
+	} else if ( m_strmIn.next_in <
+			   m_transferInBuffer.begin() +
+			   (m_transferInBuffer.size() - footerSize) )
+	{
 		m_inIsEOF = true;
 		return 0;
 	} else {
@@ -331,47 +346,68 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 	}
 	
 	if ( !startstream ) {
-		memcpy(m_transferInBuffer.begin(), m_transferInBuffer.begin()+m_transferInBuffer.size()-footerSize, footerSize);
+		memcpy(m_transferInBuffer.begin(),
+			   m_transferInBuffer.begin() +
+			   m_transferInBuffer.size() - footerSize,
+			   footerSize);
 	}
-
+	
 	if ( m_backBuffer ) {
-
+		
 		if ( startstream ) {
 			m_strmIn.avail_in =
-			(uInt)m_backBuffer->sgetn((char *)m_transferInBuffer.begin(),
-									  (std::streamsize)m_transferInBuffer.size());
+			(uInt)m_backBuffer->sgetn(reinterpret_cast<char *>
+									  (m_transferInBuffer.begin()),
+									  static_cast<std::streamsize>
+									  (m_transferInBuffer.size()));
 		} else {
 			m_strmIn.avail_in =
-			(uInt)m_backBuffer->sgetn((char *)m_transferInBuffer.begin()+footerSize,
-									  (std::streamsize)m_transferInBuffer.size()-footerSize);
+			(uInt)m_backBuffer->sgetn(reinterpret_cast<char *>
+									  (m_transferInBuffer.begin() +
+									   footerSize),
+									  static_cast<std::streamsize>
+									  (m_transferInBuffer.size() - footerSize));
 		}
-
+		
 	} else if ( m_coupledBuffer ) {
-
+		
 		if ( startstream ) {
 #ifdef _MSC_VER
 			m_strmIn.avail_in =
-			(uInt)m_coupledBuffer->_Sgetn_s((char *)m_transferInBuffer.begin(),
-											m_transferInBuffer.size(),
-											(std::streamsize)m_transferInBuffer.size());
+			(uInt)m_coupledBuffer->_Sgetn_s(reinterpret_cast<char *>
+											(m_transferInBuffer.begin()),
+											static_cast<std::streamsize>
+											(m_transferInBuffer.size()),
+											static_cast<std::streamsize>
+											(m_transferInBuffer.size()));
 #else
 			m_strmIn.avail_in =
-			m_coupledBuffer->sgetn((char *)m_transferInBuffer.begin(),
-								   m_transferInBuffer.size());
+			m_coupledBuffer->sgetn(reinterpret_cast<char *>
+								   (m_transferInBuffer.begin()),
+								   static_cast<std::streamsize>
+								   (m_transferInBuffer.size()));
 #endif
 		} else {
 #ifdef _MSC_VER
 			m_strmIn.avail_in =
-			(uInt)m_coupledBuffer->_Sgetn_s((char *)m_transferInBuffer.begin()+footerSize,
-											m_transferInBuffer.size()-footerSize,
-											(std::streamsize)m_transferInBuffer.size()-footerSize);
+			(uInt)m_coupledBuffer->_Sgetn_s(reinterpret_cast<char *>
+											(m_transferInBuffer.begin() +
+											 footerSize),
+											static_cast<std::streamsize>
+											(m_transferInBuffer.size() -
+											 footerSize),
+											static_cast<std::streamsize>
+											(m_transferInBuffer.size() -
+											 footerSize));
 #else
 			m_strmIn.avail_in =
-			m_coupledBuffer->sgetn((char *)m_transferInBuffer.begin()+footerSize,
-								   m_transferInBuffer.size()-footerSize);
+			m_coupledBuffer->sgetn(reinterpret_cast<char *>
+								   (m_transferInBuffer.begin() + footerSize),
+								   static_cast<std::streamsize>
+								   (m_transferInBuffer.size() - footerSize));
 #endif
 		}
-
+		
 	}
 	
 	if ( startstream ) {
@@ -381,7 +417,8 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 				m_strmIn.next_in[1] == gz_magic_1)
 			{
 				if ( m_strmIn.avail_in >= 2+footerSize ) {
-					// At least the 8 Byte at the and of the zipfile (4 Byte CRC, 4 Byte length)
+					// At least the 8 Byte at the and of the zipfile
+					// (4 Byte CRC, 4 Byte length)
 					m_strmIn.avail_in -= footerSize;
 				}
 				// If the filesize is smaller than header, the check will fail.
@@ -392,7 +429,8 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 	} else {
 		if ( m_transparentIn ) {
 			if ( m_strmIn.avail_in < m_transferInBuffer.size()-footerSize ) {
-				m_strmIn.avail_in += footerSize; // no zip -> no footer has to be truncated
+				// no zip -> no footer has to be truncated
+				m_strmIn.avail_in += footerSize;
 			}
 		}
 	}
@@ -400,28 +438,32 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 	return m_strmIn.avail_in;
 }
 
-
-int CFrontStreambuf::flushBuffer(bool finish)
+CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 {
 	if ( !(m_mode & std::ios_base::out) ) {
-		return 0;
+		return std::char_traits<char>::eof();
 	}
-	int num = static_cast<int>(TypeParent::pptr() - TypeParent::pbase());
+	
+	int num = static_cast<int>(TypeParent::pptr()-TypeParent::pbase());
 	if ( num <= 0 ) {
-		TypeParent::pbump(0);
-		return 0;
+		// TypeParent::pbump(0);
+		return std::char_traits<char>::eof();
 	}
 	
 	if ( !m_backBuffer && !m_coupledBuffer ) {
-		TypeParent::pbump(-num);
-		return 0;
+		// TypeParent::pbump(-num);
+		return std::char_traits<char>::eof();
 	}
 	
 	if ( m_compressLevelOut == Z_NO_COMPRESSION ) {
 		if ( m_backBuffer ) {
-			m_backBuffer->sputn(m_frontOutBuffer.begin(), num);
+			if ( m_backBuffer->sputn(m_frontOutBuffer.begin(), num) != num ) {
+				return std::char_traits<char>::eof();
+			}
 		} else if ( m_coupledBuffer ) {
-			m_coupledBuffer->sputn(m_frontOutBuffer.begin(), num);
+			if ( m_coupledBuffer->sputn(m_frontOutBuffer.begin(), num) != num ) {
+				return std::char_traits<char>::eof();
+			}
 		}
 	} else {
 		// Copy to/from transferbuff with zlib, transfer the back buffer or
@@ -444,14 +486,14 @@ int CFrontStreambuf::flushBuffer(bool finish)
 				OS_CODE
 			};
 			if ( m_backBuffer ) {
-				if ( !m_backBuffer->sputn(header, sizeof(header)) ) {
-					TypeParent::pbump(-num);
-					return 0;
+				if ( m_backBuffer->sputn(header, sizeof(header)) != sizeof(header) ) {
+					// TypeParent::pbump(-num);
+					return std::char_traits<char>::eof();
 				}
 			} else if ( m_coupledBuffer ) {
-				if ( !m_coupledBuffer->sputn(header, sizeof(header)) ) {
-					TypeParent::pbump(-num);
-					return 0;
+				if ( m_coupledBuffer->sputn(header, sizeof(header)) != sizeof(header) ) {
+					// TypeParent::pbump(-num);
+					return std::char_traits<char>::eof();
 				}
 			}
 		}
@@ -459,7 +501,7 @@ int CFrontStreambuf::flushBuffer(bool finish)
 		do {
 			int flush = finish ? Z_FINISH : Z_NO_FLUSH;
 			
-			// ToDo if not binary and Win32: \n ->  \r\n
+			/// @todo If not binary and Win32: \n ->  \r\n
 			
 			m_strmOut.avail_out = static_cast<uInt>(m_transferOutBuffer.size());
 			m_strmOut.next_out = (Bytef *)(m_transferOutBuffer.begin());
@@ -467,33 +509,40 @@ int CFrontStreambuf::flushBuffer(bool finish)
 			ret = deflate(&m_strmOut, flush);
 			
 			if ( ret == Z_STREAM_ERROR ) {
-				TypeParent::pbump(-num);
-				return 0;
+				// TypeParent::pbump(-num);
+				return std::char_traits<char>::eof();
 			}
 			
-			int have = (int)(m_transferOutBuffer.size() - m_strmOut.avail_out);
+			int have = m_transferOutBuffer.size() - m_strmOut.avail_out;
 			
 			if ( m_backBuffer ) {
-				if ( !m_backBuffer->sputn(m_transferOutBuffer.begin(), have) && have != 0 ) {
-					TypeParent::pbump(-num);
-					return 0;
+				if ( m_backBuffer->sputn(m_transferOutBuffer.begin(), have) != have
+					&&
+					have > 0 )
+				{
+					// TypeParent::pbump(-num);
+					return std::char_traits<char>::eof();
 				}
 			} else if ( m_coupledBuffer ) {
-				if ( !m_coupledBuffer->sputn(m_transferOutBuffer.begin(), have) && have != 0 ) {
-					TypeParent::pbump(-num);
-					return 0;
+				if ( m_coupledBuffer->sputn(m_transferOutBuffer.begin(), have) != have
+					&&
+					have > 0 )
+				{
+					// TypeParent::pbump(-num);
+					return std::char_traits<char>::eof();
 				}
 			} 
 		} while ( m_strmOut.avail_out == 0 );
 		
 		m_out += num;
-		m_crcOut = crc32(m_crcOut, (const Bytef *)m_frontOutBuffer.begin(), (unsigned int)num);
+		m_crcOut = crc32(m_crcOut,
+						 (const Bytef *)m_frontOutBuffer.begin(),
+						 (unsigned int)num);
 	}
 	
 	TypeParent::pbump(-num);
 	return num;
 }
-
 
 CFrontStreambuf::int_type CFrontStreambuf::overflow(int_type c)
 {
@@ -506,7 +555,6 @@ CFrontStreambuf::int_type CFrontStreambuf::overflow(int_type c)
 	}
 	return c;
 }
-
 
 CFrontStreambuf::int_type CFrontStreambuf::underflow()
 {
@@ -524,14 +572,18 @@ CFrontStreambuf::int_type CFrontStreambuf::underflow()
 		numPutback = m_putbackSize;
 	
 	if ( numPutback ) {
-		memcpy(m_frontInBuffer.begin()+(m_putbackSize-numPutback), TypeParent::gptr()-numPutback, numPutback);
+		memcpy(m_frontInBuffer.begin() + (m_putbackSize-numPutback),
+			   TypeParent::gptr() - numPutback,
+			   numPutback);
 	}
 	
 	// Read new Characters
 	std::streamsize num = 0;
 	
-	m_strmIn.avail_out = static_cast<uInt>(m_frontInBuffer.size()-m_putbackSize);
-	m_strmIn.next_out = reinterpret_cast<Bytef *>(m_frontInBuffer.begin()+m_putbackSize);
+	m_strmIn.avail_out = static_cast<uInt>
+		(m_frontInBuffer.size()-m_putbackSize);
+	m_strmIn.next_out = reinterpret_cast<Bytef *>
+		(m_frontInBuffer.begin()+m_putbackSize);
 	while ( m_strmIn.avail_out != 0 ) {
 		fill_in_buffer();
 		if ( m_strmIn.avail_in != 0 ) {
@@ -550,8 +602,8 @@ CFrontStreambuf::int_type CFrontStreambuf::underflow()
 		break;
 	}
 	
-	num = static_cast<std::streamsize>((m_frontInBuffer.size()-m_putbackSize) -
-									   m_strmIn.avail_out);
+	num = static_cast<std::streamsize>
+	((m_frontInBuffer.size()-m_putbackSize) - m_strmIn.avail_out);
 	
 	setg(m_frontInBuffer.begin()+(m_putbackSize-numPutback), 
 		 m_frontInBuffer.begin()+m_putbackSize,
@@ -563,14 +615,15 @@ CFrontStreambuf::int_type CFrontStreambuf::underflow()
 	return *TypeParent::gptr();
 }
 
-
 bool CFrontStreambuf::postOpen(TypeOpenMode mode,
 							   int compressLevel)
 {			
 	m_mode = mode;
 	m_compressLevelOut = compressLevel;
 	
-	if ( m_compressLevelOut != Z_NO_COMPRESSION  && (m_mode & std::ios_base::out) ) {
+	if ( m_compressLevelOut != Z_NO_COMPRESSION  &&
+		(m_mode & std::ios_base::out) )
+	{
 		// Set the compression level for the output
 		m_strmOut.zalloc = Z_NULL;
 		m_strmOut.zfree = Z_NULL;
@@ -582,9 +635,8 @@ bool CFrontStreambuf::postOpen(TypeOpenMode mode,
 		m_crcOut = crc32(0L, Z_NULL, 0);
 		m_strategyOut = Z_DEFAULT_STRATEGY;
 		
-		setp(m_frontOutBuffer.begin(), m_frontOutBuffer.end()-1);
-		int ret = deflateInit2(
-							   &m_strmOut,
+		setp(m_frontOutBuffer.begin(), m_frontOutBuffer.begin()+(m_frontOutBuffer.size()-1));
+		int ret = deflateInit2(&m_strmOut,
 							   m_compressLevelOut,
 							   m_methodOut,
 							   -MAX_WBITS,
@@ -611,8 +663,7 @@ bool CFrontStreambuf::postOpen(TypeOpenMode mode,
 		m_in = 0;
 		m_inIsEOF = false;
 		m_crcIn = crc32(0L, Z_NULL, 0);
-		setg(
-			 m_frontInBuffer.begin()+m_putbackSize,
+		setg(m_frontInBuffer.begin()+m_putbackSize,
 			 m_frontInBuffer.begin()+m_putbackSize,
 			 m_frontInBuffer.begin()+m_putbackSize);
 		
@@ -620,8 +671,7 @@ bool CFrontStreambuf::postOpen(TypeOpenMode mode,
 			return false;
 		
 		if ( !m_transparentIn ) {
-			int ret = inflateInit2(&m_strmIn,
-								   -MAX_WBITS);
+			int ret = inflateInit2(&m_strmIn, -MAX_WBITS);
 			if ( ret != Z_OK ) {
 				return false;
 			}
@@ -630,7 +680,6 @@ bool CFrontStreambuf::postOpen(TypeOpenMode mode,
 	
 	return true;
 }
-
 
 bool CFrontStreambuf::open(const CUri &refUri,
 						   TypeOpenMode mode,
@@ -660,7 +709,6 @@ bool CFrontStreambuf::open(const CUri &refUri,
 	return false;
 }
 
-
 void CFrontStreambuf::open(TypeParent *aBuffer,
 						   TypeOpenMode mode,
 						   int compressLevel)
@@ -670,7 +718,6 @@ void CFrontStreambuf::open(TypeParent *aBuffer,
 	postOpen(mode, compressLevel);
 }
 
-
 bool CFrontStreambuf::close()
 {
 	flushBuffer(true);
@@ -679,17 +726,23 @@ bool CFrontStreambuf::close()
 	}
 	
 	bool result = true;
-	if ( m_compressLevelOut != Z_NO_COMPRESSION && (m_mode & std::ios_base::out) ) {
+	if ( m_compressLevelOut != Z_NO_COMPRESSION &&
+		(m_mode & std::ios_base::out) )
+	{
 		// Put compression trailer
 		unsigned char c[2][4];
 		putLong (c[0], m_crcOut);
 		putLong (c[1], (unsigned long)(m_out & 0xffffffff));
 		if ( m_backBuffer ) {
-			if ( !m_backBuffer->sputn((const char *)(&c[0][0]), 8) ) {
+			if ( !m_backBuffer->sputn(reinterpret_cast<const char *>(&c[0][0]),
+									  8) )
+			{
 				result = false;
 			}
 		} else if ( m_coupledBuffer ) {
-			if ( !m_coupledBuffer->sputn((const char *)(&c[0][0]), 8) ) {
+			if ( !m_coupledBuffer->sputn(reinterpret_cast<const char *>(&c[0][0]),
+										 8) )
+			{
 				result = false;
 			}
 		}

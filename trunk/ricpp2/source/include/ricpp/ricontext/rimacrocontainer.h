@@ -33,7 +33,7 @@
 #ifndef _RICPP_RICONTEXT_RIMACROBASE_H
 #include "ricpp/ricontext/rimacrobase.h"
 #endif // _RICPP_RICONTEXT_RIMACROBASE_H
-
+#include <deque>
 namespace RiCPP {
 
 	// ----------------------------------------------------------------------------
@@ -55,8 +55,8 @@ namespace RiCPP {
 		};
 
 	private:
-		typedef std::list<CRManInterfaceCall *> MacroContainerType; ///< Type for the container
-		MacroContainerType m_calls;       ///< Container of all interface calls for this macro.
+		typedef std::deque<CRManInterfaceCall *> MacroContainerType; ///< Type for the container
+		MacroContainerType *m_calls;      ///< Container of all interface calls for this macro - strange things happens while push_back() if not dynamic.
 		
 		CRManInterfaceFactory *m_factory; ///< Container used to create the contents of the macro
 		EnumMacroTypes m_macroType;       ///< Type of macro, either object or (inline, file) archive.
@@ -75,21 +75,13 @@ namespace RiCPP {
 		 *  @param aFactory The factory that will be used to create and destroy the contents of the macro
 		 *  @param macroType Type of the macro.
 		 */
-		inline CRiMacro(
-			RtString anId = 0,
-			unsigned long aHandleNo = 0, bool isFromHandleId = false,
-			CRManInterfaceFactory *aFactory = 0,
-			EnumMacroTypes macroType = MACROTYPE_UNKNOWN
-		) :
-			CHandle(anId, aHandleNo, isFromHandleId), m_factory(aFactory), m_macroType(macroType),
-			m_isClosed(false), m_postpone(true)
-		{
-		}
+		CRiMacro(RtString anId = 0,
+				 unsigned long aHandleNo = 0, bool isFromHandleId = false,
+				 CRManInterfaceFactory *aFactory = 0,
+				 EnumMacroTypes macroType = MACROTYPE_UNKNOWN);
 
-		inline CRiMacro(const CRiMacro &aMacro)
-		{
-			*this = aMacro;
-		}
+		
+		CRiMacro(const CRiMacro &aMacro);
 
 		/** @brief Destructor, frees resources.
 		 */
@@ -103,6 +95,7 @@ namespace RiCPP {
 			return new CRiMacro(*this);
 		}
 		
+		void debug(const char *prefix=0) const;
 		virtual void clear();
 		CRiMacro &operator=(const CRiMacro &aMacro);
 
@@ -130,7 +123,7 @@ namespace RiCPP {
 		 *
 		 *  @return true, if the macro is closed
 		 */
-		bool isClosed() const
+		inline bool isClosed() const
 		{
 			return m_isClosed;
 		}
@@ -139,7 +132,7 @@ namespace RiCPP {
 		 *
 		 *  A macro is opened after created. @see isClosed()
 		 */
-		void open()
+		inline void open()
 		{
 			m_isClosed = false;
 		}
@@ -148,7 +141,7 @@ namespace RiCPP {
 		 *
 		 *  A macro is closed by the framework after called an End-Request. @see isClosed()
 		 */
-		void close()
+		inline void close()
 		{
 			m_isClosed = true;
 		}
@@ -161,7 +154,7 @@ namespace RiCPP {
 		 *
 		 *  @return true, if a macro instanciation is postponed (e.g. by a RIB writer).
 		 */
-		bool postpone() const
+		inline bool postpone() const
 		{
 			return m_postpone;
 		}
@@ -172,14 +165,14 @@ namespace RiCPP {
 		 *
 		 *  @param doPostpone true, if a macro instanciation should be postponed (e.g. by a RIB writer).
 		 */
-		void postpone(bool doPostpone)
+		inline void postpone(bool doPostpone)
 		{
 			m_postpone = doPostpone;
 		}
 
-		const CRManInterfaceFactory *factory() const { return m_factory; }
-		CRManInterfaceFactory *factory() { return m_factory; }
-		void factory(CRManInterfaceFactory *aFactory) { m_factory = aFactory; }
+		inline const CRManInterfaceFactory *factory() const { return m_factory; }
+		inline CRManInterfaceFactory *factory() { return m_factory; }
+		inline void factory(CRManInterfaceFactory *aFactory) { m_factory = aFactory; }
 		
 		/** @brief Gets the type of the macro.
 		 *
@@ -187,7 +180,7 @@ namespace RiCPP {
 		 *
 		 *  @return Type of the macro (EnumMacroTypes object, inline archive or archive file).
 		 */
-		EnumMacroTypes macroType() const
+		inline EnumMacroTypes macroType() const
 		{
 			return m_macroType;
 		}
@@ -196,7 +189,7 @@ namespace RiCPP {
 		 *
 		 *  @param aMacroType Type of the macro (EnumMacroTypes object, inline archive or archive file).
 		 */
-		void macroType(EnumMacroTypes aMacroType)
+		inline void macroType(EnumMacroTypes aMacroType)
 		{
 			m_macroType = aMacroType;
 		}

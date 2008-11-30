@@ -136,8 +136,10 @@ bool CPolygonContainer::isCCW(
 		}
 	}
 	
-	// There are no degenerate polygons here (already tested)
-	assert ( startpoint != rightmost );
+	if ( startpoint != rightmost ) {
+		// Degenerated polygon
+		return false;
+	}
 
 	// If the next vertex is to the left of the segment, the polygons orientation is ccw
 	
@@ -155,8 +157,7 @@ bool CPolygonContainer::isCCW(
 		}
 	}
 	
-	// There are no degenerate polygons here (already tested)
-	assert ( false );
+	// Degenerated polygon
 	return false;
 }
 

@@ -749,6 +749,7 @@
 		C3911A9A0E6450600051CB61 /* MyOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyOpenGLView.m; path = ../../../source/ribviewer/MyOpenGLView.m; sourceTree = SOURCE_ROOT; };
 		C3911A9D0E6450670051CB61 /* MyOpenGLView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 5; name = MyOpenGLView.h; path = ../../../source/ribviewer/MyOpenGLView.h; sourceTree = SOURCE_ROOT; };
 		C3911AEA0E6454C50051CB61 /* ribviewer-Info.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.xml; path = "ribviewer-Info.plist"; sourceTree = "<group>"; };
+		C391E0900EE0A3B80076A720 /* testcommands.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = testcommands.rib; path = ../../../RibSamples/testcommands.rib; sourceTree = SOURCE_ROOT; };
 		C392D8D00E48BBB2003E5C41 /* types.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = types.cpp; path = ../../../source/ricpp/types.cpp; sourceTree = SOURCE_ROOT; };
 		C3969E5B0DDF098C00562F24 /* MyNSObjectController.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyNSObjectController.m; path = ../../../source/riglapp/MyNSObjectController.m; sourceTree = SOURCE_ROOT; };
 		C3969E5D0DDF09AE00562F24 /* MyNSObjectController.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MyNSObjectController.h; path = ../../../source/riglapp/MyNSObjectController.h; sourceTree = SOURCE_ROOT; };
@@ -1528,6 +1529,7 @@
 		C36F02D60D57C69300554D4B /* RibFiles */ = {
 			isa = PBXGroup;
 			children = (
+				C391E0900EE0A3B80076A720 /* testcommands.rib */,
 				C36F02D70D57C6BC00554D4B /* Archive.rib */,
 				C3EFAC640E4C31F800352D9C /* ArchiveLoader.rib */,
 				C34D15110D695953002CF63B /* Polygon.rib */,

@@ -1221,6 +1221,14 @@ CRenderState::~CRenderState()
 }
 
 
+void CRenderState::debug(const char *prefix) const
+{
+    if ( prefix )
+		std::cerr << prefix;
+	if ( curMacro() )
+		curMacro()->debug();
+}
+
 void CRenderState::rememberState()
 {
 	if ( attributes().dirty() ) {
@@ -1599,8 +1607,10 @@ void CRenderState::contextBegin()
 }
 
 
+#if 0
 void CRenderState::compactArchive(std::list<CRiMacro *> &aList, TemplHandleStack<CRiMacro> &aMacroStack)
 {
+	// todo: Doesn't work i.e. m_curMacro gets deleted
 	CRiMacro *aMacro;
 	while ( !aList.empty() ) {
 		aMacro = aList.back();
@@ -1615,8 +1625,9 @@ void CRenderState::compactArchive(std::list<CRiMacro *> &aList, TemplHandleStack
 	}
 }
 
-static void markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2, std::list<CRiMacro *> &l3)
+void CRenderState::markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2, std::list<CRiMacro *> &l3)
 {
+	// todo: Doesn't work i.e. m_curMacro gets deleted
 	std::list<CRiMacro *> *lptr[3] = {&l1, &l2, &l3};
 
 	for ( std::list<CRiMacro *>::iterator iter = l1.begin(); iter != l1.end(); iter++ ) {
@@ -1640,10 +1651,11 @@ static void markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2, std::
 
 void CRenderState::compactArchives()
 {
+	// todo: Doesn't work i.e. m_curMacro gets deleted
 	std::list<CRiMacro *> archiveResults;
 	std::list<CRiMacro *> objectResults;
 	std::list<CRiMacro *> cachedResults;
-
+	
 	// Extract in reverse order
 	m_archiveMacros.extractToMark(archiveResults);
 	m_objectMacros.extractToMark(objectResults);
@@ -1659,6 +1671,7 @@ void CRenderState::compactArchives()
 	compactArchive(objectResults, m_objectMacros);
 	compactArchive(cachedResults, m_cachedArchive);	
 }
+#endif
 
 void CRenderState::contextReset()
 {
@@ -1719,7 +1732,8 @@ void CRenderState::frameEnd()
 
 	m_lightSourceHandles.clearToMark();
 	m_lightSources.clearToMark();
-	compactArchives();
+	
+	// compactArchives();
 
 	popTransform();
 	popAttributes();
@@ -1761,10 +1775,11 @@ void CRenderState::worldEnd()
 	}
 
 	m_modeStack->worldEnd();
-
+	
 	m_lightSourceHandles.clearToMark();
 	m_lightSources.clearToMark();
-	compactArchives();
+
+	// compactArchives();
 
 	popAttributes();
 	popTransform();

@@ -16,16 +16,7 @@ int main(int argc, char *argv[])
 
   	RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
 
-	RiBegin("glrenderer");
-	RiArchiveBegin("__theArchive", RI_NULL);
-	if ( argc > 1 ) {
-		RiReadArchive(argv[1], 0, RI_NULL);
-	} else {
-		RiWorldBegin();
-		RiWorldEnd();
-	}
-	RiArchiveEnd();
     result = NSApplicationMain(argc,  (const char **) argv);
-	RiEnd();
+
 	return result;
 }

@@ -1,5 +1,4 @@
 #import "MyOpenGLView.h"
-#import <ricpp/ri/ri.h>
 
 static const float defPivotDepth = 0;
 // static char *screenAction[2] = {"clear", "finish", "auto"};
@@ -25,17 +24,32 @@ static RtInt noYes[2] = {0, 1};
 #ifdef _DEBUG
 	flagDrawNormals = true;
 #endif // _DEBUG
+	contextHandle = false;
+
 	[self registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]];
-	[self resetCamera];
+	[self loadRibFile:(const char *)0];
+}
+
+- (void) closeContext
+{
+	// NSLog(@"closeContext");
+	if ( contextHandle != illContextHandle ) {
+		RiContext(contextHandle);
+		RiEnd();
+		contextHandle = illContextHandle;
+	}
 }
 
 - (void) loadRibFile: (const char *)filename
 {
-	RiEnd();
 	
 	[self resetCamera];
+	[self closeContext];
+	
+	[[self window] setDelegate:self];
 
 	RiBegin("glrenderer");
+	contextHandle = RiGetContext();
 	
 	RiArchiveBegin("__theArchive", RI_NULL);
 	if ( filename && *filename ) {
@@ -95,7 +109,13 @@ static RtInt noYes[2] = {0, 1};
 
 - (void) drawRect: (NSRect) bounds
 {
+	if ( contextHandle == illContextHandle ) {
+		return;
+	}
+	
 	char *matrixName[] = {"pre-camera"};
+
+	RiContext(contextHandle);
 	RiIdentity();
 	
 	RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
@@ -168,6 +188,12 @@ static RtInt noYes[2] = {0, 1};
 		return;
 	sdepth += [theEvent deltaY] / 5.0;
 	[self display];
+}
+
+
+- (void)windowWillClose:(NSNotification *)notification
+{
+	[self closeContext];
 }
 
 @end

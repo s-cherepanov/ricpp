@@ -3241,7 +3241,7 @@ IndexType TTrimCurve::tesselate(IndexType tess) {
 		std::deque<TNuCurveSegment>::const_iterator ci = m_curveSegs.begin();
 		
 		for ( IndexType segcnt = 0; ci != m_curveSegs.end(); ci++, segcnt++ ) {
-			int size = ci->m_points.size();
+			int size = (int)(ci->m_points.size());
 			if ( size > 1 ) {
 				int cnt;
 				pslog.ReportLogText("Segment, size = ");
@@ -3289,7 +3289,7 @@ IndexType TTrimCurve::tesselate(IndexType tess) {
 		std::vector<TSimpleTrimLoop>::iterator ti = m_trimLoops.begin();
 		pslog << TLogfile::endl() << "newpath";
 		for ( ; ti != m_trimLoops.end(); ti++ ) {
-			int size = ti->m_points.size();
+			int size = (int)(ti->m_points.size());
 			for ( int cnt = 0; cnt < size-2; cnt+=2 ) {
 				pslog << TLogfile::endl() << ti->m_points[cnt] << " " << ti->m_points[cnt+1];
 				if ( cnt == 0 ) {

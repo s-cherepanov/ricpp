@@ -513,7 +513,7 @@ CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 				return std::char_traits<char>::eof();
 			}
 			
-			int have = m_transferOutBuffer.size() - m_strmOut.avail_out;
+			std::streamsize have = static_cast<std::streamsize>(m_transferOutBuffer.size() - m_strmOut.avail_out);
 			
 			if ( m_backBuffer ) {
 				if ( m_backBuffer->sputn(m_transferOutBuffer.begin(), have) != have

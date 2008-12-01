@@ -1221,14 +1221,6 @@ CRenderState::~CRenderState()
 }
 
 
-void CRenderState::debug(const char *prefix) const
-{
-    if ( prefix )
-		std::cerr << prefix;
-	if ( curMacro() )
-		curMacro()->debug();
-}
-
 void CRenderState::rememberState()
 {
 	if ( attributes().dirty() ) {

@@ -330,7 +330,7 @@ template<class _T> inline _T &findCurve(std::deque<_T> &curveDeque, IndexType te
 	}
 
 	isNew = true;
-	idx = curveDeque.size();
+	idx = (IndexType)curveDeque.size();
 	IndexType savIdx=idx;
 	curveDeque.resize(curveDeque.size()+numCurves);
 	for ( ; savIdx < curveDeque.size(); ++savIdx ) {

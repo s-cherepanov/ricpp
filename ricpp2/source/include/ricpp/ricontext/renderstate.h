@@ -608,8 +608,6 @@ namespace RiCPP {
 		 */
 		virtual ~CRenderState();
 
-		virtual void debug(const char *prefix=0) const;
-
 		/** @todo Also remember mode for delayed calls, need mode dirty flag
 		 */
 		void rememberState();

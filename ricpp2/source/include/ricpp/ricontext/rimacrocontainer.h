@@ -56,7 +56,7 @@ namespace RiCPP {
 
 	private:
 		typedef std::deque<CRManInterfaceCall *> MacroContainerType; ///< Type for the container
-		MacroContainerType *m_calls;      ///< Container of all interface calls for this macro - strange things happens while push_back() if not dynamic.
+		MacroContainerType m_calls;       ///< Container of all interface calls for this macro.
 		
 		CRManInterfaceFactory *m_factory; ///< Container used to create the contents of the macro
 		EnumMacroTypes m_macroType;       ///< Type of macro, either object or (inline, file) archive.
@@ -95,7 +95,6 @@ namespace RiCPP {
 			return new CRiMacro(*this);
 		}
 		
-		void debug(const char *prefix=0) const;
 		virtual void clear();
 		CRiMacro &operator=(const CRiMacro &aMacro);
 

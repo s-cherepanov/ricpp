@@ -664,9 +664,9 @@ namespace RiCPP {
 		
 	protected:
 		
-		inline virtual int_type flushBuffer(bool finish);
-		inline virtual int_type overflow(int_type c);
-		inline virtual int_type underflow();
+		virtual int_type flushBuffer(bool finish);
+		virtual int_type overflow(int_type c);
+		virtual int_type underflow();
 
 		/** @brief Set m_baseUri to the file path current directory
 		 */

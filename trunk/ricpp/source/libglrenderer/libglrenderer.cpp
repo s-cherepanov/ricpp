@@ -308,7 +308,7 @@ void TGLRenderer::drawGeometricPrim(TGeometricPrimFace &primFace) {
 	}
 
 	std::deque<TGeometricIndices> &vidx = primFace.getVertexIndices();
-	IndexType vertSize = vidx.size();
+	IndexType vertSize = (IndexType)vidx.size();
 	for ( IndexType i = 0; i < vertSize; ++i ) {
 		IndexType size = vidx[i].size();
 		if ( size > 0 ) {

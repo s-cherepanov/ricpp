@@ -136,7 +136,7 @@ bool CPolygonContainer::isCCW(
 		}
 	}
 	
-	if ( startpoint != rightmost ) {
+	if ( startpoint == rightmost ) {
 		// Degenerated polygon
 		return false;
 	}

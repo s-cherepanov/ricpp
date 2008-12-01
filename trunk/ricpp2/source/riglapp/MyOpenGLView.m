@@ -14,7 +14,7 @@
 // #define _TRACE
 #endif
 
-static const int startScreen = 10; // 0-maxScreens
+static const int startScreen = 0; // 0-maxScreens
 static const int maxScreens = 23;
 
 static const float defPivotDepth = 2;

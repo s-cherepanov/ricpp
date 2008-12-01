@@ -47,6 +47,7 @@ Attribute "identifier" "name" ["Sphere"]
 Color [1.000000 0.058824 0.058824]
 Opacity [1.000000 1.000000 1.000000]
 Rotate 0.00 0 0 1
+GeometricApproximation "tesselation" [ 64 ]
 Sphere 4.00 -4.00 4.00 360.00
 AttributeEnd
 AttributeBegin

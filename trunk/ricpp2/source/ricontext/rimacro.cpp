@@ -58,6 +58,8 @@ CRiMacro::~CRiMacro()
 {
 	clear();
 	delete m_calls;
+	m_calls = 0;
+	m_factory = 0;
 }
 
 

@@ -1,6 +1,7 @@
 /* MyOpenGLView */
 
 #import <Cocoa/Cocoa.h>
+#import <ricpp/ri/ri.h>
 
 @interface MyOpenGLView : NSOpenGLView
 {
@@ -10,8 +11,10 @@
 	float sdepth;
 	float pivotDepth;
 	bool flagDrawNormals;
+	RtContextHandle contextHandle;
 }
 - (void) awakeFromNib;
+- (void) closeContext;
 - (id) resetCamera;
 - (void) loadRibFile: (const char *) filename;
 - (void) drawRect: (NSRect) bounds ;
@@ -26,4 +29,7 @@
 - (void)mouseDragged:(NSEvent *)theEvent;
 - (void)scrollWheel:(NSEvent *)theEvent;
 - (void)otherMouseDragged:(NSEvent *)theEvent;
+
+
+- (void)windowWillClose:(NSNotification *)notification;
 @end

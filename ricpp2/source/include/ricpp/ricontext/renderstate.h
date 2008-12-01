@@ -187,7 +187,7 @@ namespace RiCPP {
 
 		TemplHandleStack<CRiMacro> m_objectMacros;   ///< Stack of all object macros (objectBegin/End)
 		TemplHandleStack<CRiMacro> m_archiveMacros; ///< Stack of all archive macros (archiveBegin/End)
-		TemplHandleStack<CRiMacro> m_cachedArchive; ///< Stack of all archive macros (cached rib)
+		TemplHandleStack<CRiMacro> m_cachedMacros; ///< Stack of all archive macros (cached rib)
 		
 		TemplHandleStack<CHandle> m_lightSourceHandles;  ///< Stack of indirect light source handles
 		TemplHandleStack<CLightSource> m_lightSources;   ///< Stack of all created light sources
@@ -227,11 +227,9 @@ namespace RiCPP {
 		void clearStacks();
 		void freeAll();
 
-		/*
 		void markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2, std::list<CRiMacro *> &l3);
 		void compactArchive(std::list<CRiMacro *> &aList, TemplHandleStack<CRiMacro> &aMacroStack);
 		void compactArchives();
-		*/
 		
 		void contextReset();
 

@@ -1112,7 +1112,7 @@ CRenderState::CRenderState(
 	m_resourceStack("RES_"),
 	m_objectMacros("OBJ_"),
 	m_archiveMacros("ARC_"),
-	m_cachedArchive("CACHE_"),
+	m_cachedMacros("CACHE_"),
 	m_lightSourceHandles("LIH_"),
 	m_lightSources("LIH_")
 {
@@ -1600,6 +1600,7 @@ void CRenderState::contextBegin()
 
 	m_objectMacros.mark();
 	m_archiveMacros.mark();
+	m_cachedMacros.mark();
 	m_lightSources.mark();
 	m_lightSourceHandles.mark();
 
@@ -1607,10 +1608,8 @@ void CRenderState::contextBegin()
 }
 
 
-#if 0
 void CRenderState::compactArchive(std::list<CRiMacro *> &aList, TemplHandleStack<CRiMacro> &aMacroStack)
 {
-	// todo: Doesn't work i.e. m_curMacro gets deleted
 	CRiMacro *aMacro;
 	while ( !aList.empty() ) {
 		aMacro = aList.back();
@@ -1627,7 +1626,6 @@ void CRenderState::compactArchive(std::list<CRiMacro *> &aList, TemplHandleStack
 
 void CRenderState::markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2, std::list<CRiMacro *> &l3)
 {
-	// todo: Doesn't work i.e. m_curMacro gets deleted
 	std::list<CRiMacro *> *lptr[3] = {&l1, &l2, &l3};
 
 	for ( std::list<CRiMacro *>::iterator iter = l1.begin(); iter != l1.end(); iter++ ) {
@@ -1639,11 +1637,13 @@ void CRenderState::markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2
 					if ( !(*markIter) )
 						continue;
 					if ( (*markIter)->path().size() > 0 && (*markIter)->path()[0] == (*iter)->path()[0] ) {
+						assert(*iter != curMacro());
 						(*markIter)->macroType(CRiMacro::MACROTYPE_UNKNOWN); // Mark for deletion (also the root element (*iter))
 					}
 				}
 			}
 		} else if ( (*iter)->path().size() == 0 ) {
+			assert(*iter != curMacro());
 			(*iter)->macroType(CRiMacro::MACROTYPE_UNKNOWN); // Mark for deletion
 		}
 	}
@@ -1651,7 +1651,6 @@ void CRenderState::markRoot(std::list<CRiMacro *> &l1, std::list<CRiMacro *> &l2
 
 void CRenderState::compactArchives()
 {
-	// todo: Doesn't work i.e. m_curMacro gets deleted
 	std::list<CRiMacro *> archiveResults;
 	std::list<CRiMacro *> objectResults;
 	std::list<CRiMacro *> cachedResults;
@@ -1659,7 +1658,7 @@ void CRenderState::compactArchives()
 	// Extract in reverse order
 	m_archiveMacros.extractToMark(archiveResults);
 	m_objectMacros.extractToMark(objectResults);
-	m_cachedArchive.extractToMark(cachedResults);
+	m_cachedMacros.extractToMark(cachedResults);
 
 	// Mark root elements for deletion (Elements with one Path element and all successors)
 	markRoot(archiveResults, objectResults, cachedResults);
@@ -1669,9 +1668,8 @@ void CRenderState::compactArchives()
 	// Inserted in reversed order again, so it's the same order as before
 	compactArchive(archiveResults, m_archiveMacros);
 	compactArchive(objectResults, m_objectMacros);
-	compactArchive(cachedResults, m_cachedArchive);	
+	compactArchive(cachedResults, m_cachedMacros);	
 }
-#endif
 
 void CRenderState::contextReset()
 {
@@ -1699,7 +1697,7 @@ void CRenderState::contextEnd()
 	contextReset();
 	m_objectMacros.clear();
 	m_archiveMacros.clear();
-	m_cachedArchive.clear();
+	m_cachedMacros.clear();
 }
 
 void CRenderState::frameBegin(RtInt number)
@@ -1710,6 +1708,7 @@ void CRenderState::frameBegin(RtInt number)
 
 	m_objectMacros.mark();
 	m_archiveMacros.mark();
+	m_cachedMacros.mark();
 	m_lightSources.mark();
 	m_lightSourceHandles.mark();
 
@@ -1733,7 +1732,7 @@ void CRenderState::frameEnd()
 	m_lightSourceHandles.clearToMark();
 	m_lightSources.clearToMark();
 	
-	// compactArchives();
+	compactArchives();
 
 	popTransform();
 	popAttributes();
@@ -1758,6 +1757,7 @@ void CRenderState::worldBegin()
 
 	m_objectMacros.mark();
 	m_archiveMacros.mark();
+	m_cachedMacros.mark();
 	m_lightSources.mark();
 	m_lightSourceHandles.mark();
 
@@ -1779,7 +1779,7 @@ void CRenderState::worldEnd()
 	m_lightSourceHandles.clearToMark();
 	m_lightSources.clearToMark();
 
-	// compactArchives();
+	compactArchives();
 
 	popAttributes();
 	popTransform();
@@ -2060,14 +2060,14 @@ CRiMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle)
 {
 	CRiMacro *m = m_archiveMacros.find(handle);
 	if ( m ) return m;
-	return m_cachedArchive.find(handle);
+	return m_cachedMacros.find(handle);
 }
 
 const CRiMacro *CRenderState::findArchiveInstance(RtArchiveHandle handle) const
 {
 	const CRiMacro *m = m_archiveMacros.find(handle);
 	if ( m ) return m;
-	return m_cachedArchive.find(handle);
+	return m_cachedMacros.find(handle);
 }
 
 RtArchiveHandle CRenderState::archiveBegin(const char *aName, CRManInterfaceFactory &aFactory)
@@ -2139,7 +2139,7 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName, CRManInterface
 	if ( executeConditionial() || m_curMacro != 0 ) {
 		m_macros.push_back(m_curMacro);
 		unsigned long num;
-		RtToken t = m_cachedArchive.newHandle(aName, num);
+		RtToken t = m_cachedMacros.newHandle(aName, num);
 		CRiMacro *m = new CRiMacro(t, num, notEmptyStr(aName), &aFactory, CRiMacro::MACROTYPE_FILE);
 		m_curMacro = m;
 		
@@ -2148,7 +2148,7 @@ RtArchiveHandle CRenderState::archiveFileBegin(const char *aName, CRManInterface
 
 		if ( m != 0 ) {
 			m->path() = inputState().path();
-			m_cachedArchive.insertObject(m->handle(), m);
+			m_cachedMacros.insertObject(m->handle(), m);
 			return m->handle();
 		} else {
 			throw ExceptRiCPPError(
@@ -2988,7 +2988,7 @@ RtArchiveHandle CRenderState::storedArchiveName(RtString archiveName) const
 {
 	RtArchiveHandle handle = m_archiveMacros.identify(archiveName);
 	if ( handle ) return handle;
-	return m_cachedArchive.identify(archiveName);
+	return m_cachedMacros.identify(archiveName);
 }
 
 void CRenderState::registerResourceFactory(IResourceFactory *f)

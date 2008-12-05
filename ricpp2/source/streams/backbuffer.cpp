@@ -35,19 +35,17 @@ using namespace RiCPP;
 
 // ----------------------------------------------------------------------------
 
-bool CFileBackBuffer::open(const CUri &absUri, TypeOpenMode mode)
+bool CFileBackBuffer::open(const CUri &anAbsUri, TypeOpenMode aMode)
 {
 	close();
 	
-	CBackBufferRoot::open(absUri, mode);
+	CBackBufferRoot::open(anAbsUri, aMode);
 	
-	m_mode = mode;
-	std::string filename;
-	absUri.decodeFilepath(filename);
+	std::string filename = lastFileName().decodeFilepath();
 	
 	// std::cerr << "# FILENAME: '" << filename << "'" << std::endl;
 	
-	m_filebuf.open(filename.c_str(), mode);
+	m_filebuf.open(filename.c_str(), mode());
 	return m_filebuf.is_open();
 }
 
@@ -57,7 +55,7 @@ std::streamsize CFileBackBuffer::sgetn(char *b, std::streamsize size)
 		// File not open or no buffer
 		return 0;
 	}
-	if ( !(m_mode & std::ios_base::in) ) {
+	if ( !(mode() & std::ios_base::in) ) {
 		// File not opened for reading
 		return 0;
 	}
@@ -76,7 +74,7 @@ std::streamsize CFileBackBuffer::sputn(const char *b, std::streamsize size)
 		// File not open or no buffer
 		return 0;
 	}
-	if ( !(m_mode & std::ios_base::out) ) {
+	if ( !(mode() & std::ios_base::out) ) {
 		// File not opened for writing
 		return 0;
 	}
@@ -609,8 +607,9 @@ CFrontStreambuf::int_type CFrontStreambuf::underflow()
 		 m_frontInBuffer.begin()+m_putbackSize,
 		 m_frontInBuffer.begin()+m_putbackSize+num);
 	
-	if ( num == 0 )
+	if ( num == 0 ) {
 		return std::char_traits<char>::eof();
+	}
 	
 	return *TypeParent::gptr();
 }
@@ -622,7 +621,7 @@ bool CFrontStreambuf::postOpen(TypeOpenMode mode,
 	m_compressLevelOut = compressLevel;
 	
 	if ( m_compressLevelOut != Z_NO_COMPRESSION  &&
-		(m_mode & std::ios_base::out) )
+		(m_mode & std::ios_base::out) != 0 )
 	{
 		// Set the compression level for the output
 		m_strmOut.zalloc = Z_NULL;
@@ -649,7 +648,7 @@ bool CFrontStreambuf::postOpen(TypeOpenMode mode,
 		}
 	}
 	
-	if ( m_mode & std::ios_base::in ) {
+	if ( (m_mode & std::ios_base::in) != 0 ) {
 		// Set the compression level for the output
 		m_strmIn.zalloc = Z_NULL;
 		m_strmIn.zfree = Z_NULL;
@@ -696,7 +695,7 @@ bool CFrontStreambuf::open(const CUri &refUri,
 	m_factory = m_bufferReg->getBufferFactory(m_resolutionUri.getScheme().c_str());
 	if ( m_factory ) {
 		TypeOpenMode backMode = mode;
-		if ( mode & std::ios_base::in || compressLevel != Z_NO_COMPRESSION  )
+		if ( (mode & std::ios_base::in) != 0 || compressLevel != Z_NO_COMPRESSION  )
 			backMode |= std::ios_base::binary;
 		m_backBuffer = m_factory->open(m_resolutionUri, backMode);
 		if ( !m_backBuffer )

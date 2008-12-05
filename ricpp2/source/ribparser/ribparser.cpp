@@ -1,7 +1,7 @@
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
-// The RenderMan(R) Interface Procedures and Protocol are:
+// The RenderMan(R) Interface Procedures and Protocol ar©e:
 //         Copyright 1988, 1989, 2000, 2005 Pixar
 //                 All rights Reservered
 //
@@ -402,7 +402,7 @@ int CRibRequestData::getTokenList(
 					if ( !m_parameters[i].getFloat(v) ) {
 						errHandler().handleError(
 							RIE_BUG, RIE_ERROR,
-							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't convert value to float, using 0.0 instaead",
+							"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d, couldn't convert value to float, using 0.0 instead",
 							m_parameters[i].lineNo(), resourceName(), m_curRequest.c_str(),
 							token, (int)i, RI_NULL);
 					}
@@ -482,7 +482,7 @@ int CRibRequestData::getTokenList(
 				useParameter=false;
 				errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d type mismatch, %s found vs. %s expected",
+					"Line %ld, File \"%s\", badparamlist: '%s', parameter name '%s' at position %d type mismatch, '%s' found vs. '%s' expected",
 					m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
 					token, (int)parameterPos, CTypeInfo::basicTypeName(basicType), CTypeInfo::basicTypeName(p.declaration().basicType()), RI_NULL);
 			} else {
@@ -574,9 +574,9 @@ unsigned char CRibParser::getchar()
 	}
 
 	val = m_istream.get();
-	if ( !m_istream ) {
-		val = 0;
-	}
+//	if ( !m_istream ) {
+//		val = 0;
+//	}
 
 	unsigned char c = m_lastChar;
 	m_lastChar = val;
@@ -1120,14 +1120,14 @@ int CRibParser::handleBinary(unsigned char c) {
 		// Read all bytes to an unsigned long (w has 1..4 bytes)
 		unsigned long tmp = 0;
 		for ( i = 0; i < w; i++ ) {
+			c = getchar();
 			if ( !m_istream ) {   // EOF is not expected here
 				errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
+										 RIE_CONSISTENCY, RIE_ERROR,
+										 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 1]",
+										 lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
-			c = getchar();
 			tmp = tmp << 8;
 			tmp |= c;
 		}
@@ -1146,14 +1146,14 @@ int CRibParser::handleBinary(unsigned char c) {
 		m_token.clear();
 		m_token.reserve(w+1);
 		while ( w-- > 0 ) {
+			c = getchar();
 			if ( !m_istream ) {   // EOF is not expected here
 				errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
+										 RIE_CONSISTENCY, RIE_ERROR,
+										 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 2]",
+										 lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
-			c = getchar();
 			m_token.push_back(c);
 		}
 		return handleString();
@@ -1166,30 +1166,34 @@ int CRibParser::handleBinary(unsigned char c) {
 
 		/* Read all l number of bytes. */
 		unsigned long utmp = 0;
-		while ( l-- > 0 ) {
-			if ( !m_istream ) {  // EOF is not expected here
-				errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
-				return 0;
+		if ( l != 0 ) {
+			while ( l-- != 0 ) {
+				c = getchar();
+				if ( !m_istream ) {  // EOF is not expected here
+					errHandler().handleError(
+											 RIE_CONSISTENCY, RIE_ERROR,
+											 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 3]",
+											 lineNo(), resourceName(), RI_NULL);
+					return 0;
+				}
+				utmp = utmp << 8;
+				utmp |= c;
 			}
-			c = getchar();
-			utmp = utmp << 8;
-			utmp |= c;
 		}
-
+		
 		m_token.clear();
 		m_token.reserve(utmp+1);
-		while ( utmp-- > 0 ) {
-			if ( !m_istream ) {  // EOF is not expected here
-				errHandler().handleError(RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
-				return 0;
+		if ( utmp != 0 ) {
+			while ( utmp-- != 0 ) {
+				c = getchar();
+				if ( !m_istream ) {  // EOF is not expected here
+					errHandler().handleError(RIE_CONSISTENCY, RIE_ERROR,
+											 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 4]",
+											 lineNo(), resourceName(), RI_NULL);
+					return 0;
+				}
+				m_token.push_back(c);
 			}
-			c = getchar();
-			m_token.push_back(c);
 		}
 		return handleString();
 
@@ -1200,13 +1204,13 @@ int CRibParser::handleBinary(unsigned char c) {
 		unsigned long tmp = 0;
 		int i;
 		for ( i = 0; i < 4; i++ ) {
+			c = getchar();
 			if ( !m_istream ) {  // EOF is not expected here
 				errHandler().handleError(RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
+										 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 5]",
+										 lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
-			c = getchar();
 			tmp = tmp << 8;
 			tmp |= c;
 		}
@@ -1237,14 +1241,14 @@ int CRibParser::handleBinary(unsigned char c) {
 		for ( i = 0; i < 8; i++ )
 #endif        
 		{
+			c = getchar();
 			if ( !m_istream ) {  // EOF is not expected here
 				errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
+										 RIE_CONSISTENCY, RIE_ERROR,
+										 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 6]",
+										 lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
-			c = getchar();
 			v[i] = c;
 		}
 
@@ -1254,14 +1258,14 @@ int CRibParser::handleBinary(unsigned char c) {
 		return insertNumber((RtFloat)dbl);
 	} else if ( c < 0247 ) {    // encoded RI request
 		// 0246 | <code>
+		c = getchar();
 		if ( !m_istream ) {  // EOF is not expected here
 			errHandler().handleError(
-				RIE_CONSISTENCY, RIE_ERROR,
-				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineNo(), resourceName(), RI_NULL);
+									 RIE_CONSISTENCY, RIE_ERROR,
+									 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 7]",
+									 lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
-		c = getchar();
 		EnumRequests op = m_ribEncode[c];
 		if ( op == REQ_UNKNOWN ) {
 			errHandler().handleError(
@@ -1281,35 +1285,51 @@ int CRibParser::handleBinary(unsigned char c) {
 	} else if ( c < 0310 ) {    // nothing (reserved)
 		return RIBPARSER_NORMAL_COMMENT;  // Treat as comment
 	} else if ( c < 0314 ) {    // encoded single precision array (length follows)
-		int l = c - 0310 + 1;
+		unsigned int l = c - 0310 + 1;
 		int i;
 		unsigned long utmp = 0;
 		unsigned long tmp = 0;
 
-		while ( l-- > 0 ) {
+		while ( l-- != 0 ) {
+			c = getchar();
 			if ( !m_istream ) {  // EOF is not expected here
 				errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
+										 RIE_CONSISTENCY, RIE_ERROR,
+										 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 8]",
+										 lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
-			c = getchar();
 			utmp = utmp << 8;
 			utmp |= c;
 		}
 
 		handleArrayStart();
-		while ( utmp-- > 0 ) {
+		
+		while ( utmp-- != 0 ) {
 			for ( i = 0; i < 4; i++ ) {
+				c = getchar();
 				if ( !m_istream ) {  // EOF is not expected here
-					errHandler().handleError(
-						RIE_CONSISTENCY, RIE_ERROR,
-						"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-						lineNo(), resourceName(), RI_NULL);
+					errHandler().handleError(RIE_CONSISTENCY, RIE_ERROR,
+											 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [c==%d, handleBinary() 9]",
+											 lineNo(), resourceName(), static_cast<int>(c), RI_NULL);
+					/*
+					std::cerr << "# ++++**** c = " << static_cast<int>(c) << std::endl;
+					if ( m_istream.fail() ) {
+						std::cerr << "# ++++**** " << "failbit or badbit is set" << std::endl;
+					}
+					if ( m_istream.bad() ) {
+						std::cerr << "# ++++**** " << "badbit is set" << std::endl;
+					}
+					if ( m_istream.eof() ) {
+						std::cerr << "# ++++**** " << "eofbit is set" << std::endl;
+					}
+					if ( m_istream.good() ) {
+						std::cerr << "# ++++**** " << "goodbit is set" << std::endl;
+					}
+					m_istream.clear();
+					*/
 					return 0;
 				}
-				c = getchar();
 				tmp = tmp << 8;
 				tmp |= c;
 			}
@@ -1319,37 +1339,37 @@ int CRibParser::handleBinary(unsigned char c) {
 		return handleArrayEnd();
 	} else if ( c < 0315 ) {    // define encoded request
 		// 0314 | code | <string>
+		c = getchar();
 		if ( !m_istream ) {  // EOF is not expected here
 			errHandler().handleError(
-				RIE_CONSISTENCY, RIE_ERROR,
-				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineNo(), resourceName(), RI_NULL);
+									 RIE_CONSISTENCY, RIE_ERROR,
+									 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 10]",
+									 lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
-		c = getchar();
 		m_code = c;
 		return RIBPARSER_NORMAL_COMMENT; // Treat as comment
 	} else if ( c < 0317 ) {    // define encoded string token
 		// 0315+w | <token> | string
 		int w = c == 0315 ? 1 : 2;
+		c = getchar();
 		if ( !m_istream ) {  // EOF is not expected here
 			errHandler().handleError(
-				RIE_CONSISTENCY, RIE_ERROR,
-				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineNo(), resourceName(), RI_NULL);
+									 RIE_CONSISTENCY, RIE_ERROR,
+									 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 11]",
+									 lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
-		c = getchar();
 		unsigned long tmp = c;
 		if ( w == 2 ) {
+			c = getchar();
 			if ( !m_istream ) {  // EOF is not expected here
 				errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
+										 RIE_CONSISTENCY, RIE_ERROR,
+										 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 12]",
+										 lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
-			c = getchar();
 			tmp = tmp << 8;
 			tmp |= c;
 		}
@@ -1358,24 +1378,24 @@ int CRibParser::handleBinary(unsigned char c) {
 	} else if ( c < 0321 ) {    // interpolate defined string
 		// 0317+w | <token> | string
 		int w = c == 0317 ? 1 : 2;
+		c = getchar();
 		if ( !m_istream ) {  // EOF is not expected here
 			errHandler().handleError(
-				RIE_CONSISTENCY, RIE_ERROR,
-				"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-				lineNo(), resourceName(), RI_NULL);
+									 RIE_CONSISTENCY, RIE_ERROR,
+									 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 13]",
+									 lineNo(), resourceName(), RI_NULL);
 			return 0;
 		}
-		c = getchar();
 		unsigned long tmp = c;
 		if ( w == 2 ) {
+			c = getchar();
 			if ( !m_istream ) {  // EOF is not expected here
 				errHandler().handleError(
-					RIE_CONSISTENCY, RIE_ERROR,
-					"Line %ld, File \"%s\", protocolbotch: EOF is not expected here",
-					lineNo(), resourceName(), RI_NULL);
+										 RIE_CONSISTENCY, RIE_ERROR,
+										 "Line %ld, File \"%s\", protocolbotch: EOF is not expected here [handleBinary() 14]",
+										 lineNo(), resourceName(), RI_NULL);
 				return 0;
 			}
-			c = getchar();
 			tmp = tmp << 8;
 			tmp |= c;
 		}
@@ -2056,7 +2076,7 @@ bool CRibParser::canParse(RtString name)
 	}
 	m_ob.base(m_baseUri);
 	m_istream.rdbuf(&m_ob);
-	return m_ob.open(refUri);
+	return m_ob.open(refUri, std::ios_base::in | std::ios_base::binary);
 }
 
 

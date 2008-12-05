@@ -57,7 +57,10 @@
 #include <fstream>
 
 namespace RiCPP {
-
+	/** @brief Open mode type for streams.
+	 */
+	typedef std::ios_base::openmode TypeOpenMode;
+	
 	/** @brief Root for the backbuffer facet
 	 *
 	 *  Used by TemplFrontStreamBuf as simple backend streambuf (block
@@ -68,12 +71,13 @@ namespace RiCPP {
 	 *  CBackBufferRoot will not be instanciated.
 	 */
 	class CBackBufferRoot {
-	protected:
+	private:
 		CUri m_lastFileName; ///< URI of the associated resource.
+		TypeOpenMode m_mode; ///< Open mode
 	public:
 		/** @brief Constructor
 		 */
-		inline CBackBufferRoot() { }
+		inline CBackBufferRoot() { m_mode = static_cast<TypeOpenMode>(0); }
 
 		/** @brief Destructor
 		 *
@@ -93,15 +97,16 @@ namespace RiCPP {
 		 *  in m_lastFileName. And should be called from the derived element
 		 *  functions.
 		 *
-		 *  @param absUri The absolute URI of the resource to open.
-		 *  @param mode   The mode used to open the resource.
-		 *  @return       false, if the resource couldn't be opened, true if succeeded.
+		 *  @param anAbsUri The absolute URI of the resource to open.
+		 *  @param aMode    The mode used to open the resource.
+		 *  @return         false, if the resource couldn't be opened, true if succeeded.
 		 */
 		inline virtual bool open(
-			const CUri &absUri,
-			TypeOpenMode mode = std::ios_base::in|std::ios_base::binary)
+			const CUri &anAbsUri,
+			TypeOpenMode aMode = std::ios_base::in|std::ios_base::binary)
 		{
-			m_lastFileName = absUri;
+			m_lastFileName = anAbsUri;
+			m_mode = aMode;
 			return true;
 		}
 		
@@ -131,10 +136,20 @@ namespace RiCPP {
 		 *
 		 *  @return The URI (read-only) of the associated resource.
 		 */
-		inline virtual const CUri &lastFileName() const
+		inline const CUri &lastFileName() const
 		{
 			return m_lastFileName;
 		}
+		
+		/** @brief Gets the mode of the buffer.
+		 *
+		 *  @return The mode of the buffer.
+		 */
+		inline TypeOpenMode mode() const
+		{
+			return m_mode;
+		}
+		
 	}; // CBackBufferRoot
 
 
@@ -144,17 +159,7 @@ namespace RiCPP {
 	 */
 	class CFileBackBuffer : public CBackBufferRoot {
 		std::filebuf m_filebuf; ///< Associated file buffer.
-		TypeOpenMode m_mode;    ///< Open mode
 	public:
-		/** @brief Standard constructor.
-		 *
-		 *  Just clears m_mode.
-		 */
-		inline CFileBackBuffer()
-		{
-			m_mode = (TypeOpenMode)0;
-		}
-
 		/** @brief Destructor
 		 *
 		 *  Closes the file buffer.
@@ -175,13 +180,13 @@ namespace RiCPP {
 
 		/** @brief Opens a file buffer.
 		 *
-		 *  @param absUri The absolute URI of the file resource to open.
-		 *  @param mode The mode used to open the resource.
+		 *  @param anAbsUri The absolute URI of the file resource to open.
+		 *  @param aMode The mode used to open the resource.
 		 *  @return false, if resource couldn't be opened, true if succeeded.
 		 */
 		virtual bool open(
-			const CUri &absUri,
-			TypeOpenMode mode = std::ios_base::in|std::ios_base::binary);
+			const CUri &anAbsUri,
+			TypeOpenMode aMode = std::ios_base::in|std::ios_base::binary);
 
 		/** @brief Query whether the file buffer is open.
 		 *

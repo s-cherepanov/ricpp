@@ -1264,13 +1264,13 @@ bool CUri::encodeFilepath(const char *aPath, const char *aScheme)
 }
 
 
-const char *CUri::decodeFilepath(std::string &path) const
+std::string CUri::decodeFilepath() const
 {
-	path = "";
+	std::string path;
 	
 	const char *hierPart = getHierPart().c_str();
 	if ( !hierPart )
-		return path.c_str();
+		return path;
 
 	std::string decoded = "";
 	
@@ -1335,5 +1335,5 @@ const char *CUri::decodeFilepath(std::string &path) const
 
 	// std::cerr << "# DECODED: '" << path << "'" << std::endl;
 
-	return path.c_str();
+	return path;
 }

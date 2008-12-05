@@ -748,6 +748,7 @@ namespace RiCPP {
 			m_ob(aParserCallback.protocolHandlers()),
 			m_istream(&m_ob)
 		{
+			m_istream.clear();
 			m_parserCallback = &aParserCallback;
 			m_renderState = &aRenderState;
 			m_baseUri = aBaseUri;

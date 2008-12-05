@@ -1707,10 +1707,9 @@ namespace RiCPP {
 
 		/** @brief Decodes the hierarchical part of this URI .
 		 *
-		 * @retval aPath Path (internal representation) with the decoded hierarchical part
-		 * @return A pointer to the c_str() of @a path
+		 * @return  Path (internal representation) with the decoded hierarchical part
 		 */
-		const char *decodeFilepath(std::string &path) const;
+		std::string decodeFilepath() const;
 	};
 }
 

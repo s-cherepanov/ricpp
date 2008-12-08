@@ -331,16 +331,16 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 	bool startstream = false;
 	if ( m_transferInBuffer.size() == 0 ) {
 		m_transferInBuffer.resize(m_buffersize + footerSize);
-		m_strmIn.next_in = m_transferInBuffer.begin();
+		m_strmIn.next_in = reinterpret_cast<Bytef *>(m_transferInBuffer.begin());
 		startstream = true;
 	} else if ( m_strmIn.next_in <
-			   m_transferInBuffer.begin() +
-			   (m_transferInBuffer.size() - footerSize) )
+			   reinterpret_cast<Bytef *>(m_transferInBuffer.begin()) +
+			   (m_transferInBuffer.size() - footerSize)*sizeof(TypeFrontStreambufElement) )
 	{
 		m_inIsEOF = true;
 		return 0;
 	} else {
-		m_strmIn.next_in = m_transferInBuffer.begin();
+		m_strmIn.next_in = reinterpret_cast<Bytef *>(m_transferInBuffer.begin());
 	}
 	
 	if ( !startstream ) {
@@ -436,31 +436,31 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 	return m_strmIn.avail_in;
 }
 
-CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
+int CFrontStreambuf::flushBuffer(bool finish)
 {
 	if ( !(m_mode & std::ios_base::out) ) {
-		return std::char_traits<char>::eof();
+		return 0;
 	}
 	
 	int num = static_cast<int>(TypeParent::pptr()-TypeParent::pbase());
 	if ( num <= 0 ) {
 		// TypeParent::pbump(0);
-		return std::char_traits<char>::eof();
+		return 0;
 	}
 	
 	if ( !m_backBuffer && !m_coupledBuffer ) {
 		// TypeParent::pbump(-num);
-		return std::char_traits<char>::eof();
+		return 0;
 	}
 	
 	if ( m_compressLevelOut == Z_NO_COMPRESSION ) {
 		if ( m_backBuffer ) {
 			if ( m_backBuffer->sputn(m_frontOutBuffer.begin(), num) != num ) {
-				return std::char_traits<char>::eof();
+				return 0;
 			}
 		} else if ( m_coupledBuffer ) {
 			if ( m_coupledBuffer->sputn(m_frontOutBuffer.begin(), num) != num ) {
-				return std::char_traits<char>::eof();
+				return 0;
 			}
 		}
 	} else {
@@ -469,7 +469,7 @@ CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 		int ret;
 		
 		m_strmOut.avail_in = num;
-		m_strmOut.next_in = (Bytef *)(m_frontOutBuffer.begin());
+		m_strmOut.next_in = reinterpret_cast<Bytef *>(m_frontOutBuffer.begin());
 		
 		if ( m_transferOutBuffer.size() == 0 ) {
 			m_transferOutBuffer.resize(m_buffersize);
@@ -486,12 +486,12 @@ CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 			if ( m_backBuffer ) {
 				if ( m_backBuffer->sputn(header, sizeof(header)) != sizeof(header) ) {
 					// TypeParent::pbump(-num);
-					return std::char_traits<char>::eof();
+					return 0;
 				}
 			} else if ( m_coupledBuffer ) {
 				if ( m_coupledBuffer->sputn(header, sizeof(header)) != sizeof(header) ) {
 					// TypeParent::pbump(-num);
-					return std::char_traits<char>::eof();
+					return 0;
 				}
 			}
 		}
@@ -502,13 +502,13 @@ CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 			/// @todo If not binary and Win32: \n ->  \r\n
 			
 			m_strmOut.avail_out = static_cast<uInt>(m_transferOutBuffer.size());
-			m_strmOut.next_out = (Bytef *)(m_transferOutBuffer.begin());
+			m_strmOut.next_out = reinterpret_cast<Bytef *>(m_transferOutBuffer.begin());
 			
 			ret = deflate(&m_strmOut, flush);
 			
 			if ( ret == Z_STREAM_ERROR ) {
 				// TypeParent::pbump(-num);
-				return std::char_traits<char>::eof();
+				return 0;
 			}
 			
 			std::streamsize have = static_cast<std::streamsize>(m_transferOutBuffer.size() - m_strmOut.avail_out);
@@ -519,7 +519,7 @@ CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 					have > 0 )
 				{
 					// TypeParent::pbump(-num);
-					return std::char_traits<char>::eof();
+					return 0;
 				}
 			} else if ( m_coupledBuffer ) {
 				if ( m_coupledBuffer->sputn(m_transferOutBuffer.begin(), have) != have
@@ -527,7 +527,7 @@ CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 					have > 0 )
 				{
 					// TypeParent::pbump(-num);
-					return std::char_traits<char>::eof();
+					return 0;
 				}
 			} 
 		} while ( m_strmOut.avail_out == 0 );
@@ -544,12 +544,12 @@ CFrontStreambuf::int_type CFrontStreambuf::flushBuffer(bool finish)
 
 CFrontStreambuf::int_type CFrontStreambuf::overflow(int_type c)
 {
-	if ( c != std::char_traits<char>::eof() ) {
+	if ( c != std::char_traits<TypeFrontStreambufElement>::eof() ) {
 		*TypeParent::pptr() = c;
 		TypeParent::pbump(1);
 	}
-	if ( flushBuffer(false) == std::char_traits<char>::eof() ) {
-		return std::char_traits<char>::eof();
+	if ( flushBuffer(false) <= 0 ) {
+		return std::char_traits<TypeFrontStreambufElement>::eof();
 	}
 	return c;
 }
@@ -557,11 +557,12 @@ CFrontStreambuf::int_type CFrontStreambuf::overflow(int_type c)
 CFrontStreambuf::int_type CFrontStreambuf::underflow()
 {
 	if ( TypeParent::gptr() < TypeParent::egptr() ) {
-		return *TypeParent::gptr();
+		// It can happen that *TypeParent::gptr() == 255 == -1 (== EOF but not at end of a binary file)
+		return * reinterpret_cast<unsigned char *>(TypeParent::gptr());
 	}
 	
 	if ( m_inIsEOF ) {
-		return std::char_traits<char>::eof();
+		return std::char_traits<TypeFrontStreambufElement>::eof();
 	}
 	
 	int_type numPutback;
@@ -608,10 +609,11 @@ CFrontStreambuf::int_type CFrontStreambuf::underflow()
 		 m_frontInBuffer.begin()+m_putbackSize+num);
 	
 	if ( num == 0 ) {
-		return std::char_traits<char>::eof();
+		return std::char_traits<TypeFrontStreambufElement>::eof();
 	}
 	
-	return *TypeParent::gptr();
+	// It can happen that *TypeParent::gptr() == 255 == -1 (== EOF but not at end of a binary file)
+	return * reinterpret_cast<unsigned char *>(TypeParent::gptr());
 }
 
 bool CFrontStreambuf::postOpen(TypeOpenMode mode,

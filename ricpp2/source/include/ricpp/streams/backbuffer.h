@@ -540,7 +540,10 @@ namespace RiCPP {
 		}
 	}; // CBackBufferProtocolHandlers
 
-
+	/** @brief Type of the stream elements.
+	 */
+	typedef char TypeFrontStreambufElement;
+	
 	/** @brief Class for zlib stream buffers.
 	 *
 	 * Can be used by istream, ostream as streambuf. A coupled back end buffer
@@ -557,10 +560,10 @@ namespace RiCPP {
 	 *
 	 * @see CBackBufferRoot
 	 */
-	class CFrontStreambuf : public std::basic_streambuf<char, std::char_traits<char> > {
+	class CFrontStreambuf : public std::basic_streambuf<TypeFrontStreambufElement, std::char_traits<TypeFrontStreambufElement> > {
 
 	public:
-		typedef std::basic_streambuf<char, std::char_traits<char> > TypeParent;
+		typedef std::basic_streambuf<TypeFrontStreambufElement, std::char_traits<TypeFrontStreambufElement> > TypeParent;
 		typedef TypeParent::int_type int_type;
 		typedef TypeParent::pos_type pos_type;
 		typedef TypeParent::off_type off_type;
@@ -607,9 +610,9 @@ namespace RiCPP {
 		int_type m_buffersize; ///< @brief Buffer size incl. m_putbackSize
 		int_type m_putbackSize; ///< @brief Additional chars for put back.
 
-		TemplBuffer<char> m_frontInBuffer;
+		TemplBuffer<TypeFrontStreambufElement> m_frontInBuffer;
 		z_stream m_strmIn;
-		TemplBuffer<unsigned char> m_transferInBuffer;
+		TemplBuffer<TypeFrontStreambufElement> m_transferInBuffer;
 		bool m_inIsEOF;
 		long m_in;
 		long m_crcIn;
@@ -617,9 +620,9 @@ namespace RiCPP {
 		int m_strategyIn;
 		char m_methodIn;
 
-		TemplBuffer<char> m_frontOutBuffer;
+		TemplBuffer<TypeFrontStreambufElement> m_frontOutBuffer;
 		z_stream m_strmOut;
-		TemplBuffer<char> m_transferOutBuffer;
+		TemplBuffer<TypeFrontStreambufElement> m_transferOutBuffer;
 		long m_out;
 		long m_crcOut;
 		int m_compressLevelOut;
@@ -654,7 +657,7 @@ namespace RiCPP {
 				if (m_strmIn.avail_in == 0) {
 					return EOF;
 				}
-				m_strmIn.next_in = m_transferInBuffer.begin();
+				m_strmIn.next_in = reinterpret_cast<Bytef *>(m_transferInBuffer.begin());
 			}
 
 			m_strmIn.avail_in--;
@@ -669,7 +672,8 @@ namespace RiCPP {
 		
 	protected:
 		
-		virtual int_type flushBuffer(bool finish);
+		virtual int flushBuffer(bool finish);
+		
 		virtual int_type overflow(int_type c);
 		virtual int_type underflow();
 

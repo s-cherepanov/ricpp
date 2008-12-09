@@ -3552,7 +3552,8 @@
 		1DEB923608733DC60010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
@@ -3594,7 +3595,8 @@
 		1DEB923708733DC60010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = YES;
@@ -3647,6 +3649,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug\"",
 				);
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = riprog;
 				ZERO_LINK = YES;
@@ -3667,6 +3670,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug\"",
 				);
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = riprog;
 				ZERO_LINK = NO;
@@ -3684,6 +3688,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				GCC_WARN_PROTOTYPE_CONVERSION = NO;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = testribind;
 				ZERO_LINK = YES;
@@ -3700,6 +3705,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = NO;
 				GCC_WARN_PROTOTYPE_CONVERSION = NO;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = testribind;
 				ZERO_LINK = NO;
@@ -3773,6 +3779,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = glutrib;
 				ZERO_LINK = YES;
@@ -3787,6 +3794,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = glutrib;
 				ZERO_LINK = NO;
@@ -3955,7 +3963,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "-lzs";
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = streams;
 				ZERO_LINK = YES;
@@ -3970,7 +3978,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "-lzs";
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = streams;
 				ZERO_LINK = NO;
@@ -4052,6 +4060,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = ribtool;
 				ZERO_LINK = YES;
@@ -4066,6 +4075,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = ribtool;
 				ZERO_LINK = NO;
@@ -4113,6 +4123,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = glrenderer;
 				ZERO_LINK = YES;
@@ -4130,6 +4141,7 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = glrenderer;
 				ZERO_LINK = NO;
@@ -4410,6 +4422,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = YES;
@@ -4425,6 +4438,7 @@
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = test;
 				ZERO_LINK = NO;
@@ -4464,6 +4478,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = ribwriter;
 				ZERO_LINK = YES;
@@ -4481,6 +4496,7 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = ribwriter;
 				ZERO_LINK = NO;
@@ -4498,6 +4514,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = passthrough;
 				ZERO_LINK = YES;
@@ -4514,6 +4531,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = passthrough;
 				ZERO_LINK = NO;
@@ -4529,6 +4547,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = testpoly;
 				ZERO_LINK = YES;
@@ -4543,6 +4562,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = testpoly;
 				ZERO_LINK = NO;
@@ -4567,6 +4587,7 @@
 					Foundation,
 					"-framework",
 					AppKit,
+					"-lz",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ribviewer;
@@ -4592,6 +4613,7 @@
 					Foundation,
 					"-framework",
 					AppKit,
+					"-lz",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ribviewer;
@@ -4643,6 +4665,7 @@
 					Foundation,
 					"-framework",
 					AppKit,
+					"-lz",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = riglapp;
@@ -4693,6 +4716,7 @@
 					Foundation,
 					"-framework",
 					AppKit,
+					"-lz",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = riglapp;

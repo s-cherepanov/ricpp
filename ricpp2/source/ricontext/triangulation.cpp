@@ -2238,7 +2238,7 @@ void CSubdivisionHierarchyTesselator::extractFaces(const CSubdivisionStrategy &s
 			IndexType elemSize = floats.declaration().elemSize();
 			floats.values().resize(indexMapping.size()*elemSize);
 			for ( IndexType i = 0; i < indexMapping.size(); ++i ) {
-				assert(indexMapping.vertexIndices()[i] * elemSize + elemSize <= (*fiter).second.values().size());
+				assert((IndexType)indexMapping.vertexIndices()[i] * elemSize + elemSize <= (*fiter).second.values().size());
 				for ( IndexType elem = 0; elem < elemSize; ++elem ) {
 					floats.values()[i * elemSize + elem] = (*fiter).second.values()[indexMapping.vertexIndices()[i]*elemSize+elem];
 				}

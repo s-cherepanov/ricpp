@@ -25,8 +25,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		C312A1770E4CFDFF0035A59B /* libabloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C312A16D0E4CFD7B0035A59B /* libabloader.a */; };
-		C312A1C10E4D09A00035A59B /* ABLoaderPlugin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC09D05546B4700DB518D /* ABLoaderPlugin.dylib */; };
+		C312A1770E4CFDFF0035A59B /* libabribloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C312A16D0E4CFD7B0035A59B /* libabribloader.a */; };
+		C312A1C10E4D09A00035A59B /* libRIBLoaderPlugin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */; };
 		C35A33EB0E6576C900E7C946 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A33EA0E6576C900E7C946 /* GLUT.framework */; };
 		C35A340E0E6576F000E7C946 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A340D0E6576F000E7C946 /* OpenGL.framework */; };
 		C3A31E610E67C3BF009343C5 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A33EA0E6576C900E7C946 /* GLUT.framework */; };
@@ -104,12 +104,12 @@
 		08FB77AAFE841565C02AAC07 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		5073E0C609E734A800EC74B6 /* ABLoaderProj.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = ABLoaderProj.xcconfig; sourceTree = "<group>"; };
 		5073E0C709E734A800EC74B6 /* ABLoaderTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; path = ABLoaderTarget.xcconfig; sourceTree = "<group>"; };
-		C312A16D0E4CFD7B0035A59B /* libabloader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libabloader.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C312A1A60E4D053D0035A59B /* abplugintest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abplugintest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C312A16D0E4CFD7B0035A59B /* libabribloader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libabribloader.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C312A1A60E4D053D0035A59B /* abribplugintest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abribplugintest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C34EE0A60E498F650088ABF8 /* abrib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abrib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C35A33EA0E6576C900E7C946 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = /System/Library/Frameworks/GLUT.framework; sourceTree = "<absolute>"; };
 		C35A340D0E6576F000E7C946 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		C392D75D0E489C1B003E5C41 /* libabloader.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libabloader.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C392D75D0E489C1B003E5C41 /* libabribloader.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libabribloader.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3E3B76E0E77E93F004AA4FB /* abloader.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = abloader.cpp; path = ../../../source/abloader/abloader.cpp; sourceTree = SOURCE_ROOT; };
 		C3E3B7750E77E98D004AA4FB /* ABLoaderPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = ABLoaderPlugin.cpp; path = ../../../source/ABLoaderPlugin/ABLoaderPlugin.cpp; sourceTree = SOURCE_ROOT; };
 		C3E3B77C0E77EA1A004AA4FB /* trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = trace.h; path = ../../../source/include/abloader/tools/trace.h; sourceTree = SOURCE_ROOT; };
@@ -119,7 +119,7 @@
 		C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libriprog.1.dylib; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib; sourceTree = SOURCE_ROOT; };
 		C3E3B7DC0E77F2F6004AA4FB /* abloader.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = abloader.h; path = ../../../source/include/abloader/abloader/abloader.h; sourceTree = SOURCE_ROOT; };
 		C3E3B7DD0E77F329004AA4FB /* ABLoaderPlugin.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ABLoaderPlugin.h; sourceTree = "<group>"; };
-		D2AAC09D05546B4700DB518D /* ABLoaderPlugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ABLoaderPlugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libRIBLoaderPlugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,7 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C312A1C10E4D09A00035A59B /* ABLoaderPlugin.dylib in Frameworks */,
+				C312A1C10E4D09A00035A59B /* libRIBLoaderPlugin.dylib in Frameworks */,
 				C3A31E610E67C3BF009343C5 /* GLUT.framework in Frameworks */,
 				C3A31E730E67C3C6009343C5 /* OpenGL.framework in Frameworks */,
 			);
@@ -154,7 +154,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C312A1770E4CFDFF0035A59B /* libabloader.a in Frameworks */,
+				C312A1770E4CFDFF0035A59B /* libabribloader.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,11 +171,11 @@
 		034768DDFF38A45A11DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D2AAC09D05546B4700DB518D /* ABLoaderPlugin.dylib */,
-				C392D75D0E489C1B003E5C41 /* libabloader.1.dylib */,
+				D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */,
+				C392D75D0E489C1B003E5C41 /* libabribloader.1.dylib */,
 				C34EE0A60E498F650088ABF8 /* abrib */,
-				C312A16D0E4CFD7B0035A59B /* libabloader.a */,
-				C312A1A60E4D053D0035A59B /* abplugintest */,
+				C312A16D0E4CFD7B0035A59B /* libabribloader.a */,
+				C312A1A60E4D053D0035A59B /* abribplugintest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -206,11 +206,11 @@
 		08FB77ACFE841707C02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				C312A1700E4CFD910035A59B /* abloader */,
-				C392D6EF0E4894C2003E5C41 /* ABLoaderPlugin */,
-				C392D6EE0E4894AF003E5C41 /* abloaderdll */,
+				C312A1700E4CFD910035A59B /* abribloader */,
+				C392D6EF0E4894C2003E5C41 /* ABRibLoaderPlugin */,
+				C392D6EE0E4894AF003E5C41 /* abribloaderdll */,
 				C34EE0AB0E498F810088ABF8 /* abrib */,
-				C312A1A00E4D04E60035A59B /* abplugintest */,
+				C312A1A00E4D04E60035A59B /* abribplugintest */,
 				C3E3B77A0E77EA01004AA4FB /* tools */,
 			);
 			lineEnding = 1;
@@ -226,13 +226,13 @@
 			name = "Configuration Files";
 			sourceTree = "<group>";
 		};
-		C312A1700E4CFD910035A59B /* abloader */ = {
+		C312A1700E4CFD910035A59B /* abribloader */ = {
 			isa = PBXGroup;
 			children = (
 				C312A1790E4CFE350035A59B /* Headers */,
 				C312A1780E4CFE2D0035A59B /* Implementations */,
 			);
-			name = abloader;
+			name = abribloader;
 			sourceTree = "<group>";
 		};
 		C312A1780E4CFE2D0035A59B /* Implementations */ = {
@@ -251,13 +251,13 @@
 			name = Headers;
 			sourceTree = "<group>";
 		};
-		C312A1A00E4D04E60035A59B /* abplugintest */ = {
+		C312A1A00E4D04E60035A59B /* abribplugintest */ = {
 			isa = PBXGroup;
 			children = (
 				C312A1A20E4D05030035A59B /* Headers */,
 				C312A1A10E4D04FA0035A59B /* Implementations */,
 			);
-			name = abplugintest;
+			name = abribplugintest;
 			sourceTree = "<group>";
 		};
 		C312A1A10E4D04FA0035A59B /* Implementations */ = {
@@ -337,22 +337,22 @@
 			name = ribfiles;
 			sourceTree = "<group>";
 		};
-		C392D6EE0E4894AF003E5C41 /* abloaderdll */ = {
+		C392D6EE0E4894AF003E5C41 /* abribloaderdll */ = {
 			isa = PBXGroup;
 			children = (
 				C34EDF850E4982490088ABF8 /* Headers */,
 				C34EDF860E49824F0088ABF8 /* Implementations */,
 			);
-			name = abloaderdll;
+			name = abribloaderdll;
 			sourceTree = "<group>";
 		};
-		C392D6EF0E4894C2003E5C41 /* ABLoaderPlugin */ = {
+		C392D6EF0E4894C2003E5C41 /* ABRibLoaderPlugin */ = {
 			isa = PBXGroup;
 			children = (
 				C34EDF880E49826D0088ABF8 /* Headers */,
 				C34EDF870E49825E0088ABF8 /* Implementations */,
 			);
-			name = ABLoaderPlugin;
+			name = ABRibLoaderPlugin;
 			sourceTree = "<group>";
 		};
 		C3E3B77A0E77EA01004AA4FB /* tools */ = {
@@ -400,9 +400,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		C312A16C0E4CFD7B0035A59B /* abloader */ = {
+		C312A16C0E4CFD7B0035A59B /* abribloader */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C312A1710E4CFD910035A59B /* Build configuration list for PBXNativeTarget "abloader" */;
+			buildConfigurationList = C312A1710E4CFD910035A59B /* Build configuration list for PBXNativeTarget "abribloader" */;
 			buildPhases = (
 				C312A1690E4CFD7B0035A59B /* Headers */,
 				C312A16A0E4CFD7B0035A59B /* Sources */,
@@ -412,14 +412,14 @@
 			);
 			dependencies = (
 			);
-			name = abloader;
+			name = abribloader;
 			productName = abloader;
-			productReference = C312A16D0E4CFD7B0035A59B /* libabloader.a */;
+			productReference = C312A16D0E4CFD7B0035A59B /* libabribloader.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		C312A1A50E4D053D0035A59B /* abplugintest */ = {
+		C312A1A50E4D053D0035A59B /* abribplugintest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C312A1AD0E4D057C0035A59B /* Build configuration list for PBXNativeTarget "abplugintest" */;
+			buildConfigurationList = C312A1AD0E4D057C0035A59B /* Build configuration list for PBXNativeTarget "abribplugintest" */;
 			buildPhases = (
 				C312A1A30E4D053D0035A59B /* Sources */,
 				C312A1A40E4D053D0035A59B /* Frameworks */,
@@ -429,9 +429,9 @@
 			dependencies = (
 				C312A1AC0E4D055E0035A59B /* PBXTargetDependency */,
 			);
-			name = abplugintest;
+			name = abribplugintest;
 			productName = riabplugintest;
-			productReference = C312A1A60E4D053D0035A59B /* abplugintest */;
+			productReference = C312A1A60E4D053D0035A59B /* abribplugintest */;
 			productType = "com.apple.product-type.tool";
 		};
 		C34EE0A50E498F650088ABF8 /* abrib */ = {
@@ -451,9 +451,9 @@
 			productReference = C34EE0A60E498F650088ABF8 /* abrib */;
 			productType = "com.apple.product-type.tool";
 		};
-		C392D75C0E489C1B003E5C41 /* abloaderdll */ = {
+		C392D75C0E489C1B003E5C41 /* abribloaderdll */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C392D7610E489C43003E5C41 /* Build configuration list for PBXNativeTarget "abloaderdll" */;
+			buildConfigurationList = C392D7610E489C43003E5C41 /* Build configuration list for PBXNativeTarget "abribloaderdll" */;
 			buildPhases = (
 				C392D7590E489C1B003E5C41 /* Headers */,
 				C392D75A0E489C1B003E5C41 /* Sources */,
@@ -464,14 +464,14 @@
 			dependencies = (
 				C312A1750E4CFDA90035A59B /* PBXTargetDependency */,
 			);
-			name = abloaderdll;
+			name = abribloaderdll;
 			productName = abloaderdll;
-			productReference = C392D75D0E489C1B003E5C41 /* libabloader.1.dylib */;
+			productReference = C392D75D0E489C1B003E5C41 /* libabribloader.1.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		D2AAC09C05546B4700DB518D /* ABLoaderPlugin */ = {
+		D2AAC09C05546B4700DB518D /* RIBLoaderPlugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "ABLoaderPlugin" */;
+			buildConfigurationList = 1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "RIBLoaderPlugin" */;
 			buildPhases = (
 				D2AAC09905546B4700DB518D /* Headers */,
 				D2AAC09B05546B4700DB518D /* Frameworks */,
@@ -482,9 +482,9 @@
 			dependencies = (
 				C3E3B8D80E77F7C3004AA4FB /* PBXTargetDependency */,
 			);
-			name = ABLoaderPlugin;
+			name = RIBLoaderPlugin;
 			productName = libABLoader;
-			productReference = D2AAC09D05546B4700DB518D /* ABLoaderPlugin.dylib */;
+			productReference = D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -501,11 +501,11 @@
 			projectRoot = "";
 			targets = (
 				C34EDF730E4981440088ABF8 /* All */,
-				D2AAC09C05546B4700DB518D /* ABLoaderPlugin */,
-				C312A16C0E4CFD7B0035A59B /* abloader */,
-				C392D75C0E489C1B003E5C41 /* abloaderdll */,
+				D2AAC09C05546B4700DB518D /* RIBLoaderPlugin */,
+				C312A16C0E4CFD7B0035A59B /* abribloader */,
+				C392D75C0E489C1B003E5C41 /* abribloaderdll */,
 				C34EE0A50E498F650088ABF8 /* abrib */,
-				C312A1A50E4D053D0035A59B /* abplugintest */,
+				C312A1A50E4D053D0035A59B /* abribplugintest */,
 			);
 		};
 /* End PBXProject section */
@@ -572,32 +572,32 @@
 /* Begin PBXTargetDependency section */
 		C312A1730E4CFD9F0035A59B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C312A16C0E4CFD7B0035A59B /* abloader */;
+			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
 			targetProxy = C312A1720E4CFD9F0035A59B /* PBXContainerItemProxy */;
 		};
 		C312A1750E4CFDA90035A59B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C312A16C0E4CFD7B0035A59B /* abloader */;
+			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
 			targetProxy = C312A1740E4CFDA90035A59B /* PBXContainerItemProxy */;
 		};
 		C312A1AC0E4D055E0035A59B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D2AAC09C05546B4700DB518D /* ABLoaderPlugin */;
+			target = D2AAC09C05546B4700DB518D /* RIBLoaderPlugin */;
 			targetProxy = C312A1AB0E4D055E0035A59B /* PBXContainerItemProxy */;
 		};
 		C312A1B60E4D06C60035A59B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C312A1A50E4D053D0035A59B /* abplugintest */;
+			target = C312A1A50E4D053D0035A59B /* abribplugintest */;
 			targetProxy = C312A1B50E4D06C60035A59B /* PBXContainerItemProxy */;
 		};
 		C34EDF770E4981520088ABF8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D2AAC09C05546B4700DB518D /* ABLoaderPlugin */;
+			target = D2AAC09C05546B4700DB518D /* RIBLoaderPlugin */;
 			targetProxy = C34EDF760E4981520088ABF8 /* PBXContainerItemProxy */;
 		};
 		C34EDF790E4981540088ABF8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C392D75C0E489C1B003E5C41 /* abloaderdll */;
+			target = C392D75C0E489C1B003E5C41 /* abribloaderdll */;
 			targetProxy = C34EDF780E4981540088ABF8 /* PBXContainerItemProxy */;
 		};
 		C34EE0BE0E4990030088ABF8 /* PBXTargetDependency */ = {
@@ -607,7 +607,7 @@
 		};
 		C3E3B8D80E77F7C3004AA4FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C392D75C0E489C1B003E5C41 /* abloaderdll */;
+			target = C392D75C0E489C1B003E5C41 /* abribloaderdll */;
 			targetProxy = C3E3B8D70E77F7C3004AA4FB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -626,8 +626,9 @@
 				OTHER_LDFLAGS = (
 					"-lAugenblick",
 					"-lricppbridge",
+					"-lz",
 				);
-				PRODUCT_NAME = ABLoaderPlugin;
+				PRODUCT_NAME = libRIBLoaderPlugin;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -642,8 +643,9 @@
 				OTHER_LDFLAGS = (
 					"-lAugenblick",
 					"-lricppbridge",
+					"-lz",
 				);
-				PRODUCT_NAME = ABLoaderPlugin;
+				PRODUCT_NAME = libRIBLoaderPlugin;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
 			};
@@ -653,7 +655,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* ABLoaderProj.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = NO;
 				GCC_MODEL_TUNING = "";
@@ -684,7 +687,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5073E0C609E734A800EC74B6 /* ABLoaderProj.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				GCC_ENABLE_SSE3_EXTENSIONS = NO;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = NO;
 				GCC_MODEL_TUNING = "";
@@ -722,7 +726,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "-lbaserenderer";
 				PREBINDING = NO;
-				PRODUCT_NAME = abloader;
+				PRODUCT_NAME = abribloader;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -737,7 +741,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "-lbaserenderer";
 				PREBINDING = NO;
-				PRODUCT_NAME = abloader;
+				PRODUCT_NAME = abribloader;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -753,7 +757,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = "-lAugenblick";
 				PREBINDING = NO;
-				PRODUCT_NAME = abplugintest;
+				PRODUCT_NAME = abribplugintest;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -768,7 +772,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				OTHER_LDFLAGS = "-lAugenblick";
 				PREBINDING = NO;
-				PRODUCT_NAME = abplugintest;
+				PRODUCT_NAME = abribplugintest;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -803,6 +807,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = abrib;
 				ZERO_LINK = YES;
@@ -817,6 +822,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = abrib;
 				ZERO_LINK = NO;
@@ -826,7 +832,6 @@
 		C392D75E0E489C1B003E5C41 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
@@ -837,7 +842,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "-lAugenblick";
 				PREBINDING = NO;
-				PRODUCT_NAME = abloader;
+				PRODUCT_NAME = abribloader;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -845,7 +850,6 @@
 		C392D75F0E489C1B003E5C41 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_32_BIT)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_EXTENSION = 1.dylib;
@@ -855,7 +859,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				OTHER_LDFLAGS = "-lAugenblick";
 				PREBINDING = NO;
-				PRODUCT_NAME = abloader;
+				PRODUCT_NAME = abribloader;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -863,7 +867,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "ABLoaderPlugin" */ = {
+		1DEB916008733D950010E9CD /* Build configuration list for PBXNativeTarget "RIBLoaderPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB916108733D950010E9CD /* Debug */,
@@ -881,7 +885,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C312A1710E4CFD910035A59B /* Build configuration list for PBXNativeTarget "abloader" */ = {
+		C312A1710E4CFD910035A59B /* Build configuration list for PBXNativeTarget "abribloader" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C312A16E0E4CFD7B0035A59B /* Debug */,
@@ -890,7 +894,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C312A1AD0E4D057C0035A59B /* Build configuration list for PBXNativeTarget "abplugintest" */ = {
+		C312A1AD0E4D057C0035A59B /* Build configuration list for PBXNativeTarget "abribplugintest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C312A1A80E4D053D0035A59B /* Debug */,
@@ -917,7 +921,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C392D7610E489C43003E5C41 /* Build configuration list for PBXNativeTarget "abloaderdll" */ = {
+		C392D7610E489C43003E5C41 /* Build configuration list for PBXNativeTarget "abribloaderdll" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C392D75E0E489C1B003E5C41 /* Debug */,

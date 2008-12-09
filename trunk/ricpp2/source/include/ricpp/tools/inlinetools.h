@@ -125,7 +125,6 @@ inline const char *cutfilename(char *buf)
 	
 	if ( len > 0 ) {
 		// A '/' found at buf[len-1]
-		assert(buf[len-1] == 0);
 		buf[len-1] = 0; // can lead to buf[0] == NUL, if buf contained a file with root path
 	} else {
 		// No '/' found

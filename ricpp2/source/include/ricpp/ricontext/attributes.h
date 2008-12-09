@@ -559,12 +559,12 @@ namespace RiCPP {
 		/** @brief Gets the area light definition state.
 		 *  @return true, an area light definition is active
 		 */
-		bool CAttributes::inAreaLight() const;
+		bool inAreaLight() const;
 
 		/** @brief Sets the area light definition state.
 		 *  @param flag true, an area light definition is active
 		 */
-		void CAttributes::inAreaLight(bool flag);
+		void inAreaLight(bool flag);
 		
 		/** @brief Store counter is incremented by one to indicate that another attribute block is stored
 		 */

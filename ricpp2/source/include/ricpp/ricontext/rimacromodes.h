@@ -287,7 +287,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiEnd &CRiEnd::operator=(const CRiEnd &c)
+		inline CRiEnd &operator=(const CRiEnd &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -378,7 +378,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiResourceBegin &CRiResourceBegin::operator=(const CRiResourceBegin &c)
+		inline CRiResourceBegin &operator=(const CRiResourceBegin &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -468,7 +468,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiResourceEnd &CRiResourceEnd::operator=(const CRiResourceEnd &c)
+		inline CRiResourceEnd &operator=(const CRiResourceEnd &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -587,7 +587,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiFrameBegin &CRiFrameBegin::operator=(const CRiFrameBegin &c)
+		inline CRiFrameBegin &operator=(const CRiFrameBegin &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -684,7 +684,7 @@ namespace RiCPP {
 		 * @param c Object to assign.
 		 * @return A reference to this object.
 		 */
-		inline CRiFrameEnd &CRiFrameEnd::operator=(const CRiFrameEnd &c)
+		inline CRiFrameEnd &operator=(const CRiFrameEnd &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -778,7 +778,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiWorldBegin &CRiWorldBegin::operator=(const CRiWorldBegin &c)
+		inline CRiWorldBegin &operator=(const CRiWorldBegin &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -872,7 +872,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiWorldEnd &CRiWorldEnd::operator=(const CRiWorldEnd &c)
+		inline CRiWorldEnd &operator=(const CRiWorldEnd &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -962,7 +962,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiAttributeBegin &CRiAttributeBegin::operator=(const CRiAttributeBegin &c)
+		inline CRiAttributeBegin &operator=(const CRiAttributeBegin &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -1052,7 +1052,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiAttributeEnd &CRiAttributeEnd::operator=(const CRiAttributeEnd &c)
+		inline CRiAttributeEnd &operator=(const CRiAttributeEnd &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -1142,7 +1142,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiTransformBegin &CRiTransformBegin::operator=(const CRiTransformBegin &c)
+		inline CRiTransformBegin &operator=(const CRiTransformBegin &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -1232,7 +1232,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiTransformEnd &CRiTransformEnd::operator=(const CRiTransformEnd &c)
+		inline CRiTransformEnd &operator=(const CRiTransformEnd &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -1343,7 +1343,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiSolidBegin &CRiSolidBegin::operator=(const CRiSolidBegin &c)
+		inline CRiSolidBegin &operator=(const CRiSolidBegin &c)
 		{
 			if ( this == &c )
 				return *this;
@@ -1435,7 +1435,7 @@ namespace RiCPP {
 		 * @param c Object to assign
 		 * @return A reference to this object
 		 */
-		inline CRiSolidEnd &CRiSolidEnd::operator=(const CRiSolidEnd &c)
+		inline CRiSolidEnd &operator=(const CRiSolidEnd &c)
 		{
 			if ( this == &c )
 				return *this;

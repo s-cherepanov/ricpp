@@ -99,7 +99,7 @@ public:
 
 	/** @brief Constructor, enables all requests
 	 */
-	inline CRibFilter::CRibFilter()
+	inline CRibFilter()
 		: m_next(0), m_suspended(false)
 	{
 		for ( int i = 0; i < N_REQUESTS; ++i )

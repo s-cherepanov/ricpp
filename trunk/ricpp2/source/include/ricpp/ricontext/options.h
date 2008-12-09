@@ -369,7 +369,7 @@ namespace RiCPP {
 		}
 		RtFloat fstop() const;
 		RtFloat focallength() const;
-		inline RtFloat COptions::focaldistance() const
+		inline RtFloat focaldistance() const
 		{
 			return m_focalDistance;
 		}

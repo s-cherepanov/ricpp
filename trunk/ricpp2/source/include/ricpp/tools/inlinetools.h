@@ -100,13 +100,13 @@ inline void unmaskColon(char &c)
 }
 
 /**@brief Helper function, cuts away the filename of a path.
- * @param buf Pointer to the characrer buffer with the filepath.
+ * @param buf Pointer to the character buffer with the filepath.
  *            The buffer will be modified.
  * @return @a buf or "" is returned, the filename is cut away.
  *         @a buf can be empty (point to NUL) after calling this
  *         function.
  */
-inline char *cutfilename(char *buf)
+inline const char *cutfilename(char *buf)
 {
 	if ( !buf )
 		return "";
@@ -114,18 +114,21 @@ inline char *cutfilename(char *buf)
 	size_t len = strlen(buf);
 	
 	// empty string - no filename no changes
-	if ( !len )
+	if ( len == 0 )
 		return buf;
 
 	// --> strlen(buf) > 0, buf[0] and buf[1] are within buffer
 
-	while ( len != 0 && buf[len-1] != '/' )
+	while ( len > 0 && buf[len-1] != '/' ) {
 		--len;
-	if ( len ) {
+	}
+	
+	if ( len > 0 ) {
 		// A '/' found at buf[len-1]
+		assert(buf[len-1] == 0);
 		buf[len-1] = 0; // can lead to buf[0] == NUL, if buf contained a file with root path
 	} else {
-		// No '/' found.
+		// No '/' found
 		// Was a path containing a filename only, it was a relative path,
 		// therefore '.' is the directory
 		buf[0] = '.'; 

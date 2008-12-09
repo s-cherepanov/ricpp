@@ -120,7 +120,7 @@ namespace RiCPP {
 		 *  @return Interface number of the corresponding RI request.
 		 */
 		// inline 
-		virtual EnumRequests CRManInterfaceCall::interfaceIdx() const = 0;
+		virtual EnumRequests interfaceIdx() const = 0;
 		// {
 		//	return REQ_UNKNOWN;
 		// }

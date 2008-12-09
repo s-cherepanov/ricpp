@@ -285,12 +285,12 @@ void loadScene(const char *filename)
 
 void display(void)
 {
-	char *screenAction[2] = {"clear", "finish"};
+	const char *screenAction[2] = {"clear", "finish"};
 #ifdef _DEBUG
 	RtInt noYes[2] = {0, 1};
 #endif
 
-	char *matrixName[] = {"pre-camera"};
+	const char *matrixName[] = {"pre-camera"};
 	RiIdentity();
 	RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
 	RiTranslate(0, 0, 2.75); // Move back to previous pos

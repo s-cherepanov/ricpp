@@ -78,22 +78,22 @@ namespace RiCPP {
 		/** @brief Gets the string "TMP", the name of the TMP-variable (see getTmp()).
 		 *  @return "TMP"
 		 */
-		inline static char *tmpName() {return "TMP";}
+		inline static const char *tmpName() {return "TMP";}
 
 		/** @brief Gets the string "HOME", the name of the HOME-variable (see getHome()).
 		 *  @return "HOME"
 		 */
-		inline static char *homeName() {return "HOME";}
+		inline static const char *homeName() {return "HOME";}
 
 		/** @brief Gets the string "PATH", the name of the PATH-variable (see getPath()).
 		 *  @return "PATH"
 		 */
-		inline static char *pathName() {return "PATH";}
+		inline static const char *pathName() {return "PATH";}
 
 		/** @brief Gets the string "PROGDIR", the name of the PROGDIR-variable (see getProgDir()).
 		 *  @return "PROGDIR"
 		 */
-		inline static char *progDirName() {return "PROGDIR";}
+		inline static const char *progDirName() {return "PROGDIR";}
 
 		/** @brief Gets the value of the special variable TMP (so called in RiCPP).
 		 *

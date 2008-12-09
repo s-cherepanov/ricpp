@@ -320,9 +320,9 @@ void testrun(CRiCPPBridge &ri)
 
 	RtFloat fov = static_cast<RtFloat>(90.0);
 
-	char *save = "save";
-	char *restore = "restore";
-	char *all = "all";
+	const char *save = "save";
+	const char *restore = "restore";
+	const char *all = "all";
 
 	// Print error, does not abort
 	ri.errorHandler(ri.errorPrint());
@@ -406,7 +406,7 @@ void testGlob()
 {
 	CStringPattern p("a*bc?d");
 	std::cout << "TestGlob: " << p.pattern() << std::endl;
-	char *str;
+	const char *str;
 
 	str = "abccdbccd"; // a(bccd)bc(c)d
 	testMatch(p, str);

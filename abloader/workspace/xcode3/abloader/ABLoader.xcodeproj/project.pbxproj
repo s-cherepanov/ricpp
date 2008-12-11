@@ -29,6 +29,8 @@
 		C312A1C10E4D09A00035A59B /* libRIBLoaderPlugin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */; };
 		C35A33EB0E6576C900E7C946 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A33EA0E6576C900E7C946 /* GLUT.framework */; };
 		C35A340E0E6576F000E7C946 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A340D0E6576F000E7C946 /* OpenGL.framework */; };
+		C361AB470EEEB9150048C63A /* libabribloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C312A16D0E4CFD7B0035A59B /* libabribloader.a */; };
+		C361AB930EEEBBFC0048C63A /* ABLoaderPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = C361AB920EEEBBFC0048C63A /* ABLoaderPlugin.h */; };
 		C3A31E610E67C3BF009343C5 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A33EA0E6576C900E7C946 /* GLUT.framework */; };
 		C3A31E730E67C3C6009343C5 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A340D0E6576F000E7C946 /* OpenGL.framework */; };
 		C3E3B76F0E77E93F004AA4FB /* abloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B76E0E77E93F004AA4FB /* abloader.cpp */; };
@@ -36,7 +38,6 @@
 		C3E3B7800E77EA3C004AA4FB /* abloaderdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B77F0E77EA3C004AA4FB /* abloaderdll.cpp */; };
 		C3E3B7820E77EA6C004AA4FB /* abrib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B7810E77EA6C004AA4FB /* abrib.cpp */; };
 		C3E3B7840E77EA83004AA4FB /* abplugintest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B7830E77EA83004AA4FB /* abplugintest.cpp */; };
-		C3E3B7DE0E77F329004AA4FB /* ABLoaderPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = C3E3B7DD0E77F329004AA4FB /* ABLoaderPlugin.h */; };
 		C3E3B7DF0E77F331004AA4FB /* abloader.h in Headers */ = {isa = PBXBuildFile; fileRef = C3E3B7DC0E77F2F6004AA4FB /* abloader.h */; };
 		C3E3B8E70E77F8F0004AA4FB /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */; };
 /* End PBXBuildFile section */
@@ -91,12 +92,12 @@
 			remoteGlobalIDString = C34EE0A50E498F650088ABF8;
 			remoteInfo = riabtest;
 		};
-		C3E3B8D70E77F7C3004AA4FB /* PBXContainerItemProxy */ = {
+		C361AB440EEEB8F60048C63A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C392D75C0E489C1B003E5C41;
-			remoteInfo = abloaderdll;
+			remoteGlobalIDString = C312A16C0E4CFD7B0035A59B;
+			remoteInfo = abribloader;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -109,6 +110,7 @@
 		C34EE0A60E498F650088ABF8 /* abrib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abrib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C35A33EA0E6576C900E7C946 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = /System/Library/Frameworks/GLUT.framework; sourceTree = "<absolute>"; };
 		C35A340D0E6576F000E7C946 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		C361AB920EEEBBFC0048C63A /* ABLoaderPlugin.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = ABLoaderPlugin.h; path = ../../../source/include/abloader/ABLoaderPlugin/ABLoaderPlugin.h; sourceTree = SOURCE_ROOT; };
 		C392D75D0E489C1B003E5C41 /* libabribloader.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libabribloader.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3E3B76E0E77E93F004AA4FB /* abloader.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = abloader.cpp; path = ../../../source/abloader/abloader.cpp; sourceTree = SOURCE_ROOT; };
 		C3E3B7750E77E98D004AA4FB /* ABLoaderPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = ABLoaderPlugin.cpp; path = ../../../source/ABLoaderPlugin/ABLoaderPlugin.cpp; sourceTree = SOURCE_ROOT; };
@@ -118,7 +120,6 @@
 		C3E3B7830E77EA83004AA4FB /* abplugintest.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = abplugintest.cpp; path = ../../../source/abplugintest/abplugintest.cpp; sourceTree = SOURCE_ROOT; };
 		C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libriprog.1.dylib; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib; sourceTree = SOURCE_ROOT; };
 		C3E3B7DC0E77F2F6004AA4FB /* abloader.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = abloader.h; path = ../../../source/include/abloader/abloader/abloader.h; sourceTree = SOURCE_ROOT; };
-		C3E3B7DD0E77F329004AA4FB /* ABLoaderPlugin.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ABLoaderPlugin.h; sourceTree = "<group>"; };
 		D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libRIBLoaderPlugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -162,6 +163,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C361AB470EEEB9150048C63A /* libabribloader.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,7 +303,7 @@
 		C34EDF880E49826D0088ABF8 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				C3E3B7DD0E77F329004AA4FB /* ABLoaderPlugin.h */,
+				C361AB920EEEBBFC0048C63A /* ABLoaderPlugin.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -393,7 +395,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3E3B7DE0E77F329004AA4FB /* ABLoaderPlugin.h in Headers */,
+				C361AB930EEEBBFC0048C63A /* ABLoaderPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,7 +482,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C3E3B8D80E77F7C3004AA4FB /* PBXTargetDependency */,
+				C361AB450EEEB8F60048C63A /* PBXTargetDependency */,
 			);
 			name = RIBLoaderPlugin;
 			productName = libABLoader;
@@ -605,10 +607,10 @@
 			target = C34EE0A50E498F650088ABF8 /* abrib */;
 			targetProxy = C34EE0BD0E4990030088ABF8 /* PBXContainerItemProxy */;
 		};
-		C3E3B8D80E77F7C3004AA4FB /* PBXTargetDependency */ = {
+		C361AB450EEEB8F60048C63A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C392D75C0E489C1B003E5C41 /* abribloaderdll */;
-			targetProxy = C3E3B8D70E77F7C3004AA4FB /* PBXContainerItemProxy */;
+			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
+			targetProxy = C361AB440EEEB8F60048C63A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -617,18 +619,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
-					"-lAugenblick",
 					"-lricppbridge",
-					"-lz",
+					"-lAugenblick",
 				);
-				PRODUCT_NAME = libRIBLoaderPlugin;
+				PRODUCT_NAME = RIBLoaderPlugin;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -637,15 +637,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = lib;
 				GCC_MODEL_TUNING = "";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
-					"-lAugenblick",
 					"-lricppbridge",
-					"-lz",
+					"-lAugenblick",
 				);
-				PRODUCT_NAME = libRIBLoaderPlugin;
+				PRODUCT_NAME = RIBLoaderPlugin;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
 			};
@@ -657,10 +655,11 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
-				GCC_ENABLE_SSE3_EXTENSIONS = NO;
-				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = NO;
+				GCC_ALTIVEC_EXTENSIONS = NO;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_MODEL_TUNING = "";
-				GCC_PREPROCESSOR_DEFINITIONS = SSE_UNIT;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -675,12 +674,10 @@
 					"\"$(SRCROOT)/../../../../ricpp2/3rdparty/macos/zlib123/lib\"",
 					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
 				);
-				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -690,10 +687,11 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
-				GCC_ENABLE_SSE3_EXTENSIONS = NO;
-				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = NO;
+				GCC_ALTIVEC_EXTENSIONS = NO;
+				GCC_ENABLE_SSE3_EXTENSIONS = YES;
+				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_MODEL_TUNING = "";
-				GCC_PREPROCESSOR_DEFINITIONS = SSE_UNIT;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -708,12 +706,10 @@
 					"\"$(SRCROOT)/../../../../ricpp2/3rdparty/macos/zlib123/lib\"",
 					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
 				);
-				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
@@ -809,7 +805,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = abrib;
 				ZERO_LINK = YES;
@@ -824,7 +819,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				PRODUCT_NAME = abrib;
 				ZERO_LINK = NO;

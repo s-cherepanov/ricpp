@@ -69,7 +69,7 @@ extern "C" {
  *  @param type Type must match the type of the plugins interface (base class CContextCreator)
  *  @return Returns a plugin if @a majorversion has the right value
  */
-EXPORT
+RICPP_EXPORT
 CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)
 {
 	if ( majorversion != CContextCreator::myMajorVersion() || !type || strcmp(type, CContextCreator::myType()) != 0 )
@@ -81,7 +81,7 @@ CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)
  *  @brief Deletes a plugin created by newPlugin()
  *  @param p Plugin that is deletetd, must have been constructed by newPlugin()
  */
-EXPORT
+RICPP_EXPORT
 void CDECL deletePlugin(CContextCreator *p)
 {
 	if ( p )
@@ -92,7 +92,7 @@ void CDECL deletePlugin(CContextCreator *p)
  *  @brief Returns the major version number of the plugin
  *  @return The major version of the plugin
  */
-EXPORT
+RICPP_EXPORT
 unsigned long CDECL majorVersion()
 {
 	return CGLRendererCreator::myMajorVersion();
@@ -102,7 +102,7 @@ unsigned long CDECL majorVersion()
  *  @brief Returns the minor version number of the plugin
  *  @return The minor version of the plugin
  */
-EXPORT
+RICPP_EXPORT
 unsigned long CDECL minorVersion()
 {
 	return CGLRendererCreator::myMinorVersion();
@@ -112,7 +112,7 @@ unsigned long CDECL minorVersion()
  *  @brief Returns the revision of the plugin
  *  @return The revision number of the plugin
  */
-EXPORT
+RICPP_EXPORT
 unsigned long CDECL revision()
 {
 	return CGLRendererCreator::myRevision();
@@ -122,7 +122,7 @@ unsigned long CDECL revision()
  *  @brief Returns the type of the plugin
  *  @return The renderer type the plugin
  */
-EXPORT
+RICPP_EXPORT
 const char * CDECL type()
 {
 	return CGLRendererCreator::myType();
@@ -132,7 +132,7 @@ const char * CDECL type()
  *  @brief Returns the name of the plugin
  *  @return The name of the plugin
  */
-EXPORT
+RICPP_EXPORT
 const char * CDECL name()
 {
 	return CGLRendererCreator::myName();

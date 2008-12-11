@@ -30,7 +30,7 @@ class RiCPP::CABLoader;
 #pragma GCC visibility push(default)
 
 #include <PluginManager/LoaderPlugin.h>
-class ABLoaderPlugin : public AB::LoaderPlugin
+class EXPORT ABLoaderPlugin : public AB::LoaderPlugin
 {
 private:
 	static ABLoaderPlugin *plugin_instance;
@@ -40,10 +40,12 @@ private:
 	public:
 		ABLoaderPlugin();
 		virtual ~ABLoaderPlugin();
+	
 		static ABLoaderPlugin* MyInstance();
 	    static void deleteInstance(ABLoaderPlugin *plugin);
+	
 		virtual AB::Loader* Instance(AB::ParamSet* paramSet);
-		virtual void load(char const* filename);
+	    virtual void load(std::string const &filename);
 		virtual std::string	loadsFileExtension();
 };
 

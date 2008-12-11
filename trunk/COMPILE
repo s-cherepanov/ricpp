@@ -31,6 +31,7 @@ Additional libraries needed
 
   libtiff: tiff-3.7.2 (GnuWin32), libtiff.lib used to link by the glrenderer.
   zlib: zlib-1.2.2 (GnuWin32), libz.lib used to link by the ribparser.
+  RiCPPv2 will use zlib-1.2.3
 
   The includes and libs and DLLs are included with the ricpp\workspace\3rdparty
   directory.

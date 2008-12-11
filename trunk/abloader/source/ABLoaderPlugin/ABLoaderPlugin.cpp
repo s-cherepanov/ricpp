@@ -6,7 +6,6 @@
  *  Copyright 2008 __MyCompanyName__. All rights reserved.
  *
  */
-
 #include "abloader/ABLoaderPlugin/ABLoaderPlugin.h"
 
 #include <iostream>
@@ -31,14 +30,12 @@ ABLoaderPlugin* ABLoaderPlugin::MyInstance()
 		plugin_instance = new ABLoaderPlugin;
 		ri = new RiCPP::CRiCPPBridge;
 		if ( ri ) {
-			/*
 			// Register abloader 'renderer' -  can also be omitted and to load libabloader.1.dylib dynamically
 			// for static use link module with libabloader.a for dynamic use link with libricppbridge.a
 			abLoaderFactory = new RiCPP::TemplPluginFactory<RiCPP::CABLoaderCreator>;
 			if ( abLoaderFactory ) {
 				ri->registerRendererFactory("abloader", reinterpret_cast<RiCPP::TemplPluginFactory<RiCPP::CContextCreator> *>(abLoaderFactory));
 			}
-			*/
 		}
 	}
 	return plugin_instance;
@@ -70,12 +67,12 @@ Loader* ABLoaderPlugin::Instance(ParamSet* paramSet)
 	return MyInstance();
 }
 
-void ABLoaderPlugin::load(char const* filename)
+void ABLoaderPlugin::load(std::string const &filename)
 {
 	if ( !ri )
 		return;
 	ri->begin("abloader", RI_NULL);
-	ri->readArchive(filename, 0, RI_NULL);
+	ri->readArchive(filename.c_str(), 0, RI_NULL);
 	ri->end();
 }
 

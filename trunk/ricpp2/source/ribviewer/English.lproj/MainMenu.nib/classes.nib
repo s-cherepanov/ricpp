@@ -27,7 +27,7 @@
 				<key>panelController</key>
 				<string>id</string>
 				<key>statusLine</key>
-				<string>id</string>
+				<string>NSTextField</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSOpenGLView</string>

@@ -38,6 +38,10 @@
 #include "ricpp/ricontext/contextcreator.h"
 #endif // _RICPP_RICONTEXT_CONTEXTCREATOR_H
 
+#ifdef EXPORT
+#undef EXPORT
+#endif
+
 #include "API/Augenblick.h"
 
 namespace RiCPP {

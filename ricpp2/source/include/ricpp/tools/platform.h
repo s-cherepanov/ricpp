@@ -54,7 +54,7 @@ inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2);
 
 /** @brief Export declaration for the included functions
  */
-#define EXPORT __declspec ( dllexport )
+#define RICPP_EXPORT __declspec ( dllexport )
 
 #else
 
@@ -73,7 +73,7 @@ typedef int (*FARPROC)();
 
 /** @brief Symbolic name for visibility("default") attribute.
  */
-#define EXPORT __attribute__((visibility("default")))
+#define RICPP_EXPORT __attribute__((visibility("default")))
 
 #endif
 }

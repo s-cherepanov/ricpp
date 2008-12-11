@@ -77,7 +77,7 @@ extern "C" {
  *  @param type Type must match the type of the plugin
  *  @return Returns a plugin if @a majorversion has the right value
  */
-EXPORT
+RICPP_EXPORT
 CRibFilter * CDECL newPlugin(unsigned long majorversion, const char *type)
 {
 	if ( majorversion != CRibFilter::myMajorVersion() || !type || strcmp(type, CRibFilter::myType()) != 0 )
@@ -89,7 +89,7 @@ CRibFilter * CDECL newPlugin(unsigned long majorversion, const char *type)
  *  @brief Deletes a plugin created by newPlugin()
  *  @param p Plugin that is deletetd, must have been constructed by newPlugin()
  */
-EXPORT
+RICPP_EXPORT
 void CDECL deletePlugin(CRibFilter *p)
 {
 	if ( p )
@@ -100,7 +100,7 @@ void CDECL deletePlugin(CRibFilter *p)
  *  @brief Returns the major version number of the plugin
  *  @return The major version of the plugin
  */
-EXPORT
+RICPP_EXPORT
 unsigned long CDECL majorVersion()
 {
 	return CRibFilter::myMajorVersion();
@@ -110,7 +110,7 @@ unsigned long CDECL majorVersion()
  *  @brief Returns the minor version number of the plugin
  *  @return The minor version of the plugin
  */
-EXPORT
+RICPP_EXPORT
 unsigned long CDECL minorVersion()
 {
 	return CRibFilter::myMinorVersion();
@@ -120,7 +120,7 @@ unsigned long CDECL minorVersion()
  *  @brief Returns the revision of the plugin
  *  @return The revision number of the plugin
  */
-EXPORT
+RICPP_EXPORT
 unsigned long CDECL revision()
 {
 	return CRibFilter::myRevision();
@@ -130,7 +130,7 @@ unsigned long CDECL revision()
  *  @brief Returns the type of the plugin
  *  @return The renderer type the plugin
  */
-EXPORT
+RICPP_EXPORT
 const char * CDECL type()
 {
 	return CRibFilter::myType();
@@ -140,7 +140,7 @@ const char * CDECL type()
  *  @brief Returns the name of the plugin
  *  @return The name of the plugin
  */
-EXPORT
+RICPP_EXPORT
 const char * CDECL name()
 {
 	return CRibFilter::myName();

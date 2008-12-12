@@ -8,13 +8,14 @@
  */
 #include "abloader/ABLoaderPlugin/ABLoaderPlugin.h"
 
+#include "ricpp/ri/ri.h"
+
 #include <iostream>
 
 using namespace AB;
 
 ABLoaderPlugin *ABLoaderPlugin::plugin_instance = 0;
-RiCPP::CRiCPPBridge *ABLoaderPlugin::ri = 0;
-RiCPP::TemplPluginFactory<RiCPP::CABLoaderCreator> *ABLoaderPlugin::abLoaderFactory;
+// RiCPP::TemplPluginFactory<RiCPP::CABLoaderCreator> *ABLoaderPlugin::abLoaderFactory;
 
 ABLoaderPlugin::ABLoaderPlugin()
 {
@@ -28,15 +29,6 @@ ABLoaderPlugin* ABLoaderPlugin::MyInstance()
 {
 	if ( plugin_instance == 0 ) {
 		plugin_instance = new ABLoaderPlugin;
-		ri = new RiCPP::CRiCPPBridge;
-		if ( ri ) {
-			// Register abloader 'renderer' -  can also be omitted and to load libabloader.1.dylib dynamically
-			// for static use link module with libabloader.a for dynamic use link with libricppbridge.a
-			abLoaderFactory = new RiCPP::TemplPluginFactory<RiCPP::CABLoaderCreator>;
-			if ( abLoaderFactory ) {
-				ri->registerRendererFactory("abloader", reinterpret_cast<RiCPP::TemplPluginFactory<RiCPP::CContextCreator> *>(abLoaderFactory));
-			}
-		}
 	}
 	return plugin_instance;
 }
@@ -47,10 +39,6 @@ void ABLoaderPlugin::deleteInstance(ABLoaderPlugin *plugin)
 		delete plugin;
 	}
 	
-	if ( ri ) {
-		delete ri;
-		ri = 0;
-	}
 	if ( plugin_instance ) {
 		delete plugin_instance;
 		plugin_instance = 0;
@@ -69,11 +57,9 @@ Loader* ABLoaderPlugin::Instance(ParamSet* paramSet)
 
 void ABLoaderPlugin::load(std::string const &filename)
 {
-	if ( !ri )
-		return;
-	ri->begin("abloader", RI_NULL);
-	ri->readArchive(filename.c_str(), 0, RI_NULL);
-	ri->end();
+	RiBegin("abloader");
+	RiReadArchive(filename.c_str(), 0, RI_NULL);
+	RiEnd();
 }
 
 extern "C" AB::Plugin* Instance()

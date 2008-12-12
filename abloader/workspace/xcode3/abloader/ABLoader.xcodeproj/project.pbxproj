@@ -17,7 +17,6 @@
 				C312A1730E4CFD9F0035A59B /* PBXTargetDependency */,
 				C34EDF790E4981540088ABF8 /* PBXTargetDependency */,
 				C34EE0BE0E4990030088ABF8 /* PBXTargetDependency */,
-				C312A1B60E4D06C60035A59B /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = All;
@@ -25,14 +24,26 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		C312A1770E4CFDFF0035A59B /* libabribloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C312A16D0E4CFD7B0035A59B /* libabribloader.a */; };
 		C312A1C10E4D09A00035A59B /* libRIBLoaderPlugin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */; };
 		C35A33EB0E6576C900E7C946 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A33EA0E6576C900E7C946 /* GLUT.framework */; };
 		C35A340E0E6576F000E7C946 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A340D0E6576F000E7C946 /* OpenGL.framework */; };
-		C361AB470EEEB9150048C63A /* libabribloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C312A16D0E4CFD7B0035A59B /* libabribloader.a */; };
 		C361AB930EEEBBFC0048C63A /* ABLoaderPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = C361AB920EEEBBFC0048C63A /* ABLoaderPlugin.h */; };
 		C3A31E610E67C3BF009343C5 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A33EA0E6576C900E7C946 /* GLUT.framework */; };
 		C3A31E730E67C3C6009343C5 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A340D0E6576F000E7C946 /* OpenGL.framework */; };
+		C3D1AA020EF26896002535D2 /* libabribloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C312A16D0E4CFD7B0035A59B /* libabribloader.a */; };
+		C3D1AA030EF26896002535D2 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A99B0EF2671B002535D2 /* libbaserenderer.a */; };
+		C3D1AA040EF26896002535D2 /* librendererloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A99C0EF2671B002535D2 /* librendererloader.a */; };
+		C3D1AA050EF26896002535D2 /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A99D0EF2671B002535D2 /* libribparser.a */; };
+		C3D1AA060EF26896002535D2 /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A99E0EF2671B002535D2 /* libricontext.a */; };
+		C3D1AA070EF26896002535D2 /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A99F0EF2671B002535D2 /* libribfilter.a */; };
+		C3D1AA080EF26896002535D2 /* libstreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9A00EF2671B002535D2 /* libstreams.a */; };
+		C3D1AA090EF26896002535D2 /* libpluginhandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9A10EF2671B002535D2 /* libpluginhandler.a */; };
+		C3D1AA0A0EF26896002535D2 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9A20EF2671B002535D2 /* libgendynlib.a */; };
+		C3D1AA0B0EF26896002535D2 /* libdeclaration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9A30EF2671B002535D2 /* libdeclaration.a */; };
+		C3D1AA0C0EF26896002535D2 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9A40EF2671B002535D2 /* libricpp.a */; };
+		C3D1AA0D0EF26896002535D2 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9A50EF2671B002535D2 /* libribase.a */; };
+		C3D1AA0E0EF26896002535D2 /* libtools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9A60EF2671B002535D2 /* libtools.a */; };
+		C3D1AA140EF269B9002535D2 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */; };
 		C3E3B76F0E77E93F004AA4FB /* abloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B76E0E77E93F004AA4FB /* abloader.cpp */; };
 		C3E3B7760E77E98D004AA4FB /* ABLoaderPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B7750E77E98D004AA4FB /* ABLoaderPlugin.cpp */; };
 		C3E3B7800E77EA3C004AA4FB /* abloaderdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B77F0E77EA3C004AA4FB /* abloaderdll.cpp */; };
@@ -50,26 +61,12 @@
 			remoteGlobalIDString = C312A16C0E4CFD7B0035A59B;
 			remoteInfo = abloader;
 		};
-		C312A1740E4CFDA90035A59B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C312A16C0E4CFD7B0035A59B;
-			remoteInfo = abloader;
-		};
 		C312A1AB0E4D055E0035A59B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = D2AAC09C05546B4700DB518D;
 			remoteInfo = ABLoaderPlugin;
-		};
-		C312A1B50E4D06C60035A59B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C312A1A50E4D053D0035A59B;
-			remoteInfo = riabplugintest;
 		};
 		C34EDF760E4981520088ABF8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -92,12 +89,12 @@
 			remoteGlobalIDString = C34EE0A50E498F650088ABF8;
 			remoteInfo = riabtest;
 		};
-		C361AB440EEEB8F60048C63A /* PBXContainerItemProxy */ = {
+		C3D1AA100EF2694B002535D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C312A16C0E4CFD7B0035A59B;
-			remoteInfo = abribloader;
+			remoteGlobalIDString = C392D75C0E489C1B003E5C41;
+			remoteInfo = abribloaderdll;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -112,6 +109,19 @@
 		C35A340D0E6576F000E7C946 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		C361AB920EEEBBFC0048C63A /* ABLoaderPlugin.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = ABLoaderPlugin.h; path = ../../../source/include/abloader/ABLoaderPlugin/ABLoaderPlugin.h; sourceTree = SOURCE_ROOT; };
 		C392D75D0E489C1B003E5C41 /* libabribloader.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libabribloader.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3D1A99B0EF2671B002535D2 /* libbaserenderer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbaserenderer.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libbaserenderer.a; sourceTree = SOURCE_ROOT; };
+		C3D1A99C0EF2671B002535D2 /* librendererloader.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = librendererloader.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/librendererloader.a; sourceTree = SOURCE_ROOT; };
+		C3D1A99D0EF2671B002535D2 /* libribparser.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libribparser.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libribparser.a; sourceTree = SOURCE_ROOT; };
+		C3D1A99E0EF2671B002535D2 /* libricontext.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libricontext.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libricontext.a; sourceTree = SOURCE_ROOT; };
+		C3D1A99F0EF2671B002535D2 /* libribfilter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libribfilter.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libribfilter.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9A00EF2671B002535D2 /* libstreams.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libstreams.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libstreams.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9A10EF2671B002535D2 /* libpluginhandler.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpluginhandler.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libpluginhandler.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9A20EF2671B002535D2 /* libgendynlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgendynlib.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libgendynlib.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9A30EF2671B002535D2 /* libdeclaration.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdeclaration.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libdeclaration.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9A40EF2671B002535D2 /* libricpp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libricpp.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libricpp.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9A50EF2671B002535D2 /* libribase.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libribase.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libribase.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9A60EF2671B002535D2 /* libtools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libtools.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libtools.a; sourceTree = SOURCE_ROOT; };
+		C3D1A9FD0EF267FF002535D2 /* libricppbridge.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libricppbridge.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libricppbridge.a; sourceTree = SOURCE_ROOT; };
 		C3E3B76E0E77E93F004AA4FB /* abloader.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = abloader.cpp; path = ../../../source/abloader/abloader.cpp; sourceTree = SOURCE_ROOT; };
 		C3E3B7750E77E98D004AA4FB /* ABLoaderPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = ABLoaderPlugin.cpp; path = ../../../source/ABLoaderPlugin/ABLoaderPlugin.cpp; sourceTree = SOURCE_ROOT; };
 		C3E3B77C0E77EA1A004AA4FB /* trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = trace.h; path = ../../../source/include/abloader/tools/trace.h; sourceTree = SOURCE_ROOT; };
@@ -155,7 +165,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C312A1770E4CFDFF0035A59B /* libabribloader.a in Frameworks */,
+				C3D1AA020EF26896002535D2 /* libabribloader.a in Frameworks */,
+				C3D1AA030EF26896002535D2 /* libbaserenderer.a in Frameworks */,
+				C3D1AA040EF26896002535D2 /* librendererloader.a in Frameworks */,
+				C3D1AA050EF26896002535D2 /* libribparser.a in Frameworks */,
+				C3D1AA060EF26896002535D2 /* libricontext.a in Frameworks */,
+				C3D1AA070EF26896002535D2 /* libribfilter.a in Frameworks */,
+				C3D1AA080EF26896002535D2 /* libstreams.a in Frameworks */,
+				C3D1AA090EF26896002535D2 /* libpluginhandler.a in Frameworks */,
+				C3D1AA0A0EF26896002535D2 /* libgendynlib.a in Frameworks */,
+				C3D1AA0B0EF26896002535D2 /* libdeclaration.a in Frameworks */,
+				C3D1AA0C0EF26896002535D2 /* libricpp.a in Frameworks */,
+				C3D1AA0D0EF26896002535D2 /* libribase.a in Frameworks */,
+				C3D1AA0E0EF26896002535D2 /* libtools.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,7 +185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C361AB470EEEB9150048C63A /* libabribloader.a in Frameworks */,
+				C3D1AA140EF269B9002535D2 /* libriprog.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +219,19 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C3D1A9FD0EF267FF002535D2 /* libricppbridge.a */,
+				C3D1A99B0EF2671B002535D2 /* libbaserenderer.a */,
+				C3D1A99C0EF2671B002535D2 /* librendererloader.a */,
+				C3D1A99D0EF2671B002535D2 /* libribparser.a */,
+				C3D1A99E0EF2671B002535D2 /* libricontext.a */,
+				C3D1A99F0EF2671B002535D2 /* libribfilter.a */,
+				C3D1A9A00EF2671B002535D2 /* libstreams.a */,
+				C3D1A9A10EF2671B002535D2 /* libpluginhandler.a */,
+				C3D1A9A20EF2671B002535D2 /* libgendynlib.a */,
+				C3D1A9A30EF2671B002535D2 /* libdeclaration.a */,
+				C3D1A9A40EF2671B002535D2 /* libricpp.a */,
+				C3D1A9A50EF2671B002535D2 /* libribase.a */,
+				C3D1A9A60EF2671B002535D2 /* libtools.a */,
 				C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */,
 				C35A33EA0E6576C900E7C946 /* GLUT.framework */,
 				08FB77AAFE841565C02AAC07 /* Carbon.framework */,
@@ -464,7 +499,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C312A1750E4CFDA90035A59B /* PBXTargetDependency */,
 			);
 			name = abribloaderdll;
 			productName = abloaderdll;
@@ -482,7 +516,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C361AB450EEEB8F60048C63A /* PBXTargetDependency */,
+				C3D1AA110EF2694B002535D2 /* PBXTargetDependency */,
 			);
 			name = RIBLoaderPlugin;
 			productName = libABLoader;
@@ -577,20 +611,10 @@
 			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
 			targetProxy = C312A1720E4CFD9F0035A59B /* PBXContainerItemProxy */;
 		};
-		C312A1750E4CFDA90035A59B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
-			targetProxy = C312A1740E4CFDA90035A59B /* PBXContainerItemProxy */;
-		};
 		C312A1AC0E4D055E0035A59B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D2AAC09C05546B4700DB518D /* RIBLoaderPlugin */;
 			targetProxy = C312A1AB0E4D055E0035A59B /* PBXContainerItemProxy */;
-		};
-		C312A1B60E4D06C60035A59B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C312A1A50E4D053D0035A59B /* abribplugintest */;
-			targetProxy = C312A1B50E4D06C60035A59B /* PBXContainerItemProxy */;
 		};
 		C34EDF770E4981520088ABF8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -607,10 +631,10 @@
 			target = C34EE0A50E498F650088ABF8 /* abrib */;
 			targetProxy = C34EE0BD0E4990030088ABF8 /* PBXContainerItemProxy */;
 		};
-		C361AB450EEEB8F60048C63A /* PBXTargetDependency */ = {
+		C3D1AA110EF2694B002535D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
-			targetProxy = C361AB440EEEB8F60048C63A /* PBXContainerItemProxy */;
+			target = C392D75C0E489C1B003E5C41 /* abribloaderdll */;
+			targetProxy = C3D1AA100EF2694B002535D2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -624,6 +648,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+				);
 				OTHER_LDFLAGS = (
 					"-lricppbridge",
 					"-lAugenblick",
@@ -639,6 +667,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_MODEL_TUNING = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+				);
 				OTHER_LDFLAGS = (
 					"-lricppbridge",
 					"-lAugenblick",
@@ -660,7 +692,7 @@
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
-				GCC_VERSION = 4.2;
+				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -674,6 +706,7 @@
 					"\"$(SRCROOT)/../../../../ricpp2/3rdparty/macos/zlib123/lib\"",
 					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
@@ -692,7 +725,7 @@
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
-				GCC_VERSION = 4.2;
+				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -706,6 +739,7 @@
 					"\"$(SRCROOT)/../../../../ricpp2/3rdparty/macos/zlib123/lib\"",
 					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
@@ -828,6 +862,8 @@
 		C392D75E0E489C1B003E5C41 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
@@ -836,6 +872,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+				);
 				OTHER_LDFLAGS = "-lAugenblick";
 				PREBINDING = NO;
 				PRODUCT_NAME = abribloader;
@@ -846,6 +886,8 @@
 		C392D75F0E489C1B003E5C41 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_EXTENSION = 1.dylib;
@@ -853,6 +895,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
+				);
 				OTHER_LDFLAGS = "-lAugenblick";
 				PREBINDING = NO;
 				PRODUCT_NAME = abribloader;

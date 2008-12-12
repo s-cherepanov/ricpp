@@ -367,6 +367,7 @@ RtVoid CABLoader::doProcess(CRiBegin &obj)
 	trace("<- CABLoader::doProcess(CRiBegin &)");
 }
 
+
 RtVoid CABLoader::doProcess(CRiEnd &obj)
 {
 	trace("-> CABLoader::doProcess(CRiEnd &)");

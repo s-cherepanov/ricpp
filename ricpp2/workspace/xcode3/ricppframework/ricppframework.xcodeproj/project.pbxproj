@@ -230,7 +230,6 @@
 		C3D1A8500EF25338002535D2 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
 		C3D1A8D50EF25E1B002535D2 /* libric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B0E0D7451C70059B201 /* libric.a */; };
 		C3D1A8D60EF25E1B002535D2 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
-		C3D1A8D70EF25E1B002535D2 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089C80D3CB88F00B6C3BA /* libbaserenderer.a */; };
 		C3D1A8D80EF25E1B002535D2 /* librendererloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089A20D3CB5A300B6C3BA /* librendererloader.a */; };
 		C3D1A8D90EF25E1B002535D2 /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C380897F0D3CAEF000B6C3BA /* libribparser.a */; };
 		C3D1A8DA0EF25E1B002535D2 /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
@@ -243,7 +242,6 @@
 		C3D1A8E10EF25E1B002535D2 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
 		C3D1A8E20EF25E1B002535D2 /* libtools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EC40D3C1F4D00B2E025 /* libtools.a */; };
 		C3D1A9160EF26165002535D2 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089C80D3CB88F00B6C3BA /* libbaserenderer.a */; };
-		C3D1A9170EF26165002535D2 /* librendererloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089A20D3CB5A300B6C3BA /* librendererloader.a */; };
 		C3D1A9180EF26165002535D2 /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C380897F0D3CAEF000B6C3BA /* libribparser.a */; };
 		C3D1A9190EF26165002535D2 /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
 		C3D1A91A0EF26165002535D2 /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38088C80D3CA7A600B6C3BA /* libribfilter.a */; };
@@ -290,13 +288,7 @@
 		C3D1A9490EF26247002535D2 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
 		C3D1A94A0EF26247002535D2 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
 		C3D1A94B0EF26247002535D2 /* libtools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EC40D3C1F4D00B2E025 /* libtools.a */; };
-		C3D1A94C0EF2628C002535D2 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3808A800D3CBB4100B6C3BA /* libricppbridge.a */; };
-		C3D1A94D0EF2628C002535D2 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089C80D3CB88F00B6C3BA /* libbaserenderer.a */; };
-		C3D1A94E0EF2628C002535D2 /* librendererloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089A20D3CB5A300B6C3BA /* librendererloader.a */; };
-		C3D1A94F0EF2628C002535D2 /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C380897F0D3CAEF000B6C3BA /* libribparser.a */; };
-		C3D1A9500EF2628C002535D2 /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
 		C3D1A9510EF2628C002535D2 /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38088C80D3CA7A600B6C3BA /* libribfilter.a */; };
-		C3D1A9520EF2628C002535D2 /* libstreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F270D3C22B800B2E025 /* libstreams.a */; };
 		C3D1A9530EF2628C002535D2 /* libpluginhandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F340D3C231500B2E025 /* libpluginhandler.a */; };
 		C3D1A9540EF2628C002535D2 /* libgendynlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F3E0D3C237000B2E025 /* libgendynlib.a */; };
 		C3D1A9550EF2628C002535D2 /* libdeclaration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089010D3CA8EA00B6C3BA /* libdeclaration.a */; };
@@ -304,7 +296,6 @@
 		C3D1A9570EF2628C002535D2 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
 		C3D1A9580EF2628C002535D2 /* libtools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EC40D3C1F4D00B2E025 /* libtools.a */; };
 		C3D1AA9D0EF283E0002535D2 /* libbaserenderer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089C80D3CB88F00B6C3BA /* libbaserenderer.a */; };
-		C3D1AA9E0EF283E0002535D2 /* librendererloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089A20D3CB5A300B6C3BA /* librendererloader.a */; };
 		C3D1AA9F0EF283E0002535D2 /* libribparser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C380897F0D3CAEF000B6C3BA /* libribparser.a */; };
 		C3D1AAA00EF283E0002535D2 /* libricontext.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38089440D3CAB4B00B6C3BA /* libricontext.a */; };
 		C3D1AAA10EF283E0002535D2 /* libribfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C38088C80D3CA7A600B6C3BA /* libribfilter.a */; };
@@ -938,8 +929,6 @@
 		C3CE0F270DCF56330014BC8E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		C3CE0F470DCF57140014BC8E /* English.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = English.lproj; sourceTree = SOURCE_ROOT; };
 		C3D1A8290EF2507A002535D2 /* libricppdev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppdev.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3D1A88C0EF25A7D002535D2 /* ricpp.framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ricpp.framework-Info.plist"; sourceTree = "<group>"; };
-		C3D1A8B60EF25D20002535D2 /* ricppdev-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ricppdev-Info.plist"; sourceTree = "<group>"; };
 		C3E4FE920E6B1D5F0000B37F /* inputstate.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = inputstate.h; path = ../../../source/include/ricpp/ricontext/inputstate.h; sourceTree = SOURCE_ROOT; };
 		C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = inputstate.cpp; path = ../../../source/ricontext/inputstate.cpp; sourceTree = SOURCE_ROOT; };
 		C3EFAC640E4C31F800352D9C /* ArchiveLoader.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = ArchiveLoader.rib; path = ../../../RibSamples/ArchiveLoader.rib; sourceTree = SOURCE_ROOT; };
@@ -952,7 +941,6 @@
 			files = (
 				C3D1A8D50EF25E1B002535D2 /* libric.a in Frameworks */,
 				C3D1A8D60EF25E1B002535D2 /* libricppbridge.a in Frameworks */,
-				C3D1A8D70EF25E1B002535D2 /* libbaserenderer.a in Frameworks */,
 				C3D1A8D80EF25E1B002535D2 /* librendererloader.a in Frameworks */,
 				C3D1A8D90EF25E1B002535D2 /* libribparser.a in Frameworks */,
 				C3D1A8DA0EF25E1B002535D2 /* libricontext.a in Frameworks */,
@@ -1073,7 +1061,6 @@
 			files = (
 				C3D1A84A0EF2526A002535D2 /* libglrenderer.a in Frameworks */,
 				C3D1AA9D0EF283E0002535D2 /* libbaserenderer.a in Frameworks */,
-				C3D1AA9E0EF283E0002535D2 /* librendererloader.a in Frameworks */,
 				C3D1AA9F0EF283E0002535D2 /* libribparser.a in Frameworks */,
 				C3D1AAA00EF283E0002535D2 /* libricontext.a in Frameworks */,
 				C3D1AAA10EF283E0002535D2 /* libribfilter.a in Frameworks */,
@@ -1169,7 +1156,6 @@
 			files = (
 				C3808AC80D3CC1CA00B6C3BA /* libribwriter.a in Frameworks */,
 				C3D1A9160EF26165002535D2 /* libbaserenderer.a in Frameworks */,
-				C3D1A9170EF26165002535D2 /* librendererloader.a in Frameworks */,
 				C3D1A9180EF26165002535D2 /* libribparser.a in Frameworks */,
 				C3D1A9190EF26165002535D2 /* libricontext.a in Frameworks */,
 				C3D1A91A0EF26165002535D2 /* libribfilter.a in Frameworks */,
@@ -1187,13 +1173,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3D1A94C0EF2628C002535D2 /* libricppbridge.a in Frameworks */,
-				C3D1A94D0EF2628C002535D2 /* libbaserenderer.a in Frameworks */,
-				C3D1A94E0EF2628C002535D2 /* librendererloader.a in Frameworks */,
-				C3D1A94F0EF2628C002535D2 /* libribparser.a in Frameworks */,
-				C3D1A9500EF2628C002535D2 /* libricontext.a in Frameworks */,
 				C3D1A9510EF2628C002535D2 /* libribfilter.a in Frameworks */,
-				C3D1A9520EF2628C002535D2 /* libstreams.a in Frameworks */,
 				C3D1A9530EF2628C002535D2 /* libpluginhandler.a in Frameworks */,
 				C3D1A9540EF2628C002535D2 /* libgendynlib.a in Frameworks */,
 				C3D1A9550EF2628C002535D2 /* libdeclaration.a in Frameworks */,
@@ -1273,8 +1253,6 @@
 				C6859E8C029090F304C91782 /* Documentation */,
 				C36F02D60D57C69300554D4B /* RibFiles */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				C3D1A88C0EF25A7D002535D2 /* ricpp.framework-Info.plist */,
-				C3D1A8B60EF25D20002535D2 /* ricppdev-Info.plist */,
 			);
 			name = ricppframework;
 			sourceTree = "<group>";

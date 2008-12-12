@@ -89,13 +89,6 @@
 			remoteGlobalIDString = C34EE0A50E498F650088ABF8;
 			remoteInfo = riabtest;
 		};
-		C3D1AA100EF2694B002535D2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C392D75C0E489C1B003E5C41;
-			remoteInfo = abribloaderdll;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -516,7 +509,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				C3D1AA110EF2694B002535D2 /* PBXTargetDependency */,
 			);
 			name = RIBLoaderPlugin;
 			productName = libABLoader;
@@ -630,11 +622,6 @@
 			isa = PBXTargetDependency;
 			target = C34EE0A50E498F650088ABF8 /* abrib */;
 			targetProxy = C34EE0BD0E4990030088ABF8 /* PBXContainerItemProxy */;
-		};
-		C3D1AA110EF2694B002535D2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C392D75C0E489C1B003E5C41 /* abribloaderdll */;
-			targetProxy = C3D1AA100EF2694B002535D2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -82,9 +82,11 @@ namespace RiCPP {
 		AB::HierarchyType m_hierarchyType;
 		AB::RenderMode m_renderMode;
 		bool m_defaultCamera;
+		unsigned int m_geometryCounter;
 
 		bool valid() const;
-		RtVoid setABOptions();
+		void setABHierarchy();
+		void setABOptions();
 		void testScene();
 	
 	protected:

@@ -23,10 +23,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "abloader/abloader/abloader.h"
+/*
 #include <Shader/Fresnel.h>
 #include <Shader/Phong.h>
 #include <Shader/Reflect.h>
 #include <Core/Vector3.h>
+*/
+
+#include <Scenegraph/GeometryNode.h>
+#include <Scenegraph/Scenegraph.h>
+#include <Geometry/BoundingBox.h>
 
 /* The classes below are not exported */
 #pragma GCC visibility push(hidden)
@@ -142,6 +148,7 @@ CABLoader::CABLoader()
 	RI_NONE = 0;
 
 	m_ab = 0;
+	m_geometryCounter = 0;
 }
 
 CABLoader::~CABLoader()
@@ -166,6 +173,7 @@ void CABLoader::testScene()
 		0, 0, -1,
 		0, 0, -1
 	};
+	Scenegraph *sg = m_ab->scenegraph();
 	
 	AB::Vector3 abp[3], abn[3];
 	for ( int v = 0; v < 3; ++v ) {
@@ -174,7 +182,15 @@ void CABLoader::testScene()
 			abn[v][c] = dabn[v*3+c];
 		}
 	}
+
+	GeometryNode *g = new GeometryNode(0, 1);
 	m_ab->addTriangle(abp[0], abp[1], abp[2], abn[0], abn[1], abn[2]);
+	sg->addNode(g);
+	
+	/*
+	 m_ab->loadMengerSponge(AB::BoundingBox(AB::Vector3(-10,-10,-10), 
+	 AB::Vector3(-10,-10-10), NULL), 3);	
+	 */
 }
 
 void CABLoader::defaultDeclarations()
@@ -212,11 +228,9 @@ void CABLoader::defaultDeclarations()
 }
 
 
-RtVoid CABLoader::setABOptions()
+void CABLoader::setABHierarchy()
 {
 	m_hierarchyType = _DEF_HIERARCHY;
-	m_renderMode    = _DEF_RENDERMODE;
-	m_defaultCamera = _DEF_DEFAULT_CAMERA;
 	
 	const CParameter *aHierarchyType = renderState()->options().get(RI_ABLOADER, RI_HIERARCHY_TYPE);
 	if ( aHierarchyType ) {
@@ -235,7 +249,14 @@ RtVoid CABLoader::setABOptions()
 		else if ( strVal == std::string(RI_NO_HIERARCHY) )
 			m_hierarchyType = NO_HIERARCHY;
 	}
+	
 	m_ab->setHierarchyType(m_hierarchyType);
+}
+
+void CABLoader::setABOptions()
+{
+	m_renderMode    = _DEF_RENDERMODE;
+	m_defaultCamera = _DEF_DEFAULT_CAMERA;
 	
 	const CParameter *aRenderMode = renderState()->options().get(RI_ABLOADER, RI_RENDER_MODE);
 	if ( aRenderMode ) {
@@ -296,21 +317,28 @@ void CABLoader::hide(const CFace &f)
 	IndexType sizeCnt = 0;
 	switch ( f.faceType() ) {
 		case FACETYPE_TRIANGLES: {
+			Scenegraph *sg = m_ab->scenegraph();
+
 			for ( std::vector<IndexType>::const_iterator siter = f.sizes().begin(); siter != f.sizes().end(); siter++ ) {
+				GeometryNode *g = new GeometryNode(m_geometryCounter, m_geometryCounter+(*siter)/3);
+				m_geometryCounter += (*siter)/3;
+				if ( !g )
+					return;
 				for ( IndexType idx = 0; idx < *siter-2; ) {
 					for ( int i = 0; i < 3; ++i, ++idx ) {						
 						abp[i][0] = -1.0 * p[f.indices()[sizeCnt+idx]*3+0];
 						abp[i][1] = p[f.indices()[sizeCnt+idx]*3+1];
 						abp[i][2] = p[f.indices()[sizeCnt+idx]*3+2];
 
+						const RtFloat flipOrNot = -1.0; // -1.0 to flip, 1.0 not to flip
 						if ( n.size() == p.size() ) {
-							abn[i][0] = -1.0 * n[f.indices()[sizeCnt+idx]*3+0];
-							abn[i][1] = -1.0 * n[f.indices()[sizeCnt+idx]*3+1];
-							abn[i][2] = -1.0 * n[f.indices()[sizeCnt+idx]*3+2];
+							abn[i][0] = flipOrNot * n[f.indices()[sizeCnt+idx]*3+0];
+							abn[i][1] = flipOrNot * n[f.indices()[sizeCnt+idx]*3+1];
+							abn[i][2] = flipOrNot * n[f.indices()[sizeCnt+idx]*3+2];
 						} else if ( n.size() == 3 ) {
-							abn[i][0] = -1.0 * n[0];
-							abn[i][1] = -1.0 * n[1];
-							abn[i][2] = -1.0 * n[2];
+							abn[i][0] = flipOrNot * n[0];
+							abn[i][1] = flipOrNot * n[1];
+							abn[i][2] = flipOrNot * n[2];
 						} else {
 							abn[i][0] = 0;
 							abn[i][1] = 0;
@@ -319,6 +347,7 @@ void CABLoader::hide(const CFace &f)
 					}
 					m_ab->addTriangle(abp[0], abp[1], abp[2], abn[0], abn[1], abn[2], shaderId);
 				}
+				sg->addNode(g);
 				sizeCnt += (*siter);
 			}
 		}
@@ -407,6 +436,8 @@ RtVoid CABLoader::doProcess(CRiWorldBegin &obj)
 	if ( !valid() )
 		return;
 	
+	setABHierarchy();
+	m_geometryCounter = 0;
 	// testScene();
 	trace("<- CABLoader::doProcess(CRiWorldBegin &)");
 }

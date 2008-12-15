@@ -44,7 +44,6 @@
 		C361AB930EEEBBFC0048C63A /* ABLoaderPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = C361AB920EEEBBFC0048C63A /* ABLoaderPlugin.h */; };
 		C3A31E610E67C3BF009343C5 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A33EA0E6576C900E7C946 /* GLUT.framework */; };
 		C3A31E730E67C3C6009343C5 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C35A340D0E6576F000E7C946 /* OpenGL.framework */; };
-		C3D1AA140EF269B9002535D2 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */; };
 		C3E3B76F0E77E93F004AA4FB /* abloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B76E0E77E93F004AA4FB /* abloader.cpp */; };
 		C3E3B7760E77E98D004AA4FB /* ABLoaderPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B7750E77E98D004AA4FB /* ABLoaderPlugin.cpp */; };
 		C3E3B7800E77EA3C004AA4FB /* abloaderdll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B77F0E77EA3C004AA4FB /* abloaderdll.cpp */; };
@@ -52,6 +51,8 @@
 		C3E3B7840E77EA83004AA4FB /* abplugintest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E3B7830E77EA83004AA4FB /* abplugintest.cpp */; };
 		C3E3B7DF0E77F331004AA4FB /* abloader.h in Headers */ = {isa = PBXBuildFile; fileRef = C3E3B7DC0E77F2F6004AA4FB /* abloader.h */; };
 		C3E3B8E70E77F8F0004AA4FB /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */; };
+		C3F0922F0EF69881004A9755 /* libricppbridge.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D1A9FD0EF267FF002535D2 /* libricppbridge.a */; };
+		C3F092410EF698A4004A9755 /* libabribloader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C312A16D0E4CFD7B0035A59B /* libabribloader.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,14 +74,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C312A16C0E4CFD7B0035A59B /* abribloader */;
+			remoteGlobalIDString = C312A16C0E4CFD7B0035A59B;
 			remoteInfo = abribloader;
 		};
 		C33764840EF65BCE009E87ED /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C312A1A50E4D053D0035A59B /* abribplugintest */;
+			remoteGlobalIDString = C312A1A50E4D053D0035A59B;
 			remoteInfo = abribplugintest;
 		};
 		C34EDF760E4981520088ABF8 /* PBXContainerItemProxy */ = {
@@ -138,6 +139,7 @@
 		C3E3B7830E77EA83004AA4FB /* abplugintest.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = abplugintest.cpp; path = ../../../source/abplugintest/abplugintest.cpp; sourceTree = SOURCE_ROOT; };
 		C3E3B7AC0E77EEFA004AA4FB /* libriprog.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libriprog.1.dylib; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libriprog.1.dylib; sourceTree = SOURCE_ROOT; };
 		C3E3B7DC0E77F2F6004AA4FB /* abloader.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = abloader.h; path = ../../../source/include/abloader/abloader/abloader.h; sourceTree = SOURCE_ROOT; };
+		C3F0922C0EF693F3004A9755 /* libric.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libric.a; path = ../../../../ricpp2/workspace/xcode3/ricppframework/build/Release/libric.a; sourceTree = SOURCE_ROOT; };
 		D2AAC09D05546B4700DB518D /* libRIBLoaderPlugin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libRIBLoaderPlugin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -193,7 +195,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3D1AA140EF269B9002535D2 /* libriprog.1.dylib in Frameworks */,
+				C3F0922F0EF69881004A9755 /* libricppbridge.a in Frameworks */,
+				C3F092410EF698A4004A9755 /* libabribloader.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,6 +230,7 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C3F0922C0EF693F3004A9755 /* libric.a */,
 				C3D1A9FD0EF267FF002535D2 /* libricppbridge.a */,
 				C3D1A99B0EF2671B002535D2 /* libbaserenderer.a */,
 				C3D1A99C0EF2671B002535D2 /* librendererloader.a */,

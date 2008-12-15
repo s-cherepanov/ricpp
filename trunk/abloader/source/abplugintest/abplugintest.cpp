@@ -6,6 +6,7 @@
  *  Copyright 2008 __MyCompanyName__. All rights reserved.
  *
  */
+#include "API/Augenblick.h"
 #include "abloader/ABLoaderPlugin/ABLoaderPlugin.h"
 
 #ifdef __APPLE__
@@ -18,7 +19,7 @@ static ABLoaderPlugin *plugin = 0;
 
 void display(void)
 {
-	AUGENBLICK->requestNewRendering();
+	AB::Augenblick::Instance()->requestNewRendering();
 }
 
 
@@ -26,14 +27,14 @@ void mouse(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		AUGENBLICK->setMousePosition(x,y);
+		AB::Augenblick::Instance()->setMousePosition(x,y);
 	}
 }
 
 void motion(int x, int y)
 {
-    AUGENBLICK->mouseMovedTo(x,y);
-    AUGENBLICK->requestNewRendering();
+    AB::Augenblick::Instance()->mouseMovedTo(x,y);
+    AB::Augenblick::Instance()->requestNewRendering();
 }
 
 int main (int argc, char *argv[])
@@ -46,7 +47,7 @@ int main (int argc, char *argv[])
 	glutInitWindowSize (512, 512); 
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow ("ABLoader Test");
-
+	
 	plugin = (ABLoaderPlugin *)Instance();
 
 	if ( plugin ) {

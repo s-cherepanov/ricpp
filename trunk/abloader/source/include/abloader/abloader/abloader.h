@@ -44,10 +44,7 @@
 #endif // _RICPP_RICONTEXT_CONTEXTCREATOR_H
 
 namespace RiCPP {
-	
-#define ABLOADER_NAME "abloader"
-#define ABLOADERCREATOR_NAME "abloadercreator"
-	
+		
 	/** @brief Rendering context to render using Augenblick
 	 */
 	class CABLoader : public CTriangleRenderer {
@@ -110,13 +107,13 @@ namespace RiCPP {
 		
 		static RtToken myRendererType();
 		
-		inline virtual const char *name() const { return myName(); }
-		inline virtual const char *type() const { return myType(); }
-		inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
-		inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
-		inline virtual unsigned long revision() const { return myRevision(); }
+		virtual const char *name() const;
+		virtual const char *type() const;
+		virtual unsigned long majorVersion() const;
+		virtual unsigned long minorVersion() const;
+		virtual unsigned long revision() const;
 		
-		inline virtual RtToken rendererType() const { return myRendererType(); }
+		virtual RtToken rendererType() const;
 		
 		using TypeParent::doProcess;
 		using TypeParent::preProcess;
@@ -145,21 +142,21 @@ namespace RiCPP {
 		static unsigned long myMinorVersion();
 		static unsigned long myRevision();
 		
-		inline virtual const char *name() const { return myName(); }
-		inline virtual const char *type() const { return myType(); }
-		inline virtual unsigned long majorVersion() const { return myMajorVersion(); }
-		inline virtual unsigned long minorVersion() const { return myMinorVersion(); }
-		inline virtual unsigned long revision() const { return myRevision(); }
+		virtual const char *name() const;
+		virtual const char *type() const;
+		virtual unsigned long majorVersion() const;
+		virtual unsigned long minorVersion() const;
+		virtual unsigned long revision() const;
 		
 		virtual void startup();
 		virtual void shutdown();
 		
-		inline virtual unsigned long majorContextVersion() const { return CABLoader::myMajorVersion(); }
-		inline virtual unsigned long minorContextVersion() const { return CABLoader::myMinorVersion(); }
-		inline virtual unsigned long contextRevision() const { return CABLoader::myRevision(); }
-		inline virtual RtToken contextName() const { return CABLoader::myName(); }
-		inline virtual RtToken contextType() const { return CABLoader::myType(); }
-		inline virtual RtToken rendererType() const { return CABLoader::myRendererType(); }
+		virtual unsigned long majorContextVersion() const;
+		virtual unsigned long minorContextVersion() const;
+		virtual unsigned long contextRevision() const;
+		virtual RtToken contextName() const;
+		virtual RtToken contextType() const;
+		virtual RtToken rendererType() const;
 	}; // CABLoaderCreator
 	
 } // namespace RiCPP

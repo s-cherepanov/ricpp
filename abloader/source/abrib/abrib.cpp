@@ -96,7 +96,7 @@ void mouse(int button, int state, int x, int y)
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
 		RtInt xy[2] = {x, y};
-		RiCPPControl("abloader", "setMousePosition", xy, RI_NULL); 
+		RiCPPControl("abribloader", "setMousePosition", xy, RI_NULL); 
 		// AUGENBLICK->setMousePosition(x,y);
 	}
 }
@@ -104,7 +104,7 @@ void mouse(int button, int state, int x, int y)
 void motion(int x, int y)
 {
 	RtInt xy[2] = {x, y};
-	RiCPPControl("abloader", "mouseMovedTo", xy, RI_NULL); 
+	RiCPPControl("abribloader", "mouseMovedTo", xy, RI_NULL); 
 	RiSynchronize("render");
 	/*
 	AUGENBLICK->mouseMovedTo(x,y);
@@ -114,8 +114,8 @@ void motion(int x, int y)
 
 int main(int argc, char **argv)
 {
-	RtString hierarchyTypes[] = {"bvh", "sahbvh"}; // "bvh is default"
-	RiBegin("abloader");
+	// RtString hierarchyTypes[] = {"bvh", "sahbvh"}; // sahbvh is default
+	RiBegin("abribloader");
 	// RiBegin(RI_NULL);
 
 	glutInit(&argc, argv);
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow (argc <= 1 ? "abrib" : argv[1]);
 
-	RiOption("abloader", "hierarchyType", &hierarchyTypes[0], RI_NULL);
+	// RiOption("abribloader", "hierarchyType", &hierarchyTypes[1], RI_NULL);
 	if ( argc <= 1 )
 		testScene();
 	else

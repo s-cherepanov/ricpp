@@ -8,9 +8,10 @@
  */
 #include "abloader/ABLoaderPlugin/ABLoaderPlugin.h"
 
+#pragma GCC visibility push(hidden)
 #include "ricpp/ri/ri.h"
-
 #include <iostream>
+#pragma GCC visibility pop
 
 using namespace AB;
 
@@ -57,7 +58,7 @@ Loader* ABLoaderPlugin::Instance(ParamSet* paramSet)
 
 void ABLoaderPlugin::load(std::string const &filename)
 {
-	RiBegin("abloader");
+	RiBegin("abribloader");
 	RiReadArchive(filename.c_str(), 0, RI_NULL);
 	RiEnd();
 }

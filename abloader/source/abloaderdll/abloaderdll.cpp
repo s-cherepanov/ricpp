@@ -22,9 +22,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#pragma GCC visibility push(hidden)
-
 #include "abloader/abloader/abloader.h"
+
+#pragma GCC visibility push(hidden)
 
 #ifndef _ABLOADER_TOOLS_TRACE
 #include "abloader/tools/trace.h"

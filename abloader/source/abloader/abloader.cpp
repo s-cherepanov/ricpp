@@ -22,9 +22,14 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#pragma GCC visibility push(hidden)
-
 #include "abloader/abloader/abloader.h"
+#include <Shader/Fresnel.h>
+#include <Shader/Phong.h>
+#include <Shader/Reflect.h>
+#include <Core/Vector3.h>
+
+/* The classes below are not exported */
+#pragma GCC visibility push(hidden)
 
 // #define _TRACE
 #ifndef _ABLOADER_TOOLS_TRACE
@@ -35,18 +40,14 @@
 #include "ricpp/ricontext/rimacro.h"
 #endif // _RICPP_RICONTEXT_RIMACRO_H
 
-#include <Shader/Fresnel.h>
-#include <Shader/Phong.h>
-#include <Shader/Reflect.h>
-#include <Core/Vector3.h>
-
-#pragma GCC visibility pop
-
 using namespace RiCPP;
 using namespace AB;
 
+#define ABLOADER_NAME "abribloader"
+#define ABLOADERCREATOR_NAME "abribloadercreator"
+
 static const bool _USESTRIPS = false;
-static const HierarchyType _DEF_HIERARCHY = BVH; // BVH SAHBVH
+static const HierarchyType _DEF_HIERARCHY = SAHBVH; // BVH SAHBVH
 static const RenderMode _DEF_RENDERMODE = RAY_TRACING;
 static bool _DEF_DEFAULT_CAMERA = true;
 
@@ -57,6 +58,7 @@ const char *CABLoaderCreator::myType() { return CContextCreator::myType(); }
 unsigned long CABLoaderCreator::myMajorVersion() { return CContextCreator::myMajorVersion(); }
 unsigned long CABLoaderCreator::myMinorVersion() { return 1; }
 unsigned long CABLoaderCreator::myRevision() { return 1; }
+
 void CABLoaderCreator::startup()
 {
 	trace("<> CABLoaderCreator::startup()");
@@ -67,12 +69,37 @@ void CABLoaderCreator::shutdown()
 	trace("<> CABLoaderCreator::shutdown()");
 }
 
+
+const char *CABLoaderCreator::name() const { return myName(); }
+const char *CABLoaderCreator::type() const { return myType(); }
+unsigned long CABLoaderCreator::majorVersion() const { return myMajorVersion(); }
+unsigned long CABLoaderCreator::minorVersion() const { return myMinorVersion(); }
+unsigned long CABLoaderCreator::revision() const { return myRevision(); }
+
+unsigned long CABLoaderCreator::majorContextVersion() const { return CABLoader::myMajorVersion(); }
+unsigned long CABLoaderCreator::minorContextVersion() const { return CABLoader::myMinorVersion(); }
+unsigned long CABLoaderCreator::contextRevision() const { return CABLoader::myRevision(); }
+RtToken CABLoaderCreator::contextName() const { return CABLoader::myName(); }
+RtToken CABLoaderCreator::contextType() const { return CABLoader::myType(); }
+RtToken CABLoaderCreator::rendererType() const { return CABLoader::myRendererType(); }
+
+
+
 const char *CABLoader::myName() { return ABLOADER_NAME; }
 const char *CABLoader::myType() { return IRiContext::myType(); }
 unsigned long CABLoader::myMajorVersion() { return IRiContext::myMajorVersion(); }
 unsigned long CABLoader::myMinorVersion() { return 1; }
 unsigned long CABLoader::myRevision() { return 1; }
 RtToken CABLoader::myRendererType() { return RI_REALISTIC; }
+
+const char *CABLoader::name() const { return myName(); }
+const char *CABLoader::type() const { return myType(); }
+unsigned long CABLoader::majorVersion() const { return myMajorVersion(); }
+unsigned long CABLoader::minorVersion() const { return myMinorVersion(); }
+unsigned long CABLoader::revision() const { return myRevision(); }
+
+RtToken CABLoader::rendererType() const { return myRendererType(); }
+
 
 CABLoader::CABLoader()
 {
@@ -157,16 +184,16 @@ void CABLoader::defaultDeclarations()
 	// Additional tokens and declarations
 	
 	RI_RENDER = renderState()->tokFindCreate("render"); // Synchronize
-	RI_ABLOADER = renderState()->tokFindCreate("abloader"); // Option and control classes
+	RI_ABLOADER = renderState()->tokFindCreate("abribloader"); // Option and control classes
 	
 	RI_SET_MOUSE_POSITION = renderState()->tokFindCreate("setMousePosition");
-	RI_QUAL_SET_MOUSE_POSITION = renderState()->declare("Control:abloader:setMousePosition", "constant integer[2]", true);
+	RI_QUAL_SET_MOUSE_POSITION = renderState()->declare("Control:abribloader:setMousePosition", "constant integer[2]", true);
 
 	RI_MOUSE_MOVED_TO = renderState()->tokFindCreate("mouseMovedTo");
-	RI_QUAL_MOUSE_MOVED_TO = renderState()->declare("Control:abloader:mouseMovedTo", "constant integer[2]", true);
+	RI_QUAL_MOUSE_MOVED_TO = renderState()->declare("Control:abribloader:mouseMovedTo", "constant integer[2]", true);
 
 	RI_HIERARCHY_TYPE = renderState()->tokFindCreate("hierarchyType"); // option
-	RI_QUAL_HIERARCHY_TYPE = renderState()->declare("Option:abloader:hierarchyType", "constant string", true);
+	RI_QUAL_HIERARCHY_TYPE = renderState()->declare("Option:abribloader:hierarchyType", "constant string", true);
 	RI_BVH = renderState()->tokFindCreate("bvh");
 	RI_SAHBVH = renderState()->tokFindCreate("sahbvh");
 	RI_BIH = renderState()->tokFindCreate("bih");
@@ -174,11 +201,11 @@ void CABLoader::defaultDeclarations()
 	RI_NO_HIERARCHY= renderState()->tokFindCreate("noHierarchy");
 	
 	RI_RENDER_MODE = renderState()->tokFindCreate("renderMode"); // option
-	RI_QUAL_RENDER_MODE = renderState()->declare("Option:abloader:renderMode", "constant string", true);
+	RI_QUAL_RENDER_MODE = renderState()->declare("Option:abribloader:renderMode", "constant string", true);
 	RI_RAY_TRACING = renderState()->tokFindCreate("ray-tracing");
 	
 	RI_SET_CAMERA = renderState()->tokFindCreate("setCamera"); // option
-	RI_QUAL_SET_CAMERA = renderState()->declare("Option:abloader:setCamera", "constant string", true);
+	RI_QUAL_SET_CAMERA = renderState()->declare("Option:abribloader:setCamera", "constant string", true);
 	
 	RI_DEFAULT = renderState()->tokFindCreate("default");
 	RI_NONE = renderState()->tokFindCreate("none");
@@ -207,9 +234,8 @@ RtVoid CABLoader::setABOptions()
 			m_hierarchyType = NO_HIERARCHY;
 		else if ( strVal == std::string(RI_NO_HIERARCHY) )
 			m_hierarchyType = NO_HIERARCHY;
-		
-		m_ab->setHierarchyType(m_hierarchyType);
 	}
+	m_ab->setHierarchyType(m_hierarchyType);
 	
 	const CParameter *aRenderMode = renderState()->options().get(RI_ABLOADER, RI_RENDER_MODE);
 	if ( aRenderMode ) {
@@ -221,11 +247,8 @@ RtVoid CABLoader::setABOptions()
 			m_renderMode = OPENGL;
 		else if ( strVal == std::string(RI_NONE) )
 			m_renderMode = NONE;
-		
-		// m_ab->setRenderMode(m_renderMode);
 	}
 	m_ab->setRenderMode(m_renderMode);
-	// AB hangs, if rendermode is not set!
 
 	const CParameter *aDefaultCamera = renderState()->options().get(RI_ABLOADER, RI_SET_CAMERA);
 	if ( aDefaultCamera ) {
@@ -385,7 +408,6 @@ RtVoid CABLoader::doProcess(CRiWorldBegin &obj)
 		return;
 	
 	// testScene();
-
 	trace("<- CABLoader::doProcess(CRiWorldBegin &)");
 }
 
@@ -402,3 +424,5 @@ RtVoid CABLoader::doProcess(CRiWorldEnd &obj)
 	setABOptions();
 	trace("<- CABLoader::doProcess(CRiWorldEnd &)");
 }
+
+#pragma GCC visibility pop

@@ -35,15 +35,23 @@ static void SetRoot()
 			if ( abLoaderFactory ) {
 				ri->registerRendererFactory("abribloader", reinterpret_cast<RiCPP::TemplPluginFactory<RiCPP::CContextCreator> *>(abLoaderFactory));
 			}
+			
+			// const char *searchPath = "/usr/local/lib/Augenblick:&";
+			// ri->control("searchpath", "renderer", &searchPath, RI_NULL);
+			
+			// const int cache[2] = {0, 1};
+			// ri->control("rib", "cache-file-archives", &(cache[0]), RI_NULL);
 		}
 	}
 }
 
 static void UnsetRoot()
 {
-	if ( ri )
+	if ( ri ) {
 		delete ri;
+	}
 	ri = 0;
+	abLoaderFactory = 0;
 }
 
 ABLoaderPlugin *ABLoaderPlugin::plugin_instance = 0;
@@ -67,11 +75,7 @@ ABLoaderPlugin* ABLoaderPlugin::MyInstance()
 
 void ABLoaderPlugin::deleteInstance(ABLoaderPlugin *plugin)
 {
-	if ( plugin && plugin != plugin_instance ) {
-		delete plugin;
-	}
-	
-	if ( plugin_instance ) {
+	if ( plugin && plugin == plugin_instance ) {
 		UnsetRoot();
 		delete plugin_instance;
 		plugin_instance = 0;
@@ -90,11 +94,13 @@ Loader* ABLoaderPlugin::Instance(ParamSet* paramSet)
 
 void ABLoaderPlugin::load(std::string const &filename)
 {
-	const char *searchPath = "/usr/local/lib/Augenblick:&";
-	ri->control("searchpath", "renderer", &searchPath, RI_NULL);
-	ri->begin("abribloader");
-	ri->readArchive(filename.c_str(), 0, RI_NULL);
-	ri->end();
+	if ( !ri )
+		return;
+	
+	ri->begin("abribloader"); {
+		ri->readArchive(filename.c_str(), 0, RI_NULL);
+	} ri->end();
+	AB::Augenblick::Instance()->requestNewRendering();
 }
 
 extern "C" AB::Plugin* Instance()

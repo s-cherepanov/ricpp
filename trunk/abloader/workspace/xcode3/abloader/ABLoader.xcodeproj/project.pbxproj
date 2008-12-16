@@ -56,6 +56,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C3072D1B0EF6AC4200E4B352 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C312A16C0E4CFD7B0035A59B;
+			remoteInfo = abribloader;
+		};
 		C312A1720E4CFD9F0035A59B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -529,6 +536,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C3072D1C0EF6AC4200E4B352 /* PBXTargetDependency */,
 			);
 			name = RIBLoaderPlugin;
 			productName = libABLoader;
@@ -618,6 +626,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C3072D1C0EF6AC4200E4B352 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
+			targetProxy = C3072D1B0EF6AC4200E4B352 /* PBXContainerItemProxy */;
+		};
 		C312A1730E4CFD9F0035A59B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C312A16C0E4CFD7B0035A59B /* abribloader */;
@@ -665,6 +678,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/lib/Augenblick;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",
@@ -681,6 +695,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
 				GCC_MODEL_TUNING = "";
+				INSTALL_PATH = /usr/local/lib/Augenblick;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"",

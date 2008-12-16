@@ -249,8 +249,7 @@ void CABLoader::setABHierarchy()
 		else if ( strVal == std::string(RI_NO_HIERARCHY) )
 			m_hierarchyType = NO_HIERARCHY;
 	}
-	
-	m_ab->setHierarchyType(m_hierarchyType);
+	m_ab->setHierarchyType(m_hierarchyType);	
 }
 
 void CABLoader::setABOptions()
@@ -271,6 +270,7 @@ void CABLoader::setABOptions()
 	}
 	m_ab->setRenderMode(m_renderMode);
 
+	
 	const CParameter *aDefaultCamera = renderState()->options().get(RI_ABLOADER, RI_SET_CAMERA);
 	if ( aDefaultCamera ) {
 		std::string strVal;
@@ -307,7 +307,7 @@ void CABLoader::hide(const CFace &f)
 	std::vector<RtFloat> n;
 
 	getPosAndNormals(f, toCamera(), p, n);
-	if ( p.empty() || p.size() != n.size() ) {
+	if ( p.empty() ) {
 		trace("<- CABLoader::hide(const CFace &), no geometry");
 		return;
 	}
@@ -317,13 +317,9 @@ void CABLoader::hide(const CFace &f)
 	IndexType sizeCnt = 0;
 	switch ( f.faceType() ) {
 		case FACETYPE_TRIANGLES: {
-			Scenegraph *sg = m_ab->scenegraph();
-
+			
 			for ( std::vector<IndexType>::const_iterator siter = f.sizes().begin(); siter != f.sizes().end(); siter++ ) {
-				GeometryNode *g = new GeometryNode(m_geometryCounter, m_geometryCounter+(*siter)/3);
-				m_geometryCounter += (*siter)/3;
-				if ( !g )
-					return;
+				
 				for ( IndexType idx = 0; idx < *siter-2; ) {
 					for ( int i = 0; i < 3; ++i, ++idx ) {						
 						abp[i][0] = -1.0 * p[f.indices()[sizeCnt+idx]*3+0];
@@ -347,8 +343,18 @@ void CABLoader::hide(const CFace &f)
 					}
 					m_ab->addTriangle(abp[0], abp[1], abp[2], abn[0], abn[1], abn[2], shaderId);
 				}
-				sg->addNode(g);
+				
 				sizeCnt += (*siter);
+			}
+
+			
+			if ( m_ab->scenegraph() != 0 ) {
+				const IndexType triangleCnt = sizeCnt/3;
+				GeometryNode *g = new GeometryNode(m_geometryCounter, m_geometryCounter+triangleCnt);
+				if ( !g )
+					break;
+				m_ab->scenegraph()->addNode(g);
+				m_geometryCounter += triangleCnt;
 			}
 		}
 		break;

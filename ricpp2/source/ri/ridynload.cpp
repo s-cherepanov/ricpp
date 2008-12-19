@@ -3,9 +3,9 @@
 #define RICPP_EXPORTS
 #include "ricpp/ri/ri.h"
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
+#ifndef _RICPP_RICPP_RIROOT_H
+#include "ricpp/ricpp/riroot.h"
+#endif // _RICPP_RICPP_RIROOT_H
 
 #ifndef _RICPP_RI_RIINTERNAL_H
 #include "ricpp/ri/riinternal.h"

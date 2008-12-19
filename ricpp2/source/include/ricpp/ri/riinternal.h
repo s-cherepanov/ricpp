@@ -31,8 +31,8 @@
  *  @brief Helpers for the C-binding, for internal use only
  */
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
+#ifndef _RICPP_RICPP_RIROOT_H
+#include "ricpp/ricpp/riroot.h"
 #endif
 
 #ifndef _RICPP_RICPP_FILTERS_H

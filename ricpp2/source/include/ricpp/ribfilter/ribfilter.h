@@ -38,9 +38,9 @@
 #include "ricpp/ricpp/requests.h"
 #endif // _RICPP_RICPP_REQUESTS_H
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
+#ifndef _RICPP_RICPP_RIROOT_H
+#include "ricpp/ricpp/riroot.h"
+#endif // _RICPP_RICPP_RIROOT_H
 
 namespace RiCPP {
 

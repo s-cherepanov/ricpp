@@ -1,4 +1,4 @@
-#include "ricpp/ri/ri.h"
+#include "ricpp/ricpp.h"
 
 extern void exit(int rval);
 

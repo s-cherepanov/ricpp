@@ -1,7 +1,7 @@
 #import "MyOpenGLView.h"
 #import "MyNSObjectController.h"
 
-#import "ricpp/ri/ri.h"
+#import <ricpp/ricpp.h>
 #import <stdio.h>
 
 // For OpenGL Test drawAnObject() only (ri hides OpenGL)

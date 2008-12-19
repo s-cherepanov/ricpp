@@ -3,7 +3,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "ricpp/ri/ri.h"
+#import <ricpp/ricpp.h>
 
 int main(int argc, char *argv[])
 {

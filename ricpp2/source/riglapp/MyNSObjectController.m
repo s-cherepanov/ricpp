@@ -1,5 +1,5 @@
 #import "MyNSObjectController.h"
-#import "ricpp/ri/ri.h"
+#import <ricpp/ricpp.h>
 
 static const float pi_360 = 3.1415926535897932384626433832795/360.0;
 

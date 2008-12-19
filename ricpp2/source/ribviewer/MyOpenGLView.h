@@ -1,7 +1,7 @@
 /* MyOpenGLView */
 
 #import <Cocoa/Cocoa.h>
-#import <ricpp/ri/ri.h>
+#import <ricpp/ricpp.h>
 
 @interface MyOpenGLView : NSOpenGLView
 {

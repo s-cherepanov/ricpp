@@ -30,9 +30,9 @@
  *  @brief Pixel filters for RiCPP, see RISPEC3.2 Appendix E
  */
 
-#ifndef _RICPP_RICPP_RICPP_H
-#include "ricpp/ricpp/ricpp.h"
-#endif // _RICPP_RICPP_RICPP_H
+#ifndef _RICPP_RICPP_RIROOT_H
+#include "ricpp/ricpp/riroot.h"
+#endif // _RICPP_RICPP_RIROOT_H
 
 namespace RiCPP {
 

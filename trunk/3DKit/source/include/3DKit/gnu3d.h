@@ -18,7 +18,7 @@
  */
 
 #ifndef _RICPP_RI_RI_H
-#include <ricpp/ri/ri.h>
+#include <ricpp/ricpp.h>
 #endif
 
 #ifdef __cplusplus

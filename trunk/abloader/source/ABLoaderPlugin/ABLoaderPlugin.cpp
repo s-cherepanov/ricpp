@@ -11,9 +11,7 @@
 
 #pragma GCC visibility push(hidden)
 
-#ifndef _RICPP_RICPP_RICPPBRIDGE_H
-#include "ricpp/ricppbridge/ricppbridge.h"
-#endif // _RICPP_RICPP_RICPPBRIDGE_H
+#include <ricpp/RiCPPBridge.h>
 #include <iostream>
 
 #pragma GCC visibility pop

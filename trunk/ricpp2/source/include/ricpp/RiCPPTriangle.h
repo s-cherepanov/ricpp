@@ -1,8 +1,12 @@
-#ifndef __RICPPBASE__
-#define __RICPPBASE__
+#ifndef __RICPPTRIANGLE__
+#define __RICPPTRIANGLE__
 
-#ifndef _RICPP_BASERENDERER_BASERENDERER_H
-#include <ricpp/baserenderer/baserenderer.h>
+#ifndef _RICPP_BASERENDERER_TRIANGLERENDERER_H
+#include <ricpp/baserenderer/trianglerenderer.h>
 #endif
 
-#endif  /* __RICPPBASE__ */
+#ifndef _RICPP_RICONTEXT_CONTEXTCREATOR_H
+#include "ricpp/ricontext/contextcreator.h"
+#endif
+
+#endif  /* __RICPPTRIANGLE__ */

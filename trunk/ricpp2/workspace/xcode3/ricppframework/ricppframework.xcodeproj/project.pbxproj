@@ -52,6 +52,8 @@
 		C356360C0EFBE5CF003A6724 /* RibViewer.icns in Resources */ = {isa = PBXBuildFile; fileRef = C356360B0EFBE5CF003A6724 /* RibViewer.icns */; };
 		C35636120EFBE601003A6724 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C356360E0EFBE601003A6724 /* InfoPlist.strings */; };
 		C35636130EFBE601003A6724 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = C35636100EFBE601003A6724 /* MainMenu.nib */; };
+		C356366E0EFBE8B8003A6724 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C356366A0EFBE8B8003A6724 /* InfoPlist.strings */; };
+		C356366F0EFBE8B8003A6724 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = C356366C0EFBE8B8003A6724 /* MainMenu.nib */; };
 		C3589A170E59A88300CB67E5 /* blend.h in Headers */ = {isa = PBXBuildFile; fileRef = C3589A160E59A88300CB67E5 /* blend.h */; };
 		C3589A190E59A9AE00CB67E5 /* blend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3589A180E59A9AE00CB67E5 /* blend.cpp */; };
 		C3674D8D0DAF376F00AAE6EB /* polygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3674D8C0DAF376F00AAE6EB /* polygon.cpp */; };
@@ -216,7 +218,6 @@
 		C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C3CE0F0C0DCF54470014BC8E /* MyOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */; };
 		C3CE0F0F0DCF54A70014BC8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0E0DCF54A70014BC8E /* main.m */; };
-		C3CE0F4C0DCF57640014BC8E /* English.lproj in Resources */ = {isa = PBXBuildFile; fileRef = C3CE0F470DCF57140014BC8E /* English.lproj */; };
 		C3D1A82D0EF250D4002535D2 /* libtools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EC40D3C1F4D00B2E025 /* libtools.a */; };
 		C3D1A82E0EF250D4002535D2 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
 		C3D1A82F0EF250D4002535D2 /* libstreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685F270D3C22B800B2E025 /* libstreams.a */; };
@@ -755,6 +756,8 @@
 		C356360B0EFBE5CF003A6724 /* RibViewer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = RibViewer.icns; path = ../../../source/ribviewer/Resources/RibViewer.icns; sourceTree = SOURCE_ROOT; };
 		C356360F0EFBE601003A6724 /* English */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
 		C35636110EFBE601003A6724 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = MainMenu.nib; sourceTree = "<group>"; };
+		C356366B0EFBE8B8003A6724 /* English */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C356366D0EFBE8B8003A6724 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		C3589A160E59A88300CB67E5 /* blend.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = blend.h; path = ../../../source/include/ricpp/ricontext/blend.h; sourceTree = SOURCE_ROOT; };
 		C3589A180E59A9AE00CB67E5 /* blend.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = blend.cpp; path = ../../../source/ricontext/blend.cpp; sourceTree = SOURCE_ROOT; };
 		C3610AC60BF2F26D00007CEF /* ricppbridge.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ricppbridge.cpp; path = ../../../source/ricppbridge/ricppbridge.cpp; sourceTree = SOURCE_ROOT; };
@@ -924,13 +927,12 @@
 		C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3C9AE470D70BDE000A04717 /* ribtool.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribtool.cpp; path = ../../../source/ribtool/ribtool.cpp; sourceTree = SOURCE_ROOT; };
 		C3CE0EEE0DCF50520014BC8E /* riglapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = riglapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "riglapp-Info.plist"; sourceTree = SOURCE_ROOT; };
+		C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "riglapp-Info.plist"; sourceTree = "<group>"; };
 		C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyOpenGLView.m; path = ../../../source/riglapp/MyOpenGLView.m; sourceTree = SOURCE_ROOT; };
 		C3CE0F0E0DCF54A70014BC8E /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../../source/riglapp/main.m; sourceTree = SOURCE_ROOT; };
 		C3CE0F240DCF55FD0014BC8E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		C3CE0F270DCF56330014BC8E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		C3CE0F470DCF57140014BC8E /* English.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = English.lproj; sourceTree = SOURCE_ROOT; };
 		C3D1A8290EF2507A002535D2 /* libricppdev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppdev.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3E4FE920E6B1D5F0000B37F /* inputstate.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = inputstate.h; path = ../../../source/include/ricpp/ricontext/inputstate.h; sourceTree = SOURCE_ROOT; };
 		C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = inputstate.cpp; path = ../../../source/ricontext/inputstate.cpp; sourceTree = SOURCE_ROOT; };
@@ -1661,6 +1663,17 @@
 			path = ../../../source/ribviewer/Resources/English.lproj;
 			sourceTree = SOURCE_ROOT;
 		};
+		C35636690EFBE8B8003A6724 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */,
+				C356366A0EFBE8B8003A6724 /* InfoPlist.strings */,
+				C356366C0EFBE8B8003A6724 /* MainMenu.nib */,
+			);
+			name = Resources;
+			path = ../../../source/riglapp/Resources;
+			sourceTree = SOURCE_ROOT;
+		};
 		C3610AB60BF2F08500007CEF /* ricppbridge */ = {
 			isa = PBXGroup;
 			children = (
@@ -2086,7 +2099,6 @@
 			isa = PBXGroup;
 			children = (
 				C3911A790E644EE30051CB61 /* Resources */,
-				C3911AEA0E6454C50051CB61 /* ribviewer-Info.plist */,
 				C3911A7A0E644EEB0051CB61 /* Header */,
 				C3911A780E644ED70051CB61 /* Implementation */,
 			);
@@ -2105,6 +2117,7 @@
 		C3911A790E644EE30051CB61 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C3911AEA0E6454C50051CB61 /* ribviewer-Info.plist */,
 				C356360D0EFBE601003A6724 /* English.lproj */,
 				C356360B0EFBE5CF003A6724 /* RibViewer.icns */,
 			);
@@ -2388,7 +2401,7 @@
 		C3CE0EFA0DCF50F30014BC8E /* riglapp */ = {
 			isa = PBXGroup;
 			children = (
-				C3CE0F3B0DCF56D40014BC8E /* Resources */,
+				C35636690EFBE8B8003A6724 /* Resources */,
 				C3CE0F0A0DCF54260014BC8E /* Header */,
 				C3CE0F090DCF541A0014BC8E /* Implementation */,
 			);
@@ -2413,15 +2426,6 @@
 			);
 			name = Header;
 			sourceTree = SOURCE_ROOT;
-		};
-		C3CE0F3B0DCF56D40014BC8E /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				C3CE0F470DCF57140014BC8E /* English.lproj */,
-				C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
 		};
 		C6859E8C029090F304C91782 /* Documentation */ = {
 			isa = PBXGroup;
@@ -3276,7 +3280,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3CE0F4C0DCF57640014BC8E /* English.lproj in Resources */,
+				C356366E0EFBE8B8003A6724 /* InfoPlist.strings in Resources */,
+				C356366F0EFBE8B8003A6724 /* MainMenu.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3852,6 +3857,22 @@
 			isa = PBXVariantGroup;
 			children = (
 				C35636110EFBE601003A6724 /* English */,
+			);
+			name = MainMenu.nib;
+			sourceTree = "<group>";
+		};
+		C356366A0EFBE8B8003A6724 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C356366B0EFBE8B8003A6724 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		C356366C0EFBE8B8003A6724 /* MainMenu.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C356366D0EFBE8B8003A6724 /* English */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -4924,7 +4945,7 @@
 				GCC_WARN_UNUSED_LABEL = NO;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
-				INFOPLIST_FILE = "riglapp-Info.plist";
+				INFOPLIST_FILE = "../../../source/riglapp/Resources/riglapp-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = riglapp;
 				WRAPPER_EXTENSION = app;
@@ -4965,7 +4986,7 @@
 				GCC_WARN_UNUSED_LABEL = NO;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
-				INFOPLIST_FILE = "riglapp-Info.plist";
+				INFOPLIST_FILE = "../../../source/riglapp/Resources/riglapp-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = riglapp;
 				WRAPPER_EXTENSION = app;

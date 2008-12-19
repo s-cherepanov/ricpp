@@ -28,7 +28,7 @@
  *  @todo Seems to be something wrong with the depth buffer.
  */
 
-#include "ricpp/ri/ri.h"
+#include <ricpp/ricpp.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>

@@ -61,7 +61,7 @@ CRendererLoader are the two main parts of the front end, that bridges to
 the back end, which is in turn a class derived from CBaseRenderer.
 An instance of CRiCPPBridge implements the interface IRi, and that is the only
 interface you need to see, if you only want to use RiCPP as an API connected
-with a back end renderer. IRi (included in "ricpp/ricpp/ricpp.h") is similar
+with a back end renderer. IRi (included in "ricpp/ricpp/riroot.h") is similar
 to the declarations of the C-binding in ri.h. Therefore knowing the RenderMan Interface
 Specification [RISPEC] is important to understand the interface.
 

@@ -933,7 +933,7 @@ public:
 	 *
 	 *  @brief The RenderMan frontend functions that are forwarded to the backend.
 	 *
-	 * The rest of the interface functions see ricpp.h. The calls of functions with
+	 * The rest of the interface functions see riroot.h. The calls of functions with
 	 * variable length parameters are passed to the ...V() functions, these are
 	 * forwarded to the current rendering context
 	 * (only optionV() may be handled by the frontend, if if there is no active context)

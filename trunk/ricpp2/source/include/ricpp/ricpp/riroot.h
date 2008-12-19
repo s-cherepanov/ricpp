@@ -1,5 +1,5 @@
-#ifndef _RICPP_RICPP_RICPP_H
-#define _RICPP_RICPP_RICPP_H
+#ifndef _RICPP_RICPP_RIROOT_H
+#define _RICPP_RICPP_RIROOT_H
 
 // RICPP - RenderMan(R) Interface CPP Language Binding
 //
@@ -25,7 +25,7 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file ricpp.h
+/** @file riroot.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Abstract interface for the RenderMan(R) C++ Binding
  *
@@ -36,7 +36,7 @@
                    All rights Reservered
  @endverbatim
  *
- * ricpp.h means the same to RiCPP as ri.h to the standard C binding.
+ * riroot.h Root class for the RiCPP framework
  */
 
 #ifndef _RICPP_RIBASE_RICPPCONST_H
@@ -1959,4 +1959,4 @@ public:
 	//@}
 }; // IRi
 } // namespace RiCPP
-#endif // _RICPP_RICPP_RICPP_H
+#endif // _RICPP_RICPP_RIROOT_H

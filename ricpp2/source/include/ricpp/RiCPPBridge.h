@@ -1,8 +1,8 @@
-#ifndef __RICPPTRIANGLE__
-#define __RICPPTRIANGLE__
+#ifndef __RICPPBRIDGE__
+#define __RICPPBRIDGE__
 
-#ifndef _RICPP_RICPPBRIDGE_TRIANGLERENDERER_H
-#include <ricpp/ricppbridge/trianglerenderer.h>
+#ifndef _RICPP_RICPPBRIDGE_RICPPBRIDGE_H
+#include <ricpp/ricppbridge/ricppbridge.h>
 #endif
 
-#endif   /* __RICPPTRIANGLE__ */
+#endif   /* __RICPPBRIDGE__ */

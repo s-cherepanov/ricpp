@@ -14,7 +14,7 @@
  *                 All rights Reservered
  */
  
-#import <ricpp/ri/ri.h>
+#import <ricpp/ricpp.h>
 #import <ricpp/ri/slo.h>
 
 

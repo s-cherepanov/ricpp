@@ -13,7 +13,7 @@
  *         Copyright 1988, 1989, 2000, 2005 Pixar
  *                 All rights Reservered
  */
-#import <ricpp/ri/ri.h>
+#import <ricpp/ricpp.h>
 
 @interface G3DContextManager : NSObject
 {

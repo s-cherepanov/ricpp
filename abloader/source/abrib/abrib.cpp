@@ -11,7 +11,7 @@
 #include "abloader/tools/trace.h"
 #endif // _ABLOADER_TOOLS_TRACE
 
-#include "ricpp/ri/ri.h"
+#include <ricpp/ricpp.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>

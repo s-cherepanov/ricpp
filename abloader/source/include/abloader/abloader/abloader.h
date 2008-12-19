@@ -35,13 +35,7 @@
 /* The classes below are not exported */
 #pragma GCC visibility push(hidden)
 
-#ifndef _RICPP_BASERENDERER_TRIANGLERENDERER_H
-#include "ricpp/baserenderer/trianglerenderer.h"
-#endif // _RICPP_BASERENDERER_TRIANGLERENDERER_H
-
-#ifndef _RICPP_RICONTEXT_CONTEXTCREATOR_H
-#include "ricpp/ricontext/contextcreator.h"
-#endif // _RICPP_RICONTEXT_CONTEXTCREATOR_H
+#include <ricpp/RiCPPTriangle.h>
 
 namespace RiCPP {
 		

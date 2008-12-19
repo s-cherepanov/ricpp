@@ -36,6 +36,10 @@
 		C302FE4A0DB8883B007E509B /* bintree.h in Headers */ = {isa = PBXBuildFile; fileRef = C302FE490DB8883B007E509B /* bintree.h */; };
 		C3185B710D7D3312001784AB /* varsubst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3185B700D7D3312001784AB /* varsubst.h */; };
 		C3185B730D7D3451001784AB /* varsubst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3185B720D7D3451001784AB /* varsubst.cpp */; };
+		C323EBB80EFB79BA00F0ED84 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0F240DCF55FD0014BC8E /* AppKit.framework */; };
+		C323EBB90EFB79BA00F0ED84 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0F270DCF56330014BC8E /* Foundation.framework */; };
+		C323EBBC0EFB7D8D00F0ED84 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0F240DCF55FD0014BC8E /* AppKit.framework */; };
+		C323EBBD0EFB7D8D00F0ED84 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0F270DCF56330014BC8E /* Foundation.framework */; };
 		C339CB4F0E667A44004F2179 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C339CB4E0E667A44004F2179 /* GLUT.framework */; };
 		C339CB530E667A4F004F2179 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C339CB760E667A69004F2179 /* glutrib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C339CB750E667A69004F2179 /* glutrib.cpp */; };
@@ -925,7 +929,6 @@
 		C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = MyOpenGLView.m; path = ../../../source/riglapp/MyOpenGLView.m; sourceTree = SOURCE_ROOT; };
 		C3CE0F0E0DCF54A70014BC8E /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../../source/riglapp/main.m; sourceTree = SOURCE_ROOT; };
 		C3CE0F240DCF55FD0014BC8E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		C3CE0F260DCF561F0014BC8E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		C3CE0F270DCF56330014BC8E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		C3CE0F470DCF57140014BC8E /* English.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = English.lproj; sourceTree = SOURCE_ROOT; };
 		C3D1A8290EF2507A002535D2 /* libricppdev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppdev.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1208,7 +1211,9 @@
 			files = (
 				C3911AB20E6450D50051CB61 /* libriprog.1.dylib in Frameworks */,
 				C3911AA10E6450D20051CB61 /* OpenGL.framework in Frameworks */,
+				C323EBB80EFB79BA00F0ED84 /* AppKit.framework in Frameworks */,
 				C3911AA00E6450CF0051CB61 /* Cocoa.framework in Frameworks */,
+				C323EBB90EFB79BA00F0ED84 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1217,8 +1222,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C30089B90DEC49F400E30769 /* libriprog.1.dylib in Frameworks */,
-				C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */,
+				C323EBBC0EFB7D8D00F0ED84 /* AppKit.framework in Frameworks */,
 				C3CE0EF50DCF50920014BC8E /* Cocoa.framework in Frameworks */,
+				C323EBBD0EFB7D8D00F0ED84 /* Foundation.framework in Frameworks */,
+				C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2362,9 +2369,6 @@
 		C3CE0EE80DCF50150014BC8E /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C3CE0F240DCF55FD0014BC8E /* AppKit.framework */,
-				C3CE0F260DCF561F0014BC8E /* CoreData.framework */,
-				C3CE0F270DCF56330014BC8E /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -2372,6 +2376,8 @@
 		C3CE0EE90DCF50200014BC8E /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C3CE0F240DCF55FD0014BC8E /* AppKit.framework */,
+				C3CE0F270DCF56330014BC8E /* Foundation.framework */,
 				C339CB4E0E667A44004F2179 /* GLUT.framework */,
 				C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */,
 				C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */,
@@ -4855,20 +4861,12 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_PROTOTYPE_CONVERSION = NO;
 				INFOPLIST_FILE = "ribviewer-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = RIBViewer;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -4881,19 +4879,11 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_PROTOTYPE_CONVERSION = NO;
 				INFOPLIST_FILE = "ribviewer-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = RIBViewer;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -4906,7 +4896,6 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -4937,14 +4926,6 @@
 				GCC_WARN_UNUSED_VALUE = NO;
 				INFOPLIST_FILE = "riglapp-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "@rpath/.";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = riglapp;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
@@ -4957,7 +4938,6 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
@@ -4987,14 +4967,6 @@
 				GCC_WARN_UNUSED_VALUE = NO;
 				INFOPLIST_FILE = "riglapp-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LD_RUNPATH_SEARCH_PATHS = "@rpath/.";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = riglapp;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;

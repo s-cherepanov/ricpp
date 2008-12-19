@@ -895,8 +895,8 @@ N_{i,p(u)}=\frac{u-u_{i}}{u_{i+p}-u_{i}}N_{i,p-1}(u)+\frac{u_{i+p+1}-u}{u_{i+p+1
 \end_layout
 
 \begin_layout Standard
-Since 0/0 can occur while evaluating the form, we define this case to has
- the result 0.
+Since 0/0 can occur while evaluating the formula, we define this case to
+ have the result 0.
  The definition of the formula for 
 \begin_inset Formula $M_{j,vorder}(v)$
 \end_inset
@@ -1025,7 +1025,7 @@ BASIS
 \lyxline
 
 \begin_inset ERT
-status collapsed
+status open
 
 \begin_layout Plain Layout
 

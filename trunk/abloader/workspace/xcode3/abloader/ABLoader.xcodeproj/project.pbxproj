@@ -722,6 +722,7 @@
 					"\"$(SRCROOT)/../../../../ricpp2/source/include\"",
 					"\"$(SRCROOT)/../../../../ricpp2/3rdparty/macos/zlib123/include\"",
 					"\"/usr/local/include/Augenblick\"",
+					"\"/usr/local/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"/usr/local/lib\"/**",
@@ -749,6 +750,7 @@
 					"\"$(SRCROOT)/../../../../ricpp2/source/include\"",
 					"\"$(SRCROOT)/../../../../ricpp2/3rdparty/macos/zlib123/include\"",
 					"\"/usr/local/include/Augenblick\"",
+					"\"/usr/local/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"/usr/local/lib\"/**",

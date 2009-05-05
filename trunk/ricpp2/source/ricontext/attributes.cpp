@@ -333,7 +333,10 @@ const RtFloat CAttributes::defUpTran  = (RtFloat)(1.0e38);
 const RtFloat CAttributes::defMaxVis  = (RtFloat)(1.0e38);
 
 // RtToken const CAttributes::defGeometricApproximationType = RI_NULL;
-const RtFloat CAttributes::defGeometricApproximationValue = 0.5;
+const RtFloat CAttributes::defGeometricApproximationValue = (RtFloat)0.5;
+
+// RtToken const CAttributes::defTrimApproximationType = RI_NULL;
+const RtFloat CAttributes::defTrimApproximationValue = (RtFloat)0.5;
 
 // RtToken const CAttributes::defGeometricRepresentation = RI_PRIMITIVE;
 
@@ -438,6 +441,8 @@ CAttributes &CAttributes::operator=(const CAttributes &ra)
 	m_uBasis = ra.m_uBasis;
 	m_vBasis = ra.m_vBasis;
 	
+	m_trimApproximationType = ra.m_trimApproximationType;
+	m_trimApproximationValue = ra.m_trimApproximationValue;
 	m_trimCurve = ra.m_trimCurve;
 
 	m_motionState = ra.m_motionState;
@@ -464,7 +469,8 @@ void CAttributes::initAttributeVector()
 	m_allAttributes[(int)AIDX_DETAIL] = &m_detail;
 	m_allAttributes[(int)AIDX_DETAIL_RANGE] = &m_detailRange;
 	m_allAttributes[(int)AIDX_GEOMETRIC_APPROXIMATION_VALUE] = &m_geometricApproximationValue;
-
+	m_allAttributes[(int)AIDX_TRIM_APPROXIMATION_VALUE] = &m_trimApproximationValue; // depends on trimCurves (one interface call)
+	
 	m_allAttributes[(int)AIDX_SURFACE] = &m_surface;
 	m_allAttributes[(int)AIDX_ATMOSPHERE] = &m_atmosphere;
 	m_allAttributes[(int)AIDX_INTERIOR] = &m_interior;
@@ -474,13 +480,15 @@ void CAttributes::initAttributeVector()
 
 	m_allAttributes[(int)AIDX_SHADING_INTERPOLATION] = &m_shadingInterpolation;
 	m_allAttributes[(int)AIDX_GEOMETRIC_APPROXIMATION_TYPE] = &m_geometricApproximationType;
+	m_allAttributes[(int)AIDX_TRIM_APPROXIMATION_TYPE] = &m_trimApproximationType; // depends on trimCurves (one interface call)
 	m_allAttributes[(int)AIDX_GEOMETRIC_REPRESENTATION] = &m_geometricRepresentation;
 	m_allAttributes[(int)AIDX_ORIENTATION] = &m_orientation;
 	
 	m_allAttributes[(int)AIDX_MATTE] = &m_matte;
 	m_allAttributes[(int)AIDX_SIDES] = &m_nSides;
 
-	m_allAttributes[(int)AIDX_BASIS] = &m_uBasis;
+	m_allAttributes[(int)AIDX_UBASIS] = &m_uBasis;
+	m_allAttributes[(int)AIDX_VBASIS] = &m_vBasis; // depends on uBasis (one interface call)
 	
 	m_allAttributes[(int)AIDX_TRIM_CURVE] = &m_trimCurve;
 }
@@ -1030,7 +1038,7 @@ RtVoid CAttributes::basis(RtBasis ubasis, RtInt ustep, RtBasis vbasis, RtInt vst
 	if ( m_motionState != 0 ) {
 		m_uBasis.set(ubasis, ustep, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
 		m_vBasis.set(vbasis, vstep, m_motionState->curSampleIdx(), m_motionState->firstSampleIdx(), m_motionState->lastSampleIdx());
-		m_lastValue = AIDX_BASIS;
+		m_lastValue = AIDX_UBASIS;
 	} else {
 		m_uBasis.set(ubasis, ustep);
 		m_vBasis.set(vbasis, vstep);
@@ -1049,6 +1057,8 @@ bool CAttributes::getBasis(RtBasis ubasis, RtInt &ustep, RtBasis vbasis, RtInt &
 
 void CAttributes::initTrimCurve()
 {
+	m_trimApproximationType.set(RI_NULL);
+	m_trimApproximationValue.set(defTrimApproximationValue);
 	m_trimCurve.clear();
 	m_trimCurve.m_value.releaseAll();
 }
@@ -1083,17 +1093,33 @@ RtVoid CAttributes::motionBegin(const CMotionState &state)
 
 RtVoid CAttributes::motionEnd()
 {
-	assert(m_motionState!=0);
+	assert(m_motionState != 0);
+	
 	if ( m_motionState != 0 && m_lastValue != AIDX_ENDMARKER ) {
+
 		assert(m_allAttributes[(int)m_lastValue] != 0);
-		if (m_allAttributes[(int)m_lastValue] != 0)
+		if ( m_allAttributes[(int)m_lastValue] != 0 ) {
+			
 			m_allAttributes[(int)m_lastValue]->fill(m_motionState->curSampleIdx());
-		if ( m_lastValue == AIDX_GEOMETRIC_APPROXIMATION_VALUE ) {
-			m_geometricApproximationType.fill(m_motionState->curSampleIdx());
-		} else if ( m_lastValue == AIDX_BASIS ) {
-			m_vBasis.fill(m_motionState->curSampleIdx());
+
+			// Dependend values
+			if ( m_lastValue == AIDX_GEOMETRIC_APPROXIMATION_VALUE ) {
+				m_geometricApproximationType.fill(m_motionState->curSampleIdx());
+			} else if ( m_lastValue == AIDX_TRIM_CURVE ) {
+				m_trimApproximationType.fill(m_motionState->curSampleIdx());
+				m_trimApproximationType.fill(m_motionState->curSampleIdx());
+			} else if ( m_lastValue == AIDX_UBASIS ) {
+				m_vBasis.fill(m_motionState->curSampleIdx());
+			}
+
+		} else {
+			m_motionState = 0;
+			m_lastValue = AIDX_ENDMARKER;
+			/// @todo programm error 
 		}
+		
 	}
+	
 	m_motionState = 0;
 	m_lastValue = AIDX_ENDMARKER;
 }

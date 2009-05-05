@@ -76,8 +76,9 @@ namespace RiCPP {
 		AB::HierarchyType m_hierarchyType;
 		AB::RenderMode m_renderMode;
 		bool m_defaultCamera;
-		unsigned int m_geometryCounter;
-
+		// unsigned int m_geometryCounter;
+		// std::vector<AB::Geometry*> m_geometryList;
+		
 		bool valid() const;
 		void setABHierarchy();
 		void setABOptions();

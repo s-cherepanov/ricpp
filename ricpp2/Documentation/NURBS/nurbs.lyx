@@ -1,4 +1,4 @@
-#LyX 1.6.0 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.2 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -55,7 +55,7 @@ Andreas Pidde
 \end_layout
 
 \begin_layout Date
-March, 05th 2008
+May, 05th 2009
 \end_layout
 
 \begin_layout Section*
@@ -2047,7 +2047,7 @@ TrimCurve
 \series default
  
 \emph on
-ncurves[] order[] knot[] min[] max[] n[] u[] v[]
+ncurves[] order[] knot[] min[] max[] n[] u[] v[] w[]
 \emph default
 
 \lyxline
@@ -2125,7 +2125,6 @@ Number of curves per loop.
 The size of the array is the number of loops.
  An empty array disables the trim curve.
  The curves of a loop must be connected head-to-tail and be closed explicitly.
- This parameter is not given in the RIB-binding.
 \end_layout
 
 \end_inset
@@ -2594,7 +2593,15 @@ key "Pixa05"
 Because both rules hold, some restrictions follow.
  Trim curves do not intersect each other but may form isles (loops may contain
  other loops).
- The outer trim curve should always has a 
+ The outer trim curve should always have a 
+\begin_inset Quotes eld
+\end_inset
+
+counter clockwise
+\begin_inset Quotes erd
+\end_inset
+
+ orientation (regions to the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -2602,12 +2609,12 @@ left
 \begin_inset Quotes erd
 \end_inset
 
- orientation, otherwise the odd winding rule is violated.
+ are inside), otherwise the odd winding rule is violated.
  From outside to inside 
 \begin_inset Quotes eld
 \end_inset
 
-right
+clockwise
 \begin_inset Quotes erd
 \end_inset
 
@@ -2615,7 +2622,7 @@ right
 \begin_inset Quotes eld
 \end_inset
 
-left
+counter clockwise
 \begin_inset Quotes erd
 \end_inset
 
@@ -2623,7 +2630,7 @@ left
 \begin_inset Quotes eld
 \end_inset
 
-left
+counter clockwise
 \begin_inset Quotes erd
 \end_inset
 
@@ -2631,7 +2638,7 @@ left
 \begin_inset Quotes eld
 \end_inset
 
-right
+clockwise
 \begin_inset Quotes erd
 \end_inset
 
@@ -2648,7 +2655,7 @@ hole
 \begin_inset Quotes eld
 \end_inset
 
-left
+counter clockwise
 \begin_inset Quotes erd
 \end_inset
 
@@ -2656,7 +2663,7 @@ left
 \begin_inset Quotes eld
 \end_inset
 
-right
+clockwise
 \begin_inset Quotes erd
 \end_inset
 
@@ -2666,7 +2673,7 @@ right
 \begin_inset Quotes eld
 \end_inset
 
-left
+counter clockwise
 \begin_inset Quotes erd
 \end_inset
 
@@ -2864,15 +2871,32 @@ outside
 
 ]
 \family default
- flips what's cut away.
+ flips what's cut away, i.e.
+ flips the effect of 
+\begin_inset Quotes eld
+\end_inset
+
+counter clockwise
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+clockwise
+\begin_inset Quotes erd
+\end_inset
+
+ orientation.
 \end_layout
 
 \begin_layout Standard
 For the OpenGL output of RiCPP the trim curves are calculated using the
  tessellation values of the current attribute stack.
  The tessellation is not adaptive to the curvature of the trim curves.
- If the curves are not connected head-to-tail or are not closed, an additional
- line segment is inserted.
+ If the curves are not connected head-to-tail or are not closed, additional
+ line segments are inserted.
  The resulting polygons are then used to trim the rectangular parametric
  (u, v) grid of the NURBS surfaces.
  The next step is to triangulate the trimmed grids using a general ear-clipping

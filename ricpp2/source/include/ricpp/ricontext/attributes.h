@@ -103,6 +103,8 @@ namespace RiCPP {
 		// Type of geometric approximation
 		// static RtToken const defGeometricApproximationType;  // Default approximation type (RI_FLATNESS, chordal deviation)
 		static const RtFloat defGeometricApproximationValue; ///< Largest deviation of a point of an approximated surface to the rendered pixel in raster coordinates (0.5 ad hoc)
+		// static RtToken const defTrimApproximationType;  // Default approximation type of trim curves (RI_FLATNESS, chordal deviation)
+		static const RtFloat defTrimApproximationValue; ///< Like \a defGeometricApproximationValue for approximation of a trim curve
 
 		// static RtToken const defGeometricRepresentation; // Default representation is RI_PRIMITIVE, a shaded primitive
 
@@ -346,6 +348,7 @@ namespace RiCPP {
 			AIDX_DETAIL,
 			AIDX_DETAIL_RANGE,
 			AIDX_GEOMETRIC_APPROXIMATION_VALUE,
+			AIDX_TRIM_APPROXIMATION_VALUE,
 			
 			AIDX_SURFACE,
 			AIDX_ATMOSPHERE,
@@ -356,14 +359,16 @@ namespace RiCPP {
 			
 			AIDX_SHADING_INTERPOLATION,
 			AIDX_GEOMETRIC_APPROXIMATION_TYPE,
+			AIDX_TRIM_APPROXIMATION_TYPE,
 			AIDX_GEOMETRIC_REPRESENTATION,
 			AIDX_ORIENTATION,
 			
 			AIDX_MATTE,
 			AIDX_SIDES,
 			
-			AIDX_BASIS,
-
+			AIDX_UBASIS,
+			AIDX_VBASIS,
+			
 			AIDX_TRIM_CURVE,
 
 			AIDX_ENDMARKER
@@ -420,7 +425,9 @@ namespace RiCPP {
 		CAttributeBasis m_uBasis,                      ///< Basis matrix for bicubic splines in u direction
 		                m_vBasis;                      ///< Basis matrix for splines in v direction
 
-		CAttributeTrimCurve m_trimCurve;               ///< Trim curve, default: empty
+		CAttributeToken m_trimApproximationType;  ///< Copy of the geometric approximation type, when trim curve is set
+		CAttributeFloat m_trimApproximationValue; ///< Copy of the value for the approximation type, when trim curve is set
+		CAttributeTrimCurve m_trimCurve;          ///< Trim curve, default: empty
 		
 		bool m_inAreaLight;                    ///< An area light source was created.
 		
@@ -1002,6 +1009,14 @@ namespace RiCPP {
 			return m_vBasis.m_value.m_basis;
 		}
 		
+		inline virtual RtToken trimApproximationType() const
+		{
+			return m_trimApproximationType.m_value;
+		}
+		inline virtual RtFloat trimApproximationValue() const
+		{
+			return m_trimApproximationValue.m_value;
+		}
 		virtual RtVoid trimCurve(RtInt nloops, RtInt ncurves[], RtInt order[], RtFloat knot[], RtFloat amin[], RtFloat amax[], RtInt n[], RtFloat u[], RtFloat v[], RtFloat w[]);
 		virtual RtVoid trimCurve(const CTrimCurveData &trimCurveData);
 		inline virtual const CTrimCurveData &trimCurve() const

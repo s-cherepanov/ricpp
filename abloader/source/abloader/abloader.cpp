@@ -148,7 +148,7 @@ CABLoader::CABLoader()
 	RI_NONE = 0;
 
 	m_ab = 0;
-	m_geometryCounter = 0;
+	// m_geometryCounter = 0;
 }
 
 CABLoader::~CABLoader()
@@ -173,7 +173,7 @@ void CABLoader::testScene()
 		0, 0, -1,
 		0, 0, -1
 	};
-	Scenegraph *sg = m_ab->scenegraph();
+	// Scenegraph *sg = m_ab->scenegraph();
 	
 	AB::Vector3 abp[3], abn[3];
 	for ( int v = 0; v < 3; ++v ) {
@@ -183,9 +183,13 @@ void CABLoader::testScene()
 		}
 	}
 
-	GeometryNode *g = new GeometryNode(0, 1);
+	
+	// GeometryNode *g = new GeometryNode(0, 1);
 	m_ab->addTriangle(abp[0], abp[1], abp[2], abn[0], abn[1], abn[2]);
+	/*
+	GeometryNode *g = new GeometryNode(m_geometryList);
 	sg->addNode(g);
+	*/
 	
 	/*
 	 m_ab->loadMengerSponge(AB::BoundingBox(AB::Vector3(-10,-10,-10), 
@@ -347,15 +351,17 @@ void CABLoader::hide(const CFace &f)
 				sizeCnt += (*siter);
 			}
 
-			
+			/*
 			if ( m_ab->scenegraph() != 0 ) {
-				const IndexType triangleCnt = sizeCnt/3;
-				GeometryNode *g = new GeometryNode(m_geometryCounter, m_geometryCounter+triangleCnt);
+				// const IndexType triangleCnt = sizeCnt/3;
+				// GeometryNode *g = new GeometryNode(m_geometryCounter, m_geometryCounter+triangleCnt);
+				GeometryNode *g = new GeometryNode(m_geometryList);
 				if ( !g )
 					break;
 				m_ab->scenegraph()->addNode(g);
-				m_geometryCounter += triangleCnt;
+				// m_geometryCounter += triangleCnt;
 			}
+			 */
 		}
 		break;
 			
@@ -443,7 +449,7 @@ RtVoid CABLoader::doProcess(CRiWorldBegin &obj)
 		return;
 	
 	setABHierarchy();
-	m_geometryCounter = 0;
+	// m_geometryCounter = 0;
 	// testScene();
 	trace("<- CABLoader::doProcess(CRiWorldBegin &)");
 }

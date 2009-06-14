@@ -214,7 +214,13 @@ namespace RiCPP {
 		return logx(static_cast<type>(2), r);
 	}
 	
-
+	template <typename type> inline type nuNumSegs(type ncpts, type order)
+	{
+		return 1 + ncpts - order;
+	}
+	
+	
+	
 	/** @brief Gets the epsilon limit value
 	 *
 	 * eps is the smallest positive value eps+a != a

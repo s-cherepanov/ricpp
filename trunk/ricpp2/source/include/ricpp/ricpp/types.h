@@ -851,24 +851,27 @@ struct CTrimCurveDataInfo {
  */
 struct CTrimCurveData {
 	CTrimCurveDataInfo   m_data;    ///< Sizes.
+
+	int m_nsegments;	             ///< Total number of segments (sum(m_segments))
+	std::vector<RtInt>   m_segments; ///< Number of segments per curve (1 + number of control points - order)
 	
-	std::vector<RtInt>   m_nCurves; ///< Number if loops (curves with holes).
-	std::vector<RtInt>   m_order;   ///< Order of the curves.
-	std::vector<RtFloat> m_knots;   ///< Knot vectors of the curves.
-	std::vector<RtFloat> m_min;     ///< Minimum parametric values of the curves.
-	std::vector<RtFloat> m_max;     ///< Maximum parametric values of the curves.
-	std::vector<RtInt>   m_n;       ///< Number of coordinates.
-	std::vector<RtFloat> m_u;       ///< u coordinates of the curves.
-	std::vector<RtFloat> m_v;       ///< v coordinates of the curves.
-	std::vector<RtFloat> m_w;       ///< w coordinates of the curves.
-	std::vector<RtFloat> m_points;  ///< Points filled with (u[0], v[0], w[0], ... ).
+	std::vector<RtInt>   m_nCurves;  ///< Number if loops (curves with holes).
+	std::vector<RtInt>   m_order;    ///< Order of the curves.
+	std::vector<RtFloat> m_knots;    ///< Knot vectors of the curves.
+	std::vector<RtFloat> m_min;      ///< Minimum parametric values of the curves.
+	std::vector<RtFloat> m_max;      ///< Maximum parametric values of the curves.
+	std::vector<RtInt>   m_n;        ///< Number of coordinates.
+	std::vector<RtFloat> m_u;        ///< u coordinates of the curves.
+	std::vector<RtFloat> m_v;        ///< v coordinates of the curves.
+	std::vector<RtFloat> m_w;        ///< w coordinates of the curves.
+	std::vector<RtFloat> m_points;   ///< Points filled with (u[0], v[0], w[0], ... ).
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Member functions
 
 	/** @brief Standard constructor.
 	 */
-	inline CTrimCurveData() {}
+	inline CTrimCurveData() { m_nsegments = 0; }
 
 	/** @brief Constructor, fills instances with the values of a trim curve interface call.
 	 *
@@ -952,6 +955,7 @@ struct CTrimCurveData {
 	 */
 	inline bool operator==(const CTrimCurveData &curve)
 	{
+		// segments arn't compared, because it's number is calculated using the other values
 		if ( m_data.m_nloops != curve.m_data.m_nloops ) return false;
 		if ( m_nCurves != curve.m_nCurves ) return false;
 		if ( m_order != curve.m_order )  return false;

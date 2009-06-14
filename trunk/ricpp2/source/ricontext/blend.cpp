@@ -637,7 +637,7 @@ void CBSplineBasis::calc()
 	RtFloat t, dt;
 	IndexType cnt, lastCnt;
 	
-	m_segments = 1 + m_ncpts - m_order;
+	m_segments = nuNumSegs(m_ncpts, m_order);
 	
 	m_tVals.clear();
 	m_tVals.reserve(m_segments*(m_tess+1));
@@ -766,11 +766,10 @@ void CBSplineBasis::insertKnots(const std::vector<RtFloat> &theKnots)
 	m_knots = theKnots;
 }
 
-/*
 void CBSplineBasis::insertKnots(const std::vector<RtFloat> &theKnots, IndexType theKnotOffs)
 {
 	assert(theKnotOffs < theKnots.size());
-	if ( theKnotOffs > theKnots.size() )
+	if ( theKnotOffs >= theKnots.size() )
 		return;
 
 	m_knots.resize(knotSize());
@@ -790,7 +789,6 @@ void CBSplineBasis::insertKnots(const std::vector<RtFloat> &theKnots, IndexType 
 		m_knots[i] = lastKnot;
 	}
 }
-*/
 
 void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 						  const std::vector<RtFloat> &theKnots,
@@ -803,7 +801,6 @@ void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 }
 
 
-/*
 void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 						  const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
 						  RtFloat theTMin, RtFloat theTMax, RtInt theTess)
@@ -813,20 +810,20 @@ void CBSplineBasis::reset(RtInt theNCpts, RtInt theOrder,
 	validate();
 	calc();
 }
-*/
 
-void CBSplineBasis::nuBlendP2W(const std::vector<RtFloat> &source,
+RtInt CBSplineBasis::nuBlendP2W(const std::vector<RtFloat> &source,
 			                RtInt offs,
 			                RtInt seg,
-			                std::vector<RtFloat> &results) const
+			                std::vector<RtFloat> &results,
+							RtInt resultOffs) const
 {		
 	if ( numParameters(seg) <= 0 ) {
 		results.clear();
-		return;
+		return 0;
 	}
 
-	if ( results.size() != static_cast<size_t>(numParameters(seg)*2) ) {
-		results.resize(numParameters(seg)*2);
+	if ( results.size() < resultOffs + static_cast<size_t>(numParameters(seg)*2) ) {
+		results.resize(resultOffs + numParameters(seg)*2);
 	}
 	
 	RtInt oi, pcnt;
@@ -846,9 +843,23 @@ void CBSplineBasis::nuBlendP2W(const std::vector<RtFloat> &source,
 			U /= W;
 			V /= W;
 		}
-		results[pcnt+pcnt  ] = U;
-		results[pcnt+pcnt+1] = V;
+		results[resultOffs+2*pcnt  ] = U;
+		results[resultOffs+2*pcnt+1] = V;
 	}
+	return 2*pcnt;
+}
+
+RtInt CBSplineBasis::nuBlendP2W(const std::vector<RtFloat> &source,
+	RtInt offs,
+	std::vector<RtFloat> &results,
+	RtInt resultOffs) const
+{
+	RtInt sz = 0;
+	for ( RtInt seg = 0; seg < numSegments(); ++seg ) {
+		sz += nuBlendP2W(source, offs, seg, results, resultOffs + sz);
+	}
+	
+	return sz;
 }
 
 // -----------------------------------------------------------------------------

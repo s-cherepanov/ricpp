@@ -852,6 +852,14 @@ void CTrimCurveData::trimCurve(
 			m_points[sum*3+2] = m_w[sum];
 		}
 	}
+
+	m_segments.resize(m_data.m_total);
+	sum = 0;
+	for ( i = 0; i < m_data.m_total; ++i ) {
+		m_segments[i] = nuNumSegs(m_n[i], m_order[i]);
+		sum += m_segments[i];
+	}
+	m_nsegments = sum;
 }
 
 

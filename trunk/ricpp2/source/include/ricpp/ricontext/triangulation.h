@@ -62,7 +62,7 @@ namespace RiCPP {
 			calc();
 		}
 
-		inline const RtFloat &operator[](size_t index) const
+		inline const RtFloat &operator[](IndexType index) const
 		{
 			return m_circleData[index];
 		}
@@ -71,6 +71,63 @@ namespace RiCPP {
 		inline RtFloat   thetaMax() const { return m_thetaMax; }
 		inline RtFloat   thetaMin() const { return m_thetaMin; }
 	}; // CUnitCircle
+
+	// =========================================================================
+
+	class CTrimPath {
+	public:
+		typedef IndexType LoopIterator;
+		typedef IndexType SegmentIterator;
+		
+	private:
+		IndexType               m_tess;       ///< Tesselation per curve segment
+		const CTrimCurveData   *m_trimCurve;  ///< Pointer to the curve definition
+		
+		std::vector<IndexType>  m_loopStart;  ///< Index numbers for m_uvData (curve i: m_loopStart[i]...m_loopStart[i+1]-1), m_curveStart[numLoop] == m_uvData.size()
+		std::vector<RtFloat>    m_uvData;     ///< u, v coordinates of a tesselated trim curve, vector has an even size
+
+		/** @brief Calculates the line segments of the loops
+		 */
+		void calc();
+
+	public:
+		inline CTrimPath(IndexType theTess, const CTrimCurveData &trimCurve)
+		: m_tess(theTess), m_trimCurve(&trimCurve)
+		{
+			calc();
+		}
+		
+		inline LoopIterator loopBegin() const
+		{
+			return 0;
+		}
+
+		inline LoopIterator loopEnd() const
+		{
+			return m_loopStart.size();
+		}
+		
+		inline SegmentIterator segmentBegin(SegmentIterator loop) const
+		{
+			assert(loop < m_loopStart.size());
+			return m_loopStart[loop];
+		}
+		
+		inline SegmentIterator segmentEnd(SegmentIterator loop) const
+		{
+			assert(loop+1 < m_loopStart.size());
+			return m_loopStart[loop+1];
+		}
+
+		inline const RtFloat &operator[](SegmentIterator segment) const
+		{
+			assert(segment < m_uvData.size());
+			return m_uvData[segment];
+		}
+		
+		inline IndexType tess() const { return m_tess; }
+		inline const CTrimCurveData &trimCurveData() const { return *m_trimCurve; }
+	}; // CTrimPath
 
 	// =========================================================================
 	

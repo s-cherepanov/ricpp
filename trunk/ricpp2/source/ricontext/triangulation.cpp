@@ -59,6 +59,54 @@ using namespace RiCPP;
 
 // =============================================================================
 
+void CTrimPath::calc()
+{
+	assert(m_trimCurve != 0);
+	m_loopStart.clear();
+	m_uvData.clear();
+	
+	m_loopStart.resize(m_trimCurve->m_data.m_total+1);
+	m_uvData.resize(((m_tess+1)*m_trimCurve->m_nsegments + m_trimCurve->m_nCurves.size())*2); // close a loop explicitly
+	
+	IndexType curveOffs = 0;
+	IndexType knotOffs = 0;
+	IndexType uvOffs = 0;
+	IndexType cptOffs = 0;
+	for ( IndexType loop = 0; loop != m_trimCurve->m_nCurves.size(); ++loop ) {
+		IndexType uvOffsStart = uvOffs;
+		for ( RtInt curve = 0; curve != m_trimCurve->m_nCurves[loop]; ++curve, ++curveOffs ) {
+			CBSplineBasis bbasis(m_trimCurve->m_n[curveOffs],
+								 m_trimCurve->m_order[curveOffs],
+								 m_trimCurve->m_knots,
+								 knotOffs,
+								 m_trimCurve->m_min[curveOffs],
+								 m_trimCurve->m_max[curveOffs],
+								 m_tess
+			);
+			
+			m_loopStart[curveOffs] = uvOffs;
+			
+			// Insert UV
+			RtInt uvSize = bbasis.nuBlendP2W(m_trimCurve->m_points,
+							  cptOffs,
+							  m_uvData,
+							  uvOffs
+			);
+			
+			knotOffs += bbasis.knotSize();
+			uvOffs += uvSize*2;
+		}
+		// Close loop
+		m_uvData[uvOffs]   = m_uvData[uvOffsStart];
+		m_uvData[uvOffs+1] = m_uvData[uvOffsStart+1];
+		uvOffs += 2;
+	}
+	m_uvData.resize(uvOffs);
+	m_loopStart[curveOffs] = uvOffs;
+}
+
+// =============================================================================
+
 
 CTesselator::~CTesselator()
 {
@@ -410,7 +458,7 @@ CSurface *CPolygonTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 
 CSurface *CPointsPolygonsTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
-	size_t npolys =  m_obj->nVerts().size();
+	IndexType npolys =  m_obj->nVerts().size();
 	if ( npolys == 0 ) {
 		return  0;
 	}
@@ -2080,6 +2128,7 @@ void CNuPatchTesselator::fillIdx(RtInt usegment, RtInt vsegment)
 		}
 	}
 }
+
 
 CSurface *CNuPatchTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {

@@ -197,14 +197,11 @@ namespace RiCPP {
 		 */
 		void bsplineBasisDerivate(RtFloat t, RtInt span,
 								  std::vector<RtFloat> &N, std::vector<RtFloat> &Nd);
-		
-		bool empty() const;
-		inline IndexType knotSize() const { return static_cast<IndexType>(m_ncpts+m_order); }
-		
+				
 		void sortKnots();
 		void clearResults();
 		void insertKnots(const std::vector<RtFloat> &theKnots);
-		// void insertKnots(const std::vector<RtFloat> &theKnots, IndexType theKnotOffs);
+		void insertKnots(const std::vector<RtFloat> &theKnots, IndexType theKnotOffs);
 		void insertVals(RtInt theNCPts, RtInt theOrder,
 						RtFloat theTMin, RtFloat theTMax, RtInt theTess);
 		
@@ -234,19 +231,17 @@ namespace RiCPP {
 							 const std::vector<RtFloat> &theKnots,
 							 RtFloat theTMin, RtFloat theTMax, RtInt theTess)
 		{
-			reset(theNCPts, theOrder, theKnots, theTMin, theTMax, theTess);
+			reset(theNCPts, theOrder, theKnots, 0, theTMin, theTMax, theTess);
 		}
 
-		//  Constructor to initialize the members, @see reset()
-		/*
+		//! Constructor to initialize the members, @see reset()
 		inline CBSplineBasis(RtInt theNCPts, RtInt theOrder,
-				   const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
-				   RtFloat theTMin, RtFloat theTMax, RtInt theTess)
+							 const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
+							 RtFloat theTMin, RtFloat theTMax, RtInt theTess)
 		{
 			reset(theNCPts, theOrder, theKnots, theKnotOffs, theTMin, theTMax, theTess);
 		}
-		*/
-		
+
 		//! copy constructor
 		inline CBSplineBasis(const CBSplineBasis &sp)
 		{
@@ -273,19 +268,23 @@ namespace RiCPP {
 		/*  Used for one segement uses an offset for the knotvector and
 		 *  ncpts and order for the size of the knot vector.
 		 */
-		/*
 		void reset(RtInt theNcpts, RtInt theOrder,
 				   const std::vector<RtFloat> &theKnots, IndexType theKnotOffs,
 				   RtFloat theTMin, RtFloat theTMax, RtInt theTess);
-		*/
 
 		
 		//! Blend using control points (homogene 2D), members have to be valid
-		void nuBlendP2W(const std::vector<RtFloat> &source,
+		RtInt nuBlendP2W(const std::vector<RtFloat> &source,
 					 RtInt offs,
 					 RtInt seg,
-					 std::vector<RtFloat> &results) const;
+					 std::vector<RtFloat> &results,
+					 RtInt resultOffs) const;
 
+		RtInt nuBlendP2W(const std::vector<RtFloat> &source,
+						RtInt offs,
+						std::vector<RtFloat> &results,
+						RtInt resultOffs) const;
+		
 		/** @{
 		 */
 		inline RtInt nCPts() const { return m_ncpts; }
@@ -299,6 +298,8 @@ namespace RiCPP {
 		
 		/** @{
 		 */
+		bool empty() const;
+		inline IndexType knotSize() const { return static_cast<IndexType>(m_ncpts+m_order); }
 		inline RtInt numSegments() const { return m_segments; }
 		inline RtInt span(RtInt seg) const { return seg + order() - 1; }
 		inline RtInt offsParameters(RtInt seg) const { return valOffs()[span(seg)]; }

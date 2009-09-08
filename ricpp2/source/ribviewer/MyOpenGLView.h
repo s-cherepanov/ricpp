@@ -3,7 +3,7 @@
 #import <Cocoa/Cocoa.h>
 #import <ricpp/ricpp.h>
 
-@interface MyOpenGLView : NSOpenGLView
+@interface MyOpenGLView : NSOpenGLView <NSWindowDelegate>
 {
     IBOutlet NSTextField *statusLine;
 

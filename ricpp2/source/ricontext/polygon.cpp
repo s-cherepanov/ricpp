@@ -294,7 +294,7 @@ IndexType CPolygonContainer::getVertexInTriangle(
 {
 	IndexType idx = offset;
 	IndexType idxFound = 0;
-	RtFloat acosangle;
+	RtFloat acosangle = 0;
 	
 	do {
 		if ( m_nodes[idx].reflex() &&

@@ -1073,7 +1073,7 @@ bool CRenderState::CIfExprParser::parse(RtString expr) const
 
 	try {
 		if ( if_expr(str, result, val) ) {
-			RtFloat fval;
+			RtFloat fval = 0;
 			val.get(fval);
 			return fval != 0;
 		} else {

@@ -1285,7 +1285,7 @@ void CDisplayRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 		CRibParameter &p1 = request[1];
 		CRibParameter &p2 = request[2];
 
-		const char *name, *type, *mode;
+		const char *name = 0, *type = 0, *mode = 0;
 		bool b0 = p0.getString(name), b1 = p1.getString(type), b2 = p2.getString(mode);
 
 		if ( b0 && b1 && b2 ) {

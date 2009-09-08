@@ -1600,7 +1600,7 @@ int CRibParser::nextToken()
 	unsigned char c;        // the character read
 	bool mask,              // mask the next character in the string (\ is found) 
 		loop;               // will be false if EOF
-	char tmp;               // used to evaluate an 'octal' (\xxx) for a string
+	char tmp = 0;           // used to evaluate an 'octal' (\xxx) for a string
 	int tokenState = 0;     // State variable to identify token
 
 	m_token.clear();        // clear the current

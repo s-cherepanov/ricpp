@@ -1676,7 +1676,7 @@ public:
 			std::string v;
 			get(v);
 			if ( !v.empty() ) {
-				RtFloat v;
+				RtFloat v = 0;
 				get(v);
 				set(-v);
 			}

@@ -43,11 +43,12 @@
 namespace RiCPP {
 
 #if defined(__GNUC__)
-/** @brief Symbolic name for visibility("default") attribute.
+/* @brief Symbolic name for visibility("default") attribute.
  * (MAC)
  * see http://developer.apple.com/technotes/tn2007/tn2185.html
+ * but visibility=defaults generates many warnings
  */
-#pragma GCC visibility push(default)
+// #pragma GCC visibility push(default)
 #endif
 
 /** @brief Helper class, errormessages as Strings
@@ -348,7 +349,7 @@ public:
 }; // CErrorExceptionHandler
 
 #if defined(__GNUC__)
-#pragma GCC visibility pop
+// #pragma GCC visibility pop
 #endif
 
 } // namespace RiCPP

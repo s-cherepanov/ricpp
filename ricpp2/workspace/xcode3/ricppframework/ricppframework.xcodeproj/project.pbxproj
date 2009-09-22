@@ -3945,9 +3945,9 @@
 		C31C22470D740489009D99C2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/";
 				PRODUCT_NAME = riprog;
 			};
 			name = Debug;
@@ -3957,6 +3957,7 @@
 			buildSettings = {
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/";
 				PRODUCT_NAME = riprog;
 			};
 			name = Release;

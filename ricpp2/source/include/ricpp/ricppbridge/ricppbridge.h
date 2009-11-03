@@ -1099,6 +1099,9 @@ public:
 
 	virtual RtVoid relativeDetail(RtFloat relativedetail);
 
+	virtual RtVoid camera(RtToken type, RtToken token = RI_NULL, ...);
+    virtual RtVoid cameraV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
+
 	virtual RtVoid option(RtToken name, RtToken token = RI_NULL, ...);
 
 	/** @brief Sets an Option

@@ -152,7 +152,9 @@ RICPP_EXTERN(RtVoid)
     RiClipping (RtFloat hither, RtFloat yon),
 	RiClippingPlane(RtFloat x,RtFloat y,RtFloat z,RtFloat nx,RtFloat ny,RtFloat nz),
     RiDepthOfField (RtFloat fstop, RtFloat focallength, RtFloat focaldistance),
-    RiShutter (RtFloat smin, RtFloat smax);
+    RiShutter (RtFloat smin, RtFloat smax),
+    RiCamera (RtString name, ...),
+    RiCameraV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 RICPP_EXTERN(RtVoid)
     RiPixelVariance (RtFloat variation),

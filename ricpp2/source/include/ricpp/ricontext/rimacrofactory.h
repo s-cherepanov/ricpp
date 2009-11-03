@@ -434,6 +434,22 @@ namespace RiCPP {
 			return new CRiRelativeDetail(aLineNo, relativedetail);
 		}
 
+		inline virtual CRiCamera *newRiCamera(
+											  long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+											  const char *name,
+											  RtInt n, RtToken tokens[], RtPointer params[])
+		{
+			return new CRiCamera(aLineNo, decl, curColorDescr, name, n, tokens, params);
+		}
+		
+		inline virtual CRiCamera *newRiCamera(
+											  long aLineNo,
+											  const char *name,
+											  const CParameterList &parameters)
+		{
+			return new CRiCamera(aLineNo, name, parameters);
+		}
+		
 		inline virtual CRiOption *newRiOption(
 			long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 			const char *name,

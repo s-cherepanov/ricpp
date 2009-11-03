@@ -114,6 +114,7 @@ const char *CRequestInfo::ms_requestNames[N_REQUESTS] =
 	"Hider",
 	"ColorSamples",
 	"RelativeDetail",
+	"Camera",
 	"Option",
 
 	// Lights

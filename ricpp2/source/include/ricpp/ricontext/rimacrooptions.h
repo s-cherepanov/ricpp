@@ -196,6 +196,161 @@ namespace RiCPP {
 
 
 	///////////////////////////////////////////////////////////////////////////////
+	/** @brief Multiple Cameras.
+	 */
+	class CRiCamera : public CVarParamRManInterfaceCall {
+	private:
+		RtToken m_name; ///< Name of the option as atomized string.
+	protected:
+		typedef CVarParamRManInterfaceCall TypeParent;
+	public:
+		/** @brief Gets name for the class.
+		 *
+		 *  @return The name of the class (can be used as atomized string)
+		 */
+		inline static const char *myClassName(void) { return "CRiCamera"; }
+		
+		inline virtual const char *className() const { return CRiCamera::myClassName(); }
+		
+		inline virtual bool isA(const char *atomizedClassName) const
+		{
+			return ( atomizedClassName == myClassName() );
+		}
+		
+		inline virtual bool isKindOf(const char *atomizedClassName) const
+		{
+			if ( atomizedClassName == myClassName() )
+				return true;
+			return TypeParent::isKindOf(atomizedClassName);
+		}
+		
+		/** @brief Default constructor.
+		 *
+		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+		 *  @param aName Name of the camera (also name of space) as atomized string.
+		 */
+		inline CRiCamera(
+						 long aLineNo = -1,
+						 RtToken aName = RI_NULL)
+		: TypeParent(aLineNo), m_name(aName)
+		{
+		}
+		
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+		 *  @param decl Dictonary with the current declarations.
+		 *  @param curColorDescr Current color descriptor.
+		 *  @param aName Name of the camera (also name of space) as atomized string.
+		 *  @param n Number of parameters (size of @a tokens, @a params).
+		 *  @param tokens Tokens of the request.
+		 *  @param params Parameter values of the request.
+		 */
+		inline CRiCamera(
+						 long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
+						 RtToken aName,
+						 RtInt n, RtToken tokens[], RtPointer params[])
+		: TypeParent(aLineNo, RI_CAMERA, aName, decl, CParameterClasses(), curColorDescr, n, tokens, params), m_name(aName)
+		{
+		}
+		
+		/** @brief Constructor.
+		 *
+		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
+		 *  @param aName Name of the camera (also name of space) as atomized string.
+		 *  @param theParameters Parsed parameter list.
+		 */
+		inline CRiCamera(
+						 long aLineNo,
+						 RtToken aName,
+						 const CParameterList &theParameters
+						 )
+		: TypeParent(aLineNo, theParameters), m_name(aName)
+		{
+		}
+		
+		
+		/** @brief Copy constructor.
+		 *
+		 *  @param c Object to copy.
+		 */
+		inline CRiCamera(const CRiCamera &c)
+		{
+			*this = c;
+		}
+		
+		inline virtual CRManInterfaceCall *duplicate() const
+		{
+			return new CRiCamera(*this);
+		}
+		
+		inline virtual EnumRequests interfaceIdx() const { return REQ_CAMERA; }
+		
+		/** @brief Gets the name of the option as atomized string.
+		 *
+		 *  @return The name of the option as atomized string.
+		 */
+		inline RtToken name() const
+		{
+			return m_name;
+		}
+		
+		/** @brief Sets the name of the option as atomized string.
+		 *
+		 *  @param aName The name of the option as atomized string.
+		 */
+		inline void name(RtToken aName)
+		{
+			m_name = aName;
+		}
+		
+		inline virtual void process(IRiRoot &ri)
+		{
+			ri.cameraV(name(), paramSize(), tokenPtr(), valuePtr());
+		}
+		
+		inline virtual void preProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+			ri.preProcess(*this);
+		}
+		
+		inline virtual void doProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+			ri.doProcess(*this);
+		}
+		
+		inline virtual void postProcess(IDoRender &ri, const IArchiveCallback *cb)
+		{
+			ri.postProcess(*this);
+		}
+		
+		inline virtual void writeRIB(CRibElementsWriter &ribWriter, RtInt n=0, const RtToken ignoreTokens[]=0) const
+		{
+			ribWriter.putRequest(interfaceIdx());
+			ribWriter.putBlank();
+			ribWriter.putStringToken(name());
+			TypeParent::writeRIB(ribWriter, n, ignoreTokens);
+		}
+		
+		/** @brief Assignment.
+		 *
+		 *  @param c CRManInterfaceCall to assign
+		 *  @return A reference to this object.
+		 */
+		inline CRiCamera &operator=(const CRiCamera &c)
+		{
+			if ( this == &c )
+				return *this;
+			
+			name(c.name());
+			
+			TypeParent::operator=(c);
+			return *this;
+		}
+	}; // CRiCamera
+	
+	
+	///////////////////////////////////////////////////////////////////////////////
 	/** @brief The raster resolution and pixel aspect ratio of the image to be rendered.
 	 */
 	class CRiFormat : public CRManInterfaceCall {

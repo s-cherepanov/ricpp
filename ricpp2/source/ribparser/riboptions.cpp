@@ -1527,6 +1527,45 @@ void CRelativeDetailRibRequest::operator()(IRibParserState &parser, CRibRequestD
 	}
 }
 
+void CCameraRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
+{
+	// Camera name <paramlist>
+	
+	if ( request.size() >= 1 ) {
+		
+		CRibParameter &p0 = request[0];
+		const char *name;
+		
+		if ( p0.getString(name) ) {
+			
+			CParameterClasses p;
+			
+			int n = request.getTokenList(1, p, RI_CAMERA, name);
+			
+			if ( n > 0 ) {
+				parser.ribFilter().cameraV(name, n, request.tokenList(), request.valueList());
+			} else {
+				parser.ribFilter().cameraV(name, 0, 0, 0);
+			}
+			
+		} else {
+			parser.errHandler().handleError(
+											RIE_CONSISTENCY, RIE_ERROR,
+											"Line %ld, File \"%s\", badargument: '%s' argument %s is not a string",
+											p0.lineNo(), parser.resourceName(),
+											requestName(), "1 (name)", RI_NULL);
+		}
+		
+	} else {
+		
+		parser.errHandler().handleError(
+										RIE_MISSINGDATA, RIE_ERROR,
+										"Line %ld, File \"%s\", badargument: '%s' argument %s missing",
+										parser.lineNo(), parser.resourceName(),
+										requestName(), "(name)", RI_NULL);
+	}
+}
+
 void COptionRibRequest::operator()(IRibParserState &parser, CRibRequestData &request) const
 {
 	// Option name <paramlist>

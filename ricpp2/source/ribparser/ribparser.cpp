@@ -861,7 +861,10 @@ void CRibParser::initRequestMap()
 
 		static CRelativeDetailRibRequest relativeDetail;
 		s_requestMap.insert(std::make_pair(relativeDetail.requestName(), &relativeDetail));
-
+		
+		static CCameraRibRequest camera;
+		s_requestMap.insert(std::make_pair(camera.requestName(), &camera));
+		
 		static COptionRibRequest option;
 		s_requestMap.insert(std::make_pair(option.requestName(), &option));
 

@@ -115,6 +115,7 @@ enum EnumRequests {
 	REQ_HIDER,						///< Index for ri function IRi::hider()
 	REQ_COLOR_SAMPLES,				///< Index for ri function IRi::colorSamples()
 	REQ_RELATIVE_DETAIL,			///< Index for ri function IRi::relativeDetail()
+	REQ_CAMERA,						///< Index for ri function IRi::camera()
 	REQ_OPTION,						///< Index for ri function IRi::option()
 
 	// Lights

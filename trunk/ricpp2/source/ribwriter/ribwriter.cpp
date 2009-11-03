@@ -849,6 +849,10 @@ RtVoid CRibWriter::postProcess(CRiRelativeDetail &obj)
 TEST_WRITE_RIB
 
 
+RtVoid CRibWriter::postProcess(CRiCamera &obj)
+TEST_WRITE_RIB
+
+
 RtVoid CRibWriter::postProcess(CRiOption &obj)
 TEST_WRITE_RIB
 

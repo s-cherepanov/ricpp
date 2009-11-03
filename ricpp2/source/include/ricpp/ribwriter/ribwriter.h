@@ -245,6 +245,7 @@ public:
     virtual RtVoid postProcess(CRiHider &obj);
     virtual RtVoid postProcess(CRiColorSamples &obj);
     virtual RtVoid postProcess(CRiRelativeDetail &obj);
+    virtual RtVoid postProcess(CRiCamera &obj);
     virtual RtVoid postProcess(CRiOption &obj);
 	
     virtual RtVoid postProcess(CRiLightSource &obj);

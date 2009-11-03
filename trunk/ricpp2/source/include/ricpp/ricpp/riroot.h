@@ -714,7 +714,16 @@ public:
 	 *  @param relativedetail Factor used for scaling
 	 */
     virtual RtVoid relativeDetail(RtFloat relativedetail) = 0;
-
+	
+	//! Multi-Camera Rendering
+	/*! Marks the current view and option stack for multiple cameras
+	 *  @param name Name of the camera and camera coordinate system
+	 *  @param n Number of tokens
+	 *  @param tokens Tokens for additional parameter list
+	 *  @param params Value pointer for additional parameter list for the projection, e.g. RI_FOV float
+	 */
+    virtual RtVoid cameraV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]) = 0; /* New */
+	
 	//! Sets a implementation-specific option
 	/*! @param name Name of the option
 	 *  @param n Number of tokens
@@ -1674,6 +1683,11 @@ public:
 	 *  @see IRiRoot::hiderV()
 	 */
 	virtual RtVoid hider(RtToken type, RtToken token = RI_NULL, ...) = 0;
+
+	/** Multi-Camera Rendering
+	 *  @see IRiRoot::cameraV()
+	 */
+	virtual RtVoid camera(RtToken name, RtToken token = RI_NULL, ...) = 0;  /* New */
 
 	/** @brief Sets a implementation-specific option
 	 *  @see IRiRoot::optionV()

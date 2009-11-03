@@ -305,6 +305,21 @@ RICPP_INTERN(RtVoid) RiShutter(RtFloat smin, RtFloat smax)
 	RI_POSTAMBLE
 }
 
+RICPP_INTERN(RtVoid) RiCamera(RtString name, ...)
+{
+	RI_PREAMBLE
+	RI_GETARGS(name)
+	RiCPPRoot()->cameraV(name, n, tokens, params);
+	RI_POSTAMBLE
+}
+
+RICPP_INTERN(RtVoid) RiCameraV(RtString name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	RI_PREAMBLE
+	RiCPPRoot()->cameraV(name, n, tokens, params);
+	RI_POSTAMBLE
+}
+
 // ----------------------------------------------------------------------------
 
 RICPP_INTERN(RtVoid) RiPixelVariance(RtFloat variation)

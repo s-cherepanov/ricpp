@@ -197,7 +197,15 @@ namespace RiCPP {
 		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
 		inline virtual EnumRequests interfaceIdx() const { return REQ_RELATIVE_DETAIL; }
 	}; // CRelativeDetailRibRequest
-
+	
+	/** @brief Handles RIB request Camera name ...
+	 */
+	class CCameraRibRequest : public CRibRequest {
+	public:
+		virtual void operator()(IRibParserState &parser, CRibRequestData &request) const;
+		inline virtual EnumRequests interfaceIdx() const { return REQ_CAMERA; }
+	}; // COptionRibRequest
+	
 	/** @brief Handles RIB request Option name ...
 	 */
 	class COptionRibRequest : public CRibRequest {

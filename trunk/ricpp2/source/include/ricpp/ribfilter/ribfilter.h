@@ -489,6 +489,12 @@ public:
 			callee()->relativeDetail(relativedetail);
 	}
 
+    inline virtual RtVoid cameraV(RtToken aName, RtInt n, RtToken tokens[], RtPointer params[])
+	{
+		if ( canCall(REQ_CAMERA) )
+			callee()->cameraV(aName, n, tokens, params);
+	}
+	
     inline virtual RtVoid optionV(RtToken aName, RtInt n, RtToken tokens[], RtPointer params[])
 	{
 		if ( canCall(REQ_OPTION) )

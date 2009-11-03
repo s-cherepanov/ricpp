@@ -138,6 +138,7 @@ public:
     virtual RtVoid preProcess(CRiHider &obj) = 0;
     virtual RtVoid preProcess(CRiColorSamples &obj) = 0;
     virtual RtVoid preProcess(CRiRelativeDetail &obj) = 0;
+    virtual RtVoid preProcess(CRiCamera &obj) = 0;
     virtual RtVoid preProcess(CRiOption &obj) = 0;
 	
     virtual RtVoid preProcess(CRiLightSource &obj) = 0;
@@ -288,6 +289,7 @@ public:
     virtual RtVoid doProcess(CRiHider &obj) = 0;
     virtual RtVoid doProcess(CRiColorSamples &obj) = 0;
     virtual RtVoid doProcess(CRiRelativeDetail &obj) = 0;
+    virtual RtVoid doProcess(CRiCamera &obj) = 0;
     virtual RtVoid doProcess(CRiOption &obj) = 0;
 	
     virtual RtVoid doProcess(CRiLightSource &obj) = 0;
@@ -438,6 +440,7 @@ public:
     virtual RtVoid postProcess(CRiHider &obj) = 0;
     virtual RtVoid postProcess(CRiColorSamples &obj) = 0;
     virtual RtVoid postProcess(CRiRelativeDetail &obj) = 0;
+    virtual RtVoid postProcess(CRiCamera &obj) = 0;
     virtual RtVoid postProcess(CRiOption &obj) = 0;
 	
     virtual RtVoid postProcess(CRiLightSource &obj) = 0;

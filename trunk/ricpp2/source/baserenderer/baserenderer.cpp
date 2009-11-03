@@ -2028,6 +2028,24 @@ RtVoid CBaseRenderer::optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer
 }
 
 
+RtVoid CBaseRenderer::preProcess(CRiCamera &obj)
+{
+	renderState()->camera(obj.name(), obj.parameters());	
+}
+
+
+RtVoid CBaseRenderer::cameraV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	size_t nParamsSav = n;
+	RICPP_PREAMBLE(REQ_CAMERA)
+	name = renderState()->tokFindCreate(name);
+	renderState()->parseParameters(RI_CAMERA, name, CParameterClasses(), n, tokens, params);
+	nParamsSav = renderState()->curParamList().size();
+	RICPP_PROCESS(newRiCamera(renderState()->lineNo(), name, renderState()->curParamList()));
+	RICPP_POSTAMBLE
+	RICPP_UNREC_TOKENS(nParamsSav)
+}
+
 RtVoid CBaseRenderer::preProcess(CRiControl &obj)
 {
 	renderState()->control(obj.name(), obj.parameters());

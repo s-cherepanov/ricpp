@@ -655,6 +655,13 @@ namespace RiCPP {
 		 */
 		virtual void projection(RtToken name, const CParameterList &params);
 
+		/** @brief Sets the CTM and options as additional camera.
+		 *  @param name Name of the camera (CTM)
+		 *  @param params Parmeters for the camera
+		 *  @todo Implement Camera
+		 */
+		virtual void camera(RtToken name, const CParameterList &params);
+		
 		/** @brief Call the default declarations.
 		 *
 		 *  Overload this to add more default declarations, by calling processDeclare() with

@@ -1459,6 +1459,31 @@ RtVoid CRiCPPBridge::relativeDetail(RtFloat relativedetail)
 }
 
 
+RtVoid CRiCPPBridge::camera(RtToken type, RtToken token, ...)
+{
+	va_list marker;
+	va_start(marker, token);
+	RtInt n = getTokens(token, marker);
+	
+	cameraV(type, n, &m_tokens[0], &m_params[0]);
+}
+
+RtVoid CRiCPPBridge::cameraV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[])
+{
+	if ( m_ctxMgmt.curBackend().valid() ) {
+		try {
+			if ( disabledCommand(REQ_CAMERA) )
+				return;
+			m_ctxMgmt.curBackend().renderingContext()->cameraV(type, n, tokens, params);
+		} catch (ExceptRiCPPError &e) {
+			ricppErrHandler().handleError(e);
+		}
+	} else {
+		if ( !m_ctxMgmt.curBackend().aborted() )
+			ricppErrHandler().handleError(RIE_NOTSTARTED, RIE_SEVERE, "CRiCPPBridge::cameraV(type:%s, n:%d, ...)", type ? type : "", (int)n);
+	}
+}
+
 RtVoid CRiCPPBridge::doControl(RtToken name, const CParameterList &params)
 {
 	if ( !name )

@@ -664,6 +664,7 @@ public:
 	virtual RtVoid hiderV(RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid colorSamples(RtInt N, RtFloat nRGB[], RtFloat RGBn[]);
 	virtual RtVoid relativeDetail(RtFloat relativedetail);
+	virtual RtVoid cameraV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 	virtual RtVoid optionV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
 
 	virtual RtLightHandle lightSourceV(RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
@@ -819,6 +820,7 @@ public:
     virtual RtVoid preProcess(CRiHider &obj);
     virtual RtVoid preProcess(CRiColorSamples &obj);
     virtual RtVoid preProcess(CRiRelativeDetail &obj);
+	virtual RtVoid preProcess(CRiCamera &obj);
     virtual RtVoid preProcess(CRiOption &obj);
 	
     virtual RtVoid preProcess(CRiLightSource &obj);
@@ -968,6 +970,7 @@ public:
     inline virtual RtVoid doProcess(CRiHider &obj) {}
     inline virtual RtVoid doProcess(CRiColorSamples &obj) {}
     inline virtual RtVoid doProcess(CRiRelativeDetail &obj) {}
+    inline virtual RtVoid doProcess(CRiCamera &obj) {}
     inline virtual RtVoid doProcess(CRiOption &obj) {}
 	
     virtual RtVoid doProcess(CRiLightSource &obj);
@@ -1117,6 +1120,7 @@ public:
     inline virtual RtVoid postProcess(CRiHider &obj) {}
     inline virtual RtVoid postProcess(CRiColorSamples &obj) {}
     inline virtual RtVoid postProcess(CRiRelativeDetail &obj) {}
+    inline virtual RtVoid postProcess(CRiCamera &obj) {}
     inline virtual RtVoid postProcess(CRiOption &obj) {}
 	
     inline virtual RtVoid postProcess(CRiLightSource &obj) {}

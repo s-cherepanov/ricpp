@@ -1548,6 +1548,13 @@ void CRenderState::projection(RtToken name, const CParameterList &params)
 	curTransform().reset();
 }
 
+
+void CRenderState::camera(RtToken name, const CParameterList &params)
+{
+	/// @todo Implementation (Store camera options and coordinate system)
+}
+
+
 void CRenderState::deleteTransMapCont(TypeTransformationMap &m)
 {
 	TypeTransformationMap::iterator pos;

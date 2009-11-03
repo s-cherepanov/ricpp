@@ -122,6 +122,7 @@ namespace RiCPP {
 	class CRiHider;
 	class CRiColorSamples;
 	class CRiRelativeDetail;
+	class CRiCamera;
 
 	// Attributes
 	class CRiAttribute;

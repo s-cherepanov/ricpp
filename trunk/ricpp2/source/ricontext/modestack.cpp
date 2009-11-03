@@ -119,6 +119,7 @@ CValidModes::CValidModes()
 	m_requests[REQ_HIDER] = optionBits;
 	m_requests[REQ_COLOR_SAMPLES] = optionBits;
 	m_requests[REQ_RELATIVE_DETAIL] = optionBits;
+	m_requests[REQ_CAMERA] = optionBits;
 	m_requests[REQ_OPTION] = MODE_BIT_OUTSIDE | optionBits;
 
 	m_requests[REQ_LIGHT_SOURCE] = attributeBits;

@@ -414,6 +414,8 @@
 	
 	scalar = [(G3DSLOScalar *)[G3DSLOScalar alloc] initWithVal:value];
 	[val insertObject:scalar atIndex:i];
+	[scalar release];
+
 	return self;
 }
 

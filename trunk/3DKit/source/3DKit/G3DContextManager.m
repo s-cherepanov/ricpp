@@ -20,28 +20,23 @@
 	RtContextHandle handle;
 }
 - initWithHandle:(RtContextHandle) aHandle;
-- (RtContextHandle) handle;
-- (void) setHandle: (RtContextHandle) aHandle;
+@property (readwrite) RtContextHandle handle;
+
 @end
 
 
 @implementation G3DContextHandle
+
+@synthesize handle;
+
 - initWithHandle: (RtContextHandle) aHandle
 {
 	[super init];
 	handle = aHandle;
+
 	return self;
 }
 
-- (RtContextHandle) handle
-{
-	return handle;
-}
-
-- (void) setHandle: (RtContextHandle) aHandle
-{
-	handle = aHandle;
-}
 @end
 
 
@@ -49,7 +44,7 @@
 
 static G3DContextManager *contextManagerSingleton = 0;
 
-+ new
++ (id)contextManager
 {
 	if ( !contextManagerSingleton ) {
 		contextManagerSingleton = [[G3DContextManager alloc] init];
@@ -57,56 +52,71 @@ static G3DContextManager *contextManagerSingleton = 0;
 	return contextManagerSingleton;
 }
 
-- free
+- (void)dealloc
 {
 	id key;
+
 	for ( key in contextTable ) {
 		RiContext([[contextTable objectForKey:key] handle]);
 		RiEnd();
 	}
+
 	if ( mainContext != illContextHandle ) {
 		RiContext(mainContext);
 		RiEnd();
 	}
-	[contextTable removeAllObjects];
+
+	[contextTable dealloc];
 	mainContext = illContextHandle;
-	return nil;
+	
+	[super dealloc];
 }
 
-- init
+- (id)init
 {
 	mainContext = illContextHandle;
-	contextTable = [NSMutableDictionary new];
+	contextTable = [NSMutableDictionary dictionary];
 	_nameCnt = 0;
+
 	return self;
 }
 
-- (RtContextHandle) mainContext
+- (RtContextHandle)mainContext
 {
 	if ( mainContext == illContextHandle ) {
 		RiBegin("glrenderer");
 		mainContext = RiGetContext();
 	}
+	
 	return mainContext;
 }
 
-- (RtContextHandle) registerContext:(RtContextHandle) aContext withName: (RtToken) name
+- (RtContextHandle)registerContext:(RtContextHandle)aContext withName:(RtToken)name
 {
+	G3DContextHandle *aHandle;
+	NSString *str;
 	char buffer[64];
+	
 	if ( name == RI_NULL ) {
 		sprintf(buffer, "__Context_%ld", _nameCnt);
 		_nameCnt++;
 		name = buffer;
 	}
-	G3DContextHandle *aHandle = [[G3DContextHandle alloc] initWithHandle:[self currentContext]];
-	// Memory for NSString???
-	[contextTable setObject:aHandle forKey:[[NSString alloc] initWithCString:name encoding:NSASCIIStringEncoding]];
+
+	aHandle = [[G3DContextHandle alloc] initWithHandle:aContext];
+	str = [[NSString alloc] initWithCString:name encoding:NSASCIIStringEncoding];
+	
+	[contextTable setObject:aHandle forKey:str];
+	[str release];
+	[aHandle release];
+	
 	return aContext;
 }
 
-- (void) removeContext:(RtContextHandle) aContext
+- (void)removeContext:(RtContextHandle)aContext
 {
-	id key;
+	NSString *key;
+
 	for ( key in contextTable ) {
 		if ( [[contextTable objectForKey:key] handle] == aContext ) {
 			[contextTable removeObjectForKey:key];
@@ -115,22 +125,26 @@ static G3DContextManager *contextManagerSingleton = 0;
 	}
 }
 
-- (RtContextHandle) contextForKey: (RtToken) name
+- (RtContextHandle)contextForKey:(RtToken)name
 {
-	G3DContextHandle *aHandle = [contextTable objectForKey:[[NSString alloc] initWithCString:name encoding:NSASCIIStringEncoding]];
+	NSString *str = [[NSString alloc] initWithCString:name encoding:NSASCIIStringEncoding];
+	G3DContextHandle *aHandle = [contextTable objectForKey:str];
+	[str release];
+	
 	if ( aHandle == nil )
 		return illContextHandle;
+
 	return [aHandle handle];
 }
 
 
-- (RtContextHandle) createContext:(const char *) name
+- (RtContextHandle)createContext:(const char *)name
 {
 	RiBegin("glrenderer");
 	return [self registerContext:[self currentContext] withName:name];
 }
 
-- (RtContextHandle) createContext:(const char *) name withRenderer:(RtToken) renderer
+- (RtContextHandle)createContext:(const char *)name withRenderer:(RtToken)renderer
 {
 	if ( renderer && !strcmp(renderer, RI_ARCHIVE) )
 		RiBegin(RI_NULL);
@@ -142,31 +156,32 @@ static G3DContextManager *contextManagerSingleton = 0;
 	return [self registerContext:[self currentContext] withName:name];
 }
 
-- (RtContextHandle) createContext:(const char *) name toFile:(RtToken) ribFileName
+- (RtContextHandle)createContext:(const char *)name toFile:(RtToken)ribFileName
 {
 	RiBegin(ribFileName);
+
 	return [self registerContext:[self currentContext] withName:name];
 }
 
-- (RtContextHandle) createContext:(const char *) name toStream:(NSStream *) stm
+- (void)destroyContext:(RtContextHandle)aContext
 {
-	return illContextHandle;
-}
-
-- (void) destroyContext:(RtContextHandle) aContext
-{
+	if ( aContext == illContextHandle )
+		return;
+	
 	RtContextHandle old = [self setCurrentContext:aContext];
 	RiEnd();
+
 	if ( old != illContextHandle && old != aContext ) {
 		[self setCurrentContext:old];
 	}
+
 	if ( aContext == mainContext )
 		mainContext = illContextHandle;
 	else
 		[self removeContext:aContext];
 }
 
-- (void) destroyContextByName:(const char *) name
+- (void)destroyContextByName:(const char *)name
 {
 	RtContextHandle aContext = [self contextForKey:name];
 	if ( aContext != illContextHandle ) {
@@ -174,7 +189,7 @@ static G3DContextManager *contextManagerSingleton = 0;
 	}
 }
 
-- (RtContextHandle) setCurrentContext:(RtContextHandle) aContext
+- (RtContextHandle)setCurrentContext:(RtContextHandle)aContext
 {
 	RtContextHandle lastContext = RiGetContext();
 	RiContext(aContext);
@@ -182,7 +197,7 @@ static G3DContextManager *contextManagerSingleton = 0;
 	return lastContext;
 }
 
-- (RtContextHandle) setCurrentContextByName:(RtToken) name
+- (RtContextHandle)setCurrentContextByName:(RtToken)name
 {
 	RtContextHandle aContext = [self contextForKey:name];
 	if ( aContext != illContextHandle ) {
@@ -192,15 +207,9 @@ static G3DContextManager *contextManagerSingleton = 0;
 	return illContextHandle;
 }
 
-- (RtContextHandle) currentContext
+- (RtContextHandle)currentContext
 {
 	return RiGetContext();
-}
-
-- awake
-{
-	[self init];
-	return self;
 }
 
 @end

@@ -35,7 +35,6 @@
 		207BDEB60E90300E0050F403 /* G3DContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 207BDEB50E90300E0050F403 /* G3DContextManager.m */; };
 		207BDF390E903B350050F403 /* G3DKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3938C2E0E7192D9009582F7 /* G3DKit.dylib */; };
 		207BDF3A0E903B420050F403 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C3938C0D0E719178009582F7 /* libriprog.1.dylib */; };
-		208DB14B0E82F28900019042 /* slo.h in Headers */ = {isa = PBXBuildFile; fileRef = 208DB14A0E82F28900019042 /* slo.h */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -87,7 +86,6 @@
 		207BDEA20E902E4D0050F403 /* G3Dkit.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = G3Dkit.h; path = ../../../source/include/3DKit/G3Dkit.h; sourceTree = SOURCE_ROOT; };
 		207BDEA30E902E4D0050F403 /* gnu3d.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = gnu3d.h; path = ../../../source/include/3DKit/gnu3d.h; sourceTree = SOURCE_ROOT; };
 		207BDEB50E90300E0050F403 /* G3DContextManager.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = G3DContextManager.m; path = ../../../source/3DKit/G3DContextManager.m; sourceTree = SOURCE_ROOT; };
-		208DB14A0E82F28900019042 /* slo.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = slo.h; path = ../../../source/include/ricpp/ri/slo.h; sourceTree = SOURCE_ROOT; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; lineEnding = 1; path = main.m; sourceTree = "<group>"; };
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -136,7 +134,6 @@
 			isa = PBXGroup;
 			children = (
 				207BDE980E902E370050F403 /* 3DKit */,
-				207BDE970E902E1A0050F403 /* RiCPP */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -167,14 +164,6 @@
 				C3938C2E0E7192D9009582F7 /* G3DKit.dylib */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		207BDE970E902E1A0050F403 /* RiCPP */ = {
-			isa = PBXGroup;
-			children = (
-				207BDEB40E902FF10050F403 /* Headers */,
-			);
-			name = RiCPP;
 			sourceTree = "<group>";
 		};
 		207BDE980E902E370050F403 /* 3DKit */ = {
@@ -219,14 +208,6 @@
 				C35BCD810EC33CBF0017E366 /* gnu3d.m */,
 			);
 			name = Implementation;
-			sourceTree = "<group>";
-		};
-		207BDEB40E902FF10050F403 /* Headers */ = {
-			isa = PBXGroup;
-			children = (
-				208DB14A0E82F28900019042 /* slo.h */,
-			);
-			name = Headers;
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* 3DKit */ = {
@@ -276,7 +257,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				208DB14B0E82F28900019042 /* slo.h in Headers */,
 				207BDEA40E902E4D0050F403 /* G3DCamera.h in Headers */,
 				207BDEA50E902E4D0050F403 /* G3DContextManager.h in Headers */,
 				207BDEA60E902E4D0050F403 /* G3DLight.h in Headers */,
@@ -485,7 +465,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -494,8 +474,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../../../../ricpp2/workspace/xcode3/ricppframework/build/Release\"";
 				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				VALID_ARCHS = "ppc64 ppc7400 ppc970 i386 x86_64 ppc";
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 			};
 			name = Debug;
 		};

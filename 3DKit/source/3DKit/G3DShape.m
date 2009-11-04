@@ -279,28 +279,28 @@
 - setShader:aShader
 {
 	switch ( [aShader shaderType] ) {
-		case SLO_TYPE_SURFACE:
+		case G3D_SLO_TYPE_SURFACE:
 			surfaceShader = aShader;
 			break;
-		case SLO_TYPE_LIGHT:
+		case G3D_SLO_TYPE_LIGHT:
 			lightShader = aShader;
 			break;
-		case SLO_TYPE_DISPLACEMENT:
+		case G3D_SLO_TYPE_DISPLACEMENT:
 			displacementShader = aShader;
 			break;
-		case SLO_TYPE_INTERIOR:
+		case G3D_SLO_TYPE_INTERIOR:
 			interiorShader = aShader;
 			break;
-		case SLO_TYPE_EXTERIOR:
+		case G3D_SLO_TYPE_EXTERIOR:
 			exteriorShader = aShader;
 			break;
-		case SLO_TYPE_ATMOSPHERE:
+		case G3D_SLO_TYPE_ATMOSPHERE:
 			atmosphereShader = aShader;
 			break;
-		case SLO_TYPE_DEFORMATION:
+		case G3D_SLO_TYPE_DEFORMATION:
 			deformationShader = aShader;
 			break;
-		case SLO_TYPE_IMAGER:
+		case G3D_SLO_TYPE_IMAGER:
 			imagerShader = aShader;
 			break;
 		default:
@@ -309,24 +309,24 @@
 	return self;
 }
 
-- shaderType:(SLO_TYPE)type
+- shaderType:(G3D_SLO_TYPE)type
 {
 	switch ( type ) {
-		case SLO_TYPE_SURFACE:
+		case G3D_SLO_TYPE_SURFACE:
 			return surfaceShader;
-		case SLO_TYPE_LIGHT:
+		case G3D_SLO_TYPE_LIGHT:
 			return lightShader;
-		case SLO_TYPE_DISPLACEMENT:
+		case G3D_SLO_TYPE_DISPLACEMENT:
 			return displacementShader;
-		case SLO_TYPE_INTERIOR:
+		case G3D_SLO_TYPE_INTERIOR:
 			return interiorShader;
-		case SLO_TYPE_EXTERIOR:
+		case G3D_SLO_TYPE_EXTERIOR:
 			return exteriorShader;
-		case SLO_TYPE_ATMOSPHERE:
+		case G3D_SLO_TYPE_ATMOSPHERE:
 			return atmosphereShader;
-		case SLO_TYPE_DEFORMATION:
+		case G3D_SLO_TYPE_DEFORMATION:
 			return deformationShader;
-		case SLO_TYPE_IMAGER:
+		case G3D_SLO_TYPE_IMAGER:
 			return imagerShader;
 		default:
 			return nil;

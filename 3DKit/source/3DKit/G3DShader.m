@@ -27,6 +27,20 @@
 	return self;
 }
 
+- (id)initWithG3DSLOScalar:(G3DSLOScalar *)aVal
+{
+	if ( self == aVal )
+		return self;
+	
+	G3D_SLO_FLOAT floatVal = 0;
+	if ( self != nil )
+		floatVal = [aVal val];
+
+	[self initWithVal:floatVal];
+
+	return self;
+}
+
 - (id)initWithVal:(G3D_SLO_FLOAT)aVal
 {
 	val = aVal;
@@ -68,9 +82,27 @@
 		(G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, 
 		(G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0
 	};
-
+	
 	[self initWithVal:aVal];
 
+	return self;
+}
+
+- (id)initWithG3DSLOMatrix:(G3DSLOMatrix *)aVal
+{
+	G3D_SLO_FLOAT aMatrix[4][4] = {
+		(G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, 
+		(G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, 
+		(G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, 
+		(G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0, (G3D_SLO_FLOAT) 0
+	};
+	
+	if ( aVal == self )
+		return self;
+	
+	[aVal getVal:aMatrix];		
+	[self initWithVal:aMatrix];
+	
 	return self;
 }
 
@@ -201,6 +233,20 @@
 	return self;
 }
 
+- (id)initWithG3DSLOPoint:(G3DSLOPoint *)aVal
+{
+	if ( aVal == self )
+		return self;
+	
+	if ( aVal == nil ) {
+		[self initWithX:(G3D_SLO_FLOAT)0 y:(G3D_SLO_FLOAT)0 z:(G3D_SLO_FLOAT)0];
+	} else {
+		[self initWithX:[aVal xVal] y:[aVal yVal] z:[aVal zVal]];
+	}
+	
+	return self;
+}
+
 - (id)initWithX:(G3D_SLO_FLOAT)x y:(G3D_SLO_FLOAT)y z:(G3D_SLO_FLOAT)z
 {
 	[self setX:(G3D_SLO_FLOAT)x y:(G3D_SLO_FLOAT)y z:(G3D_SLO_FLOAT)z];
@@ -275,7 +321,12 @@
 {
 	NSUInteger i;
 	
-	[val initWithCapacity:[scalarAry count]];
+	if ( scalarAry == nil ) {
+		[self initWithCapacity:3];
+		return self;
+	}
+
+	[self initWithCapacity:[scalarAry count]];
 	for ( i = 0; i < [self count]; ++i ) {
 		G3DSLOScalar *s = [scalarAry objectAtIndex:i];
 		[self setComponent:i val:[s val]];
@@ -284,9 +335,37 @@
 	return self;
 }
 
+- (id)initWithG3DSLOColor:(G3DSLOColor *)cv
+{
+	NSUInteger i;
+	
+	if ( cv == self )
+		return self;
+
+	int aCount = 3;
+	if ( cv != nil ) {
+		aCount = [cv count];
+	}
+
+	[self initWithCapacity:aCount];
+
+	if ( cv == nil )
+		return self;
+	
+	for ( i = 0; i < aCount; ++i ) {
+		if ( cv != nil ) {
+			[self setComponent:i val:[cv component:i]];		
+		}
+	}
+
+	return self;
+}
 
 - (id)initWithColor:(NSColor *)cv
 {
+	[self initWithCapacity:3];
+	[self setColor:cv];
+	
 	return self;
 }
 
@@ -294,7 +373,7 @@
 {
 	NSUInteger i;
 	
-	[val initWithCapacity:numItems];
+	val = [NSMutableArray arrayWithCapacity:numItems];
 	for ( i = 0; i < [self count]; ++i ) {
 		[self setComponent:i val:(G3D_SLO_FLOAT)0];
 	}
@@ -356,6 +435,15 @@
 
 - (id)setColor:(NSColor *)cv
 {
+	if ( [self count] != 3 ) {
+		[val release];
+		val = [NSMutableArray arrayWithCapacity:3];
+	}
+	
+	[self setComponent:0 val:(G3D_SLO_FLOAT)[cv redComponent]];		
+	[self setComponent:1 val:(G3D_SLO_FLOAT)[cv greenComponent]];		
+	[self setComponent:2 val:(G3D_SLO_FLOAT)[cv blueComponent]];		
+
 	return self;
 }
 

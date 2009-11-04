@@ -15,7 +15,7 @@
  */
 #import <3Dkit/gnu3d.h>
 #import <3Dkit/G3DCamera.h>
-#import <ricpp/ri/slo.h>
+#import <3Dkit/G3DShader.h>
 
 typedef struct {
 	char id[6]; /* self, encoded to 6 non-0 bytes */
@@ -101,7 +101,7 @@ typedef struct {
 - (G3DSurfaceType)surfaceType;
 
 - setShader:aShader;
-- shaderType:(SLO_TYPE)type;
+- shaderType:(G3D_SLO_TYPE)type;
 
 - getBoundingBox:(RtBound *)bbox;
 - setDrawAsBox:(BOOL)flag;

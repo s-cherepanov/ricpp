@@ -31,7 +31,14 @@ typedef enum {
 	G3D_SLO_TYPE_DISPLACEMENT,
 	G3D_SLO_TYPE_VOLUME,
 	G3D_SLO_TYPE_TRANSFORMATION,
-	G3D_SLO_TYPE_IMAGER
+	G3D_SLO_TYPE_IMAGER,
+
+	G3D_SLO_TYPE_DEFORMATION,
+
+	/* Specific volume types */
+    G3D_SLO_TYPE_INTERIOR,
+	G3D_SLO_TYPE_EXTERIOR,
+	G3D_SLO_TYPE_ATMOSPHERE
 } G3D_SLO_TYPE;
 
 
@@ -62,6 +69,7 @@ typedef float G3D_SLO_FLOAT;
 @property (readwrite) G3D_SLO_FLOAT val;
 
 - (id)init;
+- (id)initWithG3DSLOScalar:(G3DSLOScalar *)aVal;
 - (id)initWithVal:(G3D_SLO_FLOAT)aVal;
 
 @end /* G3DSLOScalar */
@@ -73,6 +81,7 @@ typedef float G3D_SLO_FLOAT;
 }
 
 - (id)init;
+- (id)initWithG3DSLOMatrix:(G3DSLOMatrix *)aVal;
 - (id)initWithVal:(G3D_SLO_FLOAT[4][4])aVal;
 
 - (id)setRow:(NSUInteger)row col:(NSUInteger)col val:(G3D_SLO_FLOAT)value;
@@ -96,6 +105,7 @@ typedef float G3D_SLO_FLOAT;
 @property (readwrite) G3D_SLO_FLOAT zVal;
 
 - (id)init;
+- (id)initWithG3DSLOPoint:(G3DSLOPoint *)aVal;
 - (id)initWithX:(G3D_SLO_FLOAT)x y:(G3D_SLO_FLOAT)y z:(G3D_SLO_FLOAT)z;
 
 - (id)setX:(G3D_SLO_FLOAT)x y:(G3D_SLO_FLOAT)y z:(G3D_SLO_FLOAT)z;
@@ -111,6 +121,7 @@ typedef float G3D_SLO_FLOAT;
 @property (readwrite, copy) NSMutableArray *val;
 
 - (id)init;
+- (id)initWithG3DSLOColor:(G3DSLOColor *)cv;
 - (id)initWithColor:(NSColor *)cv;
 - (id)initWithCount:(NSUInteger)numItems components:(G3D_SLO_FLOAT *)theColorComponents;
 - (id)initWithCapacity:(NSUInteger)numItems;

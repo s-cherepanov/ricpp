@@ -23,7 +23,7 @@
     G3DProjectionType projectionType;	 /* perpective or orthographic */
     RtContextHandle	contextHandle;	 /* the RMan name for the context */
     id			worldShape;	 /* top of shape hierarchy */
-    NSArray		*lightList;	 /* list of global G3DLights */
+    NSMutableArray		*lightList;	 /* list of global G3DLights */
     id			delegate;	 /* get called when frames are done */
     NSColor		*backgroundColor; /* color of rectangle under RIB */
     G3DHider	hider;
@@ -73,96 +73,94 @@
     NSArray		*_selList;
     // void		*_G3Dprivate;
 }
+
+@property (readwrite) G3DProjectionType projectionType;
+@property (readwrite) RtContextHandle	contextHandle;
+@property (readwrite, retain) id worldShape;
+@property (readonly, retain) NSMutableArray *lightList;
+@property (readwrite, retain) id delegate;
+@property (readwrite, copy) NSColor *backgroundColor;
+@property (readwrite) G3DHider hider;
+
 #if 0
 - initFrame:(const NSRect *)fRect;
 
 /* frame and view management methods */
 - (BOOL)lockFocus;
-- unlockFocus;
-- setFlushRIB:(BOOL)flag;
+- (id)unlockFocus;
+- (id)setFlushRIB:(BOOL)flag;
 - (BOOL)doesFlushRIB;
-- flushRIB;
+- (id)flushRIB;
 
-- drawPS:(NSRect *)rects :(int)nRects;
-- drawSelf:(const NSRect *)rects :(int)nRects;
-- worldBegin:(RtContextHandle)context;
-- worldEnd:(RtContextHandle)context;
-- copyRIBCode:(NSStream *)stream;
-- setBackgroundColor:(NSColor *) c;
-- (NSColor *)backgroundColor;
-- setDrawBackgroundColor:(BOOL)flag;
+- (id)drawPS:(NSRect *)rects :(int)nRects;
+- (id)drawSelf:(const NSRect *)rects :(int)nRects;
+- (id)worldBegin:(RtContextHandle)context;
+- (id)worldEnd:(RtContextHandle)context;
+- (id)copyRIBCode:(NSStream *)stream;
+- (id)setDrawBackgroundColor:(BOOL)flag;
 - (BOOL)doesDrawBackgroundColor;
-- setFrame:(const NSRect *)fRect;
-- moveTo:(NXCoord)x :(NXCoord)y;
-- moveBy:(NXCoord)deltaX :(NXCoord)deltaY;
-- sizeTo:(NXCoord)width :(NXCoord)height;
-- sizeBy:(NXCoord)deltaWidth :(NXCoord)deltaHeight;
-- rotateTo:(NXCoord)angle;
-- rotateBy:(NXCoord)deltaAngle;
-- setWorldShape:a3DObject;
-- worldShape;
-- addLight:aLight;
-- removeLight:aLight;
-- lightList;
-- setHider:(G3DHider)hider;
-- (G3DHider)hider;
-- setSurfaceTypeForAll:(G3DSurfaceType)surfaceType chooseHider:(BOOL)flag;
+- (id)setFrame:(const NSRect *)fRect;
+- (id)moveTo:(NXCoord)x :(NXCoord)y;
+- (id)moveBy:(NXCoord)deltaX :(NXCoord)deltaY;
+- (id)sizeTo:(NXCoord)width :(NXCoord)height;
+- (id)sizeBy:(NXCoord)deltaWidth :(NXCoord)deltaHeight;
+- (id)rotateTo:(NXCoord)angle;
+- (id)rotateBy:(NXCoord)deltaAngle;
+- (id)addLight:(id)aLight;
+- (id)removeLight:(id)aLight;
+- (id)setSurfaceTypeForAll:(G3DSurfaceType)surfaceType chooseHider:(BOOL)flag;
 
 /* Picking */
-- selectShapesIn:(const NSRect *)selectionRect;
+- (id)selectShapesIn:(const NSRect *)selectionRect;
 
 /* eye vector and viewing frustum manipulation methods */
-- setProjectionRectangle:(float)l :(float)r :(float)t :(float)b;
-- getProjectionRectangle:(float *)lp :(float *)rp :(float *)tp :(float *)bp;
-- setProjection:(G3DProjectionType)aProjectionType;
-- (G3DProjectionType)projectionType;
-- setPreTransformMatrix:(RtMatrix)newPreTM;
-- getPreTransformMatrix:(RtMatrix)preTM;
-- setUsePreTransformMatrix:(BOOL)flag;
+- (id)setProjectionRectangle:(float)l :(float)r :(float)t :(float)b;
+- (id)getProjectionRectangle:(float *)lp :(float *)rp :(float *)tp :(float *)bp;
+- (id)setPreTransformMatrix:(RtMatrix)newPreTM;
+- (id)getPreTransformMatrix:(RtMatrix)preTM;
+- (id)setUsePreTransformMatrix:(BOOL)flag;
 - (BOOL)usesPreTransformMatrix;
-- setEyeAt:(RtPoint)fromPoint toward:(RtPoint)toPoint roll:(float)aRollAngle;
-- getEyeAt:(RtPoint *)anEyePoint toward:(RtPoint *)aViewPoint
+- (id)setEyeAt:(RtPoint)fromPoint toward:(RtPoint)toPoint roll:(float)aRollAngle;
+- (id)getEyeAt:(RtPoint *)anEyePoint toward:(RtPoint *)aViewPoint
 	  roll:(float *)aRollAngle;
-- setClipPlanesNear:(float)aNearPlane far:(float)aFarPlane;
-- getClipPlanesNear:(float *)aNearPlane far:(float *)aFarPlane;
-- setFieldOfViewByAngle:(float)aFieldOfView;
-- setFieldOfViewByFocalLength:(float)aFocalLength;
+- (id)setClipPlanesNear:(float)aNearPlane far:(float)aFarPlane;
+- (id)getClipPlanesNear:(float *)aNearPlane far:(float *)aFarPlane;
+- (id)setFieldOfViewByAngle:(float)aFieldOfView;
+- (id)setFieldOfViewByFocalLength:(float)aFocalLength;
 - (float)fieldOfView;
-- setPixelAspectRatio:(float)pixAspect;
+- (id)setPixelAspectRatio:(float)pixAspect;
 - (float)pixelAspectRatio;
 
-- moveEyeBy:(float)ds :(float)dt :(float)du;
-- rotateEyeBy:(float)dElev :(float)dAzim about:(RtPoint)pivotPtr;
+- (id)moveEyeBy:(float)ds :(float)dt :(float)du;
+- (id)rotateEyeBy:(float)dElev :(float)dAzim about:(RtPoint)pivotPtr;
 
 - (int)numCropWindows;
-- cropInRects:(NSRect *)rects nRects:(int)n;
+- (id)cropInRects:(NSRect *)rects nRects:(int)n;
 - (int)frameNumber;
 - (BOOL)canPrintRIB;
 
-- awake;
-- read:(NSCoder *)stream;
-- write:(NSCoder *)stream;
+- (id)copyWithZone:(NSZone *)zone;
+
+- (id)initWithCoder:(NSCoder *)coder;
+- (void)encodeWithCoder:(NSCoder *)coder;
 
 - (int)renderAsTIFF;
 - (int)renderAsEPS;
-- setDelegate:sender;
-- delegate;
 #endif
 
-- init;
-- free;
+-(id)init;
+-(void)dealloc;
 
-- (void) awakeFromNib;
-- render;
-- renderSelf:(RtContextHandle)context;
-- (void) drawRect: (NSRect) bounds;
+- (void)awakeFromNib;
+- (id)render;
+- (id)renderSelf:(RtContextHandle)context;
+- (void)drawRect:(NSRect) bounds;
 
-- convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords;
-- convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape;
+- (id)convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords;
+- (id)convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape;
+
 @end
 
-/*
-@interface Object(G3DCameraDelegate)
-- camera:sender didRenderStream:(NSStream *)s tag:(int)atag frameNumber:(int)n;
+@interface NSObject(G3DCameraDelegate)
+- (id)camera:(id)sender didRenderStream:(NSStream *)s tag:(int)atag frameNumber:(int)n;
 @end
-*/

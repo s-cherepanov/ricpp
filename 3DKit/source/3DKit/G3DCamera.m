@@ -18,6 +18,15 @@
 
 
 @implementation G3DCamera
+
+@synthesize projectionType;
+@synthesize	contextHandle;
+@synthesize worldShape;
+@synthesize lightList;
+@synthesize delegate;
+@synthesize backgroundColor;
+@synthesize hider;
+
 #if 0
 - initFrame:(const NSRect *)fRect;
 {
@@ -111,16 +120,6 @@
 }
 
 - rotateBy:(NXCoord)deltaAngle
-{
-	return self;
-}
-
-- setWorldShape:a3DObject
-{
-	return self;
-}
-
-- worldShape
 {
 	return self;
 }
@@ -320,14 +319,14 @@
 }
 #endif
 
-- init
+-(id)init
 {
-	_contextManager = [G3DContextManager new];
+	_contextManager = [G3DContextManager contextManager];
 	contextHandle = [_contextManager createContext:0];
 	
 	projectionType = G3D_Orthographic;
 	worldShape = nil;
-	lightList = nil;
+	lightList = [NSMutableArray array];
 	delegate = nil;
 	backgroundColor = nil;
 	hider = G3D_HiddenRendering;
@@ -385,10 +384,11 @@
 }
 
 
-- free
+- (void)dealloc
 {
 	[_contextManager destroyContext:contextHandle];
-	return nil;
+	[lightList release];
+	[super dealloc];
 }
 
 - (void)awakeFromNib;
@@ -396,7 +396,7 @@
 	[self init];
 }
 
-- setFlushRIB:(BOOL)flag
+- (id)setFlushRIB:(BOOL)flag
 {
 	cameraFlags.doFlush = flag ? 1 : 0;
 	return self;
@@ -404,21 +404,21 @@
 
 - (BOOL)doesFlushRIB
 {
-	return cameraFlags.doFlush == 1;
+	return cameraFlags.doFlush != 0;
 }
 
-- flushRIB
+- (id)flushRIB
 {
 	return self;
 }
 
-- render
+- (id)render
 {
 	// NSLog(@"render");
 	return [self renderSelf:contextHandle];
 }
 
-- renderSelf:(RtContextHandle)context
+- (id)renderSelf:(RtContextHandle)context
 {
 	// NSLog(@"renderSelf");
 	[_contextManager setCurrentContext:context];
@@ -429,8 +429,10 @@
 	
 	RiFrameBegin(0);
 	RiWorldBegin();
-	RiTranslate(0.0, 0.0, 2.0);
-	RiSphere(0.5, -0.5, 0.5, 360.0, RI_NULL);
+	RiTranslate(0.0, -0.75, 4.0);
+	//RiSphere(0.5, -0.5, 0.5, 360.0, RI_NULL);
+	RiRotate((RtFloat)-90.0, (RtFloat)1, (RtFloat)0, (RtFloat)0);
+	RiGeometry(RI_TEAPOT, RI_NULL);
 	RiWorldEnd();
 	RiFrameEnd();
 	
@@ -439,7 +441,7 @@
 	return self;
 }
 
-- (void) drawRect: (NSRect) bounds
+- (void)drawRect:(NSRect)bounds
 {
 	// NSLog(@"drawRect");
 
@@ -453,12 +455,12 @@
 	[self render];
 }
 
-- convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords
+- (id)convertPoints:(NXPoint *)mcoords count:(int)npts toWorld:(RtPoint *)wcoords
 {
 	return self;
 }
 
-- convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape
+- (id)convertPoints:(RtPoint *)points count:(int)n fromSpace:aShape
 {
 	return self;
 }

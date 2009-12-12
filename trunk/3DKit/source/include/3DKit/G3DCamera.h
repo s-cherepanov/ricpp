@@ -69,7 +69,6 @@
 	 -rollAngle. */
 	
     char 		*_printribfile;  /* rib file generated during printing*/
-    id			_contextManager; /* context manager for the app */
     NSArray		*_selList;
     // void		*_G3Dprivate;
 }

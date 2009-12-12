@@ -486,15 +486,11 @@ static const float pi_360 = 3.1415926535897932384626433832795/360.0;
 
 - (const char *)projectionType
 {
-	NSString *pfs = [(NSComboBox *)projectionType stringValue];
-	const char *pfcs = [pfs cStringUsingEncoding:NSASCIIStringEncoding];
-	
-	if ( !pfcs )
-		return RI_NULL;
-	
-	if ( !strcmp(pfcs, "Perspective") )
+	NSString *ptype = [(NSComboBox *)projectionType stringValue];
+
+	if ( [ptype isEqual:@"Perspective"] )
 		return RI_PERSPECTIVE;
-	if ( !strcmp(pfcs, "Orthographic") )
+	if ( [ptype isEqual:@"Orthographic"] )
 		return RI_ORTHOGRAPHIC;
 	
 	return RI_NULL;

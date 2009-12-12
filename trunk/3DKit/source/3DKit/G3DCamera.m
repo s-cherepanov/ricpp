@@ -321,8 +321,7 @@
 
 -(id)init
 {
-	_contextManager = [G3DContextManager contextManager];
-	contextHandle = [_contextManager createContext:0];
+	contextHandle = [[G3DContextManager sharedContextManager] createContext:0];
 	
 	projectionType = G3D_Orthographic;
 	worldShape = nil;
@@ -386,7 +385,7 @@
 
 - (void)dealloc
 {
-	[_contextManager destroyContext:contextHandle];
+	[[G3DContextManager sharedContextManager] destroyContext:contextHandle];
 	[lightList release];
 	[super dealloc];
 }
@@ -421,7 +420,7 @@
 - (id)renderSelf:(RtContextHandle)context
 {
 	// NSLog(@"renderSelf");
-	[_contextManager setCurrentContext:context];
+	[[G3DContextManager sharedContextManager] setCurrentContext:context];
 
 	// char *screenAction[2] = {"clear", "finish", "auto"};
 	// RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
@@ -445,7 +444,7 @@
 {
 	// NSLog(@"drawRect");
 
-	[_contextManager setCurrentContext:contextHandle];
+	[[G3DContextManager sharedContextManager] setCurrentContext:contextHandle];
 	
 	RtInt width = (RtInt)bounds.size.width;
 	RtInt height = (RtInt)bounds.size.height;

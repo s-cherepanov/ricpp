@@ -42,14 +42,15 @@
 
 @implementation G3DContextManager
 
-static G3DContextManager *contextManagerSingleton = 0;
 
-+ (id)contextManager
+static G3DContextManager *sharedContextManagerInstance = 0;
+
++ (G3DContextManager *)sharedContextManager
 {
-	if ( !contextManagerSingleton ) {
-		contextManagerSingleton = [[G3DContextManager alloc] init];
+	if ( !sharedContextManagerInstance ) {
+		sharedContextManagerInstance = [[[self class] alloc] init];
 	}
-	return contextManagerSingleton;
+	return sharedContextManagerInstance;
 }
 
 - (void)dealloc
@@ -61,35 +62,23 @@ static G3DContextManager *contextManagerSingleton = 0;
 		RiEnd();
 	}
 
-	if ( mainContext != illContextHandle ) {
-		RiContext(mainContext);
-		RiEnd();
-	}
-
-	[contextTable dealloc];
-	mainContext = illContextHandle;
+	[contextTable removeAllObjects];
+	[contextTable release];
+	
+	if ( self == sharedContextManagerInstance )
+		sharedContextManagerInstance = nil;
 	
 	[super dealloc];
 }
 
 - (id)init
 {
-	mainContext = illContextHandle;
-	contextTable = [NSMutableDictionary dictionary];
+	contextTable = [[NSMutableDictionary alloc] init];
 	_nameCnt = 0;
 
 	return self;
 }
 
-- (RtContextHandle)mainContext
-{
-	if ( mainContext == illContextHandle ) {
-		RiBegin("glrenderer");
-		mainContext = RiGetContext();
-	}
-	
-	return mainContext;
-}
 
 - (RtContextHandle)registerContext:(RtContextHandle)aContext withName:(RtToken)name
 {
@@ -107,8 +96,12 @@ static G3DContextManager *contextManagerSingleton = 0;
 	str = [[NSString alloc] initWithCString:name encoding:NSASCIIStringEncoding];
 	
 	[contextTable setObject:aHandle forKey:str];
+	
 	[str release];
 	[aHandle release];
+	
+	// Retain counts should be 1, and they are indeed
+	// NSLog(@"str count:%d, aHandle count:%d", [str retainCount], [aHandle retainCount]);
 	
 	return aContext;
 }
@@ -138,13 +131,12 @@ static G3DContextManager *contextManagerSingleton = 0;
 }
 
 
-- (RtContextHandle)createContext:(const char *)name
+- (RtContextHandle)createContext:(RtString)name
 {
-	RiBegin("glrenderer");
-	return [self registerContext:[self currentContext] withName:name];
+	return [self createContext:name withRenderer:RI_DRAFT];
 }
 
-- (RtContextHandle)createContext:(const char *)name withRenderer:(RtToken)renderer
+- (RtContextHandle)createContext:(RtString)name withRenderer:(RtToken)renderer
 {
 	if ( renderer && !strcmp(renderer, RI_ARCHIVE) )
 		RiBegin(RI_NULL);
@@ -156,7 +148,7 @@ static G3DContextManager *contextManagerSingleton = 0;
 	return [self registerContext:[self currentContext] withName:name];
 }
 
-- (RtContextHandle)createContext:(const char *)name toFile:(RtToken)ribFileName
+- (RtContextHandle)createContext:(RtString)name toFile:(RtToken)ribFileName
 {
 	RiBegin(ribFileName);
 
@@ -175,13 +167,10 @@ static G3DContextManager *contextManagerSingleton = 0;
 		[self setCurrentContext:old];
 	}
 
-	if ( aContext == mainContext )
-		mainContext = illContextHandle;
-	else
-		[self removeContext:aContext];
+	[self removeContext:aContext];
 }
 
-- (void)destroyContextByName:(const char *)name
+- (void)destroyContextByName:(RtString)name
 {
 	RtContextHandle aContext = [self contextForKey:name];
 	if ( aContext != illContextHandle ) {

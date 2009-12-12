@@ -15,33 +15,27 @@
  */
 #import <ricpp/ricpp.h>
 
+@class NSMutableDictionary;
+
 @interface G3DContextManager : NSObject
 {
-	RtContextHandle mainContext;
-	id contextTable;
-	// RtContextHandle currentContext;
+	NSMutableDictionary *contextTable;
 
 @private
 	long _nameCnt;
-	// id _focussedCamera;
-	// RtPointer _reserved;
-	// void *_G3Dprivate;
 }
 
-+ (id)contextManager;
-- (id)init;
-- (void)dealloc;
++ (G3DContextManager *)sharedContextManager;
 
-- (RtContextHandle)mainContext;
-- (RtContextHandle)createContext:(const char *)name;
-- (RtContextHandle)createContext:(const char *)name withRenderer: (RtToken)renderer;
-- (RtContextHandle)createContext:(const char *)name toFile: (RtToken)ribFileName;
+- (RtContextHandle)createContext:(RtString)name;
+- (RtContextHandle)createContext:(RtString)name withRenderer: (RtToken)renderer;
+- (RtContextHandle)createContext:(RtString)name toFile: (RtToken)ribFileName;
 
 - (void)destroyContext:(RtContextHandle)aContext;
-- (void)destroyContextByName:(const char *)name;
+- (void)destroyContextByName:(RtString)name;
 
 - (RtContextHandle)setCurrentContext:(RtContextHandle)aContext;
-- (RtContextHandle)setCurrentContextByName:(RtToken)name;
+- (RtContextHandle)setCurrentContextByName:(RtString)name;
 - (RtContextHandle)currentContext;
 
 @end

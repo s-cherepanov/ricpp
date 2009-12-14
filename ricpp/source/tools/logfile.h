@@ -61,7 +61,7 @@ public:
 	const char *GetFilename();
 	const char *GetModuleName();
 	const char *GetError();
-	const char *TLogfile::GetPrefix();
+	const char *GetPrefix();
 	
 	int OpenNewFile(const char *szFilename, bool append=true);
 	// Schliesst alte Protokoll-Datei und oeffnet neue

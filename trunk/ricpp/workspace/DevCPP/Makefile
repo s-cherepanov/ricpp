@@ -5,7 +5,7 @@ all: debug release
 clean: cleandebug cleanrelease
 
 debug:
-	@echo Building debug...
+#	@echo Building debug...
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -21,7 +21,7 @@ debug:
 #	$(MAKE) -C wxTest -f $(MAKEFILE) $@
 
 release:
-	@echo Building release...
+#	@echo Building release...
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -37,7 +37,7 @@ release:
 #	$(MAKE) -C wxTest -f $(MAKEFILE) $@
 
 cleandebug:
-	@echo Cleaning debug...
+#	@echo Cleaning debug...
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -53,7 +53,7 @@ cleandebug:
 #	$(MAKE) -C wxTest -f $(MAKEFILE) $@
 
 cleanrelease:
-	@echo Cleaning release...
+#	@echo Cleaning release...
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -69,7 +69,7 @@ cleanrelease:
 #	$(MAKE) -C wxTest -f $(MAKEFILE) $@
 
 install:
-	@echo Install...
+#	@echo Install...
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@

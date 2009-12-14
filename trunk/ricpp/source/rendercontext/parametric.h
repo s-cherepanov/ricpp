@@ -684,14 +684,14 @@ protected:
 		const TUVVector &uvvect,
 		bool clearAndReserve);
 
-	void TBicubicMesh::bicubicBlendNormals(
+	void bicubicBlendNormals(
 		const IndexType *idx,
 		const TParameter &source,
 		TNamedVector<RtFloat> &dest,
 		const TUVVector &uvVect,
 		bool clearAndReserve);
 
-	void TBicubicMesh::bicubicBlendNormals(
+	void bicubicBlendNormals(
 		const IndexType *idx,
 		const char *name,
 		IndexType components,
@@ -821,7 +821,7 @@ public:
 
 	inline TTrimVertex() : m_vidx(0), m_lidx(0), m_vtype(0) {}
 	inline TTrimVertex(IndexType ui, IndexType vi, IndexType idx, RtFloat u, RtFloat v, unsigned int vtype=trimVertex)
-		: m_ui(ui), m_vi(vi), m_idx(idx), m_u(u), m_v(v), m_vtype(vtype), m_vidx(0), m_lidx(0) {
+		: m_ui(ui), m_vi(vi), m_idx(idx), m_vidx(0), m_lidx(0), m_u(u), m_v(v), m_vtype(vtype) {
 	}
 
 	inline TTrimVertex(const TTrimVertex &vert) {
@@ -922,8 +922,8 @@ protected:
 public:
 	TParameterAxisCell *m_left, *m_right, *m_top, *m_bottom;
 	bool m_inner;
-	inline TParameterCell() : m_left(NULL), m_right(NULL), m_top(NULL), m_bottom(NULL), m_trim(NULL), m_inner(true) {}
-	inline TParameterCell(const TParameterCell &pc) : m_left(NULL), m_right(NULL), m_top(NULL), m_bottom(NULL), m_trim(NULL), m_inner(true) { *this = pc; }
+	inline TParameterCell() : m_trim(NULL), m_left(NULL), m_right(NULL), m_top(NULL), m_bottom(NULL), m_inner(true) {}
+	inline TParameterCell(const TParameterCell &pc) : m_trim(NULL), m_left(NULL), m_right(NULL), m_top(NULL), m_bottom(NULL), m_inner(true) { *this = pc; }
 	inline TParameterCell &operator=(const TParameterCell &pc) {
 		if ( &pc== this )
 			return *this;

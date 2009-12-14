@@ -661,6 +661,7 @@ public:
 	}
 }; // TSubdivPrimFace
 
+class TSubdivisionMesh;
 
 //! Subdivision mesh for one tesselation.
 /*! An instance of this class is used to store the vertex, edge and face

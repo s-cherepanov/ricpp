@@ -1644,7 +1644,7 @@ namespace RiCPP {
 		* @return Constant list of path segments.
 		* @see isAbsolute()
 		*/
-		inline const std::list<std::string> getSegments() const
+		inline const std::list<std::string> &getSegments() const
 		{
 			return m_segments;
 		}

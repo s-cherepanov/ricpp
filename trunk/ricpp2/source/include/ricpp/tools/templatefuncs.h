@@ -127,6 +127,11 @@ namespace RiCPP {
 		return result;
 	}
 
+	/** @brief Validates min <= max, swaps parameters if min > max
+	 *  @param min Minimum
+	 *  @param max Maximum
+	 *  @return false, numbers are swapped
+	 */
 	template<typename type> inline bool validateMinMax(type &min, type &max)
 	{
 		if ( min > max ) {
@@ -157,7 +162,7 @@ namespace RiCPP {
 		return val;
 	}
 	
-	/** @brief Get the inverse of a number
+	/** @brief Gets the inverse of a number
 	 *  @param val Number to invert
 	 *  @return 1 / @a val
 	 */
@@ -166,6 +171,10 @@ namespace RiCPP {
 		return static_cast<type>(1.0)/val;
 	}
 	
+	/** @brief Gets the negative of a number
+	 *  @param val Number negate
+	 *  @return -@a val
+	 */
 	template<typename type> inline type negate(type val)
 	{
 		return static_cast<type>(-1.0)*val;
@@ -204,16 +213,34 @@ namespace RiCPP {
 		return (trand<type>() - static_cast<type>(0.5)) * static_cast<type>(2.0);
 	}
 	
-	template<typename type> inline type logx(type b, type r)
+	/** @brief Gets the logarithm of a numerus x to the base b
+	 *  @param b base
+	 *  @param x numerus	 
+	 *  @return log<b>(x)
+	 */
+	template<typename type> inline type logx(type b, type x)
 	{
-		return log10(r)/log10(b);
+		return log10(x)/log10(b);
 	}
 
+	/** @brief Gets the binary logarithm of a numerus r
+	 *  @param r numerus
+	 *  @return log2(r)
+	 */
 	template<typename type> inline type log2(type r)
 	{
 		return logx(static_cast<type>(2), r);
 	}
 	
+	/** @brief Number of segments of a NURBS curve
+	 *
+	 *  The number of the segments of a NURBS curve is the number of the
+	 *  control point less the order of the curve plus 1.
+	 *
+	 *  @param ncpts Number of control points
+	 *  @param order The order of the curve
+	 *  @return Number of segmments
+	 */
 	template <typename type> inline type nuNumSegs(type ncpts, type order)
 	{
 		return 1 + ncpts - order;

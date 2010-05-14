@@ -818,7 +818,6 @@ RtInt CBSplineBasis::nuBlendP2W(const std::vector<RtFloat> &source,
 							RtInt resultOffs) const
 {		
 	if ( numParameters(seg) <= 0 ) {
-		results.clear();
 		return 0;
 	}
 

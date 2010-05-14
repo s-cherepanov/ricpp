@@ -34,6 +34,8 @@
 		C30089B90DEC49F400E30769 /* libriprog.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C31C22460D740489009D99C2 /* libriprog.1.dylib */; };
 		C3018BF60E4B2F3C00136044 /* trace.h in Headers */ = {isa = PBXBuildFile; fileRef = C3018BF50E4B2F3C00136044 /* trace.h */; };
 		C302FE4A0DB8883B007E509B /* bintree.h in Headers */ = {isa = PBXBuildFile; fileRef = C302FE490DB8883B007E509B /* bintree.h */; };
+		C309F48311305436006AFFD0 /* grid.h in Headers */ = {isa = PBXBuildFile; fileRef = C309F48211305436006AFFD0 /* grid.h */; };
+		C309F488113054A7006AFFD0 /* grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C309F487113054A7006AFFD0 /* grid.cpp */; };
 		C3185B710D7D3312001784AB /* varsubst.h in Headers */ = {isa = PBXBuildFile; fileRef = C3185B700D7D3312001784AB /* varsubst.h */; };
 		C3185B730D7D3451001784AB /* varsubst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3185B720D7D3451001784AB /* varsubst.cpp */; };
 		C323EBB80EFB79BA00F0ED84 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0F240DCF55FD0014BC8E /* AppKit.framework */; };
@@ -311,6 +313,7 @@
 		C3D1AAA60EF283E0002535D2 /* libricpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EF50D3C216000B2E025 /* libricpp.a */; };
 		C3D1AAA70EF283E0002535D2 /* libribase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C32B8B390D74546A0059B201 /* libribase.a */; };
 		C3D1AAA80EF283E0002535D2 /* libtools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3685EC40D3C1F4D00B2E025 /* libtools.a */; };
+		C3D625FC119E08570087843A /* maclinuxenv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3D625FB119E08570087843A /* maclinuxenv.cpp */; };
 		C3E4FE930E6B1D5F0000B37F /* inputstate.h in Headers */ = {isa = PBXBuildFile; fileRef = C3E4FE920E6B1D5F0000B37F /* inputstate.h */; };
 		C3E4FE950E6B1D9A0000B37F /* inputstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */; };
 /* End PBXBuildFile section */
@@ -728,6 +731,8 @@
 		C3003D7E0C1D6D21004C4EF0 /* tokenmap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = tokenmap.h; path = ../../../source/include/ricpp/declaration/tokenmap.h; sourceTree = SOURCE_ROOT; };
 		C3018BF50E4B2F3C00136044 /* trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = trace.h; path = ../../../source/include/ricpp/tools/trace.h; sourceTree = SOURCE_ROOT; };
 		C302FE490DB8883B007E509B /* bintree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; name = bintree.h; path = ../../../source/include/ricpp/tools/bintree.h; sourceTree = SOURCE_ROOT; };
+		C309F48211305436006AFFD0 /* grid.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = grid.h; path = ../../../source/include/ricpp/ricontext/grid.h; sourceTree = SOURCE_ROOT; };
+		C309F487113054A7006AFFD0 /* grid.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = grid.cpp; path = ../../../source/ricontext/grid.cpp; sourceTree = SOURCE_ROOT; };
 		C3185B700D7D3312001784AB /* varsubst.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = varsubst.h; path = ../../../source/include/ricpp/ricpp/varsubst.h; sourceTree = SOURCE_ROOT; };
 		C3185B720D7D3451001784AB /* varsubst.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = varsubst.cpp; path = ../../../source/ricpp/varsubst.cpp; sourceTree = SOURCE_ROOT; };
 		C31C22460D740489009D99C2 /* libriprog.1.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libriprog.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -934,6 +939,7 @@
 		C3CE0F240DCF55FD0014BC8E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		C3CE0F270DCF56330014BC8E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		C3D1A8290EF2507A002535D2 /* libricppdev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libricppdev.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3D625FB119E08570087843A /* maclinuxenv.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = maclinuxenv.cpp; path = ../../../source/tools/maclinuxenv.cpp; sourceTree = SOURCE_ROOT; };
 		C3E4FE920E6B1D5F0000B37F /* inputstate.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = inputstate.h; path = ../../../source/include/ricpp/ricontext/inputstate.h; sourceTree = SOURCE_ROOT; };
 		C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = inputstate.cpp; path = ../../../source/ricontext/inputstate.cpp; sourceTree = SOURCE_ROOT; };
 		C3EFAC640E4C31F800352D9C /* ArchiveLoader.rib */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = ArchiveLoader.rib; path = ../../../RibSamples/ArchiveLoader.rib; sourceTree = SOURCE_ROOT; };
@@ -1794,6 +1800,7 @@
 				C3589A180E59A9AE00CB67E5 /* blend.cpp */,
 				C37245AF0CD5DE5500945563 /* contextcreator.cpp */,
 				C37245B00CD5DE5500945563 /* displaydesc.cpp */,
+				C309F487113054A7006AFFD0 /* grid.cpp */,
 				C3E4FE940E6B1D9A0000B37F /* inputstate.cpp */,
 				C37245B10CD5DE5500945563 /* lights.cpp */,
 				C37245B20CD5DE5500945563 /* modestack.cpp */,
@@ -1826,6 +1833,7 @@
 				C37245770CD5DE3100945563 /* contextcreator.h */,
 				C37245780CD5DE3100945563 /* displaydesc.h */,
 				C37245790CD5DE3100945563 /* dorender.h */,
+				C309F48211305436006AFFD0 /* grid.h */,
 				C372457A0CD5DE3100945563 /* handlestack.h */,
 				C3E4FE920E6B1D5F0000B37F /* inputstate.h */,
 				C372457B0CD5DE3100945563 /* lights.h */,
@@ -2258,6 +2266,7 @@
 		C399BA370BE5DE05002FEEF1 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
+				C3D625FB119E08570087843A /* maclinuxenv.cpp */,
 				C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */,
 				C399BA990BE5E229002FEEF1 /* macenv.cpp */,
 				C38EA2A20BE86D370057831B /* macfilepath.cpp */,
@@ -2609,6 +2618,7 @@
 				C3BB4CBB0E3A02DE00D185BB /* triangulation.h in Headers */,
 				C3A692AE0E629EEF00B709BD /* subdivision.h in Headers */,
 				C3E4FE930E6B1D5F0000B37F /* inputstate.h in Headers */,
+				C309F48311305436006AFFD0 /* grid.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3361,6 +3371,7 @@
 				C3685ECD0D3C1F9100B2E025 /* macenv.cpp in Sources */,
 				C3685ECE0D3C1F9100B2E025 /* macfilepath.cpp in Sources */,
 				C3685ECF0D3C1F9100B2E025 /* stringlist.cpp in Sources */,
+				C3D625FC119E08570087843A /* maclinuxenv.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3474,6 +3485,7 @@
 				C38221390E378A830032A70E /* triangulation.cpp in Sources */,
 				C3A692BA0E62A8CF00B709BD /* subdivision.cpp in Sources */,
 				C3E4FE950E6B1D9A0000B37F /* inputstate.cpp in Sources */,
+				C309F488113054A7006AFFD0 /* grid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

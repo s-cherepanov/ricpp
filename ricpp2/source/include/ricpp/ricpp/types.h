@@ -899,14 +899,14 @@ struct CTrimCurveData {
 	 *
 	 *  @param curve Used to initialize copy.
 	 */
-	CTrimCurveData(const CTrimCurveData &curve)
+	inline CTrimCurveData(const CTrimCurveData &curve)
 	{
 		*this = curve;
 	}
 
 	/** @brief Destructor.
 	 */
-	~CTrimCurveData()
+	inline ~CTrimCurveData()
 	{
 		releaseAll();
 	}
@@ -915,7 +915,7 @@ struct CTrimCurveData {
 	/** @brief Duplication.
 	 *  @return Clone of this.
 	 */
-	CTrimCurveData *duplicate() const
+	inline CTrimCurveData *duplicate() const
 	{
 		return new CTrimCurveData(*this);
 	}
@@ -994,7 +994,7 @@ struct CTrimCurveData {
 	 */
 	void trimCurve(RtInt nloops, const RtInt ncurves[], const RtInt order[], const RtFloat knot[], const RtFloat amin[], const RtFloat amax[],
 				   const RtInt n[], const RtFloat u[], const RtFloat v[], const RtFloat w[]);
-}; // 
+}; // CTrimCurveData
 
 
 /** @brief A class for a 3D homogene matrix (4x4).

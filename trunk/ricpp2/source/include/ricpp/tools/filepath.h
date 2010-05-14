@@ -32,6 +32,7 @@
   * The class is implemented in macfilepath.cpp and win32filepath.cpp.
  */
 
+#include <cstring>
 #include <string>
 #include <list>
 

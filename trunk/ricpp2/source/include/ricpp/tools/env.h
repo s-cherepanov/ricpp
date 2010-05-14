@@ -43,6 +43,7 @@
 #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
 
+#include <cstdio>
 #include <string>
 
 namespace RiCPP {
@@ -195,9 +196,9 @@ namespace RiCPP {
 			if ( tmpfile[0] == '\\' )
 				tmpfile++;
 		#else
-			char buf[PATH_MAX+1];
+			char buf[TMP_MAX+1];
 			buf[0] = 0;
-			buf[PATH_MAX] = 0;
+			buf[TMP_MAX] = 0;
 			tmpfile = tmpnam(buf);
 		#endif
 			if ( !tmpfile )

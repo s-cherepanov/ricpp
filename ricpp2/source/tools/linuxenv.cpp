@@ -22,9 +22,9 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/** @file macenv.cpp
+/** @file linuxenv.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief MacOs 10 implementation of parts of CEnv,
+ *  @brief Linux 10 implementation of parts of CEnv,
  *         the adapter for environment variables.
  */
 
@@ -34,8 +34,6 @@
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
-#include <mach-o/dyld.h>
-
 #include <sys/errno.h>
 #include <sys/types.h>
 
@@ -43,58 +41,72 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+// Can be small because space is allocated dynamically if PATH_MAX was to small
+#ifndef PATH_MAX
+#define PATH_MAX 2
+#endif
+
 using namespace RiCPP;
 
-/** @brief Mac implementation to get the absolute path of the running executable.
- *
- * Use the system function _NSGetExecutablePath() and realpath() to replace
- * symlinks. The filename itself is deleted. Can return
- * an empty string. Uses a singleton to store the path.
+/** @brief Unix implementation to get the absolute path of the running executable.
  */
 std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 {
-	/* See Man page NSModule:
-       extern int _NSGetExecutablePath(
-            char *buf,
-            unsigned long *bufsize);
-		and realpath() (used instead of readlink())
-	*/
-	
 	static std::string path = "";
 	static std::string internalPath = "";
 	static bool isset = false;
 
+	prog = "";
+
 	if ( !isset ) {
 		isset = true; // only try one time, path can be empty
 
-		uint32_t buffsize = 0;
-		char *buf = 0; 
-		char symbuf[PATH_MAX+1] = { 0 };
-			
-		_NSGetExecutablePath(0, &buffsize);
-		
-		if ( buffsize > 0 ) {
-			uint32_t realbuffsize = buffsize+1;
-			buf = new char[realbuffsize];
-			if ( buf ) {
-				buf[0] = 0;
-				_NSGetExecutablePath(buf, &buffsize);
-				buf[realbuffsize-1] = 0;
-				symbuf[0] = 0;
-				if ( realpath(buf, symbuf) ) {
-					symbuf[sizeof(symbuf)-1] = 0;
-					cutfilename(symbuf);
-					path = symbuf;
-				} else {
-					path = "";
-				}
-				delete buf;
+		char *buf = new char[PATH_MAX+1];
+
+		pid_t pid;
+		char aString[128];
+		ssize_t res;
+
+		pid = getpid();
+
+		snprintf(aString, sizeof(aString), "/proc/%d/exe", pid);
+
+		res = readlink(aString, buf, PATH_MAX);
+		if ( res == (ssize_t)-1 ) {
+			// BSD
+			snprintf(aString, sizeof(aString), "/proc/%d/file", pid);
+			res = readlink(aString, buf, PATH_MAX);
+			if ( res == (ssize_t)-1 ) {
+				// Solaris
+				snprintf(aString, sizeof(aString), "/proc/%d/path/a.out", pid);
+				res = readlink(aString, buf, PATH_MAX);
+			}
+			if ( res == (ssize_t)-1 ) {
+				// Error
+				return prog;
 			}
 		}
+
+		if ( res > PATH_MAX ) {
+			delete buf;
+			buf = new char[res+1];
+			ssize_t newres = readlink(aString, buf, res);
+			if ( newres == (ssize_t)-1 || newres > res ) {
+				// error
+				return prog;
+			}
+			res = newres;
+		}
+		buf[res]='\0';
+
+		path = buf;
 		internalPath = path;
 		CFilepathConverter::convertToInternal(internalPath);
+
+		delete buf;
 	}
-	
+
 	prog = convertPath ? internalPath : path;
 	return prog;
 }
+

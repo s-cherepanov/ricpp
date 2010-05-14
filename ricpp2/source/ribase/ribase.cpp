@@ -39,6 +39,7 @@
 
 
 #include <cmath>
+#include <cstring>
 #include <iostream>
 
 extern "C" {

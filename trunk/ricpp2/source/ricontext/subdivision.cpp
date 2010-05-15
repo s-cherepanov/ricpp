@@ -35,7 +35,7 @@
 
 #ifndef _RICPP_RICONTEXT_RIMACROPRIMS_H
 #include "ricpp/ricontext/rimacroprims.h"
-#endif _RICPP_RICONTEXT_RIMACROPRIMS_H
+#endif // _RICPP_RICONTEXT_RIMACROPRIMS_H
 
 #ifdef _DEBUG
 #include <iostream>

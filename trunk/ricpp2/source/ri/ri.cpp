@@ -46,6 +46,7 @@
 #include <cassert>
 #include <cmath>
 #include <vector>
+#include <cstdio>
 
 using namespace RiCPP;
 

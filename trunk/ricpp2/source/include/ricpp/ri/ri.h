@@ -75,15 +75,15 @@
 
 #ifndef _RICPP_RIBASE_RICPPCONST_H
 #include "ricpp/ribase/ricppconst.h"
-#endif _RICPP_RIBASE_RICPPCONST_H
+#endif // _RICPP_RIBASE_RICPPCONST_H
  
 #ifndef _RICPP_RIBASE_RICPPTOKENS_H
 #include "ricpp/ribase/ricpptokens.h"
-#endif _RICPP_RIBASE_RICPPTOKENS_H
+#endif // _RICPP_RIBASE_RICPPTOKENS_H
 
 #ifndef _RICPP_RIBASE_RICPPDECLS_H
 #include "ricpp/ribase/ricppdecls.h"
-#endif _RICPP_RIBASE_RICPPDECLS_H
+#endif // _RICPP_RIBASE_RICPPDECLS_H
 
 
 #ifdef __cplusplus

@@ -34,7 +34,7 @@
 
 #ifndef _RICPP_RIBASE_RICPPDECLS_H
 #include "ricpp/ribase/ricppdecls.h"
-#endif _RICPP_RIBASE_RICPPDECLS_H
+#endif // _RICPP_RIBASE_RICPPDECLS_H
 
 using namespace RiCPP;
 

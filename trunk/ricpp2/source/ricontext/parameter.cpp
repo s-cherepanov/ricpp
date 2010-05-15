@@ -386,7 +386,7 @@ void CParameter::extract(IndexType pos, std::vector<RtFloat>::iterator &result) 
 {
 #ifdef _TRACE_EXTRACT
 	std::cout << "-> extract" << std::endl;
-#endif _TRACE_EXTRACT
+#endif // _TRACE_EXTRACT
 
 	unsigned long es  = declaration().elemSize();
 	pos = es * pos;
@@ -394,14 +394,14 @@ void CParameter::extract(IndexType pos, std::vector<RtFloat>::iterator &result) 
 	for ( ;  pos < endPos; ++pos ) {
 #ifdef _TRACE_EXTRACT
 		std::cout << "-- extract pos = " << pos << std::endl;
-#endif _TRACE_EXTRACT
+#endif // _TRACE_EXTRACT
 		*result = m_floats[pos];
 		result++;
 	}
 
 #ifdef _TRACE_EXTRACT
 	std::cout << "<- extract" << std::endl;
-#endif _TRACE_EXTRACT
+#endif // _TRACE_EXTRACT
 }
 
 void CParameter::extract(IndexType from, IndexType to, std::vector<RtFloat>::iterator &result) const

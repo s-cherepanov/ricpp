@@ -31,7 +31,7 @@
 
 #ifndef _RICPP_RICONTEXT_RIMACRO_H
 #include "ricpp/ricontext/rimacro.h"
-#endif _RICPP_RICONTEXT_RIMACRO_H
+#endif // _RICPP_RICONTEXT_RIMACRO_H
 
 #ifndef _RICPP_RIBPARSER_RIBPARSER_H
 #include "ricpp/ribparser/ribparser.h"

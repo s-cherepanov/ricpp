@@ -61,6 +61,7 @@
 #endif // _RICPP_TOOLS_TEMPLATEFUNCS_H
 
 #include <algorithm>
+#include <cstring>
 
 namespace RiCPP {
 

@@ -41,11 +41,11 @@
 
 #ifndef _RICPP_RIBASE_RICPPCONST_H
 #include "ricpp/ribase/ricppconst.h"
-#endif _RICPP_RIBASE_RICPPCONST_H
+#endif // _RICPP_RIBASE_RICPPCONST_H
  
 #ifndef _RICPP_RIBASE_RICPPTOKENS_H
 #include "ricpp/ribase/ricpptokens.h"
-#endif _RICPP_RIBASE_RICPPTOKENS_H
+#endif // _RICPP_RIBASE_RICPPTOKENS_H
 
 /** @namespace RiCPP
  *  @brief All of the interface is placed within the RiCPP namespace.

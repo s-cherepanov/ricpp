@@ -32,11 +32,11 @@
 
 #ifndef _RICPP_RICONTEXT_SURFACE_H
 #include "ricpp/ricontext/surface.h"
-#endif _RICPP_RICONTEXT_SURFACE_H
+#endif // _RICPP_RICONTEXT_SURFACE_H
 
 #ifndef _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
 #include "ricpp/ricontext/rimacroattributes.h"
-#endif _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
+#endif // _RICPP_RICONTEXT_RIMACROATTRIBUTES_H
 
 #ifndef _RICPP_RICONTEXT_BLEND_H
 #include "ricpp/ricontext/blend.h"

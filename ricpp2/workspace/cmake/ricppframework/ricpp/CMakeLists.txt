@@ -10,5 +10,5 @@ set ( ricpp_src
       ${RICPP_SOURCE_DIR}/ricpp/varsubst.cpp
 )
 
-add_library ( ricpp ${ricpp_src} )
+add_library ( ricpp STATIC ${ricpp_src} )
 

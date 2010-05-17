@@ -4,5 +4,5 @@ set ( declaration_src
       ${RICPP_SOURCE_DIR}/declaration/tokenmap.cpp
 )
 
-add_library ( declaration ${declaration_src} )
+add_library ( declaration STATIC ${declaration_src} )
 

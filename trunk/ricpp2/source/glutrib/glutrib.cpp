@@ -36,6 +36,8 @@
 #include <GL/glut.h>
 #endif
 
+#include <iostream>
+
 static RtFloat opacity_25[] = {0.25,  0.25, 0.25};
 static RtFloat opacity_50[] = {0.5,  0.5, 0.5};
 static RtFloat opacity_75[] = {0.75,  0.75, 0.75};
@@ -390,9 +392,10 @@ int main(int argc, char **argv)
 	
    	glutDisplayFunc(display); 
 	glutReshapeFunc(reshape);
-    glutMouseFunc(mouse);
-    glutMotionFunc(motion);
+	glutMouseFunc(mouse);
+	glutMotionFunc(motion);
 
+	// std::cerr << "BEGIN" << std::endl;
 	
 	RiBegin("glrenderer"); {
 		if ( argc <= 1 ) {
@@ -400,8 +403,11 @@ int main(int argc, char **argv)
 		} else {
 			loadScene(argv[1]);
 		}
+		// std::cerr << "MainLoop" << std::endl;
 		glutMainLoop();
 	} RiEnd();
 	
+	// std::cerr << "END" << std::endl;
+
 	return 0;
 }

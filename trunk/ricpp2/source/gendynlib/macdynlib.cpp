@@ -91,8 +91,13 @@ bool CMacDynLib::valid() const {
 }
 
 const char *CMacDynLib::findLib() {
-	if ( !m_libpath.empty() )
+
+	// std::cerr << "findLib()" << std::endl;
+
+	if ( !m_libpath.empty() ) {
+		// std::cerr << "findLib(exit) path:" << m_libpath.c_str() << std::endl;
 		return m_libpath.c_str();
+	}
 
 	std::string dllname(CFilepathConverter::nativeDynlibPrefix());
 	dllname += libname();
@@ -103,6 +108,8 @@ const char *CMacDynLib::findLib() {
 	}
 	dllname += CFilepathConverter::nativeDynlibSuffix();
 	
+	// std::cerr << "findLib() dllname:" << dllname.c_str() << std::endl;
+
 	m_libpath = "";
 
 	FILE *f = 0;
@@ -111,21 +118,28 @@ const char *CMacDynLib::findLib() {
 		CStringList::const_iterator i = m_searchpath.begin();
 		for ( ; i != m_searchpath.end(); i++ ) {
 			strlibpath = *i;
+			// std::cerr << "XXXXXXXX findLib(*1*) strlibpath:" << strlibpath.c_str() << std::endl;
 			if ( strlibpath.size() > 0 )
 				if ( strlibpath[strlibpath.size()-1] != '/' )
 					strlibpath += "/";
 			strlibpath += dllname;
+			// std::cerr << "findLib() strlibpath:" << strlibpath.c_str() << std::endl;
 			CFilepath p(strlibpath.c_str());
+			// std::cerr << "findLib() p.fullpath():" << p.fullpath() << std::endl;
 			if ( 0 != (f=fopen(p.fullpath(), "r")) ) {
 				fclose(f);
 				m_libpath = p.fullpath();
+				// std::cerr << "findLib() m_libpath:" << m_libpath.c_str() << std::endl;
 			}
 		}
 	} else {
 		// Search the standard path
 		m_libpath = "";
 		m_libpath += dllname;
+		// std::cerr << "findLib() m_libpath:" << m_libpath.c_str() << " dllname " << dllname.c_str() << std::endl;
 	}
+
+	// std::cerr << "findLib(exit2) m_libpath:" << m_libpath.c_str() << std::endl;
 
 	return m_libpath.c_str();
 }

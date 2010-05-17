@@ -36,15 +36,12 @@
 
 #include <sys/errno.h>
 #include <sys/types.h>
+#include <sys/param.h>
 
 #include <dirent.h>
 #include <unistd.h>
 #include <stdlib.h>
-
-// Can be small because space is allocated dynamically if PATH_MAX was to small
-#ifndef PATH_MAX
-#define PATH_MAX 2
-#endif
+#include <iostream>
 
 using namespace RiCPP;
 
@@ -99,6 +96,14 @@ std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 		}
 		buf[res]='\0';
 
+		while ( res > 0 ) {
+			--res;
+			if ( buf[res] == '/' ) {
+				buf[res] = 0;
+				break;
+			}
+		}
+
 		path = buf;
 		internalPath = path;
 		CFilepathConverter::convertToInternal(internalPath);
@@ -107,6 +112,8 @@ std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 	}
 
 	prog = convertPath ? internalPath : path;
+
+	// std::cerr << "************** prog" << prog << std::endl;
 	return prog;
 }
 

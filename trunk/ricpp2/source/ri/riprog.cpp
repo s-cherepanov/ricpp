@@ -11,6 +11,8 @@
 #include "ricpp/ri/riinternal.h"
 #endif // _RICPP_RI_RIINTERNAL_H
 
+#include <iostream>
+
 namespace RiCPP {
 
 	static CRiCPPBridge *ri=0; ///< The bridge to the rendering context
@@ -67,14 +69,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 #pragma managed(pop)
 #endif
 
-#endif // WIN32
+#else
 
-#ifdef __APPLE__
 extern "C" {
 	
 	__attribute__((constructor)) 
 	static void initializer() {
-		// std::cout << "INITIALIZER" << std::endl;
+		std::cout << "INITIALIZER" << std::endl;
 		SetRoot();
 	}
 	
@@ -82,11 +83,11 @@ extern "C" {
 	__attribute__((destructor)) 
 	static void finalizer() { 
 		UnsetRoot();
-		// std::cout << "FINALIZER" << std::endl;
+		std::cout << "FINALIZER" << std::endl;
 	} 
 	
 }
-#endif // __APPLE__
+#endif // WIN32
 
 extern "C" {
 	

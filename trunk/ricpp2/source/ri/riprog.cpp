@@ -75,7 +75,7 @@ extern "C" {
 	
 	__attribute__((constructor)) 
 	static void initializer() {
-		std::cout << "INITIALIZER" << std::endl;
+		// std::cout << "INITIALIZER" << std::endl;
 		SetRoot();
 	}
 	
@@ -83,7 +83,7 @@ extern "C" {
 	__attribute__((destructor)) 
 	static void finalizer() { 
 		UnsetRoot();
-		std::cout << "FINALIZER" << std::endl;
+		// std::cout << "FINALIZER" << std::endl;
 	} 
 	
 }

@@ -397,6 +397,9 @@ int main(int argc, char **argv)
 
 	// std::cerr << "BEGIN" << std::endl;
 	
+	// Print errors
+	RiErrorHandler(RiErrorPrint);
+
 	RiBegin("glrenderer"); {
 		if ( argc <= 1 ) {
 			testScene();

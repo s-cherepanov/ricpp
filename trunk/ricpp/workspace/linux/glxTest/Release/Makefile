@@ -5,6 +5,7 @@ RELEASEDEPLIBS += ../../ribparser/Release/libribparser.a
 RELEASEDEPLIBS += ../../rendererloader/Release/librendererloader.a
 RELEASEDEPLIBS += ../../rendercontext/Release/librendercontext.a
 RELEASEDEPLIBS += ../../glcpp/Release/libglcpp.a
+RELEASEDEPLIBS += ../../tools/Release/libtools.a
 
 RELEASELIBS    += $(RELEASEDEPLIBS) -lz
 RELEASELIBS    += -ltiff
@@ -36,6 +37,8 @@ $(RELEASEBIN): $(OBJ) $(RELEASEDEPLIBS)
 	$(MAKE) -C ../../rendercontext -f $(MAKEFILE) release
 ../../ribparser/Release/libribparser.a:
 	$(MAKE) -C ../../ribparser -f $(MAKEFILE) release
+../../tools/Release/tools.a:
+	$(MAKE) -C ../../tools -f $(MAKEFILE) release
 
 $(OBJPATH)/glxTest.o: $(GLXTEST_GLXTEST_CPP)
 	$(CPP) -c $(RELPATH)/glxTest/glxTest.cpp -o $@ $(CXXRELEASEFLAGS)

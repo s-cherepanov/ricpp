@@ -70,6 +70,7 @@
 #  include <errno.h> //!< for errno
 #  include <dlfcn.h>
 #  define WINAPI
+#  define CDECL
 #  include <locale.h> //!< for setlocale
 #  include <string.h> //!< for strcasecmp
 #  include <stdarg.h> //!< for snprintf

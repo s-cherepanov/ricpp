@@ -29,6 +29,9 @@ $(DEBUGBIN): $(OBJ) $(DEBUGDEPLIBS)
 ../../rendercontext/Debug/out/librendercontextd.a:
 	$(MAKE) -C ../../rendercontext -f $(MAKEFILE) debug
 
+../../tools/Debug/out/libtoolsd.a:
+	$(MAKE) -C ../../tools -f $(MAKEFILE) debug
+
 $(OBJPATH)/testrib.o: $(TESTRIB_TESTRIB_CPP)
 	$(CPP) -c $(RELPATH)/testrib/testrib.cpp -o $@ $(CXXDEBUGFLAGS)
 

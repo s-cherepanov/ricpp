@@ -26,6 +26,7 @@
 */
 
 #include "stdafx.h"
+#include <stdlib.h>
 #include "ribparser.h"
 
 #include <assert.h>

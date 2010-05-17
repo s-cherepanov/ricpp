@@ -6,6 +6,7 @@ clean: cleandebug cleanrelease
 
 debug:
 	@echo Building debug...
+	$(MAKE) -C tools -f $(MAKEFILE) $@
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -18,6 +19,7 @@ debug:
 
 release:
 	@echo Building release...
+	$(MAKE) -C tools -f $(MAKEFILE) $@
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -30,6 +32,7 @@ release:
 
 cleandebug:
 	@echo Cleaning debug...
+	$(MAKE) -C tools -f $(MAKEFILE) $@
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -42,6 +45,7 @@ cleandebug:
 
 cleanrelease:
 	@echo Cleaning release...
+	$(MAKE) -C tools -f $(MAKEFILE) $@
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@
@@ -54,6 +58,7 @@ cleanrelease:
 
 install:
 	@echo Install...
+	$(MAKE) -C tools -f $(MAKEFILE) $@
 	$(MAKE) -C glcpp -f $(MAKEFILE) $@
 	$(MAKE) -C rendererloader -f $(MAKEFILE) $@
 	$(MAKE) -C ribparser -f $(MAKEFILE) $@

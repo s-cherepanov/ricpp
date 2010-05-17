@@ -29,6 +29,9 @@ $(RELEASEBIN): $(OBJ) $(RELEASEDEPLIBS)
 ../../rendercontext/Release/out/librendercontext.a:
 	$(MAKE) -C ../../rendercontext -f $(MAKEFILE) release
 
+../../tools/release/out/libtools.a:
+	$(MAKE) -c ../../tools -f $(MAKEFILE) release
+
 $(OBJPATH)/testrib.o: $(TESTRIB_TESTRIB_CPP)
 	$(CPP) -c $(RELPATH)/testrib/testrib.cpp -o $@ $(CXXRELEASEFLAGS)
 

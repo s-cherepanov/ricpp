@@ -5,6 +5,7 @@ DEBUGDEPLIBS += ../../ribparser/Debug/libribparserd.a
 DEBUGDEPLIBS += ../../rendererloader/Debug/librendererloaderd.a
 DEBUGDEPLIBS += ../../rendercontext/Debug/librendercontextd.a
 DEBUGDEPLIBS += ../../glcpp/Debug/libglcppd.a
+DEBUGDEPLIBS += ../../tools/Debug/libtoolsd.a
 
 DEBUGLIBS    += $(DEBUGDEPLIBS) -lz
 DEBUGLIBS    += -ltiff
@@ -36,6 +37,8 @@ $(DEBUGBIN): $(OBJ) $(DEBUGDEPLIBS)
 	$(MAKE) -C ../../rendercontext -f $(MAKEFILE) debug
 ../../ribparser/Debug/libribparserd.a:
 	$(MAKE) -C ../../ribparser -f $(MAKEFILE) debug
+../../tools/Debug/libtoolsd.d:
+	$(MAKE) -C ../../tools -f $(MAKEFILE) dedug
 
 $(OBJPATH)/glxTest.o: $(GLXTEST_GLXTEST_CPP)
 	$(CPP) -c $(RELPATH)/glxTest/glxTest.cpp -o $@ $(CXXDEBUGFLAGS)

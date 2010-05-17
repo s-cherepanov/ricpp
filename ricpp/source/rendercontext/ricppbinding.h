@@ -32,6 +32,7 @@
 #include "ribparser/ribparser.h"
 
 #include <math.h>
+#include <stdlib.h>
 #include <vector>
 
 //! Size, class and type information of one parameter

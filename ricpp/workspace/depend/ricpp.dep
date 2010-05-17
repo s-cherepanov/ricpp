@@ -23,8 +23,11 @@ RENDERERLOADER_RENDERERLOADER_CPP = $(RELPATH)/rendererloader/rendererloader.cpp
 # tools
 # -----------------------------------------------------------------------------
 TOOLS_RICPPPLATFORM_H = $(RELPATH)/tools/ricppplatform.h
+TOOLS_STDAFX_H        = $(RELPATH)/tools/stdafx.h $(TOOLS_RICPPPLATFORM_H)
 TOOLS_GETTEMP_H       = $(RELPATH)/tools/gettemp.h
 TOOLS_HELPERS_H       = $(RELPATH)/tools/helpers.h $(RENDERERLOADER_RICPP_H)
+TOOLS_LOGFILE_H       = $(RELPATH)/tools/logfile.h
+TOOLS_LOGFILE_CPP     = $(RELPATH)/tools/logfile.cpp $(TOOLS_STDAFX_H) $(TOOLS_LOGFILE_H)
 
 
 # -----------------------------------------------------------------------------

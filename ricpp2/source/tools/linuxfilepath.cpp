@@ -28,5 +28,11 @@
  *  @brief Linux implementation of the file path classes (same as Mac)
  */
 
-#include "macfilepath.cpp"
+#include "ricpp/tools/filepath.h"
+
+using namespace RiCPP;
+
+/** @brief Dynamic libraries have the suffix ".so" at linux systems
+ */
+const char *CFilepathConverter::nativeDynlibSuffix() { return ".so"; }
 

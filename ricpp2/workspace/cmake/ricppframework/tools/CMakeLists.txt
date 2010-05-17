@@ -13,6 +13,7 @@ elseif ( ${APPLE} )
 	set ( tools_src
               ${tools_src}
               ${RICPP_SOURCE_DIR}/tools/macfilepath.cpp
+              ${RICPP_SOURCE_DIR}/tools/maclinuxfilepath.cpp
               ${RICPP_SOURCE_DIR}/tools/macenv.cpp
               ${RICPP_SOURCE_DIR}/tools/maclinuxenv.cpp
         )
@@ -23,6 +24,7 @@ else ()
 	set ( tools_src
               ${tools_src}
               ${RICPP_SOURCE_DIR}/tools/linuxfilepath.cpp
+              ${RICPP_SOURCE_DIR}/tools/maclinuxfilepath.cpp
               ${RICPP_SOURCE_DIR}/tools/linuxenv.cpp
               ${RICPP_SOURCE_DIR}/tools/maclinuxenv.cpp
         )

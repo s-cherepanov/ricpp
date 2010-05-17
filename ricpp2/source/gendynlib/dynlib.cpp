@@ -38,11 +38,14 @@
 #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
 
+#include <iostream>
+
 using namespace RiCPP;
 
 CDynLib::CDynLib(const char *aLibname, const char *aSearchpath, long int aVersion)
 	: m_useCount(0), m_version(aVersion), m_libname(aLibname), m_searchpath(':', aSearchpath, true), m_libpath("")
 {
+	// std::cerr << " ************ aSearchpath " << aSearchpath << std::endl;
 }
 
 unsigned long CDynLib::useCount() const

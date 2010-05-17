@@ -20,5 +20,5 @@ else ()
         )
 endif ()
 
-add_library ( gendynlib ${gendynlib_src} )
+add_library ( gendynlib STATIC ${gendynlib_src} )
 

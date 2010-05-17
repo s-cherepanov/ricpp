@@ -10,5 +10,5 @@ set ( ribparser_src
       ${RICPP_SOURCE_DIR}/ribparser/ribtransforms.cpp
 )
 
-add_library ( ribparser ${ribparser_src} )
+add_library ( ribparser STATIC ${ribparser_src} )
 

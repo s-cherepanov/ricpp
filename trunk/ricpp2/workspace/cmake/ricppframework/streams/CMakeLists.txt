@@ -3,5 +3,5 @@ set ( streams_src
       ${RICPP_SOURCE_DIR}/streams/uri.cpp
 )
 
-add_library ( streams ${streams_src} )
+add_library ( streams STATIC ${streams_src} )
 

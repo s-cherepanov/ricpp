@@ -23,5 +23,5 @@ set ( ricontext_src
       ${RICPP_SOURCE_DIR}/ricontext/triangulation.cpp
 )
 
-add_library ( ricontext ${ricontext_src} )
+add_library ( ricontext STATIC ${ricontext_src} )
 

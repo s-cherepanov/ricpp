@@ -28,5 +28,5 @@ else ()
         )
 endif ()
 
-add_library ( tools ${tools_src} )
+add_library ( tools STATIC ${tools_src} )
 

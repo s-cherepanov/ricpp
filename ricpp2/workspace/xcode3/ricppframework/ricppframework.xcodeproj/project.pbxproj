@@ -216,6 +216,7 @@
 		C3C9AE3D0D70BCCE00A04717 /* rimacroclasses.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */; };
 		C3C9AE440D70BD5D00A04717 /* baserenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */; };
 		C3C9AE480D70BDE000A04717 /* ribtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3C9AE470D70BDE000A04717 /* ribtool.cpp */; };
+		C3CCA5CF11A341F600B8F153 /* maclinuxfilepath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3CCA5CE11A341F600B8F153 /* maclinuxfilepath.cpp */; };
 		C3CE0EF50DCF50920014BC8E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */; };
 		C3CE0EF90DCF50DE0014BC8E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3524EAB0DCEEFBD00C59FD1 /* OpenGL.framework */; };
 		C3CE0F0C0DCF54470014BC8E /* MyOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE0F0B0DCF54470014BC8E /* MyOpenGLView.m */; };
@@ -931,6 +932,7 @@
 		C3C9AE3B0D70BCCE00A04717 /* rimacroclasses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 5; includeInIndex = 1; lineEnding = 1; name = rimacroclasses.h; path = ../../../source/include/ricpp/ricontext/rimacroclasses.h; sourceTree = SOURCE_ROOT; };
 		C3C9AE430D70BD5D00A04717 /* baserenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = baserenderer.cpp; path = ../../../source/baserenderer/baserenderer.cpp; sourceTree = SOURCE_ROOT; };
 		C3C9AE470D70BDE000A04717 /* ribtool.cpp */ = {isa = PBXFileReference; fileEncoding = 5; includeInIndex = 1; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 1; name = ribtool.cpp; path = ../../../source/ribtool/ribtool.cpp; sourceTree = SOURCE_ROOT; };
+		C3CCA5CE11A341F600B8F153 /* maclinuxfilepath.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = maclinuxfilepath.cpp; path = ../../../source/tools/maclinuxfilepath.cpp; sourceTree = SOURCE_ROOT; };
 		C3CE0EEE0DCF50520014BC8E /* riglapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = riglapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3CE0EF00DCF50520014BC8E /* riglapp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "riglapp-Info.plist"; sourceTree = "<group>"; };
 		C3CE0EF40DCF508A0014BC8E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -2266,10 +2268,11 @@
 		C399BA370BE5DE05002FEEF1 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				C3D625FB119E08570087843A /* maclinuxenv.cpp */,
-				C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */,
-				C399BA990BE5E229002FEEF1 /* macenv.cpp */,
 				C38EA2A20BE86D370057831B /* macfilepath.cpp */,
+				C3D625FB119E08570087843A /* maclinuxenv.cpp */,
+				C3CCA5CE11A341F600B8F153 /* maclinuxfilepath.cpp */,
+				C399BA990BE5E229002FEEF1 /* macenv.cpp */,
+				C33939BC0CDE14C5001BBED7 /* stringpattern.cpp */,
 				C33118220BEB10B30084F992 /* stringlist.cpp */,
 			);
 			fileEncoding = 5;
@@ -3372,6 +3375,7 @@
 				C3685ECE0D3C1F9100B2E025 /* macfilepath.cpp in Sources */,
 				C3685ECF0D3C1F9100B2E025 /* stringlist.cpp in Sources */,
 				C3D625FC119E08570087843A /* maclinuxenv.cpp in Sources */,
+				C3CCA5CF11A341F600B8F153 /* maclinuxfilepath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

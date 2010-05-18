@@ -3,5 +3,5 @@ set ( ribtool_src
 )
 
 add_executable ( ribtool ${ribtool_src} )
-target_link_libraries ( ribtool riprogdll )
+target_link_libraries ( ribtool ${ricppbridge_libs} )
 

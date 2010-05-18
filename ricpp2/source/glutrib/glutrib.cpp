@@ -28,6 +28,8 @@
  *  @todo Seems to be something wrong with the depth buffer.
  */
 
+
+
 #include <ricpp/ricpp.h>
 
 #ifdef __APPLE__
@@ -36,7 +38,8 @@
 #include <GL/glut.h>
 #endif
 
-#include <iostream>
+// ---> cannot compile on Winodws
+// #include <iostream>
 
 static RtFloat opacity_25[] = {0.25,  0.25, 0.25};
 static RtFloat opacity_50[] = {0.5,  0.5, 0.5};

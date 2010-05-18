@@ -57,13 +57,13 @@ add_subdirectory (ridynload)
 
 set (ricpp_libs ricpp ribase tools)
 set (ridynload_libs ridynload ri ${ricpp_libs})
-set (pluginhandler_libs pluginhandler gendynlib ${ricpp_libs})
+set (pluginhandler_libs pluginhandler gendynlib ${ricpp_libs} dl)
 set (ribfilter_libs ribfilter ${pluginhandler_libs})
-set (ricontext_libs ricontext declaration streams ${pluginhandler_libs})
+set (ricontext_libs ricontext declaration streams ${pluginhandler_libs} z)
 set (ribparser_libs ribparser ribfilter ${ricontext_libs})
 set (ricppbridge_libs ricppbridge rendererloader ${ribparser_libs})
 set (baserenderer_libs baserenderer ${ribparser_libs})
-set (glrenderer_libs glrenderer ${baserenderer_libs})
+set (glrenderer_libs glrenderer ${baserenderer_libs} GL)
 set (ribwriter_libs ribwriter ${baserenderer_libs})
 
 # *** dynamic libraries 

@@ -6,9 +6,9 @@ echo g++ -c src\*.cpp
 
 g++ -Wall -fexceptions -g2 -c src\*.cpp
 
-echo g++ -o nurbstest -fexceptions *.o
+echo g++ -o nurbstest *.o
 
-g++ -o nurbstest.exe -fexceptions *.o
+g++ -o nurbstest.exe *.o
 
 del *.o
 

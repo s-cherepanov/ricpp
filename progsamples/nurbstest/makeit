@@ -1,9 +1,9 @@
 #!/bin/bash
 rm ./nurbstest
 echo g++ -c src/*.cpp
-g++ -c src/*.cpp
-echo g++ -o ./nurbstest -fexceptions ./*.o
-g++ -o ./nurbstest -fexceptions ./*.o
+g++ -fexceptions -Wall -g2 -c src/*.cpp
+echo g++ -o ./nurbstest ./*.o
+g++ -o ./nurbstest ./*.o
 rm ./*.o
 strip ./nurbstest
 

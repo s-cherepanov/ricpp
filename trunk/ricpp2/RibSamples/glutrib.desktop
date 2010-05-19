@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=glutrib %U
+Name=Glut RIB
+Comment=RIB 3D Dateianzeiger
+MimeType=model/x-rib-Typ
+GenericName=Preview 3D RIB (RenderMan Interface Bytestream) files: Zoom middle mouse button, roll left mouse button, reset view right mouse button
+Comment=RIB Previewer

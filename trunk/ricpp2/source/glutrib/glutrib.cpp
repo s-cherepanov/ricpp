@@ -48,8 +48,10 @@ static RtFloat greenish[] = {0.5,  1, 0.5};
 static RtFloat redish[] = {1,  0.5, 0.5};
 static RtFloat blueish[] = {0.5,  0.5, 1};
 
-static RtInt width = 512;
-static RtInt height = 512;
+// Funny, 512x512 resulution did not work one laptop (ThinkPad T41)
+// under Gnu/Linux
+static RtInt width = 640;
+static RtInt height = (RtInt)(width * 3.0 / 4.0);
 
 static float sphi=0.0, stheta=0.0;
 static float sdepth = 0.0;
@@ -410,6 +412,7 @@ int main(int argc, char **argv)
 			loadScene(argv[1]);
 		}
 		// std::cerr << "MainLoop" << std::endl;
+		glutReshapeWindow(width, height); // Hack, display did not work on my laptop until window was resized...
 		glutMainLoop();
 	} RiEnd();
 	

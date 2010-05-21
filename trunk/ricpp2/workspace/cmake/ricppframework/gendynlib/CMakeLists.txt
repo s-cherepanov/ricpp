@@ -8,7 +8,7 @@ if ( ${WIN32} )
 elseif ( ${APPLE} )
 	set ( gendynlib_src
               ${gendynlib_src}
-              ${RICPP_SOURCE_DIR}/tools/macdynlib.cpp
+              ${RICPP_SOURCE_DIR}/gendynlib/macdynlib.cpp
         )
 else ()
 	if ( NOT ${UNIX} )

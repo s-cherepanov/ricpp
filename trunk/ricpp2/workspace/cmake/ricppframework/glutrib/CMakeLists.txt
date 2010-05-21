@@ -3,5 +3,5 @@ set ( glutrib_src
 )
 
 add_executable ( glutrib ${glutrib_src} )
-target_link_libraries ( glutrib riprogdll glut )
+target_link_libraries ( glutrib riprog glut )
 

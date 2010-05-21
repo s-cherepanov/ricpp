@@ -1,7 +1,8 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.6)
 
 project(RICPPFRAMEWORK)
 
+set ( CMAKE_CXX_FLAGS -fPIC )
 set ( RICPP_SOURCE_DIR
       ${RICPPFRAMEWORK_SOURCE_DIR}/../../../source
 )

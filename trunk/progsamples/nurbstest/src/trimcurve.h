@@ -390,7 +390,7 @@ public:
     inline void insertCurves(int loopIdx, const CTrimCurveData &trimCurveData)
     {
         m_trimCurves.resize(trimCurveData.curves(loopIdx));
-        for ( int i = 0; i < m_trimCurves.size(); ++i ) {
+        for ( unsigned int i = 0; i < m_trimCurves.size(); ++i ) {
             m_trimCurves[i].insertCurve(loopIdx, i, trimCurveData);
         }
     }

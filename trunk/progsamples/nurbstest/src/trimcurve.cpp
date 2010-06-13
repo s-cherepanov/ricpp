@@ -129,16 +129,16 @@ void CTrimCurveData::trimCurve(RtInt nloops,
         return;
     }
 
-    int i, j, sum, offs;	// Counter
+	int i, j, sum, offs;	// Counter
 
     m_nCurves.resize(m_data.m_nloops);
     m_nCurves.assign(ncurves, ncurves+m_data.m_nloops);
 
     m_nCurveOffs.resize(m_data.m_nloops);
     offs = 0;
-    for ( i = 0; i < m_nCurveOffs.size(); ++i ) {
-        m_nCurveOffs[i] = offs;
-        offs += m_nCurves[i];
+    for ( unsigned int cnt = 0; cnt < m_nCurveOffs.size(); ++cnt ) {
+        m_nCurveOffs[cnt] = offs;
+        offs += m_nCurves[cnt];
     }
 
     m_order.resize(m_data.m_total);

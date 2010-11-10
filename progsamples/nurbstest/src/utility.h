@@ -144,7 +144,7 @@ template<typename type> inline void writeVector(type &v,
 
     out << std::endl;
 
-    for ( unsigned int i=0; i<v.size()/components; ++i ) {
+    for ( IndexType i=0; i<v.size()/components; ++i ) {
         if ( i==0 || onePerLine ) {
             out << prefix + "    ";
         }

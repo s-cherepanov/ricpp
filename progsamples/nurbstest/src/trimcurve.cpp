@@ -136,7 +136,7 @@ void CTrimCurveData::trimCurve(RtInt nloops,
 
     m_nCurveOffs.resize(m_data.m_nloops);
     offs = 0;
-    for ( unsigned int cnt = 0; cnt < m_nCurveOffs.size(); ++cnt ) {
+    for ( IndexType cnt = 0; cnt < m_nCurveOffs.size(); ++cnt ) {
         m_nCurveOffs[cnt] = offs;
         offs += m_nCurves[cnt];
     }

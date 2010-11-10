@@ -319,6 +319,9 @@ public:
     const std::vector<RtFloat> &coordinates() const {
         return m_coordinates;
     }
+    const IndexType size() const {
+        return m_coordinates.size()/2;
+    }
     RtFloat u(IndexType idx) const
     {
         assert(idx*2<m_coordinates.size());
@@ -390,7 +393,7 @@ public:
     inline void insertCurves(int loopIdx, const CTrimCurveData &trimCurveData)
     {
         m_trimCurves.resize(trimCurveData.curves(loopIdx));
-        for ( unsigned int i = 0; i < m_trimCurves.size(); ++i ) {
+        for ( IndexType i = 0; i < m_trimCurves.size(); ++i ) {
             m_trimCurves[i].insertCurve(loopIdx, i, trimCurveData);
         }
     }

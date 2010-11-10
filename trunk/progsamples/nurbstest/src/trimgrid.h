@@ -11,6 +11,7 @@
 #define _RICPP_TRIMGRID_H
 
 #include "trimcurve.h"
+#include <list>
 
 namespace RiCPP {
 
@@ -104,6 +105,17 @@ public:
         return m_axisIdx;
     }
 
+	IndexType findGridForCoord(RtFloat coord) const;
+	
+	inline RtFloat coord(IndexType idx) const {
+		return m_coordinates[idx].coord();
+	}
+
+	inline IndexType size() const {
+		return m_coordinates.size();
+	}
+
+	bool clip(IndexType gridIdx, int &gridIncrement, RtFloat coord, RtFloat &clippedCoord) const;
     void write(std::ostream &out, const std::string &prefix) const;
 }; // CParametricAxis
 
@@ -173,14 +185,43 @@ private:
 /** A grid of parametric coordinates for trimming
  */
 class CTrimGrid {
+	class CTrimFragments {
+		const CTrimGrid *m_outer;
+		IndexType m_curLoop;
+
+		class CFragment {
+		public:
+			IndexType m_giu, m_giv;
+			IndexType m_startCoord;
+			RtFloat m_startU, m_startV;
+		};
+		std::list<CFragment> m_fragments;
+
+		IndexType m_lastCoord;
+		RtFloat m_lastU, m_lastV;
+
+	public:
+		inline CTrimFragments(const CTrimGrid *outer) : m_outer(outer) { }
+		void startLoop(IndexType loop, RtFloat u, RtFloat v);
+		void moveTo(IndexType coord, RtFloat u, RtFloat v);
+		void endLoop();
+	};
+
+	friend class CTrimFragments;
     CParametricAxis m_axises[2]; //!< u, v axis
 
     std::vector<CTrimCoords> m_trimLoopCoords;
+	std::list<CTrimFragments *> m_fragments;
 
-    void tesselate();
+	CTrimFragments *startLoop(IndexType loop, RtFloat u, RtFloat v) const;
+
+	void tesselate();
 public:
     inline CTrimGrid() {}
     CTrimGrid(RtInt nu, RtFloat uknot[], RtFloat umin, RtFloat umax, IndexType utess, RtInt nv, RtFloat vknot[], RtFloat vmin, RtFloat vmax, IndexType vtess);
+
+	~CTrimGrid();
+
     inline const CParametricAxis &uAxis() const {
         return m_axises[uAxisIdx];
     }
@@ -188,12 +229,9 @@ public:
         return m_axises[vAxisIdx];
     }
     void buildGrid(RtInt nu, RtFloat uknot[], RtFloat umin, RtFloat umax, IndexType utess, RtInt nv, RtFloat vknot[], RtFloat vmin, RtFloat vmax, IndexType vtess);
-    inline void trim(const CTrimPath &trimPath)
-    {
-        trimPath.getTrimCoords(m_trimLoopCoords);
-        tesselate();
-    }
-    void write(std::ostream &out, const std::string &prefix) const;
+    void trim(const CTrimPath &trimPath);
+
+	void write(std::ostream &out, const std::string &prefix) const;
 }; // CTrimGrid
 
 } // RiCPP

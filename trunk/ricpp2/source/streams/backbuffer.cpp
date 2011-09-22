@@ -61,7 +61,7 @@ std::streamsize CFileBackBuffer::sgetn(char *b, std::streamsize size)
 	}
 	
 	// Read from buffer
-#ifdef _MSC_VER
+#if 0 // defined _MSC_VER
 	return m_filebuf._Sgetn_s(b, size, size);
 #else
 	return m_filebuf.sgetn(b, size);
@@ -370,7 +370,7 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 	} else if ( m_coupledBuffer ) {
 		
 		if ( startstream ) {
-#ifdef _MSC_VER
+#if 0 // defined _MSC_VER
 			m_strmIn.avail_in =
 			(uInt)m_coupledBuffer->_Sgetn_s(reinterpret_cast<char *>
 											(m_transferInBuffer.begin()),
@@ -386,7 +386,7 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 								   (m_transferInBuffer.size()));
 #endif
 		} else {
-#ifdef _MSC_VER
+#if 0 // defined _MSC_VER
 			m_strmIn.avail_in =
 			(uInt)m_coupledBuffer->_Sgetn_s(reinterpret_cast<char *>
 											(m_transferInBuffer.begin() +

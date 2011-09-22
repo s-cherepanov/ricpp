@@ -34,6 +34,7 @@
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
 #include <list>
+#include <functional>
 #include <algorithm>
 
 namespace RiCPP {

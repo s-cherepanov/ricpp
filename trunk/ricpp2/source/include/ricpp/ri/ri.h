@@ -1,6 +1,5 @@
 #ifndef _RICPP_RI_RI_H
 #define _RICPP_RI_RI_H
-
 /* RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
@@ -25,7 +24,6 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 /** @file ri.h
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Interface for the RenderMan(R) C Binding
@@ -44,9 +42,7 @@
  *
  * @todo copy the routines that can be used with no context to riprog, ridynload
  */
-
 #ifdef _WIN32
-
 #if defined(RICPP_EXPORTS)
 #if !defined(RICPP_EXTERN)
 #define	RICPP_EXTERN(type) extern __declspec(dllexport) type
@@ -60,19 +56,14 @@
 #endif
 /* In implementation dllexport only */
 #endif
-
 #else
-
 #if !defined(RICPP_EXTERN)
 #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
 #endif
-
 #if !defined(RICPP_INTERN)
 #define RICPP_INTERN(type) __attribute__((visibility("default"))) type
 #endif
-
 #endif
-
 #ifndef _RICPP_RIBASE_RICPPCONST_H
 #include "ricpp/ribase/ricppconst.h"
 #endif // _RICPP_RIBASE_RICPPCONST_H
@@ -80,20 +71,15 @@
 #ifndef _RICPP_RIBASE_RICPPTOKENS_H
 #include "ricpp/ribase/ricpptokens.h"
 #endif // _RICPP_RIBASE_RICPPTOKENS_H
-
 #ifndef _RICPP_RIBASE_RICPPDECLS_H
 #include "ricpp/ribase/ricppdecls.h"
 #endif // _RICPP_RIBASE_RICPPDECLS_H
-
-
 #ifdef __cplusplus
-/* namespace RiCPP { /* */
+/* namespace RiCPP {  */
 #endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 /*//////////////////////////////////////////////////////////////////////
 //
 //	Additional functions
@@ -102,46 +88,35 @@ extern "C" {
 RICPP_EXTERN(RtContextHandle)
     RiCPPBegin (RtToken name, ...),
 	RiCPPBeginV(RtToken name, int n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
 	RiCPPEnd (void);
-
 RICPP_EXTERN(RtObjectHandle) 
 	RiCPPObjectBegin (RtToken name);
-
 RICPP_EXTERN(RtVoid)
 	RiCPPObjectEnd (void);
-
 RICPP_EXTERN(RtVoid)
     RiCPPControl (RtToken name, ...),
 	RiCPPControlV (RtToken name, int n, RtToken tokens[], RtPointer params[]);
-
 /*//////////////////////////////////////////////////////////////////////
 //
 //	Delarations of All of the RenderMan Interface Subroutines
 //
 //////////////////////////////////////////////////////////////////////*/
-
 RICPP_EXTERN(RtVoid)
 	RiErrorHandler(RtErrorHandler handler);
-
 RICPP_EXTERN(RtToken)
     RiDeclare (RtString name, RtString declaration);
-
 RICPP_EXTERN(RtContextHandle)
 	RiGetContext(void);
-
 RICPP_EXTERN(RtVoid)
 	RiContext(RtContextHandle),
 	RiSynchronize(RtToken),
 	RiSystem(RtString);
-
 RICPP_EXTERN(RtVoid)
     RiBegin (RtToken name),
 	RiEnd (void),
 	RiFrameBegin (RtInt number), RiFrameEnd (void),
     RiWorldBegin (void), RiWorldEnd (void);
-
 RICPP_EXTERN(RtVoid)
     RiFormat (RtInt xres, RtInt yres, RtFloat aspect),
     RiFrameAspectRatio (RtFloat aspect),
@@ -155,7 +130,6 @@ RICPP_EXTERN(RtVoid)
     RiShutter (RtFloat smin, RtFloat smax),
     RiCamera (RtString name, ...),
     RiCameraV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
     RiPixelVariance (RtFloat variation),
     RiPixelSamples (RtFloat xsamples, RtFloat ysamples),
@@ -168,7 +142,6 @@ RICPP_EXTERN(RtVoid)
     RiDisplayV (RtString name, RtToken type, RtToken mode, RtInt n, RtToken tokens[], RtPointer params[]),
 	RiDisplayChannel (RtToken channel, ...),
     RiDisplayChannelV (RtToken channel,RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
     RiHider (RtToken type, ...),
     RiHiderV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[]),
@@ -176,18 +149,15 @@ RICPP_EXTERN(RtVoid)
     RiRelativeDetail (RtFloat relativedetail),
     RiOption (RtString name, ...),
     RiOptionV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
     RiAttributeBegin (void), RiAttributeEnd (void),
     RiColor (RtColor Cs), RiOpacity (RtColor Cs),
     RiTextureCoordinates (RtFloat s1, RtFloat t1, RtFloat s2, RtFloat t2, RtFloat s3, RtFloat t3, RtFloat s4, RtFloat t4);
-
 RICPP_EXTERN(RtLightHandle)
     RiLightSource (RtString name, ...),
     RiLightSourceV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
     RiAreaLightSource (RtString name, ...),
     RiAreaLightSourceV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
     RiIlluminate (RtLightHandle light, RtBoolean onoff),
     RiSurface (RtString name, ...),
@@ -201,7 +171,6 @@ RICPP_EXTERN(RtVoid)
     RiShadingRate (RtFloat size),
     RiShadingInterpolation (RtToken type),
     RiMatte (RtBoolean onoff);
-
 RICPP_EXTERN(RtVoid)
     RiBound (RtBound bound), RiDetail (RtBound bound),
     RiDetailRange (RtFloat minvis, RtFloat lowtran, RtFloat uptran, RtFloat maxvis),
@@ -209,7 +178,6 @@ RICPP_EXTERN(RtVoid)
     RiGeometricRepresentation (RtToken type),
     RiOrientation (RtToken orientation), RiReverseOrientation (void),
     RiSides (RtInt nsides);
-
 RICPP_EXTERN(RtVoid)
     RiIdentity (void),
     RiTransform (RtMatrix transform), RiConcatTransform (RtMatrix transform),
@@ -224,18 +192,14 @@ RICPP_EXTERN(RtVoid)
     RiDisplacementV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]),
     RiCoordinateSystem (RtToken space),
     RiCoordSysTransform (RtToken space);
-
 RICPP_EXTERN(RtPoint *) 
 	RiTransformPoints (RtToken fromspace, RtToken tospace, RtInt npoints, RtPoint *points);
-
 RICPP_EXTERN(RtVoid) 
 	RiTransformBegin (void), 
 	RiTransformEnd (void);
-
 RICPP_EXTERN(RtVoid)
     RiAttribute (RtString name, ...),
     RiAttributeV (RtString name, RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
     RiPolygon (RtInt nvertices, ...),
     RiPolygonV (RtInt nvertices, RtInt n, RtToken tokens[], RtPointer params[]),
@@ -253,7 +217,6 @@ RICPP_EXTERN(RtVoid)
     RiNuPatch (RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, ...),
     RiNuPatchV (RtInt nu, RtInt uorder, RtFloat *uknot, RtFloat umin, RtFloat umax, RtInt nv, RtInt vorder, RtFloat *vknot, RtFloat vmin, RtFloat vmax, RtInt n, RtToken tokens[], RtPointer params[]),
     RiTrimCurve (RtInt nloops, RtInt *ncurves, RtInt *order, RtFloat *knot, RtFloat *amin, RtFloat *amax, RtInt *n, RtFloat *u, RtFloat *v, RtFloat *w);
-
 RICPP_EXTERN(RtVoid)
     RiSphere (RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, ...),
     RiSphereV (RtFloat radius, RtFloat zmin, RtFloat zmax, RtFloat thetamax, RtInt n, RtToken tokens[], RtPointer params[]),
@@ -272,7 +235,6 @@ RICPP_EXTERN(RtVoid)
 	RiProcedural(RtPointer data, RtBound bound, RtVoid (*subdivfunc)(RtPointer, RtFloat), RtVoid (*freefunc)(RtPointer)),
     RiGeometry (RtToken type, ...),
     RiGeometryV (RtToken type, RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
     RiCurves (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, ...),
     RiCurvesV (RtToken degree, RtInt ncurves, RtInt nverts[], RtToken wrap, RtInt n, RtToken tokens[], RtPointer params[]),
@@ -284,21 +246,17 @@ RICPP_EXTERN(RtVoid)
     RiHierarchicalSubdivisionMeshV (RtToken scheme, RtInt nfaces, RtInt nvertices[], RtInt vertices[], RtInt ntags, RtToken tags[], RtInt nargs[], RtInt intargs[], RtFloat floatargs[], RtToken stringargs[], RtInt n, RtToken tokens[], RtPointer params[]),
     RiBlobby (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], ...),
     RiBlobbyV (RtInt nleaf, RtInt ncode, RtInt code[], RtInt nflt, RtFloat flt[], RtInt nstr, RtString str[], RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
 	RiSolidBegin(RtToken type), 
 	RiSolidEnd(void);
-
 RICPP_EXTERN(RtObjectHandle) 
 	RiObjectBegin (void);
-
 RICPP_EXTERN(RtVoid)
     RiObjectEnd (void),
     RiObjectInstance (RtObjectHandle handle),
     RiMotionBegin (RtInt N, ...),
     RiMotionBeginV (RtInt N, RtFloat times[]),
     RiMotionEnd (void);
-
 RICPP_EXTERN(RtVoid)
     RiMakeTexture (RtString pic, RtString tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, ...),
     RiMakeTextureV (RtString pic, RtString tex, RtToken swrap, RtToken twrap, RtFilterFunc filterfunc, RtFloat swidth, RtFloat twidth, RtInt n, RtToken tokens[], RtPointer params[]),
@@ -312,38 +270,29 @@ RICPP_EXTERN(RtVoid)
     RiMakeShadowV (RtString pic, RtString tex, RtInt n, RtToken tokens[], RtPointer params[]),
 	RiMakeBrickMap (RtInt num, RtString *src, RtString dest, ...),
 	RiMakeBrickMapV(RtInt num, RtString *src, RtString dest, RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
 	RiResource(RtToken handle, RtToken type, ...),
 	RiResourceV(RtToken handle, RtToken type,RtInt n, RtToken tokens[], RtPointer params[]),
 	RiResourceBegin(void),
 	RiResourceEnd(void);
-
 RICPP_EXTERN(RtArchiveHandle)
 	RiArchiveBegin(RtToken name, ...),
 	RiArchiveBeginV(RtToken name, RtInt n, RtToken tokens[], RtPointer params[]);
-
 RICPP_EXTERN(RtVoid)
 	RiArchiveEnd(void);
-
 RICPP_EXTERN(RtVoid)
 	RiIfBegin(RtString expr),
 	RiElseIf(RtString expr),
 	RiElse(void),
 	RiIfEnd(void);
-
 RICPP_EXTERN(RtVoid)
     RiArchiveRecord (RtToken type, RtString format, ...),
     RiReadArchive (RtString filename, RtArchiveCallback callback, ...),
     RiReadArchiveV (RtString filename, RtArchiveCallback callback, int n, RtToken tokens[], RtPointer params[]);
-
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-
 #ifdef __cplusplus
-/* } /* namespace RiCPP */
+/* } namespace RiCPP */
 #endif
-
-
 #endif /* _RICPP_RI_RI_H */

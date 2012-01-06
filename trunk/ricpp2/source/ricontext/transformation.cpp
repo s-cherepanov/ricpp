@@ -21,30 +21,22 @@
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 /** @file transformation.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implements the handling the transformations for the render state.
  */
-
 #include "ricpp/ricontext/transformation.h"
-
 #ifndef _RICPP_RICPP_RICPPERROR_H
 #include "ricpp/ricpp/ricpperror.h"
 #endif // _RICPP_RICPP_RICPPERROR_H
-
 #ifndef _RICPP_RIBASE_RICPPTOKENS_H
 #include "ricpp/ribase/ricpptokens.h"
 #endif // _RICPP_RIBASE_RICPPTOKENS_H
-
 #ifndef _RICPP_TOOLS_TEMPLATEFUNCS_H
 #include "ricpp/tools/templatefuncs.h"
 #endif // _RICPP_TOOLS_TEMPLATEFUNCS_H
-
 using namespace RiCPP;
-
 // -----------------------------------------------------------------------------
-
 CTransformation::CMovedRotate &CTransformation::CMovedRotate::operator=(const CMovedRotate &o)
 {
 	if ( this == &o )
@@ -57,12 +49,10 @@ CTransformation::CMovedRotate &CTransformation::CMovedRotate::operator=(const CM
 	
 	return *this;
 }
-
 void CTransformation::CMovedRotate::clear()
 {
 	m_rotate.clear();
 }
-
 void CTransformation::CMovedRotate::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
@@ -73,7 +63,6 @@ void CTransformation::CMovedRotate::fill(RtInt n)
 		m_rotate[i] = m_rotate[i-1];
 	}
 }
-
 void CTransformation::CMovedRotate::set(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
@@ -102,12 +91,9 @@ void CTransformation::CMovedRotate::set(RtFloat angle, RtFloat dx, RtFloat dy, R
 	if ( n == 0 )
 		sampleReset(ctm, inverse);
 }
-
-
 void CTransformation::CMovedRotate::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 }
-
 void CTransformation::CMovedRotate::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	if ( m_rotate.size() >= 1 ) {
@@ -115,31 +101,25 @@ void CTransformation::CMovedRotate::sampleReset(CMatrix3D &ctm, CMatrix3D &inver
 		inverse.rotate(-m_rotate[0].m_angle, m_rotate[0].m_dx, m_rotate[0].m_dy, m_rotate[0].m_dz);
 	}
 }
-
 // -----------------------------------------------------------------------------
-
 CTransformation::CMovedMatrix &CTransformation::CMovedMatrix::operator=(const CTransformation::CMovedMatrix &o)		
 {
 	if ( this == &o )
 		return *this;
-
 	m_transform = o.m_transform;
 	m_inverseTransform = o.m_inverseTransform;
 	m_validInverse = o.m_validInverse;
 	m_concat = o.m_concat;
 	m_motionBegin = o.m_motionBegin;
 	m_motionEnd = o.m_motionEnd;
-
 	return *this;
 }
-
 void CTransformation::CMovedMatrix::clear()
 {
 	m_transform.clear();
 	m_inverseTransform.clear();
 	m_validInverse = true;
 }
-
 void CTransformation::CMovedMatrix::fill(RtInt n)
 {
 	if ( n == 0 ) {
@@ -154,8 +134,6 @@ void CTransformation::CMovedMatrix::fill(RtInt n)
 		}
 	}
 }
-
-
 void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 										bool concat,
 										RtInt n,
@@ -173,7 +151,6 @@ void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 		set(transform, RiIdentityMatrix, concat, n, moBegin, moEnd, ctm, inverse);
 	}
 }
-
 void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 										const RtMatrix inverseTransform,
 										bool concat,
@@ -193,7 +170,6 @@ void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 	m_motionBegin = moBegin;
 	m_motionEnd = moEnd;
 	m_concat = concat;
-
 	if ( moBegin < moEnd ) {
 		if ( m_transform.size() < (moEnd - moBegin) * 16 ) {
 			m_transform.resize((moEnd - moBegin) * 16);
@@ -208,7 +184,6 @@ void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 			m_transform[n*16+j*4+1] = transform[j][1];
 			m_transform[n*16+j*4+2] = transform[j][2];
 			m_transform[n*16+j*4+3] = transform[j][3];
-
 			m_inverseTransform[n*16+j*4+0] = inverseTransform[j][0];
 			m_inverseTransform[n*16+j*4+1] = inverseTransform[j][1];
 			m_inverseTransform[n*16+j*4+2] = inverseTransform[j][2];
@@ -219,11 +194,9 @@ void CTransformation::CMovedMatrix::set(const RtMatrix transform,
 		sampleReset(ctm, inverse);
 	
 }
-
 void CTransformation::CMovedMatrix::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 }
-
 void CTransformation::CMovedMatrix::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	RtMatrix transform, inverseTransform;
@@ -232,7 +205,6 @@ void CTransformation::CMovedMatrix::sampleReset(CMatrix3D &ctm, CMatrix3D &inver
 		transform[j][1] = m_transform[j*4+1];
 		transform[j][2] = m_transform[j*4+2];
 		transform[j][3] = m_transform[j*4+3];
-
 		inverseTransform[j][0] = m_inverseTransform[j*4+0];
 		inverseTransform[j][1] = m_inverseTransform[j*4+1];
 		inverseTransform[j][2] = m_inverseTransform[j*4+2];
@@ -244,7 +216,6 @@ void CTransformation::CMovedMatrix::sampleReset(CMatrix3D &ctm, CMatrix3D &inver
 			ctm.concatTransform(transform);
 		else
 			ctm.transform(transform);
-
 		if ( !m_validInverse ) {
 			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "Could not calculate inverse matrix in %s", "CMovedMatrix::sampleReset()");
 		}
@@ -254,9 +225,7 @@ void CTransformation::CMovedMatrix::sampleReset(CMatrix3D &ctm, CMatrix3D &inver
 			inverse.transform(inverseTransform);
 	}
 }
-
 // -----------------------------------------------------------------------------
-
 CTransformation::CMovedScale &CTransformation::CMovedScale::operator=(const CMovedScale &o)
 {
 	if ( this == &o )
@@ -269,12 +238,10 @@ CTransformation::CMovedScale &CTransformation::CMovedScale::operator=(const CMov
 	
 	return *this;
 }
-
 void CTransformation::CMovedScale::clear()
 {
 	m_scale.clear();
 }
-
 void CTransformation::CMovedScale::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
@@ -285,7 +252,6 @@ void CTransformation::CMovedScale::fill(RtInt n)
 		m_scale[i] = m_scale[i-1];
 	}
 }
-
 void CTransformation::CMovedScale::set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
@@ -313,12 +279,9 @@ void CTransformation::CMovedScale::set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt
 	if ( n == 0 )
 		sampleReset(ctm, inverse);
 }
-
-
 void CTransformation::CMovedScale::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 }
-
 void CTransformation::CMovedScale::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	if ( m_scale.size() >= 1 ) {
@@ -343,9 +306,7 @@ void CTransformation::CMovedScale::sampleReset(CMatrix3D &ctm, CMatrix3D &invers
 		}
 	}
 }
-
 // -----------------------------------------------------------------------------
-
 CTransformation::CMovedTranslate &CTransformation::CMovedTranslate::operator=(const CMovedTranslate &o)
 {
 	if ( this == &o )
@@ -358,12 +319,10 @@ CTransformation::CMovedTranslate &CTransformation::CMovedTranslate::operator=(co
 	
 	return *this;
 }
-
 void CTransformation::CMovedTranslate::clear()
 {
 	m_translate.clear();
 }
-
 void CTransformation::CMovedTranslate::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
@@ -374,7 +333,6 @@ void CTransformation::CMovedTranslate::fill(RtInt n)
 		m_translate[i] = m_translate[i-1];
 	}
 }
-
 void CTransformation::CMovedTranslate::set(RtFloat dx, RtFloat dy, RtFloat dz, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
@@ -402,12 +360,9 @@ void CTransformation::CMovedTranslate::set(RtFloat dx, RtFloat dy, RtFloat dz, R
 	if ( n == 0 )
 		sampleReset(ctm, inverse);
 }
-
-
 void CTransformation::CMovedTranslate::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 }
-
 void CTransformation::CMovedTranslate::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	if ( m_translate.size() >= 1 ) {
@@ -415,9 +370,7 @@ void CTransformation::CMovedTranslate::sampleReset(CMatrix3D &ctm, CMatrix3D &in
 		inverse.translate(-m_translate[0].m_dx, -m_translate[0].m_dy, -m_translate[0].m_dz);
 	}
 }
-
 // -----------------------------------------------------------------------------
-
 CTransformation::CMovedPerspective &CTransformation::CMovedPerspective::operator=(const CMovedPerspective &o)
 {
 	if ( this == &o )
@@ -430,12 +383,10 @@ CTransformation::CMovedPerspective &CTransformation::CMovedPerspective::operator
 	
 	return *this;
 }
-
 void CTransformation::CMovedPerspective::clear()
 {
 	m_fov.clear();
 }
-
 void CTransformation::CMovedPerspective::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
@@ -446,7 +397,6 @@ void CTransformation::CMovedPerspective::fill(RtInt n)
 		m_fov[i] = m_fov[i-1];
 	}
 }
-
 void CTransformation::CMovedPerspective::set(RtFloat fov, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
@@ -472,12 +422,9 @@ void CTransformation::CMovedPerspective::set(RtFloat fov, RtInt n, unsigned long
 	if ( n == 0 )
 		sampleReset(ctm, inverse);
 }
-
-
 void CTransformation::CMovedPerspective::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 }
-
 void CTransformation::CMovedPerspective::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	if ( m_fov.size() >= 1 ) {
@@ -489,10 +436,7 @@ void CTransformation::CMovedPerspective::sampleReset(CMatrix3D &ctm, CMatrix3D &
 		}
 	}
 }
-
 // -----------------------------------------------------------------------------
-
-
 CTransformation::CMovedSkew &CTransformation::CMovedSkew::operator=(const CMovedSkew &o)
 {
 	if ( this == &o )
@@ -505,12 +449,10 @@ CTransformation::CMovedSkew &CTransformation::CMovedSkew::operator=(const CMoved
 	
 	return *this;
 }
-
 void CTransformation::CMovedSkew::clear()
 {
 	m_skew.clear();
 }
-
 void CTransformation::CMovedSkew::fill(RtInt n)
 {
 	// Fill unused values at [n...end]
@@ -521,7 +463,6 @@ void CTransformation::CMovedSkew::fill(RtInt n)
 		m_skew[i] = m_skew[i-1];
 	}
 }
-
 void CTransformation::CMovedSkew::set(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2, RtInt n, unsigned long moBegin, unsigned long moEnd, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	assert ( moBegin <= moEnd);
@@ -553,12 +494,9 @@ void CTransformation::CMovedSkew::set(RtFloat angle, RtFloat dx1, RtFloat dy1, R
 	if ( n == 0 )
 		sampleReset(ctm, inverse);
 }
-
-
 void CTransformation::CMovedSkew::sample(RtFloat shutterTime, const TypeMotionTimes &times, CMatrix3D &ctm, CMatrix3D &inverse)
 {
 }
-
 void CTransformation::CMovedSkew::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse)
 {
 	if ( m_skew.size() >= 1 ) {
@@ -570,9 +508,7 @@ void CTransformation::CMovedSkew::sampleReset(CMatrix3D &ctm, CMatrix3D &inverse
 		}
 	}
 }
-
 // -----------------------------------------------------------------------------
-
 CTransformation::CTransformation()
 {
 	m_dirty = false;
@@ -590,12 +526,10 @@ CTransformation::CTransformation()
 	// m_CTM_onMotionStart = m_CTM;
 	// m_inverseCTM_onMotionStart = m_inverseCTM;
 }
-
 CTransformation::~CTransformation()
 {
 	clear();
 }
-
 void CTransformation::clear()
 {
 	for ( std::vector<IMovedTransform *>::iterator i = m_deferedTrans.begin(); i != m_deferedTrans.end(); i++ ) {
@@ -605,40 +539,31 @@ void CTransformation::clear()
 	m_deferedTrans.clear();
 	dirty(true);
 }
-
 CTransformation *CTransformation::duplicate() const
 { 
 	if ( m_factory )
 		return m_factory->newTransformation(*this);
 	return new CTransformation(*this);
 }
-
 CTransformation &CTransformation::operator=(const CTransformation &o)
 {
 	if ( &o == this )
 		return *this;
-
 	dirty(true);
-
 	m_factory = o.m_factory;
 	m_isValid = o.m_isValid;
 	
 	m_CTM = o.m_CTM;
 	m_inverseCTM = o.m_inverseCTM;
-
 	m_isValid_onMotionStart = o.m_isValid_onMotionStart;
 	m_CTM_onMotionStart = o.m_CTM_onMotionStart;
 	m_inverseCTM_onMotionStart = o.m_inverseCTM_onMotionStart;
-
 	m_spaceType = o.m_spaceType;
-
 	// The storeCounter is set within CRenderState()::pushTransform as needed
 	m_storeCounter = o.m_storeCounter;
 	
 	m_motionState = o.m_motionState;
-
 	clear();
-
 	// push_back_duplicate(m_deferedTrans, o.m_deferedTrans);
 	for ( std::vector<IMovedTransform *>::const_iterator j = o.m_deferedTrans.begin(); j != o.m_deferedTrans.end(); j++ ) {
 		if ( (*j) != 0 )
@@ -649,24 +574,18 @@ CTransformation &CTransformation::operator=(const CTransformation &o)
 	
 	return *this;
 }
-
 void CTransformation::reset()
 {
 	dirty(true);
-
-	m_motionState = false;
+	m_motionState = NULL;
 	m_isValid = true;
-
 	m_CTM.identity();
 	m_inverseCTM.identity();
-
 	clear();
 }
-
 void CTransformation::identity()
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.identity();
 		m_inverseCTM.identity();
@@ -686,11 +605,9 @@ void CTransformation::identity()
 		}
 	}
 }
-
 void CTransformation::transform(const RtMatrix aTransform)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.transform(aTransform);
 		CMatrix3D mat(aTransform);
@@ -717,11 +634,9 @@ void CTransformation::transform(const RtMatrix aTransform)
 		}
 	}
 }
-
 void CTransformation::transform(const RtMatrix aTransform, const RtMatrix anInverseTransform)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.transform(aTransform);
 		m_inverseCTM.transform(anInverseTransform);
@@ -741,11 +656,9 @@ void CTransformation::transform(const RtMatrix aTransform, const RtMatrix anInve
 		}
 	}
 }
-
 void CTransformation::concatTransform(const RtMatrix aTransform)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.concatTransform(aTransform);
 		CMatrix3D mat(aTransform);
@@ -770,11 +683,9 @@ void CTransformation::concatTransform(const RtMatrix aTransform)
 		}
 	}
 }
-
 void CTransformation::concatTransform(const RtMatrix aTransform, const RtMatrix anInverseTransform)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.concatTransform(aTransform);
 		m_inverseCTM.concatTransform(anInverseTransform);
@@ -793,11 +704,9 @@ void CTransformation::concatTransform(const RtMatrix aTransform, const RtMatrix 
 		}
 	}
 }
-
 void CTransformation::perspective(RtFloat fov)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		if ( fov >= (RtFloat)180.0 || fov <= -(RtFloat)180.0 ) {
 			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::perspective(%f), fov out of range", fov);
@@ -819,11 +728,9 @@ void CTransformation::perspective(RtFloat fov)
 		}
 	}
 }
-
 void CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.translate(dx, dy, dz);
 		m_inverseCTM.translate(-dx, -dy, -dz);
@@ -842,11 +749,9 @@ void CTransformation::translate(RtFloat dx, RtFloat dy, RtFloat dz)
 		}
 	}
 }
-
 void CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.rotate(angle, dx, dy, dz);
 		m_inverseCTM.rotate(-angle, dx, dy, dz);
@@ -865,11 +770,9 @@ void CTransformation::rotate(RtFloat angle, RtFloat dx, RtFloat dy, RtFloat dz)
 		}
 	}
 }
-
 void CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		m_CTM.scale(dx, dy, dz);
 		
@@ -908,11 +811,9 @@ void CTransformation::scale(RtFloat dx, RtFloat dy, RtFloat dz)
 		}
 	}
 }
-
 void CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1, RtFloat dx2, RtFloat dy2, RtFloat dz2)
 {
 	dirty(true);
-
 	if ( !m_motionState ) {
 		if ( angle >= (RtFloat)90.0  || angle <= (RtFloat)-90.0 ) {
 			throw ExceptRiCPPError(RIE_MATH, RIE_ERROR, __LINE__, __FILE__, "CTransformation::skew(%f), skew out of range", angle);
@@ -934,7 +835,6 @@ void CTransformation::skew(RtFloat angle, RtFloat dx1, RtFloat dy1, RtFloat dz1,
 		}
 	}
 }
-
 void CTransformation::motionBegin(const CMotionState &state)
 {
 	assert(m_motionState==0);
@@ -945,7 +845,6 @@ void CTransformation::motionBegin(const CMotionState &state)
 		m_inverseCTM_onMotionStart = m_inverseCTM;
 	}
 }
-
 void CTransformation::motionEnd()
 {
 	// Can be closed before (-> projection)
@@ -956,12 +855,10 @@ void CTransformation::motionEnd()
 	}
 	m_motionState = 0;
 }
-
 void CTransformation::motionSuspend()
 {
 	m_motionState = 0;
 }
-
 void CTransformation::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 {
 	std::vector<IMovedTransform *>::iterator i = m_deferedTrans.begin();
@@ -969,7 +866,6 @@ void CTransformation::sample(RtFloat shutterTime, const TypeMotionTimes &times)
 		(*i)->sample(shutterTime, times, m_CTM, m_inverseCTM);
 	}
 }
-
 void CTransformation::sampleReset()
 {
 	if ( !m_deferedTrans.empty() ) {
@@ -982,14 +878,11 @@ void CTransformation::sampleReset()
 		}
 	}
 }
-
 RtToken CTransformation::coordSysOrientation() const
 {
 	return handedness(m_CTM);
 }
-
 // ----------------------------------------------------------------------------
-
 CTransformation *CTransformationFactory::newTransformation()
 {
 	CTransformation *trans = newTransformationInstance();
@@ -998,7 +891,6 @@ CTransformation *CTransformationFactory::newTransformation()
 	}
 	return trans;
 }
-
 CTransformation *CTransformationFactory::newTransformation(const CTransformation &trans) const
 {
 	CTransformation *transPtr = newTransformationInstance(trans);
@@ -1007,12 +899,10 @@ CTransformation *CTransformationFactory::newTransformation(const CTransformation
 	}
 	return transPtr;
 }
-
 void CTransformationFactory::deleteTransformation(CTransformation *trans)
 {
 	if ( !trans )
 		return;
-
 	if ( trans->factory() ) {
 		const CTransformationFactory *f = trans->factory();
 		f->deleteTransformationInstance(trans);

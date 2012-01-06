@@ -1,6 +1,5 @@
 #ifndef _RICPP_RIBASE_RICPPTYPES_H
 #define _RICPP_RIBASE_RICPPTYPES_H
-
 /* RICPP - RenderMan(R) Interface CPP Language Binding
 //
 //     RenderMan(R) is a registered trademark of Pixar
@@ -29,9 +28,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Rt type definitions
  */
-
 #ifdef _WIN32
-
 #if defined(RICPP_EXPORTS)
 #if !defined(RICPP_EXTERN)
 #define	RICPP_EXTERN(type) extern __declspec(dllexport) type
@@ -48,9 +45,7 @@
 #define	RICPP_INTERN(type) type
 #endif
 #endif
-
 #else
-
 #if defined(RICPP_EXPORTS)
 #if !defined(RICPP_EXTERN)
 #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
@@ -67,17 +62,13 @@
 #define	RICPP_INTERN(type) type
 #endif
 #endif
-
 #endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 #ifdef __cplusplus
-/* namespace RiCPP { /* */
+/* namespace RiCPP { */
 #endif
-
 /** @defgroup ricpp_type Ri types
  *  @brief Some basic types are copied from ri.h (s.a. RISPEC3.2, Appendix C)
  *  @{
@@ -85,9 +76,7 @@ extern "C" {
 typedef short   RtBoolean;       /**< Booleans can be RI_TRUE or RI_FALSE */
 typedef int     RtInt;           /**< Integers */
 typedef float   RtFloat;         /**< Floats */
-
 typedef const char *RtToken;     /**< Tokens, changed from 'char *' to 'const char *', Tokens are either pre-declared or declared with IRi::declare() */
-
 typedef RtFloat *RtColor;        /**< Colors, changed from 'RtFloat[3]' to 'RtFloat *' to manage color using other than 3 components */
 typedef RtFloat  RtPoint[3];     /**< Points in 3D */
 typedef RtFloat  RtVector[3];    /**< Vectors in 3D */
@@ -98,30 +87,23 @@ typedef RtFloat  RtMatrix[4][4]; /**< Homogenous matrix for 3D transformations *
 typedef RtFloat  RtBasis[4][4];  /**< Base matrix for spline interpolations */
 typedef RtFloat  RtBound[6];     /**< Bound of 3D object: Left, right, bottom, top, front, back */
 typedef const char *RtString;    /**< Character string, which is not a predefined token, changed from 'char *' to 'const char *' */
-
 typedef void   *RtPointer;       /**< Pointer to arbitrary data */
 #define RtVoid  void             /**< Simple 'void' datatype, used as 'return type' for functions returning nothing (C++: typedef is not working for void) */
-
 /** @brief Pixel filter
  */
 typedef RtFloat     (*RtFilterFunc)(RtFloat, RtFloat, RtFloat, RtFloat);
-
 /** @brief Error handler
  */
 typedef RtVoid		(*RtErrorHandler)(RtInt code, RtInt severity, RtString msg);
-
 /** @brief Procedural
  */
 typedef RtVoid      (*RtProcSubdivFunc)(RtPointer, RtFloat);
-
 /** @brief Procedural free data
  */
 typedef RtVoid      (*RtProcFreeFunc)(RtPointer);
-
 /** @brief Archive callback for archive records
  */
 typedef RtVoid		(*RtArchiveCallback)(RtToken, RtString,...);
-
 /** @defgroup ricpp_handles Ri handle types
  *  @ingroup ricpp_types
  *  @brief handles are only valid for the rendering context, where they are defined
@@ -134,13 +116,10 @@ typedef RtToken RtObjectHandle;        /**< Handle for an object instance (was R
 typedef RtToken RtArchiveHandle;       /**< Handle for a rib archive (was RtPointer), is the tokenized name. */
 /** @} */
 /** @} */
-
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-
 #ifdef __cplusplus
-/* } /* namespace RiCPP */
+/* } namespace RiCPP */
 #endif
-
 #endif /* _RICPP_RIBASE_RICPPTYPES_H */

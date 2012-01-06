@@ -1357,7 +1357,7 @@ void CMatrix3D::inversePerspective(RtFloat fov)
 
         RtFloat f = deg2rad(fov);
         f = (RtFloat)tan(f/2.0);
-		if ( ( f == 0.0 ) ) {
+		if ( (RtFloat)0.0 == f ) {
 			return;
 		}
 

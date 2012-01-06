@@ -69,7 +69,7 @@ public:
 	
 	inline bool isConstant() const
 	{
-		if ( declaration.storageClass() == CLASS_UNKNOWN ) {
+		if ( declaration().storageClass() == CLASS_UNKNOWN ) {
 			throw ExceptRiCPPError(RIE_BUG, RIE_SEVERE,
 								   "Storageclass type of a parameter in TemplPrimVar::isConstant() not defined.",
 								   __LINE__, __FILE__);

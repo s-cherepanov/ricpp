@@ -28,13 +28,17 @@
  */
 
 #if !defined(WIN32)
+#if defined(GNUC)
 #pragma GCC visibility push(hidden)
+#endif
 #endif
 
 #include "ricpp/glrenderer/glrenderer.h"
 
 #if !defined(WIN32)
+#if defined(GNUC)
 #pragma GCC visibility pop
+#endif
 #endif
 
 using namespace RiCPP;
@@ -42,7 +46,9 @@ using namespace RiCPP;
 #if defined(WIN32)
 
 #if defined(_MANAGED)
+#if defined(GNUC)
 #pragma managed(push, off)
+#endif
 #endif
 
 /** @brief Defines the entry point for the DLL.

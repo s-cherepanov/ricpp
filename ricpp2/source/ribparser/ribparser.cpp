@@ -21,62 +21,46 @@
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 /** @file ribparser.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of the parser for rib
  */
-
 // #include "ricpp/ribparser/ribparser.h"
-
 #ifndef _RICPP_RIBPARSER_RIBMISC_H
 #include "ricpp/ribparser/ribmisc.h"
 #endif // _RICPP_RIBPARSER_RIBMISC_H
-
 #ifndef _RICPP_RIBPARSER_RIBMODES_H
 #include "ricpp/ribparser/ribmodes.h"
 #endif // _RICPP_RIBPARSER_RIBMODES_H
-
 #ifndef _RICPP_RIBPARSER_RIBOPTIONS_H
 #include "ricpp/ribparser/riboptions.h"
 #endif // _RICPP_RIBPARSER_RIBOPTIONS_H
-
 #ifndef _RICPP_RIBPARSER_RIBATTRIBUTES_H
 #include "ricpp/ribparser/ribattributes.h"
 #endif // _RICPP_RIBPARSER_RIBATTRIBUTES_H
-
 #ifndef _RICPP_RIBPARSER_RIBLIGHTS_H
 #include "ricpp/ribparser/riblights.h"
 #endif // _RICPP_RIBPARSER_RIBLIGHTS_H
-
 #ifndef _RICPP_RIBPARSER_RIBTRANSFORMS_H
 #include "ricpp/ribparser/ribtransforms.h"
 #endif // _RICPP_RIBPARSER_RIBTRANSFORMS_H
-
 #ifndef _RICPP_RIBPARSER_RIBPRIMS_H
 #include "ricpp/ribparser/ribprims.h"
 #endif // _RICPP_RIBPARSER_RIBPRIMS_H
-
 #ifndef _RICPP_RIBPARSER_RIBEXTERNALS_H
 #include "ricpp/ribparser/ribexternals.h"
 #endif // _RICPP_RIBPARSER_RIBEXTERNALS_H
-
 #ifndef _RICPP_RICPP_PARAMCLASSES_H
 #include "ricpp/ricpp/paramclasses.h"
 #endif // _RICPP_RICPP_PARAMCLASSES_H
-
 #ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
-
 #ifndef _RICPP_TOOLS_FILEPATH_H
 #include "ricpp/tools/filepath.h"
 #endif // _RICPP_TOOLS_FILEPATH_H
-
 using namespace RiCPP;
-
 // -----------------------------------------------------------------------------
-
 // Various status codes, sequence number is important
 const int CRibParser::RIBPARSER_REQUEST = 1;
 const int CRibParser::RIBPARSER_NORMAL_COMMENT = 2;
@@ -85,14 +69,10 @@ const int CRibParser::RIBPARSER_STRING = 4;
 const int CRibParser::RIBPARSER_ARRAY_START = 5;
 const int CRibParser::RIBPARSER_ARRAY_END = 6;
 const int CRibParser::RIBPARSER_NUMBER = 7;
-
 const int CRibParser::RIBPARSER_NOT_A_TOKEN = 0;
 const int CRibParser::RIBPARSER_EOF = -1;
-
 std::map<std::string, CRibRequest *> CRibParser::s_requestMap;
-
 // ----------------------------------------------------------------------------
-
 CRibParameter::CRibParameter()
 {
 	m_lineNo = 1;
@@ -100,19 +80,14 @@ CRibParameter::CRibParameter()
 	m_typeID = BASICTYPE_UNKNOWN;
 	m_cstrVector = 0;
 }
-
-
 CRibParameter::~CRibParameter()
 {
 	freeValue();
-
 	if ( m_cstrVector ) {
 		delete m_cstrVector;
 	}
 	m_cstrVector = 0;
 }
-
-
 CRibParameter::CRibParameter(const CRibParameter &p)
 {
 	m_lineNo = 1;
@@ -121,46 +96,33 @@ CRibParameter::CRibParameter(const CRibParameter &p)
 	m_typeID = BASICTYPE_UNKNOWN;
 	*this = p;
 }
-
-
 void CRibParameter::freeValue()
 {
 	m_vInt.clear();
 	m_vFloat.clear();
 	m_vString.clear();
 }
-
-
 CRibParameter &CRibParameter::operator=(const CRibParameter &p)
 {
 	if ( &p == this )
 		return *this;
-
 	freeValue();
-
 	m_lineNo = p.m_lineNo;
-
 	if ( m_cstrVector )
 		delete m_cstrVector;
 	m_cstrVector = 0;
-
 	m_typeID = p.m_typeID;
 	m_isArray = p.m_isArray;
-
 	m_vInt = p.m_vInt;
 	m_vFloat = p.m_vFloat;
 	m_vString = p.m_vString;
-
 	return *this;
 }
-
-
 void *CRibParameter::getValue()
 {
 	// Is there at least one value?
 	if ( getCard() == 0 )
 		return 0;
-
 	// return a pointer to the values
 	switch ( m_typeID ) {
 		case BASICTYPE_UNKNOWN:
@@ -189,13 +151,10 @@ void *CRibParameter::getValue()
 	}
 	return 0;
 }
-
-
 void *CRibParameter::getValue(size_t i) const
 {
 	if ( i >= getCard() )
 		return 0;
-
 	switch ( m_typeID ) {
 		case BASICTYPE_UNKNOWN:
 			break;
@@ -209,15 +168,11 @@ void *CRibParameter::getValue(size_t i) const
 	}
 	return 0;
 }
-
-
 size_t CRibParameter::getCard() const
 {
-
 	// No valid typeID - no value is set
 	if ( m_typeID < 0 || m_typeID >= N_BASICTYPES )
 		return 0;
-
 	// vector allocated - size is the cardinality
 	switch ( m_typeID ) {
 		case BASICTYPE_UNKNOWN:
@@ -231,16 +186,12 @@ size_t CRibParameter::getCard() const
 	}
 	return 0;
 }
-
-
 bool CRibParameter::convertIntToFloat()
 {
 	if ( m_typeID == BASICTYPE_FLOAT )
 		return true;
-
 	if ( m_typeID != BASICTYPE_INTEGER )
 		return false;
-
 	size_t i;
 	size_t size = m_vInt.size();
 	m_vFloat.resize(size);
@@ -251,15 +202,11 @@ bool CRibParameter::convertIntToFloat()
 	m_typeID = BASICTYPE_FLOAT;
 	return true;
 }
-
-
 bool CRibParameter::convertFloatToInt() {
 	if ( m_typeID == BASICTYPE_INTEGER )
 		return true;
-
 	if ( m_typeID != BASICTYPE_FLOAT )
 		return false;
-
 	size_t i;
 	size_t size = m_vFloat.size();
 	m_vInt.resize(size);
@@ -270,11 +217,7 @@ bool CRibParameter::convertFloatToInt() {
 	m_typeID = BASICTYPE_INTEGER;
 	return true;
 }
-
-
 // ----------------------------------------------------------------------------
-
-
 bool CRibRequestData::removePair(size_t start, RtToken token)
 {
 	size_t size = m_parameters.size();
@@ -283,7 +226,6 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 	}
 	
 	RtToken t;
-
 	std::vector<CRibParameter>::iterator sav;
 	std::vector<CRibParameter>::iterator iter = m_parameters.begin();
 	size_t i = 0;
@@ -304,12 +246,10 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 		}
 		
 		std::vector<CRibParameter>::iterator sav=iter; // sav points to the token
-
 		++iter; ++i; // iter points to value
 		if ( iter != m_parameters.end() ) {
 			++iter; ++i; // iter points to next token or end
 		}
-
 		if ( t == token ) {
 			m_parameters.erase(sav, iter);
 			return true;
@@ -318,7 +258,6 @@ bool CRibRequestData::removePair(size_t start, RtToken token)
 	
 	return false;
 }
-
 int CRibRequestData::getTokenList(
 	size_t start,
 	const char *aQualifier,
@@ -333,27 +272,20 @@ int CRibRequestData::getTokenList(
 	size_t size = m_parameters.size();
 	m_tokenList.clear();
 	m_valueList.clear();
-
 	if ( start >= size ) {
 		m_tokenList.push_back(0);
 		m_valueList.push_back(0);
 		return 0;
 	}
-
 	m_tokenList.reserve((size-start)/2);
 	m_valueList.reserve((size-start)/2);
-
 	// RtInt aClass, aType, aCardinality;
-
 	const char *token = 0;
 	void *value = 0;
 	size_t i;
-
 	int parameterCount = 0;
 	int parameterPos = 0;
-
 	for ( i = start; i < size; ++i, ++parameterPos ) {
-
 		// Find the parameter name
 		if ( !m_parameters[i].getString(token) ) {
 			// parameter name must be a string
@@ -364,13 +296,10 @@ int CRibRequestData::getTokenList(
 				(int)i, RI_NULL);
 			continue;
 		}
-
 		// Get the value to the parameter, value is always an array, if not convert parameter
 		// to an array (try to read parameters until a new string is found - if value is a string
 		// and not an array only one value is taken)
-
 		++i;
-
 		if ( i >= size ) {
 			// last Token value missing, don't use this parameter
 			value = 0;
@@ -381,10 +310,8 @@ int CRibRequestData::getTokenList(
 				token, (int)i-1, RI_NULL);
 			break;
 		}
-
 		bool useParameter = true;
 		size_t currParam = i;
-
 		// If Parameter is a string take only one
 		if ( m_parameters[currParam].typeID() != BASICTYPE_STRING && !m_parameters[currParam].isArray() ) {
 			// Copy numeric parameters until a string has been found.
@@ -444,9 +371,7 @@ int CRibRequestData::getTokenList(
 			--i;
 			// i == start-1 xor m_parameters[i] contains the next parameter name
 		}
-
 		value = m_parameters[currParam].getValue();  // Get the value as a pointer
-
 		if ( useParameter && m_checkParameters ) {
 			// Test token/value, if OK push to Paramter list, don't use otherwise
 			// RtInt numComps;
@@ -455,17 +380,14 @@ int CRibRequestData::getTokenList(
 			p.setDeclaration(aQualifier, table, token, parameterPos, valueCounts, renderState().dict(), renderState().options().colorDescr());
 			RtInt numComps = p.declaration().selectNumberOf(valueCounts) * p.declaration().elemSize();
 			// unsigned long int numBytes = numComps * p.declaration().basicTypeByteSize();
-
 			EnumBasicTypes basicType = m_parameters[currParam].typeID();
 			size_t size = m_parameters[currParam].getCard();
-
 			// Convert float to int, if needed
 			if ( basicType == BASICTYPE_INTEGER && p.declaration().basicType() == BASICTYPE_FLOAT ) {
 				m_parameters[currParam].convertIntToFloat();
 				basicType = m_parameters[currParam].typeID();
 				value = m_parameters[currParam].getValue();  // Get the value as a pointer
 			}
-
 			// Convert int to float with warning
 			if ( basicType == BASICTYPE_FLOAT && p.declaration().basicType() == BASICTYPE_INTEGER ) {
 				m_parameters[currParam].convertFloatToInt();
@@ -477,7 +399,6 @@ int CRibRequestData::getTokenList(
 						m_parameters[currParam].lineNo(), resourceName(), m_curRequest.c_str(),
 						token, (int)currParam, RI_NULL);
 			}
-
 			if ( basicType != p.declaration().basicType() ) {
 				useParameter=false;
 				errHandler().handleError(
@@ -504,27 +425,22 @@ int CRibRequestData::getTokenList(
 				}
 			}
 		}
-
 		if ( useParameter ) {
 			++parameterCount;
 			m_tokenList.push_back(token);
 			m_valueList.push_back(value);
 		}
 	}
-
 	if ( parameterCount == 0 ) {
 		m_tokenList.push_back(0);
 		m_valueList.push_back(0);
 	}
-
 	return parameterCount;
 }
-
 RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
 {
 	if ( (RtInt)m_tokenList.size() > n )
 		n = (RtInt)m_tokenList.size();
-
 	for ( int i = 0; i < n; ++i ) {
 		if ( m_tokenList[i] == RI_NULL )
 			continue;
@@ -542,14 +458,9 @@ RtInt CRibRequestData::numVertices(RtInt start, RtInt n)
 			return (RtInt)(p.getCard());
 		}
 	}
-
 	return 0;
 }
-
-
 // ----------------------------------------------------------------------------
-
-
 void CRibParser::putback(unsigned char c)
 {
 	m_hasPutBack = true;
@@ -557,12 +468,9 @@ void CRibParser::putback(unsigned char c)
 		lineNo(lineNo()-1);
 	m_putBack = c;
 }
-
-
 unsigned char CRibParser::getchar()
 {
 	unsigned char val;
-
 	if ( m_hasPutBack ) {
 		val = m_putBack;
 		m_hasPutBack = false;
@@ -572,12 +480,10 @@ unsigned char CRibParser::getchar()
 		}
 		return val;
 	}
-
 	val = m_istream.get();
 //	if ( !m_istream ) {
 //		val = 0;
 //	}
-
 	unsigned char c = m_lastChar;
 	m_lastChar = val;
 	
@@ -592,22 +498,16 @@ unsigned char CRibParser::getchar()
 	
 	return val;
 }
-
-
 bool CRibParser::bindObjectHandle(RtObjectHandle handle, RtInt number)
 {
 	m_mapObjectHandle[number] = handle;
 	return true;
 }
-
-
 bool CRibParser::bindObjectHandle(RtObjectHandle handle, const char *name)
 {
 	m_mapObjectStrHandle[name] = handle;
 	return true;
 }
-
-
 bool CRibParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
 {
 	NUM2OBJECT::const_iterator i = m_mapObjectHandle.find(number);
@@ -615,11 +515,8 @@ bool CRibParser::getObjectHandle(RtObjectHandle &handle, RtInt number) const
 		handle = (*i).second;
 		return true;
 	}
-
 	return false;
 }
-
-
 bool CRibParser::getObjectHandle(RtObjectHandle &handle, const char *name) const
 {
 	STR2OBJECT::const_iterator i = m_mapObjectStrHandle.find(name);
@@ -627,25 +524,18 @@ bool CRibParser::getObjectHandle(RtObjectHandle &handle, const char *name) const
 		handle = (*i).second;
 		return true;
 	}
-
 	return false;
 }
-
-
 bool CRibParser::bindLightHandle(RtLightHandle handle, RtInt number)
 {
 	m_mapLightHandle[number] = handle;
 	return true;
 }
-
-
 bool CRibParser::bindLightHandle(RtLightHandle handle, const char *handleName)
 {
 	m_mapLightStrHandle[handleName] = handle;
 	return true;
 }
-
-
 bool CRibParser::getLightHandle(RtLightHandle &handle, RtInt number) const
 {
 	NUM2LIGHT::const_iterator i = m_mapLightHandle.find(number);
@@ -653,11 +543,8 @@ bool CRibParser::getLightHandle(RtLightHandle &handle, RtInt number) const
 		handle = (*i).second;
 		return true;
 	}
-
 	return false;
 }
-
-
 bool CRibParser::getLightHandle(RtLightHandle &handle, const char *handleName) const
 {
 	STR2LIGHT::const_iterator i = m_mapLightStrHandle.find(handleName);
@@ -665,11 +552,8 @@ bool CRibParser::getLightHandle(RtLightHandle &handle, const char *handleName) c
 		handle = (*i).second;
 		return true;
 	}
-
 	return false;
 }
-
-
 /*
 bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, RtInt number)
 {
@@ -677,15 +561,11 @@ bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, RtInt number)
 	return true;
 }
 */
-
-
 bool CRibParser::bindArchiveHandle(RtArchiveHandle handle, const char *name)
 {
 	m_mapArchiveStrHandle[name] = handle;
 	return true;
 }
-
-
 /*
 bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) const
 {
@@ -694,12 +574,9 @@ bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, RtInt number) const
 		handle = (*i).second;
 		return true;
 	}
-
 	return false;
 }
 */
-
-
 bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) const
 {
 	STR2OBJECT::const_iterator i = m_mapArchiveStrHandle.find(name);
@@ -707,158 +584,107 @@ bool CRibParser::getArchiveHandle(RtArchiveHandle &handle, const char *name) con
 		handle = (*i).second;
 		return true;
 	}
-
 	return false;
 }
-
 void CRibParser::initRequestMap()
 {
 	if ( s_requestMap.empty() ) {
-
 		static CErrorHandlerRibRequest errorHandler;
 		s_requestMap.insert(std::make_pair(errorHandler.requestName(), &errorHandler));
-
 		static CDeclareRibRequest declare;
 		s_requestMap.insert(std::make_pair(declare.requestName(), &declare));
-
 		static CReadArchiveRibRequest readArchive;
 		s_requestMap.insert(std::make_pair(readArchive.requestName(), &readArchive));
-
 		static CVersionRibRequest version;
 		s_requestMap.insert(std::make_pair(version.requestName(), &version));
-
 		static CSystemRibRequest systemReq;
 		s_requestMap.insert(std::make_pair(systemReq.requestName(), &systemReq));
-
 		static CResourceBeginRibRequest resourceBegin; 
 		s_requestMap.insert(std::make_pair(resourceBegin.requestName(), &resourceBegin));
-
 		static CResourceEndRibRequest resourceEnd; 
 		s_requestMap.insert(std::make_pair(resourceEnd.requestName(), &resourceEnd));
-
 		static CResourceRibRequest resource; 
 		s_requestMap.insert(std::make_pair(resource.requestName(), &resource));
-
 		static CFrameBeginRibRequest frameBegin; 
 		s_requestMap.insert(std::make_pair(frameBegin.requestName(), &frameBegin));
-
 		static CFrameEndRibRequest frameEnd; 
 		s_requestMap.insert(std::make_pair(frameEnd.requestName(), &frameEnd));
-
 		static CWorldBeginRibRequest worldBegin; 
 		s_requestMap.insert(std::make_pair(worldBegin.requestName(), &worldBegin));
-
 		static CWorldEndRibRequest worldEnd; 
 		s_requestMap.insert(std::make_pair(worldEnd.requestName(), &worldEnd));
-
 		static CAttributeBeginRibRequest attributeBegin; 
 		s_requestMap.insert(std::make_pair(attributeBegin.requestName(), &attributeBegin));
-
 		static CAttributeEndRibRequest attributeEnd; 
 		s_requestMap.insert(std::make_pair(attributeEnd.requestName(), &attributeEnd));
-
 		static CTransformBeginRibRequest transformBegin; 
 		s_requestMap.insert(std::make_pair(transformBegin.requestName(), &transformBegin));
-
 		static CTransformEndRibRequest transformEnd; 
 		s_requestMap.insert(std::make_pair(transformEnd.requestName(), &transformEnd));
-
 		static CSolidBeginRibRequest solidBegin; 
 		s_requestMap.insert(std::make_pair(solidBegin.requestName(), &solidBegin));
-
 		static CSolidEndRibRequest solidEnd; 
 		s_requestMap.insert(std::make_pair(solidEnd.requestName(), &solidEnd));
-
 		static CObjectBeginRibRequest objectBegin; 
 		s_requestMap.insert(std::make_pair(objectBegin.requestName(), &objectBegin));
-
 		static CObjectEndRibRequest objectEnd; 
 		s_requestMap.insert(std::make_pair(objectEnd.requestName(), &objectEnd));
-
 		static CObjectInstanceRibRequest objectInstance; 
 		s_requestMap.insert(std::make_pair(objectInstance.requestName(), &objectInstance));
-
 		static CArchiveBeginRibRequest archiveBegin; 
 		s_requestMap.insert(std::make_pair(archiveBegin.requestName(), &archiveBegin));
-
 		static CArchiveEndRibRequest archiveEnd; 
 		s_requestMap.insert(std::make_pair(archiveEnd.requestName(), &archiveEnd));
-
 		static CMotionBeginRibRequest motionBegin; 
 		s_requestMap.insert(std::make_pair(motionBegin.requestName(), &motionBegin));
-
 		static CMotionEndRibRequest motionEnd; 
 		s_requestMap.insert(std::make_pair(motionEnd.requestName(), &motionEnd));
-
 		static CIfBeginRibRequest ifBegin; 
 		s_requestMap.insert(std::make_pair(ifBegin.requestName(), &ifBegin));
-
 		static CElseIfRibRequest elseIf; 
 		s_requestMap.insert(std::make_pair(elseIf.requestName(), &elseIf));
-
 		static CElseRibRequest elsePart; 
 		s_requestMap.insert(std::make_pair(elsePart.requestName(), &elsePart));
-
 		static CIfEndRibRequest ifEnd; 
 		s_requestMap.insert(std::make_pair(ifEnd.requestName(), &ifEnd));
-
 		static CFormatRibRequest format;
 		s_requestMap.insert(std::make_pair(format.requestName(), &format));
-
 		static CFrameAspectRatioRibRequest frameAspectRatio;
 		s_requestMap.insert(std::make_pair(frameAspectRatio.requestName(), &frameAspectRatio));
-
 		static CScreenWindowRibRequest screenWindow;
 		s_requestMap.insert(std::make_pair(screenWindow.requestName(), &screenWindow));
-
 		static CCropWindowRibRequest cropWindow;
 		s_requestMap.insert(std::make_pair(cropWindow.requestName(), &cropWindow));
-
 		static CProjectionRibRequest projection;
 		s_requestMap.insert(std::make_pair(projection.requestName(), &projection));
-
 		static CClippingRibRequest clipping;
 		s_requestMap.insert(std::make_pair(clipping.requestName(), &clipping));
-
 		static CClippingPlaneRibRequest clippingPlane;
 		s_requestMap.insert(std::make_pair(clippingPlane.requestName(), &clippingPlane));
-
 		static CDepthOfFieldRibRequest depthOfField;
 		s_requestMap.insert(std::make_pair(depthOfField.requestName(), &depthOfField));
-
 		static CShutterRibRequest shutter;
 		s_requestMap.insert(std::make_pair(shutter.requestName(), &shutter));
-
 		static CPixelVarianceRibRequest pixelVariance;
 		s_requestMap.insert(std::make_pair(pixelVariance.requestName(), &pixelVariance));
-
 		static CPixelSamplesRibRequest pixelSamples;
 		s_requestMap.insert(std::make_pair(pixelSamples.requestName(), &pixelSamples));
-
 		static CPixelFilterRibRequest pixelFilter;
 		s_requestMap.insert(std::make_pair(pixelFilter.requestName(), &pixelFilter));
-
 		static CExposureRibRequest exposure;
 		s_requestMap.insert(std::make_pair(exposure.requestName(), &exposure));
-
 		static CImagerRibRequest imager;
 		s_requestMap.insert(std::make_pair(imager.requestName(), &imager));
-
 		static CQuantizeRibRequest quantize;
 		s_requestMap.insert(std::make_pair(quantize.requestName(), &quantize));
-
 		static CDisplayChannelRibRequest displayChannel;
 		s_requestMap.insert(std::make_pair(displayChannel.requestName(), &displayChannel));
-
 		static CDisplayRibRequest display;
 		s_requestMap.insert(std::make_pair(display.requestName(), &display));
-
 		static CHiderRibRequest hider;
 		s_requestMap.insert(std::make_pair(hider.requestName(), &hider));
-
 		static CColorSamplesRibRequest colorSamples;
 		s_requestMap.insert(std::make_pair(colorSamples.requestName(), &colorSamples));
-
 		static CRelativeDetailRibRequest relativeDetail;
 		s_requestMap.insert(std::make_pair(relativeDetail.requestName(), &relativeDetail));
 		
@@ -867,205 +693,138 @@ void CRibParser::initRequestMap()
 		
 		static COptionRibRequest option;
 		s_requestMap.insert(std::make_pair(option.requestName(), &option));
-
 		static CAttributeRibRequest attribute; 
 		s_requestMap.insert(std::make_pair(attribute.requestName(), &attribute));
-
 		static CColorRibRequest color; 
 		s_requestMap.insert(std::make_pair(color.requestName(), &color));
-
 		static COpacityRibRequest opacity; 
 		s_requestMap.insert(std::make_pair(opacity.requestName(), &opacity));
-
 		static CSurfaceRibRequest surface; 
 		s_requestMap.insert(std::make_pair(surface.requestName(), &surface));
-
 		static CAtmosphereRibRequest atmosphere; 
 		s_requestMap.insert(std::make_pair(atmosphere.requestName(), &atmosphere));
-
 		static CInteriorRibRequest interior; 
 		s_requestMap.insert(std::make_pair(interior.requestName(), &interior));
-
 		static CExteriorRibRequest exterior; 
 		s_requestMap.insert(std::make_pair(exterior.requestName(), &exterior));
-
 		static CDisplacementRibRequest displacement; 
 		s_requestMap.insert(std::make_pair(displacement.requestName(), &displacement));
-
 		static CTextureCoordinatesRibRequest textureCoordinates; 
 		s_requestMap.insert(std::make_pair(textureCoordinates.requestName(), &textureCoordinates));
-
 		static CShadingRateRibRequest shadingRate; 
 		s_requestMap.insert(std::make_pair(shadingRate.requestName(), &shadingRate));
-
 		static CShadingInterpolationRibRequest shadingInterpolation; 
 		s_requestMap.insert(std::make_pair(shadingInterpolation.requestName(), &shadingInterpolation));
-
 		static CMatteRibRequest matte; 
 		s_requestMap.insert(std::make_pair(matte.requestName(), &matte));
-
 		static CBoundRibRequest bound; 
 		s_requestMap.insert(std::make_pair(bound.requestName(), &bound));
-
 		static CDetailRibRequest detail; 
 		s_requestMap.insert(std::make_pair(detail.requestName(), &detail));
-
 		static CDetailRangeRibRequest detailRange; 
 		s_requestMap.insert(std::make_pair(detailRange.requestName(), &detailRange));
-
 		static CGeometricApproximationRibRequest geometricApproximation; 
 		s_requestMap.insert(std::make_pair(geometricApproximation.requestName(), &geometricApproximation));
-
 		static CGeometricRepresentationRibRequest geometricRepresentation; 
 		s_requestMap.insert(std::make_pair(geometricRepresentation.requestName(), &geometricRepresentation));
-
 		static COrientationRibRequest orientation; 
 		s_requestMap.insert(std::make_pair(orientation.requestName(), &orientation));
-
 		static CReverseOrientationRibRequest reverseOrientation; 
 		s_requestMap.insert(std::make_pair(reverseOrientation.requestName(), &reverseOrientation));
-
 		static CSidesRibRequest sides; 
 		s_requestMap.insert(std::make_pair(sides.requestName(), &sides));
-
 		static CBasisRibRequest basis; 
 		s_requestMap.insert(std::make_pair(basis.requestName(), &basis));
-
 		static CTrimCurveRibRequest trimCurve; 
 		s_requestMap.insert(std::make_pair(trimCurve.requestName(), &trimCurve));
-
 		static CIdentityRibRequest identity;
 		s_requestMap.insert(std::make_pair(identity.requestName(), &identity));
-
 		static CTransformRibRequest transform;
 		s_requestMap.insert(std::make_pair(transform.requestName(), &transform));
-
 		static CConcatTransformRibRequest concatTransform;
 		s_requestMap.insert(std::make_pair(concatTransform.requestName(), &concatTransform));
-
 		static CPerspectiveRibRequest perspective;
 		s_requestMap.insert(std::make_pair(perspective.requestName(), &perspective));
-
 		static CTranslateRibRequest translate;
 		s_requestMap.insert(std::make_pair(translate.requestName(), &translate));
-
 		static CRotateRibRequest rotate;
 		s_requestMap.insert(std::make_pair(rotate.requestName(), &rotate));
-
 		static CScaleRibRequest scale;
 		s_requestMap.insert(std::make_pair(scale.requestName(), &scale));
-
 		static CSkewRibRequest skew;
 		s_requestMap.insert(std::make_pair(skew.requestName(), &skew));
-
 		static CDeformationRibRequest deformation;
 		s_requestMap.insert(std::make_pair(deformation.requestName(), &deformation));
-
 		static CScopedCoordinateSystemRibRequest scopedCoordinateSystem;
 		s_requestMap.insert(std::make_pair(scopedCoordinateSystem.requestName(), &scopedCoordinateSystem));
-
 		static CCoordinateSystemRibRequest coordinateSystem;
 		s_requestMap.insert(std::make_pair(coordinateSystem.requestName(), &coordinateSystem));
-
 		static CCoordSysTransformRibRequest coordSysTransform;
 		s_requestMap.insert(std::make_pair(coordSysTransform.requestName(), &coordSysTransform));
-
 		static CTransformPointsRibRequest transformPoints;
 		s_requestMap.insert(std::make_pair(transformPoints.requestName(), &transformPoints));
-
 		static CLightSourceRibRequest lightSource;
 		s_requestMap.insert(std::make_pair(lightSource.requestName(), &lightSource));
-
 		static CAreaLightSourceRibRequest areaLightSource;
 		s_requestMap.insert(std::make_pair(areaLightSource.requestName(), &areaLightSource));
-
 		static CIlluminateRibRequest illuminate;
 		s_requestMap.insert(std::make_pair(illuminate.requestName(), &illuminate));
-
 		static CPolygonRibRequest polygon;
 		s_requestMap.insert(std::make_pair(polygon.requestName(), &polygon));
-
 		static CGeneralPolygonRibRequest generalPolygon;
 		s_requestMap.insert(std::make_pair(generalPolygon.requestName(), &generalPolygon));
-
 		static CPointsPolygonsRibRequest pointsPolygon;
 		s_requestMap.insert(std::make_pair(pointsPolygon.requestName(), &pointsPolygon));
-
 		static CPointsGeneralPolygonsRibRequest pointsGeneralPolygon;
 		s_requestMap.insert(std::make_pair(pointsGeneralPolygon.requestName(), &pointsGeneralPolygon));
-
 		static CPatchRibRequest patch;
 		s_requestMap.insert(std::make_pair(patch.requestName(), &patch));
-
 		static CPatchMeshRibRequest patchMesh;
 		s_requestMap.insert(std::make_pair(patchMesh.requestName(), &patchMesh));
-
 		static CNuPatchRibRequest nuPatch;
 		s_requestMap.insert(std::make_pair(nuPatch.requestName(), &nuPatch));
-
 		static CSubdivisionMeshRibRequest subdivisionMesh;
 		s_requestMap.insert(std::make_pair(subdivisionMesh.requestName(), &subdivisionMesh));
-
 		static CHierarchicalSubdivisionMeshRibRequest hierarchicalSubdivisionMesh;
 		s_requestMap.insert(std::make_pair(hierarchicalSubdivisionMesh.requestName(), &hierarchicalSubdivisionMesh));
-
 		static CSphereRibRequest sphere; 
 		s_requestMap.insert(std::make_pair(sphere.requestName(), &sphere));
-
 		static CConeRibRequest cone;
 		s_requestMap.insert(std::make_pair(cone.requestName(), &cone));
-
 		static CCylinderRibRequest cylinder;
 		s_requestMap.insert(std::make_pair(cylinder.requestName(), &cylinder));
-
 		static CHyperboloidRibRequest hyperboloid;
 		s_requestMap.insert(std::make_pair(hyperboloid.requestName(), &hyperboloid));
-
 		static CParaboloidRibRequest paraboloid;
 		s_requestMap.insert(std::make_pair(paraboloid.requestName(), &paraboloid));
-
 		static CDiskRibRequest disk;
 		s_requestMap.insert(std::make_pair(disk.requestName(), &disk));
-
 		static CTorusRibRequest torus;
 		s_requestMap.insert(std::make_pair(torus.requestName(), &torus));
-
 		static CPointsRibRequest points;
 		s_requestMap.insert(std::make_pair(points.requestName(), &points));
-
 		static CCurvesRibRequest curves;
 		s_requestMap.insert(std::make_pair(curves.requestName(), &curves));
-
 		static CBlobbyRibRequest blobby;
 		s_requestMap.insert(std::make_pair(blobby.requestName(), &blobby));
-
 		static CProceduralRibRequest procedural;
 		s_requestMap.insert(std::make_pair(procedural.requestName(), &procedural));
-
 		static CGeometryRibRequest geometry;
 		s_requestMap.insert(std::make_pair(geometry.requestName(), &geometry));
-
 		static CMakeTextureRibRequest makeTexture;
 		s_requestMap.insert(std::make_pair(makeTexture.requestName(), &makeTexture));
-
 		static CMakeBumpRibRequest makeBump;
 		s_requestMap.insert(std::make_pair(makeBump.requestName(), &makeBump));
-
 		static CMakeLatLongEnvironmentRibRequest makeLatLongEnvironment;
 		s_requestMap.insert(std::make_pair(makeLatLongEnvironment.requestName(), &makeLatLongEnvironment));
-
 		static CMakeCubeFaceEnvironmentRibRequest makeCubeFaceEnvironment;
 		s_requestMap.insert(std::make_pair(makeCubeFaceEnvironment.requestName(), &makeCubeFaceEnvironment));
-
 		static CMakeShadowRibRequest makeShadow;
 		s_requestMap.insert(std::make_pair(makeShadow.requestName(), &makeShadow));
-
 		static CMakeBrickMapRibRequest makeBrickMap;
 		s_requestMap.insert(std::make_pair(makeBrickMap.requestName(), &makeBrickMap));
 	}
 }
-
-
 EnumRequests CRibParser::findIdentifier()
 {
 	m_token.push_back(0); // Terminate string
@@ -1076,8 +835,6 @@ EnumRequests CRibParser::findIdentifier()
 	}
 	return REQ_UNKNOWN;
 }
-
-
 bool CRibParser::call(const std::string &request)
 {
 	std::map<std::string, CRibRequest *>::const_iterator i;
@@ -1087,25 +844,19 @@ bool CRibParser::call(const std::string &request)
 			return true;
 		}
 	}
-
 	return false;
 }
-
-
 // handleBinary()
 // Handle binary encoded RIB -
 // some code is taken from readfunc.c found in the affine lib
 // by Thomas E. Burge
 int CRibParser::handleBinary(unsigned char c) {
-
 	assert(c > 0177);
-
 	if ( c < 0220 ) {           // 0200..0217 encoded integers and fixed numbers
 		// 0200 + (d*4) + w | <value>
 		int w = (0x03 & c) + 1;     // Number of bytes of <value> 1..4
 		int d = (0x0c & c) >> 2;    // Number of bytes after the decimal point 0..w
 		int i;
-
 		if ( w < d )
 		{
 			// Error, more bytes after the decimal point than bytes at all
@@ -1119,7 +870,6 @@ int CRibParser::handleBinary(unsigned char c) {
 			}
 			return 0;
 		}
-
 		// Read all bytes to an unsigned long (w has 1..4 bytes)
 		unsigned long tmp = 0;
 		for ( i = 0; i < w; i++ ) {
@@ -1134,16 +884,12 @@ int CRibParser::handleBinary(unsigned char c) {
 			tmp = tmp << 8;
 			tmp |= c;
 		}
-
 		i = w*8;
 		if  ( tmp & ( 1 << (i-1) )) // value is negative
 			tmp |= 0xffffffff << i; // change 0 to 1 in the upper bits
-
 		RtFloat flt = (RtFloat)((double)tmp / (double)(1 << (d * 8)));
 		return insertNumber(flt);
-
 	} else if ( c < 0240 ) {    // encoded strings of no more than 15 characters
-
 		// 0220 + w | <ASCII string>, w=[0..15]
 		int w = c - 0220;
 		m_token.clear();
@@ -1160,13 +906,11 @@ int CRibParser::handleBinary(unsigned char c) {
 			m_token.push_back(c);
 		}
 		return handleString();
-
 	} else if ( c < 0244 ) {    // encoded strings longer than 15 characters
 		// 0240 + l | <length> | <ASCII string>, l=[0..3]
 		// Assign l be the number of bytes needed to specify 
 		// the length of the string.
 		unsigned int l = c - 0240 + 1;
-
 		/* Read all l number of bytes. */
 		unsigned long utmp = 0;
 		if ( l != 0 ) {
@@ -1199,11 +943,9 @@ int CRibParser::handleBinary(unsigned char c) {
 			}
 		}
 		return handleString();
-
 	} else if ( c < 0245 ) {    // encoded single precision IEEE floating point value
 		// 0244 | <four bytes>
 		// sign bit, 8 bit exponent, 23 bit mantissa
-
 		unsigned long tmp = 0;
 		int i;
 		for ( i = 0; i < 4; i++ ) {
@@ -1218,25 +960,20 @@ int CRibParser::handleBinary(unsigned char c) {
 			tmp |= c;
 		}
 		float flt = *((float *)(void*)&tmp);
-
 		return insertNumber((RtFloat)flt);
 	} else if ( c < 0246 ) {    // encoded double precision IEEE floating point value
 		// 0245 | <eight bytes>
 		// sign bit, 11 bit exponent, 52 bit mantissa
-
 		// NOTE:  Encoded doubles don't appear to be used by anybody.  
 		//        But the following code was tested once with a hacked 
 		//        binary rib file.  Refer to the test file:
 		//        affine/ribdump/dbltest.rib.  Use ribdump, typerib,
 		//        or Pixar's catrib to view the file since it is in
 		//        binary encoded form. (see affine lib)
-
 		unsigned char *v; // value of float accessed as bytes
 		double dbl;
 		int i;
-
 		v = (unsigned char*)(void*)&dbl;
-
 		// Read double.
 #ifdef LITTLE_ENDIAN         
 		for ( i = 7; i > -1; i-- )
@@ -1254,7 +991,6 @@ int CRibParser::handleBinary(unsigned char c) {
 			}
 			v[i] = c;
 		}
-
 		// Storing data as a double doesn't get you much right 
 		// now since it is going to be stored as a 32-bit float
 		// anyway.  RtFloat is of type float as of prman 3.6c. (see affine lib)
@@ -1292,7 +1028,6 @@ int CRibParser::handleBinary(unsigned char c) {
 		int i;
 		unsigned long utmp = 0;
 		unsigned long tmp = 0;
-
 		while ( l-- != 0 ) {
 			c = getchar();
 			if ( !m_istream ) {  // EOF is not expected here
@@ -1305,7 +1040,6 @@ int CRibParser::handleBinary(unsigned char c) {
 			utmp = utmp << 8;
 			utmp |= c;
 		}
-
 		handleArrayStart();
 		
 		while ( utmp-- != 0 ) {
@@ -1402,13 +1136,11 @@ int CRibParser::handleBinary(unsigned char c) {
 			tmp = tmp << 8;
 			tmp |= c;
 		}
-
 		NUM2STRING::const_iterator i = m_stringMap.find(tmp);
 		if ( i != m_stringMap.end() ) {
 			m_token.assign((*i).second.c_str(), (*i).second.c_str()+strlen((*i).second.c_str()));
 			return handleString();
 		}
-
 		// Error string not found
 		errHandler().handleError(
 			RIE_CONSISTENCY, RIE_ERROR,
@@ -1416,32 +1148,23 @@ int CRibParser::handleBinary(unsigned char c) {
 			lineNo(), resourceName(), RI_NULL);
 		return RIBPARSER_NORMAL_COMMENT;
 	}
-
 	// else c >= 0321
 	// nothing (reserved)
-
 	return RIBPARSER_NORMAL_COMMENT; // Treat as comment
 }
-
-
 int CRibParser::handleComment(TOKENTYPE &token, bool isStructured)
 {
 	// If a comment is inbetween an interface call,
 	// it is handled after that call
 	token.push_back((char)0);
-
 	CComment cc;
 	m_deferedCommentList.push_back(cc);
-
 	CComment &c = m_deferedCommentList[m_deferedCommentList.size()-1];
 	c.m_comment = token;
 	c.m_isStructured = isStructured;
 	c.m_lineNo = lineNo();
-
 	return isStructured ? RIBPARSER_STRUCTURED_COMMENT : RIBPARSER_NORMAL_COMMENT;
 }
-
-
 void CRibParser::handleDeferedComments()
 {
 	for ( unsigned int i = 0; i < m_deferedCommentList.size(); ++i ) {
@@ -1460,8 +1183,6 @@ void CRibParser::handleDeferedComments()
 	}
 	m_deferedCommentList.clear();
 }
-
-
 int CRibParser::handleString()
 {
 	m_token.push_back((unsigned char)0);
@@ -1488,7 +1209,6 @@ int CRibParser::handleString()
 		m_defineString = -1;
 		return RIBPARSER_NORMAL_COMMENT;
 	}
-
 	if ( m_braketDepth ) {
 		CRibParameter &p = m_request.back();
 		if ( !p.setString(&m_token[0]) ) {
@@ -1506,11 +1226,8 @@ int CRibParser::handleString()
 		p.setString(&m_token[0]);
 		m_request.push_back(p);
 	}
-
 	return RIBPARSER_STRING;
 }
-
-
 int CRibParser::handleArrayStart()
 {
 	CRibParameter param;
@@ -1521,8 +1238,6 @@ int CRibParser::handleArrayStart()
 	++m_braketDepth;
 	return RIBPARSER_ARRAY_START;
 }
-
-
 int CRibParser::handleArrayEnd()
 {
 	--m_braketDepth;
@@ -1535,8 +1250,6 @@ int CRibParser::handleArrayEnd()
 	}
 	return RIBPARSER_ARRAY_END;
 }
-
-
 int CRibParser::insertNumber(RtFloat flt)
 {
 	if ( m_braketDepth ) {
@@ -1558,8 +1271,6 @@ int CRibParser::insertNumber(RtFloat flt)
 	}
 	return RIBPARSER_NUMBER;
 }
-
-
 int CRibParser::insertNumber(RtInt num)
 {
 	if ( m_braketDepth ) {
@@ -1580,22 +1291,16 @@ int CRibParser::insertNumber(RtInt num)
 	}
 	return RIBPARSER_NUMBER;
 }
-
-
 int CRibParser::handleNumber(bool isInteger)
 {
 	m_token.push_back((unsigned char)0);
-
 	if ( isInteger ) {
 		long l = ::atol(&m_token[0]);
 		return insertNumber((RtInt)l);
 	}
-
 	RtFloat f = (RtFloat)::atof(&m_token[0]);
 	return insertNumber(f);
 }
-
-
 int CRibParser::nextToken()
 {
 	int state = 0;          // the state of the scanner (switch)
@@ -1605,11 +1310,8 @@ int CRibParser::nextToken()
 		loop;               // will be false if EOF
 	char tmp = 0;           // used to evaluate an 'octal' (\xxx) for a string
 	int tokenState = 0;     // State variable to identify token
-
 	m_token.clear();        // clear the current
-
-	loop = (m_istream != false); // stop if EOF
-
+	loop = !!m_istream; // stop if EOF
 	// read the token from m_pifStream
 	while ( loop ) {
 		if ( !m_istream ) {
@@ -1627,7 +1329,6 @@ int CRibParser::nextToken()
 					continue;
 			}
 		}
-
 		if (c == '#' &&
 			state != 0 &&
 			state != 6 &&
@@ -1662,14 +1363,12 @@ int CRibParser::nextToken()
 					}
 				}
 			}
-
 			if ( !m_istream ) {
 				// EOF: End of comment
 				c = '\n';
 				loop = false;
 			}
 		}
-
 		// handle the c read
 		switch ( state ) {
 		case 0:
@@ -1696,7 +1395,6 @@ int CRibParser::nextToken()
 				return handleArrayStart();
 			if ( c == ']' )     // end of an array
 				return handleArrayEnd();
-
 			if ( c == '-' || c == '+' ) {   // a number
 				state = 2;
 				m_token.push_back(c);
@@ -1712,29 +1410,25 @@ int CRibParser::nextToken()
 				m_token.push_back(c);
 				continue;
 			}
-			if ( c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' ) {   // a RIB token
+			if ( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ) {   // a RIB token
 				state = 1;
 				m_token.push_back(c);
 				tokenState = 1;
 				continue;
 			}
-
 			// unknown c, treat as whitespace but warn
 			errHandler().handleError(
 				RIE_SYNTAX, RIE_WARNING,
 				"Line %ld, File \"%s\": Invalid character found '%c', treated as whitespace",
 				lineNo(), resourceName(), c, RI_NULL);
 			break;
-
 		case 1: // Identifier
 			{
-				if ( c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' ) {   // a RIB token
+				if ( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ) {   // a RIB token
 					m_token.push_back(c);
 					continue;
 				}
-
 				putback(c);
-
 				m_token.push_back(0); // Terminate string
 				// m_request.curRequest(&m_token[0]);
 				return RIBPARSER_REQUEST;
@@ -1756,7 +1450,6 @@ int CRibParser::nextToken()
 			}
 			putback(c);
 			return handleNumber(true);
-
 		case 3: // Number (right of a decimal point)
 			if ( c >= '0' && c <= '9' ) {
 				m_token.push_back(c);
@@ -1769,7 +1462,6 @@ int CRibParser::nextToken()
 			}
 			putback(c);
 			return handleNumber(false);
-
 		case 4: // Number (exponent)
 			if ( c == '+' || c == '-' ) {
 				state = 5;
@@ -1783,7 +1475,6 @@ int CRibParser::nextToken()
 			}
 			putback(c);
 			return handleNumber(false);
-
 		case 5: // Number (exponent)
 			if ( c >= '0' && c <= '9' ) {
 				m_token.push_back(c);
@@ -1791,7 +1482,6 @@ int CRibParser::nextToken()
 			}
 			putback(c);
 			return handleNumber(false);
-
 		case 6: // comment after first '#'
 			if ( c == '#' ) {
 				state = 7;
@@ -1809,14 +1499,12 @@ int CRibParser::nextToken()
 			m_token.push_back(c);
 			state = 10;
 			break;
-
 		case 7: // structured comment
 			if ( c == '\n' ) {
 				return handleComment(m_token, true);
 			}
 			m_token.push_back(c);
 			break;
-
 		case 8: // string
 			if ( c == '\\' ) {
 				state = 9;
@@ -1832,7 +1520,6 @@ int CRibParser::nextToken()
 			}
 			m_token.push_back(c);
 			break;
-
 		case 9: // string ( \. )
 			state = 8;
 			if ( c == '\n' ) {
@@ -1873,14 +1560,12 @@ int CRibParser::nextToken()
 			}
 			m_token.push_back(c);
 			break;
-
 		case 10: // comment
 			if ( c == '\n' ) {
 				return handleComment(m_token, false);
 			}
 			m_token.push_back(c);
 			break;
-
 		case 11: // Octal 2 in string
 			if ( c >= '0' && c <= '7' ) {
 				tmp <<= 4;
@@ -1893,7 +1578,6 @@ int CRibParser::nextToken()
 				state = 8;
 			}
 			break;
-
 		case 12: // Octal 3 in string
 			if ( c >= '0' && c <= '7' ) {
 				tmp <<= 4;
@@ -1904,7 +1588,6 @@ int CRibParser::nextToken()
 			m_token.push_back(tmp);
 			state = 8;
 			break;
-
 		default: // This is never reached
 			errHandler().handleError(
 				RIE_BUG, RIE_ERROR,
@@ -1913,11 +1596,8 @@ int CRibParser::nextToken()
 			return 0;
 		}
 	}
-
 	return RIBPARSER_EOF;
 }
-
-
 int CRibParser::parseNextCall()
 {
 	// Find first/next call (lookahead)
@@ -1933,14 +1613,11 @@ int CRibParser::parseNextCall()
 		}
 	}
 	// Lookahead is eof or an ri token
-
 	// handle any comments found (e.g. the first comments in a file)
 	handleDeferedComments();
-
 	// Clear parameter list
 	m_braketDepth = 0;
 	int t = m_lookahead; // Call id of the current request, RIBPARSER_EOF if EOF
-
 	// If there is a token ( t != EOF ), read the parameters
 	if ( t >= 0 ) {
 		m_request.clear();
@@ -1968,7 +1645,6 @@ int CRibParser::parseNextCall()
 				"Line %ld, File \"%s\", badarray: Missing closing brakets",
 				lineNo(), resourceName(), RI_NULL);
 		}
-
 		if ( m_braketDepth < 0 ) {
 			m_braketDepth = 0;
 			errHandler().handleError(
@@ -1976,7 +1652,6 @@ int CRibParser::parseNextCall()
 				"Line %ld, File \"%s\", badarray: Too many closing brakets",
 				lineNo(), resourceName(), RI_NULL);
 		}
-
 		// handles the RIB request of the previous look ahead
 		if ( !call(m_request.curRequest()) ) {
 			// *** Error
@@ -1987,34 +1662,25 @@ int CRibParser::parseNextCall()
 		}
 		handleDeferedComments(); // handles any comments found
 	}
-
 	return m_lookahead;
 }
-
-
 void CRibParser::parseFile()
 {
 	// Clear data array used by the binary decoder
 	for ( int i = 0; i < 256; ++i )
 		m_ribEncode[i] = REQ_UNKNOWN;
-
 	// Clear the list of strings (binary decoder)
 	m_stringMap.clear();
-
 	// Clear handle maps (Handle number -> handle)
 	clearHandleMaps();
-
 	// Clears any defered comments
 	m_deferedCommentList.clear();
-
 	m_code = -1;            // No defined token (binary)
 	m_defineString = -1;	// No defind string (binary)
 	m_lookahead = RIBPARSER_NOT_A_TOKEN;  // Initialize, no Token found
-
 	lineNo(1);
 	m_lastChar = 0;
 	m_hasPutBack = false;
-
 	bool running = true;
 	do {
 		// Do not stop parsing if an error occurs
@@ -2048,18 +1714,13 @@ void CRibParser::parseFile()
 			}
 		}
 	} while ( running ); // Parse all requests
-
 	// Clear the handle maps
 	clearHandleMaps();
 }
-
-
 bool CRibParser::close()
 {
 	return m_ob.close();
 }
-
-
 bool CRibParser::canParse(RtString name)
 {
 	if ( !name || !*name ) {
@@ -2067,13 +1728,11 @@ bool CRibParser::canParse(RtString name)
 		return true;
 	}
 	std::string filename = name;
-
 	CUri refUri;
 	if ( !refUri.encodeFilepath(filename.c_str(), 0) )
 	{
 		return false;
 	}
-
 	if ( !CUri::makeAbsolute(m_absUri, m_baseUri, refUri, false) ) {
 		return false;
 	}
@@ -2081,8 +1740,6 @@ bool CRibParser::canParse(RtString name)
 	m_istream.rdbuf(&m_ob);
 	return m_ob.open(refUri, std::ios_base::in | std::ios_base::binary);
 }
-
-
 void CRibParser::parse(
 	const IArchiveCallback *callback,
 	const CParameterList &params)

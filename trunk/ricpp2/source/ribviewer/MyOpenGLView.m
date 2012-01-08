@@ -107,8 +107,10 @@ static RtInt noYes[2] = {0, 1};
 	[self display];
 }
 
-- (void) drawRect: (NSRect) bounds
+- (void) drawRect: (NSRect) dirtyrect;
 {
+    NSRect bounds = [super bounds];
+    
 	if ( contextHandle == illContextHandle ) {
 		return;
 	}

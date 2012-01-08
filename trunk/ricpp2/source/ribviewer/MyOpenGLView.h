@@ -17,7 +17,7 @@
 - (void) closeContext;
 - (id) resetCamera;
 - (void) loadRibFile: (const char *) filename;
-- (void) drawRect: (NSRect) bounds ;
+- (void) drawRect: (NSRect) dirtyrect;
 - (IBAction)loadRib:(id)sender;
 - (IBAction)toggleNormals:(id)sender;
 

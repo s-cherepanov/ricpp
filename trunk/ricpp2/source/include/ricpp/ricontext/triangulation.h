@@ -104,7 +104,7 @@ namespace RiCPP {
 
 		inline LoopIterator loopEnd() const
 		{
-			return m_loopStart.size();
+			return (LoopIterator)m_loopStart.size();
 		}
 		
 		inline SegmentIterator segmentBegin(SegmentIterator loop) const

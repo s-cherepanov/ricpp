@@ -379,7 +379,7 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 											static_cast<std::streamsize>
 											(m_transferInBuffer.size()));
 #else
-			m_strmIn.avail_in =
+			m_strmIn.avail_in = (uInt)
 			m_coupledBuffer->sgetn(reinterpret_cast<char *>
 								   (m_transferInBuffer.begin()),
 								   static_cast<std::streamsize>
@@ -398,7 +398,7 @@ unsigned int CFrontStreambuf::fill_in_buffer()
 											(m_transferInBuffer.size() -
 											 footerSize));
 #else
-			m_strmIn.avail_in =
+			m_strmIn.avail_in = (uInt)
 			m_coupledBuffer->sgetn(reinterpret_cast<char *>
 								   (m_transferInBuffer.begin() + footerSize),
 								   static_cast<std::streamsize>

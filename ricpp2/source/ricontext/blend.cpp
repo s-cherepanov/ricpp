@@ -777,12 +777,12 @@ void CBSplineBasis::insertKnots(const std::vector<RtFloat> &theKnots, IndexType 
 	IndexType i, end = knotSize();
 
 	if ( theKnotOffs + end > theKnots.size() ) {
-		end = theKnots.size() - theKnotOffs;
+		end = (IndexType)(theKnots.size() - theKnotOffs);
 	}
 	
 	RtFloat lastKnot = 0;
 	for (i = 0; i < end; ++i) {
-		RtFloat lastKnot =  theKnots[theKnotOffs+i];
+		lastKnot =  theKnots[theKnotOffs+i];
 		m_knots[i] = lastKnot;
 	}
 	for (i = end; i < knotSize(); ++i) {

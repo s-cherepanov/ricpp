@@ -458,7 +458,7 @@ CSurface *CPolygonTesselator::tesselate(const CDeclaration &posDecl, const CDecl
 
 CSurface *CPointsPolygonsTesselator::tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl)
 {
-	IndexType npolys =  m_obj->nVerts().size();
+	IndexType npolys = (IndexType)m_obj->nVerts().size();
 	if ( npolys == 0 ) {
 		return  0;
 	}

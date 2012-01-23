@@ -188,7 +188,7 @@ inline const char *valToStr(char *buffer, size_t bufsize, unsigned long aLong)
 	if ( !buffer || bufsize < 1 )
 		return "";
 	buffer[0] = 0;
-	#ifdef _WIN32
+	#if defined(_WIN32) && !defined(__GNUC__)
 		sprintf_s(buffer, bufsize, "%lu", aLong);
 	#else
 		snprintf(buffer, bufsize-1, "%lu", aLong);
@@ -208,7 +208,7 @@ inline const char *valToStr(char *buffer, size_t bufsize, long aLong)
 	if ( !buffer || bufsize < 1 )
 		return "";
 	buffer[0] = 0;
-	#ifdef _WIN32
+	#if defined(_WIN32) && !defined(__GNUC__)
 		sprintf_s(buffer, bufsize, "%ld", aLong);
 	#else
 		snprintf(buffer, bufsize-1, "%ld", aLong);
@@ -228,7 +228,7 @@ inline const char *valToStr(char *buffer, size_t bufsize, unsigned int anInt)
 	if ( !buffer || bufsize < 1 )
 		return "";
 	buffer[0] = 0;
-	#ifdef _WIN32
+	#if defined(_WIN32) && !defined(__GNUC__)
 		sprintf_s(buffer, bufsize, "%u", anInt);
 	#else
 		snprintf(buffer, bufsize-1, "%u", anInt);
@@ -249,7 +249,7 @@ inline const char *valToStr(char *buffer, size_t bufsize, int anInt)
 	if ( !buffer || bufsize < 1 )
 		return "";
 	buffer[0] = 0;
-	#ifdef _WIN32
+	#if defined(_WIN32) && !defined(__GNUC__)
 		sprintf_s(buffer, bufsize, "%d", anInt);
 	#else
 		snprintf(buffer, bufsize-1, "%d", anInt);
@@ -270,7 +270,7 @@ inline const char *valToStr(char *buffer, size_t bufsize, double aDouble)
 	if ( !buffer || bufsize == 0 )
 		return "";
 	buffer[0] = 0;
-	#ifdef _WIN32
+	#if defined(_WIN32) && !defined(__GNUC__)
 		sprintf_s(buffer, bufsize, "%f", aDouble);
 	#else
 		snprintf(buffer, bufsize-1, "%f", aDouble);

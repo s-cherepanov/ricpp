@@ -37,7 +37,7 @@ using namespace RiCPP;
 /** @brief Win32 implementation to get an environment variable.
  *
  * Uses the Win32 function getenv_s() to access the environment variables,
- * can return an empty string.
+ * can return an empty string. Gnu-C does not declare getenv_s().
  */
 std::string &CEnv::get(std::string &var, const char *varName, bool convertPath)
 {
@@ -45,11 +45,14 @@ std::string &CEnv::get(std::string &var, const char *varName, bool convertPath)
 	if ( !varName )
 		return var;
 
+#if defined(_WIN32) && !defined(__GNUC__)
+	{
 	char p[MAX_PATH+1] = { 0 };
 	char *ptr = &p[0];
 
 	size_t requiredSize = 0;
 	size_t size = 0;
+
 	errno_t err = 0;
 
 	getenv_s( &requiredSize, NULL, 0, varName);
@@ -72,6 +75,13 @@ std::string &CEnv::get(std::string &var, const char *varName, bool convertPath)
 
 	if ( &p[0] != ptr )
 		delete[] ptr;
+	}
+#else
+	{
+	const char *p = getenv(varName);
+	var = p ? p : "";
+	}
+#endif
 
 	if ( convertPath )
 		return CFilepathConverter::convertToInternal(var);
@@ -163,7 +173,6 @@ std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 		
 		// In Win32 docs it is said, that the terminating NUL is counted for MAX_PATH
 		char modulepath[MAX_PATH] = { 0 };
-		char pathbuf[MAX_PATH] = { 0 };
 		
 		DWORD fsize = GetModuleFileNameA(NULL,
 			modulepath, sizeof(modulepath)-1);
@@ -171,10 +180,14 @@ std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 
 		char *ptr = modulepath;
 
+		// avoid unused variable warning
+		fsize = fsize+0;
+
 		/* GetModuleFileNameA and GetFullPathNameA will not resolve links
 		 * (junction points) created with mklink.
 		 */
 		/*
+		char pathbuf[MAX_PATH] = { 0 };
 		if ( GetFullPathNameA(modulepath,
 			sizeof(pathbuf), pathbuf, &ptr) != 0
 		) {

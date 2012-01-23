@@ -30,6 +30,7 @@
  *  @brief Simple template for a binary tree and a node template.
  */
 
+#include <vector>
 namespace RiCPP {
 
 // =============================================================================

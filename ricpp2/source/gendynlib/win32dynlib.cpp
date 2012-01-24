@@ -126,7 +126,7 @@ const char *CWin32DynLib::findLib() {
 			CFilepath p(strlibpath.c_str());
 			if (
 #if defined(WIN32) && !defined(__GNUC__)
-					0 == (fopen_s(&f, p.fullpath(), "r") == 0)
+					(0 == fopen_s(&f, p.fullpath(), "r"))
 #else
 					0 != (f = fopen(p.fullpath(), "r"))
 #endif

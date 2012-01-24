@@ -40,11 +40,13 @@
 #ifndef _RICPP_TOOLS_STRINGPATTERN_H
 #include "ricpp/tools/stringpattern.h"
 #endif // _RICPP_TOOLS_STRINGPATTERN_H
+
 #include <cmath>
 #include <cstddef>
 #include <vector>
 #include <sstream>
 #include <cassert>
+
 namespace RiCPP {
 typedef unsigned int IndexType; ///< Index type for indices
 /** @brief Possible basic types. All types consists of these basic types.

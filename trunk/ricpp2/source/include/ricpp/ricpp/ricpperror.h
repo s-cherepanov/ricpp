@@ -38,6 +38,7 @@
 #include "ricpp/tools/inlinetools.h"
 #endif // _RICPP_TOOLS_INLINETOOLS_H
 
+#include <cstdarg>
 #include <exception>
 
 namespace RiCPP {

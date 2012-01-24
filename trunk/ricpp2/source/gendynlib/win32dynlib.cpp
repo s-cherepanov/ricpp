@@ -54,7 +54,7 @@ FARPROC CWin32LibFunc::funcPtr() const {
 const HMODULE CWin32DynLib::invalidLibHandle = (HMODULE)NULL;
 
 CWin32DynLib::CWin32DynLib(const char *libname, const char *searchpath, long int version)
-	: m_libHandle(invalidLibHandle), CDynLib(libname, searchpath, version)
+	: CDynLib(libname, searchpath, version), m_libHandle(invalidLibHandle)
 {
 }
 
@@ -73,6 +73,7 @@ bool CWin32DynLib::doLoad() {
 			char modulepath[MAX_PATH];
 			modulepath[0] = (char)0;
 			DWORD fsize = GetModuleFileNameA(m_libHandle, modulepath, sizeof(modulepath));
+			fsize = fsize+0;
 			modulepath[sizeof(modulepath)-1] = (char)0;
 			m_libpath = modulepath;
 		}
@@ -102,7 +103,11 @@ const char *CWin32DynLib::findLib() {
 	dllname += libname();
 	if ( m_version >= 0 ) {
 		char buf[64] = { 0 };
+#if defined(WIN32) && !defined(__GNUC__)
 		sprintf_s(buf, sizeof(buf), ".%ld", m_version);
+#else
+		sprintf(buf, ".%ld", m_version);
+#endif
 		buf[sizeof(buf)-1] = 0;
 		dllname += buf;
 	}
@@ -119,7 +124,14 @@ const char *CWin32DynLib::findLib() {
 			strlibpath += dllname;
 			FILE *f = NULL;
 			CFilepath p(strlibpath.c_str());
-			if ( fopen_s(&f, p.fullpath(), "r") == 0 ) {
+			if (
+#if defined(WIN32) && !defined(__GNUC__)
+					0 == (fopen_s(&f, p.fullpath(), "r") == 0)
+#else
+					0 != (f = fopen(p.fullpath(), "r"))
+#endif
+				)
+			{
 				fclose(f);
 				m_libpath = p.fullpath();
 				break;

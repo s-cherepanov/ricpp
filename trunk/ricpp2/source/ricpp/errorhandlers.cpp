@@ -64,7 +64,7 @@ RtToken CPrintErrorHandler::myName() {return RI_PRINT; }
 RtVoid CPrintErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
 	const IRi *pri = &ri;
-	pri = pri;
+	pri = pri+0;
 	RiLastError = code;
 	std::cerr << "# *** Code " <<
 		"[" << code << "] " << CRiCPPErrMsg::errorMessage(code) <<
@@ -78,10 +78,10 @@ RtToken CIgnoreErrorHandler::myName() {return RI_IGNORE; }
 RtVoid CIgnoreErrorHandler::operator()(IRi &ri, RtInt code, RtInt severity, RtString message) const
 {
 	const IRi *pri = &ri;
-	pri = pri;
-	code = code;
-	severity = severity;
-	message = message;
+	pri = pri+0;
+	code = code+0;
+	severity = severity+0;
+	message = message+0;
 	RiLastError = code;
 }
 

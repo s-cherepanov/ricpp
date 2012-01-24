@@ -216,7 +216,7 @@ namespace RiCPP {
 	{
 		if ( this == &bb )
 			return *this;
-		clear(0);
+		clear();
 		try {
 			resize(bb.size());
 		} catch (ExceptRiCPPError &e) {

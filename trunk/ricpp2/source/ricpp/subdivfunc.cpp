@@ -47,7 +47,7 @@ using namespace RiCPP;
 RtToken CProcDelayedReadArchive::myName() {return RI_DELAYED_READ_ARCHIVE; }
 RtVoid CProcDelayedReadArchive::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
-	detail = detail;
+	detail = detail+0;
 
 	if ( !data )
 		return;
@@ -63,7 +63,7 @@ CProcDelayedReadArchive CProcDelayedReadArchive::func;
 RtToken CProcRunProgram::myName() {return RI_RUN_PROGRAM; }
 RtVoid CProcRunProgram::operator()(IRi &ri, RtPointer data, RtFloat detail) const
 {
-	detail = detail;
+	detail = detail+0;
 
 	if ( !data )
 		return;
@@ -110,9 +110,10 @@ RtVoid CProcDynamicLoad::operator()(IRi &ri, RtPointer data, RtFloat detail) con
 
 	/** @todo searchpath for dynamic load procedurals */
 	
-	ri = ri;
-	data = data;
-	detail = detail;
+	IRi *pri = &ri;
+
+	pri = pri+0;
+	detail = detail+0;
 
 	if ( !data )
 		return;

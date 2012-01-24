@@ -30,6 +30,10 @@
  *  @brief Small utility templates.
  */
 
+#ifndef _RICPP_RIBASE_RICPPTYPES_H
+#include "ricpp/ribase/ricpptypes.h"
+#endif
+
 #include <cmath>
 #include <cstdlib>
 #include <limits>

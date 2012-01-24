@@ -43,7 +43,7 @@
 using namespace RiCPP;
 
 CDynLib::CDynLib(const char *aLibname, const char *aSearchpath, long int aVersion)
-	: m_useCount(0), m_version(aVersion), m_libname(aLibname), m_searchpath(':', aSearchpath, true), m_libpath("")
+	: m_useCount(0), m_version(aVersion), m_libname(aLibname), m_libpath(""), m_searchpath(':', aSearchpath, true)
 {
 	// std::cerr << " ************ aSearchpath " << aSearchpath << std::endl;
 }

@@ -315,7 +315,7 @@ RtToken CTokenMap::findCreate(const char *name)
 				size_t size = strlen(name)+1;
 				newtok = new char[size];
 				if ( newtok ) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 					strcpy_s(newtok, size, name);
 #else
 					strcpy(newtok, name);

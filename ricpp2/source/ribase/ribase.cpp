@@ -89,10 +89,11 @@ RiGaussianFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 }
 RICPP_INTERN(RtFloat)
 RiBoxFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
-	x = x;
-	y = y;
-	xwidth = xwidth;
-	ywidth = ywidth;
+	// Do nothing
+	x = x + (RtFloat)0;
+	y = y + (RtFloat)0;
+	xwidth = xwidth + (RtFloat)0;
+	ywidth = ywidth + (RtFloat)0;
 	return (RtFloat)1.0;
 }
 RICPP_INTERN(RtFloat)
@@ -104,8 +105,8 @@ RICPP_INTERN(RtFloat)
 RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	RtFloat r2 = (x*x + y*y);
 	RtFloat r = (RtFloat)sqrt(r2);
-	xwidth = xwidth;
-	ywidth = ywidth;
+	xwidth = xwidth + (RtFloat)0;
+	ywidth = ywidth + (RtFloat)0;
 	return (RtFloat)((r > 2.0) ? 0.0 :
 	                 (r < 1.0) ? (3.0*r*r2 - 5.0*r2 + 2.0) :
 		                         (-r*r2 + 5.0*r2 - 8.0*r + 4.0));
@@ -113,8 +114,8 @@ RiCatmullRomFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 RICPP_INTERN(RtFloat)
 RiSincFilter (RtFloat x, RtFloat y, RtFloat xwidth, RtFloat ywidth) {
 	RtFloat s, t;
-	xwidth = xwidth;
-	ywidth = ywidth;
+	xwidth = xwidth + (RtFloat)0;
+	ywidth = ywidth + (RtFloat)0;
 	if ( x > -0.001 && x < 0.001)
 		s = (RtFloat)1.0;
 	else

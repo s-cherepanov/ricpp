@@ -30,6 +30,8 @@
  *  @brief Container template for named object pointers
  */
 
+#include <cassert>
+#include <cstdlib>
 #include <map>
 
 namespace RiCPP {

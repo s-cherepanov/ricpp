@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project pluginhandler ****
+rm -rf libpluginhandler.a Source/pluginhandler.d Source/pluginhandler.o
+Build complete for project pluginhandler

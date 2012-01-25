@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project tools ****
+rm -rf Source/win32env.o Source/win32filepath.o Source/tools.d Source/win32env.d Source/tools.o Source/win32filepath.d libtools.a Source/stringpattern.o Source/stringpattern.d Source/stringlist.d Source/stringlist.o
+Build complete for project tools

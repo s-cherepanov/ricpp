@@ -1,0 +1,71 @@
+
+**** Rebuild of configuration Debug for project declaration ****
+
+**** Internal Builder is used for build               ****
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\tokenmap.o ..\..\..\..\source\declaration\tokenmap.cpp
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\decldict.o ..\..\..\..\source\declaration\decldict.cpp
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\declaration.o ..\..\..\..\source\declaration\declaration.cpp
+ar -r libdeclaration.a Source\tokenmap.o Source\decldict.o Source\declaration.o
+ar: creating libdeclaration.a
+Build complete for project declaration
+Time consumed: 2871  ms.  
+
+**** Clean-only build of configuration Debug for project declaration ****
+rm -rf Source/decldict.o Source/tokenmap.d Source/declaration.o libdeclaration.a Source/tokenmap.o Source/decldict.d Source/declaration.d
+Build complete for project declaration
+
+**** Clean-only build of configuration Debug for project gendynlib ****
+rm -rf Source/dynlib.o Source/win32dynlib.o Source/dynlib.d Source/win32dynlib.d libgendynlib.a
+Build complete for project gendynlib
+
+**** Clean-only build of configuration Debug for project pluginhandler ****
+rm -rf libpluginhandler.a Source/pluginhandler.d Source/pluginhandler.o
+Build complete for project pluginhandler
+
+**** Clean-only build of configuration Debug for project ribase ****
+rm -rf Source/ribase.d Source/ribase.o libribase.a
+Build complete for project ribase
+
+**** Clean-only build of configuration Debug for project ricpp ****
+rm -rf Source/varsubst.o libricpp.a Source/errorhandlers.o Source/paramclasses.o Source/riroot.o Source/filters.d Source/varsubst.d Source/riroot.d Source/paramclasses.d Source/filters.o Source/ricpperror.o Source/errorhandlers.d Source/ricpperror.d Source/requests.d Source/subdivfunc.o Source/types.d Source/subdivfunc.d Source/types.o Source/requests.o
+Build complete for project ricpp
+
+**** Clean-only build of configuration Debug for project streams ****
+rm -rf Source/uri.o libstreams.a Source/backbuffer.o Source/backbuffer.d Source/uri.d
+Build complete for project streams
+
+**** Clean-only build of configuration Debug for project tools ****
+rm -rf Source/win32env.o Source/win32filepath.o Source/tools.d Source/win32env.d Source/tools.o Source/win32filepath.d libtools.a Source/stringpattern.o Source/stringpattern.d Source/stringlist.d Source/stringlist.o
+Build complete for project tools
+
+**** Clean-only build of configuration Release for project tools ****
+rm -rf libtools.a Source/stringlist.o Source/tools.o Source/stringlist.d Source/stringpattern.o Source/stringpattern.d Source/win32env.o Source/win32filepath.o Source/win32filepath.d Source/win32env.d Source/tools.d
+Build complete for project tools
+
+**** Clean-only build of configuration Debug for project declaration ****
+rm -rf Source/decldict.o Source/tokenmap.d Source/declaration.o libdeclaration.a Source/tokenmap.o Source/decldict.d Source/declaration.d
+Build complete for project declaration
+
+**** Clean-only build of configuration Debug for project gendynlib ****
+rm -rf Source/dynlib.o Source/win32dynlib.o Source/dynlib.d Source/win32dynlib.d libgendynlib.a
+Build complete for project gendynlib
+
+**** Clean-only build of configuration Debug for project pluginhandler ****
+rm -rf libpluginhandler.a Source/pluginhandler.d Source/pluginhandler.o
+Build complete for project pluginhandler
+
+**** Clean-only build of configuration Debug for project ribase ****
+rm -rf Source/ribase.d Source/ribase.o libribase.a
+Build complete for project ribase
+
+**** Clean-only build of configuration Debug for project ricpp ****
+rm -rf Source/varsubst.o libricpp.a Source/errorhandlers.o Source/paramclasses.o Source/riroot.o Source/filters.d Source/varsubst.d Source/riroot.d Source/paramclasses.d Source/filters.o Source/ricpperror.o Source/errorhandlers.d Source/ricpperror.d Source/requests.d Source/subdivfunc.o Source/types.d Source/subdivfunc.d Source/types.o Source/requests.o
+Build complete for project ricpp
+
+**** Clean-only build of configuration Debug for project streams ****
+rm -rf Source/uri.o libstreams.a Source/backbuffer.o Source/backbuffer.d Source/uri.d
+Build complete for project streams
+
+**** Clean-only build of configuration Debug for project tools ****
+rm -rf Source/win32env.o Source/win32filepath.o Source/tools.d Source/win32env.d Source/tools.o Source/win32filepath.d libtools.a Source/stringpattern.o Source/stringpattern.d Source/stringlist.d Source/stringlist.o
+Build complete for project tools

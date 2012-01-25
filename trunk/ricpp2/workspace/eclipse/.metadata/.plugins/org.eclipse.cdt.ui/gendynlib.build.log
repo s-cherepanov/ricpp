@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project gendynlib ****
+rm -rf Source/dynlib.o Source/win32dynlib.o Source/dynlib.d Source/win32dynlib.d libgendynlib.a
+Build complete for project gendynlib

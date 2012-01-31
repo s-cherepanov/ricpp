@@ -1,4 +1,8 @@
 
-**** Clean-only build of configuration Debug for project passthrough ****
-rm -rf Source/passthrough.o passthrough.1.dll Source/passthrough.d
+**** Rebuild of configuration Debug for project passthrough ****
+
+**** Internal Builder is used for build               ****
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\passthrough.o ..\..\..\..\source\ribfilter\passthrough.cpp
+g++ -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ribfilter\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\pluginhandler\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ricpp\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\gendynlib\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ribase\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\tools\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/lib -shared -o passthrough.1.dll Source\passthrough.o -lribfilter -lpluginhandler -lricpp -lgendynlib -lribase -ltools -lzdll
 Build complete for project passthrough
+Time consumed: 2647  ms.  

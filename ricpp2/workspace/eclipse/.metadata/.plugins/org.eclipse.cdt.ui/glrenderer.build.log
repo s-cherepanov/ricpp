@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project glrenderer ****
+rm -rf libglrenderer.a Source/glrenderer.d Source/glrenderer.o
+Build complete for project glrenderer

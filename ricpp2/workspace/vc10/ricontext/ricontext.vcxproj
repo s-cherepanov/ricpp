@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3A82FD0F-0D4F-4928-B2F3-D5C5304C59A4}</ProjectGuid>
+    <RootNamespace>ricontext</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../../source/include;../../../3rdparty/win32/zlib123-dll/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;RICPP_CREATEDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>../../../source/include;../../../3rdparty/win32/zlib123-dll/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;RICPP_CREATEDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../../source/include;../../../3rdparty/x64/zlib123-dll/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <AdditionalIncludeDirectories>../../../source/include;../../../3rdparty/x64/zlib123-dll/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\ricontext\attributes.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\blend.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\contextcreator.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\displaydesc.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\inputstate.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\lights.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\modestack.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\motionstate.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\options.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\optionsbase.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\parameter.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\polygon.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\renderstate.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\resource.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\ribelements.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\ricontext.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\rimacro.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\subdivision.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\surface.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\transformation.cpp" />
+    <ClCompile Include="..\..\..\source\ricontext\triangulation.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\attributes.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\blend.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\contextcreator.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\displaydesc.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\dorender.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\handlestack.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\inputstate.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\lights.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\modes.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\modestack.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\motionstate.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\options.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\optionsbase.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\parameter.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\polygon.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\renderstate.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\resource.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\ribelements.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\ricontext.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacro.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacroattributes.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacrobase.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacroclasses.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacrocontainer.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacroexternals.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacrofactory.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacrolights.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacromisc.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacromodes.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacrooptions.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacroprims.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\rimacrotransforms.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\subdivision.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\surface.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\transformation.h" />
+    <ClInclude Include="..\..\..\source\include\ricpp\ricontext\triangulation.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\declaration\declaration.vcxproj">
+      <Project>{f132c58f-975c-4752-bb09-0a9db2ee477d}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\streams\streams.vcxproj">
+      <Project>{9a6ae7b2-cf94-4a75-a872-a5877d493dea}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

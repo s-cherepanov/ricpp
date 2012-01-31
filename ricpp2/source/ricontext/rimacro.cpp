@@ -232,9 +232,9 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo, CDeclarationDictionary &decl, const CColorDescr &curColorDescr,
 	RtInt theNLoops, const RtInt theNVerts[],
 	RtInt n, RtToken tokens[], RtPointer params[])
-	: m_triangulated(0), TypeParent(aLineNo,
+	: TypeParent(aLineNo,
 		decl, CGeneralPolygonClasses(theNLoops, theNVerts), curColorDescr,
-		n, tokens, params)
+		n, tokens, params), m_triangulated(0)
 {
 	enterValues(theNLoops, theNVerts);
 }
@@ -243,7 +243,7 @@ CRiGeneralPolygon::CRiGeneralPolygon(
 	long aLineNo,
 	RtInt theNLoops, const RtInt theNVerts[],
 	const CParameterList &theParameters)
-	: m_triangulated(0), TypeParent(aLineNo, theParameters)
+	: TypeParent(aLineNo, theParameters), m_triangulated(0)
 {
 	enterValues(theNLoops, theNVerts);
 }

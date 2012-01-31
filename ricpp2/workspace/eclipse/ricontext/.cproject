@@ -59,7 +59,22 @@
 					</sourceEntries>
 				</configuration>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
+				<externalSettings containerId="declaration;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/declaration"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="declaration"/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="streams;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="streams"/>
+					</externalSetting>
+				</externalSettings>
+			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.mingw.lib.release.1776113164">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.mingw.lib.release.1776113164" moduleId="org.eclipse.cdt.core.settings" name="Release">
@@ -117,7 +132,22 @@
 					</sourceEntries>
 				</configuration>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
+				<externalSettings containerId="declaration;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/declaration"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="declaration"/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="streams;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Debug"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="streams"/>
+					</externalSetting>
+				</externalSettings>
+			</storageModule>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">

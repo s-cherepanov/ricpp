@@ -3,6 +3,7 @@
 	<name>pluginhandler</name>
 	<comment></comment>
 	<projects>
+		<project>ricpp</project>
 		<project>gendynlib</project>
 	</projects>
 	<buildSpec>

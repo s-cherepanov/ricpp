@@ -201,8 +201,8 @@ namespace RiCPP {
 	 */
 	class CRiGeneralPolygon : public CVarParamRManInterfaceCall {
 	private:
-		std::vector<RtInt> m_nVerts; ///< Number of verts per outline (Number of loops is the size of m_nVerts).
 		CTriangulatedPolygon *m_triangulated; ///< Triangulated polygon
+		std::vector<RtInt> m_nVerts; ///< Number of verts per outline (Number of loops is the size of m_nVerts).
 		/** @brief enters the values.
 		 *
 		 *  @param theNLoops Number of loops
@@ -237,9 +237,11 @@ namespace RiCPP {
 		 *
 		 *  @param aLineNo The line number to store, if aLineNo is initialized to -1 (a line number is not known)
 		 */
-		inline CRiGeneralPolygon(long aLineNo=-1)
-			: m_triangulated(0), TypeParent(aLineNo)
+		inline CRiGeneralPolygon(long aLineNo = -1)
+			: TypeParent(aLineNo)
 		{
+			m_triangulated = 0;
+			aLineNo = aLineNo + 0;
 		}
 
 		/** @brief Constructor.
@@ -301,7 +303,7 @@ namespace RiCPP {
 		 */
 		inline RtInt nLoops() const
 		{
-			return (RtInt)(m_nVerts.size());;
+			return (RtInt)(m_nVerts.size());
 		}
 
 		/** @brief Gets the number of vertices per loop.
@@ -516,7 +518,7 @@ namespace RiCPP {
 		 */
 		inline RtInt nPolys() const
 		{
-			return (RtInt)(m_nVerts.size());;
+			return (RtInt)(m_nVerts.size());
 		}
 
 		/** @brief Gets the numbers of the vertices.

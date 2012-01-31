@@ -745,8 +745,8 @@ namespace RiCPP {
 			IRibParserCallback &aParserCallback,
 			CRenderState &aRenderState,
 			const CUri &aBaseUri) :
-			m_ob(aParserCallback.protocolHandlers()),
-			m_istream(&m_ob)
+			m_istream(&m_ob),
+			m_ob(aParserCallback.protocolHandlers())
 		{
 			m_istream.clear();
 			m_parserCallback = &aParserCallback;

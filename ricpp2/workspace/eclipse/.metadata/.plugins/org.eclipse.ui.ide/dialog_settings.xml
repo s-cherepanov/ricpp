@@ -68,17 +68,19 @@
 	</list>
 	<section name="BasicNewProjectResourceWizard">
 	</section>
-	<section name="CleanDialogSettings">
-		<item value="500" key="DIALOG_WIDTH"/>
-		<item value="240" key="DIALOG_Y_ORIGIN"/>
-		<item value="378" key="DIALOG_HEIGHT"/>
-		<item value="390" key="DIALOG_X_ORIGIN"/>
-		<item value="false" key="TOGGLE_SELECTED"/>
-	</section>
 	<section name="NewWizardAction">
 		<item value="org.eclipse.cdt.ui.wizards.NewCWizard1" key="NewWizardSelectionPage.STORE_SELECTED_ID"/>
 		<list key="NewWizardSelectionPage.STORE_EXPANDED_CATEGORIES_ID">
 			<item value="org.eclipse.cdt.ui.newCWizards"/>
 		</list>
+	</section>
+	<section name="CleanDialogSettings">
+		<item value="500" key="DIALOG_WIDTH"/>
+		<item value="false" key="BUILD_NOW"/>
+		<item value="240" key="DIALOG_Y_ORIGIN"/>
+		<item value="true" key="BUILD_ALL"/>
+		<item value="390" key="DIALOG_X_ORIGIN"/>
+		<item value="441" key="DIALOG_HEIGHT"/>
+		<item value="false" key="TOGGLE_SELECTED"/>
 	</section>
 </section>

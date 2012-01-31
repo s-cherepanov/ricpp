@@ -96,8 +96,8 @@ private:
 	std::vector<EnumModes> m_modes; ///< All modes (nesting of modes), MODE_OUTSIDE is not on the stack
 	std::vector<TypeModeBits> m_modeBits; ///< All modes (nesting of modes), transparent modes are 'ored' to the mode bits of outer blocks.
 
-	size_type m_areaLightSourceDepth; ///< Nesting depth of the enclosing mode block of an area light source, 0 if not in area light source definition.
 	RtLightHandle m_areaLightSourceHandle; ///< Handle of area light source to be defined, illLightHandle if not defining an area light source.
+	size_type m_areaLightSourceDepth; ///< Nesting depth of the enclosing mode block of an area light source, 0 if not in area light source definition.
 
 	bool opaqueRequest(EnumRequests req) const; ///< Used in validRequest, requests that should be tested inside attribute/transform.
 

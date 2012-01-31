@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project ri ****
+rm -rf Source/ri.d libri.a Source/ri.o
+Build complete for project ri

@@ -480,7 +480,7 @@ namespace RiCPP {
 		 */
 		void fov(RtFloat aFov)
 		{
-			m_fov = m_fov;
+			m_fov = m_fov + 0;
 		}
 
 		inline virtual void process(IRiRoot &ri)

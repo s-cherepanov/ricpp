@@ -1192,7 +1192,7 @@ RICPP_INTERN(RtVoid) RiArchiveRecord (RtToken type, RtString format, ...)
 		va_list argList;
 		va_start(argList, format);
 		archiveBuf[0] = (char)0;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 		_vsnprintf_s(archiveBuf, ARCHIVE_BUF_SIZE-1, ARCHIVE_BUF_SIZE-2, format ? format : "%s", argList);
 #else
 		vsnprintf(archiveBuf, ARCHIVE_BUF_SIZE-1, format ? format : "%s", argList);

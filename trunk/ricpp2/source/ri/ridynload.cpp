@@ -16,9 +16,9 @@ using namespace RiCPP;
 extern "C" {
 
 // ----------------------------------------------------------------------------
-/** @brief Implemetation of the Setting of the renderer.
+/** @brief Implementation of the Setting of the renderer.
  *
- * The entry point for procedurals is posponed to the user who will create the dll.
+ * The entry point for procedurals is postponed to the user who will create the dll.
  @verbatim
   RICPP_INTERN(RtPointer) ConvertParameters(char *c) {}
   RICPP_INTERN(RtVoid) Subdivide(RtPointer data, RtFloat detail) {}
@@ -37,12 +37,12 @@ RICPP_INTERN(RtVoid) SetRenderer(IRi &ri)
 // ----------------------------------------------------------------------------
 RICPP_INTERN(RtVoid) RiBegin(RtToken name)
 {
-	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	// ERROR there is no begin/end in dynamic load procedurals (only one context)
 }
 
 RICPP_INTERN(RtVoid) RiEnd(void)
 {
-	// ERROR there is no begin/end in daynmic load procedurals (only one context)
+	// ERROR there is no begin/end in dynamic load procedurals (only one context)
 }
 
 

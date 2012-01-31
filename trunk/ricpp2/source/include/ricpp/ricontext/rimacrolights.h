@@ -44,8 +44,8 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	class CRiLightSource : public CVarParamRManInterfaceCall {
 	private:
-		RtToken m_name;
 		RtLightHandle m_handle;
+		RtToken m_name;
 		std::string m_handleName;
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;
@@ -201,8 +201,8 @@ namespace RiCPP {
 	///////////////////////////////////////////////////////////////////////////////
 	class CRiAreaLightSource : public CVarParamRManInterfaceCall {
 	private:
-		RtToken m_name;
 		RtLightHandle m_handle;
+		RtToken m_name;
 		std::string m_handleName;
 	protected:
 		typedef CVarParamRManInterfaceCall TypeParent;

@@ -49,7 +49,6 @@
 
 #include <iostream>
 #include <vector>
-#include <list>
 
 namespace RiCPP {
 	class CSubdivEdge;
@@ -877,7 +876,7 @@ namespace RiCPP {
 	public:
 		/** @brief Constructor
 		 */
-		inline CSubdivisionIndices() : m_illTopology(false), m_interpolateBoundary(0) {}
+		inline CSubdivisionIndices() : m_interpolateBoundary(0), m_illTopology(false) {}
 		
 		
 		/** @brief Initialization of the connectivity of the subdivision mesh.
@@ -965,7 +964,7 @@ namespace RiCPP {
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const = 0;
 		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
-		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
+		// virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const = 0;
 		virtual bool discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const = 0;
 	};
 	
@@ -992,7 +991,7 @@ namespace RiCPP {
 		virtual void subdivide(CSubdivisionIndices &parent, CSubdivisionIndices &child) const;
 		virtual void insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 		virtual void insertVertexValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
-		virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
+		// virtual void insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const;
 		virtual bool discardableBoundaryFace(CSubdivisionIndices &root, long faceIdx) const;
 	};
 	

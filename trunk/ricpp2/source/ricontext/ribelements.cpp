@@ -109,6 +109,7 @@ void CRibElementsWriter::putEncodedChar(char ce)
 				m_ostream << (char)('0'+d2);
 				m_ostream << (char)('0'+d1);
 			}
+			break;
 	}
 }
 

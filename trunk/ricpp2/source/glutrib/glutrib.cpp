@@ -28,13 +28,16 @@
  *  @todo Seems to be something wrong with the depth buffer.
  */
 
-
-
 #include <ricpp/ricpp.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
+// #ifdef __GNUC__
+// #define _WCHAR_T_DEFINED
+// #define GLUT_NO_LIB_PRAGMA
+// #define GLUT_NO_WARNING_DISABLE
+// #endif
 #include <GL/glut.h>
 #endif
 
@@ -209,9 +212,9 @@ void testPoly10()
 	};
 
 	// Disable warnings (variable not used)
-	opacity_25[0] = opacity_25[0];
-	opacity_50[0] = opacity_50[0];
-	opacity_75[0] = opacity_75[0];
+	opacity_25[0] = opacity_25[0]+0;
+	opacity_50[0] = opacity_50[0]+0;
+	opacity_75[0] = opacity_75[0]+0;
 
 	RiAttributeBegin(); {
 		RiTranslate(0, 0, 1.5);

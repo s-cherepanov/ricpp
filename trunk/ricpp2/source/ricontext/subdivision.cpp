@@ -42,6 +42,8 @@
 #define _TRACE
 #endif
 
+#include <cassert>
+
 using namespace RiCPP;
 
 // ----------------------------------------------------------------------------
@@ -58,12 +60,12 @@ struct SEdge {
 	}
 };
 
-inline static bool operator==(const SEdge &s1, const SEdge &s2)
+inline bool operator==(const SEdge &s1, const SEdge &s2)
 {
 	return s1.m_sortStart == s2.m_sortStart && s1.m_sortEnd == s2.m_sortEnd;
 }
 
-inline static bool operator<(const SEdge &s1, const SEdge &s2)
+inline bool operator<(const SEdge &s1, const SEdge &s2)
 {
 	return s1.m_sortStart < s2.m_sortStart || (s1.m_sortStart == s2.m_sortStart && s1.m_sortEnd < s2.m_sortEnd);
 }
@@ -1100,14 +1102,11 @@ void CCatmullClarkSubdivision::subdivide(CSubdivisionIndices &parent, CSubdivisi
 	}
 }
 
-
-
-void CCatmullClarkSubdivision::insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices,
-													   const std::list<CSubdivisionIndices>::const_iterator &curIndices,
-													   IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices,
-													   const CDeclaration &decl, std::vector<RtFloat> &floats) const
+/*
+void CCatmullClarkSubdivision::insertFaceVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices, const std::list<CSubdivisionIndices>::const_iterator &curIndices, IndexType &sharedIndices, std::vector<IndexType> &origIndices, std::vector<bool> &faceIndices, const CDeclaration &decl, std::vector<RtFloat> &floats) const
 {
 }
+*/
 
 void CCatmullClarkSubdivision::insertVaryingValues(const std::list<CSubdivisionIndices>::const_iterator &theIndices,
 												   const std::list<CSubdivisionIndices>::const_iterator &curIndices,
@@ -1177,7 +1176,9 @@ void CCatmullClarkSubdivision::insertVaryingValues(const std::list<CSubdivisionI
 		{
 			long curVertexOffs = vertexIdx * decl.elemSize();
 			for ( i = 0; i < (long)decl.elemSize(); ++i ) {
-				floats[curVertexOffs + i] = floats[curVertexOffs + i];
+				/** @todo Implementation of vertex variables
+				 */
+				floats[curVertexOffs + i] = floats[curVertexOffs + i] + 0;
 			}
 		}
 		

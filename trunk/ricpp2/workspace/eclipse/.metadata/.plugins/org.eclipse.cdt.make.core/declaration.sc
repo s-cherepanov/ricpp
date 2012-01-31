@@ -4,6 +4,12 @@
 <scannerInfo id="org.eclipse.cdt.make.core.discoveredScannerInfo">
 <instance id="cdt.managedbuild.config.gnu.mingw.lib.debug.769213274;cdt.managedbuild.config.gnu.mingw.lib.debug.769213274.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.lib.debug.405508323;cdt.managedbuild.tool.gnu.cpp.compiler.input.2053508597">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/mingw32"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/backward"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/../../../../include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include-fixed"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/mingw32"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/backward"/>
@@ -233,6 +239,9 @@
 </instance>
 <instance id="cdt.managedbuild.config.gnu.mingw.lib.debug.769213274;cdt.managedbuild.config.gnu.mingw.lib.debug.769213274.;cdt.managedbuild.tool.gnu.c.compiler.mingw.lib.debug.1093199940;cdt.managedbuild.tool.gnu.c.compiler.input.768617485">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/../../../../include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include-fixed"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/../../../../include"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include-fixed"/>

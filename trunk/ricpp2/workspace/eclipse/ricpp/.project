@@ -3,6 +3,7 @@
 	<name>ricpp</name>
 	<comment></comment>
 	<projects>
+		<project>gendynlib</project>
 		<project>ribase</project>
 	</projects>
 	<buildSpec>

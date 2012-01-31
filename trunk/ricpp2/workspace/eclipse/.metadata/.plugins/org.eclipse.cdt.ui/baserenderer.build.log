@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project baserenderer ****
+rm -rf Source/baserenderer.d libbaserenderer.a Source/baserenderer.o Source/trianglerenderer.o Source/trianglerenderer.d
+Build complete for project baserenderer

@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project ribfilter ****
+rm -rf Source/passthrough.o Source/ribfilter.o Source/ribfilterlist.d Source/ribfilterlist.o Source/ribfilter.d Source/passthrough.d libribfilter.a
+Build complete for project ribfilter

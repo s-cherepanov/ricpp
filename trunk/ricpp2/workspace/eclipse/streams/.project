@@ -3,6 +3,7 @@
 	<name>streams</name>
 	<comment></comment>
 	<projects>
+		<project>pluginhandler</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

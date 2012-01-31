@@ -3,7 +3,7 @@
 	<name>gendynlib</name>
 	<comment></comment>
 	<projects>
-		<project>ricpp</project>
+		<project>tools</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

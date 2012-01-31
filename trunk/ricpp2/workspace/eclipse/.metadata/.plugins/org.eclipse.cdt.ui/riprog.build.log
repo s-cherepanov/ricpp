@@ -1,0 +1,4 @@
+
+**** Clean-only build of configuration Debug for project riprog ****
+rm -rf Source/riprog.d riprog.dll Source/riprog.o
+Build complete for project riprog

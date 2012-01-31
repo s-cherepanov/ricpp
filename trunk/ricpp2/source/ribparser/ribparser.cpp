@@ -1304,12 +1304,12 @@ int CRibParser::handleNumber(bool isInteger)
 int CRibParser::nextToken()
 {
 	int state = 0;          // the state of the scanner (switch)
-	// bool binary = false;    // currently handling binary data
+	// bool binary = false; // currently handling binary data
 	unsigned char c;        // the character read
-	bool mask,              // mask the next character in the string (\ is found) 
-		loop;               // will be false if EOF
+	// bool mask = false;      // mask the next character in the string (\ is found)
+	bool loop = false;      // will be false if EOF
 	char tmp = 0;           // used to evaluate an 'octal' (\xxx) for a string
-	int tokenState = 0;     // State variable to identify token
+	// int tokenState = 0;     // State variable to identify token
 	m_token.clear();        // clear the current
 	loop = !!m_istream; // stop if EOF
 	// read the token from m_pifStream
@@ -1387,7 +1387,7 @@ int CRibParser::nextToken()
 				continue;
 			}
 			if ( c == '\"' ) {  // a string
-				mask = false;
+	//			mask = false;
 				state = 8;
 				continue;
 			}
@@ -1413,7 +1413,7 @@ int CRibParser::nextToken()
 			if ( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ) {   // a RIB token
 				state = 1;
 				m_token.push_back(c);
-				tokenState = 1;
+	//			tokenState = 1;
 				continue;
 			}
 			// unknown c, treat as whitespace but warn

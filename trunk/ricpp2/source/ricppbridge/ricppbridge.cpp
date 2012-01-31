@@ -393,7 +393,7 @@ RtVoid CRiCPPBridge::CRiCPPBridgeErrorHandler::handleErrorV(RtInt code, RtInt se
 	char str[ERROR_STR_SIZE];
 	str[0] = (char)0;
 	if ( message && *message && argList ) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 		_vsnprintf_s(str, ERROR_STR_SIZE-1, ERROR_STR_SIZE-2, message, argList);
 #else
 		vsnprintf(str, ERROR_STR_SIZE-1, message, argList);
@@ -2706,7 +2706,7 @@ RtVoid CRiCPPBridge::archiveRecord(RtToken type, RtString format, ...)
 	va_list argList;
 	va_start(argList, format);
 	archiveBuf[0] = (char)0;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 	_vsnprintf_s(archiveBuf, ARCHIVE_BUF_SIZE-1, ARCHIVE_BUF_SIZE-2, format ? format : "", argList);
 #else
 	vsnprintf(archiveBuf, ARCHIVE_BUF_SIZE-1, format ? format : "%s", argList);

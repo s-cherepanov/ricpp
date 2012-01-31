@@ -2219,7 +2219,7 @@ void CCurvesRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 
 		if ( b0 && b2 ) {
 			bool isLinear = false;
-			bool isPeriodic = false;
+//			bool isPeriodic = false;
 			if ( !strcmp(type, RI_LINEAR) ) {
 				isLinear = true;
 			} else if ( strcmp(type, RI_CUBIC) ) {
@@ -2231,7 +2231,7 @@ void CCurvesRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 				correct = false;
 			}
 			if ( !strcmp(wrap, RI_PERIODIC) ) {
-				isPeriodic = true;
+//				isPeriodic = true;
 			} else if ( strcmp(wrap, RI_NONPERIODIC) ) {
 				parser.errHandler().handleError(
 					RIE_CONSISTENCY, RIE_ERROR,

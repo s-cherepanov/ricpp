@@ -194,7 +194,7 @@ namespace RiCPP {
 
 		std::vector<CRiMacro *> m_macros; ///< Vector with pointer to all macros (m_objectMacros and m_archiveMacros)
 
-		std::vector<bool> m_conditions; ///< Stack of m_executeConditional and m_ifCondition for nested ifs.
+		std::vector<bool> m_conditions;  ///< Stack of m_executeConditional and m_ifCondition for nested ifs.
 		bool m_executeConditional;      ///< Render (true outside if-else-blocks, conditional inside the blocks).
 		bool m_accumulateConditional;   ///< Render (true outside if-else-blocks, cummulated m_executeConditional inside the blocks).
 		bool m_ifCondition;             ///< true, if an if or elseif condition was true;

@@ -4,6 +4,12 @@
 <scannerInfo id="org.eclipse.cdt.make.core.discoveredScannerInfo">
 <instance id="cdt.managedbuild.config.gnu.mingw.so.debug.796755568;cdt.managedbuild.config.gnu.mingw.so.debug.796755568.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.so.debug.921080234;cdt.managedbuild.tool.gnu.cpp.compiler.input.860056563">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/mingw32"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/backward"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/../../../../include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include-fixed"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/mingw32"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include/c++/backward"/>
@@ -233,6 +239,9 @@
 </instance>
 <instance id="cdt.managedbuild.config.gnu.mingw.so.debug.796755568;cdt.managedbuild.config.gnu.mingw.so.debug.796755568.;cdt.managedbuild.tool.gnu.c.compiler.mingw.so.debug.1304273874;cdt.managedbuild.tool.gnu.c.compiler.input.1756701411">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/../../../../include"/>
+<includePath path="t:\public\eclipse\mingw\bin\../lib/gcc/mingw32/4.6.1/include-fixed"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/../../../../include"/>
 <includePath path="d:\tools\mingw\bin\../lib/gcc/mingw32/4.6.1/include-fixed"/>

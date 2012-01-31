@@ -510,8 +510,8 @@ namespace RiCPP {
 		}
 
 	public:
-		inline CNuPatchTesselator() : m_useg(0), m_vseg(0), m_obj(0), m_basis(0) { }
-		inline CNuPatchTesselator(CRiNuPatch &obj) : m_obj(&obj), m_useg(0), m_vseg(0), m_basis(0) { }
+		inline CNuPatchTesselator() : m_obj(0), m_basis(0), m_useg(0), m_vseg(0) { }
+		inline CNuPatchTesselator(CRiNuPatch &obj) : m_obj(&obj), m_basis(0), m_useg(0), m_vseg(0) { }
 		virtual CSurface *tesselate(const CDeclaration &posDecl, const CDeclaration &normDecl);
 	}; // CNuPatchTesselator
 

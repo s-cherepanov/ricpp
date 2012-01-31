@@ -160,7 +160,7 @@ public:
 			char strnum[64];
 
 			strnum[0] = (char)0;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 			sprintf_s(strnum, sizeof(strnum), "%ld", ++m_maxHandleIdx);
 #else
 			snprintf(strnum, sizeof(strnum)-1, "%ld", ++m_maxHandleIdx);
@@ -235,7 +235,7 @@ public:
 	{
 		if ( !obj )
 			return false;
-		return deleteObj(obj->handle(), toMark);
+		return deleteObject(obj->handle(), toMark);
 	}
 
 	inline RtToken insertObject(ValueType *o)

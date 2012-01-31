@@ -1,4 +1,9 @@
 
-**** Clean-only build of configuration Debug for project pluginhandler ****
-rm -rf Source/pluginhandler.d Source/pluginhandler.o libpluginhandler.a
+**** Rebuild of configuration Debug for project pluginhandler ****
+
+**** Internal Builder is used for build               ****
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\pluginhandler.o ..\..\..\..\source\pluginhandler\pluginhandler.cpp
+ar -r libpluginhandler.a Source\pluginhandler.o
+ar: creating libpluginhandler.a
 Build complete for project pluginhandler
+Time consumed: 1215  ms.  

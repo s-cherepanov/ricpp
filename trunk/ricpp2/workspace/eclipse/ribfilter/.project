@@ -91,11 +91,6 @@
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ribfilter/ribfilterlist.h</locationURI>
 		</link>
 		<link>
-			<name>Source/passthrough.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribfilter/passthrough.cpp</locationURI>
-		</link>
-		<link>
 			<name>Source/ribfilter.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribfilter/ribfilter.cpp</locationURI>

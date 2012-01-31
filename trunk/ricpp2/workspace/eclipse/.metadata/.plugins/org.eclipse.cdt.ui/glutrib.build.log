@@ -1,4 +1,15 @@
 
-**** Clean-only build of configuration Debug for project glutrib ****
-rm -rf Source/glutrib.o Source/glutrib.d glutrib.exe
+**** Rebuild of configuration Debug for project glutrib ****
+
+**** Internal Builder is used for build               ****
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\glutrib.o ..\..\..\..\source\glutrib\glutrib.cpp
+In file included from ..\..\..\..\source\glutrib\glutrib.cpp:41:0:
+D:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/include/GL/glut.h:48:0: warning: ignoring #pragma comment  [-Wunknown-pragmas]
+D:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/include/GL/glut.h:49:0: warning: ignoring #pragma comment  [-Wunknown-pragmas]
+D:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/include/GL/glut.h:50:0: warning: ignoring #pragma comment  [-Wunknown-pragmas]
+D:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/include/GL/glut.h:51:0: warning: ignoring #pragma comment  [-Wunknown-pragmas]
+D:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/include/GL/glut.h:53:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
+D:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/include/GL/glut.h:54:0: warning: ignoring #pragma warning  [-Wunknown-pragmas]
+g++ -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\riprog\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/gccglut/lib -o glutrib.exe Source\glutrib.o -lriprog -lopengl32 -lglut32
 Build complete for project glutrib
+Time consumed: 935  ms.  

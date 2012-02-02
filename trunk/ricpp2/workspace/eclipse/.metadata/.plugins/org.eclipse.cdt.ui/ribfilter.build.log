@@ -1,10 +1,9 @@
 
-**** Rebuild of configuration Debug for project ribfilter ****
+**** Build of configuration Debug for project ribfilter ****
 
 **** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\ribfilter.o ..\..\..\..\source\ribfilter\ribfilter.cpp
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\ribfilterlist.o ..\..\..\..\source\ribfilter\ribfilterlist.cpp
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\ribfilter.o ..\..\..\..\source\ribfilter\ribfilter.cpp
 ar -r libribfilter.a Source\ribfilterlist.o Source\ribfilter.o
-ar: creating libribfilter.a
 Build complete for project ribfilter
-Time consumed: 2694  ms.  
+Time consumed: 2823  ms.  

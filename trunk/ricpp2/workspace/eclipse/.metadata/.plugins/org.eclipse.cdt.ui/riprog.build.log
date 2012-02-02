@@ -1,8 +1,5 @@
 
-**** Rebuild of configuration Debug for project riprog ****
+**** Build of configuration Debug for project riprog ****
 
 **** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\riprog.o ..\..\..\..\source\ri\riprog.cpp
-g++ -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ribparser\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ri\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ricppbridge\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\rendererloader\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ricontext\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ribfilter\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\declaration\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\streams\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\pluginhandler\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ricpp\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\gendynlib\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\ribase\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse\tools\Debug -LD:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/lib -shared -o riprog.dll Source\riprog.o -lri -lricppbridge -lrendererloader -lribparser -lricontext -lribfilter -ldeclaration -lstreams -lpluginhandler -lricpp -lgendynlib -lribase -ltools -lzdll
-Build complete for project riprog
-Time consumed: 5631  ms.  
+Nothing to build for riprog

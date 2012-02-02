@@ -1,11 +1,10 @@
 
-**** Rebuild of configuration Debug for project declaration ****
+**** Build of configuration Debug for project declaration ****
 
 **** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\decldict.o ..\..\..\..\source\declaration\decldict.cpp
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\declaration.o ..\..\..\..\source\declaration\declaration.cpp
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\decldict.o ..\..\..\..\source\declaration\decldict.cpp
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\tokenmap.o ..\..\..\..\source\declaration\tokenmap.cpp
 ar -r libdeclaration.a Source\tokenmap.o Source\decldict.o Source\declaration.o
-ar: creating libdeclaration.a
 Build complete for project declaration
-Time consumed: 3301  ms.  
+Time consumed: 3291  ms.  

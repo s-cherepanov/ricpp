@@ -1,10 +1,9 @@
 
-**** Rebuild of configuration Debug for project gendynlib ****
+**** Build of configuration Debug for project gendynlib ****
 
 **** Internal Builder is used for build               ****
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\win32dynlib.o ..\..\..\..\source\gendynlib\win32dynlib.cpp
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\dynlib.o ..\..\..\..\source\gendynlib\dynlib.cpp
 ar -r libgendynlib.a Source\win32dynlib.o Source\dynlib.o
-ar: creating libgendynlib.a
 Build complete for project gendynlib
-Time consumed: 2507  ms.  
+Time consumed: 2574  ms.  

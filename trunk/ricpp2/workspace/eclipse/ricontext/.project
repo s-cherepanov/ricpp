@@ -219,7 +219,7 @@
 		<link>
 			<name>Header/rimacrolights.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-WORKSPACE_LOC/include/ricpp/ricontext/rimacrolights.h</locationURI>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ricontext/rimacrolights.h</locationURI>
 		</link>
 		<link>
 			<name>Header/rimacromisc.h</name>

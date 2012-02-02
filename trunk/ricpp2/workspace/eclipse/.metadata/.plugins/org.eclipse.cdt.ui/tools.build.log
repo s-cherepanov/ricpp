@@ -1,13 +1,12 @@
 
-**** Rebuild of configuration Debug for project tools ****
+**** Build of configuration Debug for project tools ****
 
 **** Internal Builder is used for build               ****
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\stringlist.o ..\..\..\..\source\tools\stringlist.cpp
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\stringpattern.o ..\..\..\..\source\tools\stringpattern.cpp
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\win32env.o ..\..\..\..\source\tools\win32env.cpp
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\tools.o ..\..\..\..\source\tools\tools.cpp
+g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\win32env.o ..\..\..\..\source\tools\win32env.cpp
 g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\win32filepath.o ..\..\..\..\source\tools\win32filepath.cpp
 ar -r libtools.a Source\win32filepath.o Source\win32env.o Source\tools.o Source\stringpattern.o Source\stringlist.o
-ar: creating libtools.a
 Build complete for project tools
-Time consumed: 7381  ms.  
+Time consumed: 3728  ms.  

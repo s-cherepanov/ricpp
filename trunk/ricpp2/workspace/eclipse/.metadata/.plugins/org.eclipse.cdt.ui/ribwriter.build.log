@@ -1,9 +1,5 @@
 
-**** Rebuild of configuration Debug for project ribwriter ****
+**** Build of configuration Debug for project ribwriter ****
 
 **** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\ribwriter.o ..\..\..\..\source\ribwriter\ribwriter.cpp
-ar -r libribwriter.a Source\ribwriter.o
-ar: creating libribwriter.a
-Build complete for project ribwriter
-Time consumed: 6782  ms.  
+Nothing to build for ribwriter

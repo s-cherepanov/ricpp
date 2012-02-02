@@ -88,7 +88,7 @@
 		<link>
 			<name>Source/passthrough.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/ribfilter/passthrough.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribfilter/passthrough.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

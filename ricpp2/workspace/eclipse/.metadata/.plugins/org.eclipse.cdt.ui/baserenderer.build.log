@@ -1,10 +1,5 @@
 
-**** Rebuild of configuration Debug for project baserenderer ****
+**** Build of configuration Debug for project baserenderer ****
 
 **** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\trianglerenderer.o ..\..\..\..\source\baserenderer\trianglerenderer.cpp
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\baserenderer.o ..\..\..\..\source\baserenderer\baserenderer.cpp
-ar -r libbaserenderer.a Source\trianglerenderer.o Source\baserenderer.o
-ar: creating libbaserenderer.a
-Build complete for project baserenderer
-Time consumed: 22989  ms.  
+Nothing to build for baserenderer

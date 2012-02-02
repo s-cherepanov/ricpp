@@ -1,5 +1,32 @@
-#Tue Jan 24 14:52:41 CET 2012
+#Thu Feb 02 16:46:59 CET 2012
+nameStyle.constant.suffix=
+sourceHoverBackgroundColor=255,255,225
+nameStyle.getter.suffix=
 spelling_locale_initialized=true
+org.eclipse.cdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+nameStyle.cpp.test.wordDelimiter=
+nameStyle.setter.prefix=set
+nameStyle.variable.prefix=
+nameStyle.field.suffix=
+nameStyle.cpp.source.wordDelimiter=
+nameStyle.getter.prefixForBoolean=is
 useAnnotationsPrefPage=true
 eclipse.preferences.version=1
+nameStyle.variable.wordDelimiter=
+nameStyle.getter.wordDelimiter=
+nameStyle.cpp.test.suffix=_test.cpp
+nameStyle.cpp.header.prefix=
+nameStyle.constant.wordDelimiter=_
+nameStyle.cpp.source.prefix=
+nameStyle.field.wordDelimiter=
+nameStyle.variable.suffix=
+nameStyle.setter.suffix=
+nameStyle.getter.prefix=get
+nameStyle.constant.prefix=
+nameStyle.setter.wordDelimiter=
+nameStyle.cpp.header.wordDelimiter=
+nameStyle.cpp.header.suffix=.h
 useQuickDiffPrefPage=true
+nameStyle.field.prefix=
+nameStyle.cpp.source.suffix=.cpp
+nameStyle.cpp.test.prefix=

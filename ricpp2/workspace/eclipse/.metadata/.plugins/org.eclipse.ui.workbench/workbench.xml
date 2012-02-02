@@ -66,7 +66,7 @@
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
 <expanded>
-<category IMemento.internal.id="Warnings (6 items)"/>
+<category IMemento.internal.id="Warnings"/>
 </expanded>
 <columnWidths org.eclipse.ui.ide.locationField="287" org.eclipse.ui.ide.markerType="104" org.eclipse.ui.ide.pathField="142" org.eclipse.ui.ide.resourceField="107" org.eclipse.ui.ide.severityAndDescriptionField="896"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
@@ -479,6 +479,21 @@
 </trimLayout>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="baserenderer.h" tooltip="baserenderer/Header/baserenderer.h">
+<persistable path="/baserenderer/Header/baserenderer.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribwriter.h" tooltip="ribwriter/Header/ribwriter.h">
+<persistable path="/ribwriter/Header/ribwriter.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="rendererloader.cpp" tooltip="rendererloader/Source/rendererloader.cpp">
+<persistable path="/rendererloader/Source/rendererloader.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.binaryEditor" name="glutrib.exe" tooltip="glutrib/Debug/glutrib.exe">
+<persistable path="/glutrib/Debug/glutrib.exe"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="win32dynlib.cpp" tooltip="gendynlib/Source/win32dynlib.cpp">
+<persistable path="/gendynlib/Source/win32dynlib.cpp"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="glutrib.cpp" tooltip="glutrib/Source/glutrib.cpp">
 <persistable path="/glutrib/Source/glutrib.cpp"/>
 </file>
@@ -508,21 +523,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="trianglerenderer.h" tooltip="baserenderer/Header/trianglerenderer.h">
 <persistable path="/baserenderer/Header/trianglerenderer.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="baserenderer.h" tooltip="baserenderer/Header/baserenderer.h">
-<persistable path="/baserenderer/Header/baserenderer.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="baserenderer.cpp" tooltip="baserenderer/Source/baserenderer.cpp">
-<persistable path="/baserenderer/Source/baserenderer.cpp"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="glrenderer.h" tooltip="glrendererdll/Header/glrenderer.h">
-<persistable path="/glrendererdll/Header/glrenderer.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="backbuffer.cpp" tooltip="streams/Source/backbuffer.cpp">
-<persistable path="/streams/Source/backbuffer.cpp"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="riprog.cpp" tooltip="riprog/Source/riprog.cpp">
-<persistable path="/riprog/Source/riprog.cpp"/>
 </file>
 </mruList>
 </workbench>

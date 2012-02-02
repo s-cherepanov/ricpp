@@ -1,9 +1,5 @@
 
-**** Rebuild of configuration Debug for project glrenderer ****
+**** Build of configuration Debug for project glrenderer ****
 
 **** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\glrenderer.o ..\..\..\..\source\glrenderer\glrenderer.cpp
-ar -r libglrenderer.a Source\glrenderer.o
-ar: creating libglrenderer.a
-Build complete for project glrenderer
-Time consumed: 6814  ms.  
+Nothing to build for glrenderer

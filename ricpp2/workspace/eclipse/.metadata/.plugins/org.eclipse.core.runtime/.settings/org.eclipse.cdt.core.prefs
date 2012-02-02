@@ -1,5 +1,20 @@
-#Wed Jan 25 09:37:07 CET 2012
-macros/workspace=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<macros/>\r\n
+#Thu Feb 02 16:46:59 CET 2012
 org.eclipse.cdt.core.showSourceRootsAtTopLevelOfProject=true
+indexer/indexOnOpen=false
 eclipse.preferences.version=1
+indexer/updatePolicy=0
+org.eclipse.cdt.core.taskTags=TODO,FIXME,XXX
+indexer/skipTypeReferences=false
+macros/workspace=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<macros/>\r\n
+indexer/useHeuristicIncludeResolution=true
+indexer/skipImplicitReferences=false
+indexer/skipReferences=false
+indexer/filesToParseUpFront=cstdarg, stdarg.h, stddef.h, sys/resource.h, ctime, sys/types.h, signal.h, cstdio
+indexer/skipFilesLargerThanMB=8
+indexer/indexAllFiles=true
+indexer/indexerId=org.eclipse.cdt.core.fastIndexer
+org.eclipse.cdt.core.taskPriorities=normal,normal,normal
+environment/workspace=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<environment append\="true" appendContributed\="true"/>\r\n
 errorparser.default.ids=org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.MakeErrorParser
+indexer/indexUnusedHeadersWithDefaultLang=false
+indexer/skipMacroReferences=false

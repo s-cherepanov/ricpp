@@ -1,9 +1,5 @@
 
-**** Rebuild of configuration Debug for project ridynload ****
+**** Build of configuration Debug for project ridynload ****
 
 **** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\ridynload.o ..\..\..\..\source\ri\ridynload.cpp
-ar -r libridynload.a Source\ridynload.o
-ar: creating libridynload.a
-Build complete for project ridynload
-Time consumed: 562  ms.  
+Nothing to build for ridynload

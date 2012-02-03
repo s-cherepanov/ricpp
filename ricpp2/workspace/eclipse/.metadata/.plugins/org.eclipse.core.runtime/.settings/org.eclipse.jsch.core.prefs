@@ -1,7 +1,0 @@
-#Fri Feb 03 10:09:49 CET 2012
-CVSSSH2PreferencePage.PREF_AUTH_METHODS_ORDER=gssapi-with-mic,publickey,password,keyboard-interactive
-eclipse.preferences.version=1
-CVSSSH2PreferencePage.PREF_AUTH_METHODS=gssapi-with-mic,publickey,password,keyboard-interactive
-org.eclipse.jsch.core.hasMigratedSsh2Preferences=true
-SSH2HOME=Z\:\\.ssh
-org.eclipse.jsch.core.hasChangedDefaultWin32SshHome=true

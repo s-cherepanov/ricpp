@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project ribwriterdll ****
-rm -rf ribwriter.1.dll Source/ribwriterdll.d Source/ribwriterdll.o
-Build complete for project ribwriterdll

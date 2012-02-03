@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project ridynload ****
-rm -rf Source/ridynload.o Source/ridynload.d libridynload.a
-Build complete for project ridynload

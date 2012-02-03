@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project streams ****
-rm -rf Source/uri.o libstreams.a Source/backbuffer.o Source/backbuffer.d Source/uri.d
-Build complete for project streams

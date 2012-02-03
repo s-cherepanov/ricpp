@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project rendererloader ****
-rm -rf librendererloader.a Source/rendererloader.o Source/rendererloader.d
-Build complete for project rendererloader

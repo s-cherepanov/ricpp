@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project ribtool ****
-rm -rf ribtool.exe Source/ribtool.d Source/ribtool.o
-Build complete for project ribtool

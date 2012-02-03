@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project passthrough ****
-rm -rf Source/passthrough.o passthrough.1.dll Source/passthrough.d
-Build complete for project passthrough

@@ -27,19 +27,19 @@
  *  @brief Stub for the dynamic library of a CRibWriter
  */
 
-#if !defined(WIN32)
+#if !defined(WIN32) && defined(__GNUC__)
 #pragma GCC visibility push(hidden)
 #endif
 
 #include "ricpp/ribwriter/ribwriter.h"
 
-#if !defined(WIN32)
+#if !defined(WIN32) && defined(__GNUC__)
 #pragma GCC visibility pop
 #endif
 
 using namespace RiCPP;
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__GNUC__)
 
 #if defined(_MANAGED)
 #pragma managed(push, off)

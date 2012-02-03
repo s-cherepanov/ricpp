@@ -193,7 +193,7 @@ void CGLRenderer::hide(const CFace &f)
 	if ( !pptr )
 		return;
 
-#ifdef _OPENGL_TRANSFORM
+#if defined(_OPENGL_TRANSFORM)
 	const TemplPrimVar<RtFloat> *nptr = f.floats(RI_N);
 		
 	const std::vector<RtFloat> *pp = &(pptr->values());
@@ -396,7 +396,7 @@ void CGLRenderer::setTransformToCamera()
 	glLoadIdentity();
 	// I use 3 flips (2 in viewing one in model) because otherwise the camera position is not considered for lighting correctly (opposite direction)
 	glScalef(1.0F, 1.0F, -1.0F);	
-#ifdef _OPENGL_TRANSFORM
+#if defined(_OPENGL_TRANSFORM)
 	glMultMatrixf(toCamera().getFloats());
 #endif
 }
@@ -543,7 +543,7 @@ void CGLRenderer::initViewing()
 				1.0 * clip[1][2]);
 	}
 
-#ifdef _SHOWBACKGROUND	
+#if defined(_SHOWBACKGROUND)
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
 	glVertex3f((GLfloat)xmin, (GLfloat)ymin, 0.0f);
@@ -555,7 +555,7 @@ void CGLRenderer::initViewing()
 	glClear(GL_DEPTH_BUFFER_BIT);
 #endif
 	
-#ifdef _SHOWFRAMES	
+#if defined(_SHOWFRAMES)
 	glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 	glBegin(GL_LINE_LOOP);
 	glVertex3f(0.5, 0.5, 0);
@@ -565,7 +565,7 @@ void CGLRenderer::initViewing()
 	glEnd();
 #endif
 
-#ifdef _SHOWFRAMES	
+#if defined(_SHOWFRAMES)
 	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 	glBegin(GL_LINE_LOOP);
 	glVertex3f(xmin+0.5, ymin+0.5, 0);
@@ -582,7 +582,7 @@ void CGLRenderer::initViewing()
 	const CTransformation *NDCToRaster = renderState()->NDCToRaster();
 	glMultMatrixf(NDCToRaster->getCTM().getFloats());	
 	
-#ifdef _SHOWFRAMES
+#if defined(_SHOWFRAMES)
 	glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_LINE_STIPPLE);
 	glLineStipple(1, 0xAAAA);

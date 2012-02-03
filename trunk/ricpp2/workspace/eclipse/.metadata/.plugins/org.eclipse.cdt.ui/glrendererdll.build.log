@@ -1,5 +1,4 @@
 
-**** Build of configuration Debug for project glrendererdll ****
-
-**** Internal Builder is used for build               ****
-Nothing to build for glrendererdll
+**** Clean-only build of configuration Debug for project glrendererdll ****
+rm -rf glrenderer.1.dll Source/glrendererdll.d Source/glrendererdll.o
+Build complete for project glrendererdll

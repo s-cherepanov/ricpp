@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>glrenderer</name>
+	<name>ribtool</name>
 	<comment></comment>
 	<projects>
-		<project>baserenderer</project>
+		<project>ricppbridge</project>
+		<project>declaration</project>
+		<project>gendynlib</project>
+		<project>pluginhandler</project>
+		<project>rendererloader</project>
+		<project>ribase</project>
+		<project>ribfilter</project>
+		<project>ribparser</project>
+		<project>ricontext</project>
+		<project>ricpp</project>
+		<project>streams</project>
+		<project>tools</project>
+		<project>riprog</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -28,7 +40,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/ribparser/Debug}</value>
+					<value>${workspace_loc:/ribtool/Debug}</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.contents</key>
@@ -81,14 +93,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Header/glrenderer.h</name>
+			<name>Source/ribtool.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/glrenderer/glrenderer.h</locationURI>
-		</link>
-		<link>
-			<name>Source/glrenderer.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-WORKSPACE_LOC/source/glrenderer/glrenderer.cpp</locationURI>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribtool/ribtool.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

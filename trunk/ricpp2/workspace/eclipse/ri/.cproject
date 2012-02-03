@@ -65,6 +65,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.mingw.so.debug.1669549618.581488407" name="ri.cpp" rcbsApplicability="disable" resourcePath="Source/ri.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.so.debug.1230650136.443913392">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.so.debug.1230650136.443913392" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.so.debug.1230650136"/>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="Header" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>

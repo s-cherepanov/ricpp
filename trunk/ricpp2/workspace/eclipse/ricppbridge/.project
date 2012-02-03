@@ -70,4 +70,26 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Header</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Source</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Header/ricppbridge.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ricppbridge/ricppbridge.h</locationURI>
+		</link>
+		<link>
+			<name>Source/ricppbridge.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ricppbridge/ricppbridge.cpp</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

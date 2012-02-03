@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project ribwriter ****
-rm -rf libribwriter.a Source/ribwriter.o Source/ribwriter.d
-Build complete for project ribwriter

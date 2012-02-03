@@ -1,4 +1,0 @@
-
-**** Clean-only build of configuration Debug for project ricpp ****
-rm -rf Source/varsubst.o libricpp.a Source/errorhandlers.o Source/paramclasses.o Source/riroot.o Source/filters.d Source/varsubst.d Source/riroot.d Source/paramclasses.d Source/filters.o Source/ricpperror.o Source/errorhandlers.d Source/ricpperror.d Source/requests.d Source/subdivfunc.o Source/types.d Source/subdivfunc.d Source/types.o Source/requests.o
-Build complete for project ricpp

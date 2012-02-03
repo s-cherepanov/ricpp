@@ -1,8 +1,4 @@
 
-**** Build of configuration Debug for project ricppbridge ****
-
-**** Internal Builder is used for build               ****
-g++ -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../source/include -ID:\Projects\ricpp\trunk\ricpp2\workspace\eclipse/../../3rdparty/win32/zlib123-dll/include -O0 -g3 -Wall -c -fmessage-length=0 -o Source\ricppbridge.o ..\..\..\..\source\ricppbridge\ricppbridge.cpp
-ar -r libricppbridge.a Source\ricppbridge.o
+**** Clean-only build of configuration Debug for project ricppbridge ****
+rm -rf Source/ricppbridge.o Source/ricppbridge.d libricppbridge.a
 Build complete for project ricppbridge
-Time consumed: 7316  ms.  

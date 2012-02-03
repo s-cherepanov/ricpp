@@ -69,16 +69,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>Header/ribwriter.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ribwriter/ribwriter.h</locationURI>
-		</link>
-		<link>
-			<name>Source/ribwriter.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribwriter/ribwriter.cpp</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

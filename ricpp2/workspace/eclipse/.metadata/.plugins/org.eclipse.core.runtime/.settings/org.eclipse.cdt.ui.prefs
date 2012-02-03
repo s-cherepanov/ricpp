@@ -1,32 +1,37 @@
-#Thu Feb 02 16:46:59 CET 2012
+#Fri Feb 03 14:14:46 CET 2012
+hoverModifiers=org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover;\!0;org.eclipse.cdt.ui.ProblemHover;\!0;org.eclipse.cdt.ui.CDocHover;\!0;org.eclipse.cdt.ui.CMacroExpansionHover;\!0;org.eclipse.cdt.ui.CSourceHover;Shift;org.eclipse.cdt.ui.AnnotationHover;\!0;
 nameStyle.constant.suffix=
-sourceHoverBackgroundColor=255,255,225
-nameStyle.getter.suffix=
-spelling_locale_initialized=true
-org.eclipse.cdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
-nameStyle.cpp.test.wordDelimiter=
-nameStyle.setter.prefix=set
-nameStyle.variable.prefix=
-nameStyle.field.suffix=
-nameStyle.cpp.source.wordDelimiter=
-nameStyle.getter.prefixForBoolean=is
-useAnnotationsPrefPage=true
-eclipse.preferences.version=1
-nameStyle.variable.wordDelimiter=
-nameStyle.getter.wordDelimiter=
-nameStyle.cpp.test.suffix=_test.cpp
-nameStyle.cpp.header.prefix=
-nameStyle.constant.wordDelimiter=_
-nameStyle.cpp.source.prefix=
-nameStyle.field.wordDelimiter=
-nameStyle.variable.suffix=
-nameStyle.setter.suffix=
-nameStyle.getter.prefix=get
-nameStyle.constant.prefix=
-nameStyle.setter.wordDelimiter=
 nameStyle.cpp.header.wordDelimiter=
-nameStyle.cpp.header.suffix=.h
+nameStyle.cpp.source.suffix=.cpp
+nameStyle.cpp.header.prefix=
+org.eclipse.cdt.ui.text.templates.custom=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
 useQuickDiffPrefPage=true
 nameStyle.field.prefix=
-nameStyle.cpp.source.suffix=.cpp
+nameStyle.cpp.test.wordDelimiter=
+nameStyle.cpp.header.suffix=.h
+nameStyle.getter.prefix=get
+nameStyle.setter.wordDelimiter=
+useAnnotationsPrefPage=true
+nameStyle.field.suffix=
+nameStyle.getter.suffix=
+nameStyle.field.wordDelimiter=
+nameStyle.variable.wordDelimiter=
+spelling_locale_initialized=true
+sourceHoverBackgroundColor=255,255,225
+nameStyle.cpp.source.wordDelimiter=
+formatter_profile=org.eclipse.cdt.ui.default.kandr_profile
+nameStyle.getter.wordDelimiter=
+nameStyle.variable.prefix=
+nameStyle.setter.prefix=set
+hoverModifierMasks=org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover;0;org.eclipse.cdt.ui.ProblemHover;0;org.eclipse.cdt.ui.CDocHover;0;org.eclipse.cdt.ui.CMacroExpansionHover;0;org.eclipse.cdt.ui.CSourceHover;131072;org.eclipse.cdt.ui.AnnotationHover;0;
+eclipse.preferences.version=1
+nameStyle.variable.suffix=
+nameStyle.constant.wordDelimiter=_
+nameStyle.setter.suffix=
 nameStyle.cpp.test.prefix=
+org.eclipse.cdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+nameStyle.constant.prefix=
+formatter_settings_version=1
+nameStyle.getter.prefixForBoolean=is
+nameStyle.cpp.test.suffix=_test.cpp
+nameStyle.cpp.source.prefix=

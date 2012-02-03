@@ -1,4 +1,8 @@
-#Mon Jan 23 16:52:18 CET 2012
+#Fri Feb 03 13:49:13 CET 2012
+pref_state_memento.org.eclipse.debug.ui.DebugVieworg.eclipse.debug.ui.DebugView=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<DebugViewMemento org.eclipse.debug.ui.BREADCRUMB_DROPDOWN_AUTO_EXPAND\="false"/>
 eclipse.preferences.version=1
+Console.highWaterMark=88000
+preferredDetailPanes=DefaultDetailPane\:DefaultDetailPane|NumberFormatPane\:NumberFormatPane|
 preferredTargets=org.eclipse.cdt.debug.ui.toggleCBreakpointTarget\:org.eclipse.cdt.debug.ui.toggleCBreakpointTarget|
 org.eclipse.debug.ui.PREF_LAUNCH_PERSPECTIVES=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<launchPerspectives/>\r\n
+StringVariablePreferencePage=210,175,175,139,

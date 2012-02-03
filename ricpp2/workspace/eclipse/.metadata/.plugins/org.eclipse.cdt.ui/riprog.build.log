@@ -1,5 +1,4 @@
 
-**** Build of configuration Debug for project riprog ****
-
-**** Internal Builder is used for build               ****
-Nothing to build for riprog
+**** Clean-only build of configuration Debug for project riprog ****
+rm -rf Source/riprog.d riprog.dll Source/riprog.o
+Build complete for project riprog

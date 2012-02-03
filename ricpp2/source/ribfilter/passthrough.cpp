@@ -30,19 +30,19 @@
 // passthrough.cpp : Defines the entry point for the DLL application.
 //
 
-#if !defined(WIN32)
+#if !defined(WIN32) && defined(__GNUC__)
 #pragma GCC visibility push(hidden)
 #endif
 
 #include "ricpp/ribfilter/ribfilter.h"
 
-#if !defined(WIN32)
+#if !defined(WIN32) && defined(__GNUC__)
 #pragma GCC visibility pop
 #endif
 
 using namespace RiCPP;
 
-#ifdef _WIN32
+#if defined(WIN32) && !defined(__GNUC__)
 
 #ifdef _MANAGED
 #pragma managed(push, off)

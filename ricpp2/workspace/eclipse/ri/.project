@@ -70,4 +70,31 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Header</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Source</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Header/ri.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ri/ri.h</locationURI>
+		</link>
+		<link>
+			<name>Header/riinternal.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ri/riinternal.h</locationURI>
+		</link>
+		<link>
+			<name>Source/ri.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ri/ri.cpp</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

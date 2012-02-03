@@ -85,8 +85,11 @@
 				<externalSettings>
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/rendererloader"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/rendererloader/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="rendererloader"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>

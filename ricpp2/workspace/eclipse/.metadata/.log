@@ -4927,3 +4927,41 @@ Command-line arguments:  -os win32 -ws win32 -arch x86 -product org.eclipse.epp.
 
 !ENTRY org.eclipse.cdt.core 1 0 2012-02-03 14:34:34.879
 !MESSAGE Indexed 'ribtool' (1 sources, 21 headers) in 2.73 sec: 747 declarations; 1,586 references; 2 unresolved inclusions; 0 syntax errors; 15 unresolved names (0.64%)
+!SESSION 2012-02-03 14:42:26.122 -----------------------------------------------
+eclipse.buildId=M20110909-1335
+java.version=1.7.0_02
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product org.eclipse.epp.package.java.product -clean
+
+!ENTRY org.eclipse.cdt.codan.core 4 1 2012-02-03 14:49:07.325
+!MESSAGE Internal Error
+!STACK 0
+java.lang.NullPointerException
+	at org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxNodeFactory.createBranchNode(CxxNodeFactory.java:65)
+	at org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder.createTry(ControlFlowGraphBuilder.java:241)
+	at org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder.createSubGraph(ControlFlowGraphBuilder.java:217)
+	at org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder.createSubGraph(ControlFlowGraphBuilder.java:148)
+	at org.eclipse.cdt.codan.core.cxx.internal.model.cfg.ControlFlowGraphBuilder.build(ControlFlowGraphBuilder.java:79)
+	at org.eclipse.cdt.codan.core.cxx.internal.model.cfg.CxxControlFlowGraph.build(CxxControlFlowGraph.java:33)
+	at org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache.getControlFlowGraph(CxxModelsCache.java:90)
+	at org.eclipse.cdt.codan.internal.checkers.ReturnChecker.endsWithNoExitNode(ReturnChecker.java:228)
+	at org.eclipse.cdt.codan.internal.checkers.ReturnChecker.processFunction(ReturnChecker.java:172)
+	at org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker$1.visit(AbstractAstFunctionChecker.java:32)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition.accept(CPPASTFunctionDefinition.java:164)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:279)
+	at org.eclipse.cdt.codan.core.cxx.model.AbstractAstFunctionChecker.processAst(AbstractAstFunctionChecker.java:25)
+	at org.eclipse.cdt.codan.core.cxx.model.AbstractIndexAstChecker.processModel(AbstractIndexAstChecker.java:103)
+	at org.eclipse.cdt.codan.internal.core.CodanBuilder.processResource(CodanBuilder.java:149)
+	at org.eclipse.cdt.codan.internal.core.CodanBuilder.runInEditor(CodanBuilder.java:218)
+	at org.eclipse.cdt.codan.core.cxx.internal.model.CxxCodanReconciler.reconciledAst(CxxCodanReconciler.java:38)
+	at org.eclipse.cdt.codan.internal.ui.cxx.CodanCReconciler.reconciled(CodanCReconciler.java:81)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3198)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:108)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.initialReconcile(CReconcilingStrategy.java:132)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.initialReconcile(CompositeReconcilingStrategy.java:112)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.initialReconcile(CCompositeReconcilingStrategy.java:108)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.initialProcess(MonoReconciler.java:105)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.initialProcess(CReconciler.java:394)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:173)

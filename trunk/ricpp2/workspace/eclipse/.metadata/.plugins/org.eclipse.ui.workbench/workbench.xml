@@ -16,7 +16,7 @@
 <coolItem id="org.eclipse.jdt.ui.JavaElementCreationActionSet" itemType="typeToolBarContribution" x="76" y="22"/>
 <coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="122" y="22"/>
 <coolItem id="org.eclipse.stp.im.resource.actionSet" itemType="typeToolBarContribution" x="38" y="22"/>
-<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="61" y="22"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="84" y="22"/>
 <coolItem id="org.eclipse.wst.xml.ui.perspective.NewFileToolBar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="org.eclipse.wst.xml.ui.design.DesignToolBar" itemType="typeToolBarContribution" x="-1" y="-1"/>
 <coolItem id="org.lejos.nxt.ldt.actionSet" itemType="typeToolBarContribution" x="38" y="22"/>
@@ -76,6 +76,9 @@
 <view id="org.eclipse.cdt.ui.callHierarchy" partName="Call Hierarchy"/>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
 <viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<expanded>
+<category IMemento.internal.id="Errors"/>
+</expanded>
 <columnWidths org.eclipse.ui.ide.locationField="287" org.eclipse.ui.ide.markerType="104" org.eclipse.ui.ide.pathField="142" org.eclipse.ui.ide.resourceField="107" org.eclipse.ui.ide.severityAndDescriptionField="896"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
 <visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
@@ -596,11 +599,41 @@
 </trimLayout>
 </window>
 <mruList>
-<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="glut.h" tooltip="D:\Projects\ricpp\trunk\ricpp2\3rdparty\win32\gccglut\include\GL\glut.h">
-<persistable path="D:\Projects\ricpp\trunk\ricpp2\3rdparty\win32\gccglut\include\GL\glut.h" project="glutrib"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribtransforms.cpp" tooltip="ribparser/Source/ribtransforms.cpp">
+<persistable path="/ribparser/Source/ribtransforms.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribprims.cpp" tooltip="ribparser/Source/ribprims.cpp">
+<persistable path="/ribparser/Source/ribprims.cpp"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribparser.cpp" tooltip="ribparser/Source/ribparser.cpp">
 <persistable path="/ribparser/Source/ribparser.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="riboptions.cpp" tooltip="ribparser/Source/riboptions.cpp">
+<persistable path="/ribparser/Source/riboptions.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribmodes.cpp" tooltip="ribparser/Source/ribmodes.cpp">
+<persistable path="/ribparser/Source/ribmodes.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribmisc.cpp" tooltip="ribparser/Source/ribmisc.cpp">
+<persistable path="/ribparser/Source/ribmisc.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="riblights.cpp" tooltip="ribparser/Source/riblights.cpp">
+<persistable path="/ribparser/Source/riblights.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribexternals.cpp" tooltip="ribparser/Source/ribexternals.cpp">
+<persistable path="/ribparser/Source/ribexternals.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribattributes.cpp" tooltip="ribparser/Source/ribattributes.cpp">
+<persistable path="/ribparser/Source/ribattributes.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribexternals.cpp" tooltip="ribparser/Debug/Source/ribexternals.cpp">
+<persistable path="/ribparser/Debug/Source/ribexternals.cpp"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribattributes.cpp" tooltip="ribparser/Debug/Source/ribattributes.cpp">
+<persistable path="/ribparser/Debug/Source/ribattributes.cpp"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="glut.h" tooltip="D:\Projects\ricpp\trunk\ricpp2\3rdparty\win32\gccglut\include\GL\glut.h">
+<persistable path="D:\Projects\ricpp\trunk\ricpp2\3rdparty\win32\gccglut\include\GL\glut.h" project="glutrib"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ridynload.cpp" tooltip="ridynload/Source/ridynload.cpp">
 <persistable path="/ridynload/Source/ridynload.cpp"/>
@@ -610,36 +643,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ricppbridge.cpp" tooltip="ricppbridge/Source/ricppbridge.cpp">
 <persistable path="/ricppbridge/Source/ricppbridge.cpp"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribwriter.h" tooltip="ribwriter/Header/ribwriter.h">
-<persistable path="/ribwriter/Header/ribwriter.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribwriter.cpp" tooltip="ribwriter/Source/ribwriter.cpp">
-<persistable path="/ribwriter/Source/ribwriter.cpp"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribtransforms.h" tooltip="ribparser/Header/ribtransforms.h">
-<persistable path="/ribparser/Header/ribtransforms.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribprims.h" tooltip="ribparser/Header/ribprims.h">
-<persistable path="/ribparser/Header/ribprims.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribparsercallback.h" tooltip="ribparser/Header/ribparsercallback.h">
-<persistable path="/ribparser/Header/ribparsercallback.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribparser.h" tooltip="ribparser/Header/ribparser.h">
-<persistable path="/ribparser/Header/ribparser.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="riboptions.h" tooltip="ribparser/Header/riboptions.h">
-<persistable path="/ribparser/Header/riboptions.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribmodes.h" tooltip="ribparser/Header/ribmodes.h">
-<persistable path="/ribparser/Header/ribmodes.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="ribmisc.h" tooltip="ribparser/Header/ribmisc.h">
-<persistable path="/ribparser/Header/ribmisc.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="riblights.h" tooltip="ribparser/Header/riblights.h">
-<persistable path="/ribparser/Header/riblights.h"/>
 </file>
 </mruList>
 </workbench>

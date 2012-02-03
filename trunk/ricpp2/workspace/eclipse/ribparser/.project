@@ -77,6 +77,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Source</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Header/ribattributes.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ribparser/ribattributes.h</locationURI>
@@ -125,6 +130,51 @@
 			<name>Header/ribtransforms.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ribparser/ribtransforms.h</locationURI>
+		</link>
+		<link>
+			<name>Source/ribattributes.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/ribattributes.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/ribexternals.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/ribexternals.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/riblights.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/riblights.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/ribmisc.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/ribmisc.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/ribmodes.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/ribmodes.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/riboptions.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/riboptions.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/ribparser.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/ribparser.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/ribprims.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/ribprims.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/ribtransforms.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/ribparser/ribtransforms.cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

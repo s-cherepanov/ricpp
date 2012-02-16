@@ -1,24 +1,8 @@
-set ( gendynlib_src ${RICPP_SOURCE_DIR}/gendynlib/dynlib.cpp )
-
-if ( ${WIN32} )
-	set ( gendynlib_src
-              ${gendynlib_src}
-              ${RICPP_SOURCE_DIR}/gendynlib/win32dynlib.cpp
-	)
-elseif ( ${APPLE} )
-	set ( gendynlib_src
-              ${gendynlib_src}
-              ${RICPP_SOURCE_DIR}/gendynlib/macdynlib.cpp
-        )
-else ()
-	if ( NOT ${UNIX} )
-		message ("Warning: Unknown architecture using same as Unix.")
-	endif ()
-	set ( gendynlib_src
-              ${gendynlib_src}
-              ${RICPP_SOURCE_DIR}/gendynlib/linuxdynlib.cpp
-        )
-endif ()
+set ( gendynlib_src
+      ${RICPP_SOURCE_DIR}/gendynlib/dynlib.cpp
+      ${RICPP_SOURCE_DIR}/gendynlibwin32/dynlib.cpp
+      ${RICPP_SOURCE_DIR}/gendynlib/macdynlib.cpp
+      ${RICPP_SOURCE_DIR}/gendynlib/linuxdynlib.cpp
+)
 
 add_library ( gendynlib STATIC ${gendynlib_src} )
-

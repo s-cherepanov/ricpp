@@ -56,15 +56,20 @@ add_subdirectory (ribwriter)
 add_subdirectory (ri)
 add_subdirectory (ridynload)
 
+set (Z_LIB z) 
+set (GL_LIB GL) 
+set (DL_LIB dl) 
+
+
 set (ricpp_libs ricpp ribase tools)
 set (ridynload_libs ridynload ri ${ricpp_libs})
-set (pluginhandler_libs pluginhandler gendynlib ${ricpp_libs} dl)
+set (pluginhandler_libs pluginhandler gendynlib ${ricpp_libs} ${DL_LIB})
 set (ribfilter_libs ribfilter ${pluginhandler_libs})
-set (ricontext_libs ricontext declaration streams ${pluginhandler_libs} z)
+set (ricontext_libs ricontext declaration streams ${pluginhandler_libs} ${Z_LIB})
 set (ribparser_libs ribparser ribfilter ${ricontext_libs})
 set (ricppbridge_libs ricppbridge rendererloader ${ribparser_libs})
 set (baserenderer_libs baserenderer ${ribparser_libs})
-set (glrenderer_libs glrenderer ${baserenderer_libs} GL)
+set (glrenderer_libs glrenderer ${baserenderer_libs} ${GL_LIB})
 set (ribwriter_libs ribwriter ${baserenderer_libs})
 
 # *** dynamic libraries 

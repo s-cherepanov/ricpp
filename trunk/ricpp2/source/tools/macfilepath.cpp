@@ -22,11 +22,12 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-
 /** @file macfilepath.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief MAC implementation of the file path classes
  */
+
+#if defined __APPLE__
 
 #include "ricpp/tools/filepath.h"
 
@@ -36,3 +37,4 @@ using namespace RiCPP;
  */
 const char *CFilepathConverter::nativeDynlibSuffix() { return ".dylib"; }
 
+#endif // __APPLE__

@@ -27,7 +27,7 @@
  *  @brief Linux 10 implementation of parts of CEnv,
  *         the adapter for environment variables.
  */
-
+#if !(defined _WIN32) && !(defined __APPLE__)
 #include "ricpp/tools/env.h"
 
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
@@ -116,4 +116,4 @@ std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 	// std::cerr << "************** prog" << prog << std::endl;
 	return prog;
 }
-
+#endif // !_WIN_32 && !__APPLE__

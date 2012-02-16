@@ -27,6 +27,7 @@
  *  @brief implementation of a class to handle dynamic libraries in Win32.
  */
 
+#if defined _WIN32
 #include "ricpp/gendynlib/win32dynlib.h"
 
 #ifndef _RICPP_TOOLS_FILEPATH_H
@@ -125,7 +126,7 @@ const char *CWin32DynLib::findLib() {
 			FILE *f = NULL;
 			CFilepath p(strlibpath.c_str());
 			if (
-#if defined(WIN32) && !defined(__GNUC__)
+#if defined_MSC_VER
 					(0 == fopen_s(&f, p.fullpath(), "r"))
 #else
 					0 != (f = fopen(p.fullpath(), "r"))
@@ -157,3 +158,4 @@ ILibFunc *CWin32DynLib::getFunc(const char *name) const {
 CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath, long int version) {
 	return new CWin32DynLib(libname, searchpath, version);
 }
+#endif

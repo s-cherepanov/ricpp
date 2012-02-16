@@ -186,7 +186,7 @@ namespace RiCPP {
 			const char *tmpfile = 0;
 			
 			
-		#if defined(_WIN32) && !defined(__GNUC__)
+		#if defined _MSC_VER
 			char buf[L_tmpnam_s];
 			buf[0] = 0;
 			if ( tmpnam_s(buf, sizeof(buf)) )
@@ -205,7 +205,7 @@ namespace RiCPP {
 				return 0;
 			
 			
-#if defined(_WIN32) && !defined(__GNUC__)
+#if defined _MSC_VER
 			CEnv::find(tmpPath, CEnv::tmpName(), false);
 			tmpPath += CFilepathConverter::nativePathSeparator();
 			tmpPath += tmpfile;

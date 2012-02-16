@@ -26,6 +26,7 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Implementation of a class to handle dynamic libraries in MacOS.
  */
+#if !(defined _WIN32)
 
 #include "ricpp/gendynlib/macdynlib.h"
 
@@ -156,3 +157,4 @@ ILibFunc *CMacDynLib::getFunc(const char *name) const {
 CDynLib *CDynLibFactory::newDynLib(const char *libname, const char *searchpath, long int version) {
 	return new CMacDynLib(libname, searchpath, version);
 }
+#endif // !(defined __WIN32__)

@@ -27,6 +27,7 @@
  *  @brief Win32 implementation of parts of CEnv, the adapter for environment variables.
  */
 
+#if defined _WIN32
 #include "ricpp/tools/env.h"
 
 #include <windows.h>
@@ -45,7 +46,7 @@ std::string &CEnv::get(std::string &var, const char *varName, bool convertPath)
 	if ( !varName )
 		return var;
 
-#if defined(_WIN32) && !defined(__GNUC__)
+#if defined _MSC_VER
 	{
 	char p[MAX_PATH+1] = { 0 };
 	char *ptr = &p[0];
@@ -213,3 +214,4 @@ std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 	prog = convertPath ? internalPath : path;
 	return prog;
 }
+#endif // _WIN32

@@ -160,7 +160,7 @@ public:
 			char strnum[64];
 
 			strnum[0] = (char)0;
-#if defined(_WIN32) && !defined(__GNUC__)
+#if defined _MSC_VER
 			sprintf_s(strnum, sizeof(strnum), "%ld", ++m_maxHandleIdx);
 #else
 			snprintf(strnum, sizeof(strnum)-1, "%ld", ++m_maxHandleIdx);

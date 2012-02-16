@@ -27,21 +27,21 @@
  *  @brief Stub for the dynamic library of a CGLRenderer
  */
 
-#if !defined(WIN32) && defined(__GNUC__)
+#if !(defined _WIN32) && defined __GNUC__
 #pragma GCC visibility push(hidden)
 #endif
 
 #include "ricpp/glrenderer/glrenderer.h"
 
-#if !defined(WIN32) && defined(__GNUC__)
+#if !(defined _WIN32) && defined __GNUC__
 #pragma GCC visibility pop
 #endif
 
 using namespace RiCPP;
 
-#if defined(WIN32) && !defined(__GNUC__)
+#if defined _MSC_VER
 
-#if defined(_MANAGED)
+#if defined _MANAGED
 #pragma managed(push, off)
 #endif
 
@@ -55,11 +55,11 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-#if defined(_MANAGED)
+#if defined _MANAGED
 #pragma managed(pop)
 #endif
 
-#endif // WIN32
+#endif // _MSC_VER
 
 extern "C" {
 

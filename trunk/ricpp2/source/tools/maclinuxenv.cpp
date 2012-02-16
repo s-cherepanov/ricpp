@@ -27,6 +27,7 @@
  *  @brief MacOs 10 implementation of parts of CEnv,
  *         the adapter for environment variables.
  */
+#if !(defined _WIN32)
 
 #include "ricpp/tools/env.h"
 
@@ -111,3 +112,4 @@ std::string &CEnv::getPath(std::string &path, bool convertPath)
 	return convertPath ? CFilepathConverter::convertListToInternal(path) : path;
 }
 
+#endif // !_WIN32

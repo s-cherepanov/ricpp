@@ -35,7 +35,7 @@
 #include <cstring>
 #include <ios>
 
-#if defined(WIN32)
+#if defined _WIN32
 #if !defined(_WINDOWS_)
 #include <windows.h>
 #endif // _WINDOWS_
@@ -43,7 +43,7 @@
 
 namespace RiCPP {
 
-#if defined(WIN32)
+#if defined _WIN32
 
 /** @brief Case insensitive strcmp() - Compare s1 with s2, under Mac and Linux/Unix there is no _stricmp(), it is named strcasecmp().
  *  @param s1 first NUL terminated string

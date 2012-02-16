@@ -126,7 +126,7 @@ const char *CWin32DynLib::findLib() {
 			FILE *f = NULL;
 			CFilepath p(strlibpath.c_str());
 			if (
-#if defined_MSC_VER
+#if defined _MSC_VER
 					(0 == fopen_s(&f, p.fullpath(), "r"))
 #else
 					0 != (f = fopen(p.fullpath(), "r"))

@@ -27,6 +27,8 @@
  *  @brief Win32 implementation of the file path classes.
  */
 
+#if defined _WIN32
+
 #include "ricpp/tools/filepath.h"
 
 #include <windows.h>
@@ -190,3 +192,5 @@ bool CDirectory::readDirectory(const char *pattern) {
 
 	return true;
 }
+#endif // _WIN32
+

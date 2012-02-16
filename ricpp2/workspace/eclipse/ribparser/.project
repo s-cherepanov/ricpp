@@ -94,7 +94,7 @@
 		<link>
 			<name>Header/riblights.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-WORKSPACE_LOC/include/ricpp/ribparser/riblights.h</locationURI>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/ribparser/riblights.h</locationURI>
 		</link>
 		<link>
 			<name>Header/ribmisc.h</name>

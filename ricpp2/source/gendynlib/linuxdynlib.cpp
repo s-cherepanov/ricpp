@@ -28,4 +28,3 @@
  */
 
 #include "macdynlib.cpp"
-

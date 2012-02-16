@@ -582,14 +582,12 @@ namespace RiCPP {
 		static int const RESERVED     = 0xE0; ///< @brief bits 5..7: reserved
 
 		// RiCPP will be only implemented for WIN32, MACOS or Unix
-		#if defined(WIN32)
+		#if defined _WIN32
 			static int const OS_CODE = 0x0b;
+		#elif defined MACOS || defined TARGET_OS_MAC
+			static int const OS_CODE = 0x07;
 		#else
-			#if defined(MACOS) || defined(TARGET_OS_MAC)
-				static int const OS_CODE = 0x07;
-			#else
-				static int const OS_CODE = 0x03;
-			#endif
+			static int const OS_CODE = 0x03;
 		#endif
 
 		#if MAX_MEM_LEVEL >= 8

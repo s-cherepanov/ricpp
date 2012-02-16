@@ -42,28 +42,35 @@
  *
  * @todo copy the routines that can be used with no context to riprog, ridynload
  */
-#ifdef _WIN32
-#if defined(RICPP_EXPORTS)
-#if !defined(RICPP_EXTERN)
-#define	RICPP_EXTERN(type) extern __declspec(dllexport) type
-#endif
-#if !defined(RICPP_INTERN)
-#define	RICPP_INTERN(type) __declspec(dllexport) type
-#endif
+#if defined _WIN32
+/**
+ * @todo document the export directives, compare to ricpptypes.h
+ */
+#if defined RICPP_EXPORTS
+    #if !(defined RICPP_EXTERN)
+      #define RICPP_EXTERN(type) extern __declspec(dllexport) type
+    #endif
+    #if !(defined RICPP_INTERN)
+      #define RICPP_INTERN(type) __declspec(dllexport) type
+    #endif
+  #else
+    #if !(defined RICPP_EXTERN)
+      #define RICPP_EXTERN(type) extern __declspec(dllimport) type
+    #endif
+    /* In implementation dllexport only */
+  #endif
+
 #else
-#if !defined(RICPP_EXTERN)
-#define	RICPP_EXTERN(type) extern __declspec(dllimport) type
+
+  #if !(defined RICPP_EXTERN)
+    #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
+  #endif
+  #if !(defined RICPP_INTERN)
+    #define RICPP_INTERN(type) __attribute__((visibility("default"))) type
+  #endif
+
 #endif
-/* In implementation dllexport only */
-#endif
-#else
-#if !defined(RICPP_EXTERN)
-#define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
-#endif
-#if !defined(RICPP_INTERN)
-#define RICPP_INTERN(type) __attribute__((visibility("default"))) type
-#endif
-#endif
+
 #ifndef _RICPP_RIBASE_RICPPCONST_H
 #include "ricpp/ribase/ricppconst.h"
 #endif // _RICPP_RIBASE_RICPPCONST_H

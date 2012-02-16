@@ -86,6 +86,11 @@
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/gendynlib/dynlib.h</locationURI>
 		</link>
 		<link>
+			<name>Header/macdynlib.h</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/include/ricpp/gendynlib/macdynlib.h</location>
+		</link>
+		<link>
 			<name>Header/win32dynlib.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/gendynlib/win32dynlib.h</locationURI>
@@ -94,6 +99,16 @@
 			<name>Source/dynlib.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/gendynlib/dynlib.cpp</locationURI>
+		</link>
+		<link>
+			<name>Source/linuxdynlib.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/gendynlib/linuxdynlib.cpp</location>
+		</link>
+		<link>
+			<name>Source/macdynlib.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/gendynlib/macdynlib.cpp</location>
 		</link>
 		<link>
 			<name>Source/win32dynlib.cpp</name>

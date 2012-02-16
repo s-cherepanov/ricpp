@@ -37,9 +37,9 @@ namespace RiCPP {
 
 using namespace RiCPP;
 
-#if defined(WIN32) && !defined(__GNUC__)
+#if defined _MSC_VER
 
-#if defined(_MANAGED)
+#if defined _MANAGED
 #pragma managed(push, off)
 #endif
 
@@ -65,13 +65,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-#if defined(_MANAGED)
+#if defined _MANAGED
 #pragma managed(pop)
 #endif
 
-#endif // WIN32
+#endif // _MSC_VER
 
-#if defined(__GNUC__)
+#if defined __GNUC__
 
 extern "C" {
 	
@@ -89,7 +89,7 @@ extern "C" {
 	} 
 	
 }
-#endif
+#endif // __GNUC__
 
 extern "C" {
 	

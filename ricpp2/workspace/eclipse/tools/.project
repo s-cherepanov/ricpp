@@ -130,6 +130,36 @@
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/include/ricpp/tools/trace.h</locationURI>
 		</link>
 		<link>
+			<name>Source/linuxenv.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/linuxenv.cpp</location>
+		</link>
+		<link>
+			<name>Source/linuxfilepath.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/linuxfilepath.cpp</location>
+		</link>
+		<link>
+			<name>Source/macenv.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/macenv.cpp</location>
+		</link>
+		<link>
+			<name>Source/macfilepath.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/macfilepath.cpp</location>
+		</link>
+		<link>
+			<name>Source/maclinuxenv.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/maclinuxenv.cpp</location>
+		</link>
+		<link>
+			<name>Source/maclinuxfilepath.cpp</name>
+			<type>1</type>
+			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/maclinuxfilepath.cpp</location>
+		</link>
+		<link>
 			<name>Source/stringlist.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-WORKSPACE_LOC/source/tools/stringlist.cpp</locationURI>

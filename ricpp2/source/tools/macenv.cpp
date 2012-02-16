@@ -27,7 +27,7 @@
  *  @brief MacOs 10 implementation of parts of CEnv,
  *         the adapter for environment variables.
  */
-
+#if defined __APPLE__
 #include "ricpp/tools/env.h"
 
 #ifndef _RICPP_TOOLS_INLINETOOLS_H
@@ -98,3 +98,4 @@ std::string &CEnv::getProgDir(std::string &prog, bool convertPath)
 	prog = convertPath ? internalPath : path;
 	return prog;
 }
+#endif // __APPLE__

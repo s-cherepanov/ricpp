@@ -30,21 +30,21 @@
 // passthrough.cpp : Defines the entry point for the DLL application.
 //
 
-#if !defined(WIN32) && defined(__GNUC__)
+#if !(defined _WIN32) && defined __GNUC__
 #pragma GCC visibility push(hidden)
 #endif
 
 #include "ricpp/ribfilter/ribfilter.h"
 
-#if !defined(WIN32) && defined(__GNUC__)
+#if !(defined _WIN32) && defined __GNUC__
 #pragma GCC visibility pop
 #endif
 
 using namespace RiCPP;
 
-#if defined(WIN32) && !defined(__GNUC__)
+#if defined _MSC_VER
 
-#ifdef _MANAGED
+#if defined _MANAGED
 #pragma managed(push, off)
 #endif
 
@@ -63,11 +63,11 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
-#ifdef _MANAGED
+#if defined _MANAGED
 #pragma managed(pop)
 #endif
 
-#endif // WIN32
+#endif // _MSC_VER
 
 extern "C" {
 

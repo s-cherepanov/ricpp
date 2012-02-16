@@ -28,41 +28,41 @@
  *  @author Andreas Pidde (andreas@pidde.de)
  *  @brief Rt type definitions
  */
-#ifdef _WIN32
-#if defined(RICPP_EXPORTS)
-#if !defined(RICPP_EXTERN)
-#define	RICPP_EXTERN(type) extern __declspec(dllexport) type
-#endif
-#if !defined(RICPP_INTERN)
-#define	RICPP_INTERN(type) __declspec(dllexport) type
-#endif
+
+#if defined RICPP_EXPORTS
+/**
+ * @todo document the export directives, compare to ri.h
+ */
+
+    #if defined _WIN32
+      #if !(defined RICPP_EXTERN)
+        #define RICPP_EXTERN(type) extern __declspec(dllexport) type
+      #endif
+      #if !(defined RICPP_INTERN)
+        #define RICPP_INTERN(type) __declspec(dllexport) type
+      #endif
+    #else
+      #if !(defined RICPP_EXTERN)
+        #define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
+      #endif
+      #if !(defined RICPP_INTERN)
+        #define RICPP_INTERN(type) __attribute__((visibility("default"))) type
+      #endif
+    #endif
+
 #else
-/* Use local binding internally */
-#if !defined(RICPP_EXTERN)
-#define	RICPP_EXTERN(type) extern type
-#endif
-#if !defined(RICPP_INTERN)
-#define	RICPP_INTERN(type) type
-#endif
-#endif
-#else
-#if defined(RICPP_EXPORTS)
-#if !defined(RICPP_EXTERN)
-#define RICPP_EXTERN(type) extern __attribute__((visibility("default"))) type
-#endif
-#if !defined(RICPP_INTERN)
-#define RICPP_INTERN(type) __attribute__((visibility("default"))) type
-#endif
-#else
-/* Use local binding internally */
-#if !defined(RICPP_EXTERN)
-#define	RICPP_EXTERN(type) extern type
-#endif
-#if !defined(RICPP_INTERN)
-#define	RICPP_INTERN(type) type
-#endif
-#endif
-#endif
+
+      /* Use local binding internally */
+      #if !(defined RICPP_EXTERN)
+        #define RICPP_EXTERN(type) extern type
+      #endif
+      #if !(defined RICPP_INTERN)
+        #define RICPP_INTERN(type) type
+      #endif
+
+#endif // RICPP_EXPORTS
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif

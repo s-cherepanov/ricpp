@@ -46,7 +46,7 @@ CStringList::size_type CStringList::explode(
 	std::string::iterator iter;
 	bool iterinc;
 
-#if defined(WIN32)
+#if defined _WIN32
 	if ( isPathList  && separator == ':' ) {
 		// Special case for windows.
 		//

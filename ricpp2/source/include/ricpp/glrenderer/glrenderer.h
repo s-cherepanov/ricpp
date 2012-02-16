@@ -38,15 +38,11 @@
 #include "ricpp/ricontext/contextcreator.h"
 #endif // _RICPP_RICONTEXT_CONTEXTCREATOR_H
 
-#if defined(WIN32)
+#if !defined __APPLE__
 #include <GL/gl.h>
 #else
-#if defined(__APPLE__)
 #include <OpenGL/gl.h>
 #include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
-#endif
 #endif
 
 namespace RiCPP {

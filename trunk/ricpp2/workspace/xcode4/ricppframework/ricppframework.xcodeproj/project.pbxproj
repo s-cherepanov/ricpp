@@ -3238,7 +3238,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0440;
 			};
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "ricppframework" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -3966,6 +3966,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				INSTALL_PATH = "@executable_path/";
@@ -3977,6 +3978,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				INSTALL_PATH = "@executable_path/";
@@ -4004,6 +4006,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ric;
 			};
 			name = Debug;
@@ -4012,6 +4015,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ric;
 			};
 			name = Release;
@@ -4020,6 +4024,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribase;
 			};
 			name = Debug;
@@ -4028,6 +4033,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribase;
 			};
 			name = Release;
@@ -4052,6 +4058,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ridynload;
 			};
 			name = Debug;
@@ -4060,6 +4067,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ridynload;
 			};
 			name = Release;
@@ -4068,6 +4076,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = tools;
 			};
 			name = Debug;
@@ -4076,6 +4085,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = tools;
 			};
 			name = Release;
@@ -4084,6 +4094,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ricpp;
 			};
 			name = Debug;
@@ -4092,6 +4103,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ricpp;
 			};
 			name = Release;
@@ -4100,6 +4112,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = streams;
 			};
@@ -4109,6 +4122,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = streams;
 			};
@@ -4118,6 +4132,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = pluginhandler;
 			};
 			name = Debug;
@@ -4126,6 +4141,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = pluginhandler;
 			};
 			name = Release;
@@ -4134,6 +4150,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = gendynlib;
 			};
 			name = Debug;
@@ -4142,6 +4159,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = gendynlib;
 			};
 			name = Release;
@@ -4166,6 +4184,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = glrenderer;
 			};
 			name = Debug;
@@ -4174,6 +4193,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = glrenderer;
 			};
 			name = Release;
@@ -4182,6 +4202,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = glrenderer;
@@ -4192,6 +4213,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = glrenderer;
@@ -4202,6 +4224,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribfilter;
 			};
 			name = Debug;
@@ -4210,6 +4233,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribfilter;
 			};
 			name = Release;
@@ -4218,6 +4242,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = declaration;
 			};
 			name = Debug;
@@ -4226,6 +4251,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = declaration;
 			};
 			name = Release;
@@ -4234,6 +4260,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ricontext;
 			};
 			name = Debug;
@@ -4242,6 +4269,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ricontext;
 			};
 			name = Release;
@@ -4250,6 +4278,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribparser;
 			};
 			name = Debug;
@@ -4258,6 +4287,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribparser;
 			};
 			name = Release;
@@ -4266,6 +4296,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = rendererloader;
 			};
 			name = Debug;
@@ -4274,6 +4305,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = rendererloader;
 			};
 			name = Release;
@@ -4282,6 +4314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = baserenderer;
 			};
 			name = Debug;
@@ -4290,6 +4323,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = baserenderer;
 			};
 			name = Release;
@@ -4298,6 +4332,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribwriter;
 			};
 			name = Debug;
@@ -4306,6 +4341,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ribwriter;
 			};
 			name = Release;
@@ -4314,6 +4350,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ricppbridge;
 			};
 			name = Debug;
@@ -4322,6 +4359,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				PRODUCT_NAME = ricppbridge;
 			};
 			name = Release;
@@ -4345,6 +4383,7 @@
 		C3808AB70D3CC00500B6C3BA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -4355,6 +4394,7 @@
 		C3808AB80D3CC00500B6C3BA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				PRODUCT_NAME = All;
 				ZERO_LINK = NO;
@@ -4365,6 +4405,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = ribwriter;
@@ -4375,6 +4416,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = ribwriter;
@@ -4385,6 +4427,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = passthrough;
@@ -4395,6 +4438,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = passthrough;
@@ -4421,6 +4465,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "../../../source/ribviewer/Resources/ribviewer-Info.plist";
@@ -4434,6 +4479,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "../../../source/ribviewer/Resources/ribviewer-Info.plist";
@@ -4446,6 +4492,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "../../../source/riglapp/Resources/riglapp-Info.plist";
@@ -4459,6 +4506,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "../../../source/riglapp/Resources/riglapp-Info.plist";
@@ -4471,6 +4519,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = ricppdev;
 			};
@@ -4480,6 +4529,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = ricppdev;
 			};

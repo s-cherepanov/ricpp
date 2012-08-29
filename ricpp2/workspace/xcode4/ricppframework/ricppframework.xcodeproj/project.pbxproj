@@ -3909,13 +3909,11 @@
 		1DEB923608733DC60010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -3932,10 +3930,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = ../../../3rdparty/macos/zlib123/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				ONLY_ACTIVE_ARCH = YES;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
-				SDKROOT = macosx10.7;
 				USER_HEADER_SEARCH_PATHS = "../../../source/include ../../../3rdparty/macos/zlib123/include";
 			};
 			name = Debug;
@@ -3943,11 +3938,9 @@
 		1DEB923708733DC60010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_TREAT_NONCONFORMANT_CODE_ERRORS_AS_WARNINGS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
@@ -3964,10 +3957,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_SEARCH_PATHS = ../../../3rdparty/macos/zlib123/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				ONLY_ACTIVE_ARCH = YES;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
-				SDKROOT = macosx10.7;
 				USER_HEADER_SEARCH_PATHS = "../../../source/include ../../../3rdparty/macos/zlib123/include";
 			};
 			name = Release;
@@ -3978,7 +3968,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "@executable_path/";
 				PRODUCT_NAME = riprog;
 			};
@@ -3990,7 +3979,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "@executable_path/";
 				PRODUCT_NAME = riprog;
 			};
@@ -4000,7 +3988,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = testribind;
 			};
 			name = Debug;
@@ -4009,7 +3996,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = testribind;
 			};
 			name = Release;
@@ -4018,7 +4004,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ric;
 			};
 			name = Debug;
@@ -4027,7 +4012,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ric;
 			};
 			name = Release;
@@ -4036,7 +4020,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribase;
 			};
 			name = Debug;
@@ -4045,7 +4028,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribase;
 			};
 			name = Release;
@@ -4054,7 +4036,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = glutrib;
 			};
 			name = Debug;
@@ -4063,7 +4044,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = glutrib;
 			};
 			name = Release;
@@ -4072,7 +4052,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ridynload;
 			};
 			name = Debug;
@@ -4081,7 +4060,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ridynload;
 			};
 			name = Release;
@@ -4090,9 +4068,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = tools;
-				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -4100,9 +4076,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = tools;
-				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
@@ -4110,7 +4084,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ricpp;
 			};
 			name = Debug;
@@ -4119,7 +4092,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ricpp;
 			};
 			name = Release;
@@ -4128,7 +4100,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = streams;
 			};
@@ -4138,7 +4109,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = streams;
 			};
@@ -4148,7 +4118,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = pluginhandler;
 			};
 			name = Debug;
@@ -4157,7 +4126,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = pluginhandler;
 			};
 			name = Release;
@@ -4166,7 +4134,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = gendynlib;
 			};
 			name = Debug;
@@ -4175,7 +4142,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = gendynlib;
 			};
 			name = Release;
@@ -4184,7 +4150,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribtool;
 			};
 			name = Debug;
@@ -4193,7 +4158,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribtool;
 			};
 			name = Release;
@@ -4202,7 +4166,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = glrenderer;
 			};
 			name = Debug;
@@ -4211,7 +4174,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = glrenderer;
 			};
 			name = Release;
@@ -4222,7 +4184,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = glrenderer;
 			};
 			name = Debug;
@@ -4233,7 +4194,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = glrenderer;
 			};
 			name = Release;
@@ -4242,7 +4202,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribfilter;
 			};
 			name = Debug;
@@ -4251,7 +4210,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribfilter;
 			};
 			name = Release;
@@ -4260,7 +4218,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = declaration;
 			};
 			name = Debug;
@@ -4269,7 +4226,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = declaration;
 			};
 			name = Release;
@@ -4278,7 +4234,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ricontext;
 			};
 			name = Debug;
@@ -4287,7 +4242,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ricontext;
 			};
 			name = Release;
@@ -4296,7 +4250,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribparser;
 			};
 			name = Debug;
@@ -4305,7 +4258,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribparser;
 			};
 			name = Release;
@@ -4314,7 +4266,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = rendererloader;
 			};
 			name = Debug;
@@ -4323,7 +4274,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = rendererloader;
 			};
 			name = Release;
@@ -4332,7 +4282,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = baserenderer;
 			};
 			name = Debug;
@@ -4341,7 +4290,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = baserenderer;
 			};
 			name = Release;
@@ -4350,7 +4298,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribwriter;
 			};
 			name = Debug;
@@ -4359,7 +4306,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribwriter;
 			};
 			name = Release;
@@ -4368,7 +4314,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ricppbridge;
 			};
 			name = Debug;
@@ -4377,7 +4322,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ricppbridge;
 			};
 			name = Release;
@@ -4386,7 +4330,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = test;
 			};
 			name = Debug;
@@ -4395,7 +4338,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = test;
 			};
 			name = Release;
@@ -4403,11 +4345,9 @@
 		C3808AB70D3CC00500B6C3BA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = All;
 			};
 			name = Debug;
@@ -4415,10 +4355,7 @@
 		C3808AB80D3CC00500B6C3BA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = All;
 				ZERO_LINK = NO;
 			};
@@ -4430,7 +4367,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribwriter;
 			};
 			name = Debug;
@@ -4441,7 +4377,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = ribwriter;
 			};
 			name = Release;
@@ -4452,7 +4387,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = passthrough;
 			};
 			name = Debug;
@@ -4463,7 +4397,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				EXECUTABLE_EXTENSION = 1.dylib;
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = passthrough;
 			};
 			name = Release;
@@ -4472,7 +4405,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = testpoly;
 			};
 			name = Debug;
@@ -4481,7 +4413,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				PRODUCT_NAME = testpoly;
 			};
 			name = Release;
@@ -4492,7 +4423,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "../../../source/ribviewer/Resources/ribviewer-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = RIBViewer;
@@ -4506,7 +4436,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "../../../source/ribviewer/Resources/ribviewer-Info.plist";
 				PRODUCT_NAME = RIBViewer;
 				WRAPPER_EXTENSION = app;
@@ -4519,7 +4448,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "../../../source/riglapp/Resources/riglapp-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = riglapp;
@@ -4533,7 +4461,6 @@
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "../../../source/riglapp/Resources/riglapp-Info.plist";
 				PRODUCT_NAME = riglapp;
 				WRAPPER_EXTENSION = app;
@@ -4544,7 +4471,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = ricppdev;
 			};
@@ -4554,7 +4480,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				OTHER_LDFLAGS = "-lzs";
 				PRODUCT_NAME = ricppdev;
 			};

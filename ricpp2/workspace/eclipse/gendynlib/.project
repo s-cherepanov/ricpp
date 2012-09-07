@@ -103,12 +103,12 @@
 		<link>
 			<name>Source/linuxdynlib.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/gendynlib/linuxdynlib.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/gendynlib/linuxdynlib.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/macdynlib.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/gendynlib/macdynlib.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/gendynlib/macdynlib.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/win32dynlib.cpp</name>

@@ -132,32 +132,32 @@
 		<link>
 			<name>Source/linuxenv.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/linuxenv.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/tools/linuxenv.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/linuxfilepath.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/linuxfilepath.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/tools/linuxfilepath.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/macenv.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/macenv.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/tools/macenv.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/macfilepath.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/macfilepath.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/tools/macfilepath.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/maclinuxenv.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/maclinuxenv.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/tools/maclinuxenv.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/maclinuxfilepath.cpp</name>
 			<type>1</type>
-			<location>D:/Projects/ricpp/trunk/ricpp2/source/tools/maclinuxfilepath.cpp</location>
+			<locationURI>PARENT-2-WORKSPACE_LOC/source/tools/maclinuxfilepath.cpp</locationURI>
 		</link>
 		<link>
 			<name>Source/stringlist.cpp</name>

@@ -50,15 +50,15 @@
   #if defined RICPP_EXPORTS
     // dynamic library implemention
     #if !(defined RICPP_EXTERN)
-      #define RICPP_EXTERN(type) extern __declspec(dllexport) type APIENTRY
+      #define RICPP_EXTERN(type) extern __declspec(dllexport) type
     #endif
     #if !(defined RICPP_INTERN)
-      #define RICPP_INTERN(type) __declspec(dllexport) type APIENTRY
+      #define RICPP_INTERN(type) __declspec(dllexport) type
     #endif
   #else
     // dynamic library usage
     #if !(defined RICPP_EXTERN)
-      #define RICPP_EXTERN(type) extern __declspec(dllimport) type APIENTRY
+      #define RICPP_EXTERN(type) extern __declspec(dllimport) type
     #endif
     // RICPP_INTERN is only used within dynamic library implemention
   #endif

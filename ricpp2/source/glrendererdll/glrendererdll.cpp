@@ -70,7 +70,7 @@ extern "C" {
  *  @return Returns a plugin if @a majorversion has the right value
  */
 RICPP_EXPORT
-CContextCreator * APIENTRY newPlugin(unsigned long majorversion, const char *type)
+CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)
 {
 	if ( majorversion != CContextCreator::myMajorVersion() || !type || strcmp(type, CContextCreator::myType()) != 0 )
 		return NULL;
@@ -82,7 +82,7 @@ CContextCreator * APIENTRY newPlugin(unsigned long majorversion, const char *typ
  *  @param p Plugin that is deletetd, must have been constructed by newPlugin()
  */
 RICPP_EXPORT
-void APIENTRY deletePlugin(CContextCreator *p)
+void CDECL deletePlugin(CContextCreator *p)
 {
 	if ( p )
 		delete p;
@@ -93,7 +93,7 @@ void APIENTRY deletePlugin(CContextCreator *p)
  *  @return The major version of the plugin
  */
 RICPP_EXPORT
-unsigned long APIENTRY majorVersion()
+unsigned long CDECL majorVersion()
 {
 	return CGLRendererCreator::myMajorVersion();
 }
@@ -103,7 +103,7 @@ unsigned long APIENTRY majorVersion()
  *  @return The minor version of the plugin
  */
 RICPP_EXPORT
-unsigned long APIENTRY minorVersion()
+unsigned long CDECL minorVersion()
 {
 	return CGLRendererCreator::myMinorVersion();
 }
@@ -113,7 +113,7 @@ unsigned long APIENTRY minorVersion()
  *  @return The revision number of the plugin
  */
 RICPP_EXPORT
-unsigned long APIENTRY revision()
+unsigned long CDECL revision()
 {
 	return CGLRendererCreator::myRevision();
 }
@@ -123,7 +123,7 @@ unsigned long APIENTRY revision()
  *  @return The renderer type the plugin
  */
 RICPP_EXPORT
-const char * APIENTRY type()
+const char * CDECL type()
 {
 	return CGLRendererCreator::myType();
 }
@@ -133,7 +133,7 @@ const char * APIENTRY type()
  *  @return The name of the plugin
  */
 RICPP_EXPORT
-const char * APIENTRY name()
+const char * CDECL name()
 {
 	return CGLRendererCreator::myName();
 }

@@ -42,22 +42,25 @@
  *
  * @todo copy the routines that can be used with no context to riprog, ridynload
  */
+
 #if defined _WIN32
 /**
  * @todo document the export directives, compare to ricpptypes.h
  */
-#if defined RICPP_EXPORTS
+  #if defined RICPP_EXPORTS
+    // dynamic library implemention
     #if !(defined RICPP_EXTERN)
-      #define RICPP_EXTERN(type) extern __declspec(dllexport) type
+      #define RICPP_EXTERN(type) extern __declspec(dllexport) type APIENTRY
     #endif
     #if !(defined RICPP_INTERN)
-      #define RICPP_INTERN(type) __declspec(dllexport) type
+      #define RICPP_INTERN(type) __declspec(dllexport) type APIENTRY
     #endif
   #else
+    // dynamic library usage
     #if !(defined RICPP_EXTERN)
-      #define RICPP_EXTERN(type) extern __declspec(dllimport) type
+      #define RICPP_EXTERN(type) extern __declspec(dllimport) type APIENTRY
     #endif
-    /* In implementation dllexport only */
+    // RICPP_INTERN is only used within dynamic library implemention
   #endif
 
 #else

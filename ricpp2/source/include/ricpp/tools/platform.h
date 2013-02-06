@@ -36,7 +36,7 @@
 #include <ios>
 
 #if defined _WIN32
-#if !defined(_WINDOWS_)
+#if !(defined _WINDOWS_)
 #include <windows.h>
 #endif // _WINDOWS_
 #endif
@@ -52,7 +52,7 @@ namespace RiCPP {
  */
 inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2); }
 
-/** @brief Export declaration for the included functions
+/** @brief Export declaration for the included functions not used outside DLL.
  */
 #define RICPP_EXPORT __declspec ( dllexport )
 
@@ -67,13 +67,13 @@ inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2);
  */
 typedef int (*FARPROC)();
 
-/** @brief CDECL is not used for MAC
- */
-#define CDECL
-
-/** @brief Symbolic name for visibility("default") attribute.
+/** @brief Symbolic name for visibility("default") attribute not used outside DLL.
  */
 #define RICPP_EXPORT __attribute__((visibility("default")))
+
+// Not used by GnuC
+#define APIENTRY
+#define CDECL
 
 #endif
 }

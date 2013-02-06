@@ -47,7 +47,7 @@ using namespace RiCPP;
 
 /** @brief Defines the entry point for the DLL.
  */
-BOOL APIENTRY DllMain( HMODULE hModule,
+BOOL WINAPI DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
 					 )
@@ -70,7 +70,7 @@ extern "C" {
  *  @return Returns a plugin if @a majorversion has the right value
  */
 RICPP_EXPORT
-CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)
+CContextCreator * APIENTRY newPlugin(unsigned long majorversion, const char *type)
 {
 	if ( majorversion != CContextCreator::myMajorVersion() || !type || strcmp(type, CContextCreator::myType()) != 0 )
 		return NULL;
@@ -82,7 +82,7 @@ CContextCreator * CDECL newPlugin(unsigned long majorversion, const char *type)
  *  @param p Plugin that is deletetd, must have been constructed by newPlugin()
  */
 RICPP_EXPORT
-void CDECL deletePlugin(CContextCreator *p)
+void APIENTRY deletePlugin(CContextCreator *p)
 {
 	if ( p )
 		delete p;
@@ -93,7 +93,7 @@ void CDECL deletePlugin(CContextCreator *p)
  *  @return The major version of the plugin
  */
 RICPP_EXPORT
-unsigned long CDECL majorVersion()
+unsigned long APIENTRY majorVersion()
 {
 	return CRibWriterCreator::myMajorVersion();
 }
@@ -103,7 +103,7 @@ unsigned long CDECL majorVersion()
  *  @return The minor version of the plugin
  */
 RICPP_EXPORT
-unsigned long CDECL minorVersion()
+unsigned long APIENTRY minorVersion()
 {
 	return CRibWriterCreator::myMinorVersion();
 }
@@ -113,7 +113,7 @@ unsigned long CDECL minorVersion()
  *  @return The revision number of the plugin
  */
 RICPP_EXPORT
-unsigned long CDECL revision()
+unsigned long APIENTRY revision()
 {
 	return CRibWriterCreator::myRevision();
 }
@@ -123,7 +123,7 @@ unsigned long CDECL revision()
  *  @return The renderer type the plugin
  */
 RICPP_EXPORT
-const char * CDECL type()
+const char * APIENTRY type()
 {
 	return CRibWriterCreator::myType();
 }
@@ -133,7 +133,7 @@ const char * CDECL type()
  *  @return The name of the plugin
  */
 RICPP_EXPORT
-const char * CDECL name()
+const char * APIENTRY name()
 {
 	return CRibWriterCreator::myName();
 }

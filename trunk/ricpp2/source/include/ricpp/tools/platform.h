@@ -72,8 +72,9 @@ typedef int (*FARPROC)();
 #define RICPP_EXPORT __attribute__((visibility("default")))
 
 // Not used by GnuC
-#define APIENTRY
+#if !(defined CDECL)
 #define CDECL
+#endif
 
 #endif
 }

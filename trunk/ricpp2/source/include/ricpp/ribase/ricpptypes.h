@@ -36,10 +36,10 @@
 
     #if defined _WIN32
       #if !(defined RICPP_EXTERN)
-        #define RICPP_EXTERN(type) extern __declspec(dllexport) type
+        #define RICPP_EXTERN(type) extern __declspec(dllexport) type APIENTRY
       #endif
       #if !(defined RICPP_INTERN)
-        #define RICPP_INTERN(type) __declspec(dllexport) type
+        #define RICPP_INTERN(type) __declspec(dllexport) type APIENTRY
       #endif
     #else
       #if !(defined RICPP_EXTERN)

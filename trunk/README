@@ -45,6 +45,15 @@ Additional libraries needed
   For some test programms you will also need Qt (>= 2.6) or wxWindows (2.4.2)
   with their dynamic libraries.
 
+  For Linux (Ubuntu) you will need to install zlib1g-dev and freeglut3-dev
+  >sudo apt-get install zlib1g-dev freeglut3-dev
+  You can compile ricpp2 using cmake and g++, there is a cmake workspace
+  directory included in the repository.
+  After cpmpilation, you need the following files in one directory
+  glutrib libpassthrough.1.so libriprog.1.so libglrenderer.1.so
+  libribwriter.1.so ribtool
+  to run the two demo executables glutrib and ribtool.
+
 Using Visual Studio
 -------------------
 

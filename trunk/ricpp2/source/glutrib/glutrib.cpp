@@ -122,7 +122,7 @@ void testVase()
 	RiAttributeBegin(); {
 		RiColor(redish);
 		RiSides(1);
-		RiTranslate(0, -.3, 2.75);
+		RiTranslate(0, -.3F, 2.75F);
 		RiRotate(-90, 1, 0, 0);
 		RiScale(.1F, .1F, .1F);
 		RiNuPatch(11, 3, uknot, 0.0F, 1.0F, 20, 3, vknot, 0.0F, 1.0F, RI_PW, vaseMesh, RI_NULL);
@@ -150,14 +150,14 @@ void testTeapot()
 
 void testCone()
 {
-	const RtFloat rad = 0.6;
-	const RtFloat height = 1.6;
+	const RtFloat rad = 0.6F;
+	const RtFloat height = 1.6F;
 	RiAttributeBegin(); {
 		RiSides(2);
 		RiOrientation(RI_OUTSIDE);
 		RiColor(blueish);
 		RiTransformBegin(); {
-			RiTranslate(0, -height/4.0, 3);
+			RiTranslate(0, -height/4.0F, 3);
 			RiScale(1.0, 1.0, 1.0);
 			RiRotate(-45, 1, 0, 0);
 			RiCone(height, rad, 360, RI_NULL);
@@ -245,7 +245,7 @@ void testPoly10()
 		} RiAttributeEnd();
 	
 		RiAttributeBegin(); {
-			RiTranslate(0, 0, 0.2);
+			RiTranslate(0, 0, 0.2F);
 			// RiOpacity(opacity_50);
 			RiColor(redish);
 
@@ -257,8 +257,8 @@ void testPoly10()
 		} RiAttributeEnd();
 
 		RiAttributeBegin(); {
-			RiRotate(-15.0, 0, 0, 1);
-			RiTranslate(0, 0, 0.3);
+			RiRotate(-15.0F, 0, 0, 1);
+			RiTranslate(0, 0, 0.3F);
 			RiOpacity(opacity_75);
 			RiColor(blueish);
 
@@ -350,12 +350,12 @@ void motion(int x, int y)
 {
     if (leftButton)
     {
-        sphi += (float)(x - downX) / 4.0;
-        stheta += (float)(downY - y) / 4.0;
+        sphi += (float)(x - downX) / 4.0F;
+        stheta += (float)(downY - y) / 4.0F;
     }
     if (middleButton)
     {
-        sdepth += (float)(downY - y) / 10.0;
+        sdepth += (float)(downY - y) / 10.0F;
     }
     downX = x;
     downY = y;

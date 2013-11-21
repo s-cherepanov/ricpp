@@ -45,7 +45,7 @@ void CMakeTextureRibRequest::operator()(IRibParserState &parser, CRibRequestData
 
 		const char *pic = 0, *tex = 0, *filtername = 0;
 		RtToken swrap = 0, twrap = 0;
-		RtFloat swidth, twidth;
+		RtFloat swidth=0, twidth=0;
 
 		bool b0=p0.getString(pic), b1=p1.getString(tex), b2=p2.getString(swrap), b3=p3.getString(twrap), b4=p4.getString(filtername), b5=p5.getFloat(swidth), b6=p6.getFloat(twidth);
 
@@ -149,7 +149,7 @@ void CMakeBumpRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 
 		const char *pic = 0, *tex = 0, *filtername = 0;
 		RtToken swrap = 0, twrap = 0;
-		RtFloat swidth, twidth;
+		RtFloat swidth=0, twidth=0;
 
 		bool b0=p0.getString(pic), b1=p1.getString(tex), b2=p2.getString(swrap), b3=p3.getString(twrap), b4=p4.getString(filtername), b5=p5.getFloat(swidth), b6=p6.getFloat(twidth);
 
@@ -248,7 +248,7 @@ void CMakeLatLongEnvironmentRibRequest::operator()(IRibParserState &parser, CRib
 		CRibParameter &p4 = request[4];
 
 		const char *pic = 0, *tex = 0, *filtername = 0;
-		RtFloat swidth, twidth;
+		RtFloat swidth=0, twidth=0;
 
 		bool b0=p0.getString(pic), b1=p1.getString(tex), b2=p2.getString(filtername), b3=p3.getFloat(swidth), b4=p4.getFloat(twidth);
 
@@ -339,9 +339,9 @@ void CMakeCubeFaceEnvironmentRibRequest::operator()(IRibParserState &parser, CRi
 		CRibParameter &p10 = request[10];
 
 		const char *px=0, *nx=0, *py=0, *ny=0, *pz=0, *nz=0, *tex=0;
-		RtFloat fov;
+		RtFloat fov=0;
 		const char *filtername=0;
-		RtFloat swidth, twidth;
+		RtFloat swidth=0, twidth=0;
 
 		bool b0 = p0.getString(px),         b1 = p1.getString(nx),
 			 b2 = p2.getString(py),         b3 = p3.getString(ny),

@@ -472,7 +472,7 @@ void CTextureCoordinatesRibRequest::operator()(IRibParserState &parser, CRibRequ
 		CRibParameter &p6 = request[6];
 		CRibParameter &p7 = request[7];
 
-		RtFloat s1, t1, s2, t2, s3, t3, s4, t4;
+		RtFloat s1=0, t1=0, s2=0, t2=0, s3=0, t3=0, s4=0, t4=0;
 
 		bool b0 = p0.getFloat(s1),
 		     b1 = p1.getFloat(t1),
@@ -964,7 +964,7 @@ void CDetailRangeRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		CRibParameter &p2 = request[2];
 		CRibParameter &p3 = request[3];
 
-		RtFloat minvisible, lowertransition, uppertransition, maxvisible;
+		RtFloat minvisible=0, lowertransition=0, uppertransition=0, maxvisible=0;
 
 		bool b0 = p0.getFloat(minvisible),
 		     b1 = p1.getFloat(lowertransition),
@@ -1031,8 +1031,8 @@ void CGeometricApproximationRibRequest::operator()(IRibParserState &parser, CRib
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
-		RtString type;
-		RtFloat value;
+		RtString type=0;
+		RtFloat value=0;
 
 		bool b0 = p0.getString(type), b1 = p1.getFloat(value);
 
@@ -1220,7 +1220,7 @@ void CBasisRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 
 		RtString uname = 0, vname = 0;
 		RtBasis ubasis, vbasis;
-		RtInt ustep, vstep;
+		RtInt ustep=0, vstep=0;
 
 		p0.convertIntToFloat();
 		p2.convertIntToFloat();

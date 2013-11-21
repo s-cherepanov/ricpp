@@ -3,12 +3,7 @@
 	<name>passthrough</name>
 	<comment></comment>
 	<projects>
-		<project>gendynlib</project>
-		<project>pluginhandler</project>
-		<project>ribase</project>
 		<project>ribfilter</project>
-		<project>ricpp</project>
-		<project>tools</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

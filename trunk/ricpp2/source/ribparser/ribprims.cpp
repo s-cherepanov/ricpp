@@ -461,8 +461,8 @@ void CPatchMeshRibRequest::operator()(IRibParserState &parser, CRibRequestData &
 			CRibParameter &p3 = request[3];
 			CRibParameter &p4 = request[4];
 
-			RtInt nu, nv;
-			const char *type, *uwrap, *vwrap;
+			RtInt nu=0, nv=0;
+			const char *type=0, *uwrap=0, *vwrap=0;
 			bool b0 = p0.getString(type),
 				 b1 = p1.getInt(nu), b2 = p2.getString(uwrap),
 				 b3 = p3.getInt(nv), b4 = p4.getString(vwrap);
@@ -577,8 +577,8 @@ void CNuPatchRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 		p2.convertIntToFloat();	// uknot
 		p7.convertIntToFloat();	// vknot
 
-		RtInt nu, uorder, nv, vorder;
-		RtFloat *uknot=0, umin, umax, *vknot=NULL, vmin, vmax;
+		RtInt nu=0, uorder=0, nv=0, vorder=0;
+		RtFloat *uknot=0, umin=0, umax=0, *vknot=NULL, vmin=0, vmax=0;
 
 		if ( p2.isArray() && p2.typeID() == BASICTYPE_FLOAT ) {
 			uknot = (RtFloat *)p2.getValue();
@@ -1254,7 +1254,7 @@ void CSphereRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 		CRibParameter &p2 = request[2];
 		CRibParameter &p3 = request[3];
 
-		RtFloat radius, zmin, zmax, thetamax;
+		RtFloat radius=0, zmin=0, zmax=0, thetamax=0;
 		bool b0 = p0.getFloat(radius),
 		     b1 = p1.getFloat(zmin),
 		     b2 = p2.getFloat(zmax),
@@ -1372,7 +1372,7 @@ void CConeRibRequest::operator()(IRibParserState &parser, CRibRequestData &reque
 		CRibParameter &p1 = request[1];
 		CRibParameter &p2 = request[2];
 
-		RtFloat height, radius, thetamax;
+		RtFloat height=0, radius=0, thetamax=0;
 		bool b0 = p0.getFloat(height),
 		     b1 = p1.getFloat(radius),
 			 b2 = p2.getFloat(thetamax);
@@ -1482,7 +1482,7 @@ void CCylinderRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 		CRibParameter &p2 = request[2];
 		CRibParameter &p3 = request[3];
 
-		RtFloat radius, zmin, zmax, thetamax;
+		RtFloat radius=0, zmin=0, zmax=0, thetamax=0;
 		bool b0 = p0.getFloat(radius),
 		     b1 = p1.getFloat(zmin),
 		     b2 = p2.getFloat(zmax),
@@ -1814,7 +1814,7 @@ void CParaboloidRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		CRibParameter &p2 = request[2];
 		CRibParameter &p3 = request[3];
 
-		RtFloat rmax, zmin, zmax, thetamax;
+		RtFloat rmax=0, zmin=0, zmax=0, thetamax=0;
 		bool b0 = p0.getFloat(rmax),
 		     b1 = p1.getFloat(zmin),
 		     b2 = p2.getFloat(zmax),
@@ -1932,7 +1932,7 @@ void CDiskRibRequest::operator()(IRibParserState &parser, CRibRequestData &reque
 		CRibParameter &p1 = request[1];
 		CRibParameter &p2 = request[2];
 
-		RtFloat height, radius, thetamax;
+		RtFloat height=0, radius=0, thetamax=0;
 		bool b0 = p0.getFloat(height),
 		     b1 = p1.getFloat(radius),
 			 b2 = p2.getFloat(thetamax);
@@ -2042,7 +2042,7 @@ void CTorusRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 		CRibParameter &p3 = request[3];
 		CRibParameter &p4 = request[4];
 
-		RtFloat majorrad, minorrad, phimin, phimax, thetamax;
+		RtFloat majorrad=0, minorrad=0, phimin=0, phimax=0, thetamax=0;
 		bool b0 = p0.getFloat(majorrad),
 		     b1 = p1.getFloat(minorrad),
 		     b2 = p2.getFloat(phimin),

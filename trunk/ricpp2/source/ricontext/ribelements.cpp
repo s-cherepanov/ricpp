@@ -167,7 +167,9 @@ void CRibElementsWriter::putComment(RtToken type, const char *cs)
 void CRibElementsWriter::putBinValue(float aFloat)
 {
 	unsigned char code;
-	unsigned long tmp = *((unsigned long *)(void*)&aFloat);
+	unsigned long tmp = 0;
+//	tmp = *((unsigned long *)(void *)&aFloat);
+	memcpy(&tmp, &aFloat, sizeof(unsigned long));
 
 	code = (unsigned char)((tmp >> 24) & 0xffUL);
 	m_ostream << code;			

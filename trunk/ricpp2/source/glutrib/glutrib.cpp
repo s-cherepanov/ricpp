@@ -393,7 +393,7 @@ int main(int argc, char **argv)
 	storedArgv = argv;
 	
 	glutInit(&argc, argv);
-	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
+	glutInitDisplayMode ((unsigned int)(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH));
 	glutInitWindowSize (width, height); 
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow(argc <= 1 ? "GLUT RIB" : argv[1]);

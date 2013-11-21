@@ -478,10 +478,10 @@ int CFrontStreambuf::flushBuffer(bool finish)
 			char header[10] = {
 				(char)gz_magic_0, (char)gz_magic_1,
 				m_methodOut,
-				(m_mode  & std::ios_base::binary) ? 0 : ASCII_FLAG, // flags
+				(char)((m_mode  & std::ios_base::binary) ? 0 : ASCII_FLAG), // flags
 				0,0,0,0, // time
 				0, //xflags 
-				OS_CODE
+				(char)OS_CODE
 			};
 			if ( m_backBuffer ) {
 				if ( m_backBuffer->sputn(header, sizeof(header)) != sizeof(header) ) {

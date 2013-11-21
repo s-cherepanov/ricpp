@@ -959,7 +959,9 @@ int CRibParser::handleBinary(unsigned char c) {
 			tmp = tmp << 8;
 			tmp |= c;
 		}
-		float flt = *((float *)(void*)&tmp);
+		float flt = 0;
+		// flt = *((float *)(void*)&tmp);
+		memcpy(&flt, &tmp, sizeof(float));
 		return insertNumber((RtFloat)flt);
 	} else if ( c < 0246 ) {    // encoded double precision IEEE floating point value
 		// 0245 | <eight bytes>
@@ -1070,7 +1072,9 @@ int CRibParser::handleBinary(unsigned char c) {
 				tmp = tmp << 8;
 				tmp |= c;
 			}
-			float flt = *((float *)(void*)&tmp);
+			float flt = 0;
+			// flt = *((float *)(void*)&tmp);
+			memcpy(&flt, &tmp, sizeof(float));
 			insertNumber((RtFloat)flt);
 		}
 		return handleArrayEnd();

@@ -943,10 +943,13 @@ void CMatrix3D::get(RtMatrix mat) const
 
 void CMatrix3D::get(RtFloat *mat) const
 {
-	int i, j;
-	for ( i = 0; i < 16; i+=4 )
-		for ( j = 0; j < 4; ++j )
-			mat[i+j] = m_Matrix[i][j];
+	int i, j, k=0;
+	for ( i = 0; i < 4; ++i ) {
+		for ( j = 0; j < 4; ++j ) {
+			mat[k+j] = m_Matrix[i][j];
+		}
+		k += 4;
+	}
 }
 
 bool CMatrix3D::operator==(const CMatrix3D &mat) const

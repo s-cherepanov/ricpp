@@ -41,8 +41,8 @@ void CLightSourceRibRequest::operator()(IRibParserState &parser, CRibRequestData
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
-		RtInt number;
-		const char *name;
+		RtInt number=0;
+		const char *name=0;
 		const char *lightname = 0;
 		char lightnamebuf[32];
 
@@ -141,8 +141,8 @@ void CAreaLightSourceRibRequest::operator()(IRibParserState &parser, CRibRequest
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
-		RtInt number;
-		const char *name;
+		RtInt number=0;
+		const char *name=0;
 		char lightnamebuf[32];
 		const char *lightname = 0;
 

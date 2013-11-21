@@ -76,7 +76,7 @@ void CFormatRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 		CRibParameter &p2 = request[2];
-		RtInt xres, yres;
+		RtInt xres=0, yres=0;
 		RtFloat pixelaspect;
 		bool b0 = p0.getInt(xres), b1 = p1.getInt(yres), b2 = p2.getFloat(pixelaspect);
 
@@ -214,7 +214,7 @@ void CScreenWindowRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 		CRibParameter &p2 = request[2];
 		CRibParameter &p3 = request[3];
 
-		RtFloat left, right, bottom, top;
+		RtFloat left=0, right=0, bottom=0, top=0;
 
 		bool b0 = p0.getFloat(left),
 		     b1 = p1.getFloat(right),
@@ -318,7 +318,7 @@ void CCropWindowRibRequest::operator()(IRibParserState &parser, CRibRequestData 
 		CRibParameter &p2 = request[2];
 		CRibParameter &p3 = request[3];
 
-		RtFloat xmin, xmax, ymin, ymax;
+		RtFloat xmin=0, xmax=0, ymin=0, ymax=0;
 
 		bool b0 = p0.getFloat(xmin),
 		     b1 = p1.getFloat(xmax),
@@ -462,7 +462,7 @@ void CClippingRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
-		RtFloat fnear, ffar;
+		RtFloat fnear=0, ffar=0;
 		bool b0 = p0.getFloat(fnear), b1 = p1.getFloat(ffar);
 
 		if ( b0 && b1 ) {
@@ -556,7 +556,7 @@ void CClippingPlaneRibRequest::operator()(IRibParserState &parser, CRibRequestDa
 		CRibParameter &p4 = request[4];
 		CRibParameter &p5 = request[5];
 
-		RtFloat x, y, z, nx, ny, nz;
+		RtFloat x=0, y=0, z=0, nx=0, ny=0, nz=0;
 		bool
 			b0 = p0.getFloat(x),  b1 = p1.getFloat(y),
 			b2 = p2.getFloat(z),  b3 = p3.getFloat(nx),
@@ -678,7 +678,7 @@ void CDepthOfFieldRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 		CRibParameter &p1 = request[1];
 		CRibParameter &p2 = request[2];
 
-		RtFloat fstop, focallength, focaldistance;
+		RtFloat fstop=0, focallength=0, focaldistance=0;
 		bool b0 = p0.getFloat(fstop), b1 = p1.getFloat(focallength), b2 = p2.getFloat(focaldistance);
 
 		if ( b0 && b1 && b2 ) {
@@ -775,7 +775,7 @@ void CShutterRibRequest::operator()(IRibParserState &parser, CRibRequestData &re
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
-		RtFloat smin, smax;
+		RtFloat smin=0, smax=0;
 		bool b0 = p0.getFloat(smin), b1 = p1.getFloat(smax);
 
 		if ( b0 && b1 ) {
@@ -904,7 +904,7 @@ void CPixelSamplesRibRequest::operator()(IRibParserState &parser, CRibRequestDat
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
-		RtFloat xsamples, ysamples;
+		RtFloat xsamples=0, ysamples=0;
 		bool b0 = p0.getFloat(xsamples), b1 = p1.getFloat(ysamples);
 
 		if ( b0 && b1 ) {
@@ -1070,7 +1070,7 @@ void CExposureRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 		CRibParameter &p0 = request[0];
 		CRibParameter &p1 = request[1];
 
-		RtFloat gain, gamma;
+		RtFloat gain=0, gamma=0;
 		bool b0 = p0.getFloat(gain), b1 = p1.getFloat(gamma);
 
 		if ( b0 && b1 ) {
@@ -1167,9 +1167,9 @@ void CQuantizeRibRequest::operator()(IRibParserState &parser, CRibRequestData &r
 		CRibParameter &p3 = request[3];
 		CRibParameter &p4 = request[4];
 
-		const char *type;
-		RtInt one, qmin, qmax;
-		RtFloat amplifier;
+		const char *type=0;
+		RtInt one=0, qmin=0, qmax=0;
+		RtFloat amplifier=0;
 		bool
 			b0 = p0.getString(type),  b1 = p1.getInt(one),
 			b2 = p2.getInt(qmin),  b3 = p3.getInt(qmax),

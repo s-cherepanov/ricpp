@@ -66,7 +66,7 @@
 				<externalSettings containerId="tools;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/tools"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="tools" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -135,7 +135,7 @@
 				<externalSettings containerId="tools;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/tools"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="tools" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

@@ -77,7 +77,7 @@
 				<externalSettings containerId="ricpp;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -163,7 +163,7 @@
 				<externalSettings containerId="ricpp;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

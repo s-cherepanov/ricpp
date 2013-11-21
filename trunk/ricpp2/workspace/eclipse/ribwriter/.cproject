@@ -81,8 +81,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/baserenderer"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="baserenderer" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -175,8 +175,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/baserenderer"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="baserenderer" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>

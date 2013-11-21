@@ -54,7 +54,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.960312318" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"/>
 							<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" errorParsers="org.eclipse.cdt.core.GLDErrorParser" id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug.2011551718" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug">
 								<option id="gnu.cpp.link.option.paths.1227164776" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/riprog/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/riprog/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/freeglut/2.8.1/freeglut-MinGW-2.8.1-1.mp/lib&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.1470750963" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
@@ -78,7 +78,7 @@
 				<externalSettings containerId="riprog;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/riprog"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/riprog/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/riprog/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="riprog" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -159,7 +159,7 @@
 				<externalSettings containerId="riprog;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/riprog"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/riprog/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/riprog/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="riprog" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

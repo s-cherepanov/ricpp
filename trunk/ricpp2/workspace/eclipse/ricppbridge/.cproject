@@ -81,8 +81,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/rendererloader"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/rendererloader/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/rendererloader/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="rendererloader" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -90,7 +90,7 @@
 				<externalSettings containerId="ribparser;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -182,8 +182,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/rendererloader"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/rendererloader/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/rendererloader/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="rendererloader" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -191,7 +191,7 @@
 				<externalSettings containerId="ribparser;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

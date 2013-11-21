@@ -90,12 +90,12 @@
 									<listOptionValue builtIn="false" value="z"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.662361999" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricpp/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tools/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricpp/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tools/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/lib/x86&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1266304509" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -115,42 +115,42 @@
 				<externalSettings containerId="tools;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/tools"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="tools" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribase;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribase"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribase" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="gendynlib;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/gendynlib"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricpp;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="pluginhandler;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pluginhandler"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribfilter;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -243,12 +243,12 @@
 									<listOptionValue builtIn="false" value="z"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.138560152" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricpp/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tools/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricpp/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tools/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/lib/x86&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.668858764" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -268,42 +268,42 @@
 				<externalSettings containerId="tools;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/tools"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="tools" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribase;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribase"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribase" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="gendynlib;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/gendynlib"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricpp;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="pluginhandler;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pluginhandler"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribfilter;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

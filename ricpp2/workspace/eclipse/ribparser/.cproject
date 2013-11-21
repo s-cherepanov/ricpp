@@ -81,14 +81,14 @@
 				<externalSettings containerId="ribfilter;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricontext;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricontext"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricontext" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -175,14 +175,14 @@
 				<externalSettings containerId="ribfilter;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricontext;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricontext"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricontext" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

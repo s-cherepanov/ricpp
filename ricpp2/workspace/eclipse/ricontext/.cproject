@@ -69,14 +69,14 @@
 				<externalSettings containerId="declaration;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/declaration"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="declaration" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="streams;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="streams" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -148,14 +148,14 @@
 				<externalSettings containerId="declaration;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/declaration"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="declaration" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="streams;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="streams" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>

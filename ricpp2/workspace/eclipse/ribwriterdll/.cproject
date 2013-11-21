@@ -33,9 +33,9 @@
 							<builder buildPath="${workspace_loc:/riprog/Debug}" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1132794302" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.so.debug.1127633291" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.so.debug">
 								<option id="gnu.both.asm.option.include.paths.1758005775" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration}&quot;"/>
@@ -55,9 +55,9 @@
 								<option id="gnu.cpp.compiler.mingw.so.debug.option.optimization.level.140096300" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.so.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.so.debug.option.debugging.level.935553176" name="Debug Level" superClass="gnu.cpp.compiler.mingw.so.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.813639302" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration}&quot;"/>
@@ -76,9 +76,9 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.mingw.so.debug.option.optimization.level.305605686" name="Optimization Level" superClass="gnu.c.compiler.mingw.so.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.so.debug.option.debugging.level.69942676" name="Debug Level" superClass="gnu.c.compiler.mingw.so.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.2031362343" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration}&quot;"/>
@@ -99,33 +99,33 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.debug.1542003628" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.debug">
 								<option defaultValue="true" id="gnu.cpp.link.mingw.so.debug.option.shared.660406956" name="Shared (-shared)" superClass="gnu.cpp.link.mingw.so.debug.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.911264369" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="ribwriter"/>
-									<listOptionValue builtIn="false" value="baserenderer"/>
-									<listOptionValue builtIn="false" value="ribparser"/>
-									<listOptionValue builtIn="false" value="ricontext"/>
-									<listOptionValue builtIn="false" value="ribfilter"/>
-									<listOptionValue builtIn="false" value="declaration"/>
-									<listOptionValue builtIn="false" value="streams"/>
-									<listOptionValue builtIn="false" value="pluginhandler"/>
-									<listOptionValue builtIn="false" value="ricpp"/>
-									<listOptionValue builtIn="false" value="gendynlib"/>
-									<listOptionValue builtIn="false" value="ribase"/>
-									<listOptionValue builtIn="false" value="tools"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribwriter"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="baserenderer"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribparser"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ricontext"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribfilter"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="declaration"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="streams"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pluginhandler"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ricpp"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="gendynlib"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribase"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="tools"/>
 									<listOptionValue builtIn="false" value="z"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.662361999" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/streams/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricpp/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tools/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/streams/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricpp/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tools/Release}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/lib/x86&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1266304509" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
@@ -145,70 +145,70 @@
 				<externalSettings containerId="tools;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/tools"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="tools" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribase;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribase"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribase" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="gendynlib;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/gendynlib"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricpp;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="pluginhandler;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pluginhandler"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="streams;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="streams" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="declaration;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/declaration"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="declaration" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribfilter;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricontext;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricontext"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricontext" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribparser;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -216,8 +216,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/baserenderer"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="baserenderer" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -226,8 +226,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribwriter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribwriter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribwriter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribwriter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -264,9 +264,9 @@
 							<builder buildPath="${workspace_loc:/riprog/Release}" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1019865241" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.so.release.28847043" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.so.release">
 								<option id="gnu.both.asm.option.include.paths.87832804" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration}&quot;"/>
@@ -286,9 +286,9 @@
 								<option id="gnu.cpp.compiler.mingw.so.release.option.optimization.level.2128596145" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.so.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.so.release.option.debugging.level.1314786691" name="Debug Level" superClass="gnu.cpp.compiler.mingw.so.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1607546862" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration}&quot;"/>
@@ -307,9 +307,9 @@
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.mingw.so.release.option.optimization.level.1499903184" name="Optimization Level" superClass="gnu.c.compiler.mingw.so.release.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.so.release.option.debugging.level.234570040" name="Debug Level" superClass="gnu.c.compiler.mingw.so.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.115464453" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribwriter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/baserenderer}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribparser}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/declaration}&quot;"/>
@@ -330,18 +330,18 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.release.758849332" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.release">
 								<option defaultValue="true" id="gnu.cpp.link.mingw.so.release.option.shared.1671751105" name="Shared (-shared)" superClass="gnu.cpp.link.mingw.so.release.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.libs.410233770" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="ribwriter"/>
-									<listOptionValue builtIn="false" value="baserenderer"/>
-									<listOptionValue builtIn="false" value="ribparser"/>
-									<listOptionValue builtIn="false" value="ricontext"/>
-									<listOptionValue builtIn="false" value="ribfilter"/>
-									<listOptionValue builtIn="false" value="declaration"/>
-									<listOptionValue builtIn="false" value="streams"/>
-									<listOptionValue builtIn="false" value="pluginhandler"/>
-									<listOptionValue builtIn="false" value="ricpp"/>
-									<listOptionValue builtIn="false" value="gendynlib"/>
-									<listOptionValue builtIn="false" value="ribase"/>
-									<listOptionValue builtIn="false" value="tools"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribwriter"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="baserenderer"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribparser"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ricontext"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribfilter"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="declaration"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="streams"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pluginhandler"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ricpp"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="gendynlib"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribase"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="tools"/>
 									<listOptionValue builtIn="false" value="z"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.138560152" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
@@ -376,70 +376,70 @@
 				<externalSettings containerId="tools;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/tools"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/tools/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="tools" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribase;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribase"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribase" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="gendynlib;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/gendynlib"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricpp;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="pluginhandler;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pluginhandler"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="streams;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="streams" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="declaration;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/declaration"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/declaration/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="declaration" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribfilter;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricontext;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricontext"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ricontext" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ribparser;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
@@ -447,8 +447,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/baserenderer"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/baserenderer/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="baserenderer" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
@@ -457,8 +457,8 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribwriter"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribwriter/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribwriter/Release"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 						<entry flags="RESOLVED" kind="libraryFile" name="ribwriter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>

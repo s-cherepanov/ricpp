@@ -4,17 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>glrenderer</project>
-		<project>baserenderer</project>
-		<project>declaration</project>
-		<project>gendynlib</project>
-		<project>pluginhandler</project>
-		<project>ribase</project>
-		<project>ribfilter</project>
-		<project>ribparser</project>
-		<project>ricontext</project>
-		<project>ricpp</project>
-		<project>streams</project>
-		<project>tools</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

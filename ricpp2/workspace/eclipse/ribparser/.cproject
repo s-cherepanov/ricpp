@@ -9,7 +9,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ribparser"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -26,8 +26,10 @@
 							<builder buildPath="${workspace_loc:/ribparser/Debug}" id="cdt.managedbuild.tool.gnu.builder.mingw.base.252770504" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.so.debug.720153859" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.so.debug">
 								<option id="gnu.both.asm.option.include.paths.414684378" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.598169784" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -36,8 +38,10 @@
 								<option id="gnu.cpp.compiler.mingw.so.debug.option.optimization.level.391876289" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.so.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.so.debug.option.debugging.level.2084670243" name="Debug Level" superClass="gnu.cpp.compiler.mingw.so.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1832320989" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1757529063" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -45,8 +49,10 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.mingw.so.debug.option.optimization.level.531081533" name="Optimization Level" superClass="gnu.c.compiler.mingw.so.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.so.debug.option.debugging.level.1623691092" name="Debug Level" superClass="gnu.c.compiler.mingw.so.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1143509248" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.693379837" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -55,10 +61,14 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.debug.1804136122" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.debug">
 								<option defaultValue="true" id="gnu.cpp.link.mingw.so.debug.option.shared.1611148226" name="Shared (-shared)" superClass="gnu.cpp.link.mingw.so.debug.option.shared" value="false" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.paths.87529255" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/x86/lib&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1831752938" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
+								<outputType id="cdt.managedbuild.tool.gnu.cpp.linker.output.590269478" outputPrefix="lib" superClass="cdt.managedbuild.tool.gnu.cpp.linker.output"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
@@ -72,14 +82,14 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricontext;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricontext"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ricontext"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ricontext" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -90,7 +100,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribparser"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribparser/Release"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ribparser"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ribparser" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -100,15 +110,17 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="dll" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.mingw.so.release.1321594923" name="Release" parent="cdt.managedbuild.config.gnu.mingw.so.release">
+				<configuration artifactExtension="a" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.config.gnu.mingw.so.release.1321594923" name="Release" parent="cdt.managedbuild.config.gnu.mingw.so.release">
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.so.release.1321594923." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.mingw.so.release.1652651685" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.so.release">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.mingw.so.release.1580898228" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.mingw.so.release"/>
 							<builder buildPath="${workspace_loc:/ribparser/Release}" errorParsers="" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1154575636" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.assembler.mingw.so.release.2044824952" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.so.release">
 								<option id="gnu.both.asm.option.include.paths.1948153433" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.751181394" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -117,8 +129,10 @@
 								<option id="gnu.cpp.compiler.mingw.so.release.option.optimization.level.700494215" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.so.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.so.release.option.debugging.level.1699323186" name="Debug Level" superClass="gnu.cpp.compiler.mingw.so.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1223062549" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.61994264" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -126,8 +140,10 @@
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.mingw.so.release.option.optimization.level.1502549023" name="Optimization Level" superClass="gnu.c.compiler.mingw.so.release.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.so.release.option.debugging.level.61872446" name="Debug Level" superClass="gnu.c.compiler.mingw.so.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.954384616" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.479302104" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -137,12 +153,11 @@
 							<tool errorParsers="" id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.release.234528047" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.release">
 								<option defaultValue="true" id="gnu.cpp.link.mingw.so.release.option.shared.352987712" name="Shared (-shared)" superClass="gnu.cpp.link.mingw.so.release.option.shared" valueType="boolean"/>
 								<option id="gnu.cpp.link.option.paths.1799134189" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ricontext/Debug}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribfilter/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/x86/lib&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.451109755" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="ricontext"/>
-									<listOptionValue builtIn="false" value="ribfilter"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ricontext"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ribfilter"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1912474338" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -161,14 +176,14 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribfilter"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribfilter/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ribfilter" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="ricontext;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricontext"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricontext/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ricontext"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ricontext" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -177,8 +192,13 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="ribparser.cdt.managedbuild.target.gnu.mingw.so.174149746" name="Shared Library" projectType="cdt.managedbuild.target.gnu.mingw.so"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/ribparser"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/ribparser"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/ribparser"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -196,4 +216,5 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

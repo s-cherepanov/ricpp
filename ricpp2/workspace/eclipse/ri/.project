@@ -3,7 +3,6 @@
 	<name>ri</name>
 	<comment></comment>
 	<projects>
-		<project>baserenderer</project>
 		<project>ricpp</project>
 	</projects>
 	<buildSpec>

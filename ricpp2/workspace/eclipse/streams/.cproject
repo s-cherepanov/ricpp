@@ -9,7 +9,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="streams"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="streams" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -26,8 +26,9 @@
 							<builder buildPath="${workspace_loc:/streams/Debug}" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1468044181" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.lib.debug.827752439" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.lib.debug">
 								<option id="gnu.both.asm.option.include.paths.1047843753" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1718051848" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -36,8 +37,9 @@
 								<option id="gnu.cpp.compiler.mingw.lib.debug.option.optimization.level.52080069" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.lib.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.lib.debug.option.debugging.level.878741484" name="Debug Level" superClass="gnu.cpp.compiler.mingw.lib.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1081811870" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1870881389" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -45,8 +47,9 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.mingw.lib.debug.option.optimization.level.1731165659" name="Optimization Level" superClass="gnu.c.compiler.mingw.lib.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.lib.debug.option.debugging.level.114440270" name="Debug Level" superClass="gnu.c.compiler.mingw.lib.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1839945036" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1791577092" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -64,7 +67,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pluginhandler"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -75,7 +78,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/streams"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/streams/Release"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="streams"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="streams" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -92,8 +95,9 @@
 							<builder buildPath="${workspace_loc:/streams/Release}" id="cdt.managedbuild.tool.gnu.builder.mingw.base.706806714" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.lib.release.325456950" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.lib.release">
 								<option id="gnu.both.asm.option.include.paths.1195686535" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.765488944" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -102,8 +106,9 @@
 								<option id="gnu.cpp.compiler.mingw.lib.release.option.optimization.level.1322026098" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.lib.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.lib.release.option.debugging.level.1871660545" name="Debug Level" superClass="gnu.cpp.compiler.mingw.lib.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.20701387" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1770288657" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -111,8 +116,9 @@
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.mingw.lib.release.option.optimization.level.1278110669" name="Optimization Level" superClass="gnu.c.compiler.mingw.lib.release.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.lib.release.option.debugging.level.241786926" name="Debug Level" superClass="gnu.c.compiler.mingw.lib.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.2144002970" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pluginhandler}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2715151" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -130,7 +136,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/pluginhandler"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/pluginhandler/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="pluginhandler" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -155,4 +161,5 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

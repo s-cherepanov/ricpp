@@ -244,7 +244,7 @@ void CTranslateRibRequest::operator()(IRibParserState &parser, CRibRequestData &
 		CRibParameter &p1 = request[1];
 		CRibParameter &p2 = request[2];
 
-		RtFloat dx, dy, dz;
+		RtFloat dx=0, dy=0, dz=0;
 
 		bool b0 = p0.getFloat(dx),
 		     b1 = p1.getFloat(dy),
@@ -339,7 +339,7 @@ void CRotateRibRequest::operator()(IRibParserState &parser, CRibRequestData &req
 		CRibParameter &p2 = request[2];
 		CRibParameter &p3 = request[3];
 
-		RtFloat angle, x, y, z;
+		RtFloat angle=0, x=0, y=0, z=0;
 
 		bool b0 = p0.getFloat(angle),
 		     b1 = p1.getFloat(x),
@@ -441,7 +441,7 @@ void CScaleRibRequest::operator()(IRibParserState &parser, CRibRequestData &requ
 		CRibParameter &p1 = request[1];
 		CRibParameter &p2 = request[2];
 
-		RtFloat sx, sy, sz;
+		RtFloat sx=0, sy=0, sz=0;
 
 		bool b0 = p0.getFloat(sx),
 		     b1 = p1.getFloat(sy),
@@ -620,7 +620,7 @@ void CSkewRibRequest::operator()(IRibParserState &parser, CRibRequestData &reque
 		CRibParameter &p5 = request[5];
 		CRibParameter &p6 = request[6];
 
-		RtFloat angle, dx1, dy1, dz1, dx2, dy2, dz2;
+		RtFloat angle=0, dx1=0, dy1=0, dz1=0, dx2=0, dy2=0, dz2=0;
 
 		bool b0 = p0.getFloat(angle),
 		     b1 = p1.getFloat(dx1),

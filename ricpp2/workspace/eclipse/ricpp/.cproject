@@ -9,7 +9,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ricpp"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -26,8 +26,10 @@
 							<builder buildPath="${workspace_loc:/ricpp/Debug}" id="cdt.managedbuild.tool.gnu.builder.mingw.base.2094144064" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.so.debug.1743290280" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.so.debug">
 								<option id="gnu.both.asm.option.include.paths.1114869800" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1010814602" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -36,8 +38,10 @@
 								<option id="gnu.cpp.compiler.mingw.so.debug.option.optimization.level.397541164" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.so.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.so.debug.option.debugging.level.1608577818" name="Debug Level" superClass="gnu.cpp.compiler.mingw.so.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.273691712" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.860056563" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -45,8 +49,10 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.mingw.so.debug.option.optimization.level.1711378425" name="Optimization Level" superClass="gnu.c.compiler.mingw.so.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.so.debug.option.debugging.level.1036603266" name="Debug Level" superClass="gnu.c.compiler.mingw.so.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.1982754073" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1756701411" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -72,14 +78,14 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribase"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ribase"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ribase" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="gendynlib;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/gendynlib"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -90,7 +96,7 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ricpp"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ricpp/Release"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ricpp"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ricpp" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -107,8 +113,10 @@
 							<builder buildPath="${workspace_loc:/ricpp/Release}" id="cdt.managedbuild.tool.gnu.builder.mingw.base.466995844" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.so.release.1881780096" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.so.release">
 								<option id="gnu.both.asm.option.include.paths.1254633691" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.209202256" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -117,8 +125,10 @@
 								<option id="gnu.cpp.compiler.mingw.so.release.option.optimization.level.1659712133" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.so.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.mingw.so.release.option.debugging.level.1016549851" name="Debug Level" superClass="gnu.cpp.compiler.mingw.so.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.464835433" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.549741052" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -126,8 +136,10 @@
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.mingw.so.release.option.optimization.level.1848823209" name="Optimization Level" superClass="gnu.c.compiler.mingw.so.release.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.mingw.so.release.option.debugging.level.71124567" name="Debug Level" superClass="gnu.c.compiler.mingw.so.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.381776405" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/gendynlib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ribase}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/win32/zlib123-dll/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${WorkspaceDirPath}/../../3rdparty/zlib127-dll_MINGW/include&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1611237047" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -153,14 +165,14 @@
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/ribase"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/ribase/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="ribase"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="ribase" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 				<externalSettings containerId="gendynlib;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/gendynlib"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/gendynlib/Debug"/>
-						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="gendynlib" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
@@ -187,4 +199,5 @@
 	<storageModule moduleId="refreshScope" versionNumber="1">
 		<resource resourceType="PROJECT" workspacePath="/ricpp"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

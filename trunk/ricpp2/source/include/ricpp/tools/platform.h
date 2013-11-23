@@ -50,7 +50,16 @@ namespace RiCPP {
  *  @param s2 second NUL terminated string
  *  @return 1, if s1 > s2, 0 if the strings are equal and -1 if s2 > s1
  */
-inline int strcasecmp(const char *s1, const char *s2) { return _stricmp(s1, s2); }
+inline int strcasecmp(const char *s1, const char *s2) {
+//  _stricmp crahed in debug build with gcc 4.8.1
+	const char *ts1 = s1 && *s1 ? s1 : "";
+	const char *ts2 = s2 && *s2 ? s2 : "";
+#if defined _MSC_VER
+	return _stricmp(ts1, ts2);
+#else
+	return stricmp(ts1, ts2);
+#endif
+}
 
 /** @brief Export declaration for the included functions not used outside DLL.
  */

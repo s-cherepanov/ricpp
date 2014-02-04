@@ -320,7 +320,7 @@ public:
         return m_coordinates;
     }
     const IndexType size() const {
-        return m_coordinates.size()/2;
+        return (IndexType)(m_coordinates.size()/2);
     }
     RtFloat u(IndexType idx) const
     {

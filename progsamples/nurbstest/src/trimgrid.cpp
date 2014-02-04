@@ -129,7 +129,7 @@ IndexType CParametricAxis::findGridForCoord(RtFloat coord) const
 
 	// assert m_coordinates[i] <= m_coordinates[i+1] for 0 <= i < m_coordinates.size()
 
-	IndexType left = 0, right = m_coordinates.size()-1;
+	IndexType left = 0, right = (IndexType)m_coordinates.size()-1;
 	IndexType mid = (left+right)/2;
 
 	// coordinat is max float?

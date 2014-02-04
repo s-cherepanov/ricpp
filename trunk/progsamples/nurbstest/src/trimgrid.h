@@ -112,7 +112,7 @@ public:
 	}
 
 	inline IndexType size() const {
-		return m_coordinates.size();
+		return (IndexType)m_coordinates.size();
 	}
 
 	bool clip(IndexType gridIdx, int &gridIncrement, RtFloat coord, RtFloat &clippedCoord) const;

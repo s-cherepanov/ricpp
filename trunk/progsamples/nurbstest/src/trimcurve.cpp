@@ -237,7 +237,7 @@ const std::vector<RtFloat> &CTrimCurve::tesselate(IndexType tesselation)
         tesselation = 1;
     }
     if ( m_curTess != tesselation ) {
-        m_basis.reset(m_uvw.size()/3, m_order, m_knots, m_min, m_max, tesselation);
+        m_basis.reset((RtInt)(m_uvw.size()/3), m_order, m_knots, m_min, m_max, tesselation);
         m_curTess = tesselation;
         m_basis.nuBlendP2W(m_uvw, 0, m_coordinates, 0);
     }

@@ -1264,10 +1264,13 @@ public:
 	 * @return true: if matrix is the identity matrix, false: otherwise
 	 */
 	bool isIdentity() const;
+	/** @brief Swap Rows i1 and i2
+	*/
+	void swapRows(size_t i1, size_t i2);
 	/** @brief Returns the inverse of this matrix.
 	 * Using an algorithm from Graphics Gems IV (p554),
 	 * Gauss-Jordan elimination with partial pivoting.
-	 * Source copied from Aqsis renderer.
+	 * Source modified from http://www.virtual-maxim.de/matrix-invertieren-in-c-plus-plus/
 	 * @retval mat The inverse matrix.
 	 * @return true: Inverse could be calculated, false: otherwise.
 	 */

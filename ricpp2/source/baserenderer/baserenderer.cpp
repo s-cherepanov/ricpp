@@ -2595,8 +2595,10 @@ RtVoid CBaseRenderer::preProcess(CRiIdentity &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().identity();
+	// Flip normals?
 	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
 		renderState()->attributes().toggleOrientation();
+	// -------------
 }
 
 
@@ -2612,8 +2614,10 @@ RtVoid CBaseRenderer::preProcess(CRiTransform &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().transform(obj.transform());
+	// Flip normals?
 	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
 		renderState()->attributes().toggleOrientation();
+	// -------------
 }
 
 
@@ -2629,8 +2633,10 @@ RtVoid CBaseRenderer::preProcess(CRiConcatTransform &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().concatTransform(obj.transform());
+	// Flip normals?
 	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
 		renderState()->attributes().toggleOrientation();
+	// -------------
 }
 
 
@@ -2688,8 +2694,10 @@ RtVoid CBaseRenderer::preProcess(CRiScale &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->curTransform().scale(obj.dx(), obj.dy(), obj.dz());
-	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+	// Flip normals?
+	if (det * renderState()->curTransform().getCTM().determinant() < 0)
 		renderState()->attributes().toggleOrientation();
+	// -------------
 }
 
 
@@ -2750,8 +2758,10 @@ RtVoid CBaseRenderer::preProcess(CRiCoordSysTransform &obj)
 {
 	RtFloat det = renderState()->curTransform().getCTM().determinant();
 	renderState()->coordSysTransform(obj.space());
-	if ( det * renderState()->curTransform().getCTM().determinant() < 0 )
+	// Flip normals?
+	if (det * renderState()->curTransform().getCTM().determinant() < 0)
 		renderState()->attributes().toggleOrientation();
+	// -------------
 }
 
 RtVoid CBaseRenderer::coordSysTransform(RtToken space)

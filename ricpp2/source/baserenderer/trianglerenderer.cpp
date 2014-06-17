@@ -77,27 +77,27 @@ void CTriangleRenderer::getPosAndNormals(const CFace &f, const CMatrix3D &trans,
 
 			if ( np->values().size() == p.size() ) {
 				for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
-					// if ( flipNormals() ) {
-					//	n[i]   -= np->values()[i];
-					//	n[i+1] -= np->values()[i+1];
-					//	n[i+2] -= np->values()[i+2];
-					// } else {
+					if ( flipNormals() ) {
+						n[i]   -= np->values()[i];
+						n[i+1] -= np->values()[i+1];
+						n[i+2] -= np->values()[i+2];
+					} else {
 						n[i]   += np->values()[i];
 						n[i+1] += np->values()[i+1];
 						n[i+2] += np->values()[i+2];
-					// }
+					}
 				}
 			} else {
 				for ( unsigned int i = 0; i < n.size()-2; i+=3 ) {
-					// if ( flipNormals() ) {
-					//	n[i]   -= np->values()[0];
-					//	n[i+1] -= np->values()[1];
-					//	n[i+2] -= np->values()[2];
-					// } else {
+					if ( flipNormals() ) {
+						n[i]   -= np->values()[0];
+						n[i+1] -= np->values()[1];
+						n[i+2] -= np->values()[2];
+					} else {
 						n[i]   += np->values()[0];
 						n[i+1] += np->values()[1];
 						n[i+2] += np->values()[2];
-					// }
+					}
 				}
 			}
 			

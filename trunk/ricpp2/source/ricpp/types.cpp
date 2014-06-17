@@ -1474,108 +1474,104 @@ bool CMatrix3D::isIdentity() const
 }
 
 
+#if 0
 bool CMatrix3D::getInverse(RtMatrix &mat) const
 {
-        if ( isIdentity() )
-        {
-                get(mat);
-                return true;
+	if (isIdentity())
+	{
+		get(mat);
+		return true;
+	}
+	RtFloat d = determinant();
+	if (d == 0) {
+		return false;
+	}
 
-        }
+	d = 1.0 / d;
 
-        CMatrix3D b;                // b evolves from identity into inverse(a)
-        CMatrix3D a(*this);        // a evolves from original matrix into identity
+}
+#endif
 
-        b.identity();
 
-        int i;
-        int j;
-        int i1;
+void CMatrix3D::swapRows(size_t i1, size_t i2)
+{
+	if ( i1 > 3 || i2 > 3 )
+		return;
 
-        // Loop over cols of a from left to right, eliminating above and below diag
-        for (j = 0; j < 4; j++)        // Find largest pivot in column j among rows j..3
-        {
-                i1 = j;
-                for(i = j + 1; i < 4; i++)
-                {
-                        if(fabs(a.m_Matrix[i][j]) > fabs(a.m_Matrix[i1][j]))
-                        {
-                                i1 = i;
-                        }
-                }
-
-                if (i1 != j)
-                {
-                        // Swap rows i1 and j in a and b to put pivot on diagonal
-                        RtFloat temp;
-
-                        temp = a.m_Matrix[i1][0];
-                        a.m_Matrix[i1][0] = a.m_Matrix[j][0];
-                        a.m_Matrix[j][0] = temp;
-                        temp = a.m_Matrix[i1][1];
-                        a.m_Matrix[i1][1] = a.m_Matrix[j][1];
-                        a.m_Matrix[j][1] = temp;
-                        temp = a.m_Matrix[i1][2];
-                        a.m_Matrix[i1][2] = a.m_Matrix[j][2];
-                        a.m_Matrix[j][2] = temp;
-                        temp = a.m_Matrix[i1][3];
-                        a.m_Matrix[i1][3] = a.m_Matrix[j][3];
-                        a.m_Matrix[j][3] = temp;
-
-                        temp = b.m_Matrix[i1][0];
-                        b.m_Matrix[i1][0] = b.m_Matrix[j][0];
-                        b.m_Matrix[j][0] = temp;
-                        temp = b.m_Matrix[i1][1];
-                        b.m_Matrix[i1][1] = b.m_Matrix[j][1];
-                        b.m_Matrix[j][1] = temp;
-                        temp = b.m_Matrix[i1][2];
-                        b.m_Matrix[i1][2] = b.m_Matrix[j][2];
-                        b.m_Matrix[j][2] = temp;
-                        temp = b.m_Matrix[i1][3];
-                        b.m_Matrix[i1][3] = b.m_Matrix[j][3];
-                        b.m_Matrix[j][3] = temp;
-                }
-
-                // Scale row j to have a unit diagonal
-                if( a.m_Matrix[j][j] == 0.0 )
-                {
-                        // Can't invert a singular matrix!
-                        return false;
-                }
-                RtFloat scale = (RtFloat)(1.0 / a.m_Matrix[j][j]);
-                b.m_Matrix[j][0] *= scale;
-                b.m_Matrix[j][1] *= scale;
-                b.m_Matrix[j][2] *= scale;
-                b.m_Matrix[j][3] *= scale;
-                // all elements to left of a[j][j] are already zero
-                for (i1=j+1; i1<4; i1++)
-                {
-                        a.m_Matrix[j][i1] *= scale;
-                }
-                a.m_Matrix[j][j] = 1.0;
-
-                // Eliminate off-diagonal elements in column j of a, doing identical ops to b
-                for(i = 0; i < 4; i++)
-                {
-                        if(i != j)
-                        {
-                                scale = a.m_Matrix[i][j];
-                                b.m_Matrix[i][0] -= scale * b.m_Matrix[j][0];
-                                b.m_Matrix[i][1] -= scale * b.m_Matrix[j][1];
-                                b.m_Matrix[i][2] -= scale * b.m_Matrix[j][2];
-                                b.m_Matrix[i][3] -= scale * b.m_Matrix[j][3];
-
-                                // all elements to left of a[j][j] are zero
-                                // a[j][j] is 1.0
-                                for (i1=j+1; i1<4; i1++)
-                                {
-                                        a.m_Matrix[i][i1] -= scale * a.m_Matrix[j][i1];
-                                }
-                                a.m_Matrix[i][j] = 0.0;
-                        }
-                }
-        }
-        b.get(mat);
-        return true;
+	for ( size_t j = 0; j < 4; ++j ) {
+		std::swap(m_Matrix[i1][j], m_Matrix[i2][j]);
+	}
 }
 
+bool CMatrix3D::getInverse(RtMatrix &mat) const
+{
+	if ( isIdentity() ) {
+		get(mat);
+		return true;
+	}
+
+	if ( determinant() == 0 ) {
+		return false;
+	}
+
+	CMatrix3D b;                // b evolves from identity into inverse(a)
+	CMatrix3D a(*this);        // a evolves from original matrix into identity
+
+	b.identity();
+
+	// Gauß-Jordan Algorithm
+	for(size_t k = 0; k < 3; ++k) {
+		// swap rows if pivot == 0
+		if ( a.m_Matrix[k][k] == 0.0 ) {
+			for ( size_t i = k+1; i < 4; ++i ) {
+				if ( a.m_Matrix[i][k] != 0.0 ) {
+					a.swapRows(k, i);
+					b.swapRows(k, i);
+					break;
+				} else if (i == 3) {
+					return false; // no element != 0
+				}
+			}
+		}
+
+		// elimate
+		for(size_t i = k+1; i < 4; ++i)
+		{
+			if ( a.m_Matrix[k][k] == 0 )
+				return false;
+			RtFloat p = a.m_Matrix[i][k] / a.m_Matrix[k][k];
+			for(size_t j = k; j < 4; ++j)
+				a.m_Matrix[i][j] -= a.m_Matrix[k][j] * p;
+			for (size_t j = 0; j < 4; ++j)
+				b.m_Matrix[i][j] -= b.m_Matrix[k][j] * p;
+		}
+	}
+
+	// Jordan
+	for( size_t k = 3; k > 0; --k )
+	{
+		for( size_t i = k; i > 0;  )
+		{
+			--i;
+			if (a.m_Matrix[k][k] == 0)
+				return false;
+			RtFloat p = a.m_Matrix[i][k] / a.m_Matrix[k][k];
+			for ( size_t j = k; j < 4; ++j )
+				a.m_Matrix[i][j] -= a.m_Matrix[k][j]*p;
+			for ( size_t j = 0; j < 4; ++j )
+				b.m_Matrix[i][j] -= b.m_Matrix[k][j] * p;
+		}
+	}
+
+	// Copy result
+	for(size_t i = 0; i < 4; ++i)
+	{
+		const RtFloat f = a.m_Matrix[i][i];
+		if (f == 0)
+			return false;
+		for(size_t j = 0; j < 4; ++j)
+			mat[i][j] = b.m_Matrix[i][j]/f;
+	}
+
+	return true;
+}

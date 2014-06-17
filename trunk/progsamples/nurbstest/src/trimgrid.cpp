@@ -454,6 +454,7 @@ void CTrimGrid::trim(const CTrimPath &trimPath)
 		if ( !numCoords )
 			continue;
 
+		// Start u, v coordinates of (trim) polygon loop
 		RtFloat u0, v0;
 		m_trimLoopCoords[loop].getUV(0, u0, v0);
 		CTrimGrid::CTrimFragments *frags = startLoop(loop, u0, v0);

@@ -18,26 +18,26 @@ namespace RiCPP {
 ///////////////////////////////////////////////////////////////////////////////////
 // Parametric Grid
 
-/** u or v axis
+/** Identification of the u or v axis
  */
 enum EnumAxisIndex
 {
-    uAxisIdx = 0,
-    vAxisIdx
+    uAxisIdx = 0, //!< Index to identify parametric axis u
+    vAxisIdx      //!< Index to identify parametric axis v
 }; // EnumAxisIndex
 
 class CParametricLine;
 
-/** A coordinate of a parametric grid axis
+/** A single coordinate of a parametric grid axis
  */
 class CGridCoordinate {
 public:
     enum EnumCoordinateType {
-        unknownCoord     = 0,
-        segmentCoord     = 1,
-        tesselatedCoord  = 2,
-        minCoord         = 4,
-        maxCoord         = 8
+        unknownCoord     = 0, //!< coordinate is not yet initialized
+        segmentCoord     = 1, //!< coordinate appears in knot vector
+        tesselatedCoord  = 2, //!< coordinate is tesselated
+        minCoord         = 4, //!< coordinate is either umin or vmin
+        maxCoord         = 8  //!< coordinate is either umax or vmax
     };
 private:
     RtFloat m_coord;                 //<! Value of the parametric coordinate
@@ -90,8 +90,8 @@ public:
 /** Axis of parametric coordinates
  */
 class CParametricAxis {
-    std::vector<CGridCoordinate> m_coordinates;
-    EnumAxisIndex m_axisIdx;
+    std::vector<CGridCoordinate> m_coordinates; //!< Coordinates of the axis, ascending order
+    EnumAxisIndex m_axisIdx; //!< Index identifies the dimension of the axis (u or v)
 public:
     inline CParametricAxis() {
         m_axisIdx = uAxisIdx;

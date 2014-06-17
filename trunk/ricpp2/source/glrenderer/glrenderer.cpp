@@ -492,7 +492,7 @@ void CGLRenderer::initViewing()
 	glDepthMask(GL_FALSE);
 	
     glLoadIdentity();
-	
+
 #   ifdef _TRACE
 	{
 		std::cout
@@ -577,6 +577,7 @@ void CGLRenderer::initViewing()
 
 	// see setTransformToCamera()
 	glScalef(1.0F, 1.0F, -1.0F);	
+	// ----------
 
 	// camera to raster transformation pipeline
 	const CTransformation *NDCToRaster = renderState()->NDCToRaster();
@@ -604,6 +605,8 @@ void CGLRenderer::initViewing()
 
 	// see setTransformToCamera()
 	glScalef(1.0F, 1.0F, -1.0F);	
+	// ------
+
 	glMatrixMode(GL_MODELVIEW);
 	setTransformToCamera();
 	glDepthMask(GL_TRUE);
@@ -611,17 +614,37 @@ void CGLRenderer::initViewing()
 
 void CGLRenderer::initLights()
 {
-	glLoadIdentity();
-	glScalef(1.0F, 1.0F, -1.0F);	
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+//	glLoadIdentity();
+
+	GLfloat light_position0[] = { -1.0F,  1.0F, -1.0F, 0.0F };
+	GLfloat light_position1[] = {  1.0F, -1.0F,  1.0F, 0.0F };
+	normalize3(&light_position0[0]);
+	normalize3(&light_position1[0]);
+
+//	CMatrix3D mat = renderState()->preCamera();
+//	if  ( mat.invert() ) {
+//		mat.transformNormal(light_position0[0], light_position0[1], light_position0[2]);
+//		mat.transformNormal(light_position1[0], light_position1[1], light_position1[2]);
+//	}
+
+	/*
+	mat = toCamera();
+	if (mat.invert()) {
+		mat.transformNormal(light_position0[0], light_position0[1], light_position0[2]);
+		mat.transformNormal(light_position1[0], light_position1[1], light_position1[2]);
+		}
+	*/
 
 	// Inits the global light sources or the default light source - the default lightsource will be removed, if a light source is defined
 	GLfloat mat_specular[]   = { 1, 1, 1, 1 };
 	GLfloat mat_shininess[]  = { 50 };
 	GLfloat mat_emission[]   = { 0, 0, 0, 1 };
 
-	GLfloat light_ambient[]  = { 0.2F, 0.2F, 0.2F, 1 };
-	GLfloat light_diffuse[]  = { .6F, .6F, .6F, 1 };
-	GLfloat light_specular[] = { .2F, .2F, .2F, 1 };
+	GLfloat light_ambient[]  = { .1F, .1F, .1F, 1 };
+	GLfloat light_diffuse[]  = { .3F, .3F, .3F, 1 };
+	GLfloat light_specular[] = { .1F, .1F, .1F, 1 };
 
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
@@ -631,12 +654,16 @@ void CGLRenderer::initLights()
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	
-	GLfloat light_position[] = { -3.0F, 3.0F, -3.0F, 0.0F };
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
 	
+	glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+
+	glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
+
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	
 }
 
 bool CGLRenderer::delayRequest(CRManInterfaceCall &obj)

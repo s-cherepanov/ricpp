@@ -24,46 +24,53 @@
 
 /** @file glutrib.cpp
  *  @author Andreas Pidde (andreas@pidde.de)
- *  @brief Simple rib loader using GLUT to for a GL context.
+ *  @brief Simple rib loader using GLUT for an OpenGL context.
  *  @todo Seems to be something wrong with the depth buffer.
  */
 
 #include <ricpp/ricpp.h>
 
-#ifdef __APPLE__
+#if defined ( __APPLE__ )
 #include <GLUT/glut.h>
-#else
-// #ifdef __GNUC__
+// #elif defined ( __GNUC__ )
 // #define _WCHAR_T_DEFINED
 // #define GLUT_NO_LIB_PRAGMA
 // #define GLUT_NO_WARNING_DISABLE
-// #endif
+#else
 #include <GL/glut.h>
 #endif
 
-// ---> cannot compile on Winodws
+// ---> cannot compile on Windows
 // #include <iostream>
 
 static RtFloat opacity_25[] = {0.25,  0.25, 0.25};
 static RtFloat opacity_50[] = {0.5,  0.5, 0.5};
 static RtFloat opacity_75[] = {0.75,  0.75, 0.75};
+
 static RtFloat greenish[] = {0.5,  1, 0.5};
 static RtFloat redish[] = {1,  0.5, 0.5};
 static RtFloat blueish[] = {0.5,  0.5, 1};
 
-// Funny, 512x512 resulution did not work one laptop (ThinkPad T41)
+// Window size
+// Funny, 512x512 resolution did not work on one laptop (ThinkPad T41)
 // under Gnu/Linux
-static RtInt width = 640;
-static RtInt height = (RtInt)(width * 3.0 / 4.0);
+static RtInt width = 640; 							// Window height
+static RtInt height = (RtInt)(width * 3.0 / 4.0);   // Window height, 3/4 ratio
 
 static float sphi=0.0, stheta=0.0;
 static float sdepth = 0.0;
+
 static int downX=0, downY=0;
 static bool leftButton = false, middleButton = false, rightButton = false;
+
+static int drawNormals = 0;
 
 static int storedArgc = 0;
 static char **storedArgv = 0;
 
+/**
+ * NURBS vase from Larry Gritz BMRT
+ */
 void testVase()
 {
     static RtFloat vaseMesh[] = { // Data copied from BMRT
@@ -130,6 +137,9 @@ void testVase()
 }
 
 
+/**
+ * Utah teapot, build-in geometry
+ */
 void testTeapot()
 {
 	RtObjectHandle handle = RiObjectBegin(); {
@@ -148,6 +158,10 @@ void testTeapot()
 	} RiAttributeEnd();
 }
 
+
+/**
+ * Simple cone geometry
+ */
 void testCone()
 {
 	const RtFloat rad = 0.6F;
@@ -165,6 +179,10 @@ void testCone()
 	} RiAttributeEnd();
 }
 
+
+/**
+ * Simple polygon geometry
+ */
 void testPolygon()
 {
 	RiAttributeBegin(); {
@@ -191,6 +209,10 @@ void testPolygon()
 	} RiAttributeEnd();
 }
 	
+
+/**
+ * Various polygon geometry interface calls
+ */
 void testPoly10()
 {
 	RtFloat p[] = {
@@ -228,7 +250,7 @@ void testPoly10()
 			// RiPointsPolygons(1, nverts, verts, RI_P, &p, RI_NULL);
 			// RiPointsGeneralPolygons(1, nloops, nverts, verts, RI_P, &p, RI_NULL);
 	
-#   ifdef _TRACE
+#			if defined ( _TRACE )
 			{
 				RtInt i;
 				RiTransformPoints(RI_CURRENT, RI_RASTER, sizeof(p)/sizeof(RtPoint), (RtPoint *)p);
@@ -241,7 +263,7 @@ void testPoly10()
 					printf("x %f, y %f, z %f\n", p[i*3+0], p[i*3+1], p[i*3+2]);
 				}
 			}
-#   endif
+#			endif
 		} RiAttributeEnd();
 	
 		RiAttributeBegin(); {
@@ -272,6 +294,10 @@ void testPoly10()
 	} RiAttributeEnd();
 }
 
+
+/**
+ * Called, if no RIB file option given
+ */
 void testScene(void)
 {
 	RiArchiveBegin("RIBARCHIVE", RI_NULL); {
@@ -286,6 +312,10 @@ void testScene(void)
 	} RiArchiveEnd();
 }
 
+
+/**
+ * Load a RIB file into a RIB Archive. Called, if a file option given
+ */
 void loadScene(const char *filename)
 {
 	RiArchiveBegin("RIBARCHIVE", RI_NULL); {
@@ -293,21 +323,21 @@ void loadScene(const char *filename)
 	} RiArchiveEnd();
 }
 
+/**
+ * Display the scene in current window
+ */
 void display(void)
 {
 	const char *screenAction[2] = {"clear", "finish"};
-#ifdef _DEBUG
-	RtInt noYes[2] = {0, 1};
-#endif
 
 	const char *matrixName[] = {"pre-camera"};
 	RiIdentity();
 	RiTranslate(0.0F,0.0F,sdepth); // Move back and forth
-	RiTranslate(0, 0, 2.75); // Move back to previous pos
+	RiTranslate(0, 0, 2.75);       // Move back to previous position
 			
 	// Rotation
 	RiRotate(stheta, 1.0, 0.0, 0.0); // Rotate x
-	RiRotate(-sphi, 0.0, 1.0, 0.0); // Rotate y
+	RiRotate(-sphi, 0.0, 1.0, 0.0);  // Rotate y
 			
 	RiTranslate(0, 0, -2.75); // Move to a pivot
 	RiCPPControl("state", "string store-transform", matrixName, RI_NULL); // Candidate for RiResource
@@ -316,9 +346,7 @@ void display(void)
 	// RiCPPControl("rib", "cache-file-archives", &noYes[1], RI_NULL);
 	RiOption("glrenderer", RI_DISPXRES, &width, RI_DISPYRES, &height, RI_NULL);
 	RiCPPControl("glrenderer", "screen", &screenAction[0], RI_NULL);
-#ifdef _DEBUG
-	RiAttribute("glrenderer", "draw-normals", &noYes[1], RI_NULL);
-#endif
+	RiAttribute("glrenderer", "draw-normals", &drawNormals, RI_NULL);
 	    
 	RiFormat(width, height, 1.0F);
 
@@ -338,6 +366,9 @@ void display(void)
 	RiSynchronize("restart");
 }
 
+/**
+ * Called, if the window size changes
+ */
 void reshape(int aWidth, int aHeight)
 {
 	width = aWidth;
@@ -345,7 +376,9 @@ void reshape(int aWidth, int aHeight)
     // glutPostRedisplay();
 }
 
-// Copied from GLUT newave.c
+/**
+ * Mouse motion handling, code copied from GLUT newave.c
+ */
 void motion(int x, int y)
 {
     if (leftButton)
@@ -364,7 +397,9 @@ void motion(int x, int y)
 }
 
 
-// Copied from GLUT newave.c
+/**
+ * Mouse button handling, code copied from GLUT newave.c
+ */
 void mouse(int button, int state, int x, int y)
 {
     downX = x;
@@ -384,10 +419,33 @@ void mouse(int button, int state, int x, int y)
 	}
 }
 
+/**
+ * Keyboard handling
+ */
+void keyboard(unsigned char key, int x, int y)
+{
+	bool sendDisplay = false;
+	if ( key == 'n' ) {
+		drawNormals = !drawNormals;
+		sendDisplay = true;
+	}
+	if ( sendDisplay ) {
+		glutPostRedisplay();
+	}
+}
+
+/**
+ * glutrib, a RIB file loader. Displays a RIB scene into a window, using GLUT.
+ * Synopsis: glutrib [ribfile]
+ */
 int main(int argc, char **argv)
 {
 	// const char *searchPath = ".:&";
   	// RiCPPControl("searchpath", "renderer", &searchPath, RI_NULL);
+
+#if defined (_DEBUG)
+	drawNormals = 1;
+#endif
 
 	storedArgc = argc;
 	storedArgv = argv;
@@ -402,6 +460,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(reshape);
 	glutMouseFunc(mouse);
 	glutMotionFunc(motion);
+	glutKeyboardFunc(keyboard);
 
 	// std::cerr << "BEGIN" << std::endl;
 	

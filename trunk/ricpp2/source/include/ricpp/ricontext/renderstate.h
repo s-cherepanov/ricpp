@@ -637,12 +637,16 @@ namespace RiCPP {
 		inline const CTransformation *screenToNDC() const { return m_screenToNDC; }
 		inline const CTransformation *cameraToScreen() const { return m_cameraToScreen; }
 		inline const CTransformation *worldToCamera() const { return m_worldToCamera; }
+
 		
 		bool getRasterToCamera(CMatrix3D &m) const;
 		bool getCameraToRaster(CMatrix3D &m) const;
 		bool getCameraToCurrent(CMatrix3D &m) const;
 		bool getCurrentToCamera(CMatrix3D &m) const;
-		
+
+		inline const CMatrix3D &preCamera() const { return m_preCamera; }
+		inline void getPreCamera(CMatrix3D &m) const { m = m_preCamera; }
+
 		void getProjectedScreenWindow(RtFloat &left, RtFloat &right, RtFloat &bot, RtFloat &top) const;
 		void calcNDCToRaster();
 		void calcScreenToNDC();
